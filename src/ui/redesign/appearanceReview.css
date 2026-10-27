@@ -91,14 +91,34 @@
   gap: 8px;
 }
 .rd-cover-credit {
+  margin: 0;
+  color: var(--sp-muted);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  text-align: left;
+}
+.rd-page-cover > .rd-cover-credit {
   position: absolute;
   left: 16px;
   bottom: 8px;
-  padding: 4px 8px;
-  border-radius: 4px;
-  background: var(--sp-panel);
-  color: var(--sp-text);
-  font-size: 0.6875rem;
+  max-width: calc(100% - 32px);
+  color: #fff;
+  text-shadow:
+    0 1px 3px #000,
+    0 0 2px #000;
+}
+.rd-cover-credit a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.rd-cover-credit a:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+.rd-appearance-picker .rd-cover-credit {
+  padding: 0;
+  text-align: left;
 }
 .rd-appearance-picker {
   display: grid;
@@ -139,6 +159,9 @@
   background: var(--sp-tint-1);
 }
 .rd-cover-preview {
+  display: grid;
+  place-items: center;
+  background: var(--sp-header);
   height: 96px;
   overflow: hidden;
   border-radius: 8px;
@@ -204,10 +227,10 @@
   .rd-page-cover-empty {
     height: 52px;
   }
-  .rd-cover-credit {
+  .rd-page-cover > .rd-cover-credit {
     left: 8px;
-    bottom: auto;
     top: 8px;
+    bottom: auto;
   }
   .rd-cover-actions {
     right: 8px;
@@ -240,4 +263,82 @@
     grid-template-columns: minmax(0, 1fr);
     padding: 16px;
   }
+}
+
+.rd-gem-pairs {
+  display: grid;
+  gap: 32px;
+  padding: 24px;
+  background: var(--sp-panel);
+  color: var(--sp-text);
+}
+.rd-gem-pairs section {
+  min-width: 0;
+}
+.rd-gem-pairs h2 {
+  margin: 0 0 16px;
+  font-size: 1.25rem;
+}
+.rd-gem-pair-mode {
+  padding: 16px;
+  color: var(--sp-text);
+  background: var(--sp-panel);
+}
+.rd-gem-pair-mode h3 {
+  margin: 0 0 16px;
+  font-size: 0.875rem;
+}
+.rd-gem-pair-mode figure {
+  margin: 0 0 16px;
+}
+.rd-gem-pair-mode figure:last-child {
+  margin-bottom: 0;
+}
+.rd-gem-pair-mode figcaption {
+  margin-top: 8px;
+  font-size: 0.75rem;
+}
+.rd-gem-pair-wide {
+  height: 144px;
+  overflow: hidden;
+}
+.rd-gem-pair-phone {
+  width: min(390px, 100%);
+  height: 112px;
+  overflow: hidden;
+}
+@media (max-width: 640px) {
+  .rd-gem-pairs {
+    padding: 16px;
+  }
+  .rd-gem-pair-mode {
+    padding: 8px;
+  }
+}
+
+/* Source changes affect only the scrolling middle panel, never dialog geometry.
+   On short screens the picker itself can scroll to keep every control reachable. */
+.sp-modal:has(> .rd-cover-picker) {
+  display: flex;
+  flex-direction: column;
+  height: min(720px, calc(100dvh - 32px));
+}
+.sp-modal:has(> .rd-cover-picker) > .sp-modal-heading,
+.sp-modal:has(> .rd-cover-picker) > p {
+  flex-shrink: 0;
+}
+.rd-cover-picker {
+  flex: 1;
+  min-height: 0;
+  grid-template-rows: 96px auto minmax(96px, 1fr) 64px auto;
+  overflow: auto;
+}
+.rd-cover-source-panel {
+  min-height: 0;
+  overflow: auto;
+  padding: 4px;
+  scrollbar-gutter: stable;
+}
+.rd-cover-position-slot {
+  min-height: 0;
 }

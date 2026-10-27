@@ -1,3 +1,5 @@
+import { ItemIcon, ConnectedAppearanceDialog, useSpaceAccent } from './Appearance.tsx';
+import type { AppearanceTarget } from './Appearance.tsx';
 import { EditorFrame } from './EditorFrame.tsx';
 import { revokeGuestView } from './guestRevocation.ts';
 import type { SpaceRootActionMode } from './SpaceRootActions.tsx';
@@ -98,6 +100,7 @@ export function Space({
   const [loading, setLoading] = useState(true);
   const [fresh, setFresh] = useState(false);
   const [denied, setDenied] = useState(false);
+  const [appearanceItem, setAppearanceItem] = useState<AppearanceTarget | null>(null);
   const [loadError, setLoadError] = useState('');
   const [trashError, setTrashError] = useState('');
   const [operationError, setOperationError] = useState('');
@@ -119,7 +122,7 @@ export function Space({
   const mounted = useRef(true);
 
   useEffect(() => {
-    if (action || !returnToPages.current) return;
+    if (action || appearanceItem || !returnToPages.current) return;
     returnToPages.current = false;
     // The originating menu was in a drawer that has now unmounted. Restore
     // focus to its visible Pages trigger after the metadata dialog closes.
@@ -128,7 +131,7 @@ export function Space({
       if (target?.isConnected && target.getClientRects().length) target.focus();
     });
     return () => cancelAnimationFrame(frame);
-  }, [action]);
+  }, [action, appearanceItem]);
 
   // The existing guard clears its dirty bit when a departure is accepted.
   // Keep the fence until navigation actually commits (a trash request can fail).
@@ -567,10 +570,34 @@ export function Space({
     setActionError('');
     setAction({ mode: 'add', kind });
   };
+  const nativeStyle = useSpaceAccent(currentTree?.space.appearance?.accent);
+  useEffect(() => {
+    setAppearanceItem(null);
+  }, [spaceId, denied]);
+  useEffect(() => {
+    const changed = () => {
+      void refresh.current(true);
+    };
+    window.addEventListener('spinel-appearance-changed', changed);
+    return () => window.removeEventListener('spinel-appearance-changed', changed);
+  }, []);
   const navigationView = currentTree
     ? (close: () => void) => (
         <nav className="space-navigation" aria-label="Pages">
-          <h2>{currentTree.space.name}</h2>
+          <h2>
+            <ItemIcon {...currentTree.space} /> {currentTree.space.name}
+          </h2>
+          {canAdminister(currentTree.access) && !guest && (
+            <Button
+              disabled={unavailableManagement}
+              onClick={() => {
+                close();
+                setAppearanceItem(currentTree.space);
+              }}
+            >
+              Space appearance
+            </Button>
+          )}
           <SpaceTree
             space={currentTree.space}
             items={currentTree.items}
@@ -593,7 +620,9 @@ export function Space({
               returnToPages.current = window.matchMedia('(max-width: 900px)').matches;
               close();
               setActionError('');
-              setAction(value);
+              if (value.mode === 'appearance')
+                setAppearanceItem({ ...value.item, guest: Boolean(guest) });
+              else setAction(value);
             }}
             canEdit={canEdit}
             disabled={busy || unavailableManagement}
@@ -693,6 +722,13 @@ export function Space({
       navigation={navigationView}
       navigationButton={pagesButton}
     >
+      {appearanceItem && (
+        <ConnectedAppearanceDialog
+          key={appearanceItem.id}
+          target={appearanceItem}
+          close={() => setAppearanceItem(null)}
+        />
+      )}
       {route.kind === 'index' && !guest ? (
         <>
           <div className="space-index-heading">
@@ -861,7 +897,7 @@ export function Space({
         </p>
       )}
       {visiblePage && (
-        <div className="space-native-editor rd-native-editor" key={editorKey!}>
+        <div className="space-native-editor rd-native-editor" style={nativeStyle} key={editorKey!}>
           {renderEditor({
             ...visiblePage,
             saveStatusTarget: null,
@@ -927,6 +963,11 @@ export function Space({
     );
   return visiblePage ? (
     <EditorFrame
+      appearanceTarget={
+        !denied
+          ? { ...visiblePage.item, spaceId: visiblePage.spaceId, guest: Boolean(guest) }
+          : undefined
+      }
       documentKey={editorKey!}
       name={denied ? 'Space unavailable' : visiblePage.item.name}
       onRename={

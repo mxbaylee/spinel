@@ -1,12 +1,13 @@
+import { ItemIcon } from './Appearance.tsx';
 import { useEffect, useId, useMemo, useRef } from 'react';
 import type { CSSProperties } from 'react';
 import type { SpaceNode, SpaceRoot } from '../src/shared/spaces.ts';
-import { EntityIcon } from '../src/ui/EntityIcon.tsx';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import { ActionMenu } from '../src/ui/redesign/Controls.tsx';
 import { spaceHref, visibleSpaceRows } from './spaceNavigation.ts';
 
 export type SpaceTreeAction =
+  | { mode: 'appearance'; item: SpaceNode }
   | { mode: 'rename'; item: SpaceNode }
   | { mode: 'move'; item: SpaceNode }
   | { mode: 'trash'; item: SpaceNode };
@@ -78,12 +79,7 @@ export function SpaceTree({
           const expanded = expandedIds.has(item.id);
           const context = prefix + '-' + item.id;
           const parent = byId.get(item.parentId)?.name ?? space.name;
-          const icon =
-            item.kind === 'folder' ? (
-              <ProfileIcon icon="lucide:folder" size={18} />
-            ) : (
-              <EntityIcon kind={item.kind} size={18} />
-            );
+          const icon = <ItemIcon {...item} size={18} />;
           return (
             <li key={item.id} aria-label={item.name}>
               <div className="space-tree-row" style={{ '--space-depth': depth } as CSSProperties}>
@@ -148,6 +144,11 @@ export function SpaceTree({
                   <ActionMenu
                     label={`More actions for ${item.name}`}
                     actions={[
+                      {
+                        label: 'Appearance…',
+                        disabled: !canEdit || disabled,
+                        onClick: () => onAction({ mode: 'appearance', item }),
+                      },
                       {
                         label: 'Rename',
                         disabled,

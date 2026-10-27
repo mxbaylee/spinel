@@ -1,3 +1,4 @@
+import { IdentityChoice, ConnectedAppearanceDialog, ItemIcon } from './Appearance.tsx';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import { EntityIcon } from '../src/ui/EntityIcon.tsx';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
@@ -165,6 +166,13 @@ export function Dashboard({
   currentRef.current = currentId;
   const [action, setAction] = useState<Action | null>(null);
   const [name, setName] = useState('');
+  const [newIcon, setNewIcon] = useState<string | null>(null);
+  const [appearanceItem, setAppearanceItem] = useState<FileItem | null>(null);
+  useEffect(() => {
+    const changed = () => setRefresh((value) => value + 1);
+    window.addEventListener('spinel-appearance-changed', changed);
+    return () => window.removeEventListener('spinel-appearance-changed', changed);
+  }, []);
   const [kind, setKind] = useState<FileKind>('folder');
   const [destination, setDestination] = useState('');
   const [moveFolders, setMoveFolders] = useState<WorkspaceItem[]>([]);
@@ -426,6 +434,7 @@ export function Dashboard({
   function edit(mode: Action['mode'], item?: FileItem, newKind: FileKind = 'folder') {
     setAction({ mode, item });
     setName(item?.name ?? '');
+    setNewIcon(null);
     setKind(newKind);
     setDestination(
       mode === 'file'
@@ -447,7 +456,7 @@ export function Dashboard({
         action.mode === 'new' ? '' : `/${action.item!.id}`,
         action.mode === 'new' ? 'POST' : 'PATCH',
         action.mode === 'new'
-          ? { name, kind, parentId: sharedOpen ? null : currentId }
+          ? { name, kind, icon: newIcon, parentId: sharedOpen ? null : currentId }
           : action.mode === 'rename'
             ? { name }
             : { parentId: destination || null },
@@ -518,6 +527,7 @@ export function Dashboard({
         });
     }
     if (canAdminister(item.access)) {
+      result.push({ label: 'Appearance…', onClick: () => setAppearanceItem(item), disabled: busy });
       for (const mode of ['share', 'rename', 'move', 'trash'] as const) {
         result.push({
           label: { share: 'Share…', rename: 'Rename…', move: 'Move…', trash: 'Move to Trash' }[
@@ -640,7 +650,10 @@ export function Dashboard({
             </nav>
           )}
           <header className="dashboard-heading">
-            <h1>{sharedOpen ? 'Shared with me' : (current?.name ?? 'My files')}</h1>
+            <h1>
+              {current && !sharedOpen && <ItemIcon {...current} />}{' '}
+              {sharedOpen ? 'Shared with me' : (current?.name ?? 'My files')}
+            </h1>
             <div className="dashboard-heading-actions">
               {!currentId && !local && (
                 <ActionMenu
@@ -848,6 +861,9 @@ export function Dashboard({
       ) : (
         current && (
           <EditorFrame
+            appearanceTarget={current}
+            appearanceDisabled={!!local}
+            offlineAccountId={local ? user.id : undefined}
             key={current.id}
             name={current.name}
             connection={local ? 'offline' : connection}
@@ -921,6 +937,13 @@ export function Dashboard({
           </EditorFrame>
         )
       )}
+      {appearanceItem && (
+        <ConnectedAppearanceDialog
+          key={appearanceItem.id}
+          target={appearanceItem}
+          close={() => setAppearanceItem(null)}
+        />
+      )}
       {action && (
         <Modal
           title={
@@ -943,6 +966,15 @@ export function Dashboard({
               void submit();
             }}
           >
+            {action.mode === 'new' && (
+              <IdentityChoice
+                name={name}
+                kind={kind}
+                value={newIcon}
+                onChange={setNewIcon}
+                disabled={busy}
+              />
+            )}
             {action.mode === 'new' && (
               <label>
                 Type

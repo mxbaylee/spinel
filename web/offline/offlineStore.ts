@@ -1,3 +1,4 @@
+import type { ItemAppearance } from '../../src/shared/appearance.ts';
 import type { OfflineBundle } from '../../src/shared/offlineBundle.ts';
 import { FILE_KINDS } from '../../src/shared/workspace.ts';
 import type { FileItem, SpaceFile } from '../../src/shared/workspace.ts';
@@ -18,6 +19,7 @@ export type OfflineCatalog = {
   views: Record<string, FileItem[]>;
 };
 export type OfflineDownload = {
+  appearance?: ItemAppearance;
   itemId: string;
   spaceId?: string;
   name: string;
@@ -30,6 +32,7 @@ type StoredItem = OfflineDownload & { bundle: OfflineBundle };
 type StoredImage = { itemId: string; source: string; bytes: Uint8Array };
 
 const summary = (item: StoredItem): OfflineDownload => ({
+  appearance: item.bundle.appearance,
   itemId: item.itemId,
   ...(item.bundle.spaceId === undefined ? {} : { spaceId: item.bundle.spaceId }),
   name: item.name,

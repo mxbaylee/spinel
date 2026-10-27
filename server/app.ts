@@ -1,3 +1,4 @@
+import { appearanceRoutes } from '../src/server/appearance/routes.ts';
 import { assertSyncTransitionReady } from '../src/server/sync/transition.ts';
 import { profileAvatarRoutes } from '../src/server/profileAvatar.ts';
 import express from 'express';
@@ -126,6 +127,7 @@ export async function createApp(options: AppOptions) {
       spaceNativeRoutes(workspace, collaboration, origin, { spaceReview, guest: true }),
     );
     app.use('/api/guest-spaces', spaceRoutes(workspace, origin, { spaceReview, guest: true }));
+    app.use('/api/appearance', appearanceRoutes(workspace, origin));
     app.use('/api', (request, response, next) => {
       response.set('Cache-Control', 'no-store');
       if (!auth.session(cookieToken(request))?.user_id) {

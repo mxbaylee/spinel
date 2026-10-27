@@ -1,0 +1,211 @@
+.item-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  line-height: 1;
+}
+.identity-choice {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.identity-choice-current {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.identity-choice input {
+  width: 80px;
+}
+.appearance-settings {
+  display: grid;
+  gap: 20px;
+}
+.appearance-cover-art {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+.appearance-banner {
+  position: relative;
+  height: 144px;
+  flex: none;
+  overflow: hidden;
+}
+.appearance-credit {
+  position: absolute;
+  bottom: 8px;
+  left: 12px;
+  margin: 0;
+  font-size: 12px;
+  color: white;
+  text-shadow:
+    0 1px 2px #000,
+    0 0 6px #000;
+}
+.appearance-credit a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.appearance-credit a:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 3px;
+}
+.sp-modal:has(.appearance-cover-picker) {
+  height: min(720px, calc(100dvh - 32px));
+  display: flex;
+  flex-direction: column;
+}
+.appearance-cover-picker {
+  display: grid;
+  grid-template-rows: 96px auto minmax(96px, 1fr) 64px auto;
+  gap: 12px;
+  min-height: 0;
+  flex: 1;
+  overflow: auto;
+}
+.appearance-cover-preview {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--sp-bg);
+  display: grid;
+  place-items: center;
+}
+.appearance-cover-preview img {
+  width: 100%;
+  height: 96px;
+  object-fit: cover;
+}
+.appearance-source-buttons {
+  display: flex;
+  gap: 8px;
+}
+.appearance-source-buttons [aria-pressed='true'] {
+  background: var(--sp-accent);
+  color: var(--sp-on-accent);
+}
+.appearance-cover-options {
+  overflow: auto;
+  min-height: 0;
+}
+.appearance-cover-options > label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.appearance-gem-grid,
+.appearance-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.appearance-gem-grid button,
+.appearance-photo-grid button {
+  border: 2px solid transparent;
+  border-radius: 12px;
+  background: var(--sp-panel);
+  color: var(--sp-text);
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+}
+.appearance-gem-grid button[aria-pressed='true'],
+.appearance-photo-grid button[aria-pressed='true'] {
+  border-color: var(--sp-accent);
+}
+.appearance-gem-grid img,
+.appearance-photo-grid img {
+  display: block;
+  width: 100%;
+  height: 70px;
+  object-fit: cover;
+}
+.appearance-gem-grid span {
+  display: block;
+  padding: 4px;
+  font-size: 12px;
+}
+.appearance-search {
+  display: flex;
+  gap: 8px;
+  align-items: end;
+  margin-bottom: 12px;
+}
+.appearance-search input {
+  width: 100%;
+}
+.appearance-cover-position label {
+  display: grid;
+  gap: 4px;
+}
+.appearance-cover-position input {
+  width: 100%;
+  accent-color: var(--sp-accent);
+}
+.appearance-cover-footer p {
+  font-size: 13px;
+  margin: 0 0 8px;
+}
+.appearance-offline-cover {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  background: var(--sp-bg);
+  color: var(--sp-muted);
+}
+.space-shell ::selection {
+  background: var(--appearance-selection-bg, var(--sp-accent));
+  color: var(--appearance-selection-fg, var(--sp-on-accent));
+}
+.editor-frame[data-cover='true'] {
+  overflow-y: auto;
+}
+.editor-frame[data-cover='true'] > .editor-content {
+  flex: none;
+  min-height: calc(100% - var(--appearance-header-height, 61px));
+  height: calc(100% - var(--appearance-header-height, 61px));
+}
+@media (max-width: 600px) {
+  .appearance-banner {
+    height: 112px;
+  }
+  .appearance-gem-grid,
+  .appearance-photo-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .appearance-cover-footer .sp-actions {
+    flex-wrap: wrap;
+  }
+}
+
+.appearance-gem-grid img {
+  object-position: left center;
+}
+
+.appearance-colors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.appearance-colors button {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+.appearance-colors button[aria-pressed='true'] {
+  outline: 2px solid var(--sp-text);
+  outline-offset: 2px;
+}
+::selection {
+  background: var(--appearance-selection-bg, var(--sp-accent));
+  color: var(--appearance-selection-fg, var(--sp-on-accent));
+}

@@ -149,6 +149,15 @@ export function OfflineSpaceView({
   );
   return selected && !problem ? (
     <EditorFrame
+      appearanceTarget={{
+        id: selected.itemId,
+        name: selected.name,
+        kind: selected.kind,
+        spaceId,
+        appearance: selected.appearance,
+      }}
+      appearanceDisabled
+      offlineAccountId={user.id}
       name={selected.name}
       contextLabel={root ? `Space · ${root.name}` : undefined}
       connection="offline"

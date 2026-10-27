@@ -1,3 +1,4 @@
+import { ItemIcon } from './Appearance.tsx';
 import { useId } from 'react';
 import type { ReactNode } from 'react';
 import { accessLabel, fileKindLabel } from '../src/shared/workspace.ts';
@@ -12,15 +13,7 @@ import './DashboardFiles.css';
 export type DashboardFileLayout = 'list' | 'grid';
 export type DashboardOfflineState = 'available' | 'pages-available' | 'needs-connection' | null;
 
-// Copied unchanged from Spinel's approved SPN-047 Mockups.tsx filenameEmoji.
-// This is a decorative default, not stored identity; SPN-086 owns customization.
-export function filenameEmoji(name: string): string {
-  const choices = ['🌿', '🌻', '🍂', '🍋', '🪻', '🌷', '🪴', '🍄', '🌵', '🍀', '🌺', '🪷'];
-  let hash = 0;
-  for (const character of name.normalize('NFC'))
-    hash = (Math.imul(hash, 31) + character.codePointAt(0)!) >>> 0;
-  return choices[hash % choices.length]!;
-}
+export { filenameEmoji } from '../src/shared/appearance.ts';
 
 export interface DashboardFilesProps<T extends FileItem = FileItem> {
   items: readonly T[];
@@ -105,11 +98,7 @@ export function DashboardFiles<T extends FileItem>({
                 onClick={() => onOpen(item)}
               >
                 <span className="dashboard-file-identity" aria-hidden="true">
-                  {item.kind === 'folder' ? (
-                    <ProfileIcon icon="lucide:folder" size={28} />
-                  ) : (
-                    filenameEmoji(item.name)
-                  )}
+                  <ItemIcon {...item} size={28} />
                 </span>
                 <span className="dashboard-file-description">
                   <strong>{item.name}</strong>
