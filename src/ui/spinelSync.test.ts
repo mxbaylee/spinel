@@ -113,6 +113,7 @@ async function fixture({
   const events = new EventTarget();
   const dispatched = vi.spyOn(events, 'dispatchEvent');
   vi.stubGlobal('window', events);
+  vi.stubGlobal('document', Object.assign(new EventTarget(), { visibilityState: 'visible' }));
   vi.stubGlobal('WebSocket', Socket);
   let current = true;
   let metadata: () => Promise<Response> = async () =>

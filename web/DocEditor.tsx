@@ -16,6 +16,8 @@ import {
   formulaPaperColors,
 } from './DocFormulas.tsx';
 import { documentPath } from './documentAccess.ts';
+import type { OfflineSession } from './offline/OfflineSession.ts';
+import { requestFormula } from '../src/shared/formulaRequest.ts';
 import { EditorTools } from './EditorTools.tsx';
 import { useEditorChrome } from './EditorFrame.tsx';
 import { editorTheme, bindEditorTheme, installCanvasColors } from '../src/ui/editorTheme.ts';
@@ -28,6 +30,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
   IPermissionService,
   IImageIoService,
+  IURLImageService,
   ImageSourceType,
   ImageUploadStatusType,
   ICommandService,
@@ -58,7 +61,7 @@ import { UniverDocsCorePreset, UniverDocsUIPlugin } from '@univerjs/preset-docs-
 import enUS from '@univerjs/preset-docs-core/locales/en-US';
 import '@univerjs/preset-docs-core/lib/index.css';
 import {
-  prepareCollaboration,
+  prepareEditor,
   identifyCollaborator,
   watchCollaboration,
   loadSpinelDocument,
@@ -80,6 +83,7 @@ export function DocEditor({
   registerGuestEditor,
   onConnectionState,
   saveStatusTarget,
+  localAccountId,
 }: {
   id: string;
   name: string;
@@ -88,6 +92,7 @@ export function DocEditor({
   onDirty: (dirty: boolean) => void;
   registerGuestEditor?: RegisterGuestEditor;
   onConnectionState?: (state: ConnectionState | null) => void;
+  localAccountId?: string;
 }) {
   const chrome = useEditorChrome();
   const formulas = useRef<DocFormulaController | null>(null);
@@ -113,6 +118,7 @@ export function DocEditor({
   });
   useEffect(() => {
     let disposed = false;
+    let offlineSession: OfflineSession | undefined;
     let initialized = false;
     const room = `${spaceId ?? ''}/${id}`;
     if (lastRoom.current !== room) syncNotice.current = undefined;
@@ -144,6 +150,7 @@ export function DocEditor({
       onDirty(dirty);
       setStatus({
         ...state,
+        ...(busy ? { local: undefined } : {}),
         dirty,
         failed: state.failed || (initialized && Boolean(syncNotice.current)),
         message: busy
@@ -155,7 +162,8 @@ export function DocEditor({
     };
     publish(lastState);
     void (async () => {
-      const data = await prepareCollaboration(id, spaceId, () => !disposed);
+      const data = await prepareEditor(id, spaceId, () => !disposed, localAccountId);
+      offlineSession = data.offline;
       if (disposed) return;
       const nativePermissions = nativeSyncPermissions(data.unitId, data.access);
       let drawingReady!: () => void;
@@ -169,22 +177,30 @@ export function DocEditor({
           setUploadError('');
           publish(lastState);
           try {
+            if (data.offline?.enabled && !data.offline.online)
+              throw new Error(
+                'Connect before inserting a new image. Existing images remain available offline.',
+              );
             if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type))
               throw new Error('Choose a PNG, JPEG or WebP image.');
-            const response = await fetch(`${documentPath(id, spaceId)}/images`, {
-              method: 'POST',
-              headers: { 'Content-Type': file.type },
-              body: file,
-              signal: AbortSignal.timeout(30_000),
-            });
+            const response = await (data.offline?.fetch.bind(data.offline) ?? fetch)(
+              `${documentPath(id, spaceId)}/images`,
+              {
+                method: 'POST',
+                headers: { 'Content-Type': file.type },
+                body: file,
+                signal: AbortSignal.timeout(30_000),
+              },
+            );
             const image = await response.json();
             if (!response.ok) throw new Error(image.error ?? 'Image upload failed.');
+            await data.offline?.prepareImages(image.url);
             uploaded++;
             return {
               imageId: crypto.randomUUID(),
               imageSourceType: ImageSourceType.URL,
-              source: image.url as string,
-              base64Cache: image.url as string,
+              source: data.offline?.toVisible(image.url) ?? (image.url as string),
+              base64Cache: data.offline?.toVisible(image.url) ?? (image.url as string),
               status: ImageUploadStatusType.SUCCUSS,
             };
           } catch (error) {
@@ -258,7 +274,10 @@ export function DocEditor({
           [
             UniverDrawingPlugin,
             {
-              override: [[IImageIoService, { useClass: StoredImages }]],
+              override: [
+                [IImageIoService, { useClass: StoredImages }],
+                ...(data.offline ? [[IURLImageService, { useValue: data.offline }]] : []),
+              ],
               allowImageSize: 5 * 1024 * 1024,
             },
           ],
@@ -333,6 +352,19 @@ export function DocEditor({
         kind: 'doc',
         signal: loading.signal,
         isCurrent: () => !disposed,
+        offline: data.offline,
+        lock: () => {
+          formulas.current?.clear();
+          disposeEditor?.();
+          disposeEditor = undefined;
+          setEditable(false);
+          publish({
+            dirty: false,
+            failed: true,
+            local: 'attention',
+            message: 'You signed out or changed accounts. Reopen Spinel to continue.',
+          });
+        },
         initializeAccess: () => (data.access === 'viewer' ? readonly() : undefined),
         onInitialPending: () =>
           publish({
@@ -366,8 +398,22 @@ export function DocEditor({
         univer,
         unitId: data.unitId,
         colors: formulaPaperColors,
-        evaluate: (definition, signal) =>
-          formulaRequest<FormulaResult>(id, 'evaluate', { definition }, signal, spaceId),
+        evaluate: (definition, signal) => {
+          if (data.offline?.enabled && !data.offline.online)
+            return Promise.resolve({ ok: false as const, reason: 'unavailable' as const });
+          return data.offline
+            ? requestFormula<FormulaResult>(
+                `${documentPath(id, spaceId)}/formulas/evaluate`,
+                {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ definition }),
+                  signal,
+                },
+                data.offline.fetch.bind(data.offline),
+              )
+            : formulaRequest<FormulaResult>(id, 'evaluate', { definition }, signal, spaceId);
+        },
         onActivate: (formula) => {
           if (canEditFormulas.current) setFormulaEdit({ formula });
         },
@@ -429,6 +475,7 @@ export function DocEditor({
       save?.dispose();
       // Univer owns a separate React root; unmount it after our cleanup commit.
       if (disposeEditor) queueMicrotask(disposeEditor);
+      offlineSession?.dispose();
       controller.current = null;
       setEditable(false);
       onDirty(false);
@@ -443,66 +490,73 @@ export function DocEditor({
         target={chrome?.saveTarget ?? saveStatusTarget}
         onRetry={() => controller.current?.retry()}
       />
-      <EditorTools
-        id={id}
-        name={name}
-        spaceId={spaceId}
-        people={people}
-        saved={!status.dirty && !status.failed && Boolean(controller.current)}
-        insertFormula={
-          editable
-            ? () => {
-                try {
-                  if (!formulas.current) throw new Error('Wait for the document to load.');
-                  setFormulaError('');
-                  setFormulaEdit({ selection: formulas.current.selection() });
-                } catch (cause) {
-                  setFormulaError(
-                    cause instanceof Error
-                      ? cause.message
-                      : 'Place the cursor in the document first.',
-                  );
+      {!localAccountId && (
+        <EditorTools
+          id={id}
+          name={name}
+          spaceId={spaceId}
+          people={people}
+          saved={
+            !status.dirty &&
+            !status.failed &&
+            (!status.local || status.local === 'synced') &&
+            Boolean(controller.current)
+          }
+          insertFormula={
+            editable
+              ? () => {
+                  try {
+                    if (!formulas.current) throw new Error('Wait for the document to load.');
+                    setFormulaError('');
+                    setFormulaEdit({ selection: formulas.current.selection() });
+                  } catch (cause) {
+                    setFormulaError(
+                      cause instanceof Error
+                        ? cause.message
+                        : 'Place the cursor in the document first.',
+                    );
+                  }
                 }
-              }
-            : undefined
-        }
-        formulas={
-          controller.current
-            ? (close) => (
-                <div className="doc-formulas">
-                  {formulaError && <p role="alert">{formulaError}</p>}
-                  {!formulaStates.length && (
-                    <p>Use a spreadsheet cell, range, or calculation in this Doc.</p>
-                  )}
-                  <ul>
-                    {formulaStates.map(({ formula, result }) => (
-                      <li key={formula.id}>
-                        {editable ? (
-                          <button
-                            onClick={() => {
-                              close();
-                              setFormulaEdit({ formula });
-                            }}
-                          >
-                            {formula.definition.expression}
-                          </button>
-                        ) : (
-                          <code>{formula.definition.expression}</code>
-                        )}
-                        <FormulaResultView result={result} definition={formula.definition} />
-                      </li>
-                    ))}
-                  </ul>
-                  {formulaStates.length > 0 && (
-                    <button onClick={() => void formulas.current?.resume()}>
-                      Refresh formulas
-                    </button>
-                  )}
-                </div>
-              )
-            : undefined
-        }
-      />
+              : undefined
+          }
+          formulas={
+            controller.current
+              ? (close) => (
+                  <div className="doc-formulas">
+                    {formulaError && <p role="alert">{formulaError}</p>}
+                    {!formulaStates.length && (
+                      <p>Use a spreadsheet cell, range, or calculation in this Doc.</p>
+                    )}
+                    <ul>
+                      {formulaStates.map(({ formula, result }) => (
+                        <li key={formula.id}>
+                          {editable ? (
+                            <button
+                              onClick={() => {
+                                close();
+                                setFormulaEdit({ formula });
+                              }}
+                            >
+                              {formula.definition.expression}
+                            </button>
+                          ) : (
+                            <code>{formula.definition.expression}</code>
+                          )}
+                          <FormulaResultView result={result} definition={formula.definition} />
+                        </li>
+                      ))}
+                    </ul>
+                    {formulaStates.length > 0 && (
+                      <button onClick={() => void formulas.current?.resume()}>
+                        Refresh formulas
+                      </button>
+                    )}
+                  </div>
+                )
+              : undefined
+          }
+        />
+      )}
       {formulaEdit && editable && (
         <FormulaDialog
           id={id}

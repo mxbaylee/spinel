@@ -162,30 +162,54 @@ export class NativeReplica implements SyncReplica {
 
 /** The host owns the visible unit, sockets, access policy and reload UI. */
 export function createNativeSyncClient(options: NativeSyncOptions): SyncClient {
-  const client = new SyncClient({
-    ...options,
-    confirmed: new NativeReplica(options.snapshot, options.kind),
-    applyRemote: (mutations) => {
-      applyNative(options.univer, mutations);
-      // OSS history stores native inverse coordinates, not rebased operations.
-      // Even a peer write hidden by an optimistic deletion invalidates its saved
-      // inverse: Undo would restore pre-peer content. Own acks do not call here.
-      options.univer.__getInjector().get(IUndoRedoService).clearUndoRedo(options.unitId);
-      if (options.kind === 'doc')
-        options.univer
-          .__getInjector()
-          .get(DocStateChangeManagerService)
-          .clearHistory(options.unitId);
-    },
-    visibleSnapshot: () => nativeSnapshot(options.univer, options.unitId),
-  });
+  const snapshot = options.checkpoint?.snapshot ?? options.snapshot;
+  if (
+    !snapshot ||
+    snapshot.id !== options.unitId ||
+    (options.kind === 'sheet') !== 'sheets' in snapshot
+  )
+    throw new ClientError('malformed');
+  const canonical = <T>(value: T) => options.toCanonical?.(value) ?? value;
+  const visible = <T>(value: T) => options.toVisible?.(value) ?? value;
+  const confirmed = new NativeReplica(snapshot, options.kind);
+  let client: SyncClient | undefined;
+  try {
+    client = new SyncClient({
+      ...options,
+      confirmed,
+      applyRemote: (mutations) => {
+        applyNative(options.univer, visible(mutations));
+        // OSS history stores native inverse coordinates, not rebased operations.
+        // Even a peer write hidden by an optimistic deletion invalidates its saved
+        // inverse: Undo would restore pre-peer content. Own acks do not call here.
+        options.univer.__getInjector().get(IUndoRedoService).clearUndoRedo(options.unitId);
+        if (options.kind === 'doc')
+          options.univer
+            .__getInjector()
+            .get(DocStateChangeManagerService)
+            .clearHistory(options.unitId);
+      },
+      visibleSnapshot: () => canonical(nativeSnapshot(options.univer, options.unitId)),
+    });
+    // The host opened the confirmed snapshot. Restore optimistic edits once,
+    // before installing capture, with the same native geometry admission.
+    if (options.checkpoint) {
+      const restored = client.checkpoint();
+      applyNative(options.univer, visible([...restored.inflight, ...restored.buffer.flat()]));
+    }
+  } catch (error) {
+    if (client) client.dispose();
+    else confirmed.dispose();
+    throw error;
+  }
+  const ready = client;
   const capture = captureNative({
     univer: options.univer,
     unitId: options.unitId,
-    onMutation: (mutation) => client.enqueue([mutation]),
-    onFailure: (reason) => client.refuse(reason),
-    canEdit: () => client.accepting,
+    onMutation: (mutation) => ready.enqueue([canonical(mutation)]),
+    onFailure: (reason) => ready.refuse(reason),
+    canEdit: () => ready.accepting,
   });
-  client.addCleanup(() => capture.dispose());
-  return client;
+  ready.addCleanup(() => capture.dispose());
+  return ready;
 }

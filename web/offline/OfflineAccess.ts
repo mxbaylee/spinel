@@ -88,6 +88,16 @@ export class OfflineAccess {
   get mayReadLocal() {
     return this.state.phase === 'local';
   }
+  /** Every remote callback must still belong to this local account epoch. */
+  remoteGate(isCurrent: () => boolean) {
+    const epoch = this.state.epoch;
+    const check = () => {
+      if (!isCurrent() || !this.mayReadLocal || this.state.epoch !== epoch)
+        throw new DOMException('This offline session is no longer current.', 'AbortError');
+    };
+    check();
+    return check;
+  }
   private end(phase: Exclude<OfflineAccessState['phase'], 'local'>, reason?: string) {
     if (this.state.phase === 'disposed') return;
     const next = Object.freeze({ phase, reason, epoch: this.state.epoch + 1 });

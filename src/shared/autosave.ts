@@ -7,6 +7,8 @@ export interface SaveState {
   dirty: boolean;
   message: string;
   failed: boolean;
+  /** Explicit durability meanings for opted-in downloaded documents. */
+  local?: 'saving' | 'saved' | 'synced' | 'attention' | 'failed';
 }
 export class SaveFailure extends Error {
   status: number;

@@ -378,6 +378,43 @@ test('exact-revision assistant writes reject stale work but a lost acknowledgeme
   expect(f.storage.edits).toHaveLength(1);
 });
 
+test('offline replay admission fences a raced head without changing the durable retry identity', async () => {
+  const f = fixture();
+  const original = request('offline-retry', [write({ v: 'offline' })]);
+  const first = await f.server.submit({ ...original, expectedRevision: 1 }, undefined);
+  expect(first.edit.revision).toBe(2);
+  // A post-crash replay is conservative even when the advance was our own
+  // accepted edit. The host retains it for attention rather than replaying.
+  await expect(
+    f.server.submit({ ...original, expectedRevision: 1 }, undefined),
+  ).rejects.toMatchObject({ code: 'stale' });
+  expect((await f.server.submit(original, undefined)).duplicate).toBe(true);
+  expect((await f.server.submit({ ...original, expectedRevision: 2 }, undefined)).duplicate).toBe(
+    true,
+  );
+  const peer = request('peer-before-replay', [write({ v: 'peer' }, 1)], 2);
+  await f.server.submit(peer, undefined);
+  await expect(
+    f.server.submit({ ...request('offline-after-peer'), expectedRevision: 2 }, undefined),
+  ).rejects.toMatchObject({ code: 'stale' });
+  expect(f.cell()?.v).toBe('offline');
+  expect(f.storage.edits).toHaveLength(2);
+});
+
+test.each([0, -1, 1.5, Number.MAX_SAFE_INTEGER + 1, '1', null])(
+  'offline replay guard rejects invalid expected revision %s',
+  async (expectedRevision) => {
+    const f = fixture();
+    await expect(
+      f.server.submit(
+        { ...request('bad-replay'), expectedRevision: expectedRevision as number },
+        undefined,
+      ),
+    ).rejects.toMatchObject({ code: 'malformed' });
+    expect(f.storage.edits).toHaveLength(0);
+  },
+);
+
 test('before-images reconstruct exact style-resolved bases after insertion, changes and removal', async () => {
   const f = fixture();
   await f.server.submit(

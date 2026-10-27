@@ -1,4 +1,5 @@
-import { documentPath } from './documentAccess.ts';
+import { documentPath, guestItemId } from './documentAccess.ts';
+import { OfflineSession } from './offline/OfflineSession.ts';
 import { UserManagerService } from '@univerjs/core';
 import type { Univer } from '@univerjs/core';
 import type { SaveState } from '../src/shared/autosave.ts';
@@ -33,6 +34,61 @@ export async function prepareCollaboration(
     user: { id: string; name: string };
     syncVersion: 1;
   };
+}
+
+/** A local launch never asks a different cookie/account to choose its document. */
+export async function prepareEditor(
+  id: string,
+  spaceId: string | undefined,
+  isCurrent: () => boolean,
+  localAccountId?: string,
+) {
+  if (localAccountId) {
+    const offline = new OfflineSession(localAccountId, id, spaceId, isCurrent);
+    try {
+      await offline.activate();
+      if (!offline.bundle) throw new Error('This document is no longer on this device.');
+      return {
+        unitId: offline.bundle.unitId,
+        access: offline.readOnly ? ('viewer' as const) : offline.bundle.access,
+        user: { id: localAccountId, name: '' },
+        syncVersion: 1 as const,
+        offline,
+      };
+    } catch (error) {
+      offline.dispose();
+      throw error;
+    }
+  }
+  const live = await prepareCollaboration(id, spaceId, isCurrent);
+  if (!isCurrent() || guestItemId()) return { ...live, offline: undefined };
+  let offline: OfflineSession;
+  try {
+    offline = new OfflineSession(live.user.id, id, spaceId, isCurrent);
+  } catch {
+    return { ...live, offline: undefined };
+  }
+  try {
+    await offline.activate();
+    if (
+      offline.bundle &&
+      (offline.bundle.unitId !== live.unitId || offline.bundle.access !== live.access)
+    )
+      offline.stopRemote(
+        'Access or the document version changed. Your saved device copy is retained.',
+      );
+    return {
+      ...live,
+      ...(offline.bundle && {
+        unitId: offline.bundle.unitId,
+        access: offline.readOnly ? ('viewer' as const) : offline.bundle.access,
+      }),
+      offline,
+    };
+  } catch (error) {
+    offline.dispose();
+    throw error;
+  }
 }
 
 export function identifyCollaborator(univer: Univer, user: { id: string; name: string }) {

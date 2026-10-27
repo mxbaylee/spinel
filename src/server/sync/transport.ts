@@ -517,7 +517,10 @@ export function attachSync(
           if (
             message.type !== 'submit' ||
             Object.keys(message).some(
-              (key) => !['type', 'mutationId', 'baseRevision', 'mutations'].includes(key),
+              (key) =>
+                !['type', 'mutationId', 'baseRevision', 'mutations', 'expectedRevision'].includes(
+                  key,
+                ),
             )
           )
             throw new SyncError('malformed');
@@ -529,6 +532,9 @@ export function attachSync(
               mutationId: message.mutationId as string,
               baseRevision: message.baseRevision as number,
               mutations: message.mutations as SubmitParameters['mutations'],
+              ...(Object.hasOwn(message, 'expectedRevision') && {
+                expectedRevision: message.expectedRevision as number,
+              }),
             },
             session.identity,
           );

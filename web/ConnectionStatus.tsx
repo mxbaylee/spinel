@@ -107,8 +107,9 @@ export function ConnectionStatus({
                 )}
               {catalog?.local && (
                 <p>
-                  Downloaded documents are read-only in this session. Reopen Spinel while connected
-                  to edit.
+                  Downloaded documents can be edited with their saved permissions. Check the
+                  document’s save status before closing; changes sync when access and the live
+                  version are verified.
                 </p>
               )}
             </Popover.Popup>

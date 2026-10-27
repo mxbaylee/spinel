@@ -14,10 +14,16 @@ export class DownloadError extends Error {
   }
 }
 
-async function get(path: string, verifyCurrent: () => void) {
+async function get(path: string, accountId: string, verifyCurrent: () => void) {
   let response: Response;
   try {
-    response = await fetch(path, { credentials: 'same-origin', cache: 'no-store' });
+    verifyCurrent();
+    response = await fetch(path, {
+      credentials: 'same-origin',
+      cache: 'no-store',
+      headers: { 'X-Spinel-Offline-Account': accountId },
+      signal: AbortSignal.timeout(15_000),
+    });
   } catch {
     throw new DownloadError('Could not download. Check your connection and try again.');
   }
@@ -79,7 +85,7 @@ export async function downloadForOffline(
 ) {
   verifyCurrent();
   const path = documentPath(itemId, spaceId);
-  const response = await get(`${path}/offline-bundle`, verifyCurrent);
+  const response = await get(`${path}/offline-bundle`, store.accountId, verifyCurrent);
   const bundle = (await response.json().catch(() => ({}))) as OfflineBundle & { error?: string };
   verifyCurrent();
   if (!response.ok)
@@ -91,6 +97,7 @@ export async function downloadForOffline(
     // independently carries the requested root and child on every image.
     const file = await get(
       spaceId ? `${path}/images/${image.sha256}` : image.source,
+      store.accountId,
       verifyCurrent,
     );
     if (!file.ok) throw new DownloadError('An image could not be downloaded. Try again.');

@@ -1,14 +1,18 @@
 import { FormulaSaveError } from '@spinel/doc-formulas';
 
 /** Retry only read-only busy/overflow responses, never an expired admission wait. */
-export async function requestFormula<T>(url: string, init: RequestInit): Promise<T> {
+export async function requestFormula<T>(
+  url: string,
+  init: RequestInit,
+  request: (url: string, init: RequestInit) => Promise<Response> = fetch,
+): Promise<T> {
   const delays = [200, 400, 800, 1200, 1600, 2000];
   for (let attempt = 0; ; attempt++) {
     init.signal?.throwIfAborted();
     let response: Response;
     let result;
     try {
-      response = await fetch(url, init);
+      response = await request(url, init);
       result = await response.json();
     } catch (error) {
       init.signal?.throwIfAborted();

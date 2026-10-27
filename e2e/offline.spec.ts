@@ -9,7 +9,7 @@ import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import type { OfflineBundle } from '../src/shared/offlineBundle.ts';
 
 // Offline downloads need the production build's shell manifest (docs/offline.md).
-test('downloaded Sheets and Docs open read-only offline with local images; nothing else does', async ({
+test('downloaded Sheets and Docs open offline with local images; nothing else does', async ({
   browser,
   baseURL,
 }, info) => {
@@ -73,7 +73,7 @@ test('downloaded Sheets and Docs open read-only offline with local images; nothi
     await page.setViewportSize({ width: 390, height: 844 });
     await page.getByRole('button', { name: `${doc.name} Doc`, exact: true }).click();
     await expect(page.getByRole('status', { name: 'Save status', exact: true })).toHaveText(
-      'All changes saved.',
+      'Synced. All changes are saved on the server and this device.',
       { timeout: 30_000 },
     );
     const nativeCanvas = await page.locator('.editor-frame canvas').first().elementHandle();
@@ -314,9 +314,10 @@ test('downloaded Sheets and Docs open read-only offline with local images; nothi
     await row(sheet.name)
       .getByRole('button', { name: `${sheet.name} Sheet`, exact: true })
       .click();
-    await expect(
-      page.getByRole('status').filter({ hasText: 'Read only on this device' }),
-    ).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByRole('status', { name: 'Save status', exact: true })).toHaveText(
+      'Saved on this device — waiting to sync.',
+      { timeout: 30_000 },
+    );
     await expect(page.getByLabel('Spreadsheet grid', { exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Back to files', exact: true })).toHaveCount(1);
     await expect(page.getByRole('navigation', { name: 'Breadcrumb', exact: true })).toHaveCount(0);
@@ -328,7 +329,7 @@ test('downloaded Sheets and Docs open read-only offline with local images; nothi
         }),
       )
       .toBe(true);
-    await expect(page.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
+    await expect(page.getByRole('button', { name: 'Bold', exact: true })).toBeEnabled();
     const rgb = [
       [255, 153, 0],
       [34, 85, 238],
@@ -356,9 +357,10 @@ test('downloaded Sheets and Docs open read-only offline with local images; nothi
     await row(doc.name)
       .getByRole('button', { name: `${doc.name} Doc`, exact: true })
       .click();
-    await expect(
-      page.getByRole('status').filter({ hasText: 'Read only on this device' }),
-    ).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByRole('status', { name: 'Save status', exact: true })).toHaveText(
+      'Saved on this device — waiting to sync.',
+      { timeout: 30_000 },
+    );
     await page.goBack();
     await row('Online only')
       .getByRole('button', { name: 'Online only Sheet', exact: true })
@@ -555,10 +557,11 @@ test('a prepared Space Doc opens natively offline from its normal link and My fi
     const assertPreparedDoc = async () => {
       await expect(page.getByRole('heading', { name: doc.name, exact: true })).toBeVisible();
       const copy = page.getByRole('region', { name: 'Offline copy', exact: true });
-      await expect(
-        copy.getByRole('status').filter({ hasText: 'Read only on this device' }),
-      ).toHaveText('Read only on this device. Reconnect to edit.', { timeout: 30_000 });
-      await expect(copy.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
+      await expect(copy.getByRole('status', { name: 'Save status', exact: true })).toHaveText(
+        'Saved on this device — waiting to sync.',
+        { timeout: 30_000 },
+      );
+      await expect(copy.getByRole('button', { name: 'Bold', exact: true })).toBeEnabled();
       const surface = copy.locator('.univer-container');
       // Inspect the native drawing itself: a cached manifest or image URL alone
       // would not prove that verified image bytes reach the offline renderer.
@@ -589,14 +592,13 @@ test('a prepared Space Doc opens natively offline from its normal link and My fi
       await expect(
         page
           .getByRole('region', { name: 'Offline copy', exact: true })
-          .getByRole('status')
-          .filter({ hasText: 'Read only on this device' }),
-      ).toHaveText('Read only on this device. Reconnect to edit.');
+          .getByRole('status', { name: 'Save status', exact: true }),
+      ).toHaveText('Saved on this device — waiting to sync.');
       await expect(
         page
           .getByRole('region', { name: 'Offline copy', exact: true })
           .getByRole('button', { name: 'Bold', exact: true }),
-      ).toBeDisabled();
+      ).toBeEnabled();
       const screenshot = `test-results/theme-screenshots/spn-092-space-native-doc-offline-${variant}-${info.project.name}.png`;
       await page.screenshot({ path: screenshot, fullPage: true });
       await info.attach(`Native prepared Space Doc and image (${variant})`, {

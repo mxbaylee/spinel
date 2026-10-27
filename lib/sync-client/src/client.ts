@@ -30,6 +30,8 @@ import type {
 
 const clone = <T>(value: T): T => structuredClone(value);
 const validRevision = (value: number) => Number.isSafeInteger(value) && value >= 1;
+const enabled = (value: boolean | (() => boolean) | undefined) =>
+  typeof value === 'function' ? value() : Boolean(value);
 const failures = new Set<ClientFailure>([
   'unsupported',
   'refused',
@@ -72,12 +74,17 @@ export class SyncClient {
   private persistence = Promise.resolve();
   private timer?: ReturnType<typeof setTimeout>;
   private readonly cleanups: (() => void)[] = [];
+  private replayBase?: number;
+  private processingCheckpoint?: ClientCheckpoint;
+  private retainedCheckpoint?: ClientCheckpoint;
 
   constructor(options: SyncClientOptions) {
     if (!validRevision(options.revision)) throw new ClientError('malformed');
     this.options = options;
     this.revision = options.revision;
+    if (options.checkpoint) this.restore(options.checkpoint);
     this.publish();
+    if (this.reason) queueMicrotask(() => this.finishResync());
   }
 
   get confirmedRevision() {
@@ -96,6 +103,13 @@ export class SyncClient {
       connected: this.connected,
       resyncing: Boolean(this.reason),
       ...((this.reason || this.persistenceFailed) && { failure: this.reason ?? 'unavailable' }),
+      ...(this.options.persist && {
+        localPersistence: this.persistenceFailed
+          ? ('failed' as const)
+          : this.pendingPersistence
+            ? ('saving' as const)
+            : ('saved' as const),
+      }),
     };
   }
 
@@ -139,27 +153,34 @@ export class SyncClient {
   }
 
   retry(): void {
-    if (this.disposed || !this.connected || this.pendingPersistence) return;
+    if (this.disposed || this.pendingPersistence) return;
     if (this.persistenceFailed) {
       void this.changed().then(() => {
         if (!this.persistenceFailed) this.retry();
       });
       return;
     }
+    if (!this.connected || (this.reason && enabled(this.options.preservePendingOnFailure))) return;
+    if (this.awaitingResume && enabled(this.options.requireUnchangedResume)) return;
     if (this.sent) this.write(this.sent);
     else if (!this.awaitingResume && !this.reason) this.pump();
   }
 
   receive(frame: IncomingFrame): void {
     if (this.disposed) return;
+    if (this.reason && enabled(this.options.preservePendingOnFailure)) return;
     try {
+      if (enabled(this.options.preservePendingOnFailure))
+        this.processingCheckpoint = this.checkpoint();
       if (!frame || typeof frame !== 'object') throw new ClientError('malformed');
       if (frame.type === 'resync') {
         if (!failures.has(frame.reason)) throw new ClientError('malformed');
         if (frame.mutationId !== undefined) {
           if (frame.mutationId !== this.sent?.mutationId) return;
-          this.sent = null;
-          this.inflight = [];
+          if (!enabled(this.options.preservePendingOnFailure)) {
+            this.sent = null;
+            this.inflight = [];
+          }
         }
         this.refuse(frame.reason);
         return;
@@ -171,18 +192,44 @@ export class SyncClient {
       if (this.reason) return;
       if (frame.type === 'resume') this.resume(frame);
       else if (frame.type === 'edit') {
+        // An equal resume is not a lock: a peer may commit before the first
+        // replay request is built. Do not rebase that offline intent silently.
+        if (this.replayBase !== undefined && !this.sent && frame.revision > this.replayBase)
+          throw new ClientError('stale');
         this.hold(frame);
         if (!this.sent && !this.awaitingResume) this.drain();
         void this.changed();
       } else throw new ClientError('malformed');
     } catch (error) {
       this.refuse(failureOf(error));
+    } finally {
+      this.processingCheckpoint = undefined;
     }
   }
 
   /** An unrelated resync cannot answer a write that may already be durable. */
   refuse(reason: ClientFailure): void {
     if (this.disposed) return;
+    if (enabled(this.options.preservePendingOnFailure)) {
+      if (this.reason) return;
+      // Incoming application can fail after an earlier native handler ran.
+      // Keep the coherent pre-frame base+queue, not a partially rebased model.
+      this.retainedCheckpoint = clone(this.processingCheckpoint ?? this.checkpoint());
+      this.reason = reason;
+      this.retainedCheckpoint.failure = reason;
+      this.sent = clone(this.retainedCheckpoint.sent);
+      this.inflight = clone(this.retainedCheckpoint.inflight);
+      this.buffer = clone(this.retainedCheckpoint.buffer);
+      this.revision = this.retainedCheckpoint.revision;
+      this.connected = false;
+      this.awaitingResume = true;
+      this.inbox.clear();
+      this.incomingBytes = 0;
+      clearTimeout(this.timer);
+      this.timer = undefined;
+      void this.changed().then(() => this.finishResync());
+      return;
+    }
     const first = !this.reason;
     this.reason ??= reason;
     this.buffer = [];
@@ -201,6 +248,7 @@ export class SyncClient {
   }
 
   checkpoint(): ClientCheckpoint {
+    if (this.retainedCheckpoint) return clone(this.retainedCheckpoint);
     return {
       version: 1,
       unitId: this.options.unitId,
@@ -210,6 +258,77 @@ export class SyncClient {
       inflight: clone(this.inflight),
       buffer: clone(this.buffer),
     };
+  }
+
+  /** Checkpoint an editor newly opted into storage; also usable while offline. */
+  async persistNow(): Promise<void> {
+    if (this.disposed) throw new ClientError('unavailable');
+    await this.changed();
+    if (this.disposed || this.persistenceFailed) throw new ClientError('unavailable');
+  }
+
+  private restore(checkpoint: ClientCheckpoint): void {
+    if (
+      !checkpoint ||
+      checkpoint.version !== 1 ||
+      checkpoint.unitId !== this.options.unitId ||
+      checkpoint.revision !== this.revision ||
+      !checkpoint.snapshot ||
+      checkpoint.snapshot.id !== this.options.unitId ||
+      !Array.isArray(checkpoint.inflight) ||
+      !Array.isArray(checkpoint.buffer) ||
+      checkpoint.buffer.some((group) => !Array.isArray(group) || !group.length) ||
+      (checkpoint.failure !== undefined && !failures.has(checkpoint.failure))
+    )
+      throw new ClientError('malformed');
+    byteBudget()(checkpoint.snapshot);
+    if (
+      checkpoint.inflight.length > 8192 ||
+      checkpoint.buffer.length > 8192 ||
+      checkpoint.buffer.some((group) => group.length > MAX_BATCH_MUTATIONS) ||
+      checkpoint.inflight.length +
+        checkpoint.buffer.reduce((count, group) => count + group.length, 0) >
+        8192
+    )
+      throw new ClientError('capacity');
+    const pending = [...checkpoint.inflight, ...checkpoint.buffer.flat()];
+    if (pending.length > 8192 || encodedBytes(pending) > MAX_PENDING_BYTES)
+      throw new ClientError('capacity');
+    const sent = checkpoint.sent;
+    if (
+      sent !== null &&
+      (!sent ||
+        sent.type !== 'submit' ||
+        typeof sent.mutationId !== 'string' ||
+        !/^[A-Za-z0-9:_-]{1,128}$/.test(sent.mutationId) ||
+        !validRevision(sent.baseRevision) ||
+        sent.baseRevision > this.revision ||
+        !Array.isArray(sent.mutations) ||
+        !sent.mutations.length ||
+        sent.mutations.length > MAX_BATCH_MUTATIONS ||
+        sent.expectedRevision !== undefined ||
+        Object.keys(sent).some(
+          (key) => !['type', 'mutationId', 'baseRevision', 'mutations'].includes(key),
+        ) ||
+        encodedBytes(sent) > MAX_WIRE_BYTES)
+    )
+      throw new ClientError('malformed');
+    if (!sent && checkpoint.inflight.length) throw new ClientError('malformed');
+    for (const group of checkpoint.buffer)
+      if (group.length > MAX_BATCH_MUTATIONS || this.envelopeBytes(group) > MAX_WIRE_BYTES)
+        throw new ClientError('capacity');
+    // Root targets are identity, whereas nested Formula/custom IDs are data.
+    for (const mutation of [...pending, ...(sent?.mutations ?? [])])
+      if (!mutation || mutation.params?.unitId !== this.options.unitId)
+        throw new ClientError('malformed');
+    transform(pending, [], 'right', { cells: this.options.confirmed.cells() });
+    this.sent = clone(sent);
+    this.inflight = clone(checkpoint.inflight);
+    this.buffer = clone(checkpoint.buffer);
+    if (checkpoint.failure) {
+      this.reason = checkpoint.failure;
+      this.retainedCheckpoint = clone(checkpoint);
+    }
   }
 
   addCleanup(cleanup: () => void): void {
@@ -233,6 +352,7 @@ export class SyncClient {
       type: 'submit',
       mutationId: '00000000-0000-4000-8000-000000000000',
       baseRevision: Number.MAX_SAFE_INTEGER,
+      expectedRevision: Number.MAX_SAFE_INTEGER,
       mutations,
     });
   }
@@ -299,7 +419,11 @@ export class SyncClient {
 
   private write(frame: SubmitFrame | { type: 'verify'; revision: number; hash: string }): void {
     try {
-      this.options.send(clone(frame));
+      this.options.send(
+        frame.type === 'submit' && this.replayBase !== undefined
+          ? { ...clone(frame), expectedRevision: this.replayBase }
+          : clone(frame),
+      );
     } catch {
       this.setConnected(false);
     }
@@ -382,6 +506,10 @@ export class SyncClient {
       frame.revision - frame.fromRevision !== frame.edits.length
     )
       throw new ClientError('stale');
+    if (enabled(this.options.requireUnchangedResume) && (this.sent || this.buffer.length)) {
+      if (frame.revision !== this.revision) throw new ClientError('stale');
+      this.replayBase = this.revision;
+    } else this.replayBase = undefined;
     for (const [index, edit] of frame.edits.entries()) {
       if (edit.revision !== frame.fromRevision + index + 1) throw new ClientError('stale');
       this.hold(edit);
@@ -444,6 +572,8 @@ export class SyncClient {
       return;
     }
     try {
+      if (this.replayBase !== undefined && ack.revision !== this.replayBase + 1)
+        throw new ClientError('stale');
       if (ack.revision <= this.revision) throw new ClientError('stale');
       while (this.revision + 1 < ack.revision) {
         const edit = this.take(this.revision + 1);
@@ -460,10 +590,12 @@ export class SyncClient {
       this.lastEdit = this.editOnly(clone(ack));
       this.sent = null;
       this.inflight = [];
+      this.replayBase = undefined;
       this.drain();
       void this.changed();
       this.schedule();
     } catch (error) {
+      if (enabled(this.options.preservePendingOnFailure)) throw error;
       // This ack answers the sent request even when a later buffered edit cannot
       // be rebased. Reload can now retain the accepted request safely.
       this.sent = null;
@@ -556,7 +688,7 @@ export class SyncClient {
     if (
       this.notified ||
       this.disposed ||
-      this.sent ||
+      (this.sent && !enabled(this.options.preservePendingOnFailure)) ||
       this.pendingPersistence ||
       this.persistenceFailed ||
       !this.reason

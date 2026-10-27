@@ -7,7 +7,10 @@ import { EditorTools } from './EditorTools.tsx';
 import { useEditorChrome } from './EditorFrame.tsx';
 import { sheetPreset, useMobileSheetControls } from './sheetPreset.ts';
 import { IRenderManagerService } from '@univerjs/engine-render';
-import { IPermissionService, InterceptorEffectEnum } from '@univerjs/core';
+import { IPermissionService, InterceptorEffectEnum, ICommandService } from '@univerjs/core';
+import { SetFormulaCalculationStartMutation } from '@univerjs/engine-formula';
+import { CalculationMode } from '@univerjs/preset-sheets-core';
+import type { OfflineSession } from './offline/OfflineSession.ts';
 import {
   getAllWorkbookPermissionPoint,
   SheetInterceptorService,
@@ -26,7 +29,7 @@ import { createUniver, LocaleType, mergeLocales } from '@univerjs/presets';
 import enUS from '@univerjs/preset-sheets-core/locales/en-US';
 import '@univerjs/preset-sheets-core/lib/index.css';
 import {
-  prepareCollaboration,
+  prepareEditor,
   identifyCollaborator,
   watchCollaboration,
   loadSpinelDocument,
@@ -47,6 +50,7 @@ export function SheetEditor({
   onConnectionState,
   saveStatusTarget,
   registerGuestEditor,
+  localAccountId,
 }: {
   id: string;
   name: string;
@@ -55,6 +59,7 @@ export function SheetEditor({
   onDirty: (dirty: boolean) => void;
   onConnectionState?: (state: ConnectionState | null) => void;
   registerGuestEditor?: RegisterGuestEditor;
+  localAccountId?: string;
 }) {
   const chrome = useEditorChrome();
   const mobile = useRef(useMobileSheetControls()).current;
@@ -71,6 +76,7 @@ export function SheetEditor({
   });
   useEffect(() => {
     let disposed = false;
+    let offlineSession: OfflineSession | undefined;
     let initialized = false;
     const loading = new AbortController();
     const room = `${spaceId ?? ''}/${id}`;
@@ -94,6 +100,7 @@ export function SheetEditor({
       onDirty(dirty);
       setStatus({
         ...state,
+        ...(editing ? { local: undefined } : {}),
         dirty,
         failed: state.failed || (initialized && Boolean(syncNotice.current)),
         message: editing
@@ -105,7 +112,8 @@ export function SheetEditor({
     };
     publish(lastState);
     void (async () => {
-      const data = await prepareCollaboration(id, spaceId, () => !disposed);
+      const data = await prepareEditor(id, spaceId, () => !disposed, localAccountId);
+      offlineSession = data.offline;
       if (disposed) return;
       const nativePermissions = nativeSyncPermissions(data.unitId, data.access);
       recordNativeMutationInventory();
@@ -117,8 +125,28 @@ export function SheetEditor({
           [LocaleType.EN_US]: mergeLocales(enUS, sheetDrawingEnglish),
         },
         override: nativePermissions.override,
-        presets: [sheetPreset(container.current!, mobile), sheetImages(mobile)],
+        presets: [
+          sheetPreset(
+            container.current!,
+            mobile,
+            data.offline?.enabled
+              ? { initialFormulaComputing: CalculationMode.NO_CALCULATION }
+              : undefined,
+          ),
+          sheetImages(mobile, data.offline),
+        ],
       });
+      if (data.offline) {
+        const commands = univer.__getInjector().get(ICommandService);
+        commands.unregisterCommand(SetFormulaCalculationStartMutation.id);
+        commands.registerCommand({
+          ...SetFormulaCalculationStartMutation,
+          handler: (accessor, params) =>
+            data.offline!.enabled && !data.offline!.online
+              ? true
+              : SetFormulaCalculationStartMutation.handler(accessor, params),
+        });
+      }
       // Sheet services are registered lazily when the first sheet is created.
       // Own disposal before awaiting load, then attach display hooks after readiness.
       disposeEditor = () => {
@@ -177,6 +205,17 @@ export function SheetEditor({
         kind: 'sheet',
         signal: loading.signal,
         isCurrent: () => !disposed,
+        offline: data.offline,
+        lock: () => {
+          disposeEditor?.();
+          disposeEditor = undefined;
+          publish({
+            dirty: false,
+            failed: true,
+            local: 'attention',
+            message: 'You signed out or changed accounts. Reopen Spinel to continue.',
+          });
+        },
         initializeAccess: () => (data.access === 'viewer' ? readOnly() : undefined),
         onInitialPending: () =>
           publish({
@@ -285,6 +324,7 @@ export function SheetEditor({
       save?.dispose();
       // Univer owns a separate React root; unmount it after our cleanup commit.
       if (disposeEditor) queueMicrotask(disposeEditor);
+      offlineSession?.dispose();
       controller.current = null;
       if (chrome) chrome.editing.current = false;
       onDirty(false);
@@ -299,13 +339,20 @@ export function SheetEditor({
         target={chrome?.saveTarget ?? saveStatusTarget}
         onRetry={() => controller.current?.retry()}
       />
-      <EditorTools
-        id={id}
-        spaceId={spaceId}
-        name={name}
-        people={people}
-        saved={!status.dirty && !status.failed && Boolean(controller.current)}
-      />
+      {!localAccountId && (
+        <EditorTools
+          id={id}
+          spaceId={spaceId}
+          name={name}
+          people={people}
+          saved={
+            !status.dirty &&
+            !status.failed &&
+            (!status.local || status.local === 'synced') &&
+            Boolean(controller.current)
+          }
+        />
+      )}
       <div className="univer-container" ref={container} />
     </section>
   );

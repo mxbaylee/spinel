@@ -10,6 +10,7 @@ import { revokeGuestView } from './guestRevocation.ts';
 import { setSyncPresence } from './syncPresence.ts';
 import type { SyncPresenceState, SyncPresenceMember } from './syncPresence.ts';
 import { nativeMutationInventory } from './nativeMutationInventory.ts';
+import type { OfflineSession } from './offline/OfflineSession.ts';
 
 interface Watch {
   publish(state: SaveState): void;
@@ -29,6 +30,8 @@ interface Options {
   initializeAccess?(): void | Promise<void>;
   onInitialPending?(): void;
   reload(reason: ClientFailure): void;
+  offline?: OfflineSession;
+  lock?(): void;
 }
 
 const bindings = new WeakMap<Univer, ReturnType<typeof bind>>();
@@ -39,14 +42,21 @@ const closed = () => new DOMException('The editor was closed.', 'AbortError');
 export async function loadSpinelDocument(options: Options) {
   const { univer, unitId, itemId, spaceId, kind, signal, isCurrent } = options;
   const path = documentSyncPath(itemId, spaceId);
-  const response = await fetch(`${path}/snapshot?unitId=${encodeURIComponent(unitId)}`, {
-    cache: 'no-store',
-    signal: AbortSignal.any([signal, AbortSignal.timeout(15_000)]),
-  });
+  const local = options.offline?.initial();
+  const response = local
+    ? undefined
+    : await (options.offline?.fetch.bind(options.offline) ?? fetch)(
+        `${path}/snapshot?unitId=${encodeURIComponent(unitId)}`,
+        {
+          cache: 'no-store',
+          signal: AbortSignal.any([signal, AbortSignal.timeout(15_000)]),
+        },
+      );
   if (!isCurrent() || signal.aborted) throw closed();
-  if ([401, 403, 404].includes(response.status)) revokeGuestView();
-  if (!response.ok) throw new Error('Could not load this document. Reload to try again.');
-  const data = (await response.json()) as {
+  if (response && [401, 403, 404].includes(response.status)) revokeGuestView();
+  if (response && !response.ok)
+    throw new Error('Could not load this document. Reload to try again.');
+  const data = (local ? { ...local, unitId, version: 1 } : await response!.json()) as {
     version: number;
     unitId: string;
     revision: number;
@@ -65,12 +75,14 @@ export async function loadSpinelDocument(options: Options) {
   if (kind === 'sheet')
     univer.createUnit(
       UniverInstanceType.UNIVER_SHEET,
-      structuredClone(data.snapshot as IWorkbookData),
+      (options.offline?.toVisible(data.snapshot) ??
+        structuredClone(data.snapshot)) as IWorkbookData,
     );
   else
     univer.createUnit(
       UniverInstanceType.UNIVER_DOC,
-      structuredClone(data.snapshot as IDocumentData),
+      (options.offline?.toVisible(data.snapshot) ??
+        structuredClone(data.snapshot)) as IDocumentData,
     );
   // Install viewer permissions in the same turn as unit creation, before the
   // canvas can take input or native capture can record a local mutation.
@@ -119,7 +131,10 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
   let presence = emptyPresence();
   const presenceListeners = new Set<(state: SyncPresenceState) => void>();
   const abort = new AbortController();
-  const active = () => !disposed && !signal.aborted && isCurrent();
+  const active = () =>
+    !disposed && !signal.aborted && isCurrent() && (options.offline?.current ?? true);
+  const request = (path: string, init?: RequestInit) =>
+    options.offline ? options.offline.fetch(path, init) : fetch(path, init);
   const publishPresence = (next: SyncPresenceState) => {
     presence = next;
     for (const listener of presenceListeners) listener(next);
@@ -133,6 +148,7 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
       return;
     }
     const connected = roomReady && state.connected && !accessUnreachable && navigator.onLine;
+    if (options.offline) options.offline.online = connected && !denied && !state.resyncing;
     watcher.connection(
       denied || !navigator.onLine || accessUnreachable
         ? 'offline'
@@ -142,6 +158,37 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
             ? 'reconnecting'
             : 'offline',
     );
+    if (options.offline?.enabled) {
+      const attention = denied || state.resyncing || Boolean(options.offline.problem);
+      const local = attention
+        ? 'attention'
+        : state.localPersistence === 'failed'
+          ? 'failed'
+          : state.localPersistence === 'saving'
+            ? 'saving'
+            : state.pending
+              ? 'saved'
+              : connected
+                ? 'synced'
+                : 'saved';
+      watcher.publish({
+        local,
+        dirty: state.localPersistence === 'saving' || state.localPersistence === 'failed',
+        failed: attention || local === 'failed',
+        message: attention
+          ? `Needs attention. ${options.offline.problem || denialMessage || 'The live document changed or an edit could not be synchronized. Your saved device copy is retained.'}`
+          : access === 'viewer'
+            ? 'View only on this device.'
+            : local === 'failed'
+              ? 'Changes could not be saved on this device. Keep this tab open and retry saving.'
+              : local === 'saving'
+                ? 'Saving on this device…'
+                : local === 'synced'
+                  ? 'Synced. All changes are saved on the server and this device.'
+                  : 'Saved on this device — waiting to sync.',
+      });
+      return;
+    }
     watcher.publish({
       dirty: state.pending,
       failed: denied || state.resyncing || Boolean(state.failure) || !connected,
@@ -196,6 +243,17 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
     snapshot,
     revision,
     send,
+    ...(options.offline
+      ? {
+          checkpoint: options.offline.checkpoint,
+          persist: (checkpoint: import('@spinel/sync-client').ClientCheckpoint) =>
+            options.offline!.persist(checkpoint),
+          preservePendingOnFailure: () => options.offline!.enabled,
+          requireUnchangedResume: () => options.offline!.enabled,
+          toCanonical: options.offline.toCanonical,
+          toVisible: options.offline.toVisible,
+        }
+      : {}),
     ...(evidence
       ? {
           hash: (snapshot: IWorkbookData | IDocumentData, touched: Touched) => {
@@ -211,10 +269,29 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
     },
     onResync(reason) {
       if (!active() || denied) return;
+      if (options.offline?.enabled) {
+        options.offline.stopRemote(
+          'The live document changed or an edit could not be synchronized. Your saved device copy is retained.',
+        );
+        endConnection();
+        void watcher?.readonly();
+        report();
+        return;
+      }
       dispose();
       options.reload(reason);
     },
   });
+  if (options.offline) {
+    options.offline.onChange = () => {
+      if (options.offline?.readOnly) void watcher?.readonly();
+      report();
+    };
+    options.offline.onLock = () => {
+      dispose();
+      options.lock?.();
+    };
+  }
   const unregisterPresence = setSyncPresence(univer, unitId, {
     subscribe(listener) {
       presenceListeners.add(listener);
@@ -262,18 +339,33 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
   }
 
   async function checkAccess() {
-    if (!active() || checking || denied) return;
+    if (!active() || checking || denied || !navigator.onLine) return;
     checking = true;
     try {
-      const response = await fetch(documentPath(itemId, spaceId), {
-        cache: 'no-store',
-        signal: AbortSignal.any([abort.signal, signal, AbortSignal.timeout(2500)]),
-      });
+      const response = await request(
+        options.offline?.enabled
+          ? `${documentPath(itemId, spaceId)}/collaboration`
+          : documentPath(itemId, spaceId),
+        {
+          cache: 'no-store',
+          ...(options.offline?.enabled
+            ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }
+            : {}),
+          signal: AbortSignal.any([abort.signal, signal, AbortSignal.timeout(2500)]),
+        },
+      );
       const data = response.ok ? await response.json() : undefined;
       if (!active()) return;
-      const lost = [401, 403, 404].includes(response.status);
-      const changed = data && data.item.access !== access;
-      const restored = data?.live && (data.live.unitId !== unitId || data.live.restoring);
+      const lost = [401, 403, 404, 409].includes(response.status);
+      const changed =
+        data &&
+        (options.offline?.enabled
+          ? data.access !== options.offline.bundle!.access ||
+            data.user?.id !== options.offline.accountId
+          : data.item.access !== access);
+      const restored = options.offline?.enabled
+        ? data && data.unitId !== unitId
+        : data?.live && (data.live.unitId !== unitId || data.live.restoring);
       if (lost || changed || restored) {
         denied = true;
         endConnection();
@@ -284,6 +376,12 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
         denialMessage = restored
           ? 'A version is being restored or has been restored. Copy unsaved changes, then reload to continue.'
           : 'Access changed. Copy unsaved changes before reloading.';
+        if (options.offline?.enabled) {
+          options.offline.stopRemote(
+            'Access or the document version changed. Your saved device copy is retained.',
+          );
+          client.refuse('stale');
+        }
         report();
         await watcher?.readonly();
       } else {
@@ -301,14 +399,27 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
   }
 
   async function connect() {
-    if (!active() || denied || connecting || socket || !navigator.onLine) return;
+    if (
+      !active() ||
+      denied ||
+      state.resyncing ||
+      options.offline?.problem ||
+      connecting ||
+      socket ||
+      !navigator.onLine
+    )
+      return;
     connecting = true;
     roomReady = false;
     const current = ++generation;
     const same = () => active() && !denied && generation === current;
     report();
     try {
-      const ticket = await fetch(`${path}/ticket?unitId=${encodeURIComponent(unitId)}`, {
+      if (options.offline?.enabled) {
+        await checkAccess();
+        if (!same() || accessUnreachable) throw new Error('Room unavailable');
+      }
+      const ticket = await request(`${path}/ticket?unitId=${encodeURIComponent(unitId)}`, {
         method: 'POST',
         signal: AbortSignal.any([abort.signal, signal, AbortSignal.timeout(5000)]),
       });
@@ -338,7 +449,8 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
         client.setConnected(true);
         report();
       };
-      opened.onmessage = (event) => {
+      let messages = Promise.resolve();
+      const receiveMessage = async (event: MessageEvent) => {
         if (!same()) return;
         try {
           if (typeof event.data !== 'string' || event.data.length > 20 * 1024 * 1024)
@@ -360,6 +472,10 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
           if (frame.type === 'verified') return;
           if (!['resume', 'edit', 'ack', 'resync'].includes(frame.type))
             throw new Error('Invalid room message');
+          if (options.offline?.enabled) {
+            await options.offline.prepareImages(frame);
+            if (!same()) return;
+          }
           if (frame.type === 'resume') {
             if (frame.unitId !== unitId || frame.version !== 1) throw new Error('Invalid room');
             client.receive(frame);
@@ -388,6 +504,10 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
           reconnect();
         }
       };
+      opened.onmessage = (event) => {
+        if (options.offline?.enabled) messages = messages.then(() => receiveMessage(event));
+        else void receiveMessage(event);
+      };
       opened.onerror = () => opened.close();
       opened.onclose = () => {
         if (!same()) return;
@@ -413,6 +533,31 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
     endConnection();
     report();
   };
+  const foreground = () => {
+    if (document.visibilityState === 'visible') online();
+  };
+  const downloaded = (event: Event) => {
+    const detail = (event as CustomEvent).detail;
+    if (
+      !options.offline ||
+      detail?.accountId !== options.offline.accountId ||
+      detail?.itemId !== itemId ||
+      !active()
+    )
+      return;
+    void options.offline
+      .reconcileAvailability(client.checkpoint())
+      .then(() => client.persistNow())
+      .then(report, report);
+  };
+  const prepared = (event: Event) => {
+    if (options.offline && (event as CustomEvent).detail?.accountId === options.offline.accountId)
+      downloaded(
+        new CustomEvent('spinel-offline-changed', {
+          detail: { accountId: options.offline.accountId, itemId },
+        }),
+      );
+  };
   function dispose() {
     if (disposed) return;
     disposed = true;
@@ -422,27 +567,39 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
     clearInterval(accessTimer);
     endConnection();
     client.dispose();
+    options.offline?.dispose();
     unregisterPresence();
     presenceListeners.clear();
     window.removeEventListener('online', online);
     window.removeEventListener('offline', offline);
+    window.removeEventListener('spinel-offline-changed', downloaded);
+    window.removeEventListener('spinel-offline-prepared', prepared);
+    document.removeEventListener('visibilitychange', foreground);
     signal.removeEventListener('abort', dispose);
     if (bindings.get(univer) === binding) bindings.delete(univer);
   }
   const binding = {
     watch(next: Watch) {
       watcher = next;
-      if (evidence && !state.pending) observe(nativeSnapshot(univer, unitId));
+      if (evidence && !state.pending)
+        observe(
+          options.offline?.toCanonical(nativeSnapshot(univer, unitId)) ??
+            nativeSnapshot(univer, unitId),
+        );
       if (!started) {
         started = true;
         window.addEventListener('online', online);
         window.addEventListener('offline', offline);
+        window.addEventListener('spinel-offline-changed', downloaded);
+        window.addEventListener('spinel-offline-prepared', prepared);
+        document.addEventListener('visibilitychange', foreground);
         accessTimer = setInterval(() => void checkAccess(), 1000);
         void connect();
       }
       report();
       return {
         retry() {
+          client.retry();
           retryDelay = 250;
           reconnect();
           void checkAccess();

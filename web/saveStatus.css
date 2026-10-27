@@ -40,8 +40,12 @@
   color: var(--sp-text);
   font: inherit;
   font-size: 0.875rem;
-  white-space: nowrap;
+  white-space: normal;
+  line-height: 1.15;
   cursor: pointer;
+}
+.save-trigger svg {
+  flex-shrink: 0;
 }
 .workspace button.save-trigger:not(.univer-container *)[data-failed='true'],
 .sp-ui button.save-trigger[data-failed='true'],

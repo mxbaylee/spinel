@@ -97,13 +97,13 @@ export const LastSyncedCatalog: Story = {
   },
 };
 
-/** A prepared device opens downloaded files read-only from its last-synced catalog. */
+/** A prepared device keeps its last-synced catalog while downloaded files can be edited. */
 export const LocalMode: Story = {
   args: { state: 'offline', catalog: localCatalog },
   play: showDetail,
 };
 
-/** Connectivity returning does not update the local catalog or turn its copies into live editors. */
+/** Connectivity returning does not make the cached catalog fresh or prove a durable save. */
 export const OnlineLocalMode: Story = {
   args: { catalog: localCatalog },
   play: async (context) => {
@@ -111,7 +111,7 @@ export const OnlineLocalMode: Story = {
     const page = within(context.canvasElement.ownerDocument.body);
     await expect(page.getByText(/^Files as of /)).toBeVisible();
     await expect(
-      page.getByText(/^Downloaded documents are read-only in this session/),
+      page.getByText(/^Downloaded documents can be edited with their saved permissions/),
     ).toBeVisible();
   },
 };

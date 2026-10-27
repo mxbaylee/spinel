@@ -15,26 +15,40 @@ export function SaveStatus({
   target: HTMLElement | null;
   onRetry(): void;
 }) {
-  const label = state.failed
-    ? state.dirty
-      ? 'Not saved'
-      : 'Check status'
-    : state.dirty
-      ? state.message.startsWith('Editing cell')
-        ? 'Editing…'
-        : 'Saving…'
-      : state.message.startsWith('View only')
-        ? 'View only'
-        : state.message === 'All changes saved.'
-          ? 'Saved'
-          : 'Loading…';
+  const localLabels = {
+    saving: 'Saving on this device',
+    saved: 'Saved on this device',
+    synced: 'Synced',
+    attention: 'Needs attention',
+    failed: 'Not saved',
+  };
+  const label =
+    state.message.startsWith('View only') && !state.failed
+      ? 'View only'
+      : state.local
+        ? localLabels[state.local]
+        : state.failed
+          ? state.dirty
+            ? 'Not saved'
+            : 'Check status'
+          : state.dirty
+            ? state.message.startsWith('Editing cell')
+              ? 'Editing…'
+              : 'Saving…'
+            : state.message.startsWith('View only')
+              ? 'View only'
+              : state.message === 'All changes saved.'
+                ? 'Saved'
+                : 'Loading…';
   const icon = state.failed
     ? 'circle-alert'
-    : label === 'Saved'
+    : label === 'Saved' || label === 'Synced'
       ? 'check'
-      : label === 'View only'
-        ? 'eye'
-        : 'clock-3';
+      : label === 'Saved on this device'
+        ? 'hard-drive'
+        : label === 'View only'
+          ? 'eye'
+          : 'clock-3';
   return (
     <>
       <span
@@ -62,7 +76,7 @@ export function SaveStatus({
                 <Popover.Popup className="save-detail" aria-label="Save details">
                   <Popover.Title>Save details</Popover.Title>
                   <p>{state.message}</p>
-                  {state.failed && state.dirty && (
+                  {state.failed && state.dirty && state.local !== 'attention' && (
                     <button type="button" onClick={onRetry}>
                       Retry saving
                     </button>

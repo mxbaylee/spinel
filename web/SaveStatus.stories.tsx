@@ -91,6 +91,56 @@ const details: NonNullable<Story['play']> = async ({ canvasElement }) => {
 };
 
 export const Saved: Story = {};
+export const SavingOnDevice: Story = {
+  args: {
+    state: { local: 'saving', dirty: true, failed: false, message: 'Saving on this device…' },
+  },
+  play: details,
+};
+export const SavedOnDevice: Story = {
+  args: {
+    state: {
+      local: 'saved',
+      dirty: false,
+      failed: false,
+      message: 'Saved on this device — waiting to sync.',
+    },
+  },
+  play: details,
+};
+export const Synced: Story = {
+  args: {
+    state: {
+      local: 'synced',
+      dirty: false,
+      failed: false,
+      message: 'Synced. All changes are saved on the server and this device.',
+    },
+  },
+  play: details,
+};
+export const NeedsAttention: Story = {
+  args: {
+    state: {
+      local: 'attention',
+      dirty: false,
+      failed: true,
+      message: 'Needs attention. The live document changed. Your saved device copy is retained.',
+    },
+  },
+  play: details,
+};
+export const DeviceSaveFailed: Story = {
+  args: {
+    state: {
+      local: 'failed',
+      dirty: true,
+      failed: true,
+      message: 'Changes could not be saved on this device. Keep this tab open and retry saving.',
+    },
+  },
+  play: details,
+};
 export const Saving: Story = { args: { state: saving }, play: details };
 export const EditingCell: Story = {
   args: { state: { dirty: true, failed: false, message: 'Editing cell — changes not saved yet.' } },

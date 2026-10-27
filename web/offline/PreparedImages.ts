@@ -186,6 +186,38 @@ export class PreparedImages implements IURLImageService {
     };
     return visit(snapshot) as T;
   }
+  /** Only URLs issued by this adapter are reversed; authored text stays intact. */
+  canonicalize<T>(value: T): T {
+    this.assertAllowed();
+    const originals = new Map([...this.urls].map(([source, url]) => [url, source]));
+    const visit = (entry: unknown, key?: string): unknown => {
+      if (key === 'resources' && Array.isArray(entry))
+        return entry.map((resource) => {
+          const copy = visit(resource) as { data?: unknown };
+          if (typeof copy?.data !== 'string') return copy;
+          try {
+            return { ...copy, data: JSON.stringify(visit(JSON.parse(copy.data))) };
+          } catch {
+            return copy;
+          }
+        });
+      if (typeof entry === 'string') return originals.get(entry) ?? entry;
+      if (Array.isArray(entry)) return entry.map((child) => visit(child));
+      if (entry && typeof entry === 'object')
+        return Object.fromEntries(
+          Object.entries(entry).map(([name, child]) => [name, visit(child, name)]),
+        );
+      return entry;
+    };
+    return visit(value) as T;
+  }
+  async add(images: readonly OfflineBundleImage[], bytes: ReadonlyMap<string, Uint8Array>) {
+    this.assertAllowed();
+    const blobs = await verifyImages(this.access.scope.itemId, images, bytes, () =>
+      this.assertAllowed(),
+    );
+    for (const [source, blob] of blobs) this.blobs.set(source, blob);
+  }
   async getImage(url: string) {
     try {
       return this.local(url).url;
