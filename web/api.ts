@@ -54,9 +54,7 @@ export async function api<T>(
       response.ok &&
       path.endsWith('/options') &&
       typeof data?.challengeId === 'string' &&
-      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
-        data.challengeId,
-      )
+      /^[A-Za-z0-9_-]{43}$/.test(data.challengeId)
     )
       onAbandonedChallenge?.(data.challengeId);
     throw failure;

@@ -102,8 +102,8 @@ export default defineConfig({
     })),
     {
       name: 'offline-upgrade',
-      // This suite builds two real app versions and owns its same-origin server
-      // and persistent browser. It must not race a normal project webServer.
+      // This suite builds the legacy baseline and two current compatibility
+      // fixtures. Its own server/browser must not race a normal webServer.
       testMatch: '**/offline-upgrade.spec.ts',
       fullyParallel: false,
       use: { ...devices['Desktop Chrome'] },

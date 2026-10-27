@@ -145,7 +145,9 @@ async function accountDatabases(cdp: CDPSession, origin: string) {
     .sort();
 }
 async function importImages(f: OfflineFixture, origin: string, name: string, large = false) {
-  let snapshot = await offlineSheetImages();
+  // Portable import prefers the native title over the filename. Give this
+  // second item its intended identity instead of reusing "Sheet images".
+  let snapshot = { ...(await offlineSheetImages()), name };
   if (large) {
     const png = await sharp(randomBytes(640 * 640 * 3), {
       raw: { width: 640, height: 640, channels: 3 },
@@ -162,7 +164,11 @@ async function importImages(f: OfflineFixture, origin: string, name: string, lar
     data: { filename: `${name}.univer.json`, parentId: null, snapshot },
   });
   expect(response.status(), await response.text()).toBe(201);
-  return (await response.json()).item as { id: string; name: string };
+  const item = (await response.json()).item as { id: string; name: string };
+  expect(item.name).toBe(name);
+  expect(item.name).not.toBe(f.item.name);
+  expect(item.id).not.toBe(f.item.id);
+  return item;
 }
 async function capture(page: Page, info: TestInfo, state: string) {
   await mkdir('test-results/theme-screenshots', { recursive: true });

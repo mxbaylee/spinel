@@ -274,15 +274,17 @@ test('locked deletion is explicit, refuses an active writer and clears only this
         }),
       key,
     );
-    const open = () =>
-      profile.getByRole('button', { name: 'Delete offline data…', exact: true }).click();
+    const remove = profile.getByRole('button', { name: 'Delete offline data…', exact: true });
+    const open = () => remove.click();
     const dialog = profile.getByRole('dialog', {
       name: 'Delete this account’s offline data?',
       exact: true,
     });
     await open();
+    await expect(dialog).toBeVisible();
     await profile.keyboard.press('Escape');
     await expect(dialog).toHaveCount(0);
+    await expect(remove).toBeFocused();
     expect(await stored(profile, f.actor.id, f.item.id)).toEqual(retained);
     await open();
     await dialog.getByRole('button', { name: 'Delete offline data', exact: true }).click();

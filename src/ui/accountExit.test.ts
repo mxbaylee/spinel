@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
+import { randomToken } from '../server/auth/store.ts';
 
 const A = '00000000-0000-4000-8000-000000000001';
 const B = '00000000-0000-4000-8000-000000000002';
@@ -503,6 +504,8 @@ test('api fences before dispatch and keeps a stale dispatched response owned thr
 });
 
 test('cancelled delayed options retain their challenge cleanup until its response fully settles', async () => {
+  // Use the server's actual challenge identifier generator, not an account UUID.
+  const returnedChallenge = randomToken();
   let queue: Promise<unknown> = Promise.resolve();
   vi.stubGlobal('navigator', {
     locks: {
@@ -533,7 +536,7 @@ test('cancelled delayed options retain their challenge cleanup until its respons
     start(controller) {
       finishOptions = () => {
         controller.enqueue(
-          new TextEncoder().encode(JSON.stringify({ challengeId: B, options: {} })),
+          new TextEncoder().encode(JSON.stringify({ challengeId: returnedChallenge, options: {} })),
         );
         controller.close();
       };
@@ -576,14 +579,14 @@ test('cancelled delayed options retain their challenge cleanup until its respons
   expect(fetch).toHaveBeenCalledTimes(1);
   finishOptions();
   await cancelSent.promise;
-  expect(challengeId).toBe(B);
+  expect(challengeId).toBe(returnedChallenge);
   expect(openPrompt).not.toHaveBeenCalled();
   expect(fetch).toHaveBeenNthCalledWith(
     2,
     '/api/auth/cancel',
     expect.objectContaining({
       method: 'POST',
-      body: JSON.stringify({ challengeId: B }),
+      body: JSON.stringify({ challengeId: returnedChallenge }),
     }),
   );
   const marker = [...values.keys()].find((key) => key.startsWith(ACTIVE))!;
@@ -597,3 +600,34 @@ test('cancelled delayed options retain their challenge cleanup until its respons
   await expect(reopened).resolves.toBe('ready');
   expect([...values.keys()].filter((key) => key.startsWith(ACTIVE))).toEqual([]);
 });
+
+test.each([
+  ['account UUID', B],
+  ['incomplete token', 'a'.repeat(42)],
+  ['non-base64url token', '+' + 'a'.repeat(42)],
+  ['non-string value', null],
+])(
+  'cancelled options never expose a malformed challenge identifier: %s',
+  async (_name, challengeId) => {
+    const { api } = await import('../../web/api.ts');
+    const response = deferred<Response>();
+    vi.mocked(fetch).mockImplementationOnce(() => response.promise);
+    let current = true;
+    const abandoned = new DOMException('The passkey request ended.', 'AbortError');
+    const cleanup = vi.fn();
+    const options = api(
+      'authentication/options',
+      {},
+      () => {
+        if (!current) throw abandoned;
+      },
+      cleanup,
+    );
+    const rejected = expect(options).rejects.toBe(abandoned);
+    current = false;
+    response.resolve(Response.json({ challengeId, options: {} }));
+    await rejected;
+    expect(cleanup).not.toHaveBeenCalled();
+    expect(fetch).toHaveBeenCalledTimes(1);
+  },
+);
