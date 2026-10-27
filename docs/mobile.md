@@ -38,17 +38,24 @@ pending edits and switches to a local view-only state. Wait for those edits to
 save, then reopen the Doc as the on-screen note requests. Reopening initializes
 the native controls for its current page mode.
 
-See the [SPN-072 decision and evidence boundaries](implementation/SPN-072.md).
-Physical iPhone and Android acceptance is **pending** for this candidate; browser
-emulation is not an OS keyboard or IME test.
+The [owner's SPN-072 acceptance revision](implementation/SPN-072.md#owner-revision-responsive-browser-acceptance)
+(2026-10-26, America/Los_Angeles) accepts responsive browser testing for this
+change. The native Storybook and browser suites check readable reflow, saved
+settings, touch-event editing, exact persistence, formatting, Formula dialogs,
+viewer boundaries and the caret under an emulated keyboard-sized inset; see
+the [source verification and its limits](implementation/SPN-072.md#verification-boundaries).
+Physical iPhone and Android checks remain **Not run**. They provide follow-up
+confidence and are not a merge prerequisite for SPN-072. Browser emulation does
+not establish actual software-keyboard, physical touch or IME behavior.
 
 | Physical device | OS/browser versions | Doc reading, selection, keyboard, formatting and IME |
 | --------------- | ------------------- | ---------------------------------------------------- |
 | iPhone          | Not recorded        | Not run                                              |
 | Android phone   | Not recorded        | Not run                                              |
 
-Record device model, OS/browser version, installed-app/browser mode, commit,
-date and result. On each device open a populated modern Doc; read long paragraphs;
+When devices are available, record device model, OS/browser version,
+installed-app/browser mode, commit, date and result. On each device open a
+populated modern Doc; read long paragraphs;
 type with its software keyboard; move/extend a selection across wrapped lines;
 apply bold, a list and a heading; compose non-Latin text with an IME; confirm the
 caret and controls remain above the keyboard; rotate; save and reopen. Check
@@ -116,5 +123,37 @@ public DNS, certificates or deployment readiness.
 - Current Chromium installability, manifest/icons and offline privacy checks
   replace the deprecated Lighthouse PWA audit: [decision #77](implementation/SPN-028.md#legacy-decision-77-maintained-installability-verification),
   2026-10-18.
+- Docs use the pinned OSS public mobile plugins and a local reading scale;
+  preserve shared page settings, saved/exported layout, selection, collaboration
+  and viewer permissions. Do not patch the SDK or CSS-scale its native canvas.
+  SPN-049's [zoom investigation](implementation/SPN-049.md#phone-doc-fit-investigation-and-supported-fallback)
+  found snapshot mutation in public zoom commands, while the
+  [separate view-scale route](implementation/SPN-049.md#native-phone-navigation-evidence-repair)
+  supported further investigation. SPN-072's
+  [public integration](implementation/SPN-072.md#public-mobile-docs-integration)
+  and [local scale](implementation/SPN-072.md#saved-zoom-and-local-phone-scale)
+  preserve this distinction. Univer's mobile UI remains experimental; traditional
+  pages use the explicit larger-screen editing fallback to protect their layout.
+- Phone chrome keeps title, save/connection status, More and a directly available
+  people/count control; Share is in More, and document content must not overflow
+  page chrome. Follow the [composed editor design](design/editor.md#phone) and
+  SPN-047 [decision #126](implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits),
+  2026-10-20. Current light/dark/phone images require independent theme/persona
+  review under the [standing agent policy](implementation/grooming-2026-10-26.md#agent-decisions-and-visual-review).
+- Phone checks retain Formula scalar and table reading and insertion/edit dialogs,
+  every result row and usable touch targets: SPN-033
+  [decision #113](implementation/SPN-033.md#legacy-decision-113-live-authorized-document-formulas)
+  and grooming, 2026-10-20. Read-only and traditional-layout views retain their
+  existing edit restrictions.
+- Preserve the exact saved-content, Online-state and visible-caret assertions
+  from the [2026-10-26 CI audit](implementation/ci-reliability-2026-10-26.md#phone-doc-failures-remain-real-investigation).
+  SPN-072's [reconciliation](implementation/SPN-072.md#reconciliation-with-the-main-ci-audit)
+  distinguishes the retained narrow-width desktop cases from mobile integration
+  evidence; a passing retry does not establish the cause or make a failure harmless.
+- Responsive-browser evidence is sufficient for SPN-072 under the
+  [owner's 2026-10-26 scope revision](implementation/SPN-072.md#owner-revision-responsive-browser-acceptance).
+  Actual keyboard, physical touch and IME checks stay honestly unperformed in
+  the checklist above. Offline storage/account lifecycle remains SPN-055, and
+  physical offline launch, persistence and reconnect remains SPN-090.
 
 Public SDK guidance: [mobile installation](https://docs.univer.ai/guides/sheets/getting-started/installation#mobile-support).
