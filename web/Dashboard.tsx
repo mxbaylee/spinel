@@ -247,6 +247,25 @@ export function Dashboard({
       (catalogRevision < (copy.createdFileRevision ?? 0) ? copy.createdFile : undefined);
     return item ? [item] : [];
   });
+  useEffect(() => {
+    const known = new Set(items.map((item) => item.id));
+    const accepted = deviceCreatedFiles.filter(
+      (item) => !offline.downloads.get(item.id)?.creation && !known.has(item.id),
+    );
+    // Keep accepted files in the ordinary catalog before metadata edits or device
+    // removal. Repeat for late pre-acknowledgement lists; the revision cutoff
+    // above stops adoption once an authoritative list supersedes the fallback.
+    if (accepted.length)
+      setItems((previous) => {
+        const current = accepted.filter(
+          (item) =>
+            (offline.downloads.get(item.id)?.createdFileRevision ?? 0) > catalogRevisionRef.current,
+        );
+        return current.length
+          ? [...new Map([...current, ...previous].map((item) => [item.id, item])).values()]
+          : previous;
+      });
+  }, [items, offline.downloads, catalogRevision]);
   const currentCreation = creationItems.find((item) => item.id === currentId);
   // Publication must not replace a mounted editor with a different component:
   // it may still hold unfinished input or an unacknowledged native checkpoint.

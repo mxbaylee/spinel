@@ -354,6 +354,80 @@ test.describe('documents created offline', () => {
       }
     });
 
+  test('a warm upload keeps its renamed title and tags after removing the device copy', async ({
+    browser,
+    baseURL,
+  }, info) => {
+    const f = await fixture(browser, baseURL!, info, 'sheet');
+    try {
+      await f.download();
+      await f.page.goto('/');
+      await expect(
+        f.page.getByRole('button', { name: `${f.item.name} Sheet`, exact: true }),
+      ).toBeVisible();
+      let catalogReads = 0;
+      f.page.on('request', (request) => {
+        if (request.method() === 'GET' && new URL(request.url()).pathname === '/api/items')
+          catalogReads++;
+      });
+      await f.network.setOffline(true);
+      const name = 'Warm offline budget';
+      const renamed = 'Budget ready to share';
+      const id = await newDocument(f.page, 'sheet', name);
+      await edit(f.page, 'sheet', '624');
+      await savedLocally(f.page);
+      const before = (await deviceCreation(f, id))!;
+      await f.network.setOffline(false);
+      await synced(f.page);
+      const result = await readCreated(f, id, before.creation!.request.unitId);
+      content(result.snapshot, 'sheet', '624');
+      await matchesServer(f.page, result);
+
+      // Stay in this warm Dashboard: a full list reload would hide a missing
+      // ordinary catalog entry behind the server's already updated metadata.
+      await f.page.getByRole('button', { name: `Rename ${name}`, exact: true }).click();
+      const form = f.page.getByRole('form', { name: 'Rename document', exact: true });
+      await form.getByRole('textbox', { name: 'Document name', exact: true }).fill(renamed);
+      await form.getByRole('button', { name: 'Save name', exact: true }).click();
+      await expect(f.page.getByRole('heading', { name: renamed, exact: true })).toBeVisible();
+      await f.page.getByRole('button', { name: 'Back to files', exact: true }).click();
+      await expect(f.page.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
+      const row = f.page.getByRole('listitem').filter({
+        has: f.page.getByRole('button', { name: `${renamed} Sheet`, exact: true }),
+      });
+      await expect(row).toHaveCount(1);
+      await expect(f.page.getByRole('button', { name: `${name} Sheet`, exact: true })).toHaveCount(
+        0,
+      );
+      await row.getByRole('button', { name: `More actions for ${renamed}`, exact: true }).click();
+      await f.page.getByRole('menuitem', { name: 'Tags…', exact: true }).click();
+      const tags = f.page.getByRole('dialog', { name: `Tags for ${renamed}`, exact: true });
+      await tags.getByLabel('Tag', { exact: true }).fill('planning');
+      await tags.getByRole('button', { name: 'Add tag', exact: true }).click();
+      await expect(
+        tags.getByRole('button', { name: 'Remove #planning', exact: true }),
+      ).toBeVisible();
+      await tags.getByRole('button', { name: 'Done', exact: true }).click();
+      await expect(row.getByText('#planning', { exact: true })).toBeVisible();
+
+      await row.getByRole('button', { name: `More actions for ${renamed}`, exact: true }).click();
+      await f.page.getByRole('menuitem', { name: 'Remove from device', exact: true }).click();
+      await expect(
+        f.page.getByRole('status').filter({ hasText: `${renamed} was removed from this device.` }),
+      ).toHaveText(`${renamed} was removed from this device.`);
+      await expect(row).toHaveCount(1);
+      await expect(row.getByText('#planning', { exact: true })).toBeVisible();
+      expect(await deviceCreation(f, id)).toBeUndefined();
+      expect(uploaded(f, id)).toMatchObject({ name: renamed, parent_id: null, trashed_at: null });
+      expect(await readCreated(f, id, before.creation!.request.unitId)).toEqual(result);
+      expect(catalogReads).toBe(0);
+      expect(receipts(f)).toHaveLength(1);
+      expect(f.errors).toEqual([]);
+    } finally {
+      await f.close();
+    }
+  });
+
   test('a lost creation acknowledgement replays the same request after an offline reload', async ({
     browser,
     baseURL,
