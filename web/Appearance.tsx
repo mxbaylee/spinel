@@ -73,15 +73,26 @@ export function IdentityChoice({
   disabled?: boolean;
 }) {
   const [picker, setPicker] = useState(false);
+  const pickerButton = useRef<HTMLButtonElement>(null);
+  const closePicker = () => {
+    setPicker(false);
+    requestAnimationFrame(() => pickerButton.current?.focus());
+  };
   return (
     <div className="identity-choice">
       <div className="identity-choice-current">
         <ItemIcon name={name} kind={kind} appearance={{ ...emptyAppearance(), icon: value }} />
         <span>{value ? 'Custom icon' : 'Automatic icon'}</span>
       </div>
-      <Button type="button" disabled={disabled} onClick={() => setPicker(true)}>
+      <button
+        className="sp-control"
+        ref={pickerButton}
+        type="button"
+        disabled={disabled}
+        onClick={() => setPicker(true)}
+      >
         Choose icon or emoji
-      </Button>
+      </button>
       <Button
         type="button"
         disabled={disabled || value === null}
@@ -95,10 +106,10 @@ export function IdentityChoice({
         <IconPicker
           includeEmojis
           value={value ?? ''}
-          close={() => setPicker(false)}
+          close={closePicker}
           choose={(next) => {
             onChange(next);
-            setPicker(false);
+            closePicker();
           }}
         />
       )}

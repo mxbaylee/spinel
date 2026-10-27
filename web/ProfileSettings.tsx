@@ -33,8 +33,15 @@ export function IconPicker({
   return (
     <dialog
       ref={dialog}
-      className="profile-icon-dialog"
-      onCancel={close}
+      className="profile-icon-dialog sp-ui"
+      onCancel={(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        close();
+      }}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') event.stopPropagation();
+      }}
       aria-labelledby="icon-picker-title"
     >
       <h2 id="icon-picker-title" className="sp-modal-title">
@@ -116,6 +123,7 @@ export function IconPicker({
         {visible.map((icon) => (
           <button
             key={icon.value}
+            className="sp-control"
             type="button"
             title={icon.label}
             aria-label={icon.label}
@@ -133,11 +141,11 @@ export function IconPicker({
         ))}
       </div>
       {results.length > limit && (
-        <button type="button" onClick={() => setLimit(limit + 60)}>
+        <button className="sp-control" type="button" onClick={() => setLimit(limit + 60)}>
           Show more
         </button>
       )}
-      <button type="button" onClick={close}>
+      <button className="sp-control" type="button" onClick={close}>
         Cancel
       </button>
     </dialog>

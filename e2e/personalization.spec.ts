@@ -82,6 +82,16 @@ for (const variant of [
         .fill('lemon');
       await capture('identity-picker');
       await identityPicker.getByRole('button', { name: 'Lemon emoji', exact: true }).click();
+      await expect(
+        page.getByRole('button', { name: 'Choose icon or emoji', exact: true }),
+      ).toBeFocused();
+      await page.getByRole('button', { name: 'Choose icon or emoji', exact: true }).click();
+      await page.keyboard.press('Escape');
+      await expect(identityPicker).toHaveCount(0);
+      await expect(page.locator('.identity-choice-current')).toContainText('🍋');
+      await expect(
+        page.getByRole('button', { name: 'Choose icon or emoji', exact: true }),
+      ).toBeFocused();
       if (variant.name === 'light') {
         const path = `**/api/appearance/items/${item.id}`;
         await page.route(path, (route) =>
@@ -256,7 +266,9 @@ test('Space accents follow preference changes, spare native formatting and resto
   ]);
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.emulateMedia({ colorScheme: 'light' });
-  await page.addInitScript(() => localStorage.setItem('spinel-theme', 'light'));
+  await page.addInitScript(() => {
+    if (!localStorage.getItem('spinel-theme')) localStorage.setItem('spinel-theme', 'light');
+  });
   const variable = (selector: string, name: string) =>
     page
       .locator(selector)
@@ -359,7 +371,7 @@ test('Space accents follow preference changes, spare native formatting and resto
       .toBe(spaceAccentPalettes.sapphire.dark.accent);
     await expect(page.locator('.appearance-banner img')).toHaveAttribute('src', sharedArt!);
     expect(await read()).toEqual(shared);
-    // The real SPA exit must clean up the override, without relying on a page reload.
+    // The real exit retains the chosen theme and leaves the Space override behind.
     await page.getByRole('button', { name: 'My files', exact: true }).first().click();
     await expect.poll(() => variable('html', '--sp-accent')).toBe(palettes.dark['sp-accent']);
     await expect.poll(() => variable('html', '--appearance-selection-bg')).toBe('');

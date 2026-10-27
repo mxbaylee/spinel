@@ -3,6 +3,13 @@
   font-size: 1.25rem;
   line-height: 1;
 }
+.profile-icon-dialog select {
+  background: var(--sp-panel);
+  color: var(--sp-text);
+  border: 1px solid var(--sp-border);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
 .profile-workspace {
   flex-direction: column;
 }
