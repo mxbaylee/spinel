@@ -1,0 +1,158 @@
+{
+  "schema": 1,
+  "candidateHead": "cf611f7d176a8f42c64d9c5d632867a3d1c0b885",
+  "baselineSource": "a0c3154ae6b548d68ba8be9d143df781e47dc623",
+  "runId": 40581429512,
+  "runAttempt": 1,
+  "accepted": false,
+  "candidateExecuted": false,
+  "disposition": "Diagnostic observations only: desktop post-measurement redo used the wrong non-Mac shortcut; mobile cases timed out and omitted native Enter boundaries. No improvement percentage is accepted.",
+  "artifacts": [
+    {
+      "preset": "desktop",
+      "artifactId": 12769779027,
+      "originalZipBytes": 693505,
+      "originalZipSha256": "143881c22e3d27b91413978ae3d51dca4aefd948bdc820dea296db24f671b6f5"
+    },
+    {
+      "preset": "mobile",
+      "artifactId": 12772495107,
+      "originalZipBytes": 102714,
+      "originalZipSha256": "14e659b9dffa04ecda8d9a03c044da405ca52b0ce8ebaeecddd72bd0e4855f0d"
+    }
+  ],
+  "samples": [
+    {
+      "preset": "desktop",
+      "sample": "plain-1",
+      "attempt": 0,
+      "completed": false,
+      "typingWallMs": 70421.92261000001,
+      "keydownCount": 2086,
+      "frameCount": 2086,
+      "frameOpportunityP95Ms": 43.10000000000582,
+      "longTaskMaxMs": 6221,
+      "nativeDrainUpperBoundMs": 12708.399999999994,
+      "nativeQueueHighWater": {
+        "history": 2086,
+        "collaboration": 2086
+      },
+      "metricsSha256": "3cc35ccfe8573c4f6ca8c04b338729da53c1f9a562dc8901a7a27cd133ebeef5",
+      "profileSha256": null
+    },
+    {
+      "preset": "desktop",
+      "sample": "plain-2",
+      "attempt": 0,
+      "completed": false,
+      "typingWallMs": 69493.40246400001,
+      "keydownCount": 2086,
+      "frameCount": 2086,
+      "frameOpportunityP95Ms": 44.5,
+      "longTaskMaxMs": 5939,
+      "nativeDrainUpperBoundMs": 12196.400000000023,
+      "nativeQueueHighWater": {
+        "history": 2086,
+        "collaboration": 2086
+      },
+      "metricsSha256": "1220c2cf261e025af4b3d499c058edb1e4d9075795a88eb34ab98e8d3fa2794a",
+      "profileSha256": null
+    },
+    {
+      "preset": "desktop",
+      "sample": "plain-3",
+      "attempt": 0,
+      "completed": false,
+      "typingWallMs": 68784.499755,
+      "keydownCount": 2086,
+      "frameCount": 2086,
+      "frameOpportunityP95Ms": 43.59999999997672,
+      "longTaskMaxMs": 5830,
+      "nativeDrainUpperBoundMs": 11903.5,
+      "nativeQueueHighWater": {
+        "history": 2086,
+        "collaboration": 2086
+      },
+      "metricsSha256": "2a75b052226def0934821d9b997fcd01bbbe0bc3b8b74cd1abd1f75bbc29d171",
+      "profileSha256": null
+    },
+    {
+      "preset": "desktop",
+      "sample": "profile",
+      "attempt": 0,
+      "completed": false,
+      "typingWallMs": 68135.944123,
+      "keydownCount": 2086,
+      "frameCount": 2086,
+      "frameOpportunityP95Ms": 43.40000000002328,
+      "longTaskMaxMs": 5811,
+      "nativeDrainUpperBoundMs": 11942.599999999977,
+      "nativeQueueHighWater": {
+        "history": 2086,
+        "collaboration": 2086
+      },
+      "metricsSha256": "e33d35f31122fb964dc1ed2b29b866474d3a8a27d3074feb2ea283cd52396756",
+      "profileSha256": "3a0fd2c7f746dfc0ed7f9ae2305f07ad2b50b6fe1c247899dbb6718f29085db7"
+    },
+    {
+      "preset": "mobile",
+      "sample": "plain-1",
+      "attempt": 0,
+      "completed": false,
+      "typingWallMs": 255444.07588800002,
+      "keydownCount": null,
+      "frameCount": null,
+      "frameOpportunityP95Ms": null,
+      "longTaskMaxMs": null,
+      "nativeDrainUpperBoundMs": null,
+      "nativeQueueHighWater": null,
+      "metricsSha256": "85e92835181de5f274c932131afd62817afb7c06d7403dce1708cb61a715876e",
+      "profileSha256": null
+    },
+    {
+      "preset": "mobile",
+      "sample": "plain-2",
+      "attempt": 0,
+      "completed": false,
+      "typingWallMs": 255847.177428,
+      "keydownCount": null,
+      "frameCount": null,
+      "frameOpportunityP95Ms": null,
+      "longTaskMaxMs": null,
+      "nativeDrainUpperBoundMs": null,
+      "nativeQueueHighWater": null,
+      "metricsSha256": "53760884ae0ee5aa5e5aa169fee99922328c101c3095a3ff5777b7b4422e42f3",
+      "profileSha256": null
+    },
+    {
+      "preset": "mobile",
+      "sample": "plain-3",
+      "attempt": 0,
+      "completed": false,
+      "typingWallMs": 255716.82885,
+      "keydownCount": null,
+      "frameCount": null,
+      "frameOpportunityP95Ms": null,
+      "longTaskMaxMs": null,
+      "nativeDrainUpperBoundMs": null,
+      "nativeQueueHighWater": null,
+      "metricsSha256": "996e8d57f7784ff34b5f4a58605fdb7956fa9902238fd8ce6f0581ddd007865a",
+      "profileSha256": null
+    },
+    {
+      "preset": "mobile",
+      "sample": "profile",
+      "attempt": 0,
+      "completed": false,
+      "typingWallMs": 266154.704888,
+      "keydownCount": null,
+      "frameCount": null,
+      "frameOpportunityP95Ms": null,
+      "longTaskMaxMs": null,
+      "nativeDrainUpperBoundMs": null,
+      "nativeQueueHighWater": null,
+      "metricsSha256": "c2eaca4bea500bd7d55b0a362a017d986c45c07ebae646be36c191e7be419383",
+      "profileSha256": null
+    }
+  ]
+}

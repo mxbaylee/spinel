@@ -7,8 +7,9 @@ contract is maintained in `docs/implementation/SPN-108.md` on the PR/main branch
 ## Immutable baseline provenance
 
 The original observation-only baseline is
-`a0c3154ae6b548d68ba8be9d143df781e47dc623`. The commit adding this checkpoint
-also adds the exact supported mobile Enter shortcut repair used by the candidate.
+`a0c3154ae6b548d68ba8be9d143df781e47dc623`. The replacement baseline is
+`161b9874f3ac0e89a277c713ceb965e5ac39ca05`. It adds the exact supported mobile
+Enter shortcut repair used by the candidate.
 That is its only application-source difference from the original baseline:
 `web/docPhoneView.ts` registers the public native Enter command with the public
 document-focus precondition, owned by the mobile plugin's disposable lifetime.
@@ -48,3 +49,8 @@ manifests and test reports. Screenshots remain in the original CI artifacts.
 Automatic approval review rejected publication of the complete mixed CI ZIP;
 that payload is not republished here. The archive preserves failed first
 attempts as well as the eventual acceptance result.
+
+The inspected numeric record and original artifact checksums for the failed
+`cf611f7` first-attempt set are in [attempt-cf/result-summary.json](attempt-cf/result-summary.json).
+The next candidate is `6f219b8bf687e322b9b3283f771e95f95a281a9d`, CI run
+`40586200654`. No accepted result is asserted while that run is in progress.
