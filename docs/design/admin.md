@@ -129,8 +129,8 @@ loads fresh recovery-invitation recipients when the Operator explicitly opens In
 ## Diagnostics handoff (SPN-032)
 
 Owner direction, 2026-10-22; [scope and rationale](../implementation/SPN-032.md).
-Source implementation is prepared; runtime checks and actual screenshot approval
-remain pending in the implementation record. Health cards retain aggregate status
+SPN-032 delivered diagnostics; its implementation record preserves the observed
+verification. Further visual changes follow the standing independent review policy. Health cards retain aggregate status
 and guidance. See the [operator guide](../diagnostics.md) for measurement meaning.
 Add **Download diagnostics** and **Truncate diagnostics** to Backups & health;
 there is no query UI, log browser or SQL console. Download produces a standalone

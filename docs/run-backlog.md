@@ -40,7 +40,7 @@ not a technical need for public HTTPS. Owner, chat 2026-10-21; fixed lifecycle
 phases recorded in [decision #129](implementation/backlog-workflow.md#legacy-decision-129-fixed-lifecycle-phases).
 After each merge, fetch main and pick again; do not preselect a fixed queue. An
 explicit owner-requested ticket takes priority for that run. Seven completed
-tickets trigger only a reminder for the next manual review with the owner.
+tickets trigger only a reminder for the next requested grooming.
 Continue eligible work; never force grooming or block landing because of the
 count. Owner, chat 2026-10-22.
 

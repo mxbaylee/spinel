@@ -203,8 +203,11 @@ cancelled or missing results cannot pass as skipped work.
 Routine PNG capture is opt-in: add **`visual-review`** to a PR, or set
 **`capture_screenshots=true`** on a manual Storybook run. Add the label for changes
 to layout, themes, fonts, icons or visible interaction states, including relevant
-dependency updates. It requests evidence, not approval; the owner or explicitly
-delegated reviewer still approves affected screens. An explicit capture request
+dependency updates. It requests evidence, not approval. Embed all proposed designs
+and current affected-screen images on the PR. An independent nonimplementing
+subagent inspects them against the playbook/theme and all personas, records
+findings and approves the visual result at the reviewed SHA. State **agent review
+only**; human sign-off is not required ([standing policy](implementation/grooming-2026-10-26.md#agent-decisions-and-visual-review)). An explicit capture request
 also runs for a documentation-only PR. Without a capture request, code PRs and
 main pushes retain rendering and interaction checks, semantic/JSON evidence and
 failure screenshots while omitting routine PNGs. Ordinary documentation-only
