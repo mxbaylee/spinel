@@ -3,6 +3,7 @@ import { FILE_KINDS } from '../../src/shared/workspace.ts';
 import type { FileItem, SpaceFile } from '../../src/shared/workspace.ts';
 import { OFFLINE_SDK_VERSION, offlineScope } from './OfflineAccess.ts';
 import type { ClientCheckpoint } from '@spinel/sync-client';
+import { validateNativeSnapshot, validateCheckpoint } from '@spinel/sync-client/validation';
 import type { OfflineRecoveryRequest } from '../../src/shared/offlineRecovery.ts';
 import { openExistingDatabase } from './existingDatabase.ts';
 import { releaseAccountRuntime } from './runtime.ts';
@@ -58,13 +59,21 @@ const object = (value: unknown): value is Record<string, unknown> =>
 
 /** Minimum native-kind shape required before the editor can admit a stored base. */
 function storedSnapshotShape(value: unknown, kind: unknown, unitId: unknown) {
-  return (
-    object(value) &&
-    typeof unitId === 'string' &&
-    Boolean(unitId) &&
-    value.id === unitId &&
-    ((kind === 'doc' && !('sheets' in value)) || (kind === 'sheet' && object(value.sheets)))
-  );
+  if (
+    !object(value) ||
+    typeof unitId !== 'string' ||
+    !unitId ||
+    value.id !== unitId ||
+    (kind !== 'doc' && kind !== 'sheet') ||
+    (kind === 'doc' ? 'sheets' in value : !object(value.sheets))
+  )
+    return false;
+  try {
+    validateNativeSnapshot(value as unknown as ClientCheckpoint['snapshot'], kind);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function storedBaseKnown(item: Record<string, unknown>, bundle: Record<string, unknown>) {
@@ -101,6 +110,16 @@ function storedBaseKnown(item: Record<string, unknown>, bundle: Record<string, u
 export function isKnownOfflineOutbox(value: unknown): value is OfflineOutbox {
   if (!object(value) || value.version !== 1 || !object(value.checkpoint)) return false;
   const checkpoint = value.checkpoint;
+  // Use the same pure admission as the editor, without loading the SDK here.
+  try {
+    validateCheckpoint(
+      checkpoint as unknown as ClientCheckpoint,
+      value.unitId as string,
+      checkpoint.revision as number,
+    );
+  } catch {
+    return false;
+  }
   const mutation = (entry: unknown) =>
     object(entry) && typeof entry.id === 'string' && object(entry.params);
   return (
@@ -170,11 +189,8 @@ export function isKnownOfflineOutbox(value: unknown): value is OfflineOutbox {
   );
 }
 
-/** Unknown persisted queue data is retained, never treated as an empty queue. */
-export function hasOfflineEdits(outbox: unknown) {
-  if (outbox === undefined) return false;
-  if (!isKnownOfflineOutbox(outbox)) return true;
-  const checkpoint = outbox.checkpoint;
+/** The caller has already admitted this checkpoint. */
+function checkpointHasEdits(checkpoint: ClientCheckpoint) {
   return Boolean(
     checkpoint.sent ||
     checkpoint.inflight.length ||
@@ -183,6 +199,12 @@ export function hasOfflineEdits(outbox: unknown) {
     checkpoint.recoverySnapshot !== undefined ||
     checkpoint.recoveryMissing,
   );
+}
+
+/** Unknown persisted queue data is retained, never treated as an empty queue. */
+export function hasOfflineEdits(outbox: unknown) {
+  if (outbox === undefined) return false;
+  return !isKnownOfflineOutbox(outbox) || checkpointHasEdits(outbox.checkpoint);
 }
 
 export function hasStoredEdits(item: unknown) {
@@ -294,7 +316,12 @@ export function downloadSummary(
     readOnly: valid ? bundle.readOnly !== false : true,
     revision: Number.isSafeInteger(bundle.revision) ? (bundle.revision as number) : 0,
     downloadedAt: Number.isFinite(item.downloadedAt) ? (item.downloadedAt as number) : 0,
-    pending: !valid || hasStoredEdits(value),
+    // Reuse this summary's admission; encoding the same stored snapshots again
+    // for the pending flag would add avoidable work to every checkpoint save.
+    pending:
+      uncertain ||
+      item.recovery !== undefined ||
+      Boolean(outbox && checkpointHasEdits(outbox.checkpoint as ClientCheckpoint)),
     ...(uncertain
       ? {
           available: false,
@@ -871,12 +898,14 @@ export class OfflineStore {
     const completion = done(transaction);
     const items = transaction.objectStore('items');
     let pendingChanged = false;
+    let pending = false;
     try {
       const item = (await request(items.get(scope.item))) as StoredItem | undefined;
       verifyCurrent();
+      const previous = downloadSummary(item, this.accountId, scope.item);
       if (
         !item ||
-        downloadSummary(item, this.accountId, scope.item).uncertain ||
+        previous.uncertain ||
         item.bundle.accountId !== scope.account ||
         item.bundle.itemId !== scope.item ||
         item.bundle.spaceId !== scope.spaceId ||
@@ -886,9 +915,14 @@ export class OfflineStore {
         throw new Error('This download changed. Keep this tab open to preserve your changes.');
       if (item.recovery && JSON.stringify(item.outbox?.checkpoint) !== JSON.stringify(checkpoint))
         throw new Error('This offline copy is already being recovered. Keep its original changes.');
-      const wasPending = hasStoredEdits(item);
       item.outbox = { version: 1, ...scope, checkpoint };
-      pendingChanged = wasPending !== hasStoredEdits(item);
+      // The unchanged base and scope were admitted above. Inspect only the new
+      // checkpoint, retaining malformed input as pending rather than losing it.
+      pending =
+        item.recovery !== undefined ||
+        !storedSnapshotShape(checkpoint.snapshot, item.bundle.kind, scope.unitId) ||
+        hasOfflineEdits(item.outbox);
+      pendingChanged = Boolean(previous.pending) !== pending;
       if (imageFiles) {
         item.bundle.images = imageFiles.images;
         const images = transaction.objectStore('images');
@@ -910,12 +944,7 @@ export class OfflineStore {
     }
     await completion;
     verifyCurrent();
-    if (pendingChanged)
-      offlineChanged(
-        this.accountId,
-        scope.item,
-        hasOfflineEdits({ version: 1, ...scope, checkpoint }),
-      );
+    if (pendingChanged) offlineChanged(this.accountId, scope.item, pending);
   }
   /** Fix retry identity, title and bytes before any request can publish a copy. */
   async beginRecovery(

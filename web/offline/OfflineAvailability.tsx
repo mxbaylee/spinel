@@ -64,7 +64,7 @@ export function OfflineAvailability({
       <p role={message.failed ? 'alert' : 'status'}>{message.text}</p>
       {message.detail && <p>{message.detail}</p>}
       <OfflineAvailabilityActions message={message} allowNavigation={allowNavigation} />
-      <button className="sp-control" onClick={onDismiss}>
+      <button className="sp-control" style={{ marginTop: 8 }} onClick={onDismiss}>
         Done
       </button>
     </Modal>

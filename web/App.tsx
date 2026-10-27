@@ -1,5 +1,6 @@
 import { AuthEntry } from './AuthEntry.tsx';
 import { ProfilePage } from './ProfilePage.tsx';
+import { PasskeySettings } from './PasskeySettings.tsx';
 import { AccountAccessChanged, AccountExitScreen } from './AccountExit.tsx';
 import {
   accountExitPending,
@@ -66,7 +67,6 @@ const SpaceSheetEditor = lazy(() =>
 );
 
 type User = { id: string; name: string; isAdmin: boolean; icon?: string; color?: string };
-type Passkey = { id: string; name: string; provider: string };
 
 export function App() {
   return (
@@ -124,7 +124,9 @@ function AccountApp() {
     user && loaded && !local && !accountExitPending() ? user.id : null,
     browserOnline && (editorConnection ?? serverConnection) === 'online',
   );
-  const [keys, setKeys] = useState<Passkey[]>([]);
+  const [passkeyRevision, setPasskeyRevision] = useState(0);
+  const [passkeyProofReset, setPasskeyProofReset] = useState(0);
+  const [passkeyAccountReset, setPasskeyAccountReset] = useState(0);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
@@ -156,8 +158,6 @@ function AccountApp() {
   const [inviteName, setInviteName] = useState('');
   const [setupLink] = useState(() => (consoleClaim ? location.hash.slice(1).split('.') : []));
   const [setupId, setupSecret] = setupLink;
-  const refreshKeys = async (verify: () => void = () => {}) =>
-    setKeys((await api<{ passkeys: Passkey[] }>('passkeys', undefined, verify)).passkeys);
   useEffect(() => {
     if (accountRetired.current && !accountExitPending()) return;
     let current = true;
@@ -275,10 +275,6 @@ function AccountApp() {
           if (connectRequest && location.pathname === '/sign-in')
             location.assign(`/connect?request=${encodeURIComponent(connectRequest)}`);
           else if (spaceReturn && !user.isAdmin) location.assign(spaceReturn);
-          if (settings) {
-            const result = await api<{ passkeys: Passkey[] }>('passkeys', undefined, verifyClaim);
-            setKeys(result.passkeys);
-          }
         });
       } catch (failure) {
         if (!current) return;
@@ -416,7 +412,6 @@ function AccountApp() {
         setAccountLocked(true);
         setUser(null);
         setLocal(null);
-        setKeys([]);
         setFilePlaces(null);
         setEditorConnection(null);
         setCatalogStatus(null);
@@ -454,7 +449,7 @@ function AccountApp() {
     setBusy(false);
     setNotice('Passkey request cancelled.');
   }
-  async function ceremony(register: boolean) {
+  async function ceremony(register: boolean, verifyAccount: () => void = () => {}) {
     if (attempt.current && !attempt.current.cancelled) return;
     const current: { cancelled: boolean; challengeId?: string; finishing?: boolean } = {
       cancelled: false,
@@ -466,6 +461,7 @@ function AccountApp() {
     const verifyAttempt = () => {
       if (current.cancelled || attempt.current !== current)
         throw new DOMException('This passkey request ended.', 'AbortError');
+      verifyAccount();
     };
     try {
       await withAuthentication(
@@ -484,6 +480,7 @@ function AccountApp() {
                   : register
                     ? 'registration'
                     : 'authentication';
+            const requestOptions = { accountId: kind === 'registration' ? user?.id : undefined };
             const { options, challengeId } = await api<{
               options: PublicKeyCredentialCreationOptionsJSON &
                 PublicKeyCredentialRequestOptionsJSON;
@@ -496,8 +493,11 @@ function AccountApp() {
                   ? { token: inviteToken, name: inviteName }
                   : {},
               verify,
-              (challengeId) => {
-                current.challengeId = challengeId;
+              {
+                ...requestOptions,
+                onAbandonedChallenge: (challengeId) => {
+                  current.challengeId = challengeId;
+                },
               },
             );
             current.challengeId = challengeId;
@@ -532,10 +532,11 @@ function AccountApp() {
                 ...(consoleClaim ? { setupId, proof } : invitation ? { token: inviteToken } : {}),
               },
               verify,
+              requestOptions,
             );
             verify();
             if (register && !consoleClaim && !invitation) {
-              await refreshKeys(verify);
+              setPasskeyRevision((revision) => revision + 1);
               setNotice(`${result.name} added. You can use it to sign in.`);
             } else {
               location.assign(
@@ -554,7 +555,11 @@ function AccountApp() {
         },
       );
     } catch (failure) {
-      if (!current.cancelled)
+      if (!current.cancelled) {
+        if (register && (failure as { code?: string }).code === 'account_changed')
+          setPasskeyAccountReset((revision) => revision + 1);
+        if (register && (failure as { status?: number }).status === 428)
+          setPasskeyProofReset((revision) => revision + 1);
         setError(
           failure instanceof DOMException ||
             (failure instanceof Error &&
@@ -564,6 +569,7 @@ function AccountApp() {
               ? failure.message
               : 'Could not use this passkey. Try again or contact the operator.',
         );
+      }
     } finally {
       if (attempt.current === current) {
         attempt.current = null;
@@ -574,6 +580,12 @@ function AccountApp() {
   }
   function signOut() {
     if (!user || !navigation.allow()) return;
+    lockAccountExit();
+  }
+  // A confirmed passkey revocation has already ended access and cannot be
+  // cancelled by a voluntary-departure prompt. Keep the same local-copy choice.
+  function lockAccountExit() {
+    if (!user) return;
     stopDiagnostics();
     clearDashboardNavigation();
     const active = attempt.current;
@@ -584,7 +596,6 @@ function AccountApp() {
     // No request or inventory read precedes local locking.
     setUser(null);
     setLocal(null);
-    setKeys([]);
     setFilePlaces(null);
     setEditorConnection(null);
     setCatalogStatus(null);
@@ -746,27 +757,17 @@ function AccountApp() {
               onSaved={(profile) => setUser({ ...user, ...profile })}
               onSignOut={() => void signOut()}
               passkeys={
-                <section aria-labelledby="passkeys-heading">
-                  <h2 id="passkeys-heading">Your passkeys</h2>
-                  <p>
-                    Add a passkey from another device or password manager so you can sign in there
-                    too.
-                  </p>
-                  {keys.length ? (
-                    <ul className="profile-passkeys">
-                      {keys.map((key) => (
-                        <li key={key.id}>
-                          <strong>{key.name}</strong>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p>No passkeys added yet.</p>
-                  )}
-                  <button className="primary" disabled={busy} onClick={() => void ceremony(true)}>
-                    Add a passkey
-                  </button>
-                </section>
+                <PasskeySettings
+                  key={user.id}
+                  accountId={user.id}
+                  adding={busy}
+                  isAdmin={user.isAdmin}
+                  revision={passkeyRevision}
+                  verificationRequired={passkeyProofReset}
+                  accountChange={passkeyAccountReset}
+                  onAdd={(verifyAccount) => void ceremony(true, verifyAccount)}
+                  onSignedOut={lockAccountExit}
+                />
               }
             />
           ) : user.isAdmin ? (

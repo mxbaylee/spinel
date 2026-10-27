@@ -6,7 +6,8 @@
   "type": "module",
   "description": "Optimistic native Univer synchronization with durable acknowledgments.",
   "exports": {
-    ".": "./index.ts"
+    ".": "./index.ts",
+    "./validation": "./validation.ts"
   },
   "dependencies": {
     "@spinel/sync-transform": "0.0.0"

@@ -317,30 +317,27 @@ test('ordinary passkeys work without Web Locks and an old logout response cannot
 }, info) => {
   const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
   const auth = new AuthStore(db);
-  const user = auth.createUser('No-lock passkey ' + info.testId);
-  const session = auth.createSession(user.id);
+  const operator = auth.createUser('No-lock enrollment operator ' + info.testId, true);
+  const invite = new InvitationService(auth, baseURL!).create(operator.id);
   const context = await browser.newContext({ baseURL });
   await context.addInitScript(() =>
     Object.defineProperty(navigator, 'locks', { value: undefined, configurable: true }),
   );
   const oldPage = await context.newPage();
-  await context.addCookies([
-    {
-      name: COOKIE_NAME,
-      value: session.token,
-      url: baseURL!.replace('http:', 'https:'),
-      secure: true,
-      httpOnly: true,
-      sameSite: 'Strict',
-    },
-  ]);
   const responseReady = deferred(),
     release = deferred();
   let pending: Promise<number> | undefined;
   try {
     const first = await virtualPasskey(context, oldPage);
+    // Initial enrollment uses the real invitation ceremony. An unverified
+    // legacy session cannot add a first passkey after SPN-070.
+    await oldPage.goto(invite.url);
+    await oldPage.getByLabel('Your name').fill('No-lock passkey ' + info.testId);
+    await oldPage.getByRole('button', { name: 'Join with a passkey', exact: true }).click();
+    await expect(oldPage.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
+    const token = (await context.cookies()).find((cookie) => cookie.name === COOKIE_NAME)!.value;
+    const user = auth.user(auth.session(token)!.user_id!)!;
     await oldPage.goto('/profile#passkeys');
-    await oldPage.getByRole('button', { name: 'Add a passkey', exact: true }).click();
     await expect(oldPage.getByRole('listitem').filter({ hasText: 'Passkey' })).toHaveCount(1);
     const credentials = await first.cdp.send('WebAuthn.getCredentials', {
       authenticatorId: first.authenticatorId,
@@ -367,7 +364,7 @@ test('ordinary passkeys work without Web Locks and an old logout response cannot
         ).status,
     );
     await responseReady.promise;
-    expect(auth.session(session.token)).toBeUndefined();
+    expect(auth.session(token)).toBeUndefined();
     const nextPage = await context.newPage();
     const second = await virtualPasskey(context, nextPage);
     for (const credential of credentials.credentials)
@@ -380,7 +377,7 @@ test('ordinary passkeys work without Web Locks and an old logout response cannot
     await expect(nextPage.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
     expect(await nextPage.evaluate(() => navigator.locks)).toBeUndefined();
     const before = (await context.cookies()).find((cookie) => cookie.name === COOKIE_NAME)!.value;
-    expect(before).not.toBe(session.token);
+    expect(before).not.toBe(token);
     expect(auth.session(before)?.user_id).toBe(user.id);
     release.resolve();
     expect(await pending).toBe(204);
@@ -403,22 +400,22 @@ test('a crashed local passkey prompt can reopen and complete authentication and 
   test.setTimeout(90_000);
   const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
   const auth = new AuthStore(db);
-  const user = auth.createUser('Interrupted passkey ' + info.testId);
-  const session = auth.createSession(user.id);
+  const operator = auth.createUser('Interrupted enrollment operator ' + info.testId, true);
+  const invite = new InvitationService(auth, baseURL!).create(operator.id);
   const context = await browser.newContext({ baseURL });
-  await context.addCookies([
-    {
-      name: COOKIE_NAME,
-      value: session.token,
-      url: baseURL!.replace('http:', 'https:'),
-      secure: true,
-      httpOnly: true,
-      sameSite: 'Strict',
-    },
-  ]);
   try {
     const interrupted = await context.newPage();
-    const first = await virtualPasskey(context, interrupted, false);
+    const first = await virtualPasskey(context, interrupted);
+    await interrupted.goto(invite.url);
+    await interrupted.getByLabel('Your name').fill('Interrupted passkey ' + info.testId);
+    await interrupted.getByRole('button', { name: 'Join with a passkey', exact: true }).click();
+    await expect(interrupted.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
+    const token = (await context.cookies()).find((cookie) => cookie.name === COOKIE_NAME)!.value;
+    const user = auth.user(auth.session(token)!.user_id!)!;
+    await first.cdp.send('WebAuthn.setAutomaticPresenceSimulation', {
+      authenticatorId: first.authenticatorId,
+      enabled: false,
+    });
     await interrupted.goto('/profile#passkeys');
     const options = interrupted.waitForResponse(
       (response) =>
@@ -455,7 +452,7 @@ test('a crashed local passkey prompt can reopen and complete authentication and 
     expect(await reopened.evaluate((key) => localStorage.getItem(key), retained.key)).toBe(
       retained.raw,
     );
-    expect(auth.session(session.token)?.user_id).toBe(user.id);
+    expect(auth.session(token)?.user_id).toBe(user.id);
     await virtualPasskey(context, reopened);
     await reopened.goto('/profile#passkeys');
     await expect(
@@ -463,12 +460,12 @@ test('a crashed local passkey prompt can reopen and complete authentication and 
     ).toBeEnabled();
     expect(await reopened.evaluate((key) => localStorage.getItem(key), retained.key)).toBeNull();
     await reopened.getByRole('button', { name: 'Add a passkey', exact: true }).click();
-    await expect(reopened.getByRole('listitem').filter({ hasText: 'Passkey' })).toHaveCount(1);
+    await expect(reopened.getByRole('listitem').filter({ hasText: 'Passkey' })).toHaveCount(2);
     await reopened.getByRole('button', { name: 'Sign out', exact: true }).click();
     await expect(
       reopened.getByRole('button', { name: 'Sign in with a passkey', exact: true }),
     ).toBeVisible();
-    expect(auth.session(session.token)).toBeUndefined();
+    expect(auth.session(token)).toBeUndefined();
     await reopened.getByRole('button', { name: 'Sign in with a passkey', exact: true }).click();
     await expect(reopened.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
     const current = await context.request.get('/api/auth/session');

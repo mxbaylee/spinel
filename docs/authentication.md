@@ -108,7 +108,7 @@ that helper and [the notices](../THIRD-PARTY-NOTICES.md). The temporary
   stale writes or removed credentials fail. Synced passkeys reporting 0 → 0 work.
 - Cancel aborts the browser ceremony immediately and requests server cancellation
   without waiting for the network. Browser error names are translated to retry
-  guidance. No PRF extension or second confirmation ceremony is used.
+  guidance. No PRF extension is used. Sensitive account changes use the separate recent-verification ceremony described below.
 
 SimpleWebAuthn performs WebAuthn cryptographic verification; see its
 [server documentation](https://simplewebauthn.dev/docs/packages/server) and
@@ -125,11 +125,13 @@ phone if that is how the second device will be used.
 Run `npm run passkey:check` in this branch. This separate script creates a
 disposable database in the OS temporary directory and serves the built app only
 on `127.0.0.1:3102`. It prints a random one-use localhost link valid for five minutes
-that opens Settings already signed in as a fixture user. The application server
+that opens a real invitation for a fixture member. Register the first passkey
+through that invitation, then open Your profile → Passkeys to add the others. The application server
 has no such link or environment-based authentication bypass. This fixture does
 not touch `data/spinel.sqlite` and is not deployed.
 
-1. Open the printed link in a browser with your passkey managers installed.
+1. Open the printed invitation in a browser with your passkey managers installed
+   and register the first passkey.
 2. Add one passkey using the browser, one using 1Password and one using Proton
    Pass. Confirm the provider labels in Settings (some browsers return a generic
    AAGUID, displayed as “Passkey”; numbered names distinguish duplicates).
@@ -141,3 +143,33 @@ not touch `data/spinel.sqlite` and is not deployed.
 
 Restarting the script creates a new fixture account, so use its latest entry link
 and newly registered credentials. It cannot restore an earlier fixture session.
+
+## Manage your own passkeys and sessions (SPN-070)
+
+Your profile → Passkeys lists named credentials and last use. More → Remove
+names the credential and explains which sessions end. You must keep at least one
+passkey; add a replacement before removing your last one. Removing the credential
+that signed in this browser also signs it out. A synced credential may represent
+several devices. Older sessions without credential attribution also end.
+
+Sign out other devices ends your other browser sessions and their editor access,
+while keeping this browser signed in. It leaves passkeys usable for future sign-in;
+remove the lost device's credential as well. Assistant connections and personal
+access tokens are separate and remain managed in their existing account section.
+
+Adding/removing passkeys and signing out other devices require a server-verified
+passkey check within five minutes in the current session. When it is stale, verify
+with an existing passkey and then confirm the action. The ceremony cannot switch
+accounts, rotate the current cookie or extend its expiry, and preserves pending
+assistant consent. Migrated sessions start without fresh proof. Cancellation does
+not apply the action. If a submitted change's outcome cannot be confirmed, reload
+the profile before trying again; it may already have been saved.
+
+If another tab changes accounts, an old profile must reload before making a
+security change. The browser fences delayed responses, and these requests carry
+the displayed account as an expectation that the server checks against the
+authenticated cookie. That expectation grants no authority. This also protects
+the account when browser storage is unavailable.
+
+See [decisions and verification](implementation/SPN-070.md). These controls use
+cookie authentication and same-origin JSON requests, not assistant credentials.

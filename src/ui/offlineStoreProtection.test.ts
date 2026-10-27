@@ -70,7 +70,7 @@ function cleanOutbox(): OfflineOutbox {
 function pendingCopy() {
   const outbox = cleanOutbox();
   outbox.checkpoint.buffer = [
-    [{ id: 'doc.mutation.rich-text-editing', params: { text: 'Keep this work' } }],
+    [{ id: 'doc.mutation.rich-text-editing', params: { unitId: itemId, text: 'Keep this work' } }],
   ];
   return { ...cleanCopy(), outbox };
 }
@@ -148,11 +148,16 @@ test('only a known empty queue is clean; in-flight native work is retained even 
   expect(hasOfflineEdits(clean)).toBe(false);
   expect(hasStoredEdits({ ...cleanCopy(), outbox: clean })).toBe(false);
   clean.checkpoint.inflight = [
-    { id: 'doc.mutation.rich-text-editing', params: { text: 'Not yet sent' } },
+    { id: 'doc.mutation.rich-text-editing', params: { unitId: itemId, text: 'Not yet sent' } },
   ];
-  expect(isKnownOfflineOutbox(clean)).toBe(true);
+  expect(isKnownOfflineOutbox(clean)).toBe(false);
   expect(hasOfflineEdits(clean)).toBe(true);
   expect(hasStoredEdits({ ...cleanCopy(), outbox: clean })).toBe(true);
+  expect(downloadSummary({ ...cleanCopy(), outbox: clean }, account, itemId)).toMatchObject({
+    pending: true,
+    uncertain: true,
+    available: false,
+  });
 });
 
 const unknownQueues = [
@@ -167,6 +172,9 @@ const unknownQueues = [
   'null',
   'snapshot-unit',
   'inflight',
+  'missing-recovery-without-failure',
+  'recovery-snapshot-without-failure',
+  'missing-and-present-recovery',
 ] as const;
 
 function unknownQueue(kind: (typeof unknownQueues)[number]): unknown {
@@ -209,6 +217,23 @@ function unknownQueue(kind: (typeof unknownQueues)[number]): unknown {
       };
     case 'inflight':
       return { ...outbox, checkpoint: { ...outbox.checkpoint, inflight: null } };
+    case 'missing-recovery-without-failure':
+      return { ...outbox, checkpoint: { ...outbox.checkpoint, recoveryMissing: true } };
+    case 'recovery-snapshot-without-failure':
+      return {
+        ...outbox,
+        checkpoint: { ...outbox.checkpoint, recoverySnapshot: outbox.checkpoint.snapshot },
+      };
+    case 'missing-and-present-recovery':
+      return {
+        ...outbox,
+        checkpoint: {
+          ...outbox.checkpoint,
+          failure: 'refused',
+          recoveryMissing: true,
+          recoverySnapshot: outbox.checkpoint.snapshot,
+        },
+      };
   }
 }
 
@@ -269,9 +294,15 @@ const uncertainRecords = [
   'writable-viewer',
   'space-is-item',
   'sheet-without-sheets',
+  'sheet-null-child',
+  'sheet-zero-rows',
   'doc-with-sheets',
   'bundle-snapshot-identity',
   'recovery-snapshot-identity',
+  'recovery-doc-body',
+  'recovery-doc-stream',
+  'recovery-sheet-order',
+  'recovery-sheet-order-entry',
   'null',
 ] as const;
 function uncertainRecord(kind: (typeof uncertainRecords)[number]): unknown {
@@ -289,9 +320,20 @@ function uncertainRecord(kind: (typeof uncertainRecords)[number]): unknown {
   if (kind === 'space-is-item') item.bundle.spaceId = itemId;
   if (kind === 'sheet-without-sheets') {
     item.bundle.kind = 'sheet';
-    item.bundle.snapshot = { id: itemId, sheets: {} } as StoredItem['bundle']['snapshot'];
+    item.bundle.snapshot = {
+      id: itemId,
+      sheets: {},
+    } as unknown as StoredItem['bundle']['snapshot'];
     item.outbox = cleanOutbox();
     item.outbox.checkpoint.snapshot = { id: itemId } as OfflineOutbox['checkpoint']['snapshot'];
+  }
+  if (kind === 'sheet-null-child' || kind === 'sheet-zero-rows') {
+    item.kind = item.bundle.kind = 'sheet';
+    item.bundle.snapshot = {
+      id: itemId,
+      sheets: { tab: kind === 'sheet-null-child' ? null : { rowCount: 0 } },
+      sheetOrder: ['tab'],
+    } as unknown as StoredItem['bundle']['snapshot'];
   }
   if (kind === 'doc-with-sheets') Object.assign(item.bundle.snapshot, { sheets: {} });
   if (kind === 'bundle-snapshot-identity') item.bundle.snapshot.id = 'another-item';
@@ -302,6 +344,27 @@ function uncertainRecord(kind: (typeof uncertainRecords)[number]): unknown {
       ...structuredClone(item.bundle.snapshot),
       id: 'another-unit',
     };
+  }
+  if (kind.startsWith('recovery-doc-') || kind.startsWith('recovery-sheet-')) {
+    if (kind.startsWith('recovery-sheet-')) {
+      item.kind = 'sheet';
+      item.bundle.kind = 'sheet';
+      item.bundle.snapshot = {
+        id: itemId,
+        sheets: {},
+        sheetOrder: [],
+      } as unknown as StoredItem['bundle']['snapshot'];
+    }
+    item.outbox = cleanOutbox();
+    item.outbox.checkpoint.snapshot = structuredClone(item.bundle.snapshot);
+    item.outbox.checkpoint.failure = 'refused';
+    const recovery = structuredClone(item.bundle.snapshot) as unknown as Record<string, unknown>;
+    if (kind === 'recovery-doc-body') delete recovery.body;
+    if (kind === 'recovery-doc-stream') recovery.body = { dataStream: 42 };
+    if (kind === 'recovery-sheet-order') delete recovery.sheetOrder;
+    if (kind === 'recovery-sheet-order-entry') recovery.sheetOrder = [42];
+    item.outbox.checkpoint.recoverySnapshot =
+      recovery as unknown as OfflineOutbox['checkpoint']['snapshot'];
   }
   return item;
 }

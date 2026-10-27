@@ -139,7 +139,8 @@ export class ConsoleRecovery {
         expectedRPID: this.rpID,
         requireUserVerification: true,
       });
-      if (!result.verified) throw new AuthError(400, 'Could not verify this passkey. Try again.');
+      if (!result.verified || !result.registrationInfo?.userVerified)
+        throw new AuthError(400, 'Could not verify this passkey. Try again.');
       const next = this.store.transaction(() => {
         this.active(id);
         // Check before revocation: this browser may still have a target-admin session.
@@ -167,6 +168,7 @@ export class ConsoleRecovery {
           undefined,
           result.registrationInfo!.credential.id,
         );
+        this.store.markVerified(created.session, result.registrationInfo!.credential.id);
         this.store.revokeSession(session.token_hash);
         return created;
       });

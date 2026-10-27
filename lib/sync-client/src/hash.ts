@@ -7,19 +7,10 @@ import {
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
 import { ClientError, MAX_PENDING_BYTES } from './types.ts';
 import type { NativeSnapshot, Touched } from './types.ts';
+import { byteBudget } from './budget.ts';
+export { encodedBytes, byteBudget } from './budget.ts';
 
 const encoder = new TextEncoder();
-export const encodedBytes = (value: unknown) => encoder.encode(JSON.stringify(value)).byteLength;
-
-/** Charge expanded values before cloning them or retaining a lazy cell cache. */
-export function byteBudget(limit = MAX_PENDING_BYTES) {
-  let remaining = limit;
-  return (value: unknown) => {
-    remaining -= encodedBytes(value);
-    if (remaining < 0) throw new ClientError('capacity');
-  };
-}
-
 /** Same canonical SHA-256 input and expansion budget as the server's touched hash. */
 export async function hashTouched(snapshot: NativeSnapshot, touched: Touched): Promise<string> {
   let input: string;

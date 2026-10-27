@@ -188,7 +188,8 @@ export class InvitationService {
         expectedRPID: this.rpID,
         requireUserVerification: true,
       });
-      if (!result.verified) throw new AuthError(400, 'Could not verify this passkey. Try again.');
+      if (!result.verified || !result.registrationInfo?.userVerified)
+        throw new AuthError(400, 'Could not verify this passkey. Try again.');
       return this.store.transaction(() => {
         this.active(token);
         this.store.assertPending(challenge);
@@ -218,6 +219,7 @@ export class InvitationService {
           undefined,
           result.registrationInfo!.credential.id,
         );
+        this.store.markVerified(next.session, result.registrationInfo!.credential.id);
         this.store.revokeSession(session.token_hash);
         return { ...next, user: this.store.user(invite.for_user_id)! };
       });

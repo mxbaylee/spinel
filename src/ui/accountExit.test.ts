@@ -503,103 +503,109 @@ test('api fences before dispatch and keeps a stale dispatched response owned thr
   expect(settled).toBe(true);
 });
 
-test('cancelled delayed options retain their challenge cleanup until its response fully settles', async () => {
-  // Use the server's actual challenge identifier generator, not an account UUID.
-  const returnedChallenge = randomToken();
-  let queue: Promise<unknown> = Promise.resolve();
-  vi.stubGlobal('navigator', {
-    locks: {
-      request: (_name: string, run: () => Promise<unknown>) => {
-        const next = queue.then(run, run);
-        queue = next.catch(() => {});
-        return next;
+test.each(['authentication', 'registration'] as const)(
+  'cancelled delayed %s options retain account binding and challenge cleanup until the response settles',
+  async (kind) => {
+    // Use the server's actual challenge identifier generator, not an account UUID.
+    const returnedChallenge = randomToken();
+    let queue: Promise<unknown> = Promise.resolve();
+    vi.stubGlobal('navigator', {
+      locks: {
+        request: (_name: string, run: () => Promise<unknown>) => {
+          const next = queue.then(run, run);
+          queue = next.catch(() => {});
+          return next;
+        },
       },
-    },
-  });
-  const first = await client(),
-    second = await client();
-  const { api } = await import('../../web/api.ts');
-  const optionsSent = deferred(),
-    cancelSent = deferred();
-  const optionsResponse = deferred<Response>(),
-    cancelResponse = deferred<Response>();
-  vi.mocked(fetch).mockImplementation((path) => {
-    if (String(path).endsWith('/options')) {
-      optionsSent.resolve();
-      return optionsResponse.promise;
-    }
-    cancelSent.resolve();
-    return cancelResponse.promise;
-  });
-  let finishOptions!: () => void;
-  const stream = new ReadableStream({
-    start(controller) {
-      finishOptions = () => {
-        controller.enqueue(
-          new TextEncoder().encode(JSON.stringify({ challengeId: returnedChallenge, options: {} })),
-        );
-        controller.close();
-      };
-    },
-  });
-  let current = true;
-  let challengeId: string | undefined;
-  const abandoned = new DOMException('The passkey request ended.', 'AbortError');
-  const openPrompt = vi.fn(async () => {});
-  const authentication = first.withAuthentication(
-    true,
-    () => {
-      if (!current) throw abandoned;
-    },
-    async (verify, prompt) => {
-      try {
-        const options = await api<{ challengeId: string }>(
-          'authentication/options',
-          {},
-          verify,
-          (id) => {
-            challengeId = id;
-          },
-        );
-        challengeId = options.challengeId;
-        await prompt(openPrompt);
-      } catch (failure) {
-        if (challengeId) await api('cancel', { challengeId });
-        throw failure;
+    });
+    const first = await client(),
+      second = await client();
+    const { api } = await import('../../web/api.ts');
+    const optionsSent = deferred(),
+      cancelSent = deferred();
+    const optionsResponse = deferred<Response>(),
+      cancelResponse = deferred<Response>();
+    vi.mocked(fetch).mockImplementation((path) => {
+      if (String(path).endsWith('/options')) {
+        optionsSent.resolve();
+        return optionsResponse.promise;
       }
-    },
-  );
-  const rejected = expect(authentication).rejects.toBe(abandoned);
-  await optionsSent.promise;
-  current = false;
-  optionsResponse.resolve(new Response(stream, { status: 200 }));
-  await Promise.resolve();
-  await Promise.resolve();
-  expect(challengeId).toBeUndefined();
-  expect(fetch).toHaveBeenCalledTimes(1);
-  finishOptions();
-  await cancelSent.promise;
-  expect(challengeId).toBe(returnedChallenge);
-  expect(openPrompt).not.toHaveBeenCalled();
-  expect(fetch).toHaveBeenNthCalledWith(
-    2,
-    '/api/auth/cancel',
-    expect.objectContaining({
-      method: 'POST',
-      body: JSON.stringify({ challengeId: returnedChallenge }),
-    }),
-  );
-  const marker = [...values.keys()].find((key) => key.startsWith(ACTIVE))!;
-  expect(JSON.parse(values.get(marker)!).phase).toBe('network');
-  const next = vi.fn(async () => 'ready');
-  const reopened = second.withAccountRead(() => {}, next);
-  await Promise.resolve();
-  expect(next).not.toHaveBeenCalled();
-  cancelResponse.resolve(new Response(null, { status: 204 }));
-  await rejected;
-  await expect(reopened).resolves.toBe('ready');
-  expect([...values.keys()].filter((key) => key.startsWith(ACTIVE))).toEqual([]);
-});
+      cancelSent.resolve();
+      return cancelResponse.promise;
+    });
+    let finishOptions!: () => void;
+    const stream = new ReadableStream({
+      start(controller) {
+        finishOptions = () => {
+          controller.enqueue(
+            new TextEncoder().encode(
+              JSON.stringify({ challengeId: returnedChallenge, options: {} }),
+            ),
+          );
+          controller.close();
+        };
+      },
+    });
+    let current = true;
+    let challengeId: string | undefined;
+    const abandoned = new DOMException('The passkey request ended.', 'AbortError');
+    const openPrompt = vi.fn(async () => {});
+    const authentication = first.withAuthentication(
+      kind === 'authentication',
+      () => {
+        if (!current) throw abandoned;
+      },
+      async (verify, prompt) => {
+        try {
+          const options = await api<{ challengeId: string }>(`${kind}/options`, {}, verify, {
+            accountId: kind === 'registration' ? A : undefined,
+            onAbandonedChallenge: (id) => {
+              challengeId = id;
+            },
+          });
+          challengeId = options.challengeId;
+          await prompt(openPrompt);
+        } catch (failure) {
+          if (challengeId) await api('cancel', { challengeId });
+          throw failure;
+        }
+      },
+    );
+    const rejected = expect(authentication).rejects.toBe(abandoned);
+    await optionsSent.promise;
+    const headers = new Headers(vi.mocked(fetch).mock.calls[0]![1]?.headers);
+    expect(headers.get('X-Spinel-Account')).toBe(kind === 'registration' ? A : null);
+    expect(headers.get('Content-Type')).toBe('application/json');
+    current = false;
+    optionsResponse.resolve(new Response(stream, { status: 200 }));
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(challengeId).toBeUndefined();
+    expect(fetch).toHaveBeenCalledTimes(1);
+    finishOptions();
+    await cancelSent.promise;
+    expect(challengeId).toBe(returnedChallenge);
+    expect(openPrompt).not.toHaveBeenCalled();
+    expect(fetch).toHaveBeenNthCalledWith(
+      2,
+      '/api/auth/cancel',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({ challengeId: returnedChallenge }),
+      }),
+    );
+    const marker = [...values.keys()].find((key) => key.startsWith(ACTIVE))!;
+    expect(JSON.parse(values.get(marker)!).phase).toBe('network');
+    const next = vi.fn(async () => 'ready');
+    const reopened = second.withAccountRead(() => {}, next);
+    await Promise.resolve();
+    expect(next).not.toHaveBeenCalled();
+    cancelResponse.resolve(new Response(null, { status: 204 }));
+    await rejected;
+    await expect(reopened).resolves.toBe('ready');
+    expect([...values.keys()].filter((key) => key.startsWith(ACTIVE))).toEqual([]);
+  },
+);
 
 test.each([
   ['account UUID', B],
@@ -621,7 +627,7 @@ test.each([
       () => {
         if (!current) throw abandoned;
       },
-      cleanup,
+      { onAbandonedChallenge: cleanup },
     );
     const rejected = expect(options).rejects.toBe(abandoned);
     current = false;

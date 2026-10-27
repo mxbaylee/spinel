@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { validateNativeSnapshot, validateRecoverySnapshot } from '@spinel/sync-client';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import type {
   OfflineCatalog,
@@ -125,7 +126,9 @@ function pendingCopy() {
       snapshot: item.bundle.snapshot,
       sent: null,
       inflight: [],
-      buffer: [[{ id: 'doc.mutation.insert-text', params: { text: 'Saved here' } }]],
+      buffer: [
+        [{ id: 'doc.mutation.insert-text', params: { unitId: itemId, text: 'Saved here' } }],
+      ],
     },
   };
   return item;
@@ -193,6 +196,122 @@ test('logical bytes include UTF-8 metadata, the full checkpoint, and every store
   expect(persist).not.toHaveBeenCalled();
 });
 
+test.each(['missing-without-failure', 'snapshot-without-failure', 'missing-and-present'] as const)(
+  'native recovery metadata that is %s stays unavailable and retains exact pending bytes',
+  async (damage) => {
+    const item = pendingCopy();
+    const checkpoint = item.outbox!.checkpoint;
+    checkpoint.buffer = [];
+    if (damage !== 'snapshot-without-failure') checkpoint.recoveryMissing = true;
+    if (damage !== 'missing-without-failure')
+      checkpoint.recoverySnapshot = structuredClone(checkpoint.snapshot);
+    if (damage === 'missing-and-present') checkpoint.failure = 'refused';
+    expect(() => validateRecoverySnapshot(checkpoint)).toThrow();
+    const image = addImage(item);
+    const { store, saved } = existing(item, [image]);
+    const before = structuredClone(saved);
+    const bytes = Buffer.byteLength(JSON.stringify(item), 'utf8') + image.bytes.byteLength;
+    const result = await (await api()).readDeviceInventory(account, verify);
+    expect(result).toMatchObject({
+      state: 'ready',
+      bytes,
+      items: [{ itemId, available: false, pending: true, uncertain: true, bytes }],
+    });
+    expect(saved).toEqual(before);
+    expect(store.removeDeviceItem).not.toHaveBeenCalled();
+  },
+);
+
+test.each([
+  ['doc-valid', true],
+  ['doc-body-missing', false],
+  ['doc-stream-invalid', false],
+  ['sheet-valid', true],
+  ['sheet-order-missing', false],
+  ['sheet-order-invalid', false],
+  ['sheet-null-child', false],
+  ['sheet-zero-rows', false],
+] as const)(
+  'a %s recovery snapshot agrees with native admission and preserves bytes',
+  async (shape, available) => {
+    const item = pendingCopy();
+    const checkpoint = item.outbox!.checkpoint;
+    checkpoint.buffer = [];
+    checkpoint.failure = 'refused';
+    if (shape.startsWith('sheet')) {
+      item.kind = 'sheet';
+      item.bundle.kind = 'sheet';
+      item.bundle.snapshot = {
+        id: itemId,
+        sheets: {},
+        sheetOrder: [],
+      } as unknown as StoredItem['bundle']['snapshot'];
+      checkpoint.snapshot = structuredClone(item.bundle.snapshot);
+    }
+    const recovery = structuredClone(checkpoint.snapshot) as unknown as Record<string, unknown>;
+    if (shape === 'doc-body-missing') delete recovery.body;
+    if (shape === 'doc-stream-invalid') recovery.body = { dataStream: 42 };
+    if (shape === 'sheet-order-missing') delete recovery.sheetOrder;
+    if (shape === 'sheet-order-invalid') recovery.sheetOrder = [42];
+    if (shape === 'sheet-null-child') recovery.sheets = { tab: null };
+    if (shape === 'sheet-zero-rows') recovery.sheets = { tab: { rowCount: 0 } };
+    checkpoint.recoverySnapshot = recovery as unknown as typeof checkpoint.snapshot;
+    if (available) expect(() => validateRecoverySnapshot(checkpoint)).not.toThrow();
+    else expect(() => validateRecoverySnapshot(checkpoint)).toThrow();
+    const image = addImage(item);
+    const { store, saved } = existing(item, [image]);
+    const before = structuredClone(saved);
+    const bytes = Buffer.byteLength(JSON.stringify(item), 'utf8') + image.bytes.byteLength;
+    const result = await (await api()).readDeviceInventory(account, verify);
+    expect(result).toMatchObject({
+      state: 'ready',
+      bytes,
+      items: [{ itemId, available, pending: true, bytes }],
+    });
+    if (!available) expect(result.items[0].uncertain).toBe(true);
+    expect(saved).toEqual(before);
+    expect(store.removeDeviceItem).not.toHaveBeenCalled();
+  },
+);
+
+test.each(
+  (['bundle', 'checkpoint'] as const).flatMap((place) =>
+    (['valid', 'null-child', 'zero-rows'] as const).map((shape) => [place, shape] as const),
+  ),
+)(
+  'native %s snapshot admission agrees for %s geometry without changing stored bytes',
+  async (place, shape) => {
+    const item = pendingCopy();
+    item.kind = item.bundle.kind = 'sheet';
+    item.bundle.snapshot = {
+      id: itemId,
+      sheets: { tab: { id: 'tab', rowCount: 10, columnCount: 10 } },
+      sheetOrder: ['tab'],
+    } as unknown as StoredItem['bundle']['snapshot'];
+    item.outbox!.checkpoint.snapshot = structuredClone(item.bundle.snapshot);
+    item.outbox!.checkpoint.buffer = [];
+    const target = place === 'bundle' ? item.bundle.snapshot : item.outbox!.checkpoint.snapshot;
+    if (shape === 'null-child') Object.assign(target, { sheets: { tab: null } });
+    if (shape === 'zero-rows') Object.assign(target, { sheets: { tab: { rowCount: 0 } } });
+    const available = shape === 'valid';
+    if (available) expect(() => validateNativeSnapshot(target, 'sheet')).not.toThrow();
+    else expect(() => validateNativeSnapshot(target, 'sheet')).toThrow();
+    const image = addImage(item);
+    const { store, saved } = existing(item, [image]);
+    const before = structuredClone(saved);
+    const bytes = Buffer.byteLength(JSON.stringify(item), 'utf8') + image.bytes.byteLength;
+    const result = await (await api()).readDeviceInventory(account, verify);
+    expect(result).toMatchObject({
+      state: 'ready',
+      bytes,
+      items: [{ itemId, available, pending: !available, bytes }],
+    });
+    if (!available) expect(result.items[0].uncertain).toBe(true);
+    expect(saved).toEqual(before);
+    expect(store.removeDeviceItem).not.toHaveBeenCalled();
+  },
+);
+
 test('unmeasurable bytes remain unknown rather than reporting a misleading zero', async () => {
   const { storedItemBytes } = await api();
   const cyclic: { self?: unknown } = {};
@@ -201,6 +320,50 @@ test('unmeasurable bytes remain unknown rather than reporting a misleading zero'
   expect(storedItemBytes(undefined, [])).toBeNull();
   expect(storedItemBytes({}, [{ bytes: 'damaged' as unknown as Uint8Array }])).toBeNull();
 });
+
+test.each([
+  'future-revision',
+  'retry-id',
+  'extra-envelope-field',
+  'foreign-mutation',
+  'inflight-without-envelope',
+  'oversize-envelope',
+] as const)(
+  'a native-refused %s retry queue remains unavailable with all stored bytes retained',
+  async (damage) => {
+    const item = pendingCopy();
+    const checkpoint = item.outbox!.checkpoint;
+    const mutation = checkpoint.buffer[0][0];
+    checkpoint.buffer = [];
+    checkpoint.inflight = [mutation];
+    checkpoint.sent = {
+      type: 'submit',
+      mutationId: 'retry-identity',
+      baseRevision: checkpoint.revision,
+      mutations: [mutation],
+    };
+    if (damage === 'future-revision') checkpoint.sent.baseRevision++;
+    if (damage === 'retry-id') checkpoint.sent.mutationId = 'not a retry id';
+    if (damage === 'extra-envelope-field') checkpoint.sent.expectedRevision = checkpoint.revision;
+    if (damage === 'foreign-mutation') mutation.params.unitId = 'another-unit';
+    if (damage === 'inflight-without-envelope') checkpoint.sent = null;
+    if (damage === 'oversize-envelope') mutation.params.text = 'x'.repeat(65_536);
+    const { validateCheckpoint } = await import('@spinel/sync-client/validation');
+    expect(() => validateCheckpoint(checkpoint, itemId, checkpoint.revision)).toThrow();
+    const image = addImage(item);
+    const { store, saved } = existing(item, [image]);
+    const before = structuredClone(saved);
+    const bytes = Buffer.byteLength(JSON.stringify(item), 'utf8') + image.bytes.byteLength;
+    const result = await (await api()).readDeviceInventory(account, verify);
+    expect(result).toMatchObject({
+      state: 'ready',
+      bytes,
+      items: [{ itemId, available: false, pending: true, uncertain: true, bytes }],
+    });
+    expect(saved).toEqual(before);
+    expect(store.removeDeviceItem).not.toHaveBeenCalled();
+  },
+);
 
 test.each([
   'missing-user',
@@ -426,6 +589,8 @@ test.each(['account', 'item', 'space', 'unit', 'revision-offset'] as const)(
       outbox.unitId = 'foreign-unit';
       outbox.checkpoint.unitId = 'foreign-unit';
       outbox.checkpoint.snapshot = { ...structuredClone(item.bundle.snapshot), id: 'foreign-unit' };
+      for (const mutation of outbox.checkpoint.buffer.flat())
+        mutation.params.unitId = 'foreign-unit';
     }
     const before = structuredClone(item);
     const { store } = existing(item);
@@ -489,8 +654,13 @@ test.each([
     if (problem === 'zero-revision') item.outbox!.checkpoint.revision = 0;
     if (problem === 'sheet-base') {
       item.bundle.kind = 'sheet';
-      item.bundle.snapshot = { id: itemId, sheets: {} } as StoredItem['bundle']['snapshot'];
-      item.outbox!.checkpoint.snapshot = { id: itemId } as StoredItem['bundle']['snapshot'];
+      item.bundle.snapshot = {
+        id: itemId,
+        sheets: {},
+      } as unknown as StoredItem['bundle']['snapshot'];
+      item.outbox!.checkpoint.snapshot = {
+        id: itemId,
+      } as unknown as StoredItem['bundle']['snapshot'];
     }
     if (problem === 'doc-kind') Object.assign(item.outbox!.checkpoint.snapshot, { sheets: {} });
     if (problem === 'bundle-identity') item.bundle.snapshot.id = 'foreign-snapshot';

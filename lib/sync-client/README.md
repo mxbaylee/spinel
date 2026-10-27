@@ -6,6 +6,17 @@ native mutation capture and touched-value verification. The host owns transport,
 authentication, access rules, presence, editor creation and reload UI. It has no
 imports from Spinel's application or the server package at runtime.
 
+`@spinel/sync-client/validation` is an explicit pure admission entry for hosts
+that inspect retained data before loading a compatible native editor. It exposes
+the same `validateNativeSnapshot`, `validateRecoverySnapshot` and `validateCheckpoint`
+functions as the primary `index.ts`, including geometry, checkpoint structure and
+byte budgets, with no runtime SDK or transform dependency. Native mutation semantics
+are still checked by the transform engine when a queue is restored. This narrow
+subpath is the SPN-055 exception to the normal
+single-entry convention: duplicating native admission in an offline inventory
+allowed malformed recovery data to be advertised as available. The primary
+entry and its existing exports stay compatible; no dependency is added.
+
 ## Native editor integration
 
 Create the visible Sheet or Doc with the OSS local history services enabled
@@ -164,7 +175,8 @@ cross-tab ownership remain the host's responsibility.
 
 ### Restoring an offline queue
 
-Call `validateRecoverySnapshot(checkpoint)` and choose
+Call `validateCheckpoint(checkpoint, unitId, revision)` to admit the retained queue
+and recovery flags without loading the native runtime, then choose
 `checkpoint.recoverySnapshot ?? checkpoint.snapshot` for the visible unit.
 Before creating any visible native unit, call `validateNativeSnapshot(snapshot, kind)`
 to bound its bytes and compact geometry before the SDK allocates a model.

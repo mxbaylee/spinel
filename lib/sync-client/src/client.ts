@@ -7,7 +7,9 @@ import {
   UnsupportedMutationError,
 } from '@spinel/sync-transform';
 import type { Mutation } from '@spinel/sync-transform';
-import { byteBudget, encodedBytes, hashTouched } from './hash.ts';
+import { byteBudget, encodedBytes, envelopeBytes } from './budget.ts';
+import { clientFailures as failures, validateCheckpoint, validRevision } from './checkpoint.ts';
+import { hashTouched } from './hash.ts';
 import { validateRecoverySnapshot } from './recovery.ts';
 import {
   ClientError,
@@ -30,20 +32,8 @@ import type {
 } from './types.ts';
 
 const clone = <T>(value: T): T => structuredClone(value);
-const validRevision = (value: number) => Number.isSafeInteger(value) && value >= 1;
 const enabled = (value: boolean | (() => boolean) | undefined) =>
   typeof value === 'function' ? value() : Boolean(value);
-const failures = new Set<ClientFailure>([
-  'unsupported',
-  'refused',
-  'stale',
-  'divergence',
-  'unavailable',
-  'malformed',
-  'capacity',
-  'retry-conflict',
-  'invariant',
-]);
 function failureOf(error: unknown): ClientFailure {
   if (error instanceof ClientError) return error.reason;
   if (error instanceof UnsupportedMutationError) return 'unsupported';
@@ -133,7 +123,7 @@ export class SyncClient {
     if (this.disposed || !mutations.length) return;
     if (this.reason) return;
     try {
-      if (mutations.length > MAX_BATCH_MUTATIONS || this.envelopeBytes(mutations) > MAX_WIRE_BYTES)
+      if (mutations.length > MAX_BATCH_MUTATIONS || envelopeBytes(mutations) > MAX_WIRE_BYTES)
         throw new ClientError('capacity');
       const copied = clone([...mutations]);
       const pending = [...this.inflight, ...this.buffer.flat()];
@@ -144,7 +134,7 @@ export class SyncClient {
       if (encodedBytes([...this.buffer, copied]) > MAX_PENDING_BYTES)
         throw new ClientError('capacity');
       // One group is never cut in two, including an absolute write and its tail.
-      if (this.envelopeBytes(copied) > MAX_WIRE_BYTES) throw new ClientError('capacity');
+      if (envelopeBytes(copied) > MAX_WIRE_BYTES) throw new ClientError('capacity');
       this.buffer.push(copied);
       void this.changed();
       this.schedule();
@@ -308,60 +298,9 @@ export class SyncClient {
   }
 
   private restore(checkpoint: ClientCheckpoint): void {
-    if (
-      !checkpoint ||
-      checkpoint.version !== 1 ||
-      checkpoint.unitId !== this.options.unitId ||
-      checkpoint.revision !== this.revision ||
-      !checkpoint.snapshot ||
-      checkpoint.snapshot.id !== this.options.unitId ||
-      !Array.isArray(checkpoint.inflight) ||
-      !Array.isArray(checkpoint.buffer) ||
-      checkpoint.buffer.some((group) => !Array.isArray(group) || !group.length) ||
-      (checkpoint.failure !== undefined && !failures.has(checkpoint.failure))
-    )
-      throw new ClientError('malformed');
-    validateRecoverySnapshot(checkpoint);
-    byteBudget()(checkpoint.snapshot);
-    if (
-      checkpoint.inflight.length > 8192 ||
-      checkpoint.buffer.length > 8192 ||
-      checkpoint.buffer.some((group) => group.length > MAX_BATCH_MUTATIONS) ||
-      checkpoint.inflight.length +
-        checkpoint.buffer.reduce((count, group) => count + group.length, 0) >
-        8192
-    )
-      throw new ClientError('capacity');
+    validateCheckpoint(checkpoint, this.options.unitId, this.revision);
     const pending = [...checkpoint.inflight, ...checkpoint.buffer.flat()];
-    if (pending.length > 8192 || encodedBytes(pending) > MAX_PENDING_BYTES)
-      throw new ClientError('capacity');
     const sent = checkpoint.sent;
-    if (
-      sent !== null &&
-      (!sent ||
-        sent.type !== 'submit' ||
-        typeof sent.mutationId !== 'string' ||
-        !/^[A-Za-z0-9:_-]{1,128}$/.test(sent.mutationId) ||
-        !validRevision(sent.baseRevision) ||
-        sent.baseRevision > this.revision ||
-        !Array.isArray(sent.mutations) ||
-        !sent.mutations.length ||
-        sent.mutations.length > MAX_BATCH_MUTATIONS ||
-        sent.expectedRevision !== undefined ||
-        Object.keys(sent).some(
-          (key) => !['type', 'mutationId', 'baseRevision', 'mutations'].includes(key),
-        ) ||
-        encodedBytes(sent) > MAX_WIRE_BYTES)
-    )
-      throw new ClientError('malformed');
-    if (!sent && checkpoint.inflight.length) throw new ClientError('malformed');
-    for (const group of checkpoint.buffer)
-      if (group.length > MAX_BATCH_MUTATIONS || this.envelopeBytes(group) > MAX_WIRE_BYTES)
-        throw new ClientError('capacity');
-    // Root targets are identity, whereas nested Formula/custom IDs are data.
-    for (const mutation of [...pending, ...(sent?.mutations ?? [])])
-      if (!mutation || mutation.params?.unitId !== this.options.unitId)
-        throw new ClientError('malformed');
     transform(pending, [], 'right', { cells: this.options.confirmed.cells() });
     this.sent = clone(sent);
     this.inflight = clone(checkpoint.inflight);
@@ -388,16 +327,6 @@ export class SyncClient {
     this.options.confirmed.dispose();
   }
 
-  private envelopeBytes(mutations: readonly Mutation[]): number {
-    return encodedBytes({
-      type: 'submit',
-      mutationId: '00000000-0000-4000-8000-000000000000',
-      baseRevision: Number.MAX_SAFE_INTEGER,
-      expectedRevision: Number.MAX_SAFE_INTEGER,
-      mutations,
-    });
-  }
-
   private schedule(): void {
     if (this.timer || this.sent || this.reason || !this.connected || this.awaitingResume) return;
     this.timer = setTimeout(() => {
@@ -422,7 +351,7 @@ export class SyncClient {
     let groups = 0;
     for (const group of this.buffer) {
       const next = [...mutations, ...group];
-      if (next.length > MAX_BATCH_MUTATIONS || this.envelopeBytes(next) > MAX_WIRE_BYTES) break;
+      if (next.length > MAX_BATCH_MUTATIONS || envelopeBytes(next) > MAX_WIRE_BYTES) break;
       mutations.push(...group);
       groups++;
     }
@@ -589,7 +518,7 @@ export class SyncClient {
     if (
       buffer.length + inflight.length > 8192 ||
       encodedBytes([inflight, buffer]) > MAX_PENDING_BYTES ||
-      groups.some((group) => this.envelopeBytes(group) > MAX_WIRE_BYTES)
+      groups.some((group) => envelopeBytes(group) > MAX_WIRE_BYTES)
     )
       throw new ClientError('capacity');
     this.options.confirmed.apply(edit.mutations);

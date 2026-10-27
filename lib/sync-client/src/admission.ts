@@ -1,6 +1,6 @@
 import type { IWorkbookData, Workbook } from '@univerjs/core';
 import type { Mutation } from '@spinel/sync-transform';
-import { byteBudget } from './hash.ts';
+import { byteBudget } from './budget.ts';
 import { ClientError } from './types.ts';
 import type { DocumentKind, NativeSnapshot } from './types.ts';
 

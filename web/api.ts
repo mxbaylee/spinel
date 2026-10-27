@@ -27,16 +27,24 @@ export async function api<T>(
   path: string,
   body?: unknown,
   verifyCurrent: () => void = () => {},
-  onAbandonedChallenge?: (challengeId: string) => void,
+  options: {
+    signal?: AbortSignal;
+    accountId?: string;
+    onAbandonedChallenge?: (challengeId: string) => void;
+  } = {},
 ): Promise<T> {
   verifyCurrent();
+  const headers: Record<string, string> = {};
+  if (body !== undefined) headers['Content-Type'] = 'application/json';
+  if (options.accountId) headers['X-Spinel-Account'] = options.accountId;
   const response = await fetch(
     `/api/auth/${path}`,
     body === undefined
-      ? { signal: AbortSignal.timeout(15_000) }
+      ? { signal: options.signal ?? AbortSignal.timeout(15_000), headers }
       : {
+          signal: options.signal,
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify(body),
         },
   );
@@ -56,7 +64,7 @@ export async function api<T>(
       typeof data?.challengeId === 'string' &&
       /^[A-Za-z0-9_-]{43}$/.test(data.challengeId)
     )
-      onAbandonedChallenge?.(data.challengeId);
+      options.onAbandonedChallenge?.(data.challengeId);
     throw failure;
   }
   if (
@@ -70,6 +78,7 @@ export async function api<T>(
   if (!response.ok)
     throw Object.assign(new Error(data.error ?? 'Something went wrong. Try again.'), {
       status: response.status,
+      code: data.code,
     });
   return data;
 }
