@@ -16,7 +16,10 @@ import { OFFLINE_SDK_VERSION } from '../../web/offline/OfflineAccess.ts';
 import { sha256 } from '../../web/offline/PreparedImages.ts';
 import { openLocalStart } from '../../web/offline/localStart.ts';
 
-vi.mock('../../web/offline/download.ts', () => ({ downloadForOffline: vi.fn(async () => {}) }));
+vi.mock('../../web/offline/download.ts', async (original) => ({
+  ...(await original<typeof import('../../web/offline/download.ts')>()),
+  downloadForOffline: vi.fn(async () => {}),
+}));
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -205,7 +208,7 @@ test('ended authentication blocks all cold starts and HTTP while the frozen tab 
     }),
   };
   const opened = vi
-    .spyOn(offlineStorage, 'openOfflineStore')
+    .spyOn(offlineStorage, 'openExistingOfflineStore')
     .mockResolvedValue(store as unknown as OfflineStore);
   const active = new OfflineSession(scope.account, scope.item, scope.spaceId, () => true);
   const locked = vi.fn();
@@ -421,7 +424,7 @@ test.each(['remove', 'refresh'] as const)(
 );
 
 test('a clean scoped removal deletes the native item and its images in the same transaction', async () => {
-  const f = storage({ bundle, outbox: { version: 1, ...scope, checkpoint } });
+  const f = storage({ itemId: bundle.itemId, bundle, outbox: { version: 1, ...scope, checkpoint } });
   await f.store.removeClean(scope, () => {});
   expect(f.removed).toEqual(['items', 'images']);
   expect(f.aborted()).toBe(false);
@@ -439,6 +442,7 @@ function recoveryItem() {
     possibleReplayCrash: false,
   };
   const item = {
+    itemId: bundle.itemId,
     bundle: structuredClone(bundle),
     outbox: { version: 1 as const, ...scope, checkpoint: saved },
     recovery,

@@ -8,7 +8,12 @@ import { sha256 } from '../../web/offline/PreparedImages.ts';
 import { prepareShell } from '../../web/offline/shell.ts';
 import { itemsRequest } from '../../web/itemsApi.ts';
 
-vi.mock('../../web/offline/shell.ts', () => ({ prepareShell: vi.fn(async () => {}) }));
+vi.mock('../../web/offline/shell.ts', () => ({
+  prepareShell: vi.fn(async () => ({
+    buildId: 'test-build',
+    compatibility: { format: 1, sdkVersion: '1.1.0' },
+  })),
+}));
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -124,6 +129,7 @@ test('a Space download fetches images through the exact child scope and stores t
     value,
     new Map([[source, bytes]]),
     expect.any(Function),
+    expect.any(Function),
   );
 });
 
@@ -162,17 +168,35 @@ test.each(['bundle', 'shell'] as const)(
     if (stage === 'shell')
       vi.mocked(prepareShell).mockImplementationOnce(async () => {
         active = false;
+        return { buildId: 'test-build', compatibility: { format: 1, sdkVersion: '1.1.0' } };
       });
-    const saveDownload = vi.fn();
+    const commit = vi.fn();
+    const saveDownload = vi.fn(
+      async (
+        _bundle: OfflineBundle,
+        _bytes: ReadonlyMap<string, Uint8Array>,
+        verify: () => void,
+        beforeCommit?: () => Promise<unknown>,
+      ) => {
+        await beforeCommit?.();
+        verify();
+        commit();
+      },
+    );
     await expect(
       downloadForOffline(
-        { accountId: 'owner', saveDownload } as unknown as OfflineStore,
+        {
+          accountId: 'owner',
+          saveDownload,
+          runtimeRequirement: async () => ({ kind: 'empty' }),
+        } as unknown as OfflineStore,
         'item',
         'project',
         verifyCurrent,
       ),
     ).rejects.toThrow('Account changed');
-    expect(saveDownload).not.toHaveBeenCalled();
+    expect(commit).not.toHaveBeenCalled();
+    expect(saveDownload).toHaveBeenCalledTimes(stage === 'shell' ? 1 : 0);
   },
 );
 

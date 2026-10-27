@@ -4,6 +4,7 @@ import { checkImageList, verifyImages } from './PreparedImages.ts';
 import type { OfflineStore } from './offlineStore.ts';
 import { prepareShell } from './shell.ts';
 import { documentPath } from '../documentAccess.ts';
+import { isRuntimeCompatible } from './runtime.ts';
 
 /** A download failure; `status` is the HTTP status when the server answered. */
 export class DownloadError extends Error {
@@ -106,14 +107,29 @@ export async function downloadForOffline(
   }
   await verifyImages(itemId, bundle.images, bytes);
   verifyCurrent();
-  // Only a download known to be good prepares the device (fills CacheStorage).
-  await prepareShell();
-  verifyCurrent();
   try {
-    return await store.saveDownload(bundle, bytes, verifyCurrent);
+    // Reserve the complete compatible public runtime while the account catalog
+    // is locked, before the atomic private write can become an offline copy.
+    return await store.saveDownload(bundle, bytes, verifyCurrent, async () => {
+      const requirement = await store.runtimeRequirement();
+      verifyCurrent();
+      if (
+        requirement.kind === 'unknown' ||
+        (requirement.kind === 'retained' && !isRuntimeCompatible(requirement.compatibility))
+      )
+        throw new Error(
+          'The saved device data needs a compatible version of Spinel. Its contents are retained.',
+        );
+      return prepareShell(store.accountId, verifyCurrent);
+    });
   } catch (error) {
+    verifyCurrent();
     if (error instanceof DOMException && error.name === 'QuotaExceededError')
       throw new DownloadError('This device is out of space for offline documents.');
-    throw new DownloadError('Could not save this document on this device. Try again.');
+    throw new DownloadError(
+      error instanceof Error
+        ? error.message
+        : 'Could not save this document on this device. Try again.',
+    );
   }
 }

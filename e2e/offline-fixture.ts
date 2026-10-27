@@ -260,6 +260,7 @@ export async function fixture(
   info: TestInfo,
   kind: Kind,
   options: {
+    databasePath?: string;
     space?: boolean;
     actor?: 'owner' | 'editor' | 'viewer';
     images?: boolean;
@@ -269,7 +270,7 @@ export async function fixture(
     zoomRatio?: number;
   } = {},
 ) {
-  const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
+  const db = openDatabase(options.databasePath ?? `test-results/${info.project.name}/app.sqlite`);
   const auth = new AuthStore(db);
   const workspace = new WorkspaceStore(auth, { spacesEnabled: true });
   const spaces = new SpaceStore(workspace);

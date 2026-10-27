@@ -344,13 +344,27 @@ export function authRoutes(
   });
   router.post('/sign-out', (request, response) => {
     const session = store.session(cookieToken(request));
+    const expected = request.headers['x-spinel-offline-account'];
+    if (
+      expected !== undefined &&
+      (typeof expected !== 'string' ||
+        (expected !== 'anonymous' &&
+          !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(expected)))
+    )
+      throw new AuthError(400, 'The sign-out request is invalid.');
+    if (expected === 'anonymous') {
+      if (session?.user_id)
+        throw new AuthError(409, 'The account changed before sign-out finished.');
+      // This intent means there was no authenticated account to revoke. A newer
+      // anonymous ceremony is unrelated; confirm the condition without touching it.
+      response.sendStatus(204);
+      return;
+    }
+    if (expected !== undefined && session && session.user_id !== expected)
+      throw new AuthError(409, 'The account changed before sign-out finished.');
     if (session) store.revokeSession(session.token_hash);
-    response.clearCookie(COOKIE_NAME, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
-      path: '/',
-    });
+    // A delayed clearing Set-Cookie could erase a newer sign-in. The revoked
+    // cookie is inert; the next options request replaces an invalid session.
     response.sendStatus(204);
   });
   router.get('/passkeys', (request, response) => {

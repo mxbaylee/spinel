@@ -12,6 +12,7 @@ if (
     'sync-production',
     'sync-soak-sheet',
     'sync-soak-doc',
+    'offline-upgrade',
   ].includes(project)
 )
   throw new Error('SPINEL_E2E_PROJECT must name a configured browser project.');
@@ -53,6 +54,9 @@ export default defineConfig({
         '**/offline.spec.ts',
         '**/offline-editing.spec.ts',
         '**/offline-recovery.spec.ts',
+        '**/offline-device.spec.ts',
+        '**/offline-sign-out.spec.ts',
+        '**/offline-upgrade.spec.ts',
         '**/sync-client.spec.ts',
       ],
       use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3100' },
@@ -63,6 +67,7 @@ export default defineConfig({
         '**/pwa.spec.ts',
         '**/offline-editing.spec.ts',
         '**/offline-recovery.spec.ts',
+        '**/offline-upgrade.spec.ts',
         '**/sync-client.spec.ts',
       ],
       use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3101' },
@@ -95,6 +100,14 @@ export default defineConfig({
         baseURL: kind === 'sheet' ? 'http://localhost:3106' : 'http://localhost:3107',
       },
     })),
+    {
+      name: 'offline-upgrade',
+      // This suite builds two real app versions and owns its same-origin server
+      // and persistent browser. It must not race a normal project webServer.
+      testMatch: '**/offline-upgrade.spec.ts',
+      fullyParallel: false,
+      use: { ...devices['Desktop Chrome'] },
+    },
     {
       name: 'mobile-https',
       testMatch: ['**/pwa.spec.ts', '**/doc-mobile.spec.ts'],
@@ -180,20 +193,21 @@ export default defineConfig({
   ].filter(
     (server) =>
       !project ||
-      server.url.includes(
-        project === 'development'
-          ? ':3100/'
-          : project === 'production'
-            ? ':3101/'
-            : project === 'sync-development'
-              ? ':3104/'
-              : project === 'sync-production'
-                ? ':3105/'
-                : project === 'sync-soak-sheet'
-                  ? ':3106/'
-                  : project === 'sync-soak-doc'
-                    ? ':3107/'
-                    : ':3103/',
-      ),
+      (project !== 'offline-upgrade' &&
+        server.url.includes(
+          project === 'development'
+            ? ':3100/'
+            : project === 'production'
+              ? ':3101/'
+              : project === 'sync-development'
+                ? ':3104/'
+                : project === 'sync-production'
+                  ? ':3105/'
+                  : project === 'sync-soak-sheet'
+                    ? ':3106/'
+                    : project === 'sync-soak-doc'
+                      ? ':3107/'
+                      : ':3103/',
+        )),
   ),
 });

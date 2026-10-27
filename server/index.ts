@@ -11,6 +11,7 @@ if (!Number.isInteger(port) || port < 0 || port > 65535) {
 const host = process.env.HOST ?? '127.0.0.1';
 const app = await createApp({
   development,
+  staticDirectory: process.env.SPINEL_STATIC_DIRECTORY,
   backupConfigPath: process.env.BACKUP_CONFIG_PATH,
   image: process.env.SPINEL_IMAGE,
   spaceReview: process.env.SPINEL_SPACE_REVIEW !== '0',

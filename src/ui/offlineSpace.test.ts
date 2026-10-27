@@ -55,6 +55,36 @@ test('an explicit prepared child wins over the default and keeps its exact root'
   ).toMatchObject({ selected: notes, spaceId: root.id, problem: null });
 });
 
+test.each([false, true])(
+  'an explicit unavailable child link with pending=%s never opens a ready sibling',
+  (pending) => {
+    const damaged = {
+      ...notes,
+      available: false,
+      pending,
+      problem: 'An image is missing or incomplete.',
+    };
+    const current = { ...local, downloads: [damaged, ordinary, foreign, budget] };
+    const selected = selectOfflineSpace(
+      current,
+      'account',
+      route('/spaces/' + root.id + '?item=' + damaged.itemId),
+    );
+    expect(selected).toEqual({
+      spaceId: root.id,
+      root,
+      copies: [budget, damaged],
+      selected: null,
+      problem: 'missing',
+    });
+    // A root-only visit can choose the ready sibling; an exact child link cannot.
+    expect(selectOfflineSpace(current, 'account', route('/spaces/' + root.id)).selected).toBe(
+      budget,
+    );
+    expect(current.downloads[0]).toBe(damaged);
+  },
+);
+
 test.each([id(99), ordinary.itemId, foreign.itemId, root.id])(
   'an explicit unprepared, ordinary, foreign-Space or root item %s never falls back',
   (itemId) => {

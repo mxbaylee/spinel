@@ -4,10 +4,14 @@ import { DownloadError, downloadForOffline } from './download.ts';
 import type { LocalStart } from './localStart.ts';
 import {
   openOfflineStore,
+  openExistingOfflineStore,
   offlinePreparation,
   preparedAccount,
   spaceOfflineCatalog,
   watchOfflineAccount,
+  watchOfflineChanges,
+  withOfflineCatalogLock,
+  withOfflineItemWriter,
 } from './offlineStore.ts';
 import type {
   OfflineCatalog,
@@ -17,8 +21,15 @@ import type {
   OfflineUser,
 } from './offlineStore.ts';
 import { prepareShell } from './shell.ts';
+import { isRuntimeCompatible } from './runtime.ts';
+import { readDeviceInventory, removeDeviceCopy, requestPersistence } from './deviceStorage.ts';
 
-export type OfflineMessage = { text: string; failed: boolean };
+export type OfflineMessage = {
+  text: string;
+  failed: boolean;
+  recoveryItemId?: string;
+  detail?: string;
+};
 
 /**
  * This account's downloads on this device. Online, it downloads and removes
@@ -44,6 +55,9 @@ export function useOfflineDownloads(
   const [message, setMessage] = useState<OfflineMessage | null>(null);
   const mounted = useRef<{ accountId: string } | null>(null);
   const latestAccount = useRef(user.id);
+  const summaryRead = useRef(0);
+  const noticeSequence = useRef(0);
+  const pendingNotices = useRef(new Map<string, { sequence: number; pending: boolean }>());
   latestAccount.current = user.id;
   function preparation(reportFailure = false) {
     const lifetime = mounted.current;
@@ -70,10 +84,17 @@ export function useOfflineDownloads(
   latestRoot.current = options.spaceRoot;
   // The server admits one transfer at a time; run refreshes and toggles in turn.
   const queue = useRef<Promise<unknown>>(Promise.resolve());
-  function serially<T>(scope: OfflinePreparation, work: (store: OfflineStore) => Promise<T>) {
+  function serially<T>(
+    scope: OfflinePreparation,
+    work: (store: OfflineStore) => Promise<T>,
+    create = false,
+  ) {
     const run = queue.current.then(async () => {
       if (!scope.isCurrent()) return;
-      const store = await openOfflineStore(user.id);
+      const store = create
+        ? await openOfflineStore(user.id)
+        : await openExistingOfflineStore(user.id);
+      if (!store) return;
       try {
         if (!scope.isCurrent()) return;
         return await work(store);
@@ -92,7 +113,9 @@ export function useOfflineDownloads(
   function set(download: OfflineDownload, scope: OfflinePreparation) {
     if (scope.isCurrent())
       setDownloads((previous) =>
-        scope.isCurrent() ? new Map(previous).set(download.itemId, download) : previous,
+        scope.isCurrent()
+          ? new Map(previous).set(download.itemId, { ...download, available: true })
+          : previous,
       );
   }
   function unset(itemId: string, scope: OfflinePreparation) {
@@ -107,20 +130,31 @@ export function useOfflineDownloads(
 
   async function refreshSummaries() {
     const scope = preparation();
-    if (!scope || preparedAccount() !== user.id) return;
-    const store = await openOfflineStore(user.id);
-    try {
-      const known = await store.downloads();
-      if (scope.isCurrent())
-        setDownloads(new Map(known.map((download) => [download.itemId, download])));
-    } finally {
-      store.close();
-    }
+    if (!scope) return;
+    const reading = ++summaryRead.current;
+    const started = noticeSequence.current;
+    const inventory = await readDeviceInventory(user.id, verify(scope));
+    if (scope.isCurrent() && reading === summaryRead.current)
+      setDownloads(
+        new Map(
+          inventory.items.map((download) => {
+            const notice = pendingNotices.current.get(download.itemId);
+            return [
+              download.itemId,
+              notice && notice.sequence > started
+                ? { ...download, pending: download.uncertain || notice.pending }
+                : download,
+            ];
+          }),
+        ),
+      );
   }
 
   useLayoutEffect(() => {
     const lifetime = { accountId: user.id };
     mounted.current = lifetime;
+    summaryRead.current++;
+    pendingNotices.current.clear();
     setShownAccount(user.id);
     setDownloads(
       new Map(
@@ -132,14 +166,54 @@ export function useOfflineDownloads(
     setBusy(null);
     setMessage(null);
     const stopWatching = watchOfflineAccount();
-    const changed = (event: Event) => {
-      if ((event as CustomEvent<{ accountId: string }>).detail?.accountId === user.id)
+    const stopChanges = watchOfflineChanges(user.id, (change) => {
+      const scope = preparation();
+      if (!scope?.isCurrent()) return;
+      if (typeof change.pending === 'boolean') {
+        pendingNotices.current.set(change.itemId, {
+          sequence: ++noticeSequence.current,
+          pending: change.pending,
+        });
+        // A checkpoint transition already committed. Keep verified availability
+        // and update only this known row, without rehashing images per keystroke.
+        setDownloads((previous) => {
+          const item = previous.get(change.itemId);
+          return item && scope.isCurrent()
+            ? new Map(previous).set(change.itemId, {
+                ...item,
+                pending: item.uncertain || change.pending,
+              })
+            : previous;
+        });
+      } else {
+        pendingNotices.current.delete(change.itemId);
         void refreshSummaries().catch(() => {});
+      }
+    });
+    const foreground = () => {
+      if (document.visibilityState !== 'hidden') void refreshSummaries().catch(() => {});
     };
-    window.addEventListener('spinel-offline-changed', changed);
+    const accountChanged = () => {
+      if (!preparation()?.isCurrent()) {
+        setDownloads(new Map());
+        setMessage(null);
+        setBusy(null);
+      }
+    };
+    window.addEventListener('focus', foreground);
+    window.addEventListener('pageshow', foreground);
+    window.addEventListener('storage', accountChanged);
+    window.addEventListener('spinel-offline-account-changed', accountChanged);
+    document.addEventListener('visibilitychange', foreground);
+    void refreshSummaries().catch(() => {});
     const close = () => {
       if (mounted.current === lifetime) mounted.current = null;
-      window.removeEventListener('spinel-offline-changed', changed);
+      stopChanges();
+      window.removeEventListener('focus', foreground);
+      window.removeEventListener('pageshow', foreground);
+      window.removeEventListener('storage', accountChanged);
+      window.removeEventListener('spinel-offline-account-changed', accountChanged);
+      document.removeEventListener('visibilitychange', foreground);
       stopWatching();
     };
     if (local || preparedAccount() !== user.id) return close;
@@ -148,27 +222,39 @@ export function useOfflineDownloads(
     void serially(scope, async (store) => {
       const known = await store.downloads();
       if (!scope.isCurrent()) return;
-      setDownloads(new Map(known.map((download) => [download.itemId, download])));
       // Keep the shell current after an update or eviction, then refresh each
       // clean copy. Pending copies are retained even when live access is gone,
       // so My files can offer their independent recovery entry.
-      await prepareShell();
+      await withOfflineCatalogLock(user.id, async () => {
+        verify(scope)();
+        const requirement = await store.runtimeRequirement();
+        verify(scope)();
+        if (requirement.kind !== 'retained' || !isRuntimeCompatible(requirement.compatibility))
+          throw new Error('This device data needs a compatible version of Spinel.');
+        await prepareShell(user.id, verify(scope));
+      });
       for (const download of known) {
         if (!scope.isCurrent()) return;
         if (download.pending) continue;
         try {
           set(
-            await downloadForOffline(store, download.itemId, download.spaceId, verify(scope)),
+            await withOfflineItemWriter(user.id, download.itemId, () =>
+              downloadForOffline(store, download.itemId, download.spaceId, verify(scope)),
+            ),
             scope,
           );
         } catch (error) {
-          if (scope.isCurrent() && error instanceof DownloadError && error.status === 404) {
-            await store.remove(download.itemId);
-            unset(download.itemId, scope);
-            await scope.clearIfEmpty(store);
+          if (
+            scope.isCurrent() &&
+            error instanceof DownloadError &&
+            [403, 404].includes(error.status ?? 0)
+          ) {
+            const removed = await removeDeviceCopy(user.id, download.itemId, verify(scope));
+            if (removed.status === 'removed') unset(download.itemId, scope);
           }
         }
       }
+      await refreshSummaries();
     }).catch(() => {
       // Refreshing is best effort; downloads stay as they were.
     });
@@ -189,6 +275,15 @@ export function useOfflineDownloads(
       return;
     }
     const downloaded = downloads.has(item.id) && downloads.get(item.id)!.spaceId === spaceId;
+    const saved = downloads.get(item.id);
+    if (downloaded && (saved?.pending || saved?.uncertain)) {
+      setMessage({
+        text: 'Changes are saved on this device. Recover them or choose how to remove them in This device.',
+        failed: false,
+        recoveryItemId: item.id,
+      });
+      return;
+    }
     // Offline launch needs the file list as well as the document; the device
     // counts as prepared only once both are stored.
     const atClick = downloaded ? null : latestCatalog.current();
@@ -203,42 +298,70 @@ export function useOfflineDownloads(
     }
     setBusy(item.id);
     setMessage(null);
+    let outcome: 'prepared' | 'removed' | 'needs-recovery' | undefined;
+    let detail: string | undefined;
     try {
-      await serially(scope, async (store) => {
-        if (downloaded) {
-          await store.remove(item.id);
-          unset(item.id, scope);
-          // With nothing left to open, the device is no longer prepared.
-          await scope.clearIfEmpty(store);
-          return;
-        }
-        const download = await downloadForOffline(store, item.id, spaceId, verify(scope));
-        if (!scope.isCurrent()) return;
-        // Keep the newest catalog; a refresh that failed meanwhile falls back
-        // to the one there at the click, so a prepared device always has one.
-        let current = latestCatalog.current() ?? atClick ?? (await store.catalog());
-        if (!scope.isCurrent()) return;
-        const root = latestRoot.current?.id === spaceId ? latestRoot.current : rootAtClick;
-        if (spaceId !== undefined && root?.id === spaceId)
-          current = spaceOfflineCatalog(root, current ?? undefined);
-        try {
-          if (!current) throw new Error('This file list is incomplete. Try again.');
-          if (!(await scope.finish(store, { id: user.id, name: user.name }, current))) return;
-        } catch (error) {
-          // A copy with no file list can't open offline; don't keep it.
-          if (scope.isCurrent()) await store.remove(item.id).catch(() => {});
-          throw error;
-        }
-        set(download, scope);
-      });
+      if (!downloaded) {
+        const protection = await requestPersistence();
+        verify(scope)();
+        detail =
+          protection === 'granted'
+            ? 'Your browser granted storage protection. Device copies are not a backup.'
+            : protection === 'denied'
+              ? 'Your browser did not grant storage protection. Device copies can still be removed by the browser.'
+              : protection === 'unsupported'
+                ? 'This browser does not offer storage protection. Device copies are not a backup.'
+                : 'Storage protection could not be requested. Device copies are not a backup.';
+      }
+      await serially(
+        scope,
+        async (store) => {
+          if (downloaded) {
+            const result = await removeDeviceCopy(user.id, item.id, verify(scope));
+            outcome = result.status;
+            if (result.status === 'removed') unset(item.id, scope);
+            return;
+          }
+          const download = await withOfflineItemWriter(user.id, item.id, () =>
+            downloadForOffline(store, item.id, spaceId, verify(scope)),
+          );
+          if (!scope.isCurrent()) return;
+          // Keep the newest catalog; a refresh that failed meanwhile falls back
+          // to the one there at the click, so a prepared device always has one.
+          let current = latestCatalog.current() ?? atClick ?? (await store.catalog());
+          if (!scope.isCurrent()) return;
+          const root = latestRoot.current?.id === spaceId ? latestRoot.current : rootAtClick;
+          if (spaceId !== undefined && root?.id === spaceId)
+            current = spaceOfflineCatalog(root, current ?? undefined);
+          try {
+            if (!current) throw new Error('This file list is incomplete. Try again.');
+            if (!(await scope.finish(store, { id: user.id, name: user.name }, current))) return;
+          } catch (error) {
+            // A copy with no file list can't open offline; don't keep it.
+            if (scope.isCurrent()) await store.remove(item.id).catch(() => {});
+            throw error;
+          }
+          set(download, scope);
+          outcome = 'prepared';
+        },
+        !downloaded,
+      );
+      if (scope.isCurrent()) await refreshSummaries();
       if (scope.isCurrent())
         setMessage({
-          text: downloaded
-            ? `${item.name} was removed from this device.`
-            : `${item.name} is available offline on this device.`,
+          text:
+            outcome === 'needs-recovery'
+              ? 'Changes are saved on this device. Recover them or choose how to remove them in This device.'
+              : downloaded
+                ? `${item.name} was removed from this device.`
+                : `${item.name} is available offline on this device.`,
           failed: false,
+          ...(outcome === 'needs-recovery' ? { recoveryItemId: item.id } : {}),
+          ...(outcome === 'prepared' ? { detail } : {}),
         });
     } catch (error) {
+      if (scope.isCurrent())
+        await serially(scope, (store) => scope.clearIfEmpty(store)).catch(() => {});
       if (scope.isCurrent())
         setMessage({
           text:

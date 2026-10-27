@@ -8,8 +8,10 @@ import {
   preparedAccount,
   setPreparedAccount,
 } from '../../web/offline/offlineStore.ts';
+import { readDeviceInventory } from '../../web/offline/deviceStorage.ts';
 import type { OfflineDownload } from '../../web/offline/offlineStore.ts';
 
+vi.mock('../../web/offline/deviceStorage.ts', () => ({ readDeviceInventory: vi.fn() }));
 const user = { id: 'owner', name: 'Owner', isAdmin: false };
 const download: OfflineDownload = {
   itemId: 'notes',
@@ -19,11 +21,13 @@ const download: OfflineDownload = {
   revision: 1,
   downloadedAt: 1,
 };
-const databases: IDBDatabaseInfo[] = [{ name: 'spinel-offline-owner', version: 1 }];
+const retained = { kind: 'retained' as const, compatibility: { format: 1, sdkVersion: '1.1.0' } };
+const catalog = { items: [], shared: [], views: {}, syncedAt: 1 };
 let values: Map<string, string>;
 
 beforeEach(() => {
   values = new Map();
+  vi.stubGlobal('navigator', {});
   vi.stubGlobal(
     'window',
     Object.assign(new EventTarget(), {
@@ -34,6 +38,14 @@ beforeEach(() => {
       },
     }),
   );
+  vi.mocked(readDeviceInventory).mockReset();
+  vi.mocked(readDeviceInventory).mockResolvedValue({
+    state: 'ready',
+    items: [{ ...download, available: true, bytes: 10 }],
+    bytes: 10,
+    origin: {},
+    persistence: 'not-requested',
+  });
   setPreparedAccount(null);
 });
 afterEach(() => {
@@ -43,45 +55,62 @@ afterEach(() => {
 
 function deferred() {
   let resolve!: () => void;
-  const promise = new Promise<void>((done) => (resolve = done));
+  const promise = new Promise<void>((done) => {
+    resolve = done;
+  });
   return { promise, resolve };
 }
 
-/** Only the IndexedDB boundary is simulated; claimDevice and its fence are real. */
+/** Only storage boundaries are simulated. The noncreating open and account fences are real. */
 function fixture() {
   const close = vi.fn();
-  const database = { close } as unknown as IDBDatabase;
+  const database = {
+    close,
+    version: 1,
+    objectStoreNames: { contains: (name: string) => ['meta', 'items', 'images'].includes(name) },
+  } as unknown as IDBDatabase;
   const open = vi.fn(() => {
     const request: { result: IDBDatabase; onsuccess?: () => void } = { result: database };
     queueMicrotask(() => request.onsuccess?.());
     return request;
   });
-  const discovery = vi.fn(async () => databases);
+  const discovery = vi.fn();
   vi.stubGlobal('indexedDB', { databases: discovery, open });
-  const downloads = vi.spyOn(OfflineStore.prototype, 'downloads').mockResolvedValue([download]);
+  const requirement = vi
+    .spyOn(OfflineStore.prototype, 'runtimeRequirement')
+    .mockResolvedValue(retained);
   const saveCatalog = vi.spyOn(OfflineStore.prototype, 'saveCatalog').mockResolvedValue(undefined);
-  return { open, close, discovery, downloads, saveCatalog };
+  const holdOpen = (entered: ReturnType<typeof deferred>, held: ReturnType<typeof deferred>) => {
+    open.mockImplementationOnce(() => {
+      const request: { result: IDBDatabase; onsuccess?: () => void } = { result: database };
+      entered.resolve();
+      void held.promise.then(() => request.onsuccess?.());
+      return request;
+    });
+  };
+  return { open, close, database, discovery, requirement, saveCatalog, holdOpen };
 }
 
-test('startup claims existing downloads without rewriting their catalog', async () => {
+test('startup claims compatible existing downloads without creating or rewriting a catalog', async () => {
   const f = fixture();
   await claimDevice(user);
   expect(preparedAccount()).toBe(user.id);
-  expect(f.open).toHaveBeenCalledWith('spinel-offline-owner', 1);
-  expect(f.downloads).toHaveBeenCalledTimes(1);
+  expect(f.open).toHaveBeenCalledWith('spinel-offline-owner');
+  expect(f.discovery).not.toHaveBeenCalled();
+  expect(f.requirement).toHaveBeenCalledTimes(1);
   expect(f.saveCatalog).not.toHaveBeenCalled();
   expect(f.close).toHaveBeenCalledTimes(1);
 });
 
 test('an obsolete sign-in attempt cannot prepare the device after a delayed database read', async () => {
   const f = fixture();
-  const entered = deferred();
-  const held = deferred();
+  const entered = deferred(),
+    held = deferred();
   let current = true;
-  f.downloads.mockImplementationOnce(async () => {
+  f.requirement.mockImplementationOnce(async () => {
     entered.resolve();
     await held.promise;
-    return [download];
+    return retained;
   });
   const claim = claimDevice(user, () => current);
   await entered.promise;
@@ -94,7 +123,7 @@ test('an obsolete sign-in attempt cannot prepare the device after a delayed data
 
 test('same-account startup with no downloads preserves an existing live editor fence', async () => {
   const f = fixture();
-  f.downloads.mockResolvedValue([]);
+  f.requirement.mockResolvedValue({ kind: 'empty' });
   await claimDevice(user);
   const live = offlinePreparation(user.id, () => true);
   const token = values.get('spinel.offline.cancellation');
@@ -106,7 +135,7 @@ test('same-account startup with no downloads preserves an existing live editor f
 
 test('another online account cancels live editors even when there are no downloads', async () => {
   const f = fixture();
-  f.downloads.mockResolvedValue([]);
+  f.requirement.mockResolvedValue({ kind: 'empty' });
   await claimDevice(user);
   const live = offlinePreparation(user.id, () => true);
   await claimDevice({ id: 'another-account', name: 'Other', isAdmin: false });
@@ -146,8 +175,8 @@ test.each(['headers', 'body'] as const)(
 );
 
 test.each([
-  ['database discovery', 'sign-out'],
-  ['database discovery', 'account switch'],
+  ['database open', 'sign-out'],
+  ['database open', 'account switch'],
   ['download lookup', 'sign-out'],
   ['download lookup', 'account switch'],
 ] as const)(
@@ -157,35 +186,27 @@ test.each([
     const otherTab = await import('../../web/offline/offlineStore.ts');
     expect(otherTab.offlinePreparation).not.toBe(offlinePreparation);
     setPreparedAccount(user.id);
-    const f = fixture();
-    const entered = deferred();
-    const held = deferred();
-    if (boundary === 'database discovery')
-      f.discovery.mockImplementationOnce(async () => {
-        entered.resolve();
-        await held.promise;
-        return databases;
-      });
+    const f = fixture(),
+      entered = deferred(),
+      held = deferred();
+    if (boundary === 'database open') f.holdOpen(entered, held);
     else
-      f.downloads.mockImplementationOnce(async () => {
+      f.requirement.mockImplementationOnce(async () => {
         entered.resolve();
         await held.promise;
-        return [download];
+        return retained;
       });
     const pending = claimDevice(user);
     await entered.promise;
-    // Separate module epochs and no storage event: publication must inspect the
-    // durable token before it can reclaim a marker after startup's async work.
+    // No storage event: publication must inspect the persisted nonce.
     const expectedAccount = change === 'sign-out' ? null : 'another-account';
     otherTab.setPreparedAccount(expectedAccount);
     held.resolve();
     await pending;
     expect(preparedAccount()).toBe(expectedAccount);
     expect(f.saveCatalog).not.toHaveBeenCalled();
-    if (boundary === 'database discovery') {
-      expect(f.open).not.toHaveBeenCalled();
-      expect(f.downloads).not.toHaveBeenCalled();
-    } else expect(f.close).toHaveBeenCalledTimes(1);
+    expect(f.close).toHaveBeenCalledTimes(1);
+    if (boundary === 'database open') expect(f.requirement).not.toHaveBeenCalled();
   },
 );
 
@@ -204,7 +225,6 @@ test('blocked offline storage does not prevent online startup or begin database 
   expect(values.has('spinel.offline.account')).toBe(false);
 });
 
-const catalog = { items: [], shared: [], views: {}, syncedAt: 1 };
 function localFixture() {
   const f = fixture();
   vi.spyOn(OfflineStore.prototype, 'user').mockResolvedValue(user);
@@ -212,7 +232,7 @@ function localFixture() {
   return f;
 }
 
-test('local startup reads a legacy prepared catalog without writing storage', async () => {
+test('local startup reads a legacy prepared catalog without writing localStorage', async () => {
   values.clear();
   values.set('spinel.offline.account', user.id);
   const f = localFixture();
@@ -221,7 +241,7 @@ test('local startup reads a legacy prepared catalog without writing storage', as
   expect(start).toMatchObject({ user, catalog, downloads: [download] });
   expect(start?.isCurrent()).toBe(true);
   expect(write).not.toHaveBeenCalled();
-  expect(f.close).toHaveBeenCalledTimes(1);
+  expect(f.close).toHaveBeenCalledTimes(f.open.mock.calls.length);
   setPreparedAccount(null);
   expect(start?.isCurrent()).toBe(false);
 });
@@ -236,33 +256,30 @@ test.each([
   vi.resetModules();
   const otherTab = await import('../../web/offline/offlineStore.ts');
   setPreparedAccount(user.id);
-  const f = localFixture();
-  const entered = deferred();
-  const held = deferred();
-  if (boundary === 'database open')
-    f.open.mockImplementationOnce(() => {
-      const request: { result: IDBDatabase; onsuccess?: () => void } = {
-        result: { close: f.close } as unknown as IDBDatabase,
-      };
-      entered.resolve();
-      void held.promise.then(() => request.onsuccess?.());
-      return request;
-    });
+  const f = localFixture(),
+    entered = deferred(),
+    held = deferred();
+  if (boundary === 'database open') f.holdOpen(entered, held);
   else
-    f.downloads.mockImplementationOnce(async () => {
+    vi.mocked(readDeviceInventory).mockImplementationOnce(async () => {
       entered.resolve();
       await held.promise;
-      return [download];
+      return {
+        state: 'ready',
+        items: [{ ...download, available: true, bytes: 10 }],
+        bytes: 10,
+        origin: {},
+        persistence: 'not-requested',
+      };
     });
   const pending = openLocalStart();
   await entered.promise;
-  // No storage event is delivered: the read must inspect the persisted fence.
   otherTab.setPreparedAccount(change === 'account switch' ? 'another-account' : null);
   if (change === 'sign-out and same-account return') otherTab.setPreparedAccount(user.id);
   held.resolve();
   await expect(pending).resolves.toBeNull();
-  expect(f.close).toHaveBeenCalledTimes(1);
-  if (boundary === 'database open') expect(f.downloads).not.toHaveBeenCalled();
+  expect(f.close).toHaveBeenCalledTimes(f.open.mock.calls.length);
+  if (boundary === 'database open') expect(readDeviceInventory).not.toHaveBeenCalled();
 });
 
 test('a local catalog retains its cancellation check after the read completes', async () => {
@@ -272,8 +289,64 @@ test('a local catalog retains its cancellation check after the read completes', 
   localFixture();
   const start = await openLocalStart();
   expect(start?.isCurrent()).toBe(true);
-  // App checks this again at publication and immediately after subscribing.
   otherTab.setPreparedAccount(null);
   otherTab.setPreparedAccount(user.id);
   expect(start?.isCurrent()).toBe(false);
+});
+
+test('retiring the pre-exposure admission lifetime does not retire the published local session', async () => {
+  setPreparedAccount(user.id);
+  localFixture();
+  let admitting = true;
+  const start = await openLocalStart(() => admitting);
+  expect(start?.isCurrent()).toBe(true);
+  admitting = false;
+  expect(start?.isCurrent()).toBe(true);
+  setPreparedAccount(null);
+  expect(start?.isCurrent()).toBe(false);
+});
+
+test('a late catalog cannot publish after the host permits online fallback', async () => {
+  setPreparedAccount(user.id);
+  const f = localFixture(),
+    entered = deferred(),
+    held = deferred();
+  let admitting = true;
+  vi.mocked(readDeviceInventory).mockImplementationOnce(async () => {
+    entered.resolve();
+    await held.promise;
+    return { state: 'ready', items: [], bytes: 0, origin: {}, persistence: 'not-requested' };
+  });
+  const pending = openLocalStart(() => admitting);
+  await entered.promise;
+  admitting = false;
+  held.resolve();
+  expect(await pending).toBeNull();
+  expect(f.close).toHaveBeenCalledTimes(f.open.mock.calls.length);
+  expect(preparedAccount()).toBe(user.id);
+});
+
+test('an incompatible same-account runtime cannot claim data or cancel a compatible old tab', async () => {
+  setPreparedAccount(user.id);
+  const f = fixture();
+  f.requirement.mockResolvedValue({
+    kind: 'retained',
+    compatibility: { format: 2, sdkVersion: '2.0.0' },
+  });
+  const oldTab = offlinePreparation(user.id, () => true);
+  const nonce = values.get('spinel.offline.cancellation');
+  await claimDevice(user);
+  expect(preparedAccount()).toBe(user.id);
+  expect(values.get('spinel.offline.cancellation')).toBe(nonce);
+  expect(oldTab.isCurrent()).toBe(true);
+  expect(f.saveCatalog).not.toHaveBeenCalled();
+});
+
+test('unknown retained data cannot expose a local catalog', async () => {
+  setPreparedAccount(user.id);
+  const f = localFixture();
+  f.requirement.mockResolvedValue({ kind: 'unknown' });
+  expect(await openLocalStart()).toBeNull();
+  expect(readDeviceInventory).not.toHaveBeenCalled();
+  expect(preparedAccount()).toBe(user.id);
 });

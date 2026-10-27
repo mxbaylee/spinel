@@ -84,7 +84,8 @@ durable local queue; **Saved on this device** follows its storage commit, and
 **Synced** follows server acknowledgement plus local cleanup. Viewer downloads
 remain read-only. Pages that need the server, guest links and unprepared devices still
 get the generic offline page above. Physical-device verification remains
-SPN-090, with shared storage lifecycle in SPN-055. CI phone viewports do not prove
+SPN-090; [SPN-055](implementation/SPN-055.md) implements the shared storage
+lifecycle. CI phone viewports do not prove
 installed Android/iPhone behavior. The earlier global no-offline-feature policy is superseded
 for this feature, while guests keep the generic fallback ([decision #83](implementation/SPN-039.md#legacy-decision-83-complete-opted-in-offline-product)).
 
@@ -94,12 +95,26 @@ local durability through **Saved locally**; undownloaded editors must stay open
 until saving succeeds. Installing Spinel alone does not download a document or
 make its pending edits durable on the phone.
 
+Profile → This device reports actual retained copies, logical bytes, pending work,
+incomplete/missing data and the browser's storage-protection response. Browser
+usage/quota is separately labeled as origin-wide. Storage protection is a request,
+not a guarantee against browser/user deletion or device loss. Removal cannot erase
+an active writer or pending work without the explicit recovery/discard flow.
+Accepted sign-out locks local access immediately, offers original-account Keep or
+Delete, and truthfully defers remote logout while disconnected.
+
 The service worker never puts authenticated HTML, API responses, snapshots,
 images, guest pages or link tokens in CacheStorage. Navigation goes to the network
-with caching disabled; only a network failure produces the fixed offline page.
+with caching disabled; a network failure serves a complete public shell when one
+was prepared, or the generic offline page for unprepared/server-only routes.
 HTTP authorization errors are returned unchanged. Public icons and the worker
 code are safe to retain. Explicit downloads use the separately scoped IndexedDB
 store and queue described above, rather than private data in CacheStorage.
+Public retention is bounded to two complete compatible runtimes plus one candidate.
+Live tabs retain their lazy editor assets, signed-out accounts retain compatibility
+requirements, and a failed update keeps the earlier complete editor. Activation
+does not reload unfinished input. This does not establish installed-device storage
+sharing or physical phone retention; those checks remain SPN-090.
 
 ## Verification and deployment
 

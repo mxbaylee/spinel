@@ -1,6 +1,7 @@
-import { PREPARE_SHELL } from '../../src/shared/offlineShell.ts';
-import type { PrepareShellReply } from '../../src/shared/offlineShell.ts';
+import { currentRuntime, runtimeRequest } from './runtime.ts';
+import { sameCompatibility } from '../../src/shared/offlineShell.ts';
 
+/** Retained for existing bounded read-only startup callers. */
 export function within<T>(promise: Promise<T>, ms: number, message: string) {
   let timer: ReturnType<typeof setTimeout> | undefined;
   return Promise.race([
@@ -11,27 +12,19 @@ export function within<T>(promise: Promise<T>, ms: number, message: string) {
   ]).finally(() => clearTimeout(timer));
 }
 
-/** Asks the service worker to keep the public app shell on this device. */
-export async function prepareShell() {
-  if (!('serviceWorker' in navigator) || !window.isSecureContext)
-    throw new Error('This browser cannot keep Spinel offline.');
-  const registration = await within(
-    navigator.serviceWorker.ready,
-    10_000,
-    'This browser cannot keep Spinel offline.',
-  );
-  const worker = registration.active;
-  if (!worker) throw new Error('This browser cannot keep Spinel offline.');
-  const channel = new MessageChannel();
-  const reply = new Promise<PrepareShellReply>((resolve) => {
-    channel.port1.onmessage = (event) => resolve(event.data as PrepareShellReply);
-  });
-  worker.postMessage({ type: PREPARE_SHELL }, [channel.port2]);
-  try {
-    // The shell is about 21 MB; allow a slow phone connection.
-    const result = await within(reply, 180_000, 'Keeping Spinel on this device took too long.');
-    if (!result.ok) throw new Error(result.error);
-  } finally {
-    channel.port1.close();
-  }
+/** Caller owns its account catalog lock through this reservation and private commit. */
+export async function prepareShell(accountId: string, verifyCurrent: () => void) {
+  verifyCurrent();
+  const host = currentRuntime();
+  const manifest = host?.manifest;
+  if (!manifest) throw new Error('Offline downloads need a production build of Spinel.');
+  const result = await runtimeRequest('prepare', manifest.version, accountId, undefined, 180_000);
+  verifyCurrent();
+  if (
+    !result.prepared ||
+    result.manifest?.version !== manifest.version ||
+    !sameCompatibility(result.manifest.compatibility, host.compatibility)
+  )
+    throw new Error('A complete compatible Spinel app could not be kept on this device.');
+  return { buildId: manifest.version, compatibility: manifest.compatibility };
 }

@@ -28,16 +28,21 @@ export async function api<T>(
   body?: unknown,
   verifyCurrent: () => void = () => {},
 ): Promise<T> {
+  verifyCurrent();
   const response = await fetch(
     `/api/auth/${path}`,
     body === undefined
-      ? {}
+      ? { signal: AbortSignal.timeout(15_000) }
       : {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body),
         },
   );
+  // Consume a dispatched response before retiring its authentication owner.
+  // A stale-generation check must not release the transition at headers while
+  // an earlier credential request is still settling in the browser.
+  const data = response.status === 204 ? await response.text() : await response.json();
   verifyCurrent();
   if (
     response.status === 401 &&
@@ -47,8 +52,6 @@ export async function api<T>(
     location.assign(signInPath());
   }
   if (response.status === 204) return undefined as T;
-  const data = await response.json();
-  verifyCurrent();
   if (!response.ok)
     throw Object.assign(new Error(data.error ?? 'Something went wrong. Try again.'), {
       status: response.status,

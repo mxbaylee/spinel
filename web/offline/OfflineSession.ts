@@ -11,7 +11,8 @@ import { documentPath } from '../documentAccess.ts';
 import { OfflineAccess, offlineScope } from './OfflineAccess.ts';
 import { PreparedImages, checkImageList, sha256 } from './PreparedImages.ts';
 import { ScopedHTTP } from './ScopedHTTP.ts';
-import { downloadForOffline } from './download.ts';
+import { checkBundle, downloadForOffline } from './download.ts';
+import { isRuntimeCompatible } from './runtime.ts';
 import { offlineCopyName, portableOfflineSnapshot, verifyRecoveryRequest } from './recovery.ts';
 import {
   hasOfflineEdits,
@@ -19,7 +20,7 @@ import {
   offlineAccountRead,
   offlineEpoch,
   offlinePreparation,
-  openOfflineStore,
+  openExistingOfflineStore,
   preparedAccount,
 } from './offlineStore.ts';
 import type { OfflineStore } from './offlineStore.ts';
@@ -187,12 +188,16 @@ export class OfflineSession implements IURLImageService {
     this.verify();
     const current = offlineAccountRead(this.accountId);
     let release = await writerLock(this.accountId, this.itemId);
-    let store: OfflineStore;
+    let store: OfflineStore | null;
     try {
-      store = await openOfflineStore(this.accountId);
+      store = await openExistingOfflineStore(this.accountId);
     } catch (error) {
       release?.();
       throw error;
+    }
+    if (!store) {
+      release?.();
+      return;
     }
     let keep = false;
     try {
@@ -201,6 +206,11 @@ export class OfflineSession implements IURLImageService {
       if (!current()) throw closed();
       if (!download) return;
       const { bundle, outbox, bytes } = download;
+      if (!isRuntimeCompatible({ format: bundle.version, sdkVersion: bundle.sdkVersion }))
+        throw new Error(
+          'This saved copy needs a compatible version of Spinel. Its data is retained.',
+        );
+      checkBundle(bundle, this.accountId, this.itemId, this.spaceId);
       if (
         bundle.accountId !== this.accountId ||
         bundle.itemId !== this.itemId ||
