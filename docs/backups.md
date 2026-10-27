@@ -57,8 +57,14 @@ membership/order and recovery records after reopen and a SQLite snapshot copy.
 round trip and SPN-064 ownership handover with freshly reopened native services,
 described in the verification record below. Continue restoring the recorded
 immutable application version; an older image cannot be assumed to understand a
-newer Space schema. Space Trash and recovery groups containing Space data have
-no automatic expiry; backup retention does not change that application policy.
+newer Space schema. Space Trash and recovery groups containing Space data use
+the [same 30-day recovery window as ordinary Trash](trash.md). Backup retention
+is separate: keeping an archive does not extend an application's recovery
+deadline, and application cleanup does not rewrite old backup objects. Restored
+deletion timestamps keep their original age, including after ownership handover.
+Before starting a new server against deliberately retained or restored test data,
+follow the [read-only expiry inventory](implementation/SPN-095.md#previously-retained-data-and-activation);
+startup cleanup can remove content already past its original deadline.
 
 The encrypted copy also contains the canonical origin, immutable application
 image reference and runtime environment file. Host-specific Tailscale identity,

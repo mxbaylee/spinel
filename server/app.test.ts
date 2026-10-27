@@ -3,18 +3,24 @@ import type { AddressInfo } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { DatabaseSync } from './database.ts';
-import { afterEach, expect, test } from 'vitest';
+import { afterEach, expect, test, vi } from 'vitest';
 import { createApp, projectRoot } from './app.ts';
 import { openDatabase } from './database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { DocumentStore } from '../src/server/workspace/documents.ts';
 import { SpaceStore } from '../src/server/workspace/spaces.ts';
+import { migrateSpaceSchema } from '../src/server/workspace/space-schema.ts';
+import { TrashStore, TRASH_RETENTION_MS } from '../src/server/workspace/trash.ts';
+import { CollaborationStore } from '../src/server/collaboration/service.ts';
+import { SQLiteSyncStorage } from '../src/server/sync/store.ts';
 
 const cleanups: (() => Promise<unknown>)[] = [];
 afterEach(async () => {
   for (const cleanup of cleanups.reverse()) await cleanup();
   cleanups.length = 0;
+  vi.restoreAllMocks();
+  vi.useRealTimers();
 });
 
 async function temporaryDirectory() {
@@ -22,6 +28,97 @@ async function temporaryDirectory() {
   cleanups.push(() => rm(directory, { recursive: true, force: true }));
   return directory;
 }
+
+test('Space expiry reports health and native purge failures retry without blocking startup or shutdown', async () => {
+  const directory = await temporaryDirectory();
+  const path = join(directory, 'app.sqlite');
+  await writeFile(join(directory, 'index.html'), 'Fixture');
+  const db = openDatabase(path);
+  const auth = new AuthStore(db, () => Date.now() - TRASH_RETENTION_MS);
+  const workspace = new WorkspaceStore(auth, { spacesEnabled: true });
+  migrateSpaceSchema(db);
+  const owner = auth.createUser('Owner');
+  const operator = auth.createUser('Operator', true);
+  const spaces = new SpaceStore(workspace);
+  const root = spaces.createRoot(owner.id, { name: 'Private deleted Space', parentId: null }).space;
+  const doc = spaces.createChild(owner.id, root.id, {
+    name: 'Private page',
+    kind: 'doc',
+    parentId: root.id,
+  }).item;
+  const seeded = new CollaborationStore(workspace, path);
+  const ownerSession = auth.createSession(owner.id);
+  try {
+    await seeded.prepare(owner.id, doc.id, {
+      spaceId: root.id,
+      spaceItem: doc.id,
+      sessionHash: ownerSession.session.token_hash,
+    });
+    new TrashStore(workspace).trash(owner.id, root.id);
+  } finally {
+    await seeded.close();
+    db.close();
+  }
+
+  vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] });
+  const log = vi.spyOn(console, 'error').mockImplementation(() => {});
+  const remove = vi.spyOn(SQLiteSyncStorage.prototype, 'remove').mockImplementation(() => {
+    throw new Error('Private page native deletion failed');
+  });
+  const app = await createApp({ databasePath: path, staticDirectory: directory });
+  let closed = false;
+  cleanups.push(async () => {
+    if (!closed) await app.close();
+  });
+  const inspect = openDatabase(path);
+  cleanups.push(async () => inspect.close());
+  expect(inspect.prepare('SELECT id FROM workspace_items').all()).toEqual([]);
+  expect(inspect.prepare('SELECT item_id FROM collaboration_purge').all()).toEqual([
+    { item_id: doc.id },
+  ]);
+  expect(remove).toHaveBeenCalledTimes(1);
+  await vi.advanceTimersByTimeAsync(60_000);
+  expect(remove).toHaveBeenCalledTimes(2);
+
+  await new Promise<void>((resolve) => app.server.listen(0, '127.0.0.1', resolve));
+  const origin = 'http://127.0.0.1:' + (app.server.address() as AddressInfo).port;
+  const session = new AuthStore(inspect).createSession(operator.id);
+  const response = await fetch(origin + '/api/admin/health', {
+    headers: { Cookie: COOKIE_NAME + '=' + session.token },
+  });
+  expect(response.status).toBe(200);
+  const health = await response.json();
+  expect(
+    health.jobs.find((job: { name: string }) => job.name === 'space-trash-expiry'),
+  ).toMatchObject({
+    configured: true,
+    running: false,
+    lastSuccess: expect.any(Number),
+    failedSince: null,
+  });
+  expect(
+    health.jobs.find((job: { name: string }) => job.name === 'collaboration-purge'),
+  ).toMatchObject({
+    configured: true,
+    running: false,
+    failedSince: expect.any(Number),
+  });
+  await app.close();
+  closed = true;
+  expect(remove).toHaveBeenCalledTimes(3);
+  expect(inspect.prepare('SELECT item_id FROM collaboration_purge').all()).toHaveLength(1);
+  expect(inspect.prepare('SELECT unit_id FROM spinel_sync_units').all()).toEqual([
+    { unit_id: doc.id },
+  ]);
+  expect(log.mock.calls.every((args) => args.length === 1)).toBe(true);
+  expect(JSON.stringify(log.mock.calls)).not.toContain('Private');
+  remove.mockRestore();
+  const reopened = await createApp({ databasePath: path, staticDirectory: directory });
+  cleanups.push(() => reopened.close());
+  expect(inspect.prepare('SELECT item_id FROM collaboration_purge').all()).toEqual([]);
+  expect(inspect.prepare('SELECT unit_id FROM spinel_sync_units').all()).toEqual([]);
+  expect(inspect.prepare('PRAGMA foreign_key_check').all()).toEqual([]);
+}, 20_000);
 
 test('startup upgrades storage before SDK initialization and preserves Space data when explicitly disabled', async () => {
   const directory = await temporaryDirectory();
@@ -47,6 +144,7 @@ test('startup upgrades storage before SDK initialization and preserves Space dat
     'original-write',
   );
   const session = auth.createSession(owner.id);
+  const operatorSession = auth.createSession(auth.createUser('Operator', true).id);
   expect(
     db
       .prepare('PRAGMA table_info(workspace_items)')
@@ -108,6 +206,23 @@ test('startup upgrades storage before SDK initialization and preserves Space dat
   });
   // A disabled capability is unavailable, including through outer-file creation.
   expect(creation.status).toBe(404);
+  const healthResponse = await fetch(root + '/api/admin/health', {
+    headers: { Cookie: COOKIE_NAME + '=' + operatorSession.token },
+  });
+  expect(healthResponse.status).toBe(200);
+  const health = await healthResponse.json();
+  expect(
+    health.jobs.find((job: { name: string }) => job.name === 'space-trash-expiry'),
+  ).toMatchObject({
+    configured: false,
+    running: false,
+    lastAttempt: null,
+    lastSuccess: null,
+  });
+  expect(health.jobs.find((job: { name: string }) => job.name === 'trash-expiry')).toMatchObject({
+    configured: true,
+    lastSuccess: expect.any(Number),
+  });
   db = openDatabase(path);
   try {
     expect(

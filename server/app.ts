@@ -70,7 +70,6 @@ export async function createApp(options: AppOptions) {
     );
     const jobs = new HealthJobs({
       observe: ({ job, success, durationMs, runId }) => {
-        if (job === 'space-trash-expiry') return;
         diagnostics!.emit(
           {
             name: 'job.result',
@@ -159,12 +158,18 @@ export async function createApp(options: AppOptions) {
       }),
     );
     app.use('/api/spaces', spaceRoutes(workspace, origin, { spaceReview }));
-    stopCleanup = startTrashCleanup(new TrashStore(workspace), () => jobs.begin('trash-expiry'));
-    await collaboration.purgeDeleted();
+    stopCleanup = startTrashCleanup(
+      new TrashStore(workspace),
+      () => jobs.begin('trash-expiry'),
+      () => jobs.begin('space-trash-expiry'),
+    );
+    await collaboration
+      .purgeDeleted()
+      .catch(() => console.error('Collaboration purge failed; retained generations will retry.'));
     purgeTimer = setInterval(() => {
       void collaboration!
         .purgeDeleted()
-        .catch((error) => console.error('Collaboration purge will retry.', error));
+        .catch(() => console.error('Collaboration purge failed; retained generations will retry.'));
     }, 60_000);
     purgeTimer.unref();
     backups = new BackupService(database, {
@@ -487,7 +492,13 @@ export async function createApp(options: AppOptions) {
       }
       await backups?.close();
       await history?.close();
-      await collaboration?.purgeDeleted();
+      await collaboration
+        ?.purgeDeleted()
+        .catch(() =>
+          console.error(
+            'Collaboration purge incomplete; retained generations will retry after startup.',
+          ),
+        );
       await collaboration?.close();
       database.close();
       await diagnostics?.close();
