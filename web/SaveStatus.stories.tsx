@@ -77,8 +77,9 @@ const meta = {
             setState((current) => ({
               ...current,
               dirty: false,
-              message:
-                'Your offline changes were discarded from this device. The original was not changed.',
+              message: current.recovery?.creation
+                ? 'This document was discarded from this device. Any document already uploaded stays unchanged.'
+                : 'Your offline changes were discarded from this device. The original was not changed.',
               recovery: { ...current.recovery!, phase: 'discarded', message: undefined },
             }));
           }}
@@ -193,6 +194,36 @@ export const NeedsAttention: Story = {
     },
   },
   play: details,
+};
+export const CreationNeedsAttention: Story = {
+  args: {
+    state: {
+      ...recoveryFailed,
+      message:
+        'Needs attention. The chosen folder is no longer available. Use Back to files, then choose another folder from this document’s menu.',
+      recovery: { phase: 'ready', originalHref: '/', creation: true },
+    },
+  },
+  play: async (context) => {
+    const panel = await recoveryDetails(context);
+    await expect(
+      panel.getByText(/Use Back to files, then choose another folder from this document’s menu\./),
+    ).toBeVisible();
+    await expect(
+      panel.queryByRole('button', { name: 'Retry creating copy' }),
+    ).not.toBeInTheDocument();
+    await expect(panel.getByRole('button', { name: 'Export as Univer file' })).toBeEnabled();
+    await userEvent.click(panel.getByRole('button', { name: 'Discard device copy…' }));
+    await expect(
+      panel.getByText(
+        'Discard this document from this device? This cannot be undone. Any document already uploaded stays unchanged.',
+      ),
+    ).toBeVisible();
+    await userEvent.click(panel.getByRole('button', { name: 'Discard device copy' }));
+    await expect(context.args.onDiscardRecovery).toHaveBeenCalledOnce();
+    await expect(panel.getByRole('link', { name: 'My files' })).toHaveAttribute('href', '/');
+    await expect(panel.queryByRole('link', { name: 'Open original' })).not.toBeInTheDocument();
+  },
 };
 export const RecoveryCreating: Story = {
   args: {

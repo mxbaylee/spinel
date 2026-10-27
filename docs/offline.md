@@ -19,6 +19,9 @@ export and explicit discard when replay cannot safely continue.
 SPN-055 adds verified device inventory, explicit storage protection/removal,
 immediate local account locking and compatible public runtimes across updates
 ([implementation decisions](implementation/SPN-055.md)).
+SPN-051 adds creation of ordinary Sheets and Docs in the prepared account's own
+folders, with durable stable IDs, exactly-once server admission and explicit
+destination recovery ([implementation decisions](implementation/SPN-051.md)).
 [SPN-092](implementation/SPN-092.md) extends preparation and local opening to
 one account-authorized Space child at a time, with its verified images.
 The remaining parts of this contract are open, split by the Owner in chat on 2026-10-19 so
@@ -63,7 +66,7 @@ After an initial online setup in the app context they will use:
 | Application    | Shell, theme preference, icons and the code/assets needed by selected editors load without a server dependency.                                                                                                                                                  |
 | Catalog        | Last-synchronized authorized folder/file metadata, personal tags and visible paths remain browsable; freshness and offline availability are clear. A failed refresh never becomes an apparently empty workspace.                                                 |
 | Selected items | An explicit **Available offline on this device** action stores a complete existing Sheet/Doc and its required assets/images. Known undownloaded items remain identifiable but need a connection to open.                                                         |
-| Changes        | Committed edits save locally, survive ordinary termination/reopen while offline, and sync while the app is running and connected. If the live document changed meanwhile, they become a conflicted copy rather than a merge. Local-save failure remains visible. |
+| Changes        | Committed edits save locally, survive ordinary termination/reopen while offline, and sync while their document is open and connected. Reopen a retained file to resume its upload. If the live document changed meanwhile, edits become a conflicted copy rather than a merge. Local-save failure remains visible. |
 | Entry points   | Stable item links support direct launch; offline downloads and home-screen shortcuts remain distinct actions.                                                                                                                                                    |
 
 The catalog is Spinel metadata, not the server's physical filesystem. Preserve
@@ -71,8 +74,40 @@ personal filing and source permissions: never copy inaccessible owner ancestors,
 another person's tags, or unrelated documents. Owners and signed-in Collaborators
 can download permitted items; viewer downloads remain read-only. Metadata and
 selected documents refresh when connected without discarding pending local edits.
-Content search, offline new-item/image creation, and folder/sharing
+Content search, offline image creation, and folder/sharing
 administration are outside this first outcome. Existing embedded images are required.
+
+## Creating a new document offline
+
+After preparing the account online, **New → Sheet / Doc** works without a
+connection in My files and owned ordinary folders from the cached catalog.
+The complete local record commits before the editor opens. The same native
+editor saves edits on this device and restores them after an offline reload.
+Unprepared devices, Operators and link guests receive no offline creation.
+Shared-folder creation remains SPN-069; offline folders, Space trees, images and
+sharing administration are outside this flow.
+
+The row says **Not synced yet** while its stable creation request is awaiting
+server acknowledgement. Open the document to upload when connected: startup,
+foreground return and reconnect use the existing native editor's single writer.
+There is no background-writer or closed-app upload guarantee. The server accepts
+the immutable empty base exactly once, then the existing native queue delivers
+the edits. **Synced** still requires every durable edit acknowledgement and
+successful local cleanup; creation acceptance alone is insufficient.
+
+If the chosen folder was removed or is no longer owned by the account before
+creation, the row says **Needs attention** and offers **Choose another folder…**.
+Only that definitive rejection permits changing the saved destination. A lost
+response retries the original request, so it cannot create a second document or
+silently move an already accepted one. A later conflicting/deleted accepted
+document retains local work for explicit export or discard. No creation writes
+where the current account lacks permission.
+
+Even an unedited new document counts as pending work for removal, sign-out,
+refresh and application updates. Older compatible runtimes conservatively retain
+its unfamiliar queue marker. The separate local metadata survives catalog refresh
+and is fenced to the original account. See [the creation record](implementation/SPN-051.md)
+for receipt, storage and persona decisions; SPN-090 retains physical-phone checks.
 
 ## Download bundle
 

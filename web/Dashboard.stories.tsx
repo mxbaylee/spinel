@@ -5,6 +5,8 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import type { ItemKind, SpaceFile, WorkspaceItem } from '../src/shared/workspace.ts';
 import type { OfflineBundle } from '../src/shared/offlineBundle.ts';
 import type { ShellManifest } from '../src/shared/offlineShell.ts';
+import { blankOfflineSnapshot } from '../src/shared/offlineCreation.ts';
+import type { OfflineCreationRequest } from '../src/shared/offlineCreation.ts';
 import { failure, pending } from '../.storybook/api.ts';
 import { searchCatalog } from '../src/shared/search.ts';
 import { Dashboard } from './Dashboard.tsx';
@@ -152,6 +154,16 @@ function LocalDeviceFixture({ local, children }: { local: LocalStart; children: 
         await store.clearAccount(() => {});
         await store.saveCatalog(local.user, local.catalog);
         for (const copy of local.downloads) {
+          const creation: OfflineCreationRequest | undefined = copy.creation
+            ? {
+                version: 1,
+                itemId: copy.itemId,
+                unitId: crypto.randomUUID(),
+                name: copy.name,
+                kind: copy.kind,
+                parentId: copy.creation.parentId,
+              }
+            : undefined;
           const bundle = {
             version: 1,
             accountId: local.user.id,
@@ -159,19 +171,31 @@ function LocalDeviceFixture({ local, children }: { local: LocalStart; children: 
             spaceId: copy.spaceId,
             name: copy.name,
             kind: copy.kind,
-            unitId: copy.itemId,
+            unitId: creation?.unitId ?? copy.itemId,
             revision: copy.revision,
             revisionOffset: 0,
             access: copy.readOnly ? 'viewer' : 'owner',
             readOnly: copy.readOnly,
             sdkVersion: '1.1.0',
             images: [],
-            snapshot:
-              copy.kind === 'sheet'
+            snapshot: creation
+              ? blankOfflineSnapshot(creation)
+              : copy.kind === 'sheet'
                 ? { id: copy.itemId, sheets: {} }
                 : { id: copy.itemId, documentStyle: {} },
           } as OfflineBundle;
-          await store.saveDownload(bundle, new Map());
+          if (creation)
+            await store.saveCreation(
+              bundle,
+              {
+                request: creation,
+                createdAt: copy.creation!.createdAt,
+                problem: copy.creation!.problem,
+                canRelocate: copy.creation!.canRelocate,
+              },
+              () => {},
+            );
+          else await store.saveDownload(bundle, new Map());
         }
       } finally {
         store.close();
@@ -401,7 +425,7 @@ const local: LocalStart = {
   })),
 };
 /**
- * Offline on a prepared device: the last-synced list, read-only. Downloaded
+ * Offline on a prepared device: the last-synced list. Downloaded
  * items say Available offline; other Sheets and Docs say Needs a connection.
  */
 export const LocalMode: Story = {
@@ -412,6 +436,155 @@ export const LocalMode: Story = {
       await within(canvasElement).findByRole('heading', { name: 'My files' }),
     ).toBeVisible();
   },
+};
+
+export const NewOfflineDoc: Story = {
+  ...LocalMode,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(await canvas.findByRole('button', { name: 'New' }));
+    const menu = within(await body.findByRole('menu'));
+    await expect(menu.getAllByRole('menuitem').map((item) => item.textContent)).toEqual([
+      'Sheet',
+      'Doc',
+    ]);
+    await userEvent.click(menu.getByRole('menuitem', { name: 'Doc' }));
+    const dialog = within(await body.findByRole('dialog', { name: 'New doc' }));
+    await userEvent.type(dialog.getByRole('textbox', { name: 'Name' }), 'Notes for the journey');
+    await expect(dialog.getAllByRole('option').map((option) => option.textContent)).toEqual([
+      'Sheet',
+      'Doc',
+    ]);
+    await expect(
+      dialog.getByText('This document will save on this device and upload when connected.'),
+    ).toBeVisible();
+    await assertDialogControls(body.getByRole('dialog', { name: 'New doc' }));
+  },
+};
+
+const pendingCreation = {
+  itemId: id(31),
+  name: 'Notes for the journey',
+  kind: 'doc' as const,
+  readOnly: false,
+  revision: 1,
+  downloadedAt: synced,
+  pending: true,
+  available: true,
+  creation: { parentId: null, createdAt: synced },
+};
+const blockedCreation = {
+  ...pendingCreation,
+  itemId: id(32),
+  name: 'Planning for next week',
+  kind: 'sheet' as const,
+  creation: {
+    parentId: household.id,
+    createdAt: synced,
+    problem:
+      'The chosen folder is no longer available. Use Back to files, then choose another folder from this document’s menu.',
+    canRelocate: true,
+  },
+};
+export const CreatedOffline: Story = {
+  args: { local: { ...local, downloads: [...local.downloads, pendingCreation, blockedCreation] } },
+  parameters: { api: empty },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByText('Not synced yet')).toBeVisible();
+    await expect(await canvas.findByText('Needs attention')).toBeVisible();
+    await expect(
+      canvas.queryByRole('link', { name: `Recover ${pendingCreation.name}` }),
+    ).not.toBeInTheDocument();
+    await expect(
+      canvas.queryByRole('link', { name: `Recover ${blockedCreation.name}` }),
+    ).not.toBeInTheDocument();
+  },
+};
+export const ChooseCreationFolder: Story = {
+  ...CreatedOffline,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      await canvas.findByRole('button', { name: `More actions for ${blockedCreation.name}` }),
+    );
+    await userEvent.click(await body.findByRole('menuitem', { name: 'Choose another folder…' }));
+    const dialog = within(await body.findByRole('dialog', { name: 'Choose another folder' }));
+    await expect(dialog.getByRole('combobox', { name: 'Destination' })).toHaveValue('');
+    await expect(dialog.getAllByRole('option').map((option) => option.textContent)).toEqual([
+      'My files',
+      'Household',
+      'Household / Finance',
+      'Work',
+    ]);
+    await assertDialogControls(body.getByRole('dialog', { name: 'Choose another folder' }));
+  },
+};
+/** A cached destination later shared back to us cannot hide an unuploaded draft. */
+export const CreationParentNowShared: Story = {
+  args: {
+    local: {
+      ...local,
+      catalog: {
+        ...local.catalog,
+        items: local.catalog.items.filter((item) => item.id !== household.id),
+        shared: [
+          ...local.catalog.shared,
+          { ...household, access: 'editor', ownerName: 'Alex Kim', placementParentId: null },
+        ],
+      },
+      downloads: [
+        ...local.downloads,
+        {
+          ...pendingCreation,
+          creation: { ...pendingCreation.creation, parentId: household.id },
+        },
+      ],
+    },
+  },
+  parameters: { api: empty },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    await expect(
+      await canvas.findByRole('button', { name: `${pendingCreation.name} Doc` }),
+    ).toBeVisible();
+    await expect(canvas.getByText('Not synced yet')).toBeVisible();
+    await expect(
+      canvas.getByText('Saved on this device. Open to upload when connected.'),
+    ).toBeVisible();
+    await userEvent.click(
+      canvas.getByRole('button', { name: `More actions for ${pendingCreation.name}` }),
+    );
+    const menu = within(await body.findByRole('menu'));
+    await expect(menu.getAllByRole('menuitem').map((item) => item.textContent)).toEqual(['Open']);
+    await userEvent.keyboard('{Escape}');
+  },
+};
+/** An old folder view supplies context, not a reachable destination in My files. */
+export const CreationParentNoLongerListed: Story = {
+  args: {
+    local: {
+      ...local,
+      catalog: {
+        ...local.catalog,
+        items: local.catalog.items.filter((item) => item.id !== household.id),
+        // Keep the old owned view to reproduce deletion after the last visit.
+        views: local.catalog.views,
+      },
+      downloads: [
+        ...local.downloads,
+        {
+          ...pendingCreation,
+          creation: { ...pendingCreation.creation, parentId: household.id },
+        },
+      ],
+    },
+  },
+  parameters: { api: empty },
+  play: CreationParentNowShared.play,
 };
 /** Offline, a Doc that wasn't downloaded stays listed but can't open. */
 export const LocalNeedsConnection: Story = {

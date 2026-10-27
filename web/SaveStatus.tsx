@@ -112,16 +112,20 @@ export function SaveStatus({
                       {recovery.phase === 'created' ? (
                         <div className="save-recovery-actions">
                           <a href={recovery.copyHref}>Open copy</a>
-                          <a href={recovery.originalHref}>Open original</a>
+                          <a href={recovery.creation ? '/' : recovery.originalHref}>
+                            {recovery.creation ? 'My files' : 'Open original'}
+                          </a>
                         </div>
                       ) : recovery.phase === 'discarded' ? (
-                        <a href={recovery.originalHref}>Open original</a>
+                        <a href={recovery.creation ? '/' : recovery.originalHref}>
+                          {recovery.creation ? 'My files' : 'Open original'}
+                        </a>
                       ) : confirmDiscard ? (
                         <div>
                           <p>
-                            Discard all offline changes to this document from this device? This
-                            cannot be undone. The original and any copy already created stay
-                            unchanged.
+                            {recovery.creation
+                              ? 'Discard this document from this device? This cannot be undone. Any document already uploaded stays unchanged.'
+                              : 'Discard all offline changes to this document from this device? This cannot be undone. The original and any copy already created stay unchanged.'}
                           </p>
                           <div className="save-recovery-actions">
                             <button
@@ -132,7 +136,9 @@ export function SaveStatus({
                                 onDiscardRecovery?.();
                               }}
                             >
-                              Discard offline changes
+                              {recovery.creation
+                                ? 'Discard device copy'
+                                : 'Discard offline changes'}
                             </button>
                             <button type="button" onClick={() => setConfirmDiscard(false)}>
                               Keep changes
@@ -141,7 +147,7 @@ export function SaveStatus({
                         </div>
                       ) : (
                         <div className="save-recovery-actions">
-                          {!state.signInRequired && (
+                          {!state.signInRequired && !recovery.creation && (
                             <button type="button" disabled={busy} onClick={onRecover}>
                               {recovery.phase === 'creating'
                                 ? 'Creating copy…'
@@ -156,7 +162,9 @@ export function SaveStatus({
                             disabled={busy}
                             onClick={() => setConfirmDiscard(true)}
                           >
-                            Discard offline changes…
+                            {recovery.creation
+                              ? 'Discard device copy…'
+                              : 'Discard offline changes…'}
                           </button>
                         </div>
                       )}

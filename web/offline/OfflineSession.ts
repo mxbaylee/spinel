@@ -14,6 +14,7 @@ import { ScopedHTTP } from './ScopedHTTP.ts';
 import { checkBundle, downloadForOffline } from './download.ts';
 import { isRuntimeCompatible } from './runtime.ts';
 import { offlineCopyName, portableOfflineSnapshot, verifyRecoveryRequest } from './recovery.ts';
+import { CreationUploadError, uploadOfflineCreation } from './creation.ts';
 import {
   hasOfflineEdits,
   expirePreparedAccount,
@@ -70,6 +71,7 @@ export class OfflineSession implements IURLImageService {
   private recoveryCurrent?: () => boolean;
   private recoveryResolved = false;
   private verifiedRecovery?: { recovery: OfflineRecoveryRequest; checkpoint: ClientCheckpoint };
+  private creationUpload?: Promise<boolean>;
   onChange?: () => void;
   onLock?: () => void;
   online = false;
@@ -97,8 +99,11 @@ export class OfflineSession implements IURLImageService {
   get checkpoint() {
     return this.download?.outbox?.checkpoint;
   }
+  get creation() {
+    return this.download?.creation;
+  }
   get problem() {
-    return this.attention;
+    return this.attention || this.creation?.problem || '';
   }
   get readOnly() {
     return Boolean(
@@ -109,7 +114,9 @@ export class OfflineSession implements IURLImageService {
     );
   }
   get pending() {
-    return !this.recoveryResolved && hasOfflineEdits(this.download?.outbox);
+    return (
+      !this.recoveryResolved && (Boolean(this.creation) || hasOfflineEdits(this.download?.outbox))
+    );
   }
   get canRecover() {
     return Boolean(
@@ -347,6 +354,59 @@ export class OfflineSession implements IURLImageService {
     this.verifyRemote();
     return response;
   }
+  /** Admit the immutable empty base before access checks or native edit replay. */
+  async ensureCreated(signal: AbortSignal) {
+    if (!this.creation) return true;
+    if (this.creation.problem || !this.releaseWriter) return false;
+    if (this.creationUpload) return this.creationUpload;
+    const creation = this.creation;
+    this.creationUpload = (async () => {
+      this.verifyRemote();
+      try {
+        const result = await uploadOfflineCreation(
+          this.accountId,
+          creation.request,
+          signal,
+          this.verifyRemote,
+        );
+        await this.store!.updateCreation(
+          this.itemId,
+          creation,
+          undefined,
+          this.verifyRemote,
+          result.item,
+        );
+        this.verifyRemote();
+        this.download!.creation = undefined;
+        if (this.download!.outbox) delete this.download!.outbox.creation;
+        this.onChange?.();
+        return true;
+      } catch (error) {
+        this.verifyRemote();
+        if (
+          error instanceof CreationUploadError &&
+          (error.code === 'folder-unavailable' || error.code === 'creation-conflict')
+        ) {
+          const next = {
+            ...creation,
+            problem:
+              error.code === 'folder-unavailable'
+                ? 'The chosen folder is no longer available. Use Back to files, then choose another folder from this document’s menu.'
+                : 'The original upload could not be confirmed. Keep this device copy and export your work before removing it.',
+            canRelocate: error.code === 'folder-unavailable',
+          };
+          await this.store!.updateCreation(this.itemId, creation, next, this.verifyRemote);
+          this.download!.creation = next;
+          this.onChange?.();
+          return false;
+        }
+        throw error;
+      }
+    })().finally(() => {
+      this.creationUpload = undefined;
+    });
+    return this.creationUpload;
+  }
   toCanonical = <T>(value: T): T =>
     this.images ? this.images.canonicalize(value) : structuredClone(value);
   toVisible = <T>(value: T): T =>
@@ -440,7 +500,12 @@ export class OfflineSession implements IURLImageService {
       images: bundle.images,
       bytes: this.download.bytes,
     });
-    this.download.outbox = { version: 1, ...scope, checkpoint: structuredClone(checkpoint) };
+    this.download.outbox = {
+      version: 1,
+      ...scope,
+      checkpoint: structuredClone(checkpoint),
+      ...(this.creation ? { creation: true as const } : {}),
+    };
   }
   async reconcileAvailability(checkpoint: ClientCheckpoint) {
     if (this.recoveryResolved) return;

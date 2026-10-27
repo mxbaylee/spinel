@@ -24,6 +24,7 @@ import type {
 import { prepareShell } from './shell.ts';
 import { isRuntimeCompatible } from './runtime.ts';
 import { readDeviceInventory, removeDeviceCopy, requestPersistence } from './deviceStorage.ts';
+import { createOfflineDocument, relocateOfflineCreation } from './creation.ts';
 
 export type OfflineMessage = {
   text: string;
@@ -268,6 +269,56 @@ export function useOfflineDownloads(
     await serially(scope, (store) => store.saveCatalog({ id: user.id, name: user.name }, value));
   }
 
+  /** Capture the ordering cutoff immediately, without waiting for queued downloads. */
+  async function catalogRevision() {
+    const scope = preparation();
+    if (!scope?.isCurrent() || preparedAccount() !== user.id) return 0;
+    let store: OfflineStore | null = null;
+    try {
+      store = await openExistingOfflineStore(user.id);
+      verify(scope)();
+      if (!store) return 0;
+      const revision = await store.creationRevision();
+      verify(scope)();
+      return revision;
+    } catch {
+      // A conservative cutoff keeps newly accepted files discoverable when
+      // storage is unavailable; it never claims a later creation was listed.
+      return 0;
+    } finally {
+      store?.close();
+    }
+  }
+
+  async function create(name: string, kind: 'sheet' | 'doc', parentId: string | null) {
+    const scope = preparation();
+    if (!scope || preparedAccount() !== user.id)
+      throw new Error('Prepare this account online before creating documents offline.');
+    const item = await serially(scope, (store) =>
+      createOfflineDocument(store, name, kind, parentId, verify(scope)),
+    );
+    verify(scope)();
+    if (!item) throw new Error('Offline storage is not available. Connect to prepare this device.');
+    await refreshSummaries();
+    verify(scope)();
+    return item;
+  }
+
+  async function relocateCreation(itemId: string, parentId: string | null) {
+    const scope = preparation();
+    if (!scope) throw new Error('This account is no longer current.');
+    const item = await serially(scope, (store) =>
+      withOfflineItemWriter(user.id, itemId, () =>
+        relocateOfflineCreation(store, itemId, parentId, verify(scope)),
+      ),
+    );
+    verify(scope)();
+    if (!item) throw new Error('This saved document is no longer available.');
+    await refreshSummaries();
+    verify(scope)();
+    return item;
+  }
+
   async function toggle(item: Pick<WorkspaceItem, 'id' | 'name' | 'kind'>, spaceId?: string) {
     const scope = preparation(true);
     if (!scope?.isCurrent() || local || busy) return;
@@ -379,7 +430,10 @@ export function useOfflineDownloads(
     message: shownAccount === user.id ? message : null,
     clearMessage: () => setMessage(null),
     toggle,
+    create,
+    relocateCreation,
     saveCatalog,
+    catalogRevision,
     refreshSummaries,
   };
 }

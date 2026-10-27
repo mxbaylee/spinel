@@ -14,4 +14,6 @@ export interface OfflineRecoveryState {
   copyHref?: string;
   copyName?: string;
   message?: string;
+  /** This local creation has no confirmed original; never offer a second upload identity. */
+  creation?: boolean;
 }

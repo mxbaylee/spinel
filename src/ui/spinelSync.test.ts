@@ -11,6 +11,7 @@ import { getSyncPresence } from '../../web/syncPresence.ts';
 import type { SaveState } from '../shared/autosave.ts';
 import type { ConnectionState } from '../../web/connectionState.ts';
 import type { OfflineSession } from '../../web/offline/OfflineSession.ts';
+import type { OfflineCreation } from '../../web/offline/offlineStore.ts';
 import type { OfflineRecoveryRequest } from '../shared/offlineRecovery.ts';
 
 const downloadOfflineFile = vi.hoisted(() => vi.fn());
@@ -218,6 +219,7 @@ async function fixture({
     accountId: 'owner',
     itemId: space ? child : item,
     bundle: { access: 'editor', unitId: 'unit', name: 'Offline notes' },
+    creation: undefined as OfflineCreation | undefined,
     recoveryRequest: undefined as OfflineRecoveryRequest | undefined,
     onChange: undefined as (() => void) | undefined,
     initial: () =>
@@ -328,6 +330,49 @@ async function fixture({
     },
   };
 }
+
+test('creation admission updates recovery actions and the original link after a native failure', async () => {
+  const f = await fixture({ downloaded: true, canRecover: true });
+  f.offline.creation = {
+    createdAt: 1000,
+    request: {
+      version: 1,
+      itemId: item,
+      unitId: '55555555-5555-4555-8555-555555555555',
+      kind: 'doc',
+      name: 'Offline notes',
+      parentId: null,
+    },
+  };
+  f.pending();
+  f.conflict();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.saves.at(-1)?.recovery).toMatchObject({
+    phase: 'ready',
+    creation: true,
+    originalHref: '/',
+  });
+  expect(f.offline.publishRecovery).not.toHaveBeenCalled();
+
+  // The creation receipt commits, but native edits still require recovery.
+  f.offline.publishRecovery.mockRejectedValueOnce(new Error('Try the copy again.'));
+  f.offline.creation = undefined;
+  f.offline.onChange?.();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.saves.at(-1)?.recovery).toMatchObject({
+    phase: 'failed',
+    originalHref: `/?item=${item}`,
+  });
+  expect(f.saves.at(-1)?.recovery?.creation).toBeUndefined();
+  f.handle.recover();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.offline.publishRecovery).toHaveBeenCalledTimes(2);
+  expect(f.saves.at(-1)?.recovery).toMatchObject({
+    phase: 'created',
+    originalHref: `/?item=${item}`,
+    copyHref: `/?item=${f.copyItem.id}`,
+  });
+});
 
 test('recovery freezes and drains before publication, then removes local work only after the durable response', async () => {
   const f = await fixture({ downloaded: true, canRecover: true, space: true });

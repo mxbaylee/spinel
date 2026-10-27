@@ -18,6 +18,7 @@ import { historyRoutes } from '../history/routes.ts';
 import { admitTransfer, transfers } from './transfers.ts';
 import { archiveRoutes } from './archive-routes.ts';
 import { pdfRoutes } from '../pdf/routes.ts';
+import { OfflineCreationError, OfflineCreations } from './offline-creation.ts';
 
 export function workspaceRoutes(
   auth: AuthStore,
@@ -33,6 +34,7 @@ export function workspaceRoutes(
   const sheets = new SheetStore(store);
   const documents = new DocumentStore(store);
   const files = new PortableFiles(store, collaboration);
+  const creations = collaboration ? new OfflineCreations(store, collaboration) : undefined;
   const account = (request: Request) => documentIdentity(store, request.headers);
   const owner = (request: Request) => {
     const id = auth.session(cookieToken(request))?.user_id;
@@ -241,6 +243,21 @@ export function workspaceRoutes(
       throw new AuthError(503, 'History is not available.');
     });
   router.use(express.json({ limit: '8kb', strict: true }));
+  router.post('/offline-create', (request, response) => {
+    const user = owner(request);
+    if (request.headers['x-spinel-offline-account'] !== user)
+      throw new AuthError(409, 'The signed-in account changed. Reopen Spinel.');
+    if (!creations) throw new AuthError(503, 'Offline creation is not available.');
+    const result = creations.create(
+      user,
+      payload(request, ['version', 'itemId', 'unitId', 'kind', 'name', 'parentId']),
+      () => {
+        if (owner(request) !== user || response.destroyed)
+          throw new AuthError(401, 'Sign in to continue.');
+      },
+    );
+    response.status(201).json(result);
+  });
   router.post('/:id/collaboration', async (request, response) => {
     if (!collaboration) throw new AuthError(503, 'Collaboration is not available.');
     const identity = account(request),
@@ -369,6 +386,20 @@ export function workspaceRoutes(
             ? 413
             : 400;
     response.status(status).json({
+      ...(request.path === '/offline-create'
+        ? {
+            code:
+              error instanceof OfflineCreationError
+                ? error.code
+                : status === 409
+                  ? 'account-changed'
+                  : status === 401
+                    ? 'no-session'
+                    : status === 503
+                      ? 'unavailable'
+                      : 'invalid-request',
+          }
+        : {}),
       error:
         error instanceof AuthError
           ? error.message
