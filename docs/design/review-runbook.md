@@ -1,6 +1,6 @@
 # Review a design change
 
-Use a focused human/AI review when a change affects navigation, layout, visual
+Use a focused independent subagent review when a change affects navigation, layout, visual
 hierarchy, shared controls, or important empty/error/access states. A small copy
 fix needs a small review; a new journey needs its states and transitions examined.
 This replaces SPN-060's broad automation proposal. Owner, chat 2026-10-21.
@@ -30,7 +30,12 @@ screen needs visual review. A manual Storybook run can also set
 `capture_screenshots=true` and optional focused story IDs. Routine captures are
 not required for unrelated PRs; applicable rendering, play functions, native
 editor proofs and interaction assertions still run, with failure diagnostics.
-The label requests evidence and does not grant visual approval.
+The label requests evidence and does not grant visual approval. Embed every
+proposed design and the actual affected-screen images in the PR body/conversation,
+using attachments or durable commit-pinned image embeds. Include source SHA,
+theme/viewport/state captions and the design/playbook links. Artifact links and
+local galleries supplement those PR-visible images; they do not replace them.
+No human sign-off is needed under the [standing delegation](../implementation/grooming-2026-10-26.md#agent-decisions-and-visual-review).
 
 After `npm run build-storybook` when local workloads are permitted, run
 `npm run screenshots -- <story IDs>` for all five existing variants, or add
@@ -47,9 +52,11 @@ regression baselines.
 
 ## Ask focused questions
 
-One reviewer can cover a small change. For a substantial journey, independent
-subagents can take the following perspectives in parallel, then reconcile their
-findings against the same evidence. Assign only perspectives the change needs;
+One independent nonimplementing subagent can cover the visual review of a small
+change; the separate merge gate still needs two independent grades. A grading
+reviewer may also do the visual inspection. For a substantial journey, subagents
+can take the following perspectives in parallel, then reconcile their findings
+against the same evidence. Assign only perspectives the change needs;
 three reviews are not a mandatory ceremony. Ask for concrete findings, not
 approval of a proposed conclusion.
 
@@ -98,9 +105,13 @@ evidence. Separate a reproduced failure from a taste preference or hypothesis.
 Fix acceptance failures in the same PR. Put separable work in an existing or new
 ticket without duplicating ownership, and record why a finding needs no change.
 
-The PR records evidence and dispositions. Existing independent review and owner
-visual approval rules in [the backlog process](../todo/process.md) still apply.
-The runbook supplies questions and evidence; it does not replace those decisions.
+The PR records evidence, reviewer identity, reviewed SHA, findings and dispositions,
+and the independent subagent's visual approval. Explicitly state **agent review only**.
+Check the actual images against the theme tokens, approved artwork, typography,
+layout and every relevant persona; source-only review or a passing capture is
+insufficient. Revalidate evidence after affected source changes. Both independent
+merge grades and all acceptance/CI gates in [the backlog process](../todo/process.md)
+still apply. Human design or screenshot sign-off is not required.
 
 ## Worked example: is SPN-042 already finished?
 

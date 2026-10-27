@@ -39,7 +39,6 @@ export interface Ticket {
   score: number;
   depends_on: string[];
   decisions: number[];
-  owner_input: string;
   body: string;
   lineCount: number;
   heading: string;
@@ -68,8 +67,8 @@ export interface Result {
 export const CONFIG_PATH = 'docs/todo/backlog.json';
 export const EFFORT_SIZES: readonly string[] = ['S', 'M', 'L', 'XL'];
 export const IMPACT_SIZES: readonly string[] = ['S', 'M', 'L'];
-export const EFFORT_POINTS: Record<Effort, number> = { S: 3, M: 2, L: 1, XL: 0 };
-export const IMPACT_POINTS: Record<Impact, number> = { S: 1, M: 2, L: 3 };
+export const EFFORT_POINTS: Record<Effort, number> = { S: 0, M: 1, L: 2, XL: 3 };
+export const IMPACT_POINTS: Record<Impact, number> = { S: 10, M: 20, L: 30 };
 export const EFFORT_EMOJI: Record<Effort, string> = { S: '🌱', M: '🌿', L: '🌳', XL: '🏔️' };
 export const IMPACT_EMOJI: Record<Impact, string> = { S: '🤍', M: '💜', L: '🩷' };
 export const PHASES: readonly string[] = ['pre_launch', 'launch', 'post_launch'];
@@ -107,7 +106,6 @@ const FIELDS = [
   'score',
   'depends_on',
   'decisions',
-  'owner_input',
 ];
 const SINGLE_EMOJI = /^\p{RGI_Emoji}$/v;
 const INDEX_FILES = new Set(['readme.md', 'process.md', 'backlog.json']);
@@ -210,7 +208,6 @@ export function parseTicket(file: string, text: string): Ticket {
     score: d.score as number,
     depends_on: (d.depends_on ?? []) as string[],
     decisions: (d.decisions ?? []) as number[],
-    owner_input: (d.owner_input ?? '') as string,
     body: fm.body,
     lineCount: text.replace(/\n$/, '').split('\n').length,
   });
@@ -312,7 +309,6 @@ function validateTicket(t: Ticket, ctx: Context): void {
         t.errors.push(`depends_on "${dep}" is not a ${prefix}-NNN ID`);
   if (!Array.isArray(t.decisions) || t.decisions.some((x) => !Number.isInteger(x) || x < 1))
     t.errors.push('decisions must be a [list] of GitHub issue numbers');
-  if (typeof t.owner_input !== 'string') t.errors.push('owner_input must be a string');
 
   const title = t.heading.startsWith(`${t.emoji} ${t.id} `)
     ? t.heading.slice(`${t.emoji} ${t.id} `.length).trim()
@@ -489,7 +485,8 @@ function findCycle(tickets: Ticket[]): string[] | null {
 
 // ---------- ranking ----------
 
-// A ticket's own points, from 1 to 6.
+// Impact dominates own priority; larger effort comes first within that impact.
+// Own points range from 10 to 33. Dependencies inherit priority separately.
 export function baseScore(t: Pick<Ticket, 'impact' | 'effort'>): number {
   return IMPACT_POINTS[t.impact] + EFFORT_POINTS[t.effort];
 }
@@ -580,7 +577,7 @@ export function rank(tickets: Ticket[], prefix: string): Ranked[] {
       if (k.unblocks.length && !next.k.unblocks.length)
         tieBreak = `Unblocks ${k.unblocks.join(', ')}`;
       else if (k.impact !== next.k.impact) tieBreak = 'Higher impact';
-      else if (k.effort !== next.k.effort) tieBreak = 'Lower effort';
+      else if (k.effort !== next.k.effort) tieBreak = 'Larger effort';
       else tieBreak = 'Lower ID';
     }
     return { ticket: t, score: k.score, tieBreak, waiting: t.depends_on.filter((d) => ids.has(d)) };
@@ -605,7 +602,7 @@ export function renderIndex(backlog: Backlog): string {
     '',
     `How this backlog works: [process.md](process.md). Next ID: **${formatId(prefix, config.next_id)}**. ` +
       `Grooming: **${g.completed_since.length}** tickets completed since ${g.last}${done}. ` +
-      `Reminder every ${g.every}; manual review with the owner, never a work gate.`,
+      `Reminder every ${g.every}; grooming on request, never a work gate.`,
     '',
     `## Open tickets (${tickets.length})`,
     '',
@@ -614,8 +611,8 @@ export function renderIndex(backlog: Backlog): string {
   else {
     const phased = tickets.some((t) => t.phase !== 'pre_launch');
     const tableHeader = [
-      '| # | Ticket | Effort | Impact | Score | Tie-break | Waiting on | Owner input |',
-      '| --- | --- | --- | --- | --- | --- | --- | --- |',
+      '| # | Ticket | Effort | Impact | Score | Tie-break | Waiting on |',
+      '| --- | --- | --- | --- | --- | --- | --- |',
     ];
     out.push(
       phased
@@ -633,7 +630,7 @@ export function renderIndex(backlog: Backlog): string {
       const waiting = r.waiting.length ? r.waiting.map((d) => `[${d}](${d}.md)`).join(', ') : '—';
       out.push(
         `| ${i + 1} | ${link(t)} | ${EFFORT_EMOJI[t.effort]} ${t.effort} | ${IMPACT_EMOJI[t.impact]} ${t.impact} | ` +
-          `${shown(r)} | ${r.tieBreak} | ${waiting} | ${t.owner_input || '—'} |`,
+          `${shown(r)} | ${r.tieBreak} | ${waiting} |`,
       );
     });
   }

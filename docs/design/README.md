@@ -13,7 +13,13 @@ proposed placement changes; production is migrated by each implementation ticket
 [Spaces and file roles](spaces.md) covers SPN-078/091/092 and SPN-079 explicitly.
 
 Every UI change follows this playbook. A ticket that needs a pattern it doesn't
-cover adds the pattern here in its own PR first (AGENTS.md).
+cover adds the pattern here in its own PR first (AGENTS.md). Agents choose and
+refine designs using all four personas. Embed all proposed designs and actual
+current light/dark/phone screenshots on each relevant PR, where an independent
+nonimplementing subagent checks them against this playbook and the theme, records
+findings and grants visual approval. State **agent review only**; human sign-off
+is not required. The [review runbook](review-runbook.md) and [standing policy](../implementation/grooming-2026-10-26.md#agent-decisions-and-visual-review)
+supersede historical owner-review requirements below, while preserving past provenance.
 
 Spinel should feel familiar to someone coming from Google Sheets, Excel for the
 web, Apple Numbers or Zoho Sheet, and quieter than all four. Each screen page
@@ -261,7 +267,7 @@ production-wide replacement.
 ## Storybook
 
 The [covers and Space accents exploration](appearance.md) is under
-**Redesign → Appearance**. These local drafts await owner review; they do not
+**Redesign → Appearance**. These drafts require independent theme/persona review on the implementation PR; they do not
 constitute final artwork approval. SPN-086 now owns the pre-launch personalization
 scope and requires a further design iteration.
 
@@ -326,15 +332,15 @@ Pages tree handles page navigation and My files exits the Space.
   devDependency only. Owner, chat 2026-10-19.
 - Two breakpoints, not three: theme.css grew 600, 640 and 900 px rules one
   ticket at a time, and the 600/640 pair leaves a 40 px band where the phone
-  layout is half applied. Proposed in SPN-046, subject to the owner's review
-  below.
+  layout is half applied. Proposed in SPN-046 and included in the approved playbook.
 - The tokens are the theme's (`src/ui/palette.ts`), not a parallel set, so there
   is one source of color and one contrast test.
 - Public references and owner-authorized live UI research inform the patterns,
   without copying private content or third-party assets. Owner, chat 2026-10-20,
   decision [#126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits); expands the original public-material research scope.
-- The owner reviews this playbook before the UI tickets it unblocks start
-  (SPN-046 owner input).
+- An independent subagent reviews new playbook patterns and their PR-visible
+  designs before the UI tickets use them; agent decisions weigh all personas.
+  Standing delegation, owner 2026-10-26.
 
 ## Sources
 
@@ -342,7 +348,8 @@ Public help centres and product blogs: support.google.com (Docs Editors, Drive),
 support.apple.com (Numbers for iCloud), help.zoho.com (Sheet, WorkDrive),
 learn.microsoft.com and the Microsoft 365 Insider blog (Excel for the web,
 OneDrive). Read 2026-10-19. Products change; when a comparison here goes stale,
-update the comparison rather than the adopted pattern unless the owner agrees.
+update the comparison; change an adopted pattern only with recorded persona
+reasoning, PR-visible design evidence and independent theme review.
 
 Current owner direction (chat, 2026-10-21): folders are rows in **My files**.
 Personal pinning and pinned navigation are removed; folders, tags and search

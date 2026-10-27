@@ -34,13 +34,15 @@ that isn't waiting on another is next.
   needs a pattern the playbook doesn't cover adds it there in its own PR first,
   and every new component or state gets a Storybook story. Owner, chat
   2026-10-19 (SPN-046).
-- **UI PRs request screenshots with `visual-review`** and carry current light,
-  dark and phone evidence for affected screens. Approval comes from the owner
-  or a reviewer the owner explicitly delegates for that run. Other PRs keep
-  Storybook rendering and interaction checks without routine PNG capture;
-  failure diagnostics remain. Work the next ticket while approval waits.
-  Owner, chat 2026-10-19 and 2026-10-25;
-  [capture policy](docs/implementation/backlog-workflow.md#on-demand-storybook-captures).
+- **Agents decide using all four personas; human sign-off is not required.**
+  Record decisions and their tradeoffs. UI PRs use `visual-review` and embed all
+  proposed designs plus actual current light, dark and phone screenshots in the
+  PR body/conversation. An independent nonimplementing subagent inspects them
+  against [the design playbook and theme](docs/design/README.md), records findings
+  and approves the visual result on the reviewed commit. Disclose **agent review
+  only**. CI artifact links supplement the PR's visible evidence. Other PRs keep
+  rendering/interaction checks and failure diagnostics without routine captures.
+  Owner, chat 2026-10-26; [standing delegation](docs/implementation/grooming-2026-10-26.md#agent-decisions-and-visual-review).
 - **Univer Pro packages** (`@univerjs-pro/*`) are closed source under Univer's
   terms. Use them through their public API and docs only: don't decompile,
   deobfuscate or patch them, and don't work around license checks or

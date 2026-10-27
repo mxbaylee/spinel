@@ -1,5 +1,10 @@
 # backlog-workflow decision record
 
+**Current policy:** [2026-10-26 standing agent decisions and visual review](grooming-2026-10-26.md#agent-decisions-and-visual-review)
+supersedes historical human sign-off and run-specific delegation requirements.
+[Impact-first, larger-effort-first scoring](grooming-2026-10-26.md#impact-first-larger-effort-first)
+supersedes the earlier effort/impact points. Historical sources below remain provenance.
+
 ## Two independent grades on the same commit
 
 **Date/status:** 2026-10-26, accepted. **Authority:** Owner, SPN-057 review chat:
@@ -221,7 +226,8 @@ HTTPS or permission to provision resources.
 
 ## Legacy decision 139: Run-specific delegated visual approval
 
-**Recorded:** 2026-10-22. **Status:** accepted, historical run-specific authority.
+**Recorded:** 2026-10-22. **Status:** historical run-specific authority, superseded
+by [standing delegation](grooming-2026-10-26.md#agent-decisions-and-visual-review).
 **Authority:** Owner, chat 2026-10-21.
 **Source:** [original decision #139](https://github.com/mxbaylee/spinel/issues/139).
 
@@ -337,8 +343,9 @@ interaction gate without generating a second routine screenshot catalogue.
 
 Add `visual-review` for changes to layout, theme, typography, icons and visible
 interaction states, including visually relevant dependency updates. The label
-requests current evidence; approval still belongs to the owner or a reviewer
-they explicitly delegate for the current run. Omitting or removing a label does
+requests current evidence; approval now comes from an independent nonimplementing
+subagent inspecting PR-visible images against the theme and all personas under
+[standing delegation](grooming-2026-10-26.md#agent-decisions-and-visual-review). Omitting or removing a label does
 not satisfy a changed screen's review requirement. Captures are review evidence,
 not stored pixel baselines or proof that a product flow works.
 

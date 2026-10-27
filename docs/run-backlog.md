@@ -8,8 +8,7 @@ alone does not start a run.
 
 The owner authorized this workflow in chat on 2026-10-17 (SPN-037). Invoking it
 authorizes repository changes, decision records, follow-up tickets, PRs and
-squash merges that meet these gates. It does not waive an explicit owner decision,
-a required manual acceptance check, repository protection, or separate permission
+squash merges that meet these gates. It does not waive actual acceptance evidence, repository protection, or separate permission
 needed for deployment, spending, credentials or destructive operations. A narrower
 instruction from the owner, such as “one ticket” or “do not merge,” takes precedence.
 
@@ -45,15 +44,18 @@ tickets trigger only a reminder for the next manual review with the owner.
 Continue eligible work; never force grooming or block landing because of the
 count. Owner, chat 2026-10-22.
 
-When a ticket needs owner input or verification, prepare everything independent
-of that input, ask once with the linked decision record or exact verification steps, and
-save a draft PR/checkpoint. Continue with the next eligible ticket while waiting.
-A UI PR waits on the owner's approval of its light, dark and phone-width
-screenshots ([process](todo/process.md#picking-the-next-ticket)); treat it the
-same way unless the owner explicitly delegates that review for the current run.
-Use `visual-review` to request the affected screen evidence. The label does not
-grant approval; PRs without it still run applicable Storybook rendering and
-interaction checks, with failure diagnostics retained.
+Agents make decisions using all four personas and record their rationale. No human
+product/design/screenshot sign-off is required. Use `visual-review` for affected
+screens and embed all proposed designs and actual current light/dark/phone images
+on the PR. An independent nonimplementing subagent reviews those images against
+the playbook/theme and personas, records findings and approval at the reviewed SHA,
+and discloses **agent review only**. A grading reviewer may do this review too.
+The label alone does not grant approval; unrelated PRs retain rendering/interaction
+checks without routine captures. See the [standing policy](implementation/grooming-2026-10-26.md#agent-decisions-and-visual-review).
+If real-device evidence, upstream compatibility or authorized external access is
+unavailable, finish all independent work and save the concrete prerequisite,
+evidence and next action in the ticket Rules and PR checkpoint. Work the next
+eligible ticket while that capability is unavailable; never invent a test pass.
 Keep a run-local list of blocked tickets and reasons so picking does not repeatedly
 select the same blocked item. Do not change product dependencies merely to hide
 an external blocker. Reconsider it when new input or evidence arrives.
@@ -197,7 +199,7 @@ New tickets must exist on `main` before their implementation PRs can land. File
 follow-ups with the current ticket PR whenever possible. If there is no such PR,
 register them in a backlog maintenance PR with the grooming title, then implement
 them on new branches after it merges. Preserve the counter/date unless a full
-manual grooming with the owner is complete. Never bypass
+requested grooming is complete. Never bypass
 the checker or reuse an ID to avoid this prerequisite.
 
 ## 5. Publish, wait for CI, and merge
@@ -226,8 +228,8 @@ Fetch main before merging. If it advanced, update the branch and resolve conflic
 then recheck the combined change and wait for fresh CI. Have both reviewers assess
 material source, acceptance, test or workflow changes, including conflict fixes;
 record both reviewers' revalidation of the new SHA even for a mechanically unchanged
-rebase. Check both final grades and CI against the same head. Do not merge while a
-required owner decision/manual check, blocking review, or repository protection is unresolved.
+rebase. Check both final grades and CI against the same head. Do not merge while required acceptance evidence, independent visual review,
+a blocking review, or repository protection is unresolved.
 
 Squash-merge using the verified head SHA as a guard (for example,
 `gh pr merge <number> --squash --match-head-commit <reviewed-sha>`). Never use admin
@@ -237,7 +239,7 @@ check list yourself and report the setup gap; no missing check is waived.
 
 Confirm GitHub reports the PR merged. Fetch and fast-forward local main when safe,
 then start again at step 1. Keep progress updates brief: what landed, review score,
-verification, what comes next, and any owner input needed. Do not end the run just
+verification, what comes next, and any real execution prerequisite. Do not end the run just
 because one ticket finished.
 
 ## 6. Stop with a useful checkpoint

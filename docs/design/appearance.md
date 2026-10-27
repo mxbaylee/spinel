@@ -51,7 +51,8 @@ unchanged. Who may change Space accents and child covers needs explicit producti
 acceptance, including guest behavior and asset access/revocation.
 
 Final facet artwork, cover height/cropping and the treatment of
-Space-root covers remain open for owner review. The prototype uses the existing
+Space-root covers remain decisions for the implementing agent, using all personas
+and independent theme review of the designs and screenshots embedded on the PR. The prototype uses the existing
 theme surfaces, twelve proposed accent pairs in `src/ui/palette.ts`, and AA contrast
 checks. Full-editor toolbar/canvas behavior is retained; the optional cover adds
 an outer scroll region that must be judged on desktop and phone.
