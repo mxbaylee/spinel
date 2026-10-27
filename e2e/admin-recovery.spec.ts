@@ -227,9 +227,14 @@ test('Operator hands over retained ordinary and Space contents, then recovers th
       .click();
     await expect(account.getByText('Member · Disabled', { exact: true })).toBeVisible();
     expect(auth.session(oldSession.token)).toBeUndefined();
-    await expect(memberPage.getByRole('status', { name: 'Save status' })).toContainText(
-      'Access changed',
-    );
+    // This clean editor can finish SPN-053's revoked-session handoff immediately;
+    // only unfinished input or failed local persistence keeps a recovery tab open.
+    await expect(memberPage).toHaveURL(/\/sign-in(?:\?|$)/);
+    await expect(
+      memberPage.getByRole('button', { name: 'Sign in with a passkey', exact: true }),
+    ).toBeVisible();
+    await expect(memberPage.locator('.univer-container canvas')).toHaveCount(0);
+    expect((await member.request.get(`/api/items/${sheet.id}/sheet`)).status()).toBe(401);
     const beforeRows = db
       .prepare('SELECT * FROM workspace_items WHERE owner_id=? ORDER BY id')
       .all(departed.id);
