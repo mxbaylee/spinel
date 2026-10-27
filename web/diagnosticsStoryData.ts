@@ -62,10 +62,10 @@ export const healthStory: ServerHealth = {
     },
     {
       name: 'space-trash-expiry',
-      configured: false,
+      configured: true,
       running: false,
-      lastAttempt: null,
-      lastSuccess: null,
+      lastAttempt: healthStoryTime - 3600_000,
+      lastSuccess: healthStoryTime - 3600_000,
       failedSince: null,
     },
   ],

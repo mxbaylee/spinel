@@ -7,7 +7,7 @@ import { WorkspaceFiles } from './files.ts';
 import { SpaceStore } from './spaces.ts';
 import { SpaceRecoveryStore } from './space-recovery.ts';
 import { migrateSpaceSchema } from './space-schema.ts';
-import { DAY_MS, TrashStore } from './trash.ts';
+import { DAY_MS, TRASH_RETENTION_MS, TrashStore } from './trash.ts';
 
 const databases: DatabaseSync[] = [];
 afterEach(() => {
@@ -90,9 +90,13 @@ test('containing-folder trash stops at Space roots and retains internal tombston
   expect(f.db.prepare('SELECT count(*) AS n FROM native_fixture').get()!.n).toBe(3);
   expect(f.trash.list(f.owner.id)).toMatchObject({
     items: expect.arrayContaining([
-      expect.objectContaining({ id: f.outer.id, expiresAt: null }),
-      expect.objectContaining({ id: f.root.id, kind: 'space', expiresAt: null }),
-      expect.objectContaining({ id: f.sibling.id, expiresAt: null }),
+      expect.objectContaining({ id: f.outer.id, expiresAt: f.auth.now() + TRASH_RETENTION_MS }),
+      expect.objectContaining({
+        id: f.root.id,
+        kind: 'space',
+        expiresAt: f.auth.now() + TRASH_RETENTION_MS,
+      }),
+      expect.objectContaining({ id: f.sibling.id, expiresAt: f.auth.now() + TRASH_RETENTION_MS }),
     ]),
     deletion: {
       count: 6,
@@ -103,7 +107,7 @@ test('containing-folder trash stops at Space roots and retains internal tombston
   expect(f.files.shared(f.other.id)).toEqual([]);
   expect(() => f.files.get(f.other.id, f.root.id)).toThrow();
   expect(() => f.spaces.get(f.owner.id, f.root.id, f.keep.id)).toThrow();
-  f.advance(90);
+  f.advance(29);
   expect(f.trash.purgeExpired()).toBe(0);
   expect(f.trash.restore(f.owner.id, f.outer.id).parentId).toBeNull();
   expect(members(f)).toEqual(before);
@@ -117,16 +121,18 @@ test('containing-folder trash stops at Space roots and retains internal tombston
   expect(f.trash.list(f.owner.id).items).toEqual([]);
 });
 
-test('restoring a Space separately falls back to My files and keeps its original containing group retained', () => {
+test('restoring a Space separately leaves its original group to expire without touching live members', () => {
   const f = fixture();
   f.trash.trash(f.owner.id, f.outer.id);
   expect(f.trash.restore(f.owner.id, f.root.id)).toMatchObject({ kind: 'space', parentId: null });
   f.advance(60);
-  expect(f.trash.purgeExpired()).toBe(0);
-  expect(f.trash.list(f.owner.id).items.every((item) => item.expiresAt === null)).toBe(true);
-  expect(f.trash.restore(f.owner.id, f.outer.id).parentId).toBeNull();
+  // The two remaining outer rows and the older independent internal batch expire.
+  expect(f.trash.purgeExpired()).toBe(3);
+  expect(f.trash.list(f.owner.id).items).toEqual([]);
+  expect(() => f.trash.restore(f.owner.id, f.outer.id)).toThrow();
   expect(f.files.get(f.owner.id, f.root.id).parentId).toBeNull();
-  expect(f.workspace.get(f.owner.id, f.sibling.id).parentId).toBe(f.outer.id);
+  expect(f.spaces.get(f.owner.id, f.root.id, f.keep.id).item.id).toBe(f.keep.id);
+  expect(f.spaces.get(f.owner.id, f.root.id, f.nested.id).item.id).toBe(f.nested.id);
 });
 
 test('an earlier independently trashed Space stays trashed when its containing folder is restored', () => {
@@ -195,7 +201,7 @@ test('malformed foreign graphs and late delete failures roll back the whole oper
   expect(state(f.db)).toEqual(malformed);
 });
 
-test('account-only lifecycle retains Space groups while unrelated ordinary trash still expires', () => {
+test('account-only lifecycle uses the same expiry for Space groups and ordinary trash', () => {
   const f = fixture();
   f.files.share(f.owner.id, f.root.id, f.other.id, 'editor');
   for (const actor of [f.other.id, f.admin.id, 'guest:unregistered'])
@@ -211,11 +217,10 @@ test('account-only lifecycle retains Space groups while unrelated ordinary trash
   });
   f.trash.trash(f.owner.id, ordinary.id);
   f.advance(31);
-  expect(f.trash.purgeExpired()).toBe(1);
-  expect(f.trash.list(f.owner.id).items).toEqual([
-    expect.objectContaining({ id: f.root.id, expiresAt: null }),
-  ]);
-  expect(f.trash.restore(f.owner.id, f.root.id).kind).toBe('space');
+  expect(() => f.trash.restore(f.owner.id, f.root.id)).toThrow('recovery period');
+  expect(f.trash.purgeExpired()).toBe(5);
+  expect(f.trash.list(f.owner.id).items).toEqual([]);
+  expect(() => f.trash.restore(f.owner.id, f.root.id)).toThrow();
   f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(f.owner.id);
   expect(() => f.trash.list(f.owner.id)).toThrow('Sign in');
 });

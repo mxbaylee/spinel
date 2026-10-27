@@ -3,15 +3,17 @@ import type { ItemKind } from '../../shared/workspace.ts';
 import { AuthError } from '../auth/store.ts';
 import { resolveSpaceScope } from './space-scope.ts';
 import type { SpaceScope, SpaceScopeItem } from './space-scope.ts';
-import { readSpaceStructure } from './space-structure.ts';
+import { deleteSpaceItems, readSpaceStructure } from './space-structure.ts';
 import type { SpaceRecoveryRecord, SpaceStructureItem } from './space-structure.ts';
 import type { WorkspaceStore } from './store.ts';
+import { TRASH_RETENTION_MS } from './trash-retention.ts';
 
 export interface SpaceRecoveryItem {
   readonly id: string;
   readonly kind: ItemKind;
   readonly name: string;
   readonly trashedAt: number;
+  readonly expiresAt: number;
   readonly descendantCount: number;
   /** A current readable location, never a stored historical name or unchecked ID. */
   readonly originalLocation: { id: string; name: string } | null;
@@ -32,9 +34,9 @@ interface RecoveryView {
 const unavailable = () => new AuthError(404, "This item is not in this Space's trash.");
 
 /**
- * Internal account recovery for a live Space. No routes, expiry policy or whole-
- * Space lifecycle are enabled here. Editors may recover; permanent deletion is
- * reserved for the current Owner and a freshly confirmed exact subtree.
+ * Internal account recovery for a live Space. Editors may recover within 30 days;
+ * early permanent deletion requires the current Owner and a freshly confirmed
+ * exact subtree. System expiry preserves those same batch boundaries.
  */
 export class SpaceRecoveryStore {
   private readonly workspace: WorkspaceStore;
@@ -144,6 +146,8 @@ export class SpaceRecoveryStore {
     return auth.transaction(() => {
       const view = this.view(actorId, spaceId, 'edit');
       const record = this.record(view, itemId);
+      if (record.trashedAt + TRASH_RETENTION_MS <= auth.now())
+        throw new AuthError(409, 'The 30-day recovery period has ended.');
       const subtree = this.subtree(view, itemId);
       let original = this.location(view, record);
       if (original) {
@@ -201,15 +205,9 @@ export class SpaceRecoveryStore {
       const preview = this.confirmation(view, itemId);
       if (typeof version !== 'string' || version !== preview.version)
         throw new AuthError(409, 'This deleted subtree changed. Review it again before deleting.');
-      const record = this.record(view, itemId);
-      const remove = auth.database.prepare(`
-        DELETE FROM workspace_items WHERE id=? AND space_id=? AND trash_batch=? AND trashed_at=?
-      `);
       // The validated DFS reversed is leaf-first. Native FKs and existing cleanup
       // triggers run normally; independent recovery roots are not in this subtree.
-      for (const item of [...this.subtree(view, itemId)].reverse())
-        if (remove.run(item.id, spaceId, record.trashBatch, record.trashedAt).changes !== 1)
-          throw unavailable();
+      deleteSpaceItems(auth.database, spaceId, view.scope.ownerId, this.subtree(view, itemId));
       resolveSpaceScope(auth, actorId, spaceId, spaceId, 'owner');
       return { count: preview.counts.total };
     });
@@ -271,6 +269,7 @@ export class SpaceRecoveryStore {
       kind: root.kind,
       name: root.name,
       trashedAt: record.trashedAt,
+      expiresAt: record.trashedAt + TRASH_RETENTION_MS,
       descendantCount: subtree.length - 1,
       originalLocation: this.location(view, record),
     };
