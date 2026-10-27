@@ -4,7 +4,6 @@ import {
   Inject,
   Injector,
   isInternalEditorID,
-  KeyCode,
   Plugin,
   UniverInstanceType,
 } from '@univerjs/core';
@@ -31,6 +30,7 @@ import {
   ContextMenuPosition,
   IMenuManagerService,
   IShortcutService,
+  KeyCode,
 } from '@univerjs/ui';
 
 /** Only call for the public mobile preset's selection-service registration. */
