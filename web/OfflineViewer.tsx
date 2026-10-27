@@ -1,123 +1,75 @@
-import type { FormulaState } from '@spinel/doc-formulas';
-import { FormulaReadout } from './DocFormulas.tsx';
-import { useEffect, useRef, useState } from 'react';
-import { OfflineAccess, offlineScope } from './offline/OfflineAccess.ts';
-import { PreparedImages } from './offline/PreparedImages.ts';
-import { openOfflineStore, preparedAccount } from './offline/offlineStore.ts';
-import { useMobileSheetControls } from './sheetPreset.ts';
-import { openSnapshotViewer } from './snapshotViewer.ts';
-import { useEditorChrome } from './EditorFrame.tsx';
-import { SaveStatus } from './SaveStatus.tsx';
+import { useEffect, useState } from 'react';
+import { SheetEditor } from './SheetEditor.tsx';
+import { DocEditor } from './DocEditor.tsx';
+import {
+  offlineAccountEvent,
+  offlineAccountRead,
+  openOfflineStore,
+} from './offline/offlineStore.ts';
+import type { ConnectionState } from './connectionState.ts';
 
-/**
- * Opens this device's copy of a document, read-only, with images from the
- * verified local copies only. It never reaches the server: there is no
- * collaboration client, autosave or remote image fallback.
- */
+/** The same native editors restore their own durable queue on an offline launch. */
 export function OfflineViewer({
   accountId,
   itemId,
   spaceId,
+  onDirty = () => {},
+  onConnectionState,
 }: {
   accountId: string;
   itemId: string;
   spaceId?: string;
+  onDirty?: (dirty: boolean) => void;
+  onConnectionState?: (state: ConnectionState | null) => void;
 }) {
-  const chrome = useEditorChrome();
-  const container = useRef<HTMLDivElement>(null);
-  const [mobile] = useState(useMobileSheetControls);
-  const [formulaStates, setFormulaStates] = useState<FormulaState[]>([]);
-  const [ready, setReady] = useState(false);
+  const [item, setItem] = useState<{ kind: 'sheet' | 'doc'; name: string } | null>(null);
   const [problem, setProblem] = useState('');
   useEffect(() => {
-    const loading = new AbortController();
-    let access: OfflineAccess | undefined;
-    let images: PreparedImages | undefined;
-    let dispose: (() => void) | undefined;
-    const close = () => {
-      dispose?.();
-      images?.dispose();
-      access?.dispose();
+    let mounted = true;
+    const current = offlineAccountRead(accountId);
+    const changed = (event: StorageEvent) => {
+      if (!offlineAccountEvent(event, accountId)) return;
+      if (!current()) {
+        setItem(null);
+        setProblem('You signed out or changed accounts on this device.');
+      }
     };
-    // Another tab signing out or switching account ends this view at once.
-    const watch = () => {
-      if (preparedAccount() !== accountId) access?.lock('You signed out on this device.');
-    };
-    window.addEventListener('storage', watch);
+    window.addEventListener('storage', changed);
     void (async () => {
       const store = await openOfflineStore(accountId);
-      const stored = await store.bundle(itemId).finally(() => store.close());
-      if (loading.signal.aborted) return;
-      if (!stored) throw new Error('This document is no longer on this device.');
-      const { bundle, bytes } = stored;
-      if (bundle.accountId !== accountId || preparedAccount() !== accountId)
-        throw new Error('This copy belongs to another account.');
-      if (bundle.itemId !== itemId || bundle.spaceId !== spaceId)
-        throw new Error('This copy belongs to another document or Space.');
-      access = new OfflineAccess(offlineScope(bundle));
-      access.subscribe((state) => {
-        if (state.phase === 'disposed') return;
-        setProblem(state.reason ?? 'This copy can’t be shown right now.');
-        // Univer would keep showing what it already drew; take it down.
-        const shown = dispose;
-        dispose = undefined;
-        if (shown) queueMicrotask(shown);
-      });
-      images = await PreparedImages.prepare(access, bundle.images, bytes, preparedAccount);
-      if (loading.signal.aborted) return;
-      const shown = await openSnapshotViewer({
-        container: container.current!,
-        kind: bundle.kind,
-        snapshot: images.localize(bundle.snapshot),
-        signal: loading.signal,
-        images,
-        mobile,
-        onFormulaChange: (states) => {
-          if (!loading.signal.aborted) setFormulaStates([...states]);
-        },
-      });
-      // Closed or locked while it opened: nothing else will take it down.
-      if (loading.signal.aborted || !access.mayReadLocal) return shown();
-      dispose = shown;
-      setReady(true);
-    })().catch((cause) => {
-      if (loading.signal.aborted) return;
-      setProblem(cause instanceof Error ? cause.message : 'Could not open the offline copy.');
+      const download = await store.bundle(itemId).finally(() => store.close());
+      if (!mounted) return;
+      if (!current()) throw new Error('This offline session is no longer current.');
+      if (
+        !download ||
+        download.bundle.accountId !== accountId ||
+        download.bundle.itemId !== itemId ||
+        download.bundle.spaceId !== spaceId
+      )
+        throw new Error('This document is not prepared in this account or Space on this device.');
+      setItem({ kind: download.bundle.kind, name: download.bundle.name });
+    })().catch((error) => {
+      if (mounted)
+        setProblem(error instanceof Error ? error.message : 'Could not open this device copy.');
     });
     return () => {
-      loading.abort();
-      window.removeEventListener('storage', watch);
-      // Univer owns a separate React root; unmount it after this commit.
-      queueMicrotask(close);
+      mounted = false;
+      window.removeEventListener('storage', changed);
     };
-  }, [accountId, itemId, spaceId, mobile]);
+  }, [accountId, itemId, spaceId]);
+  if (problem) return <p role="alert">{problem}</p>;
+  if (!item) return <p role="status">Opening offline copy…</p>;
+  const Editor = item.kind === 'sheet' ? SheetEditor : DocEditor;
   return (
     <section aria-label="Offline copy">
-      {chrome && (
-        <SaveStatus
-          target={chrome.saveTarget}
-          state={{
-            dirty: false,
-            failed: Boolean(problem),
-            message:
-              problem ||
-              (ready ? 'View only on this device. Reconnect to edit.' : 'Opening offline copy…'),
-          }}
-          onRetry={() => {}}
-        />
-      )}
-      {problem ? (
-        <p role="alert">{problem}</p>
-      ) : ready ? (
-        <p role="status">Read only on this device. Reconnect to edit.</p>
-      ) : (
-        <p role="status">Opening offline copy…</p>
-      )}
-      {ready && !problem && <FormulaReadout states={formulaStates} target={chrome?.toolsTarget} />}
-      <div
-        className="univer-container"
-        ref={container}
-        style={{ visibility: ready && !problem ? 'visible' : 'hidden' }}
+      <Editor
+        id={itemId}
+        spaceId={spaceId}
+        name={item.name}
+        localAccountId={accountId}
+        saveStatusTarget={null}
+        onDirty={onDirty}
+        onConnectionState={onConnectionState}
       />
     </section>
   );

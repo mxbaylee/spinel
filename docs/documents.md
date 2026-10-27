@@ -6,15 +6,24 @@ native Univer snapshots in SQLite. Enhanced Pro table features, embedded sheets
 and simultaneous editing are outside SPN-008. Shape insertion controls are hidden
 because their inline SVG sources do not satisfy the stored-image contract.
 
-Documents share the spreadsheet autosave controller and transactional revision
-checks. Each save carries the loaded revision and a unique write ID. An exact
-retry after a lost response is safe; stale writers receive a visible conflict
-instead of overwriting newer work. Snapshots are limited to 10 MiB. Correcting a
-server-rejected invalid or oversized snapshot allows saving to resume; uncertain
-network responses still retry the exact original write before newer changes. Network
-failures keep changes in the open editor, show an unsaved warning and retry when
-connectivity returns. Navigation warns about pending changes. This is not a
-durable offline queue: keep the tab open until saving succeeds.
+Documents use Spinel's native mutation sync client and durable revision receipts
+([collaboration](collaboration.md)). Explicitly downloaded Docs additionally
+persist that same queue and confirmed snapshot to IndexedDB (SPN-053). **Saved
+on this device** means the local transaction committed; **Synced** also requires
+durable server acknowledgement and local cleanup. Offline reopening reconstructs
+the native document before capture resumes. A changed live revision, generation
+or grant retains local work as **Needs attention**, without overwriting the
+server. Undownloaded editors retain their existing in-memory queue and must stay
+open until saving succeeds. Active input and failed local persistence retain the
+navigation warning. See [offline editing](offline.md#how-offline-editing-works).
+
+Doc Formula definitions remain authored content; calculated source values never
+enter the offline checkpoint. Offline results are unavailable, and every source,
+resolve and evaluation request rechecks the downloading account and epoch as well
+as the server's source-access policy. Pending Formula responses cannot publish
+after that account scope ends. A connection change clears live previews but keeps
+an unfinished Formula expression and format in the open dialog; that draft also
+prevents automatic replacement of an otherwise clean cached document.
 
 ## Images
 

@@ -155,9 +155,61 @@ immutable sent envelope, rebased inflight and buffered groups. The immutable
 request reaches the hook before its first send. Writes are serialized and create
 their snapshot only when starting, so a slow store cannot retain a whole
 snapshot for every queued keystroke. A failed store keeps the state dirty and
-can be retried. This is the integration seam for the later offline outbox;
-browser storage, restoring checkpoints and cross-tab ownership belong to that
-host feature.
+can be retried, including while disconnected. `state.localPersistence` is
+`saving`, `saved` or `failed` when a hook exists; `saved` requires every queued
+hook call to have completed. The hook must resolve only after its storage
+transaction commits. `persistNow()` checkpoints an editor newly opted into local
+storage and rejects a failed write. Browser storage, account/access fencing and
+cross-tab ownership remain the host's responsibility.
+
+### Restoring an offline queue
+
+Call `validateRecoverySnapshot(checkpoint)` and choose
+`checkpoint.recoverySnapshot ?? checkpoint.snapshot` for the visible unit.
+Before creating any visible native unit, call `validateNativeSnapshot(snapshot, kind)`
+to bound its bytes and compact geometry before the SDK allocates a model.
+Pass the checkpoint,
+its `revision`, and `preservePendingOnFailure: true` plus
+`requireUnchangedResume: true` to `createNativeSyncClient`. The adapter validates
+identity and queue budgets, creates the canonical confirmed replica, and applies
+the saved inflight/buffer mutations once before capture is installed. Never
+pre-apply those mutations in the host. A complete recovery snapshot already
+contains the optimistic edits, so the adapter skips queue application for it.
+The confirmed replica always starts from `checkpoint.snapshot`. Invalid
+checkpoints fail closed.
+
+The preserve policy retains a coherent base and every pending group on refusal,
+persists a `failure` marker and stops capture/transport. If an incoming native
+application partially fails, recovery uses the checkpoint from before that
+frame. A local refusal can happen after a supported native edit has applied but
+before its queue admission, such as an edit larger than a wire envelope. In
+that case the same checkpoint write retains a canonical, bounded complete
+`recoverySnapshot` and the failure marker. If capturing it fails,
+`checkpoint.recoveryMissing` and `state.recoveryMissing` remain true and
+`state.localPersistence` stays `failed`, even when the marker itself was saved.
+Only the original live renderer can retry that capture; a restarted editor
+cannot claim that the missing edit was recovered. The host must keep its
+unsaved-change warning active while recovery is missing. A restored failure is
+attention state and never replays automatically.
+The host owns its recovery UI; this does not provide a conflict-copy operation.
+
+An unchanged-resume policy refuses any advanced pending base, including a
+crash after server commit but before local acknowledgement cleanup. After an
+equal resume, the first replay transport frame carries `expectedRevision`.
+The server checks this admission-only fence atomically, before looking up a
+receipt; it excludes the fence from the mutation's durable retry identity.
+`checkpoint.sent` keeps its original ID, base and mutation body. Peer advancement
+before the first send or a raced server commit stops replay. After the first
+successful acknowledgement, ordinary live collaboration/rebasing resumes.
+This deliberately retains an unneeded attention copy after some lost
+acknowledgements rather than replaying an advanced offline base.
+
+Both policies also accept callbacks so a host can enable them when a mounted
+editor is downloaded without replacing its optimistic model. The native
+adapter's optional `toVisible` and `toCanonical` mappers keep local image URLs in
+the displayed editor only: restored/remote mutations use `toVisible`; captured
+mutations and visible verification snapshots use `toCanonical`. The confirmed
+replica, persisted checkpoints and wire mutations stay canonical.
 
 For another native host, construct `SyncClient` with a `SyncReplica`, a visible
 snapshot reader and a remote-application callback. `enqueue` takes a mutation

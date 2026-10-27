@@ -12,7 +12,7 @@ import type { HistoryStore } from '../history/store.ts';
 import { PortableFiles, PORTABLE_LIMIT } from './portable.ts';
 import { formulaRoutes } from '../formulas/routes.ts';
 import type { FormulaDiagnostics } from '../formulas/routes.ts';
-import { documentIdentity } from '../collaboration/identity.ts';
+import { checkOfflineAccount, documentIdentity } from '../collaboration/identity.ts';
 import { historyRoutes } from '../history/routes.ts';
 import { admitTransfer, transfers } from './transfers.ts';
 import { archiveRoutes } from './archive-routes.ts';
@@ -36,6 +36,7 @@ export function workspaceRoutes(
   const owner = (request: Request) => {
     const id = auth.session(cookieToken(request))?.user_id;
     if (!id) throw new AuthError(401, 'Sign in to continue.');
+    checkOfflineAccount(request.headers, id);
     store.owner(id);
     return id;
   };

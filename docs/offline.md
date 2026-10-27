@@ -12,14 +12,14 @@ separate work.
 **What is implemented.** SPN-040 added Sheet-image support, SPN-041 the
 authorized [download bundle](#download-bundle), and SPN-039 offline launch,
 browsing and read-only viewing of downloaded documents ([below](#offline-launch-and-read-only-viewing)).
+SPN-053 adds native Sheet/Doc editing, durable local checkpoints and conservative
+replay through Spinel's own sync client, including prepared Space children.
 [SPN-092](implementation/SPN-092.md) extends preparation and local opening to
 one account-authorized Space child at a time, with its verified images.
-The rest of this contract is open, split by the Owner in chat on 2026-10-19 so
+The remaining parts of this contract are open, split by the Owner in chat on 2026-10-19 so
 every unmet requirement stays on a ticket:
 
-- [SPN-053](todo/SPN-053.md): offline editing, the outbox, **Saved on this
-  device**, restart, replay with durable server acknowledgements and **Synced**.
-- [SPN-054](todo/SPN-054.md): the conflicted copy, **Needs attention** and the
+- [SPN-054](todo/SPN-054.md): the conflicted copy behind **Needs attention** and the
   export fallback.
 - [SPN-055](todo/SPN-055.md): shared device storage, pending-edit protection,
   honest persistence limits and account/sign-out lifecycle.
@@ -90,7 +90,7 @@ current account, child, role and live generation are checked through preparation
 and materialization. Guests, MCP credentials and the private history capability
 cannot prepare an offline bundle. [Spaces are enabled by default](sharing.md#space-sharing);
 an explicitly disabled Space runtime refuses this route. Preparation is per child;
-there is no bulk Space download or native offline editing.
+there is no bulk Space download. SPN-053 edits that exact prepared child.
 
 Stored image sources remain `/api/items/:itemId/images/:hash`. A Space download
 fetches those bytes through `/api/spaces/:spaceId/items/:itemId/images/:hash`, then
@@ -153,7 +153,8 @@ Verified by `src/server/collaboration/offline-bundle.test.ts`:
 ## Offline launch and read-only viewing
 
 SPN-039, 2026-10-19, extended to Space children by SPN-092, 2026-10-22.
-This is what a device does today.
+SPN-053 extends the same downloaded copies to native editing and replay. Viewer
+downloads still use the same read-only permission fence.
 
 **Download.** Signed-in, non-admin accounts see **Available offline on this
 device** on each Sheet and Doc they can open (`web/offline/download.ts`). It:
@@ -172,7 +173,12 @@ Until the bundle transaction commits nothing counts as downloaded; local launch
 also requires the saved catalog. A failed refresh keeps the last complete copy.
 Transfers run one at a time, because the server
 admits one transfer at a time (429). **Remove from device** deletes the local copy
-only. A full device shows "This device is out of space for offline documents."
+only. Close an editable downloaded document in every tab before removing its
+copy: the removal transaction must acquire its writer Web Lock, so uncaptured
+cell input or a not-yet-committed checkpoint cannot be erased. Pending or retained
+failure checkpoints also block removal after the editor closes. A browser
+without Web Locks cannot edit or safely remove a copy through the application.
+A full device shows "This device is out of space for offline documents."
 
 **Local data.** Each account has its own IndexedDB database,
 `spinel-offline-<account id>` (`web/offline/offlineStore.ts`), holding the user's
@@ -185,7 +191,15 @@ same non-admin account with downloads (`claimDevice`). Signing out, a 401 from t
 ended or was revoked) and removing the last download clear it, so another account
 never opens this data and a revoked session doesn't open it offline. While prepared and online, the dashboard saves the catalog after
 each load and refreshes every download in the background. A document the account
-can no longer open (404) is removed: SPN-039's copies hold no edits.
+can no longer open (404) is removed only if it has no pending checkpoint or
+retained failure. Every refresh carries the expected downloading account; a
+different signed-in cookie fails before document access is checked, so its 404
+cannot delete the prior account's copy.
+The last observed online account is separate from the prepared-download marker:
+opening another tab for the same account does not cancel ordinary pending live
+edits when there are no downloads. A real account switch still cancels them.
+Download insertion and final empty-catalog marker removal share an account Web
+Lock so a different tab's new download cannot be hidden by an older removal.
 Delayed preparation after sign-out, an account switch or an unmounted view cannot
 reclaim the prepared-account marker or clear another account's marker.
 
@@ -198,9 +212,13 @@ outer parent is preserved. Prepared-child navigation uses the separate download
 summaries, and an explicit unavailable child does not silently open another page.
 The live Space offers **Make available offline** for the selected, saved Doc or
 Sheet and **On this device** for that root's prepared children. Offline Space
-links open only matching prepared copies in a read-only viewer; a root-only link
+links open only matching prepared copies with their saved permissions; a root-only link
 can choose one of its own copies. The Spaces index, full live tree and Trash need
 a connection. The offline list makes no claim that the whole Space is downloaded.
+A tree refresh that removes an open child with saved device edits keeps that
+editor visible for its access check and **Needs attention** status. Local save
+still permits deliberate navigation; a missing explicit child never substitutes
+another page.
 
 **App shell.** Nothing is cached until the first download has fetched and
 verified its bundle and images (`web/service-worker.ts`).
@@ -222,39 +240,46 @@ Local mode reads the prepared account's catalog and downloads, never a cached
 session as fresh authorization.
 
 **Local mode.** The shared network icon beside the gem reports **Offline**,
-**Reconnecting** or verified **Online**, independently of the read-only session.
-Its hover/focus/tap detail preserves **Files as of** and explains that downloaded
-documents stay read-only in this session, even after connectivity recovers.
-Reopen Spinel while connected to edit; a health response never silently replaces
-an open local viewer. SPN-042 removes the old banner; see [connection behavior](connection.md)
+**Reconnecting** or verified **Online**, independently of local durability.
+Its hover/focus/tap detail preserves **Files as of** and explains saved document
+permissions and the separate save status. A health response does not prove that
+an edit reached the server. SPN-042 removes the old banner; see [connection behavior](connection.md)
 and [decision #132](implementation/SPN-042.md#legacy-decision-132-verified-connection-proof-and-stable-presentation). Folders opened online
 are browsable, rows show **Available offline** or **Needs a connection**, and
 anything that would reach the server (New, Import, Search, Trash, sharing, tags,
 settings for passkeys, version history) is hidden or says it needs a
-connection. A downloaded Sheet or Doc opens in an open-source Univer viewer with no
-collaboration client, autosave or remote image fallback, behind the same
-permission fences as version previews (`web/snapshotViewer.ts`). Images come only
-from the verified local bytes, as object URLs: `PreparedImages` rewrites every
-verified source in the snapshot in memory, including inside resource JSON, and
-replaces the drawing plugin's `IURLImageService`. Any other image source becomes
-an empty image rather than a request. Sheet formulas aren't recalculated
-offline, so cells show their stored values: computing `IMAGE()` would load its URL
-directly, outside the local image service. Signing out offline ends the
+connection. A downloaded Sheet or Doc opens in the same open-source native editor
+as its live counterpart, with the durable native sync checkpoint installed before
+new input is captured. Owner/editor downloads are editable; viewer copies remain
+read-only. A Web Lock allows only one writer for each account/item on a device;
+a second tab or a browser without that lock opens read-only with an explanation.
+Images come from verified local bytes as object URLs. `PreparedImages` rewrites
+only native image slots, including known drawing resources, and reverses those
+URLs before hashing, persistence or transport. Authored text and opaque resource
+bytes stay intact. New image insertion needs a connection. Sheet formula
+definitions survive; initial local loading does not recalculate, and derived
+`IMAGE()` output is cancelled while offline because the OSS plugin loads it
+directly. Doc Formula results are unavailable offline, are never stored with the
+document, and require live source authorization after reconnect. Signing out offline ends the
 local session at once and revokes the server session the next time Spinel opens
 online.
 Another tab signing out or switching account closes local mode and locks any
 open copy.
 
-**Not yet.** `OfflineAccess` was ported from #86 without its remote gate.
-`ScopedHTTP` and `scopedSocket`, which scope requests and the collaboration
-socket to an account and epoch, move to SPN-053, which first needs them.
+**Account fence.** `OfflineAccess` and `ScopedHTTP` bind remote requests to the
+downloading account, exact document/Space path and current cancellation epoch.
+Socket tickets use that adapter; every socket callback also checks its connection
+generation and mounted account. Same-tab cancellation and other-tab storage
+events close the old editor. Removing the final clean download clears only the
+prepared marker, not the sign-out nonce; unrelated live editors retain their
+memory-only queues.
 
 Verified by:
 
 - `e2e/offline.spec.ts` (production build): download a Sheet with floating,
   in-cell and background images and a Doc, check CacheStorage holds only the
   shell, keep both copies through a failed refresh, go offline and reload, then
-  check the catalog, the badges, read-only
+  check the catalog, the badges, permission-correct
   Sheet and Doc views with every image from local bytes, no `/api/items`
   request and no request for an `IMAGE()` URL, a not-downloaded item, the generic
   page for `/share/`, another tab releasing the device, the next online sign-in
@@ -274,39 +299,58 @@ Verified by:
 ## How offline editing works
 
 Download and launch work as [described above](#offline-launch-and-read-only-viewing).
-The rest of this section is SPN-053 and SPN-054's design. It follows
-Spinel's own sync server/client contracts ([SPN-057](implementation/SPN-057.md) and
-[SPN-058](implementation/SPN-058.md)), used after SPN-059 removes Univer collaboration.
-Durability and acknowledgement below are requirements, independent of the
-chosen server database or a particular client method name. Owner, chat
-2026-10-19; updated during grooming, 2026-10-21.
+SPN-053 implements this section through Spinel's own sync server/client contracts
+([SPN-057](implementation/SPN-057.md), [SPN-058](implementation/SPN-058.md) and
+[SPN-059](implementation/SPN-059.md)). The separate conflicted-copy/export outcome
+remains SPN-054. See the [implementation decisions](implementation/SPN-053.md).
 
 **Edit offline.** A downloaded item opens in an open-source Univer editor created
 from the stored snapshot, with no collaboration plugins. Images come from the
 stored bytes and never fall back to a network URL. Each local mutation is captured
 through the public `ICommandService.onMutationExecutedForCollab` hook
-(`@univerjs/core`) and written to the item's outbox as
-`{entryId, account, item, unitId, baseRevision, seq, mutationId, params}`.
-**Saved on this device** appears only once that IndexedDB transaction has
+(`@univerjs/core`). The one authoritative outbox is a native `ClientCheckpoint`,
+wrapped in `{version, account, item, spaceId?, unitId, revisionOffset}` and stored
+atomically with the download's image manifest/bytes. It contains the confirmed
+snapshot/revision, exact original `sent` envelope, transformed inflight mutations,
+and ordered buffered mutation groups. The original design's entry fields map to
+this existing queue instead of a second independently updated log:
+
+| Required identity/order           | Native checkpoint representation                                                                                |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| Account, item, optional Space     | Outbox wrapper; checked against the download and mounted account                                                |
+| Live generation and original base | `unitId`, `revisionOffset`, confirmed `revision`; `sent.baseRevision` is immutable                              |
+| Local mutation ID and parameters  | Each ordered mutation's `id` and `params`                                                                       |
+| Sequence                          | Inflight order followed by buffered group order and each group's mutation order                                 |
+| Stable delivery identity          | `sent.mutationId`, allocated and durably saved before its first send; retries reuse the exact original envelope |
+
+Unsent groups have no server delivery identity yet. Reconstruction does not
+invent another delivery or duplicate the native queue.
+**Saved locally** appears only once that IndexedDB transaction has
 committed. Reopening applies the outbox, in order, on top of the stored snapshot,
 without capturing those replays again. A mobile termination callback is not the
 durability mechanism. Warnings for active, uncommitted cell or text input stay.
 
 **Reconnect, unchanged live document.** Spinel revalidates the session and
 access, then reads the live revision and generation. If both still equal the
-outbox's base, it marks the outbox `replaying` in IndexedDB and opens the normal
-collaboration editor. SPN-058 sends the pending mutations through SPN-057's normal
+outbox's base, the existing native editor sends its pending queue through the
+normal socket. SPN-058 sends the pending mutations through SPN-057's normal
 authorized sync path, retaining stable retry identities so repeat delivery does
 not apply an edit twice. An acknowledgement must mean the server durably stored
 that edit, not just received it in memory or kept a socket connected. Only
 acknowledged entries can be cleared, with a matching snapshot/revision recorded
 in local storage so restart can reconstruct all remaining work. Edits that arrive
-from others during this short replay use the ordinary collaboration protocol,
-as they do online. Spinel never PUTs a whole snapshot over the live document.
+from others after the first successful acknowledgement use the ordinary
+collaboration protocol. Before that first send, a newer peer revision stops
+replay. An admission-only `expectedRevision` guard is checked atomically by the
+server after asynchronous preparation and before receipt lookup or commit; it
+does not change the durable retry identity. Spinel never PUTs a whole snapshot
+over the live document.
 
 **Reconnect, live document moved on.** If the revision or generation has
 advanced, Spinel never replays. History restore, trash, deletion and revoked
-access count as moved on. Spinel rebuilds the offline version from the snapshot
+access count as moved on. SPN-053 freezes the editor, retains its outbox and shows
+**Needs attention**. It never refreshes/removes that pending work. In SPN-054,
+Spinel rebuilds the offline version from the snapshot
 plus the outbox, inlines its images from the stored bytes, and creates a new item
 through the existing import path. The copy goes in the person's own files, named
 `<title> (offline copy, <local date and time>)`. Only then does it clear the
@@ -316,8 +360,8 @@ or image budget), the outbox stays on the device with **Export as Univer file**
 and an explicit discard. Nothing is written into a forbidden, trashed or replaced
 document. Automatic merging of divergent offline edits is out of scope.
 
-**Crash between replay and clearing.** On restart, an outbox still marked
-`replaying` may contain edits whose acknowledgements were lost or whose local
+**Crash between replay and clearing.** On restart, a checkpoint with a `sent`
+envelope may contain edits whose acknowledgements were lost or whose local
 cleanup did not commit. Retain the outbox and original retry identities until
 durable acknowledgement and the corresponding local cleanup/rebase complete.
 Repeated delivery through SPN-057 must be idempotent. SPN-053's conservative
@@ -330,23 +374,60 @@ SPN-058 acknowledgement and retry contracts.
 
 **One queue owner.** SPN-058's pending queue is authoritative; SPN-053 persists it
 as the downloaded item's outbox, including while online. A mutation must commit
-locally before **Saved on this device** is claimed. Server acknowledgements
+locally before **Saved locally** is claimed. Server acknowledgements
 identify the durably accepted edits; local cleanup and rebasing preserve every
 unacknowledged entry across failure or restart. Do not add a separate Pro queue
 or treat a connection/status transition as proof of durability. Items that are
 not downloaded keep the online behavior and make no on-device durability claim.
 
+**Expired sign-in.** A verified 401 stops replay and clears preparation for new
+offline launches. Downloaded documents and their queues remain on the device.
+The current editor freezes input and attempts to finish its local save before
+opening sign-in. If storage fails or takes too long, or cell/IME/Formula input
+has not finished, Spinel keeps that frozen tab open with the navigation warning
+and local-save retry. This exception permits only finishing local recovery; it
+cannot contact the server or prepare another download, and a later sign-out or
+account change cancels it. Repeated 401s for the same expired session do not close
+the held tab. A failed local save takes priority over Needs attention in the save
+status so unsaved visible work is never described as safely retained.
+For an unfinished Sheet cell, expiry blocks confirmation and keeps its text
+available to copy. The native cross-sheet formula flow hides its input before
+the cell actually commits, so Spinel does not treat hiding as proof of a safe
+save. The notice asks the person to copy the text before signing in again;
+Escape explicitly discards only that unfinished input.
+Save details then offers **Continue to sign-in** even when the retained queue is
+already durable. The action rechecks local saving and unfinished host input
+before navigation; the queue is not falsely marked unsaved just to expose it.
+
+**Refused visible edits.** A supported native mutation can change the canvas
+before exceeding the transport budget. Such a local refusal retains a bounded,
+validated canonical `recoverySnapshot` alongside the failure and the original
+queue. Reopening creates the visible document from that snapshot without applying
+the queue a second time. It is local recovery data, never a server overwrite or
+replay source. If capturing that state fails, `recoveryMissing` keeps the save
+failure and navigation warning: the latest visible edits are not claimed saved.
+Failures while applying a remote frame retain the coherent pre-frame checkpoint,
+not a partially applied remote snapshot.
+
+**Clean replay expiry.** A downloaded copy with no local work can be older than
+the server's retained replay window. Before handling that initial stale response,
+Spinel first checks for unfinished cell input, IME composition or image insertion,
+then freezes input, commits prior local writes, verifies the client is still
+clean, downloads a fresh authorized bundle and reloads it. Pending/recovery work
+never takes this path. Incoming socket messages are bounded before any image
+download wait, and disconnect cancels that wait and releases queued frames.
+
 **Public APIs only.** The design needs no Pro internals, license workaround,
 paid service or engine replacement. Reusable work from draft #86: SPN-039 ported
 `web/offline/OfflineAccess` and the verified local image adapter
 (`PreparedImages`), SPN-040 landed the Sheet-image work, and SPN-053 ports the
-account- and epoch-scoped `ScopedHTTP` and `scopedSocket` adapters. Retire the
+account- and epoch-scoped HTTP/socket boundaries to the native transport. Retire the
 recovery probe, `ProbeLocalCache`, the recovery ledger, the compression observer
 and the replay-snapshot server adapter.
 
 ### Space-child editing and recovery handoff
 
-The future SPN-053/SPN-054 implementation must preserve the landed per-child
+SPN-053 preserves the landed per-child
 preparation boundary through local persistence, refresh, replay and recovery.
 Retain the original Space root and native-child identity; reconnect revalidates
 the downloading account, current root/child access, live ancestry and generation.
@@ -360,13 +441,15 @@ revocation/downgrade, child trash and history restore-generation changes in the
 existing standalone Doc/Sheet replay and recovery verification. Account recovery
 remains separate from SPN-084's anonymous-guest immediate-hiding policy: guests
 gain no offline store or outbox. These are compatibility requirements for the
-already-prepared Space children, not a claim that offline editing is delivered.
-Grooming, 2026-10-25.
+already-prepared Space children. SPN-054 must preserve them through recovery.
+Grooming, 2026-10-25; implemented by SPN-053.
 
 ## Save states
 
-Distinguish **Saving on this device**, **Saved on this device — waiting to sync**,
-**Synced**, and **Needs attention**. Only successful local persistence earns a
+The compact save control distinguishes **Saving locally**, **Saved locally**,
+**Synced**, and **Needs attention** on one line. Save details and the live
+announcement retain the full messages, including **Saving on this device** and
+**Saved on this device — waiting to sync**. Only successful local persistence earns a
 local-save claim. **Synced** requires durable server acknowledgements for every
 pending edit and successful local outbox cleanup/rebasing. These are SPN-057/
 SPN-058 semantics, independent of the server database; neither an open connection

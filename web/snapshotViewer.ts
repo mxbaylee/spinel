@@ -65,8 +65,9 @@ const aborted = () => new DOMException('The viewer was closed.', 'AbortError');
 
 /**
  * An isolated, read-only native viewer for a stored snapshot: no collaboration
- * client, autosave or live mutation transport. Used by version previews and
- * offline copies. Resolves with a dispose function once the viewer is ready;
+ * client, autosave or live mutation transport. Used by version previews;
+ * downloaded copies use the live editors and their durable local queue.
+ * Resolves with a dispose function once the viewer is ready;
  * if `signal` aborts first it disposes itself and rejects.
  */
 export async function openSnapshotViewer({

@@ -65,9 +65,8 @@ function validateScope(scope: OfflineScope) {
 /**
  * Access state for one downloaded document opened on this device. Local reads
  * stop for good once the state leaves `local`; each reader checks `mayReadLocal`
- * immediately before handing out data. SPN-039 opens downloads read-only, so
- * this adapter has no remote gate yet: the offline-editing follow-up adds
- * server revalidation alongside #86's scoped HTTP and socket adapters.
+ * immediately before handing out data. Remote requests capture the same epoch
+ * and independently require current server authorization before replay.
  */
 export class OfflineAccess {
   readonly scope: OfflineScope;
@@ -87,6 +86,16 @@ export class OfflineAccess {
   }
   get mayReadLocal() {
     return this.state.phase === 'local';
+  }
+  /** Every remote callback must still belong to this local account epoch. */
+  remoteGate(isCurrent: () => boolean) {
+    const epoch = this.state.epoch;
+    const check = () => {
+      if (!isCurrent() || !this.mayReadLocal || this.state.epoch !== epoch)
+        throw new DOMException('This offline session is no longer current.', 'AbortError');
+    };
+    check();
+    return check;
   }
   private end(phase: Exclude<OfflineAccessState['phase'], 'local'>, reason?: string) {
     if (this.state.phase === 'disposed') return;

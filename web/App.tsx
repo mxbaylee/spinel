@@ -32,7 +32,15 @@ import type { ConnectionState } from './connectionState.ts';
 import type { CatalogConnectionDetails } from './ConnectionStatus.tsx';
 import { claimDevice, isNetworkFailure, openLocalStart } from './offline/localStart.ts';
 import { within } from './offline/shell.ts';
-import { setPreparedAccount, setSignOutPending, signOutPending } from './offline/offlineStore.ts';
+import {
+  claimOnlineAccount,
+  expirePreparedAccount,
+  offlineAccountEvent,
+  offlineEpoch,
+  setPreparedAccount,
+  setSignOutPending,
+  signOutPending,
+} from './offline/offlineStore.ts';
 
 const HistoryBrowser = lazy(() =>
   import('./HistoryBrowser.tsx').then((m) => ({ default: m.HistoryBrowser })),
@@ -162,38 +170,81 @@ function AccountApp() {
       setLoaded(true);
       return;
     }
+    let current = true;
+    const verifyCurrent = () => {
+      if (!current) throw new DOMException('This sign-in attempt ended.', 'AbortError');
+    };
     void (async () => {
       try {
         if (signOutPending()) {
           clearDashboardNavigation();
           // A sign-out made offline: revoke the session before anything else.
           // Any server answer settles it, including a session that already ended.
-          await api('sign-out', {}).catch((failure) => {
+          await api('sign-out', {}, verifyCurrent).catch((failure) => {
             if (isNetworkFailure(failure)) throw failure;
           });
+          verifyCurrent();
           setSignOutPending(false);
           if (location.pathname !== '/sign-in') location.assign(signInPath());
           return;
         }
-        const { user } = await api<{ user: User }>('session');
+        const epoch = () => {
+          let verifyEpoch = () => {};
+          try {
+            verifyEpoch = offlineEpoch();
+          } catch {
+            // Blocked browser storage must not prevent an online sign-in.
+          }
+          return () => {
+            verifyCurrent();
+            verifyEpoch();
+          };
+        };
+        const verifySession = epoch();
+        const { user } = await api<{ user: User }>('session', undefined, verifySession);
+        verifySession();
+        // A verified different account intentionally rotates the epoch. Capture
+        // that new fence before the asynchronous device claim, not before it.
+        try {
+          claimOnlineAccount(user.id);
+        } catch {
+          // Offline preparation below remains best effort when storage is blocked.
+        }
+        const verifyClaim = epoch();
         // Claim the device first: the dashboard reads the pointer when it mounts.
         // IndexedDB can fail to answer at all; never hold sign-in on it.
-        await within(claimDevice(user), 3000, 'Offline data did not answer.').catch(() => {});
+        await within(
+          claimDevice(user, () => current),
+          3000,
+          'Offline data did not answer.',
+        ).catch(() => {});
+        verifyClaim();
         if (user.isAdmin) clearDashboardNavigation();
         else dashboardSession(user.id);
         setUser(user);
         if (connectRequest && location.pathname === '/sign-in')
           location.assign(`/connect?request=${encodeURIComponent(connectRequest)}`);
         else if (spaceReturn && !user.isAdmin) location.assign(spaceReturn);
-        if (settings) await refreshKeys();
+        if (settings) {
+          const result = await api<{ passkeys: Passkey[] }>('passkeys', undefined, verifyClaim);
+          verifyClaim();
+          setKeys(result.passkeys);
+        }
       } catch (failure) {
+        // StrictMode and route changes can retire an earlier request. It must
+        // not cancel the current account or reload a newer sign-in attempt.
+        if (!current) return;
+        if (failure instanceof DOMException && failure.name === 'AbortError') {
+          location.reload();
+          return;
+        }
         // Only an unreachable server opens local data; a 401 still signs in.
         if (!isNetworkFailure(failure)) {
           // The server ended this session (sign-out, revocation): stop offline
           // access too. claimDevice restores it after the next sign-in.
           if ((failure as { status?: number }).status === 401) {
             clearDashboardNavigation();
-            setPreparedAccount(null);
+            expirePreparedAccount();
           }
           if (location.pathname !== '/sign-in') location.assign(signInPath());
           return;
@@ -204,6 +255,7 @@ function AccountApp() {
           return;
         }
         const start = await openLocalStart().catch(() => null);
+        if (!current) return;
         if (!start || !start.isCurrent()) {
           setUnreachable(true);
           return;
@@ -213,9 +265,12 @@ function AccountApp() {
         setLocal(start);
         setUser({ ...start.user, isAdmin: false });
       } finally {
-        setLoaded(true);
+        if (current) setLoaded(true);
       }
     })();
+    return () => {
+      current = false;
+    };
   }, [
     settings,
     setup,
@@ -245,7 +300,8 @@ function AccountApp() {
   useLayoutEffect(() => {
     if (!local) return;
     // Another tab signed out or another account signed in: close local data.
-    const watch = () => {
+    const watch = (event?: StorageEvent) => {
+      if (event && !offlineAccountEvent(event, local.user.id)) return;
       if (local.isCurrent()) return;
       clearDashboardNavigation();
       setLocal(null);

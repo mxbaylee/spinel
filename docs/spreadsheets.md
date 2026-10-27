@@ -6,8 +6,16 @@ status above the editor distinguishes an active cell edit, pending saves, saved
 changes and failures. Press Enter or finish the cell edit to commit its value.
 The saved workbook opens again after reload or on another signed-in device.
 
-When disconnected, keep the tab open. Pending changes remain in browser memory
-and retry when the connection returns. They are not durable offline storage.
+An explicitly downloaded Sheet persists the native sync queue and confirmed
+snapshot to IndexedDB (SPN-053). **Saved on this device** follows that transaction;
+**Synced** also requires server acknowledgement and committed local cleanup.
+The same editor reconstructs pending edits across offline restarts. Reconnect
+checks the original account, grant, generation and base before replay; changed
+documents retain pending work as **Needs attention**. Existing stored images
+remain available from verified local bytes. See [offline editing](offline.md#how-offline-editing-works).
+
+For an undownloaded Sheet, keep the tab open when disconnected. Pending changes
+remain in browser memory and retry when the connection returns.
 Navigation, sign-out and closing/reloading the page warn about unsaved changes.
 If another tab or device has saved a newer revision, the stale tab keeps its
 edits and reports the conflict without overwriting the newer document. Copy any

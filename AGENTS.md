@@ -42,10 +42,14 @@ that isn't waiting on another is next.
   and approves the visual result on the reviewed commit. Disclose **agent review
   only**. CI artifact links supplement the PR's visible evidence. Other PRs keep
   rendering/interaction checks and failure diagnostics without routine captures.
-  Routine review screenshot publication to public `mxbaylee/spinel` and its PRs
-  is [already authorized](docs/implementation/grooming-2026-10-26.md#standing-screenshot-publication-authority);
-  use sample data and do not ask again for that routine publication.
   Owner, chat 2026-10-26; [standing delegation](docs/implementation/grooming-2026-10-26.md#agent-decisions-and-visual-review).
+- **Publishing useful images on PRs is already authorized.** Attach relevant
+  screenshots/designs or store them as durable, commit-pinned repository assets,
+  including on public PRs, without asking for separate publication permission.
+  Choose useful images covering the proposed designs, changed states and required
+  light/dark/phone views; omit redundant captures. Independent visual review and
+  accurate source/theme/viewport captions still apply. Owner, chat 2026-10-26;
+  [standing image permission](docs/implementation/grooming-2026-10-26.md#standing-permission-to-publish-pr-images).
 - **Univer Pro packages** (`@univerjs-pro/*`) are closed source under Univer's
   terms. Use them through their public API and docs only: don't decompile,
   deobfuscate or patch them, and don't work around license checks or

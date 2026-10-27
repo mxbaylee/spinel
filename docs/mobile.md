@@ -30,8 +30,12 @@ Docs with a traditional page layout keep that layout and are read-only on a
 phone, with **“Edit on a larger screen. This Doc keeps its page layout.”** This
 avoids changing shared page dimensions merely to fit a device. Formula results
 remain readable in their existing dialog, including all rows of table results;
-insertion and editing require an editable modern Doc. History and downloaded
-offline copies use the same mobile renderer and remain read-only.
+insertion and editing require an editable modern Doc. History uses the same
+mobile presentation and remains read-only. Downloaded offline copies use the
+live native editor with their saved permissions and SPN-053's durable local
+queue; modern Docs with an edit grant remain editable, while viewer downloads
+and traditional phone Docs remain read-only. Offline Formula results are
+unavailable, as described in [offline editing](offline.md#how-offline-editing-works).
 
 If a collaborator changes the Doc's page mode while it is open, the phone keeps
 pending edits and switches to a local view-only state. Wait for those edits to
@@ -75,20 +79,27 @@ Signed-in accounts can keep selected documents on a device
 ([docs/offline.md](offline.md#offline-launch-and-read-only-viewing), SPN-039).
 On a prepared device the service worker also caches the public app shell, so
 Spinel opens offline with the last-synced file list and downloaded documents open
-read-only. Pages that need the server, guest links and unprepared devices still
-get the generic offline page above. Offline editing and real-device runs are
-SPN-053 and SPN-090, with shared storage lifecycle in SPN-055. The earlier global no-offline-feature policy is superseded
+with their saved permissions. SPN-053 uses the native Sheet/Doc editor and a
+durable local queue; **Saved on this device** follows its storage commit, and
+**Synced** follows server acknowledgement plus local cleanup. Viewer downloads
+remain read-only. Pages that need the server, guest links and unprepared devices still
+get the generic offline page above. Physical-device verification remains
+SPN-090, with shared storage lifecycle in SPN-055. CI phone viewports do not prove
+installed Android/iPhone behavior. The earlier global no-offline-feature policy is superseded
 for this feature, while guests keep the generic fallback ([decision #83](implementation/SPN-039.md#legacy-decision-83-complete-opted-in-offline-product)).
 
 An editor already open when connectivity drops retains its existing unsaved-edit
-warning. Keep that tab open until changes are saved. Installing Spinel does not
-make pending edits durable on the phone or make it safe to close an unsaved tab.
+warning until its changes are saved. Explicitly downloaded documents can confirm
+local durability through **Saved locally**; undownloaded editors must stay open
+until saving succeeds. Installing Spinel alone does not download a document or
+make its pending edits durable on the phone.
 
 The service worker never puts authenticated HTML, API responses, snapshots,
 images, guest pages or link tokens in CacheStorage. Navigation goes to the network
 with caching disabled; only a network failure produces the fixed offline page.
 HTTP authorization errors are returned unchanged. Public icons and the worker
-code are safe to retain; no private offline cache or sync queue is introduced.
+code are safe to retain. Explicit downloads use the separately scoped IndexedDB
+store and queue described above, rather than private data in CacheStorage.
 
 ## Verification and deployment
 
