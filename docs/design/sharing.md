@@ -65,14 +65,18 @@ field or separate source-sharing wizard.
   **Can edit through a folder**. Never name an inaccessible folder. File admin
   help belongs beside that choice when relevant, not in a permanent paragraph.
   Disabled accounts are labelled and can lose direct access but cannot be granted.
+- When sharing a host Space, show its scope once in the active People editor
+  before Share / Save changes: **Applies to every current and future page and
+  folder in this Space.** This is separate from any proposed external source Space.
 - Keep **one active draft**. Cancel, switching recipients or switching tabs
   discards the short unsaved edit and clears source consent. Opening another
   host does the same. Returning begins from current confirmed access and a fresh
   source review; there is no hidden map of staged recipient changes.
-- The default People footer has only **Copy account link**. While editing it
-  shows **Cancel** and one primary action: **Share** when the recipient has no
-  effective access, or **Save changes** when they already have access. Hide Copy
-  while editing. That action saves this recipient's direct host role and any
+- The default People footer has only **Copy account link**. While editing, hide
+  Copy and place **Cancel** plus one primary action immediately at the end of
+  the active recipient editor, before any later person rows: **Share** when the
+  recipient has no effective access, or **Save changes** when they already have
+  access. That action saves this recipient's direct host role and any
   explicitly selected source additions. Source-only sharing remains actionable
   when the host role is unchanged. Header close dismisses the dialog.
 - Complete success collapses the editor to the confirmed row, announces one
@@ -118,8 +122,8 @@ guest-link role.
 | Context | Visible information and action |
 | --- | --- |
 | People overview | Names, confirmed roles, Copy account link |
-| One recipient editor | Role choice, relevant source summary, Cancel, Share / Save changes |
-| Checked source addition | Every exact proposed target and its Can view grant; whole-Space consequences |
+| One recipient editor | Role choice and source summary, followed immediately by Cancel and Share / Save changes before later person rows |
+| Checked source addition | Every exact proposed target marked Can view · Proposed; whole-Space consequences |
 | Enabled guest link | Confirmed role, fresh Copy guest link or Replace link…; More → Turn off |
 | Exceptional state | One relevant explanation and only the recovery action needed now |
 
@@ -127,7 +131,7 @@ guest-link role.
 
 The original [PR #199](https://github.com/mxbaylee/spinel/pull/199) established the
 permission and review contract. The refinement places source review only inside
-the active recipient editor, using the common footer action. It needs no extra
+the active recipient editor, immediately before its action row. It needs no extra
 Formula sources heading. Its original
 [recipient review decision](../implementation/SPN-076.md#explicit-recipient-source-review)
 remains authoritative for source scope and privacy. The simpler composition must
@@ -153,13 +157,14 @@ or partial aggregate. See [formulas.md](formulas.md).
    allows the recipient to read the report. The full label is a 44 px touch
    target. A null direct host role can still preserve inherited host access.
    The unchecked inventory uses a native disclosure instead of a permanently
-   expanded list; the source summary explains any known access limitation.
+   expanded list. For known missing source access, its visible summary says
+   **Some formulas won’t work without source access.**
 3. Checking automatically exposes **every exact authorized proposed grant name**
-   and **Can view** before Share / Save changes. Keep this proposed list visible
+   and **Can view · Proposed** before Share / Save changes. Keep this list visible
    while checked. Already accessible sources and their current roles may remain
    in a collapsed detail or brief summary; their direct/inherited access and
-   ownership receive no redundant write. An unchanged host role can still save
-   explicit source additions.
+   ownership receive no redundant write. Confirmed viewer access remains
+   **View only**. An unchanged host role can still save explicit source additions.
 4. Use one short warning for unresolved sources. Readable sources that the actor
    cannot share may explain that their Owner or File admin must act. Unreadable,
    missing or undiscoverable dependencies disclose no name, identity, parent,
@@ -197,6 +202,11 @@ distinct while a pending mutation disables navigation and dismissal.
 | Complete | Collapse to the confirmed row, announce one concise status distinguishing host/source outcomes, and return focus. Only confirmed grants are described as shared. |
 | Partial success | Keep the editor open with one concise status; retain confirmed grants and distinguish remaining access in the refreshed review. Another attempt uses this editor and its single primary action after a new opt-in. |
 | Response lost | Keep the editor open: **Could not confirm the update. Review current access and try again.** Refresh actual permissions before claiming an outcome; never claim that nothing changed solely because the response was lost. |
+
+After an uncertain response, if the selected direct role equals the refreshed
+confirmed role and source inclusion is unchecked, **Save changes** stays disabled.
+It becomes actionable only for a real role change or a fresh opt-in to an eligible
+reviewed source addition. Keeping the editor open does not enable a no-op retry.
 
 No new background access requests or notifications are sent. There is no
 automatic retry of source grants after a failed or uncertain confirmation.
