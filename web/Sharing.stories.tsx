@@ -312,6 +312,35 @@ export const OneRecipientDraft: Story = {
   },
 };
 
+export const NavigationAfterCancel: Story = {
+  parameters: { api: { [sharing(doc)]: { people: [people[0]] }, [link(doc)]: noLink } },
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    await openPerson(body, 'Alex Kim');
+    const peopleTab = body.getByRole('tab', { name: 'People' });
+    const linkTab = body.getByRole('tab', { name: 'Link' });
+    const cancel = body.getByRole('button', { name: 'Cancel' });
+    cancel.focus();
+    // Place newer navigation between React's removal and queued frame recovery.
+    // A normal click helper can wait past that frame and miss the focus theft.
+    cancel.click();
+    await new Promise<void>((resolve) =>
+      queueMicrotask(() => {
+        peopleTab.focus();
+        resolve();
+      }),
+    );
+    await new Promise<void>((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+    );
+    await expect(peopleTab).toHaveFocus();
+    await userEvent.keyboard('{ArrowRight}');
+    await expect(linkTab).toHaveAttribute('aria-selected', 'true');
+    await expect(linkTab).toHaveFocus();
+    await expect(await body.findByRole('button', { name: 'Create link' })).toBeVisible();
+  },
+};
+
 function DeferredAccess({ replace = false }: { replace?: boolean }) {
   const [ready, setReady] = useState(false);
   const [left, setLeft] = useState(false);

@@ -66,19 +66,26 @@ export function Sharing({
     if (loading || saving || !focusAfterChange.current) return;
     const next = focusAfterChange.current;
     const request = generation.current;
-    const focus = () => {
-      const target = next.editor
+    const target =
+      (next.editor
         ? editor.current?.querySelector<HTMLSelectElement>('select')
-        : personRows.current.get(next.personId);
-      (target ?? peoplePanel.current)?.focus();
-    };
+        : personRows.current.get(next.personId)) ?? peoplePanel.current;
+    if (!target) return;
     // Move focus before the dialog observes a removed control, then finish after
     // its containment restoration. Both moves belong to this exact view/change.
-    focus();
+    target.focus();
     const frame = requestAnimationFrame(() => {
       if (request !== generation.current || focusAfterChange.current !== next) return;
-      focus();
       focusAfterChange.current = null;
+      // A newer focus move owns the interaction, including focus on an already
+      // selected tab (which does not change the tab value or generation).
+      const active = target.ownerDocument.activeElement;
+      if (
+        active === target ||
+        active === target.ownerDocument.body ||
+        active === target.closest('[role="dialog"]')
+      )
+        target.focus();
     });
     return () => cancelAnimationFrame(frame);
   }, [loading, saving, people, draft]);
@@ -182,6 +189,8 @@ export function Sharing({
         setSourceRefresh((value) => value + 1);
         focusAfterChange.current = { personId: person.id, editor: true };
       } else {
+        // Keep focus on a connected element while the saving editor is removed.
+        peoplePanel.current?.focus();
         setDraft(null);
         setMessage(
           outcome
@@ -364,7 +373,10 @@ export function Sharing({
                       <Button
                         disabled={busy}
                         onClick={() => {
-                          focusAfterChange.current = { personId: person.id, editor: false };
+                          // Cancel disappears with the editor. Move focus first
+                          // so dialog containment never has to recover it later.
+                          focusAfterChange.current = null;
+                          (personRows.current.get(person.id) ?? peoplePanel.current)?.focus();
                           discardDraft();
                         }}
                       >

@@ -84,17 +84,6 @@ export function SharingSources({
   const [error, setError] = useState(false);
   const [retry, setRetry] = useState(0);
   const generation = useRef(0);
-  const retryFocus = useRef<HTMLSelectElement | null>(null);
-  useLayoutEffect(() => {
-    if (loading || !retryFocus.current) return;
-    const request = generation.current;
-    const frame = requestAnimationFrame(() => {
-      if (request !== generation.current) return;
-      retryFocus.current?.focus();
-      retryFocus.current = null;
-    });
-    return () => cancelAnimationFrame(frame);
-  }, [loading]);
   useLayoutEffect(() => {
     const request = ++generation.current;
     setReview(null);
@@ -164,8 +153,12 @@ export function SharingSources({
           <Button
             disabled={busy}
             onClick={(event) => {
-              retryFocus.current =
-                event.currentTarget.closest('.sharing-editor')?.querySelector('select') ?? null;
+              // The retry button disappears while checking; the role control
+              // stays mounted. Hand off now without a delayed focus takeover.
+              event.currentTarget
+                .closest('.sharing-editor')
+                ?.querySelector<HTMLSelectElement>('select')
+                ?.focus();
               setRetry((value) => value + 1);
             }}
           >

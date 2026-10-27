@@ -333,6 +333,22 @@ export const CheckFailed: Story = {
     retry.focus();
     await userEvent.keyboard('{Enter}');
     await waitFor(() => expect(body.getByRole('combobox')).toHaveFocus());
+    const retryAgain = await body.findByRole('button', { name: 'Retry source check' });
+    const peopleTab = body.getByRole('tab', { name: 'People' });
+    retryAgain.focus();
+    retryAgain.click();
+    await new Promise<void>((resolve) =>
+      queueMicrotask(() => {
+        peopleTab.focus();
+        resolve();
+      }),
+    );
+    await waitFor(() => expect(retryAgain).not.toBeInTheDocument());
+    await expect(await body.findByRole('button', { name: 'Retry source check' })).toBeVisible();
+    await new Promise<void>((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+    );
+    await expect(peopleTab).toHaveFocus();
   },
 };
 export const Applying: Story = {
