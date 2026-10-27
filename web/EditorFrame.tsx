@@ -197,6 +197,7 @@ export function EditorFrame({
               (appearance.canEdit ? (
                 <button
                   className="sp-control sp-quiet"
+                  ref={appearanceButton}
                   aria-label="Change appearance"
                   onClick={() => setAppearanceOpen(true)}
                 >

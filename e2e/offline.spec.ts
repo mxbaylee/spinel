@@ -232,7 +232,8 @@ test('downloaded Sheets and Docs open read-only offline with local images; nothi
 
     const api: string[] = [];
     page.on('request', (request) => {
-      if (new URL(request.url()).pathname.startsWith('/api/items')) api.push(request.url());
+      if (/^\/api\/(items|appearance)(\/|$)/.test(new URL(request.url()).pathname))
+        api.push(request.url());
     });
     await context.setOffline(true);
     // A catalog saved by an older app may still contain pins. Opening it must

@@ -591,7 +591,8 @@ export function Space({
           {canAdminister(currentTree.access) && !guest && (
             <Button
               disabled={unavailableManagement}
-              onClick={() => {
+              onClick={(event) => {
+                appearanceFocus.current = event.currentTarget;
                 close();
                 setAppearanceItem(currentTree.space);
               }}

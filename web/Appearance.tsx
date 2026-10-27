@@ -16,7 +16,7 @@ import type {
 } from '../src/shared/appearance.ts';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import { IconPicker } from './ProfileSettings.tsx';
-import { Button, Modal } from '../src/ui/redesign/Controls.tsx';
+import { Button, Choice, Modal } from '../src/ui/redesign/Controls.tsx';
 import { getTheme, watchTheme } from '../src/ui/theme.ts';
 import { spaceAccentPalettes, fillPresets, palettes } from '../src/ui/palette.ts';
 import { gemCoverSources } from '../src/ui/redesign/gemCovers.ts';
@@ -380,22 +380,13 @@ export function AppearanceDialog({
           </>
         )}
         {target.kind === 'space' && (
-          <label>
-            Space accent
-            <select
-              value={accent ?? 'spinel'}
-              disabled={busy}
-              onChange={(event) =>
-                setAccent(event.target.value === 'spinel' ? null : (event.target.value as GemName))
-              }
-            >
-              {gemNames.map((gem) => (
-                <option key={gem} value={gem}>
-                  {spaceAccentPalettes[gem].label}
-                </option>
-              ))}
-            </select>
-          </label>
+          <Choice
+            label="Space accent"
+            value={accent ?? 'spinel'}
+            disabled={busy}
+            options={gemNames.map((gem) => ({ value: gem, label: spaceAccentPalettes[gem].label }))}
+            onChange={(value) => setAccent(value === 'spinel' ? null : (value as GemName))}
+          />
         )}
         {['doc', 'sheet'].includes(target.kind) && (
           <Button disabled={busy} onClick={() => setCover(true)}>
@@ -601,18 +592,17 @@ export function CoverDialog({
         <div className="appearance-cover-options">
           {source === 'gem' ? (
             <>
-              <label>
-                Gem artwork
-                <select
-                  value={gemMode}
-                  disabled={busy}
-                  onChange={(event) => setGemMode(event.target.value as 'auto' | 'light' | 'dark')}
-                >
-                  <option value="auto">Match light and dark mode</option>
-                  <option value="light">Light artwork in both modes</option>
-                  <option value="dark">Dark artwork in both modes</option>
-                </select>
-              </label>
+              <Choice
+                label="Gem artwork"
+                value={gemMode}
+                disabled={busy}
+                onChange={(value) => setGemMode(value as 'auto' | 'light' | 'dark')}
+                options={[
+                  { value: 'auto', label: 'Match light and dark mode' },
+                  { value: 'light', label: 'Light artwork in both modes' },
+                  { value: 'dark', label: 'Dark artwork in both modes' },
+                ]}
+              />
               <div className="appearance-gem-grid">
                 {gemNames.map((value) => (
                   <button
@@ -639,17 +629,16 @@ export function CoverDialog({
                 Separate light and dark images
               </label>
               {paired && (
-                <label>
-                  Image for
-                  <select
-                    value={variant}
-                    disabled={busy}
-                    onChange={(event) => setVariant(event.target.value as 'light' | 'dark')}
-                  >
-                    <option value="light">Light mode</option>
-                    <option value="dark">Dark mode</option>
-                  </select>
-                </label>
+                <Choice
+                  label="Image for"
+                  value={variant}
+                  disabled={busy}
+                  onChange={(value) => setVariant(value as 'light' | 'dark')}
+                  options={[
+                    { value: 'light', label: 'Light mode' },
+                    { value: 'dark', label: 'Dark mode' },
+                  ]}
+                />
               )}
               {source === 'upload' ? (
                 <label>
@@ -805,17 +794,22 @@ export function useSpaceAccent(accent: GemName | null | undefined) {
   const mode = useSyncExternalStore(watchTheme, getTheme);
   useEffect(() => {
     const style = document.documentElement.style;
-    const values = accentStyle(accent, mode);
-
-    for (const [key, value] of Object.entries(values)) style.setProperty(key, String(value));
+    const applyAccent = () => {
+      for (const [key, value] of Object.entries(accentStyle(accent, getTheme())))
+        style.setProperty(key, String(value));
+    };
+    const values = accentStyle(accent, getTheme());
+    applyAccent();
+    window.addEventListener('spinel-theme', applyAccent);
     return () => {
+      window.removeEventListener('spinel-theme', applyAccent);
       for (const key of Object.keys(values)) {
         const value = palettes[getTheme()][key.slice(2)];
         if (value) style.setProperty(key, value);
         else style.removeProperty(key);
       }
     };
-  }, [accent, mode]);
+  }, [accent]);
   return Object.fromEntries(
     Object.entries(palettes[mode]).map(([key, value]) => [`--${key}`, value]),
   ) as CSSProperties;

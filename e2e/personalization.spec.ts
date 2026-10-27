@@ -112,6 +112,9 @@ for (const variant of [
       await dialog.getByRole('button', { name: 'Bismuth', exact: true }).click();
       await dialog.getByRole('button', { name: 'Save cover', exact: true }).click();
       await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+      await expect(
+        page.getByRole('button', { name: 'Change appearance', exact: true }),
+      ).toBeFocused();
       const saved = await (await context.request.get(`/api/appearance/items/${item.id}`)).json();
       expect(saved.appearance.cover).toEqual({ source: 'gem', gem: 'bismuth' });
       expect(saved.appearance.icon).toBe('🍋');
@@ -177,3 +180,146 @@ for (const variant of [
     }
   });
 }
+
+test('Space accents follow preference changes, spare native formatting and restore Spinel on exit', async ({
+  page,
+  context,
+  baseURL,
+}, info) => {
+  test.setTimeout(120_000);
+  const { SpaceStore } = await import('../src/server/workspace/spaces.ts');
+  const { palettes, spaceAccentPalettes } = await import('../src/ui/palette.ts');
+  const db = openDatabase(`test-results/${info.project.name}/app.sqlite`),
+    auth = new AuthStore(db),
+    workspace = new WorkspaceStore(auth, { spacesEnabled: true });
+  const owner = auth.createUser('Iris Garden'),
+    session = auth.createSession(owner.id),
+    spaces = new SpaceStore(workspace);
+  const root = spaces.createRoot(owner.id, {
+    name: 'Field station',
+    parentId: null,
+    icon: '🌿',
+  }).space;
+  const child = spaces.createChild(owner.id, root.id, {
+    name: 'Observations',
+    kind: 'doc',
+    parentId: root.id,
+    icon: '🍋',
+  }).item;
+  const appearance = new AppearanceStore(workspace);
+  await appearance.update(
+    {
+      userId: owner.id,
+      customData: {
+        sessionHash: session.session.token_hash,
+        spaceId: root.id,
+        spaceItem: child.id,
+      },
+    },
+    child.id,
+    { revision: 1, cover: { source: 'gem', gem: 'spinel' } },
+  );
+  await context.addCookies([
+    {
+      name: COOKIE_NAME,
+      value: session.token,
+      url: baseURL!.replace('http:', 'https:'),
+      secure: true,
+      httpOnly: true,
+      sameSite: 'Strict',
+    },
+  ]);
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.emulateMedia({ colorScheme: 'light' });
+  await page.addInitScript(() => localStorage.setItem('spinel-theme', 'light'));
+  const variable = (selector: string, name: string) =>
+    page
+      .locator(selector)
+      .first()
+      .evaluate((element, key) => getComputedStyle(element).getPropertyValue(key).trim(), name);
+  const preference = (value: string) =>
+    page.evaluate((value) => {
+      localStorage.setItem('spinel-theme', value);
+      window.dispatchEvent(new StorageEvent('storage', { key: 'spinel-theme', newValue: value }));
+    }, value);
+  try {
+    await page.goto(`/spaces/${root.id}?item=${child.id}`);
+    await expect(page.getByRole('button', { name: 'Space appearance', exact: true })).toBeEnabled();
+    const read = async () =>
+      (
+        await (
+          await context.request.get(`/api/appearance/spaces/${root.id}/items/${child.id}`)
+        ).json()
+      ).appearance;
+    const before = await read();
+    const lightArt = await page.locator('.appearance-banner img').getAttribute('src');
+    await page.getByRole('button', { name: 'Space appearance', exact: true }).click();
+    await page.getByRole('combobox', { name: 'Space accent', exact: true }).click();
+    await page.getByRole('option', { name: 'Sapphire', exact: true }).click();
+    await page.getByRole('button', { name: 'Save appearance', exact: true }).click();
+    await expect
+      .poll(() => variable('.space-navigation', '--sp-accent'))
+      .toBe(spaceAccentPalettes.sapphire.light.accent);
+    await expect(page.getByRole('button', { name: 'Space appearance', exact: true })).toBeFocused();
+    await expect
+      .poll(() => variable('.space-native-editor', '--sp-accent'))
+      .toBe(palettes.light['sp-accent']);
+    // Same resolved theme still resets root tokens; Space accent must reapply synchronously.
+    await preference('system');
+    await expect
+      .poll(() => variable('.space-navigation', '--sp-accent'))
+      .toBe(spaceAccentPalettes.sapphire.light.accent);
+    await preference('dark');
+    await expect
+      .poll(() => variable('.space-navigation', '--sp-accent'))
+      .toBe(spaceAccentPalettes.sapphire.dark.accent);
+    await expect
+      .poll(() => variable('.space-native-editor', '--sp-accent'))
+      .toBe(palettes.dark['sp-accent']);
+    const selection = await page
+      .locator('.space-navigation h2')
+      .evaluate((element) => getComputedStyle(element, '::selection').backgroundColor);
+    const rgb = (hex: string) =>
+      `rgb(${[1, 3, 5].map((start) => parseInt(hex.slice(start, start + 2), 16)).join(', ')})`;
+    expect(selection).toBe(rgb(spaceAccentPalettes.sapphire.dark.accent));
+    await expect
+      .poll(() => page.locator('.appearance-banner img').getAttribute('src'))
+      .not.toBe(lightArt);
+    expect(await read()).toEqual(before);
+    await mkdir('test-results/theme-screenshots', { recursive: true });
+    await page.screenshot({
+      path: `test-results/theme-screenshots/spn-086-space-dark-${info.project.name}.png`,
+      animations: 'disabled',
+    });
+    // A deliberately shared cover stays fixed when the surrounding theme changes.
+    await page.getByRole('button', { name: 'Change appearance', exact: true }).click();
+    await page.getByRole('button', { name: 'Change cover', exact: true }).click();
+    await page.getByRole('combobox', { name: 'Gem artwork', exact: true }).click();
+    await page.getByRole('option', { name: 'Light artwork in both modes', exact: true }).click();
+    await page.getByRole('button', { name: 'Save cover', exact: true }).click();
+    await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+    await expect(page.locator('.appearance-banner img')).toHaveAttribute('src', lightArt!);
+    const shared = await read();
+    expect(shared.cover).toEqual({ source: 'gem', gem: 'spinel', mode: 'light' });
+    await preference('light');
+    await expect
+      .poll(() => variable('.space-navigation', '--sp-accent'))
+      .toBe(spaceAccentPalettes.sapphire.light.accent);
+    await expect(page.locator('.appearance-banner img')).toHaveAttribute('src', lightArt!);
+    await preference('dark');
+    await expect
+      .poll(() => variable('.space-navigation', '--sp-accent'))
+      .toBe(spaceAccentPalettes.sapphire.dark.accent);
+    await expect(page.locator('.appearance-banner img')).toHaveAttribute('src', lightArt!);
+    expect(await read()).toEqual(shared);
+    // The real SPA exit must clean up the override, without relying on a page reload.
+    await page.getByRole('button', { name: 'My files', exact: true }).first().click();
+    await expect.poll(() => variable('html', '--sp-accent')).toBe(palettes.dark['sp-accent']);
+    await expect.poll(() => variable('html', '--appearance-selection-bg')).toBe('');
+  } finally {
+    db.prepare('DELETE FROM workspace_items WHERE id=?').run(child.id);
+    db.prepare('DELETE FROM workspace_items WHERE id=?').run(root.id);
+    db.prepare('DELETE FROM auth_users WHERE id=?').run(owner.id);
+    db.close();
+  }
+});

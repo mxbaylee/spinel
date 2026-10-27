@@ -172,7 +172,7 @@
   min-height: calc(100% - var(--appearance-header-height, 61px));
   height: calc(100% - var(--appearance-header-height, 61px));
 }
-@media (max-width: 600px) {
+@media (max-width: 640px) {
   .appearance-banner {
     height: 112px;
   }
@@ -206,9 +206,19 @@
   outline-offset: 2px;
 }
 
-@media (max-width: 600px), (pointer: coarse) {
+@media (max-width: 640px), (pointer: coarse) {
   .appearance-colors button {
     width: 44px;
     height: 44px;
+  }
+}
+
+.appearance-cover-options .sp-choice {
+  margin-bottom: 12px;
+}
+@media (max-width: 640px), (pointer: coarse) {
+  .appearance-cover-options > label,
+  .appearance-cover-position input {
+    min-height: 44px;
   }
 }
