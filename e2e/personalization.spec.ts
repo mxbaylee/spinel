@@ -71,6 +71,9 @@ for (const variant of [
         )
         .toBe(true);
       await expect(page.getByRole('tab', { name: 'Start', exact: true })).toBeVisible();
+      await expect(
+        page.getByRole('button', { name: 'Save details: Saved', exact: true }),
+      ).toBeVisible();
       await capture('editor');
       await page.getByRole('button', { name: 'Change appearance', exact: true }).click();
       await page.getByRole('button', { name: 'Choose icon or emoji', exact: true }).click();

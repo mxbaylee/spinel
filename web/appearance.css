@@ -216,6 +216,18 @@
 .appearance-cover-options .sp-choice {
   margin-bottom: 12px;
 }
+.appearance-cover-options .appearance-pairing {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.appearance-cover-options .appearance-pairing input {
+  width: 16px;
+  height: 16px;
+  min-height: 0;
+  margin: 0;
+  flex: 0 0 16px;
+}
 @media (max-width: 640px), (pointer: coarse) {
   .appearance-cover-options > label,
   .appearance-cover-position input {

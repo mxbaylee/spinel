@@ -599,7 +599,7 @@ export function CoverDialog({
             </div>
           ) : (
             <>
-              <label>
+              <label className="appearance-pairing">
                 <input
                   type="checkbox"
                   checked={paired}
