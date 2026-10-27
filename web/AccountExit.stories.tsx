@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { AccountExitView } from './AccountExit.tsx';
 import type { ExitViewState } from './AccountExit.tsx';
 
@@ -144,11 +144,21 @@ export const DeleteConfirmation: Story = {
 export const CancelDeletion: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
     const trigger = canvas.getByRole('button', { name: 'Delete offline data…' });
     await userEvent.click(trigger);
+    await expect(
+      await body.findByRole('dialog', {
+        name: 'Delete this account’s offline data?',
+      }),
+    ).toBeVisible();
     await userEvent.keyboard('{Escape}');
-    await expect(within(canvasElement.ownerDocument.body).queryByRole('dialog')).toBeNull();
-    await expect(trigger).toHaveFocus();
+    await waitFor(() => {
+      expect(
+        body.queryByRole('dialog', { name: 'Delete this account’s offline data?' }),
+      ).toBeNull();
+      expect(trigger).toHaveFocus();
+    });
     await expect(args.onDelete).not.toHaveBeenCalled();
   },
 };

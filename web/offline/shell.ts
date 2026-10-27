@@ -1,5 +1,6 @@
 import { currentRuntime, runtimeRequest } from './runtime.ts';
 import { sameCompatibility } from '../../src/shared/offlineShell.ts';
+import type { AccountRuntimeRequirement } from '../../src/shared/offlineShell.ts';
 
 /** Retained for existing bounded read-only startup callers. */
 export function within<T>(promise: Promise<T>, ms: number, message: string) {
@@ -13,12 +14,16 @@ export function within<T>(promise: Promise<T>, ms: number, message: string) {
 }
 
 /** Caller owns its account catalog lock through this reservation and private commit. */
-export async function prepareShell(accountId: string, verifyCurrent: () => void) {
+export async function prepareShell(
+  accountId: string,
+  verifyCurrent: () => void,
+  requirement: AccountRuntimeRequirement,
+) {
   verifyCurrent();
   const host = currentRuntime();
   const manifest = host?.manifest;
   if (!manifest) throw new Error('Offline downloads need a production build of Spinel.');
-  const result = await runtimeRequest('prepare', manifest.version, accountId, undefined, 180_000);
+  const result = await runtimeRequest('prepare', manifest.version, accountId, requirement, 180_000);
   verifyCurrent();
   if (
     !result.prepared ||

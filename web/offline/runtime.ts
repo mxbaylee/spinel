@@ -119,7 +119,13 @@ export async function ensureAccountRuntime(
       ? { kind: 'ready', buildId: 'development' }
       : { kind: 'unavailable', reason: 'missing-compatible-runtime' };
   }
-  if (requirement.kind === 'empty') return { kind: 'ready', buildId: host.manifest.version };
+  if (requirement.kind === 'empty') {
+    // The caller proved emptiness while holding the account catalog lock. A
+    // crashed preparation may have reserved public compatibility before its
+    // private transaction committed; retire only that account's stale hold.
+    await releaseAccountRuntime(accountId, verifyCurrent).catch(() => verifyCurrent());
+    return { kind: 'ready', buildId: host.manifest.version };
+  }
   try {
     const answer = await runtimeRequest('admit', host.manifest.version, accountId, requirement);
     verifyCurrent();

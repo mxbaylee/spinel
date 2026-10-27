@@ -1,5 +1,10 @@
 import type { RuntimeCompatibility, ShellManifest } from '../../src/shared/offlineShell.ts';
-import { parseShellManifest, validCompatibility } from '../../src/shared/offlineShell.ts';
+import {
+  LEGACY_COMPATIBILITY,
+  parseShellManifest,
+  SHELL_CACHE_PREFIX,
+  validCompatibility,
+} from '../../src/shared/offlineShell.ts';
 import { openExistingDatabase } from './existingDatabase.ts';
 
 export const RUNTIME_DATABASE = 'spinel-offline-runtime';
@@ -19,6 +24,35 @@ export const emptyRuntimeState = (): RuntimeState => ({
   accounts: {},
   clients: {},
 });
+
+/** Names only; the caller may exclude its own catalog-locked, verified empty store. */
+export async function initialRuntimeState(verify: () => void, verifiedEmptyAccount?: string) {
+  const state = emptyRuntimeState();
+  const oldCaches = (await caches.keys()).filter((name) => name.startsWith(SHELL_CACHE_PREFIX));
+  verify();
+  let unknown = true;
+  try {
+    if (indexedDB.databases) {
+      const names = await indexedDB.databases();
+      verify();
+      // The worker never opens another account's database. Only an explicit
+      // preparation's verified empty current account can be excluded; absence
+      // of enumeration is still unknown even on an apparently fresh device.
+      unknown = names.some(
+        (entry) =>
+          entry.name?.startsWith('spinel-offline-') &&
+          entry.name !== RUNTIME_DATABASE &&
+          entry.name !==
+            (verifiedEmptyAccount ? `spinel-offline-${verifiedEmptyAccount}` : undefined),
+      );
+    }
+  } catch {
+    verify();
+    unknown = true;
+  }
+  if (oldCaches.length || unknown) state.legacyCompatibility = LEGACY_COMPATIBILITY;
+  return state;
+}
 
 function request<T>(operation: IDBRequest<T>) {
   return new Promise<T>((resolve, reject) => {

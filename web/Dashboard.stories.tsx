@@ -1,12 +1,16 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import type { ItemKind, SpaceFile, WorkspaceItem } from '../src/shared/workspace.ts';
+import type { OfflineBundle } from '../src/shared/offlineBundle.ts';
+import type { ShellManifest } from '../src/shared/offlineShell.ts';
 import { failure, pending } from '../.storybook/api.ts';
 import { searchCatalog } from '../src/shared/search.ts';
 import { Dashboard } from './Dashboard.tsx';
 import type { LocalStart } from './offline/localStart.ts';
+import { openOfflineStore, preparedAccount, setPreparedAccount } from './offline/offlineStore.ts';
+import { currentRuntime, installRuntimeHost } from './offline/runtime.ts';
 import { assertDialogControls } from '../.storybook/dialogBounds.ts';
 
 const day = 86_400_000;
@@ -103,6 +107,101 @@ const inWorkspace: Decorator = (Story) => (
   </StillHistory>
 );
 
+/** LocalStart is a verified snapshot; give refreshes the same real private records. */
+function LocalDeviceFixture({ local, children }: { local: LocalStart; children: ReactNode }) {
+  const [ready, setReady] = useState(false);
+  const [problem, setProblem] = useState('');
+  useEffect(() => {
+    const previousAccount = preparedAccount();
+    const previousHost = currentRuntime();
+    const previousWorker = Object.getOwnPropertyDescriptor(navigator, 'serviceWorker');
+    const manifest: ShellManifest = {
+      protocol: 1,
+      version: '0123456789abcdef',
+      compatibility: { format: 1, sdkVersion: '1.1.0' },
+      entry: '/assets/story-runtime.js',
+      css: [],
+      files: ['/assets/story-runtime.js'],
+    };
+    installRuntimeHost({
+      manifest,
+      compatibility: manifest.compatibility,
+      switchTo: async () => {
+        throw new Error('The inventory fixture does not switch runtimes.');
+      },
+    });
+    // Only the public worker boundary is a fixture; the hook rereads actual IDB.
+    Object.defineProperty(navigator, 'serviceWorker', {
+      configurable: true,
+      value: {
+        ready: Promise.resolve({
+          active: {
+            postMessage(_message: unknown, ports: MessagePort[]) {
+              ports[0].postMessage({ ok: true, prepared: true, manifest });
+            },
+          },
+        }),
+      },
+    });
+    let cancelled = false;
+    setPreparedAccount(null);
+    setReady(false);
+    void (async () => {
+      const store = await openOfflineStore(local.user.id);
+      try {
+        await store.clearAccount(() => {});
+        await store.saveCatalog(local.user, local.catalog);
+        for (const copy of local.downloads) {
+          const bundle = {
+            version: 1,
+            accountId: local.user.id,
+            itemId: copy.itemId,
+            spaceId: copy.spaceId,
+            name: copy.name,
+            kind: copy.kind,
+            unitId: copy.itemId,
+            revision: copy.revision,
+            revisionOffset: 0,
+            access: copy.readOnly ? 'viewer' : 'owner',
+            readOnly: copy.readOnly,
+            sdkVersion: '1.1.0',
+            images: [],
+            snapshot:
+              copy.kind === 'sheet'
+                ? { id: copy.itemId, sheets: {} }
+                : { id: copy.itemId, documentStyle: {} },
+          } as OfflineBundle;
+          await store.saveDownload(bundle, new Map());
+        }
+      } finally {
+        store.close();
+      }
+      if (!cancelled) {
+        setPreparedAccount(local.user.id);
+        setReady(true);
+      }
+    })().catch((error) => {
+      if (!cancelled)
+        setProblem(error instanceof Error ? error.message : 'Story preparation failed.');
+    });
+    return () => {
+      cancelled = true;
+      if (previousWorker) Object.defineProperty(navigator, 'serviceWorker', previousWorker);
+      else Reflect.deleteProperty(navigator, 'serviceWorker');
+      if (previousHost) installRuntimeHost(previousHost);
+      else delete window.__spinelRuntimeHost;
+      setPreparedAccount(previousAccount);
+    };
+  }, [local]);
+  return problem ? (
+    <p role="alert">{problem}</p>
+  ) : ready ? (
+    children
+  ) : (
+    <p role="status">Preparing story…</p>
+  );
+}
+
 // Each story sets `parameters.api` in full: Storybook deep-merges parameters, which
 // would fold a failure() or pending() reply into the plain body set on the meta.
 
@@ -115,7 +214,17 @@ const meta = {
     user: { id: 'story-owner', name: 'Sam Lee' },
     onOpen: fn(),
   },
-  decorators: [inWorkspace],
+  decorators: [
+    inWorkspace,
+    (Story, context) =>
+      context.args.local ? (
+        <LocalDeviceFixture local={context.args.local}>
+          <Story />
+        </LocalDeviceFixture>
+      ) : (
+        <Story />
+      ),
+  ],
 } satisfies Meta<typeof Dashboard>;
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -288,6 +397,7 @@ const local: LocalStart = {
     readOnly: item.access === 'viewer',
     revision: 1,
     downloadedAt: synced,
+    available: true,
   })),
 };
 /**
@@ -297,6 +407,11 @@ const local: LocalStart = {
 export const LocalMode: Story = {
   args: { local },
   parameters: { api: empty },
+  play: async ({ canvasElement }) => {
+    await expect(
+      await within(canvasElement).findByRole('heading', { name: 'My files' }),
+    ).toBeVisible();
+  },
 };
 /** Offline, a Doc that wasn't downloaded stays listed but can't open. */
 export const LocalNeedsConnection: Story = {
@@ -430,6 +545,7 @@ export const LocalPreparedSpaceOpens: Story = {
           readOnly: false,
           revision: 4,
           downloadedAt: synced,
+          available: true,
         },
       ],
     },

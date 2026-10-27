@@ -328,6 +328,13 @@ jobs:
         run: |
           node scripts/ci/prefer-ubuntu-archive.ts
           npx playwright install --with-deps chromium
+      - name: Current-main offline source for adoption evidence
+        if: matrix.project == 'offline-upgrade'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: c2e8cac0fcdec36d992d6ebf3f377c9b579a8002
+          path: legacy-offline-source
+          persist-credentials: false
       - name: Build
         if: matrix.project != 'offline-upgrade'
         env:
@@ -339,6 +346,7 @@ jobs:
           SPINEL_E2E_PROJECT: ${{ matrix.project }}
           SHARD: ${{ matrix.shard }}
           VITE_DOC_SELECTION_EVIDENCE: ${{ matrix.project == 'production' && '1' || '0' }}
+          SPINEL_LEGACY_OFFLINE_SOURCE: ${{ matrix.project == 'offline-upgrade' && format('{0}/legacy-offline-source', github.workspace) || '' }}
         run: npx playwright test --project="$SPINEL_E2E_PROJECT" ${SHARD:+--shard="$SHARD"}
       - name: Artifact name
         if: always()

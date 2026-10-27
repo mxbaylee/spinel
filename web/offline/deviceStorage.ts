@@ -4,6 +4,7 @@ import { verifyImages } from './PreparedImages.ts';
 import {
   downloadSummary,
   hasStoredEdits,
+  isOfflineCatalog,
   offlinePreparation,
   openExistingOfflineStore,
   preparedAccount,
@@ -140,6 +141,17 @@ export async function readDeviceInventory(
     const keys = await store.itemIds();
     verifyCurrent();
     if (!keys.length) return { ...base, state: 'empty' };
+    // Cold startup also needs this account's saved identity and file list. A
+    // failed metadata read must still leave inspectable document data visible.
+    const [user, catalog] = await Promise.allSettled([store.user(), store.catalog()]);
+    verifyCurrent();
+    const metadataUnavailable =
+      user.status !== 'fulfilled' ||
+      !user.value ||
+      user.value.id !== accountId ||
+      typeof user.value.name !== 'string' ||
+      catalog.status !== 'fulfilled' ||
+      !isOfflineCatalog(catalog.value);
     const runtime = await accountRuntimeReadiness(accountId, verifyCurrent);
     verifyCurrent();
     for (const itemId of keys) {
@@ -172,6 +184,10 @@ export async function readDeviceInventory(
         )
           throw new Error(
             'This saved copy needs a compatible version of Spinel. Its data is retained.',
+          );
+        if (metadataUnavailable)
+          throw new Error(
+            'The saved account or file list is missing or incomplete. Connect to prepare this device again. Saved document data is retained.',
           );
         entry.available = true;
       } catch (error) {

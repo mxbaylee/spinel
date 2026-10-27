@@ -56,6 +56,48 @@ export type StoredImage = { itemId: string; source: string; bytes: Uint8Array };
 const object = (value: unknown): value is Record<string, unknown> =>
   Boolean(value && typeof value === 'object' && !Array.isArray(value));
 
+/** Minimum native-kind shape required before the editor can admit a stored base. */
+function storedSnapshotShape(value: unknown, kind: unknown, unitId: unknown) {
+  return (
+    object(value) &&
+    typeof unitId === 'string' &&
+    Boolean(unitId) &&
+    value.id === unitId &&
+    ((kind === 'doc' && !('sheets' in value)) || (kind === 'sheet' && object(value.sheets)))
+  );
+}
+
+function storedBaseKnown(item: Record<string, unknown>, bundle: Record<string, unknown>) {
+  const outbox = object(item.outbox) ? item.outbox : undefined;
+  const checkpoint = outbox && object(outbox.checkpoint) ? outbox.checkpoint : undefined;
+  return (
+    bundle.version === 1 &&
+    bundle.sdkVersion === OFFLINE_SDK_VERSION &&
+    typeof bundle.accountId === 'string' &&
+    Boolean(bundle.accountId) &&
+    typeof bundle.unitId === 'string' &&
+    Boolean(bundle.unitId) &&
+    (bundle.spaceId === undefined ||
+      (typeof bundle.spaceId === 'string' &&
+        Boolean(bundle.spaceId) &&
+        bundle.spaceId !== bundle.itemId)) &&
+    typeof bundle.access === 'string' &&
+    ['owner', 'admin', 'editor', 'viewer'].includes(bundle.access) &&
+    typeof bundle.readOnly === 'boolean' &&
+    (bundle.access !== 'viewer' || bundle.readOnly) &&
+    storedSnapshotShape(bundle.snapshot, bundle.kind, bundle.itemId) &&
+    Number.isSafeInteger(bundle.revision) &&
+    Number.isSafeInteger(bundle.revisionOffset) &&
+    Number(bundle.revisionOffset) >= 0 &&
+    Number(bundle.revision) > Number(bundle.revisionOffset) &&
+    Array.isArray(bundle.images) &&
+    (!checkpoint ||
+      (storedSnapshotShape(checkpoint.snapshot, bundle.kind, outbox!.unitId) &&
+        (checkpoint.recoverySnapshot === undefined ||
+          storedSnapshotShape(checkpoint.recoverySnapshot, bundle.kind, outbox!.unitId))))
+  );
+}
+
 export function isKnownOfflineOutbox(value: unknown): value is OfflineOutbox {
   if (!object(value) || value.version !== 1 || !object(value.checkpoint)) return false;
   const checkpoint = value.checkpoint;
@@ -75,7 +117,7 @@ export function isKnownOfflineOutbox(value: unknown): value is OfflineOutbox {
     checkpoint.version === 1 &&
     checkpoint.unitId === value.unitId &&
     Number.isSafeInteger(checkpoint.revision) &&
-    Number(checkpoint.revision) >= 0 &&
+    Number(checkpoint.revision) >= 1 &&
     object(checkpoint.snapshot) &&
     checkpoint.snapshot.id === value.unitId &&
     Array.isArray(checkpoint.inflight) &&
@@ -147,8 +189,7 @@ export function hasStoredEdits(item: unknown) {
   if (
     !object(item) ||
     !object(item.bundle) ||
-    item.bundle.version !== 1 ||
-    item.bundle.sdkVersion !== OFFLINE_SDK_VERSION ||
+    !storedBaseKnown(item, item.bundle) ||
     typeof item.bundle.accountId !== 'string' ||
     typeof item.bundle.itemId !== 'string' ||
     typeof item.bundle.unitId !== 'string' ||
@@ -172,14 +213,24 @@ export function hasStoredEdits(item: unknown) {
 const CHANGE_KEY = 'spinel.offline.changed';
 
 export type OfflineChange = { itemId: string; pending?: boolean };
-export const offlineChanged = (accountId: string, itemId: string, pending?: boolean) => {
-  const detail = { accountId, itemId, ...(pending === undefined ? {} : { pending }) };
+type AccountOfflineChange = OfflineChange & { accountId: string };
+const itemWriterChanges = new Map<string, AccountOfflineChange[]>();
+const itemWriterKey = (accountId: string, itemId: string) => JSON.stringify([accountId, itemId]);
+
+function publishOfflineChange(detail: AccountOfflineChange) {
   window.dispatchEvent(new CustomEvent('spinel-offline-changed', { detail }));
   try {
     storage()?.setItem(CHANGE_KEY, JSON.stringify({ ...detail, change: crypto.randomUUID() }));
   } catch {
     // A notification failure must not turn a completed private write into a failure.
   }
+}
+
+export const offlineChanged = (accountId: string, itemId: string, pending?: boolean) => {
+  const detail = { accountId, itemId, ...(pending === undefined ? {} : { pending }) };
+  const deferred = itemWriterChanges.get(itemWriterKey(accountId, itemId));
+  if (deferred) deferred.push(detail);
+  else publishOfflineChange(detail);
 };
 
 export function watchOfflineChanges(accountId: string, changed: (change: OfflineChange) => void) {
@@ -231,10 +282,7 @@ export function downloadSummary(
       outbox.revisionOffset !== bundle.revisionOffset);
   const uncertain =
     !valid ||
-    bundle.version !== 1 ||
-    bundle.sdkVersion !== OFFLINE_SDK_VERSION ||
-    !object(bundle.snapshot) ||
-    !Array.isArray(bundle.images) ||
+    !storedBaseKnown(item, bundle) ||
     Boolean(scopeMismatch) ||
     (item.outbox !== undefined && !isKnownOfflineOutbox(item.outbox)) ||
     (item.recovery !== undefined && item.outbox === undefined);
@@ -435,15 +483,30 @@ export async function withOfflineItemWriter<T>(
 ) {
   if (!navigator.locks)
     throw new Error('This browser cannot safely change device data. Use a browser with Web Locks.');
-  return navigator.locks.request(
-    `spinel-offline:${accountId}:${itemId}`,
-    { ifAvailable: true },
-    async (lock) => {
-      if (!lock)
-        throw new Error('Close this document in every tab before changing its device copy.');
-      return operation();
-    },
-  );
+  const key = itemWriterKey(accountId, itemId);
+  let changes: AccountOfflineChange[] | undefined;
+  try {
+    return await navigator.locks.request(
+      `spinel-offline:${accountId}:${itemId}`,
+      { ifAvailable: true },
+      async (lock) => {
+        if (!lock)
+          throw new Error('Close this document in every tab before changing its device copy.');
+        changes = [];
+        itemWriterChanges.set(key, changes);
+        return operation();
+      },
+    );
+  } finally {
+    if (changes) {
+      if (itemWriterChanges.get(key) === changes) itemWriterChanges.delete(key);
+      // An open editor reacts by acquiring its own item writer. Announce a
+      // committed change only after this temporary Web Lock actually releases,
+      // including when later work fails. Native editors hold a separate lifetime
+      // lock, so their pending-checkpoint notices are never delayed here.
+      for (const change of changes) publishOfflineChange(change);
+    }
+  }
 }
 
 function preparationCancellation() {

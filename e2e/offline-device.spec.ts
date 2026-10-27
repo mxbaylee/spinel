@@ -14,6 +14,7 @@ import {
   pending,
   savedLocally,
   saveStatus,
+  synced,
   usableCanvas,
 } from './offline-fixture.ts';
 import type { OfflineFixture, Stored } from './offline-fixture.ts';
@@ -56,6 +57,50 @@ async function deviceCopy(page: Page, accountId: string, itemId: string): Promis
         };
       }),
     { accountId, itemId },
+  );
+}
+
+type DeviceMetadata = { user: unknown; catalog: unknown };
+
+/** Change only startup metadata, retaining the actual private item/image stores. */
+async function replaceDeviceMetadata(
+  page: Page,
+  accountId: string,
+  replacement: DeviceMetadata | null,
+) {
+  return page.evaluate(
+    ({ accountId, replacement }) =>
+      new Promise<DeviceMetadata>((resolve, reject) => {
+        const opening = indexedDB.open(`spinel-offline-${accountId}`);
+        opening.onerror = () => reject(opening.error);
+        opening.onupgradeneeded = () => {
+          opening.transaction?.abort();
+          reject(new Error('The test copy is absent.'));
+        };
+        opening.onsuccess = () => {
+          const db = opening.result;
+          const tx = db.transaction('meta', 'readwrite');
+          const meta = tx.objectStore('meta');
+          const user = meta.get('user');
+          const catalog = meta.get('catalog');
+          if (replacement) {
+            meta.put(replacement.user, 'user');
+            meta.put(replacement.catalog, 'catalog');
+          } else {
+            meta.delete('user');
+            meta.delete('catalog');
+          }
+          tx.oncomplete = () => {
+            db.close();
+            resolve({ user: user.result, catalog: catalog.result });
+          };
+          tx.onabort = tx.onerror = () => {
+            db.close();
+            reject(tx.error);
+          };
+        };
+      }),
+    { accountId, replacement },
   );
 }
 
@@ -191,6 +236,9 @@ test('device storage reports actual image bytes, pending Space work, persistence
       .click();
     await downloaded(f.page, doc.name);
     await downloads.getByRole('button', { name: 'Close dialog', exact: true }).click();
+    // This is the account's second download. Its temporary download writer must
+    // hand off to this already-mounted editor before it reports a durable save.
+    await synced(f.page);
     await f.network.setOffline(true);
     await edit(f.page, 'doc', 'Saved offline travel note 551 ');
     await savedLocally(f.page);
@@ -359,7 +407,7 @@ test('failed required-image reads keep an earlier complete copy and never mark a
   }
 });
 
-test('external store and image deletion are reported honestly; damaged pending data needs explicit discard', async ({
+test('external store, metadata and image deletion are reported honestly; damaged pending data needs explicit discard', async ({
   browser,
   baseURL,
 }, info) => {
@@ -393,6 +441,49 @@ test('external store and image deletion are reported honestly; damaged pending d
     await savedLocally(f.page);
     const retained = await deviceCopy(f.page, f.actor.id, f.item.id);
     await device(f.page);
+    const estimatedBytes = displayedBytes(
+      await row(f.page, f.item.name).locator('.device-storage-meta').innerText(),
+    );
+    const metadata = await replaceDeviceMetadata(f.page, f.actor.id, null);
+    expect(metadata.user).toMatchObject({ id: f.actor.id, name: expect.any(String) });
+    expect(metadata.catalog).toMatchObject({
+      items: expect.any(Array),
+      shared: expect.any(Array),
+      views: expect.any(Object),
+    });
+    await refresh(f.page);
+    await expect(
+      row(f.page, f.item.name).getByText('Needs attention', { exact: true }),
+    ).toBeVisible();
+    await expect(
+      row(f.page, f.item.name).getByText('Pending changes', { exact: true }),
+    ).toBeVisible();
+    await expect(
+      row(f.page, f.item.name).getByText(/The saved account or file list is missing or incomplete/),
+    ).toBeVisible();
+    expect(
+      displayedBytes(await row(f.page, f.item.name).locator('.device-storage-meta').innerText()),
+    ).toBe(estimatedBytes);
+    expect(await deviceCopy(f.page, f.actor.id, f.item.id)).toEqual(retained);
+    const cold = await f.context.newPage();
+    try {
+      await cold.goto(f.href);
+      await expect(
+        cold.getByRole('heading', { name: "You're offline", exact: true }),
+      ).toBeVisible();
+      await expect(cold.locator('.univer-container')).toHaveCount(0);
+      expect(await deviceCopy(f.page, f.actor.id, f.item.id)).toEqual(retained);
+    } finally {
+      await cold.close();
+    }
+    // Restore the exact saved metadata so the existing image-loss proof has its
+    // own failure cause; this fixture never rewrites a checkpoint or image.
+    await replaceDeviceMetadata(f.page, f.actor.id, metadata);
+    await refresh(f.page);
+    await expect(
+      row(f.page, f.item.name).getByText('Available offline', { exact: true }),
+    ).toBeVisible();
+    expect(await deviceCopy(f.page, f.actor.id, f.item.id)).toEqual(retained);
     const missingImage = retained!.images[0].source;
     await f.page.evaluate(
       ({ account, item, source }) =>

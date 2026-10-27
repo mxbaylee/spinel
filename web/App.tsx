@@ -1,6 +1,6 @@
 import { AuthEntry } from './AuthEntry.tsx';
 import { ProfilePage } from './ProfilePage.tsx';
-import { AccountExitScreen } from './AccountExit.tsx';
+import { AccountAccessChanged, AccountExitScreen } from './AccountExit.tsx';
 import {
   accountExitPending,
   beginAccountExit,
@@ -118,6 +118,8 @@ function AccountApp() {
   const [loaded, setLoaded] = useState(false);
   const [exit, setExit] = useState<AccountExit | 'unknown' | null>(null);
   const [bootstrap, setBootstrap] = useState(0);
+  const [accountLocked, setAccountLocked] = useState(false);
+  const accountRetired = useRef(false);
   const stopDiagnostics = useAccountDiagnostics(
     user && loaded && !local && !accountExitPending() ? user.id : null,
     browserOnline && (editorConnection ?? serverConnection) === 'online',
@@ -157,10 +159,12 @@ function AccountApp() {
   const refreshKeys = async (verify: () => void = () => {}) =>
     setKeys((await api<{ passkeys: Passkey[] }>('passkeys', undefined, verify)).passkeys);
   useEffect(() => {
+    if (accountRetired.current && !accountExitPending()) return;
     let current = true;
     let admitting = true;
     const verifyCurrent = () => {
-      if (!current) throw new DOMException('This sign-in attempt ended.', 'AbortError');
+      if (!current || accountRetired.current)
+        throw new DOMException('This sign-in attempt ended.', 'AbortError');
     };
     const epoch = () => {
       let verifyEpoch = () => {};
@@ -251,7 +255,7 @@ function AccountApp() {
             }
             if (ready) {
               await within(
-                claimDevice(user, () => current && admitting),
+                claimDevice(user, () => current && admitting && !accountRetired.current),
                 3000,
                 'Offline data did not answer.',
               ).catch(() => {});
@@ -309,11 +313,13 @@ function AccountApp() {
           return;
         }
         const start = await within(
-          openLocalStart(() => current && admitting && !accountExitPending()),
+          openLocalStart(
+            () => current && admitting && !accountRetired.current && !accountExitPending(),
+          ),
           3000,
           'Offline data did not answer.',
         ).catch(() => null);
-        if (!current) return;
+        if (!current || accountRetired.current) return;
         if (!start || !start.isCurrent() || accountExitPending()) {
           setUnreachable(true);
           return;
@@ -345,11 +351,14 @@ function AccountApp() {
     spaceReview,
     spaceReturn,
     bootstrap,
+    accountLocked,
   ]);
   useEffect(
     () =>
       watchAccountExit(() => {
         if (accountExitPending()) {
+          accountRetired.current = false;
+          setAccountLocked(false);
           stopDiagnostics();
           clearDashboardNavigation();
           setUser(null);
@@ -360,7 +369,7 @@ function AccountApp() {
             if (!current.finishing) WebAuthnAbortService.cancelCeremony();
           }
           if (!exit) setBootstrap((value) => value + 1);
-        } else if (!user && !exit && !attempt.current) {
+        } else if (!accountRetired.current && !user && !exit && !attempt.current) {
           setBootstrap((value) => value + 1);
         }
       }),
@@ -378,7 +387,11 @@ function AccountApp() {
       if (
         event.key === null ||
         event.key === 'spinel.auth.generation' ||
-        (user && offlineAccountEvent(event, user.id))
+        (user &&
+          offlineAccountEvent(event, user.id) &&
+          // Removing the last clean copy does not end an ordinary online
+          // account or its unrelated memory-only editor. Its nonce is intact.
+          !(event.key === 'spinel.offline.account' && event.newValue === null && !local))
       ) {
         stopDiagnostics();
         const active = attempt.current;
@@ -386,14 +399,35 @@ function AccountApp() {
           active.cancelled = true;
           if (!active.finishing) WebAuthnAbortService.cancelCeremony();
         }
+        if (accountExitPending()) {
+          accountRetired.current = false;
+          setAccountLocked(false);
+          setUser(null);
+          setLocal(null);
+          setLoaded(false);
+          if (!exit) setBootstrap((value) => value + 1);
+          return;
+        }
+        if (!user) return;
+        // A passive fence closes this tab; it never authorizes a new session
+        // claim or remount. In particular, do not reopen a retained conflict
+        // queue immediately after the native editor has scrubbed held input.
+        accountRetired.current = true;
+        setAccountLocked(true);
         setUser(null);
         setLocal(null);
-        setBootstrap((value) => value + 1);
+        setKeys([]);
+        setFilePlaces(null);
+        setEditorConnection(null);
+        setCatalogStatus(null);
+        setError('');
+        setNotice('');
+        unsaved.current = false;
       }
     };
     window.addEventListener('storage', changed);
     return () => window.removeEventListener('storage', changed);
-  }, [user?.id, stopDiagnostics]);
+  }, [user?.id, local, exit, stopDiagnostics]);
   useLayoutEffect(() => {
     if (!local) return;
     // Another tab signed out or another account signed in: close local data.
@@ -437,7 +471,7 @@ function AccountApp() {
       await withAuthentication(
         !register || consoleClaim || invitation,
         verifyAttempt,
-        async (verify) => {
+        async (verify, prompt) => {
           try {
             if (!window.PublicKeyCredential || !window.isSecureContext)
               throw new Error('Passkeys need a supported browser at Spinel’s secure address.');
@@ -462,21 +496,29 @@ function AccountApp() {
                   ? { token: inviteToken, name: inviteName }
                   : {},
               verify,
+              (challengeId) => {
+                current.challengeId = challengeId;
+              },
             );
             current.challengeId = challengeId;
-            const response = register
-              ? await startRegistration({ optionsJSON: options })
-              : await startAuthentication({ optionsJSON: options });
-            verify();
-            const proof = consoleClaim
-              ? await signSetupProof(
-                  setupSecret,
-                  setupId,
-                  options.challenge,
-                  response as RegistrationResponseJSON,
-                  adminRecovery,
-                )
-              : undefined;
+            // Options have fully settled. Only the local credential prompt and
+            // local proof run in the phase that a later lock owner may retire.
+            const { response, proof } = await prompt(async () => {
+              const response = register
+                ? await startRegistration({ optionsJSON: options })
+                : await startAuthentication({ optionsJSON: options });
+              verify();
+              const proof = consoleClaim
+                ? await signSetupProof(
+                    setupSecret,
+                    setupId,
+                    options.challenge,
+                    response as RegistrationResponseJSON,
+                    adminRecovery,
+                  )
+                : undefined;
+              return { response, proof };
+            });
             verify();
             // Keep the transition owned until the dispatched response settles.
             // Cancelling JavaScript cannot undo the server swap or its Set-Cookie.
@@ -564,6 +606,7 @@ function AccountApp() {
         }}
       />
     );
+  if (accountLocked) return <AccountAccessChanged onReopen={() => location.reload()} />;
   if (adminRecovery)
     return (
       <ConsoleRecovery

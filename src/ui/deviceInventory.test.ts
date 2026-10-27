@@ -1,6 +1,12 @@
 import { createHash } from 'node:crypto';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
-import type { OfflineStore, StoredImage, StoredItem } from '../../web/offline/offlineStore.ts';
+import type {
+  OfflineCatalog,
+  OfflineStore,
+  OfflineUser,
+  StoredImage,
+  StoredItem,
+} from '../../web/offline/offlineStore.ts';
 import type { RuntimeReadiness } from '../../web/offline/runtime.ts';
 
 const boundary = vi.hoisted(() => ({
@@ -140,6 +146,13 @@ function existing(item: unknown = copy(), images: StoredImage[] = []) {
   const saved = { item, images };
   const store = {
     accountId: account,
+    user: vi.fn<OfflineStore['user']>().mockResolvedValue({ id: account, name: 'Device account' }),
+    catalog: vi.fn<OfflineStore['catalog']>().mockResolvedValue({
+      syncedAt: 123,
+      items: [],
+      shared: [],
+      views: {},
+    }),
     itemIds: vi.fn(async () => [itemId]),
     inspect: vi.fn(async (_itemId: string) => saved),
     downloads: vi.fn(async () => []),
@@ -187,6 +200,83 @@ test('unmeasurable bytes remain unknown rather than reporting a misleading zero'
   expect(storedItemBytes(cyclic, [])).toBeNull();
   expect(storedItemBytes(undefined, [])).toBeNull();
   expect(storedItemBytes({}, [{ bytes: 'damaged' as unknown as Uint8Array }])).toBeNull();
+});
+
+test.each([
+  'missing-user',
+  'foreign-user',
+  'invalid-user-name',
+  'missing-catalog',
+  'invalid-catalog',
+  'user-read-failure',
+  'catalog-read-failure',
+] as const)(
+  'a copy with %s cannot claim cold-start availability but retains its exact pending data and image bytes',
+  async (damage) => {
+    const item = pendingCopy();
+    const image = addImage(item);
+    const { store, saved } = existing(item, [image]);
+    const before = structuredClone(saved);
+    if (damage === 'missing-user') store.user.mockResolvedValueOnce(undefined);
+    if (damage === 'foreign-user')
+      store.user.mockResolvedValueOnce({ id: 'another-account', name: 'Foreign account title' });
+    if (damage === 'invalid-user-name')
+      store.user.mockResolvedValueOnce({ id: account, name: 42 } as unknown as OfflineUser);
+    if (damage === 'missing-catalog') store.catalog.mockResolvedValueOnce(undefined);
+    if (damage === 'invalid-catalog')
+      store.catalog.mockResolvedValueOnce({
+        syncedAt: 123,
+        items: [{ name: 'Foreign file title' }],
+        shared: [],
+        views: {},
+      } as unknown as OfflineCatalog);
+    if (damage === 'user-read-failure')
+      store.user.mockRejectedValueOnce(new Error('Private account metadata could not be read.'));
+    if (damage === 'catalog-read-failure')
+      store.catalog.mockRejectedValueOnce(new Error('Private file metadata could not be read.'));
+    const bytes = Buffer.byteLength(JSON.stringify(item), 'utf8') + image.bytes.byteLength;
+    const result = await (await api()).readDeviceInventory(account, verify);
+    expect(result).toMatchObject({
+      state: 'ready',
+      bytes,
+      items: [
+        {
+          itemId,
+          name: item.bundle.name,
+          available: false,
+          pending: true,
+          bytes,
+          problem:
+            'The saved account or file list is missing or incomplete. Connect to prepare this device again. Saved document data is retained.',
+        },
+      ],
+    });
+    expect(result.items[0].uncertain).not.toBe(true);
+    expect(JSON.stringify(result)).not.toMatch(
+      /Foreign account title|Foreign file title|Private .* metadata/,
+    );
+    expect(saved).toEqual(before);
+    expect(store.inspect).toHaveBeenCalledExactlyOnceWith(itemId);
+    expect(store.removeDeviceItem).not.toHaveBeenCalled();
+    expect(store.close).toHaveBeenCalledOnce();
+  },
+);
+
+test('an interrupted first preparation retains its clean item without inventing pending work or repairing metadata', async () => {
+  const { store, saved } = existing();
+  store.user.mockResolvedValue(undefined);
+  store.catalog.mockResolvedValue(undefined);
+  const before = structuredClone(saved);
+  const valuesBefore = new Map(values);
+  const result = await (await api()).readDeviceInventory(account, verify);
+  expect(result.state).toBe('ready');
+  expect(result.items[0]).toMatchObject({ itemId, available: false });
+  expect(result.items[0].pending).not.toBe(true);
+  expect(result.items[0].uncertain).not.toBe(true);
+  expect(saved).toEqual(before);
+  expect(values).toEqual(valuesBefore);
+  expect(persist).not.toHaveBeenCalled();
+  expect(store.removeDeviceItem).not.toHaveBeenCalled();
 });
 
 test.each([
@@ -380,7 +470,64 @@ test('a manifest with missing image bytes and an incomplete public runtime both 
   expect(store.removeDeviceItem).not.toHaveBeenCalled();
 });
 
-test.each(['open', 'inspect'] as const)(
+test.each([
+  'zero-revision',
+  'sheet-base',
+  'doc-kind',
+  'bundle-identity',
+  'recovery-identity',
+  'empty-unit',
+  'unknown-access',
+  'invalid-read-only',
+  'writable-viewer',
+  'space-is-item',
+] as const)(
+  'native admission would refuse %s, so inventory protects it instead of claiming availability',
+  async (problem) => {
+    const item = pendingCopy();
+    item.outbox!.checkpoint.buffer = [];
+    if (problem === 'zero-revision') item.outbox!.checkpoint.revision = 0;
+    if (problem === 'sheet-base') {
+      item.bundle.kind = 'sheet';
+      item.bundle.snapshot = { id: itemId, sheets: {} } as StoredItem['bundle']['snapshot'];
+      item.outbox!.checkpoint.snapshot = { id: itemId } as StoredItem['bundle']['snapshot'];
+    }
+    if (problem === 'doc-kind') Object.assign(item.outbox!.checkpoint.snapshot, { sheets: {} });
+    if (problem === 'bundle-identity') item.bundle.snapshot.id = 'foreign-snapshot';
+    if (problem === 'recovery-identity') {
+      item.outbox!.checkpoint.failure = 'stale';
+      item.outbox!.checkpoint.recoverySnapshot = {
+        ...structuredClone(item.bundle.snapshot),
+        id: 'foreign-generation',
+      };
+    }
+    if (
+      [
+        'empty-unit',
+        'unknown-access',
+        'invalid-read-only',
+        'writable-viewer',
+        'space-is-item',
+      ].includes(problem)
+    ) {
+      delete item.outbox;
+      if (problem === 'empty-unit') item.bundle.unitId = '';
+      if (problem === 'unknown-access') Object.assign(item.bundle, { access: 'future-role' });
+      if (problem === 'invalid-read-only') Object.assign(item.bundle, { readOnly: 'false' });
+      if (problem === 'writable-viewer') item.bundle.access = 'viewer';
+      if (problem === 'space-is-item') item.bundle.spaceId = itemId;
+    }
+    const before = structuredClone(item);
+    existing(item);
+    const value = await (await api()).readDeviceInventory(account, verify);
+    expect(value.items).toMatchObject([
+      { itemId, available: false, pending: true, uncertain: true },
+    ]);
+    expect(item).toEqual(before);
+  },
+);
+
+test.each(['open', 'user', 'catalog', 'inspect'] as const)(
   'account cancellation after the awaited %s rejects without returning private data and closes the store',
   async (stage) => {
     const { store, saved } = existing();
@@ -394,6 +541,18 @@ test.each(['open', 'inspect'] as const)(
         reached();
         await waiting;
         return store as unknown as OfflineStore;
+      });
+    else if (stage === 'user')
+      store.user.mockImplementationOnce(async () => {
+        reached();
+        await waiting;
+        return { id: account, name: 'Device account' };
+      });
+    else if (stage === 'catalog')
+      store.catalog.mockImplementationOnce(async () => {
+        reached();
+        await waiting;
+        return { syncedAt: 123, items: [], shared: [], views: {} };
       });
     else
       store.inspect.mockImplementationOnce(async () => {

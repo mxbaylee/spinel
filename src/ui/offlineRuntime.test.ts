@@ -6,7 +6,7 @@ import {
   publishedBuilds,
   runtimeCacheName,
 } from '../../web/offline/runtimeCache.ts';
-import { emptyRuntimeState } from '../../web/offline/runtimeStore.ts';
+import { emptyRuntimeState, initialRuntimeState } from '../../web/offline/runtimeStore.ts';
 import {
   ensureAccountRuntime,
   installRuntimeHost,
@@ -82,6 +82,59 @@ test('an existing-only probe does not mistake a storage failure for an empty sto
   f.request.error = new DOMException('Blocked', 'SecurityError');
   f.request.onerror?.();
   await expect(pending).rejects.toMatchObject({ name: 'SecurityError' });
+});
+
+test.each([
+  {
+    label: 'verified empty current account',
+    names: ['spinel-offline-fresh'],
+    account: 'fresh',
+    legacy: false,
+  },
+  { label: 'unverified current account', names: ['spinel-offline-fresh'], legacy: true },
+  {
+    label: 'another account alongside a verified empty current account',
+    names: ['spinel-offline-fresh', 'spinel-offline-kept'],
+    account: 'fresh',
+    legacy: true,
+  },
+  { label: 'public control metadata alone', names: ['spinel-offline-runtime'], legacy: false },
+  {
+    label: 'a legacy cache despite verified emptiness',
+    names: ['spinel-offline-fresh'],
+    account: 'fresh',
+    cache: true,
+    legacy: true,
+  },
+  { label: 'missing enumeration on an apparently fresh device', account: 'fresh', legacy: true },
+  {
+    label: 'failed enumeration on an apparently fresh device',
+    account: 'fresh',
+    failed: true,
+    legacy: true,
+  },
+])('initial runtime discovery respects $label without opening private stores', async (scenario) => {
+  const open = vi.fn();
+  const cachesOpen = vi.fn();
+  vi.stubGlobal('caches', {
+    keys: async () => (scenario.cache ? ['spinel-shell-legacy054'] : []),
+    open: cachesOpen,
+  });
+  vi.stubGlobal('indexedDB', {
+    open,
+    databases: scenario.failed
+      ? async () => {
+          throw new Error('Storage unavailable');
+        }
+      : scenario.names
+        ? async () => scenario.names.map((name) => ({ name }))
+        : undefined,
+  });
+  const state = await initialRuntimeState(() => {}, scenario.account);
+  expect(state.legacyCompatibility).toEqual(scenario.legacy ? a.compatibility : undefined);
+  expect(state.accounts).toEqual({});
+  expect(open).not.toHaveBeenCalled();
+  expect(cachesOpen).not.toHaveBeenCalled();
 });
 
 test('retiring an application removes its theme reactions before another runtime starts', () => {

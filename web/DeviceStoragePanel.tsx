@@ -206,59 +206,58 @@ export function DeviceStoragePanel({
         </>
       )}
       {message && !selected && <p role={message.failed ? 'alert' : 'status'}>{message.text}</p>}
-      {dialog?.kind === 'about' && (
-        <Modal
-          title="About device storage"
-          icon="info"
-          open
-          onOpenChange={(open) => {
-            if (!open) onOpenDialog(null);
-          }}
-          finalFocus={finalFocus}
-        >
-          <div className="device-storage-dialog">
-            <p>
-              Downloads are kept in this browser for this account. A home-screen shortcut does not
-              download a document.
-            </p>
-            <p>
-              Storage protection asks your browser to keep these files during automatic cleanup. The
-              browser decides whether to grant it.
-            </p>
-            <p>
-              Protection is not a backup or a guarantee. Clearing browser data, browser eviction or
-              losing this device can erase the only copy of unsynced changes. Server backups cannot
-              restore edits that never reached the server.
-            </p>
-            <p>
-              Keep pending changes until they sync, or open recovery to save a copy or export
-              recoverable work before removing it.
-            </p>
-            <div className="sp-actions">
-              <button className="sp-control sp-primary" onClick={() => onOpenDialog(null)}>
-                Done
-              </button>
-            </div>
+      <Modal
+        title="About device storage"
+        icon="info"
+        open={dialog?.kind === 'about'}
+        onOpenChange={(open) => {
+          if (!open) onOpenDialog(null);
+        }}
+        finalFocus={finalFocus}
+      >
+        <div className="device-storage-dialog">
+          <p>
+            Downloads are kept in this browser for this account. A home-screen shortcut does not
+            download a document.
+          </p>
+          <p>
+            Storage protection asks your browser to keep these files during automatic cleanup. The
+            browser decides whether to grant it.
+          </p>
+          <p>
+            Protection is not a backup or a guarantee. Clearing browser data, browser eviction or
+            losing this device can erase the only copy of unsynced changes. Server backups cannot
+            restore edits that never reached the server.
+          </p>
+          <p>
+            Keep pending changes until they sync, or open recovery to save a copy or export
+            recoverable work before removing it.
+          </p>
+          <div className="sp-actions">
+            <button className="sp-control sp-primary" onClick={() => onOpenDialog(null)}>
+              Done
+            </button>
           </div>
-        </Modal>
-      )}
-      {selected && (
-        <Modal
-          title={
-            selected.discard
-              ? 'Discard offline changes?'
-              : pending
-                ? 'Keep your offline changes'
-                : 'Remove device copy?'
-          }
-          icon={pending ? 'warning' : 'info'}
-          open
-          dismissDisabled={removing}
-          onOpenChange={(open) => {
-            if (!open) onOpenDialog(null);
-          }}
-          finalFocus={finalFocus}
-        >
+        </div>
+      </Modal>
+      {/* A controlled close resolves final focus after a removed row leaves the DOM. */}
+      <Modal
+        title={
+          selected?.discard
+            ? 'Discard offline changes?'
+            : pending
+              ? 'Keep your offline changes'
+              : 'Remove device copy?'
+        }
+        icon={pending ? 'warning' : 'info'}
+        open={selected !== null}
+        dismissDisabled={removing}
+        onOpenChange={(open) => {
+          if (!open) onOpenDialog(null);
+        }}
+        finalFocus={finalFocus}
+      >
+        {selected && (
           <div className="device-storage-dialog">
             <p className="device-storage-dialog-name">{selected.item.name}</p>
             {selected.discard ? (
@@ -330,8 +329,8 @@ export function DeviceStoragePanel({
               )}
             </div>
           </div>
-        </Modal>
-      )}
+        )}
+      </Modal>
     </section>
   );
 }

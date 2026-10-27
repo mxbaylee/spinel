@@ -13,9 +13,8 @@ import {
 } from '../src/shared/offlineShell.ts';
 import type { RuntimeCommand, RuntimeReply, ShellManifest } from '../src/shared/offlineShell.ts';
 import {
-  emptyRuntimeState,
+  initialRuntimeState,
   readRuntimeState,
-  RUNTIME_DATABASE,
   RUNTIME_LOCK,
   writeRuntimeState,
 } from './offline/runtimeStore.ts';
@@ -58,27 +57,6 @@ function locked<T>(operation: () => Promise<T>) {
 
 async function shellCaches() {
   return (await caches.keys()).filter((name) => name.startsWith(SHELL_CACHE_PREFIX));
-}
-
-async function initialState(verify: () => void) {
-  const state = emptyRuntimeState();
-  const oldCaches = await shellCaches();
-  verify();
-  let unknown = true;
-  try {
-    if (indexedDB.databases) {
-      const names = await indexedDB.databases();
-      verify();
-      // Names only: the worker never opens another account's private database.
-      unknown = names.some(
-        (entry) => entry.name?.startsWith('spinel-offline-') && entry.name !== RUNTIME_DATABASE,
-      );
-    }
-  } catch {
-    unknown = true;
-  }
-  if (oldCaches.length || unknown) state.legacyCompatibility = LEGACY_COMPATIBILITY;
-  return state;
 }
 
 async function reconcile(state: RuntimeState, verify: () => void) {
@@ -221,7 +199,14 @@ async function command(request: RuntimeCommand, clientId: string): Promise<Runti
     // account never removes a live editor or the unknown-legacy requirement.
     return { ok: true };
   }
-  const state = existing ?? (await initialState(verify));
+  const state =
+    existing ??
+    (await initialRuntimeState(
+      verify,
+      request.type === 'prepare' && request.requirement?.kind === 'empty'
+        ? request.accountId
+        : undefined,
+    ));
   if (request.type === 'admit') {
     const requirement = request.requirement;
     if (requirement?.kind === 'unknown') return { ok: true, reason: 'unknown-format' };
@@ -259,7 +244,7 @@ self.addEventListener('install', (event) =>
           const verify = () => {
             if (Date.now() > deadline) throw new Error('Offline app update timed out.');
           };
-          const state = (await readRuntimeState()) ?? (await initialState(verify));
+          const state = (await readRuntimeState()) ?? (await initialRuntimeState(verify));
           await prepare(shell, state, verify, deadline);
         });
       }
@@ -286,7 +271,7 @@ self.addEventListener('message', (event) => {
             const verify = () => {
               if (Date.now() > deadline) throw new Error('Offline app update timed out.');
             };
-            const state = (await readRuntimeState()) ?? (await initialState(verify));
+            const state = (await readRuntimeState()) ?? (await initialRuntimeState(verify));
             state.legacyCompatibility = LEGACY_COMPATIBILITY;
             await prepare(shell, state, verify, deadline);
           });

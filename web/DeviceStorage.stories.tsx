@@ -98,6 +98,15 @@ function Preview({
       return;
     }
     if (becamePending && !dialog.discard) {
+      setData(
+        (previous) =>
+          previous && {
+            ...previous,
+            items: previous.items.map((entry) =>
+              entry.itemId === dialog.item.itemId ? { ...entry, pending: true } : entry,
+            ),
+          },
+      );
       setDialog({ kind: 'remove', item: { ...dialog.item, pending: true } });
       setMessage({
         text: 'This copy now has saved or unverified offline changes. Nothing was removed.',
@@ -201,6 +210,19 @@ export const SpacePage: Story = {
 };
 export const MissingStore: Story = {
   args: { value: { ...inventory, state: 'missing', items: [], bytes: 0 } },
+};
+export const StartupMetadataMissing: Story = {
+  args: {
+    value: {
+      ...inventory,
+      items: inventory.items.map((item) => ({
+        ...item,
+        available: false,
+        problem:
+          'The saved account or file list is missing or incomplete. Connect to prepare this device again. Saved document data is retained.',
+      })),
+    },
+  },
 };
 export const StorageUnavailable: Story = {
   args: {
@@ -306,6 +328,7 @@ export const NewlyPendingIsKept: Story = {
   args: { becamePending: true },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
+    const retained = canvas.getByRole('link', { name: clean.name });
     await userEvent.click(canvas.getByRole('button', { name: `Remove ${clean.name} from device` }));
     const body = within(document.body);
     await userEvent.click(
@@ -319,7 +342,19 @@ export const NewlyPendingIsKept: Story = {
         'This copy now has saved or unverified offline changes. Nothing was removed.',
       ),
     ).toBeVisible();
+    await expect(retained).toBeInTheDocument();
+    await expect(within(dialog).getByRole('link', { name: 'Open recovery' })).toHaveAttribute(
+      'href',
+      `/?offlineRecovery=${ordinary}`,
+    );
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Keep on device' }));
+    await waitFor(() => expect(body.queryByRole('dialog')).not.toBeInTheDocument());
     await expect(canvas.getByRole('link', { name: clean.name })).toBeVisible();
+    await expect(canvas.getByRole('link', { name: clean.name })).toHaveAttribute(
+      'href',
+      `/?offlineRecovery=${ordinary}`,
+    );
+    await expect(args.onRemove).toHaveBeenCalledTimes(1);
     await expect(args.onRemove).toHaveBeenCalledWith(ordinary, false);
   },
 };
@@ -327,14 +362,15 @@ export const RemovalReturnsFocus: Story = {
   args: { value: { ...inventory, items: [clean] } },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
+    const body = within(document.body);
     await userEvent.click(canvas.getByRole('button', { name: `Remove ${clean.name} from device` }));
     await userEvent.click(
-      within(within(document.body).getByRole('dialog', { name: 'Remove device copy?' })).getByRole(
-        'button',
-        { name: 'Remove from device' },
-      ),
+      within(body.getByRole('dialog', { name: 'Remove device copy?' })).getByRole('button', {
+        name: 'Remove from device',
+      }),
     );
     await expect(args.onRemove).toHaveBeenCalledWith(ordinary, false);
+    await waitFor(() => expect(body.queryByRole('dialog')).not.toBeInTheDocument());
     await expect(canvas.queryByRole('link', { name: clean.name })).not.toBeInTheDocument();
     await waitFor(() =>
       expect(document.activeElement).toBe(

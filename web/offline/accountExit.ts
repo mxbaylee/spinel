@@ -25,6 +25,13 @@ export type AccountExit = {
   /** Remains valid after remote settlement, but not after another account transition. */
   verifyCurrent(): void;
 };
+type AuthenticationMarker = {
+  version: 1;
+  id: string;
+  coordination: 'web-lock' | 'unlocked';
+  phase: 'network' | 'prompt';
+};
+type LocalPrompt = <T>(work: () => Promise<T>) => Promise<T>;
 
 let memoryExit: ExitIntent | null = null;
 let memoryGeneration: string | null = null;
@@ -101,8 +108,16 @@ export function accountExitPending() {
 }
 
 /** Web Locks covers a dispatched verification until its actual response settles. */
-async function exclusive<T>(work: () => Promise<T>): Promise<T> {
-  const run = () => (globalThis.navigator?.locks ? navigator.locks.request(LOCK, work) : work());
+async function exclusive<T>(work: (locked: boolean) => Promise<T>): Promise<T> {
+  const run = () => {
+    const locks = globalThis.navigator?.locks;
+    return locks
+      ? locks.request(LOCK, () => {
+          retireAbandonedPrompts();
+          return work(true);
+        })
+      : work(false);
+  };
   const pending = transition.then(run, run);
   transition = pending.catch(() => {});
   return pending;
@@ -117,6 +132,34 @@ function operations() {
     return Object.keys(local).filter((key) => key.startsWith(ACTIVE));
   } catch {
     return null;
+  }
+}
+
+/** Called only while holding the same lock that the original prompt owner held. */
+function retireAbandonedPrompts() {
+  const local = control();
+  if (!local) return;
+  for (const key of operations() ?? []) {
+    const raw = read(key);
+    try {
+      const marker = JSON.parse(raw ?? '') as Partial<AuthenticationMarker>;
+      if (
+        marker &&
+        typeof marker === 'object' &&
+        !Array.isArray(marker) &&
+        Object.keys(marker).sort().join(',') === 'coordination,id,phase,version' &&
+        marker.version === 1 &&
+        uuid(marker.id) &&
+        key === ACTIVE + marker.id &&
+        marker.coordination === 'web-lock' &&
+        marker.phase === 'prompt' &&
+        local.getItem(key) === raw
+      )
+        local.removeItem(key);
+    } catch {
+      // Legacy, malformed and inaccessible markers remain unconfirmed. A lost
+      // network response is never made safe by age or by its tab disappearing.
+    }
   }
 }
 
@@ -337,9 +380,9 @@ export async function withAccountRead<T>(
 export async function withAuthentication<T>(
   replaceIdentity: boolean,
   current: () => void,
-  work: (verify: () => void) => Promise<T>,
+  work: (verify: () => void, prompt: LocalPrompt) => Promise<T>,
 ) {
-  return exclusive(async () => {
+  return exclusive(async (locked) => {
     current();
     const id = crypto.randomUUID();
     const key = ACTIVE + id;
@@ -349,14 +392,21 @@ export async function withAuthentication<T>(
       throw new Error(
         'Other sign-in requests are unfinished. Finish or cancel them before trying again.',
       );
+    const marker: AuthenticationMarker = {
+      version: 1,
+      id,
+      coordination: locked ? 'web-lock' : 'unlocked',
+      phase: 'network',
+    };
+    let encoded = JSON.stringify(marker);
     let recorded = false;
     try {
-      local?.setItem(key, id);
-      recorded = local?.getItem(key) === id;
+      local?.setItem(key, encoded);
+      recorded = local?.getItem(key) === encoded;
     } catch {
       // No offline account is admitted through an untracked ceremony.
     }
-    if (!recorded && !globalThis.navigator?.locks)
+    if (!recorded && !locked)
       throw new Error(
         'This browser cannot protect a concurrent sign-in. Allow browser storage and try again.',
       );
@@ -371,14 +421,37 @@ export async function withAuthentication<T>(
       const expected = replaceIdentity ? writeGeneration() : generation();
       const verify = () => {
         current();
-        if (accountExitPending() || generation() !== expected || (recorded && read(key) !== id))
+        if (
+          accountExitPending() ||
+          generation() !== expected ||
+          (recorded && read(key) !== encoded)
+        )
           throw cancelled();
       };
+      const phase = (value: AuthenticationMarker['phase']) => {
+        if (!recorded) return;
+        if (read(key) !== encoded) throw cancelled();
+        const next = JSON.stringify({ ...marker, phase: value });
+        local!.setItem(key, next);
+        if (local!.getItem(key) !== next) throw cancelled();
+        encoded = next;
+      };
+      const prompt: LocalPrompt = async (localWork) => {
+        verify();
+        phase('prompt');
+        try {
+          return await localWork();
+        } finally {
+          // This durable transition precedes any credential verification. If it
+          // fails, the caller never receives the prompt result for dispatch.
+          phase('network');
+        }
+      };
       verify();
-      return await work(verify);
+      return await work(verify, prompt);
     } finally {
       activeHere.delete(id);
-      if (recorded && read(key) === id) {
+      if (recorded && read(key) === encoded) {
         try {
           local?.removeItem(key);
         } catch {

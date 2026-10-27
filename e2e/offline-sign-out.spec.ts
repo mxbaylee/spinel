@@ -10,9 +10,9 @@ import { SetupService } from '../src/server/auth/setup.ts';
 import { copy, edit, fixture, savedLocally, stored, usableCanvas } from './offline-fixture.ts';
 import { startApp } from './app-process.ts';
 
-// Real shell/download acceptance runs in the production partition.
-test.beforeEach(({}, info) => {
-  test.skip(info.project.name !== 'production');
+// Real shell/download acceptance and CDP passkeys run in the production partition.
+test.beforeEach(({ browserName }, info) => {
+  test.skip(info.project.name !== 'production' || browserName !== 'chromium');
 });
 
 function deferred() {
@@ -22,7 +22,11 @@ function deferred() {
   });
   return { promise, resolve };
 }
-async function virtualPasskey(context: BrowserContext, page: Page) {
+async function virtualPasskey(
+  context: BrowserContext,
+  page: Page,
+  automaticPresenceSimulation = true,
+) {
   const cdp = await context.newCDPSession(page);
   await cdp.send('WebAuthn.enable');
   const { authenticatorId } = await cdp.send('WebAuthn.addVirtualAuthenticator', {
@@ -32,7 +36,7 @@ async function virtualPasskey(context: BrowserContext, page: Page) {
       hasResidentKey: true,
       hasUserVerification: true,
       isUserVerified: true,
-      automaticPresenceSimulation: true,
+      automaticPresenceSimulation,
     },
   });
   return { cdp, authenticatorId };
@@ -385,6 +389,95 @@ test('ordinary passkeys work without Web Locks and an old logout response cannot
   } finally {
     release.resolve();
     await pending?.catch(() => {});
+    await context.close();
+    db.close();
+  }
+});
+
+test('a crashed local passkey prompt can reopen and complete authentication and logout', async ({
+  browser,
+  baseURL,
+}, info) => {
+  test.setTimeout(90_000);
+  const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
+  const auth = new AuthStore(db);
+  const user = auth.createUser('Interrupted passkey ' + info.testId);
+  const session = auth.createSession(user.id);
+  const context = await browser.newContext({ baseURL });
+  await context.addCookies([
+    {
+      name: COOKIE_NAME,
+      value: session.token,
+      url: baseURL!.replace('http:', 'https:'),
+      secure: true,
+      httpOnly: true,
+      sameSite: 'Strict',
+    },
+  ]);
+  try {
+    const interrupted = await context.newPage();
+    const first = await virtualPasskey(context, interrupted, false);
+    await interrupted.goto('/profile#passkeys');
+    const options = interrupted.waitForResponse(
+      (response) =>
+        response.url().endsWith('/api/auth/registration/options') && response.status() === 200,
+    );
+    await interrupted.getByRole('button', { name: 'Add a passkey', exact: true }).click();
+    expect(await (await options).finished()).toBeNull();
+    const readMarker = () =>
+      interrupted.evaluate(() => {
+        const entry = Object.entries(localStorage).find(([key]) =>
+          key.startsWith('spinel.auth.active:'),
+        );
+        return entry ? { key: entry[0], raw: entry[1], marker: JSON.parse(entry[1]) } : null;
+      });
+    await expect.poll(readMarker).toMatchObject({
+      marker: {
+        version: 1,
+        coordination: 'web-lock',
+        phase: 'prompt',
+      },
+    });
+    const retained = (await readMarker())!;
+    // Kill the actual renderer while WebAuthn waits for presence. No application
+    // finally block, fabricated marker, or fake auth response can perform cleanup.
+    const crashed = interrupted.waitForEvent('crash');
+    const crashing = first.cdp.send('Page.crash').catch(() => {});
+    await crashed;
+    await interrupted.close();
+    await crashing;
+
+    const reopened = await context.newPage();
+    // This real JSON document has no App code to retire the abandoned marker.
+    await reopened.goto('/api/auth/session');
+    expect(await reopened.evaluate((key) => localStorage.getItem(key), retained.key)).toBe(
+      retained.raw,
+    );
+    expect(auth.session(session.token)?.user_id).toBe(user.id);
+    await virtualPasskey(context, reopened);
+    await reopened.goto('/profile#passkeys');
+    await expect(
+      reopened.getByRole('button', { name: 'Add a passkey', exact: true }),
+    ).toBeEnabled();
+    expect(await reopened.evaluate((key) => localStorage.getItem(key), retained.key)).toBeNull();
+    await reopened.getByRole('button', { name: 'Add a passkey', exact: true }).click();
+    await expect(reopened.getByRole('listitem').filter({ hasText: 'Passkey' })).toHaveCount(1);
+    await reopened.getByRole('button', { name: 'Sign out', exact: true }).click();
+    await expect(
+      reopened.getByRole('button', { name: 'Sign in with a passkey', exact: true }),
+    ).toBeVisible();
+    expect(auth.session(session.token)).toBeUndefined();
+    await reopened.getByRole('button', { name: 'Sign in with a passkey', exact: true }).click();
+    await expect(reopened.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
+    const current = await context.request.get('/api/auth/session');
+    expect(current.status()).toBe(200);
+    expect((await current.json()).user.id).toBe(user.id);
+    expect(
+      await reopened.evaluate(() =>
+        Object.keys(localStorage).filter((key) => key.startsWith('spinel.auth.active:')),
+      ),
+    ).toEqual([]);
+  } finally {
     await context.close();
     db.close();
   }

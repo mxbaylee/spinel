@@ -97,7 +97,7 @@ test.describe('downloaded native editors', () => {
       await f.page.getByRole('menuitem', { name: 'Remove from device', exact: true }).click();
       const dialog = f.page.getByRole('dialog', { name: 'Offline availability', exact: true });
       await expect(dialog.getByRole('alert')).toHaveText(
-        'Close this document in every tab before removing its device copy.',
+        'Close this document in every tab before changing its device copy.',
       );
       expect(
         await f.page
@@ -930,10 +930,19 @@ test.describe('downloaded native editors', () => {
       await attention(f.page);
       expect(f.network.outgoing.filter((frame) => frame.type === 'submit')).toEqual([]);
       expect(await f.read()).toEqual(baseline);
+      let accountChecks = 0;
+      f.page.on('request', (request) => {
+        if (new URL(request.url()).pathname === '/api/auth/session') accountChecks++;
+      });
       const other = await f.context.newPage();
       await other.goto(f.href);
       await expect(saveStatus(other)).toHaveText('All changes saved.', { timeout: 30_000 });
+      await expect(
+        f.page.getByRole('heading', { name: 'This tab is locked.', exact: true }),
+      ).toBeVisible();
       await expect(f.page.locator('.univer-container canvas')).toHaveCount(0);
+      await expect(f.page.getByText(f.item.name, { exact: true })).toHaveCount(0);
+      expect(accountChecks).toBe(0);
       const retained = (await stored(other, f.owner.id, f.item.id))!.outbox!;
       expect(retained.account).toBe(f.owner.id);
       expect(retained.checkpoint.buffer).toEqual(original.checkpoint.buffer);

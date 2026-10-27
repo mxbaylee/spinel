@@ -158,6 +158,7 @@ test('only a known empty queue is clean; in-flight native work is retained even 
 const unknownQueues = [
   'outbox-version',
   'checkpoint-version',
+  'zero-revision',
   'outbox-field',
   'checkpoint-field',
   'failure',
@@ -175,6 +176,8 @@ function unknownQueue(kind: (typeof unknownQueues)[number]): unknown {
       return { ...outbox, version: 2 };
     case 'checkpoint-version':
       return { ...outbox, checkpoint: { ...outbox.checkpoint, version: 2 } };
+    case 'zero-revision':
+      return { ...outbox, checkpoint: { ...outbox.checkpoint, revision: 0 } };
     case 'outbox-field':
       return { ...outbox, futureQueue: { content: 'Retain this unknown work' } };
     case 'checkpoint-field':
@@ -260,6 +263,15 @@ const uncertainRecords = [
   'outer-item',
   'kind',
   'future-sdk',
+  'empty-unit',
+  'unknown-access',
+  'invalid-read-only',
+  'writable-viewer',
+  'space-is-item',
+  'sheet-without-sheets',
+  'doc-with-sheets',
+  'bundle-snapshot-identity',
+  'recovery-snapshot-identity',
   'null',
 ] as const;
 function uncertainRecord(kind: (typeof uncertainRecords)[number]): unknown {
@@ -270,6 +282,27 @@ function uncertainRecord(kind: (typeof uncertainRecords)[number]): unknown {
   if (kind === 'outer-item') item.itemId = 'another-storage-key';
   if (kind === 'kind') Object.assign(item.bundle, { kind: 'future-document' });
   if (kind === 'future-sdk') item.bundle.sdkVersion = '999.0.0';
+  if (kind === 'empty-unit') item.bundle.unitId = '';
+  if (kind === 'unknown-access') Object.assign(item.bundle, { access: 'future-role' });
+  if (kind === 'invalid-read-only') Object.assign(item.bundle, { readOnly: 'false' });
+  if (kind === 'writable-viewer') item.bundle.access = 'viewer';
+  if (kind === 'space-is-item') item.bundle.spaceId = itemId;
+  if (kind === 'sheet-without-sheets') {
+    item.bundle.kind = 'sheet';
+    item.bundle.snapshot = { id: itemId, sheets: {} } as StoredItem['bundle']['snapshot'];
+    item.outbox = cleanOutbox();
+    item.outbox.checkpoint.snapshot = { id: itemId } as OfflineOutbox['checkpoint']['snapshot'];
+  }
+  if (kind === 'doc-with-sheets') Object.assign(item.bundle.snapshot, { sheets: {} });
+  if (kind === 'bundle-snapshot-identity') item.bundle.snapshot.id = 'another-item';
+  if (kind === 'recovery-snapshot-identity') {
+    item.outbox = cleanOutbox();
+    item.outbox.checkpoint.failure = 'stale';
+    item.outbox.checkpoint.recoverySnapshot = {
+      ...structuredClone(item.bundle.snapshot),
+      id: 'another-unit',
+    };
+  }
   return item;
 }
 

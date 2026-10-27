@@ -424,7 +424,11 @@ test.each(['remove', 'refresh'] as const)(
 );
 
 test('a clean scoped removal deletes the native item and its images in the same transaction', async () => {
-  const f = storage({ itemId: bundle.itemId, bundle, outbox: { version: 1, ...scope, checkpoint } });
+  const f = storage({
+    itemId: bundle.itemId,
+    bundle,
+    outbox: { version: 1, ...scope, checkpoint },
+  });
   await f.store.removeClean(scope, () => {});
   expect(f.removed).toEqual(['items', 'images']);
   expect(f.aborted()).toBe(false);

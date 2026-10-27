@@ -120,7 +120,7 @@ export async function downloadForOffline(
         throw new Error(
           'The saved device data needs a compatible version of Spinel. Its contents are retained.',
         );
-      return prepareShell(store.accountId, verifyCurrent);
+      return prepareShell(store.accountId, verifyCurrent, requirement);
     });
   } catch (error) {
     verifyCurrent();

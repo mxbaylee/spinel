@@ -17,6 +17,24 @@ export type ExitViewState = {
   error: string;
 };
 
+/** A passive account change never authorizes this tab to open another account. */
+export function AccountAccessChanged({ onReopen }: { onReopen(): void }) {
+  return (
+    <EntryFrame
+      title="This tab is locked."
+      intro="The account or device access changed. Your private files are closed in this tab."
+      eyebrow="ACCOUNT ACCESS CHANGED"
+      onHome={onReopen}
+      footer="Saved changes are kept on this device."
+    >
+      <p role="status">Reopen Spinel to continue with this browser’s current sign-in.</p>
+      <Button primary onClick={onReopen}>
+        Reopen Spinel
+      </Button>
+    </EntryFrame>
+  );
+}
+
 /** Only counts and explicit preservation choices remain after private content locks. */
 export function AccountExitView({
   state,

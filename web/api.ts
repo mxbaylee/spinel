@@ -27,6 +27,7 @@ export async function api<T>(
   path: string,
   body?: unknown,
   verifyCurrent: () => void = () => {},
+  onAbandonedChallenge?: (challengeId: string) => void,
 ): Promise<T> {
   verifyCurrent();
   const response = await fetch(
@@ -43,7 +44,23 @@ export async function api<T>(
   // A stale-generation check must not release the transition at headers while
   // an earlier credential request is still settling in the browser.
   const data = response.status === 204 ? await response.text() : await response.json();
-  verifyCurrent();
+  try {
+    verifyCurrent();
+  } catch (failure) {
+    // A cancelled options request can still create a server challenge. Supply
+    // only its identifier for cleanup, after the complete response has settled;
+    // the abandoned options never reach the UI or credential prompt.
+    if (
+      response.ok &&
+      path.endsWith('/options') &&
+      typeof data?.challengeId === 'string' &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+        data.challengeId,
+      )
+    )
+      onAbandonedChallenge?.(data.challengeId);
+    throw failure;
+  }
   if (
     response.status === 401 &&
     !['/sign-in', '/setup', '/recover-admin', '/invite'].includes(location.pathname)

@@ -269,6 +269,131 @@ test('unknown activities are bounded and never expired into a successful logout'
   expect(fetch).not.toHaveBeenCalled();
 });
 
+test('only a newly acquired Web Lock can retire an abandoned local prompt owner', async () => {
+  const c = await client();
+  const key = ACTIVE + B;
+  const marker = JSON.stringify({ version: 1, id: B, coordination: 'web-lock', phase: 'prompt' });
+  values.set(key, marker);
+  const work = vi.fn(async () => 'ready');
+  // The marker's old coordination mode is not proof that this caller owns a lock.
+  await expect(c.withAccountRead(() => {}, work)).rejects.toThrow('another Spinel tab');
+  expect(values.get(key)).toBe(marker);
+  expect(work).not.toHaveBeenCalled();
+  const acquire = deferred();
+  vi.stubGlobal('navigator', {
+    locks: {
+      request: async (_name: string, run: () => Promise<unknown>) => {
+        await acquire.promise;
+        return run();
+      },
+    },
+  });
+  const reopened = c.withAccountRead(() => {}, work);
+  await Promise.resolve();
+  expect(values.get(key)).toBe(marker);
+  acquire.resolve();
+  await expect(reopened).resolves.toBe('ready');
+  expect(values.has(key)).toBe(false);
+  expect(work).toHaveBeenCalledOnce();
+});
+
+test.each([
+  ['dispatched response', { version: 1, id: B, coordination: 'web-lock', phase: 'network' }],
+  [
+    'prompt without an owner lock',
+    { version: 1, id: B, coordination: 'unlocked', phase: 'prompt' },
+  ],
+  ['unknown phase', { version: 1, id: B, coordination: 'web-lock', phase: 'unknown' }],
+  ['wrong owner', { version: 1, id: A, coordination: 'web-lock', phase: 'prompt' }],
+  ['legacy marker', B],
+])('an abandoned %s is never inferred safe by a later Web Lock', async (_reason, value) => {
+  vi.stubGlobal('navigator', {
+    locks: {
+      request: (_name: string, run: () => Promise<unknown>) => run(),
+    },
+  });
+  const c = await client();
+  const key = ACTIVE + B;
+  const marker = JSON.stringify(value);
+  values.set(key, marker);
+  const exit = c.beginAccountExit(A, true);
+  await expect(c.finishAccountExit(exit)).rejects.toThrow('other Spinel tabs');
+  expect(values.get(key)).toBe(marker);
+  expect(fetch).not.toHaveBeenCalled();
+});
+
+test('a live prompt owner remains exclusive and returns to network phase before verification', async () => {
+  let queue: Promise<unknown> = Promise.resolve();
+  vi.stubGlobal('navigator', {
+    locks: {
+      request: (_name: string, run: () => Promise<unknown>) => {
+        const next = queue.then(run, run);
+        queue = next.catch(() => {});
+        return next;
+      },
+    },
+  });
+  const first = await client(),
+    second = await client();
+  const entered = deferred(),
+    promptFinished = deferred(),
+    dispatched = deferred(),
+    response = deferred();
+  const marker = () =>
+    JSON.parse(values.get([...values.keys()].find((key) => key.startsWith(ACTIVE))!)!);
+  const authentication = first.withAuthentication(
+    true,
+    () => {},
+    async (verify, prompt) => {
+      expect(marker()).toMatchObject({ coordination: 'web-lock', phase: 'network' });
+      await prompt(async () => {
+        expect(marker().phase).toBe('prompt');
+        entered.resolve();
+        await promptFinished.promise;
+      });
+      expect(marker().phase).toBe('network');
+      dispatched.resolve();
+      await response.promise;
+      verify();
+    },
+  );
+  await entered.promise;
+  const read = vi.fn(async () => 'ready');
+  const reopened = second.withAccountRead(() => {}, read);
+  await Promise.resolve();
+  expect(read).not.toHaveBeenCalled();
+  expect(marker().phase).toBe('prompt');
+  promptFinished.resolve();
+  await dispatched.promise;
+  expect(read).not.toHaveBeenCalled();
+  expect(marker().phase).toBe('network');
+  response.resolve();
+  await authentication;
+  await expect(reopened).resolves.toBe('ready');
+  expect([...values.keys()].filter((key) => key.startsWith(ACTIVE))).toEqual([]);
+});
+
+test('a prompt result cannot reach verification when its durable phase fence changed', async () => {
+  const c = await client();
+  const dispatch = vi.fn();
+  await expect(
+    c.withAuthentication(
+      true,
+      () => {},
+      async (_verify, prompt) => {
+        await prompt(async () => {
+          const key = [...values.keys()].find((key) => key.startsWith(ACTIVE))!;
+          values.set(key, 'unknown replacement');
+          return 'credential result';
+        });
+        dispatch();
+      },
+    ),
+  ).rejects.toThrow('account changed');
+  expect(dispatch).not.toHaveBeenCalled();
+  expect([...values.values()]).toContain('unknown replacement');
+});
+
 test('the shared Web Lock outlives dispatched verification and serializes the later logout', async () => {
   let queue: Promise<unknown> = Promise.resolve();
   vi.stubGlobal('navigator', {
@@ -375,4 +500,100 @@ test('api fences before dispatch and keeps a stale dispatched response owned thr
   finish();
   await rejected;
   expect(settled).toBe(true);
+});
+
+test('cancelled delayed options retain their challenge cleanup until its response fully settles', async () => {
+  let queue: Promise<unknown> = Promise.resolve();
+  vi.stubGlobal('navigator', {
+    locks: {
+      request: (_name: string, run: () => Promise<unknown>) => {
+        const next = queue.then(run, run);
+        queue = next.catch(() => {});
+        return next;
+      },
+    },
+  });
+  const first = await client(),
+    second = await client();
+  const { api } = await import('../../web/api.ts');
+  const optionsSent = deferred(),
+    cancelSent = deferred();
+  const optionsResponse = deferred<Response>(),
+    cancelResponse = deferred<Response>();
+  vi.mocked(fetch).mockImplementation((path) => {
+    if (String(path).endsWith('/options')) {
+      optionsSent.resolve();
+      return optionsResponse.promise;
+    }
+    cancelSent.resolve();
+    return cancelResponse.promise;
+  });
+  let finishOptions!: () => void;
+  const stream = new ReadableStream({
+    start(controller) {
+      finishOptions = () => {
+        controller.enqueue(
+          new TextEncoder().encode(JSON.stringify({ challengeId: B, options: {} })),
+        );
+        controller.close();
+      };
+    },
+  });
+  let current = true;
+  let challengeId: string | undefined;
+  const abandoned = new DOMException('The passkey request ended.', 'AbortError');
+  const openPrompt = vi.fn(async () => {});
+  const authentication = first.withAuthentication(
+    true,
+    () => {
+      if (!current) throw abandoned;
+    },
+    async (verify, prompt) => {
+      try {
+        const options = await api<{ challengeId: string }>(
+          'authentication/options',
+          {},
+          verify,
+          (id) => {
+            challengeId = id;
+          },
+        );
+        challengeId = options.challengeId;
+        await prompt(openPrompt);
+      } catch (failure) {
+        if (challengeId) await api('cancel', { challengeId });
+        throw failure;
+      }
+    },
+  );
+  const rejected = expect(authentication).rejects.toBe(abandoned);
+  await optionsSent.promise;
+  current = false;
+  optionsResponse.resolve(new Response(stream, { status: 200 }));
+  await Promise.resolve();
+  await Promise.resolve();
+  expect(challengeId).toBeUndefined();
+  expect(fetch).toHaveBeenCalledTimes(1);
+  finishOptions();
+  await cancelSent.promise;
+  expect(challengeId).toBe(B);
+  expect(openPrompt).not.toHaveBeenCalled();
+  expect(fetch).toHaveBeenNthCalledWith(
+    2,
+    '/api/auth/cancel',
+    expect.objectContaining({
+      method: 'POST',
+      body: JSON.stringify({ challengeId: B }),
+    }),
+  );
+  const marker = [...values.keys()].find((key) => key.startsWith(ACTIVE))!;
+  expect(JSON.parse(values.get(marker)!).phase).toBe('network');
+  const next = vi.fn(async () => 'ready');
+  const reopened = second.withAccountRead(() => {}, next);
+  await Promise.resolve();
+  expect(next).not.toHaveBeenCalled();
+  cancelResponse.resolve(new Response(null, { status: 204 }));
+  await rejected;
+  await expect(reopened).resolves.toBe('ready');
+  expect([...values.keys()].filter((key) => key.startsWith(ACTIVE))).toEqual([]);
 });

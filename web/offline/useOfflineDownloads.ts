@@ -231,7 +231,7 @@ export function useOfflineDownloads(
         verify(scope)();
         if (requirement.kind !== 'retained' || !isRuntimeCompatible(requirement.compatibility))
           throw new Error('This device data needs a compatible version of Spinel.');
-        await prepareShell(user.id, verify(scope));
+        await prepareShell(user.id, verify(scope), requirement);
       });
       for (const download of known) {
         if (!scope.isCurrent()) return;
