@@ -47,6 +47,8 @@ export function spaceNativeRoutes(
     );
   router.use((request, response, next) => {
     response.set('Cache-Control', 'no-store');
+    if (!options.guest && request.headers['x-spinel-offline-account'] !== undefined)
+      documentIdentity(workspace, request.headers);
     if (!options.spaceReview || !workspace.spacesEnabled)
       throw new AuthError(404, 'This Space is not available.');
     if (request.method !== 'GET' && request.headers.origin !== origin)

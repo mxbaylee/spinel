@@ -1,4 +1,5 @@
 import type { IURLImageService } from '@univerjs/core';
+import { mapNativeImageSources } from '../../src/shared/nativeImageSources.ts';
 import type { OfflineBundleImage } from '../../src/shared/offlineBundle.ts';
 import type { OfflineAccess } from './OfflineAccess.ts';
 
@@ -151,40 +152,43 @@ export class PreparedImages implements IURLImageService {
    * Returns a copy of a snapshot with every verified image source replaced by
    * its local object URL. Univer's document renderer loads drawing sources
    * directly rather than through this service, so this covers Doc and cell images.
-   * Resource data (such as sheet drawings) is JSON inside a string; it is parsed,
-   * rewritten and serialized again. Any other image `source` that could make a
-   * request becomes an empty local image, so nothing falls back to the network.
+   * Known drawing resource JSON is rewritten only when an image changes. Other
+   * resource bytes and authored text remain intact. An unavailable native image
+   * becomes an empty local image, so nothing falls back to the network.
    */
   localize<T>(snapshot: T): T {
     this.assertAllowed();
-    const visit = (value: unknown, key?: string): unknown => {
-      if (key === 'resources' && Array.isArray(value)) return value.map(resource);
-      if (typeof value === 'string') {
-        const source = value.startsWith(this.access.scope.origin + '/')
-          ? value.slice(this.access.scope.origin.length)
-          : value;
-        if (this.blobs.has(source)) return this.local(source).url;
-        return key === 'source' && !value.startsWith('data:') ? EMPTY_IMAGE : value;
-      }
-      if (Array.isArray(value)) return value.map((entry) => visit(entry));
-      if (value && typeof value === 'object')
-        return Object.fromEntries(
-          Object.entries(value).map(([name, entry]) => [name, visit(entry, name)]),
-        );
-      return value;
-    };
-    const resource = (entry: unknown): unknown => {
-      const copy = visit(entry) as { data?: unknown };
-      if (!copy || typeof copy.data !== 'string') return copy;
-      let data: unknown;
-      try {
-        data = JSON.parse(copy.data);
-      } catch {
-        return copy; // Not JSON, so it cannot hold an image.
-      }
-      return { ...copy, data: JSON.stringify(visit(data)) };
-    };
-    return visit(snapshot) as T;
+    return mapNativeImageSources(structuredClone(snapshot), (value) => {
+      if (this.issued.has(value)) return value;
+      const source = value.startsWith(this.access.scope.origin + '/')
+        ? value.slice(this.access.scope.origin.length)
+        : value;
+      if (this.blobs.has(source)) return this.local(source).url;
+      return value.startsWith('data:') ? value : EMPTY_IMAGE;
+    });
+  }
+  /** Only URLs issued by this adapter are reversed; authored text stays intact. */
+  canonicalize<T>(value: T): T {
+    this.assertAllowed();
+    const originals = new Map([...this.urls].map(([source, url]) => [url, source]));
+    return mapNativeImageSources(
+      structuredClone(value),
+      (source) => originals.get(source) ?? source,
+    );
+  }
+  async add(
+    images: readonly OfflineBundleImage[],
+    bytes: ReadonlyMap<string, Uint8Array>,
+    verifyAdmission: () => void = () => {},
+  ) {
+    this.assertAllowed();
+    verifyAdmission();
+    const blobs = await verifyImages(this.access.scope.itemId, images, bytes, () => {
+      this.assertAllowed();
+      verifyAdmission();
+    });
+    verifyAdmission();
+    for (const [source, blob] of blobs) this.blobs.set(source, blob);
   }
   async getImage(url: string) {
     try {

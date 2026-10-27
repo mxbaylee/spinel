@@ -26,9 +26,13 @@ Signed-in accounts can keep selected documents on a device
 ([docs/offline.md](offline.md#offline-launch-and-read-only-viewing), SPN-039).
 On a prepared device the service worker also caches the public app shell, so
 Spinel opens offline with the last-synced file list and downloaded documents open
-read-only. Pages that need the server, guest links and unprepared devices still
-get the generic offline page above. Offline editing and real-device runs are
-SPN-053 and SPN-090, with shared storage lifecycle in SPN-055. The earlier global no-offline-feature policy is superseded
+with their saved permissions. SPN-053 uses the native Sheet/Doc editor and a
+durable local queue; **Saved on this device** follows its storage commit, and
+**Synced** follows server acknowledgement plus local cleanup. Viewer downloads
+remain read-only. Pages that need the server, guest links and unprepared devices still
+get the generic offline page above. Physical-device verification remains
+SPN-090, with shared storage lifecycle in SPN-055. CI phone viewports do not prove
+installed Android/iPhone behavior. The earlier global no-offline-feature policy is superseded
 for this feature, while guests keep the generic fallback ([decision #83](implementation/SPN-039.md#legacy-decision-83-complete-opted-in-offline-product)).
 
 An editor already open when connectivity drops retains its existing unsaved-edit

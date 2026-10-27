@@ -52,6 +52,8 @@ export interface SubmitFrame {
   mutationId: string;
   baseRevision: number;
   mutations: Mutation[];
+  /** Admission-only reconnect fence; it is not part of the immutable retry identity. */
+  expectedRevision?: number;
 }
 export interface VerifyFrame {
   type: 'verify';
@@ -67,6 +69,10 @@ export interface ClientState {
   connected: boolean;
   resyncing: boolean;
   failure?: ClientFailure;
+  /** Present only with persistence; `saved` means its transaction completed. */
+  localPersistence?: 'saving' | 'saved' | 'failed';
+  /** The latest visible edit could not be captured; it is not durably recoverable. */
+  recoveryMissing?: boolean;
 }
 
 export interface ClientCheckpoint {
@@ -78,6 +84,12 @@ export interface ClientCheckpoint {
   sent: SubmitFrame | null;
   inflight: Mutation[];
   buffer: Mutation[][];
+  /** A retained queue needs explicit recovery, never an automatic replay. */
+  failure?: ClientFailure;
+  /** Complete visible state after a local post-apply refusal; never used for replay. */
+  recoverySnapshot?: NativeSnapshot;
+  /** A refusal marker alone does not mean its latest visible edit was saved. */
+  recoveryMissing?: boolean;
 }
 export interface SyncReplica {
   cells(): BaseCells;
@@ -96,6 +108,11 @@ export interface SyncClientOptions {
   onState(state: ClientState): void;
   onResync(reason: ClientFailure): void;
   persist?(checkpoint: ClientCheckpoint): void | Promise<void>;
+  checkpoint?: ClientCheckpoint;
+  /** Offline hosts retain a recoverable queue when ordinary clients would reload. */
+  preservePendingOnFailure?: boolean | (() => boolean);
+  /** First pending replay requires an unchanged server base, including send races. */
+  requireUnchangedResume?: boolean | (() => boolean);
   /** Injectable UUID source and batching delay keep queue tests deterministic. */
   mutationId?(): string;
   batchDelayMs?: number;
@@ -108,6 +125,9 @@ export interface NativeSyncOptions extends Omit<
   univer: Univer;
   kind: DocumentKind;
   snapshot: NativeSnapshot;
+  /** The visible editor may use local image URLs; storage and wire remain canonical. */
+  toCanonical?<T>(value: T): T;
+  toVisible?<T>(value: T): T;
 }
 
 export const MAX_WIRE_BYTES = 64 * 1024;

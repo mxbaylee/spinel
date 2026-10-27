@@ -854,7 +854,9 @@ export function Dashboard({
             catalog={connectionCatalog}
             access={
               local
-                ? 'Read only'
+                ? offline.downloads.get(current.id)?.readOnly
+                  ? 'Read only'
+                  : 'On this device'
                 : current.access === 'owner'
                   ? undefined
                   : accessLabel(current.access)
@@ -888,7 +890,13 @@ export function Dashboard({
             ) : local && offlineKind(current) ? (
               offline.downloads.has(current.id) ? (
                 <Suspense fallback={<p role="status">Loading offline copy…</p>}>
-                  <OfflineViewer key={current.id} accountId={user.id} itemId={current.id} />
+                  <OfflineViewer
+                    key={current.id}
+                    accountId={user.id}
+                    itemId={current.id}
+                    onDirty={navigation.dirty}
+                    onConnectionState={onConnectionState}
+                  />
                 </Suspense>
               ) : (
                 <p role="status">

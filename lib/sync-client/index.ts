@@ -8,6 +8,8 @@ export {
 export { captureNative } from './src/capture.ts';
 export type { NativeCaptureOptions } from './src/capture.ts';
 export { hashTouched } from './src/hash.ts';
+export { admitSnapshot as validateNativeSnapshot } from './src/admission.ts';
+export { validateRecoverySnapshot } from './src/recovery.ts';
 export { ClientError } from './src/types.ts';
 export type {
   AckFrame,
