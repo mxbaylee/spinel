@@ -3,7 +3,7 @@ import { writeFile } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 import type { Browser, BrowserContext, Page, TestInfo } from '@playwright/test';
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
-import { LocaleType } from '@univerjs/core';
+import { DOCS_NORMAL_EDITOR_UNIT_ID_KEY, LocaleType } from '@univerjs/core';
 import { docFormulas } from '@spinel/doc-formulas';
 import type { ClientCheckpoint, NativeSnapshot } from '@spinel/sync-client';
 import { SyncServer } from '@spinel/sync-server';
@@ -173,7 +173,21 @@ function comparable(snapshot: NativeSnapshot) {
       },
     ]),
   );
-  return JSON.parse(canonical({ ...snapshot, rev: undefined, styles: {}, sheets }));
+  return JSON.parse(
+    canonical({
+      ...snapshot,
+      rev: undefined,
+      styles: {},
+      sheets,
+      // The drawing resource is serialized JSON. Compare its complete graph,
+      // including all geometry and anchor fields, independent of object key order.
+      resources: snapshot.resources?.map((resource) =>
+        resource.name === 'SHEET_DRAWING_PLUGIN'
+          ? { ...resource, data: JSON.parse(resource.data) }
+          : resource,
+      ),
+    }),
+  );
 }
 
 async function matchesServer(page: Page, expected: { revision: number; snapshot: NativeSnapshot }) {
@@ -232,12 +246,43 @@ async function fixture(
   const control = await account(owner.id);
   let item: { id: string; name: string };
   if (options.images) {
+    const snapshot = await sheetImageFixture();
+    const resource = snapshot.resources[0];
+    const drawings = JSON.parse(resource.data);
+    const floating = drawings.tab.data.floating;
+    const transformDefaults = { flipY: false, flipX: false, angle: 0, skewX: 0, skewY: 0 };
+    // The pinned native renderer derives this rectangle from the existing cell
+    // anchors: 46 + 2*100, 20 + 4*24 + 80, one column, and three 24px rows.
+    // Seed a consistent imported fixture so strict equality tests sync behavior.
+    floating.transform = {
+      ...transformDefaults,
+      left: 246,
+      top: 196,
+      width: 100,
+      height: 72,
+    };
+    floating.axisAlignSheetTransform = {
+      ...transformDefaults,
+      ...floating.axisAlignSheetTransform,
+    };
+    resource.data = JSON.stringify(drawings);
+    const cell = snapshot.sheets.tab.cellData[1][0].p;
+    // Native cell images fit the 100x80 cell's 2px inset, preserving 4:3.
+    cell.drawings.cell.transform.width = 98;
+    cell.drawings.cell.transform.height = 73.5;
+    cell.drawings.cell.docTransform.size = { width: 98, height: 73.5 };
+    // Native cell-image layout uses an unbounded document page; its exported
+    // JSON represents these Infinity values as null, just as this import does.
+    cell.documentStyle.pageSize = {
+      width: Number.POSITIVE_INFINITY,
+      height: Number.POSITIVE_INFINITY,
+    };
     const response = await control.request.post('/api/items/import', {
       headers: { Origin: baseURL },
       data: {
         filename: 'Offline images.univer.json',
         parentId: null,
-        snapshot: await sheetImageFixture(),
+        snapshot,
       },
     });
     expect(response.status(), await response.text()).toBe(201);
@@ -628,6 +673,7 @@ test.describe('downloaded native editors', () => {
       try {
         await f.download();
         const baseline = await f.read();
+        if (kind === 'sheet') await matchesServer(f.page, baseline);
         const captured = f.network.outgoing.filter((frame) => frame.type === 'submit').length;
         await f.network.setOffline(true);
         // The first edit uses the same mounted editor that was just downloaded.
@@ -908,6 +954,11 @@ test.describe('downloaded native editors', () => {
     try {
       await f.download();
       const sheet = f.page.getByRole('region', { name: 'Sheet document', exact: true });
+      // A Sheet has both a cell editor and a formula-bar editor. This scenario
+      // must focus the actual cell draft, including after a cross-sheet switch.
+      const cellInput = f.page.locator(
+        `[id="__editor_${DOCS_NORMAL_EDITOR_UNIT_ID_KEY}"][contenteditable="true"][data-u-comp="editor"]`,
+      );
       await sheet.locator('[data-u-comp="sheet-bar-append-button"]').first().click();
       await expect(sheet.getByRole('tablist', { name: 'Sheet tabs' }).getByRole('tab')).toHaveCount(
         2,
@@ -934,12 +985,13 @@ test.describe('downloaded native editors', () => {
         'aria-selected',
         'true',
       );
-      await nativeInput(f.page).focus();
+      await cellInput.focus();
+      await expect(cellInput).toBeFocused();
       await f.page.keyboard.insertText('A1)');
       const copyDraft = async () => {
         const sentinel = `not-copied-${randomUUID()}`;
         await f.page.evaluate((text) => navigator.clipboard.writeText(text), sentinel);
-        await nativeInput(f.page).focus();
+        await cellInput.focus();
         await f.page.keyboard.press('Control+a');
         await f.page.keyboard.press('Control+c');
         await expect
@@ -974,7 +1026,7 @@ test.describe('downloaded native editors', () => {
       await other.close();
       // Confirming while on the other sheet must not hide and then lose the
       // original draft when native sheet activation completes asynchronously.
-      await nativeInput(f.page).focus();
+      await cellInput.focus();
       await f.page.keyboard.press('Enter');
       await expect(saveStatus(f.page)).toHaveText(warning);
       expect(await copyDraft()).toBe(draft);
@@ -998,7 +1050,7 @@ test.describe('downloaded native editors', () => {
       await f.network.setOffline(false);
       // After copying, Escape explicitly discards only the unfinished draft.
       // The earlier durable queue remains and can finish the sign-in handoff.
-      await nativeInput(f.page).focus();
+      await cellInput.focus();
       await f.page.keyboard.press('Escape');
       await f.page.getByRole('button', { name: /^Save details:/ }).click();
       await f.page.getByRole('button', { name: 'Continue to sign-in', exact: true }).click();
