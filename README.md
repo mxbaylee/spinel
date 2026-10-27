@@ -1,112 +1,105 @@
 # SPN-108 evidence record
 
-This branch preserves the uncapped source and the inspected result/checksum
-record for [PR #202](https://github.com/mxbaylee/spinel/pull/202). The comparison
-contract is maintained in `docs/implementation/SPN-108.md` on the PR/main branch.
+This branch preserves the uncapped source and inspected numeric results/checksums
+for [PR #202](https://github.com/mxbaylee/spinel/pull/202). The
+[measurement contract](https://github.com/mxbaylee/spinel/blob/53df5a842b61c9cddb19c2c074d2c4ce240aabca/docs/implementation/SPN-108.md)
+defines acceptance. Raw failed records are not retrospectively relabeled.
+
+## Current checkpoint: fresh cap-44 collection pending
+
+- Candidate: `53df5a842b61c9cddb19c2c074d2c4ce240aabca`.
+- Actual CI source: `09cce1d160d5b03a20c7ba106c11a806ba90facb`.
+- Both source trees: `151cd8c1d607a1534ee0aed7d3811da5e0c886a5`.
+- Immutable uncapped baseline: `3fdac69f413d2fd423bc7ded41acbd67a177739c`.
+- Main matched through `0a9cd200a5a457a6160f9dfaa86c49460ccc24e2`.
+- Fresh [CI run 40597044138](https://github.com/mxbaylee/spinel/actions/runs/40597044138)
+  and [Storybook run 40597044076](https://github.com/mxbaylee/spinel/actions/runs/40597044076).
+- No accepted browser comparison or final grade yet.
+
+The first measured cap-64 candidate failed the unchanged desktop paired-flush
+p95 target: 27.4 / 29.6 / 29.5 ms against 16 ms. The current bound of 44 keeps the original
+2,086-input continuous workload within 48 groups at unchanged native retention of 50.
+Its latency remains to be established by fresh complete pairs. Local native
+regressions passed all 48 Undo/Redo groups through actual sync admission,
+acknowledgments, hash verification and peer delivery; 19 analyzer cases passed.
+Both independent reviewers cleared source preflight, without final grades.
+
+The same failed run exposed a signed CPU-profile timestamp reader error and a
+synthetic composition sequence that omitted Chromium's final converted-text
+update. The corrected reader retains raw bytes and full clock uncertainty while
+sorting validated timestamp/sample pairs together. The mounted boundary now
+uses Chromium's public composition input commands, verifies all 70 observed
+provisional updates plus actual finalization event order, and retains exact
+content/selection/replay/revocation assertions. Physical OS IMEs and the old
+changed-final-end synthetic path without a converted update are not claimed fixed.
+
+The evidence tree remains uncapped. Its additional commit parents retain actual
+measured candidate source commits for provenance; they do not change the pinned
+baseline tree. Always use the immutable baseline SHA above for comparisons.
 
 ## Immutable baseline provenance
 
-The original observation-only baseline is
-`a0c3154ae6b548d68ba8be9d143df781e47dc623`. The replacement baseline is
-`161b9874f3ac0e89a277c713ceb965e5ac39ca05`. It adds the exact supported mobile
-Enter shortcut repair used by the candidate.
-That prior baseline's only application-source difference from the original is:
-`web/docPhoneView.ts` registers the public native Enter command with the public
-document-focus precondition, owned by the mobile plugin's disposable lifetime.
-It retains the unbounded native history/collaboration queues. The workflow pins
-this replacement baseline by full commit SHA.
+| Source | Purpose |
+| --- | --- |
+| `a0c3154ae6b548d68ba8be9d143df781e47dc623` | Original uncapped observation-only application |
+| `161b9874f3ac0e89a277c713ceb965e5ac39ca05` | Identical supported mobile Enter shortcut repair in both sources |
+| `64770ad962c543d6eb9d855e51bae994e457377d` | Identical read-only reload reason/phase observation for schema 3 |
+| `3fdac69f413d2fd423bc7ded41acbd67a177739c` | All concurrent main files through 0a9cd20, including SPN-063 docs and SPN-095 server/runtime, matched to candidate |
 
-The first mobile attempt exposed 2,071 pending character changes rather than the
-required 2,086 changes: all 15 Enter boundaries were missing. Both measured
-versions need the identical compatibility repair before their workload can be
-compared. The harness still uses `keyboard.type` and native keydown Enter.
-No input is bulk-inserted and no command shortcut is substituted by the harness.
+No baseline source installs the capacity policy, changes transport limits,
+suppresses recovery, clears history or replaces the native workload. The same
+current harness and pinned dependencies run on both sources. The original
+16 paragraphs still use 2,071 keyboard-typed characters and 15 native Enter keys.
 
-## Attempts retained so far
+## Every first attempt remains accounted for
 
 | Attempt | Disposition |
 | --- | --- |
 | Local baseline build | Passed; peak process-tree RSS 1,668.4 MiB |
-| Local browser, initial launch | Loopback listen permission denied; no workload |
-| Local browser, authorized launch | Resource-aborted at 2,099.0 MiB during two-editor startup; no accepted sample |
-| CI `40579224187`, source `49a86ad` | Both presets stopped during registration before typing; reports and manifest are in `attempt-49a/` |
-| CI `40581429512`, source `cf611f7`, desktop | All four original-baseline workloads typed; post-measurement redo failed because the full-document non-Mac shortcut is Ctrl+Y |
-| CI `40581429512`, source `cf611f7`, mobile | All four original-baseline cases exceeded the 300-second collection deadline; typing alone took 255–266 seconds and Enter was omitted by the mobile SDK |
+| Local browser, initial launch | Loopback permission denied; no workload |
+| Local browser, authorized launch | Watchdog-aborted at 2,099.0 MiB during two-editor startup; no accepted sample |
+| CI 40579224187, `49a86ad` | Both presets failed during registration before typing; [reports](attempt-49a/manifest.json) |
+| CI 40581429512, `cf611f7` | Desktop redo shortcut wrong; mobile observation deadline and missing native Enter exposed; [record](attempt-cf/result-summary.json) |
+| CI 40586200654, `6f219b8`; CI 40586541181, `dbb2207` | Interrupted during viewer-observation repair; [6f](attempt-6f/disposition.json), [dbb](attempt-dbb/disposition.json) |
+| CI 40586732900, `d099a22` | All eight baseline initial-content windows completed then failed Redo; no candidate; separate Sheet preview flake also failed despite passing retry; [record](attempt-d099/result-summary.json) |
+| CI 40591775224, `993bafa` | Interrupted by current-main integration after three complete desktop baseline-only schema 3 cases; no accepted comparison; [record](attempt-993/disposition.json) |
+| CI 40592509873, `2c33dec` | Cap 64 desktop p95 misses, incomplete signed-profile cases and synthetic composition Redo failure; ordinary current CI/Storybook components passed, responsiveness and aggregate failed; [record](attempt-2c33/result-summary.json) |
+| CI 40597044138, `53df5a8` | Fresh cap 44 collection pending; no accepted result |
 
-The registration repair uses explicit context tracing only for boundary tests,
-after timed samples. The redo repair uses Ctrl+Y. The next baseline allows
-600 seconds per observation and the paired job allows 60 minutes; candidate
-cases retain 300 seconds and every responsiveness budget is unchanged.
-These failed attempts supply diagnostic observations, not accepted improvement
-percentages. No successful candidate result is asserted by this checkpoint.
+The baseline collection deadline is 600 seconds per case and the job deadline is
+60 minutes. Candidate cases retain 300 seconds. These are collection windows;
+all registered latency targets remain unchanged. The local blank-Chromium
+IME control also retains its initial sandbox launch failure and unsupported
+all-events-trusted assertion before the completed event-order observation.
 
-## Evidence retention
+## Explicit schema 3 amendment
 
-The public record contains inspected numeric results, attempt dispositions and
-checksums. A durable private measurement bundle supplied to the owner contains
-the raw profiles, clock sidecars, input/long-task timelines, environment
-manifests and test reports. Screenshots remain in the original CI artifacts.
-Automatic approval review rejected publication of the complete mixed CI ZIP;
-that payload is not republished here. The archive preserves failed first
-attempts as well as the eventual acceptance result.
+The initial contract required baseline Redo success. The corrected shortcut and
+exact native reproduction exposed a 166,056-byte redo mutation array and a 166,206-byte
+reserved envelope (fixture unit ID `doc`), exceeding the unchanged 65,536-byte
+wire limit. Typing and Undo passed actual ACK/hash verification; Redo restored
+locally then refused sync admission with `capacity`. Browser UUIDs alter the
+exact envelope size.
 
-The inspected numeric record and original artifact checksums for the failed
-`cf611f7` first-attempt set are in [attempt-cf/result-summary.json](attempt-cf/result-summary.json).
-The `6f219b8` and `dbb2207` runs were interrupted during correction of a viewer
-observation gap. The `d099a22` run `40586732900` finished all eight baseline
-typing/initial-content windows, then failed post-Undo Redo. No candidate sample
-ran, and no accepted improvement is asserted by these attempts.
+Schema3 was adopted after baseline observation and before any candidate
+measurement. It separates primary timing and initial integrity from Redo
+outcome. Only the baseline may report `baseline-capacity-refusal`: exact
+successful empty Undo, actual Ctrl+Y, exactly one same-unit sender capacity reload
+with clean:false inside the recorded Redo phase, and exact empty saved/peer/local
+recovery at the unchanged revision. Every other failure remains blocking.
+Candidate content, selections, full original-workload replay, no reloads and
+all latency targets remain mandatory. Old schema 2 and incomplete cases stay failed.
 
-## Schema 3 amendment before candidate measurement
+## Retention and independent review
 
-After those baseline failures, an exact 2,086-input native replay established
-the cause: the exact-input native reproduction has a 166,056-byte redo mutation array and a
-166,206-byte reserved envelope (fixture unit ID `doc`), exceeding the unchanged 65,536-byte sync limit. Typing and Undo
-pass real client/server/peer ACK and hash verification. Redo applies locally,
-then SyncClient refuses with `capacity`; confirmed/server/peer content stays
-empty. The mounted recovery reloads that saved state.
+The public record contains inspected numeric results, dispositions and checksums.
+The durable private measurement bundle supplied to the owner preserves raw CPU
+profiles, clock sidecars, input/long-task timelines, phase snapshots, manifests,
+test reports and logs beyond the seven-day Actions retention. Screenshots remain
+in the original CI artifacts. Automatic approval review rejected bulk public
+publication of the complete mixed CI ZIP; that payload is not republished.
 
-This revision adds only the same read-only, evidence-build reload event used by
-the candidate to the prior uncapped application. Alongside the identical mobile
-Enter compatibility repair, it records unit, reason, clean flag and browser-clock
-time. It does not install the 64-change cap, change transport limits, suppress
-recovery, clear history or otherwise repair the old redo behavior.
-
-Schema 3 explicitly separates valid primary timing and initial integrity from
-the baseline's observed redo outcome. It accepts a baseline capacity outcome
-only after exact successful Undo, actual Ctrl+Y, exactly one same-unit sender
-reload with reason `capacity` and `clean: false` in the Redo phase, and exact
-empty sender/saved/peer recovery. Other failures remain failures. The candidate
-must pass all exact content, selection, saved/peer, all-group undo/redo and
-zero-reload requirements. Timing budgets, original workload, three plain plus
-one profile sample per preset/source, first attempts and causal gates are
-unchanged. All old schema-2 attempts remain failed; only fresh paired schema-3
-samples may establish acceptance. Two nonimplementing reviewers assessed this
-amendment before any candidate measurement; final grades remain pending.
-
-The `d099a22` development browser shard also failed on one flaky existing Sheet
-preview permission-notice assertion. Its retry passed, but the gate remains
-failed. This record does not substitute a retry or an older revision for required
-current-commit CI.
-
-
-The schema-3 matched baseline is pinned at
-`64770ad962c543d6eb9d855e51bae994e457377d`. The fresh candidate is
-`993bafa92826e95b2d187c035a72936cdb66e8d9`; its collection is pending.
-Interrupted run dispositions are in `attempt-6f/` and `attempt-dbb/`.
-The failed schema-2 set's inspected numeric observations and artifact checksums
-are in [attempt-d099/result-summary.json](attempt-d099/result-summary.json).
-No accepted browser improvement or final review grade is asserted yet.
-
-
-## Matching concurrent main changes
-
-The next immutable baseline incorporates every file change from main
-`a9893ce3c72d0a707f97e4444f9b3f48a65dd226` through
-`0a9cd200a5a457a6160f9dfaa86c49460ccc24e2`, including SPN-063 documentation and
-SPN-095 Space Trash expiry runtime/server changes. None overlaps the baseline's
-application observation or mobile compatibility files. The uncapped grouping,
-identical read-only observer and Enter repair remain intact. This matching source
-update preserves the original workload, budgets and schema-3 outcome gates.
-The interrupted `993bafa` run is retained; its replacement follows current-main
-integration and is not a retry waiver.
+Two nonimplementing reviewers must each score above 95/100 on the same final
+candidate and have no blockers, after inspecting fresh paired raw evidence and
+all current required checks. Passing retries, historical scores and a matching
+tree alone do not establish acceptance.

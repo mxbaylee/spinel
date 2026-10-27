@@ -1,0 +1,16 @@
+{
+  "candidateHead": "53df5a842b61c9cddb19c2c074d2c4ce240aabca",
+  "candidateTree": "151cd8c1d607a1534ee0aed7d3811da5e0c886a5",
+  "ciMergeSource": "09cce1d160d5b03a20c7ba106c11a806ba90facb",
+  "ciMergeTree": "151cd8c1d607a1534ee0aed7d3811da5e0c886a5",
+  "parents": [
+    "0a9cd200a5a457a6160f9dfaa86c49460ccc24e2",
+    "53df5a842b61c9cddb19c2c074d2c4ce240aabca"
+  ],
+  "matchedBaseline": "3fdac69f413d2fd423bc7ded41acbd67a177739c",
+  "currentMain": "0a9cd200a5a457a6160f9dfaa86c49460ccc24e2",
+  "ciRun": 40597044138,
+  "storybookRun": 40597044076,
+  "candidateGroupLimit": 44,
+  "reviewStatus": "two independent source preflights; final grades pending measured pairs and current CI"
+}
