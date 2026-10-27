@@ -49,6 +49,7 @@ export class AuthService {
     return { options, challengeId: challenge.id };
   }
   async registrationOptions(session: Session) {
+    this.store.requireVerified(session);
     const user = session.user_id && this.store.user(session.user_id);
     if (!user) throw new AuthError(401, 'Sign in before adding a passkey.');
     const options = await webauthn.generateRegistrationOptions({
@@ -66,6 +67,7 @@ export class AuthService {
     return { options, challengeId: challenge.id };
   }
   async register(session: Session, id: string, response: RegistrationResponseJSON) {
+    this.store.requireVerified(session);
     const challenge = this.store.takeChallenge(id, session, 'registration');
     try {
       if (!session.user_id || !this.store.user(session.user_id))
@@ -77,9 +79,13 @@ export class AuthService {
         expectedRPID: this.rpID,
         requireUserVerification: true,
       });
-      if (!result.verified) throw new AuthError(400, 'Could not verify this passkey. Try again.');
-      this.store.assertPending(challenge);
-      return saveRegistration(this.store, session.user_id, result.registrationInfo);
+      if (!result.verified || !result.registrationInfo?.userVerified)
+        throw new AuthError(400, 'Could not verify this passkey. Try again.');
+      return this.store.transaction(() => {
+        this.store.assertPending(challenge);
+        this.store.requireVerified(session);
+        return saveRegistration(this.store, session.user_id!, result.registrationInfo);
+      });
     } catch (error) {
       if (error instanceof AuthError) throw error;
       throw new AuthError(400, 'Could not verify this passkey. Try again.');
@@ -87,19 +93,63 @@ export class AuthService {
       this.store.finish(id);
     }
   }
+  async reauthenticationOptions(session: Session) {
+    const current = this.store.sessionByHash(session.token_hash);
+    if (!current?.user_id || current.user_id !== session.user_id)
+      throw new AuthError(401, 'Your session expired. Sign in again.');
+    const options = await webauthn.generateAuthenticationOptions({
+      rpID: this.rpID,
+      userVerification: 'required',
+      allowCredentials: this.store.passkeys(current.user_id).map((key) => ({
+        id: key.id,
+        transports: this.store.transports(key),
+      })),
+    });
+    const challenge = this.store.addChallenge(current, 'reauthentication', options.challenge);
+    return { options, challengeId: challenge.id };
+  }
+  async reauthenticate(session: Session, id: string, response: AuthenticationResponseJSON) {
+    return this.verifyAuthentication(session, id, response, 'reauthentication', (user, keyId) => {
+      if (user.id !== session.user_id)
+        throw new AuthError(400, 'Use a passkey for your signed-in account.');
+      // Do not rotate the cookie or change its source credential. Pending OAuth consent
+      // and revocation attribution belong to this exact browser session.
+      this.store.markVerified(session, keyId);
+      return { verifiedUntil: this.store.verifiedUntil(session)! };
+    });
+  }
   async authenticate(session: Session, id: string, response: AuthenticationResponseJSON) {
-    const challenge = this.store.takeChallenge(id, session, 'authentication');
+    return this.verifyAuthentication(session, id, response, 'authentication', (user, keyId) => {
+      const next = this.store.createSession(user.id, undefined, keyId);
+      this.store.markVerified(next.session, keyId);
+      this.store.revokeSession(session.token_hash);
+      return { ...next, session: this.store.sessionByHash(next.session.token_hash)!, user };
+    });
+  }
+  private async verifyAuthentication<T>(
+    session: Session,
+    id: string,
+    response: AuthenticationResponseJSON,
+    kind: 'authentication' | 'reauthentication',
+    complete: (user: NonNullable<ReturnType<AuthStore['user']>>, keyId: string) => T,
+  ): Promise<T> {
+    const challenge = this.store.takeChallenge(id, session, kind);
     try {
       const key = this.store.passkey(response.id);
       const user = key && this.store.user(key.user_id);
       if (
         !key ||
         !user ||
-        response.response.userHandle !== Buffer.from(user.id).toString('base64url')
+        (kind === 'reauthentication' && user.id !== session.user_id) ||
+        // An allowCredentials ceremony may omit userHandle; if supplied it must match.
+        (response.response.userHandle !== Buffer.from(user.id).toString('base64url') &&
+          !(kind === 'reauthentication' && !response.response.userHandle))
       ) {
         throw new AuthError(
           400,
-          'This passkey is not available. Try another passkey or contact the operator.',
+          kind === 'reauthentication'
+            ? 'Use a passkey for your signed-in account.'
+            : 'This passkey is not available. Try another passkey or contact the operator.',
         );
       }
       const result = await this.verify.verifyAuthenticationResponse({
@@ -115,28 +165,29 @@ export class AuthService {
           transports: this.store.transports(key),
         },
       });
-      if (!result.verified) throw new AuthError(400, 'Could not verify this passkey. Try again.');
-      this.store.assertPending(challenge);
-      if (!this.store.user(user.id))
-        throw new AuthError(401, 'This account is no longer available.');
-      const update = this.store.database
-        .prepare(
-          `UPDATE auth_passkeys SET counter=?,last_used_at=?,backed_up=?
-        WHERE id=? AND user_id=? AND counter=?`,
-        )
-        .run(
-          result.authenticationInfo.newCounter,
-          this.store.now(),
-          Number(result.authenticationInfo.credentialBackedUp),
-          key.id,
-          user.id,
-          key.counter,
-        );
-      if (update.changes !== 1)
-        throw new AuthError(409, 'This passkey changed or was removed. Try again.');
-      const next = this.store.createSession(user.id, undefined, key.id);
-      this.store.revokeSession(session.token_hash);
-      return { ...next, user };
+      if (!result.verified || !result.authenticationInfo.userVerified)
+        throw new AuthError(400, 'Could not verify this passkey. Try again.');
+      return this.store.transaction(() => {
+        this.store.assertPending(challenge);
+        if (!this.store.user(user.id))
+          throw new AuthError(401, 'This account is no longer available.');
+        const update = this.store.database
+          .prepare(
+            `UPDATE auth_passkeys SET counter=?,last_used_at=?,backed_up=?
+          WHERE id=? AND user_id=? AND counter=?`,
+          )
+          .run(
+            result.authenticationInfo.newCounter,
+            this.store.now(),
+            Number(result.authenticationInfo.credentialBackedUp),
+            key.id,
+            user.id,
+            key.counter,
+          );
+        if (update.changes !== 1)
+          throw new AuthError(409, 'This passkey changed or was removed. Try again.');
+        return complete(user, key.id);
+      });
     } catch (error) {
       if (error instanceof AuthError) throw error;
       throw new AuthError(400, 'Could not verify this passkey. Try again.');

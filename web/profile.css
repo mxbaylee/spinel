@@ -289,3 +289,40 @@
     display: none;
   }
 }
+
+.profile-key-settings .profile-passkeys li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 0;
+}
+.profile-key-settings .profile-passkeys li > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.profile-key-settings .profile-passkeys li p {
+  margin: 4px 0 0;
+}
+.profile-key-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.profile-key-confirmation {
+  display: grid;
+  gap: 16px;
+}
+.profile-key-confirmation p {
+  margin: 0;
+}
+.profile-key-confirmation .profile-key-actions {
+  justify-content: flex-end;
+}
+@media (max-width: 640px), (any-pointer: coarse) {
+  .profile-key-settings .sp-control,
+  .profile-key-confirmation .sp-control {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}

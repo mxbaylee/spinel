@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
+import { InvitationService } from '../src/server/auth/invitations.ts';
 
 test('signed-out pages redirect and APIs expose no workspace data', async ({ page, request }) => {
   await page.goto('/settings');
@@ -35,20 +36,9 @@ test('registers two devices, signs in with either, persists and revokes sessions
       : 'test-results/production/app.sqlite',
   );
   const store = new AuthStore(database);
-  const user = store.createUser(`Owner ${testInfo.testId}`);
-  const initial = store.createSession(user.id);
-  await context.addCookies([
-    {
-      name: COOKIE_NAME,
-      value: initial.token,
-      // CDP requires a secure source URL for __Host- cookie injection.
-      // The app still issues and rotates real Secure cookies over localhost.
-      url: baseURL!.replace('http:', 'https:'),
-      httpOnly: true,
-      secure: true,
-      sameSite: 'Strict',
-    },
-  ]);
+  const operator = store.createUser(`Enrollment operator ${testInfo.testId}`, true);
+  const invite = new InvitationService(store, baseURL!).create(operator.id);
+  let userId: string | undefined;
   const cdp = await context.newCDPSession(page);
   await cdp.send('WebAuthn.enable');
   const options = {
@@ -61,20 +51,28 @@ test('registers two devices, signs in with either, persists and revokes sessions
   };
   const first = (await cdp.send('WebAuthn.addVirtualAuthenticator', { options })).authenticatorId;
   try {
+    // Enroll the initial key through the real invitation path: a legacy session
+    // without a credential must not bootstrap security-sensitive account changes.
+    await page.goto(invite.url);
+    await page.getByLabel('Your name').fill(`Owner ${testInfo.testId}`);
+    await page.getByRole('button', { name: 'Join with a passkey' }).click();
+    await expect(page.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
+    const initial = (await context.cookies()).find((cookie) => cookie.name === COOKIE_NAME)!;
+    userId = store.session(initial.value)!.user_id!;
+    const user = store.user(userId)!;
     await page.goto('/settings#passkeys');
-    await page.getByRole('button', { name: 'Add a passkey' }).click();
     await expect(page.getByRole('listitem')).toHaveCount(1);
     await expect(page.getByRole('listitem')).toContainText('Passkey');
     await page.getByRole('button', { name: 'Sign out', exact: true }).click();
     await expect(page).toHaveURL(/\/sign-in$/);
-    expect(store.session(initial.token)).toBeUndefined();
+    expect(store.session(initial.value)).toBeUndefined();
     await page.getByRole('button', { name: 'Sign in with a passkey' }).click();
     await expect(page.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
     await page.reload();
     await expect(page.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
     const cookie = (await context.cookies()).find((cookie) => cookie.name === COOKIE_NAME)!;
     expect(cookie).toMatchObject({ httpOnly: true, secure: true, sameSite: 'Strict' });
-    expect(cookie.value).not.toBe(initial.token);
+    expect(cookie.value).not.toBe(initial.value);
     expect((await context.request.get('/api/health')).ok()).toBe(true);
     await cdp.send('WebAuthn.setAutomaticPresenceSimulation', {
       authenticatorId: first,
@@ -161,7 +159,8 @@ test('registers two devices, signs in with either, persists and revokes sessions
     await page.getByRole('button', { name: 'Sign in with a passkey' }).click();
     await expect(page.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
   } finally {
-    store.database.prepare('DELETE FROM auth_users WHERE id=?').run(user.id);
+    if (userId) store.database.prepare('DELETE FROM auth_users WHERE id=?').run(userId);
+    store.database.prepare('DELETE FROM auth_users WHERE id=?').run(operator.id);
     database.close();
   }
 });

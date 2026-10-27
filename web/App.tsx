@@ -1,5 +1,6 @@
 import { AuthEntry } from './AuthEntry.tsx';
 import { ProfilePage } from './ProfilePage.tsx';
+import { PasskeySettings } from './PasskeySettings.tsx';
 import { DiagnosticsProvider, useAccountDiagnostics } from './useDiagnostics.tsx';
 import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
@@ -45,7 +46,6 @@ const SpaceSheetEditor = lazy(() =>
 );
 
 type User = { id: string; name: string; isAdmin: boolean; icon?: string; color?: string };
-type Passkey = { id: string; name: string; provider: string };
 
 export function App() {
   return (
@@ -99,7 +99,8 @@ function AccountApp() {
     user && loaded && !local && !signOutPending() ? user.id : null,
     browserOnline && (editorConnection ?? serverConnection) === 'online',
   );
-  const [keys, setKeys] = useState<Passkey[]>([]);
+  const [passkeyRevision, setPasskeyRevision] = useState(0);
+  const [passkeyProofReset, setPasskeyProofReset] = useState(0);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
@@ -131,8 +132,6 @@ function AccountApp() {
   const [inviteName, setInviteName] = useState('');
   const [setupLink] = useState(() => (consoleClaim ? location.hash.slice(1).split('.') : []));
   const [setupId, setupSecret] = setupLink;
-  const refreshKeys = async () =>
-    setKeys((await api<{ passkeys: Passkey[] }>('passkeys')).passkeys);
   useEffect(() => {
     if (invitation) {
       history.replaceState(null, '', '/invite');
@@ -185,7 +184,6 @@ function AccountApp() {
         if (connectRequest && location.pathname === '/sign-in')
           location.assign(`/connect?request=${encodeURIComponent(connectRequest)}`);
         else if (spaceReturn && !user.isAdmin) location.assign(spaceReturn);
-        if (settings) await refreshKeys();
       } catch (failure) {
         // Only an unreachable server opens local data; a 401 still signs in.
         if (!isNetworkFailure(failure)) {
@@ -329,7 +327,7 @@ function AccountApp() {
       });
       if (current.cancelled) return;
       if (register && !consoleClaim && !invitation) {
-        await refreshKeys();
+        setPasskeyRevision((revision) => revision + 1);
         setNotice(`${result.name} added. You can use it to sign in.`);
       } else
         location.assign(
@@ -341,6 +339,8 @@ function AccountApp() {
         );
     } catch (failure) {
       if (!current.cancelled) {
+        if (register && (failure as { status?: number }).status === 428)
+          setPasskeyProofReset((revision) => revision + 1);
         // Browser exception names vary across providers; keep the retry action clear.
         setError(
           failure instanceof DOMException ||
@@ -524,27 +524,20 @@ function AccountApp() {
               onSaved={(profile) => setUser({ ...user, ...profile })}
               onSignOut={() => void signOut()}
               passkeys={
-                <section aria-labelledby="passkeys-heading">
-                  <h2 id="passkeys-heading">Your passkeys</h2>
-                  <p>
-                    Add a passkey from another device or password manager so you can sign in there
-                    too.
-                  </p>
-                  {keys.length ? (
-                    <ul className="profile-passkeys">
-                      {keys.map((key) => (
-                        <li key={key.id}>
-                          <strong>{key.name}</strong>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p>No passkeys added yet.</p>
-                  )}
-                  <button className="primary" disabled={busy} onClick={() => void ceremony(true)}>
-                    Add a passkey
-                  </button>
-                </section>
+                <PasskeySettings
+                  key={user.id}
+                  adding={busy}
+                  isAdmin={user.isAdmin}
+                  revision={passkeyRevision}
+                  verificationRequired={passkeyProofReset}
+                  onAdd={() => void ceremony(true)}
+                  onSignedOut={() => {
+                    stopDiagnostics();
+                    clearDashboardNavigation();
+                    setPreparedAccount(null);
+                    location.assign(signInPath());
+                  }}
+                />
               }
             />
           ) : user.isAdmin ? (

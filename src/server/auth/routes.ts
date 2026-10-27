@@ -300,6 +300,46 @@ export function authRoutes(
     }
     response.json(await service.authenticationOptions(session));
   });
+  function emptyConfirmation(request: Request) {
+    if (!request.body || Array.isArray(request.body) || Object.keys(request.body).length)
+      throw new AuthError(400, 'Confirm without additional account changes.');
+  }
+  router.post('/reauthentication/options', async (request, response) => {
+    emptyConfirmation(request);
+    response.json(await service.reauthenticationOptions(requireSession(request, true)));
+  });
+  router.post('/reauthentication/verify', async (request, response) => {
+    const body = payload(request);
+    response.json(
+      await service.reauthenticate(requireSession(request, true), body.challengeId, body.response),
+    );
+  });
+  router.post('/passkeys/:id/remove', async (request, response) => {
+    emptyConfirmation(request);
+    const result = store.removeOwnPasskey(requireSession(request, true), String(request.params.id));
+    try {
+      await accessChanged();
+    } catch {
+      throw new AuthError(
+        503,
+        'Passkey removed and its sessions ended, but open connections could not refresh. Refresh to see the result.',
+      );
+    }
+    response.json(result);
+  });
+  router.post('/sign-out-others', async (request, response) => {
+    emptyConfirmation(request);
+    store.signOutOthers(requireSession(request, true));
+    try {
+      await accessChanged();
+    } catch {
+      throw new AuthError(
+        503,
+        'Other sessions ended, but open connections could not refresh. Refresh to see the result.',
+      );
+    }
+    response.json({ signedOutOthers: true });
+  });
   router.post('/registration/options', async (request, response) => {
     response.json(await service.registrationOptions(requireSession(request, true)));
   });
@@ -356,12 +396,14 @@ export function authRoutes(
   router.get('/passkeys', (request, response) => {
     const session = requireSession(request, true);
     response.json({
+      verifiedUntil: store.verifiedUntil(session),
       passkeys: store
         .passkeys(session.user_id!)
         .map(({ id, name, provider, created_at, last_used_at }) => ({
           id,
           name,
           provider,
+          current: session.passkey_id === id,
           createdAt: created_at,
           lastUsedAt: last_used_at,
         })),
