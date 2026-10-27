@@ -27,7 +27,7 @@ import { SpaceRecoveryStore } from '../workspace/space-recovery.ts';
 import { SheetStore } from '../workspace/sheets.ts';
 import { DocumentStore } from '../workspace/documents.ts';
 import { CollaborationStore } from '../collaboration/service.ts';
-import { attachCollaboration } from '../collaboration/transport.ts';
+import { attachSync } from '../sync/transport.ts';
 import { mcpRoutes } from './routes.ts';
 import { McpDocuments } from './documents.ts';
 import { docFormulas, formulaBody } from '@spinel/doc-formulas';
@@ -376,14 +376,17 @@ test('Space MCP materialization rechecks the original root role and credential a
 test('Space MCP final commit rejects root grant, token, owner, downgrade and ancestry changes', async () => {
   const f = await spaceFixture();
   let invalidate: (() => void) | undefined;
-  f.collab.service.use('commitChangeset', async (_context, next) => {
-    const pending = next();
+  f.collab.onSubmitting(async () => {
+    await Promise.resolve();
     invalidate?.();
-    await pending;
   });
-  const transport = attachCollaboration(createServer(), f.workspace, f.collab, 'http://localhost', {
-    spaceReview: true,
-  });
+  const transport = attachSync(
+    createServer(),
+    express(),
+    f.workspace,
+    f.collab,
+    'http://localhost',
+  );
   cleanup.push(() => transport.close());
   for (const reason of ['grant', 'token', 'owner', 'downgrade', 'ancestry'] as const) {
     const editor = f.credentials(f.editor.id);
@@ -421,7 +424,7 @@ test('cell writes commit through the live service, preserve styles and retry exa
   const f = await fixture(),
     edit = await f.sheetEdit();
   const committed = vi.fn();
-  f.collab.service.on('changesetCommitted', committed);
+  f.collab.onCommitted(committed);
   expect(await f.documents.edit(f.identity, 'sheet', edit)).toMatchObject({
     revision: 2,
     status: 'committed',
@@ -465,17 +468,17 @@ test.each(['token', 'account', 'grant'] as const)(
     const f = await fixture();
     const identity = f.credentials(f.editor.id),
       edit = await f.sheetEdit(identity);
-    f.collab.service.use('commitChangeset', async (_context, next) => {
-      // Start the real transport middleware, then revoke while its recipient scan is awaited.
-      const pending = next();
+    f.collab.onSubmitting(async () => {
+      // Revoke after asynchronous admission; the durable transaction rechecks it.
+      await Promise.resolve();
       if (revoked === 'token') f.tokens.revoke(f.editor.id, identity.id);
       else if (revoked === 'account')
         f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(f.editor.id);
       else f.workspace.share(f.owner.id, f.sheet.id, f.editor.id, null);
-      await pending;
     });
-    const transport = attachCollaboration(
+    const transport = attachSync(
       createServer(),
+      express(),
       f.workspace,
       f.collab,
       'http://localhost',
@@ -571,12 +574,12 @@ for (const revoke of ['token', 'account', 'grant'] as const)
     const f = await fixture(),
       identity = f.credentials(f.editor.id),
       edit = await f.sheetEdit(identity);
-    f.collab.service.use('applyChangeset', async (_context, next) => {
+    f.collab.onSubmitting(async () => {
       if (revoke === 'token') f.tokens.revoke(f.editor.id, identity.id);
       if (revoke === 'account')
         f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(f.editor.id);
       if (revoke === 'grant') f.workspace.share(f.owner.id, f.sheet.id, f.editor.id, null);
-      await next();
+      await Promise.resolve();
     });
     await expect(f.documents.edit(identity, 'sheet', edit)).rejects.toThrow();
     const current = await f.collab.load(f.owner.id, f.sheet.id);
@@ -614,9 +617,9 @@ test('restore fences reject stale-generation writes without changing the restore
 test('competing edits are rejected at commit rather than silently transformed over a stale base', async () => {
   const f = await fixture(),
     edit = await f.sheetEdit();
-  const original = f.collab.service.submitChangeset.bind(f.collab.service);
+  const original = f.collab.submitChangeset.bind(f.collab);
   let intercepted = false;
-  vi.spyOn(f.collab.service, 'submitChangeset').mockImplementation(async (input, context) => {
+  vi.spyOn(f.collab, 'submitChangeset').mockImplementation(async (input, context) => {
     if (!intercepted) {
       intercepted = true;
       const competing = await original(
@@ -656,7 +659,7 @@ test('official HTTP MCP client reads and edits both types; token UI APIs enforce
         server.closeAllConnections();
       }),
   );
-  const transport = attachCollaboration(server, f.workspace, f.collab, origin);
+  const transport = attachSync(server, app, f.workspace, f.collab, origin);
   cleanup.push(() => transport.close());
   const address = server.address();
   if (!address || typeof address === 'string') throw new Error('No server');
@@ -765,15 +768,14 @@ test('SDK OAuth discovery, browser consent, PKCE, refresh and disconnect reach t
   app.use('/mcp', mcpRoutes(f.workspace, f.collab, origin));
   let disconnectDuringCommit = false,
     revoked = false;
-  f.collab.service.use('commitChangeset', async (_context, next) => {
-    const pending = next();
+  f.collab.onSubmitting(async () => {
+    await Promise.resolve();
     if (disconnectDuringCommit) {
       revoked = true;
       oauth.disconnect(f.owner.id, String(oauth.list(f.owner.id)[0].id));
     }
-    await pending;
   });
-  const live = attachCollaboration(server, f.workspace, f.collab, origin);
+  const live = attachSync(server, app, f.workspace, f.collab, origin);
   cleanup.push(() => live.close());
   const metadata = await (await fetch(`${origin}/.well-known/oauth-authorization-server`)).json();
   expect(metadata.token_endpoint_auth_methods_supported).toEqual(['none']);

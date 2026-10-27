@@ -1,7 +1,7 @@
 import { SaveStatus } from './SaveStatus.tsx';
 import { recordNativeMutationInventory } from './nativeMutationInventory.ts';
 import { readOnlySheetDrawings } from './readOnlySheetDrawings.ts';
-import { sheetImages, sheetImageOverride } from './sheetImages.ts';
+import { sheetImages } from './sheetImages.ts';
 import sheetDrawingEnglish from '@univerjs/preset-sheets-drawing/locales/en-US';
 import { EditorTools } from './EditorTools.tsx';
 import { useEditorChrome } from './EditorFrame.tsx';
@@ -26,14 +26,11 @@ import { createUniver, LocaleType, mergeLocales } from '@univerjs/presets';
 import enUS from '@univerjs/preset-sheets-core/locales/en-US';
 import '@univerjs/preset-sheets-core/lib/index.css';
 import {
-  collaborationPlugins,
   prepareCollaboration,
   identifyCollaborator,
   watchCollaboration,
   loadSpinelDocument,
   disposeSpinelSync,
-  ClientEnglish,
-  UIEnglish,
 } from './collaboration.ts';
 import type { SaveState } from '../src/shared/autosave.ts';
 import { editorReady } from './editorReady.ts';
@@ -110,31 +107,17 @@ export function SheetEditor({
     void (async () => {
       const data = await prepareCollaboration(id, spaceId, () => !disposed);
       if (disposed) return;
-      const nativePermissions =
-        data.syncVersion === 1 ? nativeSyncPermissions(data.unitId, data.access) : undefined;
+      const nativePermissions = nativeSyncPermissions(data.unitId, data.access);
       recordNativeMutationInventory();
       const { univer, univerAPI } = createUniver({
         theme: editorTheme(),
         darkMode: getTheme() === 'dark',
         locale: LocaleType.EN_US,
         locales: {
-          [LocaleType.EN_US]: mergeLocales(enUS, ClientEnglish, UIEnglish, sheetDrawingEnglish),
+          [LocaleType.EN_US]: mergeLocales(enUS, sheetDrawingEnglish),
         },
-        ...(data.syncVersion !== 1 ? { collaboration: true as const } : {}),
-        ...(nativePermissions ? { override: nativePermissions.override } : {}),
-        plugins: [
-          ...collaborationPlugins(
-            data.unitId,
-            [[...sheetImageOverride]],
-            false,
-            spaceId ? { spaceId, itemId: id } : undefined,
-            data.syncVersion === 1,
-          ),
-        ],
-        presets: [
-          sheetPreset(container.current!, mobile),
-          sheetImages(mobile, data.syncVersion !== 1),
-        ],
+        override: nativePermissions.override,
+        presets: [sheetPreset(container.current!, mobile), sheetImages(mobile)],
       });
       // Sheet services are registered lazily when the first sheet is created.
       // Own disposal before awaiting load, then attach display hooks after readiness.
@@ -172,7 +155,7 @@ export function SheetEditor({
       installCanvasColors(univer);
       identifyCollaborator(univer, data.user);
       const readOnly = async () => {
-        nativePermissions?.readonly();
+        nativePermissions.readonly();
         // This tab's presentation follows its grant; never change shared permissions.
         const permissions = univer.__getInjector().get(IPermissionService);
         for (const Point of getAllWorkbookPermissionPoint()) {
@@ -185,40 +168,36 @@ export function SheetEditor({
         }
         readOnlySheetDrawings(univer, data.unitId);
       };
-      if (data.syncVersion === 1)
-        await loadSpinelDocument({
-          univer,
-          unitId: data.unitId,
-          itemId: id,
-          spaceId,
-          access: data.access,
-          kind: 'sheet',
-          signal: loading.signal,
-          isCurrent: () => !disposed,
-          initializeAccess: () => (data.access === 'viewer' ? readOnly() : undefined),
-          onInitialPending: () =>
-            publish({
-              dirty: true,
-              failed: false,
-              message: 'Changes not saved yet — keep this tab open.',
-            }),
-          reload: () => {
-            if (disposed) return;
-            initialized = false;
-            syncNotice.current =
-              'The document was reloaded after a synchronization problem. Edits the server did not accept were discarded.';
-            publish({
-              dirty: false,
-              failed: true,
-              message: 'Reloading after a synchronization problem…',
-            });
-            reload((generation) => generation + 1);
-          },
-        });
-      const workbook =
-        data.syncVersion === 1
-          ? univerAPI.getActiveWorkbook()
-          : await univerAPI.getCollaboration().loadSheetAsync(data.unitId);
+      await loadSpinelDocument({
+        univer,
+        unitId: data.unitId,
+        itemId: id,
+        spaceId,
+        access: data.access,
+        kind: 'sheet',
+        signal: loading.signal,
+        isCurrent: () => !disposed,
+        initializeAccess: () => (data.access === 'viewer' ? readOnly() : undefined),
+        onInitialPending: () =>
+          publish({
+            dirty: true,
+            failed: false,
+            message: 'Changes not saved yet — keep this tab open.',
+          }),
+        reload: () => {
+          if (disposed) return;
+          initialized = false;
+          syncNotice.current =
+            'The document was reloaded after a synchronization problem. Edits the server did not accept were discarded.';
+          publish({
+            dirty: false,
+            failed: true,
+            message: 'Reloading after a synchronization problem…',
+          });
+          reload((generation) => generation + 1);
+        },
+      });
+      const workbook = univerAPI.getActiveWorkbook();
       if (!workbook) throw new Error('Could not load this spreadsheet.');
       await editorReady(univerAPI);
       if (disposed) return;
@@ -284,17 +263,7 @@ export function SheetEditor({
         return;
       }
       initialized = true;
-      save = watchCollaboration(
-        univer,
-        univerAPI,
-        data.unitId,
-        id,
-        data.access,
-        publish,
-        readOnly,
-        publishConnection,
-        spaceId,
-      );
+      save = watchCollaboration(univer, publish, readOnly, publishConnection);
       controller.current = save;
     })().catch((error) => {
       publishConnection('offline');

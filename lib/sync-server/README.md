@@ -178,6 +178,13 @@ The headless native logger is set to `SILENT` through its public service before
 plugins or snapshots load, so native warnings and parser errors cannot bypass
 the content-free diagnostic boundary.
 
+The headless model preserves authored formulas and native reference rewrites, but
+does not execute formulas in the sync process. The public engine configuration
+disables calculation and its initial scheduling. This prevents background cache
+changes and browser-only `IMAGE()` evaluation while loading or applying retained
+work. Calculation in the visible editor and explicit authorized evaluation paths
+remains separate; existing saved formula caches are preserved as input data.
+
 ## Reconnect replay
 
 `server.replay(unitId, afterRevision, actor)` synchronously returns

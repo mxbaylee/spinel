@@ -28,7 +28,7 @@ afterEach(async () => {
   for (const close of cleanup.splice(0).reverse()) await close();
 });
 
-async function fixture(space = false, syncServer = true) {
+async function fixture(space = false) {
   const directory = await mkdtemp(join(tmpdir(), 'spinel-owned-sync-'));
   cleanup.push(() => rm(directory, { recursive: true, force: true }));
   const path = join(directory, 'app.sqlite');
@@ -74,7 +74,7 @@ async function fixture(space = false, syncServer = true) {
     ...(root && { spaceId: root.id, spaceItem: id }),
   });
   const diagnostics = vi.fn();
-  let collab = new CollaborationStore(workspace, path, { syncServer, diagnostics });
+  let collab = new CollaborationStore(workspace, path, { diagnostics });
   let closed = false;
   const close = async () => {
     if (!closed) {
@@ -83,9 +83,9 @@ async function fixture(space = false, syncServer = true) {
     }
   };
   cleanup.push(close);
-  const restart = async (enabled = syncServer) => {
+  const restart = async () => {
     await close();
-    collab = new CollaborationStore(workspace, path, { syncServer: enabled, diagnostics });
+    collab = new CollaborationStore(workspace, path, { diagnostics });
     closed = false;
     return collab;
   };
@@ -374,67 +374,37 @@ test('an enabled server prepares native Docs but refuses automatic migration of 
   ).toBeUndefined();
 });
 
-test('the own server remains disabled unless explicitly enabled', async () => {
-  const f = await fixture(false, false);
-  expect(f.collab.sync).toBeUndefined();
-  await expect(f.submit(f.request('not enabled'))).rejects.toThrow('unavailable');
-  expect(
-    f.db.prepare("SELECT 1 FROM sqlite_schema WHERE name='spinel_sync_units'").get(),
-  ).toBeUndefined();
-});
-
-test('changing the server flag cannot open or overwrite owned data through the legacy backend', async () => {
+test('native sync is the only backend by default and survives a restart', async () => {
   const f = await fixture();
+  expect(f.collab.sync).toBeDefined();
   const edit = f.request('owned-server data');
   await f.collab.prepare(f.owner.id, edit.unitId, f.custom());
   await f.submit(edit);
-  const disabled = await f.restart(false);
-  await expect(disabled.prepare(f.owner.id, edit.unitId, f.custom())).rejects.toThrow();
-  await expect(disabled.load(f.owner.id, edit.unitId, f.custom())).rejects.toThrow();
-  const changeset: IChangeset = {
-    unitID: edit.unitId,
-    type: UniverType.UNIVER_SHEET,
-    baseRev: 2,
-    revision: 0,
-    userID: f.owner.id,
-    memberID: 'legacy-tab',
-    sid: 'legacy-tab',
-    reqId: 1,
-    mutations: edit.mutations.map((mutation) => ({
-      id: mutation.id,
-      data: JSON.stringify(mutation.params),
-    })),
-  };
-  await expect(
-    disabled.submitChangeset(
-      { changeset },
-      { userID: f.owner.id, memberID: 'legacy-tab', customData: f.custom() },
-    ),
-  ).resolves.toMatchObject({ status: 'rejected' });
-  expect(
-    f.db.prepare('SELECT revision FROM spinel_sync_units WHERE unit_id=?').get(edit.unitId)
-      ?.revision,
-  ).toBe(2);
-  await f.restart(true);
+  const reopened = await f.restart();
+  await reopened.prepare(f.owner.id, edit.unitId, f.custom());
   expect((await f.load()).revision).toBe(2);
   expect(((await f.load()).snapshot as IWorkbookData).sheets.first.cellData?.[0]?.[0]?.v).toBe(
     'owned-server data',
   );
+  expect(
+    f.db.prepare('SELECT revision FROM spinel_sync_units WHERE unit_id=?').get(edit.unitId)
+      ?.revision,
+  ).toBe(2);
 });
 
-test('the purge queue removes owned generations even after the server flag is disabled', async () => {
+test('the purge queue removes owned generations after restart', async () => {
   const f = await fixture();
   const edit = f.request('deleted owned data');
   await f.collab.prepare(f.owner.id, edit.unitId, f.custom());
   await f.submit(edit);
-  const disabled = await f.restart(false);
+  const reopened = await f.restart();
   const trash = new TrashStore(f.workspace);
   trash.trash(f.owner.id, edit.unitId);
   trash.empty(f.owner.id, trash.list(f.owner.id).version);
   expect(
     f.db.prepare('SELECT 1 FROM collaboration_purge WHERE item_id=?').get(edit.unitId),
   ).toBeTruthy();
-  await disabled.purgeDeleted();
+  await reopened.purgeDeleted();
   expect(
     f.db.prepare('SELECT 1 FROM spinel_sync_units WHERE unit_id=?').get(edit.unitId),
   ).toBeUndefined();

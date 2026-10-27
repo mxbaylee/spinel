@@ -104,7 +104,7 @@ export function guestRoutes(
     const item = workspace.get(user, id);
     response.json({
       unitId: collaboration.generations.active(id).unitId,
-      ...(collaboration.sync && { syncVersion: 1 }),
+      syncVersion: 1,
       access: item.access,
       user: { id: user, name: 'Guest' },
     });

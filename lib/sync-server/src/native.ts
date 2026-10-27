@@ -13,10 +13,11 @@ import { UniverDocsPlugin } from '@univerjs/docs';
 import { UniverDocsDrawingPlugin } from '@univerjs/docs-drawing';
 import { UniverDocsHyperLinkPlugin } from '@univerjs/docs-hyper-link';
 import { UniverDrawingPlugin } from '@univerjs/drawing';
+import { UniverFormulaEnginePlugin } from '@univerjs/engine-formula';
 import { UniverRenderEnginePlugin } from '@univerjs/engine-render';
 import { UniverSheetsPlugin } from '@univerjs/sheets';
 import { UniverSheetsDrawingPlugin } from '@univerjs/sheets-drawing';
-import { UniverSheetsFormulaPlugin } from '@univerjs/sheets-formula';
+import { CalculationMode, UniverSheetsFormulaPlugin } from '@univerjs/sheets-formula';
 import { UniverSheetsNumfmtPlugin } from '@univerjs/sheets-numfmt';
 import type { Mutation } from '@spinel/sync-transform';
 import type { DocumentKind, NativeSnapshot } from './types.ts';
@@ -173,7 +174,13 @@ export class NativeModel {
       // Docs rich text resolves render services, but no DOM or canvas is created.
       this.univer.registerPlugin(UniverRenderEnginePlugin);
       this.univer.registerPlugin(UniverSheetsPlugin);
-      this.univer.registerPlugin(UniverSheetsFormulaPlugin);
+      // This model applies authored mutations and formula-reference rewrites.
+      // Calculation belongs to the live editor/explicit evaluation boundary;
+      // background IMAGE() evaluation would require a browser and fetch URLs.
+      this.univer.registerPlugin(UniverFormulaEnginePlugin, { notExecuteFormula: true });
+      this.univer.registerPlugin(UniverSheetsFormulaPlugin, {
+        initialFormulaComputing: CalculationMode.NO_CALCULATION,
+      });
       this.univer.registerPlugin(UniverSheetsNumfmtPlugin);
       this.univer.registerPlugin(UniverDocsPlugin);
       this.univer.registerPlugin(UniverDocsHyperLinkPlugin);

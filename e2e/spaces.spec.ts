@@ -1,13 +1,11 @@
+import { syncNetwork } from './sync-network.ts';
 import { downloadPdf, inspectPdf } from './pdfEvidence.ts';
 import { mkdir, mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { expect, test } from '@playwright/test';
 import type { Browser, BrowserContext, Dialog, Locator, Page, TestInfo } from '@playwright/test';
-import { JSONX } from '@univerjs/core';
-import type { IDocumentData, JSONXActions } from '@univerjs/core';
-import { ErrorCode } from '@univerjs/protocol';
-import type { IGetUnitOnRevResponse } from '@univerjs/protocol';
+import type { IDocumentData, IWorkbookData } from '@univerjs/core';
 import { quoteFormulaName } from '@spinel/doc-formulas';
 import { startApp } from './app-process.ts';
 import { openDatabase } from '../server/database.ts';
@@ -19,8 +17,8 @@ import { SpaceLifecycleStore } from '../src/server/workspace/space-lifecycle.ts'
 import type { SpaceNode, SpaceRoot, SpaceTreeData } from '../src/shared/spaces.ts';
 import type { SpaceFile } from '../src/shared/workspace.ts';
 
-// The server/Pro SDK stays in startApp's child process. The collector uses the
-// public core JSONX operation reader only to verify persisted native Doc data.
+// Native materialization stays in startApp's child process. The collector reads
+// the server-confirmed native snapshot through the exact child boundary.
 async function fixture(browser: Browser, info: TestInfo) {
   const directory = await mkdtemp(join(tmpdir(), 'spinel-spaces-e2e-'));
   const databasePath = join(directory, 'app.sqlite');
@@ -60,6 +58,7 @@ async function fixture(browser: Browser, info: TestInfo) {
       isMobile: phone,
       permissions: ['clipboard-read', 'clipboard-write'],
     });
+    await syncNetwork(context);
     contexts.push(context);
     await context.addCookies([session(id)]);
     const page = await context.newPage();
@@ -346,58 +345,24 @@ async function nativeState(
   expect(metadata.ok()).toBe(true);
   const unitID = (await metadata.json()).live.unitId as string;
   const response = await context.request.get(
-    `/space-api/${spaceId}/items/${itemId}/universer-api/snapshot/${type}/unit/${unitID}/rev/0`,
+    `/sync-api/spaces/${spaceId}/items/${itemId}/snapshot?unitId=${unitID}`,
   );
   expect(response.ok()).toBe(true);
-  const { snapshot, changesets, error } = (await response.json()) as IGetUnitOnRevResponse;
-  // The public protocol returns an error envelope even on success: OK is 1.
-  expect(error?.code).toBe(ErrorCode.OK);
-  expect(snapshot).toMatchObject({ unitID, type });
-  return { unitID, snapshot, changesets };
+  const state = (await response.json()) as {
+    unitId: string;
+    revision: number;
+    snapshot: IDocumentData | IWorkbookData;
+  };
+  expect(state.unitId).toBe(unitID);
+  expect(state.snapshot.id).toBe(unitID);
+  expect(type === 1 ? 'body' in state.snapshot : 'sheets' in state.snapshot).toBe(true);
+  return { unitID, snapshot: state.snapshot, revision: state.revision };
 }
 function nativeHead(state: Awaited<ReturnType<typeof nativeState>>) {
-  // Automatic snapshots may compact the representation after acknowledgement;
-  // the live unit and current revision remain the authoritative commit identity.
-  return {
-    unitID: state.unitID,
-    revision: Math.max(state.snapshot!.rev, ...state.changesets.map((change) => change.revision)),
-  };
+  return { unitID: state.unitID, revision: state.revision };
 }
 function nativeDocText(state: Awaited<ReturnType<typeof nativeState>>) {
-  // The public snapshot protocol carries the original document JSON as bytes;
-  // HTTP JSON represents those bytes either as base64 or a numeric byte object.
-  const meta = state.snapshot?.doc?.originalMeta as Uint8Array | string | undefined;
-  expect(meta).toBeDefined();
-  const bytes =
-    typeof meta === 'string' ? Buffer.from(meta, 'base64') : Buffer.from(Object.values(meta!));
-  let document = JSON.parse(bytes.toString('utf8')) as IDocumentData;
-  for (const changeset of state.changesets) {
-    for (const mutation of changeset.mutations) {
-      expect(mutation.id).toBe('doc.mutation.rich-text-editing');
-      const { unitId, actions } = JSON.parse(mutation.data) as {
-        unitId: string;
-        actions: JSONXActions;
-      };
-      expect(unitId).toBe(state.unitID);
-      // JSONX.apply returns undefined for a no-op; a non-no-op must produce the
-      // actual resulting document rather than falling back to its prior text.
-      if (!JSONX.isNoop(actions)) {
-        const replayed = JSONX.apply(document, actions);
-        if (
-          replayed === null ||
-          typeof replayed !== 'object' ||
-          Array.isArray(replayed) ||
-          replayed.id !== document.id ||
-          replayed.documentStyle === null ||
-          typeof replayed.documentStyle !== 'object' ||
-          Array.isArray(replayed.documentStyle)
-        )
-          throw new Error('Native Doc replay did not preserve document identity and structure.');
-        document = replayed as unknown as IDocumentData;
-      }
-    }
-  }
-  return document.body?.dataStream.trim();
+  return (state.snapshot as IDocumentData).body?.dataStream.trim();
 }
 function nativeDocState(state: Awaited<ReturnType<typeof nativeState>>) {
   return { ...nativeHead(state), text: nativeDocText(state) };
@@ -411,27 +376,36 @@ function nativeDiagnostics(page: Page, phase: () => string) {
   page.on('response', (response) => {
     const path = new URL(response.url()).pathname;
     if (
-      path.includes('/space-api/') ||
+      path.startsWith('/sync-api/spaces/') ||
       /^\/api\/spaces\/[^/]+\/items\/[^/]+\/collaboration$/.test(path)
     )
       record({ http: path, method: response.request().method(), status: response.status() });
   });
   page.on('requestfailed', (request) => {
     const path = new URL(request.url()).pathname;
-    if (path.includes('/space-api/')) record({ http: path, failed: true });
+    if (path.startsWith('/sync-api/spaces/')) record({ http: path, failed: true });
   });
   page.on('websocket', (socket) => {
-    if (!new URL(socket.url()).pathname.includes('/space-api/')) return;
+    if (!new URL(socket.url()).pathname.startsWith('/sync-api/spaces/')) return;
     socket.on('framereceived', ({ payload }) => {
       try {
-        const frame = JSON.parse(String(payload)) as { cmd?: unknown; code?: unknown };
+        const frame = JSON.parse(String(payload)) as {
+          type?: unknown;
+          revision?: unknown;
+          reason?: unknown;
+        };
         if (
-          (typeof frame.cmd === 'string' || typeof frame.cmd === 'number') &&
-          (typeof frame.code === 'string' || typeof frame.code === 'number')
+          typeof frame.type === 'string' &&
+          ['resume', 'edit', 'ack', 'resync', 'presence', 'verified'].includes(frame.type)
         )
-          record({ socket: 'response', command: frame.cmd, code: frame.code });
+          record({
+            socket: 'response',
+            type: frame.type,
+            revision: typeof frame.revision === 'number' ? frame.revision : undefined,
+            reason: typeof frame.reason === 'string' ? frame.reason : undefined,
+          });
       } catch {
-        // Keep diagnostics to public command/outcome codes, never payload data.
+        // Keep diagnostics to public frame/outcome fields, never document data.
       }
     });
     socket.on('close', () => record({ socket: 'closed' }));
@@ -440,28 +414,31 @@ function nativeDiagnostics(page: Page, phase: () => string) {
 }
 async function holdNativeWrites(context: BrowserContext) {
   let release = () => {};
+  let disconnect = () => false;
   const held = new Promise<void>((done) => {
     release = done;
   });
   let received = 0;
-  let returned = 0;
-  await context.route('**/universer-api/comb/**/new_changes', async (route) => {
+  const forwarded: boolean[] = [];
+  const network = await syncNetwork(context);
+  network.interceptWrites(async (write) => {
     received++;
+    disconnect = write.disconnect;
     await held;
-    const response = await route.fetch();
-    // A transport receipt is not proof of a native commit. Callers compare the
-    // authoritative snapshot after every held request has reached the server.
-    await route.fulfill({ response });
-    returned++;
+    // A revoked connection is closed. A live one forwards to the real server;
+    // callers compare authoritative state, never treating forwarding as commit.
+    forwarded.push(write.forward());
   });
   return {
     release,
+    disconnect: () => disconnect(),
     received: () => received,
-    returned: () => returned,
+    returned: () => forwarded.length,
+    forwarded: () => forwarded.filter(Boolean).length,
     // On the assertion path, call after the native page has left to include
     // retries in the persisted-state proof. Also drain on failure while the
     // server is still alive, so fixture shutdown cannot mask the first failure.
-    drain: () => context.unrouteAll({ behavior: 'wait' }),
+    drain: () => network.drainWrites(),
   };
 }
 async function writeCell(page: Page, address: string, text: string, commit = true) {
@@ -1405,6 +1382,7 @@ test('revocation clears private Space navigation while retaining unsaved native 
   test.setTimeout(120_000);
   const f = await fixture(browser, info);
   let release = () => {};
+  let releaseResume = () => {};
   let drain = async () => {};
   try {
     const { space, child } = seed(f, 'Private recovery notebook');
@@ -1421,12 +1399,24 @@ test('revocation clears private Space navigation while retaining unsaved native 
     expect(await copyDoc(editor.page)).toBe('Persisted baseline.');
     const before = await nativeState(f.context, space.id, doc.id);
     const held = await holdNativeWrites(editor.context);
+    const network = await syncNetwork(editor.context);
     release = held.release;
+    releaseResume = network.releaseResume;
     drain = held.drain;
     await focusDoc(editor.page);
     await editor.page.keyboard.press('Control+End');
     await editor.page.keyboard.type(' Unsaved words to rescue.');
     await expect.poll(held.received).toBeGreaterThan(0);
+    // Fail this actual unconfirmed submit, then hold the replacement room's
+    // response so automatic reconnection cannot remove Retry mid-assertion.
+    network.holdResume();
+    expect(held.disconnect()).toBe(true);
+    await expect.poll(network.resumeHeld).toBe(true);
+    const connection = editor.page.getByRole('status', {
+      name: 'Connection status',
+      exact: true,
+    });
+    await expect(connection).toHaveText('Reconnecting');
     const status = editor.page.getByRole('status', { name: 'Save status', exact: true });
     await expect(status).toContainText('not saved');
     await editor.page.getByRole('button', { name: 'Save details: Not saved', exact: true }).click();
@@ -1434,6 +1424,13 @@ test('revocation clears private Space navigation while retaining unsaved native 
       editor.page.getByRole('button', { name: 'Retry saving', exact: true }),
     ).toBeVisible();
     await editor.page.keyboard.press('Escape');
+    // Re-enter a real live room and capture its retry before revocation. The
+    // zero-forwarding proof below must cover this new channel, not just the one
+    // deliberately closed to establish the failed-save state above.
+    const beforeResume = held.received();
+    releaseResume();
+    await expect.poll(held.received).toBeGreaterThan(beforeResume);
+    await expect(connection).toHaveText('Online');
     // A File admin can have a private rename draft open when the grant disappears.
     await editor.page.getByRole('button', { name: `Rename ${doc.name}`, exact: true }).click();
     await expect(editor.page.getByRole('textbox', { name: 'Document name' })).toHaveValue(doc.name);
@@ -1475,6 +1472,7 @@ test('revocation clears private Space navigation while retaining unsaved native 
     const inFlight = held.received();
     release();
     await expect.poll(held.returned).toBeGreaterThanOrEqual(inFlight);
+    expect(held.forwarded()).toBe(0);
     expect(nativeDocState(await nativeState(f.context, space.id, doc.id))).toEqual(
       nativeDocState(before),
     );
@@ -1486,12 +1484,13 @@ test('revocation clears private Space navigation while retaining unsaved native 
       nativeDocState(before),
     );
     // A separate account and native instance reload the persisted state after
-    // every held write reached the server; the rescued draft never committed.
+    // every held write was fenced by its closed channel; the draft never committed.
     await f.page.goto(href(space.id, doc.id));
     await saved(f.page);
     expect(await copyDoc(f.page)).toBe('Persisted baseline.');
     expect(f.errors).toEqual([]);
   } finally {
+    releaseResume();
     release();
     try {
       await drain();
@@ -1617,6 +1616,7 @@ test('external child, ancestor and whole-Space Trash invalidates open native edi
     const inFlight = held.received();
     release();
     await expect.poll(held.returned).toBeGreaterThanOrEqual(inFlight);
+    expect(held.forwarded()).toBe(0);
     f.page.once('dialog', (dialog) => dialog.accept());
     await f.page.goto('about:blank');
     await held.drain();

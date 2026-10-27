@@ -1,3 +1,4 @@
+import { assertSyncTransitionReady } from '../src/server/sync/transition.ts';
 import { profileAvatarRoutes } from '../src/server/profileAvatar.ts';
 import express from 'express';
 import { socialPreviewRoutes } from '../src/server/socialPreview.ts';
@@ -9,7 +10,6 @@ import { assistantOAuthRoutes } from '../src/server/auth/oauthRoutes.ts';
 import { AssistantOAuth } from '../src/server/auth/oauth.ts';
 import { pwaRoutes } from '../src/server/pwa.ts';
 import { guestRoutes } from '../src/server/workspace/guestRoutes.ts';
-import { documentIdentity, protocolSpaceScope } from '../src/server/collaboration/identity.ts';
 import { readFile } from 'node:fs/promises';
 import { createHttpServer } from './http.ts';
 import { resolve } from 'node:path';
@@ -32,9 +32,7 @@ import { migrateSpaceSchema } from '../src/server/workspace/space-schema.ts';
 import { TrashStore, startTrashCleanup } from '../src/server/workspace/trash.ts';
 import { HistoryStore } from '../src/server/history/store.ts';
 import { CollaborationStore } from '../src/server/collaboration/service.ts';
-import { attachCollaboration } from '../src/server/collaboration/transport.ts';
 import { attachSync } from '../src/server/sync/transport.ts';
-import { UnitAction, ErrorCode } from '@univerjs/protocol';
 
 export const projectRoot = resolve(import.meta.dirname, '..');
 
@@ -47,8 +45,6 @@ export interface AppOptions {
   image?: string;
   /** Spaces are enabled by default; false explicitly closes every Space boundary. */
   spaceReview?: boolean;
-  /** New protocol integration only; activation of existing documents is SPN-059. */
-  syncServer?: boolean;
 }
 
 export async function createApp(options: AppOptions) {
@@ -62,7 +58,7 @@ export async function createApp(options: AppOptions) {
   let backups: BackupService | undefined;
   let collaboration: CollaborationStore | undefined;
   let history: HistoryStore | undefined;
-  let realtime: ReturnType<typeof attachCollaboration> | undefined;
+  let realtime: ReturnType<typeof attachSync> | undefined;
   let purgeTimer: ReturnType<typeof setInterval> | undefined;
   let healthTimer: ReturnType<typeof setInterval> | undefined;
   let diagnostics: DiagnosticsStore | undefined;
@@ -87,6 +83,7 @@ export async function createApp(options: AppOptions) {
         );
       },
     });
+    assertSyncTransitionReady(database);
     const auth = new AuthStore(database);
     app.use(
       '/api/auth',
@@ -96,8 +93,7 @@ export async function createApp(options: AppOptions) {
     );
     const spaceReview = options.spaceReview !== false;
     const workspace = new WorkspaceStore(auth, { spacesEnabled: spaceReview });
-    // Rebuild the pre-production item schema before the collaboration SDK opens
-    // its second connection. Storage migration is independent of the runtime gate.
+    // Rebuild the pre-production item schema before native document services start.
     migrateSpaceSchema(database);
     const origin = options.origin ?? 'http://localhost:3000';
     const oauth = new AssistantOAuth(auth, origin);
@@ -105,17 +101,24 @@ export async function createApp(options: AppOptions) {
     collaboration = new CollaborationStore(workspace, options.databasePath, {
       spaceReview,
       observePurge: () => jobs.begin('collaboration-purge'),
-      syncServer: options.syncServer === true,
       diagnostics: (event, context, actorId) => {
         if (!actorId.startsWith('guest:')) diagnostics!.record(event, context, actorId);
       },
     });
     history = new HistoryStore(workspace, collaboration, () => jobs.begin('history-maintenance'));
     app.use('/mcp', mcpRoutes(workspace, collaboration, origin));
-    realtime =
-      options.syncServer === true
-        ? attachSync(server, app, workspace, collaboration, origin)
-        : attachCollaboration(server, workspace, collaboration, origin, { spaceReview });
+    realtime = attachSync(server, app, workspace, collaboration, origin);
+    // Retired protocol paths must not fall through to the application shell.
+    // Stale tabs cannot re-enter a second collaboration backend after cutover.
+    app.use(
+      ['/universer-api', '/guest-api', '/space-api', '/guest-space-api'],
+      (_request, response) => {
+        response
+          .set('Cache-Control', 'no-store')
+          .status(404)
+          .json({ error: 'Reload Spinel to continue.' });
+      },
+    );
     workspace.links.recover();
     app.use(guestRoutes(workspace, collaboration, origin, (id) => realtime!.privacyChanged(id)));
     app.use(
@@ -154,128 +157,6 @@ export async function createApp(options: AppOptions) {
       }),
     );
     app.use('/api/spaces', spaceRoutes(workspace, origin, { spaceReview }));
-    app.post(
-      [
-        '/universer-api/authz/-/object/-/batch_allowed',
-        '/guest-api/:guestItem/universer-api/authz/-/object/-/batch_allowed',
-        ...(spaceReview
-          ? [
-              '/space-api/:spaceId/items/:spaceItem/universer-api/authz/-/object/-/batch_allowed',
-              '/guest-space-api/:spaceId/items/:spaceItem/universer-api/authz/-/object/-/batch_allowed',
-            ]
-          : []),
-      ],
-      express.json({ limit: '64kb' }),
-      (request, response) => {
-        response.set('Cache-Control', 'no-store');
-        let identity: ReturnType<typeof documentIdentity>;
-        let spaceScope: ReturnType<typeof protocolSpaceScope>;
-        try {
-          if (request.headers.origin !== origin) throw new Error('Origin');
-          spaceScope = protocolSpaceScope(request.originalUrl, origin, spaceReview);
-          identity = documentIdentity(
-            workspace,
-            request.headers,
-            request.path.startsWith('/guest-space-api/')
-              ? spaceScope?.spaceId
-              : typeof request.params.guestItem === 'string'
-                ? request.params.guestItem
-                : undefined,
-            spaceScope,
-          );
-        } catch {
-          response.status(403).json({ error: 'This document is not available.' });
-          return;
-        }
-        const requests: unknown = request.body?.requests;
-        if (
-          !Array.isArray(requests) ||
-          requests.length > 200 ||
-          requests.some(
-            (item) =>
-              !item ||
-              typeof item !== 'object' ||
-              typeof item.unitID !== 'string' ||
-              typeof item.objectID !== 'string' ||
-              !Array.isArray(item.actions),
-          )
-        ) {
-          response.status(400).end();
-          return;
-        }
-        const readActions: number[] = [
-          UnitAction.View,
-          UnitAction.Copy,
-          UnitAction.Print,
-          UnitAction.SelectProtectedCells,
-          UnitAction.SelectUnProtectedCells,
-        ];
-        const hostActions: number[] = [
-          UnitAction.ManageCollaborator,
-          UnitAction.Share,
-          UnitAction.Delete,
-          UnitAction.RecoverHistory,
-          UnitAction.CreatePermissionObject,
-        ];
-        // This namespace names one stable child and therefore one live native
-        // unit. Resolve its role once within this synchronous response, never
-        // across requests or awaited work. Repeated permission objects must not
-        // multiply a deep Space ancestry walk.
-        let spaceUnit: string | undefined;
-        let spaceAccess: string | undefined;
-        if (spaceScope) {
-          spaceUnit = collaboration!.generations.active(spaceScope.spaceItem).unitId;
-          if (requests.some((item) => item.unitID === spaceUnit)) {
-            try {
-              spaceAccess = collaboration!.access(
-                identity.userId,
-                spaceUnit,
-                false,
-                identity.customData,
-              ).access;
-            } catch {
-              /* Do not reveal unavailable Space children. */
-            }
-          }
-        }
-        response.json({
-          error: { code: ErrorCode.OK, message: '' },
-          objectActions: requests.map((item) => {
-            let access: string | undefined;
-            if (spaceScope) {
-              access = item.unitID === spaceUnit ? spaceAccess : undefined;
-            } else {
-              try {
-                access = collaboration!.access(
-                  identity.userId,
-                  item.unitID,
-                  false,
-                  identity.customData,
-                ).access;
-              } catch {
-                /* Do not reveal other documents. */
-              }
-            }
-            return {
-              unitID: item.unitID,
-              objectID: item.objectID,
-              actions: (Array.isArray(item.actions) ? item.actions : [])
-                .slice(0, 100)
-                .map((action: number) => ({
-                  action,
-                  allowed:
-                    Boolean(access) &&
-                    Number.isInteger(action) &&
-                    action >= 0 &&
-                    action <= 45 &&
-                    !hostActions.includes(action) &&
-                    (access !== 'viewer' || readActions.includes(action)),
-                })),
-            };
-          }),
-        });
-      },
-    );
     stopCleanup = startTrashCleanup(new TrashStore(workspace), () => jobs.begin('trash-expiry'));
     await collaboration.purgeDeleted();
     purgeTimer = setInterval(() => {

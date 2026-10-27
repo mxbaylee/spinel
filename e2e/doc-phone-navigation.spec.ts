@@ -263,40 +263,68 @@ for (const role of ['editor', 'guest-viewer'] as const) {
         if (role === 'editor') {
           await expect(editor.getByRole('button', { name: 'Bold', exact: true })).toBeEnabled();
           await nativeBox.click({ position: { x: 130, y: 200 } });
+          // Zoom comparisons leave focus on Exit theatre. Verify that the canvas
+          // click returned keyboard input to this document before the shortcut.
+          await expect(
+            editor.locator('[contenteditable="true"][data-u-comp="editor"]'),
+          ).toBeFocused();
           await page.keyboard.press('Control+Home');
           const input = await page.evaluateHandle(() => document.activeElement as HTMLElement);
           expect(await input.evaluate((node) => node.isContentEditable)).toBe(true);
-          const caretInView = async () => {
+          const caretInView = async (phase: 'start' | 'end') => {
             // The OSS selection renderer positions this native input host at its
             // canvas caret anchor. Geometry is an assertion, not a substitute for
             // reviewing the captured, actually rendered caret and readable text.
-            await expect
-              .poll(async () => {
-                const anchor = await input.evaluate((node) => {
-                  const host = node.closest('[id^="univer-doc-selection-container-"]');
-                  const box = host?.getBoundingClientRect();
-                  return box ? { x: box.x, y: box.y } : null;
-                });
-                const bounds = await canvas.boundingBox();
-                return (
-                  !!anchor &&
-                  !!bounds &&
-                  anchor.x >= bounds.x &&
-                  anchor.y >= bounds.y &&
-                  anchor.x < bounds.x + bounds.width &&
-                  anchor.y < bounds.y + bounds.height
-                );
-              })
-              .toBe(true);
+            let lastGeometry: unknown;
+            try {
+              await expect
+                .poll(async () => {
+                  const geometry = await input.evaluate((node) => {
+                    const host = node.closest('[id^="univer-doc-selection-container-"]');
+                    const box = host?.getBoundingClientRect();
+                    const active = document.activeElement;
+                    return {
+                      connected: node.isConnected,
+                      focused: active === node,
+                      active: active
+                        ? {
+                            tag: active.tagName,
+                            role: active.getAttribute('role'),
+                            component: active.getAttribute('data-u-comp'),
+                          }
+                        : null,
+                      anchor: box ? { x: box.x, y: box.y } : null,
+                    };
+                  });
+                  const bounds = await canvas.boundingBox();
+                  lastGeometry = { ...geometry, bounds };
+                  const { anchor } = geometry;
+                  return (
+                    !!anchor &&
+                    !!bounds &&
+                    anchor.x >= bounds.x &&
+                    anchor.y >= bounds.y &&
+                    anchor.x < bounds.x + bounds.width &&
+                    anchor.y < bounds.y + bounds.height
+                  );
+                })
+                .toBe(true);
+            } catch (error) {
+              console.info(
+                'Phone Doc caret geometry:',
+                JSON.stringify({ theme, phase, lastGeometry }),
+              );
+              throw error;
+            }
           };
-          await caretInView();
+          await caretInView('start');
           await capture(page, info, `${role}-${theme}-caret-start`);
           const prefix = `${theme} start `;
           await page.keyboard.type(prefix);
           expectedText = prefix + expectedText;
           await expect.poll(async () => (await read()).body.dataStream).toBe(expectedText);
           await page.keyboard.press('Control+End');
-          await caretInView();
+          await caretInView('end');
           await capture(page, info, `${role}-${theme}-caret-end`);
           const suffix = ` ${theme} end`;
           await page.keyboard.type(suffix);

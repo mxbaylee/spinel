@@ -10,9 +10,12 @@ type Row = Record<string, Value>;
 export class DatabaseSync {
   private readonly database: Sqlite.Database;
   readonly path: string;
-  constructor(path: string) {
+  constructor(path: string, options: { readOnly?: boolean } = {}) {
     this.path = path;
-    this.database = new Sqlite(path);
+    this.database = new Sqlite(
+      path,
+      options.readOnly ? { readonly: true, fileMustExist: true } : undefined,
+    );
     this.database.exec('PRAGMA foreign_keys = ON; PRAGMA busy_timeout = 5000;');
   }
   get isOpen() {

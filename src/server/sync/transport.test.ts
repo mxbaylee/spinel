@@ -41,7 +41,7 @@ type Frame = {
 };
 const presence = (frames: Frame[]) => frames.filter((frame) => frame.type === 'presence').at(-1);
 
-async function fixture(enabled = true) {
+async function fixture() {
   const directory = await mkdtemp(join(tmpdir(), 'spinel-own-transport-'));
   cleanup.push(() => rm(directory, { recursive: true, force: true }));
   await writeFile(join(directory, 'index.html'), 'Fixture');
@@ -51,7 +51,6 @@ async function fixture(enabled = true) {
     databasePath: filename,
     staticDirectory: directory,
     origin,
-    syncServer: enabled,
   });
   const db = openDatabase(filename);
   cleanup.push(() => db.close());
@@ -149,8 +148,7 @@ async function fixture(enabled = true) {
     const response = await send(`/api/items/${sheet.id}/collaboration`, cookie(), 'POST', {});
     expect(response.status).toBe(200);
     const prepared = await response.json();
-    if (enabled) expect(prepared.syncVersion).toBe(1);
-    else expect(prepared).not.toHaveProperty('syncVersion');
+    expect(prepared.syncVersion).toBe(1);
     return prepared;
   };
   const mutation = (value: unknown, column = 0, unitId = sheet.id): Mutation => ({
@@ -180,15 +178,18 @@ async function fixture(enabled = true) {
   };
 }
 
-test('the new protocol is disabled by default and requires the flag', async () => {
-  const f = await fixture(false);
+test('the native protocol is available by default and the old protocol is retired', async () => {
+  const f = await fixture();
+  await f.prepare();
   expect((await f.send(`${f.prefix}/ticket?unitId=${f.sheet.id}`, f.cookie(), 'POST')).status).toBe(
-    404,
+    200,
   );
   expect(
+    (await f.send(`/universer-api/snapshot/2/unit/${f.sheet.id}/rev/0`, f.cookie())).status,
+  ).toBe(404);
+  expect(
     f.db.prepare("SELECT 1 FROM sqlite_master WHERE name='spinel_sync_units'").get(),
-  ).toBeUndefined();
-  await f.prepare();
+  ).toBeTruthy();
 });
 
 test('two real sockets converge through durable ordering, retry, divergence resync and no duplicate broadcasts', async () => {

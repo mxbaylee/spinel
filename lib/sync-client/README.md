@@ -91,8 +91,14 @@ insertion and inserts carry `PRESERVE_INSERTED_PARAGRAPH_IDS`. Sender-provided
 `derived` or transform-private parameter keys are refused.
 
 `applyNative` copies params before each public synchronous handler invocation and
-uses `{ onlyLocal: true, fromCollab: true }`. This prevents capture echo and lets
-native formula handlers recalculate. The native adapter clears local undo/redo
+uses `{ fromCollab: true }` for the live editor. That prevents capture echo while
+allowing native formula registration and dependent calculation. `onlyLocal` would
+skip both for received cell writes, leaving another person's formulas blank or
+stale. The confirmed revision replica keeps its separate local-only application
+path; it does not drive visible calculation. A two-peer real-engine regression
+proves automatic scalar/shared/array results, missed-input recalculation on resume,
+authored hashes and absence of echo without forcing a calculation.
+The native adapter clears local undo/redo
 history after every accepted remote revision, including the Doc history
 manager's debounced cache. A remote edit hidden by an optimistic deletion still
 invalidates its saved inverse: undoing that deletion could restore pre-peer
@@ -136,6 +142,13 @@ SHA-256 uses the exact canonical normalization shared with the server. An async
 generation fence discards verification results invalidated by a newer edit,
 connection change or disposal. The server receives `verify` and decides whether
 the authoritative hash agrees.
+
+For a cell with a native formula or shared-formula identity, its calculated `v`
+is a local cache and does not enter this authored-content hash. Formula text,
+shared identity, array metadata, styles, rich text and custom metadata still do.
+Ordinary values remain hashed, including cells with array metadata but no formula
+identity. Pinned Univer supplies array spill values through its display
+interceptor; they do not replace ordinary raw values in the saved snapshot.
 
 An optional `persist(checkpoint)` hook receives the confirmed snapshot, revision,
 immutable sent envelope, rebased inflight and buffered groups. The immutable

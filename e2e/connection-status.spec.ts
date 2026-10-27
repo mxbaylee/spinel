@@ -249,6 +249,8 @@ for (const width of [1280, 390]) {
         const saved = () => expect(save).toHaveText('All changes saved.', { timeout: 30_000 });
         let holdWrite = true;
         let writeHeld = false;
+        let heldWrites = 0;
+        let disconnectHeldWrite = () => false;
         let failWrites = false;
         let rejectedWrites = 0;
         let recoveryHeld = true;
@@ -260,23 +262,25 @@ for (const width of [1280, 390]) {
         const writeGate = new Promise<void>((resolve) => {
           releaseWrite = resolve;
         });
-        await page.route('**/universer-api/comb/*/unit/*/new_changes', async (route) => {
+        network.interceptWrites(async (write) => {
           if (holdWrite) {
             writeHeld = true;
+            heldWrites++;
+            disconnectHeldWrite = write.disconnect;
             await writeGate;
           }
           if (failWrites) {
-            // Reject exactly once; repeated 503s would test a reconnect storm,
-            // rather than the save control's failure and user-triggered recovery.
-            failWrites = false;
-            rejectedWrites++;
-            await route.fulfill({
-              status: 503,
-              json: { error: 'Save unavailable for this acceptance test.' },
-            });
+            // A real transport disconnect leaves the native envelope unconfirmed.
+            // Reconnect/retry must recover it; no document or save state is mocked.
+            // Retry already replaced earlier held connections. Only consume
+            // this failure when it interrupts the current live submission.
+            if (write.disconnect()) {
+              failWrites = false;
+              rejectedWrites++;
+            }
           } else {
             if (rejectedWrites && recoveryHeld) await recoveryGate;
-            await route.continue();
+            write.forward();
           }
         });
         const captureEditor = async (state: ConnectionState) => {
@@ -328,22 +332,32 @@ for (const width of [1280, 390]) {
           await expect(save).toContainText(/not saved|Saving|keep this tab open/i);
           await expect.poll(() => documentBounds(canvas)).toEqual(savedBounds);
           await expect.poll(() => documentBounds(saveTrigger)).toEqual(slotBounds);
-          // Preserve SPN-042's healthy pending-save Retry proof before the
-          // rejection: a rejected write may legitimately interrupt the room.
+          // Interrupt the actual unconfirmed submit and withhold the replacement
+          // room response through Retry. A normal RESUME would otherwise clear
+          // the failed state before the control is activated.
           await connection(page, 'Online');
+          network.holdJoinAcknowledgements();
+          const beforeRetry = heldWrites;
+          expect(disconnectHeldWrite()).toBe(true);
+          await expect.poll(() => network.joinAcknowledgementHeld()).toBe(true);
+          await connection(page, 'Reconnecting');
           await saveTrigger.click();
           await page.getByRole('button', { name: 'Retry saving', exact: true }).click();
+          network.releaseJoinAcknowledgements();
           await page.keyboard.press('Escape');
           await connection(page, 'Online');
-          // A real rejected save remains unconfirmed; no production state is mocked.
-          const rejectedResponse = page.waitForResponse(
-            (response) => response.url().includes('/new_changes') && response.status() === 503,
-          );
+          await expect.poll(() => heldWrites).toBeGreaterThan(beforeRetry);
+          // A real disconnected save remains unconfirmed; no production state is mocked.
+          // Keep the next room response withheld through failed-save geometry.
+          // An acknowledged native reconnect legitimately returns pending work
+          // to Saving and removes the failed-save Retry control.
+          network.holdJoinAcknowledgements();
           failWrites = true;
           holdWrite = false;
           releaseWrite();
-          await (await rejectedResponse).finished();
           await expect.poll(() => rejectedWrites).toBeGreaterThan(0);
+          await expect.poll(() => network.joinAcknowledgementHeld()).toBe(true);
+          await connection(page, 'Reconnecting');
           await expect(save).toContainText(/not saved|keep this tab open/i);
           await expect(save).toHaveAttribute('aria-live', 'polite');
           await expect(saveTrigger).toHaveText('Not saved');
@@ -385,13 +399,15 @@ for (const width of [1280, 390]) {
             ).toBeInViewport();
           }
           await page.getByRole('button', { name: 'Retry saving', exact: true }).click();
-          recoveryHeld = false;
-          releaseRecovery();
+          network.releaseJoinAcknowledgements();
           await page.keyboard.press('Escape');
           await expect(saveTrigger).toBeFocused();
           await expect.poll(() => documentBounds(canvas)).toEqual(savedBounds);
           await connection(page, 'Online');
+          await expect(save).toContainText(/not saved|keep this tab open/i);
           await capture(page, info, `${kind}-online-unsaved`, width === 390 ? 'phone' : 'light');
+          recoveryHeld = false;
+          releaseRecovery();
           holdWrite = false;
           releaseWrite();
           await saved();
@@ -481,11 +497,16 @@ for (const width of [1280, 390]) {
           holdWrite = false;
           releaseWrite();
           network.releaseJoinAcknowledgements();
-          await page.unrouteAll({ behavior: 'ignoreErrors' });
-          await page.close();
-          db.prepare('DELETE FROM workspace_items WHERE owner_id=?').run(user.id);
-          db.prepare('DELETE FROM auth_users WHERE id=?').run(user.id);
-          db.close();
+          network.interceptWrites(undefined);
+          try {
+            await network.drainWrites();
+          } finally {
+            await page.unrouteAll({ behavior: 'ignoreErrors' });
+            await page.close();
+            db.prepare('DELETE FROM workspace_items WHERE owner_id=?').run(user.id);
+            db.prepare('DELETE FROM auth_users WHERE id=?').run(user.id);
+            db.close();
+          }
         }
       });
     }

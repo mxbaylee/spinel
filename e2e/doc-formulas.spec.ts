@@ -120,6 +120,44 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
   for (const target of [page, other]) target.on('pageerror', (error) => errors.push(error.message));
   // Observe actual native canvas text, not just the accessible Formula panel.
   await context.addInitScript(() => {
+    const focusEvents: unknown[] = [];
+    Object.assign(window, { formulaFocusEvents: focusEvents });
+    const describeFocus = (target: EventTarget | null) =>
+      target instanceof HTMLElement
+        ? {
+            tag: target.tagName,
+            component: target.getAttribute('data-u-comp'),
+            role: target.getAttribute('role'),
+            connected: target.isConnected,
+            insideDialog: Boolean(target.closest('dialog')),
+          }
+        : null;
+    const recordFocus = (event: string, target: EventTarget | null) => {
+      focusEvents.push({
+        event,
+        at: performance.now(),
+        target: describeFocus(target),
+        active: describeFocus(document.activeElement),
+        openDialogs: document.querySelectorAll('dialog[open]').length,
+        visibility: document.visibilityState,
+        documentFocused: document.hasFocus(),
+      });
+      if (focusEvents.length > 64) focusEvents.shift();
+    };
+    const focus = HTMLElement.prototype.focus;
+    HTMLElement.prototype.focus = function (...args) {
+      recordFocus('focus:before', this);
+      focus.apply(this, args);
+      recordFocus('focus:after', this);
+    };
+    const closeDialog = HTMLDialogElement.prototype.close;
+    HTMLDialogElement.prototype.close = function (...args) {
+      recordFocus('dialog-close:before', this);
+      closeDialog.apply(this, args);
+      recordFocus('dialog-close:after', this);
+    };
+    for (const event of ['focusin', 'focusout'])
+      document.addEventListener(event, (entry) => recordFocus(event, entry.target), true);
     const original = CanvasRenderingContext2D.prototype.fillText;
     const originalRect = CanvasRenderingContext2D.prototype.fillRect;
     const lastRect = new WeakMap<CanvasRenderingContext2D, { width: number; height: number }>();
@@ -512,6 +550,21 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
     expect(errors).toEqual([]);
   } catch (error) {
     console.log('Formula response outcomes (no values or source identities):', formulaOutcomes);
+    console.log(
+      'Formula focus diagnostics (no values or source identities):',
+      JSON.stringify(
+        await page
+          .evaluate(() => ({
+            events: (window as Window & { formulaFocusEvents?: unknown[] }).formulaFocusEvents,
+            activeTag: document.activeElement?.tagName,
+            activeComponent: document.activeElement?.getAttribute('data-u-comp'),
+            openDialogs: document.querySelectorAll('dialog[open]').length,
+            visibility: document.visibilityState,
+            documentFocused: document.hasFocus(),
+          }))
+          .catch(() => null),
+      ),
+    );
     await mkdir('test-results/theme-screenshots', { recursive: true });
     await page
       .screenshot({

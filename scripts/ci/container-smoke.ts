@@ -183,20 +183,37 @@ async function checkPdfMemoryRefusal(name: string, requestPdf: () => Promise<Res
       '--input-type=module',
       '-e',
       String.raw`
+import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 const allocations = [];
+const MiB = 1024 * 1024;
 const limit = Number(readFileSync('/sys/fs/cgroup/memory.max', 'utf8'));
+assert.ok(Number.isSafeInteger(limit) && limit > 208 * MiB, 'PDF fixture needs a finite cgroup limit.');
 // Cross the actual 192 MiB worker + 32 MiB headroom admission threshold,
 // retaining 208 MiB so the helper itself never approaches the cgroup ceiling.
-const target = limit - (192 + 32 - 16) * 1024 * 1024;
-for (let chunk = 0; chunk < 64; chunk++) {
+const target = limit - (192 + 32 - 16) * MiB;
+function usedMemory() {
   const current = Number(readFileSync('/sys/fs/cgroup/memory.current', 'utf8'));
   const stat = readFileSync('/sys/fs/cgroup/memory.stat', 'utf8');
   const inactive = Number(stat.match(/^inactive_file\s+(\d+)$/m)?.[1] ?? 0);
-  const needed = target - Math.max(0, current - inactive);
-  if (needed <= 0) break;
-  allocations.push(Buffer.alloc(Math.min(8 * 1024 * 1024, needed), 0x5a));
+  assert.ok(Number.isSafeInteger(current) && current > 0 && Number.isSafeInteger(inactive));
+  return Math.max(0, current - Math.min(current, inactive));
 }
+const initial = usedMemory();
+let used = initial;
+let allocated = 0;
+const deadline = Date.now() + 8_000;
+// A smaller application baseline needs more pressure. Bound total allocation
+// by the measured container target instead of assuming 512 MiB is sufficient.
+while (used < target && allocated < target && Date.now() < deadline) {
+  const bytes = Math.min(8 * MiB, target - used, target - allocated);
+  allocations.push(Buffer.alloc(bytes, 0x5a));
+  allocated += bytes;
+  used = usedMemory();
+}
+assert.ok(used >= target, 'PDF memory fixture did not reach the admission threshold: ' +
+  JSON.stringify({ limit, target, initial, used, allocated }));
+console.error('PDF memory pressure ready', { limit, target, initial, used, allocated });
 globalThis.spinelPdfPressure = allocations;
 process.stdin.on('end', () => process.exit(0));
 process.stdin.resume();

@@ -1,6 +1,6 @@
 import express from 'express';
 import type { Request, Response, NextFunction } from 'express';
-import { CollabError } from '@univerjs-pro/collaboration-service';
+import { CollaborationError } from '../collaboration/errors.ts';
 import { AuthError } from '../auth/store.ts';
 import { documentIdentity } from '../collaboration/identity.ts';
 import type { CollaborationStore } from '../collaboration/service.ts';
@@ -187,7 +187,7 @@ export function spaceNativeRoutes(
       );
       response.json({
         unitId: collaboration.generations.active(id).unitId,
-        ...(collaboration.sync && { syncVersion: 1 }),
+        syncVersion: 1,
         access: item.access,
         user: {
           id: account.userId,
@@ -204,7 +204,7 @@ export function spaceNativeRoutes(
     const status =
       error instanceof AuthError
         ? error.status
-        : error instanceof CollabError
+        : error instanceof CollaborationError
           ? 403
           : error instanceof SyntaxError
             ? 400
