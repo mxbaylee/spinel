@@ -192,10 +192,14 @@ export function comparable(snapshot: NativeSnapshot) {
       sheets,
       // The drawing resource is serialized JSON. Compare its complete graph,
       // including all geometry and anchor fields, independent of object key order.
+      // DefinedNameDataController writes '' before its empty map is loaded and
+      // '{}' afterward. Normalize only that sentinel; retain populated payloads.
       resources: snapshot.resources?.map((resource) =>
         resource.name === 'SHEET_DRAWING_PLUGIN'
           ? { ...resource, data: JSON.parse(resource.data) }
-          : resource,
+          : resource.name === 'SHEET_DEFINED_NAME_PLUGIN' && resource.data === ''
+            ? { ...resource, data: '{}' }
+            : resource,
       ),
     }),
   );
