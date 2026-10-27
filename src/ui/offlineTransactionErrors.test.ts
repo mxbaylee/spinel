@@ -25,17 +25,18 @@ function transactionFixture() {
   );
   setPreparedAccount(null);
   const put = vi.fn();
+  const reading = { result: undefined, onsuccess: undefined as (() => void) | undefined };
   const transaction = {
     error: null as DOMException | null,
     oncomplete: undefined as (() => void) | undefined,
     onabort: undefined as (() => void) | undefined,
     onerror: undefined as ((event: { target: { error: DOMException | null } }) => void) | undefined,
-    objectStore: () => ({ put }),
+    objectStore: () => ({ put, get: () => reading }),
   };
   const database = { transaction: () => transaction, close: vi.fn() };
   const opening = { result: database, onsuccess: undefined as (() => void) | undefined };
   vi.stubGlobal('indexedDB', { open: () => opening });
-  return { transaction, database, opening, put };
+  return { transaction, database, opening, reading, put };
 }
 
 for (const stage of ['catalog', 'runtime control'] as const)
@@ -64,6 +65,10 @@ for (const stage of ['catalog', 'runtime control'] as const)
       );
       if (stage === 'runtime control') {
         f.opening.onsuccess?.();
+        await Promise.resolve();
+      } else {
+        // Admit the catalog write after the real monotonic-cutoff read.
+        f.reading.onsuccess?.();
         await Promise.resolve();
       }
       expect(f.put).toHaveBeenCalledTimes(stage === 'catalog' ? 2 : 1);

@@ -4,17 +4,30 @@ import { AccessState } from './AccessState.tsx';
 export function OfflineBadge({
   state,
 }: {
-  state: 'available' | 'pages-available' | 'needs-connection' | null;
+  state:
+    'available' | 'pages-available' | 'needs-connection' | 'not-synced' | 'needs-attention' | null;
 }) {
   if (!state) return null;
   return (
     <span className="offline-badge" data-state={state === 'pages-available' ? 'available' : state}>
-      <span aria-hidden="true">{state === 'needs-connection' ? '⌁' : '⤓'}</span>{' '}
+      <span aria-hidden="true">
+        {state === 'needs-attention'
+          ? '!'
+          : state === 'not-synced'
+            ? '↥'
+            : state === 'needs-connection'
+              ? '⌁'
+              : '⤓'}
+      </span>{' '}
       {state === 'pages-available'
         ? 'Pages available offline'
-        : state === 'available'
-          ? 'Available offline'
-          : 'Needs a connection'}
+        : state === 'not-synced'
+          ? 'Not synced yet'
+          : state === 'needs-attention'
+            ? 'Needs attention'
+            : state === 'available'
+              ? 'Available offline'
+              : 'Needs a connection'}
     </span>
   );
 }

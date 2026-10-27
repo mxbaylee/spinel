@@ -54,6 +54,7 @@ export default defineConfig({
         '**/pwa.spec.ts',
         '**/offline.spec.ts',
         '**/offline-editing.spec.ts',
+        '**/offline-creation.spec.ts',
         '**/offline-recovery.spec.ts',
         '**/offline-device.spec.ts',
         '**/offline-sign-out.spec.ts',
@@ -67,6 +68,7 @@ export default defineConfig({
       testIgnore: [
         '**/pwa.spec.ts',
         '**/offline-editing.spec.ts',
+        '**/offline-creation.spec.ts',
         '**/offline-recovery.spec.ts',
         '**/offline-upgrade.spec.ts',
         '**/sync-client.spec.ts',
@@ -87,6 +89,7 @@ export default defineConfig({
         '**/sync-client.spec.ts',
         '**/doc-mobile.spec.ts',
         '**/offline-editing.spec.ts',
+        '**/offline-creation.spec.ts',
         '**/offline-recovery.spec.ts',
       ],
       grepInvert: /@sync-soak/,

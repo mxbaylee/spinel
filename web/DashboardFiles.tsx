@@ -11,7 +11,8 @@ import { OfflineBadge } from './OfflineStatus.tsx';
 import './DashboardFiles.css';
 
 export type DashboardFileLayout = 'list' | 'grid';
-export type DashboardOfflineState = 'available' | 'pages-available' | 'needs-connection' | null;
+export type DashboardOfflineState =
+  'available' | 'pages-available' | 'needs-connection' | 'not-synced' | 'needs-attention' | null;
 
 export { filenameEmoji } from '../src/shared/appearance.ts';
 
@@ -76,6 +77,7 @@ export function DashboardFiles<T extends FileItem>({
       >
         {items.map((item, index) => {
           const date = dateMode === 'shared' ? item.sharedAt : item.updatedAt;
+          const detail = details?.(item);
           // Legacy grants use zero for unknown dates, never a Unix-epoch share date.
           const validDate =
             date !== undefined &&
@@ -127,7 +129,7 @@ export function DashboardFiles<T extends FileItem>({
                       )}
                     </span>
                   )}
-                  {details && <span className="dashboard-file-details">{details(item)}</span>}
+                  {detail != null && <span className="dashboard-file-details">{detail}</span>}
                 </span>
               </button>
               <span className="dashboard-file-date">

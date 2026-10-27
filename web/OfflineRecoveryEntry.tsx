@@ -29,7 +29,11 @@ export function OfflineRecoveryEntry({
   connection: ConnectionState;
   onConnectionState?: (state: ConnectionState | null) => void;
 }) {
-  const [item, setItem] = useState<{ name: string; spaceId?: string } | null>(null);
+  const [item, setItem] = useState<{
+    name: string;
+    spaceId?: string;
+    creation: boolean;
+  } | null>(null);
   const [problem, setProblem] = useState('');
   useEffect(() => {
     let mounted = true;
@@ -55,10 +59,14 @@ export function OfflineRecoveryEntry({
         !download ||
         download.bundle.accountId !== accountId ||
         download.bundle.itemId !== itemId ||
-        !hasOfflineEdits(download.outbox)
+        (!download.creation && !hasOfflineEdits(download.outbox))
       )
         throw new Error('There are no saved offline changes for this document on this device.');
-      setItem({ name: download.bundle.name, spaceId: download.bundle.spaceId });
+      setItem({
+        name: download.bundle.name,
+        spaceId: download.bundle.spaceId,
+        creation: Boolean(download.creation),
+      });
     })().catch((error) => {
       if (mounted)
         setProblem(error instanceof Error ? error.message : 'Could not open this device copy.');
@@ -87,7 +95,7 @@ export function OfflineRecoveryEntry({
       connection={connection}
       documentKey={itemId}
       onBack={back}
-      backLabel="My files"
+      backLabel={item.creation ? 'Back to files' : 'My files'}
     >
       <Suspense fallback={<p role="status">Opening offline changes…</p>}>
         <OfflineViewer
@@ -110,7 +118,7 @@ export function OfflineRecoveryList({
   navigation: NavigationGuard;
 }) {
   const pending = [...downloads]
-    .filter((item) => item.pending)
+    .filter((item) => item.pending && !item.creation)
     .sort((a, b) => a.name.localeCompare(b.name));
   if (!pending.length) return null;
   return (
