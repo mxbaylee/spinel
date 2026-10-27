@@ -126,6 +126,50 @@ for (const variant of [
         page.getByRole('button', { name: 'Change appearance', exact: true }),
       ).toContainText('🍋');
       await page.getByRole('button', { name: 'Change appearance', exact: true }).click();
+      // A tint belongs to the chosen line icon and survives reload; emojis keep native colors.
+      await page.getByRole('button', { name: 'Choose icon or emoji', exact: true }).click();
+      await identityPicker
+        .getByRole('textbox', { name: 'Search icons and emojis', exact: true })
+        .fill('book');
+      await identityPicker.getByRole('button', { name: 'Book Open', exact: true }).click();
+      const colors = page.getByRole('group', { name: 'Icon color', exact: true });
+      // Fill colors need their paired ink: pale/yellow choices must keep a visible glyph.
+      for (const [label, id] of [
+        ['Primary, soft', 'primary-soft'],
+        ['Highlight, strong', 'highlight-strong'],
+      ] as const) {
+        await colors.getByRole('button', { name: label, exact: true }).click();
+        const preview = page.locator('.identity-choice-current .item-icon');
+        await expect(preview).toHaveAttribute('style', new RegExp(`--fill-${id}-fg`));
+        await expect(preview).toHaveAttribute('style', new RegExp(`--fill-${id}-bg`));
+        await capture(`icon-color-${id}`);
+      }
+      await colors.getByRole('button', { name: 'Info, strong', exact: true }).click();
+      await expect(
+        colors.getByRole('button', { name: 'Info, strong', exact: true }),
+      ).toHaveAttribute('aria-pressed', 'true');
+      await capture('icon-color-doc');
+      await page.getByRole('button', { name: 'Save appearance', exact: true }).click();
+      await expect(page.getByRole('dialog')).toHaveCount(0);
+      await page.reload();
+      const headerIcon = page.getByRole('button', { name: 'Change appearance', exact: true });
+      await expect(headerIcon.locator('[data-profile-icon="lucide:book-open"]')).toBeVisible();
+      await expect(headerIcon.locator('.item-icon')).toHaveAttribute(
+        'style',
+        /--fill-info-strong-bg/,
+      );
+      const colored = await (await context.request.get(`/api/appearance/items/${item.id}`)).json();
+      expect(colored.appearance.iconColor).toBe('info-strong');
+      await headerIcon.click();
+      await page.getByRole('button', { name: 'Choose icon or emoji', exact: true }).click();
+      await identityPicker
+        .getByRole('textbox', { name: 'Search icons and emojis', exact: true })
+        .fill('lemon');
+      await identityPicker.getByRole('button', { name: 'Lemon emoji', exact: true }).click();
+      await expect(colors).toHaveCount(0);
+      await page.getByRole('button', { name: 'Save appearance', exact: true }).click();
+      await expect(headerIcon.locator('.item-icon')).not.toHaveAttribute('style', /--fill-/);
+      await headerIcon.click();
       await page.getByRole('button', { name: 'Change cover', exact: true }).click();
       const dialog = page.getByRole('dialog', { name: 'Page cover', exact: true });
       await expect(dialog).toBeVisible();
@@ -182,10 +226,58 @@ for (const variant of [
             (await page.locator('.appearance-banner').boundingBox())!.height,
         )
         .toBeLessThanOrEqual(1);
+      await page.goto('/');
+      await page.getByRole('button', { name: 'New', exact: true }).click();
+      await page.getByRole('menuitem', { name: 'Folder', exact: true }).click();
+      const folderDialog = page.getByRole('dialog', { name: 'New folder', exact: true });
+      await folderDialog.getByRole('textbox', { name: 'Name', exact: true }).fill('Colored folder');
+      await folderDialog.getByRole('button', { name: 'Secondary, strong', exact: true }).click();
+      await folderDialog.getByRole('button', { name: 'Create', exact: true }).click();
+      // Wait for the real create request rather than reading the fixture database ahead of it.
+      await expect(
+        page.getByRole('button', { name: 'More actions for Colored folder', exact: true }),
+      ).toBeVisible();
+      await page
+        .getByRole('button', { name: 'More actions for Colored folder', exact: true })
+        .click();
+      await page.getByRole('menuitem', { name: 'Appearance…', exact: true }).click();
+      await expect(
+        page.getByRole('button', { name: 'Secondary, strong', exact: true }),
+      ).toHaveAttribute('aria-pressed', 'true');
+      await page.getByRole('button', { name: 'Choose icon or emoji', exact: true }).click();
+      await identityPicker
+        .getByRole('textbox', { name: 'Search icons and emojis', exact: true })
+        .fill('book');
+      await identityPicker.getByRole('button', { name: 'Book Open', exact: true }).click();
+      await page.getByRole('button', { name: 'Info, strong', exact: true }).click();
+      await capture('icon-color-folder');
+      await page.getByRole('button', { name: 'Save appearance', exact: true }).click();
+      await expect(page.getByRole('dialog')).toHaveCount(0);
+      await page.reload();
+      await page
+        .getByRole('button', { name: 'More actions for Colored folder', exact: true })
+        .click();
+      await page.getByRole('menuitem', { name: 'Appearance…', exact: true }).click();
+      await expect(page.locator('.identity-choice-current .item-icon')).toHaveAttribute(
+        'style',
+        /--fill-info-strong-bg/,
+      );
+      await page.getByRole('button', { name: 'Reset color', exact: true }).click();
+      await expect(page.locator('.identity-choice-current .item-icon')).not.toHaveAttribute(
+        'style',
+        /--fill-/,
+      );
+      await page.getByRole('button', { name: 'Save appearance', exact: true }).click();
+      await expect(page.getByRole('dialog')).toHaveCount(0);
+      expect(
+        workspace.list(owner.id).find((entry) => entry.name === 'Colored folder')?.appearance
+          ?.iconColor,
+      ).toBeNull();
       if (variant.name === 'light')
         for (const [name, icon] of [
           ['Automatic Doc', null],
           ['Chosen Doc', '🌻'],
+          ['Colored Doc', 'lucide:book-open'],
         ] as const) {
           await page.goto('/');
           await page.getByRole('button', { name: 'New', exact: true }).click();
@@ -206,16 +298,30 @@ for (const variant of [
               .fill('book');
             await picker.getByRole('button', { name: 'Book Open', exact: true }).click();
             await expect(create.locator('[data-profile-icon="lucide:book-open"]')).toBeVisible();
-            await create.getByRole('button', { name: 'Choose icon or emoji', exact: true }).click();
-            await picker
-              .getByRole('textbox', { name: 'Search icons and emojis', exact: true })
-              .fill(icon);
-            await picker.getByRole('button', { name: 'Sunflower emoji', exact: true }).click();
+            if (icon.startsWith('lucide:')) {
+              await create.getByRole('button', { name: 'Info, strong', exact: true }).click();
+            } else {
+              await create
+                .getByRole('button', { name: 'Choose icon or emoji', exact: true })
+                .click();
+              await picker
+                .getByRole('textbox', { name: 'Search icons and emojis', exact: true })
+                .fill(icon);
+              await picker.getByRole('button', { name: 'Sunflower emoji', exact: true }).click();
+            }
           }
           await create.getByRole('button', { name: 'Create', exact: true }).click();
-          await expect(
-            page.getByRole('button', { name: 'Change appearance', exact: true }),
-          ).toContainText(icon ?? filenameEmoji(name));
+          if (icon?.startsWith('lucide:')) {
+            await expect(
+              page
+                .getByRole('button', { name: 'Change appearance', exact: true })
+                .locator('.item-icon'),
+            ).toHaveAttribute('style', /--fill-info-strong-bg/);
+          } else {
+            await expect(
+              page.getByRole('button', { name: 'Change appearance', exact: true }),
+            ).toContainText(icon ?? filenameEmoji(name));
+          }
         }
     } finally {
       db.prepare('DELETE FROM workspace_items WHERE owner_id=?').run(owner.id);

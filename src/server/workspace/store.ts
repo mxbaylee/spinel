@@ -612,7 +612,13 @@ export class WorkspaceStore {
   }
   create(
     ownerId: string,
-    input: { name?: unknown; kind?: unknown; parentId?: unknown; icon?: unknown },
+    input: {
+      name?: unknown;
+      kind?: unknown;
+      parentId?: unknown;
+      iconColor?: unknown;
+      icon?: unknown;
+    },
   ): WorkspaceItem {
     this.owner(ownerId);
     const name = this.name(input.name);
@@ -627,7 +633,7 @@ export class WorkspaceStore {
           'INSERT INTO workspace_items(id,owner_id,parent_id,kind,name,created_at,updated_at) VALUES(?,?,?,?,?,?,?)',
         )
         .run(id, ownerId, parentId, input.kind as string, name, now, now);
-      initialIcon(this.auth.database, id, input.icon);
+      initialIcon(this.auth.database, id, input.icon, input.iconColor);
       return this.get(ownerId, id);
     });
   }

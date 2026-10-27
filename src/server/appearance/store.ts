@@ -81,7 +81,7 @@ export class AppearanceStore {
   async update(actor: AppearanceActor, id: string, input: unknown) {
     const item = this.authorize(actor, id, true),
       body = object(input);
-    keys(body, ['revision', 'icon', 'folderColor', 'accent', 'cover']);
+    keys(body, ['revision', 'icon', 'iconColor', 'accent', 'cover']);
     if (!Number.isSafeInteger(body.revision) || Object.keys(body).length < 2) throw bad();
     const previous = readAppearance(this.workspace.auth.database, id);
     if (previous.revision !== body.revision)
@@ -95,10 +95,10 @@ export class AppearanceStore {
         throw bad('Choose an icon or one emoji.');
       next.icon = body.icon as string | null;
     }
-    if (Object.hasOwn(body, 'folderColor')) {
-      if (item.kind !== 'folder' || (body.folderColor !== null && !validColor(body.folderColor)))
-        throw bad('Choose a folder color.');
-      next.folderColor = body.folderColor as string | null;
+    if (Object.hasOwn(body, 'iconColor')) {
+      if (body.iconColor !== null && !validColor(body.iconColor))
+        throw bad('Choose an icon color.');
+      next.iconColor = body.iconColor as string | null;
     }
     if (Object.hasOwn(body, 'accent')) {
       if (item.kind !== 'space' || (body.accent !== null && !validGem(body.accent)))

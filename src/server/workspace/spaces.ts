@@ -144,7 +144,7 @@ export class SpaceStore {
 
   createRoot(
     actorId: string,
-    input: { name?: unknown; parentId?: unknown; icon?: unknown },
+    input: { name?: unknown; parentId?: unknown; iconColor?: unknown; icon?: unknown },
   ): SpaceScope {
     return this.workspace.auth.transaction(() => {
       this.workspace.owner(actorId);
@@ -159,7 +159,7 @@ export class SpaceStore {
           VALUES(?,?,?,'space',?,?,?)`,
         )
         .run(id, actorId, parentId, name, now, now);
-      initialIcon(this.workspace.auth.database, id, input.icon);
+      initialIcon(this.workspace.auth.database, id, input.icon, input.iconColor);
       return resolveSpaceScope(this.workspace.auth, actorId, id, id, 'owner');
     });
   }
@@ -172,6 +172,7 @@ export class SpaceStore {
       kind?: unknown;
       parentId?: unknown;
       position?: unknown;
+      iconColor?: unknown;
       icon?: unknown;
     },
   ): SpaceScope {
@@ -204,7 +205,7 @@ export class SpaceStore {
           spaceId,
           position,
         );
-      initialIcon(this.workspace.auth.database, id, input.icon);
+      initialIcon(this.workspace.auth.database, id, input.icon, input.iconColor);
       siblings.splice(position, 0, id);
       this.order(spaceId, parentId, siblings, now);
       return resolveSpaceScope(this.workspace.auth, actorId, spaceId, id, 'edit');

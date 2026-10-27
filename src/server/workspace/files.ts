@@ -149,7 +149,13 @@ export class WorkspaceFiles {
 
   create(
     user: string,
-    input: { name?: unknown; kind?: unknown; parentId?: unknown; icon?: unknown },
+    input: {
+      name?: unknown;
+      kind?: unknown;
+      parentId?: unknown;
+      iconColor?: unknown;
+      icon?: unknown;
+    },
   ): FileItem {
     if (input.kind !== 'space') return this.workspace.create(user, input);
     this.enabled();

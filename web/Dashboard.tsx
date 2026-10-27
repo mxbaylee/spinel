@@ -168,6 +168,7 @@ export function Dashboard({
   currentRef.current = currentId;
   const [action, setAction] = useState<Action | null>(null);
   const [name, setName] = useState('');
+  const [newIconColor, setNewIconColor] = useState<string | null>(null);
   const [newIcon, setNewIcon] = useState<string | null>(null);
   const [appearanceItem, setAppearanceItem] = useState<FileItem | null>(null);
   useEffect(() => {
@@ -448,6 +449,7 @@ export function Dashboard({
     setAction({ mode, item });
     setName(item?.name ?? '');
     setNewIcon(null);
+    setNewIconColor(null);
     setKind(newKind);
     setDestination(
       mode === 'file'
@@ -469,7 +471,13 @@ export function Dashboard({
         action.mode === 'new' ? '' : `/${action.item!.id}`,
         action.mode === 'new' ? 'POST' : 'PATCH',
         action.mode === 'new'
-          ? { name, kind, icon: newIcon, parentId: sharedOpen ? null : currentId }
+          ? {
+              name,
+              kind,
+              icon: newIcon,
+              iconColor: newIconColor,
+              parentId: sharedOpen ? null : currentId,
+            }
           : action.mode === 'rename'
             ? { name }
             : { parentId: destination || null },
@@ -1002,6 +1010,8 @@ export function Dashboard({
                 kind={kind}
                 value={newIcon}
                 onChange={setNewIcon}
+                color={newIconColor}
+                onColorChange={setNewIconColor}
                 disabled={busy}
               />
             )}

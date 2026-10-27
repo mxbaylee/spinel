@@ -159,11 +159,11 @@ test('stale revisions, invalid colors and invalid paired variants leave all appe
   });
   const folder = f.workspace.create(f.owner.id, { name: 'Folder', kind: 'folder', parentId: null });
   await expect(
-    f.store.update(actor, folder.id, { revision: 0, folderColor: '#fff' }),
+    f.store.update(actor, folder.id, { revision: 0, iconColor: '#fff' }),
   ).rejects.toThrow();
-  await f.store.update(actor, folder.id, { revision: 0, folderColor: 'primary-soft' });
+  await f.store.update(actor, folder.id, { revision: 0, iconColor: 'primary-soft' });
   expect(
-    f.workspace.list(f.owner.id).find((item) => item.id === folder.id)?.appearance?.folderColor,
+    f.workspace.list(f.owner.id).find((item) => item.id === folder.id)?.appearance?.iconColor,
   ).toBe('primary-soft');
 });
 test('access revoked while Unsplash awaits prevents publication and preserves prior cover', async () => {
@@ -246,4 +246,82 @@ test('Unsplash integration preserves hotlink parameters, attributes and reports 
   await provider.choose('photo');
   expect(calls.some((url) => url.includes('/photos/photo/download?ixid=retain'))).toBe(true);
   await expect(new UnsplashProvider('').search('mountains')).rejects.toMatchObject({ status: 503 });
+});
+
+test('icon colors persist atomically for Docs, folders and Space children, and legacy folder colors remain readable', async () => {
+  const f = fixture();
+  for (const kind of ['doc', 'folder'] as const) {
+    const item = f.workspace.create(f.owner.id, {
+      name: `Colored ${kind}`,
+      kind,
+      parentId: null,
+      icon: 'lucide:book-open',
+      iconColor: 'info-strong',
+    });
+    expect(f.store.get(f.actor(), item.id).appearance).toMatchObject({
+      icon: 'lucide:book-open',
+      iconColor: 'info-strong',
+    });
+    await f.store.update(f.actor(), item.id, { revision: 1, iconColor: 'success-strong' });
+    f.workspace.update(f.owner.id, item.id, { name: 'Renamed' });
+    expect(
+      f.workspace.list(f.owner.id).find((entry) => entry.id === item.id)?.appearance?.iconColor,
+    ).toBe('success-strong');
+    await expect(
+      f.store.update(f.actor(), item.id, { revision: 2, iconColor: '#ff0000' }),
+    ).rejects.toMatchObject({ status: 400 });
+    await f.store.update(f.actor(), item.id, { revision: 2, iconColor: null });
+    expect(f.store.get(f.actor(), item.id).appearance.iconColor).toBeNull();
+  }
+  const before = f.workspace.list(f.owner.id).length;
+  expect(() =>
+    f.workspace.create(f.owner.id, {
+      name: 'Invalid color',
+      kind: 'doc',
+      parentId: null,
+      icon: 'lucide:book-open',
+      iconColor: 'missing',
+    }),
+  ).toThrow('Choose an icon color');
+  expect(f.workspace.list(f.owner.id)).toHaveLength(before);
+  const root = f.spaces.createRoot(f.owner.id, {
+    name: 'Colored Space',
+    parentId: null,
+    icon: 'lucide:folder',
+    iconColor: 'info-strong',
+  }).space;
+  expect(f.store.get(f.actor(f.owner.id, root.id), root.id).appearance.iconColor).toBe(
+    'info-strong',
+  );
+  const child = f.spaces.createChild(f.owner.id, root.id, {
+    name: 'Child',
+    kind: 'doc',
+    parentId: root.id,
+    icon: 'lucide:book-open',
+    iconColor: 'secondary-strong',
+  }).item;
+  expect(f.store.get(f.actor(f.owner.id, root.id, child.id), child.id).appearance.iconColor).toBe(
+    'secondary-strong',
+  );
+  const folder = f.workspace.create(f.owner.id, {
+    name: 'Legacy folder',
+    kind: 'folder',
+    parentId: null,
+  });
+  f.db.prepare('INSERT INTO item_appearance(item_id,revision,value) VALUES(?,1,?)').run(
+    folder.id,
+    JSON.stringify({
+      revision: 1,
+      icon: null,
+      folderColor: 'success-strong',
+      accent: null,
+      cover: null,
+    }),
+  );
+  expect(f.store.get(f.actor(), folder.id).appearance.iconColor).toBe('success-strong');
+  expect(
+    f.workspace.list(f.owner.id).find((entry) => entry.id === folder.id)?.appearance?.iconColor,
+  ).toBe('success-strong');
+  await f.store.update(f.actor(), folder.id, { revision: 1, iconColor: null });
+  expect(f.store.get(f.actor(), folder.id).appearance.iconColor).toBeNull();
 });

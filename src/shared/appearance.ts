@@ -19,17 +19,28 @@ export type PageCover =
 export interface ItemAppearance {
   revision: number;
   icon: string | null;
-  folderColor: string | null;
+  iconColor: string | null;
   accent: GemName | null;
   cover: PageCover | null;
 }
 export const emptyAppearance = (): ItemAppearance => ({
   revision: 0,
   icon: null,
-  folderColor: null,
+  iconColor: null,
   accent: null,
   cover: null,
 });
+/** Preserve folder colors saved by the earlier pre-release appearance picker. */
+export function normalizeAppearance(
+  value: Partial<ItemAppearance> & { folderColor?: string | null },
+): ItemAppearance {
+  const { folderColor, ...current } = value;
+  return {
+    ...emptyAppearance(),
+    ...current,
+    iconColor: current.iconColor !== undefined ? current.iconColor : (folderColor ?? null),
+  };
+}
 export function filenameEmoji(name: string) {
   const choices = ['🌿', '🌻', '🍂', '🍋', '🪻', '🌷', '🪴', '🍄', '🌵', '🍀', '🌺', '🪷'];
   let hash = 0;

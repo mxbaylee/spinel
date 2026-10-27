@@ -5,6 +5,7 @@ import {
   coverVariant,
   emptyAppearance,
   filenameEmoji,
+  normalizeAppearance,
   gemNames,
 } from '../src/shared/appearance.ts';
 import type {
@@ -41,18 +42,17 @@ export function ItemIcon({
   size?: number;
 }) {
   const icon = appearance?.icon ?? (kind === 'folder' ? 'lucide:folder' : filenameEmoji(name));
+  const color = appearance ? normalizeAppearance(appearance).iconColor : null;
+  const tinted = icon.startsWith('lucide:') && Boolean(color);
   return (
     <span
       className="item-icon"
+      data-tinted={tinted || undefined}
       aria-hidden="true"
       style={{
         fontSize: size,
-        color:
-          kind === 'folder'
-            ? appearance?.folderColor
-              ? `var(--fill-${appearance.folderColor}-bg)`
-              : undefined
-            : undefined,
+        color: tinted ? `var(--fill-${color}-fg)` : undefined,
+        background: tinted ? `var(--fill-${color}-bg)` : undefined,
       }}
     >
       {icon.startsWith('lucide:') ? <ProfileIcon icon={icon} size={size} /> : icon}
@@ -64,12 +64,16 @@ export function IdentityChoice({
   kind,
   value,
   onChange,
+  color,
+  onColorChange,
   disabled = false,
 }: {
   name: string;
   kind?: string;
   value: string | null;
   onChange(value: string | null): void;
+  color: string | null;
+  onColorChange(value: string | null): void;
   disabled?: boolean;
 }) {
   const [picker, setPicker] = useState(false);
@@ -81,7 +85,11 @@ export function IdentityChoice({
   return (
     <div className="identity-choice">
       <div className="identity-choice-current">
-        <ItemIcon name={name} kind={kind} appearance={{ ...emptyAppearance(), icon: value }} />
+        <ItemIcon
+          name={name}
+          kind={kind}
+          appearance={{ ...emptyAppearance(), icon: value, iconColor: color }}
+        />
         <span>{value ? 'Custom icon' : 'Automatic icon'}</span>
       </div>
       <button
@@ -102,6 +110,34 @@ export function IdentityChoice({
       >
         Reset icon
       </Button>
+      {(value ?? (kind === 'folder' ? 'lucide:folder' : '')).startsWith('lucide:') ? (
+        <fieldset className="identity-color-choice">
+          <legend>Icon color</legend>
+          <div className="appearance-colors">
+            {fillPresets.map((preset) => (
+              <button
+                key={preset.id}
+                type="button"
+                aria-label={preset.label}
+                aria-pressed={color === preset.id}
+                disabled={disabled}
+                style={{
+                  background: `var(--fill-${preset.id}-bg)`,
+                  color: `var(--fill-${preset.id}-fg)`,
+                }}
+                onClick={() => onColorChange(preset.id)}
+              >
+                {color === preset.id ? '✓' : ''}
+              </button>
+            ))}
+          </div>
+          <Button type="button" disabled={disabled} onClick={() => onColorChange(null)}>
+            Reset color
+          </Button>
+        </fieldset>
+      ) : (
+        <p className="sp-muted">Emojis keep their original colors.</p>
+      )}
       {picker && (
         <IconPicker
           includeEmojis
@@ -297,7 +333,7 @@ export function AppearanceDialog({
   assets?: Record<string, string>;
 }) {
   const [icon, setIcon] = useState(value.icon),
-    [color, setColor] = useState(value.folderColor),
+    [color, setColor] = useState(normalizeAppearance(value).iconColor),
     [accent, setAccent] = useState(value.accent);
   const [busy, setBusy] = useState(false),
     [error, setError] = useState(''),
@@ -310,7 +346,7 @@ export function AppearanceDialog({
       await save({
         revision: draftRevision,
         icon,
-        ...(target.kind === 'folder' ? { folderColor: color } : {}),
+        iconColor: color,
         ...(target.kind === 'space' ? { accent } : {}),
       });
       close();
@@ -350,32 +386,10 @@ export function AppearanceDialog({
           kind={target.kind}
           value={icon}
           onChange={setIcon}
+          color={color}
+          onColorChange={setColor}
           disabled={busy}
         />
-        {target.kind === 'folder' && (
-          <>
-            <div role="group" aria-label="Folder color" className="appearance-colors">
-              {fillPresets.map((preset) => (
-                <button
-                  key={preset.id}
-                  aria-label={preset.label}
-                  aria-pressed={color === preset.id}
-                  disabled={busy}
-                  style={{
-                    background: `var(--fill-${preset.id}-bg)`,
-                    color: `var(--fill-${preset.id}-fg)`,
-                  }}
-                  onClick={() => setColor(preset.id)}
-                >
-                  {color === preset.id ? '✓' : ''}
-                </button>
-              ))}
-            </div>
-            <Button disabled={busy} onClick={() => setColor(null)}>
-              Reset color
-            </Button>
-          </>
-        )}
         {target.kind === 'space' && (
           <Choice
             label="Space accent"
@@ -827,7 +841,7 @@ export function useOfflineAppearance(
         await verifyCoverAssets(saved.bundle);
         if (active && preparedAccount() === accountId)
           setValue({
-            appearance: saved.bundle.appearance ?? emptyAppearance(),
+            appearance: normalizeAppearance(saved.bundle.appearance ?? emptyAppearance()),
             assets: Object.fromEntries(
               Object.entries(saved.bundle.coverAssets ?? {}).map(([hash, data]) => [
                 hash,

@@ -107,7 +107,7 @@ export function spaceRoutes(
     router.post('/', (request, response) => {
       const scope = spaces.createRoot(
         actor(request),
-        payload(request, ['name', 'parentId', 'icon']),
+        payload(request, ['name', 'parentId', 'icon', 'iconColor']),
       );
       response.status(201).json({ space: root(scope.space) });
     });
@@ -125,7 +125,7 @@ export function spaceRoutes(
     const scope = spaces.createChild(
       actor(request),
       String(request.params.spaceId),
-      payload(request, ['name', 'kind', 'parentId', 'position', 'icon']),
+      payload(request, ['name', 'kind', 'parentId', 'position', 'icon', 'iconColor']),
     );
     response.status(201).json({ item: node(scope.item) });
   });

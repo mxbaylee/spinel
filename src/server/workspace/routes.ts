@@ -318,7 +318,10 @@ export function workspaceRoutes(
   });
   router.post('/', (request, response) =>
     response.status(201).json({
-      item: catalog.create(owner(request), payload(request, ['name', 'kind', 'parentId', 'icon'])),
+      item: catalog.create(
+        owner(request),
+        payload(request, ['name', 'kind', 'parentId', 'icon', 'iconColor']),
+      ),
     }),
   );
   router.patch('/:id', (request, response) =>

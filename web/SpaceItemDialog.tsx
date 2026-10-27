@@ -13,6 +13,7 @@ export type SpaceDialogAction =
   | { mode: 'trash'; item: SpaceNode };
 export type SpaceDialogValue = {
   icon?: string | null;
+  iconColor?: string | null;
   name?: string;
   kind?: ItemKind;
   parentId?: string | null;
@@ -41,6 +42,7 @@ export function SpaceItemDialog({
   const item = 'item' in action ? action.item : null;
   const positionDescription = useId();
   const [name, setName] = useState(item?.name ?? '');
+  const [iconColor, setIconColor] = useState<string | null>(null);
   const [icon, setIcon] = useState<string | null>(null);
   const [parentId, setParentId] = useState(
     action.mode === 'root' ? '' : (item?.parentId ?? tree?.space.id ?? ''),
@@ -127,8 +129,8 @@ export function SpaceItemDialog({
                 : action.mode === 'rename'
                   ? { name }
                   : action.mode === 'root'
-                    ? { name, icon, parentId: parentId || null }
-                    : { name, icon, kind: action.kind, parentId },
+                    ? { name, icon, iconColor, parentId: parentId || null }
+                    : { name, icon, iconColor, kind: action.kind, parentId },
           );
         }}
       >
@@ -139,6 +141,8 @@ export function SpaceItemDialog({
               kind={action.mode === 'root' ? 'space' : action.kind}
               value={icon}
               onChange={setIcon}
+              color={iconColor}
+              onColorChange={setIconColor}
               disabled={busy || disabled}
             />
           )}

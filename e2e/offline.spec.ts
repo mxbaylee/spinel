@@ -75,7 +75,8 @@ test('downloaded Sheets and Docs open offline with local images; nothing else do
   const appearance = new AppearanceStore(workspace);
   await appearance.update({ userId: user.id, customData: {} }, doc.id, {
     revision: 0,
-    icon: '🌷',
+    icon: 'lucide:book-open',
+    iconColor: 'primary-soft',
     cover: {
       source: 'upload',
       images: { light: await coverImage('#ffd2e2'), dark: await coverImage('#382233') },
@@ -473,7 +474,17 @@ test('downloaded Sheets and Docs open offline with local images; nothing else do
     await expect
       .poll(() => page.locator('.appearance-banner img').getAttribute('src'))
       .not.toBe(coverLight);
-    await expect(page.locator('.editor-identity .item-icon')).toContainText('🌷');
+    await expect(
+      page.locator('.editor-identity [data-profile-icon="lucide:book-open"]'),
+    ).toBeVisible();
+    await expect(page.locator('.editor-identity .item-icon')).toHaveAttribute(
+      'style',
+      /--fill-primary-soft-fg/,
+    );
+    await expect(page.locator('.editor-identity .item-icon')).toHaveAttribute(
+      'style',
+      /--fill-primary-soft-bg/,
+    );
     await page.goBack();
     await row('Online only')
       .getByRole('button', { name: 'Online only Sheet', exact: true })

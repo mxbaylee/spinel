@@ -7,7 +7,13 @@ that exact character, including skin tones and joined sequences. The Emojis
 category narrows browsing. Leaving the choice
 untouched, or using Reset icon, uses the NFC-normalized filename hash and the
 existing flower/plant palette. A custom icon persists through rename. Folders
-keep a folder glyph by default and offer the existing theme-aware fill presets;
+keep a folder glyph by default. Selecting a line icon for any item exposes
+**Icon color** beside the identity choice, using a small rounded tile and contrasting paired ink from the existing theme-aware fill
+presets. Creation and editing share the control, show the selected color in the
+preview, and persist it across lists, editor headers and offline copies. Reset
+color restores the inherited color without changing the icon. Emojis retain
+their native colors and hide the tint controls; returning to a line icon reuses
+the saved color. Earlier saved folder colors remain readable as icon colors;
 type, access and save indicators remain separate from identity.
 
 Appearance lives in item metadata, independent of native document snapshots.

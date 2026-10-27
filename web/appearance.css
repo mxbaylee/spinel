@@ -5,6 +5,10 @@
   flex: none;
   line-height: 1;
 }
+.item-icon[data-tinted] {
+  border-radius: 4px;
+  padding: 3px;
+}
 .identity-choice {
   display: flex;
   align-items: center;
@@ -233,4 +237,18 @@
   .appearance-cover-position input {
     min-height: 44px;
   }
+}
+
+.identity-color-choice {
+  flex-basis: 100%;
+  min-width: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+.identity-color-choice legend {
+  margin-bottom: 8px;
+}
+.identity-color-choice > button {
+  margin-top: 8px;
 }

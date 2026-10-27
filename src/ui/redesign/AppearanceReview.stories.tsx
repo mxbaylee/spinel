@@ -112,6 +112,25 @@ export const PlaygroundStory: Story = {
       canvasElement.ownerDocument.querySelector('.identity-choice-current'),
     ).toHaveTextContent('🌻');
     await userEvent.click(body.getByRole('button', { name: 'Reset icon' }));
+    await userEvent.click(body.getByRole('button', { name: 'Choose icon or emoji' }));
+    await userEvent.type(body.getByRole('textbox', { name: 'Search icons and emojis' }), 'book');
+    await userEvent.click(body.getByRole('button', { name: 'Book Open' }));
+    const colors = within(body.getByRole('group', { name: 'Icon color' }));
+    await userEvent.click(colors.getByRole('button', { name: 'Info, strong' }));
+    await expect(colors.getByRole('button', { name: 'Info, strong' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    await userEvent.click(body.getByRole('button', { name: 'Save appearance' }));
+    if (args.failSave) {
+      await expect(body.getByRole('alert')).toHaveTextContent('Save failed');
+      return;
+    }
+    await userEvent.click(body.getByRole('button', { name: 'Appearance' }));
+    await expect(body.getByRole('button', { name: 'Info, strong' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
     if (args.kind === 'folder' || args.kind === 'space') return;
     await userEvent.click(body.getByRole('button', { name: 'Change cover' }));
     const height = body.getByRole('dialog').getBoundingClientRect().height;
