@@ -430,6 +430,11 @@ export function Dashboard({
     };
   }, [title]);
   const personalFolder = !currentId || (current?.kind === 'folder' && current.access === 'owner');
+  const listedOwnedFolders = new Set(
+    items
+      .filter((item) => item.kind === 'folder' && item.access === 'owner')
+      .map((item) => item.id),
+  );
   const visibleItems = personalFolder
     ? [
         ...new Map(
@@ -445,6 +450,7 @@ export function Dashboard({
                   item.parentId === currentId ||
                   (!currentId &&
                     (!item.parentId ||
+                      !listedOwnedFolders.has(item.parentId) ||
                       byId.get(item.parentId)?.kind !== 'folder' ||
                       byId.get(item.parentId)?.access !== 'owner' ||
                       Boolean(offline.downloads.get(item.id)?.creation?.problem))),

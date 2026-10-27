@@ -563,6 +563,29 @@ export const CreationParentNowShared: Story = {
     await userEvent.keyboard('{Escape}');
   },
 };
+/** An old folder view supplies context, not a reachable destination in My files. */
+export const CreationParentNoLongerListed: Story = {
+  args: {
+    local: {
+      ...local,
+      catalog: {
+        ...local.catalog,
+        items: local.catalog.items.filter((item) => item.id !== household.id),
+        // Keep the old owned view to reproduce deletion after the last visit.
+        views: local.catalog.views,
+      },
+      downloads: [
+        ...local.downloads,
+        {
+          ...pendingCreation,
+          creation: { ...pendingCreation.creation, parentId: household.id },
+        },
+      ],
+    },
+  },
+  parameters: { api: empty },
+  play: CreationParentNowShared.play,
+};
 /** Offline, a Doc that wasn't downloaded stays listed but can't open. */
 export const LocalNeedsConnection: Story = {
   ...LocalMode,
