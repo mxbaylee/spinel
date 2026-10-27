@@ -99,10 +99,11 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 export const PlaygroundStory: Story = {
   name: 'Playground',
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, args }) => {
     const body = within(canvasElement.ownerDocument.body);
-    await userEvent.click(body.getByRole('button', { name: 'Appearance' }));
+    if (!args.open) await userEvent.click(body.getByRole('button', { name: 'Appearance' }));
     await expect(body.getByRole('button', { name: 'Reset icon' })).toBeDisabled();
+    if (args.kind === 'folder' || args.kind === 'space') return;
     await userEvent.click(body.getByRole('button', { name: 'Change cover' }));
     const height = body.getByRole('dialog').getBoundingClientRect().height;
     for (const source of ['Upload', 'Unsplash', 'Gems']) {
@@ -113,10 +114,14 @@ export const PlaygroundStory: Story = {
     }
     await userEvent.click(body.getByRole('button', { name: 'Jasper' }));
     await userEvent.click(body.getByRole('button', { name: 'Save cover' }));
+    if (args.failSave) {
+      await expect(body.getByRole('alert')).toHaveTextContent('Save failed');
+      return;
+    }
     await userEvent.click(body.getByRole('button', { name: 'Cancel' }));
-    await expect(canvasElement.querySelector('.appearance-banner img')).toHaveStyle({
-      objectPosition: 'left center',
-    });
+    await expect(
+      getComputedStyle(canvasElement.querySelector('.appearance-banner img')!).objectPosition,
+    ).toBe('0% 50%');
   },
 };
 export const GemsLightAndDark: Story = { render: () => <GemPairs /> };

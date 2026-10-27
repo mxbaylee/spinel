@@ -1,3 +1,4 @@
+import { AppearanceStore } from '../src/server/appearance/store.ts';
 import { mkdir } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 import type { Locator } from '@playwright/test';
@@ -21,6 +22,24 @@ test('downloaded Sheets and Docs open read-only offline with local images; nothi
     workspace = new WorkspaceStore(auth);
   const user = auth.createUser(`Offline ${info.testId}`);
   const doc = workspace.create(user.id, { name: 'Offline notes', kind: 'doc', parentId: null });
+  const appearance = new AppearanceStore(workspace);
+  const coverImage = async (background: string) => ({
+    data: (
+      await sharp({ create: { width: 32, height: 32, channels: 3, background } })
+        .png()
+        .toBuffer()
+    ).toString('base64'),
+  });
+  await appearance.update({ userId: user.id, customData: {} }, doc.id, {
+    revision: 0,
+    icon: '🌷',
+    cover: {
+      source: 'upload',
+      images: { light: await coverImage('#ffd2e2'), dark: await coverImage('#382233') },
+      position: 50,
+    },
+  });
+
   workspace.create(user.id, { name: 'Online only', kind: 'sheet', parentId: null });
   await context.addCookies([
     {
@@ -359,6 +378,28 @@ test('downloaded Sheets and Docs open read-only offline with local images; nothi
     await expect(
       page.getByRole('status').filter({ hasText: 'Read only on this device' }),
     ).toBeVisible({ timeout: 30_000 });
+    await page.evaluate(() => {
+      localStorage.setItem('spinel-theme', 'light');
+      window.dispatchEvent(new StorageEvent('storage', { key: 'spinel-theme', newValue: 'light' }));
+    });
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+    await expect(page.locator('.appearance-banner img')).toHaveAttribute(
+      'src',
+      /^data:image\/webp;base64,/,
+    );
+    const coverLight = await page.locator('.appearance-banner img').getAttribute('src');
+    await page.evaluate(() => {
+      localStorage.setItem('spinel-theme', 'dark');
+      window.dispatchEvent(new StorageEvent('storage', { key: 'spinel-theme', newValue: 'dark' }));
+    });
+    await expect(page.locator('.appearance-banner img')).toHaveAttribute(
+      'src',
+      /^data:image\/webp;base64,/,
+    );
+    await expect
+      .poll(() => page.locator('.appearance-banner img').getAttribute('src'))
+      .not.toBe(coverLight);
+    await expect(page.locator('.editor-identity .item-icon')).toContainText('🌷');
     await page.goBack();
     await row('Online only')
       .getByRole('button', { name: 'Online only Sheet', exact: true })

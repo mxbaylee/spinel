@@ -1,3 +1,4 @@
+import { filenameEmoji } from '../src/shared/appearance.ts';
 import { mkdir } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 import { openDatabase } from '../server/database.ts';
@@ -72,7 +73,28 @@ for (const variant of [
       await capture('editor');
       await page.getByRole('button', { name: 'Change appearance', exact: true }).click();
       await page.getByRole('textbox', { name: 'Emoji', exact: true }).fill('🍋');
+      if (variant.name === 'light') {
+        const path = `**/api/appearance/items/${item.id}`;
+        await page.route(path, (route) =>
+          route.request().method() === 'GET'
+            ? route.fulfill({ status: 503, json: { error: 'Temporary connection failure.' } })
+            : route.continue(),
+        );
+        const failedPoll = page.waitForResponse(
+          (response) =>
+            response.url().endsWith(`/api/appearance/items/${item.id}`) &&
+            response.status() === 503,
+        );
+        await page.evaluate(() => window.dispatchEvent(new Event('focus')));
+        await failedPoll;
+        await expect(page.getByRole('textbox', { name: 'Emoji', exact: true })).toHaveValue('🍋');
+        await page.unroute(path);
+      }
+
       await page.getByRole('button', { name: 'Save appearance', exact: true }).click();
+      await expect(
+        page.getByRole('button', { name: 'Change appearance', exact: true }),
+      ).toContainText('🍋');
       await page.reload();
       await expect(
         page.getByRole('button', { name: 'Change appearance', exact: true }),
@@ -129,6 +151,25 @@ for (const variant of [
             (await page.locator('.appearance-banner').boundingBox())!.height,
         )
         .toBeLessThanOrEqual(1);
+      if (variant.name === 'light')
+        for (const [name, icon] of [
+          ['Automatic Doc', null],
+          ['Chosen Doc', '🌻'],
+        ] as const) {
+          await page.goto('/');
+          await page.getByRole('button', { name: 'New', exact: true }).click();
+          await page.getByRole('menuitem', { name: 'Doc', exact: true }).click();
+          const create = page.getByRole('dialog', { name: 'New doc', exact: true });
+          await create.getByRole('textbox', { name: 'Name', exact: true }).fill(name);
+          await expect(
+            create.getByRole('button', { name: 'Reset icon', exact: true }),
+          ).toBeDisabled();
+          if (icon) await create.getByRole('textbox', { name: 'Emoji', exact: true }).fill(icon);
+          await create.getByRole('button', { name: 'Create', exact: true }).click();
+          await expect(
+            page.getByRole('button', { name: 'Change appearance', exact: true }),
+          ).toContainText(icon ?? filenameEmoji(name));
+        }
     } finally {
       db.prepare('DELETE FROM workspace_items WHERE owner_id=?').run(owner.id);
       db.prepare('DELETE FROM auth_users WHERE id=?').run(owner.id);
