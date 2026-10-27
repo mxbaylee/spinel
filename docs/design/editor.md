@@ -29,10 +29,11 @@ editor and status controllers while changing only its viewport. The compact
 People dialog replaces hidden name tooltips. Space Pages remains the sole
 internal tree and hides only during theatre. The native Doc zoom control changes
 the snapshot's zoom setting; the separate public `fitToWidth`/`DocViewScaleService`
-route computes view scale independently. This implementation retains native
-zoom/pan; evaluating that separate fit integration and further mobile layout work
-remain in SPN-072. Native browser and visual acceptance are recorded separately
-from these source choices.
+route computes view scale independently. SPN-049 retained native zoom/pan;
+[SPN-072's public mobile integration](../implementation/SPN-072.md) now supplies
+readable modern Doc reflow and the traditional-page fallback described below.
+Native browser and visual acceptance are recorded separately from these source
+choices.
 
 SPN-085 applies the approved History and HistoryCalendar hierarchy to the isolated
 native history browser: desktop chooser beside preview, phone chooser disclosure,
