@@ -161,6 +161,15 @@ required; a grading reviewer may also perform the visual review. Nonvisual PRs k
 applicable rendering/interaction checks without routine PNG capture. Owner, chat
 2026-10-26; [standing policy](../implementation/grooming-2026-10-26.md#agent-decisions-and-visual-review).
 
+The owner gives standing permission to publish useful images on PRs, including
+public PRs, through attachments or durable, commit-pinned repository assets.
+Do not ask again for image-publication permission. Select images that cover the
+proposed designs, changed states and required light/dark/phone views; omit
+redundant captures and link the complete CI artifacts as supplementary evidence.
+Keep source, theme, viewport and fixture/native-flow captions accurate. This
+publication authority leaves independent visual review and both grading gates in
+place. Owner, chat 2026-10-26; [image-publication decision](../implementation/grooming-2026-10-26.md#standing-permission-to-publish-pr-images).
+
 ## Working a ticket
 
 1. Re-read the ticket and check it is still true against the code.
