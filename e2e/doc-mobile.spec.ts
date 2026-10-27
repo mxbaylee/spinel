@@ -1108,9 +1108,45 @@ test('a peer-protocol page-layout change preserves queued phone writing and the 
       })),
     );
 
-    const point = await textPoint(page);
-    await page.touchscreen.tap(point.x, point.y);
-    await page.touchscreen.tap(point.x, point.y);
+    // The preserved 960px page now fits as a tiny read-only fallback. Its
+    // glyphs are below the editable-text raster helper's readability threshold.
+    // Read the retained native caret to target real text without changing it.
+    let fallbackPoint: { x: number; y: number } | undefined;
+    await expect(async () => {
+      const current = await selection();
+      expect(current).toMatchObject({
+        unitId,
+        start: prefixText.length,
+        end: prefixText.length,
+        editing: false,
+        text: prefixText + original.body!.dataStream,
+      });
+      const bounds = current!.bounds;
+      expect(bounds).toBeDefined();
+      expect(Object.values(bounds!).every(Number.isFinite)).toBe(true);
+      expect(bounds!.bottom).toBeGreaterThan(bounds!.top);
+      expect(bounds!.right).toBeGreaterThanOrEqual(bounds!.left);
+      const point = { x: bounds!.left, y: (bounds!.top + bounds!.bottom) / 2 };
+      expect(
+        await canvas.evaluate(
+          (node, { point, bounds }) => {
+            const box = node.getBoundingClientRect();
+            const target = document.elementFromPoint(point.x, point.y);
+            return (
+              bounds.left >= box.left &&
+              bounds.right <= box.right &&
+              bounds.top >= box.top &&
+              bounds.bottom <= box.bottom &&
+              (target === node || Boolean(target && node.parentElement?.contains(target)))
+            );
+          },
+          { point, bounds: bounds! },
+        ),
+      ).toBe(true);
+      fallbackPoint = point;
+    }).toPass({ timeout: 5_000 });
+    await page.touchscreen.tap(fallbackPoint!.x, fallbackPoint!.y);
+    await page.touchscreen.tap(fallbackPoint!.x, fallbackPoint!.y);
     await expect(input(page)).not.toBeFocused();
     await page.keyboard.type('FORBIDDEN AFTER PAGE LAYOUT CHANGE');
     await page.getByRole('button', { name: 'Document actions', exact: true }).tap();
