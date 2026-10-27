@@ -681,10 +681,16 @@ test('phone guest Doc reader cannot write and loses its document when the link i
           ).nativeSyncEvidence?.[id]?.snapshot,
         original.id,
       );
-    await expect
-      .poll(async () => (await localSnapshot())?.body?.dataStream)
-      .toBe(original.body!.dataStream);
-    const localBeforeInput = (await localSnapshot())!;
+    // Only sync partitions build the read-only native snapshot observer. Keep
+    // keyboard, focus and saved-document denial checks in every partition.
+    const hasSnapshotEvidence = ['sync-development', 'sync-production'].includes(info.project.name);
+    let localBeforeInput: IDocumentData | undefined;
+    if (hasSnapshotEvidence) {
+      await expect
+        .poll(async () => (await localSnapshot())?.body?.dataStream)
+        .toBe(original.body!.dataStream);
+      localBeforeInput = (await localSnapshot())!;
+    }
     const point = await textPoint(page);
     for (let tap = 0; tap < 2; tap++) await page.touchscreen.tap(point.x, point.y);
     await expect(input(page)).not.toBeFocused();
@@ -702,10 +708,12 @@ test('phone guest Doc reader cannot write and loses its document when the link i
     });
     await expect(page.getByRole('status', { name: 'Save status' })).toContainText('View only');
     await expect(input(page)).not.toBeFocused();
-    const localAfterInput = (await localSnapshot())!;
-    expect(localAfterInput.body).toEqual(localBeforeInput.body);
-    expect(localAfterInput.documentStyle).toEqual(localBeforeInput.documentStyle);
-    expect(localAfterInput.settings).toEqual(localBeforeInput.settings);
+    if (hasSnapshotEvidence) {
+      const localAfterInput = (await localSnapshot())!;
+      expect(localAfterInput.body).toEqual(localBeforeInput!.body);
+      expect(localAfterInput.documentStyle).toEqual(localBeforeInput!.documentStyle);
+      expect(localAfterInput.settings).toEqual(localBeforeInput!.settings);
+    }
     await page.getByRole('button', { name: 'Formulas', exact: true }).tap();
     const panel = page.getByRole('dialog', { name: 'Formulas', exact: true });
     await expect(panel.locator('output')).toHaveText('42', { timeout: 20_000 });
