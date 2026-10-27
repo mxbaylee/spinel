@@ -100,6 +100,7 @@ import type { ConnectionState } from './connectionState.ts';
 import { guestPendingBuffer } from './guestPendingBuffer.ts';
 import type { RegisterGuestEditor } from './guestRevocation.ts';
 import { nativeSyncPermissions } from './nativeSyncPermissions.ts';
+import { observeDocResponsiveness } from './docResponsivenessEvidence.ts';
 
 export function DocEditor({
   id,
@@ -183,6 +184,7 @@ export function DocEditor({
     let stopFormulaVisibility: (() => void) | undefined;
     let stopSelectionEvidence: (() => void) | undefined;
     let stopDocumentLayout: (() => void) | undefined;
+    let responsivenessEvidence: ReturnType<typeof observeDocResponsiveness> | undefined;
     let phoneInput: ReturnType<typeof guardPhoneDocInput> | undefined;
     let phoneInputLocked = false;
     let phoneOnlyMessage: string | undefined;
@@ -448,6 +450,8 @@ export function DocEditor({
       });
       const stopTheme = bindEditorTheme(univer);
       disposeEditor = () => {
+        responsivenessEvidence?.dispose();
+        responsivenessEvidence = undefined;
         stopSelectionEvidence?.();
         stopSelectionEvidence = undefined;
         stopDocumentLayout?.();
@@ -605,6 +609,8 @@ export function DocEditor({
         .__getInjector()
         .get(IRenderManagerService)
         .getRenderUnitById(data.unitId);
+      if (import.meta.env.VITE_DOC_RESPONSIVENESS_EVIDENCE === '1')
+        responsivenessEvidence = observeDocResponsiveness(univer, data.unitId, mobile);
       render?.engine.getCanvasElement().setAttribute('aria-label', 'Document canvas');
       if (mobile && render)
         phoneInput = guardPhoneDocInput(
