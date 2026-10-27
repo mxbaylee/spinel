@@ -221,7 +221,7 @@ export function useAppearance(target: AppearanceTarget | undefined, disabled = f
       throw cause;
     }
   }
-  return { ...state, error, save, path, loading };
+  return { ...state, canEdit: !disabled && state.canEdit, error, save, path, loading };
 }
 export function CoverArt({
   cover,

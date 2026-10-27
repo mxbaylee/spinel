@@ -967,7 +967,7 @@ export function Dashboard({
       )}
       {appearanceItem && (
         <ConnectedAppearanceDialog
-          key={appearanceItem.id}
+          key={`appearance-${appearanceItem.id}`}
           target={appearanceItem}
           disabled={!!local || connection === 'offline'}
           finalFocus={() => (appearanceFocus.current?.isConnected ? appearanceFocus.current : true)}
@@ -1137,7 +1137,7 @@ export function Dashboard({
       )}
       {sharing && (
         <Sharing
-          key={sharing.id}
+          key={`sharing-${sharing.id}`}
           item={sharing}
           onClose={() => setSharing(null)}
           finalFocus={() => (sharingFocus.current?.isConnected ? sharingFocus.current : true)}

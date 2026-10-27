@@ -17,6 +17,7 @@ const coverImage = async (background: string) => ({
   ).toString('base64'),
 });
 async function assertLiveOfflineCover(page: Page, menuAppearance = false) {
+  await expect(page.locator('.editor-frame')).toHaveCount(1);
   await expect(page.getByRole('button', { name: 'Change appearance', exact: true })).toHaveCount(0);
   await expect(page.locator('.appearance-banner img')).toHaveAttribute(
     'src',
