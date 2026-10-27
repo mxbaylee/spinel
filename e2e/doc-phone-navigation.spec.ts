@@ -1,4 +1,4 @@
-import { mkdir } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
 import sharp from 'sharp';
 import { expect, test } from '@playwright/test';
 import type { Locator, Page, TestInfo } from '@playwright/test';
@@ -7,8 +7,47 @@ import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { nativeTheme } from './native-theme.ts';
 
-// These exercise the shipped desktop Doc preset at phone width. Wheel input is
-// intentional: physical touch/pinch and the software keyboard remain SPN-072/090.
+// Keep the original failing attempt; this fixture has no per-keystroke latency assertion.
+test.use({ trace: 'retain-on-failure' });
+
+async function nativeSelectionEvidence(page: Page) {
+  return page.evaluate(() => {
+    let native: unknown = null;
+    const observe = (event: Event) => {
+      native = (event as CustomEvent<unknown>).detail;
+    };
+    window.addEventListener('spinel-doc-selection-evidence', observe);
+    window.dispatchEvent(new Event('spinel-doc-selection-read'));
+    window.removeEventListener('spinel-doc-selection-evidence', observe);
+    const active = document.activeElement;
+    const inputHost = active?.closest('[id^="univer-doc-selection-container-"]');
+    const nativeBox = document.querySelector(
+      '.sheet-editor[aria-label="Doc document"] .univer-container',
+    );
+    const box = nativeBox?.getBoundingClientRect();
+    const point =
+      box && nativeBox
+        ? { x: box.x + nativeBox.clientLeft + 130, y: box.y + nativeBox.clientTop + 200 }
+        : null;
+    const hit = point ? document.elementFromPoint(point.x, point.y) : null;
+    const describe = (node: Element | null | undefined) =>
+      node ? { tag: node.tagName, id: node.id, component: node.getAttribute('data-u-comp') } : null;
+    return {
+      native,
+      active: describe(active),
+      inputHost: inputHost?.getBoundingClientRect().toJSON() ?? null,
+      nativeBox: box?.toJSON() ?? null,
+      clickPoint: point,
+      clickTarget: describe(hit),
+      coarsePointer: matchMedia('(pointer: coarse)').matches,
+    };
+  });
+}
+
+// These retain desktop-preset wheel coverage at phone width. doc-mobile.spec.ts
+// separately exercises the coarse-pointer preset with browser touch input.
+// Physical-device touch, keyboard, and IME checks remain unrun under the owner's
+// browser-only acceptance.
 async function changedContent(before: Buffer, after: Buffer) {
   const first = await sharp(before).removeAlpha().raw().toBuffer({ resolveWithObject: true });
   const second = await sharp(after).removeAlpha().raw().toBuffer({ resolveWithObject: true });
@@ -163,9 +202,13 @@ for (const role of ['editor', 'guest-viewer'] as const) {
           `Line ${index + 1}: Read the whole paragraph, including the far right edge. ` +
           'Keep the original page size and all of this text when navigating.',
       );
+      // Insert each prepared paragraph through native browser input events.
+      // insertText sends no per-character keydown/keyup/keypress events. This
+      // reduces seed history transactions; it is not a product latency repair.
+      // Prefix/suffix and forbidden-write checks below retain keyboard.type.
       for (const [index, paragraph] of paragraphs.entries()) {
         if (index > 0) await seed.keyboard.press('Enter');
-        await seed.keyboard.type(paragraph);
+        await seed.keyboard.insertText(paragraph);
       }
       // The visible native text can precede room acknowledgement and the
       // recovery-cache flush. Observe that lifecycle before reading its saved
@@ -261,14 +304,21 @@ for (const role of ['editor', 'guest-viewer'] as const) {
         expect(unchanged.documentStyle).toEqual(original.documentStyle);
 
         if (role === 'editor') {
+          const nativeEvidence: Array<{ phase: string; state: unknown }> = [];
+          const observeNative = async (phase: string) => {
+            nativeEvidence.push({ phase, state: await nativeSelectionEvidence(page) });
+          };
           await expect(editor.getByRole('button', { name: 'Bold', exact: true })).toBeEnabled();
+          await observeNative('before-click');
           await nativeBox.click({ position: { x: 130, y: 200 } });
+          await observeNative('after-click');
           // Zoom comparisons leave focus on Exit theatre. Verify that the canvas
           // click returned keyboard input to this document before the shortcut.
           await expect(
             editor.locator('[contenteditable="true"][data-u-comp="editor"]'),
           ).toBeFocused();
           await page.keyboard.press('Control+Home');
+          await observeNative('after-home');
           const input = await page.evaluateHandle(() => document.activeElement as HTMLElement);
           expect(await input.evaluate((node) => node.isContentEditable)).toBe(true);
           const caretInView = async (phase: 'start' | 'end') => {
@@ -310,10 +360,11 @@ for (const role of ['editor', 'guest-viewer'] as const) {
                 })
                 .toBe(true);
             } catch (error) {
-              console.info(
-                'Phone Doc caret geometry:',
-                JSON.stringify({ theme, phase, lastGeometry }),
-              );
+              await observeNative(`caret-${phase}-failure`);
+              const diagnostic = { theme, phase, lastGeometry, nativeEvidence };
+              const body = JSON.stringify(diagnostic, null, 2);
+              await writeFile(info.outputPath('phone-doc-selection-evidence.json'), body);
+              console.info('Phone Doc caret geometry:', body);
               throw error;
             }
           };
@@ -324,6 +375,7 @@ for (const role of ['editor', 'guest-viewer'] as const) {
           expectedText = prefix + expectedText;
           await expect.poll(async () => (await read()).body.dataStream).toBe(expectedText);
           await page.keyboard.press('Control+End');
+          await observeNative('after-end');
           await caretInView('end');
           await capture(page, info, `${role}-${theme}-caret-end`);
           const suffix = ` ${theme} end`;

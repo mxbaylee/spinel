@@ -85,6 +85,16 @@ test('touch history timeline and calendar preview retained choices without chang
     );
     const live = await (await context.request.get(`/api/items/${item.id}/doc`)).json();
     await page.goto(`/preview?item=${item.id}&version=${checkpoints[3]}`);
+    const readOnlyPreview = async () => {
+      const native = page.locator('.univer-container.spinel-mobile-doc');
+      await expect(native.getByLabel('Document canvas', { exact: true })).toBeVisible({
+        timeout: 30_000,
+      });
+      // The phone viewer hides editing affordances; desktop viewers instead
+      // render a disabled toolbar. Every replacement keeps the permission fence.
+      await expect(native.getByRole('button', { name: 'Edit', exact: true })).toHaveCount(0);
+      await expect(page.getByRole('button', { name: 'Bold', exact: true })).toHaveCount(0);
+    };
     const ready = async () => {
       await expect(
         page.getByRole('button', { name: 'Restore this version', exact: true }),
@@ -92,7 +102,7 @@ test('touch history timeline and calendar preview retained choices without chang
         timeout: 30_000,
       });
       // Every replacement must be read-only, including the initial preview.
-      await expect(page.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
+      await readOnlyPreview();
     };
     await ready();
     const chooser = page.getByRole('button', { name: /^Choose version/ });
@@ -173,7 +183,7 @@ test('touch history timeline and calendar preview retained choices without chang
     await versions.selectOption(checkpoints[1]);
     expect((await (await olderResponse).json()).snapshot.body.dataStream).toContain('Checkpoint 2');
     await ready();
-    await expect(page.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
+    await readOnlyPreview();
     await page.screenshot({
       path: `test-results/theme-screenshots/history-calendar-${info.project.name}.png`,
       fullPage: true,
@@ -241,7 +251,7 @@ test('touch history timeline and calendar preview retained choices without chang
     await expect(page.getByRole('heading', { name: 'Preview — History journal' })).toBeVisible({
       timeout: 30_000,
     });
-    await expect(page.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
+    await readOnlyPreview();
     await expect(
       page.getByRole('button', { name: 'Restore this version', exact: true }),
     ).toHaveCount(0);

@@ -3,7 +3,15 @@ import { writeFile } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 import type { Browser, BrowserContext, Page, TestInfo } from '@playwright/test';
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
-import { DOCS_NORMAL_EDITOR_UNIT_ID_KEY, LocaleType } from '@univerjs/core';
+import {
+  createParagraphId,
+  createSectionId,
+  DOCS_NORMAL_EDITOR_UNIT_ID_KEY,
+  DocumentFlavor,
+  getDocsEmptySnapshot,
+  LocaleType,
+  validateDocumentStructure,
+} from '@univerjs/core';
 import { docFormulas } from '@spinel/doc-formulas';
 import type { ClientCheckpoint, NativeSnapshot } from '@spinel/sync-client';
 import { SyncServer } from '@spinel/sync-server';
@@ -17,6 +25,7 @@ import sharp from 'sharp';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
+import { DocumentStore } from '../src/server/workspace/documents.ts';
 import { SheetStore } from '../src/server/workspace/sheets.ts';
 import { SpaceStore } from '../src/server/workspace/spaces.ts';
 import { SQLiteSyncStorage } from '../src/server/sync/store.ts';
@@ -25,6 +34,7 @@ import { sheetImageFixture } from './sheet-image-fixture.ts';
 import { recordNativeSnapshots } from './sync-snapshot.ts';
 import { syncNetwork } from './sync-network.ts';
 import type { NativeWrite } from './sync-network.ts';
+import { beginWriting, textPoint } from './doc-touch.ts';
 
 type Kind = 'sheet' | 'doc';
 type Stored = {
@@ -68,6 +78,25 @@ async function usableCanvas(page: Page) {
       },
     )
     .toBeGreaterThan(100);
+}
+
+async function phoneText(page: Page, unitId: string) {
+  return page.evaluate((id) => {
+    let text: string | undefined;
+    const receive = (event: Event) => {
+      const evidence = (event as CustomEvent<{ unitId: string; text: string }>).detail;
+      if (evidence.unitId === id) text = evidence.text;
+    };
+    window.addEventListener('spinel-doc-selection-evidence', receive);
+    try {
+      // The existing evidence observer reads the live native model, including
+      // its still-offline queue. It exposes no writable selection or document.
+      window.dispatchEvent(new Event('spinel-doc-selection-read'));
+    } finally {
+      window.removeEventListener('spinel-doc-selection-evidence', receive);
+    }
+    return text;
+  }, unitId);
 }
 
 async function stored(page: Page, accountId: string, itemId: string) {
@@ -210,7 +239,14 @@ async function fixture(
   baseURL: string,
   info: TestInfo,
   kind: Kind,
-  options: { space?: boolean; actor?: 'owner' | 'editor' | 'viewer'; images?: boolean } = {},
+  options: {
+    space?: boolean;
+    actor?: 'owner' | 'editor' | 'viewer';
+    images?: boolean;
+    phone?: boolean;
+    flavor?: DocumentFlavor;
+    zoomRatio?: number;
+  } = {},
 ) {
   const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
   const auth = new AuthStore(db);
@@ -233,11 +269,21 @@ async function fixture(
     httpOnly: true,
     sameSite: 'Strict' as const,
   });
-  const account = async (id: string) => {
+  const account = async (id: string, phone = false) => {
     const context = await browser.newContext({
       baseURL,
       viewport: { width: 1440, height: 1100 },
       permissions: ['clipboard-read', 'clipboard-write'],
+      ...(phone
+        ? {
+            viewport: { width: 390, height: 844 },
+            deviceScaleFactor: 1,
+            isMobile: true,
+            hasTouch: true,
+            colorScheme: 'light' as const,
+            reducedMotion: 'reduce' as const,
+          }
+        : {}),
     });
     contexts.push(context);
     await context.addCookies([cookie(id)]);
@@ -292,6 +338,29 @@ async function fixture(
       ? spaces.createChild(owner.id, root.id, { name: `Offline ${kind}`, kind, parentId: root.id })
           .item
       : workspace.create(owner.id, { name: `Offline ${kind}`, kind, parentId: null });
+  if (kind === 'doc' && options.flavor !== undefined) {
+    // Visible, valid text lets a real touch choose the native insertion point.
+    // Keep a non-default saved zoom to catch a phone view changing shared data.
+    const snapshot = getDocsEmptySnapshot(item.id, LocaleType.EN_US, item.name, options.flavor);
+    snapshot.settings = { ...snapshot.settings, zoomRatio: options.zoomRatio ?? 1 };
+    const stream = 'Phone journal\rOffline writing keeps the whole saved document.\r';
+    const paragraphIds = new Set<string>();
+    snapshot.body = {
+      ...snapshot.body,
+      dataStream: stream + '\n',
+      paragraphs: Array.from(stream.matchAll(/\r/g), (match) => ({
+        startIndex: match.index!,
+        paragraphId: createParagraphId(paragraphIds),
+      })),
+      sectionBreaks: [{ startIndex: stream.length, sectionId: createSectionId(new Set()) }],
+    };
+    expect(validateDocumentStructure(snapshot)).toEqual([]);
+    new DocumentStore(workspace).save(owner.id, item.id, {
+      snapshot,
+      revision: 0,
+      writeId: randomUUID(),
+    });
+  }
   for (const [user, role] of [
     [editor, 'editor'],
     [viewer, 'viewer'],
@@ -309,7 +378,7 @@ async function fixture(
   });
   expect(prepared.status(), await prepared.text()).toBe(200);
   const unitId = (await prepared.json()).unitId as string;
-  const context = await account(actor.id);
+  const context = await account(actor.id, options.phone);
   await recordNativeSnapshots(context);
   const network = await syncNetwork(context);
   const page = await context.newPage();
@@ -333,10 +402,15 @@ async function fixture(
   };
   const download = async () => {
     await page.goto(href);
+    const phoneReadOnly =
+      options.flavor === DocumentFlavor.TRADITIONAL &&
+      (await page.evaluate(() => matchMedia('(pointer: coarse) and (max-width: 900px)').matches));
     await expect(saveStatus(page)).toHaveText(
-      options.actor === 'viewer'
-        ? 'View only — reload after your access changes.'
-        : 'All changes saved.',
+      phoneReadOnly
+        ? 'View only on this phone. Edit on a larger screen.'
+        : options.actor === 'viewer'
+          ? 'View only — reload after your access changes.'
+          : 'All changes saved.',
       { timeout: 30_000 },
     );
     await expect
@@ -664,23 +738,49 @@ test.describe('downloaded native editors', () => {
     }
   });
 
-  for (const kind of ['sheet', 'doc'] as const)
-    test(`${kind}: durable edits survive two offline reloads and reconnect exactly once`, async ({
+  for (const { kind, phone } of [
+    { kind: 'sheet', phone: false },
+    { kind: 'doc', phone: false },
+    { kind: 'doc', phone: true },
+  ] as const)
+    test(`${phone ? 'phone doc' : kind}: durable edits survive two offline reloads and reconnect exactly once`, async ({
       browser,
       baseURL,
     }, info) => {
-      const f = await fixture(browser, baseURL!, info, kind, { images: kind === 'sheet' });
+      const f = await fixture(browser, baseURL!, info, kind, {
+        images: kind === 'sheet',
+        phone,
+        ...(phone ? { flavor: DocumentFlavor.MODERN, zoomRatio: 0.5 } : {}),
+      });
       try {
         await f.download();
         const baseline = await f.read();
         if (kind === 'sheet') await matchesServer(f.page, baseline);
         const captured = f.network.outgoing.filter((frame) => frame.type === 'submit').length;
         await f.network.setOffline(true);
-        // The first edit uses the same mounted editor that was just downloaded.
         const text = kind === 'doc' ? 'Offline text once 731' : '731';
-        await edit(f.page, kind, text);
+        if (phone) {
+          // A cold offline launch must mount a usable mobile native editor.
+          // Chromium drives browser key input here; this is not an OS keyboard check.
+          await f.page.reload();
+          await usableCanvas(f.page);
+          await savedLocally(f.page);
+          const region = f.page.getByRole('region', { name: 'Doc document', exact: true });
+          await expect(region).toHaveAttribute('data-mobile', 'true');
+          await matchesServer(f.page, baseline);
+          await region.getByRole('button', { name: 'Edit', exact: true }).tap();
+          await beginWriting(f.page);
+          await f.page.keyboard.type(text);
+        } else {
+          // The desktop cases keep editing the mounted editor just downloaded.
+          await edit(f.page, kind, text);
+        }
         await savedLocally(f.page);
         const beforeReload = (await stored(f.page, f.actor.id, f.item.id))!.outbox!;
+        if (phone)
+          await expect
+            .poll(() => phoneText(f.page, f.unitId))
+            .toBe(text + baseline.snapshot.body!.dataStream);
         expect(pending(beforeReload.checkpoint)).toBe(true);
         expect(beforeReload).toMatchObject({
           account: f.actor.id,
@@ -691,11 +791,32 @@ test.describe('downloaded native editors', () => {
           await f.page.reload();
           await usableCanvas(f.page);
           await savedLocally(f.page);
-          expect(await copy(f.page, kind)).toContain(text);
+          if (phone) {
+            const theme = reload === 0 ? 'light' : 'dark';
+            await f.page.emulateMedia({ colorScheme: theme });
+            await expect(f.page.locator('html')).toHaveAttribute('data-theme', theme);
+            await textPoint(f.page);
+            await expect
+              .poll(() => phoneText(f.page, f.unitId))
+              .toBe(text + baseline.snapshot.body!.dataStream);
+            expect((await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint).toEqual(
+              beforeReload.checkpoint,
+            );
+            await f.page
+              .getByRole('button', { name: 'Save details: Saved locally', exact: true })
+              .tap();
+            await expect(
+              f.page.getByRole('dialog', { name: 'Save details', exact: true }),
+            ).toContainText('Saved on this device — waiting to sync.');
+          } else expect(await copy(f.page, kind)).toContain(text);
           await f.page.screenshot({
-            path: info.outputPath(`spn-053-offline-${kind}-reload-${reload + 1}.png`),
+            path: info.outputPath(
+              `spn-053-offline-${phone ? 'doc-phone' : kind}-reload-${reload + 1}.png`,
+            ),
             animations: 'disabled',
           });
+          if (phone)
+            await f.page.getByRole('button', { name: 'Close save details', exact: true }).tap();
           expect((await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint.buffer).toEqual(
             beforeReload.checkpoint.buffer,
           );
@@ -723,6 +844,7 @@ test.describe('downloaded native editors', () => {
           };
           await expect.poll(pixels, { timeout: 25_000 }).toBe(true);
         }
+        if (phone) expect(await f.read()).toEqual(baseline);
         await f.network.setOffline(false);
         await synced(f.page);
         const committed = await f.read();
@@ -735,11 +857,25 @@ test.describe('downloaded native editors', () => {
         );
         if (kind === 'sheet') expect(committed.snapshot.sheets.tab.cellData?.[0]?.[3]?.v).toBe(731);
         else expect(committed.snapshot.body!.dataStream.split(text)).toHaveLength(2);
+        if (phone) {
+          expect(committed.snapshot.body!.dataStream).toBe(
+            text + baseline.snapshot.body!.dataStream,
+          );
+          expect(committed.snapshot.documentStyle).toEqual(baseline.snapshot.documentStyle);
+          expect(committed.snapshot.settings).toEqual(baseline.snapshot.settings);
+        }
         await matchesServer(f.page, committed);
         const writes = f.network.outgoing
           .filter((frame) => frame.type === 'submit')
           .slice(captured);
         expect(new Set(writes.map((frame) => frame.mutationId)).size).toBe(1);
+        if (phone) {
+          expect(beforeReload.checkpoint.sent).toBeNull();
+          expect(beforeReload.checkpoint.inflight).toEqual([]);
+          // Ordinary key events queue several native mutations offline. The
+          // unchanged base must send that exact durable batch once on reconnect.
+          expect(writes[0].mutations).toEqual(beforeReload.checkpoint.buffer.flat());
+        }
         expect(
           f.db
             .prepare('SELECT count(*) AS n FROM spinel_sync_revisions WHERE unit_id=?')
@@ -757,6 +893,103 @@ test.describe('downloaded native editors', () => {
         await f.close();
       }
     });
+
+  test('a traditional downloaded phone Doc retains its editor grant and queued edits while locally read-only', async ({
+    browser,
+    baseURL,
+  }, info) => {
+    const f = await fixture(browser, baseURL!, info, 'doc', {
+      actor: 'editor',
+      phone: true,
+      flavor: DocumentFlavor.TRADITIONAL,
+    });
+    const region = f.page.getByRole('region', { name: 'Doc document', exact: true });
+    const note = 'Edit on a larger screen. This Doc keeps its page layout.';
+    try {
+      // Queue an ordinary native edit on the larger screen before reopening
+      // the same real device copy through its coarse-pointer phone fallback.
+      await f.page.setViewportSize({ width: 1440, height: 1100 });
+      await f.download();
+      await expect(region).toHaveAttribute('data-mobile', 'false');
+      const baseline = await f.read();
+      await f.network.setOffline(true);
+      const text = 'Queued before phone read mode 946';
+      await edit(f.page, 'doc', text);
+      await savedLocally(f.page);
+      const before = (await stored(f.page, f.actor.id, f.item.id))!;
+      expect(before.bundle).toMatchObject({ access: 'editor', readOnly: false });
+      expect(pending(before.outbox!.checkpoint)).toBe(true);
+
+      await f.page.setViewportSize({ width: 390, height: 844 });
+      await f.page.reload();
+      await usableCanvas(f.page);
+      await expect(region).toHaveAttribute('data-mobile', 'true');
+      await savedLocally(f.page);
+      await expect(region.getByText(note, { exact: true })).toBeVisible();
+      await expect(region.getByRole('button', { name: 'Edit', exact: true })).toHaveCount(0);
+      await expect(region.getByRole('button', { name: 'Format', exact: true })).toHaveCount(0);
+      await expect
+        .poll(() => phoneText(f.page, f.unitId))
+        .toBe(text + baseline.snapshot.body!.dataStream);
+      const point = await textPoint(f.page);
+      await f.page.touchscreen.tap(point.x, point.y);
+      await f.page.touchscreen.tap(point.x, point.y);
+      await expect(nativeInput(f.page)).not.toBeFocused();
+      await f.page.keyboard.type('FORBIDDEN PHONE EDIT');
+      await savedLocally(f.page);
+      expect((await stored(f.page, f.actor.id, f.item.id))!.outbox).toEqual(before.outbox);
+      expect(await phoneText(f.page, f.unitId)).toBe(text + baseline.snapshot.body!.dataStream);
+      expect(await f.read()).toEqual(baseline);
+      expect(f.network.outgoing.filter((frame) => frame.type === 'submit')).toEqual([]);
+      for (const theme of ['light', 'dark'] as const) {
+        await f.page.emulateMedia({ colorScheme: theme });
+        await expect(f.page.locator('html')).toHaveAttribute('data-theme', theme);
+        await f.page
+          .getByRole('button', { name: 'Save details: Saved locally', exact: true })
+          .tap();
+        await expect(
+          f.page.getByRole('dialog', { name: 'Save details', exact: true }),
+        ).toContainText('Saved on this device — waiting to sync.');
+        await f.page.screenshot({
+          path: info.outputPath(`spn-053-offline-doc-phone-traditional-${theme}.png`),
+          animations: 'disabled',
+        });
+        await f.page.getByRole('button', { name: 'Close save details', exact: true }).tap();
+      }
+
+      await f.network.setOffline(false);
+      await synced(f.page);
+      const committed = await f.read();
+      expect(committed.revision).toBe(baseline.revision + 1);
+      expect(committed.snapshot.body!.dataStream).toBe(text + baseline.snapshot.body!.dataStream);
+      expect(committed.snapshot.documentStyle).toEqual(baseline.snapshot.documentStyle);
+      expect(committed.snapshot.settings).toEqual(baseline.snapshot.settings);
+      await matchesServer(f.page, committed);
+      const after = (await stored(f.page, f.actor.id, f.item.id))!;
+      expect(after.bundle).toMatchObject({ access: 'editor', readOnly: false });
+      expect(pending(after.outbox!.checkpoint)).toBe(false);
+      const writes = f.network.outgoing.filter((frame) => frame.type === 'submit');
+      expect(new Set(writes.map((frame) => frame.mutationId)).size).toBe(1);
+      // Check the app's scheduled authorization responses, not a fabricated
+      // viewer grant, after the retained outbox has synchronized normally.
+      for (let check = 0; check < 2; check++) {
+        const response = await f.page.waitForResponse(
+          (response) =>
+            response.request().method() === 'POST' &&
+            new URL(response.url()).pathname === `${f.prefix}/collaboration`,
+          { timeout: 10_000 },
+        );
+        expect(response.status()).toBe(200);
+        expect((await response.json()).access).toBe('editor');
+      }
+      await synced(f.page);
+      await expect(region.getByText(note, { exact: true })).toBeVisible();
+      expect(await f.read()).toEqual(committed);
+      expect(f.errors).toEqual([]);
+    } finally {
+      await f.close();
+    }
+  });
 
   test('Doc Formula definitions survive offline edits and reloads while reconnect rechecks source access', async ({
     browser,
