@@ -2,9 +2,13 @@ import type { ItemAppearance } from '../../src/shared/appearance.ts';
 import type { OfflineBundle, OfflineBundleImage } from '../../src/shared/offlineBundle.ts';
 import { FILE_KINDS } from '../../src/shared/workspace.ts';
 import type { FileItem, SpaceFile } from '../../src/shared/workspace.ts';
-import { offlineScope } from './OfflineAccess.ts';
+import { OFFLINE_SDK_VERSION, offlineScope } from './OfflineAccess.ts';
 import type { ClientCheckpoint } from '@spinel/sync-client';
+import { validateNativeSnapshot, validateCheckpoint } from '@spinel/sync-client/validation';
 import type { OfflineRecoveryRequest } from '../../src/shared/offlineRecovery.ts';
+import { openExistingDatabase } from './existingDatabase.ts';
+import { releaseAccountRuntime } from './runtime.ts';
+import type { AccountRuntimeRequirement } from './runtime.ts';
 
 /**
  * Account-scoped IndexedDB storage for documents downloaded on this device
@@ -30,6 +34,10 @@ export type OfflineDownload = {
   revision: number;
   downloadedAt: number;
   pending?: boolean;
+  /** A record alone is not proof that its images and public runtime still exist. */
+  available?: boolean;
+  problem?: string;
+  uncertain?: boolean;
 };
 export type OfflineOutbox = {
   version: 1;
@@ -41,42 +49,303 @@ export type OfflineOutbox = {
   /** The native client's sole queue, including its immutable retry envelope. */
   checkpoint: ClientCheckpoint;
 };
-type StoredItem = OfflineDownload & {
+export type StoredItem = OfflineDownload & {
   bundle: OfflineBundle;
   outbox?: OfflineOutbox;
   recovery?: OfflineRecoveryRequest;
 };
-type StoredImage = { itemId: string; source: string; bytes: Uint8Array };
+export type StoredImage = { itemId: string; source: string; bytes: Uint8Array };
 
-export function hasOfflineEdits(outbox: OfflineOutbox | undefined) {
-  return Boolean(
-    outbox &&
-    (outbox.checkpoint.sent ||
-      outbox.checkpoint.inflight.length ||
-      outbox.checkpoint.buffer.length ||
-      outbox.checkpoint.failure ||
-      outbox.checkpoint.recoverySnapshot ||
-      outbox.checkpoint.recoveryMissing),
+const object = (value: unknown): value is Record<string, unknown> =>
+  Boolean(value && typeof value === 'object' && !Array.isArray(value));
+
+/** Minimum native-kind shape required before the editor can admit a stored base. */
+function storedSnapshotShape(value: unknown, kind: unknown, unitId: unknown) {
+  if (
+    !object(value) ||
+    typeof unitId !== 'string' ||
+    !unitId ||
+    value.id !== unitId ||
+    (kind !== 'doc' && kind !== 'sheet') ||
+    (kind === 'doc' ? 'sheets' in value : !object(value.sheets))
+  )
+    return false;
+  try {
+    validateNativeSnapshot(value as unknown as ClientCheckpoint['snapshot'], kind);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function storedBaseKnown(item: Record<string, unknown>, bundle: Record<string, unknown>) {
+  const outbox = object(item.outbox) ? item.outbox : undefined;
+  const checkpoint = outbox && object(outbox.checkpoint) ? outbox.checkpoint : undefined;
+  return (
+    bundle.version === 1 &&
+    bundle.sdkVersion === OFFLINE_SDK_VERSION &&
+    typeof bundle.accountId === 'string' &&
+    Boolean(bundle.accountId) &&
+    typeof bundle.unitId === 'string' &&
+    Boolean(bundle.unitId) &&
+    (bundle.spaceId === undefined ||
+      (typeof bundle.spaceId === 'string' &&
+        Boolean(bundle.spaceId) &&
+        bundle.spaceId !== bundle.itemId)) &&
+    typeof bundle.access === 'string' &&
+    ['owner', 'admin', 'editor', 'viewer'].includes(bundle.access) &&
+    typeof bundle.readOnly === 'boolean' &&
+    (bundle.access !== 'viewer' || bundle.readOnly) &&
+    storedSnapshotShape(bundle.snapshot, bundle.kind, bundle.itemId) &&
+    Number.isSafeInteger(bundle.revision) &&
+    Number.isSafeInteger(bundle.revisionOffset) &&
+    Number(bundle.revisionOffset) >= 0 &&
+    Number(bundle.revision) > Number(bundle.revisionOffset) &&
+    Array.isArray(bundle.images) &&
+    (!checkpoint ||
+      (storedSnapshotShape(checkpoint.snapshot, bundle.kind, outbox!.unitId) &&
+        (checkpoint.recoverySnapshot === undefined ||
+          storedSnapshotShape(checkpoint.recoverySnapshot, bundle.kind, outbox!.unitId))))
   );
 }
 
-export const offlineChanged = (accountId: string, itemId: string) => {
-  window.dispatchEvent(
-    new CustomEvent('spinel-offline-changed', { detail: { accountId, itemId } }),
+export function isKnownOfflineOutbox(value: unknown): value is OfflineOutbox {
+  if (!object(value) || value.version !== 1 || !object(value.checkpoint)) return false;
+  const checkpoint = value.checkpoint;
+  // Use the same pure admission as the editor, without loading the SDK here.
+  try {
+    validateCheckpoint(
+      checkpoint as unknown as ClientCheckpoint,
+      value.unitId as string,
+      checkpoint.revision as number,
+    );
+  } catch {
+    return false;
+  }
+  const mutation = (entry: unknown) =>
+    object(entry) && typeof entry.id === 'string' && object(entry.params);
+  return (
+    typeof value.account === 'string' &&
+    Boolean(value.account) &&
+    typeof value.item === 'string' &&
+    Boolean(value.item) &&
+    (value.spaceId === undefined ||
+      (typeof value.spaceId === 'string' && Boolean(value.spaceId))) &&
+    typeof value.unitId === 'string' &&
+    Boolean(value.unitId) &&
+    Number.isSafeInteger(value.revisionOffset) &&
+    Number(value.revisionOffset) >= 0 &&
+    checkpoint.version === 1 &&
+    checkpoint.unitId === value.unitId &&
+    Number.isSafeInteger(checkpoint.revision) &&
+    Number(checkpoint.revision) >= 1 &&
+    object(checkpoint.snapshot) &&
+    checkpoint.snapshot.id === value.unitId &&
+    Array.isArray(checkpoint.inflight) &&
+    checkpoint.inflight.every(mutation) &&
+    Array.isArray(checkpoint.buffer) &&
+    checkpoint.buffer.every(
+      (group) => Array.isArray(group) && group.length > 0 && group.every(mutation),
+    ) &&
+    (checkpoint.sent === null ||
+      (object(checkpoint.sent) &&
+        checkpoint.sent.type === 'submit' &&
+        typeof checkpoint.sent.mutationId === 'string' &&
+        Number.isSafeInteger(checkpoint.sent.baseRevision) &&
+        Array.isArray(checkpoint.sent.mutations) &&
+        checkpoint.sent.mutations.length > 0 &&
+        checkpoint.sent.mutations.every(mutation))) &&
+    (checkpoint.recoveryMissing === undefined || typeof checkpoint.recoveryMissing === 'boolean') &&
+    (checkpoint.failure === undefined ||
+      [
+        'unsupported',
+        'refused',
+        'stale',
+        'divergence',
+        'unavailable',
+        'malformed',
+        'capacity',
+        'retry-conflict',
+        'invariant',
+      ].includes(String(checkpoint.failure))) &&
+    (checkpoint.recoverySnapshot === undefined || object(checkpoint.recoverySnapshot)) &&
+    Object.keys(value).every((key) =>
+      ['version', 'account', 'item', 'spaceId', 'unitId', 'revisionOffset', 'checkpoint'].includes(
+        key,
+      ),
+    ) &&
+    Object.keys(checkpoint).every((key) =>
+      [
+        'version',
+        'unitId',
+        'revision',
+        'snapshot',
+        'sent',
+        'inflight',
+        'buffer',
+        'failure',
+        'recoverySnapshot',
+        'recoveryMissing',
+      ].includes(key),
+    )
   );
+}
+
+/** The caller has already admitted this checkpoint. */
+function checkpointHasEdits(checkpoint: ClientCheckpoint) {
+  return Boolean(
+    checkpoint.sent ||
+    checkpoint.inflight.length ||
+    checkpoint.buffer.length ||
+    checkpoint.failure !== undefined ||
+    checkpoint.recoverySnapshot !== undefined ||
+    checkpoint.recoveryMissing,
+  );
+}
+
+/** Unknown persisted queue data is retained, never treated as an empty queue. */
+export function hasOfflineEdits(outbox: unknown) {
+  if (outbox === undefined) return false;
+  return !isKnownOfflineOutbox(outbox) || checkpointHasEdits(outbox.checkpoint);
+}
+
+export function hasStoredEdits(item: unknown) {
+  if (
+    !object(item) ||
+    !object(item.bundle) ||
+    !storedBaseKnown(item, item.bundle) ||
+    typeof item.bundle.accountId !== 'string' ||
+    typeof item.bundle.itemId !== 'string' ||
+    typeof item.bundle.unitId !== 'string' ||
+    !object(item.bundle.snapshot) ||
+    !Array.isArray(item.bundle.images) ||
+    item.recovery !== undefined ||
+    hasOfflineEdits(item.outbox)
+  )
+    return true;
+  if (object(item.outbox))
+    return (
+      item.outbox.account !== item.bundle.accountId ||
+      item.outbox.item !== item.bundle.itemId ||
+      item.outbox.spaceId !== item.bundle.spaceId ||
+      item.outbox.unitId !== item.bundle.unitId ||
+      item.outbox.revisionOffset !== item.bundle.revisionOffset
+    );
+  return false;
+}
+
+const CHANGE_KEY = 'spinel.offline.changed';
+
+export type OfflineChange = { itemId: string; pending?: boolean };
+type AccountOfflineChange = OfflineChange & { accountId: string };
+const itemWriterChanges = new Map<string, AccountOfflineChange[]>();
+const itemWriterKey = (accountId: string, itemId: string) => JSON.stringify([accountId, itemId]);
+
+function publishOfflineChange(detail: AccountOfflineChange) {
+  window.dispatchEvent(new CustomEvent('spinel-offline-changed', { detail }));
+  try {
+    storage()?.setItem(CHANGE_KEY, JSON.stringify({ ...detail, change: crypto.randomUUID() }));
+  } catch {
+    // A notification failure must not turn a completed private write into a failure.
+  }
+}
+
+export const offlineChanged = (accountId: string, itemId: string, pending?: boolean) => {
+  const detail = { accountId, itemId, ...(pending === undefined ? {} : { pending }) };
+  const deferred = itemWriterChanges.get(itemWriterKey(accountId, itemId));
+  if (deferred) deferred.push(detail);
+  else publishOfflineChange(detail);
 };
 
-const summary = (item: StoredItem): OfflineDownload => ({
-  appearance: item.bundle.appearance,
-  itemId: item.itemId,
-  ...(item.bundle.spaceId === undefined ? {} : { spaceId: item.bundle.spaceId }),
-  name: item.name,
-  kind: item.kind,
-  readOnly: item.readOnly,
-  revision: item.revision,
-  downloadedAt: item.downloadedAt,
-  pending: hasOfflineEdits(item.outbox),
-});
+export function watchOfflineChanges(accountId: string, changed: (change: OfflineChange) => void) {
+  const local = (event: Event) => {
+    const detail = (event as CustomEvent<{ accountId?: string } & OfflineChange>).detail;
+    if (detail?.accountId === accountId && typeof detail.itemId === 'string') changed(detail);
+  };
+  const remote = (event: StorageEvent) => {
+    if (event.key !== CHANGE_KEY || !event.newValue) return;
+    try {
+      const detail = JSON.parse(event.newValue);
+      if (detail.accountId === accountId && typeof detail.itemId === 'string') changed(detail);
+    } catch {
+      /* Invalid notice. */
+    }
+  };
+  window.addEventListener('spinel-offline-changed', local);
+  window.addEventListener('storage', remote);
+  return () => {
+    window.removeEventListener('spinel-offline-changed', local);
+    window.removeEventListener('storage', remote);
+  };
+}
+
+/** Validate identity before exposing a stored title; damaged records stay visible generically. */
+export function downloadSummary(
+  value: unknown,
+  accountId: string,
+  itemId: string,
+): OfflineDownload {
+  const item = object(value) ? value : {};
+  const bundle = object(item.bundle) ? item.bundle : {};
+  const valid =
+    item.itemId === itemId &&
+    bundle.accountId === accountId &&
+    bundle.itemId === itemId &&
+    ['sheet', 'doc'].includes(String(bundle.kind)) &&
+    typeof bundle.name === 'string' &&
+    bundle.name.length > 0 &&
+    (bundle.spaceId === undefined ||
+      (typeof bundle.spaceId === 'string' && Boolean(bundle.spaceId)));
+  const outbox = object(item.outbox) ? item.outbox : undefined;
+  const scopeMismatch =
+    outbox &&
+    (outbox.account !== bundle.accountId ||
+      outbox.item !== bundle.itemId ||
+      outbox.spaceId !== bundle.spaceId ||
+      outbox.unitId !== bundle.unitId ||
+      outbox.revisionOffset !== bundle.revisionOffset);
+  const uncertain =
+    !valid ||
+    !storedBaseKnown(item, bundle) ||
+    Boolean(scopeMismatch) ||
+    (item.outbox !== undefined && !isKnownOfflineOutbox(item.outbox)) ||
+    (item.recovery !== undefined && item.outbox === undefined);
+  return {
+    ...(valid && object(bundle.appearance)
+      ? { appearance: bundle.appearance as unknown as ItemAppearance }
+      : {}),
+    itemId,
+    ...(valid && typeof bundle.spaceId === 'string' ? { spaceId: bundle.spaceId } : {}),
+    name: valid ? (bundle.name as string) : 'Unavailable device copy',
+    kind: valid ? (bundle.kind as 'sheet' | 'doc') : 'doc',
+    readOnly: valid ? bundle.readOnly !== false : true,
+    revision: Number.isSafeInteger(bundle.revision) ? (bundle.revision as number) : 0,
+    downloadedAt: Number.isFinite(item.downloadedAt) ? (item.downloadedAt as number) : 0,
+    // Reuse this summary's admission; encoding the same stored snapshots again
+    // for the pending flag would add avoidable work to every checkpoint save.
+    pending:
+      uncertain ||
+      item.recovery !== undefined ||
+      Boolean(outbox && checkpointHasEdits(outbox.checkpoint as ClientCheckpoint)),
+    ...(uncertain
+      ? {
+          available: false,
+          uncertain: true,
+          problem: valid
+            ? 'The saved offline changes could not be verified. Keep this copy until you choose how to handle them.'
+            : 'This saved copy is incomplete or belongs to a different account.',
+        }
+      : {}),
+  };
+}
+
+/** Destructive paths use the same scoped uncertainty boundary as the inventory. */
+function hasProtectedStoredCopy(value: unknown, accountId: string, itemId: string) {
+  const valueSummary = downloadSummary(value, accountId, itemId);
+  return Boolean(valueSummary.pending || valueSummary.uncertain);
+}
+
+const summary = (item: StoredItem) => downloadSummary(item, item.bundle.accountId, item.itemId);
 
 /** Keep only outer-file metadata here; prepared native children live in downloads. */
 export function isOfflineCatalog(value: unknown): value is OfflineCatalog {
@@ -140,6 +409,9 @@ function storage() {
 export function preparedAccount() {
   return storage()?.getItem(ACCOUNT_KEY) ?? null;
 }
+export function offlineCancellation() {
+  return storage()?.getItem(CANCELLATION_KEY) ?? null;
+}
 /** Read-only startup also observes cancellation; it never prepares or claims a device. */
 export function offlineAccountRead(accountId: string) {
   const epoch = preparationEpoch;
@@ -165,7 +437,7 @@ export function offlineAccountEvent(
   return (
     event.key === null ||
     event.key === CANCELLATION_KEY ||
-    (event.key === SIGN_OUT_KEY && event.newValue === '1') ||
+    (event.key === SIGN_OUT_KEY && event.newValue !== null) ||
     ((event.key === ACCOUNT_KEY || event.key === ONLINE_ACCOUNT_KEY) &&
       event.newValue !== accountId)
   );
@@ -227,9 +499,46 @@ export function claimOnlineAccount(accountId: string) {
 }
 
 /** Serialize download insertion against the final empty-catalog marker check. */
-async function catalogLock<T>(accountId: string, operation: () => Promise<T>): Promise<T> {
+export async function withOfflineCatalogLock<T>(
+  accountId: string,
+  operation: () => Promise<T>,
+): Promise<T> {
   if (!globalThis.navigator?.locks) return operation();
   return navigator.locks.request(`spinel-offline-catalog:${accountId}`, operation);
+}
+
+/** Never wait on a live editor: its unfinished memory input has not reached IDB yet. */
+export async function withOfflineItemWriter<T>(
+  accountId: string,
+  itemId: string,
+  operation: () => Promise<T>,
+) {
+  if (!navigator.locks)
+    throw new Error('This browser cannot safely change device data. Use a browser with Web Locks.');
+  const key = itemWriterKey(accountId, itemId);
+  let changes: AccountOfflineChange[] | undefined;
+  try {
+    return await navigator.locks.request(
+      `spinel-offline:${accountId}:${itemId}`,
+      { ifAvailable: true },
+      async (lock) => {
+        if (!lock)
+          throw new Error('Close this document in every tab before changing its device copy.');
+        changes = [];
+        itemWriterChanges.set(key, changes);
+        return operation();
+      },
+    );
+  } finally {
+    if (changes) {
+      if (itemWriterChanges.get(key) === changes) itemWriterChanges.delete(key);
+      // An open editor reacts by acquiring its own item writer. Announce a
+      // committed change only after this temporary Web Lock actually releases,
+      // including when later work fails. Native editors hold a separate lifetime
+      // lock, so their pending-checkpoint notices are never delayed here.
+      for (const change of changes) publishOfflineChange(change);
+    }
+  }
 }
 
 function preparationCancellation() {
@@ -304,9 +613,16 @@ export function offlinePreparation(accountId: string, isMounted: () => boolean) 
     async clearIfEmpty(store: Pick<OfflineStore, 'accountId' | 'downloads'>) {
       if (store.accountId !== accountId)
         throw new Error('This preparation belongs to another account.');
-      await catalogLock(accountId, async () => {
+      await withOfflineCatalogLock(accountId, async () => {
         if (!isCurrent()) return;
         const remaining = await store.downloads();
+        if (!remaining.length && isCurrent()) {
+          // Keep the catalog lock until release settles, so a new reservation
+          // cannot be removed by this earlier empty observation.
+          await releaseAccountRuntime(accountId, () => {
+            if (!isCurrent()) throw new DOMException('The account changed.', 'AbortError');
+          }).catch(() => {});
+        }
         if (!remaining.length && isCurrent() && preparedAccount() === accountId) {
           // Removing a clean download is not sign-out. Keep the cancellation
           // nonce so unrelated live editors retain their memory-only queues.
@@ -336,7 +652,7 @@ export function watchOfflineAccount() {
 }
 /** A sign-out made offline; the server session is revoked on the next online start. */
 export function signOutPending() {
-  return storage()?.getItem(SIGN_OUT_KEY) === '1';
+  return storage()?.getItem(SIGN_OUT_KEY) != null;
 }
 export function setSignOutPending(pending: boolean) {
   if (pending) storage()?.setItem(SIGN_OUT_KEY, '1');
@@ -353,8 +669,10 @@ function done(transaction: IDBTransaction) {
   return new Promise<void>((resolve, reject) => {
     transaction.oncomplete = () => resolve();
     // While a request's error event dispatches, transaction.error is still null.
-    transaction.onerror = (event) =>
-      reject((event.target as IDBRequest | null)?.error ?? transaction.error);
+    transaction.onerror = (event) => {
+      const error = (event.target as IDBRequest | null)?.error ?? transaction.error;
+      if (error) reject(error);
+    };
     transaction.onabort = () => reject(transaction.error ?? new Error('Storage write cancelled.'));
   });
 }
@@ -370,6 +688,24 @@ export async function openOfflineStore(accountId: string) {
   };
   const database = await request(opening);
   // Another tab's schema upgrade must not wait on this connection.
+  database.onversionchange = () => database.close();
+  return new OfflineStore(accountId, database);
+}
+
+/** Observation must not create or migrate a private store, even without databases(). */
+export async function openExistingOfflineStore(accountId: string) {
+  if (!accountId) throw new Error('An account is required.');
+  const database = await openExistingDatabase(databaseName(accountId));
+  if (!database) return null;
+  if (
+    database.version !== 1 ||
+    !['meta', 'items', 'images'].every((name) => database.objectStoreNames.contains(name))
+  ) {
+    database.close();
+    throw new Error(
+      'This device store needs a compatible version of Spinel. Its data is retained.',
+    );
+  }
   database.onversionchange = () => database.close();
   return new OfflineStore(accountId, database);
 }
@@ -403,18 +739,69 @@ export class OfflineStore {
     await done(transaction);
   }
   async downloads() {
-    const transaction = this.database.transaction('items');
-    const items = (await request(transaction.objectStore('items').getAll())) as StoredItem[];
-    return items.map(summary);
+    const result: OfflineDownload[] = [];
+    for (const itemId of await this.itemIds()) {
+      const transaction = this.database.transaction('items');
+      const value: unknown = await request(transaction.objectStore('items').get(itemId));
+      if (value !== undefined) result.push(downloadSummary(value, this.accountId, itemId));
+    }
+    return result;
   }
-  async bundle(itemId: string) {
+  async itemIds() {
+    const keys = await this.itemKeys();
+    if (keys.some((key) => typeof key !== 'string' || !key))
+      throw new Error('This device store contains unrecognized data. Its contents are retained.');
+    return keys as string[];
+  }
+  async itemKeys() {
+    const transaction = this.database.transaction('items');
+    return request(transaction.objectStore('items').getAllKeys());
+  }
+  async inspect(itemId: string) {
     const transaction = this.database.transaction(['items', 'images']);
-    const item = (await request(transaction.objectStore('items').get(itemId))) as
-      StoredItem | undefined;
-    if (!item) return undefined;
+    const item: unknown = await request(transaction.objectStore('items').get(itemId));
+    if (item === undefined) return undefined;
     const images = (await request(
       transaction.objectStore('images').getAll(IDBKeyRange.bound([itemId, ''], [itemId, '\uffff'])),
     )) as StoredImage[];
+    return { item, images };
+  }
+  /** No native parser is needed to choose the reader for retained bytes. */
+  async runtimeRequirement(): Promise<AccountRuntimeRequirement> {
+    let compatibility: { format: number; sdkVersion: string } | undefined;
+    const keys = await this.itemIds();
+    if (!keys.length) return { kind: 'empty' };
+    for (const itemId of keys) {
+      const transaction = this.database.transaction('items');
+      const item: unknown = await request(transaction.objectStore('items').get(itemId));
+      if (!object(item) || !object(item.bundle)) return { kind: 'unknown' };
+      const bundle = item.bundle;
+      if (
+        bundle.accountId !== this.accountId ||
+        bundle.itemId !== itemId ||
+        !Number.isSafeInteger(bundle.version) ||
+        Number(bundle.version) < 1 ||
+        typeof bundle.sdkVersion !== 'string' ||
+        !bundle.sdkVersion
+      )
+        return { kind: 'unknown' };
+      const next = { format: bundle.version as number, sdkVersion: bundle.sdkVersion };
+      if (
+        compatibility &&
+        (compatibility.format !== next.format || compatibility.sdkVersion !== next.sdkVersion)
+      )
+        return { kind: 'unknown' };
+      compatibility = next;
+    }
+    return { kind: 'retained', compatibility: compatibility! };
+  }
+  async bundle(itemId: string) {
+    const saved = await this.inspect(itemId);
+    if (!saved) return undefined;
+    const { item: raw, images } = saved;
+    if (downloadSummary(raw, this.accountId, itemId).uncertain)
+      throw new Error('This saved copy is incomplete or belongs to a different account.');
+    const item = raw as StoredItem;
     return {
       bundle: item.bundle,
       bytes: new Map(images.map((image) => [image.source, image.bytes])),
@@ -430,11 +817,15 @@ export class OfflineStore {
     bundle: OfflineBundle,
     bytes: ReadonlyMap<string, Uint8Array>,
     verifyCurrent: () => void = () => {},
+    beforeCommit?: () => Promise<unknown>,
   ) {
     verifyCurrent();
-    return catalogLock(this.accountId, () =>
-      this.saveDownloadUnlocked(bundle, bytes, verifyCurrent),
-    );
+    return withOfflineCatalogLock(this.accountId, async () => {
+      verifyCurrent();
+      if (beforeCommit) await beforeCommit();
+      verifyCurrent();
+      return this.saveDownloadUnlocked(bundle, bytes, verifyCurrent);
+    });
   }
   private async saveDownloadUnlocked(
     bundle: OfflineBundle,
@@ -468,7 +859,7 @@ export class OfflineStore {
     try {
       const previous = (await request(items.get(bundle.itemId))) as StoredItem | undefined;
       verifyCurrent();
-      if (hasOfflineEdits(previous?.outbox))
+      if (previous !== undefined && hasProtectedStoredCopy(previous, this.accountId, bundle.itemId))
         throw new Error(
           'This document has changes on this device. Sync them before replacing its download.',
         );
@@ -511,12 +902,17 @@ export class OfflineStore {
     const transaction = this.database.transaction(['items', 'images'], 'readwrite');
     const completion = done(transaction);
     const items = transaction.objectStore('items');
+    let pendingChanged = false;
+    let pending = false;
     try {
       const item = (await request(items.get(scope.item))) as StoredItem | undefined;
       verifyCurrent();
+      const previous = downloadSummary(item, this.accountId, scope.item);
       if (
         !item ||
+        previous.uncertain ||
         item.bundle.accountId !== scope.account ||
+        item.bundle.itemId !== scope.item ||
         item.bundle.spaceId !== scope.spaceId ||
         item.bundle.unitId !== scope.unitId ||
         item.bundle.revisionOffset !== scope.revisionOffset
@@ -525,6 +921,13 @@ export class OfflineStore {
       if (item.recovery && JSON.stringify(item.outbox?.checkpoint) !== JSON.stringify(checkpoint))
         throw new Error('This offline copy is already being recovered. Keep its original changes.');
       item.outbox = { version: 1, ...scope, checkpoint };
+      // The unchanged base and scope were admitted above. Inspect only the new
+      // checkpoint, retaining malformed input as pending rather than losing it.
+      pending =
+        item.recovery !== undefined ||
+        !storedSnapshotShape(checkpoint.snapshot, item.bundle.kind, scope.unitId) ||
+        hasOfflineEdits(item.outbox);
+      pendingChanged = Boolean(previous.pending) !== pending;
       if (imageFiles) {
         item.bundle.images = imageFiles.images;
         const images = transaction.objectStore('images');
@@ -546,6 +949,7 @@ export class OfflineStore {
     }
     await completion;
     verifyCurrent();
+    if (pendingChanged) offlineChanged(this.accountId, scope.item, pending);
   }
   /** Fix retry identity, title and bytes before any request can publish a copy. */
   async beginRecovery(
@@ -656,6 +1060,49 @@ export class OfflineStore {
       },
     );
   }
+  /** The item writer lock is held by the device-management caller. */
+  async removeDeviceItem(itemId: string, verifyCurrent: () => void, discardPending = false) {
+    let needsRecovery = false;
+    await this.removeUnlocked(
+      itemId,
+      (existing) => {
+        verifyCurrent();
+        if (
+          existing !== undefined &&
+          hasProtectedStoredCopy(existing, this.accountId, itemId) &&
+          !discardPending
+        )
+          needsRecovery = true;
+      },
+      discardPending,
+      () => needsRecovery,
+    );
+    return needsRecovery
+      ? { status: 'needs-recovery' as const, itemId }
+      : { status: 'removed' as const };
+  }
+  /** Catalog and every item writer lock are held; deletion is one abortable transaction. */
+  async clearAccount(verifyCurrent: () => void) {
+    verifyCurrent();
+    const transaction = this.database.transaction(['meta', 'items', 'images'], 'readwrite');
+    const completion = done(transaction);
+    try {
+      // This read keeps the cancellation check inside the transaction, before any write.
+      await request(transaction.objectStore('items').count());
+      verifyCurrent();
+      for (const name of ['meta', 'items', 'images']) transaction.objectStore(name).clear();
+    } catch (error) {
+      try {
+        transaction.abort();
+      } catch {
+        /* Already aborted. */
+      }
+      await completion.catch(() => {});
+      throw error;
+    }
+    await completion;
+    offlineChanged(this.accountId, '');
+  }
   /** The caller holds this item's writer lock and has frozen native input. */
   async removeClean(
     scope: Pick<OfflineOutbox, 'account' | 'item' | 'spaceId' | 'unitId' | 'revisionOffset'>,
@@ -677,14 +1124,27 @@ export class OfflineStore {
         throw new Error('This download changed before its access could be checked.');
     });
   }
-  private async removeUnlocked(itemId: string, verify?: (existing?: StoredItem) => void) {
+  private async removeUnlocked(
+    itemId: string,
+    verify?: (existing?: StoredItem) => void,
+    discardPending = false,
+    keep?: () => boolean,
+  ) {
     const transaction = this.database.transaction(['items', 'images'], 'readwrite');
     const completion = done(transaction);
     const items = transaction.objectStore('items');
     try {
       const existing = (await request(items.get(itemId))) as StoredItem | undefined;
       verify?.(existing);
-      if (hasOfflineEdits(existing?.outbox))
+      if (keep?.()) {
+        await completion;
+        return;
+      }
+      if (
+        existing !== undefined &&
+        hasProtectedStoredCopy(existing, this.accountId, itemId) &&
+        !discardPending
+      )
         throw new Error(
           'Changes are saved on this device. Sync or recover them before removing this copy.',
         );

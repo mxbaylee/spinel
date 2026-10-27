@@ -7,7 +7,7 @@ import {
   hasOfflineEdits,
   offlineAccountEvent,
   offlineAccountRead,
-  openOfflineStore,
+  openExistingOfflineStore,
 } from './offline/offlineStore.ts';
 import './offlineRecovery.css';
 
@@ -45,7 +45,9 @@ export function OfflineRecoveryEntry({
       if (!/^[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}$/i.test(itemId))
         throw new Error('This recovery link is not valid.');
       if (!current()) throw new Error('This account has no prepared device copy here.');
-      const store = await openOfflineStore(accountId);
+      const store = await openExistingOfflineStore(accountId);
+      if (!store)
+        throw new Error('There are no saved offline changes for this document on this device.');
       const download = await store.bundle(itemId).finally(() => store.close());
       if (!mounted) return;
       if (!current()) throw new Error('This offline session is no longer current.');

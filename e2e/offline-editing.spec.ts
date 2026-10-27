@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { expect, test } from '@playwright/test';
-import type { Page } from '@playwright/test';
+import type { Page, Request } from '@playwright/test';
 import type { IDocumentData } from '@univerjs/core';
 import { DOCS_NORMAL_EDITOR_UNIT_ID_KEY, DocumentFlavor, LocaleType } from '@univerjs/core';
 import { docFormulas } from '@spinel/doc-formulas';
@@ -97,7 +97,7 @@ test.describe('downloaded native editors', () => {
       await f.page.getByRole('menuitem', { name: 'Remove from device', exact: true }).click();
       const dialog = f.page.getByRole('dialog', { name: 'Offline availability', exact: true });
       await expect(dialog.getByRole('alert')).toHaveText(
-        'Close this document in every tab before removing its device copy.',
+        'Close this document in every tab before changing its device copy.',
       );
       expect(
         await f.page
@@ -930,10 +930,19 @@ test.describe('downloaded native editors', () => {
       await attention(f.page);
       expect(f.network.outgoing.filter((frame) => frame.type === 'submit')).toEqual([]);
       expect(await f.read()).toEqual(baseline);
+      let accountChecks = 0;
+      f.page.on('request', (request) => {
+        if (new URL(request.url()).pathname === '/api/auth/session') accountChecks++;
+      });
       const other = await f.context.newPage();
       await other.goto(f.href);
       await expect(saveStatus(other)).toHaveText('All changes saved.', { timeout: 30_000 });
+      await expect(
+        f.page.getByRole('heading', { name: 'This tab is locked.', exact: true }),
+      ).toBeVisible();
       await expect(f.page.locator('.univer-container canvas')).toHaveCount(0);
+      await expect(f.page.getByText(f.item.name, { exact: true })).toHaveCount(0);
+      expect(accountChecks).toBe(0);
       const retained = (await stored(other, f.owner.id, f.item.id))!.outbox!;
       expect(retained.account).toBe(f.owner.id);
       expect(retained.checkpoint.buffer).toEqual(original.checkpoint.buffer);
@@ -998,6 +1007,159 @@ test.describe('downloaded native editors', () => {
         404,
       );
     } finally {
+      await f.close();
+    }
+  });
+
+  test('preparing a Space child during a held metadata access check keeps its native editor and durable edits', async ({
+    browser,
+    baseURL,
+  }, info) => {
+    const f = await fixture(browser, baseURL!, info, 'doc', { space: true, actor: 'editor' });
+    let releaseMetadata = () => {};
+    const withheld = new Promise<void>((resolve) => {
+      releaseMetadata = resolve;
+    });
+    try {
+      const openPreparation = async (name: string) => {
+        await f.page.getByRole('button', { name: 'Document actions', exact: true }).click();
+        await f.page.getByRole('menuitem', { name: 'Offline copies', exact: true }).click();
+        const dialog = f.page.getByRole('dialog', { name: 'Offline copies', exact: true });
+        const button = dialog.getByRole('button', {
+          name: `Make ${name} available offline on this device`,
+        });
+        await expect(button).toBeVisible();
+        await expect(button).toBeEnabled();
+        return {
+          dialog,
+          async prepare() {
+            await button.click();
+            await expect(dialog.getByRole('status')).toHaveText(
+              `${name} is available offline on this device.`,
+              { timeout: 120_000 },
+            );
+          },
+        };
+      };
+      // Cache the real public runtime through another child's download first.
+      // The held check keeps its real 2.5-second deadline; only this target's
+      // first publication, not the public asset transfer, must cross it.
+      const sibling = f.spaces.createChild(f.owner.id, f.root!.id, {
+        name: 'Prepared sibling',
+        kind: 'doc',
+        parentId: f.root!.id,
+      }).item;
+      await f.page.goto(`/spaces/${f.root!.id}?item=${sibling.id}`);
+      await expect(saveStatus(f.page)).toHaveText('All changes saved.', { timeout: 30_000 });
+      await expect
+        .poll(() => f.page.evaluate(() => Boolean(navigator.serviceWorker.controller)))
+        .toBe(true);
+      const siblingPreparation = await openPreparation(sibling.name);
+      await siblingPreparation.prepare();
+      await synced(f.page);
+      await siblingPreparation.dialog
+        .getByRole('button', { name: 'Close dialog', exact: true })
+        .click();
+
+      await f.page.goto(f.href);
+      await expect(saveStatus(f.page)).toHaveText('All changes saved.', { timeout: 30_000 });
+      expect(await stored(f.page, f.actor.id, f.item.id)).toBeUndefined();
+      const baseline = await f.read();
+      const canvas = await f.page.locator('.univer-container canvas').first().elementHandle();
+      // Open the controls before holding the access check, so menu rendering
+      // does not consume its deadline. Only publication crosses the response.
+      const targetPreparation = await openPreparation(f.item.name);
+      let held:
+        | {
+            request: Request;
+            status: number;
+            data: { item: { id: string; access: string }; live: { unitId: string } };
+          }
+        | undefined;
+      let intercepted = false;
+      await f.context.route(`${baseURL}${f.prefix}`, async (route) => {
+        if (route.request().method() !== 'GET' || intercepted) return route.continue();
+        intercepted = true;
+        const response = await route.fetch();
+        held = {
+          request: route.request(),
+          status: response.status(),
+          data: await response.json(),
+        };
+        await withheld;
+        await route.fulfill({ response });
+      });
+      await expect.poll(() => held?.status).toBe(200);
+      expect(held!.data).toMatchObject({
+        item: { id: f.item.id, access: 'editor' },
+        live: { unitId: f.unitId },
+      });
+      const metadataRequest = held!.request;
+      await targetPreparation.prepare();
+      // This status proves the same mounted session activated its device copy
+      // before the older { item, live } response is delivered.
+      await synced(f.page);
+      const delivered = f.page.waitForResponse(
+        (response) => response.request() === metadataRequest,
+      );
+      const rechecked = f.page.waitForResponse(
+        (response) =>
+          response.request().method() === 'POST' &&
+          new URL(response.url()).pathname === `${f.prefix}/collaboration`,
+        { timeout: 10_000 },
+      );
+      releaseMetadata();
+      // An expired/aborted request would miss the actual race, so require the
+      // held real response to finish before accepting the fresh scoped check.
+      const [deliveredResponse, checked] = await Promise.all([delivered, rechecked]);
+      expect(await deliveredResponse.finished()).toBeNull();
+      expect(checked.status()).toBe(200);
+      expect(checked.request().headers()['x-spinel-offline-account']).toBe(f.actor.id);
+      expect(await checked.json()).toMatchObject({
+        user: { id: f.actor.id },
+        access: 'editor',
+        unitId: f.unitId,
+      });
+      await targetPreparation.dialog
+        .getByRole('button', { name: 'Close dialog', exact: true })
+        .click();
+      await synced(f.page);
+      expect(
+        await f.page
+          .locator('.univer-container canvas')
+          .first()
+          .evaluate((node, original) => node === original, canvas!),
+      ).toBe(true);
+      expect(await f.read()).toEqual(baseline);
+      expect(pending((await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint)).toBe(
+        false,
+      );
+
+      await f.network.setOffline(true);
+      const text = 'Prepared during a pending access check 728.';
+      await edit(f.page, 'doc', text);
+      await savedLocally(f.page);
+      const outbox = (await stored(f.page, f.actor.id, f.item.id))!.outbox!;
+      expect(outbox).toMatchObject({
+        account: f.actor.id,
+        spaceId: f.root!.id,
+        item: f.item.id,
+        unitId: f.unitId,
+      });
+      expect(pending(outbox.checkpoint)).toBe(true);
+      expect(await f.read()).toEqual(baseline);
+      await f.network.setOffline(false);
+      await synced(f.page);
+      const committed = await f.read();
+      expect(committed.revision).toBe(baseline.revision + 1);
+      expect(committed.snapshot.body!.dataStream).toBe(text + baseline.snapshot.body!.dataStream);
+      await matchesServer(f.page, committed);
+      expect(pending((await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint)).toBe(
+        false,
+      );
+      expect(f.errors).toEqual([]);
+    } finally {
+      releaseMetadata();
       await f.close();
     }
   });

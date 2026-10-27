@@ -505,9 +505,8 @@ test.describe('offline recovery copies', () => {
       // the previously durable D1 edit must still become one recoverable copy.
       await cellInput.focus();
       await f.page.keyboard.press('Escape');
-      const ready = await details(f.page);
-      const retry = ready.getByRole('button', { name: 'Retry creating copy', exact: true });
-      if (await retry.isVisible()) await retry.click();
+      // Automatic recovery can finish as the input closes. Await its outcome
+      // instead of racing a Retry button that can change or disappear.
       const result = await recovered(f);
       expectOfflineContent(await copySnapshot(f, result.id, baseURL!), baseline.snapshot, 'sheet');
       expect(originalState(f, f.unitId)).toEqual(original);
@@ -869,13 +868,19 @@ test.describe('offline recovery copies', () => {
         const held = (await stored(f.page, f.actor.id, f.item.id))!;
         expect(pending(held.outbox!.checkpoint)).toBe(true);
         expect(held.recovery).toBeUndefined();
+        let accountChecks = 0;
+        f.page.on('request', (request) => {
+          if (new URL(request.url()).pathname === '/api/auth/session') accountChecks++;
+        });
         // This is the first end event for the tracked composition. The helper
         // performs both dispatches before yielding to its queued freeze callback.
         const rejections = await composeDocText(f.page, 'end', finalText, true);
         expect(rejections).toEqual([]);
-        await expect(saveStatus(f.page)).toHaveText(
-          'Offline access changed on this device. Reopen the document to continue.',
-        );
+        // The global passive lock also removes profile/catalog metadata. It
+        // must not reauthenticate and remount this conflict queue automatically.
+        await expect(
+          f.page.getByRole('heading', { name: 'This tab is locked.', exact: true }),
+        ).toBeVisible();
         await expect(retainedText).toHaveCount(0);
         await expect(
           panel.getByRole('button', { name: 'Discard unfinished text', exact: true }),
@@ -891,6 +896,8 @@ test.describe('offline recovery copies', () => {
           await expect(f.page.getByRole('button', { name: 'Format', exact: true })).toHaveCount(0);
         }
         await expect(f.page.getByText(finalText, { exact: true })).toHaveCount(0);
+        await expect(f.page.getByText(f.item.name, { exact: true })).toHaveCount(0);
+        expect(accountChecks).toBe(0);
         await expect
           .poll(() => f.page.evaluate(() => localStorage.getItem('spinel.offline.account')))
           .toBeNull();

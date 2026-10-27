@@ -20,6 +20,7 @@ for (const project of [
   'sync-production',
   'sync-soak-sheet',
   'sync-soak-doc',
+  'offline-upgrade',
 ]) {
   const result = spawnSync(
     process.execPath,

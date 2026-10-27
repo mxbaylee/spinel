@@ -12,6 +12,7 @@ export function AuthEntry({
   name,
   onName,
   busy,
+  finishing = false,
   error,
   notice,
   unreachable = false,
@@ -26,6 +27,7 @@ export function AuthEntry({
   name: string;
   onName: (name: string) => void;
   busy: boolean;
+  finishing?: boolean;
   error: string;
   notice: string;
   unreachable?: boolean;
@@ -151,10 +153,16 @@ export function AuthEntry({
           </p>
           {busy ? (
             <div className="ej-pending">
-              <p role="status">Continue in your browser or device’s passkey prompt.</p>
-              <Button type="button" onClick={onCancel}>
-                Cancel
-              </Button>
+              <p role="status">
+                {finishing
+                  ? 'Finishing the passkey request… Keep this page open.'
+                  : 'Continue in your browser or device’s passkey prompt.'}
+              </p>
+              {!finishing && (
+                <Button type="button" onClick={onCancel}>
+                  Cancel
+                </Button>
+              )}
             </div>
           ) : (
             <Button primary type="submit" disabled={invitation && !name.trim()}>

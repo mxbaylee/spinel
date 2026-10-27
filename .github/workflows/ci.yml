@@ -313,6 +313,7 @@ jobs:
           - { project: sync-production, shard: '' }
           - { project: sync-soak-sheet, shard: '' }
           - { project: sync-soak-doc, shard: '' }
+          - { project: offline-upgrade, shard: '' }
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -327,7 +328,15 @@ jobs:
         run: |
           node scripts/ci/prefer-ubuntu-archive.ts
           npx playwright install --with-deps chromium
+      - name: Current-main offline source for adoption evidence
+        if: matrix.project == 'offline-upgrade'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: c2e8cac0fcdec36d992d6ebf3f377c9b579a8002
+          path: legacy-offline-source
+          persist-credentials: false
       - name: Build
+        if: matrix.project != 'offline-upgrade'
         env:
           VITE_SYNC_EVIDENCE: ${{ startsWith(matrix.project, 'sync-') && '1' || '0' }}
           VITE_DOC_SELECTION_EVIDENCE: ${{ matrix.project == 'production' && '1' || '0' }}
@@ -339,6 +348,7 @@ jobs:
           SPINEL_E2E_PROJECT: ${{ matrix.project }}
           SHARD: ${{ matrix.shard }}
           VITE_DOC_SELECTION_EVIDENCE: ${{ matrix.project == 'production' && '1' || '0' }}
+          SPINEL_LEGACY_OFFLINE_SOURCE: ${{ matrix.project == 'offline-upgrade' && format('{0}/legacy-offline-source', github.workspace) || '' }}
         run: npx playwright test --project="$SPINEL_E2E_PROJECT" ${SHARD:+--shard="$SHARD"}
       - name: Artifact name
         if: always()
@@ -362,6 +372,8 @@ jobs:
             test-results/**/*-sync-presence.png
             test-results/**/spn-059-sheet-menu-*.png
             test-results/**/spn-053-offline-*.png
+            test-results/**/spn-055-*.png
+            test-results/**/spn-055-*.json
             test-results/**/sync-diagnostics.json
             test-results/**/phone-doc-caret-events*.json
             test-results/**/phone-doc-selection-evidence*.json
@@ -423,7 +435,7 @@ jobs:
               echo 'Not applicable — only allowlisted documentation changed; Backlog and Lint still run.'
               ;;
             success:false:success:success:success)
-              echo 'All browser partitions, sync soaks, retained transition and the production container passed.'
+              echo 'All browser partitions, offline upgrades, sync soaks, retained transition and the production container passed.'
               ;;
             *)
               echo "Browser/container validation incomplete: $CLASSIFICATION:$DOCS_ONLY:$BROWSER:$CONTAINER:$TRANSITION"

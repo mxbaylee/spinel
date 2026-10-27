@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import type { SpaceFile } from '../src/shared/workspace.ts';
-import { OfflineSpace, OfflineSpaceView } from './OfflineSpace.tsx';
+import { OfflineSpace, OfflineSpaceRoute, OfflineSpaceView } from './OfflineSpace.tsx';
 import type { LocalStart } from './offline/localStart.ts';
 import type { OfflineDownload } from './offline/offlineStore.ts';
 import { selectOfflineSpace } from './offline/spaceCopies.ts';
@@ -89,6 +89,63 @@ function RouteFixture({ href, children }: { href: string; children: ReactNode })
   return ready ? children : null;
 }
 
+function HeldWorkFixture({ step, onChange }: { step: number; onChange(): void }) {
+  return (
+    <section aria-label="Open recovery work fixture" style={{ padding: 24, overflow: 'auto' }}>
+      <p className="sp-muted">
+        Doc recovery fixture · this editable note detects a replaced viewer.
+      </p>
+      <h2 style={{ marginTop: 24 }}>Workshop notes</h2>
+      <label style={{ display: 'grid', gap: 8, marginBlock: 24, maxWidth: 680 }}>
+        Recovery notes
+        <textarea
+          defaultValue="Keep the workshop decisions."
+          rows={5}
+          style={{ width: '100%', resize: 'vertical' }}
+        />
+      </label>
+      {step < 2 && (
+        <button className="sp-control" onClick={onChange}>
+          {step === 0 ? 'Mark device copy incomplete' : 'Remove device record'}
+        </button>
+      )}
+      {step === 2 && <p>The open recovery work remains here after its device record is removed.</p>}
+    </section>
+  );
+}
+
+/** Exercises the production route controller; only the native document body is a fixture. */
+function HeldInventoryFixture({ onExit, onProfile }: { onExit(): void; onProfile(): void }) {
+  const [downloads, setDownloads] = useState(
+    () => new Map(local.downloads.map((item) => [item.itemId, { ...item, available: true }])),
+  );
+  const [step, setStep] = useState(0);
+  function changeInventory() {
+    if (step === 0)
+      setDownloads((current) =>
+        new Map(current).set(id(2), {
+          ...current.get(id(2))!,
+          available: false,
+          problem: 'An image required by this device copy is missing.',
+        }),
+      );
+    else setDownloads(new Map());
+    setStep((current) => current + 1);
+  }
+  return (
+    <OfflineSpaceRoute
+      key={user.id + ':' + path}
+      local={local}
+      user={user}
+      route={readSpaceLocation(new URL(path, 'https://spinel.test'))}
+      downloads={downloads}
+      onExit={onExit}
+      onProfile={onProfile}
+      renderViewer={() => <HeldWorkFixture step={step} onChange={changeInventory} />}
+    />
+  );
+}
+
 const meta = {
   id: 'space-offline-view',
   title: 'Current production/Spaces/Offline documents',
@@ -150,6 +207,55 @@ export const EditorNavigation: Story = {
 export const Phone: Story = {
   globals: { viewport: { value: 'phone', isRotated: false } },
   play: ({ canvasElement }) => checkCopies(canvasElement, true),
+};
+export const AttentionHeldViewer: Story = {
+  render: (args) => <HeldInventoryFixture onExit={args.onExit} onProfile={args.onProfile} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const work = await canvas.findByRole('textbox', { name: 'Recovery notes' });
+    await userEvent.type(work, ' Keep my unsent additions.');
+    const retained = (work as HTMLTextAreaElement).value;
+    await userEvent.click(canvas.getByRole('button', { name: 'Mark device copy incomplete' }));
+    await expect(canvas.getByRole('status', { name: 'Device copy status' })).toHaveTextContent(
+      'An image required by this device copy is missing.',
+    );
+    expect(canvas.getByRole('textbox', { name: 'Recovery notes' })).toBe(work);
+    await expect(work).toHaveValue(retained);
+    await expect(canvasElement.querySelector('.editor-access')).toHaveTextContent(
+      'Needs attention',
+    );
+    await userEvent.click(canvas.getByRole('button', { name: 'Remove device record' }));
+    await expect(canvas.getByRole('status', { name: 'Device copy status' })).toHaveTextContent(
+      'Keep this page open while you save or recover your work.',
+    );
+    expect(canvas.getByRole('textbox', { name: 'Recovery notes' })).toBe(work);
+    await expect(work).toHaveValue(retained);
+    await expect(canvasElement.querySelector('.editor-access')).toHaveTextContent(
+      'Needs attention',
+    );
+    await expect(canvas.queryByText(/^Prepared /)).not.toBeInTheDocument();
+    if (window.matchMedia('(max-width: 900px)').matches) {
+      await userEvent.click(canvas.getByRole('button', { name: 'Open Space contents' }));
+      const drawer = within(
+        await within(document.body).findByRole('dialog', { name: 'Space contents' }),
+      );
+      await expect(drawer.getByRole('link', { name: 'Project notes' })).toHaveAttribute(
+        'aria-current',
+        'page',
+      );
+      await expect(drawer.getByText('Needs attention')).toBeVisible();
+      await userEvent.click(drawer.getByRole('button', { name: 'Close Space contents' }));
+    }
+    expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(innerWidth);
+  },
+};
+export const AttentionHeldViewerDark: Story = {
+  ...AttentionHeldViewer,
+  globals: { theme: 'dark' },
+};
+export const AttentionHeldViewerPhone: Story = {
+  ...AttentionHeldViewer,
+  globals: { viewport: { value: 'phone', isRotated: false } },
 };
 /** The production controller must not open its default copy for an unavailable explicit child. */
 export const ExplicitPageNotPrepared: Story = {

@@ -6,6 +6,7 @@ import { Button } from '../src/ui/redesign/Controls.tsx';
 import type { SpaceUser } from './SpaceShell.tsx';
 import { spaceCopies } from './offline/spaceCopies.ts';
 import { useOfflineDownloads } from './offline/useOfflineDownloads.ts';
+import { OfflineAvailabilityActions } from './offline/OfflineAvailability.tsx';
 import './spaceOffline.css';
 
 /** Mounted only for an everyday account; a guest never opens an offline store. */
@@ -15,12 +16,14 @@ export function SpaceOfflineActions({
   item,
   saved,
   onOpen,
+  allowNavigation = () => true,
 }: {
   user: SpaceUser;
   root: SpaceFile;
   item: SpaceNode | null;
   saved: boolean;
   onOpen(id: string): void;
+  allowNavigation?: () => boolean;
 }) {
   const offline = useOfflineDownloads(user, undefined, () => null, { spaceRoot: root });
   const hint = useId();
@@ -55,7 +58,13 @@ export function SpaceOfflineActions({
                 ? 'Remove from device'
                 : 'Make available offline'}
           </Button>
-          {downloaded && <span className="sp-muted">Available on this device</span>}
+          {downloaded && (
+            <span className="sp-muted">
+              {copies.find((copy) => copy.itemId === current.id)?.available === false
+                ? 'Device copy needs attention'
+                : 'Available on this device'}
+            </span>
+          )}
           {!downloaded && !saved && (
             <p id={hint} className="sp-muted">
               Wait until this page is connected and saved to prepare an offline copy.
@@ -78,13 +87,18 @@ export function SpaceOfflineActions({
                   <EntityIcon kind={copy.kind} size={20} />
                   <span>{copy.name}</span>
                 </button>
+                {copy.available === false && <span className="sp-muted">Needs attention</span>}
               </li>
             ))}
           </ul>
         </details>
       )}
       {offline.message && (
-        <p role={offline.message.failed ? 'alert' : 'status'}>{offline.message.text}</p>
+        <>
+          <p role={offline.message.failed ? 'alert' : 'status'}>{offline.message.text}</p>
+          {offline.message.detail && <p>{offline.message.detail}</p>}
+          <OfflineAvailabilityActions message={offline.message} allowNavigation={allowNavigation} />
+        </>
       )}
     </section>
   );

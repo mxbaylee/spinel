@@ -33,6 +33,15 @@ rows; compact/phone headers place the controls horizontally. The avatar opens
 `/profile` (**Your profile**) and `/settings` redirects there. Profile, Passkeys,
 This device and Connected assistants are labeled sections. This device reuses the
 shared browser-local appearance control; saved name/icon/color remain separate.
+For everyday accounts, SPN-055 adds **Documents on this device** below Appearance:
+verified availability, pending/read-only/attention states, original links and
+logical bytes. Browser-wide usage/quota is a separate estimate. Explicit storage
+protection reports granted, denied, unsupported or failed; the page explains that
+device copies are not backups. Operators retain Appearance without document
+inventory. Clean removal, pending recovery handoff and separate explicit discard
+reuse the existing confirmation/focus pattern, with unknown data retained until
+the person deliberately chooses deletion. An active held recovery editor remains
+mounted when inventory changes. See [the lifecycle decisions](../implementation/SPN-055.md).
 Connected assistants retains named connections, last-used dates, Disconnect and
 advanced personal access tokens. Operators see Profile, Passkeys and This device;
 administration retains its existing connection/token metadata. Sign out and a
@@ -49,6 +58,16 @@ member guidance followed by expandable Operator commands. Pending/cancelled/erro
 states preserve the task and keyboard return. Consent uses the same frame with
 client provenance, origin, capabilities and account visible. See the
 [SPN-083 implementation and pending visual verification](../implementation/SPN-083.md).
+
+Accepted sign-out immediately switches to the quiet locked entry layout. It shows
+only the original account's device-copy counts, explicit Keep/Delete choices and
+truthful remote-sign-out status; document titles/content stay hidden. Unknown
+counts remain unknown. Confirmation errors and cancellation preserve the task,
+and a dispatched authentication verification visibly finishes before another
+transition can begin. Stories: `Current production/Account/Sign out` and
+`Current production/Offline/This device`, alongside the availability handoff
+stories. Actual current light/dark/phone evidence and independent agent review
+remain required on the PR.
 
 ## Adopted pattern
 

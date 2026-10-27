@@ -1,7 +1,12 @@
 import { afterEach, expect, test } from 'vitest';
 import { ICommandService, JSONX, TextX } from '@univerjs/core';
 import type { Mutation } from '@spinel/sync-transform';
-import { createNativeSyncClient, NativeReplica, validateRecoverySnapshot } from '../index.ts';
+import {
+  createNativeSyncClient,
+  NativeReplica,
+  validateCheckpoint,
+  validateRecoverySnapshot,
+} from '../index.ts';
 import type {
   ClientCheckpoint,
   ClientFailure,
@@ -15,6 +20,15 @@ import { book, comparable, doc, fixture, turns, wire, write } from './fixture.ts
 const cleanup: (() => void)[] = [];
 afterEach(() => {
   for (const close of cleanup.splice(0).reverse()) close();
+});
+
+test('pure checkpoint admission does not replace native mutation semantic checks', () => {
+  const f = fixture();
+  cleanup.push(() => f.close());
+  const value = f.client().sync.checkpoint();
+  value.buffer = [[{ id: 'unsupported.mutation', params: { unitId: value.unitId } }]];
+  expect(() => validateCheckpoint(value, value.unitId, value.revision)).not.toThrow();
+  expect(() => restore(value)).toThrow();
 });
 
 function restore(

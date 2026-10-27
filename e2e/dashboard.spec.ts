@@ -65,6 +65,9 @@ test('registers two devices, signs in with either, persists and revokes sessions
     await expect(page.getByRole('listitem')).toContainText('Passkey');
     await page.getByRole('button', { name: 'Sign out', exact: true }).click();
     await expect(page).toHaveURL(/\/sign-in$/);
+    await expect(
+      page.getByRole('button', { name: 'Sign in with a passkey', exact: true }),
+    ).toBeVisible();
     expect(store.session(initial.value)).toBeUndefined();
     await page.getByRole('button', { name: 'Sign in with a passkey' }).click();
     await expect(page.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();

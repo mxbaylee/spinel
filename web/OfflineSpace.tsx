@@ -1,15 +1,18 @@
 import { ItemIcon, useSpaceAccent } from './Appearance.tsx';
 import { EditorFrame } from './EditorFrame.tsx';
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useLayoutEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { EntityIcon } from '../src/ui/EntityIcon.tsx';
 import { Button } from '../src/ui/redesign/Controls.tsx';
 import { SpaceShell } from './SpaceShell.tsx';
 import type { SpaceUser } from './SpaceShell.tsx';
 import type { LocalStart } from './offline/localStart.ts';
-import { selectOfflineSpace } from './offline/spaceCopies.ts';
+import { selectOfflineSpace, spaceCopies } from './offline/spaceCopies.ts';
 import type { OfflineSpaceSelection } from './offline/spaceCopies.ts';
+import type { OfflineDownload } from './offline/offlineStore.ts';
+import { useOfflineDownloads } from './offline/useOfflineDownloads.ts';
 import { readSpaceLocation, spaceHref } from './spaceNavigation.ts';
+import type { SpaceLocation } from './spaceNavigation.ts';
 import './spaceOffline.css';
 import type { ConnectionState } from './connectionState.ts';
 
@@ -31,6 +34,7 @@ export function OfflineSpace({
   const [route, setRoute] = useState(() => readSpaceLocation(location));
   const [connection, setConnection] = useState<ConnectionState | null>(null);
   const [dirty, setDirty] = useState(false);
+  const offline = useOfflineDownloads(user, local, () => null);
   useEffect(() => {
     if (!dirty) return;
     const warn = (event: BeforeUnloadEvent) => {
@@ -45,27 +49,91 @@ export function OfflineSpace({
     window.addEventListener('popstate', changed);
     return () => window.removeEventListener('popstate', changed);
   }, []);
-  const selection = selectOfflineSpace(local, user.id, route);
+  return (
+    <OfflineSpaceRoute
+      key={user.id + ':' + local.user.id + ':' + JSON.stringify(route)}
+      user={user}
+      local={local}
+      route={route}
+      downloads={offline.downloads}
+      onExit={onExit}
+      onProfile={onProfile}
+      connection={connection ?? 'offline'}
+      renderViewer={(selected, spaceId) => (
+        <Suspense fallback={<p role="status">Opening offline copy…</p>}>
+          <OfflineViewer
+            key={spaceId + ':' + selected.itemId}
+            accountId={user.id}
+            itemId={selected.itemId}
+            spaceId={spaceId}
+            onDirty={setDirty}
+            onConnectionState={setConnection}
+          />
+        </Suspense>
+      )}
+    />
+  );
+}
+
+/** A route opens once; later inventory changes affect labels, not its editor lifetime. */
+export function OfflineSpaceRoute({
+  local,
+  user,
+  route,
+  downloads,
+  onExit,
+  onProfile,
+  renderViewer,
+  connection = 'offline',
+}: {
+  local: LocalStart;
+  user: SpaceUser;
+  route: SpaceLocation;
+  downloads: ReadonlyMap<string, OfflineDownload>;
+  onExit(): void;
+  onProfile(): void;
+  renderViewer(selected: OfflineDownload, spaceId: string): ReactNode;
+  connection?: ConnectionState;
+}) {
+  const latest = selectOfflineSpace(
+    { ...local, downloads: [...downloads.values()] },
+    user.id,
+    route,
+  );
+  const [opened, setOpened] = useState(() => (latest.selected ? latest : null));
+  useLayoutEffect(() => {
+    // A route initially lacking a copy can become ready after a completed read.
+    // Once admitted, only the outer route/account key may replace its editor.
+    if (!opened && latest.selected) setOpened(latest);
+  }, [opened, latest]);
+  let selection = latest;
+  if (opened?.selected && opened.spaceId && local.user.id === user.id) {
+    const current = downloads.get(opened.selected.itemId);
+    const selected =
+      current?.spaceId === opened.spaceId
+        ? current
+        : {
+            ...opened.selected,
+            available: false,
+            problem: 'The saved device copy could not be verified.',
+          };
+    const copies = spaceCopies(downloads.values(), opened.spaceId);
+    // Keep the current page reachable while its mounted editor finishes recovery.
+    // This retained label does not claim that its device bytes still exist.
+    if (!copies.some((copy) => copy.itemId === selected.itemId)) copies.push(selected);
+    selection = { ...opened, copies: spaceCopies(copies, opened.spaceId), selected };
+  }
   return (
     <OfflineSpaceView
       user={user}
       selection={selection}
       onExit={onExit}
       onProfile={onProfile}
-      connection={connection ?? 'offline'}
+      connection={connection}
       viewer={
-        selection.selected && selection.spaceId ? (
-          <Suspense fallback={<p role="status">Opening offline copy…</p>}>
-            <OfflineViewer
-              key={selection.spaceId + ':' + selection.selected.itemId}
-              accountId={user.id}
-              itemId={selection.selected.itemId}
-              spaceId={selection.spaceId}
-              onDirty={setDirty}
-              onConnectionState={setConnection}
-            />
-          </Suspense>
-        ) : null
+        selection.selected && selection.spaceId
+          ? renderViewer(opened?.selected ?? selection.selected, selection.spaceId)
+          : null
       }
     />
   );
@@ -101,6 +169,12 @@ export function OfflineSpaceView({
 }) {
   const { root, spaceId, copies, selected, problem } = selection;
   const nativeStyle = useSpaceAccent(root?.appearance?.accent);
+  const attention = selected?.available === false;
+  const access = attention
+    ? 'Needs attention'
+    : selected?.readOnly
+      ? 'Read only'
+      : 'On this device';
   const shell = (
     <SpaceShell
       user={user}
@@ -132,6 +206,9 @@ export function OfflineSpaceView({
                           />
                           <span>{copy.name}</span>
                         </a>
+                        {copy.available === false && (
+                          <span className="sp-muted">Needs attention</span>
+                        )}
                       </li>
                     ))}
                   </ul>
@@ -151,9 +228,7 @@ export function OfflineSpaceView({
               (problem === 'index' ? 'Your Spaces' : (root?.name ?? 'Space unavailable'))}
           </h1>
         </div>
-        {selected && (
-          <span className="space-access">{selected.readOnly ? 'Read only' : 'On this device'}</span>
-        )}
+        {selected && <span className="space-access">{access}</span>}
       </header>
       {problem ? (
         <div className="space-content space-offline-empty">
@@ -163,9 +238,22 @@ export function OfflineSpaceView({
       ) : (
         selected && (
           <>
-            <p className="space-limitations">
-              Prepared {new Date(selected.downloadedAt).toLocaleString()}. Reconnect to get the
-              latest changes.
+            <p
+              className="space-limitations"
+              role={attention ? 'status' : undefined}
+              aria-label={attention ? 'Device copy status' : undefined}
+            >
+              {attention ? (
+                <>
+                  {selected.problem ?? 'The saved device copy could not be verified.'} Keep this
+                  page open while you save or recover your work.
+                </>
+              ) : (
+                <>
+                  Prepared {new Date(selected.downloadedAt).toLocaleString()}. Reconnect to get the
+                  latest changes.
+                </>
+              )}
             </p>
             <div className="space-native-editor space-offline-viewer" style={nativeStyle}>
               {viewer}
@@ -189,7 +277,7 @@ export function OfflineSpaceView({
       name={selected.name}
       contextLabel={root ? `Space · ${root.name}` : undefined}
       connection={connection}
-      access={selected.readOnly ? 'Read only' : 'On this device'}
+      access={access}
       onBack={onExit}
       backLabel="My files"
     >

@@ -1,10 +1,12 @@
 import { validImageBase64 } from '../../src/shared/appearance.ts';
 import type { OfflineBundle } from '../../src/shared/offlineBundle.ts';
+import { offlineErrorMessage } from '../../src/shared/offlineError.ts';
 import { offlineScope } from './OfflineAccess.ts';
 import { checkImageList, verifyImages } from './PreparedImages.ts';
 import type { OfflineStore } from './offlineStore.ts';
 import { prepareShell } from './shell.ts';
 import { documentPath } from '../documentAccess.ts';
+import { isRuntimeCompatible } from './runtime.ts';
 
 /** A download failure; `status` is the HTTP status when the server answered. */
 export class DownloadError extends Error {
@@ -66,9 +68,7 @@ export function checkBundle(
   try {
     checkImageList(itemId, bundle.images);
   } catch (error) {
-    throw new DownloadError(
-      error instanceof Error ? error.message : 'The image list is malformed.',
-    );
+    throw new DownloadError(offlineErrorMessage(error, 'The image list is malformed.'));
   }
 }
 
@@ -90,7 +90,10 @@ export async function downloadForOffline(
   const bundle = (await response.json().catch(() => ({}))) as OfflineBundle & { error?: string };
   verifyCurrent();
   if (!response.ok)
-    throw new DownloadError(bundle.error ?? 'Could not download. Try again.', response.status);
+    throw new DownloadError(
+      offlineErrorMessage(bundle.error, 'Could not download. Try again.'),
+      response.status,
+    );
   checkBundle(bundle, store.accountId, itemId, spaceId);
   await verifyCoverAssets(bundle);
   verifyCurrent();
@@ -109,15 +112,26 @@ export async function downloadForOffline(
   }
   await verifyImages(itemId, bundle.images, bytes);
   verifyCurrent();
-  // Only a download known to be good prepares the device (fills CacheStorage).
-  await prepareShell();
-  verifyCurrent();
   try {
-    return await store.saveDownload(bundle, bytes, verifyCurrent);
+    // Reserve the complete compatible public runtime while the account catalog
+    // is locked, before the atomic private write can become an offline copy.
+    return await store.saveDownload(bundle, bytes, verifyCurrent, async () => {
+      const requirement = await store.runtimeRequirement();
+      verifyCurrent();
+      if (
+        requirement.kind === 'unknown' ||
+        (requirement.kind === 'retained' && !isRuntimeCompatible(requirement.compatibility))
+      )
+        throw new Error(
+          'The saved device data needs a compatible version of Spinel. Its contents are retained.',
+        );
+      return prepareShell(store.accountId, verifyCurrent, requirement);
+    });
   } catch (error) {
-    if (error instanceof DOMException && error.name === 'QuotaExceededError')
-      throw new DownloadError('This device is out of space for offline documents.');
-    throw new DownloadError('Could not save this document on this device. Try again.');
+    verifyCurrent();
+    throw new DownloadError(
+      offlineErrorMessage(error, 'Could not save this document on this device. Try again.'),
+    );
   }
 }
 
