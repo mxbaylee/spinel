@@ -14,13 +14,13 @@ authorized [download bundle](#download-bundle), and SPN-039 offline launch,
 browsing and read-only viewing of downloaded documents ([below](#offline-launch-and-read-only-viewing)).
 SPN-053 adds native Sheet/Doc editing, durable local checkpoints and conservative
 replay through Spinel's own sync client, including prepared Space children.
+SPN-054 adds account-owned recovery copies, retry-safe publication, local Univer
+export and explicit discard when replay cannot safely continue.
 [SPN-092](implementation/SPN-092.md) extends preparation and local opening to
 one account-authorized Space child at a time, with its verified images.
 The remaining parts of this contract are open, split by the Owner in chat on 2026-10-19 so
 every unmet requirement stays on a ticket:
 
-- [SPN-054](todo/SPN-054.md): the conflicted copy behind **Needs attention** and the
-  export fallback.
 - [SPN-055](todo/SPN-055.md): shared device storage, pending-edit protection,
   honest persistence limits and account/sign-out lifecycle.
 - [SPN-090](todo/SPN-090.md): actual Android/iPhone installed launches, stable
@@ -349,16 +349,43 @@ over the live document.
 **Reconnect, live document moved on.** If the revision or generation has
 advanced, Spinel never replays. History restore, trash, deletion and revoked
 access count as moved on. SPN-053 freezes the editor, retains its outbox and shows
-**Needs attention**. It never refreshes/removes that pending work. In SPN-054,
-Spinel rebuilds the offline version from the snapshot
-plus the outbox, inlines its images from the stored bytes, and creates a new item
+**Needs attention**. It never refreshes/removes that pending work. SPN-054
+rebuilds the offline version from the snapshot plus the outbox, inlines its images
+from the stored bytes, and creates a new item
 through the existing import path. The copy goes in the person's own files, named
 `<title> (offline copy, <local date and time>)`. Only then does it clear the
-outbox and refresh or remove the stale download. **Needs attention** links both
-documents. If the copy cannot be created (no permission, disabled account, size
+outbox, images and stale download in one local transaction. **Needs attention**
+links both documents. If the copy cannot be created (no permission, disabled account, size
 or image budget), the outbox stays on the device with **Export as Univer file**
 and an explicit discard. Nothing is written into a forbidden, trashed or replaced
 document. Automatic merging of divergent offline edits is out of scope.
+
+The copy name uses the device's local clock (`YYYY-MM-DD HH:mm`), with the title
+shortened to keep the full name within 120 characters. Before publication, the
+device saves one immutable recovery ID, name and payload. The account-only
+`POST /api/items/offline-recovery` endpoint uses existing import admission and
+budgets, and atomically saves the new item and its account-scoped receipt. A lost
+response or failed local cleanup retries that exact request and returns the same
+copy. A changed request or a subsequently removed/transferred copy does not
+silently create another. The original document is never written.
+
+**Offline changes on this device** in My files lists retained work, including
+prepared Space children whose original is no longer accessible. Its
+`/?offlineRecovery=<item id>` link opens only the current account's exact stored
+bundle, without requiring original-item or Space-tree access. The stored Space
+identity still governs replay and the **Open original** link. The entry checks
+the native checkpoint and verified image bytes independently of any saved retry
+payload; a mismatched retry is refused, while a valid checkpoint can still be
+exported. Export never clears the outbox. Explicit discard confirms removal of
+the device copy and leaves any original or already-created server copy intact.
+
+Recovery reconstructs transformed inflight edits followed by buffered groups,
+never applies the immutable sent envelope twice, and uses a complete retained
+visible recovery snapshot when present. Every native image location is inlined
+from same-item bytes whose hash and size pass verification. Formula definitions
+travel without cached results; source access is checked again when the copy opens
+or the Univer file is imported. The local export remains available for documents
+larger than the server import limit. See the [recovery decision record](implementation/SPN-054.md).
 
 **Crash between replay and clearing.** On restart, a checkpoint with a `sent`
 envelope may contain edits whose acknowledgements were lost or whose local
@@ -368,8 +395,12 @@ Repeated delivery through SPN-057 must be idempotent. SPN-053's conservative
 reconnect rule still applies: after revalidating access, retry pending replay
 only if the live revision/generation equals its base; an advanced
 base goes to SPN-054's conflicted-copy path without changing the live document.
-This can create an unneeded copy after a lost acknowledgement; record how often
-it happens. It must never lose or double-apply an edit; use the existing SPN-057/
+This can create an unneeded copy after a lost acknowledgement. The recovery receipt
+counts `possible_replay_crash` once when the checkpoint had an unacknowledged sent
+request; this is a possibility, not proof that the copy was unnecessary. Operators
+can aggregate these content-free counts as documented in the [implementation
+record](implementation/SPN-054.md#possible-unnecessary-copies-after-replay-crashes).
+It must never lose or double-apply an edit; use the existing SPN-057/
 SPN-058 acknowledgement and retry contracts.
 
 **One queue owner.** SPN-058's pending queue is authoritative; SPN-053 persists it
@@ -382,9 +413,10 @@ not downloaded keep the online behavior and make no on-device durability claim.
 
 **Expired sign-in.** A verified 401 stops replay and clears preparation for new
 offline launches. Downloaded documents and their queues remain on the device.
-The current editor freezes input and attempts to finish its local save before
-opening sign-in. If storage fails or takes too long, or cell/IME/Formula input
-has not finished, Spinel keeps that frozen tab open with the navigation warning
+The current editor freezes input and attempts to finish its local save. A clean
+editor can then open sign-in; retained work stays visible with local export,
+explicit discard and **Continue to sign-in**. If storage fails or takes too long,
+or cell/IME/Formula input has not finished, Spinel keeps that frozen tab open with the navigation warning
 and local-save retry. This exception permits only finishing local recovery; it
 cannot contact the server or prepare another download, and a later sign-out or
 account change cancels it. Repeated 401s for the same expired session do not close
@@ -441,8 +473,8 @@ revocation/downgrade, child trash and history restore-generation changes in the
 existing standalone Doc/Sheet replay and recovery verification. Account recovery
 remains separate from SPN-084's anonymous-guest immediate-hiding policy: guests
 gain no offline store or outbox. These are compatibility requirements for the
-already-prepared Space children. SPN-054 must preserve them through recovery.
-Grooming, 2026-10-25; implemented by SPN-053.
+already-prepared Space children, preserved by SPN-054 recovery.
+Grooming, 2026-10-25; implemented by SPN-053 and SPN-054.
 
 ## Save states
 

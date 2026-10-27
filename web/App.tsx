@@ -21,6 +21,7 @@ import { ConnectAssistant } from './ConnectAssistant.tsx';
 import { Dashboard } from './Dashboard.tsx';
 import { Space } from './Space.tsx';
 import { OfflineSpace } from './OfflineSpace.tsx';
+import { OfflineRecoveryEntry } from './OfflineRecoveryEntry.tsx';
 import { spaceHref } from './spaceNavigation.ts';
 import { clearDashboardNavigation, dashboardSession } from './dashboardNavigation.ts';
 import { rememberedFileHref } from './fileNavigation.ts';
@@ -609,6 +610,16 @@ function AccountApp() {
             <Suspense fallback={<p>Loading preview…</p>}>
               <HistoryBrowser />
             </Suspense>
+          ) : location.pathname === '/' &&
+            new URLSearchParams(location.search).has('offlineRecovery') ? (
+            <OfflineRecoveryEntry
+              key={`${user.id}:${new URLSearchParams(location.search).get('offlineRecovery')}`}
+              accountId={user.id}
+              itemId={new URLSearchParams(location.search).get('offlineRecovery') ?? ''}
+              navigation={navigation}
+              connection={browserOnline ? (editorConnection ?? serverConnection) : 'offline'}
+              onConnectionState={setEditorConnection}
+            />
           ) : (
             <Dashboard
               key={user.id}

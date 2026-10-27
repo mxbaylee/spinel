@@ -160,11 +160,17 @@ export class PortableFiles {
         .get(user, recoveryId);
       if (!receipt) return undefined;
       if (receipt.request_hash !== requestHash)
-        throw new AuthError(409, 'This recovery request changed. Your offline work is still on this device.');
+        throw new AuthError(
+          409,
+          'This recovery request changed. Your offline work is still on this device.',
+        );
       try {
         return this.workspace.get(user, String(receipt.item_id), 'owner');
       } catch {
-        throw new AuthError(409, 'The recovery copy is no longer available. Export the saved offline work.');
+        throw new AuthError(
+          409,
+          'The recovery copy is no longer available. Export the saved offline work.',
+        );
       }
     };
     const existing = previous();

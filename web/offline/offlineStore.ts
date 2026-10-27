@@ -27,6 +27,7 @@ export type OfflineDownload = {
   readOnly: boolean;
   revision: number;
   downloadedAt: number;
+  pending?: boolean;
 };
 export type OfflineOutbox = {
   version: 1;
@@ -71,6 +72,7 @@ const summary = (item: StoredItem): OfflineDownload => ({
   readOnly: item.readOnly,
   revision: item.revision,
   downloadedAt: item.downloadedAt,
+  pending: hasOfflineEdits(item.outbox),
 });
 
 /** Keep only outer-file metadata here; prepared native children live in downloads. */
@@ -558,14 +560,22 @@ export class OfflineStore {
       const item = (await request(items.get(scope.item))) as StoredItem | undefined;
       verifyCurrent();
       this.verifyRecoveryScope(item, scope);
-      if (!hasOfflineEdits(item!.outbox) ||
-        JSON.stringify(item!.outbox!.checkpoint) !== JSON.stringify(checkpoint))
+      if (
+        !hasOfflineEdits(item!.outbox) ||
+        JSON.stringify(item!.outbox!.checkpoint) !== JSON.stringify(checkpoint)
+      )
         throw new Error('The saved offline changes changed. Retry saving before recovery.');
+      if (item!.recovery && JSON.stringify(item!.recovery) !== JSON.stringify(recovery))
+        throw new Error('This offline recovery changed. Keep its saved work.');
       result = item!.recovery ?? recovery;
       item!.recovery = result;
       items.put(item);
     } catch (error) {
-      try { transaction.abort(); } catch { /* The request may already have aborted. */ }
+      try {
+        transaction.abort();
+      } catch {
+        /* The request may already have aborted. */
+      }
       await completion.catch(() => {});
       throw error;
     }
@@ -577,10 +587,15 @@ export class OfflineStore {
     item: StoredItem | undefined,
     scope: Pick<OfflineOutbox, 'account' | 'item' | 'spaceId' | 'unitId' | 'revisionOffset'>,
   ) {
-    if (scope.account !== this.accountId || !item ||
-      item.bundle.accountId !== scope.account || item.bundle.itemId !== scope.item ||
-      item.bundle.spaceId !== scope.spaceId || item.bundle.unitId !== scope.unitId ||
-      item.bundle.revisionOffset !== scope.revisionOffset)
+    if (
+      scope.account !== this.accountId ||
+      !item ||
+      item.bundle.accountId !== scope.account ||
+      item.bundle.itemId !== scope.item ||
+      item.bundle.spaceId !== scope.spaceId ||
+      item.bundle.unitId !== scope.unitId ||
+      item.bundle.revisionOffset !== scope.revisionOffset
+    )
       throw new Error('This device copy changed before recovery could finish.');
   }
   /** Caller owns the frozen writer. Undefined recoveryId means explicit discard. */
@@ -588,6 +603,7 @@ export class OfflineStore {
     scope: Pick<OfflineOutbox, 'account' | 'item' | 'spaceId' | 'unitId' | 'revisionOffset'>,
     recoveryId: string | undefined,
     verifyCurrent: () => void,
+    expected?: { recovery: OfflineRecoveryRequest; checkpoint: ClientCheckpoint },
   ) {
     verifyCurrent();
     const transaction = this.database.transaction(['items', 'images'], 'readwrite');
@@ -599,10 +615,22 @@ export class OfflineStore {
       this.verifyRecoveryScope(item, scope);
       if (recoveryId !== undefined && item!.recovery?.recoveryId !== recoveryId)
         throw new Error('This offline recovery changed. Keep its saved work.');
+      if (
+        expected &&
+        (JSON.stringify(item!.recovery) !== JSON.stringify(expected.recovery) ||
+          JSON.stringify(item!.outbox?.checkpoint) !== JSON.stringify(expected.checkpoint))
+      )
+        throw new Error('This offline recovery changed. Keep its saved work.');
       items.delete(scope.item);
-      transaction.objectStore('images').delete(IDBKeyRange.bound([scope.item, ''], [scope.item, '\uffff']));
+      transaction
+        .objectStore('images')
+        .delete(IDBKeyRange.bound([scope.item, ''], [scope.item, '\uffff']));
     } catch (error) {
-      try { transaction.abort(); } catch { /* The request may already have aborted. */ }
+      try {
+        transaction.abort();
+      } catch {
+        /* The request may already have aborted. */
+      }
       await completion.catch(() => {});
       throw error;
     }

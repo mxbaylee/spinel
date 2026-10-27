@@ -98,24 +98,46 @@ export function SaveStatus({
                         <a href={recovery.originalHref}>Open original</a>
                       ) : confirmDiscard ? (
                         <div>
-                          <p>Discard all offline changes to this document from this device? This cannot be undone. The original and any copy already created stay unchanged.</p>
+                          <p>
+                            Discard all offline changes to this document from this device? This
+                            cannot be undone. The original and any copy already created stay
+                            unchanged.
+                          </p>
                           <div className="save-recovery-actions">
-                            <button type="button" disabled={busy} onClick={() => {
-                              setConfirmDiscard(false);
-                              onDiscardRecovery?.();
-                            }}>Discard offline changes</button>
-                            <button type="button" onClick={() => setConfirmDiscard(false)}>Keep changes</button>
+                            <button
+                              type="button"
+                              disabled={busy}
+                              onClick={() => {
+                                setConfirmDiscard(false);
+                                onDiscardRecovery?.();
+                              }}
+                            >
+                              Discard offline changes
+                            </button>
+                            <button type="button" onClick={() => setConfirmDiscard(false)}>
+                              Keep changes
+                            </button>
                           </div>
                         </div>
                       ) : (
                         <div className="save-recovery-actions">
                           {!state.signInRequired && (
                             <button type="button" disabled={busy} onClick={onRecover}>
-                              {recovery.phase === 'creating' ? 'Creating copy…' : 'Retry creating copy'}
+                              {recovery.phase === 'creating'
+                                ? 'Creating copy…'
+                                : 'Retry creating copy'}
                             </button>
                           )}
-                          <button type="button" disabled={busy} onClick={onExportRecovery}>Export as Univer file</button>
-                          <button type="button" disabled={busy} onClick={() => setConfirmDiscard(true)}>Discard offline changes…</button>
+                          <button type="button" disabled={busy} onClick={onExportRecovery}>
+                            Export as Univer file
+                          </button>
+                          <button
+                            type="button"
+                            disabled={busy}
+                            onClick={() => setConfirmDiscard(true)}
+                          >
+                            Discard offline changes…
+                          </button>
                         </div>
                       )}
                     </section>

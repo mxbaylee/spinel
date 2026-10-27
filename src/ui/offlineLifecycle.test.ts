@@ -1,6 +1,8 @@
 import { afterEach, expect, test, vi } from 'vitest';
+import type { IDocumentData } from '@univerjs/core';
 import type { ClientCheckpoint } from '@spinel/sync-client';
 import type { OfflineBundle } from '../shared/offlineBundle.ts';
+import type { OfflineRecoveryRequest } from '../shared/offlineRecovery.ts';
 import { OfflineSession } from '../../web/offline/OfflineSession.ts';
 import * as offlineStorage from '../../web/offline/offlineStore.ts';
 import {
@@ -422,4 +424,379 @@ test('a clean scoped removal deletes the native item and its images in the same 
   await f.store.removeClean(scope, () => {});
   expect(f.removed).toEqual(['items', 'images']);
   expect(f.aborted()).toBe(false);
+});
+
+function recoveryItem() {
+  const saved: ClientCheckpoint = { ...structuredClone(checkpoint), failure: 'stale' };
+  const recovery: OfflineRecoveryRequest = {
+    recoveryId: '11111111-1111-4111-8111-111111111111',
+    filename: 'Notes (offline copy, 2026-10-26 21:07).univer.json',
+    snapshot: {
+      ...structuredClone(bundle.snapshot),
+      title: 'Notes (offline copy, 2026-10-26 21:07)',
+    },
+    possibleReplayCrash: false,
+  };
+  const item = {
+    bundle: structuredClone(bundle),
+    outbox: { version: 1 as const, ...scope, checkpoint: saved },
+    recovery,
+  };
+  return { item, saved, recovery };
+}
+
+test('begin recovery durably fixes its request before publication and returns an independent value', async () => {
+  const data = recoveryItem();
+  const item = { bundle: data.item.bundle, outbox: data.item.outbox };
+  const f = storage(item);
+  const request = structuredClone(data.recovery);
+  const result = await f.store.beginRecovery(scope, data.saved, request, () => {});
+  expect(f.database.transaction).toHaveBeenCalledWith('items', 'readwrite');
+  expect(f.written).toEqual([{ ...item, recovery: request }]);
+  expect(f.removed).toEqual([]);
+  expect(f.aborted()).toBe(false);
+  result.filename = 'Caller changed only its copy';
+  expect((f.written[0] as typeof data.item).recovery.filename).toBe(data.recovery.filename);
+});
+
+test('begin recovery accepts its exact existing request but refuses another identity or altered content', async () => {
+  const original = recoveryItem();
+  const repeat = storage(structuredClone(original.item));
+  await expect(
+    repeat.store.beginRecovery(scope, original.saved, structuredClone(original.recovery), () => {}),
+  ).resolves.toEqual(original.recovery);
+  for (const change of [
+    { recoveryId: '22222222-2222-4222-8222-222222222222' },
+    { filename: 'Changed.json' },
+    { possibleReplayCrash: true },
+    { snapshot: { ...original.recovery.snapshot, title: 'Changed contents' } },
+  ]) {
+    const f = storage(structuredClone(original.item));
+    await expect(
+      f.store.beginRecovery(scope, original.saved, { ...original.recovery, ...change }, () => {}),
+    ).rejects.toThrow('recovery changed');
+    expect(f.written).toEqual([]);
+    expect(f.removed).toEqual([]);
+    expect(f.aborted()).toBe(true);
+  }
+});
+
+test.each(['changed checkpoint', 'no pending work'] as const)(
+  'begin recovery refuses %s and preserves the stored copy',
+  async (mode) => {
+    const data = recoveryItem();
+    const f = storage(
+      mode === 'no pending work'
+        ? { bundle: data.item.bundle, outbox: { ...data.item.outbox, checkpoint } }
+        : data.item,
+    );
+    const supplied =
+      mode === 'changed checkpoint'
+        ? { ...data.saved, revision: data.saved.revision + 1 }
+        : checkpoint;
+    await expect(f.store.beginRecovery(scope, supplied, data.recovery, () => {})).rejects.toThrow(
+      'saved offline changes changed',
+    );
+    expect(f.written).toEqual([]);
+    expect(f.removed).toEqual([]);
+  },
+);
+
+test('a fixed recovery request prevents subsequent checkpoint edits from changing its meaning', async () => {
+  const data = recoveryItem();
+  const f = storage(structuredClone(data.item));
+  const changed = {
+    ...data.saved,
+    snapshot: { ...data.saved.snapshot, body: { dataStream: 'Later work\r\n' } },
+  };
+  await expect(f.store.saveCheckpoint(scope, changed, () => {})).rejects.toThrow(
+    'already being recovered',
+  );
+  expect(f.written).toEqual([]);
+  expect(f.aborted()).toBe(true);
+  const unchanged = storage(structuredClone(data.item));
+  await unchanged.store.saveCheckpoint(scope, structuredClone(data.saved), () => {});
+  expect(unchanged.written).toEqual([data.item]);
+});
+
+test.each(['begin', 'finish'] as const)(
+  '%s recovery verifies exact account, item, Space and generation after the asynchronous read',
+  async (action) => {
+    for (const field of ['accountId', 'itemId', 'spaceId', 'unitId', 'revisionOffset'] as const) {
+      const data = recoveryItem();
+      Object.assign(data.item.bundle, { [field]: field === 'revisionOffset' ? 20 : 'foreign' });
+      const f = storage(data.item);
+      const work =
+        action === 'begin'
+          ? f.store.beginRecovery(scope, data.saved, data.recovery, () => {})
+          : f.store.finishRecovery(scope, data.recovery.recoveryId, () => {}, {
+              recovery: data.recovery,
+              checkpoint: data.saved,
+            });
+      await expect(work).rejects.toThrow('device copy changed');
+      expect(f.written).toEqual([]);
+      expect(f.removed).toEqual([]);
+      expect(f.aborted()).toBe(true);
+    }
+  },
+);
+
+test.each(['begin', 'finish'] as const)(
+  'an account/host change during %s recovery aborts before data mutation',
+  async (action) => {
+    const data = recoveryItem();
+    const f = storage(data.item);
+    let current = true;
+    const verify = () => {
+      if (!current) throw new Error('Account changed');
+    };
+    const work =
+      action === 'begin'
+        ? f.store.beginRecovery(scope, data.saved, data.recovery, verify)
+        : f.store.finishRecovery(scope, data.recovery.recoveryId, verify, {
+            recovery: data.recovery,
+            checkpoint: data.saved,
+          });
+    current = false;
+    await expect(work).rejects.toThrow('Account changed');
+    expect(f.written).toEqual([]);
+    expect(f.removed).toEqual([]);
+    expect(f.aborted()).toBe(true);
+  },
+);
+
+test.each(['identity', 'payload', 'checkpoint'] as const)(
+  'final recovery acknowledgment cannot clear changed %s',
+  async (change) => {
+    const data = recoveryItem();
+    const expected = {
+      recovery: structuredClone(data.recovery),
+      checkpoint: structuredClone(data.saved),
+    };
+    if (change === 'identity')
+      data.item.recovery.recoveryId = '22222222-2222-4222-8222-222222222222';
+    if (change === 'payload')
+      data.item.recovery.snapshot = { ...data.item.recovery.snapshot, title: 'Changed payload' };
+    if (change === 'checkpoint') data.item.outbox.checkpoint.revision++;
+    const f = storage(data.item);
+    await expect(
+      f.store.finishRecovery(scope, expected.recovery.recoveryId, () => {}, expected),
+    ).rejects.toThrow('recovery changed');
+    expect(f.removed).toEqual([]);
+    expect(f.aborted()).toBe(true);
+  },
+);
+
+test.each(['acknowledged', 'explicit discard'] as const)(
+  '%s recovery deletes its native item and image bytes atomically',
+  async (mode) => {
+    const data = recoveryItem();
+    const f = storage(data.item);
+    await f.store.finishRecovery(
+      scope,
+      mode === 'explicit discard' ? undefined : data.recovery.recoveryId,
+      () => {},
+      mode === 'explicit discard' ? undefined : { recovery: data.recovery, checkpoint: data.saved },
+    );
+    expect(f.database.transaction).toHaveBeenCalledWith(['items', 'images'], 'readwrite');
+    expect(f.removed).toEqual(['items', 'images']);
+    expect(f.aborted()).toBe(false);
+  },
+);
+
+async function publishingSession() {
+  const f = session();
+  setPreparedAccount(scope.account);
+  const data = recoveryItem();
+  data.saved.snapshot = {
+    ...data.saved.snapshot,
+    body: { dataStream: 'Saved offline work\r\n' },
+  };
+  const download = {
+    bundle: structuredClone(bundle),
+    bytes: new Map<string, Uint8Array>(),
+    outbox: { version: 1 as const, ...scope, checkpoint: data.saved },
+    recovery: undefined as OfflineRecoveryRequest | undefined,
+  };
+  const begin = vi.fn(
+    async (
+      _scope: unknown,
+      _checkpoint: ClientCheckpoint,
+      recovery: OfflineRecoveryRequest,
+      verify: () => void,
+    ) => {
+      verify();
+      return structuredClone(recovery);
+    },
+  );
+  const finish = vi.fn(
+    async (
+      _scope: unknown,
+      _id: string | undefined,
+      verify: () => void,
+      _expected?: { recovery: OfflineRecoveryRequest; checkpoint: ClientCheckpoint },
+    ) => verify(),
+  );
+  Object.assign(f.store, { beginRecovery: begin, finishRecovery: finish, close: vi.fn() });
+  Object.assign(f.value, { download });
+  const recovery = await f.value.prepareRecovery(data.saved);
+  const copy = {
+    id: '22222222-2222-4222-8222-222222222222',
+    name: (recovery.snapshot as IDocumentData).title!,
+    kind: 'doc',
+    parentId: null,
+    access: 'owner',
+    tags: [],
+    createdAt: 1,
+    updatedAt: 1,
+  };
+  return { ...f, download, recovery, copy, saved: data.saved, begin, finish };
+}
+
+test('prepared recovery publishes the exact account-bound request on retry and only clears its full verified checkpoint after acknowledgment', async () => {
+  const f = await publishingSession();
+  const fetcher = vi.fn(async () => Response.json({ item: f.copy }, { status: 201 }));
+  vi.stubGlobal('fetch', fetcher);
+  try {
+    expect(f.begin).toHaveBeenCalledOnce();
+    expect(f.value.pending).toBe(true);
+    for (let retry = 0; retry < 2; retry++)
+      expect(
+        await f.value.publishRecovery(structuredClone(f.recovery), new AbortController().signal),
+      ).toEqual(f.copy);
+    expect(fetcher).toHaveBeenCalledTimes(2);
+    for (const [path, init] of fetcher.mock.calls as unknown as Array<[string, RequestInit]>) {
+      expect(path).toBe('/api/items/offline-recovery');
+      expect(init).toMatchObject({
+        method: 'POST',
+        credentials: 'same-origin',
+        cache: 'no-store',
+        redirect: 'error',
+      });
+      expect(new Headers(init.headers).get('x-spinel-offline-account')).toBe(scope.account);
+      expect(new Headers(init.headers).get('content-type')).toBe('application/json');
+      expect(JSON.parse(String(init.body))).toEqual(f.recovery);
+    }
+    // The original Space route is never used as the recovery destination, and
+    // an HTTP success alone has not removed the still-durable device checkpoint.
+    expect(f.finish).not.toHaveBeenCalled();
+    expect(f.value.pending).toBe(true);
+    await f.value.finishRecovery(f.recovery.recoveryId);
+    expect(f.finish).toHaveBeenCalledWith(scope, f.recovery.recoveryId, expect.any(Function), {
+      recovery: f.recovery,
+      checkpoint: f.saved,
+    });
+    expect(f.value.pending).toBe(false);
+  } finally {
+    f.value.dispose();
+  }
+});
+
+test.each(['response', 'body'] as const)(
+  'a late recovery %s after an account switch cannot authorize device cleanup',
+  async (stage) => {
+    const f = await publishingSession();
+    let answer!: () => void;
+    const waiting = new Promise<void>((resolve) => {
+      answer = resolve;
+    });
+    const reading = vi.fn();
+    const response = Response.json({ item: f.copy }, { status: 201 });
+    if (stage === 'body')
+      vi.spyOn(response, 'json').mockImplementation(async () => {
+        reading();
+        await waiting;
+        return { item: f.copy };
+      });
+    const fetcher = vi.fn(async () => {
+      if (stage === 'response') await waiting;
+      return response;
+    });
+    vi.stubGlobal('fetch', fetcher);
+    try {
+      const publication = f.value.publishRecovery(f.recovery, new AbortController().signal);
+      const rejected = expect(publication).rejects.toMatchObject({ name: 'AbortError' });
+      if (stage === 'body') await vi.waitFor(() => expect(reading).toHaveBeenCalledOnce());
+      else expect(fetcher).toHaveBeenCalledOnce();
+      offlineStorage.claimOnlineAccount('other');
+      answer();
+      await rejected;
+      expect(f.finish).not.toHaveBeenCalled();
+      expect(f.value.pending).toBe(true);
+      expect(f.download.outbox.checkpoint).toEqual(f.saved);
+      expect(f.download.recovery).toEqual(f.recovery);
+    } finally {
+      f.value.dispose();
+    }
+  },
+);
+
+test('a stale or unverified recovery request is refused before any POST or cleanup', async () => {
+  const f = await publishingSession();
+  const fetcher = vi.fn().mockRejectedValue(new Error('Unexpected network request'));
+  vi.stubGlobal('fetch', fetcher);
+  try {
+    for (const changed of [
+      { ...f.recovery, recoveryId: '33333333-3333-4333-8333-333333333333' },
+      {
+        ...f.recovery,
+        snapshot: {
+          ...f.recovery.snapshot,
+          body: { dataStream: 'Changed after verification\r\n' },
+        },
+      },
+    ])
+      await expect(f.value.publishRecovery(changed, new AbortController().signal)).rejects.toThrow(
+        'has not been verified',
+      );
+    expect(fetcher).not.toHaveBeenCalled();
+    expect(f.finish).not.toHaveBeenCalled();
+    expect(f.value.pending).toBe(true);
+  } finally {
+    f.value.dispose();
+  }
+});
+
+test('an account switch while final cleanup is waiting keeps the session pending', async () => {
+  const f = await publishingSession();
+  let finish!: () => void;
+  const waiting = new Promise<void>((resolve) => {
+    finish = resolve;
+  });
+  f.finish.mockImplementationOnce(async (_scope, _id, verify) => {
+    await waiting;
+    verify();
+  });
+  try {
+    const completion = f.value.finishRecovery(f.recovery.recoveryId);
+    const rejected = expect(completion).rejects.toMatchObject({ name: 'AbortError' });
+    expect(f.finish).toHaveBeenCalledOnce();
+    offlineStorage.claimOnlineAccount('other');
+    finish();
+    await rejected;
+    expect(f.value.pending).toBe(true);
+    expect(f.download.outbox.checkpoint).toEqual(f.saved);
+  } finally {
+    f.value.dispose();
+  }
+});
+
+test('a corrupt saved retry request blocks publication while native export still reconstructs the original offline work', async () => {
+  const f = await publishingSession();
+  const fetcher = vi.fn().mockRejectedValue(new Error('Unexpected network request'));
+  vi.stubGlobal('fetch', fetcher);
+  try {
+    const expected = await f.value.exportSnapshot(f.saved);
+    (f.download.recovery!.snapshot as IDocumentData).body!.dataStream = 'CORRUPT SAVED REQUEST\r\n';
+    await expect(f.value.prepareRecovery(f.saved)).rejects.toThrow('does not match');
+    const exported = (await f.value.exportSnapshot(f.saved)) as IDocumentData;
+    expect(exported).toEqual(expected);
+    expect(exported.body!.dataStream).toBe('Saved offline work\r\n');
+    expect(exported.id).toBe(scope.item);
+    expect(fetcher).not.toHaveBeenCalled();
+    expect(f.finish).not.toHaveBeenCalled();
+    expect(f.value.pending).toBe(true);
+  } finally {
+    f.value.dispose();
+  }
 });

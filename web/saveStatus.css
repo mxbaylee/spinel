@@ -107,7 +107,7 @@
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  color: var(--sp-link);
+  color: var(--sp-accent);
   padding: 8px;
 }
 .save-recovery button:disabled {

@@ -1,0 +1,29 @@
+.offline-recovery-list {
+  margin-block: 16px;
+  padding: 16px;
+  border: 1px solid var(--sp-border);
+  border-radius: 8px;
+  background: var(--sp-panel);
+}
+.offline-recovery-list h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+.offline-recovery-list p {
+  color: var(--sp-muted);
+  margin: 8px 0;
+}
+.offline-recovery-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.offline-recovery-list a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  overflow-wrap: anywhere;
+}
+.offline-recovery-entry {
+  padding: 24px;
+}

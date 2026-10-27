@@ -19,7 +19,8 @@ const directories: string[] = [];
 afterEach(() => {
   vi.restoreAllMocks();
   for (const database of databases.splice(0)) if (database.isOpen) database.close();
-  for (const directory of directories.splice(0)) rmSync(directory, { recursive: true, force: true });
+  for (const directory of directories.splice(0))
+    rmSync(directory, { recursive: true, force: true });
 });
 
 function fixture(path = ':memory:') {
@@ -92,12 +93,18 @@ test.each(['sheet', 'doc'] as const)(
     expect(store.load(f.collaborator.id, first.id).snapshot).toMatchObject({ id: first.id });
     expect(
       f.db
-        .prepare(`SELECT * FROM ${kind === 'sheet' ? 'sheet_snapshots' : 'doc_snapshots'} WHERE item_id=?`)
+        .prepare(
+          `SELECT * FROM ${kind === 'sheet' ? 'sheet_snapshots' : 'doc_snapshots'} WHERE item_id=?`,
+        )
         .all(original.id),
     ).toEqual(originalBefore);
-    expect(await new PortableFiles(f.workspace).recover(f.collaborator.id, request, () => {})).toEqual(first);
+    expect(
+      await new PortableFiles(f.workspace).recover(f.collaborator.id, request, () => {}),
+    ).toEqual(first);
     expect(f.workspace.list(f.collaborator.id)).toEqual([first]);
-    expect(f.db.prepare('SELECT count(*) AS count FROM workspace_offline_recoveries').get()!.count).toBe(1);
+    expect(
+      f.db.prepare('SELECT count(*) AS count FROM workspace_offline_recoveries').get()!.count,
+    ).toBe(1);
   },
 );
 
@@ -115,7 +122,13 @@ test('a durable recovery receipt survives closing and reopening the database aft
   const files = new PortableFiles(workspace);
   expect(await files.recover(f.owner.id, request, () => {})).toEqual(item);
   // Count possible lost-ack/crash copies once, even after repeated delivery.
-  expect(db.prepare('SELECT count(*) AS copies,sum(possible_replay_crash) AS possible FROM workspace_offline_recoveries').get()).toEqual({ copies: 1, possible: 1 });
+  expect(
+    db
+      .prepare(
+        'SELECT count(*) AS copies,sum(possible_replay_crash) AS possible FROM workspace_offline_recoveries',
+      )
+      .get(),
+  ).toEqual({ copies: 1, possible: 1 });
 });
 
 test('recovery identities bind payload and crash classification but remain scoped to their original account', async () => {
@@ -127,7 +140,9 @@ test('recovery identities bind payload and crash classification but remain scope
     { possibleReplayCrash: true },
     { snapshot: { ...request.snapshot, title: 'Changed' } },
   ])
-    await expect(f.files.recover(f.owner.id, { ...request, ...change }, () => {})).rejects.toMatchObject({ status: 409 });
+    await expect(
+      f.files.recover(f.owner.id, { ...request, ...change }, () => {}),
+    ).rejects.toMatchObject({ status: 409 });
   const second = await f.files.recover(f.collaborator.id, request, () => {});
   expect(second.id).not.toBe(first.id);
   expect(f.workspace.fileOwner(second.id)).toBe(f.collaborator.id);
@@ -142,12 +157,24 @@ test.each(['trashed', 'deleted', 'transferred'] as const)(
     const request = f.input('doc');
     const item = await f.files.recover(f.owner.id, request, () => {});
     if (state === 'trashed')
-      f.db.prepare('UPDATE workspace_items SET trashed_at=1,trash_batch=? WHERE id=?').run(randomUUID(), item.id);
-    else if (state === 'deleted') f.db.prepare('DELETE FROM workspace_items WHERE id=?').run(item.id);
-    else f.db.prepare('UPDATE workspace_items SET owner_id=? WHERE id=?').run(f.collaborator.id, item.id);
-    await expect(f.files.recover(f.owner.id, request, () => {})).rejects.toMatchObject({ status: 409 });
-    expect(f.db.prepare('SELECT count(*) AS count FROM workspace_offline_recoveries').get()!.count).toBe(1);
-    expect(f.db.prepare('SELECT count(*) AS count FROM workspace_items').get()!.count).toBe(state === 'deleted' ? 0 : 1);
+      f.db
+        .prepare('UPDATE workspace_items SET trashed_at=1,trash_batch=? WHERE id=?')
+        .run(randomUUID(), item.id);
+    else if (state === 'deleted')
+      f.db.prepare('DELETE FROM workspace_items WHERE id=?').run(item.id);
+    else
+      f.db
+        .prepare('UPDATE workspace_items SET owner_id=? WHERE id=?')
+        .run(f.collaborator.id, item.id);
+    await expect(f.files.recover(f.owner.id, request, () => {})).rejects.toMatchObject({
+      status: 409,
+    });
+    expect(
+      f.db.prepare('SELECT count(*) AS count FROM workspace_offline_recoveries').get()!.count,
+    ).toBe(1);
+    expect(f.db.prepare('SELECT count(*) AS count FROM workspace_items').get()!.count).toBe(
+      state === 'deleted' ? 0 : 1,
+    );
   },
 );
 
@@ -159,7 +186,15 @@ test('recovery keeps Doc Formula definitions, rejects cached values and reauthor
   const definition = {
     version: 1 as const,
     expression,
-    references: [{ start: reference.start, end: reference.end, itemId: source.id, sheetId: 'summary', range: reference.range }],
+    references: [
+      {
+        start: reference.start,
+        end: reference.end,
+        itemId: source.id,
+        sheetId: 'summary',
+        range: reference.range,
+      },
+    ],
   };
   const body = formulaBody('formula', definition);
   body.dataStream += '\r\n';
@@ -170,12 +205,19 @@ test('recovery keeps Doc Formula definitions, rejects cached values and reauthor
   const prepare = vi.fn();
   const collaboration = { prepare } as unknown as CollaborationStore;
   const formulas = new DocFormulas(f.workspace, collaboration);
-  await expect(formulas.resolve(f.collaborator.id, item.id, { expression, previous: definition }, () => {})).rejects.toThrow();
+  await expect(
+    formulas.resolve(f.collaborator.id, item.id, { expression, previous: definition }, () => {}),
+  ).rejects.toThrow();
   expect(prepare).not.toHaveBeenCalled();
   const invalid = structuredClone(request);
-  const annotation = invalid.snapshot.body.customRanges![0].properties!.spinelFormula as Record<string, unknown>;
+  const annotation = invalid.snapshot.body.customRanges![0].properties!.spinelFormula as Record<
+    string,
+    unknown
+  >;
   annotation.result = 42;
-  await expect(f.files.recover(f.collaborator.id, { ...invalid, recoveryId: randomUUID() }, () => {})).rejects.toMatchObject({ status: 400 });
+  await expect(
+    f.files.recover(f.collaborator.id, { ...invalid, recoveryId: randomUUID() }, () => {}),
+  ).rejects.toMatchObject({ status: 400 });
   expect(f.workspace.list(f.collaborator.id)).toEqual([item]);
 });
 
@@ -183,26 +225,46 @@ test('a revoked Space child recovers into ordinary owned files with separately s
   const f = fixture();
   const spaces = new SpaceStore(f.workspace);
   const root = spaces.createRoot(f.owner.id, { name: 'Project', parentId: null }).space;
-  const child = spaces.createChild(f.owner.id, root.id, { name: 'Notes', kind: 'doc', parentId: root.id }).item;
+  const child = spaces.createChild(f.owner.id, root.id, {
+    name: 'Notes',
+    kind: 'doc',
+    parentId: root.id,
+  }).item;
   spaces.share(f.owner.id, root.id, f.collaborator.id, 'editor');
-  const bytes = await sharp({ create: { width: 2, height: 2, channels: 3, background: '#ab4567' } }).png().toBuffer();
+  const bytes = await sharp({ create: { width: 2, height: 2, channels: 3, background: '#ab4567' } })
+    .png()
+    .toBuffer();
   const request = {
     ...f.input('doc'),
     snapshot: {
       ...f.snapshot('doc', child.id),
-      drawings: { picture: { drawingType: 0, imageSourceType: 'BASE64', source: `data:image/png;base64,${bytes.toString('base64')}`, unitId: child.id, subUnitId: child.id } },
+      drawings: {
+        picture: {
+          drawingType: 0,
+          imageSourceType: 'BASE64',
+          source: `data:image/png;base64,${bytes.toString('base64')}`,
+          unitId: child.id,
+          subUnitId: child.id,
+        },
+      },
     },
   };
   spaces.share(f.owner.id, root.id, f.collaborator.id, null);
   const original = f.db.prepare('SELECT * FROM workspace_items WHERE id=?').get(child.id);
   const item = await f.files.recover(f.collaborator.id, request, () => {});
-  expect(f.db.prepare('SELECT parent_id,space_id,owner_id FROM workspace_items WHERE id=?').get(item.id)).toEqual({ parent_id: null, space_id: null, owner_id: f.collaborator.id });
+  expect(
+    f.db.prepare('SELECT parent_id,space_id,owner_id FROM workspace_items WHERE id=?').get(item.id),
+  ).toEqual({ parent_id: null, space_id: null, owner_id: f.collaborator.id });
   const saved = f.files.docs.load(f.collaborator.id, item.id).snapshot!;
   const source = (saved.drawings!.picture as unknown as { source: string }).source;
   expect(source).toMatch(new RegExp(`^/api/items/${item.id}/images/[a-f0-9]{64}$`));
-  expect(Buffer.from(f.files.docs.image(f.collaborator.id, item.id, source.split('/').at(-1)!).data)).toEqual(bytes);
+  expect(
+    Buffer.from(f.files.docs.image(f.collaborator.id, item.id, source.split('/').at(-1)!).data),
+  ).toEqual(bytes);
   expect(f.db.prepare('SELECT * FROM workspace_items WHERE id=?').get(child.id)).toEqual(original);
-  expect(f.db.prepare('SELECT count(*) AS count FROM doc_images WHERE item_id=?').get(child.id)!.count).toBe(0);
+  expect(
+    f.db.prepare('SELECT count(*) AS count FROM doc_images WHERE item_id=?').get(child.id)!.count,
+  ).toBe(0);
   expect(() => f.files.docs.image(f.owner.id, item.id, source.split('/').at(-1)!)).toThrow();
 });
 
@@ -214,27 +276,46 @@ test('invalid payloads, operators, disabled accounts and late failures publish n
     { possibleReplayCrash: 'yes' },
     { snapshot: { ...request.snapshot, body: { dataStream: 'No native terminator' } } },
     { snapshot: { ...request.snapshot, extra: 'x'.repeat(PORTABLE_LIMIT) } },
-    { snapshot: { ...request.snapshot, drawings: { picture: { source: 'https://example.test/private.png' } } } },
+    {
+      snapshot: {
+        ...request.snapshot,
+        drawings: { picture: { source: 'https://example.test/private.png' } },
+      },
+    },
   ])
-    await expect(f.files.recover(f.owner.id, { ...request, ...change }, () => {})).rejects.toThrow();
-  await expect(f.files.recover(f.operator.id, request, () => {})).rejects.toMatchObject({ status: 403 });
+    await expect(
+      f.files.recover(f.owner.id, { ...request, ...change }, () => {}),
+    ).rejects.toThrow();
+  await expect(f.files.recover(f.operator.id, request, () => {})).rejects.toMatchObject({
+    status: 403,
+  });
   const originalPrepare = f.files.prepare.bind(f.files);
   vi.spyOn(f.files, 'prepare').mockImplementation(async (...args) => {
     const prepared = await originalPrepare(...args);
     f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(f.owner.id);
     return prepared;
   });
-  await expect(f.files.recover(f.owner.id, request, () => {})).rejects.toMatchObject({ status: 401 });
+  await expect(f.files.recover(f.owner.id, request, () => {})).rejects.toMatchObject({
+    status: 401,
+  });
   expect(f.db.prepare('SELECT count(*) AS count FROM workspace_items').get()!.count).toBe(0);
-  expect(f.db.prepare('SELECT count(*) AS count FROM workspace_offline_recoveries').get()!.count).toBe(0);
+  expect(
+    f.db.prepare('SELECT count(*) AS count FROM workspace_offline_recoveries').get()!.count,
+  ).toBe(0);
   expect(f.db.prepare('SELECT count(*) AS count FROM doc_images').get()!.count).toBe(0);
 });
 
 test('a failure writing the receipt rolls back the snapshot and item together', async () => {
   const f = fixture();
-  f.db.exec("CREATE TRIGGER fail_recovery BEFORE INSERT ON workspace_offline_recoveries BEGIN SELECT RAISE(ABORT,'Disk failure'); END");
-  await expect(f.files.recover(f.owner.id, f.input('doc'), () => {})).rejects.toThrow('Disk failure');
+  f.db.exec(
+    "CREATE TRIGGER fail_recovery BEFORE INSERT ON workspace_offline_recoveries BEGIN SELECT RAISE(ABORT,'Disk failure'); END",
+  );
+  await expect(f.files.recover(f.owner.id, f.input('doc'), () => {})).rejects.toThrow(
+    'Disk failure',
+  );
   expect(f.workspace.list(f.owner.id)).toEqual([]);
   expect(f.db.prepare('SELECT count(*) AS count FROM doc_snapshots').get()!.count).toBe(0);
-  expect(f.db.prepare('SELECT count(*) AS count FROM workspace_offline_recoveries').get()!.count).toBe(0);
+  expect(
+    f.db.prepare('SELECT count(*) AS count FROM workspace_offline_recoveries').get()!.count,
+  ).toBe(0);
 });

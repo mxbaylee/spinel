@@ -12,7 +12,7 @@ import { OfflineAccess, offlineScope } from './OfflineAccess.ts';
 import { PreparedImages, checkImageList, sha256 } from './PreparedImages.ts';
 import { ScopedHTTP } from './ScopedHTTP.ts';
 import { downloadForOffline } from './download.ts';
-import { offlineCopyName, portableOfflineSnapshot } from './recovery.ts';
+import { offlineCopyName, portableOfflineSnapshot, verifyRecoveryRequest } from './recovery.ts';
 import {
   hasOfflineEdits,
   expirePreparedAccount,
@@ -68,6 +68,7 @@ export class OfflineSession implements IURLImageService {
   private authenticationHTTPStopped = false;
   private recoveryCurrent?: () => boolean;
   private recoveryResolved = false;
+  private verifiedRecovery?: { recovery: OfflineRecoveryRequest; checkpoint: ClientCheckpoint };
   onChange?: () => void;
   onLock?: () => void;
   online = false;
@@ -110,10 +111,9 @@ export class OfflineSession implements IURLImageService {
     return !this.recoveryResolved && hasOfflineEdits(this.download?.outbox);
   }
   get canRecover() {
-    return Boolean(this.current && this.releaseWriter && !this.bundle?.readOnly && !this.recoveryResolved);
-  }
-  get recoveryRequest() {
-    return this.download?.recovery;
+    return Boolean(
+      this.current && this.releaseWriter && !this.bundle?.readOnly && !this.recoveryResolved,
+    );
   }
   get current() {
     return (
@@ -455,40 +455,63 @@ export class OfflineSession implements IURLImageService {
     if (!this.canRecover || !this.bundle || !this.store)
       throw new Error('Close other tabs and reopen this downloaded document to recover it.');
     return {
-      account: this.accountId, item: this.itemId, spaceId: this.spaceId,
-      unitId: this.bundle.unitId, revisionOffset: this.bundle.revisionOffset,
+      account: this.accountId,
+      item: this.itemId,
+      spaceId: this.spaceId,
+      unitId: this.bundle.unitId,
+      revisionOffset: this.bundle.revisionOffset,
     };
   }
   async exportSnapshot(checkpoint: ClientCheckpoint) {
     this.recoveryScope();
-    if (this.download!.recovery) return structuredClone(this.download!.recovery.snapshot);
     return portableOfflineSnapshot(this.bundle!, checkpoint, this.download!.bytes, this.verify);
   }
   async prepareRecovery(checkpoint: ClientCheckpoint) {
     const scope = this.recoveryScope();
-    if (this.download!.recovery) return structuredClone(this.download!.recovery);
     const snapshot = await this.exportSnapshot(checkpoint);
     this.verify();
+    if (this.download!.recovery) {
+      const recovery = this.download!.recovery;
+      verifyRecoveryRequest(this.bundle!, checkpoint, recovery, snapshot);
+      this.verifiedRecovery = {
+        recovery: structuredClone(recovery),
+        checkpoint: structuredClone(checkpoint),
+      };
+      return structuredClone(recovery);
+    }
     const name = offlineCopyName(this.bundle!.name);
     if ('sheets' in snapshot) snapshot.name = name;
     else snapshot.title = name;
     const recovery: OfflineRecoveryRequest = {
-      recoveryId: crypto.randomUUID(), filename: `${name}.univer.json`, snapshot,
+      recoveryId: crypto.randomUUID(),
+      filename: `${name}.univer.json`,
+      snapshot,
       possibleReplayCrash: Boolean(checkpoint.sent),
     };
     if (new TextEncoder().encode(JSON.stringify(recovery)).byteLength > PORTABLE_LIMIT)
-      throw new Error('This offline copy exceeds the import size limit. Export it as a Univer file to keep it.');
+      throw new Error(
+        'This offline copy exceeds the import size limit. Export it as a Univer file to keep it.',
+      );
     const saved = await this.store!.beginRecovery(scope, checkpoint, recovery, this.verify);
     this.verify();
     this.download!.recovery = saved;
+    this.verifiedRecovery = {
+      recovery: structuredClone(saved),
+      checkpoint: structuredClone(checkpoint),
+    };
     return structuredClone(saved);
   }
   /** Recovery is a new account file; never broaden the original scoped HTTP adapter. */
   async publishRecovery(recovery: OfflineRecoveryRequest, signal: AbortSignal) {
     this.recoveryScope();
     this.verifyRemote();
+    if (JSON.stringify(this.verifiedRecovery?.recovery) !== JSON.stringify(recovery))
+      throw new Error('This recovery request has not been verified. Keep this device copy.');
     const response = await fetch('/api/items/offline-recovery', {
-      method: 'POST', credentials: 'same-origin', cache: 'no-store', redirect: 'error',
+      method: 'POST',
+      credentials: 'same-origin',
+      cache: 'no-store',
+      redirect: 'error',
       headers: { 'Content-Type': 'application/json', 'X-Spinel-Offline-Account': this.accountId },
       body: JSON.stringify(recovery),
       signal: AbortSignal.any([signal, AbortSignal.timeout(20_000)]),
@@ -497,17 +520,37 @@ export class OfflineSession implements IURLImageService {
     const data = await response.json();
     this.verifyRemote();
     if (!response.ok)
-      throw Object.assign(new Error(data.error ?? 'The copy could not be created. Your offline changes stay on this device.'), { status: response.status });
+      throw Object.assign(
+        new Error(
+          data.error ?? 'The copy could not be created. Your offline changes stay on this device.',
+        ),
+        { status: response.status },
+      );
     const item = data.item as WorkspaceItem | undefined;
-    if (!item || !/^[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}$/i.test(item.id) ||
-      item.id === this.itemId || item.access !== 'owner' || item.parentId !== null ||
-      item.kind !== this.bundle!.kind || typeof item.name !== 'string')
-      throw new Error('The recovery copy could not be verified. Your offline changes stay on this device.');
+    if (
+      !item ||
+      !/^[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}$/i.test(item.id) ||
+      item.id === this.itemId ||
+      item.access !== 'owner' ||
+      item.parentId !== null ||
+      item.kind !== this.bundle!.kind ||
+      typeof item.name !== 'string'
+    )
+      throw new Error(
+        'The recovery copy could not be verified. Your offline changes stay on this device.',
+      );
     return item;
   }
   async finishRecovery(recoveryId?: string) {
     const scope = this.recoveryScope();
-    await this.store!.finishRecovery(scope, recoveryId, this.verify);
+    if (recoveryId !== undefined && this.verifiedRecovery?.recovery.recoveryId !== recoveryId)
+      throw new Error('This recovery request has not been verified. Keep this device copy.');
+    await this.store!.finishRecovery(
+      scope,
+      recoveryId,
+      this.verify,
+      recoveryId === undefined ? undefined : this.verifiedRecovery,
+    );
     this.recoveryResolved = true;
     this.download!.outbox = undefined;
   }

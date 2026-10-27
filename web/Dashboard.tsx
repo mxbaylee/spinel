@@ -43,6 +43,7 @@ import type { LocalStart } from './offline/localStart.ts';
 import type { OfflineCatalog, OfflineUser } from './offline/offlineStore.ts';
 import { useOfflineDownloads } from './offline/useOfflineDownloads.ts';
 import { OfflineAvailability } from './offline/OfflineAvailability.tsx';
+import { OfflineRecoveryList } from './OfflineRecoveryEntry.tsx';
 import { spaceCopies } from './offline/spaceCopies.ts';
 const SheetEditor = lazy(() =>
   import('./SheetEditor.tsx').then((module) => ({ default: module.SheetEditor })),
@@ -206,6 +207,11 @@ export function Dashboard({
       ? { syncedAt, items, shared: shared.items, views: views.current }
       : null;
   const offline = useOfflineDownloads(user, local, catalog);
+  useEffect(() => {
+    // Returning from the native editor reuses this Dashboard. Read its newly
+    // committed pending state before showing the account recovery entries.
+    if (!currentId) void offline.refreshSummaries().catch(() => {});
+  }, [currentId, user.id]);
   useEffect(() => {
     if (local) {
       setItems(local.catalog.items);
@@ -683,6 +689,10 @@ export function Dashboard({
               )}
             </div>
           </header>
+
+          {!currentId && (
+            <OfflineRecoveryList downloads={offline.downloads.values()} navigation={navigation} />
+          )}
 
           {local && (
             <div className="dashboard-view-choice">

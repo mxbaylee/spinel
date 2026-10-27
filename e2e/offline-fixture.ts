@@ -37,8 +37,10 @@ export type Stored = {
     checkpoint: ClientCheckpoint;
   };
 };
-export const saveStatus = (page: Page) => page.getByRole('status', { name: 'Save status', exact: true });
-export const nativeInput = (page: Page) => page.locator('[contenteditable="true"][data-u-comp="editor"]');
+export const saveStatus = (page: Page) =>
+  page.getByRole('status', { name: 'Save status', exact: true });
+export const nativeInput = (page: Page) =>
+  page.locator('[contenteditable="true"][data-u-comp="editor"]');
 export const savedLocally = (page: Page) =>
   expect(saveStatus(page)).toHaveText('Saved on this device — waiting to sync.', {
     timeout: 30_000,
@@ -190,7 +192,10 @@ export function comparable(snapshot: NativeSnapshot) {
   );
 }
 
-export async function matchesServer(page: Page, expected: { revision: number; snapshot: NativeSnapshot }) {
+export async function matchesServer(
+  page: Page,
+  expected: { revision: number; snapshot: NativeSnapshot },
+) {
   const read = () =>
     page.evaluate(
       (id) =>
@@ -308,12 +313,9 @@ export async function fixture(
             image.mime,
             image.data,
           );
-        db.prepare(`INSERT INTO ${kind === 'doc' ? 'doc_snapshots' : 'sheet_snapshots'} VALUES(?,?,?,?)`).run(
-          item.id,
-          JSON.stringify(snapshot),
-          1,
-          randomUUID(),
-        );
+        db.prepare(
+          `INSERT INTO ${kind === 'doc' ? 'doc_snapshots' : 'sheet_snapshots'} VALUES(?,?,?,?)`,
+        ).run(item.id, JSON.stringify(snapshot), 1, randomUUID());
       });
     } else {
       item = await files.import(

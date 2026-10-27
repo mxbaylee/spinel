@@ -15,12 +15,36 @@ const failed: SaveState = {
   failed: true,
   message: 'Could not finish saving recovery data. Keep this tab open and retry.',
 };
+const originalHref =
+  '/spaces/11111111-1111-4111-8111-111111111111?item=22222222-2222-4222-8222-222222222222';
+const copyHref = '/?item=33333333-3333-4333-8333-333333333333';
+const copyName =
+  'Autumn travel plans — reservations and places to explore (offline copy, 2026-10-27 14:35)';
+const recoveryFailed: SaveState = {
+  local: 'attention',
+  dirty: false,
+  failed: true,
+  retained: true,
+  message: 'Needs attention. The live document changed. Your saved device copy is retained.',
+  recovery: {
+    phase: 'failed',
+    originalHref,
+    message: 'The copy could not be created. Your offline changes stay on this device.',
+  },
+};
 
 const meta = {
   id: 'editor-savestatus',
   title: 'Current production/Editor/SaveStatus',
   component: SaveStatus,
-  args: { state: saved, target: null, onRetry: fn() },
+  args: {
+    state: saved,
+    target: null,
+    onRetry: fn(),
+    onRecover: fn(),
+    onExportRecovery: fn(),
+    onDiscardRecovery: fn(),
+  },
   parameters: {
     docs: {
       description: {
@@ -43,7 +67,19 @@ const meta = {
           state={state}
           onRetry={() => {
             args.onRetry();
-            setState(saved);
+            if (!state.signInRequired) setState(saved);
+          }}
+          onRecover={args.onRecover}
+          onExportRecovery={args.onExportRecovery}
+          onDiscardRecovery={() => {
+            args.onDiscardRecovery?.();
+            setState((current) => ({
+              ...current,
+              dirty: false,
+              message:
+                'Your offline changes were discarded from this device. The original was not changed.',
+              recovery: { ...current.recovery!, phase: 'discarded' },
+            }));
           }}
         />
         <div
@@ -90,6 +126,16 @@ const details: NonNullable<Story['play']> = async ({ canvasElement }) => {
   await noPageOverflow(canvasElement.ownerDocument);
 };
 
+async function recoveryDetails(context: Parameters<NonNullable<Story['play']>>[0]) {
+  const geometry = within(context.canvasElement).getByLabelText('Editor geometry fixture');
+  const bounds = geometry.getBoundingClientRect().toJSON();
+  await details(context);
+  await expect(geometry.getBoundingClientRect().toJSON()).toEqual(bounds);
+  return within(
+    within(context.canvasElement.ownerDocument.body).getByRole('dialog', { name: 'Save details' }),
+  );
+}
+
 export const Saved: Story = {};
 export const SavingOnDevice: Story = {
   args: {
@@ -129,6 +175,190 @@ export const NeedsAttention: Story = {
     },
   },
   play: details,
+};
+export const RecoveryCreating: Story = {
+  args: {
+    state: {
+      ...recoveryFailed,
+      message:
+        'Creating an offline copy in My files. Your saved device copy is retained until it finishes.',
+      recovery: { phase: 'creating', originalHref },
+    },
+  },
+  play: async (context) => {
+    const panel = await recoveryDetails(context);
+    for (const name of ['Creating copy…', 'Export as Univer file', 'Discard offline changes…']) {
+      const button = panel.getByRole('button', { name });
+      await expect(button).toBeDisabled();
+      await userEvent.click(button);
+    }
+    await expect(panel.queryByRole('link', { name: 'Open copy' })).not.toBeInTheDocument();
+    await expect(context.args.onRecover).not.toHaveBeenCalled();
+    await expect(context.args.onExportRecovery).not.toHaveBeenCalled();
+    await expect(context.args.onDiscardRecovery).not.toHaveBeenCalled();
+  },
+};
+export const RecoveryCreated: Story = {
+  args: {
+    state: {
+      ...recoveryFailed,
+      message: `Your offline changes were saved as ${copyName}. The original was not changed.`,
+      recovery: { phase: 'created', originalHref, copyHref, copyName },
+    },
+  },
+  play: async (context) => {
+    const panel = await recoveryDetails(context);
+    await expect(panel.getByRole('link', { name: 'Open copy' })).toHaveAttribute('href', copyHref);
+    await expect(panel.getByRole('link', { name: 'Open original' })).toHaveAttribute(
+      'href',
+      originalHref,
+    );
+    for (const name of ['Retry creating copy', 'Export as Univer file', 'Discard offline changes…'])
+      await expect(panel.queryByRole('button', { name })).not.toBeInTheDocument();
+    await expect(
+      within(context.canvasElement).getByRole('button', {
+        name: 'Save details: Needs attention',
+      }),
+    ).toBeVisible();
+    await expect(context.args.onRecover).not.toHaveBeenCalled();
+  },
+};
+export const RecoveryFailed: Story = {
+  args: { state: recoveryFailed },
+  play: async (context) => {
+    const panel = await recoveryDetails(context);
+    for (const name of ['Retry creating copy', 'Export as Univer file', 'Discard offline changes…'])
+      await expect(panel.getByRole('button', { name })).toBeEnabled();
+    await expect(
+      panel.queryByRole('button', { name: 'Discard offline changes' }),
+    ).not.toBeInTheDocument();
+    await userEvent.click(panel.getByRole('button', { name: 'Export as Univer file' }));
+    await expect(context.args.onExportRecovery).toHaveBeenCalledOnce();
+    await expect(context.args.onDiscardRecovery).not.toHaveBeenCalled();
+    await userEvent.click(panel.getByRole('button', { name: 'Retry creating copy' }));
+    await expect(context.args.onRecover).toHaveBeenCalledOnce();
+    await expect(context.args.onRetry).not.toHaveBeenCalled();
+  },
+};
+export const RecoveryExported: Story = {
+  args: {
+    state: {
+      ...recoveryFailed,
+      recovery: {
+        phase: 'failed',
+        originalHref,
+        message:
+          'The Univer file was prepared for download. Check the download before discarding your offline changes. Formula sources are checked when imported.',
+      },
+    },
+  },
+  play: async (context) => {
+    const panel = await recoveryDetails(context);
+    await expect(panel.getByRole('status')).toHaveTextContent(
+      'Check the download before discarding your offline changes.',
+    );
+    await expect(panel.getByRole('button', { name: 'Export as Univer file' })).toBeEnabled();
+    await expect(panel.getByRole('button', { name: 'Discard offline changes…' })).toBeEnabled();
+    await expect(context.args.onDiscardRecovery).not.toHaveBeenCalled();
+  },
+};
+export const RecoveryDiscardConfirmation: Story = {
+  args: { state: recoveryFailed },
+  play: async (context) => {
+    const panel = await recoveryDetails(context);
+    await userEvent.click(panel.getByRole('button', { name: 'Discard offline changes…' }));
+    await expect(
+      panel.getByText(
+        'Discard all offline changes to this document from this device? This cannot be undone. The original and any copy already created stay unchanged.',
+        { exact: true },
+      ),
+    ).toBeVisible();
+    await expect(panel.getByRole('button', { name: 'Discard offline changes' })).toBeEnabled();
+    await expect(panel.getByRole('button', { name: 'Keep changes' })).toBeEnabled();
+    await expect(context.args.onDiscardRecovery).not.toHaveBeenCalled();
+    await noPageOverflow(context.canvasElement.ownerDocument);
+  },
+};
+export const RecoveryDiscarded: Story = {
+  args: { state: recoveryFailed },
+  play: async (context) => {
+    const panel = await recoveryDetails(context);
+    await userEvent.click(panel.getByRole('button', { name: 'Discard offline changes…' }));
+    await userEvent.click(panel.getByRole('button', { name: 'Keep changes' }));
+    await expect(context.args.onDiscardRecovery).not.toHaveBeenCalled();
+    await expect(
+      panel.queryByRole('button', { name: 'Discard offline changes' }),
+    ).not.toBeInTheDocument();
+    await userEvent.click(panel.getByRole('button', { name: 'Discard offline changes…' }));
+    await userEvent.click(panel.getByRole('button', { name: 'Discard offline changes' }));
+    await expect(context.args.onDiscardRecovery).toHaveBeenCalledOnce();
+    await expect(
+      panel.getByText(
+        'Your offline changes were discarded from this device. The original was not changed.',
+        { exact: true },
+      ),
+    ).toBeVisible();
+    await expect(panel.getByRole('link', { name: 'Open original' })).toHaveAttribute(
+      'href',
+      originalHref,
+    );
+    await expect(
+      panel.queryByRole('button', { name: 'Export as Univer file' }),
+    ).not.toBeInTheDocument();
+    await expect(context.args.onRecover).not.toHaveBeenCalled();
+  },
+};
+export const RecoveryExpiredAccount: Story = {
+  args: {
+    state: {
+      ...recoveryFailed,
+      signInRequired: true,
+      message: 'Your sign-in ended. Your saved device copy is retained.',
+      recovery: { phase: 'ready', originalHref },
+    },
+  },
+  play: async (context) => {
+    const panel = await recoveryDetails(context);
+    await expect(
+      panel.queryByRole('button', { name: 'Retry creating copy' }),
+    ).not.toBeInTheDocument();
+    await expect(panel.getByRole('button', { name: 'Discard offline changes…' })).toBeEnabled();
+    await userEvent.click(panel.getByRole('button', { name: 'Export as Univer file' }));
+    await expect(context.args.onExportRecovery).toHaveBeenCalledOnce();
+    await expect(context.args.onDiscardRecovery).not.toHaveBeenCalled();
+    await userEvent.click(panel.getByRole('button', { name: 'Continue to sign-in' }));
+    await expect(context.args.onRetry).toHaveBeenCalledOnce();
+    await expect(context.args.onRecover).not.toHaveBeenCalled();
+  },
+};
+export const RecoveryUnfinishedInput: Story = {
+  args: {
+    state: {
+      ...recoveryFailed,
+      local: undefined,
+      dirty: true,
+      message: 'Copy the unfinished cell text before recovering your offline changes.',
+      recovery: { phase: 'ready', originalHref },
+    },
+  },
+  play: async (context) => {
+    const panel = await recoveryDetails(context);
+    await expect(
+      panel.getByText('Copy the unfinished cell text before recovering your offline changes.', {}),
+    ).toBeVisible();
+    for (const name of [
+      'Retry creating copy',
+      'Export as Univer file',
+      'Discard offline changes…',
+    ]) {
+      const button = panel.getByRole('button', { name });
+      await expect(button).toBeDisabled();
+      await userEvent.click(button);
+    }
+    await expect(context.args.onRecover).not.toHaveBeenCalled();
+    await expect(context.args.onExportRecovery).not.toHaveBeenCalled();
+    await expect(context.args.onDiscardRecovery).not.toHaveBeenCalled();
+  },
 };
 export const DeviceSaveFailed: Story = {
   args: {

@@ -180,10 +180,15 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
     if (recoveryResolved && recovery) {
       watcher.connection('offline');
       watcher.publish({
-        local: 'attention', dirty: false, failed: true, retained: true, recovery,
-        message: recovery.phase === 'created'
-          ? `Your offline changes were saved as ${recovery.copyName}. The original was not changed.`
-          : 'Your offline changes were discarded from this device. The original was not changed.',
+        local: 'attention',
+        dirty: false,
+        failed: true,
+        retained: true,
+        recovery,
+        message:
+          recovery.phase === 'created'
+            ? `Your offline changes were saved as ${recovery.copyName}. The original was not changed.`
+            : 'Your offline changes were discarded from this device. The original was not changed.',
       });
       return;
     }
@@ -230,13 +235,13 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
               ? `Saving on this device…${attention ? ' Synchronization needs attention.' : ''}`
               : recovery?.phase === 'creating'
                 ? 'Creating an offline copy in My files. Your saved device copy is retained until it finishes.'
-              : attention
-                ? `Needs attention. ${options.offline.problem || denialMessage || 'The live document changed or an edit could not be synchronized. Your saved device copy is retained.'}`
-                : access === 'viewer'
-                  ? 'View only on this device.'
-                  : local === 'synced'
-                    ? 'Synced. All changes are saved on the server and this device.'
-                    : 'Saved on this device — waiting to sync.',
+                : attention
+                  ? `Needs attention. ${options.offline.problem || denialMessage || 'The live document changed or an edit could not be synchronized. Your saved device copy is retained.'}`
+                  : access === 'viewer'
+                    ? 'View only on this device.'
+                    : local === 'synced'
+                      ? 'Synced. All changes are saved on the server and this device.'
+                      : 'Saved on this device — waiting to sync.',
       });
       maybeRecover();
       return;
@@ -317,7 +322,10 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
       : {}),
     onState(next) {
       state = next;
-      if (active() && next.resyncing) void watcher?.readonly(Boolean(options.offline?.enabled) || authenticationEnded).catch(() => {});
+      if (active() && next.resyncing)
+        void watcher
+          ?.readonly(Boolean(options.offline?.enabled) || authenticationEnded)
+          .catch(() => {});
       report();
     },
     onResync(reason) {
@@ -448,14 +456,27 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
   }
 
   function mayRecover() {
-    return Boolean(options.offline?.canRecover && options.offline.pending &&
-      (denied || state.resyncing || options.offline.problem));
+    return Boolean(
+      options.offline?.canRecover &&
+      options.offline.pending &&
+      (denied || state.resyncing || options.offline.problem),
+    );
   }
   function maybeRecover() {
-    if (!watcher || !active() || !mayRecover() || recoveryRunning || recoveryAttempted ||
-      authenticationEnded || !navigator.onLine || state.recoveryMissing ||
-      state.localPersistence === 'saving' || state.localPersistence === 'failed' ||
-      options.canRefresh?.() === false) return;
+    if (
+      !watcher ||
+      !active() ||
+      !mayRecover() ||
+      recoveryRunning ||
+      recoveryAttempted ||
+      authenticationEnded ||
+      !navigator.onLine ||
+      state.recoveryMissing ||
+      state.localPersistence === 'saving' ||
+      state.localPersistence === 'failed' ||
+      options.canRefresh?.() === false
+    )
+      return;
     // Set the latch synchronously: a local-save state callback may reenter report.
     recoveryAttempted = true;
     queueMicrotask(() => void recoverOffline());
@@ -470,14 +491,24 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
       throw new Error('Copy or finish the unfinished input before recovering these changes.');
     if (persist) await client.persistNow();
     if (!active()) throw closed();
-    if (persist && (state.recoveryMissing || state.localPersistence === 'failed' ||
-      state.localPersistence === 'saving'))
+    if (
+      persist &&
+      (state.recoveryMissing ||
+        state.localPersistence === 'failed' ||
+        state.localPersistence === 'saving')
+    )
       throw new Error('Retry saving the latest changes on this device before recovering them.');
   }
   function recoveryError(error: unknown) {
     if (!active() || !recovery) return;
-    recovery = { ...recovery, phase: 'failed', message: error instanceof Error
-      ? error.message : 'The copy could not be created. Your offline changes stay on this device.' };
+    recovery = {
+      ...recovery,
+      phase: 'failed',
+      message:
+        error instanceof Error
+          ? error.message
+          : 'The copy could not be created. Your offline changes stay on this device.',
+    };
     report();
   }
   async function recoverOffline() {
@@ -498,8 +529,13 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
       if (!active()) throw closed();
       client.dispose();
       recoveryResolved = true;
-      recovery = { ...recovery!, phase: 'created', copyHref: `/?item=${encodeURIComponent(item.id)}`,
-        copyName: item.name, message: undefined };
+      recovery = {
+        ...recovery!,
+        phase: 'created',
+        copyHref: `/?item=${encodeURIComponent(item.id)}`,
+        copyName: item.name,
+        message: undefined,
+      };
       report();
     } catch (error) {
       if ((error as { status?: number })?.status === 401 && active()) await endAuthentication();
@@ -516,15 +552,24 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
       await prepareRecoveryAction(true);
       const snapshot = await options.offline!.exportSnapshot(client.checkpoint());
       if (!active()) throw closed();
-      const { downloadOfflineFile } = await import('./offline/recovery.ts');
+      const { downloadOfflineFile, offlineCopyName } = await import('./offline/recovery.ts');
       if (!active()) throw closed();
-      downloadOfflineFile(snapshot, options.offline!.recoveryRequest?.filename ??
-        `${options.offline!.bundle!.name} (offline copy).univer.json`);
-      recovery = { ...recovery!, phase: 'failed',
-        message: 'The Univer file was prepared for download. Check the download before discarding your offline changes. Formula sources are checked when imported.' };
+      downloadOfflineFile(
+        snapshot,
+        `${offlineCopyName(options.offline!.bundle!.name)}.univer.json`,
+      );
+      recovery = {
+        ...recovery!,
+        phase: 'failed',
+        message:
+          'The Univer file was prepared for download. Check the download before discarding your offline changes. Formula sources are checked when imported.',
+      };
       report();
-    } catch (error) { recoveryError(error); }
-    finally { recoveryRunning = false; }
+    } catch (error) {
+      recoveryError(error);
+    } finally {
+      recoveryRunning = false;
+    }
   }
   async function discardRecovery() {
     if (recoveryRunning || recoveryResolved) return;
@@ -538,8 +583,11 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
       recoveryResolved = true;
       recovery = { ...recovery!, phase: 'discarded', message: undefined };
       report();
-    } catch (error) { recoveryError(error); }
-    finally { recoveryRunning = false; }
+    } catch (error) {
+      recoveryError(error);
+    } finally {
+      recoveryRunning = false;
+    }
   }
 
   /** A clean lifecycle change must not manufacture a retained edit checkpoint. */
@@ -851,8 +899,9 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
       detail?.accountId !== options.offline.accountId ||
       detail?.itemId !== itemId ||
       !active() ||
-      refreshingClean
-      || recoveryRunning || recoveryResolved
+      refreshingClean ||
+      recoveryRunning ||
+      recoveryResolved
     )
       return;
     void options.offline

@@ -2,6 +2,7 @@ import { NativeReplica, SyncClient, validateRecoverySnapshot } from '@spinel/syn
 import type { ClientCheckpoint, NativeSnapshot } from '@spinel/sync-client';
 import { validateFormulaDefinition } from '@spinel/doc-formulas';
 import type { OfflineBundle } from '../../src/shared/offlineBundle.ts';
+import type { OfflineRecoveryRequest } from '../../src/shared/offlineRecovery.ts';
 import { mapNativeImageSources } from '../../src/shared/nativeImageSources.ts';
 import { snapshotIdentity } from '../../src/shared/snapshotIdentity.ts';
 import { verifyImages } from './PreparedImages.ts';
@@ -10,7 +11,9 @@ import { verifyImages } from './PreparedImages.ts';
 export function reconstructOffline(checkpoint: ClientCheckpoint, kind: 'sheet' | 'doc') {
   validateRecoverySnapshot(checkpoint);
   if (checkpoint.recoveryMissing)
-    throw new Error('The latest visible changes are not saved. Keep this tab open and retry saving.');
+    throw new Error(
+      'The latest visible changes are not saved. Keep this tab open and retry saving.',
+    );
   const replica = new NativeReplica(checkpoint.snapshot, kind);
   let client: SyncClient | undefined;
   try {
@@ -79,16 +82,77 @@ export async function portableOfflineSnapshot(
       parts.push(String.fromCharCode(...data.subarray(at, at + 0x8000)));
     sources.set(source, `data:${blob.type};base64,${btoa(parts.join(''))}`);
   }
-  return mapNativeImageSources(snapshot, (source) => {
-    const image = sources.get(source);
-    if (!image) throw new Error('An offline image is missing. Keep this device copy until it can be recovered.');
-    return image;
-  }, { updateSourceType: true });
+  return mapNativeImageSources(
+    snapshot,
+    (source) => {
+      const image = sources.get(source);
+      if (!image)
+        throw new Error(
+          'An offline image is missing. Keep this device copy until it can be recovered.',
+        );
+      return image;
+    },
+    { updateSourceType: true },
+  );
 }
 
+const titlePrefix = (title: string, suffix: string) =>
+  title.slice(0, 120 - suffix.length).replace(/[\uD800-\uDBFF]$/, '');
+
 export function offlineCopyName(title: string, at = new Date()) {
-  const suffix = ` (offline copy, ${at.toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'short' })})`;
-  return title.slice(0, Math.max(1, 200 - suffix.length)) + suffix;
+  const pad = (value: number) => String(value).padStart(2, '0');
+  // Local clock, with no locale-dependent slashes or control characters in a filename.
+  const local = `${at.getFullYear()}-${pad(at.getMonth() + 1)}-${pad(at.getDate())} ${pad(at.getHours())}:${pad(at.getMinutes())}`;
+  const suffix = ` (offline copy, ${local})`;
+  return titlePrefix(title, suffix) + suffix;
+}
+
+/** A stored retry request never outranks the native checkpoint and verified bytes. */
+export function verifyRecoveryRequest(
+  bundle: OfflineBundle,
+  checkpoint: ClientCheckpoint,
+  recovery: OfflineRecoveryRequest,
+  rebuilt: NativeSnapshot,
+) {
+  const mismatch = () =>
+    new Error(
+      'The saved recovery request does not match your offline changes. Keep this device copy.',
+    );
+  if (
+    !recovery ||
+    typeof recovery !== 'object' ||
+    Object.keys(recovery).sort().join(',') !== 'filename,possibleReplayCrash,recoveryId,snapshot' ||
+    typeof recovery.recoveryId !== 'string' ||
+    !/^[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}$/i.test(recovery.recoveryId) ||
+    recovery.possibleReplayCrash !== Boolean(checkpoint.sent) ||
+    !recovery.snapshot ||
+    typeof recovery.snapshot !== 'object'
+  )
+    throw mismatch();
+  const name = 'sheets' in recovery.snapshot ? recovery.snapshot.name : recovery.snapshot.title;
+  if (typeof name !== 'string') throw mismatch();
+  const suffix = name.match(/ \(offline copy, \d{4}-\d{2}-\d{2} \d{2}:\d{2}\)$/)?.[0];
+  if (
+    !suffix ||
+    name !== titlePrefix(bundle.name, suffix) + suffix ||
+    recovery.filename !== `${name}.univer.json`
+  )
+    throw mismatch();
+  const expected = structuredClone(rebuilt);
+  if ('sheets' in expected) expected.name = name;
+  else expected.title = name;
+  // JSON object order is immaterial, but every persisted value must agree.
+  const canonical = (value: unknown) =>
+    JSON.stringify(value, (_key, child) =>
+      child && typeof child === 'object' && !Array.isArray(child)
+        ? Object.fromEntries(
+            Object.keys(child)
+              .sort()
+              .map((key) => [key, child[key]]),
+          )
+        : child,
+    );
+  if (canonical(expected) !== canonical(recovery.snapshot)) throw mismatch();
 }
 
 export function downloadOfflineFile(snapshot: NativeSnapshot, filename: string) {
