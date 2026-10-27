@@ -17,7 +17,10 @@ concurrency:
   # the one before it, so a cancelled run would leave that push's lib changes
   # untested on main. A newer push can still replace one that is only pending;
   # that push's changes were already tested on its up-to-date PR.
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  # Metadata/base edits still receive full validation, but wait for the active
+  # run instead of discarding its browser evidence. A new code push supersedes
+  # it normally. Actions may still replace a pending run in this group.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' && github.event.action != 'edited' }}
 
 jobs:
   changes:
@@ -81,12 +84,13 @@ jobs:
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
-      # Title and branch go through env, never into the script text.
+      # Title and immutable event base go through env, never into script text.
+      # origin/main may advance after this run's merge commit was created.
       - name: Title, ticket, IDs and size
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
-          BASE_REF: ${{ github.event.pull_request.base.ref }}
-        run: node scripts/backlog/cli.ts pr --base "origin/$BASE_REF" --title "$PR_TITLE"
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: node scripts/backlog/cli.ts pr --base "$BASE_SHA" --title "$PR_TITLE"
 
   lint:
     name: Lint
@@ -356,6 +360,8 @@ jobs:
             test-results/**/sync-diagnostics.json
             test-results/**/spn-059-*-soak.json
             test-results/**/error-context.md
+            test-results/**/trace.zip
+            playwright-report/*.json
           retention-days: 7
           if-no-files-found: warn
 

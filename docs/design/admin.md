@@ -107,11 +107,11 @@ actions. Loading is a status, never an empty-list message. Stories cover the act
 components with API fixtures; browser evidence separately proves real transfer,
 native opening and invitation recovery.
 
-The authorized Pages-first run permits an independent subagent to approve the
-actual light/dark/phone UI/UX across all four personas. Such merges explicitly
-state **agent review only**, per the owner's 2026-10-21 instruction and
-[decision #139](../implementation/backlog-workflow.md#legacy-decision-139-run-specific-delegated-visual-approval). This does not claim
-human screenshot approval or waive any code, access or CI requirement.
+The [standing delegation](../implementation/grooming-2026-10-26.md#agent-decisions-and-visual-review)
+requires an independent subagent to inspect the actual light/dark/phone images
+embedded on the PR against the theme and all four personas. Record findings,
+visual approval and **agent review only**. This supersedes the earlier Pages-first
+run restriction; code, access and CI requirements remain.
 
 ## Loading and failure states
 
@@ -129,8 +129,8 @@ loads fresh recovery-invitation recipients when the Operator explicitly opens In
 ## Diagnostics handoff (SPN-032)
 
 Owner direction, 2026-10-22; [scope and rationale](../implementation/SPN-032.md).
-Source implementation is prepared; runtime checks and actual screenshot approval
-remain pending in the implementation record. Health cards retain aggregate status
+SPN-032 delivered diagnostics; its implementation record preserves the observed
+verification. Further visual changes follow the standing independent review policy. Health cards retain aggregate status
 and guidance. See the [operator guide](../diagnostics.md) for measurement meaning.
 Add **Download diagnostics** and **Truncate diagnostics** to Backups & health;
 there is no query UI, log browser or SQL console. Download produces a standalone
@@ -148,7 +148,7 @@ alongside volume free space. A cleared store need not physically shrink immediat
 Show pending, failed and completed states without implying failed work succeeded;
 cancel is safe and focus returns to the surviving control. A download failure
 offers retry without promising an existing artifact. Include light/dark/phone
-stories and owner screenshot review when implementing these controls.
+stories and independent theme/persona screenshot review on the implementation PR.
 
 ## User feedback handoff (SPN-098)
 
@@ -163,7 +163,7 @@ feedback exists for that user. It is not an unread/resolution badge and does not
 open a query panel or feedback inbox. The Operator reads the downloaded SQLite
 file. Missing/failed flag data stays visibly unknown. Truncate diagnostics clears
 feedback too, then refreshes these flags. Add light/dark/phone stories for the
-dialog and absent/present/loading/failed flags before owner implementation review.
+dialog and absent/present/loading/failed flags for independent theme/persona review on the implementation PR.
 
 ## Assistant connection metadata (SPN-034)
 

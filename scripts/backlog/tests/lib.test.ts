@@ -27,7 +27,7 @@ function ticket(id: string, over: Record<string, string> = {}, body?: string): F
     emoji: '🪞',
     effort: 'M',
     impact_owner: 'M',
-    score: '4',
+    score: '21',
     depends_on: '[]',
     decisions: '[]',
     ...over,
@@ -230,82 +230,87 @@ test('XL effort is accepted without expanding persona impact sizes', () => {
   }
 });
 
-test('own points run from 1 to 6, with XL one point below L', () => {
-  // XL extends the existing effort scale; prerequisites inherit priority separately.
-  assert.equal(baseScore({ impact: 'L', effort: 'S' }), 6);
-  assert.equal(baseScore({ impact: 'S', effort: 'L' }), 2);
-  assert.equal(baseScore({ impact: 'S', effort: 'XL' }), 1);
-  assert.equal(baseScore({ impact: 'M', effort: 'XL' }), 2);
-  assert.equal(baseScore({ impact: 'L', effort: 'XL' }), 3);
+test('impact is weighted tenfold and larger effort comes first within each impact', () => {
+  // Owner, 2026-10-26: impact dominates own priority; reverse the effort preference.
+  const efforts = ['S', 'M', 'L', 'XL'] as const;
+  assert.deepEqual(efforts.map((effort) => baseScore({ impact: 'S', effort })), [10, 11, 12, 13]);
+  assert.deepEqual(efforts.map((effort) => baseScore({ impact: 'M', effort })), [20, 21, 22, 23]);
+  assert.deepEqual(efforts.map((effort) => baseScore({ impact: 'L', effort })), [30, 31, 32, 33]);
+  assert.ok(baseScore({ impact: 'L', effort: 'S' }) > baseScore({ impact: 'M', effort: 'XL' }));
+  assert.ok(baseScore({ impact: 'M', effort: 'S' }) > baseScore({ impact: 'S', effort: 'XL' }));
 });
 
 test('a prerequisite scores one above everything that depends on it, up the chain', () => {
   const b = backlog([
-    ticket('SPN-001', { impact_owner: 'S', effort: 'L' }), // own 2, under 002
-    ticket('SPN-002', { impact_owner: 'S', effort: 'L', depends_on: '[SPN-001]', emoji: '🧭' }), // own 2, under 003
-    ticket('SPN-003', { impact_owner: 'M', effort: 'M', depends_on: '[SPN-002]', emoji: '🧪' }), // own 4
-    ticket('SPN-004', { impact_owner: 'L', effort: 'S', depends_on: '[SPN-001]', emoji: '🪴' }), // own 6
+    ticket('SPN-001', { impact_owner: 'S', effort: 'L' }), // own 12, under 002
+    ticket('SPN-002', { impact_owner: 'S', effort: 'L', depends_on: '[SPN-001]', emoji: '🧭' }), // own 12, under 003
+    ticket('SPN-003', { impact_owner: 'M', effort: 'M', depends_on: '[SPN-002]', emoji: '🧪' }), // own 21
+    ticket('SPN-004', { impact_owner: 'L', effort: 'S', depends_on: '[SPN-001]', emoji: '🪴' }), // own 30
   ]);
   assert.deepEqual(Object.fromEntries(scores(b.tickets)), {
-    'SPN-001': 7,
-    'SPN-002': 5,
-    'SPN-003': 4,
-    'SPN-004': 6,
+    'SPN-001': 31,
+    'SPN-002': 22,
+    'SPN-003': 21,
+    'SPN-004': 30,
   });
 });
 
 test('a written score that differs is stale, and withScore rewrites or adds it', () => {
   const [t] = backlog([ticket('SPN-001', { score: '9' })]).tickets;
-  assert.match(staleScores([t]).errors.join(), /score is 9, should be 4/);
+  assert.match(staleScores([t]).errors.join(), /score is 9, should be 21/);
   assert.match(withScore(ticket('SPN-001').text, 7), /\nscore: 7\n/);
-  const bare = ticket('SPN-001').text.replace('score: 4\n', '');
-  assert.match(withScore(bare, 4), /impact_owner: M\nscore: 4\ndepends_on/);
+  const bare = ticket('SPN-001').text.replace('score: 21\n', '');
+  assert.match(withScore(bare, 21), /impact_owner: M\nscore: 21\ndepends_on/);
   const [missing] = backlog([{ name: 'SPN-001.md', text: bare }]).tickets;
-  assert.match(staleScores([missing]).errors.join(), /score is missing, should be 4/);
+  assert.match(staleScores([missing]).errors.join(), /score is missing, should be 21/);
 });
 
-test('ranking orders every open ticket by score and applies tie-breaks in order', () => {
+test('ranking ties prefer prerequisites, higher impact, larger effort, then lower ID', () => {
   const b = backlog([
-    ticket('SPN-001', { impact_owner: 'S', effort: 'L' }), // 2, raised to 4 by 004
-    ticket('SPN-002', { impact_owner: 'L', effort: 'L', emoji: '🧭' }), // 4, higher impact than 005
-    ticket('SPN-003', { impact_owner: 'S', effort: 'S', emoji: '🧪' }), // 4, last: lowest impact
-    ticket('SPN-004', { impact_owner: 'S', effort: 'M', depends_on: '[SPN-001]', emoji: '🪴' }), // 3, waiting
-    ticket('SPN-005', { emoji: '🔭' }), // 4, beats 006 on ID
-    ticket('SPN-006', { emoji: '🪁' }), // 4, higher impact than 003
-    ticket('SPN-007', { impact_owner: 'L', effort: 'S', emoji: '🎒' }), // 6
+    ticket('SPN-001', { impact_owner: 'S', effort: 'L' }),
+    ticket('SPN-002', { effort: 'L', emoji: '🧭' }),
+    ticket('SPN-003', { effort: 'XL', emoji: '🧪' }),
+    ticket('SPN-004', { effort: 'XL', emoji: '🪴' }),
+    ticket('SPN-005', { impact_owner: 'L', effort: 'S', depends_on: '[SPN-001]', emoji: '🔭' }),
+    ticket('SPN-006', { impact_owner: 'L', effort: 'S', depends_on: '[SPN-002]', emoji: '🪁' }),
+    ticket('SPN-007', { impact_owner: 'L', effort: 'S', depends_on: '[SPN-003]', emoji: '🎒' }),
+    ticket('SPN-008', { impact_owner: 'L', effort: 'S', depends_on: '[SPN-004]', emoji: '🧵' }),
+    ticket('SPN-009', { impact_owner: 'L', emoji: '🧶' }),
   ]);
   const ranked = rank(b.tickets, 'SPN');
   assert.deepEqual(
-    ranked.map((r) => [r.ticket.id, r.tieBreak]),
+    ranked.map((r) => [r.ticket.id, r.score, r.tieBreak]),
     [
-      ['SPN-007', '—'],
-      ['SPN-001', 'Unblocks SPN-004'],
-      ['SPN-002', 'Higher impact'],
-      ['SPN-005', 'Lower ID'],
-      ['SPN-006', 'Higher impact'],
-      ['SPN-003', '—'],
-      ['SPN-004', '—'],
+      ['SPN-003', 31, 'Lower ID'],
+      ['SPN-004', 31, 'Larger effort'],
+      ['SPN-002', 31, 'Higher impact'],
+      ['SPN-001', 31, 'Unblocks SPN-005'],
+      ['SPN-009', 31, '—'],
+      ['SPN-005', 30, 'Lower ID'],
+      ['SPN-006', 30, 'Lower ID'],
+      ['SPN-007', 30, 'Lower ID'],
+      ['SPN-008', 30, '—'],
     ],
   );
-  assert.deepEqual(ranked.at(-1)?.waiting, ['SPN-001']);
+  assert.deepEqual(ranked.at(-1)?.waiting, ['SPN-004']);
 });
 
 test('a prerequisite outranks a higher-scoring dependent, so the first row is ready', () => {
   const b = backlog([
-    ticket('SPN-001', { impact_owner: 'S', effort: 'L' }), // own 2
-    ticket('SPN-002', { impact_owner: 'L', effort: 'S', depends_on: '[SPN-001]', emoji: '🧭' }), // own 6
+    ticket('SPN-001', { impact_owner: 'S', effort: 'L' }), // own 12
+    ticket('SPN-002', { impact_owner: 'L', effort: 'S', depends_on: '[SPN-001]', emoji: '🧭' }), // own 30
   ]);
   const ranked = rank(b.tickets, 'SPN');
   assert.deepEqual(
     ranked.map((r) => [r.ticket.id, r.score, r.waiting]),
     [
-      ['SPN-001', 7, []],
-      ['SPN-002', 6, ['SPN-001']],
+      ['SPN-001', 31, []],
+      ['SPN-002', 30, ['SPN-001']],
     ],
   );
 });
 
-test('XL work keeps inherited priority while independent XL work ranks below equivalent L work', () => {
+test('XL work keeps inherited priority while independent XL work ranks above equivalent L work', () => {
   const b = backlog([
     ticket('SPN-001', { impact_owner: 'S', effort: 'XL' }),
     ticket('SPN-002', { impact_owner: 'M', effort: 'XL', depends_on: '[SPN-001]', emoji: '🧭' }),
@@ -317,16 +322,16 @@ test('XL work keeps inherited priority while independent XL work ranks below equ
   assert.deepEqual(
     rank(b.tickets, 'SPN').map((r) => [r.ticket.id, r.score, r.waiting]),
     [
-      ['SPN-001', 8, []],
-      ['SPN-002', 7, ['SPN-001']],
-      ['SPN-003', 6, ['SPN-002']],
-      ['SPN-005', 2, []],
-      ['SPN-004', 1, []],
+      ['SPN-001', 32, []],
+      ['SPN-002', 31, ['SPN-001']],
+      ['SPN-003', 30, ['SPN-002']],
+      ['SPN-004', 13, []],
+      ['SPN-005', 12, []],
     ],
   );
   const index = renderIndex(b);
-  assert.match(index, /SPN-001\.md\) Do the thing \| 🏔️ XL \| 🤍 S \| 8 \(own 1\)/);
-  assert.match(index, /SPN-004\.md\) Do the thing \| 🏔️ XL \| 🤍 S \| 1 \|/);
+  assert.match(index, /SPN-001\.md\) Do the thing \| 🏔️ XL \| 🤍 S \| 32 \(own 13\)/);
+  assert.match(index, /SPN-004\.md\) Do the thing \| 🏔️ XL \| 🤍 S \| 13 \|/);
   assert.doesNotMatch(index, /undefined|NaN/);
 });
 
@@ -349,11 +354,11 @@ test('lifecycle phases precede scores while preserving priority and dependency i
   assert.deepEqual(
     rank(b.tickets, 'SPN').map((r) => [r.ticket.id, r.score, r.waiting]),
     [
-      ['SPN-004', 4, []],
-      ['SPN-001', 1, []],
-      ['SPN-002', 7, []],
-      ['SPN-003', 6, ['SPN-002']],
-      ['SPN-005', 1, []],
+      ['SPN-004', 21, []],
+      ['SPN-001', 13, []],
+      ['SPN-002', 31, []],
+      ['SPN-003', 30, ['SPN-002']],
+      ['SPN-005', 13, []],
     ],
   );
   const index = renderIndex(b);
@@ -396,21 +401,24 @@ test('an empty backlog says so', () => {
 
 test('the index lists every open ticket in pick order', () => {
   const b = backlog([
-    ticket('SPN-001', { owner_input: '"Tap the passkey prompt"' }),
+    ticket('SPN-001'),
     ticket('SPN-002', { depends_on: '[SPN-001]', emoji: '🧭' }),
   ]);
   validateBacklog(b);
   const index = renderIndex(b);
   assert.match(
     index,
-    /\| 1 \| 🪞 \[SPN-001\]\(SPN-001.md\) Do the thing \| 🌿 M \| 💜 M \| 5 \(own 4\) \| — \| — \| Tap the passkey prompt \|/,
+    /\| 1 \| 🪞 \[SPN-001\]\(SPN-001.md\) Do the thing \| 🌿 M \| 💜 M \| 22 \(own 21\) \| — \| — \|/,
   );
   assert.match(
     index,
-    /\| 2 \| 🧭 \[SPN-002\]\(SPN-002.md\) Do the thing \| 🌿 M \| 💜 M \| 4 \| — \| \[SPN-001\]\(SPN-001.md\) \| — \|/,
+    /\| 2 \| 🧭 \[SPN-002\]\(SPN-002.md\) Do the thing \| 🌿 M \| 💜 M \| 21 \| — \| \[SPN-001\]\(SPN-001.md\) \|/,
   );
   assert.match(index, /Next ID: \*\*SPN-010\*\*/);
-  assert.doesNotMatch(index, /Top 5/);
+  assert.doesNotMatch(index, /Top 5|Owner input/);
+  for (const row of index.split('\n').filter((line) => line.startsWith('|'))) {
+    assert.equal(row.split('|').length, 9);
+  }
 });
 
 test('globs match lockfiles anywhere and directory patterns by path', () => {
@@ -637,4 +645,9 @@ test('grooming dates never go backwards or into the future', () => {
 
 test('repeated frontmatter keys are an error', () => {
   assert.match(parseFrontmatter('---\nscore: 1\nscore: 2\n---\n').error ?? '', /repeats "score"/);
+});
+
+test('retired owner-input gates are rejected instead of hidden from the index', () => {
+  const result = check([ticket('SPN-001', { owner_input: '"Approve screenshots"' })]);
+  assert.ok(result.errors.some((error) => error.includes('unknown frontmatter field "owner_input"')));
 });

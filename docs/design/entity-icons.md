@@ -94,7 +94,10 @@ images at build time without deploying a server.
 ## Review
 
 SPN-077 includes component/state stories plus light, dark and phone-width PR
-screenshots of changed surfaces. Owner visual approval is required before merge.
+screenshots of changed surfaces. Embed the designs and actual screenshots on the PR; an independent
+nonimplementing subagent must inspect them against the playbook/theme and all
+personas, record findings and approve the visual result. Human sign-off is not
+required ([standing policy](../implementation/grooming-2026-10-26.md#agent-decisions-and-visual-review)).
 Keep existing social access/revocation and long-title tests; add meaningful
 checks for the new type mapping and SVG accessibility rather than pixel tests
 that merely repeat path data.

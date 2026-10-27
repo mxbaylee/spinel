@@ -1,9 +1,12 @@
 # Bounded PDF feasibility probes
 
-Run from the repository root with Node 24 and its locked development dependencies.
+Run from the repository root with the pinned Node version and locked development dependencies.
 These synthetic probes do not accept production documents, credentials or URLs.
 They are evidence for [SPN-097](../../docs/implementation/SPN-097.md), not an export
 implementation. No packages need installing beyond the repository dependencies.
+Generated files under `output/` are ignored; review evidence from SPN-097 is
+[retained at its historical commit](https://github.com/mxbaylee/spinel/tree/d88f9253c3276d42397c138f960b7056d5b288f2/output/pdf/spn-097).
+Publish new design/screenshot evidence on the relevant PR, not as tracked build output.
 
 `guard.ts` retains the session's macOS workload guard: it refuses elevated memory
 pressure, samples the child process tree every 300 ms and terminates it on elevated
@@ -40,8 +43,8 @@ then publishes only after its layout/render loop succeeds. These negative probes
 must exit 1, with failure metrics and **no PDF** in the separate rejected folder:
 
 The rejected runs use byte-identical fixture JSON to the retained successful
-inputs above. Their regenerated duplicate inputs are ignored in that directory;
-the distinct failure metrics are retained.
+inputs above. All regenerated inputs and metrics stay in ignored output; preserve any new
+review evidence on its PR.
 
 ```sh
 node scripts/pdf-feasibility/guard.ts node scripts/pdf-feasibility/native.ts output/pdf/spn-097/rejected --page-cap=1
