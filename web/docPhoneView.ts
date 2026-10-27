@@ -7,8 +7,18 @@ import {
   Plugin,
   UniverInstanceType,
 } from '@univerjs/core';
-import { DocViewScaleService } from '@univerjs/docs-ui';
+import {
+  BoldMenuItemFactory,
+  BulletListCommand,
+  DOC_PARAGRAPH_T_EDIT_MENU_ID,
+  DocViewScaleService,
+  ItalicMenuItemFactory,
+  OrderListCommand,
+  SetInlineFormatBoldCommand,
+  SetInlineFormatItalicCommand,
+} from '@univerjs/docs-ui';
 import { IRenderManagerService, UniverRenderEnginePlugin } from '@univerjs/engine-render';
+import { ContextMenuGroup, ContextMenuPosition, IMenuManagerService } from '@univerjs/ui';
 
 class PhoneDocViewScaleService extends DocViewScaleService {
   private usesPhoneLayout() {
@@ -37,7 +47,7 @@ class PhoneDocViewScaleService extends DocViewScaleService {
   }
 }
 
-/** Register in the mobile preset before creating its first document. */
+/** Register after the native mobile UI plugin, before creating its first document. */
 export class DocPhoneViewPlugin extends Plugin {
   static override pluginName = 'SPINEL_DOC_PHONE_VIEW';
   protected _injector: Injector;
@@ -58,6 +68,35 @@ export class DocPhoneViewPlugin extends Plugin {
           { useClass: PhoneDocViewScaleService },
         ]),
     );
+  }
+
+  override onRendered() {
+    // Held-touch selection dismisses the keyboard and its Format toolbar. Add
+    // the native controls to that selection's drawer, retaining their live
+    // document-permission, selection, and active-style observables.
+    this._injector.get(IMenuManagerService).mergeMenu({
+      [ContextMenuPosition.MAIN_AREA]: {
+        [ContextMenuGroup.FORMAT]: {
+          [SetInlineFormatBoldCommand.id]: {
+            order: 1,
+            menuItemFactory: BoldMenuItemFactory,
+          },
+          [SetInlineFormatItalicCommand.id]: {
+            order: 2,
+            menuItemFactory: ItalicMenuItemFactory,
+          },
+        },
+      },
+      [DOC_PARAGRAPH_T_EDIT_MENU_ID]: {
+        quickBottom: {
+          // In 1.1.0 this quick menu omits the custom list picker's onChange.
+          // Replace only these leaves; More's separate ribbon entries keep
+          // their working list pickers and native permission checks.
+          [BulletListCommand.id]: { replace: true },
+          [OrderListCommand.id]: { replace: true },
+        },
+      },
+    });
   }
 }
 

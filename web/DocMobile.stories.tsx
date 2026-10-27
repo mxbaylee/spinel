@@ -1,12 +1,19 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useEffect, useRef, useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
-import { DocumentFlavor, getDocsEmptySnapshot, LocaleType } from '@univerjs/core';
+import {
+  createParagraphId,
+  createSectionId,
+  DocumentFlavor,
+  getDocsEmptySnapshot,
+  LocaleType,
+} from '@univerjs/core';
 import type { Univer } from '@univerjs/core';
 import { DocSkeletonManagerService } from '@univerjs/docs';
 import { calcDocRangePositions, DocSelectionRenderService } from '@univerjs/docs-ui';
 import { IRenderManagerService, ptToPixel } from '@univerjs/engine-render';
 import { createUniver, mergeLocales } from '@univerjs/presets';
+import { ContextMenuPosition, IContextMenuService } from '@univerjs/ui';
 import { UniverDocsDrawingPreset } from '@univerjs/preset-docs-drawing';
 import { UniverDocsHyperLinkPreset } from '@univerjs/preset-docs-hyper-link';
 import docsEnglish from '@univerjs/preset-docs-core/locales/en-US';
@@ -52,6 +59,8 @@ const mobileDocFixtures = new WeakMap<
     observe(): Observation;
     append(): { applied: boolean; end: number; text: string };
     focus(): boolean;
+    selectWord(): void;
+    openSelectionMenu(anchor: { left: number; bottom: number }): void;
     caret(): {
       start: number | undefined;
       end: number | undefined;
@@ -60,6 +69,7 @@ const mobileDocFixtures = new WeakMap<
       bounds: { left: number; right: number; top: number; bottom: number } | undefined;
       scroll: number;
       text: string;
+      italicText: string[];
       layoutUnchanged: boolean;
     };
   }
@@ -101,14 +111,15 @@ function MobileCanvas({ viewer = false, traditional = false, zoomRatio = 1 }: Mo
       data.drawingsOrder = [];
       const stream = paragraphs.join('\r') + '\r\n';
       let offset = 0;
+      const paragraphIds = new Set<string>();
       data.body = {
         ...data.body,
         dataStream: stream,
-        paragraphs: paragraphs.map((text, index) => {
+        paragraphs: paragraphs.map((text) => {
           offset += text.length + 1;
           return {
             startIndex: offset - 1,
-            paragraphId: `mobile-review-${index}`,
+            paragraphId: createParagraphId(paragraphIds),
             paragraphStyle: { spaceAbove: { v: 4 }, spaceBelow: { v: 12 } },
           };
         }),
@@ -116,7 +127,7 @@ function MobileCanvas({ viewer = false, traditional = false, zoomRatio = 1 }: Mo
           { st: 0, ed: paragraphs[0].length, ts: { fs: 22, bl: 1 } },
           { st: paragraphs[0].length, ed: stream.length - 2, ts: { fs: 12 } },
         ],
-        sectionBreaks: [{ startIndex: stream.length - 1, sectionId: 'mobile-review-section' }],
+        sectionBreaks: [{ startIndex: stream.length - 1, sectionId: createSectionId(new Set()) }],
       };
       const stored = JSON.stringify([data.body, data.documentStyle, data.settings]);
       const created = createUniver({
@@ -144,6 +155,7 @@ function MobileCanvas({ viewer = false, traditional = false, zoomRatio = 1 }: Mo
       canvas.setAttribute('aria-label', 'Document canvas');
       const skeletons = render.with(DocSkeletonManagerService);
       const selections = render.with(DocSelectionRenderService);
+      const contextMenus = univer.__getInjector().get(IContextMenuService);
       const layout = JSON.stringify([data.documentStyle, data.settings]);
       const fixtureHost = host.current!;
       mobileDocFixtures.set(fixtureHost, {
@@ -188,6 +200,15 @@ function MobileCanvas({ viewer = false, traditional = false, zoomRatio = 1 }: Mo
           return { applied, end, text: before.slice(0, index) + text + before.slice(index) };
         },
         focus: () => selections.enterEditing(),
+        selectWord: () => doc.setSelection(0, 'Autumn'.length),
+        openSelectionMenu(anchor) {
+          selections.exitEditing();
+          contextMenus.triggerContextMenu(
+            new MouseEvent('contextmenu', { clientX: anchor.left, clientY: anchor.bottom }),
+            ContextMenuPosition.MAIN_AREA,
+            { unitId: id, subUnitId: id },
+          );
+        },
         caret() {
           const range = selections.getActiveTextRange();
           const start = range?.startOffset;
@@ -213,6 +234,9 @@ function MobileCanvas({ viewer = false, traditional = false, zoomRatio = 1 }: Mo
                 : undefined,
             scroll: render.scene.getViewport('viewMain')?.viewportScrollY ?? 0,
             text: snapshot.body!.dataStream,
+            italicText: (snapshot.body!.textRuns ?? [])
+              .filter((run) => run.ts?.it === 1)
+              .map((run) => snapshot.body!.dataStream.slice(run.st, run.ed)),
             layoutUnchanged: JSON.stringify([snapshot.documentStyle, snapshot.settings]) === layout,
           };
         },
@@ -254,7 +278,7 @@ function MobileCanvas({ viewer = false, traditional = false, zoomRatio = 1 }: Mo
             ? 'Edit on a larger screen. This Doc keeps its page layout.'
             : viewer
               ? ''
-              : 'Tap Edit to write. Use the toolbar to format text.')}
+              : 'Tap Edit, then tap the text to write.')}
       </p>
       <div className="univer-container" ref={host} />
     </section>
@@ -387,6 +411,86 @@ export const Traditional: Story = {
     await expect(
       within(canvasElement).queryByRole('button', { name: 'Edit' }),
     ).not.toBeInTheDocument();
+  },
+};
+
+export const SelectionFormatting: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Sets the Autumn word range through the public Doc API as fixture setup, opens the native selected-text drawer, and clicks its actual Italic control. Verifies the exact styled substring and unchanged text, saved page layout, and zoom. Touch selection itself is covered separately by E2E; this is not physical long-press evidence.',
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    await ready(canvasElement, true, true);
+    const host = canvasElement.querySelector<HTMLElement>('.univer-container')!;
+    const fixture = mobileDocFixtures.get(host)!;
+    const originalText = fixture.caret().text;
+    expect(fixture.caret().italicText).toEqual([]);
+    await userEvent.click(within(host).getByRole('button', { name: 'Edit' }));
+
+    const openSelection = async () => {
+      // Only the range is fixture-driven; the drawer and action are native UI.
+      fixture.selectWord();
+      await waitFor(
+        () => {
+          const selection = fixture.caret();
+          expect(selection.start).toBe(0);
+          expect(selection.end).toBe('Autumn'.length);
+          expect(selection.hasAnchor).toBe(true);
+          expect(selection.bounds).toBeDefined();
+        },
+        { timeout: 10_000 },
+      );
+      fixture.openSelectionMenu(fixture.caret().bounds!);
+      await waitFor(
+        () => expect(host.querySelector('[data-u-comp="mobile-menu-drawer"]')).toBeVisible(),
+        { timeout: 10_000 },
+      );
+      const drawer = host.querySelector<HTMLElement>('[data-u-comp="mobile-menu-drawer"]')!;
+      await userEvent.click(within(drawer).getByRole('button', { name: 'More' }));
+      await waitFor(
+        () => {
+          expect(drawer).toHaveAttribute('data-snap', 'expanded');
+          expect(fixture.caret().editing).toBe(false);
+          for (const name of ['Bold', 'Italic']) {
+            const button = within(drawer).getByRole('button', { name });
+            expect(button).toBeVisible();
+            expect(button).toBeEnabled();
+            const bounds = button.getBoundingClientRect();
+            expect(bounds.top).toBeGreaterThanOrEqual(drawer.getBoundingClientRect().top);
+            expect(bounds.bottom).toBeLessThanOrEqual(drawer.getBoundingClientRect().bottom);
+            expect(bounds.bottom).toBeLessThanOrEqual(window.innerHeight);
+          }
+          for (const button of within(drawer).getAllByRole('button')) {
+            expect(button.getBoundingClientRect().width).toBeGreaterThanOrEqual(44);
+            expect(button.getBoundingClientRect().height).toBeGreaterThanOrEqual(44);
+          }
+        },
+        { timeout: 10_000 },
+      );
+      return drawer;
+    };
+
+    const drawer = await openSelection();
+    await userEvent.click(within(drawer).getByRole('button', { name: 'Italic' }));
+    await waitFor(
+      () => {
+        expect(drawer).not.toBeInTheDocument();
+        const formatted = fixture.caret();
+        expect(formatted.italicText).toEqual(['Autumn']);
+        expect(formatted.text).toBe(originalText);
+        expect(formatted.layoutUnchanged).toBe(true);
+      },
+      { timeout: 10_000 },
+    );
+    // Leave the actual selected-text controls open for light/dark phone capture.
+    await openSelection();
+    expect(fixture.caret().italicText).toEqual(['Autumn']);
+    expect(fixture.caret().text).toBe(originalText);
+    expect(fixture.caret().layoutUnchanged).toBe(true);
   },
 };
 

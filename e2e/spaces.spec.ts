@@ -287,6 +287,8 @@ async function commitRetainedCell(page: Page, address: string) {
 }
 async function nativeLayout(page: Page, kind: 'Doc' | 'Sheet', fitViewport = false) {
   const region = page.getByRole('region', { name: `${kind} document`, exact: true });
+  await expect(region).toBeVisible();
+  await expect(region.locator('.univer-container')).toBeVisible();
   await page.getByRole('button', { name: 'People in this document', exact: true }).click();
   const people = page.getByRole('dialog', { name: 'People in this document', exact: true });
   await expect(people.locator('.collaborator-badge').first()).toBeVisible();
@@ -312,13 +314,14 @@ async function nativeLayout(page: Page, kind: 'Doc' | 'Sheet', fitViewport = fal
           : null,
       headerBottom: frame?.querySelector('.editor-header')?.getBoundingClientRect().bottom,
       titleFontSize: heading ? getComputedStyle(heading).fontSize : null,
-      touch: matchMedia('(pointer: coarse)').matches,
+      mobile: matchMedia('(pointer: coarse) and (max-width: 900px)').matches,
       touchAction: style.touchAction,
       overscrollX: style.overscrollBehaviorX,
       overscrollY: style.overscrollBehaviorY,
     };
   });
   expect(bounds.documentWidth).toBeLessThanOrEqual(bounds.width + 1);
+  await expect(region).toHaveAttribute('data-mobile', String(bounds.mobile));
   expect(bounds.left).toBeGreaterThanOrEqual(-1);
   expect(bounds.right).toBeLessThanOrEqual(bounds.width + 1);
   if (fitViewport) {
@@ -328,7 +331,9 @@ async function nativeLayout(page: Page, kind: 'Doc' | 'Sheet', fitViewport = fal
     expect(bounds.titleFontSize).toBe('16px');
     expect(bounds.documentHeight, JSON.stringify(bounds)).toBeLessThanOrEqual(bounds.height + 1);
   }
-  if (kind === 'Sheet' && bounds.touch) {
+  // Native phone Docs and Sheets both own their canvas touch gestures. A narrow
+  // mouse viewport retains the desktop plugin and normal browser touch action.
+  if (bounds.mobile) {
     expect(bounds.touchAction).toBe('none');
     expect(bounds.overscrollX).toBe('contain');
     expect(bounds.overscrollY).toBe('contain');
@@ -1268,7 +1273,18 @@ test('Space navigation works on a touch phone and at 613px with a mouse, with re
     const phone = await f.open(f.owner.id, true);
     await phone.page.goto(href(space.id, parent.id));
     await saved(phone.page);
-    await focusDoc(phone.page);
+    const phoneDoc = phone.page.getByRole('region', { name: 'Doc document', exact: true });
+    await expect(phoneDoc).toHaveAttribute('data-mobile', 'true');
+    await phoneDoc.getByRole('button', { name: 'Edit', exact: true }).tap();
+    const phoneCanvas = phoneDoc.getByLabel('Document canvas', { exact: true });
+    await expect(phoneCanvas).toBeVisible();
+    const phoneCanvasBounds = (await phoneCanvas.boundingBox())!;
+    // The native page inset and modern top margin place the first body line
+    // near y100. Enter writing with a real touch instead of a desktop click.
+    await phone.page.touchscreen.tap(phoneCanvasBounds.x + 40, phoneCanvasBounds.y + 100);
+    await expect(
+      phone.page.locator('[contenteditable="true"][data-u-comp="editor"]'),
+    ).toBeFocused();
     await phone.page.keyboard.type('A real Space document on a phone.');
     await saved(phone.page);
     await phone.page.emulateMedia({ colorScheme: 'light' });

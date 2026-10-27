@@ -26,6 +26,7 @@ import {
   setDocumentPermissionValue,
 } from '@univerjs/docs';
 import { UnitAction } from '@univerjs/protocol';
+import { DocSelectionRenderService } from '@univerjs/docs-ui';
 import { watchPresence } from './Collaborators.tsx';
 import type { Collaborator } from './Collaborators.tsx';
 import { useEffect, useRef, useState } from 'react';
@@ -65,6 +66,7 @@ import { BuiltInUIPart, IRenderManagerService } from '@univerjs/preset-docs-core
 import { docPreset, mobileDocPlugins, useMobileDocControls } from './docPreset.ts';
 import enUS from '@univerjs/preset-docs-core/locales/en-US';
 import '@univerjs/preset-docs-core/lib/index.css';
+import '@univerjs/ui/facade';
 import {
   collaborationPlugins,
   prepareCollaboration,
@@ -141,6 +143,7 @@ export function DocEditor({
     let stopPresence: (() => void) | undefined;
     let formulaInterval: ReturnType<typeof setInterval> | undefined;
     let stopFormulaVisibility: (() => void) | undefined;
+    let stopInputEvidence: (() => void) | undefined;
     setFormulaStates([]);
     setFormulaEdit(null);
     setFormulaError('');
@@ -320,6 +323,8 @@ export function DocEditor({
       });
       const stopTheme = bindEditorTheme(univer);
       disposeEditor = () => {
+        stopInputEvidence?.();
+        stopInputEvidence = undefined;
         disposeSpinelSync(univer);
         stopTheme();
         univer.dispose();
@@ -407,6 +412,44 @@ export function DocEditor({
         .get(IRenderManagerService)
         .getRenderUnitById(data.unitId);
       render?.engine.getCanvasElement().setAttribute('aria-label', 'Document canvas');
+      if (mobile && render && import.meta.env.VITE_SYNC_EVIDENCE === '1') {
+        // Evidence builds observe the public input and command boundary. They
+        // never alter the range, input event, command, or document.
+        const emit = (detail: unknown) =>
+          window.dispatchEvent(new CustomEvent('spinel-doc-input-evidence', { detail }));
+        const selection = render.with(DocSelectionRenderService);
+        const subscription = selection.onInput$.subscribe((config) =>
+          emit({
+            stage: 'input',
+            content: config.content,
+            data: (config.event as InputEvent).data,
+            prevented: config.event.defaultPrevented,
+            editing: selection.isEditing,
+            activeRange: config.activeRange && {
+              start: config.activeRange.startOffset,
+              end: config.activeRange.endOffset,
+            },
+          }),
+        );
+        const commands = univer.__getInjector().get(ICommandService);
+        const relevant = (id: string) => /^doc\.(command|mutation)\./.test(id);
+        const before = commands.beforeCommandExecuted((command) => {
+          if (relevant(command.id)) emit({ stage: 'before', id: command.id });
+        });
+        const after = commands.onCommandExecuted((command) => {
+          if (relevant(command.id))
+            emit({
+              stage: 'after',
+              id: command.id,
+              text: document.getDocumentDataModel().getSnapshot().body?.dataStream,
+            });
+        });
+        stopInputEvidence = () => {
+          subscription.unsubscribe();
+          before.dispose();
+          after.dispose();
+        };
+      }
       // Modern Docs reflow through device-local layout options. Paginated Docs
       // only scale to fit, so retain their original layout and use the ticket's
       // read-only phone fallback instead of rewriting shared page geometry.
@@ -613,7 +656,7 @@ export function DocEditor({
               ? 'Edit on a larger screen. This Doc keeps its page layout.'
               : editable
                 ? mobile
-                  ? 'Tap Edit to write. Use the toolbar to format text.'
+                  ? 'Tap Edit, then tap the text to write.'
                   : 'Click the page to write. Type / for commands.'
                 : '')}
       </p>

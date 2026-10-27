@@ -3,11 +3,14 @@ import sharp from 'sharp';
 import { expect, test } from '@playwright/test';
 import type { Browser, BrowserContext, Locator, Page, TestInfo } from '@playwright/test';
 import {
+  createParagraphId,
+  createSectionId,
   DocumentFlavor,
   getDocsEmptySnapshot,
   LocaleType,
   NamedStyleType,
   PresetListType,
+  validateDocumentStructure,
 } from '@univerjs/core';
 import type { ICustomRange, IDocumentData } from '@univerjs/core';
 import { CombCmd } from '@univerjs/protocol';
@@ -16,6 +19,7 @@ import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { DocumentStore } from '../src/server/workspace/documents.ts';
+import { recordNativeSnapshots } from './sync-snapshot.ts';
 
 const tableExpression = `={${Array.from({ length: 30 }, (_, row) => `${row + 1},${row + 101},${row + 201}`).join(';')}}`;
 const saved = (page: Page) =>
@@ -23,6 +27,56 @@ const saved = (page: Page) =>
     timeout: 30_000,
   });
 const input = (page: Page) => page.locator('[contenteditable="true"][data-u-comp="editor"]');
+
+type InputEvidenceWindow = Window & { phoneInputEvidence?: unknown[] };
+
+/** Observe the native input boundary without creating or changing a selection. */
+async function recordPhoneInput(context: BrowserContext) {
+  await context.addInitScript(() => {
+    const records: unknown[] = [];
+    (window as InputEvidenceWindow).phoneInputEvidence = records;
+    const record = (value: unknown) => {
+      records.push(value);
+      if (records.length > 200) records.shift();
+    };
+    for (const type of ['beforeinput', 'input'])
+      document.addEventListener(
+        type,
+        (event) => {
+          const target = event.target;
+          if (
+            !(target instanceof HTMLElement) ||
+            !target.matches('[contenteditable="true"][data-u-comp="editor"]')
+          )
+            return;
+          const input = event as InputEvent;
+          const observe = (phase: string) => {
+            const selection = window.getSelection();
+            record({
+              time: performance.now(),
+              type,
+              phase,
+              data: input.data,
+              inputType: input.inputType,
+              composing: input.isComposing,
+              prevented: input.defaultPrevented,
+              focused: document.activeElement === target,
+              content: target.textContent,
+              anchorInside: Boolean(selection?.anchorNode && target.contains(selection.anchorNode)),
+              focusInside: Boolean(selection?.focusNode && target.contains(selection.focusNode)),
+              rangeCount: selection?.rangeCount,
+            });
+          };
+          observe('capture');
+          queueMicrotask(() => observe('after'));
+        },
+        true,
+      );
+    window.addEventListener('spinel-doc-input-evidence', (event) =>
+      record({ time: performance.now(), native: (event as CustomEvent).detail }),
+    );
+  });
+}
 
 // The renderer caches glyphs on offscreen canvases, so fillText interception
 // cannot locate their final screen positions. Find the first real text line in
@@ -218,16 +272,20 @@ async function fixture(
       );
       stream += expression + '\r';
     }
+  const paragraphIds = new Set<string>();
   snapshot.body = {
     ...snapshot.body,
     dataStream: stream + '\n',
     customRanges: ranges,
-    paragraphs: Array.from(stream.matchAll(/\r/g), (match, index) => ({
+    paragraphs: Array.from(stream.matchAll(/\r/g), (match) => ({
       startIndex: match.index!,
-      paragraphId: `phone-paragraph-${index}`,
+      paragraphId: createParagraphId(paragraphIds),
     })),
-    sectionBreaks: [{ startIndex: stream.length, sectionId: 'phone-section' }],
+    sectionBreaks: [{ startIndex: stream.length, sectionId: createSectionId(new Set()) }],
   };
+  // Import accepts some malformed fixtures that fail only when the first edit
+  // reaches native mutation validation. Fail at setup with the actual issues.
+  expect(validateDocumentStructure(snapshot)).toEqual([]);
   new DocumentStore(workspace).save(owner.id, item.id, {
     snapshot,
     revision: 0,
@@ -246,6 +304,8 @@ async function fixture(
       reducedMotion: 'reduce',
     });
     contexts.push(context);
+    await recordNativeSnapshots(context);
+    await recordPhoneInput(context);
     if (account)
       await context.addCookies([
         {
@@ -277,10 +337,20 @@ async function fixture(
     socket.on('framereceived', ({ payload }) => {
       try {
         const frame = JSON.parse(String(payload));
-        if (frame.cmd === CombCmd.RECV)
+        if (frame.cmd === CombCmd.RECV || ['ack', 'edit', 'resume', 'resync'].includes(frame.type))
           diagnostics.push({ received: JSON.stringify(frame).slice(0, 6000) });
       } catch {
         // Binary frames are unrelated to this legacy protocol observation.
+      }
+    });
+    socket.on('framesent', ({ payload }) => {
+      try {
+        const frame = JSON.parse(String(payload));
+        // Observe native persistence traffic, excluding authentication frames.
+        if (frame.type === 'submit' || frame.type === 'verify')
+          diagnostics.push({ sent: JSON.stringify(frame).slice(0, 6000) });
+      } catch {
+        // Other sockets may use binary payloads.
       }
     });
     socket.on('socketerror', (error) => diagnostics.push({ socketError: error }));
@@ -321,6 +391,7 @@ async function fixture(
               connection: document.querySelector('[role="status"][aria-label="Connection status"]')
                 ?.textContent,
               native: (window as Window & { nativeSyncEvidence?: unknown }).nativeSyncEvidence,
+              input: (window as InputEvidenceWindow).phoneInputEvidence,
             })),
           ),
       );
@@ -403,9 +474,24 @@ for (const zoomRatio of [1, 0.5, 2])
         ),
       ).toBe(true);
       await selectFirstWord(page);
-      await format.tap();
-      await expect(drawer).toBeVisible();
-      await page.getByRole('button', { name: 'Italic', exact: true }).tap();
+      const selectionDrawer = page.locator('[data-u-comp="mobile-menu-drawer"]');
+      await expect(selectionDrawer).toBeVisible();
+      await expect(input(page)).not.toBeFocused();
+      // Held-touch selection dismisses the native input. Restore the emulated
+      // keyboard viewport, then expand the drawer through its visible handle.
+      await keyboardOcclusion(page, 0);
+      await selectionDrawer.getByRole('button', { name: 'More', exact: true }).tap();
+      await expect(selectionDrawer).toHaveAttribute('data-snap', 'expanded');
+      const selectedBold = selectionDrawer.getByRole('button', { name: 'Bold', exact: true });
+      await expect(selectedBold).toBeEnabled();
+      await expect(selectedBold).toBeInViewport({ ratio: 1 });
+      const italic = selectionDrawer.getByRole('button', { name: 'Italic', exact: true });
+      await expect(italic).toBeEnabled();
+      await expect(italic).toBeInViewport({ ratio: 1 });
+      await touchTargets(selectionDrawer);
+      await capture(page, info, `selected-word-menu-zoom-${zoomRatio}`);
+      await italic.tap();
+      await expect(selectionDrawer).not.toBeVisible();
       await saved(page);
       await expect
         .poll(async () => {
@@ -415,15 +501,38 @@ for (const zoomRatio of [1, 0.5, 2])
             .map((run) => selected.body!.dataStream.slice(run.st, run.ed));
         })
         .toEqual(['Mobile']);
-      await page.getByRole('button', { name: 'Show keyboard', exact: true }).tap();
+      // Selection's context drawer has no keyboard action. Resume through a
+      // real canvas gesture before emulating the OS viewport change again.
+      await beginWriting(page);
+      await keyboardOcclusion(page, 320);
       await page.getByRole('button', { name: 'Heading', exact: true }).tap();
-      await page.getByText('Heading 1', { exact: true }).tap();
+      const quickMenu = page.locator('[data-u-comp="mobile-context-menu-bar"]');
+      await expect(quickMenu).toBeVisible();
+      await expect(
+        quickMenu.getByRole('menuitem', { name: 'Unordered list', exact: true }),
+      ).toHaveCount(0);
+      await expect(
+        quickMenu.getByRole('menuitem', { name: 'Ordered list', exact: true }),
+      ).toHaveCount(0);
+      await quickMenu.getByRole('menuitem', { name: 'Heading 1', exact: true }).tap();
       await saved(page);
       await expect
         .poll(async () => (await f.read()).body!.paragraphs![0]!.paragraphStyle?.namedStyleType)
         .toBe(NamedStyleType.HEADING_1);
-      await page.getByRole('button', { name: 'Heading', exact: true }).tap();
-      await page.getByText('Unordered list', { exact: true }).tap();
+      await page.getByRole('button', { name: 'More', exact: true }).tap();
+      await expect(drawer).toBeVisible();
+      await expect(drawer.getByRole('button', { name: 'Ordered list', exact: true })).toBeEnabled();
+      const unordered = drawer.getByRole('button', { name: 'Unordered list', exact: true });
+      await expect(unordered).toBeEnabled();
+      await touchTargets(drawer);
+      await unordered.tap();
+      // The native custom picker labels styles visually; its first preview is
+      // the standard bullet list. More supplies the required picker callback.
+      const bullet = drawer
+        .locator('[data-u-comp="mobile-custom-menu-option"] [data-u-comp="list-type-preview"]')
+        .first();
+      await expect(bullet).toBeVisible();
+      await bullet.tap();
       await saved(page);
       await expect
         .poll(async () => (await f.read()).body!.paragraphs![0]!.bullet?.listType)
