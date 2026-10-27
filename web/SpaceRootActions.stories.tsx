@@ -133,7 +133,6 @@ export const ShareWholeSpace: Story = {
     await userEvent.click(await sharing.findByRole('button', { name: 'Edit access for Alex Kim' }));
     await themedTarget(sharing.getByLabelText('Access for Alex Kim'), dialog);
     await expect(sharing.getByRole('button', { name: 'Save changes' })).toBeDisabled();
-    await themedTarget(sharing.getByRole('button', { name: 'Cancel' }), dialog);
     await assertDialogControls(dialog);
     await userEvent.click(sharing.getByRole('tab', { name: 'Link' }));
     await themedTarget(await sharing.findByLabelText('Link access'), dialog);
