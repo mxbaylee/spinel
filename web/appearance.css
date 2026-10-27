@@ -216,7 +216,7 @@
 .appearance-cover-options .sp-choice {
   margin-bottom: 12px;
 }
-.appearance-cover-options .appearance-pairing {
+.sp-ui .appearance-cover-options label.appearance-pairing {
   display: flex;
   align-items: center;
   gap: 8px;

@@ -130,6 +130,8 @@ for (const variant of [
       for (const source of ['Upload', 'Unsplash', 'Gems']) {
         await dialog.getByRole('button', { name: source, exact: true }).click();
         expect(Math.abs((await dialog.boundingBox())!.height - initial)).toBeLessThanOrEqual(1);
+        if (source !== 'Gems')
+          await expect(dialog.locator('.appearance-pairing')).toHaveCSS('display', 'flex');
         await capture(`picker-${source.toLowerCase()}`);
       }
       await dialog.getByRole('button', { name: 'Bismuth', exact: true }).click();
