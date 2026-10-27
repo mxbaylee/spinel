@@ -40,7 +40,7 @@ import { AccessState } from './AccessState.tsx';
 import type { ConnectionState } from './connectionState.ts';
 import type { CatalogConnectionDetails } from './ConnectionStatus.tsx';
 import type { LocalStart } from './offline/localStart.ts';
-import type { OfflineCatalog, OfflineUser } from './offline/offlineStore.ts';
+import type { OfflineCatalog, OfflineDownload, OfflineUser } from './offline/offlineStore.ts';
 import { useOfflineDownloads } from './offline/useOfflineDownloads.ts';
 import { OfflineAvailability, OfflineAvailabilityActions } from './offline/OfflineAvailability.tsx';
 import { OfflineRecoveryList } from './OfflineRecoveryEntry.tsx';
@@ -49,7 +49,7 @@ const SheetEditor = lazy(() =>
   import('./SheetEditor.tsx').then((module) => ({ default: module.SheetEditor })),
 );
 
-type Action = { mode: 'new' | 'rename' | 'move' | 'file'; item?: FileItem };
+type Action = { mode: 'new' | 'rename' | 'move' | 'file' | 'relocate-creation'; item?: FileItem };
 const TRASH_VIEW = 'trash';
 const SHARED_VIEW = 'shared';
 const selectedId = () => {
@@ -71,10 +71,25 @@ const OfflineViewer = lazy(() =>
 );
 const offlineKind = (item: FileItem) => item.kind === 'sheet' || item.kind === 'doc';
 
+function creationFile(copy: OfflineDownload): FileItem | undefined {
+  if (!copy.creation) return;
+  return {
+    id: copy.itemId,
+    kind: copy.kind,
+    name: copy.name,
+    access: 'owner',
+    parentId: copy.creation.parentId,
+    createdAt: copy.creation.createdAt,
+    updatedAt: copy.creation.createdAt,
+    tags: [],
+  };
+}
+
 /**
  * The file list and the open item. With `local` set, Spinel started without a
  * network: everything comes from the last-synced catalog on this device, only
- * downloaded documents open (read-only), and nothing reaches the server.
+ * prepared documents open from this device and new Sheets/Docs save here before
+ * connecting. Each native editor independently verifies its account and replay.
  */
 export function Dashboard({
   navigation,
@@ -204,9 +219,42 @@ export function Dashboard({
   const views = useRef<Record<string, FileItem[]>>({ ...local?.catalog.views });
   const catalog = (): OfflineCatalog | null =>
     loaded && shared.loaded
-      ? { syncedAt, items, shared: shared.items, views: views.current }
+      ? {
+          syncedAt,
+          items: [
+            ...new Map(
+              [
+                ...deviceCreatedFiles.filter((item) => !offline.downloads.get(item.id)?.creation),
+                ...items,
+              ].map((item) => [item.id, item]),
+            ).values(),
+          ],
+          shared: shared.items,
+          views: views.current,
+        }
       : null;
   const offline = useOfflineDownloads(user, local, catalog);
+  const creationItems = [...offline.downloads.values()].flatMap((copy) => {
+    const item = creationFile(copy);
+    return item ? [item] : [];
+  });
+  const rememberedCreations = useRef({ account: user.id, files: new Map<string, FileItem>() });
+  if (rememberedCreations.current.account !== user.id)
+    rememberedCreations.current = { account: user.id, files: new Map() };
+  for (const copy of offline.downloads.values())
+    if (copy.createdFile) rememberedCreations.current.files.set(copy.itemId, copy.createdFile);
+  for (const item of creationItems) rememberedCreations.current.files.set(item.id, item);
+  for (const id of rememberedCreations.current.files.keys())
+    if (!offline.downloads.has(id)) rememberedCreations.current.files.delete(id);
+  const deviceCreatedFiles = [...rememberedCreations.current.files.values()];
+  const currentCreation = creationItems.find((item) => item.id === currentId);
+  // Publication must not replace a mounted editor with a different component:
+  // it may still hold unfinished input or an unacknowledged native checkpoint.
+  const heldCreation = useRef<FileItem | null>(null);
+  if (currentCreation) heldCreation.current = currentCreation;
+  else if (heldCreation.current?.id !== currentId) heldCreation.current = null;
+  const heldCreationId = heldCreation.current?.id;
+  const localEditor = Boolean(local || heldCreationId === currentId);
   useEffect(() => {
     // Returning from the native editor reuses this Dashboard. Read its newly
     // committed pending state before showing the account recovery entries.
@@ -255,8 +303,15 @@ export function Dashboard({
     setViewed([]);
     setViewMissing(false);
     setViewId(null);
-    if (!currentId || currentId === TRASH_VIEW || currentId === SHARED_VIEW || local) {
-      if (local && currentId) setViewed(views.current[currentId] ?? []);
+    if (
+      !currentId ||
+      currentId === TRASH_VIEW ||
+      currentId === SHARED_VIEW ||
+      local ||
+      heldCreationId === currentId
+    ) {
+      if (heldCreation.current?.id === currentId) setViewed([heldCreation.current]);
+      else if (local && currentId) setViewed(views.current[currentId] ?? []);
       setViewId(currentId);
       setViewLoading(false);
       return;
@@ -289,7 +344,7 @@ export function Dashboard({
     return () => {
       disposed = true;
     };
-  }, [currentId, refresh]);
+  }, [currentId, refresh, heldCreationId]);
   useEffect(() => {
     const current = catalog();
     if (current && !local) void offline.saveCatalog(current).catch(() => {});
@@ -297,9 +352,18 @@ export function Dashboard({
   // Offline, any item from a saved view can be opened by its stable link.
   const known = local ? Object.values(views.current).flat() : [];
   const byId = new Map(
-    [...known, ...items, ...shared.items, ...viewed].map((item) => [item.id, item]),
+    [
+      ...known,
+      ...deviceCreatedFiles,
+      ...(heldCreation.current ? [heldCreation.current] : []),
+      ...items,
+      ...shared.items,
+      ...viewed,
+      ...creationItems,
+    ].map((item) => [item.id, item]),
   );
-  const current = currentId && !viewMissing ? byId.get(currentId) : undefined;
+  const current =
+    currentId && (!viewMissing || heldCreationId === currentId) ? byId.get(currentId) : undefined;
   const browsing = !currentId || sharedOpen || current?.kind === 'folder';
   const missingView = Boolean(
     loaded &&
@@ -336,7 +400,7 @@ export function Dashboard({
     return () => cancelAnimationFrame(frame);
   }, [browsing, loaded, viewLoading, searchActive, currentId]);
   const framedEditor = current && (current.kind === 'sheet' || current.kind === 'doc');
-  const liveEditor = !local && framedEditor ? current.id : null;
+  const liveEditor = !localEditor && framedEditor ? current.id : null;
   useEffect(() => {
     onConnectionState?.(liveEditor ? 'reconnecting' : null);
   }, [liveEditor, onConnectionState]);
@@ -353,10 +417,24 @@ export function Dashboard({
   const personalFolder = !currentId || (current?.kind === 'folder' && current.access === 'owner');
   const visibleItems = personalFolder
     ? [
-        ...(currentId ? viewed : items).filter(
-          (item) => item.access === 'owner' && item.parentId === currentId,
-        ),
-        ...shared.items.filter((item) => item.placementParentId === currentId),
+        ...new Map(
+          [
+            ...(currentId ? viewed : items).filter(
+              (item) => item.access === 'owner' && item.parentId === currentId,
+            ),
+            ...shared.items.filter((item) => item.placementParentId === currentId),
+            ...deviceCreatedFiles
+              .filter(
+                (item) =>
+                  item.parentId === currentId ||
+                  (!currentId &&
+                    (!item.parentId ||
+                      !byId.has(item.parentId) ||
+                      Boolean(offline.downloads.get(item.id)?.creation?.problem))),
+              )
+              .map((item) => byId.get(item.id) ?? item),
+          ].map((item) => [item.id, item]),
+        ).values(),
       ]
     : viewed.filter((item) => item.parentId === currentId);
   function ancestors(item?: FileItem) {
@@ -434,9 +512,11 @@ export function Dashboard({
     setName(item?.name ?? '');
     setKind(newKind);
     setDestination(
-      mode === 'file'
-        ? (shared.items.find((entry) => entry.id === item?.id)?.placementParentId ?? '')
-        : (item?.parentId ?? ''),
+      mode === 'relocate-creation'
+        ? ''
+        : mode === 'file'
+          ? (shared.items.find((entry) => entry.id === item?.id)?.placementParentId ?? '')
+          : (item?.parentId ?? ''),
     );
     setError('');
   }
@@ -445,23 +525,37 @@ export function Dashboard({
     setBusy(true);
     setError('');
     try {
+      if (action.mode === 'new' && localCreation && !['sheet', 'doc'].includes(kind))
+        throw new Error('Choose a Sheet or Doc to create on this device.');
+      if (action.mode === 'relocate-creation') {
+        const item = await offline.relocateCreation(action.item!.id, destination || null);
+        setViewed((previous) => previous.filter((entry) => entry.id !== item.id));
+        setAction(null);
+        return;
+      }
       if (action.mode === 'file') {
         if (await shared.place(action.item!.id, destination || null)) setAction(null);
         return;
       }
-      const { item } = await itemsRequest<{ item: FileItem }>(
-        action.mode === 'new' ? '' : `/${action.item!.id}`,
-        action.mode === 'new' ? 'POST' : 'PATCH',
-        action.mode === 'new'
-          ? { name, kind, parentId: sharedOpen ? null : currentId }
-          : action.mode === 'rename'
-            ? { name }
-            : { parentId: destination || null },
-      );
-      setItems((previous) => [
-        ...previous.filter((entry) => entry.id !== item.id),
-        ...(item.access === 'owner' ? [item] : []),
-      ]);
+      const creatingLocally = action.mode === 'new' && localCreation;
+      const item = creatingLocally
+        ? await offline.create(name, kind === 'sheet' ? 'sheet' : 'doc', currentId)
+        : (
+            await itemsRequest<{ item: FileItem }>(
+              action.mode === 'new' ? '' : `/${action.item!.id}`,
+              action.mode === 'new' ? 'POST' : 'PATCH',
+              action.mode === 'new'
+                ? { name, kind, parentId: sharedOpen ? null : currentId }
+                : action.mode === 'rename'
+                  ? { name }
+                  : { parentId: destination || null },
+            )
+          ).item;
+      if (!creatingLocally)
+        setItems((previous) => [
+          ...previous.filter((entry) => entry.id !== item.id),
+          ...(item.access === 'owner' ? [item] : []),
+        ]);
       setViewed((previous) => [...previous.filter((entry) => entry.id !== item.id), item]);
       setAction(null);
       if (browsing) setRefresh((value) => value + 1);
@@ -496,6 +590,8 @@ export function Dashboard({
     }
   }
   function offlineState(item: FileItem) {
+    const creation = offline.downloads.get(item.id)?.creation;
+    if (creation) return creation.problem ? 'needs-attention' : 'not-synced';
     if (
       item.kind === 'space' &&
       spaceCopies(offline.downloads.values(), item.id).some((copy) => copy.available !== false)
@@ -508,6 +604,17 @@ export function Dashboard({
       : null;
   }
   function rowActions(item: FileItem): MenuAction[] {
+    const creation = offline.downloads.get(item.id)?.creation;
+    if (creation)
+      return creation.canRelocate
+        ? [
+            {
+              label: 'Choose another folder…',
+              onClick: () => edit('relocate-creation', item),
+              disabled: busy,
+            },
+          ]
+        : [];
     if (local) return [];
     const result: MenuAction[] = [];
     if (item.kind !== 'folder')
@@ -611,7 +718,11 @@ export function Dashboard({
       {shared.error} <button onClick={() => void shared.refresh()}>Refresh shared items</button>
     </p>
   );
-  const canCreate = browsing && !sharedOpen && !local && (!current || current.access === 'owner');
+  const localCreation = Boolean(local) || connection === 'offline';
+  const canCreate = browsing && !sharedOpen && (!current || current.access === 'owner');
+  const newKinds = FILE_KINDS.filter((kind) =>
+    localCreation ? kind === 'sheet' || kind === 'doc' : kind !== 'space' || spacesEnabled,
+  );
   // Shared is already ordered by latest grant; alphabetizing would hide recent shares.
   const listedItems = sharedOpen
     ? shared.items
@@ -680,14 +791,20 @@ export function Dashboard({
                   label="New"
                   primary
                   actions={[
-                    ...FILE_KINDS.filter((kind) => kind !== 'space' || spacesEnabled).map(
-                      (kind) => ({
-                        label: fileKindLabel[kind],
-                        onClick: () => edit('new', undefined, kind),
-                        disabled: busy,
-                      }),
-                    ),
-                    { label: 'Import file…', onClick: () => setImportOpen(true), disabled: busy },
+                    ...newKinds.map((kind) => ({
+                      label: fileKindLabel[kind],
+                      onClick: () => edit('new', undefined, kind),
+                      disabled: busy,
+                    })),
+                    ...(!localCreation
+                      ? [
+                          {
+                            label: 'Import file…',
+                            onClick: () => setImportOpen(true),
+                            disabled: busy,
+                          },
+                        ]
+                      : []),
                   ]}
                 >
                   New
@@ -838,6 +955,12 @@ export function Dashboard({
                 onOpen={openFile}
                 actionsFor={rowActions}
                 offlineState={offlineState}
+                details={(item) => {
+                  const creation = offline.downloads.get(item.id)?.creation;
+                  return creation
+                    ? (creation.problem ?? 'Saved on this device. Open to upload when connected.')
+                    : null;
+                }}
                 dateMode={sharedOpen ? 'shared' : 'updated'}
                 loading={sharedOpen && !shared.loaded}
                 busy={busy}
@@ -848,7 +971,7 @@ export function Dashboard({
                 }
               />
             ))}
-          {canCreate && (
+          {canCreate && !localCreation && (
             <ImportFile
               key={currentId ?? 'root'}
               parentId={currentId}
@@ -888,7 +1011,7 @@ export function Dashboard({
             onBack={returnToFiles}
             actions={rowActions(current).filter((action) => action.label !== 'Rename…')}
             onRename={
-              !local && canAdminister(current.access)
+              !local && !currentCreation && canAdminister(current.access)
                 ? async (name) => {
                     const { item } = await itemsRequest<{ item: FileItem }>(
                       `/${current.id}`,
@@ -911,7 +1034,7 @@ export function Dashboard({
                 {local ? 'Connect to open this Space.' : 'This Space opens in its own view.'}{' '}
                 {!local && <button onClick={() => openFile(current)}>Open Space</button>}
               </p>
-            ) : local && offlineKind(current) ? (
+            ) : localEditor && offlineKind(current) ? (
               <Suspense fallback={<p role="status">Loading offline copy…</p>}>
                 <OfflineViewer
                   key={current.id}
@@ -951,9 +1074,11 @@ export function Dashboard({
       {action && (
         <Modal
           title={
-            action.mode === 'new'
-              ? `New ${fileKindLabel[kind].toLowerCase()}`
-              : `${action.mode === 'rename' ? 'Rename' : action.mode === 'file' ? 'File' : 'Move'} ${action.item!.name}`
+            action.mode === 'relocate-creation'
+              ? 'Choose another folder'
+              : action.mode === 'new'
+                ? `New ${fileKindLabel[kind].toLowerCase()}`
+                : `${action.mode === 'rename' ? 'Rename' : action.mode === 'file' ? 'File' : 'Move'} ${action.item!.name}`
           }
           icon={action.mode === 'new' ? kind : 'folder'}
           open
@@ -964,7 +1089,7 @@ export function Dashboard({
         >
           <form
             className="item-form file-dialog"
-            aria-label={`${action.mode === 'new' ? 'New item' : action.mode === 'file' ? 'File shared item' : action.mode === 'move' ? 'Move item' : 'Rename item'}`}
+            aria-label={`${action.mode === 'new' ? 'New item' : action.mode === 'relocate-creation' ? 'Choose another folder' : action.mode === 'file' ? 'File shared item' : action.mode === 'move' ? 'Move item' : 'Rename item'}`}
             onSubmit={(event) => {
               event.preventDefault();
               void submit();
@@ -980,7 +1105,7 @@ export function Dashboard({
                     disabled={busy}
                     onChange={(event) => setKind(event.target.value as FileKind)}
                   >
-                    {FILE_KINDS.filter((kind) => kind !== 'space' || spacesEnabled).map((kind) => (
+                    {newKinds.map((kind) => (
                       <option key={kind} value={kind}>
                         {fileKindLabel[kind]}
                       </option>
@@ -989,7 +1114,18 @@ export function Dashboard({
                 </span>
               </label>
             )}
-            {action.mode !== 'move' && action.mode !== 'file' ? (
+            {action.mode === 'relocate-creation' && (
+              <p>
+                {action.item!.name} stays saved on this device. Choose where to upload it when
+                connected.
+              </p>
+            )}
+            {action.mode === 'new' && localCreation && (
+              <p>This document will save on this device and upload when connected.</p>
+            )}
+            {action.mode !== 'move' &&
+            action.mode !== 'file' &&
+            action.mode !== 'relocate-creation' ? (
               <label>
                 Name
                 <input
@@ -1054,10 +1190,17 @@ export function Dashboard({
                     action.item?.access === 'admin' &&
                     loadingDestinations) ||
                   (action.mode === 'move' && action.item?.access === 'admin' && !destination) ||
-                  (action.mode !== 'move' && action.mode !== 'file' && !name.trim())
+                  (action.mode !== 'move' &&
+                    action.mode !== 'file' &&
+                    action.mode !== 'relocate-creation' &&
+                    !name.trim())
                 }
               >
-                {action.mode === 'new' ? 'Create' : 'Save'}
+                {action.mode === 'new'
+                  ? 'Create'
+                  : action.mode === 'relocate-creation'
+                    ? 'Choose folder'
+                    : 'Save'}
               </button>
               <button
                 type="button"

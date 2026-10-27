@@ -21,6 +21,7 @@ import { expirePreparedAccount } from './offline/offlineStore.ts';
 import { within } from './offline/shell.ts';
 import { signInPath } from './api.ts';
 import { clearDashboardNavigation } from './dashboardNavigation.ts';
+import { CreationUploadError } from './offline/creation.ts';
 
 interface Watch {
   publish(state: SaveState): void;
@@ -173,9 +174,12 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
     if (mayRecover() && !recovery)
       recovery = {
         phase: 'ready',
-        originalHref: spaceId
-          ? `/spaces/${encodeURIComponent(spaceId)}?item=${encodeURIComponent(itemId)}`
-          : `/?item=${encodeURIComponent(itemId)}`,
+        ...(options.offline?.creation ? { creation: true } : {}),
+        originalHref: options.offline?.creation
+          ? '/'
+          : spaceId
+            ? `/spaces/${encodeURIComponent(spaceId)}?item=${encodeURIComponent(itemId)}`
+            : `/?item=${encodeURIComponent(itemId)}`,
       };
     if (recoveryResolved && recovery) {
       watcher.connection('offline');
@@ -188,7 +192,9 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
         message:
           recovery.phase === 'created'
             ? `Your offline changes were saved as ${recovery.copyName}. The original was not changed.`
-            : 'Your offline changes were discarded from this device. The original was not changed.',
+            : recovery.creation
+              ? 'This new document was discarded from this device. Any upload already accepted by the server is unchanged.'
+              : 'Your offline changes were discarded from this device. The original was not changed.',
       });
       return;
     }
@@ -221,7 +227,8 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
         local,
         ...(authenticationEnded ? { signInRequired: true } : {}),
         ...(recovery ? { recovery } : {}),
-        retained: state.pending || Boolean(state.recoveryMissing),
+        retained:
+          state.pending || Boolean(state.recoveryMissing) || Boolean(options.offline.creation),
         dirty:
           Boolean(state.recoveryMissing) ||
           state.localPersistence === 'saving' ||
@@ -464,6 +471,7 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
   }
   function maybeRecover() {
     if (
+      options.offline?.creation ||
       !watcher ||
       !active() ||
       !mayRecover() ||
@@ -512,7 +520,14 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
     report();
   }
   async function recoverOffline() {
-    if (recoveryRunning || recoveryResolved || !active() || !mayRecover()) return;
+    if (
+      options.offline?.creation ||
+      recoveryRunning ||
+      recoveryResolved ||
+      !active() ||
+      !mayRecover()
+    )
+      return;
     recoveryRunning = true;
     recoveryAttempted = true;
     try {
@@ -631,6 +646,17 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
     checking = true;
     let recheck = false;
     try {
+      if (options.offline?.creation) {
+        const created = await options.offline.ensureCreated(
+          AbortSignal.any([abort.signal, signal]),
+        );
+        if (!active()) return;
+        if (!created) {
+          accessUnreachable = true;
+          report();
+          return;
+        }
+      }
       const bundle = options.offline?.enabled ? options.offline.bundle : undefined;
       const response = await request(
         bundle ? `${documentPath(itemId, spaceId)}/collaboration` : documentPath(itemId, spaceId),
@@ -692,7 +718,15 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
         accessUnreachable = !response.ok;
         report();
       }
-    } catch {
+    } catch (error) {
+      if (
+        active() &&
+        error instanceof CreationUploadError &&
+        (error.status === 401 || error.code === 'account-changed')
+      ) {
+        await endAuthentication();
+        return;
+      }
       if (active() && !abort.signal.aborted) {
         accessUnreachable = true;
         report();
@@ -723,7 +757,8 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
     try {
       if (options.offline?.enabled) {
         await checkAccess();
-        if (!same() || accessUnreachable) throw new Error('Room unavailable');
+        if (!same() || accessUnreachable || options.offline.creation)
+          throw new Error('Room unavailable');
       }
       const ticket = await request(`${path}/ticket?unitId=${encodeURIComponent(unitId)}`, {
         method: 'POST',

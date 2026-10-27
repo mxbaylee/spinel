@@ -10,7 +10,8 @@ import { OfflineBadge } from './OfflineStatus.tsx';
 import './DashboardFiles.css';
 
 export type DashboardFileLayout = 'list' | 'grid';
-export type DashboardOfflineState = 'available' | 'pages-available' | 'needs-connection' | null;
+export type DashboardOfflineState =
+  'available' | 'pages-available' | 'needs-connection' | 'not-synced' | 'needs-attention' | null;
 
 // Copied unchanged from Spinel's approved SPN-047 Mockups.tsx filenameEmoji.
 // This is a decorative default, not stored identity; SPN-086 owns customization.

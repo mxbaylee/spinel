@@ -15,6 +15,10 @@ export const Available: Story = { args: { state: 'available' } };
 export const PagesAvailable: Story = { args: { state: 'pages-available' } };
 /** Offline, a known item that isn't downloaded: it stays listed but can't open. */
 export const NeedsConnection: Story = { args: { state: 'needs-connection' } };
+/** New documents are not uploaded, even when their blank device copy has no edits. */
+export const NotSynced: Story = { args: { state: 'not-synced' } };
+/** Recovery choices belong to this file's menu, not the connection indicator. */
+export const NeedsAttention: Story = { args: { state: 'needs-attention' } };
 /** Renders nothing: online, an item that isn't downloaded carries no badge. */
 export const None: Story = { args: { state: null } };
 

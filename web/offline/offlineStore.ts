@@ -1,10 +1,12 @@
 import type { OfflineBundle, OfflineBundleImage } from '../../src/shared/offlineBundle.ts';
 import { FILE_KINDS } from '../../src/shared/workspace.ts';
-import type { FileItem, SpaceFile } from '../../src/shared/workspace.ts';
+import type { FileItem, SpaceFile, WorkspaceItem } from '../../src/shared/workspace.ts';
 import { OFFLINE_SDK_VERSION, offlineScope } from './OfflineAccess.ts';
 import type { ClientCheckpoint } from '@spinel/sync-client';
 import { validateNativeSnapshot, validateCheckpoint } from '@spinel/sync-client/validation';
 import type { OfflineRecoveryRequest } from '../../src/shared/offlineRecovery.ts';
+import { isOfflineCreationRequest } from '../../src/shared/offlineCreation.ts';
+import type { OfflineCreationRequest } from '../../src/shared/offlineCreation.ts';
 import { openExistingDatabase } from './existingDatabase.ts';
 import { releaseAccountRuntime } from './runtime.ts';
 import type { AccountRuntimeRequirement } from './runtime.ts';
@@ -36,6 +38,21 @@ export type OfflineDownload = {
   available?: boolean;
   problem?: string;
   uncertain?: boolean;
+  /** A durable new file which has not yet been acknowledged by the server. */
+  creation?: {
+    parentId: string | null;
+    createdAt: number;
+    problem?: string;
+    canRelocate?: boolean;
+  };
+  /** Last acknowledged metadata for a locally created file, independent of stale catalogs. */
+  createdFile?: WorkspaceItem;
+};
+export type OfflineCreation = {
+  request: OfflineCreationRequest;
+  createdAt: number;
+  problem?: string;
+  canRelocate?: boolean;
 };
 export type OfflineOutbox = {
   version: 1;
@@ -46,11 +63,14 @@ export type OfflineOutbox = {
   revisionOffset: number;
   /** The native client's sole queue, including its immutable retry envelope. */
   checkpoint: ClientCheckpoint;
+  /** Older runtimes reject unknown queue fields and therefore retain this draft. */
+  creation?: true;
 };
-export type StoredItem = OfflineDownload & {
+export type StoredItem = Omit<OfflineDownload, 'creation'> & {
   bundle: OfflineBundle;
   outbox?: OfflineOutbox;
   recovery?: OfflineRecoveryRequest;
+  creation?: OfflineCreation;
 };
 export type StoredImage = { itemId: string; source: string; bytes: Uint8Array };
 
@@ -107,6 +127,40 @@ function storedBaseKnown(item: Record<string, unknown>, bundle: Record<string, u
   );
 }
 
+function storedCreationKnown(item: Record<string, unknown>, bundle: Record<string, unknown>) {
+  if (
+    item.createdFile !== undefined &&
+    (!object(item.createdFile) ||
+      item.createdFile.id !== bundle.itemId ||
+      item.createdFile.kind !== bundle.kind ||
+      item.createdFile.access !== 'owner' ||
+      !isOfflineCatalog({ syncedAt: 0, items: [item.createdFile], shared: [], views: {} }))
+  )
+    return false;
+  if (item.creation === undefined)
+    return !object(item.outbox) || item.outbox.creation === undefined;
+  const creation = item.creation;
+  if (!object(creation) || !isOfflineCreationRequest(creation.request)) return false;
+  const request = creation.request;
+  return (
+    request.itemId === bundle.itemId &&
+    request.unitId === bundle.unitId &&
+    request.name === bundle.name &&
+    request.kind === bundle.kind &&
+    bundle.spaceId === undefined &&
+    bundle.access === 'owner' &&
+    bundle.readOnly === false &&
+    bundle.revision === 1 &&
+    bundle.revisionOffset === 0 &&
+    Number.isFinite(creation.createdAt) &&
+    Number(creation.createdAt) > 0 &&
+    (creation.problem === undefined || typeof creation.problem === 'string') &&
+    (creation.canRelocate === undefined || typeof creation.canRelocate === 'boolean') &&
+    object(item.outbox) &&
+    item.outbox.creation === true
+  );
+}
+
 export function isKnownOfflineOutbox(value: unknown): value is OfflineOutbox {
   if (!object(value) || value.version !== 1 || !object(value.checkpoint)) return false;
   const checkpoint = value.checkpoint;
@@ -135,6 +189,7 @@ export function isKnownOfflineOutbox(value: unknown): value is OfflineOutbox {
     Number(value.revisionOffset) >= 0 &&
     checkpoint.version === 1 &&
     checkpoint.unitId === value.unitId &&
+    (value.creation === undefined || value.creation === true) &&
     Number.isSafeInteger(checkpoint.revision) &&
     Number(checkpoint.revision) >= 1 &&
     object(checkpoint.snapshot) &&
@@ -168,9 +223,16 @@ export function isKnownOfflineOutbox(value: unknown): value is OfflineOutbox {
       ].includes(String(checkpoint.failure))) &&
     (checkpoint.recoverySnapshot === undefined || object(checkpoint.recoverySnapshot)) &&
     Object.keys(value).every((key) =>
-      ['version', 'account', 'item', 'spaceId', 'unitId', 'revisionOffset', 'checkpoint'].includes(
-        key,
-      ),
+      [
+        'version',
+        'account',
+        'item',
+        'spaceId',
+        'unitId',
+        'revisionOffset',
+        'checkpoint',
+        'creation',
+      ].includes(key),
     ) &&
     Object.keys(checkpoint).every((key) =>
       [
@@ -204,7 +266,11 @@ function checkpointHasEdits(checkpoint: ClientCheckpoint) {
 /** Unknown persisted queue data is retained, never treated as an empty queue. */
 export function hasOfflineEdits(outbox: unknown) {
   if (outbox === undefined) return false;
-  return !isKnownOfflineOutbox(outbox) || checkpointHasEdits(outbox.checkpoint);
+  return (
+    !isKnownOfflineOutbox(outbox) ||
+    outbox.creation === true ||
+    checkpointHasEdits(outbox.checkpoint)
+  );
 }
 
 export function hasStoredEdits(item: unknown) {
@@ -218,6 +284,7 @@ export function hasStoredEdits(item: unknown) {
     !object(item.bundle.snapshot) ||
     !Array.isArray(item.bundle.images) ||
     item.recovery !== undefined ||
+    item.creation !== undefined ||
     hasOfflineEdits(item.outbox)
   )
     return true;
@@ -305,6 +372,7 @@ export function downloadSummary(
   const uncertain =
     !valid ||
     !storedBaseKnown(item, bundle) ||
+    !storedCreationKnown(item, bundle) ||
     Boolean(scopeMismatch) ||
     (item.outbox !== undefined && !isKnownOfflineOutbox(item.outbox)) ||
     (item.recovery !== undefined && item.outbox === undefined);
@@ -321,7 +389,21 @@ export function downloadSummary(
     pending:
       uncertain ||
       item.recovery !== undefined ||
+      item.creation !== undefined ||
       Boolean(outbox && checkpointHasEdits(outbox.checkpoint as ClientCheckpoint)),
+    ...(!uncertain && item.creation !== undefined
+      ? {
+          creation: {
+            parentId: (item.creation as OfflineCreation).request.parentId,
+            createdAt: (item.creation as OfflineCreation).createdAt,
+            problem: (item.creation as OfflineCreation).problem,
+            canRelocate: (item.creation as OfflineCreation).canRelocate,
+          },
+        }
+      : {}),
+    ...(!uncertain && item.createdFile !== undefined
+      ? { createdFile: item.createdFile as WorkspaceItem }
+      : {}),
     ...(uncertain
       ? {
           available: false,
@@ -373,6 +455,16 @@ export function isOfflineCatalog(value: unknown): value is OfflineCatalog {
     typeof catalog.views === 'object' &&
     !Array.isArray(catalog.views) &&
     Object.values(catalog.views!).every(files)
+  );
+}
+
+/** Cached permission is provisional; the server rechecks it before creating anything. */
+export function creationFolderAllowed(catalog: OfflineCatalog, parentId: string | null) {
+  return (
+    parentId === null ||
+    [...catalog.items, ...Object.values(catalog.views).flat()].some(
+      (item) => item.id === parentId && item.kind === 'folder' && item.access === 'owner',
+    )
   );
 }
 
@@ -802,7 +894,140 @@ export class OfflineStore {
       bytes: new Map(images.map((image) => [image.source, image.bytes])),
       outbox: item.outbox,
       recovery: item.recovery,
+      creation: item.creation,
     };
+  }
+  /** A new file and its old-reader-visible pending marker commit together. */
+  async saveCreation(bundle: OfflineBundle, creation: OfflineCreation, verifyCurrent: () => void) {
+    verifyCurrent();
+    // Storage inspection stays independent of native rendering/formula modules.
+    const { snapshotIdentity } = await import('../../src/shared/snapshotIdentity.ts');
+    verifyCurrent();
+    const outbox: OfflineOutbox = {
+      version: 1,
+      account: this.accountId,
+      item: bundle.itemId,
+      unitId: bundle.unitId,
+      revisionOffset: 0,
+      creation: true,
+      checkpoint: {
+        version: 1,
+        unitId: bundle.unitId,
+        revision: 1,
+        snapshot: snapshotIdentity(bundle.snapshot, bundle.unitId),
+        sent: null,
+        inflight: [],
+        buffer: [],
+      },
+    };
+    const item: StoredItem = {
+      itemId: bundle.itemId,
+      name: bundle.name,
+      kind: bundle.kind,
+      readOnly: false,
+      revision: 1,
+      downloadedAt: creation.createdAt,
+      bundle,
+      outbox,
+      creation,
+    };
+    if (downloadSummary(item, this.accountId, bundle.itemId).uncertain || bundle.images.length)
+      throw new Error('This new document could not be verified.');
+    return withOfflineCatalogLock(this.accountId, async () => {
+      verifyCurrent();
+      const transaction = this.database.transaction(['items', 'meta'], 'readwrite');
+      const completion = done(transaction);
+      try {
+        const items = transaction.objectStore('items');
+        const existing = await request(items.get(bundle.itemId));
+        const catalog = await request(transaction.objectStore('meta').get('catalog'));
+        const user = await request(transaction.objectStore('meta').get('user'));
+        verifyCurrent();
+        if (existing !== undefined) throw new Error('This document already exists on this device.');
+        if (!isOfflineCatalog(catalog) || !object(user) || user.id !== this.accountId)
+          throw new Error('Prepare this account online before creating documents offline.');
+        if (!creationFolderAllowed(catalog, creation.request.parentId))
+          throw new Error('Choose one of your own prepared folders for this document.');
+        items.add(item);
+      } catch (error) {
+        try {
+          transaction.abort();
+        } catch {
+          /* Already aborted. */
+        }
+        await completion.catch(() => {});
+        throw error;
+      }
+      await completion;
+      verifyCurrent();
+      offlineChanged(this.accountId, bundle.itemId);
+      return summary(item);
+    });
+  }
+  /** Caller owns the item writer. Failure never clears the creation or its edits. */
+  async updateCreation(
+    itemId: string,
+    expected: OfflineCreation,
+    next: OfflineCreation | undefined,
+    verifyCurrent: () => void,
+    accepted?: WorkspaceItem,
+  ) {
+    verifyCurrent();
+    const transaction = this.database.transaction(['items', 'meta'], 'readwrite');
+    const completion = done(transaction);
+    try {
+      const items = transaction.objectStore('items');
+      const item = (await request(items.get(itemId))) as StoredItem | undefined;
+      verifyCurrent();
+      if (
+        !item ||
+        downloadSummary(item, this.accountId, itemId).uncertain ||
+        JSON.stringify(item.creation) !== JSON.stringify(expected)
+      )
+        throw new Error('This new document changed. Reopen its device copy before trying again.');
+      if (next) {
+        item.creation = next;
+        if (downloadSummary(item, this.accountId, itemId).uncertain)
+          throw new Error('The new document destination could not be verified.');
+      } else {
+        if (
+          !accepted ||
+          accepted.id !== itemId ||
+          accepted.kind !== item.kind ||
+          accepted.access !== 'owner'
+        )
+          throw new Error('The uploaded document could not be verified.');
+        const meta = transaction.objectStore('meta');
+        const catalog = await request(meta.get('catalog'));
+        verifyCurrent();
+        if (!isOfflineCatalog(catalog))
+          throw new Error('The saved file list could not be updated.');
+        // Preserve an acknowledged file in a cold local catalog as well as the
+        // native queue; a later online refresh may replace this metadata normally.
+        catalog.items = [...catalog.items.filter((row) => row.id !== itemId), accepted];
+        for (const [key, rows] of Object.entries(catalog.views))
+          catalog.views[key] = rows.filter((row) => row.id !== itemId);
+        catalog.views[itemId] = [accepted];
+        if (accepted.parentId && catalog.views[accepted.parentId])
+          catalog.views[accepted.parentId].push(accepted);
+        meta.put(catalog, 'catalog');
+        item.createdFile = accepted;
+        delete item.creation;
+        if (item.outbox) delete item.outbox.creation;
+      }
+      items.put(item);
+    } catch (error) {
+      try {
+        transaction.abort();
+      } catch {
+        /* Already aborted. */
+      }
+      await completion.catch(() => {});
+      throw error;
+    }
+    await completion;
+    verifyCurrent();
+    offlineChanged(this.accountId, itemId);
   }
   /**
    * Replaces an item's download in one transaction, so a failed or interrupted
@@ -915,11 +1140,17 @@ export class OfflineStore {
         throw new Error('This download changed. Keep this tab open to preserve your changes.');
       if (item.recovery && JSON.stringify(item.outbox?.checkpoint) !== JSON.stringify(checkpoint))
         throw new Error('This offline copy is already being recovered. Keep its original changes.');
-      item.outbox = { version: 1, ...scope, checkpoint };
+      item.outbox = {
+        version: 1,
+        ...scope,
+        checkpoint,
+        ...(item.creation ? { creation: true as const } : {}),
+      };
       // The unchanged base and scope were admitted above. Inspect only the new
       // checkpoint, retaining malformed input as pending rather than losing it.
       pending =
         item.recovery !== undefined ||
+        item.creation !== undefined ||
         !storedSnapshotShape(checkpoint.snapshot, item.bundle.kind, scope.unitId) ||
         hasOfflineEdits(item.outbox);
       pendingChanged = Boolean(previous.pending) !== pending;
