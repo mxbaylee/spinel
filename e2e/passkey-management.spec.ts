@@ -360,7 +360,7 @@ for (const boundary of ['account epoch', 'cookie race'] as const) {
       }
       const current = await context.request.get('/api/auth/session');
       expect((await current.json()).user.id).toBe(users[1].id);
-      await dialog.getByRole('button', { name: 'Close' }).click();
+      await dialog.getByRole('button', { name: 'Close', exact: true }).click();
       await expect(trigger).toBeDisabled();
       await expect(page.getByRole('button', { name: 'Add a passkey', exact: true })).toBeDisabled();
     } finally {
