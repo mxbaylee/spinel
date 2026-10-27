@@ -61,7 +61,8 @@ function NativeEditorStory(props: NativeEditorProps) {
 }
 
 const meta = {
-  title: 'Redesign/Native editors',
+  id: 'redesign-native-editors',
+  title: 'Native fixtures/Editors',
   component: NativeEditor,
   render: (args) => <NativeEditorStory {...args} />,
   decorators: [

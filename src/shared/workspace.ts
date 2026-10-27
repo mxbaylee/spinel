@@ -1,3 +1,4 @@
+import type { ItemAppearance } from './appearance.ts';
 export const ITEM_KINDS = ['folder', 'sheet', 'doc'] as const;
 export type ItemKind = (typeof ITEM_KINDS)[number];
 export type GuestRole = 'viewer' | 'editor';
@@ -26,6 +27,7 @@ export interface WorkspaceItem {
   parentId: string | null;
   kind: ItemKind;
   name: string;
+  appearance?: ItemAppearance;
   createdAt: number;
   updatedAt: number;
   tags: string[];

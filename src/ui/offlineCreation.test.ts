@@ -522,8 +522,10 @@ test('a response for another native generation cannot clear a local creation', a
   ).rejects.toThrow('could not be verified');
 });
 
-test('relocation keeps IDs and checkpoint identity, and only follows a definitive folder rejection', async () => {
+test('relocation keeps IDs, chosen appearance and checkpoint identity, and only follows a definitive folder rejection', async () => {
   const original = stored();
+  const request = { ...input, icon: 'lucide:book-open', iconColor: 'info-strong' };
+  original.creation!.request = request;
   const updateCreation = vi.fn(async () => {});
   const store = {
     bundle: vi.fn(async () => original),
@@ -537,12 +539,12 @@ test('relocation keeps IDs and checkpoint identity, and only follows a definitiv
   original.creation!.canRelocate = true;
   original.creation!.problem = 'Folder unavailable';
   await expect(relocateOfflineCreation(store, input.itemId, null, () => {})).resolves.toMatchObject(
-    { id: input.itemId },
+    { id: input.itemId, appearance: { icon: request.icon, iconColor: request.iconColor } },
   );
   expect(updateCreation).toHaveBeenCalledWith(
     input.itemId,
     original.creation,
-    { request: input, createdAt: 1000 },
+    { request, createdAt: 1000 },
     expect.any(Function),
   );
 });

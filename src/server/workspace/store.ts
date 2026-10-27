@@ -1,3 +1,9 @@
+import {
+  appearanceSchema,
+  readAppearance,
+  readAppearances,
+  initialIcon,
+} from '../appearance/data.ts';
 import { LinkAccess, linkGone } from './links.ts';
 import { randomUUID } from 'node:crypto';
 import { AuthError, AuthStore } from '../auth/store.ts';
@@ -113,6 +119,7 @@ export class WorkspaceStore {
     );
     // Retired workspace_pins tables in older databases are left untouched.
     // No feature reads or writes them; existing item/user foreign keys remain safe.
+    appearanceSchema(auth.database);
     this.links = new LinkAccess(auth, this.spacesEnabled);
   }
   ownTags(userId: string, id: string): string[] {
@@ -246,9 +253,17 @@ export class WorkspaceStore {
         'live',
       );
       if (!ordinary) throw new AuthError(413, 'This item list is too large to process at once.');
+      const appearances = readAppearances(
+        this.auth.database,
+        items.filter((item) => ordinary.has(item.id)).map((item) => item.id),
+      );
       return items
         .filter((item) => ordinary.has(item.id))
-        .map((item) => ({ ...item, tags: this.assignedTags(ownerId, item.id) }));
+        .map((item) => ({
+          ...item,
+          appearance: appearances.get(item.id),
+          tags: this.assignedTags(ownerId, item.id),
+        }));
     });
   }
   shared(userId: string): WorkspaceItem[] {
@@ -410,7 +425,13 @@ export class WorkspaceStore {
         .prepare(`SELECT ${columns} FROM workspace_items WHERE id=?`)
         .get(id) as unknown as WorkspaceItem;
       if (!item || !['sheet', 'doc'].includes(item.kind)) throw linkGone();
-      return { ...item, parentId: null, tags: [], access: guest.role };
+      return {
+        ...item,
+        appearance: readAppearance(this.auth.database, id),
+        parentId: null,
+        tags: [],
+        access: guest.role,
+      };
     }
     this.owner(userId);
     const access = this.role(userId, id);
@@ -434,6 +455,7 @@ export class WorkspaceStore {
     // A direct share must not disclose the owner's private parent chain.
     return {
       ...item,
+      appearance: readAppearance(this.auth.database, id),
       access,
       ...(access !== 'owner'
         ? {
@@ -590,7 +612,13 @@ export class WorkspaceStore {
   }
   create(
     ownerId: string,
-    input: { name?: unknown; kind?: unknown; parentId?: unknown },
+    input: {
+      name?: unknown;
+      kind?: unknown;
+      parentId?: unknown;
+      iconColor?: unknown;
+      icon?: unknown;
+    },
   ): WorkspaceItem {
     this.owner(ownerId);
     const name = this.name(input.name);
@@ -605,6 +633,7 @@ export class WorkspaceStore {
           'INSERT INTO workspace_items(id,owner_id,parent_id,kind,name,created_at,updated_at) VALUES(?,?,?,?,?,?,?)',
         )
         .run(id, ownerId, parentId, input.kind as string, name, now, now);
+      initialIcon(this.auth.database, id, input.icon, input.iconColor);
       return this.get(ownerId, id);
     });
   }

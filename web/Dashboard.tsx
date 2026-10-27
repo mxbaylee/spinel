@@ -1,3 +1,4 @@
+import { IdentityChoice, ConnectedAppearanceDialog, ItemIcon } from './Appearance.tsx';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import { EntityIcon } from '../src/ui/EntityIcon.tsx';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
@@ -45,6 +46,7 @@ import { useOfflineDownloads } from './offline/useOfflineDownloads.ts';
 import { OfflineAvailability, OfflineAvailabilityActions } from './offline/OfflineAvailability.tsx';
 import { OfflineRecoveryList } from './OfflineRecoveryEntry.tsx';
 import { spaceCopies } from './offline/spaceCopies.ts';
+import type { ItemAppearance } from '../src/shared/appearance.ts';
 const SheetEditor = lazy(() =>
   import('./SheetEditor.tsx').then((module) => ({ default: module.SheetEditor })),
 );
@@ -82,6 +84,7 @@ function creationFile(copy: OfflineDownload): FileItem | undefined {
     createdAt: copy.creation.createdAt,
     updatedAt: copy.creation.createdAt,
     tags: [],
+    appearance: copy.appearance,
   };
 }
 
@@ -164,6 +167,7 @@ export function Dashboard({
   const [viewMissing, setViewMissing] = useState(false);
   const [refresh, setRefresh] = useState(0);
   const [sharing, setSharing] = useState<FileItem | null>(null);
+  const appearanceFocus = useRef<HTMLButtonElement | null>(null);
   const sharingFocus = useRef<HTMLButtonElement | null>(null);
   const offlineFocus = useRef<HTMLButtonElement | null>(null);
   const [spaceAction, setSpaceAction] = useState<{
@@ -181,6 +185,25 @@ export function Dashboard({
   currentRef.current = currentId;
   const [action, setAction] = useState<Action | null>(null);
   const [name, setName] = useState('');
+  const [newIconColor, setNewIconColor] = useState<string | null>(null);
+  const [newIcon, setNewIcon] = useState<string | null>(null);
+  const [appearanceItem, setAppearanceItem] = useState<FileItem | null>(null);
+  useEffect(() => {
+    const changed = (event: Event) => {
+      const { id, appearance } = (event as CustomEvent<{ id: string; appearance: ItemAppearance }>)
+        .detail;
+      const update = (items: FileItem[]) =>
+        items.map((item) => (item.id === id ? { ...item, appearance } : item));
+      // Metadata saves must not remount a live native editor or discard an open draft.
+      setItems(update);
+      setViewed(update);
+      views.current = Object.fromEntries(
+        Object.entries(views.current).map(([key, items]) => [key, update(items)]),
+      );
+    };
+    window.addEventListener('spinel-appearance-changed', changed);
+    return () => window.removeEventListener('spinel-appearance-changed', changed);
+  }, []);
   const [kind, setKind] = useState<FileKind>('folder');
   const [destination, setDestination] = useState('');
   const [moveFolders, setMoveFolders] = useState<WorkspaceItem[]>([]);
@@ -532,6 +555,8 @@ export function Dashboard({
   function edit(mode: Action['mode'], item?: FileItem, newKind: FileKind = 'folder') {
     setAction({ mode, item });
     setName(item?.name ?? '');
+    setNewIcon(null);
+    setNewIconColor(null);
     setKind(newKind);
     setDestination(
       mode === 'relocate-creation'
@@ -561,13 +586,22 @@ export function Dashboard({
       }
       const creatingLocally = action.mode === 'new' && localCreation;
       const item = creatingLocally
-        ? await offline.create(name, kind === 'sheet' ? 'sheet' : 'doc', currentId)
+        ? await offline.create(name, kind === 'sheet' ? 'sheet' : 'doc', currentId, {
+            icon: newIcon,
+            iconColor: newIconColor,
+          })
         : (
             await itemsRequest<{ item: FileItem }>(
               action.mode === 'new' ? '' : `/${action.item!.id}`,
               action.mode === 'new' ? 'POST' : 'PATCH',
               action.mode === 'new'
-                ? { name, kind, parentId: sharedOpen ? null : currentId }
+                ? {
+                    name,
+                    kind,
+                    icon: newIcon,
+                    iconColor: newIconColor,
+                    parentId: sharedOpen ? null : currentId,
+                  }
                 : action.mode === 'rename'
                   ? { name }
                   : { parentId: destination || null },
@@ -668,6 +702,14 @@ export function Dashboard({
         });
     }
     if (canAdminister(item.access)) {
+      result.push({
+        label: 'Appearance…',
+        onClick: (trigger) => {
+          appearanceFocus.current = trigger ?? null;
+          setAppearanceItem(item);
+        },
+        disabled: busy || connection === 'offline',
+      });
       for (const mode of ['share', 'rename', 'move', 'trash'] as const) {
         result.push({
           label: { share: 'Share…', rename: 'Rename…', move: 'Move…', trash: 'Move to Trash' }[
@@ -794,7 +836,10 @@ export function Dashboard({
             </nav>
           )}
           <header className="dashboard-heading">
-            <h1>{sharedOpen ? 'Shared with me' : (current?.name ?? 'My files')}</h1>
+            <h1>
+              {current && !sharedOpen && <ItemIcon {...current} />}{' '}
+              {sharedOpen ? 'Shared with me' : (current?.name ?? 'My files')}
+            </h1>
             <div className="dashboard-heading-actions">
               {!currentId && !local && (
                 <ActionMenu
@@ -1028,6 +1073,9 @@ export function Dashboard({
       ) : (
         current && (
           <EditorFrame
+            appearanceTarget={current}
+            appearanceDisabled={!!local || Boolean(currentCreation)}
+            offlineAccountId={user.id}
             key={current.id}
             name={current.name}
             connection={local ? 'offline' : connection}
@@ -1104,6 +1152,15 @@ export function Dashboard({
           </EditorFrame>
         )
       )}
+      {appearanceItem && (
+        <ConnectedAppearanceDialog
+          key={`appearance-${appearanceItem.id}`}
+          target={appearanceItem}
+          disabled={!!local || connection === 'offline'}
+          finalFocus={() => (appearanceFocus.current?.isConnected ? appearanceFocus.current : true)}
+          close={() => setAppearanceItem(null)}
+        />
+      )}
       {action && (
         <Modal
           title={
@@ -1128,6 +1185,17 @@ export function Dashboard({
               void submit();
             }}
           >
+            {action.mode === 'new' && (
+              <IdentityChoice
+                name={name}
+                kind={kind}
+                value={newIcon}
+                onChange={setNewIcon}
+                color={newIconColor}
+                onColorChange={setNewIconColor}
+                disabled={busy}
+              />
+            )}
             {action.mode === 'new' && (
               <label>
                 Type
@@ -1278,7 +1346,7 @@ export function Dashboard({
       )}
       {sharing && (
         <Sharing
-          key={sharing.id}
+          key={`sharing-${sharing.id}`}
           item={sharing}
           onClose={() => setSharing(null)}
           finalFocus={() => (sharingFocus.current?.isConnected ? sharingFocus.current : true)}

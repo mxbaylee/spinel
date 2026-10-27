@@ -1,3 +1,4 @@
+import type { ItemAppearance } from '../../src/shared/appearance.ts';
 import type { OfflineBundle, OfflineBundleImage } from '../../src/shared/offlineBundle.ts';
 import { FILE_KINDS } from '../../src/shared/workspace.ts';
 import type { FileItem, SpaceFile, WorkspaceItem } from '../../src/shared/workspace.ts';
@@ -28,6 +29,7 @@ export type OfflineCatalog = {
   views: Record<string, FileItem[]>;
 };
 export type OfflineDownload = {
+  appearance?: ItemAppearance;
   itemId: string;
   spaceId?: string;
   name: string;
@@ -385,6 +387,9 @@ export function downloadSummary(
     (item.outbox !== undefined && !isKnownOfflineOutbox(item.outbox)) ||
     (item.recovery !== undefined && item.outbox === undefined);
   return {
+    ...(valid && object(bundle.appearance)
+      ? { appearance: bundle.appearance as unknown as ItemAppearance }
+      : {}),
     itemId,
     ...(valid && typeof bundle.spaceId === 'string' ? { spaceId: bundle.spaceId } : {}),
     name: valid ? (bundle.name as string) : 'Unavailable device copy',

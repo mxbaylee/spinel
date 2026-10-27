@@ -1,3 +1,4 @@
+import { initialIcon, readAppearances } from '../appearance/data.ts';
 import { randomUUID } from 'node:crypto';
 import { ITEM_KINDS } from '../../shared/workspace.ts';
 import type { ItemKind } from '../../shared/workspace.ts';
@@ -141,7 +142,10 @@ export class SpaceStore {
     });
   }
 
-  createRoot(actorId: string, input: { name?: unknown; parentId?: unknown }): SpaceScope {
+  createRoot(
+    actorId: string,
+    input: { name?: unknown; parentId?: unknown; iconColor?: unknown; icon?: unknown },
+  ): SpaceScope {
     return this.workspace.auth.transaction(() => {
       this.workspace.owner(actorId);
       const name = this.workspace.name(input.name);
@@ -155,6 +159,7 @@ export class SpaceStore {
           VALUES(?,?,?,'space',?,?,?)`,
         )
         .run(id, actorId, parentId, name, now, now);
+      initialIcon(this.workspace.auth.database, id, input.icon, input.iconColor);
       return resolveSpaceScope(this.workspace.auth, actorId, id, id, 'owner');
     });
   }
@@ -162,7 +167,14 @@ export class SpaceStore {
   createChild(
     actorId: string,
     spaceId: string,
-    input: { name?: unknown; kind?: unknown; parentId?: unknown; position?: unknown },
+    input: {
+      name?: unknown;
+      kind?: unknown;
+      parentId?: unknown;
+      position?: unknown;
+      iconColor?: unknown;
+      icon?: unknown;
+    },
   ): SpaceScope {
     return this.workspace.auth.transaction(() => {
       const tree = this.tree(actorId, spaceId, 'edit');
@@ -193,6 +205,7 @@ export class SpaceStore {
           spaceId,
           position,
         );
+      initialIcon(this.workspace.auth.database, id, input.icon, input.iconColor);
       siblings.splice(position, 0, id);
       this.order(spaceId, parentId, siblings, now);
       return resolveSpaceScope(this.workspace.auth, actorId, spaceId, id, 'edit');
@@ -306,9 +319,16 @@ export class SpaceStore {
     this.guestEnabled(actorId);
     const scope = resolveSpaceScope(this.workspace.auth, actorId, spaceId, spaceId, capability);
     const structure = readSpaceStructure(this.workspace.auth.database, spaceId, scope.ownerId);
+    const appearances = readAppearances(
+      this.workspace.auth.database,
+      structure.items.filter((item) => item.trashedAt === null).map((item) => item.id),
+    );
     const items: LiveMember[] = structure.items
       .filter((item) => item.trashedAt === null)
-      .map(({ trashedAt: _trashedAt, trashBatch: _trashBatch, ...item }) => item);
+      .map(({ trashedAt: _trashedAt, trashBatch: _trashBatch, ...item }) => ({
+        ...item,
+        appearance: appearances.get(item.id),
+      }));
     const byId = new Map(items.map((item) => [item.id, item]));
     const children = new Map<string, LiveMember[]>();
     for (const item of items) {

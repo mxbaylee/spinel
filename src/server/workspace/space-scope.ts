@@ -1,3 +1,5 @@
+import { readAppearance } from '../appearance/data.ts';
+import type { ItemAppearance } from '../../shared/appearance.ts';
 import { AuthError } from '../auth/store.ts';
 import type { AuthStore } from '../auth/store.ts';
 import type { ItemAccess, ItemKind } from '../../shared/workspace.ts';
@@ -6,6 +8,7 @@ import { currentGuestSession } from './guest-session.ts';
 export type SpaceCapability = 'read' | 'edit' | 'admin' | 'owner';
 
 export interface SpaceScopeItem {
+  readonly appearance?: ItemAppearance;
   readonly id: string;
   readonly parentId: string | null;
   readonly spaceId: string | null;
@@ -159,6 +162,7 @@ export function resolveSpaceScope(
 
     const project = (row: ScopeRow): SpaceScopeItem => ({
       id: row.id,
+      appearance: readAppearance(auth.database, row.id),
       // A direct Space grant does not disclose its owner's private outer folder.
       parentId:
         row.id === space.id && (isGuest || (access !== 'owner' && inherited === 0))

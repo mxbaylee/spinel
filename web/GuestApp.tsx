@@ -245,6 +245,7 @@ export function GuestApp() {
   return (
     <main className="workspace guest-workspace">
       <EditorFrame
+        appearanceTarget={{ ...item, guest: true }}
         name={item.name}
         guest
         access={item.access === 'editor' ? 'Guest editor' : 'View only'}

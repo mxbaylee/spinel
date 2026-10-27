@@ -290,12 +290,17 @@ export function useOfflineDownloads(
     }
   }
 
-  async function create(name: string, kind: 'sheet' | 'doc', parentId: string | null) {
+  async function create(
+    name: string,
+    kind: 'sheet' | 'doc',
+    parentId: string | null,
+    identity: { icon?: string | null; iconColor?: string | null } = {},
+  ) {
     const scope = preparation();
     if (!scope || preparedAccount() !== user.id)
       throw new Error('Prepare this account online before creating documents offline.');
     const item = await serially(scope, (store) =>
-      createOfflineDocument(store, name, kind, parentId, verify(scope)),
+      createOfflineDocument(store, name, kind, parentId, verify(scope), identity),
     );
     verify(scope)();
     if (!item) throw new Error('Offline storage is not available. Connect to prepare this device.');

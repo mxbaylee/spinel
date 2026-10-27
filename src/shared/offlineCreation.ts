@@ -1,6 +1,7 @@
 import { getDocsEmptySnapshot, LocaleType } from '@univerjs/core';
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
 import type { WorkspaceItem } from './workspace.ts';
+import { validColor, validIdentityIcon } from './appearance.ts';
 
 /** Saved before first editing; native edits remain in the existing checkpoint queue. */
 export interface OfflineCreationRequest {
@@ -10,6 +11,8 @@ export interface OfflineCreationRequest {
   kind: 'sheet' | 'doc';
   name: string;
   parentId: string | null;
+  icon?: string | null;
+  iconColor?: string | null;
 }
 
 export interface OfflineCreationResponse {
@@ -43,8 +46,12 @@ export function isOfflineCreationRequest(value: unknown): value is OfflineCreati
     (input.parentId === null || uuid(input.parentId)) &&
     input.parentId !== input.itemId &&
     input.parentId !== input.unitId &&
+    (input.icon == null || validIdentityIcon(input.icon)) &&
+    (input.iconColor == null || validColor(input.iconColor)) &&
     Object.keys(input).every((key) =>
-      ['version', 'itemId', 'unitId', 'kind', 'name', 'parentId'].includes(key),
+      ['version', 'itemId', 'unitId', 'kind', 'name', 'parentId', 'icon', 'iconColor'].includes(
+        key,
+      ),
     )
   );
 }

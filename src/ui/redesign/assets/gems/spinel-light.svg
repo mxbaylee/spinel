@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="4000" height="180" viewBox="0 0 4000 180" fill="none">
+<title>Spinel — soft gem facets</title>
+<rect width="4000" height="180" fill="#efd7d5"/>
+<g transform="translate(80 21) scale(1.5)">
+<polygon points="-60,-14 20,-14 34,12 7,30 -60,8" fill="#efd7d5" stroke="#efd7d5" stroke-width="0.4"/>
+<polygon points="20,-14 50,-14 50,27 34,12" fill="#f4e1d9" stroke="#f4e1d9" stroke-width="0.4"/>
+<polygon points="50,-14 122,-14 80,9 66,12 50,27" fill="#f8ebe2" stroke="#f8ebe2" stroke-width="0.4"/>
+<polygon points="122,-14 236,-14 184,38 93,30 80,9" fill="#efd7d5" stroke="#efd7d5" stroke-width="0.4"/>
+<polygon points="-60,8 7,30 15,60 -60,90" fill="#f5e2da" stroke="#f5e2da" stroke-width="0.4"/>
+<polygon points="-60,90 15,60 38,85 50,106 -60,106" fill="#e4c1c8" stroke="#e4c1c8" stroke-width="0.4"/>
+<polygon points="38,85 50,94 62,85 138,106 50,106" fill="#e2bdc5" stroke="#e2bdc5" stroke-width="0.4"/>
+<polygon points="93,30 184,38 85,60 62,85 50,94" fill="#e2bdc5" stroke="#e2bdc5" stroke-width="0.4"/>
+<polygon points="184,38 236,106 138,106 62,85 85,60" fill="#eacbd0" stroke="#eacbd0" stroke-width="0.4"/>
+<polygon points="236,-14 352,-14 296,66 184,38" fill="#f7e7dc" stroke="#f7e7dc" stroke-width="0.4"/>
+<polygon points="184,38 296,66 236,106" fill="#f2d9cf" stroke="#f2d9cf" stroke-width="0.4"/>
+<polygon points="352,-14 492,-14 422,26 296,66" fill="#efd4ce" stroke="#efd4ce" stroke-width="0.4"/>
+<polygon points="296,66 422,26 460,106 236,106" fill="#f7e7dc" stroke="#f7e7dc" stroke-width="0.4"/>
+<polygon points="492,-14 634,-14 578,74 422,26" fill="#e7c5c7" stroke="#e7c5c7" stroke-width="0.4"/>
+<polygon points="422,26 578,74 460,106" fill="#edd2d0" stroke="#edd2d0" stroke-width="0.4"/>
+<polygon points="578,74 634,-14 758,34 712,106 460,106" fill="#f3ded3" stroke="#f3ded3" stroke-width="0.4"/>
+<polygon points="634,-14 836,-14 758,34" fill="#f8eade" stroke="#f8eade" stroke-width="0.4"/>
+<polygon points="758,34 836,-14 948,106 712,106" fill="#efd7d5" stroke="#efd7d5" stroke-width="0.4"/>
+<polygon points="836,-14 1080,-14 1022,48 948,106" fill="#e6c4c8" stroke="#e6c4c8" stroke-width="0.4"/>
+<polygon points="948,106 1022,48 2700,106" fill="#f4dfd7" stroke="#f4dfd7" stroke-width="0.4"/>
+<polygon points="1080,-14 2700,-14 2700,106 1022,48" fill="#f7e7dc" stroke="#f7e7dc" stroke-width="0.4"/>
+<defs><clipPath id="gem"><path d="M50 27C44 13 31 6 20 9 8 12 2 24 4 37 7 56 29 76 50 94 71 76 93 56 96 37 98 24 92 12 80 9 69 6 56 13 50 27Z"/></clipPath></defs>
+<g clip-path="url(#gem)">
+<path d="M50 27C44 13 31 6 20 9 8 12 2 24 4 37 7 56 29 76 50 94 71 76 93 56 96 37 98 24 92 12 80 9 69 6 56 13 50 27Z" fill="#eacbd0"/>
+<path d="M20 -10L50 -10L50 22L34 12Z" fill="#eacbd0" stroke="#eacbd0" stroke-width="0.4"/>
+<path d="M50 -10L80 -10L66 12L50 22Z" fill="#e2bdc5" stroke="#e2bdc5" stroke-width="0.4"/>
+<path d="M20 -10L34 12L7 30L-10 20Z" fill="#eacbd0" stroke="#eacbd0" stroke-width="0.4"/>
+<path d="M80 -10L110 20L93 30L66 12Z" fill="#e2bdc5" stroke="#e2bdc5" stroke-width="0.4"/>
+<path d="M-10 20L7 30L15 60L-10 62Z" fill="#efd7d5" stroke="#efd7d5" stroke-width="0.4"/>
+<path d="M-10 62L15 60L38 85L50 94L50 110Z" fill="#eacbd0" stroke="#eacbd0" stroke-width="0.4"/>
+<path d="M110 20L110 62L85 60L93 30Z" fill="#e2bdc5" stroke="#e2bdc5" stroke-width="0.4"/>
+<path d="M110 62L50 110L50 94L62 85L85 60Z" fill="#d8afb9" stroke="#d8afb9" stroke-width="0.4"/>
+<path d="M23 33L34 12L50 22Z" fill="#efd7d5" stroke="#efd7d5" stroke-width="0.4"/>
+<path d="M50 22L66 12L77 33Z" fill="#eacbd0" stroke="#eacbd0" stroke-width="0.4"/>
+<path d="M23 33L50 22L77 33Z" fill="#e2bdc5" stroke="#e2bdc5" stroke-width="0.4"/>
+<path d="M7 30L34 12L23 33Z" fill="#f4e1d9" stroke="#f4e1d9" stroke-width="0.4"/>
+<path d="M77 33L66 12L93 30Z" fill="#e2bdc5" stroke="#e2bdc5" stroke-width="0.4"/>
+<path d="M7 30L23 33L15 60Z" fill="#f8ebe2" stroke="#f8ebe2" stroke-width="0.4"/>
+<path d="M15 60L23 33L50 80Z" fill="#f4e1d9" stroke="#f4e1d9" stroke-width="0.4"/>
+<path d="M15 60L50 80L38 85Z" fill="#eacbd0" stroke="#eacbd0" stroke-width="0.4"/>
+<path d="M93 30L85 60L77 33Z" fill="#eacbd0" stroke="#eacbd0" stroke-width="0.4"/>
+<path d="M85 60L50 80L77 33Z" fill="#d8afb9" stroke="#d8afb9" stroke-width="0.4"/>
+<path d="M85 60L62 85L50 80Z" fill="#e2bdc5" stroke="#e2bdc5" stroke-width="0.4"/>
+<path d="M38 85L50 80L50 94Z" fill="#e2bdc5" stroke="#e2bdc5" stroke-width="0.4"/>
+<path d="M50 80L62 85L50 94Z" fill="#d8afb9" stroke="#d8afb9" stroke-width="0.4"/>
+<path d="M23 33L77 33L50 80Z" fill="#efd7d5" stroke="#efd7d5" stroke-width="0.4"/>
+</g></g></svg>

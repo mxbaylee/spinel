@@ -4,7 +4,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { faviconSvg } from '../../src/ui/favicon.ts';
-import { stampStorybook } from './storybook-identity.ts';
+import { stampStorybook, validateRedesignStories } from './storybook-identity.ts';
 
 test('a published build identifies its source and replaces both competing favicons', () => {
   const directory = mkdtempSync(join(tmpdir(), 'storybook-identity-'));
@@ -37,4 +37,24 @@ test('a published build identifies its source and replaces both competing favico
   } finally {
     rmSync(directory, { recursive: true, force: true });
   }
+});
+
+test('Redesign examples require an open ticket and disappear when its ticket lands', () => {
+  const pending = { preview: { type: 'story', title: 'Redesign/SPN-066 Guest links' } };
+  assert.doesNotThrow(() => validateRedesignStories(pending, ['SPN-066']));
+  assert.throws(() => validateRedesignStories(pending, []), /open owning ticket/);
+  assert.throws(
+    () =>
+      validateRedesignStories({ old: { type: 'story', title: 'Redesign/Walkthrough' } }, [
+        'SPN-066',
+      ]),
+    /open owning ticket/,
+  );
+  // The final migration may leave no Redesign examples at all.
+  assert.doesNotThrow(() =>
+    validateRedesignStories(
+      { frame: { type: 'story', title: 'Current production/Editor/Frame' } },
+      [],
+    ),
+  );
 });

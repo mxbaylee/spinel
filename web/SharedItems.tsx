@@ -45,6 +45,7 @@ export function useSharedItems(offline?: FileItem[]) {
       if (!document.hidden) void refresh();
     };
     window.addEventListener('focus', visible);
+    window.addEventListener('spinel-appearance-changed', visible);
     document.addEventListener('visibilitychange', visible);
     const timer = window.setInterval(visible, 5000);
     return () => {
@@ -52,6 +53,7 @@ export function useSharedItems(offline?: FileItem[]) {
       generation.current++;
       window.clearInterval(timer);
       window.removeEventListener('focus', visible);
+      window.removeEventListener('spinel-appearance-changed', visible);
       document.removeEventListener('visibilitychange', visible);
     };
   }, []);

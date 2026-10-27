@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { faviconSvg } from '../../src/ui/favicon.ts';
 
@@ -11,6 +11,19 @@ export type StorybookIdentity = {
   workflowUrl: string | null;
   builtAt: string;
 };
+
+/** A proposal cannot outlive its implementation ticket or hide behind a generic group. */
+export function validateRedesignStories(
+  entries: Record<string, { type: string; title: string }>,
+  openTickets: readonly string[],
+) {
+  for (const [id, entry] of Object.entries(entries)) {
+    if (entry.type !== 'story' || !entry.title.startsWith('Redesign/')) continue;
+    const ticket = /^Redesign\/(SPN-\d{3,}) /.exec(entry.title)?.[1];
+    if (!ticket || !openTickets.includes(ticket))
+      throw new Error(`${id}: Redesign stories must name an open owning ticket in their title.`);
+  }
+}
 
 export function stampStorybook(directory: string, identity: StorybookIdentity) {
   if (![identity.sha, identity.checkedOutSha].every((sha) => /^[a-f0-9]{40}$/.test(sha))) {
@@ -37,6 +50,13 @@ export function stampStorybook(directory: string, identity: StorybookIdentity) {
 }
 
 if (import.meta.main) {
+  const index = JSON.parse(readFileSync('storybook-static/index.json', 'utf8'));
+  validateRedesignStories(
+    index.entries,
+    readdirSync('docs/todo')
+      .filter((name) => /^SPN-\d+\.md$/.test(name))
+      .map((name) => name.slice(0, -3)),
+  );
   const checkedOutSha = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
   const event = process.env.GITHUB_EVENT_PATH
     ? JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'))

@@ -8,6 +8,7 @@ import type {
 } from '../../src/shared/offlineCreation.ts';
 import type { OfflineBundle } from '../../src/shared/offlineBundle.ts';
 import type { WorkspaceItem } from '../../src/shared/workspace.ts';
+import { emptyAppearance } from '../../src/shared/appearance.ts';
 import { OFFLINE_SDK_VERSION } from './OfflineAccess.ts';
 import { accountRuntimeReadiness } from './runtime.ts';
 import { creationFolderAllowed, preparedAccount } from './offlineStore.ts';
@@ -22,6 +23,12 @@ export function creationFile(creation: OfflineCreation): WorkspaceItem {
     name: request.name,
     access: 'owner',
     tags: [],
+    appearance: {
+      ...emptyAppearance(),
+      revision: request.icon != null || request.iconColor != null ? 1 : 0,
+      icon: request.icon ?? null,
+      iconColor: request.iconColor ?? null,
+    },
     createdAt,
     updatedAt: createdAt,
   };
@@ -34,6 +41,7 @@ export async function createOfflineDocument(
   kind: 'sheet' | 'doc',
   parentId: string | null,
   verifyCurrent: () => void,
+  identity: Pick<OfflineCreationRequest, 'icon' | 'iconColor'> = {},
 ) {
   verifyCurrent();
   if (preparedAccount() !== store.accountId || !navigator.locks)
@@ -57,6 +65,8 @@ export async function createOfflineDocument(
     name: name.trim(),
     kind,
     parentId,
+    icon: identity.icon ?? null,
+    iconColor: identity.iconColor ?? null,
   };
   if (!isOfflineCreationRequest(request))
     throw new Error('Choose a name of 1–120 characters without slashes or control characters.');
@@ -74,6 +84,7 @@ export async function createOfflineDocument(
     readOnly: false,
     sdkVersion: OFFLINE_SDK_VERSION,
     images: [],
+    appearance: creationFile(creation).appearance,
     snapshot: blankOfflineSnapshot(request),
   } as OfflineBundle;
   await store.saveCreation(bundle, creation, verifyCurrent);

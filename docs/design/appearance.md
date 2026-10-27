@@ -1,77 +1,102 @@
-# Covers and Space accents — exploration
+# Item appearance
 
-Owner requested interactive Storybook drafts on 2026-10-22, during grooming.
-These are rough design candidates, not approved production behavior. The owner
-subsequently placed all personalization in pre-launch SPN-086; see its
-[decisions and design handoff](../implementation/SPN-086.md). The non-Spinel gem
-artwork needs a stronger iteration before implementation approval.
+Docs, Sheets and Spaces always have an identity icon. Creation offers the same
+searchable picker for icons and emojis as editing appearance later. Names,
+keywords and common typos search both kinds together; pasting one emoji selects
+that exact character, including skin tones and joined sequences. The Emojis
+category narrows browsing. Leaving the choice
+untouched, or using Reset icon, uses the NFC-normalized filename hash and the
+existing flower/plant palette. A custom icon persists through rename. Folders
+keep a folder glyph by default. Selecting a line icon for any item exposes
+**Icon color** beside the identity choice, using a small rounded tile and contrasting paired ink from the existing theme-aware fill
+presets. Creation and editing share the control, show the selected color in the
+preview, and persist it across lists, editor headers and offline copies. Reset
+color restores the inherited color without changing the icon. Emojis retain
+their native colors and hide the tint controls; returning to a line icon reuses
+the saved color. Earlier saved folder colors remain readable as icon colors;
+type, access and save indicators remain separate from identity.
 
-Open **Redesign → Appearance**. The stories reuse the full-editor chrome and
-native Doc/Sheet engines, including a native editor inside the Space tree.
-Start with Gems Collection or Spinel Soft Banner; compare the twelve Space accents; standalone Doc/Sheet gem
-and photo covers; and Doc In Space With Banner. Theme switching also works.
+Appearance lives in item metadata, independent of native document snapshots.
+Outer files and Space roots use owner/file-admin metadata authority. Space
+children use the existing Space edit authority, including an editor link within
+that exact Space. Ordinary document link guests cannot change metadata. All
+reads, asset reads and writes recheck current account/link access; an Operator
+has no document access. Open appearance dialogs detect conflicting revisions
+instead of overwriting another device's changes.
 
-## Draft interaction
+## Page covers
 
-- A Space accent colors navigation selection, focus and controls. It never
-  recolors an independently chosen page cover, document text or spreadsheet cells.
-- Each page can have a cover above its existing emoji/title/save row. Scroll
-  past the cover to recover editor space; there is no automatic collapse on typing.
-- **Space appearance** opens twelve accent choices. **Change cover** opens
-  Gems, Upload and Unsplash. All controls are visible on touch screens.
-- Gems offers one soft, borderless cover per character-inspired gem. Spinel reuses
-  the owner's approved heart artwork; the other cuts interpret square Ruby,
-  three-plane Jasper, Yellow Diamond, triangular Peridot, oval Sapphire,
-  teardrop Lapis, hexagonal Amethyst, round Rose Quartz, luminous Pearl, angular
-  Obsidian and stepped multicolor Bismuth. These are original geometric drafts.
-- Both pickers follow the rainbow: Ruby, Jasper, Yellow Diamond, Peridot,
-  Sapphire, Lapis, Amethyst, Spinel; then Rose Quartz, Pearl, Obsidian and Bismuth.
-  Bismuth's multicolor swatch uses a single readable teal for controls. Pearl's
-  cream cover uses a darker warm neutral accent for readable controls.
-- The initial cover matches the story's accent; changing the accent subsequently
-  never changes any cover. These drafts use one image shared across light and dark
-  mode. SPN-086 also supports optional separate light/dark images for any cover
-  source; one shared image remains a valid choice, including for Gems. See the
-  [theme-variant decision](../implementation/SPN-086.md#optional-cover-theme-variants).
-- Remove cover returns to Add cover. Page switching retains independent choices
-  and native editor snapshots for the lifetime of the story.
-- Upload previews a local JPG/PNG/WebP, with file validation and vertical crop
-  adjustment. It makes no request and disappears when the story reloads.
-- Unsplash uses an attributed bundled sample with a small local search filter.
-  Live search, provider integration, storage and production authorization are
-  outside this prototype. The sample is not evidence of a working integration.
+Docs and Sheets, standalone or inside Spaces, have independent page covers.
+The cover sits above the title and scrolls completely out of view while the
+native editor stays mounted. The picker has one viewport-bounded height across
+**Gems / Upload / Unsplash**, with a stable preview, position and action area.
+Only the options scroll on ordinary-height screens; the complete picker can
+scroll on short screens. Failed replacements preserve the saved cover.
 
-## Personas and decisions still to make
+Gems always follow the active light/dark mode; the only choice is the gem name.
+Uploads and Unsplash offer one shared
+image or a light/dark pair, with deliberate colors and a vertical crop control.
+Theme changes select an existing variant and never rewrite saved appearance.
 
-Owner gains recognizable personal spaces; Collaborator gets stable navigation
-and unchanged authored colors; Link guest needs the same readable identity without
-extra account information or appearance permissions; Operator gets no new access
-or external service in these local-only stories. Existing permission policies are
-unchanged. Who may change Space accents and child covers needs explicit production
-acceptance, including guest behavior and asset access/revocation.
+The preset order is Ruby, Jasper, Yellow Diamond, Peridot, Sapphire, Lapis,
+Amethyst, Spinel, Rose Quartz, Pearl, Obsidian and Bismuth. Gem shapes echo into
+nearby background facets, and left-aligned crops retain the focal gem at every
+width. Spinel alone reverses its heart and background orientation in dark mode.
+The original approved light Spinel remains unchanged. See the
+[reference artwork and per-pair rubric](review/spn-086/README.md).
 
-Final facet artwork, cover height/cropping and the treatment of
-Space-root covers remain decisions for the implementing agent, using all personas
-and independent theme review of the designs and screenshots embedded on the PR. The prototype uses the existing
-theme surfaces, twelve proposed accent pairs in `src/ui/palette.ts`, and AA contrast
-checks. Full-editor toolbar/canvas behavior is retained; the optional cover adds
-an outer scroll region that must be judged on desktop and phone.
+## Upload and provider boundaries
 
-## Photo fixture
+Uploads accept static PNG, JPEG or WebP up to 8 MiB and 16 megapixels. The server
+fully decodes, strips metadata, rotates and normalizes to WebP up to 4096 px.
+An item may retain at most 16 MiB across variants; a current owner may retain
+100 MiB. Storage-reducing changes remain possible after ownership transfers
+exceed quota. Transfer admission and decode concurrency bound transient memory.
+Assets are content-hashed, item-scoped database blobs served through authorized,
+no-store routes. Replacement/removal deletes unreferenced cover blobs in the
+same transaction. Trash retains them; restore returns them; permanent deletion
+cascades. Ownership handover follows the current item's owner automatically.
 
-`src/ui/redesign/assets/coast.jpg`: “Coastal cliffs meet the ocean under a cloudy
-sky”, [Jon Matthews on Unsplash](https://unsplash.com/photos/e0-Qsr4vIzo), under
-the [Unsplash License](https://unsplash.com/license). Resized to 1600 px for this
-offline review fixture. Credits remain visible in the picker and photo cover.
+Live Unsplash search requires the server environment variable
+`UNSPLASH_ACCESS_KEY`. Without it the picker reports that it is unavailable and
+offers Gems or Upload. The server searches and resolves selected IDs, validates
+provider hosts, preserves returned image hotlinks and reports the provider's
+selection/download event. Provider errors never replace the previous cover.
+Search and result bytes are bounded. The private selection metadata follows
+item permissions; Unsplash photographs themselves are public provider content.
 
-## Owner refinement, 2026-10-22
+Attribution is small white text over the image, with a subtle shadow and **no
+badge background**. Photographer and Unsplash links remain available on keyboard
+and touch. Search results also credit their photographer and Unsplash. Links use
+`utm_source=spinel&utm_medium=referral`. Provider images are never proxied into
+private upload storage. See the [attribution decision](../implementation/SPN-086.md#quiet-photo-attribution).
 
-The owner approved the soft Spinel SVG before deployment, then requested the
-complete collection plus Rose Quartz, Pearl, Obsidian and Bismuth in Storybook.
-The new covers preserve that quiet field and left-side focal gem. This gives the
-Owner more identity choices while Collaborator and Link guest retain readable
-controls and unchanged authored content. Operator has no new provider or service.
-The additional gem artwork requires further iteration. Spinel is the site-wide
-default; Space accents also override browser text-selection colors (`::selection`)
-inside the Space, without changing authored formatting. This selection behavior
-is an implementation handoff in SPN-086, not yet wired into this fixture.
+## Space accents and offline behavior
+
+Space accents change navigation, application controls and browser text-selection
+foreground/background colors. Native editor surfaces and authored formatting
+retain the base theme. Leaving a Space restores the active theme's Spinel tokens;
+semantic success/warning/error colors and exports remain unchanged. Covers are
+independent of accents.
+
+Account-only offline downloads include appearance metadata and uploaded cover
+bytes, verified by hash before the atomic device save. Gems render locally.
+Unsplash covers show a connection-required placeholder offline, without a remote
+fallback. Removing a downloaded document removes its saved cover too. Existing
+offline revocation policy applies to account copies; guests cannot download.
+Native file exports omit decorative appearance, while full database backups
+retain it.
+
+## Review surfaces
+
+**Redesign / Appearance / Playground** uses the production controls with local,
+explicitly labeled save fixtures. Controls switch item kind, starting gem and
+save failure. Upload fixture bytes remain local; live Unsplash is exercised in
+the application. **Gems Light And Dark** displays every artwork pair with desktop
+and phone crops. Production browser tests capture current editor and picker
+screens in light, dark and phone widths. Agent visual review is independent of
+owner approval; the PR records current-commit scores and findings.
+
+The cover modal keeps the same height across sources. Gem choices expand into
+the space used by photo positioning controls, with only the normal layout gap
+before the footer. Photo sliders fit the content width without horizontal scrolling.

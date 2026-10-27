@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 import { getPreference, setPreference } from '../theme.ts';
-import { ThemeMenu } from './Mockups.tsx';
+import { ThemeMenu } from './ThemeMenu.tsx';
 
 /** Exercise the real theme store while only localStorage writes are blocked. */
 function BlockedStorage({ children }: { children: ReactNode }) {
@@ -39,7 +39,8 @@ function BlockedStorage({ children }: { children: ReactNode }) {
   return children;
 }
 const meta = {
-  title: 'Redesign/Theme control',
+  id: 'redesign-theme-control',
+  title: 'Current production/Shell/Theme control',
   component: ThemeMenu,
   decorators: [
     (Story) => (

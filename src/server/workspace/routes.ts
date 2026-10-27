@@ -250,7 +250,16 @@ export function workspaceRoutes(
     if (!creations) throw new AuthError(503, 'Offline creation is not available.');
     const result = creations.create(
       user,
-      payload(request, ['version', 'itemId', 'unitId', 'kind', 'name', 'parentId']),
+      payload(request, [
+        'version',
+        'itemId',
+        'unitId',
+        'kind',
+        'name',
+        'parentId',
+        'icon',
+        'iconColor',
+      ]),
       () => {
         if (owner(request) !== user || response.destroyed)
           throw new AuthError(401, 'Sign in to continue.');
@@ -361,7 +370,10 @@ export function workspaceRoutes(
   });
   router.post('/', (request, response) =>
     response.status(201).json({
-      item: catalog.create(owner(request), payload(request, ['name', 'kind', 'parentId'])),
+      item: catalog.create(
+        owner(request),
+        payload(request, ['name', 'kind', 'parentId', 'icon', 'iconColor']),
+      ),
     }),
   );
   router.patch('/:id', (request, response) =>

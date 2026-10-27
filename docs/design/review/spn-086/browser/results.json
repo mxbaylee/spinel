@@ -1,0 +1,1069 @@
+{
+  "stories": [
+    {
+      "id": "gem-collection-theme-switch",
+      "finished": [
+        {
+          "storyId": "redesign-appearance--gem-collection-theme-switch",
+          "status": "success",
+          "reporters": []
+        }
+      ],
+      "overflow": false,
+      "images": [
+        {
+          "gem": "ruby",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "jasper",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "yellowDiamond",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "peridot",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "sapphire",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "lapis",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "amethyst",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "spinel",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "roseQuartz",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "pearl",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "obsidian",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "bismuth",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "gems-light-and-dark",
+      "finished": [
+        {
+          "storyId": "redesign-appearance--gems-light-and-dark",
+          "status": "success",
+          "reporters": []
+        }
+      ],
+      "overflow": false,
+      "images": [
+        {
+          "gem": "ruby",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "ruby",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "ruby",
+          "mode": "dark",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "ruby",
+          "mode": "dark",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "jasper",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "jasper",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "jasper",
+          "mode": "dark",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "jasper",
+          "mode": "dark",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "yellowDiamond",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "yellowDiamond",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "yellowDiamond",
+          "mode": "dark",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "yellowDiamond",
+          "mode": "dark",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "peridot",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "peridot",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "peridot",
+          "mode": "dark",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "peridot",
+          "mode": "dark",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "sapphire",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "sapphire",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "sapphire",
+          "mode": "dark",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "sapphire",
+          "mode": "dark",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "lapis",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "lapis",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "lapis",
+          "mode": "dark",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "lapis",
+          "mode": "dark",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "amethyst",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "amethyst",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "amethyst",
+          "mode": "dark",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "amethyst",
+          "mode": "dark",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "spinel",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "spinel",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "spinel",
+          "mode": "dark",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "spinel",
+          "mode": "dark",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "roseQuartz",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "roseQuartz",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "roseQuartz",
+          "mode": "dark",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "roseQuartz",
+          "mode": "dark",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "pearl",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "pearl",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "pearl",
+          "mode": "dark",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "pearl",
+          "mode": "dark",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "obsidian",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "obsidian",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "obsidian",
+          "mode": "dark",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "obsidian",
+          "mode": "dark",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "bismuth",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "bismuth",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "bismuth",
+          "mode": "dark",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "bismuth",
+          "mode": "dark",
+          "complete": true,
+          "width": 4000
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "gem-picker-theme-switch",
+      "finished": [
+        {
+          "storyId": "redesign-appearance--gem-picker-theme-switch",
+          "status": "success",
+          "reporters": []
+        }
+      ],
+      "overflow": false,
+      "images": [
+        {
+          "gem": "amethyst",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "amethyst",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "ruby",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "jasper",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "yellowDiamond",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "peridot",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "sapphire",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "lapis",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "amethyst",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "spinel",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "roseQuartz",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "pearl",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "obsidian",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        },
+        {
+          "gem": "bismuth",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "shared-photo-theme-switch",
+      "finished": [
+        {
+          "storyId": "redesign-appearance--shared-photo-theme-switch",
+          "status": "success",
+          "reporters": []
+        }
+      ],
+      "overflow": false,
+      "images": [],
+      "errors": []
+    },
+    {
+      "id": "choose-bismuth-cover",
+      "finished": [
+        {
+          "storyId": "redesign-appearance--choose-bismuth-cover",
+          "status": "success",
+          "reporters": []
+        }
+      ],
+      "overflow": false,
+      "images": [
+        {
+          "gem": "bismuth",
+          "mode": "light",
+          "complete": true,
+          "width": 4000
+        }
+      ],
+      "errors": []
+    }
+  ],
+  "captures": [
+    {
+      "filename": "pairs-390.png",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "filename": "pairs-1280.png",
+      "width": 1280,
+      "overflow": false
+    },
+    {
+      "filename": "pairs-2560.png",
+      "width": 2560,
+      "overflow": false
+    }
+  ],
+  "thumbnails": [
+    {
+      "gem": "ruby",
+      "mode": "light",
+      "viewport": 390,
+      "width": 132,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "jasper",
+      "mode": "light",
+      "viewport": 390,
+      "width": 132,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "yellowDiamond",
+      "mode": "light",
+      "viewport": 390,
+      "width": 132,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "peridot",
+      "mode": "light",
+      "viewport": 390,
+      "width": 132,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "sapphire",
+      "mode": "light",
+      "viewport": 390,
+      "width": 132,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "lapis",
+      "mode": "light",
+      "viewport": 390,
+      "width": 132,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "amethyst",
+      "mode": "light",
+      "viewport": 390,
+      "width": 132,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "spinel",
+      "mode": "light",
+      "viewport": 390,
+      "width": 132,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "roseQuartz",
+      "mode": "light",
+      "viewport": 390,
+      "width": 132,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "pearl",
+      "mode": "light",
+      "viewport": 390,
+      "width": 132,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "obsidian",
+      "mode": "light",
+      "viewport": 390,
+      "width": 132,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "bismuth",
+      "mode": "light",
+      "viewport": 390,
+      "width": 132,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "ruby",
+      "mode": "dark",
+      "viewport": 390,
+      "width": 132,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "jasper",
+      "mode": "dark",
+      "viewport": 390,
+      "width": 132,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "yellowDiamond",
+      "mode": "dark",
+      "viewport": 390,
+      "width": 132,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "peridot",
+      "mode": "dark",
+      "viewport": 390,
+      "width": 132,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "sapphire",
+      "mode": "dark",
+      "viewport": 390,
+      "width": 132,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "lapis",
+      "mode": "dark",
+      "viewport": 390,
+      "width": 132,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "amethyst",
+      "mode": "dark",
+      "viewport": 390,
+      "width": 132,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "spinel",
+      "mode": "dark",
+      "viewport": 390,
+      "width": 132,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "roseQuartz",
+      "mode": "dark",
+      "viewport": 390,
+      "width": 132,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "pearl",
+      "mode": "dark",
+      "viewport": 390,
+      "width": 132,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "obsidian",
+      "mode": "dark",
+      "viewport": 390,
+      "width": 132,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "bismuth",
+      "mode": "dark",
+      "viewport": 390,
+      "width": 132,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "ruby",
+      "mode": "light",
+      "viewport": 1280,
+      "width": 193,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "jasper",
+      "mode": "light",
+      "viewport": 1280,
+      "width": 193,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "yellowDiamond",
+      "mode": "light",
+      "viewport": 1280,
+      "width": 193,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "peridot",
+      "mode": "light",
+      "viewport": 1280,
+      "width": 193,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "sapphire",
+      "mode": "light",
+      "viewport": 1280,
+      "width": 193,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "lapis",
+      "mode": "light",
+      "viewport": 1280,
+      "width": 193,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "amethyst",
+      "mode": "light",
+      "viewport": 1280,
+      "width": 193,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "spinel",
+      "mode": "light",
+      "viewport": 1280,
+      "width": 193,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "roseQuartz",
+      "mode": "light",
+      "viewport": 1280,
+      "width": 193,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "pearl",
+      "mode": "light",
+      "viewport": 1280,
+      "width": 193,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "obsidian",
+      "mode": "light",
+      "viewport": 1280,
+      "width": 193,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "bismuth",
+      "mode": "light",
+      "viewport": 1280,
+      "width": 193,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "ruby",
+      "mode": "dark",
+      "viewport": 1280,
+      "width": 193,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "jasper",
+      "mode": "dark",
+      "viewport": 1280,
+      "width": 193,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "yellowDiamond",
+      "mode": "dark",
+      "viewport": 1280,
+      "width": 193,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "peridot",
+      "mode": "dark",
+      "viewport": 1280,
+      "width": 193,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "sapphire",
+      "mode": "dark",
+      "viewport": 1280,
+      "width": 193,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "lapis",
+      "mode": "dark",
+      "viewport": 1280,
+      "width": 193,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "amethyst",
+      "mode": "dark",
+      "viewport": 1280,
+      "width": 193,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "spinel",
+      "mode": "dark",
+      "viewport": 1280,
+      "width": 193,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "roseQuartz",
+      "mode": "dark",
+      "viewport": 1280,
+      "width": 193,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "pearl",
+      "mode": "dark",
+      "viewport": 1280,
+      "width": 193,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "obsidian",
+      "mode": "dark",
+      "viewport": 1280,
+      "width": 193,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    },
+    {
+      "gem": "bismuth",
+      "mode": "dark",
+      "viewport": 1280,
+      "width": 193,
+      "height": 80,
+      "naturalWidth": 4000,
+      "complete": true,
+      "objectPosition": "0% 50%"
+    }
+  ],
+  "spinelLightPixelsIdentical": true,
+  "assetsExactlyReproducible": true,
+  "sourceHashes": {
+    "src/ui/redesign/gemCovers.ts": "585e40e92b30c5521f929e7484fe539acd12234076cf5190565563a721b8e3c6",
+    "src/ui/redesign/spinelCover.ts": "51fa19ea739ed1e8e078ea538c042b1c094420505b7912aa241805d27e04c5d5",
+    "src/ui/redesign/AppearanceReview.tsx": "1f1a90825539c9d5b8e2426ff167fdc166c02576c9446b606378f49af6ac55bc",
+    "src/ui/redesign/AppearanceReview.stories.tsx": "91d196b1f7d9b3bfbd469b83b3679476a797137f412d3693118fdde0292561c2",
+    "src/ui/redesign/appearanceReview.css": "7c7bbfeb05178235dd7517b8ebf971974e78ab2b6745cce6d23ea8b27e7f833f"
+  },
+  "assetHashes": {
+    "src/ui/redesign/assets/gems/ruby-light.svg": "58856d0c2a3e7c54b3ee33f65b2562e1425d42eb6a9559b01084c2ec5067c073",
+    "src/ui/redesign/assets/gems/ruby-dark.svg": "fefb8d37c2462c7c28ed999a6962fc3337e62b728505656ecd0ba9ed9640d975",
+    "src/ui/redesign/assets/gems/jasper-light.svg": "249aaaac3c29b7addcea5f04fda33430770d562b607db7fc28c3b11e2963dbd3",
+    "src/ui/redesign/assets/gems/jasper-dark.svg": "098ff6a1463cb121df48f6c5c56a5413b4123808d0b9f34bae2cd30c38a6a43e",
+    "src/ui/redesign/assets/gems/yellowDiamond-light.svg": "f4d2fab11e094141031f54f7713c65fb0627a4fb3f1e2ce529c1f740aa242f6a",
+    "src/ui/redesign/assets/gems/yellowDiamond-dark.svg": "9a50ae3c6bb2c577665c2b781cca519a33d3362abe8ecfbc914c2f45a9ccfdd9",
+    "src/ui/redesign/assets/gems/peridot-light.svg": "d06a7ad70599da59efc4cab4ec17753aeff6dcf95f06b4c15d323b82afb2fd98",
+    "src/ui/redesign/assets/gems/peridot-dark.svg": "6558af829d63bab601cc9a5106be8b28909f9d8484b8303dcc91fade7530941f",
+    "src/ui/redesign/assets/gems/sapphire-light.svg": "8fde397f29274a8c82d65a621413d08fd25a1a6da87023ffd519cf4d83762b1e",
+    "src/ui/redesign/assets/gems/sapphire-dark.svg": "8efa984a5ba1479bf07e7a76082d337965ca4fa1bd8ce1849c1988725c0de78d",
+    "src/ui/redesign/assets/gems/lapis-light.svg": "09a035d67516eaaa6cbb8bd60ec440f3d1ce415cd10dc06e2dd808a8815c133b",
+    "src/ui/redesign/assets/gems/lapis-dark.svg": "4e41d70bd970f956962883cd38f4608659deb8ad814175a4aadae72f8fa9f506",
+    "src/ui/redesign/assets/gems/amethyst-light.svg": "c9e515743fc07006372ffc5f1e60489199724ba78e53907c418aa690114774ae",
+    "src/ui/redesign/assets/gems/amethyst-dark.svg": "9ffecaf07184635560569211b9a5c7f3244e8d237553b621522a2d6d9e327d0c",
+    "src/ui/redesign/assets/gems/spinel-light.svg": "d85921b44fac8ebbc19b7812218dafb2e9ca99c89502a45d3bd9c4e0994ccb41",
+    "src/ui/redesign/assets/gems/spinel-dark.svg": "894291deabd6aaf1336b3851ca839fbd4d1a4e59dbf557d63b1632e454db4e80",
+    "src/ui/redesign/assets/gems/roseQuartz-light.svg": "28254694823dbd5fa553a98fb433a39b9ecfa6478a3d72f29d6dc69626b03aa3",
+    "src/ui/redesign/assets/gems/roseQuartz-dark.svg": "88c00ec277e9148825804ab9f44fbe18da96a74f950de3f57fd7c5dc89871b56",
+    "src/ui/redesign/assets/gems/pearl-light.svg": "349e0c7de481693a6cece3579820a393449cecb4e0b59136975b4f60109c99ea",
+    "src/ui/redesign/assets/gems/pearl-dark.svg": "563edf6b7e5d9d08b4d84d1b771a3eaf158b0ada3f12f9b69833c7eaf5c88cbb",
+    "src/ui/redesign/assets/gems/obsidian-light.svg": "46e5aef4b3317a7463c201e6ebaa860da45c32996138ea89ff4381259a823766",
+    "src/ui/redesign/assets/gems/obsidian-dark.svg": "8d234cd4f4d1e47d361225898c0bd8d4a589db51558cc69586aa7f3b82596013",
+    "src/ui/redesign/assets/gems/bismuth-light.svg": "2d2ba1048e93255ac3a35086a1ebd15bd8807fc12f954800274deb192c849726",
+    "src/ui/redesign/assets/gems/bismuth-dark.svg": "65ffe45362fe796d5ac825ac01193f4a3daf39120ab78d7cff0723195785768a"
+  },
+  "refreshStatus": "All gallery, desktop pairs, picker context and 48 thumbnail captures refreshed for current source hashes. Collection/gallery/picker theme stories rerun successfully.",
+  "currentPickerStory": {
+    "finished": [
+      {
+        "storyId": "redesign-appearance--gem-picker-theme-switch",
+        "status": "success",
+        "reporters": []
+      }
+    ],
+    "errors": []
+  },
+  "sourcesUnchangedDuringCapture": true
+}

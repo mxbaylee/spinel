@@ -1,3 +1,4 @@
+import { ItemIcon, useSpaceAccent } from './Appearance.tsx';
 import { EditorFrame } from './EditorFrame.tsx';
 import { lazy, Suspense, useEffect, useLayoutEffect, useState } from 'react';
 import type { ReactNode } from 'react';
@@ -167,6 +168,7 @@ export function OfflineSpaceView({
   connection?: ConnectionState;
 }) {
   const { root, spaceId, copies, selected, problem } = selection;
+  const nativeStyle = useSpaceAccent(root?.appearance?.accent);
   const attention = selected?.available === false;
   const access = attention
     ? 'Needs attention'
@@ -196,7 +198,12 @@ export function OfflineSpaceView({
                           aria-current={copy.itemId === selected?.itemId ? 'page' : undefined}
                           onClick={close}
                         >
-                          <EntityIcon kind={copy.kind} size={20} />
+                          <ItemIcon
+                            name={copy.name}
+                            kind={copy.kind}
+                            appearance={copy.appearance}
+                            size={20}
+                          />
                           <span>{copy.name}</span>
                         </a>
                         {copy.available === false && (
@@ -248,7 +255,9 @@ export function OfflineSpaceView({
                 </>
               )}
             </p>
-            <div className="space-native-editor space-offline-viewer">{viewer}</div>
+            <div className="space-native-editor space-offline-viewer" style={nativeStyle}>
+              {viewer}
+            </div>
           </>
         )
       )}
@@ -256,6 +265,15 @@ export function OfflineSpaceView({
   );
   return selected && !problem ? (
     <EditorFrame
+      appearanceTarget={{
+        id: selected.itemId,
+        name: selected.name,
+        kind: selected.kind,
+        spaceId,
+        appearance: selected.appearance,
+      }}
+      appearanceDisabled
+      offlineAccountId={user.id}
       name={selected.name}
       contextLabel={root ? `Space · ${root.name}` : undefined}
       connection={connection}
