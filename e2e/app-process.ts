@@ -13,6 +13,9 @@ export async function startApp(options: {
   /** Upgrade acceptance keeps one public origin while swapping its fixture backend. */
   listenPort?: number;
   spaceReview?: boolean;
+  /** Recovery tests opt in with a disposable private destination and key. */
+  backupConfigPath?: string;
+  image?: string;
 }) {
   const env: NodeJS.ProcessEnv = {
     ...process.env,
@@ -25,7 +28,9 @@ export async function startApp(options: {
     SPINEL_SPACE_REVIEW: options.spaceReview === false ? '0' : '1',
     ...(options.staticDirectory ? { SPINEL_STATIC_DIRECTORY: options.staticDirectory } : {}),
   };
-  delete env.BACKUP_CONFIG_PATH;
+  if (options.backupConfigPath) env.BACKUP_CONFIG_PATH = options.backupConfigPath;
+  else delete env.BACKUP_CONFIG_PATH;
+  if (options.image) env.SPINEL_IMAGE = options.image;
   const child = spawn(
     process.execPath,
     [

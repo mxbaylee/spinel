@@ -4,6 +4,16 @@ import Sqlite from 'libsql';
 
 type Value = string | number | bigint | Uint8Array | null;
 type Row = Record<string, Value>;
+const normalizeRow = (columns: { name: string }[], value: unknown): Row | undefined =>
+  value === undefined
+    ? undefined
+    : Object.fromEntries(
+        columns.map(({ name }) => {
+          const column = (value as Record<string, Value | ArrayBuffer>)[name];
+          // libsql get() returns Buffer while all()/iterate() may return ArrayBuffer.
+          return [name, column instanceof ArrayBuffer ? Buffer.from(column) : column];
+        }),
+      );
 
 /** One SQLite runtime for app and public SDK connections. Mixing node:sqlite with
  * the SDK's libsql in one process can corrupt shared WAL locking on reopen (#68). */
@@ -31,21 +41,18 @@ export class DatabaseSync {
     const statement = this.database.prepare(sql);
     // libsql get() includes driver timing metadata on some platforms. Only SQL
     // columns belong in application records or serialized API responses.
-    const row = (value: unknown): Row | undefined =>
-      value === undefined
-        ? undefined
-        : Object.fromEntries(
-            statement.columns().map(({ name }) => {
-              const column = (value as Record<string, Value | ArrayBuffer>)[name];
-              // libsql get() returns Buffer while all() returns ArrayBuffer.
-              return [name, column instanceof ArrayBuffer ? Buffer.from(column) : column];
-            }),
-          );
+    const row = (value: unknown): Row | undefined => normalizeRow(statement.columns(), value);
     return {
       get: (...values: Value[]) => row(statement.get(...values)),
       all: (...values: Value[]) => statement.all(...values).map((value) => row(value)!),
       run: (...values: Value[]) => statement.run(...values),
     };
+  }
+  /** Stream bounded rows without materializing a complete recovery dataset. */
+  *iterate(sql: string, ...values: Value[]) {
+    const statement = this.database.prepare(sql);
+    const columns = statement.columns();
+    for (const value of statement.iterate(...values)) yield normalizeRow(columns, value)!;
   }
 }
 
