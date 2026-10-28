@@ -1,5 +1,6 @@
 import { mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import Sqlite from 'libsql';
 
 type Value = string | number | bigint | Uint8Array | null;
@@ -22,10 +23,11 @@ export class DatabaseSync {
   readonly path: string;
   constructor(path: string, options: { readOnly?: boolean } = {}) {
     this.path = path;
-    this.database = new Sqlite(
-      path,
-      options.readOnly ? { readonly: true, fileMustExist: true } : undefined,
-    );
+    // libsql 0.5.29 ignores readonly/fileMustExist options. SQLite's URI mode
+    // enforces both without immutable=1, which would hide committed WAL edits.
+    const location = options.readOnly ? pathToFileURL(path) : undefined;
+    location?.searchParams.set('mode', 'ro');
+    this.database = new Sqlite(location?.href ?? path);
     this.database.exec('PRAGMA foreign_keys = ON; PRAGMA busy_timeout = 5000;');
   }
   get isOpen() {

@@ -289,6 +289,13 @@ see [the process](todo/process.md#pull-requests-and-main).
   WAL mode and foreign keys remain enabled without resetting migration metadata.
   [Decision #68](implementation/SPN-025.md#legacy-decision-68-single-sqlite-runtime-and-consistent-copies), 2026-10-18,
   supersedes the original driver choice in [#2](implementation/SPN-001.md#legacy-decision-2-one-process-and-initial-sqlite-adapter).
+  Read-only connections use an escaped SQLite `file:` URI with `mode=ro`;
+  `libsql` 0.5.29 ignores its advertised read-only constructor options. Keep WAL
+  visibility and locking enabled. Verification fixtures drain their writers and
+  check an explicit checkpoint before recording a preservation digest, because
+  native prepared statements can defer physical close until finalization.
+  [SPN-118](implementation/SPN-118.md#enforce-read-only-opens-and-settle-verification-fixtures),
+  agent judgment 2026-10-28.
 - Startup upgrades the workspace schema for the [Space foundation](design/spaces.md#implemented-foundation)
   before the collaboration SDK opens its database connection. The migration
   preserves existing item IDs, native foreign keys, indexes and cleanup triggers;
