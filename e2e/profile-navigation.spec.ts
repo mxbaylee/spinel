@@ -70,11 +70,20 @@ for (const admin of [false, true]) {
         // The device picker and the rail both write the existing shared preference.
         await device.getByRole('radio', { name: 'Light', exact: true }).click();
         await expect(rail.getByRole('radio', { name: 'Light', exact: true })).toBeChecked();
-        const sections = ['profile', 'passkeys', 'device', ...(!admin ? ['connections'] : [])];
+        const sections = [
+          'profile',
+          'passkeys',
+          'device',
+          ...(!admin ? ['connections', 'links'] : []),
+        ];
         for (const section of sections) {
           await page.goto('/profile#' + section);
           if (section === 'profile')
             await expect(page.getByRole('textbox', { name: 'Display name' })).toBeVisible();
+          if (section === 'links')
+            await expect(
+              page.getByRole('heading', { name: 'Guest links', exact: true }),
+            ).toBeVisible();
           for (const mode of width === 390 ? (['light'] as const) : (['light', 'dark'] as const)) {
             await rail
               .getByRole('radio', { name: mode === 'light' ? 'Light' : 'Dark', exact: true })
@@ -96,6 +105,20 @@ for (const admin of [false, true]) {
             .getByRole('navigation', { name: 'Profile sections' })
             .getByRole('link', { name: 'Connected assistants' }),
         ).toHaveCount(admin ? 0 : 1);
+        await expect(
+          page
+            .getByRole('navigation', { name: 'Profile sections' })
+            .getByRole('link', { name: 'Guest links' }),
+        ).toHaveCount(admin ? 0 : 1);
+        if (admin) {
+          const inventoryRequests: string[] = [];
+          page.on('request', (request) => {
+            if (request.url().includes('/api/guest-links')) inventoryRequests.push(request.url());
+          });
+          await page.goto('/profile#links');
+          await expect(page.getByRole('textbox', { name: 'Display name' })).toBeVisible();
+          expect(inventoryRequests).toEqual([]);
+        }
       }
       expect(errors).toEqual([]);
     } finally {

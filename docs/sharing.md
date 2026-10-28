@@ -154,6 +154,37 @@ scope, image authorization after decoding, personal metadata filtering, pending
 connections, multiple guest tabs, transient polling failures and open-editor
 revocation in both development and production builds.
 
+### See and expire guest links
+
+**Your profile → Guest links** lists the signed-in account's own available Docs,
+Sheets and outer Spaces with active or expired links. Each row shows type, role,
+recorded enable date and expiry. Older links retain their addresses, roles and
+epochs, default to no expiry, and show **Enabled date unknown** when no date was
+recorded. The list contains metadata only; it never reveals a working guest
+address or preview capability. Operators cannot open this inventory, and shared
+files owned by someone else do not appear.
+
+Use a row's **More → Change expiry…** to choose Never, One day, Seven days or
+30 days from saving. Changing an active expiry preserves the address. Expired
+rows stay visible; to share again, open the file and create a fresh link in
+**Share → Link**. **Turn off link** removes the row. A Space is listed once,
+and its expiry or turn-off affects every internal page and folder. Folder links
+remain unsupported. Stale actions refresh current metadata instead of changing
+a replacement or overwriting a newer deadline.
+
+Link expiry is separate from the 24-hour guest-session lifetime. At the deadline,
+new exchanges, existing guest sessions, native socket admissions/commits, image
+reads/uploads and title/type social previews are refused. The existing 500 ms
+connection revalidation also fences the link epoch, clears guest sessions and
+closes open views; authorization does not wait for that cleanup. Already-open
+guest editors hide content, private titles, menus and document actions. Pending
+input receives only **Some changes were not saved. This document is no longer
+accessible.**, with no copy/export/recovery controls. Network interruption alone
+does not revoke access, and private-account recovery retains its existing behavior.
+
+See [SPN-066's decision and implementation](implementation/SPN-066.md) and the
+accepted [immediate-hiding policy](implementation/SPN-084.md#dirty-space-guest-revocation-needs-a-privacyrecovery-decision).
+
 ## Finding and filing account shares
 
 The **Shared with me** place contains currently accessible documents and folders,

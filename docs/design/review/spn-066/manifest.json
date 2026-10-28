@@ -1,0 +1,146 @@
+{
+  "sourceCommit": "2f84289abad8454a6dfaf4def00da345f35fd8f8",
+  "workflow": "https://github.com/mxbaylee/spinel/actions/runs/40733005392",
+  "buildIdentity": {
+    "sha": "2f84289abad8454a6dfaf4def00da345f35fd8f8",
+    "checkedOutSha": "c3ea3a853a227c1cb757584971fccd91776bb052",
+    "branch": "codex/spn-066-guest-links",
+    "pullRequest": 211,
+    "workflowUrl": "https://github.com/mxbaylee/spinel/actions/runs/40733005392",
+    "builtAt": "2026-10-28T17:12:50.668Z"
+  },
+  "capture": {
+    "reviewedAt": "2026-10-28T17:18:17.478Z",
+    "fixtureTime": "2026-10-20T16:00:00Z",
+    "checkedStates": 40,
+    "variants": [
+      "light",
+      "dark",
+      "phone",
+      "phone-dark",
+      "tablet"
+    ],
+    "renderer": "Built Storybook production components with synthetic fixtures; not a live account"
+  },
+  "productionSourceSha256": {
+    "web/GuestLinks.tsx": "1021f059fde0fc341f5ad99170efad7f2edab80a4844b29a771ce476d57935da",
+    "web/guestLinks.css": "008d2e379640322652797fc652d5cd929446eb27775cb183048af2026493167b",
+    "web/ProfilePage.tsx": "587dff69ca3564f0bfd09504d9858cdfe6d9e322196764f33de032946d5e35aa",
+    "web/ShareLink.tsx": "2f1cb1f3ca0dc20468fa318b8b582e62b3e3f31ee967667bb2a10ccd04ff78d9",
+    "web/guestLinksStoryData.ts": "521c159e2dc8eca96f7a77c91b023f2aa557b2b7e4a3d24edb9d192f05056833",
+    "src/ui/redesign/Controls.tsx": "e1b53b7fe1e79a6a2c0d5ba4c99dbd7ee33e4b898cc49e84f9acb0f5844ac918"
+  },
+  "images": [
+    {
+      "file": "profile-light.png",
+      "sourceFile": "account-profile-page--guest-links-light.png",
+      "theme": "light",
+      "viewportWidth": 1280,
+      "imageSize": [
+        1280,
+        900
+      ],
+      "sha256": "2ea82d5366dbb6bcf6e6d45f79ecb32fa1cf3b0fdadef8f98fc758efe5bb4569"
+    },
+    {
+      "file": "profile-dark.png",
+      "sourceFile": "account-profile-page--guest-links-dark.png",
+      "theme": "dark",
+      "viewportWidth": 1280,
+      "imageSize": [
+        1280,
+        900
+      ],
+      "sha256": "d528b7424521f0cba4b4718c5aa54ddd6058fc5dff3dd205e4f76ad8be0c916e"
+    },
+    {
+      "file": "profile-phone.png",
+      "sourceFile": "account-profile-page--guest-links-phone.png",
+      "theme": "light",
+      "viewportWidth": 390,
+      "imageSize": [
+        390,
+        1138
+      ],
+      "sha256": "d52c1ff0be35aabf68ec1e0dc1843fae4a6821ec59ba596e248f3ba454b73dc7"
+    },
+    {
+      "file": "change-expiry-phone.png",
+      "sourceFile": "current-production-account-guest-links--change-expiry-phone.png",
+      "theme": "light",
+      "viewportWidth": 390,
+      "imageSize": [
+        390,
+        900
+      ],
+      "sha256": "e95cdc5ec724cc454417188e283375f23fc2a6ac9c7888d76cc12fbd2cc6fe7f"
+    },
+    {
+      "file": "turn-off-space-phone-dark.png",
+      "sourceFile": "current-production-account-guest-links--turn-off-space-phone-dark.png",
+      "theme": "dark",
+      "viewportWidth": 390,
+      "imageSize": [
+        390,
+        900
+      ],
+      "sha256": "359011f1963a842cbd767572de21bcd149c29a9f86e344db65e6a1774013c2cc"
+    },
+    {
+      "file": "expired-share-phone.png",
+      "sourceFile": "sharing-sharelink--expired-phone.png",
+      "theme": "light",
+      "viewportWidth": 390,
+      "imageSize": [
+        390,
+        900
+      ],
+      "sha256": "de1689bd97a64bf6931a497a00b454c6868778ecfcb059df913a581ae59c9e90"
+    },
+    {
+      "file": "load-error-phone-dark.png",
+      "sourceFile": "current-production-account-guest-links--load-error-phone-dark.png",
+      "theme": "dark",
+      "viewportWidth": 390,
+      "imageSize": [
+        390,
+        900
+      ],
+      "sha256": "896278083021bfa575e08e3f812839abc00713af2500f2cf541fdf30a5329a9f"
+    },
+    {
+      "file": "long-title-phone.png",
+      "sourceFile": "current-production-account-guest-links--phone-phone.png",
+      "theme": "light",
+      "viewportWidth": 390,
+      "imageSize": [
+        390,
+        900
+      ],
+      "sha256": "155f847e1506db6fadf65ddaeda4a1e680d03df71c3222a37cf0a09291e26201"
+    }
+  ],
+  "nativeExpiry": {
+    "sourceCommit": "d45c8039e90f76895bb35e2e1e1b24005e60caaf",
+    "sourceTree": "2117e4aa30bc61612bd38edffa4fb78f12b58e86",
+    "localSourceCommit": "5b13c63265d83ed1e588090a953064aee2bf0892",
+    "sourceEquivalence": "Remote source commit and local tested commit have the same complete tree.",
+    "capturedAt": "2026-10-28T17:32:17.821123+00:00",
+    "renderer": "Real production browser journey with clean and dirty guest editors, held native writes, unavailable metadata and a real shortened link deadline.",
+    "theme": "light",
+    "viewport": [
+      1440,
+      1000
+    ],
+    "file": "native-expired-dirty.png",
+    "sha256": "0ca306b1307980aca17e71ed618ca44490f4e51658b27ea6f25596120b181449",
+    "equivalentSheetCaptureSha256": "0ca306b1307980aca17e71ed618ca44490f4e51658b27ea6f25596120b181449",
+    "runStatus": "Inventory and standalone Doc/Sheet journeys completed; the enclosing five-case run was aborted by the 2 GiB RSS watchdog on entering the Space case (2095 MiB observed). It is not a passing full run; final current-head CI supplies full verification.",
+    "sourceSha256": {
+      "web/spinelSync.ts": "6ca0e5d90f75137cd2690eb2683b592b9c663081f6ea767b9a1a8f2ff76476ef",
+      "web/GuestApp.tsx": "22127aba17430892db0c493ef32627049c47f6890ecbda8305a155e73b0ed579",
+      "web/guestRevocation.ts": "2aa44a8d97667059ad102ad585b8fef54b99506414fe61cff7ac5fc90d007be4",
+      "src/server/sync/transport.ts": "18cee0ad0203ea0b8485fe3e96852b73a6a4983bbc77b01c9ef810c72a3da707"
+    }
+  }
+}

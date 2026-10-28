@@ -232,7 +232,7 @@ test('whole-Space trash and internal recovery remain unchanged and recover under
 test('handover permanently closes every old guest capability, and only the new owner can create another', () => {
   const f = fixture(),
     doc = f.create('Shared document');
-  const link = f.workspace.links.begin(doc.id, 'editor');
+  const link = f.workspace.links.begin(doc.id, 'editor', 7);
   f.workspace.links.finish(doc.id, link.epoch, true);
   const guest = f.workspace.links.exchange(doc.id, link.token!);
   const headers = { cookie: guestCookieName(doc.id) + '=' + guest.token };
@@ -244,6 +244,8 @@ test('handover permanently closes every old guest capability, and only the new o
     epoch: link.epoch + 1,
     state: 'off',
     role: 'editor',
+    enabledAt: null,
+    expiresAt: null,
   });
   expect(
     f.db.prepare('SELECT token_hash,preview_hash FROM workspace_links WHERE item_id=?').get(doc.id),

@@ -769,7 +769,19 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
       });
       if (!same()) return;
       if (!ticket.ok) {
-        if ([401, 403, 404].includes(ticket.status)) await checkAccess();
+        if ([401, 403, 404].includes(ticket.status)) {
+          const rejection = await ticket.json().catch(() => null);
+          if (!same()) return;
+          // A generic denial can mean a restored generation or missing child.
+          // Only a confirmed root-capability loss is terminal without metadata.
+          if (guestItemId() && rejection?.code === 'guest-link-revoked') {
+            denied = true;
+            endConnection();
+            revokeGuestView();
+            return;
+          }
+          await checkAccess();
+        }
         throw new Error('Room unavailable');
       }
       const data = await ticket.json();

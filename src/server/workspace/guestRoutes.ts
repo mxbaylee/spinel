@@ -5,7 +5,8 @@ import { cookieToken } from '../auth/routes.ts';
 import type { WorkspaceStore } from './store.ts';
 import type { CollaborationStore } from '../collaboration/service.ts';
 import { DocumentStore } from './documents.ts';
-import { guestCookie, guestCookieName, linkGone } from './links.ts';
+import { guestCookie, guestCookieName, linkGone, linkExpiryDays } from './links.ts';
+import { GuestLinks } from './guest-links.ts';
 import { formulaRoutes } from '../formulas/routes.ts';
 import { pdfRoutes } from '../pdf/routes.ts';
 import { documentIdentity } from '../collaboration/identity.ts';
@@ -20,7 +21,8 @@ export function guestRoutes(
 ) {
   const router = express.Router(),
     links = workspace.links,
-    documents = new DocumentStore(workspace);
+    documents = new DocumentStore(workspace),
+    inventory = new GuestLinks(workspace);
   const json = express.json({ limit: '8kb', strict: true });
   const idOf = (request: Request) => {
     const id = String(request.params.id);
@@ -37,6 +39,27 @@ export function guestRoutes(
       throw new AuthError(400, 'Share links are for Sheets, Docs and Spaces.');
     return item;
   };
+  const account = (request: Request) => {
+    const user = workspace.auth.session(cookieToken(request))?.user_id;
+    if (!user) throw new AuthError(401, 'Sign in to continue.');
+    workspace.owner(user);
+    return user;
+  };
+  const inventoryEpoch = (request: Request, extra: string[] = []) => {
+    const epoch: unknown = request.body?.epoch,
+      expiresAt: unknown = request.body?.expectedExpiresAt;
+    if (
+      !request.is('application/json') ||
+      !Number.isSafeInteger(epoch) ||
+      (epoch as number) < 1 ||
+      (expiresAt !== null && (!Number.isSafeInteger(expiresAt) || (expiresAt as number) < 0)) ||
+      Object.keys(request.body).some(
+        (key) => !['epoch', 'expectedExpiresAt', ...extra].includes(key),
+      )
+    )
+      throw new AuthError(400, 'Refresh Guest links and try again.');
+    return { epoch: epoch as number, expiresAt: expiresAt as number | null };
+  };
   const guard: express.RequestHandler = (request, response, next) => {
     response.set({
       'Cache-Control': 'no-store',
@@ -52,6 +75,35 @@ export function guestRoutes(
   router.use('/api/guest/:id/formulas', formulaRoutes(workspace, collaboration, identity, true));
   router.use('/api/guest/:id/pdf', pdfRoutes(workspace, collaboration, identity));
   router.use('/api/items/:id/link', guard);
+  router.use('/api/guest-links', guard);
+  router.get('/api/guest-links', (request, response) => {
+    response.json({ items: inventory.list(account(request)) });
+  });
+  router.patch('/api/guest-links/:id', json, (request, response) => {
+    const user = account(request),
+      expected = inventoryEpoch(request, ['expiryDays']),
+      expiryDays = linkExpiryDays(request.body.expiryDays);
+    response.json(
+      inventory.changeExpiry(user, idOf(request), expected.epoch, expected.expiresAt, expiryDays),
+    );
+  });
+  router.delete('/api/guest-links/:id', json, async (request, response) => {
+    const user = account(request),
+      expected = inventoryEpoch(request),
+      item = inventory.owned(user, idOf(request)),
+      change = links.begin(item.id, null, null, expected.epoch, expected.expiresAt);
+    try {
+      await privacyChanged(item.id);
+      // Turning off remains fail-closed even if the actor loses authority while
+      // connections drain. Never publish stale titles or a success for a new actor.
+      inventory.owned(account(request), item.id);
+      links.finish(item.id, change.epoch, false);
+      response.sendStatus(204);
+    } catch (error) {
+      links.finish(item.id, change.epoch, false);
+      throw error;
+    }
+  });
   const attempts = new Map<string, { until: number; count: number }>();
   router.post('/api/guest/:id/session', json, (request, response) => {
     if (!request.is('application/json')) throw new AuthError(400, 'Invalid request.');
@@ -168,9 +220,8 @@ export function guestRoutes(
       .send(Buffer.from(image.data));
   });
   router.get('/api/items/:id/link', (request, response) => {
-    const item = owned(request),
-      state = links.state(item.id);
-    response.json({ enabled: state?.state === 'active', role: state?.role ?? 'viewer' });
+    const item = owned(request);
+    response.json(links.metadata(item.id));
   });
   router.put('/api/items/:id/link', json, async (request, response) => {
     const item = owned(request),
@@ -178,17 +229,19 @@ export function guestRoutes(
     if (
       !request.is('application/json') ||
       ![null, 'viewer', 'editor'].includes(role as string | null) ||
-      Object.keys(request.body).some((key) => key !== 'role')
+      Object.keys(request.body).some((key) => !['role', 'expiryDays'].includes(key))
     )
       throw new AuthError(400, 'Choose a view or edit link, or turn the link off.');
-    const change = links.begin(item.id, role as 'viewer' | 'editor' | null);
+    const expiryDays = Object.hasOwn(request.body, 'expiryDays')
+      ? linkExpiryDays(request.body.expiryDays)
+      : null;
+    const change = links.begin(item.id, role as 'viewer' | 'editor' | null, expiryDays);
     try {
       await privacyChanged(item.id);
       owned(request); // Session/ownership may have changed while pending admissions drained.
       links.finish(item.id, change.epoch, Boolean(role));
       response.json({
-        enabled: Boolean(role),
-        role: role ?? 'viewer',
+        ...links.metadata(item.id),
         url: change.token
           ? `${origin}/share/${item.id}?preview=${change.previewToken}#${change.token}`
           : null,
