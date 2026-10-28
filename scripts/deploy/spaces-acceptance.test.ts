@@ -16,6 +16,13 @@ const secretAccessKey = 'fixture-secret-key';
 const endpoint = 'https://fixture-bucket.sfo3.digitaloceanspaces.com';
 const pair = JSON.stringify({ accessKeyId, secretAccessKey });
 const valid = { DIGITAL_OCEAN_ACCESS_KEY: pair, DIGITAL_OCEAN_ENDPOINT: endpoint };
+const nativePair = { access_key: accessKeyId, secret_key: secretAccessKey };
+const nativeExport = {
+  ...nativePair,
+  created_at: '2026-10-28T00:00:00Z',
+  name: 'fixture-spaces-key',
+  grants: [{ bucket: 'fixture-bucket', permission: 'readwrite' }],
+};
 
 test('two named CI secrets support a credential pair and bucket endpoint without guessing credentials', () => {
   const expected = {
@@ -37,6 +44,75 @@ test('two named CI secrets support a credential pair and bucket endpoint without
   });
   assert.equal(missing.status, 'unavailable');
   if (missing.status === 'unavailable') assert.match(missing.reason, /secretAccessKey is missing/);
+});
+
+test('documented DigitalOcean API and Ansible exports normalize only their credential pair', () => {
+  for (const credentials of [
+    nativePair,
+    nativeExport,
+    { key: nativePair },
+    { key: nativeExport },
+  ]) {
+    assert.deepEqual(
+      parseSpacesAcceptanceEnvironment({
+        ...valid,
+        DIGITAL_OCEAN_ACCESS_KEY: JSON.stringify(credentials),
+      }),
+      {
+        status: 'ready',
+        configuration: { accessKeyId, secretAccessKey, bucket: 'fixture-bucket', region: 'sfo3' },
+      },
+    );
+  }
+  const target = parseSpacesAcceptanceEnvironment({
+    ...valid,
+    DIGITAL_OCEAN_ACCESS_KEY: JSON.stringify({
+      ...nativeExport,
+      grants: [{ bucket: 'different-fixture-bucket', permission: 'readwrite' }],
+    }),
+  });
+  assert.equal(target.status, 'ready');
+  if (target.status === 'ready') assert.equal(target.configuration.bucket, 'fixture-bucket');
+});
+
+test('credential exports reject mixed sources, undocumented fields and malformed metadata', () => {
+  for (const credentials of [
+    { ...nativePair, accessKeyId, secretAccessKey },
+    { key: nativePair, ...nativePair },
+    { key: nativePair, name: 'outer-metadata' },
+    { key: { accessKeyId, secretAccessKey } },
+    { key: { key: nativePair } },
+    { ...nativePair, endpoint },
+    { ...nativeExport, created_at: 123 },
+    { ...nativeExport, name: [] },
+    { ...nativeExport, grants: {} },
+    {
+      ...nativeExport,
+      grants: [{ bucket: 'fixture-bucket', permission: 'readwrite', extra: true }],
+    },
+    { ...nativeExport, grants: [{ bucket: 123, permission: 'readwrite' }] },
+    { access_key: accessKeyId },
+    { secret_key: secretAccessKey },
+  ]) {
+    const result = parseSpacesAcceptanceEnvironment({
+      ...valid,
+      DIGITAL_OCEAN_ACCESS_KEY: JSON.stringify(credentials),
+    });
+    assert.equal(result.status, 'unavailable');
+    assert.doesNotMatch(JSON.stringify(result), /fixture-|outer-metadata|digitaloceanspaces/);
+  }
+  for (const credentials of [{ accessKeyId, secretAccessKey }, nativePair, { key: nativeExport }]) {
+    for (const separateSecret of [secretAccessKey, 'conflicting-fixture-secret']) {
+      const result = parseSpacesAcceptanceEnvironment({
+        ...valid,
+        DIGITAL_OCEAN_ACCESS_KEY: JSON.stringify(credentials),
+        DIGITAL_OCEAN_SECRET_KEY: separateSecret,
+      });
+      assert.equal(result.status, 'unavailable');
+      if (result.status === 'unavailable') assert.match(result.reason, /cannot be combined/);
+      assert.doesNotMatch(JSON.stringify(result), /fixture-/);
+    }
+  }
 });
 
 test('missing or malformed external capability is explicit and never includes supplied secret values', () => {
@@ -143,8 +219,13 @@ test('CI probe produces only redacted readiness evidence without package install
     };
     delete env.NODE_TEST_CONTEXT;
     const script = fileURLToPath(new URL('./spaces-acceptance.ts', import.meta.url));
-    for (const expected of ['ready', 'unavailable']) {
-      if (expected === 'unavailable') env.DIGITAL_OCEAN_ACCESS_KEY = accessKeyId;
+    for (const [credentials, expected] of [
+      [pair, 'ready'],
+      [JSON.stringify(nativeExport), 'ready'],
+      [JSON.stringify({ key: nativeExport }), 'ready'],
+      [accessKeyId, 'unavailable'],
+    ]) {
+      env.DIGITAL_OCEAN_ACCESS_KEY = credentials;
       await writeFile(output, '');
       await writeFile(summary, '');
       const child = spawnSync(process.execPath, [script, '--probe'], {

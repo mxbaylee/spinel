@@ -90,6 +90,7 @@ export function BackupDownloads({
   const returnFocus = useRef<HTMLElement | null>(null);
   const prepareButton = useRef<HTMLButtonElement>(null);
   const downloadButton = useRef<HTMLButtonElement>(null);
+  const focusAfterCancel = useRef(false);
   const frameName = useId();
   const frame = useRef<HTMLIFrameElement>(null);
   const deliveryPath = useRef<string | null>(null);
@@ -189,6 +190,12 @@ export function BackupDownloads({
   useEffect(() => {
     if (job && !active(job)) deliveryPath.current = null;
   }, [job?.id, job?.state]);
+  useEffect(() => {
+    if (focusAfterCancel.current && phase === 'idle' && !active(job)) {
+      focusAfterCancel.current = false;
+      prepareButton.current?.focus();
+    }
+  }, [job?.state, phase]);
 
   async function loadCatalog() {
     if (catalogLoading) return;
@@ -333,10 +340,10 @@ export function BackupDownloads({
       );
       if (mounted.current && identity === operation.current) {
         reads.current++;
+        focusAfterCancel.current = true;
         setJob(result.job);
         deliveryPath.current = null;
         if (frame.current) frame.current.src = 'about:blank';
-        prepareButton.current?.focus();
       }
     } catch {
       if (mounted.current && identity === operation.current)

@@ -32,17 +32,23 @@ async function capture(page: Page, info: TestInfo, state: string) {
       await page.evaluate(() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' }));
     const primary = subject.locator('button.sp-primary:enabled').first();
     if (await primary.count())
-      await expect.poll(() => primary.evaluate((button) => {
-        const probe = document.createElement('span');
-        probe.style.backgroundColor = 'var(--sp-accent)';
-        probe.style.color = 'var(--sp-on-accent)';
-        button.append(probe);
-        const expected = getComputedStyle(probe);
-        const actual = getComputedStyle(button);
-        const matches = actual.backgroundColor === expected.backgroundColor && actual.color === expected.color;
-        probe.remove();
-        return matches;
-      })).toBe(true);
+      await expect
+        .poll(() =>
+          primary.evaluate((button) => {
+            const probe = document.createElement('span');
+            probe.style.backgroundColor = 'var(--sp-accent)';
+            probe.style.color = 'var(--sp-on-accent)';
+            button.append(probe);
+            const expected = getComputedStyle(probe);
+            const actual = getComputedStyle(button);
+            const matches =
+              actual.backgroundColor === expected.backgroundColor &&
+              actual.color === expected.color;
+            probe.remove();
+            return matches;
+          }),
+        )
+        .toBe(true);
     await page.screenshot({
       path: `test-results/theme-screenshots/spn-109-${state}-${variant}-${info.project.name}.png`,
       animations: 'disabled',
@@ -201,6 +207,9 @@ test('Operator creates and downloads a real encrypted workspace without cloud cr
     await expect(
       downloads.getByText('Backup preparation or delivery was cancelled.'),
     ).toBeVisible();
+    await expect(
+      downloads.getByRole('button', { name: 'Prepare workspace backup', exact: true }),
+    ).toBeFocused();
     await expect
       .poll(async () =>
         (await readdir(directory)).filter((name) => name.startsWith('.backup-export-')),

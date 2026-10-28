@@ -1,6 +1,16 @@
 import { randomBytes } from 'node:crypto';
 import { spawn } from 'node:child_process';
-import { mkdir, mkdtemp, readFile, readdir, rm, stat, symlink, truncate, writeFile } from 'node:fs/promises';
+import {
+  mkdir,
+  mkdtemp,
+  readFile,
+  readdir,
+  rm,
+  stat,
+  symlink,
+  truncate,
+  writeFile,
+} from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, expect, test, vi } from 'vitest';
@@ -431,16 +441,21 @@ test('a source beyond the restore envelope is refused before a snapshot can cons
     // The concrete SQLite source reports logical pages. Substitute that one
     // measurement to exercise the 8 GiB preflight without allocating an 8 GiB DB.
     return sql === 'PRAGMA page_count'
-      ? { ...statement, get: () => ({ page_count: 8 * 1024 ** 3 / 4096 + 1 }) }
+      ? { ...statement, get: () => ({ page_count: (8 * 1024 ** 3) / 4096 + 1 }) }
       : sql === 'PRAGMA page_size'
         ? { ...statement, get: () => ({ page_size: 4096 }) }
         : statement;
   });
-  await expect(makeArchive(f.db, f.directory, f.key, {
-    format: 1, createdAt: new Date().toISOString(), origin: f.options.origin, image,
-    runtimeEnvironment: '',
-  })).rejects.toMatchObject({ code: 'database-size' });
+  await expect(
+    makeArchive(f.db, f.directory, f.key, {
+      format: 1,
+      createdAt: new Date().toISOString(),
+      origin: f.options.origin,
+      image,
+      runtimeEnvironment: '',
+    }),
+  ).rejects.toMatchObject({ code: 'database-size' });
   expect(prepare.mock.calls.some(([sql]) => sql.startsWith('VACUUM'))).toBe(false);
-  expect((await readdir(f.directory)).some(name => name.startsWith('.backup-'))).toBe(false);
+  expect((await readdir(f.directory)).some((name) => name.startsWith('.backup-'))).toBe(false);
   prepare.mockRestore();
 });

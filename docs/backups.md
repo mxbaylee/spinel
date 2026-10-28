@@ -121,6 +121,33 @@ configuration below. Retention remains seven daily, four weekly and six monthly
 calendar windows. A local publication and a manual download do not establish
 offsite recovery. See [the implementation decisions](implementation/SPN-109.md).
 
+Publication and verification remain associated with the destination actually used
+by that operation. Changing deployment configuration while a job runs does not
+make the newly selected destination protected: it needs its own successful
+publication and recovery evidence. A newer configuration error or unavailable key
+cannot be replaced by an older status refresh completing later.
+
+The SPN-109 GitHub provider probe was unavailable because the access-key identifier
+was missing or malformed; it did not establish live DigitalOcean acceptance.
+Before public launch, provide the full valid scoped credential pair and complete
+the [provider, target-host and cold-recovery gate](todo/SPN-038.md). Local contract
+tests and successful browser downloads do not replace that evidence.
+
+For the GitHub Spaces acceptance workflow, set `DIGITAL_OCEAN_ENDPOINT` to the
+HTTPS bucket origin, `https://BUCKET.REGION.digitaloceanspaces.com`.
+`DIGITAL_OCEAN_ACCESS_KEY` accepts a JSON pair with `accessKeyId` and
+`secretAccessKey`, or the documented DigitalOcean export with `access_key` and
+`secret_key`, either directly or wrapped as `{"key": {...}}`. Native exports may
+include only the optional `name`, `created_at` and `grants` metadata; the runner
+ignores it and always takes the target bucket from the endpoint. These are the
+[API creation response](https://docs.digitalocean.com/products/spaces/reference/api/spaces-keys/)
+and [Ansible return value](https://docs.digitalocean.com/reference/ansible/reference/modules/spaces_key/)
+formats. Alternatively, supply a plain access key ID and put its secret in
+`DIGITAL_OCEAN_SECRET_KEY`. Leave that separate secret unset when supplying JSON;
+mixed credential sources are rejected. Use a bucket-scoped Read/Write/Delete key.
+The probe reports readiness without printing credentials, and missing or invalid
+configuration remains unavailable evidence until a real provider run succeeds.
+
 ## Current SQLite and Spaces implementation
 
 Spinel backs up to a **private DigitalOcean Space**. It uses SQLite's `VACUUM INTO`

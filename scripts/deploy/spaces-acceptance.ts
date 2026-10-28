@@ -15,6 +15,29 @@ interface Credentials {
 type Capability =
   { status: 'ready'; configuration: Credentials } | { status: 'unavailable'; reason: string };
 const unavailable = (reason: string): Capability => ({ status: 'unavailable', reason });
+const fieldsOnly = (value: unknown, fields: string[]): value is Record<string, unknown> =>
+  !!value &&
+  typeof value === 'object' &&
+  !Array.isArray(value) &&
+  Object.keys(value).every((field) => fields.includes(field));
+
+function isDigitalOceanExport(value: unknown): value is Record<string, unknown> {
+  // The native API/Ansible export has a credential pair and optional metadata.
+  // Metadata never chooses the target bucket or grants application permissions.
+  return (
+    fieldsOnly(value, ['access_key', 'secret_key', 'created_at', 'grants', 'name']) &&
+    (!Object.hasOwn(value, 'created_at') || typeof value.created_at === 'string') &&
+    (!Object.hasOwn(value, 'name') || typeof value.name === 'string') &&
+    (!Object.hasOwn(value, 'grants') ||
+      (Array.isArray(value.grants) &&
+        value.grants.every(
+          (grant) =>
+            fieldsOnly(grant, ['bucket', 'permission']) &&
+            typeof grant.bucket === 'string' &&
+            typeof grant.permission === 'string',
+        )))
+  );
+}
 
 /** Inspect known formats only. Callers must never print the ready configuration. */
 export function parseSpacesAcceptanceEnvironment(env: NodeJS.ProcessEnv): Capability {
@@ -27,16 +50,21 @@ export function parseSpacesAcceptanceEnvironment(env: NodeJS.ProcessEnv): Capabi
   if (access.startsWith('{')) {
     try {
       const value: unknown = JSON.parse(access);
-      if (
-        !value ||
-        typeof value !== 'object' ||
-        Array.isArray(value) ||
-        Object.keys(value).some((key) => !['accessKeyId', 'secretAccessKey'].includes(key))
-      )
+      if (fieldsOnly(value, ['accessKeyId', 'secretAccessKey'])) {
+        ({ accessKeyId, secretAccessKey } = value);
+      } else if (isDigitalOceanExport(value)) {
+        ({ access_key: accessKeyId, secret_key: secretAccessKey } = value);
+      } else if (fieldsOnly(value, ['key']) && isDigitalOceanExport(value.key)) {
+        ({ access_key: accessKeyId, secret_key: secretAccessKey } = value.key);
+      } else {
         return unavailable(
-          'DIGITAL_OCEAN_ACCESS_KEY JSON must contain only accessKeyId and secretAccessKey.',
+          'DIGITAL_OCEAN_ACCESS_KEY JSON must contain one supported credential-pair format.',
         );
-      ({ accessKeyId, secretAccessKey } = value as Record<string, unknown>);
+      }
+      if (env.DIGITAL_OCEAN_SECRET_KEY?.trim())
+        return unavailable(
+          'DIGITAL_OCEAN_ACCESS_KEY JSON cannot be combined with DIGITAL_OCEAN_SECRET_KEY.',
+        );
     } catch {
       return unavailable('DIGITAL_OCEAN_ACCESS_KEY is not valid credential-pair JSON.');
     }

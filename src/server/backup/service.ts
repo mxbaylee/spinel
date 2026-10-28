@@ -415,13 +415,7 @@ export class BackupService {
           .prepare(
             'UPDATE backup_state SET last_good=?, publication_identity=?, publication_destination=?, publication_key_id=? WHERE id=1 AND owner=?',
           )
-          .run(
-            this.now(),
-            identity,
-            config.type ?? 'spaces',
-            config.keyId ?? 'default',
-            owner,
-          );
+          .run(this.now(), identity, config.type ?? 'spaces', config.keyId ?? 'default', owner);
         const held = this.verificationState().backup_key;
         for (const old of expiredBackups(
           await remote.list(signal),

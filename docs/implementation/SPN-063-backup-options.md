@@ -6,9 +6,10 @@ per-database retention/backup settings, UI restore and scheduled maintenance
 messaging. The [SQLite decision](SPN-063.md#accepted-decision-keep-sqlite-without-database-adapters)
 and later [filesystem/pre-deployment direction](SPN-063.md#accepted-decision-implement-recovery-before-deployment)
 are accepted. SPN-063 implements the filesystem destination, shared scheduler,
-isolated verifier and read-only admin status. The wider configuration/export,
-diagnostics-expiry, maintenance and assisted-restore proposal is tracked in
-SPN-109–112. This discussion permits
+isolated verifier and read-only admin status. [SPN-109](SPN-109.md) subsequently
+implements configuration and encrypted Admin downloads for filesystem/Spaces;
+the owner deferred AWS S3 to post-production [SPN-114](../todo/SPN-114.md).
+Diagnostics expiry, maintenance and assisted restore remain SPN-110–112. This discussion permits
 a narrow **backup-destination** boundary; it does not reopen database-engine adapters.
 
 **Recommendation:** one SQLite application dataset and one encrypted recovery
@@ -163,7 +164,9 @@ schedule and retention) from destination-specific settings. The baseline loader
 required Spaces fields even with an injected local transport. The implemented
 [configuration loader](../../src/server/backup/config.ts) removes that dependency
 for filesystem operation, validates shared settings and preserves old Spaces files.
-The proposed manual-only Admin workflow remains SPN-109.
+The manual-only Admin workflow is implemented in [SPN-109](SPN-109.md), with
+deployment-owned policy, bounded encrypted delivery and independent provider/host
+launch acceptance.
 
 For a development configuration, select `local` as the workspace automatic
 destination in the future multi-dataset schema with this **illustrative,
@@ -474,9 +477,10 @@ Each increment needs its own concrete implementation scope when work starts.
 Steps 1–5 can be implemented and validated before deployment; real-provider
 contract checks can also run early when authorized access is available.
 SPN-063 implements steps 1–2, including read-only status presentation and the
-independent CLI. SPN-109 owns step 3's Admin exports/configuration, with diagnostics
-expiry in SPN-110; SPN-111 owns step 4 and notices; SPN-112 owns step 5. The later
-steps remain unimplemented, with real-provider/target-host acceptance in SPN-038.
+independent CLI. SPN-109 implements step 3's Admin exports/configuration for
+filesystem/Spaces, with diagnostics expiry in SPN-110; SPN-111 owns step 4 and
+notices; SPN-112 owns step 5. Those remaining controls and actual
+real-provider/target-host acceptance in SPN-038 retain their separate gates.
 
 Acceptance must cover both manual-only and automatic configurations; wrong/old
 keys; private AWS/Spaces access; interrupted transfer and bounded staging;

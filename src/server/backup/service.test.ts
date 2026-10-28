@@ -173,24 +173,38 @@ test.each(['backup', 'verification'] as const)(
     };
     await writeFile(f.configPath, JSON.stringify(config), { mode: 0o600 });
     let entered!: () => void, release!: () => void;
-    const pending = new Promise<void>((resolve) => { release = resolve; });
-    const started = new Promise<void>((resolve) => { entered = resolve; });
+    const pending = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const started = new Promise<void>((resolve) => {
+      entered = resolve;
+    });
     // This test isolates destination attribution. The existing service tests
     // separately exercise real isolated restore; no verifier budget is bypassed.
     if (kind === 'verification')
       vi.spyOn(verification, 'verifyArchive').mockResolvedValue({
-        tables: 1, rows: 1, snapshots: 0, images: 0, keyId: 'first',
+        tables: 1,
+        rows: 1,
+        snapshots: 0,
+        images: 0,
+        keyId: 'first',
       });
     const service = new BackupService(f.db, {
       ...f.options,
       remote(current) {
         const key = `${current.prefix}/2026-10-25T02-00-00.000Z-00000000-0000-4000-8000-000000000000.spinel`;
         return {
-          async put() { entered(); await pending; },
-          async list() { return [key]; },
+          async put() {
+            entered();
+            await pending;
+          },
+          async list() {
+            return [key];
+          },
           async remove() {},
           async download(_key, destination) {
-            entered(); await pending;
+            entered();
+            await pending;
             await writeFile(destination, 'opaque verifier fixture', { mode: 0o600 });
             return 'fixture';
           },
@@ -201,7 +215,9 @@ test.each(['backup', 'verification'] as const)(
     const operation = kind === 'backup' ? service.run() : service.verify();
     try {
       await started;
-      await writeFile(f.configPath, JSON.stringify({ ...config, prefix: 'destination-b' }), { mode: 0o600 });
+      await writeFile(f.configPath, JSON.stringify({ ...config, prefix: 'destination-b' }), {
+        mode: 0o600,
+      });
       await service.exports.catalog();
       release();
       expect(await operation).toBe(true);
@@ -240,19 +256,29 @@ test('overlapping configuration validation returns its own policy and an older r
   await writeFile(invalidKey, 'invalid key', { mode: 0o600 });
   await writeFile(f.configPath, JSON.stringify(config), { mode: 0o600 });
   let entered!: () => void, release!: () => void;
-  const pending = new Promise<void>((resolve) => { release = resolve; });
-  const started = new Promise<void>((resolve) => { entered = resolve; });
+  const pending = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  const started = new Promise<void>((resolve) => {
+    entered = resolve;
+  });
   const readKey = archives.readKey;
   vi.spyOn(archives, 'readKey').mockImplementationOnce(async (path) => {
-    entered(); await pending; return readKey(path);
+    entered();
+    await pending;
+    return readKey(path);
   });
   const used: string[] = [];
   const service = new BackupService(f.db, {
     ...f.options,
     remote(current) {
       return {
-        async put() { used.push(current.prefix); },
-        async list() { return []; },
+        async put() {
+          used.push(current.prefix);
+        },
+        async list() {
+          return [];
+        },
         async remove() {},
       };
     },
@@ -261,16 +287,26 @@ test('overlapping configuration validation returns its own policy and an older r
   const operation = service.run();
   try {
     await started;
-    await writeFile(f.configPath, JSON.stringify({
-      ...config, prefix: 'destination-b', keyFile: invalidKey, keyId: 'second',
-    }), { mode: 0o600 });
+    await writeFile(
+      f.configPath,
+      JSON.stringify({
+        ...config,
+        prefix: 'destination-b',
+        keyFile: invalidKey,
+        keyId: 'second',
+      }),
+      { mode: 0o600 },
+    );
     await service.exports.catalog();
     expect(service.status()).toMatchObject({ keyId: 'second', policy: { manualReady: false } });
     release();
     expect(await operation).toBe(true);
     expect(used).toEqual(['destination-a']);
     expect(service.status()).toMatchObject({
-      keyId: 'second', lastGood: null, offsite: false, policy: { manualReady: false },
+      keyId: 'second',
+      lastGood: null,
+      offsite: false,
+      policy: { manualReady: false },
     });
   } finally {
     release();
