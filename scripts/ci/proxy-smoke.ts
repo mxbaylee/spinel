@@ -3,6 +3,7 @@ import { spawnSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
+import { maintenanceProxyRequest } from './proxy-request.ts';
 
 function docker(args: string[], timeout = 30_000) {
   const result = spawnSync('docker', args, {
@@ -102,12 +103,7 @@ export async function checkMaintenanceProxy(directory: string, name: string) {
     ]);
     const binding = docker(['port', name, '8080/tcp']).trim();
     assert.match(binding, /^127\.0\.0\.1:\d+$/);
-    const request = (path: string) =>
-      fetch(`http://${binding}${path}`, {
-        headers: { Host: 'spinel.proxy-smoke.test' },
-        redirect: 'manual',
-        signal: AbortSignal.timeout(2_000),
-      });
+    const request = (path: string) => maintenanceProxyRequest(binding, path);
     const deadline = Date.now() + 15_000;
     let ready = false;
     while (Date.now() < deadline) {

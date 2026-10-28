@@ -33,6 +33,7 @@ import {
 import type { OperationReceipt, ProcessIdentity } from './journal.ts';
 import { MAINTENANCE_CHANNEL } from './supervisor-client.ts';
 import { shareWorkspaceOwnership } from './ownership.ts';
+import { processResourcesReleased } from './process-exit.ts';
 
 const DRAIN_MS = 30_000;
 const STOP_MS = 15_000;
@@ -123,7 +124,7 @@ function groupMembers(identity: ProcessIdentity) {
       const fields = readFileSync(`${path}/stat`, 'utf8')
         .replace(/^.*\) /, '')
         .split(' ');
-      if (fields[0] === 'Z' || fields[0] === 'X') continue;
+      if ((fields[0] === 'Z' || fields[0] === 'X') && processResourcesReleased(name)) continue;
       if (Number(fields[2]) !== identity.pid) continue;
       if (Number(fields[3]) !== identity.pid || BigInt(fields[19]) < BigInt(identity.start))
         throw new Error('Process group identity changed.');
@@ -136,6 +137,10 @@ function groupMembers(identity: ProcessIdentity) {
       members.push(Number(name));
     } catch (error) {
       if (['ENOENT', 'ESRCH'].includes((error as NodeJS.ErrnoException).code ?? '')) continue;
+      // Exit may revoke /proc access before the parent reaps the process.
+      // A dead leader with surviving threads is not proof of closed resources.
+      if ((error as NodeJS.ErrnoException).code === 'EACCES' && processResourcesReleased(name))
+        continue;
       throw error;
     }
   }
@@ -179,6 +184,10 @@ export function assertWorkspaceHandlesClosed(databasePath: string, ignored = new
       }
     } catch (error) {
       if (['ENOENT', 'ESRCH'].includes((error as NodeJS.ErrnoException).code ?? '')) continue;
+      // Exit may revoke /proc access before the parent reaps the process.
+      // A dead leader with surviving threads is not proof of closed resources.
+      if ((error as NodeJS.ErrnoException).code === 'EACCES' && processResourcesReleased(name))
+        continue;
       throw error;
     }
   }
@@ -905,6 +914,7 @@ export class MaintenanceSupervisor {
         this.assertGeneration();
         this.transition({ phase: 'paused' });
         this.drainWaiter?.resolve();
+        this.drainWaiter = undefined;
       } else if (value.kind === 'failure')
         this.failure(value.reason === 'drain-failed' ? 'drain-failed' : 'storage-failed');
       else if (
