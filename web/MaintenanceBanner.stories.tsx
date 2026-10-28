@@ -99,7 +99,9 @@ export const DismissAndReopen: Story = {
     await expect(canvas.getByText('Edits paused')).toBeVisible();
     await expect(canvas.getByText('Details').closest('summary')).toHaveFocus();
     await expect(canvas.getByText(/Already acknowledged edits remain saved/)).not.toBeVisible();
-    await userEvent.keyboard('{Enter}');
+    // Synthetic Enter does not perform the browser's native <summary> activation.
+    // Real Enter/Space coverage lives in e2e/maintenance-banner.spec.ts.
+    await userEvent.click(canvas.getByText('Details'));
     await expect(canvas.getByText(/Already acknowledged edits remain saved/)).toBeVisible();
     await expect(canvas.getByRole('button', { name: 'Dismiss for now' })).toBeVisible();
   },
