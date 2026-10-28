@@ -10,7 +10,7 @@ import { DocStateChangeManagerService, DocStateEmitService } from '@univerjs/doc
 import { NativeReplica } from '@spinel/sync-client';
 import { afterEach, expect, test, vi } from 'vitest';
 import { observeDocResponsiveness } from '../../web/docResponsivenessEvidence.ts';
-import { boundDocHistory, DOC_HISTORY_GROUP_LIMIT } from './boundedDocHistory.ts';
+import { boundDocHistory } from './boundedDocHistory.ts';
 
 afterEach(() => {
   vi.useRealTimers();
@@ -111,28 +111,24 @@ test('native timer completion records an actual empty observation and sealing pr
 });
 
 test('terminal capacity completion is observed after synchronous subscribers, never at an earlier group', async () => {
-  // Exercise two actual capacity boundaries, including an earlier empty cache
-  // that must not satisfy the terminal witness for the complete input.
-  const groupSize = DOC_HISTORY_GROUP_LIMIT;
-  const completedStates = 2 * groupSize;
-  const f = fixture(completedStates, true);
+  const f = fixture(64, true);
   try {
     f.arm();
-    await f.type('a'.repeat(groupSize));
+    await f.type('a'.repeat(32));
     expect(f.manager.getStateCache('doc')).toEqual({ history: [], collaboration: [] });
     expect(f.observer.readDrain()?.firstEmpty).toBeNull();
-    await f.type('b'.repeat(groupSize));
+    await f.type('b'.repeat(32));
     await Promise.resolve();
     const witness = f.seal();
     expect(witness?.invalidated).toBe(false);
-    expect(witness?.completedStates).toBe(completedStates);
+    expect(witness?.completedStates).toBe(64);
     expect(witness?.firstEmpty).toMatchObject({
-      completedStates,
+      completedStates: 64,
       pending: { history: 0, collaboration: 0 },
       history: { undos: 2, redos: 0 },
-      highWater: { history: groupSize, collaboration: groupSize },
+      highWater: { history: 32, collaboration: 32 },
     });
-    expect(f.text()).toBe('a'.repeat(groupSize) + 'b'.repeat(groupSize) + '\r\n');
+    expect(f.text()).toBe('a'.repeat(32) + 'b'.repeat(32) + '\r\n');
   } finally {
     f.close();
   }

@@ -40,6 +40,8 @@ import { MaintenanceGate } from '../src/server/maintenance/gate.ts';
 import { maintenanceRoutes } from '../src/server/maintenance/routes.ts';
 
 export const projectRoot = resolve(import.meta.dirname, '..');
+/** Below the supervisor's 15 s stop budget, leaving time to close stores. */
+const SHUTDOWN_DRAIN_MS = 10_000;
 
 export interface AppOptions {
   databasePath: string;
@@ -106,11 +108,13 @@ export async function createApp(options: AppOptions) {
       // Session and exact guest metadata lookups are read-only. Keep current
       // Operator authority and guest expiry/revocation visible during a pause.
       // Other reads can prepare native data or update auth metadata and gate.
+      // Express routing is case-insensitive, so these matches are too: `/API/…`
+      // must not reach an `/api` route without admission.
       if (
         (request.method === 'GET' &&
-          (request.path === '/api/auth/session' ||
-            /^\/api\/guest\/[a-f\d-]{36}\/?$/.test(request.path))) ||
-        !/^\/(?:api(?:\/|$)|sync-api(?:\/|$)|mcp(?:\/|$)|authorize(?:\/|$)|register(?:\/|$)|token(?:\/|$)|revoke(?:\/|$))/.test(
+          (/^\/api\/auth\/session$/i.test(request.path) ||
+            /^\/api\/guest\/[a-f\d-]{36}\/?$/i.test(request.path))) ||
+        !/^\/(?:api(?:\/|$)|sync-api(?:\/|$)|mcp(?:\/|$)|authorize(?:\/|$)|register(?:\/|$)|token(?:\/|$)|revoke(?:\/|$))/i.test(
           request.path,
         )
       ) {
@@ -500,6 +504,9 @@ export async function createApp(options: AppOptions) {
         if (status.phase !== 'draining' || draining) return;
         draining = (async () => {
           try {
+            // Downloads, imports and backup preparation can run for minutes.
+            // Cancel them so the bounded drain covers ordinary writes only.
+            maintenance.cancelLongWork();
             await maintenance.drain();
             database.assertQuiescent();
             await diagnostics?.drainMaintenance();
@@ -541,7 +548,10 @@ export async function createApp(options: AppOptions) {
       // No new admission after shutdown begins. Existing leases still own their
       // writes while the bounded drain runs; stopping sockets is not a drain.
       maintenance.stopAdmission();
-      await maintenance.drain();
+      maintenance.cancelLongWork();
+      // Shutdown must finish inside the supervisor's SIGTERM→SIGKILL budget
+      // (STOP_MS, 15 s), so it drains for less than a maintenance pause does.
+      await maintenance.drain(SHUTDOWN_DRAIN_MS);
       database.assertQuiescent();
       await diagnostics?.drainMaintenance();
       await realtime?.close();

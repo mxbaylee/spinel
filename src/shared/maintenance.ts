@@ -34,7 +34,7 @@ export interface MaintenanceAuthority {
 
 export type MaintenanceCommand =
   | { action: 'pause'; operationId: string; authority: MaintenanceAuthority }
-  | { action: 'resume'; operationId: string; resumeToken: string }
+  | { action: 'resume'; operationId: string; actorId: string; resumeToken: string }
   | {
       action: 'notice';
       operationId: string;

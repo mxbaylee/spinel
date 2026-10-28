@@ -55,6 +55,7 @@ export class MaintenanceGate {
   private readonly bridge?: MaintenanceBridge;
   private readonly active = new Set<Permit>();
   private readonly waiters = new Set<() => void>();
+  private readonly cancellable = new Set<AbortController>();
   private lifecycle = false;
   private closed = false;
   private admissionClosed = false;
@@ -161,6 +162,20 @@ export class MaintenanceGate {
       this.waiters.add(done);
     });
   }
+  /**
+   * Long transfers and preparations can outlast the drain deadline. They abort
+   * when draining starts and report an ordinary cancellation, instead of
+   * holding admission until the pause fails into recovery-required.
+   */
+  cancelOnDrain(controller: AbortController): () => void {
+    if (!this.running) controller.abort(new MaintenanceError());
+    else this.cancellable.add(controller);
+    return () => this.cancellable.delete(controller);
+  }
+  cancelLongWork() {
+    for (const controller of this.cancellable) controller.abort(new MaintenanceError());
+    this.cancellable.clear();
+  }
   stop() {
     this.closed = true;
   }
@@ -175,8 +190,9 @@ export class MaintenanceGate {
         const mutation = !['GET', 'HEAD', 'OPTIONS'].includes(request.method);
         // MCP carries the observed epoch inside each edit's arguments, rather
         // than requiring an extra nonstandard header from every MCP client.
-        const mcp = request.path === '/mcp' || request.path.startsWith('/mcp/');
-        const oauth = /^\/(?:authorize|register|token|revoke)\/?$/.test(request.path);
+        // Express routes match paths case-insensitively; so must admission.
+        const mcp = /^\/mcp(?:\/|$)/i.test(request.path);
+        const oauth = /^\/(?:authorize|register|token|revoke)\/?$/i.test(request.path);
         // A native browser form cannot set an epoch header. This one route
         // validates its single-use capability's admitted epoch before claim or
         // any write; its authorization POST still requires the normal header.

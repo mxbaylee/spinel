@@ -4,11 +4,11 @@ export type { DocDrainRequest, DocDrainWitness } from '../web/docResponsivenessE
 
 export const DOC_RESPONSIVENESS_SCHEMA = 4;
 
-// Candidate policy after 32-state flushes exceeded the unchanged mobile p95
-// budget during SPN-111 integration. The 24-state production bound retains the
-// complete original workload within 100 groups; the baseline stays uncapped.
+// Candidate policy after the 64- and 44-state experiments missed the unchanged
+// p95 budget. The public Doc constructor retains enough native history groups
+// for the original workload; the uncapped baseline keeps its original default.
 // Keep this explicit in the independent harness, including the uncapped checkout.
-export const DOC_RESPONSIVENESS_GROUP_LIMIT = 24;
+export const DOC_RESPONSIVENESS_GROUP_LIMIT = 32;
 export const DOC_RESPONSIVENESS_CANDIDATE_HISTORY_LIMIT = 100;
 export const DOC_RESPONSIVENESS_BASELINE_HISTORY_LIMIT = 50;
 

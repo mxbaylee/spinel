@@ -587,7 +587,8 @@ export function MaintenanceControls({
                   ? [
                       {
                         label: 'Cancel maintenance notice…',
-                        disabled: disabled || status.phase !== 'running',
+                        // Withdrawing a stale announcement stays possible while paused.
+                        disabled,
                         onClick: () => openConfirmation('cancel-notice'),
                       },
                     ]

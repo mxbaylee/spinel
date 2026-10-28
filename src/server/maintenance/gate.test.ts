@@ -124,6 +124,29 @@ test('drain retains accepted asynchronous work and refuses retired contexts in a
   expect(database.prepare('SELECT count(*) AS n FROM writes').get()?.n).toBe(2);
 });
 
+test('drain cancels registered long transfers so the deadline covers ordinary writes only', async () => {
+  const { gate, set } = fixture();
+  const transfer = new AbortController();
+  const finished = new AbortController();
+  const work = gate.run(
+    () =>
+      new Promise<void>((resolve) =>
+        transfer.signal.addEventListener('abort', () => resolve(), { once: true }),
+      ),
+  );
+  gate.cancelOnDrain(transfer);
+  gate.cancelOnDrain(finished)();
+  set({ phase: 'draining', epoch: 'after' });
+  gate.cancelLongWork();
+  expect(transfer.signal.reason).toBeInstanceOf(MaintenanceError);
+  expect(finished.signal.aborted).toBe(false);
+  await work;
+  await gate.drain(5);
+  const late = new AbortController();
+  gate.cancelOnDrain(late);
+  expect(late.signal.reason).toBeInstanceOf(MaintenanceError);
+});
+
 test('real callback body parsing works and HTTP disconnect cannot shorten async drain', async () => {
   const { gate, database, set } = fixture();
   const started = deferred(),

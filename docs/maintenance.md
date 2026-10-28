@@ -137,11 +137,17 @@ exact origin/CSRF checks and a fresh operation ID before asking its parent to
 pause. The parent persists the pause and changes the retry epoch before the
 application drains. Accepted HTTP, sync and job work must settle within the drain
 budget. A timeout keeps maintenance active; it never reports successful drain.
+Backup preparation and download, and workspace archive export and import, are
+cancelled when draining begins rather than holding the drain open; people
+restart them after resume. Queued work from before the pause is not resent
+automatically after resume: each tab keeps it for the person to reconcile.
 
 The parent issues a single-operation resume secret to the initiating browser and
 stores only its hash outside the database. It expires no later than five minutes
-after current verification and is bound to the operation and generation. It
-cannot be renewed by credentials in a paused/restored database. Expiry or a lost
+after current verification and is bound to the operation, generation and the
+Operator account that paused. Another administrator cannot use it. It cannot be
+renewed by credentials in a paused/restored database. A pause expected to run
+longer than five minutes ends with the cold CLI. Expiry or a lost
 browser response leaves the cold-host CLI available. If account recovery must change authentication while
 application auth is broken, stop the application, shut down the supervisor to
 release its dataset lease, run the cold setup/recovery CLI, then restart control
@@ -186,14 +192,17 @@ and no implicit interpretation of a missing spring-forward clock time.
 When the announced time arrives while the controller runs, the notice becomes
 started. If the controller was down at that instant, restart marks it missed.
 Neither state disappears when the estimate ends: it remains visible until
-explicit cancellation/replacement. Publishing, reaching or cancelling a notice
+explicit cancellation/replacement. Cancelling works in any phase, including
+during a pause; scheduling needs a running workspace. A cancelled notice clears
+once its announced window has passed. Publishing, reaching or cancelling a notice
 never pauses editing and never grants restore/resume authority. Offline devices
 are not promised receipt of an announcement.
 
 ## Budgets and acceptance boundary
 
 Default bounds are 30 seconds to drain, 15 seconds for TERM shutdown followed by
-at most 3 seconds for forced process exit, 30 seconds for application readiness,
+at most 3 seconds for forced process exit (the application drains for 10 of
+those 15 seconds, so an orderly stop does not need SIGKILL), 30 seconds for application readiness,
 and 15 seconds for the isolated verification worker. Its V8 heap is capped at
 64 MiB with a 4 MiB nursery. JSON control input is at most 4 KiB; journal input is
 at most 32 KiB. A process inventory above 32,768 entries or 4,096 descriptors for

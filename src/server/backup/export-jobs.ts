@@ -10,6 +10,7 @@ import type { RemoteStore } from './destination.ts';
 import { backupTime } from './spaces.ts';
 import { MAX_ARCHIVE_BYTES } from './transfer.ts';
 import { RecoveryResourceError } from './resource-error.ts';
+import { MaintenanceError } from '../maintenance/gate.ts';
 
 const PREPARE_MS = 30 * 60_000;
 const DELIVERY_MS = 10 * 60_000;
@@ -346,6 +347,7 @@ export class ExportJobs {
   private async prepare(job: PrivateJob, config: BackupConfig, selected?: string) {
     let remote: RemoteStore | undefined;
     const signal = AbortSignal.any([job.controller.signal, AbortSignal.timeout(PREPARE_MS)]);
+    const releaseDrain = this.db.maintenance?.cancelOnDrain(job.controller);
     try {
       this.requireLease(job);
       job.directory = await mkdtemp(
@@ -427,9 +429,16 @@ export class ExportJobs {
     } catch (error) {
       if (activeStates.has(job.public.state)) {
         job.public.state = 'failed';
-        job.public.error = error instanceof RecoveryResourceError ? error.message : FAILURE;
+        const reason = job.controller.signal.reason;
+        job.public.error =
+          error instanceof RecoveryResourceError
+            ? error.message
+            : reason instanceof MaintenanceError
+              ? reason.message
+              : FAILURE;
       }
     } finally {
+      releaseDrain?.();
       try {
         await remote?.close?.();
       } catch {

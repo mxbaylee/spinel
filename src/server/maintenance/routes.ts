@@ -102,6 +102,8 @@ export function maintenanceRoutes(
       await bridge!.control({
         action: 'resume',
         operationId: value.operationId,
+        // The token alone is not enough: only the Operator who paused may resume.
+        actorId: session.user_id,
         resumeToken: value.resumeToken,
       }),
     );

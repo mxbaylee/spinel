@@ -63,7 +63,7 @@ async function capture(
 ) {
   const directory =
     process.env.SPINEL_MAINTENANCE_CAPTURE === '1'
-      ? join(projectRoot, 'docs/design/review/spn-111')
+      ? join(projectRoot, 'docs/design/review/spn-111/application')
       : info.outputPath('maintenance-views');
   await mkdir(directory, { recursive: true });
   const views = variants

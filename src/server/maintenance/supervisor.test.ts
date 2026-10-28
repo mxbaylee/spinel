@@ -167,10 +167,30 @@ test('real SQLite app and stubborn WAL worker stop before closed verification an
   expect(() => assertWorkspaceHandlesClosed(f.databasePath)).not.toThrow();
   await supervisor.coldControl({ action: 'verify', operationId });
   await supervisor.coldControl({ action: 'start', operationId });
-  await supervisor.control({ action: 'resume', operationId, resumeToken: paused.resumeToken! });
+  // A copied token does not let a different administrator resume the pause.
+  await expect(
+    supervisor.control({
+      action: 'resume',
+      operationId,
+      actorId: randomUUID(),
+      resumeToken: paused.resumeToken!,
+    }),
+  ).rejects.toThrow('expired');
+  expect(supervisor.status().phase).not.toBe('running');
+  await supervisor.control({
+    action: 'resume',
+    operationId,
+    actorId,
+    resumeToken: paused.resumeToken!,
+  });
   expect(supervisor.status().phase).toBe('running');
   await expect(
-    supervisor.control({ action: 'resume', operationId, resumeToken: paused.resumeToken! }),
+    supervisor.control({
+      action: 'resume',
+      operationId,
+      actorId,
+      resumeToken: paused.resumeToken!,
+    }),
   ).rejects.toThrow('expired');
 });
 
@@ -485,7 +505,12 @@ test('expired authority, arbitrary commands, stale operation IDs and changed gen
   const paused = await supervisor.control({ action: 'pause', operationId, authority: proof(now) });
   now += 60_001;
   await expect(
-    supervisor.control({ action: 'resume', operationId, resumeToken: paused.resumeToken! }),
+    supervisor.control({
+      action: 'resume',
+      operationId,
+      actorId,
+      resumeToken: paused.resumeToken!,
+    }),
   ).rejects.toThrow('expired');
   expect(supervisor.status().phase).toBe('paused');
   await expect(
@@ -628,6 +653,7 @@ test('nonconsecutive duplicate commands cannot republish cancelled notices or re
   await supervisor.control({
     action: 'resume',
     operationId: pause.operationId,
+    actorId,
     resumeToken: paused.resumeToken!,
   });
   await supervisor.control({
@@ -645,6 +671,50 @@ test('nonconsecutive duplicate commands cannot republish cancelled notices or re
   await expect(
     restarted.control({ ...publish, notice: { ...publish.notice, durationMinutes: 20 } }),
   ).rejects.toThrow('different');
+});
+
+test('an Operator can withdraw a notice during a pause and a cancelled notice clears after its window', async () => {
+  const f = await fixture();
+  let now = Date.now();
+  const supervisor = await f.supervisor({ now: () => now });
+  await start(supervisor);
+  const notice = {
+    id: randomUUID(),
+    startsAt: now + 3_600_000,
+    timeZone: 'America/Los_Angeles',
+    durationMinutes: 15,
+  };
+  await supervisor.control({
+    action: 'notice',
+    operationId: randomUUID(),
+    authority: proof(now),
+    notice,
+  });
+  const operationId = randomUUID();
+  const paused = await supervisor.control({ action: 'pause', operationId, authority: proof(now) });
+  await expect(
+    supervisor.control({
+      action: 'notice',
+      operationId: randomUUID(),
+      authority: proof(now),
+      notice: { ...notice, id: randomUUID() },
+    }),
+  ).rejects.toThrow('scheduled while the workspace is running');
+  await supervisor.control({
+    action: 'cancel-notice',
+    operationId: randomUUID(),
+    authority: proof(now),
+    noticeId: notice.id,
+  });
+  expect(supervisor.status().notice?.state).toBe('cancelled');
+  await supervisor.control({
+    action: 'resume',
+    operationId,
+    actorId,
+    resumeToken: paused.resumeToken!,
+  });
+  now = notice.startsAt + 15 * 60_000;
+  await expect.poll(() => supervisor.status().notice, { timeout: 5000 }).toBeNull();
 });
 
 test('failed journal persistence still stops every owned process without touching a replaced root', async () => {

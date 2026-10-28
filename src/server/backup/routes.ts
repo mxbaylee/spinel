@@ -182,6 +182,7 @@ export function backupRoutes(auth: AuthStore, backups: BackupService, origin: st
       }
     }, 1000);
     accessCheck.unref();
+    const releaseDrain = backups.db.maintenance?.cancelOnDrain(controller);
     let input: Awaited<ReturnType<typeof open>> | undefined;
     let stream: ReadStream | undefined;
     let success = false;
@@ -212,6 +213,7 @@ export function backupRoutes(auth: AuthStore, backups: BackupService, origin: st
       await pipeline(stream, response, { signal });
       success = true;
     } finally {
+      releaseDrain?.();
       clearTimeout(watchdog);
       clearInterval(accessCheck);
       response.removeListener('close', closed);

@@ -326,10 +326,14 @@ test('HTTP writers, write-capable reads, offline bases and OAuth keep their prot
   expect((await bundle.json()).maintenanceEpoch).toBe('before');
   f.set({ phase: 'draining', epoch: 'after' });
   await expect.poll(() => f.bridge.status().phase).toBe('paused');
+  // Express matches routes case-insensitively, so case variants must not bypass admission.
   for (const path of [
     '/api/items',
+    '/API/items',
+    '/Api/Items',
     `/api/items/${f.sheet.id}/offline-bundle`,
     `/sync-api/items/${f.sheet.id}/snapshot?unitId=${f.sheet.id}`,
+    `/SYNC-API/items/${f.sheet.id}/snapshot?unitId=${f.sheet.id}`,
   ])
     expect((await f.send(path)).status, path).toBe(503);
   expect(
@@ -340,15 +344,17 @@ test('HTTP writers, write-capable reads, offline bases and OAuth keep their prot
       })
     ).status,
   ).toBe(503);
-  expect(
-    (
-      await fetch(f.root + '/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: '{}',
-      })
-    ).status,
-  ).toBe(503);
+  for (const path of ['/register', '/REGISTER'])
+    expect(
+      (
+        await fetch(f.root + path, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: '{}',
+        })
+      ).status,
+      path,
+    ).toBe(503);
   f.set({ phase: 'running' });
   const stale = await f.send('/api/items', {
     body: { kind: 'doc', name: 'Stale offline attempt', parentId: null },

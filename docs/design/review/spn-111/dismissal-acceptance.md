@@ -58,9 +58,9 @@ above 95/100 with no unresolved blockers: scope/acceptance 35, correctness and
 access/data integrity 25, verification evidence including UI 20, operations 10,
 and maintainability/documentation/over-complexity 10. Assess all four personas
 and the complete SPN-111 diff, not only this follow-up. Disclose agent review only.
-The implementing session does not have a subagent runner and does not claim either
-independent grade or final visual approval. Keep PR #206 draft and unmerged until
-those gates and all required current-head CI checks pass.
+The implementing session does not claim either independent grade or final
+visual approval. The merge gate in `docs/todo/process.md` and the grades
+recorded on PR #206 decide when it lands.
 
 ## Concurrent-main integration and landing checkpoint
 

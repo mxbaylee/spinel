@@ -124,6 +124,8 @@ uploaded and acknowledged. See [offline storage](offline.md) and
   are created automatically. Database files and sidecars are ignored by Git.
 - `SPINEL_MAINTENANCE_ROOT`: required only by the Linux supervised launchers; an
   existing private absolute directory outside the database/diagnostics directory.
+  The supervisor does not pass it on to the application child. The child still
+  runs as the same UID, so this hides the path; it does not isolate it.
 - `SPINEL_MAINTENANCE_PORT`: supervisor's public loopback status port, default
   `3002`. The private command socket remains inside the recovery root.
 

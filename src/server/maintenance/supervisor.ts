@@ -87,6 +87,17 @@ function authority(value: unknown, now: number): asserts value is MaintenanceAut
   )
     throw new Error('Verify your current Operator passkey again.');
 }
+/**
+ * The application never needs the recovery root, so it does not learn where
+ * the journal and control socket live. This is not isolation: the child runs
+ * as the same UID and can still find the directory, which is why the supported
+ * deployment treats a compromised application process as out of scope.
+ */
+function childEnvironment() {
+  const environment = { ...process.env };
+  delete environment.SPINEL_MAINTENANCE_ROOT;
+  return environment;
+}
 function delay(ms: number) {
   return new Promise<void>((resolve) => setTimeout(resolve, ms));
 }
@@ -382,6 +393,15 @@ export class MaintenanceSupervisor {
     const notice = this.journal.state.notice;
     if (notice?.state === 'scheduled' && notice.startsAt <= this.now())
       this.transition({ notice: { ...notice, state: restarting ? 'missed' : 'started' } });
+    // A cancelled notice stops being news once its announced window has passed.
+    // Started and missed notices stay until the Operator cancels them: their
+    // expiry must never read as a report that maintenance succeeded.
+    else if (
+      notice?.state === 'cancelled' &&
+      this.journal.state.phase === 'running' &&
+      notice.startsAt + notice.durationMinutes * 60_000 <= this.now()
+    )
+      this.transition({ notice: null });
   }
   private publicRequest(request: IncomingMessage, response: ServerResponse) {
     response.setHeader('Cache-Control', 'no-store');
@@ -475,7 +495,8 @@ export class MaintenanceSupervisor {
       operationId(command.operationId);
       if (command.action === 'resume') {
         if (
-          !exact(command, ['action', 'operationId', 'resumeToken']) ||
+          !exact(command, ['action', 'operationId', 'actorId', 'resumeToken']) ||
+          typeof command.actorId !== 'string' ||
           typeof command.resumeToken !== 'string' ||
           !/^[A-Za-z0-9_-]{43}$/.test(command.resumeToken)
         )
@@ -484,6 +505,7 @@ export class MaintenanceSupervisor {
         if (
           !operation ||
           operation.id !== command.operationId ||
+          operation.actorId !== command.actorId ||
           operation.generationId !== this.journal.state.generationId ||
           operation.expiresAt <= this.now() ||
           !timingSafeEqual(
@@ -519,9 +541,11 @@ export class MaintenanceSupervisor {
         await this.pause(command.operationId, command.authority, token, receipt.receipts);
         return { status: this.status(), resumeToken: token };
       }
-      if (this.journal.state.phase !== 'running')
-        throw new Error('Notices can only change while the workspace is running.');
       if (command.action === 'notice') {
+        // Scheduling waits for a running workspace; cancelling does not, so an
+        // Operator can withdraw a stale announcement during a long pause.
+        if (this.journal.state.phase !== 'running')
+          throw new Error('Notices can only be scheduled while the workspace is running.');
         if (
           !exact(command, ['action', 'operationId', 'authority', 'notice']) ||
           !object(command.notice) ||
@@ -825,11 +849,10 @@ export class MaintenanceSupervisor {
         this.options.development ? ['--dev', '--no-open'] : [],
         {
           env: {
-            ...process.env,
+            ...childEnvironment(),
             DATABASE_PATH: this.journal.databasePath,
             SPINEL_SUPERVISED: '1',
             SPINEL_PROCESS_GROUP_TOKEN: groupToken,
-            SPINEL_MAINTENANCE_ROOT: this.journal.root,
           },
           execArgv: [
             '--max-old-space-size=256',

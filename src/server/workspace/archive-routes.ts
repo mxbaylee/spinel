@@ -126,6 +126,8 @@ export function archiveRoutes(workspace: WorkspaceStore, files: PortableFiles) {
       if (!response.writableFinished) task.controller.abort();
     };
     response.once('close', closed);
+    // A multi-gigabyte download must not hold a maintenance drain open.
+    const releaseDrain = workspace.auth.database.maintenance?.cancelOnDrain(task.controller);
     const verify = () => {
       const fresh = identity(request);
       if (
@@ -177,6 +179,7 @@ export function archiveRoutes(workspace: WorkspaceStore, files: PortableFiles) {
         });
       }
     } finally {
+      releaseDrain?.();
       task.working = false;
       transfers.get(response)?.finish();
       response.off('close', closed);
@@ -199,6 +202,7 @@ export function archiveRoutes(workspace: WorkspaceStore, files: PortableFiles) {
       if (!response.writableFinished) controller.abort();
     };
     response.once('close', closed);
+    const releaseDrain = workspace.auth.database.maintenance?.cancelOnDrain(controller);
     let directory: string | undefined;
     const cleanup = async () => {
       const path = directory;
@@ -282,6 +286,7 @@ export function archiveRoutes(workspace: WorkspaceStore, files: PortableFiles) {
         });
       }
     } finally {
+      releaseDrain?.();
       clearTimeout(timer);
       controller.signal.removeEventListener('abort', stopUpload);
       response.off('close', closed);

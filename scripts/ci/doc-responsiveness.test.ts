@@ -320,7 +320,7 @@ function fixture() {
                   collaboration: DOC_RESPONSIVENESS_GROUP_LIMIT,
                 },
               ],
-          history: { undos: before ? 1 : 87, redos: 0 },
+          history: { undos: before ? 1 : 66, redos: 0 },
           selection: { start: 2086, end: 2086 },
         },
       };
@@ -332,7 +332,7 @@ function fixture() {
           snapshot: {
             unitId: metrics.native.unitId,
             observedAt: 21_200,
-            pending: { history: before ? 2086 : 22, collaboration: before ? 2086 : 22 },
+            pending: { history: before ? 2086 : 6, collaboration: before ? 2086 : 6 },
             highWater: { ...metrics.native.highWater },
             history: { undos: metrics.native.history.undos - 1, redos: 0 },
           },
@@ -432,18 +432,18 @@ test('paired proof uses the worst entire candidate task and each certain baselin
   assert.equal(result.improvement.collaboration!.baselineContainingTaskMs, 8000);
   assert.equal(result.improvement.history!.candidateEntireTaskUpperBoundMs, 80);
   assert.equal(result.improvement.history!.reductionPercent, 100 * (1 - 80 / 7000));
-  assert.equal(result.candidateGroupLimit, 24);
+  assert.equal(result.candidateGroupLimit, 32);
   assert.equal(result.candidateHistoryLimit, 100);
   assert.equal(result.baselineHistoryLimit, 50);
   assert.equal(
     result.summaries.find((value) => value.role === 'candidate' && value.sample === 'plain-1')!
       .undoRedoGroups,
-    87,
+    66,
   );
 });
 
 test('a superseded candidate capacity cannot pass on fast timing alone', () => {
-  for (const superseded of [32, 44, 64]) {
+  for (const superseded of [44, 64]) {
     const f = fixture();
     for (const { metrics } of f.candidate) {
       metrics.native.highWater = { history: superseded, collaboration: superseded };
