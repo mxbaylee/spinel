@@ -603,8 +603,14 @@ test('supervised maintenance keeps pending native work, fences old edits, and re
     epoch = cleanPaused.epoch;
     headers = { Origin: app.origin, 'X-Spinel-Epoch': epoch };
     expect((await deviceCopy(member, accountId, item.id))?.bundle.maintenanceEpoch).toBe(epoch);
+    // Keep the old dialog open: its modal boundary intentionally excludes the
+    // painted background from ordinary accessibility queries.
+    await expect(staleExpiry).toBeVisible();
+    await expect(banner(linksPage)).toHaveCount(0);
     await expect(
-      banner(linksPage).getByText('Maintenance scheduled', { exact: true }),
+      linksPage
+        .getByRole('region', { name: 'Workspace maintenance', exact: true, includeHidden: true })
+        .getByText('Maintenance scheduled', { exact: true }),
     ).toBeVisible();
     await staleExpiry.getByRole('combobox', { name: 'Expire link after' }).selectOption('30');
     const staleExpiryReply = inventoryReply('PATCH');
