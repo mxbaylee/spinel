@@ -9,3 +9,5 @@ playwright-report/
 test-results/
 storybook-static/
 output/
+# Immutable source checkout used only by the paired callback CI fixture.
+baseline-callback-source/

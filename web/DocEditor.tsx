@@ -751,6 +751,7 @@ export function DocEditor({
                 anchor: anchor
                   ? {
                       visible: anchor.visible,
+                      stroke: typeof anchor.stroke === 'string' ? anchor.stroke : null,
                       left: anchor.left,
                       top: anchor.top,
                       width: anchor.width,

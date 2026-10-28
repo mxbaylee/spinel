@@ -14,6 +14,7 @@ if (
     'sync-soak-doc',
     'offline-upgrade',
     'doc-responsiveness',
+    'doc-callback-lifetimes',
   ].includes(project)
 )
   throw new Error('SPINEL_E2E_PROJECT must name a configured browser project.');
@@ -36,6 +37,7 @@ export default defineConfig({
     process.env.CI &&
     project !== 'production' &&
     project !== 'doc-responsiveness' &&
+    project !== 'doc-callback-lifetimes' &&
     !project?.startsWith('sync-')
       ? 1
       : 0,
@@ -122,6 +124,16 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
         baseURL: 'http://localhost:3108',
+        trace: 'off',
+      },
+    },
+    {
+      name: 'doc-callback-lifetimes',
+      testMatch: '**/doc-responsiveness-callbacks.spec.ts',
+      retries: 0,
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: 'http://localhost:3109',
         trace: 'off',
       },
     },
@@ -228,6 +240,19 @@ export default defineConfig({
       reuseExistingServer: false,
     },
     {
+      command: 'npm start',
+      url: 'http://localhost:3109/sign-in',
+      env: {
+        PORT: '3109',
+        HOST: '127.0.0.1',
+        DATABASE_PATH: 'test-results/doc-callback-lifetimes/app.sqlite',
+        VITE_SYNC_EVIDENCE: '0',
+        VITE_DOC_SELECTION_EVIDENCE: '1',
+        VITE_DOC_RESPONSIVENESS_EVIDENCE: '1',
+      },
+      reuseExistingServer: false,
+    },
+    {
       command: 'node --max-old-space-size=256 --max-semi-space-size=8 scripts/e2e-https.ts',
       url: 'https://localhost:3103/sign-in',
       ignoreHTTPSErrors: true,
@@ -252,7 +277,9 @@ export default defineConfig({
                       ? ':3107/'
                       : project === 'doc-responsiveness'
                         ? ':3108/'
-                        : ':3103/',
+                        : project === 'doc-callback-lifetimes'
+                          ? ':3109/'
+                          : ':3103/',
         )),
   ),
 });
