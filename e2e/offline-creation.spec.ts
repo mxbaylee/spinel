@@ -19,6 +19,7 @@ import {
 import type { Kind, OfflineFixture, Stored } from './offline-fixture.ts';
 import { nativeTheme } from './native-theme.ts';
 import { verifySharedCreationRestart } from './offline-creation-restart.ts';
+import { offlineCreationNetwork } from './offline-creation-network.ts';
 
 type CreationStored = Stored & {
   createdFileRevision?: number;
@@ -287,10 +288,12 @@ test.describe('documents created offline', () => {
       await expect(row.getByText(`Owner: ${f.owner.name}`, { exact: true })).toBeVisible();
       await expect(row.getByText(`Created by ${f.actor.name}`, { exact: true })).toBeVisible();
       await row.getByRole('button', { name: `More actions for ${name}`, exact: true }).click();
+      const actions = f.page.getByRole('menu');
+      await expect(actions.getByRole('menuitem', { name: 'Open', exact: true })).toBeVisible();
       await expect(
-        f.page.getByRole('menuitem', { name: 'Move to Trash', exact: true }),
+        actions.getByRole('menuitem', { name: 'Move to Trash', exact: true }),
       ).toHaveCount(0);
-      await f.page.getByRole('menuitem', { name: 'Remove from device', exact: true }).click();
+      await actions.getByRole('menuitem', { name: 'Remove from device', exact: true }).click();
       await expect(
         f.page.getByRole('status').filter({ hasText: `${name} was removed from this device.` }),
       ).toHaveText(`${name} was removed from this device.`);
@@ -357,8 +360,13 @@ test.describe('documents created offline', () => {
         browser,
         baseURL,
       }, info) => {
+        const transport = await offlineCreationNetwork(baseURL!);
         const f = await fixture(browser, baseURL!, info, kind, {
           actor: shared ? 'editor' : 'owner',
+          proxy: transport.proxy,
+        }).catch(async (error) => {
+          await transport.close();
+          throw error;
         });
         let disconnected = false;
         let holdAdmission = false;
@@ -374,6 +382,7 @@ test.describe('documents created offline', () => {
             appearanceRequests.push(request.url());
         });
         const setDisconnected = async (value: boolean) => {
+          transport.setOffline(value);
           disconnected = value;
           await f.network.setOffline(value);
         };
@@ -405,6 +414,7 @@ test.describe('documents created offline', () => {
           await f.download();
           await openPreparedFolder(f, folder, shared);
           await setDisconnected(true);
+          await transport.verifyDisconnected();
           // A warm disconnected dashboard and a cold offline dashboard must both create.
           if (kind === 'doc') await f.page.reload();
           await expect(
@@ -597,11 +607,16 @@ test.describe('documents created offline', () => {
             await row
               .getByRole('button', { name: `More actions for ${name}`, exact: true })
               .click();
+            const actions = f.page.getByRole('menu');
+            await expect(
+              actions.getByRole('menuitem', { name: 'Open', exact: true }),
+            ).toBeVisible();
             for (const action of ['Rename…', 'Move…', 'Move to Trash', 'Share…'])
-              await expect(f.page.getByRole('menuitem', { name: action, exact: true })).toHaveCount(
-                0,
-              );
-            await f.page.keyboard.press('Escape');
+              await expect(
+                actions.getByRole('menuitem', { name: action, exact: true }),
+              ).toHaveCount(0);
+            await actions.press('Escape');
+            await expect(actions).toHaveCount(0);
             await expect
               .poll(async () => (await deviceCatalog(f)).shared.some((item) => item.id === id))
               .toBe(true);
@@ -688,10 +703,19 @@ test.describe('documents created offline', () => {
             ).toHaveCount(0);
           }
           expect(receipts(f)).toHaveLength(1);
+          expect(
+            transport.posts.filter(
+              (post) => post.path === '/api/items/offline-create' && post.outcome === 'forwarded',
+            ),
+          ).toHaveLength(1);
           expect(f.errors).toEqual([]);
         } finally {
           releaseAdmission();
-          await f.close();
+          try {
+            await f.close(transport.posts);
+          } finally {
+            await transport.close();
+          }
         }
       });
 

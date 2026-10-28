@@ -331,6 +331,8 @@ export type OfflineChange = { itemId: string; pending?: boolean };
 type AccountOfflineChange = OfflineChange & { accountId: string };
 const itemWriterChanges = new Map<string, AccountOfflineChange[]>();
 const itemWriterKey = (accountId: string, itemId: string) => JSON.stringify([accountId, itemId]);
+const temporaryItemWriters = new Map<string, Set<Promise<void>>>();
+const editorAdmissions = new Map<string, number>();
 
 function publishOfflineChange(detail: AccountOfflineChange) {
   window.dispatchEvent(new CustomEvent('spinel-offline-changed', { detail }));
@@ -749,6 +751,30 @@ export async function withOfflineCatalogLock<T>(
   return navigator.locks.request(`spinel-offline-catalog:${accountId}`, operation);
 }
 
+/**
+ * Hand a same-tab maintenance writer to an opening editor. New maintenance
+ * cannot slip into the handoff; other tabs still use the nonblocking Web Lock
+ * admission and are never mistaken for a temporary operation we may await.
+ */
+export async function withOfflineEditorAdmission<T>(
+  accountId: string,
+  itemId: string,
+  verifyCurrent: () => void,
+  acquire: () => Promise<T>,
+): Promise<T> {
+  const key = itemWriterKey(accountId, itemId);
+  editorAdmissions.set(key, (editorAdmissions.get(key) ?? 0) + 1);
+  try {
+    await Promise.all(temporaryItemWriters.get(key) ?? []);
+    verifyCurrent();
+    return await acquire();
+  } finally {
+    const count = editorAdmissions.get(key)!;
+    if (count === 1) editorAdmissions.delete(key);
+    else editorAdmissions.set(key, count - 1);
+  }
+}
+
 /** Never wait on a live editor: its unfinished memory input has not reached IDB yet. */
 export async function withOfflineItemWriter<T>(
   accountId: string,
@@ -758,6 +784,15 @@ export async function withOfflineItemWriter<T>(
   if (!navigator.locks)
     throw new Error('This browser cannot safely change device data. Use a browser with Web Locks.');
   const key = itemWriterKey(accountId, itemId);
+  if (editorAdmissions.has(key))
+    throw new Error('Close this document in every tab before changing its device copy.');
+  let finish!: () => void;
+  const completed = new Promise<void>((resolve) => {
+    finish = resolve;
+  });
+  const writers = temporaryItemWriters.get(key) ?? new Set<Promise<void>>();
+  writers.add(completed);
+  temporaryItemWriters.set(key, writers);
   let changes: AccountOfflineChange[] | undefined;
   try {
     return await navigator.locks.request(
@@ -772,6 +807,9 @@ export async function withOfflineItemWriter<T>(
       },
     );
   } finally {
+    writers.delete(completed);
+    if (!writers.size) temporaryItemWriters.delete(key);
+    finish();
     if (changes) {
       if (itemWriterChanges.get(key) === changes) itemWriterChanges.delete(key);
       // An open editor reacts by acquiring its own item writer. Announce a

@@ -1,4 +1,4 @@
-import { mkdir } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 import type { IWorkbookData } from '@univerjs/core';
 import { openDatabase } from '../server/database.ts';
@@ -32,12 +32,14 @@ test('collaborator creates and edits in a shared folder; owner refreshes the sam
   await second.addCookies([cookie(collaborator.id)]);
   const other = await second.newPage();
   const errors: string[] = [];
+  let stage = 'open-owner-and-collaborator-folder';
   for (const tab of [page, other]) tab.on('pageerror', (error) => errors.push(error.message));
   try {
     await page.goto(`/?item=${folder.id}`);
     await expect(page.getByText('This folder is empty.')).toBeVisible();
     await other.goto(`/?item=${folder.id}`);
     await expect(other.getByRole('heading', { name: folder.name, exact: true })).toBeVisible();
+    stage = 'create-and-edit-shared-sheet';
     await other.getByRole('button', { name: 'New', exact: true }).click();
     await other.getByRole('menuitem', { name: 'Sheet', exact: true }).click();
     const dialog = other.getByRole('dialog', { name: 'New sheet', exact: true });
@@ -80,13 +82,20 @@ test('collaborator creates and edits in a shared folder; owner refreshes the sam
     await expect(row).toContainText('Shared · Can edit');
     await expect(row).toContainText('Owner: Alex Kim');
     await expect(row).toContainText('Created by Sam Lee');
+    stage = 'verify-editor-row-actions';
     await other
       .getByRole('button', { name: 'More actions for Travel budget', exact: true })
       .click();
+    const actions = other.getByRole('menu');
+    // Prove the menu is ready before checking absent owner-only actions or
+    // dismissing it; absence alone also passes before the portal has mounted.
+    await expect(actions.getByRole('menuitem', { name: 'Open', exact: true })).toBeVisible();
     for (const name of ['Rename…', 'Move…', 'Move to Trash', 'Share…'])
-      await expect(other.getByRole('menuitem', { name, exact: true })).toHaveCount(0);
-    await other.keyboard.press('Escape');
+      await expect(actions.getByRole('menuitem', { name, exact: true })).toHaveCount(0);
+    await actions.press('Escape');
+    await expect(actions).toHaveCount(0);
 
+    stage = 'capture-light-dark-phone';
     await mkdir('test-results/theme-screenshots', { recursive: true });
     for (const [theme, width] of [
       ['light', 1440],
@@ -115,6 +124,7 @@ test('collaborator creates and edits in a shared folder; owner refreshes the sam
       await other.getByRole('button', { name: 'Cancel', exact: true }).click();
     }
 
+    stage = 'owner-refresh-and-open';
     await page.bringToFront();
     await page.getByRole('button', { name: 'More actions for Trip 2027', exact: true }).click();
     await page.getByRole('menuitem', { name: 'Refresh folder', exact: true }).click();
@@ -130,6 +140,7 @@ test('collaborator creates and edits in a shared folder; owner refreshes the sam
     ).toHaveText('All changes saved.', { timeout: 20_000 });
     expect(await serverCell()).toBe(2027);
 
+    stage = 'viewer-denial';
     workspace.share(owner.id, folder.id, collaborator.id, 'viewer');
     await other.reload();
     await expect(other.getByRole('heading', { name: folder.name, exact: true })).toBeVisible();
@@ -142,8 +153,23 @@ test('collaborator creates and edits in a shared folder; owner refreshes the sam
     expect(denied.status()).toBe(403);
     expect(workspace.children(owner.id, folder.id)).toHaveLength(1);
     expect(errors).toEqual([]);
+    stage = 'completed';
   } finally {
-    await second.close();
-    db.close();
+    try {
+      await writeFile(
+        info.outputPath('sync-diagnostics.json'),
+        JSON.stringify(
+          { stage, errors, ownerUrl: page.url(), collaboratorUrl: other.url() },
+          null,
+          2,
+        ),
+      );
+    } finally {
+      try {
+        await second.close();
+      } finally {
+        db.close();
+      }
+    }
   }
 });

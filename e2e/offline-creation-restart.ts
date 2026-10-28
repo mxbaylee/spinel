@@ -22,6 +22,7 @@ import {
 import type { Kind, Stored } from './offline-fixture.ts';
 import { syncNetwork } from './sync-network.ts';
 import { recordNativeSnapshots } from './sync-snapshot.ts';
+import { offlineCreationNetwork } from './offline-creation-network.ts';
 
 type Creation = Stored & {
   creation?: {
@@ -53,8 +54,10 @@ export async function verifySharedCreationRestart(baseURL: string, info: TestInf
   const accepted = new Map<string, { revision: number; snapshot: NativeSnapshot }>();
   const stages: string[] = [];
   const errors: string[] = [];
+  const transport = await offlineCreationNetwork(baseURL);
   let context: BrowserContext | undefined;
   const start = async (offline = false) => {
+    transport.setOffline(offline);
     // Closing this context terminates its browser process. No storageState or
     // IndexedDB fixture reconstructs data, and offline precedes any navigation.
     context = await chromium.launchPersistentContext(join(directory, 'profile'), {
@@ -63,6 +66,7 @@ export async function verifySharedCreationRestart(baseURL: string, info: TestInf
       viewport: { width: 1440, height: 1100 },
       permissions: ['clipboard-read', 'clipboard-write'],
       offline,
+      proxy: transport.proxy,
     });
     await recordNativeSnapshots(context);
     const network = await syncNetwork(context);
@@ -116,7 +120,9 @@ export async function verifySharedCreationRestart(baseURL: string, info: TestInf
     await page.getByRole('button', { name: 'Shared with me', exact: true }).click();
     await page.getByRole('button', { name: `${folder.name} Folder`, exact: true }).click();
     await expect(page.getByRole('heading', { name: folder.name, exact: true })).toBeVisible();
+    transport.setOffline(true);
     await network.setOffline(true);
+    await transport.verifyDisconnected();
     for (const kind of ['sheet', 'doc'] as const) {
       await page.getByRole('button', { name: 'New', exact: true }).click();
       const menu = page.getByRole('menu');
@@ -168,6 +174,7 @@ export async function verifySharedCreationRestart(baseURL: string, info: TestInf
       expect(serverItem(item.id)).toBeUndefined();
     }
     stages.push('offline-process-restart-retained-exact-drafts');
+    transport.setOffline(false);
     await network.setOffline(false);
     // The last opened Doc publishes first; opening the Sheet resumes its writer.
     for (const item of [...created].reverse()) {
@@ -228,6 +235,7 @@ export async function verifySharedCreationRestart(baseURL: string, info: TestInf
       expect(committed.bundle.access).toBe('editor');
       expect(pending(committed.outbox?.checkpoint)).toBe(false);
     }
+    transport.setOffline(false);
     await network.setOffline(false);
     for (const item of [...created].reverse()) {
       if (new URL(page.url()).searchParams.get('item') !== item.id)
@@ -249,6 +257,11 @@ export async function verifySharedCreationRestart(baseURL: string, info: TestInf
         .sort(),
     ).toEqual([...seeds.map(({ id }) => id), ...created.map(({ id }) => id)].sort());
     stages.push('accepted-files-survive-second-offline-process-restart-without-republication');
+    expect(
+      transport.posts.filter(
+        (post) => post.path === '/api/items/offline-create' && post.outcome === 'forwarded',
+      ),
+    ).toHaveLength(2);
     expect(errors).toEqual([]);
   } finally {
     try {
@@ -258,6 +271,7 @@ export async function verifySharedCreationRestart(baseURL: string, info: TestInf
           {
             stages,
             errors,
+            creationTransport: transport.posts,
             created: created.map(({ id, kind, before }) => ({
               id,
               kind,
@@ -272,8 +286,12 @@ export async function verifySharedCreationRestart(baseURL: string, info: TestInf
       try {
         await context?.close();
       } finally {
-        db.close();
-        await rm(directory, { recursive: true, force: true });
+        try {
+          await transport.close();
+        } finally {
+          db.close();
+          await rm(directory, { recursive: true, force: true });
+        }
       }
     }
   }
