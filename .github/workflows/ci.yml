@@ -328,13 +328,19 @@ jobs:
         run: |
           node scripts/ci/prefer-ubuntu-archive.ts
           npx playwright install --with-deps chromium
-      - name: Current-main offline source for adoption evidence
+      - name: Immutable offline source for adoption evidence
         if: matrix.project == 'offline-upgrade'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: c2e8cac0fcdec36d992d6ebf3f377c9b579a8002
           path: legacy-offline-source
           persist-credentials: false
+      - name: Install immutable offline build dependencies
+        if: matrix.project == 'offline-upgrade'
+        working-directory: legacy-offline-source
+        # Preserve the historical lock and postinstall patches for browser
+        # emission. The application server still uses the candidate install.
+        run: npm ci
       - name: Build
         if: matrix.project != 'offline-upgrade'
         env:
@@ -431,6 +437,7 @@ jobs:
           cp e2e/doc-responsiveness*.ts baseline-doc-source/e2e/
           cp web/docResponsivenessEvidence.ts baseline-doc-source/web/
           cp playwright.config.ts baseline-doc-source/playwright.config.ts
+          cp package-lock.json baseline-doc-source/package-lock.json
       - name: Install and build baseline
         working-directory: baseline-doc-source
         run: |
@@ -515,6 +522,7 @@ jobs:
           cp scripts/ci/doc-callback-lifetimes.ts baseline-callback-source/scripts/ci/
           cp web/docResponsivenessEvidence.ts baseline-callback-source/web/
           cp playwright.config.ts baseline-callback-source/playwright.config.ts
+          cp package-lock.json baseline-callback-source/package-lock.json
       - name: Install and build baseline with source maps
         working-directory: baseline-callback-source
         run: |
