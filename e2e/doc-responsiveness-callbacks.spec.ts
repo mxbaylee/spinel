@@ -339,8 +339,15 @@ for (const preset of ['desktop', 'mobile'] as const)
       failure = error;
       evidence.error = String(error);
     } finally {
+      if (finishInput) {
+        try {
+          evidence.input = await finishInput();
+        } catch (error) {
+          failure ??= error;
+          evidence.inputObservationError = String(error);
+        }
+      }
       try {
-        if (finishInput) evidence.input = await finishInput();
         if (tracing) {
           tracing = false;
           const trace = await retainTrace(cdp, info.outputPath('spn113-trace.json'));
@@ -381,9 +388,20 @@ for (const preset of ['desktop', 'mobile'] as const)
         evidence.collectionError = String(error);
       } finally {
         evidence.errors = f.errors;
+        try {
+          await cdp.detach();
+        } catch (error) {
+          failure ??= error;
+          evidence.detachError = String(error);
+        }
+        try {
+          await f.close();
+        } catch (error) {
+          failure ??= error;
+          evidence.fixtureCleanupError = String(error);
+        }
+        if (failure) evidence.passed = false;
         await persist();
-        await cdp.detach();
-        await f.close();
       }
     }
     if (failure) throw failure;
