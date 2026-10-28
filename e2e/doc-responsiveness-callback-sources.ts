@@ -9,7 +9,7 @@ import type {
 
 // The baseline and the reviewed SPN-113 repair are both valid observations.
 // Hash the complete embedded package, so a stale map or a similarly named file
-// cannot supply target attribution. SPN-114 must revisit these with the patch.
+// cannot supply target attribution. SPN-115 must revisit these with the patch.
 const docsUiSources = new Set([
   '82ff8f5bb6a16cb52a0d7b10de81cebf5a1e004bb4c7fd629ddfc993d55913cf',
   'bc1e09498276d65c6d14240e6494a25a01d036cf3a0ab0a8aeeea6cc735b75bb',

@@ -5,6 +5,8 @@ import {
   DocStateChangeManagerService,
   DocStateEmitService,
 } from '@univerjs/docs';
+import { DocSelectionRenderService } from '@univerjs/docs-ui';
+import { IRenderManagerService } from '@univerjs/engine-render';
 
 import type { DocFlushObservation } from '../src/ui/boundedDocHistory.ts';
 
@@ -270,6 +272,30 @@ export function observeDocResponsiveness(univer: Univer, unitId: string, mobile:
     );
   };
   window.addEventListener('spinel-doc-responsiveness-read', read);
+  // Separate idle-frame observation avoids copying history/snapshots on each
+  // caret sample. The public graphic is read only after real native input.
+  const readCursor = () => {
+    const anchor = injector
+      .get(IRenderManagerService)
+      .getRenderUnitById(unitId)
+      ?.with(DocSelectionRenderService)
+      .getActiveTextRange()
+      ?.getAnchor();
+    window.dispatchEvent(
+      new CustomEvent('spinel-doc-cursor-evidence', {
+        detail: {
+          unitId,
+          anchor: anchor
+            ? {
+                visible: anchor.visible,
+                stroke: typeof anchor.stroke === 'string' ? anchor.stroke : null,
+              }
+            : null,
+        },
+      }),
+    );
+  };
+  window.addEventListener('spinel-doc-cursor-read', readCursor);
   return {
     armDrain,
     sealDrain,
@@ -286,6 +312,7 @@ export function observeDocResponsiveness(univer: Univer, unitId: string, mobile:
       historySubscription.unsubscribe();
       window.removeEventListener('spinel-doc-responsiveness-reload', reloaded);
       window.removeEventListener('spinel-doc-responsiveness-read', read);
+      window.removeEventListener('spinel-doc-cursor-read', readCursor);
     },
   };
 }

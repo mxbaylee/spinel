@@ -38,7 +38,6 @@ const harnessPaths = [
   'e2e/doc-responsiveness.ts',
   'scripts/ci/doc-callback-lifetimes.ts',
   'web/docResponsivenessEvidence.ts',
-  'web/DocEditor.tsx',
   'playwright.config.ts',
   'package-lock.json',
 ];
@@ -47,7 +46,7 @@ interface SelectionEvidence {
   unitId: string;
   start?: number;
   end?: number;
-  anchor: { visible: boolean; stroke: string | null; width: number; height: number } | null;
+  anchor: { visible: boolean; width: number; height: number } | null;
   scale: { x: number; y: number };
   commands: Array<{ id: string; unitId?: string; zoomRatio?: number }>;
 }
@@ -253,7 +252,11 @@ for (const preset of ['desktop', 'mobile'] as const)
             const samples: Array<{ at: number; visible: boolean; stroke: string | null }> = [];
             const started = performance.now();
             const receive = (event: Event) => {
-              const anchor = (event as CustomEvent<SelectionEvidence>).detail.anchor;
+              const anchor = (
+                event as CustomEvent<{
+                  anchor: { visible: boolean; stroke: string | null } | null;
+                }>
+              ).detail.anchor;
               if (anchor)
                 samples.push({
                   at: performance.now(),
@@ -261,12 +264,12 @@ for (const preset of ['desktop', 'mobile'] as const)
                   stroke: anchor.stroke,
                 });
             };
-            window.addEventListener('spinel-doc-selection-evidence', receive);
+            window.addEventListener('spinel-doc-cursor-evidence', receive);
             const sample = () => {
-              window.dispatchEvent(new Event('spinel-doc-selection-read'));
+              window.dispatchEvent(new Event('spinel-doc-cursor-read'));
               if (performance.now() - started < 2200) requestAnimationFrame(sample);
               else {
-                window.removeEventListener('spinel-doc-selection-evidence', receive);
+                window.removeEventListener('spinel-doc-cursor-evidence', receive);
                 resolve(samples);
               }
             };

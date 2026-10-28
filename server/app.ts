@@ -22,6 +22,7 @@ import { HealthJobs } from '../src/server/health/jobs.ts';
 import { HealthMonitor } from '../src/server/health/monitor.ts';
 import { healthRoutes } from '../src/server/health/routes.ts';
 import { BackupService } from '../src/server/backup/service.ts';
+import { backupRoutes } from '../src/server/backup/routes.ts';
 import { openDatabase } from './database.ts';
 import { AuthStore } from '../src/server/auth/store.ts';
 import { authRoutes, cookieToken } from '../src/server/auth/routes.ts';
@@ -260,14 +261,7 @@ export async function createApp(options: AppOptions) {
     collectHealth();
     healthTimer = setInterval(collectHealth, 60_000);
     healthTimer.unref();
-    app.get('/api/admin/backups', (request, response) => {
-      const session = auth.session(cookieToken(request));
-      if (!session?.user_id || !auth.user(session.user_id)?.is_admin) {
-        response.status(404).json({ error: 'Not found' });
-        return;
-      }
-      response.json(backups!.status());
-    });
+    app.use('/api/admin/backups', backupRoutes(auth, backups, origin));
     app.get('/api/health', (_request, response) => {
       database.prepare('SELECT 1').get();
       response.json({ status: 'ok' });

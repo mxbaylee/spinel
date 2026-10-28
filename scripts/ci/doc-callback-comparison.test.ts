@@ -106,7 +106,6 @@ function evidence(role: 'baselineObservation' | 'candidate'): LoadedDocCallbackE
         'e2e/doc-responsiveness.ts',
         'scripts/ci/doc-callback-lifetimes.ts',
         'web/docResponsivenessEvidence.ts',
-        'web/DocEditor.tsx',
         'playwright.config.ts',
         'package-lock.json',
       ].map((path) => [path, hash(path)]),
@@ -226,7 +225,7 @@ test('commit, retry, failed checks, browser errors, missing source and unchecked
       value.failures.push('raw checksum differs');
     },
     (value) => {
-      value.manifest.dirtyPaths = 'M web/DocEditor.tsx';
+      value.manifest.dirtyPaths = 'M web/docResponsivenessEvidence.ts';
     },
   ];
   for (const change of changes) {
@@ -288,7 +287,7 @@ test('requires paired runtime, runner, harness and fixture identities, not merel
       value.runner.attempt = '2';
     },
     (value) => {
-      value.harnessSha256['web/DocEditor.tsx'] = 'a'.repeat(64);
+      value.harnessSha256['web/docResponsivenessEvidence.ts'] = 'a'.repeat(64);
     },
     (value) => {
       value.fixture.input = 'bulk insert';
@@ -314,7 +313,7 @@ test('requires paired runtime, runner, harness and fixture identities, not merel
 test('matching omissions or shortened/corrupt input do not satisfy the original workload', () => {
   const changes: Array<(value: DocCallbackManifest) => void> = [
     (value) => {
-      delete value.harnessSha256['web/DocEditor.tsx'];
+      delete value.harnessSha256['web/docResponsivenessEvidence.ts'];
     },
     (value) => {
       value.fixture.typedCharacters = 1;
@@ -356,13 +355,20 @@ test('matching omissions or shortened/corrupt input do not satisfy the original 
 
 test('allows only controlled matched baseline harness copies, including trimmed porcelain output', () => {
   const baseline = evidence('baselineObservation');
-  baseline.manifest.dirtyPaths = 'M web/DocEditor.tsx\n?? scripts/ci/doc-callback-lifetimes.ts';
+  baseline.manifest.dirtyPaths =
+    'M web/docResponsivenessEvidence.ts\n?? scripts/ci/doc-callback-lifetimes.ts';
   assert.equal(
     compareDocCallbackEvidence('desktop', baseline, evidence('candidate'), candidateSource)
       .accepted,
     true,
   );
-  for (const dirty of ['M server/index.ts', 'D web/DocEditor.tsx', '?? unreviewed.ts']) {
+  for (const dirty of [
+    'M server/index.ts',
+    'M web/DocEditor.tsx',
+    ' M web/DocEditor.tsx',
+    'D web/docResponsivenessEvidence.ts',
+    '?? unreviewed.ts',
+  ]) {
     baseline.manifest.dirtyPaths = dirty;
     assert.equal(
       compareDocCallbackEvidence('desktop', baseline, evidence('candidate'), candidateSource)

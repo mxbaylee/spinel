@@ -2,6 +2,8 @@ import { isAbsolute, resolve } from 'node:path';
 import { privateFile } from './archive.ts';
 
 export interface RecoveryConfig {
+  version?: 1;
+  dataset?: 'workspace';
   prefix: string;
   keyFile: string;
   runtimeEnvironmentFile: string;
@@ -10,6 +12,8 @@ export interface RecoveryConfig {
   backupHourUtc?: number;
   verificationDayUtc?: number;
   verificationHourUtc?: number;
+  automatic?: boolean;
+  manualDownload?: boolean;
 }
 export interface SpacesConfig extends RecoveryConfig {
   // Omission retains the original DigitalOcean configuration format.
@@ -25,7 +29,15 @@ export interface FilesystemConfig extends RecoveryConfig {
   rootDevice: string;
   rootInode: string;
 }
-export type BackupConfig = SpacesConfig | FilesystemConfig;
+export interface ManualConfig extends RecoveryConfig {
+  type: 'manual';
+}
+export type DestinationConfig = SpacesConfig | FilesystemConfig;
+export type BackupConfig = DestinationConfig | ManualConfig;
+
+export function hasDestination(config: BackupConfig): config is DestinationConfig {
+  return config.type !== 'manual';
+}
 
 const identifier = /^[a-zA-Z0-9_-]{1,80}$/;
 const nonempty = (value: unknown): value is string => typeof value === 'string' && value.length > 0;
@@ -42,6 +54,8 @@ export async function loadConfig(path: string): Promise<BackupConfig> {
     throw new Error('Invalid backup configuration.');
   const c = value as Record<string, unknown>;
   if (
+    (c.version !== undefined && c.version !== 1) ||
+    (c.dataset !== undefined && c.dataset !== 'workspace') ||
     typeof c.prefix !== 'string' ||
     !identifier.test(c.prefix) ||
     !nonempty(c.keyFile) ||
@@ -49,9 +63,42 @@ export async function loadConfig(path: string): Promise<BackupConfig> {
     (c.keyId !== undefined && (typeof c.keyId !== 'string' || !identifier.test(c.keyId))) ||
     !optionalInteger(c.backupHourUtc, 23) ||
     !optionalInteger(c.verificationDayUtc, 6) ||
-    !optionalInteger(c.verificationHourUtc, 23)
+    !optionalInteger(c.verificationHourUtc, 23) ||
+    (c.automatic !== undefined && typeof c.automatic !== 'boolean') ||
+    (c.manualDownload !== undefined && typeof c.manualDownload !== 'boolean')
   )
     throw new Error('Invalid backup configuration.');
+  // New policy is deliberately closed: misspelled controls must not silently
+  // enable jobs, select another dataset, or accept an arbitrary storage endpoint.
+  const sharedKeys = [
+    'version',
+    'dataset',
+    'type',
+    'prefix',
+    'keyFile',
+    'runtimeEnvironmentFile',
+    'keyId',
+    'retainedKeyFiles',
+    'backupHourUtc',
+    'verificationDayUtc',
+    'verificationHourUtc',
+    'automatic',
+    'manualDownload',
+  ];
+  const destinationKeys =
+    c.type === 'filesystem'
+      ? ['root', 'rootDevice', 'rootInode']
+      : c.type === 'manual'
+        ? []
+        : ['region', 'bucket', 'accessKeyId', 'secretAccessKey'];
+  if (
+    ['endpoint', 'signingRegion', 'forcePathStyle', 'datasets', 'retention'].some((key) =>
+      Object.hasOwn(c, key),
+    ) ||
+    ((c.version === 1 || c.type === 'manual') &&
+      Object.keys(c).some((key) => !sharedKeys.includes(key) && !destinationKeys.includes(key)))
+  )
+    throw new Error('Unsupported backup policy or destination setting.');
   if (
     c.retainedKeyFiles !== undefined &&
     (!c.retainedKeyFiles ||
@@ -66,6 +113,8 @@ export async function loadConfig(path: string): Promise<BackupConfig> {
   if (c.retainedKeyFiles && Object.hasOwn(c.retainedKeyFiles, String(c.keyId ?? 'default')))
     throw new Error('The active recovery key must not also be a retained key.');
   const shared = {
+    ...(c.version === 1 && { version: 1 as const }),
+    dataset: 'workspace' as const,
     prefix: c.prefix,
     keyFile: c.keyFile,
     runtimeEnvironmentFile: c.runtimeEnvironmentFile,
@@ -74,7 +123,15 @@ export async function loadConfig(path: string): Promise<BackupConfig> {
     backupHourUtc: (c.backupHourUtc as number | undefined) ?? 2,
     verificationDayUtc: (c.verificationDayUtc as number | undefined) ?? 0,
     verificationHourUtc: (c.verificationHourUtc as number | undefined) ?? 3,
+    // Existing installed destinations retain their schedule. New versioned
+    // policy requires an explicit automatic opt-in.
+    automatic: (c.automatic as boolean | undefined) ?? (c.version !== 1 && c.type !== 'manual'),
+    manualDownload: (c.manualDownload as boolean | undefined) ?? true,
   };
+  if (c.type === 'manual') {
+    if (c.automatic === true) throw new Error('Manual backups cannot run automatically.');
+    return { ...shared, type: 'manual', automatic: false };
+  }
   if (c.type === 'filesystem') {
     if (
       typeof c.root !== 'string' ||

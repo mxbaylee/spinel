@@ -429,6 +429,7 @@ jobs:
       - name: Use identical browser workload on both sources
         run: |
           cp e2e/doc-responsiveness*.ts baseline-doc-source/e2e/
+          cp web/docResponsivenessEvidence.ts baseline-doc-source/web/
           cp playwright.config.ts baseline-doc-source/playwright.config.ts
       - name: Install and build baseline
         working-directory: baseline-doc-source
@@ -512,7 +513,7 @@ jobs:
         run: |
           cp e2e/doc-responsiveness*.ts baseline-callback-source/e2e/
           cp scripts/ci/doc-callback-lifetimes.ts baseline-callback-source/scripts/ci/
-          cp web/DocEditor.tsx web/docResponsivenessEvidence.ts baseline-callback-source/web/
+          cp web/docResponsivenessEvidence.ts baseline-callback-source/web/
           cp playwright.config.ts baseline-callback-source/playwright.config.ts
       - name: Install and build baseline with source maps
         working-directory: baseline-callback-source

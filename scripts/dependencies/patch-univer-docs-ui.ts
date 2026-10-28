@@ -18,7 +18,7 @@
  * Source: packages/docs-ui/src/services/selection/text-range.ts and
  * controllers/render-controllers/zoom.render-controller.ts, dream-num/univer v1.1.0.
  * Prepared upstream repair: 1672ca2ad1debbcdb295e203308fae13bdb299b3.
- * SPN-114 removes this temporary patch after a suitable upstream release.
+ * SPN-115 removes this temporary patch after a suitable upstream release.
  */
 import { createHash } from 'node:crypto';
 import { readFile, writeFile } from 'node:fs/promises';
@@ -173,7 +173,7 @@ export async function patchInstalledDocsUi(root: string) {
   const directory = resolve(root, 'node_modules/@univerjs/docs-ui');
   const metadata = JSON.parse(await readFile(resolve(directory, 'package.json'), 'utf8'));
   if (metadata.name !== '@univerjs/docs-ui' || metadata.version !== '1.1.0')
-    throw new Error('Upgrading @univerjs/docs-ui: review callback lifetimes and SPN-114 first.');
+    throw new Error('Upgrading @univerjs/docs-ui: review callback lifetimes and SPN-115 first.');
   // Validate both builds before writing either; an unknown companion build fails closed.
   const updates = await Promise.all(
     (Object.keys(formats) as (keyof typeof formats)[]).map(async (format) => {
