@@ -495,6 +495,9 @@ export function DocEditor({
       ) => {
         if (disposed) return;
         inputFrozen = true;
+        // Fence owned deferred work before a preserved composition can return early.
+        boundedHistory?.dispose();
+        boundedHistory = undefined;
         canEditFormulas.current = false;
         setPreserveFormulaInput(preserveInput);
         if (!preserveInput) editFormula(null);
@@ -617,23 +620,24 @@ export function DocEditor({
       captureReady = true;
       if (import.meta.env.VITE_DOC_RESPONSIVENESS_EVIDENCE === '1')
         responsivenessEvidence = observeDocResponsiveness(univer, data.unitId, mobile);
-      boundedHistory = boundDocHistory(univer, data.unitId, (flush) => {
-        responsivenessEvidence?.flushed(flush);
-        const operation = diagnostics.begin();
-        if (operation)
-          observeOperation(
-            operation.sink,
-            {
-              component: 'editor',
-              fileId: id,
-              ...(spaceId ? { spaceId } : {}),
-              runId: operation.runId,
-            },
-            'doc-compose',
-            'success',
-            flush.durationMs,
-          );
-      });
+      if (!inputFrozen && !disposed)
+        boundedHistory = boundDocHistory(univer, data.unitId, (flush) => {
+          responsivenessEvidence?.flushed(flush);
+          const operation = diagnostics.begin();
+          if (operation)
+            observeOperation(
+              operation.sink,
+              {
+                component: 'editor',
+                fileId: id,
+                ...(spaceId ? { spaceId } : {}),
+                runId: operation.runId,
+              },
+              'doc-compose',
+              'success',
+              flush.durationMs,
+            );
+        });
       const document = univerAPI.getActiveDocument();
       if (!document) throw new Error('Could not load this document.');
       await editorReady(univerAPI);

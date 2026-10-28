@@ -13,6 +13,8 @@ import {
 } from '../../e2e/doc-responsiveness.ts';
 import type {
   CpuProfile,
+  DocDrainDiagnostics,
+  DocDrainWitness,
   DocResponsivenessEvidence,
   DocIntegritySnapshot,
   DocPreUndoIntegrity,
@@ -64,6 +66,9 @@ export interface BenchmarkMetrics {
   typingWallMs: number;
   input: InputObservation;
   native: DocResponsivenessEvidence;
+  drainDiagnostics: DocDrainDiagnostics;
+  drainArm?: DocDrainWitness;
+  drainWitness?: DocDrainWitness;
   profilerStartBracket?: ProfilerClockBracket;
   profileSha256?: string;
 }
@@ -90,7 +95,7 @@ const canonicalText =
   ).join('\r') + '\r\n';
 const hash = (text: string) => createHash('sha256').update(text).digest('hex');
 
-/** Schema 3 never turns an arbitrary old-product failure into valid evidence. */
+/** The strict baseline exception never converts an arbitrary failure into valid evidence. */
 function validateIntegrity(value: BenchmarkMetrics) {
   const failures: string[] = [];
   const check = (condition: boolean, message: string) => {
@@ -276,11 +281,191 @@ function validateIntegrity(value: BenchmarkMetrics) {
   }
   return failures;
 }
+
+/** Polls retain observation overhead separately from the browser-local witness. */
+function validDrainDiagnostics(value: BenchmarkMetrics) {
+  const diagnostics = value.drainDiagnostics;
+  if (
+    !diagnostics ||
+    !finite(diagnostics.nodeTimeOrigin) ||
+    !Array.isArray(diagnostics.polls) ||
+    diagnostics.polls.length === 0
+  )
+    return false;
+  let previousReturn = 0;
+  let previousObservation = value.input.keydownAt.at(-1)!;
+  let previousHighWater = { history: 0, collaboration: 0 };
+  for (const [index, poll] of diagnostics.polls.entries()) {
+    if (
+      poll.index !== index ||
+      !finite(poll.requestAt) ||
+      !finite(poll.returnedAt) ||
+      poll.requestAt < previousReturn ||
+      poll.returnedAt < poll.requestAt
+    )
+      return false;
+    previousReturn = poll.returnedAt;
+    const snapshot = poll.snapshot;
+    if (snapshot === null) continue;
+    if (
+      !snapshot ||
+      snapshot.unitId !== value.native.unitId ||
+      !finite(snapshot.observedAt) ||
+      snapshot.observedAt < previousObservation ||
+      snapshot.observedAt > value.input.endedAt + 1 ||
+      ![
+        snapshot.pending?.history,
+        snapshot.pending?.collaboration,
+        snapshot.highWater?.history,
+        snapshot.highWater?.collaboration,
+        snapshot.history?.undos,
+        snapshot.history?.redos,
+      ].every((count) => Number.isInteger(count) && count >= 0)
+    )
+      return false;
+    for (const family of ['history', 'collaboration'] as const)
+      if (
+        snapshot.pending[family] > snapshot.highWater[family] ||
+        snapshot.highWater[family] < previousHighWater[family] ||
+        snapshot.highWater[family] > value.native.highWater[family]
+      )
+        return false;
+    previousObservation = snapshot.observedAt;
+    previousHighWater = snapshot.highWater;
+  }
+  const firstEmpty = diagnostics.polls.find(
+    (poll) => poll.snapshot?.pending.history === 0 && poll.snapshot.pending.collaboration === 0,
+  );
+  if (
+    !firstEmpty ||
+    firstEmpty.index !== diagnostics.polls.length - 1 ||
+    !isDeepStrictEqual(firstEmpty, diagnostics.firstEmpty) ||
+    !isDeepStrictEqual(firstEmpty.snapshot!.history, value.native.history) ||
+    !isDeepStrictEqual(firstEmpty.snapshot!.highWater, value.native.highWater)
+  )
+    return false;
+  for (const bracket of [diagnostics.finishInputNodeBracket, diagnostics.finalNativeNodeBracket]) {
+    if (
+      !bracket ||
+      !finite(bracket.requestAt) ||
+      !finite(bracket.returnedAt) ||
+      bracket.requestAt < previousReturn ||
+      bracket.returnedAt < bracket.requestAt
+    )
+      return false;
+    previousReturn = bracket.returnedAt;
+  }
+  return true;
+}
+
+/** Both roles must use the same read-only recorder, with a sealed observation epoch. */
+function validDrainWitness(value: BenchmarkMetrics) {
+  const arm = value.drainArm;
+  const sealed = value.drainWitness;
+  const observed = value.native.drainWitness;
+  if (
+    !arm ||
+    !sealed ||
+    !observed ||
+    !sealed.firstEmpty ||
+    !value.preUndoIntegrity ||
+    !value.undoRedo
+  )
+    return false;
+  const initial = arm.initial;
+  const first = sealed.firstEmpty;
+  const lastKey = value.input.keydownAt.at(-1)!;
+  const empty = (pending: { history: number; collaboration: number }) =>
+    pending?.history === 0 && pending?.collaboration === 0;
+  const sameIdentity = (record: DocDrainWitness) =>
+    record.epoch === arm.epoch &&
+    record.generation === arm.generation &&
+    record.unitId === value.native.unitId &&
+    record.timeOrigin === value.input.timeOrigin &&
+    record.installedAt === arm.installedAt &&
+    record.armedAt === arm.armedAt &&
+    record.expectedCompletedStates === 2086 &&
+    isDeepStrictEqual(record.initial, initial) &&
+    record.invalidated === false &&
+    Array.isArray(record.invalidations) &&
+    record.invalidations.length === 0;
+  if (
+    !initial ||
+    typeof arm.epoch !== 'string' ||
+    !arm.epoch ||
+    arm.epoch.length > 128 ||
+    typeof arm.generation !== 'string' ||
+    !arm.generation ||
+    ![arm, observed, sealed].every(sameIdentity) ||
+    !finite(arm.timeOrigin) ||
+    !finite(arm.installedAt) ||
+    !finite(arm.armedAt) ||
+    arm.installedAt > arm.armedAt ||
+    arm.armedAt > value.input.startedAt ||
+    initial.observedAt !== arm.armedAt ||
+    !empty(initial.pending) ||
+    initial.history?.undos !== 0 ||
+    initial.history.redos !== 0 ||
+    arm.completedStates !== 0 ||
+    arm.lastCompletedStateAt !== null ||
+    arm.firstEmpty !== null ||
+    arm.sealedAt !== null ||
+    observed.sealedAt !== null ||
+    observed.completedStates !== 2086 ||
+    sealed.completedStates !== 2086 ||
+    observed.lastCompletedStateAt !== sealed.lastCompletedStateAt ||
+    !isDeepStrictEqual(observed.firstEmpty, first) ||
+    !finite(sealed.lastCompletedStateAt!) ||
+    sealed.lastCompletedStateAt! < lastKey ||
+    !finite(first.observedAt) ||
+    first.observedAt < sealed.lastCompletedStateAt! ||
+    first.observedAt > value.native.observedAt ||
+    first.observedAt > value.input.endedAt + 1 ||
+    first.observedAt > (value.drainDiagnostics?.firstEmpty?.snapshot?.observedAt ?? -1) ||
+    value.native.flushes.some(
+      (flush) => flush.startedAt + flush.durationMs > first.observedAt + 1,
+    ) ||
+    first.completedStates !== 2086 ||
+    !empty(first.pending) ||
+    !isDeepStrictEqual(first.history, value.native.history) ||
+    !isDeepStrictEqual(first.highWater, value.native.highWater) ||
+    !Array.isArray(first.wakeups) ||
+    first.wakeups.length === 0 ||
+    new Set(first.wakeups).size !== first.wakeups.length ||
+    first.wakeups.some(
+      (source) => !['terminal-state', 'history-status', 'collaboration-emission'].includes(source),
+    ) ||
+    !finite(sealed.sealedAt!) ||
+    sealed.sealedAt! < value.preUndoIntegrity.observedAt ||
+    sealed.sealedAt! > value.undoRedo.beforeUndoAt
+  )
+    return false;
+  if (
+    !Array.isArray(value.drainDiagnostics?.polls) ||
+    !value.drainDiagnostics.polls.every(
+      (poll) =>
+        !poll.snapshot ||
+        poll.snapshot.observedAt < first.observedAt ||
+        (empty(poll.snapshot.pending) &&
+          isDeepStrictEqual(poll.snapshot.history, first.history) &&
+          isDeepStrictEqual(poll.snapshot.highWater, first.highWater)),
+    )
+  )
+    return false;
+  return (['history', 'collaboration'] as const).every(
+    (family) =>
+      Number.isInteger(initial.highWater?.[family]) &&
+      initial.highWater[family] >= 0 &&
+      initial.highWater[family] <= first.highWater[family],
+  );
+}
+
 const requiredHashes = [
   'e2e/doc-responsiveness.ts',
   'e2e/doc-responsiveness.spec.ts',
   'e2e/doc-responsiveness-fixture.ts',
   'e2e/doc-responsiveness-boundaries.ts',
+  'web/docResponsivenessEvidence.ts',
   'playwright.config.ts',
   'package-lock.json',
 ];
@@ -416,6 +601,7 @@ export function compareDocResponsiveness(
         playwrightTrace: false,
         perMutationSnapshot: false,
         physicalDevice: false,
+        nativeDrainWitness: 'browser-local-events-microtask',
       }),
       `${label}: instrumentation or CPU throttle changed.`,
     );
@@ -456,12 +642,28 @@ export function compareDocResponsiveness(
         value.native.observedAt <= value.timingCompleteAt!,
       `${label}: observations fall outside the completed primary timing window.`,
     );
+    check(validDrainDiagnostics(value), `${label}: missing or invalid drain poll chronology.`);
+    check(
+      validDrainWitness(value),
+      `${label}: missing or invalid sealed browser-local drain witness.`,
+    );
     const frame = distribution(value.input.keyToFrameMs);
     const longestTask = Math.max(0, ...value.input.longTasks.map((task) => task.durationMs));
-    const flush = value.native.flushes.length
-      ? distribution(value.native.flushes.map((entry) => entry.durationMs))
+    const capacityFlushes = value.native.flushes.filter((entry) => entry.reason === 'capacity');
+    const idleFlushes = value.native.flushes.filter((entry) => entry.reason === 'idle');
+    const capacityFlush = capacityFlushes.length
+      ? distribution(capacityFlushes.map((entry) => entry.durationMs))
+      : null;
+    const idleFlush = idleFlushes.length
+      ? distribution(idleFlushes.map((entry) => entry.durationMs))
+      : null;
+    const flushMaximum = value.native.flushes.length
+      ? Math.max(...value.native.flushes.map((entry) => entry.durationMs))
       : null;
     const drain = value.native.observedAt - value.input.keydownAt.at(-1)!;
+    const localDrain = value.drainWitness?.firstEmpty
+      ? value.drainWitness.firstEmpty.observedAt - value.input.keydownAt.at(-1)!
+      : null;
     check(finite(drain) && finite(value.typingWallMs), `${label}: invalid phase timing.`);
     check(
       value.native.pending.history === 0 && value.native.pending.collaboration === 0,
@@ -474,15 +676,26 @@ export function compareDocResponsiveness(
         `${label}: native cache exceeded the capacity limit.`,
       );
       check(
-        Boolean(flush) &&
+        Boolean(capacityFlush) &&
           value.native.flushes.every(
             (entry) =>
+              finite(entry.startedAt) &&
               finite(entry.durationMs) &&
+              entry.startedAt >= value.input.startedAt &&
+              entry.startedAt + entry.durationMs <= value.native.observedAt + 1 &&
+              Number.isInteger(entry.history) &&
+              Number.isInteger(entry.collaboration) &&
               entry.history >= 0 &&
               entry.collaboration >= 0 &&
-              Math.max(entry.history, entry.collaboration) === DOC_RESPONSIVENESS_GROUP_LIMIT,
+              Math.max(entry.history, entry.collaboration) <= DOC_RESPONSIVENESS_GROUP_LIMIT &&
+              (entry.reason === 'capacity'
+                ? Math.max(entry.history, entry.collaboration) === DOC_RESPONSIVENESS_GROUP_LIMIT
+                : entry.reason === 'idle' &&
+                  Math.max(entry.history, entry.collaboration) > 0 &&
+                  finite(entry.quietForMs!) &&
+                  entry.quietForMs! >= 300),
           ),
-        `${label}: paired flush evidence missing or unbounded.`,
+        `${label}: capacity evidence missing or invalid paired flush reason, count or quiet time.`,
       );
       if (value.sample !== 'profile') {
         const limits = DOC_RESPONSIVENESS_BUDGETS[preset];
@@ -490,15 +703,25 @@ export function compareDocResponsiveness(
           value.budgetEnforced &&
             frame.p95 <= limits.inputP95Ms &&
             longestTask <= limits.longTaskMaxMs &&
-            Boolean(flush) &&
-            flush!.p95 <= limits.flushP95Ms &&
-            flush!.max <= limits.flushMaxMs &&
-            drain <= 1000,
+            Boolean(capacityFlush) &&
+            capacityFlush!.p95 <= limits.flushP95Ms &&
+            capacityFlush!.max <= limits.flushMaxMs &&
+            (!idleFlush ||
+              (idleFlush.p95 <= limits.flushP95Ms && idleFlush.max <= limits.flushMaxMs)) &&
+            flushMaximum !== null &&
+            flushMaximum <= limits.flushMaxMs &&
+            localDrain !== null &&
+            finite(localDrain) &&
+            localDrain <= 1000,
           `${label}: an absolute responsiveness budget failed.`,
         );
       }
     } else {
       check(!value.budgetEnforced, `${label}: baseline must be observational.`);
+      check(
+        value.native.flushes.length === 0,
+        `${label}: uncapped baseline reported policy flushes.`,
+      );
       if (
         value.native.highWater.history <= DOC_RESPONSIVENESS_GROUP_LIMIT ||
         value.native.highWater.collaboration <= DOC_RESPONSIVENESS_GROUP_LIMIT
@@ -511,8 +734,16 @@ export function compareDocResponsiveness(
       source: value.source,
       inputP95Ms: frame.p95,
       longestTaskMs: longestTask,
-      pairedFlushMs: flush,
+      capacityPairedFlushMs: capacityFlush,
+      idlePairedFlushMs: idleFlush,
+      pairedFlushMaximumMs: flushMaximum,
       nativeDrainUpperBoundMs: drain,
+      firstVerifiedBrowserLocalDrainMs: localDrain,
+      lateReadMinusLocalWitnessMs: localDrain === null ? null : drain - localDrain,
+      drainPollCount: value.drainDiagnostics?.polls?.length ?? 0,
+      firstEmptyAfterFinalKeyMs: value.drainDiagnostics?.firstEmpty?.snapshot
+        ? value.drainDiagnostics.firstEmpty.snapshot.observedAt - value.input.keydownAt.at(-1)!
+        : null,
       typingWallMs: value.typingWallMs,
       initialIntegrity: value.preUndoIntegrity?.passed === true,
       redoOutcome: value.undoRedo?.outcome ?? 'missing',
@@ -677,6 +908,11 @@ export function compareDocResponsiveness(
     candidateHistoryLimit: DOC_RESPONSIVENESS_CANDIDATE_HISTORY_LIMIT,
     baselineHistoryLimit: DOC_RESPONSIVENESS_BASELINE_HISTORY_LIMIT,
     protocolRevision: DOC_RESPONSIVENESS_SCHEMA,
+    drainAcceptance: {
+      metric: 'first-verified-browser-local-empty',
+      maximumMs: 1000,
+      lateReadUpperBound: 'descriptive-only',
+    },
     preset,
     physicalDevice: false,
     status: failures.length ? 'failed' : unavailable.length ? 'needs-evidence' : 'passed',

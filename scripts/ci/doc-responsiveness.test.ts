@@ -7,6 +7,7 @@ import {
   DOC_RESPONSIVENESS_BUDGETS,
   DOC_RESPONSIVENESS_CANDIDATE_HISTORY_LIMIT,
   DOC_RESPONSIVENESS_GROUP_LIMIT,
+  DOC_RESPONSIVENESS_SCHEMA,
 } from '../../e2e/doc-responsiveness.ts';
 import type { CpuProfile, DocIntegritySnapshot } from '../../e2e/doc-responsiveness.ts';
 import { compareDocResponsiveness } from './doc-responsiveness.ts';
@@ -212,7 +213,7 @@ function fixture() {
       const before = role === 'baseline-observation';
       const keys = Array.from({ length: 2086 }, (_, index) => 100 + index * 10);
       const metrics: BenchmarkMetrics = {
-        schema: 3,
+        schema: DOC_RESPONSIVENESS_SCHEMA,
         role,
         preset: 'desktop',
         sample,
@@ -245,6 +246,7 @@ function fixture() {
             'e2e/doc-responsiveness.spec.ts',
             'e2e/doc-responsiveness-fixture.ts',
             'e2e/doc-responsiveness-boundaries.ts',
+            'web/docResponsivenessEvidence.ts',
             'playwright.config.ts',
             'package-lock.json',
           ].map((path) => [path, 'd'.repeat(64)]),
@@ -279,9 +281,17 @@ function fixture() {
           playwrightTrace: false,
           perMutationSnapshot: false,
           physicalDevice: false,
+          nativeDrainWitness: 'browser-local-events-microtask',
         },
         budgets: { ...DOC_RESPONSIVENESS_BUDGETS.desktop },
         typingWallMs: (before ? 20_000 : 10_000) + (sample === 'profile' ? 500 : 0),
+        drainDiagnostics: {
+          nodeTimeOrigin: 1_000_000,
+          polls: [],
+          firstEmpty: null,
+          finishInputNodeBracket: { requestAt: 21_260, returnedAt: 21_410 },
+          finalNativeNodeBracket: { requestAt: 21_410, returnedAt: 21_460 },
+        },
         input: {
           timeOrigin: 1_000_000,
           startedAt: 0,
@@ -314,6 +324,69 @@ function fixture() {
           selection: { start: 2086, end: 2086 },
         },
       };
+      metrics.drainDiagnostics.polls = [
+        {
+          index: 0,
+          requestAt: 21_190,
+          returnedAt: 21_210,
+          snapshot: {
+            unitId: metrics.native.unitId,
+            observedAt: 21_200,
+            pending: { history: before ? 2086 : 6, collaboration: before ? 2086 : 6 },
+            highWater: { ...metrics.native.highWater },
+            history: { undos: metrics.native.history.undos - 1, redos: 0 },
+          },
+        },
+        {
+          index: 1,
+          requestAt: 21_240,
+          returnedAt: 21_255,
+          snapshot: {
+            unitId: metrics.native.unitId,
+            observedAt: 21_250,
+            pending: { ...metrics.native.pending },
+            highWater: { ...metrics.native.highWater },
+            history: { ...metrics.native.history },
+          },
+        },
+      ];
+      metrics.drainDiagnostics.firstEmpty = structuredClone(metrics.drainDiagnostics.polls[1]!);
+      metrics.drainArm = {
+        epoch: `${role}-${sample}-epoch`,
+        generation: `${role}-${sample}-generation`,
+        unitId: metrics.native.unitId,
+        timeOrigin: metrics.input.timeOrigin,
+        installedAt: 0,
+        armedAt: 0,
+        expectedCompletedStates: 2086,
+        completedStates: 0,
+        lastCompletedStateAt: null,
+        initial: {
+          observedAt: 0,
+          pending: { history: 0, collaboration: 0 },
+          highWater: { history: 0, collaboration: 0 },
+          history: { undos: 0, redos: 0 },
+        },
+        firstEmpty: null,
+        sealedAt: null,
+        invalidated: false,
+        invalidations: [],
+      };
+      metrics.drainWitness = {
+        ...structuredClone(metrics.drainArm),
+        completedStates: 2086,
+        lastCompletedStateAt: keys.at(-1)! + 1,
+        firstEmpty: {
+          observedAt: 21_250,
+          completedStates: 2086,
+          pending: { history: 0, collaboration: 0 },
+          highWater: { ...metrics.native.highWater },
+          history: { ...metrics.native.history },
+          wakeups: ['collaboration-emission'],
+        },
+        sealedAt: 21_650,
+      };
+      metrics.native.drainWitness = { ...structuredClone(metrics.drainWitness), sealedAt: null };
       const groups = metrics.native.history.undos;
       const count = sample === 'plain-1' ? groups : 1;
       const firstText = before
@@ -381,6 +454,404 @@ test('a superseded candidate capacity cannot pass on fast timing alone', () => {
   }
 });
 
+test('schema 4 requires the new chronology rather than reinterpreting schema 3 records', () => {
+  const f = fixture();
+  for (const { metrics } of [...f.baseline, ...f.candidate]) metrics.schema = 3;
+  const result = compareDocResponsiveness(f.baseline, f.candidate, 'desktop');
+  assert.equal(result.passed, false);
+  assert.ok(result.failures.some((reason) => reason.includes('old schema')));
+});
+
+test('capacity and idle flush distributions are retained independently', () => {
+  const f = fixture();
+  for (const { metrics } of f.candidate) {
+    metrics.native.flushes.push({
+      reason: 'idle',
+      startedAt: 21_250,
+      durationMs: 2,
+      history: 6,
+      collaboration: 6,
+      quietForMs: 300,
+    });
+    metrics.drainWitness!.firstEmpty!.observedAt = 21_260;
+    metrics.native.drainWitness!.firstEmpty!.observedAt = 21_260;
+    metrics.drainDiagnostics.polls.at(-1)!.snapshot!.observedAt = 21_265;
+    metrics.drainDiagnostics.firstEmpty = structuredClone(metrics.drainDiagnostics.polls.at(-1)!);
+  }
+  const result = compareDocResponsiveness(f.baseline, f.candidate, 'desktop');
+  assert.equal(result.passed, true, JSON.stringify(result));
+  const summary = result.summaries.find(
+    (value) => value.role === 'candidate' && value.sample === 'plain-1',
+  )!;
+  assert.deepEqual(summary.capacityPairedFlushMs, { count: 1, p50: 4, p95: 4, max: 4, sum: 4 });
+  assert.deepEqual(summary.idlePairedFlushMs, { count: 1, p50: 2, p95: 2, max: 2, sum: 2 });
+  assert.equal(summary.pairedFlushMaximumMs, 4);
+  assert.equal(summary.firstEmptyAfterFinalKeyMs, 315);
+  assert.equal(summary.nativeDrainUpperBoundMs, 500);
+});
+
+test('an idle flush requires a recognized reason, bounded integer work and a full quiet interval', () => {
+  const invalid = [
+    { reason: 'heartbeat' },
+    { history: 0, collaboration: 0 },
+    { history: DOC_RESPONSIVENESS_GROUP_LIMIT + 1 },
+    { collaboration: -1 },
+    { history: 0.5 },
+    { quietForMs: 299.999 },
+    { quietForMs: undefined },
+    { quietForMs: Number.NaN },
+    { quietForMs: Number.POSITIVE_INFINITY },
+  ];
+  for (const change of invalid) {
+    const f = fixture();
+    f.candidate[0]!.metrics.native.flushes.push({
+      reason: 'idle',
+      startedAt: 21_250,
+      durationMs: 2,
+      history: 6,
+      collaboration: 6,
+      quietForMs: 300,
+      ...change,
+    });
+    const result = compareDocResponsiveness(f.baseline, f.candidate, 'desktop');
+    assert.equal(result.passed, false, JSON.stringify(change));
+    assert.ok(
+      result.failures.some((reason) => reason.includes('paired flush reason, count or quiet time')),
+    );
+  }
+  const idleOnly = fixture();
+  idleOnly.candidate[0]!.metrics.native.flushes = [
+    {
+      reason: 'idle',
+      startedAt: 21_250,
+      durationMs: 2,
+      history: 6,
+      collaboration: 6,
+      quietForMs: 300,
+    },
+  ];
+  assert.equal(
+    compareDocResponsiveness(idleOnly.baseline, idleOnly.candidate, 'desktop').passed,
+    false,
+  );
+});
+
+test('cheap idle flushes cannot dilute capacity p95, and cheap capacity cannot dilute idle p95', () => {
+  for (const slowReason of ['capacity', 'idle'] as const) {
+    const f = fixture();
+    const slow = {
+      reason: slowReason,
+      startedAt: 1000,
+      durationMs: 30,
+      history: slowReason === 'capacity' ? DOC_RESPONSIVENESS_GROUP_LIMIT : 6,
+      collaboration: slowReason === 'capacity' ? DOC_RESPONSIVENESS_GROUP_LIMIT : 6,
+      ...(slowReason === 'idle' ? { quietForMs: 300 } : {}),
+    };
+    const cheapReason = slowReason === 'capacity' ? 'idle' : 'capacity';
+    const cheap = Array.from({ length: 20 }, (_, index) => ({
+      reason: cheapReason,
+      startedAt: 2000 + index * 600,
+      durationMs: 1,
+      history: cheapReason === 'capacity' ? DOC_RESPONSIVENESS_GROUP_LIMIT : 6,
+      collaboration: cheapReason === 'capacity' ? DOC_RESPONSIVENESS_GROUP_LIMIT : 6,
+      ...(cheapReason === 'idle' ? { quietForMs: 300 } : {}),
+    }));
+    f.candidate[0]!.metrics.native.flushes = [slow, ...cheap];
+    const combined = [slow, ...cheap].map((entry) => entry.durationMs).sort((a, b) => a - b);
+    assert.equal(combined[Math.ceil(combined.length * 0.95) - 1], 1);
+    const result = compareDocResponsiveness(f.baseline, f.candidate, 'desktop');
+    assert.equal(result.passed, false, slowReason);
+    assert.ok(result.failures.some((reason) => reason.includes('absolute responsiveness budget')));
+    const summary = result.summaries.find(
+      (value) => value.role === 'candidate' && value.sample === 'plain-1',
+    )!;
+    assert.equal(
+      (
+        summary[slowReason === 'capacity' ? 'capacityPairedFlushMs' : 'idlePairedFlushMs'] as {
+          p95: number;
+        }
+      ).p95,
+      30,
+    );
+  }
+});
+
+test('an isolated slow idle flush still fails the combined maximum when both p95 values pass', () => {
+  const f = fixture();
+  f.candidate[0]!.metrics.native.flushes.push(
+    ...Array.from({ length: 21 }, (_, index) => ({
+      reason: 'idle',
+      startedAt: 2000 + index * 600,
+      durationMs: index === 20 ? 51 : 1,
+      history: 6,
+      collaboration: 6,
+      quietForMs: 300,
+    })),
+  );
+  const result = compareDocResponsiveness(f.baseline, f.candidate, 'desktop');
+  assert.equal(result.passed, false);
+  const summary = result.summaries.find(
+    (value) => value.role === 'candidate' && value.sample === 'plain-1',
+  )!;
+  assert.equal((summary.capacityPairedFlushMs as { p95: number }).p95, 4);
+  assert.equal((summary.idlePairedFlushMs as { p95: number }).p95, 1);
+  assert.equal(summary.pairedFlushMaximumMs, 51);
+});
+
+test('drain diagnostics require complete ordered polls and the actual first empty snapshot', () => {
+  const invalid: Array<(metrics: BenchmarkMetrics) => void> = [
+    (metrics) => {
+      delete (metrics as Partial<BenchmarkMetrics>).drainDiagnostics;
+    },
+    (metrics) => {
+      metrics.drainDiagnostics.polls = [];
+    },
+    (metrics) => {
+      metrics.drainDiagnostics.polls[0]!.returnedAt = 1;
+    },
+    (metrics) => {
+      metrics.drainDiagnostics.polls[0]!.snapshot!.observedAt = metrics.input.endedAt + 5;
+    },
+    (metrics) => {
+      metrics.drainDiagnostics.firstEmpty = structuredClone(metrics.drainDiagnostics.polls[0]!);
+    },
+    (metrics) => {
+      metrics.drainDiagnostics.finishInputNodeBracket!.requestAt = 1;
+    },
+    (metrics) => {
+      metrics.drainDiagnostics.finalNativeNodeBracket!.requestAt = 1;
+    },
+  ];
+  for (const change of invalid) {
+    const f = fixture();
+    change(f.candidate[0]!.metrics);
+    const result = compareDocResponsiveness(f.baseline, f.candidate, 'desktop');
+    assert.equal(result.passed, false);
+    assert.ok(result.failures.some((reason) => reason.includes('drain poll chronology')));
+  }
+});
+
+test('poll cache counts, monotonic high-water and the final empty history must be consistent', () => {
+  const invalid: Array<(metrics: BenchmarkMetrics) => void> = [
+    (metrics) => {
+      metrics.drainDiagnostics.polls[0]!.snapshot!.pending.history = 33;
+    },
+    (metrics) => {
+      metrics.drainDiagnostics.polls[0]!.snapshot!.highWater.history = 33;
+    },
+    (metrics) => {
+      const middle = structuredClone(metrics.drainDiagnostics.polls[0]!);
+      middle.index = 1;
+      middle.requestAt = 21_215;
+      middle.returnedAt = 21_230;
+      middle.snapshot!.observedAt = 21_220;
+      middle.snapshot!.highWater.history = 31;
+      metrics.drainDiagnostics.polls.splice(1, 0, middle);
+      metrics.drainDiagnostics.polls[2]!.index = 2;
+      metrics.drainDiagnostics.firstEmpty = structuredClone(metrics.drainDiagnostics.polls[2]!);
+    },
+    (metrics) => {
+      metrics.drainDiagnostics.polls.at(-1)!.snapshot!.history.undos--;
+      metrics.drainDiagnostics.firstEmpty = structuredClone(metrics.drainDiagnostics.polls.at(-1)!);
+    },
+    (metrics) => {
+      for (const poll of metrics.drainDiagnostics.polls) poll.snapshot!.highWater.history = 31;
+      metrics.drainDiagnostics.firstEmpty = structuredClone(metrics.drainDiagnostics.polls.at(-1)!);
+    },
+  ];
+  for (const change of invalid) {
+    const f = fixture();
+    change(f.candidate[0]!.metrics);
+    const result = compareDocResponsiveness(f.baseline, f.candidate, 'desktop');
+    assert.equal(result.passed, false);
+    assert.ok(result.failures.some((reason) => reason.includes('drain poll chronology')));
+  }
+});
+
+test('browser-local completion requires its original arm, exact terminal count and sealed identity', () => {
+  const terminal = (metrics: BenchmarkMetrics) => [
+    metrics.drainWitness!,
+    metrics.native.drainWitness!,
+  ];
+  const everyRecord = (metrics: BenchmarkMetrics) => [metrics.drainArm!, ...terminal(metrics)];
+  const invalid: Array<(metrics: BenchmarkMetrics) => void> = [
+    (metrics) => {
+      delete metrics.drainArm;
+    },
+    (metrics) => {
+      delete metrics.drainWitness;
+    },
+    (metrics) => {
+      delete metrics.native.drainWitness;
+    },
+    (metrics) => {
+      metrics.drainWitness!.epoch = 'different-epoch';
+    },
+    (metrics) => {
+      metrics.drainWitness!.generation = 'different-generation';
+    },
+    (metrics) => {
+      for (const record of everyRecord(metrics)) record.unitId = 'different-unit';
+    },
+    (metrics) => {
+      for (const record of everyRecord(metrics)) record.timeOrigin++;
+    },
+    (metrics) => {
+      for (const record of everyRecord(metrics)) record.expectedCompletedStates = 2085;
+    },
+    (metrics) => {
+      for (const record of terminal(metrics)) record.completedStates = 2087;
+    },
+    (metrics) => {
+      metrics.drainWitness!.invalidated = true;
+    },
+    (metrics) => {
+      metrics.drainWitness!.invalidations = [
+        { reason: 'refilled-after-empty', observedAt: 21_260 },
+      ];
+    },
+    (metrics) => {
+      metrics.drainWitness!.firstEmpty = null;
+    },
+    (metrics) => {
+      for (const record of terminal(metrics)) record.firstEmpty!.pending.history = 1;
+    },
+    (metrics) => {
+      for (const record of terminal(metrics))
+        record.firstEmpty!.observedAt = metrics.input.keydownAt.at(-1)! - 1;
+    },
+    (metrics) => {
+      // The pending poll at 21,200 directly contradicts this purported 21,100 drain.
+      for (const record of terminal(metrics)) record.firstEmpty!.observedAt = 21_100;
+    },
+    (metrics) => {
+      // A policy flush cannot still be executing after the purported terminal drain.
+      metrics.native.flushes[0]!.startedAt = 21_250;
+    },
+    (metrics) => {
+      for (const record of terminal(metrics))
+        record.lastCompletedStateAt = metrics.input.keydownAt.at(-1)! - 1;
+    },
+    (metrics) => {
+      for (const record of terminal(metrics)) record.firstEmpty!.history.undos--;
+    },
+    (metrics) => {
+      for (const record of terminal(metrics)) record.firstEmpty!.highWater.history--;
+    },
+    (metrics) => {
+      for (const record of terminal(metrics)) record.firstEmpty!.wakeups = [];
+    },
+    (metrics) => {
+      for (const record of terminal(metrics)) record.firstEmpty!.completedStates = 2085;
+    },
+    (metrics) => {
+      metrics.drainWitness!.sealedAt = null;
+    },
+    (metrics) => {
+      metrics.drainWitness!.sealedAt = metrics.undoRedo!.beforeUndoAt + 1;
+    },
+    (metrics) => {
+      for (const record of everyRecord(metrics)) record.initial.pending.history = 1;
+    },
+    (metrics) => {
+      for (const record of everyRecord(metrics)) {
+        record.armedAt = metrics.input.keydownAt[0]! + 1;
+        record.initial.observedAt = record.armedAt;
+      }
+    },
+  ];
+  for (const change of invalid) {
+    const f = fixture();
+    change(f.candidate[0]!.metrics);
+    const result = compareDocResponsiveness(f.baseline, f.candidate, 'desktop');
+    assert.equal(result.passed, false);
+    assert.ok(
+      result.failures.some((reason) => reason.includes('sealed browser-local drain witness')),
+    );
+  }
+});
+
+test('a coherent browser-local completion above 1000 ms still fails the unchanged numeric limit', () => {
+  const f = fixture();
+  const metrics = f.candidate[0]!.metrics;
+  metrics.input.endedAt = 21_960;
+  metrics.native.observedAt = 21_970;
+  metrics.drainWitness!.firstEmpty!.observedAt = 21_951;
+  metrics.native.drainWitness!.firstEmpty!.observedAt = 21_951;
+  const lastPoll = metrics.drainDiagnostics.polls.at(-1)!;
+  lastPoll.requestAt = 21_940;
+  lastPoll.returnedAt = 21_958;
+  lastPoll.snapshot!.observedAt = 21_955;
+  metrics.drainDiagnostics.firstEmpty = structuredClone(lastPoll);
+  metrics.drainDiagnostics.finishInputNodeBracket = { requestAt: 21_960, returnedAt: 21_965 };
+  metrics.drainDiagnostics.finalNativeNodeBracket = { requestAt: 21_965, returnedAt: 21_975 };
+  metrics.timingCompleteAt! += 1000;
+  metrics.drainWitness!.sealedAt! += 1000;
+  for (const snapshot of [
+    metrics.preUndoIntegrity!,
+    metrics.undoRedo!.firstUndo,
+    metrics.undoRedo!.undo,
+    metrics.undoRedo!.final,
+  ]) {
+    snapshot.observedAt += 1000;
+    snapshot.sender.observedAt += 1000;
+    snapshot.peer.observedAt += 1000;
+  }
+  for (const key of [
+    'beforeUndoAt',
+    'afterUndoAt',
+    'beforeRedoAt',
+    'afterRedoAt',
+    'finalObservedAt',
+  ] as const)
+    metrics.undoRedo![key] += 1000;
+  const result = compareDocResponsiveness(f.baseline, f.candidate, 'desktop');
+  assert.equal(result.passed, false);
+  assert.equal(result.failures.length, 1, JSON.stringify(result.failures));
+  assert.ok(result.failures[0]!.includes('absolute responsiveness budget'));
+  assert.equal(
+    result.summaries.find((value) => value.role === 'candidate' && value.sample === 'plain-1')!
+      .firstVerifiedBrowserLocalDrainMs,
+    1001,
+  );
+});
+
+test('the prospective browser-local drain gate retains a slow late read as a separate diagnostic', () => {
+  const f = fixture();
+  const metrics = f.candidate[0]!.metrics;
+  metrics.native.observedAt = metrics.input.keydownAt.at(-1)! + 1001;
+  metrics.timingCompleteAt! += 1000;
+  metrics.drainWitness!.sealedAt! += 1000;
+  for (const snapshot of [
+    metrics.preUndoIntegrity!,
+    metrics.undoRedo!.firstUndo,
+    metrics.undoRedo!.undo,
+    metrics.undoRedo!.final,
+  ]) {
+    snapshot.observedAt += 1000;
+    snapshot.sender.observedAt += 1000;
+    snapshot.peer.observedAt += 1000;
+  }
+  for (const key of [
+    'beforeUndoAt',
+    'afterUndoAt',
+    'beforeRedoAt',
+    'afterRedoAt',
+    'finalObservedAt',
+  ] as const)
+    metrics.undoRedo![key] += 1000;
+  const result = compareDocResponsiveness(f.baseline, f.candidate, 'desktop');
+  assert.equal(result.passed, true, JSON.stringify(result.failures));
+  const summary = result.summaries.find(
+    (value) => value.role === 'candidate' && value.sample === 'plain-1',
+  )!;
+  assert.equal(summary.firstEmptyAfterFinalKeyMs, 300);
+  assert.equal(summary.firstVerifiedBrowserLocalDrainMs, 300);
+  assert.equal(summary.nativeDrainUpperBoundMs, 1001);
+  assert.equal(summary.lateReadMinusLocalWitnessMs, 701);
+  assert.equal(result.drainAcceptance.metric, 'first-verified-browser-local-empty');
+});
+
 test('native history retention is checked separately for candidate and baseline roles', () => {
   const setGroups = (metrics: BenchmarkMetrics, groups: number) => {
     metrics.native.history.undos = groups;
@@ -389,6 +860,10 @@ test('native history retention is checked separately for candidate and baseline 
     metrics.undoRedo!.firstUndo.sender.history.undos = groups - 1;
     metrics.undoRedo!.undo.sender.history.redos = groups;
     metrics.undoRedo!.final.sender.history.undos = groups;
+    metrics.drainWitness!.firstEmpty!.history.undos = groups;
+    metrics.native.drainWitness!.firstEmpty!.history.undos = groups;
+    metrics.drainDiagnostics.firstEmpty!.snapshot!.history.undos = groups;
+    metrics.drainDiagnostics.polls.at(-1)!.snapshot!.history.undos = groups;
   };
   const f = fixture();
   setGroups(f.candidate[0]!.metrics, DOC_RESPONSIVENESS_CANDIDATE_HISTORY_LIMIT);

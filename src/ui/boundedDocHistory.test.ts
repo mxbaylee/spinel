@@ -27,7 +27,11 @@ import { turns, wire } from '../../lib/sync-client/tests/fixture.ts';
 
 const limit = DOC_HISTORY_GROUP_LIMIT;
 
-afterEach(() => vi.useRealTimers());
+afterEach(() => {
+  vi.useRealTimers();
+  vi.restoreAllMocks();
+  vi.unstubAllGlobals();
+});
 
 function fixture(snapshot = getDocsEmptySnapshot('doc'), throws = false) {
   const replica = new NativeReplica(snapshot, 'doc', {
@@ -106,6 +110,209 @@ function fixture(snapshot = getDocsEmptySnapshot('doc'), throws = false) {
     },
   };
 }
+
+/** Keep SDK timers queued while the visible document receives rendering frames. */
+function frameFixture(onObserve?: () => void) {
+  const native = fixture();
+  native.policy.dispose();
+  let now = 1000;
+  let nextId = 0;
+  let visibility = 'visible';
+  const document = new EventTarget();
+  Object.defineProperty(document, 'visibilityState', { get: () => visibility });
+  const frames = new Map<number, FrameRequestCallback>();
+  vi.stubGlobal('document', document);
+  vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => {
+    const id = ++nextId;
+    frames.set(id, callback);
+    return id;
+  });
+  vi.stubGlobal('cancelAnimationFrame', (id: number) => frames.delete(id));
+  vi.spyOn(performance, 'now').mockImplementation(() => now);
+  const policy = boundDocHistory(native.replica.univer, 'doc', (value) => {
+    native.observations.push(value);
+    onObserve?.();
+  });
+  return {
+    ...native,
+    policy,
+    frames,
+    at(value: number) {
+      now = value;
+    },
+    frameAt(value: number) {
+      now = value;
+      const callbacks = [...frames.values()];
+      frames.clear();
+      for (const callback of callbacks) callback(now);
+    },
+    visible(value: boolean) {
+      visibility = value ? 'visible' : 'hidden';
+      document.dispatchEvent(new Event('visibilitychange'));
+    },
+    close() {
+      policy.dispose();
+      native.close();
+    },
+  };
+}
+
+test('rendering frames drain a quiet native phrase when SDK timers cannot run, without per-key history', async () => {
+  const f = frameFixture();
+  try {
+    await f.type('care');
+    expect(f.frames.size).toBe(1);
+    f.frameAt(1299);
+    expect(f.history.getUndoRedoStatus('doc').undos).toBe(0);
+    expect(f.frames.size).toBe(1);
+    await f.type('fully');
+    f.frameAt(1598);
+    expect(f.history.getUndoRedoStatus('doc').undos).toBe(0);
+    f.frameAt(1599);
+    expect(f.manager.getStateCache('doc')).toEqual({ history: [], collaboration: [] });
+    expect(f.history.getUndoRedoStatus('doc')).toEqual({ undos: 1, redos: 0 });
+    expect(f.observations).toEqual([
+      expect.objectContaining({ reason: 'idle', history: 9, collaboration: 9, quietForMs: 300 }),
+    ]);
+    expect(f.frames.size).toBe(0);
+    // The original SDK timeouts can still run later without duplicating history.
+    await vi.advanceTimersByTimeAsync(350);
+    expect(f.history.getUndoRedoStatus('doc').undos).toBe(1);
+    await f.historyCommand('undo');
+    expect(f.text()).toBe('\r\n');
+    expect(f.selection()).toMatchObject({ startOffset: 0, endOffset: 0 });
+    await f.historyCommand('redo');
+    expect(f.text()).toBe('carefully\r\n');
+    expect(f.selection()).toMatchObject({ startOffset: 9, endOffset: 9 });
+  } finally {
+    f.close();
+  }
+});
+
+test('remote and intermediate notifications cannot postpone the completed phrase quiet deadline', async () => {
+  const f = frameFixture();
+  try {
+    await f.type('phrase');
+    const sample = f.manager.getStateCache('doc').history[0]!;
+    const states = f.replica.univer.__getInjector().get(DocStateEmitService);
+    f.at(1250);
+    states.emitStateChangeInfo({ ...sample, noHistory: true });
+    states.emitStateChangeInfo({ ...sample, isSync: true });
+    states.emitStateChangeInfo({ ...sample, unitId: 'other', isSync: true });
+    f.frameAt(1300);
+    expect(f.observations).toEqual([
+      expect.objectContaining({ reason: 'idle', history: 6, collaboration: 6, quietForMs: 300 }),
+    ]);
+    expect(f.text()).toBe('phrase\r\n');
+    expect(f.history.getUndoRedoStatus('doc').undos).toBe(1);
+  } finally {
+    f.close();
+  }
+});
+
+test('native idle winning the race stops the owned frame without another flush', async () => {
+  const f = frameFixture();
+  try {
+    await f.type('native first');
+    await vi.advanceTimersByTimeAsync(300);
+    expect(f.history.getUndoRedoStatus('doc').undos).toBe(1);
+    f.frameAt(1300);
+    expect(f.observations).toEqual([]);
+    expect(f.frames.size).toBe(0);
+    expect(f.manager.getStateCache('doc')).toEqual({ history: [], collaboration: [] });
+  } finally {
+    f.close();
+  }
+});
+
+test('hidden documents cancel the owned frame and resume pending work only when visible', async () => {
+  const f = frameFixture();
+  try {
+    await f.type('retained');
+    f.visible(false);
+    expect(f.frames.size).toBe(0);
+    f.frameAt(1400);
+    expect(f.observations).toEqual([]);
+    expect(f.manager.getStateCache('doc').history).toHaveLength(8);
+    f.visible(true);
+    expect(f.frames.size).toBe(1);
+    f.frameAt(1401);
+    expect(f.observations).toHaveLength(1);
+    expect(f.history.getUndoRedoStatus('doc').undos).toBe(1);
+    expect(f.frames.size).toBe(0);
+    f.visible(false);
+    f.visible(true);
+    expect(f.frames.size).toBe(0);
+  } finally {
+    f.close();
+  }
+});
+
+test('a permission fence cancels owned work and stale callbacks cannot flush or resurrect it', async () => {
+  const f = frameFixture();
+  let allowed = true;
+  const failures: unknown[] = [];
+  const capture = captureNative({
+    univer: f.replica.univer,
+    unitId: 'doc',
+    canEdit: () => allowed,
+    onMutation: () => {},
+    onFailure: (reason) => failures.push(reason),
+  });
+  try {
+    await f.type('retained');
+    const stale = [...f.frames.values()][0]!;
+    allowed = false;
+    f.policy.dispose();
+    f.policy.dispose();
+    expect(f.frames.size).toBe(0);
+    f.at(1500);
+    stale(1500);
+    f.visible(false);
+    f.visible(true);
+    expect(f.frames.size).toBe(0);
+    expect(f.observations).toEqual([]);
+    expect(f.manager.getStateCache('doc').history).toHaveLength(8);
+    expect(f.manager.getStateCache('doc').collaboration).toHaveLength(8);
+    expect(
+      await f.commands.executeCommand('doc.command.insert-text', {
+        unitId: 'doc',
+        segmentId: '',
+        range: { startOffset: 8, endOffset: 8, collapsed: true },
+        body: { dataStream: 'forbidden' },
+        debounce: true,
+      }),
+    ).toBe(false);
+    expect(failures).toEqual(['unavailable']);
+    expect(f.text()).toBe('retained\r\n');
+    // Lifecycle cleanup leaves earlier work for the existing native mechanism.
+    await vi.advanceTimersByTimeAsync(350);
+    expect(f.history.getUndoRedoStatus('doc').undos).toBe(1);
+  } finally {
+    capture.dispose();
+    f.close();
+  }
+});
+
+test('a flush observer may synchronously tear down the editor without rearming a frame', async () => {
+  let dispose = () => {};
+  const f = frameFixture(() => dispose());
+  dispose = f.policy.dispose;
+  try {
+    await f.type('complete');
+    f.frameAt(1300);
+    expect(f.observations).toHaveLength(1);
+    expect(f.manager.getStateCache('doc')).toEqual({ history: [], collaboration: [] });
+    expect(f.frames.size).toBe(0);
+    f.visible(false);
+    f.visible(true);
+    await f.type(' later');
+    expect(f.frames.size).toBe(0);
+    expect(f.observations).toHaveLength(1);
+  } finally {
+    f.close();
+  }
+});
 
 test('real native edits bound both caches and undo/redo exact ordered groups and selections', async () => {
   const f = fixture();

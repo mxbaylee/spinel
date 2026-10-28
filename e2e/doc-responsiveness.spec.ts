@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { readFile, writeFile } from 'node:fs/promises';
 import { arch, cpus, platform, release, totalmem } from 'node:os';
@@ -18,6 +18,8 @@ import {
 } from './doc-responsiveness.ts';
 import type {
   CpuProfile,
+  DocDrainDiagnostics,
+  DocDrainWitness,
   DocIntegritySnapshot,
   DocNativeIntegrity,
   DocPreUndoIntegrity,
@@ -324,6 +326,11 @@ for (const preset of ['desktop', 'mobile'] as const)
       let profilerClock: ProfilerClockBracket | undefined;
       let reloadObservers: ReloadObservers | undefined;
       let clockOrigins: ClockOrigins | undefined;
+      const drainDiagnostics: DocDrainDiagnostics = {
+        nodeTimeOrigin: performance.timeOrigin,
+        polls: [],
+        firstEmpty: null,
+      };
       const evidence: Record<string, unknown> = {
         schema: DOC_RESPONSIVENESS_SCHEMA,
         role: baseline ? 'baseline-observation' : 'candidate',
@@ -333,6 +340,7 @@ for (const preset of ['desktop', 'mobile'] as const)
         attempt: info.retry,
         caseObservationTimeoutMs: baseline ? 600_000 : 300_000,
         nativeDrainObservationTimeoutMs: baseline ? 120_000 : 30_000,
+        drainDiagnostics,
         source: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
         dirtyPaths: execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim(),
         harnessSha256: Object.fromEntries(
@@ -342,6 +350,7 @@ for (const preset of ['desktop', 'mobile'] as const)
               'e2e/doc-responsiveness.spec.ts',
               'e2e/doc-responsiveness-fixture.ts',
               'e2e/doc-responsiveness-boundaries.ts',
+              'web/docResponsivenessEvidence.ts',
               'playwright.config.ts',
               'package-lock.json',
             ].map(async (path) => [
@@ -387,6 +396,7 @@ for (const preset of ['desktop', 'mobile'] as const)
           playwrightTrace: false,
           perMutationSnapshot: false,
           physicalDevice: false,
+          nativeDrainWitness: 'browser-local-events-microtask',
         },
         budgets: budgets[preset],
       };
@@ -412,7 +422,8 @@ for (const preset of ['desktop', 'mobile'] as const)
         await focusEmptyDoc(f.other, mobile);
         await f.page.bringToFront();
         await focusEmptyDoc(f.page, mobile);
-        expect((await readDocResponsiveness(f.page))?.mobile).toBe(mobile);
+        const initialNative = (await readDocResponsiveness(f.page))!;
+        expect(initialNative.mobile).toBe(mobile);
         expect(
           await f.page.evaluate(
             () => matchMedia('(pointer: coarse) and (max-width: 900px)').matches,
@@ -447,6 +458,22 @@ for (const preset of ['desktop', 'mobile'] as const)
           profilerClock = { beforeMs, afterMs };
           evidence.profilerStartBracket = profilerClock;
         }
+        const armedNative = await readDocResponsiveness(f.page, false, {
+          action: 'arm',
+          epoch: randomUUID(),
+          unitId: initialNative.unitId,
+          timeOrigin: clockOrigins.sender,
+          expectedCompletedStates: expectedInputCount,
+        });
+        const drainArm = armedNative?.drainWitness;
+        evidence.drainArm = drainArm;
+        expect(drainArm).toBeTruthy();
+        expect(drainArm!.invalidated).toBe(false);
+        expect(drainArm!.invalidations).toEqual([]);
+        expect(drainArm!.completedStates).toBe(0);
+        expect(drainArm!.initial.pending).toEqual({ history: 0, collaboration: 0 });
+        expect(drainArm!.initial.history).toEqual({ undos: 0, redos: 0 });
+        expect(drainArm!.firstEmpty).toBeNull();
         finishInput = await observeInput(f.page);
         const typingStarted = performance.now();
         for (const [index, paragraph] of paragraphs.entries()) {
@@ -457,27 +484,80 @@ for (const preset of ['desktop', 'mobile'] as const)
         evidence.typingWallMs = performance.now() - typingStarted;
         const drainStarted = performance.now();
         await expect
-          .poll(async () => (await readDocResponsiveness(f.page))?.pending, {
-            // A 4×-throttled observation of the existing 14.857 s pair may
-            // exceed 30 s. Only baseline collection has this wider window;
-            // candidate acceptance remains the separate <=1,000 ms drain gate.
-            timeout: baseline ? 120_000 : 30_000,
-            intervals: [25],
-          })
+          .poll(
+            async () => {
+              const requestAt = performance.now();
+              let snapshot: DocResponsivenessEvidence | null = null;
+              try {
+                snapshot = await readDocResponsiveness(f.page);
+                return snapshot?.pending;
+              } finally {
+                const poll = {
+                  index: drainDiagnostics.polls.length,
+                  requestAt,
+                  returnedAt: performance.now(),
+                  snapshot: snapshot
+                    ? {
+                        unitId: snapshot.unitId,
+                        observedAt: snapshot.observedAt,
+                        pending: snapshot.pending,
+                        highWater: snapshot.highWater,
+                        history: snapshot.history,
+                      }
+                    : null,
+                };
+                drainDiagnostics.polls.push(poll);
+                if (
+                  !drainDiagnostics.firstEmpty &&
+                  snapshot?.pending.history === 0 &&
+                  snapshot.pending.collaboration === 0
+                )
+                  drainDiagnostics.firstEmpty = poll;
+              }
+            },
+            {
+              // A 4×-throttled observation of the existing 14.857 s pair may
+              // exceed 30 s. Only baseline collection has this wider window;
+              // candidate acceptance remains the separate <=1,000 ms drain gate.
+              timeout: baseline ? 120_000 : 30_000,
+              intervals: [25],
+            },
+          )
           .toEqual({ history: 0, collaboration: 0 });
         evidence.drainObservationMs = performance.now() - drainStarted;
+        const finishInputRequestedAt = performance.now();
         const input = await finishInput();
+        drainDiagnostics.finishInputNodeBracket = {
+          requestAt: finishInputRequestedAt,
+          returnedAt: performance.now(),
+        };
         finishInput = undefined;
+        const finalNativeRequestedAt = performance.now();
         const native = (await readDocResponsiveness(f.page))!;
+        drainDiagnostics.finalNativeNodeBracket = {
+          requestAt: finalNativeRequestedAt,
+          returnedAt: performance.now(),
+        };
         evidence.native = native;
         evidence.input = input;
         const frame = distribution(input.keyToFrameMs);
         const gaps = input.keydownAt.slice(1).map((at, index) => at - input.keydownAt[index]!);
         const longTasks = distribution(input.longTasks.map((task) => task.durationMs));
-        const flush = native.flushes.length
-          ? distribution(native.flushes.map((entry) => entry.durationMs))
+        const capacityFlushes = native.flushes.filter((entry) => entry.reason === 'capacity');
+        const idleFlushes = native.flushes.filter((entry) => entry.reason === 'idle');
+        const capacityFlush = capacityFlushes.length
+          ? distribution(capacityFlushes.map((entry) => entry.durationMs))
+          : null;
+        const idleFlush = idleFlushes.length
+          ? distribution(idleFlushes.map((entry) => entry.durationMs))
+          : null;
+        const flushMaximum = native.flushes.length
+          ? Math.max(...native.flushes.map((entry) => entry.durationMs))
           : null;
         const drainUpperBoundMs = native.observedAt - input.keydownAt.at(-1)!;
+        const localDrainMs = native.drainWitness?.firstEmpty
+          ? native.drainWitness.firstEmpty.observedAt - input.keydownAt.at(-1)!
+          : null;
         evidence.summary = {
           frameOpportunityMs: frame,
           interKeyGapMs: distribution(gaps),
@@ -487,18 +567,29 @@ for (const preset of ['desktop', 'mobile'] as const)
             (sum, task) => sum + Math.max(0, task.durationMs - 50),
             0,
           ),
-          flushPairMs: flush,
+          capacityFlushPairMs: capacityFlush,
+          idleFlushPairMs: idleFlush,
+          pairedFlushMaximumMs: flushMaximum,
           postFinalKeyDrainUpperBoundMs: drainUpperBoundMs,
+          firstVerifiedBrowserLocalDrainMs: localDrainMs,
+          lateReadMinusLocalWitnessMs:
+            localDrainMs === null ? null : drainUpperBoundMs - localDrainMs,
+          drainAcceptanceMetric: 'first-verified-browser-local-empty',
         };
         evidence.budgetResults = {
           inputP95: frame.p95 <= budgets[preset].inputP95Ms,
           longestTask: longTasks.max <= budgets[preset].longTaskMaxMs,
-          flushP95: flush ? flush.p95 <= budgets[preset].flushP95Ms : null,
-          flushMaximum: flush ? flush.max <= budgets[preset].flushMaxMs : null,
+          capacityFlushP95: capacityFlush ? capacityFlush.p95 <= budgets[preset].flushP95Ms : null,
+          idleFlushP95: idleFlush ? idleFlush.p95 <= budgets[preset].flushP95Ms : null,
+          flushMaximum: flushMaximum === null ? null : flushMaximum <= budgets[preset].flushMaxMs,
           boundedHistory: native.highWater.history <= DOC_RESPONSIVENESS_GROUP_LIMIT,
           boundedCollaboration: native.highWater.collaboration <= DOC_RESPONSIVENESS_GROUP_LIMIT,
-          observedBoundedFlushes: native.flushes.length > 0,
-          drainedWithinOneSecond: drainUpperBoundMs <= 1000,
+          observedCapacityFlushes: capacityFlushes.length > 0,
+          browserLocalDrainedWithinOneSecond: localDrainMs === null ? null : localDrainMs <= 1000,
+        };
+        evidence.lateReadDiagnostic = {
+          withinOneSecond: drainUpperBoundMs <= 1000,
+          acceptanceGate: false,
         };
         evidence.heapAfter = await cdp.send('Runtime.getHeapUsage');
         if (profiling) {
@@ -541,6 +632,34 @@ for (const preset of ['desktop', 'mobile'] as const)
           reloads: initialReloads.reloads,
         };
         evidence.preUndoIntegrity = preUndoIntegrity;
+        const sealedNative = await readDocResponsiveness(f.page, false, {
+          action: 'seal',
+          epoch: drainArm!.epoch,
+          generation: drainArm!.generation,
+          unitId: drainArm!.unitId,
+          timeOrigin: drainArm!.timeOrigin,
+        });
+        const drainWitness = sealedNative?.drainWitness as DocDrainWitness | null | undefined;
+        evidence.drainWitness = drainWitness;
+        expect(drainWitness).toBeTruthy();
+        expect(drainWitness!.invalidated).toBe(false);
+        expect(drainWitness!.invalidations).toEqual([]);
+        expect(drainWitness!.epoch).toBe(drainArm!.epoch);
+        expect(drainWitness!.generation).toBe(drainArm!.generation);
+        expect(drainWitness!.unitId).toBe(native.unitId);
+        expect(drainWitness!.timeOrigin).toBe(input.timeOrigin);
+        expect(drainWitness!.expectedCompletedStates).toBe(expectedInputCount);
+        expect(drainWitness!.completedStates).toBe(expectedInputCount);
+        expect(drainWitness!.lastCompletedStateAt!).toBeGreaterThanOrEqual(input.keydownAt.at(-1)!);
+        expect(drainWitness!.firstEmpty).toBeTruthy();
+        expect(drainWitness!.firstEmpty).toEqual(native.drainWitness?.firstEmpty);
+        expect(drainWitness!.firstEmpty!.observedAt).toBeGreaterThanOrEqual(
+          drainWitness!.lastCompletedStateAt!,
+        );
+        expect(drainWitness!.firstEmpty!.pending).toEqual({ history: 0, collaboration: 0 });
+        expect(drainWitness!.firstEmpty!.history).toEqual(native.history);
+        expect(drainWitness!.firstEmpty!.highWater).toEqual(native.highWater);
+        expect(drainWitness!.sealedAt!).toBeGreaterThanOrEqual(preUndoIntegrity.observedAt);
         const historyProgress: Record<string, unknown> = { phase: 'not-started' };
         evidence.undoRedoObservation = historyProgress;
         const undoRedo = await verifyUndoRedo(
@@ -552,6 +671,7 @@ for (const preset of ['desktop', 'mobile'] as const)
           historyProgress,
         );
         evidence.undoRedo = undoRedo;
+        expect(drainWitness!.sealedAt!).toBeLessThanOrEqual(undoRedo.beforeUndoAt);
         await expect
           .poll(async () => (await f.read()).body!.dataStream)
           .toBe(undoRedo.outcome === 'passed' ? expectedText : '\r\n');
@@ -563,20 +683,41 @@ for (const preset of ['desktop', 'mobile'] as const)
           undoRedo.outcome === 'passed'
             ? 'exact saved/live peer text, sender/peer selections, undo/redo and Online passed'
             : 'baseline redo refused at capacity; exact prior typing and Undo verified; recovered saved empty state';
-        // No production policy changes. Schema 3 records the strict baseline
-        // history outcome; candidate integrity and responsiveness gates remain full.
+        // Schema 4 retains the strict baseline history outcome and separately
+        // observes capacity/idle work. Drain acceptance now uses the preregistered
+        // browser-local witness; the unchanged late-read scalar remains descriptive.
         if (!baseline) {
           expect(native.highWater.history).toBeLessThanOrEqual(DOC_RESPONSIVENESS_GROUP_LIMIT);
           expect(native.highWater.collaboration).toBeLessThanOrEqual(
             DOC_RESPONSIVENESS_GROUP_LIMIT,
           );
-          expect(native.flushes.length).toBeGreaterThan(0);
+          expect(capacityFlushes.length).toBeGreaterThan(0);
+          for (const entry of native.flushes) {
+            expect(['capacity', 'idle']).toContain(entry.reason);
+            expect(Number.isInteger(entry.history) && entry.history >= 0).toBe(true);
+            expect(Number.isInteger(entry.collaboration) && entry.collaboration >= 0).toBe(true);
+            const pending = Math.max(entry.history, entry.collaboration);
+            expect(pending).toBeGreaterThan(0);
+            expect(pending).toBeLessThanOrEqual(DOC_RESPONSIVENESS_GROUP_LIMIT);
+            if (entry.reason === 'capacity') expect(pending).toBe(DOC_RESPONSIVENESS_GROUP_LIMIT);
+            if (entry.reason === 'idle') {
+              expect(Number.isFinite(entry.quietForMs)).toBe(true);
+              expect(entry.quietForMs!).toBeGreaterThanOrEqual(300);
+            }
+          }
           if (!profiled) {
             expect(frame.p95).toBeLessThanOrEqual(budgets[preset].inputP95Ms);
             expect(longTasks.max).toBeLessThanOrEqual(budgets[preset].longTaskMaxMs);
-            expect(flush!.p95).toBeLessThanOrEqual(budgets[preset].flushP95Ms);
-            expect(flush!.max).toBeLessThanOrEqual(budgets[preset].flushMaxMs);
-            expect(drainUpperBoundMs).toBeLessThanOrEqual(1000);
+            // Idle samples must never dilute the registered capacity distribution.
+            expect(capacityFlush!.p95).toBeLessThanOrEqual(budgets[preset].flushP95Ms);
+            expect(capacityFlush!.max).toBeLessThanOrEqual(budgets[preset].flushMaxMs);
+            if (idleFlush) {
+              expect(idleFlush.p95).toBeLessThanOrEqual(budgets[preset].flushP95Ms);
+              expect(idleFlush.max).toBeLessThanOrEqual(budgets[preset].flushMaxMs);
+            }
+            expect(flushMaximum!).toBeLessThanOrEqual(budgets[preset].flushMaxMs);
+            expect(localDrainMs).not.toBeNull();
+            expect(localDrainMs!).toBeLessThanOrEqual(1000);
           }
         }
         const finalReloads = await readReloads(reloadObservers);
@@ -607,6 +748,334 @@ for (const preset of ['desktop', 'mobile'] as const)
         await f.close();
       }
     });
+
+/** Only the separate continuation case reads native state at its final key's first frame. */
+async function observeContinuationFrame(page: Page, unitId: string) {
+  const handle = await page.evaluateHandle(
+    ({ unitId, expectedKeys }) => {
+      const installedAt = performance.now();
+      let keyCount = 0;
+      let frame: number | undefined;
+      let result: {
+        keyAt: number;
+        frameAt: number;
+        readStartedAt: number;
+        readReturnedAt: number;
+        responses: number;
+        snapshot: DocResponsivenessEvidence | null;
+      } | null = null;
+      const keydown = (event: KeyboardEvent) => {
+        if (
+          !(event.target instanceof Element) ||
+          !event.target.matches('[contenteditable="true"][data-u-comp="editor"]')
+        )
+          return;
+        keyCount++;
+        if (keyCount !== expectedKeys) return;
+        const keyAt = performance.now();
+        frame = requestAnimationFrame(() => {
+          frame = undefined;
+          const frameAt = performance.now();
+          let snapshot: DocResponsivenessEvidence | null = null;
+          let responses = 0;
+          const read = (event: Event) => {
+            const evidence = (event as CustomEvent<DocResponsivenessEvidence>).detail;
+            if (evidence?.unitId !== unitId) return;
+            responses++;
+            snapshot = evidence;
+          };
+          window.addEventListener('spinel-doc-responsiveness-evidence', read);
+          const readStartedAt = performance.now();
+          try {
+            window.dispatchEvent(
+              new CustomEvent('spinel-doc-responsiveness-read', { detail: { includeText: true } }),
+            );
+          } finally {
+            window.removeEventListener('spinel-doc-responsiveness-evidence', read);
+            result = {
+              keyAt,
+              frameAt,
+              readStartedAt,
+              readReturnedAt: performance.now(),
+              responses,
+              snapshot,
+            };
+          }
+        });
+      };
+      document.addEventListener('keydown', keydown, { capture: true, passive: true });
+      return {
+        read: () => ({ installedAt, unitId, expectedKeys, keyCount, result }),
+        dispose() {
+          document.removeEventListener('keydown', keydown, true);
+          if (frame !== undefined) cancelAnimationFrame(frame);
+        },
+      };
+    },
+    { unitId, expectedKeys: expectedInputCount + 1 },
+  );
+  return {
+    read: () => handle.evaluate((value) => value.read()),
+    async dispose() {
+      await handle.evaluate((value) => value.dispose()).catch(() => {});
+      await handle.dispose();
+    },
+  };
+}
+
+for (const preset of ['desktop', 'mobile'] as const)
+  test(`${preset} resumes native typing after a quiet pause`, async ({
+    browser,
+    baseURL,
+  }, info) => {
+    test.skip(baseline, 'The renewed-input regression is a candidate-only gate.');
+    test.setTimeout(300_000);
+    const mobile = preset === 'mobile';
+    const f = await fixture(browser, baseURL!, info, mobile);
+    const cdp = await f.page.context().newCDPSession(f.page);
+    let finishInput: Awaited<ReturnType<typeof observeInput>> | undefined;
+    let continuationFrameObserver: Awaited<ReturnType<typeof observeContinuationFrame>> | undefined;
+    let reloadObservers: ReloadObservers | undefined;
+    const evidence: Record<string, unknown> = {
+      schema: DOC_RESPONSIVENESS_SCHEMA,
+      scenario: 'resume-native-typing-after-quiet-pause',
+      preset,
+      attempt: info.retry,
+      source: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
+      browser: browser.version(),
+      playwright: JSON.parse(await readFile('node_modules/@playwright/test/package.json', 'utf8'))
+        .version,
+      runtime: process.version,
+      nodeTimeOrigin: performance.timeOrigin,
+      system: {
+        platform: platform(),
+        architecture: arch(),
+        release: release(),
+        cpu: cpus()[0]?.model,
+        cpus: cpus().length,
+        totalmem: totalmem(),
+      },
+      runner: {
+        name: process.env.RUNNER_NAME ?? 'local',
+        run: process.env.GITHUB_RUN_ID ?? null,
+        attempt: process.env.GITHUB_RUN_ATTEMPT ?? null,
+      },
+      instrumentation: {
+        cpuThrottle: mobile ? 4 : 1,
+        profiler: false,
+        playwrightTrace: false,
+        physicalDevice: false,
+      },
+      fixture: {
+        originalInputCount: expectedInputCount,
+        continuation: 'x',
+        totalInputCount: expectedInputCount + 1,
+        originalTextSha256: createHash('sha256').update(expectedText).digest('hex'),
+      },
+      budgets: {
+        requestedQuietPauseMs: 350,
+        continuationRequestReturnMs: 1000,
+        continuationKeyToFrameMs: budgets[preset].longTaskMaxMs,
+        continuationKeyToNativeReadMs: budgets[preset].longTaskMaxMs,
+        finalOriginalKeyToContinuationFrameMs: 350 + 1000 + budgets[preset].longTaskMaxMs,
+        finalOriginalKeyToContinuationNativeReadMs: 350 + 1000 + budgets[preset].longTaskMaxMs,
+      },
+      harnessSha256: Object.fromEntries(
+        await Promise.all(
+          [
+            'e2e/doc-responsiveness.ts',
+            'e2e/doc-responsiveness.spec.ts',
+            'e2e/doc-responsiveness-fixture.ts',
+            'e2e/doc-responsiveness-boundaries.ts',
+            'web/docResponsivenessEvidence.ts',
+            'playwright.config.ts',
+            'package-lock.json',
+          ].map(async (path) => [
+            path,
+            createHash('sha256')
+              .update(await readFile(path))
+              .digest('hex'),
+          ]),
+        ),
+      ),
+    };
+    try {
+      await Promise.all([f.page.goto(`/?item=${f.item.id}`), f.other.goto(`/?item=${f.item.id}`)]);
+      const [senderReloads, peerReloads] = await Promise.all([
+        observeDocReloads(f.page),
+        observeDocReloads(f.other),
+      ]);
+      reloadObservers = { sender: senderReloads, peer: peerReloads };
+      await Promise.all([saved(f.page), saved(f.other), online(f.page), online(f.other)]);
+      await focusEmptyDoc(f.other, mobile);
+      await f.page.bringToFront();
+      await focusEmptyDoc(f.page, mobile);
+      evidence.browserEnvironment = {
+        configured: {
+          viewport: f.page.viewportSize(),
+          isMobile: mobile,
+          hasTouch: mobile,
+          deviceScaleFactor: 1,
+        },
+        observed: await f.page.evaluate(() => ({
+          viewport: { width: innerWidth, height: innerHeight },
+          screen: { width: screen.width, height: screen.height },
+          devicePixelRatio,
+          coarsePointer: matchMedia('(pointer: coarse)').matches,
+          touchEvent: 'ontouchstart' in window,
+          maxTouchPoints: navigator.maxTouchPoints,
+          userAgent: navigator.userAgent,
+          visibility: document.visibilityState,
+          hasFocus: document.hasFocus(),
+        })),
+      };
+      await cdp.send('Emulation.setCPUThrottlingRate', { rate: mobile ? 4 : 1 });
+      const initialNative = (await readDocResponsiveness(f.page))!;
+      expect(initialNative.mobile).toBe(mobile);
+      finishInput = await observeInput(f.page);
+      continuationFrameObserver = await observeContinuationFrame(f.page, initialNative.unitId);
+      const originalRequestedAt = performance.now();
+      for (const [index, paragraph] of paragraphs.entries()) {
+        if (index > 0) await f.page.keyboard.press('Enter');
+        await f.page.keyboard.type(paragraph);
+      }
+      const originalReturnedAt = performance.now();
+      evidence.originalTypingNodeBracket = {
+        requestAt: originalRequestedAt,
+        returnedAt: originalReturnedAt,
+      };
+      const pauseStartedAt = performance.now();
+      // No browser read or evaluation separates the original input from this key.
+      await new Promise<void>((resolve) => setTimeout(resolve, 350));
+      const continuationRequestedAt = performance.now();
+      await f.page.keyboard.type('x');
+      const continuationReturnedAt = performance.now();
+      evidence.quietPauseNodeBracket = {
+        startedAt: pauseStartedAt,
+        returnedAt: continuationRequestedAt,
+        requestedMs: 350,
+      };
+      evidence.continuationNodeBracket = {
+        requestAt: continuationRequestedAt,
+        returnedAt: continuationReturnedAt,
+      };
+      const input = await finishInput();
+      finishInput = undefined;
+      evidence.input = input;
+      const frameEvidence = await continuationFrameObserver.read();
+      evidence.continuationFrame = frameEvidence;
+      expect(frameEvidence.installedAt).toBeLessThanOrEqual(input.keydownAt[0]!);
+      expect(frameEvidence.keyCount).toBe(expectedInputCount + 1);
+      expect(frameEvidence.result).toBeTruthy();
+      const observedFrame = frameEvidence.result!;
+      const finalOriginalKeyAt = input.keydownAt[expectedInputCount - 1]!;
+      const continuationKeyAt = input.keydownAt[expectedInputCount]!;
+      const continuationFrameAt = observedFrame.frameAt;
+      const continuationFrameMs = continuationFrameAt - continuationKeyAt;
+      const continuationNativeReadMs = observedFrame.readReturnedAt - continuationKeyAt;
+      const continuationRequestReturnMs = continuationReturnedAt - continuationRequestedAt;
+      const finalOriginalKeyToContinuationFrameMs = continuationFrameAt - finalOriginalKeyAt;
+      const finalOriginalKeyToContinuationNativeReadMs =
+        observedFrame.readReturnedAt - finalOriginalKeyAt;
+      evidence.summary = {
+        finalOriginalKeyAt,
+        continuationKeyAt,
+        continuationFrameAt,
+        browserQuietGapMs: continuationKeyAt - finalOriginalKeyAt,
+        continuationKeyToFrameMs: continuationFrameMs,
+        continuationKeyToNativeReadMs: continuationNativeReadMs,
+        continuationRequestReturnMs,
+        finalOriginalKeyToContinuationFrameMs,
+        finalOriginalKeyToContinuationNativeReadMs,
+      };
+      const continuedText = expectedText.slice(0, -2) + 'x\r\n';
+      expect(observedFrame.responses).toBe(1);
+      expect(observedFrame.keyAt).toBeGreaterThanOrEqual(continuationKeyAt);
+      expect(observedFrame.readStartedAt).toBeGreaterThanOrEqual(observedFrame.frameAt);
+      expect(observedFrame.snapshot?.observedAt).toBeGreaterThanOrEqual(
+        observedFrame.readStartedAt,
+      );
+      expect(observedFrame.snapshot?.observedAt).toBeLessThanOrEqual(observedFrame.readReturnedAt);
+      expect(observedFrame.snapshot?.unitId).toBe(initialNative.unitId);
+      expect(observedFrame.snapshot?.text).toBe(continuedText);
+      expect(observedFrame.snapshot?.text?.length).toBe(2089);
+      expect(observedFrame.snapshot?.selection).toMatchObject({ start: 2087, end: 2087 });
+      await Promise.all([
+        saved(f.page),
+        saved(f.other),
+        exactText(f.page, continuedText),
+        exactText(f.other, continuedText),
+      ]);
+      await expect
+        .poll(async () => (await f.read()).body!.dataStream, { timeout: 30_000 })
+        .toBe(continuedText);
+      const sender = (await readDocResponsiveness(f.page, true))!;
+      const peer = (await readDocResponsiveness(f.other, true))!;
+      evidence.native = sender;
+      evidence.peer = {
+        unitId: peer.unitId,
+        observedAt: peer.observedAt,
+        textLength: peer.text?.length,
+        textSha256: createHash('sha256')
+          .update(peer.text ?? '')
+          .digest('hex'),
+        selection: peer.selection,
+      };
+      const savedText = (await f.read()).body!.dataStream;
+      expect(savedText).toBe(continuedText);
+      evidence.saved = {
+        textLength: savedText.length,
+        textSha256: createHash('sha256').update(savedText).digest('hex'),
+      };
+      expect(input.keydownAt).toHaveLength(expectedInputCount + 1);
+      expect(input.keyToFrameMs).toHaveLength(expectedInputCount + 1);
+      expect(continuationKeyAt - finalOriginalKeyAt).toBeGreaterThanOrEqual(300);
+      expect(continuationRequestReturnMs).toBeLessThanOrEqual(1000);
+      expect(continuationFrameMs).toBeLessThanOrEqual(budgets[preset].longTaskMaxMs);
+      expect(continuationNativeReadMs).toBeLessThanOrEqual(budgets[preset].longTaskMaxMs);
+      expect(finalOriginalKeyToContinuationFrameMs).toBeLessThanOrEqual(
+        350 + 1000 + budgets[preset].longTaskMaxMs,
+      );
+      expect(finalOriginalKeyToContinuationNativeReadMs).toBeLessThanOrEqual(
+        350 + 1000 + budgets[preset].longTaskMaxMs,
+      );
+      expect(sender.text).toBe(continuedText);
+      expect(sender.selection).toMatchObject({
+        start: expectedInputCount + 1,
+        end: expectedInputCount + 1,
+      });
+      expect(peer.text).toBe(continuedText);
+      expect(peer.selection).toMatchObject({ start: 0, end: 0 });
+      expect(f.errors).toEqual([]);
+      await Promise.all([online(f.page), online(f.other)]);
+      const finalReloads = await readReloads(reloadObservers);
+      completeReloadObservation(finalReloads);
+      evidence.reloadObservers = finalReloads.status;
+      evidence.reloads = finalReloads.reloads;
+      expect(finalReloads.reloads).toEqual([]);
+      evidence.completed = true;
+    } finally {
+      if (finishInput)
+        evidence.partialInput = await finishInput().catch((error) => ({ error: String(error) }));
+      evidence.errors = f.errors;
+      if (continuationFrameObserver) {
+        const finalFrame = await continuationFrameObserver.read().catch(() => null);
+        if (finalFrame) evidence.continuationFrame = finalFrame;
+        await continuationFrameObserver.dispose();
+      }
+      if (reloadObservers) {
+        const finalReloads = await readReloads(reloadObservers).catch(() => null);
+        if (finalReloads) {
+          evidence.reloadObservers = finalReloads.status;
+          evidence.reloads = finalReloads.reloads;
+        }
+        await Promise.all([reloadObservers.sender.dispose(), reloadObservers.peer.dispose()]);
+      }
+      await writeFile(info.outputPath('spn108-post-burst.json'), JSON.stringify(evidence, null, 2));
+      await cdp.detach().catch(() => {});
+      await f.close();
+    }
+  });
 
 // Keep candidate timing samples ahead of boundary-case server warm-up, matching
 // the baseline sample order while retaining all artifacts in one test run.

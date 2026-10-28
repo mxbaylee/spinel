@@ -1,6 +1,8 @@
 import type { Page } from '@playwright/test';
+import type { DocDrainRequest, DocDrainWitness } from '../web/docResponsivenessEvidence.ts';
+export type { DocDrainRequest, DocDrainWitness } from '../web/docResponsivenessEvidence.ts';
 
-export const DOC_RESPONSIVENESS_SCHEMA = 3;
+export const DOC_RESPONSIVENESS_SCHEMA = 4;
 
 // Candidate policy after the 64- and 44-state experiments missed the unchanged
 // p95 budget. The public Doc constructor retains enough native history groups
@@ -28,10 +30,33 @@ export interface DocResponsivenessEvidence {
     durationMs: number;
     history: number;
     collaboration: number;
+    /** Present on an idle flush; measured since the last completed native state. */
+    quietForMs?: number;
   }>;
   history: { undos: number; redos: number };
   selection: { start: number; end: number; segmentId?: string } | null;
   text?: string;
+  drainWitness?: DocDrainWitness | null;
+}
+
+export interface DocDrainPollEvidence {
+  index: number;
+  /** Request/return brackets use Node's performance.now clock. */
+  requestAt: number;
+  returnedAt: number;
+  /** Read from the existing full native observation, with no extra browser call. */
+  snapshot: Pick<
+    DocResponsivenessEvidence,
+    'unitId' | 'observedAt' | 'pending' | 'highWater' | 'history'
+  > | null;
+}
+
+export interface DocDrainDiagnostics {
+  nodeTimeOrigin: number;
+  polls: DocDrainPollEvidence[];
+  firstEmpty: DocDrainPollEvidence | null;
+  finishInputNodeBracket?: { requestAt: number; returnedAt: number };
+  finalNativeNodeBracket?: { requestAt: number; returnedAt: number };
 }
 
 export interface DocNativeIntegrity {
@@ -153,19 +178,28 @@ export async function observeDocReloads(page: Page) {
 }
 
 /** The evidence build reads public state; it cannot flush, edit or select anything. */
-export function readDocResponsiveness(page: Page, includeText = false) {
-  return page.evaluate((includeText) => {
-    let evidence: DocResponsivenessEvidence | null = null;
-    const read = (event: Event) => {
-      evidence = (event as CustomEvent<DocResponsivenessEvidence>).detail;
-    };
-    window.addEventListener('spinel-doc-responsiveness-evidence', read);
-    window.dispatchEvent(
-      new CustomEvent('spinel-doc-responsiveness-read', { detail: { includeText } }),
-    );
-    window.removeEventListener('spinel-doc-responsiveness-evidence', read);
-    return evidence as DocResponsivenessEvidence | null;
-  }, includeText);
+export function readDocResponsiveness(
+  page: Page,
+  includeText = false,
+  drainRequest?: DocDrainRequest,
+) {
+  return page.evaluate(
+    ({ includeText, drainRequest }) => {
+      let evidence: DocResponsivenessEvidence | null = null;
+      const read = (event: Event) => {
+        evidence = (event as CustomEvent<DocResponsivenessEvidence>).detail;
+      };
+      window.addEventListener('spinel-doc-responsiveness-evidence', read);
+      window.dispatchEvent(
+        new CustomEvent('spinel-doc-responsiveness-read', {
+          detail: { includeText, drainRequest },
+        }),
+      );
+      window.removeEventListener('spinel-doc-responsiveness-evidence', read);
+      return evidence as DocResponsivenessEvidence | null;
+    },
+    { includeText, drainRequest },
+  );
 }
 
 export function distribution(values: readonly number[]) {

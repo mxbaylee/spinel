@@ -30,18 +30,24 @@ prevents automatic replacement of an otherwise clean cached document.
 Docs apply edits locally while the existing sync client sends them in the
 background. Native history and collaboration composition are separate browser
 work: Spinel closes a pending native group at 32 completed state changes so an
-uninterrupted typing session cannot grow one unbounded composition batch. Ordinary
-300 ms idle, segment-switch, undo and IME boundaries remain controlled by Univer.
+uninterrupted typing session cannot grow one unbounded composition batch. An owned
+visible-frame check applies the same 300 ms quiet interval when native timers
+are delayed. It stops when queues empty or the document becomes hidden, and is
+cancelled on access loss or disposal. Native timers, segment-switch, undo and
+IME boundaries remain in place.
 A completed composition stays atomic. Undo/redo retains native content and caret
 endpoints; long uninterrupted input intentionally becomes several useful chunks.
 Docs configure the supported native history limit to 100 groups, so the original
-2,086-input workload remains fully undoable across its 66 chunks. Native eviction
+2,086-input workload has room for all 66 capacity-only chunks and additional idle
+boundaries. Acceptance replays every actual group; a slower local diagnostic
+formed 73. Native eviction
 still bounds the group count; it is not a byte limit or a promise of unlimited
 undo. Sheets keep their existing setting. The existing safety policy that
 invalidates stale local history after a peer edit remains in place.
 
 This uses public queue/flush APIs and does not replace saving, grant access,
-clear history to hide work, or postpone a hidden backlog. The
+or clear history to hide work. The SDK's obsolete cursor/zoom callback backlog
+remains a separately tracked lifecycle issue in SPN-113. The
 [measurement contract and evidence](implementation/SPN-108.md) preserve the
 original per-character reproducer, before/after profiles, desktop/mobile
 emulation boundaries and independent-review rubric. A successful Save status

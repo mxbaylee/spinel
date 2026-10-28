@@ -420,10 +420,10 @@ jobs:
         run: |
           node scripts/ci/prefer-ubuntu-archive.ts
           npx playwright install --with-deps chromium
-      - name: Immutable uncapped source with matched compatibility and recovery observation
+      - name: Immutable uncapped source with matched compatibility and native observations
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          ref: 8b87d322252db77ba738c339bbdfb2f115e9fb64
+          ref: 2c84a18449c7dae09e2817989fac6236be96ef98
           path: baseline-doc-source
           persist-credentials: false
       - name: Use identical browser workload on both sources
