@@ -288,17 +288,17 @@ test('ranking ties prefer prerequisites, higher impact, larger effort, then lowe
   ]);
   const ranked = rank(b.tickets, 'SPN');
   assert.deepEqual(
-    ranked.map((r) => [r.ticket.id, r.score, r.tieBreak]),
+    ranked.map((r) => [r.ticket.id, r.score]),
     [
-      ['SPN-003', 31, 'Lower ID'],
-      ['SPN-004', 31, 'Larger effort'],
-      ['SPN-002', 31, 'Higher impact'],
-      ['SPN-001', 31, 'Unblocks SPN-005'],
-      ['SPN-009', 31, '—'],
-      ['SPN-005', 30, 'Lower ID'],
-      ['SPN-006', 30, 'Lower ID'],
-      ['SPN-007', 30, 'Lower ID'],
-      ['SPN-008', 30, '—'],
+      ['SPN-003', 31],
+      ['SPN-004', 31],
+      ['SPN-002', 31],
+      ['SPN-001', 31],
+      ['SPN-009', 31],
+      ['SPN-005', 30],
+      ['SPN-006', 30],
+      ['SPN-007', 30],
+      ['SPN-008', 30],
     ],
   );
   assert.deepEqual(ranked.at(-1)?.waiting, ['SPN-004']);
@@ -423,15 +423,12 @@ test('external prerequisites reject non-PR URLs and malformed lists', () => {
   }
 });
 
-test('phase boundaries do not report misleading score tie-breaks', () => {
+test('phase order precedes lower ID when scores are equal', () => {
   const b = backlog([ticket('SPN-002'), ticket('SPN-001', { phase: 'launch', emoji: '🧭' })]);
   assert.deepEqual(validateBacklog(b).errors, []);
   assert.deepEqual(
-    rank(b.tickets, 'SPN').map((r) => [r.ticket.id, r.tieBreak]),
-    [
-      ['SPN-002', '—'],
-      ['SPN-001', '—'],
-    ],
+    rank(b.tickets, 'SPN').map((r) => r.ticket.id),
+    ['SPN-002', 'SPN-001'],
   );
 });
 
@@ -459,16 +456,16 @@ test('the index lists every open ticket in pick order', () => {
   const index = renderIndex(b);
   assert.match(
     index,
-    /\| 1 \| 🪞 \[SPN-001\]\(SPN-001.md\) Do the thing \| 🌿 M \| 💜 M \| 22 \(own 21\) \| — \| — \|/,
+    /\| 1 \| 🪞 \[SPN-001\]\(SPN-001.md\) Do the thing \| 🌿 M \| 💜 M \| 22 \(own 21\) \| — \|/,
   );
   assert.match(
     index,
-    /\| 2 \| 🧭 \[SPN-002\]\(SPN-002.md\) Do the thing \| 🌿 M \| 💜 M \| 21 \| — \| \[SPN-001\]\(SPN-001.md\) \|/,
+    /\| 2 \| 🧭 \[SPN-002\]\(SPN-002.md\) Do the thing \| 🌿 M \| 💜 M \| 21 \| \[SPN-001\]\(SPN-001.md\) \|/,
   );
   assert.match(index, /Next ID: \*\*SPN-010\*\*/);
-  assert.doesNotMatch(index, /Top 5|Owner input/);
+  assert.doesNotMatch(index, /Top 5|Owner input|Tie-break/);
   for (const row of index.split('\n').filter((line) => line.startsWith('|'))) {
-    assert.equal(row.split('|').length, 9);
+    assert.equal(row.split('|').length, 8);
   }
 });
 

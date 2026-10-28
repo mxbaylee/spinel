@@ -1,0 +1,95 @@
+{
+  "artifactId": 12789692708,
+  "artifactSha256": "69abd0d5e8a3f9bd6ac93abdee6bfdf31e538c4ddd610b095e0cd3eceee19526",
+  "credentials": {
+    "scope": "Automate credentials, real mobile browsers and synthetic HTTP runner reachability only",
+    "mode": "credentials",
+    "date": "2026-10-28T03:33:54.881Z",
+    "sourceSha": "9e6499158c69be8fcf722417dc55773854d01779",
+    "testedSha": "e70843d4a0f1135548de338005364b9a7b63c972",
+    "run": "https://github.com/mxbaylee/spinel/actions/runs/40627386543",
+    "authentication": "passed",
+    "status": "passed",
+    "parallelSessionsAllowed": 5,
+    "targets": [
+      {
+        "browser": "chrome",
+        "device": "Google Pixel 11 Pro XL",
+        "osVersion": "17.0"
+      },
+      {
+        "browser": "firefox",
+        "device": "Google Pixel 11 Pro XL",
+        "osVersion": "17.0"
+      },
+      {
+        "browser": "safari",
+        "device": "iPhone 18 Pro Max",
+        "osVersion": "27"
+      }
+    ]
+  },
+  "smoke": {
+    "scope": "Automate credentials, real mobile browsers and synthetic HTTP runner reachability only",
+    "mode": "smoke",
+    "date": "2026-10-28T03:33:58.354Z",
+    "sourceSha": "9e6499158c69be8fcf722417dc55773854d01779",
+    "testedSha": "e70843d4a0f1135548de338005364b9a7b63c972",
+    "run": "https://github.com/mxbaylee/spinel/actions/runs/40627386543",
+    "authentication": "passed",
+    "status": "passed",
+    "parallelSessionsAllowed": 5,
+    "targets": [
+      {
+        "browser": "chrome",
+        "device": "Google Pixel 11 Pro XL",
+        "osVersion": "17.0"
+      },
+      {
+        "browser": "firefox",
+        "device": "Google Pixel 11 Pro XL",
+        "osVersion": "17.0"
+      },
+      {
+        "browser": "safari",
+        "device": "iPhone 18 Pro Max",
+        "osVersion": "27"
+      }
+    ],
+    "sessions": [
+      {
+        "browser": "chrome",
+        "device": "Google Pixel 11 Pro XL",
+        "osVersion": "17.0",
+        "status": "passed",
+        "tunnelReached": true,
+        "teardown": "passed",
+        "returnedBrowserName": "chrome",
+        "sessionId": "12a1af12bf9dfd03d7f62325dda0f784abd1439c",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Mobile Safari/537.36"
+      },
+      {
+        "browser": "firefox",
+        "device": "Google Pixel 11 Pro XL",
+        "osVersion": "17.0",
+        "status": "passed",
+        "tunnelReached": true,
+        "teardown": "passed",
+        "returnedBrowserName": "MozillaFirefox",
+        "sessionId": "19fe182c1aa612a5db508de9e9593cac2e227cc7",
+        "userAgent": "Mozilla/5.0 (Android 17; Mobile; rv:151.0) Gecko/151.0 Firefox/151.0"
+      },
+      {
+        "browser": "safari",
+        "device": "iPhone 18 Pro Max",
+        "osVersion": "27",
+        "status": "passed",
+        "tunnelReached": true,
+        "teardown": "passed",
+        "returnedBrowserName": "safari",
+        "sessionId": "81a4cba3033bb2760f11bbe801b94a569b4ba6f4",
+        "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.0 Mobile/15E148 Safari/604.1"
+      }
+    ]
+  }
+}

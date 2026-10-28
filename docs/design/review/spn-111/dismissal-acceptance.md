@@ -59,3 +59,22 @@ and the complete SPN-111 diff, not only this follow-up. Disclose agent review on
 The implementing session does not have a subagent runner and does not claim either
 independent grade or final visual approval. Keep PR #206 draft and unmerged until
 those gates and all required current-head CI checks pass.
+
+## Concurrent-main integration and landing checkpoint
+
+Main advanced to `c604d984a40cd901ff7acd131a9573e6daadc0bb` while this revision was
+being published. The integration preserves all of PR #209's BrowserStack work,
+CI follow-up tickets, grooming decisions, ranking changes and generated index.
+The maintenance runtime and dismissal code are retained unchanged.
+
+The draft now retains main's complete backlog subtree: SPN-111 stays active and
+SPN-112 remains dependent on it while verification is incomplete. This supersedes
+the earlier checkpoint's prepared ticket retirement and completion counter; it
+is not a change to the ticket's acceptance. Before landing, retire SPN-111,
+resolve its dependency edge, add it to the current grooming completion counter
+and regenerate the index with the current backlog CLI. Include that final
+bookkeeping in the exact commit reviewed by both independent reviewers.
+
+The concurrent ticket reminder also remains applicable: local process-crash
+checks do not establish target-host or power-loss recovery proof. Final-head
+hosted CI/Caddy validation and independent review remain mandatory.
