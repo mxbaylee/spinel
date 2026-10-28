@@ -28,12 +28,26 @@ export class SpacesStore implements RemoteStore {
     this.client = new S3Client({
       region: 'us-east-1',
       endpoint: `https://${config.region}.digitaloceanspaces.com`,
+      // Only the configured Spaces region may receive recovery bytes. Do not
+      // let generic AWS endpoint environment settings redirect this client.
+      ignoreConfiguredEndpointUrls: true,
+      useFipsEndpoint: false,
+      useDualstackEndpoint: false,
       forcePathStyle: false,
       maxAttempts: 3,
-      credentials: { accessKeyId: config.accessKeyId, secretAccessKey: config.secretAccessKey },
+      credentials: {
+        accessKeyId: config.accessKeyId,
+        secretAccessKey: config.secretAccessKey,
+      },
     });
   }
+  private validKey(key: string, pending = false) {
+    if (!backupTime(pending ? key.replace(/\.pending$/, '') : key, this.config.prefix))
+      throw new Error('Not a backup in this instance prefix.');
+  }
   async put(key: string, path: string, sha256: string, signal: AbortSignal) {
+    this.validKey(key);
+    if (!/^[a-f0-9]{64}$/.test(sha256)) throw new Error('Invalid backup checksum.');
     const bounded = AbortSignal.any([signal, AbortSignal.timeout(TRANSFER_MS)]);
     bounded.throwIfAborted();
     const size = (await stat(path)).size;
@@ -53,41 +67,45 @@ export class SpacesStore implements RemoteStore {
         }),
         { abortSignal: bounded },
       );
+      const result = await this.client.send(
+        new GetObjectCommand({ Bucket: this.config.bucket, Key: pending }),
+        { abortSignal: bounded },
+      );
+      if (!result.Body) throw new Error('Uploaded backup could not be read.');
+      const stored = addAbortSignal(bounded, result.Body as Readable);
+      try {
+        if (result.ContentLength !== undefined && result.ContentLength > MAX_ARCHIVE_BYTES)
+          throw new RecoveryResourceError('archive-size');
+        if (result.ContentLength !== undefined && result.ContentLength !== size)
+          throw new Error('Uploaded backup transfer is incomplete.');
+        if ((await archiveDigest(stored, bounded, size)) !== sha256)
+          throw new Error('Uploaded backup checksum mismatch.');
+      } finally {
+        stored.destroy();
+      }
+      await this.client.send(
+        new CopyObjectCommand({
+          Bucket: this.config.bucket,
+          Key: key,
+          CopySource: `${this.config.bucket}/${encodeURIComponent(pending)}`,
+          ACL: 'private',
+        }),
+        { abortSignal: bounded },
+      );
     } finally {
       body.destroy();
+      // Abort does not excuse leaving run-owned staging. A fresh bounded signal
+      // also cleans interrupted uploads; restart cleanup retries failed cleanup.
+      await this.remove(pending, AbortSignal.timeout(15_000));
     }
-    const result = await this.client.send(
-      new GetObjectCommand({ Bucket: this.config.bucket, Key: pending }),
-      { abortSignal: bounded },
-    );
-    if (!result.Body) throw new Error('Uploaded backup could not be read.');
-    const stored = addAbortSignal(bounded, result.Body as Readable);
-    try {
-      if (result.ContentLength !== undefined && result.ContentLength > MAX_ARCHIVE_BYTES)
-        throw new RecoveryResourceError('archive-size');
-      if (result.ContentLength !== undefined && result.ContentLength !== size)
-        throw new Error('Uploaded backup transfer is incomplete.');
-      if ((await archiveDigest(stored, bounded, size)) !== sha256)
-        throw new Error('Uploaded backup checksum mismatch.');
-    } finally {
-      stored.destroy();
-    }
-    await this.client.send(
-      new CopyObjectCommand({
-        Bucket: this.config.bucket,
-        Key: key,
-        CopySource: `${this.config.bucket}/${encodeURIComponent(pending)}`,
-        ACL: 'private',
-      }),
-      { abortSignal: bounded },
-    );
-    await this.remove(pending, bounded);
   }
-  async list(signal: AbortSignal) {
+  private async keys(signal: AbortSignal) {
     const bounded = AbortSignal.any([signal, AbortSignal.timeout(TRANSFER_MS)]);
+    bounded.throwIfAborted();
     const keys: string[] = [];
     let token: string | undefined;
     let entries = 0;
+    const pages = new Set<string>();
     do {
       bounded.throwIfAborted();
       const result = await this.client.send(
@@ -105,21 +123,34 @@ export class SpacesStore implements RemoteStore {
       }
       if (
         result.IsTruncated &&
-        (!result.NextContinuationToken || result.NextContinuationToken === token)
+        (!result.NextContinuationToken || pages.has(result.NextContinuationToken))
       )
         throw new Error('Incomplete backup listing.');
       token = result.IsTruncated ? result.NextContinuationToken : undefined;
+      if (token) pages.add(token);
+      if (pages.size > MAX_ENTRIES) throw new Error('Backup catalog exceeds its page limit.');
     } while (token);
     return keys;
   }
+  async list(signal: AbortSignal) {
+    return (await this.keys(signal)).filter((key) => backupTime(key, this.config.prefix));
+  }
+  async cleanup(signal: AbortSignal) {
+    // Caller holds the shared recovery lease: no publisher is still using these.
+    for (const key of await this.keys(signal)) {
+      if (key.endsWith('.pending') && backupTime(key.slice(0, -8), this.config.prefix))
+        await this.remove(key, signal);
+    }
+  }
   async remove(key: string, signal: AbortSignal) {
+    this.validKey(key, true);
+    signal.throwIfAborted();
     await this.client.send(new DeleteObjectCommand({ Bucket: this.config.bucket, Key: key }), {
       abortSignal: signal,
     });
   }
   async download(key: string, destination: string, signal = AbortSignal.timeout(TRANSFER_MS)) {
-    if (!backupTime(key, this.config.prefix))
-      throw new Error('Not a backup in this instance prefix.');
+    this.validKey(key);
     const bounded = AbortSignal.any([signal, AbortSignal.timeout(TRANSFER_MS)]);
     bounded.throwIfAborted();
     const result = await this.client.send(

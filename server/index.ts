@@ -9,7 +9,6 @@ import {
   canonicalDatabasePath,
 } from '../src/server/maintenance/journal.ts';
 import type { WorkspaceLease } from '../src/server/maintenance/journal.ts';
-import { assertWorkspaceHandlesClosed } from '../src/server/maintenance/supervisor.ts';
 import { closeSync, constants, mkdirSync, openSync } from 'node:fs';
 import { dirname } from 'node:path';
 
@@ -52,9 +51,8 @@ const app = await (async () => {
       }
       await liveWorkspace.bindFile();
       await startupLease.bindFile();
-      // A crashed supervisor may have released its leases while an orphan app
-      // is still draining. Direct startup also requires closed existing handles.
-      assertWorkspaceHandlesClosed(databasePath);
+      // A supervised app/verifier inherits both leases before its first DB
+      // open, so an orphan continues excluding this startup after parent death.
     }
     opened = true;
     starting = await createApp({

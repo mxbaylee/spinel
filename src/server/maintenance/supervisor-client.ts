@@ -7,12 +7,13 @@ import type {
   MaintenancePublicStatus,
 } from '../../shared/maintenance.ts';
 import { publicMaintenance } from '../../shared/maintenance.ts';
+import { receiveWorkspaceOwnership } from './ownership.ts';
 
 export const MAINTENANCE_CHANNEL = 'spinel-maintenance';
 
 /** Private IPC, inherited only by the supervisor's fixed application child. */
 export async function connectMaintenance(): Promise<MaintenanceBridge> {
-  if (!process.send || process.env.SPINEL_SUPERVISED !== '1')
+  if (!process.send || process.env.SPINEL_SUPERVISED !== '1' || !process.env.DATABASE_PATH)
     throw new Error('Maintenance requires its supervised application channel.');
   let current: MaintenanceAdminStatus | undefined;
   let closed = false;
@@ -92,9 +93,10 @@ export async function connectMaintenance(): Promise<MaintenanceBridge> {
   };
   process.on('message', onMessage);
   process.on('disconnect', onDisconnect);
+  const ownership = receiveWorkspaceOwnership(process.env.DATABASE_PATH);
   send({ kind: 'hello' });
   try {
-    await initial;
+    await Promise.all([initial, ownership]);
   } catch (error) {
     clearTimeout(initialTimeout);
     process.off('message', onMessage);

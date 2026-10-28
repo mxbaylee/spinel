@@ -17,5 +17,6 @@ export interface BackupDestination extends RemoteStore {
   close(): void | Promise<void>;
 }
 export function createDestination(config: BackupConfig): BackupDestination {
+  if (config.type === 'manual') throw new Error('No automatic backup destination is configured.');
   return config.type === 'filesystem' ? new FilesystemStore(config) : new SpacesStore(config);
 }

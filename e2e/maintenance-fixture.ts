@@ -1,6 +1,6 @@
 import { execFile, spawn } from 'node:child_process';
-import { randomUUID } from 'node:crypto';
-import { mkdir, mkdtemp, realpath, rm } from 'node:fs/promises';
+import { randomBytes, randomUUID } from 'node:crypto';
+import { mkdir, mkdtemp, realpath, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { promisify } from 'node:util';
@@ -15,9 +15,33 @@ export async function startMaintenanceFixture() {
   const directory = await realpath(await mkdtemp(join(tmpdir(), 'spinel-maintenance-e2e-')));
   const recoveryRoot = join(directory, 'recovery');
   const workspace = join(directory, 'workspace');
+  const backupRoot = join(directory, 'backup-configuration');
   await mkdir(recoveryRoot, { mode: 0o700 });
   await mkdir(workspace, { mode: 0o700 });
+  await mkdir(backupRoot, { mode: 0o700 });
   const origin = 'http://localhost:3198';
+  const keyFile = join(backupRoot, 'recovery.key');
+  const runtimeEnvironmentFile = join(backupRoot, 'runtime.env');
+  const backupConfigPath = join(backupRoot, 'backup.json');
+  await writeFile(keyFile, randomBytes(32), { mode: 0o600 });
+  await writeFile(runtimeEnvironmentFile, `APP_ORIGIN=${origin}\nMAINTENANCE_FIXTURE=1\n`, {
+    mode: 0o600,
+  });
+  await writeFile(
+    backupConfigPath,
+    JSON.stringify({
+      version: 1,
+      type: 'manual',
+      prefix: 'maintenance-fixture',
+      dataset: 'workspace',
+      keyId: 'maintenance-recovery',
+      keyFile,
+      runtimeEnvironmentFile,
+      automatic: false,
+      manualDownload: true,
+    }),
+    { mode: 0o600 },
+  );
   const env: NodeJS.ProcessEnv = {
     ...process.env,
     DATABASE_PATH: join(workspace, 'instance.sqlite'),
@@ -27,8 +51,9 @@ export async function startMaintenanceFixture() {
     SPINEL_MAINTENANCE_ROOT: recoveryRoot,
     SPINEL_MAINTENANCE_PORT: '0',
     SPINEL_SPACE_REVIEW: '1',
+    BACKUP_CONFIG_PATH: backupConfigPath,
+    SPINEL_IMAGE: `sha256:${'a'.repeat(64)}`,
   };
-  delete env.BACKUP_CONFIG_PATH;
   delete env.SPINEL_SUPERVISED;
   delete env.SPINEL_PROCESS_GROUP_TOKEN;
   delete env.SPINEL_STATIC_DIRECTORY;
@@ -52,7 +77,17 @@ export async function startMaintenanceFixture() {
 
   const child = spawn(
     process.execPath,
-    ['--max-old-space-size=128', '--max-semi-space-size=4', 'server/supervisor.ts'],
+    [
+      // Keep the hosted service in its own PID view, like Compose. Playwright's
+      // protected Chromium processes remain outside it; loopback and abstract
+      // workspace ownership still use the shared host network namespace.
+      ...(process.env.GITHUB_ACTIONS === 'true'
+        ? ['scripts/ci/pid-namespace.ts', process.execPath]
+        : []),
+      '--max-old-space-size=128',
+      '--max-semi-space-size=4',
+      'server/supervisor.ts',
+    ],
     { cwd: projectRoot, env, stdio: ['ignore', 'pipe', 'pipe'] },
   );
   let output = '';
@@ -75,8 +110,9 @@ export async function startMaintenanceFixture() {
     if (closed) return;
     closed = true;
     if (child.exitCode === null && child.signalCode === null) child.kill('SIGTERM');
-    // The supervisor owns its detached application group and confirms its stop.
-    // On a forced parent exit, the app's private IPC disconnect also fails closed.
+    // Hosted cleanup tears down the service namespace. The test's explicit cold
+    // stop/verify commands separately prove graceful supervisor shutdown. Local
+    // cleanup signals the supervisor, which owns its detached application group.
     const timer = setTimeout(() => child.kill('SIGKILL'), 25_000);
     try {
       await exited;

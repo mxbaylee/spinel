@@ -1,6 +1,8 @@
 /** A real SQLite WAL owner that deliberately survives the app's normal close. */
 import { openDatabase } from '../../../server/database.ts';
+import { receiveWorkspaceOwnership } from './ownership.ts';
 if (!process.send || !process.env.DATABASE_PATH) throw new Error('Private fixture required.');
+await receiveWorkspaceOwnership(process.env.DATABASE_PATH);
 const database = openDatabase(process.env.DATABASE_PATH);
 database.prepare('SELECT count(*) FROM writes').get();
 process.on('SIGTERM', () => {});

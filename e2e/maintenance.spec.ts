@@ -1,8 +1,8 @@
 import { randomUUID } from 'node:crypto';
-import { mkdir } from 'node:fs/promises';
+import { mkdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { expect, test } from '@playwright/test';
-import type { Browser, Page, TestInfo } from '@playwright/test';
+import type { Browser, Locator, Page, TestInfo } from '@playwright/test';
 import type {
   MaintenanceControlResult,
   MaintenancePublicStatus,
@@ -54,7 +54,13 @@ const banner = (page: Page) =>
   page.getByRole('region', { name: 'Workspace maintenance', exact: true });
 const saveStatus = (page: Page) => page.getByRole('status', { name: 'Save status', exact: true });
 
-async function capture(page: Page, info: TestInfo, state: string, variants = true) {
+async function capture(
+  page: Page,
+  info: TestInfo,
+  state: string,
+  variants = true,
+  subject?: Locator,
+) {
   const directory =
     process.env.SPINEL_MAINTENANCE_CAPTURE === '1'
       ? join(projectRoot, 'docs/design/review/spn-111')
@@ -74,6 +80,10 @@ async function capture(page: Page, info: TestInfo, state: string, variants = tru
     await expect
       .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
       .toBe(true);
+    if (subject) {
+      await subject.scrollIntoViewIfNeeded();
+      await expect(subject.getByRole('heading', { level: 4 })).toBeInViewport();
+    }
     await page.screenshot({
       path: join(directory, `${state}-${variant}.png`),
       animations: 'disabled',
@@ -207,6 +217,7 @@ test('supervised maintenance keeps pending native work, fences old edits, and re
     browser = await playwright.chromium.launch(info.project.use.launchOptions);
     const operatorContext = await browser.newContext({
       baseURL: app.origin,
+      acceptDownloads: true,
       viewport: { width: 1280, height: 900 },
       colorScheme: 'light',
       reducedMotion: 'reduce',
@@ -245,6 +256,59 @@ test('supervised maintenance keeps pending native work, fences old edits, and re
       banner(operator).getByText('Maintenance scheduled', { exact: true }),
     ).toBeVisible();
     await capture(operator, info, 'scheduled');
+
+    // A ready encrypted export remains private and inert during maintenance.
+    // Start it through the real passkey flow before rotating the workspace epoch.
+    const downloads = operator.getByRole('region', {
+      name: 'Workspace backup download',
+      exact: true,
+    });
+    await expect(
+      downloads.getByRole('button', { name: 'Prepare workspace backup', exact: true }),
+    ).toBeEnabled();
+    await downloads.getByRole('button', { name: 'Prepare workspace backup', exact: true }).click();
+    const prepareBackup = operator.getByRole('dialog', {
+      name: 'Prepare encrypted backup',
+      exact: true,
+    });
+    const preparedBackup = operator.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname === '/api/admin/backups/exports' &&
+        response.request().method() === 'POST',
+    );
+    const backupProof = operator.waitForResponse(
+      (response) => new URL(response.url()).pathname === '/api/auth/reauthentication/verify',
+    );
+    await prepareBackup
+      .getByRole('button', { name: 'Verify and prepare backup', exact: true })
+      .click();
+    expect((await backupProof).status()).toBe(200);
+    const preparedReply = await preparedBackup;
+    expect(preparedReply.status()).toBe(202);
+    expect(preparedReply.request().headers()['x-spinel-epoch']).toBe(app.running.epoch);
+    const backupJobId = (await preparedReply.json()).job.id as string;
+    await expect(prepareBackup).toHaveCount(0);
+    await expect(downloads.getByText('Encrypted backup ready.', { exact: true })).toBeVisible({
+      timeout: 30_000,
+    });
+    const retainedDownloads = await downloads.elementHandle();
+    const retainedDelivery = await downloads
+      .locator('iframe[title="Encrypted backup delivery"]')
+      .elementHandle();
+    expect(retainedDownloads).not.toBeNull();
+    expect(retainedDelivery).not.toBeNull();
+    const stableDownload = async () => {
+      expect(
+        await downloads.evaluate((node, original) => node === original, retainedDownloads!),
+      ).toBe(true);
+      expect(
+        await downloads
+          .locator('iframe[title="Encrypted backup delivery"]')
+          .evaluate((node, original) => node === original, retainedDelivery!),
+      ).toBe(true);
+      expect(await retainedDelivery!.evaluate((node) => node.isConnected)).toBe(true);
+    };
+    await operator.evaluate(() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' }));
 
     // Another already-open Operator tab has the same cookie, but no resume capability.
     const unprivilegedTab = await operatorContext.newPage();
@@ -314,6 +378,17 @@ test('supervised maintenance keeps pending native work, fences old edits, and re
     ).toBeVisible();
     await capture(operator, info, 'paused-details');
     await banner(operator).locator('summary').click();
+    await expect(downloads.getByText(/Backup actions are paused for maintenance/)).toBeVisible();
+    await expect(downloads.getByText('Encrypted backup ready.', { exact: true })).toBeVisible();
+    await expect(
+      downloads.getByRole('button', { name: 'Download encrypted backup', exact: true }),
+    ).toBeDisabled();
+    await expect(
+      downloads.getByRole('button', { name: 'Cancel backup', exact: true }),
+    ).toBeDisabled();
+    await stableDownload();
+    await capture(operator, info, 'backup-paused', true, downloads);
+    await operator.evaluate(() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' }));
 
     await controls(operator).getByRole('button', { name: 'Resume', exact: true }).click();
     await expect(
@@ -326,13 +401,60 @@ test('supervised maintenance keeps pending native work, fences old edits, and re
     const resumed = await publicStatus(app.publicOrigin);
     expect(resumed.phase).toBe('running');
     expect(resumed.epoch).toBe(paused.status.epoch);
+    await expect(downloads.getByText(/Maintenance resumed\. Reload Administration/)).toBeVisible();
+    await expect(
+      downloads.getByRole('button', { name: 'Download encrypted backup', exact: true }),
+    ).toBeDisabled();
+    await stableDownload();
     await capture(operator, info, 'resumed');
+    await retainedDownloads!.dispose();
+    await retainedDelivery!.dispose();
     await controls(operator)
       .getByRole('button', { name: 'Reload Administration', exact: true })
       .click();
     await expect(
       controls(operator).getByRole('button', { name: 'Pause edits', exact: true }),
     ).toBeEnabled();
+
+    // A fresh Administration page can authorize the retained export in the new
+    // epoch, then stream it through the native form (which has no custom header).
+    await expect(
+      downloads.getByRole('button', { name: 'Download encrypted backup', exact: true }),
+    ).toBeEnabled();
+    await downloads.getByRole('button', { name: 'Download encrypted backup', exact: true }).click();
+    const authorizedBackup = operator.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname === `/api/admin/backups/exports/${backupJobId}/authorize`,
+    );
+    const nativeDelivery = operator.waitForRequest(
+      (request) =>
+        new URL(request.url()).pathname === `/api/admin/backups/exports/${backupJobId}/file`,
+    );
+    const downloadedBackup = operator.waitForEvent('download');
+    await operator
+      .getByRole('dialog', { name: 'Download encrypted backup', exact: true })
+      .getByRole('button', { name: 'Verify and download', exact: true })
+      .click();
+    const authorizedReply = await authorizedBackup;
+    expect(authorizedReply.status()).toBe(200);
+    expect(authorizedReply.request().headers()['x-spinel-epoch']).toBe(resumed.epoch);
+    const deliveryRequest = await nativeDelivery;
+    expect(deliveryRequest.method()).toBe('POST');
+    expect(new URL(deliveryRequest.url()).search).toBe('');
+    expect(deliveryRequest.headers()['x-spinel-epoch']).toBeUndefined();
+    const deliveryFields = new URLSearchParams(deliveryRequest.postData() ?? '');
+    expect([...deliveryFields.keys()].sort()).toEqual(['accountId', 'token']);
+    expect(deliveryFields.get('token')).toMatch(/^[A-Za-z0-9_-]{43}$/);
+    const download = await downloadedBackup;
+    expect(download.suggestedFilename()).toBe('spinel-workspace-backup.spinel');
+    const downloadPath = await download.path();
+    expect(downloadPath).not.toBeNull();
+    expect(await download.failure()).toBeNull();
+    const encrypted = await readFile(downloadPath!);
+    expect(encrypted.byteLength).toBeGreaterThan(37);
+    expect(encrypted.subarray(0, 8).toString()).toBe('SPINEL01');
+    await expect(downloads.getByText(/^Backup sent to your browser\./)).toBeVisible();
+    await operator.evaluate(() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' }));
     await controls(operator)
       .getByRole('button', { name: 'Maintenance actions', exact: true })
       .click();

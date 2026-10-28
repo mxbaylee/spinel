@@ -24,7 +24,8 @@ const signalCode = (signal: NodeJS.Signals | null) =>
   signal ? 128 + constants.signals[signal] : 1;
 
 if (process.argv[2] === '--inside') {
-  assert.equal(process.pid, 1, 'The fixture init must run in its own PID namespace.');
+  assert.equal(process.ppid, 1, 'The fixture wrapper must be owned by namespace init.');
+  assert.equal(readFileSync('/proc/1/comm', 'utf8').trim(), 'tini');
   // stdin carries the original environment privately through sudo/setpriv. It
   // never enters command arguments, files, diagnostic output or a root shell.
   const input = await new Promise<string>((resolveInput) => {
@@ -32,7 +33,8 @@ if (process.argv[2] === '--inside') {
       received = false;
     process.stdin.setEncoding('utf8');
     // Keep this pipe open after its first line. Even SIGKILL of the outer owner
-    // closes the writer, so PID 1 exits and the kernel kills all its descendants.
+    // closes the writer. This wrapper exits, Tini follows, and the kernel kills
+    // every remaining namespace descendant.
     process.stdin.once('end', () => process.exit(1));
     process.stdin.once('error', () => process.exit(1));
     process.stdin.on('data', (chunk: string) => {
@@ -72,8 +74,8 @@ if (process.argv[2] === '--inside') {
   for (const field of ['CapInh', 'CapPrm', 'CapEff', 'CapBnd', 'CapAmb'])
     assert.match(status, new RegExp(`^${field}:\\s+0+$`, 'm'));
   assert.match(status, /^NoNewPrivs:\s+1$/m);
-  // PID 1 has explicit signal handlers. Its exit causes the kernel to terminate
-  // every remaining namespace member, including detached/orphan worker groups.
+  // Tini reaps adopted orphans while this wrapper runs. It exits with this
+  // wrapper, so namespace teardown also covers detached/orphan worker groups.
   for (const signal of signals) process.on(signal, () => process.exit(signalCode(signal)));
   const command = spawn(invocation.command, invocation.args, {
     env: invocation.env,
@@ -123,6 +125,8 @@ if (process.argv[2] === '--inside') {
       '--inh-caps=-all',
       '--ambient-caps=-all',
       '--no-new-privs',
+      '--',
+      '/usr/bin/tini',
       '--',
       process.execPath,
       fileURLToPath(import.meta.url),

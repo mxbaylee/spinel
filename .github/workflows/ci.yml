@@ -153,6 +153,12 @@ jobs:
         if: needs.changes.outputs.docs_only != 'true'
         run: npm ci
       # lib/ runs in separate partitions below.
+      - name: Install fixture init
+        if: needs.changes.outputs.docs_only != 'true'
+        run: |
+          node scripts/ci/prefer-ubuntu-archive.ts
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends tini
       - name: Unit tests
         if: needs.changes.outputs.docs_only != 'true'
         run: node scripts/ci/pid-namespace.ts npm test -- --exclude 'lib/**'
@@ -328,6 +334,9 @@ jobs:
         run: |
           node scripts/ci/prefer-ubuntu-archive.ts
           npx playwright install --with-deps chromium
+      - name: Install maintenance fixture init
+        if: matrix.project == 'production'
+        run: sudo apt-get install -y --no-install-recommends tini
       - name: Current-main offline source for adoption evidence
         if: matrix.project == 'offline-upgrade'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -349,7 +358,7 @@ jobs:
           SHARD: ${{ matrix.shard }}
           VITE_DOC_SELECTION_EVIDENCE: ${{ matrix.project == 'production' && '1' || '0' }}
           SPINEL_LEGACY_OFFLINE_SOURCE: ${{ matrix.project == 'offline-upgrade' && format('{0}/legacy-offline-source', github.workspace) || '' }}
-        run: node scripts/ci/pid-namespace.ts npx playwright test --project="$SPINEL_E2E_PROJECT" ${SHARD:+--shard="$SHARD"}
+        run: npx playwright test --project="$SPINEL_E2E_PROJECT" ${SHARD:+--shard="$SHARD"}
       - name: Artifact name
         if: always()
         id: artifact
@@ -439,13 +448,13 @@ jobs:
         working-directory: baseline-doc-source
         env:
           SPN108_BASELINE: '1'
-        run: node "$GITHUB_WORKSPACE/scripts/ci/pid-namespace.ts" npx playwright test --project=doc-responsiveness --grep "$PRESET sustained native typing"
+        run: npx playwright test --project=doc-responsiveness --grep "$PRESET sustained native typing"
       - name: Build candidate
         run: npm run build
       - name: Verify candidate responsiveness and boundaries
         env:
           SPN108_BASELINE: '0'
-        run: node scripts/ci/pid-namespace.ts npx playwright test --project=doc-responsiveness --grep "$PRESET "
+        run: npx playwright test --project=doc-responsiveness --grep "$PRESET "
       - name: Prove paired responsiveness improvement
         run: >-
           node scripts/ci/doc-responsiveness.ts "$PRESET"

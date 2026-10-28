@@ -89,10 +89,12 @@ moves SPN-063 implementation/local acceptance before launch, using a supported
 filesystem destination and disposable processes/containers. New backup and
 restore controls can be developed locally; real-provider and target-host checks
 remain launch acceptance under SPN-038. The filesystem destination and recurring
-verifier are implemented by SPN-063. SPN-111 implements the
-[maintenance supervisor](maintenance.md); manual Admin exports, diagnostics
-expiry and assisted dataset activation remain in SPN-109, SPN-110 and SPN-112.
-See the [local setup and verification runbook](backups.md#filesystem-destination-for-local-operation).
+verifier are implemented by SPN-063. [SPN-109](implementation/SPN-109.md) adds
+deployment-owned local/Spaces policy and encrypted Admin downloads. SPN-111 adds
+the [maintenance supervisor](maintenance.md); diagnostics expiry and assisted
+dataset activation remain SPN-110 and SPN-112. AWS S3 is
+sequenced after production in [SPN-114](todo/SPN-114.md). See the
+[local setup and verification runbook](backups.md#filesystem-destination-for-local-operation).
 The
 [capacity writeup](implementation/SPN-063-capacity.md) records engine limits,
 current application budgets and measurements still required before publishing
@@ -146,16 +148,18 @@ project on its own runner, splitting development and production in two with
 `--shard`, and the **Playwright smoke** check passes only when every run and the
 container smoke do.
 
-Hosted unit tests and browser partitions run their unchanged commands inside a
-private PID/mount namespace, matching the deployment's process visibility while
-retaining the host network namespace for loopback and abstract ownership leases.
+Hosted unit tests run their unchanged command inside a private PID/mount namespace.
+The maintenance browser fixture isolates only its supervisor and service descendants,
+keeping protected Chromium processes outside the service's process inventory, as in
+deployment. Both retain the host network namespace for loopback and abstract ownership leases.
 The wrapper creates the namespace through passwordless sudo, then drops back to
-the runner UID/GID with no capabilities before executing project code. Its PID-1
-owner exits on command completion, cancellation or loss of its parent pipe;
-Linux then terminates all namespace descendants. Unrelated protected GitHub
+the runner UID/GID with no capabilities before executing project code. The distro's
+Tini runs as PID 1 and reaps orphaned workers while the command runs. The command
+wrapper exits on completion, cancellation or loss of its parent pipe; Tini follows,
+and Linux then terminates all namespace descendants. Unrelated protected GitHub
 agent descriptors are outside the fixture's process inventory. Runtime handle
-checks still fail closed for unreadable candidates inside it. The paired Doc
-responsiveness baseline and candidate use the same current wrapper.
+checks still fail closed for unreadable candidates inside it. Other browser commands,
+including both paired Doc responsiveness sources, use their ordinary process layout.
 
 CI keeps the line log and a JSON result report for each browser project/shard in
 `playwright-report/`. The existing `theme-screenshots-<project>[-<shard>]` artifact

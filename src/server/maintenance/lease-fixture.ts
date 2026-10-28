@@ -12,6 +12,9 @@ if (process.env.SPINEL_TEST_LEASE === 'live') {
 } else if (process.env.SPINEL_TEST_LEASE === 'cold') {
   await acquireColdWorkspace(process.env.DATABASE_PATH);
   process.exitCode = 1;
+} else if (process.env.SPINEL_TEST_LEASE === 'cold-held') {
+  await acquireColdWorkspace(process.env.DATABASE_PATH);
+  process.on('message', () => process.disconnect?.());
 } else throw new Error('Unknown lease fixture.');
 process.send({ ready: true }, () => {
   if (process.env.SPINEL_TEST_LEASE === 'cold') process.disconnect?.();

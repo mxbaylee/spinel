@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fireEvent, fn, userEvent, waitFor, within } from 'storybook/test';
+import { assertDialogControls } from '../.storybook/dialogBounds.ts';
 import type { MaintenanceAdminStatus } from '../src/shared/maintenance.ts';
 import { MaintenanceBanner, MaintenanceControls } from './Maintenance.tsx';
 import { maintenanceInstants } from './maintenanceTime.ts';
@@ -415,8 +416,8 @@ export const Phone: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(await canvas.findByRole('button', { name: 'Pause edits' })).toBeVisible();
-    for (const button of canvas.getAllByRole('button'))
-      expect(button.getBoundingClientRect().height).toBeGreaterThanOrEqual(44);
-    expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(innerWidth);
+    // The direct-iframe review runs this story at every partition's viewport.
+    // Keep 44px targets on touch/phone and 36px controls on desktop, as in the app.
+    await assertDialogControls(canvasElement);
   },
 };

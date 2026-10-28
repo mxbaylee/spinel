@@ -26,6 +26,8 @@ import {
   acquireColdWorkspace,
   acquireColdWorkspaceLease,
   acquireLiveWorkspace,
+  fileIdentity,
+  processIdentity,
   RecoveryJournal,
 } from './journal.ts';
 import { assertWorkspaceHandlesClosed, MaintenanceSupervisor } from './supervisor.ts';
@@ -203,6 +205,7 @@ test('live application ownership spans DB close and aliases while separate cold 
   child.send({ finish: true });
   await exit;
   const journal = await RecoveryJournal.open(f.root, f.databasePath);
+  await journal.bindWorkspace();
   await expect(acquireLiveWorkspace(hardlink)).rejects.toThrow('active application');
   await journal.close();
   const reused = await acquireLiveWorkspace(hardlink);
@@ -291,6 +294,171 @@ test('restart rejects early cold commands until old child reconciliation has com
   expect(restarted.journal.state.verifier).toBeNull();
   expect(() => assertWorkspaceHandlesClosed(f.databasePath)).not.toThrow();
 }, 10_000);
+
+test('inherited cold and live ownership survives supervisor and app death until the last WAL owner exits', async () => {
+  const f = await fixture();
+  const alias = join(f.data, 'orphan-alias.sqlite'),
+    hardlink = join(f.data, 'orphan-hardlink.sqlite');
+  await symlink(f.databasePath, alias);
+  await link(f.databasePath, hardlink);
+  const previous = fork(fileURLToPath(new URL('./supervisor-fixture.ts', import.meta.url)), [], {
+    env: {
+      ...process.env,
+      DATABASE_PATH: f.databasePath,
+      SPINEL_MAINTENANCE_ROOT: f.root,
+      SPINEL_TEST_IGNORE_STOP: '1',
+      SPINEL_TEST_WAL_CHILD: '1',
+    },
+    execArgv: [],
+    stdio: ['ignore', 'ignore', 'inherit', 'ipc'],
+  });
+  cleanups.push(async () => {
+    if (previous.exitCode === null && previous.signalCode === null) {
+      const exited = once(previous, 'exit');
+      previous.kill('SIGKILL');
+      await exited;
+    }
+    // A new controller only reconciles the recorded, marked process group.
+    const controller = await MaintenanceSupervisor.open({
+      root: f.root,
+      databasePath: f.databasePath,
+      publicPort: 0,
+      budgets: { stopMs: 100 },
+    });
+    await controller.close();
+  });
+  await message(previous, (value) => value.ready === true);
+  const operationId = randomUUID();
+  for (const action of ['verify', 'start', 'resume'] as const)
+    await maintenanceControl(f.root, { action, operationId });
+  const journal = JSON.parse(await readFile(join(f.root, 'journal.json'), 'utf8'));
+  const exited = once(previous, 'exit');
+  previous.kill('SIGKILL');
+  await exited;
+  for (const path of [f.databasePath, alias, hardlink]) {
+    await expect(acquireLiveWorkspace(path)).rejects.toThrow('active application');
+    await expect(acquireColdWorkspace(path)).rejects.toThrow('active supervisor');
+  }
+  // Kill only the app leader. Its stubborn, same-group WAL worker retains its
+  // own copies of all four sockets after both its ancestors have disappeared.
+  process.kill(journal.child.pid, 'SIGKILL');
+  const deadline = Date.now() + 3000;
+  while (processIdentity(journal.child.pid) && Date.now() < deadline)
+    await new Promise((resolve) => setTimeout(resolve, 20));
+  expect(processIdentity(journal.child.pid)).toBeNull();
+  for (const path of [f.databasePath, alias, hardlink]) {
+    await expect(acquireLiveWorkspace(path)).rejects.toThrow('active application');
+    await expect(acquireColdWorkspace(path)).rejects.toThrow('active supervisor');
+  }
+  expect(() => assertWorkspaceHandlesClosed(f.databasePath)).toThrow('still open');
+  const recovered = await MaintenanceSupervisor.open({
+    root: f.root,
+    databasePath: f.databasePath,
+    publicPort: 0,
+    budgets: { stopMs: 100 },
+  });
+  expect(recovered.journal.state.child).toBeNull();
+  expect(() => assertWorkspaceHandlesClosed(f.databasePath)).not.toThrow();
+  await recovered.close();
+  const live = await acquireLiveWorkspace(hardlink),
+    cold = await acquireColdWorkspace(hardlink);
+  await cold();
+  await live.release();
+}, 10_000);
+
+test('reconciled startup still refuses a competing cold process through the complete stop deadline', async () => {
+  const f = await fixture();
+  const token = randomUUID();
+  async function owner(kind: 'live' | 'cold-held') {
+    const child = fork(fileURLToPath(new URL('./lease-fixture.ts', import.meta.url)), [], {
+      env: {
+        ...process.env,
+        DATABASE_PATH: f.databasePath,
+        SPINEL_TEST_LEASE: kind,
+        SPINEL_PROCESS_GROUP_TOKEN: token,
+      },
+      execArgv: [],
+      detached: true,
+      stdio: ['ignore', 'ignore', 'inherit', 'ipc'],
+    });
+    cleanups.push(async () => {
+      if (child.exitCode === null && child.signalCode === null) {
+        const exited = once(child, 'exit');
+        child.kill('SIGKILL');
+        await exited;
+      }
+    });
+    await message(child, (value) => value.ready === true);
+    return child;
+  }
+  const old = await owner('live');
+  const journal = await RecoveryJournal.open(f.root, f.databasePath);
+  journal.state = {
+    ...journal.state,
+    child: processIdentity(old.pid!, token),
+    databaseIdentity: fileIdentity(f.databasePath),
+  };
+  journal.write();
+  await journal.close();
+  const oldExit = once(old, 'exit');
+  old.send({ finish: true });
+  await oldExit;
+  const competitor = await owner('cold-held');
+  await expect(
+    MaintenanceSupervisor.open({
+      root: f.root,
+      databasePath: f.databasePath,
+      publicPort: 0,
+      budgets: { stopMs: 1 },
+    }),
+  ).rejects.toThrow('active supervisor');
+  await expect(lstat(join(f.root, 'control.sock'))).rejects.toMatchObject({ code: 'ENOENT' });
+  expect(processIdentity(competitor.pid!)).not.toBeNull();
+  const competitorExit = once(competitor, 'exit');
+  competitor.send({ finish: true });
+  await competitorExit;
+  const restarted = await f.supervisor();
+  expect(restarted.status().phase).toBe('recovery-required');
+  expect(restarted.journal.state.child).toBeNull();
+}, 8000);
+
+for (const transferred of [0, 2]) {
+  test(`parent death after ${transferred} ownership handles never admits a SQLite open`, async () => {
+    const f = await fixture();
+    const parent = fork(fileURLToPath(new URL('./ownership-fixture.ts', import.meta.url)), [], {
+      env: {
+        ...process.env,
+        DATABASE_PATH: f.databasePath,
+        SPINEL_MAINTENANCE_ROOT: f.root,
+        SPINEL_TEST_OWNERSHIP_ROLE: 'parent',
+        SPINEL_TEST_TRANSFER_COUNT: String(transferred),
+      },
+      execArgv: [],
+      stdio: ['ignore', 'ignore', 'inherit', 'ipc'],
+    });
+    cleanups.push(async () => {
+      if (parent.exitCode === null && parent.signalCode === null) {
+        const exited = once(parent, 'exit');
+        parent.kill('SIGTERM');
+        await exited;
+      }
+    });
+    const waiting = await message(parent, (value) => value.waiting === true);
+    const exited = once(parent, 'exit');
+    parent.kill('SIGKILL');
+    await exited;
+    const deadline = Date.now() + 3000;
+    while (processIdentity(Number(waiting.childPid)) && Date.now() < deadline)
+      await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(processIdentity(Number(waiting.childPid))).toBeNull();
+    await expect(lstat(`${f.databasePath}.opened`)).rejects.toMatchObject({ code: 'ENOENT' });
+    expect(() => assertWorkspaceHandlesClosed(f.databasePath)).not.toThrow();
+    const live = await acquireLiveWorkspace(f.databasePath),
+      cold = await acquireColdWorkspace(f.databasePath);
+    await cold();
+    await live.release();
+  }, 10_000);
+}
 
 test('expired authority, arbitrary commands, stale operation IDs and changed generations stay closed', async () => {
   const f = await fixture();

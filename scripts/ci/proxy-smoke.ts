@@ -81,6 +81,9 @@ export async function checkMaintenanceProxy(directory: string, name: string) {
       '--read-only',
       '--user=10001:10001',
       '--cap-drop=ALL',
+      // Match Compose: the pinned binary's file capability must remain in the
+      // bounding set even though this HTTP-only fixture listens on port 8080.
+      '--cap-add=NET_BIND_SERVICE',
       '--security-opt=no-new-privileges:true',
       '--memory=128m',
       '--cpus=0.25',

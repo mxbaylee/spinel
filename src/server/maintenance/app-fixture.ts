@@ -4,6 +4,7 @@ import { createServer } from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { openDatabase } from '../../../server/database.ts';
 import { connectMaintenance } from './supervisor-client.ts';
+import { inheritedWorkspaceOwnership, shareWorkspaceOwnership } from './ownership.ts';
 
 if (!process.send || !process.env.DATABASE_PATH) throw new Error('Private test fixture required.');
 const bridge = await connectMaintenance();
@@ -16,7 +17,15 @@ const child =
         stdio: ['ignore', 'ignore', 'ignore', 'ipc'],
       })
     : undefined;
-if (child) await new Promise<void>((resolve) => child.once('message', () => resolve()));
+if (child) {
+  const opened = new Promise<void>((resolve) =>
+    child.on('message', (value: unknown) => {
+      if (value && typeof value === 'object' && 'opened' in value) resolve();
+    }),
+  );
+  await shareWorkspaceOwnership(child, inheritedWorkspaceOwnership());
+  await opened;
+}
 const server = createServer((_request, response) => {
   if (bridge.status().phase !== 'running') {
     response.writeHead(503).end();

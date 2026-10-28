@@ -17,12 +17,13 @@ runs report supervised maintenance as unavailable. Use `npm run start:supervised
 (or `npm run dev:supervised`) for this capability; deployment Compose selects
 that launcher explicitly. A direct Linux app holds a separate live-application
 lease until its process exits, including after SQLite's close method returns.
-The supervisor holds that lease too, so they cannot open the same inode through
-different paths or PID namespaces. The direct app also holds the cold-operation
+The supervisor shares that lease with every separate process opening the live
+workspace, so they cannot open the same inode through different paths or PID
+namespaces. The direct app also holds the cold-operation
 lease during startup, then releases that one for legacy live setup workflows.
-Before opening SQLite it checks for orphan handles left by an interrupted
-supervisor. A new empty database is created and its inode leased before any
-SQLite connection opens.
+A new empty database is created and its inode leased before any SQLite
+connection opens. Direct developer startup does not inspect unrelated desktop
+processes; a supervised orphan retains actual kernel ownership that blocks it.
 
 Every app and offline command touching one dataset must share the same Linux
 network namespace and service UID. Abstract Unix leases are scoped to that
@@ -34,9 +35,10 @@ The official container runs the supervisor as PID 1; its death terminates every
 member of that namespace. A host supervisor can restart in the host namespace.
 Moving a crashed host deployment into a new PID namespace while host orphans are
 still alive is unsupported: stop those old processes before changing topology.
-The `/proc` scan proves their
-closure and refuses unreadable candidate owners; it never treats `EACCES` as an
-empty descriptor list. An arbitrary SQLite process in another namespace is not
+Inherited ownership still excludes another app or cold command across those PID
+namespaces. Within this profile, the `/proc` scan verifies closure of visible
+same-UID workspace owners and refuses unreadable candidate owners; it never
+treats `EACCES` as an empty descriptor list. An arbitrary SQLite process in another namespace is not
 a supported way to access the managed dataset. Stop/reconcile all such external
 work before maintenance.
 
@@ -51,8 +53,14 @@ The private journal binds an instance, generation, current database device/inode
 retry epoch and bounded operation authorization. Updates replace one small 0600
 JSON file after syncing it, then sync the directory. Linux abstract Unix sockets
 provide exclusive kernel-owned leases for the canonical database path, existing
-inode and control root, releasing automatically after a crash. Live-application
-ownership and cold-operation exclusion are separate leases. Standalone
+inode and control root. Live-application ownership and cold-operation exclusion
+are separate leases. Before the application or maintenance verifier opens
+SQLite, the supervisor transfers copies of all four path/inode listeners over
+private IPC and waits for complete receipt. Those copies remain held until each
+recipient process exits, including after native database close and parent death.
+Worker threads share that process lifetime; any separate live-workspace worker
+must inherit the same ownership before opening SQLite. The final process exit
+releases the dataset leases without stale-file takeover. Standalone
 database-writing CLIs retain `acquireColdWorkspace` through process exit after
 any SQLite-open attempt, because native descriptors may survive `.close()`.
 Lease listeners are unreferenced so they cannot keep a failed CLI alive.
@@ -82,8 +90,18 @@ before starting the supervisor. Start `server/supervisor.ts` with the deployment
 environment. It intentionally leaves the workspace closed. A missing journal,
 controller interruption, changed process identity or corrupt journal cannot
 silently reopen editing.
-The controller persists its closed boot state before exposing public status and
-finishes old-process reconciliation before opening its private command socket.
+The controller first acquires only the recovery-root lease and persists its
+closed boot state before exposing public status. It reconciles the journal's
+recorded process groups, then acquires both dataset leases and rechecks the file
+identity before opening its private command socket. A surviving inherited owner
+or competing offline command prevents admission; no database opens during this
+reconciliation. Partial/failed ownership handoff cannot make a child ready.
+After recorded orphan reconciliation succeeds, kernel ownership can briefly
+outlast process/descriptor visibility during exit. Startup waits only on a real
+busy-lease result, within the same TERM plus forced-exit deadline. It still needs
+an exclusive bind of all four listeners, a fresh closed-handle check and an
+unchanged known generation before admitting control. A persistent competing
+process remains an error; no lease is unlinked, stolen or treated as acquired.
 
 Run the CLI as the service UID with `SPINEL_MAINTENANCE_ROOT` set:
 

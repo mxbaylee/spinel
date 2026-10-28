@@ -1,8 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { failure, pending } from '../.storybook/api.ts';
+import type { ApiMock } from '../.storybook/api.ts';
 import { BackupStatus } from './BackupStatus.tsx';
 import type { BackupStatusResponse } from './BackupStatus.tsx';
+import { capturedMaintenanceEpoch } from './maintenanceFetch.ts';
+import { refreshMaintenanceStatus } from './maintenanceState.ts';
 
 const hour = 3_600_000;
 const now = Date.UTC(2026, 9, 27, 12);
@@ -187,5 +190,184 @@ export const LoadFailed: Story = {
       'Could not load backup status',
     );
     await expect(canvas.queryByText('Backups are unavailable.')).not.toBeInTheDocument();
+  },
+};
+
+const manualPolicy = {
+  automatic: false,
+  manualDownload: true,
+  manualReady: true,
+  manualUnavailable: null,
+  backupHourUtc: 2,
+  retention: { daily: 7, weekly: 4, monthly: 6 },
+  maxArchiveBytes: 5 * 1024 * 1024 * 1024,
+};
+export const ManualDownloads: Story = {
+  args: { currentId: 'operator' },
+  parameters: {
+    api: {
+      ...reply({
+        destination: null,
+        offsite: false,
+        lastGood: null,
+        lastAttempt: null,
+        policy: manualPolicy,
+        verification: { ...status.verification, lastGood: null, lastAttempt: null },
+      }),
+      'GET /api/admin/backups/exports': { job: null },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByText('Automatic backups off')).toBeVisible();
+    await expect(canvas.getByText('Destination: Manual downloads only')).toBeVisible();
+    await waitFor(() =>
+      expect(canvas.getByRole('button', { name: 'Prepare workspace backup' })).toBeEnabled(),
+    );
+    await expect(canvas.queryByText('OK', { exact: true })).toBeNull();
+  },
+};
+export const SpacesPolicy: Story = {
+  args: { currentId: 'operator' },
+  parameters: {
+    api: {
+      ...reply({ destination: 'spaces', policy: { ...manualPolicy, automatic: true } }),
+      'GET /api/admin/backups/exports': { job: null },
+    },
+  },
+};
+export const DownloadReady: Story = {
+  args: { currentId: 'operator' },
+  parameters: {
+    api: {
+      ...reply({
+        destination: 'filesystem',
+        offsite: false,
+        policy: { ...manualPolicy, automatic: true },
+      }),
+      'GET /api/admin/backups/exports': {
+        job: {
+          id: 'fixture-backup',
+          state: 'ready',
+          createdAt: now,
+          expiresAt: now + 900_000,
+          bytes: 12 * 1024 * 1024,
+          keyId: 'workspace-2026-10',
+          error: null,
+        },
+      },
+    },
+  },
+};
+
+function maintenanceScenario(state: 'ready' | 'downloading') {
+  return {
+    args: { currentId: 'operator' },
+    parameters: {
+      api: {
+        ...reply({ policy: manualPolicy }),
+        'GET /api/maintenance': {
+          available: true,
+          phase: 'running',
+          epoch: 'before-maintenance',
+          notice: null,
+        },
+        'GET /api/admin/backups/exports': {
+          job: {
+            id: 'fixture-backup',
+            state,
+            createdAt: now,
+            expiresAt: now + 900_000,
+            bytes: 12 * 1024 * 1024,
+            keyId: 'workspace-2026-10',
+            error: null,
+          },
+        },
+      },
+    },
+  };
+}
+async function pauseBackupStatus(canvasElement: HTMLElement, responses: ApiMock) {
+  const canvas = within(canvasElement);
+  await waitFor(() =>
+    expect(canvas.getByRole('button', { name: 'Refresh download status' })).toBeEnabled(),
+  );
+  await expect(capturedMaintenanceEpoch()).toBe('before-maintenance');
+  const delivery = canvas.getByTitle('Encrypted backup delivery');
+  const exportStatus = responses['GET /api/admin/backups/exports'];
+  const paused = {
+    available: true,
+    phase: 'paused',
+    epoch: 'after-maintenance',
+    notice: null,
+  };
+  const blocked = {
+    ...failure('Private fixture detail', 503),
+    body: { error: 'Private fixture detail', code: 'maintenance' },
+  };
+  // Learn about this pause from one ordinary API poll before public polling
+  // catches up. Removing the download component would lose its native iframe.
+  const previous = globalThis.fetch;
+  const poll = fn(async () => {
+    responses['GET /api/maintenance'] = paused;
+    responses['GET /api/admin/backups/exports'] = blocked;
+    return Response.json(blocked.body, { status: 503 });
+  });
+  globalThis.fetch = (input, init) =>
+    input === '/api/admin/backups' && (init?.method ?? 'GET') === 'GET'
+      ? poll()
+      : previous(input, init);
+  try {
+    await userEvent.click(canvas.getByRole('button', { name: 'Refresh backup status' }));
+    await expect(await canvas.findByText(/Backup status is paused for maintenance/)).toBeVisible();
+    await expect(poll).toHaveBeenCalledOnce();
+    await expect(canvas.getByTitle('Encrypted backup delivery')).toBe(delivery);
+    await expect(delivery).toBeInTheDocument();
+    await expect(canvas.getByRole('button', { name: 'Refresh download status' })).toBeDisabled();
+    await expect(canvas.queryByText('Private fixture detail')).toBeNull();
+  } finally {
+    globalThis.fetch = previous;
+  }
+  return { delivery, exportStatus, paused };
+}
+
+export const MaintenancePaused: Story = {
+  ...maintenanceScenario('ready'),
+  play: async ({ canvasElement, parameters }) => {
+    const canvas = within(canvasElement);
+    await pauseBackupStatus(canvasElement, parameters.api as ApiMock);
+    await expect(canvas.getByText('Encrypted backup ready.')).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Download encrypted backup' })).toBeDisabled();
+    await expect(canvas.getByRole('button', { name: 'Cancel backup' })).toBeDisabled();
+    await expect(capturedMaintenanceEpoch()).toBe('before-maintenance');
+  },
+};
+
+export const MaintenanceResumed: Story = {
+  ...maintenanceScenario('downloading'),
+  play: async ({ canvasElement, parameters }) => {
+    const canvas = within(canvasElement);
+    const responses = parameters.api as ApiMock;
+    const { delivery, exportStatus, paused } = await pauseBackupStatus(canvasElement, responses);
+    await expect(canvas.getByText('Sending backup to your browser…')).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Cancel delivery' })).toBeDisabled();
+    // Accepted delivery finished before pause. The next admitted read reports
+    // that result, while this tab still cannot authorize a new-epoch mutation.
+    responses['GET /api/admin/backups/exports'] = {
+      job: { ...(exportStatus as { job: object }).job, state: 'delivered' },
+    };
+    responses['GET /api/maintenance'] = { ...paused, phase: 'running' };
+    await refreshMaintenanceStatus();
+    await expect(
+      await canvas.findByText(/Maintenance resumed\. Reload Administration/),
+    ).toBeVisible();
+    await waitFor(() =>
+      expect(canvas.getByRole('button', { name: 'Refresh download status' })).toBeEnabled(),
+    );
+    await expect(await canvas.findByText(/^Backup sent to your browser\./)).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Prepare workspace backup' })).toBeDisabled();
+    await expect(canvas.getByTitle('Encrypted backup delivery')).toBe(delivery);
+    await expect(delivery).toBeInTheDocument();
+    await expect(capturedMaintenanceEpoch()).toBe('before-maintenance');
   },
 };

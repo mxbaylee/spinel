@@ -24,6 +24,31 @@ interface Permit {
   release(): void;
 }
 const context = new AsyncLocalStorage<Permit>();
+const responseReleases = new WeakMap<Response, Set<() => void>>();
+
+/** Callback middleware shares one response cleanup pair. Async route work keeps
+ * its separate promise-owned permit beyond response close. */
+function releaseWithResponse(response: Response, release: () => void) {
+  if (response.writableFinished || response.destroyed) {
+    release();
+    return;
+  }
+  let releases = responseReleases.get(response);
+  if (!releases) {
+    releases = new Set();
+    responseReleases.set(response, releases);
+    const finished = () => {
+      response.off('finish', finished);
+      response.off('close', finished);
+      responseReleases.delete(response);
+      for (const done of releases!) done();
+      releases!.clear();
+    };
+    response.once('finish', finished);
+    response.once('close', finished);
+  }
+  releases.add(release);
+}
 
 /** One admission follows actual work, including after a caller closes its socket. */
 export class MaintenanceGate {
@@ -152,9 +177,18 @@ export class MaintenanceGate {
         // than requiring an extra nonstandard header from every MCP client.
         const mcp = request.path === '/mcp' || request.path.startsWith('/mcp/');
         const oauth = /^\/(?:authorize|register|token|revoke)\/?$/.test(request.path);
+        // A native browser form cannot set an epoch header. This one route
+        // validates its single-use capability's admitted epoch before claim or
+        // any write; its authorization POST still requires the normal header.
+        const backupDownload =
+          request.method === 'POST' &&
+          /^\/api\/admin\/backups\/exports\/[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\/file\/?$/i.test(
+            request.path,
+          );
+        const epochRequired = mutation && !mcp && !oauth && !backupDownload;
         const epoch = request.get(MAINTENANCE_HEADER);
-        if (mutation && !mcp && !oauth) this.assertEpoch(epoch);
-        permit = this.begin(mutation && !mcp && !oauth ? epoch : undefined);
+        if (epochRequired) this.assertEpoch(epoch);
+        permit = this.begin(epochRequired ? epoch : undefined);
       } catch (error) {
         const failure = error instanceof MaintenanceError ? error : new MaintenanceError();
         response
@@ -164,8 +198,7 @@ export class MaintenanceGate {
           .json({ error: failure.message, code: failure.code, maintenance: this.status });
         return;
       }
-      response.once('finish', permit.release);
-      response.once('close', permit.release);
+      releaseWithResponse(response, permit.release);
       if (this.status.available) response.set(MAINTENANCE_HEADER, permit.epoch);
       this.within(permit, next);
     };
@@ -183,11 +216,7 @@ export function trackMaintenanceWork<T>(work: () => T, response: Response): T {
       return Promise.resolve(result).finally(permit.release) as T;
     // Callback middleware (including Express's body parser) returns before it
     // calls next(). Keep its inherited context valid while that request lives.
-    if (response.writableFinished || response.destroyed) permit.release();
-    else {
-      response.once('finish', permit.release);
-      response.once('close', permit.release);
-    }
+    releaseWithResponse(response, permit.release);
     return result;
   } catch (error) {
     permit.release();

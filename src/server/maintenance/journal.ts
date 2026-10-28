@@ -105,6 +105,17 @@ export function canonicalDatabasePath(path: string) {
 function lockName(kind: string, identity: string) {
   return `\0spinel-${kind}-${createHash('sha256').update(identity).digest('hex')}`;
 }
+export class WorkspaceLeaseBusyError extends Error {
+  constructor(kind: string, cause: unknown) {
+    super(
+      kind.startsWith('application')
+        ? 'This workspace already has an active application or supervisor.'
+        : 'This workspace already has an active supervisor or offline operation.',
+      { cause },
+    );
+    this.name = 'WorkspaceLeaseBusyError';
+  }
+}
 async function kernelLock(kind: string, identity: string): Promise<Server> {
   maintenanceSupported();
   const server = createServer((socket) => socket.destroy());
@@ -120,11 +131,7 @@ async function kernelLock(kind: string, identity: string): Promise<Server> {
   }).catch((error) => {
     server.close();
     if ((error as NodeJS.ErrnoException).code === 'EADDRINUSE')
-      throw new Error(
-        kind.startsWith('application')
-          ? 'This workspace already has an active application or supervisor.'
-          : 'This workspace already has an active supervisor or offline operation.',
-      );
+      throw new WorkspaceLeaseBusyError(kind, error);
     throw error;
   });
   return server;
@@ -140,7 +147,32 @@ export interface WorkspaceLease {
   path: string;
   /** Bind a newly created file before any application database is opened. */
   bindFile(): Promise<void>;
+  /** Share the already-bound kernel ownership, never a replacement listener. */
+  handles(): readonly [Server, Server];
   release(): Promise<void>;
+}
+export const workspaceOwnershipRoles = [
+  'workspace',
+  'workspace-file',
+  'application',
+  'application-file',
+] as const;
+export type WorkspaceOwnershipRole = (typeof workspaceOwnershipRoles)[number];
+export interface WorkspaceOwnership {
+  databasePath: string;
+  databaseIdentity: FileIdentity;
+  handles: Record<WorkspaceOwnershipRole, Server>;
+}
+export function workspaceOwnershipAddresses(databasePath: string, identity: FileIdentity) {
+  return Object.fromEntries(
+    workspaceOwnershipRoles.map((role) => [
+      role,
+      lockName(
+        role,
+        role.endsWith('-file') ? `${identity.device}:${identity.inode}` : databasePath,
+      ),
+    ]),
+  ) as Record<WorkspaceOwnershipRole, string>;
 }
 // One-shot CLI and direct-app leases intentionally survive their JS call frame.
 // Pin the unref'd servers until explicit pre-open/test cleanup or process exit.
@@ -185,6 +217,11 @@ async function acquireWorkspaceLease(databasePath: string, kind: 'workspace' | '
   const lease = {
     path: canonical,
     bindFile: () => bindFile(true),
+    handles: () => {
+      if (released || !fileLock || !sameFile(boundIdentity ?? null, fileIdentity(canonical)))
+        throw new Error('Workspace ownership is not bound to the current file.');
+      return [pathLock, fileLock] as const;
+    },
     release,
   } satisfies WorkspaceLease;
   heldWorkspaceLeases.add(lease);
@@ -367,25 +404,16 @@ export class RecoveryJournal {
   private readonly handle: number;
   private readonly rootIdentity: FileIdentity;
   private readonly rootLock: Server;
-  private readonly releaseWorkspace: () => Promise<void>;
-  private readonly liveWorkspace: WorkspaceLease;
+  private coldWorkspace: WorkspaceLease | undefined;
+  private liveWorkspace: WorkspaceLease | undefined;
   private corrupted = false;
   private closed = false;
 
-  private constructor(
-    root: string,
-    databasePath: string,
-    handle: number,
-    rootLock: Server,
-    releaseWorkspace: () => Promise<void>,
-    liveWorkspace: WorkspaceLease,
-  ) {
+  private constructor(root: string, databasePath: string, handle: number, rootLock: Server) {
     this.root = root;
     this.databasePath = databasePath;
     this.handle = handle;
     this.rootLock = rootLock;
-    this.releaseWorkspace = releaseWorkspace;
-    this.liveWorkspace = liveWorkspace;
     const info = fstatSync(handle, { bigint: true });
     this.rootIdentity = { device: String(info.dev), inode: String(info.ino) };
     let loaded: unknown;
@@ -448,29 +476,19 @@ export class RecoveryJournal {
       constants.O_RDONLY | constants.O_DIRECTORY | constants.O_NOFOLLOW,
     );
     let rootLock: Server | undefined;
-    let releaseWorkspace: (() => Promise<void>) | undefined;
-    let liveWorkspace: WorkspaceLease | undefined;
     try {
       const info = fstatSync(handle);
       if (!info.isDirectory() || info.uid !== process.getuid!() || info.mode & 0o077)
         throw new Error('Recovery directory must be owned by this user and private (0700).');
       rootLock = await kernelLock('recovery', `${info.dev}:${info.ino}`);
-      releaseWorkspace = await acquireColdWorkspace(canonical);
-      liveWorkspace = await acquireLiveWorkspace(canonical);
-      return new RecoveryJournal(
-        root,
-        canonical,
-        handle,
-        rootLock,
-        releaseWorkspace,
-        liveWorkspace,
-      );
+      // Recorded orphan processes inherit both dataset leases. Read their
+      // identities under root-only ownership, then reconcile them before trying
+      // to acquire those leases. No database/control command is admitted yet.
+      return new RecoveryJournal(root, canonical, handle, rootLock);
     } catch (error) {
       await Promise.allSettled([
         Promise.resolve().then(() => closeSync(handle)),
         ...(rootLock ? [releaseLock(rootLock)] : []),
-        ...(releaseWorkspace ? [releaseWorkspace()] : []),
-        ...(liveWorkspace ? [liveWorkspace.release()] : []),
       ]);
       throw error;
     }
@@ -499,7 +517,41 @@ export class RecoveryJournal {
     return `/proc/self/fd/${this.handle}/${name}`;
   }
   async bindWorkspace() {
-    await this.liveWorkspace.bindFile();
+    this.checkRoot();
+    if (!this.coldWorkspace || !this.liveWorkspace) {
+      const cold = await acquireColdWorkspaceLease(this.databasePath);
+      let live: WorkspaceLease | undefined;
+      try {
+        live = await acquireLiveWorkspace(this.databasePath);
+        await cold.bindFile();
+        await live.bindFile();
+        this.coldWorkspace = cold;
+        this.liveWorkspace = live;
+      } catch (error) {
+        await Promise.allSettled([cold.release(), ...(live ? [live.release()] : [])]);
+        throw error;
+      }
+    } else {
+      await this.coldWorkspace.bindFile();
+      await this.liveWorkspace.bindFile();
+    }
+  }
+  workspaceOwnership(): WorkspaceOwnership {
+    this.checkRoot();
+    if (!this.coldWorkspace || !this.liveWorkspace)
+      throw new Error('Workspace ownership has not been acquired.');
+    const [coldPath, coldFile] = this.coldWorkspace.handles();
+    const [livePath, liveFile] = this.liveWorkspace.handles();
+    return {
+      databasePath: this.databasePath,
+      databaseIdentity: fileIdentity(this.databasePath),
+      handles: {
+        workspace: coldPath,
+        'workspace-file': coldFile,
+        application: livePath,
+        'application-file': liveFile,
+      },
+    };
   }
   checkRoot() {
     const current = lstatSync(this.root, { bigint: true });
@@ -582,8 +634,8 @@ export class RecoveryJournal {
     }
     const releases = await Promise.allSettled([
       releaseLock(this.rootLock),
-      this.releaseWorkspace(),
-      this.liveWorkspace.release(),
+      ...(this.coldWorkspace ? [this.coldWorkspace.release()] : []),
+      ...(this.liveWorkspace ? [this.liveWorkspace.release()] : []),
     ]);
     for (const result of releases) if (result.status === 'rejected') failure ??= result.reason;
     if (failure) throw failure;

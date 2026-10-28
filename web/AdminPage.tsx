@@ -99,7 +99,7 @@ export function AdminPage({ currentId }: { currentId: string }) {
                 onBusyChange={setMaintenanceBusy}
                 reloadDisabled={sectionBusy}
               />
-              <BackupStatus />
+              <BackupStatus currentId={currentId} />
               <ServerHealth />
               <AdminDiagnostics onBusyChange={setBusy} />
             </section>

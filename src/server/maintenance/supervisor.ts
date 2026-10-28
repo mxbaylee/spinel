@@ -23,6 +23,7 @@ import { publicMaintenance } from '../../shared/maintenance.ts';
 import {
   AUTHORITY_MS,
   RecoveryJournal,
+  WorkspaceLeaseBusyError,
   fileIdentity,
   processIdentity,
   sameFile,
@@ -31,6 +32,7 @@ import {
 } from './journal.ts';
 import type { OperationReceipt, ProcessIdentity } from './journal.ts';
 import { MAINTENANCE_CHANNEL } from './supervisor-client.ts';
+import { shareWorkspaceOwnership } from './ownership.ts';
 
 const DRAIN_MS = 30_000;
 const STOP_MS = 15_000;
@@ -188,6 +190,8 @@ export class MaintenanceSupervisor {
   private readonly now: () => number;
   private child: ChildProcess | undefined;
   private childReady = false;
+  private childOwned = false;
+  private childReadyEpoch: string | undefined;
   private drainWaiter: Waiter | undefined;
   private startWaiter: Waiter | undefined;
   private queue: Promise<unknown> = Promise.resolve();
@@ -214,6 +218,8 @@ export class MaintenanceSupervisor {
   private async initialize() {
     const prior = this.journal.state.child;
     const priorVerifier = this.journal.state.verifier;
+    let reconciliationFailure: unknown;
+    let reconciled = false;
     if (!this.journal.wasUnverified)
       this.transition({
         phase: 'recovery-required',
@@ -231,15 +237,58 @@ export class MaintenanceSupervisor {
       port: this.options.publicPort ?? 3002,
       host: '127.0.0.1',
     });
+    const reconciliationDeadline = Date.now() + (this.options.budgets?.stopMs ?? STOP_MS) + 3000;
     if (prior || priorVerifier) {
       try {
         if (priorVerifier) await this.stopGroup(priorVerifier, false);
         if (prior) await this.stopGroup(prior);
         else assertWorkspaceHandlesClosed(this.journal.databasePath);
-        this.transition({ child: null, verifier: null });
-      } catch {
+        reconciled = true;
+      } catch (error) {
+        reconciliationFailure = error;
         this.transition({ lastFailure: 'process-still-active' });
       }
+    }
+    // Surviving children retain the cold and application listeners. They must
+    // be reconciled before this controller can acquire either dataset lease.
+    const reconciledIdentity = reconciled ? fileIdentity(this.journal.databasePath) : null;
+    for (;;) {
+      if (
+        reconciledIdentity &&
+        !sameFile(reconciledIdentity, fileIdentity(this.journal.databasePath))
+      )
+        throw new Error('Workspace changed while acquiring recovery ownership.');
+      try {
+        await this.journal.bindWorkspace();
+        break;
+      } catch (error) {
+        // A killed group can disappear from /proc before its last inherited
+        // listener is retired. Wait only for a real exclusive bind, within the
+        // existing TERM/forced-exit budget. Persistent competitors still fail.
+        if (
+          reconciled &&
+          error instanceof WorkspaceLeaseBusyError &&
+          Date.now() < reconciliationDeadline
+        ) {
+          await delay(25);
+          continue;
+        }
+        if (reconciliationFailure)
+          throw new AggregateError(
+            [reconciliationFailure, error],
+            'Recorded workspace owners could not be reconciled before ownership acquisition.',
+          );
+        throw error;
+      }
+    }
+    if (reconciled) {
+      // Recheck after acquiring ownership, rather than treating the earlier
+      // inventory as permission to proceed while the kernel still refused it.
+      if (!sameFile(reconciledIdentity, fileIdentity(this.journal.databasePath)))
+        throw new Error('Workspace changed while acquiring recovery ownership.');
+      assertWorkspaceHandlesClosed(this.journal.databasePath);
+      if (this.journal.state.databaseIdentity) this.assertGeneration();
+      this.transition({ child: null, verifier: null });
     }
     this.reconcileNotice(true);
     // Only expose cold commands after every startup reconciliation has finished;
@@ -695,23 +744,32 @@ export class MaintenanceSupervisor {
     });
     const workerIdentity = worker.pid ? processIdentity(worker.pid, groupToken) : null;
     if (!workerIdentity) throw new Error('Recovery verification process did not start.');
-    this.transition({ verifier: workerIdentity });
     let result = false;
+    const exited = new Promise<number | null>((resolveExit) => {
+      worker.on('message', (value: unknown) => {
+        if (object(value) && value.ok === true) result = true;
+      });
+      worker.once('error', () => resolveExit(null));
+      worker.once('exit', (code) => resolveExit(code));
+    });
+    // Covers process startup and every handoff/ack wait, not just SQLite work.
     const timeout = setTimeout(() => {
       try {
-        process.kill(-worker.pid!, 'SIGKILL');
+        if (groupMembers(workerIdentity).length) process.kill(-workerIdentity.pid, 'SIGKILL');
       } catch {
-        /* already stopped */
+        /* An inconclusive identity remains closed; never signal another group. */
       }
     }, this.options.budgets?.verifyMs ?? VERIFY_MS);
     try {
-      const exit = await new Promise<number | null>((resolveExit, reject) => {
-        worker.on('message', (value: unknown) => {
-          if (object(value) && value.ok === true) result = true;
-        });
-        worker.once('error', reject);
-        worker.once('exit', (code) => resolveExit(code));
-      });
+      this.transition({ verifier: workerIdentity });
+      const [exit] = await Promise.all([
+        exited,
+        shareWorkspaceOwnership(
+          worker,
+          this.journal.workspaceOwnership(),
+          this.options.budgets?.verifyMs ?? VERIFY_MS,
+        ),
+      ]);
       assertWorkspaceHandlesClosed(this.journal.databasePath);
       if (!result || exit !== 0 || !sameFile(current, fileIdentity(this.journal.databasePath)))
         throw new Error('The current workspace did not pass closed integrity verification.');
@@ -726,6 +784,7 @@ export class MaintenanceSupervisor {
       });
     } catch (error) {
       this.failure('verification-failed');
+      await this.stopGroup(workerIdentity, false).catch(() => {});
       throw error;
     } finally {
       clearTimeout(timeout);
@@ -735,12 +794,12 @@ export class MaintenanceSupervisor {
     if (this.journal.state.phase !== 'stopped' || this.journal.state.verifiedAt === null)
       throw new Error('Verify the closed workspace before starting it.');
     this.assertGeneration();
+    await this.journal.bindWorkspace();
     assertWorkspaceHandlesClosed(this.journal.databasePath);
-    const started = new Promise<void>((resolve, reject) => {
-      this.startWaiter = { resolve, reject };
-    });
     this.transition({ phase: 'starting', lastFailure: null });
     this.childReady = false;
+    this.childOwned = false;
+    this.childReadyEpoch = undefined;
     const groupToken = randomUUID();
     const child =
       this.options.createChild?.(groupToken) ??
@@ -766,7 +825,12 @@ export class MaintenanceSupervisor {
       this.failure('start-failed');
       throw new Error('Application process did not start.');
     }
-    this.transition({ child: identity });
+    const started = new Promise<void>((resolve, reject) => {
+      this.startWaiter = { resolve, reject };
+    });
+    // A synchronous persistence failure below can reject this before the
+    // handoff/start aggregate is installed; its catch still reports the failure.
+    void started.catch(() => {});
     child.on('message', (value) => {
       void this.childMessage(child, value);
     });
@@ -776,23 +840,49 @@ export class MaintenanceSupervisor {
     child.once('exit', () => {
       if (this.child !== child) return;
       this.childReady = false;
+      this.childOwned = false;
       if (!['stopping', 'stopped'].includes(this.journal.state.phase) && !this.closing)
         this.failure('application-stopped');
     });
-    this.sendState();
     const timer = setTimeout(
       () => this.failure('start-timeout'),
       this.options.budgets?.startMs ?? START_MS,
     );
     try {
-      await started;
+      // Durable process identity precedes every transferable handle. Either
+      // parent can die mid-handoff without admitting an unowned DB open.
+      this.transition({ child: identity });
+      await Promise.all([
+        started,
+        shareWorkspaceOwnership(
+          child,
+          this.journal.workspaceOwnership(),
+          this.options.budgets?.startMs ?? START_MS,
+        ).then(() => {
+          this.childOwned = true;
+          this.acceptChildReady();
+        }),
+      ]);
     } catch (error) {
+      this.failure('start-failed');
       await this.stopGroup(identity).catch(() => {});
       throw error;
     } finally {
       clearTimeout(timer);
       this.startWaiter = undefined;
     }
+  }
+  private acceptChildReady() {
+    if (
+      !this.childOwned ||
+      this.childReadyEpoch !== this.journal.state.epoch ||
+      this.journal.state.phase !== 'starting'
+    )
+      return;
+    this.assertGeneration();
+    this.childReady = true;
+    this.transition({ phase: 'paused' });
+    this.startWaiter?.resolve();
   }
   private async childMessage(child: ChildProcess, value: unknown) {
     if (child !== this.child || !object(value) || value.channel !== MAINTENANCE_CHANNEL) return;
@@ -803,10 +893,10 @@ export class MaintenanceSupervisor {
         value.epoch === this.journal.state.epoch &&
         this.journal.state.phase === 'starting'
       ) {
-        this.assertGeneration();
-        this.childReady = true;
-        this.transition({ phase: 'paused' });
-        this.startWaiter?.resolve();
+        // IPC may deliver held + ready before the sender promise's microtask.
+        // Retain readiness until both independent barriers are complete.
+        this.childReadyEpoch = value.epoch as string;
+        this.acceptChildReady();
       } else if (
         value.kind === 'drained' &&
         value.epoch === this.journal.state.epoch &&
