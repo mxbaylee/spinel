@@ -134,7 +134,9 @@ export const WaitingForPasskey: Story = {
   play: async ({ canvasElement }) => {
     const dialog = await openPrepare(canvasElement);
     await userEvent.click(dialog.getByRole('button', { name: 'Verify and prepare backup' }));
-    await expect(dialog.getByRole('status')).toHaveTextContent('Waiting for your passkey');
+    await waitFor(() =>
+      expect(dialog.getByRole('status')).toHaveTextContent('Waiting for your passkey'),
+    );
     await expect(dialog.getByRole('button', { name: /^Cancel$/ })).toBeEnabled();
   },
 };
@@ -145,11 +147,16 @@ export const CancelPasskey: Story = {
   play: async ({ canvasElement }) => {
     const dialog = await openPrepare(canvasElement);
     await userEvent.click(dialog.getByRole('button', { name: 'Verify and prepare backup' }));
+    await waitFor(() =>
+      expect(dialog.getByRole('status')).toHaveTextContent('Waiting for your passkey'),
+    );
     await userEvent.click(dialog.getByRole('button', { name: /^Cancel$/ }));
-    await expect(within(document.body).queryByRole('dialog')).toBeNull();
-    await expect(
-      within(canvasElement).getByRole('button', { name: 'Prepare workspace backup' }),
-    ).toHaveFocus();
+    await waitFor(() => {
+      expect(within(document.body).queryByRole('dialog')).toBeNull();
+      expect(
+        within(canvasElement).getByRole('button', { name: 'Prepare workspace backup' }),
+      ).toHaveFocus();
+    });
   },
 };
 export const VerificationFailed: Story = {
