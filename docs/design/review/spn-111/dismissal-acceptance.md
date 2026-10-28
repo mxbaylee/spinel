@@ -43,13 +43,15 @@ light/dark/phone presentation, keyboard dismissal/reopening, remount/poll stabil
 notice replacement and a new pause resurfacing. Fixture buttons in the journey
 stories are explicitly test controls, not proposed application controls.
 
-At publication, standalone logic assertions passed and the five changed/new
+At publication, ten standalone logic assertion groups passed and five changed/new
 TypeScript files passed syntax transpilation. Those local checks used available
-Node 22.16.0 and TypeScript 5.8.3, not the repository's pinned toolchain; they do not
-replace hosted unit, typecheck, lint, browser or visual acceptance. Current-head
-CI, real browser reload/expiry and retained-native-input acceptance, refreshed
-visible light/dark/phone screenshots and both independent full-diff reviews remain
-required. Existing screenshots are historical and do not approve this revision.
+Node 22.16.0 and TypeScript 5.8.3, not the repository's pinned toolchain. Hosted
+Typecheck and the Storybook build subsequently passed on `d2e5927`; the Lint job
+passed dependency/Oxlint checks but found one hook line requiring formatting,
+corrected in this follow-up. None of these results is a final independent grade.
+Current-head CI, real browser reload/expiry and retained-native-input acceptance,
+refreshed visible light/dark/phone screenshots and both independent full-diff
+reviews remain required. Existing screenshots are historical, not current approval.
 
 Each of two nonimplementing reviewers must score the same final commit strictly
 above 95/100 with no unresolved blockers: scope/acceptance 35, correctness and
@@ -63,17 +65,18 @@ those gates and all required current-head CI checks pass.
 ## Concurrent-main integration and landing checkpoint
 
 Main advanced to `c604d984a40cd901ff7acd131a9573e6daadc0bb` while this revision was
-being published. The integration preserves all of PR #209's BrowserStack work,
-CI follow-up tickets, grooming decisions, ranking changes and generated index.
-The maintenance runtime and dismissal code are retained unchanged.
+being published. The integration preserves PR #209's BrowserStack work, CI follow-up
+tickets, grooming decisions and ranking changes. Maintenance runtime is unchanged.
 
-The draft now retains main's complete backlog subtree: SPN-111 stays active and
-SPN-112 remains dependent on it while verification is incomplete. This supersedes
-the earlier checkpoint's prepared ticket retirement and completion counter; it
-is not a change to the ticket's acceptance. Before landing, retire SPN-111,
-resolve its dependency edge, add it to the current grooming completion counter
-and regenerate the index with the current backlog CLI. Include that final
-bookkeeping in the exact commit reviewed by both independent reviewers.
+The first integration temporarily retained the active ticket. The hosted Pull
+request check correctly refused that state: ticket retirement and completion
+bookkeeping must be prepared inside a ticket PR, including while it is draft.
+This follow-up removes SPN-111, resolves SPN-112's dependency, records SPN-111 in
+the current grooming counter and regenerates the 24-ticket index. That prepared
+landing state does not claim this draft has merged or its review gates have passed.
+The index was rendered using the current ranking/rendering functions after an
+exact round trip of the CI-validated main index; the hosted Backlog check remains
+the authoritative complete ticket/index validation. No check was weakened.
 
 The concurrent ticket reminder also remains applicable: local process-crash
 checks do not establish target-host or power-loss recovery proof. Final-head

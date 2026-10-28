@@ -23,7 +23,9 @@ export function useMaintenanceDismissal(status: MaintenancePublicStatus | null) 
   }, [key, dismissal?.expiresAt]);
 
   return {
-    dismissed: Boolean(dismissal && dismissal.noticeKey === key && dismissal.expiresAt > Date.now()),
+    dismissed: Boolean(
+      dismissal && dismissal.noticeKey === key && dismissal.expiresAt > Date.now(),
+    ),
     dismiss() {
       if (typeof key === 'string') setDismissal(maintenanceDismissals.dismiss(key));
     },
