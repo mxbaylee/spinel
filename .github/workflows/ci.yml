@@ -521,6 +521,7 @@ jobs:
           npm ci
           npm run build -- --sourcemap hidden
       - name: Retain baseline first attempt
+        id: callback_baseline
         continue-on-error: true
         working-directory: baseline-callback-source
         env:
@@ -529,16 +530,27 @@ jobs:
       - name: Build candidate with identical source-map settings
         run: npm run build -- --sourcemap hidden
       - name: Verify candidate first attempt
+        id: callback_candidate
         continue-on-error: true
         env:
           SPN113_BASELINE: '0'
         run: npx playwright test --project=doc-callback-lifetimes --grep "$PRESET "
       - name: Verify complete paired callback evidence
-        run: >-
-          node scripts/ci/doc-callback-comparison.ts "$PRESET"
-          baseline-callback-source/test-results/doc-callback-lifetimes
-          test-results/doc-callback-lifetimes
-          "test-results/spn113-comparison-$PRESET.json"
+        if: always()
+        env:
+          BASELINE_OUTCOME: ${{ steps.callback_baseline.outcome }}
+          CANDIDATE_OUTCOME: ${{ steps.callback_candidate.outcome }}
+        run: |
+          comparison_status=0
+          node scripts/ci/doc-callback-comparison.ts "$PRESET" \
+            baseline-callback-source/test-results/doc-callback-lifetimes \
+            test-results/doc-callback-lifetimes \
+            "test-results/spn113-comparison-$PRESET.json" || comparison_status=$?
+          if [ "$BASELINE_OUTCOME" != success ] || [ "$CANDIDATE_OUTCOME" != success ]; then
+            echo "::error::Callback browser run failed or was skipped: baseline=$BASELINE_OUTCOME candidate=$CANDIDATE_OUTCOME"
+            exit 1
+          fi
+          exit "$comparison_status"
       - name: Retain raw traces, source maps and every first attempt
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

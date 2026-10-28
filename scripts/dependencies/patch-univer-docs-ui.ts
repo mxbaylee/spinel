@@ -18,6 +18,7 @@
  * Source: packages/docs-ui/src/services/selection/text-range.ts and
  * controllers/render-controllers/zoom.render-controller.ts, dream-num/univer v1.1.0.
  * Prepared upstream repair: 1672ca2ad1debbcdb295e203308fae13bdb299b3.
+ * Upstream: https://github.com/dream-num/univer/pull/7969
  * SPN-115 removes this temporary patch after a suitable upstream release.
  */
 import { createHash } from 'node:crypto';

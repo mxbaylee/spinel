@@ -4,6 +4,7 @@ import { mkdtemp, mkdir, readFile, rm, symlink, writeFile } from 'node:fs/promis
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
+import { gzipSync } from 'node:zlib';
 import {
   compareDocCallbackEvidence,
   DOC_CALLBACK_BASELINE,
@@ -13,7 +14,7 @@ import {
 import type { DocCallbackManifest, LoadedDocCallbackEvidence } from './doc-callback-comparison.ts';
 import { analyzeDocCallbackLifetimes, DOC_CALLBACK_MARKERS } from './doc-callback-lifetimes.ts';
 
-const hash = (value: string) => createHash('sha256').update(value).digest('hex');
+const hash = (value: string | Buffer) => createHash('sha256').update(value).digest('hex');
 const candidateSource = 'f'.repeat(40);
 const text =
   Array.from(
@@ -22,6 +23,14 @@ const text =
       `Line ${index + 1}: Read the whole paragraph, including the far right edge. ` +
       'Keep the original page size and all of this text when navigating.',
   ).join('\r') + '\r\n';
+const categories = [
+  'devtools.timeline',
+  'disabled-by-default-devtools.timeline.stack',
+  'toplevel',
+  'v8',
+  'blink.user_timing',
+  'disabled-by-default-renderer.scheduler',
+];
 const callsites = (['cursor', 'cursor', 'zoom-init', 'zoom-update'] as const).map(
   (family, index) => ({
     url: 'https://spinel.test/assets/bundle.js',
@@ -50,7 +59,7 @@ const raw = {
         ts: 2000 + index,
         args: {
           data: {
-            timerId: index,
+            timerId: index + 1,
             frame: 'frame',
             singleShot: index !== 1,
             timeout: 500,
@@ -64,12 +73,13 @@ const raw = {
         pid: 1,
         tid: 2,
         ts: 1_900_000 + index,
-        args: { data: { timerId: index, frame: 'frame' } },
+        args: { data: { timerId: index + 1, frame: 'frame' } },
       },
     ]),
     { name: 'ThreadControllerImpl::RunTask', ph: 'X', pid: 1, tid: 2, ts: 1000, dur: 1000 },
   ],
 };
+const rawBytes = gzipSync(JSON.stringify(raw));
 const sourceFiles = [
   { file: 'bundle.js', content: '/* retained built code */', kind: 'runtime' },
   { file: 'bundle.js.map', content: '{"sourcesContent":["original"]}', kind: 'source-map' },
@@ -102,6 +112,7 @@ function evidence(role: 'baselineObservation' | 'candidate'): LoadedDocCallbackE
       [
         'e2e/doc-responsiveness-callbacks.spec.ts',
         'e2e/doc-responsiveness-callback-sources.ts',
+        'e2e/doc-responsiveness-callback-trace.ts',
         'e2e/doc-responsiveness-fixture.ts',
         'e2e/doc-responsiveness.ts',
         'scripts/ci/doc-callback-lifetimes.ts',
@@ -120,6 +131,16 @@ function evidence(role: 'baselineObservation' | 'candidate'): LoadedDocCallbackE
       input: 'original native keyboard workload',
     },
     instrumentation: {
+      categories,
+      traceConfig: {
+        recordMode: 'recordUntilFull',
+        traceBufferSizeInKb: 1048576,
+        includedCategories: categories,
+      },
+      transferMode: 'ReturnAsStream',
+      streamFormat: 'json',
+      streamCompression: 'gzip',
+      bufferUsageReportingInterval: 1000,
       cpuThrottle: 1,
       mountedEditors: 1,
       deviceScaleFactor: 1,
@@ -132,10 +153,10 @@ function evidence(role: 'baselineObservation' | 'candidate'): LoadedDocCallbackE
     textSha256: hash(text),
     frameId: 'frame',
     trace: {
-      file: 'spn113-trace.json',
-      sha256: hash(JSON.stringify(raw)),
-      bytes: Buffer.byteLength(JSON.stringify(raw)),
-      completion: { dataLossOccurred: false },
+      file: 'spn113-trace.json.gz',
+      sha256: hash(rawBytes),
+      bytes: rawBytes.length,
+      completion: { dataLossOccurred: false, traceFormat: 'json', streamCompression: 'gzip' },
     },
     attribution: {
       callsites,
@@ -269,6 +290,48 @@ test('discloses unrelated unmapped function positions while requiring proven mea
   );
 });
 
+test('matching capture omissions or changes cannot replace the registered lossless method', () => {
+  const changes: Array<(value: LoadedDocCallbackEvidence) => void> = [
+    (value) => {
+      delete value.manifest.instrumentation.streamCompression;
+    },
+    (value) => {
+      value.manifest.instrumentation.traceConfig = {
+        ...(value.manifest.instrumentation.traceConfig as Record<string, unknown>),
+        recordMode: 'recordContinuously',
+      };
+    },
+    (value) => {
+      value.manifest.instrumentation.traceConfig = {
+        ...(value.manifest.instrumentation.traceConfig as Record<string, unknown>),
+        traceBufferSizeInKb: 204800,
+      };
+    },
+    (value) => {
+      value.manifest.instrumentation.categories = ['devtools.timeline'];
+    },
+    (value) => {
+      value.manifest.instrumentation.bufferUsageReportingInterval = 0;
+    },
+    (value) => {
+      value.manifest.trace.completion.streamCompression = 'none';
+    },
+    (value) => {
+      delete value.manifest.harnessSha256['e2e/doc-responsiveness-callback-trace.ts'];
+    },
+  ];
+  for (const change of changes) {
+    const baseline = evidence('baselineObservation');
+    const candidate = evidence('candidate');
+    change(baseline);
+    change(candidate);
+    assert.equal(
+      compareDocCallbackEvidence('desktop', baseline, candidate, candidateSource).accepted,
+      false,
+    );
+  }
+});
+
 test('requires paired runtime, runner, harness and fixture identities, not merely two passing flags', () => {
   const changes: Array<(value: DocCallbackManifest) => void> = [
     (value) => {
@@ -386,7 +449,7 @@ async function temporary(t: { after: (callback: () => Promise<void>) => void }) 
 
 async function retain(directory: string) {
   const value = evidence('candidate');
-  await writeFile(join(directory, 'spn113-trace.json'), JSON.stringify(raw));
+  await writeFile(join(directory, value.manifest.trace.file), rawBytes);
   for (const source of sourceFiles) await writeFile(join(directory, source.file), source.content);
   await writeFile(join(directory, 'spn113-evidence.json'), JSON.stringify(value.manifest));
   return value.manifest;
@@ -434,7 +497,7 @@ test('stored accepted analysis is checked against raw lifetimes, even when the r
     const value = event as { name: string; args?: { data?: { timerId?: number } } };
     return !(value.name === 'TimerRemove' && value.args?.data?.timerId === 1);
   });
-  const bytes = JSON.stringify(altered);
+  const bytes = gzipSync(JSON.stringify(altered));
   await writeFile(join(directory, manifest.trace.file), bytes);
   manifest.trace.sha256 = hash(bytes);
   manifest.trace.bytes = Buffer.byteLength(bytes);

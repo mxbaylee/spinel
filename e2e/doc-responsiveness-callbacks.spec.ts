@@ -9,6 +9,10 @@ import {
   DOC_CALLBACK_MARKERS,
 } from '../scripts/ci/doc-callback-lifetimes.ts';
 import { attributeDocCallbackSources } from './doc-responsiveness-callback-sources.ts';
+import {
+  DOC_CALLBACK_TRACE_SETTINGS,
+  readDocCallbackTrace,
+} from './doc-responsiveness-callback-trace.ts';
 import { fixture, focusEmptyDoc, exactText, saved, online } from './doc-responsiveness-fixture.ts';
 import { observeInput, readDocResponsiveness } from './doc-responsiveness.ts';
 
@@ -23,17 +27,11 @@ const expectedText = paragraphs.join('\r') + '\r\n';
 const expectedKeydowns = 2086;
 const hash = (bytes: string | Buffer) => createHash('sha256').update(bytes).digest('hex');
 const baseline = process.env.SPN113_BASELINE === '1';
-const categories = [
-  'devtools.timeline',
-  'disabled-by-default-devtools.timeline.stack',
-  'toplevel',
-  'v8',
-  'blink.user_timing',
-  'disabled-by-default-renderer.scheduler',
-];
+const categories = DOC_CALLBACK_TRACE_SETTINGS.traceConfig.includedCategories;
 const harnessPaths = [
   'e2e/doc-responsiveness-callbacks.spec.ts',
   'e2e/doc-responsiveness-callback-sources.ts',
+  'e2e/doc-responsiveness-callback-trace.ts',
   'e2e/doc-responsiveness-fixture.ts',
   'e2e/doc-responsiveness.ts',
   'scripts/ci/doc-callback-lifetimes.ts',
@@ -68,9 +66,12 @@ async function selection(page: Page) {
 }
 
 async function retainTrace(cdp: CDPSession, path: string) {
-  const completed = new Promise<{ stream?: string; dataLossOccurred?: boolean }>((resolve) =>
-    cdp.once('Tracing.tracingComplete', resolve),
-  );
+  const completed = new Promise<{
+    stream?: string;
+    dataLossOccurred?: boolean;
+    traceFormat?: string;
+    streamCompression?: string;
+  }>((resolve) => cdp.once('Tracing.tracingComplete', resolve));
   await cdp.send('Tracing.end');
   const completion = await completed;
   if (!completion.stream) throw new Error('Tracing completed without its raw stream.');
@@ -138,6 +139,7 @@ for (const preset of ['desktop', 'mobile'] as const)
       },
       instrumentation: {
         categories,
+        ...DOC_CALLBACK_TRACE_SETTINGS,
         sourceMaps: 'hidden; exact built bundle source content',
         cpuThrottle: mobile ? 4 : 1,
         mountedEditors: 1,
@@ -166,12 +168,7 @@ for (const preset of ['desktop', 'mobile'] as const)
       evidence.traceBufferUsage = bufferUsage;
       evidence.traceCategoryEnumeration = await cdp.send('Tracing.getCategories');
       // Capture before the first app navigation, including shell timer installs.
-      await cdp.send('Tracing.start', {
-        categories: categories.join(','),
-        transferMode: 'ReturnAsStream',
-        streamFormat: 'json',
-        bufferUsageReportingInterval: 1000,
-      });
+      await cdp.send('Tracing.start', DOC_CALLBACK_TRACE_SETTINGS);
       tracing = true;
       await page.goto('/');
       await expect(page.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
@@ -353,9 +350,14 @@ for (const preset of ['desktop', 'mobile'] as const)
       try {
         if (tracing) {
           tracing = false;
-          const trace = await retainTrace(cdp, info.outputPath('spn113-trace.json'));
+          const trace = await retainTrace(cdp, info.outputPath('spn113-trace.json.gz'));
           evidence.trace = trace;
-          const raw = JSON.parse(await readFile(info.outputPath(trace.file), 'utf8'));
+          expect(trace.completion.traceFormat, 'Registered trace format').toBe('json');
+          expect(trace.completion.streamCompression, 'Registered trace compression').toBe('gzip');
+          const raw = await readDocCallbackTrace(info.outputPath(trace.file), {
+            compression: 'gzip',
+          });
+          evidence.traceRead = raw.summary;
           const attribution = await attributeDocCallbackSources({
             traceEvents: raw.traceEvents,
             origin: baseURL!,

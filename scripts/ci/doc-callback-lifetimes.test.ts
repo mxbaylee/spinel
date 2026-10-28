@@ -174,6 +174,57 @@ test('repeated removals and clearing an already fired one-shot do not make pendi
   assert.equal(result.families.cursor.pendingAtTraceEnd, 0);
 });
 
+test('retains nonpositive no-op clears without creating or retiring timer lifetimes', () => {
+  const input = fixture();
+  const original = analyzeDocCallbackLifetimes(input);
+  // Chrome records native zoom's unset handle (0) and renderer sentinels (-1).
+  // Neither is a possible live timer ID under the HTML timer contract.
+  input.traceEvents.push(remove(0, 1800, 50), remove(-1, 2500, 60), remove(0, 2_500_000, 10));
+  const result = analyzeDocCallbackLifetimes(input);
+  assert.equal(result.accepted, true, result.evidenceFailures.join('\n'));
+  assert.deepEqual(result.ledger, original.ledger);
+  assert.deepEqual(result.families, original.families);
+  assert.deepEqual(result.orphans, []);
+  assert.deepEqual(
+    result.noOpRemovals.map(({ timerId, family, frame, pid, tid }) => ({
+      timerId,
+      family,
+      frame,
+      pid,
+      tid,
+    })),
+    [
+      { timerId: 0, family: 'zoom-update', frame: 'doc-frame', pid: 2, tid: 3 },
+      { timerId: -1, family: 'other', frame: 'doc-frame', pid: 2, tid: 3 },
+      { timerId: 0, family: 'cursor', frame: 'doc-frame', pid: 2, tid: 3 },
+    ],
+  );
+});
+
+test('no-op clear accounting does not excuse invalid identities, unknown sources or positive orphans', () => {
+  const invalid = [
+    install(0, 2500, 10),
+    install(-1, 2500, 10),
+    fire(0, 2500),
+    fire(-1, 2500),
+    remove(-0.5, 2500, 60),
+    remove(Number.NEGATIVE_INFINITY, 2500, 60),
+    { ...remove(0, 2500, 50), ph: 'X' },
+    { ...remove(-1, 2500, 60), args: { data: { timerId: -1, stackTrace: [point(60)] } } },
+    { ...remove(0, 2500, 50), pid: undefined },
+    remove(0, 2500, 777),
+    remove(-1, 2500, 777),
+    remove(90, 2500, 50),
+  ];
+  for (const event of invalid) {
+    const input = fixture();
+    input.traceEvents.push(event);
+    const result = analyzeDocCallbackLifetimes(input);
+    assert.equal(result.complete, false, JSON.stringify(event));
+    assert.equal(result.accepted, false, JSON.stringify(event));
+  }
+});
+
 test('callback attribution uses the install top callsite, not delay or any ancestor function', () => {
   const input = fixture();
   const unrelated = install(9, 500, 60, false, 1000);
@@ -327,6 +378,31 @@ test('trace completion, unique ordered markers, identity and observation duratio
   }
 });
 
+test('missing phase boundaries leave derived callback measurements unavailable, never zero', () => {
+  const input = fixture();
+  const missing = new Set<string>([
+    DOC_CALLBACK_MARKERS.finalKey,
+    DOC_CALLBACK_MARKERS.disposed,
+    DOC_CALLBACK_MARKERS.end,
+  ]);
+  input.traceEvents = input.traceEvents.filter(
+    (event) => !missing.has((event as { name: string }).name),
+  );
+  const result = analyzeDocCallbackLifetimes(input);
+  assert.equal(result.complete, false);
+  assert.equal(result.accepted, false);
+  for (const family of Object.values(result.families)) {
+    assert.equal(family.pendingAt.finalKey, null);
+    assert.equal(family.pendingAt.disposed, null);
+    assert.equal(family.callbacksAfterFinalKey, null);
+    assert.equal(family.callbacksAfterDisposal, null);
+    assert.equal(family.installationsAfterDisposal, null);
+    assert.equal(family.postInputCallbackWall, null);
+    assert.equal(family.postDisposalCallbackWall, null);
+  }
+  assert.deepEqual(result.candidateViolations, []);
+});
+
 test('malformed timer identities, incomplete fires and missing stack frames cannot pass', () => {
   const cases = [
     { ...fire(2, 800_000), dur: undefined },
@@ -352,7 +428,7 @@ test('task wall union and clipped tails do not sum overlapping spans or attribut
   assert.equal(result.mainThreadTasks.postInput?.unionMs, 30.1);
   assert.equal(result.mainThreadTasks.postDisposal?.unionMs, 0.1);
   assert.equal(result.families.cursor.directCallbackWall.sumMs, 0.07);
-  assert.equal(result.families.cursor.postInputCallbackWall.sumMs, 0.07);
+  assert.equal(result.families.cursor.postInputCallbackWall?.sumMs, 0.07);
 });
 
 test('retains instantaneous tasks and trace-cutoff tasks without inventing complete measured spans', () => {

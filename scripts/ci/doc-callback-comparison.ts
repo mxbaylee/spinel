@@ -7,6 +7,11 @@ import { fileURLToPath } from 'node:url';
 import { isDeepStrictEqual } from 'node:util';
 import { analyzeDocCallbackLifetimes } from './doc-callback-lifetimes.ts';
 import type { DocCallbackCallsite } from './doc-callback-lifetimes.ts';
+import {
+  DOC_CALLBACK_TRACE_SETTINGS,
+  readDocCallbackTrace,
+} from '../../e2e/doc-responsiveness-callback-trace.ts';
+import type { DocCallbackTraceSummary } from '../../e2e/doc-responsiveness-callback-trace.ts';
 
 type Preset = 'desktop' | 'mobile';
 type Analysis = ReturnType<typeof analyzeDocCallbackLifetimes>;
@@ -24,6 +29,7 @@ const expectedText =
 const harnessPaths = [
   'e2e/doc-responsiveness-callbacks.spec.ts',
   'e2e/doc-responsiveness-callback-sources.ts',
+  'e2e/doc-responsiveness-callback-trace.ts',
   'e2e/doc-responsiveness-fixture.ts',
   'e2e/doc-responsiveness.ts',
   'scripts/ci/doc-callback-lifetimes.ts',
@@ -59,7 +65,10 @@ export interface DocCallbackManifest {
   observedKeydowns: number;
   textSha256: string;
   frameId: string;
-  trace: DocCallbackArtifactFile & { completion: { dataLossOccurred: boolean } };
+  trace: DocCallbackArtifactFile & {
+    completion: { dataLossOccurred: boolean; traceFormat?: string; streamCompression?: string };
+  };
+  traceRead?: DocCallbackTraceSummary;
   attribution: {
     callsites: DocCallbackCallsite[];
     unmapped: unknown[];
@@ -138,10 +147,14 @@ export async function loadDocCallbackEvidence(
       names.add(file.file);
       await verifyDocCallbackFile(dirname(path), file);
     }
-    const raw = JSON.parse(await readFile(resolve(dirname(path), manifest.trace.file), 'utf8')) as {
-      traceEvents?: unknown[];
-    };
-    if (!Array.isArray(raw.traceEvents)) throw new Error('Raw trace has no traceEvents array.');
+    const compression = manifest.trace.completion.streamCompression ?? 'none';
+    if (compression !== 'gzip' && compression !== 'none')
+      throw new Error('Unknown retained trace compression.');
+    const raw = await readDocCallbackTrace(resolve(dirname(path), manifest.trace.file), {
+      compression,
+    });
+    if (manifest.traceRead && !isDeepStrictEqual(raw.summary, manifest.traceRead))
+      failures.push('Stored trace read summary differs from retained raw evidence.');
     analysis = analyzeDocCallbackLifetimes({
       traceEvents: raw.traceEvents,
       completion: manifest.trace.completion,
@@ -197,6 +210,11 @@ export function compareDocCallbackEvidence(
     check(
       value.trace?.completion?.dataLossOccurred === false,
       `${label}: trace completion reports missing/lost data.`,
+    );
+    check(
+      value.trace?.completion?.traceFormat === 'json' &&
+        value.trace.completion.streamCompression === 'gzip',
+      `${label}: trace completion did not confirm gzip JSON.`,
     );
     // The mapper also records arbitrary FunctionCall positions. Only unknown
     // measured timer ownership blocks completeness in the recomputed analyzer;
@@ -265,6 +283,18 @@ export function compareDocCallbackEvidence(
         value.instrumentation.playwrightTrace === false &&
         value.instrumentation.latencyBudgetsEnforced === false,
       `${label}: the registered traced browser preset changed.`,
+    );
+    for (const [key, expected] of Object.entries(DOC_CALLBACK_TRACE_SETTINGS))
+      check(
+        isDeepStrictEqual(value.instrumentation?.[key], expected),
+        `${label}: the registered trace collection ${key} changed.`,
+      );
+    check(
+      isDeepStrictEqual(
+        value.instrumentation?.categories,
+        DOC_CALLBACK_TRACE_SETTINGS.traceConfig.includedCategories,
+      ),
+      `${label}: the registered trace categories changed.`,
     );
     if (role === 'candidate')
       check(

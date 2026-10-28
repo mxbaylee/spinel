@@ -67,6 +67,8 @@ const caps: Record<DocCallbackFamily, number> = { cursor: 4, 'zoom-init': 1, 'zo
 const finite = (value: unknown): value is number =>
   typeof value === 'number' && Number.isFinite(value) && value >= 0;
 const integer = (value: unknown): value is number => finite(value) && Number.isSafeInteger(value);
+const signedInteger = (value: unknown): value is number =>
+  typeof value === 'number' && Number.isSafeInteger(value);
 const object = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 const target = (family: string): family is DocCallbackFamily =>
@@ -209,6 +211,15 @@ export function analyzeDocCallbackLifetimes(input: DocCallbackTraceInput) {
   const pendingAt = {} as Record<Phase, Record<DocCallbackFamily, number> | null>;
   for (const phase of phases) pendingAt[phase] = null;
   const orphans: Array<{ name: string; atUs: number; timerId: number; family: string }> = [];
+  const noOpRemovals: Array<{
+    pid: number;
+    tid: number;
+    frame: string;
+    atUs: number;
+    timerId: number;
+    family: DocCallbackAttribution | 'unknown';
+    callsite: number | null;
+  }> = [];
   let ignoredOtherFrames = 0;
   let unrelatedTimers = 0;
   const relevant = events
@@ -230,12 +241,33 @@ export function analyzeDocCallbackLifetimes(input: DocCallbackTraceInput) {
     }
     if (!sameThread(event)) continue;
     const data = event.args?.data;
-    if (!data || typeof data.frame !== 'string' || !integer(data.timerId)) {
+    if (!data || typeof data.frame !== 'string' || !signedInteger(data.timerId)) {
       fail(`Timer event ${index} is missing its frame or timer ID.`);
       continue;
     }
     if (data.frame !== input.frameId) {
       ignoredOtherFrames++;
+      continue;
+    }
+    if (data.timerId <= 0) {
+      // HTML timer IDs are positive. Chrome also records clearTimeout(0/-1),
+      // which cannot retire a live callback; retain these attempts explicitly.
+      if (event.name !== 'TimerRemove' || event.ph !== 'I') {
+        fail(`Timer event ${index} has a nonpositive ID outside a no-op removal.`);
+        continue;
+      }
+      const attribution = classify(topFrame(event));
+      noOpRemovals.push({
+        pid: event.pid,
+        tid: event.tid,
+        frame: data.frame,
+        atUs: event.ts,
+        timerId: data.timerId,
+        family: attribution.family,
+        callsite: attribution.index,
+      });
+      if (attribution.family === 'unknown')
+        fail(`No-op timer removal ${index} has unknown source attribution.`);
       continue;
     }
     const key = JSON.stringify([event.pid, event.tid, data.frame, data.timerId]);
@@ -354,12 +386,16 @@ export function analyzeDocCallbackLifetimes(input: DocCallbackTraceInput) {
       const owned = ledger.filter((lifetime) => lifetime.family === family);
       const fires = owned.flatMap((lifetime) => lifetime.fires);
       const postInput =
-        times.finalKey === null ? [] : fires.filter((span) => span.startedAtUs >= times.finalKey!);
+        times.finalKey === null
+          ? null
+          : fires.filter((span) => span.startedAtUs >= times.finalKey!);
       const postDisposal =
-        times.disposed === null ? [] : fires.filter((span) => span.startedAtUs >= times.disposed!);
+        times.disposed === null
+          ? null
+          : fires.filter((span) => span.startedAtUs >= times.disposed!);
       const afterDisposalInstallations =
         times.disposed === null
-          ? 0
+          ? null
           : owned.filter((lifetime) => lifetime.installedAtUs >= times.disposed!).length;
       if (!owned.length) fail(`No ${family} installations establish target-family coverage.`);
       if (
@@ -373,12 +409,13 @@ export function analyzeDocCallbackLifetimes(input: DocCallbackTraceInput) {
           `${family} pending high-water ${highWater[family]} exceeds ${caps[family]}.`,
         );
       if (
-        pendingAt.disposed?.[family] !== 0 ||
-        pendingAt.end?.[family] !== 0 ||
-        pending[family] !== 0
+        pendingAt.disposed !== null &&
+        (pendingAt.disposed[family] !== 0 ||
+          (pendingAt.end !== null && pendingAt.end[family] !== 0) ||
+          pending[family] !== 0)
       )
         candidateViolations.push(`${family} retains callbacks at/after editor disposal.`);
-      if (postDisposal.length || afterDisposalInstallations)
+      if (postDisposal?.length || afterDisposalInstallations)
         candidateViolations.push(`${family} fires or installs callbacks after editor disposal.`);
       return [
         family,
@@ -398,16 +435,18 @@ export function analyzeDocCallbackLifetimes(input: DocCallbackTraceInput) {
             phases.map((phase) => [phase, pendingAt[phase]?.[family] ?? null]),
           ),
           pendingAtTraceEnd: pending[family],
-          callbacksAfterFinalKey: postInput.length,
-          callbacksAfterDisposal: postDisposal.length,
+          callbacksAfterFinalKey: postInput?.length ?? null,
+          callbacksAfterDisposal: postDisposal?.length ?? null,
           installationsAfterDisposal: afterDisposalInstallations,
           directCallbackWall: spanSummary(fires),
-          postInputCallbackWall: spanSummary(
-            times.finalKey === null ? [] : clipped(fires, times.finalKey, lastTraceUs),
-          ),
-          postDisposalCallbackWall: spanSummary(
-            times.disposed === null ? [] : clipped(fires, times.disposed, lastTraceUs),
-          ),
+          postInputCallbackWall:
+            times.finalKey === null
+              ? null
+              : spanSummary(clipped(fires, times.finalKey, lastTraceUs)),
+          postDisposalCallbackWall:
+            times.disposed === null
+              ? null
+              : spanSummary(clipped(fires, times.disposed, lastTraceUs)),
           callbackSpans: fires,
         },
       ];
@@ -430,6 +469,7 @@ export function analyzeDocCallbackLifetimes(input: DocCallbackTraceInput) {
     families: metrics,
     ledger,
     orphans,
+    noOpRemovals,
     ignoredOtherFrames,
     unrelatedTimers,
     mainThreadTasks: {
