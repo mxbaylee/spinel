@@ -95,7 +95,9 @@ the file was retained, copied offsite or restored successfully.
 
 Only the initiating cookie session can see, cancel or receive its job. Returning
 to that session can recover the current job; signing out does not transfer it
-to a later session. Preparation lasts at most 30 minutes. A ready archive is
+to a later session. Preparation has a 30-minute cancellation deadline; synchronous
+SQLite snapshot/inventory work can delay observing cancellation until that work
+returns. Target-host measurements must establish that latency. A ready archive is
 available for ten minutes; delivery has its own ten-minute limit. **Cancel backup**
 or **Cancel delivery** removes the staged copy. Expiry, disconnected downloads,
 lost access, shutdown and dead-process restart cleanup remove it as well. Only
@@ -127,11 +129,15 @@ make the newly selected destination protected: it needs its own successful
 publication and recovery evidence. A newer configuration error or unavailable key
 cannot be replaced by an older status refresh completing later.
 
-The SPN-109 GitHub provider probe was unavailable because the access-key identifier
-was missing or malformed; it did not establish live DigitalOcean acceptance.
-Before public launch, provide the full valid scoped credential pair and complete
-the [provider, target-host and cold-recovery gate](todo/SPN-038.md). Local contract
-tests and successful browser downloads do not replace that evidence.
+The SPN-109 bounded DigitalOcean contract passed on 2026-10-28 after the owner
+updated the GitHub credentials: private publication/readback, anonymous denial,
+authenticated download/decryption, paginated catalog, pending cleanup and
+retention, with complete test-object cleanup. The [preserved evidence and exact
+source commit](implementation/SPN-109.md#digitalocean-acceptance-and-remaining-launch-evidence)
+supersede the initial unavailable probe. Before public launch, still complete
+credential rotation and the [target-host and cold-recovery gate](todo/SPN-038.md).
+A small synthetic provider round trip does not establish deployment capacity or
+host-loss recovery.
 
 For the GitHub Spaces acceptance workflow, set `DIGITAL_OCEAN_ENDPOINT` to the
 HTTPS bucket origin, `https://BUCKET.REGION.digitaloceanspaces.com`.

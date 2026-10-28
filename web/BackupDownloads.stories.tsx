@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { failure, pending } from '../.storybook/api.ts';
 import { BackupDownloads } from './BackupDownloads.tsx';
 import type { BackupExportJob, BackupPolicy } from './BackupDownloads.tsx';
@@ -46,9 +46,9 @@ export const ManualOnly: Story = {
   parameters: { api: read(null) },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(
-      await canvas.findByRole('button', { name: 'Prepare workspace backup' }),
-    ).toBeEnabled();
+    await waitFor(() =>
+      expect(canvas.getByRole('button', { name: 'Prepare workspace backup' })).toBeEnabled(),
+    );
     await expect(canvas.getByText(/recovery key is kept separately/)).toBeVisible();
     await expect(canvas.queryByText('Previously saved backups')).toBeNull();
   },
@@ -60,8 +60,8 @@ export const Delivered: Story = {
   parameters: { api: read('delivered') },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(await canvas.findByRole('status')).toHaveTextContent(
-      /Check that the download finished/,
+    await waitFor(() =>
+      expect(canvas.getByRole('status')).toHaveTextContent(/Check that the download finished/),
     );
     await expect(canvas.getByText(/does not confirm an offsite copy/)).toBeVisible();
   },
@@ -93,9 +93,9 @@ export const ReadyDownloadDisabled: Story = {
   parameters: { api: read('ready') },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(
-      await canvas.findByRole('button', { name: 'Download encrypted backup' }),
-    ).toBeDisabled();
+    const download = await canvas.findByRole('button', { name: 'Download encrypted backup' });
+    await waitFor(() => expect(canvas.queryByText('Loading download status…')).toBeNull());
+    await expect(download).toBeDisabled();
     await expect(canvas.getByText(/turned off in the deployment configuration/)).toBeVisible();
   },
 };
@@ -111,9 +111,11 @@ export const StatusUnavailable: Story = {
 };
 
 async function openPrepare(canvasElement: HTMLElement) {
-  await userEvent.click(
-    await within(canvasElement).findByRole('button', { name: 'Prepare workspace backup' }),
-  );
+  const button = await within(canvasElement).findByRole('button', {
+    name: 'Prepare workspace backup',
+  });
+  await waitFor(() => expect(button).toBeEnabled());
+  await userEvent.click(button);
   return within(
     await within(document.body).findByRole('dialog', { name: 'Prepare encrypted backup' }),
   );

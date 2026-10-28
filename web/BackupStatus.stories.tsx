@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import { expect, waitFor, within } from 'storybook/test';
 import { failure, pending } from '../.storybook/api.ts';
 import { BackupStatus } from './BackupStatus.tsx';
 import type { BackupStatusResponse } from './BackupStatus.tsx';
@@ -218,7 +218,9 @@ export const ManualDownloads: Story = {
     const canvas = within(canvasElement);
     await expect(await canvas.findByText('Automatic backups off')).toBeVisible();
     await expect(canvas.getByText('Destination: Manual downloads only')).toBeVisible();
-    await expect(canvas.getByRole('button', { name: 'Prepare workspace backup' })).toBeEnabled();
+    await waitFor(() =>
+      expect(canvas.getByRole('button', { name: 'Prepare workspace backup' })).toBeEnabled(),
+    );
     await expect(canvas.queryByText('OK', { exact: true })).toBeNull();
   },
 };
