@@ -15,6 +15,7 @@ type SessionResult = Target & {
   tunnelReached: boolean;
   teardown: 'passed' | 'failed' | 'session-id-unavailable';
   sessionId?: string;
+  returnedBrowserName: string | null;
   browserVersion?: string;
   userAgent?: string;
   failure?: string;
@@ -130,6 +131,7 @@ export async function checkSession(
     status: 'failed',
     tunnelReached: false,
     teardown: 'session-id-unavailable',
+    returnedBrowserName: null,
   };
   try {
     const session = object(
@@ -158,11 +160,11 @@ export async function checkSession(
     }
     result.sessionId = session.sessionId;
     const capabilities = object(session.capabilities);
-    if (
-      typeof capabilities.browserName !== 'string' ||
-      capabilities.browserName.toLowerCase() !== target.browser
-    )
-      throw new Error('unexpected-browser');
+    // Retain metadata even when it differs from the requested browser, then
+    // identify the unmodified running browser below.
+    if (typeof capabilities.browserName === 'string') {
+      result.returnedBrowserName = client.redact(capabilities.browserName);
+    }
     if (typeof capabilities.browserVersion === 'string') {
       result.browserVersion = client.redact(capabilities.browserVersion);
     }
@@ -178,13 +180,14 @@ export async function checkSession(
     });
     const expected = {
       chrome: /Android.*Chrome\//,
-      firefox: /Android.*Firefox\//,
+      firefox: /Android.*Gecko\/.*Firefox\//,
       safari: /iPhone.*Version\/.*Safari\//,
     }[target.browser];
     if (
       typeof userAgent !== 'string' ||
       !expected.test(userAgent) ||
-      (target.browser === 'chrome' && /SamsungBrowser\/|EdgA\/|OPR\//.test(userAgent))
+      (target.browser === 'chrome' && /SamsungBrowser\/|EdgA\/|OPR\//.test(userAgent)) ||
+      (target.browser === 'firefox' && /Chrome\/|SamsungBrowser\/|EdgA\/|OPR\//.test(userAgent))
     )
       throw new Error('unexpected-browser');
     result.userAgent = client.redact(userAgent);

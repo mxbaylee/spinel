@@ -83,7 +83,7 @@ test('real-browser evidence is required and a teardown failure cannot produce a 
         return Response.json({
           value: {
             sessionId: 'test-session',
-            capabilities: { browserName: 'firefox', browserVersion: '145' },
+            capabilities: { browserName: 'android', browserVersion: '145' },
           },
         });
       }
@@ -102,6 +102,7 @@ test('real-browser evidence is required and a teardown failure cannot produce a 
       'fixture-build',
     );
     assert.equal(result.tunnelReached, true);
+    assert.equal(result.returnedBrowserName, 'android');
     assert.equal(result.status, teardownFails ? 'failed' : 'passed');
     assert.equal(result.teardown, teardownFails ? 'failed' : 'passed');
   }
