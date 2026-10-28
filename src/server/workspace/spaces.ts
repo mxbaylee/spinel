@@ -149,7 +149,7 @@ export class SpaceStore {
     return this.workspace.auth.transaction(() => {
       this.workspace.owner(actorId);
       const name = this.workspace.name(input.name);
-      const parentId = this.outerParent(actorId, input.parentId);
+      const { parentId, ownerId } = this.workspace.creationDestination(actorId, input.parentId);
       const id = randomUUID();
       const now = this.workspace.auth.now();
       this.workspace.auth.database
@@ -158,9 +158,10 @@ export class SpaceStore {
           (id,owner_id,parent_id,kind,name,created_at,updated_at)
           VALUES(?,?,?,'space',?,?,?)`,
         )
-        .run(id, actorId, parentId, name, now, now);
+        .run(id, ownerId, parentId, name, now, now);
+      this.workspace.recordCreator(id, actorId);
       initialIcon(this.workspace.auth.database, id, input.icon, input.iconColor);
-      return resolveSpaceScope(this.workspace.auth, actorId, id, id, 'owner');
+      return resolveSpaceScope(this.workspace.auth, actorId, id, id, 'edit');
     });
   }
 
@@ -341,17 +342,6 @@ export class SpaceStore {
 
   private guestEnabled(actorId: string) {
     if (actorId.startsWith('guest:') && !this.workspace.spacesEnabled) throw unavailable();
-  }
-
-  private outerParent(actorId: string, value: unknown): string | null {
-    if (value === null) return null;
-    if (typeof value !== 'string') throw new AuthError(400, 'Choose a destination folder.');
-    // One ordinary-owner read already validates the complete live folder chain.
-    // It cannot contain any Space, so the destination cannot be below this root.
-    // Rechecking every ancestor with get() would make deep outer moves quadratic.
-    const parent = this.workspace.get(actorId, value, 'owner');
-    if (parent.kind !== 'folder') throw new AuthError(400, 'The destination must be a folder.');
-    return parent.id;
   }
 
   private parent(tree: LiveTree, value: unknown): string {

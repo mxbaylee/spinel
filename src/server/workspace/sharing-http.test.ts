@@ -59,6 +59,15 @@ test.each(['editor', 'admin'] as const)(
       ).toBe(403);
       expect((await share('owner')).status).toBe(400);
       expect((await share('viewer')).status).toBe(200);
+      expect(
+        (
+          await request('', sharedCookie, 'POST', {
+            name: 'Viewer cannot create',
+            kind: 'doc',
+            parentId: folder.id,
+          })
+        ).status,
+      ).toBe(403);
       const doc = store.create(owner.id, { name: 'Future doc', kind: 'doc', parentId: folder.id });
       const sheet = store.create(owner.id, {
         name: 'Future sheet',
@@ -136,6 +145,42 @@ test.each(['editor', 'admin'] as const)(
         ).toBe(403);
       }
       await share(role);
+      const createdIds: string[] = [];
+      for (const kind of ['folder', 'sheet', 'doc', 'space']) {
+        const created = await request('', sharedCookie, 'POST', {
+          name: `Collaborator ${kind}`,
+          kind,
+          parentId: folder.id,
+        });
+        expect(created.status).toBe(201);
+        const { item } = await created.json();
+        expect(item).toMatchObject({
+          kind,
+          parentId: folder.id,
+          access: role,
+          ownerName: owner.name,
+          createdByName: collaborator.name,
+        });
+        expect(store.fileOwner(item.id)).toBe(owner.id);
+        const viewed = await request(`/${item.id}`);
+        expect(viewed.status).toBe(200);
+        expect((await viewed.json()).item).toMatchObject({
+          id: item.id,
+          access: 'owner',
+          createdByName: collaborator.name,
+        });
+        createdIds.push(item.id);
+      }
+      expect(
+        (
+          await request('', sharedCookie, 'POST', {
+            name: 'Forged identity',
+            kind: 'doc',
+            parentId: folder.id,
+            createdByName: owner.name,
+          })
+        ).status,
+      ).toBe(400);
       expect((await upload(sharedCookie)).status).toBe(201);
       for (const { suffix, snapshot } of writes) {
         const payload = { snapshot, revision: 0, writeId: randomUUID() };
@@ -145,6 +190,16 @@ test.each(['editor', 'admin'] as const)(
         ).toBe(409);
       }
       await share(null);
+      for (const id of createdIds) expect((await request(`/${id}`, sharedCookie)).status).toBe(404);
+      expect(
+        (
+          await request('', sharedCookie, 'POST', {
+            name: 'Revoked',
+            kind: 'doc',
+            parentId: folder.id,
+          })
+        ).status,
+      ).toBe(404);
       for (const suffix of [`/${folder.id}`, `/${doc.id}/doc`, `/${sheet.id}/sheet`, imageSuffix]) {
         expect((await request(suffix, sharedCookie)).status).toBe(404);
         expect((await request(suffix, adminCookie)).status).toBe(403);

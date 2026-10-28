@@ -216,7 +216,7 @@ test('root filing survives ordinary cleanup, never moves the canonical root, and
   );
 });
 
-test('Space creation and canonical moves use only owned ordinary folders; root tags remain personal', () => {
+test('Space creation admits editable shared folders while canonical moves preserve owner boundaries; root tags remain personal', () => {
   const f = fixture();
   const foreign = f.workspace.create(f.other.id, {
     name: 'Shared destination',
@@ -224,7 +224,20 @@ test('Space creation and canonical moves use only owned ordinary folders; root t
     parentId: null,
   });
   f.workspace.share(f.other.id, foreign.id, f.owner.id, 'editor');
-  for (const parentId of [foreign.id, f.root.id, f.internal.id, f.child.id]) {
+  const shared = f.files.create(f.owner.id, {
+    kind: 'space',
+    name: 'Shared Space',
+    parentId: foreign.id,
+  });
+  expect(shared).toMatchObject({
+    access: 'editor',
+    parentId: foreign.id,
+    ownerName: f.other.name,
+    createdByName: f.owner.name,
+  });
+  expect(f.workspace.fileOwner(shared.id)).toBe(f.other.id);
+  expect(() => f.files.update(f.owner.id, f.root.id, { parentId: foreign.id })).toThrow();
+  for (const parentId of [f.root.id, f.internal.id, f.child.id]) {
     expect(() => f.files.create(f.owner.id, { kind: 'space', name: 'Denied', parentId })).toThrow();
     expect(() => f.files.update(f.owner.id, f.root.id, { parentId })).toThrow();
   }

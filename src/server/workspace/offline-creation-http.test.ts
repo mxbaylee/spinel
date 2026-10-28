@@ -152,6 +152,48 @@ test('offline-create is cookie/account fenced before permission checks and refus
   }
 });
 
+test('shared offline HTTP publication retries once with owner/creator separation and refuses relocation after revocation', async () => {
+  const f = await fixture();
+  try {
+    const folder = f.workspace.create(f.other.id, {
+      name: 'Shared trip',
+      kind: 'folder',
+      parentId: null,
+    });
+    f.workspace.share(f.other.id, folder.id, f.owner.id, 'editor');
+    f.input.parentId = folder.id;
+    const first = await f.create();
+    expect(first.status).toBe(201);
+    await first.body!.cancel();
+    const retried = await f.create();
+    expect(retried.status).toBe(201);
+    expect((await retried.json()).item).toMatchObject({
+      id: f.input.itemId,
+      access: 'editor',
+      parentId: folder.id,
+      ownerName: f.other.name,
+      createdByName: f.owner.name,
+    });
+    expect(f.workspace.fileOwner(f.input.itemId)).toBe(f.other.id);
+    expect(
+      f.db.prepare('SELECT count(*) AS count FROM workspace_offline_creations').get()!.count,
+    ).toBe(1);
+    f.workspace.share(f.other.id, folder.id, f.owner.id, null);
+    for (const body of [f.input, { ...f.input, parentId: null }]) {
+      const denied = await f.create(body);
+      expect(denied.status).toBe(409);
+      expect(await denied.json()).toMatchObject({ code: 'creation-conflict' });
+    }
+    expect(f.workspace.get(f.other.id, f.input.itemId)).toMatchObject({
+      parentId: folder.id,
+      createdByName: f.owner.name,
+    });
+    expect(f.workspace.list(f.owner.id)).toEqual([]);
+  } finally {
+    await f.close();
+  }
+});
+
 test('folder refusal is a definitive no-write result, while malformed and oversized creation requests remain bounded', async () => {
   const f = await fixture();
   try {
@@ -160,7 +202,7 @@ test('folder refusal is a definitive no-write result, while malformed and oversi
       kind: 'folder',
       parentId: null,
     });
-    f.workspace.share(f.other.id, foreign.id, f.owner.id, 'editor');
+    f.workspace.share(f.other.id, foreign.id, f.owner.id, 'viewer');
     for (const parentId of [randomUUID(), foreign.id]) {
       const denied = await f.create({ ...f.input, parentId });
       expect(denied.status).toBe(403);

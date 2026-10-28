@@ -34,6 +34,7 @@ const items: FileItem[] = [
     access: 'editor',
     parentId: null,
     ownerName: 'Alex Kim',
+    createdByName: 'Sam Lee',
     sharedAt: changed,
     createdAt: changed,
     updatedAt: changed,
@@ -106,6 +107,12 @@ export const Shared: Story = {
     dateMode: 'shared',
     onOpenTrash: undefined,
     label: 'Shared with me',
+  },
+};
+export const CreatorAttribution: Story = {
+  ...Shared,
+  play: async ({ canvasElement }) => {
+    await expect(within(canvasElement).getByText('Created by Sam Lee')).toBeVisible();
   },
 };
 export const SearchResults: Story = {

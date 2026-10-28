@@ -43,6 +43,18 @@ export class OfflineCreations {
         request_hash TEXT NOT NULL
       ) STRICT;
     `);
+    if (
+      !workspace.auth.database
+        .prepare('PRAGMA table_info(workspace_offline_creations)')
+        .all()
+        .some((column) => column.name === 'owner_id')
+    )
+      workspace.auth.transaction(() => {
+        workspace.auth.database.exec(`
+          ALTER TABLE workspace_offline_creations ADD COLUMN owner_id TEXT;
+          UPDATE workspace_offline_creations SET owner_id=user_id;
+        `);
+      });
   }
 
   create(user: string, input: unknown, verify: () => void): OfflineCreationResponse {
@@ -72,7 +84,7 @@ export class OfflineCreations {
       this.workspace.owner(user);
       const database = this.workspace.auth.database;
       const result = (): OfflineCreationResponse => ({
-        item: this.workspace.get(user, input.itemId, 'owner'),
+        item: this.workspace.get(user, input.itemId, 'edit'),
         unitId: input.unitId,
         revision: 1,
         revisionOffset: 0,
@@ -99,6 +111,7 @@ export class OfflineCreations {
         )
           throw conflict();
         try {
+          if (this.workspace.fileOwner(input.itemId) !== receipt.owner_id) throw conflict();
           return result();
         } catch {
           throw conflict();
@@ -124,42 +137,56 @@ export class OfflineCreations {
         )
           throw conflict();
       }
-      let parentId: string | null;
-      try {
-        parentId = this.workspace.parent(user, input.parentId);
-      } catch (error) {
-        if (!(error instanceof AuthError) || ![400, 403, 404, 409].includes(error.status))
-          throw error;
-        // This code is returned only before any receipt exists. A client may
-        // explicitly choose a different folder and retry these same identities.
-        throw new OfflineCreationError(
-          'folder-unavailable',
-          'The chosen folder is no longer available. Choose another folder for this device copy.',
-        );
-      }
+      const destination = () => {
+        try {
+          return this.workspace.creationDestination(user, input.parentId);
+        } catch (error) {
+          if (!(error instanceof AuthError) || ![400, 403, 404, 409].includes(error.status))
+            throw error;
+          // This code is returned only before any receipt exists. A client may
+          // explicitly choose a different folder and retry these same identities.
+          throw new OfflineCreationError(
+            'folder-unavailable',
+            'The chosen folder is no longer available. Choose another folder for this device copy.',
+          );
+        }
+      };
+      destination();
       const snapshot = materialize(
         snapshotIdentity(blankOfflineSnapshot(input), input.unitId),
         input.kind,
       );
       verify();
+      const { parentId, ownerId } = destination();
+      const admit = () => {
+        verify();
+        if (destination().ownerId !== ownerId)
+          throw new OfflineCreationError(
+            'folder-unavailable',
+            'The chosen folder changed. Choose a folder again for this device copy.',
+          );
+      };
       const now = this.workspace.auth.now();
       database
         .prepare(
           'INSERT INTO workspace_items(id,owner_id,parent_id,kind,name,created_at,updated_at) VALUES(?,?,?,?,?,?,?)',
         )
-        .run(input.itemId, user, parentId, input.kind, input.name, now, now);
+        .run(input.itemId, ownerId, parentId, input.kind, input.name, now, now);
+      this.workspace.recordCreator(input.itemId, user);
       initialIcon(database, input.itemId, input.icon, input.iconColor);
       database
         .prepare('INSERT INTO spinel_live_units VALUES(?,?,0)')
         .run(input.itemId, input.unitId);
       this.storage.create(
         { unitId: input.unitId, kind: input.kind, revision: 1, retainedFrom: 1, snapshot },
-        verify,
+        admit,
       );
       database.prepare("INSERT INTO workspace_collaboration VALUES(?,'ready')").run(input.itemId);
       database
-        .prepare('INSERT INTO workspace_offline_creations VALUES(?,?,?,?)')
-        .run(input.itemId, input.unitId, user, requestHash);
+        .prepare(
+          'INSERT INTO workspace_offline_creations(item_id,unit_id,user_id,request_hash,owner_id) VALUES(?,?,?,?,?)',
+        )
+        .run(input.itemId, input.unitId, user, requestHash, ownerId);
       return result();
     });
   }

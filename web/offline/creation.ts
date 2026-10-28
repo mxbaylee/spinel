@@ -23,7 +23,9 @@ export function creationFile(creation: OfflineCreation): WorkspaceItem {
     parentId: request.parentId,
     kind: request.kind,
     name: request.name,
-    access: 'owner',
+    access: creation.access ?? 'owner',
+    ...(creation.ownerName === undefined ? {} : { ownerName: creation.ownerName }),
+    ...(creation.createdByName === undefined ? {} : { createdByName: creation.createdByName }),
     tags: [],
     appearance: {
       ...emptyAppearance(),
@@ -90,9 +92,9 @@ export async function createOfflineDocument(
     appearance: creationFile(creation).appearance,
     snapshot: blankOfflineSnapshot(request),
   } as OfflineBundle;
-  await store.saveCreation(bundle, creation, verifyCurrent);
+  const saved = await store.saveCreation(bundle, creation, verifyCurrent);
   verifyCurrent();
-  return creationFile(creation);
+  return creationFile({ ...creation, ...saved.creation });
 }
 
 /** A definitive target rejection is the only permission to change the saved request. */
@@ -111,13 +113,13 @@ export async function relocateOfflineCreation(
       'Open the document to check its original upload before choosing another folder.',
     );
   if (!catalog || !creationFolderAllowed(catalog, parentId))
-    throw new Error('Choose one of your own prepared folders for this document.');
+    throw new Error('Choose a prepared folder where you can create documents.');
   const creation: OfflineCreation = {
     request: { ...saved.creation.request, parentId },
     createdAt: saved.creation.createdAt,
   };
-  await store.updateCreation(itemId, saved.creation, creation, verifyCurrent);
-  return creationFile(creation);
+  const updated = await store.updateCreation(itemId, saved.creation, creation, verifyCurrent);
+  return creationFile({ ...creation, ...updated.creation });
 }
 
 export class CreationUploadError extends Error {
@@ -168,7 +170,7 @@ export async function uploadOfflineCreation(
     !item ||
     item.id !== request.itemId ||
     item.kind !== request.kind ||
-    item.access !== 'owner' ||
+    !['owner', 'admin', 'editor'].includes(item.access) ||
     typeof item.name !== 'string' ||
     !item.name ||
     (item.parentId !== null && typeof item.parentId !== 'string') ||
