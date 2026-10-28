@@ -1,0 +1,448 @@
+import { randomUUID } from 'node:crypto';
+import { mkdir } from 'node:fs/promises';
+import { join } from 'node:path';
+import { expect, test } from '@playwright/test';
+import type { Browser, Page, TestInfo } from '@playwright/test';
+import type {
+  MaintenanceControlResult,
+  MaintenancePublicStatus,
+} from '../src/shared/maintenance.ts';
+import { projectRoot } from './app-process.ts';
+import { startMaintenanceFixture } from './maintenance-fixture.ts';
+
+const authenticatorOptions = {
+  protocol: 'ctap2' as const,
+  transport: 'internal' as const,
+  hasResidentKey: true,
+  hasUserVerification: true,
+  isUserVerified: true,
+  automaticPresenceSimulation: true,
+};
+
+async function passkey(page: Page) {
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send('WebAuthn.enable');
+  await cdp.send('WebAuthn.addVirtualAuthenticator', { options: authenticatorOptions });
+}
+
+const controls = (page: Page) =>
+  page.getByRole('region', { name: 'Workspace maintenance controls', exact: true });
+const banner = (page: Page) =>
+  page.getByRole('region', { name: 'Workspace maintenance', exact: true });
+const saveStatus = (page: Page) => page.getByRole('status', { name: 'Save status', exact: true });
+
+async function capture(page: Page, info: TestInfo, state: string, variants = true) {
+  const directory =
+    process.env.SPINEL_MAINTENANCE_CAPTURE === '1'
+      ? join(projectRoot, 'docs/design/review/spn-111')
+      : info.outputPath('maintenance-views');
+  await mkdir(directory, { recursive: true });
+  const views = variants
+    ? ([
+        ['light', 1280, 'light'],
+        ['dark', 1280, 'dark'],
+        ['light', 390, 'phone'],
+      ] as const)
+    : ([['light', 1280, 'light']] as const);
+  for (const [theme, width, variant] of views) {
+    if (variants) await page.setViewportSize({ width, height: 900 });
+    await page.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
+    await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+    await expect
+      .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
+      .toBe(true);
+    await page.screenshot({
+      path: join(directory, `${state}-${variant}.png`),
+      animations: 'disabled',
+      fullPage: true,
+    });
+  }
+  if (variants) {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'reduce' });
+  }
+}
+
+async function selectCell(page: Page, cell: string) {
+  const address = page
+    .getByRole('region', { name: 'Sheet document', exact: true })
+    .locator('[data-u-comp="defined-name"] input');
+  await address.fill(cell);
+  await address.press('Enter');
+}
+
+type DeviceCopy = {
+  bundle: { maintenanceEpoch?: string };
+  outbox?: { checkpoint: { sent?: unknown; buffer: unknown[]; failure?: unknown } };
+};
+
+async function deviceCopy(page: Page, accountId: string, itemId: string) {
+  return page.evaluate(
+    async ({ accountId, itemId }) => {
+      const name = `spinel-offline-${accountId}`;
+      if (!(await indexedDB.databases()).some((database) => database.name === name)) return;
+      return new Promise<DeviceCopy | undefined>((resolve, reject) => {
+        const opening = indexedDB.open(name);
+        opening.onerror = () => reject(opening.error);
+        opening.onupgradeneeded = () => {
+          opening.transaction?.abort();
+          reject(new Error('The existing device database disappeared.'));
+        };
+        opening.onsuccess = () => {
+          const database = opening.result;
+          const read = database.transaction('items').objectStore('items').get(itemId);
+          read.onerror = () => {
+            database.close();
+            reject(read.error);
+          };
+          read.onsuccess = () => {
+            database.close();
+            resolve(read.result);
+          };
+        };
+      });
+    },
+    { accountId, itemId },
+  );
+}
+
+async function publicStatus(origin: string) {
+  const response = await fetch(`${origin}/api/maintenance`);
+  expect(response.status).toBe(200);
+  const status = (await response.json()) as MaintenancePublicStatus;
+  expect(Object.keys(status).sort()).toEqual(['available', 'epoch', 'notice', 'phase']);
+  return status;
+}
+
+test('supervised maintenance keeps pending native work, fences old edits, and recovers through cold controls', async ({
+  playwright,
+}, info) => {
+  test.skip(
+    info.project.name !== 'production' || process.platform !== 'linux',
+    'Closed-process verification uses the Linux production supervisor.',
+  );
+  test.setTimeout(300_000);
+  const app = await startMaintenanceFixture();
+  let browser: Browser | undefined;
+  const failures: string[] = [];
+  try {
+    // Closed verification finishes before Chromium starts; only one native editor is resident.
+    browser = await playwright.chromium.launch(info.project.use.launchOptions);
+    const operatorContext = await browser.newContext({
+      baseURL: app.origin,
+      viewport: { width: 1280, height: 900 },
+      colorScheme: 'light',
+      reducedMotion: 'reduce',
+    });
+    const memberContext = await browser.newContext({
+      baseURL: app.origin,
+      viewport: { width: 1280, height: 900 },
+      colorScheme: 'light',
+      reducedMotion: 'reduce',
+      permissions: ['clipboard-read', 'clipboard-write'],
+    });
+    const operator = await operatorContext.newPage();
+    const member = await memberContext.newPage();
+    for (const page of [operator, member]) {
+      page.setDefaultTimeout(15_000);
+      page.on('pageerror', (error) => failures.push(error.message));
+      await passkey(page);
+    }
+    await operator.goto(app.setupLink);
+    await operator.getByRole('button', { name: 'Create admin passkey', exact: true }).click();
+    await expect(
+      operator.getByRole('heading', { name: 'Administration', exact: true }),
+    ).toBeVisible();
+    await operator.goto('/admin#invites');
+    await operator.getByRole('button', { name: 'Create invite', exact: true }).click();
+    await operator
+      .getByRole('dialog', { name: 'Create invite', exact: true })
+      .getByRole('button', { name: 'Create invite', exact: true })
+      .click();
+    const invitation = await operator.getByLabel('New invite link', { exact: true }).inputValue();
+    await member.goto(invitation);
+    await member.getByLabel('Your name', { exact: true }).fill('Maintenance member');
+    await member.getByRole('button', { name: 'Join with a passkey', exact: true }).click();
+    await expect(member.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
+    const account = await (await memberContext.request.get('/api/auth/session')).json();
+    const accountId = account.user.id as string;
+    const epoch = app.running.epoch;
+    const headers = { Origin: app.origin, 'X-Spinel-Epoch': epoch };
+    const created = await memberContext.request.post('/api/items', {
+      headers,
+      data: { name: 'Maintenance field notes', kind: 'sheet', parentId: null },
+    });
+    expect(created.status(), await created.text()).toBe(201);
+    const item = (await created.json()).item as { id: string; name: string };
+    await member.reload();
+    await expect
+      .poll(() => member.evaluate(() => Boolean(navigator.serviceWorker.controller)))
+      .toBe(true);
+    await member
+      .getByRole('button', { name: `More actions for ${item.name}`, exact: true })
+      .click();
+    await member
+      .getByRole('menuitem', { name: 'Available offline on this device', exact: true })
+      .click();
+    await expect(member.getByRole('status').filter({ hasText: 'available offline' })).toHaveText(
+      `${item.name} is available offline on this device.`,
+      { timeout: 90_000 },
+    );
+    await member.getByRole('button', { name: `${item.name} Sheet`, exact: true }).click();
+    await expect(saveStatus(member)).toHaveText(
+      'Synced. All changes are saved on the server and this device.',
+      { timeout: 30_000 },
+    );
+    await selectCell(member, 'A1');
+    await member.keyboard.insertText('Acknowledged before maintenance');
+    await member.keyboard.press('Enter');
+    await expect(saveStatus(member)).toHaveText(
+      'Synced. All changes are saved on the server and this device.',
+    );
+    const remoteSnapshot = async () =>
+      JSON.stringify(
+        (await (await memberContext.request.get(`/api/items/${item.id}/sheet`)).json()).snapshot,
+      );
+    await expect.poll(remoteSnapshot).toContain('Acknowledged before maintenance');
+
+    await operator.goto('/admin#health');
+    await expect(
+      controls(operator).getByRole('button', { name: 'Pause edits', exact: true }),
+    ).toBeEnabled();
+    await controls(operator)
+      .getByRole('button', { name: 'Maintenance actions', exact: true })
+      .click();
+    await operator.getByRole('menuitem', { name: 'Schedule a notice…', exact: true }).click();
+    const noticeDialog = operator.getByRole('dialog', {
+      name: 'Schedule a maintenance notice',
+      exact: true,
+    });
+    // A repeated local time requires an explicit occurrence and persists one absolute instant.
+    await noticeDialog.getByLabel('Date and time', { exact: true }).fill('2030-11-03T01:30');
+    await noticeDialog.getByLabel('Time zone', { exact: true }).fill('America/Los_Angeles');
+    await noticeDialog.getByLabel('Estimated minutes', { exact: true }).fill('45');
+    await noticeDialog.getByRole('button', { name: 'Verify with a passkey', exact: true }).click();
+    await expect(
+      noticeDialog.getByRole('button', { name: 'Publish notice', exact: true }),
+    ).toBeDisabled();
+    await noticeDialog
+      .getByLabel('This time occurs twice', { exact: true })
+      .selectOption(String(Date.parse('2030-11-03T09:30:00.000Z')));
+    const noticeResponse = operator.waitForResponse(
+      (response) => new URL(response.url()).pathname === '/api/admin/maintenance/notice',
+    );
+    await noticeDialog.getByRole('button', { name: 'Publish notice', exact: true }).click();
+    expect((await noticeResponse).status()).toBe(200);
+    await expect(controls(operator).getByText('Scheduled notice', { exact: true })).toBeVisible();
+    const announced = await publicStatus(app.publicOrigin);
+    expect(announced.phase).toBe('running');
+    expect(announced.notice).toMatchObject({
+      startsAt: Date.parse('2030-11-03T09:30:00.000Z'),
+      timeZone: 'America/Los_Angeles',
+      durationMinutes: 45,
+      state: 'scheduled',
+    });
+    await expect(banner(member).getByText('Maintenance scheduled', { exact: true })).toBeVisible();
+    const scheduledHeight = await banner(member).evaluate(
+      (element) => element.getBoundingClientRect().height,
+    );
+    await capture(operator, info, 'scheduled');
+
+    // Another already-open Operator tab has the same cookie, but no resume capability.
+    const unprivilegedTab = await operatorContext.newPage();
+    unprivilegedTab.setDefaultTimeout(15_000);
+    await unprivilegedTab.goto('/admin#health');
+    await expect(
+      controls(unprivilegedTab).getByRole('button', { name: 'Pause edits', exact: true }),
+    ).toBeEnabled();
+
+    await memberContext.setOffline(true);
+    await selectCell(member, 'B1');
+    await member.keyboard.insertText('Pending on this device');
+    await member.keyboard.press('Enter');
+    await expect(saveStatus(member)).toHaveText('Saved on this device — waiting to sync.', {
+      timeout: 30_000,
+    });
+    await expect
+      .poll(async () => JSON.stringify((await deviceCopy(member, accountId, item.id))?.outbox))
+      .toContain('Pending on this device');
+    expect((await deviceCopy(member, accountId, item.id))?.bundle.maintenanceEpoch).toBe(epoch);
+    await selectCell(member, 'C1');
+    await member.keyboard.insertText('Unfinished native draft');
+    const nativeDraft = await member
+      .locator('[contenteditable="true"][data-u-comp="editor"]:focus')
+      .elementHandle();
+    expect(nativeDraft).not.toBeNull();
+    const canvas = await member.locator('.editor-frame canvas').first().elementHandle();
+    expect(canvas).not.toBeNull();
+    const stableNativeEditor = async () => {
+      expect(
+        await member
+          .locator('.editor-frame canvas')
+          .first()
+          .evaluate((node, original) => node === original, canvas!),
+      ).toBe(true);
+      expect(await nativeDraft!.evaluate((element) => element.isConnected)).toBe(true);
+      const sentinel = `not-copied-${randomUUID()}`;
+      await member.evaluate((value) => navigator.clipboard.writeText(value), sentinel);
+      await nativeDraft!.focus();
+      await member.keyboard.press('Control+a');
+      await member.keyboard.press('Control+c');
+      await expect
+        .poll(async () => (await member.evaluate(() => navigator.clipboard.readText())).trim())
+        .toBe('Unfinished native draft');
+    };
+
+    let pauseRequests = 0;
+    operator.on('request', (request) => {
+      if (new URL(request.url()).pathname === '/api/admin/maintenance/pause') pauseRequests++;
+    });
+    await controls(operator).getByRole('button', { name: 'Pause edits', exact: true }).click();
+    const pauseDialog = operator.getByRole('dialog', {
+      name: 'Pause workspace edits?',
+      exact: true,
+    });
+    await capture(operator, info, 'pause-confirmation', false);
+    const proofResponse = operator.waitForResponse(
+      (response) => new URL(response.url()).pathname === '/api/auth/reauthentication/verify',
+    );
+    await pauseDialog.getByRole('button', { name: 'Verify with a passkey', exact: true }).click();
+    const proof = (await (await proofResponse).json()) as { verifiedUntil: number };
+    await expect(
+      pauseDialog.getByRole('button', { name: 'Pause edits', exact: true }),
+    ).toBeEnabled();
+    expect(pauseRequests).toBe(0);
+    const pauseResponse = operator.waitForResponse(
+      (response) => new URL(response.url()).pathname === '/api/admin/maintenance/pause',
+    );
+    await pauseDialog.getByRole('button', { name: 'Pause edits', exact: true }).click();
+    const pausedReply = await pauseResponse;
+    expect(pausedReply.status()).toBe(200);
+    const paused = (await pausedReply.json()) as MaintenanceControlResult;
+    expect(pausedReply.request().postDataJSON().intentExpiresAt).toBe(proof.verifiedUntil);
+    expect(paused.status.phase).toBe('paused');
+    expect(paused.status.epoch).not.toBe(epoch);
+    expect(paused.resumeToken).toMatch(/^[A-Za-z0-9_-]{43}$/);
+    await expect(
+      controls(operator).getByRole('button', { name: 'Resume', exact: true }),
+    ).toBeEnabled();
+    await expect(
+      controls(unprivilegedTab).getByRole('button', { name: 'Resume', exact: true }),
+    ).toBeDisabled();
+    await expect(
+      controls(unprivilegedTab).getByText(/Resume permission is unavailable in this tab/),
+    ).toBeVisible();
+    expect(
+      await operator.evaluate(
+        (token) =>
+          [
+            location.href,
+            document.body.innerText,
+            ...Object.values(localStorage),
+            ...Object.values(sessionStorage),
+          ].some((value) => value.includes(token)),
+        paused.resumeToken!,
+      ),
+    ).toBe(false);
+    const rejectedPaused = await memberContext.request.patch(`/api/items/${item.id}`, {
+      headers: { ...headers, 'X-Spinel-Epoch': paused.status.epoch },
+      data: { name: 'Must stay paused' },
+    });
+    expect(rejectedPaused.status()).toBe(503);
+    expect((await rejectedPaused.json()).code).toBe('maintenance');
+    await capture(operator, info, 'paused');
+
+    // The offline page learns the new epoch before it may open a submit channel.
+    await memberContext.setOffline(false);
+    await expect(banner(member).getByText('Edits paused', { exact: true })).toBeVisible();
+    await expect(saveStatus(member)).toContainText('Copy the unfinished cell text');
+    expect(await banner(member).evaluate((element) => element.getBoundingClientRect().height)).toBe(
+      scheduledHeight,
+    );
+    await stableNativeEditor();
+    await capture(member, info, 'native-pending', false);
+    expect((await memberContext.request.get(`/api/items/${item.id}/sheet`)).status()).toBe(503);
+
+    await controls(operator).getByRole('button', { name: 'Resume', exact: true }).click();
+    await expect(
+      controls(operator).getByRole('button', { name: 'Reload Administration', exact: true }),
+    ).toBeEnabled();
+    await expect(
+      controls(operator).getByRole('button', { name: 'Pause edits', exact: true }),
+    ).toHaveCount(0);
+    await expect(controls(operator).getByText(/Edits resumed\./)).toBeVisible();
+    const resumed = await publicStatus(app.publicOrigin);
+    expect(resumed.phase).toBe('running');
+    expect(resumed.epoch).toBe(paused.status.epoch);
+    await expect(saveStatus(member)).toContainText('Copy the unfinished cell text');
+    await stableNativeEditor();
+    const retained = await deviceCopy(member, accountId, item.id);
+    expect(retained?.bundle.maintenanceEpoch).toBe(epoch);
+    expect(JSON.stringify(retained?.outbox)).toContain('Pending on this device');
+    expect(await remoteSnapshot()).not.toContain('Pending on this device');
+    expect(await remoteSnapshot()).not.toContain('Unfinished native draft');
+    const rejectedStale = await memberContext.request.patch(`/api/items/${item.id}`, {
+      headers,
+      data: { name: 'Must not replay an old edit' },
+    });
+    expect(rejectedStale.status()).toBe(409);
+    expect((await rejectedStale.json()).code).toBe('maintenance-epoch');
+    await capture(operator, info, 'resumed');
+    await controls(operator)
+      .getByRole('button', { name: 'Reload Administration', exact: true })
+      .click();
+    await expect(
+      controls(operator).getByRole('button', { name: 'Pause edits', exact: true }),
+    ).toBeEnabled();
+    await controls(operator)
+      .getByRole('button', { name: 'Maintenance actions', exact: true })
+      .click();
+    await operator
+      .getByRole('menuitem', { name: 'Cancel maintenance notice…', exact: true })
+      .click();
+    const cancelDialog = operator.getByRole('dialog', {
+      name: 'Cancel maintenance notice?',
+      exact: true,
+    });
+    await cancelDialog.getByRole('button', { name: 'Verify with a passkey', exact: true }).click();
+    await cancelDialog.getByRole('button', { name: 'Cancel notice', exact: true }).click();
+    await expect(controls(operator).getByText(/Maintenance notice cancelled/)).toBeVisible();
+    await expect(banner(operator)).toHaveCount(0);
+    expect((await publicStatus(app.publicOrigin)).notice?.state).toBe('cancelled');
+    expect(failures).toEqual([]);
+    const cookies = (await memberContext.cookies(app.origin))
+      .map(({ name, value }) => `${name}=${value}`)
+      .join('; ');
+    await canvas!.dispose();
+    await nativeDraft!.dispose();
+
+    // Keep Chromium out of the stopped-file verification memory budget.
+    await browser.close();
+    browser = undefined;
+    const operationId = randomUUID();
+    expect((await app.control({ action: 'pause', operationId })).phase).toBe('paused');
+    expect((await app.control({ action: 'stop', operationId })).phase).toBe('stopped');
+    expect((await publicStatus(app.publicOrigin)).phase).toBe('stopped');
+    const unavailable = await fetch(`${app.publicOrigin}/api/items`);
+    expect(unavailable.status).toBe(503);
+    expect((await unavailable.json()).code).toBe('MAINTENANCE');
+    await expect(app.control({ action: 'start', operationId })).rejects.toThrow();
+    expect((await app.control({ action: 'verify', operationId })).phase).toBe('stopped');
+    const restarted = await app.control({ action: 'start', operationId });
+    expect(restarted.phase).toBe('paused');
+    expect(restarted.readyToResume).toBe(true);
+    expect((await publicStatus(app.publicOrigin)).phase).toBe('paused');
+    expect((await app.control({ action: 'resume', operationId })).phase).toBe('running');
+    const saved = await fetch(`${app.origin}/api/items/${item.id}/sheet`, {
+      headers: { Cookie: cookies },
+    });
+    expect(saved.status).toBe(200);
+    const durable = JSON.stringify((await saved.json()).snapshot);
+    expect(durable).toContain('Acknowledged before maintenance');
+    expect(durable).not.toContain('Pending on this device');
+    expect(durable).not.toContain('Unfinished native draft');
+  } finally {
+    await browser?.close();
+    await app.close();
+  }
+});

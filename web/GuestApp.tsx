@@ -1,4 +1,6 @@
+import { maintenanceFetch as fetch } from './maintenanceFetch.ts';
 import { EditorFrame } from './EditorFrame.tsx';
+import { MaintenanceShell } from './Maintenance.tsx';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { guestRevokedEvent } from './guestRevocation.ts';
@@ -35,6 +37,14 @@ type Item = {
   access: 'viewer' | 'editor';
 };
 export function GuestApp() {
+  return (
+    <MaintenanceShell guest>
+      <GuestContent />
+    </MaintenanceShell>
+  );
+}
+
+function GuestContent() {
   useEffect(() => {
     // Hash navigation alone does not run beforeunload. A real reload does, so
     // reopening/replacing a link cannot silently discard an unfinished edit.

@@ -1,3 +1,4 @@
+import { maintenanceRouter } from '../maintenance/router.ts';
 import express from 'express';
 import type { Request } from 'express';
 import { randomUUID } from 'node:crypto';
@@ -32,7 +33,7 @@ type Task = {
 
 /** Small, short-lived download receipts. Archive content never lives in this map. */
 export function archiveRoutes(workspace: WorkspaceStore, files: PortableFiles) {
-  const router = express.Router();
+  const router = maintenanceRouter();
   const tasks = new Map<string, Task>();
   const identity = (request: Request) => {
     const current = documentIdentity(workspace, request.headers);

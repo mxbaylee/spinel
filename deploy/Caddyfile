@@ -12,5 +12,28 @@ https://{$SPINEL_HOSTNAME} {
 		protocols tls1.3 tls1.3
 		get_certificate tailscale
 	}
-	reverse_proxy 127.0.0.1:3000
+	@maintenance path /api/maintenance
+	handle @maintenance {
+		reverse_proxy 127.0.0.1:3002
+	}
+	handle {
+		reverse_proxy 127.0.0.1:3000
+	}
+	handle_errors {
+		header {
+			Cache-Control "no-store"
+			Retry-After "30"
+			X-Content-Type-Options "nosniff"
+			Content-Security-Policy "default-src 'none'; frame-ancestors 'none'"
+		}
+		@api path /api/* /sync-api/* /mcp
+		handle @api {
+			header Content-Type application/json
+			respond `{"code":"MAINTENANCE","error":"Workspace maintenance is in progress. Keep pending work on this device."}` 503
+		}
+		handle {
+			header Content-Type "text/html; charset=utf-8"
+			respond `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Spinel maintenance</title><h1>Workspace maintenance</h1><p>Keep pending work on this device. Try again shortly.</p></html>` 503
+		}
+	}
 }

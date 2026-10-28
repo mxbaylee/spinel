@@ -90,6 +90,7 @@ export class CollaborationStore {
   private readonly admitted = new Map<string, Set<Promise<void>>>();
   private readonly restores = new Map<string, Promise<RestoreJob>>();
   private readonly workspace: WorkspaceStore;
+  private readonly documents: DocumentStore;
   private readonly preparing = new Map<string, Promise<void>>();
   private purging: Promise<void> | undefined;
   private purgeAfter = '';
@@ -121,7 +122,7 @@ export class CollaborationStore {
     this.generations = new CollaborationGenerations(workspace);
     this.generations.recoverBeforeServing();
     new SheetStore(workspace);
-    new DocumentStore(workspace);
+    this.documents = new DocumentStore(workspace);
     workspace.auth.database.exec(`CREATE TABLE IF NOT EXISTS workspace_collaboration (
       item_id TEXT PRIMARY KEY REFERENCES workspace_items(id) ON DELETE CASCADE,
       state TEXT NOT NULL CHECK(state IN ('preparing','ready'))
@@ -141,7 +142,7 @@ export class CollaborationStore {
         for (const listener of this.submitListeners) await listener(identity, unitId);
       },
       validateSnapshot: (unitId, snapshot) =>
-        new DocumentStore(workspace).validateImages(this.itemForUnit(unitId), snapshot),
+        this.documents.validateImages(this.itemForUnit(unitId), snapshot),
       diagnosticsFor: (identity) => (event, context) =>
         options.diagnostics?.(event, context, identity.userID),
       diagnosticContext: (unitId, identity) => ({
@@ -371,7 +372,7 @@ export class CollaborationStore {
   // A stored row that shares a name with a rendered resource is never served,
   // but an unsafe image anywhere in the generation's rows still fails closed.
   private validateImages(itemId: string, unitId: string, snapshot: IWorkbookData | IDocumentData) {
-    new DocumentStore(this.workspace).validateImages(itemId, {
+    this.documents.validateImages(itemId, {
       ...snapshot,
       resources: [...(snapshot.resources ?? []), ...this.storedResources(unitId)],
     });
@@ -485,7 +486,7 @@ export class CollaborationStore {
         { ...snapshotIdentity(initial, unitId), rev: 1 },
         item.kind as 'sheet' | 'doc',
       );
-      new DocumentStore(this.workspace).validateImages(id, native);
+      this.documents.validateImages(id, native);
       this.syncStorage.create(
         {
           unitId,
@@ -619,7 +620,7 @@ export class CollaborationStore {
         data.access !== item.access
       )
         throw changed();
-      const documents = new DocumentStore(this.workspace);
+      const documents = this.documents;
       const images = new Map<string, OfflineBundleImage>();
       const prefix = `/api/items/${id}/images/`;
       imageSources(data.snapshot, (source) => {
@@ -666,6 +667,9 @@ export class CollaborationStore {
           coverAssets[hash] = Buffer.from(asset.data as Uint8Array).toString('base64');
         }
       const fields = {
+        ...(this.workspace.auth.database.maintenance?.status.available && {
+          maintenanceEpoch: this.workspace.auth.database.maintenance.epoch,
+        }),
         appearance,
         coverAssets,
         version: 1 as const,
@@ -744,10 +748,10 @@ export class CollaborationStore {
         const preserve = await prepareBefore(before);
         checkSession();
         this.workspaceAccess(user, id, 'edit', custom);
-        new DocumentStore(this.workspace).validateImages(id, snapshot);
+        this.documents.validateImages(id, snapshot);
         const replacement = { ...snapshotIdentity(snapshot, job.nextUnit), rev: 1 };
         const native = materialize(replacement, item.kind as 'sheet' | 'doc');
-        new DocumentStore(this.workspace).validateImages(id, native);
+        this.documents.validateImages(id, native);
         this.syncStorage.create(
           {
             unitId: job.nextUnit,
@@ -775,7 +779,11 @@ export class CollaborationStore {
   }
 
   async close() {
-    await Promise.allSettled([...this.preparing.values(), ...this.restores.values()]);
+    await Promise.allSettled([
+      ...this.preparing.values(),
+      ...this.restores.values(),
+      ...[...this.admitted.values()].flatMap((pending) => [...pending]),
+    ]);
     await this.purging;
     await this.sync.close();
   }

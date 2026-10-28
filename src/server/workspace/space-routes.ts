@@ -1,3 +1,4 @@
+import { maintenanceRouter } from '../maintenance/router.ts';
 import express from 'express';
 import type { Request, Response, NextFunction } from 'express';
 import type { SpaceBootstrap, SpaceNode, SpaceRoot, SpaceTreeData } from '../../shared/spaces.ts';
@@ -50,7 +51,7 @@ export function spaceRoutes(
   origin: string,
   options: { spaceReview?: boolean; guest?: boolean } = {},
 ) {
-  const router = express.Router();
+  const router = maintenanceRouter();
   const spaces = new SpaceStore(workspace);
   const recovery = new SpaceRecoveryStore(workspace);
   const actor = (request: Request) => {

@@ -98,7 +98,13 @@ export async function verifyArchive(options: VerificationOptions): Promise<Verif
       const deadline = Date.now() + timeoutMs;
       const child = fork(new URL('./verification-worker.ts', import.meta.url), [], {
         cwd: directory,
-        env: { TZ: 'Etc/UTC', TMPDIR: directory },
+        env: {
+          TZ: 'Etc/UTC',
+          TMPDIR: directory,
+          ...(process.env.SPINEL_PROCESS_GROUP_TOKEN && {
+            SPINEL_PROCESS_GROUP_TOKEN: process.env.SPINEL_PROCESS_GROUP_TOKEN,
+          }),
+        },
         // Native SQLite/sharp require trusted addons. Archive data never supplies
         // code, module paths, output paths or process commands. Network is denied.
         execArgv: [

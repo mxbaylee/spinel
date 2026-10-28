@@ -3,8 +3,15 @@ import { openDatabase } from './database.ts';
 import { AuthStore } from '../src/server/auth/store.ts';
 import { SetupService } from '../src/server/auth/setup.ts';
 import { ConsoleRecovery } from '../src/server/auth/console-recovery.ts';
+import { acquireColdWorkspace } from '../src/server/maintenance/journal.ts';
+import { mkdirSync } from 'node:fs';
+import { dirname } from 'node:path';
 
-const database = openDatabase(resolve(process.env.DATABASE_PATH ?? 'data/spinel.sqlite'));
+const databasePath = resolve(process.env.DATABASE_PATH ?? 'data/spinel.sqlite');
+mkdirSync(dirname(databasePath), { recursive: true });
+const release =
+  process.platform === 'linux' ? await acquireColdWorkspace(databasePath) : async () => {};
+const database = openDatabase(databasePath);
 try {
   const args = process.argv.slice(2);
   const recovery = args[0] === '--recover-admin';
@@ -30,4 +37,5 @@ try {
   process.exitCode = 1;
 } finally {
   database.close();
+  await release();
 }

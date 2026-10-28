@@ -1,3 +1,4 @@
+import { maintenanceFetch as fetch } from './maintenanceFetch.ts';
 import type { ArchiveImportResult, ArchiveTask } from '../src/shared/archive.ts';
 import { clearDashboardNavigation } from './dashboardNavigation.ts';
 

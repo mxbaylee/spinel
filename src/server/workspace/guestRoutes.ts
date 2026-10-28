@@ -1,3 +1,4 @@
+import { maintenanceRouter } from '../maintenance/router.ts';
 import express from 'express';
 import type { Request, Response, NextFunction } from 'express';
 import { AuthError } from '../auth/store.ts';
@@ -18,7 +19,7 @@ export function guestRoutes(
   origin: string,
   privacyChanged: (id: string) => Promise<void>,
 ) {
-  const router = express.Router(),
+  const router = maintenanceRouter(),
     links = workspace.links,
     documents = new DocumentStore(workspace);
   const json = express.json({ limit: '8kb', strict: true });

@@ -35,6 +35,30 @@ starting; a missing build fails immediately. The server runs TypeScript directly
 with Node's type stripping, so keep the source and production dependencies when
 running it. Deployment packaging was delivered by SPN-029.
 
+## Supervised local maintenance
+
+On Linux, `npm run dev:supervised` and `npm run start:supervised` run the fixed app
+child under the maintenance supervisor. Prepare the database with `npm run setup`
+while both processes are stopped. Create a separate private directory, outside
+`data/` and diagnostics, and set its canonical absolute path as
+`SPINEL_MAINTENANCE_ROOT`. The directory must already exist, belong to the current
+user and have mode 0700. Production serving still requires `npm run build` first.
+
+Every supervisor boot waits for explicit cold verification. In a second terminal
+with the same environment, run `node scripts/deploy/maintenance.ts verify`, then
+`start --operation UUID` and `resume --operation UUID` using the returned ID.
+The [maintenance runbook](maintenance.md) covers pause, drain, worker shutdown,
+current-generation restart, authorization expiry and crash recovery. Its public
+loopback status service defaults to port 3002. Deployment Compose selects this
+launcher and mounts the independent recovery directory.
+
+Ordinary `npm run dev`, `npm start` and the image's default command remain direct
+developer/test entrypoints; their UI reports supervised maintenance unavailable.
+They do not provide the supported stop/recovery control boundary. A supervised
+dataset rejects independent setup, backup and transition CLI access until the
+supervisor releases its lease. Do not point direct and supervised servers at the
+same database.
+
 ## Deployment stage
 
 Spinel is **pre-production** until SPN-038 launches `https://spinel.baylee.dev`.
@@ -61,8 +85,10 @@ moves SPN-063 implementation/local acceptance before launch, using a supported
 filesystem destination and disposable processes/containers. New backup and
 restore controls can be developed locally; real-provider and target-host checks
 remain launch acceptance under SPN-038. The filesystem destination and recurring
-verifier are implemented by SPN-063; the broader controls are registered in
-SPN-109–112. See the [local setup and verification runbook](backups.md#filesystem-destination-for-local-operation).
+verifier are implemented by SPN-063. SPN-111 implements the
+[maintenance supervisor](maintenance.md); manual Admin exports, diagnostics
+expiry and assisted dataset activation remain in SPN-109, SPN-110 and SPN-112.
+See the [local setup and verification runbook](backups.md#filesystem-destination-for-local-operation).
 The
 [capacity writeup](implementation/SPN-063-capacity.md) records engine limits,
 current application budgets and measurements still required before publishing
@@ -84,6 +110,10 @@ uploaded and acknowledged. See [offline storage](offline.md) and
 - `DATABASE_PATH`: SQLite filename, default `data/spinel.sqlite` under the repo.
   Relative overrides resolve from the current working directory. Parent folders
   are created automatically. Database files and sidecars are ignored by Git.
+- `SPINEL_MAINTENANCE_ROOT`: required only by the Linux supervised launchers; an
+  existing private absolute directory outside the database/diagnostics directory.
+- `SPINEL_MAINTENANCE_PORT`: supervisor's public loopback status port, default
+  `3002`. The private command socket remains inside the recovery root.
 
 `GET /api/health` requires a signed-in session, verifies a database query and
 returns `{"status":"ok"}`. Signed-out APIs return 401 with sign-in guidance;
@@ -146,7 +176,11 @@ The container smoke builds the actual Dockerfile, checks the production native
 dependencies, serves the built sign-in page and JavaScript as the image's default
 non-root user, and verifies database integrity and setup-record persistence after
 container recreation. It uses disposable data and the deployment's resource and
-filesystem constraints; it does not deploy or replace the host preflight.
+filesystem constraints. The same job adapts the deployment's exact Caddyfile with
+its pinned image and exercises the static maintenance HTML/API fallback while
+both upstreams are absent, using an isolated nonroot proxy container. TLS,
+Tailscale, mounted-volume and target-host resource checks remain deployment
+acceptance; the smoke does not deploy or replace the host preflight.
 
 To repeat one run locally, build first, then use
 `SPINEL_E2E_PROJECT=production npx playwright test --project=production --shard=1/2`.

@@ -11,6 +11,8 @@ import { auditDeniedEdit } from '../collaboration/audit.ts';
 import { safeGuestRoomPresence } from '../collaboration/guestPresence.ts';
 import { Profiles } from '../auth/profile.ts';
 import { profileAvatar } from '../../profile/profile.ts';
+import { MaintenanceGate, MAINTENANCE_HEADER } from '../maintenance/gate.ts';
+import type { MaintenancePublicStatus } from '../../shared/maintenance.ts';
 
 const TICKET_TTL = 30_000;
 const MAX_TICKETS = 256;
@@ -34,6 +36,7 @@ interface Session {
   itemId: string;
   rootId: string;
   access: string;
+  epoch: string;
 }
 interface Ticket {
   session: Session;
@@ -88,6 +91,7 @@ export function attachSync(
   workspace: WorkspaceStore,
   collaboration: CollaborationStore,
   origin: string,
+  maintenance = new MaintenanceGate(),
 ) {
   const sync = collaboration.sync;
   const tickets = new Map<string, Ticket>();
@@ -138,6 +142,7 @@ export function attachSync(
     const item = collaboration.access(identity.userId, unitId, false, identity.customData);
     const rootId = target.spaceId ?? target.itemId;
     const session: Session = {
+      epoch: maintenance.epoch,
       identity: {
         userID: identity.userId,
         customData: Object.freeze({
@@ -279,7 +284,7 @@ export function attachSync(
         }
         const ticket = randomBytes(32).toString('base64url');
         tickets.set(ticket, { session, expires: Date.now() + TICKET_TTL });
-        response.json({ version: 1, ticket, expiresInMs: TICKET_TTL });
+        response.json({ version: 1, ticket, expiresInMs: TICKET_TTL, epoch: maintenance.epoch });
       } else if (target.action === 'snapshot' && request.method === 'GET') {
         const data = sync.load(session.unitId, session.identity);
         current(session);
@@ -288,6 +293,7 @@ export function attachSync(
           unitId: data.unitId,
           revision: data.revision,
           snapshot: data.snapshot,
+          epoch: maintenance.epoch,
         });
       } else response.status(405).end();
     } catch {
@@ -306,6 +312,13 @@ export function attachSync(
     try {
       const url = new URL(request.url ?? '/', origin);
       const target = scope(url.pathname);
+      if (!maintenance.running) {
+        reject();
+        return;
+      }
+      maintenance.assertEpoch(
+        url.searchParams.get('epoch') ?? request.headers[MAINTENANCE_HEADER.toLowerCase()],
+      );
       if (
         !target ||
         target.action !== 'socket' ||
@@ -426,6 +439,10 @@ export function attachSync(
     }
     socket.on('message', (bytes, binary) => {
       if (!live.has(entry)) return;
+      if (!maintenance.running || session.epoch !== maintenance.status.epoch) {
+        send(entry, { type: 'maintenance', status: maintenance.status });
+        return;
+      }
       if (binary) {
         remove(entry, 1009, 'Use JSON messages.');
         return;
@@ -487,87 +504,93 @@ export function attachSync(
         remove(entry, 1009, 'Too many pending edits.');
         return;
       }
+      // Admission happens before queueing. It survives both a pause and a
+      // disconnected caller until the exact queued operation settles.
+      const permit = maintenance.begin(session.epoch);
       entry.queue = entry.queue
-        .then(async () => {
-          if (!live.has(entry) || socket.readyState !== WebSocket.OPEN) return;
-          try {
-            current(session);
-          } catch (error) {
-            if (message.type === 'submit')
-              auditDeniedEdit(session.identity.userID, session.unitId, 'submitChangeset');
-            throw error;
-          }
-          if (message.type === 'verify') {
-            if (Object.keys(message).some((key) => !['type', 'revision', 'hash'].includes(key)))
+        .then(() =>
+          maintenance.within(permit, async () => {
+            if (!live.has(entry) || socket.readyState !== WebSocket.OPEN) return;
+            try {
+              current(session);
+            } catch (error) {
+              if (message.type === 'submit')
+                auditDeniedEdit(session.identity.userID, session.unitId, 'submitChangeset');
+              throw error;
+            }
+            if (message.type === 'verify') {
+              if (Object.keys(message).some((key) => !['type', 'revision', 'hash'].includes(key)))
+                throw new SyncError('malformed');
+              const match = sync.verify(
+                session.unitId,
+                message.revision as number,
+                message.hash as string,
+                session.identity,
+              );
+              send(
+                entry,
+                match
+                  ? { type: 'verified', revision: message.revision }
+                  : { type: 'resync', reason: 'divergence' },
+              );
+              return;
+            }
+            if (
+              message.type !== 'submit' ||
+              Object.keys(message).some(
+                (key) =>
+                  !['type', 'mutationId', 'baseRevision', 'mutations', 'expectedRevision'].includes(
+                    key,
+                  ),
+              )
+            )
               throw new SyncError('malformed');
-            const match = sync.verify(
-              session.unitId,
-              message.revision as number,
-              message.hash as string,
+            // The service owns edit authorization and its denied-edit audit.
+            // Rejecting viewers here would bypass that single audited boundary.
+            const result = await collaboration.submitSync(
+              {
+                unitId: session.unitId,
+                mutationId: message.mutationId as string,
+                baseRevision: message.baseRevision as number,
+                mutations: message.mutations as SubmitParameters['mutations'],
+                ...(Object.hasOwn(message, 'expectedRevision') && {
+                  expectedRevision: message.expectedRevision as number,
+                }),
+              },
               session.identity,
             );
-            send(
-              entry,
-              match
-                ? { type: 'verified', revision: message.revision }
-                : { type: 'resync', reason: 'divergence' },
-            );
-            return;
-          }
-          if (
-            message.type !== 'submit' ||
-            Object.keys(message).some(
-              (key) =>
-                !['type', 'mutationId', 'baseRevision', 'mutations', 'expectedRevision'].includes(
-                  key,
-                ),
-            )
-          )
-            throw new SyncError('malformed');
-          // The service owns edit authorization and its denied-edit audit.
-          // Rejecting viewers here would bypass that single audited boundary.
-          const result = await collaboration.submitSync(
-            {
-              unitId: session.unitId,
-              mutationId: message.mutationId as string,
-              baseRevision: message.baseRevision as number,
-              mutations: message.mutations as SubmitParameters['mutations'],
-              ...(Object.hasOwn(message, 'expectedRevision') && {
-                expectedRevision: message.expectedRevision as number,
-              }),
-            },
-            session.identity,
-          );
-          // Authorization is checked independently for each recipient immediately before sending.
-          for (const recipient of live) {
-            if (recipient.session.unitId !== session.unitId || !recipient.synchronized) continue;
-            try {
-              current(recipient.session);
-              const edits = result.missing.filter((edit) => edit.revision > recipient.revision);
-              if (edits.length && edits[0].revision !== recipient.revision + 1) {
-                recipient.synchronized = false;
-                send(recipient, { type: 'resync', reason: 'stale' });
-                continue;
+            // Authorization is checked independently for each recipient immediately before sending.
+            for (const recipient of live) {
+              if (recipient.session.unitId !== session.unitId || !recipient.synchronized) continue;
+              try {
+                current(recipient.session);
+                const edits = result.missing.filter((edit) => edit.revision > recipient.revision);
+                if (edits.length && edits[0].revision !== recipient.revision + 1) {
+                  recipient.synchronized = false;
+                  send(recipient, { type: 'resync', reason: 'stale' });
+                  continue;
+                }
+                for (const edit of edits) {
+                  if (send(recipient, { type: 'edit', ...wireRevision(edit) }))
+                    recipient.revision = edit.revision;
+                }
+              } catch {
+                remove(recipient, 1008, 'Access changed. Reload to continue.');
               }
-              for (const edit of edits) {
-                if (send(recipient, { type: 'edit', ...wireRevision(edit) }))
-                  recipient.revision = edit.revision;
-              }
-            } catch {
-              remove(recipient, 1008, 'Access changed. Reload to continue.');
             }
-          }
-          current(session);
-          send(entry, {
-            type: 'ack',
-            mutationId: message.mutationId,
-            duplicate: result.duplicate,
-            ...wireRevision(result.edit),
-          });
-        })
+            current(session);
+            send(entry, {
+              type: 'ack',
+              mutationId: message.mutationId,
+              duplicate: result.duplicate,
+              ...wireRevision(result.edit),
+            });
+          }),
+        )
         .catch((error: unknown) => failure(error, mutationId))
         .finally(() => {
           entry.pending--;
+          permit.release();
         });
     });
   }
@@ -591,6 +614,10 @@ export function attachSync(
   timer.unref();
   return {
     revalidate,
+    maintenance(status: MaintenancePublicStatus) {
+      tickets.clear();
+      for (const entry of live) send(entry, { type: 'maintenance', status });
+    },
     connectionCount: () => live.size,
     async privacyChanged(itemId: string) {
       for (const [key, ticket] of tickets)

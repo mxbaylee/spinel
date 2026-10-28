@@ -93,6 +93,7 @@ export function verifyHost(env: NodeJS.ProcessEnv, host: Host = localHost) {
   for (const [name, uid] of [
     ['app', 1000],
     ['caddy', 10001],
+    ['recovery', 1000],
   ] as const) {
     const path = `${config.root}/${name}`;
     const backing = JSON.parse(
@@ -108,6 +109,10 @@ export function verifyHost(env: NodeJS.ProcessEnv, host: Host = localHost) {
       (stat.mode & 0o007) !== 0
     )
       throw new Error(`Prepare ${name} with owner ${uid} and no access for other users.`);
+    if (name === 'recovery' && (stat.mode & 0o077) !== 0)
+      throw new Error(
+        'Recovery control must be private (mode0700), separate from the app database.',
+      );
   }
   const status = JSON.parse(run('tailscale', ['status', '--json']));
   if (

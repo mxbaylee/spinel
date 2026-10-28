@@ -157,6 +157,9 @@ export class McpDocuments {
           });
       }
     return this.bounded({
+      ...(this.workspace.auth.database.maintenance?.status.available && {
+        epoch: this.workspace.auth.database.maintenance.epoch,
+      }),
       unitId: loaded.unitId,
       revision: loaded.revision,
       access: loaded.access,
@@ -184,6 +187,9 @@ export class McpDocuments {
       limit = integer(args.limit, 1, 20000, 10000);
     const end = Math.min(length, offset + limit);
     return {
+      ...(this.workspace.auth.database.maintenance?.status.available && {
+        epoch: this.workspace.auth.database.maintenance.epoch,
+      }),
       unitId: loaded.unitId,
       revision: loaded.revision,
       access: loaded.access,
@@ -204,8 +210,10 @@ export class McpDocuments {
       'unitId',
       'revision',
       'requestId',
+      'epoch',
       ...(kind === 'sheet' ? ['sheetId', 'cells'] : ['offset', 'deleteCount', 'text']),
     ]);
+    this.workspace.auth.database.maintenance?.assertEpoch(args.epoch);
     const id = text(args.id),
       unitId = text(args.unitId),
       requestId = text(args.requestId);

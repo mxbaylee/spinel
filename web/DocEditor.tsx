@@ -1,3 +1,4 @@
+import { maintenanceFetch as fetch } from './maintenanceFetch.ts';
 import { SaveStatus } from './SaveStatus.tsx';
 import { recordNativeMutationInventory } from './nativeMutationInventory.ts';
 import {

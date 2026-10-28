@@ -1,3 +1,4 @@
+import { maintenanceRouter } from '../maintenance/router.ts';
 import express from 'express';
 import type { Request } from 'express';
 import { finished } from 'node:stream/promises';
@@ -17,7 +18,7 @@ export function pdfRoutes(
   identity: (request: Request) => Identity,
   itemParam: 'id' | 'itemId' = 'id',
 ) {
-  const router = express.Router({ mergeParams: true });
+  const router = maintenanceRouter({ mergeParams: true });
   const exports = new PdfExports(workspace, collaboration);
   router.use(express.json({ limit: '16kb', strict: true }));
   router.all('/', admitTransfer, async (request, response, next) => {

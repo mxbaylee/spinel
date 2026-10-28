@@ -1,3 +1,4 @@
+import { maintenanceFetch as fetch } from './maintenanceFetch.ts';
 export type ConnectionState = 'online' | 'offline' | 'reconnecting';
 export type RoomConnectionStatus = 'idle' | 'joining' | 'offline' | 'online';
 export type EditorSyncStatus = 'active' | 'offline' | 'not-started';

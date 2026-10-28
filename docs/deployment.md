@@ -40,9 +40,12 @@ mail records were left intact. Cached DNS answers may persist until expiry.
 ### Changing the application hostname
 
 When the configured hostname changes, old passkeys may no longer work at the new
-origin. Configure the canonical `APP_ORIGIN` and HTTPS proxy together, restart
-the application with that origin, and use the server console with the same
-database/environment to run `npm run setup -- --recover-admin`. Choose the
+origin. Configure the canonical `APP_ORIGIN` and HTTPS proxy together. Pause and
+stop the application, shut down its supervisor, and use the server console with
+the same database/environment to run `npm run setup -- --recover-admin`. The cold
+CLI refuses the dataset while its supervisor owns it. Restart the supervisor and
+complete [verification, start and resume](maintenance.md#first-startup-and-restart)
+before opening the printed recovery link. Choose the
 existing active admin by `--id` or exact `--name` if there is more than one.
 Open the printed link at the new origin and register a new passkey. Afterward,
 issue recovery invitations for existing members so they enroll on the new
@@ -53,9 +56,13 @@ redeployment timing and external acceptance remain SPN-038.
 
 ### Current private deployment
 
-The Node container binds only `127.0.0.1:3000` on the Linux host. Caddy binds only
-the machine’s Tailscale IPv4 address on TCP 443 and proxies HTTP and WebSockets to
-Node. Caddy requires TLS 1.3, enables HTTP/1.1 and HTTP/2, disables automatic port 80 redirects
+The Node container runs a small supervisor with its application child. The app
+binds only `127.0.0.1:3000` on the Linux host; the independent public maintenance
+service binds `127.0.0.1:3002`. Caddy binds only the machine’s Tailscale IPv4 address
+on TCP 443 and proxies HTTP and WebSockets to the app, with `/api/maintenance`
+routed to the supervisor. If either upstream is unavailable, Caddy serves its own
+fixed 503 page/JSON without database, job, credential or operation details. Caddy
+requires TLS 1.3, enables HTTP/1.1 and HTTP/2, disables automatic port 80 redirects
 and disables its admin listener. There are no Compose published ports. Host
 networking is deliberate so Node can bind actual loopback and Caddy can bind the
 actual Tailscale interface; this configuration requires Linux, not Docker Desktop
@@ -71,14 +78,15 @@ remains private.
 
 Sources: [Docker host networking](https://docs.docker.com/engine/network/drivers/host/),
 [Tailscale’s Caddy integration](https://tailscale.com/docs/integrations/web-servers/caddy/caddy-certificates),
-[Caddy TLS configuration](https://caddyserver.com/docs/caddyfile/directives/tls).
+[Caddy TLS configuration](https://caddyserver.com/docs/caddyfile/directives/tls),
+[Caddy error handlers](https://caddyserver.com/docs/caddyfile/directives/handle_errors).
 
 ## Prepare the host
 
 1. Create the droplet and attach a cloud firewall. During bootstrap, permit SSH
    only from the operator’s current IP. Install Docker Engine with Compose from
    [Docker’s Ubuntu instructions](https://docs.docker.com/engine/install/ubuntu/),
-   Node 24.19.0 at `/usr/local/bin/node`, and `cryptsetup`. Clone the reviewed
+   the Node version in `.nvmrc` at `/usr/local/bin/node`, and `cryptsetup`. Clone the reviewed
    repository into `/opt/spinel`; use an exact reviewed commit for builds.
 2. Install Tailscale using its official Ubuntu instructions and join with an
    owner-created auth key, entered on the server without committing it. Verify
@@ -95,9 +103,12 @@ Sources: [Docker host networking](https://docs.docker.com/engine/network/drivers
    outside the droplet and unlock/mount after a reboot. Never store the unlock
    passphrase in the repository, environment files or on the unencrypted root disk.
    Verify the mounted device’s ancestry with `lsblk` and `cryptsetup status`.
-5. On that mounted volume, create `app/` owned by UID/GID 1000 and `caddy/` owned by
-   UID/GID 10001, mode 0700. SQLite, WAL and shared-memory sidecars live in `app/`;
-   Caddy state lives in `caddy/`. Do not move a live SQLite main file without its
+5. On that mounted volume, create separate `app/` and `recovery/` directories owned
+   by UID/GID 1000 and `caddy/` owned by UID/GID 10001, all mode 0700. SQLite, WAL
+   and shared-memory sidecars live in `app/`; Caddy state lives in `caddy/`.
+   `recovery/` holds the private supervisor journal and control socket, outside
+   the archived workspace and diagnostics. Never restore or replace that journal
+   from a workspace backup. Do not move a live SQLite main file without its
    consistent backup/sidecar handling (see [offsite backups](backups.md)).
 
 ## Configure and start
@@ -118,29 +129,54 @@ if build-time memory competes with the small droplet; transfer/pull the exact
 image and inspect its digest on the host.
 
 Install `deploy/spinel.service` as `/etc/systemd/system/spinel.service` and run
-`systemctl daemon-reload`, then `systemctl enable --now spinel`. The service loads
-the deployment environment and executes the TypeScript preflight before Compose.
+`systemctl daemon-reload`. The service loads the deployment environment and
+executes the TypeScript preflight before Compose.
 Preflight refuses a missing/unmounted/non-LUKS data path, wrong directory owners,
 a mutable image, mismatched tailnet identity or a non-private runtime file.
 Preflight also rejects nested mounts beneath the encrypted root and checks the actual
-backing filesystem for both app and Caddy directories. Compose refuses to create missing data directories. Do not bypass preflight with
+backing filesystem for app, recovery and Caddy directories. Compose refuses to create missing data directories. Do not bypass preflight with
 a direct `docker compose up` during deployment.
 
-The service supervises both containers: a container exit brings down the pair and
-systemd restarts through preflight. Docker restart policies are deliberately off
-so an engine restart cannot bypass the encrypted-mount check. After a host reboot,
-service startup remains blocked until the operator unlocks and mounts the volume.
-Then its next retry starts Spinel. Stop with `systemctl stop spinel` before
-unmounting or locking the volume. No deployment step removes the data directory.
+On the first installation, prepare the database while both app and supervisor
+are stopped. From `/opt/spinel`, with the private deployment environment loaded,
+run `node scripts/deploy/check.ts`, then:
+
+```sh
+docker compose --env-file /etc/spinel/deploy.env -f deploy/compose.yaml run --rm --no-deps app node server/setup.ts
+systemctl enable --now spinel
+docker compose --env-file /etc/spinel/deploy.env -f deploy/compose.yaml exec app node scripts/deploy/maintenance.ts verify
+```
+
+Keep the setup link private. `verify` returns an operation ID; use that exact ID
+with `start --operation UUID` and then `resume --operation UUID` through the same
+`compose exec app node scripts/deploy/maintenance.ts` command. Open the setup link
+after resume. See the [maintenance runbook](maintenance.md) for retries and cold
+recovery. A database that already has an admin uses its existing accounts; do not
+rerun first-admin setup.
+
+The systemd unit starts the two containers detached, leaving Caddy available if
+the supervisor/app container exits. Docker restart policies are deliberately off
+so an engine restart cannot bypass the encrypted-mount check. On every supervisor
+boot, including an ordinary update, service remains in maintenance until the
+Operator explicitly verifies, starts and resumes the same generation. If status
+retains an operation ID, pass it to `verify --operation UUID` as well. After a host
+reboot, unlock and mount the volume, then explicitly run `systemctl restart spinel`
+and the cold commands. `systemctl` showing an active oneshot unit does not prove
+the app container is healthy; check `docker compose ... ps` and maintenance status.
+Stop with `systemctl stop spinel` before unmounting or locking the volume. No
+deployment step removes the data directory.
 
 ## Validate and update
 
-Print the first-admin setup link on the host with
-`docker compose --env-file /etc/spinel/deploy.env -f deploy/compose.yaml exec app node server/setup.ts`.
-Open that one-time link from the tailnet, create the admin passkey, then use Admin
+Open the first-admin setup link prepared during cold bootstrap from the tailnet,
+create the admin passkey, then use Admin
 to invite a separate everyday account. Check passkey sign-in, the certificate, and
 that a TLS 1.2 client fails while TLS 1.3 succeeds. `ss -lntup` should show the app on
-loopback and Caddy only on the Tailscale IP; investigate all other listeners.
+loopback 3000, maintenance on loopback 3002 and Caddy only on the Tailscale IP;
+investigate all other listeners. Stop the app through maintenance and check the
+proxy still serves status. Stop the supervisor container and check the static 503
+page and API response remain available; then restart through preflight and cold
+verification. These target-host checks remain launch acceptance.
 
 From a machine outside the tailnet, scan the public IPv4 address:
 `nmap -Pn -sT -p- IPV4`. Also test public UDP 443 and the Tailscale UDP listener
@@ -154,18 +190,21 @@ scan is not a passing result. No replacement IPv6-check ticket is required.
 
 Before update, note the current image ID and take a verified backup using the
 [offsite backup procedure](backups.md). Build/pull the new reviewed image, update only
-`SPINEL_IMAGE`, and `systemctl restart spinel`. Confirm the same data and passkeys
+`SPINEL_IMAGE`, and `systemctl restart spinel`. Complete the cold verify/start/resume
+sequence above, then confirm the same data and passkeys
 remain. With editors present, keep two editors open and verify reconnection and
 preserved edits. Do not roll back across an incompatible schema migration without
 an explicit data-restore plan; reverting an image alone cannot reverse schema.
 
 Record `docker stats --no-stream` for app/Caddy and `free -m` on the target at idle
 and with two active editors and during PDF export. Current caps are 1 GiB for the
-app (including its PDF child) and 128 MiB for Caddy. The app starts with a 256 MiB
+app container (including the supervisor, app and PDF/verification children) and
+128 MiB for Caddy. The supervisor has a 64 MiB V8 old-generation heap ceiling.
+The app starts with a 256 MiB
 V8 old-generation heap ceiling and an 8 MiB semi-space ceiling; native memory is
-also accounted for by the container and PDF admission checks. The three legacy
-collaboration runtime owners use the SDK's public in-process mode to avoid
-duplicated startup runtimes. See [SPN-075's measured budget decision](implementation/SPN-075.md#deployment-budget-and-portable-fonts).
+also accounted for by the container and PDF admission checks. See
+[SPN-075's measured budget decision](implementation/SPN-075.md#deployment-budget-and-portable-fonts)
+for the earlier deployment measurements; they do not measure the new supervisor.
 These are caps, not proof of target-host headroom. Acceptance still requires
 measured target-host results, including total OS/Tailscale overhead.
 

@@ -195,7 +195,7 @@ export class BackupService {
   /** Run one scheduling decision using the injected clock and real job path. */
   tick(): Promise<void> {
     if (this.ticking) return this.ticking;
-    this.ticking = this.schedule()
+    this.ticking = (this.db.runBackground(() => this.schedule()) ?? Promise.resolve())
       .catch(() => {
         console.error('Recovery scheduler failed; check database availability.');
       })

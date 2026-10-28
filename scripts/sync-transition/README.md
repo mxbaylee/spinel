@@ -7,7 +7,14 @@ There is no assumption that a live production database exists; disposable test
 databases may instead be initialized afresh. Choosing a fresh database does not
 authorize discarding work selected for retention.
 
-Stop the application and keep it stopped throughout this procedure. Preserve its
+Stop the application and its maintenance supervisor, and keep both stopped
+throughout this procedure. The Linux CLI holds the same cold workspace leases as
+the supervisor for every source, bundle and output SQLite file for the whole
+command. An active supervisor refuses export/import even when its child is
+paused or stopped. Do not release a running supervisor's lease by deleting files;
+shut it down through the [maintenance procedure](../../docs/maintenance.md).
+The source remains an offline requirement for direct legacy servers too.
+Preserve its
 encrypted backup and configuration. Use private directories on the same encrypted
 storage normally used for database recovery. The bundle contains private native
 snapshots and a full database copy, including credentials and image bytes.
@@ -57,7 +64,10 @@ snapshots and a full database copy, including credentials and image bytes.
    Test encrypted backup/restore of the converted copy. Retain the original source,
    source-copy bundle, legacy checkout and recovery configuration until these checks
    succeed. Switching the actual configured database remains a separate operator
-   action; this tool does not perform it.
+   action; this tool does not perform it. A supervisor bound to the old generation
+   refuses a replacement database inode. Validate the new copy under a separately
+   configured recovery root; this transition tool does not authorize SPN-112's
+   future assisted activation path.
 
 Each legacy unit is exported through `getUnitLoadDataWithBlocks`,
 `UnitSnapshotMaterializer` and the public native converters. Stored opaque

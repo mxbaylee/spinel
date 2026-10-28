@@ -34,6 +34,9 @@ import { TrashStore, startTrashCleanup } from '../src/server/workspace/trash.ts'
 import { HistoryStore } from '../src/server/history/store.ts';
 import { CollaborationStore } from '../src/server/collaboration/service.ts';
 import { attachSync } from '../src/server/sync/transport.ts';
+import type { MaintenanceBridge } from '../src/shared/maintenance.ts';
+import { MaintenanceGate } from '../src/server/maintenance/gate.ts';
+import { maintenanceRoutes } from '../src/server/maintenance/routes.ts';
 
 export const projectRoot = resolve(import.meta.dirname, '..');
 
@@ -46,9 +49,12 @@ export interface AppOptions {
   image?: string;
   /** Spaces are enabled by default; false explicitly closes every Space boundary. */
   spaceReview?: boolean;
+  /** Only the deployment supervisor can provide live recovery control. */
+  maintenance?: MaintenanceBridge;
 }
 
 export async function createApp(options: AppOptions) {
+  const maintenance = new MaintenanceGate(options.maintenance);
   const database = openDatabase(options.databasePath);
   const app = express();
   app.disable('x-powered-by');
@@ -63,6 +69,8 @@ export async function createApp(options: AppOptions) {
   let purgeTimer: ReturnType<typeof setInterval> | undefined;
   let healthTimer: ReturnType<typeof setInterval> | undefined;
   let diagnostics: DiagnosticsStore | undefined;
+  let unsubscribeMaintenance = () => {};
+  let draining: Promise<void> | undefined;
 
   try {
     diagnostics = new DiagnosticsStore(
@@ -85,6 +93,29 @@ export async function createApp(options: AppOptions) {
     });
     assertSyncTransitionReady(database);
     const auth = new AuthStore(database);
+    app.get('/api/maintenance', (_request, response) => {
+      response.set('Cache-Control', 'no-store').json(maintenance.status);
+    });
+    app.use(
+      '/api/admin/maintenance',
+      maintenanceRoutes(auth, options.maintenance, options.origin ?? 'http://localhost:3000'),
+    );
+    const admit = maintenance.middleware();
+    app.use((request, response, next) => {
+      // Session lookup is read-only, so a paused Operator can still use the
+      // externally authorized control lane. All other application APIs gate
+      // reads too: several reads prepare native data or update auth metadata.
+      if (
+        (request.method === 'GET' && request.path === '/api/auth/session') ||
+        !/^\/(?:api(?:\/|$)|sync-api(?:\/|$)|mcp(?:\/|$)|authorize(?:\/|$)|register(?:\/|$)|token(?:\/|$)|revoke(?:\/|$))/.test(
+          request.path,
+        )
+      ) {
+        next();
+        return;
+      }
+      admit(request, response, next);
+    });
     app.use(
       '/api/auth',
       authRoutes(auth, options.origin ?? 'http://localhost:3000', async () => {
@@ -107,7 +138,7 @@ export async function createApp(options: AppOptions) {
     });
     history = new HistoryStore(workspace, collaboration, () => jobs.begin('history-maintenance'));
     app.use('/mcp', mcpRoutes(workspace, collaboration, origin));
-    realtime = attachSync(server, app, workspace, collaboration, origin);
+    realtime = attachSync(server, app, workspace, collaboration, origin, maintenance);
     // Retired protocol paths must not fall through to the application shell.
     // Stale tabs cannot re-enter a second collaboration backend after cutover.
     app.use(
@@ -162,14 +193,17 @@ export async function createApp(options: AppOptions) {
       new TrashStore(workspace),
       () => jobs.begin('trash-expiry'),
       () => jobs.begin('space-trash-expiry'),
+      (work) => {
+        maintenance.job(work);
+      },
     );
-    await collaboration
-      .purgeDeleted()
-      .catch(() => console.error('Collaboration purge failed; retained generations will retry.'));
+    await (maintenance.job(() => collaboration!.purgeDeleted()) ?? Promise.resolve()).catch(() =>
+      console.error('Collaboration purge failed; retained generations will retry.'),
+    );
     purgeTimer = setInterval(() => {
-      void collaboration!
-        .purgeDeleted()
-        .catch(() => console.error('Collaboration purge failed; retained generations will retry.'));
+      void (maintenance.job(() => collaboration!.purgeDeleted()) ?? Promise.resolve()).catch(() =>
+        console.error('Collaboration purge failed; retained generations will retry.'),
+      );
     }, 60_000);
     purgeTimer.unref();
     backups = new BackupService(database, {
@@ -194,6 +228,8 @@ export async function createApp(options: AppOptions) {
           );
       },
     });
+    database.setMaintenanceGate(maintenance);
+    diagnostics.setMaintenanceGate(maintenance);
     const health = new HealthMonitor({
       applicationPath: options.databasePath,
       diagnosticsPath: diagnostics.path,
@@ -255,7 +291,7 @@ export async function createApp(options: AppOptions) {
         );
     };
     const collectHealth = () => {
-      void sampleHealth().catch(() => {});
+      void (maintenance.job(sampleHealth) ?? Promise.resolve()).catch(() => {});
     };
     collectHealth();
     healthTimer = setInterval(collectHealth, 60_000);
@@ -462,7 +498,29 @@ export async function createApp(options: AppOptions) {
     });
     await backups.start();
     history.start();
+    unsubscribeMaintenance =
+      options.maintenance?.subscribe((status) => {
+        realtime?.maintenance(status);
+        if (status.phase !== 'draining' || draining) return;
+        draining = (async () => {
+          try {
+            await maintenance.drain();
+            database.assertQuiescent();
+            await diagnostics?.drainMaintenance();
+            if (
+              maintenance.status.phase === 'draining' &&
+              maintenance.status.epoch === status.epoch
+            )
+              options.maintenance!.drained(status.epoch);
+          } catch {
+            options.maintenance!.fail('drain-failed');
+          }
+        })().finally(() => {
+          draining = undefined;
+        });
+      }) ?? (() => {});
   } catch (error) {
+    unsubscribeMaintenance();
     stopCleanup();
     clearInterval(purgeTimer);
     clearInterval(healthTimer);
@@ -478,10 +536,18 @@ export async function createApp(options: AppOptions) {
 
   return {
     server,
+    maintenance,
     async close() {
+      unsubscribeMaintenance();
       stopCleanup();
       clearInterval(purgeTimer);
       clearInterval(healthTimer);
+      // No new admission after shutdown begins. Existing leases still own their
+      // writes while the bounded drain runs; stopping sockets is not a drain.
+      maintenance.stopAdmission();
+      await maintenance.drain();
+      database.assertQuiescent();
+      await diagnostics?.drainMaintenance();
       await realtime?.close();
       await vite?.close();
       if (server.listening) {
@@ -492,14 +558,17 @@ export async function createApp(options: AppOptions) {
       }
       await backups?.close();
       await history?.close();
-      await collaboration
-        ?.purgeDeleted()
-        .catch(() =>
-          console.error(
-            'Collaboration purge incomplete; retained generations will retry after startup.',
-          ),
-        );
+      await (
+        maintenance.status.available
+          ? Promise.resolve()
+          : (collaboration?.purgeDeleted() ?? Promise.resolve())
+      ).catch(() =>
+        console.error(
+          'Collaboration purge incomplete; retained generations will retry after startup.',
+        ),
+      );
       await collaboration?.close();
+      maintenance.stop();
       database.close();
       await diagnostics?.close();
     },

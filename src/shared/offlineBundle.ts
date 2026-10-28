@@ -12,6 +12,8 @@ export type OfflineBundleImage = {
 
 type OfflineBundleFields = {
   version: 1;
+  /** Deployment recovery epoch captured with this base; never refreshed over pending work. */
+  maintenanceEpoch?: string;
   accountId: string;
   itemId: string;
   /** Present only for one account-authorized native child of this exact Space. */

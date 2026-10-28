@@ -7,6 +7,7 @@ import { loadConfig } from '../../src/server/backup/config.ts';
 import { createDestination } from '../../src/server/backup/destination.ts';
 import { filesystemIdentity } from '../../src/server/backup/filesystem.ts';
 import { BackupService } from '../../src/server/backup/service.ts';
+import { acquireColdWorkspace } from '../../src/server/maintenance/journal.ts';
 
 const [command, ...args] = process.argv.slice(2);
 try {
@@ -20,6 +21,8 @@ try {
     // Opening read/write must never silently create a new source database.
     const { stat } = await import('node:fs/promises');
     await stat(path);
+    const release =
+      process.platform === 'linux' ? await acquireColdWorkspace(path) : async () => {};
     const db = new DatabaseSync(path);
     db.exec('PRAGMA busy_timeout=5000; PRAGMA foreign_keys=ON');
     const service = new BackupService(db, {
@@ -34,6 +37,7 @@ try {
     } finally {
       await service.close();
       db.close();
+      await release();
     }
     console.log(
       command === 'verify'

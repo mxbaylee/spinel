@@ -1,3 +1,4 @@
+import { maintenanceRouter } from '../maintenance/router.ts';
 import express from 'express';
 import type { Request, Response, NextFunction } from 'express';
 import { AuthError, AuthStore } from '../auth/store.ts';
@@ -29,7 +30,7 @@ export function workspaceRoutes(
   history?: HistoryStore,
   diagnostics?: FormulaDiagnostics,
 ) {
-  const router = express.Router();
+  const router = maintenanceRouter();
   const trash = new TrashStore(store);
   const catalog = new WorkspaceFiles(store);
   const sheets = new SheetStore(store);

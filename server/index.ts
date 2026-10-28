@@ -2,6 +2,10 @@ import { execFile } from 'node:child_process';
 import type { AddressInfo } from 'node:net';
 import { resolve } from 'node:path';
 import { createApp, projectRoot } from './app.ts';
+import { connectMaintenance } from '../src/server/maintenance/supervisor-client.ts';
+import { acquireColdWorkspace } from '../src/server/maintenance/journal.ts';
+import { mkdirSync } from 'node:fs';
+import { dirname } from 'node:path';
 
 const development = process.argv.includes('--dev');
 const port = Number(process.env.PORT ?? 3000);
@@ -9,14 +13,30 @@ if (!Number.isInteger(port) || port < 0 || port > 65535) {
   throw new Error('PORT must be an integer between 0 and 65535.');
 }
 const host = process.env.HOST ?? '127.0.0.1';
+const databasePath = resolve(
+  process.env.DATABASE_PATH ?? resolve(projectRoot, 'data/spinel.sqlite'),
+);
+mkdirSync(dirname(databasePath), { recursive: true });
+const maintenance = process.env.SPINEL_SUPERVISED === '1' ? await connectMaintenance() : undefined;
+// Direct developer servers have no maintenance capability. Their initial lease
+// still prevents booting a second writer while a supervisor owns this dataset.
+const releaseStartup =
+  !maintenance && process.platform === 'linux'
+    ? await acquireColdWorkspace(databasePath)
+    : async () => {};
 const app = await createApp({
+  maintenance,
   development,
   staticDirectory: process.env.SPINEL_STATIC_DIRECTORY,
   backupConfigPath: process.env.BACKUP_CONFIG_PATH,
   image: process.env.SPINEL_IMAGE,
   spaceReview: process.env.SPINEL_SPACE_REVIEW !== '0',
   origin: process.env.APP_ORIGIN ?? `http://localhost:${port}`,
-  databasePath: resolve(process.env.DATABASE_PATH ?? resolve(projectRoot, 'data/spinel.sqlite')),
+  databasePath,
+}).catch(async (error: unknown) => {
+  await releaseStartup();
+  maintenance?.close();
+  throw error;
 });
 
 try {
@@ -29,8 +49,12 @@ try {
   });
 } catch (error) {
   await app.close();
+  await releaseStartup();
+  maintenance?.close();
   throw error;
 }
+maintenance?.ready();
+await releaseStartup();
 
 const address = app.server.address() as AddressInfo;
 const url = process.env.APP_ORIGIN ?? `http://localhost:${address.port}`;
@@ -57,6 +81,8 @@ async function shutdown() {
   } catch (error) {
     console.error(error);
     process.exitCode = 1;
+  } finally {
+    maintenance?.close();
   }
 }
 process.on('SIGINT', shutdown);

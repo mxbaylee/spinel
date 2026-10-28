@@ -1,3 +1,4 @@
+import { maintenanceRouter } from '../maintenance/router.ts';
 import express from 'express';
 import type { Request, Response } from 'express';
 import { AuthError } from '../auth/store.ts';
@@ -42,7 +43,7 @@ export function formulaRoutes(
   itemParam: 'id' | 'itemId' = 'id',
   diagnostics?: FormulaDiagnostics,
 ) {
-  const router = express.Router({ mergeParams: true });
+  const router = maintenanceRouter({ mergeParams: true });
   const formulas = new DocFormulas(workspace, collaboration);
   const hostId = (request: Request) => String(request.params[itemParam]);
   router.use(express.json({ limit: '16kb', strict: true }));

@@ -1,3 +1,4 @@
+import { maintenanceFetch as fetch } from './maintenanceFetch.ts';
 import { documentPath, guestItemId } from './documentAccess.ts';
 import { OfflineSession } from './offline/OfflineSession.ts';
 import { UserManagerService } from '@univerjs/core';

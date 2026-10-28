@@ -43,8 +43,10 @@ adds a supported filesystem destination to build and test the shared workflow
 locally. SPN-063 implements that destination and the recurring isolated verifier
 before deployment; selected-provider and target-host acceptance remain in SPN-038
 before public exposure. Admin separates publication, restore verification and
-offsite coverage. Manual Admin exports, diagnostics expiry, maintenance and
-assisted live restore remain separate work in SPN-109–112; CLI recovery is available.
+offsite coverage. SPN-111 implements [supervised maintenance](maintenance.md) for
+pause, drain and restart of the same dataset. Manual Admin exports, diagnostics
+expiry and assisted live restore remain separate work in SPN-109, SPN-110 and
+SPN-112; fresh-host CLI recovery is available.
 
 ## Current SQLite and Spaces implementation
 
@@ -148,14 +150,16 @@ Operator's ordinary application account cannot open documents.
    recovery copy whenever runtime configuration changes. The Compose package sets
    `SPINEL_IMAGE` from the actual immutable deployed image. Keep `APP_ORIGIN`
    consistent with the canonical hostname; passkeys are tied to its relying party.
-6. Restart through `systemctl restart spinel`. The app catches up a missed night
-   at startup. For an immediate backup, run from `/opt/spinel`:
-
-   ```bash
-   docker compose --env-file /etc/spinel/deploy.env -f deploy/compose.yaml exec app node scripts/deploy/backup.ts run
-   ```
-
-   A shared database lease prevents the CLI and scheduler from overlapping.
+6. Restart through `systemctl restart spinel`, then complete the
+   [cold verify/start/resume sequence](deployment.md#configure-and-start). Jobs
+   remain paused until resume, then the app catches up a missed night. The
+   independent `backup.ts run` and `backup.ts verify` commands refuse a dataset
+   owned by the supervisor, even when its child is stopped. To run either CLI
+   manually, first pause/stop the app and shut down the supervisor, then use a
+   one-off container with the same environment and mounted private paths after
+   preflight. Restart control and verify/start/resume afterward. The cold lease
+   spans the entire CLI database lifetime; the scheduled backup/verification
+   lease also prevents two recovery jobs from overlapping.
    Open Admin and verify a recent **Last successful backup**, with no error.
    Keep the recovery key, bucket/region/prefix and reviewed image location outside
    the droplet. Credentials can be replaced; the encryption key cannot be recovered.
@@ -167,7 +171,9 @@ hour. Weekly verification defaults to Sunday at 03:00 UTC; configure
 `verificationDayUtc` (0 Sunday through 6 Saturday) and `verificationHourUtc`
 (0–23). The app catches up missed backup/verification runs and retries failed
 attempts hourly. A first startup creates a backup and then verifies it in the
-same scheduling cycle. It must be running on an unlocked volume. A restarted process
+same scheduling cycle. In supervised mode this cycle begins only after explicit
+resume; a paused application runs no backup or verification job. It must be
+running on an unlocked volume. A restarted process
 waits up to one hour for an interrupted process's lease to expire. Graceful
 shutdown drains the active job. Backup and verification share the same lease;
 they cannot compete for staging or prune a source during verification. A forced
@@ -244,7 +250,9 @@ directory:
 Set `BACKUP_CONFIG_PATH`, `DATABASE_PATH`, `APP_ORIGIN` and immutable `SPINEL_IMAGE`
 in the app/CLI environment. The existing `run`, `list`, `download` and `restore`
 commands work with this destination; `verify` runs the same isolated check used
-by the scheduler:
+by the scheduler. Stop the application and its supervisor before `run` or `verify`;
+these commands hold the cold dataset lease for their complete database lifetime.
+`list`, `download` and fresh-directory `restore` do not open the live workspace:
 
 ```bash
 node scripts/deploy/backup.ts run
@@ -316,7 +324,9 @@ and follow the fresh-host procedure. New encryption cannot retract plaintext or
 old ciphertext already obtained with a stolen old key. Keep retained backups
 recoverable until their retention expires; if policy requires retiring a key
 earlier, explicitly account for the backups made unreadable. Live session/guest
-reconciliation for assisted activation belongs to SPN-111/112, not this verifier.
+reconciliation when replacing a dataset belongs to SPN-112, not this verifier.
+SPN-111's generation/epoch fencing supports maintenance of the current dataset
+and refuses an unexpected replacement inode.
 
 Sources: [SQLite VACUUM INTO](https://www.sqlite.org/lang_vacuum.html#vacuuminto),
 [DigitalOcean AWS SDK configuration](https://docs.digitalocean.com/products/spaces/reference/aws-sdks/).
@@ -350,8 +360,14 @@ Sources: [SQLite VACUUM INTO](https://www.sqlite.org/lang_vacuum.html#vacuuminto
 3. With the service stopped and no preexisting `app/`, rename `restored/` to `app/`
    and set ownership UID/GID 1000, mode 0700; database and recovery manifest 0600.
    Recreate the backup config/key/runtime recovery copy there. Keep the original
-   encrypted download until verification finishes. Start through the deployment
-   preflight, then sign in with the existing operator and everyday accounts.
+   encrypted download until verification finishes. Prepare a new private
+   `recovery/` directory beside `app/`, owned by UID/GID 1000, mode 0700. Do not
+   copy the old supervisor journal from the failed host or place it inside the
+   restored workspace. Start through deployment preflight, then use this new
+   host's cold authority to verify, start and resume the recovered generation
+   before signing in with the existing operator and everyday accounts. An
+   existing controller refuses a changed database inode; replacing a dataset
+   behind its journal is not a supported live activation procedure.
 4. Verify each document type, image, sharing grant, trash item and existing history
    checkpoint against pre-backup counts/hashes. Include Space child IDs/order,
    Formula bindings, live generations and earlier internal Trash. Confirm a viewer
