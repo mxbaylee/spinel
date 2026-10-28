@@ -553,7 +553,6 @@ export function withScore(text: string, value: number): string {
 export interface Ranked {
   ticket: Ticket;
   score: number;
-  tieBreak: string;
   waiting: string[];
 }
 
@@ -580,23 +579,11 @@ export function rank(tickets: Ticket[], prefix: string): Ranked[] {
     b.k.effort - a.k.effort ||
     a.k.num - b.k.num;
   all.sort(compare);
-  return all.map(({ t, k }, i) => {
-    const next = all[i + 1];
-    let tieBreak = '—';
-    if (next && next.k.phase === k.phase && next.k.score === k.score) {
-      if (k.unblocks.length && !next.k.unblocks.length)
-        tieBreak = `Unblocks ${k.unblocks.join(', ')}`;
-      else if (k.impact !== next.k.impact) tieBreak = 'Higher impact';
-      else if (k.effort !== next.k.effort) tieBreak = 'Larger effort';
-      else tieBreak = 'Lower ID';
-    }
-    return {
-      ticket: t,
-      score: k.score,
-      tieBreak,
-      waiting: [...t.depends_on.filter((d) => ids.has(d)), ...t.upstream_prs],
-    };
-  });
+  return all.map(({ t, k }) => ({
+    ticket: t,
+    score: k.score,
+    waiting: [...t.depends_on.filter((d) => ids.has(d)), ...t.upstream_prs],
+  }));
 }
 
 // ---------- index ----------
@@ -626,8 +613,8 @@ export function renderIndex(backlog: Backlog): string {
   else {
     const phased = tickets.some((t) => t.phase !== 'pre_launch');
     const tableHeader = [
-      '| # | Ticket | Effort | Impact | Score | Tie-break | Waiting on |',
-      '| --- | --- | --- | --- | --- | --- | --- |',
+      '| # | Ticket | Effort | Impact | Score | Waiting on |',
+      '| --- | --- | --- | --- | --- | --- |',
     ];
     out.push(
       phased
@@ -652,7 +639,7 @@ export function renderIndex(backlog: Backlog): string {
         : '—';
       out.push(
         `| ${i + 1} | ${link(t)} | ${EFFORT_EMOJI[t.effort]} ${t.effort} | ${IMPACT_EMOJI[t.impact]} ${t.impact} | ` +
-          `${shown(r)} | ${r.tieBreak} | ${waiting} |`,
+          `${shown(r)} | ${waiting} |`,
       );
     });
   }

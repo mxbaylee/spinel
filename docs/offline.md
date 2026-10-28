@@ -302,9 +302,11 @@ permissions and the separate save status. A health response does not prove that
 an edit reached the server. SPN-042 removes the old banner; see [connection behavior](connection.md)
 and [decision #132](implementation/SPN-042.md#legacy-decision-132-verified-connection-proof-and-stable-presentation). Folders opened online
 are browsable, rows show **Available offline** or **Needs a connection**, and
-anything that would reach the server (New, Import, Search, Trash, sharing, tags,
+anything that would reach the server (Import, Search, Trash, sharing, tags,
 settings for passkeys, version history) is hidden or says it needs a
-connection. A downloaded Sheet or Doc opens in the same open-source native editor
+connection. **New → Sheet / Doc** follows the prepared-account flow
+[above](#creating-a-new-document-offline); other creation still needs a connection.
+A downloaded Sheet or Doc opens in the same open-source native editor
 as its live counterpart, with the durable native sync checkpoint installed before
 new input is captured. Owner/editor downloads are editable; viewer copies remain
 read-only. A Web Lock allows only one writer for each account/item on a device;
@@ -640,6 +642,13 @@ owns these recorded physical-device runs, including install icons and the offlin
 manifest; SPN-055 owns the shared lifecycle, and SPN-052 separately verifies
 ordinary macOS Chrome, Firefox and Safari tabs with browser versions and
 persistence results recorded here.
+
+SPN-090's [BrowserStack CI plan](implementation/SPN-090.md#browserstack-ci-plan)
+uses Automate real mobile browsers and Local from GitHub Actions, with repository
+secrets `BS_USERNAME` and `BS_ACCESS_KEY`. The bounded HTTP infrastructure smoke
+verifies credentials, mobile allocation and runner reachability. Installed-context
+HTTPS/service-worker, Home Screen restart and offline acceptance remain separate,
+uncompleted work; do not infer those passes from a successful tunnel session.
 
 The decisive scenario is: download online, terminate, enable airplane mode, launch
 from the home screen, open/edit each document type, close and reopen offline,

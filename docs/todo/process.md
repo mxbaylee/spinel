@@ -135,8 +135,10 @@ three-phase implementation and persona tradeoffs are recorded in
 
 Within each phase, the highest score comes first, with
 ties going to the ticket that unblocks another, then higher impact, then larger
-effort, then lower ID. Each row shows the tie-break that put it ahead of the
-next. Take the first ticket in the current phase that isn't waiting on an open
+effort, then lower ID. The index shows rank, ticket, effort, impact, score and
+prerequisites; it omits the tie-reason column without changing this ordering.
+Owner, chat 2026-10-27; [index decision](../implementation/grooming-2026-10-27.md#compact-backlog-index).
+Take the first ticket in the current phase that isn't waiting on an open
 `depends_on` or a listed `upstream_prs` prerequisite. Dependency inheritance is unchanged. A
 prerequisite must be in the same or an earlier phase; the checker rejects a
 dependency on later-phase work. SPN-093/094 also name SPN-038 as an explicit
