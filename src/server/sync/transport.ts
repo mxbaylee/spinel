@@ -96,6 +96,7 @@ export function attachSync(
   const dirtyPresence = new Set<string>();
   let presenceScheduled = false;
   let closing = false;
+  let expiryFailed = false;
   const wss = new WebSocketServer({
     noServer: true,
     maxPayload: MAX_MESSAGE_BYTES,
@@ -220,7 +221,37 @@ export function attachSync(
       }
     }
   }
+  function evictScope(itemId: string) {
+    for (const [key, ticket] of tickets) if (ticket.session.rootId === itemId) tickets.delete(key);
+    for (const entry of live)
+      if (entry.session.rootId === itemId)
+        remove(entry, 1008, 'Sharing changed. Reload to continue.');
+  }
   function revalidate() {
+    // Deadline checks already deny every guest boundary. This same transport
+    // tick also fences epochs, clears capabilities and closes idle open views.
+    let cleanupFailed = false;
+    try {
+      for (const candidate of workspace.links.expiring()) {
+        try {
+          const change = workspace.links.beginExpiry(candidate.id);
+          if (!change) continue;
+          evictScope(change.id);
+          workspace.links.finish(change.id, change.epoch, false);
+        } catch {
+          cleanupFailed = true;
+        }
+      }
+    } catch {
+      cleanupFailed = true;
+    }
+    // Never put titles, IDs or raw SQLite failures in operational diagnostics.
+    // Report once per failure episode; the existing tick retries pending fences.
+    if (cleanupFailed && !expiryFailed)
+      console.error(
+        'Guest link expiry cleanup failed; access stays closed and cleanup will retry.',
+      );
+    expiryFailed = cleanupFailed;
     pruneTickets();
     for (const entry of live) {
       try {
@@ -593,12 +624,7 @@ export function attachSync(
     revalidate,
     connectionCount: () => live.size,
     async privacyChanged(itemId: string) {
-      for (const [key, ticket] of tickets)
-        if (ticket.session.rootId === itemId) tickets.delete(key);
-      for (const entry of live)
-        if (entry.session.rootId === itemId) {
-          remove(entry, 1008, 'Sharing changed. Reload to continue.');
-        }
+      evictScope(itemId);
       await revalidate();
     },
     async close() {

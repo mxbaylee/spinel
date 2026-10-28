@@ -358,17 +358,16 @@ sample-data catalogue; publishing it does not approve a production UI migration.
 The owner authorized a temporary sample-data preview for PR #125. Before merge,
 its workflow exception and environment rule `refs/pull/125/merge` (63792144) were
 removed. Normal main Storybook publishing remains enabled and waits for the
-complete visual/interaction review. The catalog retains the approved proposal
-alongside explicitly labeled current-production specimens.
+complete visual/interaction review. The approved proposal remains historical evidence. The current catalog uses
+production components; SPN-066 removes the final pending design example.
 
-## Catalog-wide audit scope
+## Historical catalog-wide audit scope
 
-Every story, including existing empty, loading, disabled and failure variants,
-is included in the CI capture inventory. The sidebar groups unchanged routes
-under **Current production**, preserving their story IDs and tests. **Redesign**
-contains the proposed patterns; **Identity** keeps shared artwork. Existing
-production specimens remain useful before/after evidence, not alternative
-recommendations for new screens.
+The following inventory describes the original SPN-047 proposal review, not
+today’s Storybook navigation. The [current catalog guide](walkthrough.md) lists
+production components, Identity artwork and isolated Native fixtures. SPN-066
+completes the migration and removes the final Redesign example. Historical
+proposal names and captures below preserve the original review provenance.
 
 - AppLayout and Rail converge on one Shell; folders and Trash are content.
   Personal pinning and its UI are removed by owner direction, 2026-10-21. GemLogo, entity icons, social cards and cursor

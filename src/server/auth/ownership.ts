@@ -231,7 +231,7 @@ export class OwnershipTransfer {
         (SELECT id FROM workspace_items WHERE owner_id=?)`,
       ).run(id);
       db.prepare(
-        `UPDATE workspace_links SET state='off',epoch=epoch+1,token_hash=NULL,preview_hash=NULL
+        `UPDATE workspace_links SET state='off',epoch=epoch+1,token_hash=NULL,preview_hash=NULL,enabled_at=NULL,expires_at=NULL
         WHERE item_id IN (SELECT id FROM workspace_items WHERE owner_id=?)`,
       ).run(id);
       // Personal placements never grant content access. Keep valid third-party

@@ -5,7 +5,13 @@ import { SharingAddress } from './SharingAddress.tsx';
 import './sharing.css';
 
 type Role = 'viewer' | 'editor';
-type State = { enabled: boolean; role: Role; url?: string | null };
+type State = {
+  enabled: boolean;
+  role: Role;
+  url?: string | null;
+  expired?: boolean;
+  expiresAt?: number | null;
+};
 type Change = { role: Role | null; replacing: boolean };
 export function ShareLink({
   id,
@@ -61,7 +67,12 @@ export function ShareLink({
       const value = await itemsRequest<State>(`/${id}/link`, 'GET', undefined, verify(request));
       if (request !== generation.current) return;
       // Only a successful creation response may reveal the secret. Never recover it on GET.
-      setState({ enabled: value.enabled, role: value.role });
+      setState({
+        enabled: value.enabled,
+        role: value.role,
+        expired: value.expired,
+        expiresAt: value.expiresAt,
+      });
       setRole(value.role);
       setLoaded(true);
     } catch (cause) {
@@ -196,8 +207,13 @@ export function ShareLink({
           <p className="sp-muted">
             {state.enabled
               ? `Guests can ${state.role === 'editor' ? 'edit' : 'view'}.`
-              : 'Off. Only people with access can open this item.'}
+              : state.expired
+                ? 'Expired. Create a new link to share this item again.'
+                : 'Off. Only people with access can open this item.'}
           </p>
+          {state.enabled && state.expiresAt != null && (
+            <p className="sp-muted">Expires {new Date(state.expiresAt).toLocaleString()}.</p>
+          )}
           {space && (
             <p className="sp-muted">
               Applies to every current and future page and folder in this Space.
