@@ -13,6 +13,7 @@ import { createDestination } from './destination.ts';
 import { BackupService } from './service.ts';
 import type { BackupConfig } from './config.ts';
 import * as verification from './verification.ts';
+import * as archives from './archive.ts';
 import { RecoveryResourceError } from './resource-error.ts';
 
 const cleanups: Array<() => unknown | Promise<unknown>> = [];
@@ -154,6 +155,128 @@ test('actual scheduling publishes and verifies encrypted local archives, catches
     [],
   );
 }, 60_000);
+
+test.each(['backup', 'verification'] as const)(
+  '%s results retain their captured Spaces destination when catalog refresh changes deployment policy',
+  async (kind) => {
+    const f = await fixture();
+    const config = {
+      type: 'spaces' as const,
+      prefix: 'destination-a',
+      region: 'nyc3',
+      bucket: 'recovery-fixture',
+      accessKeyId: 'fixture',
+      secretAccessKey: 'fixture-secret',
+      keyFile: f.keyFile,
+      runtimeEnvironmentFile: f.config.runtimeEnvironmentFile,
+      keyId: 'first',
+    };
+    await writeFile(f.configPath, JSON.stringify(config), { mode: 0o600 });
+    let entered!: () => void, release!: () => void;
+    const pending = new Promise<void>((resolve) => { release = resolve; });
+    const started = new Promise<void>((resolve) => { entered = resolve; });
+    // This test isolates destination attribution. The existing service tests
+    // separately exercise real isolated restore; no verifier budget is bypassed.
+    if (kind === 'verification')
+      vi.spyOn(verification, 'verifyArchive').mockResolvedValue({
+        tables: 1, rows: 1, snapshots: 0, images: 0, keyId: 'first',
+      });
+    const service = new BackupService(f.db, {
+      ...f.options,
+      remote(current) {
+        const key = `${current.prefix}/2026-10-25T02-00-00.000Z-00000000-0000-4000-8000-000000000000.spinel`;
+        return {
+          async put() { entered(); await pending; },
+          async list() { return [key]; },
+          async remove() {},
+          async download(_key, destination) {
+            entered(); await pending;
+            await writeFile(destination, 'opaque verifier fixture', { mode: 0o600 });
+            return 'fixture';
+          },
+        };
+      },
+    });
+    cleanups.push(() => service.close());
+    const operation = kind === 'backup' ? service.run() : service.verify();
+    try {
+      await started;
+      await writeFile(f.configPath, JSON.stringify({ ...config, prefix: 'destination-b' }), { mode: 0o600 });
+      await service.exports.catalog();
+      release();
+      expect(await operation).toBe(true);
+      // Both destinations have the same provider type; provider equality cannot
+      // turn an operation against A into protection or verification of B.
+      expect(service.status().destination).toBe('spaces');
+      if (kind === 'backup')
+        expect(service.status()).toMatchObject({ lastGood: null, offsite: false });
+      else expect(service.status().verification.lastGood).toBeNull();
+      await writeFile(f.configPath, JSON.stringify(config), { mode: 0o600 });
+      await service.exports.catalog();
+      if (kind === 'backup')
+        expect(service.status()).toMatchObject({ lastGood: f.options.now(), offsite: true });
+      else expect(service.status().verification.lastGood).toBe(f.options.now());
+    } finally {
+      release();
+      await operation;
+    }
+  },
+);
+
+test('overlapping configuration validation returns its own policy and an older read cannot replace current readiness', async () => {
+  const f = await fixture();
+  const config = {
+    type: 'spaces' as const,
+    prefix: 'destination-a',
+    region: 'nyc3',
+    bucket: 'recovery-fixture',
+    accessKeyId: 'fixture',
+    secretAccessKey: 'fixture-secret',
+    keyFile: f.keyFile,
+    runtimeEnvironmentFile: f.config.runtimeEnvironmentFile,
+    keyId: 'first',
+  };
+  const invalidKey = join(f.directory, 'invalid-key');
+  await writeFile(invalidKey, 'invalid key', { mode: 0o600 });
+  await writeFile(f.configPath, JSON.stringify(config), { mode: 0o600 });
+  let entered!: () => void, release!: () => void;
+  const pending = new Promise<void>((resolve) => { release = resolve; });
+  const started = new Promise<void>((resolve) => { entered = resolve; });
+  const readKey = archives.readKey;
+  vi.spyOn(archives, 'readKey').mockImplementationOnce(async (path) => {
+    entered(); await pending; return readKey(path);
+  });
+  const used: string[] = [];
+  const service = new BackupService(f.db, {
+    ...f.options,
+    remote(current) {
+      return {
+        async put() { used.push(current.prefix); },
+        async list() { return []; },
+        async remove() {},
+      };
+    },
+  });
+  cleanups.push(() => service.close());
+  const operation = service.run();
+  try {
+    await started;
+    await writeFile(f.configPath, JSON.stringify({
+      ...config, prefix: 'destination-b', keyFile: invalidKey, keyId: 'second',
+    }), { mode: 0o600 });
+    await service.exports.catalog();
+    expect(service.status()).toMatchObject({ keyId: 'second', policy: { manualReady: false } });
+    release();
+    expect(await operation).toBe(true);
+    expect(used).toEqual(['destination-a']);
+    expect(service.status()).toMatchObject({
+      keyId: 'second', lastGood: null, offsite: false, policy: { manualReady: false },
+    });
+  } finally {
+    release();
+    await operation;
+  }
+});
 
 test('failed newest recovery retains source and last success; old and new keys remain verifiable after rotation', async () => {
   const f = await fixture();

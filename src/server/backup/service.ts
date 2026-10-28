@@ -2,9 +2,9 @@ import { createHash, randomUUID } from 'node:crypto';
 import { chmod, lstat, mkdtemp, readdir, rm } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import type { DatabaseSync } from '../../../server/database.ts';
-import { makeArchive, privateFile, readKey } from './archive.ts';
+import { makeArchive, privateFile, readKey, validateRecovery } from './archive.ts';
 import type { Recovery } from './archive.ts';
-import { loadConfig } from './config.ts';
+import { hasDestination, loadConfig } from './config.ts';
 import type { BackupConfig } from './config.ts';
 import { createDestination } from './destination.ts';
 import type { RemoteStore } from './destination.ts';
@@ -13,6 +13,8 @@ import { verifyArchive } from './verification.ts';
 import { RecoveryResourceError } from './resource-error.ts';
 import { observeJob } from '../health/jobs.ts';
 import type { ObserveJob } from '../health/jobs.ts';
+import { ExportJobs } from './export-jobs.ts';
+import { MAX_ARCHIVE_BYTES } from './transfer.ts';
 
 const HOUR = 60 * 60_000;
 const BACKUP_FAILURE =
@@ -26,7 +28,7 @@ interface State {
   error: string | null;
   lease: number;
   owner: string | null;
-  job: Job | null;
+  job: Job | 'export' | null;
   publication_identity: string | null;
   publication_destination: string | null;
   publication_key_id: string | null;
@@ -55,7 +57,9 @@ function destinationIdentity(config: BackupConfig) {
   const destination =
     config.type === 'filesystem'
       ? ['filesystem', config.root, config.rootDevice, config.rootInode, config.prefix]
-      : ['spaces', config.region, config.bucket, config.prefix];
+      : hasDestination(config)
+        ? [config.type ?? 'spaces', config.region, config.bucket, config.prefix]
+        : ['manual', config.prefix];
   // Credential rotation preserves existing points in the same destination.
   return createHash('sha256').update(JSON.stringify(destination)).digest('hex');
 }
@@ -77,12 +81,17 @@ export class BackupService {
   now: () => number;
   active?: Promise<boolean>;
   timer?: ReturnType<typeof setInterval>;
+  readonly exports: ExportJobs;
   private activeJob?: Job;
   private config?: BackupConfig;
+  private configGeneration = 0;
   private configError: string | null = null;
   private identity?: string;
   private closing = false;
   private ticking?: Promise<void>;
+  private manualReady = false;
+  private manualUnavailable =
+    'Configure a recovery key and application image on the server to download a workspace backup.';
 
   constructor(db: DatabaseSync, options: BackupOptions) {
     this.db = db;
@@ -110,6 +119,7 @@ export class BackupService {
       error TEXT, lease INTEGER NOT NULL DEFAULT 0, owner TEXT,
       backup_key TEXT, key_id TEXT, identity TEXT
     ) STRICT; INSERT OR IGNORE INTO verification_state (id) VALUES (1);`);
+    this.exports = new ExportJobs(db, { ...options, configuration: () => this.configuration() });
   }
   state() {
     return this.db.prepare('SELECT * FROM backup_state WHERE id=1').get() as unknown as State;
@@ -121,16 +131,52 @@ export class BackupService {
   }
   private async configuration() {
     if (!this.options.configPath) throw new Error('Backup is not configured.');
+    const generation = ++this.configGeneration;
     try {
-      this.config = await loadConfig(this.options.configPath);
-      this.identity = destinationIdentity(this.config);
-      this.configError = null;
-      return this.config;
+      // A caller owns the configuration it read. Another request may reload
+      // deployment policy while this one is checking private recovery files.
+      const config = await loadConfig(this.options.configPath);
+      const identity = destinationIdentity(config);
+      let manualReady = false;
+      let manualUnavailable =
+        config.manualDownload === false
+          ? 'Workspace downloads are disabled by deployment policy.'
+          : 'Check the private recovery key, runtime configuration and application image on the server.';
+      if (config.manualDownload !== false) {
+        try {
+          await readKey(config.keyFile);
+          validateRecovery({
+            format: 1,
+            createdAt: new Date(this.now()).toISOString(),
+            origin: this.options.origin,
+            image: this.options.image ?? '',
+            runtimeEnvironment: (await privateFile(config.runtimeEnvironmentFile)).toString(),
+            keyId: config.keyId ?? 'default',
+          });
+          manualReady = true;
+          manualUnavailable = '';
+        } catch {
+          /* Policy remains visible, but unusable recovery prerequisites do not look ready. */
+        }
+      }
+      // A slower, older read must not replace the latest request's status.
+      if (generation === this.configGeneration) {
+        this.config = config;
+        this.identity = identity;
+        this.configError = null;
+        this.manualReady = manualReady;
+        this.manualUnavailable = manualUnavailable;
+      }
+      return config;
     } catch {
-      this.config = undefined;
-      this.identity = undefined;
-      this.configError =
-        'Backup configuration could not be read. Check its private file and supported settings.';
+      if (generation === this.configGeneration) {
+        this.config = undefined;
+        this.identity = undefined;
+        this.manualReady = false;
+        this.manualUnavailable = 'Check the private backup configuration on the server.';
+        this.configError =
+          'Backup configuration could not be read. Check its private file and supported settings.';
+      }
       throw new Error('Invalid backup configuration.');
     }
   }
@@ -143,11 +189,10 @@ export class BackupService {
     const lastGood = matching ? state.last_good : null;
     const verificationGood =
       !this.identity || verification.identity === this.identity ? verification.last_good : null;
-    const destination = this.config
-      ? this.config.type === 'filesystem'
-        ? 'filesystem'
-        : 'spaces'
-      : null;
+    const destination =
+      this.config && hasDestination(this.config) ? (this.config.type ?? 'spaces') : null;
+    const automatic =
+      !!this.config && hasDestination(this.config) && this.config.automatic !== false;
     return {
       configured,
       destination,
@@ -155,18 +200,27 @@ export class BackupService {
         destination === 'spaces' &&
         matching &&
         !!lastGood &&
-        state.publication_destination === 'spaces',
+        state.publication_destination === destination,
+      policy: {
+        automatic,
+        manualDownload: !!this.config && this.config.manualDownload !== false,
+        manualReady: this.manualReady,
+        manualUnavailable: this.manualReady ? null : this.manualUnavailable,
+        backupHourUtc: this.config?.backupHourUtc ?? 2,
+        retention: { daily: 7, weekly: 4, monthly: 6 },
+        maxArchiveBytes: MAX_ARCHIVE_BYTES,
+      },
       keyId: this.config?.keyId ?? null,
       lastAttempt: state.last_attempt,
       lastGood,
-      running: state.lease > now && state.job !== 'verify',
+      running: state.lease > now && state.job !== 'verify' && state.job !== 'export',
       error:
         this.configError ??
         state.error ??
-        (state.owner && state.job !== 'verify' && state.lease <= now
+        (state.owner && state.job !== 'verify' && state.job !== 'export' && state.lease <= now
           ? 'The previous backup was interrupted. A retry is due.'
           : null),
-      overdue: configured && (!lastGood || now - lastGood > 26 * HOUR),
+      overdue: automatic && (!lastGood || now - lastGood > 26 * HOUR),
       verification: {
         lastAttempt: verification.last_attempt,
         lastGood: verificationGood,
@@ -176,7 +230,7 @@ export class BackupService {
           (state.owner && state.job === 'verify' && state.lease <= now
             ? 'The previous recovery verification was interrupted. A retry is due.'
             : null),
-        overdue: configured && (!verificationGood || now - verificationGood > 8 * 24 * HOUR),
+        overdue: automatic && (!verificationGood || now - verificationGood > 8 * 24 * HOUR),
         keyId: verification.key_id,
         lastBackup: verification.backup_key,
       },
@@ -184,7 +238,9 @@ export class BackupService {
   }
 
   async start() {
-    if (!this.options.configPath || this.timer || this.closing) return;
+    if (this.timer || this.closing) return;
+    await this.exports.start();
+    if (!this.options.configPath) return;
     // Configuration errors remain visible and retryable; they do not stop the app.
     await this.configuration().catch(() => {});
     if (this.timer || this.closing) return;
@@ -206,6 +262,10 @@ export class BackupService {
   }
   private async schedule() {
     if (!this.options.configPath || this.active || this.closing) return;
+    // Deployment changes are effective at the next scheduling decision, including
+    // disabling automatic jobs without making manual recovery unavailable.
+    const config = await this.configuration().catch(() => undefined);
+    if (!config || !hasDestination(config) || config.automatic === false) return;
     const state = this.state(),
       now = this.now();
     if (state.lease > now) return;
@@ -316,7 +376,9 @@ export class BackupService {
     heartbeat.unref();
     try {
       const config = await this.configuration();
+      const identity = destinationIdentity(config);
       this.requireLease(owner);
+      if (!hasDestination(config)) throw new Error('An automatic destination is not configured.');
       remote = this.options.remote?.(config) ?? createDestination(config);
       await remote.cleanup?.(signal);
       // The shared lease excludes both publication and verification. Only this
@@ -341,7 +403,9 @@ export class BackupService {
           runtimeEnvironment: (await privateFile(config.runtimeEnvironmentFile)).toString(),
           keyId: config.keyId ?? 'default',
         };
-        archive = await makeArchive(this.db, directory, await readKey(config.keyFile), recovery);
+        archive = await makeArchive(this.db, directory, await readKey(config.keyFile), recovery, {
+          signal,
+        });
         const key = `${config.prefix}/${recovery.createdAt.replaceAll(':', '-')}-${randomUUID()}.spinel`;
         this.requireLease(owner);
         await remote.put(key, archive.archive, archive.sha256, signal);
@@ -353,8 +417,8 @@ export class BackupService {
           )
           .run(
             this.now(),
-            this.identity!,
-            config.type === 'filesystem' ? 'filesystem' : 'spaces',
+            identity,
+            config.type ?? 'spaces',
             config.keyId ?? 'default',
             owner,
           );
@@ -411,7 +475,7 @@ export class BackupService {
           .prepare(
             'UPDATE verification_state SET last_good=?, key_id=?, identity=? WHERE id=1 AND owner=?',
           )
-          .run(this.now(), verifiedKey, this.identity!, owner);
+          .run(this.now(), verifiedKey, identity, owner);
       }
       success = true;
     } catch (error) {
@@ -467,6 +531,7 @@ export class BackupService {
   async close() {
     this.closing = true;
     clearInterval(this.timer);
+    await this.exports.close();
     await this.ticking;
     await this.active;
   }

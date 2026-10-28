@@ -43,8 +43,83 @@ adds a supported filesystem destination to build and test the shared workflow
 locally. SPN-063 implements that destination and the recurring isolated verifier
 before deployment; selected-provider and target-host acceptance remain in SPN-038
 before public exposure. Admin separates publication, restore verification and
-offsite coverage. Manual Admin exports, diagnostics expiry, maintenance and
-assisted live restore remain separate work in SPN-109–112; CLI recovery is available.
+offsite coverage. SPN-109 adds encrypted Admin downloads and deployment-owned
+backup policy for local storage and DigitalOcean Spaces. AWS S3 is a separate
+[post-production feature request](todo/SPN-114.md). Diagnostics expiry,
+maintenance and assisted live restore remain SPN-110–112; CLI recovery is available.
+
+## Deployment policy and manual downloads
+
+The server's private `BACKUP_CONFIG_PATH` file owns policy and credentials. Admin
+shows effective safe values; browser requests never choose filesystem paths,
+database names, SQL, provider endpoints or secret values. The fixed backup dataset
+is `workspace`. The separate diagnostics download, live retention and document
+history retain their independent policies.
+
+New configuration files should declare `"version": 1`. They default automatic
+backup and recurring verification **off**; enable them explicitly with
+`"automatic": true` when a supported destination is ready. Existing unversioned
+filesystem and Spaces files preserve their automatic schedule. `manualDownload`
+defaults true and can be disabled by deployment. Disabling it prevents delivery
+of an already prepared archive too. Unknown new-policy fields are rejected.
+
+For manual-only use, supply a private 32-byte recovery key and the current runtime
+environment file, both on the encrypted application volume. The application still
+needs a valid immutable `SPINEL_IMAGE` reference and canonical origin. No cloud
+credentials or destination directory are required:
+
+```json
+{
+  "version": 1,
+  "type": "manual",
+  "dataset": "workspace",
+  "prefix": "example-instance",
+  "keyFile": "/data/backup.key",
+  "keyId": "workspace-2026-01",
+  "runtimeEnvironmentFile": "/data/recovery-runtime.env",
+  "manualDownload": true
+}
+```
+
+The configuration and runtime environment files are capped at 1 MiB and must be
+private regular files; the recovery key is exactly 32 bytes. Keep a separate
+recoverable copy of the key. Its identifier may appear in Admin; the key itself
+is never part of the download or returned to the browser.
+
+In **Admin → Backups & health**, choose **Prepare workspace backup**, confirm
+with an Operator passkey, then choose **Download encrypted backup** when ready.
+The browser's normal download manager receives a `.spinel` archive. A fresh
+passkey proof lasts five minutes; preparation that outlasts it requires another
+verification before delivery. A successful browser handoff does not prove that
+the file was retained, copied offsite or restored successfully.
+
+Only the initiating cookie session can see, cancel or receive its job. Returning
+to that session can recover the current job; signing out does not transfer it
+to a later session. Preparation lasts at most 30 minutes. A ready archive is
+available for ten minutes; delivery has its own ten-minute limit. **Cancel backup**
+or **Cancel delivery** removes the staged copy. Expiry, disconnected downloads,
+lost access, shutdown and dead-process restart cleanup remove it as well. Only
+one export, publication or verification job can hold the recovery lease at once.
+
+**Previously saved backups** lists complete artifacts from the configured
+filesystem or Spaces destination. Selection uses an opaque ID. The server holds
+the selected point against retention and checks encrypted authentication,
+inventory, origin and the configured current/retained key before delivery. Old
+application image references remain downloadable for independent recovery; no
+workspace is activated by this action.
+
+Creation refuses a logical SQLite source larger than 8 GiB; encrypted archives
+remain capped at 5 GiB. Encryption and delivery stream bounded chunks with disk
+reserve checks. Staging is private and database-specific. Routine backup does
+not pause edits for the entire job; the consistent SQLite copy remains
+synchronous, so target-host save-interference measurements are still required.
+
+For automatic local operation, add `"version": 1, "automatic": true` to the
+[filesystem configuration](#filesystem-destination-for-local-operation). For
+automatic DigitalOcean operation, add those fields to the existing Spaces
+configuration below. Retention remains seven daily, four weekly and six monthly
+calendar windows. A local publication and a manual download do not establish
+offsite recovery. See [the implementation decisions](implementation/SPN-109.md).
 
 ## Current SQLite and Spaces implementation
 
@@ -167,10 +242,11 @@ hour. Weekly verification defaults to Sunday at 03:00 UTC; configure
 `verificationDayUtc` (0 Sunday through 6 Saturday) and `verificationHourUtc`
 (0–23). The app catches up missed backup/verification runs and retries failed
 attempts hourly. A first startup creates a backup and then verifies it in the
-same scheduling cycle. It must be running on an unlocked volume. A restarted process
+same scheduling cycle when automatic policy is enabled. It must be running on an unlocked volume. A restarted process
 waits up to one hour for an interrupted process's lease to expire. Graceful
 shutdown drains the active job. Backup and verification share the same lease;
-they cannot compete for staging or prune a source during verification. A forced
+they cannot compete for staging or prune a source during verification or an active
+selected-artifact download. A forced
 stop leaves private staging on encrypted storage. The next lease holder reconciles
 only generated, private `.recovery-job-*` directories owned by this service. Old
 standalone `.backup-*`/`.restore-*` directories require inspection while no recovery
@@ -178,8 +254,9 @@ command is running; never remove the live database or sidecars.
 
 A streaming upload uses a `.pending` object, downloads it to verify SHA-256,
 then publishes it with a server-side copy. Unverified pending objects are never
-retention candidates or restore choices. If interrupted, they may remain: remove
-abandoned pending objects after checking no job is running. Only after publishing
+retention candidates or restore choices. Failed transfers try bounded cleanup;
+the next exclusive job reconciles recognized abandoned pending objects in this
+instance's prefix. Only after publishing
 a good backup does the job prune recognized backup filenames in its own prefix.
 No automatic bucket-wide deletion occurs. Uploads above 5 GiB fail visibly; add
 multipart support before the encrypted backup reaches that limit.

@@ -91,7 +91,7 @@ export function AdminPage({ currentId }: { currentId: string }) {
           {section === 'health' && (
             <section className="admin-health" aria-label="Backups & health">
               <h2>Backups &amp; health</h2>
-              <BackupStatus />
+              <BackupStatus currentId={currentId} />
               <ServerHealth />
               <AdminDiagnostics onBusyChange={setBusy} />
             </section>

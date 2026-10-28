@@ -26,6 +26,7 @@ const config = {
   keyFile: '/private/key',
   runtimeEnvironmentFile: '/private/runtime',
 };
+const artifact = () => `test/2026-10-27T02-00-00.000Z-${randomUUID()}.spinel`;
 async function fixture() {
   const directory = await mkdtemp(join(tmpdir(), 'spinel-spaces-'));
   cleanups.push(() => rm(directory, { recursive: true, force: true }));
@@ -39,7 +40,7 @@ async function fixture() {
 test('Spaces publishes only after verified readback, sets private ACLs, then removes pending object', async () => {
   const f = await fixture(),
     calls: string[] = [],
-    key = 'test/backup.spinel';
+    key = artifact();
   vi.spyOn(f.remote.client, 'send').mockImplementation(async (command) => {
     calls.push(command.constructor.name);
     if (command instanceof PutObjectCommand) {
@@ -58,7 +59,7 @@ test('Spaces publishes only after verified readback, sets private ACLs, then rem
     } else if (command instanceof CopyObjectCommand) {
       expect(command.input).toMatchObject({
         Key: key,
-        CopySource: `${config.bucket}/test%2Fbackup.spinel.pending`,
+        CopySource: `${config.bucket}/${encodeURIComponent(`${key}.pending`)}`,
         ACL: 'private',
       });
     } else if (command instanceof DeleteObjectCommand)
@@ -74,7 +75,7 @@ test('Spaces publishes only after verified readback, sets private ACLs, then rem
     'DeleteObjectCommand',
   ]);
 });
-test('readback mismatch never publishes or deletes a backup', async () => {
+test('readback mismatch never publishes and removes only its pending object', async () => {
   const f = await fixture(),
     calls: string[] = [];
   vi.spyOn(f.remote.client, 'send').mockImplementation(async (command) => {
@@ -85,24 +86,33 @@ test('readback mismatch never publishes or deletes a backup', async () => {
     }
     if (command instanceof GetObjectCommand)
       return { Body: Readable.from([Buffer.alloc(f.bytes.length, 0x78)]) };
-    throw new Error('No copy or deletion allowed');
+    if (command instanceof DeleteObjectCommand) {
+      expect(command.input.Key).toMatch(/\.spinel\.pending$/);
+      return {};
+    }
+    throw new Error('No publication allowed');
   });
-  await expect(
-    f.remote.put('test/backup.spinel', f.path, f.hash, AbortSignal.timeout(1000)),
-  ).rejects.toThrow('checksum');
-  expect(calls).toEqual(['PutObjectCommand', 'GetObjectCommand']);
+  await expect(f.remote.put(artifact(), f.path, f.hash, AbortSignal.timeout(1000))).rejects.toThrow(
+    'checksum',
+  );
+  expect(calls).toEqual(['PutObjectCommand', 'GetObjectCommand', 'DeleteObjectCommand']);
 });
 test('listing follows every continuation page and fails closed on incomplete/error pages', async () => {
   const f = await fixture();
+  const first = artifact(),
+    second = artifact();
   const send = vi.spyOn(f.remote.client, 'send').mockImplementation(async (command) => {
     expect(command).toBeInstanceOf(ListObjectsV2Command);
     const input = (command as ListObjectsV2Command).input;
     expect(input.Prefix).toBe('test/');
     return input.ContinuationToken
-      ? { Contents: [{ Key: 'test/second' }], IsTruncated: false }
-      : { Contents: [{ Key: 'test/first' }], IsTruncated: true, NextContinuationToken: 'next' };
+      ? {
+          Contents: [{ Key: second }, { Key: `${second}.pending` }, { Key: 'other/unknown' }],
+          IsTruncated: false,
+        }
+      : { Contents: [{ Key: first }], IsTruncated: true, NextContinuationToken: 'next' };
   });
-  expect(await f.remote.list(AbortSignal.timeout(1000))).toEqual(['test/first', 'test/second']);
+  expect(await f.remote.list(AbortSignal.timeout(1000))).toEqual([first, second]);
   send.mockImplementation(async () => ({ IsTruncated: true }));
   await expect(f.remote.list(AbortSignal.timeout(1000))).rejects.toThrow('Incomplete');
   send.mockRejectedValue(new Error('network failure'));
@@ -159,9 +169,13 @@ test.each(['truncated', 'oversized', 'aborted'] as const)(
           ...(mode === 'oversized' && { ContentLength: 5 * 1024 ** 3 + 1 }),
         };
       }
-      throw new Error('No publication or deletion allowed');
+      if (command instanceof DeleteObjectCommand) {
+        expect(command.input.Key).toMatch(/\.spinel\.pending$/);
+        return {};
+      }
+      throw new Error('No publication allowed');
     });
-    const operation = f.remote.put('test/backup.spinel', f.path, f.hash, controller.signal);
+    const operation = f.remote.put(artifact(), f.path, f.hash, controller.signal);
     if (mode === 'oversized')
       await expect(operation).rejects.toMatchObject({
         name: 'RecoveryResourceError',
@@ -170,7 +184,7 @@ test.each(['truncated', 'oversized', 'aborted'] as const)(
     else if (mode === 'truncated') await expect(operation).rejects.toThrow('incomplete');
     else await expect(operation).rejects.toThrow();
     expect(body.destroyed).toBe(true);
-    expect(calls).toEqual(['PutObjectCommand', 'GetObjectCommand']);
+    expect(calls).toEqual(['PutObjectCommand', 'GetObjectCommand', 'DeleteObjectCommand']);
   },
 );
 
@@ -191,8 +205,85 @@ test('catalog bounds apply across pages and cancellation prevents another listin
   const controller = new AbortController();
   send.mockClear().mockImplementation(async () => {
     controller.abort();
-    return { Contents: [{ Key: 'test/first' }], IsTruncated: true, NextContinuationToken: 'next' };
+    return { Contents: [{ Key: artifact() }], IsTruncated: true, NextContinuationToken: 'next' };
   });
   await expect(f.remote.list(controller.signal)).rejects.toThrow();
   expect(send).toHaveBeenCalledTimes(1);
+});
+
+test('restart cleanup removes only recognized pending keys after a complete bounded listing', async () => {
+  const f = await fixture(),
+    complete = artifact(),
+    pending = `${artifact()}.pending`,
+    foreign = pending.replace('test/', 'other/');
+  const removed: string[] = [];
+  const send = vi.spyOn(f.remote.client, 'send').mockImplementation(async (command) => {
+    if (command instanceof ListObjectsV2Command)
+      return {
+        Contents: [complete, pending, foreign, 'test/operator.pending'].map((Key) => ({ Key })),
+      };
+    if (command instanceof DeleteObjectCommand) {
+      removed.push(command.input.Key!);
+      return {};
+    }
+    throw new Error('Unexpected operation');
+  });
+  expect(await f.remote.list(AbortSignal.timeout(1000))).toEqual([complete]);
+  await f.remote.cleanup(AbortSignal.timeout(1000));
+  expect(removed).toEqual([pending]);
+  send.mockImplementation(async (command) => {
+    if (command instanceof ListObjectsV2Command) {
+      if (command.input.ContinuationToken) throw new Error('Listing interrupted');
+      return { Contents: [{ Key: pending }], IsTruncated: true, NextContinuationToken: 'next' };
+    }
+    throw new Error('Deletion must wait for the entire catalog');
+  });
+  await expect(f.remote.cleanup(AbortSignal.timeout(1000))).rejects.toThrow('Listing interrupted');
+  expect(removed).toEqual([pending]);
+});
+
+test('Spaces signs requests for its pinned endpoint and ignores generic endpoint overrides', async () => {
+  vi.stubEnv('AWS_ENDPOINT_URL_S3', 'https://untrusted.invalid');
+  cleanups.push(() => vi.unstubAllEnvs());
+  const f = await fixture();
+  const handler = vi
+    .spyOn(f.remote.client.config.requestHandler, 'handle')
+    .mockImplementation(async (request) => {
+      expect(request.hostname).toBe('test-bucket.sfo3.digitaloceanspaces.com');
+      expect(request.protocol).toBe('https:');
+      expect(request.headers.authorization).toContain('/us-east-1/s3/aws4_request');
+      return {
+        response: {
+          statusCode: 200,
+          headers: { 'content-length': String(f.bytes.length) },
+          body: Readable.from([f.bytes]),
+        },
+      };
+    });
+  const result = await f.remote.client.send(
+    new GetObjectCommand({ Bucket: config.bucket, Key: artifact() }),
+  );
+  expect(await result.Body!.transformToByteArray()).toEqual(new Uint8Array(f.bytes));
+  expect(handler).toHaveBeenCalledTimes(1);
+});
+
+test('destination operations reject foreign, incomplete and arbitrary artifact keys before transport', async () => {
+  const f = await fixture(),
+    send = vi.spyOn(f.remote.client, 'send');
+  for (const key of [
+    '../outside',
+    artifact().replace('test/', 'other/'),
+    `${artifact()}.pending`,
+  ]) {
+    await expect(f.remote.put(key, f.path, f.hash, AbortSignal.timeout(1000))).rejects.toThrow(
+      'instance prefix',
+    );
+    await expect(
+      f.remote.download(key, `${f.path}-bad`, AbortSignal.timeout(1000)),
+    ).rejects.toThrow('instance prefix');
+  }
+  await expect(
+    f.remote.remove('other/operator.pending', AbortSignal.timeout(1000)),
+  ).rejects.toThrow('instance prefix');
+  expect(send).not.toHaveBeenCalled();
 });
