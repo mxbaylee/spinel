@@ -8,6 +8,7 @@ import {
   open,
   rename,
   rm,
+  stat,
   statfs,
   writeFile,
 } from 'node:fs/promises';
@@ -18,6 +19,7 @@ import { Transform } from 'node:stream';
 import { createGzip, createGunzip } from 'node:zlib';
 import { verifyInventory, writeInventory } from './inventory.ts';
 import { RecoveryResourceError } from './resource-error.ts';
+import { MAX_ARCHIVE_BYTES } from './transfer.ts';
 
 const MAGIC = Buffer.from('SPINEL01');
 const HEADER_SIZE = 20;
@@ -45,19 +47,30 @@ export function validateRecovery(value: unknown): asserts value is Recovery {
   )
     throw new Error('Invalid recovery metadata.');
 }
-export async function privateFile(path: string) {
+export async function privateFile(path: string, maximum = 1024 * 1024) {
   const handle = await open(path, constants.O_RDONLY | constants.O_NOFOLLOW);
   try {
     const info = await handle.stat();
     if (!info.isFile() || (info.mode & 0o077) !== 0)
       throw new Error('Secret file must be private (0600).');
-    return await handle.readFile();
+    if (info.size > maximum) throw new Error('Private recovery file exceeds its size limit.');
+    // Bound the read itself too: a deployment file can grow after the stat.
+    const chunks: Buffer[] = [];
+    let length = 0;
+    for (;;) {
+      const bytes = Buffer.alloc(Math.min(64 * 1024, maximum + 1 - length));
+      const read = await handle.read(bytes, 0, bytes.length, length);
+      if (!read.bytesRead) return Buffer.concat(chunks, length);
+      length += read.bytesRead;
+      if (length > maximum) throw new Error('Private recovery file exceeds its size limit.');
+      chunks.push(bytes.subarray(0, read.bytesRead));
+    }
   } finally {
     await handle.close();
   }
 }
 export async function readKey(path: string) {
-  const bytes = await privateFile(path);
+  const bytes = await privateFile(path, 32);
   if (bytes.length !== 32) throw new Error('Backup key must contain exactly 32 random bytes.');
   return bytes;
 }
@@ -70,9 +83,9 @@ export function checkDatabase(db: DatabaseSync) {
   )
     throw new Error('Backup database integrity check failed.');
 }
-export async function digest(path: string) {
+export async function digest(path: string, signal?: AbortSignal) {
   const hash = createHash('sha256');
-  for await (const bytes of createReadStream(path)) hash.update(bytes);
+  for await (const bytes of createReadStream(path, { signal })) hash.update(bytes);
   return hash.digest('hex');
 }
 // stagingRoot must be on the same encrypted volume as the live database.
@@ -81,10 +94,17 @@ export async function makeArchive(
   stagingRoot: string,
   key: Buffer,
   recovery: Recovery,
+  options: { signal?: AbortSignal; maxArchiveBytes?: number } = {},
 ) {
+  options.signal?.throwIfAborted();
   validateRecovery(recovery);
+  const maximum = options.maxArchiveBytes ?? MAX_ARCHIVE_BYTES;
+  if (!Number.isSafeInteger(maximum) || maximum < HEADER_SIZE + 17 || maximum > MAX_ARCHIVE_BYTES)
+    throw new Error('Invalid backup size limit.');
   const pages = Number(db.prepare('PRAGMA page_count').get()!.page_count);
   const pageSize = Number(db.prepare('PRAGMA page_size').get()!.page_size);
+  // Keep creation inside the same concrete SQLite recovery envelope as restore.
+  if (pages * pageSize > 8 * 1024 ** 3) throw new RecoveryResourceError('database-size');
   const space = await statfs(stagingRoot);
   if (space.bavail * space.bsize < pages * pageSize * 2.1 + 256 * 1024 ** 2)
     throw new RecoveryResourceError('disk-space');
@@ -93,6 +113,8 @@ export async function makeArchive(
     await chmod(directory, 0o700);
     const copy = join(directory, 'snapshot.sqlite');
     await backup(db, copy);
+    options.signal?.throwIfAborted();
+    if ((await stat(copy)).size > 8 * 1024 ** 3) throw new RecoveryResourceError('database-size');
     await chmod(copy, 0o600);
     const snapshot = new DatabaseSync(copy);
     try {
@@ -112,17 +134,44 @@ export async function makeArchive(
     cipher.setAAD(header);
     const archive = join(directory, 'backup.spinel');
     await writeFile(archive, header, { mode: 0o600, flag: 'wx' });
+    let bytes = header.length + 16;
+    let nextSpaceCheck = 0;
+    const bounded = new Transform({
+      transform(chunk: Buffer, _encoding, callback) {
+        bytes += chunk.length;
+        if (bytes > maximum) {
+          callback(new RecoveryResourceError('archive-size'));
+          return;
+        }
+        if (bytes >= nextSpaceCheck) {
+          nextSpaceCheck = bytes + 4 * 1024 ** 2;
+          statfs(directory).then(
+            (current) =>
+              callback(
+                current.bavail * current.bsize < 256 * 1024 ** 2 + 4 * 1024 ** 2
+                  ? new RecoveryResourceError('disk-space')
+                  : null,
+                chunk,
+              ),
+            (error: Error) => callback(error),
+          );
+        } else callback(null, chunk);
+      },
+    });
     await pipeline(
       createReadStream(copy),
       createGzip(),
       cipher,
+      bounded,
       createWriteStream(archive, { flags: 'a' }),
+      { signal: options.signal },
     );
+    options.signal?.throwIfAborted();
     await appendFile(archive, cipher.getAuthTag());
     await rm(copy);
     return {
       archive,
-      sha256: await digest(archive),
+      sha256: await digest(archive, options.signal),
       dispose: () => rm(directory, { recursive: true, force: true }),
     };
   } catch (error) {

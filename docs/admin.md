@@ -20,6 +20,23 @@ shown: administrators never gain access to documents, images, shares or history.
 Non-admins, including signed-out callers, receive a not-found response for the
 admin page and user/invitation administration APIs.
 
+## Download an encrypted workspace backup
+
+In **Backups & health**, the Backups card shows deployment-owned policy,
+automatic publication, offsite coverage and isolated restore verification
+separately. **Prepare workspace backup** asks for fresh Operator passkey proof,
+creates a private encrypted archive, and offers **Download encrypted backup**
+when ready. The ordinary browser download manager receives it. Keep its recovery
+key separately; a completed handoff is not proof of offsite retention or a
+successful restore. No document contents are shown in Admin.
+
+Only the initiating session can see or cancel its job. Preparation, readiness and
+delivery expire; Cancel removes staging. **Previously saved backups** selects a
+complete artifact from local storage or DigitalOcean Spaces. Deployment can turn
+downloads off; Admin never edits cloud credentials or filesystem paths. See the
+[backup guide](backups.md#deployment-policy-and-manual-downloads) for setup,
+resource limits, retention and independent CLI recovery.
+
 ## Remove a passkey
 
 In **People → Actions → Manage passkeys**, choose the credential’s

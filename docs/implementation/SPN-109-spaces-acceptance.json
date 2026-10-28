@@ -1,0 +1,15 @@
+{
+  "status": "passed",
+  "sourceCommit": "0d4013d4284b86204e3a9ca526765ef4832c1e20",
+  "checks": [
+    "bucket-retention-policy",
+    "private-publication-and-readback",
+    "anonymous-access-denial",
+    "authenticated-download-and-encrypted-restore",
+    "paginated-complete-catalog-and-pending-cleanup",
+    "retention-and-deletion"
+  ],
+  "cleanup": "complete",
+  "archiveBytes": 663,
+  "durationMs": 2798
+}

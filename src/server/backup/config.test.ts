@@ -2,7 +2,8 @@ import { chmod, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, expect, test } from 'vitest';
-import { loadConfig } from './config.ts';
+import { hasDestination, loadConfig } from './config.ts';
+import { createDestination } from './destination.ts';
 
 const cleanups: (() => Promise<void>)[] = [];
 afterEach(async () => {
@@ -35,6 +36,8 @@ test('legacy Spaces configuration remains valid with explicit recovery defaults'
     backupHourUtc: 2,
     verificationDayUtc: 0,
     verificationHourUtc: 3,
+    automatic: true,
+    manualDownload: true,
   });
 });
 test('filesystem config needs no cloud credentials and retains exact device/inode identities', async () => {
@@ -54,6 +57,55 @@ test('filesystem config needs no cloud credentials and retains exact device/inod
   expect(loaded).toMatchObject(value);
   expect(loaded).not.toHaveProperty('region');
   expect(loaded).not.toHaveProperty('accessKeyId');
+  expect(loaded.automatic).toBe(true);
+});
+test('manual recovery is independent of cloud credentials and cannot schedule a remote job', async () => {
+  const loaded = await loadConfig(await config({ ...common, version: 1, type: 'manual' }));
+  expect(loaded).toMatchObject({
+    ...common,
+    type: 'manual',
+    automatic: false,
+    manualDownload: true,
+    dataset: 'workspace',
+  });
+  expect(hasDestination(loaded)).toBe(false);
+  expect(() => createDestination(loaded)).toThrow('No automatic');
+  for (const change of [
+    { automatic: true },
+    { automatic: 'false' },
+    { manualDownload: 0 },
+    { bucket: 'ignored-bucket' },
+    { region: 'sfo3' },
+    { keyFile: '' },
+    { runtimeEnvironmentFile: '' },
+    { dataset: 'arbitrary.sqlite' },
+    { dataset: 'diagnostics' },
+    { version: 2 },
+    { automaticBackups: true },
+    { retention: { daily: 1 } },
+  ])
+    await expect(
+      loadConfig(await config({ ...common, type: 'manual', ...change })),
+    ).rejects.toThrow();
+});
+test('new versioned policy defaults off while explicit automatic and manual policy are preserved', async () => {
+  const value = {
+    ...common,
+    type: 'filesystem',
+    root: '/private/backups',
+    rootDevice: '1',
+    rootInode: '2',
+  };
+  expect((await loadConfig(await config({ ...value, version: 1 }))).automatic).toBe(false);
+  expect(
+    await loadConfig(
+      await config({ ...value, version: 1, automatic: true, manualDownload: false }),
+    ),
+  ).toMatchObject({
+    automatic: true,
+    manualDownload: false,
+  });
+  expect((await loadConfig(await config({ ...value, automatic: false }))).automatic).toBe(false);
 });
 test('unknown destinations, unsafe roots/identities and invalid schedules/keys fail closed', async () => {
   const value = {
@@ -65,6 +117,7 @@ test('unknown destinations, unsafe roots/identities and invalid schedules/keys f
   };
   for (const change of [
     { type: 'anything' },
+    { type: 's3' },
     { prefix: '../escape' },
     { root: '/' },
     { root: 'relative' },
