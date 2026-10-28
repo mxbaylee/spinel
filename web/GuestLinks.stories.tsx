@@ -96,9 +96,11 @@ export const ExpirySaved: Story = {
       await expect(writes).toEqual([
         { epoch: items[0].epoch, expectedExpiresAt: items[0].expiresAt, expiryDays: null },
       ]);
-      await expect(
-        within(canvasElement).getByRole('button', { name: `More actions for ${items[0].name}` }),
-      ).toHaveFocus();
+      await waitFor(() =>
+        expect(
+          within(canvasElement).getByRole('button', { name: `More actions for ${items[0].name}` }),
+        ).toHaveFocus(),
+      );
     } finally {
       globalThis.fetch = previous;
     }
@@ -143,7 +145,9 @@ export const StaleLink: Story = {
       await expect(await within(canvasElement).findByRole('alert')).toHaveTextContent(
         'Review current guest links',
       );
-      await expect(within(document.body).queryByRole('dialog')).not.toBeInTheDocument();
+      await waitFor(() =>
+        expect(within(document.body).queryByRole('dialog')).not.toBeInTheDocument(),
+      );
     } finally {
       globalThis.fetch = previous;
     }
@@ -168,7 +172,7 @@ export const TurnedOff: Story = {
     await waitFor(() =>
       expect(canvas.queryByRole('link', { name: items[0].name })).not.toBeInTheDocument(),
     );
-    await expect(canvas.getByRole('heading', { name: 'Guest links' })).toHaveFocus();
+    await waitFor(() => expect(canvas.getByRole('heading', { name: 'Guest links' })).toHaveFocus());
   },
 };
 export const Expired: Story = {

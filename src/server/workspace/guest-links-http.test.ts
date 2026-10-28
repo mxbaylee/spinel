@@ -1,4 +1,4 @@
-import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import type { AddressInfo } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -12,7 +12,12 @@ import { SpaceStore } from './spaces.ts';
 test('Guest links HTTP inventory is owner-only, secret-free, CSRF-protected and guarded against stale or expired actions', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'spinel-guest-links-http-'));
   const path = join(directory, 'db.sqlite');
-  await writeFile(join(directory, 'index.html'), '<html><head></head><body>Fixture</body></html>');
+  // Exercise the production metadata placeholders; an empty head cannot prove
+  // that an authorized title appears before expiry and disappears afterward.
+  await writeFile(
+    join(directory, 'index.html'),
+    await readFile(new URL('../../../web/index.html', import.meta.url)),
+  );
   const app = await createApp({ databasePath: path, staticDirectory: directory });
   const db = openDatabase(path);
   let closed = false;
