@@ -6,6 +6,7 @@
   z-index: 60;
 }
 .maintenance-banner {
+  position: relative;
   background: var(--sp-panel);
   border-bottom: 1px solid var(--sp-border);
   color: var(--sp-text);
@@ -15,10 +16,36 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 8px 24px;
+  padding: 8px 80px 8px 24px;
   min-height: 64px;
   cursor: pointer;
   list-style: none;
+}
+.maintenance-banner[data-dismissed] summary {
+  min-height: 44px;
+  padding: 0 24px;
+}
+.maintenance-banner[data-dismissed] .maintenance-banner-summary {
+  display: block;
+}
+.maintenance-banner .maintenance-banner-dismiss {
+  position: absolute;
+  top: 12px;
+  right: 24px;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border-color: transparent;
+  color: var(--sp-muted);
+}
+.maintenance-banner .maintenance-banner-dismiss:hover {
+  background: var(--sp-tint-1);
+  color: var(--sp-text);
 }
 .maintenance-banner summary::-webkit-details-marker {
   display: none;
@@ -151,8 +178,14 @@
 }
 @media (max-width: 640px) {
   .maintenance-banner summary {
-    padding-inline: 16px;
+    padding-inline: 16px 72px;
     gap: 8px;
+  }
+  .maintenance-banner[data-dismissed] summary {
+    padding-inline: 16px;
+  }
+  .maintenance-banner .maintenance-banner-dismiss {
+    right: 16px;
   }
   .maintenance-banner-content {
     padding-inline: 16px;

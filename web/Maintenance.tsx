@@ -14,6 +14,7 @@ import { offlineEpoch } from './offline/offlineStore.ts';
 import { refreshMaintenanceStatus, useMaintenanceStatus } from './maintenanceState.ts';
 import { capturedMaintenanceEpoch } from './maintenanceFetch.ts';
 import { maintenanceInstants, maintenanceOffset, maintenanceTime } from './maintenanceTime.ts';
+import { useMaintenanceDismissal } from './useMaintenanceDismissal.ts';
 import './administration.css';
 import './maintenance.css';
 
@@ -53,31 +54,43 @@ export function MaintenanceBanner({
   reachable?: boolean;
   guest?: boolean;
 }) {
+  const { dismissed, dismiss, reopen } = useMaintenanceDismissal(status);
+  const details = useRef<HTMLDetailsElement>(null);
+  const summary = useRef<HTMLElement>(null);
   if (!status?.available) return null;
   const paused = status.phase !== 'running';
   const notice = status.notice?.state !== 'cancelled' ? status.notice : null;
-  if (!paused && !notice) return null;
+  if (!paused && (!notice || dismissed)) return null;
   const title = paused
     ? phaseLabel(status.phase)
     : notice?.state === 'scheduled'
       ? 'Maintenance scheduled'
       : 'Maintenance window';
   return (
-    <section className="maintenance-banner sp-ui" aria-label="Workspace maintenance">
-      <details>
-        <summary>
+    <section
+      className="maintenance-banner sp-ui"
+      aria-label="Workspace maintenance"
+      data-dismissed={dismissed || undefined}
+    >
+      <details ref={details}>
+        <summary ref={summary} onClick={() => dismissed && reopen()}>
           <ProfileIcon icon={paused ? 'lucide:pause' : 'lucide:calendar-clock'} size={18} />
           <span className="maintenance-banner-summary" role="status">
-            <strong>{title}</strong>
-            <span>
-              {!reachable
-                ? 'Last known status · reconnecting'
-                : paused
-                  ? 'Keep this tab open for pending changes.'
-                  : notice
-                    ? maintenanceTime(notice.startsAt)
-                    : ''}
-            </span>
+            <strong>
+              {title}
+              {dismissed && !reachable && ' · reconnecting'}
+            </strong>
+            {!dismissed && (
+              <span>
+                {!reachable
+                  ? 'Last known status · reconnecting'
+                  : paused
+                    ? 'Keep this tab open for pending changes.'
+                    : notice
+                      ? maintenanceTime(notice.startsAt)
+                      : ''}
+              </span>
+            )}
           </span>
           <span className="maintenance-banner-details">Details</span>
         </summary>
@@ -105,6 +118,25 @@ export function MaintenanceBanner({
           {!reachable && <p>Current maintenance status could not be checked. Retrying…</p>}
         </div>
       </details>
+      {!dismissed && (
+        <Button
+          type="button"
+          className="maintenance-banner-dismiss"
+          aria-label="Dismiss for now"
+          title="Dismiss for now"
+          onClick={(event) => {
+            if (details.current) details.current.open = false;
+            dismiss();
+            if (paused) summary.current?.focus({ preventScroll: true });
+            else
+              event.currentTarget
+                .closest<HTMLElement>('.maintenance-shell')
+                ?.focus({ preventScroll: true });
+          }}
+        >
+          <ProfileIcon icon="lucide:x" size={18} />
+        </Button>
+      )}
     </section>
   );
 }
@@ -132,6 +164,7 @@ export function MaintenanceShell({
   return (
     <div
       className="maintenance-shell"
+      tabIndex={-1}
       data-announced={height > 0 || undefined}
       style={{ '--sp-maintenance-height': `${height}px` } as CSSProperties}
     >
