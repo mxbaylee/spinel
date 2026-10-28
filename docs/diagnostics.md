@@ -72,6 +72,15 @@ They never contain document names/content, formulas, raw URLs, credentials or
 arbitrary exception text. Browser claims remain explicitly `frontend`; the server
 derives identity and rechecks current access. Guests do not collect diagnostics.
 
+Docs additionally observe `doc-compose` around a public history/collaboration
+flush triggered by the bounded capacity or owned quiet-period policy. Its
+histogram measures that paired flush in milliseconds, with the existing success
+counter and operation result. It does not measure SDK-owned idle flushes, key
+latency, render time or network acknowledgment;
+no text, selections or edit actions are collected. Collection retains the same
+account and visibility gates. The [SPN-108 benchmark](implementation/SPN-108.md)
+separately captures synthetic input timings, both native queues and CPU profiles.
+
 One browser collector belongs to one authenticated account/session. Hidden,
 offline, disconnected and signed-out states discard its pending observations;
 reconnection obtains a fresh collection binding. This is deliberately lossy

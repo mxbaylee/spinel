@@ -13,6 +13,7 @@ if (
     'sync-soak-sheet',
     'sync-soak-doc',
     'offline-upgrade',
+    'doc-responsiveness',
   ].includes(project)
 )
   throw new Error('SPINEL_E2E_PROJECT must name a configured browser project.');
@@ -31,7 +32,13 @@ export default defineConfig({
   // Keep independent native-client and offline lifecycle scenarios observable;
   // the production fixtures do not depend on earlier cases succeeding.
   // Other suites still stop repeated downstream failures early.
-  maxFailures: process.env.CI && project !== 'production' && !project?.startsWith('sync-') ? 1 : 0,
+  maxFailures:
+    process.env.CI &&
+    project !== 'production' &&
+    project !== 'doc-responsiveness' &&
+    !project?.startsWith('sync-')
+      ? 1
+      : 0,
   // Keep per-project/shard CI results outside outputDir, which Playwright clears.
   // The existing artifact upload preserves these alongside failure traces.
   reporter: process.env.CI
@@ -60,6 +67,7 @@ export default defineConfig({
         '**/offline-sign-out.spec.ts',
         '**/offline-upgrade.spec.ts',
         '**/sync-client.spec.ts',
+        '**/doc-responsiveness*.spec.ts',
       ],
       use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3100' },
     },
@@ -72,6 +80,7 @@ export default defineConfig({
         '**/offline-recovery.spec.ts',
         '**/offline-upgrade.spec.ts',
         '**/sync-client.spec.ts',
+        '**/doc-responsiveness*.spec.ts',
       ],
       use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3101' },
     },
@@ -105,6 +114,18 @@ export default defineConfig({
       },
     })),
     {
+      name: 'doc-responsiveness',
+      testMatch: '**/doc-responsiveness.spec.ts',
+      // Keep every fixed sample, including a failed first attempt, without a
+      // retry taking the place of its measured result.
+      retries: 0,
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: 'http://localhost:3108',
+        trace: 'off',
+      },
+    },
+    {
       name: 'offline-upgrade',
       // This suite builds the legacy baseline and two current compatibility
       // fixtures. Its own server/browser must not race a normal webServer.
@@ -136,6 +157,7 @@ export default defineConfig({
         DATABASE_PATH: 'test-results/development/app.sqlite',
         VITE_SYNC_EVIDENCE: '0',
         VITE_DOC_SELECTION_EVIDENCE: process.env.VITE_DOC_SELECTION_EVIDENCE ?? '0',
+        VITE_DOC_RESPONSIVENESS_EVIDENCE: '0',
       },
       reuseExistingServer: false,
     },
@@ -148,6 +170,7 @@ export default defineConfig({
         DATABASE_PATH: 'test-results/production/app.sqlite',
         VITE_SYNC_EVIDENCE: '0',
         VITE_DOC_SELECTION_EVIDENCE: process.env.VITE_DOC_SELECTION_EVIDENCE ?? '0',
+        VITE_DOC_RESPONSIVENESS_EVIDENCE: '0',
       },
       reuseExistingServer: false,
     },
@@ -161,6 +184,7 @@ export default defineConfig({
         DATABASE_PATH: 'test-results/sync-development/app.sqlite',
         VITE_SYNC_EVIDENCE: '1',
         VITE_DOC_SELECTION_EVIDENCE: '0',
+        VITE_DOC_RESPONSIVENESS_EVIDENCE: '0',
       },
       reuseExistingServer: false,
     },
@@ -173,6 +197,7 @@ export default defineConfig({
         DATABASE_PATH: 'test-results/sync-production/app.sqlite',
         VITE_SYNC_EVIDENCE: '1',
         VITE_DOC_SELECTION_EVIDENCE: '0',
+        VITE_DOC_RESPONSIVENESS_EVIDENCE: '0',
       },
       reuseExistingServer: false,
     },
@@ -185,9 +210,23 @@ export default defineConfig({
         DATABASE_PATH: `test-results/sync-soak-${kind}/app.sqlite`,
         VITE_SYNC_EVIDENCE: '1',
         VITE_DOC_SELECTION_EVIDENCE: '0',
+        VITE_DOC_RESPONSIVENESS_EVIDENCE: '0',
       },
       reuseExistingServer: false,
     })),
+    {
+      command: 'npm start',
+      url: 'http://localhost:3108/sign-in',
+      env: {
+        PORT: '3108',
+        HOST: '127.0.0.1',
+        DATABASE_PATH: 'test-results/doc-responsiveness/app.sqlite',
+        VITE_SYNC_EVIDENCE: '0',
+        VITE_DOC_SELECTION_EVIDENCE: '0',
+        VITE_DOC_RESPONSIVENESS_EVIDENCE: '1',
+      },
+      reuseExistingServer: false,
+    },
     {
       command: 'node --max-old-space-size=256 --max-semi-space-size=8 scripts/e2e-https.ts',
       url: 'https://localhost:3103/sign-in',
@@ -211,7 +250,9 @@ export default defineConfig({
                     ? ':3106/'
                     : project === 'sync-soak-doc'
                       ? ':3107/'
-                      : ':3103/',
+                      : project === 'doc-responsiveness'
+                        ? ':3108/'
+                        : ':3103/',
         )),
   ),
 });

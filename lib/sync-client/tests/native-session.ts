@@ -1,4 +1,5 @@
 import { ICommandService, IUniverInstanceService, LocaleService, LocaleType } from '@univerjs/core';
+import type { IUniverConfig } from '@univerjs/core';
 import sheetEnglish from '@univerjs/sheets/locale/en-US';
 import type { SubmitResult } from '@spinel/sync-server';
 import { expect } from 'vitest';
@@ -42,8 +43,11 @@ export function nativeSession(snapshot: NativeSnapshot, kind: DocumentKind) {
         .map(wire),
     });
   }
-  function client(actorId: string): NativePeer {
-    const live = new NativeReplica(f.storage.unit.snapshot, kind);
+  function client(
+    actorId: string,
+    options?: Pick<IUniverConfig, 'undoRedoHistoryLimit'>,
+  ): NativePeer {
+    const live = new NativeReplica(f.storage.unit.snapshot, kind, options);
     const injector = live.univer.__getInjector();
     injector.get(LocaleService).load({ [LocaleType.EN_US]: sheetEnglish });
     injector.get(IUniverInstanceService).focusUnit(snapshot.id);
