@@ -40,7 +40,9 @@ import { EditorFrame } from './EditorFrame.tsx';
 import { AccessState } from './AccessState.tsx';
 import type { ConnectionState } from './connectionState.ts';
 import type { CatalogConnectionDetails } from './ConnectionStatus.tsx';
+import { isNetworkFailure } from './offline/localStart.ts';
 import type { LocalStart } from './offline/localStart.ts';
+import { preparedAccount } from './offline/offlineStore.ts';
 import type { OfflineCatalog, OfflineDownload, OfflineUser } from './offline/offlineStore.ts';
 import { useOfflineDownloads } from './offline/useOfflineDownloads.ts';
 import { OfflineAvailability, OfflineAvailabilityActions } from './offline/OfflineAvailability.tsx';
@@ -422,8 +424,20 @@ export function Dashboard({
       })
       .catch((failure) => {
         if (!disposed) {
-          setError(failure.message);
-          setViewMissing(true);
+          const saved = views.current[currentId];
+          // A warm Dashboard can disconnect after this folder was prepared.
+          // Reuse only that account's saved folder on a network failure; an
+          // actual server denial remains authoritative even with cached rows.
+          if (
+            isNetworkFailure(failure) &&
+            preparedAccount() === user.id &&
+            saved?.some((item) => item.id === currentId && item.kind === 'folder')
+          ) {
+            setViewed(saved);
+          } else {
+            setError(failure.message);
+            setViewMissing(true);
+          }
         }
       })
       .finally(() => {

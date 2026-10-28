@@ -14,7 +14,13 @@ import type { SnapshotSaved } from './snapshots.ts';
 import { resolveSpaceScope } from './space-scope.ts';
 
 const columns =
-  'id,parent_id AS parentId,kind,name,created_at AS createdAt,updated_at AS updatedAt';
+  'i.id,i.parent_id AS parentId,i.kind,i.name,i.created_at AS createdAt,i.updated_at AS updatedAt';
+// Both joins are one-to-one, preserving discovery limits and missing legacy attribution.
+const accountItems = `${columns},coalesce(u.name,c.created_by_name) AS creatorName
+  FROM workspace_items i
+  LEFT JOIN workspace_item_creators c ON c.item_id=i.id
+  LEFT JOIN auth_users u ON u.id=c.created_by`;
+type AccountItemRow = WorkspaceItem & { creatorName: string | null };
 export class WorkspaceStore {
   auth: AuthStore;
   readonly links: LinkAccess;
@@ -240,16 +246,16 @@ export class WorkspaceStore {
       // Check the current schema because this store can predate startup migration.
       const membership = ['space_id', 'space_position']
         .filter((field) => fields.has(field))
-        .map((field) => ` AND ${field} IS NULL`)
+        .map((field) => ` AND i.${field} IS NULL`)
         .join('');
       const items = this.auth.database
         .prepare(
-          `SELECT ${columns}, 'owner' AS access FROM workspace_items
-           WHERE owner_id=? AND trashed_at IS NULL
-             AND kind IN (${ITEM_KINDS.map(() => '?').join(',')})${membership}
-           ORDER BY name COLLATE NOCASE,id LIMIT ?`,
+          `SELECT 'owner' AS access,${accountItems}
+           WHERE i.owner_id=? AND i.trashed_at IS NULL
+             AND i.kind IN (${ITEM_KINDS.map(() => '?').join(',')})${membership}
+           ORDER BY i.name COLLATE NOCASE,i.id LIMIT ?`,
         )
-        .all(ownerId, ...ITEM_KINDS, MAX_ANCESTOR_READS + 1) as unknown as WorkspaceItem[];
+        .all(ownerId, ...ITEM_KINDS, MAX_ANCESTOR_READS + 1) as unknown as AccountItemRow[];
       // Ownership is established by the query; one request-local classification
       // checks live same-owner folder ancestry without n independent role walks.
       const ordinary = classifyOrdinaryItems(
@@ -264,9 +270,9 @@ export class WorkspaceStore {
       );
       return items
         .filter((item) => ordinary.has(item.id))
-        .map((item) => ({
+        .map(({ creatorName, ...item }) => ({
           ...item,
-          ...this.creator(item.id),
+          ...(creatorName === null ? {} : { createdByName: creatorName }),
           appearance: appearances.get(item.id),
           tags: this.assignedTags(ownerId, item.id),
         }));
@@ -428,7 +434,7 @@ export class WorkspaceStore {
       )
         throw new AuthError(403, 'This link allows viewing only.');
       const item = this.auth.database
-        .prepare(`SELECT ${columns} FROM workspace_items WHERE id=?`)
+        .prepare(`SELECT ${columns} FROM workspace_items i WHERE i.id=?`)
         .get(id) as unknown as WorkspaceItem;
       if (!item || !['sheet', 'doc'].includes(item.kind)) throw linkGone();
       return {
@@ -455,13 +461,13 @@ export class WorkspaceStore {
             ? 'Only the owner can change this item or its sharing.'
             : 'You can view this document, but cannot edit it.',
       );
-    const item = this.auth.database
-      .prepare(`SELECT ${columns} FROM workspace_items WHERE id=?`)
-      .get(id) as unknown as WorkspaceItem;
+    const { creatorName, ...item } = this.auth.database
+      .prepare(`SELECT ${accountItems} WHERE i.id=?`)
+      .get(id) as unknown as AccountItemRow;
     // A direct share must not disclose the owner's private parent chain.
     return {
       ...item,
-      ...this.creator(id),
+      ...(creatorName === null ? {} : { createdByName: creatorName }),
       appearance: readAppearance(this.auth.database, id),
       access,
       ...(access !== 'owner'

@@ -450,6 +450,25 @@ test.describe('documents created offline', () => {
           await savedLocally(f.page);
           const before = (await deviceCreation(f, id))!;
           expect(pending(before.outbox?.checkpoint)).toBe(true);
+          if (shared && kind === 'sheet') {
+            // This Dashboard mounted online. Returning to its prepared shared
+            // folder must work while offline, before any cold-shell reload.
+            await f.page.getByRole('button', { name: 'Back to files', exact: true }).click();
+            await expect(
+              f.page.getByRole('heading', { name: folder.name, exact: true }),
+            ).toBeVisible();
+            await expect(f.page.getByRole('button', { name: 'New', exact: true })).toBeVisible();
+            await expect(
+              f.page.getByRole('heading', { name: "This item isn't available", exact: true }),
+            ).toHaveCount(0);
+            await f.page.getByRole('button', { name: `${name} Sheet`, exact: true }).click();
+            await usableCanvas(f.page);
+            await savedLocally(f.page);
+            expect(await copy(f.page, kind)).toContain(text);
+            expect((await deviceCreation(f, id))!.outbox!.checkpoint).toEqual(
+              before.outbox!.checkpoint,
+            );
+          }
           for (let reload = 0; reload < 2; reload++) {
             await f.page.reload();
             await expect.poll(() => f.page.evaluate(() => navigator.onLine)).toBe(false);

@@ -162,16 +162,24 @@ test('account-only creator attribution follows names, survives departure and doe
   expect(JSON.stringify(publicItem)).not.toContain(f.editor.id);
   expect(JSON.stringify(publicItem)).not.toContain(f.owner.name);
   expect(() => f.files.create(guest, { name: 'No', kind: 'doc', parentId: f.folder.id })).toThrow();
+  const expectAttribution = (createdByName: string) => {
+    expect(f.files.get(f.owner.id, item.id).createdByName).toBe(createdByName);
+    for (const [listing, access] of [
+      [f.files.list(f.owner.id), 'owner'],
+      [f.files.shared(f.viewer.id), 'viewer'],
+    ] as const)
+      expect(listing.filter((row) => row.id === item.id)).toEqual([
+        expect.objectContaining({ createdByName, access }),
+      ]);
+  };
+  expectAttribution(f.editor.name);
   f.db.prepare('UPDATE auth_users SET name=? WHERE id=?').run('Updated creator', f.editor.id);
-  expect(f.files.get(f.owner.id, item.id).createdByName).toBe('Updated creator');
+  expectAttribution('Updated creator');
   f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(f.editor.id);
-  expect(f.files.get(f.owner.id, item.id).createdByName).toBe('Updated creator');
+  expectAttribution('Updated creator');
   // Removing the collaborator must not cascade into the folder owner's item.
   f.db.prepare('DELETE FROM auth_users WHERE id=?').run(f.editor.id);
-  expect(f.files.get(f.owner.id, item.id)).toMatchObject({
-    createdByName: f.editor.name,
-    access: 'owner',
-  });
+  expectAttribution(f.editor.name);
   expect(f.workspace.fileOwner(item.id)).toBe(f.owner.id);
   expect(f.db.prepare('PRAGMA foreign_key_check').all()).toEqual([]);
 });
@@ -211,5 +219,10 @@ test('creator metadata is additive and does not invent attribution for existing 
   const reopened = new WorkspaceStore(f.auth, { spacesEnabled: true });
   migrateSpaceSchema(f.db);
   expect(reopened.get(f.editor.id, id)).not.toHaveProperty('createdByName');
+  for (const listing of [reopened.list(f.owner.id), reopened.shared(f.editor.id)]) {
+    const retained = listing.filter((item) => item.id === id);
+    expect(retained).toHaveLength(1);
+    expect(retained[0]).not.toHaveProperty('createdByName');
+  }
   expect(f.db.prepare('SELECT * FROM workspace_item_creators WHERE item_id=?').all(id)).toEqual([]);
 });
