@@ -583,10 +583,20 @@ export class SyncClient {
     }
     this.pendingPersistence++;
     this.publish();
-    const saved = this.persistence.then(() => {
-      // Materialize only when this serialized write starts. A slow store keeps
-      // one snapshot alive, rather than one whole snapshot per queued keystroke.
-      if (!this.disposed) return this.options.persist!(this.checkpoint());
+    const saved = this.persistence.then(async () => {
+      if (this.disposed) return;
+      let checkpoint: ClientCheckpoint | undefined;
+      let active = true;
+      try {
+        // A host may discover asynchronously that no local copy needs a write.
+        // Once requested, one coherent snapshot serves this serialized write.
+        await this.options.persist!(() => {
+          if (!active || this.disposed) throw new ClientError('unavailable');
+          return (checkpoint ??= this.checkpoint());
+        });
+      } finally {
+        active = false;
+      }
     });
     this.persistence = saved.catch(() => {});
     return saved.then(

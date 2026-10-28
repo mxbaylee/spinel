@@ -26,7 +26,7 @@
     "setup": "node server/setup.ts",
     "passkey:check": "npm run build && node scripts/passkey-check.ts",
     "e2e": "VITE_SYNC_EVIDENCE=1 npm run build && node scripts/e2e.ts",
-    "postinstall": "node scripts/dependencies/patch-univer-core.ts && node scripts/dependencies/patch-univer-ui.ts && node scripts/dependencies/patch-univer-drawing.ts",
+    "postinstall": "node scripts/dependencies/patch-univer-core.ts && node scripts/dependencies/patch-univer-ui.ts && node scripts/dependencies/patch-univer-drawing.ts && node scripts/dependencies/patch-univer-docs-ui.ts",
     "screenshots": "node scripts/screenshots.ts",
     "dependencies:check": "node scripts/dependencies/no-univer-pro.ts"
   },

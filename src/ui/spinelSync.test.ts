@@ -4,6 +4,7 @@ import type {
   ClientState,
   IncomingFrame,
   ClientCheckpoint,
+  ClientCheckpointFactory,
 } from '@spinel/sync-client';
 import type { Univer } from '@univerjs/core';
 import { disposeSpinelSync, getSpinelSync, loadSpinelDocument } from '../../web/spinelSync.ts';
@@ -81,7 +82,7 @@ vi.mock('@spinel/sync-client', () => ({
       },
       async persistNow() {
         try {
-          await options.persist?.(this.checkpoint());
+          await options.persist?.(() => this.checkpoint());
           if (options.persist) entry.state.localPersistence = 'saved';
           options.onState(entry.state);
         } catch (error) {
@@ -227,6 +228,7 @@ async function fixture({
     id: '44444444-4444-4444-8444-444444444444',
     name: 'Offline notes (offline copy, 2026-10-27 14:35)',
   };
+  const persisted: ClientCheckpoint[] = [];
   const offline = {
     enabled: downloaded,
     canRecover,
@@ -248,7 +250,9 @@ async function fixture({
     toCanonical: <T>(value: T) => value,
     fetch: requests,
     reconcileAvailability: vi.fn(async (_checkpoint: ClientCheckpoint) => {}),
-    persist: vi.fn(async (_checkpoint: ClientCheckpoint) => {}),
+    persist: vi.fn(async (capture: ClientCheckpointFactory) => {
+      persisted.push(capture());
+    }),
     prepareRecovery: vi.fn(
       async (_checkpoint: ClientCheckpoint): Promise<OfflineRecoveryRequest> => {
         offline.recoveryRequest ??= structuredClone(recoveryRequest);
@@ -329,6 +333,7 @@ async function fixture({
     dispatched,
     client,
     offline,
+    persisted,
     recoveryRequest,
     copyItem,
     socket: () => Socket.instances.at(-1)!,
@@ -411,12 +416,13 @@ test('recovery freezes and drains before publication, then removes local work on
     expect(preserve).toBe(true);
     order.push('freeze');
   });
-  f.offline.persist.mockImplementationOnce(async () => {
+  f.offline.persist.mockImplementationOnce(async (capture) => {
+    f.persisted.push(capture());
     order.push('drain');
   });
   f.offline.prepareRecovery.mockImplementationOnce(async (checkpoint) => {
     order.push('prepare');
-    expect(checkpoint).toEqual(f.offline.persist.mock.calls[0][0]);
+    expect(checkpoint).toEqual(f.persisted[0]);
     return prepare(checkpoint);
   });
   f.offline.publishRecovery.mockImplementationOnce(async (request, signal) => {
@@ -863,7 +869,11 @@ test.each(['freeze', 'drain', 'prepare', 'publish'] as const)(
       release = resolve;
     });
     if (stage === 'freeze') f.readonly.mockImplementationOnce(() => held);
-    if (stage === 'drain') f.offline.persist.mockImplementationOnce(() => held);
+    if (stage === 'drain')
+      f.offline.persist.mockImplementationOnce((capture) => {
+        f.persisted.push(capture());
+        return held;
+      });
     if (stage === 'prepare')
       f.offline.prepareRecovery.mockImplementationOnce(async () => {
         await held;
@@ -977,9 +987,10 @@ test.each(['response', 'body'] as const)(
 
     // Preparation activates the existing native binding through its real
     // event/persistence path while the ordinary metadata read is still held.
-    f.offline.persist.mockImplementationOnce(async () => {
+    f.offline.persist.mockImplementationOnce(async (capture) => {
       f.offline.enabled = true;
       f.offline.onChange?.();
+      f.persisted.push(capture());
     });
     window.dispatchEvent(
       new CustomEvent('spinel-offline-prepared', { detail: { accountId: 'owner' } }),
@@ -987,8 +998,8 @@ test.each(['response', 'body'] as const)(
     await vi.advanceTimersByTimeAsync(0);
     expect(f.offline.reconcileAvailability).toHaveBeenCalledOnce();
     expect(f.offline.persist).toHaveBeenCalledOnce();
-    expect(f.offline.persist.mock.calls[0][0]).toMatchObject({ sent: null, buffer: [] });
-    expect(f.offline.persist.mock.calls[0][0].failure).toBeUndefined();
+    expect(f.persisted[0]).toMatchObject({ sent: null, buffer: [] });
+    expect(f.persisted[0].failure).toBeUndefined();
 
     let confirm!: (response: Response) => void;
     const confirmation = new Promise<Response>((resolve) => {
@@ -1058,7 +1069,8 @@ test.each([403, 404])(
     f.readonly.mockImplementationOnce(async () => {
       order.push('freeze');
     });
-    f.offline.persist.mockImplementationOnce(async () => {
+    f.offline.persist.mockImplementationOnce(async (capture) => {
+      f.persisted.push(capture());
       order.push('drain');
     });
     f.offline.removeClean.mockImplementationOnce(async (verify) => {
@@ -1090,7 +1102,8 @@ test.each([false, true])(
       expect(preserveInput).toBe(true);
       order.push('freeze');
     });
-    f.offline.persist.mockImplementationOnce(async () => {
+    f.offline.persist.mockImplementationOnce(async (capture) => {
+      f.persisted.push(capture());
       order.push('persist');
     });
     f.offline.endAuthentication.mockImplementationOnce(() => {
@@ -1128,7 +1141,10 @@ test.each(['disk', 'recovery', 'host input', 'timeout'] as const)(
     if (failure === 'disk') f.offline.persist.mockRejectedValueOnce(new Error('Disk full'));
     if (failure === 'recovery') f.client.state.recoveryMissing = true;
     if (failure === 'timeout')
-      f.offline.persist.mockImplementationOnce(() => new Promise(() => {}));
+      f.offline.persist.mockImplementationOnce((capture) => {
+        f.persisted.push(capture());
+        return new Promise(() => {});
+      });
     f.metadata(async () => Response.json({}, { status: 401 }));
     await vi.advanceTimersByTimeAsync(4001);
     expect(f.offline.endAuthentication).toHaveBeenCalledOnce();
@@ -1172,7 +1188,8 @@ test('durable expired work exposes a sign-in handoff that still waits for unfini
 
 test('an account change during the 401 local drain cannot clear or redirect the new account', async () => {
   const f = await fixture({ downloaded: true });
-  f.offline.persist.mockImplementationOnce(async () => {
+  f.offline.persist.mockImplementationOnce(async (capture) => {
+    f.persisted.push(capture());
     f.offline.current = false;
   });
   f.metadata(async () => Response.json({}, { status: 401 }));
@@ -1248,7 +1265,11 @@ test.each(['freeze', 'drain', 'commit'] as const)(
   async (stage) => {
     const f = await fixture({ downloaded: true });
     if (stage === 'freeze') f.readonly.mockImplementationOnce(async () => f.pending());
-    if (stage === 'drain') f.offline.persist.mockImplementationOnce(async () => f.pending());
+    if (stage === 'drain')
+      f.offline.persist.mockImplementationOnce(async (capture) => {
+        f.persisted.push(capture());
+        f.pending();
+      });
     if (stage === 'commit')
       f.offline.removeClean.mockImplementationOnce(async (verify) => {
         f.pending();

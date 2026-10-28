@@ -114,7 +114,7 @@ test('immediate expiry keeps a held local save alive through a repeated 401 whil
   f.value.endAuthentication();
   const locked = vi.fn();
   f.value.onLock = locked;
-  const drain = f.value.persist(checkpoint);
+  const drain = f.value.persist(() => checkpoint);
   await vi.waitFor(() => expect(save).toHaveBeenCalledOnce());
   expect(f.values.has('spinel.offline.account')).toBe(false);
   offlineStorage.expirePreparedAccount();
@@ -243,7 +243,7 @@ test('ended authentication blocks all cold starts and HTTP while the frozen tab 
     expect(active.current).toBe(true);
     expect(active.toCanonical(local)).toBe(source);
     expect(await active.getImage(source)).toBe(local);
-    await active.persist(checkpoint);
+    await active.persist(() => checkpoint);
     expect(saved).toEqual([checkpoint]);
     expect(opened).toHaveBeenCalledOnce();
     await expect(active.fetch(`/api/spaces/${scope.spaceId}/items/${scope.item}`)).rejects.toThrow(
@@ -257,7 +257,7 @@ test('ended authentication blocks all cold starts and HTTP while the frozen tab 
     expect(active.current).toBe(false);
     expect(locked).toHaveBeenCalledOnce();
     expect(() => active.toCanonical(local)).toThrow();
-    await expect(active.persist(checkpoint)).rejects.toThrow('no longer current');
+    await expect(active.persist(() => checkpoint)).rejects.toThrow('no longer current');
     expect(saved).toEqual([checkpoint]);
   } finally {
     active.dispose();
