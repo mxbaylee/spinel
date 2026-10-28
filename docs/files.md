@@ -98,9 +98,9 @@ terminates the child and waits for its close before releasing capacity. A resour
 or formatting failure downloads no partial file. Limits and their operational
 tradeoffs are recorded in [SPN-075](implementation/SPN-075.md#production-integration-and-atomic-authorization).
 
-Both Pro print packages have been removed. Collaboration still uses Pro and owns
-the remaining license package until SPN-059 removes the last Pro dependencies and
-adds the repository-wide no-Pro check. This supersedes
+Printing and collaboration now use open-source/native paths. SPN-059 removed the
+remaining Pro dependencies and added the repository-wide no-Pro check
+(`npm run dependencies:check`). This supersedes
 [the licensed printing flow](implementation/SPN-031.md#legacy-decision-70-original-browser-printing)
 and implements [direct PDF for every current reader](implementation/SPN-075.md#legacy-decision-103-direct-pdf-for-every-current-reader).
 
