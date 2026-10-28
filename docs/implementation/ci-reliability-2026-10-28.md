@@ -153,3 +153,17 @@ Operator gets faster and more dependable maintenance feedback. Owner retains
 exact authored/saved content, recovery and useful undo. Collaborator retains peer
 convergence and current access. Link guest retains scope, viewer denial and
 revocation. None of those protections is optional because a label is absent.
+
+### Subsequent SPN-116 scope split
+
+**2026-10-28 — accepted follow-through, agent judgment.** The
+[SPN-116 implementation](SPN-116.md#scope-split) delivers the separately diagnosed
+shared-creation restart preparation boundary exposed while verifying SPN-118.
+It waits for the requested folder's loaded contents before deliberately
+disconnecting; complete draft and browser-restart checks retain the persistence
+contract. [SPN-120](../todo/SPN-120.md) retains this audit's original historical
+auth-heading, phone-navigation, offline-recovery-close and snapshot-reset cases,
+their required dispositions and the broader cleanup/negative checks. This is an
+explicit coherent split, not evidence that those historical symptoms are fixed.
+The original sample, failure findings and registration above remain historical
+evidence; the implementation PR records final verification and merge status.
