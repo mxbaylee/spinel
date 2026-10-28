@@ -7,9 +7,10 @@ turn-off, expired sharing, load failure and long names.
 
 The exact source commit, CI build identity, theme, viewport, capture time and
 image hashes are recorded in [manifest.json](manifest.json). The source was
-`2f84289abad8454a6dfaf4def00da345f35fd8f8`; subsequent changes before publication
-repair test fixtures and transition waits without changing these production
-components. Production source hashes make that equivalence reviewable.
+`2f84289abad8454a6dfaf4def00da345f35fd8f8`. The captured settings components remain
+byte-identical after the test-fixture and transition-wait repairs and the separate
+native-editor denial fix. Production source hashes make that equivalence
+reviewable. Real native expiry journeys are verified by the PR's browser suite.
 
 The capture run checked all 40 selected story/viewport combinations successfully.
 That count is scoped to these eight stories across five variants, not the full

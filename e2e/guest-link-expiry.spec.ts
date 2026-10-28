@@ -100,7 +100,9 @@ test('owner guest-link inventory changes expiry without rotating and fences stal
     const dialog = await expiryDialog();
     await dialog.getByRole('combobox', { name: 'Expire link after' }).selectOption('1');
     await dialog.getByRole('button', { name: 'Save expiry' }).click();
-    await expect(page.getByRole('status')).toHaveText('Expiry updated. The link is unchanged.');
+    await expect(
+      page.getByRole('region', { name: 'Guest links', exact: true }).getByRole('status'),
+    ).toHaveText('Expiry updated. The link is unchanged.');
     expect(
       db
         .prepare('SELECT epoch,token_hash,preview_hash,role FROM workspace_links WHERE item_id=?')

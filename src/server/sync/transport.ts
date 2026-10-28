@@ -9,6 +9,7 @@ import type { CollaborationStore, SyncIdentity } from '../collaboration/service.
 import { documentIdentity, validateIdentity } from '../collaboration/identity.ts';
 import { auditDeniedEdit } from '../collaboration/audit.ts';
 import { safeGuestRoomPresence } from '../collaboration/guestPresence.ts';
+import { AuthError } from '../auth/store.ts';
 import { Profiles } from '../auth/profile.ts';
 import { profileAvatar } from '../../profile/profile.ts';
 
@@ -322,7 +323,20 @@ export function attachSync(
         });
       } else response.status(405).end();
     } catch {
-      response.status(403).json({ error: 'This document is not available.' });
+      // A stale unit or missing Space child does not revoke its guest root.
+      // Only an explicit root-capability denial can close the whole guest view
+      // when its ordinary metadata probe is unreachable.
+      let guestLinkRevoked = false;
+      if (target.guest)
+        try {
+          workspace.links.principal(request.headers, target.spaceId ?? target.itemId);
+        } catch (error) {
+          guestLinkRevoked = error instanceof AuthError && error.status === 404;
+        }
+      response.status(403).json({
+        error: 'This document is not available.',
+        ...(guestLinkRevoked && { code: 'guest-link-revoked' }),
+      });
     }
   });
   // Use a named listener so close removes only this transport's handler.

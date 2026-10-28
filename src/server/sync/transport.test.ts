@@ -742,6 +742,46 @@ test('an active guest link anonymizes profiles for every recipient and expiry re
   ).toBe(true);
 });
 
+test('guest ticket failures distinguish root revocation from Origin, generation and backend errors', async () => {
+  const f = await fixture();
+  await f.prepare();
+  const link = await (
+    await f.send(`/api/items/${f.sheet.id}/link`, f.cookie(), 'PUT', { role: 'editor' })
+  ).json();
+  const entered = await f.send(`/api/guest/${f.sheet.id}/session`, '', 'POST', {
+    token: new URL(link.url).hash.slice(1),
+  });
+  const guestCookie = entered.headers.get('set-cookie')!.split(';')[0];
+  const base = `/sync-api/guest/${f.sheet.id}`;
+  const url = `${base}/ticket?unitId=${f.sheet.id}`;
+  await f.ticket(base, f.sheet.id, guestCookie);
+  const stale = await f.send(`${base}/ticket?unitId=${randomUUID()}`, guestCookie, 'POST');
+  expect(stale.status).toBe(403);
+  expect(await stale.json()).toEqual({ error: 'This document is not available.' });
+  const hostile = await f.send(url, guestCookie, 'POST', undefined, 'https://hostile.example');
+  expect(hostile.status).toBe(403);
+  expect(await hostile.json()).toEqual({ error: 'Open Spinel at its configured address.' });
+  const principal = vi.spyOn(LinkAccess.prototype, 'principal').mockImplementation(() => {
+    throw new Error('Private backend detail');
+  });
+  try {
+    const failed = await f.send(url, guestCookie, 'POST');
+    expect(failed.status).toBe(403);
+    expect(await failed.json()).toEqual({ error: 'This document is not available.' });
+  } finally {
+    principal.mockRestore();
+  }
+  expect((await f.send(url, guestCookie, 'POST')).status).toBe(200);
+  const disabled = await f.send(`/api/items/${f.sheet.id}/link`, f.cookie(), 'PUT', { role: null });
+  expect(disabled.status).toBe(200);
+  const revoked = await f.send(url, guestCookie, 'POST');
+  expect(revoked.status).toBe(403);
+  expect(await revoked.json()).toEqual({
+    error: 'This document is not available.',
+    code: 'guest-link-revoked',
+  });
+});
+
 test.each(['scan', 'fence', 'finish'] as const)(
   'expiry cleanup %s failures stay private, close guests and retry without starving another root',
   async (failure) => {
@@ -791,9 +831,12 @@ test.each(['scan', 'fence', 'finish'] as const)(
     expect(
       f.db.prepare('SELECT state FROM workspace_links WHERE item_id=?').get(f.sheet.id)?.state,
     ).toBe(failure === 'finish' ? 'pending' : 'active');
-    expect(
-      (await f.send(`${guestBase}/ticket?unitId=${f.sheet.id}`, guestCookie, 'POST')).status,
-    ).toBe(403);
+    const denied = await f.send(`${guestBase}/ticket?unitId=${f.sheet.id}`, guestCookie, 'POST');
+    expect(denied.status).toBe(403);
+    expect(await denied.json()).toEqual({
+      error: 'This document is not available.',
+      code: 'guest-link-revoked',
+    });
     await new Promise((resolve) => setTimeout(resolve, 550));
     expect(diagnostic.mock.calls).toEqual([
       ['Guest link expiry cleanup failed; access stays closed and cleanup will retry.'],
@@ -959,6 +1002,14 @@ test.each(['turn off', 'expire'] as const)(
       {},
     );
     expect(await guestPrepared.json()).toMatchObject({ syncVersion: 1, user: { name: 'Guest' } });
+    for (const path of [
+      `${guestBase}/ticket?unitId=${randomUUID()}`,
+      `/sync-api/guest-spaces/${space.id}/items/${randomUUID()}/ticket?unitId=${sheet.id}`,
+    ]) {
+      const denied = await f.send(path, guestCookie, 'POST');
+      expect(denied.status).toBe(403);
+      expect(await denied.json()).toEqual({ error: 'This document is not available.' });
+    }
     const guest = await f.connect(guestBase, sheet.id, guestCookie);
     const anonymousAccount = await f.connect(base(sheet.id), sheet.id);
     const otherChild = await f.connect(base(doc.id), doc.id);
@@ -1015,9 +1066,12 @@ test.each(['turn off', 'expire'] as const)(
       403,
     );
     await f.rejectedSocket(pendingGuestTicket, guestBase, sheet.id, guestCookie);
-    expect(
-      (await f.send(`${guestBase}/ticket?unitId=${sheet.id}`, guestCookie, 'POST')).status,
-    ).toBe(403);
+    const denied = await f.send(`${guestBase}/ticket?unitId=${sheet.id}`, guestCookie, 'POST');
+    expect(denied.status).toBe(403);
+    expect(await denied.json()).toEqual({
+      error: 'This document is not available.',
+      code: 'guest-link-revoked',
+    });
     expect(
       (
         await f.send(`/api/guest/${space.id}/session`, '', 'POST', {

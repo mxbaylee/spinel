@@ -792,6 +792,9 @@ for (const [kind, expiring] of [
       await f.page.route(`**/api/guest/${f.root.id}`, (route) => route.abort('failed'));
       await f.page.route(`**/api/guest-spaces/${f.root.id}`, (route) => route.abort('failed'));
       if (expiring) {
+        // Expiry's authoritative root denial must also hide this dirty editor
+        // when its exact-child metadata probe is unreachable.
+        await f.page.route(`**${endpoint(f.root.id, child.id)}`, (route) => route.abort('failed'));
         // Shorten only the test clock's deadline; exercise the production timer
         // without waiting a full day or invoking the turn-off route.
         f.db
