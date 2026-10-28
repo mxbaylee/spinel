@@ -1,0 +1,43 @@
+--- a/e2e/offline-creation-restart.ts
++++ b/e2e/offline-creation-restart.ts
+@@ -2,7 +2,7 @@
+ import { tmpdir } from 'node:os';
+ import { join } from 'node:path';
+ import { chromium, expect } from '@playwright/test';
+-import type { BrowserContext, TestInfo } from '@playwright/test';
++import type { BrowserContext, Route, TestInfo } from '@playwright/test';
+ import type { NativeSnapshot } from '@spinel/sync-client';
+ import { openDatabase } from '../server/database.ts';
+ import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
+@@ -56,6 +56,7 @@
+   const errors: string[] = [];
+   const transport = await offlineCreationNetwork(baseURL);
+   let context: BrowserContext | undefined;
++  let heldFolder: Route | undefined;
+   const start = async (offline = false) => {
+     transport.setOffline(offline);
+     // Closing this context terminates its browser process. No storageState or
+@@ -116,6 +117,8 @@
+       await dialog.getByRole('button', { name: 'Done', exact: true }).click();
+       await synced(page);
+     }
++    if (process.env.SPINEL_RESTART_PROBE === 'withheld-readiness')
++      await context!.route(`**/api/items/${folder.id}`, (route) => { heldFolder = route; });
+     await page.goto('/');
+     await page.getByRole('button', { name: 'Shared with me', exact: true }).click();
+     await page.getByRole('button', { name: `${folder.name} Folder`, exact: true }).click();
+@@ -275,6 +278,14 @@
+     ).toHaveLength(2);
+     expect(errors).toEqual([]);
+   } finally {
++    if (heldFolder) {
++      console.log(JSON.stringify({ probe: 'withheld-readiness', stages,
++        folderRequestHeld: true,
++        disconnectProbeSent: transport.posts.some((post) => post.path === '/api/items/offline-create'),
++        createdCount: created.length,
++      }));
++      await heldFolder.abort('internetdisconnected').catch(() => {});
++    }
+     try {
+       await writeFile(
+         info.outputPath('sync-diagnostics.json'),

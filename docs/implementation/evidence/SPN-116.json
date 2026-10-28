@@ -1,0 +1,248 @@
+{
+  "ticket": "SPN-116",
+  "date": "2026-10-28",
+  "origin": "SPN-118 / PR #213",
+  "baseCommit": "bc05dbc0d2595750f0bbf9502c2aba7e3d0b7463",
+  "fixedHelperSha256": "902e249b4aa776003318fa18161590b9a428cda99204932cac2dbc7453aae5bb",
+  "runtime": {
+    "node": "26.12.1",
+    "playwright": "1.64.1",
+    "chromium": "156.0.8078.4",
+    "chromiumBuild": "1248",
+    "build": "production with VITE_SYNC_EVIDENCE=1"
+  },
+  "historicalFailures": [
+    {
+      "sourceCommit": "bc05dbc0d2595750f0bbf9502c2aba7e3d0b7463",
+      "job": "https://github.com/mxbaylee/spinel/actions/runs/40720955777/job/122931620385",
+      "artifactId": 12832091998,
+      "artifactSha256": "d88d5ad41ade81dc5e0af696ed8f625b4cf151e8e13e1b6b04584e311e0da9be"
+    },
+    {
+      "sourceCommit": "c89047aeaacb912e1e877566ed40cbdfd95229df",
+      "job": "https://github.com/mxbaylee/spinel/actions/runs/40734811549/job/122982871350",
+      "artifactId": 12837734624,
+      "artifactSha256": "719814912051aee79a0ff34aee645b08f9fa754a11cbbc06f8c3f21f3992b80f"
+    }
+  ],
+  "budget": {
+    "declaredBeforeExecution": true,
+    "controlledBaseProbes": 3,
+    "completeCorrectedJourneys": 3,
+    "withheldReadinessNegative": 1,
+    "retries": 0
+  },
+  "controlledBaseProbe": {
+    "patch": "SPN-116-held-folder-probe.patch",
+    "applyTo": "baseCommit",
+    "observationsEachAttempt": {
+      "headingVisible": true,
+      "newButtonsBeforeDisconnect": 1,
+      "loadingVisible": true,
+      "folderViewPrepared": false,
+      "sharedFolderAccess": "editor",
+      "viewCount": 1,
+      "missingAfterDisconnect": true,
+      "newButtonsAfterDisconnect": 0
+    },
+    "report": {
+      "durationMs": 28049.738,
+      "results": [
+        {
+          "repeatEachIndex": null,
+          "status": "passed",
+          "retry": 0,
+          "durationMs": 7080,
+          "errors": []
+        },
+        {
+          "repeatEachIndex": null,
+          "status": "passed",
+          "retry": 0,
+          "durationMs": 6301,
+          "errors": []
+        },
+        {
+          "repeatEachIndex": null,
+          "status": "passed",
+          "retry": 0,
+          "durationMs": 6495,
+          "errors": []
+        }
+      ]
+    },
+    "peakRssMiB": 2011,
+    "interpretation": "Three controlled reproductions of a false readiness signal; not complete restart-journey acceptance."
+  },
+  "correctedJourneys": {
+    "report": {
+      "durationMs": 78159.246,
+      "results": [
+        {
+          "repeatEachIndex": null,
+          "status": "passed",
+          "retry": 0,
+          "durationMs": 23186,
+          "errors": []
+        },
+        {
+          "repeatEachIndex": null,
+          "status": "passed",
+          "retry": 0,
+          "durationMs": 22583,
+          "errors": []
+        },
+        {
+          "repeatEachIndex": null,
+          "status": "passed",
+          "retry": 0,
+          "durationMs": 25440,
+          "errors": []
+        }
+      ]
+    },
+    "peakRssMiB": 2028,
+    "allFiveStagesEveryAttempt": true,
+    "createdDocumentsPerAttempt": 2,
+    "checks": "Original native snapshots, saved draft/outbox, immutable creation request, ownership/attribution, two actual same-profile browser-process restarts and exactly-once publication retained."
+  },
+  "withheldReadinessNegative": {
+    "patch": "SPN-116-withheld-readiness.patch",
+    "applyTo": "corrected helper",
+    "report": {
+      "durationMs": 15512.868,
+      "results": [
+        {
+          "repeatEachIndex": null,
+          "status": "failed",
+          "retry": 0,
+          "durationMs": 11201,
+          "errors": [
+            "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('list', { name: 'Folder contents', exact: true }).getByRole('button', { name: 'Prepare sheet Sheet', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('list', { name: 'Folder contents', exact: true }).getByRole('button', { name: 'Prepare sheet Sheet', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('list', { name: 'Folder contents', exact: true }).getByRole('button', { name: 'Prepare sheet Sheet', exact: true })\u001b[22m\n\n\n   at offline-creation-restart.ts:135\n\n  133 |           exact: true,\n  134 |         }),\n> 135 |       ).toBeVisible();\n      |         ^\n  136 |     stages.push('shared-folder-view-ready');\n  137 |     transport.setOffline(true);\n  138 |     await network.setOffline(true);\n    at verifySharedCreationRestart (/workspace/scratch/d9d6222ee66c/spinel-prerequisite/e2e/offline-creation-restart.ts:135:9)\n    at /workspace/scratch/d9d6222ee66c/spinel-prerequisite/e2e/offline-creation.spec.ts:196:5"
+          ]
+        }
+      ]
+    },
+    "expectedExitCode": 1,
+    "actualExitCode": 1,
+    "peakRssMiB": 1818,
+    "folderRequestHeld": true,
+    "readyStageReached": false,
+    "disconnectProbeSent": false,
+    "createdCount": 0,
+    "interpretation": "Expected failure at the existing 5000ms Folder contents / Prepare sheet Sheet assertion before intentional outage; not a green product-test result."
+  },
+  "limits": [
+    "The initial CI attempts lack action traces; exact historical blocked locator/interleaving remains unknown.",
+    "The contents condition proves installed folder view, not a completed IndexedDB commit. Existing creation and restart acceptance verifies durability.",
+    "Three corrected attempts are a bounded sample, not a long-term reliability estimate.",
+    "The negative applies a diagnostic-only held-response patch; production and committed test helper contain no fault-injection flag.",
+    "Final committed-SHA CI and independent review results are recorded in the PR."
+  ],
+  "archive": {
+    "file": "SPN-116-readiness-evidence.zip",
+    "sha256": "e037853f52b845fed83a14226ddbdc524247afe20b41b1e2273b16ad3aff3e15",
+    "files": [
+      {
+        "path": "corrected-sample/attempt-1-diagnostics.json",
+        "bytes": 3878,
+        "sha256": "a6e29fde0af1f3c8a5b635772793ab835b238d99e8aa0cabf449b35c631d738d"
+      },
+      {
+        "path": "corrected-sample/attempt-2-diagnostics.json",
+        "bytes": 3878,
+        "sha256": "696fdbba0f019f1d992e5390b110c831e2796d92ee77088722601a241507ab68"
+      },
+      {
+        "path": "corrected-sample/attempt-3-diagnostics.json",
+        "bytes": 4026,
+        "sha256": "61a34c49044a41c2a18d756b945661ce1a9bb9c9c2e2fee2a57991a60713ea09"
+      },
+      {
+        "path": "corrected-sample/command.log",
+        "bytes": 1367,
+        "sha256": "4a602330c067eaf7457af6e3e5628af1c99657cfa476cd519917f0b2caaf5f07"
+      },
+      {
+        "path": "corrected-sample/test-report.json",
+        "bytes": 12946,
+        "sha256": "bc371b0bce41aeed5752bd9953c939acadc2e033cdad416e9d483c4990b17624"
+      },
+      {
+        "path": "held-folder-probe/command.log",
+        "bytes": 2514,
+        "sha256": "45d7417e206bac46d3506d408f507600a16c1104c5f765fc2b1112b1f40f1ea1"
+      },
+      {
+        "path": "held-folder-probe/test-report.json",
+        "bytes": 14311,
+        "sha256": "1872a4b8d8c4290e4da748c5d7e66a4a864994292c878c27d5a65328e395d258"
+      },
+      {
+        "path": "main-first-attempt/error-context.md",
+        "bytes": 2134,
+        "sha256": "afe63399e3e0e7ec90a0ad9bafdcaac193d66e97db2aff0d19f1a511fd4a3103"
+      },
+      {
+        "path": "main-first-attempt/sync-diagnostics.json",
+        "bytes": 778,
+        "sha256": "42a5b427a409b7d8113cc47ff7c71fa3259004194401c0700711ffad02788e0a"
+      },
+      {
+        "path": "main-first-attempt/test-failed-1.png",
+        "bytes": 35347,
+        "sha256": "484f39c635ee3bdae8cedb995912a4fe7ca88fbd82aad348eadd2164bc232c72"
+      },
+      {
+        "path": "main-first-attempt/test-report-excerpt.json",
+        "bytes": 2772,
+        "sha256": "ff63e508ef2338b6c498af920d49bf9d06fae9c44d93fb9d64eb7ea748f1dd28"
+      },
+      {
+        "path": "spn118-first-attempt/error-context.md",
+        "bytes": 2134,
+        "sha256": "afe63399e3e0e7ec90a0ad9bafdcaac193d66e97db2aff0d19f1a511fd4a3103"
+      },
+      {
+        "path": "spn118-first-attempt/sync-diagnostics.json",
+        "bytes": 778,
+        "sha256": "5fa38e4ebce3e01b8f4858b1da658016ac0618eda61c2ac141469d12e63532a6"
+      },
+      {
+        "path": "spn118-first-attempt/test-failed-1.png",
+        "bytes": 35347,
+        "sha256": "484f39c635ee3bdae8cedb995912a4fe7ca88fbd82aad348eadd2164bc232c72"
+      },
+      {
+        "path": "spn118-first-attempt/test-report-excerpt.json",
+        "bytes": 2772,
+        "sha256": "c8e252f35b9ec7cdb1b88788807c74fcb7ef445b588d0b216be292bc3b482746"
+      },
+      {
+        "path": "withheld-readiness/command.log",
+        "bytes": 3216,
+        "sha256": "6c389c703c93c06c5c3e009fb67c903f97b90f8bb44e38997769c42e1ac45c8f"
+      },
+      {
+        "path": "withheld-readiness/error-context.md",
+        "bytes": 13384,
+        "sha256": "c53c01f7e24c765611326a28b4cdf6f2cdf9fe04eacc691bbce803a38c957ea8"
+      },
+      {
+        "path": "withheld-readiness/sync-diagnostics.json",
+        "bytes": 668,
+        "sha256": "2d3c73d266c5ce4658a8ccc4fab954308ddd4da09511213a38e177a01d36bbd9"
+      },
+      {
+        "path": "withheld-readiness/test-failed-1.png",
+        "bytes": 29579,
+        "sha256": "b8f05224f7102e6a56ade1f008c14a00ab0b7e6c3b3215a49a49179974bfd93c"
+      },
+      {
+        "path": "withheld-readiness/test-report.json",
+        "bytes": 15734,
+        "sha256": "060a682a54bbf16c511c0d2d21d4becde35c36256bf8db820057389b53ceb5ac"
+      }
+    ]
+  }
+}

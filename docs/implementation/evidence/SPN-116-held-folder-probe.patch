@@ -1,0 +1,65 @@
+diff --git a/e2e/offline-creation-restart.ts b/e2e/offline-creation-restart.ts
+index 5e7d05f..c1366db 100644
+--- a/e2e/offline-creation-restart.ts
++++ b/e2e/offline-creation-restart.ts
+@@ -116,13 +116,60 @@ export async function verifySharedCreationRestart(baseURL: string, info: TestInf
+       await dialog.getByRole('button', { name: 'Done', exact: true }).click();
+       await synced(page);
+     }
++    let releaseFolder!: () => void;
++    let folderRequested = false;
++    const probe = process.env.SPINEL_RESTART_PROBE === 'held-folder';
++    if (probe) {
++      const held = new Promise<void>((resolve) => { releaseFolder = resolve; });
++      await context!.route(`**/api/items/${folder.id}`, async (route) => {
++        folderRequested = true;
++        await held;
++        await route.abort('internetdisconnected').catch(() => {});
++      });
++    }
+     await page.goto('/');
+     await page.getByRole('button', { name: 'Shared with me', exact: true }).click();
+     await page.getByRole('button', { name: `${folder.name} Folder`, exact: true }).click();
+     await expect(page.getByRole('heading', { name: folder.name, exact: true })).toBeVisible();
++    if (probe) {
++      await expect.poll(() => folderRequested).toBe(true);
++      const catalog = await page.evaluate(async ({ accountId, folderId }) => {
++        return new Promise((resolve, reject) => {
++          const opening = indexedDB.open(`spinel-offline-${accountId}`);
++          opening.onupgradeneeded = () => { opening.transaction?.abort(); reject(new Error('Missing prepared store')); };
++          opening.onerror = () => reject(opening.error);
++          opening.onsuccess = () => {
++            const database = opening.result;
++            const read = database.transaction('meta').objectStore('meta').get('catalog');
++            read.onerror = () => { database.close(); reject(read.error); };
++            read.onsuccess = () => {
++              const saved = read.result;
++              database.close();
++              resolve({
++                folderViewPrepared: Boolean(saved?.views?.[folderId]),
++                sharedFolderAccess: saved?.shared?.find((item: { id: string }) => item.id === folderId)?.access,
++                viewCount: Object.keys(saved?.views ?? {}).length,
++              });
++            };
++          };
++        });
++      }, { accountId: actor.id, folderId: folder.id });
++      console.log(JSON.stringify({ probe: 'heading-before-folder-response', catalog,
++        loading: await page.getByText('Loading your files…', { exact: true }).count(),
++        newButtons: await page.getByRole('button', { name: 'New', exact: true }).count(),
++      }));
++    }
+     transport.setOffline(true);
+     await network.setOffline(true);
+     await transport.verifyDisconnected();
++    if (probe) {
++      releaseFolder();
++      await expect(page.getByText("This item isn't available", { exact: true })).toBeVisible();
++      console.log(JSON.stringify({ probe: 'disconnect-before-folder-ready',
++        missing: true, newButtons: await page.getByRole('button', { name: 'New', exact: true }).count(),
++      }));
++      return;
++    }
+     for (const kind of ['sheet', 'doc'] as const) {
+       await page.getByRole('button', { name: 'New', exact: true }).click();
+       const menu = page.getByRole('menu');
