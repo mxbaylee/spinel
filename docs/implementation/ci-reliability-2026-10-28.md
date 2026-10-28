@@ -75,6 +75,9 @@ causes and acceptance from shared browser fixtures.
   runtime remedy or narrow mitigation, then verify development and production/
   container behavior. Source/runtime comparison establishes continued applicability,
   not a fresh reproduction.
+  The later [SPN-117 decision and retained comparison](SPN-117.md) document the
+  development-only compiler-path mitigation, renewed fatal evidence and required
+  final-source acceptance.
 - **SPN-118, M effort / Owner and Collaborator L impact:** the full contents of
   `src/server/sync/transition.ts`, `src/server/sync/transition.test.ts` and
   `scripts/sync-transition/verify.ts` are unchanged from failing `2361a236` to

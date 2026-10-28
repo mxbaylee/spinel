@@ -120,6 +120,17 @@ export async function verifySharedCreationRestart(baseURL: string, info: TestInf
     await page.getByRole('button', { name: 'Shared with me', exact: true }).click();
     await page.getByRole('button', { name: `${folder.name} Folder`, exact: true }).click();
     await expect(page.getByRole('heading', { name: folder.name, exact: true })).toBeVisible();
+    // The heading can use the shared-list row before this folder's view loads.
+    // Prepare the actual contents before deliberately cutting its request off.
+    const contents = page.getByRole('list', { name: 'Folder contents', exact: true });
+    for (const seed of seeds)
+      await expect(
+        contents.getByRole('button', {
+          name: `${seed.name} ${seed.kind === 'sheet' ? 'Sheet' : 'Doc'}`,
+          exact: true,
+        }),
+      ).toBeVisible();
+    stages.push('shared-folder-view-ready');
     transport.setOffline(true);
     await network.setOffline(true);
     await transport.verifyDisconnected();
