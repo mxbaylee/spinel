@@ -206,6 +206,17 @@ review are in [SPN-100](implementation/SPN-100.md#verification-and-hosted-rollou
 Host patching and deployment remain outside this change; the prior live-server
 routine was [retired](implementation/grooming-dependency-registration-2026-10-23.md#align-work-with-the-undeployed-product).
 
+Keep the resolved request-body parser on body-parser 2.4.0 or a later verified
+compatible release before deployment or public exposure. The earlier 2.3.0
+resolution could terminate the process when trailing bytes arrived after a
+compressed frame; archive upload deadlines do not mitigate that decoder error.
+The [SPN-105 repair and evidence](implementation/SPN-105.md#compatible-parser-repair-and-process-survival-evidence)
+record the narrow update and subprocess regression. Run `server/request-body.test.ts`
+when changing parser dependencies or request middleware: it exercises the real
+application's process survival, compressed JSON, decoded-byte limits and access
+checks. Preserve the existing authentication, Origin and parser-error behavior;
+verify the resolved tree with `npm ls body-parser --all` and `npm audit --json`.
+
 ## Component catalogue
 
 ```sh
