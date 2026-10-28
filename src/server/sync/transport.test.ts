@@ -15,6 +15,7 @@ import { AuthStore, COOKIE_NAME } from '../auth/store.ts';
 import { Profiles } from '../auth/profile.ts';
 import { WorkspaceStore } from '../workspace/store.ts';
 import { SpaceStore } from '../workspace/spaces.ts';
+import { LinkAccess } from '../workspace/links.ts';
 
 vi.setConfig({ testTimeout: 30_000 });
 const cleanup: (() => unknown | Promise<unknown>)[] = [];
@@ -741,6 +742,128 @@ test('an active guest link anonymizes profiles for every recipient and expiry re
   ).toBe(true);
 });
 
+test('guest ticket failures distinguish root revocation from Origin, generation and backend errors', async () => {
+  const f = await fixture();
+  await f.prepare();
+  const link = await (
+    await f.send(`/api/items/${f.sheet.id}/link`, f.cookie(), 'PUT', { role: 'editor' })
+  ).json();
+  const entered = await f.send(`/api/guest/${f.sheet.id}/session`, '', 'POST', {
+    token: new URL(link.url).hash.slice(1),
+  });
+  const guestCookie = entered.headers.get('set-cookie')!.split(';')[0];
+  const base = `/sync-api/guest/${f.sheet.id}`;
+  const url = `${base}/ticket?unitId=${f.sheet.id}`;
+  await f.ticket(base, f.sheet.id, guestCookie);
+  const stale = await f.send(`${base}/ticket?unitId=${randomUUID()}`, guestCookie, 'POST');
+  expect(stale.status).toBe(403);
+  expect(await stale.json()).toEqual({ error: 'This document is not available.' });
+  const hostile = await f.send(url, guestCookie, 'POST', undefined, 'https://hostile.example');
+  expect(hostile.status).toBe(403);
+  expect(await hostile.json()).toEqual({ error: 'Open Spinel at its configured address.' });
+  const principal = vi.spyOn(LinkAccess.prototype, 'principal').mockImplementation(() => {
+    throw new Error('Private backend detail');
+  });
+  try {
+    const failed = await f.send(url, guestCookie, 'POST');
+    expect(failed.status).toBe(403);
+    expect(await failed.json()).toEqual({ error: 'This document is not available.' });
+  } finally {
+    principal.mockRestore();
+  }
+  expect((await f.send(url, guestCookie, 'POST')).status).toBe(200);
+  const disabled = await f.send(`/api/items/${f.sheet.id}/link`, f.cookie(), 'PUT', { role: null });
+  expect(disabled.status).toBe(200);
+  const revoked = await f.send(url, guestCookie, 'POST');
+  expect(revoked.status).toBe(403);
+  expect(await revoked.json()).toEqual({
+    error: 'This document is not available.',
+    code: 'guest-link-revoked',
+  });
+});
+
+test.each(['scan', 'fence', 'finish'] as const)(
+  'expiry cleanup %s failures stay private, close guests and retry without starving another root',
+  async (failure) => {
+    const f = await fixture();
+    await f.prepare();
+    const other = f.workspace.create(f.owner.id, {
+      kind: 'doc',
+      name: 'Other private root',
+      parentId: null,
+    });
+    const link = await (
+      await f.send(`/api/items/${f.sheet.id}/link`, f.cookie(), 'PUT', { role: 'editor' })
+    ).json();
+    const otherLink = await (
+      await f.send(`/api/items/${other.id}/link`, f.cookie(), 'PUT', { role: 'viewer' })
+    ).json();
+    const entered = await f.send(`/api/guest/${f.sheet.id}/session`, '', 'POST', {
+      token: new URL(link.url).hash.slice(1),
+    });
+    const guestCookie = entered.headers.get('set-cookie')!.split(';')[0];
+    await f.send(`/api/guest/${f.sheet.id}/collaboration`, guestCookie, 'POST', {});
+    const guestBase = `/sync-api/guest/${f.sheet.id}`;
+    const guest = await f.connect(guestBase, f.sheet.id, guestCookie);
+    const diagnostic = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const scan =
+      failure === 'scan'
+        ? vi.spyOn(LinkAccess.prototype, 'expiring').mockImplementation(() => {
+            throw new Error('Private title must not reach diagnostics');
+          })
+        : undefined;
+    if (failure !== 'scan')
+      f.db.exec(`CREATE TRIGGER fail_guest_expiry BEFORE UPDATE OF state ON workspace_links
+      WHEN NEW.item_id='${f.sheet.id}' AND NEW.state='${failure === 'fence' ? 'pending' : 'off'}'
+      BEGIN SELECT RAISE(ABORT, 'Private title must not reach diagnostics'); END`);
+    f.db
+      .prepare('UPDATE workspace_links SET expires_at=? WHERE item_id IN (?,?)')
+      .run(Date.now(), f.sheet.id, other.id);
+    await expect.poll(() => diagnostic.mock.calls.length).toBe(1);
+    await expect.poll(() => guest.socket.readyState).toBe(WebSocket.CLOSED);
+    if (failure !== 'scan')
+      await expect
+        .poll(
+          () =>
+            f.db.prepare('SELECT state FROM workspace_links WHERE item_id=?').get(other.id)?.state,
+        )
+        .toBe('off');
+    expect(
+      f.db.prepare('SELECT state FROM workspace_links WHERE item_id=?').get(f.sheet.id)?.state,
+    ).toBe(failure === 'finish' ? 'pending' : 'active');
+    const denied = await f.send(`${guestBase}/ticket?unitId=${f.sheet.id}`, guestCookie, 'POST');
+    expect(denied.status).toBe(403);
+    expect(await denied.json()).toEqual({
+      error: 'This document is not available.',
+      code: 'guest-link-revoked',
+    });
+    await new Promise((resolve) => setTimeout(resolve, 550));
+    expect(diagnostic.mock.calls).toEqual([
+      ['Guest link expiry cleanup failed; access stays closed and cleanup will retry.'],
+    ]);
+    if (scan) scan.mockRestore();
+    else f.db.exec('DROP TRIGGER fail_guest_expiry');
+    for (const [id, epoch] of [
+      [f.sheet.id, link.epoch],
+      [other.id, otherLink.epoch],
+    ] as const) {
+      await expect
+        .poll(() =>
+          f.db
+            .prepare(
+              'SELECT epoch,state,token_hash,preview_hash FROM workspace_links WHERE item_id=?',
+            )
+            .get(id),
+        )
+        .toEqual({ epoch: epoch + 1, state: 'off', token_hash: null, preview_hash: null });
+      expect(
+        f.db.prepare('SELECT count(*) AS n FROM workspace_guest_sessions WHERE item_id=?').get(id)
+          ?.n,
+      ).toBe(0);
+    }
+  },
+);
+
 test('Origin, one-time tickets, operator/viewer boundaries and revoked recipients are enforced over real ingress', async () => {
   const f = await fixture();
   await f.prepare();
@@ -813,107 +936,156 @@ test('Origin, one-time tickets, operator/viewer boundaries and revoked recipient
   expect(f.db.prepare('SELECT count(*) AS n FROM spinel_sync_revisions').get()!.n).toBe(1);
 });
 
-test('Space sockets bind root plus child and root rotation fences every child, guest and old ticket', async () => {
-  const f = await fixture();
-  const space = f.spaces.createRoot(f.owner.id, { name: 'Private Space', parentId: null }).space;
-  const sheet = f.spaces.createChild(f.owner.id, space.id, {
-    name: 'Sheet',
-    kind: 'sheet',
-    parentId: space.id,
-  }).item;
-  const doc = f.spaces.createChild(f.owner.id, space.id, {
-    name: 'Doc',
-    kind: 'doc',
-    parentId: space.id,
-  }).item;
-  const otherSpace = f.spaces.createRoot(f.owner.id, { name: 'Other', parentId: null }).space;
-  f.spaces.share(f.owner.id, space.id, f.editor.id, 'admin');
-  const base = (id: string, root = space.id) => `/sync-api/spaces/${root}/items/${id}`;
-  for (const item of [sheet, doc]) {
-    const response = await f.send(
-      `/api/spaces/${space.id}/items/${item.id}/collaboration`,
-      f.cookie(),
+test.each(['turn off', 'expire'] as const)(
+  'Space sockets bind root plus child and %s fences every child, guest and old ticket',
+  async (action) => {
+    const f = await fixture();
+    const space = f.spaces.createRoot(f.owner.id, { name: 'Private Space', parentId: null }).space;
+    const sheet = f.spaces.createChild(f.owner.id, space.id, {
+      name: 'Sheet',
+      kind: 'sheet',
+      parentId: space.id,
+    }).item;
+    const doc = f.spaces.createChild(f.owner.id, space.id, {
+      name: 'Doc',
+      kind: 'doc',
+      parentId: space.id,
+    }).item;
+    const otherSpace = f.spaces.createRoot(f.owner.id, { name: 'Other', parentId: null }).space;
+    f.spaces.share(f.owner.id, space.id, f.editor.id, 'admin');
+    const base = (id: string, root = space.id) => `/sync-api/spaces/${root}/items/${id}`;
+    for (const item of [sheet, doc]) {
+      const response = await f.send(
+        `/api/spaces/${space.id}/items/${item.id}/collaboration`,
+        f.cookie(),
+        'POST',
+        {},
+      );
+      expect(response.status).toBe(200);
+      expect(await response.json()).toMatchObject({ syncVersion: 1 });
+    }
+    expect(
+      (
+        await f.send(
+          `${base(sheet.id, otherSpace.id)}/ticket?unitId=${sheet.id}`,
+          f.cookie(),
+          'POST',
+        )
+      ).status,
+    ).toBe(403);
+    expect(
+      (await f.send(`/sync-api/items/${sheet.id}/ticket?unitId=${sheet.id}`, f.cookie(), 'POST'))
+        .status,
+    ).toBe(403);
+    const sheetSocket = await f.connect(base(sheet.id), sheet.id, f.cookie(f.editor.id));
+    const docSocket = await f.connect(base(doc.id), doc.id, f.cookie(f.editor.id));
+    expect(docSocket.frames[0].snapshot).toMatchObject({ drawings: {}, drawingsOrder: [] });
+    const oldTicket = await f.ticket(base(doc.id), doc.id);
+    const enabled = await f.send(`/api/items/${space.id}/link`, f.cookie(), 'PUT', {
+      role: 'editor',
+    });
+    expect(enabled.status, await enabled.clone().text()).toBe(200);
+    await expect.poll(() => sheetSocket.socket.readyState).toBe(WebSocket.CLOSED);
+    await expect.poll(() => docSocket.socket.readyState).toBe(WebSocket.CLOSED);
+    await f.rejectedSocket(oldTicket, base(doc.id), doc.id);
+    const link = await enabled.json();
+    const entered = await f.send(`/api/guest/${space.id}/session`, '', 'POST', {
+      token: new URL(link.url).hash.slice(1),
+    });
+    expect(entered.status).toBe(204);
+    const guestCookie = entered.headers.get('set-cookie')!.split(';')[0];
+    const guestBase = `/sync-api/guest-spaces/${space.id}/items/${sheet.id}`;
+    const guestPrepared = await f.send(
+      `/api/guest-spaces/${space.id}/items/${sheet.id}/collaboration`,
+      guestCookie,
       'POST',
       {},
     );
-    expect(response.status).toBe(200);
-    expect(await response.json()).toMatchObject({ syncVersion: 1 });
-  }
-  expect(
-    (await f.send(`${base(sheet.id, otherSpace.id)}/ticket?unitId=${sheet.id}`, f.cookie(), 'POST'))
-      .status,
-  ).toBe(403);
-  expect(
-    (await f.send(`/sync-api/items/${sheet.id}/ticket?unitId=${sheet.id}`, f.cookie(), 'POST'))
-      .status,
-  ).toBe(403);
-  const sheetSocket = await f.connect(base(sheet.id), sheet.id, f.cookie(f.editor.id));
-  const docSocket = await f.connect(base(doc.id), doc.id, f.cookie(f.editor.id));
-  expect(docSocket.frames[0].snapshot).toMatchObject({ drawings: {}, drawingsOrder: [] });
-  const oldTicket = await f.ticket(base(doc.id), doc.id);
-  const enabled = await f.send(`/api/items/${space.id}/link`, f.cookie(), 'PUT', {
-    role: 'editor',
-  });
-  expect(enabled.status, await enabled.clone().text()).toBe(200);
-  await expect.poll(() => sheetSocket.socket.readyState).toBe(WebSocket.CLOSED);
-  await expect.poll(() => docSocket.socket.readyState).toBe(WebSocket.CLOSED);
-  await f.rejectedSocket(oldTicket, base(doc.id), doc.id);
-  const link = await enabled.json();
-  const entered = await f.send(`/api/guest/${space.id}/session`, '', 'POST', {
-    token: new URL(link.url).hash.slice(1),
-  });
-  expect(entered.status).toBe(204);
-  const guestCookie = entered.headers.get('set-cookie')!.split(';')[0];
-  const guestBase = `/sync-api/guest-spaces/${space.id}/items/${sheet.id}`;
-  const guestPrepared = await f.send(
-    `/api/guest-spaces/${space.id}/items/${sheet.id}/collaboration`,
-    guestCookie,
-    'POST',
-    {},
-  );
-  expect(await guestPrepared.json()).toMatchObject({ syncVersion: 1, user: { name: 'Guest' } });
-  const guest = await f.connect(guestBase, sheet.id, guestCookie);
-  const anonymousAccount = await f.connect(base(sheet.id), sheet.id);
-  const otherChild = await f.connect(base(doc.id), doc.id);
-  await expect.poll(() => presence(guest.frames)?.members?.length).toBe(2);
-  for (const client of [guest, anonymousAccount])
-    expect(presence(client.frames)!.members!.map((member) => [member.name, member.avatar])).toEqual(
-      [
+    expect(await guestPrepared.json()).toMatchObject({ syncVersion: 1, user: { name: 'Guest' } });
+    for (const path of [
+      `${guestBase}/ticket?unitId=${randomUUID()}`,
+      `/sync-api/guest-spaces/${space.id}/items/${randomUUID()}/ticket?unitId=${sheet.id}`,
+    ]) {
+      const denied = await f.send(path, guestCookie, 'POST');
+      expect(denied.status).toBe(403);
+      expect(await denied.json()).toEqual({ error: 'This document is not available.' });
+    }
+    const guest = await f.connect(guestBase, sheet.id, guestCookie);
+    const anonymousAccount = await f.connect(base(sheet.id), sheet.id);
+    const otherChild = await f.connect(base(doc.id), doc.id);
+    await expect.poll(() => presence(guest.frames)?.members?.length).toBe(2);
+    for (const client of [guest, anonymousAccount])
+      expect(
+        presence(client.frames)!.members!.map((member) => [member.name, member.avatar]),
+      ).toEqual([
         ['Guest', ''],
         ['Collaborator', ''],
-      ],
+      ]);
+    guest.socket.send(JSON.stringify({ type: 'cursor', selection: 'first!D4' }));
+    await expect
+      .poll(() =>
+        presence(anonymousAccount.frames)?.members?.some(
+          (member) => member.selection === 'first!D4',
+        ),
+      )
+      .toBe(true);
+    expect(presence(otherChild.frames)!.members).toHaveLength(1);
+    expect(
+      JSON.stringify(otherChild.frames.filter((frame) => frame.type === 'presence')),
+    ).not.toContain('first!D4');
+    otherChild.socket.send(JSON.stringify({ type: 'cursor', selection: '0:0:0:TEXT::-1' }));
+    await expect
+      .poll(() => presence(otherChild.frames)?.members?.[0].selection)
+      .toBe('0:0:0:TEXT::-1');
+    expect(JSON.stringify(guest.frames)).not.toContain(f.owner.name);
+    guest.socket.send(
+      JSON.stringify({
+        type: 'submit',
+        mutationId: randomUUID(),
+        baseRevision: 1,
+        mutations: [f.mutation('guest', 0, sheet.id)],
+      }),
     );
-  guest.socket.send(JSON.stringify({ type: 'cursor', selection: 'first!D4' }));
-  await expect
-    .poll(() =>
-      presence(anonymousAccount.frames)?.members?.some((member) => member.selection === 'first!D4'),
-    )
-    .toBe(true);
-  expect(presence(otherChild.frames)!.members).toHaveLength(1);
-  expect(
-    JSON.stringify(otherChild.frames.filter((frame) => frame.type === 'presence')),
-  ).not.toContain('first!D4');
-  otherChild.socket.send(JSON.stringify({ type: 'cursor', selection: '0:0:0:TEXT::-1' }));
-  await expect
-    .poll(() => presence(otherChild.frames)?.members?.[0].selection)
-    .toBe('0:0:0:TEXT::-1');
-  expect(JSON.stringify(guest.frames)).not.toContain(f.owner.name);
-  guest.socket.send(
-    JSON.stringify({
-      type: 'submit',
-      mutationId: randomUUID(),
-      baseRevision: 1,
-      mutations: [f.mutation('guest', 0, sheet.id)],
-    }),
-  );
-  await expect.poll(() => guest.frames.some((frame) => frame.type === 'ack')).toBe(true);
-  const rotation = await f.send(`/api/items/${space.id}/link`, f.cookie(), 'PUT', { role: null });
-  expect(rotation.status).toBe(200);
-  await expect.poll(() => guest.socket.readyState).toBe(WebSocket.CLOSED);
-  await expect.poll(() => anonymousAccount.socket.readyState).toBe(WebSocket.CLOSED);
-  await expect.poll(() => otherChild.socket.readyState).toBe(WebSocket.CLOSED);
-  expect((await f.send(`${guestBase}/snapshot?unitId=${sheet.id}`, guestCookie)).status).toBe(403);
-});
+    await expect.poll(() => guest.frames.some((frame) => frame.type === 'ack')).toBe(true);
+    const pendingGuestTicket = await f.ticket(guestBase, sheet.id, guestCookie);
+    if (action === 'turn off') {
+      const rotation = await f.send(`/api/items/${space.id}/link`, f.cookie(), 'PUT', {
+        role: null,
+      });
+      expect(rotation.status).toBe(200);
+    } else {
+      // No incoming request or edit is needed: the existing timer closes idle views.
+      f.db
+        .prepare('UPDATE workspace_links SET expires_at=? WHERE item_id=?')
+        .run(Date.now(), space.id);
+    }
+    await expect.poll(() => guest.socket.readyState).toBe(WebSocket.CLOSED);
+    await expect.poll(() => anonymousAccount.socket.readyState).toBe(WebSocket.CLOSED);
+    await expect.poll(() => otherChild.socket.readyState).toBe(WebSocket.CLOSED);
+    expect((await f.send(`${guestBase}/snapshot?unitId=${sheet.id}`, guestCookie)).status).toBe(
+      403,
+    );
+    await f.rejectedSocket(pendingGuestTicket, guestBase, sheet.id, guestCookie);
+    const denied = await f.send(`${guestBase}/ticket?unitId=${sheet.id}`, guestCookie, 'POST');
+    expect(denied.status).toBe(403);
+    expect(await denied.json()).toEqual({
+      error: 'This document is not available.',
+      code: 'guest-link-revoked',
+    });
+    expect(
+      (
+        await f.send(`/api/guest/${space.id}/session`, '', 'POST', {
+          token: new URL(link.url).hash.slice(1),
+        })
+      ).status,
+    ).toBe(404);
+    expect(
+      f.db
+        .prepare('SELECT epoch,state,token_hash,preview_hash FROM workspace_links WHERE item_id=?')
+        .get(space.id),
+    ).toEqual({ epoch: link.epoch + 1, state: 'off', token_hash: null, preview_hash: null });
+  },
+);
 
 test('a root account downgrade and revocation fence every native child connection and old ticket', async () => {
   const f = await fixture();

@@ -3,12 +3,14 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 import { ProfilePage } from './ProfilePage.tsx';
 import { Rail } from './Rail.tsx';
+import { guestLinkExamples } from './guestLinksStoryData.ts';
 const profile = { name: 'Alex Baylee', icon: 'lucide:flower', color: 'info-strong' };
 const api = {
   'GET /api/auth/profile': profile,
   'POST /api/auth/profile': profile,
   'GET /api/auth/connections': { connections: [] },
   'GET /api/auth/tokens': { tokens: [] },
+  'GET /api/guest-links': { items: guestLinkExamples },
 };
 function Preview({
   section = 'profile',
@@ -70,6 +72,15 @@ export const Profile: Story = { parameters: { api } };
 export const Passkeys: Story = { args: { section: 'passkeys' }, parameters: { api } };
 export const ThisDevice: Story = { args: { section: 'device' }, parameters: { api } };
 export const Connections: Story = { args: { section: 'connections' }, parameters: { api } };
+export const GuestLinks: Story = { args: { section: 'links' }, parameters: { api } };
+export const GuestLinksOffline: Story = {
+  args: { offline: true, section: 'links' },
+  parameters: { api },
+};
+export const GuestLinksOperator: Story = {
+  args: { admin: true, section: 'links' },
+  parameters: { api },
+};
 export const Operator: Story = { args: { admin: true }, parameters: { api } };
 export const Offline: Story = { args: { offline: true, section: 'device' } };
 export const Phone: Story = {
