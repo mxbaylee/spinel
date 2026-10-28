@@ -2,13 +2,14 @@ import type { Univer } from '@univerjs/core';
 import { DocStateChangeManagerService, DocStateEmitService } from '@univerjs/docs';
 
 // A long uninterrupted burst must not become one quadratic composition task.
-// Both 64- and 44-state candidates missed the paired-flush p95 budget. Smaller
-// native groups keep composition bounded; the public constructor retention
-// option leaves room for the original fixture's 66 capacity-only groups plus
-// additional idle boundaries. Verification replays every actual observed group.
+// The 32-state policy also exceeded the unchanged mobile paired-flush p95
+// budget during SPN-111 integration. Twenty-four completed states reduce the
+// work in each synchronous flush. The unchanged 100-group constructor limit
+// retains the original fixture's 87 groups, plus 13 spare idle boundaries.
+// Verification replays every actual observed group, including the final tail.
 // Native segment/IME boundaries and finite eviction remain intact. An owned
 // frame checks the same 300 ms quiet interval when SDK timers are delayed.
-export const DOC_HISTORY_GROUP_LIMIT = 32;
+export const DOC_HISTORY_GROUP_LIMIT = 24;
 export const DOC_HISTORY_RETENTION_LIMIT = 100;
 // Match the pinned SDK's quiet interval without joining its deferred timer queue.
 export const DOC_HISTORY_IDLE_MS = 300;

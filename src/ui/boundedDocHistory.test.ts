@@ -577,7 +577,7 @@ test('bounded groups retain exact lost-ack replay and local undo until a real pe
     expect(a.live.snapshot()).toEqual(b.live.snapshot());
     expect((f.reopen() as IDocumentData).body!.dataStream).toBe('0123456789'.repeat(7) + '\r\n');
     const history = a.live.univer.__getInjector().get(IUndoRedoService);
-    // The unchanged 70-character replay now forms 32 + 32 + 6 native changes.
+    // The unchanged 70-character replay forms 24 + 24 + 22 native changes.
     expect(history.getUndoRedoStatus('doc').undos).toBe(3);
     expect(
       await b.commands.executeCommand('doc.command.insert-text', {

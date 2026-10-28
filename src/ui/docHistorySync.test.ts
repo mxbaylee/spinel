@@ -142,7 +142,10 @@ test.each([false, true])(
       await converge(text.length);
       const originalBody = structuredClone(body(writer));
       const groups = Math.ceil(text.length / DOC_HISTORY_GROUP_LIMIT);
-      expect(groups).toBe(66);
+      // Retain the complete 2,086-state fixture, not only its newest 100 groups.
+      expect(DOC_HISTORY_GROUP_LIMIT).toBe(24);
+      expect(groups).toBe(87);
+      expect(DOC_HISTORY_RETENTION_LIMIT - groups).toBe(13);
       expect(history.getUndoRedoStatus('doc')).toEqual({ undos: bounded ? groups : 1, redos: 0 });
       if (!bounded) {
         const entry = history.pitchTopUndoElement()!;
