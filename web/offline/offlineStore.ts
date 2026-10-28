@@ -599,14 +599,17 @@ function creationDestination(
   parentId: string | null,
 ): { access: Exclude<ItemAccess, 'viewer'>; ownerName?: string } | undefined {
   if (parentId === null) return { access: 'owner' as const };
-  // Conflicting cached rows cannot grant more access than a known viewer row.
-  // The server remains the authority when a creation is later published.
-  const folders = [
-    ...(catalog.views[parentId] ?? []),
-    ...catalog.items,
-    ...catalog.shared,
-    ...Object.values(catalog.views).flat(),
-  ].filter((item) => item.id === parentId);
+  // Match Dashboard's prepared current-folder view before general list or
+  // ancestor snapshots. Reopening a folder after a role change must supersede
+  // its old copies in other folders/documents, in either direction. Conflicts
+  // within the chosen source still fail closed; publication rechecks live access.
+  let folders = (catalog.views[parentId] ?? []).filter((item) => item.id === parentId);
+  if (!folders.length)
+    folders = [...catalog.items, ...catalog.shared].filter((item) => item.id === parentId);
+  if (!folders.length)
+    folders = Object.values(catalog.views)
+      .flat()
+      .filter((item) => item.id === parentId);
   if (folders.some((item) => item.kind !== 'folder' || item.access === 'viewer')) return undefined;
   const folder = folders[0];
   if (!folder || folder.access === 'viewer') return undefined;

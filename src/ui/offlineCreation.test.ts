@@ -549,13 +549,76 @@ test('a shared viewer destination cannot create a local draft at the storage bou
     shared: [
       { ...creationFile(original.creation!), id: sharedParent, kind: 'folder', access: 'viewer' },
     ],
-    views: {},
+    views: {
+      'old-parent-view': [
+        { ...creationFile(original.creation!), id: sharedParent, kind: 'folder', access: 'editor' },
+      ],
+    },
   });
   await expect(f.store.saveCreation(original.bundle, original.creation!, () => {})).rejects.toThrow(
     'prepared folder',
   );
   expect(f.values.items.has(input.itemId)).toBe(false);
 });
+
+test.each(['editor', 'viewer'] as const)(
+  'repreparing a shared folder as %s supersedes its old parent, document and partition permission snapshots',
+  async (access) => {
+    const f = creationStorage();
+    const original = stored();
+    original.creation!.request.parentId = sharedParent;
+    f.values.items.delete(input.itemId);
+    f.values.meta.delete('catalog');
+    const staleFolder = {
+      ...creationFile(original.creation!),
+      id: sharedParent,
+      name: 'Prepared child folder',
+      kind: 'folder' as const,
+      parentId: 'parent-folder',
+      access: access === 'editor' ? ('viewer' as const) : ('editor' as const),
+      ownerName: 'Folder owner',
+    };
+    const cached: OfflineCatalog = {
+      syncedAt: 1,
+      items: [],
+      shared: [staleFolder],
+      views: { 'old-parent-view': [staleFolder], 'old-document-view': [staleFolder] },
+    };
+    const user = { id: account, name: 'Creator' };
+    await f.store.saveCatalog(user, cached);
+    // Opening the folder and preparing a native child saves this specific
+    // folder view. Unrelated cached ancestors deliberately remain unchanged.
+    const currentFolder = { ...staleFolder, access };
+    await f.store.saveCatalog(user, {
+      ...cached,
+      syncedAt: 2,
+      views: { ...cached.views, [sharedParent]: [currentFolder] },
+    });
+    const prepared = (await f.store.catalog())!;
+    expect(prepared.views['old-parent-view']).toEqual([staleFolder]);
+    expect(prepared.views['old-document-view']).toEqual([staleFolder]);
+    expect(prepared.shared).toEqual([staleFolder]);
+    expect(creationFolderAllowed(prepared, sharedParent)).toBe(access === 'editor');
+    if (access === 'editor') {
+      await expect(
+        f.store.saveCreation(original.bundle, original.creation!, () => {}),
+      ).resolves.toMatchObject({
+        creation: {
+          parentId: sharedParent,
+          access: 'editor',
+          ownerName: 'Folder owner',
+          createdByName: 'Creator',
+        },
+      });
+      expect((f.values.items.get(input.itemId) as StoredItem).bundle.access).toBe('editor');
+    } else {
+      await expect(
+        f.store.saveCreation(original.bundle, original.creation!, () => {}),
+      ).rejects.toThrow('prepared folder');
+      expect(f.values.items.has(input.itemId)).toBe(false);
+    }
+  },
+);
 
 test('legacy creation counters begin at zero and invalid or exhausted counters retain the pending draft', async () => {
   const legacy = creationStorage();
@@ -664,6 +727,13 @@ test('local folder admission accepts prepared editable ordinary folders without 
     kind: 'folder' as const,
     access: 'viewer',
   });
+  // An unrelated historical view cannot veto the current catalog. A viewer in
+  // the dedicated folder view is authoritative and still prevents creation.
+  expect(creationFolderAllowed(catalog, 'shared')).toBe(true);
+  catalog.views.shared = [
+    ...catalog.shared.filter((item) => item.id === 'shared'),
+    ...catalog.views.opened.filter((item) => item.id === 'shared'),
+  ];
   expect(creationFolderAllowed(catalog, 'shared')).toBe(false);
 });
 
