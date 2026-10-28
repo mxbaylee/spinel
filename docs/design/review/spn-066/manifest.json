@@ -119,5 +119,28 @@
       ],
       "sha256": "155f847e1506db6fadf65ddaeda4a1e680d03df71c3222a37cf0a09291e26201"
     }
-  ]
+  ],
+  "nativeExpiry": {
+    "sourceCommit": "d45c8039e90f76895bb35e2e1e1b24005e60caaf",
+    "sourceTree": "2117e4aa30bc61612bd38edffa4fb78f12b58e86",
+    "localSourceCommit": "5b13c63265d83ed1e588090a953064aee2bf0892",
+    "sourceEquivalence": "Remote source commit and local tested commit have the same complete tree.",
+    "capturedAt": "2026-10-28T17:32:17.821123+00:00",
+    "renderer": "Real production browser journey with clean and dirty guest editors, held native writes, unavailable metadata and a real shortened link deadline.",
+    "theme": "light",
+    "viewport": [
+      1440,
+      1000
+    ],
+    "file": "native-expired-dirty.png",
+    "sha256": "0ca306b1307980aca17e71ed618ca44490f4e51658b27ea6f25596120b181449",
+    "equivalentSheetCaptureSha256": "0ca306b1307980aca17e71ed618ca44490f4e51658b27ea6f25596120b181449",
+    "runStatus": "Inventory and standalone Doc/Sheet journeys completed; the enclosing five-case run was aborted by the 2 GiB RSS watchdog on entering the Space case (2095 MiB observed). It is not a passing full run; final current-head CI supplies full verification.",
+    "sourceSha256": {
+      "web/spinelSync.ts": "6ca0e5d90f75137cd2690eb2683b592b9c663081f6ea767b9a1a8f2ff76476ef",
+      "web/GuestApp.tsx": "22127aba17430892db0c493ef32627049c47f6890ecbda8305a155e73b0ed579",
+      "web/guestRevocation.ts": "2aa44a8d97667059ad102ad585b8fef54b99506414fe61cff7ac5fc90d007be4",
+      "src/server/sync/transport.ts": "18cee0ad0203ea0b8485fe3e96852b73a6a4983bbc77b01c9ef810c72a3da707"
+    }
+  }
 }
