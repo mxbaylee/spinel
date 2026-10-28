@@ -212,6 +212,16 @@ export class MaintenanceSupervisor {
     }
   }
   private async initialize() {
+    const prior = this.journal.state.child;
+    const priorVerifier = this.journal.state.verifier;
+    if (!this.journal.wasUnverified)
+      this.transition({
+        phase: 'recovery-required',
+        epoch: randomUUID(),
+        verifiedAt: null,
+        lastFailure: 'supervisor-restarted',
+      });
+    // Public status must never expose a journal's old running phase during boot.
     this.publicServer = createHttpServer((request, response) =>
       this.publicRequest(request, response),
     );
@@ -221,6 +231,19 @@ export class MaintenanceSupervisor {
       port: this.options.publicPort ?? 3002,
       host: '127.0.0.1',
     });
+    if (prior || priorVerifier) {
+      try {
+        if (priorVerifier) await this.stopGroup(priorVerifier, false);
+        if (prior) await this.stopGroup(prior);
+        else assertWorkspaceHandlesClosed(this.journal.databasePath);
+        this.transition({ child: null, verifier: null });
+      } catch {
+        this.transition({ lastFailure: 'process-still-active' });
+      }
+    }
+    this.reconcileNotice(true);
+    // Only expose cold commands after every startup reconciliation has finished;
+    // its cleanup must never erase the identity of a newly started child.
     this.journal.checkRoot();
     const socket = this.journal.path('control.sock');
     try {
@@ -238,27 +261,6 @@ export class MaintenanceSupervisor {
     this.controlServer.headersTimeout = 5000;
     await listening(this.controlServer, { path: socket });
     chmodSync(socket, 0o600);
-    const prior = this.journal.state.child;
-    const priorVerifier = this.journal.state.verifier;
-    if (!this.journal.wasUnverified) {
-      this.transition({
-        phase: 'recovery-required',
-        epoch: randomUUID(),
-        verifiedAt: null,
-        lastFailure: 'supervisor-restarted',
-      });
-      if (prior || priorVerifier) {
-        try {
-          if (priorVerifier) await this.stopGroup(priorVerifier, false);
-          if (prior) await this.stopGroup(prior);
-          else assertWorkspaceHandlesClosed(this.journal.databasePath);
-          this.transition({ child: null, verifier: null });
-        } catch {
-          this.transition({ lastFailure: 'process-still-active' });
-        }
-      }
-    }
-    this.reconcileNotice(true);
     this.noticeTimer = setInterval(() => {
       try {
         this.reconcileNotice(false);
@@ -664,6 +666,7 @@ export class MaintenanceSupervisor {
       (this.journal.state.child && groupMembers(this.journal.state.child).length)
     )
       throw new Error('Stop the application before verifying its closed workspace.');
+    await this.journal.bindWorkspace();
     assertWorkspaceHandlesClosed(this.journal.databasePath);
     const current = fileIdentity(this.journal.databasePath);
     if (

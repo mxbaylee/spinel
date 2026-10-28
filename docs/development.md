@@ -57,7 +57,11 @@ developer/test entrypoints; their UI reports supervised maintenance unavailable.
 They do not provide the supported stop/recovery control boundary. A supervised
 dataset rejects independent setup, backup and transition CLI access until the
 supervisor releases its lease. Do not point direct and supervised servers at the
-same database.
+same database. Linux live-application leases remain held through process exit and
+cover both canonical paths and inode aliases; the short cold startup lease stays
+separate to preserve direct-mode setup compatibility. All supported app/CLI
+processes for one dataset share a network namespace and service UID, as in the
+official host-network deployment.
 
 ## Deployment stage
 
@@ -141,6 +145,17 @@ avoid keeping several SDK server processes in memory. CI instead runs each
 project on its own runner, splitting development and production in two with
 `--shard`, and the **Playwright smoke** check passes only when every run and the
 container smoke do.
+
+Hosted unit tests and browser partitions run their unchanged commands inside a
+private PID/mount namespace, matching the deployment's process visibility while
+retaining the host network namespace for loopback and abstract ownership leases.
+The wrapper creates the namespace through passwordless sudo, then drops back to
+the runner UID/GID with no capabilities before executing project code. Its PID-1
+owner exits on command completion, cancellation or loss of its parent pipe;
+Linux then terminates all namespace descendants. Unrelated protected GitHub
+agent descriptors are outside the fixture's process inventory. Runtime handle
+checks still fail closed for unreadable candidates inside it. The paired Doc
+responsiveness baseline and candidate use the same current wrapper.
 
 CI keeps the line log and a JSON result report for each browser project/shard in
 `playwright-report/`. The existing `theme-screenshots-<project>[-<shard>]` artifact

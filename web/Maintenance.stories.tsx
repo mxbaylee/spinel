@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fireEvent, fn, userEvent, waitFor, within } from 'storybook/test';
 import type { MaintenanceAdminStatus } from '../src/shared/maintenance.ts';
 import { MaintenanceBanner, MaintenanceControls } from './Maintenance.tsx';
+import { maintenanceInstants } from './maintenanceTime.ts';
 
 type Scenario =
   | 'running'
@@ -19,6 +20,28 @@ type Scenario =
   | 'lost-response';
 const epoch = 'bdcb9545-e87d-44c6-8717-397523f7efb3';
 const operationId = '78758a8a-db2e-4d92-9bf4-8c0b9cac66f8';
+
+function nextRepeatedTime() {
+  const now = Date.now(),
+    year = new Date(now).getUTCFullYear();
+  const candidates: Array<{ localTime: string; timeZone: string; startsAt: number }> = [];
+  for (const candidateYear of [year, year + 1]) {
+    for (const [month, hour, timeZone] of [
+      [10, '01', 'America/Los_Angeles'],
+      [3, '02', 'Australia/Sydney'],
+    ] as const) {
+      const first = new Date(Date.UTC(candidateYear, month, 1));
+      const day = 1 + ((7 - first.getUTCDay()) % 7);
+      const localTime = `${candidateYear}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}T${hour}:30`;
+      const instants = maintenanceInstants(localTime, timeZone);
+      if (instants.length === 2 && instants[1] > now && instants[1] < now + 365 * 86_400_000)
+        candidates.push({ localTime, timeZone, startsAt: instants[1] });
+    }
+  }
+  const next = candidates.sort((a, b) => a.startsAt - b.startsAt)[0];
+  if (!next) throw new Error('No repeated time inside the notice horizon.');
+  return next;
+}
 
 function initialStatus(scenario: Scenario): MaintenanceAdminStatus {
   const paused = ['paused', 'draining', 'starting', 'recovery', 'expired'].includes(scenario);
@@ -310,11 +333,12 @@ export const NoticeForm: Story = {
 export const RepeatedTime: Story = {
   play: async ({ canvasElement }) => {
     const dialog = await noticeDialog(canvasElement);
+    const repeated = nextRepeatedTime();
     const date = dialog.getByLabelText('Date and time');
-    fireEvent.change(date, { target: { value: '2030-11-03T01:30' } });
+    fireEvent.change(date, { target: { value: repeated.localTime } });
     const zone = dialog.getByLabelText('Time zone');
     await userEvent.clear(zone);
-    await userEvent.type(zone, 'America/Los_Angeles');
+    await userEvent.type(zone, repeated.timeZone);
     await expect(await dialog.findByLabelText('This time occurs twice')).toHaveValue('');
     await userEvent.click(dialog.getByRole('button', { name: 'Verify with a passkey' }));
     await expect(await dialog.findByRole('button', { name: 'Publish notice' })).toBeDisabled();
@@ -323,15 +347,16 @@ export const RepeatedTime: Story = {
 export const PublishNotice: Story = {
   play: async ({ canvasElement, args }) => {
     const dialog = await noticeDialog(canvasElement);
+    const repeated = nextRepeatedTime();
     fireEvent.change(dialog.getByLabelText('Date and time'), {
-      target: { value: '2030-11-03T01:30' },
+      target: { value: repeated.localTime },
     });
     fireEvent.change(dialog.getByLabelText('Time zone'), {
-      target: { value: 'America/Los_Angeles' },
+      target: { value: repeated.timeZone },
     });
     await userEvent.selectOptions(
       await dialog.findByLabelText('This time occurs twice'),
-      String(Date.parse('2030-11-03T09:30:00Z')),
+      String(repeated.startsAt),
     );
     await userEvent.click(dialog.getByRole('button', { name: 'Verify with a passkey' }));
     await userEvent.click(await dialog.findByRole('button', { name: 'Publish notice' }));
@@ -342,11 +367,26 @@ export const PublishNotice: Story = {
     await expect(args.onAction).toHaveBeenCalledWith(
       'notice',
       expect.objectContaining({
-        startsAt: Date.parse('2030-11-03T09:30:00Z'),
-        timeZone: 'America/Los_Angeles',
+        startsAt: repeated.startsAt,
+        timeZone: repeated.timeZone,
         durationMinutes: 30,
       }),
     );
+  },
+};
+export const NoticeTooFarAhead: Story = {
+  play: async ({ canvasElement, args }) => {
+    const dialog = await noticeDialog(canvasElement);
+    fireEvent.change(dialog.getByLabelText('Time zone'), { target: { value: 'UTC' } });
+    fireEvent.change(dialog.getByLabelText('Date and time'), {
+      target: { value: new Date(Date.now() + 366 * 86_400_000).toISOString().slice(0, 16) },
+    });
+    await expect(await dialog.findByRole('alert')).toHaveTextContent(
+      'Choose a start time within the next 365 days.',
+    );
+    await userEvent.click(dialog.getByRole('button', { name: 'Verify with a passkey' }));
+    await expect(await dialog.findByRole('button', { name: 'Publish notice' })).toBeDisabled();
+    await expect(args.onAction).not.toHaveBeenCalled();
   },
 };
 export const CancelNotice: Story = {

@@ -10,6 +10,7 @@ import { legacyTransitionReader } from './legacy.ts';
 
 const progress: TransitionProgress = (event) => process.stdout.write(JSON.stringify(event) + '\n');
 const releaseWorkspaces: (() => Promise<void>)[] = [];
+let opened = false;
 async function leaseWorkspaces(paths: string[]) {
   if (process.platform !== 'linux') return;
   const canonical = [...new Set(paths.map(canonicalDatabasePath))].sort();
@@ -43,6 +44,7 @@ try {
         'sanitizing.sqlite',
       ].map((name) => join(values.bundle!, name)),
     ]);
+    opened = true;
     const result = await exportSyncTransition({
       source: values.source,
       directory: values.bundle,
@@ -69,6 +71,7 @@ try {
         join(values.destination!, name),
       ),
     ]);
+    opened = true;
     const result = await importSyncTransition({
       directory: values.bundle,
       destination: values.destination,
@@ -90,6 +93,10 @@ try {
   );
   process.exitCode = 1;
 } finally {
-  const releases = await Promise.allSettled(releaseWorkspaces.map((release) => release()));
-  if (releases.some((release) => release.status === 'rejected')) process.exitCode = 1;
+  // Native SQLite descriptors can outlive close(). Keep these unref'd leases
+  // until this one-shot process exits after any database-open attempt.
+  if (!opened) {
+    const releases = await Promise.allSettled(releaseWorkspaces.map((release) => release()));
+    if (releases.some((release) => release.status === 'rejected')) process.exitCode = 1;
+  }
 }

@@ -10,7 +10,7 @@ import {
   Univer,
   UniverInstanceType,
 } from '@univerjs/core';
-import type { IDocumentData, IWorkbookData, Workbook } from '@univerjs/core';
+import type { IDocumentData, IUniverConfig, IWorkbookData, Workbook } from '@univerjs/core';
 import { DocStateChangeManagerService, UniverDocsPlugin } from '@univerjs/docs';
 import { UniverDocsDrawingPlugin } from '@univerjs/docs-drawing';
 import { UniverDocsHyperLinkPlugin } from '@univerjs/docs-hyper-link';
@@ -72,10 +72,19 @@ export class NativeReplica implements SyncReplica {
   private readonly unitId: string;
   private readonly opaque: NonNullable<NativeSnapshot['resources']>;
 
-  constructor(snapshot: NativeSnapshot, kind: DocumentKind) {
+  constructor(
+    snapshot: NativeSnapshot,
+    kind: DocumentKind,
+    // Live native regression clients can exercise the editor's public retention
+    // policy at construction. Confirmed/server copies keep the SDK default.
+    options: Pick<IUniverConfig, 'undoRedoHistoryLimit'> = {},
+  ) {
     admitSnapshot(snapshot, kind);
     this.unitId = snapshot.id;
-    this.univer = new Univer({ locale: LocaleType.EN_US });
+    this.univer = new Univer({
+      locale: LocaleType.EN_US,
+      undoRedoHistoryLimit: options.undoRedoHistoryLimit,
+    });
     try {
       const injector = this.univer.__getInjector();
       injector.get(ILogService).setLogLevel(LogLevel.SILENT);

@@ -284,7 +284,12 @@ export function attachSync(
         }
         const ticket = randomBytes(32).toString('base64url');
         tickets.set(ticket, { session, expires: Date.now() + TICKET_TTL });
-        response.json({ version: 1, ticket, expiresInMs: TICKET_TTL, epoch: maintenance.epoch });
+        response.json({
+          version: 1,
+          ticket,
+          expiresInMs: TICKET_TTL,
+          ...(maintenance.status.available && { epoch: maintenance.epoch }),
+        });
       } else if (target.action === 'snapshot' && request.method === 'GET') {
         const data = sync.load(session.unitId, session.identity);
         current(session);
@@ -293,7 +298,7 @@ export function attachSync(
           unitId: data.unitId,
           revision: data.revision,
           snapshot: data.snapshot,
-          epoch: maintenance.epoch,
+          ...(maintenance.status.available && { epoch: maintenance.epoch }),
         });
       } else response.status(405).end();
     } catch {

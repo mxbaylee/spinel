@@ -67,6 +67,11 @@ and disables its admin listener. There are no Compose published ports. Host
 networking is deliberate so Node can bind actual loopback and Caddy can bind the
 actual Tailscale interface; this configuration requires Linux, not Docker Desktop
 network emulation.
+It also gives every app and offline command the same network namespace for
+kernel-owned workspace leases. Keep that namespace and service UID consistent
+when running a host-side command against the mounted dataset. The app container
+keeps its own PID namespace; lifetime path/inode leases exclude another direct
+app even when its handles are outside that namespace's `/proc` view.
 
 Tailscale runs on the host. Caddy obtains and renews `.ts.net` certificates through
 the local Tailscale socket as UID 10001; set `TS_PERMIT_CERT_UID=10001` in

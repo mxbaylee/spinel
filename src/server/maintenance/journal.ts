@@ -112,12 +112,19 @@ async function kernelLock(kind: string, identity: string): Promise<Server> {
     server.once('error', reject);
     server.listen(lockName(kind, identity), () => {
       server.removeListener('error', reject);
+      // A lease must survive while its process lives, but must not keep a failed
+      // CLI or a closed app alive. The kernel releases it at process exit.
+      server.unref();
       resolveListen();
     });
   }).catch((error) => {
     server.close();
     if ((error as NodeJS.ErrnoException).code === 'EADDRINUSE')
-      throw new Error('This workspace already has an active supervisor or offline operation.');
+      throw new Error(
+        kind.startsWith('application')
+          ? 'This workspace already has an active application or supervisor.'
+          : 'This workspace already has an active supervisor or offline operation.',
+      );
     throw error;
   });
   return server;
@@ -128,34 +135,46 @@ function releaseLock(server: Server) {
   );
 }
 
-/** Hold this lease across the complete standalone CLI database lifetime.
- * Linux releases the abstract socket on process death; no stale lock can be stolen.
- */
-export async function acquireColdWorkspace(databasePath: string) {
+export interface WorkspaceLease {
+  /** The path selected before ownership was acquired. */
+  path: string;
+  /** Bind a newly created file before any application database is opened. */
+  bindFile(): Promise<void>;
+  release(): Promise<void>;
+}
+// One-shot CLI and direct-app leases intentionally survive their JS call frame.
+// Pin the unref'd servers until explicit pre-open/test cleanup or process exit.
+const heldWorkspaceLeases = new Set<WorkspaceLease>();
+
+async function acquireWorkspaceLease(databasePath: string, kind: 'workspace' | 'application') {
   const canonical = canonicalDatabasePath(databasePath);
-  const pathLock = await kernelLock('workspace', canonical);
+  const pathLock = await kernelLock(kind, canonical);
   let fileLock: Server | undefined;
-  try {
-    let identity: FileIdentity | undefined;
+  let boundIdentity: FileIdentity | undefined;
+  let released = false;
+  const bindFile = async (required: boolean) => {
+    if (released) throw new Error('Workspace ownership has already been released.');
+    let identity: FileIdentity;
     try {
       identity = fileIdentity(canonical);
     } catch (error) {
-      if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+      if (!required && !fileLock && (error as NodeJS.ErrnoException).code === 'ENOENT') return;
+      throw error;
     }
-    if (identity) {
-      fileLock = await kernelLock('workspace-file', `${identity.device}:${identity.inode}`);
-      if (!sameFile(identity, fileIdentity(canonical)))
-        throw new Error('Workspace changed while acquiring control.');
+    if (fileLock) {
+      if (!sameFile(boundIdentity ?? null, identity))
+        throw new Error('Workspace changed while ownership was held.');
+      return;
     }
-  } catch (error) {
-    if (fileLock) await releaseLock(fileLock);
-    await releaseLock(pathLock);
-    throw error;
-  }
-  let released = false;
-  return async () => {
+    fileLock = await kernelLock(`${kind}-file`, `${identity.device}:${identity.inode}`);
+    if (!sameFile(identity, fileIdentity(canonical)))
+      throw new Error('Workspace changed while acquiring control.');
+    boundIdentity = identity;
+  };
+  const release = async () => {
     if (released) return;
     released = true;
+    heldWorkspaceLeases.delete(lease);
     const results = await Promise.allSettled([
       releaseLock(pathLock),
       ...(fileLock ? [releaseLock(fileLock)] : []),
@@ -163,6 +182,39 @@ export async function acquireColdWorkspace(databasePath: string) {
     const failed = results.find((result) => result.status === 'rejected');
     if (failed?.status === 'rejected') throw failed.reason;
   };
+  const lease = {
+    path: canonical,
+    bindFile: () => bindFile(true),
+    release,
+  } satisfies WorkspaceLease;
+  heldWorkspaceLeases.add(lease);
+  try {
+    await bindFile(false);
+  } catch (error) {
+    await release().catch(() => {});
+    throw error;
+  }
+  return lease;
+}
+
+/** Hold this lease across the complete standalone CLI database lifetime.
+ * Linux releases the abstract socket on process death; no stale lock can be stolen.
+ */
+export async function acquireColdWorkspace(databasePath: string) {
+  return (await acquireColdWorkspaceLease(databasePath)).release;
+}
+
+/** Startup additionally binds the inode after creating its initial empty file. */
+export function acquireColdWorkspaceLease(databasePath: string) {
+  return acquireWorkspaceLease(databasePath, 'workspace');
+}
+
+/** Separate app ownership permits legacy cold CLI operations beside a direct app.
+ * Keep it until process exit after any DB open: native handles may outlive close().
+ * Abstract sockets coordinate only within one Linux network namespace.
+ */
+export function acquireLiveWorkspace(databasePath: string) {
+  return acquireWorkspaceLease(databasePath, 'application');
 }
 
 export function fileIdentity(path: string): FileIdentity {
@@ -316,6 +368,7 @@ export class RecoveryJournal {
   private readonly rootIdentity: FileIdentity;
   private readonly rootLock: Server;
   private readonly releaseWorkspace: () => Promise<void>;
+  private readonly liveWorkspace: WorkspaceLease;
   private corrupted = false;
   private closed = false;
 
@@ -325,12 +378,14 @@ export class RecoveryJournal {
     handle: number,
     rootLock: Server,
     releaseWorkspace: () => Promise<void>,
+    liveWorkspace: WorkspaceLease,
   ) {
     this.root = root;
     this.databasePath = databasePath;
     this.handle = handle;
     this.rootLock = rootLock;
     this.releaseWorkspace = releaseWorkspace;
+    this.liveWorkspace = liveWorkspace;
     const info = fstatSync(handle, { bigint: true });
     this.rootIdentity = { device: String(info.dev), inode: String(info.ino) };
     let loaded: unknown;
@@ -394,17 +449,29 @@ export class RecoveryJournal {
     );
     let rootLock: Server | undefined;
     let releaseWorkspace: (() => Promise<void>) | undefined;
+    let liveWorkspace: WorkspaceLease | undefined;
     try {
       const info = fstatSync(handle);
       if (!info.isDirectory() || info.uid !== process.getuid!() || info.mode & 0o077)
         throw new Error('Recovery directory must be owned by this user and private (0700).');
       rootLock = await kernelLock('recovery', `${info.dev}:${info.ino}`);
       releaseWorkspace = await acquireColdWorkspace(canonical);
-      return new RecoveryJournal(root, canonical, handle, rootLock, releaseWorkspace);
+      liveWorkspace = await acquireLiveWorkspace(canonical);
+      return new RecoveryJournal(
+        root,
+        canonical,
+        handle,
+        rootLock,
+        releaseWorkspace,
+        liveWorkspace,
+      );
     } catch (error) {
-      closeSync(handle);
-      if (rootLock) await releaseLock(rootLock);
-      await releaseWorkspace?.();
+      await Promise.allSettled([
+        Promise.resolve().then(() => closeSync(handle)),
+        ...(rootLock ? [releaseLock(rootLock)] : []),
+        ...(releaseWorkspace ? [releaseWorkspace()] : []),
+        ...(liveWorkspace ? [liveWorkspace.release()] : []),
+      ]);
       throw error;
     }
   }
@@ -430,6 +497,9 @@ export class RecoveryJournal {
   }
   path(name: 'journal.json' | 'control.sock' | `pending-${string}` | `rejected-${string}.json`) {
     return `/proc/self/fd/${this.handle}/${name}`;
+  }
+  async bindWorkspace() {
+    await this.liveWorkspace.bindFile();
   }
   checkRoot() {
     const current = lstatSync(this.root, { bigint: true });
@@ -513,6 +583,7 @@ export class RecoveryJournal {
     const releases = await Promise.allSettled([
       releaseLock(this.rootLock),
       this.releaseWorkspace(),
+      this.liveWorkspace.release(),
     ]);
     for (const result of releases) if (result.status === 'rejected') failure ??= result.reason;
     if (failure) throw failure;

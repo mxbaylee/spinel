@@ -37,6 +37,9 @@ type Item = {
   access: 'viewer' | 'editor';
 };
 export function GuestApp() {
+  // The browser capability guard runs before every network effect, including
+  // public maintenance polling; unsupported clients never exchange a link.
+  if (!navigator.locks) return <GuestContent />;
   return (
     <MaintenanceShell guest>
       <GuestContent />

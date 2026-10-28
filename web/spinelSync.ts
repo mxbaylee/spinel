@@ -563,8 +563,13 @@ function bind(
     )
       return;
     const maintenance = getMaintenanceStatus();
-    if (!explicit && (maintenanceBlocked || maintenanceChanged ||
-        (maintenance?.available && (maintenance.phase !== 'running' || maintenance.epoch !== maintenanceEpoch))))
+    if (
+      !explicit &&
+      (maintenanceBlocked ||
+        maintenanceChanged ||
+        (maintenance?.available &&
+          (maintenance.phase !== 'running' || maintenance.epoch !== maintenanceEpoch)))
+    )
       return;
     if (explicit && maintenance?.available && maintenance.phase !== 'running') {
       recoveryError(new Error('Wait until maintenance resumes before creating a separate copy.'));
@@ -651,7 +656,7 @@ function bind(
   }
 
   /** A clean lifecycle change must not manufacture a retained edit checkpoint. */
-  async function transitionClean(action: 'refresh' | 'remove') {
+  async function transitionClean(action: 'refresh' | 'remove', restartPage = false) {
     if (!cleanDownloaded()) return false;
     refreshingClean = true;
     endConnection();
@@ -670,6 +675,7 @@ function bind(
       if (!active()) return true;
       dispose();
       if (action === 'remove') options.lock?.();
+      else if (restartPage) location.reload();
       else options.reload('stale', true);
     } catch {
       if (!active()) return true;
@@ -1011,10 +1017,18 @@ function bind(
       maintenanceChanged = true;
       endConnection();
       if (options.offline?.enabled && cleanDownloaded() && options.canRefresh?.() !== false) {
-        await transitionClean('refresh');
-      } else if (!options.offline?.enabled && !state.pending && options.canRefresh?.() !== false) {
+        // Refresh the saved base under its clean-writer checks before opening a
+        // new page. A React remount retains the old tab's immutable HTTP epoch.
+        await transitionClean('refresh', true);
+      } else if (
+        !options.offline?.enabled &&
+        !state.pending &&
+        !state.resyncing &&
+        !state.recoveryMissing &&
+        options.canRefresh?.() !== false
+      ) {
         dispose();
-        options.reload('stale', true);
+        location.reload();
       } else {
         denialMessage =
           'Maintenance changed the workspace. Keep your pending work, then create a separate copy or export it before reloading.';

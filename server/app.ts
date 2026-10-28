@@ -102,11 +102,13 @@ export async function createApp(options: AppOptions) {
     );
     const admit = maintenance.middleware();
     app.use((request, response, next) => {
-      // Session lookup is read-only, so a paused Operator can still use the
-      // externally authorized control lane. All other application APIs gate
-      // reads too: several reads prepare native data or update auth metadata.
+      // Session and exact guest metadata lookups are read-only. Keep current
+      // Operator authority and guest expiry/revocation visible during a pause.
+      // Other reads can prepare native data or update auth metadata and gate.
       if (
-        (request.method === 'GET' && request.path === '/api/auth/session') ||
+        (request.method === 'GET' &&
+          (request.path === '/api/auth/session' ||
+            /^\/api\/guest\/[a-f\d-]{36}\/?$/.test(request.path))) ||
         !/^\/(?:api(?:\/|$)|sync-api(?:\/|$)|mcp(?:\/|$)|authorize(?:\/|$)|register(?:\/|$)|token(?:\/|$)|revoke(?:\/|$))/.test(
           request.path,
         )

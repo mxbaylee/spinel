@@ -10,6 +10,8 @@ import { createApp } from '../../../server/app.ts';
 import { openDatabase } from '../../../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../auth/store.ts';
 import { WorkspaceStore } from '../workspace/store.ts';
+import { SpaceStore } from '../workspace/spaces.ts';
+import { GUEST_TTL, guestCookieName, LinkAccess } from '../workspace/links.ts';
 import { HistoryStore } from '../history/store.ts';
 import { AssistantOAuth } from '../auth/oauth.ts';
 import type {
@@ -152,6 +154,74 @@ async function fixture() {
     failed,
   };
 }
+
+test.each(['sheet', 'space'] as const)(
+  'paused %s guest metadata still enforces expiry without opening any writer route',
+  async (kind) => {
+    const realNow = Date.now;
+    let elapsed = 0;
+    vi.spyOn(Date, 'now').mockImplementation(() => realNow() + elapsed);
+    const f = await fixture();
+    const workspace = new WorkspaceStore(f.auth, { spacesEnabled: true });
+    const id =
+      kind === 'sheet'
+        ? f.sheet.id
+        : new SpaceStore(workspace).createRoot(f.owner.id, { name: 'Guest space', parentId: null })
+            .space.id;
+    const change = workspace.links.begin(id, 'viewer');
+    workspace.links.finish(id, change.epoch, true);
+    const session = workspace.links.exchange(id, change.token);
+    const headers = { Cookie: `${guestCookieName(id)}=${session.token}` };
+    expect((await f.send(`/api/guest/${id}`, { headers })).status).toBe(200);
+    f.set({ phase: 'draining', epoch: 'after' });
+    await expect.poll(() => f.bridge.status().phase).toBe('paused');
+    const authorized = await f.send(`/api/guest/${id}`, { headers });
+    expect(authorized.status).toBe(200);
+    expect((await authorized.json()).item).toMatchObject({ id, kind, access: 'viewer' });
+    for (const path of ['session', 'collaboration'])
+      expect(
+        (
+          await f.send(`/api/guest/${id}/${path}`, {
+            headers: { ...headers, 'X-Spinel-Epoch': 'after' },
+            body: {},
+          })
+        ).status,
+      ).toBe(503);
+    expect((await f.send(`/api/guest/${id}/pdf`, { headers })).status).toBe(503);
+    elapsed = GUEST_TTL + 1;
+    const expired = await f.send(`/api/guest/${id}`, { headers });
+    expect(expired.status).toBe(404);
+    expect(await expired.json()).toEqual({ error: 'This link no longer works.' });
+    expect(f.failed).not.toHaveBeenCalled();
+  },
+);
+
+test('an admitted link revocation remains visible to the guest after pause drains', async () => {
+  const f = await fixture();
+  const change = f.workspace.links.begin(f.sheet.id, 'editor');
+  f.workspace.links.finish(f.sheet.id, change.epoch, true);
+  const session = f.workspace.links.exchange(f.sheet.id, change.token);
+  const headers = { Cookie: `${guestCookieName(f.sheet.id)}=${session.token}` };
+  const finish = LinkAccess.prototype.finish;
+  vi.spyOn(LinkAccess.prototype, 'finish').mockImplementation(function (
+    this: LinkAccess,
+    id,
+    epoch,
+    enabled,
+  ) {
+    finish.call(this, id, epoch, enabled);
+    // Pause while this real, already-admitted HTTP revocation still owns its
+    // response. Guest polling must retain its authoritative 404 afterward.
+    if (id === f.sheet.id && !enabled) f.set({ phase: 'draining', epoch: 'after' });
+  });
+  expect(
+    (await f.send(`/api/items/${f.sheet.id}/link`, { method: 'PUT', body: { role: null } })).status,
+  ).toBe(200);
+  await expect.poll(() => f.bridge.status().phase).toBe('paused');
+  const revoked = await f.send(`/api/guest/${f.sheet.id}`, { headers });
+  expect(revoked.status).toBe(404);
+  expect(await revoked.json()).toEqual({ error: 'This link no longer works.' });
+});
 
 test('real control routes require current Operator, origin and fresh passkey without leaking private status', async () => {
   const f = await fixture(),

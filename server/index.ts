@@ -3,8 +3,14 @@ import type { AddressInfo } from 'node:net';
 import { resolve } from 'node:path';
 import { createApp, projectRoot } from './app.ts';
 import { connectMaintenance } from '../src/server/maintenance/supervisor-client.ts';
-import { acquireColdWorkspace } from '../src/server/maintenance/journal.ts';
-import { mkdirSync } from 'node:fs';
+import {
+  acquireColdWorkspaceLease,
+  acquireLiveWorkspace,
+  canonicalDatabasePath,
+} from '../src/server/maintenance/journal.ts';
+import type { WorkspaceLease } from '../src/server/maintenance/journal.ts';
+import { assertWorkspaceHandlesClosed } from '../src/server/maintenance/supervisor.ts';
+import { closeSync, constants, mkdirSync, openSync } from 'node:fs';
 import { dirname } from 'node:path';
 
 const development = process.argv.includes('--dev');
@@ -13,48 +19,75 @@ if (!Number.isInteger(port) || port < 0 || port > 65535) {
   throw new Error('PORT must be an integer between 0 and 65535.');
 }
 const host = process.env.HOST ?? '127.0.0.1';
-const databasePath = resolve(
+const configuredPath = resolve(
   process.env.DATABASE_PATH ?? resolve(projectRoot, 'data/spinel.sqlite'),
 );
-mkdirSync(dirname(databasePath), { recursive: true });
+mkdirSync(dirname(configuredPath), { recursive: true });
+const databasePath = canonicalDatabasePath(configuredPath);
 const maintenance = process.env.SPINEL_SUPERVISED === '1' ? await connectMaintenance() : undefined;
-// Direct developer servers have no maintenance capability. Their initial lease
-// still prevents booting a second writer while a supervisor owns this dataset.
-const releaseStartup =
-  !maintenance && process.platform === 'linux'
-    ? await acquireColdWorkspace(databasePath)
-    : async () => {};
-const app = await createApp({
-  maintenance,
-  development,
-  staticDirectory: process.env.SPINEL_STATIC_DIRECTORY,
-  backupConfigPath: process.env.BACKUP_CONFIG_PATH,
-  image: process.env.SPINEL_IMAGE,
-  spaceReview: process.env.SPINEL_SPACE_REVIEW !== '0',
-  origin: process.env.APP_ORIGIN ?? `http://localhost:${port}`,
-  databasePath,
-}).catch(async (error: unknown) => {
-  await releaseStartup();
-  maintenance?.close();
-  throw error;
-});
-
-try {
-  await new Promise<void>((resolveListen, reject) => {
-    app.server.once('error', reject);
-    app.server.listen(port, host, () => {
-      app.server.removeListener('error', reject);
-      resolveListen();
+// Live ownership remains until this process exits, independently of the cold
+// startup lease. A supervisor in another PID namespace cannot inspect our FDs.
+// Unref'd kernel listeners do not themselves keep a shut-down process alive.
+let liveWorkspace: WorkspaceLease | undefined;
+const app = await (async () => {
+  let startupLease: WorkspaceLease | undefined;
+  let opened = false;
+  let starting: Awaited<ReturnType<typeof createApp>> | undefined;
+  try {
+    if (!maintenance && process.platform === 'linux') {
+      liveWorkspace = await acquireLiveWorkspace(databasePath);
+      startupLease = await acquireColdWorkspaceLease(databasePath);
+      // First startup must bind inode ownership before any SQLite connection is
+      // opened, including an alias pointing at this newly created file.
+      try {
+        closeSync(
+          openSync(
+            databasePath,
+            constants.O_CREAT | constants.O_EXCL | constants.O_WRONLY | constants.O_NOFOLLOW,
+            0o600,
+          ),
+        );
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code !== 'EEXIST') throw error;
+      }
+      await liveWorkspace.bindFile();
+      await startupLease.bindFile();
+      // A crashed supervisor may have released its leases while an orphan app
+      // is still draining. Direct startup also requires closed existing handles.
+      assertWorkspaceHandlesClosed(databasePath);
+    }
+    opened = true;
+    starting = await createApp({
+      maintenance,
+      development,
+      staticDirectory: process.env.SPINEL_STATIC_DIRECTORY,
+      backupConfigPath: process.env.BACKUP_CONFIG_PATH,
+      image: process.env.SPINEL_IMAGE,
+      spaceReview: process.env.SPINEL_SPACE_REVIEW !== '0',
+      origin: process.env.APP_ORIGIN ?? `http://localhost:${port}`,
+      databasePath,
     });
-  });
-} catch (error) {
-  await app.close();
-  await releaseStartup();
-  maintenance?.close();
-  throw error;
-}
-maintenance?.ready();
-await releaseStartup();
+    const server = starting.server;
+    await new Promise<void>((resolveListen, reject) => {
+      server.once('error', reject);
+      server.listen(port, host, () => {
+        server.removeListener('error', reject);
+        resolveListen();
+      });
+    });
+    maintenance?.ready();
+    await startupLease?.release();
+    return starting;
+  } catch (error) {
+    await starting?.close().catch(() => {});
+    await startupLease?.release().catch(() => {});
+    // After any SQLite open, even a failed startup keeps live ownership until
+    // process exit because native descriptors can remain after close().
+    if (!opened) await liveWorkspace?.release().catch(() => {});
+    maintenance?.close();
+    throw error;
+  }
+})();
 
 const address = app.server.address() as AddressInfo;
 const url = process.env.APP_ORIGIN ?? `http://localhost:${address.port}`;

@@ -15,10 +15,30 @@ PID, database path or archive path through its control API. It needs no Docker
 socket. Ordinary `npm start`/`npm run dev` and direct `server/index.ts` development/test
 runs report supervised maintenance as unavailable. Use `npm run start:supervised`
 (or `npm run dev:supervised`) for this capability; deployment Compose selects
-that launcher explicitly. A direct Linux app holds the same lease while opening
-its database and listener, then releases it for legacy live setup workflows. Its
-open database/WAL handles prevent a supervisor from verifying or starting a second
-app. An existing supervisor lease prevents a competing direct app from booting.
+that launcher explicitly. A direct Linux app holds a separate live-application
+lease until its process exits, including after SQLite's close method returns.
+The supervisor holds that lease too, so they cannot open the same inode through
+different paths or PID namespaces. The direct app also holds the cold-operation
+lease during startup, then releases that one for legacy live setup workflows.
+Before opening SQLite it checks for orphan handles left by an interrupted
+supervisor. A new empty database is created and its inode leased before any
+SQLite connection opens.
+
+Every app and offline command touching one dataset must share the same Linux
+network namespace and service UID. Abstract Unix leases are scoped to that
+network namespace; the official `network_mode: host` deployment supplies this
+boundary even when containers have separate PID namespaces. Application workers
+remain inside their supervisor's PID namespace. Restart reconciliation must use
+that same PID namespace, or the previous namespace must have fully terminated.
+The official container runs the supervisor as PID 1; its death terminates every
+member of that namespace. A host supervisor can restart in the host namespace.
+Moving a crashed host deployment into a new PID namespace while host orphans are
+still alive is unsupported: stop those old processes before changing topology.
+The `/proc` scan proves their
+closure and refuses unreadable candidate owners; it never treats `EACCES` as an
+empty descriptor list. An arbitrary SQLite process in another namespace is not
+a supported way to access the managed dataset. Stop/reconcile all such external
+work before maintenance.
 
 Set `DATABASE_PATH` to the existing workspace and `SPINEL_MAINTENANCE_ROOT` to an
 existing canonical absolute directory, owned by the service UID with mode 0700.
@@ -30,9 +50,12 @@ account. Do not replace the configured directory while the controller runs.
 The private journal binds an instance, generation, current database device/inode,
 retry epoch and bounded operation authorization. Updates replace one small 0600
 JSON file after syncing it, then sync the directory. Linux abstract Unix sockets
-provide exclusive kernel-owned leases for the canonical database path and control
-root, releasing automatically after a crash. Standalone database-writing CLIs
-must hold the same `acquireColdWorkspace` lease for their full database lifetime.
+provide exclusive kernel-owned leases for the canonical database path, existing
+inode and control root, releasing automatically after a crash. Live-application
+ownership and cold-operation exclusion are separate leases. Standalone
+database-writing CLIs retain `acquireColdWorkspace` through process exit after
+any SQLite-open attempt, because native descriptors may survive `.close()`.
+Lease listeners are unreferenced so they cannot keep a failed CLI alive.
 A second supervisor or offline writer cannot race the running deployment. The
 journal retains up to 128 operation-intent receipts throughout their authorization
 windows. Nonconsecutive retries return current status without repeating an action;
@@ -59,6 +82,8 @@ before starting the supervisor. Start `server/supervisor.ts` with the deployment
 environment. It intentionally leaves the workspace closed. A missing journal,
 controller interruption, changed process identity or corrupt journal cannot
 silently reopen editing.
+The controller persists its closed boot state before exposing public status and
+finishes old-process reconciliation before opening its private command socket.
 
 Run the CLI as the service UID with `SPINEL_MAINTENANCE_ROOT` set:
 

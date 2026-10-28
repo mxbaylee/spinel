@@ -213,9 +213,11 @@ export function MaintenanceControls({
         ? Number(occurrence)
         : null;
   const durationMinutes = Number(duration);
+  const latestNoticeAt = now + 365 * 86_400_000;
   const validNotice = Boolean(
     startsAt &&
     startsAt > now &&
+    startsAt <= latestNoticeAt &&
     Number.isInteger(durationMinutes) &&
     durationMinutes >= 1 &&
     durationMinutes <= 1440,
@@ -677,12 +679,16 @@ export function MaintenanceControls({
               </>
             ) : confirmation === 'notice' ? (
               <>
-                <p>Announce one maintenance window. You will still choose when to pause edits.</p>
+                <p id="maintenance-notice-range">
+                  Announce one maintenance window within the next 365 days. You will still choose
+                  when to pause edits.
+                </p>
                 <div className="maintenance-notice-fields">
                   <label>
                     Date and time
                     <input
                       type="datetime-local"
+                      aria-describedby="maintenance-notice-range"
                       value={localTime}
                       onChange={(event) => {
                         setLocalTime(event.target.value);
@@ -742,6 +748,8 @@ export function MaintenanceControls({
                     </p>
                   ) : startsAt && startsAt <= now ? (
                     <p role="alert">Choose a future start time.</p>
+                  ) : startsAt && startsAt > latestNoticeAt ? (
+                    <p role="alert">Choose a start time within the next 365 days.</p>
                   ) : startsAt ? (
                     <p className="sp-muted">Your local time: {maintenanceTime(startsAt)}</p>
                   ) : null}

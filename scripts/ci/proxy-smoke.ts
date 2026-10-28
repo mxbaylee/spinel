@@ -11,6 +11,9 @@ function docker(args: string[], timeout = 30_000) {
     maxBuffer: 2 * 1024 * 1024,
     stdio: ['ignore', 'pipe', 'pipe'],
   });
+  // This helper runs only synthetic, credential-free proxy commands. Preserve
+  // bounded diagnostics rather than hiding the actual Docker startup failure.
+  if (result.error || result.status !== 0) console.error(result.stderr?.slice(-8000) ?? '');
   assert.ok(!result.error && result.status === 0, `Proxy fixture docker ${args[0]} failed.`);
   return result.stdout;
 }
@@ -85,6 +88,7 @@ export async function checkMaintenanceProxy(directory: string, name: string) {
       '--network=bridge',
       '--publish=127.0.0.1::8080',
       '--tmpfs=/config:size=1m,uid=10001,gid=10001,mode=0700',
+      '--tmpfs=/data:size=8m,uid=10001,gid=10001,mode=0700',
       '--mount',
       `type=bind,source=${config},target=/etc/caddy/proxy-smoke.json,readonly`,
       image,
@@ -141,7 +145,22 @@ export async function checkMaintenanceProxy(directory: string, name: string) {
     assert.equal(state.Running, true);
     assert.equal(state.OOMKilled, false);
     console.log('Pinned Caddy serves private static 503 HTML/JSON with both upstreams absent.');
+  } catch (error) {
+    for (const args of [
+      ['inspect', '--format', '{{json .State}}', name],
+      ['logs', '--tail', '80', name],
+    ]) {
+      const diagnostic = spawnSync('docker', args, {
+        encoding: 'utf8',
+        timeout: 10_000,
+        maxBuffer: 32 * 1024,
+        stdio: ['ignore', 'pipe', 'pipe'],
+      });
+      console.error(`Proxy fixture ${args[0]}: ${diagnostic.stdout?.slice(-16000) ?? ''}`);
+      if (diagnostic.stderr) console.error(diagnostic.stderr.slice(-16000));
+    }
+    throw error;
   } finally {
-    docker(['rm', '--force', name]);
+    docker(['rm', '--force', '--volumes', name]);
   }
 }

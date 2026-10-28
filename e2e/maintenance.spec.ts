@@ -9,6 +9,7 @@ import type {
 } from '../src/shared/maintenance.ts';
 import { projectRoot } from './app-process.ts';
 import { startMaintenanceFixture } from './maintenance-fixture.ts';
+import { maintenanceInstants } from '../web/maintenanceTime.ts';
 
 const authenticatorOptions = {
   protocol: 'ctap2' as const,
@@ -18,6 +19,28 @@ const authenticatorOptions = {
   isUserVerified: true,
   automaticPresenceSimulation: true,
 };
+
+function nextRepeatedTime() {
+  const now = Date.now(),
+    year = new Date(now).getUTCFullYear();
+  const candidates: Array<{ localTime: string; timeZone: string; startsAt: number }> = [];
+  for (const candidateYear of [year, year + 1]) {
+    for (const [month, hour, timeZone] of [
+      [10, '01', 'America/Los_Angeles'],
+      [3, '02', 'Australia/Sydney'],
+    ] as const) {
+      const first = new Date(Date.UTC(candidateYear, month, 1));
+      const day = 1 + ((7 - first.getUTCDay()) % 7);
+      const localTime = `${candidateYear}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}T${hour}:30`;
+      const instants = maintenanceInstants(localTime, timeZone);
+      if (instants.length === 2 && instants[1] > now && instants[1] < now + 365 * 86400_000)
+        candidates.push({ localTime, timeZone, startsAt: instants[1] });
+    }
+  }
+  const next = candidates.sort((a, b) => a.startsAt - b.startsAt)[0];
+  if (!next) throw new Error('No repeated time inside the notice horizon.');
+  return next;
+}
 
 async function passkey(page: Page) {
   const cdp = await page.context().newCDPSession(page);
@@ -54,7 +77,7 @@ async function capture(page: Page, info: TestInfo, state: string, variants = tru
     await page.screenshot({
       path: join(directory, `${state}-${variant}.png`),
       animations: 'disabled',
-      fullPage: true,
+      fullPage: false,
     });
   }
   if (variants) {
@@ -114,6 +137,59 @@ async function publicStatus(origin: string) {
   return status;
 }
 
+async function publishNotice(
+  operator: Page,
+  repeated: ReturnType<typeof nextRepeatedTime>,
+  info?: TestInfo,
+) {
+  await controls(operator)
+    .getByRole('button', { name: 'Maintenance actions', exact: true })
+    .click();
+  await operator.getByRole('menuitem', { name: 'Schedule a notice…', exact: true }).click();
+  const dialog = operator.getByRole('dialog', {
+    name: 'Schedule a maintenance notice',
+    exact: true,
+  });
+  // A repeated local time requires an explicit occurrence and persists one absolute instant.
+  const localTime = dialog.getByLabel('Date and time', { exact: true });
+  const timeZone = dialog.getByLabel('Time zone', { exact: true });
+  await localTime.fill(repeated.localTime);
+  await timeZone.fill(repeated.timeZone);
+  await dialog.getByLabel('Estimated minutes', { exact: true }).fill('45');
+  await expect(localTime).toHaveValue(repeated.localTime);
+  await expect(timeZone).toHaveValue(repeated.timeZone);
+  // The wrapping label contains the option text. Match the control's accessible
+  // name, rather than getByLabel's exact concatenation of all descendants.
+  const occurrence = dialog.getByRole('combobox', {
+    name: 'This time occurs twice',
+    exact: true,
+  });
+  await expect(occurrence).toBeVisible();
+  await expect(occurrence).toHaveValue('');
+  await expect(occurrence.locator('option')).toHaveText([
+    'Choose an occurrence',
+    /^First occurrence/,
+    /^Second occurrence/,
+  ]);
+  await expect(occurrence.locator('option').nth(2)).toHaveAttribute(
+    'value',
+    String(repeated.startsAt),
+  );
+  await dialog.getByRole('button', { name: 'Verify with a passkey', exact: true }).click();
+  await expect(dialog.getByRole('button', { name: 'Publish notice', exact: true })).toBeDisabled();
+  await expect(occurrence).toBeVisible();
+  await expect(occurrence).toHaveValue('');
+  await occurrence.selectOption(String(repeated.startsAt));
+  await expect(occurrence).toHaveValue(String(repeated.startsAt));
+  if (info) await capture(operator, info, 'notice-time-choice');
+  const response = operator.waitForResponse(
+    (value) => new URL(value.url()).pathname === '/api/admin/maintenance/notice',
+  );
+  await dialog.getByRole('button', { name: 'Publish notice', exact: true }).click();
+  expect((await response).status()).toBe(200);
+  await expect(controls(operator).getByText('Scheduled notice', { exact: true })).toBeVisible();
+}
+
 test('supervised maintenance keeps pending native work, fences old edits, and recovers through cold controls', async ({
   playwright,
 }, info) => {
@@ -126,7 +202,8 @@ test('supervised maintenance keeps pending native work, fences old edits, and re
   let browser: Browser | undefined;
   const failures: string[] = [];
   try {
-    // Closed verification finishes before Chromium starts; only one native editor is resident.
+    // Phase A: real Operator controls without a resident native editor. Closing
+    // this whole browser before Phase B releases its renderers and SDK imports.
     browser = await playwright.chromium.launch(info.project.use.launchOptions);
     const operatorContext = await browser.newContext({
       baseURL: app.origin,
@@ -134,20 +211,10 @@ test('supervised maintenance keeps pending native work, fences old edits, and re
       colorScheme: 'light',
       reducedMotion: 'reduce',
     });
-    const memberContext = await browser.newContext({
-      baseURL: app.origin,
-      viewport: { width: 1280, height: 900 },
-      colorScheme: 'light',
-      reducedMotion: 'reduce',
-      permissions: ['clipboard-read', 'clipboard-write'],
-    });
     const operator = await operatorContext.newPage();
-    const member = await memberContext.newPage();
-    for (const page of [operator, member]) {
-      page.setDefaultTimeout(15_000);
-      page.on('pageerror', (error) => failures.push(error.message));
-      await passkey(page);
-    }
+    operator.setDefaultTimeout(15_000);
+    operator.on('pageerror', (error) => failures.push(error.message));
+    await passkey(operator);
     await operator.goto(app.setupLink);
     await operator.getByRole('button', { name: 'Create admin passkey', exact: true }).click();
     await expect(
@@ -160,14 +227,157 @@ test('supervised maintenance keeps pending native work, fences old edits, and re
       .getByRole('button', { name: 'Create invite', exact: true })
       .click();
     const invitation = await operator.getByLabel('New invite link', { exact: true }).inputValue();
+    await operator.goto('/admin#health');
+    await expect(
+      controls(operator).getByRole('button', { name: 'Pause edits', exact: true }),
+    ).toBeEnabled();
+    const repeated = nextRepeatedTime();
+    await publishNotice(operator, repeated, info);
+    const announced = await publicStatus(app.publicOrigin);
+    expect(announced.phase).toBe('running');
+    expect(announced.notice).toMatchObject({
+      startsAt: repeated.startsAt,
+      timeZone: repeated.timeZone,
+      durationMinutes: 45,
+      state: 'scheduled',
+    });
+    await expect(
+      banner(operator).getByText('Maintenance scheduled', { exact: true }),
+    ).toBeVisible();
+    await capture(operator, info, 'scheduled');
+
+    // Another already-open Operator tab has the same cookie, but no resume capability.
+    const unprivilegedTab = await operatorContext.newPage();
+    unprivilegedTab.setDefaultTimeout(15_000);
+    unprivilegedTab.on('pageerror', (error) => failures.push(error.message));
+    await unprivilegedTab.goto('/admin#health');
+    await expect(
+      controls(unprivilegedTab).getByRole('button', { name: 'Pause edits', exact: true }),
+    ).toBeEnabled();
+
+    let pauseRequests = 0;
+    operator.on('request', (request) => {
+      if (new URL(request.url()).pathname === '/api/admin/maintenance/pause') pauseRequests++;
+    });
+    await controls(operator).getByRole('button', { name: 'Pause edits', exact: true }).click();
+    const pauseDialog = operator.getByRole('dialog', {
+      name: 'Pause workspace edits?',
+      exact: true,
+    });
+    await capture(operator, info, 'pause-confirmation', false);
+    const proofResponse = operator.waitForResponse(
+      (response) => new URL(response.url()).pathname === '/api/auth/reauthentication/verify',
+    );
+    await pauseDialog.getByRole('button', { name: 'Verify with a passkey', exact: true }).click();
+    const proof = (await (await proofResponse).json()) as { verifiedUntil: number };
+    await expect(
+      pauseDialog.getByRole('button', { name: 'Pause edits', exact: true }),
+    ).toBeEnabled();
+    expect(pauseRequests).toBe(0);
+    const pauseResponse = operator.waitForResponse(
+      (response) => new URL(response.url()).pathname === '/api/admin/maintenance/pause',
+    );
+    await pauseDialog.getByRole('button', { name: 'Pause edits', exact: true }).click();
+    const pausedReply = await pauseResponse;
+    expect(pausedReply.status()).toBe(200);
+    const paused = (await pausedReply.json()) as MaintenanceControlResult;
+    expect(pausedReply.request().postDataJSON().intentExpiresAt).toBe(proof.verifiedUntil);
+    expect(paused.status.phase).toBe('paused');
+    expect(paused.status.epoch).not.toBe(app.running.epoch);
+    expect(paused.resumeToken).toMatch(/^[A-Za-z0-9_-]{43}$/);
+    await expect(
+      controls(operator).getByRole('button', { name: 'Resume', exact: true }),
+    ).toBeEnabled();
+    await expect(
+      controls(unprivilegedTab).getByRole('button', { name: 'Resume', exact: true }),
+    ).toBeDisabled();
+    await expect(
+      controls(unprivilegedTab).getByText(/Resume permission is unavailable in this tab/),
+    ).toBeVisible();
+    expect(
+      await operator.evaluate(
+        (token) =>
+          [
+            location.href,
+            document.body.innerText,
+            ...Object.values(localStorage),
+            ...Object.values(sessionStorage),
+          ].some((value) => value.includes(token)),
+        paused.resumeToken!,
+      ),
+    ).toBe(false);
+    await unprivilegedTab.close();
+    await capture(operator, info, 'paused');
+    await banner(operator).locator('summary').click();
+    await expect(
+      banner(operator).getByText(/Already acknowledged edits remain saved\./),
+    ).toBeVisible();
+    await capture(operator, info, 'paused-details');
+    await banner(operator).locator('summary').click();
+
+    await controls(operator).getByRole('button', { name: 'Resume', exact: true }).click();
+    await expect(
+      controls(operator).getByRole('button', { name: 'Reload Administration', exact: true }),
+    ).toBeEnabled();
+    await expect(
+      controls(operator).getByRole('button', { name: 'Pause edits', exact: true }),
+    ).toHaveCount(0);
+    await expect(controls(operator).getByText(/Edits resumed\./)).toBeVisible();
+    const resumed = await publicStatus(app.publicOrigin);
+    expect(resumed.phase).toBe('running');
+    expect(resumed.epoch).toBe(paused.status.epoch);
+    await capture(operator, info, 'resumed');
+    await controls(operator)
+      .getByRole('button', { name: 'Reload Administration', exact: true })
+      .click();
+    await expect(
+      controls(operator).getByRole('button', { name: 'Pause edits', exact: true }),
+    ).toBeEnabled();
+    await controls(operator)
+      .getByRole('button', { name: 'Maintenance actions', exact: true })
+      .click();
+    await operator
+      .getByRole('menuitem', { name: 'Cancel maintenance notice…', exact: true })
+      .click();
+    const cancelDialog = operator.getByRole('dialog', {
+      name: 'Cancel maintenance notice?',
+      exact: true,
+    });
+    await cancelDialog.getByRole('button', { name: 'Verify with a passkey', exact: true }).click();
+    await cancelDialog.getByRole('button', { name: 'Cancel notice', exact: true }).click();
+    await expect(controls(operator).getByText(/Maintenance notice cancelled/)).toBeVisible();
+    await expect(banner(operator)).toHaveCount(0);
+    expect((await publicStatus(app.publicOrigin)).notice?.state).toBe('cancelled');
+    // Leave a new real UI-created announcement for the native geometry checks.
+    await publishNotice(operator, repeated);
+    expect((await publicStatus(app.publicOrigin)).notice?.state).toBe('scheduled');
+    expect(failures).toEqual([]);
+    await browser.close();
+    browser = undefined;
+
+    // Phase B: a fresh browser contains only the member's one native Sheet.
+    // Its immutable base belongs to the epoch resumed by the Operator above.
+    browser = await playwright.chromium.launch(info.project.use.launchOptions);
+    const memberContext = await browser.newContext({
+      baseURL: app.origin,
+      viewport: { width: 1280, height: 900 },
+      colorScheme: 'light',
+      reducedMotion: 'reduce',
+      permissions: ['clipboard-read', 'clipboard-write'],
+    });
+    const member = await memberContext.newPage();
+    member.setDefaultTimeout(15_000);
+    member.on('pageerror', (error) => failures.push(error.message));
+    await passkey(member);
     await member.goto(invitation);
     await member.getByLabel('Your name', { exact: true }).fill('Maintenance member');
     await member.getByRole('button', { name: 'Join with a passkey', exact: true }).click();
     await expect(member.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
     const account = await (await memberContext.request.get('/api/auth/session')).json();
     const accountId = account.user.id as string;
-    const epoch = app.running.epoch;
-    const headers = { Origin: app.origin, 'X-Spinel-Epoch': epoch };
+    let epoch = (await publicStatus(app.publicOrigin)).epoch;
+    expect(epoch).toBe(resumed.epoch);
+    let headers = { Origin: app.origin, 'X-Spinel-Epoch': epoch };
     const created = await memberContext.request.post('/api/items', {
       headers,
       data: { name: 'Maintenance field notes', kind: 'sheet', parentId: null },
@@ -193,6 +403,25 @@ test('supervised maintenance keeps pending native work, fences old edits, and re
       'Synced. All changes are saved on the server and this device.',
       { timeout: 30_000 },
     );
+    // A verified-clean downloaded editor refreshes its saved base and opens a
+    // fresh page. A React-only remount would keep the old tab's HTTP epoch.
+    const beforeCleanResume = await member.evaluate(() => performance.timeOrigin);
+    const cleanOperation = randomUUID();
+    const cleanPaused = await app.control({ action: 'pause', operationId: cleanOperation });
+    await expect(banner(member).getByText('Edits paused', { exact: true })).toBeVisible();
+    const pageRestarted = member.waitForEvent('load');
+    expect((await app.control({ action: 'resume', operationId: cleanOperation })).phase).toBe(
+      'running',
+    );
+    await pageRestarted;
+    await expect(saveStatus(member)).toHaveText(
+      'Synced. All changes are saved on the server and this device.',
+      { timeout: 30_000 },
+    );
+    expect(await member.evaluate(() => performance.timeOrigin)).toBeGreaterThan(beforeCleanResume);
+    epoch = cleanPaused.epoch;
+    headers = { Origin: app.origin, 'X-Spinel-Epoch': epoch };
+    expect((await deviceCopy(member, accountId, item.id))?.bundle.maintenanceEpoch).toBe(epoch);
     await selectCell(member, 'A1');
     await member.keyboard.insertText('Acknowledged before maintenance');
     await member.keyboard.press('Enter');
@@ -204,58 +433,10 @@ test('supervised maintenance keeps pending native work, fences old edits, and re
         (await (await memberContext.request.get(`/api/items/${item.id}/sheet`)).json()).snapshot,
       );
     await expect.poll(remoteSnapshot).toContain('Acknowledged before maintenance');
-
-    await operator.goto('/admin#health');
-    await expect(
-      controls(operator).getByRole('button', { name: 'Pause edits', exact: true }),
-    ).toBeEnabled();
-    await controls(operator)
-      .getByRole('button', { name: 'Maintenance actions', exact: true })
-      .click();
-    await operator.getByRole('menuitem', { name: 'Schedule a notice…', exact: true }).click();
-    const noticeDialog = operator.getByRole('dialog', {
-      name: 'Schedule a maintenance notice',
-      exact: true,
-    });
-    // A repeated local time requires an explicit occurrence and persists one absolute instant.
-    await noticeDialog.getByLabel('Date and time', { exact: true }).fill('2030-11-03T01:30');
-    await noticeDialog.getByLabel('Time zone', { exact: true }).fill('America/Los_Angeles');
-    await noticeDialog.getByLabel('Estimated minutes', { exact: true }).fill('45');
-    await noticeDialog.getByRole('button', { name: 'Verify with a passkey', exact: true }).click();
-    await expect(
-      noticeDialog.getByRole('button', { name: 'Publish notice', exact: true }),
-    ).toBeDisabled();
-    await noticeDialog
-      .getByLabel('This time occurs twice', { exact: true })
-      .selectOption(String(Date.parse('2030-11-03T09:30:00.000Z')));
-    const noticeResponse = operator.waitForResponse(
-      (response) => new URL(response.url()).pathname === '/api/admin/maintenance/notice',
-    );
-    await noticeDialog.getByRole('button', { name: 'Publish notice', exact: true }).click();
-    expect((await noticeResponse).status()).toBe(200);
-    await expect(controls(operator).getByText('Scheduled notice', { exact: true })).toBeVisible();
-    const announced = await publicStatus(app.publicOrigin);
-    expect(announced.phase).toBe('running');
-    expect(announced.notice).toMatchObject({
-      startsAt: Date.parse('2030-11-03T09:30:00.000Z'),
-      timeZone: 'America/Los_Angeles',
-      durationMinutes: 45,
-      state: 'scheduled',
-    });
     await expect(banner(member).getByText('Maintenance scheduled', { exact: true })).toBeVisible();
     const scheduledHeight = await banner(member).evaluate(
       (element) => element.getBoundingClientRect().height,
     );
-    await capture(operator, info, 'scheduled');
-
-    // Another already-open Operator tab has the same cookie, but no resume capability.
-    const unprivilegedTab = await operatorContext.newPage();
-    unprivilegedTab.setDefaultTimeout(15_000);
-    await unprivilegedTab.goto('/admin#health');
-    await expect(
-      controls(unprivilegedTab).getByRole('button', { name: 'Pause edits', exact: true }),
-    ).toBeEnabled();
-
     await memberContext.setOffline(true);
     await selectCell(member, 'B1');
     await member.keyboard.insertText('Pending on this device');
@@ -293,65 +474,17 @@ test('supervised maintenance keeps pending native work, fences old edits, and re
         .toBe('Unfinished native draft');
     };
 
-    let pauseRequests = 0;
-    operator.on('request', (request) => {
-      if (new URL(request.url()).pathname === '/api/admin/maintenance/pause') pauseRequests++;
-    });
-    await controls(operator).getByRole('button', { name: 'Pause edits', exact: true }).click();
-    const pauseDialog = operator.getByRole('dialog', {
-      name: 'Pause workspace edits?',
-      exact: true,
-    });
-    await capture(operator, info, 'pause-confirmation', false);
-    const proofResponse = operator.waitForResponse(
-      (response) => new URL(response.url()).pathname === '/api/auth/reauthentication/verify',
-    );
-    await pauseDialog.getByRole('button', { name: 'Verify with a passkey', exact: true }).click();
-    const proof = (await (await proofResponse).json()) as { verifiedUntil: number };
-    await expect(
-      pauseDialog.getByRole('button', { name: 'Pause edits', exact: true }),
-    ).toBeEnabled();
-    expect(pauseRequests).toBe(0);
-    const pauseResponse = operator.waitForResponse(
-      (response) => new URL(response.url()).pathname === '/api/admin/maintenance/pause',
-    );
-    await pauseDialog.getByRole('button', { name: 'Pause edits', exact: true }).click();
-    const pausedReply = await pauseResponse;
-    expect(pausedReply.status()).toBe(200);
-    const paused = (await pausedReply.json()) as MaintenanceControlResult;
-    expect(pausedReply.request().postDataJSON().intentExpiresAt).toBe(proof.verifiedUntil);
-    expect(paused.status.phase).toBe('paused');
-    expect(paused.status.epoch).not.toBe(epoch);
-    expect(paused.resumeToken).toMatch(/^[A-Za-z0-9_-]{43}$/);
-    await expect(
-      controls(operator).getByRole('button', { name: 'Resume', exact: true }),
-    ).toBeEnabled();
-    await expect(
-      controls(unprivilegedTab).getByRole('button', { name: 'Resume', exact: true }),
-    ).toBeDisabled();
-    await expect(
-      controls(unprivilegedTab).getByText(/Resume permission is unavailable in this tab/),
-    ).toBeVisible();
-    expect(
-      await operator.evaluate(
-        (token) =>
-          [
-            location.href,
-            document.body.innerText,
-            ...Object.values(localStorage),
-            ...Object.values(sessionStorage),
-          ].some((value) => value.includes(token)),
-        paused.resumeToken!,
-      ),
-    ).toBe(false);
+    const memberOperation = randomUUID();
+    const memberPaused = await app.control({ action: 'pause', operationId: memberOperation });
+    expect(memberPaused.phase).toBe('paused');
+    expect(memberPaused.epoch).not.toBe(epoch);
+    expect((await publicStatus(app.publicOrigin)).phase).toBe('paused');
     const rejectedPaused = await memberContext.request.patch(`/api/items/${item.id}`, {
-      headers: { ...headers, 'X-Spinel-Epoch': paused.status.epoch },
+      headers: { ...headers, 'X-Spinel-Epoch': memberPaused.epoch },
       data: { name: 'Must stay paused' },
     });
     expect(rejectedPaused.status()).toBe(503);
     expect((await rejectedPaused.json()).code).toBe('maintenance');
-    await capture(operator, info, 'paused');
-
     // The offline page learns the new epoch before it may open a submit channel.
     await memberContext.setOffline(false);
     await expect(banner(member).getByText('Edits paused', { exact: true })).toBeVisible();
@@ -362,23 +495,16 @@ test('supervised maintenance keeps pending native work, fences old edits, and re
     await stableNativeEditor();
     await capture(member, info, 'native-pending', false);
     expect((await memberContext.request.get(`/api/items/${item.id}/sheet`)).status()).toBe(503);
-
-    await controls(operator).getByRole('button', { name: 'Resume', exact: true }).click();
-    await expect(
-      controls(operator).getByRole('button', { name: 'Reload Administration', exact: true }),
-    ).toBeEnabled();
-    await expect(
-      controls(operator).getByRole('button', { name: 'Pause edits', exact: true }),
-    ).toHaveCount(0);
-    await expect(controls(operator).getByText(/Edits resumed\./)).toBeVisible();
-    const resumed = await publicStatus(app.publicOrigin);
-    expect(resumed.phase).toBe('running');
-    expect(resumed.epoch).toBe(paused.status.epoch);
+    const memberResumed = await app.control({ action: 'resume', operationId: memberOperation });
+    expect(memberResumed.phase).toBe('running');
+    expect(memberResumed.epoch).toBe(memberPaused.epoch);
+    await expect(banner(member).getByText('Maintenance scheduled', { exact: true })).toBeVisible();
     await expect(saveStatus(member)).toContainText('Copy the unfinished cell text');
     await stableNativeEditor();
     const retained = await deviceCopy(member, accountId, item.id);
     expect(retained?.bundle.maintenanceEpoch).toBe(epoch);
     expect(JSON.stringify(retained?.outbox)).toContain('Pending on this device');
+    expect(await remoteSnapshot()).toContain('Acknowledged before maintenance');
     expect(await remoteSnapshot()).not.toContain('Pending on this device');
     expect(await remoteSnapshot()).not.toContain('Unfinished native draft');
     const rejectedStale = await memberContext.request.patch(`/api/items/${item.id}`, {
@@ -387,28 +513,6 @@ test('supervised maintenance keeps pending native work, fences old edits, and re
     });
     expect(rejectedStale.status()).toBe(409);
     expect((await rejectedStale.json()).code).toBe('maintenance-epoch');
-    await capture(operator, info, 'resumed');
-    await controls(operator)
-      .getByRole('button', { name: 'Reload Administration', exact: true })
-      .click();
-    await expect(
-      controls(operator).getByRole('button', { name: 'Pause edits', exact: true }),
-    ).toBeEnabled();
-    await controls(operator)
-      .getByRole('button', { name: 'Maintenance actions', exact: true })
-      .click();
-    await operator
-      .getByRole('menuitem', { name: 'Cancel maintenance notice…', exact: true })
-      .click();
-    const cancelDialog = operator.getByRole('dialog', {
-      name: 'Cancel maintenance notice?',
-      exact: true,
-    });
-    await cancelDialog.getByRole('button', { name: 'Verify with a passkey', exact: true }).click();
-    await cancelDialog.getByRole('button', { name: 'Cancel notice', exact: true }).click();
-    await expect(controls(operator).getByText(/Maintenance notice cancelled/)).toBeVisible();
-    await expect(banner(operator)).toHaveCount(0);
-    expect((await publicStatus(app.publicOrigin)).notice?.state).toBe('cancelled');
     expect(failures).toEqual([]);
     const cookies = (await memberContext.cookies(app.origin))
       .map(({ name, value }) => `${name}=${value}`)
@@ -416,7 +520,7 @@ test('supervised maintenance keeps pending native work, fences old edits, and re
     await canvas!.dispose();
     await nativeDraft!.dispose();
 
-    // Keep Chromium out of the stopped-file verification memory budget.
+    // Phase C: no browser is resident during stopped-file verification.
     await browser.close();
     browser = undefined;
     const operationId = randomUUID();
@@ -441,6 +545,27 @@ test('supervised maintenance keeps pending native work, fences old edits, and re
     expect(durable).toContain('Acknowledged before maintenance');
     expect(durable).not.toContain('Pending on this device');
     expect(durable).not.toContain('Unfinished native draft');
+  } catch (error) {
+    // This test owns its browsers, so capture the live failure state before
+    // teardown; Playwright's ordinary page fixture cannot inspect it afterward.
+    let index = 0;
+    for (const context of browser?.contexts() ?? []) {
+      for (const page of context.pages()) {
+        if (page.isClosed()) continue;
+        await info.attach(`maintenance-failure-${index++}`, {
+          body: await page.screenshot({ animations: 'disabled' }).catch(() => Buffer.alloc(0)),
+          contentType: 'image/png',
+        });
+        await info.attach(`maintenance-state-${index}`, {
+          body: await page
+            .locator('body')
+            .ariaSnapshot()
+            .catch(() => 'Page unavailable.'),
+          contentType: 'text/plain',
+        });
+      }
+    }
+    throw error;
   } finally {
     await browser?.close();
     await app.close();

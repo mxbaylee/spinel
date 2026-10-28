@@ -1,4 +1,4 @@
-import { afterEach, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import type { OfflineBundle } from '../shared/offlineBundle.ts';
 import { blankOfflineSnapshot } from '../shared/offlineCreation.ts';
 import type { OfflineCreationRequest } from '../shared/offlineCreation.ts';
@@ -20,6 +20,9 @@ import {
   relocateOfflineCreation,
   uploadOfflineCreation,
 } from '../../web/offline/creation.ts';
+
+vi.mock('../../web/maintenanceState.ts', () => import('./fixtures/unsupervisedMaintenance.ts'));
+beforeEach(() => vi.stubGlobal('location', { origin: 'https://spinel.test', pathname: '/' }));
 
 const account = 'offline-creator';
 const input: OfflineCreationRequest = {

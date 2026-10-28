@@ -48,7 +48,7 @@ let cleaned = false;
 function cleanup() {
   if (cleaned) return;
   cleaned = true;
-  spawnSync('docker', ['rm', '--force', ...names, proxyName], {
+  spawnSync('docker', ['rm', '--force', '--volumes', ...names, proxyName], {
     stdio: 'ignore',
     timeout: 30_000,
   });

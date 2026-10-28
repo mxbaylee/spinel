@@ -8,6 +8,8 @@ import { sha256 } from '../../web/offline/PreparedImages.ts';
 import { prepareShell } from '../../web/offline/shell.ts';
 import { itemsRequest } from '../../web/itemsApi.ts';
 
+vi.mock('../../web/maintenanceState.ts', () => import('./fixtures/unsupervisedMaintenance.ts'));
+
 vi.mock('../../web/offline/shell.ts', () => ({
   prepareShell: vi.fn(async () => ({
     buildId: 'test-build',
@@ -194,6 +196,7 @@ for (const stage of ['runtime preparation', 'private write'] as const)
   });
 
 test('an empty server error retains its HTTP status and gives a download-specific fallback', async () => {
+  vi.stubGlobal('location', { origin: 'https://spinel.example', pathname: '/' });
   vi.stubGlobal(
     'fetch',
     vi.fn(async () => Response.json({ error: '' }, { status: 503 })),

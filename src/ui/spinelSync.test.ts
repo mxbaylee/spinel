@@ -13,6 +13,15 @@ import type { ConnectionState } from '../../web/connectionState.ts';
 import type { OfflineSession } from '../../web/offline/OfflineSession.ts';
 import type { OfflineCreation } from '../../web/offline/offlineStore.ts';
 import type { OfflineRecoveryRequest } from '../shared/offlineRecovery.ts';
+import type { MaintenancePublicStatus } from '../shared/maintenance.ts';
+
+const maintenance = vi.hoisted(() => ({ status: null as MaintenancePublicStatus | null }));
+vi.mock('../../web/maintenanceState.ts', () => ({
+  maintenanceEvent: 'spinel-maintenance',
+  getMaintenanceStatus: () => maintenance.status,
+  getMaintenanceEpoch: () => (maintenance.status?.available ? maintenance.status.epoch : undefined),
+  refreshMaintenanceStatus: async () => maintenance.status,
+}));
 
 const downloadOfflineFile = vi.hoisted(() => vi.fn());
 vi.mock('../../web/offline/recovery.ts', () => ({
@@ -135,6 +144,7 @@ afterEach(() => {
   downloadOfflineFile.mockClear();
   native.clients.length = 0;
   Socket.instances.length = 0;
+  maintenance.status = null;
 });
 const item = '11111111-1111-4111-8111-111111111111';
 const child = '22222222-2222-4222-8222-222222222222';
@@ -149,6 +159,7 @@ async function fixture({
   preparing = false,
   canRecover = false,
   canRefresh,
+  maintenanceEpoch,
 }: {
   guest?: boolean;
   space?: boolean;
@@ -159,16 +170,22 @@ async function fixture({
   preparing?: boolean;
   canRecover?: boolean;
   canRefresh?(): boolean;
+  maintenanceEpoch?: string;
 } = {}) {
   vi.useFakeTimers();
+  maintenance.status = maintenanceEpoch
+    ? { available: true, phase: 'running', epoch: maintenanceEpoch, notice: null }
+    : null;
   vi.stubGlobal('navigator', { onLine: true });
   const signIn = vi.fn();
+  const reloadPage = vi.fn();
   vi.stubGlobal('location', {
     pathname: guest ? `/share/${item}` : '/',
     origin: 'https://spinel.test',
     protocol: 'https:',
     search: '',
     assign: signIn,
+    reload: reloadPage,
   });
   const events = new EventTarget();
   const dispatched = vi.spyOn(events, 'dispatchEvent');
@@ -188,6 +205,7 @@ async function fixture({
         version: 1,
         unitId: 'unit',
         revision: 8,
+        epoch: maintenanceEpoch,
         snapshot: { id: 'unit', body: { dataStream: '\r\n' } },
       });
     if (input.includes('/ticket?')) return Response.json({ version: 1, ticket: 'one-use-ticket' });
@@ -218,7 +236,7 @@ async function fixture({
     problem: '',
     accountId: 'owner',
     itemId: space ? child : item,
-    bundle: { access: 'editor', unitId: 'unit', name: 'Offline notes' },
+    bundle: { access: 'editor', unitId: 'unit', name: 'Offline notes', maintenanceEpoch },
     creation: undefined as OfflineCreation | undefined,
     recoveryRequest: undefined as OfflineRecoveryRequest | undefined,
     onChange: undefined as (() => void) | undefined,
@@ -238,7 +256,8 @@ async function fixture({
       },
     ),
     publishRecovery: vi.fn(
-      async (_request: OfflineRecoveryRequest, _signal: AbortSignal) => copyItem,
+      async (_request: OfflineRecoveryRequest, _signal: AbortSignal, _maintenanceEpoch?: string) =>
+        copyItem,
     ),
     exportSnapshot: vi.fn(async (_checkpoint: ClientCheckpoint) =>
       structuredClone(recoveryRequest.snapshot),
@@ -306,6 +325,7 @@ async function fixture({
     reload,
     lock,
     signIn,
+    reloadPage,
     dispatched,
     client,
     offline,
@@ -317,6 +337,10 @@ async function fixture({
     },
     metadata(reply: (input: string) => Promise<Response>) {
       metadata = reply;
+    },
+    maintenance(phase: MaintenancePublicStatus['phase'], epoch: string) {
+      maintenance.status = { available: true, phase, epoch, notice: null };
+      window.dispatchEvent(new Event('spinel-maintenance'));
     },
     pending() {
       client.state.pending = true;
@@ -478,6 +502,181 @@ test('failed recovery retains the client and outbox, makes one automatic attempt
   expect(f.offline.finishRecovery).toHaveBeenCalledWith(f.recoveryRequest.recoveryId);
   expect(f.client.disposed).toBe(true);
   expect(f.offline.pending).toBe(false);
+});
+
+test.each([false, true])(
+  'clean maintenance resume restarts the page with a new HTTP epoch (downloaded: %s)',
+  async (downloaded) => {
+    const baseEpoch = '55555555-5555-4555-8555-555555555555';
+    const resumedEpoch = '66666666-6666-4666-8666-666666666666';
+    const f = await fixture({ downloaded, maintenanceEpoch: baseEpoch });
+    let releaseRefresh!: () => void;
+    if (downloaded)
+      f.offline.refreshClean.mockImplementationOnce(async (verify) => {
+        await new Promise<void>((resolve) => {
+          releaseRefresh = resolve;
+        });
+        verify();
+      });
+    f.maintenance('paused', resumedEpoch);
+    await vi.advanceTimersByTimeAsync(0);
+    expect(f.reloadPage).not.toHaveBeenCalled();
+    f.maintenance('running', resumedEpoch);
+    await vi.advanceTimersByTimeAsync(0);
+    if (downloaded) {
+      // Reopening before the clean device base commits would reload its old
+      // epoch again. Navigation waits for that independent durable boundary.
+      expect(f.offline.refreshClean).toHaveBeenCalledOnce();
+      expect(f.reloadPage).not.toHaveBeenCalled();
+      expect(f.client.disposed).toBe(false);
+      releaseRefresh();
+      await vi.advanceTimersByTimeAsync(0);
+    }
+    expect(f.readonly).toHaveBeenCalledWith(true);
+    expect(f.reloadPage).toHaveBeenCalledOnce();
+    expect(f.reload).not.toHaveBeenCalled();
+    expect(f.client.disposed).toBe(true);
+  },
+);
+
+test.each([
+  [false, 'queued work'],
+  [true, 'queued work'],
+  [false, 'native input'],
+  [true, 'native input'],
+] as const)(
+  'maintenance never restarts a page with %s downloaded and %s retained',
+  async (downloaded, retained) => {
+    const baseEpoch = '55555555-5555-4555-8555-555555555555';
+    const f = await fixture({
+      downloaded,
+      maintenanceEpoch: baseEpoch,
+      canRefresh: () => retained !== 'native input',
+    });
+    if (retained === 'queued work') f.pending();
+    f.maintenance('paused', '66666666-6666-4666-8666-666666666666');
+    await vi.advanceTimersByTimeAsync(0);
+    f.maintenance('running', '66666666-6666-4666-8666-666666666666');
+    await vi.advanceTimersByTimeAsync(0);
+    expect(f.reloadPage).not.toHaveBeenCalled();
+    expect(f.reload).not.toHaveBeenCalled();
+    expect(f.offline.refreshClean).not.toHaveBeenCalled();
+    expect(f.offline.bundle.maintenanceEpoch).toBe(baseEpoch);
+    expect(f.client.disposed).toBe(false);
+  },
+);
+
+test('automatic recovery retains its base epoch across pause and resume during asynchronous preparation', async () => {
+  const baseEpoch = '55555555-5555-4555-8555-555555555555';
+  const resumedEpoch = '66666666-6666-4666-8666-666666666666';
+  const f = await fixture({ downloaded: true, canRecover: true, maintenanceEpoch: baseEpoch });
+  let release!: () => void;
+  const held = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  const prepare = f.offline.prepareRecovery.getMockImplementation()!;
+  f.offline.prepareRecovery.mockImplementationOnce(async (checkpoint) => {
+    await held;
+    return prepare(checkpoint);
+  });
+  f.offline.publishRecovery.mockRejectedValueOnce(
+    new Error('The recovery intent has an old maintenance epoch.'),
+  );
+  f.pending();
+  f.conflict();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.offline.prepareRecovery).toHaveBeenCalledOnce();
+  expect(f.offline.publishRecovery).not.toHaveBeenCalled();
+  f.maintenance('paused', resumedEpoch);
+  await vi.advanceTimersByTimeAsync(0);
+  f.maintenance('running', resumedEpoch);
+  await vi.advanceTimersByTimeAsync(0);
+  release();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.offline.publishRecovery).toHaveBeenCalledExactlyOnceWith(
+    f.recoveryRequest,
+    expect.any(AbortSignal),
+    baseEpoch,
+  );
+  expect(f.offline.finishRecovery).not.toHaveBeenCalled();
+  expect(f.offline.pending).toBe(true);
+  expect(f.client.disposed).toBe(false);
+  expect(f.saves.at(-1)?.recovery).toMatchObject({
+    phase: 'failed',
+    message: 'The recovery intent has an old maintenance epoch.',
+  });
+  f.offline.onChange?.();
+  window.dispatchEvent(new Event('online'));
+  await vi.advanceTimersByTimeAsync(5000);
+  expect(f.offline.publishRecovery).toHaveBeenCalledOnce();
+});
+
+test('an explicit recovery retry captures the resumed epoch before preparation and cannot adopt a later resume', async () => {
+  const baseEpoch = '55555555-5555-4555-8555-555555555555';
+  const firstResume = '66666666-6666-4666-8666-666666666666';
+  const secondResume = '77777777-7777-4777-8777-777777777777';
+  const f = await fixture({ downloaded: true, canRecover: true, maintenanceEpoch: baseEpoch });
+  f.offline.publishRecovery.mockRejectedValueOnce(
+    new Error('The first copy attempt was unavailable.'),
+  );
+  f.offline.publishRecovery.mockImplementation(async (_request, _signal, epoch) => {
+    if (epoch !== maintenance.status?.epoch)
+      throw new Error('The recovery intent has an old maintenance epoch.');
+    return f.copyItem;
+  });
+  f.pending();
+  f.conflict();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.offline.publishRecovery.mock.calls.map((call) => call[2])).toEqual([baseEpoch]);
+  f.maintenance('paused', firstResume);
+  await vi.advanceTimersByTimeAsync(0);
+  // A click while paused has no authority to create a separate copy.
+  f.handle.recover();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.offline.publishRecovery).toHaveBeenCalledOnce();
+  f.maintenance('running', firstResume);
+  await vi.advanceTimersByTimeAsync(0);
+  let release!: () => void;
+  const held = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  const prepare = f.offline.prepareRecovery.getMockImplementation()!;
+  f.offline.prepareRecovery.mockImplementationOnce(async (checkpoint) => {
+    await held;
+    return prepare(checkpoint);
+  });
+  f.handle.recover();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.offline.prepareRecovery).toHaveBeenCalledTimes(2);
+  f.maintenance('paused', secondResume);
+  await vi.advanceTimersByTimeAsync(0);
+  f.maintenance('running', secondResume);
+  await vi.advanceTimersByTimeAsync(0);
+  release();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.offline.publishRecovery.mock.calls.map((call) => call[2])).toEqual([
+    baseEpoch,
+    firstResume,
+  ]);
+  expect(f.offline.finishRecovery).not.toHaveBeenCalled();
+  expect(f.offline.pending).toBe(true);
+  expect(f.client.disposed).toBe(false);
+  // A new user action can now authorize the exact retained copy in the current epoch.
+  f.handle.recover();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.offline.publishRecovery.mock.calls.map((call) => call[2])).toEqual([
+    baseEpoch,
+    firstResume,
+    secondResume,
+  ]);
+  expect(f.offline.publishRecovery.mock.calls.map(([request]) => request)).toEqual([
+    f.recoveryRequest,
+    f.recoveryRequest,
+    f.recoveryRequest,
+  ]);
+  expect(f.offline.finishRecovery).toHaveBeenCalledExactlyOnceWith(f.recoveryRequest.recoveryId);
+  expect(f.offline.pending).toBe(false);
+  expect(f.client.disposed).toBe(true);
 });
 
 test('failed recovery cleanup retains the exact request and retries the already-created copy', async () => {

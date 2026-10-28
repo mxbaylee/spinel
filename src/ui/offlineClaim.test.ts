@@ -12,6 +12,8 @@ import {
 import { readDeviceInventory } from '../../web/offline/deviceStorage.ts';
 import type { OfflineDownload } from '../../web/offline/offlineStore.ts';
 
+vi.mock('../../web/maintenanceState.ts', () => import('./fixtures/unsupervisedMaintenance.ts'));
+
 vi.mock('../../web/offline/deviceStorage.ts', () => ({ readDeviceInventory: vi.fn() }));
 const user = { id: 'owner', name: 'Owner', isAdmin: false };
 const download: OfflineDownload = {
@@ -27,6 +29,7 @@ const catalog = { items: [], shared: [], views: {}, syncedAt: 1 };
 let values: Map<string, string>;
 
 beforeEach(() => {
+  vi.stubGlobal('location', { origin: 'https://spinel.test', pathname: '/' });
   values = new Map();
   vi.stubGlobal('navigator', {});
   vi.stubGlobal(
@@ -367,7 +370,12 @@ test('an account-bound security action checks its epoch before sending', async (
 test('a retired passkey read cannot redirect a newer sign-in when its headers arrive', async () => {
   const held = deferred();
   const assign = vi.fn();
-  vi.stubGlobal('location', { pathname: '/profile', search: '', assign });
+  vi.stubGlobal('location', {
+    origin: 'https://spinel.test',
+    pathname: '/profile',
+    search: '',
+    assign,
+  });
   let current = true;
   const check = () => {
     if (!current) throw new DOMException('Retired profile read.', 'AbortError');
