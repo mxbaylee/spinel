@@ -246,6 +246,79 @@ export function acquireColdWorkspaceLease(databasePath: string) {
   return acquireWorkspaceLease(databasePath, 'workspace');
 }
 
+export interface ColdWorkspaceFiles {
+  /** Bind every new file before SQLite opens it; retain earlier inode ownership. */
+  bindFile(path: string): Promise<void>;
+  /** Only before any database open, or after a disposable test process exits. */
+  release(): Promise<void>;
+}
+const heldColdWorkspaceFiles = new Set<ColdWorkspaceFiles>();
+
+/** Offline transitions replace staging files and rename them into reserved paths.
+ * Keep every possibly live inode until process exit, sharing a listener only after
+ * its old reserved pathname no longer identifies it. Concurrent source/target
+ * aliases remain forbidden: a writable copy must never alias its retained source.
+ */
+export async function acquireColdWorkspaceFiles(
+  paths: readonly string[],
+): Promise<ColdWorkspaceFiles> {
+  const canonical = paths.map(canonicalDatabasePath).sort();
+  if (!canonical.length || new Set(canonical).size !== canonical.length)
+    throw new Error('Cold workspace paths must be distinct.');
+  const pathLocks = new Map<string, Server>();
+  const fileLocks = new Map<string, Server>();
+  const boundPaths = new Map<string, FileIdentity>();
+  let released = false;
+  const bindFile = async (path: string, required: boolean) => {
+    if (released) throw new Error('Workspace ownership has already been released.');
+    const selected = canonicalDatabasePath(path);
+    if (!pathLocks.has(selected)) throw new Error('Workspace path was not reserved.');
+    let identity: FileIdentity;
+    try {
+      identity = fileIdentity(selected);
+    } catch (error) {
+      if (!required && (error as NodeJS.ErrnoException).code === 'ENOENT') return;
+      throw error;
+    }
+    for (const [other, previous] of boundPaths) {
+      if (other === selected || !sameFile(previous, identity)) continue;
+      try {
+        if (sameFile(identity, fileIdentity(other)))
+          throw new Error('Cold workspace source and target files must not alias.');
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+      }
+    }
+    const key = `${identity.device}:${identity.inode}`;
+    if (!fileLocks.has(key)) fileLocks.set(key, await kernelLock('workspace-file', key));
+    if (!sameFile(identity, fileIdentity(selected)))
+      throw new Error('Workspace changed while acquiring control.');
+    boundPaths.set(selected, identity);
+  };
+  const lease: ColdWorkspaceFiles = {
+    bindFile: (path) => bindFile(path, true),
+    async release() {
+      if (released) return;
+      released = true;
+      heldColdWorkspaceFiles.delete(lease);
+      const results = await Promise.allSettled(
+        [...pathLocks.values(), ...fileLocks.values()].map(releaseLock),
+      );
+      const failed = results.find((result) => result.status === 'rejected');
+      if (failed?.status === 'rejected') throw failed.reason;
+    },
+  };
+  heldColdWorkspaceFiles.add(lease);
+  try {
+    for (const path of canonical) pathLocks.set(path, await kernelLock('workspace', path));
+    for (const path of canonical) await bindFile(path, false);
+  } catch (error) {
+    await lease.release().catch(() => {});
+    throw error;
+  }
+  return lease;
+}
+
 /** Separate app ownership permits legacy cold CLI operations beside a direct app.
  * Keep it until process exit after any DB open: native handles may outlive close().
  * Abstract sockets coordinate only within one Linux network namespace.

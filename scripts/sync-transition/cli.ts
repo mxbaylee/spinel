@@ -1,20 +1,17 @@
 import { parseArgs } from 'node:util';
 import { join } from 'node:path';
-import {
-  acquireColdWorkspace,
-  canonicalDatabasePath,
-} from '../../src/server/maintenance/journal.ts';
+import { acquireColdWorkspaceFiles } from '../../src/server/maintenance/journal.ts';
+import type { ColdWorkspaceFiles } from '../../src/server/maintenance/journal.ts';
 import { exportSyncTransition, importSyncTransition } from '../../src/server/sync/transition.ts';
 import type { TransitionProgress } from '../../src/server/sync/transition.ts';
 import { legacyTransitionReader } from './legacy.ts';
 
 const progress: TransitionProgress = (event) => process.stdout.write(JSON.stringify(event) + '\n');
-const releaseWorkspaces: (() => Promise<void>)[] = [];
+let workspaces: ColdWorkspaceFiles | undefined;
 let opened = false;
 async function leaseWorkspaces(paths: string[]) {
   if (process.platform !== 'linux') return;
-  const canonical = [...new Set(paths.map(canonicalDatabasePath))].sort();
-  for (const path of canonical) releaseWorkspaces.push(await acquireColdWorkspace(path));
+  workspaces = await acquireColdWorkspaceFiles(paths);
 }
 try {
   const command = process.argv[2];
@@ -49,6 +46,7 @@ try {
       source: values.source,
       directory: values.bundle,
       legacy: legacyTransitionReader(values['legacy-checkout']),
+      bindFile: workspaces?.bindFile,
       progress,
     });
     process.stdout.write(
@@ -75,6 +73,7 @@ try {
     const result = await importSyncTransition({
       directory: values.bundle,
       destination: values.destination,
+      bindFile: workspaces?.bindFile,
       progress,
     });
     process.stdout.write(
@@ -96,7 +95,8 @@ try {
   // Native SQLite descriptors can outlive close(). Keep these unref'd leases
   // until this one-shot process exits after any database-open attempt.
   if (!opened) {
-    const releases = await Promise.allSettled(releaseWorkspaces.map((release) => release()));
-    if (releases.some((release) => release.status === 'rejected')) process.exitCode = 1;
+    await workspaces?.release().catch(() => {
+      process.exitCode = 1;
+    });
   }
 }

@@ -386,6 +386,7 @@ jobs:
             test-results/**/sync-diagnostics.json
             test-results/**/phone-doc-caret-events*.json
             test-results/**/phone-doc-selection-evidence*.json
+            test-results/**/maintenance-views/*.png
             test-results/**/spn-059-*-soak.json
             test-results/**/error-context.md
             test-results/**/trace.zip

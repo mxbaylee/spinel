@@ -13,6 +13,10 @@ the supervisor for every source, bundle and output SQLite file for the whole
 command. An active supervisor refuses export/import even when its child is
 paused or stopped. Do not release a running supervisor's lease by deleting files;
 shut it down through the [maintenance procedure](../../docs/maintenance.md).
+New copying and working files acquire inode ownership before SQLite opens them,
+including backup creation. Ownership follows publication renames and retains
+replaced inodes until the command exits, because native handles may outlive
+`close()`. Distinct source and destination files must not be hard-link aliases.
 The source remains an offline requirement for direct legacy servers too.
 Preserve its
 encrypted backup and configuration. Use private directories on the same encrypted
