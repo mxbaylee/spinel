@@ -3,7 +3,7 @@ import type { ChildProcess } from 'node:child_process';
 import { createServer, request } from 'node:http';
 import { connect } from 'node:net';
 import type { Socket } from 'node:net';
-import { mkdir, mkdtemp, readFile, readdir, rm, symlink } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { chromium, expect, test } from '@playwright/test';
@@ -15,6 +15,7 @@ import { runtimeDescriptor, shellFiles } from '../src/shared/offlineShell.ts';
 import type { ShellManifest } from '../src/shared/offlineShell.ts';
 import type { RuntimeState } from '../web/offline/runtimeStore.ts';
 import { projectRoot, startApp } from './app-process.ts';
+import { linkLegacyOfflineDependencies } from './offline-upgrade-dependencies.ts';
 import { syncNetwork } from './sync-network.ts';
 
 // This project owns its sequential builds and its real server. No ordinary
@@ -144,9 +145,9 @@ async function buildLegacy(): Promise<LegacyBuild> {
         process.off('exit', stop);
       });
   });
-  // SPN-055 changes no dependencies or lib code; use the already installed
-  // pinned packages, keeping installation/network work outside this harness.
-  await symlink(join(projectRoot, 'node_modules'), join(source, 'node_modules'), 'dir');
+  // Reuse compatible external packages, but resolve every workspace import
+  // against the archived source so later application APIs cannot enter this build.
+  await linkLegacyOfflineDependencies(source, projectRoot);
   await emit(directory, source);
   const html = await readFile(join(directory, 'index.html'), 'utf8');
   expect(runtimeDescriptor(html)).toBeNull();
