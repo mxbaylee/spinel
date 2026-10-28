@@ -271,8 +271,8 @@ test('persistence saves the immutable envelope before sending and remains dirty 
   const writes: ReturnType<typeof Promise.withResolvers<void>>[] = [];
   const f = fixture();
   const a = f.client({
-    persist: (checkpoint) => {
-      checkpoints.push(checkpoint);
+    persist: (capture) => {
+      checkpoints.push(capture());
       const deferred = Promise.withResolvers<void>();
       writes.push(deferred);
       return deferred.promise;

@@ -56,7 +56,7 @@ function restore(
     onState() {},
     onResync: (reason) => failures.push(reason),
     persist: async (value) => {
-      saved.push(structuredClone(value));
+      saved.push(structuredClone(value()));
     },
     ...overrides,
   });
@@ -284,9 +284,9 @@ test('failed local persistence is visible and can retry while disconnected', asy
   let failed = true;
   const saved: ClientCheckpoint[] = [];
   const source = f.client({
-    persist: async (checkpoint) => {
+    persist: async (capture) => {
       if (failed) throw new Error('Quota exceeded');
-      saved.push(checkpoint);
+      saved.push(capture());
     },
   });
   source.edit([write({ v: 'Disk first' })]);
@@ -380,8 +380,8 @@ test('a missing recovery capture stays undurable after its marker is written or 
       if (failCapture) throw new Error('Snapshot unavailable');
       return source.live.snapshot();
     },
-    persist: async (checkpoint) => {
-      saved.push(structuredClone(checkpoint));
+    persist: async (capture) => {
+      saved.push(structuredClone(capture()));
     },
   });
   const value = 'x'.repeat(70 * 1024);

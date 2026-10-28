@@ -1,4 +1,8 @@
-import type { ClientCheckpoint, NativeSnapshot } from '@spinel/sync-client';
+import type {
+  ClientCheckpoint,
+  ClientCheckpointFactory,
+  NativeSnapshot,
+} from '@spinel/sync-client';
 import { validateRecoverySnapshot } from '@spinel/sync-client';
 import type { IURLImageService } from '@univerjs/core';
 import type { OfflineBundleImage } from '../../src/shared/offlineBundle.ts';
@@ -466,7 +470,7 @@ export class OfflineSession implements IURLImageService {
       this.download.bundle.images = images;
     }
   }
-  async persist(checkpoint: ClientCheckpoint) {
+  async persist(capture: ClientCheckpointFactory) {
     if (this.recoveryResolved) throw new Error('These offline changes have already been resolved.');
     const wasEnabled = this.enabled;
     await this.activate();
@@ -480,6 +484,7 @@ export class OfflineSession implements IURLImageService {
       throw new Error(this.problem);
     }
     this.verify();
+    const checkpoint = capture();
     if (!this.releaseWriter || this.bundle!.readOnly) {
       if (checkpoint.sent || checkpoint.buffer.length)
         throw new Error('This offline copy is read-only.');

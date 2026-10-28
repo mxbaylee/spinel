@@ -91,6 +91,12 @@ export interface ClientCheckpoint {
   /** A refusal marker alone does not mean its latest visible edit was saved. */
   recoveryMissing?: boolean;
 }
+/**
+ * Captures current state on its first call and returns that same checkpoint on
+ * later calls. Valid only until the persistence hook settles or the client is
+ * disposed; a host that has no storage to update may leave it unused.
+ */
+export type ClientCheckpointFactory = () => ClientCheckpoint;
 export interface SyncReplica {
   cells(): BaseCells;
   apply(mutations: readonly Mutation[]): void;
@@ -107,7 +113,7 @@ export interface SyncClientOptions {
   send(frame: OutgoingFrame): void;
   onState(state: ClientState): void;
   onResync(reason: ClientFailure): void;
-  persist?(checkpoint: ClientCheckpoint): void | Promise<void>;
+  persist?(capture: ClientCheckpointFactory): void | Promise<void>;
   checkpoint?: ClientCheckpoint;
   /** Offline hosts retain a recoverable queue when ordinary clients would reload. */
   preservePendingOnFailure?: boolean | (() => boolean);

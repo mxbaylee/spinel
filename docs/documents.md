@@ -52,6 +52,9 @@ dispose their pending work. This uses a narrow, version/hash-checked temporary
 OSS Docs UI repair, with [SPN-119](todo/SPN-119.md) tracking its removal after a
 suitable upstream release. The [callback lifetime contract and evidence](implementation/SPN-113.md)
 preserve normal blinking, zoom, selection and editor cleanup. The
+online editor also defers constructing a full offline checkpoint until activated
+storage needs it, preserving later offline opt-in, serialized writes and access
+checks without copying checkpoints that would be discarded. The
 [measurement contract and evidence](implementation/SPN-108.md) preserve the
 original per-character reproducer, before/after profiles, desktop/mobile
 emulation boundaries and independent-review rubric. A successful Save status

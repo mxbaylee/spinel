@@ -94,7 +94,7 @@ test('a prepared-account download hands its released writer to the mounted nativ
   let adoption: Promise<void> | undefined;
   const changed = vi.fn((change: offlineStorage.OfflineChange) => {
     if (change.itemId === itemId && change.pending === undefined) {
-      adoption = active.persist(checkpoint);
+      adoption = active.persist(() => checkpoint);
       void adoption.catch(() => {});
     }
   });
