@@ -6,6 +6,7 @@ import { ThemeSettings } from '../src/ui/ThemeSettings.tsx';
 import { AssistantConnections } from './AssistantConnections.tsx';
 import { AccessTokens } from './AccessTokens.tsx';
 import { DeviceStorage } from './DeviceStorage.tsx';
+import { GuestLinks } from './GuestLinks.tsx';
 import { rememberedFileHref } from './fileNavigation.ts';
 import './profile.css';
 
@@ -14,6 +15,7 @@ const sections = [
   ['passkeys', 'Passkeys'],
   ['device', 'This device'],
   ['connections', 'Connected assistants'],
+  ['links', 'Guest links'],
 ] as const;
 type Section = (typeof sections)[number][0];
 
@@ -32,7 +34,8 @@ export function ProfilePage({
 }) {
   const readSection = (): Section => {
     const hash = location.hash.slice(1);
-    return sections.some(([id]) => id === hash) && !(user.isAdmin && hash === 'connections')
+    return sections.some(([id]) => id === hash) &&
+      !(user.isAdmin && ['connections', 'links'].includes(hash))
       ? (hash as Section)
       : offline
         ? 'device'
@@ -61,7 +64,7 @@ export function ProfilePage({
       <div className="profile-layout">
         <nav aria-label="Profile sections">
           {sections
-            .filter(([id]) => !user.isAdmin || id !== 'connections')
+            .filter(([id]) => !user.isAdmin || !['connections', 'links'].includes(id))
             .map(([id, label]) => (
               <a key={id} href={`#${id}`} aria-current={section === id ? 'page' : undefined}>
                 {label}
@@ -98,6 +101,11 @@ export function ProfilePage({
                   </details>
                 </>
               )}
+            </div>
+          )}
+          {!user.isAdmin && section === 'links' && (
+            <div>
+              {offline ? <p>Guest links need a connection.</p> : <GuestLinks key={user.id} />}
             </div>
           )}
         </div>

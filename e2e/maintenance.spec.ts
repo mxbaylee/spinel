@@ -506,6 +506,65 @@ test('supervised maintenance keeps pending native work, fences old edits, and re
     });
     expect(created.status(), await created.text()).toBe(201);
     const item = (await created.json()).item as { id: string; name: string };
+    const linkPath = `/api/items/${item.id}/link`;
+    const inventoryPath = `/api/guest-links/${item.id}`;
+    const enableLink = () =>
+      memberContext.request.put(linkPath, { headers, data: { role: 'viewer', expiryDays: 7 } });
+    expect((await enableLink()).status()).toBe(200);
+    const linksPage = await memberContext.newPage();
+    linksPage.setDefaultTimeout(15_000);
+    linksPage.on('pageerror', (error) => failures.push(error.message));
+    await linksPage.goto('/profile#links');
+    const inventory = linksPage.getByRole('region', { name: 'Guest links', exact: true });
+    const linkMenu = () =>
+      inventory.getByRole('button', { name: `More actions for ${item.name}`, exact: true }).click();
+    const expiryDialog = async () => {
+      await linkMenu();
+      await linksPage.getByRole('menuitem', { name: 'Change expiry…', exact: true }).click();
+      return linksPage.getByRole('dialog', { name: 'Change link expiry', exact: true });
+    };
+    const inventoryReply = (method: string) =>
+      linksPage.waitForResponse(
+        (response) =>
+          new URL(response.url()).pathname === inventoryPath &&
+          response.request().method() === method,
+      );
+    // These are real component requests through supervised HTTP admission.
+    // Both inventory writes must carry this tab's immutable maintenance epoch.
+    const expiry = await expiryDialog();
+    await expiry.getByRole('combobox', { name: 'Expire link after' }).selectOption('1');
+    const changingExpiry = inventoryReply('PATCH');
+    const beforeExpirySave = Date.now();
+    await expiry.getByRole('button', { name: 'Save expiry', exact: true }).click();
+    const changedExpiry = await changingExpiry;
+    const afterExpirySave = Date.now();
+    expect(changedExpiry.status()).toBe(200);
+    expect(changedExpiry.request().headers()['x-spinel-epoch']).toBe(epoch);
+    await expect(inventory.getByRole('status')).toHaveText(
+      'Expiry updated. The link is unchanged.',
+    );
+    const updatedLink = await (await memberContext.request.get(linkPath)).json();
+    expect(updatedLink.enabled).toBe(true);
+    expect(updatedLink.expiresAt).toBeGreaterThanOrEqual(beforeExpirySave + 86_400_000);
+    expect(updatedLink.expiresAt).toBeLessThanOrEqual(afterExpirySave + 86_400_000);
+    await linkMenu();
+    await linksPage.getByRole('menuitem', { name: 'Turn off link', exact: true }).click();
+    const turningOff = inventoryReply('DELETE');
+    await linksPage
+      .getByRole('dialog')
+      .getByRole('button', { name: 'Turn off link', exact: true })
+      .click();
+    const turnedOff = await turningOff;
+    expect(turnedOff.status()).toBe(204);
+    expect(turnedOff.request().headers()['x-spinel-epoch']).toBe(epoch);
+    await expect(inventory.getByRole('link', { name: item.name, exact: true })).toHaveCount(0);
+    expect(await (await memberContext.request.get(linkPath)).json()).toMatchObject({
+      enabled: false,
+    });
+    expect((await enableLink()).status()).toBe(200);
+    await linksPage.reload();
+    const staleExpiry = await expiryDialog();
+    const beforeMaintenanceLink = await (await memberContext.request.get(linkPath)).json();
     await member.reload();
     await expect
       .poll(() => member.evaluate(() => Boolean(navigator.serviceWorker.controller)))
@@ -544,6 +603,32 @@ test('supervised maintenance keeps pending native work, fences old edits, and re
     epoch = cleanPaused.epoch;
     headers = { Origin: app.origin, 'X-Spinel-Epoch': epoch };
     expect((await deviceCopy(member, accountId, item.id))?.bundle.maintenanceEpoch).toBe(epoch);
+    await expect(
+      banner(linksPage).getByText('Maintenance scheduled', { exact: true }),
+    ).toBeVisible();
+    await staleExpiry.getByRole('combobox', { name: 'Expire link after' }).selectOption('30');
+    const staleExpiryReply = inventoryReply('PATCH');
+    await staleExpiry.getByRole('button', { name: 'Save expiry', exact: true }).click();
+    const refusedExpiry = await staleExpiryReply;
+    expect(refusedExpiry.status()).toBe(409);
+    expect((await refusedExpiry.json()).code).toBe('maintenance-epoch');
+    expect(refusedExpiry.request().headers()['x-spinel-epoch']).toBe(resumed.epoch);
+    await expect(inventory.getByRole('alert')).toContainText('Review current guest links');
+    expect(await (await memberContext.request.get(linkPath)).json()).toEqual(beforeMaintenanceLink);
+    await linkMenu();
+    await linksPage.getByRole('menuitem', { name: 'Turn off link', exact: true }).click();
+    const staleOffReply = inventoryReply('DELETE');
+    await linksPage
+      .getByRole('dialog')
+      .getByRole('button', { name: 'Turn off link', exact: true })
+      .click();
+    const refusedOff = await staleOffReply;
+    expect(refusedOff.status()).toBe(409);
+    expect((await refusedOff.json()).code).toBe('maintenance-epoch');
+    expect(refusedOff.request().headers()['x-spinel-epoch']).toBe(resumed.epoch);
+    await expect(inventory.getByRole('alert')).toContainText('Review current guest links');
+    expect(await (await memberContext.request.get(linkPath)).json()).toEqual(beforeMaintenanceLink);
+    await linksPage.close();
     await selectCell(member, 'A1');
     await member.keyboard.insertText('Acknowledged before maintenance');
     await member.keyboard.press('Enter');

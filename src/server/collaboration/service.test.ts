@@ -575,51 +575,58 @@ test('guest viewer mutations are denied while the same editor mutation commits',
   }
 });
 
-test('revoking a guest link during mutation application prevents the durable commit', async () => {
-  const f = await fixture();
-  await f.collab.prepare(f.owner.id, f.sheet.id);
-  const link = f.workspace.links.begin(f.sheet.id, 'editor');
-  f.workspace.links.finish(f.sheet.id, link.epoch, true);
-  const guest = f.workspace.links.exchange(f.sheet.id, link.token);
-  const credential = f.workspace.links.access(guest.userId)!;
-  let entered!: () => void, release!: () => void;
-  const applying = new Promise<void>((resolve) => {
-    entered = resolve;
-  });
-  const gate = new Promise<void>((resolve) => {
-    release = resolve;
-  });
-  const blocker = f.collab.onSubmitting(async () => {
-    entered();
-    await gate;
-    await Promise.resolve();
-  });
-  cleanup.push(() => {
-    release();
-    blocker.dispose();
-  });
-  const submitted = f.collab.submitChangeset(
-    { changeset: f.edit(guest.userId) },
-    {
-      userID: guest.userId,
-      memberID: 'test-member',
-      customData: {
-        guestHash: credential.tokenHash,
-        guestItem: f.sheet.id,
+test.each(['turn off', 'expire'] as const)(
+  '%s of a guest link during mutation application prevents the durable commit',
+  async (action) => {
+    const f = await fixture();
+    await f.collab.prepare(f.owner.id, f.sheet.id);
+    const link = f.workspace.links.begin(f.sheet.id, 'editor');
+    f.workspace.links.finish(f.sheet.id, link.epoch, true);
+    const guest = f.workspace.links.exchange(f.sheet.id, link.token);
+    const credential = f.workspace.links.access(guest.userId)!;
+    let entered!: () => void, release!: () => void;
+    const applying = new Promise<void>((resolve) => {
+      entered = resolve;
+    });
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const blocker = f.collab.onSubmitting(async () => {
+      entered();
+      await gate;
+      await Promise.resolve();
+    });
+    cleanup.push(() => {
+      release();
+      blocker.dispose();
+    });
+    const submitted = f.collab.submitChangeset(
+      { changeset: f.edit(guest.userId) },
+      {
+        userID: guest.userId,
+        memberID: 'test-member',
+        customData: {
+          guestHash: credential.tokenHash,
+          guestItem: f.sheet.id,
+        },
       },
-    },
-  );
-  await applying;
-  const revoked = f.workspace.links.begin(f.sheet.id, null);
-  release();
-  await expect(submitted).rejects.toThrow();
-  f.workspace.links.finish(f.sheet.id, revoked.epoch, false);
-  expect((await f.load()).revision).toBe(1);
-  expect(
-    ((await f.collab.load(f.owner.id, f.sheet.id)).snapshot as IWorkbookData).sheets.first
-      .cellData?.[0]?.[0]?.v,
-  ).toBe(42);
-});
+    );
+    await applying;
+    const revoked = action === 'turn off' ? f.workspace.links.begin(f.sheet.id, null) : undefined;
+    if (action === 'expire')
+      f.db
+        .prepare('UPDATE workspace_links SET expires_at=? WHERE item_id=?')
+        .run(f.auth.now(), f.sheet.id);
+    release();
+    await expect(submitted).rejects.toThrow();
+    if (revoked) f.workspace.links.finish(f.sheet.id, revoked.epoch, false);
+    expect((await f.load()).revision).toBe(1);
+    expect(
+      ((await f.collab.load(f.owner.id, f.sheet.id)).snapshot as IWorkbookData).sheets.first
+        .cellData?.[0]?.[0]?.v,
+    ).toBe(42);
+  },
+);
 
 test('retained native restore drains accepted edits, fences old IDs and keeps exact recoverable pre-state', async () => {
   const f = await fixture();

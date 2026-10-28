@@ -4,13 +4,20 @@
 
 Approved by the owner, 2026-10-21, [decision #126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits). Production implementation remains separate.
 See the [review, sources and screenshot inventory](redesign.md).
-Stories: `Redesign/Screens` — Profile, Connections, ThisDevice, SignIn, Setup, Invite, Recovery, Consent, ConsentExpired.
+The original screen proposals are historical. Current stories render the
+production Account, Auth and Guest links components.
 
 | Current friction                                                                                                                     | Public reference pattern                                                                                 | Adopted proposal                                                                 |
 | ------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
 | Appearance, passkeys and connections become a growing sequence of equal cards. Entry pages use oversized headings and heavy framing. | Notion exposes explicit appearance preferences; Dropbox separates account controls from file navigation. | A compact account area with section navigation; a quiet, single-task entry card. |
 
-Proposed profile sections: Profile, Passkeys, This device, Connected assistants, and the planned owner-only Guest links inventory (SPN-066). Reuse the landed SPN-036 profile fields, Lucide picker and color presets, pending OAuth return navigation, disconnect and advanced token flows. Appearance is browser-local, defaults to System and lives in This device, separately from saved profile identity. Entry/consent screens keep every security disclosure and failure state; no marketing or signup route is introduced.
+Profile sections: Profile, Passkeys, This device, Connected assistants, and the
+owner-only Guest links inventory (SPN-066). Reuse the landed SPN-036 profile fields,
+Lucide picker and color presets, pending OAuth return navigation, disconnect and
+advanced token flows. Appearance is browser-local, defaults to System and lives
+in This device, separately from saved profile identity. Entry/consent screens
+keep every security disclosure and failure state; no marketing or signup route
+is introduced.
 
 The approved proposal above governs placement during implementation. Existing behavioral and
 permission rules below still apply; production migrations remain separate tickets.
@@ -31,7 +38,7 @@ the profile and sign-out live; passkeys are one sign-in option among several.
 The rail's account foot shows Appearance and the saved profile avatar on separate
 rows; compact/phone headers place the controls horizontally. The avatar opens
 `/profile` (**Your profile**) and `/settings` redirects there. Profile, Passkeys,
-This device and Connected assistants are labeled sections. This device reuses the
+This device, Connected assistants and Guest links are labeled sections. This device reuses the
 shared browser-local appearance control; saved name/icon/color remain separate.
 For everyday accounts, SPN-055 adds **Documents on this device** below Appearance:
 verified availability, pending/read-only/attention states, original links and
@@ -46,7 +53,10 @@ Connected assistants retains named connections, last-used dates, Disconnect and
 advanced personal access tokens. Operators see Profile, Passkeys and This device;
 administration retains its existing connection/token metadata. Sign out and a
 return to the remembered file view or administration remain visible on the account
-page. Account sections retain drafts while switching and their hash survives reload.
+page. Profile and connection sections retain drafts while switching and their hash survives reload.
+Guest links loads current owner metadata on entry and discards its short modal
+draft when leaving. It never fetches while hidden, offline or in an Operator
+profile; account changes discard earlier responses. See [the sharing design](sharing.md#guest-link-inventory-spn-066).
 See [SPN-045's rationale and implementation](../implementation/SPN-045.md).
 
 The account screen uses the approved compact utility header. Broader dashboard

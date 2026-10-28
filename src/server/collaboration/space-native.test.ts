@@ -1100,6 +1100,8 @@ test('BackupService restores complete native Space data and SPN-064 transfers it
     state: 'off',
     epoch: link.epoch + 1,
     role: 'editor',
+    enabledAt: null,
+    expiresAt: null,
   });
   expect(() => workspace.links.principal(guestHeaders, f.space.id)).toThrow();
   await expect(collab.load(guest.userId, f.doc.id, guestContext)).rejects.toThrow();

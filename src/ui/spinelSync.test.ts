@@ -1494,6 +1494,103 @@ test('Space guest socket, tickets and metadata stay in the exact root/child scop
 });
 
 test.each([false, true])(
+  'a confirmed guest root ticket denial is terminal despite unreachable metadata (Space=%s)',
+  async (space) => {
+    const f = await fixture({ guest: true, space });
+    f.pending();
+    f.metadata(async () => {
+      throw new TypeError('Network unavailable');
+    });
+    const request = f.requests.getMockImplementation()!;
+    f.requests.mockImplementation(async (input, init) =>
+      input.includes('/ticket?')
+        ? Response.json({ code: 'guest-link-revoked' }, { status: 403 })
+        : request(input, init),
+    );
+    f.socket().close();
+    await vi.advanceTimersByTimeAsync(300);
+    expect(
+      f.dispatched.mock.calls.filter(([event]) => event.type === 'spinel-guest-revoked'),
+    ).toHaveLength(1);
+    expect(f.client.state.pending).toBe(true);
+    expect(f.saves.at(-1)?.dirty).toBe(true);
+    const requests = f.requests.mock.calls.length;
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(f.requests).toHaveBeenCalledTimes(requests);
+    expect(Socket.instances).toHaveLength(1);
+  },
+);
+
+test.each(['unmarked', 'malformed', 'network'] as const)(
+  '%s ticket failure with unreachable metadata preserves pending guest input',
+  async (failure) => {
+    const f = await fixture({ guest: true });
+    f.pending();
+    f.metadata(async () => {
+      throw new TypeError('Network unavailable');
+    });
+    const request = f.requests.getMockImplementation()!;
+    f.requests.mockImplementation(async (input, init) => {
+      if (!input.includes('/ticket?')) return request(input, init);
+      if (failure === 'network') throw new TypeError('Network unavailable');
+      return failure === 'malformed'
+        ? new Response('not JSON', { status: 403 })
+        : Response.json({ error: 'This document is not available.' }, { status: 403 });
+    });
+    f.socket().close();
+    await vi.advanceTimersByTimeAsync(2000);
+    expect(f.dispatched.mock.calls.some(([event]) => event.type === 'spinel-guest-revoked')).toBe(
+      false,
+    );
+    expect(f.client.state.pending).toBe(true);
+    expect(f.saves.at(-1)?.dirty).toBe(true);
+    expect(f.reload).not.toHaveBeenCalled();
+  },
+);
+
+test.each(['departed', 'reconnected'] as const)(
+  'a %s binding ignores an old guest denial body',
+  async (change) => {
+    const f = await fixture({ guest: true, space: true });
+    f.pending();
+    f.metadata(async () => {
+      throw new TypeError('Network unavailable');
+    });
+    let release!: (body: unknown) => void;
+    const response = Response.json({}, { status: 403 });
+    vi.spyOn(response, 'json').mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          release = resolve;
+        }),
+    );
+    const request = f.requests.getMockImplementation()!;
+    let held = false;
+    f.requests.mockImplementation(async (input, init) => {
+      if (input.includes('/ticket?') && !held) {
+        held = true;
+        return response;
+      }
+      return request(input, init);
+    });
+    f.socket().close();
+    await vi.advanceTimersByTimeAsync(300);
+    expect(release).toBeDefined();
+    if (change === 'departed') f.leave();
+    else window.dispatchEvent(new Event('online'));
+    await vi.advanceTimersByTimeAsync(300);
+    const reports = f.saves.length;
+    release({ code: 'guest-link-revoked' });
+    await vi.advanceTimersByTimeAsync(0);
+    expect(f.dispatched.mock.calls.some(([event]) => event.type === 'spinel-guest-revoked')).toBe(
+      false,
+    );
+    expect(f.saves).toHaveLength(reports);
+    expect(f.client.state.pending).toBe(true);
+  },
+);
+
+test.each([false, true])(
   'a stalled socket or initial replay reconnects without clearing pending edits (opened=%s)',
   async (opened) => {
     const f = await fixture();
