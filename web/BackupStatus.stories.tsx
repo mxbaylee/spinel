@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import { expect, waitFor, within } from 'storybook/test';
 import { failure, pending } from '../.storybook/api.ts';
 import { BackupStatus } from './BackupStatus.tsx';
 import type { BackupStatusResponse } from './BackupStatus.tsx';
@@ -187,5 +187,72 @@ export const LoadFailed: Story = {
       'Could not load backup status',
     );
     await expect(canvas.queryByText('Backups are unavailable.')).not.toBeInTheDocument();
+  },
+};
+
+const manualPolicy = {
+  automatic: false,
+  manualDownload: true,
+  manualReady: true,
+  manualUnavailable: null,
+  backupHourUtc: 2,
+  retention: { daily: 7, weekly: 4, monthly: 6 },
+  maxArchiveBytes: 5 * 1024 * 1024 * 1024,
+};
+export const ManualDownloads: Story = {
+  args: { currentId: 'operator' },
+  parameters: {
+    api: {
+      ...reply({
+        destination: null,
+        offsite: false,
+        lastGood: null,
+        lastAttempt: null,
+        policy: manualPolicy,
+        verification: { ...status.verification, lastGood: null, lastAttempt: null },
+      }),
+      'GET /api/admin/backups/exports': { job: null },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByText('Automatic backups off')).toBeVisible();
+    await expect(canvas.getByText('Destination: Manual downloads only')).toBeVisible();
+    await waitFor(() =>
+      expect(canvas.getByRole('button', { name: 'Prepare workspace backup' })).toBeEnabled(),
+    );
+    await expect(canvas.queryByText('OK', { exact: true })).toBeNull();
+  },
+};
+export const SpacesPolicy: Story = {
+  args: { currentId: 'operator' },
+  parameters: {
+    api: {
+      ...reply({ destination: 'spaces', policy: { ...manualPolicy, automatic: true } }),
+      'GET /api/admin/backups/exports': { job: null },
+    },
+  },
+};
+export const DownloadReady: Story = {
+  args: { currentId: 'operator' },
+  parameters: {
+    api: {
+      ...reply({
+        destination: 'filesystem',
+        offsite: false,
+        policy: { ...manualPolicy, automatic: true },
+      }),
+      'GET /api/admin/backups/exports': {
+        job: {
+          id: 'fixture-backup',
+          state: 'ready',
+          createdAt: now,
+          expiresAt: now + 900_000,
+          bytes: 12 * 1024 * 1024,
+          keyId: 'workspace-2026-10',
+          error: null,
+        },
+      },
+    },
   },
 };

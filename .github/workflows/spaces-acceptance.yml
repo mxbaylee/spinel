@@ -1,0 +1,65 @@
+name: 📦 DigitalOcean Spaces acceptance
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'src/server/backup/**'
+      - 'scripts/deploy/**'
+      - 'server/database.ts'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/spaces-acceptance.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: spaces-acceptance-${{ github.event.pull_request.number || github.ref }}
+  # Let a provider run finish its owned-object cleanup before the next run.
+  cancel-in-progress: false
+
+jobs:
+  spaces:
+    name: DigitalOcean Spaces contract
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Inspect available credential format without disclosing values
+        id: capability
+        env:
+          DIGITAL_OCEAN_ACCESS_KEY: ${{ secrets.DIGITAL_OCEAN_ACCESS_KEY }}
+          DIGITAL_OCEAN_ENDPOINT: ${{ secrets.DIGITAL_OCEAN_ENDPOINT }}
+          DIGITAL_OCEAN_SECRET_KEY: ${{ secrets.DIGITAL_OCEAN_SECRET_KEY }}
+          SPACES_ACCEPTANCE_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: node scripts/deploy/spaces-acceptance.ts --probe
+      - name: Install without provider credentials
+        if: steps.capability.outputs.ready == 'true'
+        run: npm ci
+      - name: Verify isolated encrypted provider round trip
+        if: steps.capability.outputs.ready == 'true'
+        env:
+          DIGITAL_OCEAN_ACCESS_KEY: ${{ secrets.DIGITAL_OCEAN_ACCESS_KEY }}
+          DIGITAL_OCEAN_ENDPOINT: ${{ secrets.DIGITAL_OCEAN_ENDPOINT }}
+          DIGITAL_OCEAN_SECRET_KEY: ${{ secrets.DIGITAL_OCEAN_SECRET_KEY }}
+          SPACES_ACCEPTANCE_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: node scripts/deploy/spaces-acceptance.ts
+      - name: Preserve redacted acceptance evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: spaces-acceptance
+          path: artifacts/spaces-acceptance.json
+          if-no-files-found: warn
+          retention-days: 14
