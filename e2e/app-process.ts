@@ -36,6 +36,7 @@ export async function startApp(options: {
     [
       `--max-old-space-size=${options.development ? 512 : 256}`,
       '--max-semi-space-size=8',
+      ...(options.development ? ['--no-turbo-fast-api-calls'] : []),
       'server/index.ts',
       ...(options.development ? ['--dev', '--no-open'] : []),
     ],
