@@ -2,7 +2,7 @@ import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { chromium, expect } from '@playwright/test';
-import type { BrowserContext, TestInfo } from '@playwright/test';
+import type { BrowserContext, Page, TestInfo } from '@playwright/test';
 import type { NativeSnapshot } from '@spinel/sync-client';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
@@ -32,6 +32,56 @@ type Creation = Stored & {
     createdByName?: string;
   };
 };
+
+/** A visible heading can precede the detail response and the saved folder view. */
+export async function waitForSharedFolderPreparation(
+  page: Page,
+  accountId: string,
+  folderId: string,
+  seeds: readonly { id: string; name: string }[],
+) {
+  const contents = page.getByRole('list', { name: 'Folder contents', exact: true });
+  for (const seed of seeds)
+    await expect(
+      contents.getByRole('listitem').filter({
+        has: page.getByText(seed.name, { exact: true }),
+      }),
+    ).toBeVisible();
+  await expect
+    .poll(() =>
+      page.evaluate(
+        ({ accountId, folderId }) =>
+          new Promise<string[]>((resolve, reject) => {
+            const opening = indexedDB.open(`spinel-offline-${accountId}`);
+            opening.onerror = () => reject(opening.error);
+            opening.onupgradeneeded = () => {
+              opening.transaction?.abort();
+              reject(new Error('The prepared catalog is missing.'));
+            };
+            opening.onsuccess = () => {
+              const database = opening.result;
+              const read = database
+                .transaction('meta', 'readonly')
+                .objectStore('meta')
+                .get('catalog');
+              read.onerror = () => {
+                database.close();
+                reject(read.error);
+              };
+              read.onsuccess = () => {
+                const ids = (read.result?.views?.[folderId] ?? []).map(
+                  (item: { id: string }) => item.id,
+                );
+                database.close();
+                resolve(ids.sort());
+              };
+            };
+          }),
+        { accountId, folderId },
+      ),
+    )
+    .toEqual([folderId, ...seeds.map(({ id }) => id)].sort());
+}
 
 /** Uses the existing production server; every restart opens the same real profile. */
 export async function verifySharedCreationRestart(baseURL: string, info: TestInfo) {
@@ -120,6 +170,7 @@ export async function verifySharedCreationRestart(baseURL: string, info: TestInf
     await page.getByRole('button', { name: 'Shared with me', exact: true }).click();
     await page.getByRole('button', { name: `${folder.name} Folder`, exact: true }).click();
     await expect(page.getByRole('heading', { name: folder.name, exact: true })).toBeVisible();
+    await waitForSharedFolderPreparation(page, actor.id, folder.id, seeds);
     transport.setOffline(true);
     await network.setOffline(true);
     await transport.verifyDisconnected();
