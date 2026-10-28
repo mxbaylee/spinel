@@ -153,9 +153,10 @@ test('sharing does not grant organization, onward sharing, account access or anc
   expect(() => f.store.sharing(who, f.folder.id)).toThrow('Only the owner');
   expect(() => f.store.share(who, f.doc.id, f.outsider.id, 'editor')).toThrow('Only the owner');
   expect(() => f.store.update(who, f.doc.id, { name: 'stolen' })).toThrow('Only the owner');
-  expect(() => f.store.create(who, { name: 'new', kind: 'doc', parentId: f.folder.id })).toThrow(
-    'Only the owner',
-  );
+  const created = f.store.create(who, { name: 'new', kind: 'doc', parentId: f.folder.id });
+  expect(created).toMatchObject({ access: 'editor', createdByName: 'Collaborator' });
+  expect(f.store.fileOwner(created.id)).toBe(f.owner.id);
+  expect(() => f.store.update(who, created.id, { name: 'stolen' })).toThrow('Only the owner');
   expect(() => f.store.share(f.owner.id, f.doc.id, f.admin.id, 'editor')).toThrow(
     'everyday account',
   );

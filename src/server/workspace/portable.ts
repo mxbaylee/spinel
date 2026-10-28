@@ -114,7 +114,7 @@ export class PortableFiles {
     verify: () => void,
   ) {
     this.workspace.owner(user);
-    this.workspace.parent(user, input.parentId);
+    this.workspace.creationDestination(user, input.parentId);
     const prepared = await this.prepare(input);
     return this.workspace.auth.transaction(() => {
       verify();
@@ -203,7 +203,7 @@ export class PortableFiles {
         .run(item.id, image.id, image.mime, image.data);
     const store = prepared.kind === 'doc' ? this.docs : this.sheets;
     store.save(user, item.id, { snapshot: native, revision: 0, writeId: randomUUID() });
-    return this.workspace.get(user, item.id, 'owner');
+    return this.workspace.get(user, item.id, 'edit');
   }
   /** Decode one bounded native member before either import publishes anything. */
   async prepare(

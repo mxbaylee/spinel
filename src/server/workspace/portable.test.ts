@@ -235,6 +235,57 @@ test('late snapshot failure and revoked session roll back the entire new item an
   ).toMatchObject({ name: 'Journal' });
 });
 
+test.each(['sheet', 'doc'] as const)(
+  'native %s import into a shared folder belongs to its owner and records the importing editor',
+  async (kind) => {
+    const f = fixture();
+    const folder = f.workspace.create(f.owner.id, {
+      kind: 'folder',
+      name: 'Shared imports',
+      parentId: null,
+    });
+    f.workspace.share(f.owner.id, folder.id, f.other.id, 'editor');
+    const item = await f.files.import(
+      f.other.id,
+      { filename: 'source.json', snapshot: f[kind], parentId: folder.id },
+      () => {},
+    );
+    expect(item).toMatchObject({
+      access: 'editor',
+      parentId: folder.id,
+      createdByName: f.other.name,
+    });
+    expect(f.workspace.fileOwner(item.id)).toBe(f.owner.id);
+    expect(f.workspace.get(f.owner.id, item.id)).toMatchObject({
+      access: 'owner',
+      createdByName: f.other.name,
+    });
+    expect(f.workspace.list(f.other.id)).toEqual([]);
+  },
+);
+
+test('native import rechecks shared-folder access after asynchronous preparation', async () => {
+  const f = fixture();
+  const folder = f.workspace.create(f.owner.id, {
+    kind: 'folder',
+    name: 'Shared imports',
+    parentId: null,
+  });
+  f.workspace.share(f.owner.id, folder.id, f.other.id, 'editor');
+  const before = f.db.prepare('SELECT * FROM workspace_items').all();
+  const creators = f.db.prepare('SELECT * FROM workspace_item_creators').all();
+  const pending = f.files.import(
+    f.other.id,
+    { filename: 'source.json', snapshot: f.doc, parentId: folder.id },
+    () => {},
+  );
+  f.workspace.share(f.owner.id, folder.id, f.other.id, 'viewer');
+  await expect(pending).rejects.toThrow('cannot edit');
+  expect(f.db.prepare('SELECT * FROM workspace_items').all()).toEqual(before);
+  expect(f.db.prepare('SELECT * FROM workspace_item_creators').all()).toEqual(creators);
+  expect(f.db.prepare('SELECT * FROM doc_snapshots').all()).toEqual([]);
+});
+
 test('exports use current materialized collaboration state and recheck access after loading', async () => {
   const f = fixture();
   const item = await f.files.import(

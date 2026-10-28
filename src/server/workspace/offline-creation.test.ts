@@ -98,6 +98,27 @@ test('legacy creation receipts treat omitted and null identity as the same autom
   ).toEqual(first);
 });
 
+test('legacy own-account receipts migrate without changing the accepted request or allowing ownership transfer on retry', async () => {
+  const f = await fixture();
+  const request = f.input();
+  const first = f.creations.create(f.owner.id, request, () => {});
+  f.db.exec(`
+    ALTER TABLE workspace_offline_creations DROP COLUMN owner_id;
+  `);
+  const migrated = new OfflineCreations(f.workspace, f.collaboration);
+  expect(migrated.create(f.owner.id, request, () => {})).toEqual(first);
+  expect(
+    f.db
+      .prepare('SELECT owner_id FROM workspace_offline_creations WHERE item_id=?')
+      .get(request.itemId)?.owner_id,
+  ).toBe(f.owner.id);
+  f.db.prepare('UPDATE workspace_items SET owner_id=? WHERE id=?').run(f.other.id, request.itemId);
+  f.workspace.share(f.other.id, request.itemId, f.owner.id, 'editor');
+  expect(() => migrated.create(f.owner.id, request, () => {})).toThrow(
+    expect.objectContaining({ code: 'creation-conflict' }),
+  );
+});
+
 test.each(['sheet', 'doc'] as const)(
   '%s creation admits the exact shared blank base once and inherits folder visibility',
   async (kind) => {
@@ -171,6 +192,107 @@ test('creation retries preserve subsequent native edits, renamed metadata and mo
     snapshot: { sheets: { first: { cellData: { 0: { 0: { v: 72 } } } } } },
   });
   expect(f.db.prepare('SELECT count(*) AS count FROM spinel_sync_revisions').get()!.count).toBe(1);
+});
+
+test.each(['sheet', 'doc'] as const)(
+  'offline %s publication keeps folder-owner ownership, creator attribution and one receipt across restart',
+  async (kind) => {
+    const f = await fixture();
+    const folder = f.workspace.create(f.owner.id, {
+      kind: 'folder',
+      name: 'Shared trip',
+      parentId: null,
+    });
+    f.workspace.share(f.owner.id, folder.id, f.other.id, 'editor');
+    const request = { ...f.input(kind), parentId: folder.id };
+    const first = f.creations.create(f.other.id, request, () => {});
+    expect(first.item).toMatchObject({
+      access: 'editor',
+      parentId: folder.id,
+      ownerName: f.owner.name,
+      createdByName: f.other.name,
+    });
+    expect(f.workspace.fileOwner(request.itemId)).toBe(f.owner.id);
+    expect(f.workspace.list(f.other.id)).toEqual([]);
+    expect(f.workspace.get(f.owner.id, request.itemId)).toMatchObject({
+      access: 'owner',
+      createdByName: f.other.name,
+    });
+    expect(
+      f.db
+        .prepare('SELECT user_id,owner_id FROM workspace_offline_creations WHERE item_id=?')
+        .get(request.itemId),
+    ).toEqual({ user_id: f.other.id, owner_id: f.owner.id });
+    const snapshot = new SQLiteSyncStorage(f.auth).load(request.unitId);
+    await f.collaboration.close();
+    f.db.close();
+    const db = openDatabase(f.path);
+    cleanup.push(() => db.close());
+    const workspace = new WorkspaceStore(new AuthStore(db));
+    const collaboration = new CollaborationStore(workspace, f.path);
+    cleanup.push(() => collaboration.close());
+    const creations = new OfflineCreations(workspace, collaboration);
+    // A lost HTTP response may be retried after both server and browser restart.
+    expect(creations.create(f.other.id, structuredClone(request), () => {})).toEqual(first);
+    expect(new SQLiteSyncStorage(workspace.auth).load(request.unitId)).toEqual(snapshot);
+    expect(
+      db.prepare('SELECT count(*) AS count FROM workspace_items WHERE id=?').get(request.itemId)!
+        .count,
+    ).toBe(1);
+    expect(
+      db.prepare('SELECT count(*) AS count FROM workspace_offline_creations').get()!.count,
+    ).toBe(1);
+    workspace.share(f.owner.id, folder.id, f.other.id, null);
+    expect(() => creations.create(f.other.id, request, () => {})).toThrow(
+      expect.objectContaining({ code: 'creation-conflict' }),
+    );
+    expect(() => creations.create(f.other.id, { ...request, parentId: null }, () => {})).toThrow(
+      expect.objectContaining({ code: 'creation-conflict' }),
+    );
+    expect(workspace.get(f.owner.id, request.itemId).parentId).toBe(folder.id);
+    expect(new SQLiteSyncStorage(workspace.auth).load(request.unitId)).toEqual(snapshot);
+  },
+);
+
+test('shared publication refuses a grant revoked at final admission without committing an item or receipt', async () => {
+  const f = await fixture();
+  const folder = f.workspace.create(f.owner.id, { kind: 'folder', name: 'Shared', parentId: null });
+  f.workspace.share(f.owner.id, folder.id, f.other.id, 'editor');
+  const request = { ...f.input(), parentId: folder.id };
+  let checks = 0;
+  expect(() =>
+    f.creations.create(f.other.id, request, () => {
+      if (++checks === 3) f.workspace.share(f.owner.id, folder.id, f.other.id, null);
+    }),
+  ).toThrow(expect.objectContaining({ code: 'folder-unavailable' }));
+  expect(
+    f.db.prepare('SELECT 1 FROM workspace_items WHERE id=?').get(request.itemId),
+  ).toBeUndefined();
+  expect(f.db.prepare('SELECT * FROM workspace_offline_creations').all()).toEqual([]);
+  expect(f.db.prepare('SELECT * FROM spinel_sync_units').all()).toEqual([]);
+  expect(
+    f.db.prepare('SELECT 1 FROM workspace_item_creators WHERE item_id=?').get(request.itemId),
+  ).toBeUndefined();
+});
+
+test('accepted shared receipts remain bound to their original owner even if the creator still has edit access after transfer', async () => {
+  const f = await fixture();
+  const folder = f.workspace.create(f.owner.id, { kind: 'folder', name: 'Shared', parentId: null });
+  f.workspace.share(f.owner.id, folder.id, f.other.id, 'editor');
+  const request = { ...f.input(), parentId: folder.id };
+  f.creations.create(f.other.id, request, () => {});
+  const recipient = f.auth.createUser('New owner');
+  f.db
+    .prepare('UPDATE workspace_items SET owner_id=? WHERE id IN (?,?)')
+    .run(recipient.id, folder.id, request.itemId);
+  expect(f.workspace.get(f.other.id, request.itemId).access).toBe('editor');
+  expect(() => f.creations.create(f.other.id, request, () => {})).toThrow(
+    expect.objectContaining({ code: 'creation-conflict' }),
+  );
+  expect(f.workspace.fileOwner(request.itemId)).toBe(recipient.id);
+  expect(
+    f.db.prepare('SELECT count(*) AS count FROM workspace_offline_creations').get()!.count,
+  ).toBe(1);
 });
 
 test('receipt identity survives server restart and commits no partial document on storage failure', async () => {
@@ -251,14 +373,14 @@ test.each(['trashed', 'deleted', 'transferred', 'restored'] as const)(
   },
 );
 
-test('a missing, revoked, trashed, foreign or Space folder never receives a creation; an explicit new destination can retry', async () => {
+test('a missing, revoked, trashed, read-only or Space folder never receives a creation; an explicit new destination can retry', async () => {
   const f = await fixture();
   const foreign = f.workspace.create(f.other.id, {
     name: 'Shared only',
     kind: 'folder',
     parentId: null,
   });
-  f.workspace.share(f.other.id, foreign.id, f.owner.id, 'editor');
+  f.workspace.share(f.other.id, foreign.id, f.owner.id, 'viewer');
   const trashed = f.workspace.create(f.owner.id, {
     name: 'Trashed',
     kind: 'folder',

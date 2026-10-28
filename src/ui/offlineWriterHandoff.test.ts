@@ -145,6 +145,97 @@ test('a prepared-account download hands its released writer to the mounted nativ
   }
 });
 
+test('opening a clean native copy waits for its temporary refresh and reserves the handoff against new maintenance', async () => {
+  const store = {
+    bundle: vi.fn(async () => ({ bundle: structuredClone(bundle), bytes: new Map() })),
+    close: vi.fn(),
+  };
+  vi.spyOn(offlineStorage, 'openExistingOfflineStore').mockResolvedValue(
+    store as unknown as OfflineStore,
+  );
+  const entered = deferred();
+  const release = deferred();
+  const refreshing = withOfflineItemWriter(accountId, itemId, async () => {
+    entered.resolve();
+    await release.promise;
+  });
+  const active = new OfflineSession(accountId, itemId, bundle.spaceId, () => true);
+  const competingEditor = new OfflineSession(accountId, itemId, bundle.spaceId, () => true);
+  let opening: Promise<void> | undefined;
+  try {
+    await entered.promise;
+    opening = active.activate();
+    const competingMaintenance = vi.fn(async () => {});
+    await expect(withOfflineItemWriter(accountId, itemId, competingMaintenance)).rejects.toThrow(
+      'Close this document in every tab',
+    );
+    expect(competingMaintenance).not.toHaveBeenCalled();
+    expect(store.bundle).not.toHaveBeenCalled();
+    expect(active.enabled).toBe(false);
+    release.resolve();
+    await refreshing;
+    await opening;
+    expect(active.enabled).toBe(true);
+    expect(active.readOnly).toBe(false);
+    expect(active.problem).toBe('');
+    // A real lifetime editor is not a maintenance promise. It still refuses
+    // the second editor immediately instead of queueing behind unfinished input.
+    await competingEditor.activate();
+    expect(competingEditor.readOnly).toBe(true);
+    expect(competingEditor.problem).toContain('open in another tab');
+    expect(await locks.request(lockName, { ifAvailable: true }, (lock) => Boolean(lock))).toBe(
+      false,
+    );
+  } finally {
+    release.resolve();
+    await refreshing.catch(() => {});
+    await opening?.catch(() => {});
+    competingEditor.dispose();
+    active.dispose();
+    await locks.request(lockName, () => {});
+  }
+});
+
+test.each(['dispose', 'account-change'] as const)(
+  'an editor cancelled by %s while maintenance holds its writer cannot acquire after the handoff',
+  async (reason) => {
+    const store = {
+      bundle: vi.fn(async () => ({ bundle: structuredClone(bundle), bytes: new Map() })),
+      close: vi.fn(),
+    };
+    vi.spyOn(offlineStorage, 'openExistingOfflineStore').mockResolvedValue(
+      store as unknown as OfflineStore,
+    );
+    const entered = deferred();
+    const release = deferred();
+    const refreshing = withOfflineItemWriter(accountId, itemId, async () => {
+      entered.resolve();
+      await release.promise;
+    });
+    const active = new OfflineSession(accountId, itemId, bundle.spaceId, () => true);
+    let opening: Promise<void> | undefined;
+    try {
+      await entered.promise;
+      opening = active.activate();
+      const rejected = expect(opening).rejects.toMatchObject({ name: 'AbortError' });
+      if (reason === 'dispose') active.dispose();
+      else setPreparedAccount('different-account');
+      release.resolve();
+      await refreshing;
+      await rejected;
+      expect(store.bundle).not.toHaveBeenCalled();
+      expect(await locks.request(lockName, { ifAvailable: true }, (lock) => Boolean(lock))).toBe(
+        true,
+      );
+    } finally {
+      release.resolve();
+      await refreshing.catch(() => {});
+      await opening?.catch(() => {});
+      active.dispose();
+    }
+  },
+);
+
 test.each([false, true])(
   'a failed temporary operation publishes only its committed changes after release (committed=%s)',
   async (committed) => {

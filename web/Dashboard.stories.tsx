@@ -64,6 +64,35 @@ const photos = entry(11, 'Family photos', 'folder', {
   ownerName: 'Alex Kim',
   sharedAt: now - 5 * day,
 });
+const projectFolder = entry(41, 'Trip 2027', 'folder', {
+  access: 'editor',
+  ownerName: 'Alex Kim',
+  sharedAt: now - day,
+  placementParentId: null,
+});
+const projectSheet = entry(42, 'Travel budget', 'sheet', {
+  parentId: projectFolder.id,
+  access: 'editor',
+  ownerName: 'Alex Kim',
+  createdByName: 'Sam Lee',
+  sharedAt: now - day,
+});
+const projectDoc = entry(43, 'Journey notes', 'doc', {
+  ...projectSheet,
+  id: id(43),
+  name: 'Journey notes',
+  kind: 'doc',
+  createdByName: 'Alex Kim',
+});
+function sharedFolderApi(access: 'editor' | 'admin' | 'viewer' = 'editor') {
+  const folder = { ...projectFolder, access };
+  const children = [projectSheet, projectDoc].map((item) => ({ ...item, access }));
+  return {
+    'GET /api/items': { items: [], spacesEnabled: true },
+    'GET /api/items/shared': { items: [folder, ...children] },
+    [`GET /api/items/${folder.id}`]: { item: folder, children, ancestors: [] },
+  };
+}
 
 const empty = {
   'GET /api/items': { items: [] },
@@ -174,7 +203,7 @@ function LocalDeviceFixture({ local, children }: { local: LocalStart; children: 
             unitId: creation?.unitId ?? copy.itemId,
             revision: copy.revision,
             revisionOffset: 0,
-            access: copy.readOnly ? 'viewer' : 'owner',
+            access: copy.creation?.access ?? (copy.readOnly ? 'viewer' : 'owner'),
             readOnly: copy.readOnly,
             sdkVersion: '1.1.0',
             images: [],
@@ -184,7 +213,40 @@ function LocalDeviceFixture({ local, children }: { local: LocalStart; children: 
                 ? { id: copy.itemId, sheets: {} }
                 : { id: copy.itemId, documentStyle: {} },
           } as OfflineBundle;
-          if (creation)
+          if (creation) {
+            // Reconstruct the catalog at creation time, then restore the current
+            // view below. A revoked destination still has a valid retained draft.
+            if (creation.parentId) {
+              const parent = [
+                ...local.catalog.items,
+                ...local.catalog.shared,
+                ...Object.values(local.catalog.views).flat(),
+              ].find((item) => item.id === creation.parentId);
+              const destination: WorkspaceItem = {
+                ...entry(0, 'Original destination', 'folder'),
+                ...parent,
+                id: creation.parentId,
+                kind: 'folder',
+                access: copy.creation?.access ?? 'owner',
+                ownerName: copy.creation?.ownerName,
+              };
+              const replace = (rows: typeof local.catalog.items) =>
+                rows.map((item) => (item.id === destination.id ? destination : item));
+              await store.saveCatalog(local.user, {
+                ...local.catalog,
+                items: [
+                  ...local.catalog.items.filter((item) => item.id !== destination.id),
+                  ...(destination.access === 'owner' ? [destination] : []),
+                ],
+                shared: [
+                  ...local.catalog.shared.filter((item) => item.id !== destination.id),
+                  ...(destination.access !== 'owner' ? [destination] : []),
+                ],
+                views: Object.fromEntries(
+                  Object.entries(local.catalog.views).map(([id, rows]) => [id, replace(rows)]),
+                ),
+              });
+            }
             await store.saveCreation(
               bundle,
               {
@@ -195,8 +257,9 @@ function LocalDeviceFixture({ local, children }: { local: LocalStart; children: 
               },
               () => {},
             );
-          else await store.saveDownload(bundle, new Map());
+          } else await store.saveDownload(bundle, new Map());
         }
+        await store.saveCatalog(local.user, local.catalog);
       } finally {
         store.close();
       }
@@ -310,6 +373,55 @@ export const NewSheet: Story = {
     await assertDialogControls(
       await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'New sheet' }),
     );
+  },
+};
+export const SharedFolderEditor: Story = {
+  parameters: { api: sharedFolderApi() },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Trip 2027 Folder' }));
+    await expect(await canvas.findByRole('heading', { name: 'Trip 2027' })).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'New' })).toBeVisible();
+    await expect(canvas.getByText('Created by Sam Lee')).toBeVisible();
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(canvas.getByRole('button', { name: 'More actions for Travel budget' }));
+    const menu = within(await body.findByRole('menu'));
+    for (const name of ['Rename…', 'Move…', 'Share…', 'Move to Trash'])
+      await expect(menu.queryByRole('menuitem', { name })).not.toBeInTheDocument();
+    await userEvent.keyboard('{Escape}');
+  },
+};
+export const SharedFolderAdmin: Story = {
+  parameters: { api: sharedFolderApi('admin') },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Trip 2027 Folder' }));
+    await expect(await canvas.findByRole('heading', { name: 'Trip 2027' })).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'New' })).toBeVisible();
+  },
+};
+export const SharedFolderViewer: Story = {
+  parameters: { api: sharedFolderApi('viewer') },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Trip 2027 Folder' }));
+    await expect(await canvas.findByRole('heading', { name: 'Trip 2027' })).toBeVisible();
+    await expect(canvas.queryByRole('button', { name: 'New' })).not.toBeInTheDocument();
+    await expect(canvas.queryByLabelText('Univer file or archive')).not.toBeInTheDocument();
+  },
+};
+export const NewInSharedFolder: Story = {
+  parameters: { api: sharedFolderApi() },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Trip 2027 Folder' }));
+    await canvas.findByRole('heading', { name: 'Trip 2027' });
+    await userEvent.click(canvas.getByRole('button', { name: 'New' }));
+    await userEvent.click(await body.findByRole('menuitem', { name: 'Sheet' }));
+    const dialog = await body.findByRole('dialog', { name: 'New sheet' });
+    await expect(within(dialog).getByText(/This item will belong to Alex Kim/)).toBeVisible();
+    await assertDialogControls(dialog);
   },
 };
 export const EmptyWorkspace: Story = { parameters: { api: empty } };
@@ -510,6 +622,85 @@ export const CreatedOffline: Story = {
     await expect(
       canvas.queryByRole('link', { name: `Recover ${blockedCreation.name}` }),
     ).not.toBeInTheDocument();
+  },
+};
+const sharedLocal: LocalStart = {
+  ...local,
+  catalog: {
+    ...local.catalog,
+    shared: [...local.catalog.shared, projectFolder],
+    views: { ...local.catalog.views, [projectFolder.id]: [projectFolder] },
+  },
+  downloads: [
+    ...local.downloads,
+    {
+      ...pendingCreation,
+      creation: {
+        ...pendingCreation.creation,
+        parentId: projectFolder.id,
+        access: 'editor',
+        ownerName: 'Alex Kim',
+        createdByName: 'Sam Lee',
+      },
+    },
+  ],
+};
+export const SharedCreationOffline: Story = {
+  args: { local: sharedLocal },
+  parameters: { api: empty },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Trip 2027 Folder' }));
+    await canvas.findByRole('heading', { name: 'Trip 2027' });
+    const row = await canvas.findByRole('button', { name: `${pendingCreation.name} Doc` });
+    await expect(row).toHaveTextContent(/Shared · Can edit/);
+    await expect(row).toHaveTextContent(/Owner: Alex Kim/);
+    await expect(row).toHaveTextContent(/Created by Sam Lee/);
+    await expect(row).toHaveTextContent(/Not synced yet/);
+    await userEvent.click(canvas.getByRole('button', { name: 'New' }));
+    const menu = within(await body.findByRole('menu'));
+    await expect(menu.getAllByRole('menuitem').map((item) => item.textContent)).toEqual([
+      'Sheet',
+      'Doc',
+    ]);
+    await userEvent.keyboard('{Escape}');
+  },
+};
+export const SharedCreationRevoked: Story = {
+  args: {
+    local: {
+      ...sharedLocal,
+      catalog: local.catalog,
+      downloads: [
+        ...local.downloads,
+        {
+          ...pendingCreation,
+          creation: {
+            ...pendingCreation.creation,
+            parentId: projectFolder.id,
+            access: 'editor',
+            ownerName: 'Alex Kim',
+            createdByName: 'Sam Lee',
+            canRelocate: true,
+            problem: 'The chosen folder is no longer available. Choose another folder.',
+          },
+        },
+      ],
+    },
+  },
+  parameters: { api: empty },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    await expect(await canvas.findByText('Needs attention')).toBeVisible();
+    await userEvent.click(
+      canvas.getByRole('button', { name: `More actions for ${pendingCreation.name}` }),
+    );
+    await expect(
+      await body.findByRole('menuitem', { name: 'Choose another folder…' }),
+    ).toBeVisible();
+    await userEvent.keyboard('{Escape}');
   },
 };
 export const ChooseCreationFolder: Story = {

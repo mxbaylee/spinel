@@ -27,6 +27,7 @@ import {
   offlinePreparation,
   openExistingOfflineStore,
   preparedAccount,
+  withOfflineEditorAdmission,
 } from './offlineStore.ts';
 import type { OfflineStore } from './offlineStore.ts';
 
@@ -198,7 +199,9 @@ export class OfflineSession implements IURLImageService {
   private async open() {
     this.verify();
     const current = offlineAccountRead(this.accountId);
-    let release = await writerLock(this.accountId, this.itemId);
+    let release = await withOfflineEditorAdmission(this.accountId, this.itemId, this.verify, () =>
+      writerLock(this.accountId, this.itemId),
+    );
     let store: OfflineStore | null;
     try {
       store = await openExistingOfflineStore(this.accountId);
@@ -381,6 +384,10 @@ export class OfflineSession implements IURLImageService {
           result.item,
         );
         this.verifyRemote();
+        // The publication response is authorized for this account. Its current
+        // role may differ from the cached folder role (for example editor to
+        // file admin); use that verified role before the normal replay check.
+        this.download!.bundle = { ...this.download!.bundle, access: result.item.access };
         this.download!.creation = undefined;
         if (this.download!.outbox) delete this.download!.outbox.creation;
         this.onChange?.();

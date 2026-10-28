@@ -1,7 +1,13 @@
 import { randomUUID } from 'node:crypto';
 import { writeFile } from 'node:fs/promises';
 import { expect } from '@playwright/test';
-import type { Browser, BrowserContext, Page, TestInfo } from '@playwright/test';
+import type {
+  Browser,
+  BrowserContext,
+  BrowserContextOptions,
+  Page,
+  TestInfo,
+} from '@playwright/test';
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
 import {
   createParagraphId,
@@ -28,6 +34,7 @@ import type { OfflineBundle } from '../src/shared/offlineBundle.ts';
 import { sheetImageFixture } from './sheet-image-fixture.ts';
 import { recordNativeSnapshots } from './sync-snapshot.ts';
 import { syncNetwork } from './sync-network.ts';
+import type { CreationTransportPost } from './offline-creation-network.ts';
 
 export type Kind = 'sheet' | 'doc';
 export type Stored = {
@@ -272,6 +279,7 @@ export async function fixture(
     phone?: boolean;
     flavor?: DocumentFlavor;
     zoomRatio?: number;
+    proxy?: BrowserContextOptions['proxy'];
   } = {},
 ) {
   const db = openDatabase(options.databasePath ?? `test-results/${info.project.name}/app.sqlite`);
@@ -298,6 +306,7 @@ export async function fixture(
   const account = async (id: string, phone = false) => {
     const context = await browser.newContext({
       baseURL,
+      proxy: options.proxy,
       viewport: { width: 1440, height: 1100 },
       permissions: ['clipboard-read', 'clipboard-write'],
       ...(phone
@@ -504,52 +513,59 @@ export async function fixture(
     read,
     download,
     cookie,
-    async close() {
-      const pages = context.pages();
-      const observed = await Promise.allSettled(
-        pages.map(async (target) => ({
-          ...(await target.evaluate(() => ({
-            url: location.href,
-            online: navigator.onLine,
-            preparedAccount: localStorage.getItem('spinel.offline.account'),
-            native: (window as Window & { nativeSyncEvidence?: unknown }).nativeSyncEvidence,
-            status: document.querySelector('[aria-label="Save status"]')?.textContent,
-            focus: document.activeElement?.outerHTML,
-            layout: [
-              ...document.querySelectorAll(
-                '.editor-content, [aria-label="Offline copy"], .sheet-editor, .univer-container',
-              ),
-            ].map((node) => ({
-              element: node.tagName,
-              className: node.className,
-              label: node.getAttribute('aria-label'),
-              bounds: node.getBoundingClientRect().toJSON(),
-              canvases: node.querySelectorAll('canvas').length,
+    async close(creationTransport?: readonly CreationTransportPost[]) {
+      try {
+        const pages = context.pages();
+        const observed = await Promise.allSettled(
+          pages.map(async (target) => ({
+            ...(await target.evaluate(() => ({
+              url: location.href,
+              online: navigator.onLine,
+              preparedAccount: localStorage.getItem('spinel.offline.account'),
+              native: (window as Window & { nativeSyncEvidence?: unknown }).nativeSyncEvidence,
+              status: document.querySelector('[aria-label="Save status"]')?.textContent,
+              focus: document.activeElement?.outerHTML,
+              layout: [
+                ...document.querySelectorAll(
+                  '.editor-content, [aria-label="Offline copy"], .sheet-editor, .univer-container',
+                ),
+              ].map((node) => ({
+                element: node.tagName,
+                className: node.className,
+                label: node.getAttribute('aria-label'),
+                bounds: node.getBoundingClientRect().toJSON(),
+                canvases: node.querySelectorAll('canvas').length,
+              })),
+            }))),
+            stored: await stored(target, actor.id, item.id).catch((error) => ({
+              error: String(error),
             })),
-          }))),
-          stored: await stored(target, actor.id, item.id).catch((error) => ({
-            error: String(error),
           })),
-        })),
-      );
-      // The CI artifact glob retains this filename on both success and failure.
-      // Attachments alone were absent from the archived browser diagnostics.
-      await writeFile(
-        info.outputPath('sync-diagnostics.json'),
-        JSON.stringify(
-          {
-            observed,
-            errors,
-            consoleErrors,
-            outgoing: network.outgoing,
-            incoming: network.incoming,
-          },
-          null,
-          2,
-        ),
-      );
-      for (const context of contexts) await context.close();
-      db.close();
+        );
+        // The CI artifact glob retains this filename on both success and failure.
+        // Attachments alone were absent from the archived browser diagnostics.
+        await writeFile(
+          info.outputPath('sync-diagnostics.json'),
+          JSON.stringify(
+            {
+              observed,
+              errors,
+              consoleErrors,
+              outgoing: network.outgoing,
+              incoming: network.incoming,
+              ...(creationTransport ? { creationTransport } : {}),
+            },
+            null,
+            2,
+          ),
+        );
+      } finally {
+        try {
+          await Promise.all(contexts.map((context) => context.close()));
+        } finally {
+          db.close();
+        }
+      }
     },
   };
 }

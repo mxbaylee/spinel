@@ -34,6 +34,8 @@ export interface WorkspaceItem {
   updatedAt: number;
   tags: string[];
   ownerName?: string;
+  /** Account-only attribution; never projected into guest metadata. */
+  createdByName?: string;
   sharedAt?: number;
   placementParentId?: string | null;
 }

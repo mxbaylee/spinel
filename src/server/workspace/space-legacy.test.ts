@@ -330,6 +330,8 @@ test('owned discovery batches a deep ancestry and tags without repeating one wal
     const listing = f.workspace.list(f.owner.id);
     expect(listing).toHaveLength(ids.length + 2);
     expect(listing.find((item) => item.id === ids[999])?.tags).toEqual(['first', 'second']);
+    expect(listing.find((item) => item.id === ids[999])).not.toHaveProperty('createdByName');
+    expect(listing.find((item) => item.id === f.ordinary.id)?.createdByName).toBe(f.owner.name);
     expect(statements).toBeLessThanOrEqual(2 * ids.length + 30);
     statements = 0;
     expect(f.workspace.tagSuggestions(f.owner.id)).toEqual(['first', 'second']);

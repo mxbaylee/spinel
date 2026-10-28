@@ -12,21 +12,38 @@ export function SharedBadge({ item }: { item: FileItem }) {
 }
 
 /** Items shared with this account. `offline` is local mode's saved list: read only, no requests. */
-export function useSharedItems(offline?: FileItem[]) {
-  const [items, setItems] = useState<FileItem[]>(offline ?? []),
+export function useSharedItems(
+  offline?: FileItem[],
+  readCreationRevision: () => Promise<number> = async () => 0,
+  initialCreationRevision = 0,
+) {
+  const [listing, setListing] = useState({
+      items: offline ?? [],
+      creationRevision: initialCreationRevision,
+    }),
     [loaded, setLoaded] = useState(Boolean(offline)),
     [busy, setBusy] = useState(false),
     [error, setError] = useState('');
   const mounted = useRef(false),
     generation = useRef(0),
     mutating = useRef(false);
+  const revision = useRef(initialCreationRevision);
+  const readRevision = useRef(readCreationRevision);
+  readRevision.current = readCreationRevision;
+  function accept(items: FileItem[], cutoff: number) {
+    if (cutoff < revision.current) return;
+    revision.current = cutoff;
+    setListing({ items, creationRevision: cutoff });
+  }
   async function refresh() {
     if (mutating.current) return;
     const request = ++generation.current;
     try {
+      const cutoff = Math.max(await readRevision.current(), revision.current);
+      if (!mounted.current || request !== generation.current || mutating.current) return;
       const result = await itemsRequest<{ items: FileItem[] }>('/shared');
       if (mounted.current && request === generation.current) {
-        setItems(result.items);
+        accept(result.items, cutoff);
         setError('');
         setLoaded(true);
       }
@@ -64,12 +81,13 @@ export function useSharedItems(offline?: FileItem[]) {
     setBusy(true);
     setError('');
     try {
+      const cutoff = Math.max(await readRevision.current(), revision.current);
       const result = await itemsRequest<{ items: FileItem[] }>(
         `/${id}/placement`,
         remove ? 'DELETE' : 'PUT',
         remove ? {} : { parentId },
       );
-      if (mounted.current) setItems(result.items);
+      if (mounted.current) accept(result.items, cutoff);
       return true;
     } catch (cause) {
       const message = cause instanceof Error ? cause.message : 'Could not update your folder.';
@@ -82,5 +100,5 @@ export function useSharedItems(offline?: FileItem[]) {
       if (mounted.current) setBusy(false);
     }
   }
-  return { items, loaded, busy, error, refresh, place };
+  return { ...listing, loaded, busy, error, refresh, place };
 }
