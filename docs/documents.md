@@ -46,8 +46,15 @@ undo. Sheets keep their existing setting. The existing safety policy that
 invalidates stale local history after a peer edit remains in place.
 
 This uses public queue/flush APIs and does not replace saving, grant access,
-or clear history to hide work. The SDK's obsolete cursor/zoom callback backlog
-remains a separately tracked lifecycle issue in SPN-113. The
+or clear history to hide work. Native cursor ranges now own and cancel their
+hide/blink callbacks; native zoom controllers cancel superseded updates and
+dispose their pending work. This uses a narrow, version/hash-checked temporary
+OSS Docs UI repair, with [SPN-119](todo/SPN-119.md) tracking its removal after a
+suitable upstream release. The [callback lifetime contract and evidence](implementation/SPN-113.md)
+preserve normal blinking, zoom, selection and editor cleanup. The
+online editor also defers constructing a full offline checkpoint until activated
+storage needs it, preserving later offline opt-in, serialized writes and access
+checks without copying checkpoints that would be discarded. The
 [measurement contract and evidence](implementation/SPN-108.md) preserve the
 original per-character reproducer, before/after profiles, desktop/mobile
 emulation boundaries and independent-review rubric. A successful Save status

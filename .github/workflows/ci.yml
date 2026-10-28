@@ -429,6 +429,7 @@ jobs:
       - name: Use identical browser workload on both sources
         run: |
           cp e2e/doc-responsiveness*.ts baseline-doc-source/e2e/
+          cp web/docResponsivenessEvidence.ts baseline-doc-source/web/
           cp playwright.config.ts baseline-doc-source/playwright.config.ts
       - name: Install and build baseline
         working-directory: baseline-doc-source
@@ -472,6 +473,98 @@ jobs:
           retention-days: 7
           if-no-files-found: warn
 
+  doc-callback-lifetimes:
+    name: Doc callback lifetimes (${{ matrix.preset }})
+    needs: changes
+    if: needs.changes.outputs.docs_only != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [desktop, mobile]
+    env:
+      PRESET: ${{ matrix.preset }}
+      VITE_SYNC_EVIDENCE: '0'
+      VITE_DOC_SELECTION_EVIDENCE: '1'
+      VITE_DOC_RESPONSIVENESS_EVIDENCE: '1'
+      SPINEL_E2E_PROJECT: doc-callback-lifetimes
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Install candidate
+        run: npm ci
+      - name: Install Chromium
+        run: |
+          node scripts/ci/prefer-ubuntu-archive.ts
+          npx playwright install --with-deps chromium
+      - name: Immutable merged SPN-108 baseline
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: 0e1df4725d9eccb77574d25e3eecdf678fe6ff44
+          path: baseline-callback-source
+          persist-credentials: false
+      - name: Match callback workload and read-only observations
+        run: |
+          cp e2e/doc-responsiveness*.ts baseline-callback-source/e2e/
+          cp scripts/ci/doc-callback-lifetimes.ts baseline-callback-source/scripts/ci/
+          cp web/docResponsivenessEvidence.ts baseline-callback-source/web/
+          cp playwright.config.ts baseline-callback-source/playwright.config.ts
+      - name: Install and build baseline with source maps
+        working-directory: baseline-callback-source
+        run: |
+          npm ci
+          npm run build -- --sourcemap hidden
+      - name: Retain baseline first attempt
+        id: callback_baseline
+        continue-on-error: true
+        working-directory: baseline-callback-source
+        env:
+          SPN113_BASELINE: '1'
+        run: npx playwright test --project=doc-callback-lifetimes --grep "$PRESET "
+      - name: Build candidate with identical source-map settings
+        run: npm run build -- --sourcemap hidden
+      - name: Verify candidate first attempt
+        id: callback_candidate
+        continue-on-error: true
+        env:
+          SPN113_BASELINE: '0'
+        run: npx playwright test --project=doc-callback-lifetimes --grep "$PRESET "
+      - name: Verify complete paired callback evidence
+        if: always()
+        env:
+          BASELINE_OUTCOME: ${{ steps.callback_baseline.outcome }}
+          CANDIDATE_OUTCOME: ${{ steps.callback_candidate.outcome }}
+        run: |
+          comparison_status=0
+          node scripts/ci/doc-callback-comparison.ts "$PRESET" \
+            baseline-callback-source/test-results/doc-callback-lifetimes \
+            test-results/doc-callback-lifetimes \
+            "test-results/spn113-comparison-$PRESET.json" || comparison_status=$?
+          if [ "$BASELINE_OUTCOME" != success ] || [ "$CANDIDATE_OUTCOME" != success ]; then
+            echo "::error::Callback browser run failed or was skipped: baseline=$BASELINE_OUTCOME candidate=$CANDIDATE_OUTCOME"
+            exit 1
+          fi
+          exit "$comparison_status"
+      - name: Retain raw traces, source maps and every first attempt
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: doc-callback-lifetimes-${{ matrix.preset }}
+          path: |
+            baseline-callback-source/test-results/doc-callback-lifetimes/
+            baseline-callback-source/playwright-report/*.json
+            test-results/doc-callback-lifetimes/
+            test-results/spn113-comparison-*.json
+            playwright-report/*.json
+          retention-days: 7
+          if-no-files-found: error
+
   sync-transition:
     name: Retained sync transition
     needs: changes
@@ -505,7 +598,15 @@ jobs:
   # the name. Only classified docs-only changes may omit browsers and containers.
   playwright:
     name: Playwright smoke
-    needs: [changes, playwright-run, container-smoke, sync-transition, doc-responsiveness]
+    needs:
+      [
+        changes,
+        playwright-run,
+        container-smoke,
+        sync-transition,
+        doc-responsiveness,
+        doc-callback-lifetimes,
+      ]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -518,16 +619,17 @@ jobs:
           CONTAINER: ${{ needs.container-smoke.result }}
           TRANSITION: ${{ needs.sync-transition.result }}
           RESPONSIVENESS: ${{ needs.doc-responsiveness.result }}
+          CALLBACKS: ${{ needs.doc-callback-lifetimes.result }}
         run: |
-          case "$CLASSIFICATION:$DOCS_ONLY:$BROWSER:$CONTAINER:$TRANSITION:$RESPONSIVENESS" in
-            success:true:skipped:skipped:skipped:skipped)
+          case "$CLASSIFICATION:$DOCS_ONLY:$BROWSER:$CONTAINER:$TRANSITION:$RESPONSIVENESS:$CALLBACKS" in
+            success:true:skipped:skipped:skipped:skipped:skipped)
               echo 'Not applicable — only allowlisted documentation changed; Backlog and Lint still run.'
               ;;
-            success:false:success:success:success:success)
-              echo 'All browser partitions, offline upgrades, sync soaks, retained transition, paired Doc responsiveness and the production container passed.'
+            success:false:success:success:success:success:success)
+              echo 'All browser partitions, offline upgrades, sync soaks, retained transition, paired Doc responsiveness/callback lifetimes and the production container passed.'
               ;;
             *)
-              echo "Browser/container validation incomplete: $CLASSIFICATION:$DOCS_ONLY:$BROWSER:$CONTAINER:$TRANSITION:$RESPONSIVENESS"
+              echo "Browser/container validation incomplete: $CLASSIFICATION:$DOCS_ONLY:$BROWSER:$CONTAINER:$TRANSITION:$RESPONSIVENESS:$CALLBACKS"
               exit 1
               ;;
           esac

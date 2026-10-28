@@ -314,8 +314,8 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
     ...(options.offline
       ? {
           checkpoint: options.offline.checkpoint,
-          persist: (checkpoint: import('@spinel/sync-client').ClientCheckpoint) =>
-            options.offline!.persist(checkpoint),
+          persist: (capture: import('@spinel/sync-client').ClientCheckpointFactory) =>
+            options.offline!.persist(capture),
           preservePendingOnFailure: () => options.offline!.enabled,
           requireUnchangedResume: () => options.offline!.enabled,
           toCanonical: options.offline.toCanonical,

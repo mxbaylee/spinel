@@ -16,6 +16,7 @@ export type {
   AckFrame,
   CellAddress,
   ClientCheckpoint,
+  ClientCheckpointFactory,
   ClientFailure,
   ClientState,
   DocumentKind,

@@ -161,12 +161,18 @@ Ordinary values remain hashed, including cells with array metadata but no formul
 identity. Pinned Univer supplies array spill values through its display
 interceptor; they do not replace ordinary raw values in the saved snapshot.
 
-An optional `persist(checkpoint)` hook receives the confirmed snapshot, revision,
-immutable sent envelope, rebased inflight and buffered groups. The immutable
-request reaches the hook before its first send. Writes are serialized and create
-their snapshot only when starting, so a slow store cannot retain a whole
-snapshot for every queued keystroke. A failed store keeps the state dirty and
-can be retried, including while disconnected. `state.localPersistence` is
+An optional `persist(capture)` hook receives a `ClientCheckpointFactory`. After
+checking whether storage needs an update, call `capture()` to obtain the current
+confirmed snapshot, revision, immutable sent envelope, rebased inflight and
+buffered groups. The first call captures these together; later calls within the
+same write return that checkpoint, even if editing continues. The factory throws
+after the hook settles or the client is disposed, so it cannot be retained for
+later use. A host with no local copy to save can return without calling it.
+
+The immutable request reaches the hook before its first send. Writes are
+serialized and create a snapshot only if requested, so a slow store cannot retain
+a whole snapshot for every queued keystroke. A failed capture or store keeps the
+state dirty and can be retried, including while disconnected. `state.localPersistence` is
 `saving`, `saved` or `failed` when a hook exists; `saved` requires every queued
 hook call to have completed. The hook must resolve only after its storage
 transaction commits. `persistNow()` checkpoints an editor newly opted into local
