@@ -31,6 +31,7 @@ import {
   RecoveryJournal,
 } from './journal.ts';
 import { assertWorkspaceHandlesClosed, MaintenanceSupervisor } from './supervisor.ts';
+import { processResourcesReleased } from './process-exit.ts';
 
 const cleanups: Array<() => unknown | Promise<unknown>> = [];
 afterEach(async () => {
@@ -343,9 +344,11 @@ test('inherited cold and live ownership survives supervisor and app death until 
   // own copies of all four sockets after both its ancestors have disappeared.
   process.kill(journal.child.pid, 'SIGKILL');
   const deadline = Date.now() + 3000;
-  while (processIdentity(journal.child.pid) && Date.now() < deadline)
+  // The leader can be a zombie before its other threads finish. Wait for
+  // their actual exit, then prove the separate WAL worker still owns the data.
+  while (!processResourcesReleased(String(journal.child.pid)) && Date.now() < deadline)
     await new Promise((resolve) => setTimeout(resolve, 20));
-  expect(processIdentity(journal.child.pid)).toBeNull();
+  expect(processResourcesReleased(String(journal.child.pid))).toBe(true);
   for (const path of [f.databasePath, alias, hardlink]) {
     await expect(acquireLiveWorkspace(path)).rejects.toThrow('active application');
     await expect(acquireColdWorkspace(path)).rejects.toThrow('active supervisor');

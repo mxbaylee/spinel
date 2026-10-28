@@ -1,4 +1,4 @@
-import { beforeEach, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 
 const fs = vi.hoisted(() => ({
   lstatSync: vi.fn(),
@@ -6,7 +6,7 @@ const fs = vi.hoisted(() => ({
   readdirSync: vi.fn(),
 }));
 vi.mock('node:fs', () => fs);
-import { processResourcesReleased } from './process-exit.ts';
+import { processResourcesReleased, waitForProcessInventory } from './process-exit.ts';
 
 function stat(state = 'Z', threads = '1', start = '100') {
   const fields = Array<string>(20).fill('0');
@@ -104,4 +104,79 @@ test('malformed process status and invalid PID paths are refused', () => {
   for (const pid of ['0', '-1', '../self', '42/task/43', ''])
     expect(processResourcesReleased(pid)).toBe(false);
   expect(fs.readFileSync).not.toHaveBeenCalled();
+});
+
+// Fake timers make the safety deadline deterministic; the real supervisor
+// suite separately exercises multithreaded exit and orphan WAL ownership.
+afterEach(() => vi.useRealTimers());
+
+test('permission retries require a fresh complete inventory, not an assumed exit', async () => {
+  vi.useFakeTimers();
+  const refused = error('EACCES');
+  const read = vi
+    .fn()
+    .mockImplementationOnce(() => {
+      throw refused;
+    })
+    .mockReturnValue([42]);
+  const result = waitForProcessInventory(read, Date.now() + 100);
+  expect(read).toHaveBeenCalledTimes(1);
+  await vi.advanceTimersByTimeAsync(25);
+  expect(await result).toEqual([42]);
+  expect(read).toHaveBeenCalledTimes(2);
+});
+
+test('persistently unreadable live owners remain blocked at the original deadline', async () => {
+  vi.useFakeTimers();
+  const refused = error('EACCES');
+  const read = vi.fn(() => {
+    throw refused;
+  });
+  const result = waitForProcessInventory(read, Date.now() + 60).catch(
+    (failure: unknown) => failure,
+  );
+  await vi.advanceTimersByTimeAsync(60);
+  expect(await result).toBe(refused);
+  expect(read).toHaveBeenCalledTimes(4);
+  expect(vi.getTimerCount()).toBe(0);
+});
+
+test('a successful empty inventory is returned only after the complete read succeeds', async () => {
+  vi.useFakeTimers();
+  const read = vi
+    .fn()
+    .mockImplementationOnce(() => {
+      throw error('EACCES');
+    })
+    .mockReturnValue([]);
+  const result = waitForProcessInventory(read, Date.now() + 100);
+  await vi.advanceTimersByTimeAsync(25);
+  expect(await result).toEqual([]);
+});
+
+test('identity and nonpermission failures are never retried or translated', async () => {
+  vi.useFakeTimers();
+  for (const failure of [
+    error('EPERM'),
+    error('EIO'),
+    new Error('Process group identity changed.'),
+  ]) {
+    const read = vi.fn(() => {
+      throw failure;
+    });
+    await expect(waitForProcessInventory(read, Date.now() + 100)).rejects.toBe(failure);
+    expect(read).toHaveBeenCalledTimes(1);
+    expect(vi.getTimerCount()).toBe(0);
+  }
+});
+
+test('an elapsed deadline cannot be renewed by another permission failure', async () => {
+  vi.useFakeTimers();
+  const refused = error('EACCES');
+  const read = vi.fn(() => {
+    throw refused;
+  });
+  await expect(waitForProcessInventory(read, Date.now() - 1)).rejects.toBe(refused);
+  expect(read).toHaveBeenCalledTimes(1);
+  expect(vi.getTimerCount()).toBe(0);
 });

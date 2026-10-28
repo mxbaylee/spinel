@@ -8,7 +8,10 @@ export function processResourcesReleased(pid: string): boolean {
     const stat = readFileSync(`${path}/stat`, 'utf8');
     const end = stat.lastIndexOf(') ');
     if (end < 0) throw new Error('Invalid process identity.');
-    const fields = stat.slice(end + 2).trim().split(/\s+/);
+    const fields = stat
+      .slice(end + 2)
+      .trim()
+      .split(/\s+/);
     return { state: fields[0], threads: fields[17], start: fields[19] };
   };
   const terminal = (state: ReturnType<typeof read>) =>
@@ -30,6 +33,22 @@ export function processResourcesReleased(pid: string): boolean {
       return false;
     } catch (missing) {
       return ['ENOENT', 'ESRCH'].includes((missing as NodeJS.ErrnoException).code ?? '');
+    }
+  }
+}
+
+/** A dying process can revoke /proc access before its last thread exits.
+ * Retry the complete inventory within the existing stop deadline. A failed
+ * read never means closed, and no partial inventory authorizes a signal.
+ */
+export async function waitForProcessInventory<T>(read: () => T, deadline: number): Promise<T> {
+  for (;;) {
+    try {
+      return read();
+    } catch (error) {
+      const remaining = deadline - Date.now();
+      if ((error as NodeJS.ErrnoException).code !== 'EACCES' || remaining <= 0) throw error;
+      await new Promise<void>((resolve) => setTimeout(resolve, Math.min(25, remaining)));
     }
   }
 }

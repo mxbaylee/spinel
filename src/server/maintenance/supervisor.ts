@@ -33,7 +33,7 @@ import {
 import type { OperationReceipt, ProcessIdentity } from './journal.ts';
 import { MAINTENANCE_CHANNEL } from './supervisor-client.ts';
 import { shareWorkspaceOwnership } from './ownership.ts';
-import { processResourcesReleased } from './process-exit.ts';
+import { processResourcesReleased, waitForProcessInventory } from './process-exit.ts';
 
 const DRAIN_MS = 30_000;
 const STOP_MS = 15_000;
@@ -682,24 +682,32 @@ export class MaintenanceSupervisor {
     this.transition({ phase: 'running', operation: null, completedOperationId, lastFailure: null });
   }
   private async stopGroup(identity: ProcessIdentity, checkHandles = true) {
-    if (groupMembers(identity).length) {
-      // The group/session was created here; no API accepts a PID or command.
+    const deadline = Date.now() + (this.options.budgets?.stopMs ?? STOP_MS);
+    const closedDeadline = deadline + 3000;
+    const members = () => waitForProcessInventory(() => groupMembers(identity), closedDeadline);
+    const signal = (value: NodeJS.Signals) => {
+      // The complete inventory was verified before each signal. A permission
+      // refusal, including a zombie with live threads, never permits a kill.
       try {
-        process.kill(-identity.pid, 'SIGTERM');
+        process.kill(-identity.pid, value);
       } catch (error) {
         if ((error as NodeJS.ErrnoException).code !== 'ESRCH') throw error;
       }
-      const deadline = Date.now() + (this.options.budgets?.stopMs ?? STOP_MS);
-      while (groupMembers(identity).length && Date.now() < deadline) await delay(25);
-      if (groupMembers(identity).length) {
-        process.kill(-identity.pid, 'SIGKILL');
-        const killedDeadline = Date.now() + 3000;
-        while (groupMembers(identity).length && Date.now() < killedDeadline) await delay(25);
+    };
+    if ((await members()).length) {
+      signal('SIGTERM');
+      while ((await members()).length && Date.now() < deadline) await delay(25);
+      if ((await members()).length) {
+        signal('SIGKILL');
+        while ((await members()).length && Date.now() < closedDeadline) await delay(25);
       }
-      if (groupMembers(identity).length)
-        throw new Error('Application processes are still running.');
+      if ((await members()).length) throw new Error('Application processes are still running.');
     }
-    if (checkHandles) assertWorkspaceHandlesClosed(this.journal.databasePath);
+    if (checkHandles)
+      await waitForProcessInventory(
+        () => assertWorkspaceHandlesClosed(this.journal.databasePath),
+        closedDeadline,
+      );
   }
   private async stop() {
     if (this.journal.state.phase === 'running' || this.journal.state.phase === 'draining')
