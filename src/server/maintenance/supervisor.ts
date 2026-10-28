@@ -831,7 +831,12 @@ export class MaintenanceSupervisor {
             SPINEL_PROCESS_GROUP_TOKEN: groupToken,
             SPINEL_MAINTENANCE_ROOT: this.journal.root,
           },
-          execArgv: ['--max-old-space-size=256', '--max-semi-space-size=8'],
+          execArgv: [
+            '--max-old-space-size=256',
+            '--max-semi-space-size=8',
+            // SPN-117 also applies when this child serves Vite development responses.
+            ...(this.options.development ? ['--no-turbo-fast-api-calls'] : []),
+          ],
           stdio: ['ignore', 'inherit', 'inherit', 'ipc'],
           detached: true,
         },

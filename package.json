@@ -13,7 +13,7 @@
     "backlog:index": "node scripts/backlog/cli.ts index",
     "backlog:new": "node scripts/backlog/cli.ts new",
     "backlog:pr": "node scripts/backlog/cli.ts pr",
-    "dev": "node --max-old-space-size=512 --max-semi-space-size=8 --watch server/index.ts --dev",
+    "dev": "node --max-old-space-size=512 --max-semi-space-size=8 --no-turbo-fast-api-calls --watch server/index.ts --dev",
     "build": "vite build",
     "storybook": "NODE_OPTIONS='--import ./.storybook/typescript-api.ts' storybook dev -p 6006",
     "build-storybook": "NODE_OPTIONS='--import ./.storybook/typescript-api.ts' storybook build -o storybook-static && node scripts/ci/storybook-identity.ts",

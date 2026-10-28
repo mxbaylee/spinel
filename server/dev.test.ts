@@ -9,16 +9,20 @@ import { projectRoot } from './app.ts';
 
 test('development watch mode stays running without a config-bundle restart loop', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'spinel-dev-'));
-  const child = spawn(process.execPath, ['--watch', 'server/index.ts', '--dev', '--no-open'], {
-    cwd: projectRoot,
-    env: {
-      ...process.env,
-      PORT: '0',
-      HOST: '127.0.0.1',
-      DATABASE_PATH: join(directory, 'spinel.sqlite'),
+  const child = spawn(
+    process.execPath,
+    ['--no-turbo-fast-api-calls', '--watch', 'server/index.ts', '--dev', '--no-open'],
+    {
+      cwd: projectRoot,
+      env: {
+        ...process.env,
+        PORT: '0',
+        HOST: '127.0.0.1',
+        DATABASE_PATH: join(directory, 'spinel.sqlite'),
+      },
+      stdio: ['ignore', 'pipe', 'pipe'],
     },
-    stdio: ['ignore', 'pipe', 'pipe'],
-  });
+  );
   let output = '';
   child.stdout.on('data', (data: Buffer) => {
     output += data.toString();

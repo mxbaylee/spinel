@@ -1,0 +1,149 @@
+{
+  "diagnosticOnly": true,
+  "acceptanceEvidence": false,
+  "source": "18cdd80d0f34a48b4b077c0dfad6e548c69ec34c",
+  "productSource": "5bf920d663593bd9f7d991bdfc801310277f5361",
+  "plan": "hosted-plan.json",
+  "hostedRun": {
+    "id": 40752287899,
+    "jobId": 123041884756,
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/40752287899/job/123041884756",
+    "artifact": {
+      "id": 12843972822,
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/40752287899/artifacts/12843972822",
+      "bytes": 34380679,
+      "sha256": "d8c9de4c20e34680fc8ceac4bcfa054a3711d01cb0aa25bfad92aabbc45e4e75"
+    }
+  },
+  "result": {
+    "test": "mobile sustained native typing plain-1",
+    "executions": 1,
+    "passed": 1,
+    "retries": 0,
+    "flaky": 0,
+    "skipped": 0,
+    "unexpected": 0,
+    "reportedDurationMinutes": 4.1,
+    "reportDurationMs": 243479.862,
+    "startedAt": "2026-10-28T19:14:04.798Z",
+    "finishedAt": "2026-10-28T19:18:08.987Z",
+    "peakProcessTreeRssKiB": 2912508,
+    "reportedPeakProcessTreeRssMiB": 2844,
+    "resourceAbort": null,
+    "exitCode": 0,
+    "signal": null,
+    "correctness": "Exact saved/live peer text, sender/peer selections, Undo/Redo and Online checks passed. Original workload, fourfold CPU throttle and all numerical budgets were retained."
+  },
+  "trace": {
+    "complete": true,
+    "dataLossOccurred": false,
+    "eventCount": 1548383,
+    "compressedFile": "spn118-flush-trace.json.gz",
+    "compressedBytes": 34571188,
+    "compressedSha256": "ec034d981872752237e74efe29934393a646b3ad1b66a10418a880fd279f68ea",
+    "sender": {
+      "pid": 3334,
+      "tid": 3334,
+      "thread": "CrRendererMain",
+      "sameSenderAtBothAnchors": true,
+      "timeOrigin": 1793214849605.4,
+      "navigationId": "6964F4F643093FB87A29E3F4C3E6ADD6",
+      "startAnchorPerformanceMs": 2581.800000000003,
+      "startAnchorTraceUs": 82243107,
+      "endAnchorPerformanceMs": 214063.8,
+      "endAnchorTraceUs": 293725085,
+      "performanceToTraceOffsetUs": 79661307,
+      "endAnchorAlignmentDeltaUs": -22,
+      "unmatchedBeginEvents": 0,
+      "unmatchedEndEvents": 0,
+      "beginEndPairingProblems": 0
+    },
+    "analysisSpanUs": [0, 293725200],
+    "analysisSpanQualification": "The derived sender.spanUs includes metadata events at ts=0. It is not the workload duration or independent evidence of clock coverage. Use the sender anchors, relevant event intervals and complete/no-data-loss stream metadata for correlation."
+  },
+  "flushObservations": {
+    "indexing": "Zero-based flush index from the preserved metrics and analysis.",
+    "capacityFlushCount": 65,
+    "idleFlushCount": 1,
+    "largestCapacityFlushes": [
+      {
+        "index": 4,
+        "durationMs": 60.1,
+        "historyStates": 32,
+        "collaborationStates": 32,
+        "senderMainThreadGcLabelledUnionMs": 0
+      },
+      {
+        "index": 0,
+        "durationMs": 59.6,
+        "historyStates": 32,
+        "collaborationStates": 32,
+        "senderMainThreadGcLabelledUnionMs": 0
+      },
+      {
+        "index": 5,
+        "durationMs": 55.2,
+        "historyStates": 32,
+        "collaborationStates": 32,
+        "senderMainThreadGcLabelledUnionMs": 8.474,
+        "includesMinorGc": true,
+        "minorGcEventDurationMs": 8.465
+      }
+    ],
+    "originalFailingPosition": {
+      "index": 59,
+      "diagnosticDurationMs": 28.6,
+      "originalFailedAcceptanceDurationMs": 102.1,
+      "originalMaximumBudgetMs": 100,
+      "historyStates": 32,
+      "collaborationStates": 32,
+      "senderMainThreadGcLabelledUnionMs": 0
+    },
+    "gcQualification": "GC overlap is the union of GC-labelled intervals on sender renderer/main thread 3334/3334, not exclusive GC CPU time. No such intervals overlapped the two largest diagnostic flushes. A MinorGC event overlapped the third-largest flush. These observations do not establish the cause of the original unprofiled failure."
+  },
+  "retainedEvidence": {
+    "compactArchive": "hosted-result-evidence.zip",
+    "manifest": "hosted-evidence-manifest.json",
+    "analysisMember": "analysis/trace-analysis.json",
+    "fullTraceLocation": "Original hosted artifact 12843972822; excluded from the compact repository archive as declared in its manifest."
+  },
+  "disposition": {
+    "outcome": "non-reproduction",
+    "originalCauseEstablished": false,
+    "supportedRemedyEstablished": false,
+    "declaredLocalSeries": "stopped",
+    "declaredHostedSeries": "stopped after one execution",
+    "additionalAcceptanceRetryAuthorizedByThisEvidence": false,
+    "interpretation": "The traced pass is diagnostic evidence only. It cannot replace original acceptance, erase its failure or establish transient infrastructure as the cause. No unplanned repeat follows from this outcome."
+  },
+  "runCheckpoint": {
+    "stateRefreshedAt": "2026-10-28T19:25:00Z",
+    "objective": "Work on and merge SPN-118.",
+    "previousMain": "bc05dbc0d2595750f0bbf9502c2aba7e3d0b7463",
+    "currentMain": "1a2f8aa2695400dd90ab8f10a99ea00c076359a6",
+    "mainAdvance": "SPN-066 PR 211 guest-link inventory/expiry; not evidence of a native-flush remedy.",
+    "productHeads": [
+      {
+        "pr": 214,
+        "ticket": "SPN-116",
+        "head": "5bf920d663593bd9f7d991bdfc801310277f5361",
+        "mergeableState": "dirty",
+        "status": "blocked, unmerged"
+      },
+      {
+        "pr": 213,
+        "ticket": "SPN-118",
+        "head": "c89047aeaacb912e1e877566ed40cbdfd95229df",
+        "mergeableState": "dirty",
+        "status": "blocked, unmerged"
+      }
+    ],
+    "independentReviewScores": [94, 95],
+    "reviewRequirement": "Each independent nonimplementing reviewer must score strictly above 95 on the same final product head, with no unresolved findings and successful required CI on that head.",
+    "integrationRequirement": "Resolve conflicts with current main while preserving the original failed product heads and evidence. Main's unrelated guest-link change does not justify unchanged acceptance.",
+    "sourceAudit": "Four native composition folds are established in the pinned public implementation. No unnecessary application work or safe fold removal has been demonstrated.",
+    "nextStep": "Focused function-level investigation of the public native-flush call paths, with an explicit falsifiable hypothesis before any further diagnostic execution. Establish a source-supported remedy that preserves behavior before running original acceptance on an integrated product head and obtaining renewed independent reviews on that same head.",
+    "unsupportedChanges": "No speculative SDK, grouping or numerical budget change is supported by this diagnostic.",
+    "publication": "Result-only evidence update; hosted-plan.json and executable files remain unchanged. Publishing the result alone does not match the plan-path workflow trigger or schedule another capture. The evidence branch is not for merge."
+  }
+}

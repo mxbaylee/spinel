@@ -1,0 +1,77 @@
+{
+  "artifact": {
+    "id": 12841698664,
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/40742179619/artifacts/12841698664",
+    "bytes": 2123053,
+    "sha256": "ee278252ff5f3f4364e0e9a6c7914150dda1e2a5520eccc279efc2d659d9584b"
+  },
+  "subset": "Byte-for-byte member extraction; all original baseline/candidate raw metrics and the candidate Playwright report, plus failed plain-1 error context. CPU profile and screenshots are not duplicated in this compact archive. The full original artifact is retained separately.",
+  "included": [
+    {
+      "path": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "bytes": 234600,
+      "sha256": "49d29aef458a3f0e6d783f05a283ff4320dfae029c2644a413d7f8746b6070b3"
+    },
+    {
+      "path": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "bytes": 246034,
+      "sha256": "954e220f733a79a20bdcdb892e2a2378dcda43d3ef2043caa7f3627aa0ef4730"
+    },
+    {
+      "path": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "bytes": 242037,
+      "sha256": "eb21d57547432daa600421ab5f4277758fe59f74f600359cc18e264436e24cf9"
+    },
+    {
+      "path": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "bytes": 250204,
+      "sha256": "703f297d4470052196449436f13f32c042fe743dc108d4dc560d0154e3fd10af"
+    },
+    {
+      "path": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/error-context.md",
+      "bytes": 11895,
+      "sha256": "37cb20fc42b5433d91768dc202e7d3e12647a83e1e9b41576990348907050e86"
+    },
+    {
+      "path": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "bytes": 228635,
+      "sha256": "714dfcd795b189148fda70c18eb89b6ccb5335822ce0f187fd3ea48d35ac4eb3"
+    },
+    {
+      "path": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "bytes": 227732,
+      "sha256": "7ab17801434257652766a499062843d3be7b27b7a23dbb7042e64b739804e7a1"
+    },
+    {
+      "path": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "bytes": 237051,
+      "sha256": "d32c598c5f611c2a0bc28d72552a101524e9022223b358e2e8492db5996b8326"
+    },
+    {
+      "path": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "bytes": 236587,
+      "sha256": "a067e35d6705868b657f07038a9dce8d3b1275fb3ec12b46ef5701757f48c81d"
+    },
+    {
+      "path": "playwright-report/doc-responsiveness.json",
+      "bytes": 452901,
+      "sha256": "8281f3d7cba847281c2a1cb04903e3891fc9b399f58156cd4f01fa38526c6f61"
+    }
+  ],
+  "excludedMembers": [
+    "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+    "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile",
+    "baseline-doc-source/playwright-report/doc-responsiveness.json",
+    "test-results/doc-responsiveness/doc-responsiveness-mobile--59407--typing-after-a-quiet-pause-doc-responsiveness/spn108-post-burst.json",
+    "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/test-failed-1.png",
+    "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/test-failed-2.png",
+    "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+    "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile",
+    "test-results/doc-responsiveness/doc-responsiveness-native--032b2-nd-a-late-composition-event-doc-responsiveness/spn108-boundaries.json",
+    "test-results/doc-responsiveness/doc-responsiveness-native--bfbca-mit-without-partial-history-doc-responsiveness/spn108-boundaries.json"
+  ],
+  "subsetArchive": {
+    "bytes": 359936,
+    "sha256": "de5f078821f842d52740efda7bbfb1b0456c602fcf4889dda4e730050ea6c9d1"
+  }
+}

@@ -17,6 +17,12 @@ The Node server opens `http://localhost:3000` in your browser, serves passkey si
 React dashboard with private folders and a spreadsheet editor through Vite, and creates `data/spinel.sqlite` on first startup.
 Vite updates the frontend as you edit; Node watch restarts the server on changes.
 Use `npm run dev -- --no-open` to suppress the browser opening, and Ctrl+C to stop.
+Development server launchers use `--no-turbo-fast-api-calls` on the pinned Node
+runtime to exclude a V8 abort seen while serving large Vite responses. The same
+flag covers Playwright development servers and their disposable app children;
+production and container launch arguments remain unchanged. Recheck the flag and
+its source justification when updating Node; see the
+[SPN-117 runtime decision and evidence](implementation/SPN-117.md).
 No database service or environment file is needed. An empty database has no accounts;
 run `npm run setup` in another terminal to [claim the first admin](setup.md).
 The [isolated passkey check](authentication.md#manual-provider-check) still provides
