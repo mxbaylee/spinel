@@ -1,0 +1,97 @@
+{
+  "sourceBase": "b99e0069d8b4e54a6bd4839f31f574bbfbfcde5c",
+  "runId": "40712475857",
+  "description": "Real Linux-supervised production application with synthetic passkeys, pending device changes and native input. Source patch is retained in the same run; these are not Storybook fixtures.",
+  "images": [
+    {
+      "name": "native-pending-dismissed-dark.png",
+      "sha256": "60f7a6352944e49a14bd477e0a3f53e81a96c89c5f77958daa96e2309013a356",
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "name": "native-pending-dismissed-light.png",
+      "sha256": "483fce3e1a8b47585b9b543939977dbfe8ce1b04e4a2f5d829410e515c739e84",
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "name": "native-pending-dismissed-phone.png",
+      "sha256": "7c7239aa1a18baf3448419b9b87b08c4f9beac3c5f7e56ba6ab4464667e2b0b5",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "name": "native-pending-reopened-dark.png",
+      "sha256": "461b26098be1cc7e637b7a511e0c2b35b5afab860e49c11bf707e9516e0410d9",
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "name": "native-pending-reopened-light.png",
+      "sha256": "4e081ff9090d966435a94abdc79f86503b79bc7355ed894b95bbf339cc566c36",
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "name": "native-pending-reopened-phone.png",
+      "sha256": "ca8f2e8c3a62f7bf341c35758216b3b99a048fcfec925d2ddd6a7321572f9adb",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "name": "paused-dark.png",
+      "sha256": "acaf501d64f806e686cedea149ca09b20615783e80d283e3aa3ff959c8437aab",
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "name": "paused-details-dark.png",
+      "sha256": "7f3b0c134438d63f1cf0f9912418f4f83ccb7d611f1821a45e39ae3524242554",
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "name": "paused-details-light.png",
+      "sha256": "11f17a6957c67eacf71ead38559f13799ca2622b1a6bace143d0707a9af9ee16",
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "name": "paused-details-phone.png",
+      "sha256": "5156ae545a7de7858d52e252919af83f1847fe78df5620619623916ed836d30b",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "name": "paused-light.png",
+      "sha256": "9e5d11d59dc67f7cad9573b28b2aaab450262774fc4e84835d65e11ff62b124c",
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "name": "paused-phone.png",
+      "sha256": "3e36dab007f2e006fc2a84f41352cb1aa22afcc06b8788a9a69b232906c03fba",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "name": "scheduled-dark.png",
+      "sha256": "7dff60f58d5027222b61b4dee15d838c68c16e0d371f76903d329d99e696cacf",
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "name": "scheduled-light.png",
+      "sha256": "ab7a5e1e33bfe65cbea9163d4d546647a9db5ec2c488aded48ed782b004355eb",
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "name": "scheduled-phone.png",
+      "sha256": "87e6ed4c8f6faf6f1271e8754ba1a4084c598d8516ca48cacd8ea4c9288b80ca",
+      "width": 390,
+      "height": 900
+    }
+  ]
+}

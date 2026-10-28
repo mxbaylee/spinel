@@ -616,6 +616,18 @@ test('supervised maintenance keeps pending native work, fences old edits, and re
     );
     await stableNativeEditor();
     await capture(member, info, 'native-pending', false);
+    await banner(member).getByRole('button', { name: 'Dismiss for now' }).click();
+    await expect(banner(member)).toHaveAttribute('data-dismissed', 'true');
+    await expect(saveStatus(member)).toContainText('Copy the unfinished cell text');
+    await stableNativeEditor();
+    await capture(member, info, 'native-pending-dismissed');
+    await banner(member).locator('summary').focus();
+    await member.keyboard.press('Enter');
+    await expect(banner(member).getByRole('button', { name: 'Dismiss for now' })).toBeVisible();
+    await expect(banner(member).getByText(/Already acknowledged edits remain saved/)).toBeVisible();
+    await stableNativeEditor();
+    await capture(member, info, 'native-pending-reopened');
+    await expect(saveStatus(member)).toContainText('Copy the unfinished cell text');
     expect((await memberContext.request.get(`/api/items/${item.id}/sheet`)).status()).toBe(503);
     const memberResumed = await app.control({ action: 'resume', operationId: memberOperation });
     expect(memberResumed.phase).toBe('running');
