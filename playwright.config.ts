@@ -160,8 +160,10 @@ export default defineConfig({
     {
       // Vite still serves development modules. A second Node file watcher is
       // unnecessary for fixed-source tests and adds work to cold SDK imports.
+      // Node 26's fast UTF-8 length callback can abort on Vite responses.
+      // The development-only mitigation is recorded in SPN-117.
       command:
-        'node --max-old-space-size=512 --max-semi-space-size=8 server/index.ts --dev --no-open',
+        'node --max-old-space-size=512 --max-semi-space-size=8 --no-turbo-fast-api-calls server/index.ts --dev --no-open',
       url: 'http://localhost:3100/sign-in',
       env: {
         PORT: '3100',
@@ -188,7 +190,7 @@ export default defineConfig({
     },
     {
       command:
-        'node --max-old-space-size=512 --max-semi-space-size=8 server/index.ts --dev --no-open',
+        'node --max-old-space-size=512 --max-semi-space-size=8 --no-turbo-fast-api-calls server/index.ts --dev --no-open',
       url: 'http://localhost:3104/sign-in',
       env: {
         PORT: '3104',
