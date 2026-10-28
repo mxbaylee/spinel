@@ -22,6 +22,9 @@ immediate local account locking and compatible public runtimes across updates
 SPN-051 adds creation of ordinary Sheets and Docs in the prepared account's own
 folders, with durable stable IDs, exactly-once server admission and explicit
 destination recovery ([implementation decisions](implementation/SPN-051.md)).
+SPN-069 extends that flow to prepared editable shared folders, preserving the
+folder owner's ownership and account-only creator attribution
+([implementation decisions](implementation/SPN-069.md)).
 [SPN-092](implementation/SPN-092.md) extends preparation and local opening to
 one account-authorized Space child at a time, with its verified images.
 The remaining parts of this contract are open, split by the Owner in chat on 2026-10-19 so
@@ -80,12 +83,15 @@ administration are outside this first outcome. Existing embedded images are requ
 ## Creating a new document offline
 
 After preparing the account online, **New → Sheet / Doc** works without a
-connection in My files and owned ordinary folders from the cached catalog.
+connection in My files and ordinary folders from the cached catalog where the
+account has Owner, File admin or Editor access.
 The complete local record commits before the editor opens. The same native
 editor saves edits on this device and restores them after an offline reload.
 Unprepared devices, Operators and link guests receive no offline creation.
-Shared-folder creation remains SPN-069; offline folders, Space trees, images and
-sharing administration are outside this flow.
+In a shared folder, the folder owner owns the published document and the creating
+account is shown as its creator. Local pending rows preserve that access and
+ownership distinction. Offline folders, Space trees, images and sharing
+administration are outside this flow.
 
 The row says **Not synced yet** while its stable creation request is awaiting
 server acknowledgement. Open the document to upload when connected: startup,
@@ -95,11 +101,13 @@ the immutable empty base exactly once, then the existing native queue delivers
 the edits. **Synced** still requires every durable edit acknowledgement and
 successful local cleanup; creation acceptance alone is insufficient.
 
-If the chosen folder was removed or is no longer owned by the account before
-creation, the row says **Needs attention** and offers **Choose another folder…**.
+If the chosen folder was removed or the account no longer has permission to
+create there before publication, the row says **Needs attention** and offers
+**Choose another folder…**.
 Only that definitive rejection permits changing the saved destination. A lost
 response retries the original request, so it cannot create a second document or
-silently move an already accepted one. A later conflicting/deleted accepted
+silently move an already accepted one. The receipt binds the original creator,
+folder owner, item and generation. A later conflicting/deleted accepted
 document retains local work for explicit export or discard. No creation writes
 where the current account lacks permission.
 

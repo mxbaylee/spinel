@@ -189,6 +189,14 @@ test('a nested native Doc without a title uses the exact manifest name instead o
   target.auth.now = () => Date.UTC(2026, 9, 28);
   const path = await exportPath(source);
   await target.archive.import(target.owner.id, path, () => {});
+  expect(
+    target.workspace
+      .list(target.owner.id)
+      .every((item) => item.createdByName === target.owner.name),
+  ).toBe(true);
+  expect(
+    target.database.prepare('SELECT DISTINCT created_by FROM workspace_item_creators').all(),
+  ).toEqual([{ created_by: target.owner.id }]);
   const copied = rows(target).find((row) => row.kind === 'doc')!;
   expect(copied.name).toBe(name);
   expect(copied.created_at).toBe(Date.UTC(2026, 9, 28));

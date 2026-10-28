@@ -321,6 +321,14 @@ export class WorkspaceArchive {
           INSERT INTO sheet_snapshots(item_id,snapshot,revision,write_id)
           SELECT item_id,snapshot,1,write_id FROM workspace_archive_import.snapshots WHERE kind='sheet';
         `);
+        // These are new local identities. Never import a foreign account's
+        // attribution or grant it access to the receiving workspace.
+        database
+          .prepare(
+            `INSERT INTO workspace_item_creators(item_id,created_by,created_by_name)
+            SELECT id,?,? FROM workspace_archive_import.items`,
+          )
+          .run(user, this.workspace.auth.user(user)!.name);
         check();
       });
       return {

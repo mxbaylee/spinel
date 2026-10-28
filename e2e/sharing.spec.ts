@@ -92,7 +92,7 @@ test('owner shares future folder contents, collaborator edits, and open editors 
     const address = await page.evaluate(() => navigator.clipboard.readText());
     await other.goto(address);
     await expect(other.getByRole('heading', { name: 'Shared plans', exact: true })).toBeVisible();
-    await expect(other.getByRole('button', { name: 'New', exact: true })).toBeHidden();
+    await expect(other.getByRole('button', { name: 'New', exact: true })).toBeVisible();
     await other.getByRole('button', { name: 'More actions for Shared plans', exact: true }).click();
     const folderMenu = other.getByRole('menu', {
       name: 'More actions for Shared plans',

@@ -14,7 +14,12 @@ import {
   OfflineStore,
   setPreparedAccount,
 } from '../../web/offline/offlineStore.ts';
-import type { OfflineCreation, OfflineOutbox, StoredItem } from '../../web/offline/offlineStore.ts';
+import type {
+  OfflineCatalog,
+  OfflineCreation,
+  OfflineOutbox,
+  StoredItem,
+} from '../../web/offline/offlineStore.ts';
 import {
   creationFile,
   relocateOfflineCreation,
@@ -22,6 +27,7 @@ import {
 } from '../../web/offline/creation.ts';
 
 const account = 'offline-creator';
+const sharedParent = '3b00563e-a3c2-42c2-9727-d3c6163dc25f';
 const input: OfflineCreationRequest = {
   version: 1,
   itemId: '5f8512d6-0c1f-4407-881c-707ee3388397',
@@ -84,7 +90,20 @@ function stored(kind: 'sheet' | 'doc' = 'doc'): StoredItem {
   };
 }
 
-function session() {
+function sharedCreation(kind: 'sheet' | 'doc' = 'doc', access: 'editor' | 'admin' = 'editor') {
+  const record = stored(kind);
+  record.creation = {
+    ...record.creation!,
+    request: { ...record.creation!.request, parentId: sharedParent },
+    access,
+    ownerName: 'Folder owner',
+    createdByName: 'Creator',
+  };
+  record.bundle.access = access;
+  return record;
+}
+
+function session(record = stored()) {
   const values = new Map<string, string>();
   vi.stubGlobal(
     'window',
@@ -97,7 +116,6 @@ function session() {
     }),
   );
   setPreparedAccount(account);
-  const record = stored();
   const download = {
     bundle: record.bundle,
     outbox: record.outbox,
@@ -123,10 +141,10 @@ function session() {
   return { value, store, download };
 }
 
-function accepted() {
+function accepted(item = creationFile(stored().creation!)) {
   return Response.json(
     {
-      item: creationFile(stored().creation!),
+      item,
       unitId: input.unitId,
       revision: 1,
       revisionOffset: 0,
@@ -157,10 +175,12 @@ test('accepted metadata carries a verified local acknowledgement revision withou
 test('catalog cutoffs accept legacy zero and reject invalid creation ordering', () => {
   const catalog = { syncedAt: 1000, items: [], shared: [], views: {} };
   expect(isOfflineCatalog(catalog)).toBe(true);
-  for (const creationRevision of [0, 1, Number.MAX_SAFE_INTEGER])
-    expect(isOfflineCatalog({ ...catalog, creationRevision })).toBe(true);
-  for (const creationRevision of [-1, 0.5, '1', null, Infinity, Number.MAX_SAFE_INTEGER + 1])
-    expect(isOfflineCatalog({ ...catalog, creationRevision })).toBe(false);
+  for (const field of ['creationRevision', 'sharedCreationRevision']) {
+    for (const revision of [0, 1, Number.MAX_SAFE_INTEGER])
+      expect(isOfflineCatalog({ ...catalog, [field]: revision })).toBe(true);
+    for (const revision of [-1, 0.5, '1', null, Infinity, Number.MAX_SAFE_INTEGER + 1])
+      expect(isOfflineCatalog({ ...catalog, [field]: revision })).toBe(false);
+  }
 
   const item = stored();
   item.createdFile = creationFile(item.creation!);
@@ -176,11 +196,15 @@ test('catalog cutoffs accept legacy zero and reject invalid creation ordering', 
 /** Exercise the real store's read/write ordering; browser tests prove native IDB atomicity. */
 function creationStorage(revision?: unknown) {
   vi.stubGlobal('window', new EventTarget());
+  vi.stubGlobal('navigator', {
+    locks: { request: async (_name: string, operation: () => Promise<unknown>) => operation() },
+  });
   const record = stored();
   const values = {
     items: new Map<string, unknown>([[input.itemId, record]]),
     meta: new Map<string, unknown>([
       ['catalog', { syncedAt: 10_000, creationRevision: 7, items: [], shared: [], views: {} }],
+      ['user', { id: account, name: 'Creator' }],
       ...(revision === undefined ? [] : [['creationRevision', revision] as [string, unknown]]),
     ]),
   };
@@ -217,6 +241,14 @@ function creationStorage(revision?: unknown) {
               writes.push({
                 store,
                 key: key ?? (value as StoredItem).itemId,
+                value: structuredClone(value),
+              });
+              complete();
+            },
+            add(value: unknown) {
+              writes.push({
+                store,
+                key: (value as StoredItem).itemId,
                 value: structuredClone(value),
               });
               complete();
@@ -299,6 +331,232 @@ test('creation acknowledgement orders metadata without the wall clock and preser
   expect(await f.store.creationRevision()).toBe(9);
 });
 
+test('a shared creation acknowledgement survives local restart in the shared catalog with the verified current role', async () => {
+  const f = creationStorage(8);
+  const original = sharedCreation();
+  f.values.items.set(input.itemId, original);
+  const acceptedFile = { ...creationFile(original.creation!), access: 'admin' as const };
+  const checkpoint = structuredClone(original.outbox!.checkpoint);
+  await f.store.updateCreation(input.itemId, original.creation!, undefined, () => {}, acceptedFile);
+  const persisted = structuredClone(f.values.items.get(input.itemId)) as StoredItem;
+  expect(downloadSummary(persisted, account, input.itemId)).toMatchObject({
+    createdFile: {
+      access: 'admin',
+      ownerName: 'Folder owner',
+      createdByName: 'Creator',
+      parentId: sharedParent,
+    },
+    createdFileRevision: 9,
+    pending: false,
+  });
+  expect(downloadSummary(persisted, account, input.itemId).uncertain).toBeUndefined();
+  expect(persisted.bundle.access).toBe('admin');
+  expect(persisted.outbox!.checkpoint).toEqual(checkpoint);
+  expect(await f.store.catalog()).toMatchObject({ items: [], shared: [acceptedFile] });
+});
+
+test.each(['owner', 'editor'] as const)(
+  'accepted %s metadata survives device removal and the other list refreshing before its own delayed response',
+  async (access) => {
+    const f = creationStorage(8);
+    const original = access === 'owner' ? stored() : sharedCreation();
+    f.values.items.set(input.itemId, original);
+    const acceptedFile = creationFile(original.creation!);
+    await f.store.updateCreation(
+      input.itemId,
+      original.creation!,
+      undefined,
+      () => {},
+      acceptedFile,
+    );
+    const acceptedRevision = await f.store.creationRevision();
+    expect(acceptedRevision).toBe(9);
+    // Removing the native copy must not remove the acknowledged file metadata.
+    // The browser test exercises the real Remove from device action as well.
+    f.values.items.delete(input.itemId);
+    const shared = access !== 'owner';
+    const delayed: OfflineCatalog = {
+      syncedAt: 20_000,
+      creationRevision: shared ? 9 : 7,
+      sharedCreationRevision: shared ? 0 : 9,
+      items: [],
+      shared: [],
+      views: { [sharedParent]: [] },
+    };
+    const user = { id: account, name: 'Creator' };
+    await f.store.saveCatalog(user, delayed);
+    const retained = (await f.store.catalog())!;
+    expect(retained[shared ? 'shared' : 'items']).toEqual([acceptedFile]);
+    expect(retained[shared ? 'items' : 'shared']).toEqual([]);
+    expect(retained.creationMetadata).toEqual([{ item: acceptedFile, revision: 9 }]);
+    expect(retained.views[input.itemId]).toEqual([acceptedFile]);
+    if (shared) expect(retained.views[sharedParent]).toEqual([acceptedFile]);
+    expect(f.values.items.has(input.itemId)).toBe(false);
+
+    // The matching post-acknowledgement list can move/rename the file even when
+    // the other partition is stale. Old folder views follow its canonical parent.
+    const moved = { ...acceptedFile, name: 'Moved after upload', parentId: 'new-parent' };
+    await f.store.saveCatalog(user, {
+      ...delayed,
+      creationRevision: shared ? 8 : 9,
+      sharedCreationRevision: shared ? 9 : 8,
+      [shared ? 'shared' : 'items']: [moved],
+      views: { [sharedParent]: [acceptedFile], 'new-parent': [] },
+    });
+    const authoritative = (await f.store.catalog())!;
+    expect(authoritative.creationRevision).toBe(9);
+    expect(authoritative.sharedCreationRevision).toBe(9);
+    expect(authoritative[shared ? 'shared' : 'items']).toEqual([moved]);
+    expect(authoritative.creationMetadata).toBeUndefined();
+    expect(authoritative.views[sharedParent]).toEqual([]);
+    expect(authoritative.views['new-parent']).toEqual([moved]);
+    expect(authoritative.views[input.itemId]).toEqual([moved]);
+
+    // A later revocation/trash remains authoritative when a stale opposite-list
+    // save still carries the original acceptance metadata and old folder view.
+    await f.store.saveCatalog(user, {
+      ...authoritative,
+      items: [],
+      shared: [],
+      views: {},
+    });
+    await f.store.saveCatalog(user, {
+      ...retained,
+      creationRevision: shared ? 10 : 7,
+      sharedCreationRevision: shared ? 0 : 10,
+    });
+    const revoked = (await f.store.catalog())!;
+    expect(revoked.items).toEqual([]);
+    expect(revoked.shared).toEqual([]);
+    expect(Object.values(revoked.views).flat()).toEqual([]);
+    expect(revoked.creationMetadata).toBeUndefined();
+  },
+);
+
+for (const originalAccess of ['owner', 'editor'] as const)
+  test.each([false, true])(
+    `${originalAccess} creation reconciles a later ownership transfer only with a current opposite list (%s)`,
+    async (oppositeCurrent) => {
+      const f = creationStorage(8);
+      const original = originalAccess === 'owner' ? stored() : sharedCreation();
+      original.creation!.request.parentId = sharedParent;
+      f.values.items.set(input.itemId, original);
+      const acceptedFile = creationFile(original.creation!);
+      await f.store.updateCreation(
+        input.itemId,
+        original.creation!,
+        undefined,
+        () => {},
+        acceptedFile,
+      );
+      f.values.items.delete(input.itemId);
+      const originallyOwned = originalAccess === 'owner';
+      const transferred = {
+        ...acceptedFile,
+        name: 'Transferred file',
+        access: originallyOwned ? ('editor' as const) : ('owner' as const),
+        parentId: 'new-parent',
+        ownerName: originallyOwned ? 'New owner' : undefined,
+        createdByName: 'Creator',
+      };
+      const oppositeCutoff = oppositeCurrent ? 9 : 8;
+      await f.store.saveCatalog(
+        { id: account, name: 'Creator' },
+        {
+          syncedAt: 20_000,
+          creationRevision: originallyOwned ? 9 : oppositeCutoff,
+          sharedCreationRevision: originallyOwned ? oppositeCutoff : 9,
+          items: originallyOwned ? [] : [transferred],
+          shared: originallyOwned ? [transferred] : [],
+          views: {
+            [sharedParent]: [acceptedFile],
+            [input.itemId]: [acceptedFile],
+            'new-parent': [],
+          },
+        },
+      );
+      const catalog = (await f.store.catalog())!;
+      expect(catalog.items).toEqual(originallyOwned ? [] : [transferred]);
+      expect(catalog.shared).toEqual(originallyOwned ? [transferred] : []);
+      expect(catalog.creationMetadata).toBeUndefined();
+      expect(catalog.views[sharedParent]).toEqual([]);
+      expect(catalog.views[input.itemId]).toEqual(oppositeCurrent ? [transferred] : []);
+      expect(catalog.views['new-parent']).toEqual(oppositeCurrent ? [transferred] : []);
+    },
+  );
+
+test('retained creation metadata validates its file and acknowledgement without changing legacy catalogs', () => {
+  const catalog: OfflineCatalog = { syncedAt: 1, items: [], shared: [], views: {} };
+  const item = creationFile(sharedCreation().creation!);
+  expect(isOfflineCatalog({ ...catalog, creationMetadata: [{ item, revision: 1 }] })).toBe(true);
+  for (const revision of [0, -1, 1.5, '1', null, Infinity, Number.MAX_SAFE_INTEGER + 1])
+    expect(isOfflineCatalog({ ...catalog, creationMetadata: [{ item, revision }] })).toBe(false);
+  for (const invalid of [null, { ...item, kind: 'folder' }, { ...item, createdByName: 7 }])
+    expect(
+      isOfflineCatalog({ ...catalog, creationMetadata: [{ item: invalid, revision: 1 }] }),
+    ).toBe(false);
+});
+
+test.each(['sheet', 'doc'] as const)(
+  'saving a shared %s derives its role and account-only attribution atomically from the prepared destination',
+  async (kind) => {
+    const f = creationStorage();
+    const original = stored(kind);
+    original.creation!.request.parentId = sharedParent;
+    const folder = {
+      ...creationFile(original.creation!),
+      id: sharedParent,
+      parentId: null,
+      kind: 'folder' as const,
+      access: 'editor' as const,
+      ownerName: 'Folder owner',
+    };
+    f.values.items.delete(input.itemId);
+    f.values.meta.set('catalog', { syncedAt: 1, items: [], shared: [folder], views: {} });
+    const saved = await f.store.saveCreation(original.bundle, original.creation!, () => {});
+    expect(saved).toMatchObject({
+      pending: true,
+      creation: {
+        parentId: sharedParent,
+        access: 'editor',
+        ownerName: 'Folder owner',
+        createdByName: 'Creator',
+      },
+    });
+    const persisted = structuredClone(f.values.items.get(input.itemId)) as StoredItem;
+    expect(persisted.creation!.request).toEqual(original.creation!.request);
+    expect(persisted.bundle.access).toBe('editor');
+    expect(downloadSummary(persisted, account, input.itemId).uncertain).toBeUndefined();
+    expect(creationFile(persisted.creation!)).toMatchObject({
+      id: input.itemId,
+      parentId: sharedParent,
+      access: 'editor',
+      createdByName: 'Creator',
+    });
+    expect(hasStoredEdits(persisted)).toBe(true);
+    expect(downloadSummary(persisted, 'other-account', input.itemId).uncertain).toBe(true);
+  },
+);
+
+test('a shared viewer destination cannot create a local draft at the storage boundary', async () => {
+  const f = creationStorage();
+  const original = stored();
+  original.creation!.request.parentId = sharedParent;
+  f.values.items.delete(input.itemId);
+  f.values.meta.set('catalog', {
+    syncedAt: 1,
+    items: [],
+    shared: [
+      { ...creationFile(original.creation!), id: sharedParent, kind: 'folder', access: 'viewer' },
+    ],
+    views: {},
+  });
+  await expect(f.store.saveCreation(original.bundle, original.creation!, () => {})).rejects.toThrow(
+    'prepared folder',
+  );
+  expect(f.values.items.has(input.itemId)).toBe(false);
+});
+
 test('legacy creation counters begin at zero and invalid or exhausted counters retain the pending draft', async () => {
   const legacy = creationStorage();
   expect(await legacy.store.creationRevision()).toBe(0);
@@ -357,7 +615,7 @@ test.each(['sheet', 'doc'] as const)(
   },
 );
 
-test.each(['marker', 'account', 'unit', 'kind', 'parent', 'name'] as const)(
+test.each(['marker', 'account', 'unit', 'kind', 'parent', 'name', 'role', 'creator'] as const)(
   'malformed creation %s is retained and never admitted as a clean download',
   (field) => {
     const item = stored();
@@ -367,6 +625,8 @@ test.each(['marker', 'account', 'unit', 'kind', 'parent', 'name'] as const)(
     if (field === 'kind') item.creation!.request.kind = 'sheet';
     if (field === 'parent') item.creation!.request.parentId = 'not-an-id';
     if (field === 'name') item.creation!.request.name = 'Different';
+    if (field === 'role') item.creation!.access = 'editor';
+    if (field === 'creator') Object.assign(item.creation!, { createdByName: {} });
     expect(downloadSummary(item, account, input.itemId)).toMatchObject({
       pending: true,
       uncertain: true,
@@ -376,23 +636,35 @@ test.each(['marker', 'account', 'unit', 'kind', 'parent', 'name'] as const)(
   },
 );
 
-test('local folder admission accepts only the account root and owned ordinary folders', () => {
+test('local folder admission accepts prepared editable ordinary folders without admitting viewers or Spaces', () => {
   const file = creationFile(stored().creation!);
-  const catalog = {
+  const catalog: OfflineCatalog = {
     syncedAt: 1,
     items: [{ ...file, id: 'own', kind: 'folder' as const }],
-    shared: [],
+    shared: [
+      { ...file, id: 'shared', kind: 'folder' as const, access: 'editor' as const },
+      { ...file, id: 'admin', kind: 'folder' as const, access: 'admin' as const },
+      { ...file, id: 'viewer', kind: 'folder' as const, access: 'viewer' as const },
+    ],
     views: {
       opened: [
-        { ...file, id: 'shared', kind: 'folder' as const, access: 'editor' as const },
+        { ...file, id: 'nested', kind: 'folder' as const, access: 'editor' as const },
         { ...file, id: 'space', kind: 'space' as const },
       ],
     },
   };
   expect(creationFolderAllowed(catalog, null)).toBe(true);
-  expect(creationFolderAllowed(catalog, 'own')).toBe(true);
-  for (const id of ['shared', 'space', 'missing'])
+  for (const id of ['own', 'shared', 'admin', 'nested'])
+    expect(creationFolderAllowed(catalog, id)).toBe(true);
+  for (const id of ['viewer', 'space', 'missing'])
     expect(creationFolderAllowed(catalog, id)).toBe(false);
+  catalog.views.opened.push({
+    ...file,
+    id: 'shared',
+    kind: 'folder' as const,
+    access: 'viewer',
+  });
+  expect(creationFolderAllowed(catalog, 'shared')).toBe(false);
 });
 
 test('simultaneous reconnect checks send one request and clear creation only after the local acknowledgement commits', async () => {
@@ -428,39 +700,74 @@ test('simultaneous reconnect checks send one request and clear creation only aft
   f.value.dispose();
 });
 
-test('lost acknowledgement and failed local cleanup retry the exact original creation without losing the checkpoint', async () => {
-  const f = session();
-  const checkpoint = structuredClone(f.download.outbox!.checkpoint);
-  const fetcher = vi
-    .fn()
-    .mockRejectedValueOnce(new TypeError('lost response'))
-    .mockImplementation(async () => accepted());
-  vi.stubGlobal('fetch', fetcher);
-  await expect(f.value.ensureCreated(new AbortController().signal)).rejects.toThrow(
-    'lost response',
+test('publication adopts the verified current shared role before checking native replay access', async () => {
+  const original = sharedCreation();
+  const f = session(original);
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async () => accepted({ ...creationFile(original.creation!), access: 'admin' })),
   );
-  f.store.updateCreation.mockRejectedValueOnce(new Error('disk full'));
-  await expect(f.value.ensureCreated(new AbortController().signal)).rejects.toThrow('disk full');
-  expect(f.value.pending).toBe(true);
-  expect(f.value.creation?.canRelocate).not.toBe(true);
   await expect(f.value.ensureCreated(new AbortController().signal)).resolves.toBe(true);
-  expect(fetcher.mock.calls.map((call) => (call[1] as RequestInit).body)).toEqual([
-    JSON.stringify(input),
-    JSON.stringify(input),
-    JSON.stringify(input),
-  ]);
-  expect(f.download.outbox!.checkpoint).toEqual(checkpoint);
+  expect(f.value.bundle!.access).toBe('admin');
+  expect(f.value.creation).toBeUndefined();
+  expect(f.store.updateCreation).toHaveBeenCalledWith(
+    input.itemId,
+    original.creation,
+    undefined,
+    expect.any(Function),
+    expect.objectContaining({ access: 'admin', createdByName: 'Creator', parentId: sharedParent }),
+  );
   f.value.dispose();
 });
 
-test('a definitive folder rejection stays local and enables explicit relocation without sending native edits', async () => {
-  const f = session();
+test.each(['owner', 'editor', 'admin'] as const)(
+  'lost acknowledgements retry the exact %s creation without losing its attribution or checkpoint',
+  async (access) => {
+    const original = access === 'owner' ? stored() : sharedCreation('doc', access);
+    const creationRequest = structuredClone(original.creation!.request);
+    const createdFile = creationFile(original.creation!);
+    const f = session(original);
+    const checkpoint = structuredClone(f.download.outbox!.checkpoint);
+    const fetcher = vi
+      .fn()
+      .mockRejectedValueOnce(new TypeError('lost response'))
+      .mockImplementation(async () => accepted(createdFile));
+    vi.stubGlobal('fetch', fetcher);
+    await expect(f.value.ensureCreated(new AbortController().signal)).rejects.toThrow(
+      'lost response',
+    );
+    f.store.updateCreation.mockRejectedValueOnce(new Error('disk full'));
+    await expect(f.value.ensureCreated(new AbortController().signal)).rejects.toThrow('disk full');
+    expect(f.value.pending).toBe(true);
+    expect(f.value.creation?.canRelocate).not.toBe(true);
+    expect(creationFile(f.value.creation!)).toEqual(createdFile);
+    await expect(f.value.ensureCreated(new AbortController().signal)).resolves.toBe(true);
+    expect(fetcher.mock.calls.map((call) => (call[1] as RequestInit).body)).toEqual([
+      JSON.stringify(creationRequest),
+      JSON.stringify(creationRequest),
+      JSON.stringify(creationRequest),
+    ]);
+    expect(f.download.outbox!.checkpoint).toEqual(checkpoint);
+    f.value.dispose();
+  },
+);
+
+test('a revoked shared-folder destination preserves its local work and only enables explicit relocation', async () => {
+  const original = sharedCreation();
+  const creationRequest = structuredClone(original.creation!.request);
+  const f = session(original);
   const fetcher = vi.fn(async () =>
     Response.json({ code: 'folder-unavailable', error: 'Unavailable' }, { status: 403 }),
   );
   vi.stubGlobal('fetch', fetcher);
   await expect(f.value.ensureCreated(new AbortController().signal)).resolves.toBe(false);
-  expect(f.value.creation).toMatchObject({ canRelocate: true, request: input });
+  expect(f.value.creation).toMatchObject({
+    canRelocate: true,
+    request: creationRequest,
+    access: 'editor',
+    ownerName: 'Folder owner',
+    createdByName: 'Creator',
+  });
   expect(f.value.pending).toBe(true);
   expect(f.value.problem).toContain('choose another folder');
   await expect(f.value.ensureCreated(new AbortController().signal)).resolves.toBe(false);
@@ -468,8 +775,8 @@ test('a definitive folder rejection stays local and enables explicit relocation 
   f.value.dispose();
 });
 
-test('an accepted creation conflict never authorizes redirecting the retry to another folder', async () => {
-  const f = session();
+test('revocation after accepted shared creation never authorizes redirecting its immutable retry', async () => {
+  const f = session(sharedCreation());
   vi.stubGlobal(
     'fetch',
     vi.fn(async () =>
@@ -526,7 +833,7 @@ test('relocation keeps IDs, chosen appearance and checkpoint identity, and only 
   const original = stored();
   const request = { ...input, icon: 'lucide:book-open', iconColor: 'info-strong' };
   original.creation!.request = request;
-  const updateCreation = vi.fn(async () => {});
+  const updateCreation = vi.fn(async () => ({ creation: { parentId: null, createdAt: 1000 } }));
   const store = {
     bundle: vi.fn(async () => original),
     catalog: vi.fn(async () => ({ syncedAt: 1, items: [], shared: [], views: {} })),
@@ -547,4 +854,85 @@ test('relocation keeps IDs, chosen appearance and checkpoint identity, and only 
     { request, createdAt: 1000 },
     expect.any(Function),
   );
+});
+
+test('explicit relocation from a revoked shared folder to My files recomputes ownership without replacing edits', async () => {
+  const f = creationStorage();
+  const original = sharedCreation();
+  original.creation!.problem = 'Folder unavailable';
+  original.creation!.canRelocate = true;
+  original.outbox!.checkpoint.buffer = [
+    [{ id: 'local-edit', params: { unitId: input.unitId, text: 'Keep my notes' } }],
+  ];
+  f.values.items.set(input.itemId, original);
+  const checkpoint = structuredClone(original.outbox!.checkpoint);
+  const relocated = await f.store.updateCreation(
+    input.itemId,
+    original.creation!,
+    { request: { ...original.creation!.request, parentId: null }, createdAt: 1000 },
+    () => {},
+  );
+  expect(relocated.creation).toMatchObject({
+    parentId: null,
+    access: 'owner',
+    createdByName: 'Creator',
+  });
+  expect(relocated.creation!.ownerName).toBeUndefined();
+  const persisted = f.values.items.get(input.itemId) as StoredItem;
+  expect(persisted.bundle.access).toBe('owner');
+  expect(persisted.creation!.request).toEqual({ ...original.creation!.request, parentId: null });
+  expect(persisted.outbox!.checkpoint).toEqual(checkpoint);
+  expect(persisted.creation!.problem).toBeUndefined();
+  expect(persisted.creation!.canRelocate).toBeUndefined();
+});
+
+test.each(['ambiguous', 'viewer', 'identity'] as const)(
+  'the storage boundary refuses %s relocation without changing retained work',
+  async (reason) => {
+    const f = creationStorage();
+    const original = sharedCreation();
+    f.values.items.set(input.itemId, original);
+    if (reason !== 'ambiguous') original.creation!.canRelocate = true;
+    const destination = reason === 'viewer' ? sharedParent : null;
+    f.values.meta.set('catalog', {
+      syncedAt: 1,
+      items: [],
+      shared: [
+        { ...creationFile(original.creation!), id: sharedParent, kind: 'folder', access: 'viewer' },
+      ],
+      views: {},
+    });
+    await expect(
+      f.store.updateCreation(
+        input.itemId,
+        original.creation!,
+        {
+          request: {
+            ...original.creation!.request,
+            parentId: destination,
+            ...(reason === 'identity' ? { unitId: crypto.randomUUID() } : {}),
+          },
+          createdAt: 1000,
+        },
+        () => {},
+      ),
+    ).rejects.toThrow();
+    expect(f.values.items.get(input.itemId)).toEqual(original);
+  },
+);
+
+test('a view-only publication response never acknowledges or clears a creation', async () => {
+  const original = sharedCreation();
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async () => accepted({ ...creationFile(original.creation!), access: 'viewer' })),
+  );
+  await expect(
+    uploadOfflineCreation(
+      account,
+      original.creation!.request,
+      new AbortController().signal,
+      () => {},
+    ),
+  ).rejects.toThrow('could not be verified');
 });

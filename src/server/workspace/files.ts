@@ -44,6 +44,7 @@ export class WorkspaceFiles {
       name: space.name,
       createdAt: space.createdAt,
       updatedAt: space.updatedAt,
+      ...this.workspace.creator(space.id),
       access,
       tags: this.workspace.spaceRootTags(user, space.id),
       ...(access === 'owner' ? {} : { ownerName: this.workspace.auth.user(ownerId)!.name }),

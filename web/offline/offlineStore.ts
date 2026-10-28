@@ -1,7 +1,7 @@
 import type { ItemAppearance } from '../../src/shared/appearance.ts';
 import type { OfflineBundle, OfflineBundleImage } from '../../src/shared/offlineBundle.ts';
 import { FILE_KINDS } from '../../src/shared/workspace.ts';
-import type { FileItem, SpaceFile, WorkspaceItem } from '../../src/shared/workspace.ts';
+import type { FileItem, ItemAccess, SpaceFile, WorkspaceItem } from '../../src/shared/workspace.ts';
 import { OFFLINE_SDK_VERSION, offlineScope } from './OfflineAccess.ts';
 import type { ClientCheckpoint } from '@spinel/sync-client';
 import { validateNativeSnapshot, validateCheckpoint } from '@spinel/sync-client/validation';
@@ -23,6 +23,10 @@ export type OfflineCatalog = {
   syncedAt: number;
   /** Creation acknowledgements committed before the full-list request began; absent means zero. */
   creationRevision?: number;
+  /** The shared list has its own request/acknowledgement cutoff. */
+  sharedCreationRevision?: number;
+  /** Accepted metadata awaiting its own authoritative list, even after device removal. */
+  creationMetadata?: { item: WorkspaceItem; revision: number }[];
   items: FileItem[];
   shared: FileItem[];
   /** The last-loaded ancestors, item and children for each opened folder or item. */
@@ -46,6 +50,9 @@ export type OfflineDownload = {
   creation?: {
     parentId: string | null;
     createdAt: number;
+    access?: Exclude<ItemAccess, 'viewer'>;
+    ownerName?: string;
+    createdByName?: string;
     problem?: string;
     canRelocate?: boolean;
   };
@@ -57,6 +64,10 @@ export type OfflineDownload = {
 export type OfflineCreation = {
   request: OfflineCreationRequest;
   createdAt: number;
+  /** Absent on older own-folder creations. This is provisional cached access. */
+  access?: Exclude<ItemAccess, 'viewer'>;
+  ownerName?: string;
+  createdByName?: string;
   problem?: string;
   canRelocate?: boolean;
 };
@@ -143,7 +154,7 @@ function storedCreationKnown(item: Record<string, unknown>, bundle: Record<strin
         item.createdFileRevision <= 0 ||
         item.createdFile.id !== bundle.itemId ||
         item.createdFile.kind !== bundle.kind ||
-        item.createdFile.access !== 'owner' ||
+        !['owner', 'admin', 'editor'].includes(String(item.createdFile.access)) ||
         !isOfflineCatalog({ syncedAt: 0, items: [item.createdFile], shared: [], views: {} })))
   )
     return false;
@@ -152,13 +163,18 @@ function storedCreationKnown(item: Record<string, unknown>, bundle: Record<strin
   const creation = item.creation;
   if (!object(creation) || !isOfflineCreationRequest(creation.request)) return false;
   const request = creation.request;
+  const access = creation.access === undefined ? 'owner' : creation.access;
   return (
     request.itemId === bundle.itemId &&
     request.unitId === bundle.unitId &&
     request.name === bundle.name &&
     request.kind === bundle.kind &&
     bundle.spaceId === undefined &&
-    bundle.access === 'owner' &&
+    ['owner', 'admin', 'editor'].includes(String(access)) &&
+    bundle.access === access &&
+    (request.parentId !== null || bundle.access === 'owner') &&
+    (creation.ownerName === undefined || typeof creation.ownerName === 'string') &&
+    (creation.createdByName === undefined || typeof creation.createdByName === 'string') &&
     bundle.readOnly === false &&
     bundle.revision === 1 &&
     bundle.revisionOffset === 0 &&
@@ -409,6 +425,9 @@ export function downloadSummary(
           creation: {
             parentId: (item.creation as OfflineCreation).request.parentId,
             createdAt: (item.creation as OfflineCreation).createdAt,
+            access: (item.creation as OfflineCreation).access,
+            ownerName: (item.creation as OfflineCreation).ownerName,
+            createdByName: (item.creation as OfflineCreation).createdByName,
             problem: (item.creation as OfflineCreation).problem,
             canRelocate: (item.creation as OfflineCreation).canRelocate,
           },
@@ -454,6 +473,8 @@ export function isOfflineCatalog(value: unknown): value is OfflineCatalog {
         Boolean(row.id) &&
         FILE_KINDS.includes(row.kind) &&
         typeof row.name === 'string' &&
+        (row.ownerName === undefined || typeof row.ownerName === 'string') &&
+        (row.createdByName === undefined || typeof row.createdByName === 'string') &&
         (row.parentId === null || typeof row.parentId === 'string') &&
         ['owner', 'admin', 'editor', 'viewer'].includes(row.access) &&
         Number.isFinite(row.createdAt) &&
@@ -467,6 +488,19 @@ export function isOfflineCatalog(value: unknown): value is OfflineCatalog {
     catalog.syncedAt >= 0 &&
     (catalog.creationRevision === undefined ||
       (Number.isSafeInteger(catalog.creationRevision) && catalog.creationRevision >= 0)) &&
+    (catalog.sharedCreationRevision === undefined ||
+      (Number.isSafeInteger(catalog.sharedCreationRevision) &&
+        catalog.sharedCreationRevision >= 0)) &&
+    (catalog.creationMetadata === undefined ||
+      (Array.isArray(catalog.creationMetadata) &&
+        catalog.creationMetadata.every(
+          (entry) =>
+            entry &&
+            Number.isSafeInteger(entry.revision) &&
+            entry.revision > 0 &&
+            files([entry.item]) &&
+            (entry.item.kind === 'sheet' || entry.item.kind === 'doc'),
+        ))) &&
     files(catalog.items) &&
     files(catalog.shared) &&
     Boolean(catalog.views) &&
@@ -476,14 +510,114 @@ export function isOfflineCatalog(value: unknown): value is OfflineCatalog {
   );
 }
 
+/**
+ * Acknowledgement metadata outlives the optional native download. Each list
+ * retires only metadata acknowledged before its own request, so an owned-list
+ * refresh or a queued pre-acknowledgement shared list cannot lose a new file.
+ */
+function mergeCreationCatalog(previous: OfflineCatalog | undefined, incoming: OfflineCatalog) {
+  const ownOlder = (incoming.creationRevision ?? 0) < (previous?.creationRevision ?? 0);
+  const sharedOlder =
+    (incoming.sharedCreationRevision ?? 0) < (previous?.sharedCreationRevision ?? 0);
+  // A queued snapshot with no newer partition cannot undo a later catalog.
+  if (
+    previous &&
+    ((ownOlder &&
+      (incoming.sharedCreationRevision ?? 0) <= (previous.sharedCreationRevision ?? 0)) ||
+      (sharedOlder && (incoming.creationRevision ?? 0) <= (previous.creationRevision ?? 0)))
+  )
+    return previous;
+  const next: OfflineCatalog = {
+    ...incoming,
+    ...(ownOlder && previous
+      ? {
+          items: previous.items,
+          creationRevision: previous.creationRevision,
+          syncedAt: previous.syncedAt,
+        }
+      : {}),
+    ...(sharedOlder && previous
+      ? { shared: previous.shared, sharedCreationRevision: previous.sharedCreationRevision }
+      : {}),
+    views: { ...incoming.views },
+  };
+  if (previous && (ownOlder || sharedOlder))
+    for (const key of new Set([...Object.keys(previous.views), ...Object.keys(incoming.views)]))
+      next.views[key] = [
+        ...(previous.views[key] ?? []).filter((item) =>
+          item.access === 'owner' ? ownOlder : sharedOlder,
+        ),
+        ...(incoming.views[key] ?? []).filter((item) =>
+          item.access === 'owner' ? !ownOlder : !sharedOlder,
+        ),
+      ];
+  const metadata = new Map<string, { item: WorkspaceItem; revision: number }>();
+  for (const entry of [...(previous?.creationMetadata ?? []), ...(incoming.creationMetadata ?? [])])
+    if (entry.revision > (metadata.get(entry.item.id)?.revision ?? 0))
+      metadata.set(entry.item.id, entry);
+  const retained = [];
+  for (const entry of metadata.values()) {
+    const own = entry.item.access === 'owner';
+    const cutoff = (own ? next.creationRevision : next.sharedCreationRevision) ?? 0;
+    const rows = own ? next.items : next.shared;
+    // A subsequent transfer changes which list owns the row. Only reconcile
+    // across partitions once both requests cover the original acknowledgement;
+    // that row stays in its current list instead of becoming an old-role bridge.
+    const listed =
+      rows.find((item) => item.id === entry.item.id) ??
+      (cutoff >= entry.revision &&
+      ((own ? next.sharedCreationRevision : next.creationRevision) ?? 0) >= entry.revision
+        ? (own ? next.shared : next.items).find((item) => item.id === entry.item.id)
+        : undefined);
+    let item = listed && (listed.kind === 'sheet' || listed.kind === 'doc') ? listed : undefined;
+    if (cutoff < entry.revision) {
+      item ??= entry.item;
+      retained.push({ item, revision: entry.revision });
+      if (!rows.some((row) => row.id === item!.id)) {
+        if (own) next.items = [...rows, item];
+        else next.shared = [...rows, item];
+      }
+    }
+    // A last-loaded folder view cannot resurrect this acknowledged native file
+    // after its own authoritative list observes a move, trash or revocation.
+    for (const [key, view] of Object.entries(next.views))
+      next.views[key] = view.filter((row) => row.id !== entry.item.id);
+    if (item) {
+      next.views[item.id] = [item];
+      if (item.parentId && next.views[item.parentId])
+        next.views[item.parentId] = [...next.views[item.parentId], item];
+    }
+  }
+  if (retained.length) next.creationMetadata = retained;
+  else delete next.creationMetadata;
+  return next;
+}
+
 /** Cached permission is provisional; the server rechecks it before creating anything. */
+function creationDestination(
+  catalog: OfflineCatalog,
+  parentId: string | null,
+): { access: Exclude<ItemAccess, 'viewer'>; ownerName?: string } | undefined {
+  if (parentId === null) return { access: 'owner' as const };
+  // Conflicting cached rows cannot grant more access than a known viewer row.
+  // The server remains the authority when a creation is later published.
+  const folders = [
+    ...(catalog.views[parentId] ?? []),
+    ...catalog.items,
+    ...catalog.shared,
+    ...Object.values(catalog.views).flat(),
+  ].filter((item) => item.id === parentId);
+  if (folders.some((item) => item.kind !== 'folder' || item.access === 'viewer')) return undefined;
+  const folder = folders[0];
+  if (!folder || folder.access === 'viewer') return undefined;
+  return {
+    access: folder.access,
+    ...(folder.ownerName === undefined ? {} : { ownerName: folder.ownerName }),
+  };
+}
+
 export function creationFolderAllowed(catalog: OfflineCatalog, parentId: string | null) {
-  return (
-    parentId === null ||
-    [...catalog.items, ...Object.values(catalog.views).flat()].some(
-      (item) => item.id === parentId && item.kind === 'folder' && item.access === 'owner',
-    )
-  );
+  return Boolean(creationDestination(catalog, parentId));
 }
 
 /** A first Space download can prepare local launch without an earlier Dashboard visit. */
@@ -855,16 +989,9 @@ export class OfflineStore {
     const meta = transaction.objectStore('meta');
     try {
       const previous = await request(meta.get('catalog'));
-      // A slow request can finish after a newer list has already observed a
-      // creation or its deletion. Never downgrade that authoritative cutoff,
-      // including when a failed counter read conservatively supplied zero.
-      if (
-        !isOfflineCatalog(previous) ||
-        (catalog.creationRevision ?? 0) >= (previous.creationRevision ?? 0)
-      ) {
-        meta.put(user, 'user');
-        meta.put(catalog, 'catalog');
-      }
+      const next = mergeCreationCatalog(isOfflineCatalog(previous) ? previous : undefined, catalog);
+      meta.put(user, 'user');
+      meta.put(next, 'catalog');
     } catch (error) {
       try {
         transaction.abort();
@@ -982,8 +1109,7 @@ export class OfflineStore {
       outbox,
       creation,
     };
-    if (downloadSummary(item, this.accountId, bundle.itemId).uncertain || bundle.images.length)
-      throw new Error('This new document could not be verified.');
+    if (bundle.images.length) throw new Error('This new document could not be verified.');
     return withOfflineCatalogLock(this.accountId, async () => {
       verifyCurrent();
       const transaction = this.database.transaction(['items', 'meta'], 'readwrite');
@@ -995,10 +1121,25 @@ export class OfflineStore {
         const user = await request(transaction.objectStore('meta').get('user'));
         verifyCurrent();
         if (existing !== undefined) throw new Error('This document already exists on this device.');
-        if (!isOfflineCatalog(catalog) || !object(user) || user.id !== this.accountId)
+        if (
+          !isOfflineCatalog(catalog) ||
+          !object(user) ||
+          user.id !== this.accountId ||
+          typeof user.name !== 'string'
+        )
           throw new Error('Prepare this account online before creating documents offline.');
-        if (!creationFolderAllowed(catalog, creation.request.parentId))
-          throw new Error('Choose one of your own prepared folders for this document.');
+        const destination = creationDestination(catalog, creation.request.parentId);
+        if (!destination)
+          throw new Error('Choose a prepared folder where you can create documents.');
+        item.creation = {
+          ...creation,
+          access: destination.access,
+          ownerName: destination.ownerName,
+          createdByName: user.name,
+        };
+        item.bundle = { ...bundle, access: destination.access };
+        if (downloadSummary(item, this.accountId, bundle.itemId).uncertain)
+          throw new Error('This new document could not be verified.');
         items.add(item);
       } catch (error) {
         try {
@@ -1026,6 +1167,7 @@ export class OfflineStore {
     verifyCurrent();
     const transaction = this.database.transaction(['items', 'meta'], 'readwrite');
     const completion = done(transaction);
+    let updated!: StoredItem;
     try {
       const items = transaction.objectStore('items');
       const item = (await request(items.get(itemId))) as StoredItem | undefined;
@@ -1037,7 +1179,43 @@ export class OfflineStore {
       )
         throw new Error('This new document changed. Reopen its device copy before trying again.');
       if (next) {
-        item.creation = next;
+        if (
+          JSON.stringify({ ...next.request, parentId: expected.request.parentId }) !==
+          JSON.stringify(expected.request)
+        )
+          throw new Error('Keep the original creation request until its upload is confirmed.');
+        const relocating = expected.canRelocate && !next.problem && !next.canRelocate;
+        if (next.request.parentId !== expected.request.parentId && !relocating)
+          throw new Error('Check the original upload before choosing another folder.');
+        if (relocating) {
+          const meta = transaction.objectStore('meta');
+          const catalog = await request(meta.get('catalog'));
+          const user = await request(meta.get('user'));
+          verifyCurrent();
+          const destination =
+            isOfflineCatalog(catalog) && creationDestination(catalog, next.request.parentId);
+          if (
+            !destination ||
+            !object(user) ||
+            user.id !== this.accountId ||
+            typeof user.name !== 'string'
+          )
+            throw new Error('Choose a prepared folder where you can create documents.');
+          item.creation = {
+            ...next,
+            access: destination.access,
+            ownerName: destination.ownerName,
+            createdByName: user.name,
+          };
+          item.bundle = { ...item.bundle, access: destination.access };
+        } else {
+          item.creation = {
+            ...next,
+            access: expected.access,
+            ownerName: expected.ownerName,
+            createdByName: expected.createdByName,
+          };
+        }
         if (downloadSummary(item, this.accountId, itemId).uncertain)
           throw new Error('The new document destination could not be verified.');
       } else {
@@ -1045,7 +1223,8 @@ export class OfflineStore {
           !accepted ||
           accepted.id !== itemId ||
           accepted.kind !== item.kind ||
-          accepted.access !== 'owner'
+          !['owner', 'admin', 'editor'].includes(accepted.access) ||
+          !isOfflineCatalog({ syncedAt: 0, items: [accepted], shared: [], views: {} })
         )
           throw new Error('The uploaded document could not be verified.');
         const meta = transaction.objectStore('meta');
@@ -1059,20 +1238,28 @@ export class OfflineStore {
           throw new Error('The saved creation order is full. Keep the device copy.');
         // Preserve an acknowledged file in a cold local catalog as well as the
         // native queue; a later online refresh may replace this metadata normally.
-        catalog.items = [...catalog.items.filter((row) => row.id !== itemId), accepted];
+        catalog.items = catalog.items.filter((row) => row.id !== itemId);
+        catalog.shared = catalog.shared.filter((row) => row.id !== itemId);
+        (accepted.access === 'owner' ? catalog.items : catalog.shared).push(accepted);
         for (const [key, rows] of Object.entries(catalog.views))
           catalog.views[key] = rows.filter((row) => row.id !== itemId);
         catalog.views[itemId] = [accepted];
         if (accepted.parentId && catalog.views[accepted.parentId])
           catalog.views[accepted.parentId].push(accepted);
-        meta.put(catalog, 'catalog');
         meta.put(revision + 1, 'creationRevision');
         item.createdFile = accepted;
         item.createdFileRevision = revision + 1;
+        catalog.creationMetadata = [
+          ...(catalog.creationMetadata ?? []).filter((entry) => entry.item.id !== itemId),
+          { item: accepted, revision: revision + 1 },
+        ];
+        meta.put(catalog, 'catalog');
+        item.bundle = { ...item.bundle, access: accepted.access };
         delete item.creation;
         if (item.outbox) delete item.outbox.creation;
       }
       items.put(item);
+      updated = item;
     } catch (error) {
       try {
         transaction.abort();
@@ -1085,6 +1272,7 @@ export class OfflineStore {
     await completion;
     verifyCurrent();
     offlineChanged(this.accountId, itemId);
+    return summary(updated);
   }
   /**
    * Replaces an item's download in one transaction, so a failed or interrupted

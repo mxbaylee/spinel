@@ -44,6 +44,11 @@ export class WorkspaceStore {
       ) STRICT;
       CREATE INDEX IF NOT EXISTS workspace_items_owner_parent ON workspace_items(owner_id,parent_id);
       CREATE INDEX IF NOT EXISTS workspace_items_parent ON workspace_items(parent_id);
+      CREATE TABLE IF NOT EXISTS workspace_item_creators (
+        item_id TEXT PRIMARY KEY REFERENCES workspace_items(id) ON DELETE CASCADE,
+        created_by TEXT NOT NULL,
+        created_by_name TEXT NOT NULL
+      ) STRICT;
       CREATE TABLE IF NOT EXISTS workspace_tags (
         user_id TEXT NOT NULL REFERENCES auth_users(id) ON DELETE CASCADE,
         name TEXT NOT NULL,
@@ -261,6 +266,7 @@ export class WorkspaceStore {
         .filter((item) => ordinary.has(item.id))
         .map((item) => ({
           ...item,
+          ...this.creator(item.id),
           appearance: appearances.get(item.id),
           tags: this.assignedTags(ownerId, item.id),
         }));
@@ -455,6 +461,7 @@ export class WorkspaceStore {
     // A direct share must not disclose the owner's private parent chain.
     return {
       ...item,
+      ...this.creator(id),
       appearance: readAppearance(this.auth.database, id),
       access,
       ...(access !== 'owner'
@@ -584,6 +591,44 @@ export class WorkspaceStore {
     }
     return value;
   }
+  /** Creation adopts the authorized folder's owner, never the creator's filing. */
+  creationDestination(actor: string, value: unknown): { parentId: string | null; ownerId: string } {
+    this.owner(actor);
+    if (value === null) return { parentId: null, ownerId: actor };
+    if (typeof value !== 'string') throw new AuthError(400, 'Choose a destination folder.');
+    // The ordinary resolver validates the complete same-owner live ancestry,
+    // including ancestors hidden from a directly shared folder's recipient.
+    const folder = this.get(actor, value, 'edit');
+    if (folder.kind !== 'folder') throw new AuthError(400, 'The destination must be a folder.');
+    const ownerId = this.fileOwner(folder.id);
+    const owner = this.auth.database
+      .prepare('SELECT is_admin FROM auth_users WHERE id=?')
+      .get(ownerId);
+    // Ordinary collaborators retain grants when an owner is disabled, matching
+    // existing document access. Space creation applies its stronger root scope.
+    if (!owner || owner.is_admin) throw new AuthError(404, 'This folder is not available.');
+    return { parentId: folder.id, ownerId };
+  }
+  /** Called inside the creation transaction; no actor FK can delete another owner's work. */
+  recordCreator(itemId: string, actor: string) {
+    const person = this.auth.user(actor);
+    if (!person || person.is_admin) throw new AuthError(401, 'Sign in to continue.');
+    this.auth.database
+      .prepare(
+        'INSERT INTO workspace_item_creators(item_id,created_by,created_by_name) VALUES(?,?,?)',
+      )
+      .run(itemId, actor, person.name);
+  }
+  /** Call only after account access is established. Legacy attribution stays unknown. */
+  creator(itemId: string): Pick<WorkspaceItem, 'createdByName'> {
+    const row = this.auth.database
+      .prepare(
+        `SELECT coalesce(u.name,c.created_by_name) AS name FROM workspace_item_creators c
+        LEFT JOIN auth_users u ON u.id=c.created_by WHERE c.item_id=?`,
+      )
+      .get(itemId) as { name: string } | undefined;
+    return row ? { createdByName: row.name } : {};
+  }
   /** Call only after authorizing the file; ownership is not a grant. */
   fileOwner(id: string): string {
     const row = this.auth.database
@@ -620,7 +665,7 @@ export class WorkspaceStore {
     return value;
   }
   create(
-    ownerId: string,
+    actor: string,
     input: {
       name?: unknown;
       kind?: unknown;
@@ -629,12 +674,12 @@ export class WorkspaceStore {
       icon?: unknown;
     },
   ): WorkspaceItem {
-    this.owner(ownerId);
+    this.owner(actor);
     const name = this.name(input.name);
     if (!ITEM_KINDS.includes(input.kind as ItemKind))
       throw new AuthError(400, 'Choose Folder, Sheet or Doc.');
     return this.auth.transaction(() => {
-      const parentId = this.parent(ownerId, input.parentId);
+      const { parentId, ownerId } = this.creationDestination(actor, input.parentId);
       const id = randomUUID();
       const now = this.auth.now();
       this.auth.database
@@ -642,8 +687,9 @@ export class WorkspaceStore {
           'INSERT INTO workspace_items(id,owner_id,parent_id,kind,name,created_at,updated_at) VALUES(?,?,?,?,?,?,?)',
         )
         .run(id, ownerId, parentId, input.kind as string, name, now, now);
+      this.recordCreator(id, actor);
       initialIcon(this.auth.database, id, input.icon, input.iconColor);
-      return this.get(ownerId, id);
+      return this.get(actor, id);
     });
   }
   update(

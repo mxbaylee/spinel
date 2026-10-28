@@ -114,6 +114,18 @@ File admin access permits them; viewers and editors do not receive these actions
 my folder" removes the person's filed reference, not the item, so it isn't
 grouped with the destructive items.
 
+**Shared-folder creation (SPN-069).** Inside an editable shared folder, the same
+New menu offers Folder, Sheet, Doc, enabled Space and Import file. The aggregate
+Shared with me place and viewer folders have no New action. The creation dialog
+states that the item belongs to the folder owner and the account will be shown
+as its creator. Account-only file metadata adds **Created by <name>** beside the
+existing access and owner details; the text wraps in both list and grid layouts.
+Creator attribution does not add organization actions for Editors. Offline,
+prepared shared folders offer only Sheet and Doc, and pending rows keep their
+shared role, owner and creator details. Rejected destinations use the existing
+Needs attention and explicit recovery pattern. Production stories cover Editor,
+File admin, Viewer, new item, pending offline and rejected-destination states.
+
 ## Slides removal before the redesign (SPN-074)
 
 SPN-074 removed Slides entirely before SPN-047. The existing New type selector

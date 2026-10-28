@@ -79,7 +79,9 @@ function creationFile(copy: OfflineDownload): FileItem | undefined {
     id: copy.itemId,
     kind: copy.kind,
     name: copy.name,
-    access: 'owner',
+    access: copy.creation.access ?? 'owner',
+    ownerName: copy.creation.ownerName,
+    createdByName: copy.creation.createdByName,
     parentId: copy.creation.parentId,
     createdAt: copy.creation.createdAt,
     updatedAt: copy.creation.createdAt,
@@ -152,7 +154,11 @@ export function Dashboard({
     }
   });
   const searchActive = hasSearch(query) || !parseSearchInput(draft).ok;
-  const shared = useSharedItems(local?.catalog.shared);
+  const shared = useSharedItems(
+    local?.catalog.shared,
+    () => offline.catalogRevision(),
+    local?.catalog.sharedCreationRevision ?? 0,
+  );
   const [importOpen, setImportOpen] = useState(false);
   const [archiveOpen, setArchiveOpen] = useState(false);
   const archiveFocus = useRef<HTMLButtonElement | null>(null);
@@ -242,21 +248,57 @@ export function Dashboard({
   useEffect(() => () => onCatalogStatus?.(null), [onCatalogStatus]);
   // The last-loaded view for each opened folder or item, kept for offline launch.
   const views = useRef<Record<string, FileItem[]>>({ ...local?.catalog.views });
+  // Creation metadata belongs to the file list, not to its optional device copy.
+  // Keep its ordering fence after removal until the proper list supersedes it.
+  const acknowledgedCreations = useRef(
+    new Map((local?.catalog.creationMetadata ?? []).map((entry) => [entry.item.id, entry])),
+  );
+  function creationView(rows: FileItem[]) {
+    return rows.flatMap((item) => {
+      const entry = acknowledgedCreations.current.get(item.id);
+      if (!entry) return [item];
+      const own = entry.item.access === 'owner';
+      if ((own ? catalogRevision : shared.creationRevision) < entry.revision) return [item];
+      // Ownership can change after publication. The opposite list may supply
+      // the current role/parent only after its own request covers this receipt.
+      const authoritative =
+        (own ? items : shared.items).find((row) => row.id === item.id) ??
+        ((own ? shared.creationRevision : catalogRevision) >= entry.revision
+          ? (own ? shared.items : items).find((row) => row.id === item.id)
+          : undefined);
+      return authoritative ? [authoritative] : [];
+    });
+  }
   const catalog = (): OfflineCatalog | null =>
     loaded && shared.loaded
       ? {
           syncedAt,
           creationRevision: catalogRevision,
+          sharedCreationRevision: shared.creationRevision,
+          ...(creationMetadata.length ? { creationMetadata } : {}),
           items: [
             ...new Map(
               [
-                ...deviceCreatedFiles.filter((item) => !offline.downloads.get(item.id)?.creation),
+                ...deviceCreatedFiles.filter(
+                  (item) => item.access === 'owner' && !offline.downloads.get(item.id)?.creation,
+                ),
                 ...items,
               ].map((item) => [item.id, item]),
             ).values(),
           ],
-          shared: shared.items,
-          views: views.current,
+          shared: [
+            ...new Map(
+              [
+                ...deviceCreatedFiles.filter(
+                  (item) => item.access !== 'owner' && !offline.downloads.get(item.id)?.creation,
+                ),
+                ...shared.items,
+              ].map((item) => [item.id, item]),
+            ).values(),
+          ],
+          views: Object.fromEntries(
+            Object.entries(views.current).map(([id, rows]) => [id, creationView(rows)]),
+          ),
         }
       : null;
   const offline = useOfflineDownloads(user, local, catalog);
@@ -264,16 +306,26 @@ export function Dashboard({
     const item = creationFile(copy);
     return item ? [item] : [];
   });
-  const deviceCreatedFiles = [...offline.downloads.values()].flatMap((copy) => {
-    const item =
-      creationFile(copy) ??
-      (catalogRevision < (copy.createdFileRevision ?? 0) ? copy.createdFile : undefined);
-    return item ? [item] : [];
-  });
+  for (const copy of offline.downloads.values())
+    if (
+      copy.createdFile &&
+      copy.createdFileRevision &&
+      copy.createdFileRevision > (acknowledgedCreations.current.get(copy.itemId)?.revision ?? 0)
+    )
+      acknowledgedCreations.current.set(copy.itemId, {
+        item: copy.createdFile,
+        revision: copy.createdFileRevision,
+      });
+  const creationMetadata = [...acknowledgedCreations.current.values()].filter(
+    ({ item, revision }) =>
+      (item.access === 'owner' ? catalogRevision : shared.creationRevision) < revision,
+  );
+  const deviceCreatedFiles = [...creationItems, ...creationMetadata.map((entry) => entry.item)];
   useEffect(() => {
     const known = new Set(items.map((item) => item.id));
     const accepted = deviceCreatedFiles.filter(
-      (item) => !offline.downloads.get(item.id)?.creation && !known.has(item.id),
+      (item) =>
+        item.access === 'owner' && !offline.downloads.get(item.id)?.creation && !known.has(item.id),
     );
     // Keep accepted files in the ordinary catalog before metadata edits or device
     // removal. Repeat for late pre-acknowledgement lists; the revision cutoff
@@ -282,7 +334,8 @@ export function Dashboard({
       setItems((previous) => {
         const current = accepted.filter(
           (item) =>
-            (offline.downloads.get(item.id)?.createdFileRevision ?? 0) > catalogRevisionRef.current,
+            (acknowledgedCreations.current.get(item.id)?.revision ?? 0) >
+            catalogRevisionRef.current,
         );
         return current.length
           ? [...new Map([...current, ...previous].map((item) => [item.id, item])).values()]
@@ -386,9 +439,9 @@ export function Dashboard({
   useEffect(() => {
     const current = catalog();
     if (current && !local) void offline.saveCatalog(current).catch(() => {});
-  }, [items, shared.items, viewed, offline.downloads]);
+  }, [items, shared.items, viewed, offline.downloads, catalogRevision, shared.creationRevision]);
   // Offline, any item from a saved view can be opened by its stable link.
-  const known = local ? Object.values(views.current).flat() : [];
+  const known = local ? creationView(Object.values(views.current).flat()) : [];
   const byId = new Map(
     [
       ...known,
@@ -396,7 +449,7 @@ export function Dashboard({
       ...(heldCreation.current ? [heldCreation.current] : []),
       ...items,
       ...shared.items,
-      ...viewed,
+      ...creationView(viewed),
       ...creationItems,
     ].map((item) => [item.id, item]),
   );
@@ -453,16 +506,14 @@ export function Dashboard({
     };
   }, [title]);
   const personalFolder = !currentId || (current?.kind === 'folder' && current.access === 'owner');
-  const listedOwnedFolders = new Set(
-    items
-      .filter((item) => item.kind === 'folder' && item.access === 'owner')
-      .map((item) => item.id),
+  const listedFolders = new Set(
+    [...items, ...shared.items].filter((item) => item.kind === 'folder').map((item) => item.id),
   );
   const visibleItems = personalFolder
     ? [
         ...new Map(
           [
-            ...(currentId ? viewed : items).filter(
+            ...(currentId ? creationView(viewed) : items).filter(
               (item) => item.access === 'owner' && item.parentId === currentId,
             ),
             ...shared.items.filter((item) => item.placementParentId === currentId),
@@ -473,15 +524,22 @@ export function Dashboard({
                   item.parentId === currentId ||
                   (!currentId &&
                     (!item.parentId ||
-                      !listedOwnedFolders.has(item.parentId) ||
+                      !listedFolders.has(item.parentId) ||
                       byId.get(item.parentId)?.kind !== 'folder' ||
-                      byId.get(item.parentId)?.access !== 'owner' ||
+                      (item.access === 'owner' && byId.get(item.parentId)?.access !== 'owner') ||
                       Boolean(offline.downloads.get(item.id)?.creation?.problem))),
               ),
           ].map((item) => [item.id, item]),
         ).values(),
       ]
-    : viewed.filter((item) => item.parentId === currentId);
+    : [
+        ...new Map(
+          [...creationView(viewed), ...deviceCreatedFiles]
+            .map((item) => byId.get(item.id) ?? item)
+            .filter((item) => item.parentId === currentId)
+            .map((item) => [item.id, item]),
+        ).values(),
+      ];
   function ancestors(item?: FileItem) {
     const path: FileItem[] = [];
     const seen = new Set<string>();
@@ -615,7 +673,7 @@ export function Dashboard({
       setViewed((previous) => [...previous.filter((entry) => entry.id !== item.id), item]);
       setAction(null);
       if (browsing) setRefresh((value) => value + 1);
-      if (item.access === 'admin') await shared.refresh();
+      if (!creatingLocally && item.access !== 'owner') await shared.refresh();
       if (action.mode === 'new' && item.kind !== 'folder') openFile(item);
     } catch (failure) {
       setError(failure instanceof Error ? failure.message : 'Could not save. Try again.');
@@ -792,13 +850,22 @@ export function Dashboard({
     </p>
   );
   const localCreation = Boolean(local) || connection === 'offline';
-  const canCreate = browsing && !sharedOpen && (!current || current.access === 'owner');
+  const canCreate =
+    browsing &&
+    !sharedOpen &&
+    (!currentId || (current?.kind === 'folder' && current.access !== 'viewer'));
   const newKinds = FILE_KINDS.filter((kind) =>
     localCreation ? kind === 'sheet' || kind === 'doc' : kind !== 'space' || spacesEnabled,
   );
   // Shared is already ordered by latest grant; alphabetizing would hide recent shares.
   const listedItems = sharedOpen
-    ? shared.items
+    ? [
+        ...new Map(
+          [...shared.items, ...deviceCreatedFiles.filter((item) => item.access !== 'owner')].map(
+            (item) => [item.id, byId.get(item.id) ?? item],
+          ),
+        ).values(),
+      ]
     : [...visibleItems].sort(
         (a, b) =>
           Number(b.kind === 'folder') - Number(a.kind === 'folder') ||
@@ -1019,7 +1086,11 @@ export function Dashboard({
       ) : browsing ? (
         <>
           {!searchActive &&
-            (local && current && !views.current[current.id] && !personalFolder ? (
+            (local &&
+            current &&
+            !views.current[current.id] &&
+            !personalFolder &&
+            !listedItems.length ? (
               <p role="status">
                 This folder wasn’t opened online on this device, so its contents aren’t here.
                 Connect to open it.
@@ -1058,7 +1129,8 @@ export function Dashboard({
               dialogOpen={importOpen}
               onDialogOpenChange={setImportOpen}
               onImported={(item) => {
-                setItems((previous) => [...previous, item]);
+                if (item.access === 'owner') setItems((previous) => [...previous, item]);
+                else void shared.refresh();
                 setViewed((previous) => [...previous, item]);
                 setRefresh((value) => value + 1);
                 setImportOpen(false);
@@ -1223,6 +1295,12 @@ export function Dashboard({
             )}
             {action.mode === 'new' && localCreation && (
               <p>This document will save on this device and upload when connected.</p>
+            )}
+            {action.mode === 'new' && current && current.access !== 'owner' && (
+              <p>
+                This item will belong to {current.ownerName ?? 'the folder owner'}. You’ll be shown
+                as its creator.
+              </p>
             )}
             {action.mode !== 'move' &&
             action.mode !== 'file' &&

@@ -16,10 +16,10 @@ only that item's grant; remove the ancestor grant too to revoke inherited access
 Moving an item out of a shared folder removes that inheritance immediately.
 
 Viewers can open folders, read document content and load its images. Editors can
-also save document content and upload Doc images. File admins additionally manage
+also save document content, upload Doc images and create children in editable
+shared folders. File admins additionally manage
 other accounts' grants and guest links, rename, move within authorized destinations,
-and send outer files to recoverable [Trash](trash.md). Creation in ordinary folders
-still requires ownership; [Space roles](#space-sharing) allow Edit to manage the
+and send outer files to recoverable [Trash](trash.md). [Space roles](#space-sharing) allow Edit to manage the
 internal tree. Sharing never changes ownership. Sheets and Docs use their native
 read-only mode for Viewers.
 
@@ -27,6 +27,26 @@ Shared items open at their authenticated direct address. Shared folders show the
 children; **More → Refresh folder** retrieves new additions. My files lists owned
 items and shared items personally filed there. The Shared with me place adds
 account-only discovery and personal filing, described below alongside guest links.
+
+## Creating in a shared folder
+
+Inside a folder with Can edit or File admin access, **New** creates a Sheet, Doc,
+folder or enabled outer Space in that folder. Native Univer imports use the same
+rule. The folder owner owns each new item, and everyone with folder access
+inherits their existing role. The creating account receives no extra grant and
+loses access when its folder grant is revoked. Ordinary Editors still cannot
+rename, move, trash or share those items.
+
+The creation dialog explains ownership. Account-authorized file rows show
+**Created by <name>**, including when the creator later leaves. Existing items
+without recorded attribution omit it. Guest responses never include this account
+identity. A separate copy action remains SPN-065 and must use the same destination
+and creator rules when implemented.
+
+Prepared [offline creation](offline.md#creating-a-new-document-offline) supports
+Sheets and Docs in cached editable shared folders. Publication rechecks access;
+revocation preserves local work for explicit recovery instead of silently creating
+it elsewhere. See [SPN-069's ownership and receipt decisions](implementation/SPN-069.md).
 
 ## Permission changes and unsaved work
 
