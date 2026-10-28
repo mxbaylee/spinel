@@ -134,8 +134,11 @@ test('owner guest-link inventory changes expiry without rotating and fences stal
     await row(expired.name)
       .getByRole('button', { name: `More actions for ${expired.name}` })
       .click();
-    await expect(page.getByRole('menuitem', { name: 'Change expiry…' })).toHaveCount(0);
-    await page.keyboard.press('Escape');
+    const expiredMenu = page.getByRole('menu', { name: `More actions for ${expired.name}` });
+    await expect(expiredMenu).toBeVisible();
+    await expect(expiredMenu.getByRole('menuitem', { name: 'Change expiry…' })).toHaveCount(0);
+    await expiredMenu.press('Escape');
+    await expect(expiredMenu).toBeHidden();
     await row(space.name)
       .getByRole('button', { name: `More actions for ${space.name}` })
       .click();
@@ -146,12 +149,17 @@ test('owner guest-link inventory changes expiry without rotating and fences stal
     await expect(row(space.name)).toHaveCount(0);
     await expect(page.getByRole('heading', { name: 'Guest links', exact: true })).toBeFocused();
   } finally {
-    await page.goto('/sign-in');
-    for (const user of [owner, other]) {
-      db.prepare('DELETE FROM workspace_items WHERE owner_id=?').run(user.id);
-      db.prepare('DELETE FROM auth_users WHERE id=?').run(user.id);
+    // Stop polling before removing fixtures, without a navigation that can mask
+    // the original failure after Playwright has already closed the page.
+    await page.close().catch(() => {});
+    try {
+      for (const user of [owner, other]) {
+        db.prepare('DELETE FROM workspace_items WHERE owner_id=?').run(user.id);
+        db.prepare('DELETE FROM auth_users WHERE id=?').run(user.id);
+      }
+    } finally {
+      db.close();
     }
-    db.close();
   }
 });
 

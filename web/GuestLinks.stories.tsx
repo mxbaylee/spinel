@@ -179,8 +179,13 @@ export const Expired: Story = {
   parameters: { api: { [list]: { items: [items[3]] } } },
   play: async ({ canvasElement }) => {
     const body = await menu(canvasElement, items[3].name);
-    await expect(body.queryByRole('menuitem', { name: 'Change expiry…' })).not.toBeInTheDocument();
+    const popup = await body.findByRole('menu', { name: `More actions for ${items[3].name}` });
+    await expect(popup).toBeVisible();
+    await expect(
+      within(popup).queryByRole('menuitem', { name: 'Change expiry…' }),
+    ).not.toBeInTheDocument();
     await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(body.queryByRole('menu')).not.toBeInTheDocument());
   },
 };
 export const Phone: Story = {
