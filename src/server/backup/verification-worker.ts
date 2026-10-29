@@ -1,6 +1,7 @@
 import { join } from 'node:path';
+import { rm, stat } from 'node:fs/promises';
 import { DatabaseSync } from '../../../server/database.ts';
-import { readKey, restoreArchive } from './archive.ts';
+import { digest, readKey, restoreArchive } from './archive.ts';
 import { verifyInventory } from './inventory.ts';
 import { verifySemantics } from './verification-semantics.ts';
 import { RecoveryResourceError } from './resource-error.ts';
@@ -16,6 +17,7 @@ process.once(
     expectedOrigin: string;
     expectedImage?: string;
     maxDatabaseBytes?: number;
+    retain?: boolean;
   }) => {
     let database: DatabaseSync | undefined;
     try {
@@ -39,9 +41,30 @@ process.once(
       database = new DatabaseSync(join(destination, 'spinel.sqlite'), { readOnly: true });
       const inventory = verifyInventory(database)!;
       const semantics = await verifySemantics(database);
+      database.close();
+      database = undefined;
+      const databasePath = join(destination, 'spinel.sqlite');
+      // Archived endpoints, secrets and schedules are evidence, not deployment
+      // instructions. Assisted activation must retain the current deployment.
+      if (value.retain) await rm(join(destination, 'recovery.json'));
       process.send?.({
         ok: true,
-        result: { ...inventory, ...semantics, ...(recovery.keyId && { keyId: recovery.keyId }) },
+        result: {
+          ...inventory,
+          ...semantics,
+          ...(recovery.keyId && { keyId: recovery.keyId }),
+          ...(value.retain && {
+            prepared: {
+              databaseSha256: await digest(databasePath),
+              databaseBytes: (await stat(databasePath)).size,
+              recovery: {
+                createdAt: recovery.createdAt,
+                origin: recovery.origin,
+                image: recovery.image,
+              },
+            },
+          }),
+        },
       });
     } catch (error) {
       // Raw SQLite/native errors can contain document content and credentials.

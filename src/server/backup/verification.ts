@@ -1,8 +1,24 @@
 import { fork } from 'node:child_process';
-import { chmod, mkdtemp, readFile, realpath, rm, stat } from 'node:fs/promises';
+import { chmod, lstat, mkdtemp, readFile, realpath, rm, stat } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { isRecoveryResourceCode, RecoveryResourceError } from './resource-error.ts';
+
+export interface PreparedRestore extends VerificationResult {
+  /** Private staging only. This is not permission to activate the database. */
+  databasePath: string;
+  databaseSha256: string;
+  databaseBytes: number;
+  recovery: { createdAt: string; origin: string; image: string };
+  dispose(): Promise<void>;
+}
+
+interface PreparedEvidence {
+  databaseSha256: string;
+  databaseBytes: number;
+  recovery: PreparedRestore['recovery'];
+}
+type WorkerResult = VerificationResult & { prepared?: PreparedEvidence };
 
 export interface VerificationResult {
   tables: number;
@@ -57,9 +73,33 @@ export async function checkVerificationHeadroom(
 /** The parent owns cleanup even if the worker is killed. The worker receives
  * paths by IPC, never secret bytes or user content on the command line. */
 export async function verifyArchive(options: VerificationOptions): Promise<VerificationResult> {
+  return inspectArchive(options, false);
+}
+
+/** Both catalog selection and upload will use this same isolated preparation.
+ * Keep only the verified database, never an archived deployment environment.
+ * The caller owns disposal until a supervisor durably accepts custody. */
+export async function prepareRestoreArchive(
+  options: VerificationOptions & { expectedImage: string },
+): Promise<PreparedRestore> {
+  if (!/^(sha256:[a-f0-9]{64}|\S+@sha256:[a-f0-9]{64})$/.test(options.expectedImage))
+    throw new Error('Restore preparation requires the current immutable application image.');
+  const result = await inspectArchive(options, true);
+  if (!('databasePath' in result))
+    throw new Error('Restore preparation did not retain a candidate.');
+  return result;
+}
+
+async function inspectArchive(
+  options: VerificationOptions,
+  retain: boolean,
+): Promise<VerificationResult | PreparedRestore> {
   options.signal?.throwIfAborted();
   await checkVerificationHeadroom('start');
-  const directory = await mkdtemp(join(options.stagingRoot, '.verify-'));
+  const directory = await mkdtemp(
+    join(options.stagingRoot, retain ? '.restore-candidate-' : '.verify-'),
+  );
+  let retained = false;
   try {
     await chmod(directory, 0o700);
     const archive = await realpath(options.archive);
@@ -92,8 +132,8 @@ export async function verifyArchive(options: VerificationOptions): Promise<Verif
     const timeoutMs = options.timeoutMs ?? 120_000;
     if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 10 * 60_000)
       throw new Error('Invalid recovery verification time limit.');
-    return await new Promise<VerificationResult>((resolveResult, reject) => {
-      let result: VerificationResult | undefined;
+    const result = await new Promise<WorkerResult>((resolveResult, reject) => {
+      let result: WorkerResult | undefined;
       let failure: Error | undefined;
       const deadline = Date.now() + timeoutMs;
       const child = fork(new URL('./verification-worker.ts', import.meta.url), [], {
@@ -146,7 +186,7 @@ export async function verifyArchive(options: VerificationOptions): Promise<Verif
       child.on('message', (message: unknown) => {
         const value = message as {
           ok?: unknown;
-          result?: VerificationResult;
+          result?: WorkerResult;
           resourceCode?: unknown;
         };
         if (value?.ok === false && isRecoveryResourceCode(value.resourceCode)) {
@@ -160,7 +200,8 @@ export async function verifyArchive(options: VerificationOptions): Promise<Verif
             const count = value.result![key as keyof VerificationResult];
             return typeof count === 'number' && Number.isSafeInteger(count) && count >= 0;
           }) ||
-          (value.result.keyId !== undefined && !/^[a-zA-Z0-9_-]{1,80}$/.test(value.result.keyId))
+          (value.result.keyId !== undefined && !/^[a-zA-Z0-9_-]{1,80}$/.test(value.result.keyId)) ||
+          (retain && !validPreparedEvidence(value.result.prepared, options))
         ) {
           stop(
             new Error(
@@ -191,6 +232,7 @@ export async function verifyArchive(options: VerificationOptions): Promise<Verif
           expectedOrigin: options.expectedOrigin,
           expectedImage: options.expectedImage,
           maxDatabaseBytes: options.maxDatabaseBytes,
+          retain,
         },
         (error) => {
           if (error) stop(new Error('Recovery verification could not start.'));
@@ -198,7 +240,42 @@ export async function verifyArchive(options: VerificationOptions): Promise<Verif
       );
       if (options.signal?.aborted) abort();
     });
+    options.signal?.throwIfAborted();
+    const { prepared, ...verification } = result;
+    if (!retain || !prepared) return verification;
+    const databasePath = join(directory, 'restored', 'spinel.sqlite');
+    const info = await lstat(databasePath);
+    if (!info.isFile() || info.size !== prepared.databaseBytes || (info.mode & 0o077) !== 0)
+      throw new Error('The prepared restore database is unavailable.');
+    options.signal?.throwIfAborted();
+    retained = true;
+    return {
+      ...verification,
+      ...prepared,
+      databasePath,
+      dispose: () => rm(directory, { recursive: true, force: true }),
+    };
   } finally {
-    await rm(directory, { recursive: true, force: true });
+    if (!retained) await rm(directory, { recursive: true, force: true });
   }
+}
+
+function validPreparedEvidence(
+  value: unknown,
+  options: VerificationOptions,
+): value is PreparedEvidence {
+  if (!value || typeof value !== 'object') return false;
+  const evidence = value as PreparedEvidence;
+  return (
+    typeof evidence.databaseSha256 === 'string' &&
+    /^[a-f0-9]{64}$/.test(evidence.databaseSha256) &&
+    Number.isSafeInteger(evidence.databaseBytes) &&
+    evidence.databaseBytes >= 4096 &&
+    evidence.databaseBytes <= (options.maxDatabaseBytes ?? 8 * 1024 ** 3) &&
+    !!evidence.recovery &&
+    typeof evidence.recovery.createdAt === 'string' &&
+    Number.isFinite(Date.parse(evidence.recovery.createdAt)) &&
+    evidence.recovery.origin === options.expectedOrigin &&
+    evidence.recovery.image === options.expectedImage
+  );
 }

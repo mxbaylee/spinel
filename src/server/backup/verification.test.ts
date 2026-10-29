@@ -1,6 +1,6 @@
 import { createCipheriv, createHash, randomBytes, randomUUID } from 'node:crypto';
-import { mkdtemp, readFile, readdir, rm, symlink, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { mkdtemp, readFile, readdir, rm, stat, symlink, writeFile } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { gzipSync } from 'node:zlib';
 import { afterEach, expect, test } from 'vitest';
@@ -16,7 +16,7 @@ import { CollaborationGenerations } from '../collaboration/generations.ts';
 import { SQLiteSyncStorage } from '../sync/store.ts';
 import { makeArchive, restoreArchive } from './archive.ts';
 import { verifyInventory } from './inventory.ts';
-import { checkVerificationHeadroom, verifyArchive } from './verification.ts';
+import { checkVerificationHeadroom, prepareRestoreArchive, verifyArchive } from './verification.ts';
 import { verifySemantics } from './verification-semantics.ts';
 import { RecoveryResourceError } from './resource-error.ts';
 
@@ -108,6 +108,81 @@ test('a real isolated process authenticates inventory, native content, image byt
   expect(
     f.db.prepare('SELECT snapshot FROM doc_snapshots WHERE item_id=?').get(f.doc.id)?.snapshot,
   ).toContain('Retained journal');
+}, 30_000);
+
+test('restore preparation retains verified bytes without activating data or returning deployment secrets', async () => {
+  const f = await fixture(),
+    archive = await f.archive();
+  const source = await readFile(archive.archive);
+  f.db.prepare('UPDATE workspace_items SET name=? WHERE id=?').run('Newer work', f.doc.id);
+  const prepared = await prepareRestoreArchive({ ...f.options, archive: archive.archive });
+  cleanup.push(prepared.dispose);
+  expect(prepared).toMatchObject({
+    snapshots: 2,
+    images: 1,
+    keyId: 'current',
+    recovery: { createdAt: recovery.createdAt, origin: recovery.origin, image: recovery.image },
+  });
+  expect(JSON.stringify(prepared)).not.toContain('NODE_ENV');
+  expect(Object.keys(prepared.recovery).sort()).toEqual(['createdAt', 'image', 'origin']);
+  expect(await readdir(dirname(prepared.databasePath))).toEqual(['spinel.sqlite']);
+  expect((await stat(prepared.databasePath)).mode & 0o077).toBe(0);
+  const candidate = await readFile(prepared.databasePath);
+  expect(candidate.length).toBe(prepared.databaseBytes);
+  expect(createHash('sha256').update(candidate).digest('hex')).toBe(prepared.databaseSha256);
+  const restored = new DatabaseSync(prepared.databasePath);
+  try {
+    expect(verifyInventory(restored)).toMatchObject({
+      tables: prepared.tables,
+      rows: prepared.rows,
+    });
+    expect(
+      restored.prepare('SELECT name FROM workspace_items WHERE id=?').get(f.doc.id)?.name,
+    ).toBe('Journal');
+  } finally {
+    restored.close();
+  }
+  // Preparation is deliberately separate from permission to discard later work.
+  expect(f.db.prepare('SELECT name FROM workspace_items WHERE id=?').get(f.doc.id)?.name).toBe(
+    'Newer work',
+  );
+  expect(await readFile(archive.archive)).toEqual(source);
+  await prepared.dispose();
+  await prepared.dispose();
+  expect(
+    (await readdir(f.directory)).filter((name) => name.startsWith('.restore-candidate-')),
+  ).toEqual([]);
+}, 30_000);
+
+test('incompatible or interrupted preparation leaves no candidate and preserves the encrypted source', async () => {
+  const f = await fixture(),
+    archive = await f.archive();
+  const source = await readFile(archive.archive);
+  await expect(
+    prepareRestoreArchive({
+      ...f.options,
+      archive: archive.archive,
+      expectedImage: `sha256:${'b'.repeat(64)}`,
+    }),
+  ).rejects.toThrow('verification');
+  await expect(
+    prepareRestoreArchive({
+      ...f.options,
+      archive: archive.archive,
+      expectedOrigin: 'https://another.example',
+    }),
+  ).rejects.toThrow('verification');
+  await expect(
+    prepareRestoreArchive({
+      ...f.options,
+      archive: archive.archive,
+      timeoutMs: 1,
+    }),
+  ).rejects.toEqual(new RecoveryResourceError('time-limit'));
+  expect(
+    (await readdir(f.directory)).filter((name) => name.startsWith('.restore-candidate-')),
+  ).toEqual([]);
+  expect(await readFile(archive.archive)).toEqual(source);
 }, 30_000);
 
 test('inventory covers unknown tables, integer/real precision, data, schema and empty tables', async () => {
