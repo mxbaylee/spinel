@@ -9,6 +9,7 @@ import {
   mkdir,
   mkdtemp,
   readFile,
+  readdir,
   rename,
   rm,
   symlink,
@@ -1176,4 +1177,21 @@ test('a stale shutdown challenge cannot replace or poison the current witness', 
   expect(supervisor.journal.state.restoreStop).toEqual(witness);
   expect(supervisor.status().phase).toBe('stopped');
   assertWorkspaceHandlesClosed(f.databasePath);
+});
+
+test('journal refuses oversized UTF-8 records before replacing durable state', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'spinel-journal-budget-'));
+  cleanups.push(() => rm(directory, { recursive: true, force: true }));
+  const root = join(directory, 'recovery');
+  await mkdir(root, { mode: 0o700 });
+  const journal = await RecoveryJournal.open(root, join(directory, 'workspace.sqlite'));
+  cleanups.push(() => journal.close());
+  const before = await readFile(join(root, 'journal.json'), 'utf8');
+  journal.state.lastFailure = 'é'.repeat(17_000);
+  expect(() => journal.write()).toThrow('storage budget');
+  expect(await readFile(join(root, 'journal.json'), 'utf8')).toBe(before);
+  expect(await readdir(root)).toEqual(['journal.json']);
+  journal.state = JSON.parse(before);
+  journal.write();
+  expect(await readFile(join(root, 'journal.json'), 'utf8')).toBe(before);
 });

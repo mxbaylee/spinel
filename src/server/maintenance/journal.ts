@@ -21,6 +21,7 @@ import { assertNoPendingRestore } from './restore-barrier.ts';
 import { validRestoreStopRecord } from './restore-stop.ts';
 import type { RestoreStopRecord } from './restore-stop.ts';
 
+const MAX_JOURNAL_BYTES = 32_768;
 export const AUTHORITY_MS = 5 * 60_000;
 export const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const hashPattern = /^[0-9a-f]{64}$/;
@@ -518,7 +519,7 @@ export class RecoveryJournal {
           !metadata.isFile() ||
           metadata.uid !== process.getuid!() ||
           metadata.mode & 0o077 ||
-          metadata.size > 32_768
+          metadata.size > MAX_JOURNAL_BYTES
         )
           throw new Error('Invalid recovery journal.');
         loaded = JSON.parse(readFileSync(descriptor, 'utf8'));
@@ -597,7 +598,7 @@ export class RecoveryJournal {
         info.isSymbolicLink() ||
         info.uid !== process.getuid!() ||
         info.mode & 0o077 ||
-        info.size > 32_768
+        info.size > MAX_JOURNAL_BYTES
       )
         throw new Error('Invalid interrupted recovery journal.');
       unlinkSync(path);
@@ -684,6 +685,9 @@ export class RecoveryJournal {
     this.checkRoot();
     if (this.corrupted)
       throw new Error('An invalid recovery journal needs cold-host verification.');
+    const text = JSON.stringify(this.state) + '\n';
+    if (Buffer.byteLength(text) > MAX_JOURNAL_BYTES)
+      throw new Error('Recovery journal exceeds its storage budget.');
     const name = `pending-${randomUUID()}` as const;
     const file = this.path(name);
     let descriptor: number | undefined;
@@ -694,7 +698,7 @@ export class RecoveryJournal {
         constants.O_CREAT | constants.O_EXCL | constants.O_WRONLY | constants.O_NOFOLLOW,
         0o600,
       );
-      writeFileSync(descriptor, JSON.stringify(this.state) + '\n');
+      writeFileSync(descriptor, text);
       fsyncSync(descriptor);
       closeSync(descriptor);
       descriptor = undefined;
