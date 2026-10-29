@@ -21,12 +21,16 @@ async function command(file: string, args: string[]) {
 }
 
 async function applescript(source: string, ...args: string[]) {
-  return command('/usr/bin/osascript', ['-e', source, ...args]);
+  return command('/usr/bin/osascript', [
+    '-e',
+    source.startsWith('on run') ? source : `with timeout of 5 seconds\n${source}\nend timeout`,
+    ...args,
+  ]);
 }
 
 async function evaluate(source: string) {
   return applescript(
-    'on run argv\n tell application "Safari" to return do JavaScript (item 1 of argv) in front document\nend run',
+    'on run argv\nwith timeout of 5 seconds\n tell application "Safari" to return do JavaScript (item 1 of argv) in front document\nend timeout\nend run',
     source,
   );
 }
@@ -68,7 +72,8 @@ async function main() {
   assert.equal(process.env.RUNNER_ENVIRONMENT, 'github-hosted');
   await mkdir(output, { recursive: true });
   const sentinel = randomUUID();
-  const html = '<!doctype html><html><title>Spinel desktop profile probe</title><body>Spinel synthetic profile probe</body></html>';
+  const html =
+    '<!doctype html><html><title>Spinel desktop profile probe</title><body>Spinel synthetic profile probe</body></html>';
   const worker = `self.addEventListener('install', event => event.waitUntil(caches.open('spn052-shell').then(async cache => { await cache.add('/'); await self.skipWaiting(); })));
 self.addEventListener('activate', event => event.waitUntil(self.clients.claim()));
 self.addEventListener('fetch', event => { if (event.request.mode === 'navigate') event.respondWith(caches.match('/')); });`;
@@ -76,12 +81,19 @@ self.addEventListener('fetch', event => { if (event.request.mode === 'navigate')
   const server = createServer((request, response) => {
     requests++;
     response.setHeader('Cache-Control', 'no-store');
-    response.setHeader('Content-Type', request.url === '/probe-worker.js' ? 'text/javascript' : 'text/html');
+    response.setHeader(
+      'Content-Type',
+      request.url === '/probe-worker.js' ? 'text/javascript' : 'text/html',
+    );
     response.end(request.url === '/probe-worker.js' ? worker : html);
   });
   try {
     report.os = await command('/usr/bin/sw_vers', []);
-    report.version = await command('/usr/libexec/PlistBuddy', ['-c', 'Print :CFBundleShortVersionString', '/Applications/Safari.app/Contents/Info.plist']);
+    report.version = await command('/usr/libexec/PlistBuddy', [
+      '-c',
+      'Print :CFBundleShortVersionString',
+      '/Applications/Safari.app/Contents/Info.plist',
+    ]);
     await quit();
     for (const setting of ['IncludeDevelopMenu', 'AllowJavaScriptFromAppleEvents']) {
       await command('/usr/bin/defaults', ['write', 'com.apple.Safari', setting, '-bool', 'true']);
@@ -92,7 +104,10 @@ self.addEventListener('fetch', event => { if (event.request.mode === 'navigate')
     });
     await command('/usr/bin/open', ['-a', 'Safari', 'http://localhost:8175/']);
     report.beforePid = await until(safariPid, Boolean);
-    await until(() => applescript('tell application "Safari" to return name of front document'), (value) => value === 'Spinel desktop profile probe');
+    await until(
+      () => applescript('tell application "Safari" to return name of front document'),
+      (value) => value === 'Spinel desktop profile probe',
+    );
     report.appleEvents = await evaluate('navigator.userAgent');
     await evaluate(`window.__probe = null; (async () => {
       localStorage.setItem('spn052', ${JSON.stringify(sentinel)});
@@ -106,16 +121,24 @@ self.addEventListener('fetch', event => { if (event.request.mode === 'navigate')
     const prepared = JSON.parse(await until(() => evaluate('window.__probe || ""'), Boolean));
     assert.equal(prepared.prepared, true, JSON.stringify(prepared));
     report.prepared = prepared;
-    await until(() => evaluate('String(Boolean(navigator.serviceWorker.controller))'), (value) => value === 'true');
+    await until(
+      () => evaluate('String(Boolean(navigator.serviceWorker.controller))'),
+      (value) => value === 'true',
+    );
     await quit();
     // No server is listening when Safari restarts. Reopening may read the
     // retained worker/cache/IDB but must never reconstruct or restore any store.
-    await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+    await new Promise<void>((resolve, reject) =>
+      server.close((error) => (error ? reject(error) : resolve())),
+    );
     report.requestsBeforeOffline = requests;
     await command('/usr/bin/open', ['-a', 'Safari', 'http://localhost:8175/?offline-restart']);
     report.afterPid = await until(safariPid, Boolean);
     assert.notEqual(report.beforePid, report.afterPid);
-    await until(() => evaluate('document.title'), (value) => value === 'Spinel desktop profile probe');
+    await until(
+      () => evaluate('document.title'),
+      (value) => value === 'Spinel desktop profile probe',
+    );
     await evaluate(`window.__probe = null; (async () => {
       const db = await new Promise((resolve, reject) => { const request = indexedDB.open('spn052-probe'); request.onupgradeneeded = () => { request.transaction.abort(); reject(new Error('missing-original-database')); }; request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error); });
       const idb = await new Promise((resolve, reject) => { const request = db.transaction('proof', 'readonly').objectStore('proof').get('sentinel'); request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error); });
@@ -124,17 +147,67 @@ self.addEventListener('fetch', event => { if (event.request.mode === 'navigate')
       window.__probe = JSON.stringify({ localStorage: localStorage.getItem('spn052'), indexedDB: idb, cache: cache ? await cache.text() : null, worker: Boolean(navigator.serviceWorker.controller) });
     })().catch(error => { window.__probe = JSON.stringify({ error: String(error) }); }); void 0;`);
     const retained = JSON.parse(await until(() => evaluate('window.__probe || ""'), Boolean));
-    assert.deepEqual(retained, { localStorage: sentinel, indexedDB: sentinel, cache: sentinel, worker: true });
+    assert.deepEqual(retained, {
+      localStorage: sentinel,
+      indexedDB: sentinel,
+      cache: sentinel,
+      worker: true,
+    });
     assert.equal(requests, report.requestsBeforeOffline);
     report.retained = retained;
     report.status = 'passed';
   } catch (error) {
     report.error = String(error).slice(0, 2000);
+    if (error && typeof error === 'object') {
+      const detail = error as {
+        code?: unknown;
+        signal?: unknown;
+        killed?: unknown;
+        stderr?: unknown;
+      };
+      report.errorDetail = {
+        code: detail.code,
+        signal: detail.signal,
+        killed: detail.killed,
+        stderr: detail.stderr,
+      };
+    }
+    await command('/usr/sbin/screencapture', [
+      '-x',
+      resolve(output, 'safari-capability-failure.png'),
+    ]).catch(() => {});
+    report.processes = await command('/bin/ps', ['-axo', 'pid,ppid,comm'])
+      .then((text) =>
+        text.split('\n').filter((line) => /Safari|osascript|node|bash|tccd/.test(line)),
+      )
+      .catch(String);
+    report.automationLog = await command('/usr/bin/log', [
+      'show',
+      '--last',
+      '2m',
+      '--style',
+      'compact',
+      '--predicate',
+      'subsystem == "com.apple.TCC"',
+    ])
+      .then((text) =>
+        text
+          .split('\n')
+          .filter((line) => /AUTHREQ|PROMPT|Safari|osascript/.test(line))
+          .slice(-60),
+      )
+      .catch(String);
     process.exitCode = 1;
   } finally {
-    await quit().catch((error) => { report.teardownError = String(error); process.exitCode = 1; });
+    await quit().catch((error) => {
+      report.teardownError = String(error);
+      process.exitCode = 1;
+    });
     server.close();
-    await writeFile(resolve(output, 'safari-profile-probe.json'), JSON.stringify(report, null, 2) + '\n');
+    await writeFile(
+      resolve(output, 'safari-profile-probe.json'),
+      JSON.stringify(report, null, 2) + '\n',
+    );
     console.log(JSON.stringify(report, null, 2));
   }
 }

@@ -31,6 +31,7 @@ export type OfflineMessage = {
   failed: boolean;
   recoveryItemId?: string;
   detail?: string;
+  storageHelp?: boolean;
 };
 
 /**
@@ -357,18 +358,20 @@ export function useOfflineDownloads(
     setMessage(null);
     let outcome: 'prepared' | 'removed' | 'needs-recovery' | undefined;
     let detail: string | undefined;
+    let storageHelp = false;
     try {
       if (!downloaded) {
         const protection = await requestPersistence();
         verify(scope)();
+        storageHelp = protection !== 'granted';
         detail =
           protection === 'granted'
             ? 'Your browser granted storage protection. Device copies are not a backup.'
             : protection === 'denied'
-              ? 'Your browser did not grant storage protection. Device copies can still be removed by the browser.'
+              ? 'Your browser did not grant storage protection. It may clear offline documents when space runs low.'
               : protection === 'unsupported'
-                ? 'This browser does not offer storage protection. Device copies are not a backup.'
-                : 'Storage protection could not be requested. Device copies are not a backup.';
+                ? 'This browser does not offer storage protection. It may clear offline documents.'
+                : 'Storage protection could not be requested. Offline documents may still be cleared.';
       }
       await serially(
         scope,
@@ -414,7 +417,7 @@ export function useOfflineDownloads(
                 : `${item.name} is available offline on this device.`,
           failed: false,
           ...(outcome === 'needs-recovery' ? { recoveryItemId: item.id } : {}),
-          ...(outcome === 'prepared' ? { detail } : {}),
+          ...(outcome === 'prepared' ? { detail, storageHelp } : {}),
         });
     } catch (error) {
       if (scope.isCurrent())

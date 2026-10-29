@@ -34,6 +34,14 @@ jobs:
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
+      - name: Observe ordinary Safari automation from the runner shell
+        run: |
+          open -a Safari about:blank
+          if osascript -e 'with timeout of 5 seconds' -e 'tell application "Safari" to return name of front document' -e 'end timeout'; then
+            echo 'Ordinary Safari title observation succeeded from the runner shell.'
+          else
+            echo 'Ordinary Safari title observation failed; the capability probe will preserve diagnostics.'
+          fi
       - name: Prove same-profile ordinary Safari restart
         run: node scripts/ci/desktop-profile-probe.ts
       - name: Retain profile proof
