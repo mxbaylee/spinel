@@ -16,8 +16,8 @@ const report: Record<string, unknown> = {
   status: 'failed',
 };
 
-async function command(file: string, args: string[]) {
-  return (await run(file, args, { timeout: 30_000, maxBuffer: 1024 * 1024 })).stdout.trim();
+async function command(file: string, args: string[], timeout = 30_000) {
+  return (await run(file, args, { timeout, maxBuffer: 1024 * 1024 })).stdout.trim();
 }
 
 async function applescript(source: string, ...args: string[]) {
@@ -68,42 +68,155 @@ async function allowHostedSafariAutomation() {
   // The hosted image grants accessibility, but its Safari Apple Events grant
   // can still present a normal consent dialog. Approve only this disposable
   // runner's exact Safari request through that dialog, never by editing TCC.
-  const request = applescript(
-    'on run\nwith timeout of 25 seconds\n tell application "Safari" to return name of front document\nend timeout\nend run',
-  ).then(
-    (value) => ({ value }),
-    (error) => ({ error: String(error) }),
-  );
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  await command('/usr/sbin/screencapture', [
-    '-x',
-    resolve(output, 'safari-automation-prompt.png'),
-  ]).catch(() => {});
-  report.automationPrompt = await applescript(`tell application "System Events"
+  const consentScript = `on run argv
+  with timeout of 8 seconds
+  tell application "System Events"
     if not (exists process "UserNotificationCenter") then return "No permission dialog"
     tell process "UserNotificationCenter"
       if (count of windows) is 0 then return "No permission window"
       set parts to entire contents of front window
       set dialogText to ""
       repeat with part in parts
-        try
-          if class of part is static text then set dialogText to dialogText & " " & value of part
-        end try
+        if class of part is static text then set dialogText to dialogText & " " & value of part
       end repeat
       if dialogText contains "hosted-compute-agent" and dialogText contains "Safari" and dialogText contains "control" then
+        if item 1 of argv is not "approve" then return "Recognized hosted-compute-agent control of Safari: " & dialogText
         repeat with part in parts
-          try
-            if class of part is button and (name of part is "Allow" or name of part is "OK") then
-              click part
-              return "Approved hosted-compute-agent control of Safari in the normal ephemeral-runner consent dialog: " & dialogText
-            end if
-          end try
+          if class of part is button and (name of part is "Allow" or name of part is "OK") then
+            click part
+            return "Approved hosted-compute-agent control of Safari in the normal ephemeral-runner consent dialog: " & dialogText
+          end if
         end repeat
       end if
       return "Unchanged permission dialog: " & dialogText
     end tell
-  end tell`).catch(String);
-  report.firstTitleRequest = await request;
+  end tell
+  end timeout
+  end run`;
+  const describe = (error: unknown) => {
+    const failure = error as Error & {
+      code?: unknown;
+      signal?: unknown;
+      killed?: unknown;
+      stdout?: unknown;
+      stderr?: unknown;
+    };
+    return {
+      message: String(failure.message ?? error).split('\n')[0],
+      code: failure.code ?? null,
+      signal: failure.signal ?? null,
+      killed: failure.killed ?? false,
+      stdout: String(failure.stdout ?? '').slice(-2000),
+      stderr: String(failure.stderr ?? '').slice(-4000),
+    };
+  };
+  type TitleRequest = {
+    attempt: number;
+    startedAt: string;
+    finishedAt?: string;
+    value?: string;
+    error?: ReturnType<typeof describe>;
+  };
+  const titleRequests: TitleRequest[] = [];
+  const checks: Record<string, unknown>[] = [];
+  report.automationTitleRequests = titleRequests;
+  report.automationPromptChecks = checks;
+  const deadline = Date.now() + 90_000;
+  const budget = (maximum: number) => Math.max(1, Math.min(maximum, deadline - Date.now()));
+  function titleRequest() {
+    const entry: TitleRequest = {
+      attempt: titleRequests.length + 1,
+      startedAt: new Date().toISOString(),
+    };
+    titleRequests.push(entry);
+    // At most one Safari request is pending while System Events initializes.
+    const promise = command(
+      '/usr/bin/osascript',
+      [
+        '-e',
+        'on run\nwith timeout of 20 seconds\n tell application "Safari" to return name of front document\nend timeout\nend run',
+      ],
+      budget(25_000),
+    )
+      .then(
+        (value) => {
+          entry.value = value;
+        },
+        (error) => {
+          entry.error = describe(error);
+        },
+      )
+      .finally(() => {
+        entry.finishedAt = new Date().toISOString();
+      });
+    return { entry, promise };
+  }
+  async function inspect(mode: 'inspect' | 'approve') {
+    const entry: Record<string, unknown> = { mode, startedAt: new Date().toISOString() };
+    checks.push(entry);
+    try {
+      const value = await command(
+        '/usr/bin/osascript',
+        ['-e', consentScript, mode],
+        budget(10_000),
+      );
+      entry.value = value;
+      return value;
+    } catch (error) {
+      entry.error = describe(error);
+      return '';
+    } finally {
+      entry.finishedAt = new Date().toISOString();
+    }
+  }
+  let request = titleRequest();
+  let approved = false;
+  let captures = 0;
+  try {
+    while (Date.now() < deadline) {
+      // A successful title proves consent is already available, with no extra UI action.
+      if (request.entry.value === 'Spinel desktop profile probe') {
+        report.automationReadyTitleRequest = request.entry.attempt;
+        return;
+      }
+      if (request.entry.finishedAt) request = titleRequest();
+      const observed = await inspect('inspect');
+      if (!approved && observed) report.automationPrompt = observed;
+      if (observed.startsWith('Recognized hosted-compute-agent control of Safari: ')) {
+        const path = resolve(output, `safari-automation-prompt-${++captures}.png`);
+        const capture: Record<string, unknown> = {
+          mode: 'capture',
+          path,
+          startedAt: new Date().toISOString(),
+        };
+        checks.push(capture);
+        try {
+          await command('/usr/sbin/screencapture', ['-x', path], budget(5000));
+          capture.value = 'captured';
+        } catch (error) {
+          capture.error = describe(error);
+        } finally {
+          capture.finishedAt = new Date().toISOString();
+        }
+        if (Date.now() >= deadline) break;
+        // Re-read the exact recognized dialog after the screenshot before approval.
+        const decision = await inspect('approve');
+        if (decision.startsWith('Approved hosted-compute-agent control of Safari ')) {
+          approved = true;
+          report.automationPrompt = decision;
+          if (capture.value === 'captured') report.automationPromptScreenshot = path;
+        }
+      }
+      await new Promise((resolve) => setTimeout(resolve, budget(250)));
+    }
+    throw new Error(
+      'Safari automation consent did not become usable within 90 seconds; all native observations are retained in automationPromptChecks and automationTitleRequests.',
+    );
+  } finally {
+    // Every owned request has its own remaining-deadline timeout; leave none running.
+    await request.promise;
+    report.firstTitleRequest = titleRequests[0];
+  }
 }
 
 async function main() {

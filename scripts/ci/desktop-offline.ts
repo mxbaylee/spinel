@@ -111,18 +111,94 @@ async function local(accountId: string, itemId: string): Promise<Local> {
   })()`);
 }
 
-async function edit(documentKind: 'sheet' | 'doc', text: string) {
+type DocSelection = {
+  unitId: string;
+  observedAt: number;
+  nativeRange: { start: number; end: number; collapsed: boolean; segmentId: string } | null;
+  currentLogicalRange: {
+    start: number;
+    end: number;
+    collapsed: boolean;
+    segmentId: string;
+  } | null;
+  inputFocused: boolean;
+  pendingSelection: boolean;
+  shortcutContext: { doc: boolean; editor: boolean; drawing: boolean };
+  text: string;
+  commands: { at: number; id: string; direction?: number; granularity?: string }[];
+};
+
+async function docSelection() {
+  // The existing evidence build listener only reads the native selection; it
+  // cannot move the caret, write document content or populate offline storage.
+  return browser.evaluate<DocSelection | null>(`(() => {
+    let evidence = null;
+    const observe = event => { evidence = event.detail; };
+    addEventListener('spinel-doc-selection-evidence', observe, { once: true });
+    dispatchEvent(new Event('spinel-doc-selection-read'));
+    removeEventListener('spinel-doc-selection-evidence', observe);
+    return evidence;
+  })()`);
+}
+
+async function focusDocText() {
+  // The fixture starts with an 80px inline image. Clicking its center selects
+  // the drawing and disables text-navigation shortcuts. Click the text/page to
+  // its right, then prove that native text input (not drawing input) has focus.
+  await browser.clickAt('.univer-container', 400, 200);
+  await browser.focus('[contenteditable="true"][data-u-comp="editor"]');
+  return until(
+    docSelection,
+    (value) =>
+      Boolean(
+        value?.inputFocused &&
+        !value.pendingSelection &&
+        value.shortcutContext.doc &&
+        value.shortcutContext.editor &&
+        !value.shortcutContext.drawing,
+      ),
+    'Native Doc text focus after a click outside the inline image',
+  );
+}
+
+async function edit(documentKind: 'sheet' | 'doc', text: string, itemId: string) {
   if (documentKind === 'sheet') {
     await browser.focus('[data-u-comp="defined-name"] input');
     await browser.press('SelectAll');
     await browser.type('D1');
     await browser.press('Enter');
   } else {
-    // Selection/focus uses the native contenteditable surface. All text enters
-    // through real browser/OS keyboard events, never a writable editor facade.
-    await browser.clickAt('.univer-container', 130, 200);
-    await browser.focus('[contenteditable="true"][data-u-comp="editor"]');
+    const visual = await visibleImages(`${itemId}-before-doc-input`, 'doc');
+    const before = await focusDocText();
+    assert.ok(before);
+    assert.ok(before.text.startsWith('\b'), 'The original inline image anchor must be intact');
     await browser.press('DocumentStart');
+    const caret = await until(
+      docSelection,
+      (value) =>
+        Boolean(
+          value?.inputFocused &&
+          !value.shortcutContext.drawing &&
+          value.nativeRange?.start === 0 &&
+          value.nativeRange.end === 0 &&
+          value.nativeRange.collapsed &&
+          value.currentLogicalRange?.start === 0 &&
+          value.currentLogicalRange.end === 0 &&
+          value.currentLogicalRange.collapsed,
+        ),
+      'macOS document-start shortcut must establish a collapsed native and logical caret',
+    );
+    assert.equal(caret?.text, before.text, 'Caret navigation must not change the document');
+    assert.ok(
+      caret?.commands.some(
+        (command) =>
+          command.id === 'doc.operation.move-cursor' &&
+          command.granularity === 'document' &&
+          command.at >= before.observedAt,
+      ),
+      'The actual document-start command must execute after focusing text',
+    );
+    stage('native-doc-input-caret', { itemId, before, caret, visual });
   }
   await browser.type(text);
   if (documentKind === 'sheet') await browser.press('Enter');
@@ -136,8 +212,7 @@ async function nativeText(documentKind: 'sheet' | 'doc') {
     await browser.type('D1');
     await browser.press('Enter');
   } else {
-    await browser.clickAt('.univer-container', 130, 200);
-    await browser.focus('[contenteditable="true"][data-u-comp="editor"]');
+    await focusDocText();
     await browser.press('SelectAll');
   }
   // Copy goes through the real native selection/clipboard path. The hosted
@@ -372,7 +447,7 @@ async function main() {
       await browser.goto(`${f.origin}/?item=${item.id}`);
       await canvas();
       await waitStatus('Saved on this device');
-      await edit(item.kind, item.kind === 'sheet' ? '731' : 'Desktop offline 731 ');
+      await edit(item.kind, item.kind === 'sheet' ? '731' : 'Desktop offline 731 ', item.id);
       const queued = await until(
         () => local(f.actor.id, item.id),
         (value) => Boolean(value.item?.outbox && pending(value.item.outbox.checkpoint)),

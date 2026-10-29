@@ -57,6 +57,8 @@ jobs:
       - name: Install locked application dependencies
         run: npm ci
       - name: Build the production offline runtime
+        env:
+          VITE_DOC_SELECTION_EVIDENCE: '1'
         run: npm run build
       - name: Trust the disposable loopback fixture certificate
         run: |

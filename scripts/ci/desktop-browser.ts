@@ -46,7 +46,7 @@ export type DesktopStoragePrompt = {
   reason: string;
   screenshot?: string;
   accessibility?: string;
-  process?: { pid: number; name: string; bundleIdentifier: string };
+  process?: { pid: number; name: string; bundleIdentifier: string; applicationRole: string };
 };
 export type DesktopBrowser = {
   start(url: string): Promise<DesktopBrowserStart>;
@@ -200,6 +200,10 @@ function run(argv) {
   console.log('firefox identity: ' + JSON.stringify(identity));
   if (identity.pid !== Number(argv[0]) || identity.bundleIdentifier !== 'org.mozilla.firefox')
     throw new Error('The owned process is not the expected Firefox bundle: ' + JSON.stringify(identity));
+  // Firefox activates its native accessibility tree when a client reads the
+  // application role. Reading window roles alone exposes only titlebar buttons.
+  identity.applicationRole = process.attributes.byName('AXRole').value();
+  if (identity.applicationRole !== 'AXApplication') throw new Error('The owned Firefox accessibility application is unavailable.');
   process.frontmost = true;
   var nodes = [], candidates = [], allButtons = [], truncated = false;
   var question = /\b(?:will you allow|allow) (?:https:\/\/)?localhost(?::8176)? to store data (?:in persistent storage|on your computer)\?/i;
@@ -241,7 +245,8 @@ function run(argv) {
   var promptLike = allButtons.some(function(button) { return button.labels.some(function(label) { return /^(Allow|Block|Don't Allow|Not Now)$/.test(label); }); }) || nodes.some(function(node) { return /AX(Dialog|Sheet|Popover)/.test(node.role + ' ' + node.subrole); });
   var knownQuestion = nodes.map(function(node) { return node.text.join(' '); }).join(' ').match(question);
   var status = candidates.length === 1 ? (candidates[0].button.enabled ? 'recognized' : 'pending') : knownQuestion ? 'pending' : promptLike ? 'unrecognized' : 'none';
-  var result = { status: status, action: 'none', process: identity, observedText: candidates.length === 1 ? candidates[0].prompt : knownQuestion ? knownQuestion[0] : null, nodes: nodes };
+  var browserChromeObserved = nodes.some(function(node) { return ['AXToolbar', 'AXTabGroup', 'AXTextField', 'AXRadioButton', 'AXCheckBox'].indexOf(node.role) !== -1; });
+  var result = { status: status, action: 'none', process: identity, browserChromeObserved: browserChromeObserved, observedText: candidates.length === 1 ? candidates[0].prompt : knownQuestion ? knownQuestion[0] : null, nodes: nodes };
   if (argv[1] === 'allow') {
     if (result.status !== 'recognized' || result.observedText !== argv[2]) throw new Error('The observed localhost storage prompt changed before approval.');
     system.click(candidates[0].button.element);
@@ -302,6 +307,7 @@ export function createDesktopBrowser(
       action: 'allow' | 'none';
       observedText: string | null;
       process: NonNullable<DesktopStoragePrompt['process']>;
+      browserChromeObserved: boolean;
       nodes: unknown[];
     };
     const inspect = async (action = 'inspect', expected = '') =>
@@ -375,6 +381,10 @@ export function createDesktopBrowser(
         last?.status,
         'pending',
         'The observed storage prompt did not enable its Allow action.',
+      );
+      assert.ok(
+        last?.browserChromeObserved,
+        'Firefox accessibility inspection exposes only window controls; native permission visibility is unavailable.',
       );
       await capture();
       return {
