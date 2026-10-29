@@ -7,10 +7,12 @@ import { digest } from './archive.ts';
 import {
   assertSelfContained,
   copyClosedRestoreInput,
+  copyRestoreInputFile,
   restoreOutputLimit,
   validateClosedRestoreInput,
 } from './restore-input.ts';
-import type { ClosedRestoreInput } from './restore-input.ts';
+import type { ClosedRestoreInput, RestoreInputFile } from './restore-input.ts';
+import { MAX_ARCHIVE_BYTES } from './transfer.ts';
 import type { reconcileRestoreCandidate } from './restore-candidate.ts';
 
 export type RestoreReconciliationSummary = Omit<
@@ -25,7 +27,17 @@ export interface PreparedRestore extends VerificationResult {
   databaseBytes: number;
   recovery: { createdAt: string; origin: string; image: string };
   reconciliation?: RestoreReconciliationSummary;
+  /** Present only for source preparation; never serialize private paths to HTTP. */
+  archive?: RestoreInputFile;
   dispose(): Promise<void>;
+}
+export interface PreparedRestoreSource extends PreparedRestore {
+  archive: RestoreInputFile;
+}
+export interface RestoreArchiveOptions extends VerificationOptions {
+  expectedImage: string;
+  /** Immutable completed transfer/held-catalog evidence, not browser assertions. */
+  expectedArchive: { bytes: number; sha256: string };
 }
 
 interface PreparedEvidence {
@@ -92,22 +104,22 @@ export async function verifyArchive(options: VerificationOptions): Promise<Verif
   return inspectArchive(options, false);
 }
 
-/** Both catalog selection and upload will use this same isolated preparation.
- * Keep only the verified database, never an archived deployment environment.
- * The caller owns disposal until a supervisor durably accepts custody. */
+/** Both catalog selection and upload use the same isolated preparation. Retain
+ * the verified database and exact encrypted bundle, never a deployment env file.
+ * The caller owns both until a supervisor durably accepts custody. */
 export async function prepareRestoreArchive(
-  options: VerificationOptions & { expectedImage: string },
-): Promise<PreparedRestore> {
+  options: RestoreArchiveOptions,
+): Promise<PreparedRestoreSource> {
   if (!/^(sha256:[a-f0-9]{64}|\S+@sha256:[a-f0-9]{64})$/.test(options.expectedImage))
     throw new Error('Restore preparation requires the current immutable application image.');
   const result = await inspectArchive(options, true);
-  if (!('databasePath' in result))
+  if (!('databasePath' in result) || !result.archive)
     throw new Error('Restore preparation did not retain a candidate.');
-  return result;
+  return { ...result, archive: result.archive };
 }
 
 async function inspectArchive(
-  options: VerificationOptions | ReconcileRestoreOptions,
+  options: VerificationOptions | ReconcileRestoreOptions | RestoreArchiveOptions,
   retain: boolean,
 ): Promise<VerificationResult | PreparedRestore> {
   options.signal?.throwIfAborted();
@@ -133,6 +145,7 @@ async function inspectArchive(
     const inputReads: string[] = [];
     let input: Record<string, unknown>;
     let outputMaximum = options.maxDatabaseBytes;
+    let verifiedArchive: RestoreInputFile | undefined;
     if ('current' in options) {
       const maximum = options.maxDatabaseBytes ?? 8 * 1024 ** 3;
       if (!Number.isSafeInteger(maximum) || maximum < 4096 || maximum > 8 * 1024 ** 3)
@@ -172,12 +185,43 @@ async function inspectArchive(
         now: options.now,
       };
     } else {
-      const archive = await realpath(options.archive);
+      let archive = await realpath(options.archive);
       // Preserve the final component for readKey's O_NOFOLLOW boundary.
       const keyFile = resolve(options.keyFile);
       const archiveInfo = await stat(archive);
       if (!archiveInfo.isFile()) throw new Error('Recovery archive must be a regular file.');
-      if (archiveInfo.size > 5 * 1024 ** 3) throw new RecoveryResourceError('archive-size');
+      if (archiveInfo.size > MAX_ARCHIVE_BYTES) throw new RecoveryResourceError('archive-size');
+      if (retain) {
+        if (
+          !('expectedArchive' in options) ||
+          !options.expectedArchive ||
+          !Number.isSafeInteger(options.expectedArchive.bytes) ||
+          options.expectedArchive.bytes < 1 ||
+          options.expectedArchive.bytes > MAX_ARCHIVE_BYTES ||
+          options.expectedArchive.bytes !== archiveInfo.size ||
+          !/^[a-f0-9]{64}$/.test(options.expectedArchive.sha256)
+        )
+          throw new Error('Restore preparation requires completed source transfer evidence.');
+        const space = await statfs(directory, { bigint: true });
+        if (space.bavail * space.bsize < BigInt(options.expectedArchive.bytes + 256 * 1024 ** 2))
+          throw new RecoveryResourceError('disk-space');
+        const path = resolve(directory, 'source.spinel.enc');
+        await copyRestoreInputFile(
+          {
+            path: archive,
+            bytes: options.expectedArchive.bytes,
+            sha256: options.expectedArchive.sha256,
+          },
+          path,
+          operationSignal,
+        );
+        verifiedArchive = {
+          path,
+          bytes: options.expectedArchive.bytes,
+          sha256: options.expectedArchive.sha256,
+        };
+        archive = path;
+      }
       inputReads.push(archive, keyFile, await realpath(keyFile));
       input = { kind: 'archive', archive, keyFile };
     }
@@ -227,6 +271,18 @@ async function inspectArchive(
     await assertSelfContained(databasePath);
     if ((await digest(databasePath, operationSignal)) !== prepared.databaseSha256)
       throw new Error('The prepared restore database changed.');
+    if (verifiedArchive) {
+      const source = await lstat(verifiedArchive.path);
+      if (
+        !source.isFile() ||
+        source.nlink !== 1 ||
+        source.uid !== process.getuid?.() ||
+        (source.mode & 0o077) !== 0 ||
+        source.size !== verifiedArchive.bytes ||
+        (await digest(verifiedArchive.path, operationSignal)) !== verifiedArchive.sha256
+      )
+        throw new Error('The prepared restore source changed.');
+    }
     if (reconciliation) {
       for (const suffix of ['', '-wal', '-shm', '-journal'])
         await rm(join(directory, 'current.sqlite') + suffix, { force: true });
@@ -238,6 +294,7 @@ async function inspectArchive(
       ...verification,
       ...prepared,
       databasePath,
+      ...(verifiedArchive && { archive: verifiedArchive }),
       dispose: () => rm(directory, { recursive: true, force: true }),
     };
   } catch (error) {

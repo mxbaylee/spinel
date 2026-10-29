@@ -117,8 +117,16 @@ test('restore preparation retains verified bytes without activating data or retu
     archive = await f.archive();
   const source = await readFile(archive.archive);
   f.db.prepare('UPDATE workspace_items SET name=? WHERE id=?').run('Newer work', f.doc.id);
-  const prepared = await prepareRestoreArchive({ ...f.options, archive: archive.archive });
+  const prepared = await prepareRestoreArchive({
+    ...f.options,
+    archive: archive.archive,
+    expectedArchive: { bytes: (await stat(archive.archive)).size, sha256: archive.sha256 },
+  });
   cleanup.push(prepared.dispose);
+  expect(prepared.archive.path).not.toBe(archive.archive);
+  expect(prepared.archive.bytes).toBe(source.length);
+  expect(prepared.archive.sha256).toBe(archive.sha256);
+  expect(await readFile(prepared.archive.path)).toEqual(source);
   expect(prepared).toMatchObject({
     snapshots: 2,
     images: 1,
@@ -149,6 +157,8 @@ test('restore preparation retains verified bytes without activating data or retu
     'Newer work',
   );
   expect(await readFile(archive.archive)).toEqual(source);
+  await archive.dispose();
+  expect(await readFile(prepared.archive.path)).toEqual(source);
   await prepared.dispose();
   await prepared.dispose();
   expect(
@@ -156,13 +166,34 @@ test('restore preparation retains verified bytes without activating data or retu
   ).toEqual([]);
 }, 30_000);
 
+test('source preparation requires the exact completed encrypted transfer', async () => {
+  const f = await fixture(),
+    archive = await f.archive();
+  const source = await readFile(archive.archive);
+  for (const expectedArchive of [
+    { bytes: source.length, sha256: '0'.repeat(64) },
+    { bytes: source.length + 1, sha256: archive.sha256 },
+  ])
+    await expect(
+      prepareRestoreArchive({ ...f.options, archive: archive.archive, expectedArchive }),
+    ).rejects.toThrow();
+  expect(await readFile(archive.archive)).toEqual(source);
+  expect(
+    (await readdir(f.directory)).filter((name) => name.startsWith('.restore-candidate-')),
+  ).toEqual([]);
+});
+
 test('encrypted candidate preparation preserves a populated recovery hold and permits later authorized recovery', async () => {
   const f = await fixture();
   new TrashStore(f.workspace).trash(f.owner.id, f.doc.id);
   holdRestoredTrash(f.db);
   const expected = f.db.prepare('SELECT * FROM workspace_recovery_holds').all();
   const archive = await f.archive();
-  const prepared = await prepareRestoreArchive({ ...f.options, archive: archive.archive });
+  const prepared = await prepareRestoreArchive({
+    ...f.options,
+    archive: archive.archive,
+    expectedArchive: { bytes: (await stat(archive.archive)).size, sha256: archive.sha256 },
+  });
   cleanup.push(prepared.dispose);
   const db = new DatabaseSync(prepared.databasePath);
   try {
@@ -188,6 +219,7 @@ test('incompatible or interrupted preparation leaves no candidate and preserves 
     prepareRestoreArchive({
       ...f.options,
       archive: archive.archive,
+      expectedArchive: { bytes: (await stat(archive.archive)).size, sha256: archive.sha256 },
       expectedImage: `sha256:${'b'.repeat(64)}`,
     }),
   ).rejects.toThrow('verification');
@@ -195,6 +227,7 @@ test('incompatible or interrupted preparation leaves no candidate and preserves 
     prepareRestoreArchive({
       ...f.options,
       archive: archive.archive,
+      expectedArchive: { bytes: (await stat(archive.archive)).size, sha256: archive.sha256 },
       expectedOrigin: 'https://another.example',
     }),
   ).rejects.toThrow('verification');
@@ -202,6 +235,7 @@ test('incompatible or interrupted preparation leaves no candidate and preserves 
     prepareRestoreArchive({
       ...f.options,
       archive: archive.archive,
+      expectedArchive: { bytes: (await stat(archive.archive)).size, sha256: archive.sha256 },
       timeoutMs: 1,
     }),
   ).rejects.toEqual(new RecoveryResourceError('time-limit'));

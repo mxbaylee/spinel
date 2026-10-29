@@ -1,4 +1,5 @@
 import { randomBytes, randomUUID } from 'node:crypto';
+import { writeFileSync } from 'node:fs';
 import { chmod, mkdtemp, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
@@ -159,6 +160,37 @@ async function rollbackRequest() {
   };
   return { f, request: { ...options, current, additional: [], stagingRoot: f.directory } };
 }
+
+test('source verification reads its authenticated private copy after the transfer path changes', async () => {
+  const f = await fixture(),
+    key = randomBytes(32),
+    keyFile = join(f.directory, 'source-key');
+  await writeFile(keyFile, key, { mode: 0o600 });
+  const recovery = {
+    format: 1 as const,
+    createdAt: '2026-10-29T00:00:00.000Z',
+    origin: 'https://spinel.example',
+    image: `sha256:${'a'.repeat(64)}`,
+    runtimeEnvironment: '',
+    keyId: 'current',
+  };
+  const archive = await makeArchive(f.db, f.directory, key, recovery);
+  cleanup.push(archive.dispose);
+  const bytes = await readFile(archive.archive);
+  boundaries.fork = () => writeFileSync(archive.archive, Buffer.alloc(bytes.length));
+  const prepared = await prepareRestoreArchive({
+    archive: archive.archive,
+    keyFile,
+    stagingRoot: f.directory,
+    expectedImage: recovery.image,
+    expectedOrigin: recovery.origin,
+    expectedArchive: { bytes: bytes.length, sha256: archive.sha256 },
+  });
+  cleanup.push(prepared.dispose);
+  expect(prepared.recovery).toMatchObject({ createdAt: recovery.createdAt });
+  expect(await readFile(prepared.archive.path)).toEqual(bytes);
+  expect(await readFile(archive.archive)).not.toEqual(bytes);
+});
 
 test('real rollback worker prepares a closed private original and retires attempted native identities', async () => {
   const { f, request } = await rollbackRequest();
@@ -585,6 +617,7 @@ test('real isolated reconciliation publishes only the closed verified candidate,
   cleanup.push(archive.dispose);
   const candidate = await prepareRestoreArchive({
     archive: archive.archive,
+    expectedArchive: { bytes: (await stat(archive.archive)).size, sha256: archive.sha256 },
     keyFile,
     stagingRoot: f.directory,
     expectedOrigin: recovery.origin,
