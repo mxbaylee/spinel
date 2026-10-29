@@ -36,6 +36,32 @@ async function fixture() {
 const fences = (db: DatabaseSync) =>
   db.prepare('SELECT * FROM spinel_restore_fences ORDER BY kind,id').all();
 
+test.each(['item_id', 'user_id', 'checkpoint_id', 'previous_unit', 'next_unit'] as const)(
+  'detects a conflicting %s binding found only between two attempts',
+  async (field) => {
+    const f = await fixture();
+    const other = f.workspace.create(f.owner.id, { kind: 'doc', name: 'Other', parentId: null });
+    const a = await f.snapshot(),
+      b = await f.snapshot(),
+      c = await f.snapshot();
+    const generations = new CollaborationGenerations(new WorkspaceStore(new AuthStore(a)));
+    const job = generations.begin(f.owner.id, f.item.id, f.item.id, randomUUID(), 'checkpoint');
+    const row = a.prepare('SELECT * FROM spinel_restore_jobs WHERE id=?').get(job.id)!;
+    const keys = Object.keys(row);
+    b.prepare(
+      `INSERT INTO spinel_restore_jobs(${keys.join(',')}) VALUES(${keys.map(() => '?').join(',')})`,
+    ).run(...keys.map((key) => row[key]));
+    b.prepare(`UPDATE spinel_restore_jobs SET ${field}=? WHERE id=?`).run(
+      field === 'item_id' ? other.id : randomUUID(),
+      job.id,
+    );
+    const before = fences(c);
+    expect(() => reconcileRestoreFences(f.db, c, [a, b])).toThrow('incompatible');
+    expect(fences(c)).toEqual(before);
+    expect(c.prepare('SELECT 1 FROM spinel_restore_jobs').get()).toBeUndefined();
+  },
+);
+
 test('unions retired and current identities without copying absent-item jobs or changing the source', async () => {
   const f = await fixture(),
     archivedFence = randomUUID();

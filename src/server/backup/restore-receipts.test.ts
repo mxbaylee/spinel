@@ -37,7 +37,7 @@ async function fixture() {
   const current = services(db),
     owner = current.auth.createUser('Owner');
   const snapshot = async () => {
-    const path = join(directory, 'candidate.sqlite');
+    const path = join(directory, `${randomUUID()}.sqlite`);
     await backup(db, path);
     const target = new DatabaseSync(path);
     cleanup.push(() => target.close());
@@ -58,6 +58,115 @@ function receipt(db: DatabaseSync, user: string, item = randomUUID(), unit = ran
 const tables = ['workspace_offline_creations', 'workspace_offline_recoveries', 'mcp_writes'];
 const evidence = (db: DatabaseSync) =>
   tables.map((table) => db.prepare(`SELECT * FROM ${table} ORDER BY 1,2`).all());
+
+test('attempts supply receipt tombstones, never accounts, keys or MCP actor accounts', async () => {
+  const f = await fixture(),
+    a = await f.snapshot(),
+    b = await f.snapshot(),
+    c = await f.snapshot();
+  const actor = a.auth.createUser('Attempt administrator', true);
+  a.db
+    .prepare(
+      `INSERT INTO auth_passkeys
+    (id,user_id,public_key,counter,transports,name,provider,created_at,last_used_at,backed_up,device_type)
+    VALUES(?,?,x'0102',0,'[]','Attempt key','fixture',1,NULL,0,'singleDevice')`,
+    )
+    .run(randomUUID(), actor.id);
+  b.db.prepare('INSERT INTO auth_users VALUES(?,?,1,0)').run(actor.id, 'Different attempt name');
+  const accepted = receipt(a.db, actor.id);
+  receipt(b.db, actor.id, accepted.item, accepted.unit);
+  a.db
+    .prepare('INSERT INTO workspace_offline_recoveries VALUES(?,?,?,?,0)')
+    .run(actor.id, randomUUID(), 'c'.repeat(64), randomUUID());
+  for (const [db, time] of [
+    [a.db, 5],
+    [b.db, 8],
+  ] as const)
+    db.prepare('INSERT INTO mcp_writes VALUES(?,?,?,?)').run(
+      'token:retired',
+      'request',
+      'b'.repeat(64),
+      time,
+    );
+  a.db
+    .prepare('UPDATE auth_users SET is_admin=1,name=? WHERE id=?')
+    .run('Attempt owner', f.owner.id);
+  const original = evidence(f.db),
+    first = evidence(a.db),
+    second = evidence(b.db);
+  reconcileRestoreReceipts(f.db, c.db, [a.db, b.db]);
+  expect(c.db.prepare('SELECT * FROM auth_users WHERE id=?').get(actor.id)).toEqual({
+    id: actor.id,
+    name: 'Retained request identity',
+    is_admin: 0,
+    disabled: 1,
+  });
+  expect(c.db.prepare('SELECT * FROM auth_users WHERE id=?').get(f.owner.id)).toEqual(f.owner);
+  expect(c.db.prepare('SELECT * FROM auth_users WHERE id=?').get('token:retired')).toBeUndefined();
+  expect(c.db.prepare('SELECT * FROM auth_passkeys WHERE user_id=?').get(actor.id)).toBeUndefined();
+  expect(c.db.prepare('SELECT created_at FROM mcp_writes').get()).toEqual({ created_at: 8 });
+  expect(c.db.prepare('SELECT count(*) AS n FROM workspace_offline_recoveries').get()!.n).toBe(1);
+  expect(evidence(f.db)).toEqual(original);
+  expect(evidence(a.db)).toEqual(first);
+  expect(evidence(b.db)).toEqual(second);
+});
+
+test('a conflict found only between attempts rolls back receipts and new actor tombstones together', async () => {
+  const f = await fixture(),
+    a = await f.snapshot(),
+    b = await f.snapshot(),
+    c = await f.snapshot();
+  const actor = a.auth.createUser('Attempt only');
+  b.db.prepare('INSERT INTO auth_users VALUES(?,?,0,1)').run(actor.id, 'Attempt only');
+  const accepted = receipt(a.db, actor.id);
+  receipt(b.db, actor.id, accepted.item, accepted.unit);
+  b.db.prepare('UPDATE workspace_offline_creations SET request_hash=?').run('b'.repeat(64));
+  const before = evidence(c.db);
+  expect(() => reconcileRestoreReceipts(f.db, c.db, [a.db, b.db])).toThrow('incompatible');
+  expect(evidence(c.db)).toEqual(before);
+  expect(c.db.prepare('SELECT * FROM auth_users WHERE id=?').get(actor.id)).toBeUndefined();
+});
+
+test('individually admissible attempts cannot exhaust the cumulative actor budget after activation', async () => {
+  const f = await fixture();
+  f.db.exec('BEGIN');
+  for (let i = 0; i < 1022; i++) f.auth.createUser(`Retained ${i}`);
+  f.db.exec('COMMIT');
+  const a = await f.snapshot(),
+    b = await f.snapshot(),
+    c = await f.snapshot();
+  receipt(a.db, a.auth.createUser('First attempt').id);
+  receipt(b.db, b.auth.createUser('Second attempt').id);
+  expect(() => reconcileRestoreReceipts(f.db, c.db, [a.db, b.db])).toThrow('incompatible');
+  expect(c.db.prepare('SELECT count(*) AS n FROM auth_users').get()!.n).toBe(1023);
+  expect(evidence(c.db)).toEqual(evidence(f.db));
+});
+
+test('refuses aliased, repeated or excessive attempt inputs before mutation', async () => {
+  const f = await fixture(),
+    a = await f.snapshot(),
+    c = await f.snapshot();
+  const before = evidence(c.db);
+  for (const attempts of [[c.db], [f.db], [a.db, a.db], Array(9).fill(a.db)])
+    expect(() => reconcileRestoreReceipts(f.db, c.db, attempts)).toThrow();
+  expect(evidence(c.db)).toEqual(before);
+});
+
+test('the last tombstone cannot exceed the complete account byte budget', async () => {
+  const f = await fixture(),
+    a = await f.snapshot(),
+    c = await f.snapshot();
+  const actor = a.auth.createUser('Attempt only');
+  receipt(a.db, actor.id);
+  // The existing account fits exactly when its two numbers each count as eight
+  // bytes. The synthetic row would make the next credential overlay refuse.
+  const bytes = 8 * 1024 ** 2 - Buffer.byteLength(f.owner.id) - 16;
+  c.db.prepare('UPDATE auth_users SET name=substr(hex(zeroblob(?)),1,?)').run(bytes, bytes);
+  expect(() => reconcileRestoreReceipts(f.db, c.db, [a.db])).toThrow();
+  expect(c.db.prepare('SELECT count(*) AS n FROM auth_users').get()!.n).toBe(1);
+  expect(c.db.prepare('SELECT length(name) AS n FROM auth_users').get()!.n).toBe(bytes);
+  expect(c.db.prepare('SELECT 1 FROM workspace_offline_creations').get()).toBeUndefined();
+});
 
 test('a lost creation response cannot recreate a newer accepted then deleted file after restore', async () => {
   const f = await fixture(),

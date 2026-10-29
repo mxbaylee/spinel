@@ -1,11 +1,11 @@
 import { randomUUID } from 'node:crypto';
-import { statSync } from 'node:fs';
 import { MAX_SNAPSHOT_BYTES, validateSnapshot } from '@spinel/sync-server';
 import type { NativeSnapshot, DocumentKind } from '@spinel/sync-server';
 import type { DatabaseSync } from '../../../server/database.ts';
 import { snapshotIdentity } from '../../shared/snapshotIdentity.ts';
 import { imageSources } from '../workspace/imageSources.ts';
-import { readRestoreRows, requireCompatibleRestoreSchema } from './restore-credentials.ts';
+import { readRestoreRows } from './restore-credentials.ts';
+import { restoreEvidenceSources } from './restore-evidence.ts';
 import { reconcileRestoreFences } from './restore-fences.ts';
 import { retainRestoreRevision } from '../collaboration/restore-fences.ts';
 
@@ -29,11 +29,16 @@ const required = [
  * A conservative sum may refuse earlier than per-document arithmetic; it never
  * understates an observed logical head or fabricates intermediate native edits.
  */
-export function restoreRevisionHighWater(current: DatabaseSync, candidate: DatabaseSync) {
+export function restoreRevisionHighWater(
+  current: DatabaseSync,
+  candidate: DatabaseSync,
+  additional: readonly DatabaseSync[] = [],
+) {
+  const { sources } = restoreEvidenceSources(current, candidate, additional);
   let native = 1,
     offset = 0,
     other = 0;
-  for (const db of [current, candidate]) {
+  for (const db of [...sources, candidate]) {
     const tables = new Set(
       db
         .prepare("SELECT name FROM sqlite_schema WHERE type='table'")
@@ -82,7 +87,7 @@ function textColumn(db: DatabaseSync, table: string, column: string, unit: strin
   return String(db.prepare(`SELECT ${column} FROM ${table} WHERE unit_id=?`).get(unit)![column]);
 }
 
-function assertNamespaces(current: DatabaseSync, candidate: DatabaseSync, tables: Set<string>) {
+function assertNamespaces(sources: readonly DatabaseSync[], tables: Set<string>) {
   const meanings = new Map<string, string>();
   let bytes = 0;
   const claim = (identity: unknown, item: unknown) => {
@@ -103,8 +108,11 @@ function assertNamespaces(current: DatabaseSync, candidate: DatabaseSync, tables
       if (meanings.size > 100_000 || bytes > 8 * 1024 ** 2) throw incompatible();
     }
   };
-  for (const db of [current, candidate]) {
+  for (const db of sources) {
     for (const row of readRestoreRows(db, 'workspace_items', 10_000, ['id'])) claim(row.id, row.id);
+    if (tables.has('workspace_offline_recoveries'))
+      for (const row of readRestoreRows(db, 'workspace_offline_recoveries', 100_000, ['item_id']))
+        claim(row.item_id, row.item_id);
     for (const [table, columns] of [
       ['spinel_live_units', ['unit_id']],
       ['spinel_restore_jobs', ['previous_unit', 'next_unit']],
@@ -124,14 +132,15 @@ function assertNamespaces(current: DatabaseSync, candidate: DatabaseSync, tables
  * fresh mappings and content/resource copies commit together. It does not change
  * current authority or the supervisor epoch, or establish activation health.
  */
-export function rotateRestoreGenerations(current: DatabaseSync, candidate: DatabaseSync) {
-  const a = statSync(current.path, { bigint: true }),
-    b = statSync(candidate.path, { bigint: true });
-  if (a.dev === b.dev && a.ino === b.ino) throw incompatible();
-  const tables = requireCompatibleRestoreSchema(current, candidate);
+export function rotateRestoreGenerations(
+  current: DatabaseSync,
+  candidate: DatabaseSync,
+  additional: readonly DatabaseSync[] = [],
+) {
+  const { sources, tables } = restoreEvidenceSources(current, candidate, additional);
   if (required.some((table) => !tables.has(table))) throw incompatible();
-  assertNamespaces(current, candidate, tables);
-  const highWater = restoreRevisionHighWater(current, candidate);
+  assertNamespaces([...sources, candidate], tables);
+  const highWater = restoreRevisionHighWater(current, candidate, additional);
   const items = readRestoreRows(candidate, 'workspace_items', 10_000, ['id', 'kind']);
   const byId = new Map(items.map((row) => [String(row.id), row]));
   const mappings = readRestoreRows(candidate, 'spinel_live_units', 10_000, ['item_id', 'unit_id']);
@@ -148,7 +157,7 @@ export function rotateRestoreGenerations(current: DatabaseSync, candidate: Datab
   }
   candidate.exec('BEGIN IMMEDIATE');
   try {
-    reconcileRestoreFences(current, candidate);
+    reconcileRestoreFences(current, candidate, additional);
     const fences = readRestoreRows(candidate, 'spinel_restore_fences', 100_000);
     const reserved = new Set(
       fences.filter((row) => row.kind === 'identity').map((row) => String(row.id)),

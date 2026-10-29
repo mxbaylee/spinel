@@ -12,9 +12,19 @@ import { migrateSpaceSchema } from '../workspace/space-schema.ts';
 import { TrashStore } from '../workspace/trash.ts';
 import { DocumentStore } from '../workspace/documents.ts';
 import { CollaborationStore } from '../collaboration/service.ts';
+import { OfflineCreations } from '../workspace/offline-creation.ts';
+import { PortableFiles } from '../workspace/portable.ts';
+import { McpDocuments } from '../mcp/documents.ts';
+import { HistoryStore } from '../history/store.ts';
 import { BackupService } from './service.ts';
-import { recoveryInventory, verifyInventory, writeInventory } from './inventory.ts';
-import { reconcileRestoreCandidate } from './restore-candidate.ts';
+import {
+  recoveryInventory,
+  restoreSnapshotFingerprint,
+  verifyInventory,
+  writeInventory,
+} from './inventory.ts';
+import { reconcileRestoreCandidate, reconcileRestoreRollback } from './restore-candidate.ts';
+import { rotateRestoreGenerations } from './restore-generations.ts';
 import { digest, makeArchive } from './archive.ts';
 import { prepareRestoreArchive, reconcilePreparedRestore } from './verification.ts';
 import type { ChildProcess } from 'node:child_process';
@@ -102,8 +112,195 @@ async function fixture() {
     cleanup.push(() => candidate.close());
     return candidate;
   };
-  return { directory, db, auth, workspace, owner, reader, doc, root, session, snapshot };
+  return {
+    directory,
+    db,
+    auth,
+    workspace,
+    owner,
+    reader,
+    doc,
+    root,
+    session,
+    snapshot,
+    collaboration,
+  };
 }
+
+async function originalCopy(db: DatabaseSync, directory: string) {
+  const path = join(directory, `${randomUUID()}.sqlite`);
+  await backup(db, path);
+  const copy = new DatabaseSync(path);
+  cleanup.push(() => copy.close());
+  return copy;
+}
+
+test('rollback retains original ownership, filing and content with only attempted negative evidence', async () => {
+  const f = await fixture();
+  new OfflineCreations(f.workspace, f.collaboration);
+  new PortableFiles(f.workspace, f.collaboration);
+  new McpDocuments(f.workspace, f.collaboration);
+  const history = new HistoryStore(f.workspace, f.collaboration);
+  cleanup.push(() => history.close());
+  await history.capture(f.owner.id, f.doc.id);
+  f.db.prepare('INSERT INTO workspace_grants VALUES(?,?,?,0)').run(f.doc.id, f.reader.id, 'editor');
+  f.db.prepare('INSERT INTO workspace_placements VALUES(?,?,NULL)').run(f.reader.id, f.doc.id);
+  const trash = f.workspace.create(f.owner.id, {
+    kind: 'folder',
+    name: 'Original trash',
+    parentId: null,
+  });
+  new TrashStore(f.workspace).trash(f.owner.id, trash.id);
+  writeInventory(f.db);
+  f.db
+    .prepare('UPDATE workspace_items SET name=? WHERE id=?')
+    .run('Original after backup', f.doc.id);
+  expect(() => verifyInventory(f.db)).toThrow();
+  const attempt = await originalCopy(f.db, f.directory);
+  const rollback = await originalCopy(f.db, f.directory);
+  const originalAgain = await originalCopy(f.db, f.directory);
+  const again = await originalCopy(f.db, f.directory);
+  const actor = new AuthStore(attempt).createUser('Attempt administrator', true);
+  attempt
+    .prepare('UPDATE workspace_items SET owner_id=?,name=? WHERE id=?')
+    .run(actor.id, 'Attempt content', f.doc.id);
+  attempt
+    .prepare('UPDATE auth_users SET disabled=1,is_admin=1,name=? WHERE id=?')
+    .run('Attempt authority', f.owner.id);
+  const altered = JSON.parse(
+    String(
+      attempt.prepare('SELECT snapshot FROM spinel_sync_units WHERE unit_id=?').get(f.doc.id)!
+        .snapshot,
+    ),
+  );
+  altered.body.dataStream = 'Attempt body\r\n';
+  attempt
+    .prepare('UPDATE spinel_sync_units SET snapshot=? WHERE unit_id=?')
+    .run(JSON.stringify(altered), f.doc.id);
+  const item = randomUUID(),
+    unit = randomUUID();
+  attempt
+    .prepare('INSERT INTO workspace_offline_creations VALUES(?,?,?,?,?)')
+    .run(item, unit, actor.id, 'a'.repeat(64), actor.id);
+  attempt
+    .prepare('INSERT INTO mcp_writes VALUES(?,?,?,?)')
+    .run('token:retired', 'request', 'b'.repeat(64), 10);
+  const attemptGeneration = rotateRestoreGenerations(f.db, attempt);
+  const before = [restoreSnapshotFingerprint(f.db), restoreSnapshotFingerprint(attempt)];
+  const result = await reconcileRestoreRollback(f.db, rollback, [attempt], options);
+  expect(result.generations.revisionOffset).toBeGreaterThan(attemptGeneration.revisionOffset);
+  for (const table of [
+    'workspace_items',
+    'workspace_grants',
+    'workspace_placements',
+    'workspace_recovery_holds',
+    'history_checkpoints',
+  ])
+    expect(rollback.prepare(`SELECT * FROM ${table} ORDER BY 1`).all()).toEqual(
+      f.db.prepare(`SELECT * FROM ${table} ORDER BY 1`).all(),
+    );
+  expect(rollback.prepare('SELECT * FROM auth_users WHERE id=?').get(f.owner.id)).toEqual(f.owner);
+  expect(rollback.prepare('SELECT * FROM auth_users WHERE id=?').get(actor.id)).toEqual({
+    id: actor.id,
+    name: 'Retained request identity',
+    is_admin: 0,
+    disabled: 1,
+  });
+  expect(
+    rollback.prepare('SELECT 1 FROM auth_users WHERE id=?').get('token:retired'),
+  ).toBeUndefined();
+  expect(rollback.prepare('SELECT 1 FROM auth_sessions').get()).toBeUndefined();
+  const restoredUnit = rollback
+    .prepare('SELECT unit_id FROM spinel_live_units WHERE item_id=?')
+    .get(f.doc.id)!.unit_id;
+  expect(
+    JSON.parse(
+      String(
+        rollback
+          .prepare('SELECT snapshot FROM spinel_sync_units WHERE unit_id=?')
+          .get(restoredUnit)!.snapshot,
+      ),
+    ).body.dataStream,
+  ).toBe('Retained\r\n');
+  expect(
+    rollback.prepare('SELECT unit_id FROM workspace_offline_creations WHERE item_id=?').get(item),
+  ).toEqual({ unit_id: unit });
+  expect(
+    rollback
+      .prepare("SELECT 1 FROM spinel_restore_fences WHERE kind='identity' AND id=?")
+      .get(unit),
+  ).toBeDefined();
+  expect([restoreSnapshotFingerprint(f.db), restoreSnapshotFingerprint(attempt)]).toEqual(before);
+  expect(result.inventory).toEqual(verifyInventory(rollback));
+  const repeated = await reconcileRestoreRollback(
+    originalAgain,
+    again,
+    [attempt, rollback],
+    options,
+  );
+  expect(repeated.generations.revisionOffset).toBeGreaterThan(result.generations.revisionOffset);
+  expect(again.prepare('SELECT unit_id FROM spinel_live_units ORDER BY item_id').all()).not.toEqual(
+    rollback.prepare('SELECT unit_id FROM spinel_live_units ORDER BY item_id').all(),
+  );
+});
+
+test('rollback of a never-restored original establishes inventory without inventing a backup', async () => {
+  const f = await fixture();
+  f.db.exec('DROP TABLE spinel_recovery');
+  const before = restoreSnapshotFingerprint(f.db);
+  const candidate = await originalCopy(f.db, f.directory);
+  const result = await reconcileRestoreRollback(f.db, candidate, [], options);
+  expect(result.inventory).toEqual(verifyInventory(candidate));
+  const metadata = JSON.parse(
+    String(candidate.prepare('SELECT metadata FROM spinel_recovery').get()!.metadata),
+  );
+  expect(metadata).toEqual({
+    format: 1,
+    kind: 'supervised-rollback',
+    originalFingerprint: before,
+    preparedAt: options.now,
+  });
+  expect(restoreSnapshotFingerprint(f.db)).toBe(before);
+  expect(
+    f.db.prepare("SELECT 1 FROM sqlite_schema WHERE name='spinel_recovery'").get(),
+  ).toBeUndefined();
+});
+
+test('rollback refuses a different logical original before changing credentials', async () => {
+  const f = await fixture(),
+    candidate = await f.snapshot();
+  candidate
+    .prepare('UPDATE workspace_items SET name=? WHERE id=?')
+    .run('Different content', f.doc.id);
+  writeInventory(candidate); // A valid inventory does not make it the original.
+  const before = restoreSnapshotFingerprint(candidate);
+  await expect(reconcileRestoreRollback(f.db, candidate, [], options)).rejects.toThrow(
+    'frozen original',
+  );
+  expect(restoreSnapshotFingerprint(candidate)).toBe(before);
+  expect(candidate.prepare('SELECT 1 FROM auth_sessions').get()).toBeDefined();
+});
+
+test('a late rollback failure invalidates the working copy and leaves all evidence sealed', async () => {
+  const f = await fixture(),
+    candidate = await f.snapshot();
+  const attempt = await originalCopy(f.db, f.directory);
+  const before = [restoreSnapshotFingerprint(f.db), restoreSnapshotFingerprint(attempt)];
+  const prepare = candidate.prepare.bind(candidate);
+  vi.spyOn(candidate, 'prepare').mockImplementation((sql) => {
+    if (sql.includes('INSERT INTO spinel_live_units')) throw new Error('late rollback failure');
+    return prepare(sql);
+  });
+  await expect(reconcileRestoreRollback(f.db, candidate, [attempt], options)).rejects.toThrow(
+    'late rollback failure',
+  );
+  expect([restoreSnapshotFingerprint(f.db), restoreSnapshotFingerprint(attempt)]).toEqual(before);
+  await expect(reconcileRestoreRollback(f.db, candidate, [attempt], options)).rejects.toThrow(
+    'frozen original',
+  );
+  for (const db of [f.db, attempt])
+    expect(() => db.prepare('UPDATE auth_users SET is_admin=1').run()).toThrow('cannot be changed');
+});
 
 test('composes current authority and Space access with archived content, fresh native identities and verified inventory', async () => {
   const f = await fixture();

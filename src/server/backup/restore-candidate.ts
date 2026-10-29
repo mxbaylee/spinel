@@ -2,10 +2,11 @@ import { statSync } from 'node:fs';
 import type { DatabaseSync } from '../../../server/database.ts';
 import { AuthStore } from '../auth/store.ts';
 import { WorkspaceStore } from '../workspace/store.ts';
-import { verifyInventory, writeInventory } from './inventory.ts';
+import { restoreSnapshotFingerprint, verifyInventory, writeInventory } from './inventory.ts';
 import {
   reconcileRestoreCredentials,
   requireCompatibleRestoreSchema,
+  restoreMetadataSchema,
 } from './restore-credentials.ts';
 import { reconcileRestoreOwnership } from './restore-ownership.ts';
 import { reconcileRestoreGrants } from './restore-grants.ts';
@@ -13,6 +14,7 @@ import { reconcileRestoreReceipts } from './restore-receipts.ts';
 import { reconcileRestoreOperations } from './restore-operations.ts';
 import { rotateRestoreGenerations } from './restore-generations.ts';
 import { verifySemantics } from './verification-semantics.ts';
+import { restoreEvidenceSources } from './restore-evidence.ts';
 
 const incompatible = () => new Error('This backup needs compatible recovery preparation.');
 const frozen = () => new Error('The frozen authority copy cannot be changed.');
@@ -162,4 +164,74 @@ export async function reconcileRestoreCandidate(
     inventory,
     semantics,
   };
+}
+
+/** Original-content rollback preparation, NOT forward archive admission. The
+ * caller binds current to the independent terminal witness and supplies a second
+ * disposable copy of that exact frozen original. Its embedded inventory may be
+ * stale after legitimate serving writes. Full logical equality (including that
+ * metadata) is required instead of weakening authenticated archive validation.
+ *
+ * Attempt copies contribute only negative evidence. Original ownership, grants,
+ * placements, trash/holds and content remain intact; sessions/capabilities and
+ * native generations still rotate. Never use a failed attempt as current. Any
+ * failure invalidates this entire working copy. Admission and durable custody of
+ * a usable rollback must precede activation; this function authorizes neither.
+ */
+export async function reconcileRestoreRollback(
+  current: DatabaseSync,
+  candidate: DatabaseSync,
+  additional: readonly DatabaseSync[],
+  options: { spacesEnabled: boolean; now: number },
+) {
+  if (!Number.isSafeInteger(options.now) || options.now < 0) throw incompatible();
+  const { sources } = restoreEvidenceSources(current, candidate, additional);
+  candidate.assertQuiescent();
+  for (const db of [...sources, candidate]) integrity(db);
+  const originalFingerprint = restoreSnapshotFingerprint(current);
+  if (originalFingerprint !== restoreSnapshotFingerprint(candidate))
+    throw new Error('Rollback content does not match the frozen original.');
+  for (const db of [current, candidate]) {
+    resolverSchema(db);
+    const before = constructionMark(db);
+    new WorkspaceStore(new AuthStore(db, () => options.now), {
+      spacesEnabled: options.spacesEnabled,
+    });
+    if (constructionMark(db) !== before) throw incompatible();
+  }
+  const marks = sources.map((db) => {
+    const changes = db.prepare('SELECT total_changes() AS n').get()!.n;
+    db.setWriteGuard(() => {
+      throw frozen();
+    });
+    return changes;
+  });
+  const credentials = reconcileRestoreCredentials(current, candidate);
+  const receipts = reconcileRestoreReceipts(current, candidate, additional);
+  const operations = reconcileRestoreOperations(current, candidate);
+  const generations = rotateRestoreGenerations(current, candidate, additional);
+  integrity(candidate);
+  // A never-restored serving original has no archive metadata table. Establish
+  // canonical inventory storage only AFTER equality with the sealed original;
+  // this is rollback provenance, not a claim that a new backup was created.
+  if (!candidate.prepare("SELECT 1 FROM sqlite_schema WHERE name='spinel_recovery'").get())
+    candidate.exec(restoreMetadataSchema);
+  if (!candidate.prepare('SELECT 1 FROM spinel_recovery WHERE id=1').get())
+    candidate.prepare('INSERT INTO spinel_recovery(id,metadata) VALUES(1,?)').run(
+      JSON.stringify({
+        format: 1,
+        kind: 'supervised-rollback',
+        originalFingerprint,
+        preparedAt: options.now,
+      }),
+    );
+  writeInventory(candidate);
+  const semantics = await verifySemantics(candidate);
+  const inventory = verifyInventory(candidate)!;
+  for (const [index, db] of sources.entries()) {
+    db.assertQuiescent();
+    if (db.prepare('SELECT total_changes() AS n').get()!.n !== marks[index]) throw frozen();
+  }
+  candidate.assertQuiescent();
+  return { credentials, receipts, operations, generations, inventory, semantics };
 }

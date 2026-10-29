@@ -116,6 +116,48 @@ function state(db: DatabaseSync) {
     ]);
 }
 
+test('rollback generations exceed all attempts without copying their content or mappings', async () => {
+  const f = await fixture(),
+    a = await f.snapshot(),
+    b = await f.snapshot(),
+    c = await f.snapshot();
+  const first = rotateRestoreGenerations(f.db, a);
+  const second = rotateRestoreGenerations(f.db, b, [a]);
+  expect(second.revisionOffset).toBeGreaterThan(first.revisionOffset);
+  const before = [state(f.db), state(a), state(b)];
+  const high = restoreRevisionHighWater(f.db, c, [a, b]);
+  const result = rotateRestoreGenerations(f.db, c, [a, b]);
+  expect(result.revisionOffset).toBe(high);
+  expect(high).toBeGreaterThan(second.revisionOffset);
+  const units = [a, b].flatMap((db) =>
+    db
+      .prepare('SELECT unit_id FROM spinel_live_units')
+      .all()
+      .map((row) => row.unit_id),
+  );
+  for (const unit of units) {
+    expect(
+      c.prepare("SELECT 1 FROM spinel_restore_fences WHERE kind='identity' AND id=?").get(unit),
+    ).toBeDefined();
+    expect(c.prepare('SELECT 1 FROM spinel_live_units WHERE unit_id=?').get(unit)).toBeUndefined();
+    expect(c.prepare('SELECT 1 FROM spinel_sync_units WHERE unit_id=?').get(unit)).toBeUndefined();
+  }
+  expect([state(f.db), state(a), state(b)]).toEqual(before);
+});
+
+test('rejects namespace collisions found only between attempts before rotating anything', async () => {
+  const f = await fixture(),
+    a = await f.snapshot(),
+    b = await f.snapshot(),
+    c = await f.snapshot();
+  const collision = randomUUID();
+  a.prepare('INSERT INTO spinel_live_units VALUES(?,?,0)').run(f.live.id, collision);
+  b.prepare('INSERT INTO spinel_live_units VALUES(?,?,0)').run(f.lazy.id, collision);
+  const before = state(c);
+  expect(() => rotateRestoreGenerations(f.db, c, [a, b])).toThrow('reconciliation');
+  expect(state(c)).toEqual(before);
+});
+
 test('an empty purged current generation retains its permanent revision ceiling for future recovery', async () => {
   const f = await fixture(),
     candidate = await f.snapshot();

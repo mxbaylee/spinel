@@ -1,6 +1,6 @@
-import { statSync } from 'node:fs';
 import type { DatabaseSync } from '../../../server/database.ts';
-import { readRestoreRows, requireCompatibleRestoreSchema } from './restore-credentials.ts';
+import { readRestoreRows } from './restore-credentials.ts';
+import { restoreEvidenceSources } from './restore-evidence.ts';
 
 const incompatible = () => new Error('This backup has incompatible retired request identities.');
 const identitySources = [
@@ -25,11 +25,12 @@ const validId = (value: unknown): value is string =>
  * normal generation purge. This step does not itself rotate active units or the
  * independent maintenance epoch: both are required before serving the candidate.
  */
-export function reconcileRestoreFences(current: DatabaseSync, candidate: DatabaseSync) {
-  const source = statSync(current.path, { bigint: true }),
-    target = statSync(candidate.path, { bigint: true });
-  if (source.dev === target.dev && source.ino === target.ino) throw incompatible();
-  const tables = requireCompatibleRestoreSchema(current, candidate);
+export function reconcileRestoreFences(
+  current: DatabaseSync,
+  candidate: DatabaseSync,
+  additional: readonly DatabaseSync[] = [],
+) {
+  const { sources, tables } = restoreEvidenceSources(current, candidate, additional);
   if (!tables.has('spinel_restore_fences')) throw incompatible();
   const identities = new Set<string>(),
     requests = new Set<string>(),
@@ -43,7 +44,7 @@ export function reconcileRestoreFences(current: DatabaseSync, candidate: Databas
     set.add(value);
     if (identities.size + requests.size > 100_000 || bytes > 8 * 1024 ** 2) throw incompatible();
   };
-  for (const db of [current, candidate]) {
+  for (const db of [...sources, candidate]) {
     for (const row of readRestoreRows(db, 'spinel_restore_fences', 100_000)) {
       if (row.kind !== 'identity' && row.kind !== 'request') throw incompatible();
       add(row.kind, row.id);

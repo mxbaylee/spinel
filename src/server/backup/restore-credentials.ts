@@ -26,7 +26,7 @@ const knownAuthority = new Set<string>([
 const quote = (name: string) => `"${name.replaceAll('"', '""')}"`;
 const incompatible = () =>
   new Error('This backup needs compatible authority and schema reconciliation before restore.');
-const recoverySql =
+export const restoreMetadataSchema =
   'CREATE TABLE spinel_recovery (id INTEGER PRIMARY KEY CHECK(id=1), metadata TEXT NOT NULL, inventory TEXT) STRICT';
 
 function schema(db: DatabaseSync) {
@@ -50,7 +50,7 @@ function schema(db: DatabaseSync) {
     if (!tables.has(name)) throw incompatible();
   const definitions = rows.filter((row) => {
     if (row.type === 'table' && row.name === 'spinel_recovery') {
-      if (row.sql !== recoverySql) throw incompatible();
+      if (row.sql !== restoreMetadataSchema) throw incompatible();
       return false;
     }
     // Triggers attached to recovery metadata are executable too, and must never
