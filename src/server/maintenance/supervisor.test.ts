@@ -19,7 +19,7 @@ import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { afterEach, expect, test } from 'vitest';
+import { afterEach, expect, test, vi } from 'vitest';
 import { openDatabase } from '../../../server/database.ts';
 import { maintenanceControl } from '../../../scripts/deploy/maintenance.ts';
 import {
@@ -33,10 +33,16 @@ import {
 import { assertWorkspaceHandlesClosed, MaintenanceSupervisor } from './supervisor.ts';
 import { processResourcesReleased } from './process-exit.ts';
 import { restoreBarrierPath } from './restore-barrier.ts';
+import { restoreSnapshotFingerprint } from '../backup/inventory.ts';
+import { validRestoreStopRecord } from './restore-stop.ts';
 
 const cleanups: Array<() => unknown | Promise<unknown>> = [];
 afterEach(async () => {
-  for (const cleanup of cleanups.splice(0).reverse()) await cleanup();
+  try {
+    for (const cleanup of cleanups.splice(0).reverse()) await cleanup();
+  } finally {
+    vi.restoreAllMocks();
+  }
 });
 const actorId = randomUUID();
 const proof = (now = Date.now()) => ({
@@ -63,20 +69,36 @@ async function fixture() {
   const databasePath = join(data, 'workspace.sqlite');
   await seed(databasePath);
   const createChild = (groupToken: string, env: Record<string, string> = {}) =>
-    fork(fileURLToPath(new URL('./app-fixture.ts', import.meta.url)), [], {
-      env: {
-        ...process.env,
-        ...env,
-        DATABASE_PATH: databasePath,
-        SPINEL_SUPERVISED: '1',
-        SPINEL_PROCESS_GROUP_TOKEN: groupToken,
+    fork(
+      fileURLToPath(
+        new URL(
+          env.SPINEL_TEST_REAL_APP === '1' ? '../../../server/index.ts' : './app-fixture.ts',
+          import.meta.url,
+        ),
+      ),
+      [],
+      {
+        env: {
+          ...process.env,
+          ...env,
+          DATABASE_PATH: databasePath,
+          SPINEL_SUPERVISED: '1',
+          SPINEL_PROCESS_GROUP_TOKEN: groupToken,
+        },
+        execArgv: [],
+        detached: true,
+        stdio: ['ignore', 'ignore', 'inherit', 'ipc'],
       },
-      execArgv: [],
-      detached: true,
-      stdio: ['ignore', 'ignore', 'inherit', 'ipc'],
-    });
+    );
   async function supervisor(
-    extra: { now?: () => number; env?: Record<string, string>; drainMs?: number } = {},
+    extra: {
+      now?: () => number;
+      env?: Record<string, string>;
+      drainMs?: number;
+      restoreMs?: number;
+      startMs?: number;
+      stopMs?: number;
+    } = {},
   ) {
     const instance = await MaintenanceSupervisor.open({
       root,
@@ -84,7 +106,13 @@ async function fixture() {
       publicPort: 0,
       now: extra.now,
       createChild: (groupToken) => createChild(groupToken, extra.env),
-      budgets: { drainMs: extra.drainMs ?? 2000, stopMs: 100, startMs: 5000, verifyMs: 5000 },
+      budgets: {
+        drainMs: extra.drainMs ?? 2000,
+        stopMs: extra.stopMs ?? 100,
+        startMs: extra.startMs ?? 5000,
+        verifyMs: 5000,
+        restoreMs: extra.restoreMs ?? 5000,
+      },
     });
     cleanups.push(() => instance.close());
     return instance;
@@ -821,3 +849,242 @@ for (const phase of ['starting', 'running', 'draining', 'paused', 'stopping', 's
     await stopped;
   }, 20_000);
 }
+
+test.each([false, true])(
+  'restore shutdown persists its final witness, reaps handles and tolerates duplicates=%s',
+  async (duplicate) => {
+    const f = await fixture();
+    const supervisor = await f.supervisor({
+      env: duplicate ? { SPINEL_TEST_WITNESS_DUPLICATE: '1' } : {},
+    });
+    await start(supervisor);
+    const jobId = randomUUID();
+    await supervisor.control({ action: 'pause', operationId: jobId, authority: proof() });
+    const before = supervisor.status();
+    const record = await supervisor.stopForRestore(jobId);
+    expect(validRestoreStopRecord(record)).toBe(true);
+    expect(record.request).toMatchObject({
+      jobId,
+      epoch: before.epoch,
+      generationId: before.generationId,
+    });
+    expect(record.fingerprint).toMatch(/^[a-f0-9]{64}$/);
+    expect(supervisor.status().phase).toBe('stopped');
+    expect(supervisor.journal.state.child).toBeNull();
+    assertWorkspaceHandlesClosed(f.databasePath);
+    const persisted = JSON.parse(await readFile(join(f.root, 'journal.json'), 'utf8'));
+    expect(persisted.restoreStop).toEqual(record);
+    const db = openDatabase(f.databasePath);
+    try {
+      expect(
+        db.prepare("SELECT count(*) AS n FROM writes WHERE value='final restore flush'").get()!.n,
+      ).toBe(1);
+      expect(restoreSnapshotFingerprint(db)).toBe(record.fingerprint);
+    } finally {
+      db.close();
+    }
+    await expect(supervisor.stopForRestore(jobId)).rejects.toThrow('authorized pause');
+  },
+);
+
+test('restore shutdown refuses another operation and kills a child that never provides its witness', async () => {
+  const f = await fixture();
+  const supervisor = await f.supervisor({
+    env: { SPINEL_TEST_NEVER_WITNESS: '1' },
+    restoreMs: 200,
+    stopMs: 15_000,
+  });
+  await start(supervisor);
+  const jobId = randomUUID();
+  await supervisor.control({ action: 'pause', operationId: jobId, authority: proof() });
+  await expect(supervisor.stopForRestore(randomUUID())).rejects.toThrow('authorized pause');
+  expect(supervisor.status().phase).toBe('paused');
+  const signalled = vi.spyOn(process, 'kill');
+  await expect(supervisor.stopForRestore(jobId)).rejects.toThrow('timed out');
+  expect(signalled.mock.calls.some(([, signal]) => signal === 'SIGKILL')).toBe(true);
+  expect(signalled.mock.calls.some(([, signal]) => signal === 'SIGTERM')).toBe(false);
+  signalled.mockRestore();
+  expect(supervisor.status().phase).toBe('recovery-required');
+  expect(supervisor.journal.state.restoreStop?.fingerprint).toBeNull();
+  assertWorkspaceHandlesClosed(f.databasePath);
+});
+
+test('conflicting final witness messages cannot complete restore shutdown', async () => {
+  const f = await fixture();
+  const supervisor = await f.supervisor({ env: { SPINEL_TEST_WITNESS_CONFLICT: '1' } });
+  await start(supervisor);
+  const jobId = randomUUID();
+  await supervisor.control({ action: 'pause', operationId: jobId, authority: proof() });
+  await expect(supervisor.stopForRestore(jobId)).rejects.toThrow();
+  expect(supervisor.status().phase).toBe('recovery-required');
+  assertWorkspaceHandlesClosed(f.databasePath);
+});
+
+test('witness persistence failure is never acknowledged as completed shutdown', async () => {
+  const f = await fixture();
+  const supervisor = await f.supervisor();
+  await start(supervisor);
+  const jobId = randomUUID();
+  await supervisor.control({ action: 'pause', operationId: jobId, authority: proof() });
+  const originalWrite = supervisor.journal.write.bind(supervisor.journal);
+  const write = vi.spyOn(supervisor.journal, 'write').mockImplementation(() => {
+    if (supervisor.journal.state.restoreStop?.fingerprint) throw new Error('Journal fsync failed.');
+    originalWrite();
+  });
+  try {
+    await expect(supervisor.stopForRestore(jobId)).rejects.toThrow();
+    expect(supervisor.status().phase).toBe('recovery-required');
+    expect(
+      JSON.parse(await readFile(join(f.root, 'journal.json'), 'utf8')).restoreStop.fingerprint,
+    ).toBeNull();
+    assertWorkspaceHandlesClosed(f.databasePath);
+  } finally {
+    write.mockRestore();
+  }
+});
+
+test('restart preserves the historical witness but cannot reopen its original generation', async () => {
+  const f = await fixture();
+  const supervisor = await f.supervisor();
+  await start(supervisor);
+  const jobId = randomUUID();
+  await supervisor.control({ action: 'pause', operationId: jobId, authority: proof() });
+  const record = await supervisor.stopForRestore(jobId);
+  await supervisor.close();
+  const restarted = await f.supervisor();
+  expect(restarted.journal.state.restoreStop).toEqual(record);
+  expect(restarted.status().epoch).not.toBe(record.request.epoch);
+  expect(restarted.status().phase).toBe('recovery-required');
+  for (const action of ['verify', 'start', 'resume', 'pause'] as const)
+    await expect(restarted.coldControl({ action, operationId: jobId })).rejects.toThrow(
+      'unfinished restore witness',
+    );
+  expect(restarted.journal.state.restoreStop).toEqual(record);
+});
+
+test('the production entrypoint completes the private restore shutdown handshake', async () => {
+  const f = await fixture();
+  const assets = join(f.directory, 'assets');
+  await mkdir(assets);
+  await writeFile(join(assets, 'index.html'), 'Fixture');
+  const supervisor = await f.supervisor({
+    env: { SPINEL_TEST_REAL_APP: '1', PORT: '0', SPINEL_STATIC_DIRECTORY: assets },
+    startMs: 20_000,
+    restoreMs: 20_000,
+    stopMs: 3000,
+  });
+  await start(supervisor);
+  const jobId = randomUUID();
+  await supervisor.control({ action: 'pause', operationId: jobId, authority: proof() });
+  const witness = await supervisor.stopForRestore(jobId);
+  expect(validRestoreStopRecord(witness)).toBe(true);
+  expect(witness.fingerprint).toMatch(/^[a-f0-9]{64}$/);
+  expect(supervisor.status().phase).toBe('stopped');
+  assertWorkspaceHandlesClosed(f.databasePath);
+}, 60_000);
+
+test('slow synchronous witness persistence cannot bypass the shutdown deadline', async () => {
+  const f = await fixture();
+  let elapsed = 0;
+  const supervisor = await f.supervisor({ now: () => Date.now() + elapsed, restoreMs: 5000 });
+  await start(supervisor);
+  const jobId = randomUUID();
+  await supervisor.control({ action: 'pause', operationId: jobId, authority: proof() });
+  const originalWrite = supervisor.journal.write.bind(supervisor.journal);
+  const write = vi.spyOn(supervisor.journal, 'write').mockImplementation(() => {
+    originalWrite();
+    if (supervisor.journal.state.restoreStop?.fingerprint) elapsed = 10_000;
+  });
+  try {
+    await expect(supervisor.stopForRestore(jobId)).rejects.toThrow();
+    expect(supervisor.status().phase).toBe('recovery-required');
+    assertWorkspaceHandlesClosed(f.databasePath);
+  } finally {
+    write.mockRestore();
+  }
+});
+
+test.each(['requested', 'persisted'] as const)(
+  'parent death at the %s restore boundary never fabricates an acknowledged witness',
+  async (stage) => {
+    const f = await fixture();
+    const acknowledgment = join(f.data, 'witness-ack');
+    const marker = join(f.directory, 'restore-cut');
+    const previous = fork(fileURLToPath(new URL('./supervisor-fixture.ts', import.meta.url)), [], {
+      env: {
+        ...process.env,
+        DATABASE_PATH: f.databasePath,
+        SPINEL_MAINTENANCE_ROOT: f.root,
+        SPINEL_TEST_WITNESS_ACK_FILE: acknowledgment,
+        SPINEL_TEST_RESTORE_BARRIER_FILE: marker,
+      },
+      execArgv: [],
+      stdio: ['ignore', 'ignore', 'inherit', 'ipc'],
+    });
+    cleanups.push(async () => {
+      if (previous.exitCode === null && previous.signalCode === null) {
+        const exit = once(previous, 'exit');
+        previous.kill('SIGKILL');
+        await exit;
+      }
+    });
+    await message(previous, (value) => value.ready === true);
+    const initial = randomUUID();
+    for (const action of ['verify', 'start', 'resume'] as const)
+      await maintenanceControl(f.root, { action, operationId: initial });
+    const jobId = randomUUID();
+    await maintenanceControl(f.root, { action: 'pause', operationId: jobId });
+    const armed = message(previous, (value) => value.restoreArmed === stage);
+    previous.send({ restoreBarrier: stage });
+    await armed;
+    previous.send({ restore: jobId });
+    await expect
+      .poll(
+        async () => {
+          try {
+            return await readFile(marker, 'utf8');
+          } catch (error) {
+            if ((error as NodeJS.ErrnoException).code === 'ENOENT') return null;
+            throw error;
+          }
+        },
+        { timeout: 10_000 },
+      )
+      .toBe(stage);
+    const journal = JSON.parse(await readFile(join(f.root, 'journal.json'), 'utf8'));
+    expect(journal.phase).toBe('stopping');
+    expect(journal.child).not.toBeNull();
+    const retained = journal.restoreStop;
+    expect(validRestoreStopRecord(retained)).toBe(true);
+    if (stage === 'persisted') expect(retained.fingerprint).toMatch(/^[a-f0-9]{64}$/);
+    else expect(retained.fingerprint).toBeNull();
+    await expect(lstat(acknowledgment)).rejects.toHaveProperty('code', 'ENOENT');
+    const exited = once(previous, 'exit');
+    previous.kill('SIGKILL');
+    await exited;
+    const restarted = await f.supervisor();
+    expect(restarted.journal.state.restoreStop).toEqual(retained);
+    expect(restarted.status().phase).toBe('recovery-required');
+    expect(restarted.journal.state.child).toBeNull();
+    assertWorkspaceHandlesClosed(f.databasePath);
+    await expect(lstat(acknowledgment)).rejects.toHaveProperty('code', 'ENOENT');
+    await expect(restarted.coldControl({ action: 'start', operationId: jobId })).rejects.toThrow(
+      'unfinished restore witness',
+    );
+  },
+  30_000,
+);
+
+test('a stale shutdown challenge cannot replace or poison the current witness', async () => {
+  const f = await fixture();
+  const supervisor = await f.supervisor({ env: { SPINEL_TEST_WITNESS_STALE: '1' } });
+  await start(supervisor);
+  const jobId = randomUUID();
+  await supervisor.control({ action: 'pause', operationId: jobId, authority: proof() });
+  const witness = await supervisor.stopForRestore(jobId);
+  expect(witness.fingerprint).not.toBe('0'.repeat(64));
+  expect(witness.request.jobId).toBe(jobId);
+  expect(supervisor.journal.state.restoreStop).toEqual(witness);
+  expect(supervisor.status().phase).toBe('stopped');
+  assertWorkspaceHandlesClosed(f.databasePath);
+});

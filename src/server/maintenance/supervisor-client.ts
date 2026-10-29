@@ -5,9 +5,15 @@ import type {
   MaintenanceCommand,
   MaintenanceControlResult,
   MaintenancePublicStatus,
+  RestoreStopRequest,
 } from '../../shared/maintenance.ts';
 import { publicMaintenance } from '../../shared/maintenance.ts';
 import { receiveWorkspaceOwnership } from './ownership.ts';
+import {
+  sameRestoreStopRequest,
+  validRestoreFingerprint,
+  validRestoreStopRequest,
+} from './restore-stop.ts';
 
 export const MAINTENANCE_CHANNEL = 'spinel-maintenance';
 
@@ -17,6 +23,22 @@ export async function connectMaintenance(): Promise<MaintenanceBridge> {
     throw new Error('Maintenance requires its supervised application channel.');
   let current: MaintenanceAdminStatus | undefined;
   let closed = false;
+  let restoreListener: ((request: RestoreStopRequest) => Promise<void>) | undefined;
+  let restoreRequest: RestoreStopRequest | undefined;
+  let witnessWaiter:
+    | {
+        fingerprint: string;
+        resolve(): void;
+        reject(error: Error): void;
+        timer: ReturnType<typeof setTimeout>;
+      }
+    | undefined;
+  const failWitness = () => {
+    if (!witnessWaiter) return;
+    clearTimeout(witnessWaiter.timer);
+    witnessWaiter.reject(new Error('The final restore witness was not acknowledged.'));
+    witnessWaiter = undefined;
+  };
   const listeners = new Set<(status: MaintenancePublicStatus) => void>();
   const requests = new Map<
     string,
@@ -41,6 +63,7 @@ export async function connectMaintenance(): Promise<MaintenanceBridge> {
   );
   const onMessage = (value: unknown) => {
     if (
+      closed ||
       !value ||
       typeof value !== 'object' ||
       (value as { channel?: unknown }).channel !== MAINTENANCE_CHANNEL
@@ -52,6 +75,8 @@ export async function connectMaintenance(): Promise<MaintenanceBridge> {
       requestId?: string;
       result?: MaintenanceControlResult;
       error?: string;
+      request?: unknown;
+      fingerprint?: unknown;
     };
     if (message.kind === 'state' && message.status) {
       current = message.status;
@@ -64,6 +89,60 @@ export async function connectMaintenance(): Promise<MaintenanceBridge> {
         resolveInitial();
       }
       for (const listener of listeners) listener(publicMaintenance(current));
+    } else if (message.kind === 'restore-stop') {
+      const request = message.request;
+      if (!validRestoreStopRequest(request)) return;
+      if (restoreRequest && sameRestoreStopRequest(request, restoreRequest)) return;
+      if (
+        restoreRequest ||
+        !restoreListener ||
+        !current ||
+        current.phase !== 'stopping' ||
+        current.epoch !== request.epoch ||
+        current.generationId !== request.generationId ||
+        current.operationId !== request.jobId ||
+        Date.now() >= request.deadline
+      ) {
+        try {
+          send({ kind: 'restore-stop-refused', request });
+        } catch {
+          /* Disconnect closes admission. */
+        }
+        return;
+      }
+      restoreRequest = request;
+      void Promise.resolve()
+        .then(() => restoreListener!(request))
+        .catch(() => {
+          if (!closed && process.connected) {
+            try {
+              send({ kind: 'restore-stop-refused', request });
+            } catch {
+              /* Disconnect closes admission. */
+            }
+          }
+        });
+    } else if (
+      message.kind === 'restore-witness-ack' &&
+      restoreRequest &&
+      witnessWaiter &&
+      validRestoreStopRequest(message.request) &&
+      sameRestoreStopRequest(message.request, restoreRequest) &&
+      message.fingerprint === witnessWaiter.fingerprint
+    ) {
+      if (
+        !current ||
+        current.phase !== 'stopping' ||
+        current.epoch !== restoreRequest.epoch ||
+        current.generationId !== restoreRequest.generationId ||
+        Date.now() >= restoreRequest.deadline
+      ) {
+        failWitness();
+        return;
+      }
+      clearTimeout(witnessWaiter.timer);
+      witnessWaiter.resolve();
+      witnessWaiter = undefined;
     } else if (message.kind === 'result' && typeof message.requestId === 'string') {
       const request = requests.get(message.requestId);
       if (!request) return;
@@ -78,6 +157,7 @@ export async function connectMaintenance(): Promise<MaintenanceBridge> {
   };
   const onDisconnect = () => {
     if (closed) return;
+    failWitness();
     if (current) {
       current = { ...current, phase: 'recovery-required', readyToResume: false };
       for (const listener of listeners) listener(publicMaintenance(current));
@@ -133,11 +213,44 @@ export async function connectMaintenance(): Promise<MaintenanceBridge> {
     drained: (epoch) => {
       if (!closed && process.connected) send({ kind: 'drained', epoch });
     },
+    onRestoreStop(listener) {
+      if (restoreListener || closed) throw new Error('Restore shutdown is already registered.');
+      restoreListener = listener;
+    },
+    acceptRestoreWitness(request, fingerprint) {
+      if (
+        closed ||
+        !restoreRequest ||
+        !sameRestoreStopRequest(request, restoreRequest) ||
+        !validRestoreFingerprint(fingerprint) ||
+        witnessWaiter ||
+        !current ||
+        current.phase !== 'stopping' ||
+        current.epoch !== request.epoch ||
+        current.generationId !== request.generationId ||
+        Date.now() >= request.deadline
+      )
+        return Promise.reject(new Error('The final restore witness has no current challenge.'));
+      return new Promise<void>((resolve, reject) => {
+        const timer = setTimeout(
+          failWitness,
+          Math.max(1, Math.min(30_000, request.deadline - Date.now())),
+        );
+        witnessWaiter = { fingerprint, resolve, reject, timer };
+        try {
+          send({ kind: 'restore-witness', request, fingerprint });
+        } catch {
+          failWitness();
+        }
+      });
+    },
     fail: (reason) => {
       if (!closed && process.connected) send({ kind: 'failure', reason });
     },
     close() {
       closed = true;
+      failWitness();
+      restoreListener = undefined;
       clearTimeout(initialTimeout);
       process.off('message', onMessage);
       process.off('disconnect', onDisconnect);

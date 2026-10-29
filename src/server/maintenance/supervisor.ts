@@ -35,6 +35,13 @@ import { MAINTENANCE_CHANNEL } from './supervisor-client.ts';
 import { shareWorkspaceOwnership } from './ownership.ts';
 import { processResourcesReleased, waitForProcessInventory } from './process-exit.ts';
 import { assertNoPendingRestore } from './restore-barrier.ts';
+import {
+  sameRestoreStopRequest,
+  validRestoreFingerprint,
+  validRestoreStopRequest,
+} from './restore-stop.ts';
+import type { RestoreStopRecord } from './restore-stop.ts';
+import { checkVerificationHeadroom } from '../backup/recovery-worker.ts';
 
 const DRAIN_MS = 30_000;
 const STOP_MS = 15_000;
@@ -56,7 +63,13 @@ interface SupervisorOptions {
   /** Test seams select real disposable processes; never supplied over a control API. */
   createChild?: (groupToken: string) => ChildProcess;
   now?: () => number;
-  budgets?: { drainMs?: number; stopMs?: number; startMs?: number; verifyMs?: number };
+  budgets?: {
+    drainMs?: number;
+    stopMs?: number;
+    startMs?: number;
+    verifyMs?: number;
+    restoreMs?: number;
+  };
   onTransition?: (status: MaintenanceAdminStatus) => void;
 }
 interface Waiter {
@@ -215,6 +228,8 @@ export class MaintenanceSupervisor {
   private childReadyEpoch: string | undefined;
   private drainWaiter: Waiter | undefined;
   private startWaiter: Waiter | undefined;
+  private restoreWaiter:
+    { resolve(record: RestoreStopRecord): void; reject(error: Error): void } | undefined;
   private queue: Promise<unknown> = Promise.resolve();
   private publicServer: HttpServer | undefined;
   private controlServer: HttpServer | undefined;
@@ -389,6 +404,7 @@ export class MaintenanceSupervisor {
     this.drainWaiter = undefined;
     this.startWaiter?.reject(new Error(safeError));
     this.startWaiter = undefined;
+    this.restoreWaiter?.reject(new Error(safeError));
   }
   private reconcileNotice(restarting: boolean) {
     const notice = this.journal.state.notice;
@@ -492,6 +508,10 @@ export class MaintenanceSupervisor {
   }
   control(command: unknown): Promise<MaintenanceControlResult> {
     return this.serial(async () => {
+      if (this.journal.state.restoreStop)
+        throw new Error(
+          'Finish recovery of the current restore before another maintenance operation.',
+        );
       if (!object(command)) throw new Error('Invalid maintenance operation.');
       operationId(command.operationId);
       if (command.action === 'resume') {
@@ -612,6 +632,10 @@ export class MaintenanceSupervisor {
       }
       if (!['pause', 'stop', 'start', 'verify', 'resume'].includes(String(command.action)))
         throw new Error('Unknown recovery operation.');
+      if (this.journal.state.restoreStop && command.action !== 'stop')
+        throw new Error(
+          'An unfinished restore witness must be reconciled before another recovery operation.',
+        );
       operationId(command.operationId);
       const state = this.journal.state;
       if (state.completedOperationId === command.operationId)
@@ -707,8 +731,8 @@ export class MaintenanceSupervisor {
     const completedOperationId = this.journal.state.operation?.id ?? null;
     this.transition({ phase: 'running', operation: null, completedOperationId, lastFailure: null });
   }
-  private async stopGroup(identity: ProcessIdentity, checkHandles = true) {
-    const deadline = Date.now() + (this.options.budgets?.stopMs ?? STOP_MS);
+  private async stopGroup(identity: ProcessIdentity, checkHandles = true, force = false) {
+    const deadline = Date.now() + (force ? 0 : (this.options.budgets?.stopMs ?? STOP_MS));
     const closedDeadline = deadline + 3000;
     const members = () => waitForProcessInventory(() => groupMembers(identity), closedDeadline);
     const signal = (value: NodeJS.Signals) => {
@@ -721,10 +745,10 @@ export class MaintenanceSupervisor {
       }
     };
     if ((await members()).length) {
-      signal('SIGTERM');
-      while ((await members()).length && Date.now() < deadline) await delay(25);
+      signal(force ? 'SIGKILL' : 'SIGTERM');
+      if (!force) while ((await members()).length && Date.now() < deadline) await delay(25);
       if ((await members()).length) {
-        signal('SIGKILL');
+        if (!force) signal('SIGKILL');
         while ((await members()).length && Date.now() < closedDeadline) await delay(25);
       }
       if ((await members()).length) throw new Error('Application processes are still running.');
@@ -750,6 +774,133 @@ export class MaintenanceSupervisor {
       this.failure('process-still-active');
       throw error;
     }
+  }
+
+  /** Internal orchestration boundary. A prepared restore job must own this exact
+   * pause operation. This does not authorize activation or replace custody. */
+  stopForRestore(jobId: string): Promise<RestoreStopRecord> {
+    return this.serial(async () => {
+      operationId(jobId);
+      const state = this.journal.state;
+      const child = this.child;
+      const identity = state.child;
+      if (
+        this.closing ||
+        state.phase !== 'paused' ||
+        !this.childReady ||
+        !this.childOwned ||
+        !child?.connected ||
+        !identity ||
+        state.restoreStop ||
+        !state.databaseIdentity ||
+        state.operation?.id !== jobId ||
+        state.operation.generationId !== state.generationId ||
+        state.operation.expiresAt <= this.now()
+      )
+        throw new Error('Restore shutdown requires its current, authorized pause.');
+      this.assertGeneration();
+      await checkVerificationHeadroom('start');
+      if (
+        this.journal.state !== state ||
+        this.child !== child ||
+        !child.connected ||
+        this.closing ||
+        state.operation.expiresAt <= this.now()
+      )
+        throw new Error('Restore shutdown authority changed during admission.');
+      const budget = this.options.budgets?.restoreMs ?? 120_000;
+      if (!Number.isInteger(budget) || budget < 1 || budget > 600_000)
+        throw new Error('Invalid restore shutdown budget.');
+      const record: RestoreStopRecord = {
+        request: {
+          jobId,
+          challengeId: randomUUID(),
+          epoch: state.epoch,
+          generationId: state.generationId,
+          deadline: this.now() + budget,
+        },
+        databaseIdentity: { ...state.databaseIdentity },
+        child: { ...identity },
+        fingerprint: null,
+        acceptedAt: null,
+      };
+      const witness = new Promise<RestoreStopRecord>((resolve, reject) => {
+        this.restoreWaiter = { resolve, reject };
+      });
+      void witness.catch(() => {});
+      const waiter = this.restoreWaiter!;
+      let forceStop = false;
+      let sampling = false;
+      const memory = setInterval(async () => {
+        if (sampling) return;
+        sampling = true;
+        try {
+          await checkVerificationHeadroom('running');
+          let rss = 0;
+          for (const pid of groupMembers(identity)) {
+            try {
+              rss += Number(
+                /^VmRSS:\s+(\d+)/m.exec(readFileSync(`/proc/${pid}/status`, 'utf8'))?.[1] ?? 0,
+              );
+            } catch (error) {
+              if (!processResourcesReleased(String(pid))) throw error;
+            }
+          }
+          if (rss > 512 * 1024) throw new Error('Restore shutdown exceeded its memory budget.');
+        } catch {
+          forceStop = true;
+          waiter.reject(new Error('Restore shutdown has insufficient memory headroom.'));
+        } finally {
+          sampling = false;
+        }
+      }, 100);
+      const timeout = setTimeout(() => {
+        forceStop = true;
+        waiter.reject(new Error('Restore shutdown timed out.'));
+      }, budget);
+      try {
+        this.childReady = false;
+        // Persist the challenge before directing the child to its one-shot
+        // shutdown. Ordinary SIGTERM must not race challenge registration.
+        this.transition({ phase: 'stopping', restoreStop: record, verifiedAt: null });
+        child.send(
+          { channel: MAINTENANCE_CHANNEL, kind: 'restore-stop', request: record.request },
+          (error) => {
+            if (error) waiter.reject(new Error('Restore shutdown control disconnected.'));
+          },
+        );
+        const accepted = await witness;
+        clearTimeout(timeout);
+        clearInterval(memory);
+        // Durable witness and complete process/handle closure are independent.
+        await this.stopGroup(identity);
+        if (
+          this.closing ||
+          this.journal.state.phase !== 'stopping' ||
+          this.journal.state.restoreStop?.fingerprint !== accepted.fingerprint
+        )
+          throw new Error('Restore shutdown lost its control binding.');
+        this.child = undefined;
+        this.childOwned = false;
+        this.transition({ phase: 'stopped', child: null, verifiedAt: null });
+        return structuredClone(accepted);
+      } catch (error) {
+        try {
+          await this.stopGroup(identity, true, forceStop || this.now() >= record.request.deadline);
+          this.child = undefined;
+          this.childOwned = false;
+          this.transition({ child: null });
+        } catch {
+          /* Retain unresolved process identity for restart recovery. */
+        }
+        this.failure('restore-witness-failed');
+        throw error;
+      } finally {
+        clearTimeout(timeout);
+        clearInterval(memory);
+        this.restoreWaiter = undefined;
+      }
+    });
   }
   private async verify() {
     assertNoPendingRestore(this.journal.databasePath);
@@ -835,6 +986,10 @@ export class MaintenanceSupervisor {
     }
   }
   private async start() {
+    if (this.journal.state.restoreStop)
+      throw new Error(
+        'An unfinished restore witness must be reconciled before application restart.',
+      );
     assertNoPendingRestore(this.journal.databasePath);
     if (this.journal.state.phase !== 'stopped' || this.journal.state.verifiedAt === null)
       throw new Error('Verify the closed workspace before starting it.');
@@ -888,6 +1043,9 @@ export class MaintenanceSupervisor {
     });
     child.once('exit', () => {
       if (this.child !== child) return;
+      this.restoreWaiter?.reject(
+        new Error('The application exited before restore shutdown completed.'),
+      );
       this.childReady = false;
       this.childOwned = false;
       if (!['stopping', 'stopped'].includes(this.journal.state.phase) && !this.closing)
@@ -936,7 +1094,54 @@ export class MaintenanceSupervisor {
   private async childMessage(child: ChildProcess, value: unknown) {
     if (child !== this.child || !object(value) || value.channel !== MAINTENANCE_CHANNEL) return;
     try {
-      if (value.kind === 'hello') this.sendState();
+      if (value.kind === 'restore-witness' || value.kind === 'restore-stop-refused') {
+        const record = this.journal.state.restoreStop;
+        // Out of band: serial() is already awaiting this witness. The current
+        // ChildProcess and full durable challenge are both required.
+        if (
+          !record ||
+          !this.restoreWaiter ||
+          !validRestoreStopRequest(value.request) ||
+          !sameRestoreStopRequest(value.request, record.request)
+        )
+          return;
+        if (value.kind === 'restore-stop-refused') throw new Error('Restore shutdown was refused.');
+        const acceptedAt = this.now();
+        if (
+          this.closing ||
+          this.journal.state.phase !== 'stopping' ||
+          this.journal.state.epoch !== record.request.epoch ||
+          this.journal.state.generationId !== record.request.generationId ||
+          !sameFile(this.journal.state.databaseIdentity, record.databaseIdentity) ||
+          !sameFile(fileIdentity(this.journal.databasePath), record.databaseIdentity) ||
+          child.pid !== record.child.pid ||
+          !this.journal.state.child ||
+          this.journal.state.child.start !== record.child.start ||
+          this.journal.state.child.boot !== record.child.boot ||
+          this.journal.state.child.token !== record.child.token ||
+          !validRestoreFingerprint(value.fingerprint) ||
+          (record.fingerprint !== null && record.fingerprint !== value.fingerprint) ||
+          acceptedAt >= record.request.deadline
+        )
+          throw new Error('Restore witness does not match its current challenge.');
+        const accepted =
+          record.fingerprint === null
+            ? { ...record, fingerprint: value.fingerprint, acceptedAt }
+            : record;
+        if (record.fingerprint === null) this.transition({ restoreStop: accepted });
+        // Synchronous fsync may outlast the timer while the event loop is
+        // blocked. A persisted witness alone must not bypass this deadline.
+        if (this.now() >= record.request.deadline)
+          throw new Error('Restore witness persistence exceeded its deadline.');
+        // Journal fsync above precedes ACK. Identical duplicates may ACK again.
+        child.send({
+          channel: MAINTENANCE_CHANNEL,
+          kind: 'restore-witness-ack',
+          request: record.request,
+          fingerprint: accepted.fingerprint,
+        });
+        this.restoreWaiter.resolve(accepted);
+      } else if (value.kind === 'hello') this.sendState();
       else if (
         value.kind === 'ready' &&
         value.epoch === this.journal.state.epoch &&
@@ -988,6 +1193,7 @@ export class MaintenanceSupervisor {
     clearInterval(this.noticeTimer);
     this.drainWaiter?.reject(new Error('Supervisor is stopping.'));
     this.startWaiter?.reject(new Error('Supervisor is stopping.'));
+    this.restoreWaiter?.reject(new Error('Supervisor is stopping.'));
     let failure: unknown;
     if (this.journal.state.child || this.journal.state.verifier) {
       try {

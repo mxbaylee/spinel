@@ -18,6 +18,8 @@ import type { Server } from 'node:net';
 import { basename, dirname, isAbsolute, join, resolve, sep } from 'node:path';
 import type { MaintenanceNotice, MaintenancePhase } from '../../shared/maintenance.ts';
 import { assertNoPendingRestore } from './restore-barrier.ts';
+import { validRestoreStopRecord } from './restore-stop.ts';
+import type { RestoreStopRecord } from './restore-stop.ts';
 
 export const AUTHORITY_MS = 5 * 60_000;
 export const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -71,6 +73,8 @@ export interface RecoveryJournalState {
   verifiedAt: number | null;
   lastFailure: string | null;
   updatedAt: number;
+  /** Historical binding survives supervisor epoch changes. Older journals omit it. */
+  restoreStop?: RestoreStopRecord | null;
 }
 
 export function maintenanceSupported() {
@@ -428,6 +432,11 @@ function validState(value: unknown, databasePath: string): value is RecoveryJour
       (typeof value.lastFailure === 'string' && /^[a-z-]{1,64}$/.test(value.lastFailure))
     ) ||
     !Number.isSafeInteger(value.updatedAt) ||
+    !(
+      value.restoreStop === undefined ||
+      value.restoreStop === null ||
+      validRestoreStopRecord(value.restoreStop)
+    ) ||
     !Array.isArray(value.receipts) ||
     value.receipts.length > 128 ||
     !value.receipts.every(
@@ -540,6 +549,7 @@ export class RecoveryJournal {
       verifiedAt: null,
       lastFailure: this.corrupted ? 'journal-invalid' : 'generation-unverified',
       updatedAt: Date.now(),
+      restoreStop: null,
     };
     if (!loaded && !this.corrupted) this.write();
   }

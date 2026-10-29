@@ -53,6 +53,15 @@ export interface MaintenanceControlResult {
   resumeToken?: string;
 }
 
+/** Private supervisor-to-child shutdown challenge, never public status. */
+export interface RestoreStopRequest {
+  jobId: string;
+  challengeId: string;
+  generationId: string;
+  epoch: string;
+  deadline: number;
+}
+
 export interface MaintenanceBridge {
   status(): MaintenancePublicStatus;
   adminStatus(): MaintenanceAdminStatus;
@@ -62,6 +71,8 @@ export interface MaintenanceBridge {
   ready(): void;
   /** Called only after accepted request, sync and job work has drained. */
   drained(epoch: string): void;
+  onRestoreStop?(listener: (request: RestoreStopRequest) => Promise<void>): void;
+  acceptRestoreWitness?(request: RestoreStopRequest, fingerprint: string): Promise<void>;
   /** Fixed, non-sensitive failure; the parent keeps maintenance active. */
   fail(reason: 'drain-failed' | 'storage-failed'): void;
   close(): void;

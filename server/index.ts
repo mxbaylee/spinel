@@ -11,6 +11,7 @@ import {
 import type { WorkspaceLease } from '../src/server/maintenance/journal.ts';
 import { closeSync, constants, mkdirSync, openSync } from 'node:fs';
 import { dirname } from 'node:path';
+import type { RestoreStopRequest } from '../src/shared/maintenance.ts';
 
 const development = process.argv.includes('--dev');
 const port = Number(process.env.PORT ?? 3000);
@@ -104,17 +105,31 @@ if (development && !process.argv.includes('--no-open')) {
 }
 
 let stopping = false;
-async function shutdown() {
-  if (stopping) return;
+async function shutdown(restore?: RestoreStopRequest) {
+  if (stopping) {
+    if (restore) throw new Error('Application shutdown has already started.');
+    return;
+  }
   stopping = true;
   try {
-    await app.close();
+    await app.close(
+      restore
+        ? {
+            acceptRestoreWitness: (fingerprint) => {
+              if (!maintenance?.acceptRestoreWitness)
+                throw new Error('Restore control is unavailable.');
+              return maintenance.acceptRestoreWitness(restore, fingerprint);
+            },
+          }
+        : undefined,
+    );
   } catch (error) {
-    console.error(error);
+    console.error(restore ? new Error('Supervised restore shutdown did not complete.') : error);
     process.exitCode = 1;
   } finally {
     maintenance?.close();
   }
 }
-process.on('SIGINT', shutdown);
-process.on('SIGTERM', shutdown);
+maintenance?.onRestoreStop?.((request) => shutdown(request));
+process.on('SIGINT', () => void shutdown());
+process.on('SIGTERM', () => void shutdown());
