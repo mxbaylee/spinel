@@ -61,6 +61,7 @@ import type { RestoreSourceInput, RestoreSourceManifest } from './restore-files.
 import { validRestoreAuthority } from './restore-authority.ts';
 import type { ApplicationPolicy } from '../../../server/application-policy.ts';
 import { freezeCurrentRestore } from '../backup/restore-freeze.ts';
+import { prepareRestoreAttempt } from './restore-prepare.ts';
 import { syncRestoreDirectory } from '../backup/restore-input.ts';
 
 const DRAIN_MS = 30_000;
@@ -204,6 +205,12 @@ function groupMembers(identity: ProcessIdentity) {
   return members;
 }
 
+class WorkspaceHandlesOpenError extends Error {
+  constructor() {
+    super('A workspace or WAL handle is still open.');
+  }
+}
+
 /** Never kills unrelated handle owners; their existence prevents a closed result. */
 export function assertWorkspaceHandlesClosed(databasePath: string, ignored = new Set<number>()) {
   const targets = new Set([databasePath, `${databasePath}-wal`, `${databasePath}-shm`]);
@@ -229,10 +236,9 @@ export function assertWorkspaceHandlesClosed(databasePath: string, ignored = new
         try {
           const path = `/proc/${name}/fd/${descriptor}`;
           const target = readlinkSync(path).replace(/ \(deleted\)$/, '');
-          if (targets.has(target)) throw new Error('A workspace or WAL handle is still open.');
+          if (targets.has(target)) throw new WorkspaceHandlesOpenError();
           const info = statSync(path, { bigint: true });
-          if (identities.has(`${info.dev}:${info.ino}`))
-            throw new Error('A workspace or WAL handle is still open.');
+          if (identities.has(`${info.dev}:${info.ino}`)) throw new WorkspaceHandlesOpenError();
         } catch (error) {
           if (['ENOENT', 'ESRCH', 'EINVAL'].includes((error as NodeJS.ErrnoException).code ?? ''))
             continue;
@@ -765,7 +771,7 @@ export class MaintenanceSupervisor {
     proof: MaintenanceAuthority,
     token = randomBytes(32).toString('base64url'),
     receipts: OperationReceipt[] = this.journal.state.receipts,
-    plannedEpoch = randomUUID(),
+    plannedEpoch: string = randomUUID(),
   ) {
     if (!uuidPattern.test(plannedEpoch) || plannedEpoch === this.journal.state.epoch)
       throw new Error('Invalid planned maintenance epoch.');
@@ -844,11 +850,31 @@ export class MaintenanceSupervisor {
       }
       if ((await members()).length) throw new Error('Application processes are still running.');
     }
-    if (checkHandles)
-      await waitForProcessInventory(
-        () => assertWorkspaceHandlesClosed(this.journal.databasePath),
-        closedDeadline,
-      );
+    if (checkHandles) {
+      const assertDeadline = () => {
+        if (Date.now() >= closedDeadline)
+          throw new Error('Workspace handle closure exceeded its stop deadline.');
+      };
+      for (;;) {
+        assertDeadline();
+        try {
+          await waitForProcessInventory(
+            () => assertWorkspaceHandlesClosed(this.journal.databasePath),
+            closedDeadline,
+          );
+          assertDeadline();
+          break;
+        } catch (error) {
+          // A process-group scan and the kernel's descriptor teardown are not
+          // one atomic observation. A positive open-handle observation remains
+          // blocking; recheck closure within the same existing exit budget.
+          // Unrelated owners are never signalled, and other errors still refuse.
+          const remaining = closedDeadline - Date.now();
+          if (!(error instanceof WorkspaceHandlesOpenError) || remaining <= 0) throw error;
+          await delay(Math.min(25, remaining));
+        }
+      }
+    }
   }
   private async stop() {
     if (this.journal.state.phase === 'running' || this.journal.state.phase === 'draining')
@@ -1146,15 +1172,25 @@ export class MaintenanceSupervisor {
         basename(frozen.databasePath) !== 'frozen.sqlite'
       )
         throw new Error('Frozen restore output escaped its planned slot.');
-      jobs.markFrozen(request.id, request.intentHash, record.revision, {
+      record = jobs.markFrozen(request.id, request.intentHash, record.revision, {
         directory: basename(dirname(frozen.databasePath)),
         bytes: frozen.databaseBytes,
         sha256: frozen.databaseSha256,
         fingerprint: frozen.fingerprint,
       });
       assertBudget();
-      // Candidate/rollback preparation and activation continue from this durable
-      // witnessed, authority-checked boundary. No public route exposes it yet.
+      record = await prepareRestoreAttempt({
+        jobs,
+        record,
+        root: this.journal.root,
+        now: this.now,
+        signal,
+        assertClosed,
+        deadline,
+      });
+      assertClosed();
+      // Activation follows only the durable preparation of both output images
+      // and successful real-app startup rehearsals. No public route exposes it yet.
     } finally {
       controller.abort();
       if (this.restoreAdmissionAbort === controller) this.restoreAdmissionAbort = undefined;

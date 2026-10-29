@@ -45,6 +45,7 @@ import { MAINTENANCE_CHANNEL } from './supervisor-client.ts';
 import type { RestoreAuthority } from './restore-authority.ts';
 import { validRestoreAuthority } from './restore-authority.ts';
 import { applicationPolicy } from '../../../server/application-policy.ts';
+import { prepareRestoreArchive } from '../backup/verification.ts';
 import { restoreJobIntentFixture } from './restore-job-fixture.ts';
 import { OWNERSHIP_CHANNEL, shareWorkspaceOwnership } from './ownership.ts';
 
@@ -62,16 +63,25 @@ const proof = (now = Date.now()) => ({
   sessionHash: 'a'.repeat(64),
   expiresAt: now + 60_000,
 });
-async function seed(databasePath: string, withAuthority = false) {
-  const child = fork(fileURLToPath(new URL('./seed-fixture.ts', import.meta.url)), [], {
-    env: {
-      ...process.env,
-      DATABASE_PATH: databasePath,
-      SPINEL_TEST_AUTHORITY_SEED: withAuthority ? '1' : '0',
+async function seed(databasePath: string, withAuthority = false, completeRestore = false) {
+  const child = fork(
+    fileURLToPath(
+      new URL(
+        completeRestore ? './restore-controller-fixture.ts' : './seed-fixture.ts',
+        import.meta.url,
+      ),
+    ),
+    [],
+    {
+      env: {
+        ...process.env,
+        DATABASE_PATH: databasePath,
+        SPINEL_TEST_AUTHORITY_SEED: withAuthority ? '1' : '0',
+      },
+      execArgv: [],
+      stdio: ['ignore', 'ignore', 'inherit', 'ipc'],
     },
-    execArgv: [],
-    stdio: ['ignore', 'ignore', 'inherit', 'ipc'],
-  });
+  );
   let authority: RestoreAuthority | undefined;
   child.on('message', (value: unknown) => {
     if (
@@ -86,7 +96,7 @@ async function seed(databasePath: string, withAuthority = false) {
   if (code !== 0 || (withAuthority && !authority)) throw new Error('Database seed failed.');
   return authority;
 }
-async function fixture(withAuthority = false) {
+async function fixture(withAuthority = false, completeRestore = false) {
   const directory = await mkdtemp(join(tmpdir(), 'spinel-maint-'));
   cleanups.push(() => rm(directory, { recursive: true, force: true }));
   const root = join(directory, 'recovery'),
@@ -94,7 +104,7 @@ async function fixture(withAuthority = false) {
   await mkdir(root, { mode: 0o700 });
   await mkdir(data, { mode: 0o700 });
   const databasePath = join(data, 'workspace.sqlite');
-  const authority = await seed(databasePath, withAuthority);
+  const authority = await seed(databasePath, withAuthority, completeRestore);
   const createChild = (groupToken: string, env: Record<string, string> = {}) =>
     fork(
       fileURLToPath(
@@ -451,6 +461,7 @@ test('inherited cold and live ownership survives supervisor and app death until 
     publicPort: 0,
     budgets: { stopMs: 100 },
   });
+  cleanups.push(() => recovered.close());
   expect(recovered.journal.state.child).toBeNull();
   expect(() => assertWorkspaceHandlesClosed(f.databasePath)).not.toThrow();
   await recovered.close();
@@ -459,6 +470,139 @@ test('inherited cold and live ownership survives supervisor and app death until 
   await cold();
   await live.release();
 }, 10_000);
+
+// Exercise the exact stop boundary with a real previously stopped process group
+// and real descriptors. The two restart cases above cover journal reconciliation.
+async function stoppedGroupFixture() {
+  const f = await fixture(),
+    supervisor = await f.supervisor();
+  await start(supervisor);
+  const operationId = randomUUID();
+  await supervisor.control({ action: 'pause', operationId, authority: proof() });
+  const identity = supervisor.journal.state.child!;
+  await supervisor.coldControl({ action: 'stop', operationId });
+  expect(() => assertWorkspaceHandlesClosed(f.databasePath)).not.toThrow();
+  const waitForClosure = () =>
+    (
+      supervisor as unknown as {
+        stopGroup(value: typeof identity): Promise<void>;
+      }
+    ).stopGroup(identity);
+  return { ...f, supervisor, waitForClosure };
+}
+
+test.each(['path', 'inode'] as const)(
+  'a stopped group waits for a still-open %s descriptor without signalling its owner',
+  async (kind) => {
+    const f = await stoppedGroupFixture();
+    const path = kind === 'path' ? f.databasePath : join(f.data, 'held-alias.sqlite');
+    if (kind === 'inode') await link(f.databasePath, path);
+    let descriptor: number | undefined = openSync(path, 'r');
+    const kill = vi.spyOn(process, 'kill');
+    let settled = false;
+    const pending = f.waitForClosure().finally(() => {
+      settled = true;
+    });
+    // Attach a handler immediately so the counterfactual's early refusal does not
+    // produce an unhandled rejection while this test inspects the pending state.
+    void pending.catch(() => {});
+    try {
+      await new Promise<void>((resolve) => setImmediate(resolve));
+      expect(settled).toBe(false);
+      expect(() => assertWorkspaceHandlesClosed(f.databasePath)).toThrow('still open');
+      closeSync(descriptor);
+      descriptor = undefined;
+      await pending;
+      expect(() => assertWorkspaceHandlesClosed(f.databasePath)).not.toThrow();
+      expect(kill).not.toHaveBeenCalled();
+    } finally {
+      if (descriptor !== undefined) closeSync(descriptor);
+      await pending.catch(() => {});
+    }
+  },
+);
+
+test('a persistent descriptor refuses at the original stop deadline without signalling its owner', async () => {
+  const f = await stoppedGroupFixture();
+  const descriptor = openSync(f.databasePath, 'r');
+  const kill = vi.spyOn(process, 'kill');
+  let now = Date.now();
+  vi.spyOn(Date, 'now').mockImplementation(() => now);
+  let settled = false;
+  const pending = f.waitForClosure().then(
+    () => {
+      settled = true;
+      return null;
+    },
+    (error: unknown) => {
+      settled = true;
+      return error;
+    },
+  );
+  try {
+    await new Promise<void>((resolve) => setImmediate(resolve));
+    expect(settled).toBe(false);
+    // Advance only the clock across this fixture's unchanged 100ms grace plus
+    // 3000ms closure budget. The real descriptor stays open for every scan.
+    now += 3100;
+    expect(await pending).toBeInstanceOf(Error);
+    expect(await pending).toMatchObject({
+      message: 'Workspace handle closure exceeded its stop deadline.',
+    });
+    expect(() => assertWorkspaceHandlesClosed(f.databasePath)).toThrow('still open');
+    expect(kill).not.toHaveBeenCalled();
+  } finally {
+    closeSync(descriptor);
+    await pending;
+  }
+});
+
+test('a descriptor closing after the stop budget cannot turn a late retry into success', async () => {
+  const f = await stoppedGroupFixture();
+  let descriptor: number | undefined = openSync(f.databasePath, 'r');
+  let now = Date.now();
+  vi.spyOn(Date, 'now').mockImplementation(() => now);
+  let settled = false;
+  const pending = f.waitForClosure().then(
+    () => {
+      settled = true;
+      return null;
+    },
+    (error: unknown) => {
+      settled = true;
+      return error;
+    },
+  );
+  try {
+    await new Promise<void>((resolve) => setImmediate(resolve));
+    expect(settled).toBe(false);
+    closeSync(descriptor);
+    descriptor = undefined;
+    expect(() => assertWorkspaceHandlesClosed(f.databasePath)).not.toThrow();
+    now += 3101;
+    expect(await pending).toMatchObject({
+      message: 'Workspace handle closure exceeded its stop deadline.',
+    });
+  } finally {
+    if (descriptor !== undefined) closeSync(descriptor);
+    await pending;
+  }
+});
+
+test('a successful closure scan completing across the deadline cannot report success', async () => {
+  const f = await stoppedGroupFixture();
+  expect(() => assertWorkspaceHandlesClosed(f.databasePath)).not.toThrow();
+  let now = Date.now();
+  vi.spyOn(Date, 'now').mockImplementation(() => now);
+  const pending = f.waitForClosure();
+  // stopGroup's already-resolved group-inventory continuation runs first and
+  // synchronously completes the descriptor scan. Expire the clock before its
+  // successful scan promise returns control, without creating a failed read.
+  queueMicrotask(() => {
+    now += 3101;
+  });
+  await expect(pending).rejects.toThrow('closure exceeded its stop deadline');
+});
 
 test('reconciled startup still refuses a competing cold process through the complete stop deadline', async () => {
   const f = await fixture();
@@ -1821,6 +1965,126 @@ async function admissionFixture(
   return { ...f, supervisor, request, child };
 }
 
+test.runIf(process.platform === 'linux')(
+  'complete application and authenticated archive prepare both images with startup rehearsals',
+  async () => {
+    const f = await fixture(true, true);
+    const policy = applicationPolicy(3000, {
+      APP_ORIGIN: 'https://spinel.example',
+      SPINEL_IMAGE: `spinel@sha256:${'a'.repeat(64)}`,
+      SPINEL_STATIC_DIRECTORY: join(f.data, 'assets'),
+    });
+    const seedSource = JSON.parse(await readFile(join(f.data, 'restore-source.json'), 'utf8'));
+    const source = await prepareRestoreArchive({
+      archive: seedSource.archive,
+      keyFile: seedSource.keyFile,
+      stagingRoot: f.data,
+      expectedOrigin: policy.origin,
+      expectedImage: policy.image!,
+      expectedArchive: { bytes: seedSource.bytes, sha256: seedSource.sha256 },
+      timeoutMs: 30_000,
+    });
+    cleanups.push(() => source.dispose());
+    expect(source.tables).toBeGreaterThan(0);
+    const supervisor = await MaintenanceSupervisor.open({
+      root: f.root,
+      databasePath: f.databasePath,
+      publicPort: 0,
+      applicationPolicy: policy,
+      createChild: (token) =>
+        f.createChild(token, {
+          SPINEL_TEST_REAL_APP: '1',
+          PORT: '0',
+          HOST: '127.0.0.1',
+          APP_ORIGIN: policy.origin,
+          SPINEL_IMAGE: policy.image!,
+          SPINEL_STATIC_DIRECTORY: policy.staticDirectory,
+          BACKUP_CONFIG_PATH: join(f.data, 'absent-backup-config'),
+        }),
+      budgets: {
+        startMs: 20_000,
+        stopMs: 3000,
+        drainMs: 10_000,
+        verifyMs: 5000,
+        restoreMs: 30_000,
+      },
+    });
+    cleanups.push(() => supervisor.close());
+    await start(supervisor);
+    const state = supervisor.status();
+    const id = randomUUID();
+    const admitted = await supervisor.admitPreparedRestore({
+      id,
+      generationId: state.generationId,
+      epoch: state.epoch,
+      authority: f.authority!,
+      confirmedAt: Date.now(),
+      source: {
+        archive: source.archive,
+        databasePath: source.databasePath,
+        databaseBytes: source.databaseBytes,
+        databaseSha256: source.databaseSha256,
+        recovery: source.recovery,
+      },
+    });
+    // The request-side staging lifetime ends after the custody ACK. Subsequent
+    // controller work must use its retained encrypted bundle and verified source.
+    await source.dispose();
+    await expect(lstat(source.databasePath)).rejects.toMatchObject({ code: 'ENOENT' });
+    const begun = await supervisor.beginPreparedRestore({
+      id,
+      intentHash: admitted.record.intentHash,
+      continuationToken: admitted.continuationToken!,
+    });
+    expect(begun.record.phase).toBe('pause-planned');
+    const statePath = join(f.root, 'restore-jobs', id, 'state.json');
+    await expect
+      .poll(async () => JSON.parse(await readFile(statePath, 'utf8')).phase, { timeout: 30_000 })
+      .toBe('prepared');
+    const completed = JSON.parse(await readFile(statePath, 'utf8'));
+    expect(completed.execution.frozen.fingerprint).toBe(completed.execution.stop.fingerprint);
+    expect(completed.execution.frozen.fingerprint).not.toBe(source.logicalFingerprint);
+    expect(completed.intent.source.archive.sha256).toBe(seedSource.sha256);
+    const preparation = completed.execution.preparation;
+    expect(preparation.candidate.fingerprint).not.toBe(preparation.rollback.fingerprint);
+    const slot = join(f.root, `restore-${id}`, `prepare-${preparation.slot}`);
+    for (const [image, filename, expectedName] of [
+      [preparation.candidate, ['restored', 'spinel.sqlite'], 'Archived folder'],
+      [preparation.rollback, ['rollback.sqlite'], 'Current folder'],
+    ] as const) {
+      const imagePath = join(slot, image.directory, ...filename);
+      const bytes = await readFile(imagePath);
+      expect(bytes.length).toBe(image.bytes);
+      expect(createHash('sha256').update(bytes).digest('hex')).toBe(image.sha256);
+      const observer = fork(
+        fileURLToPath(new URL('./restore-controller-observer-fixture.ts', import.meta.url)),
+        [],
+        {
+          env: {
+            ...process.env,
+            DATABASE_PATH: imagePath,
+            SPINEL_TEST_FOLDER_ID: seedSource.folderId,
+          },
+          execArgv: [],
+          stdio: ['ignore', 'ignore', 'inherit', 'ipc'],
+        },
+      );
+      let observation: unknown;
+      observer.on('message', (value: unknown) => {
+        observation = value;
+      });
+      const [code] = await once(observer, 'exit');
+      expect(code).toBe(0);
+      expect(observation).toEqual({ name: expectedName, sessions: 0 });
+      // Observer completion must not alter the selected, closed output.
+      expect(await readFile(imagePath)).toEqual(bytes);
+    }
+    expect(supervisor.status().phase).toBe('stopped');
+    assertWorkspaceHandlesClosed(f.databasePath);
+  },
+  90_000,
+);
+
 test('admission durably retains source before ACK and exact retries reuse its continuation', async () => {
   const f = await admissionFixture();
   const before = f.supervisor.status();
@@ -2025,7 +2289,7 @@ test('begin acknowledges a durable pause plan before drain and retains the job w
     await syncDirectory(path, signal);
     if (
       path.startsWith(join(f.root, `restore-${begin.id}`, 'freeze-')) &&
-      (await readdir(path)).some((name) => /^\.restore-frozen-/.test(name))
+      (await readdir(path)).some((name) => name.startsWith('.restore-frozen-'))
     )
       outputParentSynced = true;
   });
@@ -2053,9 +2317,12 @@ test('begin acknowledges a durable pause plan before drain and retains the job w
   const planned = await f.supervisor.beginPreparedRestore(begin);
   expect(planned.record.phase).toBe('pause-planned');
   expect(['running', 'draining']).toContain(f.supervisor.status().phase);
+  // This custody fixture deliberately has no valid SQLite candidate. The real
+  // controller must retain its original evidence and refuse preparation.
   await expect
-    .poll(async () => JSON.parse(await readFile(statePath, 'utf8')).phase, { timeout: 10_000 })
-    .toBe('frozen');
+    .poll(() => f.supervisor.status().phase, { timeout: 15_000 })
+    .toBe('recovery-required');
+  expect(JSON.parse(await readFile(statePath, 'utf8')).phase).toBe('preparation-planned');
   expect(witnessedBeforeAck).toBe(true);
   expect(existsSync(join(f.directory, 'witness-ack'))).toBe(true);
   assertWorkspaceHandlesClosed(f.databasePath);
@@ -2092,7 +2359,7 @@ test('begin acknowledges a durable pause plan before drain and retains the job w
   const retried = await f.supervisor.beginPreparedRestore(begin);
   expect(retried.record).toEqual(completed);
   expect(f.supervisor.status().epoch).toBe(planned.record.execution!.epoch);
-  expect(f.supervisor.status().phase).toBe('stopped');
+  expect(f.supervisor.status().phase).toBe('recovery-required');
 }, 60_000);
 
 test('failed job-witness publication never sends the child a custody acknowledgement', async () => {
@@ -2137,7 +2404,9 @@ test('a begin retry responds while drain is waiting for that retry to release', 
   await expect.poll(() => response?.record.phase, { timeout: 3000 }).toBe('pause-planned');
   await retry;
   f.child.send({ releaseHeldDrain: true });
-  await expect.poll(() => f.supervisor.status().phase, { timeout: 10_000 }).toBe('stopped');
+  await expect
+    .poll(() => f.supervisor.status().phase, { timeout: 15_000 })
+    .toBe('recovery-required');
   await expect
     .poll(
       async () =>
@@ -2145,7 +2414,7 @@ test('a begin retry responds while drain is waiting for that retry to release', 
           .phase,
       { timeout: 15_000 },
     )
-    .toBe('frozen');
+    .toBe('preparation-planned');
 }, 60_000);
 
 test('a published pause plan followed by failure fences the application without discarding intent', async () => {

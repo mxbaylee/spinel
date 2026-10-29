@@ -22,8 +22,21 @@ import type { RestoreOriginals } from './restore-files.ts';
 import { restoreIntentHash, validRestoreJobIntent } from './restore-job-intent.ts';
 import type { RestoreJobIntent } from './restore-job-intent.ts';
 
-/** Durable original shutdown planning. Later execution stages must add their
- * own evidence before becoming valid states. This store never opens SQLite. */
+/** Closed prepared image inside the one durable preparation slot. The record
+ * never accepts an arbitrary output path or permission to activate it. */
+export interface RestorePreparedImage {
+  directory: string;
+  bytes: number;
+  sha256: string;
+  fingerprint: string;
+}
+export interface RestorePreparation {
+  slot: string;
+  preparedAt: number;
+  candidate?: RestorePreparedImage;
+  rollback?: RestorePreparedImage;
+}
+/** Durable original shutdown/preparation evidence. This store never opens SQLite. */
 export interface RestorePausePlan {
   epoch: string;
   child: ProcessIdentity;
@@ -32,6 +45,7 @@ export interface RestorePausePlan {
   originals?: RestoreOriginals;
   freezeSlot?: string;
   frozen?: { directory: string; bytes: number; sha256: string; fingerprint: string };
+  preparation?: RestorePreparation;
 }
 type ExecutionPhase =
   | 'pause-planned'
@@ -42,7 +56,12 @@ type ExecutionPhase =
   | 'originals-planned'
   | 'originals-retained'
   | 'freeze-planned'
-  | 'frozen';
+  | 'frozen'
+  | 'preparation-planned'
+  | 'candidate-prepared'
+  | 'rollback-prepared'
+  | 'candidate-rehearsed'
+  | 'prepared';
 export interface RestoreJobRecord {
   version: 1;
   revision: number;
@@ -66,30 +85,52 @@ const executionPhases: readonly string[] = [
   'originals-retained',
   'freeze-planned',
   'frozen',
+  'preparation-planned',
+  'candidate-prepared',
+  'rollback-prepared',
+  'candidate-rehearsed',
+  'prepared',
 ];
 const sameProcess = (a: ProcessIdentity | null, b: ProcessIdentity) =>
   !!a && a.pid === b.pid && a.start === b.start && a.boot === b.boot && a.token === b.token;
-const sameStop = (a: RestoreStopRecord | null, b: RestoreStopRecord) =>
+const sameStop = (a: RestoreStopRecord | null | undefined, b: RestoreStopRecord) =>
   !!a &&
   sameRestoreStopRequest(a.request, b.request) &&
   sameFile(a.databaseIdentity, b.databaseIdentity) &&
   sameProcess(a.child, b.child) &&
   a.fingerprint === b.fingerprint &&
   a.acceptedAt === b.acceptedAt;
+function validPreparedImage(
+  value: unknown,
+  kind: 'reconciled' | 'rollback',
+): value is RestorePreparedImage {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const image = value as RestorePreparedImage;
+  return (
+    Object.keys(image).length === 4 &&
+    typeof image.directory === 'string' &&
+    new RegExp(`^\\.restore-${kind}-[A-Za-z0-9]{6}$`).test(image.directory) &&
+    Number.isSafeInteger(image.bytes) &&
+    image.bytes >= 4096 &&
+    image.bytes <= 8 * 1024 ** 3 &&
+    typeof image.sha256 === 'string' &&
+    /^[a-f0-9]{64}$/.test(image.sha256) &&
+    typeof image.fingerprint === 'string' &&
+    /^[a-f0-9]{64}$/.test(image.fingerprint)
+  );
+}
 function validExecution(record: RestoreJobRecord) {
   if (!executionPhases.includes(record.phase)) return !Object.hasOwn(record, 'execution');
   const plan = record.execution;
-  const hasOriginals = [
-    'originals-planned',
-    'originals-retained',
-    'freeze-planned',
-    'frozen',
-  ].includes(record.phase);
-  const hasSlot = ['freeze-planned', 'frozen'].includes(record.phase);
+  const stage = executionPhases.indexOf(record.phase);
+  const hasOriginals = stage >= executionPhases.indexOf('originals-planned');
+  const hasSlot = stage >= executionPhases.indexOf('freeze-planned');
+  const hasFrozen = stage >= executionPhases.indexOf('frozen');
+  const hasPreparation = stage >= executionPhases.indexOf('preparation-planned');
   if (
     !plan ||
     Object.keys(plan).length !==
-      4 + Number(hasOriginals) + Number(hasSlot) + Number(record.phase === 'frozen') ||
+      4 + Number(hasOriginals) + Number(hasSlot) + Number(hasFrozen) + Number(hasPreparation) ||
     typeof plan.epoch !== 'string' ||
     !uuid.test(plan.epoch) ||
     plan.epoch === record.intent.target.epoch ||
@@ -114,7 +155,7 @@ function validExecution(record: RestoreJobRecord) {
   )
     return false;
   if (hasSlot && (typeof plan.freezeSlot !== 'string' || !uuid.test(plan.freezeSlot))) return false;
-  if (record.phase === 'frozen') {
+  if (hasFrozen) {
     const frozen = plan.frozen;
     if (
       !frozen ||
@@ -127,6 +168,27 @@ function validExecution(record: RestoreJobRecord) {
       typeof frozen.sha256 !== 'string' ||
       !/^[a-f0-9]{64}$/.test(frozen.sha256) ||
       frozen.fingerprint !== plan.stop?.fingerprint
+    )
+      return false;
+  }
+  if (hasPreparation) {
+    const preparation = plan.preparation;
+    const hasCandidate = stage >= executionPhases.indexOf('candidate-prepared');
+    const hasRollback = stage >= executionPhases.indexOf('rollback-prepared');
+    if (
+      !preparation ||
+      Object.keys(preparation).length !== 2 + Number(hasCandidate) + Number(hasRollback) ||
+      typeof preparation.slot !== 'string' ||
+      !uuid.test(preparation.slot) ||
+      preparation.slot === plan.freezeSlot ||
+      !Number.isSafeInteger(preparation.preparedAt) ||
+      preparation.preparedAt < record.intent.confirmedAt ||
+      preparation.preparedAt < (plan.stop?.acceptedAt ?? Infinity) ||
+      preparation.preparedAt > record.updatedAt ||
+      preparation.preparedAt >= record.intent.authority.expiresAt ||
+      record.updatedAt >= record.intent.authority.expiresAt ||
+      (hasCandidate && !validPreparedImage(preparation.candidate, 'reconciled')) ||
+      (hasRollback && !validPreparedImage(preparation.rollback, 'rollback'))
     )
       return false;
   }
@@ -672,6 +734,57 @@ export class RestoreJobs {
     const result = this.publishExecution(current, 'frozen', { ...current.execution!, frozen });
     this.clock(current.intent);
     return result;
+  }
+  private preparationCheckpoint(
+    current: RestoreJobRecord,
+    phase: ExecutionPhase,
+    preparation: RestorePreparation,
+  ) {
+    this.clock(current.intent);
+    const result = this.publishExecution(current, phase, { ...current.execution!, preparation });
+    // Recheck target/epoch/closure binding after durable publication as well as
+    // time. A late failure preserves the published evidence, never clears it.
+    this.closedExecution(result.intent.id, result.intentHash, result.revision, phase);
+    this.clock(result.intent);
+    return result;
+  }
+  planPreparation(id: string, hash: string, revision: number, slot: string, preparedAt: number) {
+    const current = this.closedExecution(id, hash, revision, 'frozen');
+    const now = this.clock(current.intent);
+    if (!Number.isSafeInteger(preparedAt) || preparedAt < current.updatedAt || preparedAt > now)
+      throw refused();
+    return this.preparationCheckpoint(current, 'preparation-planned', { slot, preparedAt });
+  }
+  markCandidatePrepared(
+    id: string,
+    hash: string,
+    revision: number,
+    candidate: RestorePreparedImage,
+  ) {
+    const current = this.closedExecution(id, hash, revision, 'preparation-planned');
+    return this.preparationCheckpoint(current, 'candidate-prepared', {
+      ...current.execution!.preparation!,
+      candidate,
+    });
+  }
+  markRollbackPrepared(id: string, hash: string, revision: number, rollback: RestorePreparedImage) {
+    const current = this.closedExecution(id, hash, revision, 'candidate-prepared');
+    return this.preparationCheckpoint(current, 'rollback-prepared', {
+      ...current.execution!.preparation!,
+      rollback,
+    });
+  }
+  markCandidateRehearsed(id: string, hash: string, revision: number) {
+    const current = this.closedExecution(id, hash, revision, 'rollback-prepared');
+    return this.preparationCheckpoint(
+      current,
+      'candidate-rehearsed',
+      current.execution!.preparation!,
+    );
+  }
+  markPrepared(id: string, hash: string, revision: number) {
+    const current = this.closedExecution(id, hash, revision, 'candidate-rehearsed');
+    return this.preparationCheckpoint(current, 'prepared', current.execution!.preparation!);
   }
   close() {
     if (this.closed) return;

@@ -56,6 +56,9 @@ export type RestoreFilePhase =
 export interface RestoreFileControl {
   root: string;
   databasePath: string;
+  /** Controller-owned cancellation and absolute wall-clock budget. */
+  signal?: AbortSignal;
+  deadline?: number;
   /** Caller holds the workspace path/inode leases and checks all SQLite owners. */
   assertClosed(): void;
   /** Must fsync the independent journal before resolving; never just notify UI. */
@@ -746,7 +749,7 @@ async function admitMutation(control: RestoreFileControl, files: RestoreFiles, r
 }
 
 async function retained(
-  control: Pick<RestoreFileControl, 'root' | 'databasePath' | 'assertClosed'>,
+  control: Pick<RestoreFileControl, 'root' | 'databasePath' | 'assertClosed' | 'signal'>,
   files: RestoreOriginals,
 ) {
   control.assertClosed();
@@ -759,36 +762,52 @@ async function retained(
   if (!files.original['spinel.sqlite']) throw unavailable();
   for (const name of names)
     if (files.original[name])
-      await requireEvidence(join(root, 'original', name), files.original[name]!);
+      await requireEvidence(join(root, 'original', name), files.original[name]!, control.signal);
   return root;
 }
 
 /** Keep the leased inode. Never unlink/rename it or truncate before ownership checks. */
-async function overwrite(source: string, target: string, expected: FileIdentity) {
+async function overwrite(
+  source: string,
+  target: string,
+  expected: FileIdentity,
+  assertActive: () => void,
+) {
+  assertActive();
   const input = await open(source, constants.O_RDONLY | constants.O_NOFOLLOW);
   try {
+    assertActive();
     const output = await open(target, constants.O_WRONLY | constants.O_NOFOLLOW);
     try {
       const info = await output.stat();
+      assertActive();
       if (!info.isFile() || info.nlink !== 1 || !same(expected, identity(info)))
         throw unavailable();
       const buffer = Buffer.allocUnsafe(64 * 1024);
       let offset = 0;
       for (;;) {
+        assertActive();
         const { bytesRead } = await input.read(buffer, 0, buffer.length, offset);
+        assertActive();
         if (!bytesRead) break;
         if (offset + bytesRead > MAX_DATABASE) throw unavailable();
         let written = 0;
         while (written < bytesRead) {
+          assertActive();
           const result = await output.write(buffer, written, bytesRead - written, offset + written);
+          assertActive();
           if (!result.bytesWritten) throw unavailable();
           written += result.bytesWritten;
         }
         offset += bytesRead;
       }
+      assertActive();
       await output.truncate(offset);
+      assertActive();
       await output.chmod(0o600);
+      assertActive();
       await output.sync();
+      assertActive();
     } finally {
       await output.close();
     }
@@ -808,47 +827,86 @@ async function removeSidecars(databasePath: string) {
 }
 
 export async function activateRestoreFiles(control: RestoreFileControl, files: RestoreFiles) {
+  const active = () => assertMutationActive(control);
+  active();
   assertUncommitted(control);
   const root = await retained(control, files);
+  active();
   // Initial activation requires exactly the frozen original, including absent WAL.
-  await unchangedOriginal(control.databasePath, files);
+  await unchangedOriginal(control.databasePath, files, control.signal);
+  active();
   const candidate = join(root, 'candidate.sqlite');
-  await requireEvidence(candidate, files.candidate);
+  await requireEvidence(candidate, files.candidate, control.signal);
+  active();
   control.assertClosed();
   await admitMutation(control, files, false);
+  active();
   assertUncommitted(control);
   await barrier(control, files, true);
+  active();
   await control.persist('replacing');
-  await overwrite(candidate, control.databasePath, files.identity);
+  active();
+  await overwrite(candidate, control.databasePath, files.identity, active);
   await removeSidecars(control.databasePath);
+  active();
   await syncDirectory(dirname(control.databasePath));
-  await requireEvidence(control.databasePath, files.candidate);
+  active();
+  await requireEvidence(control.databasePath, files.candidate, control.signal);
+  active();
   control.assertClosed();
   await control.persist('activated');
+  active();
 }
 
 /** Replayable after any interrupted write. SQLite must verify before reopening.
  * SHM is preserved as evidence but rebuilt by SQLite, never restored as lock state.
  */
 export async function rollbackRestoreFiles(control: RestoreFileControl, files: RestoreFiles) {
+  const active = () => assertMutationActive(control);
+  active();
   assertUncommitted(control);
   const root = await retained(control, files);
   await barrier(control, files);
   control.assertClosed();
   await admitMutation(control, files, true);
+  active();
   assertUncommitted(control);
   await control.persist('rolling-back');
-  await overwrite(join(root, 'original', 'spinel.sqlite'), control.databasePath, files.identity);
+  active();
+  await overwrite(
+    join(root, 'original', 'spinel.sqlite'),
+    control.databasePath,
+    files.identity,
+    active,
+  );
   await removeSidecars(control.databasePath);
+  active();
   if (files.original['spinel.sqlite-wal'])
     requireSameEvidence(
-      await copy(join(root, 'original', 'spinel.sqlite-wal'), control.databasePath + '-wal'),
+      await copy(
+        join(root, 'original', 'spinel.sqlite-wal'),
+        control.databasePath + '-wal',
+        control.signal,
+      ),
       files.original['spinel.sqlite-wal'],
     );
+  active();
   await syncDirectory(dirname(control.databasePath));
-  await requireEvidence(control.databasePath, files.original['spinel.sqlite']!);
+  active();
+  await requireEvidence(control.databasePath, files.original['spinel.sqlite']!, control.signal);
+  active();
   control.assertClosed();
   await control.persist('rolled-back');
+  active();
+}
+
+function assertMutationActive(control: RestoreFileControl) {
+  control.signal?.throwIfAborted();
+  if (
+    control.deadline !== undefined &&
+    (!Number.isSafeInteger(control.deadline) || control.deadline <= Date.now())
+  )
+    throw new Error('Restore file mutation exceeded its deadline.');
 }
 
 /** Caller first verifies the selected generation and child health under maintenance.

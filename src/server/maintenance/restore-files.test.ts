@@ -1,4 +1,5 @@
 import { createHash, randomUUID } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import {
   chmod,
   link,
@@ -47,6 +48,7 @@ vi.mock('node:fs/promises', async (importOriginal) => {
 
 const directories: string[] = [];
 afterEach(async () => {
+  vi.restoreAllMocks();
   copyBoundary.afterCopy = undefined;
   for (const directory of directories.splice(0))
     await rm(directory, { recursive: true, force: true });
@@ -599,6 +601,58 @@ test.each(['replacing', 'activated'] as const)(
     expect(() => assertNoPendingRestore(f.databasePath)).toThrow();
   },
 );
+
+test.each(['cancel', 'deadline'] as const)(
+  'activation %s after the first write retains the barrier, partial inode and original custody',
+  async (boundary) => {
+    const f = await fixture();
+    const files = await f.prepare();
+    const controller = new AbortController();
+    const now = Date.now;
+    f.control.signal = controller.signal;
+    f.control.deadline = now() + 60_000;
+    const written = () => readFileSync(f.databasePath)[0] === f.candidate[0];
+    if (boundary === 'cancel') {
+      const check = controller.signal.throwIfAborted.bind(controller.signal);
+      vi.spyOn(controller.signal, 'throwIfAborted').mockImplementation(() => {
+        if (written()) controller.abort();
+        check();
+      });
+    } else {
+      vi.spyOn(Date, 'now').mockImplementation(() => now() + (written() ? 60_001 : 0));
+    }
+    await expect(activateRestoreFiles(f.control, files)).rejects.toThrow();
+    expect(f.phases).toEqual(['replacing']);
+    const partial = await readFile(f.databasePath);
+    expect(partial).toEqual(
+      Buffer.concat([f.candidate.subarray(0, 64 * 1024), f.original.subarray(64 * 1024)]),
+    );
+    expect((await lstat(f.databasePath)).ino.toString()).toBe(files.identity.inode);
+    expect(() => assertNoPendingRestore(f.databasePath)).toThrow('unfinished workspace restore');
+    expect(await readFile(join(f.root, `restore-${f.id}`, 'original', 'spinel.sqlite'))).toEqual(
+      f.original,
+    );
+    expect(await readFile(join(f.root, `restore-${f.id}`, 'candidate.sqlite'))).toEqual(
+      f.candidate,
+    );
+  },
+);
+
+test('cancellation during replacing publication cannot start the destructive write', async () => {
+  const f = await fixture();
+  const files = await f.prepare();
+  const controller = new AbortController();
+  f.control.signal = controller.signal;
+  const persist = f.control.persist.bind(f.control);
+  f.control.persist = async (phase) => {
+    await persist(phase);
+    if (phase === 'replacing') controller.abort();
+  };
+  await expect(activateRestoreFiles(f.control, files)).rejects.toThrow();
+  expect(f.phases).toEqual(['replacing']);
+  expect(await readFile(f.databasePath)).toEqual(f.original);
+  expect(() => assertNoPendingRestore(f.databasePath)).toThrow('unfinished workspace restore');
+});
 
 test('partial overwrite and interrupted rollback replay from immutable originals and preserve the inode', async () => {
   const f = await fixture();

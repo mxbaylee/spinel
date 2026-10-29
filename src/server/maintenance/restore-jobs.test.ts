@@ -522,3 +522,210 @@ linux(
     expect(f.jobs.read(intent.id)).toEqual(final);
   },
 );
+
+async function frozenFixture() {
+  const f = await fixture(),
+    intent = f.intent();
+  const child = { pid: 1234, start: '100', boot: randomUUID(), token: randomUUID() };
+  let record = f.jobs.admit(intent).record;
+  record = f.jobs.checkpoint(intent.id, record.intentHash, record.revision, 'source-retained');
+  Object.assign(f.journal.state, {
+    phase: 'running',
+    child,
+    restoreJob: { jobId: intent.id, intentHash: record.intentHash },
+  });
+  f.journal.write();
+  const epoch = randomUUID();
+  record = f.jobs.planPause(intent.id, record.intentHash, record.revision, epoch);
+  Object.assign(f.journal.state, {
+    phase: 'paused',
+    epoch,
+    operation: {
+      id: intent.id,
+      actorId: intent.authority.actorId,
+      sessionHash: intent.authority.sessionHash,
+      expiresAt: intent.authority.expiresAt,
+      tokenHash: intent.continuationHash,
+      generationId: intent.target.generationId,
+    },
+  });
+  f.journal.write();
+  record = f.jobs.markPaused(intent.id, record.intentHash, record.revision);
+  const stop = {
+    request: {
+      jobId: intent.id,
+      challengeId: randomUUID(),
+      generationId: intent.target.generationId,
+      epoch,
+      deadline: intent.authority.expiresAt,
+    },
+    databaseIdentity: intent.target.identity,
+    child,
+    fingerprint: null,
+    acceptedAt: null,
+  };
+  record = f.jobs.planStop(intent.id, record.intentHash, record.revision, stop);
+  Object.assign(f.journal.state, { phase: 'stopping', restoreStop: stop });
+  f.journal.write();
+  const accepted = { ...stop, fingerprint: 'a'.repeat(64), acceptedAt: record.updatedAt };
+  record = f.jobs.acceptWitness(intent.id, record.intentHash, record.revision, accepted);
+  Object.assign(f.journal.state, { phase: 'stopped', child: null, restoreStop: accepted });
+  f.journal.write();
+  record = f.jobs.markStopped(intent.id, record.intentHash, record.revision);
+  record = f.jobs.planOriginals(intent.id, record.intentHash, record.revision, {
+    id: intent.id,
+    identity: intent.target.identity,
+    original: {
+      'spinel.sqlite': { bytes: 4096, sha256: 'b'.repeat(64) },
+      'spinel.sqlite-wal': null,
+      'spinel.sqlite-shm': null,
+    },
+  });
+  record = f.jobs.markOriginalsRetained(intent.id, record.intentHash, record.revision);
+  record = f.jobs.planFreeze(intent.id, record.intentHash, record.revision, randomUUID());
+  record = f.jobs.markFrozen(intent.id, record.intentHash, record.revision, {
+    directory: '.restore-frozen-ABC123',
+    bytes: 4096,
+    sha256: 'c'.repeat(64),
+    fingerprint: accepted.fingerprint,
+  });
+  return { ...f, record };
+}
+const candidateImage = {
+  directory: '.restore-reconciled-ABC123',
+  bytes: 4096,
+  sha256: 'd'.repeat(64),
+  fingerprint: 'e'.repeat(64),
+};
+const rollbackImage = {
+  ...candidateImage,
+  directory: '.restore-rollback-DEF456',
+  sha256: 'f'.repeat(64),
+};
+
+linux(
+  'prepared stages preserve original binding, strict output schemas and the one fixed timestamp across reopen',
+  async () => {
+    const f = await frozenFixture();
+    let record = f.record;
+    const id = record.intent.id,
+      hash = record.intentHash;
+    const history = [structuredClone(record)];
+    record = f.jobs.planPreparation(id, hash, record.revision, randomUUID(), record.updatedAt);
+    history.push(structuredClone(record));
+    expect(() =>
+      f.jobs.planPreparation(id, hash, record.revision, randomUUID(), record.updatedAt),
+    ).toThrow();
+    expect(() => f.jobs.markRollbackPrepared(id, hash, record.revision, rollbackImage)).toThrow();
+    const before = readFileSync(f.statePath(id));
+    for (const invalid of [
+      { ...candidateImage, directory: '../escaped' },
+      { ...candidateImage, directory: '.restore-rollback-ABC123' },
+      { ...candidateImage, bytes: 8 * 1024 ** 3 + 1 },
+      { ...candidateImage, fingerprint: ['a'.repeat(64)] },
+      { ...candidateImage, sha256: 'bad' },
+      { ...candidateImage, arbitrary: true },
+    ]) {
+      expect(() =>
+        f.jobs.markCandidatePrepared(id, hash, record.revision, invalid as typeof candidateImage),
+      ).toThrow();
+      expect(readFileSync(f.statePath(id))).toEqual(before);
+    }
+    const preparedAt = record.execution!.preparation!.preparedAt;
+    f.advance(1);
+    record = f.jobs.markCandidatePrepared(id, hash, record.revision, candidateImage);
+    history.push(structuredClone(record));
+    expect(() => f.jobs.markCandidateRehearsed(id, hash, record.revision)).toThrow();
+    record = f.jobs.markRollbackPrepared(id, hash, record.revision, rollbackImage);
+    history.push(structuredClone(record));
+    expect(() => f.jobs.markPrepared(id, hash, record.revision)).toThrow();
+    record = f.jobs.markCandidateRehearsed(id, hash, record.revision);
+    history.push(structuredClone(record));
+    record = f.jobs.markPrepared(id, hash, record.revision);
+    history.push(structuredClone(record));
+    expect(record.intent).toEqual(f.record.intent);
+    expect(record.execution!.stop).toEqual(f.record.execution!.stop);
+    expect(record.execution!.frozen).toEqual(f.record.execution!.frozen);
+    expect(record.execution!.preparation).toEqual({
+      slot: history[1].execution!.preparation!.slot,
+      preparedAt,
+      candidate: candidateImage,
+      rollback: rollbackImage,
+    });
+    f.jobs.close();
+    const reopened = f.openJobs();
+    expect(reopened.read(id)).toEqual(record);
+    for (const saved of history.slice(1)) {
+      for (const corrupt of [
+        (item: RestoreJobRecord) => {
+          item.execution!.preparation!.slot = '../unsafe';
+        },
+        (item: RestoreJobRecord) => {
+          item.execution!.preparation!.preparedAt = item.intent.authority.expiresAt;
+        },
+        (item: RestoreJobRecord) => {
+          item.execution!.frozen!.fingerprint = '0'.repeat(64);
+        },
+        (item: RestoreJobRecord) => {
+          item.updatedAt = item.intent.authority.expiresAt;
+        },
+      ]) {
+        const invalid = structuredClone(saved);
+        corrupt(invalid);
+        writeFileSync(f.statePath(id), JSON.stringify(invalid));
+        expect(() => reopened.read(id)).toThrow('unavailable');
+      }
+    }
+    writeFileSync(f.statePath(id), JSON.stringify(record));
+    expect(reopened.read(id)).toEqual(record);
+  },
+);
+
+linux(
+  'preparation refuses changed target/epoch/authority and publication crossing expiry retains its checkpoint',
+  async () => {
+    const f = await frozenFixture();
+    const original = f.record;
+    const args = [
+      original.intent.id,
+      original.intentHash,
+      original.revision,
+      randomUUID(),
+      original.updatedAt,
+    ] as const;
+    f.journal.state.epoch = randomUUID();
+    expect(() => f.jobs.planPreparation(...args)).toThrow();
+    f.journal.state.epoch = original.execution!.epoch;
+    f.journal.state.operation!.actorId = randomUUID();
+    expect(() => f.jobs.planPreparation(...args)).toThrow();
+    f.journal.state.operation!.actorId = original.intent.authority.actorId;
+    f.journal.state.generationId = randomUUID();
+    expect(() => f.jobs.planPreparation(...args)).toThrow();
+    f.journal.state.generationId = original.intent.target.generationId;
+    expect(() => f.jobs.planPreparation(args[0], args[1], args[2] - 1, args[3], args[4])).toThrow();
+    const sync = f.journal.syncRoot.bind(f.journal);
+    const fault = vi.spyOn(f.journal, 'syncRoot').mockImplementation(() => {
+      sync();
+      if (
+        JSON.parse(readFileSync(f.statePath(original.intent.id), 'utf8')).phase ===
+        'preparation-planned'
+      )
+        f.advance(60_000);
+    });
+    await expect(Promise.resolve().then(() => f.jobs.planPreparation(...args))).rejects.toThrow(
+      'expired',
+    );
+    fault.mockRestore();
+    const planned = f.jobs.read(original.intent.id)!;
+    expect(planned.phase).toBe('preparation-planned');
+    expect(() =>
+      f.jobs.markCandidatePrepared(
+        planned.intent.id,
+        planned.intentHash,
+        planned.revision,
+        candidateImage,
+      ),
+    ).toThrow('expired');
+    expect(f.jobs.read(original.intent.id)).toEqual(planned);
+  },
+);
