@@ -12,6 +12,12 @@ const report: Record<string, unknown> = {
   scope: 'Native ordinary Safari same-profile capability probe, not application acceptance',
   sourceSha: process.env.SOURCE_SHA,
   testedSha: process.env.GITHUB_SHA,
+  runner: {
+    label: process.env.DESKTOP_RUNNER,
+    arch: process.arch,
+    imageOS: process.env.ImageOS,
+    imageVersion: process.env.ImageVersion,
+  },
   run: `https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`,
   status: 'failed',
 };
@@ -219,6 +225,52 @@ async function allowHostedSafariAutomation() {
   }
 }
 
+async function capturePaintBaseline(stage: 'online' | 'offline', pid: unknown) {
+  const baseline: Record<string, unknown> = { time: new Date().toISOString(), pid };
+  const baselines = (report.paintBaselines ??= {}) as Record<string, unknown>;
+  baselines[stage] = baseline;
+  try {
+    const state = JSON.parse(
+      await command(
+        '/usr/bin/osascript',
+        [
+          '-l',
+          'JavaScript',
+          '-e',
+          `function run(argv) {
+        var app = Application(Number(argv[0]));
+        var window = app.windows[0];
+        if (window.miniaturized()) window.miniaturized = false;
+        if (!app.frontmost()) app.activate();
+        var tab = window.currentTab();
+        return JSON.stringify({ windowId: window.id(), bounds: window.bounds(), tabIndex: tab.index(), title: tab.name(), url: tab.url(),
+          page: JSON.parse(app.doJavaScript('JSON.stringify({url:location.href,title:document.title,readyState:document.readyState,visibility:document.visibilityState,hasFocus:document.hasFocus(),text:document.body.innerText})', {in:tab})) });
+      }`,
+          String(pid),
+        ],
+        5000,
+      ),
+    );
+    baseline.state = state;
+    assert.equal(state.title, 'Spinel desktop profile probe');
+    const { x, y, width, height } = state.bounds;
+    assert.ok([x, y, width, height].every(Number.isFinite) && width > 0 && height > 0);
+    const path = resolve(output, `safari-profile-probe-${stage}.png`);
+    await command('/usr/sbin/screencapture', ['-x', `-R${x},${y},${width},${height}`, path], 5000);
+    baseline.screenshot = path;
+  } catch (error) {
+    // The capability result still measures the original stores. These captures
+    // diagnose whether simple native Safari content paints before app acceptance.
+    const detail = error as Error & { code?: unknown; signal?: unknown; stderr?: unknown };
+    baseline.error = {
+      message: String(error).slice(0, 1000),
+      code: detail.code,
+      signal: detail.signal,
+      stderr: String(detail.stderr ?? '').slice(-2000),
+    };
+  }
+}
+
 async function main() {
   // This configures only an ephemeral hosted CI user's ordinary browser. Never
   // change the owner's Safari settings or interact with their browsing profile.
@@ -228,7 +280,7 @@ async function main() {
   await mkdir(output, { recursive: true });
   const sentinel = randomUUID();
   const html =
-    '<!doctype html><html><title>Spinel desktop profile probe</title><body>Spinel synthetic profile probe</body></html>';
+    '<!doctype html><html><title>Spinel desktop profile probe</title><style>body{margin:24px;background:white;color:#102a43;font:18px system-ui}h1{font-size:28px}</style><body><h1>Spinel synthetic profile probe</h1><p>Native Safari paint baseline</p><svg width="320" height="120" aria-label="Purple and blue paint baseline"><rect width="160" height="120" fill="#7633d5"/><rect x="160" width="160" height="120" fill="#2563eb"/></svg></body></html>';
   const worker = `self.addEventListener('install', event => event.waitUntil(caches.open('spn052-shell').then(async cache => { await cache.add('/'); await self.skipWaiting(); })));
 self.addEventListener('activate', event => event.waitUntil(self.clients.claim()));
 self.addEventListener('fetch', event => { if (event.request.mode === 'navigate') event.respondWith(caches.match('/')); });`;
@@ -244,6 +296,7 @@ self.addEventListener('fetch', event => { if (event.request.mode === 'navigate')
   });
   try {
     report.os = await command('/usr/bin/sw_vers', []);
+    report.machine = await command('/usr/bin/uname', ['-m']);
     report.version = await command('/usr/libexec/PlistBuddy', [
       '-c',
       'Print :CFBundleShortVersionString',
@@ -281,6 +334,7 @@ self.addEventListener('fetch', event => { if (event.request.mode === 'navigate')
       () => evaluate('String(Boolean(navigator.serviceWorker.controller))'),
       (value) => value === 'true',
     );
+    await capturePaintBaseline('online', report.beforePid);
     await quit();
     // No server is listening when Safari restarts. Reopening may read the
     // retained worker/cache/IDB but must never reconstruct or restore any store.
@@ -311,6 +365,7 @@ self.addEventListener('fetch', event => { if (event.request.mode === 'navigate')
     });
     assert.equal(requests, report.requestsBeforeOffline);
     report.retained = retained;
+    await capturePaintBaseline('offline', report.afterPid);
     report.status = 'passed';
   } catch (error) {
     report.error = String(error).slice(0, 2000);

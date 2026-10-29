@@ -30,6 +30,12 @@ const report: Record<string, unknown> = {
   testedSha: process.env.GITHUB_SHA,
   run: `https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`,
   attempt: process.env.GITHUB_RUN_ATTEMPT,
+  runner: {
+    label: process.env.DESKTOP_RUNNER,
+    arch: process.arch,
+    imageOS: process.env.ImageOS,
+    imageVersion: process.env.ImageVersion,
+  },
   browser: kind,
   status: 'failed',
   stages: [],
@@ -205,15 +211,39 @@ async function edit(documentKind: 'sheet' | 'doc', text: string, itemId: string)
   await waitStatus('Saved on this device');
 }
 
-async function nativeText(documentKind: 'sheet' | 'doc') {
+async function nativeText(documentKind: 'sheet' | 'doc', expectedText: string) {
+  let selection: DocSelection | null = null;
   if (documentKind === 'sheet') {
     await browser.focus('[data-u-comp="defined-name"] input');
     await browser.press('SelectAll');
     await browser.type('D1');
     await browser.press('Enter');
   } else {
-    await focusDocText();
+    const before = await focusDocText();
+    assert.ok(before);
     await browser.press('SelectAll');
+    // The SDK updates the rendered native range asynchronously. Do not send
+    // Copy while only its logical range has changed. The fixture's root body
+    // ends in CR/LF, which the native select-all command excludes.
+    selection = await until(
+      docSelection,
+      (value) =>
+        Boolean(
+          value?.inputFocused &&
+          !value.pendingSelection &&
+          value.unitId === before.unitId &&
+          value.nativeRange?.segmentId === '' &&
+          value.nativeRange.start === 0 &&
+          value.nativeRange.end === before.text.length - 2 &&
+          !value.nativeRange.collapsed &&
+          value.currentLogicalRange?.segmentId === '' &&
+          value.currentLogicalRange.start === 0 &&
+          value.currentLogicalRange.end === before.text.length - 2 &&
+          !value.currentLogicalRange.collapsed,
+        ),
+      'Native and logical Doc selection must cover the restored body before Copy',
+    );
+    assert.equal(selection?.text, before.text, 'Select All must not change document content');
   }
   // Copy goes through the real native selection/clipboard path. The hosted
   // user's clipboard contains only these disposable fixtures.
@@ -224,11 +254,22 @@ async function nativeText(documentKind: 'sheet' | 'doc') {
     { timeout: 5000 },
   );
   await browser.press('Copy');
-  return until(
+  const text = await until(
     async () => (await run('/usr/bin/pbpaste', [], { timeout: 5000 })).stdout,
-    (value) => value !== sentinel,
-    'Native clipboard content',
+    (value) => value !== sentinel && value.includes(expectedText),
+    'Native clipboard content must contain the actual offline edit',
   );
+  stage('native-clipboard-content', {
+    kind: documentKind,
+    text,
+    selection: selection && {
+      unitId: selection.unitId,
+      nativeRange: selection.nativeRange,
+      logicalRange: selection.currentLogicalRange,
+      pendingSelection: selection.pendingSelection,
+    },
+  });
+  return text;
 }
 
 /** Copy naming and root/image ownership change; every other native field stays compared. */
@@ -267,26 +308,44 @@ async function visibleImages(name: string, documentKind: 'sheet' | 'doc') {
         ]
       : [[119, 0, 204]];
   let captures = 0;
-  const counts = await until(
-    async () => {
-      await browser.screenshot(path);
-      captures++;
-      const { data, info } = await sharp(path)
-        .removeAlpha()
-        .raw()
-        .toBuffer({ resolveWithObject: true });
-      const counts = colors.map(() => 0);
-      for (let offset = 0; offset < data.length; offset += info.channels)
-        colors.forEach((color, index) => {
-          if (color.every((value, channel) => Math.abs(data[offset + channel] - value) < 12))
-            counts[index]++;
+  let counts: number[];
+  try {
+    counts = await until(
+      async () => {
+        await browser.screenshot(path);
+        captures++;
+        const { data, info } = await sharp(path)
+          .removeAlpha()
+          .raw()
+          .toBuffer({ resolveWithObject: true });
+        const counts = colors.map(() => 0);
+        for (let offset = 0; offset < data.length; offset += info.channels)
+          colors.forEach((color, index) => {
+            if (color.every((value, channel) => Math.abs(data[offset + channel] - value) < 12))
+              counts[index]++;
+          });
+        return counts;
+      },
+      (counts) => counts.every((count) => count > 100),
+      'Existing image pixels must actually paint after native canvas creation',
+      15_000,
+    );
+  } catch (error) {
+    if (kind === 'safari') {
+      try {
+        stage('safari-rendering-failure-diagnostics', {
+          diagnosticOnly: true,
+          ...(await browser.diagnoseRenderingFailure(resolve(output, `${name}-diagnostic`))),
         });
-      return counts;
-    },
-    (counts) => counts.every((count) => count > 100),
-    'Existing image pixels must actually paint after native canvas creation',
-    15_000,
-  );
+      } catch (diagnosticError) {
+        stage('safari-rendering-failure-diagnostics', {
+          diagnosticOnly: true,
+          error: String(diagnosticError),
+        });
+      }
+    }
+    throw error;
+  }
   return { file: `${name}.png`, colorPixelCounts: counts, captures };
 }
 
@@ -315,6 +374,7 @@ async function main() {
   await mkdir(directory, { recursive: true });
   try {
     report.os = (await run('/usr/bin/sw_vers', [], { timeout: 5000 })).stdout.trim();
+    report.machine = (await run('/usr/bin/uname', ['-m'], { timeout: 5000 })).stdout.trim();
     const release = JSON.parse(await readFile(resolve(output, 'versions.json'), 'utf8'));
     assert.equal(release.status, 'passed');
     assert.equal(release.kind, kind);
@@ -337,6 +397,20 @@ async function main() {
       await browser.goto(`${f.origin}/?item=${item.id}`);
       await waitStatus('All changes saved.');
       await canvas();
+      if (kind === 'safari' && item.outcome === 'normal') {
+        const file = `${item.kind}-online-before-download.png`;
+        try {
+          await browser.screenshot(resolve(output, file));
+          stage('safari-online-rendering-baseline', {
+            diagnosticOnly: true,
+            itemId: item.id,
+            kind: item.kind,
+            file,
+          });
+        } catch (error) {
+          stage('safari-online-rendering-baseline', { diagnosticOnly: true, error: String(error) });
+        }
+      }
       await until(
         () => browser.evaluate<boolean>('Boolean(navigator.serviceWorker.controller)'),
         Boolean,
@@ -482,9 +556,9 @@ async function main() {
       );
       const visual = await visibleImages(`${item.kind}-${item.outcome}-offline`, item.kind);
       assert.ok(
-        (await nativeText(item.kind)).includes(
-          item.kind === 'sheet' ? '731' : 'Desktop offline 731 ',
-        ),
+        (
+          await nativeText(item.kind, item.kind === 'sheet' ? '731' : 'Desktop offline 731 ')
+        ).includes(item.kind === 'sheet' ? '731' : 'Desktop offline 731 '),
         'Restored native visible text must contain the actual offline edit',
       );
       stage('pending-restart-retained', {
@@ -600,9 +674,9 @@ async function main() {
         await canvas();
         const visual = await visibleImages(`${item.kind}-recovered-copy`, item.kind);
         assert.ok(
-          (await nativeText(item.kind)).includes(
-            item.kind === 'sheet' ? '731' : 'Desktop offline 731 ',
-          ),
+          (
+            await nativeText(item.kind, item.kind === 'sheet' ? '731' : 'Desktop offline 731 ')
+          ).includes(item.kind === 'sheet' ? '731' : 'Desktop offline 731 '),
         );
         assert.deepEqual(f.originalState(item), originals.get(item.id));
         assert.deepEqual(receipts(), publishedReceipts);

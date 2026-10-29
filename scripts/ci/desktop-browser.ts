@@ -59,6 +59,11 @@ export type DesktopBrowser = {
   clickAt(selector: string, x: number, y: number): Promise<void>;
   resolveStoragePrompt(): Promise<DesktopStoragePrompt>;
   screenshot(path: string, scope?: 'content' | 'screen'): Promise<void>;
+  diagnoseRenderingFailure(pathPrefix: string): Promise<{
+    report: string;
+    files: string[];
+    errors: string[];
+  }>;
   stop(): Promise<DesktopBrowserStop>;
 };
 
@@ -395,6 +400,167 @@ export function createDesktopBrowser(
       }) + '\n',
     );
   }
+  async function diagnoseRenderingFailure(pathPrefix: string) {
+    assert.ok(kind === 'safari' && browserPid && safariTab);
+    const prefix = resolve(pathPrefix);
+    const reportPath = `${prefix}.json`;
+    const files: string[] = [];
+    const errors: string[] = [];
+    const started = Date.now();
+    const deadline = started + 25_000;
+    const report: ObjectValue = {
+      scope: 'Read-only diagnostics after failed physical pixels; never application acceptance',
+      browserPid,
+      target: safariTab,
+      startedAt: new Date(started).toISOString(),
+      files,
+      errors,
+    };
+    await mkdir(dirname(prefix), { recursive: true });
+    async function collect<T>(name: string, limit: number, read: (timeout: number) => Promise<T>) {
+      const remaining = deadline - Date.now();
+      if (remaining <= 0) {
+        errors.push(`${name}: diagnostic deadline reached`);
+        return undefined;
+      }
+      try {
+        return await read(Math.min(limit, remaining));
+      } catch (error) {
+        errors.push(`${name}: ${String(error)}`);
+        return undefined;
+      }
+    }
+    // First capture the native backing window, before canvas readback can flush
+    // pending drawing. AppleScript window IDs are not CoreGraphics window IDs.
+    const windows = await collect('native-window', 5000, async (timeout) =>
+      object(
+        JSON.parse(
+          await command(
+            '/usr/bin/osascript',
+            [
+              '-l',
+              'JavaScript',
+              '-e',
+              `ObjC.import('CoreGraphics');
+        function run(argv) {
+          var pid = Number(argv[0]);
+          var app = Application(pid);
+          var target = app.windows.byId(Number(argv[1]));
+          var bounds = target.bounds();
+          if (typeof $.CGPreflightScreenCaptureAccess !== 'function')
+            ObjC.bindFunction('CGPreflightScreenCaptureAccess', ['bool', []]);
+          var permitted = $.CGPreflightScreenCaptureAccess();
+          // CGWindowID 0 is kCGNullWindowID; the on-screen list is not relative to another window.
+          var all = ObjC.deepUnwrap($.CGWindowListCopyWindowInfo($.kCGWindowListOptionOnScreenOnly, 0));
+          if (!Array.isArray(all)) throw new Error('CoreGraphics did not return a window list.');
+          var owned = all.filter(function(window) { return window.kCGWindowOwnerPID === pid; });
+          var matches = owned.filter(function(window) {
+            var rect = window.kCGWindowBounds;
+            return window.kCGWindowLayer === 0 && rect && rect.Width > 0 && rect.Height > 0 &&
+              Math.abs(rect.X - bounds.x) <= 1 && Math.abs(rect.Y - bounds.y) <= 1 &&
+              Math.abs(rect.Width - bounds.width) <= 1 && Math.abs(rect.Height - bounds.height) <= 1;
+          });
+          return JSON.stringify({ screenCaptureAccess: permitted, bounds: bounds, appleScriptWindowId: target.id(),
+            frontmost: app.frontmost(), currentTab: { index: target.currentTab().index(), url: target.currentTab().url(), title: target.currentTab().name() },
+            ownedWindows: owned.slice(0, 24), ownedWindowCount: owned.length,
+            matchedWindowNumber: matches.length === 1 ? matches[0].kCGWindowNumber : null, matchCount: matches.length });
+        }`,
+              String(browserPid),
+              String(safariTab!.windowId),
+            ],
+            timeout,
+          ),
+        ),
+      ),
+    );
+    report.native = windows;
+    await collect('native-window-capture', 5000, async (timeout) => {
+      assert.ok(
+        windows && windows.matchCount === 1 && Number.isSafeInteger(windows.matchedWindowNumber),
+        'No unique owned on-screen window matches the Safari bounds.',
+      );
+      const path = `${prefix}-window.png`;
+      await command(
+        '/usr/sbin/screencapture',
+        ['-x', '-o', '-l', String(windows.matchedWindowNumber), path],
+        timeout,
+      );
+      files.push(path);
+    });
+    const page = await collect('page-and-existing-bitmaps', 5000, (timeout) =>
+      evaluate<ObjectValue>(
+        `(() => {
+      function elementState(element) {
+        const style = getComputedStyle(element), rect = element.getBoundingClientRect();
+        const properties = ['display', 'visibility', 'opacity', 'content-visibility', 'color', 'background-color', 'position', 'z-index', 'overflow', 'clip-path', 'mask-image', 'filter', 'transform', 'pointer-events'];
+        return { tag: element.tagName, id: element.id, class: String(element.className).slice(0, 200), rect: { x: rect.x, y: rect.y, width: rect.width, height: rect.height }, styles: Object.fromEntries(properties.map(name => [name, style.getPropertyValue(name)])) };
+      }
+      function ancestors(element) {
+        const result = [];
+        while (element && result.length < 10) { result.push(elementState(element)); element = element.parentElement; }
+        return result;
+      }
+      const grid = [];
+      for (const x of [0.1, 0.5, 0.9]) for (const y of [0.1, 0.5, 0.9]) {
+        const point = { x: Math.floor(innerWidth * x), y: Math.floor(innerHeight * y) };
+        grid.push({ ...point, elements: document.elementsFromPoint(point.x, point.y).slice(0, 8).map(elementState) });
+      }
+      const canvases = Array.from(document.querySelectorAll('canvas')).slice(0, 2).map(canvas => {
+        const result = { id: canvas.id, width: canvas.width, height: canvas.height, ancestors: ancestors(canvas) };
+        try {
+          if (!canvas.width || !canvas.height || canvas.width * canvas.height > 1048576) throw new Error('Bitmap dimensions exceed diagnostic bounds or are empty.');
+          const png = canvas.toDataURL('image/png');
+          if (png.length > 1500000) throw new Error('Encoded bitmap exceeds diagnostic byte cap.');
+          return { ...result, png };
+        } catch (error) { return { ...result, error: String(error) }; }
+      });
+      return { url: location.href, title: document.title, visibility: document.visibilityState, hasFocus: document.hasFocus(), fonts: document.fonts.status,
+        header: ancestors(document.querySelector('.editor-header h1, .editor-header')), grid, canvases,
+        stylesheets: Array.from(document.querySelectorAll('link[rel="stylesheet"]')).slice(0, 20).map(link => ({ href: link.href, media: link.media, disabled: link.disabled, loaded: Boolean(link.sheet) })) };
+    })()`,
+        timeout,
+      ),
+    );
+    if (page) {
+      const canvases = Array.isArray(page.canvases) ? page.canvases : [];
+      for (const [index, value] of canvases.entries()) {
+        const canvas = object(value);
+        const png = canvas.png;
+        delete canvas.png;
+        if (typeof png !== 'string') continue;
+        await collect(`canvas-${index}`, 1000, async () => {
+          assert.ok(png.startsWith('data:image/png;base64,') && png.length <= 1_500_000);
+          const path = `${prefix}-canvas-${index}.png`;
+          await writeFile(path, Buffer.from(png.slice('data:image/png;base64,'.length), 'base64'));
+          canvas.diagnosticBitmap = path;
+          files.push(path);
+        });
+      }
+    }
+    report.page = page;
+    await collect('webkit-log', 8000, async (timeout) => {
+      const log = await command(
+        '/usr/bin/log',
+        [
+          'show',
+          '--last',
+          '3m',
+          '--style',
+          'compact',
+          '--predicate',
+          'process == "Safari" OR process BEGINSWITH "com.apple.WebKit" OR subsystem BEGINSWITH "com.apple.WebKit"',
+        ],
+        timeout,
+      );
+      const path = `${prefix}-webkit.log`;
+      await writeFile(path, log.split('\n').slice(-160).join('\n').slice(-64_000) + '\n');
+      files.push(path);
+    });
+    report.completedAt = new Date().toISOString();
+    report.elapsedMs = Date.now() - started;
+    await writeFile(reportPath, JSON.stringify(report, null, 2) + '\n');
+    return { report: reportPath, files, errors };
+  }
 
   async function request(path: string, method = 'GET', body?: unknown, timeout = 35_000) {
     if (spawnError) throw spawnError;
@@ -582,8 +748,8 @@ export function createDesktopBrowser(
       const code = { Enter: 36, Escape: 53, DocumentStart: 126, Space: 49 };
       await applescript(
         key === 'SelectAll' || key === 'Copy'
-          ? `tell application "Safari" to activate\ntell application "System Events" to keystroke "${keyValues[key]}" using command down`
-          : `tell application "Safari" to activate\ntell application "System Events" to key code ${code[key]}${commandKey ? ' using command down' : ''}`,
+          ? `tell application "System Events" to keystroke "${keyValues[key]}" using command down`
+          : `tell application "System Events" to key code ${code[key]}${commandKey ? ' using command down' : ''}`,
       );
       return;
     }
@@ -1022,14 +1188,31 @@ export function createDesktopBrowser(
     press,
     clickAt,
     resolveStoragePrompt,
+    diagnoseRenderingFailure,
     async type(text) {
       assert.ok(browserPid, 'Start the browser before typing.');
       if (kind === 'safari') {
         await foregroundSafari();
         await applescript(
-          'on run argv\n tell application "Safari" to activate\n tell application "System Events" to keystroke (item 1 of argv)\nend run',
+          'on run argv\n tell application "System Events" to keystroke (item 1 of argv)\nend run',
           text,
         );
+      } else if (kind === 'firefox') {
+        // Marionette's Element Send Keys dispatches a whole string in one
+        // synchronous burst. Native editors update their caret in microtasks;
+        // use separate real keyboard ticks so each character sees that update.
+        const actions = Array.from(text).flatMap((value) => [
+          { type: 'keyDown', value },
+          { type: 'keyUp', value },
+          { type: 'pause', duration: 40 },
+        ]);
+        try {
+          await session('actions', 'POST', {
+            actions: [{ type: 'key', id: 'desktop-input', actions }],
+          });
+        } finally {
+          await session('actions', 'DELETE');
+        }
       } else {
         const active = object(await session('element/active'));
         assert.equal(typeof active[elementKey], 'string');
