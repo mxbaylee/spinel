@@ -5,7 +5,7 @@ import { connect } from 'node:net';
 import type { Socket } from 'node:net';
 import { mkdir, mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { chromium, expect, test } from '@playwright/test';
 import type { BrowserContext, Page } from '@playwright/test';
 import { openDatabase } from '../server/database.ts';
@@ -26,6 +26,7 @@ test.beforeEach(({ browserName }, info) =>
 );
 const origin = 'http://localhost:3110';
 const legacyCommit = 'c2e8cac0fcdec36d992d6ebf3f377c9b579a8002';
+const legacySource = resolve(process.env.SPINEL_LEGACY_OFFLINE_SOURCE || projectRoot);
 type EmittedBuild = { directory: string; html: string; manifest: ShellManifest };
 type LegacyBuild = { directory: string; html: string; files: string[] };
 let buildDirectory: string;
@@ -39,7 +40,7 @@ async function emit(directory: string, source: string, format?: 1 | 2) {
       process.execPath,
       [
         '--max-old-space-size=1024',
-        join(projectRoot, 'node_modules/vite/bin/vite.js'),
+        join(source, 'node_modules/vite/bin/vite.js'),
         'build',
         ...(format ? ['--mode', 'offline-upgrade'] : []),
         '--outDir',
@@ -93,7 +94,7 @@ async function buildLegacy(): Promise<LegacyBuild> {
       'git',
       [
         '-C',
-        process.env.SPINEL_LEGACY_OFFLINE_SOURCE ?? projectRoot,
+        legacySource,
         'archive',
         '--format=tar',
         legacyCommit,
@@ -145,9 +146,10 @@ async function buildLegacy(): Promise<LegacyBuild> {
         process.off('exit', stop);
       });
   });
-  // Reuse compatible external packages, but resolve every workspace import
-  // against the archived source so later application APIs cannot enter this build.
-  await linkLegacyOfflineDependencies(source, projectRoot);
+  // Use the immutable checkout's installed external packages and its own
+  // postinstall patches. Every workspace import still targets the archive;
+  // the upgrade server below continues to use the current application.
+  await linkLegacyOfflineDependencies(source, legacySource);
   await emit(directory, source);
   const html = await readFile(join(directory, 'index.html'), 'utf8');
   expect(runtimeDescriptor(html)).toBeNull();

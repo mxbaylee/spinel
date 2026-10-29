@@ -37,7 +37,10 @@ export async function linkLegacyOfflineDependencies(source: string, installed: s
       workspaces.push({ path, directory });
     } else if (path.startsWith('node_modules/')) {
       if (!isDeepStrictEqual(entry, current.packages[path]))
-        throw new Error(`Installed dependency differs from the archived lockfile: ${path}`);
+        throw new Error(
+          `Installed dependency differs from the archived lockfile: ${path}. ` +
+            'Run npm ci in the immutable checkout and set SPINEL_LEGACY_OFFLINE_SOURCE to it.',
+        );
     } else if (path && !/^lib\/[a-z0-9-]+$/.test(path)) {
       throw new Error(`Unsupported archived dependency layout: ${path}`);
     }
@@ -52,7 +55,14 @@ export async function linkLegacyOfflineDependencies(source: string, installed: s
     throw new Error('Every archived workspace must have its own dependency link.');
 
   const installedModules = join(installed, 'node_modules');
-  const entries = await readdir(installedModules, { withFileTypes: true });
+  const entries = await readdir(installedModules, { withFileTypes: true }).catch((error) => {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT')
+      throw new Error(
+        'Archived build dependencies are missing. Run npm ci in the immutable checkout ' +
+          'and set SPINEL_LEGACY_OFFLINE_SOURCE to it.',
+      );
+    throw error;
+  });
   const modules = join(sourceRoot, 'node_modules');
   // An existing directory or whole-tree link is an error, never an overwrite.
   await mkdir(modules);
