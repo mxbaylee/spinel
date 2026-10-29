@@ -1,4 +1,13 @@
 import { randomUUID } from 'node:crypto';
+import { isDeepStrictEqual } from 'node:util';
+import { processIdentity } from './journal.ts';
+import {
+  matchesRestoreTrialStop,
+  RESTORE_TRIAL_STOP_MS,
+  sameRestoreTrialStopRequest,
+  validRestoreTrialStopRequest,
+} from './restore-trial-stop.ts';
+import type { RestoreTrialStopRequest } from './restore-trial-stop.ts';
 import type {
   MaintenanceAdminStatus,
   MaintenanceBridge,
@@ -29,6 +38,11 @@ export const MAINTENANCE_CHANNEL = 'spinel-maintenance';
 
 export interface SupervisedMaintenanceBridge extends MaintenanceBridge {
   takeRestoreOpening(): RestoreOpening | undefined;
+  onRestoreTrialStop(
+    permit: RestoreTrialPermit,
+    listener: (stop: RestoreTrialStopRequest) => Promise<void>,
+  ): void;
+  acceptRestoreTrialWitness(stop: RestoreTrialStopRequest, fingerprint: string): Promise<void>;
   restoreTrialReady(permit: RestoreTrialPermit): void;
   onRestoreTrialRelease(listener: (reference: RestoreTrialRelease) => void): void;
 }
@@ -44,6 +58,48 @@ export async function connectMaintenance(): Promise<SupervisedMaintenanceBridge>
   let trial: RestoreTrialPermit | undefined;
   let releaseListener: ((reference: RestoreTrialRelease) => void) | undefined;
   let released = false;
+  let trialReady = false;
+  let trialStopListener: ((stop: RestoreTrialStopRequest) => Promise<void>) | undefined;
+  let trialStop: RestoreTrialStopRequest | undefined;
+  let trialWitnessWaiter: typeof witnessWaiter;
+  const failTrialWitness = () => {
+    if (!trialWitnessWaiter) return;
+    clearTimeout(trialWitnessWaiter.timer);
+    trialWitnessWaiter.reject(new Error('The final trial witness was not acknowledged.'));
+    trialWitnessWaiter = undefined;
+  };
+  const trialStopCurrent = (stop: RestoreTrialStopRequest) =>
+    !closed &&
+    !released &&
+    !!trial &&
+    matchesRestoreTrialStop(stop, trial) &&
+    !!current?.available &&
+    ['stopping', 'recovery-required'].includes(current.phase) &&
+    current.operationId === stop.request.jobId &&
+    current.epoch === stop.request.epoch &&
+    current.generationId === stop.request.generationId &&
+    Date.now() < stop.request.deadline;
+  const bindTrial = (permit: RestoreTrialPermit) => {
+    if (
+      closed ||
+      !trialExpected ||
+      trialStop ||
+      released ||
+      !validRestoreTrialPermit(permit) ||
+      permit.child.pid !== process.pid ||
+      !isDeepStrictEqual(processIdentity(process.pid, permit.child.token), permit.child) ||
+      process.env.SPINEL_PROCESS_GROUP_TOKEN !== permit.child.token ||
+      !current?.available ||
+      !['starting', 'paused'].includes(current.phase) ||
+      current.operationId !== permit.jobId ||
+      current.epoch !== permit.epoch ||
+      current.generationId !== permit.generationId ||
+      Date.now() >= permit.deadline ||
+      (trial && !isDeepStrictEqual(trial, permit))
+    )
+      throw new Error('Restore trial has no matching application binding.');
+    trial ??= structuredClone(permit);
+  };
   let restoreListener: ((request: RestoreStopRequest) => Promise<void>) | undefined;
   let authorityListener: ((proof: RestoreAuthority) => void) | undefined;
   let restoreRequest: RestoreStopRequest | undefined;
@@ -101,6 +157,7 @@ export async function connectMaintenance(): Promise<SupervisedMaintenanceBridge>
       fingerprint?: unknown;
       authority?: unknown;
       reference?: unknown;
+      stop?: unknown;
     };
     if (message.kind === 'state' && message.status) {
       current = message.status;
@@ -118,6 +175,7 @@ export async function connectMaintenance(): Promise<SupervisedMaintenanceBridge>
       let accepted = false;
       try {
         if (
+          trialStop ||
           !releaseListener ||
           !current?.available ||
           current.epoch !== trial.epoch ||
@@ -133,12 +191,59 @@ export async function connectMaintenance(): Promise<SupervisedMaintenanceBridge>
         /* A rejected release keeps the independent application latch closed. */
       }
       send({ kind: 'restore-trial-released', reference: restoreTrialReference(trial), accepted });
+    } else if (message.kind === 'restore-trial-stop') {
+      const stop = message.stop;
+      if (!validRestoreTrialStopRequest(stop)) return;
+      if (trialStop && sameRestoreTrialStopRequest(stop, trialStop)) return;
+      if (
+        trialStop ||
+        restoreRequest ||
+        !trialStopListener ||
+        !trialStopCurrent(stop) ||
+        stop.request.deadline - Date.now() > RESTORE_TRIAL_STOP_MS
+      ) {
+        try {
+          send({ kind: 'restore-trial-stop-refused', stop });
+        } catch {
+          /* Parent disconnected. */
+        }
+        return;
+      }
+      trialStop = structuredClone(stop);
+      void Promise.resolve()
+        .then(() => {
+          if (!trialStopCurrent(trialStop!)) throw new Error('Trial shutdown binding changed.');
+          return trialStopListener!(structuredClone(trialStop!));
+        })
+        .catch(() => {
+          try {
+            send({ kind: 'restore-trial-stop-refused', stop });
+          } catch {
+            /* Parent disconnected. */
+          }
+        });
+    } else if (
+      message.kind === 'restore-trial-witness-ack' &&
+      trialStop &&
+      trialWitnessWaiter &&
+      validRestoreTrialStopRequest(message.stop) &&
+      sameRestoreTrialStopRequest(message.stop, trialStop) &&
+      message.fingerprint === trialWitnessWaiter.fingerprint
+    ) {
+      if (!trialStopCurrent(trialStop)) {
+        failTrialWitness();
+        return;
+      }
+      clearTimeout(trialWitnessWaiter.timer);
+      trialWitnessWaiter.resolve();
+      trialWitnessWaiter = undefined;
     } else if (message.kind === 'restore-authority') {
       const request = message.request;
       if (!validRestoreStopRequest(request)) return;
       const matches = () =>
         !closed &&
         !restoreRequest &&
+        (!trialExpected || released) &&
         !!current &&
         current.phase === 'running' &&
         current.epoch === request.epoch &&
@@ -165,6 +270,7 @@ export async function connectMaintenance(): Promise<SupervisedMaintenanceBridge>
       if (restoreRequest && sameRestoreStopRequest(request, restoreRequest)) return;
       if (
         restoreRequest ||
+        (trialExpected && !released) ||
         !restoreListener ||
         !current ||
         current.phase !== 'stopping' ||
@@ -228,6 +334,7 @@ export async function connectMaintenance(): Promise<SupervisedMaintenanceBridge>
   const onDisconnect = () => {
     if (closed) return;
     failWitness();
+    failTrialWitness();
     if (current) {
       current = { ...current, phase: 'recovery-required', readyToResume: false };
       for (const listener of listeners) listener(publicMaintenance(current));
@@ -262,25 +369,42 @@ export async function connectMaintenance(): Promise<SupervisedMaintenanceBridge>
       opening = undefined;
       return result;
     },
-    restoreTrialReady(permit) {
+    onRestoreTrialStop(permit, listener) {
+      if (trialStopListener) throw new Error('Trial shutdown is already registered.');
+      bindTrial(permit);
+      trialStopListener = listener;
+    },
+    acceptRestoreTrialWitness(stop, fingerprint) {
       if (
-        closed ||
-        !trialExpected ||
-        trial ||
-        !validRestoreTrialPermit(permit) ||
-        permit.child.pid !== process.pid ||
-        !current?.available ||
-        !['starting', 'paused'].includes(current.phase) ||
-        current.epoch !== permit.epoch ||
-        current.generationId !== permit.generationId ||
-        Date.now() >= permit.deadline
+        !trialStop ||
+        !validRestoreTrialStopRequest(stop) ||
+        !sameRestoreTrialStopRequest(stop, trialStop) ||
+        !trialStopCurrent(stop) ||
+        !validRestoreFingerprint(fingerprint) ||
+        trialWitnessWaiter
       )
-        throw new Error('Restore readiness has no matching application trial.');
-      trial = structuredClone(permit);
+        return Promise.reject(new Error('The final trial witness has no current challenge.'));
+      return new Promise<void>((resolve, reject) => {
+        const timer = setTimeout(
+          failTrialWitness,
+          Math.max(1, Math.min(RESTORE_TRIAL_STOP_MS, stop.request.deadline - Date.now())),
+        );
+        trialWitnessWaiter = { fingerprint, resolve, reject, timer };
+        try {
+          send({ kind: 'restore-trial-witness', stop: structuredClone(trialStop), fingerprint });
+        } catch {
+          failTrialWitness();
+        }
+      });
+    },
+    restoreTrialReady(permit) {
+      if (trialReady) throw new Error('Restore readiness was already reported.');
+      bindTrial(permit);
+      trialReady = true;
       send({
         kind: 'restore-trial-ready',
-        reference: restoreTrialReference(trial),
-        fingerprint: trial.output.fingerprint,
+        reference: restoreTrialReference(trial!),
+        fingerprint: trial!.output.fingerprint,
       });
     },
     onRestoreTrialRelease(listener) {
@@ -361,6 +485,8 @@ export async function connectMaintenance(): Promise<SupervisedMaintenanceBridge>
     close() {
       closed = true;
       failWitness();
+      failTrialWitness();
+      trialStopListener = undefined;
       restoreListener = undefined;
       authorityListener = undefined;
       clearTimeout(initialTimeout);

@@ -90,6 +90,7 @@ export async function copyRestoreInputFile(
   input: RestoreInputFile,
   destination: string,
   signal?: AbortSignal,
+  assertActive?: () => void,
 ) {
   if (
     !isAbsolute(input.path) ||
@@ -99,8 +100,15 @@ export async function copyRestoreInputFile(
     input.bytes > 8 * 1024 ** 3
   )
     throw changed();
-  signal?.throwIfAborted();
-  const source = await open(input.path, constants.O_RDONLY | constants.O_NOFOLLOW);
+  const active = () => {
+    signal?.throwIfAborted();
+    assertActive?.();
+  };
+  active();
+  const source = await open(
+    input.path,
+    constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK,
+  );
   try {
     const before = await source.stat();
     if (
@@ -111,6 +119,7 @@ export async function copyRestoreInputFile(
       before.size !== input.bytes
     )
       throw changed();
+    active();
     const target = await open(
       destination,
       constants.O_CREAT | constants.O_EXCL | constants.O_WRONLY | constants.O_NOFOLLOW,
@@ -121,7 +130,7 @@ export async function copyRestoreInputFile(
         buffer = Buffer.alloc(64 * 1024);
       let offset = 0;
       for (;;) {
-        signal?.throwIfAborted();
+        active();
         const { bytesRead } = await source.read(
           buffer,
           0,
@@ -133,7 +142,7 @@ export async function copyRestoreInputFile(
         hash.update(buffer.subarray(0, bytesRead));
         let written = 0;
         while (written < bytesRead) {
-          signal?.throwIfAborted();
+          active();
           const result = await target.write(buffer, written, bytesRead - written, offset + written);
           if (!result.bytesWritten) throw changed();
           written += result.bytesWritten;
@@ -153,8 +162,9 @@ export async function copyRestoreInputFile(
         path.ino !== before.ino
       )
         throw changed();
+      active();
       await target.sync();
-      signal?.throwIfAborted();
+      active();
     } finally {
       await target.close();
     }
@@ -183,8 +193,38 @@ async function authenticateClosedRestoreInput(
   validateClosedRestoreInput(input, 8 * 1024 ** 3);
   signal?.throwIfAborted();
   await assertSelfContained(input.databasePath);
+  await authenticateRestoreInputFile(
+    { path: input.databasePath, bytes: input.databaseBytes, sha256: input.databaseSha256 },
+    durable,
+    signal,
+  );
+  await assertSelfContained(input.databasePath);
+  signal?.throwIfAborted();
+}
+
+/** Authenticate raw, closed evidence on one pinned descriptor, optionally fsyncing
+ * it. Does not infer tuple completeness or permit SQLite recovery/opening. */
+export async function authenticateRestoreInputFile(
+  input: RestoreInputFile,
+  durable: boolean,
+  signal?: AbortSignal,
+  assertActive?: () => void,
+) {
+  if (
+    !isAbsolute(input.path) ||
+    !/^[a-f0-9]{64}$/.test(input.sha256) ||
+    !Number.isSafeInteger(input.bytes) ||
+    input.bytes < 0 ||
+    input.bytes > 8 * 1024 ** 3
+  )
+    throw changed();
+  const active = () => {
+    signal?.throwIfAborted();
+    assertActive?.();
+  };
+  active();
   const file = await open(
-    input.databasePath,
+    input.path,
     constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK,
   );
   try {
@@ -194,30 +234,31 @@ async function authenticateClosedRestoreInput(
       before.nlink !== 1n ||
       before.uid !== BigInt(process.getuid!()) ||
       (before.mode & 0o077n) !== 0n ||
-      before.size !== BigInt(input.databaseBytes)
+      before.size !== BigInt(input.bytes)
     )
       throw changed();
     const hash = createHash('sha256'),
       buffer = Buffer.alloc(64 * 1024);
     let offset = 0;
     for (;;) {
-      signal?.throwIfAborted();
+      active();
       const { bytesRead } = await file.read(
         buffer,
         0,
-        Math.min(buffer.length, input.databaseBytes + 1 - offset),
+        Math.min(buffer.length, input.bytes + 1 - offset),
         offset,
       );
       if (!bytesRead) break;
       offset += bytesRead;
-      if (offset > input.databaseBytes) throw changed();
+      if (offset > input.bytes) throw changed();
       hash.update(buffer.subarray(0, bytesRead));
     }
-    if (offset !== input.databaseBytes || hash.digest('hex') !== input.databaseSha256)
-      throw changed();
+    if (offset !== input.bytes || hash.digest('hex') !== input.sha256) throw changed();
+    active();
     if (durable) await file.sync();
+    active();
     const after = await file.stat({ bigint: true }),
-      path = await lstat(input.databasePath, { bigint: true });
+      path = await lstat(input.path, { bigint: true });
     for (const current of [after, path])
       if (
         !current.isFile() ||
@@ -231,8 +272,7 @@ async function authenticateClosedRestoreInput(
         current.nlink !== 1n
       )
         throw changed();
-    await assertSelfContained(input.databasePath);
-    signal?.throwIfAborted();
+    active();
   } finally {
     await file.close();
   }

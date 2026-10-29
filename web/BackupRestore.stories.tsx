@@ -1,0 +1,383 @@
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+import { failure, pending } from '../.storybook/api.ts';
+import type { ApiMock } from '../.storybook/api.ts';
+import { RESTORE_CONSEQUENCES } from '../src/shared/restore.ts';
+import type { RestorePreparation } from '../src/shared/restore.ts';
+import { BackupRestore } from './BackupRestore.tsx';
+import { refreshMaintenanceStatus } from './maintenanceState.ts';
+
+const now = Date.UTC(2026, 9, 29, 12);
+const job: RestorePreparation = {
+  id: 'b1111111-1111-4111-8111-111111111111',
+  state: 'ready',
+  source: 'upload',
+  createdAt: now,
+  expiresAt: now + 30 * 60_000,
+  bytes: 12 * 1024 * 1024,
+  sourceCreatedAt: new Date(now - 86400_000).toISOString(),
+  sourceSha256: 'a'.repeat(64),
+  target: {
+    generationId: 'b2222222-2222-4222-8222-222222222222',
+    epoch: 'b3333333-3333-4333-8333-333333333333',
+  },
+  preview: {
+    provisional: true,
+    currentAccounts: 2,
+    currentPasskeys: 3,
+    sharingRemoved: 4,
+    sharingDowngraded: 2,
+    isolatedItems: 7,
+    isolatedGroups: 2,
+    detachedRoots: 3,
+    heldTrashBatches: 1,
+  },
+  confirmation: 'b'.repeat(64),
+  consequencesVersion: 1,
+  error: null,
+};
+const read = (state: RestorePreparation['state'] | null) => ({
+  'GET /api/admin/restores': { available: true, job: state ? { ...job, state } : null },
+});
+const verified = {
+  'POST /api/auth/reauthentication/options': {
+    options: { challenge: 'fixture' },
+    challengeId: 'fixture',
+  },
+  'POST /api/auth/reauthentication/verify': { verifiedUntil: 4102444800000 },
+  'POST /api/auth/cancel': {},
+};
+const authenticate = fn(async () => ({
+  id: 'operator-key',
+  rawId: 'operator-key',
+  type: 'public-key' as const,
+  response: { authenticatorData: 'fixture', clientDataJSON: 'fixture', signature: 'fixture' },
+  clientExtensionResults: {},
+}));
+const meta = {
+  id: 'admin-backuprestore',
+  title: 'Current production/Admin/BackupRestore',
+  component: BackupRestore,
+  args: { currentId: 'operator' },
+  decorators: [
+    (Story) => (
+      <div className="sp-ui" style={{ maxWidth: 720 }}>
+        <Story />
+      </div>
+    ),
+  ],
+} satisfies Meta<typeof BackupRestore>;
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Available: Story = {
+  parameters: { api: read(null) },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await waitFor(() =>
+      expect(canvas.getByRole('button', { name: 'Prepare restore' })).toBeEnabled(),
+    );
+    await expect(canvas.getByText(/Document contents stay private/)).toBeVisible();
+  },
+};
+export const Unavailable: Story = {
+  parameters: { api: { 'GET /api/admin/restores': { available: false, job: null } } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByText(/Supervised restore is unavailable/)).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Prepare restore' })).toBeDisabled();
+  },
+};
+export const Loading: Story = { parameters: { api: { 'GET /api/admin/restores': pending() } } };
+export const StatusFailed: Story = {
+  parameters: { api: { 'GET /api/admin/restores': failure('/private/host/key', 503) } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByRole('alert')).toBeVisible();
+    await expect(canvas.queryByText('/private/host/key')).toBeNull();
+  },
+};
+export const SessionUnavailable: Story = {
+  parameters: { api: { 'GET /api/admin/restores': failure('private session details', 401) } },
+  play: async ({ canvasElement }) => {
+    await expect(await within(canvasElement).findByRole('alert')).toHaveTextContent(
+      /Sign in again/,
+    );
+  },
+};
+export const Uploading: Story = { parameters: { api: read('uploading') } };
+export const Preparing: Story = { parameters: { api: read('preparing') } };
+export const MaintenanceDraining: Story = {
+  parameters: {
+    api: {
+      ...read('ready'),
+      'GET /api/maintenance': {
+        available: true,
+        phase: 'running',
+        epoch: 'restore-fixture',
+        notice: null,
+      },
+    },
+  },
+  play: async ({ canvasElement, parameters }) => {
+    const canvas = within(canvasElement);
+    await waitFor(() =>
+      expect(canvas.getByRole('button', { name: 'Review restore' })).toBeEnabled(),
+    );
+    (parameters.api as ApiMock)['GET /api/maintenance'] = {
+      available: true,
+      phase: 'draining',
+      epoch: 'restore-fixture',
+      notice: null,
+    };
+    await refreshMaintenanceStatus();
+    await expect(await canvas.findByText(/workspace is in maintenance/)).toBeVisible();
+    for (const name of ['Review restore', 'Cancel preparation', 'Refresh restore status']) {
+      await expect(canvas.getByRole('button', { name })).toBeDisabled();
+    }
+    await expect(canvas.getByRole('link', { name: 'Open recovery guide' })).toBeVisible();
+    await expect(canvas.queryByText('Restore complete')).toBeNull();
+  },
+};
+export const Ready: Story = {
+  parameters: { api: read('ready') },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByText('Provisional access changes')).toBeVisible();
+    await expect(canvas.getByText(job.sourceSha256!)).toBeVisible();
+    await expect(canvas.getByText(/This workspace at/)).toBeVisible();
+    await expect(canvas.queryByText(job.target.generationId)).toBeNull();
+  },
+};
+export const Cancelled: Story = { parameters: { api: read('cancelled') } };
+export const Expired: Story = { parameters: { api: read('expired') } };
+export const Failed: Story = {
+  parameters: {
+    api: {
+      'GET /api/admin/restores': {
+        available: true,
+        job: { ...job, state: 'failed', error: '/private/backup.sqlite' },
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByRole('alert')).toHaveTextContent(/Restore preparation failed/);
+    await expect(canvas.queryByText('/private/backup.sqlite')).toBeNull();
+  },
+};
+export const AdmissionNeedsAttention: Story = {
+  parameters: {
+    api: {
+      'GET /api/admin/restores': {
+        available: true,
+        job: { ...job, state: 'admitting', error: 'untrusted diagnostic' },
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(
+      await canvas.findByRole('button', { name: 'Retry confirmed restore' }),
+    ).toBeEnabled();
+    await expect(canvas.queryByRole('button', { name: 'Cancel preparation' })).toBeNull();
+    await expect(canvas.queryByText('untrusted diagnostic')).toBeNull();
+  },
+};
+export const Accepted: Story = { parameters: { api: read('accepted') } };
+export const StartedOutcomeUnconfirmed: Story = {
+  parameters: { api: read('started') },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByText(/final outcome is not yet confirmed/)).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Prepare restore' })).toBeDisabled();
+    await expect(canvas.queryByText('Restore complete')).toBeNull();
+  },
+};
+
+async function openPreparation(canvasElement: HTMLElement) {
+  const button = await within(canvasElement).findByRole('button', { name: 'Prepare restore' });
+  await waitFor(() => expect(button).toBeEnabled());
+  await userEvent.click(button);
+  return within(
+    await within(document.body).findByRole('dialog', { name: 'Prepare workspace restore' }),
+  );
+}
+export const ManualUpload: Story = {
+  parameters: { api: read(null) },
+  play: async ({ canvasElement }) => {
+    const dialog = await openPreparation(canvasElement);
+    await expect(dialog.getByLabelText('Encrypted workspace backup')).toBeVisible();
+    await expect(dialog.getByLabelText('Separate recovery key')).toBeVisible();
+    await expect(dialog.getByText(/SQLite database file cannot be restored here/)).toBeVisible();
+    await expect(dialog.getByRole('button', { name: 'Verify and prepare' })).toBeDisabled();
+  },
+};
+async function openCatalog(canvasElement: HTMLElement) {
+  const dialog = await openPreparation(canvasElement);
+  await userEvent.click(dialog.getByRole('combobox', { name: 'Backup source' }));
+  await userEvent.click(
+    await within(document.body).findByRole('option', { name: 'Previously saved backup' }),
+  );
+  return dialog;
+}
+export const SavedBackups: Story = {
+  parameters: {
+    api: {
+      ...read(null),
+      'GET /api/admin/restores/catalog': {
+        entries: [
+          { id: 'c'.repeat(64), createdAt: now },
+          { id: 'd'.repeat(64), createdAt: now - 86400_000 },
+        ],
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const dialog = await openCatalog(canvasElement);
+    await expect(await dialog.findByRole('combobox', { name: 'Saved backup' })).toBeVisible();
+    await expect(dialog.getByRole('button', { name: 'Verify and prepare' })).toBeDisabled();
+  },
+};
+export const SavedBackupsEmpty: Story = {
+  parameters: { api: { ...read(null), 'GET /api/admin/restores/catalog': { entries: [] } } },
+  play: async ({ canvasElement }) => {
+    const dialog = await openCatalog(canvasElement);
+    await expect(await dialog.findByText(/No complete saved backups/)).toBeVisible();
+  },
+};
+export const SavedBackupsLoading: Story = {
+  parameters: { api: { ...read(null), 'GET /api/admin/restores/catalog': pending() } },
+  play: async ({ canvasElement }) => {
+    const dialog = await openCatalog(canvasElement);
+    await expect(await dialog.findByRole('status')).toHaveTextContent('Loading saved backups');
+  },
+};
+export const SavedBackupsFailed: Story = {
+  parameters: {
+    api: { ...read(null), 'GET /api/admin/restores/catalog': failure('private destination', 503) },
+  },
+  play: async ({ canvasElement }) => {
+    const dialog = await openCatalog(canvasElement);
+    await expect(await dialog.findByRole('alert')).toHaveTextContent(
+      /Saved backups could not be loaded/,
+    );
+  },
+};
+async function openConfirmation(canvasElement: HTMLElement, retry = false) {
+  const button = await within(canvasElement).findByRole('button', {
+    name: retry ? 'Retry confirmed restore' : 'Review restore',
+  });
+  await waitFor(() => expect(button).toBeEnabled());
+  await userEvent.click(button);
+  return within(
+    await within(document.body).findByRole('dialog', { name: 'Restore this workspace?' }),
+  );
+}
+export const ConfirmationReview: Story = {
+  parameters: { api: read('ready') },
+  play: async ({ canvasElement }) => {
+    const dialog = await openConfirmation(canvasElement);
+    await expect(dialog.getByRole('checkbox')).not.toBeChecked();
+    await expect(dialog.getByText('Backup fingerprint')).toBeVisible();
+    await expect(
+      dialog.getByRole('button', { name: 'Verify and restore workspace' }),
+    ).toBeDisabled();
+  },
+};
+export const FullConfirmation: Story = {
+  parameters: { api: read('ready') },
+  play: async ({ canvasElement }) => {
+    const dialog = await openConfirmation(canvasElement);
+    for (const consequence of RESTORE_CONSEQUENCES)
+      await expect(dialog.getByText(consequence)).toBeVisible();
+    await expect(
+      dialog.getByRole('button', { name: 'Verify and restore workspace' }),
+    ).toBeDisabled();
+    await userEvent.click(dialog.getByRole('checkbox'));
+    await expect(
+      dialog.getByRole('button', { name: 'Verify and restore workspace' }),
+    ).toBeEnabled();
+  },
+};
+export const WaitingForPasskey: Story = {
+  parameters: { api: { ...read('ready'), 'POST /api/auth/reauthentication/options': pending() } },
+  play: async ({ canvasElement }) => {
+    const dialog = await openConfirmation(canvasElement);
+    await userEvent.click(dialog.getByRole('checkbox'));
+    await userEvent.click(dialog.getByRole('button', { name: 'Verify and restore workspace' }));
+    await expect(await dialog.findByRole('status')).toHaveTextContent('Waiting for your passkey');
+    await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeEnabled();
+  },
+};
+export const CancelVerification: Story = {
+  parameters: WaitingForPasskey.parameters,
+  play: async ({ canvasElement }) => {
+    const dialog = await openConfirmation(canvasElement);
+    await userEvent.click(dialog.getByRole('checkbox'));
+    await userEvent.click(dialog.getByRole('button', { name: 'Verify and restore workspace' }));
+    await dialog.findByRole('status');
+    await userEvent.click(dialog.getByRole('button', { name: 'Cancel' }));
+    await waitFor(() => expect(within(document.body).queryByRole('dialog')).toBeNull());
+    await expect(
+      within(canvasElement).getByRole('button', { name: 'Review restore' }),
+    ).toHaveFocus();
+  },
+};
+export const VerificationFailed: Story = {
+  parameters: {
+    api: {
+      ...read('ready'),
+      'POST /api/auth/reauthentication/options': failure('/private/passkey', 500),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const dialog = await openConfirmation(canvasElement);
+    await userEvent.click(dialog.getByRole('checkbox'));
+    await userEvent.click(dialog.getByRole('button', { name: 'Verify and restore workspace' }));
+    await expect(await dialog.findByRole('alert')).toBeVisible();
+    await expect(dialog.queryByText('/private/passkey')).toBeNull();
+  },
+};
+export const RecordingConfirmation: Story = {
+  args: { authenticate },
+  parameters: {
+    api: {
+      ...read('ready'),
+      ...verified,
+      [`POST /api/admin/restores/preparations/${job.id}/confirm`]: pending(),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const dialog = await openConfirmation(canvasElement);
+    await userEvent.click(dialog.getByRole('checkbox'));
+    await userEvent.click(dialog.getByRole('button', { name: 'Verify and restore workspace' }));
+    await waitFor(() =>
+      expect(dialog.getByRole('status')).toHaveTextContent('Recording restore confirmation'),
+    );
+    await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeDisabled();
+  },
+};
+export const ExpiredOriginalConfirmation: Story = {
+  parameters: {
+    api: {
+      ...AdmissionNeedsAttention.parameters?.api,
+      [`POST /api/admin/restores/preparations/${job.id}/confirm`]: failure('expired original', 428),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const dialog = await openConfirmation(canvasElement, true);
+    await userEvent.click(dialog.getByRole('checkbox'));
+    await userEvent.click(dialog.getByRole('button', { name: 'Retry confirmed restore' }));
+    await expect(
+      await within(canvasElement).findByText(/original confirmation expired/),
+    ).toBeVisible();
+    const canvas = within(canvasElement);
+    await expect(canvas.getAllByRole('alert')).toHaveLength(1);
+    await expect(canvas.queryByRole('button', { name: 'Retry confirmed restore' })).toBeNull();
+    await expect(canvas.queryByText(/Passkey verification expired/)).toBeNull();
+    await expect(canvas.queryByText(/check status or retry the same confirmation/)).toBeNull();
+    await expect(canvas.getByRole('button', { name: 'Refresh restore status' })).toBeEnabled();
+    await expect(canvas.getByRole('link', { name: 'Open recovery guide' })).toBeVisible();
+  },
+};

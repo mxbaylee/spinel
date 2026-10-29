@@ -1980,6 +1980,7 @@ test
     'wrong-fingerprint',
     'release-rejected',
     'early-release',
+    'pause-publication',
     'commit-publication',
     'clock-after-final-scan',
     'clock-after-running-write',
@@ -2080,7 +2081,8 @@ test
                       'utf8',
                     ),
                   );
-                expect(readJob().phase).toBe('trial-planned');
+                expect(readJob().phase).toBe('trial-opening');
+                expect(readJob().execution.openingGrantedAt).toBeLessThanOrEqual(Date.now());
                 expect(readJob().execution.trial.child.pid).toBe(child.pid);
                 // Neither ordinary readiness nor an old attempt nonce may advance
                 // the trial or make ordinary resume available.
@@ -2100,7 +2102,7 @@ test
                 emit(event, ...args);
                 if (ordering === 'readiness-first') {
                   expect(held).toBeDefined();
-                  expect(readJob().phase).toBe('trial-planned');
+                  expect(readJob().phase).toBe('trial-opening');
                   expect(supervisor.status().readyToResume).toBe(false);
                   ownershipReordered = true;
                   emit('message', ...held!);
@@ -2207,6 +2209,22 @@ test
       });
     }
     let commitPublicationFailed = false;
+    let pausePublicationFailed = false;
+    if (ordering === 'pause-publication') {
+      const write = supervisor.journal.write.bind(supervisor.journal);
+      vi.spyOn(supervisor.journal, 'write').mockImplementation(() => {
+        write();
+        if (
+          !pausePublicationFailed &&
+          supervisor.journal.state.phase === 'paused' &&
+          JSON.parse(readFileSync(join(f.root, 'restore-jobs', id, 'state.json'), 'utf8')).phase ===
+            'trial-ready'
+        ) {
+          pausePublicationFailed = true;
+          throw new Error('Paused trial publication result was lost.');
+        }
+      });
+    }
     if (ordering === 'commit-publication') {
       const write = supervisor.journal.write.bind(supervisor.journal);
       vi.spyOn(supervisor.journal, 'write').mockImplementation(() => {
@@ -2223,6 +2241,24 @@ test
         }
       });
     }
+    let controllerFailure: string | null = null;
+    const controller = supervisor as unknown as {
+      executeRestoreStopOwned(request: {
+        id: string;
+        intentHash: string;
+        continuationToken: string;
+      }): Promise<void>;
+    };
+    const execute = controller.executeRestoreStopOwned.bind(controller);
+    vi.spyOn(controller, 'executeRestoreStopOwned').mockImplementation(async (request) => {
+      try {
+        await execute(request);
+      } catch (error) {
+        controllerFailure =
+          error instanceof Error ? error.message.slice(0, 300) : 'Unknown fixture failure';
+        throw error;
+      }
+    });
     const begun = await supervisor.beginPreparedRestore({
       id,
       intentHash: admitted.record.intentHash,
@@ -2230,10 +2266,22 @@ test
     });
     expect(begun.record.phase).toBe('pause-planned');
     const statePath = join(f.root, 'restore-jobs', id, 'state.json');
-    await expect.poll(() => privateReadyObserved, { timeout: 30_000 }).toBe(true);
+    await expect
+      .poll(() => privateReadyObserved || supervisor.status().phase === 'recovery-required', {
+        timeout: 30_000,
+      })
+      .toBe(true);
+    expect({
+      ready: privateReadyObserved,
+      phase: supervisor.status().phase,
+      jobPhase: JSON.parse(readFileSync(statePath, 'utf8')).phase,
+      controllerFailure,
+    }).toMatchObject({ ready: true });
     expect(await pausedProbe).toBe(503);
     const failed = !['ownership-first', 'readiness-first'].includes(ordering);
-    const uncommitted = ordering === 'wrong-fingerprint' || ordering === 'early-release';
+    const uncommitted = ['wrong-fingerprint', 'early-release', 'pause-publication'].includes(
+      ordering,
+    );
     const retainedBarrier = uncommitted || ordering === 'commit-publication';
     if (failed) {
       await expect
@@ -2286,13 +2334,23 @@ test
       // Observer completion must not alter the selected, closed output.
       expect(await readFile(imagePath)).toEqual(bytes);
     }
-    expect(completed.phase).toBe(
-      ordering === 'wrong-fingerprint'
-        ? 'trial-planned'
-        : ordering === 'early-release'
-          ? 'trial-ready'
-          : 'candidate-committed',
-    );
+    expect(completed.phase).toBe(uncommitted ? 'trial-witnessed-stopped' : 'candidate-committed');
+    if (uncommitted) {
+      expect(completed.execution.failure.from).toBe(
+        ordering === 'wrong-fingerprint' ? 'trial-opening' : 'trial-ready',
+      );
+      expect(completed.execution.failure.stop.fingerprint).toMatch(/^[a-f0-9]{64}$/);
+      expect(completed.execution.failure.stop.child.pid).toBe(completed.execution.trial.child.pid);
+      expect(completed.execution.failure.stop.request.challengeId).not.toBe(
+        completed.execution.stop.request.challengeId,
+      );
+      expect(completed.execution.stop.request.generationId).toBe(
+        admitted.record.intent.target.generationId,
+      );
+      expect(completed.execution.failure.stop.request.generationId).toBe(
+        completed.execution.attempt.generationId,
+      );
+    }
     expect(supervisor.status().readyToResume).toBe(false);
     expect(supervisor.journal.state.restoreStop).toEqual(
       uncommitted ? completed.execution.stop : null,
@@ -2341,6 +2399,7 @@ test
     expect(runningPublished).toBe(!failed);
     expect(earlyInjected).toBe(ordering === 'early-release');
     expect(commitPublicationFailed).toBe(ordering === 'commit-publication');
+    expect(pausePublicationFailed).toBe(ordering === 'pause-publication');
     if (ordering.startsWith('clock-after-')) {
       expect(clockAdvanced).toBe(true);
       expect(runningWritten).toBe(ordering === 'clock-after-running-write');

@@ -29,6 +29,20 @@ if (process.env.SPINEL_TEST_TRIAL_ROLE === 'seed') {
   const opening = bridge.takeRestoreOpening();
   const app = await createApp({ ...options, maintenance: bridge, restoreOpening: opening });
   if (!app.restoreTrial || !opening) throw new Error('Trial fixture did not receive its opening.');
+  let closing = false;
+  bridge.onRestoreTrialStop(app.restoreTrial, async (stop) => {
+    if (closing) throw new Error('Trial is already stopping.');
+    closing = true;
+    try {
+      await app.close({
+        acceptRestoreWitness: (fingerprint) => bridge.acceptRestoreTrialWitness(stop, fingerprint),
+      });
+      process.send?.({ kind: 'trial-stopped' });
+    } finally {
+      bridge.close();
+      process.disconnect?.();
+    }
+  });
   let refusedReuse = false,
     refusedOrdinary = false;
   try {
@@ -61,7 +75,6 @@ if (process.env.SPINEL_TEST_TRIAL_ROLE === 'seed') {
     refusedReuse,
     refusedOrdinary,
   });
-  let closing = false;
   const close = async () => {
     if (closing) return;
     closing = true;

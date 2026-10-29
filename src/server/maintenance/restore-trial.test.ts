@@ -18,6 +18,7 @@ import {
   validRestoreTrialPermit,
 } from './restore-trial.ts';
 import type { RestoreTrialPermit } from './restore-trial.ts';
+import type { RestoreTrialStopRequest } from './restore-trial-stop.ts';
 
 const linux = test.skipIf(process.platform !== 'linux');
 const cleanups: (() => unknown | Promise<unknown>)[] = [];
@@ -281,6 +282,75 @@ linux.each(['bytes', 'policy'])(
     expect(await readFile(f.databasePath)).toEqual(f.bytes);
     for (const suffix of ['-wal', '-shm', '-journal'])
       await expect(lstat(f.databasePath + suffix)).rejects.toHaveProperty('code', 'ENOENT');
+  },
+  60_000,
+);
+
+linux(
+  'failed real app trial records terminal content after expired opening and waits for its exact ACK',
+  async () => {
+    const f = await fixture();
+    const origin = await start(f);
+    expect(await httpStatus(origin + '/api/health')).toBe(503);
+    const expired = receive(f.child, 'fixture-pong');
+    f.child.send({ kind: 'fixture-expire' });
+    await expired;
+    f.set({ phase: 'stopping' });
+    const stop: RestoreTrialStopRequest = {
+      reference: restoreTrialReference(f.permit),
+      child: f.permit.child,
+      request: {
+        jobId: f.permit.jobId,
+        generationId: f.permit.generationId,
+        epoch: f.permit.epoch,
+        challengeId: randomUUID(),
+        deadline: Date.now() + 130_000,
+      },
+    };
+    // The fixture advanced its clock by 120 s: only this fresh ten-second collection
+    // challenge is live. Its original opening/release proof is already expired.
+    const refused = receive(f.child, 'restore-trial-stop-refused');
+    f.child.send({
+      channel: MAINTENANCE_CHANNEL,
+      kind: 'restore-trial-stop',
+      stop: { ...stop, child: { ...stop.child, token: randomUUID() } },
+    });
+    await refused;
+    const witness = receive(f.child, 'restore-trial-witness');
+    f.child.send({ channel: MAINTENANCE_CHANNEL, kind: 'restore-trial-stop', stop });
+    const observed = await witness;
+    expect(observed.stop).toEqual(stop);
+    expect(observed.fingerprint).toBe(f.permit.output.fingerprint);
+    const completed: unknown[] = [];
+    f.child.on('message', (value) => {
+      if (value && typeof value === 'object' && 'kind' in value && value.kind === 'trial-stopped')
+        completed.push(value);
+    });
+    f.child.send({
+      channel: MAINTENANCE_CHANNEL,
+      kind: 'restore-trial-witness-ack',
+      stop: { ...stop, reference: { ...stop.reference, nonce: randomUUID() } },
+      fingerprint: observed.fingerprint,
+    });
+    const pong = receive(f.child, 'fixture-pong');
+    f.child.send({ kind: 'fixture-ping' });
+    await pong;
+    expect(completed).toEqual([]);
+    expect(f.child.exitCode).toBeNull();
+    expect((await lstat(f.marker)).isFile()).toBe(true);
+    const stopped = receive(f.child, 'trial-stopped'),
+      exited = once(f.child, 'exit');
+    // Parent persistence is exercised in controller tests. This transport fixture
+    // sends the exact stand-in ACK only after proving the child has waited for it.
+    f.child.send({
+      channel: MAINTENANCE_CHANNEL,
+      kind: 'restore-trial-witness-ack',
+      stop,
+      fingerprint: observed.fingerprint,
+    });
+    await stopped;
+    expect((await exited)[0]).toBe(0);
+    expect((await lstat(f.marker)).isFile()).toBe(true);
   },
   60_000,
 );

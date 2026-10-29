@@ -168,6 +168,23 @@ function assertBarrier(permit: RestoreTrialPermit) {
 
 /** Recheck at every handoff boundary and immediately around first-open hashing.
  * A caller-supplied durable-stage assertion remains independently necessary. */
+/** Historical file/barrier binding only. This grants no opening, execution or
+ * release authority and intentionally does not require a live child/deadline. */
+export function assertRestoreTrialEvidenceTarget(
+  permit: RestoreTrialPermit,
+  databasePath: string,
+  databaseIdentity: FileIdentity,
+) {
+  if (
+    !validRestoreTrialPermit(permit) ||
+    databasePath !== permit.databasePath ||
+    canonicalDatabasePath(permit.databasePath) !== permit.databasePath ||
+    !sameFile(databaseIdentity, permit.identity) ||
+    !sameFile(fileIdentity(permit.databasePath), permit.identity)
+  )
+    throw refused();
+  assertBarrier(permit);
+}
 export function assertRestoreTrialTarget(
   permit: RestoreTrialPermit,
   databasePath: string,
@@ -180,13 +197,10 @@ export function assertRestoreTrialTarget(
     now >= permit.deadline ||
     permit.deadline - now > 10 * 60_000 ||
     permit.child.pid !== pid ||
-    (pid === process.pid && process.env.SPINEL_PROCESS_GROUP_TOKEN !== permit.child.token) ||
-    databasePath !== permit.databasePath ||
-    canonicalDatabasePath(permit.databasePath) !== permit.databasePath ||
-    !sameFile(databaseIdentity, permit.identity) ||
-    !sameFile(fileIdentity(permit.databasePath), permit.identity)
+    (pid === process.pid && process.env.SPINEL_PROCESS_GROUP_TOKEN !== permit.child.token)
   )
     throw refused();
+  assertRestoreTrialEvidenceTarget(permit, databasePath, databaseIdentity);
   const actual = processIdentity(pid, permit.child.token);
   if (
     !actual ||
@@ -196,7 +210,6 @@ export function assertRestoreTrialTarget(
     actual.token !== permit.child.token
   )
     throw refused();
-  assertBarrier(permit);
   if (Date.now() >= permit.deadline) throw refused();
 }
 export function assertRestoreTrialBinding(

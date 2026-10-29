@@ -1,9 +1,11 @@
 import { createHash } from 'node:crypto';
+import { existsSync, statSync } from 'node:fs';
 import { chmod, link, mkdtemp, readFile, rm, stat, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, expect, test } from 'vitest';
 import {
+  authenticateRestoreInputFile,
   copyClosedRestoreInput,
   copyRestoreInputFile,
   restoreOutputLimit,
@@ -157,3 +159,34 @@ test.each(['sidecar', 'hard-link', 'symlink', 'public-file', 'public-directory']
     } else await expect(syncClosedRestoreInput(f.input)).rejects.toThrow();
   },
 );
+
+test('raw authentication permits exact empty sidecars without weakening closed snapshot refusal', async () => {
+  const f = await fixture(),
+    path = f.input.databasePath + '-wal';
+  await writeFile(path, '', { mode: 0o600 });
+  await authenticateRestoreInputFile(
+    { path, bytes: 0, sha256: createHash('sha256').digest('hex') },
+    true,
+  );
+  await expect(syncClosedRestoreInput(f.input)).rejects.toThrow('changed');
+  await expect(
+    authenticateRestoreInputFile({ path, bytes: 0, sha256: '0'.repeat(64) }, true),
+  ).rejects.toThrow('changed');
+});
+
+test('raw copy checks the controller fence between actual 64KiB writes', async () => {
+  const f = await fixture();
+  await expect(
+    copyRestoreInputFile(
+      { path: f.input.databasePath, bytes: f.input.databaseBytes, sha256: f.input.databaseSha256 },
+      f.target,
+      undefined,
+      () => {
+        if (existsSync(f.target) && statSync(f.target).size >= 64 * 1024)
+          throw new Error('Controller deadline expired');
+      },
+    ),
+  ).rejects.toThrow('Controller deadline expired');
+  expect((await stat(f.target)).size).toBe(64 * 1024);
+  expect(await readFile(f.input.databasePath)).toEqual(f.bytes);
+});

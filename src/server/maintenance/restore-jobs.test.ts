@@ -23,6 +23,7 @@ import { RecoveryJournal, fileIdentity, processIdentity } from './journal.ts';
 import { isCommittedRestoreJob, RestoreJobs } from './restore-jobs.ts';
 import type { RestoreJobRecord } from './restore-jobs.ts';
 import { restoreTrialReference } from './restore-trial.ts';
+import type { RestoreTrialStopRequest } from './restore-trial-stop.ts';
 import type { RestoreTrialPermit } from './restore-trial.ts';
 import { restoreBarrierPath } from './restore-barrier.ts';
 import { restoreJobIntentFixture } from './restore-job-fixture.ts';
@@ -961,6 +962,12 @@ linux(
       f.jobs.markTrialReady(id, hash, record.revision, reference, f.permit.output.fingerprint),
     ).toThrow();
     f.select();
+    expect(() =>
+      f.jobs.markTrialReady(id, hash, record.revision, reference, f.permit.output.fingerprint),
+    ).toThrow();
+    record = f.jobs.markTrialOpening(id, hash, record.revision);
+    expect(record.phase).toBe('trial-opening');
+    expect(record.execution!.openingGrantedAt).toBe(record.updatedAt);
     expect(() => f.jobs.markCandidateActivated(id, hash, record.revision)).toThrow();
     expect(() =>
       f.jobs.markTrialReady(
@@ -1034,12 +1041,150 @@ async function readyTrialFixture() {
     hash = f.record.intentHash;
   let record = f.jobs.planTrial(id, hash, f.record.revision, f.permit);
   f.select();
+  record = f.jobs.markTrialOpening(id, hash, record.revision);
   const reference = restoreTrialReference(f.permit);
   record = f.jobs.markTrialReady(id, hash, record.revision, reference, f.permit.output.fingerprint);
   f.journal.state.phase = 'paused';
   f.journal.write();
   return { ...f, record, reference };
 }
+
+async function failedTrialFixture(ready: boolean) {
+  const f = await activatedTrialFixture();
+  const id = f.record.intent.id,
+    hash = f.record.intentHash;
+  let record = f.jobs.planTrial(id, hash, f.record.revision, f.permit);
+  f.select();
+  record = f.jobs.markTrialOpening(id, hash, record.revision);
+  if (ready)
+    record = f.jobs.markTrialReady(
+      id,
+      hash,
+      record.revision,
+      restoreTrialReference(f.permit),
+      f.permit.output.fingerprint,
+    );
+  // The old permit/authority is expired. Only bounded final evidence is allowed.
+  f.advance(60_000);
+  f.journal.state.phase = 'stopping';
+  f.journal.write();
+  const stop: RestoreTrialStopRequest = {
+    reference: restoreTrialReference(f.permit),
+    child: structuredClone(f.permit.child),
+    request: {
+      jobId: id,
+      generationId: f.permit.generationId,
+      epoch: f.permit.epoch,
+      challengeId: randomUUID(),
+      deadline: record.updatedAt + 90_000,
+    },
+  };
+  return { ...f, record, stop };
+}
+
+linux.each([false, true])(
+  'failed trial evidence seals its predecessor and never renews authority: ready=%s',
+  async (ready) => {
+    const f = await failedTrialFixture(ready);
+    const id = f.record.intent.id,
+      hash = f.record.intentHash;
+    for (const stop of [
+      { ...f.stop, reference: { ...f.stop.reference, nonce: randomUUID() } },
+      { ...f.stop, child: { ...f.stop.child, start: '0' } },
+      {
+        ...f.stop,
+        request: { ...f.stop.request, challengeId: f.record.execution!.stop!.request.challengeId },
+      },
+      { ...f.stop, request: { ...f.stop.request, deadline: f.stop.request.deadline + 1 } },
+    ])
+      expect(() => f.jobs.planTrialStop(id, hash, f.record.revision, stop)).toThrow();
+    const operation = structuredClone(f.journal.state.operation!);
+    for (const key of ['actorId', 'sessionHash', 'tokenHash', 'generationId'] as const) {
+      f.journal.state.operation![key] = randomUUID();
+      expect(() => f.jobs.planTrialStop(id, hash, f.record.revision, f.stop)).toThrow();
+      f.journal.state.operation = structuredClone(operation);
+    }
+    let record = f.jobs.planTrialStop(id, hash, f.record.revision, f.stop);
+    expect(record.execution!.failure).toMatchObject({
+      from: ready ? 'trial-ready' : 'trial-opening',
+      priorUpdatedAt: f.record.updatedAt,
+      requestedAt: f.record.updatedAt + 60_000,
+      stop: { fingerprint: null, acceptedAt: null },
+    });
+    expect(record.execution!.stop).toEqual(f.record.execution!.stop);
+    expect(() => f.jobs.planTrialStop(id, hash, record.revision, f.stop)).toThrow();
+    expect(() => f.jobs.markTrialOpening(id, hash, record.revision)).toThrow();
+    expect(() =>
+      f.jobs.markCandidateCommitted(id, hash, record.revision, f.stop.reference),
+    ).toThrow();
+    record = f.jobs.acceptTrialWitness(id, hash, record.revision, f.stop, 'd'.repeat(64));
+    expect(record.execution!.failure!.stop.fingerprint).not.toBe(f.permit.output.fingerprint);
+    expect(record.execution!.stop).toEqual(f.record.execution!.stop);
+    expect(f.openJobs().read(id)).toEqual(record);
+    for (const change of [
+      (r: RestoreJobRecord) => {
+        r.execution!.failure!.priorUpdatedAt = f.permit.deadline;
+      },
+      (r: RestoreJobRecord) => {
+        r.execution!.failure!.from = ready ? 'trial-opening' : 'trial-ready';
+      },
+      (r: RestoreJobRecord) => {
+        r.execution!.failure!.stop.acceptedAt = f.stop.request.deadline;
+      },
+      (r: RestoreJobRecord) => {
+        r.execution!.failure!.stop.child.start = '0';
+      },
+    ]) {
+      const changed = structuredClone(record);
+      change(changed);
+      writeFileSync(f.statePath(id), JSON.stringify(changed));
+      expect(() => f.openJobs().read(id)).toThrow();
+      writeFileSync(f.statePath(id), JSON.stringify(record));
+    }
+    // A timely witness remains useful after its deadline, but actual closure is
+    // distinct. This idle metadata fixture never opened SQLite or owned handles.
+    f.advance(30_001);
+    expect(() => f.jobs.markTrialStopped(id, hash, record.revision)).toThrow();
+    const exit = once(f.child, 'exit');
+    f.child.kill('SIGKILL');
+    await exit;
+    f.journal.state.phase = 'stopped';
+    f.journal.state.child = null;
+    f.journal.write();
+    const stopped = f.jobs.markTrialStopped(id, hash, record.revision);
+    expect(stopped.phase).toBe('trial-witnessed-stopped');
+    expect(stopped.execution).toEqual(record.execution);
+    expect(f.openJobs().read(id)).toEqual(stopped);
+  },
+);
+
+linux.each(['arrival', 'publication'])(
+  'late failed-trial witness cannot authorize ACK: %s',
+  async (boundary) => {
+    const f = await failedTrialFixture(false);
+    const id = f.record.intent.id,
+      hash = f.record.intentHash;
+    const record = f.jobs.planTrialStop(id, hash, f.record.revision, f.stop);
+    if (boundary === 'arrival') f.advance(30_000);
+    else {
+      const sync = f.journal.syncRoot.bind(f.journal);
+      vi.spyOn(f.journal, 'syncRoot').mockImplementation(() => {
+        sync();
+        if (JSON.parse(readFileSync(f.statePath(id), 'utf8')).phase === 'trial-witness-accepted')
+          f.advance(30_000);
+      });
+    }
+    expect(() =>
+      f.jobs.acceptTrialWitness(id, hash, record.revision, f.stop, 'd'.repeat(64)),
+    ).toThrow();
+    vi.restoreAllMocks();
+    const retained = f.openJobs().read(id)!;
+    expect(retained.phase).toBe(
+      boundary === 'arrival' ? 'trial-stop-requested' : 'trial-witness-accepted',
+    );
+    expect(retained.execution!.stop).toEqual(f.record.execution!.stop);
+  },
+);
 
 linux('candidate commit requires readiness and exact selected paused bindings', async () => {
   const f = await activatedTrialFixture();
@@ -1049,6 +1194,7 @@ linux('candidate commit requires readiness and exact selected paused bindings', 
   f.select();
   const reference = restoreTrialReference(f.permit);
   expect(() => f.jobs.markCandidateCommitted(id, hash, record.revision, reference)).toThrow();
+  record = f.jobs.markTrialOpening(id, hash, record.revision);
   record = f.jobs.markTrialReady(id, hash, record.revision, reference, f.permit.output.fingerprint);
   expect(record.execution!.readiness).toEqual({
     fingerprint: f.permit.output.fingerprint,

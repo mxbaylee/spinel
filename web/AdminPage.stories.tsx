@@ -96,6 +96,7 @@ const api = {
     },
   },
   'GET /api/admin/health': healthStory,
+  'GET /api/admin/restores': { available: true, job: null },
   'GET /api/admin/diagnostics': diagnosticsStory,
 };
 function Preview({ section = 'people' }: { section?: string }) {
@@ -154,6 +155,24 @@ export const Connections: Story = {
   },
 };
 export const Health: Story = { args: { section: 'health' }, parameters: { api } };
+export const RestorePreparationBlocksNavigation: Story = {
+  args: { section: 'health' },
+  parameters: { api },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const button = await canvas.findByRole('button', { name: 'Prepare restore' });
+    await waitFor(() => expect(button).toBeEnabled());
+    await userEvent.click(button);
+    const dialog = await within(document.body).findByRole('dialog', {
+      name: 'Prepare workspace restore',
+    });
+    location.hash = 'people';
+    await waitFor(() => expect(location.hash).toBe('#health'));
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Cancel' }));
+    await waitFor(() => expect(within(document.body).queryByRole('dialog')).toBeNull());
+    await expect(button).toHaveFocus();
+  },
+};
 export const DiagnosticsDownloadBlocksNavigation: Story = {
   args: { section: 'health' },
   parameters: { api: { ...api, 'POST /api/admin/diagnostics/download': pending() } },

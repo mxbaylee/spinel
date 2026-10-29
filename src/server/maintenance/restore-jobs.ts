@@ -13,16 +13,19 @@ import {
   unlinkSync,
   writeFileSync,
 } from 'node:fs';
-import { sameFile } from './journal.ts';
+import { processIdentity, sameFile } from './journal.ts';
 import {
   validRestoreTrialPermit,
   sameRestoreTrialReference,
   assertRestoreTrialTarget,
+  assertRestoreTrialEvidenceTarget,
 } from './restore-trial.ts';
 import type { RestoreTrialPermit, RestoreTrialRelease } from './restore-trial.ts';
 import type { ProcessIdentity, RecoveryJournal } from './journal.ts';
 import { sameRestoreStopRequest, validRestoreStopRecord } from './restore-stop.ts';
 import type { RestoreStopRecord } from './restore-stop.ts';
+import { matchesRestoreTrialStop, RESTORE_TRIAL_STOP_MS } from './restore-trial-stop.ts';
+import type { RestoreTrialStopRequest } from './restore-trial-stop.ts';
 import { validRestoreOriginals } from './restore-files.ts';
 import type { RestoreOriginals } from './restore-files.ts';
 import { restoreIntentHash, validRestoreJobIntent } from './restore-job-intent.ts';
@@ -48,6 +51,12 @@ export interface RestoreAttempt {
   epoch: string;
   nonce: string;
 }
+export interface RestoreTrialFailure {
+  from: 'trial-opening' | 'trial-ready';
+  priorUpdatedAt: number;
+  requestedAt: number;
+  stop: RestoreStopRecord;
+}
 /** Durable original shutdown/preparation evidence. This store never opens SQLite. */
 export interface RestorePausePlan {
   epoch: string;
@@ -60,8 +69,10 @@ export interface RestorePausePlan {
   preparation?: RestorePreparation;
   attempt?: RestoreAttempt;
   trial?: RestoreTrialPermit;
+  openingGrantedAt?: number;
   readiness?: { fingerprint: string; acceptedAt: number };
   outcome?: { role: 'candidate'; fingerprint: string; committedAt: number };
+  failure?: RestoreTrialFailure;
 }
 type ExecutionPhase =
   | 'pause-planned'
@@ -83,8 +94,12 @@ type ExecutionPhase =
   | 'candidate-replacing'
   | 'candidate-activated'
   | 'trial-planned'
+  | 'trial-opening'
   | 'trial-ready'
-  | 'candidate-committed';
+  | 'candidate-committed'
+  | 'trial-stop-requested'
+  | 'trial-witness-accepted'
+  | 'trial-witnessed-stopped';
 export interface RestoreJobRecord {
   version: 1;
   revision: number;
@@ -118,8 +133,14 @@ const executionPhases: readonly string[] = [
   'candidate-replacing',
   'candidate-activated',
   'trial-planned',
+  'trial-opening',
   'trial-ready',
   'candidate-committed',
+];
+const failurePhases: readonly string[] = [
+  'trial-stop-requested',
+  'trial-witness-accepted',
+  'trial-witnessed-stopped',
 ];
 const sameProcess = (a: ProcessIdentity | null, b: ProcessIdentity) =>
   !!a && a.pid === b.pid && a.start === b.start && a.boot === b.boot && a.token === b.token;
@@ -150,6 +171,7 @@ function validPreparedImage(
   );
 }
 function validExecution(record: RestoreJobRecord) {
+  if (failurePhases.includes(record.phase)) return validTrialFailure(record);
   if (!executionPhases.includes(record.phase)) return !Object.hasOwn(record, 'execution');
   const plan = record.execution;
   const stage = executionPhases.indexOf(record.phase);
@@ -159,6 +181,7 @@ function validExecution(record: RestoreJobRecord) {
   const hasPreparation = stage >= executionPhases.indexOf('preparation-planned');
   const hasAttempt = stage >= executionPhases.indexOf('activation-planned');
   const hasTrial = stage >= executionPhases.indexOf('trial-planned');
+  const hasOpening = stage >= executionPhases.indexOf('trial-opening');
   const hasReadiness = stage >= executionPhases.indexOf('trial-ready');
   const hasOutcome = record.phase === 'candidate-committed';
   if (
@@ -171,6 +194,7 @@ function validExecution(record: RestoreJobRecord) {
         Number(hasPreparation) +
         Number(hasAttempt) +
         Number(hasTrial) +
+        Number(hasOpening) +
         Number(hasReadiness) +
         Number(hasOutcome) ||
     typeof plan.epoch !== 'string' ||
@@ -287,6 +311,14 @@ function validExecution(record: RestoreJobRecord) {
     )
       return false;
   }
+  if (
+    hasOpening &&
+    (!Number.isSafeInteger(plan.openingGrantedAt) ||
+      plan.openingGrantedAt! < plan.preparation!.preparedAt ||
+      plan.openingGrantedAt! > record.updatedAt ||
+      plan.openingGrantedAt! >= plan.trial!.deadline)
+  )
+    return false;
   if (hasReadiness) {
     const readiness = plan.readiness;
     if (
@@ -295,6 +327,7 @@ function validExecution(record: RestoreJobRecord) {
       readiness.fingerprint !== plan.trial!.output.fingerprint ||
       !Number.isSafeInteger(readiness.acceptedAt) ||
       readiness.acceptedAt < plan.preparation!.preparedAt ||
+      readiness.acceptedAt < plan.openingGrantedAt! ||
       readiness.acceptedAt > record.updatedAt ||
       readiness.acceptedAt >= plan.trial!.deadline
     )
@@ -334,6 +367,56 @@ function validExecution(record: RestoreJobRecord) {
     ? stop.fingerprint === null
     : stop.fingerprint !== null &&
         stop.acceptedAt! >= plan.requestedAt! &&
+        stop.acceptedAt! <= record.updatedAt;
+}
+/** Failure evidence extends an immutable, previously authorized predecessor;
+ * it never moves that predecessor's historical deadline forward. */
+function validTrialFailure(record: RestoreJobRecord): boolean {
+  const failure = record.execution?.failure;
+  if (
+    !failure ||
+    Object.keys(failure).length !== 4 ||
+    !['trial-opening', 'trial-ready'].includes(failure.from) ||
+    !Number.isSafeInteger(failure.priorUpdatedAt) ||
+    !Number.isSafeInteger(failure.requestedAt) ||
+    failure.priorUpdatedAt > failure.requestedAt ||
+    failure.requestedAt > record.updatedAt
+  )
+    return false;
+  const { failure: _failure, ...predecessor } = record.execution!;
+  if (
+    !validExecution({
+      ...record,
+      phase: failure.from,
+      updatedAt: failure.priorUpdatedAt,
+      execution: predecessor,
+    })
+  )
+    return false;
+  const stop = failure.stop,
+    permit = predecessor.trial!;
+  if (
+    !validRestoreStopRecord(stop) ||
+    stop.request.jobId !== record.intent.id ||
+    stop.request.generationId !== permit.generationId ||
+    stop.request.epoch !== permit.epoch ||
+    !sameProcess(stop.child, permit.child) ||
+    !sameFile(stop.databaseIdentity, permit.identity) ||
+    [
+      record.intent.id,
+      predecessor.stop!.request.challengeId,
+      permit.attemptId,
+      permit.nonce,
+    ].includes(stop.request.challengeId) ||
+    stop.request.deadline <= failure.requestedAt ||
+    stop.request.deadline - failure.requestedAt > RESTORE_TRIAL_STOP_MS
+  )
+    return false;
+  return record.phase === 'trial-stop-requested'
+    ? stop.fingerprint === null && stop.acceptedAt === null
+    : stop.fingerprint !== null &&
+        stop.acceptedAt! >= failure.requestedAt &&
+        stop.acceptedAt! < stop.request.deadline &&
         stop.acceptedAt! <= record.updatedAt;
 }
 const privateDirectory = (fd: number) => {
@@ -391,7 +474,8 @@ function validRecord(value: unknown, id: string): value is RestoreJobRecord {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
   const record = value as RestoreJobRecord;
   return (
-    Object.keys(record).length === (executionPhases.includes(record.phase) ? 7 : 6) &&
+    Object.keys(record).length ===
+      (executionPhases.includes(record.phase) || failurePhases.includes(record.phase) ? 7 : 6) &&
     record.version === 1 &&
     Number.isSafeInteger(record.revision) &&
     record.revision >= 0 &&
@@ -400,7 +484,8 @@ function validRecord(value: unknown, id: string): value is RestoreJobRecord {
     record.intent.id === id &&
     record.intentHash === restoreIntentHash(record.intent) &&
     (['accepted', 'source-retained', 'failed'].includes(record.phase) ||
-      executionPhases.includes(record.phase)) &&
+      executionPhases.includes(record.phase) ||
+      failurePhases.includes(record.phase)) &&
     validExecution(record) &&
     Number.isSafeInteger(record.updatedAt) &&
     record.updatedAt >= record.intent.confirmedAt
@@ -1026,6 +1111,138 @@ export class RestoreJobs {
     this.trialClock(record);
     return record;
   }
+  /** Durable permission precedes the first ownership-handle dispatch. An absent
+   * grant is meaningful only while this exact pre-dispatch record is retained. */
+  markTrialOpening(id: string, hash: string, revision: number) {
+    const current = this.selectedTrialRecord(id, hash, revision, 'trial-planned', 'starting');
+    const openingGrantedAt = this.trialClock(current);
+    const result = this.publishExecution(current, 'trial-opening', {
+      ...current.execution!,
+      openingGrantedAt,
+    });
+    this.selectedTrialRecord(id, hash, result.revision, 'trial-opening', 'starting');
+    return result;
+  }
+  /** Evidence has its own clock and binding. It cannot reuse trialClock to
+   * renew opening authority, and no successful-stage method accepts its phases. */
+  private trialEvidenceRecord(
+    id: string,
+    hash: string,
+    revision: number,
+    phase: RestoreJobRecord['phase'],
+    closed = false,
+  ) {
+    const current = this.read(id),
+      state = this.journal.state,
+      owned = this.journal.workspaceOwnership();
+    if (
+      !current ||
+      current.intentHash !== hash ||
+      current.revision !== revision ||
+      current.phase !== phase ||
+      !current.execution?.trial
+    )
+      throw refused();
+    const permit = current.execution.trial,
+      intent = current.intent,
+      operation = state.operation;
+    if (
+      state.restoreJob?.jobId !== id ||
+      state.restoreJob.intentHash !== hash ||
+      state.instanceId !== intent.target.instanceId ||
+      state.generationId !== permit.generationId ||
+      state.epoch !== permit.epoch ||
+      state.verifiedAt !== null ||
+      state.verifier !== null ||
+      owned.databasePath !== intent.target.databasePath ||
+      !sameFile(state.databaseIdentity, intent.target.identity) ||
+      !sameFile(owned.databaseIdentity, intent.target.identity) ||
+      !sameStop(state.restoreStop, current.execution.stop!) ||
+      operation?.id !== id ||
+      operation.generationId !== permit.generationId ||
+      operation.actorId !== intent.authority.actorId ||
+      operation.sessionHash !== intent.authority.sessionHash ||
+      operation.expiresAt !== intent.authority.expiresAt ||
+      operation.tokenHash !== intent.continuationHash ||
+      (closed
+        ? state.phase !== 'stopped' || state.child !== null
+        : !['stopping', 'recovery-required'].includes(state.phase) ||
+          !sameProcess(state.child, permit.child) ||
+          !sameProcess(processIdentity(permit.child.pid, permit.child.token), permit.child))
+    )
+      throw refused();
+    assertRestoreTrialEvidenceTarget(permit, owned.databasePath, owned.databaseIdentity);
+    return current;
+  }
+  private evidenceClock(record: RestoreJobRecord, deadline?: number) {
+    const now = this.now();
+    if (
+      !Number.isSafeInteger(now) ||
+      now < record.updatedAt ||
+      (deadline !== undefined && now >= deadline)
+    )
+      throw refused();
+    return now;
+  }
+  planTrialStop(id: string, hash: string, revision: number, stop: RestoreTrialStopRequest) {
+    const observed = this.read(id);
+    if (!observed || !['trial-opening', 'trial-ready'].includes(observed.phase)) throw refused();
+    const current = this.trialEvidenceRecord(id, hash, revision, observed.phase);
+    if (!matchesRestoreTrialStop(stop, current.execution!.trial!)) throw refused();
+    const requestedAt = this.evidenceClock(current, stop.request.deadline);
+    if (stop.request.deadline - requestedAt > RESTORE_TRIAL_STOP_MS) throw refused();
+    const result = this.publishExecution(current, 'trial-stop-requested', {
+      ...current.execution!,
+      failure: {
+        from: current.phase as RestoreTrialFailure['from'],
+        priorUpdatedAt: current.updatedAt,
+        requestedAt,
+        stop: {
+          request: structuredClone(stop.request),
+          child: structuredClone(stop.child),
+          databaseIdentity: { ...current.intent.target.identity },
+          fingerprint: null,
+          acceptedAt: null,
+        },
+      },
+    });
+    this.trialEvidenceRecord(id, hash, result.revision, 'trial-stop-requested');
+    this.evidenceClock(result, stop.request.deadline);
+    return result;
+  }
+  /** This durable publication must finish before the sole private witness ACK. */
+  acceptTrialWitness(
+    id: string,
+    hash: string,
+    revision: number,
+    stop: RestoreTrialStopRequest,
+    fingerprint: string,
+  ) {
+    const current = this.trialEvidenceRecord(id, hash, revision, 'trial-stop-requested'),
+      failure = current.execution!.failure!;
+    if (
+      !matchesRestoreTrialStop(stop, current.execution!.trial!) ||
+      !sameRestoreStopRequest(stop.request, failure.stop.request)
+    )
+      throw refused();
+    const acceptedAt = this.evidenceClock(current, stop.request.deadline);
+    const result = this.publishExecution(current, 'trial-witness-accepted', {
+      ...current.execution!,
+      failure: { ...failure, stop: { ...failure.stop, fingerprint, acceptedAt } },
+    });
+    this.trialEvidenceRecord(id, hash, result.revision, 'trial-witness-accepted');
+    this.evidenceClock(result, stop.request.deadline);
+    return result;
+  }
+  /** Caller separately proves physical group and descriptor closure. That proof
+   * may arrive after the timely witness's deadline; it grants no new action. */
+  markTrialStopped(id: string, hash: string, revision: number) {
+    const current = this.trialEvidenceRecord(id, hash, revision, 'trial-witness-accepted', true);
+    this.evidenceClock(current);
+    const result = this.publishExecution(current, 'trial-witnessed-stopped', current.execution!);
+    this.trialEvidenceRecord(id, hash, result.revision, 'trial-witnessed-stopped', true);
+    return result;
+  }
   markTrialReady(
     id: string,
     hash: string,
@@ -1033,7 +1250,7 @@ export class RestoreJobs {
     reference: RestoreTrialRelease,
     fingerprint: string,
   ) {
-    const current = this.selectedTrialRecord(id, hash, revision, 'trial-planned', 'starting');
+    const current = this.selectedTrialRecord(id, hash, revision, 'trial-opening', 'starting');
     if (
       !sameRestoreTrialReference(reference, current.execution!.trial!) ||
       fingerprint !== current.execution!.trial!.output.fingerprint

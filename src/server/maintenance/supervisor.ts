@@ -68,6 +68,12 @@ import { prepareRestoreAttempt } from './restore-prepare.ts';
 import { activateRestoreAttempt } from './restore-activate.ts';
 import { restoreTrialReference, sameRestoreTrialReference } from './restore-trial.ts';
 import type { RestoreTrialPermit } from './restore-trial.ts';
+import {
+  RESTORE_TRIAL_STOP_MS,
+  sameRestoreTrialStopRequest,
+  validRestoreTrialStopRequest,
+} from './restore-trial-stop.ts';
+import type { RestoreTrialStopRequest } from './restore-trial-stop.ts';
 import { syncRestoreDirectory } from '../backup/restore-input.ts';
 
 const DRAIN_MS = 30_000;
@@ -282,6 +288,15 @@ export class MaintenanceSupervisor {
   private restoreExecution: Promise<void> | undefined;
   private restoreTrialWaiter:
     (Waiter & { permit: RestoreTrialPermit; assertCurrent(): void }) | undefined;
+  private restoreTrialStopWaiter:
+    | (Waiter & {
+        stop: RestoreTrialStopRequest;
+        accepted: boolean;
+        fingerprint?: string;
+        assertCurrent(): void;
+        accept(fingerprint: string): void;
+      })
+    | undefined;
   private authorityWaiter:
     | {
         request: RestoreStopRequest;
@@ -620,6 +635,7 @@ export class MaintenanceSupervisor {
     this.startWaiter = undefined;
     this.restoreWaiter?.reject(new Error(safeError));
     this.restoreTrialWaiter?.reject(new Error(safeError));
+    this.restoreTrialStopWaiter?.reject(new Error(safeError));
     this.restoreReleaseWaiter?.reject(new Error(safeError));
     this.authorityWaiter?.reject(new Error(safeError));
   }
@@ -1619,6 +1635,31 @@ export class MaintenanceSupervisor {
     }
   }
   /** The restore controller already owns serial(); witness replies remain out of band. */
+  private watchRestoreShutdown(identity: ProcessIdentity, fail: () => void) {
+    let sampling = false;
+    return setInterval(async () => {
+      if (sampling) return;
+      sampling = true;
+      try {
+        await checkVerificationHeadroom('running');
+        let rss = 0;
+        for (const pid of groupMembers(identity)) {
+          try {
+            rss += Number(
+              /^VmRSS:\s+(\d+)/m.exec(readFileSync(`/proc/${pid}/status`, 'utf8'))?.[1] ?? 0,
+            );
+          } catch (error) {
+            if (!processResourcesReleased(String(pid))) throw error;
+          }
+        }
+        if (rss > 512 * 1024) throw new Error('Restore shutdown exceeded its memory budget.');
+      } catch {
+        fail();
+      } finally {
+        sampling = false;
+      }
+    }, 100);
+  }
   private async stopForRestoreOwned(
     jobId: string,
     checkpoint?: {
@@ -1676,30 +1717,10 @@ export class MaintenanceSupervisor {
     void witness.catch(() => {});
     const waiter = this.restoreWaiter!;
     let forceStop = false;
-    let sampling = false;
-    const memory = setInterval(async () => {
-      if (sampling) return;
-      sampling = true;
-      try {
-        await checkVerificationHeadroom('running');
-        let rss = 0;
-        for (const pid of groupMembers(identity)) {
-          try {
-            rss += Number(
-              /^VmRSS:\s+(\d+)/m.exec(readFileSync(`/proc/${pid}/status`, 'utf8'))?.[1] ?? 0,
-            );
-          } catch (error) {
-            if (!processResourcesReleased(String(pid))) throw error;
-          }
-        }
-        if (rss > 512 * 1024) throw new Error('Restore shutdown exceeded its memory budget.');
-      } catch {
-        forceStop = true;
-        waiter.reject(new Error('Restore shutdown has insufficient memory headroom.'));
-      } finally {
-        sampling = false;
-      }
-    }, 100);
+    const memory = this.watchRestoreShutdown(identity, () => {
+      forceStop = true;
+      waiter.reject(new Error('Restore shutdown has insufficient memory headroom.'));
+    });
     const timeout = setTimeout(() => {
       forceStop = true;
       waiter.reject(new Error('Restore shutdown timed out.'));
@@ -1940,7 +1961,8 @@ export class MaintenanceSupervisor {
         state.operation.expiresAt !== operation.expiresAt ||
         state.operation.tokenHash !== operation.tokenHash ||
         !current ||
-        current.phase !== 'trial-planned' ||
+        current.phase !== record.phase ||
+        !['trial-planned', 'trial-opening'].includes(current.phase) ||
         current.revision !== record.revision ||
         current.intentHash !== initial.intentHash ||
         JSON.stringify(current.execution?.trial) !== JSON.stringify(permit)
@@ -1975,6 +1997,8 @@ export class MaintenanceSupervisor {
         lastFailure: null,
       });
       assertCurrent();
+      record = jobs.markTrialOpening(initial.intent.id, initial.intentHash, record.revision);
+      assertCurrent();
       await Promise.all([
         ready,
         shareWorkspaceOwnership(
@@ -2001,6 +2025,15 @@ export class MaintenanceSupervisor {
       this.transition({ phase: 'paused', verifiedAt: null });
       return record;
     } catch (error) {
+      clearTimeout(timer);
+      this.restoreTrialWaiter = undefined;
+      try {
+        if (record.phase === 'trial-opening' || record.phase === 'trial-ready')
+          await this.stopFailedRestoreTrialOwned(jobs, record);
+      } catch {
+        // Without its independent final witness this attempt remains unusable
+        // for rollback reconciliation. Retain every durable boundary reached.
+      }
       this.failure('restore-trial-failed');
       try {
         await this.stopGroup(identity);
@@ -2015,6 +2048,111 @@ export class MaintenanceSupervisor {
       clearTimeout(timer);
       signal.removeEventListener('abort', abort);
       this.restoreTrialWaiter = undefined;
+    }
+  }
+  private async stopFailedRestoreTrialOwned(jobs: RestoreJobs, initial: RestoreJobRecord) {
+    const permit = initial.execution?.trial,
+      child = this.child;
+    if (
+      this.closing ||
+      !permit ||
+      !['trial-opening', 'trial-ready'].includes(initial.phase) ||
+      !child?.connected ||
+      this.childChannelFailed ||
+      this.childReady
+    )
+      throw new Error('The failed restore trial cannot provide final evidence.');
+    let record = initial;
+    const stop: RestoreTrialStopRequest = {
+      reference: restoreTrialReference(permit),
+      child: structuredClone(permit.child),
+      request: {
+        jobId: initial.intent.id,
+        generationId: permit.generationId,
+        epoch: permit.epoch,
+        challengeId: randomUUID(),
+        deadline: this.now() + RESTORE_TRIAL_STOP_MS,
+      },
+    };
+    const assertCurrent = () => {
+      const current = jobs.read(initial.intent.id),
+        state = this.journal.state,
+        actual = processIdentity(permit.child.pid, permit.child.token);
+      if (
+        this.closing ||
+        this.child !== child ||
+        !child.connected ||
+        this.childChannelFailed ||
+        state.phase !== 'stopping' ||
+        state.generationId !== permit.generationId ||
+        state.epoch !== permit.epoch ||
+        !state.child ||
+        !actual ||
+        ['pid', 'start', 'boot', 'token'].some(
+          (key) =>
+            state.child![key as keyof ProcessIdentity] !==
+              permit.child[key as keyof ProcessIdentity] ||
+            actual[key as keyof ProcessIdentity] !== permit.child[key as keyof ProcessIdentity],
+        ) ||
+        !current ||
+        JSON.stringify(current) !== JSON.stringify(record) ||
+        this.now() < record.updatedAt ||
+        this.now() >= stop.request.deadline
+      )
+        throw new Error('Failed restore evidence lost its current binding.');
+      this.assertGeneration();
+      if (this.now() >= stop.request.deadline) throw new Error('Failed restore evidence expired.');
+    };
+    const witness = new Promise<void>((resolve, reject) => {
+      this.restoreTrialStopWaiter = {
+        stop,
+        accepted: false,
+        resolve,
+        reject,
+        assertCurrent,
+        accept: (fingerprint) => {
+          record = jobs.acceptTrialWitness(
+            initial.intent.id,
+            initial.intentHash,
+            record.revision,
+            stop,
+            fingerprint,
+          );
+        },
+      };
+    });
+    void witness.catch(() => {});
+    const waiter = this.restoreTrialStopWaiter!;
+    const timer = setTimeout(
+      () => waiter.reject(new Error('Failed restore shutdown timed out.')),
+      RESTORE_TRIAL_STOP_MS,
+    );
+    const memory = this.watchRestoreShutdown(permit.child, () =>
+      waiter.reject(new Error('Failed restore shutdown exceeded its memory budget.')),
+    );
+    try {
+      // Original witness remains in the main journal. This distinct challenge
+      // must be durable in the selected job before its private IPC dispatch.
+      this.transition({ phase: 'stopping', verifiedAt: null });
+      record = jobs.planTrialStop(initial.intent.id, initial.intentHash, record.revision, stop);
+      assertCurrent();
+      child.send({ channel: MAINTENANCE_CHANNEL, kind: 'restore-trial-stop', stop }, (error) => {
+        if (error) waiter.reject(new Error('Failed restore shutdown disconnected.'));
+      });
+      await witness;
+      clearTimeout(timer);
+      clearInterval(memory);
+      await this.stopGroup(permit.child);
+      if (this.closing || this.journal.state.phase !== 'stopping' || !waiter.accepted)
+        throw new Error('Failed restore shutdown lost its final witness binding.');
+      this.child = undefined;
+      this.childOwned = false;
+      this.transition({ phase: 'stopped', child: null, verifiedAt: null });
+      return jobs.markTrialStopped(initial.intent.id, initial.intentHash, record.revision);
+    } finally {
+      clearTimeout(timer);
+      clearInterval(memory);
+      this.restoreTrialStopWaiter = undefined;
     }
   }
   private async commitRestoreTrialOwned(
@@ -2178,6 +2316,13 @@ export class MaintenanceSupervisor {
       await this.resume(assertCurrent, assertClock);
       return record;
     } catch (error) {
+      clearTimeout(timer);
+      this.restoreReleaseWaiter = undefined;
+      try {
+        if (record.phase === 'trial-ready') await this.stopFailedRestoreTrialOwned(jobs, record);
+      } catch {
+        // A published candidate winner must never enter this failure branch.
+      }
       this.failure('restore-release-failed');
       try {
         await this.stopGroup(permit.child);
@@ -2234,6 +2379,9 @@ export class MaintenanceSupervisor {
         new Error('The application exited before restore shutdown completed.'),
       );
       this.restoreTrialWaiter?.reject(new Error('The restore trial application exited.'));
+      this.restoreTrialStopWaiter?.reject(
+        new Error('The failed trial exited before its final witness.'),
+      );
       this.restoreReleaseWaiter?.reject(
         new Error('The restore application exited before release.'),
       );
@@ -2314,7 +2462,38 @@ export class MaintenanceSupervisor {
   private async childMessage(child: ChildProcess, value: unknown) {
     if (child !== this.child || !object(value) || value.channel !== MAINTENANCE_CHANNEL) return;
     try {
-      if (value.kind === 'restore-trial-ready') {
+      if (value.kind === 'restore-trial-witness' || value.kind === 'restore-trial-stop-refused') {
+        const waiter = this.restoreTrialStopWaiter;
+        if (
+          !waiter ||
+          !validRestoreTrialStopRequest(value.stop) ||
+          !sameRestoreTrialStopRequest(value.stop, waiter.stop)
+        )
+          return;
+        if (waiter.accepted) {
+          if (value.kind !== 'restore-trial-witness' || value.fingerprint !== waiter.fingerprint)
+            throw new Error('The failed trial sent conflicting final evidence.');
+          return;
+        }
+        waiter.assertCurrent();
+        if (
+          value.kind === 'restore-trial-stop-refused' ||
+          !exact(value, ['channel', 'kind', 'stop', 'fingerprint']) ||
+          !validRestoreFingerprint(value.fingerprint)
+        )
+          throw new Error('The failed trial refused its final witness.');
+        waiter.accept(value.fingerprint);
+        waiter.assertCurrent();
+        waiter.accepted = true;
+        waiter.fingerprint = value.fingerprint;
+        this.sendChild(child, {
+          channel: MAINTENANCE_CHANNEL,
+          kind: 'restore-trial-witness-ack',
+          stop: waiter.stop,
+          fingerprint: value.fingerprint,
+        });
+        waiter.resolve();
+      } else if (value.kind === 'restore-trial-ready') {
         // Out of band while the controller holds serial(). Private readiness
         // and acknowledgement of all four ownership handles are separate gates.
         const waiter = this.restoreTrialWaiter;
@@ -2459,6 +2638,7 @@ export class MaintenanceSupervisor {
     this.startWaiter?.reject(new Error('Supervisor is stopping.'));
     this.restoreWaiter?.reject(new Error('Supervisor is stopping.'));
     this.authorityWaiter?.reject(new Error('Supervisor is stopping.'));
+    this.restoreTrialStopWaiter?.reject(new Error('Supervisor is stopping.'));
     // Cancellation requests do not settle an in-flight filesystem operation.
     // Retain kernel ownership until every queued action has actually unwound.
     await this.queue;

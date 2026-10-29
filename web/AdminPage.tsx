@@ -4,6 +4,7 @@ import { AdminInvites } from './AdminInvites.tsx';
 import { AssistantConnections } from './AssistantConnections.tsx';
 import { AccessTokens } from './AccessTokens.tsx';
 import { BackupStatus } from './BackupStatus.tsx';
+import { BackupRestore } from './BackupRestore.tsx';
 import { ServerHealth } from './ServerHealth.tsx';
 import { AdminDiagnostics } from './AdminDiagnostics.tsx';
 import { MaintenanceControls } from './Maintenance.tsx';
@@ -24,7 +25,8 @@ export function AdminPage({ currentId }: { currentId: string }) {
   const [section, setSection] = useState(readSection);
   const [sectionBusy, setBusy] = useState(false);
   const [maintenanceBusy, setMaintenanceBusy] = useState(false);
-  const busy = sectionBusy || maintenanceBusy;
+  const [restoreBusy, setRestoreBusy] = useState(false);
+  const busy = sectionBusy || maintenanceBusy || restoreBusy;
   const [recipient, setRecipient] = useState('');
   const current = useRef(section),
     pending = useRef(busy);
@@ -97,9 +99,10 @@ export function AdminPage({ currentId }: { currentId: string }) {
               <MaintenanceControls
                 currentId={currentId}
                 onBusyChange={setMaintenanceBusy}
-                reloadDisabled={sectionBusy}
+                reloadDisabled={sectionBusy || restoreBusy}
               />
               <BackupStatus currentId={currentId} />
+              <BackupRestore key={currentId} currentId={currentId} onBusyChange={setRestoreBusy} />
               <ServerHealth />
               <AdminDiagnostics onBusyChange={setBusy} />
             </section>
