@@ -207,7 +207,7 @@ export async function createDesktopOfflineFixture(options: {
     }
     const recoveryMetadata = (copyId: string) => {
       const item = database
-        .prepare('SELECT id,owner_id,parent_id,space_id FROM workspace_items WHERE id=?')
+        .prepare('SELECT id,owner_id,parent_id,space_id,name,kind FROM workspace_items WHERE id=?')
         .get(copyId);
       assert.ok(item, 'The recovered item must exist.');
       return item;
@@ -229,13 +229,16 @@ export async function createDesktopOfflineFixture(options: {
     for (const kind of ['sheet', 'doc'] as const) {
       for (const outcome of ['normal', 'conflict'] as const) {
         const name = `Desktop ${outcome} ${kind}`;
+        // Native names take precedence over filenames in the import endpoint.
+        const snapshot =
+          kind === 'sheet' ? { ...seeds.sheet, name } : { ...seeds.doc, title: name };
         const imported = await api<{ item: { id: string; name: string } }>(
           '/api/items/import',
           'POST',
           {
             filename: `${name}.univer.json`,
             parentId: null,
-            snapshot: seeds[kind],
+            snapshot,
           },
         );
         assert.equal(imported.item.name, name);

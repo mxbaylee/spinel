@@ -83,14 +83,40 @@ export const StorageGuidance: Story = {
 };
 export const BrowserStorageLimits: Story = {
   args: ProtectionDenied.args,
-  play: async () => {
+  play: async ({ args }) => {
     const body = within(document.body);
-    await userEvent.click(body.getByRole('button', { name: 'How to keep them' }));
+    const trigger = body.getByRole('button', { name: 'How to keep them' });
+    await userEvent.click(trigger);
     const guide = within(body.getByRole('dialog', { name: 'About device storage' }));
     await userEvent.click(guide.getByText('Browser storage limits', { exact: true }));
     await expect(guide.getByText('Chrome', { exact: true })).toBeVisible();
     await expect(guide.getByText('Firefox', { exact: true })).toBeVisible();
     await expect(guide.getByText('Safari', { exact: true })).toBeVisible();
+    // On a phone the expanded guide is taller than the modal. Its final action
+    // must scroll into view, remain clickable, and return to the parent result.
+    const done = guide.getByRole('button', { name: 'Done', exact: true });
+    done.scrollIntoView({ block: 'nearest' });
+    await waitFor(() => {
+      const bounds = done.getBoundingClientRect();
+      expect(bounds.top).toBeGreaterThanOrEqual(0);
+      expect(bounds.bottom).toBeLessThanOrEqual(window.innerHeight);
+      expect(
+        done.contains(
+          document.elementFromPoint(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2),
+        ),
+      ).toBe(true);
+    });
+    await userEvent.click(done);
+    await waitFor(() => expect(trigger).toHaveFocus());
+    await expect(body.getByRole('dialog', { name: 'Offline availability' })).toBeVisible();
+    await expect(args.onDismiss).not.toHaveBeenCalled();
+    await expect(args.allowNavigation).not.toHaveBeenCalled();
+    // Leave the explanatory state open for the independent visual capture.
+    await userEvent.click(trigger);
+    const reopened = within(body.getByRole('dialog', { name: 'About device storage' }));
+    const summary = reopened.getByText('Browser storage limits', { exact: true });
+    await userEvent.click(summary);
+    summary.scrollIntoView({ block: 'nearest' });
   },
 };
 export const PendingRemoval: Story = {

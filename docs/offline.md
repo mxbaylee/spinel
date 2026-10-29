@@ -709,7 +709,8 @@ Safari WebDriver sessions cannot establish this ordinary-tab restart behavior.
 
 The test cases cover image-backed Sheets and Docs for normal and divergent
 reconnect, actual persistence outcomes, locally committed edits through another
-process restart, and explicit origin storage deletion. Browser deletion APIs
+process restart, and deliberate deletion of private downloads, local markers and
+cached app assets followed by online catalog recovery. Browser deletion APIs
 exercise loss handling; they do not reproduce a browser's long-term eviction
 heuristic. Final exact browser/OS versions and observed outcomes must replace
 this in-progress checkpoint before SPN-052 is considered complete.

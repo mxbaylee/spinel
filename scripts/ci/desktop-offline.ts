@@ -168,6 +168,19 @@ function content(snapshot: NativeSnapshot) {
   return comparable({ ...images, name: undefined, title: undefined } as NativeSnapshot);
 }
 
+function imageSources(snapshot: NativeSnapshot, itemId: string, hashes: string[]) {
+  const found = new Set<string>();
+  mapNativeImageSources(snapshot, (source) => {
+    const prefix = `/api/items/${itemId}/images/`;
+    assert.ok(source.startsWith(prefix), 'Every native image must belong to this actual item');
+    const imageHash = source.slice(prefix.length);
+    assert.match(imageHash, /^[a-f\d]{64}$/);
+    found.add(imageHash);
+    return source;
+  });
+  assert.deepEqual([...found].sort(), [...hashes].sort());
+}
+
 async function visibleImages(name: string, documentKind: 'sheet' | 'doc') {
   const path = resolve(output, `${name}.png`);
   await browser.screenshot(path);
@@ -217,6 +230,7 @@ async function main() {
       certPath: resolve('test-results/desktop-tls/cert.pem'),
     });
     const f = fixture;
+    const originalImages = new Map(f.items.map((item) => [item.id, f.imageRows(item.id)]));
     report.actor = { id: f.actor.id, role: 'Collaborator with editor grants', ownerId: f.owner.id };
     await launch(f.loginURL);
     await named('button', 'Shared with me');
@@ -390,7 +404,14 @@ async function main() {
         await waitStatus('Synced.');
         const committed = await f.read(item.id, item.unitId);
         assert.ok(committed.revision > item.baseline.revision);
-        assert.deepEqual(content(committed.snapshot), content(expected.get(item.id)!));
+        assert.equal(committed.unitId, item.unitId);
+        imageSources(
+          committed.snapshot,
+          item.id,
+          originalImages.get(item.id)!.map((image) => image.id),
+        );
+        assert.deepEqual(comparable(committed.snapshot), comparable(expected.get(item.id)!));
+        assert.deepEqual(f.imageRows(item.id), originalImages.get(item.id));
         const clean = await local(f.actor.id, item.id);
         assert.ok(clean.item?.outbox);
         assert.equal(pending(clean.item.outbox.checkpoint), false);
@@ -429,12 +450,24 @@ async function main() {
         assert.equal(metadata.owner_id, f.actor.id);
         assert.equal(metadata.parent_id, null);
         assert.equal(metadata.space_id, null);
+        assert.equal(metadata.kind, item.kind);
+        assert.ok(String(metadata.name).startsWith(`${item.name} (offline copy, `));
         await until(
           () => local(f.actor.id, item.id),
           (value) => value.item === null && value.images.length === 0,
           'Recovered original no longer advertises a retained device copy',
         );
         const copied = await f.readRecovered(copyId);
+        assert.equal(copied.snapshot.id, copied.unitId);
+        assert.equal(
+          'sheets' in copied.snapshot ? copied.snapshot.name : copied.snapshot.title,
+          metadata.name,
+        );
+        imageSources(
+          copied.snapshot,
+          copyId,
+          originalImages.get(item.id)!.map((image) => image.id),
+        );
         assert.deepEqual(content(copied.snapshot), content(expected.get(item.id)!));
         assert.deepEqual(f.imageRows(copyId), f.imageRows(item.id));
         const publishedReceipts = receipts();
