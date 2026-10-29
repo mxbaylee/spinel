@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { execFile, spawn } from 'node:child_process';
 import type { ChildProcess } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
-import { access, mkdir, open, realpath, stat, writeFile } from 'node:fs/promises';
+import { access, appendFile, mkdir, open, realpath, stat, writeFile } from 'node:fs/promises';
 import { constants } from 'node:fs';
 import { createServer } from 'node:net';
 import { homedir } from 'node:os';
@@ -114,8 +114,13 @@ async function command(file: string, args: string[], timeout = 30_000) {
     );
   }
 }
-async function poll<T>(read: () => Promise<T>, accept: (value: T) => boolean, label: string) {
-  const deadline = Date.now() + 30_000;
+async function poll<T>(
+  read: () => Promise<T>,
+  accept: (value: T) => boolean,
+  label: string,
+  timeout = 30_000,
+) {
+  const deadline = Date.now() + timeout;
   let last: unknown;
   do {
     try {
@@ -182,11 +187,6 @@ async function safariPid() {
 }
 const applescript = (source: string, ...args: string[]) =>
   command('/usr/bin/osascript', ['-e', source, ...args]);
-const safariScript = (expression: string) =>
-  applescript(
-    'on run argv\n tell application "Safari" to return do JavaScript (item 1 of argv) in front document\nend run',
-    expression,
-  );
 
 // Inspect browser chrome through macOS accessibility, excluding website content.
 // Approval re-runs the same inspection and matches the question captured before it.
@@ -206,7 +206,7 @@ function run(argv) {
   if (identity.applicationRole !== 'AXApplication') throw new Error('The owned Firefox accessibility application is unavailable.');
   process.frontmost = true;
   var nodes = [], candidates = [], allButtons = [], truncated = false;
-  var question = /\b(?:will you allow|allow) (?:https:\/\/)?localhost(?::8176)? to store data (?:in persistent storage|on your computer)\?/i;
+  var question = /\b(?:will you allow|allow) (?:https:\/\/)?localhost:8176 to store data (?:in persistent storage|on your computer)\?/i;
   function text(value) {
     return typeof value === 'string' ? value.replace(/[\u200e\u200f\u2066-\u2069]/g, '').replace(/\s+/g, ' ').trim() : '';
   }
@@ -216,9 +216,12 @@ function run(argv) {
     var role = text(p.role);
     if (role === 'AXWebArea') return { texts: [], buttons: [] };
     var own = [p.name, p.description, p.value].map(text).filter(function(value, index, values) { return value && values.indexOf(value) === index; });
-    var node = { path: path, role: role, subrole: text(p.subrole), text: own, enabled: p.enabled, position: p.position, size: p.size };
+    // Role descriptions ("text", "button", "group") are metadata, not words
+    // between the three visible pieces of Firefox's storage-permission question.
+    var contentText = [p.name, p.value].map(text).filter(function(value, index, values) { return value && values.indexOf(value) === index; });
+    var node = { path: path, role: role, subrole: text(p.subrole), text: own, contentText: contentText, enabled: p.enabled, position: p.position, size: p.size };
     nodes.push(node);
-    var result = { texts: own.slice(), buttons: [] };
+    var result = { texts: contentText.slice(), buttons: [] };
     if (role === 'AXButton' || role === 'AXPopUpButton') {
       var button = { element: element, labels: own, enabled: p.enabled === true, size: p.size };
       result.buttons.push(button);
@@ -231,7 +234,7 @@ function run(argv) {
     });
     var matched = result.texts.join(' ').match(question);
     var allow = result.buttons.filter(function(button) { return button.labels.indexOf('Allow') !== -1 && Array.isArray(button.size) && button.size[0] > 0 && button.size[1] > 0; });
-    var block = result.buttons.filter(function(button) { return button.labels.indexOf('Block') !== -1; });
+    var block = result.buttons.filter(function(button) { return button.labels.indexOf('Block') !== -1 && Array.isArray(button.size) && button.size[0] > 0 && button.size[1] > 0; });
     if (matched && allow.length === 1 && block.length === 1)
       candidates.push({ path: path, prompt: matched[0], button: allow[0] });
     return result;
@@ -243,7 +246,7 @@ function run(argv) {
     return !candidates.some(function(other) { return other.path.length > candidate.path.length && candidate.path.every(function(index, part) { return other.path[part] === index; }); });
   });
   var promptLike = allButtons.some(function(button) { return button.labels.some(function(label) { return /^(Allow|Block|Don't Allow|Not Now)$/.test(label); }); }) || nodes.some(function(node) { return /AX(Dialog|Sheet|Popover)/.test(node.role + ' ' + node.subrole); });
-  var knownQuestion = nodes.map(function(node) { return node.text.join(' '); }).join(' ').match(question);
+  var knownQuestion = nodes.map(function(node) { return node.contentText.join(' '); }).join(' ').match(question);
   var status = candidates.length === 1 ? (candidates[0].button.enabled ? 'recognized' : 'pending') : knownQuestion ? 'pending' : promptLike ? 'unrecognized' : 'none';
   var browserChromeObserved = nodes.some(function(node) { return ['AXToolbar', 'AXTabGroup', 'AXTextField', 'AXRadioButton', 'AXCheckBox'].indexOf(node.role) !== -1; });
   var result = { status: status, action: 'none', process: identity, browserChromeObserved: browserChromeObserved, observedText: candidates.length === 1 ? candidates[0].prompt : knownQuestion ? knownQuestion[0] : null, nodes: nodes };
@@ -271,6 +274,127 @@ export function createDesktopBrowser(
   let launches = 0;
   let storagePrompts = 0;
   let spawnError: Error | undefined;
+  let safariTab: { windowId: number; tabIndex: number } | null = null;
+  let safariCaptureDiagnostics = 0;
+
+  function safariReference() {
+    assert.ok(safariTab, 'The launched Safari tab has not been identified.');
+    return `tab ${safariTab.tabIndex} of window id ${safariTab.windowId}`;
+  }
+  function safariScript(expression: string, timeout = 5000) {
+    return command(
+      '/usr/bin/osascript',
+      [
+        '-e',
+        `on run argv\n tell application "Safari" to return do JavaScript (item 1 of argv) in ${safariReference()}\nend run`,
+        expression,
+      ],
+      timeout,
+    );
+  }
+  async function foregroundSafari() {
+    assert.ok(browserPid && safariTab);
+    // Window IDs survive ordering changes; the tab index belongs to this window.
+    // Reuse the requested tab alongside any normally restored Safari tabs.
+    return JSON.parse(
+      await command(
+        '/usr/bin/osascript',
+        [
+          '-l',
+          'JavaScript',
+          '-e',
+          `function run(argv) {
+            var app = Application(Number(argv[0]));
+            var target = app.windows.byId(Number(argv[1]));
+            var tabIndex = Number(argv[2]);
+            function read(get) { try { return get(); } catch (error) { return { error: String(error) }; } }
+            function tabState(tab) { return { index: tab.index(), title: tab.name(), url: tab.url() }; }
+            function windowState(window) {
+              return { id: window.id(), index: window.index(), visible: window.visible(), minimized: window.miniaturized(), bounds: window.bounds(), currentTab: tabState(window.currentTab()) };
+            }
+            function snapshot() {
+              return {
+                frontmost: app.frontmost(), windowCount: app.windows.length,
+                frontWindow: read(function() { return windowState(app.windows[0]); }),
+                targetWindow: read(function() { return windowState(target); }),
+                targetTab: read(function() { return tabState(target.tabs[tabIndex - 1]); }),
+                frontDocument: read(function() { return { title: app.documents[0].name(), url: app.documents[0].url() }; })
+              };
+            }
+            var before = snapshot();
+            if (target.miniaturized()) target.miniaturized = false;
+            if (target.index() !== 1) target.index = 1;
+            if (target.currentTab().index() !== tabIndex) target.currentTab = target.tabs[tabIndex - 1];
+            if (!app.frontmost()) app.activate();
+            var deadline = Date.now() + 2000;
+            while ((!app.frontmost() || app.windows[0].id() !== Number(argv[1])) && Date.now() < deadline) delay(0.05);
+            var after = snapshot();
+            if (!after.frontmost || after.frontWindow.id !== Number(argv[1]) || !after.targetWindow.currentTab || after.targetWindow.currentTab.index !== tabIndex)
+              throw new Error('The owned Safari tab did not become frontmost: ' + JSON.stringify({ before: before, after: after }));
+            return JSON.stringify({ before: before, after: after });
+          }`,
+          String(browserPid),
+          String(safariTab.windowId),
+          String(safariTab.tabIndex),
+        ],
+        5000,
+      ),
+    ) as ObjectValue;
+  }
+  async function recordSafariRendering(path: string, native: ObjectValue) {
+    const log = join(outputDir, 'safari-render-state.jsonl');
+    // Failed painting cannot create unbounded diagnostics or a new readiness gate.
+    if (++safariCaptureDiagnostics > 64) {
+      if (safariCaptureDiagnostics === 65)
+        await appendFile(
+          log,
+          JSON.stringify({ diagnosticLimit: 64, time: new Date().toISOString() }) + '\n',
+        );
+      return;
+    }
+    let page: unknown;
+    try {
+      page = await evaluate(
+        `new Promise(resolve => {
+        const frames = [];
+        let frame;
+        function elementState(element) {
+          if (!element) return null;
+          const style = getComputedStyle(element);
+          const rect = element.getBoundingClientRect();
+          return { tag: element.tagName, id: element.id, class: String(element.className).slice(0, 200), rect: { x: rect.x, y: rect.y, width: rect.width, height: rect.height }, display: style.display, visibility: style.visibility, opacity: style.opacity, contentVisibility: style.contentVisibility, transform: style.transform };
+        }
+        function finish() {
+          clearTimeout(timer);
+          cancelAnimationFrame(frame);
+          resolve({ url: location.href, title: document.title, readyState: document.readyState, visibility: document.visibilityState, hidden: document.hidden, hasFocus: document.hasFocus(), frames,
+            viewport: { width: innerWidth, height: innerHeight, outerWidth, outerHeight, screenX, screenY, pixelRatio: devicePixelRatio, visual: visualViewport && { width: visualViewport.width, height: visualViewport.height, scale: visualViewport.scale } },
+            root: [document.documentElement, document.body, document.body?.firstElementChild].map(elementState),
+            active: elementState(document.activeElement),
+            canvases: Array.from(document.querySelectorAll('canvas')).slice(0, 8).map(canvas => ({ ...elementState(canvas), bitmapWidth: canvas.width, bitmapHeight: canvas.height })),
+            text: document.body?.innerText.slice(0, 1000) });
+        }
+        const timer = setTimeout(finish, 1000);
+        function next(time) { frames.push(time); if (frames.length === 2) finish(); else frame = requestAnimationFrame(next); }
+        frame = requestAnimationFrame(next);
+      })`,
+        3000,
+      );
+    } catch (error) {
+      page = { error: String(error) };
+    }
+    await appendFile(
+      log,
+      JSON.stringify({
+        time: new Date().toISOString(),
+        screenshot: resolve(path),
+        browserPid,
+        target: safariTab,
+        native,
+        page,
+      }) + '\n',
+    );
+  }
 
   async function request(path: string, method = 'GET', body?: unknown, timeout = 35_000) {
     if (spawnError) throw spawnError;
@@ -403,7 +527,7 @@ export function createDesktopBrowser(
       );
     }
   }
-  async function evaluate<T>(expression: string): Promise<T> {
+  async function evaluate<T>(expression: string, timeout = 30_000): Promise<T> {
     assert.ok(browserPid, 'Start the browser before evaluating a page.');
     let result: ObjectValue;
     if (kind === 'safari') {
@@ -411,18 +535,22 @@ export function createDesktopBrowser(
       // not touch localStorage, IndexedDB, CacheStorage or the native document.
       const slot = `__spinelDesktop_${randomUUID().replaceAll('-', '')}`;
       const key = JSON.stringify(slot);
-      await safariScript(
+      const deadline = Date.now() + timeout;
+      const call = (source: string) =>
+        safariScript(source, Math.max(1, Math.min(5000, deadline - Date.now())));
+      await call(
         `globalThis[${key}] = ''; Promise.resolve().then(() => (${expression})).then(value => { globalThis[${key}] = JSON.stringify({ ok: true, value: value === undefined ? null : value }); }).catch(error => { globalThis[${key}] = JSON.stringify({ ok: false, error: String(error) }); }); void 0;`,
       );
       try {
         const raw = await poll(
-          () => safariScript(`globalThis[${key}] || ''`),
+          () => call(`globalThis[${key}] || ''`),
           Boolean,
           'Safari evaluation timed out',
+          Math.max(1, deadline - Date.now()),
         );
         result = object(JSON.parse(raw));
       } finally {
-        await safariScript(`delete globalThis[${key}]; void 0;`);
+        await safariScript(`delete globalThis[${key}]; void 0;`, 1000);
       }
     } else {
       result = object(
@@ -437,6 +565,7 @@ export function createDesktopBrowser(
   }
   async function focusAt(selector: string, index: number) {
     assert.ok(Number.isSafeInteger(index) && index >= 0);
+    if (kind === 'safari') await foregroundSafari();
     await evaluate(`(() => {
       const element = document.querySelectorAll(${JSON.stringify(selector)})[${index}];
       if (!(element instanceof HTMLElement) || !element.getClientRects().length || element.matches(':disabled, [aria-disabled="true"]')) throw new Error('The target is not an enabled visible element.');
@@ -449,6 +578,7 @@ export function createDesktopBrowser(
     assert.ok(browserPid, 'Start the browser before sending input.');
     const commandKey = key === 'SelectAll' || key === 'Copy' || key === 'DocumentStart';
     if (kind === 'safari') {
+      await foregroundSafari();
       const code = { Enter: 36, Escape: 53, DocumentStart: 126, Space: 49 };
       await applescript(
         key === 'SelectAll' || key === 'Copy'
@@ -474,7 +604,7 @@ export function createDesktopBrowser(
   async function clickAt(selector: string, x: number, y: number) {
     assert.ok(browserPid, 'Start the browser before sending pointer input.');
     assert.ok(Number.isFinite(x) && Number.isFinite(y) && x >= 0 && y >= 0);
-    if (kind === 'safari') await applescript('tell application "Safari" to activate');
+    if (kind === 'safari') await foregroundSafari();
     const point = await evaluate<{ x: number; y: number }>(`(() => {
       const element = document.querySelector(${JSON.stringify(selector)});
       if (!(element instanceof HTMLElement) || !element.getClientRects().length || element.matches(':disabled, [aria-disabled="true"]')) throw new Error('The pointer target is not an enabled visible element.');
@@ -554,7 +684,11 @@ export function createDesktopBrowser(
         ],
         10_000,
       );
-    const bounds = (await applescript('tell application "Safari" to get bounds of front window'))
+    const bounds = (
+      await applescript(
+        `tell application "Safari" to get bounds of window id ${safariTab!.windowId}`,
+      )
+    )
       .split(',')
       .map(Number);
     assert.ok(bounds.length === 4 && bounds.every(Number.isFinite));
@@ -602,12 +736,13 @@ export function createDesktopBrowser(
       await session('url', 'POST', { url: target });
       return;
     }
+    await foregroundSafari();
     // A page-only marker witnesses a new document, including a same-URL reload
     // or an authentication redirect. It never reconstructs persisted storage.
     const marker = JSON.stringify(`__spinelNavigation_${randomUUID().replaceAll('-', '')}`);
     await safariScript(`globalThis[${marker}] = true; void 0;`);
     await applescript(
-      'on run argv\n tell application "Safari" to set URL of current tab of front window to item 1 of argv\nend run',
+      `on run argv\n tell application "Safari" to set URL of ${safariReference()} to item 1 of argv\nend run`,
       target,
     );
     await poll(
@@ -672,6 +807,7 @@ export function createDesktopBrowser(
     previousBrowserPid = stoppingPid ?? previousBrowserPid;
     browserPid = null;
     browserIdentity = '';
+    safariTab = null;
     sessionId = '';
     driver = null;
     return {
@@ -711,11 +847,37 @@ export function createDesktopBrowser(
         browserPid = await poll(safariPid, (value) => value !== null, 'Safari did not start');
         assert.ok(browserPid);
         browserIdentity = await processIdentity(browserPid);
-        await poll(
-          () => safariScript('document.readyState'),
-          (value) => value === 'complete',
-          'Safari page did not load',
+        const launched = await poll(
+          async () =>
+            object(
+              JSON.parse(
+                await command(
+                  '/usr/bin/osascript',
+                  [
+                    '-l',
+                    'JavaScript',
+                    '-e',
+                    `function run(argv) {
+              var app = Application(Number(argv[0]));
+              var window = app.windows[0];
+              var tab = window.currentTab();
+              return JSON.stringify({ windowId: window.id(), tabIndex: tab.index(), url: tab.url(), state: app.doJavaScript('document.readyState', { in: tab }) });
+            }`,
+                    String(browserPid),
+                  ],
+                  5000,
+                ),
+              ),
+            ),
+          (value) => value.url === 'about:blank' && value.state === 'complete',
+          'The requested Safari about:blank tab did not load',
         );
+        assert.ok(
+          Number.isSafeInteger(launched.windowId) &&
+            Number.isSafeInteger(launched.tabIndex) &&
+            Number(launched.tabIndex) > 0,
+        );
+        safariTab = { windowId: Number(launched.windowId), tabIndex: Number(launched.tabIndex) };
         await goto(url);
       } else {
         await mkdir(requestedPath, { recursive: true });
@@ -863,6 +1025,7 @@ export function createDesktopBrowser(
     async type(text) {
       assert.ok(browserPid, 'Start the browser before typing.');
       if (kind === 'safari') {
+        await foregroundSafari();
         await applescript(
           'on run argv\n tell application "Safari" to activate\n tell application "System Events" to keystroke (item 1 of argv)\nend run',
           text,
@@ -894,9 +1057,12 @@ export function createDesktopBrowser(
       if (scope === 'screen') return captureScreen(path);
       await mkdir(dirname(resolve(path)), { recursive: true });
       if (kind === 'safari') {
-        await applescript('tell application "Safari" to activate');
+        const native = await foregroundSafari();
+        await recordSafariRendering(path, native);
         const bounds = (
-          await applescript('tell application "Safari" to get bounds of front window')
+          await applescript(
+            `tell application "Safari" to get bounds of window id ${safariTab!.windowId}`,
+          )
         )
           .split(',')
           .map(Number);

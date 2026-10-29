@@ -539,7 +539,8 @@ async function main() {
           images: f.imageRows(item.id),
         });
       } else {
-        await until(status, (value) => value.includes('Needs attention'), 'Conflict recovery');
+        // The status region contains the detailed published-copy message; the
+        // production save-details control carries the stable attention label.
         await named('button', 'Save details: Needs attention');
         const href = await until(
           () =>
@@ -597,6 +598,7 @@ async function main() {
         await browser.goto(`${f.origin}${href}`);
         await waitStatus('All changes saved.');
         await canvas();
+        const visual = await visibleImages(`${item.kind}-recovered-copy`, item.kind);
         assert.ok(
           (await nativeText(item.kind)).includes(
             item.kind === 'sheet' ? '731' : 'Desktop offline 731 ',
@@ -610,6 +612,7 @@ async function main() {
           receipts: publishedReceipts,
           snapshotSha256: hash(copied.snapshot),
           images: f.imageRows(copyId),
+          visual,
         });
       }
     }
