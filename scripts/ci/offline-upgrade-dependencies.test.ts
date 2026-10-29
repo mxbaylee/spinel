@@ -134,6 +134,56 @@ test('external dependency drift is rejected before creating dependency links', a
   await assert.rejects(realpath(join(f.source, 'node_modules')), { code: 'ENOENT' });
 });
 
+test('an isolated historical install preserves transitive externals when the candidate advances', async (t) => {
+  const f = await fixture(t);
+  const parser = 'node_modules/body-parser';
+  f.packages[parser] = { version: '2.3.0', integrity: 'sha512-historical' };
+  for (const root of [f.source, f.installed])
+    await writeFile(join(root, 'package-lock.json'), JSON.stringify({ packages: f.packages }));
+  await mkdir(join(f.installed, parser));
+  await writeFile(
+    join(f.installed, parser, 'package.json'),
+    JSON.stringify({ name: 'body-parser', type: 'module', main: './index.ts' }),
+  );
+  await writeFile(join(f.installed, parser, 'index.ts'), "export const version = '2.3.0';");
+  await writeFile(
+    join(f.installed, 'node_modules/external/index.ts'),
+    "export { version } from 'body-parser';",
+  );
+  const historical = join(f.root, 'historical-installed');
+  await cp(f.installed, historical, { recursive: true, dereference: true });
+  f.packages[parser] = { version: '2.4.0', integrity: 'sha512-candidate' };
+  await writeFile(join(f.installed, 'package-lock.json'), JSON.stringify({ packages: f.packages }));
+  await writeFile(join(f.installed, parser, 'index.ts'), "export const version = '2.4.0';");
+
+  await assert.rejects(linkLegacyOfflineDependencies(f.source, f.installed), /body-parser/);
+  await linkLegacyOfflineDependencies(f.source, historical);
+  const resolve = createRequire(join(f.source, 'probe.ts')).resolve;
+  const external = resolve('external');
+  assert.equal(external, join(historical, 'node_modules/external/index.ts'));
+  // An external package's real path controls its transitive imports; a lone
+  // historical parser beside links into the candidate tree would not suffice.
+  const historicalParser = createRequire(external).resolve('body-parser');
+  assert.equal(historicalParser, join(historical, parser, 'index.ts'));
+  assert.equal(await readFile(historicalParser, 'utf8'), "export const version = '2.3.0';");
+  const current = createRequire(join(f.installed, 'probe.ts')).resolve('external');
+  const currentParser = createRequire(current).resolve('body-parser');
+  assert.equal(currentParser, join(f.installed, parser, 'index.ts'));
+  assert.equal(await readFile(currentParser, 'utf8'), "export const version = '2.4.0';");
+  assert.equal(resolve('@spinel/sync-client'), join(f.source, 'lib/sync-client/index.ts'));
+  assert.equal(resolve('@spinel/sync-transform'), join(f.source, 'lib/sync-transform/index.ts'));
+});
+
+test('an uninstalled historical checkout fails before linking with setup guidance', async (t) => {
+  const f = await fixture(t);
+  await rm(join(f.installed, 'node_modules'), { recursive: true });
+  await assert.rejects(
+    linkLegacyOfflineDependencies(f.source, f.installed),
+    /Run npm ci.*SPINEL_LEGACY_OFFLINE_SOURCE/,
+  );
+  await assert.rejects(realpath(join(f.source, 'node_modules')), { code: 'ENOENT' });
+});
+
 for (const damage of ['missing manifest', 'wrong name', 'missing link', 'escaped link'] as const)
   test(`an archived workspace with ${damage} is rejected before linking`, async (t) => {
     const f = await fixture(t);
