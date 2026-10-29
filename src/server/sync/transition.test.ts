@@ -21,6 +21,7 @@ import { verifyTransitionFixture } from '../../../scripts/sync-transition/verify
 import { digest } from '../backup/archive.ts';
 import { AuthStore } from '../auth/store.ts';
 import { WorkspaceStore } from '../workspace/store.ts';
+import { holdRestoredTrash } from '../workspace/recovery-holds.ts';
 import { SQLiteSyncStorage } from './store.ts';
 import {
   assertSyncTransitionReady,
@@ -129,6 +130,22 @@ test('all retained metadata and public snapshots survive a source-copy conversio
     expect(messages).not.toContain(secret);
   for (const [event] of progress.mock.calls)
     expect(Object.keys(event).sort()).toEqual(['completed', 'event', 'total']);
+});
+
+test('transition retains populated workspace recovery holds', async () => {
+  const f = fixture();
+  holdRestoredTrash(f.data.db);
+  const expected = f.data.db.prepare('SELECT * FROM workspace_recovery_holds').all();
+  expect(expected.length).toBeGreaterThan(0);
+  await exportSyncTransition({ source: f.source, directory: f.bundle, legacy: f.legacy });
+  const result = await importSyncTransition({ directory: f.bundle, destination: f.destination });
+  const db = new DatabaseSync(result.path);
+  try {
+    expect(db.prepare('SELECT * FROM workspace_recovery_holds').all()).toEqual(expected);
+  } finally {
+    db.close();
+  }
+  expect(f.data.db.prepare('SELECT * FROM workspace_recovery_holds').all()).toEqual(expected);
 });
 
 test('interrupted export resumes only the frozen copy and never exports completed units twice', async () => {

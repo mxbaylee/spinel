@@ -9,6 +9,8 @@ import { SyncServer } from '@spinel/sync-server';
 import { backup, DatabaseSync, openDatabase } from '../../../server/database.ts';
 import { AuthStore } from '../auth/store.ts';
 import { WorkspaceStore } from '../workspace/store.ts';
+import { TrashStore, DAY_MS } from '../workspace/trash.ts';
+import { holdRestoredTrash } from '../workspace/recovery-holds.ts';
 import { DocumentStore } from '../workspace/documents.ts';
 import { SheetStore } from '../workspace/sheets.ts';
 import { migrateSpaceSchema } from '../workspace/space-schema.ts';
@@ -152,6 +154,30 @@ test('restore preparation retains verified bytes without activating data or retu
   expect(
     (await readdir(f.directory)).filter((name) => name.startsWith('.restore-candidate-')),
   ).toEqual([]);
+}, 30_000);
+
+test('encrypted candidate preparation preserves a populated recovery hold and permits later authorized recovery', async () => {
+  const f = await fixture();
+  new TrashStore(f.workspace).trash(f.owner.id, f.doc.id);
+  holdRestoredTrash(f.db);
+  const expected = f.db.prepare('SELECT * FROM workspace_recovery_holds').all();
+  const archive = await f.archive();
+  const prepared = await prepareRestoreArchive({ ...f.options, archive: archive.archive });
+  cleanup.push(prepared.dispose);
+  const db = new DatabaseSync(prepared.databasePath);
+  try {
+    expect(db.prepare('SELECT * FROM workspace_recovery_holds').all()).toEqual(expected);
+    expect(verifyInventory(db)).toMatchObject({ rows: prepared.rows, tables: prepared.tables });
+    const workspace = new WorkspaceStore(new AuthStore(db, () => Date.now() + 40 * DAY_MS), {
+      spacesEnabled: true,
+    });
+    new TrashStore(workspace).restore(f.owner.id, f.doc.id);
+    expect(workspace.get(f.owner.id, f.doc.id).name).toBe('Journal');
+    expect(db.prepare('SELECT * FROM workspace_recovery_holds').all()).toEqual([]);
+  } finally {
+    db.close();
+  }
+  expect(f.db.prepare('SELECT * FROM workspace_recovery_holds').all()).toEqual(expected);
 }, 30_000);
 
 test('incompatible or interrupted preparation leaves no candidate and preserves the encrypted source', async () => {

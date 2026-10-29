@@ -117,6 +117,7 @@ const preservedTables = [
   'workspace_links',
   'workspace_placements',
   'workspace_retained_trash_batches',
+  'workspace_recovery_holds',
   'workspace_space_trash',
   'workspace_tag_assignments',
   'workspace_tags',

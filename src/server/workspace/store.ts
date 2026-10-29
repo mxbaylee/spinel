@@ -12,6 +12,7 @@ import { classifyOrdinaryItems, isOrdinaryItem, MAX_ANCESTOR_READS } from './ord
 import type { ItemKind, WorkspaceItem, ItemAccess, SharePerson } from '../../shared/workspace.ts';
 import type { SnapshotSaved } from './snapshots.ts';
 import { resolveSpaceScope } from './space-scope.ts';
+import { recoveryHoldSchema } from './recovery-holds.ts';
 
 const columns =
   'i.id,i.parent_id AS parentId,i.kind,i.name,i.created_at AS createdAt,i.updated_at AS updatedAt';
@@ -131,6 +132,7 @@ export class WorkspaceStore {
     // Retired workspace_pins tables in older databases are left untouched.
     // No feature reads or writes them; existing item/user foreign keys remain safe.
     appearanceSchema(auth.database);
+    recoveryHoldSchema(auth.database);
     this.links = new LinkAccess(auth, this.spacesEnabled);
   }
   ownTags(userId: string, id: string): string[] {
