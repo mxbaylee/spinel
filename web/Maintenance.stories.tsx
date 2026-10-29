@@ -458,7 +458,7 @@ export const CancelNoticeWithoutPausedProof: Story = {
     const dialog = within(await body.findByRole('dialog', { name: 'Cancel maintenance notice?' }));
     await expect(dialog.getByText(/Passkey verification cannot be renewed/)).toBeVisible();
     await expect(dialog.queryByRole('button', { name: 'Verify with a passkey' })).toBeNull();
-    await expect(dialog.queryByRole('button', { name: 'Cancel notice', exact: true })).toBeNull();
+    await expect(dialog.queryByRole('button', { name: /^Cancel notice$/ })).toBeNull();
     await expect(args.onAction).not.toHaveBeenCalled();
   },
 };
