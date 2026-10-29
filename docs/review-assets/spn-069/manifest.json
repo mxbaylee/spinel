@@ -1,0 +1,215 @@
+{
+  "ticket": "SPN-069",
+  "code_commit": "bf5a64059c1683c76ec2b20ab063700640f439d4",
+  "source_tree": "a0cdc6399427c6beb36ff4ee8e5bf982eb3ddf85",
+  "agent_review_only": true,
+  "native_flow": {
+    "test": "e2e/shared-creation.spec.ts",
+    "project": "production",
+    "retries": 0,
+    "result": "1 passed",
+    "duration_seconds": 10.4,
+    "peak_rss_mib": 1888
+  },
+  "storybook": {
+    "run_id": 40711225207,
+    "artifact_id": 12825988804,
+    "sha256": "d6b9d22a224b92e00f4c2f477c44eb234a04d0bee7a1bf9290f285f69cc2631c",
+    "checked_out_sha": "2972a061859e83acada779ce168c49bcd74d65f3",
+    "checked_out_tree": "a0cdc6399427c6beb36ff4ee8e5bf982eb3ddf85",
+    "checked_variants": 45,
+    "failures": [],
+    "peak_rss_mib": 1091,
+    "manifest": "storybook-manifest.json"
+  },
+  "images": [
+    {
+      "file": "spn-069-shared-folder-light-1440-production.png",
+      "git_blob_sha": "af1984d9fd3b2724795a98b0220ee8499b1f1f1c",
+      "width": 1440,
+      "height": 844,
+      "theme": "light",
+      "source": "native production account flow"
+    },
+    {
+      "file": "spn-069-shared-folder-dark-1440-production.png",
+      "git_blob_sha": "084dbf6f14ac0ea340f26063115fb637a8ff9236",
+      "width": 1440,
+      "height": 844,
+      "theme": "dark",
+      "source": "native production account flow"
+    },
+    {
+      "file": "spn-069-shared-folder-light-390-production.png",
+      "git_blob_sha": "4c2a38983543b42b0f8ecdd9ff6205276d01ac3c",
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "source": "native production account flow"
+    },
+    {
+      "file": "spn-069-shared-new-light-1440-production.png",
+      "git_blob_sha": "9bb9c888833e017e9b140e0184ccb1a6be383644",
+      "width": 1440,
+      "height": 844,
+      "theme": "light",
+      "source": "native production account flow"
+    },
+    {
+      "file": "spn-069-shared-new-dark-1440-production.png",
+      "git_blob_sha": "9c3e2b5d09cea374717288c3bcd86aa22f9ed0cc",
+      "width": 1440,
+      "height": 844,
+      "theme": "dark",
+      "source": "native production account flow"
+    },
+    {
+      "file": "spn-069-shared-new-light-390-production.png",
+      "git_blob_sha": "11fff1cdd26f5f98062dd6fb5d21c89bffcdbd06",
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "source": "native production account flow"
+    },
+    {
+      "file": "dashboard-dashboard--shared-creation-offline-light.png",
+      "git_blob_sha": "d57f778bf86bd3e517722703cd02aa1bdd16867c",
+      "width": 1280,
+      "height": 900,
+      "theme": "light",
+      "source": "production Storybook fixture"
+    },
+    {
+      "file": "dashboard-dashboard--shared-creation-offline-dark.png",
+      "git_blob_sha": "b48b71c9a5aac01ac6b10cf6e97fdb77f09c64fa",
+      "width": 1280,
+      "height": 900,
+      "theme": "dark",
+      "source": "production Storybook fixture"
+    },
+    {
+      "file": "dashboard-dashboard--shared-creation-offline-phone.png",
+      "git_blob_sha": "827392b2dfd93ebc8d4412c3c66509c9ed14ccd4",
+      "width": 390,
+      "height": 900,
+      "theme": "light",
+      "source": "production Storybook fixture"
+    },
+    {
+      "file": "dashboard-dashboard--shared-creation-revoked-light.png",
+      "git_blob_sha": "8a1f83a285def6796f2b2c27db39933c3b3e921f",
+      "width": 1280,
+      "height": 900,
+      "theme": "light",
+      "source": "production Storybook fixture"
+    },
+    {
+      "file": "dashboard-dashboard--shared-creation-revoked-dark.png",
+      "git_blob_sha": "767aeadd558a6550cf1281bd8964f1be9a5cc44a",
+      "width": 1280,
+      "height": 900,
+      "theme": "dark",
+      "source": "production Storybook fixture"
+    },
+    {
+      "file": "dashboard-dashboard--shared-creation-revoked-phone.png",
+      "git_blob_sha": "352b8e645d0391343400e4f02c47ffa63e96704d",
+      "width": 390,
+      "height": 1129,
+      "theme": "light",
+      "source": "production Storybook fixture"
+    },
+    {
+      "file": "dashboard-dashboard--shared-folder-viewer-phone.png",
+      "git_blob_sha": "2c7b3e586c1492d431fe3de29948db312f84f5eb",
+      "width": 390,
+      "height": 900,
+      "theme": "light",
+      "source": "production Storybook fixture"
+    },
+    {
+      "file": "dashboard-dashboard--shared-folder-admin-light.png",
+      "git_blob_sha": "e640fc689934f7c38415df3b05922ac1fdbc205a",
+      "width": 1280,
+      "height": 900,
+      "theme": "light",
+      "source": "production Storybook fixture"
+    }
+  ],
+  "notes": [
+    "Every image was regenerated from the reviewed source tree.",
+    "Native screenshots are 1440x844 or 390x844.",
+    "Storybook viewports are 1280x900 or 390x900; the rejected phone state is a full-page 1129px capture.",
+    "Complete current-head CI and independent reviews are recorded on PR210. Resource-aborted local runs are not counted as passes."
+  ],
+  "sync_production": {
+    "workflow_run_id": 40711225273,
+    "job_id": 122897514231,
+    "artifact_id": 12827940235,
+    "artifact_sha256": "cd133605098b60610bd27ce81c9db2fa1948f2eb027641130f00b31885117a21",
+    "result": "92 passed; no unexpected, flaky or skipped tests",
+    "summary": "sync-suite.json",
+    "restart_diagnostics": "shared-restart.json"
+  },
+  "callback_mobile_initial_pair": {
+    "workflow_run_id": 40711225273,
+    "job_id": 122897514047,
+    "artifact_id": 12825689637,
+    "artifact_sha256": "d08ff0cf19b8b4799fb7902b3d86bfbecaa92759eb0b69e3d76a835a2a2c99ad",
+    "result": "failed: immutable baseline collection deadline; candidate completed",
+    "comparison": "callback-mobile-attempt1-comparison.json",
+    "recheck_registration": "https://github.com/mxbaylee/spinel/pull/210#issuecomment-6472941984"
+  },
+  "callback_mobile_recheck": {
+    "workflow_run_id": 40711225273,
+    "run_attempt": 2,
+    "job_id": 122918464963,
+    "artifact_id": 12829897092,
+    "artifact_sha256": "251c5b97b1c4c9a83178ccadd3cfe114d8b38650e04b94af315cb718aaf20406",
+    "accepted": true,
+    "failures": [],
+    "summary": "callback-mobile-attempt2-summary.json",
+    "comparison": "callback-mobile-attempt2-comparison.json.gz",
+    "original_pair": "callback-mobile-attempt1-comparison.json"
+  },
+  "final_review": {
+    "code_commit": "bf5a64059c1683c76ec2b20ab063700640f439d4",
+    "agent_review_only": true,
+    "reviewers": [
+      {
+        "reviewer": "/root/acceptance_audit",
+        "commit": "bf5a64059c1683c76ec2b20ab063700640f439d4",
+        "tree": "a0cdc6399427c6beb36ff4ee8e5bf982eb3ddf85",
+        "total": 100,
+        "categories": {
+          "scope": 35,
+          "correctness": 25,
+          "evidence": 20,
+          "operations": 10,
+          "maintainability": 10
+        },
+        "deductions": [],
+        "blockers": [],
+        "visual": "Approved; agent review only. Six native and 24 production-story images inspected; 14 published hashes matched; 45 capture checks passed."
+      },
+      {
+        "reviewer": "/root/independent_review",
+        "commit": "bf5a64059c1683c76ec2b20ab063700640f439d4",
+        "tree": "a0cdc6399427c6beb36ff4ee8e5bf982eb3ddf85",
+        "total": 100,
+        "categories": {
+          "scope": 35,
+          "correctness": 25,
+          "evidence": 20,
+          "operations": 10,
+          "maintainability": 10
+        },
+        "deductions": [],
+        "blockers": [],
+        "visual": "No visual blocker; inspected current native and representative phone/dark recovery states; agent review only."
+      }
+    ],
+    "ci_workflow_success": 40711225273,
+    "storybook_workflow_success": 40711225207
+  }
+}

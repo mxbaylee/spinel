@@ -121,6 +121,19 @@ prolonged work visible in the index; it does not create an XL impact rating or
 waive the split review, PR size limits, acceptance criteria or independent review.
 Owner, chat 2026-10-21.
 
+Estimate the complete accepted outcome, including integration and verification,
+before substantial implementation. Count persistence, authority, native SDK,
+process lifecycle, migration and real-platform boundaries; record uncertainty and
+an early capability/architecture checkpoint. Reassess as soon as evidence changes
+the scope, without waiting for a line-count or elapsed-time threshold. A split
+records the original outcome, delivered slice, every remaining requirement and
+owner, remaining effort and dependencies, and why the slice can ship safely.
+Distinguish retained acceptance, newly approved scope, independently discovered
+defects and future maintenance. Show the larger outcome's remaining obligations;
+do not add ordinal T-shirt sizes or imply that closing one L completes its XL
+follow-ups. Reuse proven shared work without counting it repeatedly. Owner, chat
+2026-10-29; [full-scope accounting](../implementation/grooming-2026-10-29.md#scope-growth-and-outcome-accounting).
+
 ## Picking the next ticket
 
 `readme.md` lists every open ticket by lifecycle phase first: **Before launch**
@@ -218,6 +231,14 @@ place. Owner, chat 2026-10-26; [image-publication decision](../implementation/gr
    During a [backlog run](../run-backlog.md), continue from current main to the next eligible
    ticket without another permission prompt. Outside a run, follow the owner's
    requested scope; do not infer a whole-backlog run from a single-ticket request.
+8. **Complete branch cleanup.** Enumerate all branches created for the ticket,
+   including implementation, review, integration and evidence helpers. Recheck
+   their current heads and active PR ownership; preserve unique code and necessary
+   evidence in maintained code or immutable PR-linked storage before deleting
+   obsolete refs with a head guard. Automatic deletion of the PR head alone is
+   insufficient. Preserve unrelated active work and record any blocked deletion,
+   exact remaining refs and access prerequisite rather than claiming completion.
+   Owner, chat 2026-10-29; [evidence and cleanup decision](../implementation/grooming-2026-10-29.md#evidence-and-branch-completion).
 
 New tickets must be present on main before their implementation PR can pass the
 checker. Register follow-ups in the current ticket PR, or use a grooming PR if
@@ -282,6 +303,15 @@ toward the reminder.
 
 ## Pull requests and `main`
 
+- **The final PR description or maintained repository evidence is the acceptance
+  record.** Include exact reviewed/tested/merged identities, applicable checks
+  and run attempts, both independent grades and finding dispositions, actual
+  measurements, useful visuals and failure/retry limits. Comments supplement
+  that record. Preserve necessary machine-readable evidence and use immutable
+  links before deleting helper branches or relying on expiring CI artifacts;
+  label any supplementary artifact's retention limit. Refresh the final summary
+  so an old pending checkpoint cannot masquerade as the merged outcome. Owner,
+  chat 2026-10-29; [decision](../implementation/grooming-2026-10-29.md#evidence-and-branch-completion).
 - `main` is protected. Changes arrive by squash merge only, and the PR title
   becomes the commit message.
 - Titles: `<ticket emoji> SPN-NNN <title>`. Two exceptions carry no ID:
