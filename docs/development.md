@@ -147,6 +147,23 @@ npm run backlog:check
 ```
 
 `npm test` runs the existing Node backlog tests and Vitest server tests.
+The full browser run includes `offline-upgrade`, which emits the immutable
+SPN-054 client with its own locked dependencies and source-era postinstall patches.
+Prepare that separate build checkout before a local full run (CI does this itself):
+
+```sh
+git fetch origin c2e8cac0fcdec36d992d6ebf3f377c9b579a8002
+git worktree add --detach ../spinel-offline-054 c2e8cac0fcdec36d992d6ebf3f377c9b579a8002
+npm --prefix ../spinel-offline-054 ci
+SPINEL_LEGACY_OFFLINE_SOURCE="$(cd ../spinel-offline-054 && pwd)" npm run e2e
+```
+
+The archive's source and lockfile remain immutable, and its workspace imports
+resolve inside that archive. Historical dependencies are used only to emit the
+browser fixture; every application server uses the current patched installation.
+The helper refuses mismatched or missing installations instead of silently using
+current packages. Reuse the prepared checkout for later runs.
+
 `npm run e2e` builds the frontend, then Playwright starts isolated development and
 production servers on ports 3100 and 3101, a disposable mobile HTTPS server
 on port 3103, native snapshot evidence servers on ports 3104 and 3105, and dedicated
@@ -263,6 +280,17 @@ probe do not prove hosted execution. The retained evidence checklist and source
 review are in [SPN-100](implementation/SPN-100.md#verification-and-hosted-rollout).
 Host patching and deployment remain outside this change; the prior live-server
 routine was [retired](implementation/grooming-dependency-registration-2026-10-23.md#align-work-with-the-undeployed-product).
+
+Keep the resolved request-body parser on body-parser 2.4.0 or a later verified
+compatible release before deployment or public exposure. The earlier 2.3.0
+resolution could terminate the process when trailing bytes arrived after a
+compressed frame; archive upload deadlines do not mitigate that decoder error.
+The [SPN-105 repair and evidence](implementation/SPN-105.md#compatible-parser-repair-and-process-survival-evidence)
+record the narrow update and subprocess regression. Run `server/request-body.test.ts`
+when changing parser dependencies or request middleware: it exercises the real
+application's process survival, compressed JSON, decoded-byte limits and access
+checks. Preserve the existing authentication, Origin and parser-error behavior;
+verify the resolved tree with `npm ls body-parser --all` and `npm audit --json`.
 
 ## Component catalogue
 
