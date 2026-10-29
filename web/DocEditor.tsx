@@ -634,18 +634,8 @@ export function DocEditor({
           responsivenessEvidence?.flushed(flush);
           const operation = diagnostics.begin();
           if (operation) {
-            observeOperation(
-              operation.sink,
-              {
-                component: 'editor',
-                fileId: id,
-                ...(spaceId ? { spaceId } : {}),
-                runId: operation.runId,
-              },
-              'doc-compose',
-              flush.outcome,
-              flush.durationMs,
-            );
+            // Put the fixed flush reason first so browser sampling admits or
+            // drops this whole observation and its operation metrics together.
             observe(
               operation.sink,
               {
@@ -664,6 +654,18 @@ export function DocEditor({
                 ...(spaceId ? { spaceId } : {}),
                 runId: operation.runId,
               },
+            );
+            observeOperation(
+              operation.sink,
+              {
+                component: 'editor',
+                fileId: id,
+                ...(spaceId ? { spaceId } : {}),
+                runId: operation.runId,
+              },
+              'doc-compose',
+              flush.outcome,
+              flush.durationMs,
             );
           }
         });

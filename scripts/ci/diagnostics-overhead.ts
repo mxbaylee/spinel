@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { createHash, randomUUID } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { cpus } from 'node:os';
 import { isDiagnosticRecord } from '@spinel/diagnostics';
@@ -9,7 +9,8 @@ import type { DiagnosticRecord, DiagnosticSource } from '@spinel/diagnostics';
 import { SyncServer } from '@spinel/sync-server';
 import type { SubmitFrame } from '@spinel/sync-client';
 import { fixture, turns, wire, write } from '../../lib/sync-client/tests/fixture.ts';
-import { BrowserDiagnostics } from '../../web/diagnostics.ts';
+import { DiagnosticRateLimit } from '../../src/server/diagnostics/routes.ts';
+import { BrowserDiagnostics, DIAGNOSTIC_SAMPLE_INTERVAL_MS } from '../../web/diagnostics.ts';
 
 /**
  * Bounded native/collector measurement, not a renderer/network/disk benchmark.
@@ -20,40 +21,67 @@ import { BrowserDiagnostics } from '../../web/diagnostics.ts';
 const SAVE_COUNT = 12;
 const WARMUP_PAIRS = 2;
 const MEASURED_PAIRS = 6;
+const LATER_WINDOW_MS = 60_001;
 const fileId = 'e020756e-8c02-4f97-a93c-4172d78e9c45';
 function collector() {
   const received: DiagnosticRecord[] = [];
-  const batchSizes: number[] = [];
+  const batches: { records: number; status: number }[] = [];
+  let offsetMs = 0;
+  let verifications = 0;
+  const accountId = 'b555ee64-7a57-4f60-9818-65f90503d729';
+  const now = () => Date.now() + offsetMs;
+  const rate = new DiagnosticRateLimit(now);
   const diagnostics = new BrowserDiagnostics({
-    accountId: 'b555ee64-7a57-4f60-9818-65f90503d729',
+    accountId,
+    now,
+    monotonicNow: () => performance.now() + offsetMs,
     fetch: (async (input: RequestInfo | URL, init?: RequestInit) => {
-      if (String(input).endsWith('/collection'))
+      if (String(input).endsWith('/collection')) {
+        verifications++;
         return Response.json({
           generation: '823469fc-ad72-4c99-aa7b-fb02739c9dd5',
           binding: 'a'.repeat(64),
         });
+      }
       const body = JSON.parse(String(init?.body)) as { records: DiagnosticRecord[] };
       assert(body.records.every(isDiagnosticRecord));
       assert(body.records.length <= 64);
       assert(Buffer.byteLength(String(init?.body)) <= 64 * 1024);
-      batchSizes.push(body.records.length);
+      const admitted = rate.take(accountId, body.records.length);
+      batches.push({ records: body.records.length, status: admitted ? 200 : 429 });
+      if (!admitted) return Response.json({ error: 'Rate limit' }, { status: 429 });
       received.push(...body.records);
       return Response.json({ accepted: body.records.length, dropped: 0 });
     }) as typeof fetch,
   });
-  return { diagnostics, received, batchSizes };
+  return {
+    diagnostics,
+    received,
+    batches,
+    verifications: () => verifications,
+    advanceWindow() {
+      offsetMs += LATER_WINDOW_MS;
+    },
+  };
 }
 
 function fillQueue(diagnostics: BrowserDiagnostics, count: number) {
   for (let index = 0; index < count; index++)
-    diagnostics.emit(
+    diagnostics.capture()?.(
       {
-        name: 'operation.count',
-        metric: { kind: 'counter', unit: 'count', value: 1 },
-        details: { operation: 'document-save-local', outcome: 'success' },
+        name: 'operation.result',
+        details: { operation: 'document-save-local', outcome: 'failure', durationMs: 0 },
       },
       { component: 'editor', fileId },
     );
+}
+
+function losses(diagnostics: BrowserDiagnostics) {
+  return {
+    dropped: diagnostics.dropped,
+    sampledOut: diagnostics.sampledOut,
+    otherDropped: diagnostics.dropped - diagnostics.sampledOut,
+  };
 }
 
 async function workload(mode: 'off' | 'on' | 'saturated') {
@@ -61,7 +89,7 @@ async function workload(mode: 'off' | 'on' | 'saturated') {
   const collection = collector();
   await collection.diagnostics.start();
   if (mode === 'saturated') fillQueue(collection.diagnostics, 500);
-  const droppedBeforeNative = collection.diagnostics.dropped;
+  const beforeNative = losses(collection.diagnostics);
   const diagnostics: DiagnosticSource | undefined = enabled
     ? () => {
         const sink = collection.diagnostics.capture();
@@ -93,13 +121,27 @@ async function workload(mode: 'off' | 'on' | 'saturated') {
     );
   const writer = f.client({ diagnostics });
   const peer = f.client({ diagnostics });
+  let collectorFlushMs = 0;
+  let transportDrops = 0;
+  const flush = async () => {
+    const before = collection.diagnostics.dropped;
+    const started = performance.now();
+    // Four calls drain the bounded queue, or stop naturally after a real 429.
+    for (let batch = 0; batch < 4; batch++) await collection.diagnostics.flush();
+    collectorFlushMs += performance.now() - started;
+    transportDrops += collection.diagnostics.dropped - before;
+  };
+  const saves = () =>
+    collection.received.filter(
+      ({ event }) =>
+        event.name === 'operation.count' && event.details.operation === 'document-save-server-ack',
+    ).length;
   try {
     writer.resume();
     peer.resume();
     await turns();
-    const started = performance.now();
-    for (let index = 0; index < SAVE_COUNT; index++) {
-      writer.edit([write({ v: `synthetic-${index}` }, index)]);
+    const save = async (value: string, row: number) => {
+      writer.edit([write({ v: value }, row)]);
       writer.sync.retry();
       await turns();
       const request = writer.submits().at(-1)!;
@@ -119,15 +161,29 @@ async function workload(mode: 'off' | 'on' | 'saturated') {
       await turns();
       assert.equal(writer.sync.state.pending, false);
       assert.equal(peer.sync.state.pending, false);
-    }
+    };
+    const started = performance.now();
+    for (let index = 0; index < SAVE_COUNT; index++) await save(`synthetic-${index}`, index);
     const nativeDurationMs = performance.now() - started;
+    const afterMeasuredNative = losses(collection.diagnostics);
+    assert.equal(f.storage.history.length, SAVE_COUNT);
+    assert.equal(writer.sync.confirmedRevision, SAVE_COUNT + 1);
+    if (mode !== 'saturated') await flush();
+    const firstWindowDiagnosticSaveCounters = saves();
+    assert.equal(firstWindowDiagnosticSaveCounters, mode === 'on' ? 1 : 0);
+    // The policy clock advances only outside native timing. Real clock reads and
+    // the same active collector remain in use; no lifecycle restart or replay.
+    collection.advanceWindow();
+    assert(collection.diagnostics.capture());
+    await save('synthetic-later', 0);
+    const beforeFinalTransport = losses(collection.diagnostics);
     assert.deepEqual(writer.live.snapshot(), peer.live.snapshot());
     assert.deepEqual(
       { ...writer.live.snapshot(), rev: writer.sync.confirmedRevision },
       f.storage.unit.snapshot,
     );
-    assert.equal(f.storage.history.length, SAVE_COUNT);
-    assert.equal(writer.sync.confirmedRevision, SAVE_COUNT + 1);
+    assert.equal(f.storage.history.length, SAVE_COUNT + 1);
+    assert.equal(writer.sync.confirmedRevision, SAVE_COUNT + 2);
     const state = {
       unit: f.storage.unit,
       history: f.storage.history,
@@ -144,26 +200,33 @@ async function workload(mode: 'off' | 'on' | 'saturated') {
       accept({
         type: 'submit',
         mutationId: 'revoked',
-        baseRevision: SAVE_COUNT + 1,
+        baseRevision: SAVE_COUNT + 2,
         mutations: [write({ v: 'must never be committed' })],
       }),
       /grant was revoked/,
     );
     assert.deepEqual({ unit: f.storage.unit, history: f.storage.history }, beforeRefusal);
-    const flushStarted = performance.now();
-    for (let batch = 0; batch < 4; batch++) await collection.diagnostics.flush();
-    const collectorFlushMs = performance.now() - flushStarted;
-    const saves = collection.received.filter(
-      ({ event }) =>
-        event.name === 'operation.count' && event.details.operation === 'document-save-server-ack',
-    );
+    await flush();
+    const finalLosses = losses(collection.diagnostics);
+    const nativeQueueDrops = beforeFinalTransport.otherDropped - beforeNative.otherDropped;
     if (mode === 'saturated') {
-      assert(collection.diagnostics.dropped > droppedBeforeNative);
-      assert(saves.length <= SAVE_COUNT);
+      assert(afterMeasuredNative.otherDropped > beforeNative.otherDropped);
+      assert(nativeQueueDrops > 0);
+      assert.equal(saves(), 0);
+      assert.deepEqual(collection.batches, [
+        { records: 64, status: 200 },
+        { records: 64, status: 429 },
+      ]);
+      assert.equal(transportDrops, 192);
     } else {
-      assert.equal(saves.length, enabled ? SAVE_COUNT : 0);
-      assert.equal(collection.diagnostics.dropped, 0);
+      assert.equal(saves(), enabled ? 2 : 0);
+      assert.equal(nativeQueueDrops, 0);
+      assert.equal(transportDrops, 0);
+      assert(collection.batches.every(({ status }) => status === 200));
     }
+    assert.equal(collection.verifications(), 1);
+    assert.equal(finalLosses.otherDropped, beforeFinalTransport.otherDropped + transportDrops);
+    if (enabled) assert(finalLosses.sampledOut > 0);
     return {
       enabled,
       mode,
@@ -171,16 +234,29 @@ async function workload(mode: 'off' | 'on' | 'saturated') {
       perSaveMs: nativeDurationMs / SAVE_COUNT,
       collectorFlushMs,
       records: collection.received.length,
-      dropped: collection.diagnostics.dropped,
-      nativeObservationDrops: collection.diagnostics.dropped - droppedBeforeNative,
-      diagnosticSaveCounters: saves.length,
+      ...finalLosses,
+      lossBreakdown: {
+        queueOverflowBeforeNative: beforeNative.otherDropped,
+        measuredNativeQueueOverflow: afterMeasuredNative.otherDropped - beforeNative.otherDropped,
+        allNativeQueueOverflow: nativeQueueDrops,
+        transportDrops,
+      },
+      firstWindowDiagnosticSaveCounters,
+      laterWindowDiagnosticSaveCounters: saves() - firstWindowDiagnosticSaveCounters,
+      diagnosticSaveCounters: saves(),
+      batches: collection.batches,
+      collectionVerifications: collection.verifications(),
       nativeStateSha256,
       assertions: {
         identicalNativeContentAndResources: true,
-        acceptedHistoryRows: SAVE_COUNT,
-        successfulAcknowledgments: SAVE_COUNT,
-        duplicateDeliveryCountedOnce: true,
+        measuredSaves: SAVE_COUNT,
+        untimedLaterSaves: 1,
+        acceptedHistoryRows: SAVE_COUNT + 1,
+        successfulAcknowledgments: SAVE_COUNT + 1,
+        duplicateSubmissionsRetainOneHistoryRow: true,
+        duplicateAcknowledgmentsPreserveSavedState: true,
         bothClientsSaved: true,
+        laterSaveWithoutCollectionTransition: true,
         revokedWritesAndReceiptsDenied: true,
         refusalPreservesEveryStoredRow: true,
         authorizationChecks,
@@ -217,25 +293,38 @@ export async function measureDiagnosticsOverhead() {
     fillQueue(pressure.diagnostics, 500);
     const observedDrops = pressure.diagnostics.dropped;
     assert.equal(observedDrops, 500 - 256);
+    assert.equal(pressure.diagnostics.sampledOut, 0);
     for (let batch = 0; batch < 4; batch++) await pressure.diagnostics.flush();
-    assert.equal(pressure.received.length, 256);
-    assert.deepEqual(pressure.batchSizes, [64, 64, 64, 64]);
+    assert.equal(pressure.received.length, 64);
+    assert.equal(pressure.diagnostics.dropped - observedDrops, 192);
+    assert.deepEqual(pressure.batches, [
+      { records: 64, status: 200 },
+      { records: 64, status: 429 },
+    ]);
     const sourcePaths = [
-      'lib/diagnostics/index.ts',
-      'lib/diagnostics/client.ts',
-      'lib/sync-client/src/client.ts',
-      'lib/sync-client/src/types.ts',
+      ...[
+        'lib/diagnostics',
+        'lib/sync-client/src',
+        'lib/sync-server/src',
+        'lib/sync-transform/src',
+      ].flatMap((directory) =>
+        readdirSync(directory)
+          .filter((name) => name.endsWith('.ts') && !name.endsWith('.test.ts'))
+          .map((name) => `${directory}/${name}`),
+      ),
+      'lib/sync-client/index.ts',
       'lib/sync-client/tests/fixture.ts',
-      'lib/sync-server/src/server.ts',
-      'lib/sync-server/src/types.ts',
+      'lib/sync-server/index.ts',
+      'lib/sync-transform/index.ts',
       'package-lock.json',
+      'src/server/diagnostics/routes.ts',
       'web/diagnostics.ts',
       'scripts/ci/diagnostics-overhead.ts',
-    ];
+    ].sort();
     const off = measurements.filter((run) => !run.enabled).map((run) => run.perSaveMs);
     const on = measurements.filter((run) => run.enabled).map((run) => run.perSaveMs);
     return {
-      schemaVersion: 2,
+      schemaVersion: 3,
       measuredAt: new Date().toISOString(),
       runtime: {
         node: process.version,
@@ -256,19 +345,24 @@ export async function measureDiagnosticsOverhead() {
       method: {
         warmupPairs: WARMUP_PAIRS,
         measuredPairs: MEASURED_PAIRS,
-        savesPerRun: SAVE_COUNT,
+        measuredSavesPerRun: SAVE_COUNT,
+        untimedLaterSavesPerRun: 1,
         order: 'Alternating off/on then on/off pairs',
         clock: 'performance.now monotonic milliseconds',
+        policyClock:
+          'Real Date.now/performance.now reads plus an offset advanced only once, outside timing, before the later save; no collector lifecycle transition',
+        laterWindowAdvanceMs: LATER_WINDOW_MS,
+        sampleIntervalMs: DIAGNOSTIC_SAMPLE_INTERVAL_MS,
         enabledCollector:
-          'Real BrowserDiagnostics queue, schema validation, UUID/context creation, serialization and batching; in-memory HTTP sink',
+          'Real BrowserDiagnostics complete-bundle sampling, queue, schema validation, UUID/context creation, serialization and batching; in-memory HTTP sink uses actual DiagnosticRateLimit',
         included:
           'Native Sheet mutation admission, real SyncServer materialization/receipts, peer application, two duplicate sends/ACK deliveries, collector enqueue',
         excluded:
-          'Account-shell lifecycle/HTTP verification, initial SDK construction, browser rendering, real network/SQLite/IDB and final collector HTTP flush (reported separately)',
+          'Account-shell lifecycle/HTTP verification, initial SDK construction, browser rendering, real network/SQLite/IDB, the thirteenth native save and collector HTTP flush (reported separately)',
         timingGate:
           'No ratio-only threshold; bounded workload and resource watchdog plus exact behavioral/capacity assertions',
         saturatedValidation:
-          'Two native workloads begin with the real collector already full. Native observations must add visible drops; content/history/ACK/access/save/peer assertions and final state hashes match every off/on run. Missing diagnostic counters are disclosed, not reconstructed.',
+          'Two native workloads begin with the real collector full of failure observations that bypass sampling. All 13 native saves and final content/history/access/peer hashes match off/on runs. Queue losses before transport, sampling omissions and the subsequent real 429/queue discard are distinct. No pressure batch is spaced artificially to manufacture admission; stop cancels the retry timer.',
       },
       summary: {
         offMedianMsPerSave: median(off),
@@ -283,9 +377,13 @@ export async function measureDiagnosticsOverhead() {
       saturatedMeasurements,
       pressure: {
         attempted: 500,
-        retained: 256,
-        visiblyDropped: observedDrops,
-        batchSizes: pressure.batchSizes,
+        queuedBeforeTransport: 256,
+        queueOverflow: observedDrops,
+        sampledOut: pressure.diagnostics.sampledOut,
+        admittedRecords: pressure.received.length,
+        transportDrops: pressure.diagnostics.dropped - observedDrops,
+        totalDropped: pressure.diagnostics.dropped,
+        batches: pressure.batches,
         queueLimitEnforced: true,
       },
     };

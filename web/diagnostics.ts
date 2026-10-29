@@ -8,7 +8,51 @@ import {
   MAX_BATCH_EVENTS,
   MAX_EVENT_BYTES,
 } from '@spinel/diagnostics';
-import type { DiagnosticRecord, DiagnosticSink } from '@spinel/diagnostics';
+import type { DiagnosticEvent, DiagnosticRecord, DiagnosticSink } from '@spinel/diagnostics';
+
+export const DIAGNOSTIC_SAMPLE_INTERVAL_MS = 30_000;
+const RATE_LIMIT_RETRY_MS = 60_000;
+
+type RoutineSample =
+  | 'checkpoint-captured'
+  | 'checkpoint-skipped'
+  | 'persistence-persisted'
+  | 'persistence-not-prepared'
+  | 'persistence-read-only'
+  | 'server-ack'
+  | 'flush-capacity'
+  | 'flush-idle'
+  | 'queue-active'
+  | 'queue-empty'
+  | 'search';
+
+/** Fixed families only: never allocate a bucket per file, request or operation ID. */
+function routineSample(event: DiagnosticEvent): RoutineSample | undefined {
+  switch (event.name) {
+    case 'native.checkpoint':
+      if (event.details.outcome === 'captured') return 'checkpoint-captured';
+      if (event.details.outcome === 'skipped') return 'checkpoint-skipped';
+      return;
+    case 'offline.persistence':
+      if (event.details.outcome === 'persisted') return 'persistence-persisted';
+      if (event.details.outcome === 'skipped') {
+        if (event.details.reason === 'not-prepared') return 'persistence-not-prepared';
+        if (event.details.reason === 'read-only') return 'persistence-read-only';
+      }
+      return;
+    case 'native.flush':
+      if (event.details.outcome === 'success')
+        return event.details.reason === 'capacity' ? 'flush-capacity' : 'flush-idle';
+      return;
+    case 'sync.client.queue':
+      return event.details.pendingCount === 0 ? 'queue-empty' : 'queue-active';
+    case 'operation.result':
+      if (event.details.outcome === 'success') {
+        if (event.details.operation === 'document-save-server-ack') return 'server-ack';
+        if (event.details.operation === 'search') return 'search';
+      }
+  }
+}
 
 /** One authenticated account lifecycle. No guest adapter and no persistent queue. */
 export class BrowserDiagnostics {
@@ -19,21 +63,31 @@ export class BrowserDiagnostics {
   private queuedBytes = 0;
   private controller?: AbortController;
   private timer?: ReturnType<typeof setTimeout>;
+  private rateRetry?: ReturnType<typeof setTimeout>;
+  private readonly sampledAt = new Map<RoutineSample, number>();
   private closed = false;
   private epoch = 0;
   private flight?: { count: number; settled: boolean };
   private readonly request: typeof fetch;
   private readonly now: () => number;
+  private readonly monotonicNow: () => number;
   dropped = 0;
-  constructor(options: { accountId: string; fetch?: typeof fetch; now?: () => number }) {
+  sampledOut = 0;
+  constructor(options: {
+    accountId: string;
+    fetch?: typeof fetch;
+    now?: () => number;
+    monotonicNow?: () => number;
+  }) {
     this.accountId = options.accountId;
     this.request = options.fetch ?? maintenanceFetch;
     this.now = options.now ?? Date.now;
+    this.monotonicNow = options.monotonicNow ?? (() => performance.now());
   }
 
   /** Retry missing HTTP verification without invalidating a live collection or request. */
   async resume() {
-    if (this.closed || this.generation || this.controller) return;
+    if (this.closed || this.generation || this.controller || this.rateRetry !== undefined) return;
     await this.start();
   }
 
@@ -78,12 +132,14 @@ export class BrowserDiagnostics {
     }
   }
 
-  /** Capture at operation start: never reassign a late observation to a new collection. */
+  /** One logical bundle: retain its account/epoch and sample all related records together. */
   capture(): DiagnosticSink | undefined {
     if (this.closed || !this.generation || !this.binding) return;
     const epoch = this.epoch,
       generation = this.generation,
       binding = this.binding;
+    let selected: boolean | undefined;
+    let samplingFailed = false;
     return (event, context) => {
       if (
         this.closed ||
@@ -91,6 +147,28 @@ export class BrowserDiagnostics {
         this.generation !== generation ||
         this.binding !== binding
       ) {
+        this.drop();
+        return;
+      }
+      if (selected === undefined) {
+        try {
+          const family = routineSample(event);
+          selected = true;
+          if (family) {
+            const at = this.monotonicNow();
+            if (!Number.isFinite(at)) throw new Error('Unavailable diagnostic clock');
+            const previous = this.sampledAt.get(family);
+            selected = previous === undefined || at - previous >= DIAGNOSTIC_SAMPLE_INTERVAL_MS;
+            if (selected) this.sampledAt.set(family, at);
+          }
+        } catch {
+          selected = false;
+          samplingFailed = true;
+        }
+      }
+      if (!selected) {
+        if (!samplingFailed)
+          this.sampledOut = Math.min(Number.MAX_SAFE_INTEGER, this.sampledOut + 1);
         this.drop();
         return;
       }
@@ -186,6 +264,18 @@ export class BrowserDiagnostics {
         await this.start();
         return;
       }
+      if (response.status === 429) {
+        this.settle(flight);
+        this.suspend();
+        // Drop this window's observations. A healthy visible account may verify
+        // a fresh collection after one server rate window; nothing is replayed.
+        const retryEpoch = this.epoch;
+        this.rateRetry = setTimeout(() => {
+          this.rateRetry = undefined;
+          if (!this.closed && this.epoch === retryEpoch) void this.start();
+        }, RATE_LIMIT_RETRY_MS);
+        return;
+      }
       if (!response.ok) {
         this.settle(flight);
         this.suspend();
@@ -234,6 +324,8 @@ export class BrowserDiagnostics {
     this.queuedBytes = 0;
     if (this.timer) clearTimeout(this.timer);
     this.timer = undefined;
+    if (this.rateRetry !== undefined) clearTimeout(this.rateRetry);
+    this.rateRetry = undefined;
     this.controller?.abort();
     this.controller = undefined;
   }

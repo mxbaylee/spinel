@@ -3,11 +3,13 @@ import { mkdir, mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { expect, test } from '@playwright/test';
-import type { Browser, BrowserContext, Page, TestInfo } from '@playwright/test';
+import type { Browser, BrowserContext, Page, Response, TestInfo } from '@playwright/test';
+import type { DiagnosticRecord } from '@spinel/diagnostics';
 import { LocaleType } from '@univerjs/core';
 import { DatabaseSync, openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { DOC_HISTORY_GROUP_LIMIT } from '../src/ui/boundedDocHistory.ts';
+import { DIAGNOSTIC_SAMPLE_INTERVAL_MS } from '../web/diagnostics.ts';
 import { startApp } from './app-process.ts';
 import { nativeInput } from './offline-fixture.ts';
 
@@ -121,10 +123,37 @@ test('production open, search, local persistence and server acknowledgement rema
   const member = await f.member.newPage();
   try {
     const item = await f.create('Private diagnostic diary', 'doc');
-    const privateNativeContent = 'Private native content 123'.padEnd(
-      DOC_HISTORY_GROUP_LIMIT + 8,
-      '.',
-    );
+    const initialContent = 'Private native content 123';
+    const capacityInput = '.'.repeat(DOC_HISTORY_GROUP_LIMIT + 8);
+    const laterInput = ' Later private sample';
+    const privateNativeContent = initialContent + capacityInput + laterInput;
+    let collectionRequests = 0;
+    const eventResponses: Response[] = [];
+    member.on('request', (request) => {
+      if (request.url().endsWith('/api/diagnostics/collection')) collectionRequests++;
+    });
+    member.on('response', (response) => {
+      if (response.url().endsWith('/api/diagnostics/events')) eventResponses.push(response);
+    });
+    const acknowledged = () => {
+      const response = member.waitForResponse(
+        (response) => {
+          if (!response.url().endsWith('/api/diagnostics/events') || response.status() !== 200)
+            return false;
+          const batch = response.request().postDataJSON() as { records: DiagnosticRecord[] };
+          return batch.records.some(
+            ({ event, context }) =>
+              context.fileId === item.id &&
+              event.name === 'operation.result' &&
+              event.details.operation === 'document-save-server-ack' &&
+              event.details.outcome === 'success',
+          );
+        },
+        { timeout: 15_000 },
+      );
+      void response.catch(() => {});
+      return response;
+    };
     const nativeEvents = [
       'native.flush',
       'native.checkpoint',
@@ -141,7 +170,7 @@ test('production open, search, local persistence and server acknowledgement rema
     );
     await member.goto(f.origin);
     await member.bringToFront();
-    await collection;
+    const identity = (await (await collection).json()) as { generation: string; binding: string };
     const query = member.getByRole('searchbox', { name: 'Search files', exact: true });
     await query.fill('Private diagnostic diary');
     await expect(
@@ -163,29 +192,18 @@ test('production open, search, local persistence and server acknowledgement rema
     await expect(saved).toHaveText('Synced. All changes are saved on the server and this device.', {
       timeout: 30_000,
     });
-    const uploaded = member.waitForResponse((response) => {
-      if (!response.url().endsWith('/api/diagnostics/events') || response.status() !== 200)
-        return false;
-      const batch = response.request().postDataJSON() as {
-        records: { event: { name: string; details: { operation?: string; outcome?: string } } }[];
-      };
-      return batch.records.some(
-        ({ event }) =>
-          event.name === 'operation.result' &&
-          event.details.operation === 'document-save-server-ack' &&
-          event.details.outcome === 'success',
-      );
-    });
+    const uploaded = acknowledged();
     await member.locator('.univer-container').click({ position: { x: 130, y: 200 } });
     await nativeInput(member).focus();
     await member.keyboard.press('Control+Home');
-    // One insertText insertion may be flushed entirely by the SDK. Individual
-    // native keys cross our owned capacity boundary without relying on idle races.
-    await member.keyboard.type(privateNativeContent);
+    // Confirm the first save independently, then exercise ordinary per-key work
+    // under the production sampling and HTTP admission policy.
+    await member.keyboard.insertText(initialContent);
     await expect(saved).toHaveText('Synced. All changes are saved on the server and this device.', {
       timeout: 30_000,
     });
     expect((await (await uploaded).json()).dropped).toBe(0);
+    expect(collectionRequests).toBe(1);
     const persisted = new DatabaseSync(join(f.directory, 'diagnostics.sqlite'));
     try {
       await expect
@@ -198,6 +216,17 @@ test('production open, search, local persistence and server acknowledgement rema
               .get(f.owner.id, item.id)?.n,
         )
         .toBeGreaterThan(0);
+      // One insertText insertion may be flushed entirely by the SDK. Individual
+      // native keys cross our owned capacity boundary without relying on idle races.
+      await nativeInput(member).focus();
+      await member.keyboard.press('Control+End');
+      await member.keyboard.type(capacityInput);
+      await expect(saved).toHaveText(
+        'Synced. All changes are saved on the server and this device.',
+        {
+          timeout: 30_000,
+        },
+      );
       // Hiding the member tab deliberately discards queued diagnostics. Confirm
       // every required correlated observation is durable before changing tabs.
       await expect
@@ -214,6 +243,65 @@ test('production open, search, local persistence and server acknowledgement rema
           );
         })
         .toEqual(nativeEvents);
+      const acknowledgedRows = () =>
+        Number(
+          persisted
+            .prepare(
+              "SELECT count(*) AS n FROM events WHERE source='frontend' AND actor_id=? AND file_id=? AND name='operation.result' AND json_extract(details,'$.operation')='document-save-server-ack' AND json_extract(details,'$.outcome')='success'",
+            )
+            .get(f.owner.id, item.id)?.n ?? 0,
+        );
+      const firstWindowAcknowledgments = acknowledgedRows();
+      expect(firstWindowAcknowledgments).toBeGreaterThan(0);
+      // This is the actual sampling boundary, not a synchronization delay. The
+      // same visible account/editor must collect a fresh later save without any
+      // navigation, visibility toggle or lifecycle-based recovery.
+      await test.step('Cross the production diagnostic sampling interval', async () => {
+        await member.waitForTimeout(DIAGNOSTIC_SAMPLE_INTERVAL_MS);
+      });
+      const laterUploaded = acknowledged();
+      await nativeInput(member).focus();
+      await member.keyboard.press('Control+End');
+      await member.keyboard.insertText(laterInput);
+      await expect(saved).toHaveText(
+        'Synced. All changes are saved on the server and this device.',
+        { timeout: 30_000 },
+      );
+      expect((await (await laterUploaded).json()).dropped).toBe(0);
+      await expect.poll(acknowledgedRows).toBe(firstWindowAcknowledgments + 1);
+      expect(collectionRequests).toBe(1);
+      const batches = await Promise.all(
+        eventResponses.map(async (response) => {
+          expect(response.status(), 'Ordinary native work stays within HTTP admission').toBe(200);
+          const batch = response.request().postDataJSON() as {
+            generation: string;
+            binding: string;
+            records: DiagnosticRecord[];
+          };
+          expect({ generation: batch.generation, binding: batch.binding }).toEqual(identity);
+          expect(batch.records.length).toBeLessThanOrEqual(64);
+          const result = await response.json();
+          expect(result).toEqual({ accepted: batch.records.length, dropped: 0 });
+          return { records: batch.records.length, status: response.status() };
+        }),
+      );
+      await info.attach('diagnostic-admission', {
+        body: Buffer.from(
+          JSON.stringify(
+            {
+              sampleIntervalMs: DIAGNOSTIC_SAMPLE_INTERVAL_MS,
+              nativeCapacityKeys: capacityInput.length,
+              collectionVerifications: collectionRequests,
+              firstWindowAcknowledgments,
+              laterWindowAcknowledgments: acknowledgedRows() - firstWindowAcknowledgments,
+              batches,
+            },
+            null,
+            2,
+          ),
+        ),
+        contentType: 'application/json',
+      });
     } finally {
       persisted.close();
     }
@@ -257,7 +345,8 @@ test('production open, search, local persistence and server acknowledgement rema
       const encoded = JSON.stringify(rows);
       for (const privateText of [
         item.name,
-        'Private native content 123',
+        initialContent,
+        laterInput,
         privateNativeContent,
         f.ownerSession.token,
       ])
