@@ -47,6 +47,7 @@ import { validRestoreAuthority } from './restore-authority.ts';
 import { applicationPolicy } from '../../../server/application-policy.ts';
 import { prepareRestoreArchive } from '../backup/verification.ts';
 import { restoreJobIntentFixture } from './restore-job-fixture.ts';
+import { restoreIntentHash } from './restore-job-intent.ts';
 import { OWNERSHIP_CHANNEL, shareWorkspaceOwnership } from './ownership.ts';
 
 const cleanups: Array<() => unknown | Promise<unknown>> = [];
@@ -1950,6 +1951,8 @@ async function admissionFixture(
     epoch: state.epoch,
     authority: f.authority!,
     confirmedAt: Date.now(),
+    preview: restoreJobIntentFixture().preview,
+    consequenceEnvelope: 1,
     source: {
       archive: {
         path: archivePath,
@@ -2170,6 +2173,8 @@ test
       epoch: state.epoch,
       authority: f.authority!,
       confirmedAt: Date.now(),
+      preview: restoreJobIntentFixture().preview,
+      consequenceEnvelope: 1,
       source: {
         archive: source.archive,
         databasePath: source.databasePath,
@@ -2364,6 +2369,180 @@ test
       expect(code).toBe(0);
       // A failed release after durable commitment cannot revive original content.
       expect(selectedContents).toEqual({ name: 'Archived folder', sessions: 0 });
+
+      const terminalBytes = await readFile(statePath, 'utf8');
+      const commit = restoreFiles.commitRestoreFiles;
+      let cleanupAttempts = 0;
+      const interrupted = ordering === 'commit-publication';
+      if (interrupted) {
+        const mainPath = join(f.root, 'journal.json');
+        const originalMain = JSON.parse(await readFile(mainPath, 'utf8'));
+        const originalBytes = await readFile(f.databasePath);
+        for (const fault of [
+          'reference-hash',
+          'reference-job',
+          'generation',
+          'actor',
+          'session',
+          'token',
+          'expiry',
+          'competing-job',
+        ]) {
+          const changed = structuredClone(originalMain);
+          let competitor: string | undefined;
+          if (fault === 'reference-hash') changed.restoreJob.intentHash = 'f'.repeat(64);
+          if (fault === 'reference-job') changed.restoreJob.jobId = randomUUID();
+          if (fault === 'generation')
+            changed.generationId = changed.operation.generationId = randomUUID();
+          if (fault === 'actor') changed.operation.actorId = randomUUID();
+          if (fault === 'session') changed.operation.sessionHash = 'f'.repeat(64);
+          if (fault === 'token') changed.operation.tokenHash = 'f'.repeat(64);
+          if (fault === 'expiry') changed.operation.expiresAt++;
+          if (fault === 'competing-job') {
+            competitor = randomUUID();
+            const intent = structuredClone(completed.intent);
+            intent.id = intent.source.id = competitor;
+            const directory = join(f.root, 'restore-jobs', competitor);
+            await mkdir(directory, { mode: 0o700 });
+            await writeFile(
+              join(directory, 'state.json'),
+              JSON.stringify({
+                version: 1,
+                revision: 1,
+                intent,
+                intentHash: restoreIntentHash(intent),
+                phase: 'accepted',
+                updatedAt: intent.confirmedAt,
+              }),
+              { mode: 0o600 },
+            );
+          }
+          await writeFile(mainPath, JSON.stringify(changed), { mode: 0o600 });
+          const refused = await MaintenanceSupervisor.open({
+            root: f.root,
+            databasePath: f.databasePath,
+            publicPort: 0,
+            applicationPolicy: policy,
+            budgets: { stopMs: 100 },
+          });
+          cleanups.push(() => refused.close());
+          expect(refused.journal.wasUnverified, fault).toBe(false);
+          expect(refused.status().phase, fault).toBe('recovery-required');
+          expect(refused.journal.state.restoreJob, fault).toEqual(changed.restoreJob);
+          expect(refused.journal.state.verifiedAt, fault).toBeNull();
+          expect(existsSync(restoreBarrierPath(f.databasePath)), fault).toBe(true);
+          expect(await readFile(statePath, 'utf8'), fault).toBe(terminalBytes);
+          expect(await readFile(f.databasePath), fault).toEqual(originalBytes);
+          if (competitor) {
+            const records = new RestoreJobs(refused.journal);
+            try {
+              expect(records.read(competitor)?.phase).toBe('accepted');
+            } finally {
+              records.close();
+            }
+          }
+          await expect(
+            refused.coldControl({ action: 'verify', operationId: changed.operation.id }),
+          ).rejects.toThrow('unfinished restore job');
+          await refused.close();
+          if (competitor) await rm(join(f.root, 'restore-jobs', competitor), { recursive: true });
+        }
+        await writeFile(mainPath, JSON.stringify(originalMain), { mode: 0o600 });
+      }
+      const cleanup = interrupted
+        ? vi.spyOn(restoreFiles, 'commitRestoreFiles').mockImplementation(async (...args) => {
+            cleanupAttempts++;
+            if (cleanupAttempts === 1) throw new Error('Interrupted after main adoption.');
+            await commit(...args);
+            if (cleanupAttempts === 2) throw new Error('Interrupted after barrier cleanup.');
+          })
+        : undefined;
+      for (let attempt = 0; attempt < (interrupted ? 3 : 1); attempt++) {
+        const recovered = await MaintenanceSupervisor.open({
+          root: f.root,
+          databasePath: f.databasePath,
+          publicPort: 0,
+          applicationPolicy: policy,
+          // Historical commitment remains recoverable after the original proof
+          // expires. It grants no fresh restore attempt or private trial release.
+          now: () => Math.max(Date.now(), completed.intent.authority.expiresAt + 1000),
+          budgets: { stopMs: 100, verifyMs: 5000 },
+        });
+        cleanups.push(() => recovered.close());
+        expect(recovered.status().phase).toBe('recovery-required');
+        expect(recovered.status().generationId).toBe(completed.execution!.trial!.generationId);
+        expect(recovered.status().epoch).not.toBe(completed.execution!.trial!.epoch);
+        expect(recovered.journal.state.child).toBeNull();
+        expect(recovered.journal.state.verifiedAt).toBeNull();
+        expect(await readFile(statePath, 'utf8')).toBe(terminalBytes);
+        if (interrupted && attempt < 2) {
+          expect(recovered.journal.state.restoreJob).toEqual({
+            jobId: id,
+            intentHash: admitted.record.intentHash,
+          });
+          expect(existsSync(restoreBarrierPath(f.databasePath))).toBe(attempt === 0);
+          await expect(
+            recovered.coldControl({
+              action: 'verify',
+              operationId: recovered.status().operationId ?? randomUUID(),
+            }),
+          ).rejects.toThrow('unfinished restore job');
+        } else {
+          expect(recovered.journal.state.restoreJob).toBeNull();
+          expect(recovered.journal.state.restoreStop).toBeNull();
+          expect(existsSync(restoreBarrierPath(f.databasePath))).toBe(false);
+          await recovered.coldControl({
+            action: 'verify',
+            operationId: recovered.status().operationId ?? randomUUID(),
+          });
+          expect(recovered.journal.state.verifiedAt).not.toBeNull();
+        }
+        await recovered.close();
+        if (interrupted && attempt === 1) {
+          const editor = fork(
+            fileURLToPath(new URL('./restore-postcommit-edit-fixture.ts', import.meta.url)),
+            [],
+            {
+              env: {
+                ...process.env,
+                DATABASE_PATH: f.databasePath,
+                SPINEL_TEST_FOLDER_ID: seedSource.folderId,
+              },
+              execArgv: [],
+              stdio: ['ignore', 'ignore', 'inherit', 'ipc'],
+            },
+          );
+          let edited: unknown;
+          editor.on('message', (value: unknown) => {
+            edited = value;
+          });
+          expect((await once(editor, 'exit'))[0]).toBe(0);
+          expect(edited).toEqual({ edited: true });
+        }
+      }
+      cleanup?.mockRestore();
+      if (interrupted) {
+        expect(cleanupAttempts).toBe(3);
+        const unchanged = fork(
+          fileURLToPath(new URL('./restore-controller-observer-fixture.ts', import.meta.url)),
+          [],
+          {
+            env: {
+              ...process.env,
+              DATABASE_PATH: f.databasePath,
+              SPINEL_TEST_FOLDER_ID: seedSource.folderId,
+            },
+            execArgv: [],
+            stdio: ['ignore', 'ignore', 'inherit', 'ipc'],
+          },
+        );
+        let retained: unknown;
+        unchanged.on('message', (value: unknown) => {
+          retained = value;
+        });
+        expect((await once(unchanged, 'exit'))[0]).toBe(0);
+        expect(retained).toEqual({ name: 'Post-commit edit', sessions: 0 });
+      }
     }
   },
   90_000,

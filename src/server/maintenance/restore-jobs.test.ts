@@ -26,7 +26,7 @@ import { restoreTrialReference } from './restore-trial.ts';
 import type { RestoreTrialPermit } from './restore-trial.ts';
 import { restoreBarrierPath } from './restore-barrier.ts';
 import { restoreJobIntentFixture } from './restore-job-fixture.ts';
-import { restoreIntentHash } from './restore-job-intent.ts';
+import { restoreIntentHash, validRestoreJobIntent } from './restore-job-intent.ts';
 
 const boundaries = vi.hoisted(() => ({
   onRead: undefined as (() => void) | undefined,
@@ -106,6 +106,88 @@ async function fixture() {
     statePath: (id: string) => join(root, 'restore-jobs', id, 'state.json'),
   };
 }
+
+test('confirmation requires exact provisional preview and the complete consequence envelope', () => {
+  const intent = restoreJobIntentFixture();
+  const hash = restoreIntentHash(intent);
+  expect(validRestoreJobIntent(intent)).toBe(true);
+  for (const key of Object.keys(intent.preview).filter((key) => key !== 'provisional')) {
+    const changed = {
+      ...intent,
+      preview: {
+        ...intent.preview,
+        [key]: Number(intent.preview[key as keyof typeof intent.preview]) + 1,
+      },
+    };
+    expect(validRestoreJobIntent(changed)).toBe(true);
+    expect(restoreIntentHash(changed)).not.toBe(hash);
+    for (const invalid of [-1, 0.5, Number.MAX_SAFE_INTEGER + 1, Infinity, NaN, '1', null])
+      expect(
+        validRestoreJobIntent({ ...intent, preview: { ...intent.preview, [key]: invalid } }),
+      ).toBe(false);
+    const missing = { ...intent.preview } as Record<string, unknown>;
+    delete missing[key];
+    expect(validRestoreJobIntent({ ...intent, preview: missing })).toBe(false);
+  }
+  for (const invalid of [
+    { ...intent, preview: undefined },
+    { ...intent, preview: null },
+    { ...intent, preview: { ...intent.preview, provisional: false } },
+    { ...intent, preview: { ...intent.preview, documentNames: [] } },
+    { ...intent, consequenceEnvelope: undefined },
+    { ...intent, consequenceEnvelope: 0 },
+    { ...intent, consequenceEnvelope: 2 },
+    { ...intent, consequenceEnvelope: '1' },
+  ]) {
+    expect(validRestoreJobIntent(invalid)).toBe(false);
+    expect(() => restoreIntentHash(invalid as typeof intent)).toThrow('Invalid restore job intent');
+  }
+  const legacy = { ...intent } as Record<string, unknown>;
+  delete legacy.preview;
+  delete legacy.consequenceEnvelope;
+  expect(validRestoreJobIntent(legacy)).toBe(false);
+});
+
+linux('confirmed preview survives custody and expired retries reject changed counts', async () => {
+  const f = await fixture();
+  const intent = f.intent();
+  const accepted = f.jobs.admit(intent).record;
+  const retained = f.jobs.checkpoint(intent.id, accepted.intentHash, 0, 'source-retained');
+  f.jobs.close();
+  const reopened = f.openJobs();
+  expect(reopened.read(intent.id)?.intent).toEqual(intent);
+  f.advance(60_001);
+  expect(reopened.admit(intent)).toEqual({ created: false, record: retained });
+  for (const key of Object.keys(intent.preview).filter((key) => key !== 'provisional')) {
+    expect(() =>
+      reopened.admit({
+        ...intent,
+        preview: {
+          ...intent.preview,
+          [key]: Number(intent.preview[key as keyof typeof intent.preview]) + 1,
+        },
+      }),
+    ).toThrow('different intent');
+  }
+  expect(reopened.read(intent.id)).toEqual(retained);
+});
+
+linux(
+  'persisted confirmation tampering fails closed instead of accepting altered preview',
+  async () => {
+    for (const mutation of ['count', 'envelope', 'missing-preview'] as const) {
+      const f = await fixture();
+      const intent = f.intent();
+      const record = f.jobs.admit(intent).record;
+      const altered = JSON.parse(JSON.stringify(record));
+      if (mutation === 'count') altered.intent.preview.sharingRemoved += 1;
+      else if (mutation === 'envelope') altered.intent.consequenceEnvelope = 2;
+      else delete altered.intent.preview;
+      writeFileSync(f.statePath(intent.id), JSON.stringify(altered), { mode: 0o600 });
+      expect(() => f.jobs.read(intent.id)).toThrow();
+    }
+  },
+);
 
 linux('durable admission survives reopen and expired retries do not renew it', async () => {
   const f = await fixture();

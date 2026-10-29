@@ -38,5 +38,17 @@ export function restoreJobIntentFixture(now = Date.now()): RestoreJobIntent {
     },
     continuationHash: 'e'.repeat(64),
     confirmedAt: now,
+    preview: {
+      provisional: true,
+      currentAccounts: 2,
+      currentPasskeys: 3,
+      sharingRemoved: 4,
+      sharingDowngraded: 5,
+      isolatedItems: 6,
+      isolatedGroups: 7,
+      detachedRoots: 8,
+      heldTrashBatches: 9,
+    },
+    consequenceEnvelope: 1,
   };
 }

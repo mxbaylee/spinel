@@ -1,0 +1,811 @@
+import { createHash, randomUUID } from 'node:crypto';
+import { chmod, lstat, mkdtemp, open, readdir, rename, rm, stat, statfs } from 'node:fs/promises';
+import { dirname, join, resolve } from 'node:path';
+import { backup } from '../../../server/database.ts';
+import type { DatabaseSync } from '../../../server/database.ts';
+import type { RestorePreparation, RestorePreview } from '../../shared/restore.ts';
+import { validRestorePreview } from '../../shared/restore.ts';
+import { assertRestoreAuthority } from '../maintenance/restore-authority.ts';
+import { restoreIntentHash } from '../maintenance/restore-job-intent.ts';
+import type { RestoreAuthority } from '../maintenance/restore-authority.ts';
+import type { RestoreController, ConfirmedRestoreAdmission } from './restore-control.ts';
+import { hasDestination } from './config.ts';
+import type { BackupConfig } from './config.ts';
+import { createDestination } from './destination.ts';
+import type { RemoteStore } from './destination.ts';
+import { backupTime } from './spaces.ts';
+import {
+  fileChunks,
+  MAX_ARCHIVE_BYTES,
+  transferArchive,
+  TRANSFER_DISK_RESERVE,
+} from './transfer.ts';
+import { prepareRestoreArchive, reconcilePreparedRestore } from './verification.ts';
+import type { PreparedRestoreSource } from './verification.ts';
+import { RecoveryResourceError } from './resource-error.ts';
+
+const LIFETIME_MS = 30 * 60_000;
+const DATABASE_LIMIT = 8 * 1024 ** 3;
+const FAILURE =
+  'Restore preparation failed. Check the encrypted backup, key, compatible application image and free space.';
+const HANDOFF_FAILURE =
+  'Restore admission needs recovery. The original source remains held; retry the same confirmation.';
+const terminal = new Set<RestorePreparation['state']>([
+  'cancelled',
+  'expired',
+  'failed',
+  'started',
+]);
+const digest = (value: unknown) => createHash('sha256').update(JSON.stringify(value)).digest('hex');
+const uuid = (value: string) =>
+  /^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/.test(value);
+
+export class RestoreRegistryError extends Error {
+  readonly status: number;
+  constructor(status: number, message: string) {
+    super(message);
+    this.status = status;
+  }
+}
+export interface RestoreRegistryOptions {
+  databasePath: string;
+  origin: string;
+  image?: string;
+  spacesEnabled: boolean;
+  controller?: RestoreController;
+  now?: () => number;
+  configuration(): Promise<BackupConfig | undefined>;
+  remote?: (config: BackupConfig) => RemoteStore;
+}
+type Source = { kind: 'upload'; key: Buffer } | { kind: 'catalog'; artifactId: string };
+interface Job {
+  public: RestorePreparation;
+  requestId: string;
+  requestHash: string;
+  actor: string;
+  session: string;
+  owner: string;
+  controller: AbortController;
+  proof: RestoreAuthority;
+  directory?: string;
+  keyFile?: string;
+  prepared?: PreparedRestoreSource;
+  task?: Promise<void>;
+  initialization?: Promise<void>;
+  finishing?: Promise<void>;
+  admission?: ConfirmedRestoreAdmission;
+  ack?: Awaited<ReturnType<RestoreController['admit']>>;
+  custodyReleased?: boolean;
+  handoffWritten?: boolean;
+}
+function artifactId(config: BackupConfig, key: string) {
+  const identity =
+    config.type === 'filesystem'
+      ? ['filesystem', config.root, config.rootDevice, config.rootInode, config.prefix]
+      : hasDestination(config)
+        ? [config.type ?? 'spaces', config.region, config.bucket, config.prefix]
+        : ['manual', config.prefix];
+  return digest([identity, key]);
+}
+
+/** Application custody ends only after a matching durable supervisor ACK.
+ * Public projections are explicit; never serialize Job or controller results. */
+export class RestoreRegistry {
+  private job?: Job;
+  private history = new Map<string, Job>();
+  private creating = false;
+  private closing = false;
+  private timer?: ReturnType<typeof setInterval>;
+  private cleanupTask?: Promise<void>;
+  readonly namespace: string;
+  readonly now: () => number;
+  readonly db: DatabaseSync;
+  readonly options: RestoreRegistryOptions;
+  constructor(db: DatabaseSync, options: RestoreRegistryOptions) {
+    this.db = db;
+    this.options = { ...options };
+    this.namespace = `.restore-preparation-${digest(resolve(options.databasePath)).slice(0, 24)}-`;
+    this.now = options.now ?? Date.now;
+  }
+  start() {
+    // Rehearsal/private trial startup must remain inert. A running application
+    // allocates housekeeping only after an explicit restore preparation exists.
+    if (!this.job || this.timer || this.closing || !this.available()) return;
+    this.timer = setInterval(() => {
+      void this.db
+        .runBackground(async () => {
+          await this.cleanupOrphans();
+          await this.expire();
+        })
+        ?.catch(() => {});
+    }, 30_000);
+    this.timer.unref();
+  }
+  private async cleanupOrphans() {
+    if (this.cleanupTask) return this.cleanupTask;
+    this.cleanupTask = (async () => {
+      const root = dirname(resolve(this.options.databasePath));
+      const state = this.db.prepare('SELECT owner,job FROM backup_state WHERE id=1').get();
+      const pendingOwner = state?.job === 'restore' ? String(state.owner) : '';
+      const ownerPid = /^restore:([1-9][0-9]*):[a-f0-9-]{36}$/.exec(pendingOwner)?.[1];
+      let protectedHandoff = false;
+      let reclaimedOwner = false;
+      const dead = (pid: number) => {
+        try {
+          process.kill(pid, 0);
+          return false;
+        } catch (error) {
+          return (error as NodeJS.ErrnoException).code === 'ESRCH';
+        }
+      };
+      for (const name of await readdir(root)) {
+        if (!name.startsWith(this.namespace)) continue;
+        const match = /^([1-9][0-9]*)-[A-Za-z0-9]{6}$/.exec(name.slice(this.namespace.length));
+        if (!match) {
+          protectedHandoff = true;
+          continue;
+        }
+        if (!dead(Number(match[1]))) continue;
+        const path = join(root, name),
+          info = await lstat(path);
+        if (
+          !info.isDirectory() ||
+          info.isSymbolicLink() ||
+          info.uid !== process.getuid?.() ||
+          (info.mode & 0o077) !== 0
+        ) {
+          protectedHandoff = true;
+          continue;
+        }
+        const entries = await readdir(path);
+        if (entries.some((entry) => entry === 'handoff.json' || entry === 'handoff-pending.json')) {
+          protectedHandoff = true;
+          continue;
+        }
+        await rm(path, { recursive: true, force: true });
+        if (match[1] === ownerPid) reclaimedOwner = true;
+      }
+      if (ownerPid && dead(Number(ownerPid)) && reclaimedOwner && !protectedHandoff)
+        this.db
+          .prepare('UPDATE backup_state SET lease=0,owner=NULL,job=NULL WHERE id=1 AND owner=?')
+          .run(pendingOwner);
+    })();
+    try {
+      await this.cleanupTask;
+    } finally {
+      this.cleanupTask = undefined;
+    }
+  }
+  private async hashFile(job: Job, path: string, maximum: number, signal: AbortSignal) {
+    const file = await open(path, 'r');
+    try {
+      const hash = createHash('sha256');
+      let bytes = 0;
+      for await (const chunk of fileChunks(file, signal)) {
+        this.assertActive(job);
+        bytes += chunk.length;
+        if (bytes > maximum) throw new Error('Recovery file size limit.');
+        hash.update(chunk);
+      }
+      return hash.digest('hex');
+    } finally {
+      await file.close();
+    }
+  }
+  available() {
+    const control = this.options.controller;
+    return !!(
+      control &&
+      typeof control.target === 'function' &&
+      typeof control.admit === 'function' &&
+      typeof control.begin === 'function' &&
+      this.options.image &&
+      /^(sha256:[a-f0-9]{64}|\S+@sha256:[a-f0-9]{64})$/.test(this.options.image)
+    );
+  }
+  private control() {
+    if (!this.available() || this.closing)
+      throw new RestoreRegistryError(503, 'Supervised restore is unavailable.');
+    return this.options.controller!;
+  }
+  private lease(job: Job) {
+    const state = this.db.prepare('SELECT owner,lease,job FROM backup_state WHERE id=1').get();
+    if (state?.owner !== job.owner || state.job !== 'restore' || Number(state.lease) <= this.now())
+      throw new RestoreRegistryError(409, 'The restore source hold expired. Prepare it again.');
+  }
+  private assertActive(job: Job) {
+    job.controller.signal.throwIfAborted();
+    this.lease(job);
+    if (this.now() >= job.public.expiresAt)
+      throw new RestoreRegistryError(409, 'Restore preparation expired.');
+    const target = this.control().target();
+    if (
+      target.generationId !== job.public.target.generationId ||
+      target.epoch !== job.public.target.epoch
+    )
+      throw new RestoreRegistryError(
+        409,
+        'The target workspace changed. Prepare the restore again.',
+      );
+    assertRestoreAuthority(this.db, job.proof, this.now);
+  }
+  private owned(id: string, actor: string, session: string) {
+    const job = this.history.get(id);
+    if (!job || job.actor !== actor || job.session !== session)
+      throw new RestoreRegistryError(404, 'Restore preparation not found.');
+    return job;
+  }
+  status(id: string, actor: string, session: string) {
+    return structuredClone(this.owned(id, actor, session).public);
+  }
+  async current(actor: string, session: string) {
+    const job = this.job;
+    if (!job || job.actor !== actor || job.session !== session) return null;
+    // Do not join admission/Begin: its response must finish before drain. Only
+    // private allocation can delay returning an upload-ready preparation.
+    await job.initialization?.catch(() => {});
+    return structuredClone(job.public);
+  }
+  private async points(config: BackupConfig, remote: RemoteStore, signal: AbortSignal) {
+    const keys = await remote.list(signal);
+    signal.throwIfAborted();
+    if (keys.length > 10_000) throw new Error('Catalog limit.');
+    return keys
+      .map((key) => ({ key, time: backupTime(key, config.prefix) }))
+      .filter((point): point is { key: string; time: Date } => point.time !== null)
+      .sort((a, b) => b.time.getTime() - a.time.getTime() || b.key.localeCompare(a.key));
+  }
+  async catalog() {
+    let remote: RemoteStore | undefined;
+    try {
+      const config = await this.options.configuration();
+      if (!config || !hasDestination(config)) return { entries: [] };
+      remote = this.options.remote?.(config) ?? createDestination(config);
+      const points = await this.points(config, remote, AbortSignal.timeout(30_000));
+      return {
+        entries: points.map(({ key, time }) => ({
+          id: artifactId(config, key),
+          createdAt: time.getTime(),
+        })),
+      };
+    } catch {
+      throw new RestoreRegistryError(503, 'Saved backups could not be loaded.');
+    } finally {
+      await remote?.close?.();
+    }
+  }
+  async create(requestId: string, proof: RestoreAuthority, source: Source) {
+    let ownsCreation = false;
+    try {
+      const control = this.control();
+      if (
+        !uuid(requestId) ||
+        (source.kind === 'upload' && source.key.length !== 32) ||
+        (source.kind === 'catalog' && !/^[a-f0-9]{64}$/.test(source.artifactId))
+      )
+        throw new RestoreRegistryError(400, 'Invalid restore preparation.');
+      assertRestoreAuthority(this.db, proof, this.now);
+      const requestHash = digest(
+        source.kind === 'catalog'
+          ? source
+          : { kind: source.kind, key: createHash('sha256').update(source.key).digest('hex') },
+      );
+      const findExisting = () =>
+        [...this.history.values()].find(
+          (item) =>
+            item.requestId === requestId &&
+            item.actor === proof.actorId &&
+            item.session === proof.sessionHash,
+        );
+      const existingResult = async (existing: Job) => {
+        if (existing.requestHash !== requestHash)
+          throw new RestoreRegistryError(409, 'This request already selected a different source.');
+        await existing.initialization;
+        return structuredClone(existing.public);
+      };
+      const existing = findExisting();
+      if (existing) return await existingResult(existing);
+      await this.expire();
+      await this.cleanupOrphans();
+      assertRestoreAuthority(this.db, proof, this.now);
+      const admittedWhileWaiting = findExisting();
+      if (admittedWhileWaiting) return await existingResult(admittedWhileWaiting);
+      if (this.creating || (this.job && !terminal.has(this.job.public.state)))
+        throw new RestoreRegistryError(409, 'Finish the current restore preparation first.');
+      this.creating = true;
+      ownsCreation = true;
+      const now = this.now(),
+        id = randomUUID(),
+        owner = `restore:${process.pid}:${randomUUID()}`;
+      const target = control.target();
+      if (!uuid(target.generationId) || !uuid(target.epoch))
+        throw new RestoreRegistryError(503, 'Supervised restore is unavailable.');
+      const claim = this.db
+        .prepare("UPDATE backup_state SET owner=?,job='restore',lease=? WHERE id=1 AND lease<=?")
+        .run(owner, now + LIFETIME_MS + 60_000, now);
+      if (!claim.changes)
+        throw new RestoreRegistryError(409, 'Another backup or recovery operation is active.');
+      const job: Job = {
+        requestId,
+        requestHash,
+        actor: proof.actorId,
+        session: proof.sessionHash,
+        owner,
+        proof: structuredClone(proof),
+        controller: new AbortController(),
+        public: {
+          id,
+          state: source.kind === 'upload' ? 'uploading' : 'preparing',
+          source: source.kind,
+          createdAt: now,
+          expiresAt: now + LIFETIME_MS,
+          bytes: null,
+          sourceSha256: null,
+          sourceCreatedAt: null,
+          target: { ...target },
+          preview: null,
+          confirmation: null,
+          consequencesVersion: 1,
+          error: null,
+        },
+      };
+      this.job = job;
+      this.start();
+      this.history.set(id, job);
+      for (const [key, old] of this.history)
+        if (this.history.size > 32 && old !== job && terminal.has(old.public.state))
+          this.history.delete(key);
+      try {
+        job.initialization = (async () => {
+          job.directory = await mkdtemp(
+            join(dirname(resolve(this.options.databasePath)), `${this.namespace}${process.pid}-`),
+          );
+          await chmod(job.directory, 0o700);
+          this.assertActive(job);
+          if (source.kind === 'upload') {
+            job.keyFile = join(job.directory, 'upload.key');
+            const key = await open(job.keyFile, 'wx', 0o600);
+            try {
+              await key.writeFile(source.key);
+              await key.sync();
+            } finally {
+              await key.close();
+            }
+            this.assertActive(job);
+          }
+        })();
+        await job.initialization;
+        if (source.kind === 'catalog') {
+          const task = () => this.prepareCatalog(job, source.artifactId);
+          job.task = this.db.maintenance ? this.db.maintenance.run(task) : task();
+        }
+        return structuredClone(job.public);
+      } catch (error) {
+        await this.finish(job, 'failed');
+        throw error;
+      } finally {
+        job.initialization = undefined;
+      }
+    } finally {
+      if (ownsCreation) this.creating = false;
+      if (source.kind === 'upload') source.key.fill(0);
+    }
+  }
+  async upload(
+    id: string,
+    actor: string,
+    session: string,
+    chunks: AsyncIterable<Uint8Array>,
+    bytes: number,
+    disconnect: () => void = () => {},
+  ) {
+    const job = this.owned(id, actor, session);
+    if (job.public.state !== 'uploading' || job.task)
+      throw new RestoreRegistryError(409, 'This upload is already being processed.');
+    if (!Number.isSafeInteger(bytes) || bytes <= 0 || bytes > MAX_ARCHIVE_BYTES)
+      throw new RestoreRegistryError(413, 'Encrypted backup exceeds its size limit.');
+    const task = async () => {
+      const releaseDrain = this.db.maintenance?.cancelOnDrain(job.controller);
+      const signal = AbortSignal.any([
+        job.controller.signal,
+        AbortSignal.timeout(Math.max(1, job.proof.expiresAt - this.now())),
+      ]);
+      signal.addEventListener('abort', disconnect, { once: true });
+      try {
+        this.assertActive(job);
+        const path = join(job.directory!, 'source.spinel');
+        const output = await open(path, 'wx', 0o600);
+        const guarded = async function* (self: RestoreRegistry) {
+          for await (const chunk of chunks) {
+            self.assertActive(job);
+            signal.throwIfAborted();
+            yield chunk;
+          }
+        };
+        let sha256: string;
+        try {
+          sha256 = await transferArchive(guarded(this), output, signal, bytes, path);
+          await output.sync();
+        } finally {
+          await output.close();
+        }
+        this.assertActive(job);
+        job.public.state = 'preparing';
+        await this.prepare(job, path, { bytes, sha256 }, [{ path: job.keyFile! }], signal);
+      } catch {
+        await this.finish(job, 'failed');
+      } finally {
+        signal.removeEventListener('abort', disconnect);
+        releaseDrain?.();
+      }
+    };
+    job.task = this.db.maintenance ? this.db.maintenance.run(task) : task();
+    await job.task;
+    return structuredClone(job.public);
+  }
+  private async prepareCatalog(job: Job, selected: string) {
+    let remote: RemoteStore | undefined;
+    const releaseDrain = this.db.maintenance?.cancelOnDrain(job.controller);
+    const signal = AbortSignal.any([
+      job.controller.signal,
+      AbortSignal.timeout(Math.max(1, job.proof.expiresAt - this.now())),
+    ]);
+    try {
+      this.assertActive(job);
+      const config = await this.options.configuration();
+      this.assertActive(job);
+      if (!config || !hasDestination(config)) throw new Error('No catalog.');
+      remote = this.options.remote?.(config) ?? createDestination(config);
+      const points = await this.points(config, remote, signal);
+      this.assertActive(job);
+      const point = points.find(({ key }) => artifactId(config, key) === selected);
+      if (!point || !remote.download) throw new Error('Selected source unavailable.');
+      const path = join(job.directory!, 'source.spinel');
+      await remote.download(point.key, path, signal);
+      this.assertActive(job);
+      const info = await stat(path);
+      if (!info.isFile() || info.size <= 0 || info.size > MAX_ARCHIVE_BYTES)
+        throw new Error('Source limit.');
+      await chmod(path, 0o600);
+      const sha256 = await this.hashFile(job, path, MAX_ARCHIVE_BYTES, signal);
+      this.assertActive(job);
+      await this.prepare(
+        job,
+        path,
+        { bytes: info.size, sha256 },
+        [
+          { path: config.keyFile, id: config.keyId ?? 'default' },
+          ...Object.entries(config.retainedKeyFiles ?? {}).map(([id, path]) => ({ id, path })),
+        ],
+        signal,
+      );
+    } catch {
+      await this.finish(job, 'failed');
+    } finally {
+      try {
+        await remote?.close?.();
+      } catch {
+        await this.finish(job, 'failed');
+      } finally {
+        releaseDrain?.();
+      }
+    }
+  }
+  private async prepare(
+    job: Job,
+    archive: string,
+    expectedArchive: { bytes: number; sha256: string },
+    keys: { path: string; id?: string }[],
+    signal: AbortSignal,
+  ) {
+    for (const key of keys) {
+      this.assertActive(job);
+      let prepared: PreparedRestoreSource;
+      try {
+        prepared = await prepareRestoreArchive({
+          archive,
+          keyFile: key.path,
+          expectedArchive,
+          stagingRoot: job.directory!,
+          expectedOrigin: this.options.origin,
+          expectedImage: this.options.image!,
+          signal,
+        });
+      } catch (error) {
+        signal.throwIfAborted();
+        if (error instanceof RecoveryResourceError) throw error;
+        continue;
+      }
+      if (key.id !== undefined && prepared.keyId !== undefined && prepared.keyId !== key.id) {
+        await prepared.dispose();
+        continue;
+      }
+      job.prepared = prepared;
+      break;
+    }
+    this.assertActive(job);
+    if (!job.prepared) throw new Error('No compatible source.');
+    await this.eraseKey(job);
+    this.assertActive(job);
+    const path = join(job.directory!, 'preview-current.sqlite');
+    const pages = Number(this.db.prepare('PRAGMA page_count').get()!.page_count);
+    const pageSize = Number(this.db.prepare('PRAGMA page_size').get()!.page_size);
+    const size = pages * pageSize;
+    const disk = await statfs(job.directory!, { bigint: true });
+    if (
+      !Number.isSafeInteger(size) ||
+      size < 4096 ||
+      size > DATABASE_LIMIT ||
+      disk.bavail * disk.bsize < BigInt(size) + BigInt(TRANSFER_DISK_RESERVE)
+    )
+      throw new Error('Preview resource limit.');
+    this.assertActive(job);
+    await backup(this.db, path);
+    await chmod(path, 0o600);
+    this.assertActive(job);
+    const databaseBytes = (await stat(path)).size;
+    const databaseSha256 = await this.hashFile(job, path, DATABASE_LIMIT, signal);
+    this.assertActive(job);
+    const preview = await reconcilePreparedRestore({
+      candidate: job.prepared,
+      current: { databasePath: path, databaseBytes, databaseSha256 },
+      stagingRoot: job.directory!,
+      expectedOrigin: this.options.origin,
+      expectedImage: this.options.image!,
+      spacesEnabled: this.options.spacesEnabled,
+      now: this.now(),
+      signal,
+    });
+    try {
+      this.assertActive(job);
+      const report = preview.reconciliation;
+      if (!report) throw new Error('Missing reconciliation preview.');
+      const counts: RestorePreview = {
+        provisional: true,
+        currentAccounts: report.credentials.currentAccounts,
+        currentPasskeys: report.credentials.currentPasskeys,
+        sharingRemoved: report.grants.removed,
+        sharingDowngraded: report.grants.downgraded,
+        isolatedItems: report.ownership.isolatedItems,
+        isolatedGroups: report.ownership.isolatedGroups,
+        detachedRoots: report.ownership.detachedRoots,
+        heldTrashBatches: report.ownership.heldTrashBatches,
+      };
+      if (!validRestorePreview(counts)) throw new Error('Invalid reconciliation preview.');
+      job.public.preview = counts;
+      job.public.bytes = expectedArchive.bytes;
+      job.public.sourceSha256 = expectedArchive.sha256;
+      job.public.sourceCreatedAt = job.prepared.recovery.createdAt;
+      job.public.confirmation = digest({
+        source: expectedArchive,
+        target: job.public.target,
+        origin: this.options.origin,
+        image: this.options.image,
+        spacesEnabled: this.options.spacesEnabled,
+        preview: counts,
+        consequencesVersion: 1,
+      });
+    } finally {
+      await preview.dispose();
+      await rm(path, { force: true });
+    }
+    this.assertActive(job);
+    await rm(archive, { force: true }); // verified source owns its own authenticated ciphertext copy
+    this.assertActive(job);
+    job.public.state = 'ready';
+  }
+  private async eraseKey(job: Job) {
+    if (job.keyFile) {
+      await rm(job.keyFile, { force: true });
+      job.keyFile = undefined;
+    }
+  }
+  async confirm(
+    id: string,
+    actor: string,
+    session: string,
+    confirmation: string,
+    proof: RestoreAuthority,
+  ) {
+    const job = this.owned(id, actor, session);
+    if (confirmation !== job.public.confirmation || !confirmation || !job.public.preview)
+      throw new RestoreRegistryError(
+        409,
+        'Confirm the current source, target and restore consequences.',
+      );
+    if (job.public.state === 'started') return structuredClone(job.public);
+    if (job.public.state === 'admitting' && job.task) {
+      await job.task;
+      return structuredClone(job.public);
+    }
+    if (!['ready', 'admitting', 'accepted'].includes(job.public.state))
+      throw new RestoreRegistryError(409, 'Restore preparation is not ready.');
+    if (!job.admission) {
+      if (proof.actorId !== actor || proof.sessionHash !== session)
+        throw new RestoreRegistryError(409, 'Restore confirmation belongs to another account.');
+      job.proof = structuredClone(proof);
+      this.assertActive(job);
+      const source = job.prepared!;
+      job.admission = {
+        id,
+        ...job.public.target,
+        authority: structuredClone(proof),
+        confirmedAt: this.now(),
+        source: {
+          archive: { ...source.archive },
+          databasePath: source.databasePath,
+          databaseBytes: source.databaseBytes,
+          databaseSha256: source.databaseSha256,
+          recovery: { ...source.recovery },
+        },
+        preview: { ...job.public.preview },
+        consequenceEnvelope: 1,
+      };
+      // An uncertain IPC outcome must not expire the only source or its retention hold.
+      this.db
+        .prepare('UPDATE backup_state SET lease=? WHERE id=1 AND owner=?')
+        .run(Number.MAX_SAFE_INTEGER, job.owner);
+    }
+    const task = async () => {
+      try {
+        const control = this.control();
+        if (!job.ack) {
+          job.public.state = 'admitting';
+          // Retain the exact confirmed request for host recovery after an app crash.
+          // No cleanup path removes this marker until custody is acknowledged.
+          if (!job.handoffWritten) {
+            const temporary = join(job.directory!, 'handoff-pending.json');
+            const marker = await open(temporary, 'wx', 0o600);
+            try {
+              await marker.writeFile(JSON.stringify(job.admission));
+              await marker.sync();
+            } finally {
+              await marker.close();
+            }
+            await rename(temporary, join(job.directory!, 'handoff.json'));
+            const directory = await open(job.directory!, 'r');
+            try {
+              await directory.sync();
+            } finally {
+              await directory.close();
+            }
+            job.handoffWritten = true;
+          }
+          const ack = await control.admit(structuredClone(job.admission!));
+          const intent = ack.record.intent,
+            source = job.admission!.source;
+          if (
+            !ack.custody ||
+            restoreIntentHash(intent) !== ack.record.intentHash ||
+            ack.record.phase !== 'source-retained' ||
+            intent.id !== id ||
+            intent.target.generationId !== job.public.target.generationId ||
+            intent.target.epoch !== job.public.target.epoch ||
+            intent.source.archive.bytes !== source.archive.bytes ||
+            intent.source.archive.sha256 !== source.archive.sha256 ||
+            intent.source.candidate.bytes !== source.databaseBytes ||
+            intent.source.candidate.sha256 !== source.databaseSha256 ||
+            digest(intent.source.recovery) !== digest(source.recovery) ||
+            intent.confirmedAt !== job.admission!.confirmedAt ||
+            intent.policy.origin !== this.options.origin ||
+            intent.policy.image !== this.options.image ||
+            intent.policy.spacesEnabled !== this.options.spacesEnabled ||
+            intent.policy.consequencesVersion !== 1 ||
+            intent.consequenceEnvelope !== 1 ||
+            Object.keys(job.admission!.preview).some(
+              (key) =>
+                intent.preview[key as keyof RestorePreview] !==
+                job.admission!.preview[key as keyof RestorePreview],
+            ) ||
+            (
+              ['actorId', 'sessionHash', 'verifiedAt', 'verifiedPasskeyId', 'expiresAt'] as const
+            ).some((key) => intent.authority[key] !== job.admission!.authority[key]) ||
+            intent.continuationHash !==
+              createHash('sha256')
+                .update(ack.continuationToken ?? '')
+                .digest('hex') ||
+            !/^[A-Za-z0-9_-]{43}$/.test(ack.continuationToken ?? '')
+          )
+            throw new Error('Custody ACK does not match.');
+          job.ack = ack;
+          job.public.state = 'accepted';
+        }
+        if (!job.custodyReleased) {
+          await this.cleanup(job);
+          this.releaseLease(job);
+          job.custodyReleased = true;
+        }
+        const result = await control.begin({
+          id,
+          intentHash: job.ack.record.intentHash,
+          continuationToken: job.ack.continuationToken!,
+        });
+        if (result.record.intentHash !== job.ack.record.intentHash || !result.record.execution)
+          throw new Error('Restore plan not published.');
+        job.public.state = 'started';
+        job.public.error = null;
+      } catch {
+        job.public.error = HANDOFF_FAILURE;
+      }
+    };
+    job.task = task();
+    await job.task;
+    job.task = undefined;
+    return structuredClone(job.public);
+  }
+  private releaseLease(job: Job) {
+    this.db
+      .prepare('UPDATE backup_state SET lease=0,owner=NULL,job=NULL WHERE id=1 AND owner=?')
+      .run(job.owner);
+  }
+  private async cleanup(job: Job) {
+    await this.eraseKey(job);
+    await job.prepared?.dispose();
+    job.prepared = undefined;
+    if (job.directory) {
+      await rm(job.directory, { recursive: true, force: true });
+      job.directory = undefined;
+    }
+  }
+  private async finish(job: Job, state: 'failed' | 'cancelled' | 'expired') {
+    if (job.admission) return; // ambiguous supervisor custody requires explicit recovery
+    if (job.finishing) return job.finishing;
+    job.controller.abort();
+    job.finishing = (async () => {
+      try {
+        await this.cleanup(job);
+        this.releaseLease(job);
+        job.public.state = state;
+        job.public.error = state === 'failed' ? FAILURE : null;
+      } catch {
+        this.db
+          .prepare('UPDATE backup_state SET lease=? WHERE id=1 AND owner=?')
+          .run(Number.MAX_SAFE_INTEGER, job.owner);
+        job.public.state = 'failed';
+        job.public.error =
+          'Private restore staging could not be removed. Recovery cleanup is required.';
+      }
+    })();
+    await job.finishing;
+    job.finishing = undefined;
+  }
+  async cancel(id: string, actor: string, session: string) {
+    const job = this.owned(id, actor, session);
+    if (terminal.has(job.public.state)) return structuredClone(job.public);
+    if (job.admission)
+      throw new RestoreRegistryError(
+        409,
+        'Restore was confirmed. Its source remains held until supervised recovery resolves.',
+      );
+    job.controller.abort();
+    await job.initialization?.catch(() => {});
+    await job.task;
+    await this.finish(job, 'cancelled');
+    return structuredClone(job.public);
+  }
+  private async expire() {
+    const job = this.job;
+    if (
+      !job ||
+      job.admission ||
+      terminal.has(job.public.state) ||
+      this.now() < job.public.expiresAt
+    )
+      return;
+    job.controller.abort();
+    await job.initialization?.catch(() => {});
+    await job.task;
+    await this.finish(job, 'expired');
+  }
+  async close() {
+    this.closing = true;
+    clearInterval(this.timer);
+    await this.cleanupTask;
+    const job = this.job;
+    if (!job) return;
+    if (!job.admission) job.controller.abort();
+    await job.initialization?.catch(() => {});
+    await job.task;
+    if (!job.admission) await this.finish(job, 'cancelled');
+  }
+}

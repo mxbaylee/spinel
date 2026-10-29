@@ -1,5 +1,7 @@
 import { createHash } from 'node:crypto';
 import { isAbsolute, resolve } from 'node:path';
+import { validRestorePreview } from '../../shared/restore.ts';
+import type { RestorePreview } from '../../shared/restore.ts';
 import type { FileIdentity } from './journal.ts';
 import { validRestoreAuthority } from './restore-authority.ts';
 import type { RestoreAuthority } from './restore-authority.ts';
@@ -33,6 +35,10 @@ export interface RestoreJobIntent {
   authority: RestoreAuthority;
   continuationHash: string;
   confirmedAt: number;
+  /** Provisional counts shown at confirmation, retained without later rewriting. */
+  preview: RestorePreview;
+  /** Confirmation covers the complete consequence envelope despite provisional counts. */
+  consequenceEnvelope: 1;
 }
 const MAX_INTENT_BYTES = 24 * 1024;
 const uuid = (value: unknown) =>
@@ -56,9 +62,13 @@ export function validRestoreJobIntent(value: unknown): value is RestoreJobIntent
       'authority',
       'continuationHash',
       'confirmedAt',
+      'preview',
+      'consequenceEnvelope',
     ]) ||
     value.version !== 1 ||
     !uuid(value.id) ||
+    !validRestorePreview(value.preview) ||
+    value.consequenceEnvelope !== 1 ||
     !validRestoreSourceManifest(value.source) ||
     value.source.id !== value.id ||
     !validRestoreAuthority(value.authority) ||

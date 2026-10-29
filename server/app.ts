@@ -23,6 +23,8 @@ import { HealthMonitor } from '../src/server/health/monitor.ts';
 import { healthRoutes } from '../src/server/health/routes.ts';
 import { BackupService } from '../src/server/backup/service.ts';
 import { backupRoutes } from '../src/server/backup/routes.ts';
+import { restoreRoutes } from '../src/server/backup/restore-routes.ts';
+import type { RestoreController } from '../src/server/backup/restore-control.ts';
 import { captureTerminalRestoreFingerprint } from '../src/server/backup/restore-drain.ts';
 import { restoreSnapshotFingerprint } from '../src/server/backup/inventory.ts';
 import { openDatabase } from './database.ts';
@@ -70,6 +72,7 @@ export interface AppOptions {
   spaceReview?: boolean;
   /** Only the deployment supervisor can provide live recovery control. */
   maintenance?: MaintenanceBridge;
+  restoreController?: RestoreController;
   /** Internal bounded rehearsal/trial only; never a browser-supplied setting. */
   restoreMaximumBytes?: number;
   /** Opaque capability supplied only by the complete inherited-ownership handoff. */
@@ -344,6 +347,8 @@ export async function createApp(input: AppOptions) {
       origin: options.origin ?? 'http://localhost:3000',
       configPath: options.backupConfigPath,
       image: options.image,
+      restoreController: options.restoreController,
+      spacesEnabled: spaceReview,
       observe: () => {
         const started = Date.now(),
           runId = randomUUID();
@@ -430,6 +435,7 @@ export async function createApp(input: AppOptions) {
     healthTimer = setInterval(collectHealth, 60_000);
     healthTimer.unref();
     app.use('/api/admin/backups', backupRoutes(auth, backups, origin));
+    app.use('/api/admin/restores', restoreRoutes(auth, backups.restores, origin));
     app.get('/api/health', (_request, response) => {
       database.prepare('SELECT 1').get();
       response.json({ status: 'ok' });

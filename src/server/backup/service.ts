@@ -14,6 +14,8 @@ import { RecoveryResourceError } from './resource-error.ts';
 import { observeJob } from '../health/jobs.ts';
 import type { ObserveJob } from '../health/jobs.ts';
 import { ExportJobs } from './export-jobs.ts';
+import { RestoreRegistry } from './restore-registry.ts';
+import type { RestoreController } from './restore-control.ts';
 import { MAX_ARCHIVE_BYTES } from './transfer.ts';
 import { MaintenanceError, ShutdownError } from '../maintenance/gate.ts';
 
@@ -41,7 +43,7 @@ interface State {
   error: string | null;
   lease: number;
   owner: string | null;
-  job: Job | 'export' | null;
+  job: Job | 'export' | 'restore' | null;
   publication_identity: string | null;
   publication_destination: string | null;
   publication_key_id: string | null;
@@ -64,6 +66,8 @@ export interface BackupOptions {
   now?: () => number;
   remote?: (config: BackupConfig) => RemoteStore;
   observe?: ObserveJob;
+  restoreController?: RestoreController;
+  spacesEnabled?: boolean;
 }
 
 function destinationIdentity(config: BackupConfig) {
@@ -95,6 +99,7 @@ export class BackupService {
   active?: Promise<boolean>;
   timer?: ReturnType<typeof setInterval>;
   readonly exports: ExportJobs;
+  readonly restores: RestoreRegistry;
   private activeJob?: Job;
   private config?: BackupConfig;
   private configGeneration = 0;
@@ -133,6 +138,12 @@ export class BackupService {
       backup_key TEXT, key_id TEXT, identity TEXT
     ) STRICT; INSERT OR IGNORE INTO verification_state (id) VALUES (1);`);
     this.exports = new ExportJobs(db, { ...options, configuration: () => this.configuration() });
+    this.restores = new RestoreRegistry(db, {
+      ...options,
+      controller: options.restoreController,
+      spacesEnabled: options.spacesEnabled !== false,
+      configuration: () => (options.configPath ? this.configuration() : Promise.resolve(undefined)),
+    });
   }
   state() {
     return this.db.prepare('SELECT * FROM backup_state WHERE id=1').get() as unknown as State;
@@ -226,11 +237,19 @@ export class BackupService {
       keyId: this.config?.keyId ?? null,
       lastAttempt: state.last_attempt,
       lastGood,
-      running: state.lease > now && state.job !== 'verify' && state.job !== 'export',
+      running:
+        state.lease > now &&
+        state.job !== 'verify' &&
+        state.job !== 'export' &&
+        state.job !== 'restore',
       error:
         this.configError ??
         state.error ??
-        (state.owner && state.job !== 'verify' && state.job !== 'export' && state.lease <= now
+        (state.owner &&
+        state.job !== 'verify' &&
+        state.job !== 'export' &&
+        state.job !== 'restore' &&
+        state.lease <= now
           ? 'The previous backup was interrupted. A retry is due.'
           : null),
       overdue: automatic && (!lastGood || now - lastGood > 26 * HOUR),
@@ -253,6 +272,7 @@ export class BackupService {
   async start() {
     if (this.timer || this.closing) return;
     await this.exports.start();
+    this.restores.start();
     if (!this.options.configPath) return;
     // Configuration errors remain visible and retryable; they do not stop the app.
     await this.configuration().catch(() => {});
@@ -552,6 +572,7 @@ export class BackupService {
     this.closing = true;
     clearInterval(this.timer);
     await this.exports.close();
+    await this.restores.close();
     await this.ticking;
     await this.active;
   }

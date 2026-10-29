@@ -24,6 +24,8 @@ import type {
   RestoreStopRequest,
 } from '../../shared/maintenance.ts';
 import { publicMaintenance } from '../../shared/maintenance.ts';
+import { validRestorePreview } from '../../shared/restore.ts';
+import type { RestorePreview } from '../../shared/restore.ts';
 import {
   AUTHORITY_MS,
   RecoveryJournal,
@@ -34,7 +36,7 @@ import {
   uuidPattern,
   validNotice,
 } from './journal.ts';
-import type { OperationReceipt, ProcessIdentity } from './journal.ts';
+import type { OperationReceipt, ProcessIdentity, RecoveryJournalState } from './journal.ts';
 import { MAINTENANCE_CHANNEL } from './supervisor-client.ts';
 import { shareWorkspaceOwnership } from './ownership.ts';
 import { processResourcesReleased, waitForProcessInventory } from './process-exit.ts';
@@ -88,6 +90,8 @@ export interface RestoreAdmission {
   epoch: string;
   authority: RestoreAuthority;
   confirmedAt: number;
+  preview: RestorePreview;
+  consequenceEnvelope: 1;
   source: RestoreSourceInput;
 }
 interface SupervisorOptions {
@@ -315,6 +319,7 @@ export class MaintenanceSupervisor {
     }
   }
   private async initialize() {
+    const previous = structuredClone(this.journal.state);
     const prior = this.journal.state.child;
     const priorVerifier = this.journal.state.verifier;
     let reconciliationFailure: unknown;
@@ -390,6 +395,7 @@ export class MaintenanceSupervisor {
       this.transition({ child: null, verifier: null });
     }
     try {
+      if (!reconciliationFailure) await this.reconcileCommittedRestore(previous);
       this.journal.assertNoPendingRestoreJobs();
     } catch {
       this.failure('restore-job-pending');
@@ -422,6 +428,119 @@ export class MaintenanceSupervisor {
       }
     }, 1000);
     this.noticeTimer.unref();
+  }
+  /** Finish only the already durable winner. No source image is opened or
+   * copied: this live file may contain writes acknowledged before the crash. */
+  private async reconcileCommittedRestore(previous: RecoveryJournalState) {
+    const reference = previous.restoreJob;
+    if (!reference) return;
+    const jobs = new RestoreJobs(this.journal, this.now);
+    try {
+      const record = jobs.read(reference.jobId);
+      if (!record || !isCommittedRestoreJob(record)) return;
+      const permit = record.execution!.trial!,
+        original = record.execution!.originals!,
+        operation = previous.operation;
+      if (
+        this.journal.wasUnverified ||
+        record.intentHash !== reference.intentHash ||
+        record.intent.target.instanceId !== previous.instanceId ||
+        record.intent.target.databasePath !== this.journal.databasePath ||
+        previous.generationId !== permit.generationId ||
+        !sameFile(previous.databaseIdentity, permit.identity) ||
+        !sameFile(original.identity, permit.identity) ||
+        previous.phase === 'running' ||
+        previous.verifier ||
+        (previous.child &&
+          ['pid', 'start', 'boot', 'token'].some(
+            (key) =>
+              previous.child![key as keyof ProcessIdentity] !==
+              permit.child[key as keyof ProcessIdentity],
+          )) ||
+        (previous.restoreStop &&
+          JSON.stringify(previous.restoreStop) !== JSON.stringify(record.execution!.stop)) ||
+        operation?.id !== record.intent.id ||
+        operation.generationId !== permit.generationId ||
+        operation.actorId !== record.intent.authority.actorId ||
+        operation.sessionHash !== record.intent.authority.sessionHash ||
+        operation.expiresAt !== record.intent.authority.expiresAt ||
+        operation.tokenHash !== record.intent.continuationHash
+      )
+        throw new Error('Committed restore does not match the recorded selected generation.');
+      const snapshot = JSON.stringify(record);
+      const assertSelected = () => {
+        const state = this.journal.state;
+        if (
+          this.closing ||
+          state.instanceId !== previous.instanceId ||
+          state.generationId !== permit.generationId ||
+          !sameFile(state.databaseIdentity, permit.identity) ||
+          !sameFile(this.journal.workspaceOwnership().databaseIdentity, permit.identity) ||
+          state.child ||
+          state.verifier ||
+          state.phase !== 'recovery-required' ||
+          state.restoreJob?.jobId !== record.intent.id ||
+          state.restoreJob.intentHash !== record.intentHash ||
+          JSON.stringify(jobs.read(record.intent.id)) !== snapshot ||
+          jobs
+            .list()
+            .some(
+              (other) =>
+                other.intent.id !== record.intent.id &&
+                other.phase !== 'failed' &&
+                !isCommittedRestoreJob(other),
+            )
+        )
+          throw new Error('Committed restore recovery lost its exact selected generation.');
+        this.assertGeneration();
+        assertWorkspaceHandlesClosed(this.journal.databasePath);
+      };
+      assertSelected();
+      // A fresh boot epoch fences the old process. Its expired authorization is
+      // historical evidence, never permission to start another restore attempt.
+      // Keep the operation/reference until all terminal cleanup is durable so a
+      // second crash can identify this same winner without timestamp guessing.
+      this.transition({
+        phase: 'recovery-required',
+        restoreStop: null,
+        verifiedAt: null,
+        lastFailure: 'restore-committed-recovery',
+      });
+      assertSelected();
+      await commitRestoreFiles(
+        {
+          root: this.journal.root,
+          databasePath: this.journal.databasePath,
+          assertClosed: assertSelected,
+          readPhase: () => {
+            assertSelected();
+            return 'candidate-committed';
+          },
+          persist: async () => {
+            throw new Error('Terminal restore recovery cannot choose another outcome.');
+          },
+        },
+        {
+          ...original,
+          candidate: { bytes: permit.output.bytes, sha256: permit.output.sha256 },
+        },
+        'candidate',
+      );
+      assertSelected();
+      assertNoPendingRestore(this.journal.databasePath);
+      this.transition({
+        restoreJob: null,
+        operation: null,
+        completedOperationId: record.intent.id,
+        verifiedAt: null,
+      });
+      // Cold verification/start/resume remains explicit, exactly as for any
+      // supervisor restart. It verifies current live content, not the prepared
+      // fingerprint, and cannot reapply old source bytes over later edits.
+      this.journal.assertNoPendingRestoreJobs();
+    } finally {
+      jobs.close();
+    }
   }
   publicAddress(): AddressInfo {
     return this.publicServer!.address() as AddressInfo;
@@ -1229,6 +1348,8 @@ export class MaintenanceSupervisor {
     if (
       !policy?.image ||
       !validRestoreAuthority(request.authority) ||
+      !validRestorePreview(request.preview) ||
+      request.consequenceEnvelope !== 1 ||
       !Number.isSafeInteger(request.confirmedAt) ||
       request.confirmedAt > this.now()
     )
@@ -1328,6 +1449,8 @@ export class MaintenanceSupervisor {
         },
         authority: request.authority,
         confirmedAt: request.confirmedAt,
+        preview: structuredClone(request.preview),
+        consequenceEnvelope: request.consequenceEnvelope,
         continuationHash: existing?.intent.continuationHash ?? tokenHash(token!),
       };
       const hash = restoreIntentHash(intent);
