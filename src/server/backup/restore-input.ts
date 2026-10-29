@@ -11,7 +11,7 @@ export interface ClosedRestoreInput {
   databaseSha256: string;
   databaseBytes: number;
 }
-const changed = () => new Error('The frozen recovery input is unavailable or changed.');
+const changed = () => new Error('The recovery input is unavailable or changed.');
 export function validateClosedRestoreInput(input: ClosedRestoreInput, maximum: number) {
   if (
     !isAbsolute(input.databasePath) ||
@@ -45,7 +45,37 @@ export async function copyClosedRestoreInput(
   validateClosedRestoreInput(input, 8 * 1024 ** 3);
   signal?.throwIfAborted();
   await assertSelfContained(input.databasePath);
-  const source = await open(input.databasePath, constants.O_RDONLY | constants.O_NOFOLLOW);
+  await copyRestoreInputFile(
+    { path: input.databasePath, bytes: input.databaseBytes, sha256: input.databaseSha256 },
+    destination,
+    signal,
+  );
+  await assertSelfContained(input.databasePath);
+}
+
+/** Exact raw evidence, including an empty WAL. This does not establish a closed
+ * SQLite snapshot or authorize recovery of a DB/WAL tuple. Its caller owns
+ * tuple completeness, WAL validation and cleanup on every failure. */
+export interface RestoreInputFile {
+  path: string;
+  bytes: number;
+  sha256: string;
+}
+export async function copyRestoreInputFile(
+  input: RestoreInputFile,
+  destination: string,
+  signal?: AbortSignal,
+) {
+  if (
+    !isAbsolute(input.path) ||
+    !/^[a-f0-9]{64}$/.test(input.sha256) ||
+    !Number.isSafeInteger(input.bytes) ||
+    input.bytes < 0 ||
+    input.bytes > 8 * 1024 ** 3
+  )
+    throw changed();
+  signal?.throwIfAborted();
+  const source = await open(input.path, constants.O_RDONLY | constants.O_NOFOLLOW);
   try {
     const before = await source.stat();
     if (
@@ -53,7 +83,7 @@ export async function copyClosedRestoreInput(
       before.nlink !== 1 ||
       before.uid !== process.getuid?.() ||
       (before.mode & 0o077) !== 0 ||
-      before.size !== input.databaseBytes
+      before.size !== input.bytes
     )
       throw changed();
     const target = await open(
@@ -70,11 +100,11 @@ export async function copyClosedRestoreInput(
         const { bytesRead } = await source.read(
           buffer,
           0,
-          Math.min(buffer.length, input.databaseBytes + 1 - offset),
+          Math.min(buffer.length, input.bytes + 1 - offset),
           offset,
         );
         if (!bytesRead) break;
-        if (offset + bytesRead > input.databaseBytes) throw changed();
+        if (offset + bytesRead > input.bytes) throw changed();
         hash.update(buffer.subarray(0, bytesRead));
         let written = 0;
         while (written < bytesRead) {
@@ -86,10 +116,10 @@ export async function copyClosedRestoreInput(
         offset += bytesRead;
       }
       const after = await source.stat(),
-        path = await lstat(input.databasePath);
+        path = await lstat(input.path);
       if (
-        offset !== input.databaseBytes ||
-        hash.digest('hex') !== input.databaseSha256 ||
+        offset !== input.bytes ||
+        hash.digest('hex') !== input.sha256 ||
         before.size !== after.size ||
         before.mtimeMs !== after.mtimeMs ||
         before.ctimeMs !== after.ctimeMs ||
@@ -98,8 +128,8 @@ export async function copyClosedRestoreInput(
         path.ino !== before.ino
       )
         throw changed();
-      await assertSelfContained(input.databasePath);
       await target.sync();
+      signal?.throwIfAborted();
     } finally {
       await target.close();
     }

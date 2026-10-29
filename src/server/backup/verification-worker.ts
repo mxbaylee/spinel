@@ -8,6 +8,7 @@ import { RecoveryResourceError } from './resource-error.ts';
 import { assertSelfContained } from './restore-input.ts';
 import type { ClosedRestoreInput } from './restore-input.ts';
 import type { PreparedRestore } from './verification.ts';
+import type { FreezeWorkerInput } from './restore-freeze-worker.ts';
 
 type WorkerInput = {
   directory: string;
@@ -28,10 +29,15 @@ type WorkerInput = {
 
 const disconnected = () => process.exit(1);
 process.once('disconnect', disconnected);
-process.once('message', async (value: WorkerInput) => {
+process.once('message', async (value: WorkerInput | FreezeWorkerInput) => {
   let database: DatabaseSync | undefined;
   let current: DatabaseSync | undefined;
   try {
+    if (value.kind === 'freeze') {
+      const { freezeWorkingRestore } = await import('./restore-freeze-worker.ts');
+      process.send?.({ ok: true, result: await freezeWorkingRestore(value) });
+      return;
+    }
     const destination = join(value.directory, 'restored');
     if (value.kind === 'reconcile') {
       const databasePath = join(destination, 'spinel.sqlite');

@@ -3,7 +3,7 @@ import { chmod, link, mkdtemp, readFile, rm, stat, symlink, writeFile } from 'no
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, expect, test } from 'vitest';
-import { copyClosedRestoreInput } from './restore-input.ts';
+import { copyClosedRestoreInput, copyRestoreInputFile } from './restore-input.ts';
 
 const cleanup: string[] = [];
 afterEach(async () => {
@@ -70,4 +70,38 @@ test('cancellation before copying creates no output', async () => {
   controller.abort();
   await expect(copyClosedRestoreInput(f.input, f.target, controller.signal)).rejects.toThrow();
   await expect(stat(f.target)).rejects.toMatchObject({ code: 'ENOENT' });
+});
+
+test.each([0, 33, 70_003])(
+  'copies %i raw evidence bytes without treating them as a closed database',
+  async (size) => {
+    const f = await fixture();
+    const path = f.input.databasePath + '-wal';
+    const bytes = Buffer.alloc(size, 42);
+    await writeFile(path, bytes, { mode: 0o600 });
+    const input = { path, bytes: size, sha256: createHash('sha256').update(bytes).digest('hex') };
+    await copyRestoreInputFile(input, f.target);
+    expect(await readFile(f.target)).toEqual(bytes);
+    expect((await stat(f.target)).mode & 0o077).toBe(0);
+    expect(await readFile(path)).toEqual(bytes);
+    await expect(copyRestoreInputFile(input, f.target)).rejects.toHaveProperty('code', 'EEXIST');
+    await expect(copyClosedRestoreInput(f.input, join(f.root, 'closed.sqlite'))).rejects.toThrow(
+      'changed',
+    );
+  },
+);
+
+test('raw evidence must match both its declared size and digest', async () => {
+  const f = await fixture();
+  const input = {
+    path: f.input.databasePath,
+    bytes: f.input.databaseBytes,
+    sha256: f.input.databaseSha256,
+  };
+  await expect(copyRestoreInputFile({ ...input, bytes: 0 }, f.target)).rejects.toThrow('changed');
+  await expect(stat(f.target)).rejects.toHaveProperty('code', 'ENOENT');
+  await expect(
+    copyRestoreInputFile({ ...input, sha256: '0'.repeat(64) }, f.target),
+  ).rejects.toThrow('changed');
+  expect(await readFile(f.input.databasePath)).toEqual(f.bytes);
 });
