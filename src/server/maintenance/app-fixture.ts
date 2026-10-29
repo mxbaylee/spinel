@@ -7,6 +7,7 @@ import { writeFile } from 'node:fs/promises';
 import { openDatabase } from '../../../server/database.ts';
 import { connectMaintenance, MAINTENANCE_CHANNEL } from './supervisor-client.ts';
 import { inheritedWorkspaceOwnership, shareWorkspaceOwnership } from './ownership.ts';
+import { assertRestoreAuthority } from './restore-authority.ts';
 import { captureTerminalRestoreFingerprint } from '../backup/restore-drain.ts';
 
 if (!process.send || !process.env.DATABASE_PATH) throw new Error('Private test fixture required.');
@@ -46,6 +47,17 @@ const timer = setInterval(() => {
   if (bridge.status().phase === 'running')
     database.prepare('INSERT INTO writes(value) VALUES(?)').run('job');
 }, 20);
+bridge.onRestoreAuthority!((proof) => {
+  if (process.env.SPINEL_TEST_REVOKE_RESTORE_AUTHORITY === '1') {
+    const result = database
+      .prepare('UPDATE auth_users SET disabled=1 WHERE id=?')
+      .run(proof.actorId);
+    if (result.changes !== 1)
+      throw new Error('Authority revocation fixture did not update its user.');
+    process.send!({ revokedRestoreAuthority: proof.actorId });
+  }
+  assertRestoreAuthority(database, proof);
+});
 bridge.ready();
 let stopping = false;
 bridge.onRestoreStop!(async (request) => {

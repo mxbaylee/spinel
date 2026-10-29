@@ -1488,7 +1488,7 @@ test('real application rechecks the original proof without renewing verification
       PORT: '0',
       HOST: '127.0.0.1',
       SPINEL_STATIC_DIRECTORY: assets,
-      SPINEL_BACKUP_CONFIG: join(f.directory, 'absent-backup-config'),
+      BACKUP_CONFIG_PATH: join(f.directory, 'absent-backup-config'),
     },
   });
   const jobId = randomUUID();
@@ -1572,6 +1572,37 @@ test('authority probes reject foreign challenges and matching replies after thei
       });
       await rejected;
     }
+    // A lost response must release the queue/waiter without changing live state.
+    {
+      const arrived = new Promise<{ request: RestoreStopRequest; authority: RestoreAuthority }>(
+        (resolve) => {
+          received = resolve;
+        },
+      );
+      const rejected = expect(
+        supervisor.recheckRestoreAuthority(randomUUID(), f.authority!),
+      ).rejects.toThrow('timed out');
+      await arrived;
+      await rejected;
+    }
+    {
+      const arrived = new Promise<{ request: RestoreStopRequest; authority: RestoreAuthority }>(
+        (resolve) => {
+          received = resolve;
+        },
+      );
+      const accepted = expect(
+        supervisor.recheckRestoreAuthority(randomUUID(), f.authority!),
+      ).resolves.toBeUndefined();
+      const { request } = await arrived;
+      child.emit('message', {
+        channel: MAINTENANCE_CHANNEL,
+        kind: 'restore-authority-result',
+        request,
+        accepted: true,
+      });
+      await accepted;
+    }
     const arrived = new Promise<{ request: RestoreStopRequest; authority: RestoreAuthority }>(
       (resolve) => {
         received = resolve;
@@ -1596,4 +1627,36 @@ test('authority probes reject foreign challenges and matching replies after thei
   } finally {
     intercepted.mockRestore();
   }
+}, 30_000);
+
+test('live-child authority revocation refuses the unchanged original proof', async () => {
+  const f = await fixture(true);
+  let child!: ChildProcess;
+  const supervisor = await MaintenanceSupervisor.open({
+    root: f.root,
+    databasePath: f.databasePath,
+    publicPort: 0,
+    createChild: (token) => {
+      child = f.createChild(token, { SPINEL_TEST_REVOKE_RESTORE_AUTHORITY: '1' });
+      return child;
+    },
+    budgets: { startMs: 5000, stopMs: 100, verifyMs: 5000 },
+  });
+  cleanups.push(() => supervisor.close());
+  await start(supervisor);
+  let revoked: string | undefined;
+  child.on('message', (value: unknown) => {
+    if (
+      value &&
+      typeof value === 'object' &&
+      'revokedRestoreAuthority' in value &&
+      typeof value.revokedRestoreAuthority === 'string'
+    )
+      revoked = value.revokedRestoreAuthority;
+  });
+  await expect(supervisor.recheckRestoreAuthority(randomUUID(), f.authority!)).rejects.toThrow(
+    'original restore',
+  );
+  expect(revoked).toBe(f.authority!.actorId);
+  expect(supervisor.status().phase).toBe('running');
 });
