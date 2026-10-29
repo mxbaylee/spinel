@@ -810,7 +810,9 @@ function validRecord(value: unknown, id: string): value is RestoreJobRecord {
 
 /** Historical terminal evidence remains readable after the child dies or its
  * permit expires. This validates recorded bindings, never current authority. */
-export function isCommittedRestoreJob(value: unknown): value is RestoreJobRecord {
+export function isCommittedRestoreJob(value: unknown): value is RestoreJobRecord & {
+  phase: 'candidate-committed' | 'original-committed';
+} {
   if (!value || typeof value !== 'object') return false;
   const record = value as RestoreJobRecord;
   return (

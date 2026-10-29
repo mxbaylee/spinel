@@ -13,7 +13,7 @@ import { COOKIE_NAME, hashToken } from '../auth/store.ts';
 import { MaintenanceSupervisor } from '../maintenance/supervisor.ts';
 import type { RestoreJobRecord } from '../maintenance/restore-jobs.ts';
 import type { RestoreHttpSeed } from '../maintenance/restore-http-fixture.ts';
-import type { RestorePreparation } from '../../shared/restore.ts';
+import type { RestorePreparation, RestoreStatus } from '../../shared/restore.ts';
 
 const origin = 'https://spinel.example';
 const hash = (bytes: Uint8Array | string) => createHash('sha256').update(bytes).digest();
@@ -362,6 +362,19 @@ test('real Operator HTTP confirmation crosses custody ACK and Begin into committ
       (await request('/api/auth/session')).status,
       'old session rejected after private release',
     ).toBe(401);
+    // A new page/session observes the replacement epoch and authenticates anew;
+    // this never renews the original restore confirmation or its old session.
+    cookie = '';
+    epoch = (await json<{ epoch: string }>(await request('/api/maintenance'))).epoch;
+    await prove('authentication');
+    const completed = await json<RestoreStatus>(await request('/api/admin/restores'));
+    publicBodies.push(JSON.stringify(completed));
+    expect(completed.pending).toBe(false);
+    expect(completed.job).toBeNull();
+    expect(Object.keys(completed.outcome!).sort()).toEqual(['id', 'source', 'state', 'updatedAt']);
+    expect(completed.outcome?.state).toBe('backup-restored');
+    expect(completed.outcome?.id).toBe(restoreId);
+    expect(completed.outcome?.source.sha256).toBe(source.sha256);
     for (const text of publicBodies) {
       expect(
         [

@@ -96,7 +96,7 @@ const api = {
     },
   },
   'GET /api/admin/health': healthStory,
-  'GET /api/admin/restores': { available: true, job: null },
+  'GET /api/admin/restores': { available: true, job: null, outcome: null, pending: false },
   'GET /api/admin/diagnostics': diagnosticsStory,
 };
 function Preview({ section = 'people' }: { section?: string }) {

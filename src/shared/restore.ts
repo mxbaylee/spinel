@@ -66,3 +66,43 @@ export interface RestorePreparation {
   consequencesVersion: 1;
   error: string | null;
 }
+
+/** Historical outcome only: not a claim about the workspace's current contents. */
+export interface RestoreOutcome {
+  id: string;
+  state: 'backup-restored' | 'original-recovered' | 'did-not-start' | 'unresolved';
+  updatedAt: number;
+  source: { bytes: number; sha256: string };
+}
+
+export interface RestoreStatus {
+  available: boolean;
+  job: RestorePreparation | null;
+  outcome: RestoreOutcome | null;
+  /** Null means supervision is unavailable, not that no restore is pending. */
+  pending: boolean | null;
+}
+
+export function validRestoreOutcome(value: unknown): value is RestoreOutcome {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const record = value as RestoreOutcome;
+  return (
+    Object.keys(record).length === 4 &&
+    typeof record.id === 'string' &&
+    /^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/.test(record.id) &&
+    ['backup-restored', 'original-recovered', 'did-not-start', 'unresolved'].includes(
+      record.state,
+    ) &&
+    Number.isSafeInteger(record.updatedAt) &&
+    record.updatedAt >= 0 &&
+    record.updatedAt <= 8.64e15 &&
+    !!record.source &&
+    typeof record.source === 'object' &&
+    !Array.isArray(record.source) &&
+    Object.keys(record.source).length === 2 &&
+    Number.isSafeInteger(record.source.bytes) &&
+    record.source.bytes > 0 &&
+    typeof record.source.sha256 === 'string' &&
+    /^[a-f0-9]{64}$/.test(record.source.sha256)
+  );
+}

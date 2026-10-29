@@ -77,11 +77,10 @@ export function restoreRoutes(auth: AuthStore, registry: RestoreRegistry, origin
   router.use(express.json({ limit: '1kb', strict: true }));
   router.get('/', async (request, response) => {
     const current = operator(request);
-    const job = await registry.current(current.user_id!, current.token_hash);
+    const status = await registry.summary(current.user_id!, current.token_hash);
     sameOperator(current);
     response.json({
-      available: registry.available(),
-      job,
+      ...status,
       consequencesVersion: 1,
       consequences: RESTORE_CONSEQUENCES,
     });

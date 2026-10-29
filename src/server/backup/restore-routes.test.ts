@@ -41,6 +41,7 @@ async function fixture(controller = true) {
   const session = auth.createSession(operator.id, undefined, 'operator-key');
   const ordinary = auth.createSession(member.id);
   const origin = 'https://spinel.example';
+  const target = { generationId: randomUUID(), epoch: randomUUID() };
   const service = new BackupService(db, {
     databasePath,
     origin,
@@ -48,7 +49,8 @@ async function fixture(controller = true) {
     ...(controller
       ? {
           restoreController: {
-            target: () => ({ generationId: randomUUID(), epoch: randomUUID() }),
+            target: () => target,
+            observe: async () => ({ target, record: null, pending: false }),
             admit: async () => {
               throw new Error('No lifecycle implementation in HTTP fixture');
             },
@@ -59,11 +61,6 @@ async function fixture(controller = true) {
         }
       : {}),
   });
-  // Keep the target stable across each asynchronous admission boundary.
-  if (service.restores.options.controller) {
-    const target = { generationId: randomUUID(), epoch: randomUUID() };
-    service.restores.options.controller.target = () => target;
-  }
   cleanups.push(() => service.close());
   const app = express();
   app.use('/restore', restoreRoutes(auth, service.restores, origin));
@@ -177,4 +174,27 @@ test('a partial or missing lifecycle controller never enables Begin or creates p
   expect(
     (await readdir(f.directory)).filter((name) => name.startsWith('.restore-preparation-')),
   ).toEqual([]);
+});
+
+test('durable status rechecks the current Operator after asynchronous observation', async () => {
+  const f = await fixture();
+  f.service.restores.options.controller!.observe = async () => {
+    f.auth.revokeSession(f.session.session.token_hash);
+    return {
+      target: f.service.restores.options.controller!.target(),
+      record: null,
+      pending: false,
+    };
+  };
+  expect((await f.request('/', {}, {}, 'GET')).status).toBe(404);
+});
+
+test('unavailable observation cannot produce a successful empty outcome response', async () => {
+  const f = await fixture();
+  f.service.restores.options.controller!.observe = async () => {
+    throw new Error('/private/supervisor/evidence');
+  };
+  const response = await f.request('/', {}, {}, 'GET');
+  expect(response.status).toBe(503);
+  expect((await response.text()).includes('/private/')).toBe(false);
 });

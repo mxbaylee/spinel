@@ -140,7 +140,7 @@ export async function connectMaintenance(): Promise<SupervisedMaintenanceBridge>
     string,
     {
       action: RestoreRpcAction;
-      id: string;
+      id?: string;
       intentHash?: string;
       resolve(result: RestoreRpcResult): void;
       reject(error: Error): void;
@@ -162,14 +162,17 @@ export async function connectMaintenance(): Promise<SupervisedMaintenanceBridge>
   };
   const restoreCall = (
     action: RestoreRpcAction,
-    request: Parameters<RestoreController['admit']>[0] | Parameters<RestoreController['begin']>[0],
+    request:
+      | Parameters<RestoreController['admit']>[0]
+      | Parameters<RestoreController['begin']>[0]
+      | Parameters<RestoreController['observe']>[0],
   ) =>
     new Promise<RestoreRpcResult>((resolve, reject) => {
       if (
         closed ||
         !current?.available ||
         (trialExpected && !released) ||
-        (action === 'restore-admit' && current.phase !== 'running') ||
+        (action !== 'restore-begin' && current.phase !== 'running') ||
         restoreRequests.size >= RESTORE_RPC_PENDING ||
         !boundedRestoreRpc(request)
       ) {
@@ -177,7 +180,10 @@ export async function connectMaintenance(): Promise<SupervisedMaintenanceBridge>
         return;
       }
       const requestId = randomUUID();
-      const timer = setTimeout(() => failRestoreRequest(requestId), RESTORE_RPC_MS);
+      const timer = setTimeout(
+        () => failRestoreRequest(requestId),
+        action === 'restore-observe' ? 10_000 : RESTORE_RPC_MS,
+      );
       restoreRequests.set(requestId, {
         action,
         id: request.id,
@@ -392,6 +398,17 @@ export async function connectMaintenance(): Promise<SupervisedMaintenanceBridge>
         failRestoreRequest(message.requestId);
         return;
       }
+      if (
+        'target' in message.result &&
+        (!current?.available ||
+          current.phase !== 'running' ||
+          (trialExpected && !released) ||
+          message.result.target.generationId !== current.generationId ||
+          message.result.target.epoch !== current.epoch)
+      ) {
+        failRestoreRequest(message.requestId);
+        return;
+      }
       clearTimeout(request.timer);
       restoreRequests.delete(message.requestId);
       request.resolve(message.result);
@@ -458,7 +475,14 @@ export async function connectMaintenance(): Promise<SupervisedMaintenanceBridge>
         return result;
       },
       async begin(request) {
-        return restoreCall('restore-begin', request);
+        const result = await restoreCall('restore-begin', request);
+        if ('target' in result || !result.record) throw new Error(RESTORE_RPC_ERROR);
+        return { record: result.record };
+      },
+      async observe(request) {
+        const result = await restoreCall('restore-observe', request);
+        if (!('pending' in result)) throw new Error(RESTORE_RPC_ERROR);
+        return result;
       },
     },
     takeRestoreOpening() {

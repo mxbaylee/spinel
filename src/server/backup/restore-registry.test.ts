@@ -69,7 +69,10 @@ async function fixture() {
   const target = { generationId: randomUUID(), epoch: randomUUID() };
   const admit = vi.fn<RestoreController['admit']>();
   const begin = vi.fn<RestoreController['begin']>();
-  const controller: RestoreController = { target: () => target, admit, begin };
+  const observe = vi
+    .fn<RestoreController['observe']>()
+    .mockResolvedValue({ target, record: null, pending: false });
+  const controller: RestoreController = { target: () => target, admit, begin, observe };
   const service = new BackupService(db, {
     databasePath,
     image,
@@ -178,6 +181,7 @@ async function fixture() {
     preview,
     admit,
     begin,
+    observe,
     proof,
     create,
     upload,
@@ -439,22 +443,145 @@ test('registry startup and close without explicit preparation remain inert under
 });
 
 test.each([false, true])(
-  'dead preparation cleanup preserves uncertain handoff evidence: %s',
+  'proven dead logical lease can be reclaimed without erasing source/handoff evidence: %s',
   async (handoff) => {
     const f = await fixture();
     const stale = join(f.directory, `${f.service.restores.namespace}2147483647-Abc123`);
     await mkdir(stale, { mode: 0o700 });
     await writeFile(join(stale, 'upload.key'), randomBytes(32), { mode: 0o600 });
     if (handoff) await writeFile(join(stale, 'handoff-pending.json'), 'partial', { mode: 0o600 });
+    const id = randomUUID();
     f.db
       .prepare("UPDATE backup_state SET owner=?,job='restore',lease=? WHERE id=1")
-      .run(`restore:2147483647:${randomUUID()}`, Number.MAX_SAFE_INTEGER);
-    if (handoff) {
-      await expect(f.create()).rejects.toThrow('Another backup or recovery');
-      expect((await stat(join(stale, 'handoff-pending.json'))).isFile()).toBe(true);
-    } else {
-      expect((await f.create()).state).toBe('uploading');
-      await expect(stat(stale)).rejects.toHaveProperty('code', 'ENOENT');
-    }
+      .run(`restore:2147483647:${id}`, Number.MAX_SAFE_INTEGER);
+    expect((await f.create()).state).toBe('uploading');
+    expect(f.observe).toHaveBeenCalledWith({ id });
+    expect((await stat(join(stale, 'upload.key'))).isFile()).toBe(true);
+    if (handoff) expect((await stat(join(stale, 'handoff-pending.json'))).isFile()).toBe(true);
   },
 );
+
+async function retainedRecord(f: Awaited<ReturnType<typeof fixture>>) {
+  const created = await f.create(),
+    ready = await f.upload(created.id);
+  f.admit.mockRejectedValue(new Error('Uncertain private transport'));
+  await f.service.restores.confirm(
+    created.id,
+    f.actor.id,
+    f.session.token_hash,
+    ready.confirmation!,
+    f.proof(),
+  );
+  return f.acknowledge(f.admit.mock.calls[0][0]).record;
+}
+
+test('a fresh Operator session observes durable failure without renewing expired original proof', async () => {
+  const f = await fixture(),
+    record = await retainedRecord(f);
+  record.phase = 'failed';
+  f.observe.mockResolvedValue({ target: f.target, record, pending: false });
+  f.advance(120_000);
+  const session = f.auth.createSession(f.actor.id, undefined, 'passkey').session;
+  const result = await f.service.restores.summary(f.actor.id, session.token_hash);
+  expect(result.job).toBeNull();
+  expect(result.outcome).toEqual({
+    id: record.intent.id,
+    state: 'did-not-start',
+    updatedAt: record.updatedAt,
+    source: {
+      bytes: record.intent.source.archive.bytes,
+      sha256: record.intent.source.archive.sha256,
+    },
+  });
+  expect(Object.keys(result.outcome!).sort()).toEqual(['id', 'source', 'state', 'updatedAt']);
+  expect(JSON.stringify(result).includes(f.directory)).toBe(false);
+  expect(JSON.stringify(result).includes(record.intent.authority.sessionHash)).toBe(false);
+  expect(JSON.stringify(result).includes(record.intent.continuationHash)).toBe(false);
+  expect(f.auth.sessionByHash(session.token_hash)?.verified_at).toBeNull();
+});
+
+test('status preserves uncertainty and rechecks Operator authority after parent observation', async () => {
+  const f = await fixture(),
+    record = await retainedRecord(f);
+  f.observe.mockResolvedValue({ target: f.target, record, pending: true });
+  expect((await f.service.restores.summary(f.actor.id, f.session.token_hash)).outcome?.state).toBe(
+    'unresolved',
+  );
+  f.observe.mockImplementation(async () => {
+    f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(f.actor.id);
+    return { target: f.target, record, pending: true };
+  });
+  await expect(f.service.restores.summary(f.actor.id, f.session.token_hash)).rejects.toThrow(
+    'Operator access',
+  );
+});
+
+test.each([
+  'pending',
+  'unavailable',
+  'invalid',
+  'target-changed',
+  'live-owner',
+  'owner-changed',
+] as const)('unproven orphan lease is retained: %s', async (scenario) => {
+  const f = await fixture(),
+    id = randomUUID(),
+    owner = `restore:${scenario === 'live-owner' ? process.pid : 2147483647}:${id}`;
+  f.db
+    .prepare("UPDATE backup_state SET owner=?,job='restore',lease=? WHERE id=1")
+    .run(owner, Number.MAX_SAFE_INTEGER);
+  if (scenario === 'pending')
+    f.observe.mockResolvedValue({ target: f.target, record: null, pending: true });
+  if (scenario === 'unavailable')
+    f.observe.mockRejectedValue(new Error('Private unavailable diagnostic'));
+  if (scenario === 'invalid')
+    f.observe.mockResolvedValue({
+      target: f.target,
+      record: {} as RestoreJobRecord,
+      pending: false,
+    });
+  if (scenario === 'target-changed')
+    f.observe.mockResolvedValue({
+      target: { ...f.target, epoch: randomUUID() },
+      record: null,
+      pending: false,
+    });
+  const replacement = `restore:2147483647:${randomUUID()}`;
+  if (scenario === 'owner-changed')
+    f.observe.mockImplementation(async () => {
+      f.db.prepare('UPDATE backup_state SET owner=? WHERE id=1').run(replacement);
+      return { target: f.target, record: null, pending: false };
+    });
+  await f.service.restores.summary(f.actor.id, f.session.token_hash).catch(() => {});
+  expect(f.service.state().owner).toBe(scenario === 'owner-changed' ? replacement : owner);
+  expect(f.service.state().lease).toBe(Number.MAX_SAFE_INTEGER);
+});
+
+test('dead lease with no staging directory clears only from complete no-pending evidence', async () => {
+  const f = await fixture(),
+    id = randomUUID();
+  f.db
+    .prepare("UPDATE backup_state SET owner=?,job='restore',lease=? WHERE id=1")
+    .run(`restore:2147483647:${id}`, Number.MAX_SAFE_INTEGER);
+  await f.service.restores.summary(f.actor.id, f.session.token_hash);
+  expect(f.observe).toHaveBeenCalledWith({ id });
+  expect(f.service.state().owner).toBeNull();
+});
+
+test('failed preexecution lease uses the same generation and fresh observed epoch, not immutable historical epoch', async () => {
+  const f = await fixture(),
+    record = await retainedRecord(f);
+  record.phase = 'failed';
+  const owner = `restore:2147483647:${record.intent.id}`;
+  f.db.prepare('UPDATE backup_state SET owner=? WHERE id=1').run(owner);
+  f.observe.mockResolvedValue({ target: f.target, record, pending: false });
+  const oldGeneration = f.target.generationId;
+  f.target.generationId = randomUUID();
+  f.target.epoch = randomUUID();
+  await f.service.restores.summary(f.actor.id, f.session.token_hash);
+  expect(f.service.state().owner).toBe(owner);
+  f.target.generationId = oldGeneration;
+  expect(f.target.epoch).not.toBe(record.intent.target.epoch);
+  await f.service.restores.summary(f.actor.id, f.session.token_hash);
+  expect(f.service.state().owner).toBeNull();
+});

@@ -364,3 +364,55 @@ test('restore transport bounds pending work and rejects every unacknowledged req
   bridge!.close();
   await expect(closing).rejects.toThrow(RESTORE_RPC_ERROR);
 });
+
+test('observation distinguishes validated absence from an expired historical record without issuing mutations', async () => {
+  const controller = await ordinaryController();
+  const target = controller.target();
+  let pending = controller.observe({});
+  let frame = messages.at(-1)!;
+  const absent = { target, record: null, pending: false };
+  message('restore-result', { action: frame.kind, requestId: frame.requestId, result: absent });
+  await expect(pending).resolves.toEqual(absent);
+  const { result } = admission();
+  result.record.phase = 'failed';
+  vi.setSystemTime(result.record.intent.authority.expiresAt + 1);
+  pending = controller.observe({ id: result.record.intent.id });
+  frame = messages.at(-1)!;
+  const historical = { target, record: result.record, pending: false };
+  message('restore-result', { action: frame.kind, requestId: frame.requestId, result: historical });
+  await expect(pending).resolves.toEqual(historical);
+  expect(
+    messages.some((item) => ['restore-admit', 'restore-begin'].includes(String(item.kind))),
+  ).toBe(false);
+});
+
+test.each(['wrong-id', 'incomplete', 'stale-target', 'stopped'])(
+  'observation rejects %s instead of reporting no pending restore',
+  async (fault) => {
+    const controller = await ordinaryController();
+    const { result } = admission();
+    const target = controller.target();
+    const pending = controller.observe({ id: randomUUID() });
+    const frame = messages.at(-1)!;
+    if (fault === 'stale-target') state({ epoch: randomUUID() });
+    if (fault === 'stopped') state({ phase: 'paused' });
+    const observation = {
+      target,
+      record: fault === 'wrong-id' ? result.record : null,
+      ...(fault === 'incomplete' ? {} : { pending: false }),
+    };
+    message('restore-result', {
+      action: frame.kind,
+      requestId: frame.requestId,
+      result: observation,
+    });
+    await expect(pending).rejects.toThrow(RESTORE_RPC_ERROR);
+  },
+);
+
+test('observation timeout remains unknown and cannot hang a status request for the admission budget', async () => {
+  const controller = await ordinaryController();
+  const pending = controller.observe({}).catch((error: Error) => error.message);
+  await vi.advanceTimersByTimeAsync(10_000);
+  expect(await pending).toBe(RESTORE_RPC_ERROR);
+});

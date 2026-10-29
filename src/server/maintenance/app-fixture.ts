@@ -46,6 +46,37 @@ bridge.subscribe((status) => {
     setTimeout(() => bridge.drained(status.epoch), Number(process.env.SPINEL_TEST_DRAIN_MS ?? 5));
 });
 process.on('message', (value: unknown) => {
+  // Fixed disposable-fixture command; the observation itself uses the real
+  // child controller and both directions of the private supervisor protocol.
+  if (value && typeof value === 'object') {
+    const command = value as Record<string, unknown>;
+    const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+    if (
+      command.channel === 'spinel-maintenance-fixture' &&
+      command.kind === 'observe-restore' &&
+      typeof command.requestId === 'string' &&
+      uuid.test(command.requestId) &&
+      Object.keys(command).length === (Object.hasOwn(command, 'id') ? 4 : 3) &&
+      (!Object.hasOwn(command, 'id') || (typeof command.id === 'string' && uuid.test(command.id)))
+    ) {
+      const reply = (result?: unknown) => {
+        if (process.connected)
+          process.send!(
+            {
+              channel: 'spinel-maintenance-fixture',
+              kind: 'observe-restore-result',
+              requestId: command.requestId,
+              ...(result === undefined ? { ok: false } : { ok: true, result }),
+            },
+            () => {},
+          );
+      };
+      void bridge.restoreController
+        .observe(command.id === undefined ? {} : { id: command.id as string })
+        .then(reply, () => reply());
+      return;
+    }
+  }
   if (
     process.env.SPINEL_TEST_NEVER_DRAIN === '1' &&
     value &&

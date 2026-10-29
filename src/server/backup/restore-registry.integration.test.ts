@@ -83,6 +83,7 @@ test('complete-app catalog and manual upload converge on the real encrypted prep
     image: `spinel@sha256:${'a'.repeat(64)}`,
     restoreController: {
       target: () => target,
+      observe: async () => ({ target, record: null, pending: false }),
       admit: async () => {
         throw new Error('This acceptance test must not admit activation.');
       },

@@ -40,6 +40,8 @@ import {
 import type { OperationReceipt, ProcessIdentity, RecoveryJournalState } from './journal.ts';
 import { MAINTENANCE_CHANNEL } from './supervisor-client.ts';
 import { boundedRestoreRpc, RESTORE_RPC_ERROR, RESTORE_RPC_PENDING } from './restore-rpc.ts';
+import type { RestoreRpcAction } from './restore-rpc.ts';
+import type { RestoreObservation } from '../backup/restore-control.ts';
 import { shareWorkspaceOwnership } from './ownership.ts';
 import { processResourcesReleased, waitForProcessInventory } from './process-exit.ts';
 import { assertNoPendingRestore } from './restore-barrier.ts';
@@ -323,7 +325,8 @@ export class MaintenanceSupervisor {
   private restoreReleaseWaiter:
     (Waiter & { permit: RestoreTrialPermit; assertCurrent(): void }) | undefined;
   private restoreContinuation: { id: string; intentHash: string; token: string } | undefined;
-  private restoreRpcRequests = new Set<string>();
+  private restoreRpcRequests = new Map<string, RestoreRpcAction>();
+  private restoreAdmissions = 0;
   private restoreAdmissionAbort: AbortController | undefined;
   private queue: Promise<unknown> = Promise.resolve();
   private publicServer: HttpServer | undefined;
@@ -427,7 +430,10 @@ export class MaintenanceSupervisor {
       this.transition({ child: null, verifier: null });
     }
     try {
-      if (!reconciliationFailure) await this.reconcileCommittedRestore(previous);
+      if (!reconciliationFailure) {
+        await this.reconcileCommittedRestore(previous);
+        await this.reconcileUnexecutedRestore();
+      }
       this.journal.assertNoPendingRestoreJobs();
     } catch {
       this.failure('restore-job-pending');
@@ -460,6 +466,117 @@ export class MaintenanceSupervisor {
       }
     }, 1000);
     this.noticeTimer.unref();
+  }
+  /** A preexecution admission cannot own database mutation or an opening
+   * permit. On restart, fail only its exact closed target; never manufacture new
+   * authority or use this historical epoch tolerance for executing a restore. */
+  private async reconcileUnexecutedRestore() {
+    try {
+      const directory = lstatSync(this.journal.path('restore-jobs'));
+      if (!directory.isDirectory() || directory.isSymbolicLink())
+        throw new Error('Restore job inventory is unavailable.');
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT' && !this.journal.state.restoreJob)
+        return;
+      throw error;
+    }
+    const jobs = new RestoreJobs(this.journal, this.now);
+    try {
+      const readInventory = () =>
+        jobs.list().sort((a, b) => a.intent.id.localeCompare(b.intent.id));
+      let inventory = readInventory(); // Every record must be canonical before any cleanup.
+      const pending = inventory.filter(
+        (record) => record.phase !== 'failed' && !isCommittedRestoreJob(record),
+      );
+      if (
+        pending.length > 1 ||
+        pending.some(
+          (record) => record.execution || !['accepted', 'source-retained'].includes(record.phase),
+        )
+      )
+        throw new Error('Restore execution requires explicit recovery.');
+      const reference = structuredClone(this.journal.state.restoreJob);
+      let record = reference
+        ? inventory.find((value) => value.intent.id === reference.jobId)
+        : pending[0];
+      if (reference && (!record || record.intentHash !== reference.intentHash))
+        throw new Error('Restore admission reference is missing or conflicting.');
+      if (!record) return; // Valid historical terminal records are inert.
+      if (
+        record.execution ||
+        !['accepted', 'source-retained', 'failed'].includes(record.phase) ||
+        pending.some((value) => value.intent.id !== record!.intent.id)
+      )
+        throw new Error('Restore admission is not the sole unexecuted job.');
+      const id = record.intent.id,
+        hash = record.intentHash,
+        target = record.intent.target,
+        bootEpoch = this.journal.state.epoch;
+      const assertClosed = (expectedReference = reference) => {
+        const state = this.journal.state,
+          owned = this.journal.workspaceOwnership();
+        if (
+          this.closing ||
+          this.journal.wasUnverified ||
+          this.child ||
+          this.childOwned ||
+          this.childReady ||
+          state.child ||
+          state.verifier ||
+          state.restoreStop ||
+          state.operation ||
+          !['stopped', 'recovery-required'].includes(state.phase) ||
+          state.verifiedAt !== null ||
+          state.instanceId !== target.instanceId ||
+          state.generationId !== target.generationId ||
+          state.epoch !== bootEpoch ||
+          this.journal.databasePath !== target.databasePath ||
+          owned.databasePath !== target.databasePath ||
+          !sameFile(state.databaseIdentity, target.identity) ||
+          !sameFile(owned.databaseIdentity, target.identity) ||
+          JSON.stringify(state.restoreJob) !== JSON.stringify(expectedReference) ||
+          JSON.stringify(readInventory()) !== JSON.stringify(inventory)
+        )
+          throw new Error('Unexecuted restore admission lost its closed target.');
+        this.assertGeneration();
+        assertNoPendingRestore(this.journal.databasePath);
+        assertWorkspaceHandlesClosed(this.journal.databasePath);
+        this.journal.checkRoot();
+      };
+      assertClosed();
+      if (record.phase !== 'failed') {
+        // This old intent may be expired and its epoch was rotated at boot. The
+        // failed checkpoint grants no opening authority and preserves all intent.
+        record = jobs.checkpoint(id, hash, record.revision, 'failed');
+        inventory = inventory.map((value) => (value.intent.id === id ? record! : value));
+      }
+      assertClosed();
+      if (JSON.stringify(jobs.read(id)) !== JSON.stringify(record))
+        throw new Error('Failed restore admission publication changed.');
+      // Publish after the failed record. An uncertain publication is reread on
+      // next boot; source custody is never deleted or reinterpreted as authority.
+      this.transition({
+        phase: 'stopped',
+        restoreJob: null,
+        verifiedAt: null,
+        completedOperationId: id,
+        lastFailure: 'restore-admission-abandoned',
+      });
+      assertClosed(null);
+      if (
+        this.journal.state.restoreJob ||
+        this.journal.state.phase !== 'stopped' ||
+        this.journal.state.completedOperationId !== id ||
+        this.journal.state.verifiedAt !== null ||
+        JSON.stringify(readInventory()) !== JSON.stringify(inventory)
+      )
+        throw new Error('Restore admission cleanup publication changed.');
+      this.assertGeneration();
+      assertNoPendingRestore(this.journal.databasePath);
+      assertWorkspaceHandlesClosed(this.journal.databasePath);
+    } finally {
+      jobs.close();
+    }
   }
   /** Finish only the already durable winner. No source image is opened or
    * copied: this live file may contain writes acknowledged before the crash. */
@@ -1079,9 +1196,12 @@ export class MaintenanceSupervisor {
   admitPreparedRestore(input: RestoreAdmission) {
     const request = structuredClone(input);
     const child = this.child;
+    this.restoreAdmissions++;
     return this.serial(() => {
       if (child !== this.child) throw new Error('The originating application changed.');
       return this.admitPreparedRestoreOwned(request);
+    }).finally(() => {
+      this.restoreAdmissions--;
     });
   }
   /** Separate from source admission. Resolves after the durable pause plan,
@@ -2724,7 +2844,78 @@ export class MaintenanceSupervisor {
     this.transition({ phase: 'paused' });
     this.startWaiter?.resolve();
   }
+  private observeRestore(child: ChildProcess, id?: string): RestoreObservation {
+    const initial = this.journal.state;
+    const identity = initial.child ? { ...initial.child } : null;
+    const target = { generationId: initial.generationId, epoch: initial.epoch };
+    const assertSelected = () => {
+      const state = this.journal.state;
+      if (
+        this.closing ||
+        child !== this.child ||
+        !child.connected ||
+        !this.childOwned ||
+        !this.childReady ||
+        state.phase !== 'running' ||
+        this.restoreTrialWaiter ||
+        this.restoreReleaseWaiter ||
+        !identity ||
+        !state.child ||
+        child.pid !== identity.pid ||
+        state.child.pid !== identity.pid ||
+        state.child.start !== identity.start ||
+        state.child.boot !== identity.boot ||
+        state.child.token !== identity.token ||
+        state.generationId !== target.generationId ||
+        state.epoch !== target.epoch
+      )
+        throw new Error(RESTORE_RPC_ERROR);
+      this.journal.checkRoot();
+      this.assertGeneration();
+    };
+    assertSelected();
+    const jobs = new RestoreJobs(this.journal, this.now);
+    try {
+      // Complete validation is essential: a truncated/unreadable inventory must
+      // never be presented as missing evidence or permission to drop a lease.
+      const records = jobs.list();
+      const reference = this.journal.state.restoreJob;
+      if (
+        reference &&
+        !records.some(
+          (record) =>
+            record.intent.id === reference.jobId && record.intentHash === reference.intentHash,
+        )
+      )
+        throw new Error(RESTORE_RPC_ERROR);
+      const preferred = id ?? reference?.jobId ?? this.journal.state.completedOperationId;
+      let record = records.find((item) => item.intent.id === preferred) ?? null;
+      if (!id && !record)
+        record =
+          records.sort(
+            (a, b) =>
+              b.intent.confirmedAt - a.intent.confirmedAt ||
+              b.updatedAt - a.updatedAt ||
+              a.intent.id.localeCompare(b.intent.id),
+          )[0] ?? null;
+      const pending =
+        !!reference ||
+        !!this.journal.state.restoreStop ||
+        this.restoreAdmissions > 0 ||
+        !!this.restoreAdmissionAbort ||
+        !!this.restoreExecution ||
+        [...this.restoreRpcRequests.values()].some((action) => action !== 'restore-observe') ||
+        records.some((item) => item.phase !== 'failed' && !isCommittedRestoreJob(item));
+      assertSelected();
+      return { target, record, pending };
+    } finally {
+      jobs.close();
+    }
+  }
   private async restoreRpc(child: ChildProcess, value: Record<string, unknown>) {
+    const action = value.kind;
+    if (action !== 'restore-admit' && action !== 'restore-begin' && action !== 'restore-observe')
+      return;
     const requestId = value.requestId;
     if (typeof requestId !== 'string' || !uuidPattern.test(requestId)) return;
     if (this.restoreRpcRequests.has(requestId)) return;
@@ -2740,7 +2931,7 @@ export class MaintenanceSupervisor {
       reply();
       return;
     }
-    this.restoreRpcRequests.add(requestId);
+    this.restoreRpcRequests.set(requestId, action);
     try {
       const identity = this.journal.state.child;
       if (
@@ -2814,6 +3005,16 @@ export class MaintenanceSupervisor {
           continuationToken: request.continuationToken,
         });
         reply({ record: result.record });
+      } else if (value.kind === 'restore-observe') {
+        if (
+          !exact(request, Object.hasOwn(request, 'id') ? ['id'] : []) ||
+          (Object.hasOwn(request, 'id') &&
+            (typeof request.id !== 'string' || !uuidPattern.test(request.id)))
+        )
+          throw new Error(RESTORE_RPC_ERROR);
+        // Never join the queue: an admitted HTTP read may itself hold a drain
+        // permit. This synchronous observation includes queued mutation work.
+        reply(this.observeRestore(child, request.id as string | undefined));
       } else reply();
     } catch {
       // Fixed transport text cannot disclose a private path, archive key or proof.
@@ -2826,7 +3027,11 @@ export class MaintenanceSupervisor {
   private async childMessage(child: ChildProcess, value: unknown) {
     if (child !== this.child || !object(value) || value.channel !== MAINTENANCE_CHANNEL) return;
     try {
-      if (value.kind === 'restore-admit' || value.kind === 'restore-begin') {
+      if (
+        value.kind === 'restore-admit' ||
+        value.kind === 'restore-begin' ||
+        value.kind === 'restore-observe'
+      ) {
         await this.restoreRpc(child, value);
       } else if (
         value.kind === 'restore-trial-witness' ||

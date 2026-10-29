@@ -32,6 +32,7 @@ import {
   RecoveryJournal,
 } from './journal.ts';
 import type { RestoreAdmission } from './supervisor.ts';
+import type { RestoreObservation } from '../backup/restore-control.ts';
 import { assertWorkspaceHandlesClosed, MaintenanceSupervisor } from './supervisor.ts';
 import { processResourcesReleased } from './process-exit.ts';
 import { restoreBarrierPath } from './restore-barrier.ts';
@@ -1466,7 +1467,7 @@ test.each([
   'missing-record',
   'corrupt-record',
 ])(
-  'restart refuses ordinary recovery around unfinished restore admission: %s',
+  'restart cleans only complete unexecuted admissions and refuses uncertain records: %s',
   async (condition) => {
     const f = await fixture();
     const first = await f.supervisor();
@@ -1501,6 +1502,18 @@ test.each([
     if (condition === 'missing-record') await rm(jobPath);
     if (condition === 'corrupt-record') await writeFile(jobPath, '{');
     const restarted = await f.supervisor();
+    if (condition === 'referenced' || condition === 'orphan') {
+      expect(restarted.status().phase).toBe('stopped');
+      expect(restarted.journal.state.restoreJob).toBeNull();
+      expect(restarted.journal.state.completedOperationId).toBe(intent.id);
+      expect(restarted.journal.state.verifiedAt).toBeNull();
+      expect(JSON.parse(await readFile(jobPath, 'utf8'))).toMatchObject({
+        phase: 'failed',
+        intent,
+      });
+      await restarted.coldControl({ action: 'verify', operationId: randomUUID() });
+      return;
+    }
     expect(restarted.status().phase).toBe('recovery-required');
     const before = await readFile(journalPath);
     for (const action of ['verify', 'start', 'resume', 'pause'] as const)
@@ -3185,3 +3198,365 @@ test.each(['publication', 'deadline'])(
   },
   60_000,
 );
+
+async function unexecutedRestartFixture(
+  phase: 'accepted' | 'source-retained' | 'failed' = 'accepted',
+) {
+  const f = await fixture(),
+    first = await f.supervisor();
+  await start(first);
+  const state = first.journal.state,
+    originalChild = structuredClone(first.journal.state.child),
+    intent = {
+      ...restoreJobIntentFixture(),
+      target: {
+        instanceId: state.instanceId,
+        generationId: state.generationId,
+        epoch: state.epoch,
+        databasePath: first.journal.databasePath,
+        identity: { ...state.databaseIdentity! },
+      },
+    };
+  const jobs = new RestoreJobs(first.journal);
+  let record = jobs.admit(intent).record;
+  if (phase !== 'accepted')
+    record = jobs.checkpoint(intent.id, record.intentHash, record.revision, phase);
+  jobs.close();
+  first.journal.state.restoreJob = { jobId: intent.id, intentHash: record.intentHash };
+  first.journal.write();
+  const sourcePath = join(f.root, `restore-${intent.id}`);
+  await mkdir(sourcePath, { mode: 0o700 });
+  const retained = Buffer.from('Retained source custody must survive admission cleanup.');
+  await writeFile(join(sourcePath, 'source-custody'), retained, { mode: 0o600 });
+  await first.close();
+  const statePath = join(f.root, 'restore-jobs', intent.id, 'state.json'),
+    mainPath = join(f.root, 'journal.json');
+  return { ...f, record, intent, retained, sourcePath, statePath, mainPath, originalChild };
+}
+test.each(['accepted', 'source-retained', 'failed'] as const)(
+  'restart abandons only unexecuted %s admission without renewing expired proof or replaying source',
+  async (phase) => {
+    const f = await unexecutedRestartFixture(phase),
+      previous = JSON.parse(await readFile(f.mainPath, 'utf8'));
+    const before = await readFile(f.databasePath);
+    let durable: string | undefined,
+      epoch = previous.epoch;
+    for (let restart = 0; restart < 3; restart++) {
+      const supervisor = await MaintenanceSupervisor.open({
+        root: f.root,
+        databasePath: f.databasePath,
+        publicPort: 0,
+        now: () => f.intent.authority.expiresAt + 100_000 + restart,
+        budgets: { stopMs: 100, verifyMs: 5000 },
+      });
+      cleanups.push(() => supervisor.close());
+      expect(supervisor.status().epoch).not.toBe(epoch);
+      epoch = supervisor.status().epoch;
+      expect(supervisor.journal.state.restoreJob).toBeNull();
+      expect(supervisor.journal.state.completedOperationId).toBe(f.intent.id);
+      expect(supervisor.journal.state.child).toBeNull();
+      expect(supervisor.journal.state.verifiedAt).toBeNull();
+      expect(supervisor.journal.state.generationId).toBe(f.intent.target.generationId);
+      expect(['stopped', 'recovery-required']).toContain(supervisor.status().phase);
+      const bytes = await readFile(f.statePath, 'utf8'),
+        record = JSON.parse(bytes);
+      expect(record.phase).toBe('failed');
+      expect(record.intent).toEqual(f.intent);
+      expect(record.intentHash).toBe(f.record.intentHash);
+      expect(record.revision).toBe(f.record.revision + (phase === 'failed' ? 0 : 1));
+      if (durable) expect(bytes).toBe(durable);
+      durable = bytes;
+      expect(() => supervisor.journal.assertNoPendingRestoreJobs()).not.toThrow();
+      expect(await readFile(join(f.sourcePath, 'source-custody'))).toEqual(f.retained);
+      expect(await readFile(f.databasePath)).toEqual(before);
+      assertWorkspaceHandlesClosed(f.databasePath);
+      await supervisor.close();
+    }
+  },
+  20_000,
+);
+
+test.each(['failed-publication', 'main-publication'] as const)(
+  'restart retries uncertain preexecution cleanup after %s without renewing intent',
+  async (fault) => {
+    const f = await unexecutedRestartFixture('source-retained');
+    let injected = false;
+    if (fault === 'failed-publication') {
+      const checkpoint = RestoreJobs.prototype.checkpoint;
+      vi.spyOn(RestoreJobs.prototype, 'checkpoint').mockImplementation(function (
+        this: RestoreJobs,
+        ...args: Parameters<RestoreJobs['checkpoint']>
+      ) {
+        const record = checkpoint.apply(this, args);
+        if (!injected && args[3] === 'failed') {
+          injected = true;
+          throw new Error('Lost failed publication');
+        }
+        return record;
+      });
+    } else {
+      const write = RecoveryJournal.prototype.write;
+      vi.spyOn(RecoveryJournal.prototype, 'write').mockImplementation(function (
+        this: RecoveryJournal,
+      ) {
+        write.call(this);
+        if (
+          !injected &&
+          !this.state.restoreJob &&
+          this.state.completedOperationId === f.intent.id
+        ) {
+          injected = true;
+          throw new Error('Lost main cleanup publication');
+        }
+      });
+    }
+    const uncertain = await f.supervisor();
+    expect(injected).toBe(true);
+    expect(uncertain.status().phase).toBe('recovery-required');
+    expect(uncertain.journal.state.verifiedAt).toBeNull();
+    expect(uncertain.journal.state.child).toBeNull();
+    const failed = await readFile(f.statePath, 'utf8');
+    expect(JSON.parse(failed)).toMatchObject({ phase: 'failed', intent: f.intent });
+    await uncertain.close();
+    vi.restoreAllMocks();
+    const retry = await f.supervisor();
+    expect(retry.journal.state.restoreJob).toBeNull();
+    expect(retry.journal.state.completedOperationId).toBe(f.intent.id);
+    expect(retry.journal.state.child).toBeNull();
+    expect(retry.journal.state.verifiedAt).toBeNull();
+    expect(await readFile(f.statePath, 'utf8')).toBe(failed);
+    expect(await readFile(join(f.sourcePath, 'source-custody'))).toEqual(f.retained);
+    expect(() => retry.journal.assertNoPendingRestoreJobs()).not.toThrow();
+  },
+  20_000,
+);
+
+test.each([
+  'conflicting-reference',
+  'missing-reference-target',
+  'multiple',
+  'postexecution',
+  'barrier',
+  'active-operation',
+  'wrong-generation',
+  'wrong-instance',
+  'wrong-inode',
+  'unknown-inventory',
+] as const)(
+  'restart preserves closed uncertain admission with %s',
+  async (condition) => {
+    const f = await unexecutedRestartFixture(),
+      main = JSON.parse(await readFile(f.mainPath, 'utf8'));
+    const record = structuredClone(f.record);
+    if (condition === 'conflicting-reference') main.restoreJob.intentHash = 'f'.repeat(64);
+    if (condition === 'missing-reference-target') main.restoreJob.jobId = randomUUID();
+    if (condition === 'active-operation')
+      main.operation = {
+        id: randomUUID(),
+        generationId: main.generationId,
+        actorId: f.intent.authority.actorId,
+        sessionHash: f.intent.authority.sessionHash,
+        expiresAt: f.intent.authority.expiresAt,
+        tokenHash: f.intent.continuationHash,
+      };
+    if (condition === 'wrong-generation') record.intent.target.generationId = randomUUID();
+    if (condition === 'wrong-instance') record.intent.target.instanceId = randomUUID();
+    if (condition === 'wrong-inode')
+      record.intent.target.identity.inode = String(
+        BigInt(record.intent.target.identity.inode) + 1n,
+      );
+    if (condition.startsWith('wrong-')) {
+      record.intentHash = restoreIntentHash(record.intent);
+      main.restoreJob.intentHash = record.intentHash;
+    }
+    if (condition === 'postexecution') {
+      Object.assign(record, {
+        phase: 'pause-planned',
+        execution: { epoch: randomUUID(), child: f.originalChild, stop: null, requestedAt: null },
+      });
+      // The recorded identity remains valid historical evidence after physical exit.
+      expect(f.originalChild).not.toBeNull();
+    }
+    if (condition === 'multiple') {
+      const other = structuredClone(record),
+        id = randomUUID();
+      other.intent.id = other.intent.source.id = id;
+      other.intentHash = restoreIntentHash(other.intent);
+      const directory = join(f.root, 'restore-jobs', id);
+      await mkdir(directory, { mode: 0o700 });
+      await writeFile(join(directory, 'state.json'), JSON.stringify(other), { mode: 0o600 });
+    }
+    if (condition === 'unknown-inventory')
+      await writeFile(join(f.root, 'restore-jobs', 'unknown'), '?', { mode: 0o600 });
+    if (condition === 'barrier')
+      await writeFile(
+        restoreBarrierPath(f.databasePath),
+        JSON.stringify({
+          version: 1,
+          operationId: f.intent.id,
+          identity: f.intent.target.identity,
+        }) + '\n',
+        { mode: 0o600 },
+      );
+    await writeFile(f.statePath, JSON.stringify(record), { mode: 0o600 });
+    await writeFile(f.mainPath, JSON.stringify(main), { mode: 0o600 });
+    const before = await readFile(f.statePath),
+      bytes = await readFile(f.databasePath);
+    const supervisor = await f.supervisor();
+    expect(supervisor.status().phase).toBe('recovery-required');
+    expect(supervisor.journal.state.restoreJob).toEqual(main.restoreJob);
+    expect(supervisor.journal.state.verifiedAt).toBeNull();
+    expect(await readFile(f.statePath)).toEqual(before);
+    expect(await readFile(f.databasePath)).toEqual(bytes);
+    expect(await readFile(join(f.sourcePath, 'source-custody'))).toEqual(f.retained);
+    await expect(
+      supervisor.coldControl({ action: 'verify', operationId: randomUUID() }),
+    ).rejects.toThrow();
+  },
+  20_000,
+);
+
+function observeFromFixture(
+  child: ChildProcess,
+  id?: string,
+): Promise<{
+  ok: boolean;
+  result?: RestoreObservation;
+}> {
+  const requestId = randomUUID();
+  return new Promise((resolve, reject) => {
+    const done = (error?: Error, result?: { ok: boolean; result?: RestoreObservation }) => {
+      clearTimeout(timer);
+      child.off('message', receive);
+      child.off('exit', exited);
+      if (error) reject(error);
+      else resolve(result!);
+    };
+    const receive = (message: unknown) => {
+      if (!message || typeof message !== 'object') return;
+      const value = message as Record<string, unknown>;
+      if (
+        value.channel !== 'spinel-maintenance-fixture' ||
+        value.kind !== 'observe-restore-result' ||
+        value.requestId !== requestId
+      )
+        return;
+      done(undefined, {
+        ok: value.ok === true,
+        result: value.result as RestoreObservation | undefined,
+      });
+    };
+    const exited = () => done(new Error('Observation fixture exited before its response.'));
+    const timer = setTimeout(
+      () => done(new Error('Observation joined blocked work or did not answer.')),
+      3000,
+    );
+    child.on('message', receive);
+    child.once('exit', exited);
+    child.send(
+      {
+        channel: 'spinel-maintenance-fixture',
+        kind: 'observe-restore',
+        requestId,
+        ...(id === undefined ? {} : { id }),
+      },
+      (error) => {
+        if (error) done(error);
+      },
+    );
+  });
+}
+test('real child observation sees queued prepublication admission without joining its blocked queue', async () => {
+  const f = await admissionFixture();
+  const empty = await observeFromFixture(f.child, f.request.id);
+  expect(empty).toMatchObject({
+    ok: true,
+    result: {
+      record: null,
+      pending: false,
+      target: { generationId: f.request.generationId, epoch: f.request.epoch },
+    },
+  });
+  const owner = f.supervisor as unknown as { queue: Promise<unknown> };
+  let release!: () => void;
+  const held = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  owner.queue = owner.queue.then(() => held);
+  let settled = false;
+  const admission = f.supervisor.admitPreparedRestore(f.request).finally(() => {
+    settled = true;
+  });
+  void admission.catch(() => {});
+  try {
+    const queued = await observeFromFixture(f.child, f.request.id);
+    expect(queued).toMatchObject({ ok: true, result: { record: null, pending: true } });
+    expect(settled).toBe(false);
+    expect(f.supervisor.journal.state.restoreJob).toBeNull();
+    await expect(
+      lstat(join(f.root, 'restore-jobs', f.request.id, 'state.json')),
+    ).rejects.toMatchObject({ code: 'ENOENT' });
+    // Looking up another ID cannot disguise globally pending mutation work.
+    expect(await observeFromFixture(f.child, randomUUID())).toMatchObject({
+      ok: true,
+      result: { record: null, pending: true },
+    });
+  } finally {
+    release();
+  }
+  const admitted = await admission;
+  expect(await observeFromFixture(f.child, f.request.id)).toMatchObject({
+    ok: true,
+    result: { record: admitted.record, pending: true },
+  });
+  await f.supervisor.close();
+  let child!: ChildProcess;
+  const restarted = await MaintenanceSupervisor.open({
+    root: f.root,
+    databasePath: f.databasePath,
+    publicPort: 0,
+    createChild: (token) => {
+      child = f.createChild(token);
+      return child;
+    },
+    budgets: { startMs: 5000, stopMs: 100, verifyMs: 5000 },
+  });
+  cleanups.push(() => restarted.close());
+  expect(restarted.journal.state.restoreJob).toBeNull();
+  expect(restarted.journal.state.verifiedAt).toBeNull();
+  await start(restarted); // Explicit normal recovery, never a metadata bypass.
+  const observed = await observeFromFixture(child, f.request.id);
+  expect(observed).toMatchObject({
+    ok: true,
+    result: {
+      pending: false,
+      record: {
+        phase: 'failed',
+        intent: admitted.record.intent,
+        intentHash: admitted.record.intentHash,
+      },
+    },
+  });
+  expect(observed.result!.target.generationId).toBe(f.request.generationId);
+  expect(observed.result!.target.epoch).not.toBe(f.request.epoch);
+  const source = await readFile(
+    join(f.root, `restore-${f.request.id}-source`, 'source.spinel.enc'),
+  );
+  expect(createHash('sha256').update(source).digest('hex')).toBe(f.request.source.archive.sha256);
+}, 20_000);
+
+test('real child observation refuses corrupt complete inventory instead of reporting missing evidence', async () => {
+  const f = await admissionFixture();
+  expect(await observeFromFixture(f.child)).toMatchObject({
+    ok: true,
+    result: { record: null, pending: false },
+  });
+  const id = randomUUID(),
+    directory = join(f.root, 'restore-jobs', id);
+  await mkdir(directory, { mode: 0o700 });
+  await writeFile(join(directory, 'state.json'), '{', { mode: 0o600 });
+  const response = await observeFromFixture(f.child, randomUUID());
+  expect(response).toEqual({ ok: false, result: undefined });
+  expect(f.supervisor.status().phase).toBe('running');
+  expect(await readFile(join(directory, 'state.json'), 'utf8')).toBe('{');
+}, 15_000);

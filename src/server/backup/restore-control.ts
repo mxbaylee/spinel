@@ -7,9 +7,18 @@ export type ConfirmedRestoreAdmission = RestoreAdmission & {
   consequenceEnvelope: 1;
 };
 
+/** Private parent evidence. Never serialize this record into an HTTP response. */
+export interface RestoreObservation {
+  target: { generationId: string; epoch: string };
+  record: RestoreJobRecord | null;
+  /** Complete bounded inventory, including queued/inflight admission and main refs. */
+  pending: boolean;
+}
+
 /** Trusted application-to-supervisor boundary, never HTTP request descriptors. */
 export interface RestoreController {
   target(): { generationId: string; epoch: string };
+  observe(request: { id?: string }): Promise<RestoreObservation>;
   admit(request: ConfirmedRestoreAdmission): Promise<{
     record: RestoreJobRecord;
     custody: boolean;

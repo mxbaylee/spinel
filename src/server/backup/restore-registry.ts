@@ -1,14 +1,24 @@
 import { createHash, randomUUID } from 'node:crypto';
-import { chmod, lstat, mkdtemp, open, readdir, rename, rm, stat, statfs } from 'node:fs/promises';
+import { chmod, mkdtemp, open, rename, rm, stat, statfs } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { backup } from '../../../server/database.ts';
 import type { DatabaseSync } from '../../../server/database.ts';
-import type { RestorePreparation, RestorePreview } from '../../shared/restore.ts';
+import type {
+  RestoreOutcome,
+  RestorePreparation,
+  RestorePreview,
+  RestoreStatus,
+} from '../../shared/restore.ts';
 import { validRestorePreview } from '../../shared/restore.ts';
+import { validRestoreJobRecord } from '../maintenance/restore-jobs.ts';
 import { assertRestoreAuthority } from '../maintenance/restore-authority.ts';
 import { restoreIntentHash } from '../maintenance/restore-job-intent.ts';
 import type { RestoreAuthority } from '../maintenance/restore-authority.ts';
-import type { RestoreController, ConfirmedRestoreAdmission } from './restore-control.ts';
+import type {
+  RestoreController,
+  ConfirmedRestoreAdmission,
+  RestoreObservation,
+} from './restore-control.ts';
 import { hasDestination } from './config.ts';
 import type { BackupConfig } from './config.ts';
 import { createDestination } from './destination.ts';
@@ -121,54 +131,90 @@ export class RestoreRegistry {
     }, 30_000);
     this.timer.unref();
   }
-  private async cleanupOrphans() {
+  private assertOperator(actor: string, sessionHash: string) {
+    const current = this.db
+      .prepare(
+        `SELECT 1 AS allowed FROM auth_sessions AS s
+      JOIN auth_users AS u ON u.id=s.user_id
+      WHERE s.token_hash=? AND s.user_id=? AND s.expires_at>? AND u.is_admin=1 AND u.disabled=0`,
+      )
+      .get(sessionHash, actor, this.now());
+    if (!current)
+      throw new RestoreRegistryError(404, 'Operator access is unavailable. Sign in again.');
+  }
+  private async observe(id?: string): Promise<RestoreObservation> {
+    const control = this.control();
+    let observed: RestoreObservation;
+    try {
+      observed = await control.observe(id ? { id } : {});
+    } catch {
+      throw new RestoreRegistryError(503, 'Restore status could not be verified.');
+    }
+    const current = control.target();
+    if (
+      !observed ||
+      typeof observed.pending !== 'boolean' ||
+      !uuid(observed.target?.generationId) ||
+      !uuid(observed.target?.epoch) ||
+      observed.target.generationId !== current.generationId ||
+      observed.target.epoch !== current.epoch ||
+      (observed.record !== null &&
+        (!validRestoreJobRecord(observed.record, observed.record?.intent?.id) ||
+          (id !== undefined && observed.record.intent.id !== id) ||
+          (!observed.pending &&
+            !['failed', 'candidate-committed', 'original-committed'].includes(
+              observed.record.phase,
+            ))))
+    )
+      throw new RestoreRegistryError(503, 'Restore status could not be verified.');
+    return observed;
+  }
+  private async cleanupOrphans(authorize: () => void = () => {}) {
+    // Logical lease recovery never removes source/handoff evidence. A directory
+    // may be missing after ACK cleanup or incomplete after a crash; neither is
+    // evidence that the supervisor accepted (or rejected) the restore.
     if (this.cleanupTask) return this.cleanupTask;
     this.cleanupTask = (async () => {
-      const root = dirname(resolve(this.options.databasePath));
-      const state = this.db.prepare('SELECT owner,job FROM backup_state WHERE id=1').get();
-      const pendingOwner = state?.job === 'restore' ? String(state.owner) : '';
-      const ownerPid = /^restore:([1-9][0-9]*):[a-f0-9-]{36}$/.exec(pendingOwner)?.[1];
-      let protectedHandoff = false;
-      let reclaimedOwner = false;
-      const dead = (pid: number) => {
+      const state = this.db.prepare('SELECT owner,job,lease FROM backup_state WHERE id=1').get();
+      if (state?.job !== 'restore' || typeof state.owner !== 'string') return;
+      const owner = /^restore:([1-9][0-9]*):([a-f0-9-]{36})$/.exec(state.owner);
+      if (!owner || !uuid(owner[2]) || !Number.isSafeInteger(Number(owner[1]))) return;
+      const dead = () => {
         try {
-          process.kill(pid, 0);
+          process.kill(Number(owner[1]), 0);
           return false;
         } catch (error) {
           return (error as NodeJS.ErrnoException).code === 'ESRCH';
         }
       };
-      for (const name of await readdir(root)) {
-        if (!name.startsWith(this.namespace)) continue;
-        const match = /^([1-9][0-9]*)-[A-Za-z0-9]{6}$/.exec(name.slice(this.namespace.length));
-        if (!match) {
-          protectedHandoff = true;
-          continue;
-        }
-        if (!dead(Number(match[1]))) continue;
-        const path = join(root, name),
-          info = await lstat(path);
-        if (
-          !info.isDirectory() ||
-          info.isSymbolicLink() ||
-          info.uid !== process.getuid?.() ||
-          (info.mode & 0o077) !== 0
-        ) {
-          protectedHandoff = true;
-          continue;
-        }
-        const entries = await readdir(path);
-        if (entries.some((entry) => entry === 'handoff.json' || entry === 'handoff-pending.json')) {
-          protectedHandoff = true;
-          continue;
-        }
-        await rm(path, { recursive: true, force: true });
-        if (match[1] === ownerPid) reclaimedOwner = true;
-      }
-      if (ownerPid && dead(Number(ownerPid)) && reclaimedOwner && !protectedHandoff)
-        this.db
-          .prepare('UPDATE backup_state SET lease=0,owner=NULL,job=NULL WHERE id=1 AND owner=?')
-          .run(pendingOwner);
+      if (!dead()) return;
+      let observed: RestoreObservation;
+      try {
+        observed = await this.observe(owner[2]);
+      } catch {
+        return;
+      } // unavailable/invalid evidence retains the hold
+      authorize();
+      const current = this.control().target(),
+        record = observed.record;
+      if (
+        observed.pending ||
+        !dead() ||
+        current.generationId !== observed.target.generationId ||
+        current.epoch !== observed.target.epoch ||
+        (record !== null &&
+          !(
+            record.phase === 'failed' &&
+            !record.execution &&
+            record.intent.target.generationId === current.generationId
+          ))
+      )
+        return;
+      this.db
+        .prepare(
+          "UPDATE backup_state SET lease=0,owner=NULL,job=NULL WHERE id=1 AND owner=? AND job='restore' AND lease=?",
+        )
+        .run(state.owner, state.lease);
     })();
     try {
       await this.cleanupTask;
@@ -199,6 +245,7 @@ export class RestoreRegistry {
       typeof control.target === 'function' &&
       typeof control.admit === 'function' &&
       typeof control.begin === 'function' &&
+      typeof control.observe === 'function' &&
       this.options.image &&
       /^(sha256:[a-f0-9]{64}|\S+@sha256:[a-f0-9]{64})$/.test(this.options.image)
     );
@@ -245,6 +292,36 @@ export class RestoreRegistry {
     // private allocation can delay returning an upload-ready preparation.
     await job.initialization?.catch(() => {});
     return structuredClone(job.public);
+  }
+  async summary(actor: string, session: string): Promise<RestoreStatus> {
+    this.assertOperator(actor, session);
+    const job = await this.current(actor, session);
+    this.assertOperator(actor, session);
+    if (!this.available()) return { available: false, job, outcome: null, pending: null };
+    await this.cleanupOrphans(() => this.assertOperator(actor, session));
+    const observed = await this.observe(this.job?.admission && job ? job.id : undefined);
+    this.assertOperator(actor, session);
+    const record = observed.record;
+    let outcome: RestoreOutcome | null = null;
+    if (record) {
+      outcome = {
+        id: record.intent.id,
+        state:
+          record.phase === 'candidate-committed'
+            ? 'backup-restored'
+            : record.phase === 'original-committed'
+              ? 'original-recovered'
+              : record.phase === 'failed' && !record.execution
+                ? 'did-not-start'
+                : 'unresolved',
+        updatedAt: record.updatedAt,
+        source: {
+          bytes: record.intent.source.archive.bytes,
+          sha256: record.intent.source.archive.sha256,
+        },
+      };
+    }
+    return { available: true, job, outcome, pending: observed.pending };
   }
   private async points(config: BackupConfig, remote: RemoteStore, signal: AbortSignal) {
     const keys = await remote.list(signal);
@@ -306,8 +383,14 @@ export class RestoreRegistry {
       const existing = findExisting();
       if (existing) return await existingResult(existing);
       await this.expire();
-      await this.cleanupOrphans();
+      await this.cleanupOrphans(() => assertRestoreAuthority(this.db, proof, this.now));
+      const observation = await this.observe();
       assertRestoreAuthority(this.db, proof, this.now);
+      if (observation.pending)
+        throw new RestoreRegistryError(
+          409,
+          'Another supervised restore needs recovery before preparation.',
+        );
       const admittedWhileWaiting = findExisting();
       if (admittedWhileWaiting) return await existingResult(admittedWhileWaiting);
       if (this.creating || (this.job && !terminal.has(this.job.public.state)))
@@ -316,7 +399,7 @@ export class RestoreRegistry {
       ownsCreation = true;
       const now = this.now(),
         id = randomUUID(),
-        owner = `restore:${process.pid}:${randomUUID()}`;
+        owner = `restore:${process.pid}:${id}`;
       const target = control.target();
       if (!uuid(target.generationId) || !uuid(target.epoch))
         throw new RestoreRegistryError(503, 'Supervised restore is unavailable.');

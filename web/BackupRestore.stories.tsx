@@ -3,7 +3,7 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { failure, pending } from '../.storybook/api.ts';
 import type { ApiMock } from '../.storybook/api.ts';
 import { RESTORE_CONSEQUENCES } from '../src/shared/restore.ts';
-import type { RestorePreparation } from '../src/shared/restore.ts';
+import type { RestoreOutcome, RestorePreparation } from '../src/shared/restore.ts';
 import { BackupRestore } from './BackupRestore.tsx';
 import { refreshMaintenanceStatus } from './maintenanceState.ts';
 
@@ -37,7 +37,12 @@ const job: RestorePreparation = {
   error: null,
 };
 const read = (state: RestorePreparation['state'] | null) => ({
-  'GET /api/admin/restores': { available: true, job: state ? { ...job, state } : null },
+  'GET /api/admin/restores': {
+    available: true,
+    job: state ? { ...job, state } : null,
+    outcome: null,
+    pending: false,
+  },
 });
 const verified = {
   'POST /api/auth/reauthentication/options': {
@@ -81,7 +86,11 @@ export const Available: Story = {
   },
 };
 export const Unavailable: Story = {
-  parameters: { api: { 'GET /api/admin/restores': { available: false, job: null } } },
+  parameters: {
+    api: {
+      'GET /api/admin/restores': { available: false, job: null, outcome: null, pending: null },
+    },
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(await canvas.findByText(/Supervised restore is unavailable/)).toBeVisible();
@@ -156,6 +165,8 @@ export const Failed: Story = {
     api: {
       'GET /api/admin/restores': {
         available: true,
+        outcome: null,
+        pending: false,
         job: { ...job, state: 'failed', error: '/private/backup.sqlite' },
       },
     },
@@ -171,6 +182,8 @@ export const AdmissionNeedsAttention: Story = {
     api: {
       'GET /api/admin/restores': {
         available: true,
+        outcome: null,
+        pending: false,
         job: { ...job, state: 'admitting', error: 'untrusted diagnostic' },
       },
     },
@@ -379,5 +392,61 @@ export const ExpiredOriginalConfirmation: Story = {
     await expect(canvas.queryByText(/check status or retry the same confirmation/)).toBeNull();
     await expect(canvas.getByRole('button', { name: 'Refresh restore status' })).toBeEnabled();
     await expect(canvas.getByRole('link', { name: 'Open recovery guide' })).toBeVisible();
+  },
+};
+
+function recorded(state: RestoreOutcome['state'], pending = false): Story {
+  const outcome: RestoreOutcome = {
+    id: job.id,
+    state,
+    updatedAt: now,
+    source: { bytes: job.bytes!, sha256: job.sourceSha256! },
+  };
+  return {
+    parameters: {
+      api: { 'GET /api/admin/restores': { available: true, job: null, outcome, pending } },
+    },
+    play: async ({ canvasElement }) => {
+      const canvas = within(canvasElement);
+      await expect(
+        await canvas.findByRole('heading', { name: 'Recorded restore outcome' }),
+      ).toBeVisible();
+      await expect(canvas.getByText(job.sourceSha256!)).toBeVisible();
+      const prepare = canvas.getByRole('button', { name: 'Prepare restore' });
+      if (state === 'unresolved' || pending) await expect(prepare).toBeDisabled();
+      else await expect(prepare).toBeEnabled();
+      if (state === 'original-recovered') {
+        await expect(
+          canvas.getByText(/The backup restore did not succeed. Original content was recovered/),
+        ).toBeVisible();
+        await expect(canvas.queryByText(/^Backup restored\./)).toBeNull();
+      }
+    },
+  };
+}
+export const BackupRestored = recorded('backup-restored');
+export const OriginalRecovered = recorded('original-recovered');
+export const DidNotStart = recorded('did-not-start');
+export const UnresolvedOutcome = recorded('unresolved', true);
+export const PendingWithoutRecord: Story = {
+  parameters: {
+    api: {
+      'GET /api/admin/restores': { available: true, job: null, outcome: null, pending: true },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByText(/A restore still needs attention/)).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Prepare restore' })).toBeDisabled();
+  },
+};
+export const IncompleteObservation: Story = {
+  parameters: { api: { 'GET /api/admin/restores': { available: true, job: null } } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByRole('alert')).toHaveTextContent(
+      /Restore status is unavailable/,
+    );
+    await expect(canvas.getByRole('button', { name: 'Prepare restore' })).toBeDisabled();
   },
 };

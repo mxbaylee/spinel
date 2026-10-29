@@ -2,8 +2,12 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { startAuthentication, WebAuthnAbortService } from '@simplewebauthn/browser';
 import type { PublicKeyCredentialRequestOptionsJSON } from '@simplewebauthn/browser';
 import { Button, Choice, Modal } from '../src/ui/redesign/Controls.tsx';
-import { RESTORE_CONSEQUENCES, validRestorePreview } from '../src/shared/restore.ts';
-import type { RestorePreparation } from '../src/shared/restore.ts';
+import {
+  RESTORE_CONSEQUENCES,
+  validRestoreOutcome,
+  validRestorePreview,
+} from '../src/shared/restore.ts';
+import type { RestoreOutcome, RestorePreparation, RestoreStatus } from '../src/shared/restore.ts';
 import { capturedMaintenanceEpoch, maintenanceFetch as fetch } from './maintenanceFetch.ts';
 import {
   getMaintenanceStatus,
@@ -14,7 +18,7 @@ import { api } from './api.ts';
 import './administration.css';
 import './backup-restore.css';
 
-type Status = { available: boolean; job: RestorePreparation | null };
+type Status = RestoreStatus;
 type Entry = { id: string; createdAt: number };
 type Phase = 'idle' | 'verifying' | 'creating' | 'uploading' | 'confirming' | 'cancelling';
 const MAX_ARCHIVE_BYTES = 5 * 1024 ** 3;
@@ -85,6 +89,8 @@ export function BackupRestore({
   const [known, setKnown] = useState(false);
   const [loading, setLoading] = useState(true);
   const [job, setJob] = useState<RestorePreparation | null>(null);
+  const [outcome, setOutcome] = useState<RestoreOutcome | null>(null);
+  const [pendingRestore, setPendingRestore] = useState<boolean | null>(null);
   const [phase, setPhase] = useState<Phase>('idle');
   const [dialog, setDialog] = useState<'prepare' | 'confirm' | null>(null);
   const [source, setSource] = useState('upload');
@@ -155,10 +161,25 @@ export function BackupRestore({
     try {
       const status = await request<Status>('', AbortSignal.timeout(15_000));
       if (!mounted.current || read !== reads.current) return;
+      if (
+        typeof status.available !== 'boolean' ||
+        (status.available ? typeof status.pending !== 'boolean' : status.pending !== null) ||
+        (status.outcome !== null && !validRestoreOutcome(status.outcome))
+      )
+        throw new Error('Incomplete restore status.');
       setAvailable(status.available);
       setKnown(true);
-      setJob(status.job ?? null);
-      if (!status.job && confirmed.current) setOutcomeUnknown(true);
+      setOutcome(status.outcome);
+      setPendingRestore(status.pending);
+      const terminal = status.outcome && status.outcome.state !== 'unresolved';
+      const resolvesLocal = terminal && status.outcome?.id === confirmed.current?.id;
+      setJob(terminal && status.outcome?.id === status.job?.id ? null : status.job);
+      if (resolvesLocal) {
+        confirmed.current = null;
+        setOutcomeUnknown(false);
+        setOriginalExpired(false);
+        setDialog(null);
+      } else if (!status.job && confirmed.current) setOutcomeUnknown(true);
       if (showLoading) setError('');
     } catch (failure) {
       if (mounted.current && read === reads.current) {
@@ -172,6 +193,8 @@ export function BackupRestore({
         if ([401, 403, 404].includes(Number((failure as { status?: number })?.status))) {
           if (confirmed.current || admitted(job)) setOutcomeUnknown(true);
           setJob(null);
+          setOutcome(null);
+          setPendingRestore(null);
           clearFiles();
           setDialog(null);
           setAcknowledged(false);
@@ -225,10 +248,10 @@ export function BackupRestore({
     onBusyChange?.(phase !== 'idle' || dialog !== null);
   }, [phase, dialog, onBusyChange]);
   useEffect(() => {
-    if (!active(job) || paused || phase !== 'idle') return;
+    if ((!active(job) && pendingRestore !== true) || paused || phase !== 'idle') return;
     const timer = setInterval(() => void refresh(false), 2000);
     return () => clearInterval(timer);
-  }, [job?.id, job?.state, paused, phase]);
+  }, [job?.id, job?.state, pendingRestore, paused, phase]);
   useEffect(() => {
     const resumed = wasPaused.current && !paused;
     wasPaused.current = paused;
@@ -313,7 +336,7 @@ export function BackupRestore({
     if (mounted.current) setPhase('idle');
   }
   async function prepare() {
-    if (busy.current || maintenanceMessage() || !available) return;
+    if (busy.current || maintenanceMessage() || !available || pendingRestore !== false) return;
     const resumeUpload = job?.state === 'uploading';
     if (
       (source === 'upload' || resumeUpload) &&
@@ -489,6 +512,7 @@ export function BackupRestore({
     job.state !== 'started' &&
     ((admitted(job) && !!job.error) || (outcomeUnknown && !!confirmed.current));
   const disabled = loading || !known || !available || phase !== 'idle' || !!notice;
+  const blocksNew = pendingRestore !== false || outcome?.state === 'unresolved';
   const evidence = job && job.bytes !== null && job.sourceSha256 && (
     <dl className="restore-source-facts">
       <dt>Backup created</dt>
@@ -559,7 +583,7 @@ export function BackupRestore({
           </p>
         )}
         {notice && <p role="status">{notice}</p>}
-        {outcomeUnknown && !originalExpired && (
+        {outcomeUnknown && !originalExpired && outcome?.state !== 'unresolved' && (
           <p role="status">
             The restore outcome has not been confirmed. If your session ends, sign in again and
             check recovery status. Server availability alone is not a restore result.
@@ -574,18 +598,55 @@ export function BackupRestore({
         )}
         {error && !dialog && <p role="alert">{error}</p>}
       </div>
+      {outcome && (
+        <div className="restore-preview" aria-label="Recorded restore outcome">
+          <h4>Recorded restore outcome</h4>
+          <p role={outcome.state === 'unresolved' ? 'alert' : 'status'}>
+            {outcome.state === 'backup-restored'
+              ? 'Backup restored. This records the completed restore; later edits may have changed the workspace.'
+              : outcome.state === 'original-recovered'
+                ? 'The backup restore did not succeed. Original content was recovered. Access and sessions may have changed.'
+                : outcome.state === 'did-not-start'
+                  ? 'Restore did not begin. This attempt did not replace the workspace.'
+                  : 'The restore outcome is unconfirmed. Refresh status or follow the recovery guide before starting another restore.'}
+          </p>
+          <dl className="restore-source-facts">
+            <dt>Restore ID</dt>
+            <dd>
+              <code>{outcome.id}</code>
+            </dd>
+            <dt>Recorded</dt>
+            <dd>{time(outcome.updatedAt)}</dd>
+            <dt>Selected encrypted backup</dt>
+            <dd>{size(outcome.source.bytes)}</dd>
+            <dt>Backup fingerprint</dt>
+            <dd>
+              <code>{outcome.source.sha256}</code>
+            </dd>
+          </dl>
+        </div>
+      )}
+      {pendingRestore && !outcome && !admitted(job) && (
+        <p role="status">
+          A restore still needs attention. Refresh status before preparing another restore.
+        </p>
+      )}
       {job?.state === 'ready' && evidence}
       {job?.state === 'ready' && preview}
       {!originalExpired && (
         <div className="restore-actions">
           {canReview || mayRetry ? (
-            <Button primary disabled={disabled || originalExpired} onClick={() => open('confirm')}>
+            <Button
+              primary
+              disabled={disabled || originalExpired || (!mayRetry && blocksNew)}
+              onClick={() => open('confirm')}
+            >
               {mayRetry ? 'Retry confirmed restore' : 'Review restore'}
             </Button>
           ) : job?.state === 'uploading' && phase === 'idle' ? (
             <Button
               primary
-              disabled={disabled}
+              disabled={disabled || blocksNew}
               onClick={() => {
                 setSource('upload');
                 open('prepare');
@@ -597,7 +658,7 @@ export function BackupRestore({
             <Button
               primary
               ref={prepareButton}
-              disabled={disabled || occupied || outcomeUnknown}
+              disabled={disabled || occupied || outcomeUnknown || blocksNew}
               onClick={() => open('prepare')}
             >
               Prepare restore
