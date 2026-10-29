@@ -271,6 +271,7 @@ export class MaintenanceSupervisor {
   private controlServer: HttpServer | undefined;
   private noticeTimer: ReturnType<typeof setInterval> | undefined;
   private closing = false;
+  private closingTask: Promise<void> | undefined;
   private constructor(journal: RecoveryJournal, options: SupervisorOptions) {
     this.journal = journal;
     this.options = options;
@@ -920,6 +921,13 @@ export class MaintenanceSupervisor {
         throw new Error('Restore confirmation no longer matches the running workspace.');
       this.assertGeneration();
     };
+    const assertActive = () => {
+      assertTarget();
+      // Synchronous filesystem work can cross expiry before the abort timer runs.
+      const now = this.now();
+      if (now < request.authority.verifiedAt || now >= request.authority.expiresAt)
+        throw new Error('The original restore authorization expired.');
+    };
     assertTarget();
     const jobs = new RestoreJobs(this.journal, this.now);
     let publicationStarted = false;
@@ -960,7 +968,7 @@ export class MaintenanceSupervisor {
         throw new Error('Finish the current restore job first.');
       if (existing?.phase === 'failed') return { record: existing, custody: false };
       await this.recheckRestoreAuthorityOwned(request.id, request.authority);
-      assertTarget();
+      assertActive();
       signal.throwIfAborted();
       publicationStarted = true;
       let record = jobs.admit(intent).record;
@@ -968,7 +976,7 @@ export class MaintenanceSupervisor {
       this.transition({ restoreJob: { jobId: request.id, intentHash: hash } });
       referenceDurable = true;
       const assertRoot = () => {
-        assertTarget();
+        assertActive();
         signal.throwIfAborted();
       };
       if (record.phase === 'source-retained')
@@ -982,11 +990,11 @@ export class MaintenanceSupervisor {
           signal,
         });
       await this.recheckRestoreAuthorityOwned(request.id, request.authority);
-      assertTarget();
+      assertActive();
       signal.throwIfAborted();
       if (record.phase === 'accepted')
         record = jobs.checkpoint(request.id, hash, record.revision, 'source-retained');
-      assertTarget();
+      assertActive();
       signal.throwIfAborted();
       const continuation = this.restoreContinuation;
       return {
@@ -1553,9 +1561,18 @@ export class MaintenanceSupervisor {
       this.failure('control-failed');
     }
   }
-  async close() {
-    if (this.closing) return;
+  close(): Promise<void> {
+    if (this.closingTask) return this.closingTask;
+    if (this.closing) return Promise.resolve();
     this.closing = true;
+    this.closingTask = Promise.resolve()
+      .then(() => this.closeOwned())
+      .finally(() => {
+        this.closingTask = undefined;
+      });
+    return this.closingTask;
+  }
+  private async closeOwned() {
     this.restoreAdmissionAbort?.abort();
     this.restoreContinuation = undefined;
     clearInterval(this.noticeTimer);
@@ -1563,6 +1580,9 @@ export class MaintenanceSupervisor {
     this.startWaiter?.reject(new Error('Supervisor is stopping.'));
     this.restoreWaiter?.reject(new Error('Supervisor is stopping.'));
     this.authorityWaiter?.reject(new Error('Supervisor is stopping.'));
+    // Cancellation requests do not settle an in-flight filesystem operation.
+    // Retain kernel ownership until every queued action has actually unwound.
+    await this.queue;
     let failure: unknown;
     if (this.journal.state.child || this.journal.state.verifier) {
       try {

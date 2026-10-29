@@ -36,6 +36,7 @@ import { assertWorkspaceHandlesClosed, MaintenanceSupervisor } from './superviso
 import { processResourcesReleased } from './process-exit.ts';
 import { restoreBarrierPath } from './restore-barrier.ts';
 import { restoreSnapshotFingerprint } from '../backup/inventory.ts';
+import * as restoreFiles from './restore-files.ts';
 import { validRestoreStopRecord } from './restore-stop.ts';
 import { RestoreJobs } from './restore-jobs.ts';
 import type { RestoreStopRequest } from '../../shared/maintenance.ts';
@@ -1662,20 +1663,26 @@ test('live-child authority revocation refuses the unchanged original proof', asy
   expect(supervisor.status().phase).toBe('running');
 });
 
-async function admissionFixture(revokeOnProbe?: number) {
+async function admissionFixture(revokeOnProbe?: number, now?: () => number) {
   const f = await fixture(true);
   const policy = applicationPolicy(3000, {
     APP_ORIGIN: 'https://spinel.example',
     SPINEL_IMAGE: 'spinel@sha256:' + 'a'.repeat(64),
     SPINEL_STATIC_DIRECTORY: join(f.directory, 'assets'),
   });
+  let child!: ChildProcess;
   const supervisor = await MaintenanceSupervisor.open({
+    now,
     root: f.root,
     databasePath: f.databasePath,
     publicPort: 0,
     applicationPolicy: policy,
-    createChild: (token) =>
-      f.createChild(token, { SPINEL_TEST_REVOKE_RESTORE_AUTHORITY: String(revokeOnProbe ?? 0) }),
+    createChild: (token) => {
+      child = f.createChild(token, {
+        SPINEL_TEST_REVOKE_RESTORE_AUTHORITY: String(revokeOnProbe ?? 0),
+      });
+      return child;
+    },
     budgets: { startMs: 5000, stopMs: 100, verifyMs: 5000 },
   });
   cleanups.push(() => supervisor.close());
@@ -1711,7 +1718,7 @@ async function admissionFixture(revokeOnProbe?: number) {
       },
     },
   };
-  return { ...f, supervisor, request };
+  return { ...f, supervisor, request, child };
 }
 
 test('admission durably retains source before ACK and exact retries reuse its continuation', async () => {
@@ -1794,4 +1801,106 @@ test('stale generation and policy confirmations cannot create admission records'
   ).rejects.toThrow('deployment policy');
   expect(await readdir(f.root)).not.toContain('restore-jobs');
   expect(f.supervisor.status().phase).toBe('running');
+});
+
+test('synchronous expiry after custody checkpoint cannot return an ACK', async () => {
+  let elapsed = 0;
+  const f = await admissionFixture(undefined, () => Date.now() + elapsed);
+  const checkpoint = RestoreJobs.prototype.checkpoint;
+  const delayed = vi.spyOn(RestoreJobs.prototype, 'checkpoint').mockImplementation(function (
+    ...args
+  ) {
+    const result = checkpoint.apply(this, args);
+    if (args[3] === 'source-retained') elapsed = 60_000;
+    return result;
+  });
+  try {
+    await expect(f.supervisor.admitPreparedRestore(f.request)).rejects.toThrow('expired');
+    const record = JSON.parse(
+      await readFile(join(f.root, 'restore-jobs', f.request.id, 'state.json'), 'utf8'),
+    );
+    expect(record.phase).toBe('failed');
+    expect(f.supervisor.journal.state.restoreJob).toBeNull();
+    expect(f.supervisor.status().phase).toBe('running');
+  } finally {
+    delayed.mockRestore();
+  }
+});
+
+test('shutdown retains journal ownership until an aborted source-copy operation settles', async () => {
+  const f = await admissionFixture();
+  let arrived!: () => void, release!: () => void;
+  const copying = new Promise<void>((resolve) => {
+    arrived = resolve;
+  });
+  const held = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  const retain = restoreFiles.retainRestoreSource;
+  const delayed = vi
+    .spyOn(restoreFiles, 'retainRestoreSource')
+    .mockImplementation(async (options) => {
+      arrived();
+      await held; // Models an I/O operation that cannot finish just because its signal aborted.
+      return retain(options);
+    });
+  const journalClose = vi.spyOn(f.supervisor.journal, 'close');
+  const rejected = expect(f.supervisor.admitPreparedRestore(f.request)).rejects.toThrow();
+  await copying;
+  let closed = false;
+  const closing = f.supervisor.close().then(() => {
+    closed = true;
+  });
+  const duplicate = f.supervisor.close();
+  try {
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(closed).toBe(false);
+    expect(journalClose).not.toHaveBeenCalled();
+  } finally {
+    release();
+    await rejected;
+    await Promise.all([closing, duplicate]);
+    delayed.mockRestore();
+  }
+  expect(journalClose).toHaveBeenCalledOnce();
+  const record = JSON.parse(
+    await readFile(join(f.root, 'restore-jobs', f.request.id, 'state.json'), 'utf8'),
+  );
+  expect(record.phase).toBe('accepted');
+});
+
+test('retained-source retry rechecks expiry after the final proof promise settles', async () => {
+  let elapsed = 0;
+  const f = await admissionFixture(undefined, () => Date.now() + elapsed);
+  await f.supervisor.admitPreparedRestore(f.request);
+  let replies = 0;
+  const delay = (value: unknown) => {
+    if (
+      value &&
+      typeof value === 'object' &&
+      'kind' in value &&
+      value.kind === 'restore-authority-result' &&
+      'accepted' in value &&
+      value.accepted === true &&
+      ++replies === 2
+    ) {
+      // The parent's registered handler resolves its proof promise first. This
+      // microtask expires it before admission continues, without firing timers.
+      queueMicrotask(() => {
+        elapsed = 60_000;
+      });
+    }
+  };
+  f.child.on('message', delay);
+  try {
+    await expect(f.supervisor.admitPreparedRestore(f.request)).rejects.toThrow('expired');
+    expect(replies).toBe(2);
+    const record = JSON.parse(
+      await readFile(join(f.root, 'restore-jobs', f.request.id, 'state.json'), 'utf8'),
+    );
+    expect(record.phase).toBe('failed');
+    expect(f.supervisor.journal.state.restoreJob).toBeNull();
+  } finally {
+    f.child.off('message', delay);
+  }
 });
