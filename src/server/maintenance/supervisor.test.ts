@@ -1181,7 +1181,11 @@ test('a duplicate witness after ACK and disconnect preserves the durable accepta
     }
     return Reflect.apply(send, child, [value, ...args]) as boolean;
   });
+  const disconnected = once(child, 'disconnect');
   const accepted = await supervisor.stopForRestore(jobId);
+  // Kernel resource closure and delivery of the IPC disconnect event are
+  // separate observations. Exercise the duplicate only after its actual event.
+  await disconnected;
   expect(observed).toBe(true);
   expect(acknowledgements).toBe(1);
   expect(durableBefore).toEqual(accepted);
@@ -1967,8 +1971,17 @@ async function admissionFixture(
 
 test
   .runIf(process.platform === 'linux')
-  .each(['ownership-first', 'readiness-first', 'wrong-fingerprint'])(
-  'complete application and authenticated archive activate a private candidate trial: %s',
+  .each([
+    'ownership-first',
+    'readiness-first',
+    'wrong-fingerprint',
+    'release-rejected',
+    'early-release',
+    'commit-publication',
+    'clock-after-final-scan',
+    'clock-after-running-write',
+  ])(
+  'complete application and authenticated archive commit and release the selected candidate: %s',
   async (ordering) => {
     const f = await fixture(true, true);
     const policy = applicationPolicy(3000, {
@@ -1988,18 +2001,42 @@ test
     });
     cleanups.push(() => source.dispose());
     expect(source.tables).toBeGreaterThan(0);
+    const portProbe = createServer();
+    await new Promise<void>((resolve, reject) => {
+      portProbe.once('error', reject);
+      portProbe.listen(0, '127.0.0.1', resolve);
+    });
+    const applicationPort = (portProbe.address() as { port: number }).port;
+    await new Promise<void>((resolve, reject) =>
+      portProbe.close((error) => (error ? reject(error) : resolve())),
+    );
+    const applicationUrl = `http://127.0.0.1:${applicationPort}/api/health`;
     let privateReadyObserved = false,
       ownershipReordered = false;
+    let authorityOffset = 0,
+      clockAdvanced = false,
+      runningPublished = false,
+      runningWritten = false,
+      earlyInjected = false,
+      injectingEarlyRelease = false;
+    let trialChild: ChildProcess | undefined, privateReference: unknown;
+    let pausedProbe: Promise<number> | undefined;
+    let releaseSnapshot:
+      { phase: string; main: unknown; barrier: boolean; accepted: unknown } | undefined;
     const supervisor = await MaintenanceSupervisor.open({
       root: f.root,
       databasePath: f.databasePath,
       publicPort: 0,
       applicationPolicy: policy,
+      now: () => Date.now() + authorityOffset,
+      onTransition: (status) => {
+        if (privateReadyObserved && status.phase === 'running') runningPublished = true;
+      },
       createChild: (token, environment) => {
         const child = f.createChild(token, {
           ...environment,
           SPINEL_TEST_REAL_APP: '1',
-          PORT: '0',
+          PORT: String(applicationPort),
           HOST: '127.0.0.1',
           APP_ORIGIN: policy.origin,
           SPINEL_IMAGE: policy.image!,
@@ -2007,6 +2044,7 @@ test
           BACKUP_CONFIG_PATH: join(f.data, 'absent-backup-config'),
         });
         if (environment.SPINEL_RESTORE_TRIAL === '1') {
+          trialChild = child;
           const emit = child.emit.bind(child);
           let held: unknown[] | undefined;
           child.emit = (event: string | symbol, ...args: unknown[]) => {
@@ -2022,39 +2060,92 @@ test
             }
             if (event === 'message' && value?.kind === 'restore-trial-ready') {
               privateReadyObserved = true;
-              const reference = value.reference as {
-                jobId: string;
-                epoch: string;
-                generationId: string;
-              };
-              const readJob = () =>
-                JSON.parse(
-                  readFileSync(join(f.root, 'restore-jobs', reference.jobId, 'state.json'), 'utf8'),
-                );
-              expect(readJob().phase).toBe('trial-planned');
-              expect(readJob().execution.trial.child.pid).toBe(child.pid);
-              // Neither ordinary readiness nor an old attempt nonce may advance
-              // the trial or make ordinary resume available.
-              emit('message', {
-                channel: MAINTENANCE_CHANNEL,
-                kind: 'ready',
-                epoch: reference.epoch,
-                generationId: reference.generationId,
-              });
-              emit('message', { ...value, reference: { ...reference, nonce: randomUUID() } });
-              expect(supervisor.status().phase).toBe('starting');
-              expect(supervisor.status().readyToResume).toBe(false);
-              if (ordering === 'wrong-fingerprint')
-                return emit('message', { ...value, fingerprint: '0'.repeat(64) });
-              const result = emit(event, ...args);
-              if (ordering === 'readiness-first') {
-                expect(held).toBeDefined();
+              privateReference = structuredClone(value.reference);
+              pausedProbe = (async () => {
+                const response = await fetch(applicationUrl);
+                const status = response.status;
+                await response.text();
+                const reference = value.reference as {
+                  jobId: string;
+                  epoch: string;
+                  generationId: string;
+                };
+                const readJob = () =>
+                  JSON.parse(
+                    readFileSync(
+                      join(f.root, 'restore-jobs', reference.jobId, 'state.json'),
+                      'utf8',
+                    ),
+                  );
                 expect(readJob().phase).toBe('trial-planned');
+                expect(readJob().execution.trial.child.pid).toBe(child.pid);
+                // Neither ordinary readiness nor an old attempt nonce may advance
+                // the trial or make ordinary resume available.
+                emit('message', {
+                  channel: MAINTENANCE_CHANNEL,
+                  kind: 'ready',
+                  epoch: reference.epoch,
+                  generationId: reference.generationId,
+                });
+                emit('message', { ...value, reference: { ...reference, nonce: randomUUID() } });
+                expect(supervisor.status().phase).toBe('starting');
                 expect(supervisor.status().readyToResume).toBe(false);
-                ownershipReordered = true;
-                emit('message', ...held!);
+                if (ordering === 'wrong-fingerprint') {
+                  emit('message', { ...value, fingerprint: '0'.repeat(64) });
+                  return status;
+                }
+                emit(event, ...args);
+                if (ordering === 'readiness-first') {
+                  expect(held).toBeDefined();
+                  expect(readJob().phase).toBe('trial-planned');
+                  expect(supervisor.status().readyToResume).toBe(false);
+                  ownershipReordered = true;
+                  emit('message', ...held!);
+                }
+                return status;
+              })();
+              void pausedProbe.catch(() => {});
+              return true;
+            }
+            if (event === 'message' && value?.kind === 'restore-trial-released') {
+              if (injectingEarlyRelease) return emit(event, ...args);
+              const reference = value.reference as { jobId: string };
+              const record = JSON.parse(
+                readFileSync(join(f.root, 'restore-jobs', reference.jobId, 'state.json'), 'utf8'),
+              );
+              releaseSnapshot = {
+                phase: record.phase,
+                main: structuredClone(supervisor.journal.state),
+                barrier: existsSync(restoreBarrierPath(f.databasePath)),
+                accepted: value.accepted,
+              };
+              if (ordering === 'release-rejected')
+                return emit('message', { ...value, accepted: false });
+              if (ordering.startsWith('clock-after-')) {
+                const advance = () => {
+                  clockAdvanced = true;
+                  authorityOffset = f.authority!.expiresAt - Date.now() + 1;
+                };
+                const write = supervisor.journal.write.bind(supervisor.journal);
+                vi.spyOn(supervisor.journal, 'write').mockImplementation(() => {
+                  write();
+                  if (supervisor.journal.state.phase === 'running') {
+                    runningWritten = true;
+                    if (ordering === 'clock-after-running-write') advance();
+                  }
+                });
+                if (ordering === 'clock-after-final-scan') {
+                  const internal = supervisor as unknown as { assertGeneration(): void };
+                  const check = internal.assertGeneration.bind(supervisor);
+                  let scans = 0;
+                  vi.spyOn(internal, 'assertGeneration').mockImplementation(() => {
+                    check();
+                    // ACK validation, final admission, ordinary resume check,
+                    // then the final restore-specific admission scan.
+                    if (++scans === 4) advance();
+                  });
+                }
               }
-              return result;
             }
             return emit(event, ...args);
           };
@@ -2091,6 +2182,42 @@ test
     // controller work must use its retained encrypted bundle and verified source.
     await source.dispose();
     await expect(lstat(source.databasePath)).rejects.toMatchObject({ code: 'ENOENT' });
+    if (ordering === 'early-release') {
+      const commit = restoreFiles.commitRestoreFiles;
+      vi.spyOn(restoreFiles, 'commitRestoreFiles').mockImplementationOnce(async (...args) => {
+        await Promise.resolve();
+        earlyInjected = true;
+        injectingEarlyRelease = true;
+        try {
+          trialChild!.emit('message', {
+            channel: MAINTENANCE_CHANNEL,
+            kind: 'restore-trial-released',
+            reference: privateReference,
+            accepted: true,
+          });
+        } finally {
+          injectingEarlyRelease = false;
+        }
+        return commit(...args);
+      });
+    }
+    let commitPublicationFailed = false;
+    if (ordering === 'commit-publication') {
+      const write = supervisor.journal.write.bind(supervisor.journal);
+      vi.spyOn(supervisor.journal, 'write').mockImplementation(() => {
+        write();
+        if (
+          !commitPublicationFailed &&
+          supervisor.journal.state.restoreJob?.jobId === id &&
+          supervisor.journal.state.restoreStop === null &&
+          JSON.parse(readFileSync(join(f.root, 'restore-jobs', id, 'state.json'), 'utf8')).phase ===
+            'candidate-committed'
+        ) {
+          commitPublicationFailed = true;
+          throw new Error('Terminal main publication result was lost.');
+        }
+      });
+    }
     const begun = await supervisor.beginPreparedRestore({
       id,
       intentHash: admitted.record.intentHash,
@@ -2098,7 +2225,12 @@ test
     });
     expect(begun.record.phase).toBe('pause-planned');
     const statePath = join(f.root, 'restore-jobs', id, 'state.json');
-    if (ordering === 'wrong-fingerprint') {
+    await expect.poll(() => privateReadyObserved, { timeout: 30_000 }).toBe(true);
+    expect(await pausedProbe).toBe(503);
+    const failed = !['ownership-first', 'readiness-first'].includes(ordering);
+    const uncommitted = ordering === 'wrong-fingerprint' || ordering === 'early-release';
+    const retainedBarrier = uncommitted || ordering === 'commit-publication';
+    if (failed) {
       await expect
         .poll(() => supervisor.status().phase, { timeout: 30_000 })
         .toBe('recovery-required');
@@ -2106,8 +2238,8 @@ test
     } else {
       await expect
         .poll(async () => JSON.parse(await readFile(statePath, 'utf8')).phase, { timeout: 30_000 })
-        .toBe('trial-ready');
-      await expect.poll(() => supervisor.status().phase).toBe('paused');
+        .toBe('candidate-committed');
+      await expect.poll(() => supervisor.status().phase).toBe('running');
     }
     expect(privateReadyObserved).toBe(true);
     expect(ownershipReordered).toBe(ordering === 'readiness-first');
@@ -2150,20 +2282,89 @@ test
       expect(await readFile(imagePath)).toEqual(bytes);
     }
     expect(completed.phase).toBe(
-      ordering === 'wrong-fingerprint' ? 'trial-planned' : 'trial-ready',
+      ordering === 'wrong-fingerprint'
+        ? 'trial-planned'
+        : ordering === 'early-release'
+          ? 'trial-ready'
+          : 'candidate-committed',
     );
     expect(supervisor.status().readyToResume).toBe(false);
-    expect(supervisor.journal.state.restoreStop).toEqual(completed.execution.stop);
+    expect(supervisor.journal.state.restoreStop).toEqual(
+      uncommitted ? completed.execution.stop : null,
+    );
     expect(fileIdentity(f.databasePath)).toEqual(admitted.record.intent.target.identity);
     expect(supervisor.status().generationId).toBe(completed.execution.attempt.generationId);
     expect(supervisor.status().generationId).not.toBe(admitted.record.intent.target.generationId);
-    expect(supervisor.journal.state.operation?.generationId).toBe(supervisor.status().generationId);
-    expect(existsSync(restoreBarrierPath(f.databasePath))).toBe(true);
+    if (failed && ordering !== 'clock-after-running-write')
+      expect(supervisor.journal.state.operation?.generationId).toBe(
+        supervisor.status().generationId,
+      );
+    else {
+      expect(supervisor.journal.state.operation).toBeNull();
+      expect(supervisor.journal.state.completedOperationId).toBe(id);
+    }
+    expect(existsSync(restoreBarrierPath(f.databasePath))).toBe(retainedBarrier);
     const response = await fetch(`http://127.0.0.1:${supervisor.publicAddress().port}/`);
     expect(response.status).toBe(503);
     await response.text();
-    if (ordering === 'wrong-fingerprint') assertWorkspaceHandlesClosed(f.databasePath);
-    else expect(() => assertWorkspaceHandlesClosed(f.databasePath)).toThrow();
+    if (retainedBarrier) expect(releaseSnapshot).toBeUndefined();
+    else
+      expect(releaseSnapshot).toMatchObject({
+        phase: 'candidate-committed',
+        barrier: false,
+        accepted: true,
+        main: {
+          phase: 'paused',
+          restoreJob: null,
+          restoreStop: null,
+          generationId: completed.execution.trial.generationId,
+        },
+      });
+    if (failed) assertWorkspaceHandlesClosed(f.databasePath);
+    else {
+      expect(() => assertWorkspaceHandlesClosed(f.databasePath)).toThrow();
+      await expect
+        .poll(async () => {
+          const response = await fetch(applicationUrl);
+          await response.text();
+          return response.status;
+        })
+        // Release restores the ordinary authentication guard. Restore clears
+        // sessions, so an unauthenticated health request must still be refused.
+        .toBe(401);
+    }
+    expect(runningPublished).toBe(!failed);
+    expect(earlyInjected).toBe(ordering === 'early-release');
+    expect(commitPublicationFailed).toBe(ordering === 'commit-publication');
+    if (ordering.startsWith('clock-after-')) {
+      expect(clockAdvanced).toBe(true);
+      expect(runningWritten).toBe(ordering === 'clock-after-running-write');
+    }
+    if (!uncommitted) {
+      await supervisor.close();
+      assertWorkspaceHandlesClosed(f.databasePath);
+      const observer = fork(
+        fileURLToPath(new URL('./restore-controller-observer-fixture.ts', import.meta.url)),
+        [],
+        {
+          env: {
+            ...process.env,
+            DATABASE_PATH: f.databasePath,
+            SPINEL_TEST_FOLDER_ID: seedSource.folderId,
+          },
+          execArgv: [],
+          stdio: ['ignore', 'ignore', 'inherit', 'ipc'],
+        },
+      );
+      let selectedContents: unknown;
+      observer.on('message', (value: unknown) => {
+        selectedContents = value;
+      });
+      const [code] = await once(observer, 'exit');
+      expect(code).toBe(0);
+      // A failed release after durable commitment cannot revive original content.
+      expect(selectedContents).toEqual({ name: 'Archived folder', sessions: 0 });
+    }
   },
   90_000,
 );

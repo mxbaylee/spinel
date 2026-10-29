@@ -60,6 +60,8 @@ export interface RestorePausePlan {
   preparation?: RestorePreparation;
   attempt?: RestoreAttempt;
   trial?: RestoreTrialPermit;
+  readiness?: { fingerprint: string; acceptedAt: number };
+  outcome?: { role: 'candidate'; fingerprint: string; committedAt: number };
 }
 type ExecutionPhase =
   | 'pause-planned'
@@ -81,7 +83,8 @@ type ExecutionPhase =
   | 'candidate-replacing'
   | 'candidate-activated'
   | 'trial-planned'
-  | 'trial-ready';
+  | 'trial-ready'
+  | 'candidate-committed';
 export interface RestoreJobRecord {
   version: 1;
   revision: number;
@@ -116,6 +119,7 @@ const executionPhases: readonly string[] = [
   'candidate-activated',
   'trial-planned',
   'trial-ready',
+  'candidate-committed',
 ];
 const sameProcess = (a: ProcessIdentity | null, b: ProcessIdentity) =>
   !!a && a.pid === b.pid && a.start === b.start && a.boot === b.boot && a.token === b.token;
@@ -155,6 +159,8 @@ function validExecution(record: RestoreJobRecord) {
   const hasPreparation = stage >= executionPhases.indexOf('preparation-planned');
   const hasAttempt = stage >= executionPhases.indexOf('activation-planned');
   const hasTrial = stage >= executionPhases.indexOf('trial-planned');
+  const hasReadiness = stage >= executionPhases.indexOf('trial-ready');
+  const hasOutcome = record.phase === 'candidate-committed';
   if (
     !plan ||
     Object.keys(plan).length !==
@@ -164,7 +170,9 @@ function validExecution(record: RestoreJobRecord) {
         Number(hasFrozen) +
         Number(hasPreparation) +
         Number(hasAttempt) +
-        Number(hasTrial) ||
+        Number(hasTrial) +
+        Number(hasReadiness) +
+        Number(hasOutcome) ||
     typeof plan.epoch !== 'string' ||
     !uuid.test(plan.epoch) ||
     plan.epoch === record.intent.target.epoch ||
@@ -279,6 +287,33 @@ function validExecution(record: RestoreJobRecord) {
     )
       return false;
   }
+  if (hasReadiness) {
+    const readiness = plan.readiness;
+    if (
+      !readiness ||
+      Object.keys(readiness).length !== 2 ||
+      readiness.fingerprint !== plan.trial!.output.fingerprint ||
+      !Number.isSafeInteger(readiness.acceptedAt) ||
+      readiness.acceptedAt < plan.preparation!.preparedAt ||
+      readiness.acceptedAt > record.updatedAt ||
+      readiness.acceptedAt >= plan.trial!.deadline
+    )
+      return false;
+  }
+  if (hasOutcome) {
+    const outcome = plan.outcome;
+    if (
+      !outcome ||
+      Object.keys(outcome).length !== 3 ||
+      outcome.role !== 'candidate' ||
+      outcome.fingerprint !== plan.readiness!.fingerprint ||
+      !Number.isSafeInteger(outcome.committedAt) ||
+      outcome.committedAt < plan.readiness!.acceptedAt ||
+      outcome.committedAt > record.updatedAt ||
+      outcome.committedAt >= plan.trial!.deadline
+    )
+      return false;
+  }
   if (record.phase === 'pause-planned' || record.phase === 'paused')
     return plan.stop === null && plan.requestedAt === null;
   const stop = plan.stop;
@@ -369,6 +404,18 @@ function validRecord(value: unknown, id: string): value is RestoreJobRecord {
     validExecution(record) &&
     Number.isSafeInteger(record.updatedAt) &&
     record.updatedAt >= record.intent.confirmedAt
+  );
+}
+
+/** Historical terminal evidence remains readable after the child dies or its
+ * permit expires. This validates recorded bindings, never current authority. */
+export function isCommittedRestoreJob(value: unknown): value is RestoreJobRecord {
+  if (!value || typeof value !== 'object') return false;
+  const record = value as RestoreJobRecord;
+  return (
+    record.phase === 'candidate-committed' &&
+    typeof record.intent?.id === 'string' &&
+    validRecord(record, record.intent.id)
   );
 }
 
@@ -592,7 +639,10 @@ export class RestoreJobs {
       throw new Error(
         'Restore job inventory is full; retained IDs cannot be pruned automatically.',
       );
-    if (jobs.some((job) => job.phase !== 'failed'))
+    if (
+      this.journal.state.restoreJob ||
+      jobs.some((job) => job.phase !== 'failed' && !isCommittedRestoreJob(job))
+    )
       throw new Error('Finish the current restore job first.');
     this.target(snapshot);
     const record: RestoreJobRecord = {
@@ -904,16 +954,20 @@ export class RestoreJobs {
     return this.activationCheckpoint(current, 'candidate-activated', current.execution!);
   }
   private trialClock(record: RestoreJobRecord) {
-    const now = this.clock(record.intent),
-      permit = record.execution!.trial!;
-    if (now >= permit.deadline) throw refused();
+    const permit = record.execution!.trial!;
+    const check = () => {
+      const now = this.clock(record.intent);
+      if (now < record.updatedAt || now >= permit.deadline) throw refused();
+      return now;
+    };
+    check();
     assertRestoreTrialTarget(
       permit,
       this.journal.databasePath,
       record.intent.target.identity,
       permit.child.pid,
     );
-    this.clock(record.intent);
+    return check();
   }
   planTrial(id: string, hash: string, revision: number, permit: RestoreTrialPermit) {
     const current = this.closedExecution(id, hash, revision, 'candidate-activated');
@@ -928,7 +982,13 @@ export class RestoreJobs {
   }
   /** A trial's main journal intentionally selects its new generation. Keep this
    * binding separate: none of the original-stage APIs may accept that switch. */
-  private selectedTrialRecord(id: string, hash: string, revision: number, phase: ExecutionPhase) {
+  private selectedTrialRecord(
+    id: string,
+    hash: string,
+    revision: number,
+    phase: ExecutionPhase,
+    mainPhase: 'starting' | 'paused',
+  ) {
     const record = this.read(id);
     if (
       !record ||
@@ -947,7 +1007,7 @@ export class RestoreJobs {
       state.restoreJob?.jobId !== id ||
       state.restoreJob.intentHash !== hash ||
       state.instanceId !== target.instanceId ||
-      state.phase !== 'starting' ||
+      state.phase !== mainPhase ||
       state.generationId !== permit.generationId ||
       state.epoch !== permit.epoch ||
       owned.databasePath !== target.databasePath ||
@@ -973,14 +1033,40 @@ export class RestoreJobs {
     reference: RestoreTrialRelease,
     fingerprint: string,
   ) {
-    const current = this.selectedTrialRecord(id, hash, revision, 'trial-planned');
+    const current = this.selectedTrialRecord(id, hash, revision, 'trial-planned', 'starting');
     if (
       !sameRestoreTrialReference(reference, current.execution!.trial!) ||
       fingerprint !== current.execution!.trial!.output.fingerprint
     )
       throw refused();
-    const result = this.publishExecution(current, 'trial-ready', current.execution!);
-    this.selectedTrialRecord(id, hash, result.revision, 'trial-ready');
+    const acceptedAt = this.trialClock(current);
+    const result = this.publishExecution(current, 'trial-ready', {
+      ...current.execution!,
+      readiness: { fingerprint, acceptedAt },
+    });
+    this.selectedTrialRecord(id, hash, result.revision, 'trial-ready', 'starting');
+    return result;
+  }
+  /** Publish the winner before any barrier or public-admission release. A
+   * post-publication failure must retain this outcome for recovery. */
+  markCandidateCommitted(
+    id: string,
+    hash: string,
+    revision: number,
+    reference: RestoreTrialRelease,
+  ) {
+    const current = this.selectedTrialRecord(id, hash, revision, 'trial-ready', 'paused');
+    if (!sameRestoreTrialReference(reference, current.execution!.trial!)) throw refused();
+    const committedAt = this.trialClock(current);
+    const result = this.publishExecution(current, 'candidate-committed', {
+      ...current.execution!,
+      outcome: {
+        role: 'candidate',
+        fingerprint: current.execution!.readiness!.fingerprint,
+        committedAt,
+      },
+    });
+    this.selectedTrialRecord(id, hash, result.revision, 'candidate-committed', 'paused');
     return result;
   }
   close() {

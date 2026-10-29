@@ -46,7 +46,7 @@ import {
 } from './restore-stop.ts';
 import type { RestoreStopRecord } from './restore-stop.ts';
 import { checkVerificationHeadroom } from '../backup/recovery-worker.ts';
-import { RestoreJobs } from './restore-jobs.ts';
+import { RestoreJobs, isCommittedRestoreJob } from './restore-jobs.ts';
 import type { RestoreJobRecord } from './restore-jobs.ts';
 import { restoreIntentHash } from './restore-job-intent.ts';
 import type { RestoreJobIntent } from './restore-job-intent.ts';
@@ -56,6 +56,7 @@ import {
   validRestoreSourceManifest,
   captureRestoreOriginals,
   preserveRestoreOriginals,
+  commitRestoreFiles,
 } from './restore-files.ts';
 import type { RestoreSourceInput, RestoreSourceManifest } from './restore-files.ts';
 import { validRestoreAuthority } from './restore-authority.ts';
@@ -284,6 +285,8 @@ export class MaintenanceSupervisor {
         reject(error: Error): void;
       }
     | undefined;
+  private restoreReleaseWaiter:
+    (Waiter & { permit: RestoreTrialPermit; assertCurrent(): void }) | undefined;
   private restoreContinuation: { id: string; intentHash: string; token: string } | undefined;
   private restoreAdmissionAbort: AbortController | undefined;
   private queue: Promise<unknown> = Promise.resolve();
@@ -437,10 +440,11 @@ export class MaintenanceSupervisor {
       readyToResume: state.phase === 'paused' && this.childReady && state.verifiedAt !== null,
     };
   }
-  private transition(patch: Partial<typeof this.journal.state>) {
+  private transition(patch: Partial<typeof this.journal.state>, beforeBroadcast?: () => void) {
     this.journal.state = { ...this.journal.state, ...patch, updatedAt: this.now() };
     try {
       this.journal.write();
+      beforeBroadcast?.();
     } catch (error) {
       this.journal.state = {
         ...this.journal.state,
@@ -497,6 +501,7 @@ export class MaintenanceSupervisor {
     this.startWaiter = undefined;
     this.restoreWaiter?.reject(new Error(safeError));
     this.restoreTrialWaiter?.reject(new Error(safeError));
+    this.restoreReleaseWaiter?.reject(new Error(safeError));
     this.authorityWaiter?.reject(new Error(safeError));
   }
   private reconcileNotice(restarting: boolean) {
@@ -822,7 +827,7 @@ export class MaintenanceSupervisor {
       );
     }
   }
-  private async resume() {
+  private async resume(assertAuthorized?: () => void, beforeBroadcast?: () => void) {
     assertNoPendingRestore(this.journal.databasePath);
     this.assertGeneration();
     if (
@@ -832,7 +837,11 @@ export class MaintenanceSupervisor {
     )
       throw new Error('Verify and start the current generation under maintenance before resuming.');
     const completedOperationId = this.journal.state.operation?.id ?? null;
-    this.transition({ phase: 'running', operation: null, completedOperationId, lastFailure: null });
+    assertAuthorized?.();
+    this.transition(
+      { phase: 'running', operation: null, completedOperationId, lastFailure: null },
+      beforeBroadcast,
+    );
   }
   private async stopGroup(identity: ProcessIdentity, checkHandles = true, force = false) {
     const deadline = Date.now() + (force ? 0 : (this.options.budgets?.stopMs ?? STOP_MS));
@@ -1206,9 +1215,8 @@ export class MaintenanceSupervisor {
         deadline,
       });
       assertClosed();
-      await this.startRestoreTrialOwned(jobs, record, signal, deadline);
-      // Private readiness is not a committed restore or permission to serve.
-      // The durable barrier and job reference remain until terminal reconciliation.
+      record = await this.startRestoreTrialOwned(jobs, record, signal, deadline);
+      await this.commitRestoreTrialOwned(jobs, record, signal, deadline);
     } finally {
       controller.abort();
       if (this.restoreAdmissionAbort === controller) this.restoreAdmissionAbort = undefined;
@@ -1768,8 +1776,19 @@ export class MaintenanceSupervisor {
       deadline: trialDeadline,
     };
     let record = initial;
-    const assertCurrent = () => {
+    const assertClock = () => {
       signal.throwIfAborted();
+      const time = this.now();
+      if (
+        !Number.isSafeInteger(time) ||
+        Date.now() >= permit.deadline ||
+        time < Math.max(record.updatedAt, this.journal.state.updatedAt) ||
+        time >= initial.intent.authority.expiresAt
+      )
+        throw new Error('Restore trial authority expired or changed.');
+    };
+    const assertCurrent = () => {
+      assertClock();
       const state = this.journal.state,
         current = jobs.read(initial.intent.id),
         actual = processIdentity(identity.pid, identity.token);
@@ -1778,9 +1797,6 @@ export class MaintenanceSupervisor {
         this.child !== child ||
         !child.connected ||
         this.childChannelFailed ||
-        Date.now() >= permit.deadline ||
-        this.now() < initial.intent.authority.verifiedAt ||
-        this.now() >= initial.intent.authority.expiresAt ||
         state.phase !== 'starting' ||
         state.generationId !== attempt.generationId ||
         state.epoch !== attempt.epoch ||
@@ -1808,6 +1824,7 @@ export class MaintenanceSupervisor {
       )
         throw new Error('Restore trial lost its durable process binding.');
       this.assertGeneration();
+      assertClock();
     };
     const ready = new Promise<void>((resolve, reject) => {
       this.restoreTrialWaiter = { permit, assertCurrent, resolve, reject };
@@ -1877,6 +1894,183 @@ export class MaintenanceSupervisor {
       this.restoreTrialWaiter = undefined;
     }
   }
+  private async commitRestoreTrialOwned(
+    jobs: RestoreJobs,
+    initial: RestoreJobRecord,
+    signal: AbortSignal,
+    deadline: number,
+  ) {
+    const permit = initial.execution?.trial,
+      child = this.child;
+    if (
+      initial.phase !== 'trial-ready' ||
+      !permit ||
+      permit.role !== 'candidate' ||
+      !child ||
+      !this.childOwned ||
+      this.childReady
+    )
+      throw new Error('Restore has no privately verified candidate to commit.');
+    let record = initial,
+      referenceCleared = false,
+      releaseSent = false;
+    const assertClock = () => {
+      signal.throwIfAborted();
+      const time = this.now();
+      if (
+        !Number.isSafeInteger(time) ||
+        Date.now() >= Math.min(deadline, permit.deadline) ||
+        time < Math.max(record.updatedAt, this.journal.state.updatedAt) ||
+        time >= initial.intent.authority.expiresAt
+      )
+        throw new Error('Restore release authority expired or changed.');
+    };
+    const assertCurrent = () => {
+      assertClock();
+      const state = this.journal.state,
+        current = jobs.read(initial.intent.id),
+        identity = processIdentity(permit.child.pid, permit.child.token);
+      if (
+        this.closing ||
+        this.child !== child ||
+        !this.childOwned ||
+        !child.connected ||
+        this.childChannelFailed ||
+        state.phase !== 'paused' ||
+        state.instanceId !== initial.intent.target.instanceId ||
+        state.generationId !== permit.generationId ||
+        state.epoch !== permit.epoch ||
+        !sameFile(state.databaseIdentity, permit.identity) ||
+        !sameFile(this.journal.workspaceOwnership().databaseIdentity, permit.identity) ||
+        !state.child ||
+        !identity ||
+        ['pid', 'start', 'boot', 'token'].some(
+          (key) =>
+            state.child![key as keyof ProcessIdentity] !==
+              permit.child[key as keyof ProcessIdentity] ||
+            identity[key as keyof ProcessIdentity] !== permit.child[key as keyof ProcessIdentity],
+        ) ||
+        state.operation?.id !== initial.intent.id ||
+        state.operation.generationId !== permit.generationId ||
+        state.operation.actorId !== initial.intent.authority.actorId ||
+        state.operation.sessionHash !== initial.intent.authority.sessionHash ||
+        state.operation.expiresAt !== initial.intent.authority.expiresAt ||
+        state.operation.tokenHash !== initial.intent.continuationHash ||
+        (referenceCleared
+          ? state.restoreJob !== null
+          : state.restoreJob?.jobId !== initial.intent.id ||
+            state.restoreJob.intentHash !== initial.intentHash) ||
+        !current ||
+        current.intentHash !== record.intentHash ||
+        current.revision !== record.revision ||
+        current.phase !== record.phase ||
+        JSON.stringify(current.execution) !== JSON.stringify(record.execution)
+      )
+        throw new Error('Restore candidate commitment lost its selected process.');
+      this.assertGeneration();
+      if (referenceCleared) {
+        if (!isCommittedRestoreJob(current) || state.restoreStop || state.verifiedAt === null)
+          throw new Error('Restore terminal selection is incomplete.');
+        assertNoPendingRestore(this.journal.databasePath);
+      }
+      assertClock();
+    };
+    const released = new Promise<void>((resolve, reject) => {
+      this.restoreReleaseWaiter = {
+        permit,
+        assertCurrent: () => {
+          if (!releaseSent || !referenceCleared || !isCommittedRestoreJob(record))
+            throw new Error('Restore release has not been durably authorized.');
+          assertCurrent();
+        },
+        resolve,
+        reject,
+      };
+    });
+    void released.catch(() => {});
+    const abort = () =>
+      this.restoreReleaseWaiter?.reject(new Error('Restore release was interrupted.'));
+    signal.addEventListener('abort', abort, { once: true });
+    const timer = setTimeout(
+      () =>
+        this.restoreReleaseWaiter?.reject(new Error('Restore release acknowledgement timed out.')),
+      Math.max(1, Math.min(deadline, permit.deadline) - Date.now()),
+    );
+    try {
+      assertCurrent();
+      await commitRestoreFiles(
+        {
+          root: this.journal.root,
+          databasePath: this.journal.databasePath,
+          signal,
+          deadline,
+          // Commit only removes a barrier after selecting an outcome. Its caller
+          // verifies the one live, gated trial; no database bytes are overwritten.
+          assertClosed: () => {
+            throw new Error('A live trial cannot authorize file replacement.');
+          },
+          readPhase: () => {
+            assertCurrent();
+            if (record.phase === 'trial-ready') return 'activated';
+            if (isCommittedRestoreJob(record)) return 'candidate-committed';
+            throw new Error('Restore has no eligible terminal decision.');
+          },
+          persist: async (phase) => {
+            assertCurrent();
+            if (phase !== 'candidate-committed') throw new Error('Restore outcome changed.');
+            record = jobs.markCandidateCommitted(
+              initial.intent.id,
+              initial.intentHash,
+              record.revision,
+              restoreTrialReference(permit),
+            );
+            // The immutable winner is now durable. A later error can keep this
+            // generation closed, but can never select the original instead.
+            this.transition({ restoreStop: null, verifiedAt: this.now() });
+            assertCurrent();
+          },
+        },
+        {
+          ...initial.execution!.originals!,
+          candidate: { bytes: permit.output.bytes, sha256: permit.output.sha256 },
+        },
+        'candidate',
+      );
+      assertCurrent();
+      assertNoPendingRestore(this.journal.databasePath);
+      this.transition({ restoreJob: null });
+      referenceCleared = true;
+      assertCurrent();
+      this.journal.assertNoPendingRestoreJobs();
+      assertCurrent();
+      releaseSent = true;
+      this.sendChild(child, {
+        channel: MAINTENANCE_CHANNEL,
+        kind: 'restore-trial-release',
+        reference: restoreTrialReference(permit),
+      });
+      await released;
+      assertCurrent();
+      this.childReady = true;
+      await this.resume(assertCurrent, assertClock);
+      return record;
+    } catch (error) {
+      this.failure('restore-release-failed');
+      try {
+        await this.stopGroup(permit.child);
+        this.child = undefined;
+        this.childOwned = false;
+        this.transition({ child: null });
+      } catch {
+        // The recorded selected process remains available to restart recovery.
+      }
+      throw error;
+    } finally {
+      clearTimeout(timer);
+      signal.removeEventListener('abort', abort);
+      this.restoreReleaseWaiter = undefined;
+    }
+  }
   private launchApplicationChild(trial = false) {
     this.childReady = false;
     this.childOwned = false;
@@ -1917,6 +2111,9 @@ export class MaintenanceSupervisor {
         new Error('The application exited before restore shutdown completed.'),
       );
       this.restoreTrialWaiter?.reject(new Error('The restore trial application exited.'));
+      this.restoreReleaseWaiter?.reject(
+        new Error('The restore application exited before release.'),
+      );
       this.childReady = false;
       this.childOwned = false;
       if (!['stopping', 'stopped'].includes(this.journal.state.phase) && !this.closing)
@@ -2005,6 +2202,13 @@ export class MaintenanceSupervisor {
           value.fingerprint !== waiter.permit.output.fingerprint
         )
           throw new Error('Restore trial readiness changed.');
+        waiter.resolve();
+      } else if (value.kind === 'restore-trial-released') {
+        const waiter = this.restoreReleaseWaiter;
+        if (!waiter || !sameRestoreTrialReference(value.reference, waiter.permit)) return;
+        waiter.assertCurrent();
+        if (!exact(value, ['channel', 'kind', 'reference', 'accepted']) || value.accepted !== true)
+          throw new Error('Restore application refused private release.');
         waiter.resolve();
       } else if (value.kind === 'restore-authority-result') {
         // Out of band: the controller owns serial() while awaiting this read.
@@ -2142,10 +2346,15 @@ export class MaintenanceSupervisor {
       } catch (error) {
         failure = error;
       }
-      for (const identity of [this.journal.state.verifier, this.journal.state.child]) {
-        if (!identity) continue;
+      const identities = [this.journal.state.verifier, this.journal.state.child].filter(
+        (identity): identity is ProcessIdentity => !!identity,
+      );
+      for (const [index, identity] of identities.entries()) {
         try {
-          await this.stopGroup(identity, false);
+          // The final owned group must witness descriptor teardown within its
+          // existing stop budget, just as an explicit stop does. Earlier groups
+          // cannot assert closure while the other owned process is still alive.
+          await this.stopGroup(identity, index === identities.length - 1);
         } catch (error) {
           failure ??= error;
         }

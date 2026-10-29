@@ -20,7 +20,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, expect, test, vi } from 'vitest';
 import { RecoveryJournal, fileIdentity, processIdentity } from './journal.ts';
-import { RestoreJobs } from './restore-jobs.ts';
+import { isCommittedRestoreJob, RestoreJobs } from './restore-jobs.ts';
 import type { RestoreJobRecord } from './restore-jobs.ts';
 import { restoreTrialReference } from './restore-trial.ts';
 import type { RestoreTrialPermit } from './restore-trial.ts';
@@ -943,5 +943,200 @@ linux(
         f.permit.output.fingerprint,
       ),
     ).toThrow();
+  },
+);
+
+async function readyTrialFixture() {
+  const f = await activatedTrialFixture();
+  const id = f.record.intent.id,
+    hash = f.record.intentHash;
+  let record = f.jobs.planTrial(id, hash, f.record.revision, f.permit);
+  f.select();
+  const reference = restoreTrialReference(f.permit);
+  record = f.jobs.markTrialReady(id, hash, record.revision, reference, f.permit.output.fingerprint);
+  f.journal.state.phase = 'paused';
+  f.journal.write();
+  return { ...f, record, reference };
+}
+
+linux('candidate commit requires readiness and exact selected paused bindings', async () => {
+  const f = await activatedTrialFixture();
+  const id = f.record.intent.id,
+    hash = f.record.intentHash;
+  let record = f.jobs.planTrial(id, hash, f.record.revision, f.permit);
+  f.select();
+  const reference = restoreTrialReference(f.permit);
+  expect(() => f.jobs.markCandidateCommitted(id, hash, record.revision, reference)).toThrow();
+  record = f.jobs.markTrialReady(id, hash, record.revision, reference, f.permit.output.fingerprint);
+  expect(record.execution!.readiness).toEqual({
+    fingerprint: f.permit.output.fingerprint,
+    acceptedAt: record.updatedAt,
+  });
+  expect(() => f.jobs.markCandidateCommitted(id, hash, record.revision, reference)).toThrow();
+  f.journal.state.phase = 'paused';
+  f.journal.write();
+  const baseline = structuredClone(f.journal.state);
+  for (const change of [
+    () => {
+      f.journal.state.child!.start = '0';
+    },
+    () => {
+      f.journal.state.operation!.generationId = record.intent.target.generationId;
+    },
+    () => {
+      f.journal.state.restoreJob!.intentHash = '0'.repeat(64);
+    },
+    () => {
+      f.journal.state.restoreStop!.fingerprint = '0'.repeat(64);
+    },
+    () => {
+      f.journal.state.epoch = record.intent.target.epoch;
+    },
+  ]) {
+    change();
+    expect(() => f.jobs.markCandidateCommitted(id, hash, record.revision, reference)).toThrow();
+    Object.assign(f.journal.state, structuredClone(baseline));
+  }
+  expect(() =>
+    f.jobs.markCandidateCommitted(id, hash, record.revision, { ...reference, nonce: randomUUID() }),
+  ).toThrow();
+  expect(() => f.jobs.markCandidateCommitted(id, hash, record.revision - 1, reference)).toThrow();
+  expect(f.jobs.read(id)).toEqual(record);
+  f.advance(1);
+  const committed = f.jobs.markCandidateCommitted(id, hash, record.revision, reference);
+  expect(committed.execution!.outcome).toEqual({
+    role: 'candidate',
+    fingerprint: f.permit.output.fingerprint,
+    committedAt: committed.updatedAt,
+  });
+  expect(committed.execution!.readiness).toEqual(record.execution!.readiness);
+  expect(committed.execution!.stop).toEqual(record.execution!.stop);
+  expect(committed.intent).toEqual(record.intent);
+  expect(isCommittedRestoreJob(committed)).toBe(true);
+  expect(() => f.jobs.markCandidateCommitted(id, hash, committed.revision, reference)).toThrow();
+  expect(() => f.jobs.admit(f.intent())).toThrow('Finish the current restore job');
+  delete f.journal.state.restoreJob;
+  f.journal.write();
+  expect(f.jobs.admit(f.intent()).created).toBe(true);
+});
+
+linux(
+  'terminal schema binds readiness and winner without importing live expiry or process checks',
+  async () => {
+    const f = await readyTrialFixture();
+    const id = f.record.intent.id,
+      hash = f.record.intentHash;
+    f.advance(1);
+    const committed = f.jobs.markCandidateCommitted(id, hash, f.record.revision, f.reference);
+    for (const mutate of [
+      (r: RestoreJobRecord) => {
+        delete r.execution!.readiness;
+      },
+      (r: RestoreJobRecord) => {
+        r.execution!.readiness!.fingerprint = '0'.repeat(64);
+      },
+      (r: RestoreJobRecord) => {
+        r.execution!.readiness!.acceptedAt = r.execution!.preparation!.preparedAt - 1;
+      },
+      (r: RestoreJobRecord) => {
+        r.execution!.readiness!.acceptedAt = r.updatedAt + 1;
+      },
+      (r: RestoreJobRecord) => {
+        Object.assign(r.execution!.readiness!, { unexpected: true });
+      },
+      (r: RestoreJobRecord) => {
+        delete r.execution!.outcome;
+      },
+      (r: RestoreJobRecord) => {
+        Object.assign(r.execution!.outcome!, { role: 'original' });
+      },
+      (r: RestoreJobRecord) => {
+        r.execution!.outcome!.fingerprint = '0'.repeat(64);
+      },
+      (r: RestoreJobRecord) => {
+        r.execution!.outcome!.committedAt = r.execution!.readiness!.acceptedAt - 1;
+      },
+      (r: RestoreJobRecord) => {
+        r.execution!.outcome!.committedAt = r.updatedAt + 1;
+      },
+      (r: RestoreJobRecord) => {
+        r.execution!.outcome!.committedAt = r.execution!.trial!.deadline;
+      },
+      (r: RestoreJobRecord) => {
+        Object.assign(r.execution!.outcome!, { unexpected: true });
+      },
+      (r: RestoreJobRecord) => {
+        r.phase = 'trial-ready';
+      },
+    ]) {
+      const invalid = structuredClone(committed);
+      mutate(invalid);
+      expect(isCommittedRestoreJob(invalid)).toBe(false);
+      writeFileSync(f.statePath(id), JSON.stringify(invalid));
+      expect(() => f.jobs.read(id)).toThrow();
+    }
+    writeFileSync(f.statePath(id), JSON.stringify(committed));
+    const exit = once(f.child, 'exit');
+    f.child.kill('SIGKILL');
+    await exit;
+    f.advance(60_000);
+    expect(f.openJobs().read(id)).toEqual(committed);
+    expect(f.jobs.admit(committed.intent)).toEqual({ record: committed, created: false });
+    expect(isCommittedRestoreJob(committed)).toBe(true);
+    expect(isCommittedRestoreJob(undefined)).toBe(false);
+    expect(isCommittedRestoreJob({ phase: 'candidate-committed' })).toBe(false);
+  },
+);
+
+linux.each(['expired', 'dead child', 'missing barrier', 'backwards clock'] as const)(
+  'candidate commit refuses %s before publication',
+  async (failure) => {
+    const f = await readyTrialFixture();
+    if (failure === 'expired') f.advance(60_000);
+    if (failure === 'backwards clock') f.advance(-1);
+    if (failure === 'missing barrier') rmSync(restoreBarrierPath(f.journal.databasePath));
+    if (failure === 'dead child') {
+      const exit = once(f.child, 'exit');
+      f.child.kill('SIGKILL');
+      await exit;
+    }
+    expect(() =>
+      f.jobs.markCandidateCommitted(
+        f.record.intent.id,
+        f.record.intentHash,
+        f.record.revision,
+        f.reference,
+      ),
+    ).toThrow();
+    expect(f.jobs.read(f.record.intent.id)).toEqual(f.record);
+  },
+);
+
+linux.each(['expired', 'uncertain fsync'] as const)(
+  'candidate winner survives %s after publication',
+  async (failure) => {
+    const f = await readyTrialFixture();
+    const id = f.record.intent.id,
+      hash = f.record.intentHash;
+    const sync = f.journal.syncRoot.bind(f.journal);
+    const fault = vi.spyOn(f.journal, 'syncRoot').mockImplementation(() => {
+      sync();
+      if (JSON.parse(readFileSync(f.statePath(id), 'utf8')).phase === 'candidate-committed') {
+        if (failure === 'expired') f.advance(60_000);
+        else throw new Error('injected post-publication fsync failure');
+      }
+    });
+    expect(() => f.jobs.markCandidateCommitted(id, hash, f.record.revision, f.reference)).toThrow();
+    fault.mockRestore();
+    if (failure === 'uncertain fsync') expect(() => f.jobs.read(id)).toThrow();
+    const reopened = f.openJobs();
+    const committed = reopened.read(id)!;
+    expect(isCommittedRestoreJob(committed)).toBe(true);
+    expect(committed.execution!.readiness).toEqual(f.record.execution!.readiness);
+    expect(committed.execution!.outcome!.fingerprint).toBe(f.permit.output.fingerprint);
+    expect(() =>
+      reopened.markCandidateCommitted(id, hash, f.record.revision, f.reference),
+    ).toThrow();
+    expect(reopened.read(id)).toEqual(committed);
   },
 );

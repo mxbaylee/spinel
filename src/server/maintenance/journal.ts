@@ -20,7 +20,7 @@ import type { MaintenanceNotice, MaintenancePhase } from '../../shared/maintenan
 import { assertNoPendingRestore } from './restore-barrier.ts';
 import { validRestoreStopRecord } from './restore-stop.ts';
 import type { RestoreStopRecord } from './restore-stop.ts';
-import { RestoreJobs } from './restore-jobs.ts';
+import { RestoreJobs, isCommittedRestoreJob } from './restore-jobs.ts';
 
 const MAX_JOURNAL_BYTES = 32_768;
 export const AUTHORITY_MS = 5 * 60_000;
@@ -702,7 +702,10 @@ export class RecoveryJournal {
       }
       jobs = new RestoreJobs(this);
       const records = jobs.list();
-      if (this.state.restoreJob || records.some((record) => record.phase !== 'failed'))
+      if (
+        this.state.restoreJob ||
+        records.some((record) => record.phase !== 'failed' && !isCommittedRestoreJob(record))
+      )
         throw new Error('Unreconciled restore admission.');
     } catch (error) {
       throw new Error('An unfinished restore job requires supervised recovery before continuing.', {
