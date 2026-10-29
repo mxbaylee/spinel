@@ -1,4 +1,4 @@
-import { afterEach, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { LocaleType } from '@univerjs/core';
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
 import type { ClientCheckpoint } from '@spinel/sync-client';
@@ -20,6 +20,8 @@ vi.mock('../../web/offline/download.ts', async (original) => ({
   ...(await original<typeof import('../../web/offline/download.ts')>()),
   downloadForOffline: vi.fn(async () => {}),
 }));
+
+beforeEach(() => vi.stubGlobal('location', { origin: 'http://localhost' }));
 
 afterEach(() => {
   vi.restoreAllMocks();

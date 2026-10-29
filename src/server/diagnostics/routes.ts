@@ -1,3 +1,4 @@
+import { maintenanceRouter } from '../maintenance/router.ts';
 import express from 'express';
 import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import type { Request, Response, NextFunction } from 'express';
@@ -50,7 +51,7 @@ export function diagnosticsRoutes(
   diagnostics: DiagnosticsStore,
   origin: string,
 ) {
-  const router = express.Router();
+  const router = maintenanceRouter();
   router.use((request, _response, next) => {
     // Do not impose this tiny parser or Origin policy on unrelated /api routes.
     if (

@@ -139,9 +139,9 @@ The view header holds identity, status and actions. On phones, document identity
 gets a complete first row; status and actions occupy the second row so a long
 name cannot be squeezed out. Status retains its slot when text changes.
 
-`Shell/AppLayout` shows the existing production shell. `Redesign/Screens`
-shows the proposed compositions, including DashboardCollapsed and
-PlannedSpaceCollapsed. Screen implementation tickets perform the migration.
+The production AppLayout, Dashboard, Space and Profile stories show the current
+shell compositions, including collapsed navigation. Historical SPN-047 screen
+proposals remain in the review gallery rather than a parallel story catalog.
 
 ## Layout and responsive
 
@@ -269,8 +269,8 @@ production-wide replacement.
 Shipped UI lives under **Current production**, using the real components with
 local fixtures. Appearance includes the shared icon/emoji/color picker, covers
 and the paired gem gallery. **Native fixtures** isolates SDK regression tests.
-**Redesign** contains only the remaining ticket-owned proposal, currently
-SPN-066 guest-link management. Follow the [migration rule and ownership inventory](../implementation/storybook-production-migration.md).
+Guest-link management completes the production migration; there is no Redesign
+group. Follow the [production story rule and migration record](../implementation/storybook-production-migration.md).
 
 ```bash
 npm run storybook

@@ -1,3 +1,4 @@
+import { maintenanceFetch as fetch } from './maintenanceFetch.ts';
 /** Aggregate Operator requests never display server-provided error text. */
 export class AdminRequestError extends Error {
   readonly status: number;

@@ -1,3 +1,4 @@
+import { maintenanceFetch as fetch } from '../maintenanceFetch.ts';
 import { validImageBase64 } from '../../src/shared/appearance.ts';
 import type { OfflineBundle } from '../../src/shared/offlineBundle.ts';
 import { offlineErrorMessage } from '../../src/shared/offlineError.ts';
@@ -47,6 +48,8 @@ export function checkBundle(
 ) {
   if (
     bundle?.version !== 1 ||
+    (bundle.maintenanceEpoch !== undefined &&
+      (typeof bundle.maintenanceEpoch !== 'string' || bundle.maintenanceEpoch.length > 128)) ||
     bundle.accountId !== accountId ||
     bundle.itemId !== itemId ||
     bundle.spaceId !== spaceId ||

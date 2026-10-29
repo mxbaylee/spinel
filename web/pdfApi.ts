@@ -1,3 +1,4 @@
+import { maintenanceFetch as fetch } from './maintenanceFetch.ts';
 import { documentPath, guestItemId } from './documentAccess.ts';
 import { revokeGuestView } from './guestRevocation.ts';
 import { clearDashboardNavigation } from './dashboardNavigation.ts';

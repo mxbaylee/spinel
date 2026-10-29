@@ -5,15 +5,14 @@ Requires=docker.service tailscaled.service
 Wants=network-online.target
 
 [Service]
-Type=simple
+Type=oneshot
+RemainAfterExit=yes
 WorkingDirectory=/opt/spinel
 EnvironmentFile=/etc/spinel/deploy.env
 ExecStartPre=/usr/local/bin/node scripts/deploy/check.ts
-ExecStart=/usr/bin/docker compose --env-file /etc/spinel/deploy.env -f deploy/compose.yaml up --abort-on-container-exit
+ExecStart=/usr/bin/docker compose --env-file /etc/spinel/deploy.env -f deploy/compose.yaml up --detach
 ExecStop=/usr/bin/docker compose --env-file /etc/spinel/deploy.env -f deploy/compose.yaml down
-Restart=always
-RestartSec=30
-TimeoutStopSec=60
+TimeoutStopSec=90
 
 [Install]
 WantedBy=multi-user.target

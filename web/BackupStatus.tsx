@@ -1,8 +1,14 @@
+import { maintenanceFetch as fetch } from './maintenanceFetch.ts';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '../src/ui/redesign/Controls.tsx';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import { BackupDownloads } from './BackupDownloads.tsx';
 import type { BackupPolicy } from './BackupDownloads.tsx';
+import {
+  getMaintenanceStatus,
+  refreshMaintenanceStatus,
+  useMaintenanceStatus,
+} from './maintenanceState.ts';
 import './administration.css';
 export interface BackupCheckStatus {
   lastGood: number | null;
@@ -48,20 +54,37 @@ function StateLabel({ label }: { label: string }) {
 }
 
 export function BackupStatus({ currentId }: { currentId?: string }) {
+  const { status: maintenance } = useMaintenanceStatus();
+  const paused = !!maintenance?.available && maintenance.phase !== 'running';
   const [status, setStatus] = useState<BackupStatusResponse | null>(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const mounted = useRef(false);
   const generation = useRef(0);
+  const wasPaused = useRef(paused);
   async function refresh() {
     const request = ++generation.current;
+    const current = getMaintenanceStatus();
+    if (current?.available && current.phase !== 'running') {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
       const response = await fetch('/api/admin/backups', {
         cache: 'no-store',
         headers: currentId ? { 'X-Spinel-Account': currentId } : {},
       });
-      if (!response.ok) throw new Error('Could not load backup status. Refresh to try again.');
+      if (!response.ok) {
+        const failure = await response.json().catch(() => null);
+        if (response.status === 503 && failure?.code === 'maintenance') {
+          // Keep the download iframe and any open confirmation mounted while
+          // accepted work drains. The public status remains available here.
+          await refreshMaintenanceStatus();
+          return;
+        }
+        throw new Error('Could not load backup status. Refresh to try again.');
+      }
       const result = (await response.json()) as BackupStatusResponse;
       if (mounted.current && request === generation.current) {
         setStatus(result);
@@ -84,6 +107,11 @@ export function BackupStatus({ currentId }: { currentId?: string }) {
       clearInterval(timer);
     };
   }, [currentId]);
+  useEffect(() => {
+    const resume = wasPaused.current && !paused;
+    wasPaused.current = paused;
+    if (resume) void refresh();
+  }, [paused]);
   const label = !status
     ? ''
     : !status.configured
@@ -123,10 +151,16 @@ export function BackupStatus({ currentId }: { currentId?: string }) {
     <section aria-label="Backups" className="admin-health-card sp-ui">
       <div className="admin-section-heading">
         <h3>Backups</h3>
-        <Button disabled={loading} onClick={() => void refresh()}>
+        <Button disabled={loading || paused} onClick={() => void refresh()}>
           Refresh backup status
         </Button>
       </div>
+      {paused && (
+        <p role="status">
+          Backup status is paused for maintenance. Existing status will refresh when the workspace
+          resumes.
+        </p>
+      )}
       {loading && <p role="status">Loading backup status…</p>}
       {error ? (
         <p role="alert">{error}</p>

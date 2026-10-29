@@ -204,3 +204,31 @@ export const ArchiveUnconfirmed: Story = {
     }
   },
 };
+
+export const ArchiveInterruptedByMaintenance: Story = {
+  args: { dialogOpen: true, onArchiveImported: fn() },
+  play: async ({ canvasElement, args }) => {
+    const original = globalThis.fetch;
+    // The browser dropped the early reply; the status poll explains the cause.
+    globalThis.fetch = async (input, init) => {
+      if (String(input).endsWith('/archive-import')) throw new TypeError('Connection lost');
+      if (String(input).endsWith('/api/maintenance'))
+        return Response.json(
+          { available: true, phase: 'paused', epoch: 'fixture-epoch', notice: null },
+          { status: 503 },
+        );
+      return original(input, init);
+    };
+    try {
+      await pick(canvasElement, archive());
+      await expect(
+        await within(canvasElement.ownerDocument.body).findByRole('alert'),
+      ).toHaveTextContent(
+        'Workspace maintenance interrupted this import. After the workspace resumes, refresh your files to check whether it finished.',
+      );
+      await expect(args.onArchiveImported).not.toHaveBeenCalled();
+    } finally {
+      globalThis.fetch = original;
+    }
+  },
+};

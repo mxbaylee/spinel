@@ -1,5 +1,8 @@
-import { afterEach, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { AdminRequestError, adminResponse } from '../../web/adminRequest.ts';
+
+vi.mock('../../web/maintenanceState.ts', () => import('./fixtures/unsupervisedMaintenance.ts'));
+beforeEach(() => vi.stubGlobal('location', { origin: 'https://spinel.test', pathname: '/admin' }));
 
 afterEach(() => vi.unstubAllGlobals());
 test.each([401, 403, 404])('a departed Operator view ignores late denial %i', async (status) => {
@@ -29,7 +32,8 @@ test('current denial has a static message and mutation sends explicit confirmati
     status: 409,
     message: 'The request could not be confirmed. Refresh and try again.',
   });
-  expect(fetcher.mock.calls[0]).toEqual([
+  const [path, init] = fetcher.mock.calls[0] as unknown as [string, RequestInit];
+  expect([path, { ...init, headers: Object.fromEntries(new Headers(init.headers)) }]).toEqual([
     '/api/admin/diagnostics/truncate',
     {
       credentials: 'same-origin',
@@ -37,7 +41,7 @@ test('current denial has a static message and mutation sends explicit confirmati
       redirect: 'error',
       signal,
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'content-type': 'application/json', 'x-spinel-epoch': '' },
       body: JSON.stringify(body),
     },
   ]);

@@ -50,8 +50,9 @@ test('guest launch distinguishes offline, retry and authoritative denial without
 }, info) => {
   const requests: string[] = [];
   page.on('request', (request) => {
-    const pathname = new URL(request.url()).pathname;
-    if (pathname.startsWith('/api/')) requests.push(pathname);
+    const url = new URL(request.url());
+    if (url.pathname.startsWith('/api/'))
+      requests.push(`${request.method()} ${url.pathname}${url.search}`);
   });
   let status = 503;
   await page.route('**' + path, (route) =>
@@ -61,7 +62,20 @@ test('guest launch distinguishes offline, retry and authoritative denial without
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ colorScheme: theme });
     status = 503;
+    const maintenance = page.waitForResponse(
+      (response) => new URL(response.url()).pathname === '/api/maintenance',
+    );
     await page.goto('/share/' + id);
+    const publicStatus = await maintenance;
+    expect(publicStatus.status()).toBe(200);
+    // The real unsupervised server exposes only deployment status to guests.
+    // Exact equality rejects account, document, and Operator-only fields.
+    expect(await publicStatus.json()).toEqual({
+      available: false,
+      phase: 'running',
+      epoch: '',
+      notice: null,
+    });
     await expect(page.getByRole('heading', { name: "You're offline" })).toBeVisible();
     await expect(page.getByText('Opening shared document…')).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Try again' })).toBeEnabled();
@@ -82,8 +96,7 @@ test('guest launch distinguishes offline, retry and authoritative denial without
     await expect(page).toHaveTitle('Spinel');
     await capture(page, info, 'revoked-' + variant);
   }
-  expect(requests.length).toBeGreaterThan(0);
-  expect(requests.every((request) => request === path)).toBe(true);
+  expect([...new Set(requests)].sort()).toEqual([`GET ${path}`, 'GET /api/maintenance']);
 });
 
 test('a guest Space with an unreachable tree exposes no root identity or account controls', async ({

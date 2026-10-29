@@ -20,8 +20,9 @@ from the application. Historical design evidence remains in [the review gallery]
   viewer regression cases. They are not a full application or a claim of mobile
   Doc wrapper parity. Production Playwright journeys verify the real routes,
   editors, permissions, persistence and offline behavior.
-- **Redesign → SPN-066 Guest links:** the only unfinished proposal. Its ticket
-  replaces it with the production component and removes the last Redesign group.
+- **Current production → Account → Guest links:** the actual owner inventory,
+  expiry dialog, loading/error/expired states and stale-action safeguards.
+  Your profile also shows its integrated section. No Redesign catalog remains.
 
 Every UI ticket follows the [production migration rule](../implementation/storybook-production-migration.md).
 The merged SPN-055 device-storage stories now use DeviceStoragePanel; its old

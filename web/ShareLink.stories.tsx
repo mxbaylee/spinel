@@ -44,6 +44,50 @@ export const LinkOnCanEdit: Story = {
 export const LinkOnWithoutUrl: Story = {
   parameters: { api: { [link]: { enabled: true, role: 'viewer', url: null } } },
 };
+const deadline = Date.now() + 7 * 86_400_000;
+export const ScheduledExpiry: Story = {
+  parameters: { api: { [link]: { enabled: true, role: 'viewer', expiresAt: deadline } } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(
+      await canvas.findByText(`Expires ${new Date(deadline).toLocaleString()}.`),
+    ).toBeVisible();
+    await expect(canvas.queryByLabelText('Guest link address')).not.toBeInTheDocument();
+  },
+};
+export const Expired: Story = {
+  parameters: {
+    api: {
+      [link]: { enabled: false, role: 'editor', expired: true, expiresAt: Date.now() - 1000 },
+      [`PUT /api/items/${id}/link`]: {
+        enabled: true,
+        role: 'editor',
+        expired: false,
+        expiresAt: null,
+        url,
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(
+      await canvas.findByText('Expired. Create a new link to share this item again.'),
+    ).toBeVisible();
+    await expect(canvas.queryByLabelText('Guest link address')).not.toBeInTheDocument();
+    await expect(canvas.queryByRole('button', { name: 'Replace link…' })).not.toBeInTheDocument();
+  },
+};
+export const CreateAfterExpiry: Story = {
+  parameters: Expired.parameters,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Create link' }));
+    await expect(await canvas.findByLabelText('Guest link address')).toHaveValue(url);
+    await expect(
+      canvas.queryByText('Expired. Create a new link to share this item again.'),
+    ).not.toBeInTheDocument();
+  },
+};
 export const Failed: Story = {
   parameters: { api: { [link]: failure('Only the owner can manage the guest link.', 403) } },
 };

@@ -1,3 +1,4 @@
+import { maintenanceRouter } from '../maintenance/router.ts';
 import express from 'express';
 import type { Request } from 'express';
 import { AuthError } from '../auth/store.ts';
@@ -23,7 +24,7 @@ export function historyRoutes(
   history: HistoryStore,
   identity: (request: Request) => HistoryRouteIdentity,
 ) {
-  const router = express.Router({ mergeParams: true });
+  const router = maintenanceRouter({ mergeParams: true });
   router.use(express.json({ limit: '8kb', strict: true }));
   const check = (request: Request, original: HistoryRouteIdentity) => {
     const current = identity(request);

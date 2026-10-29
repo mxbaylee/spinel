@@ -1,4 +1,4 @@
-import { afterEach, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import {
   SpaceApiError,
   spaceAccessDenied,
@@ -6,13 +6,16 @@ import {
   spacesRequest,
 } from '../../web/spacesApi.ts';
 
+vi.mock('../../web/maintenanceState.ts', () => import('./fixtures/unsupervisedMaintenance.ts'));
+beforeEach(() => vi.stubGlobal('location', { origin: 'https://spinel.test', pathname: '/' }));
+
 afterEach(() => vi.unstubAllGlobals());
 
 test.each([401, 403, 404])(
   'guest Space response %i stays scoped to its requesting controller',
   async (status) => {
     const root = '11111111-1111-4111-8111-111111111111';
-    vi.stubGlobal('location', { pathname: `/share/${root}` });
+    vi.stubGlobal('location', { origin: 'https://spinel.test', pathname: `/share/${root}` });
     const dispatchEvent = vi.fn();
     vi.stubGlobal('window', { dispatchEvent });
     let release!: (response: Response) => void;
@@ -53,15 +56,20 @@ test('Space requests preserve scoped paths, JSON mutations, session cookies and 
   await expect(spacesRequest('/space/items', { method: 'POST', body, signal })).resolves.toEqual({
     item: { id: 'created' },
   });
-  expect(fetch).toHaveBeenCalledWith('/api/spaces/space/items', {
-    method: 'POST',
-    body: JSON.stringify(body),
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'same-origin',
-    cache: 'no-store',
-    redirect: 'error',
-    signal,
-  });
+  expect(fetch).toHaveBeenCalledOnce();
+  const [path, init] = fetch.mock.calls[0];
+  expect([path, { ...init, headers: Object.fromEntries(new Headers(init?.headers)) }]).toEqual([
+    '/api/spaces/space/items',
+    {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers: { 'content-type': 'application/json', 'x-spinel-epoch': '' },
+      credentials: 'same-origin',
+      cache: 'no-store',
+      redirect: 'error',
+      signal,
+    },
+  ]);
 });
 
 test('a successful read or empty deletion does not invent a response or mutation body', async () => {

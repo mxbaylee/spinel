@@ -1,3 +1,4 @@
+import { maintenanceFetch as fetch } from './maintenanceFetch.ts';
 import { useState } from 'react';
 import { documentPath } from './documentAccess.ts';
 import { PdfExport } from './PdfExport.tsx';

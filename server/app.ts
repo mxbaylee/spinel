@@ -35,8 +35,13 @@ import { TrashStore, startTrashCleanup } from '../src/server/workspace/trash.ts'
 import { HistoryStore } from '../src/server/history/store.ts';
 import { CollaborationStore } from '../src/server/collaboration/service.ts';
 import { attachSync } from '../src/server/sync/transport.ts';
+import type { MaintenanceBridge } from '../src/shared/maintenance.ts';
+import { MaintenanceGate, ShutdownError } from '../src/server/maintenance/gate.ts';
+import { maintenanceRoutes } from '../src/server/maintenance/routes.ts';
 
 export const projectRoot = resolve(import.meta.dirname, '..');
+/** Below the supervisor's 15 s stop budget, leaving time to close stores. */
+const SHUTDOWN_DRAIN_MS = 10_000;
 
 export interface AppOptions {
   databasePath: string;
@@ -47,9 +52,12 @@ export interface AppOptions {
   image?: string;
   /** Spaces are enabled by default; false explicitly closes every Space boundary. */
   spaceReview?: boolean;
+  /** Only the deployment supervisor can provide live recovery control. */
+  maintenance?: MaintenanceBridge;
 }
 
 export async function createApp(options: AppOptions) {
+  const maintenance = new MaintenanceGate(options.maintenance);
   const database = openDatabase(options.databasePath);
   const app = express();
   app.disable('x-powered-by');
@@ -64,6 +72,8 @@ export async function createApp(options: AppOptions) {
   let purgeTimer: ReturnType<typeof setInterval> | undefined;
   let healthTimer: ReturnType<typeof setInterval> | undefined;
   let diagnostics: DiagnosticsStore | undefined;
+  let unsubscribeMaintenance = () => {};
+  let draining: Promise<void> | undefined;
 
   try {
     diagnostics = new DiagnosticsStore(
@@ -86,6 +96,33 @@ export async function createApp(options: AppOptions) {
     });
     assertSyncTransitionReady(database);
     const auth = new AuthStore(database);
+    app.get('/api/maintenance', (_request, response) => {
+      response.set('Cache-Control', 'no-store').json(maintenance.status);
+    });
+    app.use(
+      '/api/admin/maintenance',
+      maintenanceRoutes(auth, options.maintenance, options.origin ?? 'http://localhost:3000'),
+    );
+    const admit = maintenance.middleware();
+    app.use((request, response, next) => {
+      // Session and exact guest metadata lookups are read-only. Keep current
+      // Operator authority and guest expiry/revocation visible during a pause.
+      // Other reads can prepare native data or update auth metadata and gate.
+      // Express routing is case-insensitive, so these matches are too: `/API/…`
+      // must not reach an `/api` route without admission.
+      if (
+        (request.method === 'GET' &&
+          (/^\/api\/auth\/session$/i.test(request.path) ||
+            /^\/api\/guest\/[a-f\d-]{36}\/?$/i.test(request.path))) ||
+        !/^\/(?:api(?:\/|$)|sync-api(?:\/|$)|mcp(?:\/|$)|authorize(?:\/|$)|register(?:\/|$)|token(?:\/|$)|revoke(?:\/|$))/i.test(
+          request.path,
+        )
+      ) {
+        next();
+        return;
+      }
+      admit(request, response, next);
+    });
     app.use(
       '/api/auth',
       authRoutes(auth, options.origin ?? 'http://localhost:3000', async () => {
@@ -108,7 +145,7 @@ export async function createApp(options: AppOptions) {
     });
     history = new HistoryStore(workspace, collaboration, () => jobs.begin('history-maintenance'));
     app.use('/mcp', mcpRoutes(workspace, collaboration, origin));
-    realtime = attachSync(server, app, workspace, collaboration, origin);
+    realtime = attachSync(server, app, workspace, collaboration, origin, maintenance);
     // Retired protocol paths must not fall through to the application shell.
     // Stale tabs cannot re-enter a second collaboration backend after cutover.
     app.use(
@@ -163,14 +200,17 @@ export async function createApp(options: AppOptions) {
       new TrashStore(workspace),
       () => jobs.begin('trash-expiry'),
       () => jobs.begin('space-trash-expiry'),
+      (work) => {
+        maintenance.job(work);
+      },
     );
-    await collaboration
-      .purgeDeleted()
-      .catch(() => console.error('Collaboration purge failed; retained generations will retry.'));
+    await (maintenance.job(() => collaboration!.purgeDeleted()) ?? Promise.resolve()).catch(() =>
+      console.error('Collaboration purge failed; retained generations will retry.'),
+    );
     purgeTimer = setInterval(() => {
-      void collaboration!
-        .purgeDeleted()
-        .catch(() => console.error('Collaboration purge failed; retained generations will retry.'));
+      void (maintenance.job(() => collaboration!.purgeDeleted()) ?? Promise.resolve()).catch(() =>
+        console.error('Collaboration purge failed; retained generations will retry.'),
+      );
     }, 60_000);
     purgeTimer.unref();
     backups = new BackupService(database, {
@@ -195,6 +235,8 @@ export async function createApp(options: AppOptions) {
           );
       },
     });
+    database.setMaintenanceGate(maintenance);
+    diagnostics.setMaintenanceGate(maintenance);
     const health = new HealthMonitor({
       applicationPath: options.databasePath,
       diagnosticsPath: diagnostics.path,
@@ -256,7 +298,7 @@ export async function createApp(options: AppOptions) {
         );
     };
     const collectHealth = () => {
-      void sampleHealth().catch(() => {});
+      void (maintenance.job(sampleHealth) ?? Promise.resolve()).catch(() => {});
     };
     collectHealth();
     healthTimer = setInterval(collectHealth, 60_000);
@@ -456,7 +498,32 @@ export async function createApp(options: AppOptions) {
     });
     await backups.start();
     history.start();
+    unsubscribeMaintenance =
+      options.maintenance?.subscribe((status) => {
+        realtime?.maintenance(status);
+        if (status.phase !== 'draining' || draining) return;
+        draining = (async () => {
+          try {
+            // Downloads, imports and backup preparation can run for minutes.
+            // Cancel them so the bounded drain covers ordinary writes only.
+            maintenance.cancelLongWork();
+            await maintenance.drain();
+            database.assertQuiescent();
+            await diagnostics?.drainMaintenance();
+            if (
+              maintenance.status.phase === 'draining' &&
+              maintenance.status.epoch === status.epoch
+            )
+              options.maintenance!.drained(status.epoch);
+          } catch {
+            options.maintenance!.fail('drain-failed');
+          }
+        })().finally(() => {
+          draining = undefined;
+        });
+      }) ?? (() => {});
   } catch (error) {
+    unsubscribeMaintenance();
     stopCleanup();
     clearInterval(purgeTimer);
     clearInterval(healthTimer);
@@ -472,10 +539,22 @@ export async function createApp(options: AppOptions) {
 
   return {
     server,
+    maintenance,
     async close() {
+      unsubscribeMaintenance();
       stopCleanup();
       clearInterval(purgeTimer);
       clearInterval(healthTimer);
+      // No new admission after shutdown begins. Existing leases still own their
+      // writes while the bounded drain runs; stopping sockets is not a drain.
+      maintenance.stopAdmission();
+      // A restart is not maintenance; stopped jobs must not say it was.
+      maintenance.cancelLongWork(new ShutdownError());
+      // Shutdown must finish inside the supervisor's SIGTERM→SIGKILL budget
+      // (STOP_MS, 15 s), so it drains for less than a maintenance pause does.
+      await maintenance.drain(SHUTDOWN_DRAIN_MS);
+      database.assertQuiescent();
+      await diagnostics?.drainMaintenance();
       await realtime?.close();
       await vite?.close();
       if (server.listening) {
@@ -486,14 +565,17 @@ export async function createApp(options: AppOptions) {
       }
       await backups?.close();
       await history?.close();
-      await collaboration
-        ?.purgeDeleted()
-        .catch(() =>
-          console.error(
-            'Collaboration purge incomplete; retained generations will retry after startup.',
-          ),
-        );
+      await (
+        maintenance.status.available
+          ? Promise.resolve()
+          : (collaboration?.purgeDeleted() ?? Promise.resolve())
+      ).catch(() =>
+        console.error(
+          'Collaboration purge incomplete; retained generations will retry after startup.',
+        ),
+      );
       await collaboration?.close();
+      maintenance.stop();
       database.close();
       await diagnostics?.close();
     },

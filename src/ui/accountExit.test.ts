@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { randomToken } from '../server/auth/store.ts';
 
+vi.mock('../../web/maintenanceState.ts', () => import('./fixtures/unsupervisedMaintenance.ts'));
+
 const A = '00000000-0000-4000-8000-000000000001';
 const B = '00000000-0000-4000-8000-000000000002';
 const CANCEL = '00000000-0000-4000-8000-000000000003';
@@ -53,7 +55,7 @@ beforeEach(() => {
   );
   vi.stubGlobal('window', Object.assign(new EventTarget(), { localStorage: local }));
   vi.stubGlobal('navigator', {});
-  vi.stubGlobal('location', { pathname: '/sign-in' });
+  vi.stubGlobal('location', { origin: 'https://spinel.test', pathname: '/sign-in' });
   vi.stubGlobal(
     'fetch',
     vi.fn(async () => new Response(null, { status: 204 })),
@@ -89,9 +91,13 @@ test('accepted exit locks synchronously, stores identifiers only, and keeps its 
       cache: 'no-store',
       credentials: 'same-origin',
       body: '{}',
-      headers: { 'Content-Type': 'application/json', 'X-Spinel-Offline-Account': A },
     }),
   );
+  expect(Object.fromEntries(new Headers(vi.mocked(fetch).mock.calls[0]![1]?.headers))).toEqual({
+    'content-type': 'application/json',
+    'x-spinel-offline-account': A,
+    'x-spinel-epoch': '',
+  });
   c.beginAccountExit(A, true);
   expect(() => exit.verifyCurrent()).toThrow('account changed');
 });
@@ -118,10 +124,13 @@ test('a verified anonymous exit sends an explicit fence instead of legacy uncond
   await c.finishAccountExit(exit);
   expect(fetch).toHaveBeenLastCalledWith(
     '/api/auth/sign-out',
-    expect.objectContaining({
-      headers: { 'Content-Type': 'application/json', 'X-Spinel-Offline-Account': 'anonymous' },
-    }),
+    expect.objectContaining({ method: 'POST' }),
   );
+  expect(Object.fromEntries(new Headers(vi.mocked(fetch).mock.calls.at(-1)![1]?.headers))).toEqual({
+    'content-type': 'application/json',
+    'x-spinel-offline-account': 'anonymous',
+    'x-spinel-epoch': '',
+  });
   expect(c.accountExitPending()).toBe(false);
 });
 

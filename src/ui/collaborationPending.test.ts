@@ -3,6 +3,8 @@ import type { Univer } from '@univerjs/core';
 import { prepareCollaboration, watchCollaboration } from '../../web/collaboration.ts';
 import { getSpinelSync } from '../../web/spinelSync.ts';
 
+vi.mock('../../web/maintenanceState.ts', () => import('./fixtures/unsupervisedMaintenance.ts'));
+
 vi.mock('../../web/spinelSync.ts', () => ({
   getSpinelSync: vi.fn(),
   loadSpinelDocument: vi.fn(),
@@ -21,7 +23,7 @@ test.each([401, 403, 404])(
   'late preparation denial %i cannot revoke a replacement guest editor',
   async (status) => {
     const root = '11111111-1111-4111-8111-111111111111';
-    vi.stubGlobal('location', { pathname: `/share/${root}` });
+    vi.stubGlobal('location', { origin: 'https://spinel.test', pathname: `/share/${root}` });
     const dispatchEvent = vi.fn();
     vi.stubGlobal('window', { dispatchEvent });
     let release!: (response: Response) => void;
@@ -51,7 +53,7 @@ test.each([401, 403, 404])(
 test.each([undefined, 0, 2])(
   'an obsolete preparation response (%s) cannot choose another backend',
   async (syncVersion) => {
-    vi.stubGlobal('location', { pathname: '/' });
+    vi.stubGlobal('location', { origin: 'https://spinel.test', pathname: '/' });
     vi.stubGlobal(
       'fetch',
       vi.fn(async () =>
@@ -68,7 +70,7 @@ test.each([undefined, 0, 2])(
 );
 
 test('preparation uses the current native protocol for each document', async () => {
-  vi.stubGlobal('location', { pathname: '/' });
+  vi.stubGlobal('location', { origin: 'https://spinel.test', pathname: '/' });
   const response = {
     unitId: 'unit',
     access: 'editor',
