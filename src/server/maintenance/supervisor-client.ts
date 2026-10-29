@@ -33,10 +33,20 @@ import {
 import type { RestoreOpening, RestoreTrialPermit, RestoreTrialRelease } from './restore-trial.ts';
 
 import { validRestoreAuthority } from './restore-authority.ts';
+import type { RestoreController } from '../backup/restore-control.ts';
+import {
+  boundedRestoreRpc,
+  RESTORE_RPC_ERROR,
+  RESTORE_RPC_MS,
+  RESTORE_RPC_PENDING,
+  validRestoreRpcResult,
+} from './restore-rpc.ts';
+import type { RestoreRpcAction, RestoreRpcResult } from './restore-rpc.ts';
 
 export const MAINTENANCE_CHANNEL = 'spinel-maintenance';
 
 export interface SupervisedMaintenanceBridge extends MaintenanceBridge {
+  readonly restoreController: RestoreController;
   takeRestoreOpening(): RestoreOpening | undefined;
   onRestoreTrialStop(
     permit: RestoreTrialPermit,
@@ -126,10 +136,62 @@ export async function connectMaintenance(): Promise<SupervisedMaintenanceBridge>
       timer: ReturnType<typeof setTimeout>;
     }
   >();
-  const send = (message: Record<string, unknown>) => {
-    if (closed || !process.connected) throw new Error('Recovery control is unavailable.');
-    process.send!({ channel: MAINTENANCE_CHANNEL, ...message }, () => {});
+  const restoreRequests = new Map<
+    string,
+    {
+      action: RestoreRpcAction;
+      id: string;
+      intentHash?: string;
+      resolve(result: RestoreRpcResult): void;
+      reject(error: Error): void;
+      timer: ReturnType<typeof setTimeout>;
+    }
+  >();
+  const failRestoreRequest = (requestId: string) => {
+    const request = restoreRequests.get(requestId);
+    if (!request) return;
+    clearTimeout(request.timer);
+    restoreRequests.delete(requestId);
+    request.reject(new Error(RESTORE_RPC_ERROR));
   };
+  const send = (message: Record<string, unknown>, onError?: () => void) => {
+    if (closed || !process.connected) throw new Error('Recovery control is unavailable.');
+    process.send!({ channel: MAINTENANCE_CHANNEL, ...message }, (error) => {
+      if (error) onError?.();
+    });
+  };
+  const restoreCall = (
+    action: RestoreRpcAction,
+    request: Parameters<RestoreController['admit']>[0] | Parameters<RestoreController['begin']>[0],
+  ) =>
+    new Promise<RestoreRpcResult>((resolve, reject) => {
+      if (
+        closed ||
+        !current?.available ||
+        (trialExpected && !released) ||
+        (action === 'restore-admit' && current.phase !== 'running') ||
+        restoreRequests.size >= RESTORE_RPC_PENDING ||
+        !boundedRestoreRpc(request)
+      ) {
+        reject(new Error(RESTORE_RPC_ERROR));
+        return;
+      }
+      const requestId = randomUUID();
+      const timer = setTimeout(() => failRestoreRequest(requestId), RESTORE_RPC_MS);
+      restoreRequests.set(requestId, {
+        action,
+        id: request.id,
+        intentHash: 'intentHash' in request ? request.intentHash : undefined,
+        resolve,
+        reject,
+        timer,
+      });
+      try {
+        send({ kind: action, requestId, request }, () => failRestoreRequest(requestId));
+      } catch {
+        failRestoreRequest(requestId);
+      }
+    });
   let resolveInitial!: () => void, rejectInitial!: (error: Error) => void;
   const initial = new Promise<void>((resolve, reject) => {
     resolveInitial = resolve;
@@ -149,6 +211,7 @@ export async function connectMaintenance(): Promise<SupervisedMaintenanceBridge>
       return;
     const message = value as {
       kind?: string;
+      action?: RestoreRpcAction;
       status?: MaintenanceAdminStatus;
       requestId?: string;
       result?: MaintenanceControlResult;
@@ -319,6 +382,19 @@ export async function connectMaintenance(): Promise<SupervisedMaintenanceBridge>
       clearTimeout(witnessWaiter.timer);
       witnessWaiter.resolve();
       witnessWaiter = undefined;
+    } else if (message.kind === 'restore-result' && typeof message.requestId === 'string') {
+      const request = restoreRequests.get(message.requestId);
+      if (!request || message.action !== request.action) return;
+      if (
+        message.error !== undefined ||
+        !validRestoreRpcResult(message.result, request.action, request.id, request.intentHash)
+      ) {
+        failRestoreRequest(message.requestId);
+        return;
+      }
+      clearTimeout(request.timer);
+      restoreRequests.delete(message.requestId);
+      request.resolve(message.result);
     } else if (message.kind === 'result' && typeof message.requestId === 'string') {
       const request = requests.get(message.requestId);
       if (!request) return;
@@ -344,6 +420,7 @@ export async function connectMaintenance(): Promise<SupervisedMaintenanceBridge>
       request.reject(new Error('Recovery control is unavailable.'));
     }
     requests.clear();
+    for (const id of restoreRequests.keys()) failRestoreRequest(id);
     rejectInitial(new Error('Recovery control disconnected.'));
     // An orphan app must not keep serving against stale parent authority.
     process.kill(process.pid, 'SIGTERM');
@@ -364,6 +441,26 @@ export async function connectMaintenance(): Promise<SupervisedMaintenanceBridge>
     throw error;
   }
   return {
+    restoreController: {
+      target() {
+        if (
+          closed ||
+          !current?.available ||
+          current.phase !== 'running' ||
+          (trialExpected && !released)
+        )
+          throw new Error(RESTORE_RPC_ERROR);
+        return { generationId: current.generationId, epoch: current.epoch };
+      },
+      async admit(request) {
+        const result = await restoreCall('restore-admit', request);
+        if (!('custody' in result)) throw new Error(RESTORE_RPC_ERROR);
+        return result;
+      },
+      async begin(request) {
+        return restoreCall('restore-begin', request);
+      },
+    },
     takeRestoreOpening() {
       const result = opening;
       opening = undefined;
@@ -497,6 +594,7 @@ export async function connectMaintenance(): Promise<SupervisedMaintenanceBridge>
         request.reject(new Error('Application is stopping.'));
       }
       requests.clear();
+      for (const id of restoreRequests.keys()) failRestoreRequest(id);
       listeners.clear();
     },
   };

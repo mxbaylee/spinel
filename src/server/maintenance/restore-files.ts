@@ -1,3 +1,5 @@
+import { validFailedRestoreCustody } from './restore-failed-custody.ts';
+import type { FailedRestoreCustody } from './restore-failed-custody.ts';
 import { createHash } from 'node:crypto';
 import { constants, createReadStream } from 'node:fs';
 import {
@@ -1048,4 +1050,118 @@ export async function commitRestoreFiles(
 function assertUncommitted(control: RestoreFileControl) {
   if (control.readPhase()?.endsWith('-committed'))
     throw new Error('A committed restore cannot replace or roll back the workspace.');
+}
+
+/** A second prepared image has a separate name under the existing job barrier.
+ * This never redefines original custody or restores raw original WAL bytes. */
+async function preparedOriginalBoundary(
+  control: RestoreFileControl,
+  files: RestoreFiles,
+  failed: FailedRestoreCustody,
+  attemptId: string,
+) {
+  assertMutationActive(control);
+  assertUncommitted(control);
+  if (
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(attemptId) ||
+    !validFailedRestoreCustody(failed) ||
+    failed.stop.reference.jobId !== files.id ||
+    !same(failed.identity, files.identity)
+  )
+    throw unavailable();
+  const root = await retained(control, files);
+  await barrier(control, files);
+  const captured = join(root, `failed-${failed.captureId}`, 'raw');
+  await privateDirectory(join(root, `failed-${failed.captureId}`));
+  await privateDirectory(captured);
+  for (const name of names) {
+    const path = join(captured, name),
+      evidence = failed.files[name];
+    if (evidence) await requireEvidence(path, evidence, control.signal);
+    else {
+      try {
+        await lstat(path);
+        throw unavailable();
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+      }
+    }
+  }
+  await unchangedOriginal(
+    control.databasePath,
+    { id: files.id, identity: failed.identity, original: failed.files },
+    control.signal,
+  );
+  assertMutationActive(control);
+  control.assertClosed();
+  return join(root, `original-${attemptId}.sqlite`);
+}
+export async function stagePreparedRestoreOriginal(
+  control: RestoreFileControl,
+  files: RestoreFiles,
+  failed: FailedRestoreCustody,
+  attemptId: string,
+  source: string,
+) {
+  const active = () => assertMutationActive(control);
+  const staged = await preparedOriginalBoundary(control, files, failed, attemptId);
+  await ownedFile(source);
+  for (const suffix of ['-wal', '-shm', '-journal']) {
+    try {
+      await lstat(source + suffix);
+      throw unavailable();
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+    }
+  }
+  await requireEvidence(source, files.candidate, control.signal);
+  active();
+  const sourceInfo = await ownedFile(source),
+    live = await ownedFile(control.databasePath);
+  if (same(identity(sourceInfo), identity(live))) throw unavailable();
+  const available = control.availableBytes ?? availableBytes;
+  const workspaceNeed =
+    Math.max(0, files.candidate.bytes - live.size) +
+    Math.max(2 * files.candidate.bytes, failed.files['spinel.sqlite-wal']?.bytes ?? 0) +
+    RESERVE;
+  const shared = (await lstat(control.root)).dev === live.dev;
+  if (
+    (await available(control.root)) <
+      BigInt(files.candidate.bytes + RESERVE + (shared ? workspaceNeed : 0)) ||
+    (!shared && (await available(dirname(control.databasePath))) < BigInt(workspaceNeed))
+  )
+    throw unavailable();
+  // Exclusive creation: an interrupted or uncertain attempt is retained, never overwritten.
+  await copyStagedCandidate(source, staged, active);
+  await requireEvidence(staged, files.candidate, control.signal);
+  active();
+  await syncDirectory(dirname(staged));
+  active();
+  await preparedOriginalBoundary(control, files, failed, attemptId);
+}
+export async function activatePreparedRestoreOriginal(
+  control: RestoreFileControl,
+  files: RestoreFiles,
+  failed: FailedRestoreCustody,
+  attemptId: string,
+) {
+  const active = () => assertMutationActive(control);
+  const staged = await preparedOriginalBoundary(control, files, failed, attemptId);
+  await requireEvidence(staged, files.candidate, control.signal);
+  await admitMutation(control, files, false);
+  active();
+  assertUncommitted(control);
+  await control.persist('rolling-back');
+  active();
+  await overwrite(staged, control.databasePath, files.identity, active);
+  active();
+  await removeSidecars(control.databasePath);
+  active();
+  await syncDirectory(dirname(control.databasePath));
+  active();
+  await requireEvidence(control.databasePath, files.candidate, control.signal);
+  active();
+  control.assertClosed();
+  await control.persist('rolled-back');
+  active();
 }

@@ -1,3 +1,4 @@
+import type { FailedRestoreCustody } from './restore-failed-custody.ts';
 import { createHash, randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import {
@@ -18,6 +19,8 @@ import { afterEach, expect, test, vi } from 'vitest';
 import { assertNoPendingRestore, restoreBarrierPath } from './restore-barrier.ts';
 import {
   activateRestoreFiles,
+  stagePreparedRestoreOriginal,
+  activatePreparedRestoreOriginal,
   commitRestoreFiles,
   prepareRestoreFiles,
   preserveRestoreOriginals,
@@ -882,4 +885,123 @@ test('capacity lost after preparation or before rollback refuses mutation and re
   f.control.availableBytes = undefined;
   await rollbackRestoreFiles(f.control, files);
   expect(await readFile(f.databasePath)).toEqual(f.original);
+});
+
+async function preparedOriginalFixture() {
+  const f = await fixture(),
+    originalFiles = await f.prepare();
+  await activateRestoreFiles(f.control, originalFiles);
+  const captureId = randomUUID(),
+    generationId = randomUUID(),
+    epoch = randomUUID(),
+    now = Date.now();
+  const failed: FailedRestoreCustody = {
+    version: 1,
+    captureId,
+    identity: originalFiles.identity,
+    stop: {
+      reference: {
+        jobId: f.id,
+        intentHash: 'a'.repeat(64),
+        attemptId: randomUUID(),
+        nonce: randomUUID(),
+        role: 'candidate',
+        generationId,
+        epoch,
+      },
+      child: { pid: 123, start: '1', boot: randomUUID(), token: randomUUID() },
+      request: {
+        jobId: f.id,
+        generationId,
+        epoch,
+        challengeId: randomUUID(),
+        deadline: now + 30_000,
+      },
+    },
+    witness: { fingerprint: 'b'.repeat(64), acceptedAt: now },
+    files: {
+      'spinel.sqlite': fingerprint(f.candidate),
+      'spinel.sqlite-wal': null,
+      'spinel.sqlite-shm': null,
+    },
+  };
+  const raw = join(f.root, `restore-${f.id}`, `failed-${captureId}`, 'raw');
+  await mkdir(raw, { recursive: true, mode: 0o700 });
+  await writeFile(join(raw, 'spinel.sqlite'), f.candidate, { mode: 0o600 });
+  const prepared = Buffer.alloc(140_003, 0x43),
+    path = join(f.root, 'reconciled-original.sqlite');
+  await writeFile(path, prepared, { mode: 0o600 });
+  const files = { ...originalFiles, candidate: fingerprint(prepared) },
+    attempt = randomUUID();
+  return { ...f, files, failed, raw, prepared, path, attempt };
+}
+test('prepared original activation retains both raw generations and never reinstalls bytes after original commitment', async () => {
+  const f = await preparedOriginalFixture(),
+    before = await lstat(f.databasePath);
+  await stagePreparedRestoreOriginal(f.control, f.files, f.failed, f.attempt, f.path);
+  await activatePreparedRestoreOriginal(f.control, f.files, f.failed, f.attempt);
+  expect(await readFile(f.databasePath)).toEqual(f.prepared);
+  expect((await lstat(f.databasePath)).ino).toBe(before.ino);
+  expect(await readFile(join(f.raw, 'spinel.sqlite'))).toEqual(f.candidate);
+  expect(await readFile(join(f.root, `restore-${f.id}`, 'original', 'spinel.sqlite'))).toEqual(
+    f.original,
+  );
+  expect(f.phases.at(-1)).toBe('rolled-back');
+  expect(() => assertNoPendingRestore(f.databasePath)).toThrow();
+  await commitRestoreFiles(f.control, f.files, 'original');
+  const acknowledged = Buffer.from('Acknowledged edit after original commitment');
+  await writeFile(f.databasePath, acknowledged);
+  await commitRestoreFiles(f.control, f.files, 'original');
+  await expect(
+    activatePreparedRestoreOriginal(f.control, f.files, f.failed, f.attempt),
+  ).rejects.toThrow();
+  await expect(
+    stagePreparedRestoreOriginal(f.control, f.files, f.failed, f.attempt, f.path),
+  ).rejects.toThrow();
+  expect(await readFile(f.databasePath)).toEqual(acknowledged);
+});
+test.each(['failed-raw', 'live', 'original-raw', 'barrier', 'staged'] as const)(
+  'prepared original refuses changed %s without replacing live bytes',
+  async (changed) => {
+    const f = await preparedOriginalFixture();
+    await stagePreparedRestoreOriginal(f.control, f.files, f.failed, f.attempt, f.path);
+    const changedPath =
+      changed === 'failed-raw'
+        ? join(f.raw, 'spinel.sqlite')
+        : changed === 'live'
+          ? f.databasePath
+          : changed === 'original-raw'
+            ? join(f.root, `restore-${f.id}`, 'original', 'spinel.sqlite')
+            : changed === 'barrier'
+              ? restoreBarrierPath(f.databasePath)
+              : join(f.root, `restore-${f.id}`, `original-${f.attempt}.sqlite`);
+    await writeFile(changedPath, 'changed');
+    const before = await readFile(f.databasePath);
+    await expect(
+      activatePreparedRestoreOriginal(f.control, f.files, f.failed, f.attempt),
+    ).rejects.toThrow();
+    expect(await readFile(f.databasePath)).toEqual(before);
+    expect(f.phases.at(-1)).toBe('activated');
+  },
+);
+test('prepared original authority loss after the first chunk retains partial inode, raw evidence and barrier', async () => {
+  const f = await preparedOriginalFixture();
+  await stagePreparedRestoreOriginal(f.control, f.files, f.failed, f.attempt, f.path);
+  const control = {
+    ...f.control,
+    assertAuthorized: () => {
+      if (readFileSync(f.databasePath)[0] === 0x43) throw new Error('Original proof expired');
+    },
+  };
+  await expect(
+    activatePreparedRestoreOriginal(control, f.files, f.failed, f.attempt),
+  ).rejects.toThrow('Original proof expired');
+  const partial = await readFile(f.databasePath);
+  expect(partial.length).toBe(f.candidate.length);
+  expect(partial.subarray(0, 65_536)).toEqual(f.prepared.subarray(0, 65_536));
+  expect(partial.subarray(65_536)).toEqual(f.candidate.subarray(65_536));
+  expect(f.phases.at(-1)).toBe('rolling-back');
+  expect(() => assertNoPendingRestore(f.databasePath)).toThrow();
+  expect(await readFile(join(f.raw, 'spinel.sqlite'))).toEqual(f.candidate);
+  expect(await readFile(f.path)).toEqual(f.prepared);
 });

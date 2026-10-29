@@ -1,3 +1,5 @@
+import { validRestoreAuthority } from '../maintenance/restore-authority.ts';
+import type { RestoreAuthority } from '../maintenance/restore-authority.ts';
 import { chmod, lstat, mkdtemp, rm, statfs } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { checkVerificationHeadroom, runRecoveryWorker } from './recovery-worker.ts';
@@ -33,6 +35,7 @@ export interface PreparedRollback extends ClosedRestoreInput, RollbackEvidence {
 }
 export interface RollbackWorkerInput {
   kind: 'rollback';
+  authority?: RestoreAuthority;
   directory: string;
   current: ClosedRestoreInput & { fingerprint: string };
   additional: ClosedRestoreInput[];
@@ -99,6 +102,7 @@ function validResult(
  * The result is private evidence, never authority to reopen or replace a file.
  */
 export async function prepareRestoreRollback(options: {
+  authority?: RestoreAuthority;
   current: ClosedRestoreInput & { fingerprint: string };
   additional: readonly ClosedRestoreInput[];
   stagingRoot: string;
@@ -126,6 +130,8 @@ export async function prepareRestoreRollback(options: {
     options.now < 0
   )
     throw new Error('Invalid rollback preparation.');
+  if (options.authority !== undefined && !validRestoreAuthority(options.authority))
+    throw new Error('Invalid original rollback authority.');
   const inputs = [options.current, ...options.additional];
   const identities = new Set<string>();
   for (const input of inputs) {
@@ -177,6 +183,15 @@ export async function prepareRestoreRollback(options: {
       timeoutMs: Math.max(1, deadline - Date.now()),
       input: {
         kind: 'rollback',
+        ...(options.authority && {
+          authority: {
+            actorId: options.authority.actorId,
+            sessionHash: options.authority.sessionHash,
+            verifiedPasskeyId: options.authority.verifiedPasskeyId,
+            verifiedAt: options.authority.verifiedAt,
+            expiresAt: options.authority.expiresAt,
+          },
+        }),
         current: { ...copies[0], fingerprint: options.current.fingerprint },
         additional: copies.slice(1),
         maxDatabaseBytes: maximum,

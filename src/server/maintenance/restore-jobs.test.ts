@@ -1049,7 +1049,7 @@ async function readyTrialFixture() {
   return { ...f, record, reference };
 }
 
-async function failedTrialFixture(ready: boolean) {
+async function failedTrialFixture(ready: boolean, expired = true) {
   const f = await activatedTrialFixture();
   const id = f.record.intent.id,
     hash = f.record.intentHash;
@@ -1065,7 +1065,7 @@ async function failedTrialFixture(ready: boolean) {
       f.permit.output.fingerprint,
     );
   // The old permit/authority is expired. Only bounded final evidence is allowed.
-  f.advance(60_000);
+  if (expired) f.advance(60_000);
   f.journal.state.phase = 'stopping';
   f.journal.write();
   const stop: RestoreTrialStopRequest = {
@@ -1076,7 +1076,7 @@ async function failedTrialFixture(ready: boolean) {
       generationId: f.permit.generationId,
       epoch: f.permit.epoch,
       challengeId: randomUUID(),
-      deadline: record.updatedAt + 90_000,
+      deadline: record.updatedAt + (expired ? 90_000 : 30_000),
     },
   };
   return { ...f, record, stop };
@@ -1186,8 +1186,8 @@ linux.each(['arrival', 'publication'])(
   },
 );
 
-async function stoppedFailedTrialFixture() {
-  const f = await failedTrialFixture(false);
+async function stoppedFailedTrialFixture(expired = true) {
+  const f = await failedTrialFixture(false, expired);
   const id = f.record.intent.id,
     hash = f.record.intentHash;
   let record = f.jobs.planTrialStop(id, hash, f.record.revision, f.stop);
@@ -1501,5 +1501,210 @@ linux.each(['expired', 'uncertain fsync'] as const)(
       reopened.markCandidateCommitted(id, hash, f.record.revision, f.reference),
     ).toThrow();
     expect(reopened.read(id)).toEqual(committed);
+  },
+);
+
+async function originalRecoveryFixture(expired = false) {
+  const f = await stoppedFailedTrialFixture(expired);
+  let record = planFailedCustody(f);
+  record = f.jobs.markTrialFrozen(record.intent.id, record.intentHash, record.revision, {
+    directory: '.restore-frozen-abc123',
+    bytes: 4096,
+    sha256: 'e'.repeat(64),
+    fingerprint: 'd'.repeat(64),
+  });
+  return { ...f, record };
+}
+linux(
+  'original recovery preserves sealed predecessor and refuses expired proof, skipped stages and altered history',
+  async () => {
+    const expired = await originalRecoveryFixture(true);
+    expect(() =>
+      expired.jobs.planOriginalPreparation(
+        expired.record.intent.id,
+        expired.record.intentHash,
+        expired.record.revision,
+        randomUUID(),
+        expired.record.intent.authority.expiresAt,
+      ),
+    ).toThrow();
+    const f = await originalRecoveryFixture(),
+      id = f.record.intent.id,
+      hash = f.record.intentHash;
+    let record = f.jobs.planOriginalPreparation(
+      id,
+      hash,
+      f.record.revision,
+      randomUUID(),
+      f.record.intent.authority.expiresAt,
+    );
+    expect(() =>
+      f.jobs.planOriginalPreparation(
+        id,
+        hash,
+        record.revision,
+        randomUUID(),
+        record.intent.authority.expiresAt,
+      ),
+    ).toThrow();
+    expect(() =>
+      f.jobs.planOriginalActivation(id, hash, record.revision, attemptFixture()),
+    ).toThrow();
+    record = f.jobs.markOriginalPrepared(id, hash, record.revision, {
+      directory: '.restore-rollback-new123',
+      bytes: 4096,
+      sha256: '3'.repeat(64),
+      fingerprint: '4'.repeat(64),
+    });
+    record = f.jobs.markOriginalRehearsed(id, hash, record.revision);
+    expect(() =>
+      f.jobs.planOriginalActivation(id, hash, record.revision, f.record.execution!.attempt!),
+    ).toThrow();
+    record = f.jobs.planOriginalActivation(id, hash, record.revision, attemptFixture());
+    record = f.jobs.markOriginalStaged(id, hash, record.revision);
+    record = f.jobs.markOriginalReplacing(id, hash, record.revision);
+    record = f.jobs.markOriginalActivated(id, hash, record.revision);
+    const { rollback, ...predecessor } = record.execution!;
+    expect(predecessor).toEqual(f.record.execution);
+    expect(rollback!.priorUpdatedAt).toBe(f.record.updatedAt);
+    for (const mutate of [
+      (r: RestoreJobRecord) => {
+        r.execution!.rollback!.deadline++;
+      },
+      (r: RestoreJobRecord) => {
+        r.execution!.rollback!.attempt!.epoch = r.execution!.attempt!.epoch;
+      },
+      (r: RestoreJobRecord) => {
+        r.execution!.rollback!.image!.directory = '../original';
+      },
+      (r: RestoreJobRecord) => {
+        delete r.execution!.failure;
+      },
+      (r: RestoreJobRecord) => {
+        r.execution!.rollback!.priorUpdatedAt = r.intent.authority.expiresAt;
+      },
+      (r: RestoreJobRecord) => {
+        r.phase = 'original-committed';
+      },
+    ]) {
+      const changed = structuredClone(record);
+      mutate(changed);
+      writeFileSync(f.statePath(id), JSON.stringify(changed));
+      expect(() => f.openJobs().read(id)).toThrow();
+      writeFileSync(f.statePath(id), JSON.stringify(record));
+    }
+    f.advance(60_000);
+    expect(f.openJobs().read(id)).toEqual(record);
+    expect(() => f.jobs.markOriginalActivated(id, hash, record.revision)).toThrow();
+  },
+);
+
+linux.each(['success', 'publication', 'expiry'] as const)(
+  'original winner uses exact role and stays durable after %s',
+  async (mode) => {
+    const f = await originalRecoveryFixture(),
+      id = f.record.intent.id,
+      hash = f.record.intentHash;
+    let record = f.jobs.planOriginalPreparation(
+      id,
+      hash,
+      f.record.revision,
+      randomUUID(),
+      f.record.intent.authority.expiresAt,
+    );
+    record = f.jobs.markOriginalPrepared(id, hash, record.revision, {
+      directory: '.restore-rollback-new123',
+      bytes: 4096,
+      sha256: '3'.repeat(64),
+      fingerprint: '4'.repeat(64),
+    });
+    record = f.jobs.markOriginalRehearsed(id, hash, record.revision);
+    record = f.jobs.planOriginalActivation(id, hash, record.revision, attemptFixture());
+    record = f.jobs.markOriginalStaged(id, hash, record.revision);
+    record = f.jobs.markOriginalReplacing(id, hash, record.revision);
+    record = f.jobs.markOriginalActivated(id, hash, record.revision);
+    const token = randomUUID(),
+      child = spawn(
+        process.execPath,
+        [
+          '--input-type=module',
+          '--eval',
+          "process.on('message', () => {}); process.send({ ready: true });",
+        ],
+        {
+          env: { ...process.env, SPINEL_PROCESS_GROUP_TOKEN: token },
+          stdio: ['ignore', 'ignore', 'inherit', 'ipc'],
+        },
+      );
+    cleanups.push(async () => {
+      if (child.exitCode !== null || child.signalCode !== null) return;
+      const exit = once(child, 'exit');
+      child.kill('SIGKILL');
+      await exit;
+    });
+    await once(child, 'message');
+    const image = record.execution!.rollback!.image!,
+      permit: RestoreTrialPermit = {
+        ...f.permit,
+        ...record.execution!.rollback!.attempt!,
+        role: 'original',
+        child: processIdentity(child.pid!, token)!,
+        output: { bytes: image.bytes, sha256: image.sha256, fingerprint: image.fingerprint },
+        deadline: record.execution!.rollback!.deadline,
+      };
+    expect(() =>
+      f.jobs.planOriginalTrial(id, hash, record.revision, { ...permit, role: 'candidate' }),
+    ).toThrow();
+    expect(() =>
+      f.jobs.planOriginalTrial(id, hash, record.revision, { ...permit, child: f.permit.child }),
+    ).toThrow();
+    record = f.jobs.planOriginalTrial(id, hash, record.revision, permit);
+    Object.assign(f.journal.state, {
+      phase: 'starting',
+      generationId: permit.generationId,
+      epoch: permit.epoch,
+      child: permit.child,
+    });
+    f.journal.state.operation!.generationId = permit.generationId;
+    f.journal.write();
+    record = f.jobs.markOriginalTrialOpening(id, hash, record.revision);
+    const reference = restoreTrialReference(permit);
+    expect(() =>
+      f.jobs.markOriginalTrialReady(id, hash, record.revision, f.stop.reference, image.fingerprint),
+    ).toThrow();
+    record = f.jobs.markOriginalTrialReady(id, hash, record.revision, reference, image.fingerprint);
+    expect(() => f.jobs.markOriginalCommitted(id, hash, record.revision, reference)).toThrow();
+    f.journal.state.phase = 'paused';
+    f.journal.write();
+    expect(() => f.jobs.markCandidateCommitted(id, hash, record.revision, reference)).toThrow();
+    if (mode !== 'success') {
+      const sync = f.journal.syncRoot.bind(f.journal);
+      vi.spyOn(f.journal, 'syncRoot').mockImplementation(() => {
+        sync();
+        if (JSON.parse(readFileSync(f.statePath(id), 'utf8')).phase === 'original-committed') {
+          if (mode === 'publication') throw new Error('Lost original winner publication');
+          f.advance(60_000);
+        }
+      });
+      expect(() => f.jobs.markOriginalCommitted(id, hash, record.revision, reference)).toThrow();
+      vi.restoreAllMocks();
+      record = f.openJobs().read(id)!;
+    } else record = f.jobs.markOriginalCommitted(id, hash, record.revision, reference);
+    expect(record.phase).toBe('original-committed');
+    expect(isCommittedRestoreJob(record)).toBe(true);
+    expect(record.execution!.rollback!.outcome!.fingerprint).toBe(image.fingerprint);
+    expect(record.execution!.trial).toEqual(f.record.execution!.trial);
+    expect(record.execution!.failure).toEqual(f.record.execution!.failure);
+    f.advance(60_000);
+    expect(f.openJobs().read(id)).toEqual(record);
+    expect(() =>
+      f.jobs.planOriginalPreparation(
+        id,
+        hash,
+        record.revision,
+        randomUUID(),
+        record.intent.authority.expiresAt,
+      ),
+    ).toThrow();
   },
 );

@@ -1,3 +1,4 @@
+import { assertRestoreAuthority } from '../maintenance/restore-authority.ts';
 import { stat } from 'node:fs/promises';
 import { join } from 'node:path';
 import { DatabaseSync } from '../../../server/database.ts';
@@ -45,6 +46,7 @@ export async function prepareWorkingRollback(input: RollbackWorkerInput) {
     const current = connect(input.current.databasePath);
     if (restoreSnapshotFingerprint(current) !== input.current.fingerprint)
       throw new Error('Rollback original differs from its independent witness.');
+    if (input.authority !== undefined) assertRestoreAuthority(current, input.authority);
     const additional = input.additional.map((value) => connect(value.databasePath));
     const candidate = connect(output);
     candidate.exec('PRAGMA journal_mode=DELETE');
@@ -56,6 +58,7 @@ export async function prepareWorkingRollback(input: RollbackWorkerInput) {
       additional,
       input,
     );
+    if (input.authority !== undefined) assertRestoreAuthority(current, input.authority);
     const logicalFingerprint = restoreSnapshotFingerprint(candidate);
     for (const db of connections.splice(0)) db.close();
     await assertSelfContained(output);

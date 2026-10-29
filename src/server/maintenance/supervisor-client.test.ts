@@ -1,4 +1,4 @@
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import type { MaintenanceAdminStatus } from '../../shared/maintenance.ts';
 import { connectMaintenance, MAINTENANCE_CHANNEL } from './supervisor-client.ts';
@@ -8,14 +8,18 @@ import { restoreTrialReference } from './restore-trial.ts';
 import type { RestoreTrialPermit } from './restore-trial.ts';
 import { validRestoreTrialStopRequest } from './restore-trial-stop.ts';
 import type { RestoreTrialStopRequest } from './restore-trial-stop.ts';
+import { restoreIntentHash } from './restore-job-intent.ts';
+import { RESTORE_RPC_ERROR, RESTORE_RPC_MS, RESTORE_RPC_PENDING } from './restore-rpc.ts';
+import type { ConfirmedRestoreAdmission } from '../backup/restore-control.ts';
 
 const boundary = vi.hoisted(() => ({
+  trial: true,
   state: undefined as MaintenanceAdminStatus | undefined,
   child: undefined as RestoreTrialPermit['child'] | undefined,
 }));
 vi.mock('./ownership.ts', () => ({
   receiveWorkspaceOwnership: async (_path: string, opening: (value: object) => void) => {
-    opening({});
+    if (boundary.trial) opening({});
     void Promise.resolve().then(() =>
       process.emit('message', {
         channel: 'spinel-maintenance',
@@ -56,6 +60,7 @@ function stop(): RestoreTrialStopRequest {
   };
 }
 beforeEach(async () => {
+  boundary.trial = true;
   vi.useFakeTimers();
   vi.setSystemTime(1_800_000_000_000);
   const intent = restoreJobIntentFixture();
@@ -247,4 +252,115 @@ test('a committed released trial can later use ordinary restore authority and sh
   await Promise.resolve();
   expect(ordinaryStop).toHaveBeenCalledExactlyOnceWith(request);
   expect(failedStop).not.toHaveBeenCalled();
+});
+
+async function ordinaryController() {
+  bridge!.close();
+  boundary.trial = false;
+  bridge = await connectMaintenance();
+  state({ phase: 'running', operationId: null, authorityExpiresAt: null });
+  return bridge.restoreController;
+}
+function admission() {
+  const intent = restoreJobIntentFixture();
+  intent.target.generationId = permit.generationId;
+  intent.target.epoch = permit.epoch;
+  const continuationToken = 'T'.repeat(43);
+  intent.continuationHash = createHash('sha256').update(continuationToken).digest('hex');
+  const request: ConfirmedRestoreAdmission = {
+    id: intent.id,
+    generationId: intent.target.generationId,
+    epoch: intent.target.epoch,
+    authority: intent.authority,
+    confirmedAt: intent.confirmedAt,
+    preview: intent.preview,
+    consequenceEnvelope: 1,
+    source: {
+      archive: { ...intent.source.archive, path: '/srv/private/archive.spinel' },
+      databasePath: '/srv/private/prepared.sqlite',
+      databaseBytes: intent.source.candidate.bytes,
+      databaseSha256: intent.source.candidate.sha256,
+      recovery: intent.source.recovery,
+    },
+  };
+  return {
+    request,
+    result: {
+      record: {
+        version: 1,
+        revision: 1,
+        phase: 'source-retained',
+        intent,
+        intentHash: restoreIntentHash(intent),
+        updatedAt: intent.confirmedAt,
+      },
+      custody: true,
+      continuationToken,
+    },
+  };
+}
+
+test('private trial cannot obtain a running restore target or admit another source', async () => {
+  const { request } = admission();
+  expect(() => bridge!.restoreController.target()).toThrow(RESTORE_RPC_ERROR);
+  await expect(bridge!.restoreController.admit(request)).rejects.toThrow(RESTORE_RPC_ERROR);
+  expect(messages.some((item) => item.kind === 'restore-admit')).toBe(false);
+});
+
+test('custody RPC requires its correlated action and validated original record before resolving', async () => {
+  const controller = await ordinaryController();
+  const { request, result } = admission();
+  expect(controller.target()).toEqual({ generationId: permit.generationId, epoch: permit.epoch });
+  const pending = controller.admit(request);
+  const frame = messages.at(-1)!;
+  let settled = false;
+  void pending.then(() => {
+    settled = true;
+  });
+  message('restore-result', { action: 'restore-admit', requestId: randomUUID(), result });
+  message('restore-result', { action: 'restore-begin', requestId: frame.requestId, result });
+  await Promise.resolve();
+  expect(settled).toBe(false);
+  message('restore-result', { action: frame.kind, requestId: frame.requestId, result });
+  await expect(pending).resolves.toEqual(result);
+  // A late duplicate cannot dispatch a separate begin or replace the settled ACK.
+  message('restore-result', { action: frame.kind, requestId: frame.requestId, result });
+  expect(messages.filter((item) => item.kind === 'restore-admit')).toHaveLength(1);
+  expect(messages.some((item) => item.kind === 'restore-begin')).toBe(false);
+});
+
+test.each(['record', 'token', 'error'])(
+  'invalid %s reply cannot establish source custody',
+  async (fault) => {
+    const controller = await ordinaryController();
+    const { request, result } = admission();
+    const pending = controller.admit(request),
+      frame = messages.at(-1)!;
+    if (fault === 'record') result.record.intent.id = randomUUID();
+    if (fault === 'token') result.continuationToken = 'U'.repeat(43);
+    message('restore-result', {
+      action: frame.kind,
+      requestId: frame.requestId,
+      result,
+      ...(fault === 'error' ? { error: '/private/archive/key must not escape' } : {}),
+    });
+    await expect(pending).rejects.toThrow(RESTORE_RPC_ERROR);
+  },
+);
+
+test('restore transport bounds pending work and rejects every unacknowledged request on timeout or close', async () => {
+  const controller = await ordinaryController(),
+    { request } = admission();
+  const pending = Array.from({ length: RESTORE_RPC_PENDING }, () =>
+    controller.admit(request).catch((error: Error) => error.message),
+  );
+  await expect(controller.admit(request)).rejects.toThrow(RESTORE_RPC_ERROR);
+  expect(messages.filter((item) => item.kind === 'restore-admit')).toHaveLength(
+    RESTORE_RPC_PENDING,
+  );
+  await vi.advanceTimersByTimeAsync(RESTORE_RPC_MS);
+  expect(await Promise.all(pending)).toEqual(Array(RESTORE_RPC_PENDING).fill(RESTORE_RPC_ERROR));
+  const closing = controller.admit(request);
+  bridge!.close();
+  await expect(closing).rejects.toThrow(RESTORE_RPC_ERROR);
 });

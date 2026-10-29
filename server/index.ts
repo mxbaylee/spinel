@@ -62,6 +62,7 @@ const app = await (async () => {
     opened = true;
     starting = await createApp({
       maintenance,
+      restoreController: maintenance?.restoreController,
       restoreOpening: maintenance?.takeRestoreOpening(),
       development,
       ...applicationPolicy(port),

@@ -1977,6 +1977,8 @@ test
   .each([
     'ownership-first',
     'readiness-first',
+    'original-recovered',
+    'original-commit-publication',
     'wrong-fingerprint',
     'failed-freeze-publication',
     'release-rejected',
@@ -2016,6 +2018,8 @@ test
       portProbe.close((error) => (error ? reject(error) : resolve())),
     );
     const applicationUrl = `http://127.0.0.1:${applicationPort}/api/health`;
+    const originalRecovery = ordering.startsWith('original-');
+    const terminalPhase = originalRecovery ? 'original-committed' : 'candidate-committed';
     let privateReadyObserved = false,
       ownershipReordered = false;
     let authorityOffset = 0,
@@ -2074,6 +2078,7 @@ test
                   jobId: string;
                   epoch: string;
                   generationId: string;
+                  role: 'candidate' | 'original';
                 };
                 const readJob = () =>
                   JSON.parse(
@@ -2082,9 +2087,11 @@ test
                       'utf8',
                     ),
                   );
-                expect(readJob().phase).toBe('trial-opening');
-                expect(readJob().execution.openingGrantedAt).toBeLessThanOrEqual(Date.now());
-                expect(readJob().execution.trial.child.pid).toBe(child.pid);
+                const original = reference.role === 'original';
+                expect(readJob().phase).toBe(original ? 'original-trial-opening' : 'trial-opening');
+                const selected = original ? readJob().execution.rollback : readJob().execution;
+                expect(selected.openingGrantedAt).toBeLessThanOrEqual(Date.now());
+                expect(selected.trial.child.pid).toBe(child.pid);
                 // Neither ordinary readiness nor an old attempt nonce may advance
                 // the trial or make ordinary resume available.
                 emit('message', {
@@ -2096,7 +2103,11 @@ test
                 emit('message', { ...value, reference: { ...reference, nonce: randomUUID() } });
                 expect(supervisor.status().phase).toBe('starting');
                 expect(supervisor.status().readyToResume).toBe(false);
-                if (ordering === 'wrong-fingerprint' || ordering === 'failed-freeze-publication') {
+                if (
+                  ordering === 'wrong-fingerprint' ||
+                  ordering === 'failed-freeze-publication' ||
+                  (originalRecovery && !original)
+                ) {
                   emit('message', { ...value, fingerprint: '0'.repeat(64) });
                   return status;
                 }
@@ -2226,7 +2237,7 @@ test
         }
       });
     }
-    if (ordering === 'commit-publication') {
+    if (ordering === 'commit-publication' || ordering === 'original-commit-publication') {
       const write = supervisor.journal.write.bind(supervisor.journal);
       vi.spyOn(supervisor.journal, 'write').mockImplementation(() => {
         write();
@@ -2235,7 +2246,7 @@ test
           supervisor.journal.state.restoreJob?.jobId === id &&
           supervisor.journal.state.restoreStop === null &&
           JSON.parse(readFileSync(join(f.root, 'restore-jobs', id, 'state.json'), 'utf8')).phase ===
-            'candidate-committed'
+            terminalPhase
         ) {
           commitPublicationFailed = true;
           throw new Error('Terminal main publication result was lost.');
@@ -2252,6 +2263,17 @@ test
         publish.apply(this, args);
         frozenPublicationFailed = true;
         throw new Error('Failed frozen publication result was lost.');
+      });
+    }
+    if (['wrong-fingerprint', 'early-release', 'pause-publication'].includes(ordering)) {
+      const publish = RestoreJobs.prototype.markTrialFrozen;
+      vi.spyOn(RestoreJobs.prototype, 'markTrialFrozen').mockImplementation(function (
+        this: RestoreJobs,
+        ...args: Parameters<RestoreJobs['markTrialFrozen']>
+      ) {
+        const result = publish.apply(this, args);
+        authorityOffset = result.intent.authority.expiresAt + 1 - Date.now();
+        return result;
       });
     }
     let controllerFailure: string | null = null;
@@ -2291,14 +2313,14 @@ test
       controllerFailure,
     }).toMatchObject({ ready: true });
     expect(await pausedProbe).toBe(503);
-    const failed = !['ownership-first', 'readiness-first'].includes(ordering);
+    const failed = !['ownership-first', 'readiness-first', 'original-recovered'].includes(ordering);
     const uncommitted = [
       'wrong-fingerprint',
       'failed-freeze-publication',
       'early-release',
       'pause-publication',
     ].includes(ordering);
-    const retainedBarrier = uncommitted || ordering === 'commit-publication';
+    const retainedBarrier = uncommitted || ordering.endsWith('commit-publication');
     if (failed) {
       await expect
         .poll(() => supervisor.status().phase, { timeout: 30_000 })
@@ -2307,12 +2329,13 @@ test
     } else {
       await expect
         .poll(async () => JSON.parse(await readFile(statePath, 'utf8')).phase, { timeout: 30_000 })
-        .toBe('candidate-committed');
+        .toBe(terminalPhase);
       await expect.poll(() => supervisor.status().phase).toBe('running');
     }
     expect(privateReadyObserved).toBe(true);
     expect(ownershipReordered).toBe(ordering === 'readiness-first');
     const completed = JSON.parse(await readFile(statePath, 'utf8'));
+    const selected = originalRecovery ? completed.execution.rollback : completed.execution;
     expect(completed.execution.frozen.fingerprint).toBe(completed.execution.stop.fingerprint);
     expect(completed.execution.frozen.fingerprint).not.toBe(source.logicalFingerprint);
     expect(completed.intent.source.archive.sha256).toBe(seedSource.sha256);
@@ -2350,8 +2373,8 @@ test
       // Observer completion must not alter the selected, closed output.
       expect(await readFile(imagePath)).toEqual(bytes);
     }
-    expect(completed.phase).toBe(uncommitted ? 'trial-frozen' : 'candidate-committed');
-    if (uncommitted) {
+    expect(completed.phase).toBe(uncommitted ? 'trial-frozen' : terminalPhase);
+    if (uncommitted || originalRecovery) {
       const failure = completed.execution.failure;
       expect(failure.capture.manifest.witness.fingerprint).toBe(failure.stop.fingerprint);
       expect(failure.freeze.output.fingerprint).toBe(failure.stop.fingerprint);
@@ -2378,7 +2401,7 @@ test
         failure.freeze.output.sha256,
       );
       expect(completed.execution.failure.from).toBe(
-        ['wrong-fingerprint', 'failed-freeze-publication'].includes(ordering)
+        ['wrong-fingerprint', 'failed-freeze-publication'].includes(ordering) || originalRecovery
           ? 'trial-opening'
           : 'trial-ready',
       );
@@ -2393,6 +2416,23 @@ test
       expect(completed.execution.failure.stop.request.generationId).toBe(
         completed.execution.attempt.generationId,
       );
+    }
+    if (originalRecovery) {
+      expect(selected.attempt.generationId).not.toBe(completed.execution.attempt.generationId);
+      expect(selected.attempt.epoch).not.toBe(completed.execution.attempt.epoch);
+      expect(selected.trial.role).toBe('original');
+      expect(selected.outcome.role).toBe('original');
+      expect(selected.outcome.fingerprint).toBe(selected.image.fingerprint);
+      const path = join(
+        f.root,
+        `restore-${id}`,
+        `original-${selected.slot}`,
+        selected.image.directory,
+        'rollback.sqlite',
+      );
+      const image = await readFile(path);
+      expect(image.length).toBe(selected.image.bytes);
+      expect(createHash('sha256').update(image).digest('hex')).toBe(selected.image.sha256);
     }
     if (ordering === 'failed-freeze-publication') {
       expect(frozenPublicationFailed).toBe(true);
@@ -2421,7 +2461,7 @@ test
       uncommitted ? completed.execution.stop : null,
     );
     expect(fileIdentity(f.databasePath)).toEqual(admitted.record.intent.target.identity);
-    expect(supervisor.status().generationId).toBe(completed.execution.attempt.generationId);
+    expect(supervisor.status().generationId).toBe(selected.attempt.generationId);
     expect(supervisor.status().generationId).not.toBe(admitted.record.intent.target.generationId);
     if (failed && ordering !== 'clock-after-running-write')
       expect(supervisor.journal.state.operation?.generationId).toBe(
@@ -2438,14 +2478,14 @@ test
     if (retainedBarrier) expect(releaseSnapshot).toBeUndefined();
     else
       expect(releaseSnapshot).toMatchObject({
-        phase: 'candidate-committed',
+        phase: terminalPhase,
         barrier: false,
         accepted: true,
         main: {
           phase: 'paused',
           restoreJob: null,
           restoreStop: null,
-          generationId: completed.execution.trial.generationId,
+          generationId: selected.trial.generationId,
         },
       });
     if (failed) assertWorkspaceHandlesClosed(f.databasePath);
@@ -2463,7 +2503,7 @@ test
     }
     expect(runningPublished).toBe(!failed);
     expect(earlyInjected).toBe(ordering === 'early-release');
-    expect(commitPublicationFailed).toBe(ordering === 'commit-publication');
+    expect(commitPublicationFailed).toBe(ordering.endsWith('commit-publication'));
     expect(pausePublicationFailed).toBe(ordering === 'pause-publication');
     if (ordering.startsWith('clock-after-')) {
       expect(clockAdvanced).toBe(true);
@@ -2492,12 +2532,15 @@ test
       const [code] = await once(observer, 'exit');
       expect(code).toBe(0);
       // A failed release after durable commitment cannot revive original content.
-      expect(selectedContents).toEqual({ name: 'Archived folder', sessions: 0 });
+      expect(selectedContents).toEqual({
+        name: originalRecovery ? 'Current folder' : 'Archived folder',
+        sessions: 0,
+      });
 
       const terminalBytes = await readFile(statePath, 'utf8');
       const commit = restoreFiles.commitRestoreFiles;
       let cleanupAttempts = 0;
-      const interrupted = ordering === 'commit-publication';
+      const interrupted = ordering.endsWith('commit-publication');
       if (interrupted) {
         const mainPath = join(f.root, 'journal.json');
         const originalMain = JSON.parse(await readFile(mainPath, 'utf8'));
@@ -2594,8 +2637,8 @@ test
         });
         cleanups.push(() => recovered.close());
         expect(recovered.status().phase).toBe('recovery-required');
-        expect(recovered.status().generationId).toBe(completed.execution!.trial!.generationId);
-        expect(recovered.status().epoch).not.toBe(completed.execution!.trial!.epoch);
+        expect(recovered.status().generationId).toBe(selected.trial.generationId);
+        expect(recovered.status().epoch).not.toBe(selected.trial.epoch);
         expect(recovered.journal.state.child).toBeNull();
         expect(recovered.journal.state.verifiedAt).toBeNull();
         expect(await readFile(statePath, 'utf8')).toBe(terminalBytes);

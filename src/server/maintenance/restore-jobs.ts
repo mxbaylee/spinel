@@ -72,6 +72,19 @@ export interface RestoreTrialFailure {
     output?: NonNullable<RestorePausePlan['frozen']>;
   };
 }
+export interface RestoreOriginalAttempt {
+  priorUpdatedAt: number;
+  slot: string;
+  preparedAt: number;
+  deadline: number;
+  image?: RestorePreparedImage;
+  rehearsedAt?: number;
+  attempt?: RestoreAttempt;
+  trial?: RestoreTrialPermit;
+  openingGrantedAt?: number;
+  readiness?: { fingerprint: string; acceptedAt: number };
+  outcome?: { role: 'original'; fingerprint: string; committedAt: number };
+}
 /** Durable original shutdown/preparation evidence. This store never opens SQLite. */
 export interface RestorePausePlan {
   epoch: string;
@@ -88,6 +101,7 @@ export interface RestorePausePlan {
   readiness?: { fingerprint: string; acceptedAt: number };
   outcome?: { role: 'candidate'; fingerprint: string; committedAt: number };
   failure?: RestoreTrialFailure;
+  rollback?: RestoreOriginalAttempt;
 }
 type ExecutionPhase =
   | 'pause-planned'
@@ -119,7 +133,18 @@ type ExecutionPhase =
   | 'trial-custody-planned'
   | 'trial-custody-retained'
   | 'trial-freeze-planned'
-  | 'trial-frozen';
+  | 'trial-frozen'
+  | 'original-preparation-planned'
+  | 'original-prepared'
+  | 'original-rehearsed'
+  | 'original-activation-planned'
+  | 'original-staged'
+  | 'original-replacing'
+  | 'original-activated'
+  | 'original-trial-planned'
+  | 'original-trial-opening'
+  | 'original-trial-ready'
+  | 'original-committed';
 export interface RestoreJobRecord {
   version: 1;
   revision: number;
@@ -167,6 +192,19 @@ const failurePhases: readonly string[] = [
   'trial-freeze-planned',
   'trial-frozen',
 ];
+const originalPhases: readonly string[] = [
+  'original-preparation-planned',
+  'original-prepared',
+  'original-rehearsed',
+  'original-activation-planned',
+  'original-staged',
+  'original-replacing',
+  'original-activated',
+  'original-trial-planned',
+  'original-trial-opening',
+  'original-trial-ready',
+  'original-committed',
+];
 const sameProcess = (a: ProcessIdentity | null, b: ProcessIdentity) =>
   !!a && a.pid === b.pid && a.start === b.start && a.boot === b.boot && a.token === b.token;
 const sameStop = (a: RestoreStopRecord | null | undefined, b: RestoreStopRecord) =>
@@ -196,6 +234,7 @@ function validPreparedImage(
   );
 }
 function validExecution(record: RestoreJobRecord) {
+  if (originalPhases.includes(record.phase)) return validOriginalAttempt(record);
   if (failurePhases.includes(record.phase)) return validTrialFailure(record);
   if (!executionPhases.includes(record.phase)) return !Object.hasOwn(record, 'execution');
   const plan = record.execution;
@@ -586,13 +625,172 @@ function unchangedFile(fd: number, path: string, before: ReturnType<typeof priva
   }
 }
 
+/** Original recovery extends the sealed failed candidate; it cannot rewrite
+ * historical candidate authorization, custody, readiness or its final witness. */
+function validOriginalAttempt(record: RestoreJobRecord): boolean {
+  const rollback = record.execution?.rollback,
+    stage = originalPhases.indexOf(record.phase);
+  if (!rollback || stage < 0) return false;
+  const { rollback: _, ...predecessor } = record.execution!;
+  if (
+    !validRecord(
+      {
+        ...record,
+        execution: predecessor,
+        phase: 'trial-frozen',
+        updatedAt: rollback.priorUpdatedAt,
+      },
+      record.intent.id,
+    )
+  )
+    return false;
+  const image = stage >= 1,
+    rehearsed = stage >= 2,
+    attempt = stage >= 3,
+    trial = stage >= 7,
+    opening = stage >= 8,
+    ready = stage >= 9,
+    outcome = stage >= 10;
+  if (
+    Object.keys(rollback).length !==
+      4 +
+        Number(image) +
+        Number(rehearsed) +
+        Number(attempt) +
+        Number(trial) +
+        Number(opening) +
+        Number(ready) +
+        Number(outcome) ||
+    !Number.isSafeInteger(rollback.priorUpdatedAt) ||
+    !Number.isSafeInteger(rollback.preparedAt) ||
+    rollback.preparedAt < rollback.priorUpdatedAt ||
+    rollback.preparedAt > record.updatedAt ||
+    !Number.isSafeInteger(rollback.deadline) ||
+    rollback.deadline <= record.updatedAt ||
+    rollback.deadline > record.intent.authority.expiresAt ||
+    rollback.deadline - rollback.preparedAt > 600_000 ||
+    typeof rollback.slot !== 'string' ||
+    !uuid.test(rollback.slot) ||
+    [
+      record.intent.id,
+      predecessor.freezeSlot,
+      predecessor.preparation!.slot,
+      predecessor.failure!.capture!.slot,
+      predecessor.failure!.freeze!.slot,
+      ...Object.values(predecessor.attempt!),
+    ].includes(rollback.slot) ||
+    (image && !validPreparedImage(rollback.image, 'rollback')) ||
+    (rehearsed &&
+      (!Number.isSafeInteger(rollback.rehearsedAt) ||
+        rollback.rehearsedAt! < rollback.preparedAt ||
+        rollback.rehearsedAt! > record.updatedAt))
+  )
+    return false;
+  if (attempt) {
+    const value = rollback.attempt;
+    if (
+      !value ||
+      Object.keys(value).length !== 4 ||
+      ![value.attemptId, value.generationId, value.epoch, value.nonce].every(
+        (v) => typeof v === 'string' && uuid.test(v),
+      ) ||
+      new Set(Object.values(value)).size !== 4 ||
+      Object.values(value).some((v) =>
+        [
+          record.intent.id,
+          record.intent.target.generationId,
+          record.intent.target.epoch,
+          predecessor.epoch,
+          predecessor.child.token,
+          predecessor.trial!.child.token,
+          predecessor.freezeSlot,
+          predecessor.preparation!.slot,
+          predecessor.failure!.capture!.slot,
+          predecessor.failure!.freeze!.slot,
+          rollback.slot,
+          ...Object.values(predecessor.attempt!),
+        ].includes(v),
+      )
+    )
+      return false;
+  }
+  if (trial) {
+    const permit = rollback.trial,
+      selected = rollback.attempt!,
+      output = rollback.image!;
+    if (
+      !validRestoreTrialPermit(permit) ||
+      permit.role !== 'original' ||
+      permit.jobId !== record.intent.id ||
+      permit.intentHash !== record.intentHash ||
+      !['attemptId', 'generationId', 'epoch', 'nonce'].every(
+        (key) => permit[key as keyof RestoreTrialPermit] === selected[key as keyof RestoreAttempt],
+      ) ||
+      permit.databasePath !== record.intent.target.databasePath ||
+      !sameFile(permit.identity, record.intent.target.identity) ||
+      [predecessor.child, predecessor.trial!.child].some(
+        (child) => sameProcess(permit.child, child) || permit.child.token === child.token,
+      ) ||
+      permit.output.bytes !== output.bytes ||
+      permit.output.sha256 !== output.sha256 ||
+      permit.output.fingerprint !== output.fingerprint ||
+      permit.deadline > rollback.deadline ||
+      permit.deadline <= record.updatedAt ||
+      Object.keys(record.intent.policy).some(
+        (key) =>
+          permit.policy[key as keyof typeof permit.policy] !==
+          record.intent.policy[key as keyof typeof permit.policy],
+      )
+    )
+      return false;
+  }
+  if (
+    opening &&
+    (!Number.isSafeInteger(rollback.openingGrantedAt) ||
+      rollback.openingGrantedAt! < rollback.rehearsedAt! ||
+      rollback.openingGrantedAt! > record.updatedAt)
+  )
+    return false;
+  if (
+    ready &&
+    (!rollback.readiness ||
+      Object.keys(rollback.readiness).length !== 2 ||
+      rollback.readiness.fingerprint !== rollback.image!.fingerprint ||
+      !Number.isSafeInteger(rollback.readiness.acceptedAt) ||
+      rollback.readiness.acceptedAt < rollback.openingGrantedAt! ||
+      rollback.readiness.acceptedAt > record.updatedAt)
+  )
+    return false;
+  if (
+    outcome &&
+    (!rollback.outcome ||
+      Object.keys(rollback.outcome).length !== 3 ||
+      rollback.outcome.role !== 'original' ||
+      rollback.outcome.fingerprint !== rollback.readiness!.fingerprint ||
+      !Number.isSafeInteger(rollback.outcome.committedAt) ||
+      rollback.outcome.committedAt < rollback.readiness!.acceptedAt ||
+      rollback.outcome.committedAt > record.updatedAt)
+  )
+    return false;
+  return true;
+}
+/** Select by durable branch, never by a caller-supplied role. */
+export function selectedRestoreTrial(record: RestoreJobRecord) {
+  return originalPhases.includes(record.phase)
+    ? record.execution?.rollback?.trial
+    : record.execution?.trial;
+}
 export { validRecord as validRestoreJobRecord };
 function validRecord(value: unknown, id: string): value is RestoreJobRecord {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
   const record = value as RestoreJobRecord;
   return (
     Object.keys(record).length ===
-      (executionPhases.includes(record.phase) || failurePhases.includes(record.phase) ? 7 : 6) &&
+      (executionPhases.includes(record.phase) ||
+      failurePhases.includes(record.phase) ||
+      originalPhases.includes(record.phase)
+        ? 7
+        : 6) &&
     record.version === 1 &&
     Number.isSafeInteger(record.revision) &&
     record.revision >= 0 &&
@@ -602,7 +800,8 @@ function validRecord(value: unknown, id: string): value is RestoreJobRecord {
     record.intentHash === restoreIntentHash(record.intent) &&
     (['accepted', 'source-retained', 'failed'].includes(record.phase) ||
       executionPhases.includes(record.phase) ||
-      failurePhases.includes(record.phase)) &&
+      failurePhases.includes(record.phase) ||
+      originalPhases.includes(record.phase)) &&
     validExecution(record) &&
     Number.isSafeInteger(record.updatedAt) &&
     record.updatedAt >= record.intent.confirmedAt
@@ -615,7 +814,7 @@ export function isCommittedRestoreJob(value: unknown): value is RestoreJobRecord
   if (!value || typeof value !== 'object') return false;
   const record = value as RestoreJobRecord;
   return (
-    record.phase === 'candidate-committed' &&
+    ['candidate-committed', 'original-committed'].includes(record.phase) &&
     typeof record.intent?.id === 'string' &&
     validRecord(record, record.intent.id)
   );
@@ -1156,7 +1355,7 @@ export class RestoreJobs {
     return this.activationCheckpoint(current, 'candidate-activated', current.execution!);
   }
   private trialClock(record: RestoreJobRecord) {
-    const permit = record.execution!.trial!;
+    const permit = selectedRestoreTrial(record)!;
     const check = () => {
       const now = this.clock(record.intent);
       if (now < record.updatedAt || now >= permit.deadline) throw refused();
@@ -1197,10 +1396,10 @@ export class RestoreJobs {
       record.intentHash !== hash ||
       record.revision !== revision ||
       record.phase !== phase ||
-      !record.execution?.trial
+      !selectedRestoreTrial(record)
     )
       throw refused();
-    const permit = record.execution.trial,
+    const permit = selectedRestoreTrial(record)!,
       target = record.intent.target;
     const state = this.journal.state,
       owned = this.journal.workspaceOwnership(),
@@ -1216,7 +1415,7 @@ export class RestoreJobs {
       !sameFile(owned.databaseIdentity, target.identity) ||
       !sameFile(state.databaseIdentity, target.identity) ||
       !sameProcess(state.child, permit.child) ||
-      !sameStop(state.restoreStop, record.execution.stop!) ||
+      !sameStop(state.restoreStop, record.execution!.stop!) ||
       operation?.id !== id ||
       operation.generationId !== permit.generationId ||
       operation.actorId !== record.intent.authority.actorId ||
@@ -1484,6 +1683,166 @@ export class RestoreJobs {
       },
     });
     this.selectedTrialRecord(id, hash, result.revision, 'candidate-committed', 'paused');
+    return result;
+  }
+  private originalClock(record: RestoreJobRecord) {
+    const time = this.clock(record.intent);
+    if (time < record.updatedAt || time >= record.execution!.rollback!.deadline) throw refused();
+    return time;
+  }
+  private originalClosed(
+    id: string,
+    hash: string,
+    revision: number,
+    phase: RestoreJobRecord['phase'],
+  ) {
+    const record = this.trialEvidenceRecord(id, hash, revision, phase, true);
+    if (phase === 'trial-frozen') this.clock(record.intent);
+    else this.originalClock(record);
+    return record;
+  }
+  private originalCheckpoint(
+    current: RestoreJobRecord,
+    phase: ExecutionPhase,
+    rollback: RestoreOriginalAttempt,
+  ) {
+    this.originalClock({ ...current, execution: { ...current.execution!, rollback } });
+    const result = this.publishExecution(current, phase, { ...current.execution!, rollback });
+    this.originalClosed(result.intent.id, result.intentHash, result.revision, phase);
+    return result;
+  }
+  planOriginalPreparation(
+    id: string,
+    hash: string,
+    revision: number,
+    slot: string,
+    deadline: number,
+  ) {
+    const current = this.originalClosed(id, hash, revision, 'trial-frozen');
+    return this.originalCheckpoint(current, 'original-preparation-planned', {
+      priorUpdatedAt: current.updatedAt,
+      slot,
+      preparedAt: this.clock(current.intent),
+      deadline,
+    });
+  }
+  markOriginalPrepared(id: string, hash: string, revision: number, image: RestorePreparedImage) {
+    const current = this.originalClosed(id, hash, revision, 'original-preparation-planned');
+    return this.originalCheckpoint(current, 'original-prepared', {
+      ...current.execution!.rollback!,
+      image,
+    });
+  }
+  markOriginalRehearsed(id: string, hash: string, revision: number) {
+    const current = this.originalClosed(id, hash, revision, 'original-prepared');
+    return this.originalCheckpoint(current, 'original-rehearsed', {
+      ...current.execution!.rollback!,
+      rehearsedAt: this.originalClock(current),
+    });
+  }
+  planOriginalActivation(id: string, hash: string, revision: number, attempt: RestoreAttempt) {
+    const current = this.originalClosed(id, hash, revision, 'original-rehearsed');
+    return this.originalCheckpoint(current, 'original-activation-planned', {
+      ...current.execution!.rollback!,
+      attempt,
+    });
+  }
+  markOriginalStaged(id: string, hash: string, revision: number) {
+    const current = this.originalClosed(id, hash, revision, 'original-activation-planned');
+    return this.originalCheckpoint(current, 'original-staged', current.execution!.rollback!);
+  }
+  markOriginalReplacing(id: string, hash: string, revision: number) {
+    const current = this.originalClosed(id, hash, revision, 'original-staged');
+    return this.originalCheckpoint(current, 'original-replacing', current.execution!.rollback!);
+  }
+  markOriginalActivated(id: string, hash: string, revision: number) {
+    const current = this.originalClosed(id, hash, revision, 'original-replacing');
+    return this.originalCheckpoint(current, 'original-activated', current.execution!.rollback!);
+  }
+  planOriginalTrial(id: string, hash: string, revision: number, permit: RestoreTrialPermit) {
+    const current = this.originalClosed(id, hash, revision, 'original-activated');
+    const next = {
+      ...current,
+      phase: 'original-trial-planned' as const,
+      execution: {
+        ...current.execution!,
+        rollback: { ...current.execution!.rollback!, trial: permit },
+      },
+    };
+    if (!validExecution(next)) throw refused();
+    this.trialClock(next);
+    const result = this.originalCheckpoint(
+      current,
+      'original-trial-planned',
+      next.execution.rollback,
+    );
+    this.trialClock(result);
+    return result;
+  }
+  markOriginalTrialOpening(id: string, hash: string, revision: number) {
+    const current = this.selectedTrialRecord(
+      id,
+      hash,
+      revision,
+      'original-trial-planned',
+      'starting',
+    );
+    const result = this.publishExecution(current, 'original-trial-opening', {
+      ...current.execution!,
+      rollback: { ...current.execution!.rollback!, openingGrantedAt: this.trialClock(current) },
+    });
+    this.selectedTrialRecord(id, hash, result.revision, 'original-trial-opening', 'starting');
+    return result;
+  }
+  markOriginalTrialReady(
+    id: string,
+    hash: string,
+    revision: number,
+    reference: RestoreTrialRelease,
+    fingerprint: string,
+  ) {
+    const current = this.selectedTrialRecord(
+      id,
+      hash,
+      revision,
+      'original-trial-opening',
+      'starting',
+    );
+    if (
+      !sameRestoreTrialReference(reference, selectedRestoreTrial(current)!) ||
+      fingerprint !== selectedRestoreTrial(current)!.output.fingerprint
+    )
+      throw refused();
+    const result = this.publishExecution(current, 'original-trial-ready', {
+      ...current.execution!,
+      rollback: {
+        ...current.execution!.rollback!,
+        readiness: { fingerprint, acceptedAt: this.trialClock(current) },
+      },
+    });
+    this.selectedTrialRecord(id, hash, result.revision, 'original-trial-ready', 'starting');
+    return result;
+  }
+  markOriginalCommitted(
+    id: string,
+    hash: string,
+    revision: number,
+    reference: RestoreTrialRelease,
+  ) {
+    const current = this.selectedTrialRecord(id, hash, revision, 'original-trial-ready', 'paused');
+    if (!sameRestoreTrialReference(reference, selectedRestoreTrial(current)!)) throw refused();
+    const result = this.publishExecution(current, 'original-committed', {
+      ...current.execution!,
+      rollback: {
+        ...current.execution!.rollback!,
+        outcome: {
+          role: 'original',
+          fingerprint: current.execution!.rollback!.readiness!.fingerprint,
+          committedAt: this.trialClock(current),
+        },
+      },
+    });
+    this.selectedTrialRecord(id, hash, result.revision, 'original-committed', 'paused');
     return result;
   }
   close() {
