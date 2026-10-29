@@ -5,6 +5,7 @@ import type { ArchiveImportResult } from '../src/shared/archive.ts';
 import { PORTABLE_LIMIT } from '../src/shared/portable.ts';
 import type { WorkspaceItem } from '../src/shared/workspace.ts';
 import { itemsRequest } from './itemsApi.ts';
+import { refreshMaintenanceStatus } from './maintenanceState.ts';
 import { Button, Modal } from '../src/ui/redesign/Controls.tsx';
 import { ArchiveRequestError, importWorkspaceArchive } from './workspaceArchiveApi.ts';
 import './fileDialog.css';
@@ -102,12 +103,19 @@ export function ImportFile({
       onImported(item);
     } catch (cause) {
       if (!current()) return;
+      // A browser may drop the server's early maintenance reply mid-upload.
+      // Then the status poll is the only way to tell the person why.
+      const unconfirmed = archive && !(cause instanceof ArchiveRequestError);
+      const maintenance = unconfirmed ? await refreshMaintenanceStatus().catch(() => null) : null;
+      if (!current()) return;
       setError(
-        archive && !(cause instanceof ArchiveRequestError)
-          ? 'Could not confirm the import. Refresh your files before trying again.'
-          : cause instanceof Error
-            ? cause.message
-            : 'Could not import this file.',
+        maintenance?.available && maintenance.phase !== 'running'
+          ? 'Workspace maintenance interrupted this import. After the workspace resumes, refresh your files to check whether it finished.'
+          : unconfirmed
+            ? 'Could not confirm the import. Refresh your files before trying again.'
+            : cause instanceof Error
+              ? cause.message
+              : 'Could not import this file.',
       );
     } finally {
       if (current()) {

@@ -1,4 +1,5 @@
-import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, readdir, rm, writeFile } from 'node:fs/promises';
+import { request as httpRequest } from 'node:http';
 import { createHash, randomUUID } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -136,6 +137,7 @@ async function fixture() {
     });
   return {
     app,
+    directory,
     auth,
     db,
     workspace,
@@ -296,6 +298,20 @@ test('real control routes require current Operator, origin and fresh passkey wit
   expect(f.control).toHaveBeenCalledTimes(1);
   f.set({ phase: 'draining', epoch: 'after' });
   await expect.poll(() => f.bridge.status().phase).toBe('paused');
+  // A stale notice can still be withdrawn while edits are paused.
+  f.auth.markVerified(f.operatorSession.session, 'operator-key');
+  const noticeId = randomUUID();
+  const withdrawn = await f.send(path + '/cancel-notice', {
+    admin: true,
+    body: {
+      operationId: randomUUID(),
+      intentExpiresAt: f.auth.verifiedUntil(f.operatorSession.session)!,
+      noticeId,
+    },
+  });
+  expect(withdrawn.status, await withdrawn.clone().text()).toBe(200);
+  expect(f.control).toHaveBeenCalledTimes(2);
+  expect(f.control.mock.calls[1][0]).toMatchObject({ action: 'cancel-notice', noticeId });
   expect((await f.send('/api/auth/session', { admin: true })).status).toBe(200);
   expect((await f.send(path, { admin: true })).status).toBe(200);
   f.db.prepare('UPDATE auth_users SET is_admin=0 WHERE id=?').run(f.operator.id);
@@ -546,4 +562,47 @@ test('a disconnected OAuth request drains its provider promise and cannot resume
   await refused.promise;
   expect(exchange).not.toHaveBeenCalled();
   expect(f.failed).not.toHaveBeenCalled();
+});
+
+test('a pause during a stalled archive upload cancels it with a reason instead of failing the drain', async () => {
+  const f = await fixture();
+  const imports = join(f.directory, '.archive-imports');
+  let upload!: ReturnType<typeof httpRequest>;
+  const reply = new Promise<{ status: number; body: string }>((resolve, reject) => {
+    upload = httpRequest(
+      `${f.root}/api/items/archive-import`,
+      {
+        method: 'POST',
+        headers: {
+          Cookie: f.cookie(),
+          Origin: f.origin,
+          'X-Spinel-Epoch': 'before',
+          'X-Spinel-Account': f.owner.id,
+          'Content-Type': 'application/zip',
+          'Content-Length': String(64 * 1024 * 1024),
+        },
+      },
+      (response) => {
+        let body = '';
+        response.setEncoding('utf8');
+        response.on('data', (chunk) => (body += chunk));
+        response.on('end', () => resolve({ status: response.statusCode!, body }));
+      },
+    );
+    upload.on('error', reject);
+    // A slow client: one megabyte arrives, then the upload stalls indefinitely.
+    upload.write(Buffer.alloc(1024 * 1024));
+  });
+  cleanups.push(() => upload.destroy());
+  await expect.poll(async () => (await readdir(imports).catch(() => [])).length).toBe(1);
+  expect(f.app.maintenance.pending).toBeGreaterThan(0);
+  f.set({ phase: 'draining', epoch: 'after' });
+  // Without cancellation this upload would hold the drain until its deadline.
+  await expect.poll(() => f.bridge.status().phase, { timeout: 5_000 }).toBe('paused');
+  expect(f.failed).not.toHaveBeenCalled();
+  const { status, body } = await reply;
+  expect(status).toBe(503);
+  expect(JSON.parse(body).error).toMatch(/maintenance stopped this import\. No files were added/);
+  await expect.poll(() => readdir(imports)).toEqual([]);
+  expect(f.db.prepare('SELECT COUNT(*) AS total FROM workspace_items').get()!.total).toBe(1);
 });

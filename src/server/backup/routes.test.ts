@@ -440,19 +440,17 @@ test.each(['disconnect', 'revocation', 'maintenance'] as const)(
       let drain: Promise<void> | undefined;
       if (failure === 'maintenance') {
         f.setMaintenance({ phase: 'draining', epoch: 'after' });
-        let drained = false;
-        drain = f.gate!.drain().then(async () => {
+        // As the application's draining subscriber does: stop long transfers,
+        // then drain. The client is still connected and reading nothing.
+        f.gate!.cancelLongWork();
+        drain = f.gate!.drain(5000).then(async () => {
           // The admission must outlive socket close through actual file cleanup
           // and release of the persisted recovery lease.
           expect(f.backups.state().owner).toBeNull();
           expect(
             (await readdir(f.directory)).filter((name) => name.startsWith('.backup-export-')),
           ).toEqual([]);
-          drained = true;
         });
-        await new Promise((resolve) => setTimeout(resolve, 20));
-        expect(drained).toBe(false);
-        response.destroy();
       } else if (failure === 'disconnect') response.destroy();
       else f.auth.revokeSession(f.session.session.token_hash);
       await vi.waitFor(
@@ -468,7 +466,12 @@ test.each(['disconnect', 'revocation', 'maintenance'] as const)(
         { timeout: 10_000, interval: 30 },
       );
       await drain;
-      if (failure === 'maintenance') f.setMaintenance({ phase: 'paused' });
+      if (failure === 'maintenance') {
+        f.setMaintenance({ phase: 'paused' });
+        expect((await f.backups.exports.current(f.session.session.token_hash))?.error).toMatch(
+          /maintenance stopped this download\. Prepare a new download/,
+        );
+      }
     } finally {
       response.destroy();
       request.destroy();

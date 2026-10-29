@@ -13,6 +13,10 @@ import { RecoveryResourceError } from './resource-error.ts';
 import { MaintenanceError } from '../maintenance/gate.ts';
 
 const PREPARE_MS = 30 * 60_000;
+const MAINTENANCE_CANCELLED =
+  'Workspace maintenance stopped this backup before it was ready. Prepare a new download.';
+const DELIVERY_MAINTENANCE =
+  'Workspace maintenance stopped this download. Prepare a new download after the workspace resumes.';
 const DELIVERY_MS = 10 * 60_000;
 const FAILURE =
   'The workspace backup could not be prepared. Check the recovery key, application image and free space, then try again.';
@@ -434,7 +438,7 @@ export class ExportJobs {
           error instanceof RecoveryResourceError
             ? error.message
             : reason instanceof MaintenanceError
-              ? reason.message
+              ? MAINTENANCE_CANCELLED
               : FAILURE;
       }
     } finally {
@@ -516,11 +520,15 @@ export class ExportJobs {
       path: job.path,
       bytes: job.public.bytes,
       signal: job.controller.signal,
-      finish: (success: boolean) =>
+      finish: (success: boolean, reason?: unknown) =>
         this.finish(
           job,
           success ? 'delivered' : 'failed',
-          success ? null : 'The download was interrupted. Create another backup and try again.',
+          success
+            ? null
+            : reason instanceof MaintenanceError
+              ? DELIVERY_MAINTENANCE
+              : 'The download was interrupted. Create another backup and try again.',
         ),
     };
   }

@@ -137,9 +137,17 @@ exact origin/CSRF checks and a fresh operation ID before asking its parent to
 pause. The parent persists the pause and changes the retry epoch before the
 application drains. Accepted HTTP, sync and job work must settle within the drain
 budget. A timeout keeps maintenance active; it never reports successful drain.
-Backup preparation and download, and workspace archive export and import, are
-cancelled when draining begins rather than holding the drain open; people
-restart them after resume. Queued work from before the pause is not resent
+Scheduled backups and verification, backup preparation and download, and
+workspace archive export and import are cancelled when draining begins rather
+than holding the drain open. Each says that maintenance stopped it. People
+restart a download, export or import after resume; a scheduled job retries
+within an hour once the workspace is running (or waits to be run again if
+automatic backups are off). An application restart stops the same work and says
+so instead. One step cannot be interrupted: the snapshot copy at the start of a
+backup (`VACUUM INTO` plus integrity checks) is synchronous. On a large
+workspace it can outlast the 25-second drain, which then fails into
+`recovery-required` with `drain-failed`; run verify → start → resume and pause
+again once the backup has finished. Queued work from before the pause is not resent
 automatically after resume: each tab keeps it for the person to reconcile.
 
 The parent issues a single-operation resume secret to the initiating browser and

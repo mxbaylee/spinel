@@ -221,7 +221,7 @@ export function backupRoutes(auth: AuthStore, backups: BackupService, origin: st
         stream?.destroy();
         await input?.close();
       } finally {
-        await download.finish(success);
+        await download.finish(success, controller.signal.reason);
       }
     }
   });

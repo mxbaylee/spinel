@@ -36,7 +36,7 @@ import { HistoryStore } from '../src/server/history/store.ts';
 import { CollaborationStore } from '../src/server/collaboration/service.ts';
 import { attachSync } from '../src/server/sync/transport.ts';
 import type { MaintenanceBridge } from '../src/shared/maintenance.ts';
-import { MaintenanceGate } from '../src/server/maintenance/gate.ts';
+import { MaintenanceGate, ShutdownError } from '../src/server/maintenance/gate.ts';
 import { maintenanceRoutes } from '../src/server/maintenance/routes.ts';
 
 export const projectRoot = resolve(import.meta.dirname, '..');
@@ -548,7 +548,8 @@ export async function createApp(options: AppOptions) {
       // No new admission after shutdown begins. Existing leases still own their
       // writes while the bounded drain runs; stopping sockets is not a drain.
       maintenance.stopAdmission();
-      maintenance.cancelLongWork();
+      // A restart is not maintenance; stopped jobs must not say it was.
+      maintenance.cancelLongWork(new ShutdownError());
       // Shutdown must finish inside the supervisor's SIGTERM→SIGKILL budget
       // (STOP_MS, 15 s), so it drains for less than a maintenance pause does.
       await maintenance.drain(SHUTDOWN_DRAIN_MS);

@@ -217,6 +217,38 @@ test('accepted detached preparation retains its own permit after create returns 
   }
 });
 
+test('a drain cancels detached preparation so the pause completes and the Operator sees why', async () => {
+  const f = await fixture(),
+    maintenance = supervised(f.db);
+  let entered!: () => void;
+  const enteredArchive = new Promise<void>((resolve) => {
+    entered = resolve;
+  });
+  // Stands in for a preparation far longer than the drain deadline: it only
+  // ends when its abort signal fires.
+  vi.spyOn(archives, 'makeArchive').mockImplementationOnce(async (...args) => {
+    entered();
+    const signal = args[4]!.signal!;
+    await new Promise<void>((_resolve, reject) =>
+      signal.addEventListener('abort', () => reject(signal.reason), { once: true }),
+    );
+    throw new Error('unreachable');
+  });
+  const created = await maintenance.gate.run(() => f.service.exports.create('session-a'));
+  await enteredArchive;
+  expect(maintenance.gate.pending).toBe(1);
+  maintenance.phase('draining');
+  maintenance.gate.cancelLongWork();
+  await maintenance.gate.drain(5000);
+  maintenance.phase('paused');
+  expect(maintenance.gate.pending).toBe(0);
+  const current = await f.service.exports.current('session-a');
+  expect(current?.id).toBe(created.id);
+  expect(current?.state).toBe('failed');
+  expect(current?.error).toMatch(/maintenance stopped this backup.*Prepare a new download/);
+  expect(await f.staging()).toHaveLength(0);
+});
+
 test('paused expiry and heartbeat are inert, resumed timers get fresh admission, and overdue delivery is refused immediately', async () => {
   const f = await fixture(),
     maintenance = supervised(f.db);

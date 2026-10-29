@@ -410,6 +410,39 @@ export const CancelNotice: Story = {
     await expect(canvas.queryByRole('region', { name: 'Workspace maintenance' })).toBeNull();
   },
 };
+export const CancelNoticeWhilePaused: Story = {
+  args: { scenario: 'scheduled' },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement),
+      body = within(document.body);
+    // This tab pauses, so it holds the resume capability the cancel must keep.
+    const pause = await pauseDialog(canvasElement);
+    await userEvent.click(pause.getByRole('button', { name: 'Verify with a passkey' }));
+    await userEvent.click(await pause.findByRole('button', { name: 'Pause edits' }));
+    await expect(await canvas.findByRole('button', { name: 'Resume' })).toBeEnabled();
+    await userEvent.click(canvas.getByRole('button', { name: 'Maintenance actions' }));
+    // Replacing a notice waits for running; withdrawing a stale one does not.
+    await expect(
+      await body.findByRole('menuitem', { name: 'Replace maintenance notice…' }),
+    ).toHaveAttribute('aria-disabled', 'true');
+    await userEvent.click(body.getByRole('menuitem', { name: 'Cancel maintenance notice…' }));
+    const dialog = within(await body.findByRole('dialog', { name: 'Cancel maintenance notice?' }));
+    await userEvent.click(dialog.getByRole('button', { name: 'Verify with a passkey' }));
+    await userEvent.click(await dialog.findByRole('button', { name: 'Cancel notice' }));
+    await expect(await canvas.findByText(/Maintenance notice cancelled/)).toBeVisible();
+    await expect(args.onAction).toHaveBeenCalledWith(
+      'cancel-notice',
+      expect.objectContaining({ noticeId: operationId }),
+    );
+    // The pause is untouched and this tab can still resume it.
+    await expect(canvas.getByRole('button', { name: 'Resume' })).toBeEnabled();
+    await userEvent.click(canvas.getByRole('button', { name: 'Resume' }));
+    await expect(args.onAction).toHaveBeenCalledWith(
+      'resume',
+      expect.objectContaining({ resumeToken: 'fixture-memory-only-resume-authority' }),
+    );
+  },
+};
 export const Phone: Story = {
   args: { scenario: 'scheduled' },
   globals: { viewport: { value: 'phone', isRotated: false } },

@@ -3,7 +3,7 @@ import type { AddressInfo } from 'node:net';
 import { afterEach, expect, test } from 'vitest';
 import { DatabaseSync } from '../../../server/database.ts';
 import type { MaintenanceBridge, MaintenancePublicStatus } from '../../shared/maintenance.ts';
-import { MaintenanceError, MaintenanceGate } from './gate.ts';
+import { MaintenanceError, MaintenanceGate, ShutdownError } from './gate.ts';
 import { maintenanceRouter } from './router.ts';
 
 const cleanups: Array<() => unknown | Promise<unknown>> = [];
@@ -145,6 +145,18 @@ test('drain cancels registered long transfers so the deadline covers ordinary wr
   const late = new AbortController();
   gate.cancelOnDrain(late);
   expect(late.signal.reason).toBeInstanceOf(MaintenanceError);
+});
+
+test('shutdown cancels long work with its own reason, so a restart is not reported as maintenance', () => {
+  const { gate } = fixture();
+  const transfer = new AbortController();
+  gate.cancelOnDrain(transfer);
+  gate.stopAdmission();
+  gate.cancelLongWork(new ShutdownError());
+  expect(transfer.signal.reason).toBeInstanceOf(ShutdownError);
+  const late = new AbortController();
+  gate.cancelOnDrain(late);
+  expect(late.signal.reason).toBeInstanceOf(ShutdownError);
 });
 
 test('real callback body parsing works and HTTP disconnect cannot shorten async drain', async () => {

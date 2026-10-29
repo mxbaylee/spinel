@@ -360,7 +360,8 @@ export function MaintenanceControls({
       loading ||
       reloadRequired ||
       !status?.available ||
-      status.phase !== 'running'
+      // Withdrawing a stale notice stays possible while paused; the rest waits.
+      (kind !== 'cancel-notice' && status.phase !== 'running')
     )
       return;
     setError('');
@@ -454,7 +455,7 @@ export function MaintenanceControls({
       return;
     }
     if (kind === 'notice' && !validNotice) return;
-    if (kind !== 'resume' && status.phase !== 'running') {
+    if (kind !== 'resume' && kind !== 'cancel-notice' && status.phase !== 'running') {
       setError('Maintenance changed while this dialog was open. Close it and refresh the status.');
       return;
     }

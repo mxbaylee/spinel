@@ -17,6 +17,13 @@ export class MaintenanceError extends Error {
   }
 }
 
+/** Long work stopped because the application is shutting down, not paused. */
+export class ShutdownError extends Error {
+  constructor() {
+    super('The application is restarting. Try again shortly.');
+  }
+}
+
 interface Permit {
   gate: MaintenanceGate;
   active: boolean;
@@ -56,6 +63,8 @@ export class MaintenanceGate {
   private readonly active = new Set<Permit>();
   private readonly waiters = new Set<() => void>();
   private readonly cancellable = new Set<AbortController>();
+  /** Shutdown is terminal, so work registered after it reports a restart. */
+  private shutdown = false;
   private lifecycle = false;
   private closed = false;
   private admissionClosed = false;
@@ -168,12 +177,14 @@ export class MaintenanceGate {
    * holding admission until the pause fails into recovery-required.
    */
   cancelOnDrain(controller: AbortController): () => void {
-    if (!this.running) controller.abort(new MaintenanceError());
+    if (!this.running)
+      controller.abort(this.shutdown ? new ShutdownError() : new MaintenanceError());
     else this.cancellable.add(controller);
     return () => this.cancellable.delete(controller);
   }
-  cancelLongWork() {
-    for (const controller of this.cancellable) controller.abort(new MaintenanceError());
+  cancelLongWork(reason: Error = new MaintenanceError()) {
+    if (reason instanceof ShutdownError) this.shutdown = true;
+    for (const controller of this.cancellable) controller.abort(reason);
     this.cancellable.clear();
   }
   stop() {

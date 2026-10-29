@@ -1,6 +1,7 @@
+import { MaintenanceError } from '../maintenance/gate.ts';
 import { maintenanceRouter } from '../maintenance/router.ts';
 import express from 'express';
-import type { Request } from 'express';
+import type { Request, Response } from 'express';
 import { randomUUID } from 'node:crypto';
 import { once } from 'node:events';
 import { open, rm } from 'node:fs/promises';
@@ -22,6 +23,18 @@ import { archiveCapacity, archiveDirectory } from './archive-storage.ts';
 
 const TASK_TTL = 15 * 60_000;
 const MAX_TASKS = 100;
+const EXPORT_MAINTENANCE =
+  'Workspace maintenance stopped this export. Start a new export after the workspace resumes.';
+const IMPORT_MAINTENANCE =
+  'Workspace maintenance stopped this import. No files were added. Try again after the workspace resumes.';
+/** Same shape as the gate's own refusals, so clients treat it as maintenance. */
+function maintenanceReply(response: Response, error: string) {
+  response
+    .status(503)
+    .set('Cache-Control', 'no-store')
+    .set('Retry-After', '5')
+    .json({ error, code: 'maintenance' });
+}
 type Task = {
   public: ArchiveTask;
   user: string;
@@ -165,14 +178,20 @@ export function archiveRoutes(workspace: WorkspaceStore, files: PortableFiles) {
       await completion;
       if (!task.controller.signal.aborted) task.public.state = 'completed';
     } catch (error) {
-      if (task.controller.signal.aborted) task.public.state = 'cancelled';
+      if (task.controller.signal.reason instanceof MaintenanceError) {
+        task.public.state = 'failed';
+        task.public.error = EXPORT_MAINTENANCE;
+      } else if (task.controller.signal.aborted) task.public.state = 'cancelled';
       else {
         task.public.state = 'failed';
         task.public.error =
           error instanceof AuthError ? error.message : 'Could not export your files. Try again.';
       }
       if (response.headersSent || response.destroyed) response.destroy();
-      else {
+      else if (task.controller.signal.reason instanceof MaintenanceError) {
+        response.removeHeader('Content-Disposition');
+        maintenanceReply(response, EXPORT_MAINTENANCE);
+      } else {
         response.removeHeader('Content-Disposition');
         response.status(error instanceof AuthError ? error.status : 400).json({
           error: task.public.error ?? 'Export cancelled.',
@@ -192,8 +211,22 @@ export function archiveRoutes(workspace: WorkspaceStore, files: PortableFiles) {
     transfer.start();
     const controller = new AbortController();
     // Aborting must wake a stalled request read, not just its next verification.
+    // A maintenance stop answers first, so the person learns why instead of
+    // seeing a reset connection; the socket closes once that reply is sent.
     const stopUpload = () => {
-      if (!request.complete) request.destroy();
+      if (request.complete) return;
+      if (controller.signal.reason instanceof MaintenanceError && !response.headersSent) {
+        // A peer that never drains the reply must not hold the drain open.
+        const fallback = setTimeout(() => request.destroy(), 1000);
+        fallback.unref();
+        response.once('close', () => {
+          clearTimeout(fallback);
+          request.destroy();
+        });
+        response.once('finish', () => request.destroy());
+        response.set('Connection', 'close');
+        maintenanceReply(response, IMPORT_MAINTENANCE);
+      } else request.destroy();
     };
     controller.signal.addEventListener('abort', stopUpload, { once: true });
     const timer = setTimeout(() => controller.abort(), TRANSFER_TIMEOUT);
@@ -275,15 +308,18 @@ export function archiveRoutes(workspace: WorkspaceStore, files: PortableFiles) {
       response.status(201).json({ result });
     } catch (error) {
       await cleanup();
-      if (!response.destroyed) {
+      if (!response.destroyed && !response.headersSent) {
         // Do not continue receiving a rejected multi-gigabyte upload.
         if (!request.complete) response.set('Connection', 'close');
-        response.status(error instanceof AuthError ? error.status : 400).json({
-          error:
-            error instanceof AuthError
-              ? error.message
-              : 'Could not import this archive. No files were added.',
-        });
+        if (controller.signal.reason instanceof MaintenanceError)
+          maintenanceReply(response, IMPORT_MAINTENANCE);
+        else
+          response.status(error instanceof AuthError ? error.status : 400).json({
+            error:
+              error instanceof AuthError
+                ? error.message
+                : 'Could not import this archive. No files were added.',
+          });
       }
     } finally {
       releaseDrain?.();

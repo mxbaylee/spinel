@@ -15,12 +15,25 @@ import { observeJob } from '../health/jobs.ts';
 import type { ObserveJob } from '../health/jobs.ts';
 import { ExportJobs } from './export-jobs.ts';
 import { MAX_ARCHIVE_BYTES } from './transfer.ts';
+import { MaintenanceError, ShutdownError } from '../maintenance/gate.ts';
 
 const HOUR = 60 * 60_000;
 const BACKUP_FAILURE =
   'Backup or retention failed. Check the private backup configuration, storage access and free disk space, then retry.';
 const VERIFY_FAILURE =
   'Recovery verification failed. Keep the source backup and check recovery keys, application compatibility, storage access and free space.';
+/** A stop is not a failure: it says why, and whether the schedule retries it. */
+function stoppedMessage(reason: unknown, automatic: boolean) {
+  const cause =
+    reason instanceof ShutdownError
+      ? 'Stopped when the application restarted before it finished.'
+      : 'Stopped for workspace maintenance before it finished.';
+  return `${cause} ${
+    automatic
+      ? 'It retries automatically within an hour once the workspace is running.'
+      : 'Run it again once the workspace is running.'
+  }`;
+}
 type Job = 'backup' | 'verify';
 interface State {
   last_attempt: number | null;
@@ -329,10 +342,16 @@ export class BackupService {
     }
     this.activeJob = job;
     const finish = job === 'backup' ? observeJob(this.options.observe) : () => {};
-    this.active = this.perform(job, owner)
+    // A pause or restart stops long work on purpose; job health records no
+    // failure for it.
+    const stop = new AbortController();
+    const stopped = () =>
+      stop.signal.reason instanceof MaintenanceError || stop.signal.reason instanceof ShutdownError;
+    this.active = this.perform(job, owner, stop)
       .then(
         (result) => {
-          finish(result);
+          // A run that already published still counts, even if a drain began during cleanup.
+          if (result || !stopped()) finish(result);
           return result;
         },
         (error) => {
@@ -354,12 +373,15 @@ export class BackupService {
         .prepare('UPDATE verification_state SET error=? WHERE id=1 AND owner=?')
         .run(message, owner);
   }
-  private async perform(job: Job, owner: string) {
+  private async perform(job: Job, owner: string, stop: AbortController) {
     let archive: Awaited<ReturnType<typeof makeArchive>> | undefined;
     let remote: RemoteStore | undefined;
     let directory: string | undefined;
     let success = false;
-    const signal = AbortSignal.timeout(30 * 60_000);
+    // A backup or verification can run for up to 30 minutes, far beyond the
+    // drain deadline. A pause stops it; the schedule retries once running.
+    const releaseDrain = this.db.maintenance?.cancelOnDrain(stop);
+    const signal = AbortSignal.any([stop.signal, AbortSignal.timeout(30 * 60_000)]);
     const heartbeat = setInterval(() => {
       try {
         this.db
@@ -479,11 +501,15 @@ export class BackupService {
         owner,
         error instanceof RecoveryResourceError
           ? new RecoveryResourceError(error.code).message
-          : job === 'backup'
-            ? BACKUP_FAILURE
-            : VERIFY_FAILURE,
+          : stop.signal.reason instanceof MaintenanceError ||
+              stop.signal.reason instanceof ShutdownError
+            ? stoppedMessage(stop.signal.reason, this.config?.automatic !== false)
+            : job === 'backup'
+              ? BACKUP_FAILURE
+              : VERIFY_FAILURE,
       );
     } finally {
+      releaseDrain?.();
       clearInterval(heartbeat);
       let cleanupFailed = false;
       try {

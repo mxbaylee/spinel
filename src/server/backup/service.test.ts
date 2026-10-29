@@ -15,6 +15,8 @@ import type { BackupConfig } from './config.ts';
 import * as verification from './verification.ts';
 import * as archives from './archive.ts';
 import { RecoveryResourceError } from './resource-error.ts';
+import { MaintenanceGate } from '../maintenance/gate.ts';
+import type { MaintenanceAdminStatus, MaintenanceBridge } from '../../shared/maintenance.ts';
 
 const cleanups: Array<() => unknown | Promise<unknown>> = [];
 afterEach(async () => {
@@ -419,6 +421,75 @@ test('backup and verifier share a real lease, and shutdown drains active retriev
   expect(await checking).toBe(true);
   await closing;
   expect(verifier.status().verification.running).toBe(false);
+}, 60_000);
+
+test('a pause stops a running backup within the drain, reports no job failure, and the schedule retries it an hour later', async () => {
+  const f = await fixture();
+  const outcomes: boolean[] = [];
+  const service = new BackupService(f.db, {
+    ...f.options,
+    observe: () => (success) => outcomes.push(success),
+  });
+  cleanups.push(() => service.close());
+  let status: MaintenanceAdminStatus = {
+    available: true,
+    phase: 'running',
+    epoch: randomUUID(),
+    notice: null,
+    operationId: null,
+    authorityExpiresAt: null,
+    generationId: randomUUID(),
+    lastFailure: null,
+    readyToResume: false,
+  };
+  const bridge: MaintenanceBridge = {
+    status: () => status,
+    adminStatus: () => status,
+    subscribe: () => () => {},
+    control: async () => ({ status }),
+    ready() {},
+    drained() {},
+    fail() {},
+    close() {},
+  };
+  const gate = new MaintenanceGate(bridge);
+  f.db.setMaintenanceGate(gate);
+  let entered!: () => void;
+  const started = new Promise<void>((resolve) => {
+    entered = resolve;
+  });
+  // A backup that would run for its whole 30-minute budget: only abort ends it.
+  vi.spyOn(archives, 'makeArchive').mockImplementationOnce(async (...args) => {
+    entered();
+    const signal = args[4]!.signal!;
+    await new Promise<void>((_resolve, reject) =>
+      signal.addEventListener('abort', () => reject(signal.reason), { once: true }),
+    );
+    throw new Error('unreachable');
+  });
+  const running = gate.run(() => service.run());
+  await started;
+  status = { ...status, phase: 'draining' };
+  gate.cancelLongWork();
+  await gate.drain(5000);
+  expect(await running).toBe(false);
+  expect(gate.pending).toBe(0);
+  expect(service.status().error).toMatch(
+    /Stopped for workspace maintenance.*retries automatically within an hour/,
+  );
+  // A planned stop is not a failed backup in job health.
+  expect(outcomes).toEqual([]);
+  expect(await f.files()).toHaveLength(0);
+  status = { ...status, phase: 'running' };
+  // The scheduler, not a manual run, owns the retry, and waits out the hour.
+  f.advance(59 * 60_000);
+  await service.tick();
+  expect(await f.files()).toHaveLength(0);
+  f.advance(60_000);
+  await service.tick();
+  expect(await f.files()).toHaveLength(1);
+  expect(service.status().error).toBeNull();
+  expect(outcomes).toEqual([true]);
 }, 60_000);
 
 test('a destination cleanup failure releases the lease and keeps the published backup recoverable', async () => {
