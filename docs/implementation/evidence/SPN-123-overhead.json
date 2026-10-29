@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "measuredAt": "2026-10-29T21:21:29.764Z",
+  "measuredAt": "2026-10-29T21:37:28.219Z",
   "runtime": {
     "node": "v26.12.1",
     "platform": "linux",
@@ -8,7 +8,7 @@
     "cpuCount": 9
   },
   "source": {
-    "baseCommit": "04f048c94850836941fa366b453de899418a2d86",
+    "baseCommit": "c01ccdef0f22a7c136263da2360440feda7b6db2",
     "note": "Source-file hashes identify the measured working tree; baseCommit alone is not the complete tested source.",
     "sha256": {
       "lib/diagnostics/index.ts": "54357f1d66a4516379b39c27f939577c23075b30d2d409b01290ee2b3bb1c906",
@@ -19,8 +19,8 @@
       "lib/sync-server/src/server.ts": "5be58a9b33110f50f7aa5927eb159335655024e2838eb55ce84bb88f8146ed49",
       "lib/sync-server/src/types.ts": "7501543ee7b362a40a3922a8ce01c4544e3fa4d27f3d98d50146773e03600923",
       "package-lock.json": "417a0eb4b269a3e0cc6db81e134f3b1962bb0ff8668a6ae5f8c302da6762e520",
-      "web/diagnostics.ts": "1f42c9316d0dc4fb17afd5d2a88207449eda08d9854551b7e9c221a867e6ef2f",
-      "scripts/ci/diagnostics-overhead.ts": "b551579b9b56b890e0a5e25190650991c07da455277aef9441ffa8910ccd84e2"
+      "web/diagnostics.ts": "1472532b4c6e0c962119292afbdfa8b97210c1d05e23cf3619bc61d935c6d686",
+      "scripts/ci/diagnostics-overhead.ts": "f19fb3ffa839edbf279c8cac565cafc75f45d334b514b17ad8875f2f5db6c1d7"
     }
   },
   "method": {
@@ -31,21 +31,21 @@
     "clock": "performance.now monotonic milliseconds",
     "enabledCollector": "Real BrowserDiagnostics queue, schema validation, UUID/context creation, serialization and batching; in-memory HTTP sink",
     "included": "Native Sheet mutation admission, real SyncServer materialization/receipts, peer application, two duplicate sends/ACK deliveries, collector enqueue",
-    "excluded": "Initial SDK construction, browser rendering, real network/SQLite/IDB and final collector HTTP flush (reported separately)",
+    "excluded": "Account-shell lifecycle/HTTP verification, initial SDK construction, browser rendering, real network/SQLite/IDB and final collector HTTP flush (reported separately)",
     "timingGate": "No ratio-only threshold; bounded workload and resource watchdog plus exact behavioral/capacity assertions",
     "saturatedValidation": "Two native workloads begin with the real collector already full. Native observations must add visible drops; content/history/ACK/access/save/peer assertions and final state hashes match every off/on run. Missing diagnostic counters are disclosed, not reconstructed."
   },
   "summary": {
-    "offMedianMsPerSave": 1.531891250000001,
-    "onMedianMsPerSave": 1.4582821250000015,
-    "medianDeltaMsPerSave": -0.0736091249999995,
+    "offMedianMsPerSave": 1.468648125000006,
+    "onMedianMsPerSave": 1.489244375000008,
+    "medianDeltaMsPerSave": 0.02059625000000187,
     "offRangeMsPerSave": [
-      1.2123569166666546,
-      1.6995734166666712
+      1.1768617500000005,
+      1.6788689166666775
     ],
     "onRangeMsPerSave": [
-      1.405920583333322,
-      1.629073833333327
+      1.4227818333333364,
+      2.3332026666666743
     ],
     "warning": "A small in-process sample describes this workload only and does not explain old unprofiled pauses."
   },
@@ -53,9 +53,9 @@
     {
       "enabled": false,
       "mode": "off",
-      "nativeDurationMs": 20.394881000000055,
-      "perSaveMs": 1.6995734166666712,
-      "collectorFlushMs": 0.0037660000000414584,
+      "nativeDurationMs": 16.058221000000003,
+      "perSaveMs": 1.3381850833333335,
+      "collectorFlushMs": 0.004356999999913569,
       "records": 0,
       "dropped": 0,
       "nativeObservationDrops": 0,
@@ -75,9 +75,9 @@
     {
       "enabled": true,
       "mode": "on",
-      "nativeDurationMs": 17.576561999999967,
-      "perSaveMs": 1.4647134999999973,
-      "collectorFlushMs": 1.457858999999985,
+      "nativeDurationMs": 17.083767999999964,
+      "perSaveMs": 1.4236473333333304,
+      "collectorFlushMs": 1.2426639999999907,
       "records": 50,
       "dropped": 0,
       "nativeObservationDrops": 0,
@@ -97,9 +97,9 @@
     {
       "enabled": true,
       "mode": "on",
-      "nativeDurationMs": 19.548885999999925,
-      "perSaveMs": 1.629073833333327,
-      "collectorFlushMs": 1.2482330000000275,
+      "nativeDurationMs": 18.554720999999972,
+      "perSaveMs": 1.5462267499999978,
+      "collectorFlushMs": 1.5973099999999931,
       "records": 50,
       "dropped": 0,
       "nativeObservationDrops": 0,
@@ -119,9 +119,9 @@
     {
       "enabled": false,
       "mode": "off",
-      "nativeDurationMs": 20.2581550000001,
-      "perSaveMs": 1.6881795833333417,
-      "collectorFlushMs": 0.003073999999969601,
+      "nativeDurationMs": 20.14642700000013,
+      "perSaveMs": 1.6788689166666775,
+      "collectorFlushMs": 0.0029549999999289867,
       "records": 0,
       "dropped": 0,
       "nativeObservationDrops": 0,
@@ -141,9 +141,9 @@
     {
       "enabled": false,
       "mode": "off",
-      "nativeDurationMs": 18.114959,
-      "perSaveMs": 1.5095799166666666,
-      "collectorFlushMs": 0.003926000000092245,
+      "nativeDurationMs": 16.05292300000019,
+      "perSaveMs": 1.3377435833333493,
+      "collectorFlushMs": 0.004266000000143322,
       "records": 0,
       "dropped": 0,
       "nativeObservationDrops": 0,
@@ -163,9 +163,9 @@
     {
       "enabled": true,
       "mode": "on",
-      "nativeDurationMs": 16.871046999999862,
-      "perSaveMs": 1.405920583333322,
-      "collectorFlushMs": 1.1041559999998753,
+      "nativeDurationMs": 17.073382000000038,
+      "perSaveMs": 1.4227818333333364,
+      "collectorFlushMs": 1.1869599999999991,
       "records": 50,
       "dropped": 0,
       "nativeObservationDrops": 0,
@@ -185,9 +185,9 @@
     {
       "enabled": true,
       "mode": "on",
-      "nativeDurationMs": 18.80857900000001,
-      "perSaveMs": 1.567381583333334,
-      "collectorFlushMs": 1.4604929999998149,
+      "nativeDurationMs": 21.995546999999988,
+      "perSaveMs": 1.832962249999999,
+      "collectorFlushMs": 1.648375999999871,
       "records": 50,
       "dropped": 0,
       "nativeObservationDrops": 0,
@@ -207,9 +207,9 @@
     {
       "enabled": false,
       "mode": "off",
-      "nativeDurationMs": 14.806814000000031,
-      "perSaveMs": 1.2339011666666693,
-      "collectorFlushMs": 0.007181000000173299,
+      "nativeDurationMs": 19.831682,
+      "perSaveMs": 1.6526401666666668,
+      "collectorFlushMs": 0.003294999999980064,
       "records": 0,
       "dropped": 0,
       "nativeObservationDrops": 0,
@@ -229,9 +229,9 @@
     {
       "enabled": false,
       "mode": "off",
-      "nativeDurationMs": 14.548282999999856,
-      "perSaveMs": 1.2123569166666546,
-      "collectorFlushMs": 0.0026939999997921404,
+      "nativeDurationMs": 19.189334000000144,
+      "perSaveMs": 1.5991111666666786,
+      "collectorFlushMs": 0.003995999999915512,
       "records": 0,
       "dropped": 0,
       "nativeObservationDrops": 0,
@@ -251,9 +251,9 @@
     {
       "enabled": true,
       "mode": "on",
-      "nativeDurationMs": 17.01662699999997,
-      "perSaveMs": 1.4180522499999977,
-      "collectorFlushMs": 1.0323779999998806,
+      "nativeDurationMs": 27.998432000000093,
+      "perSaveMs": 2.3332026666666743,
+      "collectorFlushMs": 1.1071799999999712,
       "records": 50,
       "dropped": 0,
       "nativeObservationDrops": 0,
@@ -273,9 +273,9 @@
     {
       "enabled": true,
       "mode": "on",
-      "nativeDurationMs": 17.422209000000066,
-      "perSaveMs": 1.4518507500000055,
-      "collectorFlushMs": 1.1171850000000632,
+      "nativeDurationMs": 17.187144000000217,
+      "perSaveMs": 1.4322620000000181,
+      "collectorFlushMs": 3.489462999999887,
       "records": 50,
       "dropped": 0,
       "nativeObservationDrops": 0,
@@ -295,9 +295,9 @@
     {
       "enabled": false,
       "mode": "off",
-      "nativeDurationMs": 18.650431000000026,
-      "perSaveMs": 1.5542025833333355,
-      "collectorFlushMs": 0.003815000000031432,
+      "nativeDurationMs": 14.122341000000006,
+      "perSaveMs": 1.1768617500000005,
+      "collectorFlushMs": 0.003505000000131986,
       "records": 0,
       "dropped": 0,
       "nativeObservationDrops": 0,
@@ -319,9 +319,9 @@
     {
       "enabled": true,
       "mode": "saturated",
-      "nativeDurationMs": 16.34432300000003,
-      "perSaveMs": 1.3620269166666692,
-      "collectorFlushMs": 4.801521999999977,
+      "nativeDurationMs": 15.608191999999917,
+      "perSaveMs": 1.3006826666666598,
+      "collectorFlushMs": 5.1504979999999705,
       "records": 256,
       "dropped": 294,
       "nativeObservationDrops": 50,
@@ -341,9 +341,9 @@
     {
       "enabled": true,
       "mode": "saturated",
-      "nativeDurationMs": 17.299332999999933,
-      "perSaveMs": 1.4416110833333278,
-      "collectorFlushMs": 5.671774999999798,
+      "nativeDurationMs": 17.439644999999928,
+      "perSaveMs": 1.453303749999994,
+      "collectorFlushMs": 4.774541999999883,
       "records": 256,
       "dropped": 294,
       "nativeObservationDrops": 50,

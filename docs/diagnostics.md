@@ -187,9 +187,21 @@ The browser endpoint admits the four exact `operation.*` names, the explicit
 client registry, and the three exact resync names above. It does not admit
 arbitrary server sync, history, runtime, maintenance or writer-loss events.
 Existing session/account/generation and file/Space authorization remain in force.
-Operations beginning before a collection handshake, while hidden/offline, or
+The account shell gates diagnostics by its verified non-local account, browser
+connectivity and visibility. An editor joining a room, or retiring its old view
+after successful recovery, does not establish diagnostic HTTP unavailability.
+The collector's own handshake and response checks still verify its HTTP session
+and generation. An editor/dashboard online confirmation only resumes an
+unverified or suspended collector; it cannot restart an already verified or
+in-flight collection. Failed HTTP collection/flush stays unavailable, and a later
+resume never replays the discarded queue.
+
+Operations beginning before a collection handshake, while hidden/browser-offline, or
 crossing suspension may have no retained observation. No delayed event is rebound
 to a replacement account or collection; there is no persistent diagnostic queue.
+The actual account/collector lifecycle regressions live in
+`src/server/diagnostics/account.test.ts` and `src/ui/spinelSync.test.ts`; the
+production export test also traverses the real app/editor boundary.
 
 Maintenance's internal sink accepts only registered maintenance events and writes
 them synchronously through its existing lifecycle allowance; ordinary application

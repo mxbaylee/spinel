@@ -31,6 +31,12 @@ export class BrowserDiagnostics {
     this.now = options.now ?? Date.now;
   }
 
+  /** Retry missing HTTP verification without invalidating a live collection or request. */
+  async resume() {
+    if (this.closed || this.generation || this.controller) return;
+    await this.start();
+  }
+
   /** Call on authenticated entry/reconnect. Events before this completes are dropped. */
   async start() {
     if (this.closed) return;

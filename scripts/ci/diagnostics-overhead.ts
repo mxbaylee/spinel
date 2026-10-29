@@ -264,7 +264,7 @@ export async function measureDiagnosticsOverhead() {
         included:
           'Native Sheet mutation admission, real SyncServer materialization/receipts, peer application, two duplicate sends/ACK deliveries, collector enqueue',
         excluded:
-          'Initial SDK construction, browser rendering, real network/SQLite/IDB and final collector HTTP flush (reported separately)',
+          'Account-shell lifecycle/HTTP verification, initial SDK construction, browser rendering, real network/SQLite/IDB and final collector HTTP flush (reported separately)',
         timingGate:
           'No ratio-only threshold; bounded workload and resource watchdog plus exact behavioral/capacity assertions',
         saturatedValidation:

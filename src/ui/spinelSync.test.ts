@@ -15,7 +15,11 @@ import type { OfflineSession } from '../../web/offline/OfflineSession.ts';
 import type { OfflineCreation } from '../../web/offline/offlineStore.ts';
 import type { OfflineRecoveryRequest } from '../shared/offlineRecovery.ts';
 import type { MaintenancePublicStatus } from '../shared/maintenance.ts';
-import type { DiagnosticEvent, DiagnosticSource } from '@spinel/diagnostics';
+import { isDiagnosticRecord } from '@spinel/diagnostics';
+import type { DiagnosticEvent, DiagnosticRecord, DiagnosticSource } from '@spinel/diagnostics';
+import { AccountDiagnostics, diagnosticsConnectionPolicy } from '../../web/diagnosticsAccount.ts';
+import { BrowserDiagnostics } from '../../web/diagnostics.ts';
+import { beginOperation, diagnosticSource } from '../../web/operationDiagnostics.ts';
 
 const maintenance = vi.hoisted(() => ({ status: null as MaintenancePublicStatus | null }));
 vi.mock('../../web/maintenanceState.ts', () => ({
@@ -171,6 +175,7 @@ async function fixture({
   maintenanceEpoch,
   diagnostics,
   clock,
+  onConnection,
 }: {
   guest?: boolean;
   space?: boolean;
@@ -184,6 +189,7 @@ async function fixture({
   maintenanceEpoch?: string;
   diagnostics?: DiagnosticSource;
   clock?: () => number;
+  onConnection?(state: ConnectionState): void;
 } = {}) {
   vi.useFakeTimers();
   if (clock) vi.spyOn(performance, 'now').mockImplementation(clock);
@@ -327,7 +333,10 @@ async function fixture({
   const readonly = vi.fn(async (_preserveInput?: boolean) => {});
   const handle = getSpinelSync(univer)!.watch({
     publish: (state) => saves.push(state),
-    connection: (state) => connections.push(state),
+    connection: (state) => {
+      connections.push(state);
+      onConnection?.(state);
+    },
     readonly,
   });
   await vi.advanceTimersByTimeAsync(0);
@@ -385,6 +394,356 @@ function diagnosticObservations(throws = false) {
   });
   return { observations, diagnostics };
 }
+
+async function collectedAccount(initialCollectionFails = false) {
+  const clients: BrowserDiagnostics[] = [];
+  const starts: Promise<void>[] = [];
+  const batches: {
+    accountId: string | null;
+    generation: string;
+    binding: string;
+    records: DiagnosticRecord[];
+  }[] = [];
+  let collectionRequests = 0;
+  let failedFlush = false;
+  const request = vi.fn<typeof fetch>(async (url, options) => {
+    if (String(url).endsWith('/collection')) {
+      collectionRequests++;
+      return initialCollectionFails && collectionRequests === 1
+        ? Response.json({}, { status: 503 })
+        : Response.json({ generation: crypto.randomUUID(), binding: 'a'.repeat(64) });
+    }
+    const body = JSON.parse(String(options?.body));
+    expect(body.records.every(isDiagnosticRecord)).toBe(true);
+    if (failedFlush) {
+      failedFlush = false;
+      return Response.json({}, { status: 503 });
+    }
+    batches.push({
+      ...body,
+      accountId: new Headers(options?.headers).get('X-Spinel-Diagnostic-Account'),
+    });
+    return Response.json({ accepted: body.records.length, dropped: 0 });
+  });
+  const account = new AccountDiagnostics((accountId) => {
+    const client = new BrowserDiagnostics({ accountId, fetch: request });
+    const start = client.start.bind(client);
+    vi.spyOn(client, 'start').mockImplementation(() => {
+      const pending = start();
+      starts.push(pending);
+      return pending;
+    });
+    clients.push(client);
+    return client;
+  });
+  stops.push(() => account.stop());
+  const owner = crypto.randomUUID();
+  account.account(owner);
+  account.connection(true);
+  expect(account.begin()).toBeUndefined();
+  await starts.at(-1);
+  return {
+    account,
+    owner,
+    clients,
+    starts,
+    batches,
+    request,
+    source: diagnosticSource(account, { component: 'editor', fileId: item, route: '/files/:id' }),
+    connection(state: ConnectionState) {
+      // App passes this exact policy to the hook. Its availability effect owns
+      // hard invalidation; the separate online-hint effect has no teardown.
+      const policy = diagnosticsConnectionPolicy(navigator.onLine, state);
+      if (!policy.available || policy.onlineHint)
+        account.connection(policy.available && document.visibilityState !== 'hidden');
+    },
+    failNextFlush() {
+      failedFlush = true;
+    },
+    records() {
+      return batches.flatMap((batch) => batch.records);
+    },
+  };
+}
+
+test('actual account collection retains open and transport reconnect observations through native room reports', async () => {
+  let at = 100;
+  const collection = await collectedAccount();
+  const opened = beginOperation(collection.source, 'document-open', () => at);
+  const f = await fixture({
+    diagnostics: collection.source,
+    clock: () => at,
+    onConnection: collection.connection,
+  });
+  expect(f.connections.at(-1)).toBe('reconnecting');
+  expect(collection.account.begin()).toBeDefined();
+  at = 120;
+  opened('success');
+  f.socket().open();
+  at = 130;
+  f.socket().frame({
+    type: 'resume',
+    version: 1,
+    unitId: 'unit',
+    fromRevision: 8,
+    revision: 8,
+    edits: [],
+  });
+  f.pending();
+  const snapshot = structuredClone(f.client.options.snapshot);
+  at = 140;
+  f.socket().close();
+  expect(f.connections.at(-1)).toBe('reconnecting');
+  expect(collection.account.begin()).toBeDefined();
+  await vi.advanceTimersByTimeAsync(300);
+  f.socket().open();
+  at = 180;
+  f.socket().frame({
+    type: 'resume',
+    version: 1,
+    unitId: 'unit',
+    fromRevision: 8,
+    revision: 8,
+    edits: [],
+  });
+  await collection.clients[0].flush();
+  expect(collection.starts).toHaveLength(1);
+  expect(collection.batches).toHaveLength(1);
+  expect(collection.batches[0].accountId).toBe(collection.owner);
+  expect(
+    collection
+      .records()
+      .filter(({ event }) => event.name === 'operation.result')
+      .map(({ event }) => event),
+  ).toEqual([
+    {
+      name: 'operation.result',
+      details: { operation: 'document-open', outcome: 'success', durationMs: 20 },
+    },
+  ]);
+  expect(
+    collection
+      .records()
+      .filter(({ event }) => event.name === 'sync.client.connection')
+      .map(({ event }) => event),
+  ).toEqual([
+    {
+      name: 'sync.client.connection',
+      details: {
+        reason: 'initial',
+        outcome: 'success',
+        durationMs: 30,
+        pendingCount: 0,
+        oldestPendingAgeMs: 0,
+      },
+    },
+    {
+      name: 'sync.client.connection',
+      details: {
+        reason: 'transport',
+        outcome: 'success',
+        durationMs: 40,
+        pendingCount: 1,
+        oldestPendingAgeMs: null,
+      },
+    },
+  ]);
+  expect(collection.clients[0].dropped).toBe(0);
+  expect(f.client.options.snapshot).toEqual(snapshot);
+  expect(f.client.state).toMatchObject({
+    revision: 8,
+    pending: true,
+    pendingMutations: 1,
+    connected: true,
+  });
+  expect(f.client.disposed).toBe(false);
+  expect(f.saves.at(-1)?.dirty).toBe(true);
+  expect(f.requests.mock.calls.some(([url]) => url.includes('/api/health'))).toBe(false);
+});
+
+test('actual collection records recovery success after the retired editor reports offline', async () => {
+  let at = 100;
+  const collection = await collectedAccount();
+  const f = await fixture({
+    downloaded: true,
+    canRecover: true,
+    diagnostics: collection.source,
+    clock: () => at,
+    onConnection: collection.connection,
+  });
+  f.socket().open();
+  f.socket().frame({
+    type: 'resume',
+    version: 1,
+    unitId: 'unit',
+    fromRevision: 8,
+    revision: 8,
+    edits: [],
+  });
+  await vi.advanceTimersByTimeAsync(0);
+  const publication = Promise.withResolvers<typeof f.copyItem>();
+  f.offline.publishRecovery.mockImplementationOnce(() => publication.promise);
+  f.pending();
+  f.conflict();
+  await vi.advanceTimersByTimeAsync(0);
+  at = 180;
+  publication.resolve(f.copyItem);
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.connections.at(-1)).toBe('offline');
+  expect(collection.account.begin()).toBeDefined();
+  await collection.clients[0].flush();
+  expect(collection.starts).toHaveLength(1);
+  expect(
+    collection
+      .records()
+      .filter(({ event }) => event.name === 'offline.recovery')
+      .map(({ event }) => event),
+  ).toEqual([{ name: 'offline.recovery', details: { outcome: 'success', durationMs: 80 } }]);
+  expect(collection.clients[0].dropped).toBe(0);
+  expect(f.offline.finishRecovery).toHaveBeenCalledOnce();
+  expect(f.offline.pending).toBe(false);
+  expect(f.client.disposed).toBe(true);
+  expect(f.signIn).not.toHaveBeenCalled();
+});
+
+test.each(['collection', 'flush'] as const)(
+  'a failed diagnostic %s resumes on the actual online room hint without rebinding old operations',
+  async (failure) => {
+    const collection = await collectedAccount(failure === 'collection');
+    const opened = beginOperation(collection.source, 'document-open');
+    const f = await fixture({
+      diagnostics: collection.source,
+      onConnection: collection.connection,
+    });
+    f.pending();
+    const snapshot = structuredClone(f.client.options.snapshot);
+    if (failure === 'flush') {
+      f.socket().open();
+      f.socket().frame({
+        type: 'resume',
+        version: 1,
+        unitId: 'unit',
+        fromRevision: 8,
+        revision: 8,
+        edits: [],
+      });
+      collection.failNextFlush();
+      await collection.clients[0].flush();
+      expect(collection.account.begin()).toBeUndefined();
+      f.socket().close();
+      await vi.advanceTimersByTimeAsync(300);
+    }
+    expect(collection.starts).toHaveLength(1);
+    expect(collection.account.begin()).toBeUndefined();
+    f.socket().open();
+    f.socket().frame({
+      type: 'resume',
+      version: 1,
+      unitId: 'unit',
+      fromRevision: 8,
+      revision: 8,
+      edits: [],
+    });
+    await collection.starts.at(-1);
+    expect(collection.starts).toHaveLength(2);
+    expect(collection.account.begin()).toBeDefined();
+    opened('success');
+    const fresh = beginOperation(collection.source, 'search');
+    fresh('success');
+    await collection.clients[0].flush();
+    expect(
+      collection
+        .records()
+        .filter(({ event }) => event.name === 'operation.result')
+        .map(({ event }) => event),
+    ).toEqual([
+      {
+        name: 'operation.result',
+        details: { operation: 'search', outcome: 'success', durationMs: expect.any(Number) },
+      },
+    ]);
+    expect(collection.records().some(({ event }) => event.name === 'sync.client.connection')).toBe(
+      false,
+    );
+    expect(f.client.options.snapshot).toEqual(snapshot);
+    expect(f.client.state).toMatchObject({
+      revision: 8,
+      pending: true,
+      pendingMutations: 1,
+      connected: true,
+    });
+    expect(f.client.disposed).toBe(false);
+  },
+);
+
+test.each(['browser offline', 'account switch'] as const)(
+  'actual collection drops late open/connection events after %s without altering pending native work',
+  async (boundary) => {
+    const collection = await collectedAccount();
+    const opened = beginOperation(collection.source, 'document-open');
+    const f = await fixture({
+      diagnostics: collection.source,
+      onConnection: collection.connection,
+    });
+    f.pending();
+    const snapshot = structuredClone(f.client.options.snapshot);
+    const nextOwner = boundary === 'account switch' ? crypto.randomUUID() : collection.owner;
+    if (boundary === 'browser offline') {
+      vi.stubGlobal('navigator', { onLine: false });
+      window.dispatchEvent(new Event('offline'));
+      expect(collection.account.begin()).toBeUndefined();
+      expect(f.client.state.pending).toBe(true);
+      vi.stubGlobal('navigator', { onLine: true });
+      // The hook's browser listener restarts HTTP verification; room readiness
+      // cannot capture a scope from a handshake that has not completed yet.
+      collection.account.connection(true);
+      window.dispatchEvent(new Event('online'));
+      await vi.advanceTimersByTimeAsync(300);
+    } else {
+      collection.account.account(nextOwner);
+      collection.account.connection(true);
+    }
+    await collection.starts.at(-1);
+    f.socket().open();
+    f.socket().frame({
+      type: 'resume',
+      version: 1,
+      unitId: 'unit',
+      fromRevision: 8,
+      revision: 8,
+      edits: [],
+    });
+    opened('success');
+    const fresh = beginOperation(collection.source, 'search');
+    fresh('success');
+    await collection.clients.at(-1)!.flush();
+    expect(collection.batches).toHaveLength(1);
+    expect(collection.batches[0].accountId).toBe(nextOwner);
+    expect(
+      collection
+        .records()
+        .filter(({ event }) => event.name === 'operation.result')
+        .map(({ event }) => event),
+    ).toEqual([
+      {
+        name: 'operation.result',
+        details: { operation: 'search', outcome: 'success', durationMs: expect.any(Number) },
+      },
+    ]);
+    expect(collection.records().some(({ event }) => event.name === 'sync.client.connection')).toBe(
+      false,
+    );
+    expect(collection.clients[0].dropped).toBeGreaterThan(0);
+    expect(f.client.options.snapshot).toEqual(snapshot);
+    expect(f.client.state).toMatchObject({
+      revision: 8,
+      pending: true,
+      pendingMutations: 1,
+      connected: true,
+    });
+    expect(f.client.disposed).toBe(false);
+  },
+);
 
 test.each([false, true])(
   'production connection observations time room readiness once across retry (throwing observer=%s)',

@@ -13,6 +13,7 @@ import {
 } from './offline/accountExit.ts';
 import type { AccountExit } from './offline/accountExit.ts';
 import { DiagnosticsProvider, useAccountDiagnostics } from './useDiagnostics.tsx';
+import { diagnosticsConnectionPolicy } from './diagnosticsAccount.ts';
 import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   startAuthentication,
@@ -125,7 +126,7 @@ function AccountApp() {
   const accountRetired = useRef(false);
   const stopDiagnostics = useAccountDiagnostics(
     user && loaded && !local && !accountExitPending() ? user.id : null,
-    browserOnline && (editorConnection ?? serverConnection) === 'online',
+    diagnosticsConnectionPolicy(browserOnline, editorConnection ?? serverConnection),
   );
   const [passkeyRevision, setPasskeyRevision] = useState(0);
   const [passkeyProofReset, setPasskeyProofReset] = useState(0);

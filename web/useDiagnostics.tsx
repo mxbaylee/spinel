@@ -13,7 +13,10 @@ export function DiagnosticsProvider({ children }: { children: ReactNode }) {
 }
 
 /** Account shell only. Guest roots have no provider and receive no sink/run IDs. */
-export function useAccountDiagnostics(userId: string | null, connected: boolean) {
+export function useAccountDiagnostics(
+  userId: string | null,
+  { available, onlineHint }: { available: boolean; onlineHint: boolean },
+) {
   const account = useContext(DiagnosticsContext);
   useLayoutEffect(() => {
     account?.account(userId);
@@ -21,7 +24,7 @@ export function useAccountDiagnostics(userId: string | null, connected: boolean)
   }, [account, userId]);
   useLayoutEffect(() => {
     const sync = () =>
-      account?.connection(connected && navigator.onLine && document.visibilityState !== 'hidden');
+      account?.connection(available && navigator.onLine && document.visibilityState !== 'hidden');
     const changedAccount = (event: StorageEvent) => {
       if (
         event.key === null ||
@@ -47,7 +50,13 @@ export function useAccountDiagnostics(userId: string | null, connected: boolean)
       window.removeEventListener('storage', changedAccount);
       account?.connection(false);
     };
-  }, [account, userId, connected]);
+  }, [account, userId, available]);
+  // A fresh room/server online proof retries a failed collection handshake or
+  // HTTP self-suspension. Room transitions never tear down a verified collection.
+  useLayoutEffect(() => {
+    if (onlineHint)
+      account?.connection(available && navigator.onLine && document.visibilityState !== 'hidden');
+  }, [account, userId, available, onlineHint]);
   return () => account?.stop();
 }
 
