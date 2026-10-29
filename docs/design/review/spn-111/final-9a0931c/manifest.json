@@ -1,0 +1,274 @@
+{
+  "candidate": "9a0931cf9197bbf9d3022c511298bd9974d5f9c4",
+  "ciRun": 40805811875,
+  "productionJob": 123224626476,
+  "productionArtifact": {
+    "id": 12868686529,
+    "sha256": "344483d6e0d558bfe3979b29a6aab716568d179273338742a2750bce023d1b6a"
+  },
+  "storybookRun": 40805811857,
+  "storybookArtifacts": [
+    {
+      "id": 12868352464,
+      "variant": "light",
+      "sha256": "26f0ebdc2b38351d467d3ff6c4221bc135a8a422a3e3808c8021946f11ac9d05"
+    },
+    {
+      "id": 12868756570,
+      "variant": "dark",
+      "sha256": "52f30d597ad82cda3588b2b2fa1df376f0f6abb1091778f3394751a345e466e6"
+    },
+    {
+      "id": 12868617363,
+      "variant": "phone",
+      "sha256": "a6f10a78dc53019ff4ee3bcbe60b5ea89e9c6db3b0bbcad0a377a9bf5ca02229"
+    }
+  ],
+  "files": [
+    {
+      "path": "application/backup-paused-dark.png",
+      "sha256": "516ade404d5e513ed089b4fffc49053503d63303e825f7565b29d733f5627fac",
+      "width": 1280,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/backup-paused-light.png",
+      "sha256": "52800e8e4f4ed2ed556e5ab7d5ffea9d3954614ecf5a4108916c9518909de167",
+      "width": 1280,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/backup-paused-phone.png",
+      "sha256": "4b1e05d38ada0d69a11e24ee99bbecf242a13672d99f5c9c136e7f8f4f2f6163",
+      "width": 390,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/cancel-while-paused-dark.png",
+      "sha256": "5d4347161b7b9ae1a914eeb65aeba06293d7443c1729e3a986fccea7dbcb96e2",
+      "width": 1280,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/cancel-while-paused-light.png",
+      "sha256": "cf6f23cbbc8fc78bd6cd56293ccf1ccda1bc4350440b4fd413559204a1406032",
+      "width": 1280,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/cancel-while-paused-phone.png",
+      "sha256": "b41d2440dcc1284a46d8ae46f7abe1fb9c150ea491ecd87381ca28a394938630",
+      "width": 390,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/cancel-without-proof-dark.png",
+      "sha256": "4d0d86b8d2eb44d56e84ab69e4b5489f5a8dddbafa2f996a0ab8251ee517d39c",
+      "width": 1280,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/cancel-without-proof-light.png",
+      "sha256": "f86fcd8351ca524a5d1b5376be0df98807058ed78a77fe38dddbb0f9e6ee055d",
+      "width": 1280,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/cancel-without-proof-phone.png",
+      "sha256": "3531e081bcb7c1eb1cfa6065d0147d778682cb51fd4a5a97aa7d760c64714c92",
+      "width": 390,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/native-pending-dismissed-dark.png",
+      "sha256": "a5cd3f0ec23f851d9563633a3154c54df498f6da3dc9066d5b0e2c4656b00026",
+      "width": 1280,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/native-pending-dismissed-light.png",
+      "sha256": "483fce3e1a8b47585b9b543939977dbfe8ce1b04e4a2f5d829410e515c739e84",
+      "width": 1280,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/native-pending-dismissed-phone.png",
+      "sha256": "7c7239aa1a18baf3448419b9b87b08c4f9beac3c5f7e56ba6ab4464667e2b0b5",
+      "width": 390,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/native-pending-light.png",
+      "sha256": "0bb41c0662e967ba81c447ce0931179c0174d030aa98743bfc15c6564c6a08b3",
+      "width": 1280,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/native-pending-reopened-dark.png",
+      "sha256": "461b26098be1cc7e637b7a511e0c2b35b5afab860e49c11bf707e9516e0410d9",
+      "width": 1280,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/native-pending-reopened-light.png",
+      "sha256": "4e081ff9090d966435a94abdc79f86503b79bc7355ed894b95bbf339cc566c36",
+      "width": 1280,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/native-pending-reopened-phone.png",
+      "sha256": "1a4701b25ce3b2a96e2cad9f5e60cc3d65d05f1231ab2d045732710c8bb16bc4",
+      "width": 390,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/notice-time-choice-dark.png",
+      "sha256": "d125862cec2dfc793d98fa67c38b181ce2a9c96097f620274270b8687dd10238",
+      "width": 1280,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/notice-time-choice-light.png",
+      "sha256": "bdc30d599779ec63cc2b6db2e88c177e2cf65823f3295b601703d8a447488362",
+      "width": 1280,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/notice-time-choice-phone.png",
+      "sha256": "a0976d15d836a57aea374278c26c74a75f0a1f39ac5b1b26f15303e595b08360",
+      "width": 390,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/pause-confirmation-light.png",
+      "sha256": "e4750c865a9a2d404cf26c33e2cd734941f6090336503be07f71b7e9ef75bced",
+      "width": 1280,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/paused-dark.png",
+      "sha256": "7b277186f4ece2ff59fe3cce027d81340c05ec8fc9d75ae9a33b5c2d0d6a0772",
+      "width": 1280,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/paused-details-dark.png",
+      "sha256": "3318c3dbe9c33b91c05bfe9bab0bad42513a7e16fe21deb71d08450f4d75faa5",
+      "width": 1280,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/paused-details-light.png",
+      "sha256": "3515035052132cf37d845f99c4d45dd6312e642b6582c0e87e832628f9d86797",
+      "width": 1280,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/paused-details-phone.png",
+      "sha256": "62d60a7059b7a0951bdb778dcd40083645633df1987d58ed6b5194818177b536",
+      "width": 390,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/paused-light.png",
+      "sha256": "aaa157c1bea62fd1105affac0c6113cc1ab4da9673eae1394f4793562bbfa275",
+      "width": 1280,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/paused-phone.png",
+      "sha256": "9b6f6dfb9425dcad72774012b7272c88211d247ac11cd6956e09c07c811c7370",
+      "width": 390,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/resumed-dark.png",
+      "sha256": "130261bcfb2a1d277c36f5a424d7ed70ae6f8d9c8a063e316206755a5a47549c",
+      "width": 1280,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/resumed-light.png",
+      "sha256": "ad7282c403f3f398cf0d2c308cc028dfb427ff09b6219baa433bc4507a8187fc",
+      "width": 1280,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/resumed-phone.png",
+      "sha256": "43cf43d6d1c52c78a183a83c316bf77f55ede6a17630d9054e5ada3a455bf623",
+      "width": 390,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/scheduled-dark.png",
+      "sha256": "7dff60f58d5027222b61b4dee15d838c68c16e0d371f76903d329d99e696cacf",
+      "width": 1280,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/scheduled-light.png",
+      "sha256": "ab7a5e1e33bfe65cbea9163d4d546647a9db5ec2c488aded48ed782b004355eb",
+      "width": 1280,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "application/scheduled-phone.png",
+      "sha256": "87e6ed4c8f6faf6f1271e8754ba1a4084c598d8516ca48cacd8ea4c9288b80ca",
+      "width": 390,
+      "height": 900,
+      "source": "Actual supervised production application; synthetic test accounts and fixed notice time"
+    },
+    {
+      "path": "storybook/dashboard-importfile--archive-interrupted-by-maintenance-light.png",
+      "sha256": "6bc459bd70a25fa0a4fb3f0bf822f3180c52cf085416046367729b890a5dfd59",
+      "width": 1280,
+      "height": 900,
+      "source": "Storybook production-component fixture; archive interrupted by maintenance"
+    },
+    {
+      "path": "storybook/dashboard-importfile--archive-interrupted-by-maintenance-dark.png",
+      "sha256": "04e42e6e43ebd2456c2399be7a3aff9269831477869958a0808ff58baf987471",
+      "width": 1280,
+      "height": 900,
+      "source": "Storybook production-component fixture; archive interrupted by maintenance"
+    },
+    {
+      "path": "storybook/dashboard-importfile--archive-interrupted-by-maintenance-phone.png",
+      "sha256": "89444d89035f71ff0e23297d5942eda3ebc927de04801b797e330198058df937",
+      "width": 390,
+      "height": 900,
+      "source": "Storybook production-component fixture; archive interrupted by maintenance"
+    }
+  ]
+}

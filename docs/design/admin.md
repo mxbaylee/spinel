@@ -165,11 +165,22 @@ context go to the server Operator. Submission success requires persistence; keep
 the draft on failure and prevent duplicate submissions while pending.
 
 The admin user list shows an accessible **Feedback available** flag when stored
-feedback exists for that user. It is not an unread/resolution badge and does not
-open a query panel or feedback inbox. The Operator reads the downloaded SQLite
-file. Missing/failed flag data stays visibly unknown. Truncate diagnostics clears
-feedback too, then refreshes these flags. Add light/dark/phone stories for the
-dialog and absent/present/loading/failed flags for independent theme/persona review on the implementation PR.
+feedback exists for that user. Beside it, a compact action menu offers
+**Download user metrics** and **Download system metrics**, following the
+[paired-export decision](../implementation/SPN-098.md#paired-user-and-system-downloads)
+(owner, chat 2026-10-29). Show their shared time span: the first contains all
+retained rows attributed to that user, and the second contains every actor's and
+system row in that same span. Both are Operator-only SQLite downloads for local
+inspection. This is not an unread/resolution badge, query panel or feedback inbox.
+
+Keep preparation, pending download, cancellation, failure and expiry explicit.
+Missing/failed flag data stays unknown. Explain when only old feedback remains
+and associated metrics have expired; an empty user selection offers no unrelated
+system-wide download. Truncate diagnostics clears feedback too, invalidates
+unfinished prepared downloads and refreshes flags. Do not imply that handing a
+file to the browser proves the Operator saved it. Add light/dark/phone stories
+for the submission dialog, flag and both download actions, including keyboard
+focus return, loading, empty/expired and failed states, for independent review.
 
 ## Assistant connection metadata (SPN-034)
 

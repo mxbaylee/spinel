@@ -1,0 +1,141 @@
+{
+  "stages": [
+    "both-native-drafts-persisted-offline",
+    "offline-process-restart-retained-exact-drafts",
+    "both-drafts-published-once-to-folder-owner",
+    "accepted-files-survive-second-offline-process-restart-without-republication"
+  ],
+  "errors": [],
+  "creationTransport": [
+    {
+      "path": "/api/items/34367e17-3c11-49ba-b662-66de844224e9/collaboration",
+      "at": 1793199742319,
+      "outcome": "forwarded"
+    },
+    {
+      "path": "/sync-api/items/34367e17-3c11-49ba-b662-66de844224e9/ticket",
+      "at": 1793199743031,
+      "outcome": "forwarded"
+    },
+    {
+      "path": "/api/items/5484ac47-18e2-4f7e-a088-b71b10f6a93b/collaboration",
+      "at": 1793199745328,
+      "outcome": "forwarded"
+    },
+    {
+      "path": "/sync-api/items/5484ac47-18e2-4f7e-a088-b71b10f6a93b/ticket",
+      "at": 1793199746011,
+      "outcome": "forwarded"
+    },
+    {
+      "path": "/api/items/offline-create",
+      "at": 1793199746839,
+      "outcome": "blocked"
+    },
+    {
+      "path": "/api/items/offline-create",
+      "at": 1793199754482,
+      "outcome": "forwarded"
+    },
+    {
+      "path": "/api/items/bdfc3fdc-fc79-4aec-88cd-0de6667bb605/collaboration",
+      "at": 1793199754506,
+      "outcome": "forwarded"
+    },
+    {
+      "path": "/api/items/bdfc3fdc-fc79-4aec-88cd-0de6667bb605/collaboration",
+      "at": 1793199754608,
+      "outcome": "forwarded"
+    },
+    {
+      "path": "/api/items/bdfc3fdc-fc79-4aec-88cd-0de6667bb605/collaboration",
+      "at": 1793199754732,
+      "outcome": "forwarded"
+    },
+    {
+      "path": "/sync-api/items/bdfc3fdc-fc79-4aec-88cd-0de6667bb605/ticket",
+      "at": 1793199754740,
+      "outcome": "forwarded"
+    },
+    {
+      "path": "/api/items/offline-create",
+      "at": 1793199756449,
+      "outcome": "forwarded"
+    },
+    {
+      "path": "/api/items/97fe9562-7a8c-4014-913b-583095dca5cf/collaboration",
+      "at": 1793199756582,
+      "outcome": "forwarded"
+    },
+    {
+      "path": "/sync-api/items/97fe9562-7a8c-4014-913b-583095dca5cf/ticket",
+      "at": 1793199756611,
+      "outcome": "forwarded"
+    },
+    {
+      "path": "/api/items/bdfc3fdc-fc79-4aec-88cd-0de6667bb605/collaboration",
+      "at": 1793199761365,
+      "outcome": "forwarded"
+    },
+    {
+      "path": "/api/items/bdfc3fdc-fc79-4aec-88cd-0de6667bb605/collaboration",
+      "at": 1793199761512,
+      "outcome": "forwarded"
+    },
+    {
+      "path": "/api/items/bdfc3fdc-fc79-4aec-88cd-0de6667bb605/collaboration",
+      "at": 1793199761615,
+      "outcome": "forwarded"
+    },
+    {
+      "path": "/sync-api/items/bdfc3fdc-fc79-4aec-88cd-0de6667bb605/ticket",
+      "at": 1793199761623,
+      "outcome": "forwarded"
+    },
+    {
+      "path": "/api/items/97fe9562-7a8c-4014-913b-583095dca5cf/collaboration",
+      "at": 1793199762252,
+      "outcome": "forwarded"
+    },
+    {
+      "path": "/api/items/97fe9562-7a8c-4014-913b-583095dca5cf/collaboration",
+      "at": 1793199762861,
+      "outcome": "forwarded"
+    },
+    {
+      "path": "/sync-api/items/97fe9562-7a8c-4014-913b-583095dca5cf/ticket",
+      "at": 1793199762952,
+      "outcome": "forwarded"
+    }
+  ],
+  "created": [
+    {
+      "id": "97fe9562-7a8c-4014-913b-583095dca5cf",
+      "kind": "sheet",
+      "request": {
+        "version": 1,
+        "itemId": "97fe9562-7a8c-4014-913b-583095dca5cf",
+        "unitId": "3b89e91d-e375-4c2e-9648-d8f9eae963b2",
+        "name": "Cold restart sheet",
+        "kind": "sheet",
+        "parentId": "03c1a957-ace1-4209-9389-c9688c522d50",
+        "icon": null,
+        "iconColor": null
+      }
+    },
+    {
+      "id": "bdfc3fdc-fc79-4aec-88cd-0de6667bb605",
+      "kind": "doc",
+      "request": {
+        "version": 1,
+        "itemId": "bdfc3fdc-fc79-4aec-88cd-0de6667bb605",
+        "unitId": "36aa8d31-32d9-4e14-be16-e65284bcea14",
+        "name": "Cold restart doc",
+        "kind": "doc",
+        "parentId": "03c1a957-ace1-4209-9389-c9688c522d50",
+        "icon": null,
+        "iconColor": null
+      }
+    }
+  ]
+}

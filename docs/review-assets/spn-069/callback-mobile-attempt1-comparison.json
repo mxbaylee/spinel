@@ -1,0 +1,210 @@
+{
+  "schema": 1,
+  "preset": "mobile",
+  "accepted": false,
+  "failures": [
+    "baseline: Retained source attribution artifacts are missing.",
+    "baseline: callback collection or native behavior did not complete successfully.",
+    "baseline: trace completion reports missing/lost data.",
+    "baseline: trace completion did not confirm gzip JSON.",
+    "baseline: unmapped source observations were not retained.",
+    "baseline: recomputed callback evidence is incomplete or rejected."
+  ],
+  "baseline": {
+    "source": "0e1df4725d9eccb77574d25e3eecdf678fe6ff44",
+    "unmappedSourcePositions": null
+  },
+  "candidate": {
+    "source": "2972a061859e83acada779ce168c49bcd74d65f3",
+    "traceSha256": "0a249e2846c4cb1755ec79c030d7ac722ff203a01b0b030e1c6302e99ca98bd0",
+    "bounded": true,
+    "unmappedSourcePositions": 10,
+    "families": {
+      "cursor": {
+        "installations": 16732,
+        "removals": 16725,
+        "duplicateRemovals": 0,
+        "firings": 13,
+        "oneShotFirings": 7,
+        "intervalFirings": 6,
+        "pendingHighWater": 4,
+        "pendingAt": {
+          "beforeMount": 0,
+          "inputStart": 2,
+          "finalKey": 2,
+          "disposed": 0,
+          "end": 0
+        },
+        "pendingAtTraceEnd": 0,
+        "callbacksAfterFinalKey": 13,
+        "callbacksAfterDisposal": 0,
+        "installationsAfterDisposal": 0,
+        "directCallbackWall": {
+          "count": 13,
+          "sumMs": 5.117,
+          "unionMs": 5.117,
+          "maxMs": 1.162
+        },
+        "postInputCallbackWall": {
+          "count": 13,
+          "sumMs": 5.117,
+          "unionMs": 5.117,
+          "maxMs": 1.162
+        },
+        "postDisposalCallbackWall": {
+          "count": 0,
+          "sumMs": 0,
+          "unionMs": 0,
+          "maxMs": 0
+        },
+        "callbackSpans": [
+          {
+            "startedAtUs": 843520885,
+            "durationUs": 848
+          },
+          {
+            "startedAtUs": 843957331,
+            "durationUs": 1162
+          },
+          {
+            "startedAtUs": 844949691,
+            "durationUs": 68
+          },
+          {
+            "startedAtUs": 845964447,
+            "durationUs": 72
+          },
+          {
+            "startedAtUs": 847038887,
+            "durationUs": 1078
+          },
+          {
+            "startedAtUs": 847936753,
+            "durationUs": 88
+          },
+          {
+            "startedAtUs": 848936116,
+            "durationUs": 88
+          },
+          {
+            "startedAtUs": 844497475,
+            "durationUs": 697
+          },
+          {
+            "startedAtUs": 845506120,
+            "durationUs": 69
+          },
+          {
+            "startedAtUs": 846513036,
+            "durationUs": 88
+          },
+          {
+            "startedAtUs": 847540482,
+            "durationUs": 696
+          },
+          {
+            "startedAtUs": 848437486,
+            "durationUs": 84
+          },
+          {
+            "startedAtUs": 849436464,
+            "durationUs": 79
+          }
+        ]
+      },
+      "zoom-init": {
+        "installations": 1,
+        "removals": 0,
+        "duplicateRemovals": 0,
+        "firings": 1,
+        "oneShotFirings": 1,
+        "intervalFirings": 0,
+        "pendingHighWater": 1,
+        "pendingAt": {
+          "beforeMount": 0,
+          "inputStart": 0,
+          "finalKey": 0,
+          "disposed": 0,
+          "end": 0
+        },
+        "pendingAtTraceEnd": 0,
+        "callbacksAfterFinalKey": 0,
+        "callbacksAfterDisposal": 0,
+        "installationsAfterDisposal": 0,
+        "directCallbackWall": {
+          "count": 1,
+          "sumMs": 15.965,
+          "unionMs": 15.965,
+          "maxMs": 15.965
+        },
+        "postInputCallbackWall": {
+          "count": 0,
+          "sumMs": 0,
+          "unionMs": 0,
+          "maxMs": 0
+        },
+        "postDisposalCallbackWall": {
+          "count": 0,
+          "sumMs": 0,
+          "unionMs": 0,
+          "maxMs": 0
+        },
+        "callbackSpans": [
+          {
+            "startedAtUs": 627760550,
+            "durationUs": 15965
+          }
+        ]
+      },
+      "zoom-update": {
+        "installations": 2087,
+        "removals": 2085,
+        "duplicateRemovals": 0,
+        "firings": 2,
+        "oneShotFirings": 2,
+        "intervalFirings": 0,
+        "pendingHighWater": 1,
+        "pendingAt": {
+          "beforeMount": 0,
+          "inputStart": 0,
+          "finalKey": 1,
+          "disposed": 0,
+          "end": 0
+        },
+        "pendingAtTraceEnd": 0,
+        "callbacksAfterFinalKey": 1,
+        "callbacksAfterDisposal": 0,
+        "installationsAfterDisposal": 0,
+        "directCallbackWall": {
+          "count": 2,
+          "sumMs": 9.723,
+          "unionMs": 9.723,
+          "maxMs": 7.126
+        },
+        "postInputCallbackWall": {
+          "count": 1,
+          "sumMs": 2.597,
+          "unionMs": 2.597,
+          "maxMs": 2.597
+        },
+        "postDisposalCallbackWall": {
+          "count": 0,
+          "sumMs": 0,
+          "unionMs": 0,
+          "maxMs": 0
+        },
+        "callbackSpans": [
+          {
+            "startedAtUs": 627714544,
+            "durationUs": 7126
+          },
+          {
+            "startedAtUs": 843501111,
+            "durationUs": 2597
+          }
+        ]
+      }
+    }
+  },
+  "timing": "Traced callback observations are descriptive; unchanged unprofiled SPN-108 gates remain required."
+}
