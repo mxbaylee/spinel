@@ -37,6 +37,10 @@ import { restoreBarrierPath } from './restore-barrier.ts';
 import { restoreSnapshotFingerprint } from '../backup/inventory.ts';
 import { validRestoreStopRecord } from './restore-stop.ts';
 import { RestoreJobs } from './restore-jobs.ts';
+import type { RestoreStopRequest } from '../../shared/maintenance.ts';
+import { MAINTENANCE_CHANNEL } from './supervisor-client.ts';
+import type { RestoreAuthority } from './restore-authority.ts';
+import { validRestoreAuthority } from './restore-authority.ts';
 import { applicationPolicy } from '../../../server/application-policy.ts';
 import { restoreJobIntentFixture } from './restore-job-fixture.ts';
 import { OWNERSHIP_CHANNEL, shareWorkspaceOwnership } from './ownership.ts';
@@ -55,16 +59,31 @@ const proof = (now = Date.now()) => ({
   sessionHash: 'a'.repeat(64),
   expiresAt: now + 60_000,
 });
-async function seed(databasePath: string) {
+async function seed(databasePath: string, withAuthority = false) {
   const child = fork(fileURLToPath(new URL('./seed-fixture.ts', import.meta.url)), [], {
-    env: { ...process.env, DATABASE_PATH: databasePath },
+    env: {
+      ...process.env,
+      DATABASE_PATH: databasePath,
+      SPINEL_TEST_AUTHORITY_SEED: withAuthority ? '1' : '0',
+    },
     execArgv: [],
     stdio: ['ignore', 'ignore', 'inherit', 'ipc'],
   });
+  let authority: RestoreAuthority | undefined;
+  child.on('message', (value: unknown) => {
+    if (
+      value &&
+      typeof value === 'object' &&
+      'restoreAuthority' in value &&
+      validRestoreAuthority(value.restoreAuthority)
+    )
+      authority = value.restoreAuthority;
+  });
   const [code] = await once(child, 'exit');
-  if (code !== 0) throw new Error('Database seed failed.');
+  if (code !== 0 || (withAuthority && !authority)) throw new Error('Database seed failed.');
+  return authority;
 }
-async function fixture() {
+async function fixture(withAuthority = false) {
   const directory = await mkdtemp(join(tmpdir(), 'spinel-maint-'));
   cleanups.push(() => rm(directory, { recursive: true, force: true }));
   const root = join(directory, 'recovery'),
@@ -72,7 +91,7 @@ async function fixture() {
   await mkdir(root, { mode: 0o700 });
   await mkdir(data, { mode: 0o700 });
   const databasePath = join(data, 'workspace.sqlite');
-  await seed(databasePath);
+  const authority = await seed(databasePath, withAuthority);
   const createChild = (groupToken: string, env: Record<string, string> = {}) =>
     fork(
       fileURLToPath(
@@ -122,7 +141,7 @@ async function fixture() {
     cleanups.push(() => instance.close());
     return instance;
   }
-  return { directory, root, data, databasePath, supervisor };
+  return { directory, root, data, databasePath, supervisor, authority, createChild };
 }
 async function start(supervisor: MaintenanceSupervisor) {
   const operationId = randomUUID();
@@ -1452,3 +1471,129 @@ test.each([undefined, 'sha256:' + 'a'.repeat(64)])(
   },
   20_000,
 );
+
+test('real application rechecks the original proof without renewing verification or pausing', async () => {
+  const f = await fixture(true);
+  const assets = join(f.directory, 'assets');
+  await mkdir(assets);
+  await writeFile(
+    join(assets, 'index.html'),
+    '<html><body>Private restore authority fixture</body></html>',
+  );
+  const supervisor = await f.supervisor({
+    startMs: 20_000,
+    stopMs: 3000,
+    env: {
+      SPINEL_TEST_REAL_APP: '1',
+      PORT: '0',
+      HOST: '127.0.0.1',
+      SPINEL_STATIC_DIRECTORY: assets,
+      SPINEL_BACKUP_CONFIG: join(f.directory, 'absent-backup-config'),
+    },
+  });
+  const jobId = randomUUID();
+  await expect(supervisor.recheckRestoreAuthority(jobId, f.authority!)).rejects.toThrow(
+    'current application',
+  );
+  await start(supervisor);
+  const before = supervisor.status();
+  await expect(supervisor.recheckRestoreAuthority(jobId, f.authority!)).resolves.toBeUndefined();
+  for (const altered of [
+    { ...f.authority!, verifiedAt: f.authority!.verifiedAt + 1 },
+    { ...f.authority!, verifiedPasskeyId: 'other' },
+    { ...f.authority!, actorId: randomUUID() },
+    { ...f.authority!, sessionHash: 'f'.repeat(64) },
+  ])
+    await expect(supervisor.recheckRestoreAuthority(jobId, altered)).rejects.toThrow(
+      'original restore',
+    );
+  expect(supervisor.status()).toEqual(before);
+}, 60_000);
+
+test('authority probes reject foreign challenges and matching replies after their deadline', async () => {
+  const f = await fixture(true);
+  let child!: ChildProcess;
+  let elapsed = 0;
+  const supervisor = await MaintenanceSupervisor.open({
+    root: f.root,
+    databasePath: f.databasePath,
+    publicPort: 0,
+    now: () => Date.now() + elapsed,
+    createChild: (token) => {
+      child = f.createChild(token);
+      return child;
+    },
+    budgets: { startMs: 5000, stopMs: 100, verifyMs: 5000 },
+  });
+  cleanups.push(() => supervisor.close());
+  await start(supervisor);
+  const before = supervisor.status();
+  let received!: (value: { request: RestoreStopRequest; authority: RestoreAuthority }) => void;
+  const send = child.send;
+  const intercepted = vi
+    .spyOn(child, 'send')
+    .mockImplementation((value: unknown, ...args: unknown[]) => {
+      if (
+        value &&
+        typeof value === 'object' &&
+        'kind' in value &&
+        value.kind === 'restore-authority'
+      ) {
+        received(value as { request: RestoreStopRequest; authority: RestoreAuthority });
+        return true;
+      }
+      return Reflect.apply(send, child, [value, ...args]) as boolean;
+    });
+  try {
+    for (const field of ['challengeId', 'epoch', 'generationId', 'jobId', 'deadline'] as const) {
+      const arrived = new Promise<{ request: RestoreStopRequest; authority: RestoreAuthority }>(
+        (resolve) => {
+          received = resolve;
+        },
+      );
+      const rejected = expect(
+        supervisor.recheckRestoreAuthority(randomUUID(), f.authority!),
+      ).rejects.toThrow('original restore');
+      const { request } = await arrived;
+      child.emit('message', {
+        channel: MAINTENANCE_CHANNEL,
+        kind: 'restore-authority-result',
+        request: {
+          ...request,
+          [field]: field === 'deadline' ? request.deadline + 1 : randomUUID(),
+        },
+        accepted: true,
+      });
+      child.emit('message', {
+        channel: MAINTENANCE_CHANNEL,
+        kind: 'restore-authority-result',
+        request,
+        accepted: false,
+      });
+      await rejected;
+    }
+    const arrived = new Promise<{ request: RestoreStopRequest; authority: RestoreAuthority }>(
+      (resolve) => {
+        received = resolve;
+      },
+    );
+    const original = { ...f.authority! };
+    const rejected = expect(
+      supervisor.recheckRestoreAuthority(randomUUID(), original),
+    ).rejects.toThrow('challenge');
+    original.verifiedPasskeyId = 'changed-while-queued';
+    const packet = await arrived;
+    expect(packet.authority).toEqual(f.authority);
+    elapsed = 6000;
+    child.emit('message', {
+      channel: MAINTENANCE_CHANNEL,
+      kind: 'restore-authority-result',
+      request: packet.request,
+      accepted: true,
+    });
+    await rejected;
+    expect(supervisor.status()).toEqual(before);
+  } finally {
+    intercepted.mockRestore();
+  }
+});

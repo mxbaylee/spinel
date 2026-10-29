@@ -6,6 +6,7 @@ import type {
   MaintenanceControlResult,
   MaintenancePublicStatus,
   RestoreStopRequest,
+  RestoreAuthority,
 } from '../../shared/maintenance.ts';
 import { publicMaintenance } from '../../shared/maintenance.ts';
 import { receiveWorkspaceOwnership } from './ownership.ts';
@@ -14,6 +15,8 @@ import {
   validRestoreFingerprint,
   validRestoreStopRequest,
 } from './restore-stop.ts';
+
+import { validRestoreAuthority } from './restore-authority.ts';
 
 export const MAINTENANCE_CHANNEL = 'spinel-maintenance';
 
@@ -24,6 +27,7 @@ export async function connectMaintenance(): Promise<MaintenanceBridge> {
   let current: MaintenanceAdminStatus | undefined;
   let closed = false;
   let restoreListener: ((request: RestoreStopRequest) => Promise<void>) | undefined;
+  let authorityListener: ((proof: RestoreAuthority) => void) | undefined;
   let restoreRequest: RestoreStopRequest | undefined;
   let witnessWaiter:
     | {
@@ -77,6 +81,7 @@ export async function connectMaintenance(): Promise<MaintenanceBridge> {
       error?: string;
       request?: unknown;
       fingerprint?: unknown;
+      authority?: unknown;
     };
     if (message.kind === 'state' && message.status) {
       current = message.status;
@@ -89,6 +94,32 @@ export async function connectMaintenance(): Promise<MaintenanceBridge> {
         resolveInitial();
       }
       for (const listener of listeners) listener(publicMaintenance(current));
+    } else if (message.kind === 'restore-authority') {
+      const request = message.request;
+      if (!validRestoreStopRequest(request)) return;
+      const matches = () =>
+        !closed &&
+        !restoreRequest &&
+        !!current &&
+        current.phase === 'running' &&
+        current.epoch === request.epoch &&
+        current.generationId === request.generationId &&
+        Date.now() < request.deadline;
+      let accepted = false;
+      try {
+        if (matches() && authorityListener && validRestoreAuthority(message.authority)) {
+          authorityListener(message.authority);
+          // The synchronous database read may cross the challenge deadline.
+          accepted = matches();
+        }
+      } catch {
+        /* Only a boolean crosses IPC; never expose account or SQL details. */
+      }
+      try {
+        send({ kind: 'restore-authority-result', request, accepted });
+      } catch {
+        /* A disconnected parent cannot admit this restore. */
+      }
     } else if (message.kind === 'restore-stop') {
       const request = message.request;
       if (!validRestoreStopRequest(request)) return;
@@ -213,6 +244,10 @@ export async function connectMaintenance(): Promise<MaintenanceBridge> {
     drained: (epoch) => {
       if (!closed && process.connected) send({ kind: 'drained', epoch });
     },
+    onRestoreAuthority(listener) {
+      if (authorityListener || closed) throw new Error('Restore authority is already registered.');
+      authorityListener = listener;
+    },
     onRestoreStop(listener) {
       if (restoreListener || closed) throw new Error('Restore shutdown is already registered.');
       restoreListener = listener;
@@ -251,6 +286,7 @@ export async function connectMaintenance(): Promise<MaintenanceBridge> {
       closed = true;
       failWitness();
       restoreListener = undefined;
+      authorityListener = undefined;
       clearTimeout(initialTimeout);
       process.off('message', onMessage);
       process.off('disconnect', onDisconnect);

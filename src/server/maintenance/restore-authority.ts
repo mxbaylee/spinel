@@ -1,12 +1,8 @@
 import type { DatabaseSync } from '../../../server/database.ts';
 import { VERIFICATION_MS } from '../auth/store.ts';
-import type { MaintenanceAuthority } from '../../shared/maintenance.ts';
+import type { MaintenanceAuthority, RestoreAuthority } from '../../shared/maintenance.ts';
+export type { RestoreAuthority } from '../../shared/maintenance.ts';
 
-/** Private immutable job evidence, never browser-supplied authority. */
-export interface RestoreAuthority extends MaintenanceAuthority {
-  verifiedPasskeyId: string;
-  verifiedAt: number;
-}
 const keys = ['actorId', 'sessionHash', 'expiresAt', 'verifiedPasskeyId', 'verifiedAt'];
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const refused = () => new Error('The original restore authorization is no longer valid.');

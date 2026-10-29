@@ -37,6 +37,8 @@ import { TrashStore, startTrashCleanup } from '../src/server/workspace/trash.ts'
 import { HistoryStore } from '../src/server/history/store.ts';
 import { CollaborationStore } from '../src/server/collaboration/service.ts';
 import { attachSync } from '../src/server/sync/transport.ts';
+import { assertRestoreAuthority } from '../src/server/maintenance/restore-authority.ts';
+import type { RestoreAuthority } from '../src/shared/maintenance.ts';
 import type { MaintenanceBridge } from '../src/shared/maintenance.ts';
 import { MaintenanceGate, ShutdownError } from '../src/server/maintenance/gate.ts';
 import { maintenanceRoutes } from '../src/server/maintenance/routes.ts';
@@ -604,6 +606,12 @@ export async function createApp(options: AppOptions) {
   return {
     server,
     maintenance,
+    /** Private live-child check. No verification is renewed and nothing is written. */
+    verifyRestoreAuthority(proof: RestoreAuthority) {
+      if (!database.isOpen || !maintenance.running)
+        throw new Error('Restore authority requires the current running application.');
+      assertRestoreAuthority(database, proof);
+    },
     /** Private supervisor readiness only. This neither authorizes a barrier
      * bypass nor opens admission, and never returns workspace content. */
     verifyPausedRestore(expected: { fingerprint: string; epoch: string; generationId: string }) {

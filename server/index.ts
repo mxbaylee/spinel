@@ -128,6 +128,7 @@ async function shutdown(restore?: RestoreStopRequest) {
     maintenance?.close();
   }
 }
+maintenance?.onRestoreAuthority?.((proof) => app.verifyRestoreAuthority(proof));
 maintenance?.onRestoreStop?.((request) => shutdown(request));
 process.on('SIGINT', () => void shutdown());
 process.on('SIGTERM', () => void shutdown());

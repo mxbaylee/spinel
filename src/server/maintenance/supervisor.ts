@@ -18,6 +18,8 @@ import type {
   MaintenanceAdminStatus,
   MaintenanceAuthority,
   MaintenanceControlResult,
+  RestoreAuthority,
+  RestoreStopRequest,
 } from '../../shared/maintenance.ts';
 import { publicMaintenance } from '../../shared/maintenance.ts';
 import {
@@ -42,6 +44,7 @@ import {
 } from './restore-stop.ts';
 import type { RestoreStopRecord } from './restore-stop.ts';
 import { checkVerificationHeadroom } from '../backup/recovery-worker.ts';
+import { validRestoreAuthority } from './restore-authority.ts';
 import type { ApplicationPolicy } from '../../../server/application-policy.ts';
 
 const DRAIN_MS = 30_000;
@@ -234,6 +237,13 @@ export class MaintenanceSupervisor {
   private startWaiter: Waiter | undefined;
   private restoreWaiter:
     { resolve(record: RestoreStopRecord): void; reject(error: Error): void } | undefined;
+  private authorityWaiter:
+    | {
+        request: RestoreStopRequest;
+        accept(): void;
+        reject(error: Error): void;
+      }
+    | undefined;
   private queue: Promise<unknown> = Promise.resolve();
   private publicServer: HttpServer | undefined;
   private controlServer: HttpServer | undefined;
@@ -417,6 +427,7 @@ export class MaintenanceSupervisor {
     this.startWaiter?.reject(new Error(safeError));
     this.startWaiter = undefined;
     this.restoreWaiter?.reject(new Error(safeError));
+    this.authorityWaiter?.reject(new Error(safeError));
   }
   private reconcileNotice(restarting: boolean) {
     const notice = this.journal.state.notice;
@@ -810,6 +821,89 @@ export class MaintenanceSupervisor {
   stopForRestore(jobId: string): Promise<RestoreStopRecord> {
     return this.serial(() => this.stopForRestoreOwned(jobId));
   }
+  /** Read-only private probe. Success is neither admission nor activation authority. */
+  recheckRestoreAuthority(jobId: string, original: RestoreAuthority): Promise<void> {
+    // Snapshot before queueing: a caller cannot replace proof fields while waiting.
+    const proof = structuredClone(original);
+    return this.serial(() => this.recheckRestoreAuthorityOwned(jobId, proof));
+  }
+  private async recheckRestoreAuthorityOwned(jobId: string, proof: RestoreAuthority) {
+    operationId(jobId);
+    if (!validRestoreAuthority(proof)) throw new Error('Invalid original restore authority.');
+    const state = this.journal.state;
+    const child = this.child;
+    const identity = state.child ? { ...state.child } : null;
+    const databaseIdentity = state.databaseIdentity ? { ...state.databaseIdentity } : null;
+    const request: RestoreStopRequest = {
+      jobId,
+      challengeId: randomUUID(),
+      generationId: state.generationId,
+      epoch: state.epoch,
+      deadline: Math.min(proof.expiresAt, this.now() + 5000),
+    };
+    const assertCurrent = () => {
+      const current = this.journal.state;
+      if (
+        this.closing ||
+        (this.authorityWaiter !== undefined && this.authorityWaiter.request !== request) ||
+        !child ||
+        this.child !== child ||
+        !child.connected ||
+        !this.childReady ||
+        !this.childOwned ||
+        !identity ||
+        child.pid !== identity.pid ||
+        !current.child ||
+        current.child.pid !== identity.pid ||
+        current.child.start !== identity.start ||
+        current.child.boot !== identity.boot ||
+        current.child.token !== identity.token ||
+        current.phase !== 'running' ||
+        current.restoreStop ||
+        current.generationId !== request.generationId ||
+        current.epoch !== request.epoch ||
+        !sameFile(current.databaseIdentity, databaseIdentity) ||
+        proof.verifiedAt > this.now() ||
+        this.now() >= request.deadline
+      )
+        throw new Error('The original restore authority has no current application challenge.');
+      this.assertGeneration();
+      if (this.now() >= request.deadline)
+        throw new Error('The restore authority challenge expired.');
+    };
+    assertCurrent();
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      await new Promise<void>((resolve, reject) => {
+        this.authorityWaiter = {
+          request,
+          reject,
+          accept: () => {
+            try {
+              assertCurrent();
+              resolve();
+            } catch (error) {
+              reject(error);
+            }
+          },
+        };
+        timer = setTimeout(
+          () => reject(new Error('Restore authority recheck timed out.')),
+          Math.max(1, Math.min(5000, request.deadline - this.now())),
+        );
+        child!.send(
+          { channel: MAINTENANCE_CHANNEL, kind: 'restore-authority', request, authority: proof },
+          (error) => {
+            if (error) reject(new Error('Restore authority channel disconnected.'));
+          },
+        );
+      });
+      assertCurrent();
+    } finally {
+      clearTimeout(timer);
+      this.authorityWaiter = undefined;
+    }
+  }
   /** The restore controller already owns serial(); witness replies remain out of band. */
   private async stopForRestoreOwned(jobId: string): Promise<RestoreStopRecord> {
     operationId(jobId);
@@ -1142,7 +1236,19 @@ export class MaintenanceSupervisor {
   private async childMessage(child: ChildProcess, value: unknown) {
     if (child !== this.child || !object(value) || value.channel !== MAINTENANCE_CHANNEL) return;
     try {
-      if (value.kind === 'restore-witness' || value.kind === 'restore-stop-refused') {
+      if (value.kind === 'restore-authority-result') {
+        // Out of band: the controller owns serial() while awaiting this read.
+        const waiter = this.authorityWaiter;
+        if (
+          !waiter ||
+          !validRestoreStopRequest(value.request) ||
+          !sameRestoreStopRequest(value.request, waiter.request) ||
+          typeof value.accepted !== 'boolean'
+        )
+          return;
+        if (value.accepted) waiter.accept();
+        else waiter.reject(new Error('The original restore authorization is no longer valid.'));
+      } else if (value.kind === 'restore-witness' || value.kind === 'restore-stop-refused') {
         const record = this.journal.state.restoreStop;
         // Out of band: serial() is already awaiting this witness. The current
         // ChildProcess and full durable challenge are both required.
@@ -1242,6 +1348,7 @@ export class MaintenanceSupervisor {
     this.drainWaiter?.reject(new Error('Supervisor is stopping.'));
     this.startWaiter?.reject(new Error('Supervisor is stopping.'));
     this.restoreWaiter?.reject(new Error('Supervisor is stopping.'));
+    this.authorityWaiter?.reject(new Error('Supervisor is stopping.'));
     let failure: unknown;
     if (this.journal.state.child || this.journal.state.verifier) {
       try {
