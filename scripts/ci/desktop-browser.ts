@@ -11,7 +11,7 @@ import { setTimeout as delay } from 'node:timers/promises';
 import { promisify } from 'node:util';
 
 export type DesktopBrowserKind = 'chrome' | 'firefox' | 'safari';
-export type DesktopKey = 'Enter' | 'Escape' | 'Home' | 'SelectAll' | 'Space';
+export type DesktopKey = 'Enter' | 'Escape' | 'DocumentStart' | 'SelectAll' | 'Copy' | 'Space';
 type ObjectValue = Record<string, unknown>;
 type ProfileIdentity = {
   mode: 'explicit-directory' | 'ordinary-hosted-safari-user';
@@ -47,6 +47,7 @@ export type DesktopBrowser = {
   press(key: DesktopKey): Promise<void>;
   type(text: string): Promise<void>;
   click(selector: string, index?: number): Promise<void>;
+  clickAt(selector: string, x: number, y: number): Promise<void>;
   screenshot(path: string): Promise<void>;
   stop(): Promise<DesktopBrowserStop>;
 };
@@ -60,8 +61,9 @@ const binaries = {
 const keyValues: Record<DesktopKey, string> = {
   Enter: '\uE007',
   Escape: '\uE00C',
-  Home: '\uE011',
+  DocumentStart: '\uE013',
   SelectAll: 'a',
+  Copy: 'c',
   Space: '\uE00D',
 };
 
@@ -227,20 +229,21 @@ export function createDesktopBrowser(
   }
   async function press(key: DesktopKey) {
     assert.ok(browserPid, 'Start the browser before sending input.');
+    const commandKey = key === 'SelectAll' || key === 'Copy' || key === 'DocumentStart';
     if (kind === 'safari') {
-      const code = { Enter: 36, Escape: 53, Home: 115, Space: 49 };
+      const code = { Enter: 36, Escape: 53, DocumentStart: 126, Space: 49 };
       await applescript(
-        key === 'SelectAll'
-          ? 'tell application "Safari" to activate\ntell application "System Events" to keystroke "a" using command down'
-          : `tell application "Safari" to activate\ntell application "System Events" to key code ${code[key]}`,
+        key === 'SelectAll' || key === 'Copy'
+          ? `tell application "Safari" to activate\ntell application "System Events" to keystroke "${keyValues[key]}" using command down`
+          : `tell application "Safari" to activate\ntell application "System Events" to key code ${code[key]}${commandKey ? ' using command down' : ''}`,
       );
       return;
     }
     const actions = [
-      ...(key === 'SelectAll' ? [{ type: 'keyDown', value: '\uE03D' }] : []),
+      ...(commandKey ? [{ type: 'keyDown', value: '\uE03D' }] : []),
       { type: 'keyDown', value: keyValues[key] },
       { type: 'keyUp', value: keyValues[key] },
-      ...(key === 'SelectAll' ? [{ type: 'keyUp', value: '\uE03D' }] : []),
+      ...(commandKey ? [{ type: 'keyUp', value: '\uE03D' }] : []),
     ];
     try {
       await session('actions', 'POST', {
@@ -248,6 +251,106 @@ export function createDesktopBrowser(
       });
     } finally {
       await session('actions', 'DELETE');
+    }
+  }
+  async function clickAt(selector: string, x: number, y: number) {
+    assert.ok(browserPid, 'Start the browser before sending pointer input.');
+    assert.ok(Number.isFinite(x) && Number.isFinite(y) && x >= 0 && y >= 0);
+    if (kind === 'safari') await applescript('tell application "Safari" to activate');
+    const point = await evaluate<{ x: number; y: number }>(`(() => {
+      const element = document.querySelector(${JSON.stringify(selector)});
+      if (!(element instanceof HTMLElement) || !element.getClientRects().length || element.matches(':disabled, [aria-disabled="true"]')) throw new Error('The pointer target is not an enabled visible element.');
+      element.scrollIntoView({ block: 'center', inline: 'nearest' });
+      const rect = element.getBoundingClientRect();
+      const x = Math.round(rect.left + ${x});
+      const y = Math.round(rect.top + ${y});
+      if (${x} >= rect.width || ${y} >= rect.height || x < 0 || y < 0 || x >= innerWidth || y >= innerHeight || !element.contains(document.elementFromPoint(x, y))) throw new Error('The pointer position is outside or obscures the target.');
+      return { x, y };
+    })()`);
+    if (kind !== 'safari') {
+      try {
+        await session('actions', 'POST', {
+          actions: [
+            {
+              type: 'pointer',
+              id: 'desktop-pointer',
+              parameters: { pointerType: 'mouse' },
+              actions: [
+                { type: 'pointerMove', origin: 'viewport', duration: 0, ...point },
+                { type: 'pointerDown', button: 0 },
+                { type: 'pointerUp', button: 0 },
+              ],
+            },
+          ],
+        });
+      } finally {
+        await session('actions', 'DELETE');
+      }
+      return;
+    }
+    // System Events coordinate clicks perform accessibility actions, which do
+    // not initialize canvas selection. Quartz posts actual macOS pointer input.
+    const post = (mode: 'move' | 'click', screenX: number, screenY: number) =>
+      command('/usr/bin/osascript', [
+        '-l',
+        'JavaScript',
+        '-e',
+        `
+        ObjC.import('CoreGraphics');
+        ObjC.import('CoreFoundation');
+        function run(argv) {
+          var point = { x: Number(argv[1]), y: Number(argv[2]) };
+          var types = argv[0] === 'move' ? [$.kCGEventMouseMoved] : [$.kCGEventLeftMouseDown, $.kCGEventLeftMouseUp];
+          types.forEach(function(type) {
+            var event = $.CGEventCreateMouseEvent(null, type, point, $.kCGMouseButtonLeft);
+            $.CGEventPost($.kCGHIDEventTap, event);
+            $.CFRelease(event);
+          });
+        }
+      `,
+        mode,
+        String(screenX),
+        String(screenY),
+      ]);
+    const bounds = (await applescript('tell application "Safari" to get bounds of front window'))
+      .split(',')
+      .map(Number);
+    assert.ok(bounds.length === 4 && bounds.every(Number.isFinite));
+    const [left, top, right, bottom] = bounds;
+    assert.ok(right > left && bottom > top);
+    const screen = { x: Math.round((left + right) / 2), y: Math.round((top + bottom) / 2) };
+    const key = JSON.stringify(`__spinelPointer_${randomUUID().replaceAll('-', '')}`);
+    type Pointer = { x: number; y: number; trusted: boolean; target: boolean };
+    await evaluate(`(() => {
+      const element = document.querySelector(${JSON.stringify(selector)});
+      const state = globalThis[${key}] = {};
+      state.observe = event => { state[event.type] = { x: event.clientX, y: event.clientY, trusted: event.isTrusted, target: element.contains(event.target) }; };
+      addEventListener('mousemove', state.observe, true);
+      addEventListener('mousedown', state.observe, true);
+    })()`);
+    try {
+      // Observe a real move inside the current window to locate the viewport;
+      // this avoids guessing toolbar, border or sidebar offsets.
+      await post('move', screen.x, screen.y);
+      const moved = await poll(
+        () => evaluate<Pointer | null>(`globalThis[${key}].mousemove || null`),
+        Boolean,
+        'Safari did not receive native pointer movement',
+      );
+      assert.ok(moved?.trusted, 'Safari pointer movement must be trusted native input.');
+      await post('click', screen.x + point.x - moved.x, screen.y + point.y - moved.y);
+      const clicked = await poll(
+        () => evaluate<Pointer | null>(`globalThis[${key}].mousedown || null`),
+        Boolean,
+        'Safari did not receive the native pointer click',
+      );
+      assert.ok(clicked?.trusted && clicked.target, 'The native click did not reach the target.');
+      assert.ok(Math.abs(clicked.x - point.x) <= 1 && Math.abs(clicked.y - point.y) <= 1);
+    } finally {
+      await evaluate(`(() => {
+        const state = globalThis[${key}];
+        if (state) { removeEventListener('mousemove', state.observe, true); removeEventListener('mousedown', state.observe, true); delete globalThis[${key}]; }
+      })()`);
     }
   }
   async function goto(url: string) {
@@ -512,6 +615,7 @@ export function createDesktopBrowser(
     evaluate,
     focus: (selector) => focusAt(selector, 0),
     press,
+    clickAt,
     async type(text) {
       assert.ok(browserPid, 'Start the browser before typing.');
       if (kind === 'safari') {

@@ -669,6 +669,51 @@ account switching and revoked/read-only shares. Deterministic CI also exercises
 failed writes, partial downloads, eviction, removal with pending work, repeated
 replay and interrupted application/storage updates.
 
+## Ordinary desktop browser tabs
+
+Use a regular Chrome, Firefox or Safari window and keep using the same browser
+profile. Download each document while connected, wait for the completed download
+message, and check **Profile → This device** before leaving the network. A plain
+tab does not require installing Spinel. Private Browsing/Incognito and another
+profile have different storage lifetimes and do not inherit the prepared copies.
+
+Spinel requests `navigator.storage.persist()` during an explicit download and
+reports its actual result. A denied, unsupported or failed request does not mean
+the download failed; it means browser protection was not established. The result's
+**How to keep them** action opens the same **About device storage** guide used in
+Profile, without navigating away from the editor. Pending work remains mounted.
+
+| Browser | Persistence and eviction rules |
+| --- | --- |
+| Chrome | Chromium grants persistence using browser heuristics rather than a permission prompt. Best-effort origin storage can be evicted under storage pressure. A request can be denied; returning to Spinel and checking the actual protection state is more useful than assuming a grant. [Chrome storage guidance](https://web.dev/articles/persistent-storage). |
+| Firefox | A persistence request can show a permission prompt. The person may allow persistent storage; browsing-data and session-only cleanup settings still matter. Check the site's storage exception and avoid clearing pending work. [Mozilla storage controls](https://support.mozilla.org/en-US/kb/storage). |
+| Safari | WebKit supports the Storage API and decides persistence using heuristics. Origin data may be evicted under quota/storage pressure or inactivity. Its tracking-prevention policy can remove script-writable storage after seven days of Safari use without interaction with the site; this is not seven elapsed calendar days. Do not promise an ordinary tab the exemption documented for Home Screen apps. [WebKit storage policy](https://webkit.org/blog/14403/updates-to-storage-policy/), [tracking prevention](https://webkit.org/tracking-prevention/), and [Safari-use timing](https://webkit.org/blog/10218/full-third-party-cookie-blocking-and-more/). |
+
+These policies are platform documentation, not a measured retention timer or a
+guarantee against user deletion. Keep free disk space and avoid cleanup settings
+that clear this site's data. Before intentionally clearing storage, reconnect and
+open pending documents until they say **Synced**, or export recoverable work.
+Server backups cannot restore edits that never reached the server. If the whole
+origin is cleared, an offline browser may have no Spinel shell or catalog to show;
+after reconnection the server catalog returns without claiming lost downloads.
+
+### Native desktop verification
+
+SPN-052's native matrix is in progress. Its maintained
+[implementation record](implementation/SPN-052.md) distinguishes capability probes
+from full application acceptance. The matrix uses actual installed macOS browsers,
+retains their original profiles, witnesses process termination and new process
+IDs, and blocks the application transport before relaunch. It never reconstructs
+IndexedDB or CacheStorage from exported state. Linux WebKit and fresh isolated
+Safari WebDriver sessions cannot establish this ordinary-tab restart behavior.
+
+The test cases cover image-backed Sheets and Docs for normal and divergent
+reconnect, actual persistence outcomes, locally committed edits through another
+process restart, and explicit origin storage deletion. Browser deletion APIs
+exercise loss handling; they do not reproduce a browser's long-term eviction
+heuristic. Final exact browser/OS versions and observed outcomes must replace
+this in-progress checkpoint before SPN-052 is considered complete.
+
 ## Platform references
 
 - [Offline assets and structured data](https://web.dev/learn/pwa/offline-data)

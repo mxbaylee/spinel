@@ -7,7 +7,16 @@ on:
     paths:
       - .github/workflows/desktop-offline.yml
       - scripts/ci/desktop-*.ts
-      - web/offline/**
+      - e2e/doc-image-fixture.ts
+      - e2e/offline-fixture.ts
+      - web/**
+      - src/**
+      - server/**
+      - lib/**
+      - vite.config.ts
+      - .nvmrc
+      - package.json
+      - package-lock.json
       - docs/todo/SPN-052.md
       - docs/implementation/SPN-052.md
   workflow_dispatch:
@@ -20,10 +29,14 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  profile-probe:
-    name: Native Safari profile capability
+  desktop:
+    name: Native desktop offline (${{ matrix.browser }})
     runs-on: macos-26
-    timeout-minutes: 8
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chrome, firefox, safari]
     env:
       SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
@@ -35,12 +48,31 @@ jobs:
           node-version-file: .nvmrc
           package-manager-cache: false
       - name: Prove same-profile ordinary Safari restart
+        if: matrix.browser == 'safari'
         run: node scripts/ci/desktop-profile-probe.ts
-      - name: Retain profile proof
+      - name: Install locked application dependencies
+        run: npm ci
+      - name: Build the production offline runtime
+        run: npm run build
+      - name: Trust the disposable loopback fixture certificate
+        run: |
+          test "$RUNNER_ENVIRONMENT" = github-hosted
+          mkdir -p test-results/desktop-tls
+          openssl req -x509 -newkey rsa:2048 -nodes \
+            -keyout test-results/desktop-tls/key.pem \
+            -out test-results/desktop-tls/cert.pem -days 1 \
+            -subj /CN=localhost -addext 'subjectAltName=DNS:localhost,IP:127.0.0.1'
+          sudo security add-trusted-cert -d -r trustRoot \
+            -k /Library/Keychains/System.keychain test-results/desktop-tls/cert.pem
+      - name: Verify retained documents, edits, images and reconnect
+        env:
+          DESKTOP_BROWSER: ${{ matrix.browser }}
+        run: node --max-old-space-size=1024 scripts/ci/desktop-offline.ts "$DESKTOP_BROWSER"
+      - name: Retain native profile and application evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: desktop-offline-${{ github.run_id }}-${{ github.run_attempt }}
+          name: desktop-offline-${{ matrix.browser }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: artifacts/desktop-offline/
           if-no-files-found: error
           retention-days: 14
