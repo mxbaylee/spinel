@@ -380,6 +380,7 @@ test('custody preserves original bytes and activates through the leased inode, b
   }
   expect(() => assertNoPendingRestore(f.databasePath)).not.toThrow();
   await activateRestoreFiles(f.control, files);
+  expect((await lstat(f.databasePath)).mode & 0o077).toBe(0);
   expect(f.phases).toEqual(['replacing', 'activated']);
   expect(await readFile(f.databasePath)).toEqual(f.candidate);
   expect((await lstat(f.databasePath)).ino).toBe(before.ino);

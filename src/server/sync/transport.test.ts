@@ -203,6 +203,23 @@ test('the native protocol is available by default and the old protocol is retire
   ).toBeTruthy();
 });
 
+test('closed admission rejects an otherwise valid socket without consuming its ticket', async () => {
+  const f = await fixture();
+  await f.prepare();
+  const token = await f.ticket();
+  // Gate tests prove the independent restore latch forces running=false even
+  // for running/unavailable bridge states. Here an authenticated positive control
+  // proves transport consults that gate before accepting or consuming the ticket.
+  const blocked = vi.spyOn(f.app.maintenance, 'running', 'get').mockReturnValue(false);
+  try {
+    await f.rejectedSocket(token);
+  } finally {
+    blocked.mockRestore();
+  }
+  const connection = await f.connect(f.prefix, f.sheet.id, f.cookie(), token);
+  expect(connection.socket.readyState).toBe(WebSocket.OPEN);
+});
+
 test('offline replay sends an atomic head fence through the authorized native socket', async () => {
   const f = await fixture();
   await f.prepare();

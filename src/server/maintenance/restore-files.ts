@@ -787,6 +787,7 @@ async function overwrite(source: string, target: string, expected: FileIdentity)
         offset += bytesRead;
       }
       await output.truncate(offset);
+      await output.chmod(0o600);
       await output.sync();
     } finally {
       await output.close();

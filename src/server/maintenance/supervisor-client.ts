@@ -16,16 +16,34 @@ import {
   validRestoreStopRequest,
 } from './restore-stop.ts';
 
+import {
+  restoreTrialReference,
+  sameRestoreTrialReference,
+  validRestoreTrialPermit,
+} from './restore-trial.ts';
+import type { RestoreOpening, RestoreTrialPermit, RestoreTrialRelease } from './restore-trial.ts';
+
 import { validRestoreAuthority } from './restore-authority.ts';
 
 export const MAINTENANCE_CHANNEL = 'spinel-maintenance';
 
+export interface SupervisedMaintenanceBridge extends MaintenanceBridge {
+  takeRestoreOpening(): RestoreOpening | undefined;
+  restoreTrialReady(permit: RestoreTrialPermit): void;
+  onRestoreTrialRelease(listener: (reference: RestoreTrialRelease) => void): void;
+}
+
 /** Private IPC, inherited only by the supervisor's fixed application child. */
-export async function connectMaintenance(): Promise<MaintenanceBridge> {
+export async function connectMaintenance(): Promise<SupervisedMaintenanceBridge> {
   if (!process.send || process.env.SPINEL_SUPERVISED !== '1' || !process.env.DATABASE_PATH)
     throw new Error('Maintenance requires its supervised application channel.');
   let current: MaintenanceAdminStatus | undefined;
   let closed = false;
+  let opening: RestoreOpening | undefined;
+  let trialExpected = false;
+  let trial: RestoreTrialPermit | undefined;
+  let releaseListener: ((reference: RestoreTrialRelease) => void) | undefined;
+  let released = false;
   let restoreListener: ((request: RestoreStopRequest) => Promise<void>) | undefined;
   let authorityListener: ((proof: RestoreAuthority) => void) | undefined;
   let restoreRequest: RestoreStopRequest | undefined;
@@ -82,6 +100,7 @@ export async function connectMaintenance(): Promise<MaintenanceBridge> {
       request?: unknown;
       fingerprint?: unknown;
       authority?: unknown;
+      reference?: unknown;
     };
     if (message.kind === 'state' && message.status) {
       current = message.status;
@@ -94,6 +113,26 @@ export async function connectMaintenance(): Promise<MaintenanceBridge> {
         resolveInitial();
       }
       for (const listener of listeners) listener(publicMaintenance(current));
+    } else if (message.kind === 'restore-trial-release') {
+      if (!trial || !sameRestoreTrialReference(message.reference, trial)) return;
+      let accepted = false;
+      try {
+        if (
+          !releaseListener ||
+          !current?.available ||
+          current.epoch !== trial.epoch ||
+          current.generationId !== trial.generationId ||
+          (!released &&
+            (!['starting', 'paused'].includes(current.phase) || Date.now() >= trial.deadline))
+        )
+          throw new Error('Restore release binding changed.');
+        releaseListener(message.reference);
+        released = true;
+        accepted = true;
+      } catch {
+        /* A rejected release keeps the independent application latch closed. */
+      }
+      send({ kind: 'restore-trial-released', reference: restoreTrialReference(trial), accepted });
     } else if (message.kind === 'restore-authority') {
       const request = message.request;
       if (!validRestoreStopRequest(request)) return;
@@ -204,7 +243,10 @@ export async function connectMaintenance(): Promise<MaintenanceBridge> {
   };
   process.on('message', onMessage);
   process.on('disconnect', onDisconnect);
-  const ownership = receiveWorkspaceOwnership(process.env.DATABASE_PATH);
+  const ownership = receiveWorkspaceOwnership(process.env.DATABASE_PATH, (capability) => {
+    opening = capability;
+    trialExpected = true;
+  });
   send({ kind: 'hello' });
   try {
     await Promise.all([initial, ownership]);
@@ -215,6 +257,37 @@ export async function connectMaintenance(): Promise<MaintenanceBridge> {
     throw error;
   }
   return {
+    takeRestoreOpening() {
+      const result = opening;
+      opening = undefined;
+      return result;
+    },
+    restoreTrialReady(permit) {
+      if (
+        closed ||
+        !trialExpected ||
+        trial ||
+        !validRestoreTrialPermit(permit) ||
+        permit.child.pid !== process.pid ||
+        !current?.available ||
+        !['starting', 'paused'].includes(current.phase) ||
+        current.epoch !== permit.epoch ||
+        current.generationId !== permit.generationId ||
+        Date.now() >= permit.deadline
+      )
+        throw new Error('Restore readiness has no matching application trial.');
+      trial = structuredClone(permit);
+      send({
+        kind: 'restore-trial-ready',
+        reference: restoreTrialReference(trial),
+        fingerprint: trial.output.fingerprint,
+      });
+    },
+    onRestoreTrialRelease(listener) {
+      if (closed || !trialExpected || releaseListener)
+        throw new Error('Restore release listener is unavailable.');
+      releaseListener = listener;
+    },
     status: () => publicMaintenance(current!),
     adminStatus: () => structuredClone(current!),
     subscribe(listener) {
@@ -240,7 +313,10 @@ export async function connectMaintenance(): Promise<MaintenanceBridge> {
         }
       });
     },
-    ready: () => send({ kind: 'ready', epoch: current!.epoch }),
+    ready: () => {
+      if (trialExpected) throw new Error('A restore trial cannot report ordinary readiness.');
+      send({ kind: 'ready', epoch: current!.epoch });
+    },
     drained: (epoch) => {
       if (!closed && process.connected) send({ kind: 'drained', epoch });
     },

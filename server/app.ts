@@ -43,7 +43,17 @@ import type { MaintenanceBridge } from '../src/shared/maintenance.ts';
 import { MaintenanceGate, ShutdownError } from '../src/server/maintenance/gate.ts';
 import { maintenanceRoutes } from '../src/server/maintenance/routes.ts';
 import { assertNoPendingRestore } from '../src/server/maintenance/restore-barrier.ts';
-import { canonicalDatabasePath } from '../src/server/maintenance/journal.ts';
+import {
+  fileIdentity,
+  sameFile,
+  canonicalDatabasePath,
+} from '../src/server/maintenance/journal.ts';
+
+import {
+  consumeRestoreOpening,
+  sameRestoreTrialReference,
+} from '../src/server/maintenance/restore-trial.ts';
+import type { RestoreOpening } from '../src/server/maintenance/restore-trial.ts';
 
 export const projectRoot = resolve(import.meta.dirname, '..');
 /** Below the supervisor's 15 s stop budget, leaving time to close stores. */
@@ -62,13 +72,45 @@ export interface AppOptions {
   maintenance?: MaintenanceBridge;
   /** Internal bounded rehearsal/trial only; never a browser-supplied setting. */
   restoreMaximumBytes?: number;
+  /** Opaque capability supplied only by the complete inherited-ownership handoff. */
+  restoreOpening?: RestoreOpening;
 }
 
-export async function createApp(options: AppOptions) {
-  // Check before even constructing storage: initialization can migrate or write.
-  // Paused maintenance and inherited ownership alone do not authorize a trial.
-  assertNoPendingRestore(canonicalDatabasePath(options.databasePath));
-  const maintenance = new MaintenanceGate(options.maintenance);
+export async function createApp(input: AppOptions) {
+  const options = { ...input };
+  const databasePath = canonicalDatabasePath(options.databasePath);
+  if (options.restoreOpening !== undefined && options.databasePath !== databasePath)
+    throw new Error('Restore opening requires its exact canonical target.');
+  const trial =
+    options.restoreOpening !== undefined
+      ? await consumeRestoreOpening(options.restoreOpening, databasePath, {
+          origin: options.origin ?? 'http://localhost:3000',
+          image: options.image ?? '',
+          spacesEnabled: options.spaceReview !== false,
+          staticDirectory: resolve(options.staticDirectory ?? resolve(projectRoot, 'dist')),
+          consequencesVersion: 1,
+        })
+      : undefined;
+  if (!trial) assertNoPendingRestore(databasePath);
+  else {
+    const state = options.maintenance?.adminStatus(),
+      actual = options.maintenance?.status();
+    if (
+      options.development ||
+      !state?.available ||
+      !actual?.available ||
+      !['starting', 'paused'].includes(state.phase) ||
+      !['starting', 'paused'].includes(actual.phase) ||
+      state.epoch !== trial.epoch ||
+      actual.epoch !== trial.epoch ||
+      state.generationId !== trial.generationId ||
+      Date.now() >= trial.deadline
+    )
+      throw new Error('Restore trial has no matching closed application state.');
+  }
+  let trialClosed = !!trial,
+    trialEnding = false;
+  const maintenance = new MaintenanceGate(options.maintenance, () => trialClosed);
   const database = openDatabase(options.databasePath);
   const startupMark = () =>
     JSON.stringify({
@@ -78,6 +120,7 @@ export async function createApp(options: AppOptions) {
   // Capture before constructors. Equal final content alone could hide a write
   // followed by an undo, or a temporary schema change during initialization.
   let initialMark: string | null = null;
+  let originalMaximumPages: number | undefined;
   let initialEpoch: string | undefined;
   let initialGeneration: string | undefined;
   let startupStayedClosed = !!options.maintenance;
@@ -98,6 +141,18 @@ export async function createApp(options: AppOptions) {
   };
   const app = express();
   app.disable('x-powered-by');
+  // Runs before every auth, metadata, static and health handler. The sync upgrade
+  // handler and all background work independently consult this same closed gate.
+  app.use((_request, response, next) => {
+    if (!trialClosed) {
+      next();
+      return;
+    }
+    response
+      .status(503)
+      .set('Cache-Control', 'no-store')
+      .json({ code: 'maintenance', error: 'Workspace recovery is being verified.' });
+  });
   const server = createHttpServer(app);
   app.use(profileAvatarRoutes());
   let vite: import('vite').ViteDevServer | undefined;
@@ -114,8 +169,9 @@ export async function createApp(options: AppOptions) {
   let draining: Promise<void> | undefined;
 
   try {
-    if (options.restoreMaximumBytes !== undefined) {
-      const maximum = options.restoreMaximumBytes,
+    const maximumBytes = trial?.maximumBytes ?? options.restoreMaximumBytes;
+    if (maximumBytes !== undefined) {
+      const maximum = maximumBytes,
         status = maintenance.status;
       const pageSize = Number(database.prepare('PRAGMA page_size').get()!.page_size);
       const pages = Number(database.prepare('PRAGMA page_count').get()!.page_count);
@@ -128,6 +184,11 @@ export async function createApp(options: AppOptions) {
         pages * pageSize > maximum
       )
         throw new Error('Invalid restore startup resource boundary.');
+      originalMaximumPages = Number(
+        database.prepare('PRAGMA max_page_count').get()!.max_page_count,
+      );
+      if (!Number.isSafeInteger(originalMaximumPages) || originalMaximumPages < pages)
+        throw new Error('Invalid original database growth boundary.');
       database.exec(
         `PRAGMA cache_size=-2048; PRAGMA temp_store=FILE; PRAGMA max_page_count=${Math.floor(maximum / pageSize)}`,
       );
@@ -603,6 +664,40 @@ export async function createApp(options: AppOptions) {
     throw error;
   }
 
+  function verifyPausedRestore(expected: {
+    fingerprint: string;
+    epoch: string;
+    generationId: string;
+  }) {
+    observeTrialAdmission();
+    const state = options.maintenance?.adminStatus();
+    if (
+      !startupStayedClosed ||
+      !database.isOpen ||
+      !state?.available ||
+      !['starting', 'paused'].includes(state.phase) ||
+      maintenance.pending ||
+      initialMark === null ||
+      expected.epoch !== initialEpoch ||
+      state.epoch !== initialEpoch ||
+      expected.generationId !== initialGeneration ||
+      state.generationId !== initialGeneration ||
+      !/^[a-f0-9]{64}$/.test(expected.fingerprint) ||
+      startupMark() !== initialMark
+    )
+      throw new Error('The restore trial did not retain its prepared startup state.');
+    database.assertQuiescent();
+    database.exec('BEGIN');
+    try {
+      if (restoreSnapshotFingerprint(database) !== expected.fingerprint)
+        throw new Error('The restore trial differs from its prepared snapshot.');
+      database.exec('COMMIT');
+    } catch (error) {
+      database.exec('ROLLBACK');
+      throw error;
+    }
+  }
+
   return {
     server,
     maintenance,
@@ -612,42 +707,39 @@ export async function createApp(options: AppOptions) {
         throw new Error('Restore authority requires the current running application.');
       assertRestoreAuthority(database, proof);
     },
-    /** Private supervisor readiness only. This neither authorizes a barrier
-     * bypass nor opens admission, and never returns workspace content. */
-    verifyPausedRestore(expected: { fingerprint: string; epoch: string; generationId: string }) {
-      observeTrialAdmission();
-      const state = options.maintenance?.adminStatus();
-      if (
-        !startupStayedClosed ||
-        !database.isOpen ||
-        !state?.available ||
-        !['starting', 'paused'].includes(state.phase) ||
-        maintenance.pending ||
-        initialMark === null ||
-        expected.epoch !== initialEpoch ||
-        state.epoch !== initialEpoch ||
-        expected.generationId !== initialGeneration ||
-        state.generationId !== initialGeneration ||
-        !/^[a-f0-9]{64}$/.test(expected.fingerprint) ||
-        startupMark() !== initialMark
-      )
-        throw new Error('The restore trial did not retain its prepared startup state.');
-      database.assertQuiescent();
-      database.exec('BEGIN');
-      try {
-        if (restoreSnapshotFingerprint(database) !== expected.fingerprint)
-          throw new Error('The restore trial differs from its prepared snapshot.');
-        database.exec('COMMIT');
-      } catch (error) {
-        database.exec('ROLLBACK');
-        throw error;
-      }
+    /** Private readiness and release; neither method is mounted on HTTP. */
+    verifyPausedRestore,
+    restoreTrial: trial ? structuredClone(trial) : undefined,
+    releaseRestoreTrial(reference: unknown) {
+      if (!trial || trialEnding || !database.isOpen || !sameRestoreTrialReference(reference, trial))
+        throw new Error('Restore release has no matching trial.');
+      if (!trialClosed) return; // Same-outcome retry reports completion without renewing authority.
+      if (Date.now() >= trial.deadline) throw new Error('Restore release expired.');
+      assertNoPendingRestore(databasePath);
+      if (!sameFile(fileIdentity(databasePath), trial.identity))
+        throw new Error('Restore target changed.');
+      verifyPausedRestore({
+        fingerprint: trial.output.fingerprint,
+        epoch: trial.epoch,
+        generationId: trial.generationId,
+      });
+      if (Date.now() >= trial.deadline) throw new Error('Restore release expired.');
+      if (originalMaximumPages !== undefined)
+        maintenance.initialize(() =>
+          database.exec(`PRAGMA max_page_count=${originalMaximumPages}`),
+        );
+      assertNoPendingRestore(databasePath);
+      if (Date.now() >= trial.deadline) throw new Error('Restore release expired.');
+      startupStayedClosed = false;
+      unsubscribeTrialObservation();
+      trialClosed = false;
     },
     async close(options?: {
       /** Private supervised restore shutdown. Resolve only after the parent has
        * durably accepted the final witness for its exact pending challenge. */
       acceptRestoreWitness?: (fingerprint: string) => Promise<void>;
     }) {
+      trialEnding = true;
       startupStayedClosed = false;
       unsubscribeTrialObservation();
       unsubscribeMaintenance();

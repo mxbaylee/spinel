@@ -167,6 +167,19 @@ export async function copyRestoreInputFile(
  * exited. Node's permission model disables descriptor sync even for allowed paths.
  * No SQLite connection is opened here; authenticate the same descriptor we sync. */
 export async function syncClosedRestoreInput(input: ClosedRestoreInput, signal?: AbortSignal) {
+  await authenticateClosedRestoreInput(input, true, signal);
+}
+
+/** Read-only same-descriptor authentication before the first permitted live open. */
+export async function verifyClosedRestoreInput(input: ClosedRestoreInput, signal?: AbortSignal) {
+  await authenticateClosedRestoreInput(input, false, signal);
+}
+
+async function authenticateClosedRestoreInput(
+  input: ClosedRestoreInput,
+  durable: boolean,
+  signal?: AbortSignal,
+) {
   validateClosedRestoreInput(input, 8 * 1024 ** 3);
   signal?.throwIfAborted();
   await assertSelfContained(input.databasePath);
@@ -202,7 +215,7 @@ export async function syncClosedRestoreInput(input: ClosedRestoreInput, signal?:
     }
     if (offset !== input.databaseBytes || hash.digest('hex') !== input.databaseSha256)
       throw changed();
-    await file.sync();
+    if (durable) await file.sync();
     const after = await file.stat({ bigint: true }),
       path = await lstat(input.databasePath, { bigint: true });
     for (const current of [after, path])

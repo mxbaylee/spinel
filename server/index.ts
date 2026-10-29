@@ -59,11 +59,18 @@ const app = await (async () => {
     opened = true;
     starting = await createApp({
       maintenance,
+      restoreOpening: maintenance?.takeRestoreOpening(),
       development,
       ...applicationPolicy(port),
       backupConfigPath: process.env.BACKUP_CONFIG_PATH,
       databasePath,
     });
+    if (starting.restoreTrial) {
+      const trialApplication = starting;
+      maintenance!.onRestoreTrialRelease((reference) =>
+        trialApplication.releaseRestoreTrial(reference),
+      );
+    }
     const server = starting.server;
     await new Promise<void>((resolveListen, reject) => {
       server.once('error', reject);
@@ -72,7 +79,15 @@ const app = await (async () => {
         resolveListen();
       });
     });
-    maintenance?.ready();
+    if (starting.restoreTrial) {
+      const trial = starting.restoreTrial;
+      starting.verifyPausedRestore({
+        fingerprint: trial.output.fingerprint,
+        epoch: trial.epoch,
+        generationId: trial.generationId,
+      });
+      maintenance!.restoreTrialReady(trial);
+    } else maintenance?.ready();
     await startupLease?.release();
     return starting;
   } catch (error) {
