@@ -4,7 +4,7 @@
 
 How this backlog works: [process.md](process.md). Next ID: **SPN-124**. Grooming: **7** tickets completed since 2026-10-28: SPN-113, SPN-069, SPN-066, SPN-117, SPN-116, SPN-111, SPN-121. Reminder every 7; grooming on request, never a work gate.
 
-## Open tickets (23)
+## Open tickets (22)
 
 Complete each phase before the next. Within a phase, take the highest-ranked ticket that has no listed prerequisites.
 
@@ -27,21 +27,20 @@ Complete each phase before the next. Within a phase, take the highest-ranked tic
 | 13 | 🖼️ [SPN-068](SPN-068.md) Insert images into a Sheet | 🌿 M | 🤍 S | 11 | — |
 | 14 | 🧩 [SPN-087](SPN-087.md) Remove obsolete layout CSS from Storybook examples | 🌿 M | 🤍 S | 11 | — |
 | 15 | 💬 [SPN-089](SPN-089.md) Check remaining dialogs for consistent title icons | 🌱 S | 🤍 S | 10 | — |
-| 16 | 🦈 [SPN-123](SPN-123.md) Shorten the DigitalOcean Spaces CI name | 🌱 S | 🤍 S | 10 | — |
 
 ### Launch
 
 | # | Ticket | Effort | Impact | Score | Waiting on |
 | --- | --- | --- | --- | --- | --- |
-| 17 | 🌐 [SPN-038](SPN-038.md) Access Spinel over public HTTPS without Tailscale | 🌳 L | 💜 M | 23 (own 22) | — |
+| 16 | 🌐 [SPN-038](SPN-038.md) Access Spinel over public HTTPS without Tailscale | 🌳 L | 💜 M | 23 (own 22) | — |
 
 ### After launch
 
 | # | Ticket | Effort | Impact | Score | Waiting on |
 | --- | --- | --- | --- | --- | --- |
-| 18 | 📌 [SPN-099](SPN-099.md) Run Univer core unpatched once upstream ships the fixes | 🌳 L | 💜 M | 22 | [dream-num/univer#7938](https://github.com/dream-num/univer/pull/7938) |
-| 19 | ☁️ [SPN-114](SPN-114.md) Back up the workspace to AWS S3 after production launch | 🌳 L | 💜 M | 22 | [SPN-038](SPN-038.md) |
-| 20 | 🪡 [SPN-119](SPN-119.md) Run Univer Docs UI unpatched after the callback fixes ship | 🌿 M | 💜 M | 21 | [dream-num/univer#7969](https://github.com/dream-num/univer/pull/7969) |
-| 21 | 🧵 [SPN-122](SPN-122.md) Run native Doc composition unpatched after the upstream improvement ships | 🌿 M | 💜 M | 21 | — |
-| 22 | 🧰 [SPN-094](SPN-094.md) Add plugins for document types and file conversion | 🏔️ XL | 🤍 S | 13 | [SPN-038](SPN-038.md) |
-| 23 | 📥 [SPN-093](SPN-093.md) Import a CSV file as a Sheet | 🌿 M | 🤍 S | 11 | [SPN-038](SPN-038.md) |
+| 17 | 📌 [SPN-099](SPN-099.md) Run Univer core unpatched once upstream ships the fixes | 🌳 L | 💜 M | 22 | [dream-num/univer#7938](https://github.com/dream-num/univer/pull/7938) |
+| 18 | ☁️ [SPN-114](SPN-114.md) Back up the workspace to AWS S3 after production launch | 🌳 L | 💜 M | 22 | [SPN-038](SPN-038.md) |
+| 19 | 🪡 [SPN-119](SPN-119.md) Run Univer Docs UI unpatched after the callback fixes ship | 🌿 M | 💜 M | 21 | [dream-num/univer#7969](https://github.com/dream-num/univer/pull/7969) |
+| 20 | 🧵 [SPN-122](SPN-122.md) Run native Doc composition unpatched after the upstream improvement ships | 🌿 M | 💜 M | 21 | — |
+| 21 | 🧰 [SPN-094](SPN-094.md) Add plugins for document types and file conversion | 🏔️ XL | 🤍 S | 13 | [SPN-038](SPN-038.md) |
+| 22 | 📥 [SPN-093](SPN-093.md) Import a CSV file as a Sheet | 🌿 M | 🤍 S | 11 | [SPN-038](SPN-038.md) |
