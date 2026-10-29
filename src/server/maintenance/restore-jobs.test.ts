@@ -7,6 +7,7 @@ import {
   linkSync,
   mkdirSync,
   readFileSync,
+  readlinkSync,
   readdirSync,
   renameSync,
   rmSync,
@@ -25,11 +26,16 @@ import { restoreIntentHash } from './restore-job-intent.ts';
 const boundaries = vi.hoisted(() => ({
   onRead: undefined as (() => void) | undefined,
   onUnlink: undefined as (() => void) | undefined,
+  onClose: undefined as ((fd: number, close: () => void) => void) | undefined,
 }));
 vi.mock('node:fs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('node:fs')>();
   return {
     ...actual,
+    closeSync: (fd: number) => {
+      if (boundaries.onClose) return boundaries.onClose(fd, () => actual.closeSync(fd));
+      return actual.closeSync(fd);
+    },
     unlinkSync: (path: import('node:fs').PathLike) => {
       if (String(path).includes('/pending-')) boundaries.onUnlink?.();
       return actual.unlinkSync(path);
@@ -45,6 +51,7 @@ const cleanups: Array<() => void | Promise<void>> = [];
 afterEach(async () => {
   boundaries.onRead = undefined;
   boundaries.onUnlink = undefined;
+  boundaries.onClose = undefined;
   vi.restoreAllMocks();
   for (const cleanup of cleanups.splice(0).reverse()) await cleanup();
 });
@@ -377,3 +384,30 @@ linux('publication and cleanup errors are both retained and poison the store', a
   f.jobs.close();
   expect(f.openJobs().read(intent.id)?.intentHash).toBe(restoreIntentHash(intent));
 });
+
+linux(
+  'an uncertain explicit close is never retried on a potentially reused descriptor',
+  async () => {
+    const f = await fixture();
+    const intent = f.intent();
+    let pending: number | undefined;
+    const attempts: number[] = [];
+    boundaries.onClose = (fd, close) => {
+      attempts.push(fd);
+      const path = readlinkSync(`/proc/self/fd/${fd}`);
+      close();
+      if (path.includes('/pending-')) {
+        pending = fd;
+        throw new Error('Injected error after descriptor was closed');
+      }
+    };
+    expect(() => f.jobs.admit(intent)).toThrow('after descriptor was closed');
+    expect(pending).toBeDefined();
+    expect(attempts.filter((fd) => fd === pending)).toHaveLength(1);
+    expect(() => f.jobs.read(intent.id)).toThrow();
+    boundaries.onClose = undefined;
+    f.jobs.close();
+    // No rename occurred; the empty job directory remains an interrupted admission.
+    expect(() => f.openJobs().read(intent.id)).toThrow();
+  },
+);
