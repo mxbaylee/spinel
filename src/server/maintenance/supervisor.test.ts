@@ -1,6 +1,6 @@
 import { fork } from 'node:child_process';
 import type { ChildProcess } from 'node:child_process';
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { EventEmitter, once } from 'node:events';
 import {
   chmod,
@@ -31,6 +31,7 @@ import {
   processIdentity,
   RecoveryJournal,
 } from './journal.ts';
+import type { RestoreAdmission } from './supervisor.ts';
 import { assertWorkspaceHandlesClosed, MaintenanceSupervisor } from './supervisor.ts';
 import { processResourcesReleased } from './process-exit.ts';
 import { restoreBarrierPath } from './restore-barrier.ts';
@@ -1659,4 +1660,138 @@ test('live-child authority revocation refuses the unchanged original proof', asy
   );
   expect(revoked).toBe(f.authority!.actorId);
   expect(supervisor.status().phase).toBe('running');
+});
+
+async function admissionFixture(revokeOnProbe?: number) {
+  const f = await fixture(true);
+  const policy = applicationPolicy(3000, {
+    APP_ORIGIN: 'https://spinel.example',
+    SPINEL_IMAGE: 'spinel@sha256:' + 'a'.repeat(64),
+    SPINEL_STATIC_DIRECTORY: join(f.directory, 'assets'),
+  });
+  const supervisor = await MaintenanceSupervisor.open({
+    root: f.root,
+    databasePath: f.databasePath,
+    publicPort: 0,
+    applicationPolicy: policy,
+    createChild: (token) =>
+      f.createChild(token, { SPINEL_TEST_REVOKE_RESTORE_AUTHORITY: String(revokeOnProbe ?? 0) }),
+    budgets: { startMs: 5000, stopMs: 100, verifyMs: 5000 },
+  });
+  cleanups.push(() => supervisor.close());
+  await start(supervisor);
+  // Custody-only fixture: opaque bytes stand in for prior verifier output. This
+  // is not archive authentication, SQLite opening or activation acceptance.
+  const archive = Buffer.alloc(128, 1),
+    candidate = Buffer.alloc(4096, 2);
+  const archivePath = join(f.directory, 'prepared.spinel'),
+    databasePath = join(f.directory, 'prepared.sqlite');
+  await writeFile(archivePath, archive, { mode: 0o600 });
+  await writeFile(databasePath, candidate, { mode: 0o600 });
+  const state = supervisor.status();
+  const request: RestoreAdmission = {
+    id: randomUUID(),
+    generationId: state.generationId,
+    epoch: state.epoch,
+    authority: f.authority!,
+    confirmedAt: Date.now(),
+    source: {
+      archive: {
+        path: archivePath,
+        bytes: archive.length,
+        sha256: createHash('sha256').update(archive).digest('hex'),
+      },
+      databasePath,
+      databaseBytes: candidate.length,
+      databaseSha256: createHash('sha256').update(candidate).digest('hex'),
+      recovery: {
+        createdAt: new Date().toISOString(),
+        origin: policy.origin,
+        image: policy.image!,
+      },
+    },
+  };
+  return { ...f, supervisor, request };
+}
+
+test('admission durably retains source before ACK and exact retries reuse its continuation', async () => {
+  const f = await admissionFixture();
+  const before = f.supervisor.status();
+  const result = await f.supervisor.admitPreparedRestore(f.request);
+  expect(result.custody).toBe(true);
+  expect(result.record.phase).toBe('source-retained');
+  expect(result.continuationToken).toMatch(/^[a-zA-Z0-9_-]{43}$/);
+  const text = await readFile(join(f.root, 'restore-jobs', f.request.id, 'state.json'), 'utf8');
+  expect(JSON.parse(text)).toEqual(result.record);
+  expect(text).not.toContain(result.continuationToken!);
+  expect(f.supervisor.journal.state.restoreJob).toEqual({
+    jobId: f.request.id,
+    intentHash: result.record.intentHash,
+  });
+  await rm(f.request.source.archive.path);
+  await rm(f.request.source.databasePath);
+  const retried = await f.supervisor.admitPreparedRestore(f.request);
+  expect(retried).toEqual(result);
+  await expect(
+    f.supervisor.admitPreparedRestore({ ...f.request, confirmedAt: f.request.confirmedAt + 1 }),
+  ).rejects.toThrow();
+  await expect(
+    f.supervisor.admitPreparedRestore({ ...f.request, id: randomUUID() }),
+  ).rejects.toThrow('current restore');
+  expect(f.supervisor.status()).toEqual(before);
+});
+
+test.each(['copy', 'revocation'])(
+  'certain pre-mutation %s failure preserves running data and records terminal failure',
+  async (cause) => {
+    const f = await admissionFixture(cause === 'revocation' ? 2 : undefined);
+    const before = f.supervisor.status();
+    if (cause === 'copy') f.request.source.archive.sha256 = 'f'.repeat(64);
+    await expect(f.supervisor.admitPreparedRestore(f.request)).rejects.toThrow();
+    const record = JSON.parse(
+      await readFile(join(f.root, 'restore-jobs', f.request.id, 'state.json'), 'utf8'),
+    );
+    expect(record.phase).toBe('failed');
+    expect(f.supervisor.journal.state.restoreJob).toBeNull();
+    expect(f.supervisor.status()).toEqual(before);
+    const retried = await f.supervisor.admitPreparedRestore(f.request);
+    expect(retried).toEqual({ record, custody: false });
+    expect(await readFile(f.request.source.archive.path)).toEqual(Buffer.alloc(128, 1));
+  },
+);
+
+test('uncertain main-reference publication retains the independent admission guard', async () => {
+  const f = await admissionFixture();
+  const write = vi.spyOn(f.supervisor.journal, 'write').mockImplementation(() => {
+    throw new Error('Journal publication failed.');
+  });
+  try {
+    await expect(f.supervisor.admitPreparedRestore(f.request)).rejects.toThrow();
+    expect(f.supervisor.status().phase).toBe('recovery-required');
+    const record = JSON.parse(
+      await readFile(join(f.root, 'restore-jobs', f.request.id, 'state.json'), 'utf8'),
+    );
+    expect(record.phase).toBe('accepted');
+    expect(() => f.supervisor.journal.assertNoPendingRestoreJobs()).toThrow('unfinished restore');
+  } finally {
+    write.mockRestore();
+  }
+});
+
+test('stale generation and policy confirmations cannot create admission records', async () => {
+  const f = await admissionFixture();
+  await expect(
+    f.supervisor.admitPreparedRestore({ ...f.request, generationId: randomUUID() }),
+  ).rejects.toThrow('confirmation');
+  await expect(
+    f.supervisor.admitPreparedRestore({
+      ...f.request,
+      source: {
+        ...f.request.source,
+        recovery: { ...f.request.source.recovery, image: 'spinel@sha256:' + 'b'.repeat(64) },
+      },
+    }),
+  ).rejects.toThrow('deployment policy');
+  expect(await readdir(f.root)).not.toContain('restore-jobs');
+  expect(f.supervisor.status().phase).toBe('running');
 });

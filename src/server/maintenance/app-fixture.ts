@@ -47,8 +47,10 @@ const timer = setInterval(() => {
   if (bridge.status().phase === 'running')
     database.prepare('INSERT INTO writes(value) VALUES(?)').run('job');
 }, 20);
+let authorityChecks = 0;
 bridge.onRestoreAuthority!((proof) => {
-  if (process.env.SPINEL_TEST_REVOKE_RESTORE_AUTHORITY === '1') {
+  authorityChecks++;
+  if (authorityChecks === Number(process.env.SPINEL_TEST_REVOKE_RESTORE_AUTHORITY)) {
     const result = database
       .prepare('UPDATE auth_users SET disabled=1 WHERE id=?')
       .run(proof.actorId);

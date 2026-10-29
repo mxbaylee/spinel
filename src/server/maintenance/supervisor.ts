@@ -13,6 +13,7 @@ import {
 import { createServer as createHttpServer } from 'node:http';
 import type { IncomingMessage, ServerResponse, Server as HttpServer } from 'node:http';
 import type { AddressInfo } from 'node:net';
+import { isAbsolute, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type {
   MaintenanceAdminStatus,
@@ -44,6 +45,15 @@ import {
 } from './restore-stop.ts';
 import type { RestoreStopRecord } from './restore-stop.ts';
 import { checkVerificationHeadroom } from '../backup/recovery-worker.ts';
+import { RestoreJobs } from './restore-jobs.ts';
+import { restoreIntentHash } from './restore-job-intent.ts';
+import type { RestoreJobIntent } from './restore-job-intent.ts';
+import {
+  retainRestoreSource,
+  readRetainedRestoreSource,
+  validRestoreSourceManifest,
+} from './restore-files.ts';
+import type { RestoreSourceInput, RestoreSourceManifest } from './restore-files.ts';
 import { validRestoreAuthority } from './restore-authority.ts';
 import type { ApplicationPolicy } from '../../../server/application-policy.ts';
 
@@ -59,6 +69,16 @@ export type ColdMaintenanceCommand =
   | { action: 'status' }
   | { action: 'pause' | 'stop' | 'start' | 'verify' | 'resume'; operationId: string };
 
+/** Only a trusted app-owned prepared-source registry may construct this request.
+ * No HTTP/IPC admission endpoint exists until that registry is integrated. */
+export interface RestoreAdmission {
+  id: string;
+  generationId: string;
+  epoch: string;
+  authority: RestoreAuthority;
+  confirmedAt: number;
+  source: RestoreSourceInput;
+}
 interface SupervisorOptions {
   root: string;
   databasePath: string;
@@ -244,6 +264,8 @@ export class MaintenanceSupervisor {
         reject(error: Error): void;
       }
     | undefined;
+  private restoreContinuation: { id: string; intentHash: string; token: string } | undefined;
+  private restoreAdmissionAbort: AbortController | undefined;
   private queue: Promise<unknown> = Promise.resolve();
   private publicServer: HttpServer | undefined;
   private controlServer: HttpServer | undefined;
@@ -821,6 +843,196 @@ export class MaintenanceSupervisor {
   stopForRestore(jobId: string): Promise<RestoreStopRecord> {
     return this.serial(() => this.stopForRestoreOwned(jobId));
   }
+  /** Ends at durable custody ACK. Never pauses, stops or replaces the workspace. */
+  admitPreparedRestore(input: RestoreAdmission) {
+    const request = structuredClone(input);
+    const child = this.child;
+    return this.serial(() => {
+      if (child !== this.child) throw new Error('The originating application changed.');
+      return this.admitPreparedRestoreOwned(request);
+    });
+  }
+  private async admitPreparedRestoreOwned(request: RestoreAdmission) {
+    operationId(request.id);
+    const policy = this.applicationPolicy;
+    if (
+      !policy?.image ||
+      !validRestoreAuthority(request.authority) ||
+      !Number.isSafeInteger(request.confirmedAt) ||
+      request.confirmedAt > this.now()
+    )
+      throw new Error('Restore requires captured deployment policy and original confirmation.');
+    const source = request.source;
+    for (const path of [source.databasePath, source.archive.path])
+      if (
+        typeof path !== 'string' ||
+        !isAbsolute(path) ||
+        resolve(path) !== path ||
+        path.includes('\0') ||
+        Buffer.byteLength(path) > 4096
+      )
+        throw new Error('Invalid private prepared source.');
+    const manifest: RestoreSourceManifest = {
+      version: 1,
+      id: request.id,
+      archive: { bytes: source.archive.bytes, sha256: source.archive.sha256 },
+      candidate: { bytes: source.databaseBytes, sha256: source.databaseSha256 },
+      recovery: { ...source.recovery },
+    };
+    if (
+      !validRestoreSourceManifest(manifest) ||
+      manifest.recovery.image !== policy.image ||
+      manifest.recovery.origin !== policy.origin
+    )
+      throw new Error('The prepared source does not match deployment policy.');
+    const child = this.child;
+    const initial = this.journal.state;
+    const identity = initial.child ? { ...initial.child } : null;
+    const target = {
+      instanceId: initial.instanceId,
+      generationId: request.generationId,
+      epoch: request.epoch,
+      databasePath: this.journal.databasePath,
+      identity: initial.databaseIdentity ? { ...initial.databaseIdentity } : null,
+    };
+    const assertTarget = () => {
+      const state = this.journal.state;
+      if (
+        this.closing ||
+        !child?.connected ||
+        child !== this.child ||
+        !this.childReady ||
+        !this.childOwned ||
+        !identity ||
+        !state.child ||
+        child.pid !== identity.pid ||
+        state.child.pid !== identity.pid ||
+        state.child.start !== identity.start ||
+        state.child.boot !== identity.boot ||
+        state.child.token !== identity.token ||
+        state.phase !== 'running' ||
+        state.restoreStop ||
+        state.instanceId !== target.instanceId ||
+        state.generationId !== target.generationId ||
+        state.epoch !== target.epoch ||
+        !sameFile(state.databaseIdentity, target.identity)
+      )
+        throw new Error('Restore confirmation no longer matches the running workspace.');
+      this.assertGeneration();
+    };
+    assertTarget();
+    const jobs = new RestoreJobs(this.journal, this.now);
+    let publicationStarted = false;
+    let referenceDurable = false;
+    const controller = new AbortController();
+    const signal = AbortSignal.any([
+      controller.signal,
+      AbortSignal.timeout(
+        Math.max(1, Math.min(AUTHORITY_MS, request.authority.expiresAt - this.now())),
+      ),
+    ]);
+    this.restoreAdmissionAbort = controller;
+    try {
+      // Retry lookup precedes randomness and preserves the original confirmation.
+      const existing = jobs.read(request.id);
+      const token = existing ? undefined : randomBytes(32).toString('base64url');
+      const intent: RestoreJobIntent = {
+        version: 1,
+        id: request.id,
+        target: { ...target, identity: target.identity! },
+        source: manifest,
+        policy: {
+          origin: policy.origin,
+          image: policy.image,
+          spacesEnabled: policy.spaceReview,
+          staticDirectory: policy.staticDirectory,
+          consequencesVersion: 1,
+        },
+        authority: request.authority,
+        confirmedAt: request.confirmedAt,
+        continuationHash: existing?.intent.continuationHash ?? tokenHash(token!),
+      };
+      const hash = restoreIntentHash(intent);
+      if (existing && existing.intentHash !== hash)
+        throw new Error('Restore job ID already has different intent.');
+      const reference = this.journal.state.restoreJob;
+      if (reference && (reference.jobId !== request.id || reference.intentHash !== hash))
+        throw new Error('Finish the current restore job first.');
+      if (existing?.phase === 'failed') return { record: existing, custody: false };
+      await this.recheckRestoreAuthorityOwned(request.id, request.authority);
+      assertTarget();
+      signal.throwIfAborted();
+      publicationStarted = true;
+      let record = jobs.admit(intent).record;
+      if (token) this.restoreContinuation = { id: request.id, intentHash: hash, token };
+      this.transition({ restoreJob: { jobId: request.id, intentHash: hash } });
+      referenceDurable = true;
+      const assertRoot = () => {
+        assertTarget();
+        signal.throwIfAborted();
+      };
+      if (record.phase === 'source-retained')
+        await readRetainedRestoreSource({ root: this.journal.root, manifest, assertRoot, signal });
+      else
+        await retainRestoreSource({
+          root: this.journal.root,
+          id: request.id,
+          source,
+          assertRoot,
+          signal,
+        });
+      await this.recheckRestoreAuthorityOwned(request.id, request.authority);
+      assertTarget();
+      signal.throwIfAborted();
+      if (record.phase === 'accepted')
+        record = jobs.checkpoint(request.id, hash, record.revision, 'source-retained');
+      assertTarget();
+      signal.throwIfAborted();
+      const continuation = this.restoreContinuation;
+      return {
+        record,
+        custody: true,
+        continuationToken:
+          continuation?.id === request.id && continuation.intentHash === hash
+            ? continuation.token
+            : undefined,
+      };
+    } catch (error) {
+      if (publicationStarted) {
+        // Only certain pre-mutation failure may release the independent guard.
+        // Uncertain store/journal publication remains fenced for host recovery.
+        try {
+          const record = jobs.read(request.id);
+          // A full inventory or another active job can refuse before publication.
+          // With a certain absent record, there is no admission to roll back.
+          if (!record) {
+            publicationStarted = false;
+            throw error;
+          }
+          if (!referenceDurable) throw error;
+          assertTarget();
+          const reference = this.journal.state.restoreJob;
+          if (
+            !record ||
+            !reference ||
+            reference.jobId !== record.intent.id ||
+            reference.intentHash !== record.intentHash
+          )
+            throw error;
+          jobs.checkpoint(record.intent.id, record.intentHash, record.revision, 'failed');
+          this.transition({ restoreJob: null });
+        } catch {
+          if (publicationStarted) this.failure('restore-admission-unresolved');
+        }
+        if (publicationStarted) this.restoreContinuation = undefined;
+      }
+      throw error;
+    } finally {
+      controller.abort();
+      this.restoreAdmissionAbort = undefined;
+      jobs.close();
+    }
+  }
   /** Read-only private probe. Success is neither admission nor activation authority. */
   recheckRestoreAuthority(jobId: string, original: RestoreAuthority): Promise<void> {
     // Snapshot before queueing: a caller cannot replace proof fields while waiting.
@@ -1344,6 +1556,8 @@ export class MaintenanceSupervisor {
   async close() {
     if (this.closing) return;
     this.closing = true;
+    this.restoreAdmissionAbort?.abort();
+    this.restoreContinuation = undefined;
     clearInterval(this.noticeTimer);
     this.drainWaiter?.reject(new Error('Supervisor is stopping.'));
     this.startWaiter?.reject(new Error('Supervisor is stopping.'));

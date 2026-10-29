@@ -23,6 +23,11 @@ export interface RestoreFiles {
   candidate: RestoreFileEvidence;
 }
 export type RestoreOriginals = Omit<RestoreFiles, 'candidate'>;
+/** Trusted verifier output needed for custody; never accepted from HTTP. */
+export type RestoreSourceInput = Pick<
+  PreparedRestoreSource,
+  'archive' | 'databasePath' | 'databaseBytes' | 'databaseSha256' | 'recovery'
+>;
 export interface RestoreSourceManifest {
   version: 1;
   id: string;
@@ -299,7 +304,7 @@ export async function readRetainedRestoreSource(options: {
 export async function retainRestoreSource(options: {
   root: string;
   id: string;
-  source: PreparedRestoreSource;
+  source: RestoreSourceInput;
   assertRoot(): void;
   signal?: AbortSignal;
 }) {
