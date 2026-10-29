@@ -37,7 +37,7 @@ import { processResourcesReleased } from './process-exit.ts';
 import { restoreBarrierPath } from './restore-barrier.ts';
 import { restoreSnapshotFingerprint } from '../backup/inventory.ts';
 import * as restoreFiles from './restore-files.ts';
-import { validRestoreStopRecord } from './restore-stop.ts';
+import { validRestoreStopRecord, validRestoreStopRequest } from './restore-stop.ts';
 import { RestoreJobs } from './restore-jobs.ts';
 import type { RestoreStopRequest } from '../../shared/maintenance.ts';
 import { MAINTENANCE_CHANNEL } from './supervisor-client.ts';
@@ -1541,7 +1541,14 @@ test('authority probes reject foreign challenges and matching replies after thei
         'kind' in value &&
         value.kind === 'restore-authority'
       ) {
-        received(value as { request: RestoreStopRequest; authority: RestoreAuthority });
+        if (
+          !('request' in value) ||
+          !validRestoreStopRequest(value.request) ||
+          !('authority' in value) ||
+          !validRestoreAuthority(value.authority)
+        )
+          throw new Error('Invalid authority probe fixture packet.');
+        received({ request: value.request, authority: value.authority });
         return true;
       }
       return Reflect.apply(send, child, [value, ...args]) as boolean;
@@ -1808,7 +1815,8 @@ test('synchronous expiry after custody checkpoint cannot return an ACK', async (
   const f = await admissionFixture(undefined, () => Date.now() + elapsed);
   const checkpoint = RestoreJobs.prototype.checkpoint;
   const delayed = vi.spyOn(RestoreJobs.prototype, 'checkpoint').mockImplementation(function (
-    ...args
+    this: RestoreJobs,
+    ...args: Parameters<RestoreJobs['checkpoint']>
   ) {
     const result = checkpoint.apply(this, args);
     if (args[3] === 'source-retained') elapsed = 60_000;

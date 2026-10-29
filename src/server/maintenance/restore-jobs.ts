@@ -265,6 +265,7 @@ export class RestoreJobs {
       this.inspect(record.intent.id, (directory) => {
         const name = `/proc/self/fd/${directory}/pending-${randomUUID()}`;
         let fd: number | undefined;
+        const errors: unknown[] = [];
         try {
           fd = openSync(
             name,
@@ -273,21 +274,30 @@ export class RestoreJobs {
           );
           writeFileSync(fd, text);
           fsyncSync(fd);
-          closeSync(fd);
+          const completed = fd;
           fd = undefined;
+          closeSync(completed);
           this.check();
           renameSync(name, `/proc/self/fd/${directory}/state.json`);
           fsyncSync(directory);
           fsyncSync(this.descriptor);
           this.journal.syncRoot();
-        } finally {
-          if (fd !== undefined) closeSync(fd);
-          try {
-            unlinkSync(name);
-          } catch (error) {
-            if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
-          }
+        } catch (error) {
+          errors.push(error);
         }
+        try {
+          if (fd !== undefined) closeSync(fd);
+        } catch (error) {
+          errors.push(error);
+        }
+        try {
+          unlinkSync(name);
+        } catch (error) {
+          if ((error as NodeJS.ErrnoException).code !== 'ENOENT') errors.push(error);
+        }
+        if (errors.length === 1) throw errors[0];
+        if (errors.length > 1)
+          throw new AggregateError(errors, 'Restore publication and cleanup failed.');
       });
     } catch (error) {
       this.uncertain = true;

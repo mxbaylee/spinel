@@ -22,11 +22,18 @@ import { RestoreJobs } from './restore-jobs.ts';
 import { restoreJobIntentFixture } from './restore-job-fixture.ts';
 import { restoreIntentHash } from './restore-job-intent.ts';
 
-const boundaries = vi.hoisted(() => ({ onRead: undefined as (() => void) | undefined }));
+const boundaries = vi.hoisted(() => ({
+  onRead: undefined as (() => void) | undefined,
+  onUnlink: undefined as (() => void) | undefined,
+}));
 vi.mock('node:fs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('node:fs')>();
   return {
     ...actual,
+    unlinkSync: (path: import('node:fs').PathLike) => {
+      if (String(path).includes('/pending-')) boundaries.onUnlink?.();
+      return actual.unlinkSync(path);
+    },
     readSync: (fd: number, buffer: Buffer, offset: number, length: number, position: number) => {
       boundaries.onRead?.();
       return actual.readSync(fd, buffer, offset, length, position);
@@ -37,6 +44,7 @@ vi.mock('node:fs', async (importOriginal) => {
 const cleanups: Array<() => void | Promise<void>> = [];
 afterEach(async () => {
   boundaries.onRead = undefined;
+  boundaries.onUnlink = undefined;
   vi.restoreAllMocks();
   for (const cleanup of cleanups.splice(0).reverse()) await cleanup();
 });
@@ -343,3 +351,29 @@ linux.each(['state', 'pending', 'journal'])(
   },
   10_000,
 );
+
+linux('publication and cleanup errors are both retained and poison the store', async () => {
+  const f = await fixture();
+  const intent = f.intent();
+  const publication = new Error('Injected publication fsync failure');
+  const cleanup = new Error('Injected pending cleanup failure');
+  const sync = vi.spyOn(f.journal, 'syncRoot').mockImplementation(() => {
+    throw publication;
+  });
+  boundaries.onUnlink = () => {
+    throw cleanup;
+  };
+  let failure: unknown;
+  try {
+    f.jobs.admit(intent);
+  } catch (error) {
+    failure = error;
+  }
+  expect(failure).toBeInstanceOf(AggregateError);
+  expect((failure as AggregateError).errors).toEqual([publication, cleanup]);
+  expect(() => f.jobs.read(intent.id)).toThrow();
+  boundaries.onUnlink = undefined;
+  sync.mockRestore();
+  f.jobs.close();
+  expect(f.openJobs().read(intent.id)?.intentHash).toBe(restoreIntentHash(intent));
+});
