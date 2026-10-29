@@ -7,8 +7,9 @@ import type { Browser, BrowserContext, Page, TestInfo } from '@playwright/test';
 import { LocaleType } from '@univerjs/core';
 import { DatabaseSync, openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
+import { DOC_HISTORY_GROUP_LIMIT } from '../src/ui/boundedDocHistory.ts';
 import { startApp } from './app-process.ts';
-import { edit as editNative } from './offline-fixture.ts';
+import { nativeInput } from './offline-fixture.ts';
 
 async function fixture(browser: Browser, context: BrowserContext, info: TestInfo) {
   const directory = await mkdtemp(join(tmpdir(), 'spinel-diagnostics-e2e-'));
@@ -120,6 +121,20 @@ test('production open, search, local persistence and server acknowledgement rema
   const member = await f.member.newPage();
   try {
     const item = await f.create('Private diagnostic diary', 'doc');
+    const privateNativeContent = 'Private native content 123'.padEnd(
+      DOC_HISTORY_GROUP_LIMIT + 8,
+      '.',
+    );
+    const nativeEvents = [
+      'native.flush',
+      'native.checkpoint',
+      'offline.persistence',
+      'sync.client.connection',
+    ];
+    const capacityFlush = (row: Record<string, unknown>) => {
+      const details = JSON.parse(String(row.details));
+      return details.outcome === 'success' && details.reason === 'capacity';
+    };
     const collection = member.waitForResponse(
       (response) =>
         response.url().endsWith('/api/diagnostics/collection') && response.status() === 200,
@@ -161,7 +176,12 @@ test('production open, search, local persistence and server acknowledgement rema
           event.details.outcome === 'success',
       );
     });
-    await editNative(member, 'doc', 'Private native content 123');
+    await member.locator('.univer-container').click({ position: { x: 130, y: 200 } });
+    await nativeInput(member).focus();
+    await member.keyboard.press('Control+Home');
+    // One insertText insertion may be flushed entirely by the SDK. Individual
+    // native keys cross our owned capacity boundary without relying on idle races.
+    await member.keyboard.type(privateNativeContent);
     await expect(saved).toHaveText('Synced. All changes are saved on the server and this device.', {
       timeout: 30_000,
     });
@@ -173,17 +193,33 @@ test('production open, search, local persistence and server acknowledgement rema
           () =>
             persisted
               .prepare(
-                "SELECT count(*) AS n FROM events WHERE source='frontend' AND name='operation.result' AND json_extract(details,'$.operation')='document-save-local' AND json_extract(details,'$.outcome')='success'",
+                "SELECT count(*) AS n FROM events WHERE source='frontend' AND actor_id=? AND file_id=? AND name='operation.result' AND json_extract(details,'$.operation')='document-save-local' AND json_extract(details,'$.outcome')='success'",
               )
-              .get()?.n,
+              .get(f.owner.id, item.id)?.n,
         )
         .toBeGreaterThan(0);
+      // Hiding the member tab deliberately discards queued diagnostics. Confirm
+      // every required correlated observation is durable before changing tabs.
+      await expect
+        .poll(() => {
+          const rows = persisted
+            .prepare(
+              "SELECT name, details FROM events WHERE source='frontend' AND actor_id=? AND file_id=?",
+            )
+            .all(f.owner.id, item.id);
+          return nativeEvents.filter((name) =>
+            rows.some(
+              (row) => row.name === name && (name !== 'native.flush' || capacityFlush(row)),
+            ),
+          );
+        })
+        .toEqual(nativeEvents);
     } finally {
       persisted.close();
     }
     const content = await f.member.request.get(`${f.origin}/api/items/${item.id}/doc`);
     expect(content.status()).toBe(200);
-    expect(JSON.stringify(await content.json())).toContain('Private native content 123');
+    expect(JSON.stringify(await content.json())).toContain(privateNativeContent);
     await page.bringToFront();
     await page.goto(`${f.origin}/admin#health`);
     const exported = await downloadDatabase(page, join(f.directory, 'operations.sqlite'));
@@ -206,24 +242,25 @@ test('production open, search, local persistence and server acknowledgement rema
           ),
           `${source} ${operation}`,
         ).toBe(true);
-      for (const name of [
-        'native.flush',
-        'native.checkpoint',
-        'offline.persistence',
-        'sync.client.connection',
-      ])
+      for (const name of nativeEvents)
         expect(
           rows.some(
             (row) =>
               row.name === name &&
               row.source === 'frontend' &&
               row.actor_id === f.owner.id &&
-              row.file_id === item.id,
+              row.file_id === item.id &&
+              (name !== 'native.flush' || capacityFlush(row)),
           ),
           name,
         ).toBe(true);
       const encoded = JSON.stringify(rows);
-      for (const privateText of [item.name, 'Private native content 123', f.ownerSession.token])
+      for (const privateText of [
+        item.name,
+        'Private native content 123',
+        privateNativeContent,
+        f.ownerSession.token,
+      ])
         expect(encoded).not.toContain(privateText);
       expect(exported.prepare('PRAGMA user_version').get()?.user_version).toBe(1);
     } finally {
