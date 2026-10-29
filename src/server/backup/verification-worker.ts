@@ -10,6 +10,7 @@ import type { ClosedRestoreInput } from './restore-input.ts';
 import type { PreparedRestore } from './verification.ts';
 import type { FreezeWorkerInput } from './restore-freeze-worker.ts';
 import type { RollbackWorkerInput } from './restore-rollback.ts';
+import type { StartupWorkerInput } from './restore-startup.ts';
 
 type WorkerInput = {
   directory: string;
@@ -28,12 +29,20 @@ type WorkerInput = {
     }
 );
 
+type RecoveryWorkerInput =
+  WorkerInput | FreezeWorkerInput | RollbackWorkerInput | StartupWorkerInput;
+
 const disconnected = () => process.exit(1);
 process.once('disconnect', disconnected);
-process.once('message', async (value: WorkerInput | FreezeWorkerInput | RollbackWorkerInput) => {
+process.once('message', async (value: RecoveryWorkerInput) => {
   let database: DatabaseSync | undefined;
   let current: DatabaseSync | undefined;
   try {
+    if (value.kind === 'startup') {
+      const { rehearseWorkingStartup } = await import('./restore-startup-worker.ts');
+      process.send?.({ ok: true, result: await rehearseWorkingStartup(value) });
+      return;
+    }
     if (value.kind === 'freeze') {
       const { freezeWorkingRestore } = await import('./restore-freeze-worker.ts');
       process.send?.({ ok: true, result: await freezeWorkingRestore(value) });

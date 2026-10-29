@@ -32,6 +32,7 @@ import {
 import { reconcileRestoreCandidate, reconcileRestoreRollback } from './restore-candidate.ts';
 import { rotateRestoreGenerations } from './restore-generations.ts';
 import { prepareRestoreRollback } from './restore-rollback.ts';
+import { rehearseRestoreStartup } from './restore-startup.ts';
 import { digest, makeArchive } from './archive.ts';
 import { prepareRestoreArchive, reconcilePreparedRestore } from './verification.ts';
 import type { ChildProcess } from 'node:child_process';
@@ -187,6 +188,17 @@ async function verifyPreparedApplication(
   source: ClosedRestoreInput & { logicalFingerprint: string },
   stagingRoot: string,
 ) {
+  await rehearseRestoreStartup({
+    candidate: source,
+    expectedOrigin: 'https://spinel.example',
+    expectedImage: `sha256:${'a'.repeat(64)}`,
+    spacesEnabled: true,
+    stagingRoot,
+    staticDirectory: stagingRoot,
+  });
+  expect(
+    (await readdir(stagingRoot)).filter((name) => name.startsWith('.restore-startup-')),
+  ).toEqual([]);
   const directory = await mkdtemp(join(stagingRoot, 'startup-'));
   const databasePath = join(directory, 'spinel.sqlite');
   await copyClosedRestoreInput(source, databasePath);
@@ -335,6 +347,50 @@ test('a wrong original witness is rejected by the actual rollback worker with co
   expect(await readFile(request.current.databasePath)).toEqual(original);
   expect(
     (await readdir(f.directory)).filter((name) => name.startsWith('.restore-rollback-')),
+  ).toEqual([]);
+});
+
+test('isolated startup refuses wrong content, absent assets, malformed results and late cancellation without altering its source', async () => {
+  const { f, request } = await rollbackRequest(true);
+  const candidate = await prepareRestoreRollback(request);
+  cleanup.push(candidate.dispose);
+  const before = await readFile(candidate.databasePath);
+  const input = {
+    candidate,
+    expectedOrigin: 'https://spinel.example',
+    expectedImage: `sha256:${'a'.repeat(64)}`,
+    spacesEnabled: true,
+    stagingRoot: f.directory,
+    staticDirectory: f.directory,
+  };
+  await expect(
+    rehearseRestoreStartup({
+      ...input,
+      candidate: { ...candidate, logicalFingerprint: '0'.repeat(64) },
+    }),
+  ).rejects.toThrow('Recovery verification failed');
+  const empty = await mkdtemp(join(f.directory, 'empty-assets-'));
+  await expect(rehearseRestoreStartup({ ...input, staticDirectory: empty })).rejects.toThrow(
+    'Recovery verification failed',
+  );
+  await expect(rehearseRestoreStartup({ ...input, timeoutMs: 1 })).rejects.toThrow();
+  await expect(rehearseRestoreStartup({ ...input, signal: AbortSignal.abort() })).rejects.toThrow();
+  boundaries.fork = (child) =>
+    child.prependListener('message', (value) => {
+      const message = value as { ok?: boolean; result?: { logicalFingerprint?: string } };
+      if (message.ok && message.result) message.result.logicalFingerprint = '0'.repeat(64);
+    });
+  await expect(rehearseRestoreStartup(input)).rejects.toThrow('Recovery verification failed');
+  boundaries.fork = undefined;
+  const abort = new AbortController();
+  boundaries.remove = (path) => {
+    if (String(path).includes('.restore-startup-')) abort.abort();
+  };
+  await expect(rehearseRestoreStartup({ ...input, signal: abort.signal })).rejects.toThrow();
+  boundaries.remove = undefined;
+  expect(await readFile(candidate.databasePath)).toEqual(before);
+  expect(
+    (await readdir(f.directory)).filter((name) => name.startsWith('.restore-startup-')),
   ).toEqual([]);
 });
 

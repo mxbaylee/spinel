@@ -58,6 +58,8 @@ export interface AppOptions {
   spaceReview?: boolean;
   /** Only the deployment supervisor can provide live recovery control. */
   maintenance?: MaintenanceBridge;
+  /** Internal bounded rehearsal/trial only; never a browser-supplied setting. */
+  restoreMaximumBytes?: number;
 }
 
 export async function createApp(options: AppOptions) {
@@ -110,6 +112,24 @@ export async function createApp(options: AppOptions) {
   let draining: Promise<void> | undefined;
 
   try {
+    if (options.restoreMaximumBytes !== undefined) {
+      const maximum = options.restoreMaximumBytes,
+        status = maintenance.status;
+      const pageSize = Number(database.prepare('PRAGMA page_size').get()!.page_size);
+      const pages = Number(database.prepare('PRAGMA page_count').get()!.page_count);
+      if (
+        !status.available ||
+        !['starting', 'paused'].includes(status.phase) ||
+        !Number.isSafeInteger(maximum) ||
+        maximum < 4096 ||
+        maximum > 8 * 1024 ** 3 ||
+        pages * pageSize > maximum
+      )
+        throw new Error('Invalid restore startup resource boundary.');
+      database.exec(
+        `PRAGMA cache_size=-2048; PRAGMA temp_store=FILE; PRAGMA max_page_count=${Math.floor(maximum / pageSize)}`,
+      );
+    }
     if (options.maintenance) {
       initialMark = startupMark();
       initialEpoch = maintenance.status.epoch;
