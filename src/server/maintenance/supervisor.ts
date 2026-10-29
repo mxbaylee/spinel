@@ -42,6 +42,7 @@ import {
 } from './restore-stop.ts';
 import type { RestoreStopRecord } from './restore-stop.ts';
 import { checkVerificationHeadroom } from '../backup/recovery-worker.ts';
+import type { ApplicationPolicy } from '../../../server/application-policy.ts';
 
 const DRAIN_MS = 30_000;
 const STOP_MS = 15_000;
@@ -60,8 +61,10 @@ interface SupervisorOptions {
   databasePath: string;
   publicPort?: number;
   development?: boolean;
+  /** Deployment-owned snapshot; omission leaves restore admission unavailable. */
+  applicationPolicy?: ApplicationPolicy;
   /** Test seams select real disposable processes; never supplied over a control API. */
-  createChild?: (groupToken: string) => ChildProcess;
+  createChild?: (groupToken: string, environment: NodeJS.ProcessEnv) => ChildProcess;
   now?: () => number;
   budgets?: {
     drainMs?: number;
@@ -222,6 +225,7 @@ export class MaintenanceSupervisor {
   readonly journal: RecoveryJournal;
   private readonly options: SupervisorOptions;
   private readonly now: () => number;
+  private readonly applicationPolicy: Readonly<ApplicationPolicy> | undefined;
   private child: ChildProcess | undefined;
   private childReady = false;
   private childOwned = false;
@@ -239,6 +243,9 @@ export class MaintenanceSupervisor {
     this.journal = journal;
     this.options = options;
     this.now = options.now ?? Date.now;
+    this.applicationPolicy = options.applicationPolicy
+      ? Object.freeze({ ...options.applicationPolicy })
+      : undefined;
   }
   static async open(options: SupervisorOptions) {
     const journal = await RecoveryJournal.open(options.root, options.databasePath);
@@ -801,128 +808,130 @@ export class MaintenanceSupervisor {
   /** Internal orchestration boundary. A prepared restore job must own this exact
    * pause operation. This does not authorize activation or replace custody. */
   stopForRestore(jobId: string): Promise<RestoreStopRecord> {
-    return this.serial(async () => {
-      operationId(jobId);
-      const state = this.journal.state;
-      const child = this.child;
-      const identity = state.child;
-      if (
-        this.closing ||
-        state.phase !== 'paused' ||
-        !this.childReady ||
-        !this.childOwned ||
-        !child?.connected ||
-        !identity ||
-        state.restoreStop ||
-        !state.databaseIdentity ||
-        state.operation?.id !== jobId ||
-        state.operation.generationId !== state.generationId ||
-        state.operation.expiresAt <= this.now()
-      )
-        throw new Error('Restore shutdown requires its current, authorized pause.');
-      this.assertGeneration();
-      await checkVerificationHeadroom('start');
-      if (
-        this.journal.state !== state ||
-        this.child !== child ||
-        !child.connected ||
-        this.closing ||
-        state.operation.expiresAt <= this.now()
-      )
-        throw new Error('Restore shutdown authority changed during admission.');
-      const budget = this.options.budgets?.restoreMs ?? 120_000;
-      if (!Number.isInteger(budget) || budget < 1 || budget > 600_000)
-        throw new Error('Invalid restore shutdown budget.');
-      const record: RestoreStopRecord = {
-        request: {
-          jobId,
-          challengeId: randomUUID(),
-          epoch: state.epoch,
-          generationId: state.generationId,
-          deadline: this.now() + budget,
-        },
-        databaseIdentity: { ...state.databaseIdentity },
-        child: { ...identity },
-        fingerprint: null,
-        acceptedAt: null,
-      };
-      const witness = new Promise<RestoreStopRecord>((resolve, reject) => {
-        this.restoreWaiter = { resolve, reject };
-      });
-      void witness.catch(() => {});
-      const waiter = this.restoreWaiter!;
-      let forceStop = false;
-      let sampling = false;
-      const memory = setInterval(async () => {
-        if (sampling) return;
-        sampling = true;
-        try {
-          await checkVerificationHeadroom('running');
-          let rss = 0;
-          for (const pid of groupMembers(identity)) {
-            try {
-              rss += Number(
-                /^VmRSS:\s+(\d+)/m.exec(readFileSync(`/proc/${pid}/status`, 'utf8'))?.[1] ?? 0,
-              );
-            } catch (error) {
-              if (!processResourcesReleased(String(pid))) throw error;
-            }
-          }
-          if (rss > 512 * 1024) throw new Error('Restore shutdown exceeded its memory budget.');
-        } catch {
-          forceStop = true;
-          waiter.reject(new Error('Restore shutdown has insufficient memory headroom.'));
-        } finally {
-          sampling = false;
-        }
-      }, 100);
-      const timeout = setTimeout(() => {
-        forceStop = true;
-        waiter.reject(new Error('Restore shutdown timed out.'));
-      }, budget);
+    return this.serial(() => this.stopForRestoreOwned(jobId));
+  }
+  /** The restore controller already owns serial(); witness replies remain out of band. */
+  private async stopForRestoreOwned(jobId: string): Promise<RestoreStopRecord> {
+    operationId(jobId);
+    const state = this.journal.state;
+    const child = this.child;
+    const identity = state.child;
+    if (
+      this.closing ||
+      state.phase !== 'paused' ||
+      !this.childReady ||
+      !this.childOwned ||
+      !child?.connected ||
+      !identity ||
+      state.restoreStop ||
+      !state.databaseIdentity ||
+      state.operation?.id !== jobId ||
+      state.operation.generationId !== state.generationId ||
+      state.operation.expiresAt <= this.now()
+    )
+      throw new Error('Restore shutdown requires its current, authorized pause.');
+    this.assertGeneration();
+    await checkVerificationHeadroom('start');
+    if (
+      this.journal.state !== state ||
+      this.child !== child ||
+      !child.connected ||
+      this.closing ||
+      state.operation.expiresAt <= this.now()
+    )
+      throw new Error('Restore shutdown authority changed during admission.');
+    const budget = this.options.budgets?.restoreMs ?? 120_000;
+    if (!Number.isInteger(budget) || budget < 1 || budget > 600_000)
+      throw new Error('Invalid restore shutdown budget.');
+    const record: RestoreStopRecord = {
+      request: {
+        jobId,
+        challengeId: randomUUID(),
+        epoch: state.epoch,
+        generationId: state.generationId,
+        deadline: this.now() + budget,
+      },
+      databaseIdentity: { ...state.databaseIdentity },
+      child: { ...identity },
+      fingerprint: null,
+      acceptedAt: null,
+    };
+    const witness = new Promise<RestoreStopRecord>((resolve, reject) => {
+      this.restoreWaiter = { resolve, reject };
+    });
+    void witness.catch(() => {});
+    const waiter = this.restoreWaiter!;
+    let forceStop = false;
+    let sampling = false;
+    const memory = setInterval(async () => {
+      if (sampling) return;
+      sampling = true;
       try {
-        this.childReady = false;
-        // Persist the challenge before directing the child to its one-shot
-        // shutdown. Ordinary SIGTERM must not race challenge registration.
-        this.transition({ phase: 'stopping', restoreStop: record, verifiedAt: null });
-        child.send(
-          { channel: MAINTENANCE_CHANNEL, kind: 'restore-stop', request: record.request },
-          (error) => {
-            if (error) waiter.reject(new Error('Restore shutdown control disconnected.'));
-          },
-        );
-        const accepted = await witness;
-        clearTimeout(timeout);
-        clearInterval(memory);
-        // Durable witness and complete process/handle closure are independent.
-        await this.stopGroup(identity);
-        if (
-          this.closing ||
-          this.journal.state.phase !== 'stopping' ||
-          this.journal.state.restoreStop?.fingerprint !== accepted.fingerprint
-        )
-          throw new Error('Restore shutdown lost its control binding.');
+        await checkVerificationHeadroom('running');
+        let rss = 0;
+        for (const pid of groupMembers(identity)) {
+          try {
+            rss += Number(
+              /^VmRSS:\s+(\d+)/m.exec(readFileSync(`/proc/${pid}/status`, 'utf8'))?.[1] ?? 0,
+            );
+          } catch (error) {
+            if (!processResourcesReleased(String(pid))) throw error;
+          }
+        }
+        if (rss > 512 * 1024) throw new Error('Restore shutdown exceeded its memory budget.');
+      } catch {
+        forceStop = true;
+        waiter.reject(new Error('Restore shutdown has insufficient memory headroom.'));
+      } finally {
+        sampling = false;
+      }
+    }, 100);
+    const timeout = setTimeout(() => {
+      forceStop = true;
+      waiter.reject(new Error('Restore shutdown timed out.'));
+    }, budget);
+    try {
+      this.childReady = false;
+      // Persist the challenge before directing the child to its one-shot
+      // shutdown. Ordinary SIGTERM must not race challenge registration.
+      this.transition({ phase: 'stopping', restoreStop: record, verifiedAt: null });
+      child.send(
+        { channel: MAINTENANCE_CHANNEL, kind: 'restore-stop', request: record.request },
+        (error) => {
+          if (error) waiter.reject(new Error('Restore shutdown control disconnected.'));
+        },
+      );
+      const accepted = await witness;
+      clearTimeout(timeout);
+      clearInterval(memory);
+      // Durable witness and complete process/handle closure are independent.
+      await this.stopGroup(identity);
+      if (
+        this.closing ||
+        this.journal.state.phase !== 'stopping' ||
+        this.journal.state.restoreStop?.fingerprint !== accepted.fingerprint
+      )
+        throw new Error('Restore shutdown lost its control binding.');
+      this.child = undefined;
+      this.childOwned = false;
+      this.transition({ phase: 'stopped', child: null, verifiedAt: null });
+      return structuredClone(accepted);
+    } catch (error) {
+      try {
+        await this.stopGroup(identity, true, forceStop || this.now() >= record.request.deadline);
         this.child = undefined;
         this.childOwned = false;
-        this.transition({ phase: 'stopped', child: null, verifiedAt: null });
-        return structuredClone(accepted);
-      } catch (error) {
-        try {
-          await this.stopGroup(identity, true, forceStop || this.now() >= record.request.deadline);
-          this.child = undefined;
-          this.childOwned = false;
-          this.transition({ child: null });
-        } catch {
-          /* Retain unresolved process identity for restart recovery. */
-        }
-        this.failure('restore-witness-failed');
-        throw error;
-      } finally {
-        clearTimeout(timeout);
-        clearInterval(memory);
-        this.restoreWaiter = undefined;
+        this.transition({ child: null });
+      } catch {
+        /* Retain unresolved process identity for restart recovery. */
       }
-    });
+      this.failure('restore-witness-failed');
+      throw error;
+    } finally {
+      clearTimeout(timeout);
+      clearInterval(memory);
+      this.restoreWaiter = undefined;
+    }
   }
   private async verify() {
     this.journal.assertNoPendingRestoreJobs();
@@ -1009,6 +1018,18 @@ export class MaintenanceSupervisor {
       clearTimeout(timeout);
     }
   }
+  private applicationEnvironment() {
+    const environment = childEnvironment();
+    const policy = this.applicationPolicy;
+    if (policy) {
+      environment.APP_ORIGIN = policy.origin;
+      environment.SPINEL_SPACE_REVIEW = policy.spaceReview ? '1' : '0';
+      environment.SPINEL_STATIC_DIRECTORY = policy.staticDirectory;
+      if (policy.image === undefined) delete environment.SPINEL_IMAGE;
+      else environment.SPINEL_IMAGE = policy.image;
+    }
+    return environment;
+  }
   private async start() {
     this.journal.assertNoPendingRestoreJobs();
     if (this.journal.state.restoreStop)
@@ -1027,18 +1048,19 @@ export class MaintenanceSupervisor {
     this.childOwned = false;
     this.childReadyEpoch = undefined;
     const groupToken = randomUUID();
+    const environment = {
+      ...this.applicationEnvironment(),
+      DATABASE_PATH: this.journal.databasePath,
+      SPINEL_SUPERVISED: '1',
+      SPINEL_PROCESS_GROUP_TOKEN: groupToken,
+    };
     const child =
-      this.options.createChild?.(groupToken) ??
+      this.options.createChild?.(groupToken, environment) ??
       fork(
         fileURLToPath(new URL('../../../server/index.ts', import.meta.url)),
         this.options.development ? ['--dev', '--no-open'] : [],
         {
-          env: {
-            ...childEnvironment(),
-            DATABASE_PATH: this.journal.databasePath,
-            SPINEL_SUPERVISED: '1',
-            SPINEL_PROCESS_GROUP_TOKEN: groupToken,
-          },
+          env: environment,
           execArgv: [
             '--max-old-space-size=256',
             '--max-semi-space-size=8',

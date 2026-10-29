@@ -26,6 +26,7 @@ export interface RestoreJobIntent {
     origin: string;
     image: string;
     spacesEnabled: boolean;
+    staticDirectory: string;
     /** The full loss/sign-out/sharing/ownership consequence envelope, not counts. */
     consequencesVersion: 1;
   };
@@ -82,9 +83,20 @@ export function validRestoreJobIntent(value: unknown): value is RestoreJobIntent
     ![target.identity.device, target.identity.inode].every(
       (n) => typeof n === 'string' && /^(0|[1-9][0-9]{0,19})$/.test(n),
     ) ||
-    !shape(policy, ['origin', 'image', 'spacesEnabled', 'consequencesVersion']) ||
+    !shape(policy, [
+      'origin',
+      'image',
+      'spacesEnabled',
+      'staticDirectory',
+      'consequencesVersion',
+    ]) ||
     policy.origin !== value.source.recovery.origin ||
     policy.image !== value.source.recovery.image ||
+    typeof policy.staticDirectory !== 'string' ||
+    policy.staticDirectory.includes('\0') ||
+    Buffer.byteLength(policy.staticDirectory) > 4096 ||
+    !isAbsolute(policy.staticDirectory) ||
+    resolve(policy.staticDirectory) !== policy.staticDirectory ||
     typeof policy.spacesEnabled !== 'boolean' ||
     policy.consequencesVersion !== 1
   )

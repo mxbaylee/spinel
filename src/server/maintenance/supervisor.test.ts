@@ -37,6 +37,7 @@ import { restoreBarrierPath } from './restore-barrier.ts';
 import { restoreSnapshotFingerprint } from '../backup/inventory.ts';
 import { validRestoreStopRecord } from './restore-stop.ts';
 import { RestoreJobs } from './restore-jobs.ts';
+import { applicationPolicy } from '../../../server/application-policy.ts';
 import { restoreJobIntentFixture } from './restore-job-fixture.ts';
 import { OWNERSHIP_CHANNEL, shareWorkspaceOwnership } from './ownership.ts';
 
@@ -1391,4 +1392,63 @@ test.each(['verify', 'start'] as const)(
     expect(supervisor.journal.state.verifier).toBeNull();
   },
   10_000,
+);
+
+test.each([undefined, 'sha256:' + 'a'.repeat(64)])(
+  'real application child uses pinned deployment policy with image=%s',
+  async (image) => {
+    const f = await fixture();
+    const staticDirectory = join(f.directory, 'trusted-assets');
+    await mkdir(staticDirectory);
+    await writeFile(
+      join(staticDirectory, 'index.html'),
+      '<!doctype html><title>Trusted fixture</title>',
+    );
+    const policy = applicationPolicy(3000, {
+      APP_ORIGIN: 'https://trusted.example',
+      SPINEL_IMAGE: image,
+      SPINEL_SPACE_REVIEW: '0',
+      SPINEL_STATIC_DIRECTORY: staticDirectory,
+    });
+    const original = { ...policy };
+    const supervisor = await MaintenanceSupervisor.open({
+      root: f.root,
+      databasePath: f.databasePath,
+      publicPort: 0,
+      applicationPolicy: policy,
+      createChild: (_token, environment) => {
+        expect(environment.APP_ORIGIN).toBe(original.origin);
+        expect(environment.SPINEL_IMAGE).toBe(image);
+        expect(environment.SPINEL_SPACE_REVIEW).toBe('0');
+        expect(environment.SPINEL_STATIC_DIRECTORY).toBe(staticDirectory);
+        expect(environment.SPINEL_MAINTENANCE_ROOT).toBeUndefined();
+        return fork(fileURLToPath(new URL('../../../server/index.ts', import.meta.url)), [], {
+          env: { ...environment, PORT: '0', HOST: '127.0.0.1', BACKUP_CONFIG_PATH: undefined },
+          execArgv: [],
+          detached: true,
+          stdio: ['ignore', 'ignore', 'inherit', 'ipc'],
+        });
+      },
+      budgets: { startMs: 10_000, stopMs: 100, verifyMs: 5000 },
+    });
+    cleanups.push(() => supervisor.close());
+    // Caller-owned configuration must not retarget a later child or restore trial.
+    policy.origin = 'https://changed.example';
+    policy.image = 'sha256:' + 'f'.repeat(64);
+    policy.spaceReview = true;
+    policy.staticDirectory = join(f.directory, 'missing-assets');
+    const old = process.env.SPINEL_IMAGE;
+    try {
+      process.env.SPINEL_IMAGE = 'sha256:' + 'e'.repeat(64);
+      const operationId = randomUUID();
+      await supervisor.coldControl({ action: 'verify', operationId });
+      await supervisor.coldControl({ action: 'start', operationId });
+      expect(supervisor.status().readyToResume).toBe(true);
+      expect(supervisor.status().phase).toBe('paused');
+    } finally {
+      if (old === undefined) delete process.env.SPINEL_IMAGE;
+      else process.env.SPINEL_IMAGE = old;
+    }
+  },
+  20_000,
 );

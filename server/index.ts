@@ -2,6 +2,7 @@ import { execFile } from 'node:child_process';
 import type { AddressInfo } from 'node:net';
 import { resolve } from 'node:path';
 import { createApp, projectRoot } from './app.ts';
+import { applicationPolicy } from './application-policy.ts';
 import { connectMaintenance } from '../src/server/maintenance/supervisor-client.ts';
 import {
   acquireColdWorkspaceLease,
@@ -59,11 +60,8 @@ const app = await (async () => {
     starting = await createApp({
       maintenance,
       development,
-      staticDirectory: process.env.SPINEL_STATIC_DIRECTORY,
+      ...applicationPolicy(port),
       backupConfigPath: process.env.BACKUP_CONFIG_PATH,
-      image: process.env.SPINEL_IMAGE,
-      spaceReview: process.env.SPINEL_SPACE_REVIEW !== '0',
-      origin: process.env.APP_ORIGIN ?? `http://localhost:${port}`,
       databasePath,
     });
     const server = starting.server;

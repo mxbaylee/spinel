@@ -22,7 +22,13 @@ export function restoreJobIntentFixture(now = Date.now()): RestoreJobIntent {
       candidate: { bytes: 4096, sha256: 'c'.repeat(64) },
       recovery: { createdAt: new Date(now - 1000).toISOString(), origin, image },
     },
-    policy: { origin, image, spacesEnabled: true, consequencesVersion: 1 },
+    policy: {
+      origin,
+      image,
+      spacesEnabled: true,
+      staticDirectory: '/srv/spinel/dist',
+      consequencesVersion: 1,
+    },
     authority: {
       actorId: randomUUID(),
       sessionHash: 'd'.repeat(64),

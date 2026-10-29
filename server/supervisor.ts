@@ -1,4 +1,5 @@
 import { resolve } from 'node:path';
+import { applicationPolicy } from './application-policy.ts';
 import { MaintenanceSupervisor } from '../src/server/maintenance/supervisor.ts';
 
 const root = process.env.SPINEL_MAINTENANCE_ROOT;
@@ -14,6 +15,7 @@ const supervisor = await MaintenanceSupervisor.open({
   databasePath: resolve(process.env.DATABASE_PATH ?? 'data/spinel.sqlite'),
   publicPort,
   development: process.argv.includes('--dev'),
+  applicationPolicy: applicationPolicy(Number(process.env.PORT ?? 3000)),
 });
 console.log(
   `Spinel recovery control is available on 127.0.0.1:${supervisor.publicAddress().port}.`,

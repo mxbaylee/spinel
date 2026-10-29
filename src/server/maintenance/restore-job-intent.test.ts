@@ -26,6 +26,7 @@ test('intent identity includes every binding and ignores only object property or
     { ...intent, authority: { ...intent.authority, expiresAt: intent.authority.expiresAt - 1 } },
     { ...intent, authority: { ...intent.authority, verifiedPasskeyId: 'other' } },
     { ...intent, policy: { ...intent.policy, spacesEnabled: false } },
+    { ...intent, policy: { ...intent.policy, staticDirectory: '/srv/spinel/other-assets' } },
     { ...intent, continuationHash: 'f'.repeat(64) },
   ])
     expect(restoreIntentHash(changed)).not.toBe(hash);
@@ -43,6 +44,7 @@ test('intent validation rejects incomplete, inconsistent and unbounded bindings'
     { ...intent, target: { ...intent.target, databasePath: 'workspace.sqlite' } },
     { ...intent, target: { ...intent.target, identity: { device: '1', inode: '-1' } } },
     { ...intent, policy: { ...intent.policy, image: 'different' } },
+    { ...intent, policy: { ...intent.policy, staticDirectory: 'relative-assets' } },
     { ...intent, policy: { ...intent.policy, consequencesVersion: 2 } },
     { ...intent, confirmedAt: intent.authority.expiresAt },
     { ...intent, confirmedAt: intent.authority.verifiedAt - 1 },
