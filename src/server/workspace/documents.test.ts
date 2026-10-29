@@ -5,6 +5,7 @@ import { afterEach, expect, test } from 'vitest';
 import { AuthStore } from '../auth/store.ts';
 import { WorkspaceStore } from './store.ts';
 import { DocumentStore, DOCUMENT_IMAGE_LIMIT, IMAGE_LIMIT } from './documents.ts';
+import { restoreFenceSchema } from '../collaboration/restore-fences.ts';
 
 const databases: DatabaseSync[] = [];
 afterEach(() => databases.splice(0).forEach((db) => db.close()));
@@ -29,6 +30,26 @@ const png = () =>
   sharp({ create: { width: 3, height: 2, channels: 4, background: '#ff9900' } })
     .png()
     .toBuffer();
+
+test('a restored lazy document refuses a matching old full-snapshot save without changing its content', () => {
+  const f = fixture(),
+    db = f.workspace.auth.database;
+  const payload = { snapshot: f.snapshot, revision: 0, writeId: randomUUID() };
+  f.docs.save(f.owner.id, f.item.id, payload);
+  db.exec(restoreFenceSchema);
+  db.prepare("INSERT INTO spinel_restore_fences VALUES('identity',?)").run(f.item.id);
+  expect(() => f.docs.save(f.owner.id, f.item.id, payload)).toThrow('recovered');
+  expect(() =>
+    f.docs.save(f.owner.id, f.item.id, {
+      ...payload,
+      revision: 1,
+      writeId: randomUUID(),
+      snapshot: { ...f.snapshot, title: 'Stale replacement' },
+    }),
+  ).toThrow('recovered');
+  expect(f.docs.load(f.owner.id, f.item.id).snapshot).toEqual(f.snapshot);
+  expect(f.docs.load(f.owner.id, f.item.id).revision).toBe(1);
+});
 
 test('native document snapshots preserve their complete data and the shared revision/retry contract', () => {
   const f = fixture();

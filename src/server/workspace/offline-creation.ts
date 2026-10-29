@@ -7,6 +7,7 @@ import { snapshotIdentity } from '../../shared/snapshotIdentity.ts';
 import { AuthError } from '../auth/store.ts';
 import type { CollaborationStore } from '../collaboration/service.ts';
 import { SQLiteSyncStorage } from '../sync/store.ts';
+import { restoreFenced } from '../collaboration/restore-fences.ts';
 import type { WorkspaceStore } from './store.ts';
 
 export class OfflineCreationError extends AuthError {
@@ -122,6 +123,7 @@ export class OfflineCreations {
       // another document or a generation that is awaiting purge.
       for (const id of [input.itemId, input.unitId]) {
         if (
+          restoreFenced(database, 'identity', id) ||
           database.prepare('SELECT 1 FROM workspace_items WHERE id=?').get(id) ||
           database.prepare('SELECT 1 FROM spinel_sync_units WHERE unit_id=?').get(id) ||
           database

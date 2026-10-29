@@ -118,6 +118,7 @@ const preservedTables = [
   'workspace_placements',
   'workspace_retained_trash_batches',
   'workspace_recovery_holds',
+  'spinel_restore_fences',
   'workspace_space_trash',
   'workspace_tag_assignments',
   'workspace_tags',
