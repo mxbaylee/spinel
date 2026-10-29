@@ -23,6 +23,7 @@ import { HealthMonitor } from '../src/server/health/monitor.ts';
 import { healthRoutes } from '../src/server/health/routes.ts';
 import { BackupService } from '../src/server/backup/service.ts';
 import { backupRoutes } from '../src/server/backup/routes.ts';
+import { captureTerminalRestoreFingerprint } from '../src/server/backup/restore-drain.ts';
 import { openDatabase } from './database.ts';
 import { AuthStore } from '../src/server/auth/store.ts';
 import { authRoutes, cookieToken } from '../src/server/auth/routes.ts';
@@ -540,7 +541,11 @@ export async function createApp(options: AppOptions) {
   return {
     server,
     maintenance,
-    async close() {
+    async close(options?: {
+      /** Private supervised restore shutdown. Resolve only after the parent has
+       * durably accepted the final witness for its exact pending challenge. */
+      acceptRestoreWitness?: (fingerprint: string) => Promise<void>;
+    }) {
       unsubscribeMaintenance();
       stopCleanup();
       clearInterval(purgeTimer);
@@ -576,8 +581,19 @@ export async function createApp(options: AppOptions) {
       );
       await collaboration?.close();
       maintenance.stop();
-      database.close();
-      await diagnostics?.close();
+      try {
+        if (options?.acceptRestoreWitness) {
+          const fingerprint = captureTerminalRestoreFingerprint(database);
+          // No SQLite transaction remains open while waiting for persistence.
+          await options.acceptRestoreWitness(fingerprint);
+        }
+      } finally {
+        try {
+          database.close();
+        } finally {
+          await diagnostics?.close();
+        }
+      }
     },
   };
 }
