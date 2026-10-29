@@ -511,7 +511,7 @@ export class RecoveryJournal {
     try {
       const descriptor = openSync(
         this.path('journal.json'),
-        constants.O_RDONLY | constants.O_NOFOLLOW,
+        constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK,
       );
       try {
         const metadata = fstatSync(descriptor);
@@ -605,8 +605,20 @@ export class RecoveryJournal {
     }
     fsyncSync(this.handle);
   }
-  path(name: 'journal.json' | 'control.sock' | `pending-${string}` | `rejected-${string}.json`) {
+  path(
+    name:
+      | 'journal.json'
+      | 'control.sock'
+      | 'restore-jobs'
+      | `pending-${string}`
+      | `rejected-${string}.json`,
+  ) {
     return `/proc/self/fd/${this.handle}/${name}`;
+  }
+  syncRoot() {
+    this.checkRoot();
+    fsyncSync(this.handle);
+    this.checkRoot();
   }
   async bindWorkspace() {
     this.checkRoot();

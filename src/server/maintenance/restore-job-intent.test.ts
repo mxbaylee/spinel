@@ -2,41 +2,8 @@ import { randomUUID } from 'node:crypto';
 import { expect, test } from 'vitest';
 import { restoreIntentHash, validRestoreJobIntent } from './restore-job-intent.ts';
 import type { RestoreJobIntent } from './restore-job-intent.ts';
+import { restoreJobIntentFixture } from './restore-job-fixture.ts';
 
-function fixture(): RestoreJobIntent {
-  const id = randomUUID();
-  const now = Date.now();
-  const origin = 'https://spinel.example';
-  const image = 'sha256:' + 'a'.repeat(64);
-  return {
-    version: 1,
-    id,
-    target: {
-      instanceId: randomUUID(),
-      generationId: randomUUID(),
-      epoch: randomUUID(),
-      databasePath: '/srv/spinel/workspace.sqlite',
-      identity: { device: '1', inode: '2' },
-    },
-    source: {
-      version: 1,
-      id,
-      archive: { bytes: 100, sha256: 'b'.repeat(64) },
-      candidate: { bytes: 4096, sha256: 'c'.repeat(64) },
-      recovery: { createdAt: new Date(now - 1000).toISOString(), origin, image },
-    },
-    policy: { origin, image, spacesEnabled: true, consequencesVersion: 1 },
-    authority: {
-      actorId: randomUUID(),
-      sessionHash: 'd'.repeat(64),
-      verifiedAt: now - 1000,
-      verifiedPasskeyId: 'passkey',
-      expiresAt: now + 1000,
-    },
-    continuationHash: 'e'.repeat(64),
-    confirmedAt: now,
-  };
-}
 function reordered(value: unknown): unknown {
   if (value !== null && typeof value === 'object')
     return Object.fromEntries(
@@ -48,7 +15,7 @@ function reordered(value: unknown): unknown {
 }
 
 test('intent identity includes every binding and ignores only object property order', () => {
-  const intent = fixture();
+  const intent = restoreJobIntentFixture();
   expect(validRestoreJobIntent(intent)).toBe(true);
   const hash = restoreIntentHash(intent);
   expect(restoreIntentHash(reordered(intent) as RestoreJobIntent)).toBe(hash);
@@ -65,7 +32,7 @@ test('intent identity includes every binding and ignores only object property or
 });
 
 test('intent validation rejects incomplete, inconsistent and unbounded bindings', () => {
-  const intent = fixture();
+  const intent = restoreJobIntentFixture();
   for (const invalid of [
     {},
     null,

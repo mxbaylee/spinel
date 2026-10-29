@@ -1184,7 +1184,9 @@ test('journal refuses oversized UTF-8 records before replacing durable state', a
   cleanups.push(() => rm(directory, { recursive: true, force: true }));
   const root = join(directory, 'recovery');
   await mkdir(root, { mode: 0o700 });
-  const journal = await RecoveryJournal.open(root, join(directory, 'workspace.sqlite'));
+  const data = join(directory, 'data');
+  await mkdir(data, { mode: 0o700 });
+  const journal = await RecoveryJournal.open(root, join(data, 'workspace.sqlite'));
   cleanups.push(() => journal.close());
   const before = await readFile(join(root, 'journal.json'), 'utf8');
   journal.state.lastFailure = 'é'.repeat(17_000);
