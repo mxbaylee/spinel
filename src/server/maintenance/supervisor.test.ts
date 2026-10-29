@@ -105,7 +105,7 @@ async function fixture(withAuthority = false, completeRestore = false) {
   await mkdir(data, { mode: 0o700 });
   const databasePath = join(data, 'workspace.sqlite');
   const authority = await seed(databasePath, withAuthority, completeRestore);
-  const createChild = (groupToken: string, env: Record<string, string> = {}) =>
+  const createChild = (groupToken: string, env: NodeJS.ProcessEnv = {}) =>
     fork(
       fileURLToPath(
         new URL(
@@ -1965,9 +1965,11 @@ async function admissionFixture(
   return { ...f, supervisor, request, child };
 }
 
-test.runIf(process.platform === 'linux')(
-  'complete application and authenticated archive prepare both images with startup rehearsals',
-  async () => {
+test
+  .runIf(process.platform === 'linux')
+  .each(['ownership-first', 'readiness-first', 'wrong-fingerprint'])(
+  'complete application and authenticated archive activate a private candidate trial: %s',
+  async (ordering) => {
     const f = await fixture(true, true);
     const policy = applicationPolicy(3000, {
       APP_ORIGIN: 'https://spinel.example',
@@ -1986,13 +1988,16 @@ test.runIf(process.platform === 'linux')(
     });
     cleanups.push(() => source.dispose());
     expect(source.tables).toBeGreaterThan(0);
+    let privateReadyObserved = false,
+      ownershipReordered = false;
     const supervisor = await MaintenanceSupervisor.open({
       root: f.root,
       databasePath: f.databasePath,
       publicPort: 0,
       applicationPolicy: policy,
-      createChild: (token) =>
-        f.createChild(token, {
+      createChild: (token, environment) => {
+        const child = f.createChild(token, {
+          ...environment,
           SPINEL_TEST_REAL_APP: '1',
           PORT: '0',
           HOST: '127.0.0.1',
@@ -2000,7 +2005,62 @@ test.runIf(process.platform === 'linux')(
           SPINEL_IMAGE: policy.image!,
           SPINEL_STATIC_DIRECTORY: policy.staticDirectory,
           BACKUP_CONFIG_PATH: join(f.data, 'absent-backup-config'),
-        }),
+        });
+        if (environment.SPINEL_RESTORE_TRIAL === '1') {
+          const emit = child.emit.bind(child);
+          let held: unknown[] | undefined;
+          child.emit = (event: string | symbol, ...args: unknown[]) => {
+            const value = args[0] as Record<string, unknown> | undefined;
+            if (
+              event === 'message' &&
+              value?.kind === 'held' &&
+              value.trialNonce &&
+              ordering === 'readiness-first'
+            ) {
+              held = args;
+              return true;
+            }
+            if (event === 'message' && value?.kind === 'restore-trial-ready') {
+              privateReadyObserved = true;
+              const reference = value.reference as {
+                jobId: string;
+                epoch: string;
+                generationId: string;
+              };
+              const readJob = () =>
+                JSON.parse(
+                  readFileSync(join(f.root, 'restore-jobs', reference.jobId, 'state.json'), 'utf8'),
+                );
+              expect(readJob().phase).toBe('trial-planned');
+              expect(readJob().execution.trial.child.pid).toBe(child.pid);
+              // Neither ordinary readiness nor an old attempt nonce may advance
+              // the trial or make ordinary resume available.
+              emit('message', {
+                channel: MAINTENANCE_CHANNEL,
+                kind: 'ready',
+                epoch: reference.epoch,
+                generationId: reference.generationId,
+              });
+              emit('message', { ...value, reference: { ...reference, nonce: randomUUID() } });
+              expect(supervisor.status().phase).toBe('starting');
+              expect(supervisor.status().readyToResume).toBe(false);
+              if (ordering === 'wrong-fingerprint')
+                return emit('message', { ...value, fingerprint: '0'.repeat(64) });
+              const result = emit(event, ...args);
+              if (ordering === 'readiness-first') {
+                expect(held).toBeDefined();
+                expect(readJob().phase).toBe('trial-planned');
+                expect(supervisor.status().readyToResume).toBe(false);
+                ownershipReordered = true;
+                emit('message', ...held!);
+              }
+              return result;
+            }
+            return emit(event, ...args);
+          };
+        }
+        return child;
+      },
       budgets: {
         startMs: 20_000,
         stopMs: 3000,
@@ -2038,9 +2098,19 @@ test.runIf(process.platform === 'linux')(
     });
     expect(begun.record.phase).toBe('pause-planned');
     const statePath = join(f.root, 'restore-jobs', id, 'state.json');
-    await expect
-      .poll(async () => JSON.parse(await readFile(statePath, 'utf8')).phase, { timeout: 30_000 })
-      .toBe('prepared');
+    if (ordering === 'wrong-fingerprint') {
+      await expect
+        .poll(() => supervisor.status().phase, { timeout: 30_000 })
+        .toBe('recovery-required');
+      await expect.poll(() => supervisor.journal.state.child, { timeout: 10_000 }).toBeNull();
+    } else {
+      await expect
+        .poll(async () => JSON.parse(await readFile(statePath, 'utf8')).phase, { timeout: 30_000 })
+        .toBe('trial-ready');
+      await expect.poll(() => supervisor.status().phase).toBe('paused');
+    }
+    expect(privateReadyObserved).toBe(true);
+    expect(ownershipReordered).toBe(ordering === 'readiness-first');
     const completed = JSON.parse(await readFile(statePath, 'utf8'));
     expect(completed.execution.frozen.fingerprint).toBe(completed.execution.stop.fingerprint);
     expect(completed.execution.frozen.fingerprint).not.toBe(source.logicalFingerprint);
@@ -2079,8 +2149,21 @@ test.runIf(process.platform === 'linux')(
       // Observer completion must not alter the selected, closed output.
       expect(await readFile(imagePath)).toEqual(bytes);
     }
-    expect(supervisor.status().phase).toBe('stopped');
-    assertWorkspaceHandlesClosed(f.databasePath);
+    expect(completed.phase).toBe(
+      ordering === 'wrong-fingerprint' ? 'trial-planned' : 'trial-ready',
+    );
+    expect(supervisor.status().readyToResume).toBe(false);
+    expect(supervisor.journal.state.restoreStop).toEqual(completed.execution.stop);
+    expect(fileIdentity(f.databasePath)).toEqual(admitted.record.intent.target.identity);
+    expect(supervisor.status().generationId).toBe(completed.execution.attempt.generationId);
+    expect(supervisor.status().generationId).not.toBe(admitted.record.intent.target.generationId);
+    expect(supervisor.journal.state.operation?.generationId).toBe(supervisor.status().generationId);
+    expect(existsSync(restoreBarrierPath(f.databasePath))).toBe(true);
+    const response = await fetch(`http://127.0.0.1:${supervisor.publicAddress().port}/`);
+    expect(response.status).toBe(503);
+    await response.text();
+    if (ordering === 'wrong-fingerprint') assertWorkspaceHandlesClosed(f.databasePath);
+    else expect(() => assertWorkspaceHandlesClosed(f.databasePath)).toThrow();
   },
   90_000,
 );

@@ -603,6 +603,47 @@ test.each(['replacing', 'activated'] as const)(
 );
 
 test.each(['cancel', 'deadline'] as const)(
+  'candidate staging %s after the first chunk preserves the immutable inputs and refuses partial retry',
+  async (boundary) => {
+    const f = await fixture();
+    const originals = await captureRestoreOriginals(f);
+    await preserveRestoreOriginals(f, originals);
+    const staged = join(f.root, `restore-${f.id}`, 'candidate.sqlite');
+    const controller = new AbortController();
+    const now = Date.now;
+    const deadline = now() + 60_000;
+    const written = () => {
+      try {
+        return readFileSync(staged).length > 0;
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code === 'ENOENT') return false;
+        throw error;
+      }
+    };
+    if (boundary === 'cancel') {
+      const check = controller.signal.throwIfAborted.bind(controller.signal);
+      vi.spyOn(controller.signal, 'throwIfAborted').mockImplementation(() => {
+        if (written()) controller.abort();
+        check();
+      });
+    } else {
+      vi.spyOn(Date, 'now').mockImplementation(() => now() + (written() ? 60_001 : 0));
+    }
+    await expect(
+      stageRestoreCandidate({ ...f, signal: controller.signal, deadline }, originals),
+    ).rejects.toThrow();
+    expect(await readFile(staged)).toEqual(f.candidate.subarray(0, 64 * 1024));
+    expect((await lstat(staged)).mode & 0o777).toBe(0o600);
+    expect(await readFile(f.candidatePath)).toEqual(f.candidate);
+    expect(await readFile(f.databasePath)).toEqual(f.original);
+    expect(await readFile(f.databasePath + '-wal')).toEqual(f.wal);
+    expect(() => assertNoPendingRestore(f.databasePath)).not.toThrow();
+    vi.restoreAllMocks();
+    await expect(stageRestoreCandidate(f, originals)).rejects.toThrow('changed');
+  },
+);
+
+test.each(['cancel', 'deadline'] as const)(
   'activation %s after the first write retains the barrier, partial inode and original custody',
   async (boundary) => {
     const f = await fixture();

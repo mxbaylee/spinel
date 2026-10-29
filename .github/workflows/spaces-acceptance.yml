@@ -1,4 +1,4 @@
-name: 🦈 Spaces
+name: 🦈 DigitalOcean Spaces
 
 on:
   pull_request:
@@ -23,7 +23,7 @@ concurrency:
 
 jobs:
   spaces:
-    name: 🦈 Spaces
+    name: 🦈 DigitalOcean Spaces
     if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 10

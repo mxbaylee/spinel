@@ -59,6 +59,8 @@ export interface RestoreFileControl {
   /** Controller-owned cancellation and absolute wall-clock budget. */
   signal?: AbortSignal;
   deadline?: number;
+  /** Lightweight controller authority/clock fence; no process inventory scans. */
+  assertAuthorized?(): void;
   /** Caller holds the workspace path/inode leases and checks all SQLite owners. */
   assertClosed(): void;
   /** Must fsync the independent journal before resolving; never just notify UI. */
@@ -553,14 +555,21 @@ export async function stageRestoreCandidate(
     databasePath: string;
     candidatePath: string;
     expectedCandidate: RestoreFileEvidence;
+    signal?: AbortSignal;
+    deadline?: number;
+    assertAuthorized?(): void;
     assertClosed(): void;
     availableBytes?: RestoreFileControl['availableBytes'];
   },
   originals: RestoreOriginals,
 ): Promise<RestoreFiles> {
+  const active = () => assertMutationActive(options);
+  active();
   const target = await retained(options, originals);
+  active();
   assertNoPendingRestore(options.databasePath);
-  await unchangedOriginal(options.databasePath, originals);
+  await unchangedOriginal(options.databasePath, originals, options.signal);
+  active();
   const source = await ownedFile(options.databasePath),
     candidate = await ownedFile(options.candidatePath);
   if (same(identity(source), identity(candidate))) throw unavailable();
@@ -573,7 +582,8 @@ export async function stageRestoreCandidate(
     }
     throw new Error('The restore candidate must be a closed, self-contained database.');
   }
-  await requireEvidence(options.candidatePath, options.expectedCandidate);
+  await requireEvidence(options.candidatePath, options.expectedCandidate, options.signal);
+  active();
   const staged = join(target, 'candidate.sqlite');
   let exists = true;
   try {
@@ -584,7 +594,8 @@ export async function stageRestoreCandidate(
   }
   // A prior attempt may have copied every byte but failed before file fsync.
   // Matching page-cache contents alone are not durable custody.
-  if (exists) await syncExistingCandidate(staged, options.expectedCandidate);
+  if (exists) await syncExistingCandidate(staged, options.expectedCandidate, options.signal);
+  active();
   // Retained originals already consume space. Reserve the additional candidate,
   // in-place growth and WAL/startup allowance on the appropriate filesystem.
   const recoveryNeed = (exists ? 0 : candidate.size) + RESERVE;
@@ -601,19 +612,94 @@ export async function stageRestoreCandidate(
   )
     throw new Error('Not enough disk space to retain both generations and recovery working space.');
   if (!exists) {
+    active();
     try {
-      requireSameEvidence(await copy(options.candidatePath, staged), options.expectedCandidate);
+      await copyStagedCandidate(options.candidatePath, staged, active);
+      await requireEvidence(staged, options.expectedCandidate, options.signal);
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code !== 'EEXIST') throw error;
-      await syncExistingCandidate(staged, options.expectedCandidate);
+      await syncExistingCandidate(staged, options.expectedCandidate, options.signal);
     }
   }
+  active();
   await syncDirectory(target);
+  active();
   await syncDirectory(options.root);
+  active();
   options.assertClosed();
   if (!same(identity(source), identity(await ownedFile(options.databasePath)))) throw unavailable();
-  await unchangedOriginal(options.databasePath, originals);
+  await unchangedOriginal(options.databasePath, originals, options.signal);
+  active();
   return { ...originals, candidate: { ...options.expectedCandidate } };
+}
+
+/** Candidate staging has a controller deadline. Bound each copy operation so
+ * cancellation can leave only an unacknowledged private partial output; the
+ * immutable prepared source and original custody are never changed. */
+async function copyStagedCandidate(source: string, target: string, active: () => void) {
+  active();
+  const before = await ownedFile(source);
+  active();
+  const input = await open(
+    source,
+    constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK,
+  );
+  try {
+    active();
+    const opened = await input.stat();
+    if (
+      !opened.isFile() ||
+      !same(identity(opened), identity(before)) ||
+      opened.size !== before.size
+    )
+      throw unavailable();
+    const output = await open(
+      target,
+      constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW,
+      0o600,
+    );
+    try {
+      const buffer = Buffer.alloc(64 * 1024);
+      let position = 0;
+      while (position < before.size) {
+        active();
+        const { bytesRead } = await input.read(
+          buffer,
+          0,
+          Math.min(buffer.length, before.size - position),
+          position,
+        );
+        active();
+        if (!bytesRead) throw unavailable();
+        let offset = 0;
+        while (offset < bytesRead) {
+          active();
+          const { bytesWritten } = await output.write(buffer, offset, bytesRead - offset, null);
+          active();
+          if (!bytesWritten) throw unavailable();
+          offset += bytesWritten;
+        }
+        position += bytesRead;
+      }
+      active();
+      await output.sync();
+      active();
+      for (const after of [await input.stat(), await ownedFile(source)]) {
+        if (
+          !same(identity(before), identity(after)) ||
+          before.size !== after.size ||
+          before.mtimeMs !== after.mtimeMs ||
+          before.ctimeMs !== after.ctimeMs
+        )
+          throw unavailable();
+      }
+      active();
+    } finally {
+      await output.close();
+    }
+  } finally {
+    await input.close();
+  }
 }
 
 async function syncExistingCandidate(
@@ -900,13 +986,16 @@ export async function rollbackRestoreFiles(control: RestoreFileControl, files: R
   active();
 }
 
-function assertMutationActive(control: RestoreFileControl) {
+function assertMutationActive(
+  control: Pick<RestoreFileControl, 'signal' | 'deadline' | 'assertAuthorized'>,
+) {
   control.signal?.throwIfAborted();
   if (
     control.deadline !== undefined &&
     (!Number.isSafeInteger(control.deadline) || control.deadline <= Date.now())
   )
     throw new Error('Restore file mutation exceeded its deadline.');
+  control.assertAuthorized?.();
 }
 
 /** Caller first verifies the selected generation and child health under maintenance.

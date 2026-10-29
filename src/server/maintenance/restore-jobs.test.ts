@@ -1,5 +1,6 @@
-import { fork, spawnSync } from 'node:child_process';
+import { fork, spawn, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { once } from 'node:events';
 import { randomUUID } from 'node:crypto';
 import {
   appendFileSync,
@@ -18,9 +19,12 @@ import { mkdir, mkdtemp, realpath, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, expect, test, vi } from 'vitest';
-import { RecoveryJournal, fileIdentity } from './journal.ts';
+import { RecoveryJournal, fileIdentity, processIdentity } from './journal.ts';
 import { RestoreJobs } from './restore-jobs.ts';
 import type { RestoreJobRecord } from './restore-jobs.ts';
+import { restoreTrialReference } from './restore-trial.ts';
+import type { RestoreTrialPermit } from './restore-trial.ts';
+import { restoreBarrierPath } from './restore-barrier.ts';
 import { restoreJobIntentFixture } from './restore-job-fixture.ts';
 import { restoreIntentHash } from './restore-job-intent.ts';
 
@@ -727,5 +731,217 @@ linux(
       ),
     ).toThrow('expired');
     expect(f.jobs.read(original.intent.id)).toEqual(planned);
+  },
+);
+
+async function preparedFixture() {
+  const f = await frozenFixture();
+  let record = f.record;
+  const id = record.intent.id,
+    hash = record.intentHash;
+  record = f.jobs.planPreparation(id, hash, record.revision, randomUUID(), record.updatedAt);
+  record = f.jobs.markCandidatePrepared(id, hash, record.revision, candidateImage);
+  record = f.jobs.markRollbackPrepared(id, hash, record.revision, rollbackImage);
+  record = f.jobs.markCandidateRehearsed(id, hash, record.revision);
+  record = f.jobs.markPrepared(id, hash, record.revision);
+  return { ...f, record };
+}
+const attemptFixture = () => ({
+  attemptId: randomUUID(),
+  generationId: randomUUID(),
+  epoch: randomUUID(),
+  nonce: randomUUID(),
+});
+
+linux(
+  'activation phases preserve immutable originals and reject reused identities or skipped transitions',
+  async () => {
+    const f = await preparedFixture();
+    let record = f.record;
+    const id = record.intent.id,
+      hash = record.intentHash;
+    for (const attempt of [
+      { ...attemptFixture(), generationId: record.intent.target.generationId },
+      { ...attemptFixture(), epoch: record.execution!.epoch },
+      { ...attemptFixture(), nonce: 'not-a-uuid' },
+      { ...attemptFixture(), extra: true },
+    ])
+      expect(() => f.jobs.planActivation(id, hash, record.revision, attempt)).toThrow();
+    record = f.jobs.planActivation(id, hash, record.revision, attemptFixture());
+    const attempt = record.execution!.attempt;
+    expect(() => f.jobs.planActivation(id, hash, record.revision, attemptFixture())).toThrow();
+    expect(() => f.jobs.markCandidateActivated(id, hash, record.revision)).toThrow();
+    record = f.jobs.markCandidateStaged(id, hash, record.revision);
+    expect(() => f.jobs.markCandidateActivated(id, hash, record.revision)).toThrow();
+    record = f.jobs.markCandidateReplacing(id, hash, record.revision);
+    record = f.jobs.markCandidateActivated(id, hash, record.revision);
+    expect(record.execution).toEqual({ ...f.record.execution, attempt });
+    expect(record.intent).toEqual(f.record.intent);
+    expect(f.openJobs().read(id)).toEqual(record);
+    const invalid = structuredClone(record);
+    invalid.execution!.attempt!.epoch = invalid.intent.target.epoch;
+    writeFileSync(f.statePath(id), JSON.stringify(invalid));
+    expect(() => f.jobs.read(id)).toThrow();
+    writeFileSync(f.statePath(id), JSON.stringify(record));
+    f.advance(60_000);
+    expect(() => f.jobs.markCandidateActivated(id, hash, record.revision)).toThrow();
+    expect(f.jobs.read(id)).toEqual(record);
+  },
+);
+
+async function activatedTrialFixture() {
+  const f = await preparedFixture();
+  let record = f.record;
+  const id = record.intent.id,
+    hash = record.intentHash;
+  record = f.jobs.planActivation(id, hash, record.revision, attemptFixture());
+  record = f.jobs.markCandidateStaged(id, hash, record.revision);
+  record = f.jobs.markCandidateReplacing(id, hash, record.revision);
+  record = f.jobs.markCandidateActivated(id, hash, record.revision);
+  // Metadata-store boundary only: a real idle process has no ownership handles
+  // and opens no database. The supervisor suite supplies actual trial readiness.
+  const token = randomUUID();
+  const child = spawn(
+    process.execPath,
+    [
+      '--input-type=module',
+      '--eval',
+      "process.on('message', () => {}); process.send({ ready: true });",
+    ],
+    {
+      env: { ...process.env, SPINEL_PROCESS_GROUP_TOKEN: token },
+      stdio: ['ignore', 'ignore', 'inherit', 'ipc'],
+    },
+  );
+  cleanups.push(async () => {
+    if (child.exitCode !== null || child.signalCode !== null) return;
+    const exit = once(child, 'exit');
+    child.kill('SIGKILL');
+    await exit;
+  });
+  await once(child, 'message');
+  const candidate = record.execution!.preparation!.candidate!,
+    attempt = record.execution!.attempt!;
+  writeFileSync(
+    restoreBarrierPath(f.journal.databasePath),
+    JSON.stringify({ version: 1, operationId: id, identity: record.intent.target.identity }) + '\n',
+    { mode: 0o600 },
+  );
+  const permit: RestoreTrialPermit = {
+    version: 1,
+    jobId: id,
+    intentHash: hash,
+    ...attempt,
+    role: 'candidate',
+    child: processIdentity(child.pid!, token)!,
+    databasePath: record.intent.target.databasePath,
+    identity: record.intent.target.identity,
+    output: {
+      bytes: candidate.bytes,
+      sha256: candidate.sha256,
+      fingerprint: candidate.fingerprint,
+    },
+    policy: record.intent.policy,
+    maximumBytes: 1024 * 1024,
+    deadline: record.intent.authority.expiresAt,
+  };
+  const select = () => {
+    Object.assign(f.journal.state, {
+      phase: 'starting',
+      generationId: permit.generationId,
+      epoch: permit.epoch,
+      child: permit.child,
+    });
+    f.journal.state.operation!.generationId = permit.generationId;
+    f.journal.write();
+  };
+  return { ...f, record, permit, child, select };
+}
+
+linux(
+  'trial permit and readiness bind the selected generation without weakening original-stage checks',
+  async () => {
+    const f = await activatedTrialFixture();
+    const id = f.record.intent.id,
+      hash = f.record.intentHash;
+    for (const permit of [
+      { ...f.permit, nonce: randomUUID() },
+      { ...f.permit, role: 'original' as const },
+      { ...f.permit, output: { ...f.permit.output, fingerprint: '0'.repeat(64) } },
+      { ...f.permit, policy: { ...f.permit.policy, spacesEnabled: false } },
+      { ...f.permit, deadline: f.permit.deadline + 1 },
+      { ...f.permit, child: { ...f.permit.child, start: '0' } },
+    ])
+      expect(() => f.jobs.planTrial(id, hash, f.record.revision, permit)).toThrow();
+    let record = f.jobs.planTrial(id, hash, f.record.revision, f.permit);
+    const reference = restoreTrialReference(f.permit);
+    expect(() =>
+      f.jobs.markTrialReady(id, hash, record.revision, reference, f.permit.output.fingerprint),
+    ).toThrow();
+    f.select();
+    expect(() => f.jobs.markCandidateActivated(id, hash, record.revision)).toThrow();
+    expect(() =>
+      f.jobs.markTrialReady(
+        id,
+        hash,
+        record.revision,
+        { ...reference, nonce: randomUUID() },
+        f.permit.output.fingerprint,
+      ),
+    ).toThrow();
+    expect(() =>
+      f.jobs.markTrialReady(id, hash, record.revision, reference, '0'.repeat(64)),
+    ).toThrow();
+    f.journal.state.operation!.generationId = f.record.intent.target.generationId;
+    expect(() =>
+      f.jobs.markTrialReady(id, hash, record.revision, reference, f.permit.output.fingerprint),
+    ).toThrow();
+    f.journal.state.operation!.generationId = f.permit.generationId;
+    record = f.jobs.markTrialReady(
+      id,
+      hash,
+      record.revision,
+      reference,
+      f.permit.output.fingerprint,
+    );
+    expect(record.phase).toBe('trial-ready');
+    expect(record.execution!.stop).toEqual(f.record.execution!.stop);
+    expect(record.execution!.trial).toEqual(f.permit);
+    expect(record.intent).toEqual(f.record.intent);
+    expect(f.openJobs().read(id)).toEqual(record);
+    const invalid = structuredClone(record);
+    invalid.execution!.trial!.nonce = randomUUID();
+    writeFileSync(f.statePath(id), JSON.stringify(invalid));
+    expect(() => f.jobs.read(id)).toThrow();
+  },
+);
+
+linux(
+  'trial publication expiry keeps the exact permit and cannot authorize readiness',
+  async () => {
+    const f = await activatedTrialFixture();
+    const id = f.record.intent.id,
+      hash = f.record.intentHash;
+    const sync = f.journal.syncRoot.bind(f.journal);
+    const fault = vi.spyOn(f.journal, 'syncRoot').mockImplementation(() => {
+      sync();
+      if (JSON.parse(readFileSync(f.statePath(id), 'utf8')).phase === 'trial-planned')
+        f.advance(60_000);
+    });
+    expect(() => f.jobs.planTrial(id, hash, f.record.revision, f.permit)).toThrow();
+    fault.mockRestore();
+    const planned = f.jobs.read(id)!;
+    expect(planned.phase).toBe('trial-planned');
+    expect(planned.execution!.trial).toEqual(f.permit);
+    f.select();
+    expect(() =>
+      f.jobs.markTrialReady(
+        id,
+        hash,
+        planned.revision,
+        restoreTrialReference(f.permit),
+        f.permit.output.fingerprint,
+      ),
+    ).toThrow();
   },
 );
