@@ -19,6 +19,7 @@ export interface RestoreFiles {
   original: Record<Name, RestoreFileEvidence | null>;
   candidate: RestoreFileEvidence;
 }
+export type RestoreOriginals = Omit<RestoreFiles, 'candidate'>;
 export type RestoreFilePhase =
   | 'replacing'
   | 'activated'
@@ -146,20 +147,23 @@ export async function prepareRestoreFiles(options: {
   expectedCandidate: RestoreFileEvidence;
   assertClosed(): void;
 }): Promise<RestoreFiles> {
+  const originals = await preserveRestoreOriginals(options);
+  return stageRestoreCandidate(options, originals);
+}
+
+/** Preserve the closed raw tuple BEFORE opening a disposable clone or generating
+ * the final reconciled candidate. Journal this manifest before advancing. */
+export async function preserveRestoreOriginals(options: {
+  root: string;
+  id: string;
+  databasePath: string;
+  assertClosed(): void;
+}): Promise<RestoreOriginals> {
   options.assertClosed();
+  assertNoPendingRestore(options.databasePath);
   await privateDirectory(options.root);
   const source = await ownedFile(options.databasePath);
-  const candidate = await ownedFile(options.candidatePath);
-  if (same(identity(source), identity(candidate))) throw unavailable();
-  for (const suffix of ['-wal', '-shm']) {
-    try {
-      await lstat(options.candidatePath + suffix);
-      throw new Error('The restore candidate must be a closed, self-contained database.');
-    } catch (error) {
-      if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
-    }
-  }
-  await requireEvidence(options.candidatePath, options.expectedCandidate);
+  await noRollbackJournal(options.databasePath);
   const original = {} as RestoreFiles['original'];
   for (const name of names) {
     try {
@@ -171,22 +175,9 @@ export async function prepareRestoreFiles(options: {
     }
   }
   const originalBytes = Object.values(original).reduce((sum, file) => sum + (file?.bytes ?? 0), 0);
-  // Originals, second candidate copy, in-place growth and two candidate-sized
-  // WAL/startup allowances are additional space; existing staging already uses disk.
-  const recoveryNeed = originalBytes + candidate.size + RESERVE;
-  const workspaceNeed =
-    Math.max(0, candidate.size - source.size) +
-    Math.max(2 * candidate.size, original['spinel.sqlite-wal']?.bytes ?? 0) +
-    RESERVE;
-  const rootInfo = await lstat(options.root);
-  const recoveryFs = await statfs(options.root, { bigint: true });
-  const workspaceFs = await statfs(dirname(options.databasePath), { bigint: true });
-  const shared = rootInfo.dev === source.dev;
-  if (
-    recoveryFs.bavail * recoveryFs.bsize < BigInt(recoveryNeed + (shared ? workspaceNeed : 0)) ||
-    (!shared && workspaceFs.bavail * workspaceFs.bsize < BigInt(workspaceNeed))
-  )
-    throw new Error('Not enough disk space to retain both generations and recovery working space.');
+  const space = await statfs(options.root, { bigint: true });
+  if (space.bavail * space.bsize < BigInt(originalBytes + RESERVE))
+    throw new Error('Not enough disk space to retain the original generation.');
   const target = directory(options.root, options.id);
   await mkdir(target, { mode: 0o700 });
   await mkdir(join(target, 'original'), { mode: 0o700 });
@@ -196,21 +187,141 @@ export async function prepareRestoreFiles(options: {
       requireSameEvidence(await copy(sourcePath, join(target, 'original', name)), original[name]!);
     }
   }
-  requireSameEvidence(
-    await copy(options.candidatePath, join(target, 'candidate.sqlite')),
-    options.expectedCandidate,
-  );
   await syncDirectory(join(target, 'original'));
   await syncDirectory(target);
   await syncDirectory(options.root);
   options.assertClosed();
   if (!same(identity(source), identity(await ownedFile(options.databasePath)))) throw unavailable();
-  return {
-    id: options.id,
-    identity: identity(source),
-    original,
-    candidate: { ...options.expectedCandidate },
-  };
+  const result = { id: options.id, identity: identity(source), original };
+  await unchangedOriginal(options.databasePath, result);
+  return result;
+}
+
+/** Stage the fully reconciled output while retaining the earlier original
+ * manifest. Repeating exactly this file is safe; different output never replaces
+ * an existing attempt. This operation does not authorize activation. */
+export async function stageRestoreCandidate(
+  options: {
+    root: string;
+    databasePath: string;
+    candidatePath: string;
+    expectedCandidate: RestoreFileEvidence;
+    assertClosed(): void;
+    availableBytes?: RestoreFileControl['availableBytes'];
+  },
+  originals: RestoreOriginals,
+): Promise<RestoreFiles> {
+  const target = await retained(options, originals);
+  assertNoPendingRestore(options.databasePath);
+  await unchangedOriginal(options.databasePath, originals);
+  const source = await ownedFile(options.databasePath),
+    candidate = await ownedFile(options.candidatePath);
+  if (same(identity(source), identity(candidate))) throw unavailable();
+  for (const suffix of ['-wal', '-shm', '-journal']) {
+    try {
+      await lstat(options.candidatePath + suffix);
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') continue;
+      throw error;
+    }
+    throw new Error('The restore candidate must be a closed, self-contained database.');
+  }
+  await requireEvidence(options.candidatePath, options.expectedCandidate);
+  const staged = join(target, 'candidate.sqlite');
+  let exists = true;
+  try {
+    await lstat(staged);
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+    exists = false;
+  }
+  // A prior attempt may have copied every byte but failed before file fsync.
+  // Matching page-cache contents alone are not durable custody.
+  if (exists) await syncExistingCandidate(staged, options.expectedCandidate);
+  // Retained originals already consume space. Reserve the additional candidate,
+  // in-place growth and WAL/startup allowance on the appropriate filesystem.
+  const recoveryNeed = (exists ? 0 : candidate.size) + RESERVE;
+  const workspaceNeed =
+    Math.max(0, candidate.size - source.size) +
+    Math.max(2 * candidate.size, originals.original['spinel.sqlite-wal']?.bytes ?? 0) +
+    RESERVE;
+  const rootInfo = await lstat(options.root);
+  const available = options.availableBytes ?? availableBytes;
+  const shared = rootInfo.dev === source.dev;
+  if (
+    (await available(options.root)) < BigInt(recoveryNeed + (shared ? workspaceNeed : 0)) ||
+    (!shared && (await available(dirname(options.databasePath))) < BigInt(workspaceNeed))
+  )
+    throw new Error('Not enough disk space to retain both generations and recovery working space.');
+  if (!exists) {
+    try {
+      requireSameEvidence(await copy(options.candidatePath, staged), options.expectedCandidate);
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== 'EEXIST') throw error;
+      await syncExistingCandidate(staged, options.expectedCandidate);
+    }
+  }
+  await syncDirectory(target);
+  await syncDirectory(options.root);
+  options.assertClosed();
+  if (!same(identity(source), identity(await ownedFile(options.databasePath)))) throw unavailable();
+  await unchangedOriginal(options.databasePath, originals);
+  return { ...originals, candidate: { ...options.expectedCandidate } };
+}
+
+async function syncExistingCandidate(path: string, expected: RestoreFileEvidence) {
+  const before = await ownedFile(path);
+  if (before.mode & 0o077) throw unavailable();
+  const handle = await open(path, constants.O_RDONLY | constants.O_NOFOLLOW);
+  try {
+    const unchanged = async () => {
+      for (const info of [await handle.stat(), await ownedFile(path)]) {
+        if (
+          !same(identity(before), identity(info)) ||
+          before.size !== info.size ||
+          before.mtimeMs !== info.mtimeMs ||
+          before.ctimeMs !== info.ctimeMs
+        )
+          throw unavailable();
+      }
+    };
+    await requireEvidence(path, expected);
+    await unchanged();
+    await handle.sync();
+    await unchanged();
+  } finally {
+    await handle.close();
+  }
+}
+
+async function availableBytes(path: string) {
+  const info = await statfs(path, { bigint: true });
+  return info.bavail * info.bsize;
+}
+
+async function noRollbackJournal(databasePath: string) {
+  try {
+    await lstat(databasePath + '-journal');
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return;
+    throw error;
+  }
+  throw new Error('Unexpected rollback journal evidence requires independent recovery.');
+}
+async function unchangedOriginal(databasePath: string, files: RestoreOriginals) {
+  await noRollbackJournal(databasePath);
+  for (const name of names) {
+    const path = databasePath + name.slice('spinel.sqlite'.length);
+    if (files.original[name]) await requireEvidence(path, files.original[name]!);
+    else {
+      try {
+        await lstat(path);
+        throw unavailable();
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+      }
+    }
+  }
 }
 
 async function barrier(control: RestoreFileControl, files: RestoreFiles, create = false) {
@@ -270,12 +381,7 @@ async function admitMutation(control: RestoreFileControl, files: RestoreFiles, r
   const wal = files.original['spinel.sqlite-wal']?.bytes ?? 0;
   const workspaceNeed =
     Math.max(0, desired - current.size) + (rollback ? wal : Math.max(2 * desired, wal)) + RESERVE;
-  const available =
-    control.availableBytes ??
-    (async (path: string) => {
-      const info = await statfs(path, { bigint: true });
-      return info.bavail * info.bsize;
-    });
+  const available = control.availableBytes ?? availableBytes;
   const shared = (await lstat(control.root)).dev === current.dev;
   if (
     (await available(control.root)) < BigInt(RESERVE + (shared ? workspaceNeed : 0)) ||
@@ -284,13 +390,17 @@ async function admitMutation(control: RestoreFileControl, files: RestoreFiles, r
     throw new Error('Not enough disk space to safely change or roll back this generation.');
 }
 
-async function retained(control: RestoreFileControl, files: RestoreFiles) {
+async function retained(
+  control: Pick<RestoreFileControl, 'root' | 'databasePath' | 'assertClosed'>,
+  files: RestoreOriginals,
+) {
   control.assertClosed();
   await privateDirectory(control.root);
   const root = directory(control.root, files.id);
   await privateDirectory(root);
   await privateDirectory(join(root, 'original'));
   if (!same(files.identity, identity(await ownedFile(control.databasePath)))) throw unavailable();
+  await noRollbackJournal(control.databasePath);
   if (!files.original['spinel.sqlite']) throw unavailable();
   for (const name of names)
     if (files.original[name])
@@ -345,18 +455,7 @@ export async function activateRestoreFiles(control: RestoreFileControl, files: R
   assertUncommitted(control);
   const root = await retained(control, files);
   // Initial activation requires exactly the frozen original, including absent WAL.
-  for (const name of names) {
-    const path = control.databasePath + name.slice('spinel.sqlite'.length);
-    if (files.original[name]) await requireEvidence(path, files.original[name]!);
-    else {
-      try {
-        await lstat(path);
-        throw unavailable();
-      } catch (error) {
-        if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
-      }
-    }
-  }
+  await unchangedOriginal(control.databasePath, files);
   const candidate = join(root, 'candidate.sqlite');
   await requireEvidence(candidate, files.candidate);
   control.assertClosed();

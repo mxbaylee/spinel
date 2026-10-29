@@ -18,6 +18,8 @@ import {
   activateRestoreFiles,
   commitRestoreFiles,
   prepareRestoreFiles,
+  preserveRestoreOriginals,
+  stageRestoreCandidate,
   rollbackRestoreFiles,
 } from './restore-files.ts';
 import type { RestoreFileControl, RestoreFilePhase } from './restore-files.ts';
@@ -119,6 +121,53 @@ test('custody preserves original bytes and activates through the leased inode, b
   await commitRestoreFiles(f.control, files, 'candidate');
   expect(f.phases.at(-1)).toBe('candidate-committed');
   expect(() => assertNoPendingRestore(f.databasePath)).not.toThrow();
+});
+
+test('original custody precedes candidate generation and staging retries never replace a different attempt', async () => {
+  const f = await fixture();
+  await rm(f.candidatePath);
+  const originals = await preserveRestoreOriginals(f);
+  const custody = join(f.root, `restore-${f.id}`);
+  expect(await readFile(join(custody, 'original', 'spinel.sqlite-wal'))).toEqual(f.wal);
+  await expect(lstat(join(custody, 'candidate.sqlite'))).rejects.toHaveProperty('code', 'ENOENT');
+  expect(() => assertNoPendingRestore(f.databasePath)).not.toThrow();
+  // The isolated reconciliation worker would produce this later closed file.
+  await writeFile(f.candidatePath, f.candidate, { mode: 0o600 });
+  const files = await stageRestoreCandidate(f, originals);
+  expect(await stageRestoreCandidate(f, originals)).toEqual(files);
+  const different = Buffer.from('different later candidate');
+  await writeFile(f.candidatePath, different);
+  await expect(
+    stageRestoreCandidate({ ...f, expectedCandidate: fingerprint(different) }, originals),
+  ).rejects.toThrow('changed');
+  expect(await readFile(join(custody, 'candidate.sqlite'))).toEqual(f.candidate);
+  expect(await readFile(join(custody, 'original', 'spinel.sqlite'))).toEqual(f.original);
+  await activateRestoreFiles(f.control, files);
+  expect(await readFile(f.databasePath)).toEqual(f.candidate);
+});
+
+test('a changed current WAL after custody refuses staging without changing retained originals', async () => {
+  const f = await fixture(),
+    originals = await preserveRestoreOriginals(f);
+  await writeFile(f.databasePath + '-wal', 'later unbound WAL');
+  await expect(stageRestoreCandidate(f, originals)).rejects.toThrow('changed');
+  const custody = join(f.root, `restore-${f.id}`);
+  expect(await readFile(join(custody, 'original', 'spinel.sqlite-wal'))).toEqual(f.wal);
+  await expect(lstat(join(custody, 'candidate.sqlite'))).rejects.toHaveProperty('code', 'ENOENT');
+});
+
+test('unexpected rollback journals refuse custody and activation while preserving their evidence', async () => {
+  const f = await fixture(),
+    journal = f.databasePath + '-journal';
+  await writeFile(journal, 'unhandled rollback evidence', { mode: 0o600 });
+  await expect(preserveRestoreOriginals(f)).rejects.toThrow('rollback journal');
+  expect(await readFile(journal, 'utf8')).toBe('unhandled rollback evidence');
+  await rm(journal);
+  const files = await f.prepare();
+  await writeFile(journal, 'unexpected after custody', { mode: 0o600 });
+  await expect(activateRestoreFiles(f.control, files)).rejects.toThrow('rollback journal');
+  expect(await readFile(f.databasePath)).toEqual(f.original);
+  expect(await readFile(journal, 'utf8')).toBe('unexpected after custody');
 });
 
 test.each(['replacing', 'activated'] as const)(
@@ -226,21 +275,41 @@ test.each(['changed original', 'changed candidate', 'replacement inode', 'open h
   },
 );
 
-test('rejects candidate WAL, source aliases and reused operation IDs without changing current data', async () => {
+test('rejects candidate WAL and source aliases without changing current data', async () => {
   const f = await fixture();
+  const originals = await preserveRestoreOriginals(f);
   await writeFile(f.candidatePath + '-wal', 'uncheckpointed content', { mode: 0o600 });
-  await expect(f.prepare()).rejects.toThrow('self-contained');
+  await expect(stageRestoreCandidate(f, originals)).rejects.toThrow('self-contained');
   await rm(f.candidatePath + '-wal');
   await rm(f.candidatePath);
   await symlink(f.databasePath, f.candidatePath);
-  await expect(f.prepare()).rejects.toThrow();
+  await expect(stageRestoreCandidate(f, originals)).rejects.toThrow();
   await rm(f.candidatePath);
   await link(f.databasePath, f.candidatePath);
-  await expect(f.prepare()).rejects.toThrow();
+  await expect(stageRestoreCandidate(f, originals)).rejects.toThrow();
   await rm(f.candidatePath);
   await writeFile(f.candidatePath, f.candidate, { mode: 0o600 });
+  await stageRestoreCandidate(f, originals);
+  expect(await readFile(f.databasePath)).toEqual(f.original);
+});
+
+test('rejects reused operation IDs without replacing original custody', async () => {
+  const f = await fixture();
   await f.prepare();
   await expect(f.prepare()).rejects.toHaveProperty('code', 'EEXIST');
+  expect(await readFile(f.databasePath)).toEqual(f.original);
+});
+
+test('identical staging retry reserves no second candidate allocation', async () => {
+  const f = await fixture();
+  const originals = await preserveRestoreOriginals(f);
+  const reserve = 256 * 1024 * 1024;
+  const availableBytes = async () => BigInt(2 * reserve + 2 * f.candidate.length);
+  await expect(stageRestoreCandidate({ ...f, availableBytes }, originals)).rejects.toThrow(
+    'disk space',
+  );
+  const files = await stageRestoreCandidate(f, originals);
+  expect(await stageRestoreCandidate({ ...f, availableBytes }, originals)).toEqual(files);
   expect(await readFile(f.databasePath)).toEqual(f.original);
 });
 
