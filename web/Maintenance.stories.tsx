@@ -57,7 +57,7 @@ function initialStatus(scenario: Scenario): MaintenanceAdminStatus {
             ? 'paused'
             : 'running',
     epoch,
-    notice: ['scheduled', 'missed'].includes(scenario)
+    notice: ['scheduled', 'missed', 'expired'].includes(scenario)
       ? {
           id: operationId,
           startsAt: Date.now() + (scenario === 'missed' ? -3_600_000 : 86_400_000),
@@ -103,6 +103,9 @@ function Preview({
           return Response.json({ error: 'Private fixture diagnostic' }, { status: 503 });
         return Response.json({ status });
       }
+      // Authentication writes are gated in the real app during maintenance.
+      if (path.startsWith('/api/auth/reauthentication/') && status.phase !== 'running')
+        return Response.json({ error: 'Workspace maintenance' }, { status: 503 });
       if (path === '/api/auth/reauthentication/options')
         return Response.json({ options: { challenge: 'fixture' }, challengeId: 'a'.repeat(43) });
       if (path === '/api/auth/reauthentication/verify') {
@@ -427,7 +430,7 @@ export const CancelNoticeWhilePaused: Story = {
     ).toHaveAttribute('aria-disabled', 'true');
     await userEvent.click(body.getByRole('menuitem', { name: 'Cancel maintenance notice…' }));
     const dialog = within(await body.findByRole('dialog', { name: 'Cancel maintenance notice?' }));
-    await userEvent.click(dialog.getByRole('button', { name: 'Verify with a passkey' }));
+    await expect(dialog.queryByRole('button', { name: 'Verify with a passkey' })).toBeNull();
     await userEvent.click(await dialog.findByRole('button', { name: 'Cancel notice' }));
     await expect(await canvas.findByText(/Maintenance notice cancelled/)).toBeVisible();
     await expect(args.onAction).toHaveBeenCalledWith(
@@ -441,6 +444,22 @@ export const CancelNoticeWhilePaused: Story = {
       'resume',
       expect.objectContaining({ resumeToken: 'fixture-memory-only-resume-authority' }),
     );
+  },
+};
+export const CancelNoticeWithoutPausedProof: Story = {
+  args: { scenario: 'expired' },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement),
+      body = within(document.body);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Maintenance actions' }));
+    await userEvent.click(
+      await body.findByRole('menuitem', { name: 'Cancel maintenance notice…' }),
+    );
+    const dialog = within(await body.findByRole('dialog', { name: 'Cancel maintenance notice?' }));
+    await expect(dialog.getByText(/Passkey verification cannot be renewed/)).toBeVisible();
+    await expect(dialog.queryByRole('button', { name: 'Verify with a passkey' })).toBeNull();
+    await expect(dialog.queryByRole('button', { name: 'Cancel notice', exact: true })).toBeNull();
+    await expect(args.onAction).not.toHaveBeenCalled();
   },
 };
 export const Phone: Story = {

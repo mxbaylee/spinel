@@ -221,6 +221,8 @@ export function MaintenanceControls({
   const challenge = useRef<string | null>(null);
   const operation = useRef<string | null>(null);
   const resume = useRef<ResumeAuthority | null>(null);
+  // Reuse the pause's bounded proof; authentication writes stay gated while paused.
+  const pauseVerification = useRef(0);
   const actionButton = useRef<HTMLButtonElement>(null);
   const menu = useRef<HTMLButtonElement>(null);
   const [verifyAccount] = useState(() => {
@@ -281,6 +283,7 @@ export function MaintenanceControls({
       readRequest.current?.abort();
       actionRequest.current?.abort();
       resume.current = null;
+      pauseVerification.current = 0;
       clearInterval(polling);
       if (verifying.current) WebAuthnAbortService.cancelCeremony();
       if (challenge.current) void api('cancel', { challengeId: challenge.current }).catch(() => {});
@@ -304,8 +307,10 @@ export function MaintenanceControls({
     const captured = capturedMaintenanceEpoch();
     if (next.available && next.phase === 'running' && captured && captured !== next.epoch)
       setReloadRequired(true);
-    if (next.phase === 'running' || next.operationId !== resume.current?.operationId)
+    if (next.phase === 'running' || next.operationId !== resume.current?.operationId) {
       resume.current = null;
+      pauseVerification.current = 0;
+    }
     setStatus(next);
     setNow(Date.now());
   }
@@ -366,13 +371,15 @@ export function MaintenanceControls({
       return;
     setError('');
     setMessage('');
-    setVerifiedUntil(0);
+    setVerifiedUntil(
+      kind === 'cancel-notice' && status.phase !== 'running' ? pauseVerification.current : 0,
+    );
     operation.current = crypto.randomUUID();
     setConfirmation(kind);
   }
 
   async function verify() {
-    if (locked.current || !confirmation) return;
+    if (locked.current || !confirmation || status?.phase !== 'running') return;
     locked.current = true;
     verifying.current = true;
     const identity = ++serial.current;
@@ -495,12 +502,14 @@ export function MaintenanceControls({
       if (!mounted.current || identity !== serial.current || controller.signal.aborted) return;
       if (!result.ok || typeof data.status?.available !== 'boolean')
         throw new Error('Maintenance request could not be confirmed');
-      if (kind === 'pause' && data.resumeToken && data.status.authorityExpiresAt)
+      if (kind === 'pause' && data.resumeToken && data.status.authorityExpiresAt) {
         resume.current = {
           operationId,
           token: data.resumeToken,
           expiresAt: data.status.authorityExpiresAt,
         };
+        pauseVerification.current = Math.min(verifiedUntil, data.status.authorityExpiresAt);
+      }
       adopt(data.status);
       if (kind === 'resume') setReloadRequired(true);
       setConfirmation(null);
@@ -798,6 +807,12 @@ export function MaintenanceControls({
               <p role="status">Follow your passkey manager to verify this Operator account.</p>
             ) : verifiedUntil > now ? (
               <p role="status">Passkey verified. Confirm the action below.</p>
+            ) : status?.phase !== 'running' ? (
+              <p role="status">
+                Passkey verification cannot be renewed while edits are paused. Resume edits using
+                this tab or the server recovery controls, reload Administration, then cancel the
+                notice.
+              </p>
             ) : (
               <p className="sp-muted">Verify your Operator passkey before continuing.</p>
             )}
@@ -813,11 +828,11 @@ export function MaintenanceControls({
                 >
                   {busy === 'submit' ? 'Working…' : actionLabel}
                 </Button>
-              ) : (
+              ) : status?.phase === 'running' ? (
                 <Button primary disabled={busy !== null} onClick={() => void verify()}>
                   {busy === 'verify' ? 'Verifying…' : 'Verify with a passkey'}
                 </Button>
-              )}
+              ) : null}
             </div>
           </div>
         </Modal>

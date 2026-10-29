@@ -298,8 +298,16 @@ test('real control routes require current Operator, origin and fresh passkey wit
   expect(f.control).toHaveBeenCalledTimes(1);
   f.set({ phase: 'draining', epoch: 'after' });
   await expect.poll(() => f.bridge.status().phase).toBe('paused');
-  // A stale notice can still be withdrawn while edits are paused.
-  f.auth.markVerified(f.operatorSession.session, 'operator-key');
+  // Reuse the proof from before the pause: auth-store writes remain gated.
+  expect(
+    (
+      await f.send('/api/auth/reauthentication/options', {
+        admin: true,
+        body: {},
+        headers: { 'X-Spinel-Epoch': 'after' },
+      })
+    ).status,
+  ).toBe(503);
   const noticeId = randomUUID();
   const withdrawn = await f.send(path + '/cancel-notice', {
     admin: true,
@@ -312,6 +320,15 @@ test('real control routes require current Operator, origin and fresh passkey wit
   expect(withdrawn.status, await withdrawn.clone().text()).toBe(200);
   expect(f.control).toHaveBeenCalledTimes(2);
   expect(f.control.mock.calls[1][0]).toMatchObject({ action: 'cancel-notice', noticeId });
+  expect(
+    (
+      await f.send(path + '/cancel-notice', {
+        admin: true,
+        body: { operationId: randomUUID(), intentExpiresAt: Date.now() - 1, noticeId },
+      })
+    ).status,
+  ).toBe(428);
+  expect(f.control).toHaveBeenCalledTimes(2);
   expect((await f.send('/api/auth/session', { admin: true })).status).toBe(200);
   expect((await f.send(path, { admin: true })).status).toBe(200);
   f.db.prepare('UPDATE auth_users SET is_admin=0 WHERE id=?').run(f.operator.id);

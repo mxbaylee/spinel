@@ -146,8 +146,9 @@ automatic backups are off). An application restart stops the same work and says
 so instead. One step cannot be interrupted: the snapshot copy at the start of a
 backup (`VACUUM INTO` plus integrity checks) is synchronous. On a large
 workspace it can outlast the 25-second drain, which then fails into
-`recovery-required` with `drain-failed`; run verify → start → resume and pause
-again once the backup has finished. Queued work from before the pause is not resent
+`recovery-required` with `drain-failed`; use the current operation ID to run
+stop → verify → start → resume, then pause again. Stop must close the surviving
+application before verification. Queued work from before the pause is not resent
 automatically after resume: each tab keeps it for the person to reconcile.
 
 The parent issues a single-operation resume secret to the initiating browser and
@@ -200,8 +201,12 @@ and no implicit interpretation of a missing spring-forward clock time.
 When the announced time arrives while the controller runs, the notice becomes
 started. If the controller was down at that instant, restart marks it missed.
 Neither state disappears when the estimate ends: it remains visible until
-explicit cancellation/replacement. Cancelling works in any phase, including
-during a pause; scheduling needs a running workspace. A cancelled notice clears
+explicit cancellation/replacement. During a pause, the initiating tab can cancel
+using its still-unexpired passkey verification from that pause. It cannot renew
+verification while workspace writes are gated. After that proof expires or is
+lost, resume using the tab's remaining authority or the server recovery controls,
+reload Administration, and verify again to cancel. Scheduling needs a running
+workspace ([authority decision](implementation/SPN-111.md#bound-paused-notice-cancellation-to-the-existing-proof)). A cancelled notice clears
 once its announced window has passed. Publishing, reaching or cancelling a notice
 never pauses editing and never grants restore/resume authority. Offline devices
 are not promised receipt of an announcement.

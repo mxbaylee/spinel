@@ -370,6 +370,15 @@ test('supervised maintenance keeps pending native work, fences old edits, and re
         paused.resumeToken!,
       ),
     ).toBe(false);
+    await controls(unprivilegedTab).getByRole('button', { name: 'Maintenance actions' }).click();
+    await unprivilegedTab.getByRole('menuitem', { name: 'Cancel maintenance notice…' }).click();
+    const noProof = unprivilegedTab.getByRole('dialog', { name: 'Cancel maintenance notice?' });
+    await expect(noProof.getByText(/Passkey verification cannot be renewed/)).toBeVisible();
+    await expect(noProof.getByRole('button', { name: 'Verify with a passkey' })).toHaveCount(0);
+    await expect(noProof.getByRole('button', { name: 'Cancel notice', exact: true })).toHaveCount(
+      0,
+    );
+    await capture(unprivilegedTab, info, 'cancel-without-proof');
     await unprivilegedTab.close();
     await capture(operator, info, 'paused');
     await banner(operator).locator('summary').click();
@@ -390,6 +399,37 @@ test('supervised maintenance keeps pending native work, fences old edits, and re
     await capture(operator, info, 'backup-paused', true, downloads);
     await operator.evaluate(() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' }));
 
+    // Real paused cancellation reuses the pre-pause proof; no auth write is admitted.
+    let pausedReauthentication = 0;
+    const observeReauthentication = (request: import('@playwright/test').Request) => {
+      if (new URL(request.url()).pathname.startsWith('/api/auth/reauthentication/'))
+        pausedReauthentication++;
+    };
+    operator.on('request', observeReauthentication);
+    await controls(operator).getByRole('button', { name: 'Maintenance actions' }).click();
+    await operator.getByRole('menuitem', { name: 'Cancel maintenance notice…' }).click();
+    const cancelDialog = operator.getByRole('dialog', { name: 'Cancel maintenance notice?' });
+    await expect(cancelDialog.getByRole('button', { name: 'Verify with a passkey' })).toHaveCount(
+      0,
+    );
+    await capture(operator, info, 'cancel-while-paused');
+    const cancelledResponse = operator.waitForResponse(
+      (response) => new URL(response.url()).pathname === '/api/admin/maintenance/cancel-notice',
+    );
+    await cancelDialog.getByRole('button', { name: 'Cancel notice', exact: true }).click();
+    const cancelledReply = await cancelledResponse;
+    expect(cancelledReply.status()).toBe(200);
+    expect(cancelledReply.request().postDataJSON().intentExpiresAt).toBe(proof.verifiedUntil);
+    const cancelled = await publicStatus(app.publicOrigin);
+    expect(cancelled.notice?.state).toBe('cancelled');
+    expect(cancelled.phase).toBe('paused');
+    expect(cancelled.epoch).toBe(paused.status.epoch);
+    expect(pausedReauthentication).toBe(0);
+    operator.off('request', observeReauthentication);
+    await expect(controls(operator).getByText(/Maintenance notice cancelled/)).toBeVisible();
+    await expect(
+      controls(operator).getByRole('button', { name: 'Resume', exact: true }),
+    ).toBeEnabled();
     await controls(operator).getByRole('button', { name: 'Resume', exact: true }).click();
     await expect(
       controls(operator).getByRole('button', { name: 'Reload Administration', exact: true }),
@@ -455,19 +495,6 @@ test('supervised maintenance keeps pending native work, fences old edits, and re
     expect(encrypted.subarray(0, 8).toString()).toBe('SPINEL01');
     await expect(downloads.getByText(/^Backup sent to your browser\./)).toBeVisible();
     await operator.evaluate(() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' }));
-    await controls(operator)
-      .getByRole('button', { name: 'Maintenance actions', exact: true })
-      .click();
-    await operator
-      .getByRole('menuitem', { name: 'Cancel maintenance notice…', exact: true })
-      .click();
-    const cancelDialog = operator.getByRole('dialog', {
-      name: 'Cancel maintenance notice?',
-      exact: true,
-    });
-    await cancelDialog.getByRole('button', { name: 'Verify with a passkey', exact: true }).click();
-    await cancelDialog.getByRole('button', { name: 'Cancel notice', exact: true }).click();
-    await expect(controls(operator).getByText(/Maintenance notice cancelled/)).toBeVisible();
     await expect(banner(operator)).toHaveCount(0);
     expect((await publicStatus(app.publicOrigin)).notice?.state).toBe('cancelled');
     // Leave a new real UI-created announcement for the native geometry checks.

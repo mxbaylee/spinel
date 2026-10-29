@@ -105,8 +105,8 @@ or **Cancel delivery** removes the staged copy. Expiry, disconnected downloads,
 lost access, shutdown and dead-process restart cleanup remove it as well. Only
 one export, publication or verification job can hold the recovery lease at once.
 
-Supervised maintenance blocks new backup actions and waits for already admitted
-preparation or delivery to finish. A ready archive remains private and inert while
+Supervised maintenance blocks new backup actions, cancels admitted preparation
+and delivery, and drains their cleanup. A ready archive remains private and inert while
 paused; its expiry clock continues, so it cannot be delivered after its deadline.
 Heartbeat, expiry and staging cleanup wait for an admitted running tick. A
 supervised shutdown after draining leaves retained staging for the next running
