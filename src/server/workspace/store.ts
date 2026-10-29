@@ -418,6 +418,13 @@ export class WorkspaceStore {
             ? 'viewer'
             : null;
   }
+  /** Account-only authority query without loading document metadata or tags.
+   * Guest capabilities remain confined to the explicit guest paths in get().
+   */
+  accountAccess(userId: string, id: string): ItemAccess | null {
+    this.owner(userId);
+    return this.role(userId, id);
+  }
   get(
     userId: string,
     id: string,
@@ -445,8 +452,7 @@ export class WorkspaceStore {
         access: guest.role,
       };
     }
-    this.owner(userId);
-    const access = this.role(userId, id);
+    const access = this.accountAccess(userId, id);
     if (!access) throw new AuthError(404, 'This item is not available.');
     if (
       (needed === 'owner' && access !== 'owner') ||

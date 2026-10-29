@@ -78,7 +78,7 @@ export function requireCompatibleRestoreSchema(current: DatabaseSync, candidate:
   return target.tables;
 }
 
-function boundedRows(db: DatabaseSync, table: string, max: number, selected?: string[]) {
+export function readRestoreRows(db: DatabaseSync, table: string, max: number, selected?: string[]) {
   const columns =
     selected ??
     db
@@ -127,12 +127,14 @@ export function reconcileRestoreCredentials(current: DatabaseSync, candidate: Da
   const targetFile = statSync(candidate.path, { bigint: true });
   if (sourceFile.dev === targetFile.dev && sourceFile.ino === targetFile.ino) throw incompatible();
   const tables = requireCompatibleRestoreSchema(current, candidate);
-  const users = boundedRows(current, 'auth_users', 1024);
-  const passkeys = boundedRows(current, 'auth_passkeys', 8192);
-  const profiles = tables.has('auth_profiles') ? boundedRows(current, 'auth_profiles', 1024) : [];
-  const links = boundedRows(candidate, 'workspace_links', 100_000, ['item_id', 'epoch']);
+  const users = readRestoreRows(current, 'auth_users', 1024);
+  const passkeys = readRestoreRows(current, 'auth_passkeys', 8192);
+  const profiles = tables.has('auth_profiles')
+    ? readRestoreRows(current, 'auth_profiles', 1024)
+    : [];
+  const links = readRestoreRows(candidate, 'workspace_links', 100_000, ['item_id', 'epoch']);
   const currentLink = current.prepare('SELECT epoch FROM workspace_links WHERE item_id=?');
-  const copyRows = (table: string, rows: ReturnType<typeof boundedRows>) => {
+  const copyRows = (table: string, rows: ReturnType<typeof readRestoreRows>) => {
     const columns = current
       .prepare(`PRAGMA table_info(${quote(table)})`)
       .all()
