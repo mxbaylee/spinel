@@ -9,6 +9,7 @@ import { assertSelfContained } from './restore-input.ts';
 import type { ClosedRestoreInput } from './restore-input.ts';
 import type { PreparedRestore } from './verification.ts';
 import type { FreezeWorkerInput } from './restore-freeze-worker.ts';
+import type { RollbackWorkerInput } from './restore-rollback.ts';
 
 type WorkerInput = {
   directory: string;
@@ -29,13 +30,18 @@ type WorkerInput = {
 
 const disconnected = () => process.exit(1);
 process.once('disconnect', disconnected);
-process.once('message', async (value: WorkerInput | FreezeWorkerInput) => {
+process.once('message', async (value: WorkerInput | FreezeWorkerInput | RollbackWorkerInput) => {
   let database: DatabaseSync | undefined;
   let current: DatabaseSync | undefined;
   try {
     if (value.kind === 'freeze') {
       const { freezeWorkingRestore } = await import('./restore-freeze-worker.ts');
       process.send?.({ ok: true, result: await freezeWorkingRestore(value) });
+      return;
+    }
+    if (value.kind === 'rollback') {
+      const { prepareWorkingRollback } = await import('./restore-rollback-worker.ts');
+      process.send?.({ ok: true, result: await prepareWorkingRollback(value) });
       return;
     }
     const destination = join(value.directory, 'restored');

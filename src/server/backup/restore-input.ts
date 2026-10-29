@@ -2,6 +2,31 @@ import { createHash } from 'node:crypto';
 import { constants } from 'node:fs';
 import { lstat, open } from 'node:fs/promises';
 import { isAbsolute } from 'node:path';
+import { RecoveryResourceError } from './resource-error.ts';
+
+/** Leave room for immutable source copies plus three bounded output-sized
+ * allocations (database, journal, temporary work). This is an admission limit,
+ * not a physical reservation against unrelated writers on the volume. */
+export function restoreOutputLimit(
+  available: bigint,
+  sourceBytes: number,
+  initialBytes: number,
+  maximum: number,
+) {
+  if (
+    ![sourceBytes, initialBytes, maximum].every(Number.isSafeInteger) ||
+    sourceBytes < 0 ||
+    initialBytes < 4096 ||
+    maximum < initialBytes ||
+    maximum > 8 * 1024 ** 3
+  )
+    throw new Error('Invalid recovery output budget.');
+  const remaining = available - BigInt(sourceBytes) - BigInt(256 * 1024 ** 2);
+  const bound = remaining / 3n;
+  const result = Number(bound < BigInt(maximum) ? bound : BigInt(maximum));
+  if (result < initialBytes) throw new RecoveryResourceError('disk-space');
+  return result;
+}
 
 /** A trusted, closed, self-contained snapshot, not a live DB or a raw DB/WAL
  * rollback tuple. The supervisor must snapshot all acknowledged WAL changes

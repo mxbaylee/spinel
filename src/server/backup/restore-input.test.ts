@@ -3,7 +3,22 @@ import { chmod, link, mkdtemp, readFile, rm, stat, symlink, writeFile } from 'no
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, expect, test } from 'vitest';
-import { copyClosedRestoreInput, copyRestoreInputFile } from './restore-input.ts';
+import {
+  copyClosedRestoreInput,
+  copyRestoreInputFile,
+  restoreOutputLimit,
+} from './restore-input.ts';
+
+test('output growth is bounded after immutable input, journal and temporary-space allowances', () => {
+  const MiB = 1024 ** 2;
+  const available = BigInt(256 * MiB + 20 * MiB + 3 * 10 * MiB);
+  expect(restoreOutputLimit(available, 20 * MiB, 4096, 8 * 1024 ** 3)).toBe(10 * MiB);
+  expect(restoreOutputLimit(available, 20 * MiB, 4096, 5 * MiB)).toBe(5 * MiB);
+  expect(() => restoreOutputLimit(available, 20 * MiB, 11 * MiB, 8 * 1024 ** 3)).toThrow(
+    'disk space',
+  );
+  expect(() => restoreOutputLimit(0n, 20 * MiB, 4096, 8 * 1024 ** 3)).toThrow('disk space');
+});
 
 const cleanup: string[] = [];
 afterEach(async () => {

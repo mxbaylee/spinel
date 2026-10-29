@@ -7,6 +7,7 @@ import { digest } from './archive.ts';
 import {
   assertSelfContained,
   copyClosedRestoreInput,
+  restoreOutputLimit,
   validateClosedRestoreInput,
 } from './restore-input.ts';
 import type { ClosedRestoreInput } from './restore-input.ts';
@@ -131,6 +132,7 @@ async function inspectArchive(
     await chmod(directory, 0o700);
     const inputReads: string[] = [];
     let input: Record<string, unknown>;
+    let outputMaximum = options.maxDatabaseBytes;
     if ('current' in options) {
       const maximum = options.maxDatabaseBytes ?? 8 * 1024 ** 3;
       if (!Number.isSafeInteger(maximum) || maximum < 4096 || maximum > 8 * 1024 ** 3)
@@ -138,13 +140,12 @@ async function inspectArchive(
       validateClosedRestoreInput(options.current, maximum);
       validateClosedRestoreInput(options.candidate, maximum);
       const space = await statfs(directory, { bigint: true });
-      if (
-        space.bavail * space.bsize <
-        BigInt(
-          3 * (options.current.databaseBytes + options.candidate.databaseBytes) + 256 * 1024 ** 2,
-        )
-      )
-        throw new RecoveryResourceError('disk-space');
+      outputMaximum = restoreOutputLimit(
+        space.bavail * space.bsize,
+        options.current.databaseBytes,
+        options.candidate.databaseBytes,
+        maximum,
+      );
       await mkdir(join(directory, 'restored'), { mode: 0o700 });
       const currentPath = join(directory, 'current.sqlite'),
         candidatePath = join(directory, 'restored', 'spinel.sqlite');
@@ -189,7 +190,7 @@ async function inspectArchive(
         ...input,
         expectedOrigin: options.expectedOrigin,
         expectedImage: options.expectedImage,
-        maxDatabaseBytes: options.maxDatabaseBytes,
+        maxDatabaseBytes: outputMaximum,
         retain,
       },
       validate(value): value is WorkerResult {
@@ -201,7 +202,11 @@ async function inspectArchive(
             return typeof count === 'number' && Number.isSafeInteger(count) && count >= 0;
           }) &&
           (result.keyId === undefined || /^[a-zA-Z0-9_-]{1,80}$/.test(result.keyId)) &&
-          (!retain || validPreparedEvidence(result.prepared, options)) &&
+          (!retain ||
+            validPreparedEvidence(result.prepared, {
+              ...options,
+              maxDatabaseBytes: outputMaximum,
+            })) &&
           (!reconciliation || validReconciliationSummary(result.prepared?.reconciliation))
         );
       },

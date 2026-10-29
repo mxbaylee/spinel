@@ -25,6 +25,7 @@ import {
 } from './inventory.ts';
 import { reconcileRestoreCandidate, reconcileRestoreRollback } from './restore-candidate.ts';
 import { rotateRestoreGenerations } from './restore-generations.ts';
+import { prepareRestoreRollback } from './restore-rollback.ts';
 import { digest, makeArchive } from './archive.ts';
 import { prepareRestoreArchive, reconcilePreparedRestore } from './verification.ts';
 import type { ChildProcess } from 'node:child_process';
@@ -34,11 +35,18 @@ import type { ChildProcess } from 'node:child_process';
 const boundaries = vi.hoisted(() => ({
   remove: undefined as ((path: unknown) => void) | undefined,
   fork: undefined as ((child: ChildProcess) => void) | undefined,
+  availableBytes: undefined as bigint | undefined,
 }));
 vi.mock('node:fs/promises', async (original) => {
   const actual = await original<typeof import('node:fs/promises')>();
   return {
     ...actual,
+    statfs: async (...args: Parameters<typeof actual.statfs>) => {
+      const value = await actual.statfs(...args);
+      return boundaries.availableBytes === undefined
+        ? value
+        : { ...value, bsize: 1n, bavail: boundaries.availableBytes };
+    },
     rm: async (...args: Parameters<typeof actual.rm>) => {
       await actual.rm(...args);
       boundaries.remove?.(args[0]);
@@ -62,6 +70,7 @@ const cleanup: (() => unknown | Promise<unknown>)[] = [];
 afterEach(async () => {
   boundaries.remove = undefined;
   boundaries.fork = undefined;
+  boundaries.availableBytes = undefined;
   vi.restoreAllMocks();
   for (const close of cleanup.splice(0).reverse()) await close();
 });
@@ -134,6 +143,138 @@ async function originalCopy(db: DatabaseSync, directory: string) {
   cleanup.push(() => copy.close());
   return copy;
 }
+
+async function rollbackRequest() {
+  const f = await fixture();
+  f.db.exec('DROP TABLE spinel_recovery');
+  const fingerprint = restoreSnapshotFingerprint(f.db);
+  const path = join(f.directory, 'rollback-original.sqlite');
+  await backup(f.db, path);
+  await chmod(path, 0o600);
+  const current = {
+    databasePath: path,
+    databaseBytes: (await stat(path)).size,
+    databaseSha256: await digest(path),
+    fingerprint,
+  };
+  return { f, request: { ...options, current, additional: [], stagingRoot: f.directory } };
+}
+
+test('real rollback worker prepares a closed private original and retires attempted native identities', async () => {
+  const { f, request } = await rollbackRequest();
+  const attempt = await originalCopy(f.db, f.directory);
+  rotateRestoreGenerations(f.db, attempt);
+  const retired = attempt
+    .prepare('SELECT unit_id FROM spinel_live_units')
+    .all()
+    .map((row) => row.unit_id);
+  const attemptPath = join(f.directory, 'retained-attempt.sqlite');
+  await backup(attempt, attemptPath);
+  await chmod(attemptPath, 0o600);
+  const evidence = {
+    databasePath: attemptPath,
+    databaseBytes: (await stat(attemptPath)).size,
+    databaseSha256: await digest(attemptPath),
+  };
+  const originals = [await readFile(request.current.databasePath), await readFile(attemptPath)];
+  const maximum = 2 * request.current.databaseBytes;
+  boundaries.availableBytes = BigInt(
+    request.current.databaseBytes + evidence.databaseBytes + 256 * 1024 ** 2 + 3 * maximum,
+  );
+  let spawned!: ChildProcess;
+  boundaries.fork = (child) => {
+    spawned = child;
+    vi.spyOn(child, 'send');
+  };
+  const prepared = await prepareRestoreRollback({ ...request, additional: [evidence] });
+  cleanup.push(prepared.dispose);
+  expect(vi.mocked(spawned.send).mock.calls[0][0]).toMatchObject({
+    kind: 'rollback',
+    maxDatabaseBytes: maximum,
+  });
+  expect(prepared.databaseBytes).toBeLessThanOrEqual(maximum);
+  expect(await readdir(dirname(prepared.databasePath))).toEqual(['rollback.sqlite']);
+  expect((await stat(prepared.databasePath)).mode & 0o777).toBe(0o600);
+  expect(await digest(prepared.databasePath)).toBe(prepared.databaseSha256);
+  expect(prepared.originalFingerprint).toBe(request.current.fingerprint);
+  expect(prepared.reconciliation.generations.rotated).toBe(1);
+  expect([await readFile(request.current.databasePath), await readFile(attemptPath)]).toEqual(
+    originals,
+  );
+  const output = new DatabaseSync(prepared.databasePath);
+  cleanup.push(() => output.close());
+  expect(verifyInventory(output)).toEqual({ tables: prepared.tables, rows: prepared.rows });
+  for (const unit of retired) {
+    expect(
+      output
+        .prepare("SELECT 1 FROM spinel_restore_fences WHERE kind='identity' AND id=?")
+        .get(unit),
+    ).toBeDefined();
+    expect(
+      output.prepare('SELECT 1 FROM spinel_live_units WHERE unit_id=?').get(unit),
+    ).toBeUndefined();
+  }
+});
+
+test('a wrong original witness is rejected by the actual rollback worker with complete staging cleanup', async () => {
+  const { f, request } = await rollbackRequest();
+  const original = await readFile(request.current.databasePath);
+  await expect(
+    prepareRestoreRollback({
+      ...request,
+      current: { ...request.current, fingerprint: 'f'.repeat(64) },
+    }),
+  ).rejects.toThrow();
+  expect(await readFile(request.current.databasePath)).toEqual(original);
+  expect(
+    (await readdir(f.directory)).filter((name) => name.startsWith('.restore-rollback-')),
+  ).toEqual([]);
+});
+
+test('actual rollback growth beyond the admitted disk cap fails without retaining output', async () => {
+  const { f, request } = await rollbackRequest();
+  const original = await readFile(request.current.databasePath);
+  // VACUUM produced a compact original with no recovery table. Creating its
+  // required inventory needs another page, but this allowance cannot grow it.
+  boundaries.availableBytes = BigInt(256 * 1024 ** 2 + 4 * request.current.databaseBytes);
+  await expect(prepareRestoreRollback(request)).rejects.toThrow();
+  expect(await readFile(request.current.databasePath)).toEqual(original);
+  expect(
+    (await readdir(f.directory)).filter((name) => name.startsWith('.restore-rollback-')),
+  ).toEqual([]);
+});
+
+test('rollback rejects changed input bytes and alias attempts without publishing output', async () => {
+  const { f, request } = await rollbackRequest();
+  await expect(
+    prepareRestoreRollback({
+      ...request,
+      current: { ...request.current, databaseSha256: 'f'.repeat(64) },
+    }),
+  ).rejects.toThrow();
+  await expect(
+    prepareRestoreRollback({ ...request, additional: [request.current] }),
+  ).rejects.toThrow('independent');
+  const controller = new AbortController();
+  controller.abort();
+  await expect(prepareRestoreRollback({ ...request, signal: controller.signal })).rejects.toThrow();
+  expect(
+    (await readdir(f.directory)).filter((name) => name.startsWith('.restore-rollback-')),
+  ).toEqual([]);
+});
+
+test('rollback cancellation at source-cleanup never publishes an otherwise valid result', async () => {
+  const { f, request } = await rollbackRequest();
+  const controller = new AbortController();
+  boundaries.remove = (path) => {
+    if (String(path).includes('.restore-rollback-') && String(path).endsWith('/current.sqlite'))
+      controller.abort();
+  };
+  await expect(prepareRestoreRollback({ ...request, signal: controller.signal })).rejects.toThrow();
+  expect(
+    (await readdir(f.directory)).filter((name) => name.startsWith('.restore-rollback-')),
+  ).toEqual([]);
+});
 
 test('rollback retains original ownership, filing and content with only attempted negative evidence', async () => {
   const f = await fixture();
@@ -473,8 +614,20 @@ test('real isolated reconciliation publishes only the closed verified candidate,
     expectedOrigin: recovery.origin,
     expectedImage: recovery.image,
   };
+  const maximum = candidate.databaseBytes * 2;
+  boundaries.availableBytes = BigInt(current.databaseBytes + 256 * 1024 ** 2 + 3 * maximum);
+  let spawned!: ChildProcess;
+  boundaries.fork = (child) => {
+    spawned = child;
+    vi.spyOn(child, 'send');
+  };
   const output = await reconcilePreparedRestore(request);
   cleanup.push(output.dispose);
+  expect(vi.mocked(spawned.send).mock.calls[0][0]).toMatchObject({
+    kind: 'reconcile',
+    maxDatabaseBytes: maximum,
+  });
+  expect(output.databaseBytes).toBeLessThanOrEqual(maximum);
   expect(output.databasePath).not.toBe(candidate.databasePath);
   expect(output.recovery).toEqual(candidate.recovery);
   expect(output.databaseSha256).toBe(await digest(output.databasePath));
