@@ -181,6 +181,8 @@ if (process.argv.includes('--seed')) {
               .prepare('SELECT counter FROM auth_passkeys WHERE id=?')
               .get(input.credentialId)?.counter,
             memoryLimitBytes: await numericFile('/sys/fs/cgroup/memory.max'),
+            cpuMax: (await readFile('/sys/fs/cgroup/cpu.max', 'utf8')).trim(),
+            pidsMax: await numericFile('/sys/fs/cgroup/pids.max'),
             memoryPeakBytes: await numericFile('/sys/fs/cgroup/memory.peak'),
           });
         } finally {
@@ -277,7 +279,7 @@ if (process.argv.includes('--seed')) {
     };
     service = fork('/app/server/supervisor.ts', [], {
       env: environment,
-      execArgv: ['--max-old-space-size=128', '--max-semi-space-size=4'],
+      execArgv: ['--max-old-space-size=64'],
       stdio: ['ignore', 'ignore', 'pipe', 'ipc'],
     });
     // Retain only allowlisted native error metadata, never stderr text/paths.

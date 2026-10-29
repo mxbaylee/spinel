@@ -512,8 +512,11 @@ stop/readiness evidence before opening a candidate. A failed trial permits at
 most one refreshed original-content attempt within the original authority window;
 it never copies raw original files back over a live or newly acknowledged
 generation. A committed outcome survives restart cleanup without reinstalling
-prepared bytes. An unexecuted, fully identified admission is marked failed and
-left stopped/unverified for explicit host recovery. Missing evidence, expired
+prepared bytes. On supervisor restart, an unexecuted, fully identified admission
+is marked failed and left stopped/unverified for explicit host recovery. A proven
+non-start in the still-running application releases only that attempt's logical
+hold, retaining its recovery evidence and permitting a new preparation.
+Missing evidence, expired
 authority or ambiguous ownership keeps the workspace closed.
 
 For an unresolved restore, preserve the private recovery root, encrypted source,

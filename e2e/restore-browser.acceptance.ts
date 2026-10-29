@@ -48,8 +48,11 @@ const artifact: Record<string, unknown> = {
     'Real production Admin browser flow with synthetic CDP passkey, Linux controller and disposable HTTPS proxy; not physical-device or remote-provider acceptance',
   startedAt: new Date().toISOString(),
   image,
-  containerMemoryMiB: 1800,
-  containerCpus: 2,
+  containerMemoryMiB: 1024,
+  containerCpus: 0.75,
+  containerPids: 128,
+  supervisorOldSpaceMiB: 64,
+  fixtureDriverOldSpaceMiB: 128,
   volume,
   storage:
     'Durable Linux named volume for workspace/recovery; private host bind for source exchange and evidence only',
@@ -283,9 +286,10 @@ try {
       '--name',
       `${container}-init`,
       '--pull=never',
-      '--memory=1800m',
-      '--memory-swap=1800m',
-      '--cpus=2',
+      '--memory=1024m',
+      '--memory-swap=1024m',
+      '--cpus=0.75',
+      '--pids-limit=128',
       '--network=none',
       '--user',
       '0:0',
@@ -306,9 +310,10 @@ try {
       '--pull=never',
       '--name',
       container,
-      '--memory=1800m',
-      '--memory-swap=1800m',
-      '--cpus=2',
+      '--memory=1024m',
+      '--memory-swap=1024m',
+      '--cpus=0.75',
+      '--pids-limit=128',
       '--user',
       `${process.getuid!()}:${process.getgid!()}`,
       '-p',
@@ -438,6 +443,8 @@ try {
     originalSessionExcluded: boolean;
     counter: number;
     memoryLimitBytes: number | null;
+    cpuMax: string;
+    pidsMax: number | null;
     memoryPeakBytes: number | null;
   }>('closed-proof.json');
   if (
@@ -447,7 +454,9 @@ try {
     containerExit !== 0 ||
     !Number.isSafeInteger(proof.counter) ||
     proof.counter < 4 ||
-    proof.memoryLimitBytes !== 1800 * 1024 * 1024 ||
+    proof.memoryLimitBytes !== 1024 * 1024 * 1024 ||
+    proof.cpuMax !== '75000 100000' ||
+    proof.pidsMax !== 128 ||
     !Number.isSafeInteger(proof.memoryPeakBytes) ||
     proof.memoryPeakBytes === null ||
     proof.memoryPeakBytes <= 0
