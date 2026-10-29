@@ -116,6 +116,24 @@ function state(db: DatabaseSync) {
     ]);
 }
 
+test('an empty purged current generation retains its permanent revision ceiling for future recovery', async () => {
+  const f = await fixture(),
+    candidate = await f.snapshot();
+  f.db.exec(
+    'UPDATE spinel_restore_revision SET revision=500; DELETE FROM workspace_items; DELETE FROM spinel_sync_units; DELETE FROM collaboration_purge',
+  );
+  expect(restoreRevisionHighWater(f.db, candidate)).toBe(500);
+  const result = rotateRestoreGenerations(f.db, candidate);
+  expect(result.revisionOffset).toBe(500);
+  expect(candidate.prepare('SELECT revision FROM spinel_restore_revision').get()!.revision).toBe(
+    501,
+  );
+  candidate.exec(
+    'DELETE FROM workspace_items; DELETE FROM spinel_sync_units; DELETE FROM collaboration_purge',
+  );
+  expect(restoreRevisionHighWater(f.db, candidate)).toBe(501);
+});
+
 test('rotates every document, preserves archived resources/content, and old identities stay retired after purge and another restore', async () => {
   const f = await fixture(),
     trashed = f.create();

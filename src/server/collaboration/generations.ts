@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { AuthError } from '../auth/store.ts';
 import type { WorkspaceStore } from '../workspace/store.ts';
 import { resolveDocument } from '../workspace/document-access.ts';
-import { restoreFenceSchema, restoreFenced } from './restore-fences.ts';
+import { restoreFenceSchema, restoreFenced, retainRestoreRevision } from './restore-fences.ts';
 
 export type LiveGeneration = { itemId: string; unitId: string; offset: number };
 export type RestoreJob = {
@@ -183,6 +183,7 @@ export class CollaborationGenerations {
         `INSERT INTO spinel_live_units VALUES(?,?,?) ON CONFLICT(item_id) DO UPDATE SET
         unit_id=excluded.unit_id,revision_offset=excluded.revision_offset`,
       ).run(job.itemId, job.nextUnit, drainedRevision);
+      retainRestoreRevision(db, drainedRevision + 1);
       db.prepare("UPDATE spinel_restore_jobs SET status='complete',revision=? WHERE id=?").run(
         drainedRevision + 1,
         id,

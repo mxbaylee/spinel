@@ -1,4 +1,8 @@
 import { MAX_RETAINED_BYTES, MAX_RETAINED_REVISIONS, SyncError } from '@spinel/sync-server';
+import {
+  retainRestoreRevision,
+  restoreRevisionDeletionSchema,
+} from '../collaboration/restore-fences.ts';
 import type { SyncCommit, SyncRevision, SyncStorage, SyncUnit } from '@spinel/sync-server';
 import type { AuthStore } from '../auth/store.ts';
 
@@ -40,6 +44,7 @@ export class SQLiteSyncStorage implements SyncStorage {
         UNIQUE(unit_id,actor_id,mutation_id)
       ) STRICT;
     `);
+    restoreRevisionDeletionSchema(auth.database);
   }
 
   has(unitId: string): boolean {
@@ -139,22 +144,7 @@ export class SQLiteSyncStorage implements SyncStorage {
       // Workspace recovery can establish a large logical offset. Check the
       // addition inside the same transaction as the receipt/head, so the first
       // exhausted edit cannot commit an unrepresentable logical revision.
-      const hasGenerations = this.auth.database
-        .prepare("SELECT 1 FROM sqlite_schema WHERE type='table' AND name='spinel_live_units'")
-        .get();
-      const offset = hasGenerations
-        ? Number(
-            this.auth.database
-              .prepare('SELECT revision_offset FROM spinel_live_units WHERE unit_id=?')
-              .get(unit.unitId)?.revision_offset ?? 0,
-          )
-        : 0;
-      if (
-        !Number.isSafeInteger(offset) ||
-        offset < 0 ||
-        unit.revision > Number.MAX_SAFE_INTEGER - offset
-      )
-        throw new SyncError('capacity');
+      const logicalRevision = this.logicalRevision(unit.unitId, unit.revision);
       if (this.receipt(unit.unitId, edit.actorId, edit.mutationId))
         throw new SyncError('retry-conflict');
       this.auth.database
@@ -179,14 +169,45 @@ export class SQLiteSyncStorage implements SyncStorage {
         )
         .run(unit.revision, snapshot, retainedFrom, unit.unitId, expectedRevision);
       if (changed.changes !== 1) throw new SyncError('stale');
+      retainRestoreRevision(this.auth.database, logicalRevision);
     });
   }
 
   /** Trusted lifecycle caller checks its purge outbox and active generation. */
   remove(unitId: string): void {
     this.auth.transaction(() => {
+      const head = this.auth.database
+        .prepare('SELECT revision FROM spinel_sync_units WHERE unit_id=?')
+        .get(unitId);
+      if (head)
+        retainRestoreRevision(
+          this.auth.database,
+          this.logicalRevision(unitId, Number(head.revision)),
+        );
       this.auth.database.prepare('DELETE FROM spinel_sync_units WHERE unit_id=?').run(unitId);
     });
+  }
+
+  private logicalRevision(unitId: string, revision: number) {
+    const hasGenerations = this.auth.database
+      .prepare("SELECT 1 FROM sqlite_schema WHERE type='table' AND name='spinel_live_units'")
+      .get();
+    const offset = hasGenerations
+      ? Number(
+          this.auth.database
+            .prepare('SELECT revision_offset FROM spinel_live_units WHERE unit_id=?')
+            .get(unitId)?.revision_offset ?? 0,
+        )
+      : 0;
+    if (
+      !Number.isSafeInteger(revision) ||
+      revision < 1 ||
+      !Number.isSafeInteger(offset) ||
+      offset < 0 ||
+      revision > Number.MAX_SAFE_INTEGER - offset
+    )
+      throw new SyncError('capacity');
+    return revision + offset;
   }
 
   private retain(unitId: string, revision: number): number {

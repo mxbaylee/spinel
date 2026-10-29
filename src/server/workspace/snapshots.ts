@@ -1,6 +1,6 @@
 import { AuthError } from '../auth/store.ts';
 import type { WorkspaceStore } from './store.ts';
-import { restoreFenced } from '../collaboration/restore-fences.ts';
+import { restoreFenced, retainRestoreRevision } from '../collaboration/restore-fences.ts';
 
 export type SnapshotSaved = {
   id: string;
@@ -64,6 +64,7 @@ export function commitSnapshot(
       .run(workspace.auth.now(), id);
     // Observers run inside this transaction: a failed baseline cannot acknowledge a save.
     workspace.snapshotSaved({ id, before: current, after: { snapshot: text, revision: next } });
+    retainRestoreRevision(db, next);
     return { revision: next };
   });
 }

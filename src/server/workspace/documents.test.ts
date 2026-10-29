@@ -31,6 +31,27 @@ const png = () =>
     .png()
     .toBuffer();
 
+test('legacy saves retain accepted revisions after deletion and failed observers cannot advance the clock', () => {
+  const f = fixture();
+  f.db.exec(restoreFenceSchema);
+  f.docs.save(f.owner.id, f.item.id, { snapshot: f.snapshot, revision: 0, writeId: randomUUID() });
+  const listener = f.workspace.onSnapshotSaved(() => {
+    throw new Error('fixture observer refusal');
+  });
+  const second = {
+    snapshot: { ...f.snapshot, title: 'Changed' },
+    revision: 1,
+    writeId: randomUUID(),
+  };
+  expect(() => f.docs.save(f.owner.id, f.item.id, second)).toThrow('fixture observer refusal');
+  expect(f.db.prepare('SELECT revision FROM spinel_restore_revision').get()!.revision).toBe(1);
+  expect(f.docs.load(f.owner.id, f.item.id).revision).toBe(1);
+  listener.dispose();
+  f.docs.save(f.owner.id, f.item.id, second);
+  f.db.prepare('DELETE FROM workspace_items WHERE id=?').run(f.item.id);
+  expect(f.db.prepare('SELECT revision FROM spinel_restore_revision').get()!.revision).toBe(2);
+});
+
 test('a restored lazy document refuses a matching old full-snapshot save without changing its content', () => {
   const f = fixture(),
     db = f.workspace.auth.database;
@@ -53,8 +74,10 @@ test('a restored lazy document refuses a matching old full-snapshot save without
 
 test('native document snapshots preserve their complete data and the shared revision/retry contract', () => {
   const f = fixture();
+  f.db.exec(restoreFenceSchema);
   const payload = { snapshot: f.snapshot, revision: 0, writeId: randomUUID() };
   expect(f.docs.save(f.owner.id, f.item.id, payload)).toEqual({ revision: 1 });
+  expect(f.db.prepare('SELECT revision FROM spinel_restore_revision').get()!.revision).toBe(1);
   expect(f.docs.save(f.owner.id, f.item.id, payload)).toEqual({ revision: 1 });
   expect(new DocumentStore(f.workspace).load(f.owner.id, f.item.id)).toEqual({
     access: 'owner',

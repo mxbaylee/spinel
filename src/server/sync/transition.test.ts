@@ -139,6 +139,7 @@ test('transition retains populated workspace recovery holds and permanent retry 
   f.data.db.exec(restoreFenceSchema);
   f.data.db.prepare('INSERT INTO spinel_restore_fences VALUES(?,?)').run('identity', randomUUID());
   f.data.db.prepare('INSERT INTO spinel_restore_fences VALUES(?,?)').run('request', randomUUID());
+  f.data.db.exec('UPDATE spinel_restore_revision SET revision=500');
   const fences = f.data.db.prepare('SELECT * FROM spinel_restore_fences ORDER BY kind,id').all();
   const expected = f.data.db.prepare('SELECT * FROM workspace_recovery_holds').all();
   expect(expected.length).toBeGreaterThan(0);
@@ -147,6 +148,7 @@ test('transition retains populated workspace recovery holds and permanent retry 
   const db = new DatabaseSync(result.path);
   try {
     expect(db.prepare('SELECT * FROM workspace_recovery_holds').all()).toEqual(expected);
+    expect(db.prepare('SELECT revision FROM spinel_restore_revision').get()!.revision).toBe(500);
     expect(db.prepare('SELECT * FROM spinel_restore_fences ORDER BY kind,id').all()).toEqual(
       fences,
     );

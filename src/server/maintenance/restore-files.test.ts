@@ -58,6 +58,7 @@ async function fixture() {
     root,
     databasePath,
     assertClosed,
+    readPhase: () => phases.at(-1),
     async persist(phase) {
       if (phase === fail) throw new Error('Journal fsync failed.');
       phases.push(phase);
@@ -167,9 +168,42 @@ test('partial overwrite and interrupted rollback replay from immutable originals
   expect(() => assertNoPendingRestore(f.databasePath)).not.toThrow();
   // A completed restore cannot later replay rollback over newly accepted work.
   await writeFile(f.databasePath, Buffer.from('newly accepted work'));
-  await expect(rollbackRestoreFiles(f.control, files)).rejects.toHaveProperty('code', 'ENOENT');
+  await expect(rollbackRestoreFiles(f.control, files)).rejects.toThrow('committed');
   expect(await readFile(f.databasePath)).toEqual(Buffer.from('newly accepted work'));
 });
+
+test.each(['candidate', 'original'] as const)(
+  'durable %s commitment forbids rollback even when marker cleanup has failed',
+  async (outcome) => {
+    const f = await fixture(),
+      files = await f.prepare();
+    await activateRestoreFiles(f.control, files);
+    if (outcome === 'original') await rollbackRestoreFiles(f.control, files);
+    const marker = restoreBarrierPath(f.databasePath),
+      pending = `${marker}.${files.id}.pending`;
+    // An unexpected temporary-marker inode makes cleanup fail AFTER persist.
+    await writeFile(pending, 'unexpected pending marker', { mode: 0o600 });
+    await expect(commitRestoreFiles(f.control, files, outcome)).rejects.toThrow('changed');
+    expect(f.control.readPhase()).toBe(`${outcome}-committed`);
+    expect(() => assertNoPendingRestore(f.databasePath)).toThrow();
+    const selected = await readFile(f.databasePath);
+    await expect(rollbackRestoreFiles(f.control, files)).rejects.toThrow('committed');
+    await expect(activateRestoreFiles(f.control, files)).rejects.toThrow('committed');
+    await expect(
+      commitRestoreFiles(f.control, files, outcome === 'candidate' ? 'original' : 'candidate'),
+    ).rejects.toThrow('committed');
+    expect(await readFile(f.databasePath)).toEqual(selected);
+    await rm(pending);
+    await commitRestoreFiles(f.control, files, outcome);
+    expect(() => assertNoPendingRestore(f.databasePath)).not.toThrow();
+    expect(await readFile(f.databasePath)).toEqual(selected);
+    // Re-enter after unlink but before the original directory fsync completed.
+    // Newly acknowledged bytes must never be replaced on terminal cleanup retry.
+    await writeFile(f.databasePath, 'new acknowledged work');
+    await commitRestoreFiles(f.control, files, outcome);
+    expect(await readFile(f.databasePath)).toEqual(Buffer.from('new acknowledged work'));
+  },
+);
 
 test.each(['changed original', 'changed candidate', 'replacement inode', 'open handle'] as const)(
   'rejects %s before the first destructive write',

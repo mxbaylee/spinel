@@ -7,6 +7,7 @@ import { snapshotIdentity } from '../../shared/snapshotIdentity.ts';
 import { imageSources } from '../workspace/imageSources.ts';
 import { readRestoreRows, requireCompatibleRestoreSchema } from './restore-credentials.ts';
 import { reconcileRestoreFences } from './restore-fences.ts';
+import { retainRestoreRevision } from '../collaboration/restore-fences.ts';
 
 const incompatible = () =>
   new Error('This backup needs compatible native generation reconciliation.');
@@ -18,11 +19,13 @@ const required = [
   'spinel_restore_jobs',
   'spinel_generation_resources',
   'spinel_restore_fences',
+  'spinel_restore_revision',
   'workspace_collaboration',
   'collaboration_purge',
 ];
 
-/** A global upper bound also covers units whose current document was deleted.
+/** The durable ceiling covers observed heads after their documents are deleted.
+ * Historical offsets erased before this clock existed cannot be reconstructed.
  * A conservative sum may refuse earlier than per-document arithmetic; it never
  * understates an observed logical head or fabricates intermediate native edits.
  */
@@ -45,6 +48,7 @@ export function restoreRevisionHighWater(current: DatabaseSync, candidate: Datab
       ['history_checkpoints', 'revision', 0],
       ['history_progress', 'revision', 0],
       ['spinel_restore_jobs', 'revision', 1],
+      ['spinel_restore_revision', 'revision', 0],
     ] as const) {
       if (!tables.has(table)) continue;
       const columns = table === 'spinel_restore_jobs' ? [field, 'status'] : [field];
@@ -243,6 +247,7 @@ export function rotateRestoreGenerations(current: DatabaseSync, candidate: Datab
       queue.run(oldUnit);
     }
     for (const row of candidate.iterate('PRAGMA foreign_key_check')) if (row) throw incompatible();
+    retainRestoreRevision(candidate, highWater + 1);
     candidate.exec('COMMIT');
     return { rotated: documents.length, initialized, revisionOffset: highWater };
   } catch (error) {

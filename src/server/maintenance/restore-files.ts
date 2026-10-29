@@ -33,6 +33,9 @@ export interface RestoreFileControl {
   assertClosed(): void;
   /** Must fsync the independent journal before resolving; never just notify UI. */
   persist(phase: RestoreFilePhase): Promise<void>;
+  /** Read the durable decision for this exact job under the caller's serial
+   * control lock. A surviving barrier never overrides a committed outcome. */
+  readPhase(): RestoreFilePhase | undefined;
   /** Test-only resource probe; never accepted through a control request. */
   availableBytes?: (path: string) => Promise<bigint>;
 }
@@ -339,6 +342,7 @@ async function removeSidecars(databasePath: string) {
 }
 
 export async function activateRestoreFiles(control: RestoreFileControl, files: RestoreFiles) {
+  assertUncommitted(control);
   const root = await retained(control, files);
   // Initial activation requires exactly the frozen original, including absent WAL.
   for (const name of names) {
@@ -357,6 +361,7 @@ export async function activateRestoreFiles(control: RestoreFileControl, files: R
   await requireEvidence(candidate, files.candidate);
   control.assertClosed();
   await admitMutation(control, files, false);
+  assertUncommitted(control);
   await barrier(control, files, true);
   await control.persist('replacing');
   await overwrite(candidate, control.databasePath, files.identity);
@@ -371,10 +376,12 @@ export async function activateRestoreFiles(control: RestoreFileControl, files: R
  * SHM is preserved as evidence but rebuilt by SQLite, never restored as lock state.
  */
 export async function rollbackRestoreFiles(control: RestoreFileControl, files: RestoreFiles) {
+  assertUncommitted(control);
   const root = await retained(control, files);
   await barrier(control, files);
   control.assertClosed();
   await admitMutation(control, files, true);
+  assertUncommitted(control);
   await control.persist('rolling-back');
   await overwrite(join(root, 'original', 'spinel.sqlite'), control.databasePath, files.identity);
   await removeSidecars(control.databasePath);
@@ -398,10 +405,32 @@ export async function commitRestoreFiles(
   files: RestoreFiles,
   outcome: 'candidate' | 'original',
 ) {
-  await barrier(control, files);
+  const phase = control.readPhase();
+  const selected = outcome === 'candidate' ? 'candidate-committed' : 'original-committed';
+  if (phase?.endsWith('-committed') && phase !== selected)
+    throw new Error('This restore already has a different committed outcome.');
+  let marked = true;
+  try {
+    await barrier(control, files);
+  } catch (error) {
+    if (phase !== selected || (error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+    marked = false;
+  }
   if (!same(files.identity, identity(await ownedFile(control.databasePath)))) throw unavailable();
-  await control.persist(outcome === 'candidate' ? 'candidate-committed' : 'original-committed');
+  if (phase !== selected) await control.persist(selected);
   const pending = `${restoreBarrierPath(control.databasePath)}.${files.id}.pending`;
+  if (!marked) {
+    // Normal commit removes pending first. An unexplained residual file still
+    // needs recovery; never delete it based only on a terminal phase.
+    try {
+      await lstat(pending);
+      throw unavailable();
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+    }
+    await syncDirectory(dirname(control.databasePath));
+    return;
+  }
   try {
     const old = await lstat(pending),
       current = await lstat(restoreBarrierPath(control.databasePath));
@@ -412,4 +441,9 @@ export async function commitRestoreFiles(
   }
   await rm(restoreBarrierPath(control.databasePath));
   await syncDirectory(dirname(control.databasePath));
+}
+
+function assertUncommitted(control: RestoreFileControl) {
+  if (control.readPhase()?.endsWith('-committed'))
+    throw new Error('A committed restore cannot replace or roll back the workspace.');
 }

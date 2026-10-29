@@ -13,6 +13,8 @@ import { resolveDocument } from '../workspace/document-access.ts';
 import { migrateSpaceSchema } from '../workspace/space-schema.ts';
 import { SpaceStore } from '../workspace/spaces.ts';
 import { CollaborationGenerations } from '../collaboration/generations.ts';
+import { DocumentStore } from '../workspace/documents.ts';
+import { SheetStore } from '../workspace/sheets.ts';
 import { SQLiteSyncStorage } from './store.ts';
 
 const cleanup: (() => Promise<unknown> | unknown)[] = [];
@@ -144,6 +146,84 @@ test('the compare-and-swap head rejects a second writer and a used retry identit
   expect(() => f.store.commit(reused, f.guard)).toThrow('retry-conflict');
   expect(f.store.load(f.item.id)?.revision).toBe(2);
   expect(f.store.receipt(f.item.id, f.editor.id, first.edit.mutationId)).toEqual(first.edit);
+});
+
+test('accepted logical revisions remain fenced after native purge and failed edits cannot raise the ceiling', async () => {
+  const f = await fixture();
+  new CollaborationGenerations(f.workspace);
+  f.database.prepare('INSERT INTO spinel_live_units VALUES(?,?,100)').run(f.item.id, f.item.id);
+  const accepted = next(f.unit, f.editor.id);
+  f.store.commit(accepted, f.guard);
+  expect(f.database.prepare('SELECT revision FROM spinel_restore_revision').get()!.revision).toBe(
+    102,
+  );
+  const refused = next(accepted.unit, f.editor.id);
+  expect(() =>
+    f.store.commit(refused, () => {
+      throw new Error('revoked');
+    }),
+  ).toThrow('revoked');
+  f.store.remove(f.item.id);
+  expect(f.database.prepare('SELECT revision FROM spinel_restore_revision').get()!.revision).toBe(
+    102,
+  );
+});
+
+test('deleting a pre-feature head retains its logical revision before mapping cascades and native purge', async () => {
+  const f = await fixture();
+  let unit = f.unit;
+  for (let index = 0; index < 19; index++) {
+    const edit = next(unit, f.editor.id);
+    f.store.commit(edit, f.guard);
+    unit = edit.unit;
+  }
+  // This database acquired the new clock after the older writes were accepted.
+  new CollaborationGenerations(f.workspace);
+  new DocumentStore(f.workspace);
+  new SheetStore(f.workspace);
+  new SQLiteSyncStorage(f.auth);
+  f.database.prepare('INSERT INTO spinel_live_units VALUES(?,?,100)').run(f.item.id, f.item.id);
+  expect(f.database.prepare('SELECT revision FROM spinel_restore_revision').get()!.revision).toBe(
+    0,
+  );
+  f.database.exec(
+    "CREATE TRIGGER refuse_delete AFTER DELETE ON workspace_items BEGIN SELECT RAISE(ABORT,'fixture deletion refusal'); END",
+  );
+  expect(() => f.database.prepare('DELETE FROM workspace_items WHERE id=?').run(f.item.id)).toThrow(
+    'fixture deletion refusal',
+  );
+  expect(f.database.prepare('SELECT revision FROM spinel_restore_revision').get()!.revision).toBe(
+    0,
+  );
+  expect(
+    f.database.prepare('SELECT 1 FROM workspace_items WHERE id=?').get(f.item.id),
+  ).toBeDefined();
+  f.database.exec('DROP TRIGGER refuse_delete');
+  f.database.prepare('DELETE FROM workspace_items WHERE id=?').run(f.item.id);
+  expect(f.database.prepare('SELECT 1 FROM spinel_live_units').get()).toBeUndefined();
+  f.store.remove(f.item.id);
+  expect(f.database.prepare('SELECT revision FROM spinel_restore_revision').get()!.revision).toBe(
+    120,
+  );
+});
+
+test('startup purge of a pre-feature orphan retains its remaining native revision evidence', async () => {
+  const f = await fixture();
+  let unit = f.unit;
+  for (let index = 0; index < 19; index++) {
+    const edit = next(unit, f.editor.id);
+    f.store.commit(edit, f.guard);
+    unit = edit.unit;
+  }
+  f.database.prepare('DELETE FROM workspace_items WHERE id=?').run(f.item.id);
+  new CollaborationGenerations(f.workspace);
+  expect(f.database.prepare('SELECT revision FROM spinel_restore_revision').get()!.revision).toBe(
+    0,
+  );
+  f.store.remove(f.item.id);
+  expect(f.database.prepare('SELECT revision FROM spinel_restore_revision').get()!.revision).toBe(
+    20,
+  );
 });
 
 test('logical revision exhaustion refuses the next write atomically while keeping the accepted receipt', async () => {
