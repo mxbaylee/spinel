@@ -1,0 +1,123 @@
+{
+  "source_commit": "bf5a64059c1683c76ec2b20ab063700640f439d4",
+  "source_tree": "a0cdc6399427c6beb36ff4ee8e5bf982eb3ddf85",
+  "workflow_run_id": 40711225273,
+  "run_attempt": 2,
+  "job_id": 122918464963,
+  "artifact_id": 12829897092,
+  "artifact_sha256": "251c5b97b1c4c9a83178ccadd3cfe114d8b38650e04b94af315cb718aaf20406",
+  "accepted": true,
+  "failures": [],
+  "sources": {
+    "baseline": {
+      "source": "0e1df4725d9eccb77574d25e3eecdf678fe6ff44",
+      "role": "baselineObservation",
+      "preset": "mobile",
+      "attempt": 0,
+      "runner": {
+        "run": "40711225273",
+        "attempt": "2",
+        "name": "GitHub Actions 1000029363"
+      },
+      "browser": "156.0.8078.4",
+      "runtime": "v26.12.1",
+      "playwright": "1.64.1",
+      "harnessSha256": {
+        "e2e/doc-responsiveness-callbacks.spec.ts": "20ce77a7bc42e6e15ec5cf35a6583d8909deeb62eebd0e8fe87ba5e51cece166",
+        "e2e/doc-responsiveness-callback-sources.ts": "00e1abe33b46d745d01ecee18889c9e9e99cbc235c5a17c65ebcd992e6553b31",
+        "e2e/doc-responsiveness-callback-trace.ts": "ffebefbc04bde0f07140229e0ff9938691e54c154ba0af7d73c914cc50be3e94",
+        "e2e/doc-responsiveness-fixture.ts": "8a77b15b3fa9ab3961b949cb5fc820f263775ded4952e8f5ef34e4cd02a9b80f",
+        "e2e/doc-responsiveness.ts": "38c3cc6bcab8dd6564444cb946784e748899e9560efb7e7dbbed0e21d16ec067",
+        "scripts/ci/doc-callback-lifetimes.ts": "f35be9f51f6940c4bc0c9dbc07a9657d661c68a63ef2efe0cd3e8d8e8bcd8c68",
+        "web/docResponsivenessEvidence.ts": "4b2b5b6f41b365839733fabb2cb0fc52eaaf81e314f7b9f39b443b8fa6874a08",
+        "playwright.config.ts": "5625e17a130459fc5dfbb2882e0ce0c95a6f9e75de31ec9479ac062ed7a2c48f",
+        "package-lock.json": "ba87bb0cd0388b11a06eb9e3375acae584e70f5f267da03e6bd5803bc492aeb7"
+      },
+      "complete": true,
+      "passed": true,
+      "behaviorPassed": true,
+      "phase": "ordinary-route-disposal",
+      "typingWallMs": 266088.970152,
+      "observedKeydowns": 2086,
+      "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+      "errors": [],
+      "trace": {
+        "file": "spn113-trace.json.gz",
+        "bytes": 33169946,
+        "sha256": "432a2b27b9c5b1839cea2d4f27f80b92e1b857c82f0ee09fd61c8173b0d0acee",
+        "completion": {
+          "dataLossOccurred": false,
+          "stream": "1",
+          "traceFormat": "json",
+          "streamCompression": "gzip"
+        }
+      },
+      "analysis": {
+        "complete": true,
+        "accepted": true,
+        "bounded": false,
+        "failures": null
+      },
+      "evidence_sha256": "e9516733038771bf188ad5140d39d957501faee2c38adacbbf4da185d825665e"
+    },
+    "candidate": {
+      "source": "2972a061859e83acada779ce168c49bcd74d65f3",
+      "role": "candidate",
+      "preset": "mobile",
+      "attempt": 0,
+      "runner": {
+        "run": "40711225273",
+        "attempt": "2",
+        "name": "GitHub Actions 1000029363"
+      },
+      "browser": "156.0.8078.4",
+      "runtime": "v26.12.1",
+      "playwright": "1.64.1",
+      "harnessSha256": {
+        "e2e/doc-responsiveness-callbacks.spec.ts": "20ce77a7bc42e6e15ec5cf35a6583d8909deeb62eebd0e8fe87ba5e51cece166",
+        "e2e/doc-responsiveness-callback-sources.ts": "00e1abe33b46d745d01ecee18889c9e9e99cbc235c5a17c65ebcd992e6553b31",
+        "e2e/doc-responsiveness-callback-trace.ts": "ffebefbc04bde0f07140229e0ff9938691e54c154ba0af7d73c914cc50be3e94",
+        "e2e/doc-responsiveness-fixture.ts": "8a77b15b3fa9ab3961b949cb5fc820f263775ded4952e8f5ef34e4cd02a9b80f",
+        "e2e/doc-responsiveness.ts": "38c3cc6bcab8dd6564444cb946784e748899e9560efb7e7dbbed0e21d16ec067",
+        "scripts/ci/doc-callback-lifetimes.ts": "f35be9f51f6940c4bc0c9dbc07a9657d661c68a63ef2efe0cd3e8d8e8bcd8c68",
+        "web/docResponsivenessEvidence.ts": "4b2b5b6f41b365839733fabb2cb0fc52eaaf81e314f7b9f39b443b8fa6874a08",
+        "playwright.config.ts": "5625e17a130459fc5dfbb2882e0ce0c95a6f9e75de31ec9479ac062ed7a2c48f",
+        "package-lock.json": "ba87bb0cd0388b11a06eb9e3375acae584e70f5f267da03e6bd5803bc492aeb7"
+      },
+      "complete": true,
+      "passed": true,
+      "behaviorPassed": true,
+      "phase": "ordinary-route-disposal",
+      "typingWallMs": 172140.74031999998,
+      "observedKeydowns": 2086,
+      "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+      "errors": [],
+      "trace": {
+        "file": "spn113-trace.json.gz",
+        "bytes": 31028753,
+        "sha256": "17831e90de6daebc1c42fcd3790def1ea8d78015af5715badee4cb6237aabac3",
+        "completion": {
+          "dataLossOccurred": false,
+          "stream": "1",
+          "traceFormat": "json",
+          "streamCompression": "gzip"
+        }
+      },
+      "analysis": {
+        "complete": true,
+        "accepted": true,
+        "bounded": true,
+        "failures": null
+      },
+      "evidence_sha256": "75dcc8dc659c694e7cd7e94fb6bd3799f5d5d3f4b313019540cb9e75a3aa8a6f"
+    }
+  },
+  "comparison_file": "callback-mobile-attempt2-comparison.json.gz",
+  "comparison_uncompressed_sha256": "abdb02fafedd3f8779707ae45c37353759b69c4a747c421d8efb47001e1d71de",
+  "comparison_gzip_sha256": "5ab0c324dd3a6ba7207fbd6a9924d49223df684686cdd25500141c6ff331f4de",
+  "browser_step_outcomes": {
+    "baseline": "success",
+    "candidate": "success"
+  },
+  "initial_failed_pair_retained": true
+}

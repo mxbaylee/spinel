@@ -1,0 +1,482 @@
+{
+  "reviewedAt": "2026-10-28T15:01:28.345Z",
+  "durationMs": 42079,
+  "captureScreenshots": true,
+  "fixtureTime": "2026-10-20T16:00:00Z",
+  "viewport": "all",
+  "theme": "all",
+  "variants": [
+    "light",
+    "dark",
+    "phone",
+    "phone-dark",
+    "tablet"
+  ],
+  "requested": [
+    "dashboard-dashboard--shared-folder-editor",
+    "dashboard-dashboard--shared-folder-admin",
+    "dashboard-dashboard--shared-folder-viewer",
+    "dashboard-dashboard--new-in-shared-folder",
+    "dashboard-dashboard--shared-creation-offline",
+    "dashboard-dashboard--shared-creation-revoked",
+    "dashboard-files--creator-attribution",
+    "dashboard-dashboard--creation-parent-now-shared",
+    "dashboard-dashboard--creation-parent-no-longer-listed"
+  ],
+  "checked": [
+    {
+      "id": "dashboard-dashboard--shared-folder-editor",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-admin",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-viewer",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-dashboard--new-in-shared-folder",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-dashboard--shared-creation-offline",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-dashboard--shared-creation-revoked",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-files--creator-attribution",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-dashboard--creation-parent-now-shared",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-dashboard--creation-parent-no-longer-listed",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-editor",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-admin",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-viewer",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-dashboard--new-in-shared-folder",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-dashboard--shared-creation-offline",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-dashboard--shared-creation-revoked",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-files--creator-attribution",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-dashboard--creation-parent-now-shared",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-dashboard--creation-parent-no-longer-listed",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-editor",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-admin",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-viewer",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-dashboard--new-in-shared-folder",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-dashboard--shared-creation-offline",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-dashboard--shared-creation-revoked",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-files--creator-attribution",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-dashboard--creation-parent-now-shared",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-dashboard--creation-parent-no-longer-listed",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-editor",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-admin",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-viewer",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--new-in-shared-folder",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--shared-creation-offline",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--shared-creation-revoked",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-files--creator-attribution",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--creation-parent-now-shared",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--creation-parent-no-longer-listed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-editor",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-admin",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-viewer",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-dashboard--new-in-shared-folder",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-dashboard--shared-creation-offline",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-dashboard--shared-creation-revoked",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-files--creator-attribution",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-dashboard--creation-parent-now-shared",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-dashboard--creation-parent-no-longer-listed",
+      "variant": "tablet"
+    }
+  ],
+  "captures": [
+    {
+      "id": "dashboard-dashboard--shared-folder-editor",
+      "variant": "light",
+      "filename": "dashboard-dashboard--shared-folder-editor-light.png",
+      "title": "Current production/Dashboard/Dashboard / Shared Folder Editor"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-admin",
+      "variant": "light",
+      "filename": "dashboard-dashboard--shared-folder-admin-light.png",
+      "title": "Current production/Dashboard/Dashboard / Shared Folder Admin"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-viewer",
+      "variant": "light",
+      "filename": "dashboard-dashboard--shared-folder-viewer-light.png",
+      "title": "Current production/Dashboard/Dashboard / Shared Folder Viewer"
+    },
+    {
+      "id": "dashboard-dashboard--new-in-shared-folder",
+      "variant": "light",
+      "filename": "dashboard-dashboard--new-in-shared-folder-light.png",
+      "title": "Current production/Dashboard/Dashboard / New In Shared Folder"
+    },
+    {
+      "id": "dashboard-dashboard--shared-creation-offline",
+      "variant": "light",
+      "filename": "dashboard-dashboard--shared-creation-offline-light.png",
+      "title": "Current production/Dashboard/Dashboard / Shared Creation Offline"
+    },
+    {
+      "id": "dashboard-dashboard--shared-creation-revoked",
+      "variant": "light",
+      "filename": "dashboard-dashboard--shared-creation-revoked-light.png",
+      "title": "Current production/Dashboard/Dashboard / Shared Creation Revoked"
+    },
+    {
+      "id": "dashboard-files--creator-attribution",
+      "variant": "light",
+      "filename": "dashboard-files--creator-attribution-light.png",
+      "title": "Current production/Dashboard/File list / Creator Attribution"
+    },
+    {
+      "id": "dashboard-dashboard--creation-parent-now-shared",
+      "variant": "light",
+      "filename": "dashboard-dashboard--creation-parent-now-shared-light.png",
+      "title": "Current production/Dashboard/Dashboard / Creation Parent Now Shared"
+    },
+    {
+      "id": "dashboard-dashboard--creation-parent-no-longer-listed",
+      "variant": "light",
+      "filename": "dashboard-dashboard--creation-parent-no-longer-listed-light.png",
+      "title": "Current production/Dashboard/Dashboard / Creation Parent No Longer Listed"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-editor",
+      "variant": "dark",
+      "filename": "dashboard-dashboard--shared-folder-editor-dark.png",
+      "title": "Current production/Dashboard/Dashboard / Shared Folder Editor"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-admin",
+      "variant": "dark",
+      "filename": "dashboard-dashboard--shared-folder-admin-dark.png",
+      "title": "Current production/Dashboard/Dashboard / Shared Folder Admin"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-viewer",
+      "variant": "dark",
+      "filename": "dashboard-dashboard--shared-folder-viewer-dark.png",
+      "title": "Current production/Dashboard/Dashboard / Shared Folder Viewer"
+    },
+    {
+      "id": "dashboard-dashboard--new-in-shared-folder",
+      "variant": "dark",
+      "filename": "dashboard-dashboard--new-in-shared-folder-dark.png",
+      "title": "Current production/Dashboard/Dashboard / New In Shared Folder"
+    },
+    {
+      "id": "dashboard-dashboard--shared-creation-offline",
+      "variant": "dark",
+      "filename": "dashboard-dashboard--shared-creation-offline-dark.png",
+      "title": "Current production/Dashboard/Dashboard / Shared Creation Offline"
+    },
+    {
+      "id": "dashboard-dashboard--shared-creation-revoked",
+      "variant": "dark",
+      "filename": "dashboard-dashboard--shared-creation-revoked-dark.png",
+      "title": "Current production/Dashboard/Dashboard / Shared Creation Revoked"
+    },
+    {
+      "id": "dashboard-files--creator-attribution",
+      "variant": "dark",
+      "filename": "dashboard-files--creator-attribution-dark.png",
+      "title": "Current production/Dashboard/File list / Creator Attribution"
+    },
+    {
+      "id": "dashboard-dashboard--creation-parent-now-shared",
+      "variant": "dark",
+      "filename": "dashboard-dashboard--creation-parent-now-shared-dark.png",
+      "title": "Current production/Dashboard/Dashboard / Creation Parent Now Shared"
+    },
+    {
+      "id": "dashboard-dashboard--creation-parent-no-longer-listed",
+      "variant": "dark",
+      "filename": "dashboard-dashboard--creation-parent-no-longer-listed-dark.png",
+      "title": "Current production/Dashboard/Dashboard / Creation Parent No Longer Listed"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-editor",
+      "variant": "phone",
+      "filename": "dashboard-dashboard--shared-folder-editor-phone.png",
+      "title": "Current production/Dashboard/Dashboard / Shared Folder Editor"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-admin",
+      "variant": "phone",
+      "filename": "dashboard-dashboard--shared-folder-admin-phone.png",
+      "title": "Current production/Dashboard/Dashboard / Shared Folder Admin"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-viewer",
+      "variant": "phone",
+      "filename": "dashboard-dashboard--shared-folder-viewer-phone.png",
+      "title": "Current production/Dashboard/Dashboard / Shared Folder Viewer"
+    },
+    {
+      "id": "dashboard-dashboard--new-in-shared-folder",
+      "variant": "phone",
+      "filename": "dashboard-dashboard--new-in-shared-folder-phone.png",
+      "title": "Current production/Dashboard/Dashboard / New In Shared Folder"
+    },
+    {
+      "id": "dashboard-dashboard--shared-creation-offline",
+      "variant": "phone",
+      "filename": "dashboard-dashboard--shared-creation-offline-phone.png",
+      "title": "Current production/Dashboard/Dashboard / Shared Creation Offline"
+    },
+    {
+      "id": "dashboard-dashboard--shared-creation-revoked",
+      "variant": "phone",
+      "filename": "dashboard-dashboard--shared-creation-revoked-phone.png",
+      "title": "Current production/Dashboard/Dashboard / Shared Creation Revoked"
+    },
+    {
+      "id": "dashboard-files--creator-attribution",
+      "variant": "phone",
+      "filename": "dashboard-files--creator-attribution-phone.png",
+      "title": "Current production/Dashboard/File list / Creator Attribution"
+    },
+    {
+      "id": "dashboard-dashboard--creation-parent-now-shared",
+      "variant": "phone",
+      "filename": "dashboard-dashboard--creation-parent-now-shared-phone.png",
+      "title": "Current production/Dashboard/Dashboard / Creation Parent Now Shared"
+    },
+    {
+      "id": "dashboard-dashboard--creation-parent-no-longer-listed",
+      "variant": "phone",
+      "filename": "dashboard-dashboard--creation-parent-no-longer-listed-phone.png",
+      "title": "Current production/Dashboard/Dashboard / Creation Parent No Longer Listed"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-editor",
+      "variant": "phone-dark",
+      "filename": "dashboard-dashboard--shared-folder-editor-phone-dark.png",
+      "title": "Current production/Dashboard/Dashboard / Shared Folder Editor"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-admin",
+      "variant": "phone-dark",
+      "filename": "dashboard-dashboard--shared-folder-admin-phone-dark.png",
+      "title": "Current production/Dashboard/Dashboard / Shared Folder Admin"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-viewer",
+      "variant": "phone-dark",
+      "filename": "dashboard-dashboard--shared-folder-viewer-phone-dark.png",
+      "title": "Current production/Dashboard/Dashboard / Shared Folder Viewer"
+    },
+    {
+      "id": "dashboard-dashboard--new-in-shared-folder",
+      "variant": "phone-dark",
+      "filename": "dashboard-dashboard--new-in-shared-folder-phone-dark.png",
+      "title": "Current production/Dashboard/Dashboard / New In Shared Folder"
+    },
+    {
+      "id": "dashboard-dashboard--shared-creation-offline",
+      "variant": "phone-dark",
+      "filename": "dashboard-dashboard--shared-creation-offline-phone-dark.png",
+      "title": "Current production/Dashboard/Dashboard / Shared Creation Offline"
+    },
+    {
+      "id": "dashboard-dashboard--shared-creation-revoked",
+      "variant": "phone-dark",
+      "filename": "dashboard-dashboard--shared-creation-revoked-phone-dark.png",
+      "title": "Current production/Dashboard/Dashboard / Shared Creation Revoked"
+    },
+    {
+      "id": "dashboard-files--creator-attribution",
+      "variant": "phone-dark",
+      "filename": "dashboard-files--creator-attribution-phone-dark.png",
+      "title": "Current production/Dashboard/File list / Creator Attribution"
+    },
+    {
+      "id": "dashboard-dashboard--creation-parent-now-shared",
+      "variant": "phone-dark",
+      "filename": "dashboard-dashboard--creation-parent-now-shared-phone-dark.png",
+      "title": "Current production/Dashboard/Dashboard / Creation Parent Now Shared"
+    },
+    {
+      "id": "dashboard-dashboard--creation-parent-no-longer-listed",
+      "variant": "phone-dark",
+      "filename": "dashboard-dashboard--creation-parent-no-longer-listed-phone-dark.png",
+      "title": "Current production/Dashboard/Dashboard / Creation Parent No Longer Listed"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-editor",
+      "variant": "tablet",
+      "filename": "dashboard-dashboard--shared-folder-editor-tablet.png",
+      "title": "Current production/Dashboard/Dashboard / Shared Folder Editor"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-admin",
+      "variant": "tablet",
+      "filename": "dashboard-dashboard--shared-folder-admin-tablet.png",
+      "title": "Current production/Dashboard/Dashboard / Shared Folder Admin"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-viewer",
+      "variant": "tablet",
+      "filename": "dashboard-dashboard--shared-folder-viewer-tablet.png",
+      "title": "Current production/Dashboard/Dashboard / Shared Folder Viewer"
+    },
+    {
+      "id": "dashboard-dashboard--new-in-shared-folder",
+      "variant": "tablet",
+      "filename": "dashboard-dashboard--new-in-shared-folder-tablet.png",
+      "title": "Current production/Dashboard/Dashboard / New In Shared Folder"
+    },
+    {
+      "id": "dashboard-dashboard--shared-creation-offline",
+      "variant": "tablet",
+      "filename": "dashboard-dashboard--shared-creation-offline-tablet.png",
+      "title": "Current production/Dashboard/Dashboard / Shared Creation Offline"
+    },
+    {
+      "id": "dashboard-dashboard--shared-creation-revoked",
+      "variant": "tablet",
+      "filename": "dashboard-dashboard--shared-creation-revoked-tablet.png",
+      "title": "Current production/Dashboard/Dashboard / Shared Creation Revoked"
+    },
+    {
+      "id": "dashboard-files--creator-attribution",
+      "variant": "tablet",
+      "filename": "dashboard-files--creator-attribution-tablet.png",
+      "title": "Current production/Dashboard/File list / Creator Attribution"
+    },
+    {
+      "id": "dashboard-dashboard--creation-parent-now-shared",
+      "variant": "tablet",
+      "filename": "dashboard-dashboard--creation-parent-now-shared-tablet.png",
+      "title": "Current production/Dashboard/Dashboard / Creation Parent Now Shared"
+    },
+    {
+      "id": "dashboard-dashboard--creation-parent-no-longer-listed",
+      "variant": "tablet",
+      "filename": "dashboard-dashboard--creation-parent-no-longer-listed-tablet.png",
+      "title": "Current production/Dashboard/Dashboard / Creation Parent No Longer Listed"
+    }
+  ],
+  "verifications": [],
+  "failures": []
+}

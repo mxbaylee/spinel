@@ -161,6 +161,15 @@ Owner, chat 2026-10-26; [decision](implementation/backlog-workflow.md#two-indepe
 
 ## 4. Fix here or file separately
 
+Before substantial implementation, assess the whole accepted outcome and its
+integration/verification boundaries. Record the first capability or architecture
+checkpoint and revise effort immediately when evidence changes it. A split must
+show the completed slice and every remaining obligation/estimate, distinguishing
+retained acceptance, new approved scope, independent defects and future
+maintenance. Closing the parent is not completion of those follow-ups; do not
+add ordinal sizes or count a shared migration repeatedly. See the
+[scope-growth decision](implementation/grooming-2026-10-29.md#scope-growth-and-outcome-accounting).
+
 Use overlap with the ticket first, then changed-line count and reviewability.
 Count additions plus deletions relative to the current base, applying the
 exclusions and limits in base-branch `backlog.json`; do not use raw lockfile size.
@@ -215,6 +224,14 @@ changed-line count and finding dispositions. A draft is appropriate while blocke
 mark it ready only when its acceptance criteria and both independent reviews are complete.
 Publish early if helpful, but do not treat opening the PR as completing the ticket.
 
+Keep necessary final evidence in the PR description or maintained repository
+files: exact source/tested identities, current-head checks and attempts, both
+reviews, measurements, useful images, failure/retry dispositions and any retained
+limits. Link immutable evidence and preserve essential machine-readable results
+before helper-branch cleanup or artifact expiry. Comments are supplementary;
+an earlier pending checkpoint must not be the final merged summary. Clearly name
+any expiring supplementary raw artifacts instead of calling summaries full traces.
+
 Wait for all required checks on the current head to finish successfully. The
 current set is **Backlog**, **Pull request**, **Lint**, **Typecheck**, **Unit tests**,
 **Lib tests** and **Playwright smoke**, plus any added repository-required checks. Missing,
@@ -243,8 +260,17 @@ bypass, force-push main, relax protection or dismiss a blocking review just to
 continue. Where branch rules are not configured yet, still enforce this named
 check list yourself and report the setup gap; no missing check is waived.
 
-Confirm GitHub reports the PR merged. Fetch and fast-forward local main when safe,
-then start again at step 1. Keep progress updates brief: what landed, review score,
+Confirm GitHub reports the PR merged and record its squash identity. Enumerate
+all ticket-created implementation, review, integration and evidence branches;
+recheck current heads, active PR ownership and unique work. Preserve necessary
+code/evidence durably, then delete obsolete refs with a head guard. Automatic
+deletion of only the PR head is insufficient. Preserve unrelated active branches;
+record blocked deletions with exact refs and their access prerequisite rather
+than claiming cleanup completed. The [cleanup decision](implementation/grooming-2026-10-29.md#evidence-and-branch-completion)
+is part of completing a merged ticket.
+
+Fetch and fast-forward local main when safe, then start again at step 1.
+Keep progress updates brief: what landed, review score,
 verification, what comes next, and any real execution prerequisite. Do not end the run just
 because one ticket finished.
 

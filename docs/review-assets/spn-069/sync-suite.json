@@ -1,0 +1,188 @@
+{
+  "source_commit": "bf5a64059c1683c76ec2b20ab063700640f439d4",
+  "source_tree": "a0cdc6399427c6beb36ff4ee8e5bf982eb3ddf85",
+  "workflow_run_id": 40711225273,
+  "job_id": 122897514231,
+  "artifact_id": 12827940235,
+  "artifact_sha256": "cd133605098b60610bd27ce81c9db2fa1948f2eb027641130f00b31885117a21",
+  "stats": {
+    "startTime": "2026-10-28T15:00:56.577Z",
+    "duration": 754362.047,
+    "expected": 92,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "offline_creation_tests": [
+    {
+      "title": "shared creation survives same-profile browser-process restarts",
+      "line": 193,
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration_ms": 21891
+        }
+      ]
+    },
+    {
+      "title": "a delayed shared list cannot lose an uploaded file after an owned refresh, device removal and cold reload",
+      "line": 199,
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration_ms": 7690
+        }
+      ]
+    },
+    {
+      "title": "sheet: create in a cached folder, edit, reload twice offline and upload once",
+      "line": 359,
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration_ms": 15719
+        }
+      ]
+    },
+    {
+      "title": "doc: create in a cached folder, edit, reload twice offline and upload once",
+      "line": 359,
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration_ms": 14133
+        }
+      ]
+    },
+    {
+      "title": "sheet: create in a cached shared folder, edit, reload twice offline and upload once",
+      "line": 359,
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration_ms": 17605
+        }
+      ]
+    },
+    {
+      "title": "doc: create in a cached shared folder, edit, reload twice offline and upload once",
+      "line": 359,
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration_ms": 15998
+        }
+      ]
+    },
+    {
+      "title": "a warm upload keeps its renamed title and tags after removing the device copy",
+      "line": 722,
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration_ms": 6741
+        }
+      ]
+    },
+    {
+      "title": "a lost creation acknowledgement replays the same request after an offline reload",
+      "line": 797,
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration_ms": 8600
+        }
+      ]
+    },
+    {
+      "title": "a lost shared creation acknowledgement replays the same request after an offline reload",
+      "line": 797,
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration_ms": 8639
+        }
+      ]
+    },
+    {
+      "title": "a phone Doc starts offline, accepts native text and retains it through a cold reload",
+      "line": 887,
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration_ms": 8268
+        }
+      ]
+    },
+    {
+      "title": "a deleted destination retains the draft until another own folder is chosen",
+      "line": 930,
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration_ms": 8995
+        }
+      ]
+    },
+    {
+      "title": "a revoked shared destination retains the draft until another own folder is chosen",
+      "line": 930,
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration_ms": 9019
+        }
+      ]
+    },
+    {
+      "title": "switching accounts hides a new offline document and retains it only for its original account",
+      "line": 1055,
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration_ms": 8335
+        }
+      ]
+    },
+    {
+      "title": "a failed local creation stays in the form without claiming a saved document",
+      "line": 1099,
+      "status": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration_ms": 6075
+        }
+      ]
+    }
+  ],
+  "restart_diagnostics": "shared-restart.json",
+  "restart_diagnostics_sha256": "7bba5115c05396274f26c0318435806ba6c9f7a25c83b12d47affaaf143dd6ba"
+}

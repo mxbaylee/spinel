@@ -22,8 +22,35 @@ the product's acceptance fixture.
 `codex/spn-111-flush-repair` and `codex/spn-111-flush-headroom` carried the
 32 → 24 doc-history flush-cap change. That change was reverted before landing
 ([SPN-121](../SPN-121.md) owns the investigation); their commits remain in the
-PR history. The older `integration/spn-118-main-20261028` contains the same
-eleven SPN-118 source and evidence files as active PR #213; its additional
+PR history. The older `integration/spn-118-main-20261028` has eleven SPN-118
+source/evidence changes retained in active PR #213: eight files are byte-identical;
+`docs/development.md`, `scripts/sync-transition/README.md` and `server/database.ts`
+retain the same SPN-118 changes with later main/SPN-111 integration. Its additional
 SPN-066/SPN-116 work is on main. It contains no unique unfinished
 implementation. Recheck branch heads before deleting any ref. Preserve the
 active SPN-105 and SPN-118 PR branches.
+
+## Grooming preservation — 2026-10-29
+
+The final SPN-111 gallery, manifests and baseline-startup failure evidence from
+`codex/spn-111-review-9a0931c` at
+`85fd49b5ab7ac37c35dc234ea9b4bc5223622d84` are now kept byte-for-byte in
+[`docs/design/review/spn-111/final-9a0931c/`](../../design/review/spn-111/final-9a0931c/README.md).
+This preserves the evidence before deleting the helper. It is the historical
+capture of source `9a0931cf9197bbf9d3022c511298bd9974d5f9c4`, not a new capture.
+
+The inventory still found the following obsolete refs, whose heads must be
+rechecked immediately before deletion:
+
+| Branch | Reviewed head | Disposition |
+| --- | --- | --- |
+| `codex/spn-111-review-9a0931c` | `85fd49b5ab7ac37c35dc234ea9b4bc5223622d84` | Final gallery/diagnostics preserved above. |
+| `evidence/spn-118-native-flush-diagnostic-20261028` | `f258c9daef5176a17654c7f32a91a7f31e8e8b97` | Diagnostic content is byte-identical to the retained PR #206 history linked above. |
+| `integration/spn-118-main-20261028` | `8befcbf96123cbf10f8e8304ebe9d88dd671ef06` | All eleven SPN-118 source/evidence changes are retained in active PR #213: eight files are byte-identical, three include later main integration; additional prerequisite work is already on main. |
+
+The grooming session's Git push deletion attempt could not authenticate. The
+connected GitHub API supports the PR/merge operations but exposes no ref-deletion
+operation, and the browser session is signed out. This is an access limitation,
+not a successful deletion. The grooming PR records the final live-ref result.
+Preserve active PR #212/SPN-105, #213/SPN-118 and #217/SPN-112 branches. Future
+cleanup must recheck this inventory rather than treating old heads as a lease.
