@@ -6,6 +6,7 @@ import { AccessTokens } from './AccessTokens.tsx';
 import { BackupStatus } from './BackupStatus.tsx';
 import { ServerHealth } from './ServerHealth.tsx';
 import { AdminDiagnostics } from './AdminDiagnostics.tsx';
+import { MaintenanceControls } from './Maintenance.tsx';
 import './administration.css';
 
 const sections = [
@@ -21,7 +22,9 @@ function readSection(): Section {
 }
 export function AdminPage({ currentId }: { currentId: string }) {
   const [section, setSection] = useState(readSection);
-  const [busy, setBusy] = useState(false);
+  const [sectionBusy, setBusy] = useState(false);
+  const [maintenanceBusy, setMaintenanceBusy] = useState(false);
+  const busy = sectionBusy || maintenanceBusy;
   const [recipient, setRecipient] = useState('');
   const current = useRef(section),
     pending = useRef(busy);
@@ -91,6 +94,11 @@ export function AdminPage({ currentId }: { currentId: string }) {
           {section === 'health' && (
             <section className="admin-health" aria-label="Backups & health">
               <h2>Backups &amp; health</h2>
+              <MaintenanceControls
+                currentId={currentId}
+                onBusyChange={setMaintenanceBusy}
+                reloadDisabled={sectionBusy}
+              />
               <BackupStatus currentId={currentId} />
               <ServerHealth />
               <AdminDiagnostics onBusyChange={setBusy} />

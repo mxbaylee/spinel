@@ -1,6 +1,9 @@
-import { afterEach, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { OfflineAccess } from '../../web/offline/OfflineAccess.ts';
 import { ScopedHTTP } from '../../web/offline/ScopedHTTP.ts';
+
+vi.mock('../../web/maintenanceState.ts', () => import('./fixtures/unsupervisedMaintenance.ts'));
+beforeEach(() => vi.stubGlobal('location', { origin: 'https://spinel.example', pathname: '/' }));
 
 afterEach(() => vi.unstubAllGlobals());
 

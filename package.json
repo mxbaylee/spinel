@@ -18,6 +18,8 @@
     "storybook": "NODE_OPTIONS='--import ./.storybook/typescript-api.ts' storybook dev -p 6006",
     "build-storybook": "NODE_OPTIONS='--import ./.storybook/typescript-api.ts' storybook build -o storybook-static && node scripts/ci/storybook-identity.ts",
     "start": "node --max-old-space-size=256 --max-semi-space-size=8 server/index.ts",
+    "start:supervised": "node --max-old-space-size=64 server/supervisor.ts",
+    "dev:supervised": "node --max-old-space-size=64 server/supervisor.ts --dev",
     "lint": "npm run dependencies:check && oxlint --deny-warnings . && npm run format:check",
     "format": "prettier --write web server src lib e2e .storybook scripts/screenshots.ts scripts/social-preview.ts scripts/passkey-check.ts scripts/e2e.ts scripts/e2e-https.ts scripts/deploy scripts/dependencies scripts/sync-transition scripts/ci scripts/pdf-feasibility scripts/serial.ts scripts/serial.test.ts *.config.ts",
     "format:check": "prettier --check web server src lib e2e .storybook scripts/screenshots.ts scripts/social-preview.ts scripts/passkey-check.ts scripts/e2e.ts scripts/e2e-https.ts scripts/deploy scripts/dependencies scripts/sync-transition scripts/ci scripts/pdf-feasibility scripts/serial.ts scripts/serial.test.ts *.config.ts",

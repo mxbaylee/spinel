@@ -1,0 +1,224 @@
+{
+  "repository": "mxbaylee/spinel",
+  "sourceHead": "fa4f3c450935dc4db6f982343e32cad00652c3d6",
+  "sourceTree": "1c798a8763287a178f78ed556bb7e778f7a5993e",
+  "base": "1a2f8aa2695400dd90ab8f10a99ea00c076359a6",
+  "testedMerge": "06103013d326818dffa9ba1b9611906caacc089c",
+  "testedMergeTree": "1c798a8763287a178f78ed556bb7e778f7a5993e",
+  "runId": 40757131122,
+  "jobId": 123059375857,
+  "artifactId": 12846164647,
+  "artifactName": "theme-screenshots-production-2",
+  "artifactZipSha256": "7108d593afb2b0a0513a7af599cdb9c9b77ae205ac0d485e8723cb5d0aa43b63",
+  "artifactBytes": 18154188,
+  "report": "playwright-report/production-2-of-2.json",
+  "reportSha256": "ed9f6950e92be5617e2dcb06211eaad101aae8a1237a9d1bb8269d25ad1bad26",
+  "reportStats": {
+    "startTime": "2026-10-28T19:47:22.491Z",
+    "duration": 812340.978,
+    "expected": 79,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "testCount": 79,
+  "attemptCount": 79,
+  "actualWorkers": 1,
+  "retriesConfigured": 2,
+  "retriesObserved": 0,
+  "failOnFlakyTests": true,
+  "maintenanceCase": {
+    "file": "maintenance.spec.ts",
+    "line": 203,
+    "title": "maintenance.spec.ts / supervised maintenance keeps pending native work, fences old edits, and recovers through cold controls",
+    "projectName": "production",
+    "status": "expected",
+    "expectedStatus": "passed",
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 33546,
+        "startTime": "2026-10-28T19:49:01.496Z",
+        "errors": []
+      }
+    ]
+  },
+  "fixture": "Disposable Linux-supervised production app with synthetic accounts and passkeys; actual native Sheet input and pending device work.",
+  "visualReview": {
+    "source": "fa4f3c450935dc4db6f982343e32cad00652c3d6",
+    "scope": "agent review only",
+    "approved": true,
+    "reviewers": [
+      {
+        "identity": "/root/review_a",
+        "nonimplementing": true,
+        "imagesDirectlyInspected": 15,
+        "decision": "Approved; no visual findings or required changes.",
+        "assessment": "Coherent theme and readable status; phone controls fit and expanded Details exposes full guidance; Operator authority and pending member work remain distinct. Captures show Operator and member flows; guest scope is supported by source and access tests."
+      },
+      {
+        "identity": "/root/review_b",
+        "nonimplementing": true,
+        "imagesDirectlyInspected": 15,
+        "decision": "Approved; no visual blocker or required correction.",
+        "assessment": "Consistent typography, spacing, icons and controls across light, dark and phone. Schedule and actual pause remain distinct; compact and reopened states retain the native draft and unsaved indicator; expanded phone guidance wraps cleanly."
+      }
+    ],
+    "criteria": "Current Spinel design playbook and theme; Operator, Owner, Collaborator and Link guest personas.",
+    "limitation": "Visual approval only. Final numerical grades and complete CI are recorded separately in the PR."
+  },
+  "scope": "Current full-application evidence. Visual approval is separate from complete CI and final numerical review gates.",
+  "images": [
+    {
+      "name": "scheduled-light.png",
+      "artifactPath": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production/maintenance-views/scheduled-light.png",
+      "bytes": 96341,
+      "width": 1280,
+      "height": 900,
+      "theme": "light",
+      "sha256": "ab7a5e1e33bfe65cbea9163d4d546647a9db5ec2c488aded48ed782b004355eb",
+      "gitBlob": "8fd667d6498079464118de65fe7130425571e73a"
+    },
+    {
+      "name": "scheduled-dark.png",
+      "artifactPath": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production/maintenance-views/scheduled-dark.png",
+      "bytes": 94404,
+      "width": 1280,
+      "height": 900,
+      "theme": "dark",
+      "sha256": "7dff60f58d5027222b61b4dee15d838c68c16e0d371f76903d329d99e696cacf",
+      "gitBlob": "ceebccf0b110c5968c9ed744503a341ea318f316"
+    },
+    {
+      "name": "scheduled-phone.png",
+      "artifactPath": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production/maintenance-views/scheduled-phone.png",
+      "bytes": 65543,
+      "width": 390,
+      "height": 900,
+      "theme": "light",
+      "sha256": "87e6ed4c8f6faf6f1271e8754ba1a4084c598d8516ca48cacd8ea4c9288b80ca",
+      "gitBlob": "0842e7c71263b88d4bc2cdc51e1a3247dd81befb"
+    },
+    {
+      "name": "paused-light.png",
+      "artifactPath": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production/maintenance-views/paused-light.png",
+      "bytes": 95283,
+      "width": 1280,
+      "height": 900,
+      "theme": "light",
+      "sha256": "f4c803effd8dc3562cf597f2e36a83d1ef333096cc1b6d00c6c1c6fda2e84532",
+      "gitBlob": "ebad02f06dfbb8f072b96622d0b31f10ab9e2df9"
+    },
+    {
+      "name": "paused-dark.png",
+      "artifactPath": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production/maintenance-views/paused-dark.png",
+      "bytes": 93018,
+      "width": 1280,
+      "height": 900,
+      "theme": "dark",
+      "sha256": "eb5c15bfc3b314876a94ee210fb5495b7fb0c59f769943cc6aab707ac125d481",
+      "gitBlob": "c622c0d769ecd57dd029469889c9ea84a8e9246f"
+    },
+    {
+      "name": "paused-phone.png",
+      "artifactPath": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production/maintenance-views/paused-phone.png",
+      "bytes": 65386,
+      "width": 390,
+      "height": 900,
+      "theme": "light",
+      "sha256": "d9fbe8f5f2c899bca8f3b1ae778aec31f4e7419f8d9c67cbb054fda513d62d5a",
+      "gitBlob": "24ce910883d8452fcd33f9db0107aa97db51af77"
+    },
+    {
+      "name": "paused-details-light.png",
+      "artifactPath": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production/maintenance-views/paused-details-light.png",
+      "bytes": 103929,
+      "width": 1280,
+      "height": 900,
+      "theme": "light",
+      "sha256": "ecc0326100a7302cbfe789f90412788842f549eec04c5876f0850cdfda4ded5a",
+      "gitBlob": "336bd6b60d01258f2b93aac29e47f2fe3877197c"
+    },
+    {
+      "name": "paused-details-dark.png",
+      "artifactPath": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production/maintenance-views/paused-details-dark.png",
+      "bytes": 102517,
+      "width": 1280,
+      "height": 900,
+      "theme": "dark",
+      "sha256": "d373c473ad7060e105061c9a3bda41979a2690c50c2ce9bf84498d18c2b60549",
+      "gitBlob": "3347e38c6893f333c56df6bd159cb6e079f84e8c"
+    },
+    {
+      "name": "paused-details-phone.png",
+      "artifactPath": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production/maintenance-views/paused-details-phone.png",
+      "bytes": 71629,
+      "width": 390,
+      "height": 900,
+      "theme": "light",
+      "sha256": "5cd4fb986514cf6e7bf68d0841bb6ace56b55128a50f4f88e555da8cea672a7f",
+      "gitBlob": "30670d2e8672b48a44ca9407a11fd1d25a09e6f5"
+    },
+    {
+      "name": "native-pending-dismissed-light.png",
+      "artifactPath": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production/maintenance-views/native-pending-dismissed-light.png",
+      "bytes": 54155,
+      "width": 1280,
+      "height": 900,
+      "theme": "light",
+      "sha256": "483fce3e1a8b47585b9b543939977dbfe8ce1b04e4a2f5d829410e515c739e84",
+      "gitBlob": "76f8601ed40cd659cd93773b3d14c44e22be4136"
+    },
+    {
+      "name": "native-pending-dismissed-dark.png",
+      "artifactPath": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production/maintenance-views/native-pending-dismissed-dark.png",
+      "bytes": 54384,
+      "width": 1280,
+      "height": 900,
+      "theme": "dark",
+      "sha256": "60f7a6352944e49a14bd477e0a3f53e81a96c89c5f77958daa96e2309013a356",
+      "gitBlob": "4adf5dc98da5c93adf1829e44df5bd39d001f1e8"
+    },
+    {
+      "name": "native-pending-dismissed-phone.png",
+      "artifactPath": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production/maintenance-views/native-pending-dismissed-phone.png",
+      "bytes": 38041,
+      "width": 390,
+      "height": 900,
+      "theme": "light",
+      "sha256": "7c7239aa1a18baf3448419b9b87b08c4f9beac3c5f7e56ba6ab4464667e2b0b5",
+      "gitBlob": "79c18082ca7bad15d6d54c23f2bd2cd1898dc79f"
+    },
+    {
+      "name": "native-pending-reopened-light.png",
+      "artifactPath": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production/maintenance-views/native-pending-reopened-light.png",
+      "bytes": 79174,
+      "width": 1280,
+      "height": 900,
+      "theme": "light",
+      "sha256": "4e081ff9090d966435a94abdc79f86503b79bc7355ed894b95bbf339cc566c36",
+      "gitBlob": "15d98fa6e03c3bdf1ce032677bb9bf285b4c73fe"
+    },
+    {
+      "name": "native-pending-reopened-dark.png",
+      "artifactPath": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production/maintenance-views/native-pending-reopened-dark.png",
+      "bytes": 79739,
+      "width": 1280,
+      "height": 900,
+      "theme": "dark",
+      "sha256": "461b26098be1cc7e637b7a511e0c2b35b5afab860e49c11bf707e9516e0410d9",
+      "gitBlob": "ce5605b8fdec0beb4b89050b3411cbe6e81127ea"
+    },
+    {
+      "name": "native-pending-reopened-phone.png",
+      "artifactPath": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production/maintenance-views/native-pending-reopened-phone.png",
+      "bytes": 60953,
+      "width": 390,
+      "height": 900,
+      "theme": "light",
+      "sha256": "ca8f2e8c3a62f7bf341c35758216b3b99a048fcfec925d2ddd6a7321572f9adb",
+      "gitBlob": "25799f916abcb25c5f2f52b5954a03a0887af0b2"
+    }
+  ]
+}

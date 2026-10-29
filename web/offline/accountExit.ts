@@ -1,3 +1,4 @@
+import { maintenanceFetch as fetch } from '../maintenanceFetch.ts';
 import { offlineCancellation, setPreparedAccount } from './offlineStore.ts';
 
 const EXIT = 'spinel.offline.sign-out';

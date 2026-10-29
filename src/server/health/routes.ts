@@ -1,11 +1,11 @@
-import express from 'express';
+import { maintenanceRouter } from '../maintenance/router.ts';
 import type { AuthStore } from '../auth/store.ts';
 import { cookieToken } from '../auth/routes.ts';
 import type { HealthMonitor } from './monitor.ts';
 
 /** Public liveness reveals one bit; every measurement requires a current Operator. */
 export function healthRoutes(auth: AuthStore, monitor: HealthMonitor) {
-  const router = express.Router();
+  const router = maintenanceRouter();
   router.get('/healthz', (_request, response) => {
     response.set('Cache-Control', 'no-store');
     try {

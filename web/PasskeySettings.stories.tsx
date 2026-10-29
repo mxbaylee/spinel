@@ -372,7 +372,9 @@ export const CookieChangedDuringConfirmation: Story = {
       await within(document.body).findByRole('dialog', { name: 'Sign out other devices?' }),
     );
     const previous = globalThis.fetch;
-    const requests = fn<typeof fetch>(async (_input, init) => {
+    const requests = fn<typeof fetch>(async (input, init) => {
+      await expect(input).toBe('/api/auth/sign-out-others');
+      await expect(init?.method).toBe('POST');
       await expect(new Headers(init?.headers).get('X-Spinel-Account')).toBe(args.accountId);
       return Response.json(
         {
@@ -382,7 +384,13 @@ export const CookieChangedDuringConfirmation: Story = {
         { status: 409 },
       );
     });
-    globalThis.fetch = requests;
+    globalThis.fetch = async (input, init) => {
+      // The mutation may first discover deployment status. It has no account
+      // authority and is distinct from the one cookie-bound revocation below.
+      if (input === '/api/maintenance' && (init?.method ?? 'GET') === 'GET')
+        return Response.json({ available: false, phase: 'running', epoch: '', notice: null });
+      return requests(input, init);
+    };
     try {
       await userEvent.click(dialog.getByRole('button', { name: 'Sign out other devices' }));
       await expect(await dialog.findByRole('alert')).toHaveTextContent(/Your account changed/);

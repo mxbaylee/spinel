@@ -1,3 +1,4 @@
+import { maintenanceFetch } from './maintenanceFetch.ts';
 import {
   exactKeys,
   isDiagnosticRecord,
@@ -26,7 +27,7 @@ export class BrowserDiagnostics {
   dropped = 0;
   constructor(options: { accountId: string; fetch?: typeof fetch; now?: () => number }) {
     this.accountId = options.accountId;
-    this.request = options.fetch ?? globalThis.fetch.bind(globalThis);
+    this.request = options.fetch ?? maintenanceFetch;
     this.now = options.now ?? Date.now;
   }
 

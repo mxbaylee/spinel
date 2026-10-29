@@ -4,6 +4,7 @@ import { fileKindLabel } from '../src/shared/workspace.ts';
 import { EntityIcon } from '../src/ui/EntityIcon.tsx';
 import { ActionMenu, Button, Modal } from '../src/ui/redesign/Controls.tsx';
 import { clearDashboardNavigation } from './dashboardNavigation.ts';
+import { maintenanceFetch } from './maintenanceFetch.ts';
 import { spaceHref } from './spaceNavigation.ts';
 import './guestLinks.css';
 
@@ -31,7 +32,7 @@ export function GuestLinks() {
       throw new Error('This guest-link view is no longer current.');
   }
   async function request<T>(path: string, method: string, body: unknown, version: number) {
-    const response = await fetch(`/api/guest-links${path}`, {
+    const response = await maintenanceFetch(`/api/guest-links${path}`, {
       method,
       credentials: 'same-origin',
       signal: AbortSignal.any([lifetime.current!.signal, AbortSignal.timeout(15_000)]),

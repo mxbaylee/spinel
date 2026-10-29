@@ -15,6 +15,7 @@ export type OfflineScope = Readonly<{
   sdkVersion: typeof OFFLINE_SDK_VERSION;
   schema: 1;
   revisionOffset: number;
+  maintenanceEpoch?: string;
 }>;
 export type OfflineAccessState = Readonly<{
   phase: 'local' | 'attention' | 'locked' | 'disposed';
@@ -36,6 +37,7 @@ export function offlineScope(bundle: OfflineBundle, origin = location.origin): O
     sdkVersion: OFFLINE_SDK_VERSION,
     schema: 1,
     revisionOffset: bundle.revisionOffset,
+    maintenanceEpoch: bundle.maintenanceEpoch,
   };
   validateScope(scope);
   return scope;

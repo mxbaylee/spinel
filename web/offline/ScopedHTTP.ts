@@ -1,3 +1,4 @@
+import { maintenanceFetch as fetch } from '../maintenanceFetch.ts';
 import { documentPath, documentSyncPath } from '../documentAccess.ts';
 import type { OfflineAccess } from './OfflineAccess.ts';
 
@@ -24,6 +25,9 @@ export class ScopedHTTP {
       throw new Error('This request does not belong to the downloaded document.');
     const headers = new Headers(init.headers);
     headers.set('X-Spinel-Offline-Account', scope.accountId);
+    // Missing epochs from older downloads are deliberately unbound. A new
+    // supervised generation cannot silently authorize their pending queue.
+    headers.set('X-Spinel-Epoch', scope.maintenanceEpoch ?? '');
     const response = await fetch(url, {
       ...init,
       headers,

@@ -5,10 +5,32 @@ import {
   mcpAuthRouter,
 } from '@modelcontextprotocol/sdk/server/auth/router.js';
 import { AssistantOAuth, MCP_SCOPES } from './oauth.ts';
+import type { OAuthServerProvider } from '@modelcontextprotocol/sdk/server/auth/provider.js';
 
 export function assistantOAuthRoutes(provider: AssistantOAuth) {
+  // The SDK awaits PKCE work internally rather than returning its handler's
+  // promise from Router. Retain each actual provider operation, and reject a
+  // disconnected request's later continuation before it can touch a database.
+  const admit = <T>(work: () => T): T => {
+    const gate = provider.auth.database.maintenance;
+    return gate ? gate.run(work) : work();
+  };
+  const scoped: OAuthServerProvider = {
+    clientsStore: {
+      getClient: (id) => admit(() => provider.clientsStore.getClient(id)),
+      registerClient: (input) => admit(() => provider.clientsStore.registerClient(input)),
+    },
+    authorize: (...args) => admit(() => provider.authorize(...args)),
+    challengeForAuthorizationCode: (...args) =>
+      admit(() => provider.challengeForAuthorizationCode(...args)),
+    exchangeAuthorizationCode: (...args) =>
+      admit(() => provider.exchangeAuthorizationCode(...args)),
+    exchangeRefreshToken: (...args) => admit(() => provider.exchangeRefreshToken(...args)),
+    verifyAccessToken: (...args) => admit(() => provider.verifyAccessToken(...args)),
+    revokeToken: (...args) => admit(() => provider.revokeToken(...args)),
+  };
   const options = {
-    provider,
+    provider: scoped,
     issuerUrl: new URL(provider.origin),
     resourceServerUrl: new URL(provider.resource),
     scopesSupported: MCP_SCOPES,

@@ -13,6 +13,8 @@ import { WorkspaceStore } from '../workspace/store.ts';
 import { restoreArchive } from './archive.ts';
 import { backupRoutes } from './routes.ts';
 import { BackupService } from './service.ts';
+import { MaintenanceGate } from '../maintenance/gate.ts';
+import type { MaintenanceBridge, MaintenancePublicStatus } from '../../shared/maintenance.ts';
 
 const cleanups: (() => Promise<unknown> | unknown)[] = [];
 afterEach(async () => {
@@ -20,7 +22,7 @@ afterEach(async () => {
   for (const close of cleanups.splice(0).reverse()) await close();
 });
 
-async function fixture() {
+async function fixture(supervised = false) {
   const directory = await mkdtemp(join(tmpdir(), 'spinel-export-http-'));
   cleanups.push(() => rm(directory, { recursive: true, force: true }));
   const databasePath = join(directory, 'spinel.sqlite');
@@ -81,9 +83,22 @@ async function fixture() {
     image: `sha256:${'a'.repeat(64)}`,
     now: () => now,
   });
+  let maintenanceStatus: MaintenancePublicStatus = {
+    available: true,
+    phase: 'running',
+    epoch: 'before',
+    notice: null,
+  };
+  // These HTTP tests drive controller state directly while retaining the real
+  // admission, database guard, export preparation and native streaming routes.
+  const gate = supervised
+    ? new MaintenanceGate({ status: () => maintenanceStatus } as MaintenanceBridge)
+    : undefined;
+  if (gate) db.setMaintenanceGate(gate);
   await backups.start();
   cleanups.push(() => backups.close());
   const app = express();
+  if (gate) app.use(gate.middleware());
   app.use('/api/admin/backups', backupRoutes(auth, backups, origin));
   const server = createServer(app);
   await new Promise<void>((resolve, reject) => {
@@ -106,6 +121,7 @@ async function fixture() {
       from = origin,
       body = '{}',
       content = 'application/json',
+      epoch = supervised ? maintenanceStatus.epoch : null,
     }: {
       method?: string;
       token?: string;
@@ -113,6 +129,7 @@ async function fixture() {
       from?: string;
       body?: string;
       content?: string;
+      epoch?: string | null;
     } = {},
   ) =>
     fetch(root + path, {
@@ -122,6 +139,7 @@ async function fixture() {
         Origin: from,
         'X-Spinel-Account': accountId,
         'Content-Type': content,
+        ...(epoch === null ? {} : { 'X-Spinel-Epoch': epoch }),
       },
       ...(method === 'POST' ? { body } : {}),
     });
@@ -147,6 +165,8 @@ async function fixture() {
     request(`/exports/${id}/file`, {
       body: new URLSearchParams({ token, accountId: operator.id }).toString(),
       content: 'application/x-www-form-urlencoded',
+      // Native forms cannot set custom headers; authority is in their body.
+      epoch: null,
       ...overrides,
     });
   return {
@@ -167,12 +187,66 @@ async function fixture() {
     ready,
     authorize,
     delivery,
+    gate,
+    setMaintenance: (next: Partial<MaintenancePublicStatus>) => {
+      maintenanceStatus = { ...maintenanceStatus, ...next };
+    },
     advance: (milliseconds: number) => {
       now += milliseconds;
     },
-    verify: () => auth.markVerified(session.session, operator.id),
+    verify: () => {
+      const verify = () => auth.markVerified(session.session, operator.id);
+      return gate ? gate.run(verify) : verify();
+    },
   };
 }
+
+test('supervised native downloads require a current capability, stay blocked while paused, and refuse a pre-pause capability after resume', async () => {
+  const f = await fixture(true);
+  f.verify();
+  expect((await f.request('/exports', { epoch: null })).status).toBe(409);
+  expect((await f.request('/exports')).status).toBe(202);
+  const job = await f.ready();
+  const before = await f.authorize(job.id);
+  const state = f.backups.state();
+  f.setMaintenance({ phase: 'paused', epoch: 'after' });
+  expect((await f.delivery(job.id, before.token)).status).toBe(503);
+  expect((await f.request(`/exports/${job.id}/authorize`)).status).toBe(503);
+  expect(f.backups.state()).toEqual(state);
+  f.setMaintenance({ phase: 'running' });
+  const stale = await f.delivery(job.id, before.token);
+  expect(stale.status).toBe(409);
+  expect(await stale.json()).toMatchObject({ code: 'maintenance-epoch' });
+  expect(f.backups.state()).toEqual(state);
+  const current = await f.authorize(job.id);
+  const delivered = await f.delivery(job.id, current.token);
+  expect(delivered.status).toBe(200);
+  expect(
+    Buffer.from(await delivered.arrayBuffer())
+      .subarray(0, 8)
+      .toString(),
+  ).toBe('SPINEL01');
+  await vi.waitFor(() => expect(f.gate!.pending).toBe(0));
+});
+
+test('native download authorization retains its admitted epoch when maintenance changes during an asynchronous lookup', async () => {
+  const f = await fixture(true);
+  f.verify();
+  expect((await f.request('/exports')).status).toBe(202);
+  const job = await f.ready();
+  const current = f.backups.exports.current.bind(f.backups.exports);
+  vi.spyOn(f.backups.exports, 'current').mockImplementationOnce(async (session) => {
+    const value = await current(session);
+    f.setMaintenance({ phase: 'draining', epoch: 'after' });
+    return value;
+  });
+  const permission = await f.authorize(job.id);
+  await f.gate!.drain();
+  f.setMaintenance({ phase: 'running' });
+  expect((await f.delivery(job.id, permission.token)).status).toBe(409);
+  expect((await f.backups.exports.current(f.session.session.token_hash))?.state).toBe('ready');
+  expect((await f.request(`/exports/${job.id}/cancel`)).status).toBe(200);
+});
 
 test('manual-only HTTP export requires fresh session-bound Operator authority and downloads a real restorable encrypted workspace', async () => {
   const f = await fixture();
@@ -315,17 +389,21 @@ test('asynchronous metadata never returns to an Operator whose session was revok
   expect((await f.request('/exports', { method: 'GET' })).status).toBe(404);
 });
 
-test.each(['disconnect', 'revocation'] as const)(
+test.each(['disconnect', 'revocation', 'maintenance'] as const)(
   'a real backpressured HTTP download releases its archive and lease after %s',
   async (failure) => {
-    const f = await fixture();
+    const f = await fixture(failure === 'maintenance');
     // Incompressible bytes exceed a loopback socket's send buffers, keeping the
     // real pipeline active while the client pauses reading. No timing barrier
     // or substituted streaming implementation can manufacture this outcome.
-    f.db.exec('CREATE TABLE export_payload (id TEXT PRIMARY KEY, bytes BLOB)');
-    f.db
-      .prepare('INSERT INTO export_payload VALUES (?,?)')
-      .run('fixture', randomBytes(16 * 1024 ** 2));
+    const seed = () => {
+      f.db.exec('CREATE TABLE export_payload (id TEXT PRIMARY KEY, bytes BLOB)');
+      f.db
+        .prepare('INSERT INTO export_payload VALUES (?,?)')
+        .run('fixture', randomBytes(16 * 1024 ** 2));
+    };
+    if (f.gate) f.gate.run(seed);
+    else seed();
     f.verify();
     expect((await f.request('/exports')).status).toBe(202);
     const job = await f.ready();
@@ -359,7 +437,21 @@ test.each(['disconnect', 'revocation'] as const)(
       expect((await f.backups.exports.current(f.session.session.token_hash))?.state).toBe(
         'downloading',
       );
-      if (failure === 'disconnect') response.destroy();
+      let drain: Promise<void> | undefined;
+      if (failure === 'maintenance') {
+        f.setMaintenance({ phase: 'draining', epoch: 'after' });
+        // As the application's draining subscriber does: stop long transfers,
+        // then drain. The client is still connected and reading nothing.
+        f.gate!.cancelLongWork();
+        drain = f.gate!.drain(5000).then(async () => {
+          // The admission must outlive socket close through actual file cleanup
+          // and release of the persisted recovery lease.
+          expect(f.backups.state().owner).toBeNull();
+          expect(
+            (await readdir(f.directory)).filter((name) => name.startsWith('.backup-export-')),
+          ).toEqual([]);
+        });
+      } else if (failure === 'disconnect') response.destroy();
       else f.auth.revokeSession(f.session.session.token_hash);
       await vi.waitFor(
         async () => {
@@ -373,6 +465,13 @@ test.each(['disconnect', 'revocation'] as const)(
         },
         { timeout: 10_000, interval: 30 },
       );
+      await drain;
+      if (failure === 'maintenance') {
+        f.setMaintenance({ phase: 'paused' });
+        expect((await f.backups.exports.current(f.session.session.token_hash))?.error).toMatch(
+          /maintenance stopped this download\. Prepare a new download/,
+        );
+      }
     } finally {
       response.destroy();
       request.destroy();

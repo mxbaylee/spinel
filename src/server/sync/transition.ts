@@ -1,8 +1,11 @@
 import { createHash } from 'node:crypto';
 import {
   chmodSync,
+  closeSync,
   existsSync,
+  fstatSync,
   mkdtempSync,
+  openSync,
   readFileSync,
   realpathSync,
   renameSync,
@@ -29,6 +32,8 @@ export interface LegacyTransitionReader {
   close(): Promise<void>;
 }
 export type LegacyTransitionReaderFactory = (copy: string) => Promise<LegacyTransitionReader>;
+/** The CLI reserves paths before starting and retains all inode leases until exit. */
+type BindTransitionFile = (path: string) => Promise<void>;
 export type TransitionProgress = (event: {
   event:
     | 'sync_transition.exported'
@@ -159,6 +164,24 @@ function initializeDirectory(directory: string, marker: string, provenance: unkn
   } finally {
     rmSync(preparing, { recursive: true, force: true });
   }
+}
+async function copyDatabase(source: DatabaseSync, path: string, bindFile?: BindTransitionFile) {
+  // VACUUM INTO accepts an empty file. Establish its inode lease before SQLite
+  // can open it; binding only after the copy leaves hard-link aliases unowned.
+  const descriptor = openSync(path, 'wx', 0o600);
+  const identity = fstatSync(descriptor, { bigint: true });
+  closeSync(descriptor);
+  await bindFile?.(path);
+  await backup(source, path);
+  const copied = statSync(path, { bigint: true });
+  if (identity.dev !== copied.dev || identity.ino !== copied.ino) throw unavailable();
+}
+async function renameDatabase(from: string, to: string, bindFile?: BindTransitionFile) {
+  await bindFile?.(from);
+  renameSync(from, to);
+  // The batch lease recognizes this same inode under its new reserved path;
+  // both path reservations and every replaced inode stay owned until exit.
+  await bindFile?.(to);
 }
 function readManifest(directory: string): Manifest {
   const value = readJson(join(directory, manifestName)) as Manifest;
@@ -437,6 +460,7 @@ export async function exportSyncTransition(options: {
   source: string;
   directory: string;
   legacy: LegacyTransitionReaderFactory;
+  bindFile?: BindTransitionFile;
   progress?: TransitionProgress;
 }) {
   const directory = resolve(options.directory);
@@ -451,16 +475,18 @@ export async function exportSyncTransition(options: {
     if (!existsSync(join(directory, sourceName))) {
       const copying = join(directory, 'source-copying.sqlite');
       rmSync(copying, { force: true });
+      await options.bindFile?.(original);
       const db = new DatabaseSync(original, { readOnly: true });
       try {
         checkDatabase(db);
-        await backup(db, copying);
+        await copyDatabase(db, copying, options.bindFile);
       } finally {
         db.close();
       }
       chmodSync(copying, 0o600);
-      renameSync(copying, join(directory, sourceName));
+      await renameDatabase(copying, join(directory, sourceName), options.bindFile);
     }
+    await options.bindFile?.(join(directory, sourceName));
     const copy = new DatabaseSync(join(directory, sourceName), { readOnly: true });
     try {
       checkDatabase(copy);
@@ -484,6 +510,7 @@ export async function exportSyncTransition(options: {
   }
   const copyPath = join(directory, sourceName);
   if ((await digest(copyPath)) !== manifest.sourceHash) throw unavailable();
+  await options.bindFile?.(copyPath);
   const db = new DatabaseSync(copyPath, { readOnly: true });
   let reader: LegacyTransitionReader | undefined;
   const working = join(directory, 'legacy-working.sqlite');
@@ -504,8 +531,9 @@ export async function exportSyncTransition(options: {
       }
       if (!reader) {
         for (const suffix of ['', '-wal', '-shm']) rmSync(working + suffix, { force: true });
-        await backup(db, working);
+        await copyDatabase(db, working, options.bindFile);
         chmodSync(working, 0o600);
+        await options.bindFile?.(working);
         reader = await options.legacy(working);
       }
       const current = await reader.load(item.unitId, item.kind);
@@ -545,9 +573,10 @@ export async function exportSyncTransition(options: {
     if (manifest.sanitizedHash === null) {
       const sanitizing = join(directory, 'sanitizing.sqlite');
       for (const suffix of ['', '-wal', '-shm']) rmSync(sanitizing + suffix, { force: true });
-      await backup(db, sanitizing);
+      await copyDatabase(db, sanitizing, options.bindFile);
       chmodSync(sanitizing, 0o600);
       if (manifest.purgedUnits.length) {
+        await options.bindFile?.(sanitizing);
         const cleaner = await options.legacy(sanitizing);
         try {
           await cleaner.purge(manifest.purgedUnits);
@@ -555,6 +584,7 @@ export async function exportSyncTransition(options: {
           await cleaner.close();
         }
         // Reopen through public APIs to prove deletion survived SDK disposal.
+        await options.bindFile?.(sanitizing);
         const checker = await options.legacy(sanitizing);
         try {
           await checker.assertMissing(manifest.purgedUnits);
@@ -562,6 +592,7 @@ export async function exportSyncTransition(options: {
           await checker.close();
         }
       }
+      await options.bindFile?.(sanitizing);
       const clean = new DatabaseSync(sanitizing, { readOnly: true });
       try {
         checkDatabase(clean);
@@ -575,7 +606,7 @@ export async function exportSyncTransition(options: {
       } finally {
         clean.close();
       }
-      renameSync(sanitizing, sanitizedPath);
+      await renameDatabase(sanitizing, sanitizedPath, options.bindFile);
       manifest.sanitizedHash = await digest(sanitizedPath);
       writeJson(join(directory, manifestName), manifest);
       options.progress?.({
@@ -736,6 +767,7 @@ function verifyImportedUnits(directory: string, target: DatabaseSync, manifest: 
 export async function importSyncTransition(options: {
   directory: string;
   destination: string;
+  bindFile?: BindTransitionFile;
   progress?: TransitionProgress;
 }) {
   const directory = realpathSync(options.directory);
@@ -756,6 +788,7 @@ export async function importSyncTransition(options: {
   });
   const finalPath = join(destination, publishedName);
   const pendingPath = join(destination, pendingName);
+  await options.bindFile?.(sourcePath);
   const source = new DatabaseSync(sourcePath, { readOnly: true });
   let target: DatabaseSync | undefined;
   try {
@@ -772,6 +805,7 @@ export async function importSyncTransition(options: {
       throw unavailable();
     for (const item of legacy) exported(directory, manifest, item);
     if (existsSync(finalPath)) {
+      await options.bindFile?.(finalPath);
       target = new DatabaseSync(finalPath, { readOnly: true });
       const state = target
         .prepare(
@@ -799,13 +833,15 @@ export async function importSyncTransition(options: {
     if (!existsSync(pendingPath)) {
       const copying = join(destination, 'pending-copying.sqlite');
       for (const suffix of ['', '-wal', '-shm']) rmSync(copying + suffix, { force: true });
+      await options.bindFile?.(sanitizedPath);
       const sanitized = new DatabaseSync(sanitizedPath, { readOnly: true });
       try {
-        await backup(sanitized, copying);
+        await copyDatabase(sanitized, copying, options.bindFile);
       } finally {
         sanitized.close();
       }
       chmodSync(copying, 0o600);
+      await options.bindFile?.(copying);
       const copied = new DatabaseSync(copying, { readOnly: true });
       try {
         checkDatabase(copied);
@@ -813,8 +849,9 @@ export async function importSyncTransition(options: {
       } finally {
         copied.close();
       }
-      renameSync(copying, pendingPath);
+      await renameDatabase(copying, pendingPath, options.bindFile);
     }
+    await options.bindFile?.(pendingPath);
     target = new DatabaseSync(pendingPath);
     target.exec('PRAGMA journal_mode=DELETE');
     checkDatabase(target);
@@ -894,7 +931,7 @@ export async function importSyncTransition(options: {
     target.close();
     target = undefined;
     if ((await digest(sourcePath)) !== manifest.sourceHash) throw unavailable();
-    renameSync(pendingPath, finalPath);
+    await renameDatabase(pendingPath, finalPath, options.bindFile);
     options.progress?.({
       event: 'sync_transition.verified',
       completed: legacy.length,

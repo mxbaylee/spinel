@@ -43,9 +43,9 @@ test('host preflight rejects missing, plaintext and nested data mounts while acc
     stat: (path: string) => {
       if (path === missing) throw new Error('Missing directory');
       return {
-        uid: path.endsWith('/app') ? 1000 : 10001,
+        uid: path.endsWith('/app') || path.endsWith('/recovery') ? 1000 : 10001,
         mode: path.endsWith('.env') ? 0o600 : 0o700,
-        isDirectory: () => path === `${root}/app` || path === `${root}/caddy`,
+        isDirectory: () => ['app', 'caddy', 'recovery'].some((name) => path === `${root}/${name}`),
         isSocket: () => path.endsWith('tailscaled.sock'),
         isFile: () => path.endsWith('.env'),
       };
@@ -78,7 +78,7 @@ test('host preflight rejects missing, plaintext and nested data mounts while acc
     },
   };
   assert.equal(verifyHost(valid, host).root, root);
-  for (const name of ['app', 'caddy']) {
+  for (const name of ['app', 'caddy', 'recovery']) {
     nested = `${root}/${name}`;
     assert.throws(() => verifyHost(valid, host), /nested mount/);
     nested = '';

@@ -11,6 +11,8 @@ import { cookieToken } from '../auth/routes.ts';
 import type { BackupService } from './service.ts';
 import { ExportError } from './export-jobs.ts';
 import { MAX_ARCHIVE_BYTES } from './transfer.ts';
+import { MaintenanceError } from '../maintenance/gate.ts';
+import { maintenanceRouter } from '../maintenance/router.ts';
 
 const TOKEN_MS = 60_000;
 const DELIVERY_MS = 10 * 60_000;
@@ -25,10 +27,11 @@ function empty(value: unknown) {
 
 /** Mounted only at /api/admin/backups; no archive or deployment input is accepted. */
 export function backupRoutes(auth: AuthStore, backups: BackupService, origin: string) {
-  const router = express.Router();
+  const router = maintenanceRouter();
   // There can be only one retained export. Keep just one delivery capability,
   // in memory, hashed and bound to the initiating cookie session and job.
-  let capability: { job: string; session: string; digest: Buffer; expiresAt: number } | undefined;
+  let capability:
+    { job: string; session: string; digest: Buffer; expiresAt: number; epoch: string } | undefined;
   const operator = (request: Request, account?: unknown): Session => {
     const session = auth.session(cookieToken(request));
     if (!session?.user_id || !auth.user(session.user_id)?.is_admin)
@@ -128,7 +131,15 @@ export function backupRoutes(auth: AuthStore, backups: BackupService, origin: st
     const token = randomBytes(32).toString('base64url');
     const expiresAt = Math.min(auth.now() + TOKEN_MS, job.expiresAt ?? 0);
     if (expiresAt <= auth.now()) throw new AuthError(410, 'This backup expired. Prepare another.');
-    capability = { job: job.id, session: current.token_hash, digest: hash(token), expiresAt };
+    capability = {
+      job: job.id,
+      session: current.token_hash,
+      digest: hash(token),
+      expiresAt,
+      // Keep the authorization request's admission even if a pause began
+      // during its asynchronous status lookup; later state cannot renew it.
+      epoch: backups.db.maintenance?.epoch ?? '',
+    };
     response.json({ token, expiresAt });
   });
   router.post('/exports/:id/file', async (request, response) => {
@@ -151,6 +162,7 @@ export function backupRoutes(auth: AuthStore, backups: BackupService, origin: st
       !timingSafeEqual(capability.digest, hash(body.token))
     )
       throw new AuthError(410, 'Download permission expired. Choose Download again.');
+    backups.db.maintenance?.assertEpoch(capability.epoch);
     // Consume before the first await: a second request cannot reuse authority.
     capability = undefined;
     const download = await backups.exports.claim(current.token_hash, id);
@@ -170,6 +182,7 @@ export function backupRoutes(auth: AuthStore, backups: BackupService, origin: st
       }
     }, 1000);
     accessCheck.unref();
+    const releaseDrain = backups.db.maintenance?.cancelOnDrain(controller);
     let input: Awaited<ReturnType<typeof open>> | undefined;
     let stream: ReadStream | undefined;
     let success = false;
@@ -200,6 +213,7 @@ export function backupRoutes(auth: AuthStore, backups: BackupService, origin: st
       await pipeline(stream, response, { signal });
       success = true;
     } finally {
+      releaseDrain?.();
       clearTimeout(watchdog);
       clearInterval(accessCheck);
       response.removeListener('close', closed);
@@ -207,7 +221,7 @@ export function backupRoutes(auth: AuthStore, backups: BackupService, origin: st
         stream?.destroy();
         await input?.close();
       } finally {
-        await download.finish(success);
+        await download.finish(success, controller.signal.reason);
       }
     }
   });
@@ -216,7 +230,10 @@ export function backupRoutes(auth: AuthStore, backups: BackupService, origin: st
       response.destroy();
       return;
     }
-    const known = error instanceof AuthError || error instanceof ExportError;
+    const known =
+      error instanceof AuthError ||
+      error instanceof ExportError ||
+      error instanceof MaintenanceError;
     const status = known
       ? error.status
       : error instanceof Error && 'type' in error && error.type === 'entity.too.large'
@@ -226,6 +243,7 @@ export function backupRoutes(auth: AuthStore, backups: BackupService, origin: st
       error: known
         ? error.message
         : 'The backup request could not complete. Refresh and try again.',
+      ...(error instanceof MaintenanceError ? { code: error.code } : {}),
     });
   });
   return router;

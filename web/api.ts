@@ -1,3 +1,4 @@
+import { maintenanceFetch as fetch } from './maintenanceFetch.ts';
 import { clearDashboardNavigation } from './dashboardNavigation.ts';
 import { spaceReviewSignInPath } from '../src/shared/spaceReviewRoute.ts';
 

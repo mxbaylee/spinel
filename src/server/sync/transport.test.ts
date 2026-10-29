@@ -16,6 +16,12 @@ import { Profiles } from '../auth/profile.ts';
 import { WorkspaceStore } from '../workspace/store.ts';
 import { SpaceStore } from '../workspace/spaces.ts';
 import { LinkAccess } from '../workspace/links.ts';
+import type {
+  MaintenanceAdminStatus,
+  MaintenanceBridge,
+  MaintenancePublicStatus,
+} from '../../shared/maintenance.ts';
+import { publicMaintenance } from '../../shared/maintenance.ts';
 
 vi.setConfig({ testTimeout: 30_000 });
 const cleanup: (() => unknown | Promise<unknown>)[] = [];
@@ -42,7 +48,7 @@ type Frame = {
 };
 const presence = (frames: Frame[]) => frames.filter((frame) => frame.type === 'presence').at(-1);
 
-async function fixture() {
+async function fixture(maintenance?: MaintenanceBridge) {
   const directory = await mkdtemp(join(tmpdir(), 'spinel-own-transport-'));
   cleanup.push(() => rm(directory, { recursive: true, force: true }));
   await writeFile(join(directory, 'index.html'), 'Fixture');
@@ -52,6 +58,7 @@ async function fixture() {
     databasePath: filename,
     staticDirectory: directory,
     origin,
+    maintenance,
   });
   const db = openDatabase(filename);
   cleanup.push(() => db.close());
@@ -93,6 +100,7 @@ async function fixture() {
       headers: {
         Cookie: credential,
         Origin: suppliedOrigin,
+        ...(maintenance && { 'X-Spinel-Epoch': maintenance.status().epoch }),
         ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
         ...extraHeaders,
       },
@@ -115,7 +123,7 @@ async function fixture() {
   ) => {
     const token = existing ?? (await ticket(base, id, credential));
     const socket = new WebSocket(
-      `${root.replace('http:', 'ws:')}${base}/socket?unitId=${id}&ticket=${token}${afterRevision === undefined ? '' : `&afterRevision=${afterRevision}`}`,
+      `${root.replace('http:', 'ws:')}${base}/socket?unitId=${id}&ticket=${token}${afterRevision === undefined ? '' : `&afterRevision=${afterRevision}`}${maintenance ? `&epoch=${encodeURIComponent(maintenance.status().epoch)}` : ''}`,
       { headers: { Cookie: credential, Origin: origin }, autoPong },
     );
     sockets.push(socket);
@@ -140,7 +148,7 @@ async function fixture() {
     afterRevision?: string,
   ) => {
     const socket = new WebSocket(
-      `${root.replace('http:', 'ws:')}${base}/socket?unitId=${id}&ticket=${token}${afterRevision === undefined ? '' : `&afterRevision=${afterRevision}`}`,
+      `${root.replace('http:', 'ws:')}${base}/socket?unitId=${id}&ticket=${token}${afterRevision === undefined ? '' : `&afterRevision=${afterRevision}`}${maintenance ? `&epoch=${encodeURIComponent(maintenance.status().epoch)}` : ''}`,
       { headers: { Cookie: credential, Origin: suppliedOrigin } },
     );
     sockets.push(socket);
@@ -780,6 +788,104 @@ test('guest ticket failures distinguish root revocation from Origin, generation 
     error: 'This document is not available.',
     code: 'guest-link-revoked',
   });
+});
+
+test('supervised expiry admits running cleanup, closes paused guests without writes and cleans up after resume', async () => {
+  let status: MaintenanceAdminStatus = {
+    available: true,
+    phase: 'running',
+    epoch: 'expiry-before',
+    notice: null,
+    operationId: randomUUID(),
+    authorityExpiresAt: Date.now() + 60_000,
+    generationId: randomUUID(),
+    lastFailure: null,
+    readyToResume: false,
+  };
+  const listeners = new Set<(status: MaintenancePublicStatus) => void>();
+  const update = (patch: Partial<MaintenanceAdminStatus>) => {
+    status = { ...status, ...patch };
+    for (const listener of listeners) listener(publicMaintenance(status));
+  };
+  const bridge: MaintenanceBridge = {
+    status: () => publicMaintenance(status),
+    adminStatus: () => status,
+    subscribe(listener) {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
+    },
+    async control() {
+      return { status };
+    },
+    drained() {},
+    ready() {},
+    fail() {
+      throw new Error('Fixture drain failed.');
+    },
+    close() {},
+  };
+  const f = await fixture(bridge);
+  await f.prepare();
+  const diagnostic = vi.spyOn(console, 'error').mockImplementation(() => {});
+  const beginExpiry = vi.spyOn(LinkAccess.prototype, 'beginExpiry');
+  const guestBase = `/sync-api/guest/${f.sheet.id}`;
+  const state = () =>
+    f.db.prepare('SELECT * FROM workspace_links WHERE item_id=?').get(f.sheet.id)!;
+  for (const paused of [false, true]) {
+    const linked = await f.send(`/api/items/${f.sheet.id}/link`, f.cookie(), 'PUT', {
+      role: 'editor',
+      expiryDays: 7,
+    });
+    expect(linked.status).toBe(200);
+    const link = await linked.json();
+    const entered = await f.send(`/api/guest/${f.sheet.id}/session`, '', 'POST', {
+      token: new URL(link.url).hash.slice(1),
+    });
+    expect(entered.status).toBe(204);
+    const guestCookie = entered.headers.get('set-cookie')!.split(';')[0];
+    const guest = await f.connect(guestBase, f.sheet.id, guestCookie);
+    const unused = await f.ticket(guestBase, f.sheet.id, guestCookie);
+    beginExpiry.mockClear();
+    if (paused) {
+      update({ phase: 'paused', epoch: 'expiry-after' });
+      expect(guest.socket.readyState).toBe(WebSocket.OPEN);
+    }
+    // Only fixture setup uses this separate connection. The timer's app handle
+    // has the real write guard and must acquire its own running admission.
+    f.db
+      .prepare('UPDATE workspace_links SET expires_at=? WHERE item_id=?')
+      .run(Date.now(), f.sheet.id);
+    const expired = state();
+    await expect.poll(() => guest.socket.readyState).toBe(WebSocket.CLOSED);
+    expect((await f.send(`/api/guest/${f.sheet.id}`, guestCookie)).status).toBe(404);
+    if (paused) {
+      expect(beginExpiry).not.toHaveBeenCalled();
+      expect(state()).toEqual(expired);
+      expect(
+        f.db
+          .prepare('SELECT count(*) AS n FROM workspace_guest_sessions WHERE item_id=?')
+          .get(f.sheet.id)?.n,
+      ).toBe(1);
+      expect(f.app.maintenance.pending).toBe(0);
+      update({ phase: 'running' });
+    }
+    await expect
+      .poll(() => state())
+      .toMatchObject({
+        epoch: link.epoch + 1,
+        state: 'off',
+        token_hash: null,
+        preview_hash: null,
+      });
+    expect(beginExpiry).toHaveBeenCalled();
+    expect(
+      f.db
+        .prepare('SELECT count(*) AS n FROM workspace_guest_sessions WHERE item_id=?')
+        .get(f.sheet.id)?.n,
+    ).toBe(0);
+    await f.rejectedSocket(unused, guestBase, f.sheet.id, guestCookie);
+    expect(diagnostic).not.toHaveBeenCalled();
+  }
 });
 
 test.each(['scan', 'fence', 'finish'] as const)(

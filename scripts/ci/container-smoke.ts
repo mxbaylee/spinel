@@ -6,12 +6,14 @@ import { tmpdir } from 'node:os';
 import { basename, join } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
+import { checkMaintenanceProxy } from './proxy-smoke.ts';
 
 const version = readFileSync('.nvmrc', 'utf8').trim();
 assert.match(version, /^\d+\.\d+\.\d+$/);
 const directory = mkdtempSync(join(process.env.RUNNER_TEMP ?? tmpdir(), 'spinel-container-smoke-'));
 const dataDirectory = join(directory, 'data');
 const names = ['native', 'first', 'restart'].map((phase) => `${basename(directory)}-${phase}`);
+const proxyName = `${basename(directory)}-proxy`;
 const origin = 'http://localhost:3105';
 const base = 'http://127.0.0.1:3105';
 // Match the app's deployment limits without involving its proxy or tailnet.
@@ -46,7 +48,10 @@ let cleaned = false;
 function cleanup() {
   if (cleaned) return;
   cleaned = true;
-  spawnSync('docker', ['rm', '--force', ...names], { stdio: 'ignore', timeout: 30_000 });
+  spawnSync('docker', ['rm', '--force', '--volumes', ...names, proxyName], {
+    stdio: 'ignore',
+    timeout: 30_000,
+  });
   // The container's UID 1000 owns the database and WAL; the runner may have a
   // different UID. Remove only this run's freshly created temporary directory.
   const result = spawnSync('sudo', ['-n', 'rm', '-rf', '--', directory], {
@@ -384,6 +389,7 @@ try {
 }
 
 try {
+  await checkMaintenanceProxy(directory, proxyName);
   console.log('Building the final production image.');
   const imageFile = join(directory, 'image-id');
   run('docker', ['build', '--pull', '--progress=plain', '--iidfile', imageFile, '.'], {

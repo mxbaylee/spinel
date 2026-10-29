@@ -1,3 +1,4 @@
+import { maintenanceFetch as fetch } from '../maintenanceFetch.ts';
 import type {
   ClientCheckpoint,
   ClientCheckpointFactory,
@@ -375,6 +376,7 @@ export class OfflineSession implements IURLImageService {
           creation.request,
           signal,
           this.verifyRemote,
+          this.bundle?.maintenanceEpoch,
         );
         await this.store!.updateCreation(
           this.itemId,
@@ -589,7 +591,11 @@ export class OfflineSession implements IURLImageService {
     return structuredClone(saved);
   }
   /** Recovery is a new account file; never broaden the original scoped HTTP adapter. */
-  async publishRecovery(recovery: OfflineRecoveryRequest, signal: AbortSignal) {
+  async publishRecovery(
+    recovery: OfflineRecoveryRequest,
+    signal: AbortSignal,
+    epoch = this.bundle?.maintenanceEpoch ?? '',
+  ) {
     this.recoveryScope();
     this.verifyRemote();
     if (JSON.stringify(this.verifiedRecovery?.recovery) !== JSON.stringify(recovery))
@@ -599,7 +605,13 @@ export class OfflineSession implements IURLImageService {
       credentials: 'same-origin',
       cache: 'no-store',
       redirect: 'error',
-      headers: { 'Content-Type': 'application/json', 'X-Spinel-Offline-Account': this.accountId },
+      // Intent is captured before asynchronous preparation. A later poll may
+      // never upgrade an old automatic recovery to the resumed epoch.
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Spinel-Offline-Account': this.accountId,
+        'X-Spinel-Epoch': epoch,
+      },
       body: JSON.stringify(recovery),
       signal: AbortSignal.any([signal, AbortSignal.timeout(20_000)]),
     });

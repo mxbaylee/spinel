@@ -1,3 +1,4 @@
+import { maintenanceRouter } from '../maintenance/router.ts';
 import { admitTransfer, transfers } from '../workspace/transfers.ts';
 import express from 'express';
 import type { Request, Response, NextFunction } from 'express';
@@ -10,7 +11,7 @@ export function appearanceRoutes(
   origin: string,
   store = new AppearanceStore(workspace),
 ) {
-  const router = express.Router();
+  const router = maintenanceRouter();
   for (const guest of [false, true])
     for (const scoped of [false, true]) {
       const prefix = `${guest ? '/guest' : ''}${scoped ? '/spaces/:spaceId' : ''}/items/:id`;
