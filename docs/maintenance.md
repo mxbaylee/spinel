@@ -3,7 +3,10 @@
 SPN-111 adds a deployment-owned pause around the current workspace. It can drain
 accepted operations, stop every application process, verify that the live SQLite
 and WAL handles are closed, and start the same generation under maintenance.
-Replacing a dataset from a backup remains [SPN-112](todo/SPN-112.md).
+Replacing a dataset from a backup uses the separate
+[Admin restore flow](backups.md#restore-through-admin), with durable encrypted
+source custody and independent generation admission. Ordinary maintenance commands
+do not authorize replacement or bypass an unresolved restore's opening barrier.
 
 ## Supported control boundary
 

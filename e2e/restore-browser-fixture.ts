@@ -4,7 +4,7 @@ import { execFile, fork } from 'node:child_process';
 import type { ChildProcess } from 'node:child_process';
 import { promisify } from 'node:util';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
-import { mkdir, readFile, readdir, rename, writeFile } from 'node:fs/promises';
+import { chmod, copyFile, mkdir, readFile, readdir, rename, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { DatabaseSync, openDatabase } from '../server/database.ts';
@@ -16,9 +16,12 @@ import { validRestoreJobRecord } from '../src/server/maintenance/restore-jobs.ts
 import type { RestoreJobRecord } from '../src/server/maintenance/restore-jobs.ts';
 
 const directory = '/fixture';
-const data = join(directory, 'data');
+// Database and Unix control socket require the durable Linux filesystem. The
+// host bind is only a private exchange for browser input and safe evidence.
+const stateDirectory = '/state';
+const data = join(stateDirectory, 'data');
 const databasePath = join(data, 'workspace.sqlite');
-const root = join(directory, 'recovery');
+const root = join(stateDirectory, 'recovery');
 const staticDirectory = '/app/dist';
 const image = process.env.SPINEL_IMAGE!;
 if (!/^sha256:[a-f0-9]{64}$/.test(image))
@@ -126,6 +129,13 @@ if (process.argv.includes('--seed')) {
   let stopping: Promise<void> | undefined;
   let source: Seed | undefined;
   let fixturePhase = 'preparing-source';
+  const serviceDiagnostic: {
+    exitCode: number | null;
+    signal: string | null;
+    errorCode: string | null;
+    errno: number | null;
+    syscall: string | null;
+  } = { exitCode: null, signal: null, errorCode: null, errno: null, syscall: null };
   async function record() {
     const names = await readdir(join(root, 'restore-jobs')).catch(() => []);
     if (names.length !== 1) return null;
@@ -179,6 +189,7 @@ if (process.argv.includes('--seed')) {
       }
     })());
   try {
+    await chmod(stateDirectory, 0o700);
     await mkdir(data, { mode: 0o700 });
     await mkdir(root, { mode: 0o700 });
     source = await new Promise<Seed>((resolve, reject) => {
@@ -206,6 +217,15 @@ if (process.argv.includes('--seed')) {
         else reject(new Error('Browser fixture seed failed.'));
       });
     });
+    const exported = join(directory, 'source');
+    await mkdir(exported, { mode: 0o700 });
+    const archive = join(exported, 'workspace.spinel');
+    const keyFile = join(exported, 'archive.key');
+    await copyFile(source.archive, archive);
+    await chmod(archive, 0o600);
+    await copyFile(source.keyFile, keyFile);
+    await chmod(keyFile, 0o600);
+    source = { ...source, archive, keyFile };
     fixturePhase = 'starting-shipped-supervisor';
     const runtimeFiles = [
       'server/app.ts',
@@ -258,9 +278,28 @@ if (process.argv.includes('--seed')) {
     service = fork('/app/server/supervisor.ts', [], {
       env: environment,
       execArgv: ['--max-old-space-size=128', '--max-semi-space-size=4'],
-      stdio: ['ignore', 'ignore', 'ignore', 'ipc'],
+      stdio: ['ignore', 'ignore', 'pipe', 'ipc'],
     });
-    serviceExit = new Promise((resolveExit) => service!.once('exit', resolveExit));
+    // Retain only allowlisted native error metadata, never stderr text/paths.
+    let stderrTail = '';
+    service.stderr!.on('data', (chunk: Buffer) => {
+      stderrTail = (stderrTail + chunk.toString('utf8')).slice(-8192);
+      serviceDiagnostic.errorCode =
+        /code:\s*['"](E[A-Z0-9_]{1,63})['"]/.exec(stderrTail)?.[1] ?? serviceDiagnostic.errorCode;
+      const errno = /errno:\s*(-?\d{1,8})/.exec(stderrTail)?.[1];
+      if (errno !== undefined) serviceDiagnostic.errno = Number(errno);
+      serviceDiagnostic.syscall =
+        /syscall:\s*['"](listen|bind|open|chmod|stat|read|unlink)['"]/.exec(stderrTail)?.[1] ??
+        serviceDiagnostic.syscall;
+    });
+    serviceExit = new Promise((resolveExit) =>
+      service!.once('close', (code, signal) => {
+        stderrTail = '';
+        serviceDiagnostic.exitCode = code;
+        serviceDiagnostic.signal = signal;
+        resolveExit(code);
+      }),
+    );
     const control = async (action: string, operationId?: string) => {
       const result = await run(
         process.execPath,
@@ -280,6 +319,7 @@ if (process.argv.includes('--seed')) {
       try {
         initial = await control('status');
       } catch {
+        if (service.exitCode !== null || service.signalCode !== null) break;
         await new Promise((resolveWait) => setTimeout(resolveWait, 100));
       }
     }
@@ -338,7 +378,7 @@ if (process.argv.includes('--seed')) {
     });
   } catch {
     await stop().catch(() => {});
-    await publish('failed.json', { failed: true, phase: fixturePhase });
+    await publish('failed.json', { failed: true, phase: fixturePhase, service: serviceDiagnostic });
     process.exitCode = 1;
   }
 }

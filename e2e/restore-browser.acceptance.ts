@@ -27,6 +27,7 @@ const output = resolve(
 );
 const directory = await mkdtemp(join(tmpdir(), 'spinel-restore-browser-'));
 const container = `spinel-restore-browser-${randomUUID()}`;
+const volume = `${container}-state`;
 const hash = (bytes: Uint8Array) => createHash('sha256').update(bytes).digest('hex');
 let stage = 'initializing';
 let browser: Browser | undefined;
@@ -35,6 +36,10 @@ let child: ChildProcess | undefined;
 let exit: Promise<number | null> | undefined;
 let succeeded = false;
 let shutdownPromise: Promise<void> | undefined;
+let containerExit: number | null | undefined;
+let volumeDisposition:
+  'not-created' | 'creation-unconfirmed' | 'retained' | 'cleanup-unconfirmed' | 'removed' =
+  'not-created';
 const sockets = new Set<Socket>();
 const captures: Array<{ state: string; variant: string; filename: string }> = [];
 const proxy = httpsServer();
@@ -45,6 +50,9 @@ const artifact: Record<string, unknown> = {
   image,
   containerMemoryMiB: 1800,
   containerCpus: 2,
+  volume,
+  storage:
+    'Durable Linux named volume for workspace/recovery; private host bind for source exchange and evidence only',
 };
 
 async function poll<T>(
@@ -100,6 +108,11 @@ async function capture(page: Page, state: string) {
 }
 async function shutdown() {
   return (shutdownPromise ??= (async () => {
+    // A timed-out ownership command may leave its Docker process running.
+    await run('docker', ['rm', '--force', `${container}-init`], {
+      timeout: 10_000,
+      maxBuffer: 4096,
+    }).catch(() => {});
     await browser?.close().catch(() => {});
     browser = undefined;
     if (child && child.exitCode === null) {
@@ -111,6 +124,7 @@ async function shutdown() {
         exit!,
         new Promise<null>((resolveWait) => setTimeout(() => resolveWait(null), 5000)),
       ]);
+      containerExit = completed;
       if (completed === null && child.exitCode === null)
         await run('docker', ['kill', container], { timeout: 10_000, maxBuffer: 4096 }).catch(
           () => {},
@@ -256,6 +270,34 @@ try {
     { mode: 0o600 },
   );
   stage = 'starting-linux-supervisor';
+  volumeDisposition = 'creation-unconfirmed';
+  await run('docker', ['volume', 'create', volume], { timeout: 15_000, maxBuffer: 4096 });
+  volumeDisposition = 'retained';
+  // The volume is empty here. Only its ownership is initialized as root; the
+  // fixture, shipped CLI and application all run as the unprivileged fixture UID.
+  await run(
+    'docker',
+    [
+      'run',
+      '--rm',
+      '--name',
+      `${container}-init`,
+      '--pull=never',
+      '--memory=1800m',
+      '--memory-swap=1800m',
+      '--cpus=2',
+      '--network=none',
+      '--user',
+      '0:0',
+      '-v',
+      `${volume}:/state`,
+      image,
+      'chown',
+      `${process.getuid!()}:${process.getgid!()}`,
+      '/state',
+    ],
+    { timeout: 15_000, maxBuffer: 4096 },
+  );
   child = spawn(
     'docker',
     [
@@ -275,6 +317,8 @@ try {
       `${join(project, 'e2e/restore-browser-fixture.ts')}:/app/e2e/restore-browser-fixture.ts:ro`,
       '-v',
       `${directory}:/fixture`,
+      '-v',
+      `${volume}:/state`,
       '-e',
       `SPINEL_IMAGE=${image}`,
       '-w',
@@ -400,6 +444,7 @@ try {
     !proof.committed ||
     !proof.restoredContent ||
     !proof.originalSessionExcluded ||
+    containerExit !== 0 ||
     !Number.isSafeInteger(proof.counter) ||
     proof.counter < 4 ||
     proof.memoryLimitBytes !== 1800 * 1024 * 1024 ||
@@ -424,11 +469,23 @@ try {
   process.exitCode = 1;
 } finally {
   await shutdown();
+  if (succeeded) {
+    try {
+      volumeDisposition = 'cleanup-unconfirmed';
+      await run('docker', ['volume', 'rm', volume], { timeout: 15_000, maxBuffer: 4096 });
+      volumeDisposition = 'removed';
+    } catch {
+      succeeded = false;
+      stage = 'volume-cleanup-incomplete';
+      process.exitCode = 1;
+    }
+  }
   artifact.stage = stage;
   artifact.passed = succeeded;
   artifact.captures = captures;
   artifact.completedAt = new Date().toISOString();
   artifact.privateFixtureRetained = !succeeded;
+  artifact.privateVolumeDisposition = volumeDisposition;
   await writeFile(join(output, 'evidence.json'), JSON.stringify(artifact, null, 2));
   if (succeeded) await rm(directory, { recursive: true, force: true });
 }

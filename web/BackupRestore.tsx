@@ -32,7 +32,9 @@ const admitted = (job: RestorePreparation | null) =>
   !!job && ['admitting', 'accepted', 'started'].includes(job.state);
 const time = (value: number | string) => new Date(value).toLocaleString();
 const size = (bytes: number) =>
-  `${(bytes / 1024 / 1024).toLocaleString(undefined, { maximumFractionDigits: 1 })} MiB`;
+  bytes < 1024 * 1024
+    ? `${Math.max(1, Math.ceil(bytes / 1024))} KiB`
+    : `${(bytes / 1024 / 1024).toLocaleString(undefined, { maximumFractionDigits: 1 })} MiB`;
 const messages: Record<RestorePreparation['state'], string> = {
   uploading: 'Waiting for the encrypted backup upload.',
   preparing: 'Checking the encrypted backup and preparing an access preview…',

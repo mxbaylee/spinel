@@ -47,8 +47,9 @@ offsite coverage. SPN-109 adds encrypted Admin downloads and deployment-owned
 backup policy for local storage and DigitalOcean Spaces. AWS S3 is a separate
 [post-production feature request](todo/SPN-114.md). SPN-111 implements
 [supervised maintenance](maintenance.md) for pause, drain and restart of the
-same dataset. Diagnostics expiry and assisted live restore remain SPN-110 and
-SPN-112; fresh-host CLI recovery is available.
+same dataset. SPN-112 adds [assisted workspace restore](#restore-through-admin)
+under that supervisor. Diagnostics expiry remains SPN-110; fresh-host CLI recovery
+is also available.
 
 ## Deployment policy and manual downloads
 
@@ -443,12 +444,84 @@ and follow the fresh-host procedure. New encryption cannot retract plaintext or
 old ciphertext already obtained with a stolen old key. Keep retained backups
 recoverable until their retention expires; if policy requires retiring a key
 earlier, explicitly account for the backups made unreadable. Live session/guest
-reconciliation when replacing a dataset belongs to SPN-112, not this verifier.
-SPN-111's generation/epoch fencing supports maintenance of the current dataset
-and refuses an unexpected replacement inode.
+reconciliation when replacing a dataset is part of assisted restore, not this
+isolated verifier. Ordinary maintenance still refuses an unexpected replacement
+inode; assisted restore has its own retained custody, opening barriers and fresh
+generation/epoch admission.
 
 Sources: [SQLite VACUUM INTO](https://www.sqlite.org/lang_vacuum.html#vacuuminto),
 [DigitalOcean AWS SDK configuration](https://docs.digitalocean.com/products/spaces/reference/aws-sdks/).
+
+## Restore through Admin
+
+Use **Backups & health → Restore workspace** in a supervised Linux deployment.
+The Operator can restore a whole encrypted workspace without viewing its contents.
+Direct development startup does not supply the independent supervisor and reports
+this capability unavailable. The [maintenance guide](maintenance.md) describes
+the supported filesystem, namespace, private recovery root and service account.
+Actual validation and remaining acceptance work are recorded in
+[SPN-112](implementation/SPN-112.md); source implementation alone is not a tested
+deployment.
+
+1. Select **Prepare restore**. Choose **Previously saved backup** from the configured
+   filesystem/Spaces catalog, or **Encrypted backup from this device**. An upload
+   needs the complete `.spinel` bundle, at most 5 GiB, and its separate original
+   32-byte recovery key. It needs no automatic backup destination. A bare SQLite
+   file is not accepted. Catalog recovery uses the deployment's configured active
+   and retained keys; it does not ask the browser for provider credentials.
+2. Complete the fresh Operator passkey check. Preparation takes private custody,
+   checks the encrypted inventory, compatible immutable image/origin and resource
+   requirements, and builds a provisional reconciliation preview. The current
+   workspace keeps running. The backup retention lease protects the selected
+   point while preparation owns it. **Cancel preparation** is available before
+   admission; closing a dialog or changing Admin sections is not cancellation.
+3. Select **Review restore**, inspect the source fingerprint, exact target and
+   provisional consequences, then freshly authenticate and confirm. Work accepted
+   after the backup, including edits accepted before maintenance drains, is lost
+   if that backup is activated. Everyone is signed out, personal filing is removed,
+   sharing can be removed or downgraded, and archived ownership/trash may require
+   recovery. Counts can change before the final frozen comparison.
+4. Wait for the recorded outcome. Confirmation first durably hands the encrypted
+   source to the supervisor, then starts maintenance separately so its HTTP reply
+   can drain. An accepted reply or reachable server is not completion. After service
+   returns, sign in again and refresh restore status. **Backup restored** is a
+   historical completed outcome; later edits may have changed the workspace.
+   **Original content was recovered** means the candidate failed and one verified
+   original-content recovery completed; access and sessions may still have changed.
+   **Restore did not begin** means that attempt never replaced the workspace.
+
+Current account state and passkeys remain authoritative. Archived credentials
+cannot authorize activation or renew the original confirmation. Sharing is capped
+by current grants, guest capabilities and sessions are revoked, and native/offline
+retry fences prevent old clients replaying discarded work. Common item IDs keep
+current ownership; archive-only components are isolated for explicit handover and
+restored trash is held for recovery. The preview describes these losses without
+exposing document contents to the Operator. Restoring a historical backup does not
+claim that the resulting reconciled workspace was newly backed up, and uploaded
+configuration never replaces current endpoints, secrets or schedules.
+
+If a reply is lost, **Refresh restore status** before acting. An offered
+**Retry confirmed restore** repeats only the original exact intent while its
+authority remains valid. A new passkey check cannot renew that old confirmation.
+Unknown, expired or unresolved outcomes block new preparation. Cancellation after
+admission is not an undo operation; do not start another restore to guess whether
+the first one completed.
+
+The supervisor preserves closed original files and requires independent final
+stop/readiness evidence before opening a candidate. A failed trial permits at
+most one refreshed original-content attempt within the original authority window;
+it never copies raw original files back over a live or newly acknowledged
+generation. A committed outcome survives restart cleanup without reinstalling
+prepared bytes. An unexecuted, fully identified admission is marked failed and
+left stopped/unverified for explicit host recovery. Missing evidence, expired
+authority or ambiguous ownership keeps the workspace closed.
+
+For an unresolved restore, preserve the private recovery root, encrypted source,
+raw/frozen custody and opening barrier. Use the independent CLI's `status` to
+inspect maintenance state. Ordinary verify/start/resume refuses unresolved
+execution; deleting journals, barriers or retained files is not a recovery step.
+Resolve the retained evidence and deployment ownership before reopening, or use
+the separate fresh-host recovery procedure with an explicit access review.
 
 ## Restore onto a fresh host
 
@@ -470,6 +543,7 @@ Sources: [SQLite VACUUM INTO](https://www.sqlite.org/lang_vacuum.html#vacuuminto
    new directory. Wrong keys, changed/truncated bytes and existing destinations
    fail. It never overwrites live data. The destination and staging must be on
    the same encrypted filesystem.
+
 2. Read `restored/recovery.json` privately. Restore its exact runtime environment
    to the deployment environment file (0600), adjusting host-specific paths and
    new backup credentials. Select its recorded immutable image. Recreate private
@@ -573,8 +647,7 @@ original cryptographic WebAuthn credentials, supplied by virtual authenticators,
 to sign in again as Operator, Owner and Collaborator. Existing credentials were
 not replaced. Owner/Collaborator read the expected native snapshots and exact
 image bytes; the viewer's edit returned 403, an unrelated document returned 404,
-the Operator's document request returned 403, and an unauthenticated guest got
-401. Every check passed again after replacing the running app container.
+the Operator's document request returned 403, and an unauthenticated guest got 401. Every check passed again after replacing the running app container.
 
 The restored host then produced and verified a new offsite backup at
 `2026-10-18T02:39:18.706Z`, with no admin error. Its object was

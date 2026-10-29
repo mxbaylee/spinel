@@ -10,6 +10,7 @@ import { openDatabase } from '../../../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../auth/store.ts';
 import { BackupService } from './service.ts';
 import { restoreRoutes } from './restore-routes.ts';
+import * as journal from '../maintenance/journal.ts';
 
 const cleanups: Array<() => unknown | Promise<unknown>> = [];
 afterEach(async () => {
@@ -17,6 +18,10 @@ afterEach(async () => {
   vi.restoreAllMocks();
 });
 async function fixture(controller = true) {
+  const identity = { pid: process.pid, start: '12345', boot: randomUUID(), token: '' };
+  vi.spyOn(journal, 'processIdentity').mockImplementation((pid) =>
+    pid === process.pid ? identity : null,
+  );
   const directory = await mkdtemp(join(tmpdir(), 'spinel-restore-http-'));
   cleanups.push(() => rm(directory, { recursive: true, force: true }));
   const databasePath = join(directory, 'app.sqlite'),

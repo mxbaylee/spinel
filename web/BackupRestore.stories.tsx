@@ -158,6 +158,26 @@ export const Ready: Story = {
     await expect(canvas.queryByText(job.target.generationId)).toBeNull();
   },
 };
+export const SmallBackup: Story = {
+  parameters: {
+    api: {
+      'GET /api/admin/restores': {
+        available: true,
+        job: { ...job, bytes: 2048 },
+        outcome: null,
+        pending: false,
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByText('2 KiB', { exact: true })).toBeVisible();
+    await expect(canvas.queryByText('0 MiB', { exact: true })).toBeNull();
+    const dialog = await openConfirmation(canvasElement);
+    await expect(dialog.getByText('2 KiB', { exact: true })).toBeVisible();
+    await expect(dialog.queryByText('0 MiB', { exact: true })).toBeNull();
+  },
+};
 export const Cancelled: Story = { parameters: { api: read('cancelled') } };
 export const Expired: Story = { parameters: { api: read('expired') } };
 export const Failed: Story = {

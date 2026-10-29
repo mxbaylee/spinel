@@ -2,7 +2,7 @@ import { fork, type ChildProcess } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
 import { once } from 'node:events';
 import { existsSync, readFileSync, statSync } from 'node:fs';
-import { mkdir, mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
+import { chmod, copyFile, mkdir, mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -54,6 +54,24 @@ async function evidence(root: string) {
     if (entry.isDirectory() && entry.name.startsWith('restore-') && entry.name !== 'restore-jobs')
       await walk(join(root, entry.name));
   return result;
+}
+
+/** Never give the long-lived test process a native handle to the live inode.
+ * libsql may retain handles beyond close(); observations use disposable copies. */
+async function probeCopy(directory: string, databasePath: string, includeWal: boolean) {
+  const probeDirectory = await mkdtemp(join(directory, 'closed-probe-'));
+  const target = join(probeDirectory, 'workspace.sqlite');
+  await copyFile(databasePath, target);
+  await chmod(target, 0o600);
+  if (includeWal) {
+    try {
+      await copyFile(`${databasePath}-wal`, `${target}-wal`);
+      await chmod(`${target}-wal`, 0o600);
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+    }
+  }
+  return target;
 }
 
 test.skipIf(process.platform !== 'linux').each(cuts)(
@@ -237,7 +255,7 @@ test.skipIf(process.platform !== 'linux').each(cuts)(
         // This read-only immutable view deliberately excludes WAL. Prove the
         // acknowledged row still requires recovery of the surviving WAL; never
         // change production checkpoint settings to manufacture that condition.
-        const mainOnly = pathToFileURL(databasePath);
+        const mainOnly = pathToFileURL(await probeCopy(directory, databasePath, false));
         mainOnly.searchParams.set('mode', 'ro');
         mainOnly.searchParams.set('immutable', '1');
         const database = new DatabaseSync(mainOnly.href);
@@ -299,7 +317,7 @@ test.skipIf(process.platform !== 'linux').each(cuts)(
       await launch(false);
       assertWorkspaceHandlesClosed(databasePath);
       if (cut !== 'activation' && cut !== 'private-open') {
-        const location = pathToFileURL(databasePath);
+        const location = pathToFileURL(await probeCopy(directory, databasePath, true));
         location.searchParams.set('mode', 'ro');
         const database = new DatabaseSync(location.href);
         try {

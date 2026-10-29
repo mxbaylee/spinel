@@ -14,6 +14,7 @@ import { RestoreRegistry } from './restore-registry.ts';
 import { RecoveryResourceError } from './resource-error.ts';
 import type { RestoreController, ConfirmedRestoreAdmission } from './restore-control.ts';
 import * as verification from './verification.ts';
+import * as journal from '../maintenance/journal.ts';
 
 const cleanups: Array<() => unknown | Promise<unknown>> = [];
 afterEach(async () => {
@@ -37,6 +38,10 @@ const report = {
   generations: { rotated: 1, initialized: 0, revisionOffset: 1 },
 };
 async function fixture() {
+  const identity = { pid: process.pid, start: '12345', boot: randomUUID(), token: '' };
+  const identityReader = vi
+    .spyOn(journal, 'processIdentity')
+    .mockImplementation((pid) => (pid === process.pid ? { ...identity } : null));
   const directory = await mkdtemp(join(tmpdir(), 'spinel-restore-registry-'));
   cleanups.push(() => rm(directory, { recursive: true, force: true }));
   const databasePath = join(directory, 'application.sqlite'),
@@ -170,6 +175,8 @@ async function fixture() {
     return { record, custody: true, continuationToken };
   }
   return {
+    identity,
+    identityReader,
     directory,
     db,
     auth,
@@ -585,3 +592,245 @@ test('failed preexecution lease uses the same generation and fresh observed epoc
   await f.service.restores.summary(f.actor.id, f.session.token_hash);
   expect(f.service.state().owner).toBeNull();
 });
+
+test.each([
+  'same',
+  'start',
+  'boot',
+  'missing',
+  'unreadable',
+  'pending',
+  'unavailable',
+  'target-changed',
+  'invalid',
+] as const)(
+  'incarnation-bound orphan recovery retains uncertainty and distinguishes PID reuse: %s',
+  async (scenario) => {
+    const f = await fixture(),
+      id = randomUUID();
+    const owner = `restore:v2:${process.pid}:${f.identity.boot}:${f.identity.start}:${id}`;
+    f.db
+      .prepare("UPDATE backup_state SET owner=?,job='restore',lease=? WHERE id=1")
+      .run(owner, Number.MAX_SAFE_INTEGER);
+    if (scenario !== 'same') f.identity.start = '12346';
+    if (scenario === 'boot') {
+      f.identity.start = '12345';
+      f.identity.boot = randomUUID();
+    }
+    if (scenario === 'missing') f.identityReader.mockReturnValue(null);
+    if (scenario === 'unreadable')
+      f.identityReader.mockImplementation(() => {
+        throw new Error('Private identity unavailable');
+      });
+    if (scenario === 'pending')
+      f.observe.mockResolvedValue({ target: f.target, record: null, pending: true });
+    if (scenario === 'unavailable') f.observe.mockRejectedValue(new Error('Unavailable'));
+    if (scenario === 'target-changed')
+      f.observe.mockResolvedValue({
+        target: { ...f.target, epoch: randomUUID() },
+        record: null,
+        pending: false,
+      });
+    if (scenario === 'invalid')
+      f.observe.mockResolvedValue({
+        target: f.target,
+        record: {} as RestoreJobRecord,
+        pending: false,
+      });
+    await f.service.restores.summary(f.actor.id, f.session.token_hash).catch(() => {});
+    const released = ['start', 'boot', 'missing'].includes(scenario);
+    expect(f.service.state().owner).toBe(released ? null : owner);
+    expect(f.service.state().lease).toBe(released ? 0 : Number.MAX_SAFE_INTEGER);
+    if (released) expect(f.observe).toHaveBeenCalledWith({ id });
+  },
+);
+
+test('creation cannot claim a source lease without a readable current process incarnation', async () => {
+  const f = await fixture();
+  f.identityReader.mockReturnValue(null);
+  await expect(f.create()).rejects.toThrow('process ownership');
+  expect(f.service.state().owner).toBeNull();
+  expect(
+    (await readdir(f.directory)).some((name) => name.startsWith(f.service.restores.namespace)),
+  ).toBe(false);
+});
+
+test('certain own admission failure releases only its logical lease, preserves evidence and permits a new preparation', async () => {
+  const f = await fixture(),
+    record = await retainedRecord(f);
+  const admission = f.admit.mock.calls[0][0];
+  const directory = join(
+    f.directory,
+    (await readdir(f.directory)).find((name) => name.startsWith(f.service.restores.namespace))!,
+  );
+  const files = [
+    admission.source.archive.path,
+    admission.source.databasePath,
+    join(directory, 'handoff.json'),
+  ];
+  const hashes = () =>
+    Promise.all(
+      files.map(async (path) =>
+        createHash('sha256')
+          .update(await readFile(path))
+          .digest('hex'),
+      ),
+    );
+  const before = await hashes();
+  record.phase = 'failed';
+  f.observe.mockResolvedValue({ target: f.target, record, pending: false });
+  const result = await f.service.restores.summary(f.actor.id, f.session.token_hash);
+  expect(result.job?.state).toBe('failed');
+  expect(result.outcome?.state).toBe('did-not-start');
+  expect(f.service.state().lease).toBe(0);
+  const next = await f.create();
+  expect(next.state).toBe('uploading');
+  expect(next.id).not.toBe(record.intent.id);
+  const lease = f.service.state().owner;
+  expect(
+    (
+      await f.service.restores.confirm(
+        record.intent.id,
+        f.actor.id,
+        f.session.token_hash,
+        result.job!.confirmation!,
+        f.proof(),
+      )
+    ).state,
+  ).toBe('failed');
+  expect(
+    (await f.service.restores.cancel(record.intent.id, f.actor.id, f.session.token_hash)).state,
+  ).toBe('failed');
+  expect(f.admit).toHaveBeenCalledTimes(1);
+  expect(f.service.state().owner).toBe(lease);
+  expect(await hashes()).toEqual(before);
+});
+
+test.each([
+  'pending',
+  'intent-source',
+  'intent-authority',
+  'target',
+  'revoked',
+  'lease-changed',
+] as const)(
+  'own admission terminalization refuses nonmatching or changed evidence: %s',
+  async (scenario) => {
+    const f = await fixture(),
+      record = await retainedRecord(f),
+      owner = f.service.state().owner;
+    record.phase = 'failed';
+    if (scenario === 'intent-source') record.intent.source.archive.sha256 = 'f'.repeat(64);
+    if (scenario === 'intent-authority') record.intent.authority.expiresAt++;
+    record.intentHash = restoreIntentHash(record.intent);
+    if (scenario === 'target') f.target.generationId = randomUUID();
+    f.observe.mockImplementation(async () => {
+      if (scenario === 'revoked')
+        f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(f.actor.id);
+      if (scenario === 'lease-changed')
+        f.db.prepare('UPDATE backup_state SET lease=? WHERE id=1').run(Number.MAX_SAFE_INTEGER - 1);
+      return { target: f.target, record, pending: scenario === 'pending' };
+    });
+    await f.service.restores.summary(f.actor.id, f.session.token_hash).catch(() => {});
+    expect(f.service.state().owner).toBe(owner);
+    expect(f.service.state().lease).toBe(
+      Number.MAX_SAFE_INTEGER - (scenario === 'lease-changed' ? 1 : 0),
+    );
+    expect(
+      f.service.restores.status(record.intent.id, f.actor.id, f.session.token_hash).state,
+    ).toBe('admitting');
+  },
+);
+
+test('an admission retry starting during observation prevents logical terminalization until its task settles', async () => {
+  const f = await fixture(),
+    record = await retainedRecord(f);
+  record.phase = 'failed';
+  const prepared = f.service.restores.status(record.intent.id, f.actor.id, f.session.token_hash);
+  let reject!: (error: Error) => void;
+  f.admit.mockImplementation(
+    () =>
+      new Promise((_resolve, rejectAdmission) => {
+        reject = rejectAdmission;
+      }),
+  );
+  let retry: Promise<unknown> | undefined;
+  f.observe
+    .mockResolvedValue({ target: f.target, record, pending: false })
+    .mockImplementationOnce(async () => {
+      retry = f.service.restores.confirm(
+        prepared.id,
+        f.actor.id,
+        f.session.token_hash,
+        prepared.confirmation!,
+        f.proof(),
+      );
+      return { target: f.target, record, pending: false };
+    });
+  try {
+    await f.service.restores.summary(f.actor.id, f.session.token_hash);
+    expect(f.service.state().lease).toBe(Number.MAX_SAFE_INTEGER);
+    expect(f.service.restores.status(prepared.id, f.actor.id, f.session.token_hash).state).toBe(
+      'admitting',
+    );
+  } finally {
+    reject(new Error('Admission retry failed without custody'));
+    await retry;
+  }
+  expect((await f.service.restores.summary(f.actor.id, f.session.token_hash)).job?.state).toBe(
+    'failed',
+  );
+});
+
+test.each([false, true])(
+  'failed outcome after custody release respects the acknowledged intent and never touches a later lease (conflict=%s)',
+  async (conflict) => {
+    const f = await fixture(),
+      created = await f.create(),
+      ready = await f.upload(created.id);
+    let acknowledged!: ReturnType<typeof f.acknowledge>;
+    f.admit.mockImplementation(async (request) => {
+      acknowledged = f.acknowledge(request);
+      f.begin.mockRejectedValue(new Error('Begin failed before execution'));
+      return acknowledged;
+    });
+    const accepted = await f.service.restores.confirm(
+      created.id,
+      f.actor.id,
+      f.session.token_hash,
+      ready.confirmation!,
+      f.proof(),
+    );
+    expect(accepted.state).toBe('accepted');
+    expect(f.service.state().owner).toBeNull();
+    const record = structuredClone(acknowledged.record);
+    record.phase = 'failed';
+    if (conflict) {
+      record.intent.policy.staticDirectory = join(f.directory, 'different-assets');
+      record.intentHash = restoreIntentHash(record.intent);
+    }
+    const owner = `verification:${randomUUID()}`,
+      lease = Date.now() + 60_000;
+    f.db
+      .prepare("UPDATE backup_state SET owner=?,job='verify',lease=? WHERE id=1")
+      .run(owner, lease);
+    f.observe.mockResolvedValue({ target: f.target, record, pending: false });
+    f.db.setWriteGuard(() => {
+      throw new Error('No backup state writes are authorized');
+    });
+    try {
+      if (conflict)
+        await expect(f.service.restores.summary(f.actor.id, f.session.token_hash)).rejects.toThrow(
+          'status could not be verified',
+        );
+      else
+        expect(
+          (await f.service.restores.summary(f.actor.id, f.session.token_hash)).job?.state,
+        ).toBe('failed');
+      expect(f.service.state().owner).toBe(owner);
+      expect(f.service.state().lease).toBe(lease);
+    } finally {
+      f.db.setWriteGuard(() => {});
+    }
+  },
+);

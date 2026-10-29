@@ -11,6 +11,9 @@ import type {
 } from '../../shared/restore.ts';
 import { validRestorePreview } from '../../shared/restore.ts';
 import { validRestoreJobRecord } from '../maintenance/restore-jobs.ts';
+import type { RestoreJobRecord } from '../maintenance/restore-jobs.ts';
+import { processIdentity } from '../maintenance/journal.ts';
+import type { ProcessIdentity } from '../maintenance/journal.ts';
 import { assertRestoreAuthority } from '../maintenance/restore-authority.ts';
 import { restoreIntentHash } from '../maintenance/restore-job-intent.ts';
 import type { RestoreAuthority } from '../maintenance/restore-authority.ts';
@@ -49,6 +52,47 @@ const terminal = new Set<RestorePreparation['state']>([
 const digest = (value: unknown) => createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const uuid = (value: string) =>
   /^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/.test(value);
+const bootId = (value: string) => /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/.test(value);
+const validProcess = (value: ProcessIdentity | null, pid: number): value is ProcessIdentity =>
+  !!value && value.pid === pid && bootId(value.boot) && /^[0-9]{1,32}$/.test(value.start);
+function leaseOwner(value: string) {
+  const legacy = /^restore:([1-9][0-9]*):([a-f0-9-]{36})$/.exec(value);
+  const current = /^restore:v2:([1-9][0-9]*):([a-f0-9-]{36}):([0-9]{1,32}):([a-f0-9-]{36})$/.exec(
+    value,
+  );
+  const pid = Number(current?.[1] ?? legacy?.[1]);
+  const id = current?.[4] ?? legacy?.[2];
+  if (
+    !Number.isSafeInteger(pid) ||
+    pid <= 0 ||
+    !id ||
+    !uuid(id) ||
+    (current && !bootId(current[2]))
+  )
+    return null;
+  return {
+    pid,
+    id,
+    identity: current ? { pid, boot: current[2], start: current[3], token: '' } : null,
+  };
+}
+function ownerGone(owner: NonNullable<ReturnType<typeof leaseOwner>>) {
+  try {
+    if (owner.identity) {
+      const current = processIdentity(owner.pid);
+      return (
+        current === null ||
+        (validProcess(current, owner.pid) &&
+          (current.boot !== owner.identity.boot || current.start !== owner.identity.start))
+      );
+    }
+    // Legacy owners cannot distinguish a reused live PID. Keep that ambiguity.
+    process.kill(owner.pid, 0);
+    return false;
+  } catch (error) {
+    return !owner.identity && (error as NodeJS.ErrnoException).code === 'ESRCH';
+  }
+}
 
 export class RestoreRegistryError extends Error {
   readonly status: number;
@@ -87,6 +131,7 @@ interface Job {
   ack?: Awaited<ReturnType<RestoreController['admit']>>;
   custodyReleased?: boolean;
   handoffWritten?: boolean;
+  admissionFailureObserved?: boolean;
 }
 function artifactId(config: BackupConfig, key: string) {
   const identity =
@@ -169,6 +214,83 @@ export class RestoreRegistry {
       throw new RestoreRegistryError(503, 'Restore status could not be verified.');
     return observed;
   }
+  private matchesAdmission(job: Job, record: RestoreJobRecord) {
+    const admission = job.admission;
+    if (!admission) return false;
+    const intent = record.intent,
+      source = admission.source;
+    return (
+      restoreIntentHash(intent) === record.intentHash &&
+      intent.id === job.public.id &&
+      intent.target.generationId === admission.generationId &&
+      intent.target.epoch === admission.epoch &&
+      intent.source.archive.bytes === source.archive.bytes &&
+      intent.source.archive.sha256 === source.archive.sha256 &&
+      intent.source.candidate.bytes === source.databaseBytes &&
+      intent.source.candidate.sha256 === source.databaseSha256 &&
+      digest(intent.source.recovery) === digest(source.recovery) &&
+      intent.confirmedAt === admission.confirmedAt &&
+      intent.policy.origin === this.options.origin &&
+      intent.policy.image === this.options.image &&
+      intent.policy.spacesEnabled === this.options.spacesEnabled &&
+      intent.policy.consequencesVersion === 1 &&
+      intent.consequenceEnvelope === 1 &&
+      Object.keys(admission.preview).every(
+        (key) =>
+          intent.preview[key as keyof RestorePreview] ===
+          admission.preview[key as keyof RestorePreview],
+      ) &&
+      (['actorId', 'sessionHash', 'verifiedAt', 'verifiedPasskeyId', 'expiresAt'] as const).every(
+        (key) => intent.authority[key] === admission.authority[key],
+      ) &&
+      (!job.ack || job.ack.record.intentHash === record.intentHash)
+    );
+  }
+  private async reconcileAdmission(authorize: () => void) {
+    const job = this.job;
+    const idle = () =>
+      this.job === job &&
+      !!job?.admission &&
+      !job.admissionFailureObserved &&
+      !job.task &&
+      !job.initialization &&
+      !job.finishing;
+    if (!job || !idle()) return;
+    authorize();
+    const lease = this.db.prepare('SELECT owner,job,lease FROM backup_state WHERE id=1').get();
+    const observed = await this.observe(job.public.id);
+    authorize();
+    if (!idle()) return;
+    const current = this.control().target(),
+      record = observed.record;
+    if (record && !this.matchesAdmission(job, record))
+      throw new RestoreRegistryError(503, 'Restore status could not be verified.');
+    if (
+      !record ||
+      record.phase !== 'failed' ||
+      record.execution ||
+      observed.pending ||
+      record.intent.target.generationId !== current.generationId ||
+      observed.target.generationId !== current.generationId ||
+      observed.target.epoch !== current.epoch
+    )
+      return;
+    if (!job.custodyReleased) {
+      if (lease?.owner !== job.owner || lease.job !== 'restore') return;
+      const result = this.db
+        .prepare(
+          "UPDATE backup_state SET lease=0,owner=NULL,job=NULL WHERE id=1 AND owner=? AND job='restore' AND lease=?",
+        )
+        .run(job.owner, lease.lease);
+      if (result.changes !== 1) return;
+    }
+    // A matching ACK may already have released the lease. Never touch a later
+    // operation's owner in that case. Keep admission, staging and handoff files;
+    // normal finish/cleanup would destroy the evidence of this resolved failure.
+    job.admissionFailureObserved = true;
+    job.public.state = 'failed';
+    job.public.error = 'Restore did not begin. Its retained source remains available for recovery.';
+  }
   private async cleanupOrphans(authorize: () => void = () => {}) {
     // Logical lease recovery never removes source/handoff evidence. A directory
     // may be missing after ACK cleanup or incomplete after a crash; neither is
@@ -177,20 +299,13 @@ export class RestoreRegistry {
     this.cleanupTask = (async () => {
       const state = this.db.prepare('SELECT owner,job,lease FROM backup_state WHERE id=1').get();
       if (state?.job !== 'restore' || typeof state.owner !== 'string') return;
-      const owner = /^restore:([1-9][0-9]*):([a-f0-9-]{36})$/.exec(state.owner);
-      if (!owner || !uuid(owner[2]) || !Number.isSafeInteger(Number(owner[1]))) return;
-      const dead = () => {
-        try {
-          process.kill(Number(owner[1]), 0);
-          return false;
-        } catch (error) {
-          return (error as NodeJS.ErrnoException).code === 'ESRCH';
-        }
-      };
+      const owner = leaseOwner(state.owner);
+      if (!owner) return;
+      const dead = () => ownerGone(owner);
       if (!dead()) return;
       let observed: RestoreObservation;
       try {
-        observed = await this.observe(owner[2]);
+        observed = await this.observe(owner.id);
       } catch {
         return;
       } // unavailable/invalid evidence retains the hold
@@ -295,6 +410,7 @@ export class RestoreRegistry {
   }
   async summary(actor: string, session: string): Promise<RestoreStatus> {
     this.assertOperator(actor, session);
+    if (this.available()) await this.reconcileAdmission(() => this.assertOperator(actor, session));
     const job = await this.current(actor, session);
     this.assertOperator(actor, session);
     if (!this.available()) return { available: false, job, outcome: null, pending: null };
@@ -362,6 +478,8 @@ export class RestoreRegistry {
       )
         throw new RestoreRegistryError(400, 'Invalid restore preparation.');
       assertRestoreAuthority(this.db, proof, this.now);
+      await this.reconcileAdmission(() => assertRestoreAuthority(this.db, proof, this.now));
+      assertRestoreAuthority(this.db, proof, this.now);
       const requestHash = digest(
         source.kind === 'catalog'
           ? source
@@ -398,8 +516,16 @@ export class RestoreRegistry {
       this.creating = true;
       ownsCreation = true;
       const now = this.now(),
-        id = randomUUID(),
-        owner = `restore:${process.pid}:${id}`;
+        id = randomUUID();
+      let identity: ProcessIdentity | null;
+      try {
+        identity = processIdentity(process.pid);
+      } catch {
+        identity = null;
+      }
+      if (!validProcess(identity, process.pid))
+        throw new RestoreRegistryError(503, 'Restore process ownership could not be verified.');
+      const owner = `restore:v2:${process.pid}:${identity.boot}:${identity.start}:${id}`;
       const target = control.target();
       if (!uuid(target.generationId) || !uuid(target.epoch))
         throw new RestoreRegistryError(503, 'Supervised restore is unavailable.');
@@ -697,6 +823,7 @@ export class RestoreRegistry {
         'Confirm the current source, target and restore consequences.',
       );
     if (job.public.state === 'started') return structuredClone(job.public);
+    if (job.admissionFailureObserved) return structuredClone(job.public);
     if (job.public.state === 'admitting' && job.task) {
       await job.task;
       return structuredClone(job.public);
@@ -755,34 +882,11 @@ export class RestoreRegistry {
             job.handoffWritten = true;
           }
           const ack = await control.admit(structuredClone(job.admission!));
-          const intent = ack.record.intent,
-            source = job.admission!.source;
+          const intent = ack.record.intent;
           if (
             !ack.custody ||
-            restoreIntentHash(intent) !== ack.record.intentHash ||
             ack.record.phase !== 'source-retained' ||
-            intent.id !== id ||
-            intent.target.generationId !== job.public.target.generationId ||
-            intent.target.epoch !== job.public.target.epoch ||
-            intent.source.archive.bytes !== source.archive.bytes ||
-            intent.source.archive.sha256 !== source.archive.sha256 ||
-            intent.source.candidate.bytes !== source.databaseBytes ||
-            intent.source.candidate.sha256 !== source.databaseSha256 ||
-            digest(intent.source.recovery) !== digest(source.recovery) ||
-            intent.confirmedAt !== job.admission!.confirmedAt ||
-            intent.policy.origin !== this.options.origin ||
-            intent.policy.image !== this.options.image ||
-            intent.policy.spacesEnabled !== this.options.spacesEnabled ||
-            intent.policy.consequencesVersion !== 1 ||
-            intent.consequenceEnvelope !== 1 ||
-            Object.keys(job.admission!.preview).some(
-              (key) =>
-                intent.preview[key as keyof RestorePreview] !==
-                job.admission!.preview[key as keyof RestorePreview],
-            ) ||
-            (
-              ['actorId', 'sessionHash', 'verifiedAt', 'verifiedPasskeyId', 'expiresAt'] as const
-            ).some((key) => intent.authority[key] !== job.admission!.authority[key]) ||
+            !this.matchesAdmission(job, ack.record) ||
             intent.continuationHash !==
               createHash('sha256')
                 .update(ack.continuationToken ?? '')
@@ -854,6 +958,9 @@ export class RestoreRegistry {
   }
   async cancel(id: string, actor: string, session: string) {
     const job = this.owned(id, actor, session);
+    this.assertOperator(actor, session);
+    await this.reconcileAdmission(() => this.assertOperator(actor, session));
+    this.assertOperator(actor, session);
     if (terminal.has(job.public.state)) return structuredClone(job.public);
     if (job.admission)
       throw new RestoreRegistryError(
