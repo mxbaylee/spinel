@@ -4,6 +4,9 @@ import { chmod, copyFile, link, lstat, mkdir, open, realpath, rm, statfs } from 
 import { dirname, join, resolve } from 'node:path';
 import type { FileIdentity } from './journal.ts';
 import { assertNoPendingRestore, restoreBarrierPath } from './restore-barrier.ts';
+import { copyClosedRestoreInput, copyRestoreInputFile } from '../backup/restore-input.ts';
+import type { PreparedRestoreSource } from '../backup/verification.ts';
+import { MAX_ARCHIVE_BYTES } from '../backup/transfer.ts';
 
 const RESERVE = 256 * 1024 ** 2;
 const MAX_DATABASE = 8 * 1024 ** 3;
@@ -20,6 +23,13 @@ export interface RestoreFiles {
   candidate: RestoreFileEvidence;
 }
 export type RestoreOriginals = Omit<RestoreFiles, 'candidate'>;
+export interface RestoreSourceManifest {
+  version: 1;
+  id: string;
+  archive: RestoreFileEvidence;
+  candidate: RestoreFileEvidence;
+  recovery: PreparedRestoreSource['recovery'];
+}
 export type RestoreFilePhase =
   | 'replacing'
   | 'activated'
@@ -48,9 +58,9 @@ const identity = (info: { dev: number; ino: number }): FileIdentity => ({
 });
 const same = (a: FileIdentity, b: FileIdentity) => a.device === b.device && a.inode === b.inode;
 
-async function digest(path: string) {
+async function digest(path: string, signal?: AbortSignal) {
   const hash = createHash('sha256');
-  for await (const chunk of createReadStream(path)) hash.update(chunk);
+  for await (const chunk of createReadStream(path, { signal })) hash.update(chunk);
   return hash.digest('hex');
 }
 
@@ -90,9 +100,9 @@ async function syncDirectory(path: string) {
     await handle.close();
   }
 }
-async function evidence(path: string): Promise<RestoreFileEvidence> {
+async function evidence(path: string, signal?: AbortSignal): Promise<RestoreFileEvidence> {
   const before = await ownedFile(path);
-  const sha256 = await digest(path);
+  const sha256 = await digest(path, signal);
   const after = await ownedFile(path);
   if (
     !same(identity(before), identity(after)) ||
@@ -102,8 +112,8 @@ async function evidence(path: string): Promise<RestoreFileEvidence> {
     throw unavailable();
   return { bytes: after.size, sha256 };
 }
-async function requireEvidence(path: string, expected: RestoreFileEvidence) {
-  const actual = await evidence(path);
+async function requireEvidence(path: string, expected: RestoreFileEvidence, signal?: AbortSignal) {
+  const actual = await evidence(path, signal);
   if (actual.bytes !== expected.bytes || actual.sha256 !== expected.sha256) throw unavailable();
 }
 function directory(root: string, id: string) {
@@ -133,6 +143,217 @@ async function copy(source: string, target: string) {
 
 function requireSameEvidence(actual: RestoreFileEvidence, expected: RestoreFileEvidence) {
   if (actual.bytes !== expected.bytes || actual.sha256 !== expected.sha256) throw unavailable();
+}
+
+const sourceShape = (value: unknown, keys: string[]): value is Record<string, unknown> =>
+  !!value &&
+  typeof value === 'object' &&
+  !Array.isArray(value) &&
+  Object.keys(value).length === keys.length &&
+  keys.every((key) => Object.hasOwn(value, key));
+export function validRestoreSourceManifest(value: unknown): value is RestoreSourceManifest {
+  if (
+    !sourceShape(value, ['version', 'id', 'archive', 'candidate', 'recovery']) ||
+    value.version !== 1 ||
+    typeof value.id !== 'string' ||
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value.id)
+  )
+    return false;
+  for (const [name, minimum, maximum] of [
+    ['archive', 1, MAX_ARCHIVE_BYTES],
+    ['candidate', 4096, MAX_DATABASE],
+  ] as const) {
+    const file = value[name];
+    if (
+      !sourceShape(file, ['bytes', 'sha256']) ||
+      !Number.isSafeInteger(file.bytes) ||
+      Number(file.bytes) < minimum ||
+      Number(file.bytes) > maximum ||
+      typeof file.sha256 !== 'string' ||
+      !/^[a-f0-9]{64}$/.test(file.sha256)
+    )
+      return false;
+  }
+  const recovery = value.recovery;
+  return (
+    sourceShape(recovery, ['createdAt', 'origin', 'image']) &&
+    typeof recovery.createdAt === 'string' &&
+    recovery.createdAt.length <= 64 &&
+    Number.isFinite(Date.parse(recovery.createdAt)) &&
+    typeof recovery.origin === 'string' &&
+    recovery.origin.length > 0 &&
+    recovery.origin.length <= 4096 &&
+    typeof recovery.image === 'string' &&
+    recovery.image.length <= 1024 &&
+    /^(sha256:[a-f0-9]{64}|\S+@sha256:[a-f0-9]{64})$/.test(recovery.image)
+  );
+}
+function sourceManifest(value: RestoreSourceManifest): RestoreSourceManifest {
+  if (!validRestoreSourceManifest(value)) throw unavailable();
+  return {
+    version: 1,
+    id: value.id,
+    archive: { bytes: value.archive.bytes, sha256: value.archive.sha256 },
+    candidate: { bytes: value.candidate.bytes, sha256: value.candidate.sha256 },
+    recovery: {
+      createdAt: value.recovery.createdAt,
+      origin: value.recovery.origin,
+      image: value.recovery.image,
+    },
+  };
+}
+function sourceFiles(root: string, manifest: RestoreSourceManifest) {
+  const target = directory(root, manifest.id) + '-source';
+  const text = JSON.stringify(manifest) + '\n';
+  return {
+    target,
+    text,
+    ready: createHash('sha256').update(text).digest('hex') + '\n',
+    archive: join(target, 'source.spinel.enc'),
+    candidate: join(target, 'candidate.sqlite'),
+  };
+}
+async function sourceFileExists(path: string) {
+  try {
+    await lstat(path);
+    return true;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return false;
+    throw error;
+  }
+}
+async function checkSourceFile(path: string, expected: RestoreFileEvidence, signal?: AbortSignal) {
+  signal?.throwIfAborted();
+  const info = await ownedFile(path);
+  if (info.mode & 0o077 || info.size !== expected.bytes) throw unavailable();
+  await syncExistingCandidate(path, expected, signal);
+  signal?.throwIfAborted();
+}
+async function sourceMarker(path: string, text: string, create: boolean, signal?: AbortSignal) {
+  signal?.throwIfAborted();
+  if (create) {
+    try {
+      const file = await open(
+        path,
+        constants.O_CREAT | constants.O_EXCL | constants.O_WRONLY | constants.O_NOFOLLOW,
+        0o600,
+      );
+      try {
+        await file.writeFile(text);
+        await file.sync();
+      } finally {
+        await file.close();
+      }
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== 'EEXIST') throw error;
+    }
+  }
+  await checkSourceFile(
+    path,
+    { bytes: Buffer.byteLength(text), sha256: createHash('sha256').update(text).digest('hex') },
+    signal,
+  );
+}
+
+/** The independent journal must bind this exact manifest to the job/target.
+ * Rechecking private bytes also repairs a prior fsync interruption; a ready marker
+ * alone never proves durable custody. No application staging path is needed. */
+export async function readRetainedRestoreSource(options: {
+  root: string;
+  manifest: RestoreSourceManifest;
+  assertRoot(): void;
+  signal?: AbortSignal;
+}) {
+  const manifest = sourceManifest(options.manifest),
+    files = sourceFiles(options.root, manifest);
+  options.assertRoot();
+  await privateDirectory(options.root);
+  await privateDirectory(files.target);
+  await sourceMarker(join(files.target, 'intent.json'), files.text, false, options.signal);
+  await checkSourceFile(files.archive, manifest.archive, options.signal);
+  await checkSourceFile(files.candidate, manifest.candidate, options.signal);
+  for (const suffix of ['-wal', '-shm', '-journal'])
+    if (await sourceFileExists(files.candidate + suffix)) throw unavailable();
+  await sourceMarker(join(files.target, 'ready'), files.ready, false, options.signal);
+  await syncDirectory(files.target);
+  await syncDirectory(options.root);
+  options.assertRoot();
+  options.signal?.throwIfAborted();
+  return {
+    manifest,
+    archive: { path: files.archive, ...manifest.archive },
+    candidate: {
+      databasePath: files.candidate,
+      databaseBytes: manifest.candidate.bytes,
+      databaseSha256: manifest.candidate.sha256,
+      recovery: { ...manifest.recovery },
+    },
+  };
+}
+
+/** Transfer verified source custody BEFORE pause. The immutable intent precedes
+ * copies, so identical retries reuse complete files and copy missing ones. An
+ * interrupted partial file or marker refuses this attempt, without overwrite;
+ * the controller must report failure and owns cancellation/retention. Caller keeps application and
+ * catalog custody until this returns AND its independent job record is fsynced. */
+export async function retainRestoreSource(options: {
+  root: string;
+  id: string;
+  source: PreparedRestoreSource;
+  assertRoot(): void;
+  signal?: AbortSignal;
+}) {
+  const source = options.source;
+  const archive = {
+    path: source.archive.path,
+    bytes: source.archive.bytes,
+    sha256: source.archive.sha256,
+  };
+  const candidate = {
+    databasePath: source.databasePath,
+    databaseBytes: source.databaseBytes,
+    databaseSha256: source.databaseSha256,
+  };
+  const manifest = sourceManifest({
+    version: 1,
+    id: options.id,
+    archive: { bytes: archive.bytes, sha256: archive.sha256 },
+    candidate: { bytes: candidate.databaseBytes, sha256: candidate.databaseSha256 },
+    recovery: { ...source.recovery },
+  });
+  const files = sourceFiles(options.root, manifest);
+  options.assertRoot();
+  options.signal?.throwIfAborted();
+  await privateDirectory(options.root);
+  await mkdir(files.target, { mode: 0o700 }).catch((error: NodeJS.ErrnoException) => {
+    if (error.code !== 'EEXIST') throw error;
+  });
+  await privateDirectory(files.target);
+  await sourceMarker(join(files.target, 'intent.json'), files.text, true, options.signal);
+  await syncDirectory(files.target);
+  await syncDirectory(options.root);
+  options.assertRoot();
+  const archiveExists = await sourceFileExists(files.archive),
+    candidateExists = await sourceFileExists(files.candidate);
+  const space = await statfs(options.root, { bigint: true });
+  if (
+    (!archiveExists || !candidateExists) &&
+    space.bavail * space.bsize <
+      BigInt(
+        (archiveExists ? 0 : archive.bytes) +
+          (candidateExists ? 0 : candidate.databaseBytes) +
+          RESERVE,
+      )
+  )
+    throw new Error('Not enough disk space to retain the verified restore source.');
+  if (archiveExists) await checkSourceFile(files.archive, manifest.archive, options.signal);
+  else await copyRestoreInputFile(archive, files.archive, options.signal);
+  options.assertRoot();
+  if (candidateExists) await checkSourceFile(files.candidate, manifest.candidate, options.signal);
+  else await copyClosedRestoreInput(candidate, files.candidate, options.signal);
+  options.assertRoot();
+  await sourceMarker(join(files.target, 'ready'), files.ready, true, options.signal);
+  return readRetainedRestoreSource({ ...options, manifest });
 }
 
 /** Stage immutable originals and candidate. No live workspace bytes are written.
@@ -269,7 +490,11 @@ export async function stageRestoreCandidate(
   return { ...originals, candidate: { ...options.expectedCandidate } };
 }
 
-async function syncExistingCandidate(path: string, expected: RestoreFileEvidence) {
+async function syncExistingCandidate(
+  path: string,
+  expected: RestoreFileEvidence,
+  signal?: AbortSignal,
+) {
   const before = await ownedFile(path);
   if (before.mode & 0o077) throw unavailable();
   const handle = await open(path, constants.O_RDONLY | constants.O_NOFOLLOW);
@@ -285,7 +510,7 @@ async function syncExistingCandidate(path: string, expected: RestoreFileEvidence
           throw unavailable();
       }
     };
-    await requireEvidence(path, expected);
+    await requireEvidence(path, expected, signal);
     await unchanged();
     await handle.sync();
     await unchanged();

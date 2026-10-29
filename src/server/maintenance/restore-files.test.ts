@@ -1,5 +1,6 @@
 import { createHash, randomUUID } from 'node:crypto';
 import {
+  chmod,
   link,
   lstat,
   mkdir,
@@ -21,8 +22,12 @@ import {
   preserveRestoreOriginals,
   stageRestoreCandidate,
   rollbackRestoreFiles,
+  retainRestoreSource,
+  readRetainedRestoreSource,
+  validRestoreSourceManifest,
 } from './restore-files.ts';
 import type { RestoreFileControl, RestoreFilePhase } from './restore-files.ts';
+import type { PreparedRestoreSource } from '../backup/verification.ts';
 
 const directories: string[] = [];
 afterEach(async () => {
@@ -91,6 +96,254 @@ async function fixture() {
     },
   };
 }
+
+async function sourceFixture() {
+  const f = await fixture();
+  const archive = Buffer.from('already authenticated encrypted source fixture');
+  const path = join(f.root, 'application-upload.spinel.enc');
+  await writeFile(path, archive, { mode: 0o600 });
+  const source: PreparedRestoreSource = {
+    tables: 0,
+    rows: 0,
+    images: 0,
+    snapshots: 0,
+    archive: { path, ...fingerprint(archive) },
+    databasePath: f.candidatePath,
+    databaseBytes: f.candidate.length,
+    databaseSha256: fingerprint(f.candidate).sha256,
+    recovery: {
+      createdAt: '2026-10-29T00:00:00.000Z',
+      origin: 'https://spinel.example',
+      image: 'sha256:' + 'a'.repeat(64),
+    },
+    async dispose() {
+      await rm(path);
+      await rm(f.candidatePath);
+    },
+  };
+  return {
+    ...f,
+    archive,
+    source,
+    options: { root: f.root, id: f.id, source, assertRoot() {} },
+    target: join(f.root, `restore-${f.id}-source`),
+  };
+}
+
+test('source custody retains independent private bytes after application staging is released', async () => {
+  const f = await sourceFixture();
+  const saved = await retainRestoreSource(f.options);
+  expect(validRestoreSourceManifest(saved.manifest)).toBe(true);
+  expect(await readFile(saved.archive.path)).toEqual(f.archive);
+  expect(await readFile(saved.candidate.databasePath)).toEqual(f.candidate);
+  for (const path of [
+    saved.archive.path,
+    saved.candidate.databasePath,
+    join(f.target, 'intent.json'),
+    join(f.target, 'ready'),
+  ]) {
+    const info = await lstat(path);
+    expect(info.mode & 0o077).toBe(0);
+    expect(info.nlink).toBe(1);
+  }
+  expect(await readFile(join(f.target, 'intent.json'), 'utf8')).not.toContain(
+    f.source.databasePath,
+  );
+  await f.source.dispose();
+  expect(
+    await readRetainedRestoreSource({ root: f.root, manifest: saved.manifest, assertRoot() {} }),
+  ).toEqual(saved);
+  expect(await retainRestoreSource(f.options)).toEqual(saved);
+  // This byte-custody test does not establish cryptographic preparation,
+  // authorize a target, pause an app, or mutate the live DB/WAL tuple.
+  expect(await readFile(f.databasePath)).toEqual(f.original);
+  expect(await readFile(f.databasePath + '-wal')).toEqual(f.wal);
+  expect(() => assertNoPendingRestore(f.databasePath)).not.toThrow();
+});
+
+test('an interrupted source transfer resumes the same intent, without replacing retained bytes', async () => {
+  const f = await sourceFixture();
+  let calls = 0;
+  await expect(
+    retainRestoreSource({
+      ...f.options,
+      assertRoot() {
+        if (++calls === 3) throw new Error('Simulated interruption');
+      },
+    }),
+  ).rejects.toThrow('Simulated interruption');
+  const path = join(f.target, 'source.spinel.enc');
+  const retained = await lstat(path);
+  await expect(lstat(join(f.target, 'ready'))).rejects.toHaveProperty('code', 'ENOENT');
+  await expect(lstat(join(f.target, 'candidate.sqlite'))).rejects.toHaveProperty('code', 'ENOENT');
+  const saved = await retainRestoreSource(f.options);
+  expect((await lstat(saved.archive.path)).ino).toBe(retained.ino);
+  expect(await readFile(saved.candidate.databasePath)).toEqual(f.candidate);
+  await expect(
+    retainRestoreSource({
+      ...f.options,
+      source: { ...f.source, archive: { ...f.source.archive, sha256: 'f'.repeat(64) } },
+    }),
+  ).rejects.toThrow('unavailable or changed');
+  expect(await readFile(saved.archive.path)).toEqual(f.archive);
+});
+
+test('partial source custody with mismatching bytes refuses repair by overwrite', async () => {
+  const f = await sourceFixture();
+  let calls = 0;
+  await expect(
+    retainRestoreSource({
+      ...f.options,
+      assertRoot() {
+        if (++calls === 3) throw new Error('Interrupted');
+      },
+    }),
+  ).rejects.toThrow('Interrupted');
+  const path = join(f.target, 'source.spinel.enc');
+  await writeFile(path, Buffer.alloc(f.archive.length, 0x7a));
+  await expect(retainRestoreSource(f.options)).rejects.toThrow('unavailable or changed');
+  expect(await readFile(path)).toEqual(Buffer.alloc(f.archive.length, 0x7a));
+  expect(await readFile(f.source.archive.path)).toEqual(f.archive);
+  await expect(lstat(join(f.target, 'ready'))).rejects.toHaveProperty('code', 'ENOENT');
+});
+
+test('manifest field order does not change the retained source identity', async () => {
+  const f = await sourceFixture(),
+    saved = await retainRestoreSource(f.options);
+  const { manifest } = saved;
+  const reordered = {
+    recovery: {
+      image: manifest.recovery.image,
+      origin: manifest.recovery.origin,
+      createdAt: manifest.recovery.createdAt,
+    },
+    candidate: { sha256: manifest.candidate.sha256, bytes: manifest.candidate.bytes },
+    archive: { sha256: manifest.archive.sha256, bytes: manifest.archive.bytes },
+    id: manifest.id,
+    version: 1 as const,
+  };
+  expect(
+    await readRetainedRestoreSource({ root: f.root, manifest: reordered, assertRoot() {} }),
+  ).toEqual(saved);
+  expect(
+    await retainRestoreSource({
+      ...f.options,
+      source: { ...f.source, recovery: reordered.recovery },
+    }),
+  ).toEqual(saved);
+});
+
+test('an interruption after ready publication still permits a full custody retry', async () => {
+  const f = await sourceFixture();
+  let calls = 0;
+  await expect(
+    retainRestoreSource({
+      ...f.options,
+      assertRoot() {
+        if (++calls === 5) throw new Error('Interrupted before acknowledgment');
+      },
+    }),
+  ).rejects.toThrow('Interrupted before acknowledgment');
+  expect((await lstat(join(f.target, 'ready'))).isFile()).toBe(true);
+  await f.source.dispose();
+  const saved = await retainRestoreSource(f.options);
+  expect(await readFile(saved.candidate.databasePath)).toEqual(f.candidate);
+});
+
+test.each(['intent.json', 'candidate.sqlite', 'ready'])(
+  'truncated %s custody evidence refuses this attempt without overwrite',
+  async (name) => {
+    const f = await sourceFixture(),
+      saved = await retainRestoreSource(f.options);
+    const path = join(f.target, name),
+      partial = Buffer.from('partial');
+    await writeFile(path, partial);
+    await expect(retainRestoreSource(f.options)).rejects.toThrow('unavailable or changed');
+    await expect(
+      readRetainedRestoreSource({ root: f.root, manifest: saved.manifest, assertRoot() {} }),
+    ).rejects.toThrow('unavailable or changed');
+    expect(await readFile(path)).toEqual(partial);
+    expect(await readFile(f.source.archive.path)).toEqual(f.archive);
+    expect(await readFile(f.candidatePath)).toEqual(f.candidate);
+  },
+);
+
+test('cancellation after the copies cannot acknowledge completed source custody', async () => {
+  const f = await sourceFixture(),
+    controller = new AbortController();
+  let calls = 0;
+  await expect(
+    retainRestoreSource({
+      ...f.options,
+      signal: controller.signal,
+      assertRoot() {
+        if (++calls === 4) controller.abort();
+      },
+    }),
+  ).rejects.toThrow();
+  await expect(lstat(join(f.target, 'ready'))).rejects.toHaveProperty('code', 'ENOENT');
+  await f.source.dispose();
+  const saved = await retainRestoreSource(f.options);
+  expect(await readFile(saved.archive.path)).toEqual(f.archive);
+  await expect(
+    readRetainedRestoreSource({
+      root: f.root,
+      manifest: saved.manifest,
+      signal: AbortSignal.abort(),
+      assertRoot() {},
+    }),
+  ).rejects.toThrow();
+});
+
+test('custody read refuses sidecars, permissive files, aliases and a changed ready record', async () => {
+  const f = await sourceFixture(),
+    saved = await retainRestoreSource(f.options);
+  const read = () =>
+    readRetainedRestoreSource({ root: f.root, manifest: saved.manifest, assertRoot() {} });
+  for (const suffix of ['-wal', '-shm', '-journal']) {
+    await writeFile(saved.candidate.databasePath + suffix, '');
+    await expect(read()).rejects.toThrow('unavailable or changed');
+    await rm(saved.candidate.databasePath + suffix);
+  }
+  await chmod(saved.candidate.databasePath, 0o644);
+  await expect(read()).rejects.toThrow('unavailable or changed');
+  await chmod(saved.candidate.databasePath, 0o600);
+  await rm(saved.archive.path);
+  await symlink(f.source.archive.path, saved.archive.path);
+  await expect(read()).rejects.toThrow('unavailable or changed');
+  await rm(saved.archive.path);
+  await link(f.source.archive.path, saved.archive.path);
+  await expect(read()).rejects.toThrow('unavailable or changed');
+  await rm(saved.archive.path);
+  await writeFile(saved.archive.path, f.archive, { mode: 0o600 });
+  await writeFile(join(f.target, 'ready'), '0'.repeat(64) + '\n');
+  await expect(read()).rejects.toThrow('unavailable or changed');
+  expect(await readFile(f.source.archive.path)).toEqual(f.archive);
+});
+
+test('source manifests are bounded and reject extra fields or changed provenance', async () => {
+  const f = await sourceFixture(),
+    saved = await retainRestoreSource(f.options);
+  for (const changed of [
+    { ...saved.manifest, id: '../foreign' },
+    { ...saved.manifest, path: '/foreign' },
+    { ...saved.manifest, archive: { ...saved.manifest.archive, bytes: 5 * 1024 ** 3 + 1 } },
+    { ...saved.manifest, candidate: { ...saved.manifest.candidate, bytes: 8 * 1024 ** 3 + 1 } },
+    { ...saved.manifest, recovery: { ...saved.manifest.recovery, origin: 'x'.repeat(4097) } },
+    { ...saved.manifest, recovery: { ...saved.manifest.recovery, image: 'latest' } },
+  ])
+    expect(validRestoreSourceManifest(changed)).toBe(false);
+  await expect(
+    readRetainedRestoreSource({
+      root: f.root,
+      manifest: {
+        ...saved.manifest,
+        recovery: { ...saved.manifest.recovery, origin: 'https://different.example' },
+      },
+      assertRoot() {},
+    }),
+  ).rejects.toThrow('unavailable or changed');
+});
 
 test('custody preserves original bytes and activates through the leased inode, behind a durable opening barrier', async () => {
   const f = await fixture();
