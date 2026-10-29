@@ -6,6 +6,8 @@ import {
 } from '../../web/connectionState.ts';
 import type { ConnectionState, EditorConnectionEvent } from '../../web/connectionState.ts';
 
+vi.mock('../../web/maintenanceState.ts', () => import('./fixtures/unsupervisedMaintenance.ts'));
+
 function editor(...events: EditorConnectionEvent[]) {
   return events.reduce(reduceEditorConnection, createEditorConnection(true));
 }
@@ -93,6 +95,7 @@ afterEach(() => {
 
 function server(online = true) {
   vi.useFakeTimers();
+  vi.stubGlobal('location', { origin: 'https://spinel.test', pathname: '/' });
   const browser = new EventTarget();
   const navigator = { onLine: online };
   vi.stubGlobal('window', browser);

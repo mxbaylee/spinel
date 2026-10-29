@@ -1,3 +1,4 @@
+import { maintenanceFetch } from './maintenanceFetch.ts';
 import { useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Modal } from '../src/ui/redesign/Controls.tsx';
@@ -67,7 +68,7 @@ export async function formulaRequest<T>(
             body: JSON.stringify(body),
           }),
     },
-    transport?.fetch,
+    transport?.fetch ?? maintenanceFetch,
     transport?.verify,
   );
 }

@@ -257,17 +257,21 @@ export function startTrashCleanup(
   store: TrashStore,
   observe?: ObserveJob,
   observeSpaces?: ObserveJob,
+  runWork: (work: () => void) => void = (work) => work(),
 ) {
-  const run = () => {
-    const finish = observeJob(observe);
-    try {
-      store.purgeExpired(observeSpaces);
-      finish(true);
-    } catch {
-      finish(false);
-      console.error('Trash cleanup failed; retained items will be retried on the next daily run.');
-    }
-  };
+  const run = () =>
+    runWork(() => {
+      const finish = observeJob(observe);
+      try {
+        store.purgeExpired(observeSpaces);
+        finish(true);
+      } catch {
+        finish(false);
+        console.error(
+          'Trash cleanup failed; retained items will be retried on the next daily run.',
+        );
+      }
+    });
   run();
   const timer = setInterval(run, DAY_MS);
   timer.unref();

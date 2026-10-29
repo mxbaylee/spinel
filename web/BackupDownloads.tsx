@@ -1,8 +1,14 @@
 import { useEffect, useId, useRef, useState } from 'react';
+import { capturedMaintenanceEpoch, maintenanceFetch as fetch } from './maintenanceFetch.ts';
 import { startAuthentication, WebAuthnAbortService } from '@simplewebauthn/browser';
 import type { PublicKeyCredentialRequestOptionsJSON } from '@simplewebauthn/browser';
 import { Button, Choice, Modal } from '../src/ui/redesign/Controls.tsx';
 import { api } from './api.ts';
+import {
+  getMaintenanceStatus,
+  refreshMaintenanceStatus,
+  useMaintenanceStatus,
+} from './maintenanceState.ts';
 import './backup-downloads.css';
 
 export interface BackupPolicy {
@@ -42,19 +48,35 @@ const messages: Record<BackupExportJob['state'], string> = {
   expired: 'This download expired. Prepare another backup to try again.',
   failed: 'The backup could not be prepared or delivered. Check the backup guide and try again.',
 };
+const pausedMessage =
+  'Backup actions are paused for maintenance. Keep this page open until the workspace resumes.';
+const reloadMessage =
+  'Maintenance resumed. Reload Administration before preparing or downloading another backup.';
 
-function requestError(status: number) {
+function maintenanceMessage() {
+  const status = getMaintenanceStatus();
+  if (!status?.available) return '';
+  if (status.phase !== 'running') return pausedMessage;
+  const epoch = capturedMaintenanceEpoch();
+  return epoch !== undefined && epoch !== status.epoch ? reloadMessage : '';
+}
+
+function requestError(status: number, code?: unknown) {
   return Object.assign(
     new Error(
-      [401, 403, 404].includes(status)
-        ? 'Operator access is unavailable. Sign in again with your Operator account.'
-        : status === 428
-          ? 'Verify with a passkey again before preparing or downloading this backup.'
-          : status === 409
-            ? 'The backup request could not start. Refresh the status and wait for any active recovery job to finish.'
-            : 'The backup request could not be confirmed. Refresh the status and try again.',
+      code === 'maintenance'
+        ? pausedMessage
+        : code === 'maintenance-epoch'
+          ? reloadMessage
+          : [401, 403, 404].includes(status)
+            ? 'Operator access is unavailable. Sign in again with your Operator account.'
+            : status === 428
+              ? 'Verify with a passkey again before preparing or downloading this backup.'
+              : status === 409
+                ? 'The backup request could not start. Refresh the status and wait for any active recovery job to finish.'
+                : 'The backup request could not be confirmed. Refresh the status and try again.',
     ),
-    { status },
+    { status, code },
   );
 }
 
@@ -69,6 +91,9 @@ export function BackupDownloads({
   hasDestination: boolean;
   authenticate?: typeof startAuthentication;
 }) {
+  const { status: maintenance } = useMaintenanceStatus();
+  const paused = !!maintenance?.available && maintenance.phase !== 'running';
+  const maintenanceNotice = maintenanceMessage();
   const [job, setJob] = useState<BackupExportJob | null>(null);
   const [loading, setLoading] = useState(true);
   const [statusKnown, setStatusKnown] = useState(false);
@@ -94,6 +119,7 @@ export function BackupDownloads({
   const frameName = useId();
   const frame = useRef<HTMLIFrameElement>(null);
   const deliveryPath = useRef<string | null>(null);
+  const wasPaused = useRef(paused);
 
   function deliveryLoaded() {
     if (!mounted.current || !deliveryPath.current) return;
@@ -125,12 +151,22 @@ export function BackupDownloads({
       },
       ...(body === undefined ? {} : { body: JSON.stringify(body) }),
     });
-    if (!response.ok) throw requestError(response.status);
+    if (!response.ok) {
+      const failure = await response.json().catch(() => null);
+      if (failure?.code === 'maintenance' || failure?.code === 'maintenance-epoch')
+        void refreshMaintenanceStatus();
+      throw requestError(response.status, failure?.code);
+    }
     return (await response.json()) as T;
   }
 
   async function refresh(showLoading = true) {
     const read = ++reads.current;
+    const current = getMaintenanceStatus();
+    if (current?.available && current.phase !== 'running') {
+      setLoading(false);
+      return;
+    }
     if (showLoading) setLoading(true);
     try {
       const result = await request<{ job: BackupExportJob | null }>(
@@ -142,10 +178,14 @@ export function BackupDownloads({
         setStatusKnown(true);
         if (showLoading) setError('');
       }
-    } catch {
+    } catch (failure) {
       if (mounted.current && read === reads.current) {
-        setStatusKnown(false);
-        setError('Download status is unavailable. Refresh before trying another backup.');
+        if ((failure as { code?: string })?.code === 'maintenance')
+          setError(requestError(503, 'maintenance').message);
+        else {
+          setStatusKnown(false);
+          setError('Download status is unavailable. Refresh before trying another backup.');
+        }
       }
     } finally {
       if (mounted.current && read === reads.current) setLoading(false);
@@ -183,10 +223,15 @@ export function BackupDownloads({
     };
   }, [currentId]);
   useEffect(() => {
-    if (!active(job)) return;
+    if (!active(job) || paused) return;
     const timer = setInterval(() => void refresh(false), 2000);
     return () => clearInterval(timer);
-  }, [job?.id, job?.state]);
+  }, [job?.id, job?.state, paused]);
+  useEffect(() => {
+    const resume = wasPaused.current && !paused;
+    wasPaused.current = paused;
+    if (resume) void refresh();
+  }, [paused]);
   useEffect(() => {
     if (job && !active(job)) deliveryPath.current = null;
   }, [job?.id, job?.state]);
@@ -199,6 +244,8 @@ export function BackupDownloads({
 
   async function loadCatalog() {
     if (catalogLoading) return;
+    const current = getMaintenanceStatus();
+    if (current?.available && current.phase !== 'running') return;
     setCatalogLoading(true);
     setCatalogError('');
     try {
@@ -217,13 +264,13 @@ export function BackupDownloads({
     }
   }
   function open(next: Action) {
-    if (busy.current || !policy.manualDownload) return;
+    if (busy.current || !policy.manualDownload || maintenanceMessage()) return;
     returnFocus.current = document.activeElement as HTMLElement;
     setError('');
     setAction(next);
   }
   async function perform() {
-    if (!action || busy.current) return;
+    if (!action || busy.current || maintenanceMessage()) return;
     if (!policy.manualDownload) {
       setError('Workspace downloads are turned off in the deployment configuration.');
       return;
@@ -310,7 +357,7 @@ export function BackupDownloads({
         if ((failure as { status?: number })?.status === 428) proofUntil.current = 0;
         setError(
           failure instanceof Error && 'status' in failure
-            ? requestError(Number(failure.status)).message
+            ? requestError(Number(failure.status), (failure as { code?: string }).code).message
             : 'Passkey verification or the backup request did not finish. Refresh the status and try again.',
         );
       }
@@ -324,7 +371,7 @@ export function BackupDownloads({
     }
   }
   async function cancelJob() {
-    if (!job || busy.current) return;
+    if (!job || busy.current || maintenanceMessage()) return;
     busy.current = true;
     const identity = ++operation.current;
     const pending = new AbortController();
@@ -357,7 +404,7 @@ export function BackupDownloads({
     }
   }
   const occupied = active(job);
-  const disabled = loading || !statusKnown || phase !== 'idle';
+  const disabled = loading || !statusKnown || phase !== 'idle' || !!maintenanceNotice;
   const state = job?.state;
   return (
     <section className="admin-backup-downloads" aria-label="Workspace backup download">
@@ -394,11 +441,14 @@ export function BackupDownloads({
           </Button>
         )}
         {occupied && (
-          <Button disabled={phase !== 'idle'} onClick={() => void cancelJob()}>
+          <Button
+            disabled={phase !== 'idle' || !!maintenanceNotice}
+            onClick={() => void cancelJob()}
+          >
             {state === 'downloading' ? 'Cancel delivery' : 'Cancel backup'}
           </Button>
         )}
-        <Button disabled={loading || phase !== 'idle'} onClick={() => void refresh()}>
+        <Button disabled={loading || phase !== 'idle' || paused} onClick={() => void refresh()}>
           Refresh download status
         </Button>
       </div>
@@ -419,7 +469,8 @@ export function BackupDownloads({
           </>
         )}
       </div>
-      {error && !action && <p role="alert">{error}</p>}
+      {maintenanceNotice && <p role="status">{maintenanceNotice}</p>}
+      {error && !action && !maintenanceNotice && <p role="alert">{error}</p>}
       <p className="sp-muted">
         A download does not confirm an offsite copy or a successful restore. Keep the file and its
         key somewhere you can reach if this server is lost.
@@ -460,7 +511,7 @@ export function BackupDownloads({
                 >
                   Prepare selected backup
                 </Button>
-                <Button disabled={catalogLoading} onClick={() => void loadCatalog()}>
+                <Button disabled={catalogLoading || paused} onClick={() => void loadCatalog()}>
                   Refresh saved backups
                 </Button>
               </div>
@@ -496,14 +547,15 @@ export function BackupDownloads({
         </p>
         {phase === 'verifying' && <p role="status">Waiting for your passkey…</p>}
         {phase === 'requesting' && <p role="status">Requesting your backup…</p>}
-        {error && <p role="alert">{error}</p>}
+        {maintenanceNotice && <p role="status">{maintenanceNotice}</p>}
+        {error && !maintenanceNotice && <p role="alert">{error}</p>}
         <div className="admin-dialog-actions">
           <Button disabled={phase === 'requesting'} onClick={cancelAction}>
             Cancel
           </Button>
           <Button
             primary
-            disabled={phase !== 'idle' || !policy.manualDownload}
+            disabled={phase !== 'idle' || !policy.manualDownload || !!maintenanceNotice}
             onClick={() => void perform()}
           >
             {action?.kind === 'download' ? 'Verify and download' : 'Verify and prepare backup'}

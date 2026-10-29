@@ -146,7 +146,15 @@ export async function runPdf(job: PdfJob, signal?: AbortSignal): Promise<PdfResu
     return await new Promise<PdfResult>((resolve, reject) => {
       const worker = fork(new URL('./worker.ts', import.meta.url), [], {
         // Do not inherit sessions, database paths, tokens, NODE_OPTIONS or test loaders.
-        env: { DISABLE_SYSTEM_FONTS_LOAD: '1', LANG: 'C.UTF-8', TZ: 'UTC', NODE_ENV: 'production' },
+        env: {
+          DISABLE_SYSTEM_FONTS_LOAD: '1',
+          LANG: 'C.UTF-8',
+          TZ: 'UTC',
+          NODE_ENV: 'production',
+          ...(process.env.SPINEL_PROCESS_GROUP_TOKEN && {
+            SPINEL_PROCESS_GROUP_TOKEN: process.env.SPINEL_PROCESS_GROUP_TOKEN,
+          }),
+        },
         execArgv: [
           `--max-old-space-size=${Math.min(256, Math.floor(workerBudget / (2 * 1024 * 1024)))}`,
           '--max-semi-space-size=16',

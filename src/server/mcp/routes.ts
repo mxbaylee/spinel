@@ -1,3 +1,4 @@
+import { maintenanceRouter } from '../maintenance/router.ts';
 import express from 'express';
 import type { Request, Response, NextFunction } from 'express';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
@@ -20,6 +21,11 @@ const write = {
   unitId: string,
   revision: { type: 'integer', minimum: 1 },
   requestId: { type: 'string', format: 'uuid' },
+  epoch: {
+    type: 'string',
+    description:
+      'The recovery epoch returned by the document read; required on a supervised server.',
+  },
 };
 const schema = (
   properties: Record<string, object>,
@@ -84,7 +90,7 @@ const tools: Tool[] = [
           },
         },
       },
-      [...Object.keys(write), 'sheetId', 'cells'],
+      [...Object.keys(write).filter((key) => key !== 'epoch'), 'sheetId', 'cells'],
     ),
     annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: true },
   },
@@ -99,7 +105,7 @@ const tools: Tool[] = [
         deleteCount: { type: 'integer', minimum: 0, maximum: 10000 },
         text: { type: 'string', maxLength: 10000 },
       },
-      [...Object.keys(write), 'offset', 'text'],
+      [...Object.keys(write).filter((key) => key !== 'epoch'), 'offset', 'text'],
     ),
     annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: true },
   },
@@ -111,7 +117,7 @@ export function mcpRoutes(
   collaboration: CollaborationStore,
   origin: string,
 ) {
-  const router = express.Router();
+  const router = maintenanceRouter();
   const tokens = new AccessTokens(workspace.auth),
     oauth = new AssistantOAuth(workspace.auth, origin),
     documents = new McpDocuments(workspace, collaboration);

@@ -262,9 +262,24 @@ File admin, Space, replacement, once-only address and stale-response states are
 covered. The shared screenshot runner captures these in light, dark and phone
 variants when run; a story’s presence is not screenshot approval.
 
-## Guest-link inventory (planned, SPN-066)
+## Guest-link inventory (SPN-066)
 
-Profile → Guest links lists the owner’s own files with type, role, enabled date
-and expiry. Each row offers Change expiry and Turn off; it never reveals the
-secret address. See `Redesign/Screens/PlannedGuestLinks`. Expiry choices are
-never, one day, seven days and 30 days; changing expiry does not rotate a link.
+Profile → Guest links uses the production `GuestLinks` component to list the
+owner’s own files with type, confirmed role, enabled date and expiry. Legacy
+dates say **Enabled date unknown**. A Space appears once with its entire scope.
+Rows offer **More → Change expiry…** and **Turn off link**; they never reveal
+the secret address. Expiry choices are Never, One day, Seven days and 30 days
+from saving; changing expiry does not rotate an active link.
+
+Expired rows remain visible with a fresh-link explanation and no expiry editor.
+Turn-off confirms the named file or whole-Space consequence. Pending writes
+disable conflicting controls and dismissal; uncertain writes re-read current
+access before another action. Removed rows return focus to the section heading.
+Loading, retry, error and empty states use the shared status patterns. Offline
+accounts explain the connection requirement; Operators have no Guest links section.
+
+Stories: `Current production/Account/Guest links` and the GuestLinks states in
+`Current production/Account/Your profile`. These replace the final Redesign
+example. Review production profile composition and its dialogs in light, dark
+and phone widths; the [implementation record](../implementation/SPN-066.md)
+documents privacy, expiry and persona decisions.

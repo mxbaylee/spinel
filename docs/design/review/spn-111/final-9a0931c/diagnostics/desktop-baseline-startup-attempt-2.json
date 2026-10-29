@@ -1,0 +1,580 @@
+{
+  "config": {
+    "argv": [
+      "/opt/hostedtoolcache/node/26.12.1/x64/bin/node",
+      "/home/runner/work/spinel/spinel/baseline-doc-source/node_modules/.bin/playwright",
+      "test",
+      "--project=doc-responsiveness",
+      "--grep",
+      "desktop sustained native typing"
+    ],
+    "configFile": "/home/runner/work/spinel/spinel/baseline-doc-source/playwright.config.ts",
+    "rootDir": "/home/runner/work/spinel/spinel/baseline-doc-source/e2e",
+    "failOnFlakyTests": true,
+    "forbidOnly": true,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "ci": {
+        "commitHref": "https://github.com/mxbaylee/spinel/commit/d59a772a886d3c241bda665c4793c7f9d17bf3af",
+        "commitHash": "d59a772a886d3c241bda665c4793c7f9d17bf3af",
+        "prHref": "https://github.com/mxbaylee/spinel/pull/206",
+        "prTitle": "⏸️ SPN-111 Pause edits for supervised workspace recovery",
+        "prBaseHash": "17df5bef7fe63ea3a5b7184cafc1d65214b35789",
+        "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/40805896981"
+      },
+      "gitCommit": {
+        "shortHash": "2c84a18",
+        "hash": "2c84a18449c7dae09e2817989fac6236be96ef98",
+        "subject": "Observe native drain identically in the uncapped SPN-108 baseline",
+        "body": "Observe native drain identically in the uncapped SPN-108 baseline",
+        "author": {
+          "name": "Baylee Schmeisser",
+          "email": "119542904+mxbaylee@users.noreply.github.com",
+          "time": 1793147022000
+        },
+        "committer": {
+          "name": "Baylee Schmeisser",
+          "email": "119542904+mxbaylee@users.noreply.github.com",
+          "time": 1793147022000
+        },
+        "branch": "HEAD"
+      }
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-doc-source/test-results/doc-responsiveness",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/d59a772a886d3c241bda665c4793c7f9d17bf3af",
+            "commitHash": "d59a772a886d3c241bda665c4793c7f9d17bf3af",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/206",
+            "prTitle": "⏸️ SPN-111 Pause edits for supervised workspace recovery",
+            "prBaseHash": "17df5bef7fe63ea3a5b7184cafc1d65214b35789",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/40805896981"
+          },
+          "gitCommit": {
+            "shortHash": "2c84a18",
+            "hash": "2c84a18449c7dae09e2817989fac6236be96ef98",
+            "subject": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "body": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "branch": "HEAD"
+          }
+        },
+        "id": "development",
+        "name": "development",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-doc-source/e2e",
+        "testIgnore": [
+          "**/pwa.spec.ts",
+          "**/offline.spec.ts",
+          "**/offline-editing.spec.ts",
+          "**/offline-creation.spec.ts",
+          "**/offline-recovery.spec.ts",
+          "**/offline-device.spec.ts",
+          "**/offline-sign-out.spec.ts",
+          "**/offline-upgrade.spec.ts",
+          "**/sync-client.spec.ts",
+          "**/doc-responsiveness*.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-doc-source/test-results/doc-responsiveness",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/d59a772a886d3c241bda665c4793c7f9d17bf3af",
+            "commitHash": "d59a772a886d3c241bda665c4793c7f9d17bf3af",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/206",
+            "prTitle": "⏸️ SPN-111 Pause edits for supervised workspace recovery",
+            "prBaseHash": "17df5bef7fe63ea3a5b7184cafc1d65214b35789",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/40805896981"
+          },
+          "gitCommit": {
+            "shortHash": "2c84a18",
+            "hash": "2c84a18449c7dae09e2817989fac6236be96ef98",
+            "subject": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "body": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "branch": "HEAD"
+          }
+        },
+        "id": "production",
+        "name": "production",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-doc-source/e2e",
+        "testIgnore": [
+          "**/pwa.spec.ts",
+          "**/offline-editing.spec.ts",
+          "**/offline-creation.spec.ts",
+          "**/offline-recovery.spec.ts",
+          "**/offline-upgrade.spec.ts",
+          "**/sync-client.spec.ts",
+          "**/doc-responsiveness*.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-doc-source/test-results/doc-responsiveness",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/d59a772a886d3c241bda665c4793c7f9d17bf3af",
+            "commitHash": "d59a772a886d3c241bda665c4793c7f9d17bf3af",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/206",
+            "prTitle": "⏸️ SPN-111 Pause edits for supervised workspace recovery",
+            "prBaseHash": "17df5bef7fe63ea3a5b7184cafc1d65214b35789",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/40805896981"
+          },
+          "gitCommit": {
+            "shortHash": "2c84a18",
+            "hash": "2c84a18449c7dae09e2817989fac6236be96ef98",
+            "subject": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "body": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "branch": "HEAD"
+          }
+        },
+        "id": "sync-development",
+        "name": "sync-development",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-doc-source/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/sync-client.spec.ts",
+          "**/doc-mobile.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-doc-source/test-results/doc-responsiveness",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/d59a772a886d3c241bda665c4793c7f9d17bf3af",
+            "commitHash": "d59a772a886d3c241bda665c4793c7f9d17bf3af",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/206",
+            "prTitle": "⏸️ SPN-111 Pause edits for supervised workspace recovery",
+            "prBaseHash": "17df5bef7fe63ea3a5b7184cafc1d65214b35789",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/40805896981"
+          },
+          "gitCommit": {
+            "shortHash": "2c84a18",
+            "hash": "2c84a18449c7dae09e2817989fac6236be96ef98",
+            "subject": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "body": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "branch": "HEAD"
+          }
+        },
+        "id": "sync-production",
+        "name": "sync-production",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-doc-source/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/sync-client.spec.ts",
+          "**/doc-mobile.spec.ts",
+          "**/offline-editing.spec.ts",
+          "**/offline-creation.spec.ts",
+          "**/offline-recovery.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-doc-source/test-results/doc-responsiveness",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/d59a772a886d3c241bda665c4793c7f9d17bf3af",
+            "commitHash": "d59a772a886d3c241bda665c4793c7f9d17bf3af",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/206",
+            "prTitle": "⏸️ SPN-111 Pause edits for supervised workspace recovery",
+            "prBaseHash": "17df5bef7fe63ea3a5b7184cafc1d65214b35789",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/40805896981"
+          },
+          "gitCommit": {
+            "shortHash": "2c84a18",
+            "hash": "2c84a18449c7dae09e2817989fac6236be96ef98",
+            "subject": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "body": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "branch": "HEAD"
+          }
+        },
+        "id": "sync-soak-sheet",
+        "name": "sync-soak-sheet",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-doc-source/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/sync-client.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-doc-source/test-results/doc-responsiveness",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/d59a772a886d3c241bda665c4793c7f9d17bf3af",
+            "commitHash": "d59a772a886d3c241bda665c4793c7f9d17bf3af",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/206",
+            "prTitle": "⏸️ SPN-111 Pause edits for supervised workspace recovery",
+            "prBaseHash": "17df5bef7fe63ea3a5b7184cafc1d65214b35789",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/40805896981"
+          },
+          "gitCommit": {
+            "shortHash": "2c84a18",
+            "hash": "2c84a18449c7dae09e2817989fac6236be96ef98",
+            "subject": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "body": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "branch": "HEAD"
+          }
+        },
+        "id": "sync-soak-doc",
+        "name": "sync-soak-doc",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-doc-source/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/sync-client.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-doc-source/test-results/doc-responsiveness",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/d59a772a886d3c241bda665c4793c7f9d17bf3af",
+            "commitHash": "d59a772a886d3c241bda665c4793c7f9d17bf3af",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/206",
+            "prTitle": "⏸️ SPN-111 Pause edits for supervised workspace recovery",
+            "prBaseHash": "17df5bef7fe63ea3a5b7184cafc1d65214b35789",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/40805896981"
+          },
+          "gitCommit": {
+            "shortHash": "2c84a18",
+            "hash": "2c84a18449c7dae09e2817989fac6236be96ef98",
+            "subject": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "body": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "branch": "HEAD"
+          }
+        },
+        "id": "doc-responsiveness",
+        "name": "doc-responsiveness",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-doc-source/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/doc-responsiveness.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-doc-source/test-results/doc-responsiveness",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/d59a772a886d3c241bda665c4793c7f9d17bf3af",
+            "commitHash": "d59a772a886d3c241bda665c4793c7f9d17bf3af",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/206",
+            "prTitle": "⏸️ SPN-111 Pause edits for supervised workspace recovery",
+            "prBaseHash": "17df5bef7fe63ea3a5b7184cafc1d65214b35789",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/40805896981"
+          },
+          "gitCommit": {
+            "shortHash": "2c84a18",
+            "hash": "2c84a18449c7dae09e2817989fac6236be96ef98",
+            "subject": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "body": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "branch": "HEAD"
+          }
+        },
+        "id": "doc-callback-lifetimes",
+        "name": "doc-callback-lifetimes",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-doc-source/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/doc-responsiveness-callbacks.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-doc-source/test-results/doc-responsiveness",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/d59a772a886d3c241bda665c4793c7f9d17bf3af",
+            "commitHash": "d59a772a886d3c241bda665c4793c7f9d17bf3af",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/206",
+            "prTitle": "⏸️ SPN-111 Pause edits for supervised workspace recovery",
+            "prBaseHash": "17df5bef7fe63ea3a5b7184cafc1d65214b35789",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/40805896981"
+          },
+          "gitCommit": {
+            "shortHash": "2c84a18",
+            "hash": "2c84a18449c7dae09e2817989fac6236be96ef98",
+            "subject": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "body": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "branch": "HEAD"
+          }
+        },
+        "id": "offline-upgrade",
+        "name": "offline-upgrade",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-doc-source/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/offline-upgrade.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-doc-source/test-results/doc-responsiveness",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/d59a772a886d3c241bda665c4793c7f9d17bf3af",
+            "commitHash": "d59a772a886d3c241bda665c4793c7f9d17bf3af",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/206",
+            "prTitle": "⏸️ SPN-111 Pause edits for supervised workspace recovery",
+            "prBaseHash": "17df5bef7fe63ea3a5b7184cafc1d65214b35789",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/40805896981"
+          },
+          "gitCommit": {
+            "shortHash": "2c84a18",
+            "hash": "2c84a18449c7dae09e2817989fac6236be96ef98",
+            "subject": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "body": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "branch": "HEAD"
+          }
+        },
+        "id": "mobile-https",
+        "name": "mobile-https",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-doc-source/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/pwa.spec.ts",
+          "**/doc-mobile.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-doc-source/test-results/doc-responsiveness",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/d59a772a886d3c241bda665c4793c7f9d17bf3af",
+            "commitHash": "d59a772a886d3c241bda665c4793c7f9d17bf3af",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/206",
+            "prTitle": "⏸️ SPN-111 Pause edits for supervised workspace recovery",
+            "prBaseHash": "17df5bef7fe63ea3a5b7184cafc1d65214b35789",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/40805896981"
+          },
+          "gitCommit": {
+            "shortHash": "2c84a18",
+            "hash": "2c84a18449c7dae09e2817989fac6236be96ef98",
+            "subject": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "body": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "branch": "HEAD"
+          }
+        },
+        "name": "doc-responsiveness",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-doc-source/e2e",
+        "snapshotDir": "/home/runner/work/spinel/spinel/baseline-doc-source/e2e",
+        "testIgnore": [],
+        "testMatch": "**/doc-responsiveness.spec.ts",
+        "timeout": 30000,
+        "use": {
+          "trace": "off",
+          "screenshot": "only-on-failure",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "screen": {
+            "width": 1920,
+            "height": 1080
+          },
+          "deviceScaleFactor": 1,
+          "isMobile": false,
+          "hasTouch": false,
+          "defaultBrowserType": "chromium",
+          "baseURL": "http://localhost:3108"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "doc-responsiveness"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "playwright-report/doc-responsiveness.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [],
+  "errors": [
+    {
+      "message": "Error: Timed out waiting 60000ms from config.webServer.",
+      "stack": "Error: Timed out waiting 60000ms from config.webServer."
+    }
+  ],
+  "stats": {
+    "startTime": "2026-10-29T03:06:02.954Z",
+    "duration": 63933.396,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

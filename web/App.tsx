@@ -1,4 +1,5 @@
 import { AuthEntry } from './AuthEntry.tsx';
+import { MaintenanceShell } from './Maintenance.tsx';
 import { ProfilePage } from './ProfilePage.tsx';
 import { PasskeySettings } from './PasskeySettings.tsx';
 import { AccountAccessChanged, AccountExitScreen } from './AccountExit.tsx';
@@ -71,7 +72,9 @@ type User = { id: string; name: string; isAdmin: boolean; icon?: string; color?:
 export function App() {
   return (
     <DiagnosticsProvider>
-      <AccountApp />
+      <MaintenanceShell>
+        <AccountApp />
+      </MaintenanceShell>
     </DiagnosticsProvider>
   );
 }

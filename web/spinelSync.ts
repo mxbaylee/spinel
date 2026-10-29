@@ -1,3 +1,10 @@
+import { maintenanceFetch as fetch } from './maintenanceFetch.ts';
+import {
+  getMaintenanceStatus,
+  maintenanceEvent,
+  refreshMaintenanceStatus,
+} from './maintenanceState.ts';
+import type { MaintenancePublicStatus } from '../src/shared/maintenance.ts';
 import {
   createNativeSyncClient,
   hashTouched,
@@ -74,6 +81,7 @@ export async function loadSpinelDocument(options: Options) {
     unitId: string;
     revision: number;
     snapshot: IWorkbookData | IDocumentData;
+    epoch?: string;
   };
   if (!current()) throw closed();
   if (
@@ -104,7 +112,12 @@ export async function loadSpinelDocument(options: Options) {
   // canvas can take input or native capture can record a local mutation.
   await options.initializeAccess?.();
   if (!current()) throw closed();
-  const binding = bind(options, data.snapshot, data.revision);
+  const binding = bind(
+    options,
+    data.snapshot,
+    data.revision,
+    options.offline?.bundle ? (options.offline.bundle.maintenanceEpoch ?? '') : (data.epoch ?? ''),
+  );
   bindings.set(univer, binding);
 }
 
@@ -117,7 +130,12 @@ export function disposeSpinelSync(univer: Univer) {
 }
 
 /** Sockets and scoped access stay in the application; the reusable client owns edits. */
-function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revision: number) {
+function bind(
+  options: Options,
+  snapshot: IWorkbookData | IDocumentData,
+  revision: number,
+  maintenanceEpoch: string,
+) {
   const { univer, unitId, itemId, spaceId, access, signal, isCurrent } = options;
   const path = documentSyncPath(itemId, spaceId);
   let disposed = false;
@@ -145,6 +163,10 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
   let recoveryAttempted = false;
   let recoveryResolved = false;
   let clearMessages = () => {};
+  let maintenanceBlocked = false;
+  let maintenanceChanged = false;
+  let maintenanceHandling = false;
+  let queuedMaintenance: MaintenancePublicStatus | undefined;
   let state: ClientState = {
     revision,
     pending: false,
@@ -201,7 +223,8 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
       });
       return;
     }
-    const connected = roomReady && state.connected && !accessUnreachable && navigator.onLine;
+    const connected =
+      !maintenanceBlocked && roomReady && state.connected && !accessUnreachable && navigator.onLine;
     if (options.offline) options.offline.online = connected && !denied && !state.resyncing;
     watcher.connection(
       denied || !navigator.onLine || accessUnreachable
@@ -213,7 +236,8 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
             : 'offline',
     );
     if (options.offline?.enabled) {
-      const attention = denied || state.resyncing || Boolean(options.offline.problem);
+      const attention =
+        denied || state.resyncing || maintenanceBlocked || Boolean(options.offline.problem);
       const local =
         state.recoveryMissing || state.localPersistence === 'failed'
           ? 'failed'
@@ -246,7 +270,7 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
               : recovery?.phase === 'creating'
                 ? 'Creating an offline copy in My files. Your saved device copy is retained until it finishes.'
                 : attention
-                  ? `Needs attention. ${options.offline.problem || denialMessage || 'The live document changed or an edit could not be synchronized. Your saved device copy is retained.'}`
+                  ? `Needs attention. ${options.offline.problem || denialMessage || (maintenanceBlocked ? 'Maintenance has paused edits. Your device copy is retained.' : 'The live document changed or an edit could not be synchronized. Your saved device copy is retained.')}`
                   : access === 'viewer'
                     ? 'View only on this device.'
                     : local === 'synced'
@@ -259,22 +283,27 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
     watcher.publish({
       ...(authenticationEnded ? { signInRequired: true } : {}),
       dirty: state.pending,
-      failed: denied || state.resyncing || Boolean(state.failure) || !connected,
-      message: denied
-        ? denialMessage
-        : state.resyncing
-          ? 'An edit could not be applied. Waiting for the server before reloading.'
-          : state.pending
-            ? 'Changes not saved yet — keep this tab open.'
-            : connected
-              ? access === 'viewer'
-                ? 'View only — reload after your access changes.'
-                : 'All changes saved.'
-              : 'Connection interrupted. Reconnect to continue.',
+      failed:
+        denied || maintenanceBlocked || state.resyncing || Boolean(state.failure) || !connected,
+      message: maintenanceBlocked
+        ? maintenanceChanged
+          ? 'Maintenance changed this workspace. Copy pending changes before reloading.'
+          : 'Edits are paused for maintenance. Keep this tab open; pending changes are not yet confirmed.'
+        : denied
+          ? denialMessage
+          : state.resyncing
+            ? 'An edit could not be applied. Waiting for the server before reloading.'
+            : state.pending
+              ? 'Changes not saved yet — keep this tab open.'
+              : connected
+                ? access === 'viewer'
+                  ? 'View only — reload after your access changes.'
+                  : 'All changes saved.'
+                : 'Connection interrupted. Reconnect to continue.',
     });
   };
   const send = (frame: OutgoingFrame | { type: 'cursor'; selection: string }) => {
-    if (!active() || denied || socket?.readyState !== WebSocket.OPEN) return;
+    if (!active() || denied || maintenanceBlocked || socket?.readyState !== WebSocket.OPEN) return;
     try {
       socket.send(JSON.stringify(frame));
       if (frame.type === 'submit') {
@@ -480,6 +509,8 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
       !mayRecover() ||
       recoveryRunning ||
       recoveryAttempted ||
+      maintenanceBlocked ||
+      maintenanceChanged ||
       authenticationEnded ||
       !navigator.onLine ||
       state.recoveryMissing ||
@@ -522,7 +553,7 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
     };
     report();
   }
-  async function recoverOffline() {
+  async function recoverOffline(explicit = false) {
     if (
       options.offline?.creation ||
       recoveryRunning ||
@@ -531,6 +562,22 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
       !mayRecover()
     )
       return;
+    const maintenance = getMaintenanceStatus();
+    if (
+      !explicit &&
+      (maintenanceBlocked ||
+        maintenanceChanged ||
+        (maintenance?.available &&
+          (maintenance.phase !== 'running' || maintenance.epoch !== maintenanceEpoch)))
+    )
+      return;
+    if (explicit && maintenance?.available && maintenance.phase !== 'running') {
+      recoveryError(new Error('Wait until maintenance resumes before creating a separate copy.'));
+      return;
+    }
+    // Capture intent before any asynchronous preparation. Only a fresh explicit
+    // copy action may use the resumed epoch; an automatic retry retains its base.
+    const recoveryEpoch = explicit && maintenance?.available ? maintenance.epoch : maintenanceEpoch;
     recoveryRunning = true;
     recoveryAttempted = true;
     try {
@@ -539,7 +586,7 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
       report();
       const request = await options.offline!.prepareRecovery(client.checkpoint());
       if (!active()) throw closed();
-      const item = await options.offline!.publishRecovery(request, abort.signal);
+      const item = await options.offline!.publishRecovery(request, abort.signal, recoveryEpoch);
       if (!active()) throw closed();
       // Stop all future native writes before the durable outbox is removed.
       // A failed local commit leaves the exact request available for another retry.
@@ -609,7 +656,7 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
   }
 
   /** A clean lifecycle change must not manufacture a retained edit checkpoint. */
-  async function transitionClean(action: 'refresh' | 'remove') {
+  async function transitionClean(action: 'refresh' | 'remove', restartPage = false) {
     if (!cleanDownloaded()) return false;
     refreshingClean = true;
     endConnection();
@@ -628,6 +675,7 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
       if (!active()) return true;
       dispose();
       if (action === 'remove') options.lock?.();
+      else if (restartPage) location.reload();
       else options.reload('stale', true);
     } catch {
       if (!active()) return true;
@@ -645,7 +693,15 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
   }
 
   async function checkAccess() {
-    if (!active() || checking || denied || refreshingClean || !navigator.onLine) return;
+    if (
+      !active() ||
+      checking ||
+      denied ||
+      maintenanceBlocked ||
+      refreshingClean ||
+      !navigator.onLine
+    )
+      return;
     checking = true;
     let recheck = false;
     try {
@@ -744,6 +800,7 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
     if (
       !active() ||
       denied ||
+      maintenanceBlocked ||
       state.resyncing ||
       refreshingClean ||
       options.offline?.problem ||
@@ -758,6 +815,8 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
     const same = () => active() && !denied && generation === current;
     report();
     try {
+      await applyMaintenance(await refreshMaintenanceStatus());
+      if (!same() || maintenanceBlocked) return;
       if (options.offline?.enabled) {
         await checkAccess();
         if (!same() || accessUnreachable || options.offline.creation)
@@ -765,11 +824,26 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
       }
       const ticket = await request(`${path}/ticket?unitId=${encodeURIComponent(unitId)}`, {
         method: 'POST',
+        headers: { 'X-Spinel-Epoch': maintenanceEpoch },
         signal: AbortSignal.any([abort.signal, signal, AbortSignal.timeout(5000)]),
       });
       if (!same()) return;
       if (!ticket.ok) {
-        if ([401, 403, 404].includes(ticket.status)) await checkAccess();
+        if (ticket.status === 409 || ticket.status === 503)
+          await applyMaintenance(await refreshMaintenanceStatus());
+        if ([401, 403, 404].includes(ticket.status)) {
+          const rejection = await ticket.json().catch(() => null);
+          if (!same()) return;
+          // A generic denial can mean a restored generation or missing child.
+          // Only a confirmed root-capability loss is terminal without metadata.
+          if (guestItemId() && rejection?.code === 'guest-link-revoked') {
+            denied = true;
+            endConnection();
+            revokeGuestView();
+            return;
+          }
+          await checkAccess();
+        }
         throw new Error('Room unavailable');
       }
       const data = await ticket.json();
@@ -781,6 +855,7 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
       url.searchParams.set('unitId', unitId);
       url.searchParams.set('ticket', data.ticket);
       url.searchParams.set('afterRevision', String(client.confirmedRevision));
+      if (maintenanceEpoch) url.searchParams.set('epoch', maintenanceEpoch);
       const opened = new WebSocket(url);
       socket = opened;
       // An upgrade or initial replay can stall before any submit starts its
@@ -810,6 +885,10 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
           const frame = JSON.parse(data);
           if (!frame || typeof frame !== 'object' || Array.isArray(frame))
             throw new Error('Invalid room message');
+          if (frame.type === 'maintenance') {
+            await applyMaintenance(await refreshMaintenanceStatus());
+            return;
+          }
           if (frame.type === 'presence') {
             if (
               typeof frame.selfId !== 'string' ||
@@ -925,6 +1004,64 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
     }
   }
 
+  async function applyMaintenance(status: MaintenancePublicStatus | null) {
+    if (
+      !active() ||
+      !status?.available ||
+      (status.phase === 'running' && status.epoch === maintenanceEpoch)
+    )
+      return;
+    maintenanceBlocked = true;
+    report();
+    if (!watcher) return;
+    if (maintenanceHandling) {
+      queuedMaintenance = status;
+      return;
+    }
+    maintenanceHandling = true;
+    try {
+      // Keep the receipt channel alive during drain so an already accepted edit
+      // can still be acknowledged. No new submission leaves this mounted view.
+      await watcher.readonly(true);
+      await client.persistNow();
+      if (!active()) return;
+      if (status.phase !== 'running') return;
+      maintenanceChanged = true;
+      endConnection();
+      if (options.offline?.enabled && cleanDownloaded() && options.canRefresh?.() !== false) {
+        // Refresh the saved base under its clean-writer checks before opening a
+        // new page. A React remount retains the old tab's immutable HTTP epoch.
+        await transitionClean('refresh', true);
+      } else if (
+        !options.offline?.enabled &&
+        !state.pending &&
+        !state.resyncing &&
+        !state.recoveryMissing &&
+        options.canRefresh?.() !== false
+      ) {
+        dispose();
+        location.reload();
+      } else {
+        denialMessage =
+          'Maintenance changed the workspace. Keep your pending work, then create a separate copy or export it before reloading.';
+        options.offline?.stopRemote(denialMessage);
+        if (options.offline?.enabled) client.refuse('stale');
+        else denied = true;
+      }
+    } catch {
+      // Failed local persistence never clears the mounted native model or queue.
+    } finally {
+      maintenanceHandling = false;
+      report();
+      const latest = queuedMaintenance;
+      queuedMaintenance = undefined;
+      if (latest) void applyMaintenance(latest);
+    }
+  }
+  const maintenanceNotice = () => {
+    void applyMaintenance(getMaintenanceStatus());
+  };
+
   const online = () => {
     retryDelay = 250;
     reconnect();
@@ -978,6 +1115,7 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
     window.removeEventListener('offline', offline);
     window.removeEventListener('spinel-offline-changed', downloaded);
     window.removeEventListener('spinel-offline-prepared', prepared);
+    window.removeEventListener(maintenanceEvent, maintenanceNotice);
     document.removeEventListener('visibilitychange', foreground);
     signal.removeEventListener('abort', dispose);
     if (bindings.get(univer) === binding) bindings.delete(univer);
@@ -996,12 +1134,14 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
         window.addEventListener('offline', offline);
         window.addEventListener('spinel-offline-changed', downloaded);
         window.addEventListener('spinel-offline-prepared', prepared);
+        window.addEventListener(maintenanceEvent, maintenanceNotice);
         document.addEventListener('visibilitychange', foreground);
         accessTimer = setInterval(() => {
           void checkAccess();
           maybeRecover();
         }, 1000);
         void connect();
+        maintenanceNotice();
       }
       report();
       return {
@@ -1015,7 +1155,7 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
           reconnect();
           void checkAccess();
         },
-        recover: () => void recoverOffline(),
+        recover: () => void recoverOffline(true),
         exportRecovery: () => void exportRecovery(),
         discardRecovery: () => void discardRecovery(),
         dispose,

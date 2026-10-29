@@ -1,3 +1,4 @@
+import { maintenanceRouter } from '../maintenance/router.ts';
 import express from 'express';
 import type { Request, Response, NextFunction } from 'express';
 import { CollaborationError } from '../collaboration/errors.ts';
@@ -27,7 +28,7 @@ export function spaceNativeRoutes(
     diagnostics?: FormulaDiagnostics;
   } = {},
 ) {
-  const router = express.Router({ mergeParams: true });
+  const router = maintenanceRouter({ mergeParams: true });
   const spaces = new SpaceStore(workspace);
   const documents = new DocumentStore(workspace);
   const files = new PortableFiles(workspace, collaboration);

@@ -1,3 +1,4 @@
+import { maintenanceRouter } from '../maintenance/router.ts';
 import express from 'express';
 import { Profiles } from './profile.ts';
 import type { Request, Response, NextFunction } from 'express';
@@ -36,7 +37,7 @@ export function authRoutes(
   origin: string,
   accessChanged: () => Promise<void> = async () => {},
 ) {
-  const router = express.Router();
+  const router = maintenanceRouter();
   const service = new AuthService(store, origin);
   const profiles = new Profiles(store);
   const setup = new SetupService(store, origin);

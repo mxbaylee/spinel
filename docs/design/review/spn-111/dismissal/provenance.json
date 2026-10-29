@@ -1,0 +1,162 @@
+{
+  "sourceCommit": "80de0a2562a1b9f82f5fbdaed1c63df9b5f77b0b",
+  "sourceRun": 40636340003,
+  "integratedMain": "ca26c508e5e5bcb2d6ab6350746e1a7d8f142953",
+  "unchangedComponents": [
+    "web/Maintenance.tsx",
+    "web/maintenance.css",
+    "web/Maintenance.stories.tsx",
+    "web/BackupStatus.tsx",
+    "web/BackupStatus.stories.tsx"
+  ],
+  "captures": [
+    {
+      "file": "maintenance-banner--scheduled-light.png",
+      "sha256": "446f5460a710f1cdb265eb79238e77f21833eba5e44c4b9a1e903d0dcda523bf",
+      "artifact": 12793839597,
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "file": "maintenance-banner--paused-light.png",
+      "sha256": "8b769d8134d51d42325edeeffbfb36aae1ba5462d945adb080ea752010c91738",
+      "artifact": 12793839597,
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "file": "maintenance-banner--paused-dismissed-light.png",
+      "sha256": "38074bf9bb5c974068f73e9e2b26c3c960469c1d36fd0c1ce3276b1214952786",
+      "artifact": 12793839597,
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "file": "maintenance-banner--notice-details-light.png",
+      "sha256": "34ab41449936ad7abd525a9e2d015ca3d19760cb4e60ea0a6bc02704eb9dce6b",
+      "artifact": 12793839597,
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "file": "maintenance-controls--repeated-time-light.png",
+      "sha256": "8557193810e4c105cf0b0d808dbba8d42b3ec403de89e3c0dbc535503054e8a0",
+      "artifact": 12793839597,
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "file": "admin-backupstatus--maintenance-paused-light.png",
+      "sha256": "f307d31cb12d5eb6ad4189acaa31bd755fa7801290a2386ae8e410ad9a6f33ea",
+      "artifact": 12793839597,
+      "width": 1280,
+      "height": 1100
+    },
+    {
+      "file": "admin-backupstatus--maintenance-resumed-light.png",
+      "sha256": "77c5d443dbc8a1074897ae52ee10fb27e25331872764c6e2d32d120dd86d5207",
+      "artifact": 12793839597,
+      "width": 1280,
+      "height": 1054
+    },
+    {
+      "file": "maintenance-banner--scheduled-dark.png",
+      "sha256": "7b502258b5b5ecf7460029bb6e511854654f6f3672dc913e58e187f66ced6532",
+      "artifact": 12793374024,
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "file": "maintenance-banner--paused-dark.png",
+      "sha256": "793b74f905c9506c940da2b8e412abc76dd650c087762b4be10f16c9526a6463",
+      "artifact": 12793374024,
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "file": "maintenance-banner--paused-dismissed-dark.png",
+      "sha256": "f6f5f30164ee0ed83a5b13fadeb6ef76946dc42c4d4c04956973c67999ab0ad7",
+      "artifact": 12793374024,
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "file": "maintenance-banner--notice-details-dark.png",
+      "sha256": "316edb40c436cabfb8a54421fed83931b60c9fea83f0d4db3c4cbe853fbb66da",
+      "artifact": 12793374024,
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "file": "maintenance-controls--repeated-time-dark.png",
+      "sha256": "4ba7f04944148fd9aca70c1c205919b0f71cc3a03ca9b75accbbf05434e4df45",
+      "artifact": 12793374024,
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "file": "admin-backupstatus--maintenance-paused-dark.png",
+      "sha256": "6b40e42e4cf4b588d7fb625d0088c61897f375790461db6cfc066a5c3b539a63",
+      "artifact": 12793374024,
+      "width": 1280,
+      "height": 1100
+    },
+    {
+      "file": "admin-backupstatus--maintenance-resumed-dark.png",
+      "sha256": "f5d5b549762a1be66a5b1aa2e784fa7539b4d7db942eed37942de5494e4d7f94",
+      "artifact": 12793374024,
+      "width": 1280,
+      "height": 1054
+    },
+    {
+      "file": "maintenance-banner--scheduled-phone.png",
+      "sha256": "9a9129fe2a93e220ca679c0b0b927beedaea981c068412c720485ead4fec9da4",
+      "artifact": 12793533833,
+      "width": 390,
+      "height": 900
+    },
+    {
+      "file": "maintenance-banner--paused-phone.png",
+      "sha256": "ee33f771a848cd7192caadefd6fb2c34969b6f7e413f812fd9c495cb5a2cc52a",
+      "artifact": 12793533833,
+      "width": 390,
+      "height": 900
+    },
+    {
+      "file": "maintenance-banner--paused-dismissed-phone.png",
+      "sha256": "fc7f932e0adb1c59fb339745c102c3eb3d56f8f258076a0590c53bc91a475869",
+      "artifact": 12793533833,
+      "width": 390,
+      "height": 900
+    },
+    {
+      "file": "maintenance-banner--notice-details-phone.png",
+      "sha256": "5edc7b5e3dcfd9b1219887c3622a10f26c6c0e2487cb062062fc2b514535899d",
+      "artifact": 12793533833,
+      "width": 390,
+      "height": 900
+    },
+    {
+      "file": "maintenance-controls--repeated-time-phone.png",
+      "sha256": "7a24e4038ff9dfc3f2d4ed42dba499b8c5201e26a02e420789c3ff2bc5652b34",
+      "artifact": 12793533833,
+      "width": 390,
+      "height": 900
+    },
+    {
+      "file": "admin-backupstatus--maintenance-paused-phone.png",
+      "sha256": "5af692cf1f06fe10fe74a61db9e771ad871af48b5010b4b4bc10b9e467b3189b",
+      "artifact": 12793533833,
+      "width": 390,
+      "height": 1611
+    },
+    {
+      "file": "admin-backupstatus--maintenance-resumed-phone.png",
+      "sha256": "1dc90498662ed67e8678663c4b7ea45d72c3e72c9cd0143163f71bfc98469de1",
+      "artifact": 12793533833,
+      "width": 390,
+      "height": 1469
+    }
+  ],
+  "limits": "Existing production-component Storybook captures, not new integrated-head application runs or independent visual approval. The source run had a failing synthetic-keyboard story, subsequently repaired; no failing-story capture is used."
+}

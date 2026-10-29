@@ -10,8 +10,13 @@ import type { RemoteStore } from './destination.ts';
 import { backupTime } from './spaces.ts';
 import { MAX_ARCHIVE_BYTES } from './transfer.ts';
 import { RecoveryResourceError } from './resource-error.ts';
+import { MaintenanceError } from '../maintenance/gate.ts';
 
 const PREPARE_MS = 30 * 60_000;
+const MAINTENANCE_CANCELLED =
+  'Workspace maintenance stopped this backup before it was ready. Prepare a new download.';
+const DELIVERY_MAINTENANCE =
+  'Workspace maintenance stopped this download. Prepare a new download after the workspace resumes.';
 const DELIVERY_MS = 10 * 60_000;
 const FAILURE =
   'The workspace backup could not be prepared. Check the recovery key, application image and free space, then try again.';
@@ -39,6 +44,7 @@ interface PrivateJob {
   task?: Promise<void>;
   finishing?: Promise<void>;
   heartbeat?: ReturnType<typeof setInterval>;
+  heartbeatTask?: Promise<void>;
 }
 interface Options {
   databasePath: string;
@@ -102,7 +108,10 @@ export class ExportJobs {
   private job?: PrivateJob;
   private timer?: ReturnType<typeof setInterval>;
   private closing = false;
-  private reconciling?: Promise<void>;
+  private closingTask?: Promise<void>;
+  private initialized = false;
+  private ticking?: Promise<void>;
+  private reconciling?: Promise<boolean>;
 
   constructor(db: DatabaseSync, options: Options) {
     this.db = db;
@@ -117,11 +126,26 @@ export class ExportJobs {
   }
   async start() {
     if (this.timer || this.closing) return;
-    await this.reconcile();
+    await this.tick();
+    if (this.timer || this.closing) return;
     this.timer = setInterval(() => {
-      void this.expire().catch(() => {});
+      void this.tick().catch(() => {});
     }, 5_000);
     this.timer.unref();
+  }
+  /** Fresh admission for periodic cleanup; skipped work remains due on resume. */
+  tick(): Promise<void> {
+    if (this.ticking) return this.ticking;
+    if (this.closing) return Promise.resolve();
+    const task = this.db.runBackground(async () => {
+      if (!this.initialized) await this.reconcile();
+      await this.expire();
+    });
+    if (!task) return Promise.resolve();
+    this.ticking = task.finally(() => {
+      this.ticking = undefined;
+    });
+    return this.ticking;
   }
   private state() {
     return this.db
@@ -142,23 +166,29 @@ export class ExportJobs {
       .run(owner);
     liveOwners.delete(owner);
   }
-  private reconcile(): Promise<void> {
+  private reconcile(): Promise<boolean> {
     if (this.reconciling) return this.reconciling;
-    this.reconciling = this.reconcileStaging().finally(() => {
-      this.reconciling = undefined;
-    });
+    this.reconciling = this.reconcileStaging()
+      .then((completed) => {
+        if (completed) this.initialized = true;
+        return completed;
+      })
+      .finally(() => {
+        this.reconciling = undefined;
+      });
     return this.reconciling;
   }
   private async reconcileStaging() {
     const state = this.state();
-    if (state.lease > this.now() && (state.job !== 'export' || ownerAlive(state.owner))) return;
+    if (state.lease > this.now() && (state.job !== 'export' || ownerAlive(state.owner)))
+      return false;
     const owner = `export:${process.pid}:${randomUUID()}`;
     const claim = this.db
       .prepare(
         "UPDATE backup_state SET lease=?,owner=?,job='export' WHERE id=1 AND lease=? AND owner IS ?",
       )
       .run(this.now() + PREPARE_MS, owner, state.lease, state.owner);
-    if (!claim.changes) return;
+    if (!claim.changes) return false;
     liveOwners.add(owner);
     try {
       for (const entry of await readdir(dirname(this.options.databasePath), {
@@ -181,6 +211,7 @@ export class ExportJobs {
     } finally {
       this.release(owner);
     }
+    return true;
   }
   private async expire() {
     const job = this.job;
@@ -254,19 +285,34 @@ export class ExportJobs {
     };
     this.job = job;
     job.heartbeat = setInterval(() => {
+      void this.heartbeat(job).catch(() => {});
+    }, 30_000);
+    job.heartbeat.unref();
+    // The create response can finish while preparation is still active. Retain
+    // a separate inherited permit through remote close and final cleanup too.
+    const prepare = () => this.prepare(job, config, artifact);
+    job.task = this.db.maintenance ? this.db.maintenance.run(prepare) : prepare();
+    return { ...job.public };
+  }
+  private heartbeat(job: PrivateJob): Promise<void> {
+    if (job.heartbeatTask) return job.heartbeatTask;
+    if (this.closing || this.job !== job) return Promise.resolve();
+    const task = this.db.runBackground(async () => {
       try {
         this.requireLease(job);
         this.db
           .prepare('UPDATE backup_state SET lease=? WHERE id=1 AND owner=?')
-          .run((job.public.expiresAt ?? this.now()) + 60_000, owner);
-        void this.expire().catch(() => {});
+          .run((job.public.expiresAt ?? this.now()) + 60_000, job.owner);
+        await this.expire();
       } catch {
-        void this.finish(job, 'failed', FAILURE).catch(() => {});
+        await this.finish(job, 'failed', FAILURE);
       }
-    }, 30_000);
-    job.heartbeat.unref();
-    job.task = this.prepare(job, config, artifact);
-    return { ...job.public };
+    });
+    if (!task) return Promise.resolve();
+    job.heartbeatTask = task.finally(() => {
+      job.heartbeatTask = undefined;
+    });
+    return job.heartbeatTask;
   }
   private async points(config: BackupConfig, remote: RemoteStore, signal: AbortSignal) {
     const keys = await remote.list(signal);
@@ -305,6 +351,7 @@ export class ExportJobs {
   private async prepare(job: PrivateJob, config: BackupConfig, selected?: string) {
     let remote: RemoteStore | undefined;
     const signal = AbortSignal.any([job.controller.signal, AbortSignal.timeout(PREPARE_MS)]);
+    const releaseDrain = this.db.maintenance?.cancelOnDrain(job.controller);
     try {
       this.requireLease(job);
       job.directory = await mkdtemp(
@@ -386,9 +433,16 @@ export class ExportJobs {
     } catch (error) {
       if (activeStates.has(job.public.state)) {
         job.public.state = 'failed';
-        job.public.error = error instanceof RecoveryResourceError ? error.message : FAILURE;
+        const reason = job.controller.signal.reason;
+        job.public.error =
+          error instanceof RecoveryResourceError
+            ? error.message
+            : reason instanceof MaintenanceError
+              ? MAINTENANCE_CANCELLED
+              : FAILURE;
       }
     } finally {
+      releaseDrain?.();
       try {
         await remote?.close?.();
       } catch {
@@ -399,6 +453,7 @@ export class ExportJobs {
     }
   }
   private async cleanup(job: PrivateJob) {
+    this.db.maintenance?.assertWrite();
     clearInterval(job.heartbeat);
     try {
       if (job.directory) await rm(job.directory, { recursive: true, force: true });
@@ -415,6 +470,7 @@ export class ExportJobs {
     state: ExportJob['state'],
     error: string | null = null,
   ): Promise<void> {
+    this.db.maintenance?.assertWrite();
     if (job.finishing) return job.finishing;
     if (!activeStates.has(job.public.state) && !job.directory) return Promise.resolve();
     job.public.state = state;
@@ -464,19 +520,51 @@ export class ExportJobs {
       path: job.path,
       bytes: job.public.bytes,
       signal: job.controller.signal,
-      finish: (success: boolean) =>
+      finish: (success: boolean, reason?: unknown) =>
         this.finish(
           job,
           success ? 'delivered' : 'failed',
-          success ? null : 'The download was interrupted. Create another backup and try again.',
+          success
+            ? null
+            : reason instanceof MaintenanceError
+              ? DELIVERY_MAINTENANCE
+              : 'The download was interrupted. Create another backup and try again.',
         ),
     };
   }
-  async close() {
+  close(): Promise<void> {
+    if (this.closingTask) return this.closingTask;
     this.closing = true;
     clearInterval(this.timer);
-    await this.reconciling;
-    if (this.job && (activeStates.has(this.job.public.state) || this.job.directory))
-      await this.finish(this.job, 'cancelled');
+    const job = this.job;
+    clearInterval(job?.heartbeat);
+    this.closingTask = (async () => {
+      const cleanup = async () => {
+        await this.reconciling;
+        if (job && (activeStates.has(job.public.state) || job.directory))
+          await this.finish(job, 'cancelled');
+      };
+      // App shutdown has already closed admission and drained. Without a fresh
+      // permit, retained staging/lease cleanup belongs to the next running boot.
+      // Direct mode preserves its ordinary cancellation and cleanup behavior.
+      const finalizing = this.db.maintenance?.status.available
+        ? this.db.runBackground(cleanup)
+        : cleanup();
+      try {
+        const settled = await Promise.allSettled([
+          finalizing,
+          this.ticking,
+          this.reconciling,
+          job?.task,
+          job?.finishing,
+          job?.heartbeatTask,
+        ]);
+        const failed = settled.find((result) => result.status === 'rejected');
+        if (failed?.status === 'rejected') throw failed.reason;
+      } finally {
+        if (job) liveOwners.delete(job.owner);
+      }
+    })();
+    return this.closingTask;
   }
 }

@@ -28,11 +28,12 @@ production account/admin controls without granting document access; fewer
 parallel mock implementations also reduce maintenance. Existing production
 interaction tests and independent light/dark/phone review remain required.
 
-## Remaining Redesign ownership
+## Completed Redesign migration
 
-- **SPN-066:** `redesign-spn-066-guest-links--preview`, owner-wide guest-link
-  inventory and expiry. It is now the final Redesign example. Replace it with
-  the production guest-link settings component and remove the Redesign group.
+- **SPN-066:** production `GuestLinks` and integrated `ProfilePage` stories
+  replace `redesign-spn-066-guest-links--preview`. The final Redesign group and
+  its current catalog instructions are removed. Historical captures retain
+  their original provenance.
 - **SPN-055 has landed** in `2361a23`: production `DeviceStoragePanel` and its
   stories replace the former This device proposal; no pending example remains.
 - Other open UI tickets have no retained legacy story. Add or update production

@@ -1,3 +1,5 @@
+import { maintenanceFetch as fetch } from '../maintenanceFetch.ts';
+import { capturedMaintenanceEpoch } from '../maintenanceFetch.ts';
 import {
   blankOfflineSnapshot,
   isOfflineCreationRequest,
@@ -74,6 +76,7 @@ export async function createOfflineDocument(
     throw new Error('Choose a name of 1–120 characters without slashes or control characters.');
   const creation: OfflineCreation = { request, createdAt: Date.now() };
   const bundle = {
+    maintenanceEpoch: capturedMaintenanceEpoch(),
     version: 1,
     accountId: store.accountId,
     itemId: request.itemId,
@@ -135,6 +138,7 @@ export async function uploadOfflineCreation(
   request: OfflineCreationRequest,
   signal: AbortSignal,
   verifyCurrent: () => void,
+  maintenanceEpoch?: string,
 ): Promise<OfflineCreationResponse> {
   verifyCurrent();
   const response = await fetch('/api/items/offline-create', {
@@ -142,7 +146,11 @@ export async function uploadOfflineCreation(
     credentials: 'same-origin',
     cache: 'no-store',
     redirect: 'error',
-    headers: { 'Content-Type': 'application/json', 'X-Spinel-Offline-Account': accountId },
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Spinel-Offline-Account': accountId,
+      'X-Spinel-Epoch': maintenanceEpoch ?? '',
+    },
     body: JSON.stringify(request),
     signal: AbortSignal.any([signal, AbortSignal.timeout(15_000)]),
   });

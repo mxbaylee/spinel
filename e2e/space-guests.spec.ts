@@ -703,8 +703,13 @@ test('a stale missing sibling action preserves a valid guest root and pending na
   }
 });
 
-for (const kind of ['doc', 'sheet'] as const) {
-  test(`revoked dirty guest ${kind} loses native content, portals and keyboard access across Space children`, async ({
+for (const [kind, expiring] of [
+  ['doc', false],
+  ['sheet', false],
+  ['doc', true],
+  ['sheet', true],
+] as const) {
+  test(`${expiring ? 'expired' : 'revoked'} dirty guest ${kind} loses native content, portals and keyboard access across Space children`, async ({
     browser,
   }, info) => {
     test.setTimeout(150_000);
@@ -720,6 +725,18 @@ for (const kind of ['doc', 'sheet'] as const) {
       await other.goto(guestPath(f.root.id, sibling.id));
       await saved(other);
       await f.page.bringToFront();
+      let expiringImage: string | undefined;
+      if (expiring) {
+        const doc = kind === 'doc' ? child : sibling;
+        const uploaded = await f.guest.request.post(`${endpoint(f.root.id, doc.id)}/images`, {
+          headers: { Origin: f.origin, 'Content-Type': 'image/png' },
+          data: await png(f.page),
+        });
+        expect(uploaded.status()).toBe(201);
+        expiringImage = (await uploaded.json()).url;
+        expect((await f.guest.request.get(expiringImage!)).status()).toBe(200);
+        expect(await (await f.guest.request.get(link.split('#')[0])).text()).toContain(f.root.name);
+      }
       const before = await f.snapshot(child.id);
       const siblingBefore = await f.snapshot(sibling.id);
       let received = 0;
@@ -774,7 +791,16 @@ for (const kind of ['doc', 'sheet'] as const) {
       // child access watcher must enforce denial independently of those polls.
       await f.page.route(`**/api/guest/${f.root.id}`, (route) => route.abort('failed'));
       await f.page.route(`**/api/guest-spaces/${f.root.id}`, (route) => route.abort('failed'));
-      await f.link(null);
+      if (expiring) {
+        // Expiry's authoritative root denial must also hide this dirty editor
+        // when its exact-child metadata probe is unreachable.
+        await f.page.route(`**${endpoint(f.root.id, child.id)}`, (route) => route.abort('failed'));
+        // Shorten only the test clock's deadline; exercise the production timer
+        // without waiting a full day or invoking the turn-off route.
+        f.db
+          .prepare('UPDATE workspace_links SET expires_at=? WHERE item_id=?')
+          .run(Date.now() + 1000, f.root.id);
+      } else await f.link(null);
       for (const target of [f.page, other]) {
         await expect(
           target.getByRole('heading', { name: 'This link no longer works.', exact: true }),
@@ -824,6 +850,20 @@ for (const kind of ['doc', 'sheet'] as const) {
       expect(await f.snapshot(sibling.id)).toEqual(siblingBefore);
       for (const target of [child, sibling])
         expect((await f.guest.request.get(endpoint(f.root.id, target.id))).status()).toBe(404);
+      if (expiring) {
+        expect((await f.guest.request.get(expiringImage!)).status()).toBe(401);
+        expect(await (await f.guest.request.get(link.split('#')[0])).text()).not.toContain(
+          f.root.name,
+        );
+        expect(
+          (
+            await f.guest.request.post(`/api/guest/${f.root.id}/session`, {
+              headers: { Origin: f.origin },
+              data: { token: new URL(link).hash.slice(1) },
+            })
+          ).status(),
+        ).toBe(404);
+      }
       await mkdir('test-results/theme-screenshots', { recursive: true });
       for (const mode of [
         { name: 'light', colorScheme: 'light', width: 1280 },
@@ -833,7 +873,7 @@ for (const kind of ['doc', 'sheet'] as const) {
         await f.page.emulateMedia({ colorScheme: mode.colorScheme });
         await f.page.setViewportSize({ width: mode.width, height: 844 });
         await f.page.screenshot({
-          path: `test-results/theme-screenshots/spn-084-dirty-${kind}-${mode.name}-${info.project.name}.png`,
+          path: `test-results/theme-screenshots/${expiring ? 'spn-066-expired' : 'spn-084'}-dirty-${kind}-${mode.name}-${info.project.name}.png`,
           fullPage: true,
         });
       }

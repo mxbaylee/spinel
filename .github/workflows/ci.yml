@@ -153,9 +153,15 @@ jobs:
         if: needs.changes.outputs.docs_only != 'true'
         run: npm ci
       # lib/ runs in separate partitions below.
+      - name: Install fixture init
+        if: needs.changes.outputs.docs_only != 'true'
+        run: |
+          node scripts/ci/prefer-ubuntu-archive.ts
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends tini
       - name: Unit tests
         if: needs.changes.outputs.docs_only != 'true'
-        run: npm test -- --exclude 'lib/**'
+        run: node scripts/ci/pid-namespace.ts npm test -- --exclude 'lib/**'
       - name: PDF collaboration overlap evidence
         if: always() && needs.changes.outputs.docs_only != 'true'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -328,6 +334,9 @@ jobs:
         run: |
           node scripts/ci/prefer-ubuntu-archive.ts
           npx playwright install --with-deps chromium
+      - name: Install maintenance fixture init
+        if: matrix.project == 'production'
+        run: sudo apt-get install -y --no-install-recommends tini
       - name: Immutable offline source for adoption evidence
         if: matrix.project == 'offline-upgrade'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -383,6 +392,7 @@ jobs:
             test-results/**/sync-diagnostics.json
             test-results/**/phone-doc-caret-events*.json
             test-results/**/phone-doc-selection-evidence*.json
+            test-results/**/maintenance-views/*.png
             test-results/**/spn-059-*-soak.json
             test-results/**/error-context.md
             test-results/**/trace.zip

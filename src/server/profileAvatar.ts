@@ -1,10 +1,10 @@
-import express from 'express';
+import { maintenanceRouter } from './maintenance/router.ts';
 import { avatarProfile } from '../profile/profile.ts';
 import { iconNodes } from '../profile/iconNodes.ts';
 import { palettes } from '../ui/palette.ts';
 import { escapeMarkup } from '../shared/markup.ts';
 export function profileAvatarRoutes() {
-  const router = express.Router();
+  const router = maintenanceRouter();
   router.get('/profile-avatar/:icon/:color.svg', (request, response) => {
     const profile = avatarProfile(request.path);
     if (!profile) {

@@ -25,6 +25,7 @@ import type {
 import type { DiagnosticLoss, DiagnosticsStatus } from '../../shared/diagnostics.ts';
 export type { DiagnosticLoss, DiagnosticsStatus } from '../../shared/diagnostics.ts';
 import { DatabaseSync } from '../../../server/database.ts';
+import type { MaintenanceGate } from '../maintenance/gate.ts';
 import { snapshotDatabase } from './snapshot.ts';
 
 const MiB = 1024 * 1024;
@@ -69,6 +70,7 @@ export class DiagnosticsStore {
   private scheduled?: NodeJS.Immediate;
   private exportJob?: { controller: AbortController; finished: Promise<void>; release: () => void };
   private closed = false;
+  private maintenance?: MaintenanceGate;
   private readonly dropped: DiagnosticsStatus['dropped'] = {
     invalid: 0,
     queue: 0,
@@ -190,12 +192,35 @@ export class DiagnosticsStore {
   readonly emit: DiagnosticSink = (event, context) => {
     this.record(event, context);
   };
+  setMaintenanceGate(gate: MaintenanceGate) {
+    this.maintenance = gate;
+    this.database?.setMaintenanceGate(gate);
+  }
+  /** Flush the bounded lossy queue before claiming that every storage owner drained. */
+  async drainMaintenance() {
+    if (this.exportJob) await this.exportJob.finished;
+    this.database?.assertQuiescent();
+    if (this.scheduled) clearImmediate(this.scheduled);
+    this.scheduled = undefined;
+    const flush = () => {
+      while (this.queue.length) this.flush();
+      if (this.scheduled) clearImmediate(this.scheduled);
+      this.scheduled = undefined;
+    };
+    if (this.maintenance) this.maintenance.initialize(flush);
+    else flush();
+  }
 
   /** Backend call sites may supply only already-authorized actor/file context. */
   record(event: DiagnosticEvent, context: DiagnosticContext, actorId?: string) {
     try {
       const generation = this.currentGeneration;
-      if (typeof generation !== 'string' || this.closed) return this.lose('unavailable');
+      if (
+        typeof generation !== 'string' ||
+        this.closed ||
+        (this.maintenance && !this.maintenance.running)
+      )
+        return this.lose('unavailable');
       const record = { id: randomUUID(), occurredAt: this.now(), event, context };
       if (!isDiagnosticRecord(record) || (actorId !== undefined && !isUuid(actorId)))
         return this.lose('invalid');
@@ -216,7 +241,7 @@ export class DiagnosticsStore {
       this.queuedBytes += bytes;
       this.scheduled ??= setImmediate(() => {
         this.scheduled = undefined;
-        this.flush();
+        this.database?.runBackground(() => this.flush());
       });
     } catch {
       this.lose('invalid');
@@ -273,7 +298,7 @@ export class DiagnosticsStore {
     if (this.queue.length && !this.closed)
       this.scheduled ??= setImmediate(() => {
         this.scheduled = undefined;
-        this.flush();
+        this.database?.runBackground(() => this.flush());
       });
   }
 

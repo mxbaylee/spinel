@@ -564,20 +564,22 @@ export class HistoryStore {
   tick(): Promise<void> {
     if (this.closing) return Promise.resolve();
     if (this.ticking) return this.ticking;
-    const finish = observeJob(this.observeMaintenance);
-    this.ticking = this.scan()
-      .then(
-        (success) => {
-          finish(success);
-        },
-        (error) => {
-          finish(false);
-          throw error;
-        },
-      )
-      .finally(() => {
-        this.ticking = undefined;
-      });
+    this.ticking = (
+      this.workspace.auth.database.runBackground(() => {
+        const finish = observeJob(this.observeMaintenance);
+        return this.scan().then(
+          (success) => {
+            finish(success);
+          },
+          (error) => {
+            finish(false);
+            throw error;
+          },
+        );
+      }) ?? Promise.resolve()
+    ).finally(() => {
+      this.ticking = undefined;
+    });
     return this.ticking;
   }
 

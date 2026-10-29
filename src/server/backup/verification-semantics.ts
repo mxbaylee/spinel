@@ -147,6 +147,10 @@ export async function verifySemantics(db: DatabaseSync) {
       Number(link.epoch) < 0 ||
       !['off', 'pending', 'active'].includes(String(link.state)) ||
       !['viewer', 'editor'].includes(String(link.role)) ||
+      ['enabled_at', 'expires_at'].some(
+        (field) =>
+          link[field] != null && (!Number.isSafeInteger(link[field]) || Number(link[field]) < 0),
+      ) ||
       (link.state === 'active' &&
         (typeof link.token_hash !== 'string' || !/^[a-f0-9]{64}$/.test(link.token_hash)))
     )

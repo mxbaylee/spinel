@@ -2,12 +2,14 @@ import { afterEach, expect, test, vi } from 'vitest';
 import { pdfFilename, preparePdfDownload, readPdfOptions } from '../../web/pdfApi.ts';
 import { guestRevokedEvent } from '../../web/guestRevocation.ts';
 
+vi.mock('../../web/maintenanceState.ts', () => import('./fixtures/unsupervisedMaintenance.ts'));
+
 afterEach(() => vi.unstubAllGlobals());
 
 const root = '00000000-0000-4000-8000-000000000075';
 
 test('immediate options cleanup sends no abandoned transfer before the replacement load', async () => {
-  vi.stubGlobal('location', { pathname: '/' });
+  vi.stubGlobal('location', { origin: 'https://spinel.test', pathname: '/' });
   const fetcher = vi.fn(async () => Response.json({ kind: 'doc' }));
   vi.stubGlobal('fetch', fetcher);
   const initial = new AbortController();
@@ -23,7 +25,7 @@ test('immediate options cleanup sends no abandoned transfer before the replaceme
 });
 
 test('PDF requests preserve exact guest Space child scope and only selected worksheet IDs', async () => {
-  vi.stubGlobal('location', { pathname: `/share/${root}` });
+  vi.stubGlobal('location', { origin: 'https://spinel.test', pathname: `/share/${root}` });
   const signal = new AbortController().signal;
   const fetcher = vi.fn(async (_path: string, init?: RequestInit) =>
     init?.method === 'POST'
@@ -59,7 +61,7 @@ test('PDF requests preserve exact guest Space child scope and only selected work
 });
 
 test('an authoritative guest PDF refusal revokes the visible guest view', async () => {
-  vi.stubGlobal('location', { pathname: `/share/${root}` });
+  vi.stubGlobal('location', { origin: 'https://spinel.test', pathname: `/share/${root}` });
   const dispatchEvent = vi.fn();
   vi.stubGlobal('window', { dispatchEvent });
   vi.stubGlobal(
@@ -76,7 +78,7 @@ test('an authoritative guest PDF refusal revokes the visible guest view', async 
 test.each([true, false])(
   'a denied child PDF rechecks the exact guest root (valid=%s)',
   async (valid) => {
-    vi.stubGlobal('location', { pathname: `/share/${root}` });
+    vi.stubGlobal('location', { origin: 'https://spinel.test', pathname: `/share/${root}` });
     const dispatchEvent = vi.fn();
     vi.stubGlobal('window', { dispatchEvent });
     const fetcher = vi.fn(async (path: string) =>
@@ -97,7 +99,7 @@ test.each([true, false])(
 );
 
 test('a failed guest root recheck never turns a denied child into a PDF or an invented revocation', async () => {
-  vi.stubGlobal('location', { pathname: `/share/${root}` });
+  vi.stubGlobal('location', { origin: 'https://spinel.test', pathname: `/share/${root}` });
   const dispatchEvent = vi.fn();
   vi.stubGlobal('window', { dispatchEvent });
   vi.stubGlobal(
@@ -114,7 +116,7 @@ test('a failed guest root recheck never turns a denied child into a PDF or an in
 });
 
 test('a departed child cannot recheck or revoke the current guest view', async () => {
-  vi.stubGlobal('location', { pathname: `/share/${root}` });
+  vi.stubGlobal('location', { origin: 'https://spinel.test', pathname: `/share/${root}` });
   const dispatchEvent = vi.fn();
   vi.stubGlobal('window', { dispatchEvent });
   let release!: (response: Response) => void;
@@ -147,7 +149,7 @@ test('a departed child cannot recheck or revoke the current guest view', async (
 test('cancelling before a delayed refusal does not revoke or redirect a newer view', async () => {
   const assign = vi.fn(),
     dispatchEvent = vi.fn();
-  vi.stubGlobal('location', { pathname: `/share/${root}`, assign });
+  vi.stubGlobal('location', { origin: 'https://spinel.test', pathname: `/share/${root}`, assign });
   vi.stubGlobal('window', { dispatchEvent });
   const controller = new AbortController();
   let release!: (response: Response) => void;
@@ -170,7 +172,7 @@ test('cancelling before a delayed refusal does not revoke or redirect a newer vi
 });
 
 test('a cancelled body read yields no downloadable Blob', async () => {
-  vi.stubGlobal('location', { pathname: '/' });
+  vi.stubGlobal('location', { origin: 'https://spinel.test', pathname: '/' });
   const controller = new AbortController();
   const response = new Response('%PDF-1.7', { headers: { 'Content-Type': 'application/pdf' } });
   response.blob = async () => {
@@ -185,7 +187,7 @@ test('a cancelled body read yields no downloadable Blob', async () => {
 });
 
 test('an HTML or JSON success response cannot become a mislabeled PDF download', async () => {
-  vi.stubGlobal('location', { pathname: '/' });
+  vi.stubGlobal('location', { origin: 'https://spinel.test', pathname: '/' });
   vi.stubGlobal(
     'fetch',
     vi.fn(async () => Response.json({ error: 'Proxy page' })),
@@ -198,7 +200,7 @@ test('an HTML or JSON success response cannot become a mislabeled PDF download',
 test.each([null, false, 'Gateway failed', { error: 7 }])(
   'a malformed error response retains the neutral PDF failure (%j)',
   async (body) => {
-    vi.stubGlobal('location', { pathname: '/' });
+    vi.stubGlobal('location', { origin: 'https://spinel.test', pathname: '/' });
     vi.stubGlobal(
       'fetch',
       vi.fn(async () => Response.json(body, { status: 500 })),

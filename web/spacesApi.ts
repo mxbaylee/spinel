@@ -1,3 +1,4 @@
+import { maintenanceFetch as fetch } from './maintenanceFetch.ts';
 /** Preserve authoritative denials without redirecting over an unsaved Space editor. */
 export class SpaceApiError extends Error {
   readonly status: number;

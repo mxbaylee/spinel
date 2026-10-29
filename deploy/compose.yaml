@@ -2,8 +2,9 @@ name: spinel
 services:
   app:
     image: ${SPINEL_IMAGE:?Set an immutable Spinel image tag}
+    command: ['node', '--max-old-space-size=64', 'server/supervisor.ts']
     network_mode: host
-    user: "1000:1000"
+    user: '1000:1000'
     read_only: true
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
@@ -11,8 +12,10 @@ services:
       NODE_ENV: production
       SPINEL_IMAGE: ${SPINEL_IMAGE}
       HOST: 127.0.0.1
-      PORT: "3000"
+      PORT: '3000'
       DATABASE_PATH: /data/spinel.sqlite
+      SPINEL_MAINTENANCE_ROOT: /recovery
+      SPINEL_MAINTENANCE_PORT: '3002'
       APP_ORIGIN: https://${SPINEL_HOSTNAME:?Set the tailnet hostname}
     env_file:
       - ${SPINEL_RUNTIME_ENV:-/etc/spinel/runtime.env}
@@ -22,21 +25,26 @@ services:
         target: /data
         bind:
           create_host_path: false
-    tmpfs: ["/tmp:size=16m,mode=1777"]
+      - type: bind
+        source: ${SPINEL_DATA_ROOT:?Set the unlocked encrypted mount}/recovery
+        target: /recovery
+        bind:
+          create_host_path: false
+    tmpfs: ['/tmp:size=16m,mode=1777']
     mem_limit: 1024m
     cpus: 0.75
     pids_limit: 128
-    stop_grace_period: 30s
-    restart: "no"
+    stop_grace_period: 70s
+    restart: 'no'
     logging:
       driver: local
       options:
         max-size: 10m
-        max-file: "3"
+        max-file: '3'
   caddy:
     image: caddy:2-alpine@sha256:eb4d35b7452d1ab6171fbdbe8d9275b2301dad6dad92115d91e19fb9b24d510f
     network_mode: host
-    user: "10001:10001"
+    user: '10001:10001'
     read_only: true
     cap_drop: [ALL]
     cap_add: [NET_BIND_SERVICE]
@@ -60,14 +68,14 @@ services:
         target: /data
         bind:
           create_host_path: false
-    tmpfs: ["/config:size=8m,uid=10001,gid=10001,mode=0700"]
+    tmpfs: ['/config:size=8m,uid=10001,gid=10001,mode=0700']
     mem_limit: 128m
     cpus: 0.25
     pids_limit: 64
-    restart: "no"
+    restart: 'no'
     depends_on: [app]
     logging:
       driver: local
       options:
         max-size: 10m
-        max-file: "3"
+        max-file: '3'

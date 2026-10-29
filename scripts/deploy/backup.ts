@@ -7,6 +7,7 @@ import { hasDestination, loadConfig } from '../../src/server/backup/config.ts';
 import { createDestination } from '../../src/server/backup/destination.ts';
 import { filesystemIdentity } from '../../src/server/backup/filesystem.ts';
 import { BackupService } from '../../src/server/backup/service.ts';
+import { acquireColdWorkspace } from '../../src/server/maintenance/journal.ts';
 
 const [command, ...args] = process.argv.slice(2);
 const noDestination = new Error(
@@ -29,20 +30,28 @@ try {
     // Opening read/write must never silently create a new source database.
     const { stat } = await import('node:fs/promises');
     await stat(path);
-    const db = new DatabaseSync(path);
-    db.exec('PRAGMA busy_timeout=5000; PRAGMA foreign_keys=ON');
-    const service = new BackupService(db, {
-      databasePath: path,
-      origin: process.env.APP_ORIGIN ?? '',
-      image: process.env.SPINEL_IMAGE,
-      configPath: process.env.BACKUP_CONFIG_PATH,
-    });
+    // The unref'd kernel lease lasts until this one-shot CLI exits. Native
+    // libsql descriptors can outlive close(), including a failed constructor.
+    if (process.platform === 'linux') await acquireColdWorkspace(path);
+    let db: DatabaseSync | undefined;
+    let service: BackupService | undefined;
     try {
+      db = new DatabaseSync(path);
+      db.exec('PRAGMA busy_timeout=5000; PRAGMA foreign_keys=ON');
+      service = new BackupService(db, {
+        databasePath: path,
+        origin: process.env.APP_ORIGIN ?? '',
+        image: process.env.SPINEL_IMAGE,
+        configPath: process.env.BACKUP_CONFIG_PATH,
+      });
       const successful = command === 'verify' ? await service.verify() : await service.run();
       if (!successful) throw new Error('Recovery operation failed or another run holds the lease.');
     } finally {
-      await service.close();
-      db.close();
+      try {
+        await service?.close();
+      } finally {
+        db?.close();
+      }
     }
     console.log(
       command === 'verify'
