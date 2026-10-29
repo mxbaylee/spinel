@@ -64,6 +64,48 @@ async function quit() {
   await until(safariPid, (value) => value === '');
 }
 
+async function allowHostedSafariAutomation() {
+  // The hosted image grants accessibility, but its Safari Apple Events grant
+  // can still present a normal consent dialog. Approve only this disposable
+  // runner's exact Safari request through that dialog, never by editing TCC.
+  const request = applescript(
+    'on run\nwith timeout of 25 seconds\n tell application "Safari" to return name of front document\nend timeout\nend run',
+  ).then(
+    (value) => ({ value }),
+    (error) => ({ error: String(error) }),
+  );
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  await command('/usr/sbin/screencapture', [
+    '-x',
+    resolve(output, 'safari-automation-prompt.png'),
+  ]).catch(() => {});
+  report.automationPrompt = await applescript(`tell application "System Events"
+    if not (exists process "UserNotificationCenter") then return "No permission dialog"
+    tell process "UserNotificationCenter"
+      if (count of windows) is 0 then return "No permission window"
+      set parts to entire contents of front window
+      set dialogText to ""
+      repeat with part in parts
+        try
+          if class of part is static text then set dialogText to dialogText & " " & value of part
+        end try
+      end repeat
+      if dialogText contains "hosted-compute-agent" and dialogText contains "Safari" and dialogText contains "control" then
+        repeat with part in parts
+          try
+            if class of part is button and (name of part is "Allow" or name of part is "OK") then
+              click part
+              return "Approved hosted-compute-agent control of Safari in the normal ephemeral-runner consent dialog: " & dialogText
+            end if
+          end try
+        end repeat
+      end if
+      return "Unchanged permission dialog: " & dialogText
+    end tell
+  end tell`).catch(String);
+  report.firstTitleRequest = await request;
+}
+
 async function main() {
   // This configures only an ephemeral hosted CI user's ordinary browser. Never
   // change the owner's Safari settings or interact with their browsing profile.
@@ -104,6 +146,7 @@ self.addEventListener('fetch', event => { if (event.request.mode === 'navigate')
     });
     await command('/usr/bin/open', ['-a', 'Safari', 'http://localhost:8175/']);
     report.beforePid = await until(safariPid, Boolean);
+    await allowHostedSafariAutomation();
     await until(
       () => applescript('tell application "Safari" to return name of front document'),
       (value) => value === 'Spinel desktop profile probe',
