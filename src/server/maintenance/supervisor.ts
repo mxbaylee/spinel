@@ -75,6 +75,11 @@ import {
 } from './restore-trial-stop.ts';
 import type { RestoreTrialStopRequest } from './restore-trial-stop.ts';
 import { syncRestoreDirectory } from '../backup/restore-input.ts';
+import {
+  captureFailedRestoreCustody,
+  preserveFailedRestoreCustody,
+  failedRestoreCustodyInputs,
+} from './restore-failed-custody.ts';
 
 const DRAIN_MS = 30_000;
 const STOP_MS = 15_000;
@@ -2148,12 +2153,140 @@ export class MaintenanceSupervisor {
       this.child = undefined;
       this.childOwned = false;
       this.transition({ phase: 'stopped', child: null, verifiedAt: null });
-      return jobs.markTrialStopped(initial.intent.id, initial.intentHash, record.revision);
+      record = jobs.markTrialStopped(initial.intent.id, initial.intentHash, record.revision);
+      return await this.retainFailedRestoreTrialOwned(jobs, record);
     } finally {
       clearTimeout(timer);
       clearInterval(memory);
       this.restoreTrialStopWaiter = undefined;
     }
+  }
+  /** Negative evidence only: this cannot refresh the original proof or select
+   * rollback content. One recorded deadline covers custody and failed freezing. */
+  private async retainFailedRestoreTrialOwned(jobs: RestoreJobs, initial: RestoreJobRecord) {
+    if (
+      initial.phase !== 'trial-witnessed-stopped' ||
+      !initial.execution?.failure ||
+      !initial.execution.trial
+    )
+      throw new Error('Failed restore has no witnessed closed trial.');
+    let record = initial;
+    const permit = initial.execution.trial,
+      failed = initial.execution.failure.stop;
+    const budget = this.options.budgets?.restoreMs ?? 120_000;
+    const deadline = Math.min(this.now(), Date.now()) + budget;
+    const signal = AbortSignal.any([
+      AbortSignal.timeout(budget),
+      ...(this.restoreAdmissionAbort ? [this.restoreAdmissionAbort.signal] : []),
+    ]);
+    const assertBudget = () => {
+      signal.throwIfAborted();
+      const now = this.now();
+      if (now < record.updatedAt || now >= deadline || Date.now() >= deadline)
+        throw new Error('Failed restore evidence exceeded its fixed time budget.');
+    };
+    const assertClosed = () => {
+      assertBudget();
+      const state = this.journal.state,
+        current = jobs.read(initial.intent.id),
+        original = initial.execution!.stop!;
+      if (
+        this.closing ||
+        this.child ||
+        this.childOwned ||
+        this.childReady ||
+        state.child ||
+        state.phase !== 'stopped' ||
+        state.generationId !== permit.generationId ||
+        state.epoch !== permit.epoch ||
+        state.instanceId !== initial.intent.target.instanceId ||
+        state.restoreJob?.jobId !== initial.intent.id ||
+        state.restoreJob.intentHash !== initial.intentHash ||
+        !sameFile(state.databaseIdentity, initial.intent.target.identity) ||
+        !state.restoreStop ||
+        JSON.stringify(state.restoreStop) !== JSON.stringify(original) ||
+        !current ||
+        JSON.stringify(current) !== JSON.stringify(record) ||
+        groupMembers(permit.child).length
+      )
+        throw new Error('Failed restore evidence lost physical closure or its original binding.');
+      this.assertGeneration();
+      assertWorkspaceHandlesClosed(this.journal.databasePath);
+      assertBudget();
+    };
+    assertClosed();
+    record = jobs.planTrialCapture(
+      initial.intent.id,
+      initial.intentHash,
+      record.revision,
+      randomUUID(),
+      deadline,
+    );
+    const custody = {
+      root: this.journal.root,
+      databasePath: this.journal.databasePath,
+      permit,
+      stop: {
+        reference: restoreTrialReference(permit),
+        child: permit.child,
+        request: failed.request,
+      },
+      witness: { fingerprint: failed.fingerprint!, acceptedAt: failed.acceptedAt! },
+      captureId: record.execution!.failure!.capture!.slot,
+      now: this.now,
+      deadline,
+      signal,
+      assertClosed,
+    };
+    const manifest = await captureFailedRestoreCustody(custody);
+    assertClosed();
+    record = jobs.planTrialCustody(
+      initial.intent.id,
+      initial.intentHash,
+      record.revision,
+      manifest,
+    );
+    await preserveFailedRestoreCustody(custody, record.execution!.failure!.capture!.manifest!);
+    assertClosed();
+    record = jobs.markTrialCustodyRetained(initial.intent.id, initial.intentHash, record.revision);
+    record = jobs.planTrialFreeze(
+      initial.intent.id,
+      initial.intentHash,
+      record.revision,
+      randomUUID(),
+      deadline,
+    );
+    const parent = join(this.journal.root, `restore-${initial.intent.id}`),
+      stagingRoot = join(parent, `failed-freeze-${record.execution!.failure!.freeze!.slot}`);
+    assertClosed();
+    mkdirSync(stagingRoot, { mode: 0o700 });
+    await syncRestoreDirectory(stagingRoot, signal);
+    assertClosed();
+    await syncRestoreDirectory(parent, signal);
+    assertClosed();
+    const frozen = await freezeCurrentRestore({
+      ...failedRestoreCustodyInputs(this.journal.root, manifest),
+      stagingRoot,
+      timeoutMs: Math.max(1, deadline - Date.now()),
+      signal,
+    });
+    // Never dispose a completed failed image on uncertain publication. Its exact
+    // directory remains in this one reserved slot for independent recovery.
+    await syncRestoreDirectory(stagingRoot, signal);
+    assertClosed();
+    if (
+      dirname(dirname(frozen.databasePath)) !== stagingRoot ||
+      basename(frozen.databasePath) !== 'frozen.sqlite'
+    )
+      throw new Error('Failed frozen output escaped its reserved slot.');
+    record = jobs.markTrialFrozen(initial.intent.id, initial.intentHash, record.revision, {
+      directory: basename(dirname(frozen.databasePath)),
+      bytes: frozen.databaseBytes,
+      sha256: frozen.databaseSha256,
+      fingerprint: frozen.fingerprint,
+    });
+    assertClosed();
+    return record;
   }
   private async commitRestoreTrialOwned(
     jobs: RestoreJobs,

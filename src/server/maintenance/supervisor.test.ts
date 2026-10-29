@@ -1978,6 +1978,7 @@ test
     'ownership-first',
     'readiness-first',
     'wrong-fingerprint',
+    'failed-freeze-publication',
     'release-rejected',
     'early-release',
     'pause-publication',
@@ -2095,7 +2096,7 @@ test
                 emit('message', { ...value, reference: { ...reference, nonce: randomUUID() } });
                 expect(supervisor.status().phase).toBe('starting');
                 expect(supervisor.status().readyToResume).toBe(false);
-                if (ordering === 'wrong-fingerprint') {
+                if (ordering === 'wrong-fingerprint' || ordering === 'failed-freeze-publication') {
                   emit('message', { ...value, fingerprint: '0'.repeat(64) });
                   return status;
                 }
@@ -2241,6 +2242,18 @@ test
         }
       });
     }
+    let frozenPublicationFailed = false;
+    if (ordering === 'failed-freeze-publication') {
+      const publish = RestoreJobs.prototype.markTrialFrozen;
+      vi.spyOn(RestoreJobs.prototype, 'markTrialFrozen').mockImplementation(function (
+        this: RestoreJobs,
+        ...args: Parameters<RestoreJobs['markTrialFrozen']>
+      ) {
+        publish.apply(this, args);
+        frozenPublicationFailed = true;
+        throw new Error('Failed frozen publication result was lost.');
+      });
+    }
     let controllerFailure: string | null = null;
     const controller = supervisor as unknown as {
       executeRestoreStopOwned(request: {
@@ -2279,9 +2292,12 @@ test
     }).toMatchObject({ ready: true });
     expect(await pausedProbe).toBe(503);
     const failed = !['ownership-first', 'readiness-first'].includes(ordering);
-    const uncommitted = ['wrong-fingerprint', 'early-release', 'pause-publication'].includes(
-      ordering,
-    );
+    const uncommitted = [
+      'wrong-fingerprint',
+      'failed-freeze-publication',
+      'early-release',
+      'pause-publication',
+    ].includes(ordering);
     const retainedBarrier = uncommitted || ordering === 'commit-publication';
     if (failed) {
       await expect
@@ -2334,10 +2350,37 @@ test
       // Observer completion must not alter the selected, closed output.
       expect(await readFile(imagePath)).toEqual(bytes);
     }
-    expect(completed.phase).toBe(uncommitted ? 'trial-witnessed-stopped' : 'candidate-committed');
+    expect(completed.phase).toBe(uncommitted ? 'trial-frozen' : 'candidate-committed');
     if (uncommitted) {
+      const failure = completed.execution.failure;
+      expect(failure.capture.manifest.witness.fingerprint).toBe(failure.stop.fingerprint);
+      expect(failure.freeze.output.fingerprint).toBe(failure.stop.fingerprint);
+      expect(failure.capture.deadline).toBe(failure.freeze.deadline);
+      const raw = join(f.root, `restore-${id}`, `failed-${failure.capture.slot}`, 'raw');
+      for (const [name, evidence] of Object.entries(failure.capture.manifest.files)) {
+        if (!evidence) continue;
+        const retained = await readFile(join(raw, name));
+        expect(retained.length).toBe((evidence as { bytes: number }).bytes);
+        expect(createHash('sha256').update(retained).digest('hex')).toBe(
+          (evidence as { sha256: string }).sha256,
+        );
+      }
+      const frozenPath = join(
+        f.root,
+        `restore-${id}`,
+        `failed-freeze-${failure.freeze.slot}`,
+        failure.freeze.output.directory,
+        'frozen.sqlite',
+      );
+      const frozenBytes = await readFile(frozenPath);
+      expect(frozenBytes.length).toBe(failure.freeze.output.bytes);
+      expect(createHash('sha256').update(frozenBytes).digest('hex')).toBe(
+        failure.freeze.output.sha256,
+      );
       expect(completed.execution.failure.from).toBe(
-        ordering === 'wrong-fingerprint' ? 'trial-opening' : 'trial-ready',
+        ['wrong-fingerprint', 'failed-freeze-publication'].includes(ordering)
+          ? 'trial-opening'
+          : 'trial-ready',
       );
       expect(completed.execution.failure.stop.fingerprint).toMatch(/^[a-f0-9]{64}$/);
       expect(completed.execution.failure.stop.child.pid).toBe(completed.execution.trial.child.pid);
@@ -2350,6 +2393,28 @@ test
       expect(completed.execution.failure.stop.request.generationId).toBe(
         completed.execution.attempt.generationId,
       );
+    }
+    if (ordering === 'failed-freeze-publication') {
+      expect(frozenPublicationFailed).toBe(true);
+      const retainedRoot = join(f.root, `restore-${id}`),
+        before = (await readdir(retainedRoot)).sort();
+      expect(
+        before.filter((name) => name.startsWith('failed-') && !name.startsWith('failed-freeze-')),
+      ).toEqual([`failed-${completed.execution.failure.capture.slot}`]);
+      expect(before.filter((name) => name.startsWith('failed-freeze-'))).toEqual([
+        `failed-freeze-${completed.execution.failure.freeze.slot}`,
+      ]);
+      const replay = await supervisor.beginPreparedRestore({
+        id,
+        intentHash: admitted.record.intentHash,
+        continuationToken: admitted.continuationToken!,
+      });
+      expect(replay.queued).toBe(false);
+      expect(replay.record).toEqual(completed);
+      expect((await readdir(retainedRoot)).sort()).toEqual(before);
+      expect(supervisor.journal.state.child).toBeNull();
+      expect(existsSync(restoreBarrierPath(f.databasePath))).toBe(true);
+      assertWorkspaceHandlesClosed(f.databasePath);
     }
     expect(supervisor.status().readyToResume).toBe(false);
     expect(supervisor.journal.state.restoreStop).toEqual(

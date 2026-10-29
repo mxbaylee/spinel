@@ -1186,6 +1186,141 @@ linux.each(['arrival', 'publication'])(
   },
 );
 
+async function stoppedFailedTrialFixture() {
+  const f = await failedTrialFixture(false);
+  const id = f.record.intent.id,
+    hash = f.record.intentHash;
+  let record = f.jobs.planTrialStop(id, hash, f.record.revision, f.stop);
+  record = f.jobs.acceptTrialWitness(id, hash, record.revision, f.stop, 'd'.repeat(64));
+  const exit = once(f.child, 'exit');
+  f.child.kill('SIGKILL');
+  await exit;
+  f.journal.state.phase = 'stopped';
+  f.journal.state.child = null;
+  f.journal.write();
+  record = f.jobs.markTrialStopped(id, hash, record.revision);
+  return { ...f, record };
+}
+function planFailedCustody(f: Awaited<ReturnType<typeof stoppedFailedTrialFixture>>) {
+  const id = f.record.intent.id,
+    hash = f.record.intentHash,
+    deadline = f.record.updatedAt + 120_000;
+  let record = f.jobs.planTrialCapture(id, hash, f.record.revision, randomUUID(), deadline);
+  const manifest = {
+    version: 1 as const,
+    captureId: record.execution!.failure!.capture!.slot,
+    stop: f.stop,
+    witness: {
+      fingerprint: record.execution!.failure!.stop.fingerprint!,
+      acceptedAt: record.execution!.failure!.stop.acceptedAt!,
+    },
+    identity: f.permit.identity,
+    files: f.record.execution!.originals!.original,
+  };
+  record = f.jobs.planTrialCustody(id, hash, record.revision, manifest);
+  record = f.jobs.markTrialCustodyRetained(id, hash, record.revision);
+  expect(() =>
+    f.jobs.planTrialFreeze(id, hash, record.revision, randomUUID(), deadline + 1),
+  ).toThrow();
+  record = f.jobs.planTrialFreeze(id, hash, record.revision, randomUUID(), deadline);
+  return record;
+}
+linux(
+  'failed capture/freeze retains original evidence and has one immutable evidence deadline',
+  async () => {
+    const f = await stoppedFailedTrialFixture();
+    let record = planFailedCustody(f);
+    const id = record.intent.id,
+      hash = record.intentHash;
+    record = f.jobs.markTrialFrozen(id, hash, record.revision, {
+      directory: '.restore-frozen-abc123',
+      bytes: 4096,
+      sha256: 'e'.repeat(64),
+      fingerprint: 'd'.repeat(64),
+    });
+    expect(record.phase).toBe('trial-frozen');
+    expect(record.execution!.stop).toEqual(f.record.execution!.stop);
+    expect(record.execution!.frozen).toEqual(f.record.execution!.frozen);
+    expect(record.execution!.preparation).toEqual(f.record.execution!.preparation);
+    expect(record.execution!.failure!.freeze!.deadline).toBe(
+      record.execution!.failure!.capture!.deadline,
+    );
+    expect(() =>
+      f.jobs.markCandidateCommitted(id, hash, record.revision, f.stop.reference),
+    ).toThrow();
+    expect(() =>
+      f.jobs.planTrialCapture(id, hash, record.revision, randomUUID(), record.updatedAt + 120_000),
+    ).toThrow();
+    for (const mutate of [
+      (r: RestoreJobRecord) => {
+        r.execution!.failure!.capture!.manifest!.witness.fingerprint = f.permit.output.fingerprint;
+      },
+      (r: RestoreJobRecord) => {
+        r.execution!.failure!.capture!.manifest!.stop.reference.nonce = randomUUID();
+      },
+      (r: RestoreJobRecord) => {
+        r.execution!.failure!.capture!.retainedAt = r.execution!.failure!.capture!.deadline;
+      },
+      (r: RestoreJobRecord) => {
+        r.execution!.failure!.freeze!.deadline += 1;
+      },
+      (r: RestoreJobRecord) => {
+        r.execution!.failure!.freeze!.output!.fingerprint = f.permit.output.fingerprint;
+      },
+      (r: RestoreJobRecord) => {
+        r.execution!.failure!.freeze!.output!.directory = '../original';
+      },
+      (r: RestoreJobRecord) => {
+        r.execution!.failure!.freeze!.slot = r.execution!.freezeSlot!;
+      },
+      (r: RestoreJobRecord) => {
+        delete r.execution!.failure!.capture!.manifest;
+      },
+      (r: RestoreJobRecord) => {
+        r.phase = 'trial-custody-planned';
+      },
+    ]) {
+      const changed = structuredClone(record);
+      mutate(changed);
+      writeFileSync(f.statePath(id), JSON.stringify(changed));
+      expect(() => f.openJobs().read(id)).toThrow();
+      writeFileSync(f.statePath(id), JSON.stringify(record));
+    }
+    f.advance(120_001);
+    expect(f.openJobs().read(id)).toEqual(record);
+  },
+);
+linux.each(['lost-publication', 'deadline'])(
+  'failed frozen publication preserves its exact output after %s',
+  async (boundary) => {
+    const f = await stoppedFailedTrialFixture(),
+      record = planFailedCustody(f);
+    const id = record.intent.id,
+      hash = record.intentHash;
+    const sync = f.journal.syncRoot.bind(f.journal);
+    vi.spyOn(f.journal, 'syncRoot').mockImplementation(() => {
+      sync();
+      if (JSON.parse(readFileSync(f.statePath(id), 'utf8')).phase === 'trial-frozen') {
+        if (boundary === 'deadline') f.advance(120_001);
+        else throw new Error('Lost frozen publication result');
+      }
+    });
+    expect(() =>
+      f.jobs.markTrialFrozen(id, hash, record.revision, {
+        directory: '.restore-frozen-abc123',
+        bytes: 4096,
+        sha256: 'e'.repeat(64),
+        fingerprint: 'd'.repeat(64),
+      }),
+    ).toThrow();
+    vi.restoreAllMocks();
+    const retained = f.openJobs().read(id)!;
+    expect(retained.phase).toBe('trial-frozen');
+    expect(retained.execution!.failure!.freeze!.output!.sha256).toBe('e'.repeat(64));
+    expect(retained.execution!.frozen).toEqual(f.record.execution!.frozen);
+  },
+);
+
 linux('candidate commit requires readiness and exact selected paused bindings', async () => {
   const f = await activatedTrialFixture();
   const id = f.record.intent.id,

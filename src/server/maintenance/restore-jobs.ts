@@ -28,6 +28,8 @@ import { matchesRestoreTrialStop, RESTORE_TRIAL_STOP_MS } from './restore-trial-
 import type { RestoreTrialStopRequest } from './restore-trial-stop.ts';
 import { validRestoreOriginals } from './restore-files.ts';
 import type { RestoreOriginals } from './restore-files.ts';
+import { validFailedRestoreCustody } from './restore-failed-custody.ts';
+import type { FailedRestoreCustody } from './restore-failed-custody.ts';
 import { restoreIntentHash, validRestoreJobIntent } from './restore-job-intent.ts';
 import type { RestoreJobIntent } from './restore-job-intent.ts';
 
@@ -56,6 +58,19 @@ export interface RestoreTrialFailure {
   priorUpdatedAt: number;
   requestedAt: number;
   stop: RestoreStopRecord;
+  capture?: {
+    slot: string;
+    plannedAt: number;
+    deadline: number;
+    manifest?: FailedRestoreCustody;
+    retainedAt?: number;
+  };
+  freeze?: {
+    slot: string;
+    plannedAt: number;
+    deadline: number;
+    output?: NonNullable<RestorePausePlan['frozen']>;
+  };
 }
 /** Durable original shutdown/preparation evidence. This store never opens SQLite. */
 export interface RestorePausePlan {
@@ -99,7 +114,12 @@ type ExecutionPhase =
   | 'candidate-committed'
   | 'trial-stop-requested'
   | 'trial-witness-accepted'
-  | 'trial-witnessed-stopped';
+  | 'trial-witnessed-stopped'
+  | 'trial-capture-planned'
+  | 'trial-custody-planned'
+  | 'trial-custody-retained'
+  | 'trial-freeze-planned'
+  | 'trial-frozen';
 export interface RestoreJobRecord {
   version: 1;
   revision: number;
@@ -141,6 +161,11 @@ const failurePhases: readonly string[] = [
   'trial-stop-requested',
   'trial-witness-accepted',
   'trial-witnessed-stopped',
+  'trial-capture-planned',
+  'trial-custody-planned',
+  'trial-custody-retained',
+  'trial-freeze-planned',
+  'trial-frozen',
 ];
 const sameProcess = (a: ProcessIdentity | null, b: ProcessIdentity) =>
   !!a && a.pid === b.pid && a.start === b.start && a.boot === b.boot && a.token === b.token;
@@ -373,9 +398,15 @@ function validExecution(record: RestoreJobRecord) {
  * it never moves that predecessor's historical deadline forward. */
 function validTrialFailure(record: RestoreJobRecord): boolean {
   const failure = record.execution?.failure;
+  const stage = failurePhases.indexOf(record.phase),
+    hasCapture = stage >= 3,
+    hasManifest = stage >= 4,
+    hasRetained = stage >= 5,
+    hasFreeze = stage >= 6,
+    hasFrozen = stage >= 7;
   if (
     !failure ||
-    Object.keys(failure).length !== 4 ||
+    Object.keys(failure).length !== 4 + Number(hasCapture) + Number(hasFreeze) ||
     !['trial-opening', 'trial-ready'].includes(failure.from) ||
     !Number.isSafeInteger(failure.priorUpdatedAt) ||
     !Number.isSafeInteger(failure.requestedAt) ||
@@ -412,6 +443,91 @@ function validTrialFailure(record: RestoreJobRecord): boolean {
     stop.request.deadline - failure.requestedAt > RESTORE_TRIAL_STOP_MS
   )
     return false;
+  const capture = failure.capture,
+    freeze = failure.freeze;
+  if (hasCapture) {
+    if (
+      !capture ||
+      Object.keys(capture).length !== 3 + Number(hasManifest) + Number(hasRetained) ||
+      typeof capture.slot !== 'string' ||
+      !uuid.test(capture.slot) ||
+      [
+        record.intent.id,
+        permit.attemptId,
+        predecessor.freezeSlot,
+        predecessor.preparation?.slot,
+      ].includes(capture.slot) ||
+      !Number.isSafeInteger(capture.plannedAt) ||
+      capture.plannedAt < stop.acceptedAt! ||
+      capture.plannedAt > record.updatedAt ||
+      !Number.isSafeInteger(capture.deadline) ||
+      capture.deadline <= capture.plannedAt ||
+      capture.deadline - capture.plannedAt > 600_000 ||
+      (!hasRetained && record.updatedAt >= capture.deadline)
+    )
+      return false;
+    if (hasManifest) {
+      const manifest = capture.manifest;
+      if (
+        !validFailedRestoreCustody(manifest) ||
+        manifest.captureId !== capture.slot ||
+        !matchesRestoreTrialStop(manifest.stop, permit) ||
+        !sameRestoreStopRequest(manifest.stop.request, stop.request) ||
+        !sameFile(manifest.identity, permit.identity) ||
+        manifest.witness.fingerprint !== stop.fingerprint ||
+        manifest.witness.acceptedAt !== stop.acceptedAt
+      )
+        return false;
+    }
+    if (
+      hasRetained &&
+      (!Number.isSafeInteger(capture.retainedAt) ||
+        capture.retainedAt! < capture.plannedAt ||
+        capture.retainedAt! >= capture.deadline ||
+        capture.retainedAt! > record.updatedAt)
+    )
+      return false;
+  }
+  if (hasFreeze) {
+    if (
+      !freeze ||
+      Object.keys(freeze).length !== 3 + Number(hasFrozen) ||
+      typeof freeze.slot !== 'string' ||
+      !uuid.test(freeze.slot) ||
+      [
+        record.intent.id,
+        permit.attemptId,
+        predecessor.freezeSlot,
+        predecessor.preparation?.slot,
+        capture!.slot,
+      ].includes(freeze.slot) ||
+      !Number.isSafeInteger(freeze.plannedAt) ||
+      freeze.plannedAt < capture!.retainedAt! ||
+      freeze.plannedAt > record.updatedAt ||
+      !Number.isSafeInteger(freeze.deadline) ||
+      freeze.deadline <= freeze.plannedAt ||
+      freeze.deadline !== capture!.deadline ||
+      freeze.deadline - freeze.plannedAt > 600_000 ||
+      record.updatedAt >= freeze.deadline
+    )
+      return false;
+    if (hasFrozen) {
+      const output = freeze.output;
+      if (
+        !output ||
+        Object.keys(output).length !== 4 ||
+        typeof output.directory !== 'string' ||
+        !/^\.restore-frozen-[A-Za-z0-9]{6}$/.test(output.directory) ||
+        !Number.isSafeInteger(output.bytes) ||
+        output.bytes < 4096 ||
+        output.bytes > 8 * 1024 ** 3 ||
+        typeof output.sha256 !== 'string' ||
+        !/^[a-f0-9]{64}$/.test(output.sha256) ||
+        output.fingerprint !== stop.fingerprint
+      )
+        return false;
+    }
+  }
   return record.phase === 'trial-stop-requested'
     ? stop.fingerprint === null && stop.acceptedAt === null
     : stop.fingerprint !== null &&
@@ -470,6 +586,7 @@ function unchangedFile(fd: number, path: string, before: ReturnType<typeof priva
   }
 }
 
+export { validRecord as validRestoreJobRecord };
 function validRecord(value: unknown, id: string): value is RestoreJobRecord {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
   const record = value as RestoreJobRecord;
@@ -1242,6 +1359,89 @@ export class RestoreJobs {
     const result = this.publishExecution(current, 'trial-witnessed-stopped', current.execution!);
     this.trialEvidenceRecord(id, hash, result.revision, 'trial-witnessed-stopped', true);
     return result;
+  }
+  private trialEvidenceCheckpoint(
+    current: RestoreJobRecord,
+    phase: ExecutionPhase,
+    failure: RestoreTrialFailure,
+    deadline: number,
+  ) {
+    this.evidenceClock(current, deadline);
+    const result = this.publishExecution(current, phase, { ...current.execution!, failure });
+    this.trialEvidenceRecord(result.intent.id, result.intentHash, result.revision, phase, true);
+    this.evidenceClock(result, deadline);
+    return result;
+  }
+  planTrialCapture(id: string, hash: string, revision: number, slot: string, deadline: number) {
+    const current = this.trialEvidenceRecord(id, hash, revision, 'trial-witnessed-stopped', true);
+    const plannedAt = this.evidenceClock(current, deadline);
+    return this.trialEvidenceCheckpoint(
+      current,
+      'trial-capture-planned',
+      {
+        ...current.execution!.failure!,
+        capture: { slot, plannedAt, deadline },
+      },
+      deadline,
+    );
+  }
+  planTrialCustody(id: string, hash: string, revision: number, manifest: FailedRestoreCustody) {
+    const current = this.trialEvidenceRecord(id, hash, revision, 'trial-capture-planned', true);
+    const failure = current.execution!.failure!;
+    return this.trialEvidenceCheckpoint(
+      current,
+      'trial-custody-planned',
+      {
+        ...failure,
+        capture: { ...failure.capture!, manifest },
+      },
+      failure.capture!.deadline,
+    );
+  }
+  markTrialCustodyRetained(id: string, hash: string, revision: number) {
+    const current = this.trialEvidenceRecord(id, hash, revision, 'trial-custody-planned', true);
+    const failure = current.execution!.failure!;
+    const retainedAt = this.evidenceClock(current, failure.capture!.deadline);
+    return this.trialEvidenceCheckpoint(
+      current,
+      'trial-custody-retained',
+      {
+        ...failure,
+        capture: { ...failure.capture!, retainedAt },
+      },
+      failure.capture!.deadline,
+    );
+  }
+  planTrialFreeze(id: string, hash: string, revision: number, slot: string, deadline: number) {
+    const current = this.trialEvidenceRecord(id, hash, revision, 'trial-custody-retained', true);
+    const plannedAt = this.evidenceClock(current, deadline);
+    return this.trialEvidenceCheckpoint(
+      current,
+      'trial-freeze-planned',
+      {
+        ...current.execution!.failure!,
+        freeze: { slot, plannedAt, deadline },
+      },
+      deadline,
+    );
+  }
+  markTrialFrozen(
+    id: string,
+    hash: string,
+    revision: number,
+    output: NonNullable<RestorePausePlan['frozen']>,
+  ) {
+    const current = this.trialEvidenceRecord(id, hash, revision, 'trial-freeze-planned', true);
+    const failure = current.execution!.failure!;
+    return this.trialEvidenceCheckpoint(
+      current,
+      'trial-frozen',
+      {
+        ...failure,
+        freeze: { ...failure.freeze!, output },
+      },
+      failure.freeze!.deadline,
+    );
   }
   markTrialReady(
     id: string,
