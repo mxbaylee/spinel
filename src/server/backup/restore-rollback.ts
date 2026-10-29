@@ -1,11 +1,11 @@
 import { chmod, lstat, mkdtemp, rm, statfs } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
-import { digest } from './archive.ts';
 import { checkVerificationHeadroom, runRecoveryWorker } from './recovery-worker.ts';
 import { RecoveryResourceError } from './resource-error.ts';
 import { MAX_RESTORE_EVIDENCE_INPUTS } from './restore-evidence.ts';
 import {
-  assertSelfContained,
+  syncClosedRestoreInput,
+  syncRestoreDirectory,
   copyClosedRestoreInput,
   restoreOutputLimit,
   validateClosedRestoreInput,
@@ -186,21 +186,14 @@ export async function prepareRestoreRollback(options: {
       validate: (value): value is RollbackEvidence =>
         validResult(value, options.current.fingerprint, maximum),
     });
-    const file = await lstat(databasePath);
-    if (
-      !file.isFile() ||
-      file.nlink !== 1 ||
-      file.uid !== process.getuid?.() ||
-      (file.mode & 0o077) !== 0 ||
-      file.size !== result.databaseBytes
-    )
-      throw new Error('Rollback output is unavailable.');
-    await assertSelfContained(databasePath);
-    if ((await digest(databasePath, signal)) !== result.databaseSha256)
-      throw new Error('Rollback output changed.');
+    await syncClosedRestoreInput(
+      { databasePath, databaseBytes: result.databaseBytes, databaseSha256: result.databaseSha256 },
+      signal,
+    );
     for (const copy of copies)
       for (const suffix of ['', '-wal', '-shm', '-journal'])
         await rm(copy.databasePath + suffix, { force: true });
+    await syncRestoreDirectory(directory, signal);
     signal.throwIfAborted();
     if (Date.now() >= deadline) throw new RecoveryResourceError('time-limit');
     retained = true;

@@ -1,10 +1,10 @@
 import { chmod, lstat, mkdtemp, rm, statfs } from 'node:fs/promises';
 import { join } from 'node:path';
-import { digest } from './archive.ts';
 import { checkVerificationHeadroom, runRecoveryWorker } from './recovery-worker.ts';
 import { RecoveryResourceError } from './resource-error.ts';
 import {
-  assertSelfContained,
+  syncClosedRestoreInput,
+  syncRestoreDirectory,
   copyRestoreInputFile,
   validateClosedRestoreInput,
 } from './restore-input.ts';
@@ -123,20 +123,13 @@ export async function freezeCurrentRestore(options: {
       },
     });
     const databasePath = join(directory, 'frozen.sqlite');
-    const info = await lstat(databasePath);
-    if (
-      !info.isFile() ||
-      info.nlink !== 1 ||
-      info.uid !== process.getuid?.() ||
-      (info.mode & 0o077) !== 0 ||
-      info.size !== result.databaseBytes
-    )
-      throw new Error('Frozen current output is unavailable.');
-    await assertSelfContained(databasePath);
-    if ((await digest(databasePath, signal)) !== result.databaseSha256)
-      throw new Error('Frozen current output changed.');
+    await syncClosedRestoreInput(
+      { databasePath, databaseBytes: result.databaseBytes, databaseSha256: result.databaseSha256 },
+      signal,
+    );
     for (const suffix of ['', '-wal', '-shm', '-journal'])
       await rm(source + suffix, { force: true });
+    await syncRestoreDirectory(directory, signal);
     signal.throwIfAborted();
     if (Date.now() >= deadline) throw new RecoveryResourceError('time-limit');
     retained = true;

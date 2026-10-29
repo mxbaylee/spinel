@@ -7,6 +7,8 @@ import {
   copyClosedRestoreInput,
   copyRestoreInputFile,
   restoreOutputLimit,
+  syncClosedRestoreInput,
+  syncRestoreDirectory,
 } from './restore-input.ts';
 
 test('output growth is bounded after immutable input, journal and temporary-space allowances', () => {
@@ -120,3 +122,38 @@ test('raw evidence must match both its declared size and digest', async () => {
   ).rejects.toThrow('changed');
   expect(await readFile(f.input.databasePath)).toEqual(f.bytes);
 });
+
+test('parent authenticates and syncs a closed private output without opening SQLite', async () => {
+  const f = await fixture();
+  await syncClosedRestoreInput(f.input);
+  await syncRestoreDirectory(f.root);
+  expect(await readFile(f.input.databasePath)).toEqual(f.bytes);
+  await expect(
+    syncClosedRestoreInput({ ...f.input, databaseSha256: '0'.repeat(64) }),
+  ).rejects.toThrow();
+  await expect(
+    syncClosedRestoreInput({ ...f.input, databaseBytes: f.bytes.length - 1 }),
+  ).rejects.toThrow();
+  const cancellation = new AbortController();
+  cancellation.abort();
+  await expect(syncClosedRestoreInput(f.input, cancellation.signal)).rejects.toThrow();
+  await expect(syncRestoreDirectory(f.root, cancellation.signal)).rejects.toThrow();
+});
+
+test.each(['sidecar', 'hard-link', 'symlink', 'public-file', 'public-directory'])(
+  'parent refuses unsafe completed output: %s',
+  async (kind) => {
+    const f = await fixture();
+    if (kind === 'sidecar') await writeFile(f.input.databasePath + '-wal', '');
+    if (kind === 'hard-link') await link(f.input.databasePath, f.target);
+    if (kind === 'symlink') {
+      await symlink(f.input.databasePath, f.target);
+      f.input.databasePath = f.target;
+    }
+    if (kind === 'public-file') await chmod(f.input.databasePath, 0o644);
+    if (kind === 'public-directory') {
+      await chmod(f.root, 0o755);
+      await expect(syncRestoreDirectory(f.root)).rejects.toThrow();
+    } else await expect(syncClosedRestoreInput(f.input)).rejects.toThrow();
+  },
+);

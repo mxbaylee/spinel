@@ -251,6 +251,7 @@ export class MaintenanceSupervisor {
   private readonly applicationPolicy: Readonly<ApplicationPolicy> | undefined;
   private child: ChildProcess | undefined;
   private childReady = false;
+  private childChannelFailed = false;
   private childOwned = false;
   private childReadyEpoch: string | undefined;
   private drainWaiter: Waiter | undefined;
@@ -434,9 +435,35 @@ export class MaintenanceSupervisor {
     this.sendState();
     this.options.onTransition?.(this.status());
   }
+  private childControlFailed(child: ChildProcess, reason = 'application-disconnected') {
+    if (child !== this.child) return;
+    // A failed state send must not recursively send another failure state into
+    // the same broken channel. During stop, physical closure remains the gate.
+    this.childChannelFailed = true;
+    if (!this.closing && !['stopping', 'stopped'].includes(this.journal.state.phase))
+      this.failure(reason);
+  }
+  private sendChild(child: ChildProcess, message: Parameters<ChildProcess['send']>[0]) {
+    if (child !== this.child || this.childChannelFailed) return;
+    if (!child.connected) {
+      this.childControlFailed(child);
+      return;
+    }
+    try {
+      child.send(message, (error) => {
+        if (error) this.childControlFailed(child);
+      });
+    } catch {
+      this.childControlFailed(child);
+    }
+  }
   private sendState() {
-    if (this.child?.connected)
-      this.child.send({ channel: MAINTENANCE_CHANNEL, kind: 'state', status: this.status() });
+    if (this.child)
+      this.sendChild(this.child, {
+        channel: MAINTENANCE_CHANNEL,
+        kind: 'state',
+        status: this.status(),
+      });
   }
   private failure(reason: string) {
     this.childReady = false;
@@ -1386,6 +1413,7 @@ export class MaintenanceSupervisor {
         },
       );
     this.child = child;
+    this.childChannelFailed = false;
     const identity = child.pid ? processIdentity(child.pid, groupToken) : null;
     if (!identity) {
       this.failure('start-failed');
@@ -1400,9 +1428,7 @@ export class MaintenanceSupervisor {
     child.on('message', (value) => {
       void this.childMessage(child, value);
     });
-    child.once('error', () => {
-      if (this.child === child) this.failure('start-failed');
-    });
+    child.on('error', () => this.childControlFailed(child, 'start-failed'));
     child.once('exit', () => {
       if (this.child !== child) return;
       this.restoreWaiter?.reject(
@@ -1494,21 +1520,22 @@ export class MaintenanceSupervisor {
           this.journal.state.child.boot !== record.child.boot ||
           this.journal.state.child.token !== record.child.token ||
           !validRestoreFingerprint(value.fingerprint) ||
-          (record.fingerprint !== null && record.fingerprint !== value.fingerprint) ||
-          acceptedAt >= record.request.deadline
+          (record.fingerprint !== null && record.fingerprint !== value.fingerprint)
         )
           throw new Error('Restore witness does not match its current challenge.');
-        const accepted =
-          record.fingerprint === null
-            ? { ...record, fingerprint: value.fingerprint, acceptedAt }
-            : record;
-        if (record.fingerprint === null) this.transition({ restoreStop: accepted });
+        // Validate conflicts above even after acceptance. A duplicate must not
+        // ACK again: the first ACK may already have let the child disconnect.
+        if (record.fingerprint !== null) return;
+        if (acceptedAt >= record.request.deadline)
+          throw new Error('Restore witness arrived after its deadline.');
+        const accepted = { ...record, fingerprint: value.fingerprint, acceptedAt };
+        this.transition({ restoreStop: accepted });
         // Synchronous fsync may outlast the timer while the event loop is
         // blocked. A persisted witness alone must not bypass this deadline.
         if (this.now() >= record.request.deadline)
           throw new Error('Restore witness persistence exceeded its deadline.');
-        // Journal fsync above precedes ACK. Identical duplicates may ACK again.
-        child.send({
+        // Journal fsync above precedes the one acknowledgement.
+        this.sendChild(child, {
           channel: MAINTENANCE_CHANNEL,
           kind: 'restore-witness-ack',
           request: record.request,
@@ -1542,14 +1569,13 @@ export class MaintenanceSupervisor {
         uuidPattern.test(value.requestId)
       ) {
         const reply = (result?: MaintenanceControlResult, error?: string) => {
-          if (child.connected)
-            child.send({
-              channel: MAINTENANCE_CHANNEL,
-              kind: 'result',
-              requestId: value.requestId,
-              result,
-              error,
-            });
+          this.sendChild(child, {
+            channel: MAINTENANCE_CHANNEL,
+            kind: 'result',
+            requestId: value.requestId,
+            result,
+            error,
+          });
         };
         try {
           reply(await this.control(value.command));

@@ -1,5 +1,4 @@
-import { constants } from 'node:fs';
-import { open, stat } from 'node:fs/promises';
+import { stat } from 'node:fs/promises';
 import { join } from 'node:path';
 import { DatabaseSync } from '../../../server/database.ts';
 import { digest } from './archive.ts';
@@ -63,21 +62,6 @@ export async function prepareWorkingRollback(input: RollbackWorkerInput) {
     const bytes = (await stat(output)).size;
     if (bytes < 4096 || bytes > input.maxDatabaseBytes)
       throw new RecoveryResourceError('database-size');
-    const file = await open(output, constants.O_RDONLY | constants.O_NOFOLLOW);
-    try {
-      await file.sync();
-    } finally {
-      await file.close();
-    }
-    const directory = await open(
-      input.directory,
-      constants.O_RDONLY | constants.O_DIRECTORY | constants.O_NOFOLLOW,
-    );
-    try {
-      await directory.sync();
-    } finally {
-      await directory.close();
-    }
     return {
       ...inventory,
       ...semantics,

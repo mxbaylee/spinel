@@ -1,5 +1,4 @@
-import { constants } from 'node:fs';
-import { chmod, open, rm, stat } from 'node:fs/promises';
+import { chmod, rm, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 import { backup, DatabaseSync } from '../../../server/database.ts';
 import { checkDatabase, digest } from './archive.ts';
@@ -66,23 +65,8 @@ export async function freezeWorkingRestore(input: FreezeWorkerInput) {
     const bytes = (await stat(output)).size;
     if (bytes < 4096 || bytes > input.maxDatabaseBytes)
       throw new RecoveryResourceError('database-size');
-    const handle = await open(output, constants.O_RDONLY | constants.O_NOFOLLOW);
-    try {
-      await handle.sync();
-    } finally {
-      await handle.close();
-    }
     for (const suffix of ['', '-wal', '-shm', '-journal'])
       await rm(source + suffix, { force: true });
-    const directory = await open(
-      input.directory,
-      constants.O_RDONLY | constants.O_DIRECTORY | constants.O_NOFOLLOW,
-    );
-    try {
-      await directory.sync();
-    } finally {
-      await directory.close();
-    }
     return {
       databaseBytes: bytes,
       databaseSha256: await digest(output),

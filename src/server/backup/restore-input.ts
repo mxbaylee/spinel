@@ -162,3 +162,96 @@ export async function copyRestoreInputFile(
     await source.close();
   }
 }
+
+/** Parent-only durability boundary after the restricted worker has physically
+ * exited. Node's permission model disables descriptor sync even for allowed paths.
+ * No SQLite connection is opened here; authenticate the same descriptor we sync. */
+export async function syncClosedRestoreInput(input: ClosedRestoreInput, signal?: AbortSignal) {
+  validateClosedRestoreInput(input, 8 * 1024 ** 3);
+  signal?.throwIfAborted();
+  await assertSelfContained(input.databasePath);
+  const file = await open(
+    input.databasePath,
+    constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK,
+  );
+  try {
+    const before = await file.stat({ bigint: true });
+    if (
+      !before.isFile() ||
+      before.nlink !== 1n ||
+      before.uid !== BigInt(process.getuid!()) ||
+      (before.mode & 0o077n) !== 0n ||
+      before.size !== BigInt(input.databaseBytes)
+    )
+      throw changed();
+    const hash = createHash('sha256'),
+      buffer = Buffer.alloc(64 * 1024);
+    let offset = 0;
+    for (;;) {
+      signal?.throwIfAborted();
+      const { bytesRead } = await file.read(
+        buffer,
+        0,
+        Math.min(buffer.length, input.databaseBytes + 1 - offset),
+        offset,
+      );
+      if (!bytesRead) break;
+      offset += bytesRead;
+      if (offset > input.databaseBytes) throw changed();
+      hash.update(buffer.subarray(0, bytesRead));
+    }
+    if (offset !== input.databaseBytes || hash.digest('hex') !== input.databaseSha256)
+      throw changed();
+    await file.sync();
+    const after = await file.stat({ bigint: true }),
+      path = await lstat(input.databasePath, { bigint: true });
+    for (const current of [after, path])
+      if (
+        !current.isFile() ||
+        current.dev !== before.dev ||
+        current.ino !== before.ino ||
+        current.size !== before.size ||
+        current.mtimeNs !== before.mtimeNs ||
+        current.ctimeNs !== before.ctimeNs ||
+        current.uid !== before.uid ||
+        current.mode !== before.mode ||
+        current.nlink !== 1n
+      )
+        throw changed();
+    await assertSelfContained(input.databasePath);
+    signal?.throwIfAborted();
+  } finally {
+    await file.close();
+  }
+}
+
+/** Publish the completed output namespace after disposable evidence is removed. */
+export async function syncRestoreDirectory(path: string, signal?: AbortSignal) {
+  signal?.throwIfAborted();
+  const directory = await open(
+    path,
+    constants.O_RDONLY | constants.O_DIRECTORY | constants.O_NOFOLLOW,
+  );
+  try {
+    const before = await directory.stat({ bigint: true });
+    if (
+      !before.isDirectory() ||
+      before.uid !== BigInt(process.getuid!()) ||
+      (before.mode & 0o077n) !== 0n
+    )
+      throw changed();
+    await directory.sync();
+    const after = await lstat(path, { bigint: true });
+    if (
+      !after.isDirectory() ||
+      after.dev !== before.dev ||
+      after.ino !== before.ino ||
+      after.uid !== before.uid ||
+      after.mode !== before.mode
+    )
+      throw changed();
+    signal?.throwIfAborted();
+  } finally {
+    await directory.close();
+  }
+}

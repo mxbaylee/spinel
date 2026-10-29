@@ -1001,6 +1001,92 @@ test.each([false, true])(
   },
 );
 
+test('a duplicate witness after ACK and disconnect preserves the durable acceptance without sending again', async () => {
+  const f = await fixture();
+  let child!: ChildProcess;
+  const supervisor = await MaintenanceSupervisor.open({
+    root: f.root,
+    databasePath: f.databasePath,
+    publicPort: 0,
+    createChild: (token) => (child = f.createChild(token)),
+    budgets: { startMs: 5000, stopMs: 100, verifyMs: 5000, restoreMs: 5000 },
+  });
+  cleanups.push(() => supervisor.close());
+  await start(supervisor);
+  const jobId = randomUUID();
+  await supervisor.control({ action: 'pause', operationId: jobId, authority: proof() });
+  const send = child.send;
+  let acknowledgements = 0,
+    observed = false;
+  let durableBefore: unknown, durableAfter: unknown;
+  vi.spyOn(child, 'send').mockImplementation((value: unknown, ...args: unknown[]) => {
+    if (
+      value &&
+      typeof value === 'object' &&
+      'kind' in value &&
+      value.kind === 'restore-witness-ack'
+    ) {
+      acknowledgements++;
+      child.once('disconnect', () => {
+        observed = true;
+        durableBefore = structuredClone(supervisor.journal.state.restoreStop);
+        child.emit('message', { ...value, kind: 'restore-witness' });
+        durableAfter = structuredClone(supervisor.journal.state.restoreStop);
+      });
+    }
+    return Reflect.apply(send, child, [value, ...args]) as boolean;
+  });
+  const accepted = await supervisor.stopForRestore(jobId);
+  expect(observed).toBe(true);
+  expect(acknowledgements).toBe(1);
+  expect(durableBefore).toEqual(accepted);
+  expect(durableAfter).toEqual(accepted);
+  expect(supervisor.status().phase).toBe('stopped');
+  assertWorkspaceHandlesClosed(f.databasePath);
+});
+
+test.each(['callback', 'throw'])(
+  'state send %s failure closes admission without recursive IPC or an unhandled error',
+  async (mode) => {
+    const f = await fixture();
+    let child!: ChildProcess;
+    const supervisor = await MaintenanceSupervisor.open({
+      root: f.root,
+      databasePath: f.databasePath,
+      publicPort: 0,
+      createChild: (token) => (child = f.createChild(token)),
+      budgets: { startMs: 5000, stopMs: 100, verifyMs: 5000, drainMs: 500 },
+    });
+    cleanups.push(() => supervisor.close());
+    await start(supervisor);
+    let sends = 0;
+    const send = child.send;
+    const intercepted = vi
+      .spyOn(child, 'send')
+      .mockImplementation((value: unknown, ...args: unknown[]) => {
+        if (value && typeof value === 'object' && 'kind' in value && value.kind === 'state') {
+          sends++;
+          const error = Object.assign(new Error('Closed IPC fixture'), { code: 'EPIPE' });
+          if (mode === 'throw') throw error;
+          const callback = args.at(-1);
+          if (typeof callback !== 'function')
+            throw new Error('State send lacks an error callback.');
+          callback(error);
+          return false;
+        }
+        return Reflect.apply(send, child, [value, ...args]) as boolean;
+      });
+    await expect(
+      supervisor.control({ action: 'pause', operationId: randomUUID(), authority: proof() }),
+    ).rejects.toThrow();
+    child.emit('message', { channel: MAINTENANCE_CHANNEL, kind: 'hello' });
+    expect(supervisor.status().phase).toBe('recovery-required');
+    expect(supervisor.status().readyToResume).toBe(false);
+    expect(sends).toBe(1);
+    intercepted.mockRestore();
+  },
+);
+
 test('restore shutdown refuses another operation and kills a child that never provides its witness', async () => {
   const f = await fixture();
   const supervisor = await f.supervisor({
