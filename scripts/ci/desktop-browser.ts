@@ -39,6 +39,14 @@ export type DesktopBrowserStop = {
   driverExited: boolean;
   stoppedAt: string;
 };
+export type DesktopStoragePrompt = {
+  action: 'allow' | 'none';
+  observedText: string | null;
+  button: 'Allow' | null;
+  reason: string;
+  screenshot?: string;
+  accessibility?: string;
+};
 export type DesktopBrowser = {
   start(url: string): Promise<DesktopBrowserStart>;
   goto(url: string): Promise<void>;
@@ -48,7 +56,8 @@ export type DesktopBrowser = {
   type(text: string): Promise<void>;
   click(selector: string, index?: number): Promise<void>;
   clickAt(selector: string, x: number, y: number): Promise<void>;
-  screenshot(path: string): Promise<void>;
+  resolveStoragePrompt(): Promise<DesktopStoragePrompt>;
+  screenshot(path: string, scope?: 'content' | 'screen'): Promise<void>;
   stop(): Promise<DesktopBrowserStop>;
 };
 
@@ -148,6 +157,65 @@ const safariScript = (expression: string) =>
     expression,
   );
 
+// Inspect browser chrome through macOS accessibility, excluding website content.
+// Approval re-runs the same inspection and matches the question captured before it.
+const firefoxStoragePromptScript = String.raw`
+function run(argv) {
+  var system = Application('System Events');
+  var processes = system.applicationProcesses.whose({ unixId: Number(argv[0]) })();
+  if (processes.length !== 1) throw new Error('The owned Firefox process is unavailable.');
+  var process = processes[0];
+  if (process.name() !== 'Firefox') throw new Error('The process is not Firefox.');
+  process.frontmost = true;
+  var nodes = [], candidates = [], allButtons = [], truncated = false;
+  var question = /\b(?:will you allow|allow) (?:https:\/\/)?localhost(?::8176)? to store data (?:in persistent storage|on your computer)\?/i;
+  function text(value) {
+    return typeof value === 'string' ? value.replace(/[\u200e\u200f\u2066-\u2069]/g, '').replace(/\s+/g, ' ').trim() : '';
+  }
+  function visit(element, path, depth) {
+    if (nodes.length >= 500 || depth > 18) { truncated = true; return { texts: [], buttons: [] }; }
+    var p = element.properties();
+    var role = text(p.role);
+    if (role === 'AXWebArea') return { texts: [], buttons: [] };
+    var own = [p.name, p.description, p.value].map(text).filter(function(value, index, values) { return value && values.indexOf(value) === index; });
+    var node = { path: path, role: role, subrole: text(p.subrole), text: own, enabled: p.enabled, position: p.position, size: p.size };
+    nodes.push(node);
+    var result = { texts: own.slice(), buttons: [] };
+    if (role === 'AXButton' || role === 'AXPopUpButton') {
+      var button = { element: element, labels: own, enabled: p.enabled === true, size: p.size };
+      result.buttons.push(button);
+      allButtons.push(button);
+    }
+    element.uiElements().forEach(function(child, index) {
+      var nested = visit(child, path.concat(index), depth + 1);
+      result.texts = result.texts.concat(nested.texts);
+      result.buttons = result.buttons.concat(nested.buttons);
+    });
+    var matched = result.texts.join(' ').match(question);
+    var allow = result.buttons.filter(function(button) { return button.labels.indexOf('Allow') !== -1 && Array.isArray(button.size) && button.size[0] > 0 && button.size[1] > 0; });
+    var block = result.buttons.filter(function(button) { return button.labels.indexOf('Block') !== -1; });
+    if (matched && allow.length === 1 && block.length === 1)
+      candidates.push({ path: path, prompt: matched[0], button: allow[0] });
+    return result;
+  }
+  process.windows().forEach(function(window, index) { visit(window, [index], 0); });
+  if (truncated) throw new Error('Firefox accessibility inspection exceeded its bound.');
+  // Only the smallest matching container represents the observed prompt.
+  candidates = candidates.filter(function(candidate) {
+    return !candidates.some(function(other) { return other.path.length > candidate.path.length && candidate.path.every(function(index, part) { return other.path[part] === index; }); });
+  });
+  var promptLike = allButtons.some(function(button) { return button.labels.some(function(label) { return /^(Allow|Block|Don't Allow|Not Now)$/.test(label); }); }) || nodes.some(function(node) { return /AX(Dialog|Sheet|Popover)/.test(node.role + ' ' + node.subrole); });
+  var knownQuestion = nodes.map(function(node) { return node.text.join(' '); }).join(' ').match(question);
+  var status = candidates.length === 1 ? (candidates[0].button.enabled ? 'recognized' : 'pending') : knownQuestion ? 'pending' : promptLike ? 'unrecognized' : 'none';
+  var result = { status: status, action: 'none', observedText: candidates.length === 1 ? candidates[0].prompt : knownQuestion ? knownQuestion[0] : null, nodes: nodes };
+  if (argv[1] === 'allow') {
+    if (result.status !== 'recognized' || result.observedText !== argv[2]) throw new Error('The observed localhost storage prompt changed before approval.');
+    system.click(candidates[0].button.element);
+    result.action = 'allow';
+  }
+  return JSON.stringify(result);
+}`;
+
 /** Native macOS browsers with real, retained profiles. No storage export/import or policy overrides. */
 export function createDesktopBrowser(
   kind: DesktopBrowserKind,
@@ -162,6 +230,7 @@ export function createDesktopBrowser(
   let browserIdentity = '';
   let previousBrowserPid: number | null = null;
   let launches = 0;
+  let storagePrompts = 0;
   let spawnError: Error | undefined;
 
   async function request(path: string, method = 'GET', body?: unknown, timeout = 35_000) {
@@ -185,6 +254,108 @@ export function createDesktopBrowser(
     assert.ok(sessionId, 'The browser has no active WebDriver session.');
     return request(`session/${sessionId}/${path}`, method, body);
   };
+  async function captureScreen(path: string) {
+    assert.ok(browserPid, 'Start the browser before capturing it.');
+    await mkdir(dirname(resolve(path)), { recursive: true });
+    await command('/usr/sbin/screencapture', ['-x', '-m', resolve(path)], 10_000);
+  }
+  async function resolveStoragePrompt(): Promise<DesktopStoragePrompt> {
+    assert.ok(browserPid, 'Start the browser before inspecting permissions.');
+    if (kind !== 'firefox')
+      return { action: 'none', observedText: null, button: null, reason: 'not-firefox' };
+    type Inspection = {
+      status: 'recognized' | 'pending' | 'unrecognized' | 'none';
+      action: 'allow' | 'none';
+      observedText: string | null;
+      nodes: unknown[];
+    };
+    const inspect = async (action = 'inspect', expected = '') =>
+      JSON.parse(
+        await command(
+          '/usr/bin/osascript',
+          [
+            '-l',
+            'JavaScript',
+            '-e',
+            firefoxStoragePromptScript,
+            String(browserPid),
+            action,
+            expected,
+          ],
+          10_000,
+        ),
+      ) as Inspection;
+    let last: Inspection | undefined;
+    let evidence: { screenshot: string; accessibility: string } | undefined;
+    async function capture(error?: unknown) {
+      const stem = resolve(outputDir, `firefox-storage-prompt-${++storagePrompts}`);
+      evidence = { screenshot: `${stem}.png`, accessibility: `${stem}.json` };
+      await mkdir(outputDir, { recursive: true });
+      await writeFile(
+        evidence.accessibility,
+        JSON.stringify(
+          { inspection: last, error: error === undefined ? undefined : String(error) },
+          null,
+          2,
+        ) + '\n',
+      );
+      await captureScreen(evidence.screenshot);
+      return evidence;
+    }
+    try {
+      const deadline = Date.now() + 10_000;
+      do {
+        const complete = await evaluate<boolean>(
+          `Array.from(document.querySelectorAll('[role="dialog"]')).some(dialog => dialog.getClientRects().length && dialog.textContent.includes('Offline availability') && Array.from(dialog.querySelectorAll('button')).some(button => button.textContent.trim() === 'Done'))`,
+        );
+        if (complete)
+          return {
+            action: 'none',
+            observedText: null,
+            button: null,
+            reason: 'production-result-already-visible',
+          };
+        last = await inspect();
+        if (last.status === 'recognized') {
+          await capture();
+          const approved = await inspect('allow', last.observedText!);
+          assert.equal(approved.action, 'allow');
+          return {
+            action: 'allow',
+            observedText: approved.observedText,
+            button: 'Allow',
+            reason: 'observed-localhost-storage-permission',
+            ...evidence,
+          };
+        }
+        assert.notEqual(
+          last.status,
+          'unrecognized',
+          'An unrecognized native Firefox permission prompt was left untouched.',
+        );
+        await delay(500);
+      } while (Date.now() < deadline);
+      assert.notEqual(
+        last?.status,
+        'pending',
+        'The observed storage prompt did not enable its Allow action.',
+      );
+      await capture();
+      return {
+        action: 'none',
+        observedText: null,
+        button: null,
+        reason: 'no-native-storage-prompt-observed',
+        ...evidence,
+      };
+    } catch (error) {
+      if (!evidence) await capture(error);
+      throw new Error(
+        `Firefox storage permission was not approved: ${String(error)}. Native evidence: ${evidence?.accessibility}; ${evidence?.screenshot}`,
+        { cause: error },
+      );
+    }
+  }
   async function evaluate<T>(expression: string): Promise<T> {
     assert.ok(browserPid, 'Start the browser before evaluating a page.');
     let result: ObjectValue;
@@ -537,7 +708,7 @@ export function createDesktopBrowser(
                     : {
                         'moz:firefoxOptions': {
                           binary: binaries.firefox,
-                          args: ['--profile', actualPath, '--width', '1280', '--height', '900'],
+                          args: ['--profile', actualPath],
                         },
                       }),
                 },
@@ -585,6 +756,7 @@ export function createDesktopBrowser(
         assert.ok(Number.isSafeInteger(browserPid) && browserPid! > 0);
         browserIdentity = await processIdentity(browserPid!);
         assert.ok(browserIdentity, 'The browser process could not be observed.');
+        if (kind === 'firefox') await session('window/rect', 'POST', { width: 1280, height: 900 });
         await goto(url);
       }
       assert.notEqual(
@@ -616,6 +788,7 @@ export function createDesktopBrowser(
     focus: (selector) => focusAt(selector, 0),
     press,
     clickAt,
+    resolveStoragePrompt,
     async type(text) {
       assert.ok(browserPid, 'Start the browser before typing.');
       if (kind === 'safari') {
@@ -645,8 +818,9 @@ export function createDesktopBrowser(
         await session(`element/${id}/click`, 'POST', {});
       }
     },
-    async screenshot(path) {
+    async screenshot(path, scope = 'content') {
       assert.ok(browserPid, 'Start the browser before capturing it.');
+      if (scope === 'screen') return captureScreen(path);
       await mkdir(dirname(resolve(path)), { recursive: true });
       if (kind === 'safari') {
         await applescript('tell application "Safari" to activate');

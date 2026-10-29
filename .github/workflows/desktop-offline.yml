@@ -47,6 +47,10 @@ jobs:
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
+      - name: Use current vendor stable browsers
+        env:
+          DESKTOP_BROWSER: ${{ matrix.browser }}
+        run: node scripts/ci/desktop-browser-versions.ts "$DESKTOP_BROWSER"
       - name: Prove same-profile ordinary Safari restart
         if: matrix.browser == 'safari'
         run: node scripts/ci/desktop-profile-probe.ts

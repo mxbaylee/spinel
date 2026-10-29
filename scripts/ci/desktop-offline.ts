@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { promisify } from 'node:util';
@@ -213,6 +213,7 @@ let fixture: Awaited<ReturnType<typeof createDesktopOfflineFixture>> | undefined
 const launches: DesktopBrowserStart[] = [];
 async function launch(url: string) {
   const evidence = await browser.start(url);
+  assert.equal(evidence.version, (report.release as { installed: string }).installed);
   if (launches.length) assert.deepEqual(evidence.profile, launches[0].profile);
   launches.push(evidence);
   stage('browser-start', evidence);
@@ -224,6 +225,10 @@ async function main() {
   await mkdir(directory, { recursive: true });
   try {
     report.os = (await run('/usr/bin/sw_vers', [], { timeout: 5000 })).stdout.trim();
+    const release = JSON.parse(await readFile(resolve(output, 'versions.json'), 'utf8'));
+    assert.equal(release.status, 'passed');
+    assert.equal(release.kind, kind);
+    report.release = release;
     fixture = await createDesktopOfflineFixture({
       directory,
       keyPath: resolve('test-results/desktop-tls/key.pem'),
@@ -250,6 +255,8 @@ async function main() {
       const before = await browser.evaluate<boolean>('navigator.storage.persisted()');
       await named('button', 'Document actions');
       await named('[role="menuitem"]', 'Available offline on this device');
+      const permission =
+        kind === 'firefox' && !before ? await browser.resolveStoragePrompt() : null;
       const message = await until(
         () =>
           browser.evaluate<string>(
@@ -291,6 +298,7 @@ async function main() {
         itemId: item.id,
         before,
         after,
+        permission,
         message,
       });
       await named('[role="dialog"] button', 'Done');
@@ -315,8 +323,23 @@ async function main() {
     }
     report.persistence = persistence;
     stage('all-four-downloads-complete');
-    stage('browser-stop', await browser.stop());
     await f.setOffline(true);
+    stage('transport-disabled-before-quit', await f.verifyDisconnected());
+    // Online openings may refresh another clean copy and remove its empty
+    // outbox. Observe the actual pre-quit records after the online scope ends;
+    // preserve full equality across the process boundary, including metadata.
+    await browser.goto(f.origin + '/');
+    await named('button', 'Shared with me');
+    for (const item of f.items) {
+      const beforeQuit = await local(f.actor.id, item.id);
+      assert.ok(beforeQuit.item);
+      assert.deepEqual(beforeQuit.item.bundle, initial.get(item.id)!.item!.bundle);
+      assert.deepEqual(beforeQuit.images, initial.get(item.id)!.images);
+      assert.equal(pending(beforeQuit.item.outbox?.checkpoint), false);
+      initial.set(item.id, beforeQuit);
+    }
+    stage('exact-records-captured-before-quit');
+    stage('browser-stop', await browser.stop());
     stage('transport-disabled-before-relaunch', await f.verifyDisconnected());
     await launch(f.origin + '/');
     await named('button', 'Shared with me');
@@ -567,6 +590,7 @@ async function main() {
       )
       .catch(String);
     await browser.screenshot(resolve(output, 'failure.png')).catch(() => {});
+    await browser.screenshot(resolve(output, 'failure-screen.png'), 'screen').catch(() => {});
     process.exitCode = 1;
   } finally {
     try {

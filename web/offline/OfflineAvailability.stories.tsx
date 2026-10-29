@@ -94,7 +94,7 @@ export const BrowserStorageLimits: Story = {
     await expect(guide.getByText('Safari', { exact: true })).toBeVisible();
     // On a phone the expanded guide is taller than the modal. Its final action
     // must scroll into view, remain clickable, and return to the parent result.
-    const done = guide.getByRole('button', { name: 'Done', exact: true });
+    const done = guide.getByRole('button', { name: 'Done' });
     done.scrollIntoView({ block: 'nearest' });
     await waitFor(() => {
       const bounds = done.getBoundingClientRect();
@@ -113,10 +113,12 @@ export const BrowserStorageLimits: Story = {
     await expect(args.allowNavigation).not.toHaveBeenCalled();
     // Leave the explanatory state open for the independent visual capture.
     await userEvent.click(trigger);
-    const reopened = within(body.getByRole('dialog', { name: 'About device storage' }));
+    const reopenedDialog = body.getByRole('dialog', { name: 'About device storage' });
+    const reopened = within(reopenedDialog);
     const summary = reopened.getByText('Browser storage limits', { exact: true });
-    await userEvent.click(summary);
-    summary.scrollIntoView({ block: 'nearest' });
+    if (!summary.closest('details')!.open) await userEvent.click(summary);
+    await expect(reopened.getByText('Safari', { exact: true })).toBeVisible();
+    reopenedDialog.scrollTo({ top: 0 });
   },
 };
 export const PendingRemoval: Story = {
