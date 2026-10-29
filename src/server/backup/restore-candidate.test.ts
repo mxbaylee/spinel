@@ -1,0 +1,374 @@
+import { randomBytes, randomUUID } from 'node:crypto';
+import { chmod, mkdtemp, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { dirname, join } from 'node:path';
+import { afterEach, expect, test, vi } from 'vitest';
+import { backup, DatabaseSync, openDatabase } from '../../../server/database.ts';
+import { AuthStore } from '../auth/store.ts';
+import { WorkspaceStore } from '../workspace/store.ts';
+import { SpaceStore } from '../workspace/spaces.ts';
+import { resolveSpaceScope } from '../workspace/space-scope.ts';
+import { migrateSpaceSchema } from '../workspace/space-schema.ts';
+import { TrashStore } from '../workspace/trash.ts';
+import { DocumentStore } from '../workspace/documents.ts';
+import { CollaborationStore } from '../collaboration/service.ts';
+import { BackupService } from './service.ts';
+import { recoveryInventory, verifyInventory, writeInventory } from './inventory.ts';
+import { reconcileRestoreCandidate } from './restore-candidate.ts';
+import { digest, makeArchive } from './archive.ts';
+import { prepareRestoreArchive, reconcilePreparedRestore } from './verification.ts';
+import type { ChildProcess } from 'node:child_process';
+
+// Hooks affect only this parent process. The restricted child runs unmodified
+// modules, including its own SQLite and cleanup operations.
+const boundaries = vi.hoisted(() => ({
+  remove: undefined as ((path: unknown) => void) | undefined,
+  fork: undefined as ((child: ChildProcess) => void) | undefined,
+}));
+vi.mock('node:fs/promises', async (original) => {
+  const actual = await original<typeof import('node:fs/promises')>();
+  return {
+    ...actual,
+    rm: async (...args: Parameters<typeof actual.rm>) => {
+      await actual.rm(...args);
+      boundaries.remove?.(args[0]);
+    },
+  };
+});
+vi.mock('node:child_process', async (original) => {
+  const actual = await original<typeof import('node:child_process')>();
+  return {
+    ...actual,
+    fork: (...args: Parameters<typeof actual.fork>) => {
+      const child = actual.fork(...args);
+      boundaries.fork?.(child);
+      return child;
+    },
+  };
+});
+
+vi.setConfig({ testTimeout: 30_000 });
+const cleanup: (() => unknown | Promise<unknown>)[] = [];
+afterEach(async () => {
+  boundaries.remove = undefined;
+  boundaries.fork = undefined;
+  vi.restoreAllMocks();
+  for (const close of cleanup.splice(0).reverse()) await close();
+});
+const options = { spacesEnabled: true, now: 1_000_000 };
+async function fixture() {
+  const directory = await mkdtemp(join(tmpdir(), 'spinel-restore-candidate-'));
+  cleanup.push(() => rm(directory, { recursive: true, force: true }));
+  const db = openDatabase(join(directory, 'current.sqlite'));
+  cleanup.push(() => db.close());
+  const auth = new AuthStore(db, () => options.now),
+    workspace = new WorkspaceStore(auth, { spacesEnabled: true });
+  migrateSpaceSchema(db);
+  const owner = auth.createUser('Owner'),
+    reader = auth.createUser('Collaborator');
+  auth.createUser('Operator', true);
+  const collaboration = new CollaborationStore(workspace, db.path);
+  cleanup.push(() => collaboration.close());
+  const service = new BackupService(db, {
+    databasePath: db.path,
+    origin: 'https://spinel.example',
+  });
+  cleanup.push(() => service.close());
+  const docs = new DocumentStore(workspace);
+  const doc = workspace.create(owner.id, { kind: 'doc', name: 'Archived', parentId: null });
+  docs.save(owner.id, doc.id, {
+    revision: 0,
+    writeId: randomUUID(),
+    snapshot: { id: doc.id, body: { dataStream: 'Retained\r\n' } },
+  });
+  await collaboration.prepare(owner.id, doc.id);
+  const root = new SpaceStore(workspace).createRoot(owner.id, {
+    name: 'Space',
+    parentId: null,
+  }).space;
+  db.prepare('INSERT INTO workspace_grants VALUES(?,?,?,0)').run(root.id, reader.id, 'viewer');
+  const session = auth.createSession(owner.id).token;
+  // Simulate a database that was previously recovered. Its current inventory
+  // will be stale after subsequent legitimate current writes.
+  db.exec(
+    'CREATE TABLE spinel_recovery (id INTEGER PRIMARY KEY CHECK(id=1), metadata TEXT NOT NULL, inventory TEXT) STRICT',
+  );
+  db.prepare('INSERT INTO spinel_recovery(id,metadata) VALUES(1,?)').run('{}');
+  const snapshot = async () => {
+    writeInventory(db);
+    const path = join(directory, `${randomUUID()}.sqlite`);
+    await backup(db, path);
+    const candidate = new DatabaseSync(path);
+    cleanup.push(() => candidate.close());
+    return candidate;
+  };
+  return { directory, db, auth, workspace, owner, reader, doc, root, session, snapshot };
+}
+
+test('composes current authority and Space access with archived content, fresh native identities and verified inventory', async () => {
+  const f = await fixture();
+  f.db.prepare('INSERT INTO workspace_grants VALUES(?,?,?,0)').run(f.doc.id, f.reader.id, 'editor');
+  const gone = f.workspace.create(f.owner.id, {
+    kind: 'folder',
+    name: 'Recovered trash',
+    parentId: null,
+  });
+  new TrashStore(f.workspace).trash(f.owner.id, gone.id);
+  const candidate = await f.snapshot();
+  const joined = f.auth.createUser('Joined after backup');
+  f.db
+    .prepare(
+      "INSERT INTO auth_passkeys(id,user_id,public_key,counter,transports,name,provider,created_at,last_used_at,backed_up,device_type) VALUES('current-key',?,x'0102',7,'[]','Current key','fixture',100,NULL,0,'singleDevice')",
+    )
+    .run(joined.id);
+  f.db.prepare('DELETE FROM workspace_grants WHERE item_id=?').run(f.doc.id);
+  f.db.prepare('UPDATE workspace_items SET name=? WHERE id=?').run('Current', f.doc.id);
+  f.db.exec("UPDATE backup_state SET last_good=200,lease=900,owner='current',job='verify'");
+  expect(() => verifyInventory(f.db)).toThrow('does not match');
+  const before = recoveryInventory(f.db);
+  const result = await reconcileRestoreCandidate(f.db, candidate, options);
+  expect(result.generations.rotated).toBe(1);
+  expect(result.generations.initialized).toBe(1);
+  expect(result.inventory).toEqual(verifyInventory(candidate));
+  expect(candidate.prepare('SELECT name FROM workspace_items WHERE id=?').get(f.doc.id)!.name).toBe(
+    'Archived',
+  );
+  expect(candidate.prepare('SELECT 1 FROM auth_sessions').get()).toBeUndefined();
+  expect(candidate.prepare('SELECT name FROM auth_users WHERE id=?').get(joined.id)!.name).toBe(
+    'Joined after backup',
+  );
+  expect(
+    candidate.prepare("SELECT user_id,counter FROM auth_passkeys WHERE id='current-key'").get(),
+  ).toEqual({ user_id: joined.id, counter: 7 });
+  expect(
+    candidate.prepare('SELECT 1 FROM workspace_grants WHERE item_id=?').get(f.doc.id),
+  ).toBeUndefined();
+  expect(
+    candidate.prepare('SELECT role FROM workspace_grants WHERE item_id=?').get(f.root.id)!.role,
+  ).toBe('viewer');
+  expect(candidate.prepare('SELECT count(*) AS n FROM workspace_recovery_holds').get()!.n).toBe(1);
+  const active = candidate
+    .prepare('SELECT unit_id FROM spinel_live_units WHERE item_id=?')
+    .get(f.doc.id)!.unit_id;
+  expect(active).not.toBe(f.doc.id);
+  expect(
+    candidate
+      .prepare("SELECT 1 FROM spinel_restore_fences WHERE kind='identity' AND id=?")
+      .get(f.doc.id),
+  ).toBeDefined();
+  expect(candidate.prepare('SELECT last_good,lease,owner,job FROM backup_state').get()).toEqual({
+    last_good: 200,
+    lease: 0,
+    owner: null,
+    job: null,
+  });
+  expect(recoveryInventory(f.db)).toEqual(before);
+  // Real Space permission reads use AuthStore's transaction wrapper. They must
+  // work while INSERT/UPDATE and writable RETURNING remain denied on this copy.
+  expect(resolveSpaceScope(f.auth, f.reader.id, f.root.id, f.root.id).access).toBe('viewer');
+  expect(() => f.db.prepare('UPDATE auth_users SET name=? RETURNING id').all('changed')).toThrow(
+    'frozen',
+  );
+  expect(() => candidate.exec('DELETE FROM workspace_items')).toThrow();
+});
+
+test('an authenticated inventory mismatch refuses before authority changes', async () => {
+  const f = await fixture(),
+    candidate = await f.snapshot();
+  candidate.prepare('UPDATE auth_users SET name=? WHERE id=?').run('Tampered', f.owner.id);
+  const before = recoveryInventory(candidate),
+    current = recoveryInventory(f.db);
+  await expect(reconcileRestoreCandidate(f.db, candidate, options)).rejects.toThrow(
+    'does not match',
+  );
+  expect(recoveryInventory(candidate)).toEqual(before);
+  expect(recoveryInventory(f.db)).toEqual(current);
+});
+
+test('matching old schemas cannot silently initialize a missing resolver index', async () => {
+  const f = await fixture();
+  f.db.exec('DROP INDEX workspace_links_expiry');
+  const candidate = await f.snapshot(),
+    before = recoveryInventory(candidate);
+  const exec = vi.spyOn(f.db, 'exec');
+  await expect(reconcileRestoreCandidate(f.db, candidate, options)).rejects.toThrow('compatible');
+  expect(exec).not.toHaveBeenCalled();
+  expect(recoveryInventory(candidate)).toEqual(before);
+});
+
+test('future constructor row side effects are detected even without a schema change', async () => {
+  const f = await fixture(),
+    candidate = await f.snapshot(),
+    exec = f.db.exec.bind(f.db);
+  vi.spyOn(f.db, 'exec').mockImplementation((sql) => {
+    exec(sql);
+    if (sql.includes('CREATE TABLE IF NOT EXISTS auth_users'))
+      exec('UPDATE auth_users SET name=name');
+  });
+  await expect(reconcileRestoreCandidate(f.db, candidate, options)).rejects.toThrow('compatible');
+  expect(candidate.prepare('SELECT count(*) AS n FROM auth_sessions').get()!.n).toBe(1);
+});
+
+test('late semantic failure publishes no result and makes the partially transformed candidate unusable for an in-place retry', async () => {
+  const f = await fixture(),
+    candidate = await f.snapshot(),
+    current = recoveryInventory(f.db);
+  // Semantic verification streams images, so inject at its actual read seam.
+  const iterate = candidate.iterate.bind(candidate);
+  vi.spyOn(candidate, 'iterate').mockImplementation(function* (sql, ...values) {
+    if (sql === 'SELECT item_id,id,mime,data FROM doc_images')
+      throw new Error('fixture semantic failure');
+    yield* iterate(sql, ...values);
+  });
+  await expect(reconcileRestoreCandidate(f.db, candidate, options)).rejects.toThrow(
+    'fixture semantic failure',
+  );
+  expect(candidate.prepare('SELECT 1 FROM auth_sessions').get()).toBeUndefined();
+  expect(recoveryInventory(f.db)).toEqual(current);
+  // Final verification deliberately leaves query_only set; only the worker may
+  // discard this file and rebuild from immutable authenticated input.
+  await expect(reconcileRestoreCandidate(f.db, candidate, options)).rejects.toThrow();
+});
+
+test('real isolated reconciliation publishes only the closed verified candidate, preserves inputs and removes current authority staging', async () => {
+  const f = await fixture(),
+    key = randomBytes(32),
+    keyFile = join(f.directory, 'recovery-key');
+  await writeFile(keyFile, key, { mode: 0o600 });
+  const recovery = {
+    format: 1 as const,
+    createdAt: '2026-10-29T00:00:00.000Z',
+    origin: 'https://spinel.example',
+    image: `sha256:${'a'.repeat(64)}`,
+    runtimeEnvironment: 'DO_NOT_APPLY=archived\n',
+    keyId: 'current',
+  };
+  const archive = await makeArchive(f.db, f.directory, key, recovery);
+  cleanup.push(archive.dispose);
+  const candidate = await prepareRestoreArchive({
+    archive: archive.archive,
+    keyFile,
+    stagingRoot: f.directory,
+    expectedOrigin: recovery.origin,
+    expectedImage: recovery.image,
+  });
+  cleanup.push(candidate.dispose);
+  const currentUser = f.auth.createUser('Joined after archive');
+  f.db.prepare('UPDATE workspace_items SET name=? WHERE id=?').run('Current', f.doc.id);
+  const currentPath = join(f.directory, 'frozen-current.sqlite');
+  await backup(f.db, currentPath);
+  await chmod(currentPath, 0o600);
+  const current = {
+    databasePath: currentPath,
+    databaseBytes: (await stat(currentPath)).size,
+    databaseSha256: await digest(currentPath),
+  };
+  const inputs = [
+    await readFile(currentPath),
+    await readFile(candidate.databasePath),
+    await readFile(archive.archive),
+  ];
+  const request = {
+    ...options,
+    candidate,
+    current,
+    stagingRoot: f.directory,
+    expectedOrigin: recovery.origin,
+    expectedImage: recovery.image,
+  };
+  const output = await reconcilePreparedRestore(request);
+  cleanup.push(output.dispose);
+  expect(output.databasePath).not.toBe(candidate.databasePath);
+  expect(output.recovery).toEqual(candidate.recovery);
+  expect(output.databaseSha256).toBe(await digest(output.databasePath));
+  expect(output.reconciliation?.credentials.currentAccounts).toBe(4);
+  expect(output.reconciliation?.generations.rotated).toBe(1);
+  expect(await readdir(dirname(dirname(output.databasePath)))).toEqual(['restored']);
+  expect(await readdir(dirname(output.databasePath))).toEqual(['spinel.sqlite']);
+  const opened = new DatabaseSync(output.databasePath);
+  try {
+    expect(verifyInventory(opened)).toEqual({ tables: output.tables, rows: output.rows });
+    expect(opened.prepare('SELECT name FROM workspace_items WHERE id=?').get(f.doc.id)!.name).toBe(
+      'Archived',
+    );
+    expect(opened.prepare('SELECT name FROM auth_users WHERE id=?').get(currentUser.id)!.name).toBe(
+      'Joined after archive',
+    );
+    expect(opened.prepare('SELECT 1 FROM auth_sessions').get()).toBeUndefined();
+  } finally {
+    opened.close();
+  }
+  expect([
+    await readFile(currentPath),
+    await readFile(candidate.databasePath),
+    await readFile(archive.archive),
+  ]).toEqual(inputs);
+  await output.dispose();
+  await expect(reconcilePreparedRestore({ ...request, timeoutMs: 1 })).rejects.toThrow();
+  const cancelled = new AbortController();
+  cancelled.abort();
+  await expect(
+    reconcilePreparedRestore({ ...request, signal: cancelled.signal }),
+  ).rejects.toThrow();
+  // Both copies exist when fork occurs; cancel the actual child and prove cleanup.
+  const activeCancellation = new AbortController();
+  let reachedFork = false;
+  boundaries.fork = () => {
+    reachedFork = true;
+    queueMicrotask(() => activeCancellation.abort());
+  };
+  await expect(
+    reconcilePreparedRestore({ ...request, signal: activeCancellation.signal }),
+  ).rejects.toThrow();
+  expect(reachedFork).toBe(true);
+  boundaries.fork = undefined;
+  // Stop only this owned child so the real timeout must kill and reap it.
+  reachedFork = false;
+  boundaries.fork = (child) => {
+    reachedFork = true;
+    child.kill('SIGSTOP');
+  };
+  await expect(reconcilePreparedRestore({ ...request, timeoutMs: 2_000 })).rejects.toThrow(
+    'time limit',
+  );
+  expect(reachedFork).toBe(true);
+  boundaries.fork = undefined;
+  const atPublication = (path: unknown) =>
+    typeof path === 'string' &&
+    path.includes('.restore-reconciled-') &&
+    path.endsWith('/current.sqlite');
+  const lateCancellation = new AbortController();
+  boundaries.remove = (path) => {
+    if (atPublication(path)) lateCancellation.abort();
+  };
+  await expect(
+    reconcilePreparedRestore({ ...request, signal: lateCancellation.signal }),
+  ).rejects.toThrow();
+  expect(lateCancellation.signal.aborted).toBe(true);
+  boundaries.remove = (path) => {
+    if (atPublication(path)) vi.spyOn(Date, 'now').mockReturnValue(Date.now() + 120_001);
+  };
+  await expect(reconcilePreparedRestore(request)).rejects.toThrow('time limit');
+  vi.restoreAllMocks();
+  boundaries.remove = undefined;
+  expect(await readFile(currentPath)).toEqual(inputs[0]);
+  // Refuse after credential overlay inside the real worker; expose no raw SQL.
+  const incompatible = new DatabaseSync(currentPath);
+  incompatible.prepare("UPDATE workspace_items SET kind='sheet' WHERE id=?").run(f.doc.id);
+  incompatible.close();
+  current.databaseSha256 = await digest(currentPath);
+  current.databaseBytes = (await stat(currentPath)).size;
+  const incompatibleBytes = await readFile(currentPath);
+  await expect(reconcilePreparedRestore(request)).rejects.toThrow('Recovery verification failed');
+  expect(await readFile(currentPath)).toEqual(incompatibleBytes);
+  // A changed source is refused during bounded copy, before any SQLite opening.
+  const changed = Buffer.from(inputs[0]);
+  changed[0] ^= 1;
+  await writeFile(currentPath, changed);
+  await expect(reconcilePreparedRestore(request)).rejects.toThrow('changed');
+  expect(
+    (await readdir(f.directory)).filter((name) => name.startsWith('.restore-reconciled-')),
+  ).toEqual([]);
+  expect(await readFile(candidate.databasePath)).toEqual(inputs[1]);
+  expect(await readFile(archive.archive)).toEqual(inputs[2]);
+}, 120_000);

@@ -1,8 +1,31 @@
 import { fork } from 'node:child_process';
-import { chmod, lstat, mkdtemp, readFile, realpath, rm, stat } from 'node:fs/promises';
+import {
+  chmod,
+  lstat,
+  mkdir,
+  mkdtemp,
+  readFile,
+  realpath,
+  rm,
+  stat,
+  statfs,
+} from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { isRecoveryResourceCode, RecoveryResourceError } from './resource-error.ts';
+import { digest } from './archive.ts';
+import {
+  assertSelfContained,
+  copyClosedRestoreInput,
+  validateClosedRestoreInput,
+} from './restore-input.ts';
+import type { ClosedRestoreInput } from './restore-input.ts';
+import type { reconcileRestoreCandidate } from './restore-candidate.ts';
+
+export type RestoreReconciliationSummary = Omit<
+  Awaited<ReturnType<typeof reconcileRestoreCandidate>>,
+  'inventory' | 'semantics'
+>;
 
 export interface PreparedRestore extends VerificationResult {
   /** Private staging only. This is not permission to activate the database. */
@@ -10,6 +33,7 @@ export interface PreparedRestore extends VerificationResult {
   databaseSha256: string;
   databaseBytes: number;
   recovery: { createdAt: string; origin: string; image: string };
+  reconciliation?: RestoreReconciliationSummary;
   dispose(): Promise<void>;
 }
 
@@ -17,6 +41,7 @@ interface PreparedEvidence {
   databaseSha256: string;
   databaseBytes: number;
   recovery: PreparedRestore['recovery'];
+  reconciliation?: RestoreReconciliationSummary;
 }
 type WorkerResult = VerificationResult & { prepared?: PreparedEvidence };
 
@@ -36,6 +61,38 @@ export interface VerificationOptions {
   maxDatabaseBytes?: number;
   timeoutMs?: number;
   signal?: AbortSignal;
+}
+export interface ReconcileRestoreOptions extends Omit<
+  VerificationOptions,
+  'archive' | 'keyFile' | 'expectedImage'
+> {
+  expectedImage: string;
+  /** Already authenticated and semantically verified archive output. */
+  candidate: ClosedRestoreInput & { recovery: PreparedRestore['recovery'] };
+  /** New closed snapshot made after drain, including acknowledged WAL writes. */
+  current: ClosedRestoreInput;
+  spacesEnabled: boolean;
+  now: number;
+}
+
+/** Prepare a new output in isolation. Neither input is modified or consumed.
+ * The supervisor still owns source custody, epoch fencing, rollback and health.
+ */
+export async function reconcilePreparedRestore(
+  options: ReconcileRestoreOptions,
+): Promise<PreparedRestore> {
+  if (
+    !/^(sha256:[a-f0-9]{64}|\S+@sha256:[a-f0-9]{64})$/.test(options.expectedImage) ||
+    !validPreparedEvidence(options.candidate, options) ||
+    typeof options.spacesEnabled !== 'boolean' ||
+    !Number.isSafeInteger(options.now) ||
+    options.now < 0
+  )
+    throw new Error('Invalid frozen recovery preparation.');
+  const result = await inspectArchive(options, true);
+  if (!('databasePath' in result))
+    throw new Error('Restore reconciliation did not retain a candidate.');
+  return result;
 }
 
 /** A child heap cap alone cannot protect a smaller application cgroup. Linux
@@ -91,24 +148,80 @@ export async function prepareRestoreArchive(
 }
 
 async function inspectArchive(
-  options: VerificationOptions,
+  options: VerificationOptions | ReconcileRestoreOptions,
   retain: boolean,
 ): Promise<VerificationResult | PreparedRestore> {
   options.signal?.throwIfAborted();
+  const limit = options.timeoutMs ?? 120_000;
+  if (!Number.isInteger(limit) || limit < 1 || limit > 10 * 60_000)
+    throw new Error('Invalid recovery verification time limit.');
+  const deadline = Date.now() + limit;
+  const operationSignal = AbortSignal.any([
+    AbortSignal.timeout(limit),
+    ...(options.signal ? [options.signal] : []),
+  ]);
   await checkVerificationHeadroom('start');
+  const reconciliation = 'current' in options ? options : undefined;
   const directory = await mkdtemp(
-    join(options.stagingRoot, retain ? '.restore-candidate-' : '.verify-'),
+    join(
+      options.stagingRoot,
+      reconciliation ? '.restore-reconciled-' : retain ? '.restore-candidate-' : '.verify-',
+    ),
   );
   let retained = false;
   try {
     await chmod(directory, 0o700);
-    const archive = await realpath(options.archive);
-    // Keep the configured final component so readKey's O_NOFOLLOW boundary is
-    // still effective; canonicalization here must not turn a symlink into a key.
-    const keyFile = resolve(options.keyFile);
-    const archiveInfo = await stat(archive);
-    if (!archiveInfo.isFile()) throw new Error('Recovery archive must be a regular file.');
-    if (archiveInfo.size > 5 * 1024 ** 3) throw new RecoveryResourceError('archive-size');
+    const inputReads: string[] = [];
+    let input: Record<string, unknown>;
+    if ('current' in options) {
+      const maximum = options.maxDatabaseBytes ?? 8 * 1024 ** 3;
+      if (!Number.isSafeInteger(maximum) || maximum < 4096 || maximum > 8 * 1024 ** 3)
+        throw new Error('Invalid recovery database limit.');
+      validateClosedRestoreInput(options.current, maximum);
+      validateClosedRestoreInput(options.candidate, maximum);
+      const space = await statfs(directory, { bigint: true });
+      if (
+        space.bavail * space.bsize <
+        BigInt(
+          3 * (options.current.databaseBytes + options.candidate.databaseBytes) + 256 * 1024 ** 2,
+        )
+      )
+        throw new RecoveryResourceError('disk-space');
+      await mkdir(join(directory, 'restored'), { mode: 0o700 });
+      const currentPath = join(directory, 'current.sqlite'),
+        candidatePath = join(directory, 'restored', 'spinel.sqlite');
+      await copyClosedRestoreInput(options.current, currentPath, operationSignal);
+      await copyClosedRestoreInput(options.candidate, candidatePath, operationSignal);
+      input = {
+        kind: 'reconcile',
+        current: {
+          databasePath: resolve(currentPath),
+          databaseSha256: options.current.databaseSha256,
+          databaseBytes: options.current.databaseBytes,
+        },
+        candidate: {
+          databasePath: resolve(candidatePath),
+          databaseSha256: options.candidate.databaseSha256,
+          databaseBytes: options.candidate.databaseBytes,
+          recovery: {
+            createdAt: options.candidate.recovery.createdAt,
+            origin: options.candidate.recovery.origin,
+            image: options.candidate.recovery.image,
+          },
+        },
+        spacesEnabled: options.spacesEnabled,
+        now: options.now,
+      };
+    } else {
+      const archive = await realpath(options.archive);
+      // Preserve the final component for readKey's O_NOFOLLOW boundary.
+      const keyFile = resolve(options.keyFile);
+      const archiveInfo = await stat(archive);
+      if (!archiveInfo.isFile()) throw new Error('Recovery archive must be a regular file.');
+      if (archiveInfo.size > 5 * 1024 ** 3) throw new RecoveryResourceError('archive-size');
+      inputReads.push(archive, keyFile, await realpath(keyFile));
+      input = { kind: 'archive', archive, keyFile };
+    }
     const root = fileURLToPath(new URL('../../../', import.meta.url));
     const reads = new Set([
       join(root, 'server'),
@@ -118,9 +231,7 @@ async function inspectArchive(
       join(root, 'node_modules'),
       await realpath(join(root, 'node_modules')),
       directory,
-      archive,
-      keyFile,
-      await realpath(keyFile),
+      ...inputReads,
     ]);
     for (const name of [
       '@spinel/sync-server',
@@ -129,9 +240,8 @@ async function inspectArchive(
       '@spinel/diagnostics',
     ])
       reads.add(dirname(fileURLToPath(import.meta.resolve(name))));
-    const timeoutMs = options.timeoutMs ?? 120_000;
-    if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 10 * 60_000)
-      throw new Error('Invalid recovery verification time limit.');
+    operationSignal.throwIfAborted();
+    const timeoutMs = Math.max(1, deadline - Date.now());
     const result = await new Promise<WorkerResult>((resolveResult, reject) => {
       let result: WorkerResult | undefined;
       let failure: Error | undefined;
@@ -201,7 +311,8 @@ async function inspectArchive(
             return typeof count === 'number' && Number.isSafeInteger(count) && count >= 0;
           }) ||
           (value.result.keyId !== undefined && !/^[a-zA-Z0-9_-]{1,80}$/.test(value.result.keyId)) ||
-          (retain && !validPreparedEvidence(value.result.prepared, options))
+          (retain && !validPreparedEvidence(value.result.prepared, options)) ||
+          (reconciliation && !validReconciliationSummary(value.result.prepared?.reconciliation))
         ) {
           stop(
             new Error(
@@ -226,8 +337,7 @@ async function inspectArchive(
       });
       child.send(
         {
-          archive,
-          keyFile,
+          ...input,
           directory: resolve(directory),
           expectedOrigin: options.expectedOrigin,
           expectedImage: options.expectedImage,
@@ -240,14 +350,28 @@ async function inspectArchive(
       );
       if (options.signal?.aborted) abort();
     });
-    options.signal?.throwIfAborted();
+    operationSignal.throwIfAborted();
     const { prepared, ...verification } = result;
     if (!retain || !prepared) return verification;
     const databasePath = join(directory, 'restored', 'spinel.sqlite');
     const info = await lstat(databasePath);
-    if (!info.isFile() || info.size !== prepared.databaseBytes || (info.mode & 0o077) !== 0)
+    if (
+      !info.isFile() ||
+      info.nlink !== 1 ||
+      info.uid !== process.getuid?.() ||
+      info.size !== prepared.databaseBytes ||
+      (info.mode & 0o077) !== 0
+    )
       throw new Error('The prepared restore database is unavailable.');
-    options.signal?.throwIfAborted();
+    await assertSelfContained(databasePath);
+    if ((await digest(databasePath, operationSignal)) !== prepared.databaseSha256)
+      throw new Error('The prepared restore database changed.');
+    if (reconciliation) {
+      for (const suffix of ['', '-wal', '-shm', '-journal'])
+        await rm(join(directory, 'current.sqlite') + suffix, { force: true });
+    }
+    operationSignal.throwIfAborted();
+    if (Date.now() >= deadline) throw new RecoveryResourceError('time-limit');
     retained = true;
     return {
       ...verification,
@@ -255,6 +379,10 @@ async function inspectArchive(
       databasePath,
       dispose: () => rm(directory, { recursive: true, force: true }),
     };
+  } catch (error) {
+    if (operationSignal.aborted && !options.signal?.aborted)
+      throw new RecoveryResourceError('time-limit');
+    throw error;
   } finally {
     if (!retained) await rm(directory, { recursive: true, force: true });
   }
@@ -262,7 +390,7 @@ async function inspectArchive(
 
 function validPreparedEvidence(
   value: unknown,
-  options: VerificationOptions,
+  options: Pick<VerificationOptions, 'expectedOrigin' | 'expectedImage' | 'maxDatabaseBytes'>,
 ): value is PreparedEvidence {
   if (!value || typeof value !== 'object') return false;
   const evidence = value as PreparedEvidence;
@@ -272,10 +400,49 @@ function validPreparedEvidence(
     Number.isSafeInteger(evidence.databaseBytes) &&
     evidence.databaseBytes >= 4096 &&
     evidence.databaseBytes <= (options.maxDatabaseBytes ?? 8 * 1024 ** 3) &&
+    (evidence.reconciliation === undefined ||
+      validReconciliationSummary(evidence.reconciliation)) &&
     !!evidence.recovery &&
     typeof evidence.recovery.createdAt === 'string' &&
     Number.isFinite(Date.parse(evidence.recovery.createdAt)) &&
     evidence.recovery.origin === options.expectedOrigin &&
     evidence.recovery.image === options.expectedImage
   );
+}
+
+function validReconciliationSummary(value: unknown): value is RestoreReconciliationSummary {
+  const fields: Record<keyof RestoreReconciliationSummary, readonly string[]> = {
+    credentials: ['currentAccounts', 'currentPasskeys'],
+    ownership: [
+      'currentItems',
+      'isolatedItems',
+      'isolatedGroups',
+      'detachedRoots',
+      'heldTrashBatches',
+    ],
+    grants: ['copied', 'removed', 'downgraded'],
+    receipts: ['copied', 'matched'],
+    operations: ['copied', 'defaulted'],
+    generations: ['rotated', 'initialized', 'revisionOffset'],
+  };
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const groups = value as Record<string, unknown>;
+  if (Object.keys(groups).length !== Object.keys(fields).length) return false;
+  return Object.entries(fields).every(([group, keys]) => {
+    const values = groups[group];
+    if (
+      !values ||
+      typeof values !== 'object' ||
+      Array.isArray(values) ||
+      Object.keys(values).length !== keys.length
+    )
+      return false;
+    const counts = values as Record<string, unknown>;
+    return keys.every(
+      (key) =>
+        typeof counts[key] === 'number' &&
+        Number.isSafeInteger(counts[key]) &&
+        Number(counts[key]) >= 0,
+    );
+  });
 }
