@@ -1,6 +1,17 @@
 import { createHash } from 'node:crypto';
 import { constants, createReadStream } from 'node:fs';
-import { chmod, copyFile, link, lstat, mkdir, open, realpath, rm, statfs } from 'node:fs/promises';
+import {
+  chmod,
+  copyFile,
+  link,
+  lstat,
+  mkdir,
+  open,
+  opendir,
+  realpath,
+  rm,
+  statfs,
+} from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import type { FileIdentity } from './journal.ts';
 import { assertNoPendingRestore, restoreBarrierPath } from './restore-barrier.ts';
@@ -126,9 +137,13 @@ function directory(root: string, id: string) {
     throw unavailable();
   return join(root, `restore-${id}`);
 }
-async function copy(source: string, target: string) {
+async function copy(source: string, target: string, signal?: AbortSignal) {
+  signal?.throwIfAborted();
   const before = await ownedFile(source);
+  signal?.throwIfAborted();
   await copyFile(source, target, constants.COPYFILE_EXCL);
+  // Native copying is not abortable. Settle it, harden and sync its completed
+  // output before reporting cancellation, so exact custody retry remains valid.
   await chmod(target, 0o600);
   const handle = await open(target, constants.O_RDONLY | constants.O_NOFOLLOW);
   try {
@@ -143,7 +158,8 @@ async function copy(source: string, target: string) {
     before.mtimeMs !== after.mtimeMs
   )
     throw unavailable();
-  return evidence(target);
+  signal?.throwIfAborted();
+  return evidence(target, signal);
 }
 
 function requireSameEvidence(actual: RestoreFileEvidence, expected: RestoreFileEvidence) {
@@ -379,47 +395,149 @@ export async function prepareRestoreFiles(options: {
 
 /** Preserve the closed raw tuple BEFORE opening a disposable clone or generating
  * the final reconciled candidate. Journal this manifest before advancing. */
-export async function preserveRestoreOriginals(options: {
+interface RestoreOriginalOptions {
+  /** One controller deadline/cancellation signal covers the complete raw tuple. */
+  signal?: AbortSignal;
   root: string;
   id: string;
   databasePath: string;
   assertClosed(): void;
-}): Promise<RestoreOriginals> {
+}
+
+export function validRestoreOriginals(value: unknown): value is RestoreOriginals {
+  if (
+    !sourceShape(value, ['id', 'identity', 'original']) ||
+    typeof value.id !== 'string' ||
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(value.id) ||
+    !sourceShape(value.identity, ['device', 'inode']) ||
+    ![value.identity.device, value.identity.inode].every(
+      (n) => typeof n === 'string' && /^(0|[1-9][0-9]{0,19})$/.test(n),
+    ) ||
+    !sourceShape(value.original, [...names])
+  )
+    return false;
+  const original = value.original;
+  return names.every((name) => {
+    const file = original[name];
+    if (file === null) return name !== 'spinel.sqlite';
+    return (
+      sourceShape(file, ['bytes', 'sha256']) &&
+      Number.isSafeInteger(file.bytes) &&
+      Number(file.bytes) >= (name === 'spinel.sqlite' ? 1 : 0) &&
+      Number(file.bytes) <= MAX_DATABASE &&
+      typeof file.sha256 === 'string' &&
+      /^[a-f0-9]{64}$/.test(file.sha256)
+    );
+  });
+}
+
+/** Read only, under exclusive closure. Persist this manifest before copying when
+ * the controller needs crash-safe retry; later copies never redefine originals. */
+export async function captureRestoreOriginals(
+  options: RestoreOriginalOptions,
+): Promise<RestoreOriginals> {
+  options.signal?.throwIfAborted();
   options.assertClosed();
   assertNoPendingRestore(options.databasePath);
+  directory(options.root, options.id);
   await privateDirectory(options.root);
   const source = await ownedFile(options.databasePath);
   await noRollbackJournal(options.databasePath);
-  const original = {} as RestoreFiles['original'];
+  const original = {} as RestoreOriginals['original'];
   for (const name of names) {
     try {
-      original[name] = await evidence(options.databasePath + name.slice('spinel.sqlite'.length));
+      original[name] = await evidence(
+        options.databasePath + name.slice('spinel.sqlite'.length),
+        options.signal,
+      );
     } catch (error) {
       if (name === 'spinel.sqlite' || (error as NodeJS.ErrnoException).code !== 'ENOENT')
         throw error;
       original[name] = null;
     }
   }
-  const originalBytes = Object.values(original).reduce((sum, file) => sum + (file?.bytes ?? 0), 0);
-  const space = await statfs(options.root, { bigint: true });
-  if (space.bavail * space.bsize < BigInt(originalBytes + RESERVE))
-    throw new Error('Not enough disk space to retain the original generation.');
-  const target = directory(options.root, options.id);
-  await mkdir(target, { mode: 0o700 });
-  await mkdir(join(target, 'original'), { mode: 0o700 });
-  for (const name of names) {
-    if (original[name]) {
-      const sourcePath = options.databasePath + name.slice('spinel.sqlite'.length);
-      requireSameEvidence(await copy(sourcePath, join(target, 'original', name)), original[name]!);
+  const result = { id: options.id, identity: identity(source), original };
+  if (!validRestoreOriginals(result)) throw unavailable();
+  await unchangedOriginal(options.databasePath, result, options.signal);
+  if (!same(result.identity, identity(await ownedFile(options.databasePath)))) throw unavailable();
+  options.signal?.throwIfAborted();
+  options.assertClosed();
+  assertNoPendingRestore(options.databasePath);
+  options.signal?.throwIfAborted();
+  return result;
+}
+
+export async function preserveRestoreOriginals(
+  options: RestoreOriginalOptions,
+  expected?: RestoreOriginals,
+): Promise<RestoreOriginals> {
+  const snapshot = expected === undefined ? undefined : structuredClone(expected);
+  if (snapshot !== undefined && (!validRestoreOriginals(snapshot) || snapshot.id !== options.id))
+    throw unavailable();
+  const current = await captureRestoreOriginals(options);
+  options.signal?.throwIfAborted();
+  if (snapshot) {
+    if (!same(current.identity, snapshot.identity)) throw unavailable();
+    for (const name of names) {
+      const a = current.original[name],
+        b = snapshot.original[name];
+      if (a === null || b === null) {
+        if (a !== b) throw unavailable();
+      } else requireSameEvidence(a, b);
     }
   }
-  await syncDirectory(join(target, 'original'));
+  const result = snapshot ?? current;
+  const target = directory(options.root, options.id),
+    originalDirectory = join(target, 'original');
+  for (const path of [target, originalDirectory]) {
+    options.signal?.throwIfAborted();
+    try {
+      await mkdir(path, { mode: 0o700 });
+    } catch (error) {
+      // An existing directory alone never proves that this is the same attempt.
+      if (!snapshot || (error as NodeJS.ErrnoException).code !== 'EEXIST') throw error;
+    }
+    await privateDirectory(path);
+  }
+  const present = new Set<string>();
+  for await (const entry of await opendir(originalDirectory, { bufferSize: 4 })) {
+    if (!names.includes(entry.name as Name) || !result.original[entry.name as Name])
+      throw unavailable();
+    present.add(entry.name);
+  }
+  let missingBytes = 0;
+  for (const name of names) {
+    const file = result.original[name];
+    if (!file) continue;
+    if (present.has(name))
+      await syncExistingCandidate(join(originalDirectory, name), file, options.signal);
+    else missingBytes += file.bytes;
+  }
+  const space = await statfs(options.root, { bigint: true });
+  if (space.bavail * space.bsize < BigInt(missingBytes + RESERVE))
+    throw new Error('Not enough disk space to retain the original generation.');
+  for (const name of names) {
+    if (result.original[name] && !present.has(name)) {
+      const sourcePath = options.databasePath + name.slice('spinel.sqlite'.length);
+      requireSameEvidence(
+        await copy(sourcePath, join(originalDirectory, name), options.signal),
+        result.original[name]!,
+      );
+    }
+  }
+  await syncDirectory(originalDirectory);
   await syncDirectory(target);
   await syncDirectory(options.root);
+  options.signal?.throwIfAborted();
   options.assertClosed();
-  if (!same(identity(source), identity(await ownedFile(options.databasePath)))) throw unavailable();
-  const result = { id: options.id, identity: identity(source), original };
-  await unchangedOriginal(options.databasePath, result);
+  assertNoPendingRestore(options.databasePath);
+  if (!same(result.identity, identity(await ownedFile(options.databasePath)))) throw unavailable();
+  await unchangedOriginal(options.databasePath, result, options.signal);
+  if (!same(result.identity, identity(await ownedFile(options.databasePath)))) throw unavailable();
+  options.signal?.throwIfAborted();
+  options.assertClosed();
+  assertNoPendingRestore(options.databasePath);
+  options.signal?.throwIfAborted();
   return result;
 }
 
@@ -500,6 +618,7 @@ async function syncExistingCandidate(
   expected: RestoreFileEvidence,
   signal?: AbortSignal,
 ) {
+  signal?.throwIfAborted();
   const before = await ownedFile(path);
   if (before.mode & 0o077) throw unavailable();
   const handle = await open(path, constants.O_RDONLY | constants.O_NOFOLLOW);
@@ -519,6 +638,7 @@ async function syncExistingCandidate(
     await unchanged();
     await handle.sync();
     await unchanged();
+    signal?.throwIfAborted();
   } finally {
     await handle.close();
   }
@@ -538,11 +658,16 @@ async function noRollbackJournal(databasePath: string) {
   }
   throw new Error('Unexpected rollback journal evidence requires independent recovery.');
 }
-async function unchangedOriginal(databasePath: string, files: RestoreOriginals) {
+async function unchangedOriginal(
+  databasePath: string,
+  files: RestoreOriginals,
+  signal?: AbortSignal,
+) {
+  signal?.throwIfAborted();
   await noRollbackJournal(databasePath);
   for (const name of names) {
     const path = databasePath + name.slice('spinel.sqlite'.length);
-    if (files.original[name]) await requireEvidence(path, files.original[name]!);
+    if (files.original[name]) await requireEvidence(path, files.original[name]!, signal);
     else {
       try {
         await lstat(path);

@@ -13,13 +13,15 @@ import {
 } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { afterEach, expect, test } from 'vitest';
+import { afterEach, expect, test, vi } from 'vitest';
 import { assertNoPendingRestore, restoreBarrierPath } from './restore-barrier.ts';
 import {
   activateRestoreFiles,
   commitRestoreFiles,
   prepareRestoreFiles,
   preserveRestoreOriginals,
+  captureRestoreOriginals,
+  validRestoreOriginals,
   stageRestoreCandidate,
   rollbackRestoreFiles,
   retainRestoreSource,
@@ -29,8 +31,23 @@ import {
 import type { RestoreFileControl, RestoreFilePhase } from './restore-files.ts';
 import type { PreparedRestoreSource } from '../backup/verification.ts';
 
+const copyBoundary = vi.hoisted(() => ({
+  afterCopy: undefined as undefined | ((source: unknown, target: unknown) => void | Promise<void>),
+}));
+vi.mock('node:fs/promises', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('node:fs/promises')>();
+  return {
+    ...actual,
+    async copyFile(...args: Parameters<typeof actual.copyFile>) {
+      await actual.copyFile(...args);
+      await copyBoundary.afterCopy?.(args[0], args[1]);
+    },
+  };
+});
+
 const directories: string[] = [];
 afterEach(async () => {
+  copyBoundary.afterCopy = undefined;
   for (const directory of directories.splice(0))
     await rm(directory, { recursive: true, force: true });
 });
@@ -398,6 +415,144 @@ test('original custody precedes candidate generation and staging retries never r
   expect(await readFile(join(custody, 'original', 'spinel.sqlite'))).toEqual(f.original);
   await activateRestoreFiles(f.control, files);
   expect(await readFile(f.databasePath)).toEqual(f.candidate);
+});
+
+test('a pre-captured original manifest resumes only exact completed copies and fills missing files', async () => {
+  const f = await fixture(),
+    manifest = await captureRestoreOriginals(f);
+  expect(validRestoreOriginals(manifest)).toBe(true);
+  const custody = join(f.root, `restore-${f.id}`),
+    original = join(custody, 'original');
+  await expect(lstat(custody)).rejects.toHaveProperty('code', 'ENOENT');
+  await mkdir(original, { recursive: true, mode: 0o700 });
+  const copied = join(original, 'spinel.sqlite');
+  await writeFile(copied, f.original, { mode: 0o600 });
+  const before = await lstat(copied);
+  expect(await preserveRestoreOriginals(f, manifest)).toEqual(manifest);
+  expect(await preserveRestoreOriginals(f, manifest)).toEqual(manifest);
+  expect((await lstat(copied)).ino).toBe(before.ino);
+  expect(await readFile(join(original, 'spinel.sqlite-wal'))).toEqual(f.wal);
+  expect(await readFile(join(original, 'spinel.sqlite-shm'))).toEqual(f.shm);
+  await expect(preserveRestoreOriginals(f)).rejects.toHaveProperty('code', 'EEXIST');
+  expect(await readFile(f.databasePath)).toEqual(f.original);
+});
+
+test.each([null, false, 0, {}, { original: null }])(
+  'malformed supplied custody manifest %j cannot become a fresh capture',
+  async (value) => {
+    const f = await fixture();
+    await expect(
+      preserveRestoreOriginals(
+        f,
+        value as unknown as Parameters<typeof preserveRestoreOriginals>[1],
+      ),
+    ).rejects.toThrow('changed');
+    await expect(lstat(join(f.root, `restore-${f.id}`))).rejects.toHaveProperty('code', 'ENOENT');
+    expect(await readFile(f.databasePath)).toEqual(f.original);
+  },
+);
+
+test('original custody cancellation is checked before copying and after final closure verification', async () => {
+  const f = await fixture(),
+    manifest = await captureRestoreOriginals(f);
+  const early = new AbortController();
+  early.abort();
+  await expect(
+    preserveRestoreOriginals({ ...f, signal: early.signal }, manifest),
+  ).rejects.toThrow();
+  await expect(lstat(join(f.root, `restore-${f.id}`))).rejects.toHaveProperty('code', 'ENOENT');
+  const late = new AbortController();
+  let closures = 0;
+  await expect(
+    preserveRestoreOriginals(
+      {
+        ...f,
+        signal: late.signal,
+        assertClosed() {
+          f.assertClosed();
+          if (++closures === 4) late.abort();
+        },
+      },
+      manifest,
+    ),
+  ).rejects.toThrow();
+  expect(closures).toBe(4);
+  // Completed copies survive an unacknowledged attempt; retry must authenticate and sync them.
+  expect(await preserveRestoreOriginals(f, manifest)).toEqual(manifest);
+  expect(await readFile(f.databasePath)).toEqual(f.original);
+});
+
+test('cancellation during native copy waits for private durable output before permitting exact retry', async () => {
+  const f = await fixture(),
+    manifest = await captureRestoreOriginals(f),
+    controller = new AbortController();
+  let copied!: () => void, release!: () => void;
+  const reachedCopy = new Promise<void>((resolve) => {
+    copied = resolve;
+  });
+  const releaseCopy = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  copyBoundary.afterCopy = async (source) => {
+    if (source === f.databasePath) {
+      copied();
+      await releaseCopy;
+    }
+  };
+  let settled = false;
+  const pending = preserveRestoreOriginals({ ...f, signal: controller.signal }, manifest);
+  void pending.then(
+    () => {
+      settled = true;
+    },
+    () => {
+      settled = true;
+    },
+  );
+  try {
+    await reachedCopy;
+    controller.abort();
+    await Promise.resolve();
+    expect(settled).toBe(false);
+  } finally {
+    release();
+  }
+  await expect(pending).rejects.toThrow();
+  const copiedPath = join(f.root, `restore-${f.id}`, 'original', 'spinel.sqlite');
+  expect((await lstat(copiedPath)).mode & 0o077).toBe(0);
+  expect(await readFile(copiedPath)).toEqual(f.original);
+  expect(await preserveRestoreOriginals(f, manifest)).toEqual(manifest);
+});
+
+test('retry never overwrites a partial original or redefines it after current content changes', async () => {
+  const f = await fixture(),
+    manifest = await captureRestoreOriginals(f);
+  const original = join(f.root, `restore-${f.id}`, 'original');
+  await mkdir(original, { recursive: true, mode: 0o700 });
+  const copied = join(original, 'spinel.sqlite');
+  await writeFile(copied, 'partial retained evidence', { mode: 0o600 });
+  await expect(preserveRestoreOriginals(f, manifest)).rejects.toThrow('changed');
+  expect(await readFile(copied, 'utf8')).toBe('partial retained evidence');
+  await expect(lstat(join(original, 'spinel.sqlite-wal'))).rejects.toHaveProperty('code', 'ENOENT');
+  await writeFile(f.databasePath + '-wal', 'later current writes');
+  await expect(preserveRestoreOriginals(f, manifest)).rejects.toThrow('changed');
+  expect(await readFile(copied, 'utf8')).toBe('partial retained evidence');
+});
+
+test('explicit absent-sidecar custody and its private directory cannot be replaced on retry', async () => {
+  const f = await fixture();
+  await rm(f.databasePath + '-wal');
+  const manifest = await captureRestoreOriginals(f);
+  expect(manifest.original['spinel.sqlite-wal']).toBeNull();
+  await preserveRestoreOriginals(f, manifest);
+  const original = join(f.root, `restore-${f.id}`, 'original'),
+    extra = join(original, 'spinel.sqlite-wal');
+  await writeFile(extra, 'unbound evidence', { mode: 0o600 });
+  await expect(preserveRestoreOriginals(f, manifest)).rejects.toThrow('changed');
+  expect(await readFile(extra, 'utf8')).toBe('unbound evidence');
+  await rm(extra);
+  await chmod(original, 0o755);
+  await expect(preserveRestoreOriginals(f, manifest)).rejects.toThrow('changed');
 });
 
 test('a changed current WAL after custody refuses staging without changing retained originals', async () => {
