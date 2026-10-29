@@ -136,6 +136,25 @@ export class SQLiteSyncStorage implements SyncStorage {
       if (!current) throw new SyncError('unavailable');
       if (current.revision !== expectedRevision) throw new SyncError('stale');
       if (current.kind !== unit.kind) throw new SyncError('malformed');
+      // Workspace recovery can establish a large logical offset. Check the
+      // addition inside the same transaction as the receipt/head, so the first
+      // exhausted edit cannot commit an unrepresentable logical revision.
+      const hasGenerations = this.auth.database
+        .prepare("SELECT 1 FROM sqlite_schema WHERE type='table' AND name='spinel_live_units'")
+        .get();
+      const offset = hasGenerations
+        ? Number(
+            this.auth.database
+              .prepare('SELECT revision_offset FROM spinel_live_units WHERE unit_id=?')
+              .get(unit.unitId)?.revision_offset ?? 0,
+          )
+        : 0;
+      if (
+        !Number.isSafeInteger(offset) ||
+        offset < 0 ||
+        unit.revision > Number.MAX_SAFE_INTEGER - offset
+      )
+        throw new SyncError('capacity');
       if (this.receipt(unit.unitId, edit.actorId, edit.mutationId))
         throw new SyncError('retry-conflict');
       this.auth.database

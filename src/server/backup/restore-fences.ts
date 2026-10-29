@@ -67,14 +67,15 @@ export function reconcileRestoreFences(current: DatabaseSync, candidate: Databas
         bindings.set(id, binding);
       }
   }
-  candidate.exec('BEGIN IMMEDIATE');
+  candidate.exec('SAVEPOINT restore_fence_union');
   try {
     const insert = candidate.prepare('INSERT OR IGNORE INTO spinel_restore_fences VALUES(?,?)');
     for (const id of identities) insert.run('identity', id);
     for (const id of requests) insert.run('request', id);
-    candidate.exec('COMMIT');
+    candidate.exec('RELEASE restore_fence_union');
   } catch (error) {
-    candidate.exec('ROLLBACK');
+    candidate.exec('ROLLBACK TO restore_fence_union');
+    candidate.exec('RELEASE restore_fence_union');
     throw error;
   }
   return { identities: identities.size, requests: requests.size };

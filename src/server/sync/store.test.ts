@@ -146,6 +146,22 @@ test('the compare-and-swap head rejects a second writer and a used retry identit
   expect(f.store.receipt(f.item.id, f.editor.id, first.edit.mutationId)).toEqual(first.edit);
 });
 
+test('logical revision exhaustion refuses the next write atomically while keeping the accepted receipt', async () => {
+  const f = await fixture();
+  new CollaborationGenerations(f.workspace);
+  f.database
+    .prepare('INSERT INTO spinel_live_units VALUES(?,?,?)')
+    .run(f.item.id, f.item.id, Number.MAX_SAFE_INTEGER - 2);
+  const accepted = next(f.unit, f.editor.id);
+  f.store.commit(accepted, f.guard);
+  const refused = next(accepted.unit, f.editor.id);
+  expect(() => f.store.commit(refused, f.guard)).toThrow('capacity');
+  expect(f.store.load(f.item.id)).toEqual(accepted.unit);
+  expect(f.store.receipt(f.item.id, f.editor.id, accepted.edit.mutationId)).toEqual(accepted.edit);
+  expect(f.store.receipt(f.item.id, f.editor.id, refused.edit.mutationId)).toBeUndefined();
+  expect(f.store.revisions(f.item.id, 1, 2)).toEqual([accepted.edit]);
+});
+
 test.each(['session', 'grant'] as const)(
   'a %s revoked after materialization is refused by the final transaction guard',
   async (revoked) => {
