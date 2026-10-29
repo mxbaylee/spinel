@@ -24,6 +24,17 @@ that isn't waiting on another is next.
 - **Never reuse a ticket ID.** Use `npm run backlog:new`.
 - **One ticket per PR**, titled `<ticket emoji> SPN-NNN <ticket title>`. Squash
   merge only.
+- **Size the complete outcome before building.** Include integration, authority,
+  persistence, native/platform investigation and verification; record early scope
+  checkpoints. Splits retain every remaining requirement and its estimate, so a
+  closed parent never hides larger follow-ups. [Scope accounting](docs/implementation/grooming-2026-10-29.md#scope-growth-and-outcome-accounting).
+- **Final evidence belongs in the PR description or maintained code.** Preserve
+  exact source/check/review identities, measurements, useful visuals and failure
+  dispositions; comments and expiring artifacts only supplement that record.
+  After merge, preserve unique work and delete every obsolete ticket-created
+  implementation/review/integration/evidence branch after rechecking its head
+  and active PR ownership. Record access-blocked cleanup explicitly. Owner, chat
+  2026-10-29; [evidence and cleanup](docs/implementation/grooming-2026-10-29.md#evidence-and-branch-completion).
 - **Weigh every persona** in [docs/product/personas.md](docs/product/personas.md)
   when deciding anything, and log the decision as described in process.md.
 - **Decisions live in `docs/implementation/SPN-NNN.md`**, beside implementation notes, following [the record convention](docs/implementation/README.md). Link them from ticket Rules; [SPN-096's inventory](docs/implementation/SPN-096.md) maps legacy issues to canonical records with original provenance. Owner, chat 2026-10-22.
