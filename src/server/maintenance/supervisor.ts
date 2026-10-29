@@ -34,6 +34,7 @@ import type { OperationReceipt, ProcessIdentity } from './journal.ts';
 import { MAINTENANCE_CHANNEL } from './supervisor-client.ts';
 import { shareWorkspaceOwnership } from './ownership.ts';
 import { processResourcesReleased, waitForProcessInventory } from './process-exit.ts';
+import { assertNoPendingRestore } from './restore-barrier.ts';
 
 const DRAIN_MS = 30_000;
 const STOP_MS = 15_000;
@@ -695,6 +696,7 @@ export class MaintenanceSupervisor {
     }
   }
   private async resume() {
+    assertNoPendingRestore(this.journal.databasePath);
     this.assertGeneration();
     if (
       !this.childReady ||
@@ -750,6 +752,7 @@ export class MaintenanceSupervisor {
     }
   }
   private async verify() {
+    assertNoPendingRestore(this.journal.databasePath);
     if (
       this.childReady ||
       this.child?.exitCode === null ||
@@ -832,6 +835,7 @@ export class MaintenanceSupervisor {
     }
   }
   private async start() {
+    assertNoPendingRestore(this.journal.databasePath);
     if (this.journal.state.phase !== 'stopped' || this.journal.state.verifiedAt === null)
       throw new Error('Verify the closed workspace before starting it.');
     this.assertGeneration();

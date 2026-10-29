@@ -17,6 +17,7 @@ import { createServer } from 'node:net';
 import type { Server } from 'node:net';
 import { basename, dirname, isAbsolute, join, resolve, sep } from 'node:path';
 import type { MaintenanceNotice, MaintenancePhase } from '../../shared/maintenance.ts';
+import { assertNoPendingRestore } from './restore-barrier.ts';
 
 export const AUTHORITY_MS = 5 * 60_000;
 export const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -178,14 +179,20 @@ export function workspaceOwnershipAddresses(databasePath: string, identity: File
 // Pin the unref'd servers until explicit pre-open/test cleanup or process exit.
 const heldWorkspaceLeases = new Set<WorkspaceLease>();
 
-async function acquireWorkspaceLease(databasePath: string, kind: 'workspace' | 'application') {
+async function acquireWorkspaceLease(
+  databasePath: string,
+  kind: 'workspace' | 'application',
+  supervised = false,
+) {
   const canonical = canonicalDatabasePath(databasePath);
+  if (!supervised) assertNoPendingRestore(canonical);
   const pathLock = await kernelLock(kind, canonical);
   let fileLock: Server | undefined;
   let boundIdentity: FileIdentity | undefined;
   let released = false;
   const bindFile = async (required: boolean) => {
     if (released) throw new Error('Workspace ownership has already been released.');
+    if (!supervised) assertNoPendingRestore(canonical);
     let identity: FileIdentity;
     try {
       identity = fileIdentity(canonical);
@@ -273,6 +280,7 @@ export async function acquireColdWorkspaceFiles(
     if (released) throw new Error('Workspace ownership has already been released.');
     const selected = canonicalDatabasePath(path);
     if (!pathLocks.has(selected)) throw new Error('Workspace path was not reserved.');
+    assertNoPendingRestore(selected);
     let identity: FileIdentity;
     try {
       identity = fileIdentity(selected);
@@ -592,10 +600,12 @@ export class RecoveryJournal {
   async bindWorkspace() {
     this.checkRoot();
     if (!this.coldWorkspace || !this.liveWorkspace) {
-      const cold = await acquireColdWorkspaceLease(this.databasePath);
+      // Only the supervisor may own an interrupted target for protective rollback.
+      // Its verify/start/resume paths separately refuse unresolved restore evidence.
+      const cold = await acquireWorkspaceLease(this.databasePath, 'workspace', true);
       let live: WorkspaceLease | undefined;
       try {
-        live = await acquireLiveWorkspace(this.databasePath);
+        live = await acquireWorkspaceLease(this.databasePath, 'application', true);
         await cold.bindFile();
         await live.bindFile();
         this.coldWorkspace = cold;
@@ -642,6 +652,7 @@ export class RecoveryJournal {
   /** Only explicit cold-host verification may replace an unreadable journal. */
   acceptJournal() {
     this.checkRoot();
+    assertNoPendingRestore(this.databasePath);
     if (this.corrupted) {
       const info = lstatSync(this.path('journal.json'));
       if (

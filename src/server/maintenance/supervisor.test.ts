@@ -32,6 +32,7 @@ import {
 } from './journal.ts';
 import { assertWorkspaceHandlesClosed, MaintenanceSupervisor } from './supervisor.ts';
 import { processResourcesReleased } from './process-exit.ts';
+import { restoreBarrierPath } from './restore-barrier.ts';
 
 const cleanups: Array<() => unknown | Promise<unknown>> = [];
 afterEach(async () => {
@@ -98,6 +99,21 @@ async function start(supervisor: MaintenanceSupervisor) {
   await supervisor.coldControl({ action: 'resume', operationId });
   return operationId;
 }
+
+test('a restart retains control but never verifies, starts or resumes an unresolved restore', async () => {
+  const f = await fixture();
+  await writeFile(restoreBarrierPath(f.databasePath), '{}', { mode: 0o600 });
+  const supervisor = await f.supervisor();
+  expect(supervisor.status().phase).toBe('recovery-required');
+  for (const action of ['verify', 'start', 'resume'] as const)
+    await expect(supervisor.coldControl({ action, operationId: randomUUID() })).rejects.toThrow(
+      'unfinished workspace restore',
+    );
+  expect(() => supervisor.journal.acceptJournal()).toThrow('unfinished workspace restore');
+  expect(supervisor.journal.state.child).toBeNull();
+  expect(supervisor.journal.state.verifier).toBeNull();
+  expect(await readFile(restoreBarrierPath(f.databasePath), 'utf8')).toBe('{}');
+});
 function message(child: ChildProcess, predicate: (value: Record<string, unknown>) => boolean) {
   return new Promise<Record<string, unknown>>((resolveMessage, reject) => {
     const timer = setTimeout(() => {
