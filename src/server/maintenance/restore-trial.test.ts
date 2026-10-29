@@ -19,6 +19,7 @@ import {
 } from './restore-trial.ts';
 import type { RestoreTrialPermit } from './restore-trial.ts';
 
+const linux = test.skipIf(process.platform !== 'linux');
 const cleanups: (() => unknown | Promise<unknown>)[] = [];
 afterEach(async () => {
   for (const close of cleanups.splice(0).reverse()) await close();
@@ -192,41 +193,45 @@ async function start(f: Awaited<ReturnType<typeof fixture>>) {
   return `http://127.0.0.1:${listening.port}`;
 }
 
-test('real trial stays private until exact release after barrier cleanup, and repeated release is harmless', async () => {
-  const f = await fixture(),
-    origin = await start(f);
-  for (const path of [
-    '/',
-    '/api/maintenance',
-    '/api/health',
-    '/api/auth/session',
-    '/api/admin/maintenance',
-  ]) {
-    const response = await fetch(origin + path);
-    expect(response.status).toBe(503);
-    expect(response.headers.get('cache-control')).toBe('no-store');
-    await response.text();
-  }
-  expect((await f.release()).accepted).toBe(false);
-  expect(await httpStatus(origin + '/api/maintenance')).toBe(503);
-  // Stand-in for the controller's already durable terminal decision/main update.
-  // This tests the child boundary, not crash-safe job commitment.
-  await rm(f.marker);
-  f.set({ phase: 'paused' });
-  expect((await f.release()).accepted).toBe(true);
-  f.set({ phase: 'running' });
-  expect((await f.release()).accepted).toBe(true);
-  const response = await fetch(origin + '/api/maintenance');
-  expect(response.status).toBe(200);
-  expect(await response.json()).toMatchObject({
-    available: true,
-    phase: 'running',
-    epoch: f.permit.epoch,
-    notice: null,
-  });
-}, 60_000);
+linux(
+  'real trial stays private until exact release after barrier cleanup, and repeated release is harmless',
+  async () => {
+    const f = await fixture(),
+      origin = await start(f);
+    for (const path of [
+      '/',
+      '/api/maintenance',
+      '/api/health',
+      '/api/auth/session',
+      '/api/admin/maintenance',
+    ]) {
+      const response = await fetch(origin + path);
+      expect(response.status).toBe(503);
+      expect(response.headers.get('cache-control')).toBe('no-store');
+      await response.text();
+    }
+    expect((await f.release()).accepted).toBe(false);
+    expect(await httpStatus(origin + '/api/maintenance')).toBe(503);
+    // Stand-in for the controller's already durable terminal decision/main update.
+    // This tests the child boundary, not crash-safe job commitment.
+    await rm(f.marker);
+    f.set({ phase: 'paused' });
+    expect((await f.release()).accepted).toBe(true);
+    f.set({ phase: 'running' });
+    expect((await f.release()).accepted).toBe(true);
+    const response = await fetch(origin + '/api/maintenance');
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({
+      available: true,
+      phase: 'running',
+      epoch: f.permit.epoch,
+      notice: null,
+    });
+  },
+  60_000,
+);
 
-test.each(['running', 'unavailable', 'expired'])(
+linux.each(['running', 'unavailable', 'expired'])(
   'an unexpected %s state cannot open trial HTTP or rehabilitate readiness',
   async (change) => {
     const f = await fixture(),
@@ -245,19 +250,23 @@ test.each(['running', 'unavailable', 'expired'])(
   60_000,
 );
 
-test('permit validation refuses non-scalar role and a process identity that no longer exists', async () => {
-  const f = await fixture();
-  // Settle the real handoff before testing independent malformed bindings.
-  await start(f);
-  expect(validRestoreTrialPermit(f.permit)).toBe(true);
-  expect(validRestoreTrialPermit({ ...f.permit, role: ['candidate'] })).toBe(false);
-  const gone = { ...f.permit, child: { ...f.permit.child, pid: 2147483647 } };
-  expect(() =>
-    assertRestoreTrialTarget(gone, f.databasePath, f.ownership.databaseIdentity, gone.child.pid),
-  ).toThrow('unavailable');
-}, 60_000);
+linux(
+  'permit validation refuses non-scalar role and a process identity that no longer exists',
+  async () => {
+    const f = await fixture();
+    // Settle the real handoff before testing independent malformed bindings.
+    await start(f);
+    expect(validRestoreTrialPermit(f.permit)).toBe(true);
+    expect(validRestoreTrialPermit({ ...f.permit, role: ['candidate'] })).toBe(false);
+    const gone = { ...f.permit, child: { ...f.permit.child, pid: 2147483647 } };
+    expect(() =>
+      assertRestoreTrialTarget(gone, f.databasePath, f.ownership.databaseIdentity, gone.child.pid),
+    ).toThrow('unavailable');
+  },
+  60_000,
+);
 
-test.each(['bytes', 'policy'])(
+linux.each(['bytes', 'policy'])(
   'a permitted handoff with mismatched %s never opens SQLite or reports health',
   async (mismatch) => {
     const f = await fixture();

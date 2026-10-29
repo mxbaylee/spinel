@@ -20,6 +20,7 @@ import { join } from 'node:path';
 import { afterEach, expect, test, vi } from 'vitest';
 import { RecoveryJournal, fileIdentity } from './journal.ts';
 import { RestoreJobs } from './restore-jobs.ts';
+import type { RestoreJobRecord } from './restore-jobs.ts';
 import { restoreJobIntentFixture } from './restore-job-fixture.ts';
 import { restoreIntentHash } from './restore-job-intent.ts';
 
@@ -409,5 +410,115 @@ linux(
     f.jobs.close();
     // No rename occurred; the empty job directory remains an interrupted admission.
     expect(() => f.openJobs().read(intent.id)).toThrow();
+  },
+);
+
+linux(
+  'planned shutdown preserves intent and journals witness before physical-stop completion',
+  async () => {
+    const f = await fixture(),
+      intent = f.intent();
+    const child = { pid: 1234, start: '100', boot: randomUUID(), token: randomUUID() };
+    let record = f.jobs.admit(intent).record;
+    record = f.jobs.checkpoint(intent.id, record.intentHash, record.revision, 'source-retained');
+    Object.assign(f.journal.state, {
+      phase: 'running',
+      child,
+      restoreJob: { jobId: intent.id, intentHash: record.intentHash },
+    });
+    f.journal.write();
+    const history: RestoreJobRecord[] = [];
+    const epoch = randomUUID();
+    record = f.jobs.planPause(intent.id, record.intentHash, record.revision, epoch);
+    history.push(structuredClone(record));
+    expect(record.intent).toEqual(intent);
+    expect(() =>
+      f.jobs.checkpoint(intent.id, record.intentHash, record.revision, 'failed'),
+    ).toThrow();
+    expect(() => f.jobs.markPaused(intent.id, record.intentHash, record.revision)).toThrow();
+    Object.assign(f.journal.state, {
+      phase: 'paused',
+      epoch,
+      operation: {
+        id: intent.id,
+        actorId: intent.authority.actorId,
+        sessionHash: intent.authority.sessionHash,
+        expiresAt: intent.authority.expiresAt,
+        tokenHash: intent.continuationHash,
+        generationId: intent.target.generationId,
+      },
+    });
+    f.journal.write();
+    record = f.jobs.markPaused(intent.id, record.intentHash, record.revision);
+    history.push(structuredClone(record));
+    const stop = {
+      request: {
+        jobId: intent.id,
+        challengeId: randomUUID(),
+        generationId: intent.target.generationId,
+        epoch,
+        deadline: intent.authority.expiresAt,
+      },
+      databaseIdentity: intent.target.identity,
+      child,
+      fingerprint: null,
+      acceptedAt: null,
+    };
+    f.advance(5);
+    record = f.jobs.planStop(intent.id, record.intentHash, record.revision, stop);
+    history.push(structuredClone(record));
+    expect(f.journal.state.restoreStop).toBeNull();
+    Object.assign(f.journal.state, { phase: 'stopping', restoreStop: stop });
+    f.journal.write();
+    const accepted = { ...stop, fingerprint: 'a'.repeat(64), acceptedAt: record.updatedAt };
+    record = f.jobs.acceptWitness(intent.id, record.intentHash, record.revision, accepted);
+    history.push(structuredClone(record));
+    expect(f.openJobs().read(intent.id)).toEqual(record);
+    expect(f.journal.state.restoreStop!.fingerprint).toBeNull();
+    expect(() => f.jobs.markStopped(intent.id, record.intentHash, record.revision)).toThrow();
+    // Store-boundary fixture only: the supervisor separately proves group/FD closure.
+    Object.assign(f.journal.state, { phase: 'stopped', child: null, restoreStop: accepted });
+    f.journal.write();
+    f.advance(120_000); // Recording completed closure cannot renew expired authority.
+    record = f.jobs.markStopped(intent.id, record.intentHash, record.revision);
+    history.push(structuredClone(record));
+    expect(record.phase).toBe('witnessed-stopped');
+    expect(record.intent).toEqual(intent);
+    expect(record.execution!.stop).toEqual(accepted);
+    expect(() => f.journal.assertNoPendingRestoreJobs()).toThrow('unfinished restore');
+    const final = structuredClone(record);
+    for (const historical of history) {
+      const corruptions: ((value: RestoreJobRecord) => void)[] = [
+        (value) => {
+          value.execution!.epoch = value.intent.target.epoch;
+        },
+        (value) => {
+          value.execution!.child.boot = [value.execution!.child.boot] as unknown as string;
+        },
+      ];
+      if (historical.execution!.stop) {
+        corruptions.push((value) => {
+          value.execution!.stop!.request.deadline = value.intent.confirmedAt - 1;
+        });
+        corruptions.push((value) => {
+          value.execution!.requestedAt = value.intent.confirmedAt - 1;
+        });
+        corruptions.push((value) => {
+          value.execution!.stop!.request.epoch = randomUUID();
+        });
+        if (historical.execution!.stop!.fingerprint !== null)
+          corruptions.push((value) => {
+            value.execution!.stop!.acceptedAt = value.execution!.requestedAt! - 1;
+          });
+      }
+      for (const corrupt of corruptions) {
+        const invalid = structuredClone(historical);
+        corrupt(invalid);
+        writeFileSync(f.statePath(intent.id), JSON.stringify(invalid));
+        expect(() => f.jobs.read(intent.id)).toThrow('unavailable');
+      }
+    }
+    writeFileSync(f.statePath(intent.id), JSON.stringify(final));
+    expect(f.jobs.read(intent.id)).toEqual(final);
   },
 );

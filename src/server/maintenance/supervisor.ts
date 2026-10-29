@@ -46,6 +46,7 @@ import {
 import type { RestoreStopRecord } from './restore-stop.ts';
 import { checkVerificationHeadroom } from '../backup/recovery-worker.ts';
 import { RestoreJobs } from './restore-jobs.ts';
+import type { RestoreJobRecord } from './restore-jobs.ts';
 import { restoreIntentHash } from './restore-job-intent.ts';
 import type { RestoreJobIntent } from './restore-job-intent.ts';
 import {
@@ -258,6 +259,8 @@ export class MaintenanceSupervisor {
   private startWaiter: Waiter | undefined;
   private restoreWaiter:
     { resolve(record: RestoreStopRecord): void; reject(error: Error): void } | undefined;
+  private restoreWitnessCheckpoint: ((record: RestoreStopRecord) => void) | undefined;
+  private restoreExecution: Promise<void> | undefined;
   private authorityWaiter:
     | {
         request: RestoreStopRequest;
@@ -757,7 +760,10 @@ export class MaintenanceSupervisor {
     proof: MaintenanceAuthority,
     token = randomBytes(32).toString('base64url'),
     receipts: OperationReceipt[] = this.journal.state.receipts,
+    plannedEpoch = randomUUID(),
   ) {
+    if (!uuidPattern.test(plannedEpoch) || plannedEpoch === this.journal.state.epoch)
+      throw new Error('Invalid planned maintenance epoch.');
     if (this.journal.state.phase !== 'running' || !this.childReady)
       throw new Error('Only a running, verified application can pause.');
     if (id === this.journal.state.completedOperationId)
@@ -768,7 +774,7 @@ export class MaintenanceSupervisor {
     this.transition({
       phase: 'draining',
       receipts,
-      epoch: randomUUID(),
+      epoch: plannedEpoch,
       lastFailure: null,
       operation: {
         id,
@@ -880,6 +886,184 @@ export class MaintenanceSupervisor {
       return this.admitPreparedRestoreOwned(request);
     });
   }
+  /** Separate from source admission. Resolves after the durable pause plan,
+   * before drain, so an eventual HTTP caller can release its request permit.
+   * No public IPC/HTTP route exposes this incomplete execution path yet. */
+  async beginPreparedRestore(input: { id: string; intentHash: string; continuationToken: string }) {
+    const request = structuredClone(input),
+      originatingChild = this.child;
+    if (this.closing) throw new Error('Recovery control is stopping.');
+    const authenticate = (record: RestoreJobRecord | undefined) => {
+      if (
+        !record ||
+        record.intentHash !== request.intentHash ||
+        typeof request.continuationToken !== 'string' ||
+        !/^[A-Za-z0-9_-]{43}$/.test(request.continuationToken) ||
+        !timingSafeEqual(
+          Buffer.from(record.intent.continuationHash, 'hex'),
+          Buffer.from(tokenHash(request.continuationToken), 'hex'),
+        )
+      )
+        throw new Error('Restore continuation does not match its original intent.');
+      return record;
+    };
+    // Publication is synchronous under our exclusive root lock. A retry can
+    // observe it between queue awaits without joining the drain-owning action.
+    const observer = new RestoreJobs(this.journal, this.now);
+    try {
+      const record = authenticate(observer.read(request.id));
+      if (record.execution) return { record, queued: this.restoreExecution !== undefined };
+    } finally {
+      observer.close();
+    }
+    return this.serial(async () => {
+      const jobs = new RestoreJobs(this.journal, this.now);
+      const controller = new AbortController();
+      let planAttempted = false;
+      try {
+        const record = authenticate(jobs.read(request.id));
+        // Lost acknowledgements observe existing execution; never renew its
+        // authority or schedule a second pause from a later generation.
+        if (record.execution) return { record, queued: this.restoreExecution !== undefined };
+        if (record.phase !== 'source-retained')
+          throw new Error('Restore source custody is incomplete.');
+        const assertRunning = () => {
+          const state = this.journal.state,
+            target = record.intent.target;
+          if (
+            this.closing ||
+            originatingChild !== this.child ||
+            !this.child?.connected ||
+            !this.childReady ||
+            !this.childOwned ||
+            state.phase !== 'running' ||
+            state.restoreStop ||
+            state.instanceId !== target.instanceId ||
+            state.epoch !== target.epoch ||
+            state.generationId !== target.generationId ||
+            !sameFile(state.databaseIdentity, target.identity) ||
+            state.restoreJob?.jobId !== request.id ||
+            state.restoreJob.intentHash !== request.intentHash ||
+            this.now() < record.intent.authority.verifiedAt ||
+            this.now() >= record.intent.authority.expiresAt
+          )
+            throw new Error('The original restore confirmation is no longer current.');
+          this.assertGeneration();
+        };
+        assertRunning();
+        this.restoreAdmissionAbort = controller;
+        const signal = AbortSignal.any([
+          controller.signal,
+          AbortSignal.timeout(
+            Math.max(1, Math.min(AUTHORITY_MS, record.intent.authority.expiresAt - this.now())),
+          ),
+        ]);
+        await readRetainedRestoreSource({
+          root: this.journal.root,
+          manifest: record.intent.source,
+          assertRoot: assertRunning,
+          signal,
+        });
+        await this.recheckRestoreAuthorityOwned(request.id, record.intent.authority);
+        assertRunning();
+        signal.throwIfAborted();
+        planAttempted = true;
+        const planned = jobs.planPause(
+          request.id,
+          request.intentHash,
+          record.revision,
+          randomUUID(),
+        );
+        // Append to the existing queue without awaiting it. The plan response
+        // settles before this action can wait for application drain.
+        const execution = this.serial(() => this.executeRestoreStopOwned(request));
+        this.restoreExecution = execution;
+        void execution
+          .catch(() => {
+            try {
+              this.failure('restore-execution-unresolved');
+            } catch {
+              /* Retain durable job/reference for host recovery. */
+            }
+          })
+          .finally(() => {
+            if (this.restoreExecution === execution) this.restoreExecution = undefined;
+          });
+        return { record: planned, queued: true };
+      } catch (error) {
+        if (planAttempted) this.failure('restore-execution-unresolved');
+        throw error;
+      } finally {
+        controller.abort();
+        if (this.restoreAdmissionAbort === controller) this.restoreAdmissionAbort = undefined;
+        jobs.close();
+      }
+    });
+  }
+  private async executeRestoreStopOwned(request: {
+    id: string;
+    intentHash: string;
+    continuationToken: string;
+  }) {
+    const jobs = new RestoreJobs(this.journal, this.now);
+    try {
+      let record = jobs.read(request.id);
+      if (
+        !record ||
+        record.intentHash !== request.intentHash ||
+        record.phase !== 'pause-planned' ||
+        !record.execution
+      )
+        throw new Error('Restore pause plan is unavailable.');
+      const plan = record.execution,
+        state = this.journal.state,
+        child = state.child;
+      if (
+        this.closing ||
+        !this.childReady ||
+        !this.childOwned ||
+        !this.child?.connected ||
+        !child ||
+        child.pid !== plan.child.pid ||
+        child.start !== plan.child.start ||
+        child.boot !== plan.child.boot ||
+        child.token !== plan.child.token ||
+        state.phase !== 'running' ||
+        state.restoreStop ||
+        state.restoreJob?.jobId !== request.id ||
+        state.restoreJob.intentHash !== request.intentHash ||
+        state.instanceId !== record.intent.target.instanceId ||
+        !sameFile(state.databaseIdentity, record.intent.target.identity) ||
+        state.generationId !== record.intent.target.generationId ||
+        state.epoch !== record.intent.target.epoch ||
+        this.now() < record.intent.authority.verifiedAt ||
+        this.now() >= record.intent.authority.expiresAt
+      )
+        throw new Error('Restore pause plan changed.');
+      this.assertGeneration();
+      await this.pause(
+        request.id,
+        record.intent.authority,
+        request.continuationToken,
+        state.receipts,
+        plan.epoch,
+      );
+      record = jobs.markPaused(request.id, request.intentHash, record.revision);
+      await this.stopForRestoreOwned(request.id, {
+        request: (stop) => {
+          record = jobs.planStop(request.id, request.intentHash, record!.revision, stop);
+        },
+        witness: (stop) => {
+          record = jobs.acceptWitness(request.id, request.intentHash, record!.revision, stop);
+        },
+      });
+      jobs.markStopped(request.id, request.intentHash, record.revision);
+      // Raw custody, freeze and activation will continue from this durable
+      // boundary. Until those stages exist, the original remains stopped.
+    } finally {
+      jobs.close();
+    }
+  }
   private async admitPreparedRestoreOwned(request: RestoreAdmission) {
     operationId(request.id);
     const policy = this.applicationPolicy;
@@ -990,6 +1174,7 @@ export class MaintenanceSupervisor {
       const hash = restoreIntentHash(intent);
       if (existing && existing.intentHash !== hash)
         throw new Error('Restore job ID already has different intent.');
+      if (existing?.execution) throw new Error('Restore execution has already begun.');
       const reference = this.journal.state.restoreJob;
       if (reference && (reference.jobId !== request.id || reference.intentHash !== hash))
         throw new Error('Finish the current restore job first.');
@@ -1152,7 +1337,13 @@ export class MaintenanceSupervisor {
     }
   }
   /** The restore controller already owns serial(); witness replies remain out of band. */
-  private async stopForRestoreOwned(jobId: string): Promise<RestoreStopRecord> {
+  private async stopForRestoreOwned(
+    jobId: string,
+    checkpoint?: {
+      request(record: RestoreStopRecord): void;
+      witness(record: RestoreStopRecord): void;
+    },
+  ): Promise<RestoreStopRecord> {
     operationId(jobId);
     const state = this.journal.state;
     const child = this.child;
@@ -1232,10 +1423,16 @@ export class MaintenanceSupervisor {
       waiter.reject(new Error('Restore shutdown timed out.'));
     }, budget);
     try {
+      checkpoint?.request(record);
+      if (this.now() >= state.operation.expiresAt || this.now() >= record.request.deadline)
+        throw new Error('Restore shutdown authority expired during planning.');
+      this.restoreWitnessCheckpoint = checkpoint?.witness;
       this.childReady = false;
       // Persist the challenge before directing the child to its one-shot
       // shutdown. Ordinary SIGTERM must not race challenge registration.
       this.transition({ phase: 'stopping', restoreStop: record, verifiedAt: null });
+      if (this.now() >= state.operation.expiresAt || this.now() >= record.request.deadline)
+        throw new Error('Restore shutdown authority expired before dispatch.');
       child.send(
         { channel: MAINTENANCE_CHANNEL, kind: 'restore-stop', request: record.request },
         (error) => {
@@ -1272,6 +1469,7 @@ export class MaintenanceSupervisor {
       clearTimeout(timeout);
       clearInterval(memory);
       this.restoreWaiter = undefined;
+      this.restoreWitnessCheckpoint = undefined;
     }
   }
   private async verify() {
@@ -1529,6 +1727,7 @@ export class MaintenanceSupervisor {
         if (acceptedAt >= record.request.deadline)
           throw new Error('Restore witness arrived after its deadline.');
         const accepted = { ...record, fingerprint: value.fingerprint, acceptedAt };
+        this.restoreWitnessCheckpoint?.(accepted);
         this.transition({ restoreStop: accepted });
         // Synchronous fsync may outlast the timer while the event loop is
         // blocked. A persisted witness alone must not bypass this deadline.

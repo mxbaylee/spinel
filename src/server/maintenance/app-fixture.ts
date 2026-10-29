@@ -43,6 +43,17 @@ bridge.subscribe((status) => {
   if (status.phase === 'draining' && process.env.SPINEL_TEST_NEVER_DRAIN !== '1')
     setTimeout(() => bridge.drained(status.epoch), Number(process.env.SPINEL_TEST_DRAIN_MS ?? 5));
 });
+process.on('message', (value: unknown) => {
+  if (
+    process.env.SPINEL_TEST_NEVER_DRAIN === '1' &&
+    value &&
+    typeof value === 'object' &&
+    'releaseHeldDrain' in value &&
+    value.releaseHeldDrain === true &&
+    bridge.status().phase === 'draining'
+  )
+    bridge.drained(bridge.status().epoch);
+});
 const timer = setInterval(() => {
   if (bridge.status().phase === 'running')
     database.prepare('INSERT INTO writes(value) VALUES(?)').run('job');

@@ -15,7 +15,7 @@ import {
   symlink,
   writeFile,
 } from 'node:fs/promises';
-import { openSync, closeSync, writeFileSync } from 'node:fs';
+import { openSync, closeSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -1756,7 +1756,11 @@ test('live-child authority revocation refuses the unchanged original proof', asy
   expect(supervisor.status().phase).toBe('running');
 });
 
-async function admissionFixture(revokeOnProbe?: number, now?: () => number) {
+async function admissionFixture(
+  revokeOnProbe?: number,
+  now?: () => number,
+  environment: Record<string, string> = {},
+) {
   const f = await fixture(true);
   const policy = applicationPolicy(3000, {
     APP_ORIGIN: 'https://spinel.example',
@@ -1773,6 +1777,8 @@ async function admissionFixture(revokeOnProbe?: number, now?: () => number) {
     createChild: (token) => {
       child = f.createChild(token, {
         SPINEL_TEST_REVOKE_RESTORE_AUTHORITY: String(revokeOnProbe ?? 0),
+        SPINEL_TEST_WITNESS_ACK_FILE: join(f.directory, 'witness-ack'),
+        ...environment,
       });
       return child;
     },
@@ -1998,3 +2004,156 @@ test('retained-source retry rechecks expiry after the final proof promise settle
     f.child.off('message', delay);
   }
 });
+
+test('begin acknowledges a durable pause plan before drain and retains the job witness before ACK', async () => {
+  const f = await admissionFixture(undefined, undefined, { SPINEL_TEST_DRAIN_MS: '500' });
+  const admitted = await f.supervisor.admitPreparedRestore(f.request);
+  const begin = {
+    id: f.request.id,
+    intentHash: admitted.record.intentHash,
+    continuationToken: admitted.continuationToken!,
+  };
+  await expect(
+    f.supervisor.beginPreparedRestore({ ...begin, continuationToken: 'A'.repeat(43) }),
+  ).rejects.toThrow('continuation');
+  expect(f.supervisor.status().phase).toBe('running');
+  const statePath = join(f.root, 'restore-jobs', begin.id, 'state.json');
+  const write = f.supervisor.journal.write.bind(f.supervisor.journal);
+  let witnessedBeforeAck = false;
+  vi.spyOn(f.supervisor.journal, 'write').mockImplementation(() => {
+    if (f.supervisor.journal.state.restoreStop?.fingerprint && !witnessedBeforeAck) {
+      const job = JSON.parse(readFileSync(statePath, 'utf8'));
+      expect(job.phase).toBe('witness-accepted');
+      expect(job.execution.stop).toEqual(f.supervisor.journal.state.restoreStop);
+      expect(existsSync(join(f.directory, 'witness-ack'))).toBe(false);
+      witnessedBeforeAck = true;
+    }
+    write();
+  });
+  const planned = await f.supervisor.beginPreparedRestore(begin);
+  expect(planned.record.phase).toBe('pause-planned');
+  expect(['running', 'draining']).toContain(f.supervisor.status().phase);
+  await expect
+    .poll(async () => JSON.parse(await readFile(statePath, 'utf8')).phase, { timeout: 10_000 })
+    .toBe('witnessed-stopped');
+  expect(witnessedBeforeAck).toBe(true);
+  expect(existsSync(join(f.directory, 'witness-ack'))).toBe(true);
+  assertWorkspaceHandlesClosed(f.databasePath);
+  const completed = JSON.parse(await readFile(statePath, 'utf8'));
+  expect(completed.intent).toEqual(admitted.record.intent);
+  const retried = await f.supervisor.beginPreparedRestore(begin);
+  expect(retried.record).toEqual(completed);
+  expect(f.supervisor.status().epoch).toBe(planned.record.execution!.epoch);
+  expect(f.supervisor.status().phase).toBe('stopped');
+}, 60_000);
+
+test('failed job-witness publication never sends the child a custody acknowledgement', async () => {
+  const f = await admissionFixture();
+  const admitted = await f.supervisor.admitPreparedRestore(f.request);
+  vi.spyOn(RestoreJobs.prototype, 'acceptWitness').mockImplementation(() => {
+    throw new Error('Injected witness publication failure');
+  });
+  await f.supervisor.beginPreparedRestore({
+    id: f.request.id,
+    intentHash: admitted.record.intentHash,
+    continuationToken: admitted.continuationToken!,
+  });
+  await expect
+    .poll(() => f.supervisor.status().lastFailure, { timeout: 10_000 })
+    .toBe('restore-execution-unresolved');
+  expect(existsSync(join(f.directory, 'witness-ack'))).toBe(false);
+  expect(f.supervisor.journal.state.restoreStop!.fingerprint).toBeNull();
+  const job = JSON.parse(
+    await readFile(join(f.root, 'restore-jobs', f.request.id, 'state.json'), 'utf8'),
+  );
+  expect(job.phase).toBe('stop-requested');
+  assertWorkspaceHandlesClosed(f.databasePath);
+  expect(() => f.supervisor.journal.assertNoPendingRestoreJobs()).toThrow('unfinished restore');
+}, 60_000);
+
+test('a begin retry responds while drain is waiting for that retry to release', async () => {
+  const f = await admissionFixture(undefined, undefined, { SPINEL_TEST_NEVER_DRAIN: '1' });
+  const admitted = await f.supervisor.admitPreparedRestore(f.request);
+  const request = {
+    id: f.request.id,
+    intentHash: admitted.record.intentHash,
+    continuationToken: admitted.continuationToken!,
+  };
+  await f.supervisor.beginPreparedRestore(request);
+  await expect.poll(() => f.supervisor.status().phase).toBe('draining');
+  let response: Awaited<ReturnType<MaintenanceSupervisor['beginPreparedRestore']>> | undefined;
+  const retry = f.supervisor.beginPreparedRestore(request).then((result) => {
+    response = result;
+  });
+  // The fixture withholds drain until the simulated request has its response.
+  await expect.poll(() => response?.record.phase, { timeout: 3000 }).toBe('pause-planned');
+  await retry;
+  f.child.send({ releaseHeldDrain: true });
+  await expect.poll(() => f.supervisor.status().phase, { timeout: 10_000 }).toBe('stopped');
+}, 60_000);
+
+test('a published pause plan followed by failure fences the application without discarding intent', async () => {
+  const f = await admissionFixture();
+  const admitted = await f.supervisor.admitPreparedRestore(f.request);
+  const plan = RestoreJobs.prototype.planPause;
+  vi.spyOn(RestoreJobs.prototype, 'planPause').mockImplementation(function (
+    this: RestoreJobs,
+    ...args: Parameters<RestoreJobs['planPause']>
+  ) {
+    plan.apply(this, args);
+    throw new Error('Injected failure after durable plan');
+  });
+  const request = {
+    id: f.request.id,
+    intentHash: admitted.record.intentHash,
+    continuationToken: admitted.continuationToken!,
+  };
+  await expect(f.supervisor.beginPreparedRestore(request)).rejects.toThrow('after durable plan');
+  expect(f.supervisor.status().phase).toBe('recovery-required');
+  expect(f.supervisor.status().lastFailure).toBe('restore-execution-unresolved');
+  const retry = await f.supervisor.beginPreparedRestore(request);
+  expect(retry.record.phase).toBe('pause-planned');
+  expect(retry.record.intent).toEqual(admitted.record.intent);
+  expect(retry.queued).toBe(false);
+  expect(f.supervisor.journal.state.restoreJob?.jobId).toBe(request.id);
+}, 60_000);
+
+test('stop-plan persistence crossing original expiry never dispatches the shutdown challenge', async () => {
+  let clock: number | undefined;
+  const f = await admissionFixture(undefined, () => clock ?? Date.now());
+  const admitted = await f.supervisor.admitPreparedRestore(f.request);
+  const plan = RestoreJobs.prototype.planStop;
+  vi.spyOn(RestoreJobs.prototype, 'planStop').mockImplementation(function (
+    this: RestoreJobs,
+    ...args: Parameters<RestoreJobs['planStop']>
+  ) {
+    const result = plan.apply(this, args);
+    clock = f.request.authority.expiresAt;
+    return result;
+  });
+  const send = vi.spyOn(f.child, 'send');
+  await f.supervisor.beginPreparedRestore({
+    id: f.request.id,
+    intentHash: admitted.record.intentHash,
+    continuationToken: admitted.continuationToken!,
+  });
+  await expect
+    .poll(() => f.supervisor.status().lastFailure, { timeout: 10_000 })
+    .toBe('restore-execution-unresolved');
+  expect(
+    send.mock.calls.some(
+      ([message]) =>
+        message &&
+        typeof message === 'object' &&
+        'kind' in message &&
+        message.kind === 'restore-stop',
+    ),
+  ).toBe(false);
+  const job = JSON.parse(
+    await readFile(join(f.root, 'restore-jobs', f.request.id, 'state.json'), 'utf8'),
+  );
+  expect(job.phase).toBe('stop-requested');
+  expect(job.execution.stop.fingerprint).toBeNull();
+  expect(existsSync(join(f.directory, 'witness-ack'))).toBe(false);
+  assertWorkspaceHandlesClosed(f.databasePath);
+}, 60_000);

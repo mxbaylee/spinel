@@ -13,25 +13,96 @@ import {
   unlinkSync,
   writeFileSync,
 } from 'node:fs';
-import type { RecoveryJournal } from './journal.ts';
+import { sameFile } from './journal.ts';
+import type { ProcessIdentity, RecoveryJournal } from './journal.ts';
+import { sameRestoreStopRequest, validRestoreStopRecord } from './restore-stop.ts';
+import type { RestoreStopRecord } from './restore-stop.ts';
 import { restoreIntentHash, validRestoreJobIntent } from './restore-job-intent.ts';
 import type { RestoreJobIntent } from './restore-job-intent.ts';
 
-/** Admission only. Later mutation stages must add their required evidence before
- * becoming valid persisted states. This store alone never pauses/opens a database.
- */
+/** Durable original shutdown planning. Later execution stages must add their
+ * own evidence before becoming valid states. This store never opens SQLite. */
+export interface RestorePausePlan {
+  epoch: string;
+  child: ProcessIdentity;
+  stop: RestoreStopRecord | null;
+  requestedAt: number | null;
+}
+type ExecutionPhase =
+  'pause-planned' | 'paused' | 'stop-requested' | 'witness-accepted' | 'witnessed-stopped';
 export interface RestoreJobRecord {
   version: 1;
   revision: number;
   intent: RestoreJobIntent;
   intentHash: string;
-  phase: 'accepted' | 'source-retained' | 'failed';
+  phase: 'accepted' | 'source-retained' | 'failed' | ExecutionPhase;
+  execution?: RestorePausePlan;
   updatedAt: number;
 }
 const MAX_JOB_BYTES = 64 * 1024;
 const MAX_JOBS = 64;
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 const refused = () => new Error('Restore job custody is unavailable or changed.');
+const executionPhases: readonly string[] = [
+  'pause-planned',
+  'paused',
+  'stop-requested',
+  'witness-accepted',
+  'witnessed-stopped',
+];
+const sameProcess = (a: ProcessIdentity | null, b: ProcessIdentity) =>
+  !!a && a.pid === b.pid && a.start === b.start && a.boot === b.boot && a.token === b.token;
+const sameStop = (a: RestoreStopRecord | null, b: RestoreStopRecord) =>
+  !!a &&
+  sameRestoreStopRequest(a.request, b.request) &&
+  sameFile(a.databaseIdentity, b.databaseIdentity) &&
+  sameProcess(a.child, b.child) &&
+  a.fingerprint === b.fingerprint &&
+  a.acceptedAt === b.acceptedAt;
+function validExecution(record: RestoreJobRecord) {
+  if (!executionPhases.includes(record.phase)) return !Object.hasOwn(record, 'execution');
+  const plan = record.execution;
+  if (
+    !plan ||
+    Object.keys(plan).length !== 4 ||
+    typeof plan.epoch !== 'string' ||
+    !uuid.test(plan.epoch) ||
+    plan.epoch === record.intent.target.epoch ||
+    !plan.child ||
+    Object.keys(plan.child).length !== 4 ||
+    !Number.isInteger(plan.child.pid) ||
+    plan.child.pid <= 1 ||
+    plan.child.pid > 2147483647 ||
+    typeof plan.child.start !== 'string' ||
+    !/^\d{1,20}$/.test(plan.child.start) ||
+    typeof plan.child.boot !== 'string' ||
+    !uuid.test(plan.child.boot) ||
+    typeof plan.child.token !== 'string' ||
+    !uuid.test(plan.child.token)
+  )
+    return false;
+  if (record.phase === 'pause-planned' || record.phase === 'paused')
+    return plan.stop === null && plan.requestedAt === null;
+  const stop = plan.stop;
+  if (
+    !validRestoreStopRecord(stop) ||
+    !Number.isSafeInteger(plan.requestedAt) ||
+    plan.requestedAt! < record.intent.confirmedAt ||
+    plan.requestedAt! > record.updatedAt ||
+    stop.request.deadline <= plan.requestedAt! ||
+    stop.request.jobId !== record.intent.id ||
+    stop.request.epoch !== plan.epoch ||
+    stop.request.generationId !== record.intent.target.generationId ||
+    !sameFile(stop.databaseIdentity, record.intent.target.identity) ||
+    !sameProcess(stop.child, plan.child)
+  )
+    return false;
+  return record.phase === 'stop-requested'
+    ? stop.fingerprint === null
+    : stop.fingerprint !== null &&
+        stop.acceptedAt! >= plan.requestedAt! &&
+        stop.acceptedAt! <= record.updatedAt;
+}
 const privateDirectory = (fd: number) => {
   const info = fstatSync(fd);
   if (
@@ -87,7 +158,7 @@ function validRecord(value: unknown, id: string): value is RestoreJobRecord {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
   const record = value as RestoreJobRecord;
   return (
-    Object.keys(record).length === 6 &&
+    Object.keys(record).length === (executionPhases.includes(record.phase) ? 7 : 6) &&
     record.version === 1 &&
     Number.isSafeInteger(record.revision) &&
     record.revision >= 0 &&
@@ -95,7 +166,9 @@ function validRecord(value: unknown, id: string): value is RestoreJobRecord {
     validRestoreJobIntent(record.intent) &&
     record.intent.id === id &&
     record.intentHash === restoreIntentHash(record.intent) &&
-    ['accepted', 'source-retained', 'failed'].includes(record.phase) &&
+    (['accepted', 'source-retained', 'failed'].includes(record.phase) ||
+      executionPhases.includes(record.phase)) &&
+    validExecution(record) &&
     Number.isSafeInteger(record.updatedAt) &&
     record.updatedAt >= record.intent.confirmedAt
   );
@@ -360,7 +433,7 @@ export class RestoreJobs {
       !current ||
       current.intentHash !== intentHash ||
       current.revision !== revision ||
-      current.phase === 'failed' ||
+      !['accepted', 'source-retained'].includes(current.phase) ||
       (phase === 'source-retained' && current.phase !== 'accepted')
     )
       throw refused();
@@ -379,6 +452,136 @@ export class RestoreJobs {
       this.clock(current.intent);
     }
     return structuredClone(next);
+  }
+  private executionRecord(
+    id: string,
+    hash: string,
+    revision: number,
+    phase: RestoreJobRecord['phase'],
+  ) {
+    const current = this.read(id);
+    if (
+      !current ||
+      current.intentHash !== hash ||
+      current.revision !== revision ||
+      current.phase !== phase
+    )
+      throw refused();
+    const state = this.journal.state,
+      owned = this.journal.workspaceOwnership(),
+      target = current.intent.target;
+    if (
+      state.restoreJob?.jobId !== id ||
+      state.restoreJob.intentHash !== hash ||
+      state.instanceId !== target.instanceId ||
+      state.generationId !== target.generationId ||
+      owned.databasePath !== target.databasePath ||
+      !sameFile(state.databaseIdentity, target.identity) ||
+      !sameFile(owned.databaseIdentity, target.identity)
+    )
+      throw refused();
+    return current;
+  }
+  private executionBinding(current: RestoreJobRecord, phase: 'paused' | 'stopping' | 'stopped') {
+    const state = this.journal.state,
+      plan = current.execution!,
+      intent = current.intent;
+    if (
+      state.phase !== phase ||
+      state.epoch !== plan.epoch ||
+      state.operation?.id !== intent.id ||
+      state.operation.generationId !== intent.target.generationId ||
+      state.operation.actorId !== intent.authority.actorId ||
+      state.operation.sessionHash !== intent.authority.sessionHash ||
+      state.operation.expiresAt !== intent.authority.expiresAt ||
+      state.operation.tokenHash !== intent.continuationHash ||
+      (phase === 'stopped' ? state.child !== null : !sameProcess(state.child, plan.child))
+    )
+      throw refused();
+  }
+  private publishExecution(
+    current: RestoreJobRecord,
+    phase: ExecutionPhase,
+    execution: RestorePausePlan,
+  ) {
+    const now = this.now();
+    if (!Number.isSafeInteger(now) || now < current.updatedAt) throw refused();
+    const next: RestoreJobRecord = {
+      ...current,
+      phase,
+      execution: structuredClone(execution),
+      revision: current.revision + 1,
+      updatedAt: now,
+    };
+    this.publish(next);
+    return structuredClone(next);
+  }
+  /** Reserve the epoch before drain. Original intent and proof never change. */
+  planPause(id: string, hash: string, revision: number, epoch: string) {
+    const current = this.executionRecord(id, hash, revision, 'source-retained');
+    this.target(current.intent);
+    this.clock(current.intent);
+    const state = this.journal.state;
+    if (state.phase !== 'running' || state.restoreStop || !state.child) throw refused();
+    const result = this.publishExecution(current, 'pause-planned', {
+      epoch,
+      child: state.child,
+      stop: null,
+      requestedAt: null,
+    });
+    this.clock(current.intent);
+    return result;
+  }
+  markPaused(id: string, hash: string, revision: number) {
+    const current = this.executionRecord(id, hash, revision, 'pause-planned');
+    this.executionBinding(current, 'paused');
+    if (this.journal.state.restoreStop) throw refused();
+    return this.publishExecution(current, 'paused', current.execution!);
+  }
+  /** Must run before the shutdown challenge is sent to the child. */
+  planStop(id: string, hash: string, revision: number, stop: RestoreStopRecord) {
+    const current = this.executionRecord(id, hash, revision, 'paused');
+    this.executionBinding(current, 'paused');
+    this.clock(current.intent);
+    if (
+      this.journal.state.restoreStop ||
+      stop.fingerprint !== null ||
+      stop.request.deadline <= this.now()
+    )
+      throw refused();
+    const result = this.publishExecution(current, 'stop-requested', {
+      ...current.execution!,
+      stop,
+      requestedAt: this.now(),
+    });
+    this.clock(current.intent);
+    if (this.now() >= stop.request.deadline) throw refused();
+    return result;
+  }
+  /** Durable job witness precedes main-journal publication and the sole ACK.
+   * Recording evidence after authority expiry does not authorize a mutation. */
+  acceptWitness(id: string, hash: string, revision: number, stop: RestoreStopRecord) {
+    const current = this.executionRecord(id, hash, revision, 'stop-requested');
+    this.executionBinding(current, 'stopping');
+    const requested = current.execution!.stop!,
+      mirrored = this.journal.state.restoreStop;
+    if (
+      !validRestoreStopRecord(stop) ||
+      stop.fingerprint === null ||
+      stop.acceptedAt! < current.updatedAt ||
+      !sameRestoreStopRequest(stop.request, requested.request) ||
+      !mirrored ||
+      !sameStop(mirrored, requested)
+    )
+      throw refused();
+    return this.publishExecution(current, 'witness-accepted', { ...current.execution!, stop });
+  }
+  /** Caller separately proves physical group/descriptor closure before this. */
+  markStopped(id: string, hash: string, revision: number) {
+    const current = this.executionRecord(id, hash, revision, 'witness-accepted');
+    this.executionBinding(current, 'stopped');
+    if (!sameStop(this.journal.state.restoreStop, current.execution!.stop!)) throw refused();
+    return this.publishExecution(current, 'witnessed-stopped', current.execution!);
   }
   close() {
     if (this.closed) return;
