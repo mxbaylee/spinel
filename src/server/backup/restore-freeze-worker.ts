@@ -5,6 +5,8 @@ import { checkDatabase, digest } from './archive.ts';
 import { restoreSnapshotFingerprint } from './inventory.ts';
 import { RecoveryResourceError } from './resource-error.ts';
 import { assertSelfContained } from './restore-input.ts';
+import { assertRestoreAuthority } from '../maintenance/restore-authority.ts';
+import type { RestoreAuthority } from '../maintenance/restore-authority.ts';
 
 export interface FreezeWorkerInput {
   kind: 'freeze';
@@ -14,6 +16,7 @@ export interface FreezeWorkerInput {
   fingerprint: string;
   database: { bytes: number; sha256: string };
   wal?: { bytes: number; sha256: string };
+  authority?: RestoreAuthority;
 }
 
 /** Operates exclusively on disposable, parent-authenticated copies. SQLite may
@@ -50,6 +53,7 @@ export async function freezeWorkingRestore(input: FreezeWorkerInput) {
     checkDatabase(db);
     if (restoreSnapshotFingerprint(db) !== input.fingerprint)
       throw new Error('Recovered current state differs from the drain witness.');
+    if (input.authority !== undefined) assertRestoreAuthority(db, input.authority);
     await backup(db, output);
     db.close();
     db = undefined;
@@ -59,6 +63,7 @@ export async function freezeWorkingRestore(input: FreezeWorkerInput) {
     checkDatabase(db);
     if (restoreSnapshotFingerprint(db) !== input.fingerprint)
       throw new Error('Frozen current state differs from the drain witness.');
+    if (input.authority !== undefined) assertRestoreAuthority(db, input.authority);
     db.close();
     db = undefined;
     await assertSelfContained(output);

@@ -3,6 +3,7 @@ import type { ChildProcess } from 'node:child_process';
 import { createHash, randomBytes, randomUUID, timingSafeEqual } from 'node:crypto';
 import {
   chmodSync,
+  mkdirSync,
   lstatSync,
   readFileSync,
   readdirSync,
@@ -13,7 +14,7 @@ import {
 import { createServer as createHttpServer } from 'node:http';
 import type { IncomingMessage, ServerResponse, Server as HttpServer } from 'node:http';
 import type { AddressInfo } from 'node:net';
-import { isAbsolute, resolve } from 'node:path';
+import { basename, dirname, isAbsolute, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type {
   MaintenanceAdminStatus,
@@ -53,10 +54,14 @@ import {
   retainRestoreSource,
   readRetainedRestoreSource,
   validRestoreSourceManifest,
+  captureRestoreOriginals,
+  preserveRestoreOriginals,
 } from './restore-files.ts';
 import type { RestoreSourceInput, RestoreSourceManifest } from './restore-files.ts';
 import { validRestoreAuthority } from './restore-authority.ts';
 import type { ApplicationPolicy } from '../../../server/application-policy.ts';
+import { freezeCurrentRestore } from '../backup/restore-freeze.ts';
+import { syncRestoreDirectory } from '../backup/restore-input.ts';
 
 const DRAIN_MS = 30_000;
 const STOP_MS = 15_000;
@@ -1006,6 +1011,8 @@ export class MaintenanceSupervisor {
     continuationToken: string;
   }) {
     const jobs = new RestoreJobs(this.journal, this.now);
+    const controller = new AbortController();
+    this.restoreAdmissionAbort = controller;
     try {
       let record = jobs.read(request.id);
       if (
@@ -1057,10 +1064,100 @@ export class MaintenanceSupervisor {
           record = jobs.acceptWitness(request.id, request.intentHash, record!.revision, stop);
         },
       });
-      jobs.markStopped(request.id, request.intentHash, record.revision);
-      // Raw custody, freeze and activation will continue from this durable
-      // boundary. Until those stages exist, the original remains stopped.
+      record = jobs.markStopped(request.id, request.intentHash, record.revision);
+      const budget = this.options.budgets?.restoreMs ?? 120_000;
+      const deadline = Date.now() + budget;
+      const signal = AbortSignal.any([controller.signal, AbortSignal.timeout(budget)]);
+      const assertBudget = () => {
+        signal.throwIfAborted();
+        if (Date.now() >= deadline) throw new Error('Restore custody exceeded its time budget.');
+      };
+      const assertClosed = () => {
+        assertBudget();
+        const state = this.journal.state,
+          target = record!.intent.target,
+          stop = record!.execution!.stop!;
+        if (
+          this.closing ||
+          this.child ||
+          state.child ||
+          state.phase !== 'stopped' ||
+          state.restoreJob?.jobId !== request.id ||
+          state.restoreJob.intentHash !== request.intentHash ||
+          state.instanceId !== target.instanceId ||
+          state.generationId !== target.generationId ||
+          state.epoch !== plan.epoch ||
+          !sameFile(state.databaseIdentity, target.identity) ||
+          !state.restoreStop ||
+          !sameRestoreStopRequest(state.restoreStop.request, stop.request) ||
+          state.restoreStop.fingerprint !== stop.fingerprint ||
+          groupMembers(plan.child).length
+        )
+          throw new Error('Restore original closure changed.');
+        this.assertGeneration();
+        assertWorkspaceHandlesClosed(this.journal.databasePath);
+        assertBudget();
+      };
+      const custody = {
+        root: this.journal.root,
+        id: request.id,
+        databasePath: this.journal.databasePath,
+        assertClosed,
+        signal,
+      };
+      const originals = await captureRestoreOriginals(custody);
+      record = jobs.planOriginals(request.id, request.intentHash, record.revision, originals);
+      await preserveRestoreOriginals(custody, record.execution!.originals!);
+      record = jobs.markOriginalsRetained(request.id, request.intentHash, record.revision);
+      assertClosed();
+      record = jobs.planFreeze(request.id, request.intentHash, record.revision, randomUUID());
+      const retained = join(this.journal.root, `restore-${request.id}`);
+      const stagingRoot = join(retained, `freeze-${record.execution!.freezeSlot!}`);
+      // This bounded slot was selected durably. Existing/partial work is never
+      // silently replaced by a fresh worker directory after interruption.
+      mkdirSync(stagingRoot, { mode: 0o700 });
+      await syncRestoreDirectory(stagingRoot, signal);
+      await syncRestoreDirectory(retained, signal);
+      assertClosed();
+      const originalPath = join(retained, 'original', 'spinel.sqlite');
+      const frozen = await freezeCurrentRestore({
+        database: { path: originalPath, ...originals.original['spinel.sqlite']! },
+        ...(originals.original['spinel.sqlite-wal'] && {
+          wal: { path: originalPath + '-wal', ...originals.original['spinel.sqlite-wal'] },
+        }),
+        fingerprint: record.execution!.stop!.fingerprint!,
+        authority: record.intent.authority,
+        stagingRoot,
+        timeoutMs: Math.max(1, Math.min(budget, deadline - Date.now())),
+        signal: AbortSignal.any([
+          signal,
+          AbortSignal.timeout(
+            Math.max(1, Math.min(AUTHORITY_MS, record.intent.authority.expiresAt - this.now())),
+          ),
+        ]),
+      });
+      // Retain successful worker output even if this publication is uncertain.
+      // The worker syncs its output directory; its new entry in this reserved
+      // parent must also be durable before the job can reference that output.
+      await syncRestoreDirectory(stagingRoot, signal);
+      assertClosed();
+      if (
+        dirname(dirname(frozen.databasePath)) !== stagingRoot ||
+        basename(frozen.databasePath) !== 'frozen.sqlite'
+      )
+        throw new Error('Frozen restore output escaped its planned slot.');
+      jobs.markFrozen(request.id, request.intentHash, record.revision, {
+        directory: basename(dirname(frozen.databasePath)),
+        bytes: frozen.databaseBytes,
+        sha256: frozen.databaseSha256,
+        fingerprint: frozen.fingerprint,
+      });
+      assertBudget();
+      // Candidate/rollback preparation and activation continue from this durable
+      // witnessed, authority-checked boundary. No public route exposes it yet.
     } finally {
+      controller.abort();
+      if (this.restoreAdmissionAbort === controller) this.restoreAdmissionAbort = undefined;
       jobs.close();
     }
   }

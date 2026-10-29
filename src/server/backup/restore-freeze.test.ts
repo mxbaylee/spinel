@@ -6,6 +6,9 @@ import { afterEach, expect, test } from 'vitest';
 import { DatabaseSync } from '../../../server/database.ts';
 import { recoveryInventory, restoreSnapshotFingerprint } from './inventory.ts';
 import { freezeCurrentRestore } from './restore-freeze.ts';
+import { AuthStore } from '../auth/store.ts';
+import { captureRestoreAuthority } from '../maintenance/restore-authority.ts';
+import type { RestoreAuthority } from '../maintenance/restore-authority.ts';
 
 const roots: string[] = [];
 afterEach(async () => {
@@ -16,11 +19,15 @@ const evidence = (path: string, bytes: Buffer) => ({
   bytes: bytes.length,
   sha256: createHash('sha256').update(bytes).digest('hex'),
 });
-async function fixture(checkpoint = false) {
+async function fixture(
+  checkpoint = false,
+  configure?: (database: DatabaseSync) => RestoreAuthority,
+) {
   const root = await mkdtemp(join(tmpdir(), 'spinel-freeze-'));
   roots.push(root);
   const live = join(root, 'live.sqlite');
   const database = new DatabaseSync(live);
+  let authority: RestoreAuthority | undefined;
   let original: Buffer, wal: Buffer | undefined, priorWal: Buffer, fingerprint: string;
   try {
     database.exec(`PRAGMA journal_mode=WAL; PRAGMA wal_autocheckpoint=0;
@@ -29,6 +36,7 @@ async function fixture(checkpoint = false) {
       INSERT INTO users VALUES('operator',1);
       INSERT INTO spinel_recovery VALUES(1,'current recovery evidence');
       PRAGMA user_version=7;`);
+    authority = configure?.(database);
     priorWal = await readFile(live + '-wal');
     database.prepare('UPDATE users SET enabled=0 WHERE id=?').run('operator');
     database.exec('BEGIN');
@@ -59,6 +67,7 @@ async function fixture(checkpoint = false) {
       ...(wal! && { wal: evidence(path + '-wal', wal!) }),
       fingerprint: fingerprint!,
       stagingRoot,
+      ...(authority && { authority }),
     },
   };
 }
@@ -148,3 +157,47 @@ test('drain fingerprints include recovery metadata and migration version', () =>
     db.close();
   }
 });
+
+test.each([false, true])(
+  'freeze rechecks the original passkey proof against witnessed current data (revoked=%s)',
+  async (revoked) => {
+    const f = await fixture(false, (database) => {
+      const auth = new AuthStore(database),
+        operator = auth.createUser('Operator', true),
+        now = Date.now();
+      database
+        .prepare('INSERT INTO auth_passkeys VALUES(?,?,?,?,?,?,?,?,?,?,?)')
+        .run(
+          'first',
+          operator.id,
+          Buffer.from([1]),
+          0,
+          '[]',
+          'first',
+          'Browser',
+          now,
+          null,
+          0,
+          'singleDevice',
+        );
+      const session = auth.createSession(operator.id, undefined, 'first').session;
+      auth.markVerified(session, 'first');
+      const proof = captureRestoreAuthority(database, {
+        actorId: operator.id,
+        sessionHash: session.token_hash,
+        expiresAt: now + 60_000,
+      });
+      if (revoked) database.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(operator.id);
+      return proof;
+    });
+    if (revoked) await expect(freezeCurrentRestore(f.options)).rejects.toThrow();
+    else {
+      const frozen = await freezeCurrentRestore(f.options);
+      expect(frozen.fingerprint).toBe(f.options.fingerprint);
+      await frozen.dispose();
+    }
+    expect(await readFile(f.options.database.path)).toEqual(f.original);
+    expect(await readFile(f.options.database.path + '-wal')).toEqual(f.wal);
+  },
+  30_000,
+);

@@ -9,6 +9,8 @@ import {
   validateClosedRestoreInput,
 } from './restore-input.ts';
 import type { ClosedRestoreInput, RestoreInputFile } from './restore-input.ts';
+import { validRestoreAuthority } from '../maintenance/restore-authority.ts';
+import type { RestoreAuthority } from '../maintenance/restore-authority.ts';
 
 interface FrozenEvidence {
   databaseBytes: number;
@@ -32,8 +34,19 @@ export async function freezeCurrentRestore(options: {
   maxDatabaseBytes?: number;
   timeoutMs?: number;
   signal?: AbortSignal;
+  /** Original live proof; rechecked against the witnessed frozen image. */
+  authority?: RestoreAuthority;
 }): Promise<FrozenRestore> {
   options.signal?.throwIfAborted();
+  const authority =
+    options.authority === undefined ? undefined : structuredClone(options.authority);
+  if (authority !== undefined && !validRestoreAuthority(authority))
+    throw new Error('Invalid original restore authority.');
+  const assertAuthorityTime = () => {
+    if (authority && (Date.now() < authority.verifiedAt || Date.now() >= authority.expiresAt))
+      throw new Error('The original restore authorization expired.');
+  };
+  assertAuthorityTime();
   const maximum = options.maxDatabaseBytes ?? 8 * 1024 ** 3;
   const limit = options.timeoutMs ?? 120_000;
   if (
@@ -106,6 +119,7 @@ export async function freezeCurrentRestore(options: {
         kind: 'freeze',
         maxDatabaseBytes: maximum,
         fingerprint: options.fingerprint,
+        ...(authority && { authority }),
         database: { bytes: options.database.bytes, sha256: options.database.sha256 },
         ...(options.wal && { wal: { bytes: options.wal.bytes, sha256: options.wal.sha256 } }),
       },
@@ -132,6 +146,7 @@ export async function freezeCurrentRestore(options: {
     await syncRestoreDirectory(directory, signal);
     signal.throwIfAborted();
     if (Date.now() >= deadline) throw new RecoveryResourceError('time-limit');
+    assertAuthorityTime();
     retained = true;
     return {
       ...result,

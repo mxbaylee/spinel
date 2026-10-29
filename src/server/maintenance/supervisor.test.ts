@@ -37,6 +37,7 @@ import { processResourcesReleased } from './process-exit.ts';
 import { restoreBarrierPath } from './restore-barrier.ts';
 import { restoreSnapshotFingerprint } from '../backup/inventory.ts';
 import * as restoreFiles from './restore-files.ts';
+import * as restoreInput from '../backup/restore-input.ts';
 import { validRestoreStopRecord, validRestoreStopRequest } from './restore-stop.ts';
 import { RestoreJobs } from './restore-jobs.ts';
 import type { RestoreStopRequest } from '../../shared/maintenance.ts';
@@ -2018,6 +2019,25 @@ test('begin acknowledges a durable pause plan before drain and retains the job w
   ).rejects.toThrow('continuation');
   expect(f.supervisor.status().phase).toBe('running');
   const statePath = join(f.root, 'restore-jobs', begin.id, 'state.json');
+  let outputParentSynced = false;
+  const syncDirectory = restoreInput.syncRestoreDirectory;
+  vi.spyOn(restoreInput, 'syncRestoreDirectory').mockImplementation(async (path, signal) => {
+    await syncDirectory(path, signal);
+    if (
+      path.startsWith(join(f.root, `restore-${begin.id}`, 'freeze-')) &&
+      (await readdir(path)).some((name) => /^\.restore-frozen-/.test(name))
+    )
+      outputParentSynced = true;
+  });
+  const markFrozen = RestoreJobs.prototype.markFrozen;
+  vi.spyOn(RestoreJobs.prototype, 'markFrozen').mockImplementation(function (
+    this: RestoreJobs,
+    ...args: Parameters<RestoreJobs['markFrozen']>
+  ) {
+    expect(outputParentSynced).toBe(true);
+    return markFrozen.apply(this, args);
+  });
+
   const write = f.supervisor.journal.write.bind(f.supervisor.journal);
   let witnessedBeforeAck = false;
   vi.spyOn(f.supervisor.journal, 'write').mockImplementation(() => {
@@ -2035,12 +2055,40 @@ test('begin acknowledges a durable pause plan before drain and retains the job w
   expect(['running', 'draining']).toContain(f.supervisor.status().phase);
   await expect
     .poll(async () => JSON.parse(await readFile(statePath, 'utf8')).phase, { timeout: 10_000 })
-    .toBe('witnessed-stopped');
+    .toBe('frozen');
   expect(witnessedBeforeAck).toBe(true);
   expect(existsSync(join(f.directory, 'witness-ack'))).toBe(true);
   assertWorkspaceHandlesClosed(f.databasePath);
   const completed = JSON.parse(await readFile(statePath, 'utf8'));
   expect(completed.intent).toEqual(admitted.record.intent);
+  const frozen = completed.execution.frozen;
+  expect(frozen.fingerprint).toBe(completed.execution.stop.fingerprint);
+  const frozenPath = join(
+    f.root,
+    `restore-${begin.id}`,
+    `freeze-${completed.execution.freezeSlot}`,
+    frozen.directory,
+    'frozen.sqlite',
+  );
+  const frozenBytes = await readFile(frozenPath);
+  expect(frozenBytes.length).toBe(frozen.bytes);
+  expect(createHash('sha256').update(frozenBytes).digest('hex')).toBe(frozen.sha256);
+  const observer = new RestoreJobs(f.supervisor.journal);
+  try {
+    expect(observer.read(begin.id)).toEqual(completed);
+    for (const alter of ['path', 'fingerprint', 'original-inode']) {
+      const invalid = structuredClone(completed);
+      if (alter === 'path') invalid.execution.frozen.directory = '../escape';
+      else if (alter === 'fingerprint') invalid.execution.frozen.fingerprint = '0'.repeat(64);
+      else invalid.execution.originals.identity.inode = '0';
+      writeFileSync(statePath, JSON.stringify(invalid));
+      expect(() => observer.read(begin.id)).toThrow('unavailable');
+    }
+  } finally {
+    writeFileSync(statePath, JSON.stringify(completed));
+    observer.close();
+  }
+
   const retried = await f.supervisor.beginPreparedRestore(begin);
   expect(retried.record).toEqual(completed);
   expect(f.supervisor.status().epoch).toBe(planned.record.execution!.epoch);
@@ -2090,6 +2138,14 @@ test('a begin retry responds while drain is waiting for that retry to release', 
   await retry;
   f.child.send({ releaseHeldDrain: true });
   await expect.poll(() => f.supervisor.status().phase, { timeout: 10_000 }).toBe('stopped');
+  await expect
+    .poll(
+      async () =>
+        JSON.parse(await readFile(join(f.root, 'restore-jobs', request.id, 'state.json'), 'utf8'))
+          .phase,
+      { timeout: 15_000 },
+    )
+    .toBe('frozen');
 }, 60_000);
 
 test('a published pause plan followed by failure fences the application without discarding intent', async () => {
@@ -2157,3 +2213,76 @@ test('stop-plan persistence crossing original expiry never dispatches the shutdo
   expect(existsSync(join(f.directory, 'witness-ack'))).toBe(false);
   assertWorkspaceHandlesClosed(f.databasePath);
 }, 60_000);
+
+test('revocation during drain preserves raw current evidence and refuses frozen authority', async () => {
+  const f = await admissionFixture(undefined, undefined, { SPINEL_TEST_REVOKE_ON_DRAIN: '1' });
+  const admitted = await f.supervisor.admitPreparedRestore(f.request);
+  await f.supervisor.beginPreparedRestore({
+    id: f.request.id,
+    intentHash: admitted.record.intentHash,
+    continuationToken: admitted.continuationToken!,
+  });
+  await expect
+    .poll(() => f.supervisor.status().lastFailure, { timeout: 15_000 })
+    .toBe('restore-execution-unresolved');
+  const job = JSON.parse(
+    await readFile(join(f.root, 'restore-jobs', f.request.id, 'state.json'), 'utf8'),
+  );
+  expect(job.phase).toBe('freeze-planned');
+  expect(job.execution.originals.id).toBe(f.request.id);
+  expect(job.execution.frozen).toBeUndefined();
+  expect(job.execution.stop.fingerprint).toMatch(/^[a-f0-9]{64}$/);
+  assertWorkspaceHandlesClosed(f.databasePath);
+  const raw = await readFile(join(f.root, `restore-${f.request.id}`, 'original', 'spinel.sqlite'));
+  expect(createHash('sha256').update(raw).digest('hex')).toBe(
+    job.execution.originals.original['spinel.sqlite'].sha256,
+  );
+  expect(fileIdentity(f.databasePath)).toEqual(admitted.record.intent.target.identity);
+}, 60_000);
+
+test.each(['publication', 'deadline'])(
+  'late frozen %s failure retains the exact output and cannot allocate another slot on retry',
+  async (boundary) => {
+    const f = await admissionFixture();
+    const admitted = await f.supervisor.admitPreparedRestore(f.request);
+    const actualNow = Date.now;
+    let elapsed = 0;
+    vi.spyOn(Date, 'now').mockImplementation(() => actualNow() + elapsed);
+    const markFrozen = RestoreJobs.prototype.markFrozen;
+    vi.spyOn(RestoreJobs.prototype, 'markFrozen').mockImplementation(function (
+      this: RestoreJobs,
+      ...args: Parameters<RestoreJobs['markFrozen']>
+    ) {
+      const result = markFrozen.apply(this, args);
+      if (boundary === 'publication') throw new Error('Injected failure after frozen publication');
+      elapsed = 120_001;
+      return result;
+    });
+    const request = {
+      id: f.request.id,
+      intentHash: admitted.record.intentHash,
+      continuationToken: admitted.continuationToken!,
+    };
+    await f.supervisor.beginPreparedRestore(request);
+    await expect
+      .poll(() => f.supervisor.status().lastFailure, { timeout: 15_000 })
+      .toBe('restore-execution-unresolved');
+    const job = JSON.parse(
+      await readFile(join(f.root, 'restore-jobs', request.id, 'state.json'), 'utf8'),
+    );
+    expect(job.phase).toBe('frozen');
+    const retained = join(f.root, `restore-${request.id}`),
+      slot = `freeze-${job.execution.freezeSlot}`;
+    expect((await readdir(retained)).filter((name) => name.startsWith('freeze-'))).toEqual([slot]);
+    const output = join(retained, slot, job.execution.frozen.directory, 'frozen.sqlite');
+    const before = await readFile(output);
+    expect(createHash('sha256').update(before).digest('hex')).toBe(job.execution.frozen.sha256);
+    const retry = await f.supervisor.beginPreparedRestore(request);
+    expect(retry.record).toEqual(job);
+    expect(await readFile(output)).toEqual(before);
+    expect((await readdir(retained)).filter((name) => name.startsWith('freeze-'))).toEqual([slot]);
+    expect(f.supervisor.status().phase).toBe('recovery-required');
+    assertWorkspaceHandlesClosed(f.databasePath);
+  },
+  60_000,
+);

@@ -17,6 +17,8 @@ import { sameFile } from './journal.ts';
 import type { ProcessIdentity, RecoveryJournal } from './journal.ts';
 import { sameRestoreStopRequest, validRestoreStopRecord } from './restore-stop.ts';
 import type { RestoreStopRecord } from './restore-stop.ts';
+import { validRestoreOriginals } from './restore-files.ts';
+import type { RestoreOriginals } from './restore-files.ts';
 import { restoreIntentHash, validRestoreJobIntent } from './restore-job-intent.ts';
 import type { RestoreJobIntent } from './restore-job-intent.ts';
 
@@ -27,9 +29,20 @@ export interface RestorePausePlan {
   child: ProcessIdentity;
   stop: RestoreStopRecord | null;
   requestedAt: number | null;
+  originals?: RestoreOriginals;
+  freezeSlot?: string;
+  frozen?: { directory: string; bytes: number; sha256: string; fingerprint: string };
 }
 type ExecutionPhase =
-  'pause-planned' | 'paused' | 'stop-requested' | 'witness-accepted' | 'witnessed-stopped';
+  | 'pause-planned'
+  | 'paused'
+  | 'stop-requested'
+  | 'witness-accepted'
+  | 'witnessed-stopped'
+  | 'originals-planned'
+  | 'originals-retained'
+  | 'freeze-planned'
+  | 'frozen';
 export interface RestoreJobRecord {
   version: 1;
   revision: number;
@@ -49,6 +62,10 @@ const executionPhases: readonly string[] = [
   'stop-requested',
   'witness-accepted',
   'witnessed-stopped',
+  'originals-planned',
+  'originals-retained',
+  'freeze-planned',
+  'frozen',
 ];
 const sameProcess = (a: ProcessIdentity | null, b: ProcessIdentity) =>
   !!a && a.pid === b.pid && a.start === b.start && a.boot === b.boot && a.token === b.token;
@@ -62,9 +79,17 @@ const sameStop = (a: RestoreStopRecord | null, b: RestoreStopRecord) =>
 function validExecution(record: RestoreJobRecord) {
   if (!executionPhases.includes(record.phase)) return !Object.hasOwn(record, 'execution');
   const plan = record.execution;
+  const hasOriginals = [
+    'originals-planned',
+    'originals-retained',
+    'freeze-planned',
+    'frozen',
+  ].includes(record.phase);
+  const hasSlot = ['freeze-planned', 'frozen'].includes(record.phase);
   if (
     !plan ||
-    Object.keys(plan).length !== 4 ||
+    Object.keys(plan).length !==
+      4 + Number(hasOriginals) + Number(hasSlot) + Number(record.phase === 'frozen') ||
     typeof plan.epoch !== 'string' ||
     !uuid.test(plan.epoch) ||
     plan.epoch === record.intent.target.epoch ||
@@ -81,6 +106,30 @@ function validExecution(record: RestoreJobRecord) {
     !uuid.test(plan.child.token)
   )
     return false;
+  if (
+    hasOriginals &&
+    (!validRestoreOriginals(plan.originals) ||
+      plan.originals.id !== record.intent.id ||
+      !sameFile(plan.originals.identity, record.intent.target.identity))
+  )
+    return false;
+  if (hasSlot && (typeof plan.freezeSlot !== 'string' || !uuid.test(plan.freezeSlot))) return false;
+  if (record.phase === 'frozen') {
+    const frozen = plan.frozen;
+    if (
+      !frozen ||
+      Object.keys(frozen).length !== 4 ||
+      typeof frozen.directory !== 'string' ||
+      !/^\.restore-frozen-[A-Za-z0-9]{6}$/.test(frozen.directory) ||
+      !Number.isSafeInteger(frozen.bytes) ||
+      frozen.bytes < 4096 ||
+      frozen.bytes > 8 * 1024 ** 3 ||
+      typeof frozen.sha256 !== 'string' ||
+      !/^[a-f0-9]{64}$/.test(frozen.sha256) ||
+      frozen.fingerprint !== plan.stop?.fingerprint
+    )
+      return false;
+  }
   if (record.phase === 'pause-planned' || record.phase === 'paused')
     return plan.stop === null && plan.requestedAt === null;
   const stop = plan.stop;
@@ -582,6 +631,47 @@ export class RestoreJobs {
     this.executionBinding(current, 'stopped');
     if (!sameStop(this.journal.state.restoreStop, current.execution!.stop!)) throw refused();
     return this.publishExecution(current, 'witnessed-stopped', current.execution!);
+  }
+  private closedExecution(id: string, hash: string, revision: number, phase: ExecutionPhase) {
+    const current = this.executionRecord(id, hash, revision, phase);
+    this.executionBinding(current, 'stopped');
+    if (!sameStop(this.journal.state.restoreStop, current.execution!.stop!)) throw refused();
+    return current;
+  }
+  planOriginals(id: string, hash: string, revision: number, originals: RestoreOriginals) {
+    const current = this.closedExecution(id, hash, revision, 'witnessed-stopped');
+    return this.publishExecution(current, 'originals-planned', {
+      ...current.execution!,
+      originals,
+    });
+  }
+  markOriginalsRetained(id: string, hash: string, revision: number) {
+    const current = this.closedExecution(id, hash, revision, 'originals-planned');
+    return this.publishExecution(current, 'originals-retained', current.execution!);
+  }
+  /** Reserve one worker slot before creating its directory. Ambiguous or partial
+   * slots remain evidence; automatic retry must not allocate another one. */
+  planFreeze(id: string, hash: string, revision: number, freezeSlot: string) {
+    const current = this.closedExecution(id, hash, revision, 'originals-retained');
+    this.clock(current.intent);
+    const result = this.publishExecution(current, 'freeze-planned', {
+      ...current.execution!,
+      freezeSlot,
+    });
+    this.clock(current.intent);
+    return result;
+  }
+  markFrozen(
+    id: string,
+    hash: string,
+    revision: number,
+    frozen: NonNullable<RestorePausePlan['frozen']>,
+  ) {
+    const current = this.closedExecution(id, hash, revision, 'freeze-planned');
+    this.clock(current.intent);
+    const result = this.publishExecution(current, 'frozen', { ...current.execution!, frozen });
+    this.clock(current.intent);
+    return result;
   }
   close() {
     if (this.closed) return;

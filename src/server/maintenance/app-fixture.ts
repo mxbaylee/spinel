@@ -40,6 +40,8 @@ const server = createServer((_request, response) => {
 });
 await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
 bridge.subscribe((status) => {
+  if (status.phase === 'draining' && process.env.SPINEL_TEST_REVOKE_ON_DRAIN === '1')
+    database.prepare('UPDATE auth_users SET disabled=1 WHERE is_admin=1').run();
   if (status.phase === 'draining' && process.env.SPINEL_TEST_NEVER_DRAIN !== '1')
     setTimeout(() => bridge.drained(status.epoch), Number(process.env.SPINEL_TEST_DRAIN_MS ?? 5));
 });
