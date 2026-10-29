@@ -77,7 +77,13 @@ async function installDmg(url: string, bundle: string, identifier: string) {
     mount,
   ]);
   try {
-    const source = join(mount, bundle);
+    // A mounted distribution can carry Finder/resource-fork metadata which
+    // strict codesign rejects (Apple QA1940). Copy regular signed bytes first;
+    // then require the same strict signature and Gatekeeper checks on that copy.
+    const source = join(directory, bundle);
+    await command('/usr/bin/ditto', ['--norsrc', join(mount, bundle), source]);
+    report.installationCopy =
+      'ditto --norsrc, followed by strict codesign and Gatekeeper assessment';
     const id = (
       await command('/usr/libexec/PlistBuddy', [
         '-c',

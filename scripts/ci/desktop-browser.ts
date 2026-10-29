@@ -46,6 +46,7 @@ export type DesktopStoragePrompt = {
   reason: string;
   screenshot?: string;
   accessibility?: string;
+  process?: { pid: number; name: string; bundleIdentifier: string };
 };
 export type DesktopBrowser = {
   start(url: string): Promise<DesktopBrowserStart>;
@@ -81,7 +82,37 @@ function object(value: unknown): ObjectValue {
   return value as ObjectValue;
 }
 async function command(file: string, args: string[], timeout = 30_000) {
-  return (await run(file, args, { timeout, maxBuffer: 4 * 1024 * 1024 })).stdout.trim();
+  try {
+    return (await run(file, args, { timeout, maxBuffer: 4 * 1024 * 1024 })).stdout.trim();
+  } catch (error) {
+    const failure = error as Error & {
+      code?: string | number;
+      signal?: string | null;
+      killed?: boolean;
+      stdout?: string;
+      stderr?: string;
+    };
+    const details = {
+      program: file,
+      code: failure.code ?? null,
+      signal: failure.signal ?? null,
+      killed: failure.killed ?? false,
+      timeoutMs: timeout,
+      stdout: String(failure.stdout ?? '').slice(-2000),
+      stderr: String(failure.stderr ?? '').slice(-8000),
+    };
+    // Keep code available to the deliberate ps/pgrep "process absent" checks.
+    throw Object.assign(
+      new Error(`Native command failed: ${JSON.stringify(details)}`, { cause: error }),
+      {
+        code: failure.code,
+        signal: failure.signal,
+        killed: failure.killed,
+        stdout: failure.stdout,
+        stderr: failure.stderr,
+      },
+    );
+  }
 }
 async function poll<T>(read: () => Promise<T>, accept: (value: T) => boolean, label: string) {
   const deadline = Date.now() + 30_000;
@@ -165,7 +196,10 @@ function run(argv) {
   var processes = system.applicationProcesses.whose({ unixId: Number(argv[0]) })();
   if (processes.length !== 1) throw new Error('The owned Firefox process is unavailable.');
   var process = processes[0];
-  if (process.name() !== 'Firefox') throw new Error('The process is not Firefox.');
+  var identity = { pid: process.unixId(), name: process.name(), bundleIdentifier: process.bundleIdentifier() };
+  console.log('firefox identity: ' + JSON.stringify(identity));
+  if (identity.pid !== Number(argv[0]) || identity.bundleIdentifier !== 'org.mozilla.firefox')
+    throw new Error('The owned process is not the expected Firefox bundle: ' + JSON.stringify(identity));
   process.frontmost = true;
   var nodes = [], candidates = [], allButtons = [], truncated = false;
   var question = /\b(?:will you allow|allow) (?:https:\/\/)?localhost(?::8176)? to store data (?:in persistent storage|on your computer)\?/i;
@@ -207,7 +241,7 @@ function run(argv) {
   var promptLike = allButtons.some(function(button) { return button.labels.some(function(label) { return /^(Allow|Block|Don't Allow|Not Now)$/.test(label); }); }) || nodes.some(function(node) { return /AX(Dialog|Sheet|Popover)/.test(node.role + ' ' + node.subrole); });
   var knownQuestion = nodes.map(function(node) { return node.text.join(' '); }).join(' ').match(question);
   var status = candidates.length === 1 ? (candidates[0].button.enabled ? 'recognized' : 'pending') : knownQuestion ? 'pending' : promptLike ? 'unrecognized' : 'none';
-  var result = { status: status, action: 'none', observedText: candidates.length === 1 ? candidates[0].prompt : knownQuestion ? knownQuestion[0] : null, nodes: nodes };
+  var result = { status: status, action: 'none', process: identity, observedText: candidates.length === 1 ? candidates[0].prompt : knownQuestion ? knownQuestion[0] : null, nodes: nodes };
   if (argv[1] === 'allow') {
     if (result.status !== 'recognized' || result.observedText !== argv[2]) throw new Error('The observed localhost storage prompt changed before approval.');
     system.click(candidates[0].button.element);
@@ -267,6 +301,7 @@ export function createDesktopBrowser(
       status: 'recognized' | 'pending' | 'unrecognized' | 'none';
       action: 'allow' | 'none';
       observedText: string | null;
+      process: NonNullable<DesktopStoragePrompt['process']>;
       nodes: unknown[];
     };
     const inspect = async (action = 'inspect', expected = '') =>
@@ -325,6 +360,7 @@ export function createDesktopBrowser(
             observedText: approved.observedText,
             button: 'Allow',
             reason: 'observed-localhost-storage-permission',
+            process: approved.process,
             ...evidence,
           };
         }
@@ -346,6 +382,7 @@ export function createDesktopBrowser(
         observedText: null,
         button: null,
         reason: 'no-native-storage-prompt-observed',
+        process: last?.process,
         ...evidence,
       };
     } catch (error) {
@@ -462,27 +499,51 @@ export function createDesktopBrowser(
     // System Events coordinate clicks perform accessibility actions, which do
     // not initialize canvas selection. Quartz posts actual macOS pointer input.
     const post = (mode: 'move' | 'click', screenX: number, screenY: number) =>
-      command('/usr/bin/osascript', [
-        '-l',
-        'JavaScript',
-        '-e',
-        `
+      command(
+        '/usr/bin/osascript',
+        [
+          '-l',
+          'JavaScript',
+          '-e',
+          `
+        console.log('pointer: importing frameworks');
         ObjC.import('CoreGraphics');
         ObjC.import('CoreFoundation');
+        console.log('pointer: frameworks imported');
         function run(argv) {
           var point = { x: Number(argv[1]), y: Number(argv[2]) };
+          console.log('pointer: preflight');
+          if (typeof $.CGPreflightPostEventAccess !== 'function')
+            ObjC.bindFunction('CGPreflightPostEventAccess', ['bool', []]);
+          var permitted = $.CGPreflightPostEventAccess();
+          console.log('pointer: post-event access ' + permitted);
+          if (!permitted) throw new Error('The native input host is not permitted to post pointer events.');
           var types = argv[0] === 'move' ? [$.kCGEventMouseMoved] : [$.kCGEventLeftMouseDown, $.kCGEventLeftMouseUp];
           types.forEach(function(type) {
-            var event = $.CGEventCreateMouseEvent(null, type, point, $.kCGMouseButtonLeft);
-            $.CGEventPost($.kCGHIDEventTap, event);
-            $.CFRelease(event);
+            console.log('pointer: creating event ' + type);
+            var event = $.CGEventCreateMouseEvent($(), type, point, $.kCGMouseButtonLeft);
+            console.log('pointer: validating event ' + type);
+            if (!event || typeof event.isNil !== 'function' || event.isNil())
+              throw new Error('Quartz did not return a nonnil bridged event: ' + Automation.getDisplayString(event, true));
+            try {
+              console.log('pointer: posting event ' + type);
+              $.CGEventPost($.kCGHIDEventTap, event);
+              console.log('pointer: posted event ' + type);
+            } finally {
+              console.log('pointer: releasing event ' + type);
+              $.CFRelease(event);
+              console.log('pointer: released event ' + type);
+            }
           });
+          return JSON.stringify({ mode: argv[0], point: point, posted: types.length });
         }
       `,
-        mode,
-        String(screenX),
-        String(screenY),
-      ]);
+          mode,
+          String(screenX),
+          String(screenY),
+        ],
+        10_000,
+      );
     const bounds = (await applescript('tell application "Safari" to get bounds of front window'))
       .split(',')
       .map(Number);

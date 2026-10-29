@@ -183,11 +183,6 @@ function imageSources(snapshot: NativeSnapshot, itemId: string, hashes: string[]
 
 async function visibleImages(name: string, documentKind: 'sheet' | 'doc') {
   const path = resolve(output, `${name}.png`);
-  await browser.screenshot(path);
-  const { data, info } = await sharp(path)
-    .removeAlpha()
-    .raw()
-    .toBuffer({ resolveWithObject: true });
   const colors =
     documentKind === 'sheet'
       ? [
@@ -196,17 +191,28 @@ async function visibleImages(name: string, documentKind: 'sheet' | 'doc') {
           [34, 187, 102],
         ]
       : [[119, 0, 204]];
-  const counts = colors.map(() => 0);
-  for (let offset = 0; offset < data.length; offset += info.channels)
-    colors.forEach((color, index) => {
-      if (color.every((value, channel) => Math.abs(data[offset + channel] - value) < 12))
-        counts[index]++;
-    });
-  assert.ok(
-    counts.every((count) => count > 100),
-    `Existing image pixels are missing: ${counts}`,
+  let captures = 0;
+  const counts = await until(
+    async () => {
+      await browser.screenshot(path);
+      captures++;
+      const { data, info } = await sharp(path)
+        .removeAlpha()
+        .raw()
+        .toBuffer({ resolveWithObject: true });
+      const counts = colors.map(() => 0);
+      for (let offset = 0; offset < data.length; offset += info.channels)
+        colors.forEach((color, index) => {
+          if (color.every((value, channel) => Math.abs(data[offset + channel] - value) < 12))
+            counts[index]++;
+        });
+      return counts;
+    },
+    (counts) => counts.every((count) => count > 100),
+    'Existing image pixels must actually paint after native canvas creation',
+    15_000,
   );
-  return { file: `${name}.png`, colorPixelCounts: counts };
+  return { file: `${name}.png`, colorPixelCounts: counts, captures };
 }
 
 let fixture: Awaited<ReturnType<typeof createDesktopOfflineFixture>> | undefined;
@@ -215,8 +221,17 @@ async function launch(url: string) {
   const evidence = await browser.start(url);
   assert.equal(evidence.version, (report.release as { installed: string }).installed);
   if (launches.length) assert.deepEqual(evidence.profile, launches[0].profile);
+  const environment = await browser.evaluate<{
+    browserTab: boolean;
+    secureContext: boolean;
+    storagePersisted: boolean;
+  }>(
+    `(async () => ({ browserTab: matchMedia('(display-mode: browser)').matches, secureContext: isSecureContext, storagePersisted: await navigator.storage.persisted() }))()`,
+  );
+  assert.equal(environment.browserTab, true, 'Acceptance must use an ordinary browser tab');
+  assert.equal(environment.secureContext, true);
   launches.push(evidence);
-  stage('browser-start', evidence);
+  stage('browser-start', { ...evidence, ...environment });
 }
 
 async function main() {
