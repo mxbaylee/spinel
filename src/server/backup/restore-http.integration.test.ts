@@ -12,6 +12,8 @@ import { DatabaseSync } from '../../../server/database.ts';
 import { COOKIE_NAME, hashToken } from '../auth/store.ts';
 import { MaintenanceSupervisor } from '../maintenance/supervisor.ts';
 import type { RestoreJobRecord } from '../maintenance/restore-jobs.ts';
+import type { RestoreStopRecord } from '../maintenance/restore-stop.ts';
+import { RecoveryResourceError } from './resource-error.ts';
 import type { RestoreHttpSeed } from '../maintenance/restore-http-fixture.ts';
 import type { RestorePreparation, RestoreStatus } from '../../shared/restore.ts';
 
@@ -179,6 +181,43 @@ test('real Operator HTTP confirmation crosses custody ACK and Begin into committ
         }
       },
     });
+    // Diagnostic call-through only: never change the guard, budgets or result.
+    // Retain typed resource codes and numeric kernel observations, never messages.
+    let stopDiagnostic: Record<string, string | number | null> | null = null;
+    type StopControl = {
+      stopForRestoreOwned(
+        id: string,
+        checkpoint?: {
+          request(record: RestoreStopRecord): void;
+          witness(record: RestoreStopRecord): void;
+        },
+      ): Promise<RestoreStopRecord>;
+    };
+    const stopControl = supervisor as unknown as StopControl;
+    const originalStop = stopControl.stopForRestoreOwned.bind(supervisor);
+    stopControl.stopForRestoreOwned = async (...args) => {
+      try {
+        return await originalStop(...args);
+      } catch (error) {
+        const numeric = (path: string, pattern: RegExp) => {
+          try {
+            const value = Number(pattern.exec(readFileSync(path, 'utf8'))?.[1]);
+            return Number.isSafeInteger(value) && value >= 0 ? value : null;
+          } catch {
+            return null;
+          }
+        };
+        stopDiagnostic = {
+          code: error instanceof RecoveryResourceError ? error.code : 'untyped-failure',
+          phase: supervisor!.status().phase,
+          cgroupLimitBytes: numeric('/sys/fs/cgroup/memory.max', /^(\d+)/),
+          cgroupUsedBytes: numeric('/sys/fs/cgroup/memory.current', /^(\d+)/),
+          hostAvailableKiB: numeric('/proc/meminfo', /^MemAvailable:\s+(\d+)/m),
+          processRssBytes: process.memoryUsage().rss,
+        };
+        throw error;
+      }
+    };
     const boot = randomUUID();
     await supervisor.coldControl({ action: 'verify', operationId: boot });
     await supervisor.coldControl({ action: 'start', operationId: boot });
@@ -322,26 +361,33 @@ test('real Operator HTTP confirmation crosses custody ACK and Begin into committ
       accepted.state,
       'Begin response settled while its HTTP admission could still drain',
     ).toBe('started');
-    // Poll only allowlisted diagnostics. Never print private durable job bodies.
-    await expect
-      .poll(
-        () => {
-          const current = record();
-          return {
-            job: current.phase,
-            phase: supervisor!.status().phase,
-            failure: supervisor!.status().lastFailure,
-            outcome: current.execution?.outcome?.role ?? null,
-          };
-        },
-        { timeout: 100_000, interval: 100 },
-      )
-      .toEqual({
-        job: 'candidate-committed',
-        phase: 'running',
-        failure: null,
-        outcome: 'candidate',
-      });
+    // Stop promptly on protective recovery, preserving only safe diagnostics.
+    const snapshot = () => {
+      const current = record();
+      return {
+        job: current.phase,
+        phase: supervisor!.status().phase,
+        failure: supervisor!.status().lastFailure,
+        outcome: current.execution?.outcome?.role ?? null,
+      };
+    };
+    const deadline = Date.now() + 100_000;
+    let observed = snapshot();
+    while (Date.now() < deadline) {
+      observed = snapshot();
+      if (observed.phase === 'recovery-required')
+        throw new Error(
+          `HTTP restore entered protective recovery: ${JSON.stringify({ ...observed, stop: stopDiagnostic })}`,
+        );
+      if (observed.job === 'candidate-committed' && observed.phase === 'running') break;
+      await new Promise((resolveWait) => setTimeout(resolveWait, 100));
+    }
+    expect(observed).toEqual({
+      job: 'candidate-committed',
+      phase: 'running',
+      failure: null,
+      outcome: 'candidate',
+    });
     const terminal = record();
     expect(custodyBeforeDrain).toBe(true);
     expect(preparationReleasedBeforeDrain).toBe(true);

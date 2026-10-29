@@ -133,6 +133,9 @@ interface Evidence {
   cleanup: 'not-needed' | 'complete' | 'failed';
   archiveBytes?: number;
   durationMs?: number;
+  supervisedRestore?: Awaited<
+    ReturnType<typeof import('./spaces-restore-acceptance.ts').runSupervisedSpacesRestore>
+  >;
 }
 const commit = () =>
   /^[a-f0-9]{40}$/.test(process.env.SPACES_ACCEPTANCE_COMMIT ?? '')
@@ -165,7 +168,8 @@ export async function runSpacesAcceptance(configuration: Credentials): Promise<E
   };
   const controller = new AbortController();
   const stop = () => controller.abort();
-  const timeout = setTimeout(stop, 3 * 60_000);
+  const deadline = started + 4 * 60_000;
+  const timeout = setTimeout(stop, 4 * 60_000);
   const signal = controller.signal;
   process.on('SIGTERM', stop);
   process.on('SIGINT', stop);
@@ -177,6 +181,7 @@ export async function runSpacesAcceptance(configuration: Credentials): Promise<E
     | undefined;
   let source: import('../../server/database.ts').DatabaseSync | undefined;
   let recoveryKey: Buffer | undefined;
+  let retainLocalState = false;
   const owned = new Set<string>();
   try {
     // Probe mode imports no package dependencies, so CI discovers missing
@@ -332,9 +337,33 @@ export async function runSpacesAcceptance(configuration: Credentials): Promise<E
     for (const key of expired) await remote.remove(key, signal);
     assertAcceptanceCatalog(await remote.list(signal), [newest]);
     evidence.checks.push(step);
+    step = 'supervised-provider-catalog-restore';
+    // Reuse only this invocation's already-owned namespace. Leave the catalog
+    // empty before publishing the complete-app fixture; cleanup still tracks
+    // every earlier key and can run independently after cancellation.
+    await remote.remove(newest, signal);
+    assertAcceptanceCatalog(await remote.list(signal), []);
+    const { runSupervisedSpacesRestore } = await import('./spaces-restore-acceptance.ts');
+    retainLocalState = true;
+    evidence.supervisedRestore = await runSupervisedSpacesRestore({
+      configuration: config,
+      remote,
+      directory,
+      signal,
+      deadline,
+      own: (key) => owned.add(key),
+    });
+    retainLocalState = evidence.supervisedRestore.localCleanup !== 'safe';
+    evidence.checks.push(...evidence.supervisedRestore.checks);
+    if (evidence.supervisedRestore.status !== 'passed') {
+      evidence.failedStep = evidence.supervisedRestore.failedStep ?? step;
+      throw new Error('Supervised provider acceptance did not pass.');
+    }
+    signal.throwIfAborted();
+    if (Date.now() >= deadline) throw new Error('Provider acceptance deadline expired.');
     evidence.status = 'passed';
   } catch {
-    evidence.failedStep = step;
+    evidence.failedStep ??= step;
   } finally {
     clearTimeout(timeout);
     // Independent cleanup stays live after cancellation, and never discovers
@@ -360,7 +389,8 @@ export async function runSpacesAcceptance(configuration: Credentials): Promise<E
     try {
       source?.close();
       await archive?.dispose();
-      if (directory) await rm(directory, { recursive: true, force: true });
+      if (retainLocalState) evidence.cleanup = 'failed';
+      else if (directory) await rm(directory, { recursive: true, force: true });
     } catch {
       evidence.cleanup = 'failed';
     }

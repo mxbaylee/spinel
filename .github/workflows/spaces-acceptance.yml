@@ -6,7 +6,11 @@ on:
     types: [opened, synchronize, reopened]
     paths:
       - 'src/server/backup/**'
+      - 'src/server/maintenance/**'
+      - 'src/shared/restore.ts'
       - 'scripts/deploy/**'
+      - 'server/app.ts'
+      - 'server/index.ts'
       - 'server/database.ts'
       - 'package.json'
       - 'package-lock.json'
@@ -47,7 +51,7 @@ jobs:
       - name: Install without provider credentials
         if: steps.capability.outputs.ready == 'true'
         run: npm ci
-      - name: Verify isolated encrypted provider round trip
+      - name: Verify encrypted provider backups and supervised catalog restore
         if: steps.capability.outputs.ready == 'true'
         env:
           DIGITAL_OCEAN_ACCESS_KEY: ${{ secrets.DIGITAL_OCEAN_ACCESS_KEY }}
