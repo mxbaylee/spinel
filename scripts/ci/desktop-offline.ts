@@ -148,10 +148,10 @@ async function docSelection() {
 }
 
 async function focusDocText() {
-  // The fixture starts with an 80px inline image. Clicking its center selects
-  // the drawing and disables text-navigation shortcuts. Click the text/page to
-  // its right, then prove that native text input (not drawing input) has focus.
-  await browser.clickAt('.univer-container', 400, 200);
+  // The fixture's 80px inline image moves right after the 20-character edit.
+  // x640 is inside the page and beyond both positions at the measured 1024px
+  // and 1280px desktop widths. Prove text input, not drawing input, has focus.
+  await browser.clickAt('.univer-container', 640, 200);
   await browser.focus('[contenteditable="true"][data-u-comp="editor"]');
   return until(
     docSelection,

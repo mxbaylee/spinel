@@ -26,19 +26,112 @@ async function command(file: string, args: string[], timeout = 30_000) {
   return (await run(file, args, { timeout, maxBuffer: 1024 * 1024 })).stdout.trim();
 }
 
-async function applescript(source: string, ...args: string[]) {
-  return command('/usr/bin/osascript', [
-    '-e',
-    source.startsWith('on run') ? source : `with timeout of 5 seconds\n${source}\nend timeout`,
-    ...args,
-  ]);
+type SafariTarget = {
+  pid: number;
+  bundleIdentifier: string;
+  executablePath: string;
+  launchedAt: number;
+};
+let target: SafariTarget | null = null;
+const targets: Record<string, unknown>[] = [];
+report.safariTargets = targets;
+// Address the observed process, not a Launch Services name lookup after an
+// update. This removes ambiguity; it does not establish why Intel name-based
+// Apple Events timed out, and it does not bypass normal automation consent.
+const safariRequestScript = String.raw`
+ObjC.import('AppKit');
+function run(argv) {
+  var pid = Number(argv[0]);
+  var running = $.NSRunningApplication.runningApplicationWithProcessIdentifier(pid);
+  if (running.isNil() || running.terminated) throw new Error('The observed Safari process exited.');
+  var identity = { pid: running.processIdentifier, bundleIdentifier: ObjC.unwrap(running.bundleIdentifier),
+    executablePath: ObjC.unwrap(running.executableURL.path), launchedAt: running.launchDate.timeIntervalSince1970 };
+  if (identity.pid !== pid || identity.bundleIdentifier !== 'com.apple.Safari' || !Number.isFinite(identity.launchedAt) || identity.launchedAt <= 0)
+    throw new Error('The observed PID is not the expected Safari process: ' + JSON.stringify(identity));
+  if (argv[1] && identity.launchedAt !== Number(argv[1]))
+    throw new Error('The observed Safari PID has been reused: ' + JSON.stringify(identity));
+  if (argv[2] === 'identify') return JSON.stringify(identity);
+  console.log('Safari request target: ' + JSON.stringify(identity));
+  var app = Application(pid);
+  var seconds = Number(argv[4]);
+  if (argv[2] === 'title') return app.documents[0].name({ timeout: seconds });
+  if (argv[2] === 'evaluate') return app.doJavaScript(argv[3], { in: app.documents[0] }, { timeout: seconds });
+  if (argv[2] === 'quit') { app.quit(); return 'Quit requested'; }
+  if (argv[2] === 'baseline') {
+    var window = app.windows[0];
+    if (window.miniaturized()) window.miniaturized = false;
+    if (!app.frontmost()) app.activate();
+    var tab = window.currentTab();
+    return JSON.stringify({ windowId: window.id(), bounds: window.bounds(), tabIndex: tab.index(), title: tab.name(), url: tab.url(),
+      page: JSON.parse(app.doJavaScript('JSON.stringify({url:location.href,title:document.title,readyState:document.readyState,visibility:document.visibilityState,hasFocus:document.hasFocus(),text:document.body.innerText})', {in:tab})) });
+  }
+  throw new Error('Unknown Safari request.');
+}`;
+async function identifySafari(pid: string, stage: string) {
+  assert.match(pid, /^\d+$/);
+  const entry: Record<string, unknown> = {
+    stage,
+    pid: Number(pid),
+    time: new Date().toISOString(),
+  };
+  targets.push(entry);
+  try {
+    const identity = JSON.parse(
+      await command(
+        '/usr/bin/osascript',
+        ['-l', 'JavaScript', '-e', safariRequestScript, pid, '', 'identify', '', '5'],
+        8000,
+      ),
+    ) as SafariTarget;
+    assert.equal(identity.pid, Number(pid));
+    assert.equal(identity.bundleIdentifier, 'com.apple.Safari');
+    assert.ok(Number.isFinite(identity.launchedAt) && identity.launchedAt > 0);
+    entry.identity = identity;
+    return identity;
+  } catch (error) {
+    const detail = error as Error & {
+      code?: unknown;
+      signal?: unknown;
+      killed?: unknown;
+      stdout?: unknown;
+      stderr?: unknown;
+    };
+    entry.error = {
+      message: String(error).split('\n')[0],
+      code: detail.code,
+      signal: detail.signal,
+      killed: detail.killed,
+      stdout: String(detail.stdout ?? '').slice(-2000),
+      stderr: String(detail.stderr ?? '').slice(-4000),
+    };
+    throw error;
+  }
+}
+function safariRequest(
+  mode: 'title' | 'evaluate' | 'quit' | 'baseline',
+  source = '',
+  timeout = 8000,
+) {
+  assert.ok(target, 'Identify the observed Safari process before sending it Apple Events.');
+  return command(
+    '/usr/bin/osascript',
+    [
+      '-l',
+      'JavaScript',
+      '-e',
+      safariRequestScript,
+      String(target.pid),
+      String(target.launchedAt),
+      mode,
+      source,
+      String(Math.max(1, Math.floor(timeout / 1000))),
+    ],
+    timeout,
+  );
 }
 
 async function evaluate(source: string) {
-  return applescript(
-    'on run argv\nwith timeout of 5 seconds\n tell application "Safari" to return do JavaScript (item 1 of argv) in front document\nend timeout\nend run',
-    source,
-  );
+  return safariRequest('evaluate', source);
 }
 
 async function until(check: () => Promise<string>, predicate: (value: string) => boolean) {
@@ -58,16 +151,29 @@ async function until(check: () => Promise<string>, predicate: (value: string) =>
 
 async function safariPid() {
   try {
-    return await command('/usr/bin/pgrep', ['-x', 'Safari']);
-  } catch {
-    return '';
+    const pid = await command('/usr/bin/pgrep', ['-x', 'Safari'], 5000);
+    assert.match(pid, /^\d+$/, 'Expected one ordinary Safari process.');
+    return pid;
+  } catch (error) {
+    if ((error as { code?: unknown }).code === 1) return '';
+    throw error;
   }
 }
 
-async function quit() {
-  if (!(await safariPid())) return;
-  await applescript('tell application "Safari" to quit');
+async function quit(allowExisting = false) {
+  const pid = await safariPid();
+  if (!pid) {
+    target = null;
+    return;
+  }
+  if (!target) {
+    assert.ok(allowExisting, 'No owned Safari identity is available for teardown.');
+    target = await identifySafari(pid, 'pre-probe-cleanup');
+  }
+  assert.equal(String(target.pid), pid, 'An unowned Safari process appeared before teardown.');
+  await safariRequest('quit');
   await until(safariPid, (value) => value === '');
+  target = null;
 }
 
 async function allowHostedSafariAutomation() {
@@ -118,6 +224,8 @@ async function allowHostedSafariAutomation() {
   };
   type TitleRequest = {
     attempt: number;
+    targetPid: number;
+    timeoutMs: number;
     startedAt: string;
     finishedAt?: string;
     value?: string;
@@ -130,20 +238,18 @@ async function allowHostedSafariAutomation() {
   const deadline = Date.now() + 90_000;
   const budget = (maximum: number) => Math.max(1, Math.min(maximum, deadline - Date.now()));
   function titleRequest() {
+    assert.ok(target);
+    const timeout = budget(titleRequests.length === 0 ? 60_000 : 25_000);
     const entry: TitleRequest = {
       attempt: titleRequests.length + 1,
+      targetPid: target.pid,
+      timeoutMs: timeout,
       startedAt: new Date().toISOString(),
     };
     titleRequests.push(entry);
-    // At most one Safari request is pending while System Events initializes.
-    const promise = command(
-      '/usr/bin/osascript',
-      [
-        '-e',
-        'on run\nwith timeout of 20 seconds\n tell application "Safari" to return name of front document\nend timeout\nend run',
-      ],
-      budget(25_000),
-    )
+    // Keep one initial request alive while cold System Events initializes. The
+    // original 90-second total deadline still bounds every request and UI check.
+    const promise = safariRequest('title', '', timeout)
       .then(
         (value) => {
           entry.value = value;
@@ -230,27 +336,8 @@ async function capturePaintBaseline(stage: 'online' | 'offline', pid: unknown) {
   const baselines = (report.paintBaselines ??= {}) as Record<string, unknown>;
   baselines[stage] = baseline;
   try {
-    const state = JSON.parse(
-      await command(
-        '/usr/bin/osascript',
-        [
-          '-l',
-          'JavaScript',
-          '-e',
-          `function run(argv) {
-        var app = Application(Number(argv[0]));
-        var window = app.windows[0];
-        if (window.miniaturized()) window.miniaturized = false;
-        if (!app.frontmost()) app.activate();
-        var tab = window.currentTab();
-        return JSON.stringify({ windowId: window.id(), bounds: window.bounds(), tabIndex: tab.index(), title: tab.name(), url: tab.url(),
-          page: JSON.parse(app.doJavaScript('JSON.stringify({url:location.href,title:document.title,readyState:document.readyState,visibility:document.visibilityState,hasFocus:document.hasFocus(),text:document.body.innerText})', {in:tab})) });
-      }`,
-          String(pid),
-        ],
-        5000,
-      ),
-    );
+    assert.equal(target?.pid, Number(pid));
+    const state = JSON.parse(await safariRequest('baseline', '', 5000));
     baseline.state = state;
     assert.equal(state.title, 'Spinel desktop profile probe');
     const { x, y, width, height } = state.bounds;
@@ -302,7 +389,7 @@ self.addEventListener('fetch', event => { if (event.request.mode === 'navigate')
       'Print :CFBundleShortVersionString',
       '/Applications/Safari.app/Contents/Info.plist',
     ]);
-    await quit();
+    await quit(true);
     for (const setting of ['IncludeDevelopMenu', 'AllowJavaScriptFromAppleEvents']) {
       await command('/usr/bin/defaults', ['write', 'com.apple.Safari', setting, '-bool', 'true']);
     }
@@ -312,9 +399,10 @@ self.addEventListener('fetch', event => { if (event.request.mode === 'navigate')
     });
     await command('/usr/bin/open', ['-a', 'Safari', 'http://localhost:8175/']);
     report.beforePid = await until(safariPid, Boolean);
+    target = await identifySafari(String(report.beforePid), 'online');
     await allowHostedSafariAutomation();
     await until(
-      () => applescript('tell application "Safari" to return name of front document'),
+      () => safariRequest('title'),
       (value) => value === 'Spinel desktop profile probe',
     );
     report.appleEvents = await evaluate('navigator.userAgent');
@@ -345,6 +433,7 @@ self.addEventListener('fetch', event => { if (event.request.mode === 'navigate')
     await command('/usr/bin/open', ['-a', 'Safari', 'http://localhost:8175/?offline-restart']);
     report.afterPid = await until(safariPid, Boolean);
     assert.notEqual(report.beforePid, report.afterPid);
+    target = await identifySafari(String(report.afterPid), 'offline-restart');
     await until(
       () => evaluate('document.title'),
       (value) => value === 'Spinel desktop profile probe',

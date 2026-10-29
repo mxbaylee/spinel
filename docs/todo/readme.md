@@ -14,8 +14,8 @@ Complete each phase before the next. Within a phase, take the highest-ranked tic
 | --- | --- | --- | --- | --- | --- |
 | 1 | 🛟 [SPN-112](SPN-112.md) Restore a workspace backup through Admin | 🏔️ XL | 🩷 L | 33 | — |
 | 2 | 🧾 [SPN-118](SPN-118.md) Preserve an edited destination when transition resume is refused | 🌿 M | 🩷 L | 31 | — |
-| 3 | 🧪 [SPN-090](SPN-090.md) Verify offline launches on real phones | 🏔️ XL | 💜 M | 23 | — |
-| 4 | 💻 [SPN-052](SPN-052.md) Use offline documents in a desktop browser tab | 🌳 L | 💜 M | 22 | — |
+| 3 | 💻 [SPN-052](SPN-052.md) Use offline documents in a desktop browser tab | 🏔️ XL | 💜 M | 23 | — |
+| 4 | 🧪 [SPN-090](SPN-090.md) Verify offline launches on real phones | 🏔️ XL | 💜 M | 23 | — |
 | 5 | 📑 [SPN-065](SPN-065.md) Make a copy of a Sheet or Doc | 🌳 L | 💜 M | 22 | — |
 | 6 | 🧺 [SPN-071](SPN-071.md) Hide shares and see where my access comes from | 🌳 L | 💜 M | 22 | — |
 | 7 | 📨 [SPN-098](SPN-098.md) Send user feedback with diagnostic context | 🌳 L | 💜 M | 22 | — |

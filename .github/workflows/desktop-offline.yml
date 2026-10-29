@@ -42,8 +42,6 @@ jobs:
           - browser: firefox
             runner: macos-26
           - browser: safari
-            runner: macos-26
-          - browser: safari
             runner: macos-26-intel
     env:
       SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
