@@ -20,6 +20,7 @@ export type RollbackSummary = Omit<
 export interface RollbackEvidence {
   databaseSha256: string;
   databaseBytes: number;
+  logicalFingerprint: string;
   originalFingerprint: string;
   tables: number;
   rows: number;
@@ -48,7 +49,9 @@ function validResult(
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
   const result = value as RollbackEvidence;
   if (
-    Object.keys(result).length !== 8 ||
+    Object.keys(result).length !== 9 ||
+    typeof result.logicalFingerprint !== 'string' ||
+    !/^[a-f0-9]{64}$/.test(result.logicalFingerprint) ||
     result.originalFingerprint !== fingerprint ||
     typeof result.databaseSha256 !== 'string' ||
     !/^[a-f0-9]{64}$/.test(result.databaseSha256) ||

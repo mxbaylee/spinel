@@ -15,6 +15,10 @@ import { TrashStore, TRASH_RETENTION_MS } from '../src/server/workspace/trash.ts
 import { CollaborationStore } from '../src/server/collaboration/service.ts';
 import { SQLiteSyncStorage } from '../src/server/sync/store.ts';
 import { restoreBarrierPath } from '../src/server/maintenance/restore-barrier.ts';
+import { restoreSnapshotFingerprint } from '../src/server/backup/inventory.ts';
+import type { MaintenanceAdminStatus, MaintenanceBridge } from '../src/shared/maintenance.ts';
+import { publicMaintenance } from '../src/shared/maintenance.ts';
+import { randomUUID } from 'node:crypto';
 
 const cleanups: (() => Promise<unknown>)[] = [];
 afterEach(async () => {
@@ -29,6 +33,159 @@ async function temporaryDirectory() {
   cleanups.push(() => rm(directory, { recursive: true, force: true }));
   return directory;
 }
+
+async function restoreStartupFixture() {
+  const directory = await temporaryDirectory(),
+    path = join(directory, 'restore.sqlite');
+  await writeFile(join(directory, 'index.html'), 'Startup fixture');
+  const seed = await createApp({ databasePath: path, staticDirectory: directory });
+  await seed.close();
+  const reader = new DatabaseSync(path);
+  new AuthStore(reader).createUser('Preserved owner');
+  const fingerprint = restoreSnapshotFingerprint(reader);
+  reader.close();
+  const state: MaintenanceAdminStatus = {
+    available: true,
+    phase: 'starting',
+    epoch: randomUUID(),
+    notice: null,
+    operationId: randomUUID(),
+    authorityExpiresAt: Date.now() + 60_000,
+    generationId: randomUUID(),
+    lastFailure: null,
+    readyToResume: false,
+  };
+  const listeners = new Set<Parameters<MaintenanceBridge['subscribe']>[0]>();
+  const bridge: MaintenanceBridge = {
+    status: () => publicMaintenance(state),
+    adminStatus: () => state,
+    subscribe(listener) {
+      listeners.add(listener);
+      return () => {
+        listeners.delete(listener);
+      };
+    },
+    async control() {
+      throw new Error('Unexpected control');
+    },
+    ready() {},
+    drained() {},
+    fail() {},
+    close() {},
+  };
+  const expected = { fingerprint, epoch: state.epoch, generationId: state.generationId };
+  return {
+    directory,
+    path,
+    state,
+    bridge,
+    expected,
+    set(patch: Partial<MaintenanceAdminStatus>) {
+      Object.assign(state, patch);
+      for (const listener of listeners) listener(publicMaintenance(state));
+    },
+    async open() {
+      const app = await createApp({
+        databasePath: path,
+        staticDirectory: directory,
+        maintenance: bridge,
+      });
+      cleanups.push(() => app.close());
+      return app;
+    },
+  };
+}
+
+test('private restore readiness compares complete startup state without opening writes', async () => {
+  const f = await restoreStartupFixture(),
+    app = await f.open();
+  expect(() => app.verifyPausedRestore(f.expected)).not.toThrow();
+  expect(() => app.maintenance.assertWrite()).toThrow();
+  expect(() => app.verifyPausedRestore({ ...f.expected, fingerprint: '0'.repeat(64) })).toThrow(
+    'prepared snapshot',
+  );
+  expect(() => app.verifyPausedRestore({ ...f.expected, epoch: randomUUID() })).toThrow(
+    'startup state',
+  );
+  expect(() => app.verifyPausedRestore({ ...f.expected, generationId: randomUUID() })).toThrow(
+    'startup state',
+  );
+  f.set({ phase: 'paused' });
+  expect(() => app.verifyPausedRestore(f.expected)).not.toThrow();
+  f.set({ epoch: randomUUID() });
+  expect(() => app.verifyPausedRestore(f.expected)).toThrow('startup state');
+});
+
+test.each(['running', 'unavailable', 'epoch', 'generation'])(
+  'restore readiness stays invalid after a transient %s admission change',
+  async (change) => {
+    const f = await restoreStartupFixture(),
+      app = await f.open();
+    expect(() => app.verifyPausedRestore(f.expected)).not.toThrow();
+    f.set(
+      change === 'running'
+        ? { phase: 'running' }
+        : change === 'unavailable'
+          ? { available: false }
+          : change === 'epoch'
+            ? { epoch: randomUUID() }
+            : { generationId: randomUUID() },
+    );
+    f.set({
+      available: true,
+      phase: 'paused',
+      epoch: f.expected.epoch,
+      generationId: f.expected.generationId,
+    });
+    expect(() => app.verifyPausedRestore(f.expected)).toThrow('startup state');
+  },
+);
+
+test('restore readiness checks actual gate admission as well as the admin report', async () => {
+  const f = await restoreStartupFixture(),
+    app = await f.open();
+  const status = f.bridge.status;
+  f.bridge.status = () => ({ ...status(), phase: 'running' });
+  expect(app.maintenance.running).toBe(true);
+  expect(() => app.verifyPausedRestore(f.expected)).toThrow('startup state');
+  f.bridge.status = status;
+  expect(() => app.verifyPausedRestore(f.expected)).toThrow('startup state');
+});
+
+test.each(['row', 'schema'])(
+  'restore startup rejects a %s write even if its final logical content is unchanged',
+  async (kind) => {
+    const f = await restoreStartupFixture(),
+      exec = DatabaseSync.prototype.exec;
+    let injected = false;
+    vi.spyOn(DatabaseSync.prototype, 'exec').mockImplementation(function (this: DatabaseSync, sql) {
+      exec.call(this, sql);
+      if (
+        this.path === f.path &&
+        !injected &&
+        sql.includes('CREATE TABLE IF NOT EXISTS auth_users')
+      ) {
+        injected = true;
+        exec.call(
+          this,
+          kind === 'row'
+            ? 'UPDATE auth_users SET name=name'
+            : 'CREATE TABLE transient_restore_probe(id INTEGER); DROP TABLE transient_restore_probe;',
+        );
+      }
+    });
+    const app = await f.open();
+    expect(injected).toBe(true);
+    const reader = new DatabaseSync(f.path);
+    try {
+      expect(restoreSnapshotFingerprint(reader)).toBe(f.expected.fingerprint);
+    } finally {
+      reader.close();
+    }
+    expect(() => app.verifyPausedRestore(f.expected)).toThrow('startup state');
+    expect(() => app.maintenance.assertWrite()).toThrow();
+  },
+);
 
 test.each(['marker', 'directory', 'symlink'])(
   'direct application startup refuses a %s restore barrier before opening storage',

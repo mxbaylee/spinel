@@ -133,7 +133,7 @@ export class DatabaseSync {
       /^\s*PRAGMA\s+(?:table_info|table_xinfo|index_list|index_info|index_xinfo|foreign_key_list|foreign_key_check|integrity_check|quick_check)(?:\s*\([^;]*\))?\s*;?\s*$/i.test(
         sql,
       ) ||
-      /^\s*PRAGMA\s+(?:database_list|user_version|page_count|page_size|freelist_count)\s*;?\s*$/i.test(
+      /^\s*PRAGMA\s+(?:database_list|user_version|schema_version|page_count|page_size|freelist_count)\s*;?\s*$/i.test(
         sql,
       );
     if (!read) throw denied;

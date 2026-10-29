@@ -5,6 +5,11 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { afterEach, expect, test, vi } from 'vitest';
 import { backup, DatabaseSync, openDatabase } from '../../../server/database.ts';
+import { createApp } from '../../../server/app.ts';
+import type { MaintenanceAdminStatus, MaintenanceBridge } from '../../shared/maintenance.ts';
+import { publicMaintenance } from '../../shared/maintenance.ts';
+import { copyClosedRestoreInput } from './restore-input.ts';
+import type { ClosedRestoreInput } from './restore-input.ts';
 import { AuthStore } from '../auth/store.ts';
 import { WorkspaceStore } from '../workspace/store.ts';
 import { SpaceStore } from '../workspace/spaces.ts';
@@ -76,10 +81,16 @@ afterEach(async () => {
   for (const close of cleanup.splice(0).reverse()) await close();
 });
 const options = { spacesEnabled: true, now: 1_000_000 };
-async function fixture() {
+async function fixture(completeStartup = false) {
   const directory = await mkdtemp(join(tmpdir(), 'spinel-restore-candidate-'));
   cleanup.push(() => rm(directory, { recursive: true, force: true }));
-  const db = openDatabase(join(directory, 'current.sqlite'));
+  const databasePath = join(directory, 'current.sqlite');
+  if (completeStartup) {
+    await writeFile(join(directory, 'index.html'), 'Restore startup fixture');
+    const initialized = await createApp({ databasePath, staticDirectory: directory });
+    await initialized.close();
+  }
+  const db = openDatabase(databasePath);
   cleanup.push(() => db.close());
   const auth = new AuthStore(db, () => options.now),
     workspace = new WorkspaceStore(auth, { spacesEnabled: true });
@@ -108,6 +119,17 @@ async function fixture() {
   }).space;
   db.prepare('INSERT INTO workspace_grants VALUES(?,?,?,0)').run(root.id, reader.id, 'viewer');
   const session = auth.createSession(owner.id).token;
+  if (completeStartup) {
+    const history = new HistoryStore(workspace, collaboration);
+    cleanup.push(() => history.close());
+    await history.capture(owner.id, doc.id);
+    const trash = workspace.create(owner.id, {
+      kind: 'folder',
+      name: 'Retained trash',
+      parentId: null,
+    });
+    new TrashStore(workspace).trash(owner.id, trash.id);
+  }
   // Simulate a database that was previously recovered. Its current inventory
   // will be stale after subsequent legitimate current writes.
   db.exec(
@@ -145,8 +167,8 @@ async function originalCopy(db: DatabaseSync, directory: string) {
   return copy;
 }
 
-async function rollbackRequest() {
-  const f = await fixture();
+async function rollbackRequest(completeStartup = false) {
+  const f = await fixture(completeStartup);
   f.db.exec('DROP TABLE spinel_recovery');
   const fingerprint = restoreSnapshotFingerprint(f.db);
   const path = join(f.directory, 'rollback-original.sqlite');
@@ -159,6 +181,57 @@ async function rollbackRequest() {
     fingerprint,
   };
   return { f, request: { ...options, current, additional: [], stagingRoot: f.directory } };
+}
+
+async function verifyPreparedApplication(
+  source: ClosedRestoreInput & { logicalFingerprint: string },
+  stagingRoot: string,
+) {
+  const directory = await mkdtemp(join(stagingRoot, 'startup-'));
+  const databasePath = join(directory, 'spinel.sqlite');
+  await copyClosedRestoreInput(source, databasePath);
+  await writeFile(join(directory, 'index.html'), 'Prepared startup fixture');
+  const state: MaintenanceAdminStatus = {
+    available: true,
+    phase: 'starting',
+    notice: null,
+    epoch: randomUUID(),
+    generationId: randomUUID(),
+    operationId: randomUUID(),
+    authorityExpiresAt: Date.now() + 60_000,
+    lastFailure: null,
+    readyToResume: false,
+  };
+  const bridge: MaintenanceBridge = {
+    status: () => publicMaintenance(state),
+    adminStatus: () => state,
+    subscribe: () => () => {},
+    async control() {
+      throw new Error('Unexpected control');
+    },
+    ready() {},
+    drained() {},
+    fail() {},
+    close() {},
+  };
+  const app = await createApp({ databasePath, staticDirectory: directory, maintenance: bridge });
+  try {
+    app.verifyPausedRestore({
+      fingerprint: source.logicalFingerprint,
+      epoch: state.epoch,
+      generationId: state.generationId,
+    });
+    expect(() => app.maintenance.assertWrite()).toThrow();
+  } finally {
+    await app.close({
+      async acceptRestoreWitness(value) {
+        expect(value).toBe(source.logicalFingerprint);
+      },
+    });
+  }
+  // The staged original remains closed and byte-identical after startup/shutdown
+  // of a disposable copy. Actual process handoff/activation is a different gate.
+  expect(await digest(source.databasePath)).toBe(source.databaseSha256);
 }
 
 test('source verification reads its authenticated private copy after the transfer path changes', async () => {
@@ -193,7 +266,7 @@ test('source verification reads its authenticated private copy after the transfe
 });
 
 test('real rollback worker prepares a closed private original and retires attempted native identities', async () => {
-  const { f, request } = await rollbackRequest();
+  const { f, request } = await rollbackRequest(true);
   const attempt = await originalCopy(f.db, f.directory);
   rotateRestoreGenerations(f.db, attempt);
   const retired = attempt
@@ -228,6 +301,7 @@ test('real rollback worker prepares a closed private original and retires attemp
   expect(await readdir(dirname(prepared.databasePath))).toEqual(['rollback.sqlite']);
   expect((await stat(prepared.databasePath)).mode & 0o777).toBe(0o600);
   expect(await digest(prepared.databasePath)).toBe(prepared.databaseSha256);
+  await verifyPreparedApplication(prepared, f.directory);
   expect(prepared.originalFingerprint).toBe(request.current.fingerprint);
   expect(prepared.reconciliation.generations.rotated).toBe(1);
   expect([await readFile(request.current.databasePath), await readFile(attemptPath)]).toEqual(
@@ -235,6 +309,7 @@ test('real rollback worker prepares a closed private original and retires attemp
   );
   const output = new DatabaseSync(prepared.databasePath);
   cleanup.push(() => output.close());
+  expect(prepared.logicalFingerprint).toBe(restoreSnapshotFingerprint(output));
   expect(verifyInventory(output)).toEqual({ tables: prepared.tables, rows: prepared.rows });
   for (const unit of retired) {
     expect(
@@ -601,7 +676,7 @@ test('late semantic failure publishes no result and makes the partially transfor
 });
 
 test('real isolated reconciliation publishes only the closed verified candidate, preserves inputs and removes current authority staging', async () => {
-  const f = await fixture(),
+  const f = await fixture(true),
     key = randomBytes(32),
     keyFile = join(f.directory, 'recovery-key');
   await writeFile(keyFile, key, { mode: 0o600 });
@@ -664,12 +739,14 @@ test('real isolated reconciliation publishes only the closed verified candidate,
   expect(output.databasePath).not.toBe(candidate.databasePath);
   expect(output.recovery).toEqual(candidate.recovery);
   expect(output.databaseSha256).toBe(await digest(output.databasePath));
+  await verifyPreparedApplication(output, f.directory);
   expect(output.reconciliation?.credentials.currentAccounts).toBe(4);
   expect(output.reconciliation?.generations.rotated).toBe(1);
   expect(await readdir(dirname(dirname(output.databasePath)))).toEqual(['restored']);
   expect(await readdir(dirname(output.databasePath))).toEqual(['spinel.sqlite']);
   const opened = new DatabaseSync(output.databasePath);
   try {
+    expect(output.logicalFingerprint).toBe(restoreSnapshotFingerprint(opened));
     expect(verifyInventory(opened)).toEqual({ tables: output.tables, rows: output.rows });
     expect(opened.prepare('SELECT name FROM workspace_items WHERE id=?').get(f.doc.id)!.name).toBe(
       'Archived',

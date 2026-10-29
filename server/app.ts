@@ -24,6 +24,7 @@ import { healthRoutes } from '../src/server/health/routes.ts';
 import { BackupService } from '../src/server/backup/service.ts';
 import { backupRoutes } from '../src/server/backup/routes.ts';
 import { captureTerminalRestoreFingerprint } from '../src/server/backup/restore-drain.ts';
+import { restoreSnapshotFingerprint } from '../src/server/backup/inventory.ts';
 import { openDatabase } from './database.ts';
 import { AuthStore } from '../src/server/auth/store.ts';
 import { authRoutes, cookieToken } from '../src/server/auth/routes.ts';
@@ -65,6 +66,32 @@ export async function createApp(options: AppOptions) {
   assertNoPendingRestore(canonicalDatabasePath(options.databasePath));
   const maintenance = new MaintenanceGate(options.maintenance);
   const database = openDatabase(options.databasePath);
+  const startupMark = () =>
+    JSON.stringify({
+      changes: database.prepare('SELECT total_changes() AS n').get()!.n,
+      schema: database.prepare('PRAGMA schema_version').get()!.schema_version,
+    });
+  // Capture before constructors. Equal final content alone could hide a write
+  // followed by an undo, or a temporary schema change during initialization.
+  let initialMark: string | null = null;
+  let initialEpoch: string | undefined;
+  let initialGeneration: string | undefined;
+  let startupStayedClosed = !!options.maintenance;
+  const observeTrialAdmission = () => {
+    const state = options.maintenance?.adminStatus(),
+      actual = maintenance.status;
+    if (
+      !state?.available ||
+      !actual.available ||
+      maintenance.running ||
+      !['starting', 'paused'].includes(state.phase) ||
+      !['starting', 'paused'].includes(actual.phase) ||
+      state.epoch !== initialEpoch ||
+      actual.epoch !== initialEpoch ||
+      state.generationId !== initialGeneration
+    )
+      startupStayedClosed = false;
+  };
   const app = express();
   app.disable('x-powered-by');
   const server = createHttpServer(app);
@@ -79,9 +106,19 @@ export async function createApp(options: AppOptions) {
   let healthTimer: ReturnType<typeof setInterval> | undefined;
   let diagnostics: DiagnosticsStore | undefined;
   let unsubscribeMaintenance = () => {};
+  let unsubscribeTrialObservation = () => {};
   let draining: Promise<void> | undefined;
 
   try {
+    if (options.maintenance) {
+      initialMark = startupMark();
+      initialEpoch = maintenance.status.epoch;
+      initialGeneration = options.maintenance.adminStatus().generationId;
+      observeTrialAdmission();
+      // Subscribe before constructors/awaits: a later return to paused cannot
+      // rehabilitate a process that already admitted ordinary work.
+      unsubscribeTrialObservation = options.maintenance.subscribe(observeTrialAdmission);
+    }
     diagnostics = new DiagnosticsStore(
       diagnosticsConfiguration(options.databasePath, options.image),
     );
@@ -529,6 +566,7 @@ export async function createApp(options: AppOptions) {
         });
       }) ?? (() => {});
   } catch (error) {
+    unsubscribeTrialObservation();
     unsubscribeMaintenance();
     stopCleanup();
     clearInterval(purgeTimer);
@@ -546,11 +584,44 @@ export async function createApp(options: AppOptions) {
   return {
     server,
     maintenance,
+    /** Private supervisor readiness only. This neither authorizes a barrier
+     * bypass nor opens admission, and never returns workspace content. */
+    verifyPausedRestore(expected: { fingerprint: string; epoch: string; generationId: string }) {
+      observeTrialAdmission();
+      const state = options.maintenance?.adminStatus();
+      if (
+        !startupStayedClosed ||
+        !database.isOpen ||
+        !state?.available ||
+        !['starting', 'paused'].includes(state.phase) ||
+        maintenance.pending ||
+        initialMark === null ||
+        expected.epoch !== initialEpoch ||
+        state.epoch !== initialEpoch ||
+        expected.generationId !== initialGeneration ||
+        state.generationId !== initialGeneration ||
+        !/^[a-f0-9]{64}$/.test(expected.fingerprint) ||
+        startupMark() !== initialMark
+      )
+        throw new Error('The restore trial did not retain its prepared startup state.');
+      database.assertQuiescent();
+      database.exec('BEGIN');
+      try {
+        if (restoreSnapshotFingerprint(database) !== expected.fingerprint)
+          throw new Error('The restore trial differs from its prepared snapshot.');
+        database.exec('COMMIT');
+      } catch (error) {
+        database.exec('ROLLBACK');
+        throw error;
+      }
+    },
     async close(options?: {
       /** Private supervised restore shutdown. Resolve only after the parent has
        * durably accepted the final witness for its exact pending challenge. */
       acceptRestoreWitness?: (fingerprint: string) => Promise<void>;
     }) {
+      startupStayedClosed = false;
+      unsubscribeTrialObservation();
       unsubscribeMaintenance();
       stopCleanup();
       clearInterval(purgeTimer);

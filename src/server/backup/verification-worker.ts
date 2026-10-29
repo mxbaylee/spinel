@@ -2,7 +2,7 @@ import { join } from 'node:path';
 import { rm, stat } from 'node:fs/promises';
 import { DatabaseSync } from '../../../server/database.ts';
 import { digest, readKey, restoreArchive } from './archive.ts';
-import { verifyInventory } from './inventory.ts';
+import { restoreSnapshotFingerprint, verifyInventory } from './inventory.ts';
 import { verifySemantics } from './verification-semantics.ts';
 import { RecoveryResourceError } from './resource-error.ts';
 import { assertSelfContained } from './restore-input.ts';
@@ -75,6 +75,7 @@ process.once('message', async (value: WorkerInput | FreezeWorkerInput | Rollback
         now: value.now,
       });
       const { inventory, semantics, ...reconciliation } = result;
+      const logicalFingerprint = restoreSnapshotFingerprint(database);
       database.close();
       database = undefined;
       current.close();
@@ -91,6 +92,7 @@ process.once('message', async (value: WorkerInput | FreezeWorkerInput | Rollback
           ...inventory,
           ...semantics,
           prepared: {
+            logicalFingerprint,
             databaseSha256: await digest(databasePath),
             databaseBytes: bytes,
             recovery: value.candidate.recovery,
@@ -119,6 +121,7 @@ process.once('message', async (value: WorkerInput | FreezeWorkerInput | Rollback
     database = new DatabaseSync(join(destination, 'spinel.sqlite'), { readOnly: true });
     const inventory = verifyInventory(database)!;
     const semantics = await verifySemantics(database);
+    const logicalFingerprint = value.retain ? restoreSnapshotFingerprint(database) : undefined;
     database.close();
     database = undefined;
     const databasePath = join(destination, 'spinel.sqlite');
@@ -133,6 +136,7 @@ process.once('message', async (value: WorkerInput | FreezeWorkerInput | Rollback
         ...(recovery.keyId && { keyId: recovery.keyId }),
         ...(value.retain && {
           prepared: {
+            logicalFingerprint,
             databaseSha256: await digest(databasePath),
             databaseBytes: (await stat(databasePath)).size,
             recovery: {

@@ -111,6 +111,7 @@ async function sourceFixture() {
     databasePath: f.candidatePath,
     databaseBytes: f.candidate.length,
     databaseSha256: fingerprint(f.candidate).sha256,
+    logicalFingerprint: 'd'.repeat(64),
     recovery: {
       createdAt: '2026-10-29T00:00:00.000Z',
       origin: 'https://spinel.example',

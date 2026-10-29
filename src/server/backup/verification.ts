@@ -25,6 +25,7 @@ export interface PreparedRestore extends VerificationResult {
   databasePath: string;
   databaseSha256: string;
   databaseBytes: number;
+  logicalFingerprint: string;
   recovery: { createdAt: string; origin: string; image: string };
   reconciliation?: RestoreReconciliationSummary;
   /** Present only for source preparation; never serialize private paths to HTTP. */
@@ -43,6 +44,7 @@ export interface RestoreArchiveOptions extends VerificationOptions {
 interface PreparedEvidence {
   databaseSha256: string;
   databaseBytes: number;
+  logicalFingerprint: string;
   recovery: PreparedRestore['recovery'];
   reconciliation?: RestoreReconciliationSummary;
 }
@@ -247,10 +249,12 @@ async function inspectArchive(
           }) &&
           (result.keyId === undefined || /^[a-zA-Z0-9_-]{1,80}$/.test(result.keyId)) &&
           (!retain ||
-            validPreparedEvidence(result.prepared, {
+            (validPreparedEvidence(result.prepared, {
               ...options,
               maxDatabaseBytes: outputMaximum,
-            })) &&
+            }) &&
+              typeof result.prepared.logicalFingerprint === 'string' &&
+              /^[a-f0-9]{64}$/.test(result.prepared.logicalFingerprint))) &&
           (!reconciliation || validReconciliationSummary(result.prepared?.reconciliation))
         );
       },
@@ -309,7 +313,7 @@ async function inspectArchive(
 function validPreparedEvidence(
   value: unknown,
   options: Pick<VerificationOptions, 'expectedOrigin' | 'expectedImage' | 'maxDatabaseBytes'>,
-): value is PreparedEvidence {
+): value is Omit<PreparedEvidence, 'logicalFingerprint'> {
   if (!value || typeof value !== 'object') return false;
   const evidence = value as PreparedEvidence;
   return (

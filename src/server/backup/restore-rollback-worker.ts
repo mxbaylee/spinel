@@ -57,6 +57,7 @@ export async function prepareWorkingRollback(input: RollbackWorkerInput) {
       additional,
       input,
     );
+    const logicalFingerprint = restoreSnapshotFingerprint(candidate);
     for (const db of connections.splice(0)) db.close();
     await assertSelfContained(output);
     const bytes = (await stat(output)).size;
@@ -81,6 +82,7 @@ export async function prepareWorkingRollback(input: RollbackWorkerInput) {
       ...inventory,
       ...semantics,
       reconciliation,
+      logicalFingerprint,
       databaseSha256: await digest(output),
       databaseBytes: bytes,
       originalFingerprint: input.current.fingerprint,
