@@ -36,6 +36,8 @@ import { processResourcesReleased } from './process-exit.ts';
 import { restoreBarrierPath } from './restore-barrier.ts';
 import { restoreSnapshotFingerprint } from '../backup/inventory.ts';
 import { validRestoreStopRecord } from './restore-stop.ts';
+import { RestoreJobs } from './restore-jobs.ts';
+import { restoreJobIntentFixture } from './restore-job-fixture.ts';
 import { OWNERSHIP_CHANNEL, shareWorkspaceOwnership } from './ownership.ts';
 
 const cleanups: Array<() => unknown | Promise<unknown>> = [];
@@ -1197,3 +1199,196 @@ test('journal refuses oversized UTF-8 records before replacing durable state', a
   journal.write();
   expect(await readFile(join(root, 'journal.json'), 'utf8')).toBe(before);
 });
+
+test.each([
+  'referenced',
+  'orphan',
+  'missing-main',
+  'corrupt-main',
+  'missing-record',
+  'corrupt-record',
+])(
+  'restart refuses ordinary recovery around unfinished restore admission: %s',
+  async (condition) => {
+    const f = await fixture();
+    const first = await f.supervisor();
+    await start(first);
+    const state = first.journal.state;
+    const intent = {
+      ...restoreJobIntentFixture(),
+      target: {
+        instanceId: state.instanceId,
+        generationId: state.generationId,
+        epoch: state.epoch,
+        databasePath: first.journal.databasePath,
+        identity: { ...state.databaseIdentity! },
+      },
+    };
+    const jobs = new RestoreJobs(first.journal);
+    let record;
+    try {
+      record = jobs.admit(intent).record;
+    } finally {
+      jobs.close();
+    }
+    if (condition !== 'orphan') {
+      first.journal.state.restoreJob = { jobId: intent.id, intentHash: record.intentHash };
+      first.journal.write();
+    }
+    await first.close();
+    const journalPath = join(f.root, 'journal.json');
+    const jobPath = join(f.root, 'restore-jobs', intent.id, 'state.json');
+    if (condition === 'missing-main') await rm(journalPath);
+    if (condition === 'corrupt-main') await writeFile(journalPath, '{');
+    if (condition === 'missing-record') await rm(jobPath);
+    if (condition === 'corrupt-record') await writeFile(jobPath, '{');
+    const restarted = await f.supervisor();
+    expect(restarted.status().phase).toBe('recovery-required');
+    const before = await readFile(journalPath);
+    for (const action of ['verify', 'start', 'resume', 'pause'] as const)
+      await expect(restarted.coldControl({ action, operationId: randomUUID() })).rejects.toThrow(
+        'restore job',
+      );
+    await expect(
+      restarted.control({ action: 'pause', operationId: randomUUID(), authority: proof() }),
+    ).rejects.toThrow('restore job');
+    expect(() => restarted.journal.acceptJournal()).toThrow('restore job');
+    expect(await readFile(journalPath)).toEqual(before);
+    await restarted.coldControl({ action: 'stop', operationId: randomUUID() });
+    expect(restarted.journal.state.operation).toBeNull();
+    if (condition === 'corrupt-main') expect(await readFile(journalPath)).toEqual(before);
+    expect(restarted.journal.state.child).toBeNull();
+    expect(restarted.journal.state.verifier).toBeNull();
+    expect(['stopped', 'recovery-required']).toContain(
+      (await restarted.coldControl({ action: 'status' })).status.phase,
+    );
+  },
+  15_000,
+);
+
+test('unreferenced failed pre-mutation jobs preserve idempotency without blocking ordinary recovery', async () => {
+  const f = await fixture();
+  const first = await f.supervisor();
+  await start(first);
+  const state = first.journal.state;
+  const intent = {
+    ...restoreJobIntentFixture(),
+    target: {
+      instanceId: state.instanceId,
+      generationId: state.generationId,
+      epoch: state.epoch,
+      databasePath: first.journal.databasePath,
+      identity: { ...state.databaseIdentity! },
+    },
+  };
+  const jobs = new RestoreJobs(first.journal);
+  try {
+    const { record } = jobs.admit(intent);
+    jobs.checkpoint(intent.id, record.intentHash, 0, 'failed');
+  } finally {
+    jobs.close();
+  }
+  const jobPath = join(f.root, 'restore-jobs', intent.id, 'state.json');
+  const retained = await readFile(jobPath);
+  await first.close();
+  const restarted = await f.supervisor();
+  await start(restarted);
+  expect(await readFile(jobPath)).toEqual(retained);
+}, 15_000);
+
+test.each([false, true])(
+  'pending admission permits protective stop of a failed live child with recording failure=%s',
+  async (recordingFailure) => {
+    const f = await fixture();
+    const supervisor = await f.supervisor();
+    await start(supervisor);
+    const state = supervisor.journal.state;
+    const intent = {
+      ...restoreJobIntentFixture(),
+      target: {
+        instanceId: state.instanceId,
+        generationId: state.generationId,
+        epoch: state.epoch,
+        databasePath: supervisor.journal.databasePath,
+        identity: { ...state.databaseIdentity! },
+      },
+    };
+    const jobs = new RestoreJobs(supervisor.journal);
+    try {
+      jobs.admit(intent);
+    } finally {
+      jobs.close();
+    }
+    expect(supervisor.journal.state.operation).toBeNull();
+    // A pending admission is not permission to discard running/draining work.
+    await expect(
+      supervisor.coldControl({ action: 'stop', operationId: randomUUID() }),
+    ).rejects.toThrow('Pause and drain');
+    const child = supervisor.journal.state.child!;
+    supervisor.journal.state = {
+      ...supervisor.journal.state,
+      phase: 'recovery-required',
+      verifiedAt: null,
+      lastFailure: 'storage-failed',
+    };
+    supervisor.journal.write();
+    const jobPath = join(f.root, 'restore-jobs', intent.id, 'state.json');
+    const before = await readFile(jobPath);
+    const mainPath = join(f.root, 'journal.json');
+    const priorMain = await readFile(mainPath);
+    const fault = recordingFailure
+      ? vi.spyOn(supervisor.journal, 'write').mockImplementation(() => {
+          throw new Error('Injected stop recording failure');
+        })
+      : undefined;
+    await supervisor.coldControl({ action: 'stop', operationId: randomUUID() });
+    if (recordingFailure) {
+      expect(await readFile(mainPath)).toEqual(priorMain);
+      expect(supervisor.status().phase).toBe('recovery-required');
+    }
+    fault?.mockRestore();
+    expect(supervisor.journal.state.child).toBeNull();
+    expect(supervisor.journal.state.operation).toBeNull();
+    expect(processResourcesReleased(String(child.pid))).toBe(true);
+    expect(await readFile(jobPath)).toEqual(before);
+    await expect(
+      supervisor.coldControl({ action: 'verify', operationId: randomUUID() }),
+    ).rejects.toThrow('restore job');
+  },
+  15_000,
+);
+
+test.each(['verify', 'start'] as const)(
+  'rechecks independent restore admission after awaited ownership before %s',
+  async (action) => {
+    const f = await fixture();
+    const supervisor = await f.supervisor();
+    const operationId = randomUUID();
+    await supervisor.coldControl({ action: 'verify', operationId });
+    const bind = supervisor.journal.bindWorkspace.bind(supervisor.journal);
+    vi.spyOn(supervisor.journal, 'bindWorkspace').mockImplementationOnce(async () => {
+      await bind();
+      const state = supervisor.journal.state;
+      const intent = {
+        ...restoreJobIntentFixture(),
+        target: {
+          instanceId: state.instanceId,
+          generationId: state.generationId,
+          epoch: state.epoch,
+          databasePath: supervisor.journal.databasePath,
+          identity: { ...state.databaseIdentity! },
+        },
+      };
+      const jobs = new RestoreJobs(supervisor.journal);
+      try {
+        jobs.admit(intent);
+      } finally {
+        jobs.close();
+      }
+    });
+    await expect(supervisor.coldControl({ action, operationId })).rejects.toThrow('restore job');
+    expect(supervisor.journal.state.child).toBeNull();
+    expect(supervisor.journal.state.verifier).toBeNull();
+  },
+  10_000,
+);

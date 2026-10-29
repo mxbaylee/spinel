@@ -326,6 +326,11 @@ export class MaintenanceSupervisor {
       if (this.journal.state.databaseIdentity) this.assertGeneration();
       this.transition({ child: null, verifier: null });
     }
+    try {
+      this.journal.assertNoPendingRestoreJobs();
+    } catch {
+      this.failure('restore-job-pending');
+    }
     this.reconcileNotice(true);
     // Only expose cold commands after every startup reconciliation has finished;
     // its cleanup must never erase the identity of a newly started child.
@@ -508,6 +513,7 @@ export class MaintenanceSupervisor {
   }
   control(command: unknown): Promise<MaintenanceControlResult> {
     return this.serial(async () => {
+      this.journal.assertNoPendingRestoreJobs();
       if (this.journal.state.restoreStop)
         throw new Error(
           'Finish recovery of the current restore before another maintenance operation.',
@@ -632,6 +638,7 @@ export class MaintenanceSupervisor {
       }
       if (!['pause', 'stop', 'start', 'verify', 'resume'].includes(String(command.action)))
         throw new Error('Unknown recovery operation.');
+      if (command.action !== 'stop') this.journal.assertNoPendingRestoreJobs();
       if (this.journal.state.restoreStop && command.action !== 'stop')
         throw new Error(
           'An unfinished restore witness must be reconciled before another recovery operation.',
@@ -642,6 +649,12 @@ export class MaintenanceSupervisor {
         throw new Error('This operation has already completed.');
       if (state.operation && state.operation.id !== command.operationId)
         throw new Error('Use the exact current operation ID from status.');
+      // A protective host stop must not accept an invalid journal or mint new
+      // maintenance authority just to close already-paused/recovery resources.
+      if (command.action === 'stop') {
+        await this.stop();
+        return { status: this.status() };
+      }
       if (!state.operation) {
         this.journal.acceptJournal();
         this.transition({
@@ -665,8 +678,7 @@ export class MaintenanceSupervisor {
           });
         } else if (!['paused', 'stopped', 'recovery-required'].includes(state.phase))
           throw new Error('Another transition is still running.');
-      } else if (command.action === 'stop') await this.stop();
-      else if (command.action === 'verify') await this.verify();
+      } else if (command.action === 'verify') await this.verify();
       else if (command.action === 'start') await this.start();
       else await this.resume();
       return { status: this.status() };
@@ -763,13 +775,23 @@ export class MaintenanceSupervisor {
     if (this.journal.state.phase === 'running' || this.journal.state.phase === 'draining')
       throw new Error('Pause and drain accepted work before stopping the application.');
     const identity = this.journal.state.child;
+    const record = (patch: Partial<typeof this.journal.state>) => {
+      try {
+        this.transition(patch);
+      } catch {
+        // A host stop may contain already-paused/recovery resources even when
+        // recording fails. transition keeps the proxy closed; an invalid main
+        // journal and independent restore evidence remain untouched.
+      }
+    };
     this.childReady = false;
-    this.transition({ phase: 'stopping' });
+    record({ phase: 'stopping' });
     try {
       if (identity) await this.stopGroup(identity);
       else assertWorkspaceHandlesClosed(this.journal.databasePath);
       this.child = undefined;
-      this.transition({ phase: 'stopped', child: null, verifiedAt: null });
+      this.childOwned = false;
+      record({ phase: 'stopped', child: null, verifiedAt: null });
     } catch (error) {
       this.failure('process-still-active');
       throw error;
@@ -903,6 +925,7 @@ export class MaintenanceSupervisor {
     });
   }
   private async verify() {
+    this.journal.assertNoPendingRestoreJobs();
     assertNoPendingRestore(this.journal.databasePath);
     if (
       this.childReady ||
@@ -911,6 +934,7 @@ export class MaintenanceSupervisor {
     )
       throw new Error('Stop the application before verifying its closed workspace.');
     await this.journal.bindWorkspace();
+    this.journal.assertNoPendingRestoreJobs();
     assertWorkspaceHandlesClosed(this.journal.databasePath);
     const current = fileIdentity(this.journal.databasePath);
     if (
@@ -986,6 +1010,7 @@ export class MaintenanceSupervisor {
     }
   }
   private async start() {
+    this.journal.assertNoPendingRestoreJobs();
     if (this.journal.state.restoreStop)
       throw new Error(
         'An unfinished restore witness must be reconciled before application restart.',
@@ -995,6 +1020,7 @@ export class MaintenanceSupervisor {
       throw new Error('Verify the closed workspace before starting it.');
     this.assertGeneration();
     await this.journal.bindWorkspace();
+    this.journal.assertNoPendingRestoreJobs();
     assertWorkspaceHandlesClosed(this.journal.databasePath);
     this.transition({ phase: 'starting', lastFailure: null });
     this.childReady = false;

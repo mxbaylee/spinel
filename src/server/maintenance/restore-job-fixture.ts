@@ -28,7 +28,7 @@ export function restoreJobIntentFixture(now = Date.now()): RestoreJobIntent {
       sessionHash: 'd'.repeat(64),
       verifiedAt: now - 1000,
       verifiedPasskeyId: 'passkey',
-      expiresAt: now + 1000,
+      expiresAt: now + 60_000,
     },
     continuationHash: 'e'.repeat(64),
     confirmedAt: now,

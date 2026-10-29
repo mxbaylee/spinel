@@ -20,6 +20,7 @@ import type { MaintenanceNotice, MaintenancePhase } from '../../shared/maintenan
 import { assertNoPendingRestore } from './restore-barrier.ts';
 import { validRestoreStopRecord } from './restore-stop.ts';
 import type { RestoreStopRecord } from './restore-stop.ts';
+import { RestoreJobs } from './restore-jobs.ts';
 
 const MAX_JOURNAL_BYTES = 32_768;
 export const AUTHORITY_MS = 5 * 60_000;
@@ -76,6 +77,8 @@ export interface RecoveryJournalState {
   updatedAt: number;
   /** Historical binding survives supervisor epoch changes. Older journals omit it. */
   restoreStop?: RestoreStopRecord | null;
+  /** Only identity lives here; the separate job owns its restore checkpoint. */
+  restoreJob?: { jobId: string; intentHash: string } | null;
 }
 
 export function maintenanceSupported() {
@@ -438,6 +441,16 @@ function validState(value: unknown, databasePath: string): value is RecoveryJour
       value.restoreStop === null ||
       validRestoreStopRecord(value.restoreStop)
     ) ||
+    !(
+      value.restoreJob === undefined ||
+      value.restoreJob === null ||
+      (record(value.restoreJob) &&
+        Object.keys(value.restoreJob).length === 2 &&
+        typeof value.restoreJob.jobId === 'string' &&
+        uuidPattern.test(value.restoreJob.jobId) &&
+        typeof value.restoreJob.intentHash === 'string' &&
+        hashPattern.test(value.restoreJob.intentHash))
+    ) ||
     !Array.isArray(value.receipts) ||
     value.receipts.length > 128 ||
     !value.receipts.every(
@@ -551,6 +564,7 @@ export class RecoveryJournal {
       lastFailure: this.corrupted ? 'journal-invalid' : 'generation-unverified',
       updatedAt: Date.now(),
       restoreStop: null,
+      restoreJob: null,
     };
     if (!loaded && !this.corrupted) this.write();
   }
@@ -672,10 +686,37 @@ export class RecoveryJournal {
     )
       throw new Error('Recovery directory is missing or changed.');
   }
+  /** Metadata-only admissions are still unfinished work. Missing/corrupt main
+   * state must not let cold verification silently discard independent records.
+   * Later restore-stage reconciliation will replace this conservative refusal.
+   */
+  assertNoPendingRestoreJobs() {
+    this.checkRoot();
+    let jobs: RestoreJobs | undefined;
+    try {
+      try {
+        lstatSync(this.path('restore-jobs'));
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code === 'ENOENT' && !this.state.restoreJob) return;
+        throw error;
+      }
+      jobs = new RestoreJobs(this);
+      const records = jobs.list();
+      if (this.state.restoreJob || records.some((record) => record.phase !== 'failed'))
+        throw new Error('Unreconciled restore admission.');
+    } catch (error) {
+      throw new Error('An unfinished restore job requires supervised recovery before continuing.', {
+        cause: error,
+      });
+    } finally {
+      jobs?.close();
+    }
+  }
   /** Only explicit cold-host verification may replace an unreadable journal. */
   acceptJournal() {
     this.checkRoot();
     assertNoPendingRestore(this.databasePath);
+    this.assertNoPendingRestoreJobs();
     if (this.corrupted) {
       const info = lstatSync(this.path('journal.json'));
       if (

@@ -96,7 +96,7 @@ linux('durable admission survives reopen and expired retries do not renew it', a
   f.jobs.close();
   const reopened = f.openJobs();
   expect(reopened.read(intent.id)).toEqual(retained);
-  f.advance(1001);
+  f.advance(60_001);
   expect(reopened.admit(intent)).toEqual({ created: false, record: retained });
   expect(() => reopened.checkpoint(intent.id, retained.intentHash, 1, 'source-retained')).toThrow();
   expect(() => reopened.admit({ ...intent, continuationHash: 'f'.repeat(64) })).toThrow(
@@ -123,13 +123,13 @@ linux(
     expect(() =>
       f.jobs.checkpoint(intent.id, record.intentHash, 0, 'accepted' as 'source-retained'),
     ).toThrow();
-    f.advance(1000);
+    f.advance(60_000);
     expect(() => f.jobs.checkpoint(intent.id, record.intentHash, 0, 'source-retained')).toThrow(
       'expired',
     );
     f.jobs.checkpoint(intent.id, record.intentHash, 0, 'failed');
     const stale = f.intent();
-    f.advance(1000);
+    f.advance(60_000);
     expect(() => f.jobs.admit(stale)).toThrow('expired');
     expect(f.jobs.read(stale.id)).toBeUndefined();
   },
@@ -240,7 +240,7 @@ linux('expiry during publication retains the ID without reporting new authority'
   const intent = f.intent();
   const sync = f.journal.syncRoot.bind(f.journal);
   vi.spyOn(f.journal, 'syncRoot').mockImplementationOnce(() => {
-    f.advance(1000);
+    f.advance(60_000);
     sync();
   });
   expect(() => f.jobs.admit(intent)).toThrow('expired');
@@ -297,7 +297,8 @@ linux.each(['state', 'pending', 'journal'])(
   async (kind) => {
     const f = await fixture();
     const intent = f.intent();
-    f.jobs.admit(intent);
+    const { record } = f.jobs.admit(intent);
+    if (kind === 'journal') f.jobs.checkpoint(intent.id, record.intentHash, 0, 'failed');
     const path =
       kind === 'journal'
         ? join(f.root, 'journal.json')

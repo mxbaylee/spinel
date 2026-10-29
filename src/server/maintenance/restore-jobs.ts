@@ -14,7 +14,6 @@ import {
   writeFileSync,
 } from 'node:fs';
 import type { RecoveryJournal } from './journal.ts';
-import { sameFile } from './journal.ts';
 import { restoreIntentHash, validRestoreJobIntent } from './restore-job-intent.ts';
 import type { RestoreJobIntent } from './restore-job-intent.ts';
 
@@ -239,14 +238,16 @@ export class RestoreJobs {
     const state = this.journal.state;
     const owned = this.journal.workspaceOwnership();
     const target = intent.target;
+    const matches = (identity: typeof target.identity) =>
+      identity.device === target.identity.device && identity.inode === target.identity.inode;
     if (
       target.instanceId !== state.instanceId ||
       target.generationId !== state.generationId ||
       target.epoch !== state.epoch ||
       target.databasePath !== owned.databasePath ||
       !state.databaseIdentity ||
-      !sameFile(target.identity, state.databaseIdentity) ||
-      !sameFile(target.identity, owned.databaseIdentity)
+      !matches(state.databaseIdentity) ||
+      !matches(owned.databaseIdentity)
     )
       throw refused();
   }
@@ -353,6 +354,7 @@ export class RestoreJobs {
       (phase === 'source-retained' && current.phase !== 'accepted')
     )
       throw refused();
+    if (phase !== 'failed') this.target(current.intent);
     const now = phase === 'failed' ? this.now() : this.clock(current.intent);
     if (!Number.isSafeInteger(now)) throw refused();
     const next: RestoreJobRecord = {
@@ -362,7 +364,10 @@ export class RestoreJobs {
       updatedAt: Math.max(now, current.updatedAt),
     };
     this.publish(next);
-    if (phase !== 'failed') this.clock(current.intent);
+    if (phase !== 'failed') {
+      this.target(current.intent);
+      this.clock(current.intent);
+    }
     return structuredClone(next);
   }
   close() {
