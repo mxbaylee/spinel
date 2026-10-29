@@ -193,7 +193,18 @@ place. Owner, chat 2026-10-26; [image-publication decision](../implementation/gr
 
 1. Re-read the ticket and check it is still true against the code.
 2. Branch from `main`. One ticket, one branch, one PR, one squashed commit.
-3. Build it with its tests. Make decisions as they come up (below).
+3. Build it with its tests. Make decisions as they come up (below). Maintain
+   diagnostics with the behavior: when a change affects an instrumented
+   operation, save, sync, checkpoint, maintenance or runtime boundary, inspect
+   its emitter, exact timing/outcome, retry counting and attribution. Update the
+   [emitter inventory](../diagnostics.md#emitter-maintenance-inventory) and
+   meaningful regression coverage when the contract changes; remove obsolete
+   observations instead of leaving misleading success or duration records.
+   Retain fixed content-free fields, explicit units, collection/loss bounds and
+   observer-failure isolation. Describe the diagnostic impact in the PR template,
+   or explain why the inspected boundary is unchanged. This is upkeep of the
+   relevant contract, not a requirement to add metrics to every edit. Owner,
+   chat 2026-10-29, [maintenance decision](../implementation/SPN-123.md#ongoing-diagnostic-upkeep).
 4. **Split when it grows.** Past ~10k changed lines, or ~3 days in progress, look
    for a split. 100k is the hard limit and CI fails past it. Lockfiles and
    generated files don't count; the list is in `backlog.json`. Land the coherent

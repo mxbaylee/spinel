@@ -1,11 +1,15 @@
 import { randomUUID } from 'node:crypto';
+import type { AddressInfo } from 'node:net';
+import express from 'express';
 import { afterEach, expect, test } from 'vitest';
+import type { DiagnosticContext, DiagnosticEvent } from '@spinel/diagnostics';
 import { DatabaseSync } from '../../../server/database.ts';
-import { AuthStore } from '../auth/store.ts';
+import { AuthStore, COOKIE_NAME } from '../auth/store.ts';
 import { WorkspaceStore } from './store.ts';
 import { WorkspaceSearch } from './search.ts';
 import { TrashStore } from './trash.ts';
 import { DocumentStore } from './documents.ts';
+import { workspaceRoutes } from './routes.ts';
 const databases: DatabaseSync[] = [];
 afterEach(() => databases.splice(0).forEach((db) => db.close()));
 function fixture() {
@@ -51,6 +55,93 @@ function fixture() {
     },
   };
 }
+
+test('search observations preserve authorized results and have one outcome before response delivery', async () => {
+  const f = fixture();
+  const observations: { event: DiagnosticEvent; context: DiagnosticContext; actorId?: string }[] =
+    [];
+  let brokenObserver = false;
+  let rejectResponse = false;
+  const app = express();
+  app.use((_request, response, next) => {
+    const json = response.json;
+    response.json = (body: unknown) => {
+      if (rejectResponse) {
+        rejectResponse = false;
+        throw new Error('Injected response failure after catalog success.');
+      }
+      return json.call(response, body);
+    };
+    next();
+  });
+  app.use(
+    '/api/items',
+    workspaceRoutes(
+      f.auth,
+      'https://spinel.example',
+      f.store,
+      undefined,
+      undefined,
+      (event, context, actorId) => {
+        if (brokenObserver) throw new Error('Injected observer failure.');
+        observations.push({ event, context, actorId });
+      },
+    ),
+  );
+  const server = app.listen(0, '127.0.0.1');
+  await new Promise<void>((resolve) => server.once('listening', resolve));
+  const base = `http://127.0.0.1:${(server.address() as AddressInfo).port}/api/items/search`;
+  const cookie = `${COOKIE_NAME}=${f.auth.createSession(f.viewer.id).token}`;
+  const search = (query: string, session = cookie) =>
+    fetch(base + query, { headers: { Cookie: session } });
+  const results = () => observations.filter(({ event }) => event.name === 'operation.result');
+  const outcomes = () =>
+    observations.flatMap(({ event }) =>
+      event.name === 'operation.result' ? [event.details.outcome] : [],
+    );
+  try {
+    const response = await search('?q=Budget');
+    expect(response.status).toBe(200);
+    expect((await response.json()).items.map((item: { id: string }) => item.id)).toEqual([
+      f.sheet.id,
+    ]);
+    expect(results()).toMatchObject([
+      {
+        event: { details: { operation: 'search', outcome: 'success' } },
+        context: { component: 'server', route: '/api/items' },
+        actorId: f.viewer.id,
+      },
+    ]);
+    expect((await search('?owner=invalid')).status).toBe(400);
+    expect(outcomes()).toEqual(['success', 'failure']);
+    expect((await search('?q=Budget', '')).status).toBe(401);
+    expect(results()).toHaveLength(2);
+    rejectResponse = true;
+    expect((await search('?q=Budget')).status).toBe(400);
+    // Catalog timing ends before response delivery, so a send failure is not a
+    // second, contradictory catalog-query outcome.
+    expect(outcomes()).toEqual([
+      'success',
+      'failure',
+      'success',
+    ]);
+    brokenObserver = true;
+    const preserved = await search('?q=Budget');
+    expect((await preserved.json()).items.map((item: { id: string }) => item.id)).toEqual([
+      f.sheet.id,
+    ]);
+    expect((await search('?owner=invalid')).status).toBe(400);
+    expect(f.search.find(f.other.id, { q: 'Budget' })).toEqual([]);
+    expect(JSON.stringify(observations)).not.toContain('Budget');
+    expect(results()).toHaveLength(3);
+  } finally {
+    await new Promise<void>((resolve, reject) => {
+      server.close((error) => (error ? reject(error) : resolve()));
+      server.closeAllConnections();
+    });
+  }
+});
+
 test('search excludes private ancestors, other users tags and inaccessible exact titles', () => {
   const f = fixture();
   f.store.changeTag(f.owner.id, f.sheet.id, 'owner-secret-tag');

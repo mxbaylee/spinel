@@ -189,6 +189,36 @@ test('rendering frames drain a quiet native phrase when SDK timers cannot run, w
   }
 });
 
+test('a native flush failure is observed without replacing the original exception or clearing pending work', async () => {
+  const f = frameFixture(() => {
+    throw new Error('Observer unavailable');
+  });
+  let flush: ReturnType<typeof vi.spyOn> | undefined;
+  try {
+    await f.type('retain');
+    const failure = new Error('Native flush failed');
+    const before = f.manager.getStateCache('doc');
+    flush = vi.spyOn(f.manager, 'flushPendingChanges').mockImplementation(() => {
+      throw failure;
+    });
+    expect(() => f.frameAt(1300)).toThrow(failure);
+    expect(f.manager.getStateCache('doc')).toEqual(before);
+    expect(f.text()).toBe('retain\r\n');
+    expect(f.observations).toEqual([
+      expect.objectContaining({
+        outcome: 'failure',
+        reason: 'idle',
+        history: 6,
+        collaboration: 6,
+        durationMs: 0,
+      }),
+    ]);
+  } finally {
+    flush?.mockRestore();
+    f.close();
+  }
+});
+
 test('remote and intermediate notifications cannot postpone the completed phrase quiet deadline', async () => {
   const f = frameFixture();
   try {

@@ -8,6 +8,7 @@ import { LocaleType } from '@univerjs/core';
 import { DatabaseSync, openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { startApp } from './app-process.ts';
+import { edit as editNative } from './offline-fixture.ts';
 
 async function fixture(browser: Browser, context: BrowserContext, info: TestInfo) {
   const directory = await mkdtemp(join(tmpdir(), 'spinel-diagnostics-e2e-'));
@@ -104,6 +105,134 @@ async function downloadDatabase(page: Page, destination: string) {
   expect((await readFile(destination)).subarray(0, 16).toString()).toBe('SQLite format 3\0');
   return new DatabaseSync(destination);
 }
+
+test('production open, search, local persistence and server acknowledgement remain distinct in the diagnostics export', async ({
+  page,
+  context,
+  browser,
+}, info) => {
+  test.skip(
+    info.project.name !== 'production',
+    'Prepared offline copies require the production runtime manifest.',
+  );
+  test.setTimeout(180_000);
+  const f = await fixture(browser, context, info);
+  const member = await f.member.newPage();
+  try {
+    const item = await f.create('Private diagnostic diary', 'doc');
+    const collection = member.waitForResponse(
+      (response) =>
+        response.url().endsWith('/api/diagnostics/collection') && response.status() === 200,
+    );
+    await member.goto(f.origin);
+    await member.bringToFront();
+    await collection;
+    const query = member.getByRole('searchbox', { name: 'Search files', exact: true });
+    await query.fill('Private diagnostic diary');
+    await expect(
+      member.getByRole('region', { name: 'Search results', exact: true }).getByRole('status'),
+    ).toHaveText('1 result');
+    await member.getByRole('button', { name: 'Clear search and filters', exact: true }).click();
+    await member
+      .getByRole('button', { name: `More actions for ${item.name}`, exact: true })
+      .click();
+    await member
+      .getByRole('menuitem', { name: 'Available offline on this device', exact: true })
+      .click();
+    await expect(member.getByRole('status').filter({ hasText: 'available offline' })).toHaveText(
+      `${item.name} is available offline on this device.`,
+      { timeout: 120_000 },
+    );
+    await member.getByRole('button', { name: `${item.name} Doc`, exact: true }).click();
+    const saved = member.getByRole('status', { name: 'Save status', exact: true });
+    await expect(saved).toHaveText('Synced. All changes are saved on the server and this device.', {
+      timeout: 30_000,
+    });
+    const uploaded = member.waitForResponse((response) => {
+      if (!response.url().endsWith('/api/diagnostics/events') || response.status() !== 200)
+        return false;
+      const batch = response.request().postDataJSON() as {
+        records: { event: { name: string; details: { operation?: string; outcome?: string } } }[];
+      };
+      return batch.records.some(
+        ({ event }) =>
+          event.name === 'operation.result' &&
+          event.details.operation === 'document-save-server-ack' &&
+          event.details.outcome === 'success',
+      );
+    });
+    await editNative(member, 'doc', 'Private native content 123');
+    await expect(saved).toHaveText('Synced. All changes are saved on the server and this device.', {
+      timeout: 30_000,
+    });
+    expect((await (await uploaded).json()).dropped).toBe(0);
+    const persisted = new DatabaseSync(join(f.directory, 'diagnostics.sqlite'));
+    try {
+      await expect
+        .poll(
+          () =>
+            persisted
+              .prepare(
+                "SELECT count(*) AS n FROM events WHERE source='frontend' AND name='operation.result' AND json_extract(details,'$.operation')='document-save-local' AND json_extract(details,'$.outcome')='success'",
+              )
+              .get()?.n,
+        )
+        .toBeGreaterThan(0);
+    } finally {
+      persisted.close();
+    }
+    const content = await f.member.request.get(`${f.origin}/api/items/${item.id}/doc`);
+    expect(content.status()).toBe(200);
+    expect(JSON.stringify(await content.json())).toContain('Private native content 123');
+    await page.bringToFront();
+    await page.goto(`${f.origin}/admin#health`);
+    const exported = await downloadDatabase(page, join(f.directory, 'operations.sqlite'));
+    try {
+      const rows = exported.prepare('SELECT * FROM events').all();
+      for (const [source, operation] of [
+        ['frontend', 'document-open'],
+        ['frontend', 'document-save-local'],
+        ['frontend', 'document-save-server-ack'],
+        ['frontend', 'search'],
+        ['backend', 'search'],
+      ])
+        expect(
+          rows.some(
+            (row) =>
+              row.source === source &&
+              row.name === 'operation.result' &&
+              JSON.parse(String(row.details)).operation === operation &&
+              JSON.parse(String(row.details)).outcome === 'success',
+          ),
+          `${source} ${operation}`,
+        ).toBe(true);
+      for (const name of [
+        'native.flush',
+        'native.checkpoint',
+        'offline.persistence',
+        'sync.client.connection',
+      ])
+        expect(
+          rows.some(
+            (row) =>
+              row.name === name &&
+              row.source === 'frontend' &&
+              row.actor_id === f.owner.id &&
+              row.file_id === item.id,
+          ),
+          name,
+        ).toBe(true);
+      const encoded = JSON.stringify(rows);
+      for (const privateText of [item.name, 'Private native content 123', f.ownerSession.token])
+        expect(encoded).not.toContain(privateText);
+      expect(exported.prepare('PRAGMA user_version').get()?.user_version).toBe(1);
+    } finally {
+      exported.close();
+    }
+  } finally {
+    await f.close();
+  }
+});
 
 test('Operator downloads real correlated diagnostics without document data and clears only a freshly confirmed generation', async ({
   page,

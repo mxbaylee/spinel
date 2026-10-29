@@ -13,6 +13,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { expect, test, vi } from 'vitest';
 import type { DiagnosticRecord } from '@spinel/diagnostics';
+import type { MaintenanceDiagnosticEvent } from '@spinel/diagnostics';
+import { MaintenanceGate } from '../maintenance/gate.ts';
+import type { MaintenanceBridge, MaintenancePublicStatus } from '../../shared/maintenance.ts';
 import { DatabaseSync } from '../../../server/database.ts';
 import { DiagnosticsStore, DIAGNOSTICS_LIMITS } from './store.ts';
 
@@ -23,6 +26,133 @@ const event = {
 } as const;
 const context = { component: 'editor' } as const;
 const record = (): DiagnosticRecord => ({ id: randomUUID(), occurredAt: 1234, event, context });
+
+test('internal maintenance observations persist after admission closes without admitting ordinary writes', async () => {
+  const f = fixture();
+  const gate = new MaintenanceGate();
+  f.store.setMaintenanceGate(gate);
+  try {
+    gate.stopAdmission();
+    f.store.record(event, context);
+    const observed = {
+      name: 'maintenance.drain',
+      details: { outcome: 'success', durationMs: 30, admittedCount: 2 },
+    } as const;
+    f.store.recordMaintenance(observed);
+    f.store.recordMaintenance(event as unknown as MaintenanceDiagnosticEvent);
+    expect(f.store.status()).toMatchObject({
+      recordCount: 1,
+      dropped: { invalid: 1, unavailable: 1 },
+    });
+    const db = f.read();
+    try {
+      expect(db.prepare('SELECT name,source,actor_id,details FROM events').get()).toEqual({
+        name: observed.name,
+        source: 'backend',
+        actor_id: null,
+        details: JSON.stringify(observed.details),
+      });
+    } finally {
+      db.close();
+    }
+    expect(() => gate.begin()).toThrow('paused');
+  } finally {
+    await f.dispose();
+  }
+});
+
+test('pre-auth maintenance refusal bursts have a fixed write bound, visible losses and unchanged gate authority', async () => {
+  const f = fixture();
+  const status: MaintenancePublicStatus = {
+    available: true,
+    phase: 'running',
+    epoch: 'current',
+    notice: null,
+  };
+  const gate = new MaintenanceGate({ status: () => status } as MaintenanceBridge, (event) => {
+    f.store.recordMaintenance(event as MaintenanceDiagnosticEvent);
+  });
+  f.store.setMaintenanceGate(gate);
+  const application = new DatabaseSync(':memory:');
+  application.exec('CREATE TABLE content(value TEXT)');
+  application.setMaintenanceGate(gate);
+  const accepted = gate.begin();
+  let time = 10;
+  const clock = vi.spyOn(performance, 'now').mockImplementation(() => time);
+  try {
+    status.phase = 'draining';
+    for (let i = 0; i < 1000; i++) {
+      expect(() =>
+        gate.run(() => application.exec("INSERT INTO content VALUES ('refused')")),
+      ).toThrow('paused');
+      expect(() => gate.assertEpoch('retired')).toThrow('Maintenance changed');
+    }
+    expect(f.store.status()).toMatchObject({ recordCount: 2, dropped: { queue: 1998 } });
+    f.store.recordMaintenance({ name: 'maintenance.phase', details: { phase: 'draining' } });
+    gate.within(accepted, () => application.exec("INSERT INTO content VALUES ('accepted')"));
+    accepted.release();
+    await gate.drain();
+    expect(f.store.status().recordCount).toBe(4);
+    expect(application.prepare('SELECT value FROM content').all()).toEqual([{ value: 'accepted' }]);
+    expect(() => application.exec("INSERT INTO content VALUES ('outside-admission')")).toThrow(
+      'paused',
+    );
+    time = 10 + DIAGNOSTICS_LIMITS.maintenanceRefusalIntervalMs - 1;
+    expect(() => gate.run(() => {})).toThrow('paused');
+    expect(() => gate.assertEpoch('retired')).toThrow('Maintenance changed');
+    expect(f.store.status()).toMatchObject({ recordCount: 4, dropped: { queue: 2000 } });
+    time++;
+    expect(() => gate.run(() => {})).toThrow('paused');
+    expect(() => gate.assertEpoch('retired')).toThrow('Maintenance changed');
+    expect(f.store.status()).toMatchObject({ recordCount: 6, dropped: { queue: 2000 } });
+
+    // Clearing records or changing phase does not refill request-driven write capacity.
+    status.phase = 'running';
+    gate.run(() => f.store.truncate());
+    status.phase = 'draining';
+    expect(() => gate.run(() => {})).toThrow('paused');
+    expect(() => gate.assertEpoch('retired')).toThrow('Maintenance changed');
+    expect(f.store.status()).toMatchObject({ recordCount: 0, dropped: { queue: 2002 } });
+    time += DIAGNOSTICS_LIMITS.maintenanceRefusalIntervalMs;
+    expect(() => gate.run(() => {})).toThrow('paused');
+    expect(() => gate.assertEpoch('retired')).toThrow('Maintenance changed');
+    f.store.recordMaintenance({
+      name: 'maintenance.refused',
+      details: { reason: 'paused', secret: 'never collected' },
+    } as unknown as MaintenanceDiagnosticEvent);
+    expect(f.store.status()).toMatchObject({
+      recordCount: 2,
+      dropped: { queue: 2002, invalid: 1 },
+    });
+    const db = f.read();
+    try {
+      expect(
+        db.prepare('SELECT name,source,actor_id,details FROM events ORDER BY rowid').all(),
+      ).toEqual([
+        {
+          name: 'maintenance.refused',
+          source: 'backend',
+          actor_id: null,
+          details: JSON.stringify({ reason: 'paused' }),
+        },
+        {
+          name: 'maintenance.refused',
+          source: 'backend',
+          actor_id: null,
+          details: JSON.stringify({ reason: 'stale-epoch' }),
+        },
+      ]);
+    } finally {
+      db.close();
+    }
+    expect(application.prepare('SELECT value FROM content').all()).toEqual([{ value: 'accepted' }]);
+  } finally {
+    clock.mockRestore();
+    accepted.release();
+    application.close();
+    await f.dispose();
+  }
+});
 
 test.each(['same', 'symlink', 'hardlink'])(
   'rejects an empty application database through a %s path before creating diagnostics tables',

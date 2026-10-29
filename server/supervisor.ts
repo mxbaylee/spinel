@@ -1,5 +1,6 @@
 import { resolve } from 'node:path';
 import { MaintenanceSupervisor } from '../src/server/maintenance/supervisor.ts';
+import { supervisorDiagnostics } from '../src/server/diagnostics/supervisor.ts';
 
 const root = process.env.SPINEL_MAINTENANCE_ROOT;
 if (!root)
@@ -9,11 +10,17 @@ if (!root)
 const publicPort = Number(process.env.SPINEL_MAINTENANCE_PORT ?? 3002);
 if (!Number.isInteger(publicPort) || publicPort < 0 || publicPort > 65535)
   throw new Error('SPINEL_MAINTENANCE_PORT must be a valid loopback port.');
+const databasePath = resolve(process.env.DATABASE_PATH ?? 'data/spinel.sqlite');
+const diagnostics = supervisorDiagnostics(databasePath, process.env.SPINEL_IMAGE);
 const supervisor = await MaintenanceSupervisor.open({
   root,
-  databasePath: resolve(process.env.DATABASE_PATH ?? 'data/spinel.sqlite'),
+  databasePath,
   publicPort,
   development: process.argv.includes('--dev'),
+  diagnostics: diagnostics.sink,
+}).catch(async (error: unknown) => {
+  await diagnostics.close();
+  throw error;
 });
 console.log(
   `Spinel recovery control is available on 127.0.0.1:${supervisor.publicAddress().port}.`,
@@ -30,6 +37,8 @@ async function shutdown() {
       'Recovery control could not prove complete shutdown. Maintenance remains required.',
     );
     process.exitCode = 1;
+  } finally {
+    await diagnostics.close();
   }
 }
 process.on('SIGINT', () => {

@@ -139,6 +139,74 @@ fields are nullable. Logs have explicit severity and static messages. Metric
 names constrain kind/unit/value. See the
 [public contract](../lib/diagnostics/README.md) before adding instrumentation.
 
+## Emitter maintenance inventory
+
+Maintain this table when code moves or changes an observed boundary. The PR's
+**Diagnostic upkeep** section explains added, moved, retired or unchanged
+observations and the associated regression evidence. Preserve the actual
+operation's content, history, permission, save and peer-delivery assertions when
+testing observers off, enabled, throwing or under collection pressure. Metrics
+are evidence about an operation; they never grant authority or replace its tests.
+
+The new operation, sync, persistence, flush, checkpoint and maintenance durations
+use monotonic `performance.now()` differences in
+milliseconds. `occurred_at` is the producer's wall time and `received_at` is the
+server's receipt time; neither substitutes for a monotonic duration. Browser
+observations are claims tagged `frontend`; backend observations use verified
+actors when the operation has one. Automatic history and supervisor work remain
+unattributed instead of assigning the file owner as the actor.
+
+| Observation | Production emitter and exact boundary | Regression owner |
+| --- | --- | --- |
+| `operation.*: document-open` | `web/DocEditor.tsx`, `web/SheetEditor.tsx`: mounted editor initialization through usable native editor, access/formulas/presence initialization and save watcher installation; failure/unmount completes once. Includes Space children through the same editors. | `src/ui/operationDiagnostics.test.ts`, `e2e/diagnostics.spec.ts` |
+| `operation.*: document-save-local` | `web/offline/OfflineSession.ts`: persistence invocation through successful `saveCheckpoint` transaction. No-prepared/read-only skips do not claim a local durable write. | `src/ui/offlinePersistence.test.ts`, `e2e/diagnostics.spec.ts` |
+| `operation.*: document-save-server-ack` | `lib/sync-client/src/client.ts`: oldest freshly enqueued group through its matching accepted server acknowledgment. Restored/rebased work has no provable enqueue time and starts at its first send in the current client. Within that client lifetime, reconnect/resend retains the observation and duplicate receipts cannot add a second success. | `lib/sync-client/tests/diagnostics.test.ts`, `e2e/diagnostics.spec.ts` |
+| `operation.*: search` | `web/SearchPanel.tsx`: after the 150 ms debounce, request through handing current scoped results to React; superseded/disposed results are cancelled. `src/server/workspace/routes.ts`: authorized catalog query through returned result or failure, excluding transport and browser rendering. Keep the two sources separate. | `src/ui/operationDiagnostics.test.ts`, `src/server/workspace/search.test.ts`, `e2e/diagnostics.spec.ts` |
+| `operation.*: snapshot-restore` | `src/server/collaboration/service.ts`: one admitted restore run, after the selected checkpoint is loaded, through preserved-before checkpoint/native replacement and durable generation completion. Coalesced callers and completed receipt retries do not create another operation. | `src/server/history/store.test.ts` |
+| `sync.client.connection` | `web/spinelSync.ts`: initial/reconnect attempt through native replay readiness, failure or disposal; fixed initial/transport/timeout/offline reason vocabulary. Maintenance resumes through clean refresh and replacement-editor readiness, not a connection to the old room. | `src/ui/spinelSync.test.ts`, `e2e/diagnostics.spec.ts`, existing sync/offline browser suites |
+| `sync.client.resync`, `sync.edit.resync`, `sync.resync.pending` | `lib/sync-client/src/client.ts`: refusal through pending receipt/checkpoint preservation and host handoff. `handed-off` does not mean the replacement editor is ready; that is a separate `document-open`. | `lib/sync-client/tests/diagnostics.test.ts` |
+| `sync.client.refresh` | `web/spinelSync.ts`: clean cached-base refresh through `refreshClean` commit and replacement-editor handoff, or failure/cancellation. Fixed retention/access-change/maintenance reasons distinguish this path from a pending-edit refusal. Replacement readiness remains a separate `document-open`. | `src/ui/spinelSync.test.ts` |
+| `sync.client.queue`, `sync.client.acknowledged` | `lib/sync-client/src/client.ts`: bounded pending count/oldest age and receipt classification. Age is null after reload/rebase when this process cannot prove an originating monotonic time. No diagnostic timestamp is persisted with edits. | `lib/sync-client/tests/diagnostics.test.ts` |
+| `doc-compose`, `native.flush` | `src/ui/boundedDocHistory.ts` → `web/DocEditor.tsx`: owned capacity/quiet-period flush through native return or original throw; reason, pre-flush history/collaboration group counts, elapsed time and outcome. | `src/ui/boundedDocHistory.test.ts`, existing paired Doc responsiveness/callback CI |
+| `native.checkpoint` | `lib/sync-client/src/client.ts`: lazy checkpoint capture or skip/failure at the existing persistence hook, distinct from storage completion. | `lib/sync-client/tests/diagnostics.test.ts` |
+| `offline.persistence` | `web/offline/OfflineSession.ts`: actual checkpoint persistence or explicit not-prepared/read-only skip; retains original storage errors. | `src/ui/offlinePersistence.test.ts` |
+| `offline.publication`, `offline.recovery` | `web/offline/OfflineSession.ts`, `web/spinelSync.ts`: the active account's publication/recovery attempt through result/cancellation; collection can remain absent offline. | `src/ui/offlineCreation.test.ts`, `src/ui/spinelSync.test.ts`, existing offline browser suites |
+| `offline.server.publication`, `offline.server.recovery` | `src/server/workspace/offline-creation.ts`, `portable.ts`: verified request through committed publication or matched durable receipt; `published` and `duplicate` are distinct. Failure records omit unverified file context. | `src/server/workspace/offline-creation.test.ts`, `offline-recovery.test.ts` |
+| `history.checkpoint` | `src/server/history/store.ts`: asynchronous native/collaboration capture through its transaction commit, skip or failure. Captures count once; a shared capture is not a second write. The synchronous native-save baseline remains part of the save transaction and is not separately counted. | `src/server/history/store.test.ts`, existing native/Space history suites |
+| `maintenance.phase`, `maintenance.verification` | `src/server/maintenance/supervisor.ts`: distinct supervisor phases and actual closed-workspace verification success/failure/refusal. Supervisor remains observable while the application is stopped. | `src/server/maintenance/supervisor.test.ts` |
+| `maintenance.drain`, `maintenance.refused` | `src/server/maintenance/gate.ts`: drain entry through permit settlement/deadline, with active permit count at entry; that count includes nested permits, not unique HTTP requests. Fixed paused/stale-epoch refusal codes. | `src/server/maintenance/gate.test.ts`, `src/server/diagnostics/store.test.ts` |
+| `runtime.cpu`, `runtime.event-loop` | `src/server/diagnostics/runtime.ts` via existing minute health sampling: cumulative process user+system CPU delta in milliseconds; mean/max event-loop delay from a bounded 20 ms-resolution histogram, converted from nanoseconds to milliseconds. Each row states its actual monotonic window. | `src/server/diagnostics/runtime.test.ts` |
+| Existing Formula/job/memory/storage/server-sync observations | Existing producers remain in place; registry changes retain schema-v1 names, units and exports. Legacy `document-save` remains readable; new producers use the two explicit save names. | Existing diagnostics, Formula, health and sync suites |
+
+The runtime sampler skips windows shorter than one second, resets its delay
+histogram after sampling and disables it during shutdown. CPU milliseconds may
+exceed wall milliseconds when process threads use several cores. These bounded
+samples cannot identify the cause of an earlier unprofiled pause.
+
+The browser endpoint admits the four exact `operation.*` names, the explicit
+client registry, and the three exact resync names above. It does not admit
+arbitrary server sync, history, runtime, maintenance or writer-loss events.
+Existing session/account/generation and file/Space authorization remain in force.
+Operations beginning before a collection handshake, while hidden/offline, or
+crossing suspension may have no retained observation. No delayed event is rebound
+to a replacement account or collection; there is no persistent diagnostic queue.
+
+Maintenance's internal sink accepts only registered maintenance events and writes
+them synchronously through its existing lifecycle allowance; ordinary application
+writes remain blocked. Request-driven refusal observations are limited to one per
+fixed reason per monotonic second (two reasons, at most two writes per second).
+Extra attempts increase the existing queue-loss counter before record allocation
+or disk work. Truncation and phase changes do not refill that allowance. The
+low-frequency drain, phase and verification observations retain their separate
+lifecycle path. The supervisor is a secondary writer to the same bounded
+diagnostics store. It never deletes the application's temporary exports, captures
+the current generation for each new observation, and leaves old queued records
+bound to their original generation. Truncation therefore cannot resurrect old
+supervisor observations. `diagnostics.writer-loss` reports fixed cumulative loss
+counters for one supervisor `run_id`; final counters also appear in its process
+log. These are process-lifetime limits, not measured per-user loss. If storage is
+unavailable, there may be no loss snapshot in the export.
+
 ## Clear, limits and failure handling
 
 Truncate requires confirmation. It irreversibly clears diagnostics and, when

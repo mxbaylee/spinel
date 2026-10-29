@@ -14,6 +14,7 @@ export const DOC_HISTORY_RETENTION_LIMIT = 100;
 export const DOC_HISTORY_IDLE_MS = 300;
 
 export interface DocFlushObservation {
+  outcome: 'success' | 'failure';
   reason: 'capacity' | 'idle';
   startedAt: number;
   durationMs: number;
@@ -58,22 +59,25 @@ export function boundDocHistory(
     const collaboration = pending.collaboration.length;
     flushing = true;
     const startedAt = performance.now();
+    let outcome: DocFlushObservation['outcome'] = 'failure';
     try {
       manager.flushPendingChanges(unitId);
+      outcome = 'success';
     } finally {
       flushing = false;
-    }
-    try {
-      observe?.({
-        reason,
-        startedAt,
-        durationMs: performance.now() - startedAt,
-        history,
-        collaboration,
-        ...(reason === 'idle' ? { quietForMs } : {}),
-      });
-    } catch {
-      // Optional measurements cannot change native input or synchronization.
+      try {
+        observe?.({
+          outcome,
+          reason,
+          startedAt,
+          durationMs: performance.now() - startedAt,
+          history,
+          collaboration,
+          ...(reason === 'idle' ? { quietForMs } : {}),
+        });
+      } catch {
+        // Optional measurements cannot change native input or synchronization.
+      }
     }
   };
   function scheduleFrame() {

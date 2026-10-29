@@ -12,6 +12,7 @@ import { dirname, join, resolve } from 'node:path';
 import {
   diagnosticMessage,
   isDiagnosticRecord,
+  isMaintenanceDiagnosticEvent,
   isUuid,
   MAX_BATCH_BYTES,
   MAX_EVENT_BYTES,
@@ -21,6 +22,7 @@ import type {
   DiagnosticEvent,
   DiagnosticRecord,
   DiagnosticSink,
+  MaintenanceDiagnosticEvent,
 } from '@spinel/diagnostics';
 import type { DiagnosticLoss, DiagnosticsStatus } from '../../shared/diagnostics.ts';
 export type { DiagnosticLoss, DiagnosticsStatus } from '../../shared/diagnostics.ts';
@@ -34,6 +36,7 @@ export const DIAGNOSTICS_LIMITS = {
   physicalBytes: 96 * MiB,
   queueBytes: MiB,
   queueEvents: 256,
+  maintenanceRefusalIntervalMs: 1000,
   reserveBytes: 256 * MiB,
 } as const;
 interface Attribution {
@@ -65,12 +68,17 @@ export class DiagnosticsStore {
   private currentGeneration: string | null = null;
   private readonly build: string;
   private readonly now: () => number;
+  private readonly secondaryWriter: boolean;
   private queue: Pending[] = [];
   private queuedBytes = 0;
   private scheduled?: NodeJS.Immediate;
   private exportJob?: { controller: AbortController; finished: Promise<void>; release: () => void };
   private closed = false;
   private maintenance?: MaintenanceGate;
+  private readonly lastMaintenanceRefusal = {
+    paused: Number.NEGATIVE_INFINITY,
+    'stale-epoch': Number.NEGATIVE_INFINITY,
+  };
   private readonly dropped: DiagnosticsStatus['dropped'] = {
     invalid: 0,
     queue: 0,
@@ -84,11 +92,14 @@ export class DiagnosticsStore {
     build: string;
     now?: () => number;
     applicationPath?: string;
+    /** Supervisor observes the same store; it never owns application export cleanup. */
+    secondaryWriter?: boolean;
   }) {
     this.path = resolve(options.path);
     // Deployment build only: never copy request values, branches or URLs here.
     this.build = /^[a-zA-Z0-9._-]{1,64}$/.test(options.build) ? options.build : 'unknown';
     this.now = options.now ?? Date.now;
+    this.secondaryWriter = options.secondaryWriter === true;
     try {
       if (options.applicationPath) {
         if (this.path === resolve(options.applicationPath))
@@ -150,8 +161,9 @@ export class DiagnosticsStore {
       database.exec(
         `PRAGMA max_page_count = ${Math.floor(DIAGNOSTICS_LIMITS.storageBytes / pageSize)};`,
       );
-      // This store has one owning server process; remove its interrupted exports.
-      for (const name of readdirSync(dirname(this.path))) {
+      // Only the application owns interrupted export cleanup. A supervisor writer
+      // must not remove an active application's immutable download.
+      for (const name of this.secondaryWriter ? [] : readdirSync(dirname(this.path))) {
         if (/^\.diagnostics-export-[a-zA-Z0-9]{6}$/.test(name))
           rmSync(join(dirname(this.path), name), { recursive: true, force: true });
       }
@@ -214,7 +226,10 @@ export class DiagnosticsStore {
   /** Backend call sites may supply only already-authorized actor/file context. */
   record(event: DiagnosticEvent, context: DiagnosticContext, actorId?: string) {
     try {
-      const generation = this.currentGeneration;
+      const generation = this.secondaryWriter
+        ? this.database?.prepare('SELECT generation FROM diagnostics_state WHERE singleton=1').get()
+            ?.generation
+        : this.currentGeneration;
       if (
         typeof generation !== 'string' ||
         this.closed ||
@@ -245,6 +260,43 @@ export class DiagnosticsStore {
       });
     } catch {
       this.lose('invalid');
+    }
+  }
+
+  /** Internal lifecycle observations only; never grants application writes or client admission. */
+  recordMaintenance(event: MaintenanceDiagnosticEvent) {
+    try {
+      if (!isMaintenanceDiagnosticEvent(event)) return this.lose('invalid');
+      const generation = this.currentGeneration;
+      if (typeof generation !== 'string' || this.closed) return this.lose('unavailable');
+      if (event.name === 'maintenance.refused') {
+        // Request admission happens before authentication. A paused-request burst
+        // may write at most once per fixed reason/second, without bypassing the
+        // collector's pressure accounting or starving actual lifecycle outcomes.
+        const now = performance.now();
+        const previous = this.lastMaintenanceRefusal[event.details.reason];
+        if (
+          !Number.isFinite(now) ||
+          now - previous < DIAGNOSTICS_LIMITS.maintenanceRefusalIntervalMs
+        )
+          return this.lose('queue');
+        this.lastMaintenanceRefusal[event.details.reason] = now;
+      }
+      const record = {
+        id: randomUUID(),
+        occurredAt: this.now(),
+        event,
+        context: { component: 'server' as const },
+      };
+      if (!isDiagnosticRecord(record)) return this.lose('invalid');
+      const bytes = Buffer.byteLength(JSON.stringify(record));
+      if (bytes > MAX_EVENT_BYTES) return this.lose('invalid');
+      const append = () =>
+        this.append({ record, bytes, generation, attribution: { source: 'backend' } });
+      if (this.maintenance) this.maintenance.initialize(append);
+      else append();
+    } catch {
+      this.lose('unavailable');
     }
   }
 

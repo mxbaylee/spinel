@@ -35,6 +35,12 @@ that isn't waiting on another is next.
   implementation/review/integration/evidence branch after rechecking its head
   and active PR ownership. Record access-blocked cleanup explicitly. Owner, chat
   2026-10-29; [evidence and cleanup](docs/implementation/grooming-2026-10-29.md#evidence-and-branch-completion).
+- **Maintain diagnostics with the code they describe.** For changes to observed
+  operations, saving, sync, checkpoints, maintenance or runtime sampling, check
+  the emitter contract and update [its inventory](docs/diagnostics.md#emitter-maintenance-inventory)
+  and regression evidence when it changes. Explain diagnostic impact in the PR,
+  including a reasoned no-impact choice. Keep observations content-free, bounded,
+  truthful across retries and unable to affect the operation. Owner, chat 2026-10-29.
 - **Weigh every persona** in [docs/product/personas.md](docs/product/personas.md)
   when deciding anything, and log the decision as described in process.md.
 - **Decisions live in `docs/implementation/SPN-NNN.md`**, beside implementation notes, following [the record convention](docs/implementation/README.md). Link them from ticket Rules; [SPN-096's inventory](docs/implementation/SPN-096.md) maps legacy issues to canonical records with original provenance. Owner, chat 2026-10-22.

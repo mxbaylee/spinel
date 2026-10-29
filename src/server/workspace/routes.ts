@@ -21,6 +21,7 @@ import { archiveRoutes } from './archive-routes.ts';
 import { pdfRoutes } from '../pdf/routes.ts';
 import { OfflineCreationError, OfflineCreations } from './offline-creation.ts';
 import { SourceSharing } from './source-sharing.ts';
+import { observeOperation } from '@spinel/diagnostics';
 
 export function workspaceRoutes(
   auth: AuthStore,
@@ -35,8 +36,10 @@ export function workspaceRoutes(
   const catalog = new WorkspaceFiles(store);
   const sheets = new SheetStore(store);
   const documents = new DocumentStore(store);
-  const files = new PortableFiles(store, collaboration);
-  const creations = collaboration ? new OfflineCreations(store, collaboration) : undefined;
+  const files = new PortableFiles(store, collaboration, diagnostics);
+  const creations = collaboration
+    ? new OfflineCreations(store, collaboration, diagnostics)
+    : undefined;
   const sourceSharing = new SourceSharing(store, collaboration);
   const account = (request: Request) => documentIdentity(store, request.headers);
   const owner = (request: Request) => {
@@ -87,7 +90,25 @@ export function workspaceRoutes(
     );
   };
   router.get('/search', (request, response) => {
-    response.json({ items: catalog.find(owner(request), request.query) });
+    const user = owner(request);
+    const started = performance.now();
+    const observed = (outcome: 'success' | 'failure') =>
+      observeOperation(
+        diagnostics ? (event, context) => diagnostics(event, context, user) : undefined,
+        { component: 'server', route: '/api/items' },
+        'search',
+        outcome,
+        Math.max(0, performance.now() - started),
+      );
+    let items: ReturnType<WorkspaceFiles['find']>;
+    try {
+      items = catalog.find(user, request.query);
+      observed('success');
+    } catch (error) {
+      observed('failure');
+      throw error;
+    }
+    response.json({ items });
   });
   router.get('/:id/sheet', (request, response) => native(request, response, 'sheet'));
   router.put('/:id/sheet', express.json({ limit: '10mb', strict: true }), (request, response) => {

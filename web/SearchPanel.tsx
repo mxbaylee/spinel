@@ -10,6 +10,8 @@ import { DashboardFiles } from './DashboardFiles.tsx';
 import type { DashboardFilesProps } from './DashboardFiles.tsx';
 import { searchWithinScope } from '../src/shared/searchScope.ts';
 import type { SearchScope } from '../src/shared/searchScope.ts';
+import { useDiagnostics } from './useDiagnostics.tsx';
+import { beginOperation, diagnosticSource } from './operationDiagnostics.ts';
 
 export function SearchPanel({
   query,
@@ -50,6 +52,7 @@ export function SearchPanel({
   onReady?: () => void;
   viewControls?: ReactNode;
 }) {
+  const diagnostics = useDiagnostics();
   const active = hasSearch(query),
     key = new URLSearchParams(query).toString();
   // Keep the exact draft while the parent echoes a parsed query, preserving caret/spacing.
@@ -81,32 +84,45 @@ export function SearchPanel({
   useEffect(() => {
     if (!active || invalid) return;
     let disposed = false;
+    let finished: ReturnType<typeof beginOperation> | undefined;
     setLoading(true);
     setError(null);
     const timer = window.setTimeout(() => {
+      finished = beginOperation(
+        diagnosticSource(diagnostics, {
+          component: 'dashboard',
+          route: '/files',
+        }),
+        'search',
+      );
       // Empty supported filters return the complete current authorized outer
       // catalog in one server transaction. Filter after deriving scope, never
       // infer descendants from filtered results or the dashboard's loaded cache.
       void itemsRequest<{ items: SearchItem<FileItem>[] }>('/search')
         .then((result) => {
-          if (!disposed)
+          if (!disposed) {
             setServer({
               key: requestKey,
               items: searchWithinScope(result.items, query, scope, Date.now()),
             });
+            finished?.('success');
+          } else finished?.('cancelled');
         })
         .catch((cause) => {
-          if (!disposed)
+          if (!disposed) {
             setError({
               key: requestKey,
               message: cause instanceof Error ? cause.message : 'Could not search. Try again.',
             });
+            finished?.('failure');
+          } else finished?.('cancelled');
         })
         .finally(() => {
           if (!disposed) setLoading(false);
         });
     }, 150);
     return () => {
+      finished?.('cancelled');
       disposed = true;
       window.clearTimeout(timer);
     };
