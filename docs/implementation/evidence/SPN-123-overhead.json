@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 1,
-  "measuredAt": "2026-10-29T21:07:50.250Z",
+  "schemaVersion": 2,
+  "measuredAt": "2026-10-29T21:21:29.764Z",
   "runtime": {
     "node": "v26.12.1",
     "platform": "linux",
@@ -8,16 +8,19 @@
     "cpuCount": 9
   },
   "source": {
-    "baseCommit": "416ad49d6b713de89396ada6253f5ca4d9bfab3b",
+    "baseCommit": "04f048c94850836941fa366b453de899418a2d86",
     "note": "Source-file hashes identify the measured working tree; baseCommit alone is not the complete tested source.",
     "sha256": {
-      "lib/diagnostics/index.ts": "ec1aa95000cd6c112d9bce91abec3480fd8a42471a76c494421145829a5da2a7",
-      "lib/diagnostics/client.ts": "5a34e83f7a780794e08631cf55a7c320e9f05715992d47913f59561936ecd5a8",
-      "lib/sync-client/src/client.ts": "982802c0d2c32c06b818509983a2256e7ce4face50d3a9afad6d67498fd32a5e",
+      "lib/diagnostics/index.ts": "54357f1d66a4516379b39c27f939577c23075b30d2d409b01290ee2b3bb1c906",
+      "lib/diagnostics/client.ts": "5d2866b8ddbddf1de45e6a91bf71cb21ace9a263f7c1c4d0338fa54ccb66fc0d",
+      "lib/sync-client/src/client.ts": "558f7728b74980525b1cb0cbb4499617b6465742216c8066efcca29a07816bc4",
       "lib/sync-client/src/types.ts": "fe260270c331122672c61d2f525ac9e0273f8c637b222cb05bd0116c93881064",
       "lib/sync-client/tests/fixture.ts": "5aab40aaddd9fb2738053dbf87956b647830909768f1706bb5df9a7d8d64e365",
+      "lib/sync-server/src/server.ts": "5be58a9b33110f50f7aa5927eb159335655024e2838eb55ce84bb88f8146ed49",
+      "lib/sync-server/src/types.ts": "7501543ee7b362a40a3922a8ce01c4544e3fa4d27f3d98d50146773e03600923",
+      "package-lock.json": "417a0eb4b269a3e0cc6db81e134f3b1962bb0ff8668a6ae5f8c302da6762e520",
       "web/diagnostics.ts": "1f42c9316d0dc4fb17afd5d2a88207449eda08d9854551b7e9c221a867e6ef2f",
-      "scripts/ci/diagnostics-overhead.ts": "0fa6f84ec025334ef9343d4bdd46496a828f08d1fc177c7bf271ab34777040c9"
+      "scripts/ci/diagnostics-overhead.ts": "b551579b9b56b890e0a5e25190650991c07da455277aef9441ffa8910ccd84e2"
     }
   },
   "method": {
@@ -29,201 +32,332 @@
     "enabledCollector": "Real BrowserDiagnostics queue, schema validation, UUID/context creation, serialization and batching; in-memory HTTP sink",
     "included": "Native Sheet mutation admission, real SyncServer materialization/receipts, peer application, two duplicate sends/ACK deliveries, collector enqueue",
     "excluded": "Initial SDK construction, browser rendering, real network/SQLite/IDB and final collector HTTP flush (reported separately)",
-    "timingGate": "No ratio-only threshold; bounded workload and resource watchdog plus exact behavioral/capacity assertions"
+    "timingGate": "No ratio-only threshold; bounded workload and resource watchdog plus exact behavioral/capacity assertions",
+    "saturatedValidation": "Two native workloads begin with the real collector already full. Native observations must add visible drops; content/history/ACK/access/save/peer assertions and final state hashes match every off/on run. Missing diagnostic counters are disclosed, not reconstructed."
   },
   "summary": {
-    "offMedianMsPerSave": 1.3816323333333287,
-    "onMedianMsPerSave": 1.6380970833333304,
-    "medianDeltaMsPerSave": 0.2564647500000017,
+    "offMedianMsPerSave": 1.531891250000001,
+    "onMedianMsPerSave": 1.4582821250000015,
+    "medianDeltaMsPerSave": -0.0736091249999995,
     "offRangeMsPerSave": [
-      1.2010931666666618,
-      1.7443449166666671
+      1.2123569166666546,
+      1.6995734166666712
     ],
     "onRangeMsPerSave": [
-      1.4158142500000015,
-      1.736456000000004
+      1.405920583333322,
+      1.629073833333327
     ],
     "warning": "A small in-process sample describes this workload only and does not explain old unprofiled pauses."
   },
   "measurements": [
     {
       "enabled": false,
-      "nativeDurationMs": 19.658424999999966,
-      "perSaveMs": 1.6382020833333304,
-      "collectorFlushMs": 0.003986000000054446,
+      "mode": "off",
+      "nativeDurationMs": 20.394881000000055,
+      "perSaveMs": 1.6995734166666712,
+      "collectorFlushMs": 0.0037660000000414584,
       "records": 0,
       "dropped": 0,
+      "nativeObservationDrops": 0,
+      "diagnosticSaveCounters": 0,
+      "nativeStateSha256": "0f62e77c88f0f5359db52351e77f630cb1d555e416150878f72fe3a7c6aeea15",
       "assertions": {
         "identicalNativeContentAndResources": true,
         "acceptedHistoryRows": 12,
         "successfulAcknowledgments": 12,
         "duplicateDeliveryCountedOnce": true,
-        "bothClientsSaved": true
+        "bothClientsSaved": true,
+        "revokedWritesAndReceiptsDenied": true,
+        "refusalPreservesEveryStoredRow": true,
+        "authorizationChecks": 62
       }
     },
     {
       "enabled": true,
-      "nativeDurationMs": 20.837472000000048,
-      "perSaveMs": 1.736456000000004,
-      "collectorFlushMs": 2.113886999999977,
+      "mode": "on",
+      "nativeDurationMs": 17.576561999999967,
+      "perSaveMs": 1.4647134999999973,
+      "collectorFlushMs": 1.457858999999985,
       "records": 50,
       "dropped": 0,
+      "nativeObservationDrops": 0,
+      "diagnosticSaveCounters": 12,
+      "nativeStateSha256": "0f62e77c88f0f5359db52351e77f630cb1d555e416150878f72fe3a7c6aeea15",
       "assertions": {
         "identicalNativeContentAndResources": true,
         "acceptedHistoryRows": 12,
         "successfulAcknowledgments": 12,
         "duplicateDeliveryCountedOnce": true,
-        "bothClientsSaved": true
+        "bothClientsSaved": true,
+        "revokedWritesAndReceiptsDenied": true,
+        "refusalPreservesEveryStoredRow": true,
+        "authorizationChecks": 62
       }
     },
     {
       "enabled": true,
-      "nativeDurationMs": 20.756344000000013,
-      "perSaveMs": 1.7296953333333345,
-      "collectorFlushMs": 1.2226329999999734,
+      "mode": "on",
+      "nativeDurationMs": 19.548885999999925,
+      "perSaveMs": 1.629073833333327,
+      "collectorFlushMs": 1.2482330000000275,
       "records": 50,
       "dropped": 0,
+      "nativeObservationDrops": 0,
+      "diagnosticSaveCounters": 12,
+      "nativeStateSha256": "0f62e77c88f0f5359db52351e77f630cb1d555e416150878f72fe3a7c6aeea15",
       "assertions": {
         "identicalNativeContentAndResources": true,
         "acceptedHistoryRows": 12,
         "successfulAcknowledgments": 12,
         "duplicateDeliveryCountedOnce": true,
-        "bothClientsSaved": true
+        "bothClientsSaved": true,
+        "revokedWritesAndReceiptsDenied": true,
+        "refusalPreservesEveryStoredRow": true,
+        "authorizationChecks": 62
       }
     },
     {
       "enabled": false,
-      "nativeDurationMs": 20.932139000000006,
-      "perSaveMs": 1.7443449166666671,
-      "collectorFlushMs": 0.005578000000014072,
+      "mode": "off",
+      "nativeDurationMs": 20.2581550000001,
+      "perSaveMs": 1.6881795833333417,
+      "collectorFlushMs": 0.003073999999969601,
       "records": 0,
       "dropped": 0,
+      "nativeObservationDrops": 0,
+      "diagnosticSaveCounters": 0,
+      "nativeStateSha256": "0f62e77c88f0f5359db52351e77f630cb1d555e416150878f72fe3a7c6aeea15",
       "assertions": {
         "identicalNativeContentAndResources": true,
         "acceptedHistoryRows": 12,
         "successfulAcknowledgments": 12,
         "duplicateDeliveryCountedOnce": true,
-        "bothClientsSaved": true
+        "bothClientsSaved": true,
+        "revokedWritesAndReceiptsDenied": true,
+        "refusalPreservesEveryStoredRow": true,
+        "authorizationChecks": 62
       }
     },
     {
       "enabled": false,
-      "nativeDurationMs": 16.60412999999994,
-      "perSaveMs": 1.383677499999995,
-      "collectorFlushMs": 0.0035450000000309956,
+      "mode": "off",
+      "nativeDurationMs": 18.114959,
+      "perSaveMs": 1.5095799166666666,
+      "collectorFlushMs": 0.003926000000092245,
       "records": 0,
       "dropped": 0,
+      "nativeObservationDrops": 0,
+      "diagnosticSaveCounters": 0,
+      "nativeStateSha256": "0f62e77c88f0f5359db52351e77f630cb1d555e416150878f72fe3a7c6aeea15",
       "assertions": {
         "identicalNativeContentAndResources": true,
         "acceptedHistoryRows": 12,
         "successfulAcknowledgments": 12,
         "duplicateDeliveryCountedOnce": true,
-        "bothClientsSaved": true
+        "bothClientsSaved": true,
+        "revokedWritesAndReceiptsDenied": true,
+        "refusalPreservesEveryStoredRow": true,
+        "authorizationChecks": 62
       }
     },
     {
       "enabled": true,
-      "nativeDurationMs": 16.98977100000002,
-      "perSaveMs": 1.4158142500000015,
-      "collectorFlushMs": 1.1567340000001423,
+      "mode": "on",
+      "nativeDurationMs": 16.871046999999862,
+      "perSaveMs": 1.405920583333322,
+      "collectorFlushMs": 1.1041559999998753,
       "records": 50,
       "dropped": 0,
+      "nativeObservationDrops": 0,
+      "diagnosticSaveCounters": 12,
+      "nativeStateSha256": "0f62e77c88f0f5359db52351e77f630cb1d555e416150878f72fe3a7c6aeea15",
       "assertions": {
         "identicalNativeContentAndResources": true,
         "acceptedHistoryRows": 12,
         "successfulAcknowledgments": 12,
         "duplicateDeliveryCountedOnce": true,
-        "bothClientsSaved": true
+        "bothClientsSaved": true,
+        "revokedWritesAndReceiptsDenied": true,
+        "refusalPreservesEveryStoredRow": true,
+        "authorizationChecks": 62
       }
     },
     {
       "enabled": true,
-      "nativeDurationMs": 20.38375300000007,
-      "perSaveMs": 1.6986460833333392,
-      "collectorFlushMs": 1.4086540000000696,
+      "mode": "on",
+      "nativeDurationMs": 18.80857900000001,
+      "perSaveMs": 1.567381583333334,
+      "collectorFlushMs": 1.4604929999998149,
       "records": 50,
       "dropped": 0,
+      "nativeObservationDrops": 0,
+      "diagnosticSaveCounters": 12,
+      "nativeStateSha256": "0f62e77c88f0f5359db52351e77f630cb1d555e416150878f72fe3a7c6aeea15",
       "assertions": {
         "identicalNativeContentAndResources": true,
         "acceptedHistoryRows": 12,
         "successfulAcknowledgments": 12,
         "duplicateDeliveryCountedOnce": true,
-        "bothClientsSaved": true
+        "bothClientsSaved": true,
+        "revokedWritesAndReceiptsDenied": true,
+        "refusalPreservesEveryStoredRow": true,
+        "authorizationChecks": 62
       }
     },
     {
       "enabled": false,
-      "nativeDurationMs": 14.41311799999994,
-      "perSaveMs": 1.2010931666666618,
-      "collectorFlushMs": 0.0036959999999908177,
+      "mode": "off",
+      "nativeDurationMs": 14.806814000000031,
+      "perSaveMs": 1.2339011666666693,
+      "collectorFlushMs": 0.007181000000173299,
       "records": 0,
       "dropped": 0,
+      "nativeObservationDrops": 0,
+      "diagnosticSaveCounters": 0,
+      "nativeStateSha256": "0f62e77c88f0f5359db52351e77f630cb1d555e416150878f72fe3a7c6aeea15",
       "assertions": {
         "identicalNativeContentAndResources": true,
         "acceptedHistoryRows": 12,
         "successfulAcknowledgments": 12,
         "duplicateDeliveryCountedOnce": true,
-        "bothClientsSaved": true
+        "bothClientsSaved": true,
+        "revokedWritesAndReceiptsDenied": true,
+        "refusalPreservesEveryStoredRow": true,
+        "authorizationChecks": 62
       }
     },
     {
       "enabled": false,
-      "nativeDurationMs": 16.555045999999948,
-      "perSaveMs": 1.3795871666666624,
-      "collectorFlushMs": 0.0036860000000160653,
+      "mode": "off",
+      "nativeDurationMs": 14.548282999999856,
+      "perSaveMs": 1.2123569166666546,
+      "collectorFlushMs": 0.0026939999997921404,
       "records": 0,
       "dropped": 0,
+      "nativeObservationDrops": 0,
+      "diagnosticSaveCounters": 0,
+      "nativeStateSha256": "0f62e77c88f0f5359db52351e77f630cb1d555e416150878f72fe3a7c6aeea15",
       "assertions": {
         "identicalNativeContentAndResources": true,
         "acceptedHistoryRows": 12,
         "successfulAcknowledgments": 12,
         "duplicateDeliveryCountedOnce": true,
-        "bothClientsSaved": true
+        "bothClientsSaved": true,
+        "revokedWritesAndReceiptsDenied": true,
+        "refusalPreservesEveryStoredRow": true,
+        "authorizationChecks": 62
       }
     },
     {
       "enabled": true,
-      "nativeDurationMs": 18.61446100000012,
-      "perSaveMs": 1.5512050833333433,
-      "collectorFlushMs": 1.0340590000000702,
+      "mode": "on",
+      "nativeDurationMs": 17.01662699999997,
+      "perSaveMs": 1.4180522499999977,
+      "collectorFlushMs": 1.0323779999998806,
       "records": 50,
       "dropped": 0,
+      "nativeObservationDrops": 0,
+      "diagnosticSaveCounters": 12,
+      "nativeStateSha256": "0f62e77c88f0f5359db52351e77f630cb1d555e416150878f72fe3a7c6aeea15",
       "assertions": {
         "identicalNativeContentAndResources": true,
         "acceptedHistoryRows": 12,
         "successfulAcknowledgments": 12,
         "duplicateDeliveryCountedOnce": true,
-        "bothClientsSaved": true
+        "bothClientsSaved": true,
+        "revokedWritesAndReceiptsDenied": true,
+        "refusalPreservesEveryStoredRow": true,
+        "authorizationChecks": 62
       }
     },
     {
       "enabled": true,
-      "nativeDurationMs": 18.930576999999857,
-      "perSaveMs": 1.5775480833333215,
-      "collectorFlushMs": 1.5438879999999244,
+      "mode": "on",
+      "nativeDurationMs": 17.422209000000066,
+      "perSaveMs": 1.4518507500000055,
+      "collectorFlushMs": 1.1171850000000632,
       "records": 50,
       "dropped": 0,
+      "nativeObservationDrops": 0,
+      "diagnosticSaveCounters": 12,
+      "nativeStateSha256": "0f62e77c88f0f5359db52351e77f630cb1d555e416150878f72fe3a7c6aeea15",
       "assertions": {
         "identicalNativeContentAndResources": true,
         "acceptedHistoryRows": 12,
         "successfulAcknowledgments": 12,
         "duplicateDeliveryCountedOnce": true,
-        "bothClientsSaved": true
+        "bothClientsSaved": true,
+        "revokedWritesAndReceiptsDenied": true,
+        "refusalPreservesEveryStoredRow": true,
+        "authorizationChecks": 62
       }
     },
     {
       "enabled": false,
-      "nativeDurationMs": 14.423232999999982,
-      "perSaveMs": 1.201936083333332,
-      "collectorFlushMs": 0.0037649999999302963,
+      "mode": "off",
+      "nativeDurationMs": 18.650431000000026,
+      "perSaveMs": 1.5542025833333355,
+      "collectorFlushMs": 0.003815000000031432,
       "records": 0,
       "dropped": 0,
+      "nativeObservationDrops": 0,
+      "diagnosticSaveCounters": 0,
+      "nativeStateSha256": "0f62e77c88f0f5359db52351e77f630cb1d555e416150878f72fe3a7c6aeea15",
       "assertions": {
         "identicalNativeContentAndResources": true,
         "acceptedHistoryRows": 12,
         "successfulAcknowledgments": 12,
         "duplicateDeliveryCountedOnce": true,
-        "bothClientsSaved": true
+        "bothClientsSaved": true,
+        "revokedWritesAndReceiptsDenied": true,
+        "refusalPreservesEveryStoredRow": true,
+        "authorizationChecks": 62
+      }
+    }
+  ],
+  "saturatedMeasurements": [
+    {
+      "enabled": true,
+      "mode": "saturated",
+      "nativeDurationMs": 16.34432300000003,
+      "perSaveMs": 1.3620269166666692,
+      "collectorFlushMs": 4.801521999999977,
+      "records": 256,
+      "dropped": 294,
+      "nativeObservationDrops": 50,
+      "diagnosticSaveCounters": 0,
+      "nativeStateSha256": "0f62e77c88f0f5359db52351e77f630cb1d555e416150878f72fe3a7c6aeea15",
+      "assertions": {
+        "identicalNativeContentAndResources": true,
+        "acceptedHistoryRows": 12,
+        "successfulAcknowledgments": 12,
+        "duplicateDeliveryCountedOnce": true,
+        "bothClientsSaved": true,
+        "revokedWritesAndReceiptsDenied": true,
+        "refusalPreservesEveryStoredRow": true,
+        "authorizationChecks": 62
+      }
+    },
+    {
+      "enabled": true,
+      "mode": "saturated",
+      "nativeDurationMs": 17.299332999999933,
+      "perSaveMs": 1.4416110833333278,
+      "collectorFlushMs": 5.671774999999798,
+      "records": 256,
+      "dropped": 294,
+      "nativeObservationDrops": 50,
+      "diagnosticSaveCounters": 0,
+      "nativeStateSha256": "0f62e77c88f0f5359db52351e77f630cb1d555e416150878f72fe3a7c6aeea15",
+      "assertions": {
+        "identicalNativeContentAndResources": true,
+        "acceptedHistoryRows": 12,
+        "successfulAcknowledgments": 12,
+        "duplicateDeliveryCountedOnce": true,
+        "bothClientsSaved": true,
+        "revokedWritesAndReceiptsDenied": true,
+        "refusalPreservesEveryStoredRow": true,
+        "authorizationChecks": 62
       }
     }
   ],

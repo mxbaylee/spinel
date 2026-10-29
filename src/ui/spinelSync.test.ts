@@ -15,6 +15,7 @@ import type { OfflineSession } from '../../web/offline/OfflineSession.ts';
 import type { OfflineCreation } from '../../web/offline/offlineStore.ts';
 import type { OfflineRecoveryRequest } from '../shared/offlineRecovery.ts';
 import type { MaintenancePublicStatus } from '../shared/maintenance.ts';
+import type { DiagnosticEvent, DiagnosticSource } from '@spinel/diagnostics';
 
 const maintenance = vi.hoisted(() => ({ status: null as MaintenancePublicStatus | null }));
 vi.mock('../../web/maintenanceState.ts', () => ({
@@ -58,6 +59,12 @@ vi.mock('@spinel/sync-client', () => ({
     return {
       get confirmedRevision() {
         return entry.state.revision;
+      },
+      diagnosticQueue() {
+        return {
+          pendingCount: entry.state.pendingMutations,
+          oldestPendingAgeMs: entry.state.pendingMutations ? null : 0,
+        };
       },
       setConnected(connected: boolean) {
         entry.state = { ...entry.state, connected };
@@ -141,6 +148,7 @@ const stops: (() => void)[] = [];
 afterEach(() => {
   for (const stop of stops.splice(0).reverse()) stop();
   vi.useRealTimers();
+  vi.restoreAllMocks();
   vi.unstubAllGlobals();
   downloadOfflineFile.mockClear();
   native.clients.length = 0;
@@ -161,6 +169,8 @@ async function fixture({
   canRecover = false,
   canRefresh,
   maintenanceEpoch,
+  diagnostics,
+  clock,
 }: {
   guest?: boolean;
   space?: boolean;
@@ -172,8 +182,11 @@ async function fixture({
   canRecover?: boolean;
   canRefresh?(): boolean;
   maintenanceEpoch?: string;
+  diagnostics?: DiagnosticSource;
+  clock?: () => number;
 } = {}) {
   vi.useFakeTimers();
+  if (clock) vi.spyOn(performance, 'now').mockImplementation(clock);
   maintenance.status = maintenanceEpoch
     ? { available: true, phase: 'running', epoch: maintenanceEpoch, notice: null }
     : null;
@@ -306,6 +319,7 @@ async function fixture({
     lock,
     offline: downloaded || preparing ? (offline as unknown as OfflineSession) : undefined,
     canRefresh,
+    diagnostics,
   });
   beforeWatch?.();
   const saves: SaveState[] = [];
@@ -359,6 +373,228 @@ async function fixture({
     },
   };
 }
+
+function diagnosticObservations(throws = false) {
+  const observations: DiagnosticEvent[] = [];
+  const diagnostics: DiagnosticSource = () => ({
+    context: { component: 'editor', fileId: item },
+    sink(event) {
+      observations.push(structuredClone(event));
+      if (throws) throw new Error('The optional observer failed');
+    },
+  });
+  return { observations, diagnostics };
+}
+
+test.each([false, true])(
+  'production connection observations time room readiness once across retry (throwing observer=%s)',
+  async (throws) => {
+    let at = 100;
+    const observed = diagnosticObservations(throws);
+    const f = await fixture({ diagnostics: observed.diagnostics, clock: () => at });
+    f.socket().open();
+    at = 120;
+    expect(observed.observations).toEqual([]);
+    f.socket().frame({
+      type: 'resume',
+      version: 1,
+      unitId: 'unit',
+      fromRevision: 8,
+      revision: 8,
+      edits: [],
+    });
+    expect(f.connections.at(-1)).toBe('online');
+    f.pending();
+    at = 130;
+    f.socket().close();
+    await vi.advanceTimersByTimeAsync(300);
+    f.socket().open();
+    at = 180;
+    f.socket().frame({
+      type: 'resume',
+      version: 1,
+      unitId: 'unit',
+      fromRevision: 8,
+      revision: 8,
+      edits: [],
+    });
+    expect(f.saves.at(-1)?.dirty).toBe(true);
+    expect(observed.observations).toEqual([
+      {
+        name: 'sync.client.connection',
+        details: {
+          reason: 'initial',
+          outcome: 'success',
+          durationMs: 20,
+          pendingCount: 0,
+          oldestPendingAgeMs: 0,
+        },
+      },
+      {
+        name: 'sync.client.connection',
+        details: {
+          reason: 'transport',
+          outcome: 'success',
+          durationMs: 50,
+          pendingCount: 1,
+          oldestPendingAgeMs: null,
+        },
+      },
+    ]);
+  },
+);
+
+test.each(['failure', 'cancelled'] as const)(
+  'production connection %s is terminal and keeps pending work',
+  async (outcome) => {
+    let at = 100;
+    const observed = diagnosticObservations(true);
+    const f = await fixture({ diagnostics: observed.diagnostics, clock: () => at });
+    f.pending();
+    at = 145;
+    if (outcome === 'failure') {
+      f.metadata(async () => Response.json({}, { status: 403 }));
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(f.readonly).toHaveBeenCalled();
+    } else f.abort.abort();
+    expect(f.client.state.pending).toBe(true);
+    f.abort.abort();
+    expect(observed.observations).toEqual([
+      {
+        name: 'sync.client.connection',
+        details: {
+          reason: 'initial',
+          outcome,
+          durationMs: 45,
+          pendingCount: 1,
+          oldestPendingAgeMs: null,
+        },
+      },
+    ]);
+  },
+);
+
+test.each(['handed-off', 'failure', 'cancelled'] as const)(
+  'clean stale refresh observes delayed %s without retaining a native failure',
+  async (outcome) => {
+    let at = 100;
+    const observed = diagnosticObservations(true);
+    const f = await fixture({
+      downloaded: true,
+      diagnostics: observed.diagnostics,
+      clock: () => at,
+    });
+    const refresh = Promise.withResolvers<void>();
+    f.offline.refreshClean.mockImplementationOnce(async (verify) => {
+      await refresh.promise;
+      verify();
+    });
+    f.socket().open();
+    f.socket().frame({ type: 'resync', reason: 'stale' });
+    await vi.advanceTimersByTimeAsync(0);
+    expect(f.offline.refreshClean).toHaveBeenCalledOnce();
+    expect(observed.observations.filter((event) => event.name === 'sync.client.refresh')).toEqual(
+      [],
+    );
+    expect(f.reload).not.toHaveBeenCalled();
+    at = 140;
+    if (outcome === 'cancelled') f.abort.abort();
+    if (outcome === 'failure') refresh.reject(new Error('Refresh unavailable'));
+    else refresh.resolve();
+    await vi.advanceTimersByTimeAsync(0);
+    expect(observed.observations.filter((event) => event.name === 'sync.client.refresh')).toEqual([
+      {
+        name: 'sync.client.refresh',
+        details: {
+          reason: 'retention',
+          outcome,
+          durationMs: 40,
+          pendingCount: 0,
+          oldestPendingAgeMs: 0,
+        },
+      },
+    ]);
+    expect(f.client.received).toEqual([]);
+    expect(f.client.state.resyncing).toBe(false);
+    expect(f.reload).toHaveBeenCalledTimes(outcome === 'handed-off' ? 1 : 0);
+    if (outcome === 'failure') {
+      expect(f.client.disposed).toBe(false);
+      expect(f.offline.problem).toContain('fresh download');
+    }
+  },
+);
+
+test.each(['maintenance', 'access-change'] as const)(
+  'clean refresh records its actual %s reason',
+  async (reason) => {
+    const observed = diagnosticObservations();
+    const base = '55555555-5555-4555-8555-555555555555';
+    const f = await fixture({
+      downloaded: true,
+      diagnostics: observed.diagnostics,
+      maintenanceEpoch: base,
+    });
+    if (reason === 'maintenance') {
+      const resumed = '66666666-6666-4666-8666-666666666666';
+      f.maintenance('paused', resumed);
+      await vi.advanceTimersByTimeAsync(0);
+      f.maintenance('running', resumed);
+      await vi.advanceTimersByTimeAsync(0);
+      expect(f.reloadPage).toHaveBeenCalledOnce();
+    } else {
+      f.metadata(async () =>
+        Response.json({ access: 'viewer', unitId: 'unit', user: { id: 'owner' } }),
+      );
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(f.reload).toHaveBeenCalledWith('stale', true);
+    }
+    expect(observed.observations.filter((event) => event.name === 'sync.client.refresh')).toEqual([
+      {
+        name: 'sync.client.refresh',
+        details: {
+          reason,
+          outcome: 'handed-off',
+          durationMs: expect.any(Number),
+          pendingCount: 0,
+          oldestPendingAgeMs: 0,
+        },
+      },
+    ]);
+  },
+);
+
+test.each(['success', 'failure', 'cancelled'] as const)(
+  'production recovery observes delayed %s and cannot be changed by a throwing observer',
+  async (outcome) => {
+    let at = 100;
+    const observed = diagnosticObservations(true);
+    const f = await fixture({
+      downloaded: true,
+      canRecover: true,
+      diagnostics: observed.diagnostics,
+      clock: () => at,
+    });
+    const publication = Promise.withResolvers<typeof f.copyItem>();
+    f.offline.publishRecovery.mockImplementationOnce(() => publication.promise);
+    f.pending();
+    f.conflict();
+    await vi.advanceTimersByTimeAsync(0);
+    expect(f.offline.publishRecovery).toHaveBeenCalledOnce();
+    expect(f.offline.finishRecovery).not.toHaveBeenCalled();
+    expect(observed.observations.filter((event) => event.name === 'offline.recovery')).toEqual([]);
+    at = 160;
+    if (outcome === 'cancelled') f.abort.abort();
+    if (outcome === 'failure') publication.reject(new Error('Publication unavailable'));
+    else publication.resolve(f.copyItem);
+    await vi.advanceTimersByTimeAsync(0);
+    expect(observed.observations.filter((event) => event.name === 'offline.recovery')).toEqual([
+      { name: 'offline.recovery', details: { outcome, durationMs: 60 } },
+    ]);
+    expect(f.offline.finishRecovery).toHaveBeenCalledTimes(outcome === 'success' ? 1 : 0);
+    expect(f.offline.pending).toBe(outcome !== 'success');
+    if (outcome === 'failure') expect(f.client.disposed).toBe(false);
+  },
+);
 
 test('creation admission updates recovery actions and the original link after a native failure', async () => {
   const f = await fixture({ downloaded: true, canRecover: true });

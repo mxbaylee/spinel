@@ -693,12 +693,14 @@ export class SyncClient {
       const own = this.take(ack.revision);
       if (own && canonical(own) !== canonical(this.editOnly(ack)))
         throw new ClientError('malformed');
+      // This validated receipt proves server durability even if applying it to
+      // the local confirmed replica fails. Observe it before native replay.
+      this.finishSave('success', ack.duplicate);
       // The visible unit already includes this optimistic edit and transformed
       // remote edits. The exact durable output advances only the confirmed copy.
       this.options.confirmed.apply(ack.mutations);
       this.revision = ack.revision;
       this.lastEdit = this.editOnly(clone(ack));
-      this.finishSave('success', ack.duplicate);
       this.sent = null;
       this.inflight = [];
       this.replayBase = undefined;
@@ -711,7 +713,9 @@ export class SyncClient {
       // be rebased. Reload can now retain the accepted request safely.
       this.sent = null;
       this.inflight = [];
-      this.finishSave('failure');
+      // Before receipt validation, a replay/order failure leaves durability
+      // unknown. After validation, finishSave is already settled as success.
+      this.finishSave('cancelled');
       this.refuse(failureOf(error));
     }
   }

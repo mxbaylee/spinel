@@ -760,12 +760,20 @@ function bind(
       if (!cleanDownloaded()) client.refuse('stale');
       report();
     } finally {
-      if (observation) observeDiagnostic(observation.sink, {
-        name: 'sync.client.refresh', details: {
-          reason, outcome, durationMs: Math.max(0, performance.now() - observedAt),
-          ...client.diagnosticQueue(),
-        },
-      }, observation.context);
+      if (observation)
+        observeDiagnostic(
+          observation.sink,
+          {
+            name: 'sync.client.refresh',
+            details: {
+              reason,
+              outcome,
+              durationMs: Math.max(0, performance.now() - observedAt),
+              ...client.diagnosticQueue(),
+            },
+          },
+          observation.context,
+        );
     }
     return true;
   }

@@ -138,6 +138,38 @@ test('checkpoint outcomes and one restore outcome preserve content across concur
   expect(JSON.stringify(observations)).not.toContain('Private edited content');
 });
 
+test('restore failure preserves the original error, live content and history when observations throw', async () => {
+  const observations: DiagnosticEvent[] = [];
+  const f = await fixture((event) => {
+    observations.push(event);
+    throw new Error('An observer cannot replace the restore error.');
+  });
+  const baseline = f.history.list(f.owner.id, f.item.id)[0];
+  await f.edit('Keep the current content');
+  const before = await f.collaboration.load(f.owner.id, f.item.id);
+  const checkpoints = f.history.list(f.owner.id, f.item.id);
+  const failure = new Error('Injected generation commit failure.');
+  vi.spyOn(f.collaboration.generations, 'finish').mockImplementationOnce(() => {
+    throw failure;
+  });
+  await expect(
+    f.history.restore(f.owner.id, f.item.id, baseline.id, f.item.id, randomUUID()),
+  ).rejects.toBe(failure);
+  expect(await f.collaboration.load(f.owner.id, f.item.id)).toEqual(before);
+  expect(f.history.list(f.owner.id, f.item.id)).toEqual(checkpoints);
+  expect(
+    observations.filter(
+      (event) =>
+        event.name === 'operation.result' && event.details.operation === 'snapshot-restore',
+    ),
+  ).toMatchObject([{ details: { operation: 'snapshot-restore', outcome: 'failure' } }]);
+  await f.edit('Editing still works after the failed restore');
+  const latest = (await f.collaboration.load(f.owner.id, f.item.id)).snapshot as IWorkbookData;
+  expect(latest.sheets.first.cellData?.[0]?.[0]?.v).toBe(
+    'Editing still works after the failed restore',
+  );
+});
+
 test('captures a baseline before editing, every five minutes of work, and at idle breaks; rejects unauthorized reads', async () => {
   const f = await fixture();
   expect(f.history.list(f.owner.id, f.item.id).map((p) => p.revision)).toEqual([1]);

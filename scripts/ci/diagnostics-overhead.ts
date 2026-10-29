@@ -6,6 +6,8 @@ import { dirname } from 'node:path';
 import { cpus } from 'node:os';
 import { isDiagnosticRecord } from '@spinel/diagnostics';
 import type { DiagnosticRecord, DiagnosticSource } from '@spinel/diagnostics';
+import { SyncServer } from '@spinel/sync-server';
+import type { SubmitFrame } from '@spinel/sync-client';
 import { fixture, turns, wire, write } from '../../lib/sync-client/tests/fixture.ts';
 import { BrowserDiagnostics } from '../../web/diagnostics.ts';
 
@@ -42,9 +44,24 @@ function collector() {
   return { diagnostics, received, batchSizes };
 }
 
-async function workload(enabled: boolean) {
+function fillQueue(diagnostics: BrowserDiagnostics, count: number) {
+  for (let index = 0; index < count; index++)
+    diagnostics.emit(
+      {
+        name: 'operation.count',
+        metric: { kind: 'counter', unit: 'count', value: 1 },
+        details: { operation: 'document-save-local', outcome: 'success' },
+      },
+      { component: 'editor', fileId },
+    );
+}
+
+async function workload(mode: 'off' | 'on' | 'saturated') {
+  const enabled = mode !== 'off';
   const collection = collector();
   await collection.diagnostics.start();
+  if (mode === 'saturated') fillQueue(collection.diagnostics, 500);
+  const droppedBeforeNative = collection.diagnostics.dropped;
   const diagnostics: DiagnosticSource | undefined = enabled
     ? () => {
         const sink = collection.diagnostics.capture();
@@ -57,6 +74,23 @@ async function workload(enabled: boolean) {
       }
     : undefined;
   const f = fixture();
+  let authorized = true;
+  let authorizationChecks = 0;
+  const authoritative = new SyncServer<void>(f.storage, {
+    authorize() {
+      authorizationChecks++;
+      if (!authorized) throw new Error('The synthetic editor grant was revoked');
+    },
+  });
+  const accept = (request: SubmitFrame) =>
+    authoritative.submit(
+      {
+        ...structuredClone(request),
+        unitId: f.storage.unit.unitId,
+        actorId: 'a',
+      },
+      undefined,
+    );
   const writer = f.client({ diagnostics });
   const peer = f.client({ diagnostics });
   try {
@@ -70,8 +104,8 @@ async function workload(enabled: boolean) {
       await turns();
       const request = writer.submits().at(-1)!;
       writer.sync.retry();
-      const committed = await f.accept(request);
-      const receipt = await f.accept(request);
+      const committed = await accept(request);
+      const receipt = await accept(request);
       assert.equal(receipt.duplicate, true);
       const ack = {
         type: 'ack' as const,
@@ -94,6 +128,28 @@ async function workload(enabled: boolean) {
     );
     assert.equal(f.storage.history.length, SAVE_COUNT);
     assert.equal(writer.sync.confirmedRevision, SAVE_COUNT + 1);
+    const state = {
+      unit: f.storage.unit,
+      history: f.storage.history,
+      writer: writer.live.snapshot(),
+      peer: peer.live.snapshot(),
+    };
+    const nativeStateSha256 = createHash('sha256').update(JSON.stringify(state)).digest('hex');
+    const beforeRefusal = structuredClone({ unit: f.storage.unit, history: f.storage.history });
+    authorized = false;
+    // Current authorization must still deny both new writes and access to a
+    // previously accepted receipt under disabled, normal or saturated collection.
+    await assert.rejects(accept(writer.submits().at(-1)!), /grant was revoked/);
+    await assert.rejects(
+      accept({
+        type: 'submit',
+        mutationId: 'revoked',
+        baseRevision: SAVE_COUNT + 1,
+        mutations: [write({ v: 'must never be committed' })],
+      }),
+      /grant was revoked/,
+    );
+    assert.deepEqual({ unit: f.storage.unit, history: f.storage.history }, beforeRefusal);
     const flushStarted = performance.now();
     for (let batch = 0; batch < 4; batch++) await collection.diagnostics.flush();
     const collectorFlushMs = performance.now() - flushStarted;
@@ -101,24 +157,37 @@ async function workload(enabled: boolean) {
       ({ event }) =>
         event.name === 'operation.count' && event.details.operation === 'document-save-server-ack',
     );
-    assert.equal(saves.length, enabled ? SAVE_COUNT : 0);
-    assert.equal(collection.diagnostics.dropped, 0);
+    if (mode === 'saturated') {
+      assert(collection.diagnostics.dropped > droppedBeforeNative);
+      assert(saves.length <= SAVE_COUNT);
+    } else {
+      assert.equal(saves.length, enabled ? SAVE_COUNT : 0);
+      assert.equal(collection.diagnostics.dropped, 0);
+    }
     return {
       enabled,
+      mode,
       nativeDurationMs,
       perSaveMs: nativeDurationMs / SAVE_COUNT,
       collectorFlushMs,
       records: collection.received.length,
       dropped: collection.diagnostics.dropped,
+      nativeObservationDrops: collection.diagnostics.dropped - droppedBeforeNative,
+      diagnosticSaveCounters: saves.length,
+      nativeStateSha256,
       assertions: {
         identicalNativeContentAndResources: true,
         acceptedHistoryRows: SAVE_COUNT,
         successfulAcknowledgments: SAVE_COUNT,
         duplicateDeliveryCountedOnce: true,
         bothClientsSaved: true,
+        revokedWritesAndReceiptsDenied: true,
+        refusalPreservesEveryStoredRow: true,
+        authorizationChecks,
       },
     };
   } finally {
+    authoritative.close();
     f.close();
     collection.diagnostics.stop();
   }
@@ -131,26 +200,21 @@ function median(values: number[]) {
 
 export async function measureDiagnosticsOverhead() {
   for (let pair = 0; pair < WARMUP_PAIRS; pair++) {
-    await workload(Boolean(pair % 2));
-    await workload(!Boolean(pair % 2));
+    await workload(pair % 2 === 0 ? 'off' : 'on');
+    await workload(pair % 2 === 0 ? 'on' : 'off');
   }
   const measurements = [];
   for (let pair = 0; pair < MEASURED_PAIRS; pair++) {
-    measurements.push(await workload(Boolean(pair % 2)));
-    measurements.push(await workload(!Boolean(pair % 2)));
+    measurements.push(await workload(pair % 2 === 0 ? 'off' : 'on'));
+    measurements.push(await workload(pair % 2 === 0 ? 'on' : 'off'));
   }
+  const saturatedMeasurements = [await workload('saturated'), await workload('saturated')];
+  for (const measured of [...measurements, ...saturatedMeasurements])
+    assert.equal(measured.nativeStateSha256, measurements[0].nativeStateSha256);
   const pressure = collector();
   try {
     await pressure.diagnostics.start();
-    for (let index = 0; index < 500; index++)
-      pressure.diagnostics.emit(
-        {
-          name: 'operation.count',
-          metric: { kind: 'counter', unit: 'count', value: 1 },
-          details: { operation: 'document-save-local', outcome: 'success' },
-        },
-        { component: 'editor', fileId },
-      );
+    fillQueue(pressure.diagnostics, 500);
     const observedDrops = pressure.diagnostics.dropped;
     assert.equal(observedDrops, 500 - 256);
     for (let batch = 0; batch < 4; batch++) await pressure.diagnostics.flush();
@@ -162,13 +226,16 @@ export async function measureDiagnosticsOverhead() {
       'lib/sync-client/src/client.ts',
       'lib/sync-client/src/types.ts',
       'lib/sync-client/tests/fixture.ts',
+      'lib/sync-server/src/server.ts',
+      'lib/sync-server/src/types.ts',
+      'package-lock.json',
       'web/diagnostics.ts',
       'scripts/ci/diagnostics-overhead.ts',
     ];
     const off = measurements.filter((run) => !run.enabled).map((run) => run.perSaveMs);
     const on = measurements.filter((run) => run.enabled).map((run) => run.perSaveMs);
     return {
-      schemaVersion: 1,
+      schemaVersion: 2,
       measuredAt: new Date().toISOString(),
       runtime: {
         node: process.version,
@@ -200,6 +267,8 @@ export async function measureDiagnosticsOverhead() {
           'Initial SDK construction, browser rendering, real network/SQLite/IDB and final collector HTTP flush (reported separately)',
         timingGate:
           'No ratio-only threshold; bounded workload and resource watchdog plus exact behavioral/capacity assertions',
+        saturatedValidation:
+          'Two native workloads begin with the real collector already full. Native observations must add visible drops; content/history/ACK/access/save/peer assertions and final state hashes match every off/on run. Missing diagnostic counters are disclosed, not reconstructed.',
       },
       summary: {
         offMedianMsPerSave: median(off),
@@ -211,6 +280,7 @@ export async function measureDiagnosticsOverhead() {
           'A small in-process sample describes this workload only and does not explain old unprofiled pauses.',
       },
       measurements,
+      saturatedMeasurements,
       pressure: {
         attempted: 500,
         retained: 256,

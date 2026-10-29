@@ -14,6 +14,7 @@ export const CLIENT_FAILURE_REASONS = [
 export type ClientDiagnosticOutcome = 'success' | 'failure' | 'cancelled';
 export type ClientConnectionReason = 'initial' | 'transport' | 'timeout' | 'offline';
 export interface ClientQueueObservation {
+  /** Native mutations: inflight.length plus all buffered group lengths, not saves/groups. */
   pendingCount: number;
   /** Unknown after reload/rebase: monotonic timestamps are never persisted. */
   oldestPendingAgeMs: number | null;
@@ -43,6 +44,7 @@ export type ClientDiagnosticEvent =
         durationMs: number;
       };
     }
+  /** Active queue samples are bounded to once/second, plus the immediate empty transition. */
   | { name: 'sync.client.queue'; details: ClientQueueObservation }
   | { name: 'sync.client.acknowledged'; details: { duplicate: boolean } }
   | {
@@ -140,7 +142,8 @@ export function isClientDiagnosticEvent(value: unknown): value is ClientDiagnost
         keys(d, ['reason', 'outcome', 'durationMs', 'pendingCount', 'oldestPendingAgeMs']) &&
         member(d.reason, ['retention', 'access-change', 'maintenance']) &&
         member(d.outcome, ['handed-off', 'failure', 'cancelled']) &&
-        amount(d.durationMs) && queue(d)
+        amount(d.durationMs) &&
+        queue(d)
       );
     case 'sync.client.queue':
       return keys(d, ['pendingCount', 'oldestPendingAgeMs']) && queue(d);

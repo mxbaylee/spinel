@@ -78,6 +78,173 @@ test('queued persistence captures once only when requested, and a skipped hook n
   expect(events.some((event) => event.name === 'operation.result')).toBe(false);
 });
 
+test('preserving a refused immutable request cancels its acknowledgment wait without claiming a failed durable save', async () => {
+  const f = fixture();
+  cleanup.push(f.close);
+  let at = 100;
+  const events: DiagnosticEvent[] = [];
+  const source = f.client({
+    diagnostics: observer(events),
+    diagnosticNow: () => at,
+    preservePendingOnFailure: true,
+    persist: (capture) => {
+      capture();
+    },
+  });
+  source.resume();
+  await turns();
+  source.edit([write({ v: 'already accepted but acknowledgment lost' })]);
+  await source.sync.persistNow();
+  source.sync.retry();
+  await turns();
+  const request = source.submits()[0];
+  await f.accept(request);
+  // The client cannot know whether this receipt was committed. Its retained
+  // identity remains recoverable even when a different failure ends replay.
+  at = 145;
+  source.sync.refuse('divergence');
+  await turns();
+  source.sync.refuse('stale');
+  expect(source.sync.checkpoint().sent).toEqual(request);
+  expect(f.storage.history).toHaveLength(1);
+  expect(source.sync.state).toMatchObject({ pending: true, resyncing: true });
+  source.sync.dispose();
+  expect(events.filter((event) => event.name === 'operation.result')).toEqual([
+    {
+      name: 'operation.result',
+      details: { operation: 'document-save-server-ack', outcome: 'cancelled', durationMs: 45 },
+    },
+  ]);
+  expect(events.some((event) => event.name === 'sync.client.acknowledged')).toBe(false);
+});
+
+test('rebased save timing starts at the newly observed envelope and its oldest pending age remains unknown', async () => {
+  const f = fixture();
+  cleanup.push(f.close);
+  let at = 100;
+  const events: DiagnosticEvent[] = [];
+  const source = f.client({ diagnostics: observer(events), diagnosticNow: () => at });
+  source.resume();
+  await turns();
+  source.edit([write({ v: 'local' })]);
+  const peer = await f.accept(
+    { type: 'submit', mutationId: 'peer', baseRevision: 1, mutations: [write({ v: 'peer' }, 2)] },
+    'peer',
+  );
+  at = 150;
+  source.sync.receive({ type: 'edit', ...wire(peer.edit) });
+  expect(source.sync.diagnosticQueue()).toEqual({ pendingCount: 1, oldestPendingAgeMs: null });
+  at = 200;
+  source.sync.retry();
+  await turns();
+  const request = source.submits()[0];
+  const accepted = await f.accept(request);
+  at = 225;
+  source.sync.receive({
+    type: 'ack',
+    mutationId: request.mutationId,
+    duplicate: false,
+    ...wire(accepted.edit),
+  });
+  await turns();
+  expect(events.filter((event) => event.name === 'operation.result')).toEqual([
+    {
+      name: 'operation.result',
+      details: { operation: 'document-save-server-ack', outcome: 'success', durationMs: 25 },
+    },
+  ]);
+});
+
+test.each([false, true])(
+  'a validated durable receipt succeeds before local replay fails (preserve=%s)',
+  async (preservePendingOnFailure) => {
+    const f = fixture();
+    cleanup.push(f.close);
+    let at = 100;
+    const events: DiagnosticEvent[] = [];
+    const source = f.client({
+      diagnostics: observer(events),
+      diagnosticNow: () => at,
+      preservePendingOnFailure,
+    });
+    source.resume();
+    await turns();
+    source.edit([write({ v: 'durable despite local replay failure' })]);
+    source.sync.retry();
+    await turns();
+    const request = source.submits()[0];
+    const accepted = await f.accept(request);
+    const durable = structuredClone({ unit: f.storage.unit, history: f.storage.history });
+    const error = new Error('Local replay failed');
+    const apply = vi.spyOn(NativeReplica.prototype, 'apply').mockImplementationOnce(() => {
+      at = 200;
+      throw error;
+    });
+    at = 150;
+    source.sync.receive({
+      type: 'ack',
+      mutationId: request.mutationId,
+      duplicate: false,
+      ...wire(accepted.edit),
+    });
+    await turns();
+    expect(apply).toHaveBeenCalledOnce();
+    expect(source.failures).toEqual(['malformed']);
+    expect(source.sync.state).toMatchObject({
+      revision: 1,
+      resyncing: true,
+      pending: preservePendingOnFailure,
+    });
+    expect(source.sync.checkpoint().sent).toEqual(preservePendingOnFailure ? request : null);
+    expect({ unit: f.storage.unit, history: f.storage.history }).toEqual(durable);
+    source.sync.dispose();
+    expect(events.filter((event) => event.name === 'operation.result')).toEqual([
+      {
+        name: 'operation.result',
+        details: { operation: 'document-save-server-ack', outcome: 'success', durationMs: 50 },
+      },
+    ]);
+    expect(events.filter((event) => event.name === 'sync.client.acknowledged')).toEqual([
+      { name: 'sync.client.acknowledged', details: { duplicate: false } },
+    ]);
+  },
+);
+
+test.each(['unmatched', 'malformed', 'conflicting'] as const)(
+  '%s acknowledgment cannot claim a durable save',
+  async (condition) => {
+    const f = fixture();
+    cleanup.push(f.close);
+    const events: DiagnosticEvent[] = [];
+    const source = f.client({ diagnostics: observer(events) });
+    source.resume();
+    await turns();
+    source.edit([write({ v: 'pending' })]);
+    source.sync.retry();
+    await turns();
+    const request = source.submits()[0];
+    const accepted = await f.accept(request);
+    if (condition === 'conflicting')
+      source.sync.receive({ type: 'edit', ...wire(accepted.edit), hash: 'a'.repeat(64) });
+    source.sync.receive({
+      type: 'ack',
+      mutationId: condition === 'unmatched' ? 'unmatched' : request.mutationId,
+      duplicate: false,
+      ...wire(accepted.edit),
+      ...(condition === 'malformed' ? { hash: 'invalid' } : {}),
+    });
+    await turns();
+    source.sync.dispose();
+    expect(
+      events.some(
+        (event) => event.name === 'operation.result' && event.details.outcome === 'success',
+      ),
+    ).toBe(false);
+    expect(events.some((event) => event.name === 'sync.client.acknowledged')).toBe(false);
+    expect(f.storage.history).toHaveLength(1);
+  },
+);
+
 test('resync emits fixed reason, pending count and duration only when its preserved checkpoint settles', async () => {
   const f = fixture();
   cleanup.push(f.close);

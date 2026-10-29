@@ -23,6 +23,16 @@ const events: ClientDiagnosticEvent[] = [
       oldestPendingAgeMs: null,
     },
   },
+  {
+    name: 'sync.client.refresh',
+    details: {
+      reason: 'retention',
+      outcome: 'handed-off',
+      durationMs: 40,
+      pendingCount: 0,
+      oldestPendingAgeMs: 0,
+    },
+  },
   { name: 'sync.client.queue', details: { pendingCount: 0, oldestPendingAgeMs: 0 } },
   { name: 'sync.client.acknowledged', details: { duplicate: true } },
   {

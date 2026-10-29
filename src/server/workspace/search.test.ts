@@ -120,11 +120,7 @@ test('search observations preserve authorized results and have one outcome befor
     expect((await search('?q=Budget')).status).toBe(400);
     // Catalog timing ends before response delivery, so a send failure is not a
     // second, contradictory catalog-query outcome.
-    expect(outcomes()).toEqual([
-      'success',
-      'failure',
-      'success',
-    ]);
+    expect(outcomes()).toEqual(['success', 'failure', 'success']);
     brokenObserver = true;
     const preserved = await search('?q=Budget');
     expect((await preserved.json()).items.map((item: { id: string }) => item.id)).toEqual([
