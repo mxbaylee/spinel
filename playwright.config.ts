@@ -1,6 +1,12 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const project = process.env.SPINEL_E2E_PROJECT;
+// Only an explicit routine CI plan reduces duplicate phone executions. Local,
+// manual/full compatibility and unknown settings keep every combination.
+const syncExclusions =
+  process.env.SPINEL_CI_FULL_COMPATIBILITY === 'false'
+    ? /@sync-soak|@phone-ordinary/
+    : /@sync-soak/;
 const shard = process.env.SHARD?.replaceAll('/', '-of-');
 if (
   project &&
@@ -89,7 +95,7 @@ export default defineConfig({
     {
       name: 'sync-development',
       testMatch: ['**/sync-client.spec.ts', '**/doc-mobile.spec.ts'],
-      grepInvert: /@sync-soak/,
+      grepInvert: syncExclusions,
       use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3104' },
     },
     {
@@ -103,7 +109,7 @@ export default defineConfig({
         '**/offline-creation.spec.ts',
         '**/offline-recovery.spec.ts',
       ],
-      grepInvert: /@sync-soak/,
+      grepInvert: syncExclusions,
       use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3105' },
     },
     ...(['sheet', 'doc'] as const).map((kind) => ({

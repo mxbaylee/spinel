@@ -175,7 +175,7 @@ export async function loadDocCallbackEvidence(
 /** Numeric budgets are descriptive in traced samples; SPN-108 stays independent. */
 export function compareDocCallbackEvidence(
   preset: Preset,
-  baseline: LoadedDocCallbackEvidence,
+  baseline: LoadedDocCallbackEvidence | null,
   candidate: LoadedDocCallbackEvidence,
   candidateSource: string,
 ) {
@@ -186,7 +186,9 @@ export function compareDocCallbackEvidence(
   check(preset === 'desktop' || preset === 'mobile', 'Unknown callback preset.');
   check(/^[a-f0-9]{40}$/.test(candidateSource), 'Expected candidate commit is invalid.');
   for (const [label, evidence, role, source] of [
-    ['baseline', baseline, 'baselineObservation', DOC_CALLBACK_BASELINE],
+    ...(baseline
+      ? [['baseline', baseline, 'baselineObservation', DOC_CALLBACK_BASELINE] as const]
+      : []),
     ['candidate', candidate, 'candidate', candidateSource],
   ] as const) {
     failures.push(...evidence.failures.map((failure) => `${label}: ${failure}`));
@@ -319,31 +321,35 @@ export function compareDocCallbackEvidence(
       );
     }
   }
-  for (const key of [
-    'browser',
-    'runtime',
-    'playwright',
-    'runner',
-    'harnessSha256',
-    'fixture',
-    'instrumentation',
-  ] as const)
-    check(
-      isDeepStrictEqual(baseline.manifest[key], candidate.manifest[key]),
-      `Paired ${key} differs.`,
-    );
+  if (baseline)
+    for (const key of [
+      'browser',
+      'runtime',
+      'playwright',
+      'runner',
+      'harnessSha256',
+      'fixture',
+      'instrumentation',
+    ] as const)
+      check(
+        isDeepStrictEqual(baseline.manifest[key], candidate.manifest[key]),
+        `Paired ${key} differs.`,
+      );
   return {
     schema: 1,
+    mode: baseline === null ? 'candidate-only' : 'paired',
     preset,
     accepted: failures.length === 0,
     failures,
-    baseline: {
-      source: baseline.manifest.source,
-      traceSha256: baseline.manifest.trace?.sha256,
-      bounded: baseline.analysis?.bounded,
-      unmappedSourcePositions: baseline.manifest.attribution?.unmapped?.length ?? null,
-      families: baseline.analysis?.families,
-    },
+    baseline: baseline
+      ? {
+          source: baseline.manifest.source,
+          traceSha256: baseline.manifest.trace?.sha256,
+          bounded: baseline.analysis?.bounded,
+          unmappedSourcePositions: baseline.manifest.attribution?.unmapped?.length ?? null,
+          families: baseline.analysis?.families,
+        }
+      : null,
     candidate: {
       source: candidate.manifest.source,
       traceSha256: candidate.manifest.trace?.sha256,
@@ -365,13 +371,14 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     !output
   )
     throw new Error(
-      'Usage: node scripts/ci/doc-callback-comparison.ts <desktop|mobile> <baseline-root> <candidate-root> <output.json>',
+      'Usage: node scripts/ci/doc-callback-comparison.ts <desktop|mobile> <baseline-root|-> <candidate-root> <output.json>',
     );
   let report:
     ReturnType<typeof compareDocCallbackEvidence> | { accepted: false; failures: string[] };
   try {
     // Large raw traces are loaded/analyzed sequentially, not both in parallel.
-    const baseline = await loadDocCallbackEvidence(baselineDirectory);
+    const baseline =
+      baselineDirectory === '-' ? null : await loadDocCallbackEvidence(baselineDirectory);
     const candidate = await loadDocCallbackEvidence(candidateDirectory);
     const source = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
     report = compareDocCallbackEvidence(preset, baseline, candidate, source);

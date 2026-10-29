@@ -6,30 +6,43 @@ on:
   pull_request:
     branches: [main]
     # Draft commits already run every check; becoming ready changes no code.
-    types: [opened, edited, synchronize, reopened]
+    types: [opened, edited, synchronize, reopened, labeled, unlabeled]
+  workflow_dispatch:
+  schedule:
+    - cron: '23 9 * * 1'
 
 permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.event.pull_request.number || github.ref }}
-  # A running push to main is never cancelled: Lib tests diffs each push against
-  # the one before it, so a cancelled run would leave that push's lib changes
-  # untested on main. A newer push can still replace one that is only pending;
-  # that push's changes were already tested on its up-to-date PR.
-  # Metadata/base edits still receive full validation, but wait for the active
-  # run instead of discarding its browser evidence. A new code push supersedes
-  # it normally. Actions may still replace a pending run in this group.
-  cancel-in-progress: ${{ github.event_name == 'pull_request' && github.event.action != 'edited' }}
+  # Metadata and label events cannot cancel OR replace a pending code run.
+  # Every main push keeps its own immutable before/after range; no PR pass reuse.
+  group: ci-${{ github.event_name == 'pull_request' && contains(fromJSON('["opened","synchronize"]'), github.event.action) && format('code-{0}', github.event.pull_request.number) || format('event-{0}', github.run_id) }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' && github.event.action == 'synchronize' }}
 
 jobs:
   changes:
-    name: Classify changes
+    name: Classify changes (${{ github.run_id }})
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
-      docs_only: ${{ steps.changes.outputs.docs_only }}
-      lib_run: ${{ steps.lib-changes.outputs.run }}
+      mode: ${{ steps.changes.outputs.mode }}
+      plan: ${{ steps.changes.outputs.plan }}
+      plan_sha256: ${{ steps.changes.outputs.plan_sha256 }}
+      backlog: ${{ steps.changes.outputs.backlog }}
+      pull_request: ${{ steps.changes.outputs.pull_request }}
+      lint: ${{ steps.changes.outputs.lint }}
+      typecheck: ${{ steps.changes.outputs.typecheck }}
+      unit_tests: ${{ steps.changes.outputs.unit_tests }}
+      lib_test_run: ${{ steps.changes.outputs.lib_test_run }}
+      playwright_run: ${{ steps.changes.outputs.playwright_run }}
+      container_smoke: ${{ steps.changes.outputs.container_smoke }}
+      sync_transition: ${{ steps.changes.outputs.sync_transition }}
+      doc_responsiveness: ${{ steps.changes.outputs.doc_responsiveness }}
+      doc_callback_lifetimes: ${{ steps.changes.outputs.doc_callback_lifetimes }}
+      responsiveness_baseline: ${{ steps.changes.outputs.responsiveness_baseline }}
+      callback_baseline: ${{ steps.changes.outputs.callback_baseline }}
+      phone_compatibility: ${{ steps.changes.outputs.phone_compatibility }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -41,22 +54,18 @@ jobs:
           package-manager-cache: false
       - id: changes
         run: node scripts/ci/changes.ts
-      - name: Library dependencies
-        id: lib-changes
-        env:
-          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
-        run: |
-          if [ -z "${BASE//0/}" ] || ! git cat-file -e "$BASE^{commit}" 2>/dev/null ||
-            ! git diff --quiet "$BASE" HEAD -- lib scripts/dependencies package.json \
-              package-lock.json vitest.config.ts tsconfig.json .nvmrc .github/workflows/ci.yml; then
-            echo "run=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "Nothing lib/ depends on changed since $BASE."
-            echo "run=false" >> "$GITHUB_OUTPUT"
-          fi
+      - name: Retain immutable coverage plan
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ci-plan
+          path: ci-plan.json
+          retention-days: 30
+          if-no-files-found: error
 
   backlog:
-    name: Backlog
+    name: ${{ needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata' && 'Metadata only - Backlog' || 'Backlog' }}
+    needs: changes
+    if: always() && (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -93,7 +102,9 @@ jobs:
         run: node scripts/backlog/cli.ts pr --base "$BASE_SHA" --title "$PR_TITLE"
 
   lint:
-    name: Lint
+    name: ${{ needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata' && 'Metadata only - Lint' || 'Lint' }}
+    needs: changes
+    if: always() && (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -110,60 +121,86 @@ jobs:
         run: npm run lint
 
   typecheck:
-    name: Typecheck
+    name: ${{ needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata' && 'Metadata only - Typecheck' || 'Typecheck' }}
     needs: changes
+    if: always() && (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    outputs:
+      evidence: ${{ steps.typecheck.outcome }}
     steps:
-      - if: needs.changes.outputs.docs_only != 'true'
+      - name: Require complete applicability
+        env:
+          CLASSIFICATION: ${{ needs.changes.result }}
+          SELECTED: ${{ needs.changes.outputs.typecheck }}
+        run: |
+          case "$CLASSIFICATION:$SELECTED" in
+            success:true|success:false) ;;
+            *) echo 'Missing successful applicability decision.' >&2; exit 1 ;;
+          esac
+      - if: needs.changes.outputs.typecheck == 'true'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-      - if: needs.changes.outputs.docs_only != 'true'
+      - if: needs.changes.outputs.typecheck == 'true'
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
       - name: Install
-        if: needs.changes.outputs.docs_only != 'true'
+        if: needs.changes.outputs.typecheck == 'true'
         run: npm ci
       - name: Typecheck
-        if: needs.changes.outputs.docs_only != 'true'
+        id: typecheck
+        if: needs.changes.outputs.typecheck == 'true'
         run: npm run typecheck
       - name: Documentation-only change
-        if: needs.changes.outputs.docs_only == 'true'
+        if: needs.changes.outputs.typecheck == 'false'
         run: echo 'Not applicable — only allowlisted documentation changed; Backlog and Lint still run.'
 
   unit-tests:
-    name: Unit tests
+    name: ${{ needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata' && 'Metadata only - Unit tests' || 'Unit tests' }}
     needs: changes
+    if: always() && (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    outputs:
+      evidence: ${{ steps.unit.outcome }}
     steps:
-      - if: needs.changes.outputs.docs_only != 'true'
+      - name: Require complete applicability
+        env:
+          CLASSIFICATION: ${{ needs.changes.result }}
+          SELECTED: ${{ needs.changes.outputs.unit_tests }}
+        run: |
+          case "$CLASSIFICATION:$SELECTED" in
+            success:true|success:false) ;;
+            *) echo 'Missing successful applicability decision.' >&2; exit 1 ;;
+          esac
+      - if: needs.changes.outputs.unit_tests == 'true'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-      - if: needs.changes.outputs.docs_only != 'true'
+      - if: needs.changes.outputs.unit_tests == 'true'
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
       - name: Install
-        if: needs.changes.outputs.docs_only != 'true'
+        if: needs.changes.outputs.unit_tests == 'true'
         run: npm ci
       # lib/ runs in separate partitions below.
       - name: Install fixture init
-        if: needs.changes.outputs.docs_only != 'true'
+        if: needs.changes.outputs.unit_tests == 'true'
         run: |
           node scripts/ci/prefer-ubuntu-archive.ts
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends tini
       - name: Unit tests
-        if: needs.changes.outputs.docs_only != 'true'
+        id: unit
+        if: needs.changes.outputs.unit_tests == 'true'
         run: node scripts/ci/pid-namespace.ts npm test -- --exclude 'lib/**'
       - name: PDF collaboration overlap evidence
-        if: always() && needs.changes.outputs.docs_only != 'true'
+        if: always() && needs.changes.outputs.unit_tests == 'true'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: pdf-collaboration-overlap
@@ -171,16 +208,16 @@ jobs:
           retention-days: 7
           if-no-files-found: warn
       - name: Documentation-only change
-        if: needs.changes.outputs.docs_only == 'true'
+        if: needs.changes.outputs.unit_tests == 'false'
         run: echo 'Not applicable — only allowlisted documentation changed; Backlog and Lint still run.'
 
   # Separate runners retain maxWorkers: 1 and every seed/assertion. The mixed
   # native-history/intent matrix has its own runner so it does not consume the
   # ordinary cell suite's time budget (SPN-056 integrated verification).
   lib-test-run:
-    name: Lib tests (${{ matrix.suite }})
+    name: ${{ needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata' && 'Metadata only - Lib tests' || 'Lib tests' }} (${{ matrix.suite }})
     needs: changes
-    if: needs.changes.outputs.lib_run == 'true'
+    if: needs.changes.outputs.lib_test_run == 'true'
     runs-on: ubuntu-latest
     # Ordinary cells measured 255s; the stronger mixed matrix projects over
     # eight minutes locally. Keep the same hosted cap for every full partition.
@@ -253,35 +290,39 @@ jobs:
   # Keep the policy-required check available for branch protection, including
   # explicit non-applicable runs. Every required partition must succeed.
   lib-tests:
-    name: Lib tests
+    name: ${{ needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata' && 'Metadata only - Lib tests' || 'Lib tests' }}
     needs: [changes, lib-test-run]
-    if: always()
+    if: always() && (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Required library validation
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Verify selected evidence and publish result
         env:
           CLASSIFICATION: ${{ needs.changes.result }}
-          LIB_RUN: ${{ needs.changes.outputs.lib_run }}
-          RESULT: ${{ needs.lib-test-run.result }}
-        run: |
-          case "$CLASSIFICATION:$LIB_RUN:$RESULT" in
-            success:true:success)
-              echo 'All library partitions passed.'
-              ;;
-            success:false:skipped)
-              echo 'Not applicable — nothing the library tests depend on changed.'
-              ;;
-            *)
-              echo "Library validation incomplete: $CLASSIFICATION:$LIB_RUN:$RESULT"
-              exit 1
-              ;;
-          esac
+          COVERAGE_PLAN: ${{ needs.changes.outputs.plan }}
+          COVERAGE_PLAN_SHA256: ${{ needs.changes.outputs.plan_sha256 }}
+          COVERAGE_RESULTS: '{"lib-test-run":"${{ needs.lib-test-run.result }}"}'
+        run: node scripts/ci/coverage-result.ts lib
+      - name: Retain coverage result
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ci-results-lib
+          path: ci-results-lib.json
+          retention-days: 30
+          if-no-files-found: warn
 
   container-smoke:
-    name: Container smoke
+    name: ${{ needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata' && 'Metadata only - Container smoke' || 'Container smoke' }}
     needs: changes
-    if: needs.changes.outputs.docs_only != 'true'
+    if: needs.changes.outputs.container_smoke == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -299,8 +340,8 @@ jobs:
 
   playwright-run:
     needs: changes
-    if: needs.changes.outputs.docs_only != 'true'
-    name: Playwright smoke (${{ matrix.project }}${{ matrix.shard && format(' {0}', matrix.shard) || '' }})
+    if: needs.changes.outputs.playwright_run == 'true'
+    name: ${{ needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata' && 'Metadata only - Playwright smoke' || 'Playwright smoke' }} (${{ matrix.project }}${{ matrix.shard && format(' {0}', matrix.shard) || '' }})
     runs-on: ubuntu-latest
     # Each runner keeps one browser worker and only its own app server, as
     # `npm run e2e` does; the builds and their shards run side by side instead
@@ -361,6 +402,7 @@ jobs:
           # Server-only provider credential; never passed to the Vite build.
           UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY || vars.UNSPLASH_ACCESS_KEY }}
           SPINEL_E2E_PROJECT: ${{ matrix.project }}
+          SPINEL_CI_FULL_COMPATIBILITY: ${{ needs.changes.outputs.phone_compatibility }}
           SHARD: ${{ matrix.shard }}
           VITE_DOC_SELECTION_EVIDENCE: ${{ matrix.project == 'production' && '1' || '0' }}
           SPINEL_LEGACY_OFFLINE_SOURCE: ${{ matrix.project == 'offline-upgrade' && format('{0}/legacy-offline-source', github.workspace) || '' }}
@@ -404,9 +446,9 @@ jobs:
   # runner. The constrained local host aborted two-editor startup at its 2 GiB
   # watchdog limit; that aborted attempt is not acceptance evidence.
   doc-responsiveness:
-    name: Doc responsiveness (${{ matrix.preset }})
+    name: ${{ needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata' && 'Metadata only - Doc responsiveness' || 'Doc responsiveness' }} (${{ matrix.preset }})
     needs: changes
-    if: needs.changes.outputs.docs_only != 'true'
+    if: needs.changes.outputs.doc_responsiveness == 'true'
     runs-on: ubuntu-latest
     # Four baseline observations allow 600 s each after the first throttled
     # baseline took 255–266 s just to type. Candidate cases retain 300 s and all
@@ -423,6 +465,11 @@ jobs:
       VITE_DOC_RESPONSIVENESS_EVIDENCE: '1'
       SPINEL_E2E_PROJECT: doc-responsiveness
     steps:
+      - name: Require comparison applicability
+        env:
+          PAIRED: ${{ needs.changes.outputs.responsiveness_baseline }}
+        run: |
+          case "$PAIRED" in true|false) ;; *) echo 'Missing comparison decision.' >&2; exit 1 ;; esac
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
@@ -437,23 +484,27 @@ jobs:
           node scripts/ci/prefer-ubuntu-archive.ts
           npx playwright install --with-deps chromium
       - name: Immutable uncapped source with matched compatibility and native observations
+        if: needs.changes.outputs.responsiveness_baseline == 'true'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: 2c84a18449c7dae09e2817989fac6236be96ef98
           path: baseline-doc-source
           persist-credentials: false
       - name: Use identical browser workload on both sources
+        if: needs.changes.outputs.responsiveness_baseline == 'true'
         run: |
           cp e2e/doc-responsiveness*.ts baseline-doc-source/e2e/
           cp web/docResponsivenessEvidence.ts baseline-doc-source/web/
           cp playwright.config.ts baseline-doc-source/playwright.config.ts
           cp package-lock.json baseline-doc-source/package-lock.json
       - name: Install and build baseline
+        if: needs.changes.outputs.responsiveness_baseline == 'true'
         working-directory: baseline-doc-source
         run: |
           npm ci
           npm run build
       - name: Observe baseline first attempts
+        if: needs.changes.outputs.responsiveness_baseline == 'true'
         working-directory: baseline-doc-source
         env:
           SPN108_BASELINE: '1'
@@ -464,12 +515,14 @@ jobs:
         env:
           SPN108_BASELINE: '0'
         run: npx playwright test --project=doc-responsiveness --grep "$PRESET "
-      - name: Prove paired responsiveness improvement
-        run: >-
-          node scripts/ci/doc-responsiveness.ts "$PRESET"
-          baseline-doc-source/test-results/doc-responsiveness
-          test-results/doc-responsiveness
-          "test-results/spn108-comparison-$PRESET.json"
+      - name: Verify candidate evidence and selected paired comparison
+        env:
+          PAIRED: ${{ needs.changes.outputs.responsiveness_baseline }}
+        run: |
+          baseline=-
+          if [ "$PAIRED" = true ]; then baseline=baseline-doc-source/test-results/doc-responsiveness; fi
+          node scripts/ci/doc-responsiveness.ts "$PRESET" "$baseline" \
+            test-results/doc-responsiveness "test-results/spn108-comparison-$PRESET.json"
       - name: Retain every baseline and candidate attempt
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -491,9 +544,9 @@ jobs:
           if-no-files-found: warn
 
   doc-callback-lifetimes:
-    name: Doc callback lifetimes (${{ matrix.preset }})
+    name: ${{ needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata' && 'Metadata only - Doc callback lifetimes' || 'Doc callback lifetimes' }} (${{ matrix.preset }})
     needs: changes
-    if: needs.changes.outputs.docs_only != 'true'
+    if: needs.changes.outputs.doc_callback_lifetimes == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     strategy:
@@ -507,6 +560,11 @@ jobs:
       VITE_DOC_RESPONSIVENESS_EVIDENCE: '1'
       SPINEL_E2E_PROJECT: doc-callback-lifetimes
     steps:
+      - name: Require comparison applicability
+        env:
+          PAIRED: ${{ needs.changes.outputs.callback_baseline }}
+        run: |
+          case "$PAIRED" in true|false) ;; *) echo 'Missing comparison decision.' >&2; exit 1 ;; esac
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
@@ -521,12 +579,14 @@ jobs:
           node scripts/ci/prefer-ubuntu-archive.ts
           npx playwright install --with-deps chromium
       - name: Immutable merged SPN-108 baseline
+        if: needs.changes.outputs.callback_baseline == 'true'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: 0e1df4725d9eccb77574d25e3eecdf678fe6ff44
           path: baseline-callback-source
           persist-credentials: false
       - name: Match callback workload and read-only observations
+        if: needs.changes.outputs.callback_baseline == 'true'
         run: |
           cp e2e/doc-responsiveness*.ts baseline-callback-source/e2e/
           cp scripts/ci/doc-callback-lifetimes.ts baseline-callback-source/scripts/ci/
@@ -534,11 +594,13 @@ jobs:
           cp playwright.config.ts baseline-callback-source/playwright.config.ts
           cp package-lock.json baseline-callback-source/package-lock.json
       - name: Install and build baseline with source maps
+        if: needs.changes.outputs.callback_baseline == 'true'
         working-directory: baseline-callback-source
         run: |
           npm ci
           npm run build -- --sourcemap hidden
       - name: Retain baseline first attempt
+        if: needs.changes.outputs.callback_baseline == 'true'
         id: callback_baseline
         continue-on-error: true
         working-directory: baseline-callback-source
@@ -556,15 +618,19 @@ jobs:
       - name: Verify complete paired callback evidence
         if: always()
         env:
+          PAIRED: ${{ needs.changes.outputs.callback_baseline }}
           BASELINE_OUTCOME: ${{ steps.callback_baseline.outcome }}
           CANDIDATE_OUTCOME: ${{ steps.callback_candidate.outcome }}
         run: |
           comparison_status=0
+          baseline=-
+          expected_baseline=skipped
+          if [ "$PAIRED" = true ]; then baseline=baseline-callback-source/test-results/doc-callback-lifetimes; expected_baseline=success; fi
           node scripts/ci/doc-callback-comparison.ts "$PRESET" \
-            baseline-callback-source/test-results/doc-callback-lifetimes \
+            "$baseline" \
             test-results/doc-callback-lifetimes \
             "test-results/spn113-comparison-$PRESET.json" || comparison_status=$?
-          if [ "$BASELINE_OUTCOME" != success ] || [ "$CANDIDATE_OUTCOME" != success ]; then
+          if [ "$BASELINE_OUTCOME" != "$expected_baseline" ] || [ "$CANDIDATE_OUTCOME" != success ]; then
             echo "::error::Callback browser run failed or was skipped: baseline=$BASELINE_OUTCOME candidate=$CANDIDATE_OUTCOME"
             exit 1
           fi
@@ -584,9 +650,9 @@ jobs:
           if-no-files-found: error
 
   sync-transition:
-    name: Retained sync transition
+    name: ${{ needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata' && 'Metadata only - Retained sync transition' || 'Retained sync transition' }}
     needs: changes
-    if: needs.changes.outputs.docs_only != 'true'
+    if: needs.changes.outputs.sync_transition == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -615,39 +681,47 @@ jobs:
   # The ruleset requires a check named "Playwright smoke", so this job carries
   # the name. Only classified docs-only changes may omit browsers and containers.
   playwright:
-    name: Playwright smoke
+    name: ${{ needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata' && 'Metadata only - Playwright smoke' || 'Playwright smoke' }}
     needs:
       [
         changes,
+        backlog,
+        pull-request,
+        lint,
+        typecheck,
+        unit-tests,
+        lib-test-run,
+        lib-tests,
         playwright-run,
         container-smoke,
         sync-transition,
         doc-responsiveness,
         doc-callback-lifetimes,
       ]
-    if: always()
+    if: always() && (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Required browser and container validation
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Verify selected evidence and publish result
         env:
           CLASSIFICATION: ${{ needs.changes.result }}
-          DOCS_ONLY: ${{ needs.changes.outputs.docs_only }}
-          BROWSER: ${{ needs.playwright-run.result }}
-          CONTAINER: ${{ needs.container-smoke.result }}
-          TRANSITION: ${{ needs.sync-transition.result }}
-          RESPONSIVENESS: ${{ needs.doc-responsiveness.result }}
-          CALLBACKS: ${{ needs.doc-callback-lifetimes.result }}
-        run: |
-          case "$CLASSIFICATION:$DOCS_ONLY:$BROWSER:$CONTAINER:$TRANSITION:$RESPONSIVENESS:$CALLBACKS" in
-            success:true:skipped:skipped:skipped:skipped:skipped)
-              echo 'Not applicable — only allowlisted documentation changed; Backlog and Lint still run.'
-              ;;
-            success:false:success:success:success:success:success)
-              echo 'All browser partitions, offline upgrades, sync soaks, retained transition, paired Doc responsiveness/callback lifetimes and the production container passed.'
-              ;;
-            *)
-              echo "Browser/container validation incomplete: $CLASSIFICATION:$DOCS_ONLY:$BROWSER:$CONTAINER:$TRANSITION:$RESPONSIVENESS:$CALLBACKS"
-              exit 1
-              ;;
-          esac
+          COVERAGE_PLAN: ${{ needs.changes.outputs.plan }}
+          COVERAGE_PLAN_SHA256: ${{ needs.changes.outputs.plan_sha256 }}
+          COVERAGE_GATE_RESULTS: '{"typecheck":"${{ needs.typecheck.result }}","unit-tests":"${{ needs.unit-tests.result }}","lib-tests":"${{ needs.lib-tests.result }}"}'
+          COVERAGE_RESULTS: '{"backlog":"${{ needs.backlog.result }}","pull-request":"${{ needs.pull-request.result }}","lint":"${{ needs.lint.result }}","typecheck":"${{ needs.typecheck.outputs.evidence }}","unit-tests":"${{ needs.unit-tests.outputs.evidence }}","lib-test-run":"${{ needs.lib-test-run.result }}","playwright-run":"${{ needs.playwright-run.result }}","container-smoke":"${{ needs.container-smoke.result }}","sync-transition":"${{ needs.sync-transition.result }}","doc-responsiveness":"${{ needs.doc-responsiveness.result }}","doc-callback-lifetimes":"${{ needs.doc-callback-lifetimes.result }}"}'
+        run: node scripts/ci/coverage-result.ts browser
+      - name: Retain coverage result
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ci-results-browser
+          path: ci-results-browser.json
+          retention-days: 30
+          if-no-files-found: warn

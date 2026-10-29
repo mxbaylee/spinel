@@ -80,7 +80,11 @@ test('Git ranges include earlier commits, both rename paths, deletions and unusu
         GITHUB_OUTPUT: outputPath,
       },
     });
-    assert.equal(readFileSync(outputPath, 'utf8'), 'docs_only=true\n');
+    assert.match(readFileSync(outputPath, 'utf8'), /^docs_only=true\n/);
+    const published = JSON.parse(readFileSync(join(cwd, 'ci-plan.json'), 'utf8'));
+    assert.equal(published.base, base);
+    assert.equal(published.head, docsHead);
+    assert.equal(published.suites['unit-tests'].selected, false);
     assert.deepEqual(
       changedPaths(
         'pull_request',
