@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
 import type { AddressInfo } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -14,6 +14,7 @@ import { migrateSpaceSchema } from '../src/server/workspace/space-schema.ts';
 import { TrashStore, TRASH_RETENTION_MS } from '../src/server/workspace/trash.ts';
 import { CollaborationStore } from '../src/server/collaboration/service.ts';
 import { SQLiteSyncStorage } from '../src/server/sync/store.ts';
+import { restoreBarrierPath } from '../src/server/maintenance/restore-barrier.ts';
 
 const cleanups: (() => Promise<unknown>)[] = [];
 afterEach(async () => {
@@ -28,6 +29,27 @@ async function temporaryDirectory() {
   cleanups.push(() => rm(directory, { recursive: true, force: true }));
   return directory;
 }
+
+test.each(['marker', 'directory', 'symlink'])(
+  'direct application startup refuses a %s restore barrier before opening storage',
+  async (kind) => {
+    const directory = await temporaryDirectory(),
+      databasePath = join(directory, 'spinel.sqlite');
+    const original = Buffer.from('interrupted replacement bytes: not a database');
+    await writeFile(databasePath, original);
+    const barrier = restoreBarrierPath(databasePath);
+    if (kind === 'marker') await writeFile(barrier, 'malformed pending operation');
+    else if (kind === 'directory') await mkdir(barrier);
+    else await symlink(join(directory, 'missing'), barrier);
+    const alias = join(directory, 'alias.sqlite');
+    await symlink(databasePath, alias);
+    for (const path of [databasePath, alias])
+      await expect(createApp({ databasePath: path, staticDirectory: directory })).rejects.toThrow(
+        'unfinished workspace restore',
+      );
+    expect(await readFile(databasePath)).toEqual(original);
+  },
+);
 
 test('Space expiry reports health and native purge failures retry without blocking startup or shutdown', async () => {
   const directory = await temporaryDirectory();

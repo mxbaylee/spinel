@@ -39,6 +39,8 @@ import { attachSync } from '../src/server/sync/transport.ts';
 import type { MaintenanceBridge } from '../src/shared/maintenance.ts';
 import { MaintenanceGate, ShutdownError } from '../src/server/maintenance/gate.ts';
 import { maintenanceRoutes } from '../src/server/maintenance/routes.ts';
+import { assertNoPendingRestore } from '../src/server/maintenance/restore-barrier.ts';
+import { canonicalDatabasePath } from '../src/server/maintenance/journal.ts';
 
 export const projectRoot = resolve(import.meta.dirname, '..');
 /** Below the supervisor's 15 s stop budget, leaving time to close stores. */
@@ -58,6 +60,9 @@ export interface AppOptions {
 }
 
 export async function createApp(options: AppOptions) {
+  // Check before even constructing storage: initialization can migrate or write.
+  // Paused maintenance and inherited ownership alone do not authorize a trial.
+  assertNoPendingRestore(canonicalDatabasePath(options.databasePath));
   const maintenance = new MaintenanceGate(options.maintenance);
   const database = openDatabase(options.databasePath);
   const app = express();

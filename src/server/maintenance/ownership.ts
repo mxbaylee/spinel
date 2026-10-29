@@ -10,6 +10,7 @@ import {
   workspaceOwnershipRoles,
 } from './journal.ts';
 import type { WorkspaceOwnership, WorkspaceOwnershipRole } from './journal.ts';
+import { assertNoPendingRestore } from './restore-barrier.ts';
 
 export const OWNERSHIP_CHANNEL = 'spinel-workspace-ownership';
 const HANDOFF_MS = 10_000;
@@ -31,6 +32,7 @@ export function shareWorkspaceOwnership(
   const transferId = randomUUID();
   const addresses = workspaceOwnershipAddresses(ownership.databasePath, ownership.databaseIdentity);
   return new Promise<void>((resolve, reject) => {
+    assertNoPendingRestore(ownership.databasePath);
     let sending = false;
     let settled = false;
     const finish = (error?: Error) => {
@@ -61,6 +63,7 @@ export function shareWorkspaceOwnership(
       });
     const sendHandles = async () => {
       for (const role of workspaceOwnershipRoles) {
+        assertNoPendingRestore(ownership.databasePath);
         const handle = ownership.handles[role];
         if (
           !handle.listening ||
@@ -85,8 +88,14 @@ export function shareWorkspaceOwnership(
       if (value.kind === 'request' && !sending) {
         sending = true;
         void sendHandles().catch((error: Error) => finish(error));
-      } else if (value.kind === 'held' && value.transferId === transferId && sending) finish();
-      else if (value.kind === 'refused') failed();
+      } else if (value.kind === 'held' && value.transferId === transferId && sending) {
+        try {
+          assertNoPendingRestore(ownership.databasePath);
+          finish();
+        } catch {
+          failed();
+        }
+      } else if (value.kind === 'refused') failed();
     }
     child.on('message', onMessage);
     child.once('error', failed);
@@ -105,6 +114,7 @@ export async function receiveWorkspaceOwnership(databasePath: string): Promise<W
   if (!process.send || !process.connected)
     throw new Error('A private workspace ownership channel is required.');
   const canonical = canonicalDatabasePath(databasePath);
+  assertNoPendingRestore(canonical);
   const identity = fileIdentity(canonical);
   if (inherited) {
     if (inherited.databasePath !== canonical || !sameFile(inherited.databaseIdentity, identity))
@@ -119,11 +129,36 @@ export async function receiveWorkspaceOwnership(databasePath: string): Promise<W
     let complete = false;
     const finish = (error?: Error) => {
       if (settled) return;
+      if (!error) {
+        try {
+          assertNoPendingRestore(canonical);
+        } catch (failure) {
+          error = failure instanceof Error ? failure : new Error('Workspace opening refused.');
+        }
+      }
       settled = true;
       clearTimeout(timer);
       process.off('message', onMessage);
       process.off('disconnect', disconnected);
       if (error) {
+        // Other listeners may already be queued in the IPC channel. They were
+        // never accepted and must not keep a failed pre-open receiver alive.
+        const discard = (value: unknown, handle: unknown) => {
+          if (
+            record(value) &&
+            value.channel === OWNERSHIP_CHANNEL &&
+            value.kind === 'handle' &&
+            handle instanceof Server &&
+            !heldServers.has(handle)
+          ) {
+            handle.unref();
+            handle.close(() => {});
+          }
+        };
+        if (process.connected) {
+          process.on('message', discard);
+          process.once('disconnect', () => process.off('message', discard));
+        }
         // A failed handoff has never permitted a DB open. Close only the
         // incomplete copies received by this process, preserving parent holds.
         for (const handle of Object.values(handles)) {
@@ -160,6 +195,7 @@ export async function receiveWorkspaceOwnership(databasePath: string): Promise<W
       }
       if (value.kind !== 'handle' || complete) return;
       try {
+        assertNoPendingRestore(canonical);
         const role = value.role as WorkspaceOwnershipRole;
         const addresses = value.addresses;
         if (

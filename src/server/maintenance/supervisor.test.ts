@@ -1,7 +1,7 @@
 import { fork } from 'node:child_process';
 import type { ChildProcess } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
-import { once } from 'node:events';
+import { EventEmitter, once } from 'node:events';
 import {
   chmod,
   link,
@@ -14,7 +14,7 @@ import {
   symlink,
   writeFile,
 } from 'node:fs/promises';
-import { openSync, closeSync } from 'node:fs';
+import { openSync, closeSync, writeFileSync } from 'node:fs';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -35,6 +35,7 @@ import { processResourcesReleased } from './process-exit.ts';
 import { restoreBarrierPath } from './restore-barrier.ts';
 import { restoreSnapshotFingerprint } from '../backup/inventory.ts';
 import { validRestoreStopRecord } from './restore-stop.ts';
+import { OWNERSHIP_CHANNEL, shareWorkspaceOwnership } from './ownership.ts';
 
 const cleanups: Array<() => unknown | Promise<unknown>> = [];
 afterEach(async () => {
@@ -526,6 +527,94 @@ for (const transferred of [0, 2]) {
     await live.release();
   }, 10_000);
 }
+
+test.each(['before', 'during'])(
+  'ordinary inherited ownership refuses a restore barrier created %s transfer',
+  async (pending) => {
+    const f = await fixture(),
+      before = await readFile(f.databasePath);
+    const parent = fork(fileURLToPath(new URL('./ownership-fixture.ts', import.meta.url)), [], {
+      env: {
+        ...process.env,
+        DATABASE_PATH: f.databasePath,
+        SPINEL_MAINTENANCE_ROOT: f.root,
+        SPINEL_TEST_OWNERSHIP_ROLE: 'parent',
+        SPINEL_TEST_TRANSFER_COUNT: '4',
+        SPINEL_TEST_OWNERSHIP_BARRIER: pending,
+      },
+      execArgv: [],
+      stdio: ['ignore', 'ignore', 'inherit', 'ipc'],
+    });
+    cleanups.push(async () => {
+      if (parent.exitCode === null && parent.signalCode === null) {
+        const exited = once(parent, 'exit');
+        parent.kill('SIGTERM');
+        await exited;
+      }
+    });
+    const exited = once(parent, 'exit');
+    const refused = await message(parent, (value) => value.refused === true);
+    expect(refused.code).toBe(1);
+    expect(refused.lateClosed).toBe(pending === 'during');
+    expect((await exited)[0]).toBe(0);
+    await expect(lstat(`${f.databasePath}.opened`)).rejects.toMatchObject({ code: 'ENOENT' });
+    expect(await readFile(f.databasePath)).toEqual(before);
+    expect(() => assertWorkspaceHandlesClosed(f.databasePath)).not.toThrow();
+  },
+  10_000,
+);
+
+test.each(['before', 'during', 'acknowledgment'])(
+  'ordinary ownership sender refuses a restore barrier at %s',
+  async (point) => {
+    const f = await fixture(),
+      journal = await RecoveryJournal.open(f.root, f.databasePath);
+    cleanups.push(() => journal.close());
+    await journal.bindWorkspace();
+    const channel = new EventEmitter();
+    let handles = 0;
+    const pending = () =>
+      writeFileSync(restoreBarrierPath(f.databasePath), 'pending', { mode: 0o600, flag: 'wx' });
+    const send = vi.fn(
+      (
+        value: { kind: string; transferId?: string },
+        _handle: unknown,
+        callback: (error?: Error) => void,
+      ) => {
+        if (value.kind === 'offer')
+          queueMicrotask(() =>
+            channel.emit('message', { channel: OWNERSHIP_CHANNEL, kind: 'request' }),
+          );
+        if (value.kind === 'handle') {
+          handles++;
+          if (point === 'during' && handles === 2) pending();
+          if (handles === 4)
+            queueMicrotask(() => {
+              if (point === 'acknowledgment') pending();
+              channel.emit('message', {
+                channel: OWNERSHIP_CHANNEL,
+                kind: 'held',
+                transferId: value.transferId,
+              });
+            });
+        }
+        callback();
+        return true;
+      },
+    );
+    // Sender control-flow injection with real retained kernel listeners. The
+    // separate process test above exercises the actual receiver and IPC handles.
+    const child = Object.assign(channel, { connected: true, send }) as unknown as ChildProcess;
+    if (point === 'before') pending();
+    await expect(shareWorkspaceOwnership(child, journal.workspaceOwnership())).rejects.toThrow(
+      point === 'acknowledgment' ? 'handoff was interrupted' : 'unfinished workspace restore',
+    );
+    expect(handles).toBe(point === 'before' ? 0 : point === 'during' ? 2 : 4);
+    expect(
+      Object.values(journal.workspaceOwnership().handles).every((handle) => handle.listening),
+    ).toBe(true);
+  },
+);
 
 test('expired authority, arbitrary commands, stale operation IDs and changed generations stay closed', async () => {
   const f = await fixture();
