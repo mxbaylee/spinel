@@ -1,0 +1,1964 @@
+{
+  "schemaVersion": 1,
+  "status": "event trials in progress; not final acceptance",
+  "pullRequest": 222,
+  "originalSource": "00e3250b053a749d61f085f3954428afa3cca07d",
+  "temporaryBase": "1f2fd0b715b40ebd92446c15125a43283ee67ec2",
+  "head": "ef1597a5a12fd7af762cdc6f3208246dbc9705dd",
+  "testedMerge": "7d8421a3a91c6440f99bbba108798c525e2598f6",
+  "targeted": {
+    "runId": 40998449892,
+    "attempt": 1,
+    "plan": {
+      "version": 1,
+      "event": "pull_request",
+      "action": "opened",
+      "base": "1f2fd0b715b40ebd92446c15125a43283ee67ec2",
+      "head": "ef1597a5a12fd7af762cdc6f3208246dbc9705dd",
+      "tested": "7d8421a3a91c6440f99bbba108798c525e2598f6",
+      "mode": "targeted",
+      "labels": [],
+      "paths": [
+        "docs/todo/SPN-115.md",
+        "docs/todo/backlog.json",
+        "docs/todo/readme.md",
+        "src/server/health/routes.ts"
+      ],
+      "suites": {
+        "backlog": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Automatic coverage for the complete change range."
+        },
+        "pull-request": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Automatic coverage for the complete change range."
+        },
+        "lint": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Automatic coverage for the complete change range."
+        },
+        "typecheck": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Automatic coverage for the complete change range."
+        },
+        "unit-tests": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Automatic coverage for the complete change range."
+        },
+        "lib-test-run": {
+          "selected": false,
+          "dependencies": [
+            "lib/**",
+            "scripts/dependencies/**",
+            "package{,-lock}.json",
+            "vitest.config.ts",
+            "tsconfig.json",
+            ".nvmrc",
+            ".github/workflows/ci.yml"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "No lib-test-run dependency changed; explicit inapplicability."
+        },
+        "playwright-run": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Automatic coverage for the complete change range."
+        },
+        "container-smoke": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Automatic coverage for the complete change range."
+        },
+        "sync-transition": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Automatic coverage for the complete change range."
+        },
+        "doc-responsiveness": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Automatic coverage for the complete change range."
+        },
+        "doc-callback-lifetimes": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Automatic coverage for the complete change range."
+        },
+        "responsiveness-baseline": {
+          "selected": false,
+          "dependencies": [
+            "web/**",
+            "server/**",
+            "lib/**",
+            "e2e/**",
+            "src/shared/**",
+            "src/server/{sync,history,collaboration}/**",
+            "scripts/{ci,dependencies,sync-transition}/**",
+            "build/runtime/dependency/workflow configuration"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "No responsiveness-baseline dependency changed; explicit inapplicability."
+        },
+        "callback-baseline": {
+          "selected": false,
+          "dependencies": [
+            "web/**",
+            "server/**",
+            "lib/**",
+            "e2e/**",
+            "src/shared/**",
+            "src/server/{sync,history,collaboration}/**",
+            "scripts/{ci,dependencies,sync-transition}/**",
+            "build/runtime/dependency/workflow configuration"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "No callback-baseline dependency changed; explicit inapplicability."
+        },
+        "phone-compatibility": {
+          "selected": false,
+          "dependencies": [
+            "full plan backstop; ordinary phone owners remain in routine browser coverage"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Routine phone contract owners cover every assertion; full duplicate compatibility reserved for backstop."
+        }
+      }
+    },
+    "artifact": {
+      "id": 12951808276,
+      "zipSha256": "6d3886091c7699c33349d7b772864937c071de2fc5e99e85989eb6f1d13aa63b"
+    },
+    "status": "completed",
+    "jobsBeforeMetadata": [
+      {
+        "id": 123876980680,
+        "name": "Pull request",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123876981062,
+        "name": "Classify changes (40998449892)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067718,
+        "name": "Unit tests",
+        "status": "in_progress",
+        "conclusion": null,
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067734,
+        "name": "Lint",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067744,
+        "name": "Backlog",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067761,
+        "name": "Typecheck",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067791,
+        "name": "Doc responsiveness (mobile)",
+        "status": "in_progress",
+        "conclusion": null,
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067793,
+        "name": "Retained sync transition",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067814,
+        "name": "Doc responsiveness (desktop)",
+        "status": "in_progress",
+        "conclusion": null,
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067817,
+        "name": "Doc callback lifetimes (mobile)",
+        "status": "in_progress",
+        "conclusion": null,
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067823,
+        "name": "Doc callback lifetimes (desktop)",
+        "status": "in_progress",
+        "conclusion": null,
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067870,
+        "name": "Playwright smoke (production 1/2)",
+        "status": "in_progress",
+        "conclusion": null,
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067871,
+        "name": "Playwright smoke (development 1/2)",
+        "status": "in_progress",
+        "conclusion": null,
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067880,
+        "name": "Playwright smoke (mobile-https)",
+        "status": "in_progress",
+        "conclusion": null,
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067897,
+        "name": "Playwright smoke (production 2/2)",
+        "status": "in_progress",
+        "conclusion": null,
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067907,
+        "name": "Playwright smoke (offline-upgrade)",
+        "status": "in_progress",
+        "conclusion": null,
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067929,
+        "name": "Playwright smoke (development 2/2)",
+        "status": "in_progress",
+        "conclusion": null,
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067940,
+        "name": "Playwright smoke (sync-soak-doc)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067965,
+        "name": "Playwright smoke (sync-development)",
+        "status": "in_progress",
+        "conclusion": null,
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067971,
+        "name": "Playwright smoke (sync-soak-sheet)",
+        "status": "in_progress",
+        "conclusion": null,
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877068014,
+        "name": "Playwright smoke (sync-production)",
+        "status": "in_progress",
+        "conclusion": null,
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877068154,
+        "name": "Lib tests",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877068619,
+        "name": "Container smoke",
+        "status": "in_progress",
+        "conclusion": null,
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877068704,
+        "name": "${{ (((needs.changes.result == 'success') && (needs.changes.outputs.mode == 'metadata') && 'Metadata only - Lib tests') || 'Lib tests') }} (${{ matrix.suite }})",
+        "status": "completed",
+        "conclusion": "skipped",
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      }
+    ],
+    "jobsAfterMetadata": [
+      {
+        "id": 123876980680,
+        "name": "Pull request",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123876981062,
+        "name": "Classify changes (40998449892)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067718,
+        "name": "Unit tests",
+        "status": "in_progress",
+        "conclusion": null,
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067734,
+        "name": "Lint",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067744,
+        "name": "Backlog",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067761,
+        "name": "Typecheck",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067791,
+        "name": "Doc responsiveness (mobile)",
+        "status": "in_progress",
+        "conclusion": null,
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067793,
+        "name": "Retained sync transition",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067814,
+        "name": "Doc responsiveness (desktop)",
+        "status": "in_progress",
+        "conclusion": null,
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067817,
+        "name": "Doc callback lifetimes (mobile)",
+        "status": "in_progress",
+        "conclusion": null,
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067823,
+        "name": "Doc callback lifetimes (desktop)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067870,
+        "name": "Playwright smoke (production 1/2)",
+        "status": "in_progress",
+        "conclusion": null,
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067871,
+        "name": "Playwright smoke (development 1/2)",
+        "status": "in_progress",
+        "conclusion": null,
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067880,
+        "name": "Playwright smoke (mobile-https)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067897,
+        "name": "Playwright smoke (production 2/2)",
+        "status": "in_progress",
+        "conclusion": null,
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067907,
+        "name": "Playwright smoke (offline-upgrade)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067929,
+        "name": "Playwright smoke (development 2/2)",
+        "status": "in_progress",
+        "conclusion": null,
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067940,
+        "name": "Playwright smoke (sync-soak-doc)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067965,
+        "name": "Playwright smoke (sync-development)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877067971,
+        "name": "Playwright smoke (sync-soak-sheet)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877068014,
+        "name": "Playwright smoke (sync-production)",
+        "status": "in_progress",
+        "conclusion": null,
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877068154,
+        "name": "Lib tests",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877068619,
+        "name": "Container smoke",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877068704,
+        "name": "${{ (((needs.changes.result == 'success') && (needs.changes.outputs.mode == 'metadata') && 'Metadata only - Lib tests') || 'Lib tests') }} (${{ matrix.suite }})",
+        "status": "completed",
+        "conclusion": "skipped",
+        "startedAt": null,
+        "completedAt": null,
+        "runnerAllocated": false
+      }
+    ],
+    "conclusion": "success",
+    "jobsFinal": [
+      {
+        "id": 123876980680,
+        "name": "Pull request",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-10-30T03:37:53Z",
+        "completedAt": "2026-10-30T03:38:06Z",
+        "runnerAllocated": true
+      },
+      {
+        "id": 123876981062,
+        "name": "Classify changes (40998449892)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-10-30T03:37:53Z",
+        "completedAt": "2026-10-30T03:38:08Z",
+        "runnerAllocated": true
+      },
+      {
+        "id": 123877067718,
+        "name": "Unit tests",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-10-30T03:38:11Z",
+        "completedAt": "2026-10-30T03:45:05Z",
+        "runnerAllocated": true
+      },
+      {
+        "id": 123877067734,
+        "name": "Lint",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-10-30T03:38:11Z",
+        "completedAt": "2026-10-30T03:38:58Z",
+        "runnerAllocated": true
+      },
+      {
+        "id": 123877067744,
+        "name": "Backlog",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-10-30T03:38:11Z",
+        "completedAt": "2026-10-30T03:38:24Z",
+        "runnerAllocated": true
+      },
+      {
+        "id": 123877067761,
+        "name": "Typecheck",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-10-30T03:38:11Z",
+        "completedAt": "2026-10-30T03:38:45Z",
+        "runnerAllocated": true
+      },
+      {
+        "id": 123877067791,
+        "name": "Doc responsiveness (mobile)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-10-30T03:38:11Z",
+        "completedAt": "2026-10-30T03:54:27Z",
+        "runnerAllocated": true
+      },
+      {
+        "id": 123877067793,
+        "name": "Retained sync transition",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-10-30T03:38:10Z",
+        "completedAt": "2026-10-30T03:38:48Z",
+        "runnerAllocated": true
+      },
+      {
+        "id": 123877067814,
+        "name": "Doc responsiveness (desktop)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-10-30T03:38:11Z",
+        "completedAt": "2026-10-30T03:46:18Z",
+        "runnerAllocated": true
+      },
+      {
+        "id": 123877067817,
+        "name": "Doc callback lifetimes (mobile)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-10-30T03:38:11Z",
+        "completedAt": "2026-10-30T03:44:30Z",
+        "runnerAllocated": true
+      },
+      {
+        "id": 123877067823,
+        "name": "Doc callback lifetimes (desktop)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-10-30T03:38:11Z",
+        "completedAt": "2026-10-30T03:41:52Z",
+        "runnerAllocated": true
+      },
+      {
+        "id": 123877067870,
+        "name": "Playwright smoke (production 1/2)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-10-30T03:38:11Z",
+        "completedAt": "2026-10-30T03:50:10Z",
+        "runnerAllocated": true
+      },
+      {
+        "id": 123877067871,
+        "name": "Playwright smoke (development 1/2)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-10-30T03:38:11Z",
+        "completedAt": "2026-10-30T03:52:58Z",
+        "runnerAllocated": true
+      },
+      {
+        "id": 123877067880,
+        "name": "Playwright smoke (mobile-https)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-10-30T03:38:11Z",
+        "completedAt": "2026-10-30T03:40:07Z",
+        "runnerAllocated": true
+      },
+      {
+        "id": 123877067897,
+        "name": "Playwright smoke (production 2/2)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-10-30T03:38:11Z",
+        "completedAt": "2026-10-30T03:51:05Z",
+        "runnerAllocated": true
+      },
+      {
+        "id": 123877067907,
+        "name": "Playwright smoke (offline-upgrade)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-10-30T03:38:12Z",
+        "completedAt": "2026-10-30T03:39:54Z",
+        "runnerAllocated": true
+      },
+      {
+        "id": 123877067929,
+        "name": "Playwright smoke (development 2/2)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-10-30T03:38:11Z",
+        "completedAt": "2026-10-30T03:55:49Z",
+        "runnerAllocated": true
+      },
+      {
+        "id": 123877067940,
+        "name": "Playwright smoke (sync-soak-doc)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-10-30T03:38:11Z",
+        "completedAt": "2026-10-30T03:39:41Z",
+        "runnerAllocated": true
+      },
+      {
+        "id": 123877067965,
+        "name": "Playwright smoke (sync-development)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-10-30T03:38:11Z",
+        "completedAt": "2026-10-30T03:41:30Z",
+        "runnerAllocated": true
+      },
+      {
+        "id": 123877067971,
+        "name": "Playwright smoke (sync-soak-sheet)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-10-30T03:38:27Z",
+        "completedAt": "2026-10-30T03:40:25Z",
+        "runnerAllocated": true
+      },
+      {
+        "id": 123877068014,
+        "name": "Playwright smoke (sync-production)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-10-30T03:38:11Z",
+        "completedAt": "2026-10-30T03:48:16Z",
+        "runnerAllocated": true
+      },
+      {
+        "id": 123877068154,
+        "name": "Lib tests",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-10-30T03:38:11Z",
+        "completedAt": "2026-10-30T03:38:26Z",
+        "runnerAllocated": true
+      },
+      {
+        "id": 123877068619,
+        "name": "Container smoke",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-10-30T03:38:29Z",
+        "completedAt": "2026-10-30T03:39:56Z",
+        "runnerAllocated": true
+      },
+      {
+        "id": 123877068704,
+        "name": "${{ (((needs.changes.result == 'success') && (needs.changes.outputs.mode == 'metadata') && 'Metadata only - Lib tests') || 'Lib tests') }} (${{ matrix.suite }})",
+        "status": "completed",
+        "conclusion": "skipped",
+        "startedAt": "2026-10-30T03:38:08Z",
+        "completedAt": "2026-10-30T03:38:08Z",
+        "runnerAllocated": false
+      },
+      {
+        "id": 123882102013,
+        "name": "Playwright smoke",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-10-30T03:55:52Z",
+        "completedAt": "2026-10-30T03:56:06Z",
+        "runnerAllocated": true
+      }
+    ],
+    "observedRunnerSeconds": 7421,
+    "observedWallSeconds": 1096
+  },
+  "metadata": {
+    "runId": 40998696318,
+    "attempt": 1,
+    "action": "description-only edit while code run in progress",
+    "plan": {
+      "version": 1,
+      "event": "pull_request",
+      "action": "edited",
+      "base": "1f2fd0b715b40ebd92446c15125a43283ee67ec2",
+      "head": "ef1597a5a12fd7af762cdc6f3208246dbc9705dd",
+      "tested": "7d8421a3a91c6440f99bbba108798c525e2598f6",
+      "mode": "metadata",
+      "labels": [],
+      "paths": [
+        "docs/todo/SPN-115.md",
+        "docs/todo/backlog.json",
+        "docs/todo/readme.md",
+        "src/server/health/routes.ts"
+      ],
+      "suites": {
+        "backlog": {
+          "selected": false,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Metadata event emits no code evidence."
+        },
+        "pull-request": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Title/body validation only; existing code checks untouched."
+        },
+        "lint": {
+          "selected": false,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Metadata event emits no code evidence."
+        },
+        "typecheck": {
+          "selected": false,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Metadata event emits no code evidence."
+        },
+        "unit-tests": {
+          "selected": false,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Metadata event emits no code evidence."
+        },
+        "lib-test-run": {
+          "selected": false,
+          "dependencies": [
+            "lib/**",
+            "scripts/dependencies/**",
+            "package{,-lock}.json",
+            "vitest.config.ts",
+            "tsconfig.json",
+            ".nvmrc",
+            ".github/workflows/ci.yml"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Metadata event emits no code evidence."
+        },
+        "playwright-run": {
+          "selected": false,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Metadata event emits no code evidence."
+        },
+        "container-smoke": {
+          "selected": false,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Metadata event emits no code evidence."
+        },
+        "sync-transition": {
+          "selected": false,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Metadata event emits no code evidence."
+        },
+        "doc-responsiveness": {
+          "selected": false,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Metadata event emits no code evidence."
+        },
+        "doc-callback-lifetimes": {
+          "selected": false,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Metadata event emits no code evidence."
+        },
+        "responsiveness-baseline": {
+          "selected": false,
+          "dependencies": [
+            "web/**",
+            "server/**",
+            "lib/**",
+            "e2e/**",
+            "src/shared/**",
+            "src/server/{sync,history,collaboration}/**",
+            "scripts/{ci,dependencies,sync-transition}/**",
+            "build/runtime/dependency/workflow configuration"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Metadata event emits no code evidence."
+        },
+        "callback-baseline": {
+          "selected": false,
+          "dependencies": [
+            "web/**",
+            "server/**",
+            "lib/**",
+            "e2e/**",
+            "src/shared/**",
+            "src/server/{sync,history,collaboration}/**",
+            "scripts/{ci,dependencies,sync-transition}/**",
+            "build/runtime/dependency/workflow configuration"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Metadata event emits no code evidence."
+        },
+        "phone-compatibility": {
+          "selected": false,
+          "dependencies": [
+            "full plan backstop; ordinary phone owners remain in routine browser coverage"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Metadata event emits no code evidence."
+        }
+      }
+    },
+    "artifact": {
+      "id": 12951983361,
+      "zipSha256": "6a8d3c0c0cedc06b01b387b7014979c2b9910e4d0de8aa43a7bd81a57c91508b"
+    },
+    "jobs": [
+      {
+        "id": 123877764225,
+        "name": "Pull request",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-10-30T03:40:33Z",
+        "completedAt": "2026-10-30T03:40:47Z",
+        "runnerAllocated": true
+      },
+      {
+        "id": 123877764470,
+        "name": "Classify changes (40998696318)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-10-30T03:40:34Z",
+        "completedAt": "2026-10-30T03:40:51Z",
+        "runnerAllocated": true
+      },
+      {
+        "id": 123877866719,
+        "name": "needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata' && 'Metadata only - Typecheck' || 'Typecheck'",
+        "status": "completed",
+        "conclusion": "skipped",
+        "startedAt": "2026-10-30T03:40:52Z",
+        "completedAt": "2026-10-30T03:40:51Z",
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877866809,
+        "name": "${{ (((needs.changes.result == 'success') && (needs.changes.outputs.mode == 'metadata') && 'Metadata only - Lib tests') || 'Lib tests') }} (${{ matrix.suite }})",
+        "status": "completed",
+        "conclusion": "skipped",
+        "startedAt": "2026-10-30T03:40:52Z",
+        "completedAt": "2026-10-30T03:40:51Z",
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877866890,
+        "name": "needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata' && 'Metadata only - Backlog' || 'Backlog'",
+        "status": "completed",
+        "conclusion": "skipped",
+        "startedAt": "2026-10-30T03:40:52Z",
+        "completedAt": "2026-10-30T03:40:51Z",
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877866924,
+        "name": "needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata' && 'Metadata only - Lint' || 'Lint'",
+        "status": "completed",
+        "conclusion": "skipped",
+        "startedAt": "2026-10-30T03:40:52Z",
+        "completedAt": "2026-10-30T03:40:51Z",
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877866967,
+        "name": "${{ (((needs.changes.result == 'success') && (needs.changes.outputs.mode == 'metadata') && 'Metadata only - Doc responsiveness') || 'Doc responsiveness') }} (${{ matrix.preset }})",
+        "status": "completed",
+        "conclusion": "skipped",
+        "startedAt": "2026-10-30T03:40:52Z",
+        "completedAt": "2026-10-30T03:40:51Z",
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877866976,
+        "name": "needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata' && 'Metadata only - Unit tests' || 'Unit tests'",
+        "status": "completed",
+        "conclusion": "skipped",
+        "startedAt": "2026-10-30T03:40:52Z",
+        "completedAt": "2026-10-30T03:40:51Z",
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877866983,
+        "name": "${{ (((needs.changes.result == 'success') && (needs.changes.outputs.mode == 'metadata') && 'Metadata only - Doc callback lifetimes') || 'Doc callback lifetimes') }} (${{ matrix.preset }})",
+        "status": "completed",
+        "conclusion": "skipped",
+        "startedAt": "2026-10-30T03:40:52Z",
+        "completedAt": "2026-10-30T03:40:51Z",
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877866986,
+        "name": "${{ (((needs.changes.result == 'success') && (needs.changes.outputs.mode == 'metadata') && 'Metadata only - Playwright smoke') || 'Playwright smoke') }} (${{ matrix.project }}${{ ((matrix.shard && format(' {0}', matrix.shard)) || '') }})",
+        "status": "completed",
+        "conclusion": "skipped",
+        "startedAt": "2026-10-30T03:40:52Z",
+        "completedAt": "2026-10-30T03:40:51Z",
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877867109,
+        "name": "needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata' && 'Metadata only - Playwright smoke' || 'Playwright smoke'",
+        "status": "completed",
+        "conclusion": "skipped",
+        "startedAt": "2026-10-30T03:40:52Z",
+        "completedAt": "2026-10-30T03:40:52Z",
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877867170,
+        "name": "needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata' && 'Metadata only - Retained sync transition' || 'Retained sync transition'",
+        "status": "completed",
+        "conclusion": "skipped",
+        "startedAt": "2026-10-30T03:40:52Z",
+        "completedAt": "2026-10-30T03:40:51Z",
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877867172,
+        "name": "needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata' && 'Metadata only - Container smoke' || 'Container smoke'",
+        "status": "completed",
+        "conclusion": "skipped",
+        "startedAt": "2026-10-30T03:40:52Z",
+        "completedAt": "2026-10-30T03:40:51Z",
+        "runnerAllocated": false
+      },
+      {
+        "id": 123877867265,
+        "name": "needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata' && 'Metadata only - Lib tests' || 'Lib tests'",
+        "status": "completed",
+        "conclusion": "skipped",
+        "startedAt": "2026-10-30T03:40:52Z",
+        "completedAt": "2026-10-30T03:40:52Z",
+        "runnerAllocated": false
+      }
+    ],
+    "observedExecutedRunnerSeconds": 31,
+    "timingSource": "GitHub REST jobs timestamps; connector omits timing fields. Skipped jobs have no runner and sometimes negative timestamp differences, which are not counted as execution.",
+    "limitation": "GitHub renders skipped conditional job names as raw expressions. They are distinct from exact required code check names; no application workload ran.",
+    "independentReview": "review_115_independent verified saved and fresh check-run evidence; no metadata-isolation blocker. Literal skipped expressions accepted as platform display limitation; no final grade."
+  },
+  "pending": [
+    "Complete targeted first attempt and retain results/coverage/timing.",
+    "Additive labels, base retarget, negative dependency wiring and final-main full run.",
+    "Both independent final grades and all final gates."
+  ],
+  "labelProbes": [
+    {
+      "runId": 41000630195,
+      "kind": "add ci-performance",
+      "conclusion": "cancelled",
+      "scope": "Plan/check-routing observation only; not a passing full coverage run. Redundant code work cancelled after plan capture.",
+      "plan": {
+        "version": 1,
+        "event": "pull_request",
+        "action": "labeled",
+        "base": "1f2fd0b715b40ebd92446c15125a43283ee67ec2",
+        "head": "ef1597a5a12fd7af762cdc6f3208246dbc9705dd",
+        "tested": "7d8421a3a91c6440f99bbba108798c525e2598f6",
+        "mode": "targeted",
+        "labels": [
+          "ci-performance"
+        ],
+        "paths": [
+          "docs/todo/SPN-115.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "src/server/health/routes.ts"
+        ],
+        "suites": {
+          "backlog": {
+            "selected": true,
+            "dependencies": [
+              "complete immutable change range and current event metadata"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "Automatic coverage for the complete change range."
+          },
+          "pull-request": {
+            "selected": true,
+            "dependencies": [
+              "complete immutable change range and current event metadata"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "Automatic coverage for the complete change range."
+          },
+          "lint": {
+            "selected": true,
+            "dependencies": [
+              "complete immutable change range and current event metadata"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "Automatic coverage for the complete change range."
+          },
+          "typecheck": {
+            "selected": true,
+            "dependencies": [
+              "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "Automatic coverage for the complete change range."
+          },
+          "unit-tests": {
+            "selected": true,
+            "dependencies": [
+              "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "Automatic coverage for the complete change range."
+          },
+          "lib-test-run": {
+            "selected": false,
+            "dependencies": [
+              "lib/**",
+              "scripts/dependencies/**",
+              "package{,-lock}.json",
+              "vitest.config.ts",
+              "tsconfig.json",
+              ".nvmrc",
+              ".github/workflows/ci.yml"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "No lib-test-run dependency changed; explicit inapplicability."
+          },
+          "playwright-run": {
+            "selected": true,
+            "dependencies": [
+              "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "Automatic coverage for the complete change range."
+          },
+          "container-smoke": {
+            "selected": true,
+            "dependencies": [
+              "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "Automatic coverage for the complete change range."
+          },
+          "sync-transition": {
+            "selected": true,
+            "dependencies": [
+              "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "Automatic coverage for the complete change range."
+          },
+          "doc-responsiveness": {
+            "selected": true,
+            "dependencies": [
+              "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "Automatic coverage for the complete change range."
+          },
+          "doc-callback-lifetimes": {
+            "selected": true,
+            "dependencies": [
+              "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "Automatic coverage for the complete change range."
+          },
+          "responsiveness-baseline": {
+            "selected": true,
+            "dependencies": [
+              "web/**",
+              "server/**",
+              "lib/**",
+              "e2e/**",
+              "src/shared/**",
+              "src/server/{sync,history,collaboration}/**",
+              "scripts/{ci,dependencies,sync-transition}/**",
+              "build/runtime/dependency/workflow configuration"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "Performance dependency or additive ci-performance label."
+          },
+          "callback-baseline": {
+            "selected": true,
+            "dependencies": [
+              "web/**",
+              "server/**",
+              "lib/**",
+              "e2e/**",
+              "src/shared/**",
+              "src/server/{sync,history,collaboration}/**",
+              "scripts/{ci,dependencies,sync-transition}/**",
+              "build/runtime/dependency/workflow configuration"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "Performance dependency or additive ci-performance label."
+          },
+          "phone-compatibility": {
+            "selected": false,
+            "dependencies": [
+              "full plan backstop; ordinary phone owners remain in routine browser coverage"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "Routine phone contract owners cover every assertion; full duplicate compatibility reserved for backstop."
+          }
+        }
+      },
+      "artifactZipSha256": "dc292d7e25fe3d53eebcb9dca5ee811b74f9821dfdc57f909252805f764f1254"
+    },
+    {
+      "runId": 41001027238,
+      "kind": "remove ci-performance",
+      "conclusion": "cancelled",
+      "scope": "Plan/check-routing observation only; not a passing full coverage run. Redundant code work cancelled after plan capture.",
+      "plan": {
+        "version": 1,
+        "event": "pull_request",
+        "action": "unlabeled",
+        "base": "1f2fd0b715b40ebd92446c15125a43283ee67ec2",
+        "head": "ef1597a5a12fd7af762cdc6f3208246dbc9705dd",
+        "tested": "7d8421a3a91c6440f99bbba108798c525e2598f6",
+        "mode": "targeted",
+        "labels": [],
+        "paths": [
+          "docs/todo/SPN-115.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "src/server/health/routes.ts"
+        ],
+        "suites": {
+          "backlog": {
+            "selected": true,
+            "dependencies": [
+              "complete immutable change range and current event metadata"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "Automatic coverage for the complete change range."
+          },
+          "pull-request": {
+            "selected": true,
+            "dependencies": [
+              "complete immutable change range and current event metadata"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "Automatic coverage for the complete change range."
+          },
+          "lint": {
+            "selected": true,
+            "dependencies": [
+              "complete immutable change range and current event metadata"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "Automatic coverage for the complete change range."
+          },
+          "typecheck": {
+            "selected": true,
+            "dependencies": [
+              "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "Automatic coverage for the complete change range."
+          },
+          "unit-tests": {
+            "selected": true,
+            "dependencies": [
+              "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "Automatic coverage for the complete change range."
+          },
+          "lib-test-run": {
+            "selected": false,
+            "dependencies": [
+              "lib/**",
+              "scripts/dependencies/**",
+              "package{,-lock}.json",
+              "vitest.config.ts",
+              "tsconfig.json",
+              ".nvmrc",
+              ".github/workflows/ci.yml"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "No lib-test-run dependency changed; explicit inapplicability."
+          },
+          "playwright-run": {
+            "selected": true,
+            "dependencies": [
+              "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "Automatic coverage for the complete change range."
+          },
+          "container-smoke": {
+            "selected": true,
+            "dependencies": [
+              "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "Automatic coverage for the complete change range."
+          },
+          "sync-transition": {
+            "selected": true,
+            "dependencies": [
+              "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "Automatic coverage for the complete change range."
+          },
+          "doc-responsiveness": {
+            "selected": true,
+            "dependencies": [
+              "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "Automatic coverage for the complete change range."
+          },
+          "doc-callback-lifetimes": {
+            "selected": true,
+            "dependencies": [
+              "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "Automatic coverage for the complete change range."
+          },
+          "responsiveness-baseline": {
+            "selected": false,
+            "dependencies": [
+              "web/**",
+              "server/**",
+              "lib/**",
+              "e2e/**",
+              "src/shared/**",
+              "src/server/{sync,history,collaboration}/**",
+              "scripts/{ci,dependencies,sync-transition}/**",
+              "build/runtime/dependency/workflow configuration"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "No responsiveness-baseline dependency changed; explicit inapplicability."
+          },
+          "callback-baseline": {
+            "selected": false,
+            "dependencies": [
+              "web/**",
+              "server/**",
+              "lib/**",
+              "e2e/**",
+              "src/shared/**",
+              "src/server/{sync,history,collaboration}/**",
+              "scripts/{ci,dependencies,sync-transition}/**",
+              "build/runtime/dependency/workflow configuration"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "No callback-baseline dependency changed; explicit inapplicability."
+          },
+          "phone-compatibility": {
+            "selected": false,
+            "dependencies": [
+              "full plan backstop; ordinary phone owners remain in routine browser coverage"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "Routine phone contract owners cover every assertion; full duplicate compatibility reserved for backstop."
+          }
+        }
+      },
+      "artifactZipSha256": "2f6fbb4b321f96eba760c261876338fdf9ccfa54bd8d812143eb90cc2bf06373"
+    },
+    {
+      "runId": 41001216275,
+      "kind": "add ci-full",
+      "conclusion": "cancelled",
+      "scope": "Plan/check-routing observation only; not a passing full coverage run. Redundant code work cancelled after plan capture.",
+      "plan": {
+        "version": 1,
+        "event": "pull_request",
+        "action": "labeled",
+        "base": "1f2fd0b715b40ebd92446c15125a43283ee67ec2",
+        "head": "ef1597a5a12fd7af762cdc6f3208246dbc9705dd",
+        "tested": "7d8421a3a91c6440f99bbba108798c525e2598f6",
+        "mode": "full",
+        "labels": [
+          "ci-full"
+        ],
+        "paths": [
+          "docs/todo/SPN-115.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "src/server/health/routes.ts"
+        ],
+        "suites": {
+          "backlog": {
+            "selected": true,
+            "dependencies": [
+              "complete immutable change range and current event metadata"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "ci-full adds full coverage."
+          },
+          "pull-request": {
+            "selected": true,
+            "dependencies": [
+              "complete immutable change range and current event metadata"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "ci-full adds full coverage."
+          },
+          "lint": {
+            "selected": true,
+            "dependencies": [
+              "complete immutable change range and current event metadata"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "ci-full adds full coverage."
+          },
+          "typecheck": {
+            "selected": true,
+            "dependencies": [
+              "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "ci-full adds full coverage."
+          },
+          "unit-tests": {
+            "selected": true,
+            "dependencies": [
+              "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "ci-full adds full coverage."
+          },
+          "lib-test-run": {
+            "selected": true,
+            "dependencies": [
+              "lib/**",
+              "scripts/dependencies/**",
+              "package{,-lock}.json",
+              "vitest.config.ts",
+              "tsconfig.json",
+              ".nvmrc",
+              ".github/workflows/ci.yml"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "ci-full adds full coverage."
+          },
+          "playwright-run": {
+            "selected": true,
+            "dependencies": [
+              "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "ci-full adds full coverage."
+          },
+          "container-smoke": {
+            "selected": true,
+            "dependencies": [
+              "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "ci-full adds full coverage."
+          },
+          "sync-transition": {
+            "selected": true,
+            "dependencies": [
+              "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "ci-full adds full coverage."
+          },
+          "doc-responsiveness": {
+            "selected": true,
+            "dependencies": [
+              "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "ci-full adds full coverage."
+          },
+          "doc-callback-lifetimes": {
+            "selected": true,
+            "dependencies": [
+              "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "ci-full adds full coverage."
+          },
+          "responsiveness-baseline": {
+            "selected": true,
+            "dependencies": [
+              "web/**",
+              "server/**",
+              "lib/**",
+              "e2e/**",
+              "src/shared/**",
+              "src/server/{sync,history,collaboration}/**",
+              "scripts/{ci,dependencies,sync-transition}/**",
+              "build/runtime/dependency/workflow configuration"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "ci-full adds full coverage."
+          },
+          "callback-baseline": {
+            "selected": true,
+            "dependencies": [
+              "web/**",
+              "server/**",
+              "lib/**",
+              "e2e/**",
+              "src/shared/**",
+              "src/server/{sync,history,collaboration}/**",
+              "scripts/{ci,dependencies,sync-transition}/**",
+              "build/runtime/dependency/workflow configuration"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "ci-full adds full coverage."
+          },
+          "phone-compatibility": {
+            "selected": true,
+            "dependencies": [
+              "full plan backstop; ordinary phone owners remain in routine browser coverage"
+            ],
+            "inputs": [
+              "docs/todo/SPN-115.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "src/server/health/routes.ts"
+            ],
+            "reason": "ci-full adds full coverage."
+          }
+        }
+      },
+      "artifactZipSha256": "1bcb68b61e2cdba103a4e18c57818c1c80c4ef5504fcdceb00970352208b8869"
+    }
+  ],
+  "firstMainRetarget": {
+    "base": "416cf2142018374b2729992b264acf419ffa4553",
+    "head": "ef1597a5a12fd7af762cdc6f3208246dbc9705dd",
+    "mergeable": false,
+    "observedRun": false,
+    "scope": "Base changed to main after SPN052 landed; bookkeeping conflict prevented an Actions run. This is not base-change routing acceptance. Integrate main and obtain an edited-base plan later."
+  }
+}

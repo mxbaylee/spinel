@@ -1,0 +1,404 @@
+{
+  "passed": true,
+  "evidence": {
+    "planSha256": "e54e4f28d4253eee632779a3fd25492b60f5c7846502a71c0d807e84cfec53c6",
+    "plan": {
+      "version": 1,
+      "event": "pull_request",
+      "action": "opened",
+      "base": "1f2fd0b715b40ebd92446c15125a43283ee67ec2",
+      "head": "ef1597a5a12fd7af762cdc6f3208246dbc9705dd",
+      "tested": "7d8421a3a91c6440f99bbba108798c525e2598f6",
+      "mode": "targeted",
+      "labels": [],
+      "paths": [
+        "docs/todo/SPN-115.md",
+        "docs/todo/backlog.json",
+        "docs/todo/readme.md",
+        "src/server/health/routes.ts"
+      ],
+      "suites": {
+        "backlog": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Automatic coverage for the complete change range."
+        },
+        "pull-request": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Automatic coverage for the complete change range."
+        },
+        "lint": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Automatic coverage for the complete change range."
+        },
+        "typecheck": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Automatic coverage for the complete change range."
+        },
+        "unit-tests": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Automatic coverage for the complete change range."
+        },
+        "lib-test-run": {
+          "selected": false,
+          "dependencies": [
+            "lib/**",
+            "scripts/dependencies/**",
+            "package{,-lock}.json",
+            "vitest.config.ts",
+            "tsconfig.json",
+            ".nvmrc",
+            ".github/workflows/ci.yml"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "No lib-test-run dependency changed; explicit inapplicability."
+        },
+        "playwright-run": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Automatic coverage for the complete change range."
+        },
+        "container-smoke": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Automatic coverage for the complete change range."
+        },
+        "sync-transition": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Automatic coverage for the complete change range."
+        },
+        "doc-responsiveness": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Automatic coverage for the complete change range."
+        },
+        "doc-callback-lifetimes": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Automatic coverage for the complete change range."
+        },
+        "responsiveness-baseline": {
+          "selected": false,
+          "dependencies": [
+            "web/**",
+            "server/**",
+            "lib/**",
+            "e2e/**",
+            "src/shared/**",
+            "src/server/{sync,history,collaboration}/**",
+            "scripts/{ci,dependencies,sync-transition}/**",
+            "build/runtime/dependency/workflow configuration"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "No responsiveness-baseline dependency changed; explicit inapplicability."
+        },
+        "callback-baseline": {
+          "selected": false,
+          "dependencies": [
+            "web/**",
+            "server/**",
+            "lib/**",
+            "e2e/**",
+            "src/shared/**",
+            "src/server/{sync,history,collaboration}/**",
+            "scripts/{ci,dependencies,sync-transition}/**",
+            "build/runtime/dependency/workflow configuration"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "No callback-baseline dependency changed; explicit inapplicability."
+        },
+        "phone-compatibility": {
+          "selected": false,
+          "dependencies": [
+            "full plan backstop; ordinary phone owners remain in routine browser coverage"
+          ],
+          "inputs": [
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "src/server/health/routes.ts"
+          ],
+          "reason": "Routine phone contract owners cover every assertion; full duplicate compatibility reserved for backstop."
+        }
+      }
+    },
+    "gateResults": {
+      "typecheck": "success",
+      "unit-tests": "success",
+      "lib-tests": "success"
+    },
+    "results": [
+      {
+        "suite": "backlog",
+        "selected": true,
+        "dependencies": [
+          "complete immutable change range and current event metadata"
+        ],
+        "inputs": [
+          "docs/todo/SPN-115.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "src/server/health/routes.ts"
+        ],
+        "reason": "Automatic coverage for the complete change range.",
+        "result": "success"
+      },
+      {
+        "suite": "pull-request",
+        "selected": true,
+        "dependencies": [
+          "complete immutable change range and current event metadata"
+        ],
+        "inputs": [
+          "docs/todo/SPN-115.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "src/server/health/routes.ts"
+        ],
+        "reason": "Automatic coverage for the complete change range.",
+        "result": "success"
+      },
+      {
+        "suite": "lint",
+        "selected": true,
+        "dependencies": [
+          "complete immutable change range and current event metadata"
+        ],
+        "inputs": [
+          "docs/todo/SPN-115.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "src/server/health/routes.ts"
+        ],
+        "reason": "Automatic coverage for the complete change range.",
+        "result": "success"
+      },
+      {
+        "suite": "typecheck",
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "docs/todo/SPN-115.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "src/server/health/routes.ts"
+        ],
+        "reason": "Automatic coverage for the complete change range.",
+        "result": "success"
+      },
+      {
+        "suite": "unit-tests",
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "docs/todo/SPN-115.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "src/server/health/routes.ts"
+        ],
+        "reason": "Automatic coverage for the complete change range.",
+        "result": "success"
+      },
+      {
+        "suite": "lib-test-run",
+        "selected": false,
+        "dependencies": [
+          "lib/**",
+          "scripts/dependencies/**",
+          "package{,-lock}.json",
+          "vitest.config.ts",
+          "tsconfig.json",
+          ".nvmrc",
+          ".github/workflows/ci.yml"
+        ],
+        "inputs": [
+          "docs/todo/SPN-115.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "src/server/health/routes.ts"
+        ],
+        "reason": "No lib-test-run dependency changed; explicit inapplicability.",
+        "result": "skipped"
+      },
+      {
+        "suite": "playwright-run",
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "docs/todo/SPN-115.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "src/server/health/routes.ts"
+        ],
+        "reason": "Automatic coverage for the complete change range.",
+        "result": "success"
+      },
+      {
+        "suite": "container-smoke",
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "docs/todo/SPN-115.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "src/server/health/routes.ts"
+        ],
+        "reason": "Automatic coverage for the complete change range.",
+        "result": "success"
+      },
+      {
+        "suite": "sync-transition",
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "docs/todo/SPN-115.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "src/server/health/routes.ts"
+        ],
+        "reason": "Automatic coverage for the complete change range.",
+        "result": "success"
+      },
+      {
+        "suite": "doc-responsiveness",
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "docs/todo/SPN-115.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "src/server/health/routes.ts"
+        ],
+        "reason": "Automatic coverage for the complete change range.",
+        "result": "success"
+      },
+      {
+        "suite": "doc-callback-lifetimes",
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "docs/todo/SPN-115.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "src/server/health/routes.ts"
+        ],
+        "reason": "Automatic coverage for the complete change range.",
+        "result": "success"
+      }
+    ]
+  }
+}
