@@ -172,6 +172,17 @@ device. Reconnect to edit." or the problem) and `e2e/offline.spec.ts` covers the
 
 ## Stories
 
+**Copying (SPN-065).** Doc/Sheet rows offer **Make a copy…** for every authorized
+everyday reader. One existing Modal holds Name and Folder, using the same
+production form as the editor's native dialog. It defaults to the current owned
+folder, otherwise My files. Explicit shared destinations explain their owner and
+creator attribution. Successful copying opens the new document; returning to the
+file list shows the created-name confirmation. Folder/Space rows, guest views and
+offline/pending local creations have no copy action. The outer editor More menu
+does not duplicate the native addon action. `Dashboard/Make a copy` stories cover
+loading, shared destinations, waiting, offline, creation, failure and retained
+completion; the actual dashboard journey is `Dashboard/Dashboard` `MakeCopy`.
+
 `Dashboard/Dashboard`, `Dashboard/SearchPanel`, `Dashboard/SharedBadge`, `Dashboard/TagLabels`,
 `Dashboard/DocumentTags`, `Dashboard/Trash`, `Dashboard/ImportFile`,
 `Dashboard/OfflineBadge` (also the "You're offline" page), and

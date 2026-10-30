@@ -1,4 +1,44 @@
-# Import, export and PDF
+# Copy, import, export and PDF
+
+## Make a copy
+
+Choose **Make a copy** in the native Doc/Sheet toolbar (its overflow on narrower
+desktop windows, or **More** on phones), or **Make a copy…** in a file row's menu.
+The editor opens its own native dialog/phone drawer; copying adds no button to
+Spinel's outer Share/collaborator header. Enter the name and folder together.
+The default name is `<name> (copy)`, placed in the current owned folder or My files.
+The copy opens after success. Changes must be confirmed and the editor connected;
+unfinished cell/text/Formula input, image uploads and recovery block submission.
+
+An authorized everyday account can copy with read access, including a Viewer or
+File admin. Guests and Operators cannot. A shared source defaults to the copying
+account's My files. An explicit editable shared-folder destination owns the new
+file according to that folder and records the copier as creator (SPN-069).
+Authorized internal Space Docs/Sheets can become standalone copies; whole Spaces
+and folders cannot be duplicated.
+
+The copy retains current confirmed native content, saved icon/color and applicable
+cover appearance. Images and uploaded covers have independently authorized bytes;
+revoking the source does not break them. Formula definitions and deliberate source
+bindings remain, with no cached values or new source grants. Each viewer's current
+access governs evaluation. History, named versions, tags, source grants and guest
+links are excluded; destination folder access still applies.
+
+Content and image budgets match native import: 10 MiB content, 5 MiB per image,
+50 MiB images total, and the existing layout/geometry limits below. Copying reads
+stored image bytes directly and therefore does not impose the portable export's
+20 MiB envelope. Covers retain the existing 16 MiB item/100 MiB owner budgets.
+After asynchronous preparation, one transaction rechecks the session, exact
+source/destination authority, confirmed revision, restore generation, appearance
+and destination ownership, then publishes the new identity and all assets together.
+An intervening edit or restore refuses the copy with a retry message; no partial
+item is visible. See [SPN-065 decisions](implementation/SPN-065.md).
+
+Native phone drawers can be dismissed while a request finishes. The addon retains
+the completed result, announces it, and offers **Open copy** when reopened without
+resubmitting. It never automatically leaves newly unsaved or disconnected work.
+
+## Native file transfer
 
 In a Sheet or Doc, open **Export → Download Univer file** after changes are saved.
 This downloads the current collaboration content as native Univer JSON. It includes

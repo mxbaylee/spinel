@@ -46,7 +46,6 @@ const meta = {
   component: CopyFileForm,
   render: (args) => <CopyDialog {...args} />,
   args: { id, onClose: fn(), onCreated: fn() },
-  parameters: { api },
 } satisfies Meta<typeof CopyFileForm>;
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -59,7 +58,7 @@ const ready: NonNullable<Story['play']> = async ({ canvasElement }) => {
   await assertDialogControls(element);
 };
 
-export const OwnedFolder: Story = { play: ready };
+export const OwnedFolder: Story = { parameters: { api }, play: ready };
 export const SharedViewer: Story = {
   parameters: {
     api: {
@@ -80,6 +79,7 @@ export const SharedViewer: Story = {
   },
 };
 export const SharedDestination: Story = {
+  parameters: { api },
   play: async (context) => {
     await ready(context);
     const element = await dialog(context.canvasElement);
@@ -92,12 +92,15 @@ export const Loading: Story = {
   parameters: { api: { [`GET /api/items/${id}/copy-options`]: pending() } },
   play: async ({ canvasElement }) => {
     const element = await dialog(canvasElement);
+    await expect(within(element).getByRole('status')).toHaveTextContent('Loading folders…');
+    await expect(within(element).queryByLabelText('Name')).not.toBeInTheDocument();
     await expect(within(element).getByRole('button', { name: 'Make a copy' })).toBeDisabled();
     await expect(within(element).getByRole('button', { name: 'Cancel' })).toBeEnabled();
     await assertDialogControls(element);
   },
 };
 export const WaitingForSave: Story = {
+  parameters: { api },
   args: { unavailable: 'Finish your edit and wait for changes to save before making a copy.' },
   play: async (context) => {
     await ready(context);
@@ -107,8 +110,16 @@ export const WaitingForSave: Story = {
   },
 };
 export const Offline: Story = {
+  parameters: { api },
   args: { unavailable: 'Reconnect before making a copy.' },
-  play: ready,
+  play: async (context) => {
+    await ready(context);
+    const element = await dialog(context.canvasElement);
+    await expect(within(element).getByRole('status')).toHaveTextContent(
+      'Reconnect before making a copy.',
+    );
+    await expect(within(element).getByRole('button', { name: 'Make a copy' })).toBeDisabled();
+  },
 };
 export const MakingCopy: Story = {
   parameters: { api: { ...api, [`POST /api/items/${id}/copy`]: pending() } },
@@ -152,6 +163,33 @@ export const AccessLost: Story = {
       'This document is not available.',
     );
     await expect(within(element).queryByLabelText('Name')).not.toBeInTheDocument();
+    await assertDialogControls(element);
+  },
+};
+
+export const CompletedAfterDismissal: Story = {
+  args: { initialCreated: { ...folder, id, kind: 'sheet', name: 'October budget (copy)' } },
+  play: async ({ canvasElement, args }) => {
+    const element = await dialog(canvasElement);
+    await expect(within(element).getByRole('form')).toHaveAttribute('aria-busy', 'false');
+    await expect(within(element).getByRole('status')).toHaveTextContent(
+      'Created October budget (copy).',
+    );
+    await userEvent.click(within(element).getByRole('button', { name: 'Open copy' }));
+    await expect(args.onCreated).toHaveBeenCalledWith(args.initialCreated);
+    await assertDialogControls(element);
+  },
+};
+
+export const CompletedWhileOffline: Story = {
+  args: {
+    initialCreated: { ...folder, id, kind: 'sheet', name: 'October budget (copy)' },
+    unavailable: 'Reconnect before making a copy.',
+  },
+  play: async ({ canvasElement }) => {
+    const element = await dialog(canvasElement);
+    await expect(within(element).getByText('Reconnect before making a copy.')).toBeVisible();
+    await expect(within(element).getByRole('button', { name: 'Open copy' })).toBeDisabled();
     await assertDialogControls(element);
   },
 };

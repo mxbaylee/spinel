@@ -35,14 +35,16 @@ async function editCell(page: Page, address: string, text: string) {
   await page.keyboard.press('Enter');
 }
 
-async function openNativeCopy(page: Page, mobile = false) {
+async function openNativeCopy(page: Page, mobile = false, info?: TestInfo) {
   if (mobile) {
     // The actual native More control must remain reachable for a Doc viewer.
     await page.locator('.univer-container [data-u-comp="mobile-more-trigger"]').tap();
-    await page
+    const action = page
       .locator('[data-u-comp="mobile-more-menu"]')
-      .getByRole('button', { name: 'Make a copy', exact: true })
-      .tap();
+      .getByRole('button', { name: 'Make a copy', exact: true });
+    await expect(action).toBeVisible();
+    if (info) await capture(page, info, 'native-doc-viewer-menu-phone', ['light']);
+    await action.tap();
   } else {
     const toolbar = page.locator('.univer-container [data-u-comp="ribbon-toolbar"]');
     await expect(toolbar).toBeVisible();
@@ -66,10 +68,15 @@ async function openNativeCopy(page: Page, mobile = false) {
   return dialog;
 }
 
-async function capture(page: Page, info: TestInfo, name: string) {
+async function capture(
+  page: Page,
+  info: TestInfo,
+  name: string,
+  themes: readonly ('light' | 'dark')[] = ['light', 'dark'],
+) {
   if (process.env.SPINEL_CAPTURE_SCREENSHOTS !== '1') return;
   await mkdir('test-results/theme-screenshots', { recursive: true });
-  for (const theme of ['light', 'dark'] as const) {
+  for (const theme of themes) {
     await page.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
     await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
@@ -111,17 +118,23 @@ async function dismissNativeCopyDrawer(page: Page) {
   const endY = page.viewportSize()!.height - 8;
   const touch = await page.context().newCDPSession(page);
   try {
-    await touch.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [start] });
-    for (let step = 1; step <= 8; step++)
-      await touch.send('Input.dispatchTouchEvent', {
-        type: 'touchMove',
-        touchPoints: [{ x: start.x, y: start.y + ((endY - start.y) * step) / 8 }],
-      });
-    await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    // Complete one actual touch drag without browser fling inertia consuming
+    // the next deliberate tap after the drawer unmounts on pointer release.
+    await touch.send('Input.synthesizeScrollGesture', {
+      x: start.x,
+      y: start.y,
+      yDistance: endY - start.y,
+      gestureSourceType: 'touch',
+      preventFling: true,
+      speed: 800,
+    });
   } finally {
     await touch.detach();
   }
-  await expect(drawer).toBeHidden();
+  // The drawer coordinator hides a closing layer before its native content
+  // unmounts. A new tap must wait until the old touch/focus layer is detached.
+  await expect(drawer).toHaveCount(0);
+  await expect(page.locator('[data-u-comp="mobile-dialog"]')).toHaveCount(0);
 }
 
 test('native Sheet copying waits for saved online content, keeps images, and edits an independent same-folder copy', async ({
@@ -408,7 +421,7 @@ test('a phone Doc viewer retains a copy after dismissing its busy native drawer 
       { timeout: 30_000 },
     );
     await expect(page.getByRole('button', { name: 'Edit', exact: true })).toHaveCount(0);
-    const dialog = await openNativeCopy(page, true);
+    const dialog = await openNativeCopy(page, true, info);
     await expect(dialog.getByRole('textbox', { name: 'Name', exact: true })).toHaveValue(
       'Shared recipe (copy)',
     );
@@ -426,7 +439,10 @@ test('a phone Doc viewer retains a copy after dismissing its busy native drawer 
     expect(workspace.fileOwner(copy.id)).toBe(viewer.id);
     await dismissNativeCopyDrawer(page);
     await expect(page).toHaveURL(new RegExp(`item=${source.id}$`));
-    await page.locator('.univer-container [data-u-comp="mobile-more-trigger"]').tap();
+    const nativeMore = page.locator('.univer-container [data-u-comp="mobile-more-trigger"]');
+    await expect(nativeMore).toHaveAttribute('aria-expanded', 'false');
+    await nativeMore.tap();
+    await expect(nativeMore).toHaveAttribute('aria-expanded', 'true');
     const copyMenu = page
       .locator('[data-u-comp="mobile-more-menu"]')
       .getByRole('button', { name: 'Make a copy', exact: true });
