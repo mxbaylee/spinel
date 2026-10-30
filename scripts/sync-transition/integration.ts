@@ -225,6 +225,18 @@ try {
     originalHash,
     'Source changed during final public deletion verification.',
   );
+  // Both native-purge and public SDK work have drained. Their native statements
+  // may still retain closed writers; checkpoint before measuring preservation.
+  const settled = new DatabaseSync(imported.path);
+  try {
+    assert.deepEqual(settled.prepare('PRAGMA wal_checkpoint(TRUNCATE)').get(), {
+      busy: 0,
+      log: 0,
+      checkpointed: 0,
+    });
+  } finally {
+    settled.close();
+  }
   const afterEdits = await digest(imported.path);
   await assert.rejects(importSyncTransition({ directory: bundle, destination }), /verification/);
   assert.equal(await digest(imported.path), afterEdits);
