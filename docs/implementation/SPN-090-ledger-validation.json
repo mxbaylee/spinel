@@ -1,0 +1,162 @@
+{
+  "scope": "Pure local historical-observation and conditional smoke-only forecast module; no storage publication, workflow change or provider calls",
+  "baseSha": "2851a121c858e90bb24d29cb0f54b2715c2fbe8b",
+  "nodeVersion": "26.12.1",
+  "providerRequests": 0,
+  "deviceSessions": 0,
+  "tunnels": 0,
+  "attempts": [
+    {
+      "tests": {
+        "passed": 10,
+        "failed": 0,
+        "skipped": 0,
+        "durationMs": 94.203166
+      },
+      "sourceSha256": {
+        "scripts/ci/browserstack-ledger.ts": "29bc814bacf996914a9cfa3f15f9aef5cb4058567d71a392f1b6f19626d256fc",
+        "scripts/ci/browserstack-ledger.test.ts": "61eaa497bf11f612a10cbcc55e12f93ce348bfaf8c87dcc6184f7d1305b89cc6",
+        "docs/implementation/SPN-090-browserstack-history.json": "bd3c8f497d6fe818b5759aeeccb4d4204d0aeaf137d3b63735171776b80fee35",
+        "docs/implementation/SPN-090-browserstack-history-provenance.json": "7677c61c28363096520c9163bcbf9dfeebb2a72bc61e41061f5532f7001ee152",
+        "docs/implementation/SPN-090.md": "b7d277f7989f479df3d68c849b415294066499940dfa4151b3434222a67276da",
+        "docs/todo/SPN-090.md": "b14a4d3943ad70052da1e50475b87115c9ec9e4c30cb5c6c7e902e7202fc285b"
+      },
+      "sourcesUnchanged": true,
+      "checks": [
+        {
+          "name": "format",
+          "status": 0,
+          "signal": null,
+          "durationMs": 293
+        },
+        {
+          "name": "tests",
+          "status": 0,
+          "signal": null,
+          "durationMs": 128
+        },
+        {
+          "name": "typecheck",
+          "status": 0,
+          "signal": null,
+          "durationMs": 220
+        },
+        {
+          "name": "lint",
+          "status": 0,
+          "signal": null,
+          "durationMs": 89
+        }
+      ],
+      "watchdog": {
+        "sharedLockReleased": true,
+        "exitCode": 0,
+        "rss": "unmeasured: complete batch finished before first two-second sample"
+      },
+      "followUp": "Source self-review added safe malformed-JSON errors and timestamp/uncertainty ordering for imported reports; subsequent attempts below preserve their validation."
+    },
+    {
+      "tests": {
+        "passed": 10,
+        "failed": 1,
+        "skipped": 0,
+        "durationMs": 94.310292
+      },
+      "sourceSha256": {
+        "scripts/ci/browserstack-ledger.ts": "32cccccf8ac8a72505ca87c14e422bba03d7c8f26654e1b2050847ba218469a9",
+        "scripts/ci/browserstack-ledger.test.ts": "ed31861cb22a3548f60963fc611432b2adb230d3641a34bd9512cde90f589058",
+        "docs/implementation/SPN-090-browserstack-history.json": "bd3c8f497d6fe818b5759aeeccb4d4204d0aeaf137d3b63735171776b80fee35",
+        "docs/implementation/SPN-090-browserstack-history-provenance.json": "7677c61c28363096520c9163bcbf9dfeebb2a72bc61e41061f5532f7001ee152",
+        "docs/implementation/SPN-090.md": "7075b14013901e5a14b96fa9d16d3efbb862daac82f2dca8d8c724be57585035",
+        "docs/todo/SPN-090.md": "b14a4d3943ad70052da1e50475b87115c9ec9e4c30cb5c6c7e902e7202fc285b"
+      },
+      "checks": [
+        {
+          "name": "format",
+          "status": 0,
+          "signal": null,
+          "durationMs": 291
+        },
+        {
+          "name": "tests",
+          "status": 1,
+          "signal": null,
+          "durationMs": 129
+        }
+      ],
+      "failure": "older retained reports cannot conceal a newer partial collection: latestCollection projected insertion order rather than the newest timestamp",
+      "diagnosis": "Uncertainty gating already used the corrected newest/least-certain observation. The output projection still read reports.at(-1). It now uses the same selected observation. No gate/threshold was weakened.",
+      "watchdog": {
+        "sharedLockReleased": true,
+        "exitCode": 1,
+        "rss": "unmeasured: complete batch finished before first two-second sample"
+      }
+    },
+    {
+      "tests": {
+        "passed": 11,
+        "failed": 0,
+        "skipped": 0,
+        "durationMs": 88.494334
+      },
+      "sourceSha256": {
+        "scripts/ci/browserstack-ledger.ts": "3a31216a0afaaf6aa86395510b4bb6a34909ace91015195ed62ebae71a6decca",
+        "scripts/ci/browserstack-ledger.test.ts": "ed31861cb22a3548f60963fc611432b2adb230d3641a34bd9512cde90f589058",
+        "docs/implementation/SPN-090-browserstack-history.json": "bd3c8f497d6fe818b5759aeeccb4d4204d0aeaf137d3b63735171776b80fee35",
+        "docs/implementation/SPN-090-browserstack-history-provenance.json": "7677c61c28363096520c9163bcbf9dfeebb2a72bc61e41061f5532f7001ee152",
+        "docs/implementation/SPN-090.md": "7075b14013901e5a14b96fa9d16d3efbb862daac82f2dca8d8c724be57585035",
+        "docs/todo/SPN-090.md": "b14a4d3943ad70052da1e50475b87115c9ec9e4c30cb5c6c7e902e7202fc285b"
+      },
+      "sourcesUnchanged": true,
+      "checks": [
+        {
+          "name": "format",
+          "status": 0,
+          "signal": null,
+          "durationMs": 266
+        },
+        {
+          "name": "tests",
+          "status": 0,
+          "signal": null,
+          "durationMs": 120
+        },
+        {
+          "name": "typecheck",
+          "status": 0,
+          "signal": null,
+          "durationMs": 122
+        },
+        {
+          "name": "lint",
+          "status": 0,
+          "signal": null,
+          "durationMs": 74
+        }
+      ],
+      "watchdog": {
+        "sharedLockReleased": true,
+        "exitCode": 0,
+        "rss": "unmeasured: complete batch finished before first two-second sample"
+      }
+    }
+  ],
+  "tools": {
+    "typescript": {
+      "version": "7.0.2",
+      "packageJsonSha256": "3722b30210616a13a3213ded11575ba6b2dbab10c32a5ef67afca8513e27017e"
+    },
+    "oxlint": {
+      "version": "1.88.0",
+      "packageJsonSha256": "4c5aa33f77a6a18bee88bad13f140f31d23e3f61e21c82a4a2f2e2f7367d7248"
+    },
+    "prettier": {
+      "version": "3.9.10",
+      "packageJsonSha256": "8cb38508278b3e618eb0fc3df5425c48db1f66202b58cfd430f84bb9dc6a9903"
+    },
+    "@types/node": {
+      "version": "26.6.5",
+      "packageJsonSha256": "e9bf302124358d90ec233c509c4f9fb2223129b988da8147b5c1bf835f652e86"
+    }
+  }
+}

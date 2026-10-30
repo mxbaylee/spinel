@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "report": "SPN-090-browserstack-history.json",
+  "reportSha256": "bd3c8f497d6fe818b5759aeeccb4d4204d0aeaf137d3b63735171776b80fee35",
+  "artifactZipSha256": "342ac6616535d26dcf2d8686283bc2c85eaedd19f37e41d7342cbead205f64be",
+  "artifactId": "12949769354",
+  "run": "https://github.com/mxbaylee/spinel/actions/runs/40993658109",
+  "quotaJobId": "123861689833",
+  "deviceJobId": "123861691248",
+  "deviceJobConclusion": "skipped",
+  "sourceSha": "2851a121c858e90bb24d29cb0f54b2715c2fbe8b",
+  "testedSha": "2851a121c858e90bb24d29cb0f54b2715c2fbe8b",
+  "observedAt": "2026-10-30T02:47:07.549Z",
+  "requests": 13,
+  "retainedBuilds": 5,
+  "uniqueTerminalSessions": 15,
+  "reportedDurationSeconds": 241,
+  "knownSmokeSeconds": 96,
+  "additionalUnmappedSessionSeconds": 145,
+  "allocationAllowed": false,
+  "lifetimeCompleteness": "unknown",
+  "chargedDurationMapping": "unverified"
+}
