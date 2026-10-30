@@ -7,13 +7,9 @@ import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { chmod, copyFile, mkdir, readFile, readdir, rename, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { DatabaseSync, openDatabase } from '../server/database.ts';
-import { createApp } from '../server/app.ts';
-import { AuthStore } from '../src/server/auth/store.ts';
-import { WorkspaceStore } from '../src/server/workspace/store.ts';
-import { makeArchive } from '../src/server/backup/archive.ts';
 import { validRestoreJobRecord } from '../src/server/maintenance/restore-jobs.ts';
 import type { RestoreJobRecord } from '../src/server/maintenance/restore-jobs.ts';
+import type { RestoreRichMetadata } from '../src/server/maintenance/restore-rich-fixture.ts';
 
 const directory = '/fixture';
 // Database and Unix control socket require the durable Linux filesystem. The
@@ -27,21 +23,31 @@ const image = process.env.SPINEL_IMAGE!;
 if (!/^sha256:[a-f0-9]{64}$/.test(image))
   throw new Error('Actual production image identity required.');
 const run = promisify(execFile);
-type Bootstrap = { origin: string; credentialId: string; publicKey: string };
+type PublicCredential = { credentialId: string; publicKey: string };
+type Bootstrap = PublicCredential & {
+  origin: string;
+  owner: PublicCredential;
+  reader: PublicCredential;
+};
 type Seed = {
   operatorId: string;
   folderId: string;
   archive: string;
   keyFile: string;
   sha256: string;
+  rich: RestoreRichMetadata;
 };
 const input = JSON.parse(await readFile(join(directory, 'bootstrap.json'), 'utf8')) as Bootstrap;
 const origin = new URL(input.origin);
 if (
   origin.protocol !== 'https:' ||
   origin.hostname !== 'localhost' ||
-  !/^[A-Za-z0-9_-]{43}$/.test(input.credentialId) ||
-  Buffer.from(input.publicKey, 'base64url').length !== 77
+  ![input, input.owner, input.reader].every(
+    (credential) =>
+      credential &&
+      /^[A-Za-z0-9_-]{43}$/.test(credential.credentialId) &&
+      Buffer.from(credential.publicKey, 'base64url').length === 77,
+  )
 )
   throw new Error('Invalid private browser fixture bootstrap.');
 
@@ -61,6 +67,23 @@ async function numericFile(path: string) {
 }
 
 async function seed(): Promise<Seed> {
+  // Keep bootstrap/native SDK imports out of the long-lived orchestration
+  // process: they belong only to this separately exiting seed child.
+  const [database, application, authModule, workspaceModule, archiveModule, richModule] =
+    await Promise.all([
+      import('../server/database.ts'),
+      import('../server/app.ts'),
+      import('../src/server/auth/store.ts'),
+      import('../src/server/workspace/store.ts'),
+      import('../src/server/backup/archive.ts'),
+      import('../src/server/maintenance/restore-rich-fixture.ts'),
+    ]);
+  const { openDatabase } = database;
+  const { createApp } = application;
+  const { AuthStore } = authModule;
+  const { WorkspaceStore } = workspaceModule;
+  const { makeArchive } = archiveModule;
+  const { seedRestoreRichFixture, mutateRestoreRichCurrent } = richModule;
   const app = await createApp({
     databasePath,
     origin: input.origin,
@@ -86,6 +109,7 @@ async function seed(): Promise<Seed> {
       name: 'Archived folder',
       parentId: null,
     });
+    const rich = await seedRestoreRichFixture({ auth, workspace, ownerId: owner.id });
     const keyFile = join(data, 'archive.key');
     await writeFile(keyFile, key, { flag: 'wx', mode: 0o600 });
     const archive = await makeArchive(db, data, key, {
@@ -97,12 +121,28 @@ async function seed(): Promise<Seed> {
       keyId: 'browser-fixture',
     });
     workspace.update(owner.id, folder.id, { name: 'Current folder' });
+    await mutateRestoreRichCurrent({
+      auth,
+      workspace,
+      metadata: rich,
+      credentials: {
+        owner: {
+          id: input.owner.credentialId,
+          publicKey: Buffer.from(input.owner.publicKey, 'base64url'),
+        },
+        reader: {
+          id: input.reader.credentialId,
+          publicKey: Buffer.from(input.reader.publicKey, 'base64url'),
+        },
+      },
+    });
     return {
       operatorId: operator.id,
       folderId: folder.id,
       archive: archive.archive,
       keyFile,
       sha256: archive.sha256,
+      rich,
     };
   } finally {
     key.fill(0);
@@ -129,6 +169,7 @@ if (process.argv.includes('--seed')) {
   let stopping: Promise<void> | undefined;
   let source: Seed | undefined;
   let fixturePhase = 'preparing-source';
+  let driverServingPeakRssBytes = 0;
   const serviceDiagnostic: {
     exitCode: number | null;
     signal: string | null;
@@ -164,6 +205,7 @@ if (process.argv.includes('--seed')) {
       }
       service = undefined;
       if (source && completed?.phase === 'candidate-committed') {
+        const { DatabaseSync } = await import('../server/database.ts');
         const location = pathToFileURL(databasePath);
         location.searchParams.set('mode', 'ro');
         const db = new DatabaseSync(location.href);
@@ -184,6 +226,7 @@ if (process.argv.includes('--seed')) {
             cpuMax: (await readFile('/sys/fs/cgroup/cpu.max', 'utf8')).trim(),
             pidsMax: await numericFile('/sys/fs/cgroup/pids.max'),
             memoryPeakBytes: await numericFile('/sys/fs/cgroup/memory.peak'),
+            fixtureDriverServingPeakRssBytes: driverServingPeakRssBytes,
           });
         } finally {
           db.close();
@@ -241,6 +284,7 @@ if (process.argv.includes('--seed')) {
       'src/server/maintenance/supervisor-client.ts',
       'src/server/maintenance/restore-rpc.ts',
       'src/server/maintenance/restore-jobs.ts',
+      'src/server/maintenance/restore-rich-fixture.ts',
       'scripts/deploy/maintenance.ts',
     ];
     const hash = async (path: string) =>
@@ -341,9 +385,11 @@ if (process.argv.includes('--seed')) {
       resume: resumed.phase,
     });
     fixturePhase = 'serving-browser';
+    driverServingPeakRssBytes = process.memoryUsage().rss;
     await publish('ready.json', source);
     let observing = false;
     timer = setInterval(() => {
+      driverServingPeakRssBytes = Math.max(driverServingPeakRssBytes, process.memoryUsage().rss);
       if (observing || stopping) return;
       observing = true;
       void (async () => {

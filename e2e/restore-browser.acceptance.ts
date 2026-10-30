@@ -14,6 +14,13 @@ import { join, relative, resolve } from 'node:path';
 import { promisify } from 'node:util';
 import { chromium, expect } from '@playwright/test';
 import type { Browser, Page } from '@playwright/test';
+import type { RestoreRichMetadata } from '../src/server/maintenance/restore-rich-fixture.ts';
+import {
+  prepareRichRestoreBoundary,
+  verifyRestoredRichWorkspace,
+} from './restore-rich-acceptance.ts';
+import { expectNativeSheetValue } from './native-sheet-value.ts';
+import { textPoint } from './doc-touch.ts';
 
 const run = promisify(execFile);
 const image = process.env.SPINEL_RESTORE_BROWSER_IMAGE;
@@ -81,7 +88,7 @@ function hostFile(path: string) {
     throw new Error('Invalid fixture file reference.');
   return result;
 }
-async function capture(page: Page, state: string) {
+async function capture(page: Page, state: string, restoreRegion = true) {
   for (const [theme, width, variant] of [
     ['light', 1280, 'light'],
     ['dark', 1280, 'dark'],
@@ -94,7 +101,7 @@ async function capture(page: Page, state: string) {
       .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
       .toBe(true);
     const modal = page.getByRole('dialog');
-    if (!(await modal.count()))
+    if (restoreRegion && !(await modal.count()))
       await page
         .getByRole('region', { name: 'Restore workspace', exact: true })
         .scrollIntoViewIfNeeded();
@@ -160,6 +167,10 @@ try {
   const sourceFiles = [
     'e2e/restore-browser.acceptance.ts',
     'e2e/restore-browser-fixture.ts',
+    'e2e/restore-rich-acceptance.ts',
+    'e2e/native-sheet-value.ts',
+    'e2e/doc-touch.ts',
+    'src/server/maintenance/restore-rich-fixture.ts',
     'web/BackupRestore.tsx',
     'web/BackupRestore.stories.tsx',
     'web/backup-restore.css',
@@ -258,18 +269,37 @@ try {
   });
   await new Promise<void>((resolveListen) => proxy.listen(0, '127.0.0.1', resolveListen));
   const origin = `https://localhost:${(proxy.address() as { port: number }).port}`;
-  const credential = generateKeyPairSync('ec', { namedCurve: 'prime256v1' });
-  const jwk = credential.publicKey.export({ format: 'jwk' });
-  const credentialId = randomBytes(32).toString('base64url');
-  const publicKey = Buffer.concat([
-    Buffer.from([0xa5, 1, 2, 3, 0x26, 0x20, 1, 0x21, 0x58, 32]),
-    Buffer.from(jwk.x!, 'base64url'),
-    Buffer.from([0x22, 0x58, 32]),
-    Buffer.from(jwk.y!, 'base64url'),
-  ]);
+  const makeCredential = () => {
+    const pair = generateKeyPairSync('ec', { namedCurve: 'prime256v1' });
+    const jwk = pair.publicKey.export({ format: 'jwk' });
+    return {
+      credentialId: randomBytes(32).toString('base64url'),
+      publicKey: Buffer.concat([
+        Buffer.from([0xa5, 1, 2, 3, 0x26, 0x20, 1, 0x21, 0x58, 32]),
+        Buffer.from(jwk.x!, 'base64url'),
+        Buffer.from([0x22, 0x58, 32]),
+        Buffer.from(jwk.y!, 'base64url'),
+      ]).toString('base64url'),
+      privateKey: pair.privateKey.export({ type: 'pkcs8', format: 'der' }).toString('base64'),
+    };
+  };
+  const credentials = {
+    operator: makeCredential(),
+    owner: makeCredential(),
+    reader: makeCredential(),
+  };
+  const publicCredential = (value: ReturnType<typeof makeCredential>) => ({
+    credentialId: value.credentialId,
+    publicKey: value.publicKey,
+  });
   await writeFile(
     join(directory, 'bootstrap.json'),
-    JSON.stringify({ origin, credentialId, publicKey: publicKey.toString('base64url') }),
+    JSON.stringify({
+      origin,
+      ...publicCredential(credentials.operator),
+      owner: publicCredential(credentials.owner),
+      reader: publicCredential(credentials.reader),
+    }),
     { mode: 0o600 },
   );
   stage = 'starting-linux-supervisor';
@@ -332,6 +362,10 @@ try {
       'node',
       '--max-old-space-size=128',
       'e2e/restore-browser-fixture.ts',
+      'e2e/restore-rich-acceptance.ts',
+      'e2e/native-sheet-value.ts',
+      'e2e/doc-touch.ts',
+      'src/server/maintenance/restore-rich-fixture.ts',
     ],
     { stdio: 'ignore' },
   );
@@ -339,9 +373,13 @@ try {
   child.on('error', () => {});
   const source = await poll(
     () =>
-      privateJson<{ operatorId: string; archive: string; keyFile: string; sha256: string }>(
-        'ready.json',
-      ),
+      privateJson<{
+        operatorId: string;
+        archive: string;
+        keyFile: string;
+        sha256: string;
+        rich: RestoreRichMetadata;
+      }>('ready.json'),
     (value) => !!value.operatorId,
   );
   const shipped = await privateJson<{
@@ -358,45 +396,73 @@ try {
   artifact.fixtureUid = process.getuid!();
   stage = 'authenticating-browser';
   browser = await chromium.launch();
-  const context = await browser.newContext({
-    ignoreHTTPSErrors: true,
-    viewport: { width: 1280, height: 1000 },
-    reducedMotion: 'reduce',
-  });
-  const page = await context.newPage();
-  failurePage = page;
-  page.setDefaultTimeout(30_000);
   let pageErrors = 0;
-  page.on('pageerror', () => pageErrors++);
-  const cdp = await context.newCDPSession(page);
-  await cdp.send('WebAuthn.enable');
-  const { authenticatorId } = await cdp.send('WebAuthn.addVirtualAuthenticator', {
-    options: {
-      protocol: 'ctap2',
-      transport: 'internal',
-      hasResidentKey: true,
-      hasUserVerification: true,
-      isUserVerified: true,
-      automaticPresenceSimulation: true,
-    },
-  });
-  await cdp.send('WebAuthn.addCredential', {
-    authenticatorId,
-    credential: {
-      credentialId: Buffer.from(credentialId, 'base64url').toString('base64'),
-      isResidentCredential: true,
-      rpId: 'localhost',
-      privateKey: credential.privateKey.export({ type: 'pkcs8', format: 'der' }).toString('base64'),
-      userHandle: Buffer.from(source.operatorId).toString('base64'),
-      signCount: 0,
-    },
-  });
+  const createActor = async (credential: ReturnType<typeof makeCredential>, userId: string) => {
+    const context = await browser!.newContext({
+      ignoreHTTPSErrors: true,
+      viewport: { width: 1280, height: 1000 },
+      reducedMotion: 'reduce',
+      permissions: ['clipboard-read', 'clipboard-write'],
+    });
+    const page = await context.newPage();
+    page.setDefaultTimeout(30_000);
+    page.on('pageerror', () => pageErrors++);
+    const cdp = await context.newCDPSession(page);
+    await cdp.send('WebAuthn.enable');
+    const { authenticatorId } = await cdp.send('WebAuthn.addVirtualAuthenticator', {
+      options: {
+        protocol: 'ctap2',
+        transport: 'internal',
+        hasResidentKey: true,
+        hasUserVerification: true,
+        isUserVerified: true,
+        automaticPresenceSimulation: true,
+      },
+    });
+    await cdp.send('WebAuthn.addCredential', {
+      authenticatorId,
+      credential: {
+        credentialId: Buffer.from(credential.credentialId, 'base64url').toString('base64'),
+        isResidentCredential: true,
+        rpId: 'localhost',
+        privateKey: credential.privateKey,
+        userHandle: Buffer.from(userId).toString('base64'),
+        signCount: 0,
+      },
+    });
+    const signIn = async () => {
+      failurePage = page;
+      await page.goto(origin);
+      await page.getByRole('button', { name: 'Sign in with a passkey', exact: true }).click();
+      await expect
+        .poll(async () => {
+          const response = await context.request.get(`${origin}/api/auth/session`);
+          return response.status() === 200 ? (await response.json()).user?.id : null;
+        })
+        .toBe(userId);
+      await expect(
+        page.getByRole('button', { name: 'Sign in with a passkey', exact: true }),
+      ).toHaveCount(0);
+    };
+    return { context, page, signIn };
+  };
+  const operator = await createActor(credentials.operator, source.operatorId);
+  const { page } = operator;
+  failurePage = page;
   await page.goto(origin);
   await page.getByRole('button', { name: 'Sign in with a passkey', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Administration', exact: true })).toBeVisible();
   await page.goto(`${origin}/admin#health`);
   const restore = page.getByRole('region', { name: 'Restore workspace', exact: true });
   await expect(restore.getByRole('button', { name: 'Prepare restore', exact: true })).toBeEnabled();
+  stage = 'authenticating-current-owner';
+  const owner = await createActor(credentials.owner, source.rich.ownerId);
+  await owner.signIn();
+  const boundary = await prepareRichRestoreBoundary(source.rich, owner.context.request, origin);
+  // Keep this real passkey and cookie alive across the restore without an open editor.
+  await owner.page.goto('about:blank');
+  failurePage = page;
+  await page.bringToFront();
   stage = 'preparing-through-admin';
   await restore.getByRole('button', { name: 'Prepare restore', exact: true }).click();
   const preparation = page.getByRole('dialog', { name: 'Prepare workspace restore', exact: true });
@@ -426,6 +492,8 @@ try {
     140_000,
   );
   if (terminal.sourceSha256 !== source.sha256) throw new Error('Unexpected committed source.');
+  stage = 'checking-owner-session-reset';
+  expect((await owner.context.request.get(`${origin}/api/auth/session`)).status()).toBe(401);
   stage = 'authenticating-after-session-reset';
   await page.goto(`${origin}/admin#health`);
   await page.getByRole('button', { name: 'Sign in with a passkey', exact: true }).click();
@@ -434,6 +502,82 @@ try {
   await expect(restore.getByText(/^Backup restored\./)).toBeVisible();
   await expect(restore.getByText(source.sha256, { exact: true })).toBeVisible();
   await capture(page, 'restored-after-sign-in');
+  stage = 'checking-rich-restored-workspace';
+  await page.goto('about:blank');
+  await owner.signIn();
+  const reader = await createActor(credentials.reader, source.rich.readerId);
+  await reader.signIn();
+  await reader.page.goto('about:blank');
+  artifact.richWorkspace = await verifyRestoredRichWorkspace(
+    source.rich,
+    { owner: owner.context.request, reader: reader.context.request },
+    origin,
+    boundary,
+  );
+  failurePage = owner.page;
+  stage = 'rendering-restored-document';
+  await owner.page.goto(`${origin}/?item=${source.rich.docId}`);
+  const doc = owner.page.getByRole('region', { name: 'Doc document', exact: true });
+  await expect(doc.getByLabel('Document canvas', { exact: true })).toBeVisible();
+  await expect(doc.getByRole('status', { name: 'Save status' })).toHaveText('All changes saved.');
+  // Real raster evidence: visible text glyphs and the archived purple image, not just a mounted canvas.
+  const ink = await textPoint(owner.page);
+  const purplePixels = () =>
+    doc.locator('canvas').evaluateAll((canvases) => {
+      let count = 0;
+      for (const node of canvases) {
+        const canvas = node as HTMLCanvasElement;
+        if (!canvas.width || !canvas.height) continue;
+        const data = canvas.getContext('2d')?.getImageData(0, 0, canvas.width, canvas.height).data;
+        if (data)
+          for (let i = 0; i < data.length; i += 4)
+            if (data[i] === 116 && data[i + 1] === 56 && data[i + 2] === 174 && data[i + 3] === 255)
+              count++;
+      }
+      return count;
+    });
+  await expect.poll(purplePixels).toBeGreaterThan(24);
+  await capture(owner.page, 'restored-owner-document', false);
+  // Select through the visible native text, then read its real Copy action.
+  // This proves the expected text reached the editor rather than only its API.
+  await owner.page.bringToFront();
+  const copyPoint = await textPoint(owner.page);
+  await owner.page.mouse.click(copyPoint.x, copyPoint.y);
+  await expect(doc.locator('[contenteditable="true"][data-u-comp="editor"]').first()).toBeFocused();
+  await owner.page.keyboard.press('Control+a');
+  await owner.page.keyboard.press('Control+c');
+  await expect
+    .poll(() => owner.page.evaluate(() => navigator.clipboard.readText()))
+    .toContain(source.rich.expectedDocText.replace(/[\b\r\n]/g, ''));
+  await owner.page.keyboard.press('Escape');
+  stage = 'rendering-restored-sheet';
+  await owner.page.goto(`${origin}/?item=${source.rich.sheetId}`);
+  const sheet = owner.page.getByRole('region', { name: 'Sheet document', exact: true });
+  await expect(sheet.getByLabel('Spreadsheet grid', { exact: true })).toBeVisible();
+  await expect(sheet.getByRole('status', { name: 'Save status' })).toHaveText('All changes saved.');
+  await expectNativeSheetValue(owner.page, 'A1', source.rich.expectedSheetValue);
+  await capture(owner.page, 'restored-owner-sheet', false);
+  await owner.page.goto('about:blank');
+  stage = 'rendering-restored-reader';
+  failurePage = reader.page;
+  await reader.page.goto(`${origin}/?item=${source.rich.docId}`);
+  const readerDoc = reader.page.getByRole('region', { name: 'Doc document', exact: true });
+  await expect(readerDoc.getByLabel('Document canvas', { exact: true })).toBeVisible();
+  await expect(readerDoc.getByRole('status', { name: 'Save status' })).toHaveText(
+    'View only — reload after your access changes.',
+  );
+  await textPoint(reader.page);
+  await capture(reader.page, 'restored-reader-document', false);
+  artifact.nativeRendering = {
+    ownerDoc: true,
+    ownerSheet: true,
+    readerDoc: true,
+    visibleDocumentInkPixels: ink.pixels,
+    archivedImageRendered: true,
+    documentNativeCopy: true,
+    sheetA1NativeCopy: source.rich.expectedSheetValue,
+    originalOwnerSessionExcluded: true,
+  };
   if (pageErrors) throw new Error('Browser reported an application exception.');
   stage = 'closing-and-checking-content';
   await shutdown();
@@ -469,7 +613,21 @@ try {
   artifact.pageErrors = pageErrors;
   succeeded = true;
   stage = 'passed';
-} catch {
+} catch (error) {
+  // The reviewed source location helps diagnose a failed assertion without
+  // persisting its message/expected/actual payload, which could contain secrets.
+  const location =
+    error instanceof Error
+      ? /(?:^|\/)(restore-(?:browser\.acceptance|rich-acceptance)\.ts):(\d+):(\d+)/m.exec(
+          error.stack ?? '',
+        )
+      : null;
+  if (location)
+    artifact.failureSource = {
+      file: location[1],
+      line: Number(location[2]),
+      column: Number(location[3]),
+    };
   // Never print raw Playwright call logs, file chooser paths, cookies or keys.
   await failurePage
     ?.screenshot({ path: join(output, 'failure.png'), animations: 'disabled' })
