@@ -367,8 +367,18 @@ export async function verifyTransitionFixture(
       permanentPurge: true,
     };
   } finally {
-    await history.close();
-    await collab.close();
-    db.close();
+    try {
+      await history.close();
+      await collab.close();
+      // Native statements can retain the writer after close() until GC. Settle
+      // its committed pages before any refused-resume preservation baseline.
+      assert.deepEqual(db.prepare('PRAGMA wal_checkpoint(TRUNCATE)').get(), {
+        busy: 0,
+        log: 0,
+        checkpointed: 0,
+      });
+    } finally {
+      db.close();
+    }
   }
 }
