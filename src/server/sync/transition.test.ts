@@ -9,8 +9,10 @@ import {
   statSync,
 } from 'node:fs';
 import { randomUUID } from 'node:crypto';
+import { spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { afterEach, expect, test, vi } from 'vitest';
 import type { IDocumentData } from '@univerjs/core';
 import { materialize } from '@spinel/sync-server';
@@ -85,6 +87,35 @@ function fixture() {
   };
 }
 
+// This fixture contains only synthetic application/native tables. Observe every
+// schema definition and row independently of the importer's preservation list;
+// never use this helper to inspect the retained SDK's proprietary storage.
+function nativeContents(path: string) {
+  const directory = mkdtempSync(join(tmpdir(), 'spinel-native-observation-'));
+  const output = join(directory, 'state.json');
+  try {
+    const result = spawnSync(
+      process.execPath,
+      [
+        fileURLToPath(
+          new URL('../../../scripts/sync-transition/capture-native-fixture.ts', import.meta.url),
+        ),
+        path,
+        output,
+      ],
+      { encoding: 'utf8', timeout: 5_000 },
+    );
+    expect(result.error).toBeUndefined();
+    expect(result.status, result.stderr).toBe(0);
+    return JSON.parse(readFileSync(output, 'utf8')) as {
+      schema: unknown[];
+      tables: Record<string, string[]>;
+    };
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+}
+
 test('all retained metadata and public snapshots survive a source-copy conversion and native edit/recovery boundaries', async () => {
   const f = fixture();
   const original = await digest(f.source);
@@ -111,6 +142,12 @@ test('all retained metadata and public snapshots survive a source-copy conversio
     await importSyncTransition({ directory: f.bundle, destination: f.destination }),
   ).toMatchObject({ resumed: true });
   await verifyTransitionFixture(result.path, f.data, f.directory);
+  // The fixture's committed pages must be settled before any observer or GC can
+  // change the baseline. Empty/missing WAL has no deferred durable content.
+  expect(existsSync(`${result.path}-wal`) ? statSync(`${result.path}-wal`).size : 0).toBe(0);
+  const contents = nativeContents(result.path);
+  const receipt = readFileSync(join(f.destination, 'transition.json'));
+  const inode = statSync(result.path).ino;
   const afterEdits = await digest(result.path);
   // A served copy has diverged from the migration receipt; preserve it and refuse
   // to claim it is still the original verified output.
@@ -118,6 +155,12 @@ test('all retained metadata and public snapshots survive a source-copy conversio
     importSyncTransition({ directory: f.bundle, destination: f.destination }),
   ).rejects.toThrow('verification');
   expect(await digest(result.path)).toBe(afterEdits);
+  expect(nativeContents(result.path)).toEqual(contents);
+  expect(readFileSync(join(f.destination, 'transition.json'))).toEqual(receipt);
+  expect(statSync(result.path).ino).toBe(inode);
+  expect(existsSync(join(f.destination, 'pending.sqlite'))).toBe(false);
+  expect(await digest(f.source)).toBe(original);
+  expect(await digest(join(f.bundle, 'source.sqlite'))).toBe(sourceCopyHash);
   const messages = JSON.stringify(progress.mock.calls);
   for (const secret of [
     'Retained budget',
@@ -129,6 +172,71 @@ test('all retained metadata and public snapshots survive a source-copy conversio
     expect(messages).not.toContain(secret);
   for (const [event] of progress.mock.calls)
     expect(Object.keys(event).sort()).toEqual(['completed', 'event', 'total']);
+});
+
+test('same-bundle refusal observes newer committed WAL metadata and preserves every native row and durable byte', async () => {
+  const f = fixture();
+  await exportSyncTransition({ source: f.source, directory: f.bundle, legacy: f.legacy });
+  const result = await importSyncTransition({ directory: f.bundle, destination: f.destination });
+  const sourceHash = await digest(f.source);
+  const bundleHash = await digest(join(f.bundle, 'source.sqlite'));
+  const databaseUrl = new URL('../../../server/database.ts', import.meta.url).href;
+  const seeded = spawnSync(
+    process.execPath,
+    [
+      '--input-type=module',
+      '-e',
+      `
+    import { openDatabase } from ${JSON.stringify(databaseUrl)};
+    const db = openDatabase(process.argv[1]);
+    db.exec('PRAGMA wal_autocheckpoint=0');
+    db.prepare('UPDATE workspace_items SET name=? WHERE id=?').run('Newer committed name', process.argv[2]);
+    process.exit(0);
+  `,
+      result.path,
+      f.data.doc.id,
+    ],
+    { encoding: 'utf8', timeout: 5_000 },
+  );
+  expect(seeded.error).toBeUndefined();
+  expect(seeded.status, seeded.stderr).toBe(0);
+  const main = readFileSync(result.path);
+  const wal = readFileSync(`${result.path}-wal`);
+  expect(wal.length).toBeGreaterThan(0);
+  const contents = nativeContents(result.path);
+  expect(contents.tables.workspace_items.join('\n')).toContain('Newer committed name');
+  const receipt = readFileSync(join(f.destination, 'transition.json'));
+  const inode = statSync(result.path).ino;
+  // Complete the importer in a separate process; no importer-owned connection
+  // can perform a later write after the byte-preservation observation.
+  const refused = spawnSync(
+    process.execPath,
+    [
+      '--input-type=module',
+      '-e',
+      `
+    import assert from 'node:assert/strict';
+    import { importSyncTransition } from ${JSON.stringify(new URL('./transition.ts', import.meta.url).href)};
+    await assert.rejects(importSyncTransition({
+      directory: process.argv[1], destination: process.argv[2],
+      progress() { throw new Error('Refusal must not publish progress'); },
+    }), /verification/);
+  `,
+      f.bundle,
+      f.destination,
+    ],
+    { encoding: 'utf8', timeout: 20_000 },
+  );
+  expect(refused.error).toBeUndefined();
+  expect(refused.status, refused.stderr).toBe(0);
+  expect(readFileSync(result.path).equals(main), 'main database bytes').toBe(true);
+  expect(readFileSync(`${result.path}-wal`).equals(wal), 'committed WAL bytes').toBe(true);
+  expect(nativeContents(result.path)).toEqual(contents);
+  expect(readFileSync(join(f.destination, 'transition.json'))).toEqual(receipt);
+  expect(statSync(result.path).ino).toBe(inode);
+  expect(existsSync(join(f.destination, 'pending.sqlite'))).toBe(false);
+  expect(await digest(f.source)).toBe(sourceHash);
+  expect(await digest(join(f.bundle, 'source.sqlite'))).toBe(bundleHash);
 });
 
 test('interrupted export resumes only the frozen copy and never exports completed units twice', async () => {

@@ -58,6 +58,11 @@ snapshots and a full database copy, including credentials and image bytes.
    A repeat after publication re-verifies the original output. If the new app has
    edited it, retry refuses and leaves those newer changes untouched; continue
    using the verified live copy rather than treating import as a restore command.
+   Verification uses enforced SQLite read-only access and includes committed WAL
+   contents. Preserve the database and any WAL together; a different main-file
+   digest alone does not prove that document content changed. The
+   [SPN-118 record](../../docs/implementation/SPN-118.md) explains the checked
+   lifecycle boundary and independent content/metadata preservation evidence.
    Copy creation uses a separate disposable file and publishes `pending.sqlite`
    only after SQLite integrity and retained metadata checks; a mid-copy failure
    is safely recreated on retry.

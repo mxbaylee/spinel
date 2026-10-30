@@ -486,33 +486,72 @@ async function updateWorker(page: Page) {
   return page.evaluate(async () => {
     const registration = await navigator.serviceWorker.ready;
     return new Promise<'activated' | 'redundant'>((done, reject) => {
-      const timer = setTimeout(
-        () => finish(new Error('The emitted worker did not finish installing.')),
-        120_000,
-      );
+      const started = performance.now();
+      const originalActive = registration.active;
+      const observations: unknown[] = [];
+      let updateState = 'pending';
       let observed: ServiceWorker | null = null;
+      const worker = (value: ServiceWorker | null) =>
+        value && {
+          state: value.state,
+          url: value.scriptURL,
+          originalActive: value === originalActive,
+          observed: value === observed,
+        };
+      const record = (event: string) => {
+        observations.push({
+          event,
+          elapsedMs: Math.round(performance.now() - started),
+          updateState,
+          installing: worker(registration.installing),
+          waiting: worker(registration.waiting),
+          active: worker(registration.active),
+          observed: worker(observed),
+        });
+        if (observations.length > 32) observations.splice(1, 1);
+      };
+      const timer = setTimeout(() => {
+        record('timeout');
+        finish(
+          new Error(
+            `The emitted worker did not finish installing. ${JSON.stringify(observations)}`,
+          ),
+        );
+      }, 120_000);
+      const controllerChanged = () => record('controllerchange');
       const finish = (value: Error | 'activated' | 'redundant') => {
         clearTimeout(timer);
         registration.removeEventListener('updatefound', found);
+        navigator.serviceWorker.removeEventListener('controllerchange', controllerChanged);
         observed?.removeEventListener('statechange', changed);
         if (value instanceof Error) reject(value);
         else done(value);
       };
       const changed = () => {
+        record('statechange');
         if (observed?.state === 'activated' || observed?.state === 'redundant')
           finish(observed.state);
       };
       const found = () => {
         observed = registration.installing;
+        record('updatefound');
         observed?.addEventListener('statechange', changed);
         changed();
       };
+      record('entry');
       registration.addEventListener('updatefound', found);
+      navigator.serviceWorker.addEventListener('controllerchange', controllerChanged);
       void registration.update().then(
         () => {
+          updateState = 'fulfilled';
+          record('update-fulfilled');
           if (!observed && registration.installing) found();
         },
-        (error: unknown) => finish(error instanceof Error ? error : new Error(String(error))),
+        (error: unknown) => {
+          updateState = 'rejected';
+          record('update-rejected');
+          finish(error instanceof Error ? error : new Error(String(error)));
+        },
       );
     });
   });
