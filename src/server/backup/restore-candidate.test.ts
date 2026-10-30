@@ -30,6 +30,7 @@ import {
   writeInventory,
 } from './inventory.ts';
 import { reconcileRestoreCandidate, reconcileRestoreRollback } from './restore-candidate.ts';
+import { restoreNotice } from './restore-notice.ts';
 import { rotateRestoreGenerations } from './restore-generations.ts';
 import { prepareRestoreRollback } from './restore-rollback.ts';
 import { rehearseRestoreStartup } from './restore-startup.ts';
@@ -563,6 +564,12 @@ test('rollback of a never-restored original establishes inventory without invent
     kind: 'supervised-rollback',
     originalFingerprint: before,
     preparedAt: options.now,
+    restoreOutcome: { outcome: 'recovered', at: options.now },
+  });
+  // Everyone was signed out, so members see the undone-restore notice, not a backup date.
+  expect(restoreNotice(candidate, options.now + 1)).toEqual({
+    outcome: 'recovered',
+    at: options.now,
   });
   expect(restoreSnapshotFingerprint(f.db)).toBe(before);
   expect(

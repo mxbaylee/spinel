@@ -144,7 +144,6 @@ export function validRestorePreview(value: unknown): value is RestorePreview {
   );
 }
 
-export const RESTORE_CONSEQUENCES_VERSION = 1;
 export const RESTORE_CONSEQUENCES = [
   'Newer work, including work accepted before maintenance drains, will be lost.',
   'Sharing may be removed or downgraded, including access to unchanged siblings.',
@@ -182,20 +181,22 @@ export interface RestorePreparation {
   error: string | null;
 }
 
-/** Shown to every signed-in account after a backup replaced the workspace.
- * Only these two dates cross the API: never the source, key or archived settings. */
-export interface RestoreNotice {
-  restoredAt: number;
-  backupCreatedAt: string;
-}
+/** Shown to every signed-in account after a supervised restore ended. Only these
+ * fields cross the API: never the source, key or archived settings. `recovered`
+ * means the restore was undone and the original content kept. */
+export type RestoreNotice =
+  | { outcome: 'restored'; at: number; backupCreatedAt: string }
+  | { outcome: 'recovered'; at: number };
 export const RESTORE_NOTICE_MS = 30 * 24 * 60 * 60_000;
 export function validRestoreNotice(value: unknown): value is RestoreNotice {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
-  const notice = value as RestoreNotice;
+  const notice = value as Record<string, unknown>;
+  const keys = Object.keys(notice).sort().join();
+  if (!Number.isSafeInteger(notice.at) || (notice.at as number) <= 0) return false;
+  if (notice.outcome === 'recovered') return keys === 'at,outcome';
   return (
-    Object.keys(notice).length === 2 &&
-    Number.isSafeInteger(notice.restoredAt) &&
-    notice.restoredAt > 0 &&
+    notice.outcome === 'restored' &&
+    keys === 'at,backupCreatedAt,outcome' &&
     typeof notice.backupCreatedAt === 'string' &&
     notice.backupCreatedAt.length <= 64 &&
     Number.isFinite(Date.parse(notice.backupCreatedAt))

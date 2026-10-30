@@ -371,6 +371,7 @@ jobs:
           - { project: sync-soak-sheet, shard: '' }
           - { project: sync-soak-doc, shard: '' }
           - { project: offline-upgrade, shard: '' }
+          - { project: supervised-restore, shard: '' }
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -386,7 +387,7 @@ jobs:
           node scripts/ci/prefer-ubuntu-archive.ts
           npx playwright install --with-deps chromium
       - name: Install maintenance fixture init
-        if: matrix.project == 'production'
+        if: matrix.project == 'production' || matrix.project == 'supervised-restore'
         run: sudo apt-get install -y --no-install-recommends tini
       - name: Immutable offline source for adoption evidence
         if: matrix.project == 'offline-upgrade'

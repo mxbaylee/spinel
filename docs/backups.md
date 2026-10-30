@@ -505,10 +505,15 @@ deployment.
    **Original content was recovered** means the candidate failed and one verified
    original-content recovery completed; access and sessions may still have changed.
    **Restore did not begin** means that attempt never replaced the workspace.
-   For 30 days after a backup is restored, every account sees a notice after
-   signing in: the restore date, the backup's date, that later changes were
-   discarded and that filing, links or sharing may have changed. It contains no
-   document names or counts. Dismissing it hides it in that browser only.
+   For 30 days after a restore ends, every account sees a banner after signing in.
+   After **Backup restored** it gives the restore date and the backup's date, and
+   says later changes were discarded, everyone was signed out and filing, links or
+   sharing may have changed. After **Original content was recovered** it says the
+   restore did not finish, the workspace kept its own content, and everyone was
+   still signed out with links or sharing possibly changed, because rollback
+   reconciles access the same way. It contains no document names or counts, and
+   an open document hides it until the member returns to a list. Dismissing it
+   hides it in that browser only.
 
 Current account state and passkeys remain authoritative. Archived credentials
 cannot authorize activation or renew the original confirmation. Sharing is capped
@@ -539,12 +544,33 @@ hold, retaining its recovery evidence and permitting a new preparation.
 Missing evidence, expired
 authority or ambiguous ownership keeps the workspace closed.
 
+The confirmation's passkey check also bounds activation. Reading the held source,
+the final capacity check, stopping the application, opening and health-checking
+the candidate, committing, and any original-content recovery after a failed trial
+must all finish within five minutes of that check. If time runs out before
+commit, the restore fails; if original-content recovery then cannot finish in the
+time left, the workspace stays closed as an unresolved restore. The real-process
+acceptance fixture took under a minute from confirmation to commit; no
+measurement exists yet for a large database on the 1 GiB / 0.75 CPU profile.
+Rehearse a restore of a realistically sized backup on the target host before
+relying on this path. If confirmation to commit takes more than about two
+minutes, do not rely on it: a failed trial's original-content recovery needs
+about as long again ([SPN-124](todo/SPN-124.md) separates the work's lifetime from
+the passkey window).
+
 The private journal retains at most **64 restore IDs**, including completed and
 failed attempts. Successful source/custody evidence is deliberately retained;
 there is no automatic pruning or supported journal-deletion shortcut. A 65th
 new ID is refused. Keep these records and plan recovery-root capacity accordingly;
 changing that bound or retention policy requires a separately reviewed recovery
-design ([SPN-125](todo/SPN-125.md)). The supported layout mounts the application directory as one filesystem:
+design ([SPN-125](todo/SPN-125.md)). Each attempt that reached activation keeps
+its encrypted source (the archive's size, at most 5 GiB), the preserved original
+database files and a frozen comparison copy (each about the live database's
+size), plus one more database-sized capture for each failed trial. Plan at least
+the archive size plus three times the database size per restore you expect before
+retention lands, and after a rehearsal measure the recovery root with
+`du -sh <recovery root>` rather than relying on this estimate. Preparation's
+disk estimate covers the next attempt only, not this accumulation. The supported layout mounts the application directory as one filesystem:
 the database and any WAL/SHM files must share its device. The recovery root may
 use a separate volume. Free bytes are counted once per device, while the existing
 application and recovery safety reserves both remain required on a shared volume.

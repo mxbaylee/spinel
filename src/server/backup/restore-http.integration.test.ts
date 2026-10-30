@@ -431,8 +431,9 @@ test('real Operator HTTP confirmation crosses custody ACK and Begin into committ
     // dates, never the source, key, origin, image or archived environment.
     const session = await json<{ restore: unknown }>(await request('/api/auth/session'));
     expect(validRestoreNotice(session.restore)).toBe(true);
-    expect((session.restore as RestoreNotice).restoredAt).toBeLessThanOrEqual(Date.now());
-    expect((session.restore as RestoreNotice).restoredAt).toBeGreaterThan(Date.now() - 10 * 60_000);
+    expect((session.restore as RestoreNotice).outcome).toBe('restored');
+    expect((session.restore as RestoreNotice).at).toBeLessThanOrEqual(Date.now());
+    expect((session.restore as RestoreNotice).at).toBeGreaterThan(Date.now() - 10 * 60_000);
     publicBodies.push(JSON.stringify(session));
     const completed = await json<RestoreStatus>(await request('/api/admin/restores'));
     publicBodies.push(JSON.stringify(completed));

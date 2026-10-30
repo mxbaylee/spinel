@@ -539,7 +539,9 @@ test('target changes during preview fail closed before a confirmation exists', a
   expect(f.admit).not.toHaveBeenCalled();
 });
 
-test.each(['current', 'retained', 'resource'] as const)(
+// `unreadable`: the deployment key cannot authenticate, so the retained key is tried.
+// `origin`/`image`: refusals no other key can change stop at the first key.
+test.each(['current', 'retained', 'resource', 'unreadable', 'origin', 'image'] as const)(
   'catalog uses the common verifier and held source with %s key outcome',
   async (outcome) => {
     const f = await fixture();
@@ -569,13 +571,24 @@ test.each(['current', 'retained', 'resource'] as const)(
     );
     f.service.options.configPath = configPath;
     const verified = f.prepare.getMockImplementation()!;
+    const refusal = {
+      resource: 'disk-space',
+      unreadable: 'backup-unreadable',
+      origin: 'backup-origin',
+      image: 'backup-image',
+    } as const;
     f.prepare.mockImplementation(async (options) => {
-      if (outcome === 'resource') throw new RecoveryResourceError('disk-space');
+      if (outcome === 'resource' || outcome === 'origin' || outcome === 'image')
+        throw new RecoveryResourceError(refusal[outcome]);
+      if (outcome === 'unreadable' && options.keyFile === keyFile)
+        throw new RecoveryResourceError(refusal.unreadable);
       return {
         ...(await verified(options)),
-        keyId: outcome === 'retained' ? 'retained' : 'default',
+        keyId: outcome === 'current' ? 'default' : 'retained',
       };
     });
+    const fails = outcome === 'resource' || outcome === 'origin' || outcome === 'image';
+    const retries = outcome === 'retained' || outcome === 'unreadable';
     const published = `workspace/2026-10-29T01-02-03.000Z-${randomUUID()}.spinel`;
     const ciphertext = Buffer.from('held-catalog-ciphertext-fixture');
     f.service.restores.options.remote = () => ({
@@ -599,10 +612,10 @@ test.each(['current', 'retained', 'resource'] as const)(
     await expect
       .poll(() => f.service.restores.status(prepared.id, f.actor.id, f.session.token_hash).state)
       .not.toBe('preparing');
-    expect(f.service.restores.status(prepared.id, f.actor.id, f.session.token_hash).state).toBe(
-      outcome === 'resource' ? 'failed' : 'ready',
-    );
-    expect(f.prepare).toHaveBeenCalledTimes(outcome === 'retained' ? 2 : 1);
+    const status = f.service.restores.status(prepared.id, f.actor.id, f.session.token_hash);
+    expect(status.state).toBe(fails ? 'failed' : 'ready');
+    if (fails) expect(status.error).toBe(new RecoveryResourceError(refusal[outcome]).message);
+    expect(f.prepare).toHaveBeenCalledTimes(retries ? 2 : 1);
     expect(f.prepare.mock.calls[0][0]).toMatchObject({
       keyFile,
       expectedArchive: {
@@ -610,8 +623,8 @@ test.each(['current', 'retained', 'resource'] as const)(
         sha256: createHash('sha256').update(ciphertext).digest('hex'),
       },
     });
-    expect(f.service.state().job).toBe(outcome === 'resource' ? null : 'restore');
-    if (outcome === 'retained') expect(f.prepare.mock.calls[1][0].keyFile).toBe(retainedKey);
+    expect(f.service.state().job).toBe(fails ? null : 'restore');
+    if (retries) expect(f.prepare.mock.calls[1][0].keyFile).toBe(retainedKey);
   },
 );
 

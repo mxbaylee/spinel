@@ -35,17 +35,23 @@
   border-color: transparent;
   color: var(--sp-muted);
 }
+/* The banner tints decorative icons with the accent; the dismiss action stays muted. */
+.restore-notice .restore-notice-dismiss [aria-hidden='true'] {
+  color: inherit;
+}
 .restore-notice .restore-notice-dismiss:hover {
   background: var(--sp-tint-1);
   color: var(--sp-text);
 }
 /* These views draw their own edge-to-edge pages, so the band keeps the page inset. */
+.space-main > .restore-notice,
 .workspace.admin-workspace > .workspace-body > .restore-notice,
 .workspace.profile-workspace > .workspace-body > .restore-notice,
 .workspace.history-workspace > .workspace-body > .restore-notice {
   margin: 16px 24px 0;
 }
 @media (max-width: 640px) {
+  .space-main > .restore-notice,
   .workspace.admin-workspace > .workspace-body > .restore-notice,
   .workspace.profile-workspace > .workspace-body > .restore-notice,
   .workspace.history-workspace > .workspace-body > .restore-notice {

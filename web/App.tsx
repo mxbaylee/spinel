@@ -674,10 +674,10 @@ function AccountApp() {
       <>
         {error && <p role="alert">{error}</p>}
         {notice && <p role="status">{notice}</p>}
-        <RestoreNotice notice={restored} />
         <Space
           key={user.id}
           user={user}
+          banner={<RestoreNotice notice={restored} />}
           navigation={navigation}
           connection={browserOnline ? (editorConnection ?? serverConnection) : 'offline'}
           onExit={() => location.assign(rememberedFileHref(user.id))}

@@ -22,15 +22,23 @@ const day = (value: number | string) =>
  * without any document names, counts or the Operator's private preview. */
 export function RestoreNotice({ notice }: { notice: Notice | null }) {
   const [dismissed, setDismissed] = useState(dismissedAt);
-  if (!validRestoreNotice(notice) || dismissed === notice.restoredAt) return null;
+  if (!validRestoreNotice(notice) || dismissed === notice.at) return null;
+  const label = notice.outcome === 'restored' ? 'Workspace restored' : 'Workspace restore undone';
   return (
-    <section className="restore-notice banner sp-ui" aria-label="Workspace restored">
+    <section className="restore-notice banner sp-ui" aria-label={label}>
       <ProfileIcon icon="lucide:history" size={18} />
-      <p role="status">
-        <strong>Workspace restored.</strong> On {day(notice.restoredAt)} it went back to a backup
-        from {day(notice.backupCreatedAt)}: changes made after that backup were discarded, and
-        personal filing, links or sharing may have changed.
-      </p>
+      {notice.outcome === 'restored' ? (
+        <p role="status">
+          <strong>{label}.</strong> On {day(notice.at)}, it went back to a backup from{' '}
+          {day(notice.backupCreatedAt)}. Changes made after that backup were discarded, everyone was
+          signed out, and personal filing, links or sharing may have changed.
+        </p>
+      ) : (
+        <p role="status">
+          <strong>{label}.</strong> On {day(notice.at)}, a restore did not finish, so the workspace
+          kept its own content. Everyone was signed out, and links or sharing may have changed.
+        </p>
+      )}
       <Button
         type="button"
         className="restore-notice-dismiss"
@@ -38,11 +46,11 @@ export function RestoreNotice({ notice }: { notice: Notice | null }) {
         title="Dismiss"
         onClick={() => {
           try {
-            localStorage.setItem(restoreNoticeStorageKey, String(notice.restoredAt));
+            localStorage.setItem(restoreNoticeStorageKey, String(notice.at));
           } catch {
             // Blocked storage only means the notice returns on the next visit.
           }
-          setDismissed(notice.restoredAt);
+          setDismissed(notice.at);
         }}
       >
         <ProfileIcon icon="lucide:x" size={18} />
