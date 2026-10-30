@@ -1,5 +1,6 @@
 import { statSync } from 'node:fs';
 import type { DatabaseSync } from '../../../server/database.ts';
+import { markRestoredWorkspace } from './restore-notice.ts';
 import { AuthStore } from '../auth/store.ts';
 import { WorkspaceStore } from '../workspace/store.ts';
 import { restoreSnapshotFingerprint, verifyInventory, writeInventory } from './inventory.ts';
@@ -147,6 +148,7 @@ export async function reconcileRestoreCandidate(
   const receipts = reconcileRestoreReceipts(current, candidate);
   const operations = reconcileRestoreOperations(current, candidate);
   const generations = rotateRestoreGenerations(current, candidate);
+  markRestoredWorkspace(candidate, options.now);
   integrity(candidate);
   writeInventory(candidate);
   const semantics = await verifySemantics(candidate);

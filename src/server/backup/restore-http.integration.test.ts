@@ -15,7 +15,14 @@ import type { RestoreJobRecord } from '../maintenance/restore-jobs.ts';
 import type { RestoreStopRecord } from '../maintenance/restore-stop.ts';
 import { RecoveryResourceError } from './resource-error.ts';
 import type { RestoreHttpSeed } from '../maintenance/restore-http-fixture.ts';
-import type { RestorePreparation, RestoreStatus } from '../../shared/restore.ts';
+import {
+  validRestoreNotice,
+  validRestoreResources,
+  validRestoreVerification,
+  type RestoreNotice,
+  type RestorePreparation,
+  type RestoreStatus,
+} from '../../shared/restore.ts';
 
 const origin = 'https://spinel.example';
 const hash = (bytes: Uint8Array | string) => createHash('sha256').update(bytes).digest();
@@ -311,6 +318,8 @@ test('real Operator HTTP confirmation crosses custody ACK and Begin into committ
           'sourceCreatedAt',
           'target',
           'preview',
+          'verification',
+          'resources',
           'confirmation',
           'consequencesVersion',
           'error',
@@ -343,6 +352,11 @@ test('real Operator HTTP confirmation crosses custody ACK and Begin into committ
     );
     expect(prepared.state).toBe('ready');
     expect(prepared.sourceSha256).toBe(source.sha256);
+    // Operator-visible preparation evidence: verified counts and the capacity
+    // plan checked before pausing, never paths or secrets (checked below).
+    expect(validRestoreVerification(prepared.verification)).toBe(true);
+    expect(validRestoreResources(prepared.resources)).toBe(true);
+    expect(prepared.resources?.sufficient).toBe(true);
     expect(prepared.preview).toMatchObject({
       provisional: true,
       currentAccounts: 2,
@@ -413,6 +427,13 @@ test('real Operator HTTP confirmation crosses custody ACK and Begin into committ
     cookie = '';
     epoch = (await json<{ epoch: string }>(await request('/api/maintenance'))).epoch;
     await prove('authentication');
+    // Every account learns of the replacement after signing in again: two
+    // dates, never the source, key, origin, image or archived environment.
+    const session = await json<{ restore: unknown }>(await request('/api/auth/session'));
+    expect(validRestoreNotice(session.restore)).toBe(true);
+    expect((session.restore as RestoreNotice).restoredAt).toBeLessThanOrEqual(Date.now());
+    expect((session.restore as RestoreNotice).restoredAt).toBeGreaterThan(Date.now() - 10 * 60_000);
+    publicBodies.push(JSON.stringify(session));
     const completed = await json<RestoreStatus>(await request('/api/admin/restores'));
     publicBodies.push(JSON.stringify(completed));
     expect(completed.pending).toBe(false);

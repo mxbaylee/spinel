@@ -122,11 +122,9 @@ process.once('message', async (value: RecoveryWorkerInput) => {
         maxDatabaseBytes: value.maxDatabaseBytes,
       },
     );
-    if (
-      recovery.origin !== value.expectedOrigin ||
-      (value.expectedImage !== undefined && recovery.image !== value.expectedImage)
-    )
-      throw new Error('Incompatible recovery metadata.');
+    if (recovery.origin !== value.expectedOrigin) throw new RecoveryResourceError('backup-origin');
+    if (value.expectedImage !== undefined && recovery.image !== value.expectedImage)
+      throw new RecoveryResourceError('backup-image');
     database = new DatabaseSync(join(destination, 'spinel.sqlite'), { readOnly: true });
     const inventory = verifyInventory(database)!;
     const semantics = await verifySemantics(database);

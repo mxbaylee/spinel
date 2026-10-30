@@ -10,7 +10,7 @@ import { createDestination } from './destination.ts';
 import type { RemoteStore } from './destination.ts';
 import { backupTime, expiredBackups } from './spaces.ts';
 import { verifyArchive } from './verification.ts';
-import { RecoveryResourceError } from './resource-error.ts';
+import { keyIndependent, RecoveryResourceError } from './resource-error.ts';
 import { observeJob } from '../health/jobs.ts';
 import type { ObserveJob } from '../health/jobs.ts';
 import { ExportJobs } from './export-jobs.ts';
@@ -502,7 +502,7 @@ export class BackupService {
           } catch (error) {
             signal.throwIfAborted();
             // Resource refusal cannot improve by trying another retained key.
-            if (error instanceof RecoveryResourceError) throw error;
+            if (keyIndependent(error)) throw error;
           }
         }
         if (!verifiedKey) throw new Error('Recovery could not be verified with configured keys.');

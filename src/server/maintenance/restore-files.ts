@@ -384,22 +384,6 @@ export async function retainRestoreSource(options: {
   return readRetainedRestoreSource({ ...options, manifest });
 }
 
-/** Stage immutable originals and candidate. No live workspace bytes are written.
- * Caller must durably journal the returned manifest before calling activate.
- * Failed/abandoned directories remain private evidence; never reuse an ID.
- */
-export async function prepareRestoreFiles(options: {
-  root: string;
-  id: string;
-  databasePath: string;
-  candidatePath: string;
-  expectedCandidate: RestoreFileEvidence;
-  assertClosed(): void;
-}): Promise<RestoreFiles> {
-  const originals = await preserveRestoreOriginals(options);
-  return stageRestoreCandidate(options, originals);
-}
-
 /** Preserve the closed raw tuple BEFORE opening a disposable clone or generating
  * the final reconciled candidate. Journal this manifest before advancing. */
 interface RestoreOriginalOptions {
@@ -821,12 +805,11 @@ async function barrier(control: RestoreFileControl, files: RestoreFiles, create 
   }
 }
 
-async function admitMutation(control: RestoreFileControl, files: RestoreFiles, rollback: boolean) {
+async function admitMutation(control: RestoreFileControl, files: RestoreFiles) {
   const current = await ownedFile(control.databasePath);
-  const desired = rollback ? files.original['spinel.sqlite']!.bytes : files.candidate.bytes;
+  const desired = files.candidate.bytes;
   const wal = files.original['spinel.sqlite-wal']?.bytes ?? 0;
-  const workspaceNeed =
-    Math.max(0, desired - current.size) + (rollback ? wal : Math.max(2 * desired, wal)) + RESERVE;
+  const workspaceNeed = Math.max(0, desired - current.size) + Math.max(2 * desired, wal) + RESERVE;
   const available = control.availableBytes ?? availableBytes;
   const shared = (await lstat(control.root)).dev === current.dev;
   if (
@@ -927,7 +910,7 @@ export async function activateRestoreFiles(control: RestoreFileControl, files: R
   await requireEvidence(candidate, files.candidate, control.signal);
   active();
   control.assertClosed();
-  await admitMutation(control, files, false);
+  await admitMutation(control, files);
   active();
   assertUncommitted(control);
   await barrier(control, files, true);
@@ -943,48 +926,6 @@ export async function activateRestoreFiles(control: RestoreFileControl, files: R
   active();
   control.assertClosed();
   await control.persist('activated');
-  active();
-}
-
-/** Replayable after any interrupted write. SQLite must verify before reopening.
- * SHM is preserved as evidence but rebuilt by SQLite, never restored as lock state.
- */
-export async function rollbackRestoreFiles(control: RestoreFileControl, files: RestoreFiles) {
-  const active = () => assertMutationActive(control);
-  active();
-  assertUncommitted(control);
-  const root = await retained(control, files);
-  await barrier(control, files);
-  control.assertClosed();
-  await admitMutation(control, files, true);
-  active();
-  assertUncommitted(control);
-  await control.persist('rolling-back');
-  active();
-  await overwrite(
-    join(root, 'original', 'spinel.sqlite'),
-    control.databasePath,
-    files.identity,
-    active,
-  );
-  await removeSidecars(control.databasePath);
-  active();
-  if (files.original['spinel.sqlite-wal'])
-    requireSameEvidence(
-      await copy(
-        join(root, 'original', 'spinel.sqlite-wal'),
-        control.databasePath + '-wal',
-        control.signal,
-      ),
-      files.original['spinel.sqlite-wal'],
-    );
-  active();
-  await syncDirectory(dirname(control.databasePath));
-  active();
-  await requireEvidence(control.databasePath, files.original['spinel.sqlite']!, control.signal);
-  active();
-  control.assertClosed();
-  await control.persist('rolled-back');
   active();
 }
 
@@ -1148,7 +1089,7 @@ export async function activatePreparedRestoreOriginal(
   const active = () => assertMutationActive(control);
   const staged = await preparedOriginalBoundary(control, files, failed, attemptId);
   await requireEvidence(staged, files.candidate, control.signal);
-  await admitMutation(control, files, false);
+  await admitMutation(control, files);
   active();
   assertUncommitted(control);
   await control.persist('rolling-back');

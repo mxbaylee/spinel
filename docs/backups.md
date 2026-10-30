@@ -471,7 +471,11 @@ deployment.
    32-byte recovery key. It needs no automatic backup destination. A bare SQLite
    file is not accepted. Catalog recovery uses the deployment's configured active
    and retained keys; it does not ask the browser for provider credentials.
-2. Complete the fresh Operator passkey check. Preparation takes private custody,
+2. Complete the fresh Operator passkey check. It lasts five minutes, and upload,
+   verification and the preview must finish within it; otherwise preparation
+   fails saying the passkey check expired. For a large backup over a slow
+   connection, choose a saved backup instead ([SPN-124](todo/SPN-124.md) lifts
+   this limit). Preparation takes private custody,
    checks the encrypted inventory, compatible immutable image/origin and resource
    requirements, and builds a provisional reconciliation preview. The current
    workspace keeps running. The backup retention lease protects the selected
@@ -482,7 +486,11 @@ deployment.
    provisional: space is not reserved, and the supervisor checks it again before
    pausing edits. Insufficient preparation capacity leaves editing running and
    asks you to free space and prepare again. Larger later inputs can still require
-   recovery; a successful estimate does not guarantee completion.
+   recovery; a successful estimate does not guarantee completion. A failure names
+   its cause where Spinel can tell it safely: a key that cannot decrypt the backup
+   (a wrong key and altered bytes look the same), a backup from another workspace
+   address or application image, an expired passkey check, or a memory, time, size
+   or disk limit. No failure message includes paths, contents or native errors.
 3. Select **Review restore**, inspect the source fingerprint, exact target and
    provisional consequences, then freshly authenticate and confirm. Work accepted
    after the backup, including edits accepted before maintenance drains, is lost
@@ -497,6 +505,10 @@ deployment.
    **Original content was recovered** means the candidate failed and one verified
    original-content recovery completed; access and sessions may still have changed.
    **Restore did not begin** means that attempt never replaced the workspace.
+   For 30 days after a backup is restored, every account sees a notice after
+   signing in: the restore date, the backup's date, that later changes were
+   discarded and that filing, links or sharing may have changed. It contains no
+   document names or counts. Dismissing it hides it in that browser only.
 
 Current account state and passkeys remain authoritative. Archived credentials
 cannot authorize activation or renew the original confirmation. Sharing is capped
@@ -532,12 +544,13 @@ failed attempts. Successful source/custody evidence is deliberately retained;
 there is no automatic pruning or supported journal-deletion shortcut. A 65th
 new ID is refused. Keep these records and plan recovery-root capacity accordingly;
 changing that bound or retention policy requires a separately reviewed recovery
-design. The supported layout mounts the application directory as one filesystem:
+design ([SPN-125](todo/SPN-125.md)). The supported layout mounts the application directory as one filesystem:
 the database and any WAL/SHM files must share its device. The recovery root may
 use a separate volume. Free bytes are counted once per device, while the existing
 application and recovery safety reserves both remain required on a shared volume.
 
-For an unresolved restore, preserve the private recovery root, encrypted source,
+For an unresolved restore, follow the [maintenance runbook](maintenance.md#an-unresolved-restore).
+Preserve the private recovery root, encrypted source,
 raw/frozen custody and opening barrier. Use the independent CLI's `status` to
 inspect maintenance state. Ordinary verify/start/resume refuses unresolved
 execution; deleting journals, barriers or retained files is not a recovery step.

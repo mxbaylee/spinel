@@ -134,47 +134,96 @@ jobs:
         if: needs.changes.outputs.docs_only == 'true'
         run: echo 'Not applicable — only allowlisted documentation changed; Backlog and Lint still run.'
 
-  unit-tests:
-    name: Unit tests
+  # Separate runners retain maxWorkers: 1 and every case/assertion. Real restore
+  # lifecycle cases include bounded physical shutdown/closure waits: the
+  # 117-case supervisor file alone measured 343s and maintenance/backup another
+  # ~260s, so one serial job could not finish within its hosted cap (SPN-112).
+  unit-test-run:
+    name: Unit tests (${{ matrix.suite }})
     needs: changes
+    if: needs.changes.outputs.docs_only != 'true'
     runs-on: ubuntu-latest
-    # Real restore lifecycle cases include bounded physical shutdown/closure waits.
-    # The117-case supervisor file alone measured343s; retain every assertion.
     timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [supervisor, recovery, remaining]
     steps:
-      - if: needs.changes.outputs.docs_only != 'true'
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-      - if: needs.changes.outputs.docs_only != 'true'
-        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
       - name: Install
-        if: needs.changes.outputs.docs_only != 'true'
         run: npm ci
-      # lib/ runs in separate partitions below.
       - name: Install fixture init
-        if: needs.changes.outputs.docs_only != 'true'
         run: |
           node scripts/ci/prefer-ubuntu-archive.ts
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends tini
+      # lib/ runs in its own partitions below.
       - name: Unit tests
-        if: needs.changes.outputs.docs_only != 'true'
-        run: node scripts/ci/pid-namespace.ts npm test -- --exclude 'lib/**'
+        env:
+          SUITE: ${{ matrix.suite }}
+        run: |
+          case "$SUITE" in
+            supervisor)
+              node scripts/ci/pid-namespace.ts npx vitest run src/server/maintenance/supervisor.test.ts
+              ;;
+            recovery)
+              node scripts/ci/pid-namespace.ts npx vitest run src/server/maintenance/ src/server/backup/ \
+                --exclude 'src/server/maintenance/supervisor.test.ts'
+              ;;
+            remaining)
+              # Exact exclusions keep future test files in this partition; it
+              # also runs the node:test script suites.
+              node scripts/ci/pid-namespace.ts npm test -- --exclude 'lib/**' \
+                --exclude 'src/server/maintenance/**' \
+                --exclude 'src/server/backup/**'
+              ;;
+            *)
+              echo "Unknown unit partition: $SUITE" >&2
+              exit 1
+              ;;
+          esac
       - name: PDF collaboration overlap evidence
-        if: always() && needs.changes.outputs.docs_only != 'true'
+        if: always() && matrix.suite == 'remaining'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: pdf-collaboration-overlap
           path: output/pdf/spn-075-overlap/
           retention-days: 7
           if-no-files-found: warn
-      - name: Documentation-only change
-        if: needs.changes.outputs.docs_only == 'true'
-        run: echo 'Not applicable — only allowlisted documentation changed; Backlog and Lint still run.'
+
+  # The ruleset requires a check named "Unit tests". Only classified docs-only
+  # changes may omit the partitions; every partition must otherwise succeed.
+  unit-tests:
+    name: Unit tests
+    needs: [changes, unit-test-run]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Required unit validation
+        env:
+          CLASSIFICATION: ${{ needs.changes.result }}
+          DOCS_ONLY: ${{ needs.changes.outputs.docs_only }}
+          RESULT: ${{ needs.unit-test-run.result }}
+        run: |
+          case "$CLASSIFICATION:$DOCS_ONLY:$RESULT" in
+            success:false:success)
+              echo 'All unit partitions passed.'
+              ;;
+            success:true:skipped)
+              echo 'Not applicable — only allowlisted documentation changed; Backlog and Lint still run.'
+              ;;
+            *)
+              echo "Unit validation incomplete: $CLASSIFICATION:$DOCS_ONLY:$RESULT"
+              exit 1
+              ;;
+          esac
 
   # Separate runners retain maxWorkers: 1 and every seed/assertion. The mixed
   # native-history/intent matrix has its own runner so it does not consume the

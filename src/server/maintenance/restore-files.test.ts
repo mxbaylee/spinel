@@ -22,12 +22,10 @@ import {
   stagePreparedRestoreOriginal,
   activatePreparedRestoreOriginal,
   commitRestoreFiles,
-  prepareRestoreFiles,
   preserveRestoreOriginals,
   captureRestoreOriginals,
   validRestoreOriginals,
   stageRestoreCandidate,
-  rollbackRestoreFiles,
   retainRestoreSource,
   readRetainedRestoreSource,
   validRestoreSourceManifest,
@@ -109,7 +107,7 @@ async function fixture() {
     shm,
     phases,
     control,
-    prepare: () => prepareRestoreFiles(options),
+    prepare: async () => stageRestoreCandidate(options, await preserveRestoreOriginals(options)),
     openHandle: () => {
       closed = false;
     },
@@ -596,12 +594,9 @@ test.each(['replacing', 'activated'] as const)(
       phase === 'replacing' ? f.original : f.candidate,
     );
     expect(() => assertNoPendingRestore(f.databasePath)).toThrow();
-    f.failJournal();
-    await rollbackRestoreFiles(f.control, files);
-    expect(await readFile(f.databasePath)).toEqual(f.original);
-    expect(await readFile(f.databasePath + '-wal')).toEqual(f.wal);
-    await expect(lstat(f.databasePath + '-shm')).rejects.toHaveProperty('code', 'ENOENT');
-    expect(() => assertNoPendingRestore(f.databasePath)).toThrow();
+    expect(await readFile(join(f.root, `restore-${f.id}`, 'original', 'spinel.sqlite'))).toEqual(
+      f.original,
+    );
   },
 );
 
@@ -698,44 +693,16 @@ test('cancellation during replacing publication cannot start the destructive wri
   expect(() => assertNoPendingRestore(f.databasePath)).toThrow('unfinished workspace restore');
 });
 
-test('partial overwrite and interrupted rollback replay from immutable originals and preserve the inode', async () => {
-  const f = await fixture();
-  const files = await f.prepare();
-  await activateRestoreFiles(f.control, files);
-  // Simulate interrupted data/sidecar writes. Real process-cut coverage is also
-  // required when the supervisor operation integrates these file primitives.
-  await writeFile(f.databasePath, Buffer.from('partial candidate'));
-  await writeFile(f.databasePath + '-wal', Buffer.from('partial candidate WAL'));
-  f.failJournal('rolled-back');
-  await expect(rollbackRestoreFiles(f.control, files)).rejects.toThrow('Journal fsync failed');
-  await writeFile(f.databasePath, Buffer.from('partial rollback'));
-  f.failJournal();
-  await rollbackRestoreFiles(f.control, files);
-  await rollbackRestoreFiles(f.control, files);
-  expect(await readFile(f.databasePath)).toEqual(f.original);
-  expect(await readFile(f.databasePath + '-wal')).toEqual(f.wal);
-  expect(String((await lstat(f.databasePath)).ino)).toBe(files.identity.inode);
-  f.failJournal('original-committed');
-  await expect(commitRestoreFiles(f.control, files, 'original')).rejects.toThrow(
-    'Journal fsync failed',
-  );
-  expect(() => assertNoPendingRestore(f.databasePath)).toThrow();
-  f.failJournal();
-  await commitRestoreFiles(f.control, files, 'original');
-  expect(() => assertNoPendingRestore(f.databasePath)).not.toThrow();
-  // A completed restore cannot later replay rollback over newly accepted work.
-  await writeFile(f.databasePath, Buffer.from('newly accepted work'));
-  await expect(rollbackRestoreFiles(f.control, files)).rejects.toThrow('committed');
-  expect(await readFile(f.databasePath)).toEqual(Buffer.from('newly accepted work'));
-});
-
 test.each(['candidate', 'original'] as const)(
   'durable %s commitment forbids rollback even when marker cleanup has failed',
   async (outcome) => {
-    const f = await fixture(),
-      files = await f.prepare();
-    await activateRestoreFiles(f.control, files);
-    if (outcome === 'original') await rollbackRestoreFiles(f.control, files);
+    const f = await preparedOriginalFixture();
+    let files = f.originalFiles;
+    if (outcome === 'original') {
+      await stagePreparedRestoreOriginal(f.control, f.files, f.failed, f.attempt, f.path);
+      await activatePreparedRestoreOriginal(f.control, f.files, f.failed, f.attempt);
+      files = f.files;
+    }
     const marker = restoreBarrierPath(f.databasePath),
       pending = `${marker}.${files.id}.pending`;
     // An unexpected temporary-marker inode makes cleanup fail AFTER persist.
@@ -744,7 +711,9 @@ test.each(['candidate', 'original'] as const)(
     expect(f.control.readPhase()).toBe(`${outcome}-committed`);
     expect(() => assertNoPendingRestore(f.databasePath)).toThrow();
     const selected = await readFile(f.databasePath);
-    await expect(rollbackRestoreFiles(f.control, files)).rejects.toThrow('committed');
+    await expect(
+      activatePreparedRestoreOriginal(f.control, f.files, f.failed, f.attempt),
+    ).rejects.toThrow('committed');
     await expect(activateRestoreFiles(f.control, files)).rejects.toThrow('committed');
     await expect(
       commitRestoreFiles(f.control, files, outcome === 'candidate' ? 'original' : 'candidate'),
@@ -821,17 +790,14 @@ test('identical staging retry reserves no second candidate allocation', async ()
   expect(await readFile(f.databasePath)).toEqual(f.original);
 });
 
-test('missing original evidence and changed barrier identities cannot authorize rollback', async () => {
+test('changed and aliased barrier identities still block ordinary opens', async () => {
   const f = await fixture();
   const files = await f.prepare();
   await activateRestoreFiles(f.control, files);
   const marker = restoreBarrierPath(f.databasePath);
   await writeFile(marker, '{}');
-  await expect(rollbackRestoreFiles(f.control, files)).rejects.toThrow();
-  expect(await readFile(f.databasePath)).toEqual(f.candidate);
-  await rm(join(f.root, `restore-${f.id}`, 'original', 'spinel.sqlite'));
-  await expect(rollbackRestoreFiles(f.control, files)).rejects.toThrow();
   expect(() => assertNoPendingRestore(f.databasePath)).toThrow();
+  expect(await readFile(f.databasePath)).toEqual(f.candidate);
   await rm(marker);
   await symlink('missing-marker-target', marker);
   expect(() => assertNoPendingRestore(f.databasePath)).toThrow();
@@ -848,8 +814,7 @@ test.each(['', '{"version":', 'complete but not published'])(
     expect(() => assertNoPendingRestore(f.databasePath)).not.toThrow();
     await activateRestoreFiles(f.control, files);
     await expect(lstat(pending)).rejects.toHaveProperty('code', 'ENOENT');
-    await rollbackRestoreFiles(f.control, files);
-    expect(await readFile(f.databasePath)).toEqual(f.original);
+    expect(await readFile(f.databasePath)).toEqual(f.candidate);
   },
 );
 
@@ -859,13 +824,12 @@ test('interruption after atomic marker publication leaves a readable barrier and
   await activateRestoreFiles(f.control, files);
   const pending = `${restoreBarrierPath(f.databasePath)}.${files.id}.pending`;
   await link(restoreBarrierPath(f.databasePath), pending);
-  await rollbackRestoreFiles(f.control, files);
-  await commitRestoreFiles(f.control, files, 'original');
+  await commitRestoreFiles(f.control, files, 'candidate');
   await expect(lstat(pending)).rejects.toHaveProperty('code', 'ENOENT');
-  expect(await readFile(f.databasePath)).toEqual(f.original);
+  expect(await readFile(f.databasePath)).toEqual(f.candidate);
 });
 
-test('capacity lost after preparation or before rollback refuses mutation and retains all source evidence', async () => {
+test('capacity lost after preparation refuses activation and retains all source evidence', async () => {
   const f = await fixture();
   const files = await f.prepare();
   f.control.availableBytes = async () => 0n;
@@ -873,18 +837,6 @@ test('capacity lost after preparation or before rollback refuses mutation and re
   expect(f.phases).toEqual([]);
   expect(await readFile(f.databasePath)).toEqual(f.original);
   expect(() => assertNoPendingRestore(f.databasePath)).not.toThrow();
-  f.control.availableBytes = undefined;
-  await activateRestoreFiles(f.control, files);
-  f.control.availableBytes = async () => 0n;
-  await expect(rollbackRestoreFiles(f.control, files)).rejects.toThrow('Not enough disk space');
-  expect(await readFile(f.databasePath)).toEqual(f.candidate);
-  expect(await readFile(join(f.root, `restore-${files.id}`, 'original', 'spinel.sqlite'))).toEqual(
-    f.original,
-  );
-  expect(() => assertNoPendingRestore(f.databasePath)).toThrow();
-  f.control.availableBytes = undefined;
-  await rollbackRestoreFiles(f.control, files);
-  expect(await readFile(f.databasePath)).toEqual(f.original);
 });
 
 async function preparedOriginalFixture() {
@@ -933,7 +885,7 @@ async function preparedOriginalFixture() {
   await writeFile(path, prepared, { mode: 0o600 });
   const files = { ...originalFiles, candidate: fingerprint(prepared) },
     attempt = randomUUID();
-  return { ...f, files, failed, raw, prepared, path, attempt };
+  return { ...f, originalFiles, files, failed, raw, prepared, path, attempt };
 }
 test('prepared original activation retains both raw generations and never reinstalls bytes after original commitment', async () => {
   const f = await preparedOriginalFixture(),
@@ -948,7 +900,14 @@ test('prepared original activation retains both raw generations and never reinst
   );
   expect(f.phases.at(-1)).toBe('rolled-back');
   expect(() => assertNoPendingRestore(f.databasePath)).toThrow();
+  f.failJournal('original-committed');
+  await expect(commitRestoreFiles(f.control, f.files, 'original')).rejects.toThrow(
+    'Journal fsync failed',
+  );
+  expect(() => assertNoPendingRestore(f.databasePath)).toThrow();
+  f.failJournal();
   await commitRestoreFiles(f.control, f.files, 'original');
+  expect(() => assertNoPendingRestore(f.databasePath)).not.toThrow();
   const acknowledged = Buffer.from('Acknowledged edit after original commitment');
   await writeFile(f.databasePath, acknowledged);
   await commitRestoreFiles(f.control, f.files, 'original');
@@ -984,6 +943,22 @@ test.each(['failed-raw', 'live', 'original-raw', 'barrier', 'staged'] as const)(
     expect(f.phases.at(-1)).toBe('activated');
   },
 );
+test('capacity lost before prepared original activation refuses mutation and retains raw evidence', async () => {
+  const f = await preparedOriginalFixture();
+  await stagePreparedRestoreOriginal(f.control, f.files, f.failed, f.attempt, f.path);
+  f.control.availableBytes = async () => 0n;
+  await expect(
+    activatePreparedRestoreOriginal(f.control, f.files, f.failed, f.attempt),
+  ).rejects.toThrow('Not enough disk space');
+  expect(await readFile(f.databasePath)).toEqual(f.candidate);
+  expect(await readFile(join(f.root, `restore-${f.id}`, 'original', 'spinel.sqlite'))).toEqual(
+    f.original,
+  );
+  expect(() => assertNoPendingRestore(f.databasePath)).toThrow();
+  f.control.availableBytes = undefined;
+  await activatePreparedRestoreOriginal(f.control, f.files, f.failed, f.attempt);
+  expect(await readFile(f.databasePath)).toEqual(f.prepared);
+});
 test('prepared original authority loss after the first chunk retains partial inode, raw evidence and barrier', async () => {
   const f = await preparedOriginalFixture();
   await stagePreparedRestoreOriginal(f.control, f.files, f.failed, f.attempt, f.path);

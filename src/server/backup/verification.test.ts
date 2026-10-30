@@ -222,7 +222,7 @@ test('incompatible or interrupted preparation leaves no candidate and preserves 
       expectedArchive: { bytes: (await stat(archive.archive)).size, sha256: archive.sha256 },
       expectedImage: `sha256:${'b'.repeat(64)}`,
     }),
-  ).rejects.toThrow('verification');
+  ).rejects.toMatchObject({ code: 'backup-image' });
   await expect(
     prepareRestoreArchive({
       ...f.options,
@@ -230,7 +230,7 @@ test('incompatible or interrupted preparation leaves no candidate and preserves 
       expectedArchive: { bytes: (await stat(archive.archive)).size, sha256: archive.sha256 },
       expectedOrigin: 'https://another.example',
     }),
-  ).rejects.toThrow('verification');
+  ).rejects.toMatchObject({ code: 'backup-origin' });
   await expect(
     prepareRestoreArchive({
       ...f.options,
@@ -433,7 +433,7 @@ test('wrong key, incompatible image, bounded decompression and killed worker pre
   const source = await readFile(archive.archive);
   await expect(
     verifyArchive({ ...f.options, archive: archive.archive, keyFile: wrong }),
-  ).rejects.toThrow();
+  ).rejects.toMatchObject({ name: 'RecoveryResourceError', code: 'backup-unreadable' });
   await expect(
     verifyArchive({ ...f.options, archive: archive.archive, keyFile: alias }),
   ).rejects.toThrow();
@@ -443,7 +443,7 @@ test('wrong key, incompatible image, bounded decompression and killed worker pre
       archive: archive.archive,
       expectedImage: `sha256:${'b'.repeat(64)}`,
     }),
-  ).rejects.toThrow();
+  ).rejects.toMatchObject({ code: 'backup-image' });
   await expect(
     restoreArchive(archive.archive, f.key, f.directory, join(f.directory, 'too-large'), {
       maxDatabaseBytes: 4096,

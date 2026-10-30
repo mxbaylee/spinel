@@ -12,6 +12,14 @@ export const RESTORE_RESOURCE_MESSAGES = {
     'The restored database exceeds the recovery size limit. Keep the source backup and use a larger recovery budget.',
   'disk-space':
     'Recovery has insufficient disk space. Free space on the private backup, application or recovery volume, then retry.',
+  'backup-unreadable':
+    'The backup could not be decrypted and checked with this recovery key. Use the key that belongs to this complete, unmodified backup.',
+  'backup-origin':
+    'This backup belongs to a different workspace address. Restore it on the deployment that created it, or use the fresh-host recovery procedure.',
+  'backup-image':
+    'This backup was made by a different application image. Run the image recorded with the backup, or use the fresh-host recovery procedure.',
+  'restore-authority':
+    'The five-minute passkey check expired before preparation finished. Prepare the restore again, or choose a saved backup instead of a slow upload.',
 } as const;
 
 export interface RestoreResources {
@@ -172,6 +180,26 @@ export interface RestorePreparation {
   confirmation: string | null;
   consequencesVersion: 1;
   error: string | null;
+}
+
+/** Shown to every signed-in account after a backup replaced the workspace.
+ * Only these two dates cross the API: never the source, key or archived settings. */
+export interface RestoreNotice {
+  restoredAt: number;
+  backupCreatedAt: string;
+}
+export const RESTORE_NOTICE_MS = 30 * 24 * 60 * 60_000;
+export function validRestoreNotice(value: unknown): value is RestoreNotice {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const notice = value as RestoreNotice;
+  return (
+    Object.keys(notice).length === 2 &&
+    Number.isSafeInteger(notice.restoredAt) &&
+    notice.restoredAt > 0 &&
+    typeof notice.backupCreatedAt === 'string' &&
+    notice.backupCreatedAt.length <= 64 &&
+    Number.isFinite(Date.parse(notice.backupCreatedAt))
+  );
 }
 
 /** Historical outcome only: not a claim about the workspace's current contents. */

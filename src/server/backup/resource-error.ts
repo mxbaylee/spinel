@@ -15,3 +15,8 @@ export class RecoveryResourceError extends Error {
     this.code = code;
   }
 }
+
+/** Refusals that another configured key cannot change. A wrong key and altered
+ * bytes are indistinguishable, so `backup-unreadable` tries the next key. */
+export const keyIndependent = (error: unknown): error is RecoveryResourceError =>
+  error instanceof RecoveryResourceError && error.code !== 'backup-unreadable';

@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "status": "Local complete-app acceptance passed; first hosted provider failure and unit timeout retained. Reviewed repair awaits actual provider and full CI.",
+  "status": "Local and actual Spaces provider acceptance passed. Unit validation is partitioned after the serial job hit its cap and hid one stale HTTP allowlist; current-head CI and final whole-ticket grades remain.",
   "limitations": [
-    "Actual Spaces acceptance, both whole-ticket grades and all seven current-head CI gates remain pending.",
+    "Actual Spaces acceptance passed at 2c63fea (run 41005346893); it is rerun on the landing commit. Both whole-ticket grades and all seven CI gates are recorded against the landing commit in the PR, not here.",
     "Historical da/160 preparation failures remain failures; observer interference was reproduced, but their exact denied PID was not recorded.",
-    "The0d3 browser run failed cold inspection; separate repaired inspection does not rewrite that run as passed.",
+    "The 0d3 browser run failed cold inspection; separate repaired inspection does not rewrite that run as passed.",
     "Synthetic CDP passkeys and local Linux production images are not physical-device or provider acceptance.",
-    "The separate read-only metadata observer is outside the1GiB serving cgroup; its own32MiB profile and11MiB observed peak are disclosed."
+    "The separate read-only metadata observer is outside the 1 GiB serving cgroup; its own 32 MiB profile and 11 MiB observed peak are disclosed."
   ],
   "crashCuts": {
     "sourceSha": "15775bccf78493bf74896a7ecc7165ba7412ca6a",
@@ -294,7 +294,7 @@
       "PidsLimit": 128
     },
     "actualOriginalMountReadOnly": true,
-    "watchdogPeak": "No2sRSSsample: helper finished in0.350s; exit0",
+    "watchdogPeak": "No 2 s RSS sample: helper finished in 0.350 s; exit 0",
     "originalServingRunStillRecordedFailed": true,
     "proof": {
       "committed": true,
@@ -641,7 +641,7 @@
       "admin-backuprestore--expired-tablet.png": "4112d53cae7bcd8ea0d31a007fe2f0eb04c94c4b231533b096d1243d112c42b1"
     },
     "revalidatedAt": "280d2e72ee07c3f11c3b62049adf57ee2e17fb56",
-    "reuseReview": "D rechecked all200 hashes and unchanged restore components/stories/styles/shared controls. SPN052 has separate scoped offline-help UI. Approved reuse of da proposed-state evidence, not a fresh280 Storybook run."
+    "reuseReview": "D rechecked all 200 hashes and unchanged restore components/stories/styles/shared controls. SPN052 has separate scoped offline-help UI. Approved reuse of the da proposed-state evidence, not a fresh 280 Storybook run."
   },
   "productionBuildCurrent": {
     "source": "280d2e72ee07c3f11c3b62049adf57ee2e17fb56",
@@ -1071,8 +1071,8 @@
       "logSha256": "462e7633ef4a8f7acac1e9c759421101257e6c63b1f623624d245d788a4e4d68"
     },
     "limitations": [
-      "Memory guard is injected through the measured-memory failure callback; timeout uses the actual30-second timer.",
-      "Separate older assertion correction follows firstbatch and has its own passing run.",
+      "Memory guard is injected through the measured-memory failure callback; timeout uses the actual 30-second timer.",
+      "Separate older assertion correction follows the first batch and has its own passing run.",
       "Historical da preparation failure cause remains unproven; no new production/browser run yet."
     ]
   },
@@ -1693,7 +1693,7 @@
     "evidenceBundle": "../review-assets/spn-112/actual-280-evidence.zip",
     "evidenceBundleSha256": "d8ca61569b98ab65e73c756418f322887d3d0a966e66ae213af91a690e62fb3e",
     "evidenceSha256": "9f5927b18f2ce68735eb4ee6c933e364a6df9a5b14919fea37a89b1f8ef34b72",
-    "review": "D inspected all18 and approved current actual visuals; agent review only. B independently verified acceptance/source/resource/closure evidence."
+    "review": "D inspected all 18 and approved current actual visuals; agent review only. B independently verified acceptance/source/resource/closure evidence."
   },
   "provider636": {
     "runId": 41003825864,
@@ -1809,7 +1809,7 @@
       ],
       "checks": {
         "scopedTests": "11/11",
-        "typecheck": "passed; sampled1615MiB",
+        "typecheck": "passed; sampled 1615 MiB",
         "lint": "passed",
         "format": "passed",
         "diffCheck": "passed"
@@ -1823,8 +1823,88 @@
     "conclusion": "cancelled",
     "startedAt": "2026-10-30T04:36:43Z",
     "completedAt": "2026-10-30T04:46:58Z",
-    "reason": "Job reached its10-minute wall-clock cap.117supervisor cases passed in342709ms;32files reported with no assertion failure before cancellation. Whole suite did not complete.",
+    "reason": "Job reached its 10-minute wall-clock cap. 117 supervisor cases passed in 342709 ms; 32 files reported with no assertion failure before cancellation. Whole suite did not complete.",
     "logSha256": "8542893f866cbc43c87522173357e645b312ee181610d94e48855c0d7e9b75a3",
-    "repair": "Job cap15minutes; individual test limits/assertions unchanged."
+    "repair": "Job cap 15 minutes; individual test limits/assertions unchanged."
+  },
+  "provider2c6": {
+    "runId": 41005346893,
+    "jobId": 123898882208,
+    "attempt": 1,
+    "head": "2c63feac6d5d8fdc4a699a2a20ae9b326c4bb2c1",
+    "artifactId": 12955426900,
+    "artifactZipSha256": "04e55ecb6377d87da25a19dcf2e4ebdddf2b0ba6786e4a9eca8bd7fe69c1ee6a",
+    "result": {
+      "status": "passed",
+      "sourceCommit": "2c63feac6d5d8fdc4a699a2a20ae9b326c4bb2c1",
+      "checks": [
+        "bucket-retention-policy",
+        "private-publication-and-readback",
+        "anonymous-access-denial",
+        "authenticated-download-and-encrypted-restore",
+        "paginated-complete-catalog-and-pending-cleanup",
+        "retention-and-deletion",
+        "complete-app-provider-fixture",
+        "operator-provider-catalog",
+        "catalog-source-preparation",
+        "catalog-confirmation-and-private-release",
+        "provider-restore-session-revocation-and-outcome",
+        "provider-restored-content-and-current-passkey"
+      ],
+      "cleanup": "complete",
+      "archiveBytes": 663,
+      "supervisedRestore": {
+        "status": "passed",
+        "checks": [
+          "complete-app-provider-fixture",
+          "operator-provider-catalog",
+          "catalog-source-preparation",
+          "catalog-confirmation-and-private-release",
+          "provider-restore-session-revocation-and-outcome",
+          "provider-restored-content-and-current-passkey"
+        ],
+        "runtime": "real-app-child-process",
+        "imagePolicy": "synthetic-fixture",
+        "localCleanup": "safe",
+        "archiveBytes": 12309,
+        "sourceSha256": "dae5ab1682138533a9d797e71df05fb1c561c4110e75fbaf5dc1614551da05b2"
+      },
+      "durationMs": 13088
+    }
+  },
+  "unit2c6": {
+    "runId": 41005346913,
+    "attempts": [
+      {
+        "attempt": 1,
+        "jobId": 123899898299,
+        "conclusion": "cancelled",
+        "startedAt": "2026-10-30T04:59:56Z",
+        "completedAt": "2026-10-30T05:15:11Z"
+      },
+      {
+        "attempt": 2,
+        "jobId": 123923216686,
+        "conclusion": "cancelled",
+        "startedAt": "2026-10-30T06:16:25Z",
+        "completedAt": "2026-10-30T06:31:41Z"
+      }
+    ],
+    "reason": "Serial vitest (maxWorkers 1) reached the 15-minute cap; 163 of 221 application files reported.",
+    "failure": "restore-http.integration public preparation key allowlist predated verification/resources fields from 121fb7f.",
+    "repair": "Allowlist plus ready-state validity assertions; three unit partitions with a required aggregate. No case, assertion or deadline changed.",
+    "localLinux": {
+      "image": "node:26.12.1-bookworm",
+      "arch": "arm64",
+      "limits": "2 GiB / 2 CPU",
+      "restoreHttpMs": 4356,
+      "neverReportedFiles": 58,
+      "neverReportedTests": 208,
+      "result": "passed",
+      "excludedSetupArtifacts": [
+        "native bindings outside repository node_modules denied by worker permissions",
+        "stale host body-parser 2.3.0 versus locked 2.4.0"
+      ]
+    }
   }
 }

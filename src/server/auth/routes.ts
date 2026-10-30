@@ -12,6 +12,7 @@ import type { Session } from './store.ts';
 import { AdminStore } from './admin.ts';
 import { OwnershipTransfer } from './ownership.ts';
 import { AccessTokens } from './tokens.ts';
+import { restoreNotice } from '../backup/restore-notice.ts';
 import { AssistantOAuth } from './oauth.ts';
 
 class AccountChangedError extends AuthError {}
@@ -90,6 +91,7 @@ export function authRoutes(
     const user = store.user(session.user_id!)!;
     response.json({
       user: { id: user.id, ...profiles.get(user.id), isAdmin: Boolean(user.is_admin) },
+      restore: restoreNotice(store.database, Date.now()),
     });
   });
   const requireAdmin = (request: Request) => {

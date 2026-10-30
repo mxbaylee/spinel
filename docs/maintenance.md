@@ -193,6 +193,27 @@ field, without inheriting application credentials. Unknown state remains in
 maintenance. The proxy can continue explaining the outage while application auth
 and ordinary jobs are unavailable.
 
+## An unresolved restore
+
+Admin reports an unresolved or unknown restore outcome, the workspace stays in
+maintenance, and ordinary verify/start/resume refuse to reopen it. The files alone
+cannot prove which generation is intended, so recovery is deliberate:
+
+1. Leave the workspace closed. Do not delete the private recovery root, its
+   `restore-*` directories or journals, the `<database>.restore-pending` opening
+   barrier or any retained source; do not run another database writer.
+2. Record `node scripts/deploy/maintenance.ts status`, then restart the supervisor
+   once. Restart finishes reopening a committed outcome without reinstalling
+   prepared bytes, and marks an admission that never executed as failed and stopped.
+3. If status now shows a stopped operation and no pending restore, run verify,
+   start and resume with that operation ID, sign in as the Operator and
+   **Refresh restore status**. Only a recorded outcome says which data is live.
+4. If verify still refuses, copy the whole application directory and recovery
+   root read-only to separate encrypted storage, then follow
+   [fresh-host recovery](backups.md#restore-onto-a-fresh-host) from the last
+   verified backup with its access review. Keep the copy until that host is
+   checked; it is the only evidence of work accepted after that backup.
+
 ## Notices and time zones
 
 Notices are one-off announcements. They record a full absolute instant, an IANA

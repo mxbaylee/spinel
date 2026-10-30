@@ -39,7 +39,7 @@ import {
 } from './transfer.ts';
 import { prepareRestoreArchive, reconcilePreparedRestore } from './verification.ts';
 import type { PreparedRestoreSource } from './verification.ts';
-import { RecoveryResourceError } from './resource-error.ts';
+import { keyIndependent, RecoveryResourceError } from './resource-error.ts';
 
 const LIFETIME_MS = 30 * 60_000;
 const DATABASE_LIMIT = 8 * 1024 ** 3;
@@ -723,6 +723,7 @@ export class RestoreRegistry {
     keys: { path: string; id?: string }[],
     signal: AbortSignal,
   ) {
+    let unreadable = false;
     for (const key of keys) {
       this.assertActive(job);
       let prepared: PreparedRestoreSource;
@@ -738,7 +739,8 @@ export class RestoreRegistry {
         });
       } catch (error) {
         signal.throwIfAborted();
-        if (error instanceof RecoveryResourceError) throw error;
+        if (keyIndependent(error)) throw error;
+        unreadable ||= error instanceof RecoveryResourceError;
         continue;
       }
       if (key.id !== undefined && prepared.keyId !== undefined && prepared.keyId !== key.id) {
@@ -749,7 +751,10 @@ export class RestoreRegistry {
       break;
     }
     this.assertActive(job);
-    if (!job.prepared) throw new Error('No compatible source.');
+    if (!job.prepared)
+      throw unreadable
+        ? new RecoveryResourceError('backup-unreadable')
+        : new Error('No compatible source.');
     await this.eraseKey(job);
     this.assertActive(job);
     const path = join(job.directory!, 'preview-current.sqlite');
@@ -926,6 +931,8 @@ export class RestoreRegistry {
           // No cleanup path removes this marker until custody is acknowledged.
           if (!job.handoffWritten) {
             const temporary = join(job.directory!, 'handoff-pending.json');
+            // A retry after a failed write/sync/rename replaces only this unpublished copy.
+            await rm(temporary, { force: true });
             const marker = await open(temporary, 'wx', 0o600);
             try {
               await marker.writeFile(JSON.stringify(job.admission));
@@ -1018,7 +1025,9 @@ export class RestoreRegistry {
             ? null
             : error instanceof RecoveryResourceError
               ? new RecoveryResourceError(error.code).message
-              : FAILURE;
+              : this.now() >= job.proof.expiresAt
+                ? new RecoveryResourceError('restore-authority').message
+                : FAILURE;
       } catch {
         this.db
           .prepare('UPDATE backup_state SET lease=? WHERE id=1 AND owner=?')

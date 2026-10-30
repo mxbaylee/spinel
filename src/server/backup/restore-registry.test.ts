@@ -330,6 +330,8 @@ test.each(['target', 'authority', 'expiry'] as const)(
     const failed = await f.upload(created.id);
     expect(failed.state).toBe('failed');
     expect(failed.confirmation).toBeNull();
+    if (scenario === 'expiry')
+      expect(failed.error).toBe(new RecoveryResourceError('restore-authority').message);
     expect(f.admit).not.toHaveBeenCalled();
     expect(f.service.state().owner).toBeNull();
   },
@@ -341,6 +343,12 @@ test('allowlisted resource errors survive preparation while arbitrary errors rem
   const first = await f.create();
   expect((await f.upload(first.id)).error).toBe(
     new RecoveryResourceError('memory-headroom').message,
+  );
+  // A key that cannot authenticate the upload is reported once every key is tried.
+  f.prepare.mockRejectedValueOnce(new RecoveryResourceError('backup-unreadable'));
+  const unreadable = await f.create();
+  expect((await f.upload(unreadable.id)).error).toBe(
+    new RecoveryResourceError('backup-unreadable').message,
   );
   f.prepare.mockRejectedValueOnce(new Error('private source /secret/data.sqlite'));
   const second = await f.create();
@@ -418,6 +426,29 @@ test('revocation during upload prevents verification and discards private prepar
   expect(result.state).toBe('failed');
   expect(f.prepare).not.toHaveBeenCalled();
   expect(f.service.state().owner).toBeNull();
+});
+
+test('an unpublished handoff copy from an interrupted confirmation does not wedge the retry', async () => {
+  const f = await fixture(),
+    created = await f.create(),
+    ready = await f.upload(created.id);
+  const [directory] = (await readdir(f.directory)).filter((name) =>
+    name.startsWith('.restore-preparation-'),
+  );
+  await writeFile(join(f.directory, directory, 'handoff-pending.json'), 'partial', {
+    mode: 0o600,
+  });
+  f.admit.mockImplementation(async (request) => f.acknowledge(request));
+  const result = await f.service.restores.confirm(
+    created.id,
+    f.actor.id,
+    f.session.token_hash,
+    ready.confirmation!,
+    f.proof(),
+  );
+  expect(result.state).toBe('started');
+  expect(result.error).toBeNull();
+  expect(f.admit).toHaveBeenCalledOnce();
 });
 
 test('uncertain custody retains source and original request; retry releases only after matching ACK', async () => {
