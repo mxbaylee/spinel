@@ -54,6 +54,70 @@ test('one logical native save includes queue delay and retries, and a duplicate 
   expect(JSON.stringify(events)).not.toContain('Private content');
 });
 
+test('queue sampling skips count and age work between due observations and still reports immediate empty', async () => {
+  const f = fixture();
+  cleanup.push(f.close);
+  let at = 100;
+  const events: DiagnosticEvent[] = [];
+  const source = f.client({ diagnostics: observer(events), diagnosticNow: () => at });
+  source.resume();
+  await turns();
+  const queues = () => events.filter((event) => event.name === 'sync.client.queue');
+  expect(queues()).toEqual([
+    { name: 'sync.client.queue', details: { pendingCount: 0, oldestPendingAgeMs: 0 } },
+  ]);
+  const measurements = vi.spyOn(source.sync, 'diagnosticQueue');
+  // Native input publishes repeatedly inside the sampling interval. Suppression
+  // must avoid constructing the full observation, not merely discard its result.
+  for (let group = 0; group < 32; group++) {
+    at = 100 + group;
+    source.edit([write({ v: `first-${group}` }, 0), write({ v: `second-${group}` }, 1)]);
+  }
+  expect(measurements).not.toHaveBeenCalled();
+  expect(queues()).toHaveLength(1);
+  expect(source.sync.state).toMatchObject({ pending: true, resyncing: false });
+
+  at = 1100;
+  source.sync.setConnected(true);
+  expect(measurements).toHaveBeenCalledOnce();
+  expect(queues().at(-1)).toEqual({
+    name: 'sync.client.queue',
+    details: { pendingCount: 64, oldestPendingAgeMs: 1000 },
+  });
+  source.sync.retry();
+  await turns();
+  const request = source.submits()[0];
+  expect(request.mutations).toHaveLength(64);
+  expect(measurements).toHaveBeenCalledOnce();
+  expect(queues().at(-1)).toEqual({
+    name: 'sync.client.queue',
+    details: { pendingCount: 64, oldestPendingAgeMs: 1000 },
+  });
+  for (let publication = 0; publication < 64; publication++) source.sync.setConnected(true);
+  expect(measurements).toHaveBeenCalledOnce();
+
+  const accepted = await f.accept(request);
+  at = 1101;
+  source.sync.receive({
+    type: 'ack',
+    mutationId: request.mutationId,
+    duplicate: false,
+    ...wire(accepted.edit),
+  });
+  await turns();
+  expect(measurements).toHaveBeenCalledTimes(2);
+  expect(queues()).toEqual([
+    { name: 'sync.client.queue', details: { pendingCount: 0, oldestPendingAgeMs: 0 } },
+    { name: 'sync.client.queue', details: { pendingCount: 64, oldestPendingAgeMs: 1000 } },
+    { name: 'sync.client.queue', details: { pendingCount: 0, oldestPendingAgeMs: 0 } },
+  ]);
+  expect(source.sync.state).toMatchObject({ pending: false, revision: 2, resyncing: false });
+  expect({ ...source.live.snapshot(), rev: source.sync.confirmedRevision }).toEqual(
+    f.storage.unit.snapshot,
+  );
+  expect(f.storage.history).toHaveLength(1);
+});
+
 test('queued persistence captures once only when requested, and a skipped hook never claims a local save', async () => {
   const f = fixture();
   cleanup.push(f.close);

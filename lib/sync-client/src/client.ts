@@ -99,33 +99,39 @@ export class SyncClient {
   }
   /** Unknown age is preferable to inventing timestamps for persisted/rebased work. */
   diagnosticQueue(): ClientQueueObservation {
-    const pendingCount =
-      this.inflight.length + this.buffer.reduce((count, group) => count + group.length, 0);
+    let pendingCount = this.inflight.length;
+    let oldest = Infinity;
+    let unknownAge = false;
+    if (this.inflight.length) {
+      const at = this.sentObservation?.unknownAge ? undefined : this.sentObservation?.at;
+      if (at === undefined) unknownAge = true;
+      else oldest = at;
+    }
+    for (const group of this.buffer) {
+      pendingCount += group.length;
+      const at = this.queuedObservations.get(group)?.at;
+      if (at === undefined) unknownAge = true;
+      else oldest = Math.min(oldest, at);
+    }
     if (!pendingCount) return { pendingCount, oldestPendingAgeMs: 0 };
-    const times = [
-      ...(this.inflight.length
-        ? [this.sentObservation?.unknownAge ? undefined : this.sentObservation?.at]
-        : []),
-      ...this.buffer.map((group) => this.queuedObservations.get(group)?.at),
-    ];
     return {
       pendingCount,
-      oldestPendingAgeMs: times.some((at) => at === undefined)
-        ? null
-        : Math.max(0, this.diagnosticNow() - Math.min(...(times as number[]))),
+      oldestPendingAgeMs: unknownAge ? null : Math.max(0, this.diagnosticNow() - oldest),
     };
   }
   private observeQueue(force = false): void {
     if (!this.options.diagnostics) return;
     const at = this.diagnosticNow();
-    const queue = this.diagnosticQueue();
     // Sample active queues at most once/second, with an immediate final empty state.
+    // Admission precedes the count/age scan: publish also runs inside native edits.
+    // Buffered groups are nonempty by enqueue, rebase and checkpoint admission.
     if (
       !force &&
       at - this.queueObservedAt < 1000 &&
-      !(this.queueObservedCount && !queue.pendingCount)
+      !(this.queueObservedCount && !this.inflight.length && !this.buffer.length)
     )
       return;
+    const queue = this.diagnosticQueue();
     this.queueObservedAt = at;
     this.queueObservedCount = queue.pendingCount;
     const scope = captureDiagnostic(this.options.diagnostics);

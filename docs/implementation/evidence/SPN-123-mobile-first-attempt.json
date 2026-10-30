@@ -1,0 +1,1560 @@
+{
+  "schema": 1,
+  "purpose": "Retained first-attempt mobile responsiveness failure for SPN-123, extracted from the original CI artifact without changing acceptance or rerunning tests.",
+  "source": {
+    "repository": "mxbaylee/spinel",
+    "pullRequest": 220,
+    "headCommit": "8f3ace5329b754bb4534203aba0d755cc61bdedb",
+    "baseCommit": "81e369d3d2f7f67329924430e22edd9caa66d816",
+    "testedMergeCommit": "376b129f3c70754b595477debe9f285e1ffe076e",
+    "immutableBaselineCommit": "2c84a18449c7dae09e2817989fac6236be96ef98",
+    "workflowRunId": 40974229811,
+    "workflowRunNumber": 1477,
+    "workflowRunAttempt": 1,
+    "jobId": 123798468916,
+    "jobName": "Doc responsiveness (mobile)",
+    "workflowUrl": "https://github.com/mxbaylee/spinel/actions/runs/40974229811",
+    "jobUrl": "https://github.com/mxbaylee/spinel/actions/runs/40974229811/job/123798468916",
+    "artifact": {
+      "id": 12942629144,
+      "name": "doc-responsiveness-mobile",
+      "bytes": 2215230,
+      "sha256": "52a64fad45027ee878613116a3fbb561b24fdce10430a89f734643cb44cdac94",
+      "expiresAt": "2026-11-06T00:06:00Z",
+      "role": "Supplementary expiring artifact; the compact records here preserve the failure measurements independently of its retention."
+    },
+    "browser": "156.0.8078.4",
+    "playwright": "1.64.1",
+    "runtime": "v26.12.1",
+    "runner": {
+      "name": "GitHub Actions 1000031729",
+      "os": "Linux",
+      "arch": "X64",
+      "run": "40974229811",
+      "attempt": "1"
+    },
+    "cgroupLimit": "unavailable",
+    "harnessSha256": {
+      "e2e/doc-responsiveness.ts": "38c3cc6bcab8dd6564444cb946784e748899e9560efb7e7dbbed0e21d16ec067",
+      "e2e/doc-responsiveness.spec.ts": "f7c5a1dc3d22d6a0ef9fb8615d08a4918976a45de7a17f2a941372cf9ecff388",
+      "e2e/doc-responsiveness-fixture.ts": "8a77b15b3fa9ab3961b949cb5fc820f263775ded4952e8f5ef34e4cd02a9b80f",
+      "e2e/doc-responsiveness-boundaries.ts": "7875ed78948227bf6a781be987230b9fbd0b1391a67d7683f0961169c8672705",
+      "web/docResponsivenessEvidence.ts": "4b2b5b6f41b365839733fabb2cb0fc52eaaf81e314f7b9f39b443b8fa6874a08",
+      "playwright.config.ts": "05ab0c9d65a8c371ee8bba3b767b55205834c3f7d09d7f2156bc42615640350a",
+      "package-lock.json": "417a0eb4b269a3e0cc6db81e134f3b1962bb0ff8668a6ae5f8c302da6762e520"
+    }
+  },
+  "result": {
+    "baseline": {
+      "passedTests": 4,
+      "failedTests": 0,
+      "loggedDurationMinutes": 15.1
+    },
+    "candidate": {
+      "passedTests": 6,
+      "failedTests": 1,
+      "loggedDurationMinutes": 12.4
+    },
+    "retries": 0,
+    "candidateComparisonExecuted": false,
+    "failure": {
+      "sample": "plain-2",
+      "assertion": "capacityFlush.max <= budgets.mobile.flushMaxMs",
+      "location": "e2e/doc-responsiveness.spec.ts:713",
+      "expectedMaximumMs": 100,
+      "observedMaximumMs": 104.19999999995343
+    },
+    "interpretation": "A failed first-attempt maximum budget is retained as a failure. Other passing samples and integrity checks do not override it."
+  },
+  "layout": {
+    "nativeFlushColumns": [
+      "outcome",
+      "reason",
+      "startedAtMs",
+      "durationMs",
+      "historyStates",
+      "collaborationStates",
+      "quietForMsOrNull"
+    ],
+    "flushDistributionMethod": "For each reason, sort retained durationMs ascending; p50/p95 use nearest rank ceil(n*p)-1; max is the last value; sum adds sorted values. Every native flush record is retained, so these distributions can be recomputed without the artifact.",
+    "reportedSummaryQualification": "Non-flush aggregates are copied from original metrics; unrelated full key/frame/long-task arrays are intentionally omitted. Only the failed overlapping interval is retained below.",
+    "completedQualification": "The failed plain-2 metrics omit completed because the maximum assertion threw; present:false is not converted to an original false or a successful result."
+  },
+  "candidates": [
+    {
+      "sample": "plain-1",
+      "evidencePath": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "evidenceSha256": "bd3896e6bcd7cd744507df0e51824df4f83df38fdd3fea27f6aee062e420072a",
+      "rawFlags": {
+        "schema": 4,
+        "role": "candidate",
+        "preset": "mobile",
+        "budgetEnforced": true,
+        "attempt": 0,
+        "source": "376b129f3c70754b595477debe9f285e1ffe076e",
+        "dirtyPaths": "?? baseline-doc-source/",
+        "timingComplete": true,
+        "completed": {
+          "present": true,
+          "value": true
+        },
+        "instrumentation": {
+          "profiler": false,
+          "cpuThrottle": 4,
+          "longTaskObserver": true,
+          "perKeyRequestAnimationFrame": true,
+          "playwrightTrace": false,
+          "perMutationSnapshot": false,
+          "physicalDevice": false,
+          "nativeDrainWitness": "browser-local-events-microtask"
+        }
+      },
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetResults": {
+        "inputP95": true,
+        "longestTask": true,
+        "capacityFlushP95": true,
+        "idleFlushP95": true,
+        "flushMaximum": true,
+        "boundedHistory": true,
+        "boundedCollaboration": true,
+        "observedCapacityFlushes": true,
+        "browserLocalDrainedWithinOneSecond": true
+      },
+      "nativeFlushRows": [
+        ["success", "capacity", 3177, 32.800000000046566, 32, 32, null],
+        ["success", "capacity", 4470.5, 13.800000000046566, 32, 32, null],
+        ["success", "capacity", 5701.20000000007, 13.400000000023283, 32, 32, null],
+        ["success", "capacity", 7028.800000000047, 12.400000000023283, 32, 32, null],
+        ["success", "capacity", 8288.400000000023, 24.20000000006985, 32, 32, null],
+        ["success", "capacity", 9618.800000000047, 28.199999999953434, 32, 32, null],
+        ["success", "capacity", 10926.5, 13.400000000023283, 32, 32, null],
+        ["success", "capacity", 12232.70000000007, 21.099999999976717, 32, 32, null],
+        ["success", "capacity", 13502.600000000093, 17.199999999953434, 32, 32, null],
+        ["success", "capacity", 14935.300000000047, 15.900000000023283, 32, 32, null],
+        ["success", "capacity", 16278.100000000093, 12.399999999906868, 32, 32, null],
+        ["success", "capacity", 17860.70000000007, 12.699999999953434, 32, 32, null],
+        ["success", "capacity", 19216.100000000093, 13.29999999993015, 32, 32, null],
+        ["success", "capacity", 20643.100000000093, 12.699999999953434, 32, 32, null],
+        ["success", "capacity", 22093.5, 14.100000000093132, 32, 32, null],
+        ["success", "capacity", 23612.800000000047, 13.800000000046566, 32, 32, null],
+        ["success", "capacity", 25272.400000000023, 16.400000000023283, 32, 32, null],
+        ["success", "capacity", 26822.100000000093, 13.399999999906868, 32, 32, null],
+        ["success", "capacity", 28349.20000000007, 17.599999999976717, 32, 32, null],
+        ["success", "capacity", 30028.20000000007, 17.900000000023283, 32, 32, null],
+        ["success", "capacity", 31725.400000000023, 12.70000000006985, 32, 32, null],
+        ["success", "capacity", 33466.40000000002, 11.900000000023283, 32, 32, null],
+        ["success", "capacity", 35219.40000000002, 12.5, 32, 32, null],
+        ["success", "capacity", 37014.30000000005, 12.199999999953434, 32, 32, null],
+        ["success", "capacity", 38865.80000000005, 21.800000000046566, 32, 32, null],
+        ["success", "capacity", 40684.10000000009, 13.5, 32, 32, null],
+        ["success", "capacity", 42507.40000000002, 13, 32, 32, null],
+        ["success", "capacity", 44514.10000000009, 12.5, 32, 32, null],
+        ["success", "capacity", 46484.40000000002, 16.20000000006985, 32, 32, null],
+        ["success", "capacity", 48615.70000000007, 13, 32, 32, null],
+        ["success", "capacity", 50743.5, 16, 32, 32, null],
+        ["success", "capacity", 52818.10000000009, 11.599999999976717, 32, 32, null],
+        ["success", "capacity", 54984.20000000007, 17, 32, 32, null],
+        ["success", "capacity", 57235.70000000007, 11.79999999993015, 32, 32, null],
+        ["success", "capacity", 59550, 13.800000000046566, 32, 32, null],
+        ["success", "capacity", 61831.80000000005, 13.699999999953434, 32, 32, null],
+        ["success", "capacity", 64115.30000000005, 13.199999999953434, 32, 32, null],
+        ["success", "capacity", 66577.6000000001, 14.399999999906868, 32, 32, null],
+        ["success", "capacity", 68945.80000000005, 13.300000000046566, 32, 32, null],
+        ["success", "capacity", 71507.6000000001, 13.199999999953434, 32, 32, null],
+        ["success", "capacity", 73934.30000000005, 13.699999999953434, 32, 32, null],
+        ["success", "capacity", 76373.19999999995, 14.800000000046566, 32, 32, null],
+        ["success", "capacity", 78850.1000000001, 16.899999999906868, 32, 32, null],
+        ["success", "capacity", 81450.40000000014, 12, 32, 32, null],
+        ["success", "capacity", 83961.6000000001, 14.300000000046566, 32, 32, null],
+        ["success", "capacity", 86448.90000000014, 13.399999999906868, 32, 32, null],
+        ["success", "capacity", 89085.80000000005, 14.600000000093132, 32, 32, null],
+        ["success", "capacity", 91614.6000000001, 16.0999999998603, 32, 32, null],
+        ["success", "capacity", 94303.19999999995, 16.100000000093132, 32, 32, null],
+        ["success", "capacity", 96943, 13, 32, 32, null],
+        ["success", "capacity", 99615.19999999995, 12, 32, 32, null],
+        ["success", "capacity", 102333.5, 11.900000000139698, 32, 32, null],
+        ["success", "capacity", 105294.40000000014, 18.5, 32, 32, null],
+        ["success", "capacity", 108153.80000000005, 13.699999999953434, 32, 32, null],
+        ["success", "capacity", 111238.6000000001, 13.699999999953434, 32, 32, null],
+        ["success", "capacity", 114124.6000000001, 14.899999999906868, 32, 32, null],
+        ["success", "capacity", 117019.6000000001, 12.199999999953434, 32, 32, null],
+        ["success", "capacity", 120027.40000000014, 15.699999999953434, 32, 32, null],
+        ["success", "capacity", 123047.80000000005, 13.300000000046566, 32, 32, null],
+        ["success", "capacity", 125998.80000000005, 12.300000000046566, 32, 32, null],
+        ["success", "capacity", 129106.90000000014, 14.399999999906868, 32, 32, null],
+        ["success", "capacity", 132091.6000000001, 19.899999999906868, 32, 32, null],
+        ["success", "capacity", 135079.5, 12.300000000046566, 32, 32, null],
+        ["success", "capacity", 138161, 12, 32, 32, null],
+        ["success", "capacity", 141359.69999999995, 18.800000000046566, 32, 32, null],
+        ["success", "idle", 142342, 3.800000000046566, 6, 6, 369.69999999995343]
+      ],
+      "recomputedFlushDistributions": {
+        "capacity": {
+          "count": 65,
+          "p50": 13.699999999953434,
+          "p95": 21.800000000046566,
+          "max": 32.800000000046566,
+          "sum": 974.4999999996508
+        },
+        "idle": {
+          "count": 1,
+          "p50": 3.800000000046566,
+          "p95": 3.800000000046566,
+          "max": 3.800000000046566,
+          "sum": 3.800000000046566
+        }
+      },
+      "reportedSummary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 58.5,
+          "p95": 86.39999999990687,
+          "max": 267.19999999995343,
+          "sum": 120123.09999998554
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 68.40000000002328,
+          "p95": 97.10000000009313,
+          "max": 279.69999999995343,
+          "sum": 140154.70000000007
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 1026,
+          "p50": 64,
+          "p95": 93,
+          "max": 252,
+          "sum": 68722
+        },
+        "totalBlockingMs": 17422,
+        "capacityFlushPairMs": {
+          "count": 65,
+          "p50": 13.699999999953434,
+          "p95": 21.800000000046566,
+          "max": 32.800000000046566,
+          "sum": 974.4999999996508
+        },
+        "idleFlushPairMs": {
+          "count": 1,
+          "p50": 3.800000000046566,
+          "p95": 3.800000000046566,
+          "max": 3.800000000046566,
+          "sum": 3.800000000046566
+        },
+        "pairedFlushMaximumMs": 32.800000000046566,
+        "postFinalKeyDrainUpperBoundMs": 939.0999999998603,
+        "firstVerifiedBrowserLocalDrainMs": 378.80000000004657,
+        "lateReadMinusLocalWitnessMs": 560.2999999998137,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "rawCorrectness": {
+        "preUndoIntegrity": {
+          "observedAt": 150320.19999999995,
+          "sender": {
+            "unitId": "2f52a505-aaf8-462e-9119-6a743a9bb4c5",
+            "observedAt": 150295.6000000001,
+            "textLength": 2088,
+            "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+            "selection": {
+              "start": 2086,
+              "end": 2086,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 66,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 32,
+              "collaboration": 32
+            }
+          },
+          "peer": {
+            "unitId": "2f52a505-aaf8-462e-9119-6a743a9bb4c5",
+            "observedAt": 150291.80014648428,
+            "textLength": 2088,
+            "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "saved": {
+            "revision": 17,
+            "textLength": 2088,
+            "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44"
+          },
+          "passed": true,
+          "reloads": []
+        },
+        "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed",
+        "undoRedoOutcome": "passed",
+        "undoRedoRequestedGroups": 66,
+        "undoRedoReloads": [],
+        "errors": [],
+        "finalReloads": [],
+        "reloadObservers": [
+          {
+            "surface": "sender",
+            "installedAt": 45.70000000006985,
+            "sourceInstalledAt": 45.70000000006985,
+            "sourceTimeOrigin": 1793318021669.7,
+            "dropped": 0,
+            "malformed": 0
+          },
+          {
+            "surface": "peer",
+            "installedAt": 44.50014648435172,
+            "sourceInstalledAt": 43.09999999997672,
+            "sourceTimeOrigin": 1793318021671.1,
+            "dropped": 0,
+            "malformed": 0
+          }
+        ],
+        "finalPending": {
+          "history": 0,
+          "collaboration": 0
+        },
+        "finalHighWater": {
+          "history": 32,
+          "collaboration": 32
+        },
+        "finalHistory": {
+          "undos": 66,
+          "redos": 0
+        },
+        "drainWitnessInvalidated": false,
+        "drainWitnessInvalidations": []
+      }
+    },
+    {
+      "sample": "plain-2",
+      "evidencePath": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "evidenceSha256": "2038d8464f6c513c3da1b25d3d14b12cd575b86cb285821c0831c43493c03529",
+      "rawFlags": {
+        "schema": 4,
+        "role": "candidate",
+        "preset": "mobile",
+        "budgetEnforced": true,
+        "attempt": 0,
+        "source": "376b129f3c70754b595477debe9f285e1ffe076e",
+        "dirtyPaths": "?? baseline-doc-source/",
+        "timingComplete": true,
+        "completed": {
+          "present": false,
+          "value": null
+        },
+        "instrumentation": {
+          "profiler": false,
+          "cpuThrottle": 4,
+          "longTaskObserver": true,
+          "perKeyRequestAnimationFrame": true,
+          "playwrightTrace": false,
+          "perMutationSnapshot": false,
+          "physicalDevice": false,
+          "nativeDrainWitness": "browser-local-events-microtask"
+        }
+      },
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetResults": {
+        "inputP95": true,
+        "longestTask": true,
+        "capacityFlushP95": true,
+        "idleFlushP95": true,
+        "flushMaximum": false,
+        "boundedHistory": true,
+        "boundedCollaboration": true,
+        "observedCapacityFlushes": true,
+        "browserLocalDrainedWithinOneSecond": true
+      },
+      "nativeFlushRows": [
+        ["success", "capacity", 3151, 31, 32, 32, null],
+        ["success", "capacity", 4450.90000000014, 16.0999999998603, 32, 32, null],
+        ["success", "capacity", 5681.40000000014, 12.699999999953434, 32, 32, null],
+        ["success", "capacity", 6978.199999999953, 18, 32, 32, null],
+        ["success", "capacity", 8241.300000000047, 34.199999999953434, 32, 32, null],
+        ["success", "capacity", 9568.5, 18.800000000046566, 32, 32, null],
+        ["success", "capacity", 10850.5, 12.199999999953434, 32, 32, null],
+        ["success", "capacity", 12192.600000000093, 16.300000000046566, 32, 32, null],
+        ["success", "capacity", 13513.5, 18, 32, 32, null],
+        ["success", "capacity", 14887.300000000047, 14.100000000093132, 32, 32, null],
+        ["success", "capacity", 16320.40000000014, 12.899999999906868, 32, 32, null],
+        ["success", "capacity", 17734.800000000047, 104.19999999995343, 32, 32, null],
+        ["success", "capacity", 19274.600000000093, 13.899999999906868, 32, 32, null],
+        ["success", "capacity", 20782, 12.400000000139698, 32, 32, null],
+        ["success", "capacity", 22312.300000000047, 19.100000000093132, 32, 32, null],
+        ["success", "capacity", 24030.5, 13, 32, 32, null],
+        ["success", "capacity", 25679.800000000047, 21.199999999953434, 32, 32, null],
+        ["success", "capacity", 27313.5, 24.800000000046566, 32, 32, null],
+        ["success", "capacity", 29093.40000000014, 13.799999999813735, 32, 32, null],
+        ["success", "capacity", 30760.300000000047, 15.800000000046566, 32, 32, null],
+        ["success", "capacity", 32447, 14, 32, 32, null],
+        ["success", "capacity", 34281.10000000009, 14.300000000046566, 32, 32, null],
+        ["success", "capacity", 36049.40000000014, 12.799999999813735, 32, 32, null],
+        ["success", "capacity", 38004.5, 14.800000000046566, 32, 32, null],
+        ["success", "capacity", 40038.60000000009, 20.399999999906868, 32, 32, null],
+        ["success", "capacity", 42013.60000000009, 13.800000000046566, 32, 32, null],
+        ["success", "capacity", 44183.69999999995, 17.600000000093132, 32, 32, null],
+        ["success", "capacity", 46317.10000000009, 13.199999999953434, 32, 32, null],
+        ["success", "capacity", 48444.40000000014, 14.5, 32, 32, null],
+        ["success", "capacity", 50706.69999999995, 13.300000000046566, 32, 32, null],
+        ["success", "capacity", 52886.10000000009, 12.800000000046566, 32, 32, null],
+        ["success", "capacity", 55096.30000000005, 13, 32, 32, null],
+        ["success", "capacity", 57469.30000000005, 14.199999999953434, 32, 32, null],
+        ["success", "capacity", 59682, 12.400000000139698, 32, 32, null],
+        ["success", "capacity", 62084, 14.400000000139698, 32, 32, null],
+        ["success", "capacity", 64422, 13.699999999953434, 32, 32, null],
+        ["success", "capacity", 66757, 13.699999999953434, 32, 32, null],
+        ["success", "capacity", 69270.90000000014, 14.599999999860302, 32, 32, null],
+        ["success", "capacity", 71670.5, 17, 32, 32, null],
+        ["success", "capacity", 74303.40000000014, 15.299999999813735, 32, 32, null],
+        ["success", "capacity", 76785, 17.300000000046566, 32, 32, null],
+        ["success", "capacity", 79364.69999999995, 17.5, 32, 32, null],
+        ["success", "capacity", 81910.30000000005, 14.899999999906868, 32, 32, null],
+        ["success", "capacity", 84615.5, 15.800000000046566, 32, 32, null],
+        ["success", "capacity", 87346.19999999995, 14.5, 32, 32, null],
+        ["success", "capacity", 90069.40000000014, 14.199999999953434, 32, 32, null],
+        ["success", "capacity", 92784.19999999995, 13, 32, 32, null],
+        ["success", "capacity", 95684.19999999995, 14.800000000046566, 32, 32, null],
+        ["success", "capacity", 98529.1000000001, 15.800000000046566, 32, 32, null],
+        ["success", "capacity", 101236.69999999995, 13.100000000093132, 32, 32, null],
+        ["success", "capacity", 104299.80000000005, 14.699999999953434, 32, 32, null],
+        ["success", "capacity", 107095.40000000014, 12.099999999860302, 32, 32, null],
+        ["success", "capacity", 109997.1000000001, 18.0999999998603, 32, 32, null],
+        ["success", "capacity", 112917.40000000014, 13.899999999906868, 32, 32, null],
+        ["success", "capacity", 115832.19999999995, 12.100000000093132, 32, 32, null],
+        ["success", "capacity", 118940.40000000014, 14.299999999813735, 32, 32, null],
+        ["success", "capacity", 122032.6000000001, 13.699999999953434, 32, 32, null],
+        ["success", "capacity", 125064.6000000001, 17.0999999998603, 32, 32, null],
+        ["success", "capacity", 128104.30000000005, 15, 32, 32, null],
+        ["success", "capacity", 131183.40000000014, 13.799999999813735, 32, 32, null],
+        ["success", "capacity", 134269.90000000014, 13.799999999813735, 32, 32, null],
+        ["success", "capacity", 137232, 14.800000000046566, 32, 32, null],
+        ["success", "capacity", 140197.1000000001, 13.5, 32, 32, null],
+        ["success", "capacity", 143283.90000000014, 18.799999999813735, 32, 32, null],
+        ["success", "capacity", 146502.5, 13.800000000046566, 32, 32, null],
+        ["success", "idle", 147483.40000000014, 7.399999999906868, 6, 6, 363.89999999990687]
+      ],
+      "recomputedFlushDistributions": {
+        "capacity": {
+          "count": 65,
+          "p50": 14.400000000139698,
+          "p95": 24.800000000046566,
+          "max": 104.19999999995343,
+          "sum": 1102.6999999985565
+        },
+        "idle": {
+          "count": 1,
+          "p50": 7.399999999906868,
+          "p95": 7.399999999906868,
+          "max": 7.399999999906868,
+          "sum": 7.399999999906868
+        }
+      },
+      "reportedSummary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 60.4000000001397,
+          "p95": 89.89999999990687,
+          "max": 178.5,
+          "sum": 124459.19999999343
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 70.70000000018626,
+          "p95": 101.30000000004657,
+          "max": 194.9000000001397,
+          "sum": 145371
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 1090,
+          "p50": 63,
+          "p95": 98,
+          "max": 161,
+          "sum": 74133
+        },
+        "totalBlockingMs": 19634,
+        "capacityFlushPairMs": {
+          "count": 65,
+          "p50": 14.400000000139698,
+          "p95": 24.800000000046566,
+          "max": 104.19999999995343,
+          "sum": 1102.6999999985565
+        },
+        "idleFlushPairMs": {
+          "count": 1,
+          "p50": 7.399999999906868,
+          "p95": 7.399999999906868,
+          "max": 7.399999999906868,
+          "sum": 7.399999999906868
+        },
+        "pairedFlushMaximumMs": 104.19999999995343,
+        "postFinalKeyDrainUpperBoundMs": 939.8000000000466,
+        "firstVerifiedBrowserLocalDrainMs": 377,
+        "lateReadMinusLocalWitnessMs": 562.8000000000466,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "rawCorrectness": {
+        "preUndoIntegrity": {
+          "observedAt": 154812.80000000005,
+          "sender": {
+            "unitId": "1192d21e-111e-4415-9585-f06ce0ea75ce",
+            "observedAt": 154807.30000000005,
+            "textLength": 2088,
+            "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+            "selection": {
+              "start": 2086,
+              "end": 2086,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 66,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 32,
+              "collaboration": 32
+            }
+          },
+          "peer": {
+            "unitId": "1192d21e-111e-4415-9585-f06ce0ea75ce",
+            "observedAt": 154805.8000976562,
+            "textLength": 2088,
+            "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "saved": {
+            "revision": 17,
+            "textLength": 2088,
+            "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44"
+          },
+          "passed": true,
+          "reloads": []
+        },
+        "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed",
+        "undoRedoOutcome": "passed",
+        "undoRedoRequestedGroups": 1,
+        "undoRedoReloads": [],
+        "errors": [],
+        "finalReloads": [],
+        "reloadObservers": [
+          {
+            "surface": "sender",
+            "installedAt": 43.60000000009313,
+            "sourceInstalledAt": 43.60000000009313,
+            "sourceTimeOrigin": 1793318182233.9,
+            "dropped": 0,
+            "malformed": 0
+          },
+          {
+            "surface": "peer",
+            "installedAt": 44.00009765615687,
+            "sourceInstalledAt": 42.89999999990687,
+            "sourceTimeOrigin": 1793318182235,
+            "dropped": 0,
+            "malformed": 0
+          }
+        ],
+        "finalPending": {
+          "history": 0,
+          "collaboration": 0
+        },
+        "finalHighWater": {
+          "history": 32,
+          "collaboration": 32
+        },
+        "finalHistory": {
+          "undos": 66,
+          "redos": 0
+        },
+        "drainWitnessInvalidated": false,
+        "drainWitnessInvalidations": []
+      }
+    },
+    {
+      "sample": "plain-3",
+      "evidencePath": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "evidenceSha256": "b250df87df21abbdbf2e7efc0d7caa8958af4083da6db3254285a5d419afed30",
+      "rawFlags": {
+        "schema": 4,
+        "role": "candidate",
+        "preset": "mobile",
+        "budgetEnforced": true,
+        "attempt": 0,
+        "source": "376b129f3c70754b595477debe9f285e1ffe076e",
+        "dirtyPaths": "?? baseline-doc-source/",
+        "timingComplete": true,
+        "completed": {
+          "present": true,
+          "value": true
+        },
+        "instrumentation": {
+          "profiler": false,
+          "cpuThrottle": 4,
+          "longTaskObserver": true,
+          "perKeyRequestAnimationFrame": true,
+          "playwrightTrace": false,
+          "perMutationSnapshot": false,
+          "physicalDevice": false,
+          "nativeDrainWitness": "browser-local-events-microtask"
+        }
+      },
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetResults": {
+        "inputP95": true,
+        "longestTask": true,
+        "capacityFlushP95": true,
+        "idleFlushP95": true,
+        "flushMaximum": true,
+        "boundedHistory": true,
+        "boundedCollaboration": true,
+        "observedCapacityFlushes": true,
+        "browserLocalDrainedWithinOneSecond": true
+      },
+      "nativeFlushRows": [
+        ["success", "capacity", 3307.1999999999534, 28.4000000001397, 32, 32, null],
+        ["success", "capacity", 4267.399999999907, 14.300000000046566, 32, 32, null],
+        ["success", "capacity", 5308.699999999953, 12.800000000046566, 32, 32, null],
+        ["success", "capacity", 6419.899999999907, 11.100000000093132, 32, 32, null],
+        ["success", "capacity", 7464, 25.399999999906868, 32, 32, null],
+        ["success", "capacity", 8614.899999999907, 25.9000000001397, 32, 32, null],
+        ["success", "capacity", 9701.800000000047, 13.899999999906868, 32, 32, null],
+        ["success", "capacity", 10719.199999999953, 19.800000000046566, 32, 32, null],
+        ["success", "capacity", 11762.600000000093, 16.699999999953434, 32, 32, null],
+        ["success", "capacity", 12830.199999999953, 14.300000000046566, 32, 32, null],
+        ["success", "capacity", 13835.399999999907, 12.300000000046566, 32, 32, null],
+        ["success", "capacity", 14856.600000000093, 12.199999999953434, 32, 32, null],
+        ["success", "capacity", 16041.5, 12.5, 32, 32, null],
+        ["success", "capacity", 17178.699999999953, 11.800000000046566, 32, 32, null],
+        ["success", "capacity", 18341.699999999953, 12.800000000046566, 32, 32, null],
+        ["success", "capacity", 19518.5, 11.699999999953434, 32, 32, null],
+        ["success", "capacity", 20607.300000000047, 14.399999999906868, 32, 32, null],
+        ["success", "capacity", 21732.399999999907, 12.600000000093132, 32, 32, null],
+        ["success", "capacity", 22925.300000000047, 11.300000000046566, 32, 32, null],
+        ["success", "capacity", 24150.800000000047, 13.199999999953434, 32, 32, null],
+        ["success", "capacity", 25401.100000000093, 12.899999999906868, 32, 32, null],
+        ["success", "capacity", 26836.300000000047, 15, 32, 32, null],
+        ["success", "capacity", 28500, 11, 32, 32, null],
+        ["success", "capacity", 29858.600000000093, 12.299999999813735, 32, 32, null],
+        ["success", "capacity", 31360.600000000093, 20.299999999813735, 32, 32, null],
+        ["success", "capacity", 32983.80000000005, 13.899999999906868, 32, 32, null],
+        ["success", "capacity", 34794, 14.699999999953434, 32, 32, null],
+        ["success", "capacity", 36412.10000000009, 12.699999999953434, 32, 32, null],
+        ["success", "capacity", 38098.69999999995, 12.199999999953434, 32, 32, null],
+        ["success", "capacity", 39749.80000000005, 15.399999999906868, 32, 32, null],
+        ["success", "capacity", 41466.10000000009, 12.799999999813735, 32, 32, null],
+        ["success", "capacity", 43087.10000000009, 11.199999999953434, 32, 32, null],
+        ["success", "capacity", 44777.60000000009, 18.299999999813735, 32, 32, null],
+        ["success", "capacity", 46710.89999999991, 11.400000000139698, 32, 32, null],
+        ["success", "capacity", 48496.80000000005, 12.5, 32, 32, null],
+        ["success", "capacity", 50458.80000000005, 17.5, 32, 32, null],
+        ["success", "capacity", 52327.89999999991, 12.5, 32, 32, null],
+        ["success", "capacity", 54189.89999999991, 10.600000000093132, 32, 32, null],
+        ["success", "capacity", 56066.69999999995, 17, 32, 32, null],
+        ["success", "capacity", 58022, 11.199999999953434, 32, 32, null],
+        ["success", "capacity", 60124.89999999991, 13.900000000139698, 32, 32, null],
+        ["success", "capacity", 62352.5, 14.899999999906868, 32, 32, null],
+        ["success", "capacity", 64755.69999999995, 15.199999999953434, 32, 32, null],
+        ["success", "capacity", 66898.1000000001, 11.099999999860302, 32, 32, null],
+        ["success", "capacity", 69255.5, 14.300000000046566, 32, 32, null],
+        ["success", "capacity", 71342.3999999999, 12, 32, 32, null],
+        ["success", "capacity", 73529.30000000005, 12.599999999860302, 32, 32, null],
+        ["success", "capacity", 75668.6000000001, 11.599999999860302, 32, 32, null],
+        ["success", "capacity", 77948.8999999999, 14.300000000046566, 32, 32, null],
+        ["success", "capacity", 80136.3999999999, 12.300000000046566, 32, 32, null],
+        ["success", "capacity", 82453, 13.800000000046566, 32, 32, null],
+        ["success", "capacity", 84694.3999999999, 11.800000000046566, 32, 32, null],
+        ["success", "capacity", 86963.8999999999, 13.600000000093132, 32, 32, null],
+        ["success", "capacity", 89340.3999999999, 13.900000000139698, 32, 32, null],
+        ["success", "capacity", 91812.19999999995, 11, 32, 32, null],
+        ["success", "capacity", 94355.30000000005, 11.899999999906868, 32, 32, null],
+        ["success", "capacity", 96832.69999999995, 14, 32, 32, null],
+        ["success", "capacity", 99341, 14.100000000093132, 32, 32, null],
+        ["success", "capacity", 101954.30000000005, 15.300000000046566, 32, 32, null],
+        ["success", "capacity", 104626.19999999995, 13.199999999953434, 32, 32, null],
+        ["success", "capacity", 107486.8999999999, 14.100000000093132, 32, 32, null],
+        ["success", "capacity", 110222.19999999995, 12.400000000139698, 32, 32, null],
+        ["success", "capacity", 113009.19999999995, 12.5, 32, 32, null],
+        ["success", "capacity", 115775.8999999999, 12.300000000046566, 32, 32, null],
+        ["success", "capacity", 118583.80000000005, 15.899999999906868, 32, 32, null],
+        ["success", "idle", 119446.19999999995, 1.3000000000465661, 6, 6, 341]
+      ],
+      "recomputedFlushDistributions": {
+        "capacity": {
+          "count": 65,
+          "p50": 12.899999999906868,
+          "p95": 20.299999999813735,
+          "max": 28.4000000001397,
+          "sum": 914.7999999995809
+        },
+        "idle": {
+          "count": 1,
+          "p50": 1.3000000000465661,
+          "p95": 1.3000000000465661,
+          "max": 1.3000000000465661,
+          "sum": 1.3000000000465661
+        }
+      },
+      "reportedSummary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 47.800000000046566,
+          "p95": 78,
+          "max": 232.60000000009313,
+          "sum": 102025.99999999069
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 54.699999999953434,
+          "p95": 87,
+          "max": 243.80000000004657,
+          "sum": 117205.90000000014
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 697,
+          "p50": 61,
+          "p95": 90,
+          "max": 221,
+          "sum": 45043
+        },
+        "totalBlockingMs": 10193,
+        "capacityFlushPairMs": {
+          "count": 65,
+          "p50": 12.899999999906868,
+          "p95": 20.299999999813735,
+          "max": 28.4000000001397,
+          "sum": 914.7999999995809
+        },
+        "idleFlushPairMs": {
+          "count": 1,
+          "p50": 1.3000000000465661,
+          "p95": 1.3000000000465661,
+          "max": 1.3000000000465661,
+          "sum": 1.3000000000465661
+        },
+        "pairedFlushMaximumMs": 28.4000000001397,
+        "postFinalKeyDrainUpperBoundMs": 656,
+        "firstVerifiedBrowserLocalDrainMs": 347.19999999995343,
+        "lateReadMinusLocalWitnessMs": 308.80000000004657,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "rawCorrectness": {
+        "preUndoIntegrity": {
+          "observedAt": 126263.8999999999,
+          "sender": {
+            "unitId": "090799ff-82ee-4052-8bbc-4562069c34e9",
+            "observedAt": 126253.30000000005,
+            "textLength": 2088,
+            "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+            "selection": {
+              "start": 2086,
+              "end": 2086,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 66,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 32,
+              "collaboration": 32
+            }
+          },
+          "peer": {
+            "unitId": "090799ff-82ee-4052-8bbc-4562069c34e9",
+            "observedAt": 126252.89985351544,
+            "textLength": 2088,
+            "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "saved": {
+            "revision": 17,
+            "textLength": 2088,
+            "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44"
+          },
+          "passed": true,
+          "reloads": []
+        },
+        "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed",
+        "undoRedoOutcome": "passed",
+        "undoRedoRequestedGroups": 1,
+        "undoRedoReloads": [],
+        "errors": [],
+        "finalReloads": [],
+        "reloadObservers": [
+          {
+            "surface": "sender",
+            "installedAt": 69.10000000009313,
+            "sourceInstalledAt": 69.10000000009313,
+            "sourceTimeOrigin": 1793318338546.3,
+            "dropped": 0,
+            "malformed": 0
+          },
+          {
+            "surface": "peer",
+            "installedAt": 73.49985351553187,
+            "sourceInstalledAt": 70.39999999990687,
+            "sourceTimeOrigin": 1793318338549.4,
+            "dropped": 0,
+            "malformed": 0
+          }
+        ],
+        "finalPending": {
+          "history": 0,
+          "collaboration": 0
+        },
+        "finalHighWater": {
+          "history": 32,
+          "collaboration": 32
+        },
+        "finalHistory": {
+          "undos": 66,
+          "redos": 0
+        },
+        "drainWitnessInvalidated": false,
+        "drainWitnessInvalidations": []
+      }
+    },
+    {
+      "sample": "profile",
+      "evidencePath": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "evidenceSha256": "3cfdaa5173e1372215692587eed6de5e8f7d1ca475dd5bba0c469c0e270c8af0",
+      "rawFlags": {
+        "schema": 4,
+        "role": "candidate",
+        "preset": "mobile",
+        "budgetEnforced": false,
+        "attempt": 0,
+        "source": "376b129f3c70754b595477debe9f285e1ffe076e",
+        "dirtyPaths": "?? baseline-doc-source/",
+        "timingComplete": true,
+        "completed": {
+          "present": true,
+          "value": true
+        },
+        "instrumentation": {
+          "profiler": true,
+          "cpuThrottle": 4,
+          "longTaskObserver": true,
+          "perKeyRequestAnimationFrame": true,
+          "playwrightTrace": false,
+          "perMutationSnapshot": false,
+          "physicalDevice": false,
+          "nativeDrainWitness": "browser-local-events-microtask"
+        }
+      },
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetResults": {
+        "inputP95": true,
+        "longestTask": true,
+        "capacityFlushP95": true,
+        "idleFlushP95": true,
+        "flushMaximum": true,
+        "boundedHistory": true,
+        "boundedCollaboration": true,
+        "observedCapacityFlushes": true,
+        "browserLocalDrainedWithinOneSecond": true
+      },
+      "nativeFlushRows": [
+        ["success", "capacity", 4074.1999999999534, 35.300000000046566, 32, 32, null],
+        ["success", "capacity", 5028.800000000047, 17.600000000093132, 32, 32, null],
+        ["success", "capacity", 5969.699999999953, 14.900000000139698, 32, 32, null],
+        ["success", "capacity", 6937.699999999953, 17.800000000046566, 32, 32, null],
+        ["success", "capacity", 7924.100000000093, 37.5999999998603, 32, 32, null],
+        ["success", "capacity", 9060.5, 20.5, 32, 32, null],
+        ["success", "capacity", 10169.90000000014, 14.5, 32, 32, null],
+        ["success", "capacity", 11352.699999999953, 18.300000000046566, 32, 32, null],
+        ["success", "capacity", 12379.699999999953, 23, 32, 32, null],
+        ["success", "capacity", 13542.600000000093, 16.699999999953434, 32, 32, null],
+        ["success", "capacity", 14704.100000000093, 14.399999999906868, 32, 32, null],
+        ["success", "capacity", 15957.300000000047, 16.300000000046566, 32, 32, null],
+        ["success", "capacity", 17190.40000000014, 14.899999999906868, 32, 32, null],
+        ["success", "capacity", 18521.300000000047, 14.100000000093132, 32, 32, null],
+        ["success", "capacity", 19812.40000000014, 13.599999999860302, 32, 32, null],
+        ["success", "capacity", 21160.300000000047, 14.399999999906868, 32, 32, null],
+        ["success", "capacity", 22545.5, 20.4000000001397, 32, 32, null],
+        ["success", "capacity", 24145.600000000093, 17.0999999998603, 32, 32, null],
+        ["success", "capacity", 25592.40000000014, 14.099999999860302, 32, 32, null],
+        ["success", "capacity", 27180.100000000093, 15.399999999906868, 32, 32, null],
+        ["success", "capacity", 28830.600000000093, 16.0999999998603, 32, 32, null],
+        ["success", "capacity", 30846.300000000047, 17.800000000046566, 32, 32, null],
+        ["success", "capacity", 32813.19999999995, 14.100000000093132, 32, 32, null],
+        ["success", "capacity", 34883.10000000009, 15.399999999906868, 32, 32, null],
+        ["success", "capacity", 36647.40000000014, 18.5999999998603, 32, 32, null],
+        ["success", "capacity", 38550.30000000005, 22.800000000046566, 32, 32, null],
+        ["success", "capacity", 40476.19999999995, 17.9000000001397, 32, 32, null],
+        ["success", "capacity", 42462.90000000014, 16.0999999998603, 32, 32, null],
+        ["success", "capacity", 44533.69999999995, 15.600000000093132, 32, 32, null],
+        ["success", "capacity", 46814, 18.4000000001397, 32, 32, null],
+        ["success", "capacity", 48930.60000000009, 14.800000000046566, 32, 32, null],
+        ["success", "capacity", 51047.30000000005, 14.199999999953434, 32, 32, null],
+        ["success", "capacity", 53250, 20.300000000046566, 32, 32, null],
+        ["success", "capacity", 55347.69999999995, 13.300000000046566, 32, 32, null],
+        ["success", "capacity", 57627.69999999995, 17.4000000001397, 32, 32, null],
+        ["success", "capacity", 60022.10000000009, 15.399999999906868, 32, 32, null],
+        ["success", "capacity", 62478.90000000014, 17.0999999998603, 32, 32, null],
+        ["success", "capacity", 65050.10000000009, 17.399999999906868, 32, 32, null],
+        ["success", "capacity", 67527.30000000005, 14.699999999953434, 32, 32, null],
+        ["success", "capacity", 70010, 15.400000000139698, 32, 32, null],
+        ["success", "capacity", 72733.19999999995, 17.800000000046566, 32, 32, null],
+        ["success", "capacity", 75232.5, 14.699999999953434, 32, 32, null],
+        ["success", "capacity", 77822.69999999995, 16.100000000093132, 32, 32, null],
+        ["success", "capacity", 80314.19999999995, 15.800000000046566, 32, 32, null],
+        ["success", "capacity", 82883, 15.699999999953434, 32, 32, null],
+        ["success", "capacity", 85582.19999999995, 23.800000000046566, 32, 32, null],
+        ["success", "capacity", 88210.1000000001, 12.199999999953434, 32, 32, null],
+        ["success", "capacity", 90953.1000000001, 16.0999999998603, 32, 32, null],
+        ["success", "capacity", 93482.6000000001, 16, 32, 32, null],
+        ["success", "capacity", 96177, 15.300000000046566, 32, 32, null],
+        ["success", "capacity", 98924.6000000001, 23.0999999998603, 32, 32, null],
+        ["success", "capacity", 101583.5, 12.600000000093132, 32, 32, null],
+        ["success", "capacity", 104171.1000000001, 15.699999999953434, 32, 32, null],
+        ["success", "capacity", 106811.1000000001, 12.899999999906868, 32, 32, null],
+        ["success", "capacity", 109600, 16.600000000093132, 32, 32, null],
+        ["success", "capacity", 112345.69999999995, 14.300000000046566, 32, 32, null],
+        ["success", "capacity", 115092.1000000001, 14.300000000046566, 32, 32, null],
+        ["success", "capacity", 117847.69999999995, 17.200000000186265, 32, 32, null],
+        ["success", "capacity", 120686, 15.600000000093132, 32, 32, null],
+        ["success", "capacity", 123358.80000000005, 12.199999999953434, 32, 32, null],
+        ["success", "capacity", 126098.19999999995, 14.800000000046566, 32, 32, null],
+        ["success", "capacity", 128812.80000000005, 15.199999999953434, 32, 32, null],
+        ["success", "capacity", 131552.30000000005, 12.399999999906868, 32, 32, null],
+        ["success", "capacity", 134533.5, 14.600000000093132, 32, 32, null],
+        ["success", "capacity", 137628, 35.800000000046566, 32, 32, null],
+        ["success", "idle", 138557.19999999995, 1.4000000001396984, 6, 6, 317]
+      ],
+      "recomputedFlushDistributions": {
+        "capacity": {
+          "count": 65,
+          "p50": 15.699999999953434,
+          "p95": 23.800000000046566,
+          "max": 37.5999999998603,
+          "sum": 1114.5
+        },
+        "idle": {
+          "count": 1,
+          "p50": 1.4000000001396984,
+          "p95": 1.4000000001396984,
+          "max": 1.4000000001396984,
+          "sum": 1.4000000001396984
+        }
+      },
+      "reportedSummary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 58.5,
+          "p95": 84.10000000009313,
+          "max": 263.80000000004657,
+          "sum": 116378.9999999858
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 69.30000000004657,
+          "p95": 94.4000000001397,
+          "max": 276.5,
+          "sum": 135232.5
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 1022,
+          "p50": 62,
+          "p95": 90,
+          "max": 250,
+          "sum": 67351
+        },
+        "totalBlockingMs": 16251,
+        "capacityFlushPairMs": {
+          "count": 65,
+          "p50": 15.699999999953434,
+          "p95": 23.800000000046566,
+          "max": 37.5999999998603,
+          "sum": 1114.5
+        },
+        "idleFlushPairMs": {
+          "count": 1,
+          "p50": 1.4000000001396984,
+          "p95": 1.4000000001396984,
+          "max": 1.4000000001396984,
+          "sum": 1.4000000001396984
+        },
+        "pairedFlushMaximumMs": 37.5999999998603,
+        "postFinalKeyDrainUpperBoundMs": 444.60000000009313,
+        "firstVerifiedBrowserLocalDrainMs": 322.30000000004657,
+        "lateReadMinusLocalWitnessMs": 122.30000000004657,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "rawCorrectness": {
+        "preUndoIntegrity": {
+          "observedAt": 146414.5,
+          "sender": {
+            "unitId": "5eb60c8b-a362-416b-9d8d-0118dfbf4957",
+            "observedAt": 146403.90000000014,
+            "textLength": 2088,
+            "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+            "selection": {
+              "start": 2086,
+              "end": 2086,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 66,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 32,
+              "collaboration": 32
+            }
+          },
+          "peer": {
+            "unitId": "5eb60c8b-a362-416b-9d8d-0118dfbf4957",
+            "observedAt": 146403.20009765634,
+            "textLength": 2088,
+            "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "saved": {
+            "revision": 17,
+            "textLength": 2088,
+            "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44"
+          },
+          "passed": true,
+          "reloads": []
+        },
+        "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed",
+        "undoRedoOutcome": "passed",
+        "undoRedoRequestedGroups": 1,
+        "undoRedoReloads": [],
+        "errors": [],
+        "finalReloads": [],
+        "reloadObservers": [
+          {
+            "surface": "sender",
+            "installedAt": 29.699999999953434,
+            "sourceInstalledAt": 29.699999999953434,
+            "sourceTimeOrigin": 1793318465709,
+            "dropped": 0,
+            "malformed": 0
+          },
+          {
+            "surface": "peer",
+            "installedAt": 29.900097656296566,
+            "sourceInstalledAt": 28.300000000046566,
+            "sourceTimeOrigin": 1793318465710.6,
+            "dropped": 0,
+            "malformed": 0
+          }
+        ],
+        "finalPending": {
+          "history": 0,
+          "collaboration": 0
+        },
+        "finalHighWater": {
+          "history": 32,
+          "collaboration": 32
+        },
+        "finalHistory": {
+          "undos": 66,
+          "redos": 0
+        },
+        "drainWitnessInvalidated": false,
+        "drainWitnessInvalidations": []
+      }
+    }
+  ],
+  "failedInterval": {
+    "sample": "plain-2",
+    "inputTimeOrigin": 1793318182233.9,
+    "nativeFlushIndexZeroBased": 11,
+    "nativeFlush": {
+      "outcome": "success",
+      "reason": "capacity",
+      "startedAt": 17734.800000000047,
+      "durationMs": 104.19999999995343,
+      "history": 32,
+      "collaboration": 32
+    },
+    "flushEndAtMs": 17839,
+    "longTasksOverlappingFlush": [
+      {
+        "startedAt": 17729.40000000014,
+        "durationMs": 161
+      }
+    ],
+    "surroundingKeyEvents": [
+      {
+        "index": 382,
+        "keydownAtMs": 17673.5,
+        "keyToFrameMs": 43.4000000001397
+      },
+      {
+        "index": 383,
+        "keydownAtMs": 17730,
+        "keyToFrameMs": 168.5
+      },
+      {
+        "index": 384,
+        "keydownAtMs": 17910.90000000014,
+        "keyToFrameMs": 39.799999999813735
+      }
+    ],
+    "containingKeyInterval": {
+      "index": 383,
+      "keydownAtMs": 17730,
+      "nextKeydownAtMs": 17910.90000000014,
+      "durationMs": 180.9000000001397
+    },
+    "profiler": false,
+    "playwrightTrace": false,
+    "attributionLimit": "This is an unprofiled first attempt. Temporal overlap identifies the containing long task/key interval, not its CPU cause; no inference attributes this outlier to diagnostic hot-path work."
+  },
+  "separateProfileSample": {
+    "sample": "profile",
+    "source": "376b129f3c70754b595477debe9f285e1ffe076e",
+    "evidencePath": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile",
+    "profileFileSha256": "8c131775ec5f2af751aaedcd1b4a1657de73ca0b49fc4d48d8912bc1dd4c1659",
+    "clockEvidence": {
+      "bracket": {
+        "beforeMs": 1733.4000000001397,
+        "afterMs": 2976.9000000001397
+      },
+      "profileStartTimeUs": 1430970640,
+      "profileEndTimeUs": 1567986856,
+      "sha256": "8c131775ec5f2af751aaedcd1b4a1657de73ca0b49fc4d48d8912bc1dd4c1659"
+    },
+    "requestedSampleIntervalUs": 1000,
+    "sampleCount": 125767,
+    "timeDeltaCount": 125767,
+    "startTimeUs": 1430970640,
+    "endTimeUs": 1567986856,
+    "summedTimeDeltasUs": 137014981,
+    "negativeTimeDeltaCount": 0,
+    "aggregationMethod": "Use exact callFrame.functionName equality for diagnosticQueue, observeQueue and diagnosticNow across all matching node IDs. For each samples[i] leaf ID, credit timeDeltas[i] microseconds only to that exact sampled leaf. Sum across matching nodes. Do not walk ancestors, add descendants, multiply hitCount by interval, or infer wall-clock duration. Zero-hit matched nodes are retained. Node hitCount is included only as raw context.",
+    "qualification": "These are sampled leaf self-time estimates from the separate successful profiled candidate, under 4x CPU throttling and profiler overhead. They are not isolated causal overhead, inclusive subtree time, per-edit latency, or evidence of the cause of the unprofiled plain-2 maximum. Raw profile remains supplementary; its exact file hash and per-node aggregated values are retained.",
+    "functions": [
+      {
+        "name": "diagnosticQueue",
+        "sampleCount": 288,
+        "sampledLeafSelfTimeUs": 307021,
+        "sampledLeafSelfTimeMs": 307.021,
+        "nodes": [
+          {
+            "id": 1503,
+            "callFrame": {
+              "functionName": "diagnosticQueue",
+              "scriptId": "45",
+              "url": "http://localhost:3108/assets/guestPendingBuffer-DCdJAftX.js",
+              "lineNumber": 0,
+              "columnNumber": 66921
+            },
+            "profileHitCount": 1,
+            "sampleCount": 1,
+            "sampledLeafSelfTimeUs": 1267
+          },
+          {
+            "id": 3345,
+            "callFrame": {
+              "functionName": "diagnosticQueue",
+              "scriptId": "45",
+              "url": "http://localhost:3108/assets/guestPendingBuffer-DCdJAftX.js",
+              "lineNumber": 0,
+              "columnNumber": 66921
+            },
+            "profileHitCount": 159,
+            "sampleCount": 160,
+            "sampledLeafSelfTimeUs": 169491
+          },
+          {
+            "id": 10826,
+            "callFrame": {
+              "functionName": "diagnosticQueue",
+              "scriptId": "45",
+              "url": "http://localhost:3108/assets/guestPendingBuffer-DCdJAftX.js",
+              "lineNumber": 0,
+              "columnNumber": 66921
+            },
+            "profileHitCount": 1,
+            "sampleCount": 1,
+            "sampledLeafSelfTimeUs": 1360
+          },
+          {
+            "id": 6974,
+            "callFrame": {
+              "functionName": "diagnosticQueue",
+              "scriptId": "45",
+              "url": "http://localhost:3108/assets/guestPendingBuffer-DCdJAftX.js",
+              "lineNumber": 0,
+              "columnNumber": 66921
+            },
+            "profileHitCount": 0,
+            "sampleCount": 0,
+            "sampledLeafSelfTimeUs": 0
+          },
+          {
+            "id": 1800,
+            "callFrame": {
+              "functionName": "diagnosticQueue",
+              "scriptId": "45",
+              "url": "http://localhost:3108/assets/guestPendingBuffer-DCdJAftX.js",
+              "lineNumber": 0,
+              "columnNumber": 66921
+            },
+            "profileHitCount": 125,
+            "sampleCount": 125,
+            "sampledLeafSelfTimeUs": 134336
+          },
+          {
+            "id": 8102,
+            "callFrame": {
+              "functionName": "diagnosticQueue",
+              "scriptId": "45",
+              "url": "http://localhost:3108/assets/guestPendingBuffer-DCdJAftX.js",
+              "lineNumber": 0,
+              "columnNumber": 66921
+            },
+            "profileHitCount": 1,
+            "sampleCount": 1,
+            "sampledLeafSelfTimeUs": 567
+          },
+          {
+            "id": 11254,
+            "callFrame": {
+              "functionName": "diagnosticQueue",
+              "scriptId": "45",
+              "url": "http://localhost:3108/assets/guestPendingBuffer-DCdJAftX.js",
+              "lineNumber": 0,
+              "columnNumber": 66921
+            },
+            "profileHitCount": 0,
+            "sampleCount": 0,
+            "sampledLeafSelfTimeUs": 0
+          }
+        ]
+      },
+      {
+        "name": "observeQueue",
+        "sampleCount": 183,
+        "sampledLeafSelfTimeUs": 204614,
+        "sampledLeafSelfTimeMs": 204.614,
+        "nodes": [
+          {
+            "id": 1502,
+            "callFrame": {
+              "functionName": "observeQueue",
+              "scriptId": "45",
+              "url": "http://localhost:3108/assets/guestPendingBuffer-DCdJAftX.js",
+              "lineNumber": 0,
+              "columnNumber": 67330
+            },
+            "profileHitCount": 1,
+            "sampleCount": 1,
+            "sampledLeafSelfTimeUs": 1674
+          },
+          {
+            "id": 3344,
+            "callFrame": {
+              "functionName": "observeQueue",
+              "scriptId": "45",
+              "url": "http://localhost:3108/assets/guestPendingBuffer-DCdJAftX.js",
+              "lineNumber": 0,
+              "columnNumber": 67330
+            },
+            "profileHitCount": 90,
+            "sampleCount": 90,
+            "sampledLeafSelfTimeUs": 97787
+          },
+          {
+            "id": 8611,
+            "callFrame": {
+              "functionName": "observeQueue",
+              "scriptId": "45",
+              "url": "http://localhost:3108/assets/guestPendingBuffer-DCdJAftX.js",
+              "lineNumber": 0,
+              "columnNumber": 67330
+            },
+            "profileHitCount": 2,
+            "sampleCount": 2,
+            "sampledLeafSelfTimeUs": 1530
+          },
+          {
+            "id": 6973,
+            "callFrame": {
+              "functionName": "observeQueue",
+              "scriptId": "45",
+              "url": "http://localhost:3108/assets/guestPendingBuffer-DCdJAftX.js",
+              "lineNumber": 0,
+              "columnNumber": 67330
+            },
+            "profileHitCount": 0,
+            "sampleCount": 0,
+            "sampledLeafSelfTimeUs": 0
+          },
+          {
+            "id": 1799,
+            "callFrame": {
+              "functionName": "observeQueue",
+              "scriptId": "45",
+              "url": "http://localhost:3108/assets/guestPendingBuffer-DCdJAftX.js",
+              "lineNumber": 0,
+              "columnNumber": 67330
+            },
+            "profileHitCount": 90,
+            "sampleCount": 90,
+            "sampledLeafSelfTimeUs": 103623
+          },
+          {
+            "id": 8101,
+            "callFrame": {
+              "functionName": "observeQueue",
+              "scriptId": "45",
+              "url": "http://localhost:3108/assets/guestPendingBuffer-DCdJAftX.js",
+              "lineNumber": 0,
+              "columnNumber": 67330
+            },
+            "profileHitCount": 0,
+            "sampleCount": 0,
+            "sampledLeafSelfTimeUs": 0
+          },
+          {
+            "id": 11253,
+            "callFrame": {
+              "functionName": "observeQueue",
+              "scriptId": "45",
+              "url": "http://localhost:3108/assets/guestPendingBuffer-DCdJAftX.js",
+              "lineNumber": 0,
+              "columnNumber": 67330
+            },
+            "profileHitCount": 0,
+            "sampleCount": 0,
+            "sampledLeafSelfTimeUs": 0
+          }
+        ]
+      },
+      {
+        "name": "diagnosticNow",
+        "sampleCount": 33,
+        "sampledLeafSelfTimeUs": 32836,
+        "sampledLeafSelfTimeMs": 32.836,
+        "nodes": [
+          {
+            "id": 1847,
+            "callFrame": {
+              "functionName": "diagnosticNow",
+              "scriptId": "45",
+              "url": "http://localhost:3108/assets/guestPendingBuffer-DCdJAftX.js",
+              "lineNumber": 0,
+              "columnNumber": 66791
+            },
+            "profileHitCount": 1,
+            "sampleCount": 1,
+            "sampledLeafSelfTimeUs": 832
+          },
+          {
+            "id": 4705,
+            "callFrame": {
+              "functionName": "diagnosticNow",
+              "scriptId": "45",
+              "url": "http://localhost:3108/assets/guestPendingBuffer-DCdJAftX.js",
+              "lineNumber": 0,
+              "columnNumber": 66791
+            },
+            "profileHitCount": 2,
+            "sampleCount": 2,
+            "sampledLeafSelfTimeUs": 1982
+          },
+          {
+            "id": 9085,
+            "callFrame": {
+              "functionName": "diagnosticNow",
+              "scriptId": "45",
+              "url": "http://localhost:3108/assets/guestPendingBuffer-DCdJAftX.js",
+              "lineNumber": 0,
+              "columnNumber": 66791
+            },
+            "profileHitCount": 4,
+            "sampleCount": 4,
+            "sampledLeafSelfTimeUs": 4038
+          },
+          {
+            "id": 5180,
+            "callFrame": {
+              "functionName": "diagnosticNow",
+              "scriptId": "45",
+              "url": "http://localhost:3108/assets/guestPendingBuffer-DCdJAftX.js",
+              "lineNumber": 0,
+              "columnNumber": 66791
+            },
+            "profileHitCount": 2,
+            "sampleCount": 2,
+            "sampledLeafSelfTimeUs": 3086
+          },
+          {
+            "id": 4229,
+            "callFrame": {
+              "functionName": "diagnosticNow",
+              "scriptId": "45",
+              "url": "http://localhost:3108/assets/guestPendingBuffer-DCdJAftX.js",
+              "lineNumber": 0,
+              "columnNumber": 66791
+            },
+            "profileHitCount": 16,
+            "sampleCount": 16,
+            "sampledLeafSelfTimeUs": 15291
+          },
+          {
+            "id": 2309,
+            "callFrame": {
+              "functionName": "diagnosticNow",
+              "scriptId": "45",
+              "url": "http://localhost:3108/assets/guestPendingBuffer-DCdJAftX.js",
+              "lineNumber": 0,
+              "columnNumber": 66791
+            },
+            "profileHitCount": 2,
+            "sampleCount": 2,
+            "sampledLeafSelfTimeUs": 2091
+          },
+          {
+            "id": 4001,
+            "callFrame": {
+              "functionName": "diagnosticNow",
+              "scriptId": "45",
+              "url": "http://localhost:3108/assets/guestPendingBuffer-DCdJAftX.js",
+              "lineNumber": 0,
+              "columnNumber": 66791
+            },
+            "profileHitCount": 2,
+            "sampleCount": 2,
+            "sampledLeafSelfTimeUs": 1788
+          },
+          {
+            "id": 6991,
+            "callFrame": {
+              "functionName": "diagnosticNow",
+              "scriptId": "45",
+              "url": "http://localhost:3108/assets/guestPendingBuffer-DCdJAftX.js",
+              "lineNumber": 0,
+              "columnNumber": 66791
+            },
+            "profileHitCount": 3,
+            "sampleCount": 3,
+            "sampledLeafSelfTimeUs": 2863
+          },
+          {
+            "id": 7117,
+            "callFrame": {
+              "functionName": "diagnosticNow",
+              "scriptId": "45",
+              "url": "http://localhost:3108/assets/guestPendingBuffer-DCdJAftX.js",
+              "lineNumber": 0,
+              "columnNumber": 66791
+            },
+            "profileHitCount": 1,
+            "sampleCount": 1,
+            "sampledLeafSelfTimeUs": 865
+          }
+        ]
+      }
+    ]
+  }
+}
