@@ -168,6 +168,7 @@ export function ActionMenu({
   );
 }
 const modalIcons = {
+  copy: 'copy-plus',
   folder: 'folder',
   trash: 'trash-2',
   share: 'share-2',

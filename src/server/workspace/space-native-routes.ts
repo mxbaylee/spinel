@@ -15,6 +15,7 @@ import type { FormulaDiagnostics } from '../formulas/routes.ts';
 import { historyRoutes } from '../history/routes.ts';
 import type { HistoryStore } from '../history/store.ts';
 import { admitTransfer, transfers } from './transfers.ts';
+import { CopyFiles } from './copy.ts';
 
 /** Existing native integrations, admitted through one exact Space + child namespace. */
 export function spaceNativeRoutes(
@@ -32,6 +33,7 @@ export function spaceNativeRoutes(
   const spaces = new SpaceStore(workspace);
   const documents = new DocumentStore(workspace);
   const files = new PortableFiles(workspace, collaboration);
+  const copies = new CopyFiles(workspace, files);
   const scopeOf = (request: Request) => {
     const spaceId = String(request.params.spaceId),
       spaceItem = String(request.params.itemId);
@@ -97,6 +99,37 @@ export function spaceNativeRoutes(
       .send(Buffer.from(image.data));
   });
   if (!options.guest) {
+    router.get('/copy-options', (request, response) => {
+      const actor = identity(request);
+      response.json(copies.options(actor.userId, scopeOf(request).spaceItem, actor.customData));
+    });
+    router.post(
+      '/copy',
+      admitTransfer,
+      express.json({ limit: '8kb', strict: true }),
+      async (request, response) => {
+        const transfer = transfers.get(response)!;
+        transfer.start();
+        try {
+          if (!request.is('application/json'))
+            throw new AuthError(400, 'Send the copy name and destination as JSON.');
+          const actor = identity(request);
+          const item = await copies.copy(
+            actor.userId,
+            scopeOf(request).spaceItem,
+            request.body,
+            () => {
+              if (response.destroyed || identity(request).userId !== actor.userId)
+                throw new AuthError(401, 'Sign in to continue.');
+            },
+            actor.customData,
+          );
+          response.status(201).json({ item });
+        } finally {
+          transfer.finish();
+        }
+      },
+    );
     if (options.history)
       router.use(
         '/history',

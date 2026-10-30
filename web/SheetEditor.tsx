@@ -46,6 +46,9 @@ import type { ConnectionState } from './connectionState.ts';
 import { guestPendingBuffer } from './guestPendingBuffer.ts';
 import type { RegisterGuestEditor } from './guestRevocation.ts';
 import { nativeSyncPermissions } from './nativeSyncPermissions.ts';
+import { BehaviorSubject } from 'rxjs';
+import { copyUnavailable, NativeCopyPlugin } from './nativeCopy.tsx';
+import { guestItemId } from './documentAccess.ts';
 
 export function SheetEditor({
   id,
@@ -84,13 +87,21 @@ export function SheetEditor({
     let offlineSession: OfflineSession | undefined;
     let initialized = false;
     let captureReady = false;
+    const copyStatus = new BehaviorSubject<string | null>(
+      'Wait for the document to finish opening.',
+    );
+    let lastConnection: ConnectionState = 'reconnecting';
     const loading = new AbortController();
     const room = `${spaceId ?? ''}/${id}`;
     if (lastRoom.current !== room) syncNotice.current = undefined;
     lastRoom.current = room;
     onConnectionState?.('reconnecting');
     const publishConnection = (state: ConnectionState) => {
-      if (!disposed) onConnectionState?.(state);
+      if (!disposed) {
+        lastConnection = state;
+        publish(lastState);
+        onConnectionState?.(state);
+      }
     };
     let stopPresence: (() => void) | undefined;
     setPeople([]);
@@ -103,6 +114,13 @@ export function SheetEditor({
       lastState = state;
       if (disposed) return;
       const dirty = editing || state.dirty;
+      copyStatus.next(
+        copyUnavailable(
+          { ...state, dirty, failed: state.failed || Boolean(syncNotice.current) },
+          initialized,
+          lastConnection === 'online',
+        ),
+      );
       if (dirty && initialized) syncNotice.current = undefined;
       onDirty(dirty, Boolean(state.retained));
       setStatus({
@@ -139,6 +157,10 @@ export function SheetEditor({
           [LocaleType.EN_US]: mergeLocales(enUS, sheetDrawingEnglish),
         },
         override: nativePermissions.override,
+        plugins:
+          !localAccountId && !guestItemId()
+            ? [[NativeCopyPlugin, { id, spaceId, unavailable: copyStatus }]]
+            : [],
         presets: [
           sheetPreset(
             container.current!,
@@ -372,6 +394,8 @@ export function SheetEditor({
     });
     return () => {
       disposed = true;
+      copyStatus.next('This document is closed.');
+      copyStatus.complete();
       loading.abort();
       registerGuestEditor?.(null);
       stopPresence?.();

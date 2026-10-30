@@ -1,0 +1,36 @@
+.copy-file {
+  color: var(--sp-text);
+  font:
+    14px / 1.5 system-ui,
+    sans-serif;
+  min-width: 0;
+}
+.copy-file p {
+  margin: 0;
+}
+.copy-file .copy-file-note {
+  color: var(--sp-muted);
+  font-size: 12px;
+}
+.copy-file-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.copy-file [role='alert'] {
+  color: var(--fill-error-soft-fg);
+}
+.spinel-copy-dialog {
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+}
+.dashboard-copy-confirmation {
+  margin: 12px 0;
+  color: var(--sp-muted);
+}
+@media (pointer: coarse), (max-width: 640px) {
+  .copy-file .sp-control {
+    min-height: 44px;
+  }
+}
