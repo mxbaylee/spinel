@@ -1,4 +1,3 @@
-// Temporary SPN-115 service-path routing observation; removed before landing.
 import { maintenanceRouter } from '../maintenance/router.ts';
 import type { AuthStore } from '../auth/store.ts';
 import { cookieToken } from '../auth/routes.ts';

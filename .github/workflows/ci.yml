@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [main, codex/spn-115-evidence-base]
+    branches: [main]
     # Draft commits already run every check; becoming ready changes no code.
     types: [opened, edited, synchronize, reopened, labeled, unlabeled]
   workflow_dispatch:
@@ -217,8 +217,7 @@ jobs:
   lib-test-run:
     name: ${{ needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata' && 'Metadata only - Lib tests' || 'Lib tests' }} (${{ matrix.suite }})
     needs: changes
-    # SPN-115 acceptance fault injection: selected worker intentionally omitted. Never merge.
-    if: ${{ false }}
+    if: needs.changes.outputs.lib_test_run == 'true'
     runs-on: ubuntu-latest
     # Ordinary cells measured 255s; the stronger mixed matrix projects over
     # eight minutes locally. Keep the same hosted cap for every full partition.
