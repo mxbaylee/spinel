@@ -261,6 +261,72 @@ function displayedBytes(text: string) {
   return Number(match![1]) * 1024 ** ['B', 'KB', 'MB', 'GB'].indexOf(match![2]);
 }
 
+test('a denied download offers offline storage guidance without leaving the editor', async ({
+  browser,
+  baseURL,
+}, info) => {
+  test.setTimeout(180_000);
+  const f = await fixture(browser, baseURL!, info, 'sheet');
+  try {
+    // Control this UI branch only. The desktop matrix records the browsers’ real grants.
+    await f.context.addInitScript(() => {
+      Object.defineProperty(navigator.storage, 'persist', {
+        configurable: true,
+        value: async () => false,
+      });
+    });
+    await f.page.goto(`/?item=${f.item.id}`);
+    await expect(saveStatus(f.page)).toHaveText('All changes saved.', { timeout: 30_000 });
+    await expect
+      .poll(() => f.page.evaluate(() => Boolean(navigator.serviceWorker.controller)))
+      .toBe(true);
+    const href = f.page.url();
+    const canvas = await f.page.locator('.univer-container canvas').first().elementHandle();
+    await f.page.getByRole('button', { name: 'Document actions', exact: true }).click();
+    await f.page
+      .getByRole('menuitem', { name: 'Available offline on this device', exact: true })
+      .click();
+    await downloaded(f.page, f.item.name);
+    const result = f.page.getByRole('dialog', { name: 'Offline availability', exact: true });
+    await expect(result.getByText(/Your browser did not grant storage protection/)).toBeVisible();
+    // The result remains open while the mounted native writer adopts its new device copy.
+    await expect(
+      f.page.getByRole('status', { name: 'Save status', exact: true, includeHidden: true }),
+    ).toHaveText('Synced. All changes are saved on the server and this device.', {
+      timeout: 30_000,
+    });
+    const saved = await deviceCopy(f.page, f.actor.id, f.item.id);
+    expect(saved?.item?.bundle.itemId).toBe(f.item.id);
+    await f.network.setOffline(true);
+    const trigger = result.getByRole('button', { name: 'How to keep them' });
+    await trigger.click();
+    const guide = f.page.getByRole('dialog', { name: 'About device storage', exact: true });
+    await expect(guide.getByText(/Use a regular window/)).toBeVisible();
+    await guide.getByText('Browser storage limits', { exact: true }).click();
+    await expect(guide.getByText(/seven days of Safari use/)).toBeVisible();
+    await f.page.keyboard.press('Escape');
+    await expect(trigger).toBeFocused();
+    await expect(result).toBeVisible();
+    expect(f.page.url()).toBe(href);
+    expect(await deviceCopy(f.page, f.actor.id, f.item.id)).toEqual(saved);
+    expect(
+      await f.page
+        .locator('.univer-container canvas')
+        .first()
+        .evaluate((node, original) => node === original, canvas!),
+    ).toBe(true);
+    await result.getByRole('button', { name: 'Done', exact: true }).click();
+    await edit(f.page, 'sheet', 'Storage guidance retained this editor');
+    await savedLocally(f.page);
+    expect(
+      pending((await deviceCopy(f.page, f.actor.id, f.item.id))?.item?.outbox?.checkpoint),
+    ).toBe(true);
+    expect(f.errors).toEqual([]);
+  } finally {
+    await f.close();
+  }
+});
+
 test('device storage reports actual image bytes, pending Space work, persistence and exact links', async ({
   browser,
   baseURL,

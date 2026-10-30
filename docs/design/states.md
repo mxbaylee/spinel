@@ -120,7 +120,10 @@ section places them.
 - **Persistent storage** (SPN-052): when a download finishes and the browser
   hasn't granted persistent storage, the download's confirmation says so in
   place: "Downloaded. This browser may clear offline documents when space runs
-  low." with a **How to keep them** link to the guide. Your profile → This
+  low." with a **How to keep them** action opening the shared **About device
+  storage** guide in place. Closing the guide returns focus to its trigger and
+  keeps the download result and editor open. The guide also opens offline;
+  browser-specific limits sit behind **Browser storage limits**. Your profile → This
   device repeats the current state and per-item usage, with **Remove from
   device** per item.
 - **Downloads that were cleared** (SPN-052): the row loses its "Available

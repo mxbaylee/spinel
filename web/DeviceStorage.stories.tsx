@@ -267,7 +267,16 @@ export const RequestProtection: Story = {
     await expect(canvas.getByRole('link', { name: clean.name })).toBeVisible();
   },
 };
-export const AboutStorage: Story = { args: { initialDialog: 'about' } };
+export const AboutStorage: Story = {
+  args: { initialDialog: 'about' },
+  play: async () => {
+    const guide = within(
+      within(document.body).getByRole('dialog', { name: 'About device storage' }),
+    );
+    await expect(guide.getByText(/Use a regular window/)).toBeVisible();
+    await expect(guide.getByText(/Server backups cannot restore edits/)).toBeVisible();
+  },
+};
 export const CleanRemoval: Story = { args: { initialDialog: 'clean' } };
 export const PendingRemoval: Story = {
   args: { initialDialog: 'pending', value: { ...inventory, items: [pending] } },
