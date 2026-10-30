@@ -2007,6 +2007,10 @@ test
     'commit-publication',
     'clock-after-final-scan',
     'clock-after-running-write',
+    'failed-stop-timeout',
+    'failed-stop-memory',
+    'failed-stop-publication-deadline',
+    'preparation-diagnostic',
   ])(
   'complete application and authenticated archive commit and release the selected candidate: %s',
   async (ordering) => {
@@ -2038,6 +2042,7 @@ test
       portProbe.close((error) => (error ? reject(error) : resolve())),
     );
     const applicationUrl = `http://127.0.0.1:${applicationPort}/api/health`;
+    const forcedStop = ordering.startsWith('failed-stop-');
     const originalRecovery = ordering.startsWith('original-');
     const terminalPhase = originalRecovery ? 'original-committed' : 'candidate-committed';
     let privateReadyObserved = false,
@@ -2049,6 +2054,19 @@ test
       earlyInjected = false,
       injectingEarlyRelease = false;
     let trialChild: ChildProcess | undefined, privateReference: unknown;
+    const trialSignals: Array<NodeJS.Signals | number | undefined> = [];
+    let trialStopSent = false;
+    let injectedStopFailure = false;
+    const kill = process.kill.bind(process);
+    vi.spyOn(process, 'kill').mockImplementation((pid, signal) => {
+      if (
+        trialChild?.pid !== undefined &&
+        pid === -trialChild.pid &&
+        (signal === 'SIGTERM' || signal === 'SIGKILL')
+      )
+        trialSignals.push(signal);
+      return kill(pid, signal);
+    });
     let pausedProbe: Promise<number> | undefined;
     let releaseSnapshot:
       { phase: string; main: unknown; barrier: boolean; accepted: unknown } | undefined;
@@ -2074,6 +2092,22 @@ test
         });
         if (environment.SPINEL_RESTORE_TRIAL === '1') {
           trialChild = child;
+          if (forcedStop) {
+            const send = child.send;
+            vi.spyOn(child, 'send').mockImplementation((value: unknown, ...args: unknown[]) => {
+              if (
+                value &&
+                typeof value === 'object' &&
+                'kind' in value &&
+                value.kind === 'restore-trial-stop'
+              ) {
+                trialStopSent = true;
+                // Keep the actual selected app open: no synthetic final witness.
+                return true;
+              }
+              return Reflect.apply(send, child, [value, ...args]) as boolean;
+            });
+          }
           const emit = child.emit.bind(child);
           let held: unknown[] | undefined;
           child.emit = (event: string | symbol, ...args: unknown[]) => {
@@ -2124,6 +2158,7 @@ test
                 expect(supervisor.status().phase).toBe('starting');
                 expect(supervisor.status().readyToResume).toBe(false);
                 if (
+                  forcedStop ||
                   ordering === 'wrong-fingerprint' ||
                   ordering === 'failed-freeze-publication' ||
                   (originalRecovery && !original)
@@ -2191,13 +2226,67 @@ test
       },
       budgets: {
         startMs: 20_000,
-        stopMs: 3000,
+        stopMs: forcedStop ? 15_000 : 3000,
         drainMs: 10_000,
         verifyMs: 5000,
         restoreMs: 30_000,
       },
     });
     cleanups.push(() => supervisor.close());
+    if (ordering === 'failed-stop-memory') {
+      const internal = supervisor as unknown as {
+        watchRestoreShutdown(
+          identity: { pid: number },
+          fail: () => void,
+        ): ReturnType<typeof setInterval>;
+      };
+      const watch = internal.watchRestoreShutdown.bind(supervisor);
+      vi.spyOn(internal, 'watchRestoreShutdown').mockImplementation((identity, fail) => {
+        if (identity.pid !== trialChild?.pid) return watch(identity, fail);
+        // Exercise the same rejection callback as a measured headroom refusal,
+        // without allocating enough memory to harm the development machine.
+        return setInterval(() => {
+          injectedStopFailure = true;
+          fail();
+        }, 10);
+      });
+    }
+    if (ordering === 'failed-stop-publication-deadline') {
+      const planStop = RestoreJobs.prototype.planTrialStop;
+      vi.spyOn(RestoreJobs.prototype, 'planTrialStop').mockImplementation(function (
+        this: RestoreJobs,
+        ...args: Parameters<RestoreJobs['planTrialStop']>
+      ) {
+        planStop.apply(this, args);
+        injectedStopFailure = true;
+        throw new Error('Injected failure after durable stop request.');
+      });
+      const write = supervisor.journal.write.bind(supervisor.journal);
+      vi.spyOn(supervisor.journal, 'write').mockImplementation(() => {
+        write();
+        if (
+          injectedStopFailure &&
+          !clockAdvanced &&
+          supervisor.journal.state.phase === 'recovery-required'
+        ) {
+          clockAdvanced = true;
+          authorityOffset += 30_001;
+        }
+      });
+    }
+    let preparationRefused = false;
+    if (ordering === 'preparation-diagnostic') {
+      const sync = restoreInput.syncRestoreDirectory;
+      vi.spyOn(restoreInput, 'syncRestoreDirectory').mockImplementation(async (...args) => {
+        if (!preparationRefused && args[0].includes('/prepare-')) {
+          preparationRefused = true;
+          const failure = new RecoveryResourceError('memory-headroom');
+          failure.message = '/private/custody SELECT sessions';
+          throw failure;
+        }
+        return sync(...args);
+      });
+    }
     await start(supervisor);
     const state = supervisor.status();
     const id = randomUUID();
@@ -2322,6 +2411,25 @@ test
     });
     expect(begun.record.phase).toBe('pause-planned');
     const statePath = join(f.root, 'restore-jobs', id, 'state.json');
+    if (ordering === 'preparation-diagnostic') {
+      await expect
+        .poll(() => supervisor.status().lastFailure, { timeout: 30_000 })
+        .toBe('restore-prep-planned-directory-sync-memory-headroom');
+      expect(preparationRefused).toBe(true);
+      expect(privateReadyObserved).toBe(false);
+      const retained = JSON.parse(await readFile(statePath, 'utf8'));
+      expect(retained.phase).toBe('preparation-planned');
+      expect(retained.execution.stop.fingerprint).toBe(retained.execution.frozen.fingerprint);
+      expect(retained.execution.preparation.candidate).toBeUndefined();
+      expect(retained.execution.trial).toBeUndefined();
+      expect(supervisor.journal.state.child).toBeNull();
+      expect(supervisor.status().phase).toBe('recovery-required');
+      const main = JSON.parse(await readFile(join(f.root, 'journal.json'), 'utf8'));
+      expect(main.lastFailure).toBe('restore-prep-planned-directory-sync-memory-headroom');
+      expect(main.restoreJob.jobId).toBe(id);
+      assertWorkspaceHandlesClosed(f.databasePath);
+      return;
+    }
     await expect
       .poll(() => privateReadyObserved || supervisor.status().phase === 'recovery-required', {
         timeout: 30_000,
@@ -2334,6 +2442,30 @@ test
       controllerFailure,
     }).toMatchObject({ ready: true });
     expect(await pausedProbe).toBe(503);
+    if (forcedStop) {
+      await expect.poll(() => supervisor.journal.state.child, { timeout: 40_000 }).toBeNull();
+      const retained = JSON.parse(await readFile(statePath, 'utf8'));
+      expect(retained.phase).toBe('trial-stop-requested');
+      expect(retained.execution.failure.stop.fingerprint).toBeNull();
+      expect(retained.execution.failure.stop.acceptedAt).toBeNull();
+      expect(retained.execution.failure.capture).toBeUndefined();
+      expect(retained.execution.rollback).toBeUndefined();
+      expect(retained.execution.outcome).toBeUndefined();
+      expect(retained.execution.stop.fingerprint).toMatch(/^[a-f0-9]{64}$/);
+      expect(retained.execution.trial.child.pid).toBe(trialChild!.pid);
+      expect(trialSignals).toEqual(['SIGKILL']);
+      await expect.poll(() => trialChild!.signalCode).toBe('SIGKILL');
+      expect(processResourcesReleased(String(trialChild!.pid))).toBe(true);
+      expect(supervisor.status().phase).toBe('recovery-required');
+      expect(supervisor.journal.state.restoreJob?.jobId).toBe(id);
+      expect(supervisor.journal.state.restoreStop).toEqual(retained.execution.stop);
+      expect(existsSync(restoreBarrierPath(f.databasePath))).toBe(true);
+      assertWorkspaceHandlesClosed(f.databasePath);
+      expect(trialStopSent).toBe(ordering !== 'failed-stop-publication-deadline');
+      expect(injectedStopFailure).toBe(ordering !== 'failed-stop-timeout');
+      expect(clockAdvanced).toBe(ordering === 'failed-stop-publication-deadline');
+      return;
+    }
     const failed = !['ownership-first', 'readiness-first', 'original-recovered'].includes(ordering);
     const uncommitted = [
       'wrong-fingerprint',
@@ -3026,7 +3158,7 @@ test('failed job-witness publication never sends the child a custody acknowledge
   });
   await expect
     .poll(() => f.supervisor.status().lastFailure, { timeout: 10_000 })
-    .toBe('restore-execution-unresolved');
+    .toBe('restore-stop-requested-unknown');
   expect(existsSync(join(f.directory, 'witness-ack'))).toBe(false);
   expect(f.supervisor.journal.state.restoreStop!.fingerprint).toBeNull();
   const job = JSON.parse(
@@ -3086,7 +3218,7 @@ test('a published pause plan followed by failure fences the application without 
   };
   await expect(f.supervisor.beginPreparedRestore(request)).rejects.toThrow('after durable plan');
   expect(f.supervisor.status().phase).toBe('recovery-required');
-  expect(f.supervisor.status().lastFailure).toBe('restore-execution-unresolved');
+  expect(f.supervisor.status().lastFailure).toBe('restore-pause-planned-unknown');
   const retry = await f.supervisor.beginPreparedRestore(request);
   expect(retry.record.phase).toBe('pause-planned');
   expect(retry.record.intent).toEqual(admitted.record.intent);
@@ -3115,7 +3247,7 @@ test('stop-plan persistence crossing original expiry never dispatches the shutdo
   });
   await expect
     .poll(() => f.supervisor.status().lastFailure, { timeout: 10_000 })
-    .toBe('restore-execution-unresolved');
+    .toBe('restore-stop-requested-unknown');
   expect(
     send.mock.calls.some(
       ([message]) =>
@@ -3144,7 +3276,7 @@ test('revocation during drain preserves raw current evidence and refuses frozen 
   });
   await expect
     .poll(() => f.supervisor.status().lastFailure, { timeout: 15_000 })
-    .toBe('restore-execution-unresolved');
+    .toBe('restore-freeze-planned-unknown');
   const job = JSON.parse(
     await readFile(join(f.root, 'restore-jobs', f.request.id, 'state.json'), 'utf8'),
   );
@@ -3186,7 +3318,7 @@ test.each(['publication', 'deadline'])(
     await f.supervisor.beginPreparedRestore(request);
     await expect
       .poll(() => f.supervisor.status().lastFailure, { timeout: 15_000 })
-      .toBe('restore-execution-unresolved');
+      .toBe('restore-frozen-unknown');
     const job = JSON.parse(
       await readFile(join(f.root, 'restore-jobs', request.id, 'state.json'), 'utf8'),
     );

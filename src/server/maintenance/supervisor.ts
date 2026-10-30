@@ -1,3 +1,4 @@
+import { restoreExecutionFailureReason } from './restore-failure.ts';
 import { isDeepStrictEqual } from 'node:util';
 import { estimateRestoreCapacity, validRestorePreviewBytes } from './restore-capacity.ts';
 import type { RestoreCapacityVolume } from './restore-capacity.ts';
@@ -789,6 +790,20 @@ export class MaintenanceSupervisor {
         status: this.status(),
       });
   }
+  private restoreExecutionFailure(id: string, error: unknown) {
+    let phase: unknown;
+    try {
+      const jobs = new RestoreJobs(this.journal);
+      try {
+        phase = jobs.read(id)?.phase;
+      } finally {
+        jobs.close();
+      }
+    } catch {
+      /* Missing/uncertain evidence cannot prevent fail-closed handling. */
+    }
+    this.failure(restoreExecutionFailureReason(phase, error));
+  }
   private failure(reason: string) {
     this.childReady = false;
     try {
@@ -1351,9 +1366,9 @@ export class MaintenanceSupervisor {
         const execution = this.serial(() => this.executeRestoreStopOwned(request));
         this.restoreExecution = execution;
         void execution
-          .catch(() => {
+          .catch((error) => {
             try {
-              this.failure('restore-execution-unresolved');
+              this.restoreExecutionFailure(request.id, error);
             } catch {
               /* Retain durable job/reference for host recovery. */
             }
@@ -1363,7 +1378,7 @@ export class MaintenanceSupervisor {
           });
         return { record: planned, queued: true };
       } catch (error) {
-        if (planAttempted) this.failure('restore-execution-unresolved');
+        if (planAttempted) this.restoreExecutionFailure(request.id, error);
         throw error;
       } finally {
         controller.abort();
@@ -2339,7 +2354,9 @@ export class MaintenanceSupervisor {
       }
       this.failure('restore-trial-failed');
       try {
-        await this.stopGroup(identity);
+        // Any eligible final-witness attempt has finished. An unusable private
+        // trial gets no new TERM grace, including after a slow failure write.
+        await this.stopGroup(identity, true, true);
         this.child = undefined;
         this.childOwned = false;
         this.transition({ child: null });
@@ -2765,7 +2782,9 @@ export class MaintenanceSupervisor {
       }
       this.failure('restore-release-failed');
       try {
-        await this.stopGroup(permit.child);
+        // After any eligible final-evidence attempt, contain the failed private
+        // process immediately while retaining the physical-closure proof.
+        await this.stopGroup(permit.child, true, true);
         this.child = undefined;
         this.childOwned = false;
         this.transition({ child: null });

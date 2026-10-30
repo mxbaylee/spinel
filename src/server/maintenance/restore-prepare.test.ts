@@ -1,3 +1,4 @@
+import { RecoveryResourceError } from '../backup/resource-error.ts';
 import { createHash, randomUUID } from 'node:crypto';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { mkdir, mkdtemp, readFile, realpath, rm, writeFile } from 'node:fs/promises';
@@ -304,13 +305,17 @@ test.each(['candidate-prepared', 'rollback-prepared', 'candidate-rehearsed', 'pr
     f.onPublish((phase) => {
       if (phase === failed) throw new Error('Published then failed');
     });
-    await expect(prepareRestoreAttempt(f.options)).rejects.toThrow('Published then failed');
+    await expect(prepareRestoreAttempt(f.options)).rejects.toMatchObject({
+      name: 'RestorePreparationFailure',
+      code: 'unknown',
+    });
     const retained = f.outputs.map((path) => readFileSync(path));
     const dirs = readdirSync(f.retained);
     expect(f.state().phase).toBe(failed);
-    await expect(prepareRestoreAttempt({ ...f.options, record: f.state() })).rejects.toThrow(
-      'stale preparation',
-    );
+    await expect(prepareRestoreAttempt({ ...f.options, record: f.state() })).rejects.toMatchObject({
+      step: 'plan',
+      code: 'unknown',
+    });
     expect(readdirSync(f.retained)).toEqual(dirs);
     expect(f.outputs.map((path) => readFileSync(path))).toEqual(retained);
     expect(f.dispose).not.toHaveBeenCalled();
@@ -320,13 +325,19 @@ test.each(['candidate-prepared', 'rollback-prepared', 'candidate-rehearsed', 'pr
 test('failed rollback and failed candidate rehearsal cannot advertise prepared or automatically retry', async () => {
   const f = await fixture();
   vi.mocked(prepareRestoreRollback).mockRejectedValueOnce(new Error('Rollback refused'));
-  await expect(prepareRestoreAttempt(f.options)).rejects.toThrow('Rollback refused');
+  await expect(prepareRestoreAttempt(f.options)).rejects.toMatchObject({
+    step: 'rollback-prepare',
+    code: 'unknown',
+  });
   expect(f.state().phase).toBe('candidate-prepared');
   expect(f.outputs).toHaveLength(1);
   expect(rehearseRestoreStartup).not.toHaveBeenCalled();
   const second = await fixture();
   vi.mocked(rehearseRestoreStartup).mockRejectedValueOnce(new Error('Startup writes'));
-  await expect(prepareRestoreAttempt(second.options)).rejects.toThrow('Startup writes');
+  await expect(prepareRestoreAttempt(second.options)).rejects.toMatchObject({
+    step: 'candidate-rehearse',
+    code: 'unknown',
+  });
   expect(second.state().phase).toBe('rollback-prepared');
   expect(second.outputs).toHaveLength(2);
   expect(second.jobs.markPrepared).not.toHaveBeenCalled();
@@ -357,7 +368,10 @@ test('closure lost after candidate worker or synchronous scan crosses expiry sto
   f.options.assertClosed.mockImplementation(() => {
     if (f.outputs.length) throw new Error('Original reopened');
   });
-  await expect(prepareRestoreAttempt(f.options)).rejects.toThrow('Original reopened');
+  await expect(prepareRestoreAttempt(f.options)).rejects.toMatchObject({
+    step: 'authority',
+    code: 'unknown',
+  });
   expect(f.outputs).toHaveLength(1);
   expect(f.state().phase).toBe('preparation-planned');
   expect(prepareRestoreRollback).not.toHaveBeenCalled();
@@ -365,7 +379,10 @@ test('closure lost after candidate worker or synchronous scan crosses expiry sto
   second.options.assertClosed.mockImplementationOnce(() => {
     second.advance(60_000);
   });
-  await expect(prepareRestoreAttempt(second.options)).rejects.toThrow('deadline');
+  await expect(prepareRestoreAttempt(second.options)).rejects.toMatchObject({
+    step: 'deadline',
+    code: 'unknown',
+  });
   expect(second.jobs.planPreparation).not.toHaveBeenCalled();
 });
 
@@ -374,7 +391,10 @@ test('a reserved slot survives an uncertain plan before any worker starts', asyn
   f.onPublish((phase) => {
     if (phase === 'preparation-planned') throw new Error('Plan publication uncertain');
   });
-  await expect(prepareRestoreAttempt(f.options)).rejects.toThrow('Plan publication uncertain');
+  await expect(prepareRestoreAttempt(f.options)).rejects.toMatchObject({
+    step: 'plan',
+    code: 'unknown',
+  });
   expect(reconcilePreparedRestore).not.toHaveBeenCalled();
   const directories = readdirSync(f.retained);
   await expect(prepareRestoreAttempt({ ...f.options, record: f.state() })).rejects.toThrow();
@@ -407,3 +427,17 @@ test.each(['path', 'sidecar', 'hash', 'witness'] as const)(
     expect(f.dispose).not.toHaveBeenCalled();
   },
 );
+
+test('preparation diagnostics identify the failing operation without retaining private errors', async () => {
+  const f = await fixture();
+  const failure = new RecoveryResourceError('memory-headroom');
+  failure.message = '/private/path SELECT credentials';
+  vi.mocked(reconcilePreparedRestore).mockRejectedValueOnce(failure);
+  await expect(prepareRestoreAttempt(f.options)).rejects.toMatchObject({
+    step: 'candidate-reconcile',
+    code: 'memory-headroom',
+    message: 'Restore preparation failed.',
+  });
+  expect(f.state().phase).toBe('preparation-planned');
+  expect(prepareRestoreRollback).not.toHaveBeenCalled();
+});
