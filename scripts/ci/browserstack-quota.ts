@@ -8,7 +8,15 @@ export const retainedSessionIds = [
   '81a4cba3033bb2760f11bbe801b94a569b4ba6f4',
 ] as const;
 
-export const quotaLimits = Object.freeze({ totalMs: 60_000, requestMs: 8_000, bytes: 65_536 });
+export const quotaLimits = Object.freeze({
+  totalMs: 60_000,
+  requestMs: 8_000,
+  bytes: 65_536,
+  requests: 64,
+  pageSize: 10,
+  builds: 50,
+  sessions: 200,
+});
 type Row = Record<string, unknown>;
 type Observation<T> =
   { outcome: 'available'; data: T } | { outcome: 'unavailable'; reason: string };
@@ -23,6 +31,41 @@ type Session = {
   executionStatus: string;
   createdAt: string | null;
 };
+
+type Pagination = { pages: number; outcome: 'exhausted' | 'partial'; reason: string | null };
+type SessionEvidence = {
+  sessionId: string;
+  buildIds: string[];
+  observations: {
+    source: 'retained-smoke' | 'build-list' | 'detail';
+    evidence: Observation<Session>;
+  }[];
+  conflict: boolean;
+};
+const providerStatus = (value: unknown) =>
+  typeof value === 'string' &&
+  /^(done|passed|failed|error|timeout|running|queued|unmarked)$/.test(value)
+    ? value
+    : 'unknown';
+const terminal = (value: Session) =>
+  value.durationSeconds !== null &&
+  value.createdAt !== null &&
+  !['running', 'queued', 'unknown'].includes(value.providerStatus) &&
+  ['done', 'error', 'timeout'].includes(value.executionStatus);
+const identifier = (value: unknown): string => {
+  if (typeof value !== 'string' || !/^[a-f0-9]{40}$/.test(value))
+    throw new Error('invalid-response');
+  return value;
+};
+const conflicts = (a: Session, b: Session) =>
+  (Object.keys(a) as (keyof Session)[]).some(
+    (key) =>
+      a[key] !== null &&
+      b[key] !== null &&
+      a[key] !== 'unknown' &&
+      b[key] !== 'unknown' &&
+      a[key] !== b[key],
+  );
 
 function row(value: unknown): Row {
   if (!value || typeof value !== 'object' || Array.isArray(value))
@@ -60,11 +103,7 @@ function session(value: unknown, expectedId: string): Session {
       duration <= Number.MAX_SAFE_INTEGER
         ? duration
         : null,
-    providerStatus:
-      typeof data.status === 'string' &&
-      /^(done|passed|failed|error|timeout|running|queued|unmarked)$/.test(data.status)
-        ? data.status
-        : 'unknown',
+    providerStatus: providerStatus(data.status),
     executionStatus:
       typeof data.browserstack_status === 'string' &&
       /^(done|error|timeout|running|queued)$/.test(data.browserstack_status)
@@ -75,7 +114,7 @@ function session(value: unknown, expectedId: string): Session {
 }
 function reason(error: unknown): string {
   const message = error instanceof Error ? error.message : '';
-  return /^(http-\d{3}|invalid-response|response-too-large|request-timeout|deadline-exceeded|session-identity-mismatch)$/.test(
+  return /^(http-\d{3}|invalid-response|response-too-large|request-timeout|deadline-exceeded|request-limit|session-identity-mismatch)$/.test(
     message,
   )
     ? message
@@ -92,6 +131,7 @@ export async function collectQuotaEvidence(options: {
   const now = options.now ?? (() => performance.now());
   const started = now();
   const overallDeadline = started + quotaLimits.totalMs;
+  let requests = 0;
   const overall = new AbortController();
   const totalTimer = setTimeout(() => overall.abort(), quotaLimits.totalMs);
   const authorization = `Basic ${Buffer.from(`${options.username}:${options.accessKey}`).toString('base64')}`;
@@ -102,6 +142,8 @@ export async function collectQuotaEvidence(options: {
     const remaining = overallDeadline - now();
     if (overall.signal.aborted || remaining <= 0)
       return { outcome: 'unavailable', reason: 'deadline-exceeded' };
+    if (requests >= quotaLimits.requests)
+      return { outcome: 'unavailable', reason: 'request-limit' };
     const controller = new AbortController();
     const end = Math.min(overallDeadline, now() + quotaLimits.requestMs);
     const timeout = setTimeout(() => controller.abort(), Math.max(0, end - now()));
@@ -119,7 +161,9 @@ export async function collectQuotaEvidence(options: {
       if (signal.aborted || now() >= end) throw new Error('request-timeout');
     };
     async function request() {
-      // Every caller uses a fixed local path; there is no caller-supplied URL/method.
+      // Paths use only local endpoints, validated IDs and bounded numeric offsets.
+      active();
+      requests++;
       const received = await fetcher(`https://api.browserstack.com/automate/${path}`, {
         method: 'GET',
         headers: { Authorization: authorization, Accept: 'application/json' },
@@ -191,23 +235,188 @@ export async function collectQuotaEvidence(options: {
         evidence: await read(`sessions/${id}.json`, (value) => session(value, id)),
       });
     }
+    // Keep pagination progress separate from this map: a page containing the
+    // six already observed IDs still advances that build's retained listing.
+    const observed = new Map<string, SessionEvidence>(
+      sessions.map(({ sessionId, evidence }) => [
+        sessionId,
+        {
+          sessionId,
+          buildIds: [],
+          observations: [{ source: 'retained-smoke', evidence }],
+          conflict: false,
+        },
+      ]),
+    );
+    const observe = (
+      entry: SessionEvidence,
+      source: SessionEvidence['observations'][number]['source'],
+      evidence: Observation<Session>,
+    ) => {
+      if (evidence.outcome === 'available')
+        for (const previous of entry.observations)
+          if (
+            previous.evidence.outcome === 'available' &&
+            conflicts(previous.evidence.data, evidence.data)
+          )
+            entry.conflict = true;
+      const observation = { source, evidence };
+      if (
+        !entry.observations.some(
+          (previous) => JSON.stringify(previous) === JSON.stringify(observation),
+        )
+      )
+        entry.observations.push(observation);
+    };
+    async function paginate<T>(
+      path: (offset: number) => string,
+      parse: (value: unknown) => T,
+      id: (value: T) => string,
+      accept: (value: T) => string | null,
+    ): Promise<Pagination> {
+      const seen = new Set<string>();
+      let pages = 0,
+        offset = 0;
+      while (true) {
+        const page = await read(path(offset), (value) => {
+          if (!Array.isArray(value) || value.length > quotaLimits.pageSize)
+            throw new Error('invalid-response');
+          return value.map(parse);
+        });
+        if (page.outcome === 'unavailable')
+          return { pages, outcome: 'partial', reason: page.reason };
+        pages++;
+        let progress = 0;
+        for (const value of page.data) {
+          const key = id(value);
+          if (!seen.has(key)) {
+            seen.add(key);
+            progress++;
+          }
+          const failure = accept(value);
+          if (failure) return { pages, outcome: 'partial', reason: failure };
+        }
+        if (page.data.length < quotaLimits.pageSize)
+          return { pages, outcome: 'exhausted', reason: null };
+        if (!progress) return { pages, outcome: 'partial', reason: 'pagination-no-progress' };
+        offset += page.data.length;
+      }
+    }
+    const builds = new Map<
+      string,
+      {
+        buildId: string;
+        providerStatuses: string[];
+        conflict: boolean;
+        sessionIds: string[];
+        pagination: Pagination;
+      }
+    >();
+    const buildPagination = await paginate(
+      (offset) => `builds.json?limit=${quotaLimits.pageSize}&offset=${offset}`,
+      (value) => {
+        const data = row(row(value).automation_build);
+        return { buildId: identifier(data.hashed_id), status: providerStatus(data.status) };
+      },
+      (value) => value.buildId,
+      ({ buildId, status }) => {
+        if (!builds.has(buildId)) {
+          if (builds.size >= quotaLimits.builds) return 'build-limit';
+          builds.set(buildId, {
+            buildId,
+            providerStatuses: [],
+            conflict: false,
+            sessionIds: [],
+            pagination: { pages: 0, outcome: 'partial', reason: 'not-requested' },
+          });
+        }
+        const build = builds.get(buildId)!;
+        if (!build.providerStatuses.includes(status)) build.providerStatuses.push(status);
+        build.conflict = build.providerStatuses.filter((status) => status !== 'unknown').length > 1;
+        return null;
+      },
+    );
+    for (const build of builds.values()) {
+      build.pagination = await paginate(
+        (offset) =>
+          `builds/${build.buildId}/sessions.json?limit=${quotaLimits.pageSize}&offset=${offset}`,
+        (value) => {
+          const sessionId = identifier(row(row(value).automation_session).hashed_id);
+          return { sessionId, data: session(value, sessionId) };
+        },
+        (value) => value.sessionId,
+        ({ sessionId, data }) => {
+          let entry = observed.get(sessionId);
+          if (!entry) {
+            if (observed.size >= quotaLimits.sessions) return 'session-limit';
+            entry = { sessionId, buildIds: [], observations: [], conflict: false };
+            observed.set(sessionId, entry);
+          }
+          if (!entry.buildIds.includes(build.buildId)) entry.buildIds.push(build.buildId);
+          if (!build.sessionIds.includes(sessionId)) build.sessionIds.push(sessionId);
+          observe(entry, 'build-list', { outcome: 'available', data });
+          return null;
+        },
+      );
+    }
+    for (const entry of observed.values()) {
+      // A known detail failure is retained, never retried. Sparse list responses
+      // may need one detail GET; neither a duration alone nor a build duration
+      // proves a terminal session's measured usage.
+      if (
+        entry.observations.some(({ source }) => source === 'retained-smoke') ||
+        entry.observations.some(
+          ({ evidence }) => evidence.outcome === 'available' && terminal(evidence.data),
+        )
+      )
+        continue;
+      observe(
+        entry,
+        'detail',
+        await read(`sessions/${entry.sessionId}.json`, (value) => session(value, entry.sessionId)),
+      );
+    }
+    const history = {
+      scope: 'credential-visible-retained-builds-and-sessions',
+      snapshot: 'non-atomic',
+      buildPagination,
+      builds: [...builds.values()],
+      sessions: [...observed.values()],
+      deadlineExceeded: overall.signal.aborted || now() >= overallDeadline,
+    };
     const complete =
       planEvidence.outcome === 'available' &&
+      !history.deadlineExceeded &&
       sessions.every(
-        ({ evidence }) =>
-          evidence.outcome === 'available' &&
-          evidence.data.durationSeconds !== null &&
-          evidence.data.createdAt !== null &&
-          !['running', 'queued', 'unknown'].includes(evidence.data.providerStatus) &&
-          ['done', 'error', 'timeout'].includes(evidence.data.executionStatus),
+        ({ evidence }) => evidence.outcome === 'available' && terminal(evidence.data),
+      ) &&
+      buildPagination.outcome === 'exhausted' &&
+      history.builds.every(
+        ({ pagination, providerStatuses, conflict }) =>
+          pagination.outcome === 'exhausted' &&
+          !conflict &&
+          providerStatuses.every((status) => !['running', 'queued', 'unknown'].includes(status)),
+      ) &&
+      history.sessions.every(
+        ({ conflict, observations }) =>
+          !conflict &&
+          observations.every(({ evidence }) => evidence.outcome === 'available') &&
+          observations.some(
+            ({ evidence }) => evidence.outcome === 'available' && terminal(evidence.data),
+          ),
       );
     return {
       mode: 'quota',
-      scope: 'Seven read-only requests for Plan and the six retained smoke sessions',
+      scope:
+        'Bounded read-only Plan, six known smoke sessions and retained build/session enumeration',
       status: complete ? 'passed' : 'failed',
       plan: planEvidence,
       sessions,
-      coverage: 'six-retained-smoke-sessions-only',
+      history,
+      requests,
+      limits: quotaLimits,
+      coverage: 'credential-visible-retained-records-only-not-lifetime-history',
+      expiredOrDeletedHistory: 'unknown',
       accountWideHistory: 'unknown',
       chargedDurationMapping: 'unverified',
       remainingMinutes: null,

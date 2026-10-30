@@ -9,6 +9,7 @@ import { collectQuotaEvidence, quotaLimits, retainedSessionIds } from './browser
 
 const credentials = { username: 'secret-user', accessKey: 'secret-key' };
 function success(url: string | URL | Request) {
+  if (String(url).includes('?limit=')) return Response.json([]);
   const id = String(url).match(/sessions\/([a-f0-9]+)\.json$/)?.[1];
   return Response.json(
     id
@@ -49,7 +50,7 @@ function valid(url: string | URL | Request) {
     : success(url);
 }
 
-test('only seven exact authenticated GETs; retained IDs match both immutable smoke reports', async () => {
+test('fixed provenance GETs plus an empty retained build list; IDs match immutable smoke reports', async () => {
   const ids: string[] = [];
   for (const name of ['first', 'verified']) {
     const evidence = JSON.parse(
@@ -78,7 +79,7 @@ test('only seven exact authenticated GETs; retained IDs match both immutable smo
   });
   assert.deepEqual(
     urls,
-    ['plan.json', ...ids.map((id) => `sessions/${id}.json`)].map(
+    ['plan.json', ...ids.map((id) => `sessions/${id}.json`), 'builds.json?limit=10&offset=0'].map(
       (path) => `https://api.browserstack.com/automate/${path}`,
     ),
   );
@@ -102,7 +103,7 @@ test('every failure is retained without retries, including expired/denied record
       return new Response('secret-key invalid JSON');
     },
   });
-  assert.equal(calls, 7);
+  assert.equal(calls, 8);
   assert.equal(result.status, 'failed');
   assert.deepEqual(result.plan, { outcome: 'unavailable', reason: 'request-failed' });
   assert.deepEqual(
@@ -123,7 +124,7 @@ test('missing, negative, nonnumeric and unfinished durations never become zero o
   const result = await collectQuotaEvidence({
     ...credentials,
     fetcher: async (url) => {
-      if (String(url).endsWith('plan.json')) return valid(url);
+      if (String(url).endsWith('plan.json') || String(url).includes('?limit=')) return valid(url);
       const i = index++;
       return Response.json({
         automation_session: {
@@ -173,7 +174,7 @@ test('declared and streamed response sizes are bounded and cancelled without rea
     reason: 'response-too-large',
   });
   assert.equal(cancelled, 2);
-  assert.equal(calls, 7);
+  assert.equal(calls, 8);
 });
 
 test('fragmented and empty chunks cannot expand retained buffering beyond the byte limit', async () => {
@@ -224,7 +225,7 @@ test('a stalled fetch is aborted at the per-request deadline and is never retrie
   const result = await pending;
   assert.equal(signal?.aborted, true);
   assert.deepEqual(result.plan, { outcome: 'unavailable', reason: 'request-timeout' });
-  assert.equal(calls, 7);
+  assert.equal(calls, 8);
 });
 
 test('overall deadline cancels a stalled body and records all unstarted observations', async (context) => {
@@ -281,7 +282,7 @@ test('synchronous work crossing either deadline is refused even before timer del
       outcome: 'unavailable',
       reason: advance === quotaLimits.totalMs ? 'deadline-exceeded' : 'request-timeout',
     });
-    assert.equal(calls, advance === quotaLimits.totalMs ? 1 : 7);
+    assert.equal(calls, advance === quotaLimits.totalMs ? 1 : 8);
   }
 });
 
@@ -346,4 +347,365 @@ test('manual quota workflow defaults to read-only and has no device or tunnel ac
   assert.match(smoke, /github.event_name == 'workflow_dispatch' && inputs.mode == 'smoke'/);
   assert.match(smoke, /github.event.label.name == 'ci-real-devices'/);
   assert.match(smoke, /github.event.pull_request.head.repo.full_name == github.repository/);
+});
+
+const observedId = (value: number) => value.toString(16).padStart(40, '0');
+const buildRow = (id: string) => ({
+  automation_build: {
+    hashed_id: id,
+    status: 'done',
+    name: 'secret-name',
+    public_url: 'secret-url',
+  },
+});
+const sessionRow = (id: string, extra: Record<string, unknown> = {}) => ({
+  automation_session: {
+    hashed_id: id,
+    duration: 12.5,
+    status: 'done',
+    browserstack_status: 'done',
+    created_at: '2026-10-28T03:28:27Z',
+    name: 'secret-name',
+    logs: 'secret-url',
+    ...extra,
+  },
+});
+
+test('pages retained builds and sessions, reuses known details and never infers lifetime completeness', async () => {
+  const urls: string[] = [];
+  const builds = Array.from({ length: 11 }, (_, index) => observedId(index + 1));
+  const ids = [
+    ...retainedSessionIds,
+    ...Array.from({ length: 5 }, (_, index) => observedId(index + 100)),
+  ];
+  const result = await collectQuotaEvidence({
+    ...credentials,
+    fetcher: async (url) => {
+      const location = new URL(String(url));
+      urls.push(location.pathname + location.search);
+      const offset = Number(location.searchParams.get('offset'));
+      if (location.pathname === '/automate/builds.json')
+        return Response.json(builds.slice(offset, offset + 10).map(buildRow));
+      if (location.pathname === `/automate/builds/${builds[0]}/sessions.json`)
+        return Response.json(ids.slice(offset, offset + 10).map((id) => sessionRow(id)));
+      if (location.search) return Response.json([]);
+      return valid(url);
+    },
+  });
+  assert.equal(result.status, 'passed');
+  assert.equal(result.history.buildPagination.pages, 2);
+  assert.equal(result.history.builds.length, 11);
+  assert.equal(result.history.builds[0].pagination.pages, 2);
+  assert.deepEqual(result.history.builds[0].sessionIds, ids);
+  assert.equal(result.history.sessions.length, 11);
+  for (const id of retainedSessionIds)
+    assert.equal(urls.filter((url) => url === `/automate/sessions/${id}.json`).length, 1);
+  assert.equal(urls.filter((url) => url.startsWith('/automate/sessions/')).length, 6);
+  assert.equal(result.history.snapshot, 'non-atomic');
+  assert.equal(result.accountWideHistory, 'unknown');
+  assert.equal(result.expiredOrDeletedHistory, 'unknown');
+  assert.equal(result.remainingMinutes, null);
+  assert.equal(result.allocationAllowed, false);
+  assert.doesNotMatch(JSON.stringify(result), /secret|public_url|logs|name/);
+});
+
+test('a repeated full page is partial without looping or duplicating observations', async () => {
+  const ids = [
+    ...retainedSessionIds,
+    ...Array.from({ length: 4 }, (_, index) => observedId(index + 100)),
+  ];
+  let listCalls = 0;
+  const result = await collectQuotaEvidence({
+    ...credentials,
+    fetcher: async (url) => {
+      const path = String(url);
+      if (path.includes('/builds.json?')) return Response.json([buildRow(observedId(1))]);
+      if (path.includes('/sessions.json?')) {
+        listCalls++;
+        return Response.json(ids.map((id) => sessionRow(id)));
+      }
+      return valid(url);
+    },
+  });
+  assert.equal(listCalls, 2);
+  assert.equal(result.status, 'failed');
+  assert.deepEqual(result.history.builds[0].pagination, {
+    pages: 2,
+    outcome: 'partial',
+    reason: 'pagination-no-progress',
+  });
+  assert.equal(result.history.sessions.length, 10);
+  assert.equal(result.history.sessions[0].observations.length, 2);
+  assert.equal(result.history.sessions[9].observations.length, 1);
+});
+
+test('the same session in multiple builds is deduplicated and conflicting measurements are retained', async () => {
+  const id = observedId(100),
+    builds = [observedId(1), observedId(2)];
+  const result = await collectQuotaEvidence({
+    ...credentials,
+    fetcher: async (url) => {
+      const path = String(url);
+      if (path.includes('/builds.json?')) return Response.json(builds.map(buildRow));
+      if (path.includes('/sessions.json?'))
+        return Response.json([
+          sessionRow(id, {
+            duration: path.includes(builds[0]) ? 10 : 20,
+          }),
+        ]);
+      return valid(url);
+    },
+  });
+  const entry = result.history.sessions.find((entry) => entry.sessionId === id)!;
+  assert.equal(result.status, 'failed');
+  assert.equal(result.history.sessions.length, 7);
+  assert.deepEqual(entry.buildIds, builds);
+  assert.equal(entry.conflict, true);
+  assert.deepEqual(
+    entry.observations.map(({ evidence }) =>
+      evidence.outcome === 'available' ? evidence.data.durationSeconds : null,
+    ),
+    [10, 20],
+  );
+});
+
+test('sparse lists get one bounded detail lookup while known failed details are not retried', async () => {
+  const fresh = observedId(100),
+    missing = retainedSessionIds[0];
+  const urls: string[] = [];
+  const result = await collectQuotaEvidence({
+    ...credentials,
+    fetcher: async (url) => {
+      const path = String(url);
+      urls.push(path);
+      if (path.includes('/builds.json?')) return Response.json([buildRow(observedId(1))]);
+      if (path.includes('/sessions.json?'))
+        return Response.json([
+          sessionRow(fresh, { created_at: undefined, browserstack_status: undefined }),
+          sessionRow(missing),
+        ]);
+      if (path.endsWith(`sessions/${missing}.json`))
+        return new Response('secret-error', { status: 404 });
+      return valid(url);
+    },
+  });
+  assert.equal(result.status, 'failed');
+  assert.equal(urls.filter((url) => url.endsWith(`sessions/${missing}.json`)).length, 1);
+  assert.equal(urls.filter((url) => url.endsWith(`sessions/${fresh}.json`)).length, 1);
+  const entry = result.history.sessions.find((entry) => entry.sessionId === fresh)!;
+  assert.deepEqual(
+    entry.observations.map(({ source }) => source),
+    ['build-list', 'detail'],
+  );
+  assert.equal(entry.conflict, false);
+  assert.deepEqual(result.history.sessions[0].observations[0].evidence, {
+    outcome: 'unavailable',
+    reason: 'http-404',
+  });
+});
+
+test('active sessions and missing detail evidence remain explicit and cannot authorize allocation', async () => {
+  const id = observedId(100);
+  const result = await collectQuotaEvidence({
+    ...credentials,
+    fetcher: async (url) => {
+      const path = String(url);
+      if (path.includes('/builds.json?')) return Response.json([buildRow(observedId(1))]);
+      if (path.includes('/sessions.json?'))
+        return Response.json([
+          sessionRow(id, { status: 'running', browserstack_status: 'running' }),
+        ]);
+      if (path.endsWith(`sessions/${id}.json`))
+        return new Response('secret-error', { status: 403 });
+      return valid(url);
+    },
+  });
+  const entry = result.history.sessions.at(-1)!;
+  assert.equal(result.status, 'failed');
+  assert.deepEqual(entry.observations[1], {
+    source: 'detail',
+    evidence: { outcome: 'unavailable', reason: 'http-403' },
+  });
+  assert.equal(
+    entry.observations[0].evidence.outcome === 'available' &&
+      entry.observations[0].evidence.data.executionStatus,
+    'running',
+  );
+  assert.equal(result.allocationAllowed, false);
+  assert.doesNotMatch(JSON.stringify(result), /secret/);
+});
+
+test('the global request cap includes provenance, pages and details, retaining every unstarted lookup', async () => {
+  const builds = Array.from({ length: 10 }, (_, index) => observedId(index + 1));
+  const urls: string[] = [];
+  const result = await collectQuotaEvidence({
+    ...credentials,
+    fetcher: async (url) => {
+      const location = new URL(String(url));
+      urls.push(String(url));
+      const offset = Number(location.searchParams.get('offset'));
+      if (location.pathname === '/automate/builds.json')
+        return Response.json(offset ? [] : builds.map(buildRow));
+      if (location.search) {
+        const index = builds.findIndex((id) => location.pathname.includes(id));
+        return Response.json(
+          offset
+            ? []
+            : Array.from({ length: 10 }, (_, n) =>
+                sessionRow(observedId(100 + index * 10 + n), { created_at: undefined }),
+              ),
+        );
+      }
+      return valid(url);
+    },
+  });
+  assert.equal(urls.length, 64);
+  assert.equal(result.requests, quotaLimits.requests);
+  assert.equal(new Set(urls).size, 64);
+  assert.equal(result.status, 'failed');
+  assert.equal(result.history.sessions.length, 106);
+  const unavailable = result.history.sessions
+    .flatMap(({ observations }) => observations)
+    .filter(({ evidence }) => evidence.outcome === 'unavailable');
+  assert.equal(unavailable.length, 65);
+  assert.ok(
+    unavailable.every(
+      ({ evidence }) => evidence.outcome === 'unavailable' && evidence.reason === 'request-limit',
+    ),
+  );
+});
+
+test('build and session count caps retain explicit partial coverage within the request bound', async () => {
+  for (const limit of ['builds', 'sessions'] as const) {
+    let calls = 0;
+    const result = await collectQuotaEvidence({
+      ...credentials,
+      fetcher: async (url) => {
+        calls++;
+        const location = new URL(String(url)),
+          offset = Number(location.searchParams.get('offset'));
+        if (location.pathname === '/automate/builds.json')
+          return Response.json(
+            limit === 'builds'
+              ? Array.from({ length: 10 }, (_, n) => buildRow(observedId(offset + n + 1)))
+              : [buildRow(observedId(1))],
+          );
+        if (location.search)
+          return Response.json(
+            limit === 'sessions'
+              ? Array.from({ length: 10 }, (_, n) => sessionRow(observedId(offset + n + 100)))
+              : [],
+          );
+        return valid(url);
+      },
+    });
+    assert.ok(calls <= quotaLimits.requests);
+    assert.equal(result.status, 'failed');
+    if (limit === 'builds') {
+      assert.equal(result.history.builds.length, quotaLimits.builds);
+      assert.equal(result.history.buildPagination.reason, 'build-limit');
+    } else {
+      assert.equal(result.history.sessions.length, quotaLimits.sessions);
+      assert.equal(result.history.builds[0].pagination.reason, 'session-limit');
+    }
+  }
+});
+
+test('enumeration crossing the shared deadline keeps partial coverage and starts no detail lookup', async () => {
+  let clock = 0,
+    calls = 0;
+  const result = await collectQuotaEvidence({
+    ...credentials,
+    now: () => clock,
+    fetcher: async (url) => {
+      calls++;
+      if (String(url).includes('/builds.json?')) return Response.json([buildRow(observedId(1))]);
+      if (String(url).includes('/sessions.json?')) {
+        clock = quotaLimits.totalMs;
+        return Response.json([sessionRow(observedId(100))]);
+      }
+      return valid(url);
+    },
+  });
+  assert.equal(calls, 9);
+  assert.equal(result.history.deadlineExceeded, true);
+  assert.equal(result.history.builds[0].pagination.reason, 'deadline-exceeded');
+  assert.equal(result.history.sessions.length, 6);
+  assert.equal(result.status, 'failed');
+});
+
+test('malformed IDs and oversized pages never become paths or leak provider fields', async () => {
+  for (const payload of [
+    [buildRow('../secret-key')],
+    Array.from({ length: 11 }, (_, n) => buildRow(observedId(n))),
+  ]) {
+    const urls: string[] = [];
+    const result = await collectQuotaEvidence({
+      ...credentials,
+      fetcher: async (url) => {
+        urls.push(String(url));
+        return String(url).includes('/builds.json?') ? Response.json(payload) : valid(url);
+      },
+    });
+    assert.equal(result.history.buildPagination.reason, 'invalid-response');
+    assert.equal(result.history.builds.length, 0);
+    assert.equal(urls.length, 8);
+    assert.equal(result.status, 'failed');
+    assert.doesNotMatch(JSON.stringify(result), /secret|public_url/);
+    assert.ok(urls.every((url) => !url.includes('secret')));
+  }
+});
+
+test('active and conflicting duplicate build states are retained without names or duration substitution', async () => {
+  const result = await collectQuotaEvidence({
+    ...credentials,
+    fetcher: async (url) => {
+      if (String(url).includes('/builds.json?'))
+        return Response.json([
+          buildRow(observedId(1)),
+          {
+            automation_build: {
+              hashed_id: observedId(1),
+              status: 'running',
+              duration: 999,
+              name: 'secret-name',
+            },
+          },
+        ]);
+      if (String(url).includes('/sessions.json?')) return Response.json([]);
+      return valid(url);
+    },
+  });
+  assert.equal(result.history.builds.length, 1);
+  assert.deepEqual(result.history.builds[0].providerStatuses, ['done', 'running']);
+  assert.equal(result.history.builds[0].conflict, true);
+  assert.equal(result.status, 'failed');
+  assert.doesNotMatch(JSON.stringify(result), /secret|999/);
+});
+
+test('a full first page containing only known smoke IDs still advances to new retained sessions', async () => {
+  const offsets: number[] = [];
+  const result = await collectQuotaEvidence({
+    ...credentials,
+    fetcher: async (url) => {
+      const location = new URL(String(url));
+      if (location.pathname === '/automate/builds.json')
+        return Response.json([buildRow(observedId(1))]);
+      if (location.search) {
+        const offset = Number(location.searchParams.get('offset'));
+        offsets.push(offset);
+        return Response.json(
+          (offset === 0
+            ? [...retainedSessionIds, ...retainedSessionIds.slice(0, 4)]
+            : [observedId(100)]
+          ).map((id) => sessionRow(id)),
+        );
+      }
+      return valid(url);
+    },
+  });
+  assert.deepEqual(offsets, [0, 10]);
+  assert.equal(result.status, 'passed');
+  assert.equal(result.history.builds[0].pagination.outcome, 'exhausted');
+  assert.equal(result.history.sessions.length, 7);
 });

@@ -103,5 +103,25 @@
       "Implementation-record formatting needed repair"
     ],
     "fullProjectTypecheck": false
+  },
+  "retainedHistoryValidation": {
+    "result": "passed",
+    "passed": 28,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 347.008833,
+    "sourceSha256": {
+      "scripts/ci/browserstack.ts": "d2f8d71c42c00d432f32143c8b0a6b4a9aabe47d752376f22b0a4cffc97cbc0c",
+      "scripts/ci/browserstack.test.ts": "69b5536445bf87e10ac4eeff9ef615a90cb59f89565af1fd5b00da300b3bc923",
+      "scripts/ci/browserstack-quota.ts": "cd150376fff70bfe5da58c91ce067edb207485da00aff8f0677f6520328fc816",
+      "scripts/ci/browserstack-quota.test.ts": "a2c3e97e93ead10ced338efa44a28c4972fe1d9ef11bcf3416bbecbdbe072873",
+      ".github/workflows/browserstack.yml": "10ee245bb55a4d3aca87fbd00330f739bc561cd11634ab0b70eb089004a9b4d4"
+    },
+    "compiler": "Scoped strict options, passed",
+    "lint": "Oxlint --deny-warnings, passed after replacing a prefix regex with equivalent startsWith in one assertion",
+    "format": "passed",
+    "independentSourceReview": "B, no blocking finding; not a whole-ticket grade",
+    "providerRequests": 0,
+    "deviceAllocations": 0
   }
 }

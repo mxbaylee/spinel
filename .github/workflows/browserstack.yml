@@ -35,7 +35,7 @@ jobs:
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
-      - name: Read Plan and six retained session records (no devices or Local)
+      - name: Read Plan, known sessions and bounded retained history (no devices or Local)
         timeout-minutes: 2
         env:
           BS_USERNAME: ${{ secrets.BS_USERNAME }}
