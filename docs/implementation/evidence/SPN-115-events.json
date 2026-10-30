@@ -236,7 +236,8 @@
         "conclusion": "success",
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123876981062,
@@ -245,7 +246,8 @@
         "conclusion": "success",
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067718,
@@ -254,7 +256,8 @@
         "conclusion": null,
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067734,
@@ -263,7 +266,8 @@
         "conclusion": "success",
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067744,
@@ -272,7 +276,8 @@
         "conclusion": "success",
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067761,
@@ -281,7 +286,8 @@
         "conclusion": "success",
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067791,
@@ -290,7 +296,8 @@
         "conclusion": null,
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067793,
@@ -299,7 +306,8 @@
         "conclusion": "success",
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067814,
@@ -308,7 +316,8 @@
         "conclusion": null,
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067817,
@@ -317,7 +326,8 @@
         "conclusion": null,
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067823,
@@ -326,7 +336,8 @@
         "conclusion": null,
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067870,
@@ -335,7 +346,8 @@
         "conclusion": null,
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067871,
@@ -344,7 +356,8 @@
         "conclusion": null,
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067880,
@@ -353,7 +366,8 @@
         "conclusion": null,
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067897,
@@ -362,7 +376,8 @@
         "conclusion": null,
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067907,
@@ -371,7 +386,8 @@
         "conclusion": null,
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067929,
@@ -380,7 +396,8 @@
         "conclusion": null,
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067940,
@@ -389,7 +406,8 @@
         "conclusion": "success",
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067965,
@@ -398,7 +416,8 @@
         "conclusion": null,
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067971,
@@ -407,7 +426,8 @@
         "conclusion": null,
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877068014,
@@ -416,7 +436,8 @@
         "conclusion": null,
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877068154,
@@ -425,7 +446,8 @@
         "conclusion": "success",
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877068619,
@@ -434,7 +456,8 @@
         "conclusion": null,
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877068704,
@@ -443,7 +466,8 @@
         "conclusion": "skipped",
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       }
     ],
     "jobsAfterMetadata": [
@@ -454,7 +478,8 @@
         "conclusion": "success",
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123876981062,
@@ -463,7 +488,8 @@
         "conclusion": "success",
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067718,
@@ -472,7 +498,8 @@
         "conclusion": null,
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067734,
@@ -481,7 +508,8 @@
         "conclusion": "success",
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067744,
@@ -490,7 +518,8 @@
         "conclusion": "success",
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067761,
@@ -499,7 +528,8 @@
         "conclusion": "success",
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067791,
@@ -508,7 +538,8 @@
         "conclusion": null,
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067793,
@@ -517,7 +548,8 @@
         "conclusion": "success",
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067814,
@@ -526,7 +558,8 @@
         "conclusion": null,
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067817,
@@ -535,7 +568,8 @@
         "conclusion": null,
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067823,
@@ -544,7 +578,8 @@
         "conclusion": "success",
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067870,
@@ -553,7 +588,8 @@
         "conclusion": null,
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067871,
@@ -562,7 +598,8 @@
         "conclusion": null,
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067880,
@@ -571,7 +608,8 @@
         "conclusion": "success",
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067897,
@@ -580,7 +618,8 @@
         "conclusion": null,
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067907,
@@ -589,7 +628,8 @@
         "conclusion": "success",
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067929,
@@ -598,7 +638,8 @@
         "conclusion": null,
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067940,
@@ -607,7 +648,8 @@
         "conclusion": "success",
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067965,
@@ -616,7 +658,8 @@
         "conclusion": "success",
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877067971,
@@ -625,7 +668,8 @@
         "conclusion": "success",
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877068014,
@@ -634,7 +678,8 @@
         "conclusion": null,
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877068154,
@@ -643,7 +688,8 @@
         "conclusion": "success",
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877068619,
@@ -652,7 +698,8 @@
         "conclusion": "success",
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       },
       {
         "id": 123877068704,
@@ -661,7 +708,8 @@
         "conclusion": "skipped",
         "startedAt": null,
         "completedAt": null,
-        "runnerAllocated": false
+        "runnerAllocated": null,
+        "runnerAllocationEvidence": "Unknown: connector snapshot omitted allocation/timestamp fields. Use jobsFinal REST timestamps for compute."
       }
     ],
     "conclusion": "success",
@@ -1251,9 +1299,8 @@
     "independentReview": "review_115_independent verified saved and fresh check-run evidence; no metadata-isolation blocker. Literal skipped expressions accepted as platform display limitation; no final grade."
   },
   "pending": [
-    "Complete targeted first attempt and retain results/coverage/timing.",
-    "Additive labels, base retarget, negative dependency wiring and final-main full run.",
-    "Both independent final grades and all final gates."
+    "Final current-main full coverage and bounded compute/first-attempt/useful-failure comparison.",
+    "Two independent whole-ticket final grades and guarded merge."
   ],
   "labelProbes": [
     {
@@ -3542,5 +3589,10 @@
     "reason": "Base retarget or ambiguous edit requires full coverage.",
     "disposition": "Routing proof only; redundant remaining work cancelled. The still-injected missing worker failed as expected. Pull request validation also failed because the historical evidence base still contained SPN052, already merged on main, and its old completion counter. Final base must be current main; no gate waived.",
     "pullRequestFailureLogSha256": "196f59b7ac11cdc5ff582ce818b76845409839a67ce9e3c9520f3d2cbd920693"
+  },
+  "finalValidationPreparation": {
+    "previousHead": "2ac56056ec467dc8dee96d44ca9e345be2cb8345",
+    "supersededRuns": [41003899933, 41003899962, 41003900766],
+    "reason": "Independent reviews identified stale current-status wording and false runner-allocation values in incomplete connector snapshots. Correct evidence before final validation; requested cancellation of redundant unfinished runs. Executable routing/harness source unchanged."
   }
 }
