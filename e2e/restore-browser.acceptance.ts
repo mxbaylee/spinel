@@ -22,6 +22,7 @@ import {
 } from './restore-rich-acceptance.ts';
 import { expectNativeSheetValue } from './native-sheet-value.ts';
 import { textPoint } from './doc-touch.ts';
+import { RestoreObserver, containRestoreObserver } from './restore-observer.ts';
 
 const run = promisify(execFile);
 const configuredImage = process.env.SPINEL_RESTORE_BROWSER_IMAGE;
@@ -59,8 +60,11 @@ let interrupted = false;
 let abortPromise: Promise<void> | undefined;
 let servingCreated = false;
 const helperNames = new Set<string>();
+const observerName = `${container}-observer`;
+let servingInspectionAllowed = true;
 const profile = ['--memory=1024m', '--memory-swap=1024m', '--cpus=0.75', '--pids-limit=128'];
 const fixtureUser = `${process.getuid!()}:${process.getgid!()}`;
+const observer = new RestoreObserver({ name: observerName, volume, image, user: fixtureUser });
 let pageErrors = 0;
 const browserTraffic: Array<{ kind: string; route: string; status?: number }> = [];
 const routeClass = (address: string) => {
@@ -94,7 +98,9 @@ const artifact: Record<string, unknown> = {
   persistentServingFixtureProcesses: 0,
   bootstrapOldSpaceMiB: 256,
   coldProbeOldSpaceMiB: 128,
-  observation: 'Host CLI and bounded file reads; shipped supervisor is container PID 1',
+  observation:
+    'Pre-restore host CLI; canonical metadata read in a separate PID namespace; shipped supervisor is container PID 1',
+  observer: observer.evidence,
   volume,
   storage:
     'Durable Linux named volume for workspace/recovery; private host bind for source exchange and evidence only',
@@ -455,6 +461,8 @@ async function helper(mode: 'bootstrap' | 'cold') {
   helperNames.delete(name);
 }
 async function servingRead(path: string, maxBuffer = 32_768) {
+  if (!servingInspectionAllowed)
+    throw new Error('Serving exec is forbidden during restore authority scans.');
   const { stdout } = await run('docker', ['exec', container, 'cat', path], {
     timeout: 5000,
     maxBuffer,
@@ -462,26 +470,22 @@ async function servingRead(path: string, maxBuffer = 32_768) {
   return stdout;
 }
 async function observeOutcome() {
-  const { stdout } = await run(
-    'docker',
-    ['exec', container, 'ls', '-1', '/state/recovery/restore-jobs'],
-    {
-      timeout: 5000,
-      maxBuffer: 4096,
-    },
-  );
-  const names = stdout.trim().split('\n').filter(Boolean);
+  const names = await observer.jobs();
   if (names.length !== 1 || !/^[a-f0-9-]{36}$/.test(names[0])) return null;
-  const value: unknown = JSON.parse(
-    await servingRead(`/state/recovery/restore-jobs/${names[0]}/state.json`, 1024 * 1024),
-  );
+  const value: unknown = JSON.parse(await observer.job(names[0]));
   if (!validRestoreJobRecord(value, names[0]))
     throw new Error('Invalid canonical outcome evidence.');
-  const journal = JSON.parse(await servingRead('/state/recovery/journal.json'));
+  const journal = JSON.parse(await observer.journal());
   const trial = value.execution?.trial;
   return {
     outcome: value.phase,
     phase: journal.phase,
+    closedFailure:
+      journal.phase === 'recovery-required' && journal.child === null && journal.verifier === null,
+    failureCode:
+      typeof journal.lastFailure === 'string' && /^[a-z-]{1,64}$/.test(journal.lastFailure)
+        ? journal.lastFailure
+        : null,
     sourceSha256: value.intent.source.archive.sha256,
     selected:
       !!trial &&
@@ -500,7 +504,7 @@ async function servingResources() {
       throw new Error('Invalid serving resource measurement.');
     return Number(text);
   };
-  // Sequential tiny cat processes do not load another Node/SDK in the serving cgroup.
+  // Permitted only before restore or after a selected terminal / closed failure observation.
   return {
     memoryLimitBytes: await number('/sys/fs/cgroup/memory.max'),
     swapLimitBytes: await number('/sys/fs/cgroup/memory.swap.max'),
@@ -508,81 +512,116 @@ async function servingResources() {
     pidsMax: await number('/sys/fs/cgroup/pids.max'),
     memoryPeakBytes: await number('/sys/fs/cgroup/memory.peak'),
     memoryCurrentBytes: await number('/sys/fs/cgroup/memory.current'),
-    peakScope: 'Serving cgroup through pre-shutdown observation; excludes later cold helper',
+    peakScope:
+      'Serving cgroup through pre-shutdown observation; excludes separate observer and later cold helper',
   };
 }
 async function shutdown() {
   return (shutdownPromise ??= (async () => {
-    if (servingDeadline) clearTimeout(servingDeadline);
-    await browser?.close().catch(() => {});
-    browser = undefined;
-    // A timed-out Docker client can leave its owned helper container alive.
-    for (const name of [`${container}-init`, ...helperNames])
-      await removeOwnedContainer(name, true);
-    if (servingCreated) {
-      artifact.servingResources = await servingResources().catch(() => null);
-      await run('docker', ['stop', '--time', '30', container], {
-        timeout: 40_000,
-        maxBuffer: 4096,
-      }).catch(() => {});
-      if (exit) {
-        const completed = await Promise.race([
-          exit,
-          new Promise<null>((resolveWait) => {
-            const timer = setTimeout(() => resolveWait(null), 5000);
-            timer.unref();
-          }),
-        ]);
-        artifact.attachedDockerExit = completed;
-      }
-      let state = await containerState(container).catch(() => null);
-      if (!state || state.running || state.pid !== 0) {
-        await run('docker', ['kill', container], { timeout: 10_000, maxBuffer: 4096 }).catch(
-          () => {},
-        );
-        state = await containerState(container).catch(() => null);
-      }
-      artifact.supervisorClosure = state;
-      const logs = await run('docker', ['logs', '--tail', '30', container], {
-        timeout: 5000,
-        maxBuffer: 16_384,
-      }).catch(() => null);
-      if (logs) {
-        const tail = (logs.stderr + logs.stdout).slice(-16_384);
-        const errno = /errno:\s*(-?\d{1,8})/.exec(tail)?.[1];
-        artifact.serviceDiagnostic = {
-          errorCode: /code:\s*['"](E[A-Z0-9_]{1,63})['"]/.exec(tail)?.[1] ?? null,
-          errno: errno === undefined ? null : Number(errno),
-          syscall:
-            /syscall:\s*['"](listen|bind|open|chmod|stat|read|unlink)['"]/.exec(tail)?.[1] ?? null,
-        };
-      } // Raw process logs, paths and source material are never persisted.
+    const closed = await containRestoreObserver(
+      async () => {
+        if (servingDeadline) clearTimeout(servingDeadline);
+        await browser?.close().catch(() => {});
+        browser = undefined;
+        // A timed-out Docker client can leave its owned helper container alive.
+        for (const name of [`${container}-init`, ...helperNames])
+          await removeOwnedContainer(name, true);
+        if (servingCreated) {
+          if (!servingInspectionAllowed) {
+            const observed = await observeOutcome().catch(() => null);
+            if (observed?.closedFailure) {
+              servingInspectionAllowed = true;
+              artifact.canonicalFailure = observed;
+            }
+          }
+          artifact.servingResources = servingInspectionAllowed
+            ? await servingResources().catch(() => null)
+            : null;
+          if (!servingInspectionAllowed)
+            artifact.servingResourcesUnavailable =
+              'Restore remains nonterminal; no serving observer process was launched.';
+          await run('docker', ['stop', '--time', '30', container], {
+            timeout: 40_000,
+            maxBuffer: 4096,
+          }).catch(() => {});
+          if (exit) {
+            const completed = await Promise.race([
+              exit,
+              new Promise<null>((resolveWait) => {
+                const timer = setTimeout(() => resolveWait(null), 5000);
+                timer.unref();
+              }),
+            ]);
+            artifact.attachedDockerExit = completed;
+          }
+          let state = await containerState(container).catch(() => null);
+          if (!state || state.running || state.pid !== 0) {
+            await run('docker', ['kill', container], { timeout: 10_000, maxBuffer: 4096 }).catch(
+              () => {},
+            );
+            state = await containerState(container).catch(() => null);
+          }
+          artifact.supervisorClosure = state;
+          const logs = await run('docker', ['logs', '--tail', '30', container], {
+            timeout: 5000,
+            maxBuffer: 16_384,
+          }).catch(() => null);
+          if (logs) {
+            const tail = (logs.stderr + logs.stdout).slice(-16_384);
+            const errno = /errno:\s*(-?\d{1,8})/.exec(tail)?.[1];
+            artifact.serviceDiagnostic = {
+              errorCode: /code:\s*['"](E[A-Z0-9_]{1,63})['"]/.exec(tail)?.[1] ?? null,
+              errno: errno === undefined ? null : Number(errno),
+              syscall:
+                /syscall:\s*['"](listen|bind|open|chmod|stat|read|unlink)['"]/.exec(tail)?.[1] ??
+                null,
+            };
+          } // Raw process logs, paths and source material are never persisted.
 
-      if (
-        state &&
-        !state.running &&
-        state.pid === 0 &&
-        state.exitCode === 0 &&
-        !state.oomKilled &&
-        artifact.attachedDockerExit === 0
-      ) {
-        containerExit = state.exitCode;
-        await writeFile(
-          join(directory, 'supervisor-closed.json'),
-          JSON.stringify({
-            image,
-            container,
-            ...state,
-            confirmedAt: new Date().toISOString(),
-          }),
-          { mode: 0o600 },
-        );
-      }
+          if (
+            state &&
+            !state.running &&
+            state.pid === 0 &&
+            state.exitCode === 0 &&
+            !state.oomKilled &&
+            artifact.attachedDockerExit === 0
+          ) {
+            containerExit = state.exitCode;
+            await writeFile(
+              join(directory, 'supervisor-closed.json'),
+              JSON.stringify({
+                image,
+                container,
+                ...state,
+                confirmedAt: new Date().toISOString(),
+              }),
+              { mode: 0o600 },
+            );
+          }
+        }
+      },
+      () => observer.close(),
+    );
+    if (!closed.workCompleted) {
+      succeeded = false;
+      process.exitCode = 1;
+      artifact.shutdownFailure = true;
     }
-    for (const socket of sockets) socket.destroy();
-    proxy.closeAllConnections();
-    if (proxy.listening)
-      await new Promise<void>((resolveClose) => proxy.close(() => resolveClose()));
+    if (!closed.observerClosed) {
+      succeeded = false;
+      process.exitCode = 1;
+      artifact.observerCleanupIncomplete = true;
+    }
+    try {
+      for (const socket of sockets) socket.destroy();
+      proxy.closeAllConnections();
+      if (proxy.listening)
+        await new Promise<void>((resolveClose) => proxy.close(() => resolveClose()));
+    } catch {
+      artifact.shutdownFailure = true;
+      succeeded = false;
+      process.exitCode = 1;
+    }
   })());
 }
 
@@ -596,7 +635,12 @@ function interrupt(signal: 'SIGTERM' | 'SIGINT') {
   abortPromise ??= (async () => {
     artifact.interrupted = signal;
     await Promise.all(
-      [...(servingCreated ? [container] : []), ...helperNames, `${container}-init`].map((name) =>
+      [
+        ...(servingCreated ? [container] : []),
+        ...helperNames,
+        observerName,
+        `${container}-init`,
+      ].map((name) =>
         run('docker', ['kill', name], {
           timeout: 3000,
           maxBuffer: 4096,
@@ -855,6 +899,17 @@ try {
   if (parentPid !== 0 || !userIds || userIds.some((uid) => uid !== process.getuid!()))
     throw new Error('Unexpected shipped supervisor process ownership.');
   artifact.servingPid1 = { pid: 1, parentPid, userIds, command };
+  const { stdout: servingNamespace } = await run(
+    'docker',
+    ['exec', container, 'readlink', '/proc/1/ns/pid'],
+    { timeout: 3000, maxBuffer: 1024 },
+  );
+  if (!/^pid:\[\d+\]$/.test(servingNamespace.trim()))
+    throw new Error('Invalid serving PID namespace.');
+  const observerNamespace = await observer.start();
+  if (observerNamespace === servingNamespace.trim())
+    throw new Error('Observer shares serving PID namespace.');
+  artifact.observerNamespaceIsolated = true;
   const operationId = randomUUID();
   setStage('cli-verify');
   await control('verify', operationId);
@@ -1006,6 +1061,7 @@ try {
   await capture(page, 'loss-confirmation');
   await confirmation.getByRole('checkbox').check();
   setStage('confirming-and-restoring');
+  servingInspectionAllowed = false;
   await confirmation
     .getByRole('button', { name: 'Verify and restore workspace', exact: true })
     .click();
@@ -1013,13 +1069,18 @@ try {
     observeOutcome,
     (value) =>
       value !== null &&
-      value.outcome === 'candidate-committed' &&
-      value.phase === 'running' &&
-      value.selected,
+      (value.closedFailure ||
+        (value.outcome === 'candidate-committed' && value.phase === 'running' && value.selected)),
     140_000,
   );
+  if (terminal?.closedFailure) {
+    servingInspectionAllowed = true;
+    artifact.canonicalFailure = terminal;
+    throw new Error('Restore stopped closed before a committed outcome.');
+  }
   if (!terminal || terminal.sourceSha256 !== source.sha256)
     throw new Error('Unexpected committed source.');
+  servingInspectionAllowed = true;
   setStage('checking-owner-session-reset');
   expect((await owner.context.request.get(`${origin}/api/auth/session`)).status()).toBe(401);
   setStage('authenticating-after-session-reset');
@@ -1123,7 +1184,12 @@ try {
   if (pageErrors) throw new Error('Browser reported an application exception.');
   setStage('closing-and-checking-content');
   await shutdown();
-  if (containerExit !== 0 || deadlineExpired)
+  if (
+    containerExit !== 0 ||
+    deadlineExpired ||
+    artifact.shutdownFailure ||
+    artifact.observerCleanupIncomplete
+  )
     throw new Error('Confirmed clean supervisor closure required.');
   await helper('cold');
   const coldProof = await privateJson<{
@@ -1241,7 +1307,8 @@ try {
     succeeded = false;
     process.exitCode = 1;
   }
-  if (interrupted) succeeded = false;
+  if (interrupted || artifact.shutdownFailure || artifact.observerCleanupIncomplete)
+    succeeded = false;
   if (succeeded) {
     try {
       volumeDisposition = 'cleanup-unconfirmed';

@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "status": "incomplete",
   "limitations": [
+    "16089cc fresh acceptance failed before activation with restore-prep-planned-authority-eacces after a reconciled output was created; exact denied syscall/PID remains under investigation.",
     "Current-source production browser run failed during confirmation/restore; root cause under read-only investigation. Earlier157 full pass does not replace current-source acceptance.",
     "Actual Spaces acceptance, both whole-ticket grades and all seven current-head CI gates remain pending.",
     "The0d3 browser run failed cold inspection; separate repaired inspection does not rewrite that run as passed.",
@@ -950,7 +951,7 @@
       "originalInspectionHashesUnchanged": true
     }
   },
-  "lastProductionCandidateSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+  "lastProductionCandidateSha": "16089ccbc4c886826e1d3527efc2649c9ba4884a",
   "diagnosticsAndContainment": {
     "sourceHashes": {
       "src/server/maintenance/restore-failure.ts": "c1f849f7055d4101130d7ab5821a32c0fc5c9cda41e8682b2d11232893d398dd",
@@ -1088,5 +1089,380 @@
       "Separate older assertion correction follows firstbatch and has its own passing run.",
       "Historical da preparation failure cause remains unproven; no new production/browser run yet."
     ]
+  },
+  "browser160Failure": {
+    "scope": "Real production Admin browser flow with synthetic CDP passkey, Linux controller and disposable HTTPS proxy; not physical-device or remote-provider acceptance",
+    "startedAt": "2026-10-30T03:36:40.248Z",
+    "image": "sha256:e299149e024bcf56dc24d58cde5f0936f76287637b7f056d547b508e7625ee75",
+    "productionSource": "16089ccbc4c886826e1d3527efc2649c9ba4884a",
+    "failureSource": {
+      "file": "restore-browser.acceptance.ts",
+      "line": 263,
+      "column": 9
+    },
+    "pageErrors": 0,
+    "stage": "confirming-and-restoring",
+    "stageTimings": [
+      {
+        "stage": "initializing",
+        "elapsedMs": 0
+      },
+      {
+        "stage": "starting-linux-supervisor",
+        "elapsedMs": 485
+      },
+      {
+        "stage": "bootstrapping-closed-workspace",
+        "elapsedMs": 708
+      },
+      {
+        "stage": "starting-shipped-supervisor",
+        "elapsedMs": 2855
+      },
+      {
+        "stage": "cli-verify",
+        "elapsedMs": 3933
+      },
+      {
+        "stage": "cli-start",
+        "elapsedMs": 4476
+      },
+      {
+        "stage": "cli-resume",
+        "elapsedMs": 6268
+      },
+      {
+        "stage": "authenticating-browser",
+        "elapsedMs": 6665
+      },
+      {
+        "stage": "authenticating-current-owner",
+        "elapsedMs": 15509
+      },
+      {
+        "stage": "preparing-through-admin",
+        "elapsedMs": 26488
+      },
+      {
+        "stage": "confirming-and-restoring",
+        "elapsedMs": 29522
+      }
+    ],
+    "elapsedMs": 170292,
+    "finalStageElapsedMs": 140770,
+    "passed": false,
+    "completedAt": "2026-10-30T03:39:30.540Z",
+    "servingResources": {
+      "memoryLimitBytes": 1073741824,
+      "swapLimitBytes": 0,
+      "cpuMax": "75000 100000",
+      "pidsMax": 128,
+      "memoryPeakBytes": 319172608,
+      "memoryCurrentBytes": 67031040,
+      "peakScope": "Serving cgroup through pre-shutdown observation; excludes later cold helper"
+    },
+    "bootstrapClosure": {
+      "running": false,
+      "pid": 0,
+      "exitCode": 0,
+      "oomKilled": false
+    },
+    "supervisorClosure": {
+      "running": false,
+      "pid": 0,
+      "exitCode": 0,
+      "oomKilled": false
+    },
+    "containerCleanup": {
+      "spinel-restore-browser-436e8881-fc3d-4f5f-b21b-61510ef9d5e6-bootstrap": "confirmed-absent",
+      "spinel-restore-browser-436e8881-fc3d-4f5f-b21b-61510ef9d5e6-init": "confirmed-absent",
+      "spinel-restore-browser-436e8881-fc3d-4f5f-b21b-61510ef9d5e6": "confirmed-absent"
+    },
+    "privateFixtureRetained": true,
+    "privateVolumeDisposition": "retained",
+    "readOnlyInspection": {
+      "journal": {
+        "phase": "recovery-required",
+        "lastFailure": "restore-prep-planned-authority-eacces",
+        "updatedAt": 1793331432584,
+        "hasChild": false,
+        "hasVerifier": false,
+        "hasRestoreReference": true,
+        "operation": {
+          "kind": null,
+          "phase": null
+        }
+      },
+      "jobs": [
+        {
+          "preparationDirectory": {
+            "exists": true,
+            "isDirectory": true,
+            "device": 65025,
+            "inode": 898462,
+            "childCount": 1,
+            "reconciled": [
+              {
+                "directory": true,
+                "device": 65025,
+                "inode": 898463,
+                "output": {
+                  "bytes": 573440,
+                  "device": 65025,
+                  "inode": 898471
+                }
+              }
+            ]
+          },
+          "id": "16cc0d70-1521-4cf1-9f62-e2354c0e3cdc",
+          "phase": "preparation-planned",
+          "revision": 11,
+          "updatedAt": 1793331431386,
+          "intentHash": "8984617f6c76a5fe02ce39af1f3cfbc32e4ab433df5391ae32aa477a09950845",
+          "sourceSha256": "7948af1eff31226bc1397dd532089172fb986cd5951f10f04c0620debf6157f5",
+          "executionKeys": [
+            "epoch",
+            "child",
+            "stop",
+            "requestedAt",
+            "originals",
+            "freezeSlot",
+            "frozen",
+            "preparation"
+          ],
+          "requestedAt": 1793331429979,
+          "originalStop": {
+            "present": true,
+            "fingerprint": "74446d74c0df9793a753ec0dec9d0efe73f8e73b2dc1db4f63701821cfa34ced",
+            "acceptedAt": 1793331430036
+          },
+          "originalsRetained": true,
+          "freezePlanned": true,
+          "frozen": {
+            "bytes": 565248,
+            "sha256": "ab0460c83a3854809c1d974651d991c0bddac379ad11e12480c99dc4e5ba5bb0",
+            "fingerprint": "74446d74c0df9793a753ec0dec9d0efe73f8e73b2dc1db4f63701821cfa34ced"
+          },
+          "preparation": {
+            "preparedAt": 1793331431385,
+            "candidate": null,
+            "rollback": null
+          },
+          "trial": {
+            "planned": false
+          },
+          "failure": null,
+          "rollback": null,
+          "mainReferenceMatches": true
+        }
+      ],
+      "sourceFiles": [
+        {
+          "role": "journal",
+          "bytes": 1547,
+          "sha256": "0de69eca03d88b393cde6c2d9fbab79685b6a5860183a386b0dbfde606a4e974",
+          "device": 65025,
+          "inode": 898466
+        },
+        {
+          "role": "job-state",
+          "bytes": 3146,
+          "sha256": "58773d1e55cc15332b726262ab17084e05f9f33695a7422ee51b5ccdeb9491e6",
+          "device": 65025,
+          "inode": 898449
+        }
+      ],
+      "sourceUnchanged": true
+    }
+  },
+  "observerInterference": {
+    "source": "16089ccbc4c886826e1d3527efc2649c9ba4884a",
+    "image": "sha256:e299149e024bcf56dc24d58cde5f0936f76287637b7f056d547b508e7625ee75",
+    "firstAttempt": "Inconclusive driver timeout; intermediate logs were not retained. No guard result.",
+    "elapsedMs": 12553,
+    "observerProcesses": 150,
+    "observerErrors": 0,
+    "samples": [
+      {
+        "phase": "baseline",
+        "ok": 565,
+        "failed": 0
+      },
+      {
+        "phase": "observers",
+        "ok": 3555,
+        "failed": 15
+      },
+      {
+        "phase": "settled",
+        "ok": 548,
+        "failed": 0
+      }
+    ],
+    "failures": [
+      {
+        "phase": "observers",
+        "code": "EACCES",
+        "operation": "readdirSync",
+        "pid": 124,
+        "comm": "other",
+        "syscall": "scandir"
+      },
+      {
+        "phase": "observers",
+        "code": "EACCES",
+        "operation": "readdirSync",
+        "pid": 176,
+        "comm": "cat",
+        "syscall": "scandir"
+      },
+      {
+        "phase": "observers",
+        "code": "EACCES",
+        "operation": "readdirSync",
+        "pid": 300,
+        "comm": "other",
+        "syscall": "scandir"
+      },
+      {
+        "phase": "observers",
+        "code": "EACCES",
+        "operation": "readdirSync",
+        "pid": 318,
+        "comm": "other",
+        "syscall": "scandir"
+      },
+      {
+        "phase": "observers",
+        "code": "EACCES",
+        "operation": "readdirSync",
+        "pid": 325,
+        "comm": "other",
+        "syscall": "scandir"
+      },
+      {
+        "phase": "observers",
+        "code": "EACCES",
+        "operation": "readdirSync",
+        "pid": 358,
+        "comm": "other",
+        "syscall": "scandir"
+      },
+      {
+        "phase": "observers",
+        "code": "EACCES",
+        "operation": "readdirSync",
+        "pid": 434,
+        "comm": "other",
+        "syscall": "scandir"
+      },
+      {
+        "phase": "observers",
+        "code": "EACCES",
+        "operation": "readdirSync",
+        "pid": 531,
+        "comm": "other",
+        "syscall": "scandir"
+      },
+      {
+        "phase": "observers",
+        "code": "EACCES",
+        "operation": "readdirSync",
+        "pid": 699,
+        "comm": "other",
+        "syscall": "scandir"
+      },
+      {
+        "phase": "observers",
+        "code": "EACCES",
+        "operation": "readdirSync",
+        "pid": 718,
+        "comm": "other",
+        "syscall": "scandir"
+      },
+      {
+        "phase": "observers",
+        "code": "EACCES",
+        "operation": "readdirSync",
+        "pid": 863,
+        "comm": "sh",
+        "syscall": "scandir"
+      },
+      {
+        "phase": "observers",
+        "code": "EACCES",
+        "operation": "readdirSync",
+        "pid": 875,
+        "comm": "other",
+        "syscall": "scandir"
+      },
+      {
+        "phase": "observers",
+        "code": "EACCES",
+        "operation": "readdirSync",
+        "pid": 893,
+        "comm": "other",
+        "syscall": "scandir"
+      },
+      {
+        "phase": "observers",
+        "code": "EACCES",
+        "operation": "readdirSync",
+        "pid": 905,
+        "comm": "other",
+        "syscall": "scandir"
+      },
+      {
+        "phase": "observers",
+        "code": "EACCES",
+        "operation": "readdirSync",
+        "pid": 941,
+        "comm": "ls",
+        "syscall": "scandir"
+      }
+    ],
+    "allFailurePidsCorrelate": true,
+    "limitation": "Proves this observer mechanism can cause guard refusals; historical da/160 failing PID was not captured."
+  },
+  "observerIsolation": {
+    "source": "16089ccbc4c886826e1d3527efc2649c9ba4884a",
+    "image": "sha256:e299149e024bcf56dc24d58cde5f0936f76287637b7f056d547b508e7625ee75",
+    "metadataReadCycles": 25,
+    "proof": {
+      "event": "result",
+      "ok": 3252,
+      "failures": []
+    },
+    "namespaces": {
+      "serving": "pid:[4026532568]",
+      "observer": "pid:[4026532702]"
+    },
+    "profile": {
+      "memoryBytes": 33554432,
+      "swapBytes": 0,
+      "cpus": 0.1,
+      "pids": 16,
+      "network": "none",
+      "volumeReadOnly": true
+    },
+    "peakBytes": 11587584,
+    "observerClosed": true,
+    "idempotentClose": true,
+    "absenceConfirmed": true,
+    "scope": "Separate read-only metadata observer, not part of serving cgroup. Production guards unchanged. Isolation preceded subsequent cleanup/privacy hardening; final5 Node regressions cover hardening.",
+    "finalSourceHashes": {
+      "e2e/restore-observer.ts": "3426952d21f3603701ac5c286032eb8acbdb427878e07a52f28fe91e54a916e3",
+      "e2e/restore-browser.acceptance.ts": "6d9365b3e0dab5a5e5ffdfd33b9ebbcf48b841a54488fdd91d3a253c9baa983b",
+      "scripts/ci/restore-observer.test.ts": "b55c5e1911b4246064cff0b9cf6bb6173ffde0e95fba774bb44a798609a65ca7"
+    },
+    "regressions": {
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "durationMs": 82.01075,
+      "logSha256": "baee32ceabe81846682e30e1fe3264b1cbd74d66a91a55f69903bd187b3d9694",
+      "hostPeak": "Unmeasured: completed before2-second watchdog sample; printed0MiB is not zero footprint."
+    },
+    "review": "B independently closed cleanup/privacy findings; agent review only, not whole-ticket grade."
   }
 }
