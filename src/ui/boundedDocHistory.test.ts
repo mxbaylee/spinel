@@ -581,6 +581,19 @@ test('bounded groups retain exact lost-ack replay and local undo until a real pe
     b = f.client('collaborator');
   const cap = boundDocHistory(a.live.univer, 'doc');
   const manager = a.live.univer.__getInjector().get(DocStateChangeManagerService);
+  const selections = a.live.univer.__getInjector().get(DocSelectionManagerService);
+  const range = (at: number) => ({ startOffset: at, endOffset: at, collapsed: true });
+  selections.replaceSelectionInfoWithoutRefresh(
+    {
+      textRanges: [{ ...range(0), isActive: true }],
+      rectRanges: [],
+      segmentId: '',
+      segmentPage: 0,
+      isEditing: true,
+      style: NORMAL_TEXT_SELECTION_PLUGIN_STYLE,
+    },
+    { unitId: 'doc', subUnitId: 'doc' },
+  );
   try {
     await turns();
     for (let i = 0; i < 70; i++)
@@ -590,6 +603,7 @@ test('bounded groups retain exact lost-ack replay and local undo until a real pe
           segmentId: '',
           range: { startOffset: i, endOffset: i, collapsed: true },
           body: { dataStream: String(i % 10) },
+          textRanges: [range(i + 1)],
           debounce: true,
         }),
       ).toBe(true);
@@ -609,6 +623,33 @@ test('bounded groups retain exact lost-ack replay and local undo until a real pe
     const history = a.live.univer.__getInjector().get(IUndoRedoService);
     // The unchanged 70-character replay now forms 32 + 32 + 6 native changes.
     expect(history.getUndoRedoStatus('doc').undos).toBe(3);
+    const original = '0123456789'.repeat(7);
+    // Sync capture adds the paragraph-preservation marker to these real edits.
+    // Replaying every actual group must retain exact durable and peer state.
+    for (const [command, lengths] of [
+      ['undo', [2 * limit, limit, 0]],
+      ['redo', [limit, 2 * limit, original.length]],
+    ] as const)
+      for (const length of lengths) {
+        expect(
+          await a.commands.executeCommand(`univer.command.${command}`, { unitId: 'doc' }),
+        ).toBe(true);
+        manager.flushPendingChanges('doc');
+        const replay = await f.submit(a, await f.request(a));
+        b.sync.receive({ type: 'edit', ...wire(replay.edit) });
+        await f.acknowledge(a, replay);
+        const expected = original.slice(0, length) + '\r\n';
+        const live = a.live.snapshot() as IDocumentData;
+        expect(live.body!.dataStream).toBe(expected);
+        expect(live).toEqual(b.live.snapshot());
+        expect((f.storage.unit.snapshot as IDocumentData).body).toEqual(live.body);
+        expect((f.reopen() as IDocumentData).body).toEqual(live.body);
+        expect(selections.getTextRanges({ unitId: 'doc', subUnitId: 'doc' })?.[0]).toMatchObject({
+          startOffset: length,
+          endOffset: length,
+        });
+      }
+    expect(history.getUndoRedoStatus('doc')).toEqual({ undos: 3, redos: 0 });
     expect(
       await b.commands.executeCommand('doc.command.insert-text', {
         unitId: 'doc',

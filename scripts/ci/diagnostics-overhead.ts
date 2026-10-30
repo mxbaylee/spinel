@@ -317,6 +317,12 @@ export async function measureDiagnosticsOverhead() {
       'lib/sync-server/index.ts',
       'lib/sync-transform/index.ts',
       'package-lock.json',
+      'scripts/dependencies/patch-univer-core.ts',
+      'scripts/dependencies/patch-univer-docs.ts',
+      'node_modules/@univerjs/core/lib/es/index.js',
+      'node_modules/@univerjs/core/lib/cjs/index.js',
+      'node_modules/@univerjs/docs/lib/es/index.js',
+      'node_modules/@univerjs/docs/lib/cjs/index.js',
       'src/server/diagnostics/routes.ts',
       'web/diagnostics.ts',
       'scripts/ci/diagnostics-overhead.ts',
@@ -334,7 +340,7 @@ export async function measureDiagnosticsOverhead() {
       },
       source: {
         baseCommit: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
-        note: 'Source-file hashes identify the measured working tree; baseCommit alone is not the complete tested source.',
+        note: 'Source-file and installed SDK hashes identify the measured working tree; baseCommit alone is not the complete tested source.',
         sha256: Object.fromEntries(
           sourcePaths.map((path) => [
             path,

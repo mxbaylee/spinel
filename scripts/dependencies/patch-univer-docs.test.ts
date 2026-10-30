@@ -27,11 +27,10 @@ import { test } from 'node:test';
 import { runInNewContext } from 'node:vm';
 import * as core from '@univerjs/core';
 import type { IDocumentData, JSONXActions } from '@univerjs/core';
-import type {
-  DocStateChangeManagerService,
-  IDocStateChangeInfo,
-  IDocStateChangeParams,
-} from '@univerjs/docs';
+import { DocSelectionManagerService, DocStateChangeManagerService } from '@univerjs/docs';
+import type { IDocStateChangeInfo, IDocStateChangeParams } from '@univerjs/docs';
+import { NORMAL_TEXT_SELECTION_PLUGIN_STYLE } from '@univerjs/engine-render';
+import { createNativeSyncClient, NativeReplica } from '@spinel/sync-client';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { patchInstalledDocs, prepareDocsPatch } from './patch-univer-docs.ts';
 
@@ -271,6 +270,79 @@ function keyboardBody(index = 0): core.IDocumentBody {
     customRanges: [],
     customDecorations: [],
   };
+}
+
+/** The sync capture hook, not a hand-authored body, supplies the preservation marker. */
+async function capturedKeyboardSequence() {
+  const replica = new NativeReplica(seed('ab\r\n'), 'doc', { undoRedoHistoryLimit: 100 });
+  let sync: ReturnType<typeof createNativeSyncClient> | undefined;
+  try {
+    const injector = replica.univer.__getInjector();
+    injector.get(core.IUniverInstanceService).focusUnit(unitId);
+    const commands = injector.get(core.ICommandService);
+    const manager = injector.get(DocStateChangeManagerService);
+    const selections = injector.get(DocSelectionManagerService);
+    const failures: string[] = [];
+    const initial = replica.snapshot() as IDocumentData;
+    sync = createNativeSyncClient({
+      univer: replica.univer,
+      unitId,
+      kind: 'doc',
+      snapshot: initial,
+      revision: 1,
+      send() {},
+      onState() {},
+      onResync: (reason) => failures.push(reason),
+    });
+    const range = (at: number) => ({ startOffset: at, endOffset: at, collapsed: true });
+    selections.replaceSelectionInfoWithoutRefresh(
+      {
+        textRanges: [{ ...range(2), isActive: true }],
+        rectRanges: [],
+        segmentId: '',
+        segmentPage: 0,
+        isEditing: true,
+        style: NORMAL_TEXT_SELECTION_PLUGIN_STYLE,
+      },
+      { unitId, subUnitId: unitId },
+    );
+    const snapshots = [initial];
+    for (let index = 0; index < 32; index++) {
+      assert.equal(
+        await commands.executeCommand('doc.command.insert-text', {
+          unitId,
+          segmentId: '',
+          range: range(2 + index),
+          body: keyboardBody(index),
+          textRanges: [range(3 + index)],
+          debounce: true,
+        }),
+        true,
+      );
+      snapshots.push(replica.snapshot() as IDocumentData);
+    }
+    assert.deepEqual(failures, []);
+    const cache = manager.getStateCache(unitId);
+    assert.equal(cache.history.length, 32);
+    assert.deepEqual(cache.history, cache.collaboration);
+    const states = structuredClone(cache.history);
+    for (const state of states) {
+      const component = state.redoState.actions![1] as { e: core.TextXAction[] };
+      const insert = component.e.find((action) => action.t === core.TextXActionType.INSERT)!;
+      assert.equal(insert.t, core.TextXActionType.INSERT);
+      const body = (insert as core.IInsertAction).body;
+      assert.equal(Object.hasOwn(body, core.PRESERVE_INSERTED_PARAGRAPH_IDS), true);
+      assert.equal(Reflect.get(body, core.PRESERVE_INSERTED_PARAGRAPH_IDS), true);
+    }
+    const undoSnapshots: IDocumentData[] = [];
+    undoSnapshots[states.length] = snapshots.at(-1)!;
+    for (let index = states.length - 1; index >= 0; index--)
+      undoSnapshots[index] = apply(undoSnapshots[index + 1], states[index].undoState.actions);
+    return { states, snapshots, undoSnapshots };
+  } finally {
+    sync?.dispose();
+    replica.dispose();
+  }
 }
 const insertAt =
   (offset: number, body = keyboardBody()): Request =>
@@ -670,6 +742,9 @@ for (const format of ['es', 'cjs'] as const) {
       { name: 'divergent cache', length: 9, start: 2, historyStart: 3 },
       { name: 'eligible history with mixed collaboration', length: 9, start: 2, historyStart: 3 },
       { name: 'known empty and undefined fields', length: 7, start: 0 },
+      { name: 'paragraph preservation marker', length: 7, start: 0 },
+      { name: 'mixed marker presence', length: 7, start: 0 },
+      { name: 'preservation marker and known undefined fields', length: 7, start: 0 },
       { name: 'dataStream only', length: 7, start: 0 },
     ];
     for (const { name, length, start, constant, historyStart = 0 } of cases) {
@@ -680,7 +755,7 @@ for (const format of ['es', 'cjs'] as const) {
             : name === 'eligible history with mixed collaboration' && index === 0
               ? { dataStream: 'XY' }
               : keyboardBody(index);
-        if (name === 'known empty and undefined fields') {
+        if (name.includes('known') && name.includes('undefined fields')) {
           Object.assign(body, {
             paragraphs: index % 2 ? undefined : [],
             customBlocks: [],
@@ -688,6 +763,12 @@ for (const format of ['es', 'cjs'] as const) {
           });
           Object.assign(body.textRuns![0], { sId: undefined });
         }
+        if (
+          name === 'paragraph preservation marker' ||
+          name === 'preservation marker and known undefined fields' ||
+          (name === 'mixed marker presence' && index % 2 === 0)
+        )
+          Object.assign(body, { [core.PRESERVE_INSERTED_PARAGRAPH_IDS]: true });
         return insertAt(start + (constant ? 0 : index), body);
       });
       const scenario = sequence(requests, seed('ab\r\n'));
@@ -707,6 +788,31 @@ for (const format of ['es', 'cjs'] as const) {
         candidate.counts.allocations < control.counts.allocations,
         `${name}: balanced insert work must actually execute.`,
       );
+    }
+  });
+
+  test(`${format}: real sync-captured native typing uses the qualified composition path`, async () => {
+    const { original, patched } = prepareDocsPatch(await readBuild(format), format);
+    const scenario = await capturedKeyboardSequence();
+    const unchanged = structuredClone(scenario);
+    for (const historyStart of [0, 12]) {
+      const history = scenario.states.slice(historyStart);
+      const control = measuredFlush(original, history, scenario.states);
+      const candidate = measuredFlush(patched, history, scenario.states);
+      assertNativePreservation(
+        control.output,
+        candidate.output,
+        scenario,
+        `${format}: actual sync capture`,
+        historyStart,
+      );
+      assert.equal(candidate.counts.textCompose, control.counts.textCompose);
+      for (const key of ['iteratorNext', 'bodySlices', 'cloneVisits', 'allocations'] as const)
+        assert.ok(
+          candidate.counts[key] < control.counts[key],
+          `Actual marked native typing must reduce ${key}, including divergent caches.`,
+        );
+      assert.deepEqual(scenario, unchanged, 'The native input and metadata are never rewritten.');
     }
   });
 
@@ -846,6 +952,13 @@ for (const format of ['es', 'cjs'] as const) {
           Object.assign(text.serialize()[0], { [field]: undefined });
           return edit(text);
         },
+      });
+    for (const value of [undefined, false, 0, 1, null, 'true'])
+      cases.push({
+        name: `invalid own paragraph preservation marker ${String(value)}`,
+        request: decorateInsert((action) => {
+          Object.assign(action.body, { [core.PRESERVE_INSERTED_PARAGRAPH_IDS]: value });
+        }),
       });
     // Keep the fixed matrix observable after any failure, and await each case
     // because the native primitive counters temporarily wrap shared methods.
