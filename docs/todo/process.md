@@ -327,14 +327,29 @@ toward the reminder.
   Playwright smoke builds the app and checks development and production servers
   (SPN-001).
 
+The [SPN-115 coverage policy](../implementation/SPN-115.md) keeps all seven code
+check names and publishes a digest-bound plan from the immutable event range.
+Only positively proved title/body edits update cheap Pull request validation;
+their nonexecuted code jobs have distinct metadata-only names and isolated
+concurrency, so they cannot replace pending or failed code evidence. Base retargets,
+ambiguous events, unavailable ranges and unknown paths select full coverage.
+`ci-performance` and `ci-full` add coverage; removing labels never removes
+path-required checks. Weekly and manual runs select the full compatibility plan.
+Candidate native content/access/latency checks remain automatic for application
+changes. Historical comparisons follow performance dependencies or additive
+labels; broad soak, retained transition and container routing stays unchanged.
+Selected evidence must succeed; only explicitly inapplicable evidence may be
+skipped. No result is reused from another run, including after merge to main.
+
 Documentation-only CI keeps Backlog, Pull request and Lint validation, while
 Typecheck, Unit tests, Playwright smoke and Build Storybook report explicitly
 that application validation is not applicable. Storybook still builds and deploys
 on main pushes/manual runs so a docs push cannot displace a queued code deploy. The allowlist is Markdown under
 `docs/`, root `README.md`, `AGENTS.md`, `THIRD-PARTY-NOTICES.md`, and exactly
 `docs/todo/backlog.json` (which still gets backlog validation). Other JSON,
-executable mockups, code, tests, dependencies, workflows and unknown paths run
-the full suite. Classification uses the complete PR/push diff with both sides
+executable mockups, dependencies, workflows and unknown paths run the full
+plan. Other code/test paths retain automatic candidate correctness and their
+applicable historical comparisons under SPN-115. Classification uses the complete PR/push diff with both sides
 of renames; uncertain ranges and manual runs use full validation. A failed or
 cancelled classification never passes the browser gate. This is an applicability
 check, not a waiver for failures. Owner, chat 2026-10-20,

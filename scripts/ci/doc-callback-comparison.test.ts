@@ -525,3 +525,42 @@ test('artifact resolution rejects traversal and symlinks escaping the retained c
     /escapes its case/,
   );
 });
+
+test('candidate-only callback evidence retains first-attempt/source/content/bounded-lifetime checks', () => {
+  const result = compareDocCallbackEvidence(
+    'desktop',
+    null,
+    evidence('candidate'),
+    candidateSource,
+  );
+  assert.equal(result.mode, 'candidate-only');
+  assert.equal(result.baseline, null);
+  assert.equal(result.accepted, true, JSON.stringify(result));
+  for (const mutate of [
+    (value: LoadedDocCallbackEvidence) => {
+      value.manifest.source = 'e'.repeat(40);
+    },
+    (value: LoadedDocCallbackEvidence) => {
+      value.manifest.attempt = 1;
+    },
+    (value: LoadedDocCallbackEvidence) => {
+      value.manifest.textSha256 = '0'.repeat(64);
+    },
+    (value: LoadedDocCallbackEvidence) => {
+      value.manifest.behaviorPassed = false;
+    },
+    (value: LoadedDocCallbackEvidence) => {
+      value.analysis!.accepted = false;
+    },
+    (value: LoadedDocCallbackEvidence) => {
+      value.failures.push('Missing retained raw trace');
+    },
+  ]) {
+    const candidate = evidence('candidate');
+    mutate(candidate);
+    assert.equal(
+      compareDocCallbackEvidence('desktop', null, candidate, candidateSource).accepted,
+      false,
+    );
+  }
+});

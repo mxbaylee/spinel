@@ -1,19 +1,9 @@
 import { execFileSync } from 'node:child_process';
-import { appendFileSync, readFileSync } from 'node:fs';
+import { appendFileSync, readFileSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 
-// Deliberately narrow: Markdown under docs may describe executable examples,
-// but .ts/.tsx design mockups and unknown JSON still need the full suite.
-export function documentationOnly(paths: string[]): boolean {
-  return (
-    paths.length > 0 &&
-    paths.every(
-      (path) =>
-        /^(README|AGENTS|THIRD-PARTY-NOTICES)\.md$/.test(path) ||
-        /^docs\/.+\.md$/.test(path) ||
-        path === 'docs/todo/backlog.json',
-    )
-  );
-}
+import { coveragePlan, documentationOnly } from './plan.ts';
+export { documentationOnly } from './plan.ts';
 
 export function changedPaths(eventName: string, event: unknown, cwd = process.cwd()): string[] {
   const payload = event as {
@@ -54,21 +44,42 @@ export function changedPaths(eventName: string, event: unknown, cwd = process.cw
 }
 
 if (import.meta.main) {
-  let docsOnly = false;
+  const eventName = process.env.GITHUB_EVENT_NAME ?? '';
+  let event: unknown = null;
+  let paths: string[] | null = null;
   try {
-    docsOnly = documentationOnly(
-      changedPaths(
-        process.env.GITHUB_EVENT_NAME ?? '',
-        JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH ?? '', 'utf8')),
-      ),
-    );
+    event = JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH ?? '', 'utf8'));
+    paths = changedPaths(eventName, event);
   } catch {
     console.log('Change classification unavailable; running full validation.');
   }
-  console.log(
-    docsOnly
-      ? 'Documentation-only change: backlog and lint checks remain required.'
-      : 'Full validation required.',
+  let plan = coveragePlan(eventName, event, paths, process.env.GITHUB_SHA);
+  // Actions limits job outputs. Oversized classification must select full, not
+  // silently lose a decision or truncate paths into an unsafe narrow plan.
+  if (Buffer.byteLength(JSON.stringify(plan)) > 64 * 1024)
+    plan = coveragePlan(eventName, event, null, process.env.GITHUB_SHA);
+  const json = JSON.stringify(plan);
+  const digest = createHash('sha256').update(json).digest('hex');
+  writeFileSync('ci-plan.json', json + '\n');
+  console.log(JSON.stringify(plan, null, 2));
+  appendFileSync(
+    process.env.GITHUB_OUTPUT!,
+    [
+      `docs_only=${documentationOnly(paths ?? []) && plan.mode === 'targeted'}`,
+      `mode=${plan.mode}`,
+      `plan=${json}`,
+      `plan_sha256=${digest}`,
+      ...Object.entries(plan.suites).map(
+        ([id, suite]) => `${id.replaceAll('-', '_')}=${suite.selected}`,
+      ),
+    ].join('\n') + '\n',
   );
-  appendFileSync(process.env.GITHUB_OUTPUT!, `docs_only=${docsOnly}\n`);
+  if (process.env.GITHUB_STEP_SUMMARY)
+    appendFileSync(
+      process.env.GITHUB_STEP_SUMMARY,
+      `## Immutable CI coverage plan\n\nSHA-256: ${digest}\n\n` +
+        '```json\n' +
+        JSON.stringify(plan, null, 2) +
+        '\n```\n',
+    );
 }

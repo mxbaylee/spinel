@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import { glob, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
@@ -472,7 +473,7 @@ const requiredHashes = [
 
 /** Recompute gates from raw observations; a cached summary is not proof. */
 export function compareDocResponsiveness(
-  baseline: BenchmarkArtifact[],
+  baseline: BenchmarkArtifact[] | null,
   candidate: BenchmarkArtifact[],
   preset: Preset,
 ) {
@@ -498,10 +499,10 @@ export function compareDocResponsiveness(
     );
     return matching;
   };
-  const first = selected(baseline, 'baseline-observation'),
+  const first = baseline === null ? [] : selected(baseline, 'baseline-observation'),
     second = selected(candidate, 'candidate');
   const all = [...first, ...second];
-  const reference = first[0]?.metrics;
+  const reference = (baseline === null ? second[0] : first[0])?.metrics;
   const summaries: Array<Record<string, unknown>> = [];
   for (const { metrics: value } of all) {
     const label = `${value.role}/${value.sample}`;
@@ -585,7 +586,7 @@ export function compareDocResponsiveness(
     ] as const) {
       check(
         value[field] !== undefined && isDeepStrictEqual(value[field], reference?.[field]),
-        `${label}: ${field} differs from the paired baseline.`,
+        `${label}: ${field} differs from the matched measurement reference.`,
       );
     }
     check(
@@ -781,7 +782,7 @@ export function compareDocResponsiveness(
       return null;
     }
   };
-  const beforeProfile = profileEvidence(first, 'baseline'),
+  const beforeProfile = baseline === null ? null : profileEvidence(first, 'baseline'),
     afterProfile = profileEvidence(second, 'candidate');
   // Long-task observations censor tasks below 50 ms. A floor of 50 is a
   // conservative upper bound when none are reported, never a claim of zero work.
@@ -839,7 +840,7 @@ export function compareDocResponsiveness(
       const before = beforeProfile?.[family],
         after = afterProfile?.[family];
       const baselineContainingTaskMs = before?.maxContainingTaskMs ?? null;
-      if (before?.status !== 'sampled' || baselineContainingTaskMs === null)
+      if (baseline !== null && (before?.status !== 'sampled' || baselineContainingTaskMs === null))
         unavailable.push(`baseline ${family}: no certain composition-containing task witness.`);
       if (!afterProfile) unavailable.push(`candidate ${family}: raw profile unavailable.`);
       const large = baselineContainingTaskMs !== null && baselineContainingTaskMs > 1000;
@@ -859,7 +860,12 @@ export function compareDocResponsiveness(
           baselineContainingTaskMs,
           candidateEntireTaskUpperBoundMs: candidateTaskUpperBoundMs,
           reductionPercent,
-          status: large ? 'registered-relative-gate-applied' : 'large-stall-not-reproduced',
+          status:
+            baseline === null
+              ? 'paired-comparison-inapplicable'
+              : large
+                ? 'registered-relative-gate-applied'
+                : 'large-stall-not-reproduced',
           candidateAttribution:
             after?.status === 'sampled'
               ? 'sampled-native-reducer'
@@ -870,12 +876,12 @@ export function compareDocResponsiveness(
       ] as const;
     }),
   );
-  if (!largeStallWitnesses)
+  if (baseline !== null && !largeStallWitnesses)
     unavailable.push(
       'No >1,000 ms composition-containing baseline stall reproduced; independent evidence is still required.',
     );
 
-  const profilingVariation = [first, second].map((artifacts) => {
+  const profilingVariation = (baseline === null ? [second] : [first, second]).map((artifacts) => {
     const plain = artifacts
       .filter(({ metrics }) => metrics.sample !== 'profile')
       .map(({ metrics }) => metrics.typingWallMs);
@@ -904,6 +910,7 @@ export function compareDocResponsiveness(
   failures.push(...integrityFailures);
   return {
     schema: 2,
+    mode: baseline === null ? 'candidate-only' : 'paired',
     candidateGroupLimit: DOC_RESPONSIVENESS_GROUP_LIMIT,
     candidateHistoryLimit: DOC_RESPONSIVENESS_CANDIDATE_HISTORY_LIMIT,
     baselineHistoryLimit: DOC_RESPONSIVENESS_BASELINE_HISTORY_LIMIT,
@@ -960,12 +967,18 @@ if (import.meta.main) {
   const [preset, baseline, candidate, output] = process.argv.slice(2);
   if (!['desktop', 'mobile'].includes(preset ?? '') || !baseline || !candidate || !output)
     throw new Error(
-      'Usage: node scripts/ci/doc-responsiveness.ts <desktop|mobile> <baseline-directory> <candidate-directory> <output.json>',
+      'Usage: node scripts/ci/doc-responsiveness.ts <desktop|mobile> <baseline-directory|-> <candidate-directory> <output.json>',
     );
   let report:
     ReturnType<typeof compareDocResponsiveness> | { passed: false; status: string; error: string };
   try {
-    const [before, after] = await Promise.all([loadArtifacts(baseline), loadArtifacts(candidate)]);
+    const [before, after] = await Promise.all([
+      baseline === '-' ? null : loadArtifacts(baseline),
+      loadArtifacts(candidate),
+    ]);
+    const source = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+    if (after.some(({ metrics }) => metrics.source !== source))
+      throw new Error('Candidate evidence does not match this commit.');
     report = compareDocResponsiveness(before, after, preset as Preset);
   } catch (error) {
     report = { passed: false, status: 'failed', error: String(error) };
