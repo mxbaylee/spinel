@@ -586,11 +586,15 @@ try {
   // Select through the visible native text, then read its real Copy action.
   // This proves the expected text reached the editor rather than only its API.
   await owner.page.bringToFront();
+  await owner.page.evaluate(
+    (value) => navigator.clipboard.writeText(value),
+    `not-copied-${randomUUID()}`,
+  );
   const copyPoint = await textPoint(owner.page);
   await owner.page.mouse.click(copyPoint.x, copyPoint.y);
   await expect(doc.locator('[contenteditable="true"][data-u-comp="editor"]').first()).toBeFocused();
-  await owner.page.keyboard.press('Control+a');
-  await owner.page.keyboard.press('Control+c');
+  await owner.page.keyboard.press('ControlOrMeta+a');
+  await owner.page.keyboard.press('ControlOrMeta+c');
   await expect
     .poll(() => owner.page.evaluate(() => navigator.clipboard.readText()))
     .toContain(source.rich.expectedDocText.replace(/[\b\r\n]/g, ''));
@@ -605,7 +609,7 @@ try {
     'All changes saved.',
     { timeout: 30_000 },
   );
-  await expectNativeSheetValue(owner.page, 'A1', source.rich.expectedSheetValue);
+  await expectNativeSheetValue(owner.page, 'A1', source.rich.expectedSheetValue, 'ControlOrMeta+c');
   await capture(owner.page, 'restored-owner-sheet', false);
   await owner.page.goto('about:blank');
   setStage('rendering-restored-reader');
