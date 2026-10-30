@@ -19,7 +19,7 @@ import {
   formulaPaperColors,
   type FormulaTransport,
 } from './DocFormulas.tsx';
-import { documentPath } from './documentAccess.ts';
+import { documentPath, guestItemId } from './documentAccess.ts';
 import type { OfflineSession } from './offline/OfflineSession.ts';
 import { EditorTools } from './EditorTools.tsx';
 import { useEditorChrome } from './EditorFrame.tsx';
@@ -80,6 +80,7 @@ import '@univerjs/preset-docs-hyper-link/lib/index.css';
 import drawingEnUS from '@univerjs/preset-docs-drawing/locales/en-US';
 import '@univerjs/preset-docs-drawing/lib/index.css';
 import { createUniver, LocaleType, mergeLocales } from '@univerjs/presets';
+import type { IPreset } from '@univerjs/presets';
 import { BuiltInUIPart, IRenderManagerService } from '@univerjs/preset-docs-core';
 import { IContextMenuService } from '@univerjs/ui';
 import { docPreset, mobileDocPlugins, useMobileDocControls } from './docPreset.ts';
@@ -105,6 +106,8 @@ import { observeDocResponsiveness } from './docResponsivenessEvidence.ts';
 import { boundDocHistory, DOC_HISTORY_RETENTION_LIMIT } from '../src/ui/boundedDocHistory.ts';
 import { observeOperation } from '@spinel/diagnostics';
 import { useDiagnostics } from './useDiagnostics.tsx';
+import { BehaviorSubject } from 'rxjs';
+import { copyUnavailable, NativeCopyPlugin } from './nativeCopy.tsx';
 
 export function DocEditor({
   id,
@@ -170,6 +173,10 @@ export function DocEditor({
     let offlineSession: OfflineSession | undefined;
     let initialized = false;
     let captureReady = false;
+    const copyEnabled = !localAccountId && !guestItemId();
+    const copyStatus = new BehaviorSubject<string | null>(
+      'Wait for the document to finish opening.',
+    );
     const room = `${spaceId ?? ''}/${id}`;
     if (lastRoom.current !== room) syncNotice.current = undefined;
     lastRoom.current = room;
@@ -181,6 +188,7 @@ export function DocEditor({
       if (state !== 'online' && lastConnection === 'online') formulas.current?.clear();
       else if (state === 'online' && lastConnection !== 'online') void formulas.current?.refresh();
       lastConnection = state;
+      publish(lastState);
       onConnectionState?.(state);
     };
     const loading = new AbortController();
@@ -220,6 +228,13 @@ export function DocEditor({
       const busy =
         uploads > 0 || insertions > 0 || composing || heldComposition || formulaDraftOpen.current;
       const dirty = busy || state.dirty;
+      copyStatus.next(
+        copyUnavailable(
+          { ...state, dirty, failed: state.failed || Boolean(syncNotice.current) },
+          initialized,
+          lastConnection === 'online',
+        ),
+      );
       if (dirty && initialized) syncNotice.current = undefined;
       onDirty(dirty, Boolean(state.retained));
       setStatus({
@@ -421,6 +436,14 @@ export function DocEditor({
         },
         override: [...nativePermissions.override, [IImageIoService, { useClass: StoredImages }]],
         plugins: [
+          ...(copyEnabled
+            ? [
+                [
+                  NativeCopyPlugin,
+                  { id, spaceId, unavailable: copyStatus },
+                ] satisfies IPreset['plugins'][number],
+              ]
+            : []),
           [
             UniverDrawingPlugin,
             {
@@ -451,6 +474,7 @@ export function DocEditor({
                 `${InsertDocEllipseShapeCommand.id}.below`,
               ].map((id) => [id, { hidden: true }]),
             ),
+            copyEnabled,
           ),
           mobileDocPlugins(UniverDocsHyperLinkPreset(), mobile),
         ],
@@ -526,9 +550,10 @@ export function DocEditor({
         phoneInput?.stopEditing();
         if (mobile)
           univerAPI
-            .setUIVisible(BuiltInUIPart.HEADER, false)
+            .setUIVisible(BuiltInUIPart.HEADER, Boolean(copyEnabled))
+            .setUIVisible(BuiltInUIPart.HEADER_MENU, false)
             .setUIVisible(BuiltInUIPart.FOOTER, false)
-            .setUIVisible(BuiltInUIPart.TOOLBAR, false);
+            .setUIVisible(BuiltInUIPart.TOOLBAR, Boolean(copyEnabled));
         // Local UI state only: changing the shared document's permission rules
         // would also make still-authorized collaborators read-only.
         const permissions = univer.__getInjector().get(IPermissionService);
@@ -942,6 +967,8 @@ export function DocEditor({
     });
     return () => {
       disposed = true;
+      copyStatus.next('This document is closed.');
+      copyStatus.complete();
       discardUnfinishedText.current = undefined;
       formulaDraftChanged.current = undefined;
       editorElement?.removeEventListener('compositionstart', compositionStart, true);

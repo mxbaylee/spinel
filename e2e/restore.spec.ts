@@ -94,7 +94,9 @@ for (const kind of ['sheet', 'doc'] as const) {
       });
       const untouched = await read();
       await preview.locator('.univer-container').click({ position: { x: 130, y: 200 } });
-      await preview.keyboard.type('must not edit');
+      // The Sheet warning focuses OK, so later spaces would dismiss the warning.
+      if (kind === 'sheet') await preview.keyboard.press('m');
+      else await preview.keyboard.type('must not edit');
       if (kind === 'sheet') {
         await expect(
           preview.getByText('The range is protected, and you do not have edit permission.', {

@@ -60,13 +60,22 @@ async function embeddedImage(source: string) {
       'Images must be embedded in the Univer file; remote images are not fetched.',
     );
   const bytes = Buffer.from(match[2], 'base64');
-  if (!bytes.length || bytes.length > IMAGE_LIMIT || bytes.toString('base64') !== match[2])
-    throw new AuthError(413, 'Each embedded image must be at most 5 MiB.');
+  if (bytes.toString('base64') !== match[2])
+    throw new AuthError(400, 'Choose a valid embedded image.');
+  return validatedImage({ data: bytes, mime: match[1] });
+}
+
+/** Both foreign imports and same-instance copies fully decode their admitted image bytes. */
+async function validatedImage(image: { data: Uint8Array; mime: string }) {
+  const { mime } = image;
+  const bytes = Buffer.from(image.data);
+  if (!bytes.length || bytes.length > IMAGE_LIMIT)
+    throw new AuthError(413, 'Each image must be at most 5 MiB.');
   let safe = bytes;
   try {
     const image = sharp(bytes, { limitInputPixels: 16_000_000, failOn: 'error' });
     const metadata = await image.metadata();
-    if (`image/${metadata.format}` !== match[1] || (metadata.pages ?? 1) > 1) throw invalid();
+    if (`image/${metadata.format}` !== mime || (metadata.pages ?? 1) > 1) throw invalid();
     // Fully decode, but preserve already-sanitized exported bytes (especially JPEG).
     await image.clone().raw().toBuffer();
     if (metadata.exif || metadata.icc || metadata.iptc || metadata.xmp || metadata.orientation)
@@ -75,7 +84,7 @@ async function embeddedImage(source: string) {
     throw new AuthError(400, 'Choose valid static PNG, JPEG or WebP images up to 16 megapixels.');
   }
   if (safe.length > IMAGE_LIMIT) throw new AuthError(413, 'An embedded image exceeds 5 MiB.');
-  return { id: createHash('sha256').update(safe).digest('hex'), mime: match[1], data: safe };
+  return { id: createHash('sha256').update(safe).digest('hex'), mime, data: safe };
 }
 
 export interface PreparedPortableFile {
@@ -190,25 +199,29 @@ export class PortableFiles {
       return item;
     });
   }
-  private publish(user: string, prepared: PreparedPortableFile, parentId: unknown) {
-    const item = this.workspace.create(user, {
-      name: prepared.name,
-      kind: prepared.kind,
-      parentId,
+  /** Publish a prepared native item and its images as one atomic creation. */
+  publish(user: string, prepared: PreparedPortableFile, parentId: unknown) {
+    return this.workspace.auth.transaction(() => {
+      const item = this.workspace.create(user, {
+        name: prepared.name,
+        kind: prepared.kind,
+        parentId,
+      });
+      const native = this.materialize(prepared, item.id);
+      for (const image of prepared.images.values())
+        this.workspace.auth.database
+          .prepare('INSERT OR IGNORE INTO doc_images VALUES(?,?,?,?)')
+          .run(item.id, image.id, image.mime, image.data);
+      const store = prepared.kind === 'doc' ? this.docs : this.sheets;
+      store.save(user, item.id, { snapshot: native, revision: 0, writeId: randomUUID() });
+      return this.workspace.get(user, item.id, 'edit');
     });
-    const native = this.materialize(prepared, item.id);
-    for (const image of prepared.images.values())
-      this.workspace.auth.database
-        .prepare('INSERT OR IGNORE INTO doc_images VALUES(?,?,?,?)')
-        .run(item.id, image.id, image.mime, image.data);
-    const store = prepared.kind === 'doc' ? this.docs : this.sheets;
-    store.save(user, item.id, { snapshot: native, revision: 0, writeId: randomUUID() });
-    return this.workspace.get(user, item.id, 'edit');
   }
   /** Decode one bounded native member before either import publishes anything. */
   async prepare(
     input: { filename?: unknown; snapshot?: unknown },
     mapFormulaSource?: (sourceId: string) => string,
+    readImage?: (source: string) => { data: Uint8Array; mime: string },
   ): Promise<PreparedPortableFile> {
     if (typeof input.filename !== 'string' || !/\.(?:json|univer)$/i.test(input.filename))
       throw invalid();
@@ -240,7 +253,7 @@ export class PortableFiles {
     const images = new Map<string, Awaited<ReturnType<typeof embeddedImage>>>();
     let total = 0;
     for (const source of sources) {
-      const image = await embeddedImage(source);
+      const image = await (readImage ? validatedImage(readImage(source)) : embeddedImage(source));
       total += image.data.length;
       if (total > DOCUMENT_IMAGE_LIMIT)
         throw new AuthError(413, 'The document exceeds its 50 MiB image limit.');

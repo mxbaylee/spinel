@@ -49,6 +49,7 @@ import { OfflineAvailability, OfflineAvailabilityActions } from './offline/Offli
 import { OfflineRecoveryList } from './OfflineRecoveryEntry.tsx';
 import { spaceCopies } from './offline/spaceCopies.ts';
 import type { ItemAppearance } from '../src/shared/appearance.ts';
+import { CopyFileForm } from './CopyFile.tsx';
 const SheetEditor = lazy(() =>
   import('./SheetEditor.tsx').then((module) => ({ default: module.SheetEditor })),
 );
@@ -196,6 +197,10 @@ export function Dashboard({
   const [newIconColor, setNewIconColor] = useState<string | null>(null);
   const [newIcon, setNewIcon] = useState<string | null>(null);
   const [appearanceItem, setAppearanceItem] = useState<FileItem | null>(null);
+  const [copyItem, setCopyItem] = useState<FileItem | null>(null);
+  const [copyBusy, setCopyBusy] = useState(false);
+  const copyFocus = useRef<HTMLButtonElement | null>(null);
+  const [copyConfirmation, setCopyConfirmation] = useState('');
   useEffect(() => {
     const changed = (event: Event) => {
       const { id, appearance } = (event as CustomEvent<{ id: string; appearance: ItemAppearance }>)
@@ -585,6 +590,7 @@ export function Dashboard({
   function navigate(id: string | null, check = true) {
     if (check && id !== currentId && !navigation.allow()) return;
     offline.clearMessage();
+    if (check) setCopyConfirmation('');
     if (check) returnContext.current = null;
     setQuery({ ...emptySearch });
     setDraft('');
@@ -754,6 +760,16 @@ export function Dashboard({
         : [];
     if (local) return [];
     const result: MenuAction[] = [];
+    if (placement === 'row' && (item.kind === 'sheet' || item.kind === 'doc'))
+      result.push({
+        label: 'Make a copy…',
+        icon: <ProfileIcon icon="lucide:copy-plus" size={18} />,
+        disabled: busy || connection === 'offline',
+        onClick: (trigger) => {
+          copyFocus.current = trigger ?? null;
+          setCopyItem(item);
+        },
+      });
     if (item.kind !== 'folder')
       result.push({ label: 'Tags…', onClick: () => setTagging(item), disabled: busy });
     if (item.access !== 'owner') {
@@ -1237,6 +1253,43 @@ export function Dashboard({
             )}
           </EditorFrame>
         )
+      )}
+      {browsing && copyConfirmation && (
+        <p className="dashboard-copy-confirmation" role="status">
+          {copyConfirmation}
+        </p>
+      )}
+      {copyItem && (
+        <Modal
+          title="Make a copy"
+          icon="copy"
+          open
+          dismissDisabled={copyBusy}
+          onOpenChange={(open) => {
+            if (!open && !copyBusy) setCopyItem(null);
+          }}
+          finalFocus={() => (copyFocus.current?.isConnected ? copyFocus.current : true)}
+        >
+          <CopyFileForm
+            id={copyItem.id}
+            unavailable={connection === 'offline' ? 'Reconnect before making a copy.' : null}
+            canSubmit={() => connection !== 'offline'}
+            onBusy={setCopyBusy}
+            onClose={() => setCopyItem(null)}
+            onCreated={(item) => {
+              setCopyItem(null);
+              setItems((previous) => [
+                ...previous.filter((entry) => entry.id !== item.id),
+                ...(item.access === 'owner' ? [item] : []),
+              ]);
+              setViewed((previous) => [...previous.filter((entry) => entry.id !== item.id), item]);
+              setCopyConfirmation(`Created ${item.name}.`);
+              setRefresh((value) => value + 1);
+              if (item.access !== 'owner') void shared.refresh();
+              openFile(item);
+            }}
+          />
+        </Modal>
       )}
       {appearanceItem && (
         <ConnectedAppearanceDialog
