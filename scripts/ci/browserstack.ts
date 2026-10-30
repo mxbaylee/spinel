@@ -1,3 +1,4 @@
+import { collectQuotaEvidence } from './browserstack-quota.ts';
 import { randomUUID } from 'node:crypto';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
@@ -211,6 +212,23 @@ export async function checkSession(
 
 async function main() {
   const mode = process.argv[2];
+  if (mode === 'quota') {
+    const report = {
+      ...(await collectQuotaEvidence({
+        username: process.env.BS_USERNAME ?? '',
+        accessKey: process.env.BS_ACCESS_KEY ?? '',
+      })),
+      date: new Date().toISOString(),
+      sourceSha: process.env.SOURCE_SHA,
+      testedSha: process.env.GITHUB_SHA,
+      run: `https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`,
+    };
+    await mkdir('artifacts', { recursive: true });
+    await writeFile('artifacts/browserstack-quota.json', `${JSON.stringify(report, null, 2)}\n`);
+    console.log(JSON.stringify(report, null, 2));
+    if (report.status !== 'passed') process.exitCode = 1;
+    return;
+  }
   if (mode !== 'credentials' && mode !== 'smoke') throw new Error('invalid-mode');
   const report: JsonObject = {
     scope: 'Automate credentials, real mobile browsers and synthetic HTTP runner reachability only',

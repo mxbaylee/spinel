@@ -1,0 +1,75 @@
+{
+  "scope": "Offline unit tests of the read-only quota collector and existing smoke harness; no provider dispatch",
+  "baseSha": "ea874c9787a6ca4b074062576c1592812e290e50",
+  "nodeVersion": "26.12.1",
+  "command": "node --test scripts/ci/browserstack.test.ts scripts/ci/browserstack-quota.test.ts",
+  "providerRequests": 0,
+  "deviceSessions": 0,
+  "localTunnels": 0,
+  "attempts": [
+    {
+      "result": "failed",
+      "passed": 14,
+      "failed": 1,
+      "sourceSha256": {
+        "scripts/ci/browserstack.ts": "e683cab10d4672764296d9acccb5eac8f7d0545eeca2f4aa64cabccc824d6158",
+        "scripts/ci/browserstack.test.ts": "69b5536445bf87e10ac4eeff9ef615a90cb59f89565af1fd5b00da300b3bc923",
+        "scripts/ci/browserstack-quota.ts": "25b6ece71a91da0bbecf1c88f55f60269a84384db46ce8166f92e3cf1196a161",
+        "scripts/ci/browserstack-quota.test.ts": "03bd6b97d2f8e9fb90756301ea26f89f5edd90085e81ba81ea9b262fdd00d0eb",
+        ".github/workflows/browserstack.yml": "43beb39c58ba253ed9d9fe07db0f860a36abfd8a540cc2d715b7611ce6ae9e8b"
+      },
+      "failureTest": "overall deadline cancels a stalled body and records all unstarted observations",
+      "failure": "cancelled=false, expected true",
+      "diagnosis": "The stream pulled before the collector acquired its reader. Deadline refusal after headers left that body uncancelled. Collector now retains/cancels the response before reader acquisition; stalled-body fixture waits for actual demand; a separate expired-header regression preserves this boundary."
+    },
+    {
+      "result": "passed",
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "durationMs": 300.618375,
+      "sourceSha256": {
+        "scripts/ci/browserstack.ts": "d2f8d71c42c00d432f32143c8b0a6b4a9aabe47d752376f22b0a4cffc97cbc0c",
+        "scripts/ci/browserstack.test.ts": "69b5536445bf87e10ac4eeff9ef615a90cb59f89565af1fd5b00da300b3bc923",
+        "scripts/ci/browserstack-quota.ts": "432ea3b69e9564e4858f9f325ac711fb68b68fb6a44c9706ef1ee0b0e1f1cd3f",
+        "scripts/ci/browserstack-quota.test.ts": "6b0f28c12de98600a310ef971910f23e171e1d922fecabe65c64bc6357739a60",
+        ".github/workflows/browserstack.yml": "43beb39c58ba253ed9d9fe07db0f860a36abfd8a540cc2d715b7611ce6ae9e8b"
+      },
+      "tests": [
+        "only seven exact authenticated GETs; retained IDs match both immutable smoke reports",
+        "every failure is retained without retries, including expired/denied records and remote exceptions",
+        "missing, negative, nonnumeric and unfinished durations never become zero or spending authority",
+        "declared and streamed response sizes are bounded and cancelled without reading raw errors",
+        "fragmented and empty chunks cannot expand retained buffering beyond the byte limit",
+        "a stalled fetch is aborted at the per-request deadline and is never retried",
+        "overall deadline cancels a stalled body and records all unstarted observations",
+        "synchronous work crossing either deadline is refused even before timer delivery",
+        "a response received at an expired boundary is cancelled before its body reader exists",
+        "quota CLI with missing credentials retains a failing report without opening a listener or provider connection",
+        "manual quota workflow defaults to read-only and has no device or tunnel action",
+        "selects physical phones, excludes beta/tablet/emulator entries, and supports unlisted Firefox",
+        "credentials stay in the HTTPS authorization header and remote error text is discarded",
+        "a wrong runner challenge fails and still deletes the allocated session",
+        "real-browser evidence is required and a teardown failure cannot produce a pass",
+        "session creation failures never echo the remote exception or claim cleanup",
+        "malformed success responses and a different Android browser do not pass"
+      ]
+    }
+  ],
+  "resourceControl": {
+    "runner": "/tmp/spinel-owner-watch.ts",
+    "sharedSerialLock": true,
+    "processTreeLimitMiB": 2048,
+    "criticalMacPressureAborts": true,
+    "sampleIntervalMs": 2000,
+    "peakRssMiB": null,
+    "reason": "All runs completed before a monitor sample; printed zero is not a measured zero-memory claim."
+  },
+  "remaining": [
+    "No authenticated account evidence",
+    "No quota admission or lifetime ledger",
+    "No monthly schedule or forecast",
+    "No installed-context or physical offline acceptance",
+    "No whole-ticket grade or current-head CI"
+  ]
+}
