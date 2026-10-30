@@ -13,6 +13,12 @@ order, metadata, cache lifetimes and publication. Tests retain the verified
 original manager as a semantic and work-count control. The original license
 headers and notices remain. SPN-122 tracks eventual removal after a suitable
 upstream release; no upstream submission is claimed by this local repair.
+SPN-123 also admits the public paragraph-preservation marker added by native
+sync capture when its owned value is exactly `true` and every existing shape
+guard passes. The [retained proof archive](docs/implementation/evidence/SPN-123-native-marker-proof.zip)
+includes modified Apache-2.0 manager/test source and pinned original/current/
+proposed OSS bundle bytes, preserving their headers and attribution. No Pro
+package is included or inspected.
 
 `scripts/dependencies/patch-univer-docs-ui.ts` and its `.test.ts` adapt the
 Apache-2.0 [Univer 1.1.0 cursor selection](https://github.com/dream-num/univer/blob/v1.1.0/packages/docs-ui/src/services/selection/text-range.ts)

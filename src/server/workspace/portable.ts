@@ -12,7 +12,8 @@ import { validatePortableLayout } from './portableValidation.ts';
 import { removeImportedSourceBindings } from '../formulas/import.ts';
 import { resolveDocument, validateDocumentCredentials } from './document-access.ts';
 import { mapArchiveFormulaSources } from './archive-formulas.ts';
-import { isUuid } from '@spinel/diagnostics';
+import { isUuid, observe } from '@spinel/diagnostics';
+import type { FormulaDiagnostics } from '../formulas/routes.ts';
 
 import { PORTABLE_LIMIT } from '../../shared/portable.ts';
 export { PORTABLE_LIMIT };
@@ -90,9 +91,15 @@ export class PortableFiles {
   readonly sheets: SheetStore;
   readonly workspace: WorkspaceStore;
   readonly collaboration?: CollaborationStore;
-  constructor(workspace: WorkspaceStore, collaboration?: CollaborationStore) {
+  private readonly diagnostics?: FormulaDiagnostics;
+  constructor(
+    workspace: WorkspaceStore,
+    collaboration?: CollaborationStore,
+    diagnostics?: FormulaDiagnostics,
+  ) {
     this.workspace = workspace;
     this.collaboration = collaboration;
+    this.diagnostics = diagnostics;
     this.docs = new DocumentStore(workspace);
     this.sheets = new SheetStore(workspace);
     // A deleted/transferred copy must not make a lost-response retry create a
@@ -123,6 +130,46 @@ export class PortableFiles {
   }
   /** Same-instance recovery publishes only already-downloaded bytes, never the original. */
   async recover(
+    user: string,
+    input: {
+      recoveryId?: unknown;
+      filename?: unknown;
+      snapshot?: unknown;
+      possibleReplayCrash?: unknown;
+    },
+    verify: () => void,
+  ) {
+    const started = performance.now();
+    const observed = (outcome: 'published' | 'duplicate' | 'failure', fileId?: string) => {
+      if (!this.diagnostics) return;
+      try {
+        verify();
+        this.workspace.owner(user);
+        if (fileId) this.workspace.get(user, fileId, 'owner');
+        observe(
+          this.diagnostics
+            ? (event, context) => this.diagnostics!(event, context, user)
+            : undefined,
+          {
+            name: 'offline.server.recovery',
+            details: { outcome, durationMs: Math.max(0, performance.now() - started) },
+          },
+          { component: 'server', route: '/api/items', ...(fileId ? { fileId } : {}) },
+        );
+      } catch {
+        /* Revoked authority and broken observers never change recovery. */
+      }
+    };
+    try {
+      const result = await this.recoverCore(user, input, verify);
+      observed(result.duplicate ? 'duplicate' : 'published', result.item.id);
+      return result.item;
+    } catch (error) {
+      observed('failure');
+      throw error;
+    }
+  }
+  private async recoverCore(
     user: string,
     input: {
       recoveryId?: unknown;
@@ -174,7 +221,7 @@ export class PortableFiles {
       }
     };
     const existing = previous();
-    if (existing) return existing;
+    if (existing) return { item: existing, duplicate: true };
     // Unlike foreign-file import, this is the account's same-instance checkpoint.
     // Keep only validated definitions; calculating them reauthorizes every source.
     const prepared = await this.prepare(input, (sourceId) => sourceId);
@@ -182,12 +229,12 @@ export class PortableFiles {
       // Includes the session/account check after asynchronous image decoding and
       // the receipt recheck before this transaction publishes any native state.
       const existing = previous();
-      if (existing) return existing;
+      if (existing) return { item: existing, duplicate: true };
       const item = this.publish(user, prepared, null);
       this.workspace.auth.database
         .prepare('INSERT INTO workspace_offline_recoveries VALUES(?,?,?,?,?)')
         .run(user, recoveryId, requestHash, item.id, Number(possibleReplayCrash));
-      return item;
+      return { item, duplicate: false };
     });
   }
   private publish(user: string, prepared: PreparedPortableFile, parentId: unknown) {

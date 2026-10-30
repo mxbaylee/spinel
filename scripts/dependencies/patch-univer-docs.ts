@@ -20,7 +20,8 @@
  * Source: packages/docs/src/services/doc-state-change-manager.service.ts,
  * dream-num/univer v1.1.0 (Apache-2.0). No Pro code is read or modified.
  * Temporary: SPN-122 removes this after a suitable upstream release. SPN-121
- * retains the source, semantic and browser acceptance evidence.
+ * retains the source, semantic and browser acceptance evidence. SPN-123 proves
+ * the public paragraph-preservation marker emitted by native sync capture.
  */
 import { createHash } from 'node:crypto';
 import { readFile, writeFile } from 'node:fs/promises';
@@ -63,7 +64,8 @@ function canBalanceDocInserts(states, key) {
 \t\tconst insert = edits[edits.length - 1];
 \t\tif (!hasOnlyDocInsertKeys(insert, ["t", "len", "body", "valueRangeId"]) || !Object.hasOwn(insert, "t") || !Object.hasOwn(insert, "len") || !Object.hasOwn(insert, "body") || insert.t !== "i" || insert.len !== 1 || insert.valueRangeId !== void 0) return false;
 \t\tconst body = insert.body;
-\t\tif (!hasOnlyDocInsertKeys(body, ["dataStream", "textRuns", "paragraphs", "customRanges", "customDecorations", "customBlocks", "sectionBreaks"]) || !Object.hasOwn(body, "dataStream") || typeof body.dataStream !== "string" || body.dataStream.length !== 1) return false;
+\t\tif (!hasOnlyDocInsertKeys(body, ["dataStream", "textRuns", "paragraphs", "customRanges", "customDecorations", "customBlocks", "sectionBreaks", "__textXPreserveParagraphIds"]) || !Object.hasOwn(body, "dataStream") || typeof body.dataStream !== "string" || body.dataStream.length !== 1) return false;
+\t\tif (Object.hasOwn(body, "__textXPreserveParagraphIds") && body["__textXPreserveParagraphIds"] !== true) return false;
 \t\t// The SDK's structural tokens are C0 controls. Keep all C0/DEL on the native path.
 \t\tconst code = body.dataStream.charCodeAt(0);
 \t\tif (code < 32 || code === 127) return false;

@@ -16,6 +16,8 @@ import { createHttpServer } from './http.ts';
 import { resolve } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { DiagnosticsStore } from '../src/server/diagnostics/store.ts';
+import { RuntimeDiagnostics } from '../src/server/diagnostics/runtime.ts';
+import { isMaintenanceDiagnosticEvent } from '@spinel/diagnostics';
 import { diagnosticsRoutes } from '../src/server/diagnostics/routes.ts';
 import { diagnosticsConfiguration } from '../src/server/diagnostics/configuration.ts';
 import { HealthJobs } from '../src/server/health/jobs.ts';
@@ -57,7 +59,10 @@ export interface AppOptions {
 }
 
 export async function createApp(options: AppOptions) {
-  const maintenance = new MaintenanceGate(options.maintenance);
+  let diagnostics: DiagnosticsStore | undefined;
+  const maintenance = new MaintenanceGate(options.maintenance, (event) => {
+    if (isMaintenanceDiagnosticEvent(event)) diagnostics?.recordMaintenance(event);
+  });
   const database = openDatabase(options.databasePath);
   const app = express();
   app.disable('x-powered-by');
@@ -71,7 +76,7 @@ export async function createApp(options: AppOptions) {
   let realtime: ReturnType<typeof attachSync> | undefined;
   let purgeTimer: ReturnType<typeof setInterval> | undefined;
   let healthTimer: ReturnType<typeof setInterval> | undefined;
-  let diagnostics: DiagnosticsStore | undefined;
+  let runtimeDiagnostics: RuntimeDiagnostics | undefined;
   let unsubscribeMaintenance = () => {};
   let draining: Promise<void> | undefined;
 
@@ -79,6 +84,7 @@ export async function createApp(options: AppOptions) {
     diagnostics = new DiagnosticsStore(
       diagnosticsConfiguration(options.databasePath, options.image),
     );
+    if (diagnostics.status().available) runtimeDiagnostics = new RuntimeDiagnostics();
     const jobs = new HealthJobs({
       observe: ({ job, success, durationMs, runId }) => {
         diagnostics!.emit(
@@ -143,7 +149,12 @@ export async function createApp(options: AppOptions) {
         if (!actorId.startsWith('guest:')) diagnostics!.record(event, context, actorId);
       },
     });
-    history = new HistoryStore(workspace, collaboration, () => jobs.begin('history-maintenance'));
+    history = new HistoryStore(
+      workspace,
+      collaboration,
+      () => jobs.begin('history-maintenance'),
+      (event, context, actorId) => diagnostics!.record(event, context, actorId),
+    );
     app.use('/mcp', mcpRoutes(workspace, collaboration, origin));
     realtime = attachSync(server, app, workspace, collaboration, origin, maintenance);
     // Retired protocol paths must not fall through to the application shell.
@@ -249,6 +260,7 @@ export async function createApp(options: AppOptions) {
     app.use(healthRoutes(auth, health));
     const sampleHealth = async () => {
       const sample = await health.sample();
+      runtimeDiagnostics?.sample(diagnostics!.emit);
       for (const [scope, value] of [
         ['process', sample.memory.processRssBytes],
         ['host', sample.memory.systemUsedBytes],
@@ -523,6 +535,7 @@ export async function createApp(options: AppOptions) {
         });
       }) ?? (() => {});
   } catch (error) {
+    runtimeDiagnostics?.close();
     unsubscribeMaintenance();
     stopCleanup();
     clearInterval(purgeTimer);
@@ -541,6 +554,7 @@ export async function createApp(options: AppOptions) {
     server,
     maintenance,
     async close() {
+      runtimeDiagnostics?.close();
       unsubscribeMaintenance();
       stopCleanup();
       clearInterval(purgeTimer);

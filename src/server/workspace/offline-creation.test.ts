@@ -21,6 +21,7 @@ import { OfflineCreations } from './offline-creation.ts';
 import { migrateSpaceSchema } from './space-schema.ts';
 import { SpaceStore } from './spaces.ts';
 import { WorkspaceStore } from './store.ts';
+import type { FormulaDiagnostics } from '../formulas/routes.ts';
 
 const cleanup: (() => unknown | Promise<unknown>)[] = [];
 afterEach(async () => {
@@ -28,7 +29,7 @@ afterEach(async () => {
   for (const close of cleanup.splice(0).reverse()) await close();
 });
 
-async function fixture() {
+async function fixture(diagnostics?: FormulaDiagnostics) {
   const directory = await mkdtemp(join(tmpdir(), 'spinel-offline-creation-'));
   cleanup.push(() => rm(directory, { recursive: true, force: true }));
   const path = join(directory, 'app.sqlite');
@@ -44,7 +45,7 @@ async function fixture() {
   const operator = auth.createUser('Operator', true);
   const collaboration = new CollaborationStore(workspace, path);
   cleanup.push(() => collaboration.close());
-  const creations = new OfflineCreations(workspace, collaboration);
+  const creations = new OfflineCreations(workspace, collaboration, diagnostics);
   const input = (kind: 'sheet' | 'doc' = 'sheet'): OfflineCreationRequest => ({
     version: 1,
     itemId: randomUUID(),
@@ -55,6 +56,38 @@ async function fixture() {
   });
   return { path, db, auth, workspace, owner, other, operator, collaboration, creations, input };
 }
+
+test('publication observations distinguish durable new work from retries and keep the verified collaborator actor', async () => {
+  const sink = vi.fn<FormulaDiagnostics>();
+  const f = await fixture(sink);
+  const folder = f.workspace.create(f.owner.id, {
+    name: 'Private folder',
+    kind: 'folder',
+    parentId: null,
+  });
+  f.workspace.share(f.owner.id, folder.id, f.other.id, 'editor');
+  const request = { ...f.input(), parentId: folder.id };
+  const first = f.creations.create(f.other.id, request, () => {});
+  expect(f.creations.create(f.other.id, request, () => {})).toEqual(first);
+  expect(sink.mock.calls.map(([event]) => event.details)).toEqual([
+    { outcome: 'published', durationMs: expect.any(Number) },
+    { outcome: 'duplicate', durationMs: expect.any(Number) },
+  ]);
+  expect(
+    sink.mock.calls.every(
+      ([, context, actor]) => actor === f.other.id && context.fileId === first.item.id,
+    ),
+  ).toBe(true);
+  expect(JSON.stringify(sink.mock.calls)).not.toContain('Private folder');
+  sink.mockImplementation(() => {
+    throw new Error('Observer failed');
+  });
+  expect(f.creations.create(f.other.id, request, () => {})).toEqual(first);
+  expect(() =>
+    f.creations.create(f.other.id, { ...request, unitId: randomUUID() }, () => {}),
+  ).toThrow('no longer matches');
+  expect(f.db.prepare('SELECT count(*) AS n FROM workspace_offline_creations').get()?.n).toBe(1);
+});
 
 test('the shared Doc base preserves deterministic identities through native normalization', () => {
   const request = { itemId: randomUUID(), kind: 'doc' as const, name: 'Offline journal' };

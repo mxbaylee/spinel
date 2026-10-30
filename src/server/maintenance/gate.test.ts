@@ -1,6 +1,7 @@
 import express from 'express';
 import type { AddressInfo } from 'node:net';
-import { afterEach, expect, test } from 'vitest';
+import { afterEach, expect, test, vi } from 'vitest';
+import type { DiagnosticEvent, DiagnosticSink } from '@spinel/diagnostics';
 import { DatabaseSync } from '../../../server/database.ts';
 import type { MaintenanceBridge, MaintenancePublicStatus } from '../../shared/maintenance.ts';
 import { MaintenanceError, MaintenanceGate, ShutdownError } from './gate.ts';
@@ -10,7 +11,7 @@ const cleanups: Array<() => unknown | Promise<unknown>> = [];
 afterEach(async () => {
   for (const cleanup of cleanups.splice(0).reverse()) await cleanup();
 });
-function fixture() {
+function fixture(diagnostics?: DiagnosticSink) {
   let status: MaintenancePublicStatus = {
     available: true,
     phase: 'running',
@@ -18,7 +19,7 @@ function fixture() {
     notice: null,
   };
   const bridge = { status: () => status } as MaintenanceBridge;
-  const gate = new MaintenanceGate(bridge);
+  const gate = new MaintenanceGate(bridge, diagnostics);
   const database = new DatabaseSync(':memory:');
   database.exec('CREATE TABLE writes(value TEXT)');
   database.setMaintenanceGate(gate);
@@ -31,6 +32,67 @@ function fixture() {
     },
   };
 }
+
+test('drain records exact monotonic duration and initial active permits without changing refused or durable work', async () => {
+  const events: DiagnosticEvent[] = [];
+  const { gate, database, set } = fixture((event) => events.push(event));
+  let time = 10;
+  const clock = vi.spyOn(performance, 'now').mockImplementation(() => time);
+  try {
+    const done = deferred();
+    const writing = gate.run(async () => {
+      await done.promise;
+      database.prepare('INSERT INTO writes VALUES (?)').run('durable');
+    });
+    const second = gate.begin();
+    set({ phase: 'draining', epoch: 'after' });
+    expect(() => gate.run(() => {})).toThrow(MaintenanceError);
+    const draining = gate.drain();
+    time = 35;
+    second.release();
+    done.resolve();
+    await writing;
+    await draining;
+    expect(events).toEqual([
+      { name: 'maintenance.refused', details: { reason: 'paused' } },
+      {
+        name: 'maintenance.drain',
+        details: { outcome: 'success', admittedCount: 2, durationMs: 25 },
+      },
+    ]);
+    expect(database.prepare('SELECT value FROM writes').all()).toEqual([{ value: 'durable' }]);
+    set({ phase: 'running' });
+    expect(() => gate.run(() => {}, 'before')).toThrow('Maintenance changed');
+    expect(events.at(-1)).toEqual({
+      name: 'maintenance.refused',
+      details: { reason: 'stale-epoch' },
+    });
+  } finally {
+    clock.mockRestore();
+  }
+});
+
+test('throwing drain/refusal observers preserve the deadline error and normal admission behavior', async () => {
+  const events: DiagnosticEvent[] = [];
+  const { gate, set } = fixture((event) => {
+    events.push(event);
+    throw new Error('broken observer');
+  });
+  const permit = gate.begin();
+  set({ phase: 'draining', epoch: 'after' });
+  await expect(gate.drain(1)).rejects.toThrow('Maintenance drain deadline exceeded.');
+  expect(events.at(-1)).toMatchObject({
+    name: 'maintenance.drain',
+    details: { outcome: 'failure', admittedCount: 1 },
+  });
+  expect(() => gate.run(() => {})).toThrow(MaintenanceError);
+  permit.release();
+  await expect(gate.drain()).resolves.toBeUndefined();
+  expect(events.at(-1)).toMatchObject({
+    name: 'maintenance.drain',
+    details: { outcome: 'success', admittedCount: 0 },
+  });
+});
 function deferred() {
   let resolve!: () => void;
   const promise = new Promise<void>((done) => {

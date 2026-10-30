@@ -1,4 +1,6 @@
 import { maintenanceFetch as fetch } from '../maintenanceFetch.ts';
+import { captureDiagnostic, observe, observeOperation } from '@spinel/diagnostics';
+import type { ClientDiagnosticOutcome, DiagnosticSource } from '@spinel/diagnostics';
 import type {
   ClientCheckpoint,
   ClientCheckpointFactory,
@@ -57,6 +59,7 @@ async function writerLock(account: string, item: string) {
  * adapter. It owns no mutation queue; the native checkpoint is authoritative.
  */
 export class OfflineSession implements IURLImageService {
+  diagnostics?: DiagnosticSource;
   readonly accountId: string;
   readonly itemId: string;
   readonly spaceId?: string;
@@ -369,51 +372,74 @@ export class OfflineSession implements IURLImageService {
     if (this.creationUpload) return this.creationUpload;
     const creation = this.creation;
     this.creationUpload = (async () => {
-      this.verifyRemote();
+      const observation = captureDiagnostic(this.diagnostics);
+      const started = performance.now();
+      let outcome: ClientDiagnosticOutcome = 'failure';
       try {
-        const result = await uploadOfflineCreation(
-          this.accountId,
-          creation.request,
-          signal,
-          this.verifyRemote,
-          this.bundle?.maintenanceEpoch,
-        );
-        await this.store!.updateCreation(
-          this.itemId,
-          creation,
-          undefined,
-          this.verifyRemote,
-          result.item,
-        );
         this.verifyRemote();
-        // The publication response is authorized for this account. Its current
-        // role may differ from the cached folder role (for example editor to
-        // file admin); use that verified role before the normal replay check.
-        this.download!.bundle = { ...this.download!.bundle, access: result.item.access };
-        this.download!.creation = undefined;
-        if (this.download!.outbox) delete this.download!.outbox.creation;
-        this.onChange?.();
-        return true;
-      } catch (error) {
-        this.verifyRemote();
-        if (
-          error instanceof CreationUploadError &&
-          (error.code === 'folder-unavailable' || error.code === 'creation-conflict')
-        ) {
-          const next = {
-            ...creation,
-            problem:
-              error.code === 'folder-unavailable'
-                ? 'The chosen folder is no longer available. Use Back to files, then choose another folder from this document’s menu.'
-                : 'The original upload could not be confirmed. Keep this device copy and export your work before removing it.',
-            canRelocate: error.code === 'folder-unavailable',
-          };
-          await this.store!.updateCreation(this.itemId, creation, next, this.verifyRemote);
-          this.download!.creation = next;
+        try {
+          const result = await uploadOfflineCreation(
+            this.accountId,
+            creation.request,
+            signal,
+            this.verifyRemote,
+            this.bundle?.maintenanceEpoch,
+          );
+          await this.store!.updateCreation(
+            this.itemId,
+            creation,
+            undefined,
+            this.verifyRemote,
+            result.item,
+          );
+          this.verifyRemote();
+          // The publication response is authorized for this account. Its current
+          // role may differ from the cached folder role (for example editor to
+          // file admin); use that verified role before the normal replay check.
+          this.download!.bundle = { ...this.download!.bundle, access: result.item.access };
+          this.download!.creation = undefined;
+          if (this.download!.outbox) delete this.download!.outbox.creation;
           this.onChange?.();
-          return false;
+          outcome = 'success';
+          return true;
+        } catch (error) {
+          this.verifyRemote();
+          if (
+            error instanceof CreationUploadError &&
+            (error.code === 'folder-unavailable' || error.code === 'creation-conflict')
+          ) {
+            const next = {
+              ...creation,
+              problem:
+                error.code === 'folder-unavailable'
+                  ? 'The chosen folder is no longer available. Use Back to files, then choose another folder from this document’s menu.'
+                  : 'The original upload could not be confirmed. Keep this device copy and export your work before removing it.',
+              canRelocate: error.code === 'folder-unavailable',
+            };
+            await this.store!.updateCreation(this.itemId, creation, next, this.verifyRemote);
+            this.download!.creation = next;
+            this.onChange?.();
+            return false;
+          }
+          throw error;
         }
+      } catch (error) {
+        if (signal.aborted || (error instanceof DOMException && error.name === 'AbortError'))
+          outcome = 'cancelled';
         throw error;
+      } finally {
+        if (observation)
+          observe(
+            observation.sink,
+            {
+              name: 'offline.publication',
+              details: {
+                outcome,
+                durationMs: Math.max(0, performance.now() - started),
+              },
+            },
+            observation.context,
+          );
       }
     })().finally(() => {
       this.creationUpload = undefined;
@@ -480,46 +506,85 @@ export class OfflineSession implements IURLImageService {
     }
   }
   async persist(capture: ClientCheckpointFactory) {
-    if (this.recoveryResolved) throw new Error('These offline changes have already been resolved.');
-    const wasEnabled = this.enabled;
-    await this.activate();
-    if (!this.download) return;
-    if (!wasEnabled && this.pending) {
-      this.stopRemote(
-        'Another editing session left changes on this device. Keep this tab open and reopen the downloaded copy to recover them.',
-      );
-      this.releaseWriter?.();
-      this.releaseWriter = undefined;
-      throw new Error(this.problem);
+    const observation = captureDiagnostic(this.diagnostics);
+    const started = performance.now();
+    let outcome: 'persisted' | 'skipped' | 'failure' | 'cancelled' = 'failure';
+    let reason: 'write' | 'not-prepared' | 'read-only' = 'write';
+    let durableDurationMs: number | undefined;
+    try {
+      if (this.recoveryResolved)
+        throw new Error('These offline changes have already been resolved.');
+      const wasEnabled = this.enabled;
+      await this.activate();
+      if (!this.download) {
+        outcome = 'skipped';
+        reason = 'not-prepared';
+        return;
+      }
+      if (!wasEnabled && this.pending) {
+        this.stopRemote(
+          'Another editing session left changes on this device. Keep this tab open and reopen the downloaded copy to recover them.',
+        );
+        this.releaseWriter?.();
+        this.releaseWriter = undefined;
+        throw new Error(this.problem);
+      }
+      this.verify();
+      const checkpoint = capture();
+      if (!this.releaseWriter || this.bundle!.readOnly) {
+        if (checkpoint.sent || checkpoint.buffer.length)
+          throw new Error('This offline copy is read-only.');
+        outcome = 'skipped';
+        reason = 'read-only';
+        return;
+      }
+      const bundle = this.bundle!;
+      if (checkpoint.unitId !== bundle.unitId) throw new Error('The document generation changed.');
+      await this.prepareImages(checkpoint);
+      this.verify();
+      const scope = {
+        account: this.accountId,
+        item: this.itemId,
+        spaceId: this.spaceId,
+        unitId: bundle.unitId,
+        revisionOffset: bundle.revisionOffset,
+      };
+      await this.store!.saveCheckpoint(scope, checkpoint, this.verify, {
+        images: bundle.images,
+        bytes: this.download.bytes,
+      });
+      outcome = 'persisted';
+      durableDurationMs = Math.max(0, performance.now() - started);
+      this.download.outbox = {
+        version: 1,
+        ...scope,
+        checkpoint: structuredClone(checkpoint),
+        ...(this.creation ? { creation: true as const } : {}),
+      };
+    } catch (error) {
+      if (outcome !== 'persisted' && error instanceof DOMException && error.name === 'AbortError')
+        outcome = 'cancelled';
+      throw error;
+    } finally {
+      if (observation) {
+        const durationMs = Math.max(0, performance.now() - started);
+        observe(
+          observation.sink,
+          { name: 'offline.persistence', details: { outcome, reason, durationMs } },
+          observation.context,
+        );
+        // A resolved host hook may have skipped storage; only the committed
+        // saveCheckpoint transaction is a local durable save success.
+        if (outcome !== 'skipped')
+          observeOperation(
+            observation.sink,
+            observation.context,
+            'document-save-local',
+            outcome === 'persisted' ? 'success' : outcome,
+            durableDurationMs ?? durationMs,
+          );
+      }
     }
-    this.verify();
-    const checkpoint = capture();
-    if (!this.releaseWriter || this.bundle!.readOnly) {
-      if (checkpoint.sent || checkpoint.buffer.length)
-        throw new Error('This offline copy is read-only.');
-      return;
-    }
-    const bundle = this.bundle!;
-    if (checkpoint.unitId !== bundle.unitId) throw new Error('The document generation changed.');
-    await this.prepareImages(checkpoint);
-    this.verify();
-    const scope = {
-      account: this.accountId,
-      item: this.itemId,
-      spaceId: this.spaceId,
-      unitId: bundle.unitId,
-      revisionOffset: bundle.revisionOffset,
-    };
-    await this.store!.saveCheckpoint(scope, checkpoint, this.verify, {
-      images: bundle.images,
-      bytes: this.download.bytes,
-    });
-    this.download.outbox = {
-      version: 1,
-      ...scope,
-      checkpoint: structuredClone(checkpoint),
-      ...(this.creation ? { creation: true as const } : {}),
-    };
   }
   async reconcileAvailability(checkpoint: ClientCheckpoint) {
     if (this.recoveryResolved) return;

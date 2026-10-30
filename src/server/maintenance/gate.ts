@@ -1,4 +1,6 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
+import { observe } from '@spinel/diagnostics';
+import type { DiagnosticSink } from '@spinel/diagnostics';
 import type { RequestHandler, Response } from 'express';
 import type { MaintenanceBridge, MaintenancePublicStatus } from '../../shared/maintenance.ts';
 
@@ -68,8 +70,10 @@ export class MaintenanceGate {
   private lifecycle = false;
   private closed = false;
   private admissionClosed = false;
-  constructor(bridge?: MaintenanceBridge) {
+  private readonly diagnostics?: DiagnosticSink;
+  constructor(bridge?: MaintenanceBridge, diagnostics?: DiagnosticSink) {
     this.bridge = bridge;
+    this.diagnostics = diagnostics;
   }
   get status(): MaintenancePublicStatus {
     return this.bridge?.status() ?? { available: false, phase: 'running', epoch: '', notice: null };
@@ -89,15 +93,22 @@ export class MaintenanceGate {
     );
   }
   assertEpoch(epoch: unknown) {
-    if (this.status.available && epoch !== this.epoch) throw new MaintenanceError(true);
+    if (this.status.available && epoch !== this.epoch) this.refuse(true);
+  }
+  private refuse(stale = false): never {
+    observe(
+      this.diagnostics,
+      { name: 'maintenance.refused', details: { reason: stale ? 'stale-epoch' : 'paused' } },
+      { component: 'server' },
+    );
+    throw new MaintenanceError(stale);
   }
   begin(epoch?: string): Permit {
     const parent = context.getStore();
-    if (this.status.available && parent?.gate === this && !parent.active)
-      throw new MaintenanceError(true);
+    if (this.status.available && parent?.gate === this && !parent.active) this.refuse(true);
     const inherited = parent?.gate === this && parent.active;
     if (!inherited) {
-      if (!this.running) throw new MaintenanceError();
+      if (!this.running) this.refuse();
       if (epoch !== undefined) this.assertEpoch(epoch);
     }
     const permit: Permit = {
@@ -157,19 +168,35 @@ export class MaintenanceGate {
     }
   }
   async drain(deadlineMs = 25_000) {
-    if (!this.active.size) return;
-    await new Promise<void>((resolve, reject) => {
-      const done = () => {
-        clearTimeout(timer);
-        this.waiters.delete(done);
-        resolve();
-      };
-      const timer = setTimeout(() => {
-        this.waiters.delete(done);
-        reject(new Error('Maintenance drain deadline exceeded.'));
-      }, deadlineMs);
-      this.waiters.add(done);
-    });
+    const started = performance.now();
+    // Permits include nested request/work leases; this is not a unique-request count.
+    const admittedCount = this.active.size;
+    let outcome: 'success' | 'failure' = 'failure';
+    try {
+      if (this.active.size)
+        await new Promise<void>((resolve, reject) => {
+          const done = () => {
+            clearTimeout(timer);
+            this.waiters.delete(done);
+            resolve();
+          };
+          const timer = setTimeout(() => {
+            this.waiters.delete(done);
+            reject(new Error('Maintenance drain deadline exceeded.'));
+          }, deadlineMs);
+          this.waiters.add(done);
+        });
+      outcome = 'success';
+    } finally {
+      observe(
+        this.diagnostics,
+        {
+          name: 'maintenance.drain',
+          details: { outcome, admittedCount, durationMs: Math.max(0, performance.now() - started) },
+        },
+        { component: 'server' },
+      );
+    }
   }
   /**
    * Long transfers and preparations can outlast the drain deadline. They abort

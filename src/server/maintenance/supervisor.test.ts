@@ -20,6 +20,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterEach, expect, test } from 'vitest';
+import type { DiagnosticEvent, DiagnosticSink } from '@spinel/diagnostics';
 import { openDatabase } from '../../../server/database.ts';
 import { maintenanceControl } from '../../../scripts/deploy/maintenance.ts';
 import {
@@ -75,13 +76,21 @@ async function fixture() {
       stdio: ['ignore', 'ignore', 'inherit', 'ipc'],
     });
   async function supervisor(
-    extra: { now?: () => number; env?: Record<string, string>; drainMs?: number } = {},
+    extra: {
+      now?: () => number;
+      env?: Record<string, string>;
+      drainMs?: number;
+      diagnostics?: DiagnosticSink;
+      onTransition?: () => void;
+    } = {},
   ) {
     const instance = await MaintenanceSupervisor.open({
       root,
       databasePath,
       publicPort: 0,
       now: extra.now,
+      diagnostics: extra.diagnostics,
+      onTransition: extra.onTransition,
       createChild: (groupToken) => createChild(groupToken, extra.env),
       budgets: { drainMs: extra.drainMs ?? 2000, stopMs: 100, startMs: 5000, verifyMs: 5000 },
     });
@@ -152,8 +161,18 @@ test('external journal and kernel lease refuse unsafe paths and concurrent offli
 });
 
 test('real SQLite app and stubborn WAL worker stop before closed verification and restart', async () => {
+  const events: DiagnosticEvent[] = [];
   const f = await fixture(),
-    supervisor = await f.supervisor({ env: { SPINEL_TEST_WAL_CHILD: '1' } });
+    supervisor = await f.supervisor({
+      env: { SPINEL_TEST_WAL_CHILD: '1' },
+      diagnostics(event) {
+        events.push(event);
+        throw new Error('broken diagnostic observer');
+      },
+      onTransition() {
+        throw new Error('broken transition observer');
+      },
+    });
   await start(supervisor);
   const epoch = supervisor.status().epoch,
     operationId = randomUUID();
@@ -162,6 +181,9 @@ test('real SQLite app and stubborn WAL worker stop before closed verification an
   expect(paused.status.epoch).not.toBe(epoch);
   expect(paused.resumeToken).toMatch(/^[A-Za-z0-9_-]{43}$/);
   expect(() => assertWorkspaceHandlesClosed(f.databasePath)).toThrow('still open');
+  await expect(supervisor.coldControl({ action: 'verify', operationId })).rejects.toThrow(
+    'Stop the application',
+  );
   await supervisor.coldControl({ action: 'stop', operationId });
   expect(supervisor.status().phase).toBe('stopped');
   expect(() => assertWorkspaceHandlesClosed(f.databasePath)).not.toThrow();
@@ -192,6 +214,32 @@ test('real SQLite app and stubborn WAL worker stop before closed verification an
       resumeToken: paused.resumeToken!,
     }),
   ).rejects.toThrow('expired');
+  expect(
+    events
+      .filter((event) => event.name === 'maintenance.phase')
+      .map((event) => event.details.phase),
+  ).toEqual([
+    'recovery-required',
+    'stopped',
+    'starting',
+    'paused',
+    'running',
+    'draining',
+    'paused',
+    'stopping',
+    'stopped',
+    'starting',
+    'paused',
+    'running',
+  ]);
+  expect(
+    events
+      .filter((event) => event.name === 'maintenance.verification')
+      .map((event) => event.details.outcome),
+  ).toEqual(['success', 'refused', 'success']);
+  for (const event of events)
+    if (event.name === 'maintenance.verification')
+      expect(event.details.durationMs).toBeGreaterThanOrEqual(0);
 });
 
 test('live application ownership spans DB close and aliases while separate cold CLI access remains available', async () => {
@@ -526,8 +574,16 @@ test('expired authority, arbitrary commands, stale operation IDs and changed gen
 });
 
 test('a timed-out drain does not claim paused, and unrelated handles block closed recovery without being killed', async () => {
+  const events: DiagnosticEvent[] = [];
   const f = await fixture(),
-    supervisor = await f.supervisor({ env: { SPINEL_TEST_NEVER_DRAIN: '1' }, drainMs: 50 });
+    supervisor = await f.supervisor({
+      env: { SPINEL_TEST_NEVER_DRAIN: '1' },
+      drainMs: 50,
+      diagnostics(event) {
+        events.push(event);
+        throw new Error('broken observer must not replace native refusal');
+      },
+    });
   await start(supervisor);
   const operationId = randomUUID();
   await expect(
@@ -545,6 +601,11 @@ test('a timed-out drain does not claim paused, and unrelated handles block close
   }
   await supervisor.coldControl({ action: 'verify', operationId });
   expect(supervisor.status().phase).toBe('stopped');
+  expect(
+    events
+      .filter((event) => event.name === 'maintenance.verification')
+      .map((event) => event.details.outcome),
+  ).toEqual(['success', 'failure', 'success']);
 });
 
 test('one-off absolute notices preserve DST instants, cancellation and missed downtime without authorizing pause', async () => {
