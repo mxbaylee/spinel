@@ -180,6 +180,9 @@ export const Ready: Story = {
     await expect(canvas.getByText(job.sourceSha256!)).toBeVisible();
     await expect(canvas.getByText(/This workspace at/)).toBeVisible();
     await expect(canvas.getByText('Verified backup')).toBeVisible();
+    await expect(canvas.getByText(/^Tables:/)).toHaveTextContent(
+      'Tables: 33 · Rows: 200 · Snapshots: 14 · Images: 6',
+    );
     await expect(canvas.getByText('Estimated disk space')).toBeVisible();
     await expect(canvas.queryByText(job.target.generationId)).toBeNull();
   },
@@ -308,7 +311,7 @@ export const SmallBackup: Story = {
     api: {
       'GET /api/admin/restores': {
         available: true,
-        job: { ...job, bytes: 2048 },
+        job: { ...job, bytes: 2048, verification: { ...job.verification!, images: 1 } },
         outcome: null,
         pending: false,
       },
@@ -318,9 +321,15 @@ export const SmallBackup: Story = {
     const canvas = within(canvasElement);
     await expect(await canvas.findByText('2 KiB', { exact: true })).toBeVisible();
     await expect(canvas.queryByText('0 MiB', { exact: true })).toBeNull();
+    await expect(canvas.getByText(/^Tables:/)).toHaveTextContent(
+      'Tables: 33 · Rows: 200 · Snapshots: 14 · Images: 1',
+    );
     const dialog = await openConfirmation(canvasElement);
     await expect(dialog.getByText('2 KiB', { exact: true })).toBeVisible();
     await expect(dialog.queryByText('0 MiB', { exact: true })).toBeNull();
+    await expect(dialog.getByText(/^Tables:/)).toHaveTextContent(
+      'Tables: 33 · Rows: 200 · Snapshots: 14 · Images: 1',
+    );
   },
 };
 export const Cancelled: Story = { parameters: { api: read('cancelled') } };
@@ -476,6 +485,22 @@ export const FullConfirmation: Story = {
     await expect(
       dialog.getByRole('button', { name: 'Verify and restore workspace' }),
     ).toBeEnabled();
+    // ConfirmationReview preserves the top/source view. This existing story
+    // finishes at the acknowledgement and actions so screenshots cover both ends.
+    const confirm = dialog.getByRole('button', { name: 'Verify and restore workspace' });
+    confirm.scrollIntoView({ block: 'end', behavior: 'instant' });
+    await waitFor(() => {
+      const panel = confirm.closest('[role="dialog"]')!.getBoundingClientRect();
+      for (const node of [
+        dialog.getByRole('checkbox').closest('label')!,
+        dialog.getByRole('button', { name: 'Cancel' }),
+        confirm,
+      ]) {
+        const box = node.getBoundingClientRect();
+        expect(box.top).toBeGreaterThanOrEqual(Math.max(0, panel.top) - 1);
+        expect(box.bottom).toBeLessThanOrEqual(Math.min(window.innerHeight, panel.bottom) + 1);
+      }
+    });
   },
 };
 export const WaitingForPasskey: Story = {

@@ -13,11 +13,22 @@ import { maintenanceControl } from '../../../scripts/deploy/maintenance.ts';
 import { assertWorkspaceHandlesClosed } from './supervisor.ts';
 import { restoreBarrierPath } from './restore-barrier.ts';
 import { sameProcess } from './journal.ts';
+import { restoreSnapshotFingerprint } from '../backup/inventory.ts';
+import type { RestoreTrialStopRequest } from './restore-trial-stop.ts';
+import { restoreTrialReference } from './restore-trial.ts';
 import { processResourcesReleased } from './process-exit.ts';
 import type { RestoreJobRecord } from './restore-jobs.ts';
 import { authenticator, restoreHttpClient, seed, seedOwner } from './restore-http-test-client.ts';
 
-const cuts = ['admission', 'activation', 'private-open', 'commit', 'postcommit'] as const;
+const cuts = [
+  'admission',
+  'activation',
+  'private-open',
+  'commit',
+  'postcommit',
+  'original-activation',
+  'original-commit',
+] as const;
 const alive = (child: ChildProcess) => child.exitCode === null && child.signalCode === null;
 async function kill(child: ChildProcess) {
   if (!alive(child)) return;
@@ -77,6 +88,9 @@ async function probeCopy(directory: string, databasePath: string, includeWal: bo
 test.skipIf(process.platform !== 'linux').each(cuts)(
   'real SIGKILL at %s preserves the durable restore decision and all retained evidence',
   async (cut) => {
+    const originalRecovery = cut === 'original-activation' || cut === 'original-commit';
+    const partial = cut === 'activation' || cut === 'original-activation';
+    const unresolved = partial || cut === 'private-open';
     const directory = await mkdtemp(join(tmpdir(), 'spinel-restore-crash-'));
     const root = join(directory, 'recovery'),
       data = join(directory, 'data');
@@ -88,7 +102,7 @@ test.skipIf(process.platform !== 'linux').each(cuts)(
     const source = await seed(databasePath, credential);
     const ownerCredential = authenticator();
     const ownerId =
-      cut === 'postcommit'
+      cut === 'postcommit' || originalRecovery
         ? await seedOwner(databasePath, source.folderId, ownerCredential)
         : undefined;
     const identity = statSync(databasePath);
@@ -208,24 +222,124 @@ test.skipIf(process.platform !== 'linux').each(cuts)(
       } else {
         expect(before.execution!.stop!.fingerprint).toBeTruthy();
         expect(before.phase).toBe(
-          cut === 'activation'
-            ? 'candidate-replacing'
-            : cut === 'private-open'
-              ? 'trial-opening'
-              : 'candidate-committed',
+          cut === 'original-activation'
+            ? 'original-replacing'
+            : cut === 'original-commit'
+              ? 'original-committed'
+              : cut === 'activation'
+                ? 'candidate-replacing'
+                : cut === 'private-open'
+                  ? 'trial-opening'
+                  : 'candidate-committed',
         );
       }
+      const witnessBytes = originalRecovery
+        ? await readFile(join(directory, 'failed-trial-witness.json'))
+        : undefined;
       const retained = await evidence(root);
       const liveHash = createHash('sha256')
         .update(await readFile(databasePath))
         .digest('hex');
       if (cut !== 'admission') expect(Object.keys(retained).length).toBeGreaterThan(0);
-      if (cut === 'activation') {
+      if (partial) {
+        const selected = originalRecovery
+          ? before.execution!.rollback!.image!
+          : before.execution!.preparation!.candidate!;
         expect(reached.bytesWritten).toBe(64 * 1024);
-        expect(before.execution!.preparation!.candidate!.bytes).toBeGreaterThan(
-          reached.bytesWritten!,
+        expect(selected.bytes).toBeGreaterThan(reached.bytesWritten!);
+        expect(liveHash).not.toBe(selected.sha256);
+      }
+      if (originalRecovery) {
+        const execution = before.execution!;
+        const failure = execution.failure!;
+        const wire = JSON.parse(witnessBytes!.toString('utf8')) as {
+          receivedAt: number;
+          pid: number;
+          rejectedReadiness: { fingerprint: string; reference: { role: string } };
+          witness: { kind: string; fingerprint: string; stop: RestoreTrialStopRequest };
+        };
+        expect(wire.rejectedReadiness.reference.role).toBe('candidate');
+        expect(wire.rejectedReadiness.fingerprint).toBe(
+          execution.preparation!.candidate!.fingerprint,
         );
-        expect(liveHash).not.toBe(before.execution!.preparation!.candidate!.sha256);
+        expect(wire.witness.kind).toBe('restore-trial-witness');
+        expect(wire.witness.fingerprint).toMatch(/^[a-f0-9]{64}$/);
+        expect(wire.witness.fingerprint).not.toBe('0'.repeat(64));
+        expect(wire.pid).toBe(execution.trial!.child.pid);
+        expect(wire.witness.stop.child).toEqual(execution.trial!.child);
+        expect(wire.witness.stop.reference).toEqual(restoreTrialReference(execution.trial!));
+        expect(wire.rejectedReadiness.reference).toEqual(restoreTrialReference(execution.trial!));
+        expect(wire.witness.stop.request).toEqual(failure.stop.request);
+        expect(failure.stop.fingerprint).toBe(wire.witness.fingerprint);
+        expect(failure.stop.acceptedAt).toBeGreaterThanOrEqual(wire.receivedAt);
+        expect(failure.stop.acceptedAt).toBeLessThan(failure.stop.request.deadline);
+        expect(failure.stop.request.challengeId).not.toBe(execution.stop!.request.challengeId);
+        expect(processResourcesReleased(String(wire.pid))).toBe(true);
+        expect(execution.frozen!.fingerprint).toBe(execution.stop!.fingerprint);
+        expect(failure.freeze!.output!.fingerprint).toBe(wire.witness.fingerprint);
+        expect(execution.rollback!.attempt!.generationId).not.toBe(execution.attempt!.generationId);
+        expect(execution.outcome).toBeUndefined();
+        expect(execution.readiness).toBeUndefined();
+        expect(failure.from).toBe('trial-opening');
+        const retainedRoot = join(root, `restore-${prepared.id}`);
+        const frozen = execution.frozen!;
+        const failed = failure.freeze!.output!;
+        for (const [path, image, expectedName] of [
+          [
+            join(retainedRoot, `freeze-${execution.freezeSlot}`, frozen.directory, 'frozen.sqlite'),
+            frozen,
+            'Current folder',
+          ],
+          [
+            join(
+              retainedRoot,
+              `failed-freeze-${failure.freeze!.slot}`,
+              failed.directory,
+              'frozen.sqlite',
+            ),
+            failed,
+            'Archived folder',
+          ],
+        ] as const) {
+          const bytes = await readFile(path);
+          expect(bytes.length).toBe(image.bytes);
+          expect(createHash('sha256').update(bytes).digest('hex')).toBe(image.sha256);
+          const location = pathToFileURL(await probeCopy(directory, path, false));
+          location.searchParams.set('mode', 'ro');
+          location.searchParams.set('immutable', '1');
+          const database = new DatabaseSync(location.href);
+          try {
+            expect(restoreSnapshotFingerprint(database)).toBe(image.fingerprint);
+            expect(
+              database.prepare('SELECT name FROM workspace_items WHERE id=?').get(source.folderId)
+                ?.name,
+            ).toBe(expectedName);
+            expect(
+              database
+                .prepare('SELECT user_id FROM auth_passkeys WHERE id=?')
+                .get(ownerCredential.id)?.user_id,
+            ).toBe(ownerId);
+          } finally {
+            database.close();
+          }
+          expect(await readFile(path)).toEqual(bytes);
+        }
+        const raw = join(retainedRoot, `failed-${failure.capture!.slot}`, 'raw');
+        for (const [name, image] of Object.entries(failure.capture!.manifest!.files)) {
+          if (!image) continue;
+          const bytes = await readFile(join(raw, name));
+          expect(bytes.length).toBe(image.bytes);
+          expect(createHash('sha256').update(bytes).digest('hex')).toBe(image.sha256);
+        }
+        if (cut === 'original-commit') {
+          expect(execution.rollback!.outcome!.role).toBe('original');
+          expect(execution.rollback!.outcome!.fingerprint).toBe(
+            execution.rollback!.image!.fingerprint,
+          );
+          expect(main.child).toEqual(execution.rollback!.trial!.child);
+          expect(sameProcess(execution.rollback!.trial!.child)).toBe(true);
+          expect(existsSync(restoreBarrierPath(databasePath))).toBe(true);
+        }
       }
       if (cut === 'postcommit') {
         // Kill the actual writer first. Killing only its supervisor would let
@@ -282,7 +396,8 @@ test.skipIf(process.platform !== 'linux').each(cuts)(
       assertWorkspaceHandlesClosed(databasePath);
       expect(statSync(databasePath).ino).toBe(identity.ino);
       expect(await evidence(root)).toEqual(retained);
-      if (cut === 'activation' || cut === 'private-open') {
+      if (unresolved) {
+        expect(main.restoreJob?.jobId).toBe(prepared.id);
         expect(record()).toEqual(before);
         expect(existsSync(restoreBarrierPath(databasePath))).toBe(true);
         expect(
@@ -290,9 +405,10 @@ test.skipIf(process.platform !== 'linux').each(cuts)(
             .update(await readFile(databasePath))
             .digest('hex'),
         ).toBe(liveHash);
-        await expect(
-          maintenanceControl(root, { action: 'verify', operationId: prepared.id }),
-        ).rejects.toThrow();
+        for (const action of ['verify', 'start', 'resume'] as const)
+          await expect(
+            maintenanceControl(root, { action, operationId: prepared.id }),
+          ).rejects.toThrow();
       } else {
         if (cut === 'admission') {
           expect(record().phase).toBe('failed');
@@ -305,6 +421,13 @@ test.skipIf(process.platform !== 'linux').each(cuts)(
         for (const action of ['verify', 'start', 'resume'] as const)
           await maintenanceControl(root, { action, operationId });
         await client.authenticate();
+        if (originalRecovery) {
+          await ownerClient!.authenticate();
+          const current = await ownerClient!.json<{ item: { name: string } }>(
+            await ownerClient!.request(`/api/items/${source.folderId}`),
+          );
+          expect(current.item.name).toBe('Current folder');
+        }
         if (acknowledgedId) {
           await ownerClient!.authenticate();
           const read = await ownerClient!.json<{ item: { name: string } }>(
@@ -316,7 +439,7 @@ test.skipIf(process.platform !== 'linux').each(cuts)(
       await close(controller!);
       await launch(false);
       assertWorkspaceHandlesClosed(databasePath);
-      if (cut !== 'activation' && cut !== 'private-open') {
+      if (!unresolved) {
         const location = pathToFileURL(await probeCopy(directory, databasePath, true));
         location.searchParams.set('mode', 'ro');
         const database = new DatabaseSync(location.href);
@@ -324,7 +447,20 @@ test.skipIf(process.platform !== 'linux').each(cuts)(
           expect(
             database.prepare('SELECT name FROM workspace_items WHERE id=?').get(source.folderId)
               ?.name,
-          ).toBe(cut === 'admission' ? 'Current folder' : 'Archived folder');
+          ).toBe(cut === 'admission' || originalRecovery ? 'Current folder' : 'Archived folder');
+          if (originalRecovery) {
+            const key = database
+              .prepare('SELECT user_id,public_key,counter FROM auth_passkeys WHERE id=?')
+              .get(ownerCredential.id);
+            expect(key?.user_id).toBe(ownerId);
+            expect(Buffer.from(key!.public_key as Uint8Array).toString('base64url')).toBe(
+              ownerCredential.publicKey,
+            );
+            // Acknowledged fresh authentication after the first recovery must
+            // survive the second restart, rather than reinstalling prepared bytes.
+            expect(key?.counter).toBe(ownerCredential.counter());
+            expect(ownerCredential.counter()).toBeGreaterThan(0);
+          }
           if (acknowledgedId)
             expect(
               database.prepare('SELECT name FROM workspace_items WHERE id=?').get(acknowledgedId)
@@ -335,6 +471,8 @@ test.skipIf(process.platform !== 'linux').each(cuts)(
         }
       }
       expect(await evidence(root)).toEqual(retained);
+      if (witnessBytes)
+        expect(await readFile(join(directory, 'failed-trial-witness.json'))).toEqual(witnessBytes);
       expect(
         createHash('sha256')
           .update(await readFile(source.archive))

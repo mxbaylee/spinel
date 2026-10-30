@@ -8,6 +8,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { RestoreJobs } from './restore-jobs.ts';
 import { MaintenanceSupervisor } from './supervisor.ts';
+import { MAINTENANCE_CHANNEL } from './supervisor-client.ts';
 
 const root = process.env.SPINEL_MAINTENANCE_ROOT;
 const databasePath = process.env.DATABASE_PATH;
@@ -15,22 +16,28 @@ const marker = process.env.SPINEL_TEST_CRASH_MARKER;
 const cut = process.env.SPINEL_TEST_CRASH_CUT;
 if (!process.send || !root || !databasePath || !marker)
   throw new Error('Private crash controller required.');
-const mark = (name: string, bytesWritten?: number) => {
-  const fd = openSync(marker, 'wx', 0o600);
+const save = (path: string, value: unknown) => {
+  const fd = openSync(path, 'wx', 0o600);
   try {
-    writeFileSync(fd, JSON.stringify({ cut: name, pid: process.pid, bytesWritten }));
+    writeFileSync(fd, JSON.stringify(value));
     fsyncSync(fd);
   } finally {
     closeSync(fd);
   }
-  const directory = openSync(dirname(marker), 'r');
+  const directory = openSync(dirname(path), 'r');
   try {
     fsyncSync(directory);
   } finally {
     closeSync(directory);
   }
+};
+const mark = (name: string, bytesWritten?: number) => {
+  save(marker, { cut: name, pid: process.pid, bytesWritten });
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0);
 };
+const originalRecovery = cut === 'original-activation' || cut === 'original-commit';
+let rejectedReadiness: unknown;
+let witnessedFailure = false;
 
 if (cut === 'admission') {
   const admit = RestoreJobs.prototype.admit;
@@ -40,15 +47,16 @@ if (cut === 'admission') {
     return result;
   };
 }
-if (cut === 'commit') {
-  const commit = RestoreJobs.prototype.markCandidateCommitted;
-  RestoreJobs.prototype.markCandidateCommitted = function (...args) {
+if (cut === 'commit' || cut === 'original-commit') {
+  const method = cut === 'commit' ? 'markCandidateCommitted' : 'markOriginalCommitted';
+  const commit = RestoreJobs.prototype[method];
+  RestoreJobs.prototype[method] = function (...args) {
     const result = commit.apply(this, args);
-    mark('commit');
+    mark(cut);
     return result;
   };
 }
-if (cut === 'activation') {
+if (cut === 'activation' || cut === 'original-activation') {
   // Patch only this test process's FileHandle prototype, and match the exact
   // existing live inode plus durable replacing phase before stopping a write.
   const probePath = join(dirname(databasePath), `.crash-probe-${randomUUID()}`);
@@ -66,7 +74,8 @@ if (cut === 'activation') {
       const id = main.restoreJob?.jobId;
       if (id) {
         const job = JSON.parse(readFileSync(join(root, 'restore-jobs', id, 'state.json'), 'utf8'));
-        if (job.phase === 'candidate-replacing') mark('activation', result.bytesWritten);
+        if (job.phase === (originalRecovery ? 'original-replacing' : 'candidate-replacing'))
+          mark(cut, result.bytesWritten);
       }
     }
     return result;
@@ -83,8 +92,8 @@ const supervisor = await MaintenanceSupervisor.open({
     spaceReview: true,
     staticDirectory: join(dirname(databasePath), 'assets'),
   },
-  createChild: (_token, environment) =>
-    fork(
+  createChild: (_token, environment) => {
+    const child = fork(
       fileURLToPath(
         new URL(
           cut === 'private-open' ? './restore-crash-app-fixture.ts' : '../../../server/index.ts',
@@ -104,7 +113,40 @@ const supervisor = await MaintenanceSupervisor.open({
         detached: true,
         stdio: ['ignore', 'ignore', 'ignore', 'ipc'],
       },
-    ),
+    );
+    if (originalRecovery && environment.SPINEL_RESTORE_TRIAL === '1') {
+      // Reject only the genuine candidate readiness. The production application
+      // still receives a real failure-stop challenge and captures its own final
+      // fingerprint after shutdown; no prepared fingerprint is synthesized here.
+      const emit = child.emit.bind(child);
+      child.emit = (event: string | symbol, ...args: unknown[]) => {
+        const value = args[0] as Record<string, unknown> | undefined;
+        if (event === 'message' && value?.channel === MAINTENANCE_CHANNEL) {
+          const reference = value.reference as { role?: unknown } | undefined;
+          if (value.kind === 'restore-trial-ready' && reference?.role === 'candidate') {
+            rejectedReadiness ??= structuredClone(value);
+            return emit(event, { ...value, fingerprint: '0'.repeat(64) }, ...args.slice(1));
+          }
+          const stop = value.stop as { reference?: { role?: unknown } } | undefined;
+          if (
+            value.kind === 'restore-trial-witness' &&
+            stop?.reference?.role === 'candidate' &&
+            !witnessedFailure
+          ) {
+            save(join(dirname(marker), 'failed-trial-witness.json'), {
+              receivedAt: Date.now(),
+              pid: child.pid,
+              rejectedReadiness,
+              witness: value,
+            });
+            witnessedFailure = true;
+          }
+        }
+        return emit(event, ...args);
+      };
+    }
+    return child;
+  },
   budgets: { startMs: 25_000, verifyMs: 20_000, drainMs: 15_000, stopMs: 5000, restoreMs: 90_000 },
 });
 if (process.env.SPINEL_TEST_INITIAL_BOOT === '1') {

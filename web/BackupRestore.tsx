@@ -579,8 +579,8 @@ export function BackupRestore({
         inventory, document snapshots and images passed verification.
       </p>
       <p className="sp-muted">
-        {job.verification.tables} tables · {job.verification.rows} rows ·{' '}
-        {job.verification.snapshots} snapshots · {job.verification.images} images
+        Tables: {job.verification.tables} · Rows: {job.verification.rows} · Snapshots:{' '}
+        {job.verification.snapshots} · Images: {job.verification.images}
       </p>
       <p className="sp-muted">
         Application startup and current access are checked during the supervised restore.

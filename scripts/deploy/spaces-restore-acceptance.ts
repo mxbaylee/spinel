@@ -230,6 +230,8 @@ export async function runSupervisedSpacesRestore(options: {
     step = 'provider-restored-content-and-current-passkey';
     const location = pathToFileURL(databasePath);
     location.searchParams.set('mode', 'ro');
+    // The final reader owns SQLite too; supervisor closure cannot witness its close.
+    evidence.localCleanup = 'retain';
     const saved = new DatabaseSync(location.href);
     try {
       requireResult(
@@ -242,6 +244,7 @@ export async function runSupervisedSpacesRestore(options: {
       );
     } finally {
       saved.close();
+      evidence.localCleanup = 'safe';
     }
     evidence.checks.push(step);
     signal.throwIfAborted();

@@ -340,37 +340,112 @@ async function removeOwnedContainer(name: string, force: boolean) {
 async function helper(mode: 'bootstrap' | 'cold') {
   if (interrupted || deadlineExpired) throw new Error('Acceptance was interrupted.');
   const name = `${container}-${mode}`;
+  const runId = randomUUID();
+  artifact[`${mode}RunId`] = runId;
   helperNames.add(name); // Include uncertain launches in bounded failure containment.
-  await run(
-    'docker',
-    [
-      'run',
-      '--pull=never',
-      '--name',
-      name,
-      ...profile,
-      '--network=none',
-      '--user',
-      fixtureUser,
-      '-v',
-      `${join(project, 'e2e/restore-browser-fixture.ts')}:/app/e2e/restore-browser-fixture.ts:ro`,
-      '-v',
-      `${directory}:/fixture`,
-      '-v',
-      `${volume}:/state${mode === 'cold' ? ':ro' : ''}`,
-      '-e',
-      `SPINEL_IMAGE=${image}`,
-      '-w',
-      '/app',
-      image,
-      'node',
-      `--max-old-space-size=${mode === 'bootstrap' ? 256 : 128}`,
-      '--max-semi-space-size=8',
-      'e2e/restore-browser-fixture.ts',
-      `--${mode}`,
-    ],
-    { timeout: mode === 'bootstrap' ? 45_000 : 20_000, maxBuffer: 4096 },
-  );
+  try {
+    await run(
+      'docker',
+      [
+        'run',
+        '--pull=never',
+        '--name',
+        name,
+        ...profile,
+        '--network=none',
+        '--user',
+        fixtureUser,
+        '-v',
+        `${join(project, 'e2e/restore-browser-fixture.ts')}:/app/e2e/restore-browser-fixture.ts:ro`,
+        '-v',
+        `${directory}:/fixture`,
+        '-v',
+        `${volume}:/state${mode === 'cold' ? ':ro' : ''}`,
+        '-e',
+        `SPINEL_IMAGE=${image}`,
+        '-e',
+        `SPINEL_RESTORE_HELPER_RUN=${runId}`,
+        '-w',
+        '/app',
+        image,
+        'node',
+        `--process-timeout=${mode === 'bootstrap' ? 40 : 15}s`,
+        `--max-old-space-size=${mode === 'bootstrap' ? 256 : 128}`,
+        '--max-semi-space-size=8',
+        'e2e/restore-browser-fixture.ts',
+        `--${mode}`,
+      ],
+      { timeout: mode === 'bootstrap' ? 45_000 : 20_000, maxBuffer: 4096 },
+    );
+  } catch (error) {
+    // execFile can reject before the usual inspection. Preserve bounded typed
+    // evidence before finally removes the exact owned container.
+    artifact[`${mode}Closure`] = await containerState(name).catch(() => null);
+    const failed = error as { code?: unknown; signal?: unknown; stderr?: unknown };
+    const stderr = typeof failed.stderr === 'string' ? failed.stderr.slice(-4096) : '';
+    const sourceLine = /restore-browser-fixture\.ts:(\d+):\d+/.exec(stderr)?.[1];
+    const code =
+      /\b(SQLITE_(?:READONLY|CANTOPEN|IOERR|BUSY|LOCKED|NOTADB|CORRUPT|ERROR|MISUSE)(?:_[A-Z]{1,24})?|EROFS|ENOENT|EACCES)\b/.exec(
+        stderr,
+      )?.[1] ?? null;
+    const raw =
+      mode === 'cold'
+        ? await privateJson<Record<string, unknown>>('cold-diagnostic.json').catch(() => null)
+        : null;
+    const diagnostic = raw?.runId === runId ? raw : null;
+    const failure = diagnostic?.failure as Record<string, unknown> | null | undefined;
+    const stages = [
+      'closure',
+      'canonical-record',
+      'source-group',
+      'copy-group',
+      'copy-verification',
+      'database-open',
+      'content-query',
+      'sidecar-observation',
+      'session-query',
+      'counter-query',
+      'assertions',
+      'database-close',
+      'source-recheck',
+      'complete',
+    ];
+    const diagnosticCode = failure?.code;
+    artifact.helperFailure = {
+      mode,
+      runId,
+      exitCode:
+        typeof failed.code === 'number' && Number.isSafeInteger(failed.code) ? failed.code : null,
+      signal: failed.signal === 'SIGTERM' || failed.signal === 'SIGKILL' ? failed.signal : null,
+      sourceLine: sourceLine ? Number(sourceLine) : null,
+      code,
+      cold: diagnostic
+        ? {
+            stage:
+              typeof diagnostic.stage === 'string' && stages.includes(diagnostic.stage)
+                ? diagnostic.stage
+                : null,
+            sourceUnchanged: diagnostic.sourceUnchanged === true,
+            sourceLine:
+              typeof failure?.sourceLine === 'number' &&
+              Number.isSafeInteger(failure.sourceLine) &&
+              failure.sourceLine > 0
+                ? failure.sourceLine
+                : null,
+            code:
+              typeof diagnosticCode === 'string' &&
+              /^(?:SQLITE_(?:READONLY|CANTOPEN|IOERR|BUSY|LOCKED|NOTADB|CORRUPT|ERROR|MISUSE)(?:_[A-Z]{1,24})?|EROFS|ENOENT|EACCES)$/.test(
+                diagnosticCode,
+              )
+                ? diagnosticCode
+                : typeof diagnosticCode === 'number' && Number.isSafeInteger(diagnosticCode)
+                  ? diagnosticCode
+                  : null,
+          }
+        : null,
+    };
+    throw new Error('Acceptance helper failed; bounded diagnostics retained.');
+  }
   const state = await containerState(name);
   artifact[`${mode}Closure`] = state;
   if (state.running || state.pid !== 0 || state.exitCode !== 0 || state.oomKilled)
@@ -1053,6 +1128,8 @@ try {
   await helper('cold');
   const coldProof = await privateJson<{
     committed: boolean;
+    helperRunId: string;
+    sourceUnchanged: boolean;
     restoredContent: boolean;
     originalSessionExcluded: boolean;
     counter: number;
@@ -1063,6 +1140,8 @@ try {
   };
   if (
     !proof.committed ||
+    proof.helperRunId !== artifact.coldRunId ||
+    !proof.sourceUnchanged ||
     !proof.restoredContent ||
     !proof.originalSessionExcluded ||
     containerExit !== 0 ||
