@@ -48,3 +48,34 @@ in-flight copying; changed-source retry; source access lost; and a retained crea
 copy that cannot be opened until reconnecting. The native completion captures above
 cover the successful retained result itself. No alternate proposed UI or SPN-065
 Redesign story remains.
+
+## Restore-test keyboard proof
+
+Final validation at `6881260d231da906daa1b1a2d3ee7bce0c4d7649` exposed a
+flaky Sheet preview warning assertion in the existing restore test. The preview,
+its editor setup and the test were unchanged from main; that preview does not
+load the copy addon. CI run `40988347960`, development partition 2 job
+`123845073708`, failed its first attempt and passed its built-in retry, so the
+flaky-test gate correctly failed. The failed attempt has no trace; the retry
+trace alone cannot prove that attempt's exact keyboard interleaving.
+
+The predeclared single-attempt production diagnostic in
+`restore-warning-proof.json` demonstrates the stimulus race: one printable key
+opens the native permission warning and autofocuses OK; a subsequent Space
+generates a trusted click on OK and dismisses the warning. The stored revision
+and full snapshot remain unchanged. The proof passed in 5.9 seconds with peak
+process-tree RSS 1,483,268 KiB, using Node 26.12.1 and Chromium 156.0.8078.4 under
+the 2 GiB watchdog. Its source, authenticated-session verification and trusted
+key/focus/click events are retained without credentials or document content.
+
+The repair sends one printable key for the Sheet denial assertion. It retains
+the Doc stimulus, visible protection warning, explicit OK click, unchanged
+revision and complete two-editor restore checks. No product code, timeout,
+retry policy or correctness assertion changes. The final PR records the bounded
+full-journey result and current-head CI, including the original flaky failure.
+
+The one planned full Sheet restore attempt was resource-aborted at
+2,098,032 KiB by the 2 GiB guard, with no product assertion failure reported
+before termination. It is not an acceptance pass; full multi-editor validation
+runs in CI. An earlier anchored CLI filter selected no test and was corrected
+before this scenario attempt. Neither condition caused a product-assertion retry.
