@@ -44,6 +44,21 @@ let exit: Promise<number | null> | undefined;
 let succeeded = false;
 let shutdownPromise: Promise<void> | undefined;
 let containerExit: number | null | undefined;
+let pageErrors = 0;
+const browserTraffic: Array<{ kind: string; route: string; status?: number }> = [];
+const routeClass = (address: string) => {
+  const path = new URL(address).pathname;
+  if (['/', '/sign-in', '/admin', '/api/auth/session', '/api/maintenance'].includes(path))
+    return path;
+  if (path.startsWith('/api/auth/')) return 'authentication';
+  if (path.startsWith('/api/items/')) return 'workspace-item';
+  if (path.startsWith('/assets/')) return 'public-asset';
+  return 'other';
+};
+const observeTraffic = (value: (typeof browserTraffic)[number]) => {
+  browserTraffic.push(value);
+  if (browserTraffic.length > 80) browserTraffic.shift();
+};
 let volumeDisposition:
   'not-created' | 'creation-unconfirmed' | 'retained' | 'cleanup-unconfirmed' | 'removed' =
   'not-created';
@@ -396,7 +411,6 @@ try {
   artifact.fixtureUid = process.getuid!();
   stage = 'authenticating-browser';
   browser = await chromium.launch();
-  let pageErrors = 0;
   const createActor = async (credential: ReturnType<typeof makeCredential>, userId: string) => {
     const context = await browser!.newContext({
       ignoreHTTPSErrors: true,
@@ -407,6 +421,20 @@ try {
     const page = await context.newPage();
     page.setDefaultTimeout(30_000);
     page.on('pageerror', () => pageErrors++);
+    page.on('response', (response) =>
+      observeTraffic({
+        kind: 'response',
+        route: routeClass(response.url()),
+        status: response.status(),
+      }),
+    );
+    page.on('requestfailed', (request) =>
+      observeTraffic({ kind: 'failed', route: routeClass(request.url()) }),
+    );
+    page.on('framenavigated', (frame) => {
+      if (frame === page.mainFrame())
+        observeTraffic({ kind: 'navigation', route: routeClass(frame.url()) });
+    });
     const cdp = await context.newCDPSession(page);
     await cdp.send('WebAuthn.enable');
     const { authenticatorId } = await cdp.send('WebAuthn.addVirtualAuthenticator', {
@@ -440,9 +468,12 @@ try {
           return response.status() === 200 ? (await response.json()).user?.id : null;
         })
         .toBe(userId);
-      await expect(
-        page.getByRole('button', { name: 'Sign in with a passkey', exact: true }),
-      ).toHaveCount(0);
+      // A verified cookie and disappeared passkey button can precede the
+      // authentication redirect and everyday-account runtime admission.
+      // Do not navigate away until the real destination has settled.
+      await expect(page.getByRole('region', { name: 'Your files', exact: true })).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
+      await expect(page.getByRole('status').filter({ hasText: /^Loading…$/ })).toHaveCount(0);
     };
     return { context, page, signIn };
   };
@@ -628,6 +659,48 @@ try {
       line: Number(location[2]),
       column: Number(location[3]),
     };
+  artifact.pageErrors = pageErrors;
+  artifact.browserTraffic = browserTraffic;
+  let diagnosticTimer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    artifact.browserBootstrap = await Promise.race([
+      failurePage?.evaluate(async () => {
+        const keys = Object.keys(localStorage);
+        const active = keys.filter((key) => key.startsWith('spinel.auth.active:'));
+        const phases = { network: 0, prompt: 0, unknown: 0 };
+        for (const key of active) {
+          try {
+            const phase: unknown = JSON.parse(localStorage.getItem(key) ?? '{}').phase;
+            if (phase === 'network' || phase === 'prompt') phases[phase]++;
+            else phases.unknown++;
+          } catch {
+            phases.unknown++;
+          }
+        }
+        const locks = await navigator.locks.query();
+        return {
+          readyState: document.readyState,
+          visible: document.visibilityState === 'visible',
+          authMarkerPhases: phases,
+          heldLocks: locks.held?.length ?? 0,
+          pendingLocks: locks.pending?.length ?? 0,
+          heldAuthLocks:
+            locks.held?.filter((lock) => lock.name === 'spinel-auth-transition').length ?? 0,
+          pendingAuthLocks:
+            locks.pending?.filter((lock) => lock.name === 'spinel-auth-transition').length ?? 0,
+          pendingExit: localStorage.getItem('spinel.offline.sign-out') !== null,
+          serviceWorkerControlled: Boolean(navigator.serviceWorker.controller),
+        };
+      }),
+      new Promise<null>((resolveTimeout) => {
+        diagnosticTimer = setTimeout(() => resolveTimeout(null), 5000);
+      }),
+    ]);
+  } catch {
+    artifact.browserBootstrap = null;
+  } finally {
+    if (diagnosticTimer) clearTimeout(diagnosticTimer);
+  }
   // Never print raw Playwright call logs, file chooser paths, cookies or keys.
   await failurePage
     ?.screenshot({ path: join(output, 'failure.png'), animations: 'disabled' })
