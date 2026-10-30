@@ -141,7 +141,10 @@ export function CopyFileForm({
       {created ? (
         <>
           <p role="status">Created {created.name}.</p>
-          <p>{unavailable ?? 'Your copy is ready to open.'}</p>
+          <p>
+            {unavailable?.replace('making a copy', 'opening the copy') ??
+              'Your copy is ready to open.'}
+          </p>
           <div className="copy-file-actions">
             <Button onClick={onClose}>Close</Button>
             <Button primary disabled={Boolean(unavailable)} onClick={() => onCreated(created)}>

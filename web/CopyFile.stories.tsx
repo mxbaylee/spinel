@@ -188,7 +188,7 @@ export const CompletedWhileOffline: Story = {
   },
   play: async ({ canvasElement }) => {
     const element = await dialog(canvasElement);
-    await expect(within(element).getByText('Reconnect before making a copy.')).toBeVisible();
+    await expect(within(element).getByText('Reconnect before opening the copy.')).toBeVisible();
     await expect(within(element).getByRole('button', { name: 'Open copy' })).toBeDisabled();
     await assertDialogControls(element);
   },
