@@ -35,11 +35,13 @@ const admitted = (job: RestorePreparation | null) =>
   !!job && ['admitting', 'accepted', 'started'].includes(job.state);
 const time = (value: number | string) => new Date(value).toLocaleString();
 const size = (bytes: number) =>
-  bytes >= 1024 ** 3
-    ? `${(bytes / 1024 ** 3).toLocaleString(undefined, { maximumFractionDigits: 1 })} GiB`
-    : bytes < 1024 * 1024
-      ? `${Math.max(1, Math.ceil(bytes / 1024))} KiB`
-      : `${(bytes / 1024 / 1024).toLocaleString(undefined, { maximumFractionDigits: 1 })} MiB`;
+  bytes === 0
+    ? '0 KiB'
+    : bytes >= 1024 ** 3
+      ? `${(bytes / 1024 ** 3).toLocaleString(undefined, { maximumFractionDigits: 1 })} GiB`
+      : bytes < 1024 * 1024
+        ? `${Math.max(1, Math.ceil(bytes / 1024))} KiB`
+        : `${(bytes / 1024 / 1024).toLocaleString(undefined, { maximumFractionDigits: 1 })} MiB`;
 const messages: Record<RestorePreparation['state'], string> = {
   uploading: 'Waiting for the encrypted backup upload.',
   preparing: 'Checking the encrypted backup and preparing an access preview…',
@@ -646,7 +648,8 @@ export function BackupRestore({
             {phase === 'uploading'
               ? 'Uploading and checking the encrypted backup…'
               : job.error && admitted(job)
-                ? 'The confirmed restore needs attention. Its source remains protected; check status or retry the same confirmation.'
+                ? (resourceFailure ??
+                  'The confirmed restore needs attention. Its source remains protected; check status or retry the same confirmation.')
                 : job.state === 'failed' && resourceFailure
                   ? resourceFailure
                   : messages[job.state]}

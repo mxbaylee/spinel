@@ -4,7 +4,7 @@
 import { execFile, execFileSync, spawn } from 'node:child_process';
 import type { ChildProcess } from 'node:child_process';
 import { createHash, generateKeyPairSync, randomBytes, randomUUID } from 'node:crypto';
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { lstat, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { request as httpRequest } from 'node:http';
 import { createServer as httpsServer } from 'node:https';
 import { connect, createServer } from 'node:net';
@@ -99,6 +99,153 @@ const artifact: Record<string, unknown> = {
   storage:
     'Durable Linux named volume for workspace/recovery; private host bind for source exchange and evidence only',
 };
+
+// These are the only source-tree exceptions. They are also literal build-context
+// exclusions, pinned below; runtime fixtures and *.test.ts elsewhere are NOT exempt.
+const imageException = (path: string) =>
+  path.startsWith('docs/') || path.startsWith('e2e/') || /^lib\/[^/]+\/tests(?:\/|$)/.test(path);
+const boundSource = (path: string) => !imageException(path) || path.startsWith('e2e/');
+const dockerIgnoreRules = [
+  '.git',
+  'node_modules',
+  'dist',
+  'data',
+  'test-results',
+  'storybook-static',
+  'playwright-report',
+  '.env',
+  '.env.*',
+  '*.sqlite',
+  '*.sqlite-*',
+  '*.log',
+  '*.pem',
+  '*.key',
+  'docs',
+  'e2e',
+  'lib/*/tests',
+];
+function knownDockerExclusion(path: string) {
+  const first = path.split('/')[0];
+  return (
+    [
+      '.git',
+      'node_modules',
+      'dist',
+      'data',
+      'test-results',
+      'storybook-static',
+      'playwright-report',
+      'docs',
+    ].includes(first) ||
+    /^lib\/[^/]+\/tests(?:\/|$)/.test(path) ||
+    // Root-only matching is deliberately conservative for ignored inventories.
+    (!path.includes('/') &&
+      (/^\.env(?:\..*)?$/.test(path) || /(?:\.sqlite(?:-.*)?|\.log|\.pem|\.key)$/.test(path)))
+  );
+}
+type SourceEntry = { mode: string; oid: string };
+function sourceTree(revision: string) {
+  const records = execFileSync('git', ['ls-tree', '-r', '-z', revision], {
+    encoding: 'utf8',
+    maxBuffer: 16 * 1024 * 1024,
+  })
+    .split('\0')
+    .filter(Boolean);
+  const entries = new Map<string, SourceEntry>();
+  for (const record of records) {
+    const match = /^([0-7]{6}) (blob|commit) ([a-f0-9]{40})\t([\s\S]+)$/.exec(record);
+    if (!match || match[4].startsWith('/') || match[4].split('/').includes('..'))
+      throw new Error('Unsupported source tree entry.');
+    if (!boundSource(match[4])) continue;
+    if (match[2] !== 'blob' || !['100644', '100755'].includes(match[1]))
+      throw new Error('Source manifest refuses symlinks and submodules.');
+    entries.set(match[4], { mode: match[1], oid: match[3] });
+  }
+  return entries;
+}
+async function verifySourceIdentity(head: string, imageRevision: string) {
+  const current = sourceTree(head),
+    built = sourceTree(imageRevision);
+  const production = (tree: Map<string, SourceEntry>) =>
+    [...tree].filter(([path]) => !imageException(path));
+  if (JSON.stringify(production(current)) !== JSON.stringify(production(built)))
+    throw new Error('Production input tree differs from the immutable image revision.');
+  const rules = (await readFile('.dockerignore', 'utf8'))
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line && !line.startsWith('#'));
+  if (JSON.stringify(rules) !== JSON.stringify(dockerIgnoreRules))
+    throw new Error('Docker context exclusions changed; source policy requires review.');
+  const staged = execFileSync('git', ['diff', '--cached', '--name-only', '-z', head], {
+    encoding: 'utf8',
+    maxBuffer: 4 * 1024 * 1024,
+  })
+    .split('\0')
+    .filter(Boolean);
+  if (staged.some(boundSource)) throw new Error('Staged source differs from the reviewed head.');
+  for (const ignored of [false, true]) {
+    const inventory = execFileSync(
+      'git',
+      [
+        'ls-files',
+        '--others',
+        ...(ignored ? ['--ignored'] : []),
+        '--exclude-standard',
+        '--directory',
+        '-z',
+      ],
+      { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 },
+    )
+      .split('\0')
+      .filter(Boolean);
+    // In particular output/ and baseline-callback-source/ are gitignored but
+    // NOT Dockerignored. Reject them rather than attest to a tracked-only context.
+    if (inventory.some((path) => !knownDockerExclusion(path)))
+      throw new Error(
+        'Untracked Docker-context or host-acceptance inputs require a clean snapshot.',
+      );
+  }
+  const hashes: Record<string, string> = {};
+  const installedLibraryHashes: Record<string, string> = {};
+  const packages = new Map<string, string>();
+  for (const [path, entry] of current) {
+    const info = await lstat(path);
+    if (!info.isFile() || (info.mode & 0o111 ? '100755' : '100644') !== entry.mode)
+      throw new Error('Working source type or mode differs from the reviewed tree.');
+    const bytes = await readFile(path);
+    const oid = createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex');
+    if (oid !== entry.oid) throw new Error('Working source bytes differ from the reviewed tree.');
+    hashes[path] = hash(bytes);
+    const library = /^lib\/([^/]+)\/(.+)$/.exec(path);
+    if (library) {
+      let name = packages.get(library[1]);
+      if (!name) {
+        const manifest = JSON.parse(await readFile(`lib/${library[1]}/package.json`, 'utf8'));
+        if (typeof manifest.name !== 'string' || !/^@spinel\/[a-z0-9-]+$/.test(manifest.name))
+          throw new Error('Unexpected installed workspace package identity.');
+        name = manifest.name as string;
+        packages.set(library[1], name);
+      }
+      const installed = join('node_modules', name, library[2]);
+      const installedInfo = await lstat(installed);
+      if (
+        !installedInfo.isFile() ||
+        (installedInfo.mode & 0o111 ? '100755' : '100644') !== entry.mode ||
+        hash(await readFile(installed)) !== hashes[path]
+      )
+        throw new Error('Installed workspace source differs from the reviewed tree.');
+      installedLibraryHashes[path] = hashes[path];
+    }
+  }
+  return {
+    hashes,
+    installedLibraryHashes,
+    productionEntries: production(current).length,
+    productionManifestSha256: hash(Buffer.from(JSON.stringify(production(current)))),
+    exceptions: ['docs/', 'e2e/ (host files separately pinned)', 'lib/<workspace>/tests/'],
+    ignoredInventory: 'Checked with --directory; non-Dockerignored drift refused',
+  };
+}
 
 async function poll<T>(
   read: () => Promise<T>,
@@ -410,42 +557,13 @@ try {
   if (!/^[a-f0-9]{40}$/.test(productionSource))
     throw new Error('Production image requires its exact Git source label.');
   artifact.productionSource = productionSource;
-  const sourceFiles = [
-    'e2e/restore-browser.acceptance.ts',
-    'e2e/restore-browser-fixture.ts',
-    'e2e/restore-rich-acceptance.ts',
-    'e2e/native-sheet-value.ts',
-    'e2e/doc-touch.ts',
-    'src/server/maintenance/restore-rich-fixture.ts',
-    'web/BackupRestore.tsx',
-    'web/BackupRestore.stories.tsx',
-    'web/backup-restore.css',
-    'web/AdminPage.tsx',
-    'src/shared/restore.ts',
-    'src/server/backup/restore-control.ts',
-    'src/server/backup/restore-registry.ts',
-    'src/server/backup/restore-routes.ts',
-    'src/server/maintenance/supervisor.ts',
-    'src/server/maintenance/supervisor-client.ts',
-    'src/server/maintenance/restore-rpc.ts',
-    'src/server/maintenance/restore-jobs.ts',
-    'server/app.ts',
-    'server/index.ts',
-    'server/supervisor.ts',
-    'scripts/deploy/maintenance.ts',
-    'Dockerfile',
-    'package-lock.json',
-  ];
-  const sourceHashes = Object.fromEntries(
-    await Promise.all(sourceFiles.map(async (path) => [path, hash(await readFile(path))])),
+  const sourceIdentity = await verifySourceIdentity(
+    artifact.sourceBase as string,
+    productionSource,
   );
+  const { hashes: sourceHashes, ...identitySummary } = sourceIdentity;
   artifact.sourceHashes = sourceHashes;
-  for (const [path, expected] of Object.entries(sourceHashes))
-    if (
-      !path.startsWith('e2e/') &&
-      hash(execFileSync('git', ['show', `${productionSource}:${path}`])) !== expected
-    )
-      throw new Error('Current source differs from the production image source.');
+  artifact.productionInputIdentity = identitySummary;
   const probe = createServer();
   await new Promise<void>((resolveListen) => probe.listen(0, '127.0.0.1', resolveListen));
   const httpPort = (probe.address() as { port: number }).port;
@@ -959,9 +1077,14 @@ try {
     proof.memoryPeakBytes <= 0
   )
     throw new Error('Closed workspace proof did not pass.');
-  for (const [path, expected] of Object.entries(sourceHashes))
-    if (hash(await readFile(path)) !== expected)
-      throw new Error('Source changed during browser acceptance.');
+  if (
+    execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim() !== artifact.sourceBase
+  )
+    throw new Error('Reviewed head changed during acceptance.');
+  const finalIdentity = await verifySourceIdentity(artifact.sourceBase as string, productionSource);
+  if (JSON.stringify(finalIdentity) !== JSON.stringify(sourceIdentity))
+    throw new Error('Source or installed library identity changed during acceptance.');
+  artifact.sourceIdentityRechecked = true;
   if (interrupted || deadlineExpired) throw new Error('Acceptance was interrupted.');
   artifact.closedProof = proof;
   artifact.pageErrors = pageErrors;

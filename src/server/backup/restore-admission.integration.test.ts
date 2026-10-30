@@ -35,27 +35,48 @@ async function retainedFiles(directory: string) {
   return files;
 }
 
-test.skipIf(process.platform !== 'linux')(
-  'real failed admission releases only its logical hold and permits a new Operator preparation',
-  async () => {
+test.skipIf(process.platform !== 'linux').each(['published-failure', 'full-journal'] as const)(
+  'real %s admission releases only its logical hold and permits a new Operator preparation',
+  async (scenario) => {
     const directory = await mkdtemp(join(tmpdir(), 'spinel-restore-admission-'));
     const data = join(directory, 'data'),
       root = join(directory, 'recovery');
     let supervisor: MaintenanceSupervisor | undefined;
     let passed = false;
     const originalCheckpoint = RestoreJobs.prototype.checkpoint;
+    const originalAdmit = RestoreJobs.prototype.admit;
     let injected = 0;
-    const fault = vi.spyOn(RestoreJobs.prototype, 'checkpoint').mockImplementation(function (
-      this: RestoreJobs,
-      ...args
-    ) {
-      // Actual encrypted custody and the main reference already exist. Refuse
-      // only its first source-retained publication; the real failure journal and
-      // subsequent observation/recovery are not mocked.
-      if (args[3] === 'source-retained' && injected++ === 0)
-        throw new Error('Injected source-retained publication failure.');
-      return originalCheckpoint.apply(this, args);
-    });
+    const fault =
+      scenario === 'published-failure'
+        ? vi.spyOn(RestoreJobs.prototype, 'checkpoint').mockImplementation(function (
+            this: RestoreJobs,
+            ...args
+          ) {
+            // Actual encrypted custody and the main reference already exist. Refuse
+            // only its first source-retained publication; the real failure journal and
+            // subsequent observation/recovery are not mocked.
+            if (args[3] === 'source-retained' && injected++ === 0)
+              throw new Error('Injected source-retained publication failure.');
+            return originalCheckpoint.apply(this, args);
+          })
+        : vi.spyOn(RestoreJobs.prototype, 'admit').mockImplementation(function (
+            this: RestoreJobs,
+            intent,
+          ) {
+            if (injected++ === 0) {
+              // Retain 64 canonical terminal IDs, then let the real capacity guard
+              // refuse the requested 65th admission before any record is published.
+              for (let index = 0; index < 64; index++) {
+                const previous = structuredClone(intent),
+                  id = randomUUID();
+                previous.id = id;
+                previous.source.id = id;
+                const record = originalAdmit.call(this, previous).record;
+                this.checkpoint(id, record.intentHash, record.revision, 'failed');
+              }
+            }
+            return originalAdmit.call(this, intent);
+          });
     try {
       await mkdir(data, { mode: 0o700 });
       await mkdir(root, { mode: 0o700 });
@@ -112,9 +133,14 @@ test.skipIf(process.platform !== 'linux')(
       expect(admitted.state).toBe('admitting');
       expect(injected).toBe(1);
       const recordPath = join(root, 'restore-jobs', first.id, 'state.json');
-      const failed = JSON.parse(await readFile(recordPath, 'utf8')) as RestoreJobRecord;
-      expect(failed.phase).toBe('failed');
-      expect(failed.execution).toBeUndefined();
+      const failed =
+        scenario === 'published-failure'
+          ? (JSON.parse(await readFile(recordPath, 'utf8')) as RestoreJobRecord)
+          : null;
+      if (failed) {
+        expect(failed.phase).toBe('failed');
+        expect(failed.execution).toBeUndefined();
+      } else await expect(readFile(recordPath)).rejects.toHaveProperty('code', 'ENOENT');
       expect(supervisor.journal.state.restoreJob).toBeNull();
       expect(supervisor.status()).toMatchObject({
         phase: 'running',
@@ -126,18 +152,24 @@ test.skipIf(process.platform !== 'linux')(
       );
       expect(stagingNames).toHaveLength(1);
       const staging = join(data, stagingNames[0]);
-      const custody = join(root, `restore-${first.id}-source`);
+      const custody =
+        scenario === 'published-failure'
+          ? join(root, `restore-${first.id}-source`)
+          : join(root, 'restore-jobs');
       const held = await retainedFiles(staging),
         sealed = await retainedFiles(custody);
       expect(Object.keys(held)).toContain('handoff.json');
-      expect(Object.keys(sealed)).toContain('ready');
+      if (failed) expect(Object.keys(sealed)).toContain('ready');
+      else
+        expect(Object.keys(sealed).filter((name) => name.endsWith('/state.json'))).toHaveLength(64);
 
       // The same still-running app and real session observe the exact failure.
       // Before the repair, this outcome hid the old UI job but its permanent
       // in-memory admission/lease still made the next preparation return409.
       const outcome = await client.json<RestoreStatus>(await client.request('/api/admin/restores'));
       expect(outcome.pending).toBe(false);
-      expect(outcome.outcome).toMatchObject({ id: first.id, state: 'did-not-start' });
+      if (failed) expect(outcome.outcome).toMatchObject({ id: first.id, state: 'did-not-start' });
+      else expect(outcome.outcome).toBeNull();
       expect(outcome.job === null || outcome.job.state === 'failed').toBe(true);
       expect(await retainedFiles(staging)).toEqual(held);
       expect(await retainedFiles(custody)).toEqual(sealed);
@@ -146,7 +178,8 @@ test.skipIf(process.platform !== 'linux')(
       expect(next.state).toBe('ready');
       const repeated = await client.json<RestorePreparation>(await client.confirm(first), 202);
       expect(repeated.state).toBe('failed');
-      expect(JSON.parse(await readFile(recordPath, 'utf8'))).toEqual(failed);
+      if (failed) expect(JSON.parse(await readFile(recordPath, 'utf8'))).toEqual(failed);
+      else await expect(readFile(recordPath)).rejects.toHaveProperty('code', 'ENOENT');
       const current = await client.json<RestoreStatus>(await client.request('/api/admin/restores'));
       expect(current.job).toMatchObject({ id: next.id, state: 'ready' });
       expect(await retainedFiles(staging)).toEqual(held);

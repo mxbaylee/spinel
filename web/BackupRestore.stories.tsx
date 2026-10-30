@@ -280,6 +280,29 @@ export const MemoryHeadroomRefusal: Story = {
     ).toBeVisible();
   },
 };
+export const ConfirmedDiskShortage: Story = {
+  parameters: {
+    api: {
+      'GET /api/admin/restores': {
+        available: true,
+        outcome: null,
+        pending: true,
+        job: {
+          ...job,
+          state: 'accepted',
+          resources: null,
+          error: RESTORE_RESOURCE_MESSAGES['disk-space'],
+        },
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByText(RESTORE_RESOURCE_MESSAGES['disk-space'])).toBeVisible();
+    await expect(canvas.queryByText('Estimated disk space')).toBeNull();
+    await expect(canvas.getByRole('button', { name: 'Retry confirmed restore' })).toBeEnabled();
+  },
+};
 export const SmallBackup: Story = {
   parameters: {
     api: {

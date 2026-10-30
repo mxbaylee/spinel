@@ -438,6 +438,7 @@ test('uncertain custody retains source and original request; retry releases only
   const original = f.admit.mock.calls[0][0];
   expect((await stat(original.source.archive.path)).isFile()).toBe(true);
   expect(f.service.state().lease).toBe(Number.MAX_SAFE_INTEGER);
+  f.observe.mockResolvedValue({ target: f.target, record: null, pending: true });
   await expect(
     f.service.restores.cancel(created.id, f.actor.id, f.session.token_hash),
   ).rejects.toThrow('confirmed');
@@ -457,27 +458,32 @@ test('uncertain custody retains source and original request; retry releases only
   expect(JSON.stringify(result)).not.toContain('continuationToken');
 });
 
-test('a mismatched custody ACK cannot erase source or start maintenance', async () => {
-  const f = await fixture(),
-    created = await f.create(),
-    ready = await f.upload(created.id);
-  f.admit.mockImplementation(async (request) => {
-    const ack = f.acknowledge(request);
-    ack.record.intent.source.archive.sha256 = '0'.repeat(64);
-    return ack;
-  });
-  const result = await f.service.restores.confirm(
-    created.id,
-    f.actor.id,
-    f.session.token_hash,
-    ready.confirmation!,
-    f.proof(),
-  );
-  expect(result.state).toBe('admitting');
-  expect(f.begin).not.toHaveBeenCalled();
-  expect((await stat(f.admit.mock.calls[0][0].source.archive.path)).isFile()).toBe(true);
-  expect(f.service.state().owner).not.toBeNull();
-});
+test.each(['source', 'preview-size'] as const)(
+  'a mismatched %s custody ACK cannot erase source or start maintenance',
+  async (scenario) => {
+    const f = await fixture(),
+      created = await f.create(),
+      ready = await f.upload(created.id);
+    f.admit.mockImplementation(async (request) => {
+      const ack = f.acknowledge(request);
+      if (scenario === 'source') ack.record.intent.source.archive.sha256 = '0'.repeat(64);
+      if (scenario === 'preview-size') ack.record.intent.previewDatabaseBytes += 4096;
+      ack.record.intentHash = restoreIntentHash(ack.record.intent);
+      return ack;
+    });
+    const result = await f.service.restores.confirm(
+      created.id,
+      f.actor.id,
+      f.session.token_hash,
+      ready.confirmation!,
+      f.proof(),
+    );
+    expect(result.state).toBe('admitting');
+    expect(f.begin).not.toHaveBeenCalled();
+    expect((await stat(f.admit.mock.calls[0][0].source.archive.path)).isFile()).toBe(true);
+    expect(f.service.state().owner).not.toBeNull();
+  },
+);
 
 test('target changes during preview fail closed before a confirmation exists', async () => {
   const f = await fixture(),
@@ -850,10 +856,165 @@ test('certain own admission failure releases only its logical lease, preserves e
   expect(await hashes()).toEqual(before);
 });
 
+test('authoritative absent admission releases the live lease for an export and retains source evidence', async () => {
+  const f = await fixture(),
+    record = await retainedRecord(f);
+  const request = f.admit.mock.calls[0][0];
+  const before = await readFile(request.source.archive.path);
+  f.observe.mockResolvedValue({ target: f.target, record: null, pending: false });
+  const result = await f.service.restores.summary(f.actor.id, f.session.token_hash);
+  expect(result.job?.state).toBe('failed');
+  expect(result.outcome).toBeNull();
+  expect(f.service.state().lease).toBe(0);
+  const keyFile = join(f.directory, 'export.key'),
+    runtimeEnvironmentFile = join(f.directory, 'export.env');
+  await writeFile(keyFile, randomBytes(32), { mode: 0o600 });
+  await writeFile(runtimeEnvironmentFile, 'RECOVERY_FIXTURE=1\n', { mode: 0o600 });
+  f.service.options.configPath = join(f.directory, 'export.json');
+  await writeFile(
+    f.service.options.configPath,
+    JSON.stringify({
+      version: 1,
+      type: 'manual',
+      prefix: 'workspace',
+      keyFile,
+      runtimeEnvironmentFile,
+      keyId: 'fixture',
+    }),
+    { mode: 0o600 },
+  );
+  const download = await f.service.exports.create(f.session.token_hash);
+  expect(download.state).toBe('preparing');
+  await f.service.exports.cancel(f.session.token_hash, download.id);
+  expect(await readFile(request.source.archive.path)).toEqual(before);
+  const repeated = await f.service.restores.confirm(
+    record.intent.id,
+    f.actor.id,
+    f.session.token_hash,
+    result.job!.confirmation!,
+    f.proof(),
+  );
+  expect(repeated.state).toBe('failed');
+  expect(f.admit).toHaveBeenCalledTimes(1);
+});
+
+test('an admission retry that fully settles during observation invalidates earlier absence evidence', async () => {
+  const f = await fixture(),
+    record = await retainedRecord(f);
+  const prepared = f.service.restores.status(record.intent.id, f.actor.id, f.session.token_hash);
+  const owner = f.service.state().owner;
+  f.observe.mockImplementationOnce(async () => {
+    // This absent observation was made before a later dispatch whose ACK was lost.
+    await f.service.restores.confirm(
+      record.intent.id,
+      f.actor.id,
+      f.session.token_hash,
+      prepared.confirmation!,
+      f.proof(),
+    );
+    return { target: f.target, record: null, pending: false };
+  });
+  await f.service.restores.summary(f.actor.id, f.session.token_hash);
+  expect(f.admit).toHaveBeenCalledTimes(2);
+  expect(f.service.state().owner).toBe(owner);
+  expect(f.service.state().lease).toBe(Number.MAX_SAFE_INTEGER);
+  expect(f.service.restores.status(record.intent.id, f.actor.id, f.session.token_hash).state).toBe(
+    'admitting',
+  );
+});
+
+test('absence cannot resolve an admission whose custody ACK was already observed', async () => {
+  const f = await fixture(),
+    created = await f.create(),
+    ready = await f.upload(created.id);
+  f.admit.mockImplementation(async (request) => {
+    const ack = f.acknowledge(request);
+    f.begin.mockRejectedValueOnce(new Error('Uncertain Begin'));
+    return ack;
+  });
+  await f.service.restores.confirm(
+    created.id,
+    f.actor.id,
+    f.session.token_hash,
+    ready.confirmation!,
+    f.proof(),
+  );
+  f.observe.mockResolvedValue({ target: f.target, record: null, pending: false });
+  const result = await f.service.restores.summary(f.actor.id, f.session.token_hash);
+  expect(result.job?.state).toBe('accepted');
+  expect(result.outcome).toBeNull();
+});
+
+test('absence in a changed original epoch retains the unknown admission hold', async () => {
+  const f = await fixture(),
+    record = await retainedRecord(f);
+  const owner = f.service.state().owner;
+  f.target.epoch = randomUUID();
+  f.observe.mockResolvedValue({ target: f.target, record: null, pending: false });
+  const result = await f.service.restores.summary(f.actor.id, f.session.token_hash);
+  expect(result.job?.state).toBe('admitting');
+  expect(result.outcome).toBeNull();
+  expect(f.service.state().owner).toBe(owner);
+  expect(f.service.state().lease).toBe(Number.MAX_SAFE_INTEGER);
+  expect(record.intent.target.epoch).not.toBe(f.target.epoch);
+});
+
+test('another current Operator can resolve absent admission after revocation without seeing private preparation', async () => {
+  const f = await fixture();
+  await retainedRecord(f);
+  const request = f.admit.mock.calls[0][0],
+    bytes = await readFile(request.source.archive.path);
+  const other = f.auth.createUser('Another operator', true);
+  const session = f.auth.createSession(other.id).session;
+  f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(f.actor.id);
+  f.observe.mockResolvedValue({ target: f.target, record: null, pending: false });
+  const result = await f.service.restores.summary(other.id, session.token_hash);
+  expect(result.job).toBeNull();
+  expect(result.outcome).toBeNull();
+  expect(f.service.state().lease).toBe(0);
+  expect(await readFile(request.source.archive.path)).toEqual(bytes);
+  expect(JSON.stringify(result)).not.toContain(request.source.archive.sha256);
+});
+
+test('correlated Begin capacity advice clears a stale estimate without changing confirmed intent or releasing custody', async () => {
+  const f = await fixture(),
+    created = await f.create(),
+    ready = await f.upload(created.id);
+  f.admit.mockImplementation(async (request) => {
+    const ack = f.acknowledge(request);
+    f.begin.mockRejectedValueOnce(new RecoveryResourceError('disk-space'));
+    return ack;
+  });
+  const first = await f.service.restores.confirm(
+    created.id,
+    f.actor.id,
+    f.session.token_hash,
+    ready.confirmation!,
+    f.proof(),
+  );
+  expect(first.state).toBe('accepted');
+  expect(first.resources).toBeNull();
+  expect(first.error).toBe(new RecoveryResourceError('disk-space').message);
+  expect(first.confirmation).toBe(ready.confirmation);
+  const request = structuredClone(f.admit.mock.calls[0][0]);
+  const second = await f.service.restores.confirm(
+    created.id,
+    f.actor.id,
+    f.session.token_hash,
+    ready.confirmation!,
+    { ...f.proof(), expiresAt: f.proof().expiresAt + 1 },
+  );
+  expect(second.state).toBe('started');
+  expect(f.admit).toHaveBeenCalledTimes(1);
+  expect(f.admit.mock.calls[0][0]).toEqual(request);
+  expect(f.begin.mock.calls[1]).toEqual(f.begin.mock.calls[0]);
+});
+
 test.each([
   'pending',
   'intent-source',
   'intent-authority',
+  'preview-size',
   'target',
   'revoked',
   'lease-changed',
@@ -866,6 +1027,7 @@ test.each([
     record.phase = 'failed';
     if (scenario === 'intent-source') record.intent.source.archive.sha256 = 'f'.repeat(64);
     if (scenario === 'intent-authority') record.intent.authority.expiresAt++;
+    if (scenario === 'preview-size') record.intent.previewDatabaseBytes += 4096;
     record.intentHash = restoreIntentHash(record.intent);
     if (scenario === 'target') f.target.generationId = randomUUID();
     f.observe.mockImplementation(async () => {

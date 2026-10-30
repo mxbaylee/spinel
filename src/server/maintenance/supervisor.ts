@@ -1,3 +1,4 @@
+import { isDeepStrictEqual } from 'node:util';
 import { estimateRestoreCapacity, validRestorePreviewBytes } from './restore-capacity.ts';
 import type { RestoreCapacityVolume } from './restore-capacity.ts';
 import { RecoveryResourceError } from '../backup/resource-error.ts';
@@ -91,6 +92,28 @@ import {
   preserveFailedRestoreCustody,
   failedRestoreCustodyInputs,
 } from './restore-failed-custody.ts';
+
+/** Only this pre-publication planner refusal may carry resource advice over IPC. */
+class RestoreBeginCapacityError extends RecoveryResourceError {
+  readonly jobId: string;
+  #intentHash: string;
+  #revision: number;
+  #child: ProcessIdentity;
+  constructor(record: RestoreJobRecord, child: ProcessIdentity) {
+    super('disk-space');
+    this.jobId = record.intent.id;
+    this.#intentHash = record.intentHash;
+    this.#revision = record.revision;
+    this.#child = structuredClone(child);
+  }
+  matches(record: RestoreJobRecord, child: ProcessIdentity | null) {
+    return (
+      record.intentHash === this.#intentHash &&
+      record.revision === this.#revision &&
+      isDeepStrictEqual(child, this.#child)
+    );
+  }
+}
 
 const DRAIN_MS = 30_000;
 const STOP_MS = 15_000;
@@ -1312,7 +1335,10 @@ export class MaintenanceSupervisor {
         // Recheck authority after synchronous filesystem work too.
         assertRunning();
         signal.throwIfAborted();
-        if (!capacity.sufficient) throw new RecoveryResourceError('disk-space');
+        if (!capacity.sufficient) {
+          if (!this.journal.state.child) throw new Error(RESTORE_RPC_ERROR);
+          throw new RestoreBeginCapacityError(record, this.journal.state.child);
+        }
         planAttempted = true;
         const planned = jobs.planPause(
           request.id,
@@ -2991,6 +3017,47 @@ export class MaintenanceSupervisor {
     assertCurrent();
     return { target: { generationId: request.generationId, epoch: request.epoch }, resources };
   }
+  private beginCapacityRefusal(error: unknown, child: ChildProcess) {
+    if (!(error instanceof RestoreBeginCapacityError)) return;
+    const jobs = new RestoreJobs(this.journal, this.now);
+    try {
+      const record = jobs.read(error.jobId),
+        state = this.journal.state;
+      if (
+        !record ||
+        record.phase !== 'source-retained' ||
+        record.execution ||
+        !error.matches(record, state.child) ||
+        this.closing ||
+        child !== this.child ||
+        !child.connected ||
+        !this.childOwned ||
+        !this.childReady ||
+        state.child?.pid !== child.pid ||
+        state.phase !== 'running' ||
+        state.restoreStop ||
+        state.instanceId !== record.intent.target.instanceId ||
+        state.generationId !== record.intent.target.generationId ||
+        state.epoch !== record.intent.target.epoch ||
+        !sameFile(state.databaseIdentity, record.intent.target.identity) ||
+        state.restoreJob?.jobId !== record.intent.id ||
+        state.restoreJob.intentHash !== record.intentHash
+      )
+        return;
+      this.assertGeneration();
+      const at = this.now();
+      if (
+        at < record.updatedAt ||
+        at < record.intent.authority.verifiedAt ||
+        at >= record.intent.authority.expiresAt
+      )
+        return;
+      return { generationId: state.generationId, epoch: state.epoch };
+    } finally {
+      jobs.close();
+    }
+  }
+
   private async restoreRpc(child: ChildProcess, value: Record<string, unknown>) {
     const action = value.kind;
     if (
@@ -3003,13 +3070,14 @@ export class MaintenanceSupervisor {
     const requestId = value.requestId;
     if (typeof requestId !== 'string' || !uuidPattern.test(requestId)) return;
     if (this.restoreRpcRequests.has(requestId)) return;
-    const reply = (result?: unknown) =>
+    const reply = (result?: unknown, capacity?: { generationId: string; epoch: string }) =>
       this.sendChild(child, {
         channel: MAINTENANCE_CHANNEL,
         kind: 'restore-result',
         action: value.kind,
         requestId,
         ...(result === undefined ? { error: RESTORE_RPC_ERROR } : { result }),
+        ...(capacity ? { resourceCode: 'disk-space', target: capacity } : {}),
       });
     if (this.restoreRpcRequests.size >= RESTORE_RPC_PENDING) {
       reply();
@@ -3118,10 +3186,16 @@ export class MaintenanceSupervisor {
         // permit. This synchronous observation includes queued mutation work.
         reply(this.observeRestore(child, request.id as string | undefined));
       } else reply();
-    } catch {
-      // Fixed transport text cannot disclose a private path, archive key or proof.
-      // Failure/timeout never grants permission to release uncertain source custody.
-      reply();
+    } catch (error) {
+      // Advice only: a concurrent Begin may have published since the refusal.
+      // Recheck its original binding synchronously; uncertainty remains generic.
+      let capacity: { generationId: string; epoch: string } | undefined;
+      try {
+        if (action === 'restore-begin') capacity = this.beginCapacityRefusal(error, child);
+      } catch {
+        /* An unreadable or changed record cannot establish this refusal. */
+      }
+      reply(undefined, capacity);
     } finally {
       this.restoreRpcRequests.delete(requestId);
     }

@@ -1,3 +1,5 @@
+import { RecoveryResourceError } from '../backup/resource-error.ts';
+import { RESTORE_RPC_ERROR } from './restore-rpc.ts';
 import { fork } from 'node:child_process';
 import type { ChildProcess } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
@@ -3638,6 +3640,37 @@ test.each(['recovery-volume', 'shared-volume'] as const)(
       }),
     ).rejects.toThrow('insufficient disk space');
     expect(pause).not.toHaveBeenCalled();
+    const rpcRequestId = randomUUID();
+    await (
+      f.supervisor as unknown as { restoreRpc(child: ChildProcess, value: object): Promise<void> }
+    ).restoreRpc(f.child, {
+      channel: MAINTENANCE_CHANNEL,
+      kind: 'restore-begin',
+      requestId: rpcRequestId,
+      request: {
+        id: f.request.id,
+        intentHash: admitted.record.intentHash,
+        continuationToken: admitted.continuationToken!,
+      },
+    });
+    expect(
+      sent.mock.calls.find(
+        ([message]) =>
+          !!message &&
+          typeof message === 'object' &&
+          'requestId' in message &&
+          message.requestId === rpcRequestId,
+      )?.[0],
+    ).toEqual({
+      channel: MAINTENANCE_CHANNEL,
+      kind: 'restore-result',
+      action: 'restore-begin',
+      requestId: rpcRequestId,
+      error: RESTORE_RPC_ERROR,
+      resourceCode: 'disk-space',
+      target: { generationId: f.request.generationId, epoch: f.request.epoch },
+    });
+    expect(pause).not.toHaveBeenCalled();
     expect(f.supervisor.status()).toEqual(before);
     expect(f.supervisor.status().phase).toBe('running');
     expect(f.child.connected).toBe(true);
@@ -3695,4 +3728,64 @@ test('capacity probing cannot cross original proof expiry and publish a pause pl
   expect(
     JSON.parse(await readFile(join(f.root, 'restore-jobs', f.request.id, 'state.json'), 'utf8')),
   ).toEqual(admitted.record);
+});
+
+test('a concurrent pause publication makes an earlier capacity refusal generic over IPC', async () => {
+  let low = false;
+  const f = await admissionFixture(undefined, undefined, {}, () => ({
+    device: '1',
+    availableBytes: low ? 0n : 10n ** 12n,
+  }));
+  const admitted = await f.supervisor.admitPreparedRestore(f.request);
+  const request = {
+    id: f.request.id,
+    intentHash: admitted.record.intentHash,
+    continuationToken: admitted.continuationToken!,
+  };
+  low = true;
+  const refusal = await f.supervisor.beginPreparedRestore(request).catch((error) => error);
+  expect(refusal).toBeInstanceOf(RecoveryResourceError);
+  expect(refusal.code).toBe('disk-space');
+  vi.spyOn(f.supervisor, 'beginPreparedRestore').mockImplementationOnce(async () => {
+    const jobs = new RestoreJobs(f.supervisor.journal);
+    try {
+      jobs.planPause(request.id, request.intentHash, admitted.record.revision, randomUUID());
+    } finally {
+      jobs.close();
+    }
+    throw refusal;
+  });
+  const sent = vi.spyOn(f.child, 'send');
+  const requestId = randomUUID();
+  await (
+    f.supervisor as unknown as { restoreRpc(child: ChildProcess, value: object): Promise<void> }
+  ).restoreRpc(f.child, {
+    channel: MAINTENANCE_CHANNEL,
+    kind: 'restore-begin',
+    requestId,
+    request,
+  });
+  expect(
+    sent.mock.calls.find(
+      ([message]) =>
+        !!message &&
+        typeof message === 'object' &&
+        'requestId' in message &&
+        message.requestId === requestId,
+    )?.[0],
+  ).toEqual({
+    channel: MAINTENANCE_CHANNEL,
+    kind: 'restore-result',
+    action: 'restore-begin',
+    requestId,
+    error: RESTORE_RPC_ERROR,
+  });
+  const jobs = new RestoreJobs(f.supervisor.journal);
+  try {
+    expect(jobs.read(request.id)?.phase).toBe('pause-planned');
+    expect(jobs.read(request.id)?.execution).toBeDefined();
+  } finally {
+    jobs.close();
+  }
+  expect(f.supervisor.journal.state.restoreJob?.jobId).toBe(request.id);
 });

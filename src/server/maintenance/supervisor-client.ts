@@ -1,3 +1,4 @@
+import { RecoveryResourceError } from '../backup/resource-error.ts';
 import { randomUUID } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
 import { processIdentity } from './journal.ts';
@@ -40,6 +41,7 @@ import {
   RESTORE_RPC_MS,
   RESTORE_RPC_PENDING,
   validRestoreRpcResult,
+  validRestoreBeginCapacityRefusal,
 } from './restore-rpc.ts';
 import type { RestoreRpcAction, RestoreRpcResult } from './restore-rpc.ts';
 
@@ -142,6 +144,7 @@ export async function connectMaintenance(): Promise<SupervisedMaintenanceBridge>
       action: RestoreRpcAction;
       id?: string;
       intentHash?: string;
+      target: { generationId: string; epoch: string };
       resolve(result: RestoreRpcResult): void;
       reject(error: Error): void;
       timer: ReturnType<typeof setTimeout>;
@@ -187,6 +190,7 @@ export async function connectMaintenance(): Promise<SupervisedMaintenanceBridge>
       );
       restoreRequests.set(requestId, {
         action,
+        target: { generationId: current.generationId, epoch: current.epoch },
         id: 'id' in request ? request.id : undefined,
         intentHash: 'intentHash' in request ? request.intentHash : undefined,
         resolve,
@@ -393,7 +397,25 @@ export async function connectMaintenance(): Promise<SupervisedMaintenanceBridge>
       const request = restoreRequests.get(message.requestId);
       if (!request || message.action !== request.action) return;
       if (
+        validRestoreBeginCapacityRefusal(message) &&
+        request.action === 'restore-begin' &&
+        current?.available &&
+        current.phase === 'running' &&
+        !(trialExpected && !released) &&
+        message.target.generationId === request.target.generationId &&
+        message.target.epoch === request.target.epoch &&
+        current.generationId === request.target.generationId &&
+        current.epoch === request.target.epoch
+      ) {
+        clearTimeout(request.timer);
+        restoreRequests.delete(message.requestId);
+        request.reject(new RecoveryResourceError('disk-space'));
+        return;
+      }
+      if (
         message.error !== undefined ||
+        Object.hasOwn(message, 'resourceCode') ||
+        Object.hasOwn(message, 'target') ||
         !validRestoreRpcResult(message.result, request.action, request.id, request.intentHash)
       ) {
         failRestoreRequest(message.requestId);

@@ -490,3 +490,69 @@ test.each(['stale-target', 'private-path', 'unsafe-number', 'missing-scope', 'cl
     await expect(pending).rejects.toThrow(RESTORE_RPC_ERROR);
   },
 );
+
+test('only a correlated current Begin capacity refusal preserves fixed disk-space advice', async () => {
+  const controller = await ordinaryController(),
+    { result } = admission();
+  const pending = controller.begin({
+    id: result.record.intent.id,
+    intentHash: result.record.intentHash,
+    continuationToken: result.continuationToken,
+  });
+  const frame = messages.at(-1)!;
+  const refusal = {
+    action: 'restore-begin',
+    requestId: frame.requestId,
+    error: RESTORE_RPC_ERROR,
+    resourceCode: 'disk-space',
+    target: controller.target(),
+  };
+  let settled = false;
+  void pending.catch(() => {
+    settled = true;
+  });
+  message('restore-result', { ...refusal, requestId: randomUUID() });
+  message('restore-result', { ...refusal, action: 'restore-admit' });
+  await Promise.resolve();
+  expect(settled).toBe(false);
+  message('restore-result', refusal);
+  await expect(pending).rejects.toMatchObject({
+    name: 'RecoveryResourceError',
+    code: 'disk-space',
+  });
+  expect(messages.filter((item) => item.kind === 'restore-begin')).toHaveLength(1);
+});
+
+test.each(['extra', 'result', 'code', 'text', 'target', 'current-epoch', 'paused', 'other-action'])(
+  'a %s capacity refusal stays generic and cannot establish a no-start outcome',
+  async (fault) => {
+    const controller = await ordinaryController(),
+      { request, result } = admission();
+    const pending =
+      fault === 'other-action'
+        ? controller.admit(request)
+        : controller.begin({
+            id: result.record.intent.id,
+            intentHash: result.record.intentHash,
+            continuationToken: result.continuationToken,
+          });
+    const frame = messages.at(-1)!;
+    const refusal: Record<string, unknown> = {
+      action: frame.kind,
+      requestId: frame.requestId,
+      error: RESTORE_RPC_ERROR,
+      resourceCode: 'disk-space',
+      target: controller.target(),
+    };
+    if (fault === 'extra') refusal.noStart = true;
+    if (fault === 'result') refusal.result = result;
+    if (fault === 'code') refusal.resourceCode = 'memory-headroom';
+    if (fault === 'text') refusal.error = '/private/archive/key';
+    if (fault === 'target') refusal.target = { ...controller.target(), epoch: randomUUID() };
+    if (fault === 'current-epoch') state({ epoch: randomUUID() });
+    if (fault === 'paused') state({ phase: 'paused' });
+    message('restore-result', refusal);
+    await expect(pending).rejects.toMatchObject({ message: RESTORE_RPC_ERROR });
+    await expect(pending).rejects.not.toHaveProperty('code');
+  },
+);

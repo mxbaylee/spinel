@@ -137,6 +137,7 @@ interface Job {
   custodyReleased?: boolean;
   handoffWritten?: boolean;
   admissionFailureObserved?: boolean;
+  admissionAttempt: number;
 }
 function artifactId(config: BackupConfig, key: string) {
   const identity =
@@ -235,6 +236,7 @@ export class RestoreRegistry {
       intent.source.candidate.sha256 === source.databaseSha256 &&
       digest(intent.source.recovery) === digest(source.recovery) &&
       intent.confirmedAt === admission.confirmedAt &&
+      intent.previewDatabaseBytes === admission.previewDatabaseBytes &&
       intent.policy.origin === this.options.origin &&
       intent.policy.image === this.options.image &&
       intent.policy.spacesEnabled === this.options.spacesEnabled &&
@@ -263,21 +265,25 @@ export class RestoreRegistry {
     if (!job || !idle()) return;
     authorize();
     const lease = this.db.prepare('SELECT owner,job,lease FROM backup_state WHERE id=1').get();
+    const attempt = job.admissionAttempt;
     const observed = await this.observe(job.public.id);
     authorize();
-    if (!idle()) return;
+    if (!idle() || job.admissionAttempt !== attempt) return;
     const current = this.control().target(),
       record = observed.record;
     if (record && !this.matchesAdmission(job, record))
       throw new RestoreRegistryError(503, 'Restore status could not be verified.');
     if (
-      !record ||
-      record.phase !== 'failed' ||
-      record.execution ||
       observed.pending ||
-      record.intent.target.generationId !== current.generationId ||
       observed.target.generationId !== current.generationId ||
-      observed.target.epoch !== current.epoch
+      observed.target.epoch !== current.epoch ||
+      (record
+        ? record.phase !== 'failed' ||
+          !!record.execution ||
+          record.intent.target.generationId !== current.generationId
+        : !!job.ack ||
+          job.admission!.generationId !== current.generationId ||
+          job.admission!.epoch !== current.epoch)
     )
       return;
     if (!job.custodyReleased) {
@@ -294,7 +300,9 @@ export class RestoreRegistry {
     // normal finish/cleanup would destroy the evidence of this resolved failure.
     job.admissionFailureObserved = true;
     job.public.state = 'failed';
-    job.public.error = 'Restore did not begin. Its retained source remains available for recovery.';
+    job.public.error = record
+      ? 'Restore did not begin. Its retained source remains available for recovery.'
+      : 'Restore was not admitted. Its retained source remains available for recovery.';
   }
   private async cleanupOrphans(authorize: () => void = () => {}) {
     // Logical lease recovery never removes source/handoff evidence. A directory
@@ -547,6 +555,7 @@ export class RestoreRegistry {
         owner,
         proof: structuredClone(proof),
         controller: new AbortController(),
+        admissionAttempt: 0,
         public: {
           id,
           state: source.kind === 'upload' ? 'uploading' : 'preparing',
@@ -868,7 +877,7 @@ export class RestoreRegistry {
       );
     if (job.public.state === 'started') return structuredClone(job.public);
     if (job.admissionFailureObserved) return structuredClone(job.public);
-    if (job.public.state === 'admitting' && job.task) {
+    if (['admitting', 'accepted'].includes(job.public.state) && job.task) {
       await job.task;
       return structuredClone(job.public);
     }
@@ -963,10 +972,19 @@ export class RestoreRegistry {
           throw new Error('Restore plan not published.');
         job.public.state = 'started';
         job.public.error = null;
-      } catch {
-        job.public.error = HANDOFF_FAILURE;
+      } catch (error) {
+        if (
+          job.ack &&
+          job.custodyReleased &&
+          error instanceof RecoveryResourceError &&
+          error.code === 'disk-space'
+        ) {
+          job.public.resources = null;
+          job.public.error = new RecoveryResourceError('disk-space').message;
+        } else job.public.error = HANDOFF_FAILURE;
       }
     };
+    job.admissionAttempt++;
     job.task = task();
     await job.task;
     job.task = undefined;

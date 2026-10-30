@@ -96,3 +96,33 @@ export function validRestoreRpcResult(
           result.record.intent.continuationHash))
   );
 }
+
+/** Advice for one correlated Begin; not an outcome or permission to release custody. */
+export function validRestoreBeginCapacityRefusal(value: unknown): value is {
+  resourceCode: 'disk-space';
+  target: { generationId: string; epoch: string };
+} {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const message = value as Record<string, unknown>;
+  const keys = ['channel', 'kind', 'action', 'requestId', 'error', 'resourceCode', 'target'];
+  const target = message.target as Record<string, unknown> | undefined;
+  return (
+    Object.keys(message).length === keys.length &&
+    Object.keys(message).every((key) => keys.includes(key)) &&
+    message.channel === 'spinel-maintenance' &&
+    message.kind === 'restore-result' &&
+    message.action === 'restore-begin' &&
+    typeof message.requestId === 'string' &&
+    uuidPattern.test(message.requestId) &&
+    message.error === RESTORE_RPC_ERROR &&
+    message.resourceCode === 'disk-space' &&
+    !!target &&
+    typeof target === 'object' &&
+    !Array.isArray(target) &&
+    Object.keys(target).length === 2 &&
+    typeof target.generationId === 'string' &&
+    uuidPattern.test(target.generationId) &&
+    typeof target.epoch === 'string' &&
+    uuidPattern.test(target.epoch)
+  );
+}
