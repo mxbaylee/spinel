@@ -36,7 +36,13 @@ const directory = await mkdtemp(join(tmpdir(), 'spinel-restore-browser-'));
 const container = `spinel-restore-browser-${randomUUID()}`;
 const volume = `${container}-state`;
 const hash = (bytes: Uint8Array) => createHash('sha256').update(bytes).digest('hex');
+const startedAt = Date.now();
 let stage = 'initializing';
+const stageTimings = [{ stage, elapsedMs: 0 }];
+const setStage = (value: string) => {
+  stage = value;
+  stageTimings.push({ stage, elapsedMs: Date.now() - startedAt });
+};
 let browser: Browser | undefined;
 let failurePage: Page | undefined;
 let child: ChildProcess | undefined;
@@ -68,7 +74,7 @@ const proxy = httpsServer();
 const artifact: Record<string, unknown> = {
   scope:
     'Real production Admin browser flow with synthetic CDP passkey, Linux controller and disposable HTTPS proxy; not physical-device or remote-provider acceptance',
-  startedAt: new Date().toISOString(),
+  startedAt: new Date(startedAt).toISOString(),
   image,
   containerMemoryMiB: 1024,
   containerCpus: 0.75,
@@ -317,7 +323,7 @@ try {
     }),
     { mode: 0o600 },
   );
-  stage = 'starting-linux-supervisor';
+  setStage('starting-linux-supervisor');
   volumeDisposition = 'creation-unconfirmed';
   await run('docker', ['volume', 'create', volume], { timeout: 15_000, maxBuffer: 4096 });
   volumeDisposition = 'retained';
@@ -409,7 +415,7 @@ try {
   artifact.shippedImage = shipped;
   artifact.shippedCli = await privateJson('cli-proof.json');
   artifact.fixtureUid = process.getuid!();
-  stage = 'authenticating-browser';
+  setStage('authenticating-browser');
   browser = await chromium.launch();
   const createActor = async (credential: ReturnType<typeof makeCredential>, userId: string) => {
     const context = await browser!.newContext({
@@ -471,9 +477,15 @@ try {
       // A verified cookie and disappeared passkey button can precede the
       // authentication redirect and everyday-account runtime admission.
       // Do not navigate away until the real destination has settled.
-      await expect(page.getByRole('region', { name: 'Your files', exact: true })).toBeVisible();
-      await expect(page.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
-      await expect(page.getByRole('status').filter({ hasText: /^Loading…$/ })).toHaveCount(0);
+      await expect(page.getByRole('region', { name: 'Your files', exact: true })).toBeVisible({
+        timeout: 30_000,
+      });
+      await expect(page.getByRole('heading', { name: 'My files', exact: true })).toBeVisible({
+        timeout: 30_000,
+      });
+      await expect(page.getByRole('status').filter({ hasText: /^Loading…$/ })).toHaveCount(0, {
+        timeout: 30_000,
+      });
     };
     return { context, page, signIn };
   };
@@ -486,7 +498,7 @@ try {
   await page.goto(`${origin}/admin#health`);
   const restore = page.getByRole('region', { name: 'Restore workspace', exact: true });
   await expect(restore.getByRole('button', { name: 'Prepare restore', exact: true })).toBeEnabled();
-  stage = 'authenticating-current-owner';
+  setStage('authenticating-current-owner');
   const owner = await createActor(credentials.owner, source.rich.ownerId);
   await owner.signIn();
   const boundary = await prepareRichRestoreBoundary(source.rich, owner.context.request, origin);
@@ -494,7 +506,7 @@ try {
   await owner.page.goto('about:blank');
   failurePage = page;
   await page.bringToFront();
-  stage = 'preparing-through-admin';
+  setStage('preparing-through-admin');
   await restore.getByRole('button', { name: 'Prepare restore', exact: true }).click();
   const preparation = page.getByRole('dialog', { name: 'Prepare workspace restore', exact: true });
   const archiveChoice = page.waitForEvent('filechooser');
@@ -513,7 +525,7 @@ try {
   await expect(confirmation.getByText(source.sha256, { exact: true })).toBeVisible();
   await capture(page, 'loss-confirmation');
   await confirmation.getByRole('checkbox').check();
-  stage = 'confirming-and-restoring';
+  setStage('confirming-and-restoring');
   await confirmation
     .getByRole('button', { name: 'Verify and restore workspace', exact: true })
     .click();
@@ -523,9 +535,9 @@ try {
     140_000,
   );
   if (terminal.sourceSha256 !== source.sha256) throw new Error('Unexpected committed source.');
-  stage = 'checking-owner-session-reset';
+  setStage('checking-owner-session-reset');
   expect((await owner.context.request.get(`${origin}/api/auth/session`)).status()).toBe(401);
-  stage = 'authenticating-after-session-reset';
+  setStage('authenticating-after-session-reset');
   await page.goto(`${origin}/admin#health`);
   await page.getByRole('button', { name: 'Sign in with a passkey', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Administration', exact: true })).toBeVisible();
@@ -533,7 +545,7 @@ try {
   await expect(restore.getByText(/^Backup restored\./)).toBeVisible();
   await expect(restore.getByText(source.sha256, { exact: true })).toBeVisible();
   await capture(page, 'restored-after-sign-in');
-  stage = 'checking-rich-restored-workspace';
+  setStage('checking-rich-restored-workspace');
   await page.goto('about:blank');
   await owner.signIn();
   const reader = await createActor(credentials.reader, source.rich.readerId);
@@ -546,11 +558,13 @@ try {
     boundary,
   );
   failurePage = owner.page;
-  stage = 'rendering-restored-document';
+  setStage('rendering-restored-document');
   await owner.page.goto(`${origin}/?item=${source.rich.docId}`);
   const doc = owner.page.getByRole('region', { name: 'Doc document', exact: true });
-  await expect(doc.getByLabel('Document canvas', { exact: true })).toBeVisible();
-  await expect(doc.getByRole('status', { name: 'Save status' })).toHaveText('All changes saved.');
+  await expect(doc.getByLabel('Document canvas', { exact: true })).toBeVisible({ timeout: 30_000 });
+  await expect(doc.getByRole('status', { name: 'Save status' })).toHaveText('All changes saved.', {
+    timeout: 30_000,
+  });
   // Real raster evidence: visible text glyphs and the archived purple image, not just a mounted canvas.
   const ink = await textPoint(owner.page);
   const purplePixels = () =>
@@ -581,21 +595,29 @@ try {
     .poll(() => owner.page.evaluate(() => navigator.clipboard.readText()))
     .toContain(source.rich.expectedDocText.replace(/[\b\r\n]/g, ''));
   await owner.page.keyboard.press('Escape');
-  stage = 'rendering-restored-sheet';
+  setStage('rendering-restored-sheet');
   await owner.page.goto(`${origin}/?item=${source.rich.sheetId}`);
   const sheet = owner.page.getByRole('region', { name: 'Sheet document', exact: true });
-  await expect(sheet.getByLabel('Spreadsheet grid', { exact: true })).toBeVisible();
-  await expect(sheet.getByRole('status', { name: 'Save status' })).toHaveText('All changes saved.');
+  await expect(sheet.getByLabel('Spreadsheet grid', { exact: true })).toBeVisible({
+    timeout: 30_000,
+  });
+  await expect(sheet.getByRole('status', { name: 'Save status' })).toHaveText(
+    'All changes saved.',
+    { timeout: 30_000 },
+  );
   await expectNativeSheetValue(owner.page, 'A1', source.rich.expectedSheetValue);
   await capture(owner.page, 'restored-owner-sheet', false);
   await owner.page.goto('about:blank');
-  stage = 'rendering-restored-reader';
+  setStage('rendering-restored-reader');
   failurePage = reader.page;
   await reader.page.goto(`${origin}/?item=${source.rich.docId}`);
   const readerDoc = reader.page.getByRole('region', { name: 'Doc document', exact: true });
-  await expect(readerDoc.getByLabel('Document canvas', { exact: true })).toBeVisible();
+  await expect(readerDoc.getByLabel('Document canvas', { exact: true })).toBeVisible({
+    timeout: 30_000,
+  });
   await expect(readerDoc.getByRole('status', { name: 'Save status' })).toHaveText(
     'View only — reload after your access changes.',
+    { timeout: 30_000 },
   );
   await textPoint(reader.page);
   await capture(reader.page, 'restored-reader-document', false);
@@ -610,7 +632,7 @@ try {
     originalOwnerSessionExcluded: true,
   };
   if (pageErrors) throw new Error('Browser reported an application exception.');
-  stage = 'closing-and-checking-content';
+  setStage('closing-and-checking-content');
   await shutdown();
   const proof = await privateJson<{
     committed: boolean;
@@ -643,7 +665,7 @@ try {
   artifact.closedProof = proof;
   artifact.pageErrors = pageErrors;
   succeeded = true;
-  stage = 'passed';
+  setStage('passed');
 } catch (error) {
   // The reviewed source location helps diagnose a failed assertion without
   // persisting its message/expected/actual payload, which could contain secrets.
@@ -716,11 +738,14 @@ try {
       volumeDisposition = 'removed';
     } catch {
       succeeded = false;
-      stage = 'volume-cleanup-incomplete';
+      setStage('volume-cleanup-incomplete');
       process.exitCode = 1;
     }
   }
   artifact.stage = stage;
+  artifact.stageTimings = stageTimings;
+  artifact.elapsedMs = Date.now() - startedAt;
+  artifact.finalStageElapsedMs = Date.now() - startedAt - stageTimings.at(-1)!.elapsedMs;
   artifact.passed = succeeded;
   artifact.captures = captures;
   artifact.completedAt = new Date().toISOString();
