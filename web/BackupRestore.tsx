@@ -123,6 +123,7 @@ export function BackupRestore({
   const confirmed = useRef<{ id: string; confirmation: string } | null>(null);
   const returnFocus = useRef<HTMLElement | null>(null),
     prepareButton = useRef<HTMLButtonElement | null>(null);
+  const confirmationActions = useRef<HTMLDivElement | null>(null);
   const archiveInput = useRef<HTMLInputElement | null>(null),
     keyInput = useRef<HTMLInputElement | null>(null);
   const wasPaused = useRef(paused);
@@ -256,6 +257,13 @@ export function BackupRestore({
   useEffect(() => {
     onBusyChange?.(phase !== 'idle' || dialog !== null);
   }, [phase, dialog, onBusyChange]);
+  useEffect(() => {
+    // Async feedback and the immutable retry explanation can push the actions
+    // below a phone's viewport after a visible click. Follow them without moving
+    // focus or changing the initial, unconfirmed source/consequence review.
+    if (dialog === 'confirm' && (phase === 'verifying' || phase === 'confirming' || error))
+      confirmationActions.current?.scrollIntoView({ block: 'nearest', behavior: 'instant' });
+  }, [dialog, phase, error]);
   useEffect(() => {
     if ((!active(job) && pendingRestore !== true) || paused || phase !== 'idle') return;
     const timer = setInterval(() => void refresh(false), 2000);
@@ -926,7 +934,7 @@ export function BackupRestore({
         {phase === 'verifying' && <p role="status">Waiting for your passkey…</p>}
         {phase === 'confirming' && <p role="status">Recording restore confirmation…</p>}
         {error && <p role="alert">{error}</p>}
-        <div className="admin-dialog-actions">
+        <div className="admin-dialog-actions" ref={confirmationActions}>
           <Button disabled={phase === 'confirming'} onClick={cancelDialog}>
             Cancel
           </Button>

@@ -461,6 +461,26 @@ async function openConfirmation(canvasElement: HTMLElement, retry = false) {
     await within(document.body).findByRole('dialog', { name: 'Restore this workspace?' }),
   );
 }
+async function expectConfirmationFeedbackInView(
+  dialog: ReturnType<typeof within>,
+  role: 'status' | 'alert',
+) {
+  await waitFor(() => {
+    const feedback = dialog.getByRole(role);
+    const panel = feedback.closest('[role="dialog"]')!.getBoundingClientRect();
+    for (const node of [
+      feedback,
+      dialog.getByRole('button', { name: 'Cancel' }),
+      dialog.getByRole('button', {
+        name: /^(Verify and restore workspace|Retry confirmed restore)$/,
+      }),
+    ]) {
+      const box = node.getBoundingClientRect();
+      expect(box.top).toBeGreaterThanOrEqual(Math.max(0, panel.top) - 1);
+      expect(box.bottom).toBeLessThanOrEqual(Math.min(window.innerHeight, panel.bottom) + 1);
+    }
+  });
+}
 export const ConfirmationReview: Story = {
   parameters: { api: read('ready') },
   play: async ({ canvasElement }) => {
@@ -508,9 +528,13 @@ export const WaitingForPasskey: Story = {
   play: async ({ canvasElement }) => {
     const dialog = await openConfirmation(canvasElement);
     await userEvent.click(dialog.getByRole('checkbox'));
-    await userEvent.click(dialog.getByRole('button', { name: 'Verify and restore workspace' }));
+    const confirm = dialog.getByRole('button', { name: 'Verify and restore workspace' });
+    // Match a real click's visible action before asynchronous content is inserted.
+    confirm.scrollIntoView({ block: 'end', behavior: 'instant' });
+    await userEvent.click(confirm);
     await expect(await dialog.findByRole('status')).toHaveTextContent('Waiting for your passkey');
     await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeEnabled();
+    await expectConfirmationFeedbackInView(dialog, 'status');
   },
 };
 export const CancelVerification: Story = {
@@ -537,9 +561,13 @@ export const VerificationFailed: Story = {
   play: async ({ canvasElement }) => {
     const dialog = await openConfirmation(canvasElement);
     await userEvent.click(dialog.getByRole('checkbox'));
-    await userEvent.click(dialog.getByRole('button', { name: 'Verify and restore workspace' }));
+    const confirm = dialog.getByRole('button', { name: 'Verify and restore workspace' });
+    // Match a real click's visible action before asynchronous content is inserted.
+    confirm.scrollIntoView({ block: 'end', behavior: 'instant' });
+    await userEvent.click(confirm);
     await expect(await dialog.findByRole('alert')).toBeVisible();
     await expect(dialog.queryByText('/private/passkey')).toBeNull();
+    await expectConfirmationFeedbackInView(dialog, 'alert');
   },
 };
 export const RecordingConfirmation: Story = {
@@ -554,11 +582,15 @@ export const RecordingConfirmation: Story = {
   play: async ({ canvasElement }) => {
     const dialog = await openConfirmation(canvasElement);
     await userEvent.click(dialog.getByRole('checkbox'));
-    await userEvent.click(dialog.getByRole('button', { name: 'Verify and restore workspace' }));
+    const confirm = dialog.getByRole('button', { name: 'Verify and restore workspace' });
+    // Match a real click's visible action before asynchronous content is inserted.
+    confirm.scrollIntoView({ block: 'end', behavior: 'instant' });
+    await userEvent.click(confirm);
     await waitFor(() =>
       expect(dialog.getByRole('status')).toHaveTextContent('Recording restore confirmation'),
     );
     await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeDisabled();
+    await expectConfirmationFeedbackInView(dialog, 'status');
   },
 };
 export const ExpiredOriginalConfirmation: Story = {
