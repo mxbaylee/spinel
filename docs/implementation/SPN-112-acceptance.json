@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "status": "incomplete",
+  "status": "Local complete-app acceptance passed; actual Spaces, final reviews and current-head CI pending.",
   "limitations": [
-    "16089cc fresh acceptance failed before activation with restore-prep-planned-authority-eacces after a reconciled output was created; exact denied syscall/PID remains under investigation.",
-    "Current-source production browser run failed during confirmation/restore; root cause under read-only investigation. Earlier157 full pass does not replace current-source acceptance.",
     "Actual Spaces acceptance, both whole-ticket grades and all seven current-head CI gates remain pending.",
+    "Historical da/160 preparation failures remain failures; observer interference was reproduced, but their exact denied PID was not recorded.",
     "The0d3 browser run failed cold inspection; separate repaired inspection does not rewrite that run as passed.",
-    "Synthetic CDP passkeys and local Linux production images are not physical-device or provider acceptance."
+    "Synthetic CDP passkeys and local Linux production images are not physical-device or provider acceptance.",
+    "The separate read-only metadata observer is outside the1GiB serving cgroup; its own32MiB profile and11MiB observed peak are disclosed."
   ],
   "crashCuts": {
     "sourceSha": "15775bccf78493bf74896a7ecc7165ba7412ca6a",
@@ -639,42 +639,28 @@
       "admin-backuprestore--ready-phone-dark.png": "db9d502d6db730c98d8353eeeb65e46a9e70a373599df29e3c73f17999867263",
       "admin-backuprestore--incomplete-observation-phone.png": "ed5140c9e3073fc025b8b12a89526f5dabe16eb9ae7b6b5157a2b0b62cca3b1b",
       "admin-backuprestore--expired-tablet.png": "4112d53cae7bcd8ea0d31a007fe2f0eb04c94c4b231533b096d1243d112c42b1"
-    }
+    },
+    "revalidatedAt": "280d2e72ee07c3f11c3b62049adf57ee2e17fb56",
+    "reuseReview": "D rechecked all200 hashes and unchanged restore components/stories/styles/shared controls. SPN052 has separate scoped offline-help UI. Approved reuse of da proposed-state evidence, not a fresh280 Storybook run."
   },
   "productionBuildCurrent": {
-    "firstAttempt": {
-      "source": "da57183b96b03a43c58e7ec524877d49828ccb23",
-      "context": "/var/folders/ps/901m_rt10gq_nlynvsf_r82m0000gn/T/spinel112-production-da-mr2pkqck",
-      "passed": false,
-      "stage": "Pinned Node base layer before app source copy/npm/build",
-      "error": "short read: expected 55892324 bytes but got 7772923: unexpected EOF",
-      "layer": "sha256:cff4327141a2d5ef9643dfe8f22d398ae41dfddd10f8259453d938fa4c325f0b",
-      "base": "node:26.12.1-bookworm-slim@sha256:28147155d47dc31abe0a46e0d12b59b2fb3d0a2dcc5dc65fce76a074180b16fe",
-      "memoryPeakBytes": 191279104,
-      "memoryEvents": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
-      "memoryLimitBytes": 1887436800,
-      "swapLimitBytes": 0,
-      "cpuMax": "200000 100000",
-      "hostClientPeakMiB": 162,
-      "imageProduced": false,
-      "browserRunStarted": false,
-      "contextSourcesUnchanged": 1937
+    "source": "280d2e72ee07c3f11c3b62049adf57ee2e17fb56",
+    "context": "/var/folders/ps/901m_rt10gq_nlynvsf_r82m0000gn/T/spinel112-production-280-fskjzwcf",
+    "image": "sha256:0269317f66cdb230a9b41f7cff46e2aafb813efddd4480e58f99d7ba1e8d4fdc",
+    "passed": true,
+    "attempt": 1,
+    "builder": "spinel112-production-160",
+    "reusedTaskCache": true,
+    "resources": {
+      "memory.max": "1887436800",
+      "memory.swap.max": "0",
+      "cpu.max": "200000 100000",
+      "memory.peak": "1613774848",
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0"
     },
-    "secondAttempt": {
-      "source": "da57183b96b03a43c58e7ec524877d49828ccb23",
-      "context": "/var/folders/ps/901m_rt10gq_nlynvsf_r82m0000gn/T/spinel112-production-da-mr2pkqck",
-      "image": "sha256:629bfffd0ddc352964452caa329b0e52a0ae7aae3b9dd0a9078c832876ab1d2a",
-      "passed": true,
-      "attempt": 2,
-      "firstFailurePreserved": "/tmp/spn112-da-production-build.json",
-      "builder": "spinel112-production-da-retry2",
-      "memoryLimitBytes": 1887436800,
-      "swapLimitBytes": 0,
-      "cpuMax": "200000 100000",
-      "memoryPeakBytes": 1887436800,
-      "memoryEvents": "low 0\nhigh 0\nmax 335\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
-      "hostClientPeakMiB": 184
-    }
+    "hostClientPeakMiB": 147,
+    "sourceFilesVerified": 2040,
+    "installedLibraryFilesVerified": 222
   },
   "browserCurrentFailure": {
     "scope": "Real production Admin browser flow with synthetic CDP passkey, Linux controller and disposable HTTPS proxy; not physical-device or remote-provider acceptance",
@@ -951,7 +937,7 @@
       "originalInspectionHashesUnchanged": true
     }
   },
-  "lastProductionCandidateSha": "16089ccbc4c886826e1d3527efc2649c9ba4884a",
+  "lastProductionCandidateSha": "280d2e72ee07c3f11c3b62049adf57ee2e17fb56",
   "diagnosticsAndContainment": {
     "sourceHashes": {
       "src/server/maintenance/restore-failure.ts": "c1f849f7055d4101130d7ab5821a32c0fc5c9cda41e8682b2d11232893d398dd",
@@ -1464,5 +1450,249 @@
       "hostPeak": "Unmeasured: completed before2-second watchdog sample; printed0MiB is not zero footprint."
     },
     "review": "B independently closed cleanup/privacy findings; agent review only, not whole-ticket grade."
+  },
+  "productionBuild160": {
+    "firstAttempt": {
+      "source": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "context": "/var/folders/ps/901m_rt10gq_nlynvsf_r82m0000gn/T/spinel112-production-da-mr2pkqck",
+      "passed": false,
+      "stage": "Pinned Node base layer before app source copy/npm/build",
+      "error": "short read: expected 55892324 bytes but got 7772923: unexpected EOF",
+      "layer": "sha256:cff4327141a2d5ef9643dfe8f22d398ae41dfddd10f8259453d938fa4c325f0b",
+      "base": "node:26.12.1-bookworm-slim@sha256:28147155d47dc31abe0a46e0d12b59b2fb3d0a2dcc5dc65fce76a074180b16fe",
+      "memoryPeakBytes": 191279104,
+      "memoryEvents": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+      "memoryLimitBytes": 1887436800,
+      "swapLimitBytes": 0,
+      "cpuMax": "200000 100000",
+      "hostClientPeakMiB": 162,
+      "imageProduced": false,
+      "browserRunStarted": false,
+      "contextSourcesUnchanged": 1937
+    },
+    "secondAttempt": {
+      "source": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "context": "/var/folders/ps/901m_rt10gq_nlynvsf_r82m0000gn/T/spinel112-production-da-mr2pkqck",
+      "image": "sha256:629bfffd0ddc352964452caa329b0e52a0ae7aae3b9dd0a9078c832876ab1d2a",
+      "passed": true,
+      "attempt": 2,
+      "firstFailurePreserved": "/tmp/spn112-da-production-build.json",
+      "builder": "spinel112-production-da-retry2",
+      "memoryLimitBytes": 1887436800,
+      "swapLimitBytes": 0,
+      "cpuMax": "200000 100000",
+      "memoryPeakBytes": 1887436800,
+      "memoryEvents": "low 0\nhigh 0\nmax 335\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+      "hostClientPeakMiB": 184
+    }
+  },
+  "browserCurrent": {
+    "source": "280d2e72ee07c3f11c3b62049adf57ee2e17fb56",
+    "image": "sha256:0269317f66cdb230a9b41f7cff46e2aafb813efddd4480e58f99d7ba1e8d4fdc",
+    "passed": true,
+    "elapsedMs": 89510,
+    "pageErrors": 0,
+    "scope": "Real production Admin browser flow with synthetic CDP passkey, Linux controller and disposable HTTPS proxy; not physical-device or remote-provider acceptance",
+    "shippedCli": {
+      "initial": "recovery-required",
+      "verify": true,
+      "start": true,
+      "resume": "running"
+    },
+    "richWorkspace": {
+      "sheetContent": true,
+      "docContent": true,
+      "imageSha256": "49e0f79025c2f68f9e0b1a2d6caf30ea62643c2d4be76a3f43f25125825fef91",
+      "historyCheckpoint": true,
+      "retainedViewer": true,
+      "revokedGrantDenied": true,
+      "viewerWriteDenied": true,
+      "revokedGuestDenied": true,
+      "acknowledgedOldCreationRetryDenied": true,
+      "nativeGenerationRenewed": true,
+      "restoredContentUnchanged": true,
+      "documentSnapshotSha256": "9860607f54b0019c25ac7a3454f12539301e0fff96f73a2320214f05489c220f",
+      "sheetSnapshotSha256": "7f1a17913f91a8a03cf54b3bd2c4ef7a275a7c13c6a923245f6b701b6d99e0fc"
+    },
+    "nativeRendering": {
+      "ownerDoc": true,
+      "ownerSheet": true,
+      "readerDoc": true,
+      "visibleDocumentInkPixels": 534,
+      "archivedImageRendered": true,
+      "documentNativeCopy": true,
+      "sheetA1NativeCopy": "Archived budget value",
+      "originalOwnerSessionExcluded": true
+    },
+    "servingResources": {
+      "memoryLimitBytes": 1073741824,
+      "swapLimitBytes": 0,
+      "cpuMax": "75000 100000",
+      "pidsMax": 128,
+      "memoryPeakBytes": 332079104,
+      "memoryCurrentBytes": 209756160,
+      "peakScope": "Serving cgroup through pre-shutdown observation; excludes separate observer and later cold helper"
+    },
+    "observer": {
+      "scope": "Separate read-only metadata observer; excluded from serving cgroup measurements",
+      "sqliteOpened": false,
+      "identity": {
+        "containerId": "312f502b787f19e38b7325c8c8ec6c03bccde55a7d63b47a9aad622469602fd9",
+        "name": "spinel-restore-browser-11fae6d8-fe52-47b3-b95d-2d29e7ad0650-observer",
+        "image": "sha256:0269317f66cdb230a9b41f7cff46e2aafb813efddd4480e58f99d7ba1e8d4fdc",
+        "user": "501:20",
+        "hostPid": 1319,
+        "pidNamespace": "pid:[4026532704]"
+      },
+      "profile": {
+        "memoryBytes": 33554432,
+        "swapBytes": 0,
+        "cpus": 0.1,
+        "pids": 16,
+        "network": "none",
+        "volumeReadOnly": true
+      },
+      "initialResources": {
+        "memory.current": 1392640,
+        "memory.peak": 8507392,
+        "memory.max": 33554432,
+        "memory.swap.max": 0,
+        "cpu.max": "10000 100000",
+        "pids.max": 16
+      },
+      "logs": {
+        "stdoutBytes": 0,
+        "stderrBytes": 0,
+        "errorCode": null
+      },
+      "finalResources": {
+        "memory.current": 2703360,
+        "memory.peak": 11575296,
+        "memory.max": 33554432,
+        "memory.swap.max": 0,
+        "cpu.max": "10000 100000",
+        "pids.max": 16
+      },
+      "beforeClosure": {
+        "running": true,
+        "pid": 1319,
+        "exitCode": 0,
+        "oomKilled": false
+      },
+      "closure": {
+        "running": false,
+        "pid": 0,
+        "exitCode": 0,
+        "oomKilled": false
+      },
+      "absenceConfirmed": true
+    },
+    "bootstrapClosure": {
+      "running": false,
+      "pid": 0,
+      "exitCode": 0,
+      "oomKilled": false
+    },
+    "supervisorClosure": {
+      "running": false,
+      "pid": 0,
+      "exitCode": 0,
+      "oomKilled": false
+    },
+    "coldClosure": {
+      "running": false,
+      "pid": 0,
+      "exitCode": 0,
+      "oomKilled": false
+    },
+    "closedProof": {
+      "committed": true,
+      "restoredContent": true,
+      "originalSessionExcluded": true,
+      "counter": 4,
+      "helperRunId": "3b09c428-f9fa-4927-92a1-65f668d40b48",
+      "sourceUnchanged": true,
+      "sourceGroup": {
+        "workspace.sqlite": {
+          "device": "65025",
+          "inode": "901035",
+          "bytes": 573440,
+          "mtime": 1793334156502.159,
+          "ctime": 1793334156502.159,
+          "sha256": "ef7f422b62f54e514e2a0d66eb76f07db7405e66882c4c0ea37ff7132e53455b"
+        },
+        "workspace.sqlite-wal": null,
+        "workspace.sqlite-shm": null
+      },
+      "copiedGroup": {
+        "workspace.sqlite": {
+          "device": "53",
+          "inode": "901112",
+          "bytes": 573440,
+          "mtime": 1793334157981.159,
+          "ctime": 1793334157981.159,
+          "sha256": "ef7f422b62f54e514e2a0d66eb76f07db7405e66882c4c0ea37ff7132e53455b"
+        },
+        "workspace.sqlite-wal": null,
+        "workspace.sqlite-shm": null
+      },
+      "copySidecarsAfterFirstSelect": {
+        "workspace.sqlite-wal": {
+          "present": true,
+          "bytes": 0
+        },
+        "workspace.sqlite-shm": {
+          "present": true,
+          "bytes": 32768
+        }
+      },
+      "memoryLimitBytes": 1073741824,
+      "swapLimitBytes": 0,
+      "cpuMax": "75000 100000",
+      "pidsMax": 128,
+      "memoryPeakBytes": 332079104,
+      "memoryCurrentBytes": 209756160,
+      "peakScope": "Serving cgroup through pre-shutdown observation; excludes separate observer and later cold helper"
+    },
+    "containerCleanup": {
+      "spinel-restore-browser-11fae6d8-fe52-47b3-b95d-2d29e7ad0650-bootstrap": "confirmed-absent",
+      "spinel-restore-browser-11fae6d8-fe52-47b3-b95d-2d29e7ad0650-init": "confirmed-absent",
+      "spinel-restore-browser-11fae6d8-fe52-47b3-b95d-2d29e7ad0650-cold": "confirmed-absent",
+      "spinel-restore-browser-11fae6d8-fe52-47b3-b95d-2d29e7ad0650": "confirmed-absent"
+    },
+    "privateFixtureRetained": false,
+    "privateVolumeDisposition": "removed",
+    "sourceClosure": {
+      "source": "280d2e72ee07c3f11c3b62049adf57ee2e17fb56",
+      "image": "sha256:0269317f66cdb230a9b41f7cff46e2aafb813efddd4480e58f99d7ba1e8d4fdc",
+      "sourceFiles": 2040,
+      "installedLibraryFiles": 222,
+      "unchanged": true,
+      "captures": {
+        "prepared-source-light.png": "0b35f8c7cf1e60838128078fa975fdd869c5f9e0ae1c065c8eef051b6c7173e6",
+        "prepared-source-dark.png": "05bd387acc83ca7da4b4c246d6b4c5b90d8d4a0e36ef34210edc911a52114724",
+        "prepared-source-phone.png": "f80c053b2b5a2f432c7220c1f397bd0e471cf612b48a3ab658a52f8f124e98ec",
+        "loss-confirmation-light.png": "36f8b0588a14919cc10fa09ec2578ef2d73e153dc197f2cd471a2852994369da",
+        "loss-confirmation-dark.png": "a313350d61880f943b326363b9d6aaaf7a149070dd34b31238debf68b9941811",
+        "loss-confirmation-phone.png": "d63fbfa259d742328508180c53437a31181c617a9564a3f86220b103152d8c10",
+        "restored-after-sign-in-light.png": "d4be6abb397035b7f8f368b4f10a3d14cb5ac98c4ec7b82d05a091ebd79ae4c8",
+        "restored-after-sign-in-dark.png": "7e8a7ea7821ef9faa12cf75af926d36d35a35b9ea1bda8f39d92da93d78995bc",
+        "restored-after-sign-in-phone.png": "2fb1e1cd854e97fef1949e766ad73a3e4cf959c43173404adc73255da7c6b60d",
+        "restored-owner-document-light.png": "f525d1620680c3678ac0d66d6f9586b6d9219f7c1d8c80073036541efcf7e18c",
+        "restored-owner-document-dark.png": "fe12014f5d7fba8b4ae4d7137b490d1d2c8728c2c3e1a55ecd94ff040c29bc37",
+        "restored-owner-document-phone.png": "9e36b903a772a74531cdc9fcb7208876b7d1d3bca5ec73b0056f519c0707985e",
+        "restored-owner-sheet-light.png": "6405a120b3c07ee744c7a287004672d9abe14aec16298e700d284f40ac100d25",
+        "restored-owner-sheet-dark.png": "2cbaacd74b6737362fc45523d661edae5d25aa1bdbc25c16e5a59ce23b34351d",
+        "restored-owner-sheet-phone.png": "909557b48ef0a83ae2d7a2b59a0755d271a5f41aa33a77a1702b52b41e82a00b",
+        "restored-reader-document-light.png": "87f73abd82742a23a4957bcba3015c9b344c3f9a454fa18d8ae69243fb3b5931",
+        "restored-reader-document-dark.png": "21e3ae4e0cdb344013aeefef7db7f2cd8654c83e3b1003260a1a7909b423a3f0",
+        "restored-reader-document-phone.png": "357008b4117a9c47dc7233273e566a69861ea64a319d84c87b06c126ad8fcd7d"
+      },
+      "captureCount": 18
+    },
+    "evidenceBundle": "../review-assets/spn-112/actual-280-evidence.zip",
+    "evidenceBundleSha256": "d8ca61569b98ab65e73c756418f322887d3d0a966e66ae213af91a690e62fb3e",
+    "evidenceSha256": "9f5927b18f2ce68735eb4ee6c933e364a6df9a5b14919fea37a89b1f8ef34b72",
+    "review": "D inspected all18 and approved current actual visuals; agent review only. B independently verified acceptance/source/resource/closure evidence."
   }
 }
