@@ -72,12 +72,30 @@ async function fixture() {
       () => now,
     );
   const target = { generationId: randomUUID(), epoch: randomUUID() };
+  const estimate = vi.fn<RestoreController['estimate']>().mockResolvedValue({
+    target,
+    resources: {
+      provisional: true,
+      checkedAt: now,
+      requiredAdditionalBytes: 512 * 1024 ** 2,
+      availableBytes: 1024 ** 3,
+      sufficient: true,
+      filesystems: [
+        {
+          purposes: ['application', 'preparation', 'recovery'],
+          requiredAdditionalBytes: 512 * 1024 ** 2,
+          availableBytes: 1024 ** 3,
+          sufficient: true,
+        },
+      ],
+    },
+  });
   const admit = vi.fn<RestoreController['admit']>();
   const begin = vi.fn<RestoreController['begin']>();
   const observe = vi
     .fn<RestoreController['observe']>()
     .mockResolvedValue({ target, record: null, pending: false });
-  const controller: RestoreController = { target: () => target, admit, begin, observe };
+  const controller: RestoreController = { target: () => target, admit, begin, observe, estimate };
   const service = new BackupService(db, {
     databasePath,
     image,
@@ -157,6 +175,7 @@ async function fixture() {
       },
       authority: request.authority,
       confirmedAt: request.confirmedAt,
+      previewDatabaseBytes: request.previewDatabaseBytes,
       preview: request.preview,
       consequenceEnvelope: 1,
       continuationHash: createHash('sha256').update(continuationToken).digest('hex'),
@@ -184,6 +203,7 @@ async function fixture() {
     session,
     service,
     target,
+    estimate,
     prepare,
     preview,
     admit,
@@ -213,6 +233,22 @@ test('manual encrypted upload needs no destination/config and erases its private
   expect((await stat(join(directory, 'upload.key'))).mode & 0o777).toBe(0o600);
   const ready = await f.upload(created.id);
   expect(ready.state).toBe('ready');
+  expect(ready.verification).toEqual({
+    applicationCompatible: true,
+    sourceCompatible: true,
+    databaseVerified: true,
+    tables: 1,
+    rows: 1,
+    snapshots: 0,
+    images: 0,
+  });
+  expect(ready.resources?.sufficient).toBe(true);
+  expect(f.estimate).toHaveBeenCalledWith({
+    ...f.target,
+    archiveBytes: Buffer.byteLength('encrypted-source-boundary-fixture'),
+    databaseBytes: 4096,
+    previewDatabaseBytes: 4096,
+  });
   expect(ready.preview).toMatchObject({
     provisional: true,
     sharingRemoved: 4,
@@ -227,6 +263,114 @@ test('manual encrypted upload needs no destination/config and erases its private
   expect(f.service.state().job).toBe('restore');
   await f.service.restores.cancel(created.id, f.actor.id, f.session.token_hash);
   expect(f.service.state().owner).toBeNull();
+});
+
+test('insufficient recovery capacity publishes path-free estimates and releases preparation without admission', async () => {
+  const f = await fixture();
+  f.estimate.mockResolvedValueOnce({
+    target: f.target,
+    resources: {
+      provisional: true,
+      checkedAt: Date.now(),
+      requiredAdditionalBytes: 1024 ** 3,
+      availableBytes: 2 * 1024 ** 3,
+      sufficient: false,
+      filesystems: [
+        {
+          purposes: ['application', 'preparation'],
+          requiredAdditionalBytes: 512 * 1024 ** 2,
+          availableBytes: 2 * 1024 ** 3,
+          sufficient: true,
+        },
+        {
+          purposes: ['recovery'],
+          requiredAdditionalBytes: 512 * 1024 ** 2,
+          availableBytes: 0,
+          sufficient: false,
+        },
+      ],
+    },
+  });
+  const created = await f.create();
+  const failed = await f.upload(created.id);
+  expect(failed.state).toBe('failed');
+  expect(failed.resources?.sufficient).toBe(false);
+  expect(failed.error).toBe(new RecoveryResourceError('disk-space').message);
+  expect(failed.confirmation).toBeNull();
+  expect(f.admit).not.toHaveBeenCalled();
+  expect(f.begin).not.toHaveBeenCalled();
+  expect(f.service.state().owner).toBeNull();
+  expect(JSON.stringify(failed)).not.toContain(f.directory);
+  expect(
+    (await readdir(f.directory)).filter((name) => name.startsWith('.restore-preparation-')),
+  ).toEqual([]);
+  expect((await f.create()).state).toBe('uploading');
+});
+
+test.each(['target', 'authority', 'expiry'] as const)(
+  'capacity awaits recheck %s before ready publication',
+  async (scenario) => {
+    const f = await fixture();
+    const result = await f.estimate({
+      ...f.target,
+      archiveBytes: 64,
+      databaseBytes: 4096,
+      previewDatabaseBytes: 4096,
+    });
+    f.estimate.mockClear();
+    f.estimate.mockImplementationOnce(async () => {
+      const response = structuredClone(result);
+      if (scenario === 'target') response.target.epoch = randomUUID();
+      if (scenario === 'authority')
+        f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(f.actor.id);
+      if (scenario === 'expiry') f.advance(60_001);
+      return response;
+    });
+    const created = await f.create();
+    const failed = await f.upload(created.id);
+    expect(failed.state).toBe('failed');
+    expect(failed.confirmation).toBeNull();
+    expect(f.admit).not.toHaveBeenCalled();
+    expect(f.service.state().owner).toBeNull();
+  },
+);
+
+test('allowlisted resource errors survive preparation while arbitrary errors remain private', async () => {
+  const f = await fixture();
+  f.prepare.mockRejectedValueOnce(new RecoveryResourceError('memory-headroom'));
+  const first = await f.create();
+  expect((await f.upload(first.id)).error).toBe(
+    new RecoveryResourceError('memory-headroom').message,
+  );
+  f.prepare.mockRejectedValueOnce(new Error('private source /secret/data.sqlite'));
+  const second = await f.create();
+  const failed = await f.upload(second.id);
+  expect(failed.state).toBe('failed');
+  expect(failed.error).not.toContain('/secret');
+});
+
+test('admission binds the observed reconciled preview size rather than the original candidate size', async () => {
+  const f = await fixture();
+  const preview = f.preview.getMockImplementation()!;
+  f.preview.mockImplementation(async (options) => ({
+    ...(await preview(options)),
+    databaseBytes: 8192,
+  }));
+  const created = await f.create();
+  const ready = await f.upload(created.id);
+  f.admit.mockRejectedValueOnce(new Error('Uncertain handoff'));
+  await f.service.restores.confirm(
+    created.id,
+    f.actor.id,
+    f.session.token_hash,
+    ready.confirmation!,
+    f.proof(),
+  );
+  const request = f.admit.mock.calls[0][0];
+  expect(request.source.databaseBytes).toBe(4096);
+  expect(request.previewDatabaseBytes).toBe(8192);
+  expect(f.estimate.mock.calls[0][0].previewDatabaseBytes).toBe(8192);
+  expect(f.acknowledge(request).record.intent.previewDatabaseBytes).toBe(8192);
 });
 
 test('same preparation request is idempotent, changed source and another session are refused', async () => {

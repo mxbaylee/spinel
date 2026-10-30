@@ -1,4 +1,109 @@
 /** Safe Admin restore DTOs. No source paths, secret keys or private authority. */
+export const RESTORE_RESOURCE_MESSAGES = {
+  'memory-headroom':
+    'Recovery verification has insufficient memory headroom. Free memory or use a larger recovery host, then retry.',
+  'memory-limit':
+    'Recovery verification exceeded its memory limit. Use a recovery host with a larger verification budget.',
+  'time-limit':
+    'Recovery verification exceeded its time limit. Use a recovery host with a larger verification budget.',
+  'archive-size':
+    'The backup exceeds the encrypted archive size limit. Keep the source backup and use a larger recovery budget.',
+  'database-size':
+    'The restored database exceeds the recovery size limit. Keep the source backup and use a larger recovery budget.',
+  'disk-space':
+    'Recovery has insufficient disk space. Free space on the private backup, application or recovery volume, then retry.',
+} as const;
+
+export interface RestoreResources {
+  provisional: true;
+  checkedAt: number;
+  requiredAdditionalBytes: number;
+  availableBytes: number;
+  sufficient: boolean;
+  filesystems: Array<{
+    purposes: Array<'application' | 'recovery' | 'preparation'>;
+    requiredAdditionalBytes: number;
+    availableBytes: number;
+    sufficient: boolean;
+  }>;
+}
+
+export function validRestoreResources(value: unknown): value is RestoreResources {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const report = value as RestoreResources;
+  const bytes = (size: unknown) => Number.isSafeInteger(size) && Number(size) >= 0;
+  if (
+    Object.keys(report).length !== 6 ||
+    report.provisional !== true ||
+    !bytes(report.checkedAt) ||
+    report.checkedAt > 8.64e15 ||
+    !bytes(report.requiredAdditionalBytes) ||
+    !bytes(report.availableBytes) ||
+    typeof report.sufficient !== 'boolean' ||
+    !Array.isArray(report.filesystems) ||
+    report.filesystems.length < 1 ||
+    report.filesystems.length > 2
+  )
+    return false;
+  const purposes: string[] = [];
+  let required = 0,
+    available = 0;
+  for (const filesystem of report.filesystems) {
+    if (
+      !filesystem ||
+      typeof filesystem !== 'object' ||
+      Array.isArray(filesystem) ||
+      Object.keys(filesystem).length !== 4 ||
+      !Array.isArray(filesystem.purposes) ||
+      filesystem.purposes.length < 1 ||
+      filesystem.purposes.length > 3 ||
+      !filesystem.purposes.every((purpose) =>
+        ['application', 'recovery', 'preparation'].includes(purpose),
+      ) ||
+      !bytes(filesystem.requiredAdditionalBytes) ||
+      !bytes(filesystem.availableBytes) ||
+      filesystem.sufficient !== filesystem.availableBytes >= filesystem.requiredAdditionalBytes
+    )
+      return false;
+    purposes.push(...filesystem.purposes);
+    required += filesystem.requiredAdditionalBytes;
+    available += filesystem.availableBytes;
+  }
+  return (
+    purposes.length === 3 &&
+    new Set(purposes).size === 3 &&
+    Number.isSafeInteger(required) &&
+    Number.isSafeInteger(available) &&
+    required === report.requiredAdditionalBytes &&
+    available === report.availableBytes &&
+    report.sufficient === report.filesystems.every((filesystem) => filesystem.sufficient)
+  );
+}
+
+export interface RestoreVerification {
+  applicationCompatible: true;
+  sourceCompatible: true;
+  databaseVerified: true;
+  tables: number;
+  rows: number;
+  snapshots: number;
+  images: number;
+}
+
+export function validRestoreVerification(value: unknown): value is RestoreVerification {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const report = value as RestoreVerification;
+  return (
+    Object.keys(report).length === 7 &&
+    report.applicationCompatible === true &&
+    report.sourceCompatible === true &&
+    report.databaseVerified === true &&
+    (['tables', 'rows', 'snapshots', 'images'] as const).every(
+      (key) => Number.isSafeInteger(report[key]) && report[key] >= 0,
+    )
+  );
+}
+
 export interface RestorePreview {
   provisional: true;
   currentAccounts: number;
@@ -62,6 +167,8 @@ export interface RestorePreparation {
   sourceCreatedAt: string | null;
   target: { generationId: string; epoch: string };
   preview: RestorePreview | null;
+  verification: RestoreVerification | null;
+  resources: RestoreResources | null;
   confirmation: string | null;
   consequencesVersion: 1;
   error: string | null;

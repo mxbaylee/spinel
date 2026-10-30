@@ -165,7 +165,8 @@ export async function connectMaintenance(): Promise<SupervisedMaintenanceBridge>
     request:
       | Parameters<RestoreController['admit']>[0]
       | Parameters<RestoreController['begin']>[0]
-      | Parameters<RestoreController['observe']>[0],
+      | Parameters<RestoreController['observe']>[0]
+      | Parameters<RestoreController['estimate']>[0],
   ) =>
     new Promise<RestoreRpcResult>((resolve, reject) => {
       if (
@@ -182,11 +183,11 @@ export async function connectMaintenance(): Promise<SupervisedMaintenanceBridge>
       const requestId = randomUUID();
       const timer = setTimeout(
         () => failRestoreRequest(requestId),
-        action === 'restore-observe' ? 10_000 : RESTORE_RPC_MS,
+        action === 'restore-observe' || action === 'restore-estimate' ? 10_000 : RESTORE_RPC_MS,
       );
       restoreRequests.set(requestId, {
         action,
-        id: request.id,
+        id: 'id' in request ? request.id : undefined,
         intentHash: 'intentHash' in request ? request.intentHash : undefined,
         resolve,
         reject,
@@ -459,6 +460,11 @@ export async function connectMaintenance(): Promise<SupervisedMaintenanceBridge>
   }
   return {
     restoreController: {
+      async estimate(request) {
+        const result = await restoreCall('restore-estimate', request);
+        if (!('resources' in result)) throw new Error(RESTORE_RPC_ERROR);
+        return result;
+      },
       target() {
         if (
           closed ||

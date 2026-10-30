@@ -1,13 +1,16 @@
+import { validRestoreResources } from '../../shared/restore.ts';
 import { createHash } from 'node:crypto';
 import { AUTHORITY_MS, uuidPattern } from './journal.ts';
 import { validRestoreJobRecord } from './restore-jobs.ts';
 import type { RestoreController } from '../backup/restore-control.ts';
 
-export type RestoreRpcAction = 'restore-admit' | 'restore-begin' | 'restore-observe';
+export type RestoreRpcAction =
+  'restore-admit' | 'restore-begin' | 'restore-observe' | 'restore-estimate';
 export type RestoreRpcResult =
   | Awaited<ReturnType<RestoreController['admit']>>
   | Awaited<ReturnType<RestoreController['begin']>>
-  | Awaited<ReturnType<RestoreController['observe']>>;
+  | Awaited<ReturnType<RestoreController['observe']>>
+  | Awaited<ReturnType<RestoreController['estimate']>>;
 
 // Admission itself cannot outlive its original authority. A lost IPC reply is
 // uncertain custody, never permission for the registry to discard its source.
@@ -36,6 +39,21 @@ export function validRestoreRpcResult(
   if (!value || typeof value !== 'object' || Array.isArray(value) || !boundedRestoreRpc(value))
     return false;
   const result = value as Record<string, unknown>;
+  if (action === 'restore-estimate') {
+    const target = result.target as { generationId?: unknown; epoch?: unknown } | undefined;
+    return (
+      Object.keys(result).length === 2 &&
+      !!target &&
+      typeof target === 'object' &&
+      !Array.isArray(target) &&
+      Object.keys(target).length === 2 &&
+      typeof target.generationId === 'string' &&
+      uuidPattern.test(target.generationId) &&
+      typeof target.epoch === 'string' &&
+      uuidPattern.test(target.epoch) &&
+      validRestoreResources(result.resources)
+    );
+  }
   if (action === 'restore-observe') {
     const target = result.target as { generationId?: unknown; epoch?: unknown } | undefined;
     if (

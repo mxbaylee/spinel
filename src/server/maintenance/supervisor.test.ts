@@ -31,6 +31,8 @@ import {
   processIdentity,
   RecoveryJournal,
 } from './journal.ts';
+import type { RestoreCapacityVolume } from './restore-capacity.ts';
+import { estimateRestoreCapacity } from './restore-capacity.ts';
 import type { RestoreAdmission } from './supervisor.ts';
 import type { RestoreObservation } from '../backup/restore-control.ts';
 import { assertWorkspaceHandlesClosed, MaintenanceSupervisor } from './supervisor.ts';
@@ -1923,6 +1925,7 @@ async function admissionFixture(
   revokeOnProbe?: number,
   now?: () => number,
   environment: Record<string, string> = {},
+  restoreCapacityVolume?: RestoreCapacityVolume,
 ) {
   const f = await fixture(true);
   const policy = applicationPolicy(3000, {
@@ -1933,6 +1936,7 @@ async function admissionFixture(
   let child!: ChildProcess;
   const supervisor = await MaintenanceSupervisor.open({
     now,
+    restoreCapacityVolume,
     root: f.root,
     databasePath: f.databasePath,
     publicPort: 0,
@@ -1966,6 +1970,7 @@ async function admissionFixture(
     confirmedAt: Date.now(),
     preview: restoreJobIntentFixture().preview,
     consequenceEnvelope: 1,
+    previewDatabaseBytes: 8192,
     source: {
       archive: {
         path: archivePath,
@@ -2202,6 +2207,7 @@ test
       confirmedAt: Date.now(),
       preview: restoreJobIntentFixture().preview,
       consequenceEnvelope: 1,
+      previewDatabaseBytes: 8192,
       source: {
         archive: source.archive,
         databasePath: source.databasePath,
@@ -3560,3 +3566,133 @@ test('real child observation refuses corrupt complete inventory instead of repor
   expect(f.supervisor.status().phase).toBe('running');
   expect(await readFile(join(directory, 'state.json'), 'utf8')).toBe('{');
 }, 15_000);
+
+test.each(['recovery-volume', 'shared-volume'] as const)(
+  'whole-cutover capacity rejects insufficient %s before pause while the real child stays running',
+  async (kind) => {
+    let application = '',
+      recovery = '',
+      low = false,
+      capacity = 0n;
+    const f = await admissionFixture(undefined, undefined, {}, (path) => ({
+      device: kind === 'shared-volume' || path !== recovery ? '1' : '2',
+      availableBytes:
+        low && (kind === 'shared-volume' || path === recovery) ? capacity : 10n ** 12n,
+    }));
+    application = f.databasePath;
+    recovery = f.root;
+    const request = {
+      generationId: f.request.generationId,
+      epoch: f.request.epoch,
+      archiveBytes: f.request.source.archive.bytes,
+      databaseBytes: f.request.source.databaseBytes,
+      previewDatabaseBytes: f.request.previewDatabaseBytes,
+    };
+    const initial = f.supervisor.estimatePreparedRestore(request);
+    expect(initial.resources.sufficient).toBe(true);
+    const admitted = await f.supervisor.admitPreparedRestore(f.request);
+    const plan = estimateRestoreCapacity(
+      {
+        ...request,
+        databasePath: application,
+        recoveryRoot: recovery,
+        identity: admitted.record.intent.target.identity,
+        sourceRetained: true,
+        checkedAt: Date.now(),
+      },
+      (path) => ({
+        device: kind === 'shared-volume' || path !== recovery ? '1' : '2',
+        availableBytes: 10n ** 12n,
+      }),
+    );
+    const recoveryPlan = plan.filesystems.find((item) => item.purposes.includes('recovery'))!;
+    capacity = BigInt(recoveryPlan.requiredAdditionalBytes - 1);
+    if (kind === 'shared-volume') {
+      // Both independent demands fit; it is their simultaneous shared-volume
+      // sum that must refuse, not a accidentally low single-volume fixture.
+      const independent = estimateRestoreCapacity(
+        {
+          ...request,
+          databasePath: application,
+          recoveryRoot: recovery,
+          identity: admitted.record.intent.target.identity,
+          sourceRetained: true,
+          checkedAt: Date.now(),
+        },
+        (path) => ({ device: path === recovery ? '2' : '1', availableBytes: 10n ** 12n }),
+      );
+      expect(
+        independent.filesystems.every((item) => BigInt(item.requiredAdditionalBytes) <= capacity),
+      ).toBe(true);
+    }
+    low = true;
+    const before = f.supervisor.status(),
+      beforeJournal = await readFile(join(f.root, 'journal.json'));
+    const pause = vi.spyOn(RestoreJobs.prototype, 'planPause');
+    const sent = vi.spyOn(f.child, 'send');
+    await expect(
+      f.supervisor.beginPreparedRestore({
+        id: f.request.id,
+        intentHash: admitted.record.intentHash,
+        continuationToken: admitted.continuationToken!,
+      }),
+    ).rejects.toThrow('insufficient disk space');
+    expect(pause).not.toHaveBeenCalled();
+    expect(f.supervisor.status()).toEqual(before);
+    expect(f.supervisor.status().phase).toBe('running');
+    expect(f.child.connected).toBe(true);
+    expect(await readFile(join(f.root, 'journal.json'))).toEqual(beforeJournal);
+    const record = JSON.parse(
+      await readFile(join(f.root, 'restore-jobs', f.request.id, 'state.json'), 'utf8'),
+    );
+    expect(record).toEqual(admitted.record);
+    expect(record.execution).toBeUndefined();
+    expect(f.supervisor.journal.state.restoreStop).toBeNull();
+    expect(existsSync(join(f.root, `restore-${f.request.id}`))).toBe(false);
+    expect(existsSync(restoreBarrierPath(f.databasePath))).toBe(false);
+    expect(
+      sent.mock.calls.some(
+        ([message]) =>
+          !!message &&
+          typeof message === 'object' &&
+          'kind' in message &&
+          ['pause', 'restore-stop'].includes(String(message.kind)),
+      ),
+    ).toBe(false);
+    const refreshed = f.supervisor.estimatePreparedRestore(request);
+    expect(refreshed.resources.sufficient).toBe(false);
+    expect(() =>
+      f.supervisor.estimatePreparedRestore({ ...request, epoch: randomUUID() }),
+    ).toThrow();
+  },
+);
+
+test('capacity probing cannot cross original proof expiry and publish a pause plan', async () => {
+  let clock: number | undefined;
+  let expire = false;
+  const f = await admissionFixture(
+    undefined,
+    () => clock ?? Date.now(),
+    {},
+    () => {
+      if (expire) clock = Date.now() + 60_000;
+      return { device: '1', availableBytes: 10n ** 12n };
+    },
+  );
+  const admitted = await f.supervisor.admitPreparedRestore(f.request);
+  const pause = vi.spyOn(RestoreJobs.prototype, 'planPause');
+  expire = true;
+  await expect(
+    f.supervisor.beginPreparedRestore({
+      id: f.request.id,
+      intentHash: admitted.record.intentHash,
+      continuationToken: admitted.continuationToken!,
+    }),
+  ).rejects.toThrow('no longer current');
+  expect(pause).not.toHaveBeenCalled();
+  expect(f.supervisor.status().phase).toBe('running');
+  expect(f.supervisor.journal.state.restoreStop).toBeNull();
+  expect(
+    JSON.parse(await readFile(join(f.root, 'restore-jobs', f.request.id, 'state.json'), 'utf8')),
+  ).toEqual(admitted.record);
+});

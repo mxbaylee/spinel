@@ -9,7 +9,11 @@ import type {
   RestorePreview,
   RestoreStatus,
 } from '../../shared/restore.ts';
-import { validRestorePreview } from '../../shared/restore.ts';
+import {
+  validRestorePreview,
+  validRestoreResources,
+  validRestoreVerification,
+} from '../../shared/restore.ts';
 import { validRestoreJobRecord } from '../maintenance/restore-jobs.ts';
 import type { RestoreJobRecord } from '../maintenance/restore-jobs.ts';
 import { processIdentity } from '../maintenance/journal.ts';
@@ -124,6 +128,7 @@ interface Job {
   directory?: string;
   keyFile?: string;
   prepared?: PreparedRestoreSource;
+  previewDatabaseBytes?: number;
   task?: Promise<void>;
   initialization?: Promise<void>;
   finishing?: Promise<void>;
@@ -553,6 +558,8 @@ export class RestoreRegistry {
           sourceCreatedAt: null,
           target: { ...target },
           preview: null,
+          verification: null,
+          resources: null,
           confirmation: null,
           consequencesVersion: 1,
           error: null,
@@ -641,8 +648,8 @@ export class RestoreRegistry {
         this.assertActive(job);
         job.public.state = 'preparing';
         await this.prepare(job, path, { bytes, sha256 }, [{ path: job.keyFile! }], signal);
-      } catch {
-        await this.finish(job, 'failed');
+      } catch (error) {
+        await this.finish(job, 'failed', error);
       } finally {
         signal.removeEventListener('abort', disconnect);
         releaseDrain?.();
@@ -688,8 +695,8 @@ export class RestoreRegistry {
         ],
         signal,
       );
-    } catch {
-      await this.finish(job, 'failed');
+    } catch (error) {
+      await this.finish(job, 'failed', error);
     } finally {
       try {
         await remote?.close?.();
@@ -781,24 +788,61 @@ export class RestoreRegistry {
         heldTrashBatches: report.ownership.heldTrashBatches,
       };
       if (!validRestorePreview(counts)) throw new Error('Invalid reconciliation preview.');
+      if (
+        !Number.isSafeInteger(preview.databaseBytes) ||
+        preview.databaseBytes < 4096 ||
+        preview.databaseBytes > DATABASE_LIMIT
+      )
+        throw new Error('Invalid preview size.');
+      job.previewDatabaseBytes = preview.databaseBytes;
       job.public.preview = counts;
       job.public.bytes = expectedArchive.bytes;
       job.public.sourceSha256 = expectedArchive.sha256;
       job.public.sourceCreatedAt = job.prepared.recovery.createdAt;
-      job.public.confirmation = digest({
-        source: expectedArchive,
-        target: job.public.target,
-        origin: this.options.origin,
-        image: this.options.image,
-        spacesEnabled: this.options.spacesEnabled,
-        preview: counts,
-        consequencesVersion: 1,
-      });
+      const verification = {
+        applicationCompatible: true as const,
+        sourceCompatible: true as const,
+        databaseVerified: true as const,
+        tables: job.prepared.tables,
+        rows: job.prepared.rows,
+        snapshots: job.prepared.snapshots,
+        images: job.prepared.images,
+      };
+      if (!validRestoreVerification(verification))
+        throw new Error('Invalid verification coverage.');
+      job.public.verification = verification;
     } finally {
       await preview.dispose();
       await rm(path, { force: true });
     }
     this.assertActive(job);
+    const estimate = await this.control().estimate({
+      ...job.public.target,
+      archiveBytes: expectedArchive.bytes,
+      databaseBytes: job.prepared.databaseBytes,
+      previewDatabaseBytes: job.previewDatabaseBytes!,
+    });
+    this.assertActive(job);
+    if (
+      !estimate ||
+      estimate.target?.generationId !== job.public.target.generationId ||
+      estimate.target?.epoch !== job.public.target.epoch ||
+      !validRestoreResources(estimate.resources)
+    )
+      throw new Error('Invalid capacity evidence.');
+    job.public.resources = structuredClone(estimate.resources);
+    if (!estimate.resources.sufficient) throw new RecoveryResourceError('disk-space');
+    job.public.confirmation = digest({
+      source: expectedArchive,
+      target: job.public.target,
+      origin: this.options.origin,
+      image: this.options.image,
+      spacesEnabled: this.options.spacesEnabled,
+      preview: job.public.preview,
+      previewDatabaseBytes: job.previewDatabaseBytes,
+      verification: job.public.verification,
+      consequencesVersion: 1,
+    });
     await rm(archive, { force: true }); // verified source owns its own authenticated ciphertext copy
     this.assertActive(job);
     job.public.state = 'ready';
@@ -831,6 +875,13 @@ export class RestoreRegistry {
     if (!['ready', 'admitting', 'accepted'].includes(job.public.state))
       throw new RestoreRegistryError(409, 'Restore preparation is not ready.');
     if (!job.admission) {
+      if (
+        !job.previewDatabaseBytes ||
+        !validRestoreResources(job.public.resources) ||
+        !job.public.resources.sufficient ||
+        !validRestoreVerification(job.public.verification)
+      )
+        throw new RestoreRegistryError(409, 'Prepare and verify this restore again.');
       if (proof.actorId !== actor || proof.sessionHash !== session)
         throw new RestoreRegistryError(409, 'Restore confirmation belongs to another account.');
       job.proof = structuredClone(proof);
@@ -841,6 +892,7 @@ export class RestoreRegistry {
         ...job.public.target,
         authority: structuredClone(proof),
         confirmedAt: this.now(),
+        previewDatabaseBytes: job.previewDatabaseBytes,
         source: {
           archive: { ...source.archive },
           databasePath: source.databasePath,
@@ -934,7 +986,7 @@ export class RestoreRegistry {
       job.directory = undefined;
     }
   }
-  private async finish(job: Job, state: 'failed' | 'cancelled' | 'expired') {
+  private async finish(job: Job, state: 'failed' | 'cancelled' | 'expired', error?: unknown) {
     if (job.admission) return; // ambiguous supervisor custody requires explicit recovery
     if (job.finishing) return job.finishing;
     job.controller.abort();
@@ -943,7 +995,12 @@ export class RestoreRegistry {
         await this.cleanup(job);
         this.releaseLease(job);
         job.public.state = state;
-        job.public.error = state === 'failed' ? FAILURE : null;
+        job.public.error =
+          state !== 'failed'
+            ? null
+            : error instanceof RecoveryResourceError
+              ? new RecoveryResourceError(error.code).message
+              : FAILURE;
       } catch {
         this.db
           .prepare('UPDATE backup_state SET lease=? WHERE id=1 AND owner=?')

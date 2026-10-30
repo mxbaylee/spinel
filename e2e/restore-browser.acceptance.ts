@@ -14,6 +14,7 @@ import { join, relative, resolve } from 'node:path';
 import { promisify } from 'node:util';
 import { chromium, expect } from '@playwright/test';
 import type { Browser, Page } from '@playwright/test';
+import { validRestoreJobRecord } from '../src/server/maintenance/restore-jobs.ts';
 import type { RestoreRichMetadata } from '../src/server/maintenance/restore-rich-fixture.ts';
 import {
   prepareRichRestoreBoundary,
@@ -23,11 +24,13 @@ import { expectNativeSheetValue } from './native-sheet-value.ts';
 import { textPoint } from './doc-touch.ts';
 
 const run = promisify(execFile);
-const image = process.env.SPINEL_RESTORE_BROWSER_IMAGE;
-if (!image || !/^sha256:[a-f0-9]{64}$/.test(image))
+const configuredImage = process.env.SPINEL_RESTORE_BROWSER_IMAGE;
+if (!configuredImage || !/^sha256:[a-f0-9]{64}$/.test(configuredImage))
   throw new Error(
     'Set SPINEL_RESTORE_BROWSER_IMAGE to the immutable ID of the current production Dockerfile build.',
   );
+// Preserve the validated string type across helper closures.
+const image = configuredImage;
 const project = resolve('.');
 const output = resolve(
   process.env.SPINEL_RESTORE_BROWSER_EVIDENCE ?? 'test-results/spn112-real-browser',
@@ -50,6 +53,14 @@ let exit: Promise<number | null> | undefined;
 let succeeded = false;
 let shutdownPromise: Promise<void> | undefined;
 let containerExit: number | null | undefined;
+let servingDeadline: ReturnType<typeof setTimeout> | undefined;
+let deadlineExpired = false;
+let interrupted = false;
+let abortPromise: Promise<void> | undefined;
+let servingCreated = false;
+const helperNames = new Set<string>();
+const profile = ['--memory=1024m', '--memory-swap=1024m', '--cpus=0.75', '--pids-limit=128'];
+const fixtureUser = `${process.getuid!()}:${process.getgid!()}`;
 let pageErrors = 0;
 const browserTraffic: Array<{ kind: string; route: string; status?: number }> = [];
 const routeClass = (address: string) => {
@@ -80,7 +91,10 @@ const artifact: Record<string, unknown> = {
   containerCpus: 0.75,
   containerPids: 128,
   supervisorOldSpaceMiB: 64,
-  fixtureDriverOldSpaceMiB: 128,
+  persistentServingFixtureProcesses: 0,
+  bootstrapOldSpaceMiB: 256,
+  coldProbeOldSpaceMiB: 128,
+  observation: 'Host CLI and bounded file reads; shipped supervisor is container PID 1',
   volume,
   storage:
     'Durable Linux named volume for workspace/recovery; private host bind for source exchange and evidence only',
@@ -95,7 +109,8 @@ async function poll<T>(
   while (Date.now() < deadline) {
     const value = await read().catch(() => null);
     if (value !== null && accept(value)) return value;
-    if (child && child.exitCode !== null) throw new Error('Fixture exited before acceptance.');
+    if (child && child.exitCode !== null)
+      throw new Error('Shipped supervisor exited before acceptance.');
     await new Promise((resolveWait) => setTimeout(resolveWait, 100));
   }
   throw new Error('Bounded acceptance observation timed out.');
@@ -137,29 +152,210 @@ async function capture(page: Page, state: string, restoreRegion = true) {
   await page.setViewportSize({ width: 1280, height: 1000 });
   await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'reduce' });
 }
+type ContainerState = { running: boolean; pid: number; exitCode: number; oomKilled: boolean };
+async function containerState(name: string): Promise<ContainerState> {
+  const { stdout } = await run('docker', ['inspect', '--format', '{{json .State}}', name], {
+    timeout: 10_000,
+    maxBuffer: 16_384,
+  });
+  const value = JSON.parse(stdout);
+  if (
+    typeof value.Running !== 'boolean' ||
+    !Number.isInteger(value.Pid) ||
+    !Number.isInteger(value.ExitCode) ||
+    typeof value.OOMKilled !== 'boolean'
+  )
+    throw new Error('Invalid container ownership observation.');
+  return {
+    running: value.Running,
+    pid: value.Pid,
+    exitCode: value.ExitCode,
+    oomKilled: value.OOMKilled,
+  };
+}
+async function removeOwnedContainer(name: string, force: boolean) {
+  await run('docker', ['rm', ...(force ? ['--force'] : []), name], {
+    timeout: 10_000,
+    maxBuffer: 4096,
+  }).catch(() => {});
+  const absent = await run(
+    'docker',
+    ['container', 'ls', '--all', '--filter', `name=^/${name}$`, '--format', '{{.ID}}'],
+    { timeout: 10_000, maxBuffer: 4096 },
+  ).then(
+    (result) => result.stdout.trim() === '',
+    () => false,
+  );
+  const cleanup = (artifact.containerCleanup ??= {}) as Record<string, string>;
+  cleanup[name] = absent ? 'confirmed-absent' : 'unconfirmed';
+  return absent;
+}
+async function helper(mode: 'bootstrap' | 'cold') {
+  if (interrupted || deadlineExpired) throw new Error('Acceptance was interrupted.');
+  const name = `${container}-${mode}`;
+  helperNames.add(name); // Include uncertain launches in bounded failure containment.
+  await run(
+    'docker',
+    [
+      'run',
+      '--pull=never',
+      '--name',
+      name,
+      ...profile,
+      '--network=none',
+      '--user',
+      fixtureUser,
+      '-v',
+      `${join(project, 'e2e/restore-browser-fixture.ts')}:/app/e2e/restore-browser-fixture.ts:ro`,
+      '-v',
+      `${directory}:/fixture`,
+      '-v',
+      `${volume}:/state${mode === 'cold' ? ':ro' : ''}`,
+      '-e',
+      `SPINEL_IMAGE=${image}`,
+      '-w',
+      '/app',
+      image,
+      'node',
+      `--max-old-space-size=${mode === 'bootstrap' ? 256 : 128}`,
+      '--max-semi-space-size=8',
+      'e2e/restore-browser-fixture.ts',
+      `--${mode}`,
+    ],
+    { timeout: mode === 'bootstrap' ? 45_000 : 20_000, maxBuffer: 4096 },
+  );
+  const state = await containerState(name);
+  artifact[`${mode}Closure`] = state;
+  if (state.running || state.pid !== 0 || state.exitCode !== 0 || state.oomKilled)
+    throw new Error('Acceptance helper did not close successfully.');
+  if (!(await removeOwnedContainer(name, false)))
+    throw new Error('Helper removal remains unconfirmed.');
+  helperNames.delete(name);
+}
+async function servingRead(path: string, maxBuffer = 32_768) {
+  const { stdout } = await run('docker', ['exec', container, 'cat', path], {
+    timeout: 5000,
+    maxBuffer,
+  });
+  return stdout;
+}
+async function observeOutcome() {
+  const { stdout } = await run(
+    'docker',
+    ['exec', container, 'ls', '-1', '/state/recovery/restore-jobs'],
+    {
+      timeout: 5000,
+      maxBuffer: 4096,
+    },
+  );
+  const names = stdout.trim().split('\n').filter(Boolean);
+  if (names.length !== 1 || !/^[a-f0-9-]{36}$/.test(names[0])) return null;
+  const value: unknown = JSON.parse(
+    await servingRead(`/state/recovery/restore-jobs/${names[0]}/state.json`, 1024 * 1024),
+  );
+  if (!validRestoreJobRecord(value, names[0]))
+    throw new Error('Invalid canonical outcome evidence.');
+  const journal = JSON.parse(await servingRead('/state/recovery/journal.json'));
+  const trial = value.execution?.trial;
+  return {
+    outcome: value.phase,
+    phase: journal.phase,
+    sourceSha256: value.intent.source.archive.sha256,
+    selected:
+      !!trial &&
+      trial.generationId === journal.generationId &&
+      trial.epoch === journal.epoch &&
+      journal.restoreJob == null &&
+      ['pid', 'start', 'boot', 'token'].every(
+        (key) => journal.child?.[key] === trial.child[key as keyof typeof trial.child],
+      ),
+  };
+}
+async function servingResources() {
+  const number = async (path: string) => {
+    const text = (await servingRead(path)).trim();
+    if (!/^\d+$/.test(text) || !Number.isSafeInteger(Number(text)))
+      throw new Error('Invalid serving resource measurement.');
+    return Number(text);
+  };
+  // Sequential tiny cat processes do not load another Node/SDK in the serving cgroup.
+  return {
+    memoryLimitBytes: await number('/sys/fs/cgroup/memory.max'),
+    swapLimitBytes: await number('/sys/fs/cgroup/memory.swap.max'),
+    cpuMax: (await servingRead('/sys/fs/cgroup/cpu.max')).trim(),
+    pidsMax: await number('/sys/fs/cgroup/pids.max'),
+    memoryPeakBytes: await number('/sys/fs/cgroup/memory.peak'),
+    memoryCurrentBytes: await number('/sys/fs/cgroup/memory.current'),
+    peakScope: 'Serving cgroup through pre-shutdown observation; excludes later cold helper',
+  };
+}
 async function shutdown() {
   return (shutdownPromise ??= (async () => {
-    // A timed-out ownership command may leave its Docker process running.
-    await run('docker', ['rm', '--force', `${container}-init`], {
-      timeout: 10_000,
-      maxBuffer: 4096,
-    }).catch(() => {});
+    if (servingDeadline) clearTimeout(servingDeadline);
     await browser?.close().catch(() => {});
     browser = undefined;
-    if (child && child.exitCode === null) {
+    // A timed-out Docker client can leave its owned helper container alive.
+    for (const name of [`${container}-init`, ...helperNames])
+      await removeOwnedContainer(name, true);
+    if (servingCreated) {
+      artifact.servingResources = await servingResources().catch(() => null);
       await run('docker', ['stop', '--time', '30', container], {
         timeout: 40_000,
         maxBuffer: 4096,
       }).catch(() => {});
-      const completed = await Promise.race([
-        exit!,
-        new Promise<null>((resolveWait) => setTimeout(() => resolveWait(null), 5000)),
-      ]);
-      containerExit = completed;
-      if (completed === null && child.exitCode === null)
+      if (exit) {
+        const completed = await Promise.race([
+          exit,
+          new Promise<null>((resolveWait) => {
+            const timer = setTimeout(() => resolveWait(null), 5000);
+            timer.unref();
+          }),
+        ]);
+        artifact.attachedDockerExit = completed;
+      }
+      let state = await containerState(container).catch(() => null);
+      if (!state || state.running || state.pid !== 0) {
         await run('docker', ['kill', container], { timeout: 10_000, maxBuffer: 4096 }).catch(
           () => {},
         );
+        state = await containerState(container).catch(() => null);
+      }
+      artifact.supervisorClosure = state;
+      const logs = await run('docker', ['logs', '--tail', '30', container], {
+        timeout: 5000,
+        maxBuffer: 16_384,
+      }).catch(() => null);
+      if (logs) {
+        const tail = (logs.stderr + logs.stdout).slice(-16_384);
+        const errno = /errno:\s*(-?\d{1,8})/.exec(tail)?.[1];
+        artifact.serviceDiagnostic = {
+          errorCode: /code:\s*['"](E[A-Z0-9_]{1,63})['"]/.exec(tail)?.[1] ?? null,
+          errno: errno === undefined ? null : Number(errno),
+          syscall:
+            /syscall:\s*['"](listen|bind|open|chmod|stat|read|unlink)['"]/.exec(tail)?.[1] ?? null,
+        };
+      } // Raw process logs, paths and source material are never persisted.
+
+      if (
+        state &&
+        !state.running &&
+        state.pid === 0 &&
+        state.exitCode === 0 &&
+        !state.oomKilled &&
+        artifact.attachedDockerExit === 0
+      ) {
+        containerExit = state.exitCode;
+        await writeFile(
+          join(directory, 'supervisor-closed.json'),
+          JSON.stringify({
+            image,
+            container,
+            ...state,
+            confirmedAt: new Date().toISOString(),
+          }),
+          { mode: 0o600 },
+        );
+      }
     }
     for (const socket of sockets) socket.destroy();
     proxy.closeAllConnections();
@@ -167,6 +363,35 @@ async function shutdown() {
       await new Promise<void>((resolveClose) => proxy.close(() => resolveClose()));
   })());
 }
+
+function interrupt(signal: 'SIGTERM' | 'SIGINT') {
+  interrupted = true;
+  deadlineExpired = true;
+  process.exitCode = 1;
+  // The owner watchdog allows only five seconds before SIGKILL. Immediately
+  // contain exact registered containers; do not spend that grace on a normal
+  // application drain. Interrupted evidence/volumes are always retained.
+  abortPromise ??= (async () => {
+    artifact.interrupted = signal;
+    await Promise.all(
+      [...(servingCreated ? [container] : []), ...helperNames, `${container}-init`].map((name) =>
+        run('docker', ['kill', name], {
+          timeout: 3000,
+          maxBuffer: 4096,
+        }).catch(() => {}),
+      ),
+    );
+    await writeFile(
+      join(directory, 'interrupted.json'),
+      JSON.stringify({ signal, stage, container, volume }),
+      { mode: 0o600 },
+    );
+    await shutdown();
+  })();
+  void abortPromise.catch(() => {});
+}
+process.once('SIGTERM', () => interrupt('SIGTERM'));
+process.once('SIGINT', () => interrupt('SIGINT'));
 
 try {
   await mkdir(output, { recursive: true });
@@ -353,45 +578,108 @@ try {
     ],
     { timeout: 15_000, maxBuffer: 4096 },
   );
+  setStage('bootstrapping-closed-workspace');
+  await helper('bootstrap');
+  setStage('starting-shipped-supervisor');
+  if (interrupted) throw new Error('Acceptance was interrupted.');
+  servingCreated = true;
   child = spawn(
     'docker',
     [
       'run',
-      '--rm',
       '--pull=never',
       '--name',
       container,
-      '--memory=1024m',
-      '--memory-swap=1024m',
-      '--cpus=0.75',
-      '--pids-limit=128',
+      ...profile,
       '--user',
-      `${process.getuid!()}:${process.getgid!()}`,
+      fixtureUser,
       '-p',
       `127.0.0.1:${httpPort}:3199`,
-      '-v',
-      `${join(project, 'e2e/restore-browser-fixture.ts')}:/app/e2e/restore-browser-fixture.ts:ro`,
-      '-v',
-      `${directory}:/fixture`,
       '-v',
       `${volume}:/state`,
       '-e',
       `SPINEL_IMAGE=${image}`,
+      '-e',
+      'DATABASE_PATH=/state/data/workspace.sqlite',
+      '-e',
+      `APP_ORIGIN=${origin}`,
+      '-e',
+      'SPINEL_MAINTENANCE_ROOT=/state/recovery',
+      '-e',
+      'SPINEL_MAINTENANCE_PORT=0',
+      '-e',
+      'SPINEL_STATIC_DIRECTORY=/app/dist',
+      '-e',
+      'PORT=3199',
+      '-e',
+      'HOST=0.0.0.0',
+      '-e',
+      'BACKUP_CONFIG_PATH=/state/data/absent-backup-config',
       '-w',
       '/app',
       image,
       'node',
-      '--max-old-space-size=128',
-      'e2e/restore-browser-fixture.ts',
-      'e2e/restore-rich-acceptance.ts',
-      'e2e/native-sheet-value.ts',
-      'e2e/doc-touch.ts',
-      'src/server/maintenance/restore-rich-fixture.ts',
+      '--max-old-space-size=64',
+      '/app/server/supervisor.ts',
     ],
     { stdio: 'ignore' },
   );
-  exit = new Promise((resolveExit) => child!.once('exit', resolveExit));
+  exit = new Promise((resolveExit) => child!.once('close', resolveExit));
   child.on('error', () => {});
+  const control = async (action: string, operationId?: string) => {
+    if (interrupted) throw new Error('Acceptance was interrupted.');
+    const result = await run(
+      'docker',
+      [
+        'exec',
+        container,
+        'node',
+        '--max-old-space-size=64',
+        '/app/scripts/deploy/maintenance.ts',
+        action,
+        ...(operationId ? ['--operation', operationId] : []),
+      ],
+      { timeout: 70_000, maxBuffer: 32_768 },
+    );
+    return JSON.parse(result.stdout) as { phase: string };
+  };
+  const initial = await poll(
+    () => control('status'),
+    (value) => typeof value.phase === 'string',
+    30_000,
+  );
+  const command = (await servingRead('/proc/1/cmdline', 4096)).split('\0').filter(Boolean);
+  if (
+    command.length !== 3 ||
+    !/^(?:.*\/)?node$/.test(command[0]) ||
+    command[1] !== '--max-old-space-size=64' ||
+    command[2] !== '/app/server/supervisor.ts'
+  )
+    throw new Error('Shipped supervisor is not the expected container PID 1.');
+  const pid1Status = await servingRead('/proc/1/status', 16_384);
+  const parentPid = Number(/^PPid:\s+(\d+)$/m.exec(pid1Status)?.[1]);
+  const userIds = /^Uid:\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)$/m.exec(pid1Status)?.slice(1).map(Number);
+  if (parentPid !== 0 || !userIds || userIds.some((uid) => uid !== process.getuid!()))
+    throw new Error('Unexpected shipped supervisor process ownership.');
+  artifact.servingPid1 = { pid: 1, parentPid, userIds, command };
+  const operationId = randomUUID();
+  setStage('cli-verify');
+  await control('verify', operationId);
+  setStage('cli-start');
+  await control('start', operationId);
+  setStage('cli-resume');
+  const resumed = await control('resume', operationId);
+  if (resumed.phase !== 'running') throw new Error('Shipped CLI did not resume workspace.');
+  artifact.shippedCli = {
+    initial: initial.phase,
+    verify: true,
+    start: true,
+    resume: resumed.phase,
+  };
+  servingDeadline = setTimeout(() => {
+    deadlineExpired = true;
+    void shutdown();
+  }, 5 * 60_000);
   const source = await poll(
     () =>
       privateJson<{
@@ -413,7 +701,6 @@ try {
     if (hash(await readFile(path)) !== expected)
       throw new Error('Shipped server source does not match current source.');
   artifact.shippedImage = shipped;
-  artifact.shippedCli = await privateJson('cli-proof.json');
   artifact.fixtureUid = process.getuid!();
   setStage('authenticating-browser');
   browser = await chromium.launch();
@@ -530,11 +817,16 @@ try {
     .getByRole('button', { name: 'Verify and restore workspace', exact: true })
     .click();
   const terminal = await poll(
-    () => privateJson<{ outcome: string; phase: string; sourceSha256: string }>('status.json'),
-    (value) => value.outcome === 'candidate-committed' && value.phase === 'running',
+    observeOutcome,
+    (value) =>
+      value !== null &&
+      value.outcome === 'candidate-committed' &&
+      value.phase === 'running' &&
+      value.selected,
     140_000,
   );
-  if (terminal.sourceSha256 !== source.sha256) throw new Error('Unexpected committed source.');
+  if (!terminal || terminal.sourceSha256 !== source.sha256)
+    throw new Error('Unexpected committed source.');
   setStage('checking-owner-session-reset');
   expect((await owner.context.request.get(`${origin}/api/auth/session`)).status()).toBe(401);
   setStage('authenticating-after-session-reset');
@@ -638,16 +930,19 @@ try {
   if (pageErrors) throw new Error('Browser reported an application exception.');
   setStage('closing-and-checking-content');
   await shutdown();
-  const proof = await privateJson<{
+  if (containerExit !== 0 || deadlineExpired)
+    throw new Error('Confirmed clean supervisor closure required.');
+  await helper('cold');
+  const coldProof = await privateJson<{
     committed: boolean;
     restoredContent: boolean;
     originalSessionExcluded: boolean;
     counter: number;
-    memoryLimitBytes: number | null;
-    cpuMax: string;
-    pidsMax: number | null;
-    memoryPeakBytes: number | null;
   }>('closed-proof.json');
+  const proof = {
+    ...coldProof,
+    ...(artifact.servingResources as Awaited<ReturnType<typeof servingResources>>),
+  };
   if (
     !proof.committed ||
     !proof.restoredContent ||
@@ -656,6 +951,7 @@ try {
     !Number.isSafeInteger(proof.counter) ||
     proof.counter < 4 ||
     proof.memoryLimitBytes !== 1024 * 1024 * 1024 ||
+    proof.swapLimitBytes !== 0 ||
     proof.cpuMax !== '75000 100000' ||
     proof.pidsMax !== 128 ||
     !Number.isSafeInteger(proof.memoryPeakBytes) ||
@@ -666,6 +962,7 @@ try {
   for (const [path, expected] of Object.entries(sourceHashes))
     if (hash(await readFile(path)) !== expected)
       throw new Error('Source changed during browser acceptance.');
+  if (interrupted || deadlineExpired) throw new Error('Acceptance was interrupted.');
   artifact.closedProof = proof;
   artifact.pageErrors = pageErrors;
   succeeded = true;
@@ -735,6 +1032,14 @@ try {
   process.exitCode = 1;
 } finally {
   await shutdown();
+  // Cold helper may fail after shutdown's initial containment. Keep all volumes
+  // and private evidence on any failure; remove only exact task-owned containers.
+  for (const name of helperNames) await removeOwnedContainer(name, true);
+  if (servingCreated && !(await removeOwnedContainer(container, containerExit !== 0))) {
+    succeeded = false;
+    process.exitCode = 1;
+  }
+  if (interrupted) succeeded = false;
   if (succeeded) {
     try {
       volumeDisposition = 'cleanup-unconfirmed';

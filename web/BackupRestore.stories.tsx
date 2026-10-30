@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { failure, pending } from '../.storybook/api.ts';
 import type { ApiMock } from '../.storybook/api.ts';
-import { RESTORE_CONSEQUENCES } from '../src/shared/restore.ts';
+import { RESTORE_CONSEQUENCES, RESTORE_RESOURCE_MESSAGES } from '../src/shared/restore.ts';
 import type { RestoreOutcome, RestorePreparation } from '../src/shared/restore.ts';
 import { BackupRestore } from './BackupRestore.tsx';
 import { refreshMaintenanceStatus } from './maintenanceState.ts';
@@ -31,6 +31,30 @@ const job: RestorePreparation = {
     isolatedGroups: 2,
     detachedRoots: 3,
     heldTrashBatches: 1,
+  },
+  verification: {
+    applicationCompatible: true,
+    sourceCompatible: true,
+    databaseVerified: true,
+    tables: 33,
+    rows: 200,
+    snapshots: 14,
+    images: 6,
+  },
+  resources: {
+    provisional: true,
+    checkedAt: now,
+    requiredAdditionalBytes: 768 * 1024 ** 2,
+    availableBytes: 4 * 1024 ** 3,
+    sufficient: true,
+    filesystems: [
+      {
+        purposes: ['application', 'preparation', 'recovery'],
+        requiredAdditionalBytes: 768 * 1024 ** 2,
+        availableBytes: 4 * 1024 ** 3,
+        sufficient: true,
+      },
+    ],
   },
   confirmation: 'b'.repeat(64),
   consequencesVersion: 1,
@@ -155,7 +179,105 @@ export const Ready: Story = {
     await expect(await canvas.findByText('Provisional access changes')).toBeVisible();
     await expect(canvas.getByText(job.sourceSha256!)).toBeVisible();
     await expect(canvas.getByText(/This workspace at/)).toBeVisible();
+    await expect(canvas.getByText('Verified backup')).toBeVisible();
+    await expect(canvas.getByText('Estimated disk space')).toBeVisible();
     await expect(canvas.queryByText(job.target.generationId)).toBeNull();
+  },
+};
+export const SeparateRecoveryVolume: Story = {
+  parameters: {
+    api: {
+      'GET /api/admin/restores': {
+        available: true,
+        outcome: null,
+        pending: false,
+        job: {
+          ...job,
+          resources: {
+            ...job.resources!,
+            requiredAdditionalBytes: 1024 ** 3,
+            availableBytes: 4 * 1024 ** 3,
+            filesystems: [
+              {
+                purposes: ['application', 'preparation'],
+                requiredAdditionalBytes: 512 * 1024 ** 2,
+                availableBytes: 2 * 1024 ** 3,
+                sufficient: true,
+              },
+              {
+                purposes: ['recovery'],
+                requiredAdditionalBytes: 512 * 1024 ** 2,
+                availableBytes: 2 * 1024 ** 3,
+                sufficient: true,
+              },
+            ],
+          },
+        },
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByText('Recovery volume')).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Review restore' })).toBeEnabled();
+  },
+};
+export const InsufficientDiskSpace: Story = {
+  parameters: {
+    api: {
+      'GET /api/admin/restores': {
+        available: true,
+        outcome: null,
+        pending: false,
+        job: {
+          ...job,
+          state: 'failed',
+          confirmation: null,
+          error: RESTORE_RESOURCE_MESSAGES['disk-space'],
+          resources: {
+            ...job.resources!,
+            availableBytes: 256 * 1024 ** 2,
+            sufficient: false,
+            filesystems: [
+              {
+                ...job.resources!.filesystems[0],
+                availableBytes: 256 * 1024 ** 2,
+                sufficient: false,
+              },
+            ],
+          },
+        },
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByText(/Editing has not been paused/)).toBeVisible();
+    await expect(canvas.queryByRole('button', { name: 'Review restore' })).toBeNull();
+    await expect(canvas.getByRole('button', { name: 'Prepare restore' })).toBeEnabled();
+  },
+};
+export const MemoryHeadroomRefusal: Story = {
+  parameters: {
+    api: {
+      'GET /api/admin/restores': {
+        available: true,
+        outcome: null,
+        pending: false,
+        job: {
+          ...job,
+          state: 'failed',
+          confirmation: null,
+          resources: null,
+          error: RESTORE_RESOURCE_MESSAGES['memory-headroom'],
+        },
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    await expect(
+      await within(canvasElement).findByText(RESTORE_RESOURCE_MESSAGES['memory-headroom']),
+    ).toBeVisible();
   },
 };
 export const SmallBackup: Story = {

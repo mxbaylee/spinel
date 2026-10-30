@@ -275,6 +275,7 @@ function admission() {
     confirmedAt: intent.confirmedAt,
     preview: intent.preview,
     consequenceEnvelope: 1,
+    previewDatabaseBytes: 8192,
     source: {
       archive: { ...intent.source.archive, path: '/srv/private/archive.spinel' },
       databasePath: '/srv/private/prepared.sqlite',
@@ -304,7 +305,12 @@ test('private trial cannot obtain a running restore target or admit another sour
   const { request } = admission();
   expect(() => bridge!.restoreController.target()).toThrow(RESTORE_RPC_ERROR);
   await expect(bridge!.restoreController.admit(request)).rejects.toThrow(RESTORE_RPC_ERROR);
-  expect(messages.some((item) => item.kind === 'restore-admit')).toBe(false);
+  await expect(bridge!.restoreController.estimate(capacityRequest())).rejects.toThrow(
+    RESTORE_RPC_ERROR,
+  );
+  expect(
+    messages.some((item) => item.kind === 'restore-admit' || item.kind === 'restore-estimate'),
+  ).toBe(false);
 });
 
 test('custody RPC requires its correlated action and validated original record before resolving', async () => {
@@ -416,3 +422,71 @@ test('observation timeout remains unknown and cannot hang a status request for t
   await vi.advanceTimersByTimeAsync(10_000);
   expect(await pending).toBe(RESTORE_RPC_ERROR);
 });
+
+function capacityReply() {
+  return {
+    target: { generationId: permit.generationId, epoch: permit.epoch },
+    resources: {
+      provisional: true as const,
+      checkedAt: Date.now(),
+      requiredAdditionalBytes: 300_000_000,
+      availableBytes: 500_000_000,
+      sufficient: true,
+      filesystems: [
+        {
+          purposes: ['application', 'preparation', 'recovery'] as Array<
+            'application' | 'preparation' | 'recovery'
+          >,
+          requiredAdditionalBytes: 300_000_000,
+          availableBytes: 500_000_000,
+          sufficient: true,
+        },
+      ],
+    },
+  };
+}
+const capacityRequest = () => ({
+  generationId: permit.generationId,
+  epoch: permit.epoch,
+  archiveBytes: 100,
+  databaseBytes: 4096,
+  previewDatabaseBytes: 8192,
+});
+
+test('capacity RPC returns only correlated path-free current-generation estimates without an admission', async () => {
+  const controller = await ordinaryController();
+  const pending = controller.estimate(capacityRequest()),
+    frame = messages.at(-1)!;
+  expect(frame.kind).toBe('restore-estimate');
+  const result = capacityReply();
+  message('restore-result', { action: 'restore-observe', requestId: frame.requestId, result });
+  let settled = false;
+  void pending.then(() => {
+    settled = true;
+  });
+  await Promise.resolve();
+  expect(settled).toBe(false);
+  message('restore-result', { action: frame.kind, requestId: frame.requestId, result });
+  await expect(pending).resolves.toEqual(result);
+  expect(
+    messages.some((value) => value.kind === 'restore-admit' || value.kind === 'restore-begin'),
+  ).toBe(false);
+});
+
+test.each(['stale-target', 'private-path', 'unsafe-number', 'missing-scope', 'closed-state'])(
+  'capacity RPC refuses %s evidence',
+  async (fault) => {
+    const controller = await ordinaryController();
+    const pending = controller.estimate(capacityRequest()),
+      frame = messages.at(-1)!;
+    const result = capacityReply();
+    if (fault === 'stale-target') result.target.epoch = randomUUID();
+    if (fault === 'private-path')
+      Object.assign(result.resources.filesystems[0], { path: '/private/recovery' });
+    if (fault === 'unsafe-number') result.resources.availableBytes = Number.MAX_SAFE_INTEGER + 1;
+    if (fault === 'missing-scope') result.resources.filesystems[0].purposes = ['application'];
+    if (fault === 'closed-state') state({ phase: 'draining' });
+    message('restore-result', { action: frame.kind, requestId: frame.requestId, result });
+    await expect(pending).rejects.toThrow(RESTORE_RPC_ERROR);
+  },
+);

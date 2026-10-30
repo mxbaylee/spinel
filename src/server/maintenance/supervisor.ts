@@ -1,3 +1,6 @@
+import { estimateRestoreCapacity, validRestorePreviewBytes } from './restore-capacity.ts';
+import type { RestoreCapacityVolume } from './restore-capacity.ts';
+import { RecoveryResourceError } from '../backup/resource-error.ts';
 import { prepareAndActivateRestoreOriginal } from './restore-original.ts';
 import { fork } from 'node:child_process';
 import type { ChildProcess } from 'node:child_process';
@@ -41,7 +44,11 @@ import type { OperationReceipt, ProcessIdentity, RecoveryJournalState } from './
 import { MAINTENANCE_CHANNEL } from './supervisor-client.ts';
 import { boundedRestoreRpc, RESTORE_RPC_ERROR, RESTORE_RPC_PENDING } from './restore-rpc.ts';
 import type { RestoreRpcAction } from './restore-rpc.ts';
-import type { RestoreObservation } from '../backup/restore-control.ts';
+import type {
+  RestoreCapacityRequest,
+  RestoreCapacityResult,
+  RestoreObservation,
+} from '../backup/restore-control.ts';
 import { shareWorkspaceOwnership } from './ownership.ts';
 import { processResourcesReleased, waitForProcessInventory } from './process-exit.ts';
 import { assertNoPendingRestore } from './restore-barrier.ts';
@@ -106,6 +113,7 @@ export interface RestoreAdmission {
   authority: RestoreAuthority;
   confirmedAt: number;
   preview: RestorePreview;
+  previewDatabaseBytes: number;
   consequenceEnvelope: 1;
   source: RestoreSourceInput;
 }
@@ -119,6 +127,8 @@ interface SupervisorOptions {
   /** Test seams select real disposable processes; never supplied over a control API. */
   createChild?: (groupToken: string, environment: NodeJS.ProcessEnv) => ChildProcess;
   now?: () => number;
+  /** Test-only per-volume disk observation; never accepted by a control request. */
+  restoreCapacityVolume?: RestoreCapacityVolume;
   budgets?: {
     drainMs?: number;
     stopMs?: number;
@@ -1285,6 +1295,24 @@ export class MaintenanceSupervisor {
         await this.recheckRestoreAuthorityOwned(request.id, record.intent.authority);
         assertRunning();
         signal.throwIfAborted();
+        const capacity = estimateRestoreCapacity(
+          {
+            databasePath: this.journal.databasePath,
+            identity: record.intent.target.identity,
+            recoveryRoot: this.journal.root,
+            archiveBytes: record.intent.source.archive.bytes,
+            databaseBytes: record.intent.source.candidate.bytes,
+            previewDatabaseBytes: record.intent.previewDatabaseBytes,
+            sourceRetained: true,
+            checkedAt: this.now(),
+          },
+          this.options.restoreCapacityVolume,
+        );
+        // No pause/witness/custody is possible before this whole-cutover check.
+        // Recheck authority after synchronous filesystem work too.
+        assertRunning();
+        signal.throwIfAborted();
+        if (!capacity.sufficient) throw new RecoveryResourceError('disk-space');
         planAttempted = true;
         const planned = jobs.planPause(
           request.id,
@@ -1515,6 +1543,7 @@ export class MaintenanceSupervisor {
       !policy?.image ||
       !validRestoreAuthority(request.authority) ||
       !validRestorePreview(request.preview) ||
+      !validRestorePreviewBytes(request.previewDatabaseBytes) ||
       request.consequenceEnvelope !== 1 ||
       !Number.isSafeInteger(request.confirmedAt) ||
       request.confirmedAt > this.now()
@@ -1616,6 +1645,7 @@ export class MaintenanceSupervisor {
         authority: request.authority,
         confirmedAt: request.confirmedAt,
         preview: structuredClone(request.preview),
+        previewDatabaseBytes: request.previewDatabaseBytes,
         consequenceEnvelope: request.consequenceEnvelope,
         continuationHash: existing?.intent.continuationHash ?? tokenHash(token!),
       };
@@ -2904,7 +2934,9 @@ export class MaintenanceSupervisor {
         this.restoreAdmissions > 0 ||
         !!this.restoreAdmissionAbort ||
         !!this.restoreExecution ||
-        [...this.restoreRpcRequests.values()].some((action) => action !== 'restore-observe') ||
+        [...this.restoreRpcRequests.values()].some(
+          (action) => action !== 'restore-observe' && action !== 'restore-estimate',
+        ) ||
         records.some((item) => item.phase !== 'failed' && !isCommittedRestoreJob(item));
       assertSelected();
       return { target, record, pending };
@@ -2912,9 +2944,61 @@ export class MaintenanceSupervisor {
       jobs.close();
     }
   }
+  /** Read-only estimate for the current application's verified preparation.
+   * It cannot pause, retain source, renew authority or authorize an opening. */
+  estimatePreparedRestore(request: RestoreCapacityRequest): RestoreCapacityResult {
+    const state = this.journal.state;
+    const child = this.child;
+    const assertCurrent = () => {
+      const current = this.journal.state;
+      if (
+        this.closing ||
+        !child?.connected ||
+        child !== this.child ||
+        !this.childReady ||
+        !this.childOwned ||
+        current.phase !== 'running' ||
+        current.instanceId !== state.instanceId ||
+        current.restoreStop ||
+        current.generationId !== request.generationId ||
+        current.epoch !== request.epoch ||
+        !current.child ||
+        current.child.pid !== child.pid ||
+        !state.child ||
+        current.child.start !== state.child.start ||
+        current.child.boot !== state.child.boot ||
+        current.child.token !== state.child.token ||
+        !state.databaseIdentity ||
+        !sameFile(current.databaseIdentity, state.databaseIdentity)
+      )
+        throw new Error(RESTORE_RPC_ERROR);
+      this.assertGeneration();
+    };
+    assertCurrent();
+    const resources = estimateRestoreCapacity(
+      {
+        databasePath: this.journal.databasePath,
+        identity: state.databaseIdentity!,
+        recoveryRoot: this.journal.root,
+        archiveBytes: request.archiveBytes,
+        databaseBytes: request.databaseBytes,
+        previewDatabaseBytes: request.previewDatabaseBytes,
+        sourceRetained: false,
+        checkedAt: this.now(),
+      },
+      this.options.restoreCapacityVolume,
+    );
+    assertCurrent();
+    return { target: { generationId: request.generationId, epoch: request.epoch }, resources };
+  }
   private async restoreRpc(child: ChildProcess, value: Record<string, unknown>) {
     const action = value.kind;
-    if (action !== 'restore-admit' && action !== 'restore-begin' && action !== 'restore-observe')
+    if (
+      action !== 'restore-admit' &&
+      action !== 'restore-begin' &&
+      action !== 'restore-observe' &&
+      action !== 'restore-estimate'
+    )
       return;
     const requestId = value.requestId;
     if (typeof requestId !== 'string' || !uuidPattern.test(requestId)) return;
@@ -2947,7 +3031,24 @@ export class MaintenanceSupervisor {
       )
         throw new Error(RESTORE_RPC_ERROR);
       const request = value.request;
-      if (value.kind === 'restore-admit') {
+      if (value.kind === 'restore-estimate') {
+        if (
+          !exact(request, [
+            'generationId',
+            'epoch',
+            'archiveBytes',
+            'databaseBytes',
+            'previewDatabaseBytes',
+          ]) ||
+          Object.keys(request).length !== 5 ||
+          typeof request.generationId !== 'string' ||
+          !uuidPattern.test(request.generationId) ||
+          typeof request.epoch !== 'string' ||
+          !uuidPattern.test(request.epoch)
+        )
+          throw new Error(RESTORE_RPC_ERROR);
+        reply(this.estimatePreparedRestore(request as unknown as RestoreCapacityRequest));
+      } else if (value.kind === 'restore-admit') {
         if (
           !exact(request, [
             'id',
@@ -2956,6 +3057,7 @@ export class MaintenanceSupervisor {
             'authority',
             'confirmedAt',
             'preview',
+            'previewDatabaseBytes',
             'consequenceEnvelope',
             'source',
           ])
@@ -3030,7 +3132,8 @@ export class MaintenanceSupervisor {
       if (
         value.kind === 'restore-admit' ||
         value.kind === 'restore-begin' ||
-        value.kind === 'restore-observe'
+        value.kind === 'restore-observe' ||
+        value.kind === 'restore-estimate'
       ) {
         await this.restoreRpc(child, value);
       } else if (

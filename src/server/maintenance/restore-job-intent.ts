@@ -3,6 +3,7 @@ import { isAbsolute, resolve } from 'node:path';
 import { validRestorePreview } from '../../shared/restore.ts';
 import type { RestorePreview } from '../../shared/restore.ts';
 import type { FileIdentity } from './journal.ts';
+import { validRestorePreviewBytes } from './restore-capacity.ts';
 import { validRestoreAuthority } from './restore-authority.ts';
 import type { RestoreAuthority } from './restore-authority.ts';
 import { validRestoreSourceManifest } from './restore-files.ts';
@@ -37,6 +38,8 @@ export interface RestoreJobIntent {
   confirmedAt: number;
   /** Provisional counts shown at confirmation, retained without later rewriting. */
   preview: RestorePreview;
+  /** Observed completed preview size; disk availability is deliberately not immutable. */
+  previewDatabaseBytes: number;
   /** Confirmation covers the complete consequence envelope despite provisional counts. */
   consequenceEnvelope: 1;
 }
@@ -63,11 +66,13 @@ export function validRestoreJobIntent(value: unknown): value is RestoreJobIntent
       'continuationHash',
       'confirmedAt',
       'preview',
+      'previewDatabaseBytes',
       'consequenceEnvelope',
     ]) ||
     value.version !== 1 ||
     !uuid(value.id) ||
     !validRestorePreview(value.preview) ||
+    !validRestorePreviewBytes(value.previewDatabaseBytes) ||
     value.consequenceEnvelope !== 1 ||
     !validRestoreSourceManifest(value.source) ||
     value.source.id !== value.id ||

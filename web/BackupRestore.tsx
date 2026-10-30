@@ -1,11 +1,14 @@
-import { useEffect, useId, useRef, useState } from 'react';
+import { Fragment, useEffect, useId, useRef, useState } from 'react';
 import { startAuthentication, WebAuthnAbortService } from '@simplewebauthn/browser';
 import type { PublicKeyCredentialRequestOptionsJSON } from '@simplewebauthn/browser';
 import { Button, Choice, Modal } from '../src/ui/redesign/Controls.tsx';
 import {
   RESTORE_CONSEQUENCES,
+  RESTORE_RESOURCE_MESSAGES,
   validRestoreOutcome,
   validRestorePreview,
+  validRestoreResources,
+  validRestoreVerification,
 } from '../src/shared/restore.ts';
 import type { RestoreOutcome, RestorePreparation, RestoreStatus } from '../src/shared/restore.ts';
 import { capturedMaintenanceEpoch, maintenanceFetch as fetch } from './maintenanceFetch.ts';
@@ -32,9 +35,11 @@ const admitted = (job: RestorePreparation | null) =>
   !!job && ['admitting', 'accepted', 'started'].includes(job.state);
 const time = (value: number | string) => new Date(value).toLocaleString();
 const size = (bytes: number) =>
-  bytes < 1024 * 1024
-    ? `${Math.max(1, Math.ceil(bytes / 1024))} KiB`
-    : `${(bytes / 1024 / 1024).toLocaleString(undefined, { maximumFractionDigits: 1 })} MiB`;
+  bytes >= 1024 ** 3
+    ? `${(bytes / 1024 ** 3).toLocaleString(undefined, { maximumFractionDigits: 1 })} GiB`
+    : bytes < 1024 * 1024
+      ? `${Math.max(1, Math.ceil(bytes / 1024))} KiB`
+      : `${(bytes / 1024 / 1024).toLocaleString(undefined, { maximumFractionDigits: 1 })} MiB`;
 const messages: Record<RestorePreparation['state'], string> = {
   uploading: 'Waiting for the encrypted backup upload.',
   preparing: 'Checking the encrypted backup and preparing an access preview…',
@@ -508,7 +513,15 @@ export function BackupRestore({
   }
   const occupied = active(job),
     retry = admitted(job) || (confirmed.current?.id === job?.id && !!confirmed.current);
-  const canReview = job?.state === 'ready' && !!job.preview && validRestorePreview(job.preview);
+  const canReview =
+    job?.state === 'ready' &&
+    validRestorePreview(job.preview) &&
+    validRestoreVerification(job.verification) &&
+    validRestoreResources(job.resources) &&
+    job.resources.sufficient;
+  const resourceFailure = Object.values(RESTORE_RESOURCE_MESSAGES).find(
+    (message) => message === job?.error,
+  );
   const mayRetry =
     !!job &&
     job.state !== 'started' &&
@@ -556,6 +569,59 @@ export function BackupRestore({
       </p>
     </div>
   );
+  const verification = job && validRestoreVerification(job.verification) && (
+    <div className="restore-preview">
+      <h4>Verified backup</h4>
+      <p>
+        Matches this workspace and application. The encrypted bundle, database integrity and
+        inventory, document snapshots and images passed verification.
+      </p>
+      <p className="sp-muted">
+        {job.verification.tables} tables · {job.verification.rows} rows ·{' '}
+        {job.verification.snapshots} snapshots · {job.verification.images} images
+      </p>
+      <p className="sp-muted">
+        Application startup and current access are checked during the supervised restore.
+      </p>
+    </div>
+  );
+  const resources = job && validRestoreResources(job.resources) && (
+    <div className="restore-preview" aria-label="Estimated disk space">
+      <h4>Estimated disk space</h4>
+      <dl className="restore-source-facts">
+        {job.resources.filesystems.map((filesystem) => (
+          <Fragment key={filesystem.purposes.join('-')}>
+            <dt>
+              {filesystem.purposes
+                .map(
+                  (purpose) =>
+                    ({
+                      application: 'Application',
+                      recovery: 'Recovery',
+                      preparation: 'Preparation',
+                    })[purpose],
+                )
+                .join(' / ')}{' '}
+              volume
+            </dt>
+            <dd>
+              {size(filesystem.requiredAdditionalBytes)} additional needed;{' '}
+              {size(filesystem.availableBytes)} available
+            </dd>
+          </Fragment>
+        ))}
+      </dl>
+      <p className="sp-muted">
+        Provisional estimate, checked {time(job.resources.checkedAt)}. Space is checked again before
+        editing is paused and is not reserved. Later database growth can require more space.
+      </p>
+      {!job.resources.sufficient && (
+        <p role="alert">
+          Not enough disk space. Free space and prepare again. Editing has not been paused.
+        </p>
+      )}
+    </div>
+  );
   return (
     <section className="admin-health-card admin-restore sp-ui" aria-label="Restore workspace">
       <div className="admin-section-heading">
@@ -581,7 +647,9 @@ export function BackupRestore({
               ? 'Uploading and checking the encrypted backup…'
               : job.error && admitted(job)
                 ? 'The confirmed restore needs attention. Its source remains protected; check status or retry the same confirmation.'
-                : messages[job.state]}
+                : job.state === 'failed' && resourceFailure
+                  ? resourceFailure
+                  : messages[job.state]}
           </p>
         )}
         {notice && <p role="status">{notice}</p>}
@@ -634,6 +702,8 @@ export function BackupRestore({
         </p>
       )}
       {job?.state === 'ready' && evidence}
+      {job?.state === 'ready' && verification}
+      {(job?.state === 'ready' || job?.state === 'failed') && resources}
       {job?.state === 'ready' && preview}
       {!originalExpired && (
         <div className="restore-actions">
@@ -823,6 +893,8 @@ export function BackupRestore({
         }
       >
         {evidence}
+        {verification}
+        {resources}
         <ul className="restore-consequences">
           {RESTORE_CONSEQUENCES.map((consequence) => (
             <li key={consequence}>{consequence}</li>

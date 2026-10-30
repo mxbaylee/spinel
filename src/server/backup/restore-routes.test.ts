@@ -54,6 +54,24 @@ async function fixture(controller = true) {
     ...(controller
       ? {
           restoreController: {
+            estimate: async () => ({
+              target,
+              resources: {
+                provisional: true,
+                checkedAt: Date.now(),
+                requiredAdditionalBytes: 512 * 1024 ** 2,
+                availableBytes: 1024 ** 3,
+                sufficient: true,
+                filesystems: [
+                  {
+                    purposes: ['application', 'preparation', 'recovery'],
+                    requiredAdditionalBytes: 512 * 1024 ** 2,
+                    availableBytes: 1024 ** 3,
+                    sufficient: true,
+                  },
+                ],
+              },
+            }),
             target: () => target,
             observe: async () => ({ target, record: null, pending: false }),
             admit: async () => {

@@ -1,17 +1,4 @@
-const messages = {
-  'memory-headroom':
-    'Recovery verification has insufficient memory headroom. Free memory or use a larger recovery host, then retry.',
-  'memory-limit':
-    'Recovery verification exceeded its memory limit. Use a recovery host with a larger verification budget.',
-  'time-limit':
-    'Recovery verification exceeded its time limit. Use a recovery host with a larger verification budget.',
-  'archive-size':
-    'The backup exceeds the encrypted archive size limit. Keep the source backup and use a larger recovery budget.',
-  'database-size':
-    'The restored database exceeds the recovery size limit. Keep the source backup and use a larger recovery budget.',
-  'disk-space':
-    'Recovery has insufficient disk space. Free space on the private backup or staging volume, then retry.',
-} as const;
+import { RESTORE_RESOURCE_MESSAGES as messages } from '../../shared/restore.ts';
 
 export type RecoveryResourceCode = keyof typeof messages;
 export const isRecoveryResourceCode = (value: unknown): value is RecoveryResourceCode =>

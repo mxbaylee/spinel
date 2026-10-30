@@ -20,10 +20,10 @@ last-success/failure status for the selected SQLite recovery path.
 
 DigitalOcean offers different kinds of protection, which cover different failures:
 
-| Option | What it supplies | What Spinel still needs to establish |
-| --- | --- | --- |
-| Droplet backups | Scheduled system-disk images. | Attached volumes are excluded; active database writes need an appropriate consistent backup method. |
-| Volumes | Data replicated across hosts, plus volume snapshots. | Hardware redundancy does not recover an earlier application state after a bad write or deletion. |
+| Option             | What it supplies                                                                                               | What Spinel still needs to establish                                                                            |
+| ------------------ | -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| Droplet backups    | Scheduled system-disk images.                                                                                  | Attached volumes are excluded; active database writes need an appropriate consistent backup method.             |
+| Volumes            | Data replicated across hosts, plus volume snapshots.                                                           | Hardware redundancy does not recover an earlier application state after a bad write or deletion.                |
 | Managed PostgreSQL | Daily backups and seven-day point-in-time recovery; eligible configurations with standby nodes offer failover. | Select an applicable plan, preserve assets/configuration outside that database, and prove application recovery. |
 
 Sources checked 2026-10-21: DigitalOcean's [backup limits](https://docs.digitalocean.com/products/backups/details/limits/),
@@ -245,6 +245,7 @@ Operator's ordinary application account cannot open documents.
    Keep a separate recovery copy in your password manager or encrypted offline
    storage. Securely transfer a working copy to `/srv/spinel/data/app/backup.key`,
    owned by UID 1000, mode 0600. Never paste it into chat or commit it.
+
 4. On the encrypted volume, create `app/backup.json`, UID 1000, mode 0600:
 
    ```json
@@ -261,6 +262,7 @@ Operator's ordinary application account cannot open documents.
 
    Region chooses the actual regional endpoint; the SDK signing configuration
    follows DigitalOcean's `us-east-1` example. Store only server-readable secrets.
+
 5. Add `BACKUP_CONFIG_PATH=/data/backup.json` to the deployment runtime environment.
    Copy that **complete, current** runtime environment into
    `/srv/spinel/data/app/recovery-runtime.env`, UID 1000, mode 0600. Update this
@@ -475,6 +477,12 @@ deployment.
    workspace keeps running. The backup retention lease protects the selected
    point while preparation owns it. **Cancel preparation** is available before
    admission; closing a dialog or changing Admin sections is not cancellation.
+   The ready view reports verified inventory/snapshot/image coverage and estimated
+   additional disk space on each application/recovery volume. These estimates are
+   provisional: space is not reserved, and the supervisor checks it again before
+   pausing edits. Insufficient preparation capacity leaves editing running and
+   asks you to free space and prepare again. Larger later inputs can still require
+   recovery; a successful estimate does not guarantee completion.
 3. Select **Review restore**, inspect the source fingerprint, exact target and
    provisional consequences, then freshly authenticate and confirm. Work accepted
    after the backup, including edits accepted before maintenance drains, is lost
@@ -518,6 +526,16 @@ non-start in the still-running application releases only that attempt's logical
 hold, retaining its recovery evidence and permitting a new preparation.
 Missing evidence, expired
 authority or ambiguous ownership keeps the workspace closed.
+
+The private journal retains at most **64 restore IDs**, including completed and
+failed attempts. Successful source/custody evidence is deliberately retained;
+there is no automatic pruning or supported journal-deletion shortcut. A 65th
+new ID is refused. Keep these records and plan recovery-root capacity accordingly;
+changing that bound or retention policy requires a separately reviewed recovery
+design. The supported layout mounts the application directory as one filesystem:
+the database and any WAL/SHM files must share its device. The recovery root may
+use a separate volume. Free bytes are counted once per device, while the existing
+application and recovery safety reserves both remain required on a shared volume.
 
 For an unresolved restore, preserve the private recovery root, encrypted source,
 raw/frozen custody and opening barrier. Use the independent CLI's `status` to

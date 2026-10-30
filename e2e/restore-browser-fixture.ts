@@ -1,14 +1,10 @@
 /** Disposable Linux backend for the real browser restore acceptance script.
  * Private control files and synthetic source material never enter server logs. */
-import { execFile, fork } from 'node:child_process';
-import type { ChildProcess } from 'node:child_process';
-import { promisify } from 'node:util';
-import { createHash, randomBytes, randomUUID } from 'node:crypto';
+import { createHash, randomBytes } from 'node:crypto';
 import { chmod, copyFile, mkdir, readFile, readdir, rename, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { pathToFileURL } from 'node:url';
 import { validRestoreJobRecord } from '../src/server/maintenance/restore-jobs.ts';
-import type { RestoreJobRecord } from '../src/server/maintenance/restore-jobs.ts';
 import type { RestoreRichMetadata } from '../src/server/maintenance/restore-rich-fixture.ts';
 
 const directory = '/fixture';
@@ -22,7 +18,6 @@ const staticDirectory = '/app/dist';
 const image = process.env.SPINEL_IMAGE!;
 if (!/^sha256:[a-f0-9]{64}$/.test(image))
   throw new Error('Actual production image identity required.');
-const run = promisify(execFile);
 type PublicCredential = { credentialId: string; publicKey: string };
 type Bootstrap = PublicCredential & {
   origin: string;
@@ -57,18 +52,9 @@ async function publish(name: string, value: unknown) {
   await rename(temporary, join(directory, name));
 }
 
-async function numericFile(path: string) {
-  try {
-    const value = Number((await readFile(path, 'utf8')).trim());
-    return Number.isSafeInteger(value) && value >= 0 ? value : null;
-  } catch {
-    return null;
-  }
-}
-
 async function seed(): Promise<Seed> {
-  // Keep bootstrap/native SDK imports out of the long-lived orchestration
-  // process: they belong only to this separately exiting seed child.
+  // Native bootstrap imports belong only to this separately exiting container.
+  // The shipped supervisor starts after Docker confirms physical closure.
   const [database, application, authModule, workspaceModule, archiveModule, richModule] =
     await Promise.all([
       import('../server/database.ts'),
@@ -150,283 +136,99 @@ async function seed(): Promise<Seed> {
   }
 }
 
-if (process.argv.includes('--seed')) {
+if (process.argv[2] === '--bootstrap') {
+  await chmod(stateDirectory, 0o700);
+  await mkdir(data, { mode: 0o700 });
+  await mkdir(root, { mode: 0o700 });
+  const source = await seed();
+  const exported = join(directory, 'source');
+  await mkdir(exported, { mode: 0o700 });
+  const archive = join(exported, 'workspace.spinel');
+  const keyFile = join(exported, 'archive.key');
+  await copyFile(source.archive, archive);
+  await chmod(archive, 0o600);
+  await copyFile(source.keyFile, keyFile);
+  await chmod(keyFile, 0o600);
+  const runtimeFiles = [
+    'server/app.ts',
+    'server/index.ts',
+    'server/supervisor.ts',
+    'src/shared/restore.ts',
+    'src/server/backup/restore-control.ts',
+    'src/server/backup/restore-registry.ts',
+    'src/server/backup/restore-routes.ts',
+    'src/server/maintenance/supervisor.ts',
+    'src/server/maintenance/supervisor-client.ts',
+    'src/server/maintenance/restore-rpc.ts',
+    'src/server/maintenance/restore-jobs.ts',
+    'src/server/maintenance/restore-rich-fixture.ts',
+    'scripts/deploy/maintenance.ts',
+  ];
+  const hash = async (path: string) =>
+    createHash('sha256')
+      .update(await readFile(`/app/${path}`))
+      .digest('hex');
+  const bundleFiles = [
+    'dist/index.html',
+    ...(await readdir('/app/dist/assets'))
+      .filter((name) => /\.(?:js|css)$/.test(name))
+      .map((name) => `dist/assets/${name}`),
+  ];
+  await publish('image-evidence.json', {
+    image,
+    node: process.versions.node,
+    platform: process.platform,
+    architecture: process.arch,
+    sourceHashes: Object.fromEntries(
+      await Promise.all(runtimeFiles.map(async (path) => [path, await hash(path)])),
+    ),
+    bundleHashes: Object.fromEntries(
+      await Promise.all(bundleFiles.map(async (path) => [path, await hash(path)])),
+    ),
+  });
+  await publish('ready.json', { ...source, archive, keyFile });
+} else if (process.argv[2] === '--cold') {
+  // The host writes this only after Docker independently confirms that the
+  // serving container is stopped with PID 0, exit 0 and no OOM. Its volume is
+  // mounted read-only here; this helper never overlaps a serving process.
+  const closure = JSON.parse(await readFile(join(directory, 'supervisor-closed.json'), 'utf8'));
+  if (
+    closure.image !== image ||
+    closure.pid !== 0 ||
+    closure.running !== false ||
+    closure.exitCode !== 0 ||
+    closure.oomKilled !== false ||
+    !/^spinel-restore-browser-[a-f0-9-]{36}$/.test(closure.container)
+  )
+    throw new Error('Confirmed supervisor closure required before cold inspection.');
+  const source = JSON.parse(await readFile(join(directory, 'ready.json'), 'utf8')) as Seed;
+  const names = await readdir(join(root, 'restore-jobs'));
+  if (names.length !== 1) throw new Error('Expected one canonical restore job.');
+  const completed: unknown = JSON.parse(
+    await readFile(join(root, 'restore-jobs', names[0], 'state.json'), 'utf8'),
+  );
+  if (!validRestoreJobRecord(completed, names[0]) || completed.phase !== 'candidate-committed')
+    throw new Error('Committed canonical outcome required.');
+  const { DatabaseSync } = await import('../server/database.ts');
+  const location = pathToFileURL(databasePath);
+  location.searchParams.set('mode', 'ro');
+  const db = new DatabaseSync(location.href);
   try {
-    const result = await seed();
-    await new Promise<void>((resolve, reject) =>
-      process.send!(result, (error) => (error ? reject(error) : resolve())),
-    );
-  } catch {
-    process.exitCode = 1;
+    await publish('closed-proof.json', {
+      committed: true,
+      restoredContent:
+        db.prepare('SELECT name FROM workspace_items WHERE id=?').get(source.folderId)?.name ===
+        'Archived folder',
+      originalSessionExcluded:
+        db
+          .prepare('SELECT COUNT(*) AS count FROM auth_sessions WHERE token_hash=?')
+          .get(completed.intent.authority.sessionHash)?.count === 0,
+      counter: db.prepare('SELECT counter FROM auth_passkeys WHERE id=?').get(input.credentialId)
+        ?.counter,
+    });
   } finally {
-    process.disconnect?.();
+    db.close();
   }
 } else {
-  let service: ChildProcess | undefined;
-  let serviceExit: Promise<number | null> | undefined;
-  let timer: ReturnType<typeof setInterval> | undefined;
-  let deadline: ReturnType<typeof setTimeout> | undefined;
-  let stopping: Promise<void> | undefined;
-  let source: Seed | undefined;
-  let fixturePhase = 'preparing-source';
-  let driverServingPeakRssBytes = 0;
-  const serviceDiagnostic: {
-    exitCode: number | null;
-    signal: string | null;
-    errorCode: string | null;
-    errno: number | null;
-    syscall: string | null;
-  } = { exitCode: null, signal: null, errorCode: null, errno: null, syscall: null };
-  async function record() {
-    const names = await readdir(join(root, 'restore-jobs')).catch(() => []);
-    if (names.length !== 1) return null;
-    const value = JSON.parse(
-      await readFile(join(root, 'restore-jobs', names[0], 'state.json'), 'utf8'),
-    );
-    if (!validRestoreJobRecord(value, names[0]))
-      throw new Error('Invalid fixture outcome evidence.');
-    return value as RestoreJobRecord;
-  }
-  const stop = () =>
-    (stopping ??= (async () => {
-      if (timer) clearInterval(timer);
-      if (deadline) clearTimeout(deadline);
-      const completed = await record();
-      if (service && service.exitCode === null) {
-        service.kill('SIGTERM');
-        const timedOut = new Promise<never>((_, reject) =>
-          setTimeout(
-            () => reject(new Error('Shipped supervisor shutdown timed out.')),
-            25_000,
-          ).unref(),
-        );
-        if ((await Promise.race([serviceExit!, timedOut])) !== 0)
-          throw new Error('Shipped supervisor shutdown failed.');
-      }
-      service = undefined;
-      if (source && completed?.phase === 'candidate-committed') {
-        const { DatabaseSync } = await import('../server/database.ts');
-        const location = pathToFileURL(databasePath);
-        location.searchParams.set('mode', 'ro');
-        const db = new DatabaseSync(location.href);
-        try {
-          await publish('closed-proof.json', {
-            committed: true,
-            restoredContent:
-              db.prepare('SELECT name FROM workspace_items WHERE id=?').get(source.folderId)
-                ?.name === 'Archived folder',
-            originalSessionExcluded:
-              db
-                .prepare('SELECT COUNT(*) AS count FROM auth_sessions WHERE token_hash=?')
-                .get(completed.intent.authority.sessionHash)?.count === 0,
-            counter: db
-              .prepare('SELECT counter FROM auth_passkeys WHERE id=?')
-              .get(input.credentialId)?.counter,
-            memoryLimitBytes: await numericFile('/sys/fs/cgroup/memory.max'),
-            cpuMax: (await readFile('/sys/fs/cgroup/cpu.max', 'utf8')).trim(),
-            pidsMax: await numericFile('/sys/fs/cgroup/pids.max'),
-            memoryPeakBytes: await numericFile('/sys/fs/cgroup/memory.peak'),
-            fixtureDriverServingPeakRssBytes: driverServingPeakRssBytes,
-          });
-        } finally {
-          db.close();
-        }
-      }
-    })());
-  try {
-    await chmod(stateDirectory, 0o700);
-    await mkdir(data, { mode: 0o700 });
-    await mkdir(root, { mode: 0o700 });
-    source = await new Promise<Seed>((resolve, reject) => {
-      const child = fork(fileURLToPath(import.meta.url), ['--seed'], {
-        execArgv: ['--max-old-space-size=256', '--max-semi-space-size=8'],
-        stdio: ['ignore', 'ignore', 'ignore', 'ipc'],
-      });
-      let value: Seed | undefined;
-      let failed = false;
-      const timeout = setTimeout(() => {
-        failed = true;
-        child.kill('SIGKILL');
-      }, 30_000);
-      child.once('message', (message) => {
-        value = message as Seed;
-      });
-      child.once('error', () => {
-        failed = true;
-        if (child.pid) child.kill('SIGKILL');
-      });
-      // Settle only after the child and its IPC/stdio resources physically close.
-      child.once('close', (code) => {
-        clearTimeout(timeout);
-        if (!failed && code === 0 && value) resolve(value);
-        else reject(new Error('Browser fixture seed failed.'));
-      });
-    });
-    const exported = join(directory, 'source');
-    await mkdir(exported, { mode: 0o700 });
-    const archive = join(exported, 'workspace.spinel');
-    const keyFile = join(exported, 'archive.key');
-    await copyFile(source.archive, archive);
-    await chmod(archive, 0o600);
-    await copyFile(source.keyFile, keyFile);
-    await chmod(keyFile, 0o600);
-    source = { ...source, archive, keyFile };
-    fixturePhase = 'starting-shipped-supervisor';
-    const runtimeFiles = [
-      'server/app.ts',
-      'server/index.ts',
-      'server/supervisor.ts',
-      'src/shared/restore.ts',
-      'src/server/backup/restore-control.ts',
-      'src/server/backup/restore-registry.ts',
-      'src/server/backup/restore-routes.ts',
-      'src/server/maintenance/supervisor.ts',
-      'src/server/maintenance/supervisor-client.ts',
-      'src/server/maintenance/restore-rpc.ts',
-      'src/server/maintenance/restore-jobs.ts',
-      'src/server/maintenance/restore-rich-fixture.ts',
-      'scripts/deploy/maintenance.ts',
-    ];
-    const hash = async (path: string) =>
-      createHash('sha256')
-        .update(await readFile(`/app/${path}`))
-        .digest('hex');
-    const bundleFiles = [
-      'dist/index.html',
-      ...(await readdir('/app/dist/assets'))
-        .filter((name) => /\.(?:js|css)$/.test(name))
-        .map((name) => `dist/assets/${name}`),
-    ];
-    await publish('image-evidence.json', {
-      image,
-      node: process.versions.node,
-      platform: process.platform,
-      architecture: process.arch,
-      sourceHashes: Object.fromEntries(
-        await Promise.all(runtimeFiles.map(async (path) => [path, await hash(path)])),
-      ),
-      bundleHashes: Object.fromEntries(
-        await Promise.all(bundleFiles.map(async (path) => [path, await hash(path)])),
-      ),
-    });
-    const environment = {
-      ...process.env,
-      DATABASE_PATH: databasePath,
-      APP_ORIGIN: input.origin,
-      SPINEL_MAINTENANCE_ROOT: root,
-      SPINEL_MAINTENANCE_PORT: '0',
-      SPINEL_IMAGE: image,
-      SPINEL_STATIC_DIRECTORY: staticDirectory,
-      PORT: '3199',
-      HOST: '0.0.0.0',
-      BACKUP_CONFIG_PATH: join(data, 'absent-backup-config'),
-    };
-    service = fork('/app/server/supervisor.ts', [], {
-      env: environment,
-      execArgv: ['--max-old-space-size=64'],
-      stdio: ['ignore', 'ignore', 'pipe', 'ipc'],
-    });
-    // Retain only allowlisted native error metadata, never stderr text/paths.
-    let stderrTail = '';
-    service.stderr!.on('data', (chunk: Buffer) => {
-      stderrTail = (stderrTail + chunk.toString('utf8')).slice(-8192);
-      serviceDiagnostic.errorCode =
-        /code:\s*['"](E[A-Z0-9_]{1,63})['"]/.exec(stderrTail)?.[1] ?? serviceDiagnostic.errorCode;
-      const errno = /errno:\s*(-?\d{1,8})/.exec(stderrTail)?.[1];
-      if (errno !== undefined) serviceDiagnostic.errno = Number(errno);
-      serviceDiagnostic.syscall =
-        /syscall:\s*['"](listen|bind|open|chmod|stat|read|unlink)['"]/.exec(stderrTail)?.[1] ??
-        serviceDiagnostic.syscall;
-    });
-    serviceExit = new Promise((resolveExit) =>
-      service!.once('close', (code, signal) => {
-        stderrTail = '';
-        serviceDiagnostic.exitCode = code;
-        serviceDiagnostic.signal = signal;
-        resolveExit(code);
-      }),
-    );
-    const control = async (action: string, operationId?: string) => {
-      const result = await run(
-        process.execPath,
-        [
-          '--max-old-space-size=64',
-          '/app/scripts/deploy/maintenance.ts',
-          action,
-          ...(operationId ? ['--operation', operationId] : []),
-        ],
-        { env: environment, timeout: 70_000, maxBuffer: 32_768 },
-      );
-      return JSON.parse(result.stdout) as { phase: string };
-    };
-    const initialDeadline = Date.now() + 30_000;
-    let initial: { phase: string } | undefined;
-    while (Date.now() < initialDeadline && !initial) {
-      try {
-        initial = await control('status');
-      } catch {
-        if (service.exitCode !== null || service.signalCode !== null) break;
-        await new Promise((resolveWait) => setTimeout(resolveWait, 100));
-      }
-    }
-    if (!initial) throw new Error('Shipped CLI could not observe supervisor.');
-    const operationId = randomUUID();
-    fixturePhase = 'cli-verify';
-    await control('verify', operationId);
-    fixturePhase = 'cli-start';
-    await control('start', operationId);
-    fixturePhase = 'cli-resume';
-    const resumed = await control('resume', operationId);
-    if (resumed.phase !== 'running') throw new Error('Shipped CLI did not resume workspace.');
-    await publish('cli-proof.json', {
-      initial: initial.phase,
-      verify: true,
-      start: true,
-      resume: resumed.phase,
-    });
-    fixturePhase = 'serving-browser';
-    driverServingPeakRssBytes = process.memoryUsage().rss;
-    await publish('ready.json', source);
-    let observing = false;
-    timer = setInterval(() => {
-      driverServingPeakRssBytes = Math.max(driverServingPeakRssBytes, process.memoryUsage().rss);
-      if (observing || stopping) return;
-      observing = true;
-      void (async () => {
-        const current = await record();
-        const state = JSON.parse(await readFile(join(root, 'journal.json'), 'utf8')) as {
-          phase: string;
-        };
-        await publish('status.json', {
-          phase: state.phase,
-          outcome: current?.phase ?? null,
-          id: current?.intent.id ?? null,
-          sourceSha256: current?.intent.source.archive.sha256 ?? null,
-        });
-      })()
-        .catch(() => {})
-        .finally(() => {
-          observing = false;
-        });
-    }, 100);
-    deadline = setTimeout(() => {
-      void stop().finally(() => process.exit(1));
-    }, 5 * 60_000);
-    process.once('SIGTERM', () => {
-      void stop().then(
-        () => process.exit(0),
-        () => process.exit(1),
-      );
-    });
-    process.once('SIGINT', () => {
-      void stop().then(
-        () => process.exit(0),
-        () => process.exit(1),
-      );
-    });
-  } catch {
-    await stop().catch(() => {});
-    await publish('failed.json', { failed: true, phase: fixturePhase, service: serviceDiagnostic });
-    process.exitCode = 1;
-  }
+  throw new Error('Select the exited bootstrap or post-closure cold helper.');
 }

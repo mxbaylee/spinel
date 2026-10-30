@@ -50,5 +50,6 @@ export function restoreJobIntentFixture(now = Date.now()): RestoreJobIntent {
       heldTrashBatches: 9,
     },
     consequenceEnvelope: 1,
+    previewDatabaseBytes: 8192,
   };
 }

@@ -28,6 +28,7 @@ test('intent identity includes every binding and ignores only object property or
     { ...intent, policy: { ...intent.policy, spacesEnabled: false } },
     { ...intent, policy: { ...intent.policy, staticDirectory: '/srv/spinel/other-assets' } },
     { ...intent, continuationHash: 'f'.repeat(64) },
+    { ...intent, previewDatabaseBytes: intent.previewDatabaseBytes + 4096 },
   ])
     expect(restoreIntentHash(changed)).not.toBe(hash);
 });
@@ -38,6 +39,9 @@ test('intent validation rejects incomplete, inconsistent and unbounded bindings'
     {},
     null,
     { ...intent, extra: true },
+    ...[undefined, null, 0, 4095, 1.5, '4096', 8 * 1024 ** 3 + 1, Number.MAX_SAFE_INTEGER].map(
+      (previewDatabaseBytes) => ({ ...intent, previewDatabaseBytes }),
+    ),
     { ...intent, source: { ...intent.source, id: randomUUID() } },
     { ...intent, target: { ...intent.target, databasePath: '/srv/../workspace.sqlite' } },
     { ...intent, target: { ...intent.target, databasePath: '/srv/\0workspace.sqlite' } },
