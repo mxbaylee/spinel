@@ -27,7 +27,8 @@ Each passing browser's `acceptance.json` records current vendor installation,
 actual process/profile identities and exits, blocked application transport, exact
 retained records/checkpoints and image bytes, native caret and OS clipboard
 observations, normal revision/clean-state checks, both owned conflict copies,
-unchanged originals and exact receipts, and truthful behavior after explicit
+unchanged server originals, recovered device-copy cleanup and exact receipts,
+and truthful behavior after explicit
 deletion. Offline and recovered-copy PNGs prove that existing images paint.
 Deletion is a deliberate browser-API operation, not a measured eviction timer.
 
@@ -48,7 +49,8 @@ exits and blocked HTTP/WebSocket transport before both relaunches.
 The complete report records four retained pending checkpoints and image bundles,
 native Sheet D1 = 731 and Doc prefix edits, physical image captures and native
 clipboard content, both exact normal reconnects, two correctly owned conflict
-copies with unchanged originals and exact receipts, and truthful explicit
+copies with unchanged server originals, recovered device-copy cleanup and exact
+receipts, and truthful explicit
 storage-loss behavior. The corrected native input helper must exit successfully
 and prove trusted DOM movement/target delivery before native caret/content checks;
 the earlier release crash is not waived. The synthetic SVG/Canvas2D and profile

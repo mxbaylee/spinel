@@ -743,8 +743,9 @@ Each browser passed the same complete outcome:
   and one application of each edit. For the two originals advanced by the Owner,
   publish exactly one Collaborator-owned recovery copy each, reopen the copies,
   verify their edited content and visible images, and preserve the original
-  server/device state through another outage and reconnect. Receipt checks cover
-  all copies for the account.
+  server state through another outage and reconnect. Confirm that recovered
+  originals no longer advertise a device copy. Receipt checks cover all copies
+  for the account.
 - Delete the private download database, local markers and cached application
   assets explicitly. The online server catalog returns with no prepared-account
   marker or available-offline badges. A subsequent disconnected item launch
