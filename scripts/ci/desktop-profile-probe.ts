@@ -52,9 +52,19 @@ function run(argv) {
     throw new Error('The observed Safari PID has been reused: ' + JSON.stringify(identity));
   if (argv[2] === 'identify') return JSON.stringify(identity);
   console.log('Safari request target: ' + JSON.stringify(identity));
+  function phase(name) { console.log('Safari request phase: ' + JSON.stringify({ at: new Date().toISOString(), phase: name })); }
+  phase('application-constructor-begin');
   var app = Application(pid);
+  phase('application-constructor-end');
   var seconds = Number(argv[4]);
-  if (argv[2] === 'title') return app.documents[0].name({ timeout: seconds });
+  if (argv[2] === 'title') {
+    var name = app.documents[0].name;
+    phase('title-specifier-ready');
+    phase('title-get-begin');
+    var title = name({ timeout: seconds });
+    phase('title-get-end');
+    return title;
+  }
   if (argv[2] === 'evaluate') return app.doJavaScript(argv[3], { in: app.documents[0] }, { timeout: seconds });
   if (argv[2] === 'quit') { app.quit(); return 'Quit requested'; }
   if (argv[2] === 'baseline') {
@@ -111,9 +121,10 @@ function safariRequest(
   mode: 'title' | 'evaluate' | 'quit' | 'baseline',
   source = '',
   timeout = 8000,
+  trace?: (stderr: string) => void,
 ) {
   assert.ok(target, 'Identify the observed Safari process before sending it Apple Events.');
-  return command(
+  return run(
     '/usr/bin/osascript',
     [
       '-l',
@@ -126,7 +137,16 @@ function safariRequest(
       source,
       String(Math.max(1, Math.floor(timeout / 1000))),
     ],
-    timeout,
+    { timeout, maxBuffer: 1024 * 1024 },
+  ).then(
+    ({ stdout, stderr }) => {
+      trace?.(stderr);
+      return stdout.trim();
+    },
+    (error) => {
+      trace?.(String(error.stderr ?? ''));
+      throw error;
+    },
   );
 }
 
@@ -229,12 +249,14 @@ async function allowHostedSafariAutomation() {
     startedAt: string;
     finishedAt?: string;
     value?: string;
+    phases?: string[];
     error?: ReturnType<typeof describe>;
   };
   const titleRequests: TitleRequest[] = [];
   const checks: Record<string, unknown>[] = [];
   report.automationTitleRequests = titleRequests;
   report.automationPromptChecks = checks;
+  report.automationStartedAt = new Date().toISOString();
   const deadline = Date.now() + 90_000;
   const budget = (maximum: number) => Math.max(1, Math.min(maximum, deadline - Date.now()));
   function titleRequest() {
@@ -249,7 +271,12 @@ async function allowHostedSafariAutomation() {
     titleRequests.push(entry);
     // Keep one initial request alive while cold System Events initializes. The
     // original 90-second total deadline still bounds every request and UI check.
-    const promise = safariRequest('title', '', timeout)
+    const promise = safariRequest('title', '', timeout, (stderr) => {
+      entry.phases = stderr
+        .split('\n')
+        .filter((line) => line.startsWith('Safari request phase: '))
+        .map((line) => line.slice('Safari request phase: '.length));
+    })
       .then(
         (value) => {
           entry.value = value;
@@ -327,6 +354,7 @@ async function allowHostedSafariAutomation() {
   } finally {
     // Every owned request has its own remaining-deadline timeout; leave none running.
     await request.promise;
+    report.automationFinishedAt = new Date().toISOString();
     report.firstTitleRequest = titleRequests[0];
   }
 }
@@ -345,6 +373,19 @@ async function capturePaintBaseline(stage: 'online' | 'offline', pid: unknown) {
     const path = resolve(output, `safari-profile-probe-${stage}.png`);
     await command('/usr/sbin/screencapture', ['-x', `-R${x},${y},${width},${height}`, path], 5000);
     baseline.screenshot = path;
+    // Readback can affect a canvas backend. Capture the physical display first;
+    // neither these synthetic pixels nor their readback prove app acceptance.
+    baseline.canvas2d = JSON.parse(
+      await evaluate(`JSON.stringify((() => {
+      const result = { ...globalThis.__spinelCanvasPaint, readbackAfterPhysicalCapture: true };
+      try {
+        const context = document.getElementById('canvas-paint').getContext('2d');
+        if (!context) throw new Error('The default Canvas2D context is unavailable');
+        result.pixels = [[80, 80], [240, 80]].map(([x, y]) => ({ x, y, rgba: Array.from(context.getImageData(x, y, 1, 1).data) }));
+      } catch (error) { result.readbackError = String(error); }
+      return result;
+    })())`),
+    );
   } catch (error) {
     // The capability result still measures the original stores. These captures
     // diagnose whether simple native Safari content paints before app acceptance.
@@ -358,6 +399,104 @@ async function capturePaintBaseline(stage: 'online' | 'offline', pid: unknown) {
   }
 }
 
+async function captureAutomationLog() {
+  if (!report.automationStartedAt) return;
+  const startedAt = String(report.automationStartedAt);
+  const finishedAt = String(report.automationFinishedAt ?? new Date().toISOString());
+  const queryEnd = new Date(Math.ceil(Date.parse(finishedAt) / 1000) * 1000).toISOString();
+  const logDate = (value: string) => value.slice(0, 19).replace('T', ' ') + '+0000';
+  let text = '';
+  let queryError: Record<string, unknown> | undefined;
+  try {
+    text = await command(
+      '/usr/bin/log',
+      [
+        'show',
+        '--start',
+        logDate(startedAt),
+        '--end',
+        logDate(queryEnd),
+        '--style',
+        'compact',
+        '--info',
+        '--debug',
+        '--predicate',
+        'subsystem == "com.apple.TCC" OR process == "appleeventsd"',
+      ],
+      8000,
+    );
+  } catch (error) {
+    const detail = error as Error & {
+      code?: unknown;
+      signal?: unknown;
+      killed?: unknown;
+      stdout?: unknown;
+      stderr?: unknown;
+    };
+    // A timeout or buffer limit can still yield useful native observations.
+    // Apply the same correlation and retention limits to that partial output.
+    text = Buffer.from(String(detail.stdout ?? ''))
+      .subarray(0, 1024 * 1024)
+      .toString();
+    queryError = {
+      message: String(error).split('\n')[0],
+      code: detail.code,
+      signal: detail.signal,
+      killed: detail.killed,
+      stderr: String(detail.stderr ?? '').slice(-2000),
+    };
+  }
+  const lines = text.split('\n');
+  const requestId = (line: string) => /msgID[=:]\s*([\w.-]+)/.exec(line)?.[1];
+  const ids = new Set(
+    lines
+      .filter((line) => line.includes('kTCCServiceAppleEvents'))
+      .map(requestId)
+      .filter((id) => id !== undefined),
+  );
+  const matched = lines.filter(
+    (line) =>
+      line.includes('kTCCServiceAppleEvents') ||
+      line.includes('appleeventsd') ||
+      ids.has(requestId(line) ?? ''),
+  );
+  // Retain the beginning and end of the correlated observations within 64 KiB,
+  // so verbose native startup cannot displace the final consent outcome.
+  const head: string[] = [];
+  const tail: string[] = [];
+  let retainedBytes = 0;
+  let end = matched.length;
+  for (const line of matched) {
+    const size = Buffer.byteLength(line) + 1;
+    if (retainedBytes + size > 32 * 1024) break;
+    head.push(line);
+    retainedBytes += size;
+  }
+  while (end > head.length) {
+    const line = matched[end - 1];
+    const size = Buffer.byteLength(line) + 1;
+    if (retainedBytes + size > 64 * 1024) break;
+    tail.unshift(line);
+    retainedBytes += size;
+    end--;
+  }
+  report.automationLog = {
+    startedAt,
+    finishedAt,
+    queryEnd,
+    requestIds: [...ids],
+    error: queryError,
+    sourceComplete: !queryError,
+    matchedLineCount: matched.length,
+    retainedLineCount: head.length + tail.length,
+    retainedBytes,
+    headLineCount: head.length,
+    omittedLineCount: end - head.length,
+    truncated: Boolean(queryError) || end > head.length,
+    lines: [...head, ...tail],
+  };
+}
+
 async function main() {
   // This configures only an ephemeral hosted CI user's ordinary browser. Never
   // change the owner's Safari settings or interact with their browsing profile.
@@ -366,8 +505,26 @@ async function main() {
   assert.equal(process.env.RUNNER_ENVIRONMENT, 'github-hosted');
   await mkdir(output, { recursive: true });
   const sentinel = randomUUID();
-  const html =
-    '<!doctype html><html><title>Spinel desktop profile probe</title><style>body{margin:24px;background:white;color:#102a43;font:18px system-ui}h1{font-size:28px}</style><body><h1>Spinel synthetic profile probe</h1><p>Native Safari paint baseline</p><svg width="320" height="120" aria-label="Purple and blue paint baseline"><rect width="160" height="120" fill="#7633d5"/><rect x="160" width="160" height="120" fill="#2563eb"/></svg></body></html>';
+  const html = `<!doctype html><html><title>Spinel desktop profile probe</title>
+<style>body{margin:24px;background:white;color:#102a43;font:18px system-ui}h1{font-size:28px}section{display:flex;flex-wrap:wrap;gap:24px}figure{margin:0}figcaption{margin-bottom:8px}</style>
+<body><h1>Spinel synthetic profile probe</h1><p>Native Safari paint baseline</p><section>
+<figure><figcaption>SVG</figcaption><svg width="320" height="120" aria-label="Purple and blue paint baseline"><rect width="160" height="120" fill="#7633d5"/><rect x="160" width="160" height="120" fill="#2563eb"/></svg></figure>
+<figure><figcaption>Canvas 2D with default settings</figcaption><canvas id="canvas-paint" width="320" height="120" aria-label="Purple and blue Canvas2D paint baseline"></canvas></figure>
+</section><script>
+(() => {
+  const canvas = document.getElementById('canvas-paint');
+  const result = globalThis.__spinelCanvasPaint = { context: '2d', options: 'default', width: canvas.width, height: canvas.height, contextAvailable: false, drawCompleted: false };
+  try {
+    const context = canvas.getContext('2d');
+    result.contextAvailable = Boolean(context);
+    if (!context) return;
+    context.fillStyle = '#7633d5'; context.fillRect(0, 0, 160, 120);
+    context.fillStyle = '#2563eb'; context.fillRect(160, 0, 160, 120);
+    context.fillStyle = 'white'; context.font = '18px system-ui'; context.fillText('Canvas 2D', 12, 28);
+    result.drawCompleted = true;
+  } catch (error) { result.drawError = String(error); }
+})();
+</script></body></html>`;
   const worker = `self.addEventListener('install', event => event.waitUntil(caches.open('spn052-shell').then(async cache => { await cache.add('/'); await self.skipWaiting(); })));
 self.addEventListener('activate', event => event.waitUntil(self.clients.claim()));
 self.addEventListener('fetch', event => { if (event.request.mode === 'navigate') event.respondWith(caches.match('/')); });`;
@@ -481,24 +638,9 @@ self.addEventListener('fetch', event => { if (event.request.mode === 'navigate')
         text.split('\n').filter((line) => /Safari|osascript|node|bash|tccd/.test(line)),
       )
       .catch(String);
-    report.automationLog = await command('/usr/bin/log', [
-      'show',
-      '--last',
-      '2m',
-      '--style',
-      'compact',
-      '--predicate',
-      'subsystem == "com.apple.TCC"',
-    ])
-      .then((text) =>
-        text
-          .split('\n')
-          .filter((line) => /AUTHREQ|PROMPT|Safari|osascript/.test(line))
-          .slice(-60),
-      )
-      .catch(String);
     process.exitCode = 1;
   } finally {
+    await captureAutomationLog();
     await quit().catch((error) => {
       report.teardownError = String(error);
       process.exitCode = 1;

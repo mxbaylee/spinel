@@ -27,13 +27,14 @@ folder owner's ownership and account-only creator attribution
 ([implementation decisions](implementation/SPN-069.md)).
 [SPN-092](implementation/SPN-092.md) extends preparation and local opening to
 one account-authorized Space child at a time, with its verified images.
+[SPN-052](implementation/SPN-052.md) verifies the shared lifecycle in ordinary
+desktop Chrome, Firefox and Safari tabs, with observed persistence outcomes and
+in-place retention guidance ([native verification](#native-desktop-verification)).
 The remaining parts of this contract are open, split by the Owner in chat on 2026-10-19 so
 every unmet requirement stays on a ticket:
 
 - [SPN-090](todo/SPN-090.md): actual Android/iPhone installed launches, stable
   home-screen links and the recorded device/browser verification matrix.
-- [SPN-052](todo/SPN-052.md): desktop browser-tab compatibility using SPN-055's
-  shared lifecycle; it does not wait for SPN-090's physical-phone runs.
 
 [Decision #91](implementation/SPN-039.md#legacy-decision-91-offline-prerequisites-without-partial-completion) keeps every
 acceptance requirement below.
@@ -682,6 +683,16 @@ reports its actual result. A denied, unsupported or failed request does not mean
 the download failed; it means browser protection was not established. The result's
 **How to keep them** action opens the same **About device storage** guide used in
 Profile, without navigating away from the editor. Pending work remains mounted.
+The [retention-guidance decision](implementation/SPN-052.md#retention-guidance-in-the-download-result)
+records the alternatives and all four persona effects.
+
+Desktop tabs reuse SPN-039's offline viewing, SPN-053/SPN-054's native edits and
+recovery, and SPN-055's shared storage lifecycle. They use the same truthful
+local-save and recovery states as the installed app, following the
+[composed design](design/states.md#offline). Changed stories render production
+components under the [migration rule](implementation/storybook-production-migration.md);
+the [visual record](design/review/spn-052/README.md) preserves light, dark and
+phone evidence and independent agent review. No SPN-052 Redesign example remains.
 
 | Browser | Persistence and eviction rules |
 | --- | --- |
@@ -699,21 +710,59 @@ after reconnection the server catalog returns without claiming lost downloads.
 
 ### Native desktop verification
 
-SPN-052's native matrix is in progress. Its maintained
-[implementation record](implementation/SPN-052.md) distinguishes capability probes
-from full application acceptance. The matrix uses actual installed macOS browsers,
-retains their original profiles, witnesses process termination and new process
-IDs, and blocks the application transport before relaunch. It never reconstructs
-IndexedDB or CacheStorage from exported state. Linux WebKit and fresh isolated
-Safari WebDriver sessions cannot establish this ordinary-tab restart behavior.
+The full application sequence passed on the following installed browsers on
+2026-10-29–30. The runs checked vendor release versions and used the production
+application over loopback HTTPS with a synthetic Owner and an invited
+Collaborator holding editor grants. These are ordinary browser tabs with retained
+profiles and real native input.
 
-The test cases cover image-backed Sheets and Docs for normal and divergent
-reconnect, actual persistence outcomes, locally committed edits through another
-process restart, and deliberate deletion of private downloads, local markers and
-cached app assets followed by online catalog recovery. Browser deletion APIs
-exercise loss handling; they do not reproduce a browser's long-term eviction
-heuristic. Final exact browser/OS versions and observed outcomes must replace
-this in-progress checkpoint before SPN-052 is considered complete.
+| Browser | Measured macOS and runner | Observed persistence | Full application result |
+| --- | --- | --- | --- |
+| Chrome 156.0.8078.80 | macOS 26.6.2 (25G83), arm64, `macos-26`, image `20261021.0445.8` | All four requests remained unprotected (`false` before and after); the result and **How to keep them** guide were exercised. Both restarts still reported `false`. | Passed, [native run 8](https://github.com/mxbaylee/spinel/actions/runs/40973885475). |
+| Firefox 159.0 | macOS 26.6.2 (25G83), arm64, `macos-26`, image `20261021.0445.8` | The real `localhost:8176` persistent-storage prompt was allowed: `false` → `true` on the first download. The remaining downloads and both restarts reported `true`. | Passed, [native run 8](https://github.com/mxbaylee/spinel/actions/runs/40973885475). |
+| Safari 27.2 | macOS 15.7.9 (24G830), x86_64, `macos-15-intel`, image `20260824.0482.1` | All four requests remained unprotected (`false` before and after); the result and **How to keep them** guide were exercised. Both restarts still reported `false`. | Passed, [native run 13](https://github.com/mxbaylee/spinel/actions/runs/40979677496). |
+
+Chrome and Firefox ran from source `68a2ce9980234e292a5e333abca15c9faec271e2`,
+tested as merge `f4f474442372fef7aa28af9e801d9d6377c0da38`. Safari ran from
+source/tested push `0cd9aa4c0b0135c92d6271ab297cae2f6e679160`. The maintained
+[implementation record](implementation/SPN-052.md) preserves exact evidence,
+earlier failures and their dispositions separately from these passing runs.
+
+Each browser passed the same complete outcome:
+
+- Download two Sheets and two Docs, covering normal and divergent reconnect,
+  with three existing image payloads in each file. Block HTTPS requests and
+  WebSocket upgrades before closing the browser, then reopen its original profile
+  in a new process. The catalog, original records and image bytes remain exact;
+  no browser store is reconstructed from an exported fixture.
+- Make native offline edits, commit them locally, quit and restart again while
+  the transport remains blocked. All four pending records, checkpoints and image
+  hashes survive. Browser screenshots show the existing images, and native
+  selection/copy confirms the edited Sheet and Doc content.
+- Reconnect the two unchanged originals and verify exact content, image bytes
+  and one application of each edit. For the two originals advanced by the Owner,
+  publish exactly one Collaborator-owned recovery copy each, reopen the copies,
+  verify their edited content and visible images, and preserve the original
+  server/device state through another outage and reconnect. Receipt checks cover
+  all copies for the account.
+- Delete the private download database, local markers and cached application
+  assets explicitly. The online server catalog returns with no prepared-account
+  marker or available-offline badges. A subsequent disconnected item launch
+  requires a connection and opens no native editor.
+
+These are measured restart and recovery results for the listed environments.
+Safari's maintained gate uses the qualified Intel Sequoia runner; earlier hosted
+Safari rendering and automation failures remain in the implementation record,
+without attributing them to architecture or claiming those hosts passed. Linux
+WebKit and fresh isolated Safari WebDriver sessions do not establish ordinary
+Safari profile retention. Browser deletion APIs exercise storage-loss handling;
+they do not measure the long-term eviction policies documented above, and a
+persistence grant remains distinct from a backup guarantee.
+
+SPN-051's offline creation remains the shared delivered implementation. Native
+desktop applications and synchronization while the browser is closed are outside
+this verification. SPN-090 retains the separate physical-phone and installed-app
+checks; desktop completion does not depend on or complete those runs.
 
 ## Platform references
 

@@ -1,0 +1,195 @@
+{
+  "schema": 1,
+  "archive": "SPN-118-mobile-reset-diagnostics.zip",
+  "sha256": "fcaa49c079a11ba72c51f52ce8a1e4478dbfd875dd4a580245ebfebad5acb3a6",
+  "bytes": 93581,
+  "currentCiFailure": {
+    "source": "b7bd03fce8ebd168f9dfba1e6d7203b59cbc2ba1",
+    "testedMerge": "55d2971ea76f1c74b04240e9d66821fadc9ec485",
+    "run": 40940887746,
+    "job": 123683827291,
+    "artifact": 12930365148,
+    "artifactSha256": "126490433173a6dbb6f5622c125d0ae02552c15e88e58d760bcc091147e7430a",
+    "test": "mobile sustained native typing plain-1",
+    "retry": 0,
+    "failedAt": "2026-10-29T19:59:30.7923017Z",
+    "error": "apiRequestContext.get: read ECONNRESET",
+    "site": "e2e/doc-responsiveness-fixture.ts:95 via e2e/doc-responsiveness.spec.ts:247 redo convergence",
+    "results": {
+      "candidatePassed": 6,
+      "candidateFailed": 1,
+      "baselinePassed": 4
+    },
+    "supportedEvidence": {
+      "latencyBudgetsPassed": true,
+      "flushMaximumMs": 52.2,
+      "browserLocalDrainMs": 373.1,
+      "preUndoIntegrityPassed": true,
+      "undoEmptySavedRevision": 20,
+      "finalNativeHistory": {
+        "undos": 66,
+        "redos": 0
+      },
+      "finalPending": {
+        "history": 0,
+        "collaboration": 0
+      },
+      "finalReloads": []
+    },
+    "missingEvidence": [
+      "Final saved/peer redo convergence and complete correctness acceptance",
+      "Contemporaneous server lifecycle/socket evidence establishing reset cause"
+    ],
+    "status": "Failed; no rerun or waiver"
+  },
+  "historicalMainFailure": {
+    "source": "d001fb0fe106bf81a7bcd57b9b4db78de86424cb",
+    "sourceTitle": "SPN-072 Edit Docs comfortably on a phone",
+    "event": "push",
+    "branch": "main",
+    "run": 40461836024,
+    "workflowAttempt": 1,
+    "job": 122048106950,
+    "jobUrl": "https://github.com/mxbaylee/spinel/actions/runs/40461836024/job/122048106950",
+    "artifact": 12714443489,
+    "artifactSha256": "1a92175c5b1f98d2951cf59329e8702d9944bc0df43e5000913caf6515bf19d0",
+    "artifactExpiresAt": "2026-11-03T06:39:50Z",
+    "test": "native Docs preserve concurrent text and undo across reconnect, render profile presence, and capture actual image UI edits",
+    "testLocation": "e2e/sync-client.spec.ts:347",
+    "readLocation": "e2e/sync-client.spec.ts:156",
+    "assertionLocation": "e2e/sync-client.spec.ts:405",
+    "failedRequest": "GET /sync-api/items/:id/snapshot?unitId=:id",
+    "error": "apiRequestContext.get: read ECONNRESET",
+    "attempts": [
+      {
+        "retry": 0,
+        "status": "failed",
+        "durationMs": 6302
+      },
+      {
+        "retry": 1,
+        "status": "passed",
+        "durationMs": 12602
+      }
+    ],
+    "suite": {
+      "expected": 35,
+      "unexpected": 0,
+      "flaky": 1,
+      "skipped": 0
+    },
+    "disposition": "Immutable pre-existing main snapshot-observation reset; scenario retry did not make the workflow pass. Different endpoint and phase from SPN-118 current failure; no common cause established.",
+    "owner": "SPN-120 after the explicit SPN-116 scope split",
+    "credentialsOrDocumentContentsIncluded": false
+  },
+  "nativeDiagnostic": {
+    "source": "b7bd03fce8ebd168f9dfba1e6d7203b59cbc2ba1",
+    "dirtyPaths": "",
+    "platform": "macOS26.5.2 arm64; differs from GitHub ubuntu",
+    "browser": "156.0.8078.4",
+    "playwright": "1.64.1",
+    "attempt": 0,
+    "completed": true,
+    "caseStatistics": {
+      "startTime": "2026-10-29T20:39:21.790Z",
+      "duration": 123141.598,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "allBudgetResultsPassed": true,
+    "inputP95Ms": 65.40000000596046,
+    "flushMaximumMs": 36.599999994039536,
+    "browserLocalDrainMs": 343.6000000089407,
+    "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed",
+    "undoRedoOutcome": "passed",
+    "redoDurationMs": 4275.600000008941,
+    "readRequests": 13,
+    "reusedRequests": 12,
+    "readErrorEvents": [],
+    "readResponseStatuses": [200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200],
+    "interReadIdleGaps": [
+      {
+        "id": 2,
+        "idleGapMs": 8,
+        "reusedSocket": true
+      },
+      {
+        "id": 3,
+        "idleGapMs": 236,
+        "reusedSocket": true
+      },
+      {
+        "id": 4,
+        "idleGapMs": 4,
+        "reusedSocket": true
+      },
+      {
+        "id": 5,
+        "idleGapMs": 2939,
+        "reusedSocket": true
+      },
+      {
+        "id": 6,
+        "idleGapMs": 5,
+        "reusedSocket": true
+      },
+      {
+        "id": 7,
+        "idleGapMs": 3304,
+        "reusedSocket": true
+      },
+      {
+        "id": 8,
+        "idleGapMs": 150,
+        "reusedSocket": true
+      },
+      {
+        "id": 9,
+        "idleGapMs": 308,
+        "reusedSocket": true
+      },
+      {
+        "id": 10,
+        "idleGapMs": 511,
+        "reusedSocket": true
+      },
+      {
+        "id": 11,
+        "idleGapMs": 18,
+        "reusedSocket": true
+      },
+      {
+        "id": 12,
+        "idleGapMs": 3,
+        "reusedSocket": true
+      },
+      {
+        "id": 13,
+        "idleGapMs": 14,
+        "reusedSocket": true
+      }
+    ],
+    "peakWorkloadMiB": 2001,
+    "initialAndObservedPressure": 1,
+    "knownOwnedProcessesRemaining": [],
+    "browserStackMinutes": 0,
+    "limitations": [
+      "Exactly one diagnostic; no root cause or repair established",
+      "Server/npm termination may omit final buffered diagnostic tail; parent child-exit and physical PID absence verified",
+      "No GitHub gate replacement, physical-device claim or Linux-equivalence claim"
+    ]
+  },
+  "mechanismProbe": {
+    "pairs": 3,
+    "poolingSuccesses": 3,
+    "connectionCloseSuccesses": 3,
+    "serverDeathNegatives": 2,
+    "reproducedResets": 0,
+    "elapsedMs": 38744,
+    "peakMiB": 368,
+    "sourceSha256": "afa727b9590e77e4cac88f8987cf92432d6b2ba32a4a6d51093c1e21657bb57c",
+    "limitations": "Forced client event-loop hold; no reset reproduced; not proof of historical cause."
+  }
+}

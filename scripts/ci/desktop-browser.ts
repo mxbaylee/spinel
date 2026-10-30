@@ -281,6 +281,7 @@ export function createDesktopBrowser(
   let spawnError: Error | undefined;
   let safariTab: { windowId: number; tabIndex: number } | null = null;
   let safariCaptureDiagnostics = 0;
+  let safariCleanupDiagnostics = 0;
 
   function safariReference() {
     assert.ok(safariTab, 'The launched Safari tab has not been identified.');
@@ -581,7 +582,7 @@ export function createDesktopBrowser(
   }
   async function evaluate<T>(expression: string, timeout = 30_000): Promise<T> {
     assert.ok(browserPid, 'Start the browser before evaluating a page.');
-    let result: ObjectValue;
+    let result: ObjectValue | undefined;
     if (kind === 'safari') {
       // Apple Events cannot return promises. This temporary page-only slot does
       // not touch localStorage, IndexedDB, CacheStorage or the native document.
@@ -590,10 +591,11 @@ export function createDesktopBrowser(
       const deadline = Date.now() + timeout;
       const call = (source: string) =>
         safariScript(source, Math.max(1, Math.min(5000, deadline - Date.now())));
-      await call(
-        `globalThis[${key}] = ''; Promise.resolve().then(() => (${expression})).then(value => { globalThis[${key}] = JSON.stringify({ ok: true, value: value === undefined ? null : value }); }).catch(error => { globalThis[${key}] = JSON.stringify({ ok: false, error: String(error) }); }); void 0;`,
-      );
+      let evaluationFailure: { error: unknown } | undefined;
       try {
+        await call(
+          `globalThis[${key}] = ''; Promise.resolve().then(() => (${expression})).then(value => { globalThis[${key}] = JSON.stringify({ ok: true, value: value === undefined ? null : value }); }).catch(error => { globalThis[${key}] = JSON.stringify({ ok: false, error: String(error) }); }); void 0;`,
+        );
         const raw = await poll(
           () => call(`globalThis[${key}] || ''`),
           Boolean,
@@ -601,9 +603,38 @@ export function createDesktopBrowser(
           Math.max(1, deadline - Date.now()),
         );
         result = object(JSON.parse(raw));
-      } finally {
-        await safariScript(`delete globalThis[${key}]; void 0;`, 1000);
+        assert.equal(result.ok, true, String(result.error));
+      } catch (error) {
+        evaluationFailure = { error };
       }
+      try {
+        await safariScript(`delete globalThis[${key}]; void 0;`, 5000);
+      } catch (cleanupError) {
+        if (++safariCleanupDiagnostics <= 16) {
+          try {
+            await appendFile(
+              join(outputDir, 'safari-evaluation-cleanup.jsonl'),
+              JSON.stringify({
+                time: new Date().toISOString(),
+                browserPid,
+                target: safariTab,
+                diagnostic: safariCleanupDiagnostics,
+                diagnosticLimit: 16,
+                evaluationError: evaluationFailure
+                  ? String(evaluationFailure.error).slice(0, 8000)
+                  : null,
+                cleanupError: String(cleanupError).slice(0, 8000),
+              }) + '\n',
+            );
+          } catch (diagnosticError) {
+            console.error(
+              `Safari cleanup diagnostic failed: ${String(diagnosticError).slice(0, 2000)}`,
+            );
+          }
+        }
+        if (!evaluationFailure) throw cleanupError;
+      }
+      if (evaluationFailure) throw evaluationFailure.error;
     } else {
       result = object(
         await session('execute/async', 'POST', {
@@ -611,8 +642,9 @@ export function createDesktopBrowser(
           args: [],
         }),
       );
+      assert.equal(result.ok, true, String(result.error));
     }
-    assert.equal(result.ok, true, String(result.error));
+    assert.ok(result, 'The browser did not return an evaluation result.');
     return result.value as T;
   }
   async function focusAt(selector: string, index: number) {
@@ -690,6 +722,9 @@ export function createDesktopBrowser(
     }
     // System Events coordinate clicks perform accessibility actions, which do
     // not initialize canvas selection. Quartz posts actual macOS pointer input.
+    // Native evidence showed a crash during JXA CFRelease after a successful post;
+    // its cause is unknown. Each helper owns at most two events, exits immediately
+    // after posting and is capped at 10 seconds; process exit reclaims allocations.
     const post = (mode: 'move' | 'click', screenX: number, screenY: number) =>
       command(
         '/usr/bin/osascript',
@@ -700,7 +735,6 @@ export function createDesktopBrowser(
           `
         console.log('pointer: importing frameworks');
         ObjC.import('CoreGraphics');
-        ObjC.import('CoreFoundation');
         console.log('pointer: frameworks imported');
         function run(argv) {
           var point = { x: Number(argv[1]), y: Number(argv[2]) };
@@ -715,17 +749,20 @@ export function createDesktopBrowser(
             console.log('pointer: creating event ' + type);
             var event = $.CGEventCreateMouseEvent($(), type, point, $.kCGMouseButtonLeft);
             console.log('pointer: validating event ' + type);
-            if (!event || typeof event.isNil !== 'function' || event.isNil())
+            // CGEventRef is an opaque C pointer; JXA can expose Ref without ObjC's isNil.
+            if (!event || (typeof event.isNil === 'function' && event.isNil()))
               throw new Error('Quartz did not return a nonnil bridged event: ' + Automation.getDisplayString(event, true));
-            try {
-              console.log('pointer: posting event ' + type);
-              $.CGEventPost($.kCGHIDEventTap, event);
-              console.log('pointer: posted event ' + type);
-            } finally {
-              console.log('pointer: releasing event ' + type);
-              $.CFRelease(event);
-              console.log('pointer: released event ' + type);
-            }
+            var actualType = Number($.CGEventGetType(event));
+            if (actualType !== Number(type))
+              throw new Error('Quartz event type differs: expected ' + type + ', received ' + actualType);
+            var location = $.CGEventGetLocation(event);
+            var actualPoint = { x: Number(location.x), y: Number(location.y) };
+            console.log('pointer: validated event ' + actualType + ' at ' + JSON.stringify(actualPoint));
+            if (actualPoint.x !== point.x || actualPoint.y !== point.y)
+              throw new Error('Quartz event location differs: expected ' + JSON.stringify(point) + ', received ' + JSON.stringify(actualPoint));
+            console.log('pointer: posting event ' + type);
+            $.CGEventPost($.kCGHIDEventTap, event);
+            console.log('pointer: posted event ' + type);
           });
           return JSON.stringify({ mode: argv[0], point: point, posted: types.length });
         }
