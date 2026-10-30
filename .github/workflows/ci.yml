@@ -138,7 +138,9 @@ jobs:
     name: Unit tests
     needs: changes
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # Real restore lifecycle cases include bounded physical shutdown/closure waits.
+    # The117-case supervisor file alone measured343s; retain every assertion.
+    timeout-minutes: 15
     steps:
       - if: needs.changes.outputs.docs_only != 'true'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7

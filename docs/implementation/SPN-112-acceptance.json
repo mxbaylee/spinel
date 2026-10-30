@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "status": "Local complete-app acceptance passed; actual Spaces, final reviews and current-head CI pending.",
+  "status": "Local complete-app acceptance passed; first hosted provider failure and unit timeout retained. Reviewed repair awaits actual provider and full CI.",
   "limitations": [
     "Actual Spaces acceptance, both whole-ticket grades and all seven current-head CI gates remain pending.",
     "Historical da/160 preparation failures remain failures; observer interference was reproduced, but their exact denied PID was not recorded.",
@@ -1694,5 +1694,137 @@
     "evidenceBundleSha256": "d8ca61569b98ab65e73c756418f322887d3d0a966e66ae213af91a690e62fb3e",
     "evidenceSha256": "9f5927b18f2ce68735eb4ee6c933e364a6df9a5b14919fea37a89b1f8ef34b72",
     "review": "D inspected all18 and approved current actual visuals; agent review only. B independently verified acceptance/source/resource/closure evidence."
+  },
+  "provider636": {
+    "runId": 41003825864,
+    "jobId": 123894074553,
+    "head": "63603dceabc9dcdbaea10749551dad3646032f33",
+    "artifactId": 12954652082,
+    "artifactZipSha256": "f1d42b75300d1f665331473c4c3b1cbf38ff69097dccd8b724d816fd80268436",
+    "result": {
+      "status": "failed",
+      "sourceCommit": "63603dceabc9dcdbaea10749551dad3646032f33",
+      "checks": [
+        "bucket-retention-policy",
+        "private-publication-and-readback",
+        "anonymous-access-denial",
+        "authenticated-download-and-encrypted-restore",
+        "paginated-complete-catalog-and-pending-cleanup",
+        "retention-and-deletion",
+        "complete-app-provider-fixture"
+      ],
+      "cleanup": "complete",
+      "archiveBytes": 663,
+      "supervisedRestore": {
+        "status": "failed",
+        "checks": ["complete-app-provider-fixture"],
+        "runtime": "real-app-child-process",
+        "imagePolicy": "synthetic-fixture",
+        "localCleanup": "safe",
+        "archiveBytes": 12315,
+        "sourceSha256": "716209a4886ca58bfeba132f47477a9ad65e83695a49aef2a17aa715e23e3999",
+        "failedStep": "provider-controller-start"
+      },
+      "failedStep": "provider-controller-start",
+      "durationMs": 4720
+    },
+    "cause": "Unproven; original step combined open/verify/start/resume/authentication. No raw diagnostic was retained.",
+    "repairEvidence": {
+      "base": "63603dceabc9dcdbaea10749551dad3646032f33",
+      "sourceHashes": {
+        ".github/workflows/spaces-acceptance.yml": "467263e973d23b38ccf3bf1a422d9844c0f475012f6178ee1e36d50822f2be4f",
+        "scripts/deploy/spaces-restore-acceptance.ts": "4f779e976ccae5ed1f0f6e863df6b930b82d937539cde4a60eb6a4368e0c105f",
+        "scripts/deploy/spaces-restore-acceptance.test.ts": "bd4e052516c98d934c74de2581f3efc9c021dd51796c6f0e82b2f3fa0e128205"
+      },
+      "originalFailureCause": "unproven",
+      "localProbes": [
+        {
+          "kind": "startup",
+          "result": {
+            "stages": ["verify", "start", "resume"],
+            "result": {
+              "status": "failed",
+              "checks": ["complete-app-provider-fixture"],
+              "runtime": "real-app-child-process",
+              "imagePolicy": "synthetic-fixture",
+              "localCleanup": "safe",
+              "archiveBytes": 12310,
+              "sourceSha256": "3c34017823f3af44eff558c26c2909045bd006da37b29af9d4fd7794cb495029",
+              "failedStep": "provider-controller-resume",
+              "failureCode": "restore-unknown-unknown",
+              "controllerPhase": "running"
+            },
+            "durationMs": 2291,
+            "expectedStop": true
+          },
+          "container": {
+            "Status": "exited",
+            "Running": false,
+            "Pid": 0,
+            "ExitCode": 0,
+            "OOMKilled": false
+          },
+          "limits": {
+            "Memory": 1887436800,
+            "MemorySwap": 1887436800,
+            "NanoCpus": 2000000000,
+            "PidsLimit": 128
+          },
+          "scope": "Intermediate fixed-stage diagnostic overlay; actual seed/supervisor/app/auth, synthetic fake publication, no provider network; expected deliberate stop is not complete restore acceptance."
+        },
+        {
+          "kind": "auth",
+          "result": {
+            "stages": ["verify", "start", "resume"],
+            "result": {
+              "status": "failed",
+              "checks": ["complete-app-provider-fixture"],
+              "runtime": "real-app-child-process",
+              "imagePolicy": "synthetic-fixture",
+              "localCleanup": "safe",
+              "archiveBytes": 12309,
+              "sourceSha256": "cb59bf658c54fcd1ba24480bb2fb6841449290fa555f56e8678ff6f49a7284b5",
+              "failedStep": "operator-provider-catalog",
+              "failureCode": "restore-unknown-unknown",
+              "controllerPhase": "running"
+            },
+            "durationMs": 1669,
+            "expectedStop": true
+          },
+          "container": {
+            "Status": "exited",
+            "Running": false,
+            "Pid": 0,
+            "ExitCode": 0,
+            "OOMKilled": false
+          },
+          "limits": {
+            "Memory": 1887436800,
+            "MemorySwap": 1887436800,
+            "NanoCpus": 2000000000,
+            "PidsLimit": 128
+          },
+          "scope": "Intermediate fixed-stage diagnostic overlay; actual seed/supervisor/app/auth, synthetic fake publication, no provider network; expected deliberate stop is not complete restore acceptance."
+        }
+      ],
+      "checks": {
+        "scopedTests": "11/11",
+        "typecheck": "passed; sampled1615MiB",
+        "lint": "passed",
+        "format": "passed",
+        "diffCheck": "passed"
+      }
+    },
+    "review": "B independently approved safe diagnostics/unchanged namespace wrapper and cleanup boundaries; agent review only, no provider pass."
+  },
+  "unit636": {
+    "runId": 41003825891,
+    "jobId": 123894159219,
+    "conclusion": "cancelled",
+    "startedAt": "2026-10-30T04:36:43Z",
+    "completedAt": "2026-10-30T04:46:58Z",
+    "reason": "Job reached its10-minute wall-clock cap.117supervisor cases passed in342709ms;32files reported with no assertion failure before cancellation. Whole suite did not complete.",
+    "logSha256": "8542893f866cbc43c87522173357e645b312ee181610d94e48855c0d7e9b75a3",
+    "repair": "Job cap15minutes; individual test limits/assertions unchanged."
   }
 }

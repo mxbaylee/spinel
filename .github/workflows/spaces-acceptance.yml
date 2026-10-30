@@ -9,6 +9,7 @@ on:
       - 'src/server/maintenance/**'
       - 'src/shared/restore.ts'
       - 'scripts/deploy/**'
+      - 'scripts/ci/pid-namespace.ts'
       - 'server/app.ts'
       - 'server/index.ts'
       - 'server/database.ts'
@@ -50,7 +51,11 @@ jobs:
         run: node scripts/deploy/spaces-acceptance.ts --probe
       - name: Install without provider credentials
         if: steps.capability.outputs.ready == 'true'
-        run: npm ci
+        run: |
+          npm ci
+          node scripts/ci/prefer-ubuntu-archive.ts
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends tini
       - name: Verify encrypted provider backups and supervised catalog restore
         if: steps.capability.outputs.ready == 'true'
         env:
@@ -58,7 +63,10 @@ jobs:
           DIGITAL_OCEAN_ENDPOINT: ${{ secrets.DIGITAL_OCEAN_ENDPOINT }}
           DIGITAL_OCEAN_SECRET_KEY: ${{ secrets.DIGITAL_OCEAN_SECRET_KEY }}
           SPACES_ACCEPTANCE_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
-        run: node scripts/deploy/spaces-acceptance.ts
+        # Keep recovery's process inventory inside the same production-like PID
+        # boundary used by controller tests. Original provider credentials pass
+        # privately through the wrapper's stdin, never shell arguments or logs.
+        run: node scripts/ci/pid-namespace.ts node scripts/deploy/spaces-acceptance.ts
       - name: Preserve redacted acceptance evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

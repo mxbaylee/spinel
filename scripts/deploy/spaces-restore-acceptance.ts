@@ -16,6 +16,7 @@ import {
   restoreHttpClient,
   seed,
 } from '../../src/server/maintenance/restore-http-test-client.ts';
+import { restoreExecutionFailureReason } from '../../src/server/maintenance/restore-failure.ts';
 import type { RestoreJobRecord } from '../../src/server/maintenance/restore-jobs.ts';
 import { MaintenanceSupervisor } from '../../src/server/maintenance/supervisor.ts';
 import type { RestorePreparation, RestoreStatus } from '../../src/shared/restore.ts';
@@ -23,6 +24,9 @@ import type { RestorePreparation, RestoreStatus } from '../../src/shared/restore
 interface RestoreEvidence {
   status: 'passed' | 'failed';
   failedStep?: string;
+  failureCode?: string;
+  controllerPhase?: string;
+  httpStatus?: number;
   checks: string[];
   runtime: 'real-app-child-process';
   imagePolicy: 'synthetic-fixture';
@@ -33,6 +37,41 @@ interface RestoreEvidence {
 const requireResult = (condition: unknown) => {
   if (!condition) throw new Error('Supervised provider acceptance assertion failed.');
 };
+
+/** Public acceptance reports carry only fixed diagnostics. Native error details
+ * and controller reads must neither leak private input nor prevent containment. */
+export function supervisedRestoreFailure(error: unknown, status: () => unknown) {
+  const result: { failureCode: string; controllerPhase?: string; httpStatus?: number } = {
+    failureCode: restoreExecutionFailureReason('unknown', error),
+  };
+  try {
+    if (error instanceof Error) {
+      const match = /^Unexpected fixture HTTP status ([1-5][0-9]{2})\.$/.exec(error.message);
+      if (match) result.httpStatus = Number(match[1]);
+    }
+  } catch {
+    // Untrusted diagnostic accessors cannot replace the original failure.
+  }
+  try {
+    const phase = status();
+    if (
+      typeof phase === 'string' &&
+      [
+        'running',
+        'draining',
+        'paused',
+        'stopping',
+        'stopped',
+        'starting',
+        'recovery-required',
+      ].includes(phase)
+    )
+      result.controllerPhase = phase;
+  } catch {
+    // A corrupt/unavailable journal remains a failure with no fabricated phase.
+  }
+  return result;
+}
 
 export async function runSupervisedSpacesRestore(options: {
   configuration: SpacesConfig;
@@ -109,7 +148,7 @@ export async function runSupervisedSpacesRestore(options: {
     await new Promise<void>((resolve, reject) =>
       portProbe.close((error) => (error ? reject(error) : resolve())),
     );
-    step = 'provider-controller-start';
+    step = 'provider-controller-open';
     // Even a rejected open may have attempted ownership/reconciliation. Without
     // a returned controller and positively completed close, retain its files.
     evidence.localCleanup = 'retain';
@@ -144,8 +183,11 @@ export async function runSupervisedSpacesRestore(options: {
       },
     });
     const boot = randomUUID();
+    step = 'provider-controller-verify';
     await supervisor.coldControl({ action: 'verify', operationId: boot });
+    step = 'provider-controller-start';
     await supervisor.coldControl({ action: 'start', operationId: boot });
+    step = 'provider-controller-resume';
     await supervisor.coldControl({ action: 'resume', operationId: boot });
     const originalGeneration = supervisor.status().generationId;
     const client = restoreHttpClient(
@@ -154,6 +196,7 @@ export async function runSupervisedSpacesRestore(options: {
       credential,
       signal,
     );
+    step = 'provider-operator-authentication';
     await client.authenticate();
     step = 'operator-provider-catalog';
     const catalog = await client.json<{ entries: { id: string; createdAt: number }[] }>(
@@ -250,8 +293,12 @@ export async function runSupervisedSpacesRestore(options: {
     signal.throwIfAborted();
     requireResult(Date.now() < options.deadline);
     evidence.status = 'passed';
-  } catch {
+  } catch (error) {
     evidence.failedStep = step;
+    Object.assign(
+      evidence,
+      supervisedRestoreFailure(error, () => supervisor?.status().phase),
+    );
   } finally {
     try {
       await closeController();
