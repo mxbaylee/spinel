@@ -1,0 +1,20 @@
+.storage-help {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+.storage-help summary {
+  cursor: pointer;
+  padding-block: 12px;
+  font-weight: 600;
+}
+.storage-help summary:focus-visible {
+  outline: 2px solid var(--sp-accent);
+  outline-offset: 2px;
+}
+.storage-help ul {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding-left: 24px;
+}
