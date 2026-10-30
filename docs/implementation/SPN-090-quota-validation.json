@@ -54,6 +54,21 @@
         "session creation failures never echo the remote exception or claim cleanup",
         "malformed success responses and a different Android browser do not pass"
       ]
+    },
+    {
+      "result": "passed",
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "durationMs": 474.731292,
+      "sourceSha256": {
+        "scripts/ci/browserstack.ts": "d2f8d71c42c00d432f32143c8b0a6b4a9aabe47d752376f22b0a4cffc97cbc0c",
+        "scripts/ci/browserstack.test.ts": "69b5536445bf87e10ac4eeff9ef615a90cb59f89565af1fd5b00da300b3bc923",
+        "scripts/ci/browserstack-quota.ts": "543352ff7f5fcaf205c2495c80913f484c1c334835e202448c165ce2ecabb351",
+        "scripts/ci/browserstack-quota.test.ts": "6b0f28c12de98600a310ef971910f23e171e1d922fecabe65c64bc6357739a60",
+        ".github/workflows/browserstack.yml": "43beb39c58ba253ed9d9fe07db0f860a36abfd8a540cc2d715b7611ce6ae9e8b"
+      },
+      "change": "Use an immutable received-response local for strict narrowing; preserve outer cleanup reference and all request/abort behavior."
     }
   ],
   "resourceControl": {
@@ -71,5 +86,22 @@
     "No monthly schedule or forecast",
     "No installed-context or physical offline acceptance",
     "No whole-ticket grade or current-head CI"
-  ]
+  ],
+  "scopedStaticValidation": {
+    "files": [
+      "scripts/ci/browserstack.ts",
+      "scripts/ci/browserstack.test.ts",
+      "scripts/ci/browserstack-quota.ts",
+      "scripts/ci/browserstack-quota.test.ts"
+    ],
+    "compiler": "Repository-pinned TypeScript; strict repository options, explicit --ignoreConfig and primary-worktree Node types",
+    "result": "passed",
+    "lint": "Repository-pinned Oxlint --deny-warnings passed",
+    "initialFailures": [
+      "CLI required --ignoreConfig for explicit files",
+      "Captured mutable response was possibly undefined at eight uses",
+      "Implementation-record formatting needed repair"
+    ],
+    "fullProjectTypecheck": false
+  }
 }

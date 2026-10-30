@@ -120,7 +120,7 @@ export async function collectQuotaEvidence(options: {
     };
     async function request() {
       // Every caller uses a fixed local path; there is no caller-supplied URL/method.
-      response = await fetcher(`https://api.browserstack.com/automate/${path}`, {
+      const received = await fetcher(`https://api.browserstack.com/automate/${path}`, {
         method: 'GET',
         headers: { Authorization: authorization, Accept: 'application/json' },
         redirect: 'error',
@@ -129,18 +129,19 @@ export async function collectQuotaEvidence(options: {
         if (signal.aborted) void value.body?.cancel().catch(() => {});
         return value;
       });
+      response = received;
       active();
-      if (!response.ok) {
-        void response.body?.cancel().catch(() => {});
-        throw new Error(`http-${response.status}`);
+      if (!received.ok) {
+        void received.body?.cancel().catch(() => {});
+        throw new Error(`http-${received.status}`);
       }
-      const length = response.headers.get('content-length');
+      const length = received.headers.get('content-length');
       if (length !== null && (!/^\d+$/.test(length) || Number(length) > quotaLimits.bytes)) {
-        void response.body?.cancel().catch(() => {});
+        void received.body?.cancel().catch(() => {});
         throw new Error('response-too-large');
       }
-      if (!response.body) throw new Error('invalid-response');
-      reader = response.body.getReader();
+      if (!received.body) throw new Error('invalid-response');
+      reader = received.body.getReader();
       const body = Buffer.alloc(quotaLimits.bytes);
       let bytes = 0;
       while (true) {
