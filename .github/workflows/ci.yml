@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
+    branches: [main, codex/spn-115-evidence-base]
     # Draft commits already run every check; becoming ready changes no code.
     types: [opened, edited, synchronize, reopened, labeled, unlabeled]
   workflow_dispatch:
