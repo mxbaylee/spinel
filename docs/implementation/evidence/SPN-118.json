@@ -1,0 +1,207 @@
+{
+  "ticket": "SPN-118",
+  "date": "2026-10-28",
+  "source": "bc05dbc0d2595750f0bbf9502c2aba7e3d0b7463",
+  "runtime": {
+    "node": "26.12.1",
+    "libsql": "0.5.29",
+    "platform": "linux-x64",
+    "libsql_js_source": "55bee86d1c284f1ddf2b9e280e870d2b6cef884a"
+  },
+  "fixture": "Synthetic native/application data only; no operator or proprietary SDK data.",
+  "historical_failure": {
+    "job": "https://github.com/mxbaylee/spinel/actions/runs/40537669633/job/122307404648",
+    "expected_sha256": "99632b657afb7079734f85a3250c7db579c5bdf104c533c3a7e6159475bbdd38",
+    "actual_sha256": "a262e3e79480b78d8e28b2ad18b625c50e409ed86c63e19fd9de79ce1a27677b",
+    "qualification": "Original log supplies digests, not database images or connection timing.",
+    "source": "2361a23604a2c6f8de6671cd3cc53b76aed2eaac"
+  },
+  "unchanged_transition_suite": {
+    "attempt": 1,
+    "passed": 20,
+    "failed": 0,
+    "qualification": "Spontaneous intermittent failure was not reproduced."
+  },
+  "controlled_lifecycle": {
+    "operation": "Run complete native edit/recovery fixture; refuse same-bundle resume; execute three fixed diagnostic GC turns.",
+    "before_refusal": {
+      "main": {
+        "bytes": 376832,
+        "sha256": "8e058ab4188effa50deead05e6ac82245a1d6dd7640709e7b9355dd28fa52124"
+      },
+      "wal": {
+        "bytes": 659232,
+        "sha256": "dc051895c1c29c943f1c899c26412f749106617a9902e16fd2693890d1d5c764"
+      }
+    },
+    "after_refusal": {
+      "main": {
+        "bytes": 376832,
+        "sha256": "8e058ab4188effa50deead05e6ac82245a1d6dd7640709e7b9355dd28fa52124"
+      },
+      "wal": {
+        "bytes": 659232,
+        "sha256": "dc051895c1c29c943f1c899c26412f749106617a9902e16fd2693890d1d5c764"
+      }
+    },
+    "after_first_gc": {
+      "main": {
+        "bytes": 413696,
+        "sha256": "4532d77ec16c4abb37934db343f1ec3d1b326290b5ee9f5787b8f65875171df8"
+      },
+      "wal": null,
+      "shm": null
+    },
+    "later_gc_turns": "No further main-file byte changes in turns 2 and 3.",
+    "main_byte_difference": {
+      "page_size": 4096,
+      "different_shared_offsets": 9844,
+      "added_bytes": 36864,
+      "changed_pages": [
+        1,
+        10,
+        11,
+        16,
+        17,
+        26,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        42,
+        44,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        68,
+        76,
+        78,
+        79,
+        80,
+        81,
+        82,
+        83,
+        85,
+        86,
+        87,
+        89,
+        93,
+        94,
+        95,
+        96,
+        97,
+        98,
+        99,
+        100,
+        101
+      ]
+    },
+    "logical_state": {
+      "observer": "Independent read-only libsql process over the retained before/after main+WAL images; complete schema and sorted serialized rows, including BLOB bytes. Empty inline observer output was discarded.",
+      "equal": true,
+      "bytes": 51548,
+      "sha256": "d14452f79b9fa959e5ab18ad410170d67c21c7100af0e8213317b0f7adff759b",
+      "tables": 33,
+      "rows": 70,
+      "per_table_rows": {
+        "auth_access_tokens": 1,
+        "auth_challenges": 0,
+        "auth_passkeys": 0,
+        "auth_sessions": 5,
+        "auth_users": 6,
+        "collaboration_purge": 0,
+        "cover_assets": 0,
+        "doc_images": 1,
+        "doc_snapshots": 1,
+        "history_checkpoints": 7,
+        "history_progress": 5,
+        "history_restore_labels": 2,
+        "item_appearance": 0,
+        "sheet_snapshots": 0,
+        "spinel_generation_resources": 0,
+        "spinel_live_units": 1,
+        "spinel_restore_jobs": 2,
+        "spinel_sync_activation": 1,
+        "spinel_sync_revisions": 1,
+        "spinel_sync_transition_state": 1,
+        "spinel_sync_transition_units": 5,
+        "spinel_sync_units": 6,
+        "workspace_collaboration": 6,
+        "workspace_grants": 4,
+        "workspace_guest_sessions": 0,
+        "workspace_item_creators": 5,
+        "workspace_items": 9,
+        "workspace_links": 1,
+        "workspace_placements": 0,
+        "workspace_retained_trash_batches": 0,
+        "workspace_space_trash": 0,
+        "workspace_tag_assignments": 0,
+        "workspace_tags": 0
+      }
+    },
+    "interpretation": "Demonstrated deferred checkpoint with unchanged logical content. The exact connection responsible for the historical CI failure remains untraced."
+  },
+  "archive": {
+    "file": "SPN-118-synthetic-checkpoint.zip",
+    "bytes": 98661,
+    "sha256": "92acf6204662a9cc8fbbce5e974f85ad6ff8856376fa2130373f35536b40bbc4",
+    "contents": "Exact synthetic before main/WAL bytes, after-checkpoint main bytes, and shared full logical-state JSON. Transient SHM bytes are excluded."
+  },
+  "attempt_notes": [
+    "First exploratory probe had a child-script syntax error; no preservation result was obtained.",
+    "Corrected prepared-statement probe observed delayed finalization; subsequent exec-based probe isolated immediate last-connection closure.",
+    "The exec-based old-options reader changed main bytes 4096 to 8192 and removed WAL; mode=ro preserved both and read the WAL-only schema.",
+    "Old readOnly options created a missing path; mode=ro rejected it. immutable=1 missed the WAL-only table and was rejected as a design option."
+  ],
+  "regressions": {
+    "database_before_repair": {
+      "passed": 2,
+      "failed": 3,
+      "failures": [
+        "Nominal read-only UPDATE succeeded.",
+        "Nominal read-only open created a missing file.",
+        "Closing the nominal read-only WAL reader changed main-file bytes."
+      ],
+      "sandbox_attempt": "First run proved write/no-create failures but its child process was blocked with EPERM; rerun outside sandbox under the same watchdog established the WAL failure."
+    },
+    "transition_before_repair": {
+      "selected": 2,
+      "failed": 2,
+      "unselected": 19,
+      "failures": [
+        "Native fixture returned with a nonempty 650992-byte WAL.",
+        "Same-bundle refusal changed the main bytes of a WAL-backed destination."
+      ]
+    },
+    "first_complete_post_repair": {
+      "files": 2,
+      "passed": 26,
+      "failed": 0,
+      "duration_seconds": 7.23,
+      "combined_peak_rss_mib": 931,
+      "coverage": "All five database cases and all 21 transition cases; no test retries."
+    }
+  }
+}
