@@ -32,6 +32,12 @@ export interface MaintenanceAuthority {
   expiresAt: number;
 }
 
+/** Original server-captured verification; private restore IPC only. */
+export interface RestoreAuthority extends MaintenanceAuthority {
+  verifiedPasskeyId: string;
+  verifiedAt: number;
+}
+
 export type MaintenanceCommand =
   | { action: 'pause'; operationId: string; authority: MaintenanceAuthority }
   | { action: 'resume'; operationId: string; actorId: string; resumeToken: string }
@@ -53,6 +59,15 @@ export interface MaintenanceControlResult {
   resumeToken?: string;
 }
 
+/** Private supervisor-to-child shutdown challenge, never public status. */
+export interface RestoreStopRequest {
+  jobId: string;
+  challengeId: string;
+  generationId: string;
+  epoch: string;
+  deadline: number;
+}
+
 export interface MaintenanceBridge {
   status(): MaintenancePublicStatus;
   adminStatus(): MaintenanceAdminStatus;
@@ -62,6 +77,10 @@ export interface MaintenanceBridge {
   ready(): void;
   /** Called only after accepted request, sync and job work has drained. */
   drained(epoch: string): void;
+  /** Read-only recheck of the original proof, never a renewed verification. */
+  onRestoreAuthority?(listener: (proof: RestoreAuthority) => void): void;
+  onRestoreStop?(listener: (request: RestoreStopRequest) => Promise<void>): void;
+  acceptRestoreWitness?(request: RestoreStopRequest, fingerprint: string): Promise<void>;
   /** Fixed, non-sensitive failure; the parent keeps maintenance active. */
   fail(reason: 'drain-failed' | 'storage-failed'): void;
   close(): void;

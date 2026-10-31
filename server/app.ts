@@ -23,6 +23,10 @@ import { HealthMonitor } from '../src/server/health/monitor.ts';
 import { healthRoutes } from '../src/server/health/routes.ts';
 import { BackupService } from '../src/server/backup/service.ts';
 import { backupRoutes } from '../src/server/backup/routes.ts';
+import { restoreRoutes } from '../src/server/backup/restore-routes.ts';
+import type { RestoreController } from '../src/server/backup/restore-control.ts';
+import { captureTerminalRestoreFingerprint } from '../src/server/backup/restore-drain.ts';
+import { restoreSnapshotFingerprint } from '../src/server/backup/inventory.ts';
 import { openDatabase } from './database.ts';
 import { AuthStore } from '../src/server/auth/store.ts';
 import { authRoutes, cookieToken } from '../src/server/auth/routes.ts';
@@ -35,9 +39,23 @@ import { TrashStore, startTrashCleanup } from '../src/server/workspace/trash.ts'
 import { HistoryStore } from '../src/server/history/store.ts';
 import { CollaborationStore } from '../src/server/collaboration/service.ts';
 import { attachSync } from '../src/server/sync/transport.ts';
+import { assertRestoreAuthority } from '../src/server/maintenance/restore-authority.ts';
+import type { RestoreAuthority } from '../src/shared/maintenance.ts';
 import type { MaintenanceBridge } from '../src/shared/maintenance.ts';
 import { MaintenanceGate, ShutdownError } from '../src/server/maintenance/gate.ts';
 import { maintenanceRoutes } from '../src/server/maintenance/routes.ts';
+import { assertNoPendingRestore } from '../src/server/maintenance/restore-barrier.ts';
+import {
+  fileIdentity,
+  sameFile,
+  canonicalDatabasePath,
+} from '../src/server/maintenance/journal.ts';
+
+import {
+  consumeRestoreOpening,
+  sameRestoreTrialReference,
+} from '../src/server/maintenance/restore-trial.ts';
+import type { RestoreOpening } from '../src/server/maintenance/restore-trial.ts';
 
 export const projectRoot = resolve(import.meta.dirname, '..');
 /** Below the supervisor's 15 s stop budget, leaving time to close stores. */
@@ -54,13 +72,90 @@ export interface AppOptions {
   spaceReview?: boolean;
   /** Only the deployment supervisor can provide live recovery control. */
   maintenance?: MaintenanceBridge;
+  restoreController?: RestoreController;
+  /** Internal bounded rehearsal/trial only; never a browser-supplied setting. */
+  restoreMaximumBytes?: number;
+  /** Opaque capability supplied only by the complete inherited-ownership handoff. */
+  restoreOpening?: RestoreOpening;
 }
 
-export async function createApp(options: AppOptions) {
-  const maintenance = new MaintenanceGate(options.maintenance);
+export async function createApp(input: AppOptions) {
+  const options = { ...input };
+  const databasePath = canonicalDatabasePath(options.databasePath);
+  if (options.restoreOpening !== undefined && options.databasePath !== databasePath)
+    throw new Error('Restore opening requires its exact canonical target.');
+  const trial =
+    options.restoreOpening !== undefined
+      ? await consumeRestoreOpening(options.restoreOpening, databasePath, {
+          origin: options.origin ?? 'http://localhost:3000',
+          image: options.image ?? '',
+          spacesEnabled: options.spaceReview !== false,
+          staticDirectory: resolve(options.staticDirectory ?? resolve(projectRoot, 'dist')),
+          consequencesVersion: 1,
+        })
+      : undefined;
+  if (!trial) assertNoPendingRestore(databasePath);
+  else {
+    const state = options.maintenance?.adminStatus(),
+      actual = options.maintenance?.status();
+    if (
+      options.development ||
+      !state?.available ||
+      !actual?.available ||
+      !['starting', 'paused'].includes(state.phase) ||
+      !['starting', 'paused'].includes(actual.phase) ||
+      state.epoch !== trial.epoch ||
+      actual.epoch !== trial.epoch ||
+      state.generationId !== trial.generationId ||
+      Date.now() >= trial.deadline
+    )
+      throw new Error('Restore trial has no matching closed application state.');
+  }
+  let trialClosed = !!trial,
+    trialEnding = false;
+  const maintenance = new MaintenanceGate(options.maintenance, () => trialClosed);
   const database = openDatabase(options.databasePath);
+  const startupMark = () =>
+    JSON.stringify({
+      changes: database.prepare('SELECT total_changes() AS n').get()!.n,
+      schema: database.prepare('PRAGMA schema_version').get()!.schema_version,
+    });
+  // Capture before constructors. Equal final content alone could hide a write
+  // followed by an undo, or a temporary schema change during initialization.
+  let initialMark: string | null = null;
+  let originalMaximumPages: number | undefined;
+  let initialEpoch: string | undefined;
+  let initialGeneration: string | undefined;
+  let startupStayedClosed = !!options.maintenance;
+  const observeTrialAdmission = () => {
+    const state = options.maintenance?.adminStatus(),
+      actual = maintenance.status;
+    if (
+      !state?.available ||
+      !actual.available ||
+      maintenance.running ||
+      !['starting', 'paused'].includes(state.phase) ||
+      !['starting', 'paused'].includes(actual.phase) ||
+      state.epoch !== initialEpoch ||
+      actual.epoch !== initialEpoch ||
+      state.generationId !== initialGeneration
+    )
+      startupStayedClosed = false;
+  };
   const app = express();
   app.disable('x-powered-by');
+  // Runs before every auth, metadata, static and health handler. The sync upgrade
+  // handler and all background work independently consult this same closed gate.
+  app.use((_request, response, next) => {
+    if (!trialClosed) {
+      next();
+      return;
+    }
+    response
+      .status(503)
+      .set('Cache-Control', 'no-store')
+      .json({ code: 'maintenance', error: 'Workspace recovery is being verified.' });
+  });
   const server = createHttpServer(app);
   app.use(profileAvatarRoutes());
   let vite: import('vite').ViteDevServer | undefined;
@@ -73,9 +168,43 @@ export async function createApp(options: AppOptions) {
   let healthTimer: ReturnType<typeof setInterval> | undefined;
   let diagnostics: DiagnosticsStore | undefined;
   let unsubscribeMaintenance = () => {};
+  let unsubscribeTrialObservation = () => {};
   let draining: Promise<void> | undefined;
 
   try {
+    const maximumBytes = trial?.maximumBytes ?? options.restoreMaximumBytes;
+    if (maximumBytes !== undefined) {
+      const maximum = maximumBytes,
+        status = maintenance.status;
+      const pageSize = Number(database.prepare('PRAGMA page_size').get()!.page_size);
+      const pages = Number(database.prepare('PRAGMA page_count').get()!.page_count);
+      if (
+        !status.available ||
+        !['starting', 'paused'].includes(status.phase) ||
+        !Number.isSafeInteger(maximum) ||
+        maximum < 4096 ||
+        maximum > 8 * 1024 ** 3 ||
+        pages * pageSize > maximum
+      )
+        throw new Error('Invalid restore startup resource boundary.');
+      originalMaximumPages = Number(
+        database.prepare('PRAGMA max_page_count').get()!.max_page_count,
+      );
+      if (!Number.isSafeInteger(originalMaximumPages) || originalMaximumPages < pages)
+        throw new Error('Invalid original database growth boundary.');
+      database.exec(
+        `PRAGMA cache_size=-2048; PRAGMA temp_store=FILE; PRAGMA max_page_count=${Math.floor(maximum / pageSize)}`,
+      );
+    }
+    if (options.maintenance) {
+      initialMark = startupMark();
+      initialEpoch = maintenance.status.epoch;
+      initialGeneration = options.maintenance.adminStatus().generationId;
+      observeTrialAdmission();
+      // Subscribe before constructors/awaits: a later return to paused cannot
+      // rehabilitate a process that already admitted ordinary work.
+      unsubscribeTrialObservation = options.maintenance.subscribe(observeTrialAdmission);
+    }
     diagnostics = new DiagnosticsStore(
       diagnosticsConfiguration(options.databasePath, options.image),
     );
@@ -218,6 +347,8 @@ export async function createApp(options: AppOptions) {
       origin: options.origin ?? 'http://localhost:3000',
       configPath: options.backupConfigPath,
       image: options.image,
+      restoreController: options.restoreController,
+      spacesEnabled: spaceReview,
       observe: () => {
         const started = Date.now(),
           runId = randomUUID();
@@ -304,6 +435,7 @@ export async function createApp(options: AppOptions) {
     healthTimer = setInterval(collectHealth, 60_000);
     healthTimer.unref();
     app.use('/api/admin/backups', backupRoutes(auth, backups, origin));
+    app.use('/api/admin/restores', restoreRoutes(auth, backups.restores, origin));
     app.get('/api/health', (_request, response) => {
       database.prepare('SELECT 1').get();
       response.json({ status: 'ok' });
@@ -523,6 +655,7 @@ export async function createApp(options: AppOptions) {
         });
       }) ?? (() => {});
   } catch (error) {
+    unsubscribeTrialObservation();
     unsubscribeMaintenance();
     stopCleanup();
     clearInterval(purgeTimer);
@@ -537,10 +670,84 @@ export async function createApp(options: AppOptions) {
     throw error;
   }
 
+  function verifyPausedRestore(expected: {
+    fingerprint: string;
+    epoch: string;
+    generationId: string;
+  }) {
+    observeTrialAdmission();
+    const state = options.maintenance?.adminStatus();
+    if (
+      !startupStayedClosed ||
+      !database.isOpen ||
+      !state?.available ||
+      !['starting', 'paused'].includes(state.phase) ||
+      maintenance.pending ||
+      initialMark === null ||
+      expected.epoch !== initialEpoch ||
+      state.epoch !== initialEpoch ||
+      expected.generationId !== initialGeneration ||
+      state.generationId !== initialGeneration ||
+      !/^[a-f0-9]{64}$/.test(expected.fingerprint) ||
+      startupMark() !== initialMark
+    )
+      throw new Error('The restore trial did not retain its prepared startup state.');
+    database.assertQuiescent();
+    database.exec('BEGIN');
+    try {
+      if (restoreSnapshotFingerprint(database) !== expected.fingerprint)
+        throw new Error('The restore trial differs from its prepared snapshot.');
+      database.exec('COMMIT');
+    } catch (error) {
+      database.exec('ROLLBACK');
+      throw error;
+    }
+  }
+
   return {
     server,
     maintenance,
-    async close() {
+    /** Private live-child check. No verification is renewed and nothing is written. */
+    verifyRestoreAuthority(proof: RestoreAuthority) {
+      if (!database.isOpen || !maintenance.running)
+        throw new Error('Restore authority requires the current running application.');
+      assertRestoreAuthority(database, proof);
+    },
+    /** Private readiness and release; neither method is mounted on HTTP. */
+    verifyPausedRestore,
+    restoreTrial: trial ? structuredClone(trial) : undefined,
+    releaseRestoreTrial(reference: unknown) {
+      if (!trial || trialEnding || !database.isOpen || !sameRestoreTrialReference(reference, trial))
+        throw new Error('Restore release has no matching trial.');
+      if (!trialClosed) return; // Same-outcome retry reports completion without renewing authority.
+      if (Date.now() >= trial.deadline) throw new Error('Restore release expired.');
+      assertNoPendingRestore(databasePath);
+      if (!sameFile(fileIdentity(databasePath), trial.identity))
+        throw new Error('Restore target changed.');
+      verifyPausedRestore({
+        fingerprint: trial.output.fingerprint,
+        epoch: trial.epoch,
+        generationId: trial.generationId,
+      });
+      if (Date.now() >= trial.deadline) throw new Error('Restore release expired.');
+      if (originalMaximumPages !== undefined)
+        maintenance.initialize(() =>
+          database.exec(`PRAGMA max_page_count=${originalMaximumPages}`),
+        );
+      assertNoPendingRestore(databasePath);
+      if (Date.now() >= trial.deadline) throw new Error('Restore release expired.');
+      startupStayedClosed = false;
+      unsubscribeTrialObservation();
+      trialClosed = false;
+    },
+    async close(options?: {
+      /** Private supervised restore shutdown. Resolve only after the parent has
+       * durably accepted the final witness for its exact pending challenge. */
+      acceptRestoreWitness?: (fingerprint: string) => Promise<void>;
+    }) {
+      trialEnding = true;
+      startupStayedClosed = false;
+      unsubscribeTrialObservation();
       unsubscribeMaintenance();
       stopCleanup();
       clearInterval(purgeTimer);
@@ -576,8 +783,19 @@ export async function createApp(options: AppOptions) {
       );
       await collaboration?.close();
       maintenance.stop();
-      database.close();
-      await diagnostics?.close();
+      try {
+        if (options?.acceptRestoreWitness) {
+          const fingerprint = captureTerminalRestoreFingerprint(database);
+          // No SQLite transaction remains open while waiting for persistence.
+          await options.acceptRestoreWitness(fingerprint);
+        }
+      } finally {
+        try {
+          database.close();
+        } finally {
+          await diagnostics?.close();
+        }
+      }
     },
   };
 }

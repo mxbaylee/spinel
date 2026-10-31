@@ -22,6 +22,47 @@ function fixture() {
   return { db, auth, workspace, owner, collaborator, item, generations };
 }
 
+test.each(['staging', 'complete'] as const)(
+  'workspace recovery retires a %s restore request in every completion path',
+  (status) => {
+    const f = fixture(),
+      job = f.generations.begin(f.owner.id, f.item.id, f.item.id, randomUUID(), 'checkpoint');
+    if (status === 'complete')
+      f.generations.finish(
+        job.id,
+        3,
+        () => {},
+        () => {},
+      );
+    f.db.prepare("INSERT INTO spinel_restore_fences VALUES('request',?)").run(job.id);
+    const session = f.auth.createSession(f.owner.id),
+      custom = { sessionHash: session.session.token_hash };
+    const before = f.generations.active(f.item.id);
+    expect(() =>
+      f.generations.completed(f.owner.id, f.item.id, job.id, 'checkpoint', custom),
+    ).toThrow('retired');
+    expect(() =>
+      f.generations.begin(f.owner.id, f.item.id, before.unitId, job.id, 'checkpoint', custom),
+    ).toThrow('retired');
+    expect(() =>
+      f.generations.finish(
+        job.id,
+        10,
+        () => {
+          throw new Error('must not preserve');
+        },
+        () => {},
+        custom,
+      ),
+    ).toThrow('retired');
+    expect(f.generations.active(f.item.id)).toEqual(before);
+    f.db.prepare('DELETE FROM spinel_restore_jobs WHERE id=?').run(job.id);
+    expect(() =>
+      f.generations.begin(f.owner.id, f.item.id, before.unitId, job.id, 'checkpoint', custom),
+    ).toThrow('retired');
+  },
+);
+
 test('switch, pre-state, receipt and purge are atomic; retries cannot restore twice', () => {
   const f = fixture(),
     request = randomUUID();
@@ -40,6 +81,7 @@ test('switch, pre-state, receipt and purge are atomic; retries cannot restore tw
     () => {},
   );
   expect(saved).toMatchObject({ status: 'complete', revision: 8 });
+  expect(f.db.prepare('SELECT revision FROM spinel_restore_revision').get()!.revision).toBe(8);
   expect(f.generations.active(f.item.id)).toEqual({
     itemId: f.item.id,
     unitId: job.nextUnit,
@@ -72,6 +114,27 @@ test('switch, pre-state, receipt and purge are atomic; retries cannot restore tw
   expect(() =>
     f.generations.begin(f.owner.id, f.item.id, f.item.id, randomUUID(), 'checkpoint'),
   ).toThrow('changed');
+});
+
+test('a late generation receipt failure rolls back its logical revision ceiling and mapping', () => {
+  const f = fixture(),
+    job = f.generations.begin(f.owner.id, f.item.id, f.item.id, randomUUID(), 'checkpoint');
+  f.db.exec(
+    "CREATE TRIGGER refuse_receipt BEFORE UPDATE ON spinel_restore_jobs WHEN NEW.status='complete' BEGIN SELECT RAISE(ABORT,'fixture receipt refusal'); END",
+  );
+  expect(() =>
+    f.generations.finish(
+      job.id,
+      40,
+      () => {},
+      () => {},
+    ),
+  ).toThrow('fixture receipt refusal');
+  expect(f.db.prepare('SELECT revision FROM spinel_restore_revision').get()!.revision).toBe(0);
+  expect(f.generations.active(f.item.id).unitId).toBe(f.item.id);
+  expect(
+    f.db.prepare('SELECT status FROM spinel_restore_jobs WHERE id=?').get(job.id)!.status,
+  ).toBe('staging');
 });
 
 test('a failed atomic switch keeps the old generation and rolls back partial pre-state writes', () => {

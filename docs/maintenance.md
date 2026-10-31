@@ -3,7 +3,10 @@
 SPN-111 adds a deployment-owned pause around the current workspace. It can drain
 accepted operations, stop every application process, verify that the live SQLite
 and WAL handles are closed, and start the same generation under maintenance.
-Replacing a dataset from a backup remains [SPN-112](todo/SPN-112.md).
+Replacing a dataset from a backup uses the separate
+[Admin restore flow](backups.md#restore-through-admin), with durable encrypted
+source custody and independent generation admission. Ordinary maintenance commands
+do not authorize replacement or bypass an unresolved restore's opening barrier.
 
 ## Supported control boundary
 
@@ -189,6 +192,36 @@ This marker is not authorization and sanitized worker environments copy only tha
 field, without inheriting application credentials. Unknown state remains in
 maintenance. The proxy can continue explaining the outage while application auth
 and ordinary jobs are unavailable.
+
+## An unresolved restore
+
+Admin reports an unresolved or unknown restore outcome, the workspace stays in
+maintenance, and ordinary verify/start/resume refuse to reopen it. The files alone
+cannot prove which generation is intended, so recovery is deliberate:
+
+1. Leave the workspace closed. Do not delete the private recovery root, its
+   `restore-*` directories or journals, the `<database>.restore-pending` opening
+   barrier or any retained source; do not run another database writer.
+2. Record `node scripts/deploy/maintenance.ts status`, then restart the supervisor
+   once. Restart finishes reopening a committed outcome without reinstalling
+   prepared bytes. It marks an admission that never executed, or a restore that
+   stopped before activation with the live files still matching the preserved
+   original and no opening barrier, as failed and stopped.
+3. If status now shows a stopped operation and no pending restore, run verify,
+   start and resume with that operation ID, sign in as the Operator and
+   **Refresh restore status**. Only a recorded outcome says which data is live.
+4. If verify still refuses, the restore stopped between activating the candidate
+   and committing an outcome, for example when the host lost power during the
+   candidate's trial or ran past the [two-minute custody budget or the
+   confirmation's five-minute window](backups.md) after activation. The
+   preserved original is intact in the recovery root, but no supported command
+   reinstalls it yet ([SPN-128](todo/SPN-128.md)); copying those files back by hand
+   is not a recovery step. Copy the whole application directory and recovery root
+   read-only to separate encrypted storage, then follow
+   [fresh-host recovery](backups.md#restore-onto-a-fresh-host) from the last
+   verified backup with its access review. That loses work accepted after the
+   backup, so tell the Owner and Collaborators before reopening. Keep the copy
+   until that host is checked; it is the only evidence of the lost work.
 
 ## Notices and time zones
 

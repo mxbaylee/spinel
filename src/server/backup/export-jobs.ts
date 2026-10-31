@@ -9,7 +9,7 @@ import { createDestination } from './destination.ts';
 import type { RemoteStore } from './destination.ts';
 import { backupTime } from './spaces.ts';
 import { MAX_ARCHIVE_BYTES } from './transfer.ts';
-import { RecoveryResourceError } from './resource-error.ts';
+import { keyIndependent, RecoveryResourceError } from './resource-error.ts';
 import { MaintenanceError } from '../maintenance/gate.ts';
 
 const PREPARE_MS = 30 * 60_000;
@@ -411,7 +411,7 @@ export class ExportJobs {
             break;
           } catch (error) {
             signal.throwIfAborted();
-            if (error instanceof RecoveryResourceError) throw error;
+            if (keyIndependent(error)) throw error;
           } finally {
             await rm(restored, { recursive: true, force: true });
           }

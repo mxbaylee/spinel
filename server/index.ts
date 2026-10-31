@@ -2,6 +2,7 @@ import { execFile } from 'node:child_process';
 import type { AddressInfo } from 'node:net';
 import { resolve } from 'node:path';
 import { createApp, projectRoot } from './app.ts';
+import { applicationPolicy } from './application-policy.ts';
 import { connectMaintenance } from '../src/server/maintenance/supervisor-client.ts';
 import {
   acquireColdWorkspaceLease,
@@ -11,6 +12,8 @@ import {
 import type { WorkspaceLease } from '../src/server/maintenance/journal.ts';
 import { closeSync, constants, mkdirSync, openSync } from 'node:fs';
 import { dirname } from 'node:path';
+import type { RestoreStopRequest } from '../src/shared/maintenance.ts';
+import type { RestoreTrialStopRequest } from '../src/server/maintenance/restore-trial-stop.ts';
 
 const development = process.argv.includes('--dev');
 const port = Number(process.env.PORT ?? 3000);
@@ -28,6 +31,8 @@ const maintenance = process.env.SPINEL_SUPERVISED === '1' ? await connectMainten
 // startup lease. A supervisor in another PID namespace cannot inspect our FDs.
 // Unref'd kernel listeners do not themselves keep a shut-down process alive.
 let liveWorkspace: WorkspaceLease | undefined;
+let stopping = false;
+let shutdownTask: Promise<void> | undefined;
 const app = await (async () => {
   let startupLease: WorkspaceLease | undefined;
   let opened = false;
@@ -57,14 +62,22 @@ const app = await (async () => {
     opened = true;
     starting = await createApp({
       maintenance,
+      restoreController: maintenance?.restoreController,
+      restoreOpening: maintenance?.takeRestoreOpening(),
       development,
-      staticDirectory: process.env.SPINEL_STATIC_DIRECTORY,
+      ...applicationPolicy(port),
       backupConfigPath: process.env.BACKUP_CONFIG_PATH,
-      image: process.env.SPINEL_IMAGE,
-      spaceReview: process.env.SPINEL_SPACE_REVIEW !== '0',
-      origin: process.env.APP_ORIGIN ?? `http://localhost:${port}`,
       databasePath,
     });
+    if (starting.restoreTrial) {
+      const trialApplication = starting;
+      maintenance!.onRestoreTrialStop(starting.restoreTrial, (stop) =>
+        shutdownApplication(trialApplication, undefined, stop),
+      );
+      maintenance!.onRestoreTrialRelease((reference) =>
+        trialApplication.releaseRestoreTrial(reference),
+      );
+    }
     const server = starting.server;
     await new Promise<void>((resolveListen, reject) => {
       server.once('error', reject);
@@ -73,11 +86,21 @@ const app = await (async () => {
         resolveListen();
       });
     });
-    maintenance?.ready();
+    if (stopping) throw new Error('Application stopped during private trial startup.');
+    if (starting.restoreTrial) {
+      const trial = starting.restoreTrial;
+      starting.verifyPausedRestore({
+        fingerprint: trial.output.fingerprint,
+        epoch: trial.epoch,
+        generationId: trial.generationId,
+      });
+      maintenance!.restoreTrialReady(trial);
+    } else maintenance?.ready();
     await startupLease?.release();
     return starting;
   } catch (error) {
-    await starting?.close().catch(() => {});
+    if (shutdownTask) await shutdownTask;
+    else await starting?.close().catch(() => {});
     await startupLease?.release().catch(() => {});
     // After any SQLite open, even a failed startup keeps live ownership until
     // process exit because native descriptors can remain after close().
@@ -103,18 +126,46 @@ if (development && !process.argv.includes('--no-open')) {
   });
 }
 
-let stopping = false;
-async function shutdown() {
-  if (stopping) return;
-  stopping = true;
-  try {
-    await app.close();
-  } catch (error) {
-    console.error(error);
-    process.exitCode = 1;
-  } finally {
-    maintenance?.close();
+async function shutdownApplication(
+  application: Awaited<ReturnType<typeof createApp>>,
+  restore?: RestoreStopRequest,
+  trialStop?: RestoreTrialStopRequest,
+) {
+  if (stopping) {
+    if (restore || trialStop) throw new Error('Application shutdown has already started.');
+    return shutdownTask;
   }
+  stopping = true;
+  shutdownTask = (async () => {
+    try {
+      await application.close(
+        restore || trialStop
+          ? {
+              acceptRestoreWitness: (fingerprint) => {
+                if (trialStop) {
+                  if (!maintenance?.acceptRestoreTrialWitness)
+                    throw new Error('Restore trial control is unavailable.');
+                  return maintenance.acceptRestoreTrialWitness(trialStop, fingerprint);
+                }
+                if (!maintenance?.acceptRestoreWitness)
+                  throw new Error('Restore control is unavailable.');
+                return maintenance.acceptRestoreWitness(restore!, fingerprint);
+              },
+            }
+          : undefined,
+      );
+    } catch (error) {
+      console.error(
+        restore || trialStop ? new Error('Supervised restore shutdown did not complete.') : error,
+      );
+      process.exitCode = 1;
+    } finally {
+      maintenance?.close();
+    }
+  })();
+  return shutdownTask;
 }
-process.on('SIGINT', shutdown);
-process.on('SIGTERM', shutdown);
+maintenance?.onRestoreAuthority?.((proof) => app.verifyRestoreAuthority(proof));
+maintenance?.onRestoreStop?.((request) => shutdownApplication(app, request));
+process.on('SIGINT', () => void shutdownApplication(app));
+process.on('SIGTERM', () => void shutdownApplication(app));

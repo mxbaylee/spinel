@@ -42,9 +42,14 @@ export function Trash({ onChanged }: { onChanged(): Promise<void> }) {
     <section aria-label="Trash">
       <h2>Trash</h2>
       <p>
-        Files, folders and Spaces can be restored for 30 days before daily cleanup removes them
-        permanently.
+        Files, folders and Spaces can normally be restored for 30 days before daily cleanup removes
+        them permanently.
       </p>
+      {listing?.items.some((item) => item.heldAfterRecovery) && (
+        <p>
+          Items held after workspace recovery stay until you restore or permanently delete them.
+        </p>
+      )}
       {listing ? (
         <>
           <button disabled={busy || !listing.items.length} onClick={() => setConfirmation(listing)}>
@@ -99,12 +104,20 @@ export function Trash({ onChanged }: { onChanged(): Promise<void> }) {
                   <br />
                   <small>
                     Deleted {new Date(item.trashedAt).toLocaleString()} ·{' '}
-                    {item.expiresAt <= now ? 'Recovery ended' : 'Recover until'}{' '}
-                    {new Date(item.expiresAt).toLocaleString()}
+                    {item.heldAfterRecovery ? (
+                      'Held after workspace recovery'
+                    ) : (
+                      <>
+                        {item.expiresAt <= now ? 'Recovery ended' : 'Recover until'}{' '}
+                        {new Date(item.expiresAt).toLocaleString()}
+                      </>
+                    )}
                   </small>
                 </div>
                 <button
-                  disabled={busy || !!confirmation || item.expiresAt <= now}
+                  disabled={
+                    busy || !!confirmation || (!item.heldAfterRecovery && item.expiresAt <= now)
+                  }
                   aria-label={`Restore ${item.name}`}
                   onClick={() => void change(`/${item.id}/restore`, {}, `Restored ${item.name}.`)}
                 >

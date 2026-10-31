@@ -13,11 +13,15 @@ export interface RecoveryInventory {
 /** Hash the immutable snapshot, never the live connection. SQL text conversion
  * preserves INTEGER values outside JavaScript's safe range; blobs remain bytes.
  * Length framing and SQLite types distinguish null, text, numbers and blobs. */
-export function recoveryInventory(db: DatabaseSync): RecoveryInventory {
+export function recoveryInventory(
+  db: DatabaseSync,
+  options: { includeRecovery?: boolean } = {},
+): RecoveryInventory {
   const definitions = db
     .prepare(
       `SELECT type,name,tbl_name,sql FROM sqlite_schema
-       WHERE name<>'spinel_recovery' AND tbl_name<>'spinel_recovery' ORDER BY type,name`,
+       ${options.includeRecovery ? '' : "WHERE name<>'spinel_recovery' AND tbl_name<>'spinel_recovery'"}
+       ORDER BY type,name`,
     )
     .all();
   const names = definitions.filter((row) => row.type === 'table').map((row) => String(row.name));
@@ -68,6 +72,21 @@ export function recoveryInventory(db: DatabaseSync): RecoveryInventory {
     return { name, rows, sha256: hash.digest('hex') };
   });
   return { format: 1, schema, tables };
+}
+
+/** Compare complete logical snapshots, including recovery metadata and migration
+ * version. A live drain witness must be taken in a consistent read transaction
+ * after final flush, then bound to the job/epoch before any connection closes.
+ * Computing this only after WAL recovery cannot establish that witness. */
+export function restoreSnapshotFingerprint(db: DatabaseSync): string {
+  return createHash('sha256')
+    .update(
+      JSON.stringify({
+        userVersion: db.prepare('PRAGMA user_version').get()!.user_version,
+        inventory: recoveryInventory(db, { includeRecovery: true }),
+      }),
+    )
+    .digest('hex');
 }
 
 export function writeInventory(db: DatabaseSync) {

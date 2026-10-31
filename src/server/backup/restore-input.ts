@@ -1,0 +1,310 @@
+import { createHash } from 'node:crypto';
+import { constants } from 'node:fs';
+import { lstat, open } from 'node:fs/promises';
+import { isAbsolute } from 'node:path';
+import { RecoveryResourceError } from './resource-error.ts';
+
+/** Leave room for immutable source copies plus three bounded output-sized
+ * allocations (database, journal, temporary work). This is an admission limit,
+ * not a physical reservation against unrelated writers on the volume. */
+export function restoreOutputLimit(
+  available: bigint,
+  sourceBytes: number,
+  initialBytes: number,
+  maximum: number,
+) {
+  if (
+    ![sourceBytes, initialBytes, maximum].every(Number.isSafeInteger) ||
+    sourceBytes < 0 ||
+    initialBytes < 4096 ||
+    maximum < initialBytes ||
+    maximum > 8 * 1024 ** 3
+  )
+    throw new Error('Invalid recovery output budget.');
+  const remaining = available - BigInt(sourceBytes) - BigInt(256 * 1024 ** 2);
+  const bound = remaining / 3n;
+  const result = Number(bound < BigInt(maximum) ? bound : BigInt(maximum));
+  if (result < initialBytes) throw new RecoveryResourceError('disk-space');
+  return result;
+}
+
+/** A trusted, closed, self-contained snapshot, not a live DB or a raw DB/WAL
+ * rollback tuple. The supervisor must snapshot all acknowledged WAL changes
+ * under the maintenance barrier before deriving this evidence. */
+export interface ClosedRestoreInput {
+  databasePath: string;
+  databaseSha256: string;
+  databaseBytes: number;
+}
+const changed = () => new Error('The recovery input is unavailable or changed.');
+export function validateClosedRestoreInput(input: ClosedRestoreInput, maximum: number) {
+  if (
+    !isAbsolute(input.databasePath) ||
+    !/^[a-f0-9]{64}$/.test(input.databaseSha256) ||
+    !Number.isSafeInteger(input.databaseBytes) ||
+    input.databaseBytes < 4096 ||
+    input.databaseBytes > maximum
+  )
+    throw changed();
+}
+export async function assertSelfContained(path: string) {
+  for (const suffix of ['-wal', '-shm', '-journal']) {
+    try {
+      await lstat(path + suffix);
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') continue;
+      throw error;
+    }
+    throw changed();
+  }
+}
+
+/** Pin the source descriptor, stream a bounded exclusive private copy, and
+ * authenticate its exact bytes. Never open original evidence with SQLite.
+ * Caller owns target-directory cleanup on every error or cancellation. */
+export async function copyClosedRestoreInput(
+  input: ClosedRestoreInput,
+  destination: string,
+  signal?: AbortSignal,
+) {
+  validateClosedRestoreInput(input, 8 * 1024 ** 3);
+  signal?.throwIfAborted();
+  await assertSelfContained(input.databasePath);
+  await copyRestoreInputFile(
+    { path: input.databasePath, bytes: input.databaseBytes, sha256: input.databaseSha256 },
+    destination,
+    signal,
+  );
+  await assertSelfContained(input.databasePath);
+}
+
+/** Exact raw evidence, including an empty WAL. This does not establish a closed
+ * SQLite snapshot or authorize recovery of a DB/WAL tuple. Its caller owns
+ * tuple completeness, WAL validation and cleanup on every failure. */
+export interface RestoreInputFile {
+  path: string;
+  bytes: number;
+  sha256: string;
+}
+export async function copyRestoreInputFile(
+  input: RestoreInputFile,
+  destination: string,
+  signal?: AbortSignal,
+  assertActive?: () => void,
+) {
+  if (
+    !isAbsolute(input.path) ||
+    !/^[a-f0-9]{64}$/.test(input.sha256) ||
+    !Number.isSafeInteger(input.bytes) ||
+    input.bytes < 0 ||
+    input.bytes > 8 * 1024 ** 3
+  )
+    throw changed();
+  const active = () => {
+    signal?.throwIfAborted();
+    assertActive?.();
+  };
+  active();
+  const source = await open(
+    input.path,
+    constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK,
+  );
+  try {
+    const before = await source.stat();
+    if (
+      !before.isFile() ||
+      before.nlink !== 1 ||
+      before.uid !== process.getuid?.() ||
+      (before.mode & 0o077) !== 0 ||
+      before.size !== input.bytes
+    )
+      throw changed();
+    active();
+    const target = await open(
+      destination,
+      constants.O_CREAT | constants.O_EXCL | constants.O_WRONLY | constants.O_NOFOLLOW,
+      0o600,
+    );
+    try {
+      const hash = createHash('sha256'),
+        buffer = Buffer.alloc(64 * 1024);
+      let offset = 0;
+      for (;;) {
+        active();
+        const { bytesRead } = await source.read(
+          buffer,
+          0,
+          Math.min(buffer.length, input.bytes + 1 - offset),
+          offset,
+        );
+        if (!bytesRead) break;
+        if (offset + bytesRead > input.bytes) throw changed();
+        hash.update(buffer.subarray(0, bytesRead));
+        let written = 0;
+        while (written < bytesRead) {
+          active();
+          const result = await target.write(buffer, written, bytesRead - written, offset + written);
+          if (!result.bytesWritten) throw changed();
+          written += result.bytesWritten;
+        }
+        offset += bytesRead;
+      }
+      const after = await source.stat(),
+        path = await lstat(input.path);
+      if (
+        offset !== input.bytes ||
+        hash.digest('hex') !== input.sha256 ||
+        before.size !== after.size ||
+        before.mtimeMs !== after.mtimeMs ||
+        before.ctimeMs !== after.ctimeMs ||
+        !path.isFile() ||
+        path.dev !== before.dev ||
+        path.ino !== before.ino
+      )
+        throw changed();
+      active();
+      await target.sync();
+      active();
+    } finally {
+      await target.close();
+    }
+  } finally {
+    await source.close();
+  }
+}
+
+/** Parent-only durability boundary after the restricted worker has physically
+ * exited. Node's permission model disables descriptor sync even for allowed paths.
+ * No SQLite connection is opened here; authenticate the same descriptor we sync. */
+export async function syncClosedRestoreInput(input: ClosedRestoreInput, signal?: AbortSignal) {
+  await authenticateClosedRestoreInput(input, true, signal);
+}
+
+/** Read-only same-descriptor authentication before the first permitted live open. */
+export async function verifyClosedRestoreInput(input: ClosedRestoreInput, signal?: AbortSignal) {
+  await authenticateClosedRestoreInput(input, false, signal);
+}
+
+async function authenticateClosedRestoreInput(
+  input: ClosedRestoreInput,
+  durable: boolean,
+  signal?: AbortSignal,
+) {
+  validateClosedRestoreInput(input, 8 * 1024 ** 3);
+  signal?.throwIfAborted();
+  await assertSelfContained(input.databasePath);
+  await authenticateRestoreInputFile(
+    { path: input.databasePath, bytes: input.databaseBytes, sha256: input.databaseSha256 },
+    durable,
+    signal,
+  );
+  await assertSelfContained(input.databasePath);
+  signal?.throwIfAborted();
+}
+
+/** Authenticate raw, closed evidence on one pinned descriptor, optionally fsyncing
+ * it. Does not infer tuple completeness or permit SQLite recovery/opening. */
+export async function authenticateRestoreInputFile(
+  input: RestoreInputFile,
+  durable: boolean,
+  signal?: AbortSignal,
+  assertActive?: () => void,
+) {
+  if (
+    !isAbsolute(input.path) ||
+    !/^[a-f0-9]{64}$/.test(input.sha256) ||
+    !Number.isSafeInteger(input.bytes) ||
+    input.bytes < 0 ||
+    input.bytes > 8 * 1024 ** 3
+  )
+    throw changed();
+  const active = () => {
+    signal?.throwIfAborted();
+    assertActive?.();
+  };
+  active();
+  const file = await open(
+    input.path,
+    constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK,
+  );
+  try {
+    const before = await file.stat({ bigint: true });
+    if (
+      !before.isFile() ||
+      before.nlink !== 1n ||
+      before.uid !== BigInt(process.getuid!()) ||
+      (before.mode & 0o077n) !== 0n ||
+      before.size !== BigInt(input.bytes)
+    )
+      throw changed();
+    const hash = createHash('sha256'),
+      buffer = Buffer.alloc(64 * 1024);
+    let offset = 0;
+    for (;;) {
+      active();
+      const { bytesRead } = await file.read(
+        buffer,
+        0,
+        Math.min(buffer.length, input.bytes + 1 - offset),
+        offset,
+      );
+      if (!bytesRead) break;
+      offset += bytesRead;
+      if (offset > input.bytes) throw changed();
+      hash.update(buffer.subarray(0, bytesRead));
+    }
+    if (offset !== input.bytes || hash.digest('hex') !== input.sha256) throw changed();
+    active();
+    if (durable) await file.sync();
+    active();
+    const after = await file.stat({ bigint: true }),
+      path = await lstat(input.path, { bigint: true });
+    for (const current of [after, path])
+      if (
+        !current.isFile() ||
+        current.dev !== before.dev ||
+        current.ino !== before.ino ||
+        current.size !== before.size ||
+        current.mtimeNs !== before.mtimeNs ||
+        current.ctimeNs !== before.ctimeNs ||
+        current.uid !== before.uid ||
+        current.mode !== before.mode ||
+        current.nlink !== 1n
+      )
+        throw changed();
+    active();
+  } finally {
+    await file.close();
+  }
+}
+
+/** Publish the completed output namespace after disposable evidence is removed. */
+export async function syncRestoreDirectory(path: string, signal?: AbortSignal) {
+  signal?.throwIfAborted();
+  const directory = await open(
+    path,
+    constants.O_RDONLY | constants.O_DIRECTORY | constants.O_NOFOLLOW,
+  );
+  try {
+    const before = await directory.stat({ bigint: true });
+    if (
+      !before.isDirectory() ||
+      before.uid !== BigInt(process.getuid!()) ||
+      (before.mode & 0o077n) !== 0n
+    )
+      throw changed();
+    await directory.sync();
+    const after = await lstat(path, { bigint: true });
+    if (
+      !after.isDirectory() ||
+      after.dev !== before.dev ||
+      after.ino !== before.ino ||
+      after.uid !== before.uid ||
+      after.mode !== before.mode
+    )
+      throw changed();
+    signal?.throwIfAborted();
+  } finally {
+    await directory.close();
+  }
+}

@@ -256,6 +256,13 @@ One banner per view; it reserves no space when absent, so it is for conditions
 present on load, not for status that changes while the view is open (that goes
 in the header's status slots).
 
+The post-restore notice is the informational case
+([SPN-112](../implementation/SPN-112.md#merge-review-dispositions)): the accent
+color instead of the alert color, `role="status"`, and dismiss as its one action,
+remembered per browser. It sits under the header on My files, Admin, Profile,
+History and a Space view with no open page. An open document hides it, because
+editors need the full height and the member sees it again on returning to a list.
+
 ### Loading
 
 A short `role="status"` line in the region that will fill ("Loading your

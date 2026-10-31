@@ -1,0 +1,744 @@
+{
+  "schemaVersion": 1,
+  "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+  "fixtureTime": "2026-10-20T16:00:00Z",
+  "review": "Agent review only. All 200 hashes verified; 80 distinct current images independently inspected across current and byte-identical prior captures, including every story. Not all 200 personally inspected.",
+  "images": [
+    {
+      "id": "admin-backuprestore--available",
+      "variant": "phone",
+      "filename": "admin-backuprestore--available-phone.png",
+      "title": "Current production/Admin/BackupRestore / Available",
+      "file": "story-admin-backuprestore--available-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "b49f7620485369640f664a3ae00ddae7d119c724824e0687ec015c4e3d185979",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--unavailable",
+      "variant": "phone",
+      "filename": "admin-backuprestore--unavailable-phone.png",
+      "title": "Current production/Admin/BackupRestore / Unavailable",
+      "file": "story-admin-backuprestore--unavailable-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "bf91c9909a05f02c03a745818923f94d6d0e538b844d7b28213f2b61f04600a2",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--loading",
+      "variant": "phone",
+      "filename": "admin-backuprestore--loading-phone.png",
+      "title": "Current production/Admin/BackupRestore / Loading",
+      "file": "story-admin-backuprestore--loading-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "49c25ac2add0f298d1cd53800ab8136a7d8ab1e718765b541ae6d0fcaa63eeb7",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--status-failed",
+      "variant": "phone",
+      "filename": "admin-backuprestore--status-failed-phone.png",
+      "title": "Current production/Admin/BackupRestore / Status Failed",
+      "file": "story-admin-backuprestore--status-failed-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "3b573d39b9e22989165b790ed8e03837ae2e9aeb0312ca4d454cc06f484c1c85",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--session-unavailable",
+      "variant": "phone",
+      "filename": "admin-backuprestore--session-unavailable-phone.png",
+      "title": "Current production/Admin/BackupRestore / Session Unavailable",
+      "file": "story-admin-backuprestore--session-unavailable-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "b77c210a727b54af82cde39e1dcab72515d53a54247f8c43ad7f8af3acdc6ac4",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--uploading",
+      "variant": "phone",
+      "filename": "admin-backuprestore--uploading-phone.png",
+      "title": "Current production/Admin/BackupRestore / Uploading",
+      "file": "story-admin-backuprestore--uploading-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "2f5090556c2f083df43070ef6bc039e70a51dd701c4a28964676aa9323c30707",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--preparing",
+      "variant": "phone",
+      "filename": "admin-backuprestore--preparing-phone.png",
+      "title": "Current production/Admin/BackupRestore / Preparing",
+      "file": "story-admin-backuprestore--preparing-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "3abf3341d3191ecfcc2c579e80c150e5a09cf8dcc303c9a5450ad57300b8e3e1",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--maintenance-draining",
+      "variant": "phone",
+      "filename": "admin-backuprestore--maintenance-draining-phone.png",
+      "title": "Current production/Admin/BackupRestore / Maintenance Draining",
+      "file": "story-admin-backuprestore--maintenance-draining-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "4792aa6dc77bf6fcd727092f4b17a9610f4d4523d2347b233f6c3d7c91c07162",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--ready",
+      "variant": "dark",
+      "filename": "admin-backuprestore--ready-dark.png",
+      "title": "Current production/Admin/BackupRestore / Ready",
+      "file": "story-admin-backuprestore--ready-dark.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "5e0e0fecfd755a3bbd714773c21dafc4dc9eaca86777d85fad694d2230067b22",
+      "theme": "dark",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--separate-recovery-volume",
+      "variant": "dark",
+      "filename": "admin-backuprestore--separate-recovery-volume-dark.png",
+      "title": "Current production/Admin/BackupRestore / Separate Recovery Volume",
+      "file": "story-admin-backuprestore--separate-recovery-volume-dark.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "3b5c7463806e58251993387547164db9fa61665f131a0dbecd34c1e593028883",
+      "theme": "dark",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--insufficient-disk-space",
+      "variant": "phone",
+      "filename": "admin-backuprestore--insufficient-disk-space-phone.png",
+      "title": "Current production/Admin/BackupRestore / Insufficient Disk Space",
+      "file": "story-admin-backuprestore--insufficient-disk-space-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "71c2d3335fdbcbf9fc456ebab40a0d7b856648711a07909b641545de9e8e018d",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--memory-headroom-refusal",
+      "variant": "phone",
+      "filename": "admin-backuprestore--memory-headroom-refusal-phone.png",
+      "title": "Current production/Admin/BackupRestore / Memory Headroom Refusal",
+      "file": "story-admin-backuprestore--memory-headroom-refusal-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "7a1df94f03073e89d55fa675fea9ebf7b8a9fba8744152a212c95d66fc8f677a",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--confirmed-disk-shortage",
+      "variant": "phone",
+      "filename": "admin-backuprestore--confirmed-disk-shortage-phone.png",
+      "title": "Current production/Admin/BackupRestore / Confirmed Disk Shortage",
+      "file": "story-admin-backuprestore--confirmed-disk-shortage-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "15a3be9decc3104e009d3020adec01695562e516a42a9f8a18fef3c7a17bd3f4",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--small-backup",
+      "variant": "dark",
+      "filename": "admin-backuprestore--small-backup-dark.png",
+      "title": "Current production/Admin/BackupRestore / Small Backup",
+      "file": "story-admin-backuprestore--small-backup-dark.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "0c207a1244301f1b79f8a53aca098fc13b3ee5acae8ae032d7eb98ffb97e7178",
+      "theme": "dark",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--cancelled",
+      "variant": "phone",
+      "filename": "admin-backuprestore--cancelled-phone.png",
+      "title": "Current production/Admin/BackupRestore / Cancelled",
+      "file": "story-admin-backuprestore--cancelled-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "c901d0a1c2e02fde115f00256a6c016ede3fc06029e0d1384a834d53cb80e36c",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--expired",
+      "variant": "phone",
+      "filename": "admin-backuprestore--expired-phone.png",
+      "title": "Current production/Admin/BackupRestore / Expired",
+      "file": "story-admin-backuprestore--expired-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "091b1e8801d319ca10a62666861336515d8a10c11db173d018fe48c537c3164c",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--failed",
+      "variant": "phone",
+      "filename": "admin-backuprestore--failed-phone.png",
+      "title": "Current production/Admin/BackupRestore / Failed",
+      "file": "story-admin-backuprestore--failed-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "0d3d6e9016fc3971e8f475a71ede063a6673f6d88cbbd569e94b44168eeebd82",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--admission-needs-attention",
+      "variant": "phone",
+      "filename": "admin-backuprestore--admission-needs-attention-phone.png",
+      "title": "Current production/Admin/BackupRestore / Admission Needs Attention",
+      "file": "story-admin-backuprestore--admission-needs-attention-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "14f7e64c2cfc33e50bb8e5b61f20770a3753f183b741f4ba06c3d2b46606222b",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--accepted",
+      "variant": "phone",
+      "filename": "admin-backuprestore--accepted-phone.png",
+      "title": "Current production/Admin/BackupRestore / Accepted",
+      "file": "story-admin-backuprestore--accepted-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "69b2311abe04ff09f6c1f48dd9cdc011de5f8a76673ee93a84827c184f262c9e",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--started-outcome-unconfirmed",
+      "variant": "phone",
+      "filename": "admin-backuprestore--started-outcome-unconfirmed-phone.png",
+      "title": "Current production/Admin/BackupRestore / Started Outcome Unconfirmed",
+      "file": "story-admin-backuprestore--started-outcome-unconfirmed-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "32b06f4a089a9a95dcd1c027729428aff5844b86e933f2efb22a4708610aa104",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--manual-upload",
+      "variant": "phone",
+      "filename": "admin-backuprestore--manual-upload-phone.png",
+      "title": "Current production/Admin/BackupRestore / Manual Upload",
+      "file": "story-admin-backuprestore--manual-upload-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "a17464337cd68a9b0762b779c2ddc0f832c7e70aad6a76480f325dcbc645b3c0",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--saved-backups",
+      "variant": "phone",
+      "filename": "admin-backuprestore--saved-backups-phone.png",
+      "title": "Current production/Admin/BackupRestore / Saved Backups",
+      "file": "story-admin-backuprestore--saved-backups-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "402d4fd02887dffefa391324208a4406b96daaf98228e1ba24e92556427195a3",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--saved-backups-empty",
+      "variant": "phone",
+      "filename": "admin-backuprestore--saved-backups-empty-phone.png",
+      "title": "Current production/Admin/BackupRestore / Saved Backups Empty",
+      "file": "story-admin-backuprestore--saved-backups-empty-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "36c61c98dcd044a99f01bdb7f735953f454d8185ffff1d1783760f51d2ba765a",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--saved-backups-loading",
+      "variant": "phone",
+      "filename": "admin-backuprestore--saved-backups-loading-phone.png",
+      "title": "Current production/Admin/BackupRestore / Saved Backups Loading",
+      "file": "story-admin-backuprestore--saved-backups-loading-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "394e52d69af63d09b0389d7b98d2d3d3aed925d15ad87bfb6086749ca4a342b3",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--saved-backups-failed",
+      "variant": "phone",
+      "filename": "admin-backuprestore--saved-backups-failed-phone.png",
+      "title": "Current production/Admin/BackupRestore / Saved Backups Failed",
+      "file": "story-admin-backuprestore--saved-backups-failed-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "0733eb58106467381a648b51288171ac8c80b551b4eeecce016d3590be0ba1c8",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--confirmation-review",
+      "variant": "phone",
+      "filename": "admin-backuprestore--confirmation-review-phone.png",
+      "title": "Current production/Admin/BackupRestore / Confirmation Review",
+      "file": "story-admin-backuprestore--confirmation-review-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "0e8075181903e491731d82c0425bbf8863e3f08b27c953a6712e78ebeadf73ca",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--full-confirmation",
+      "variant": "phone",
+      "filename": "admin-backuprestore--full-confirmation-phone.png",
+      "title": "Current production/Admin/BackupRestore / Full Confirmation",
+      "file": "story-admin-backuprestore--full-confirmation-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "cf6c9b7fc367dc83af08b9a3e2687999435c5d6c881a7c76297c2a9071f46248",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--waiting-for-passkey",
+      "variant": "phone",
+      "filename": "admin-backuprestore--waiting-for-passkey-phone.png",
+      "title": "Current production/Admin/BackupRestore / Waiting For Passkey",
+      "file": "story-admin-backuprestore--waiting-for-passkey-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "6013621fefae44145204ab3179b8981898ba5a17a731c0753a14eaea87b415de",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--cancel-verification",
+      "variant": "phone",
+      "filename": "admin-backuprestore--cancel-verification-phone.png",
+      "title": "Current production/Admin/BackupRestore / Cancel Verification",
+      "file": "story-admin-backuprestore--cancel-verification-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "dc67a5326f9a607837582a311aef81c28b1646e1da6adaa3a9fea22f98f17e9e",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--verification-failed",
+      "variant": "phone",
+      "filename": "admin-backuprestore--verification-failed-phone.png",
+      "title": "Current production/Admin/BackupRestore / Verification Failed",
+      "file": "story-admin-backuprestore--verification-failed-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "dc1c8cc0388b1edeca473d6b43732c504385342c8d47f4c3b889bb77a7474681",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--recording-confirmation",
+      "variant": "phone",
+      "filename": "admin-backuprestore--recording-confirmation-phone.png",
+      "title": "Current production/Admin/BackupRestore / Recording Confirmation",
+      "file": "story-admin-backuprestore--recording-confirmation-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "74e637db8d7d94b4192f73e913c49cfae5874ab2ac2d959e8670bc71028595cc",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--expired-original-confirmation",
+      "variant": "phone",
+      "filename": "admin-backuprestore--expired-original-confirmation-phone.png",
+      "title": "Current production/Admin/BackupRestore / Expired Original Confirmation",
+      "file": "story-admin-backuprestore--expired-original-confirmation-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "4e9559e07543ccc322ccb871166f2295a6ee19b895c6cc840f1f0ef0a80fefa2",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--backup-restored",
+      "variant": "phone",
+      "filename": "admin-backuprestore--backup-restored-phone.png",
+      "title": "Current production/Admin/BackupRestore / Backup Restored",
+      "file": "story-admin-backuprestore--backup-restored-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "4eab1cf38c5fa3f273b82f493fc1db1b670bd4a683ce350458df62d1c80de9ce",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--original-recovered",
+      "variant": "phone",
+      "filename": "admin-backuprestore--original-recovered-phone.png",
+      "title": "Current production/Admin/BackupRestore / Original Recovered",
+      "file": "story-admin-backuprestore--original-recovered-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "1dda78a86d8671d800f47d70e9d4ea78b1b4bc19b779eeb2f8f531e65d6ac77a",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--did-not-start",
+      "variant": "phone",
+      "filename": "admin-backuprestore--did-not-start-phone.png",
+      "title": "Current production/Admin/BackupRestore / Did Not Start",
+      "file": "story-admin-backuprestore--did-not-start-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "04b5db3457b000b2656fd18b19b244f8de3e60243df8b232eef71dd7f231a225",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--unresolved-outcome",
+      "variant": "phone",
+      "filename": "admin-backuprestore--unresolved-outcome-phone.png",
+      "title": "Current production/Admin/BackupRestore / Unresolved Outcome",
+      "file": "story-admin-backuprestore--unresolved-outcome-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "db37c2c960fbab9370f34b8c2dfa2fdeb84a411479ee3cc5862f0bad64a92e6d",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--pending-without-record",
+      "variant": "phone",
+      "filename": "admin-backuprestore--pending-without-record-phone.png",
+      "title": "Current production/Admin/BackupRestore / Pending Without Record",
+      "file": "story-admin-backuprestore--pending-without-record-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "72afb7db42736caec7d8f012e42d095d388c34be2aa177fae8137e85f21b06e4",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--incomplete-observation",
+      "variant": "phone",
+      "filename": "admin-backuprestore--incomplete-observation-phone.png",
+      "title": "Current production/Admin/BackupRestore / Incomplete Observation",
+      "file": "story-admin-backuprestore--incomplete-observation-phone.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "ed5140c9e3073fc025b8b12a89526f5dabe16eb9ae7b6b5157a2b0b62cca3b1b",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-page--health",
+      "variant": "dark",
+      "filename": "admin-page--health-dark.png",
+      "title": "Current production/Admin/Administration / Health",
+      "file": "story-admin-page--health-dark.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "62c5805e2e3e355e6a682d1ac56f0d5f3c86b5f685085a38a570eb897deb0cb9",
+      "theme": "dark",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-page--health-warning",
+      "variant": "dark",
+      "filename": "admin-page--health-warning-dark.png",
+      "title": "Current production/Admin/Administration / Health Warning",
+      "file": "story-admin-page--health-warning-dark.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "3e40d4eecbe0689513e4d9bc21d468f9fd7e058931e8661b9420ffa64c211623",
+      "theme": "dark",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--full-confirmation",
+      "variant": "phone-dark",
+      "filename": "admin-backuprestore--full-confirmation-phone-dark.png",
+      "title": "Current production/Admin/BackupRestore / Full Confirmation",
+      "file": "story-admin-backuprestore--full-confirmation-phone-dark.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "87cc7f6bbcfcea4471b3d140ff3c28c57e6aeb6817007ac60933da3fbc40b237",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--manual-upload",
+      "variant": "phone-dark",
+      "filename": "admin-backuprestore--manual-upload-phone-dark.png",
+      "title": "Current production/Admin/BackupRestore / Manual Upload",
+      "file": "story-admin-backuprestore--manual-upload-phone-dark.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "9f46d5adcb8e4878a501ec0e172794a3b173a6e9346b0bb2f80888c9086f3210",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--ready",
+      "variant": "phone-dark",
+      "filename": "admin-backuprestore--ready-phone-dark.png",
+      "title": "Current production/Admin/BackupRestore / Ready",
+      "file": "story-admin-backuprestore--ready-phone-dark.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "db9d502d6db730c98d8353eeeb65e46a9e70a373599df29e3c73f17999867263",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--insufficient-disk-space",
+      "variant": "phone-dark",
+      "filename": "admin-backuprestore--insufficient-disk-space-phone-dark.png",
+      "title": "Current production/Admin/BackupRestore / Insufficient Disk Space",
+      "file": "story-admin-backuprestore--insufficient-disk-space-phone-dark.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "0503fa1307e889995067b847c1e69f2efc2ee72a5f78aa269357505f8cdba541",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--memory-headroom-refusal",
+      "variant": "dark",
+      "filename": "admin-backuprestore--memory-headroom-refusal-dark.png",
+      "title": "Current production/Admin/BackupRestore / Memory Headroom Refusal",
+      "file": "story-admin-backuprestore--memory-headroom-refusal-dark.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "9639ec50b3d3e701b12d4eb88a245a0c5bc095eeb4480b6617022d11ba0c2c08",
+      "theme": "dark",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    },
+    {
+      "id": "admin-backuprestore--confirmed-disk-shortage",
+      "variant": "dark",
+      "filename": "admin-backuprestore--confirmed-disk-shortage-dark.png",
+      "title": "Current production/Admin/BackupRestore / Confirmed Disk Shortage",
+      "file": "story-admin-backuprestore--confirmed-disk-shortage-dark.png",
+      "kind": "storybook-fixture",
+      "sourceSha": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "sha256": "bc9a65ba80231c183c957a8efbd670028442ec657a33e573b07aeee7b75e11a8",
+      "theme": "dark",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "caption": "Current production component with deterministic local API fixtures; not an actual restore or provider run."
+    }
+  ]
+}

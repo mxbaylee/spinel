@@ -7,6 +7,7 @@ import { classifyOrdinaryItems } from './ordinary-scope.ts';
 import { readSpaceStructure } from './space-structure.ts';
 import type { SpaceStructure } from './space-structure.ts';
 import { SpaceLifecycleStore } from './space-lifecycle.ts';
+import { cleanRecoveryHolds, recoveryProtected, recoveryProtectedItems } from './recovery-holds.ts';
 
 const MAX_ITEMS = 10_001; // A full retained Space has at most 10,000 members plus its root.
 const overBudget = () =>
@@ -114,6 +115,10 @@ export class FileTrash {
   list(user: string): TrashListing {
     return this.workspace.auth.transaction(() => {
       const view = this.view(user);
+      const protectedItems = recoveryProtectedItems(
+        this.workspace.auth.database,
+        view.candidates.map((row) => row.id),
+      );
       const tags = this.workspace.auth.database.prepare(
         'SELECT name FROM workspace_tag_assignments WHERE user_id=? AND item_id=? ORDER BY name LIMIT ?',
       );
@@ -133,6 +138,7 @@ export class FileTrash {
           tags: names.map((tag) => String(tag.name)),
           trashedAt: row.trashedAt!,
           expiresAt: row.trashedAt! + this.retention,
+          ...(protectedItems.has(row.id) ? { heldAfterRecovery: true as const } : {}),
         };
       });
       return {
@@ -207,7 +213,10 @@ export class FileTrash {
         this.cleanGroups();
         return this.files.get(user, id);
       }
-      if (root.trashedAt + this.retention <= this.workspace.auth.now())
+      if (
+        root.trashedAt + this.retention <= this.workspace.auth.now() &&
+        !recoveryProtected(db, id)
+      )
         throw new AuthError(409, 'The 30-day recovery period has ended.');
       let parentId = root.parentId;
       if (parentId) {
@@ -279,6 +288,7 @@ export class FileTrash {
   }
 
   private cleanGroups() {
+    cleanRecoveryHolds(this.workspace.auth.database);
     this.workspace.auth.database.exec(`DELETE FROM workspace_retained_trash_batches
       WHERE NOT EXISTS(SELECT 1 FROM workspace_items i WHERE i.trash_batch=workspace_retained_trash_batches.batch)`);
   }

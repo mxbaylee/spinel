@@ -32,6 +32,7 @@ export function SpaceShell({
   onProfile,
   navigation,
   navigationButton,
+  banner,
   children,
 }: {
   user?: SpaceUser;
@@ -41,6 +42,8 @@ export function SpaceShell({
   onProfile(): void;
   navigation?: (close: () => void) => ReactNode;
   navigationButton?: RefObject<HTMLButtonElement | null>;
+  /** A playbook banner for the whole view; an open document takes the full height instead. */
+  banner?: ReactNode;
   children: ReactNode;
 }) {
   const [expanded, setExpanded] = useState(true);
@@ -126,6 +129,7 @@ export function SpaceShell({
         </aside>
       )}
       <main className="space-main">
+        {!documentOpen && banner}
         {navigation && (
           <div className="space-pages-control">
             <button
