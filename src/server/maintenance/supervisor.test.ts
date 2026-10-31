@@ -1971,7 +1971,6 @@ async function admissionFixture(
     authority: f.authority!,
     confirmedAt: Date.now(),
     preview: restoreJobIntentFixture().preview,
-    consequenceEnvelope: 1,
     previewDatabaseBytes: 8192,
     source: {
       archive: {
@@ -2297,7 +2296,6 @@ test
       authority: f.authority!,
       confirmedAt: Date.now(),
       preview: restoreJobIntentFixture().preview,
-      consequenceEnvelope: 1,
       previewDatabaseBytes: 8192,
       source: {
         archive: source.archive,
@@ -2479,6 +2477,14 @@ test
         .poll(() => supervisor.status().phase, { timeout: 30_000 })
         .toBe('recovery-required');
       await expect.poll(() => supervisor.journal.state.child, { timeout: 10_000 }).toBeNull();
+      // An early failure is published before the failed trial is stopped, so
+      // wait for its evidence to be frozen rather than reading mid-capture.
+      if (uncommitted)
+        await expect
+          .poll(async () => JSON.parse(await readFile(statePath, 'utf8')).phase, {
+            timeout: 30_000,
+          })
+          .toBe('trial-frozen');
     } else {
       await expect
         .poll(async () => JSON.parse(await readFile(statePath, 'utf8')).phase, { timeout: 30_000 })

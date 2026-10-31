@@ -208,9 +208,10 @@ cannot prove which generation is intended, so recovery is deliberate:
 3. If status now shows a stopped operation and no pending restore, run verify,
    start and resume with that operation ID, sign in as the Operator and
    **Refresh restore status**. Only a recorded outcome says which data is live.
-4. If verify still refuses, the restore stopped between freezing the original and
-   committing an outcome, for example when the host lost power during the
-   candidate's trial or ran past the confirmation's five-minute window. The
+4. If verify still refuses, the restore stopped between preserving the original
+   and committing an outcome, for example when the host lost power during the
+   candidate's trial or ran past the [two-minute custody budget or the
+   confirmation's five-minute window](backups.md). The
    preserved original is intact in the recovery root, but no supported command
    reinstalls it yet ([SPN-128](todo/SPN-128.md)); copying those files back by hand
    is not a recovery step. Copy the whole application directory and recovery root

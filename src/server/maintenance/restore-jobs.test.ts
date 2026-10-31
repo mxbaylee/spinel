@@ -135,17 +135,16 @@ test('confirmation requires exact provisional preview and the complete consequen
     { ...intent, preview: null },
     { ...intent, preview: { ...intent.preview, provisional: false } },
     { ...intent, preview: { ...intent.preview, documentNames: [] } },
-    { ...intent, consequenceEnvelope: undefined },
-    { ...intent, consequenceEnvelope: 0 },
-    { ...intent, consequenceEnvelope: 2 },
-    { ...intent, consequenceEnvelope: '1' },
+    { ...intent, policy: { ...intent.policy, consequencesVersion: undefined } },
+    { ...intent, policy: { ...intent.policy, consequencesVersion: 0 } },
+    { ...intent, policy: { ...intent.policy, consequencesVersion: 2 } },
+    { ...intent, policy: { ...intent.policy, consequencesVersion: '1' } },
   ]) {
     expect(validRestoreJobIntent(invalid)).toBe(false);
     expect(() => restoreIntentHash(invalid as typeof intent)).toThrow('Invalid restore job intent');
   }
   const legacy = { ...intent } as Record<string, unknown>;
   delete legacy.preview;
-  delete legacy.consequenceEnvelope;
   expect(validRestoreJobIntent(legacy)).toBe(false);
 });
 
@@ -182,7 +181,7 @@ linux(
       const record = f.jobs.admit(intent).record;
       const altered = JSON.parse(JSON.stringify(record));
       if (mutation === 'count') altered.intent.preview.sharingRemoved += 1;
-      else if (mutation === 'envelope') altered.intent.consequenceEnvelope = 2;
+      else if (mutation === 'envelope') altered.intent.policy.consequencesVersion = 2;
       else delete altered.intent.preview;
       writeFileSync(f.statePath(intent.id), JSON.stringify(altered), { mode: 0o600 });
       expect(() => f.jobs.read(intent.id)).toThrow();

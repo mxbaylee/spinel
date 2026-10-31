@@ -177,7 +177,6 @@ async function fixture() {
       confirmedAt: request.confirmedAt,
       previewDatabaseBytes: request.previewDatabaseBytes,
       preview: request.preview,
-      consequenceEnvelope: 1,
       continuationHash: createHash('sha256').update(continuationToken).digest('hex'),
     };
     const record: RestoreJobRecord = {

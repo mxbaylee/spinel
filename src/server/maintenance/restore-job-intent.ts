@@ -30,7 +30,8 @@ export interface RestoreJobIntent {
     image: string;
     spacesEnabled: boolean;
     staticDirectory: string;
-    /** The full loss/sign-out/sharing/ownership consequence envelope, not counts. */
+    /** Confirmation covers the full loss/sign-out/sharing/ownership consequence
+     * envelope, not only the provisional counts. */
     consequencesVersion: 1;
   };
   authority: RestoreAuthority;
@@ -40,8 +41,6 @@ export interface RestoreJobIntent {
   preview: RestorePreview;
   /** Observed completed preview size; disk availability is deliberately not immutable. */
   previewDatabaseBytes: number;
-  /** Confirmation covers the complete consequence envelope despite provisional counts. */
-  consequenceEnvelope: 1;
 }
 const MAX_INTENT_BYTES = 24 * 1024;
 const uuid = (value: unknown) =>
@@ -67,13 +66,11 @@ export function validRestoreJobIntent(value: unknown): value is RestoreJobIntent
       'confirmedAt',
       'preview',
       'previewDatabaseBytes',
-      'consequenceEnvelope',
     ]) ||
     value.version !== 1 ||
     !uuid(value.id) ||
     !validRestorePreview(value.preview) ||
     !validRestorePreviewBytes(value.previewDatabaseBytes) ||
-    value.consequenceEnvelope !== 1 ||
     !validRestoreSourceManifest(value.source) ||
     value.source.id !== value.id ||
     !validRestoreAuthority(value.authority) ||

@@ -22,6 +22,8 @@ import { authenticator, restoreHttpClient, seed, seedOwner } from './restore-htt
 
 const cuts = [
   'admission',
+  'custody',
+  'freeze',
   'activation',
   'private-open',
   'commit',
@@ -29,6 +31,14 @@ const cuts = [
   'original-activation',
   'original-commit',
 ] as const;
+const cutPhases: Partial<Record<(typeof cuts)[number], string>> = {
+  custody: 'originals-retained',
+  freeze: 'frozen',
+  activation: 'candidate-replacing',
+  'private-open': 'trial-opening',
+  'original-activation': 'original-replacing',
+  'original-commit': 'original-committed',
+};
 const alive = (child: ChildProcess) => child.exitCode === null && child.signalCode === null;
 async function kill(child: ChildProcess) {
   if (!alive(child)) return;
@@ -90,7 +100,8 @@ test.skipIf(process.platform !== 'linux').each(cuts)(
   async (cut) => {
     const originalRecovery = cut === 'original-activation' || cut === 'original-commit';
     const partial = cut === 'activation' || cut === 'original-activation';
-    const unresolved = partial || cut === 'private-open';
+    const preActivation = cut === 'custody' || cut === 'freeze';
+    const unresolved = partial || preActivation || cut === 'private-open';
     const directory = await mkdtemp(join(tmpdir(), 'spinel-restore-crash-'));
     const root = join(directory, 'recovery'),
       data = join(directory, 'data');
@@ -221,17 +232,7 @@ test.skipIf(process.platform !== 'linux').each(cuts)(
         expect(main.restoreJob).toBeNull();
       } else {
         expect(before.execution!.stop!.fingerprint).toBeTruthy();
-        expect(before.phase).toBe(
-          cut === 'original-activation'
-            ? 'original-replacing'
-            : cut === 'original-commit'
-              ? 'original-committed'
-              : cut === 'activation'
-                ? 'candidate-replacing'
-                : cut === 'private-open'
-                  ? 'trial-opening'
-                  : 'candidate-committed',
-        );
+        expect(before.phase).toBe(cutPhases[cut] ?? 'candidate-committed');
       }
       const witnessBytes = originalRecovery
         ? await readFile(join(directory, 'failed-trial-witness.json'))
@@ -399,7 +400,8 @@ test.skipIf(process.platform !== 'linux').each(cuts)(
       if (unresolved) {
         expect(main.restoreJob?.jobId).toBe(prepared.id);
         expect(record()).toEqual(before);
-        expect(existsSync(restoreBarrierPath(databasePath))).toBe(true);
+        // Activation writes the opening barrier; earlier cuts never changed the live file.
+        expect(existsSync(restoreBarrierPath(databasePath))).toBe(!preActivation);
         expect(
           createHash('sha256')
             .update(await readFile(databasePath))

@@ -47,6 +47,16 @@ if (cut === 'admission') {
     return result;
   };
 }
+if (cut === 'custody' || cut === 'freeze') {
+  // Both cuts precede activation, so the live database is still the original.
+  const method = cut === 'custody' ? 'markOriginalsRetained' : 'markFrozen';
+  const reach = RestoreJobs.prototype[method] as (...args: unknown[]) => unknown;
+  (RestoreJobs.prototype[method] as unknown) = function (this: RestoreJobs, ...args: unknown[]) {
+    const result = reach.apply(this, args);
+    mark(cut);
+    return result;
+  };
+}
 if (cut === 'commit' || cut === 'original-commit') {
   const method = cut === 'commit' ? 'markCandidateCommitted' : 'markOriginalCommitted';
   const commit = RestoreJobs.prototype[method];

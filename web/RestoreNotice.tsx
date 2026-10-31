@@ -30,13 +30,13 @@ export function RestoreNotice({ notice }: { notice: Notice | null }) {
       {notice.outcome === 'restored' ? (
         <p role="status">
           <strong>{label}.</strong> On {day(notice.at)}, it went back to a backup from{' '}
-          {day(notice.backupCreatedAt)}. Changes made after that backup were discarded, everyone was
-          signed out, and personal filing, links or sharing may have changed.
+          {day(notice.backupCreatedAt)}, discarding later changes and signing everyone out, so
+          personal filing, links or sharing may have changed.
         </p>
       ) : (
         <p role="status">
-          <strong>{label}.</strong> On {day(notice.at)}, a restore did not finish, so the workspace
-          kept its own content. Everyone was signed out, and links or sharing may have changed.
+          <strong>{label}.</strong> On {day(notice.at)}, a restore did not finish and the workspace
+          kept its own content, but everyone was signed out and links or sharing may have changed.
         </p>
       )}
       <Button

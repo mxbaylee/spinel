@@ -4,7 +4,6 @@ import type { RestoreResources, RestorePreview } from '../../shared/restore.ts';
 
 export type ConfirmedRestoreAdmission = RestoreAdmission & {
   preview: RestorePreview;
-  consequenceEnvelope: 1;
 };
 
 /** Private parent evidence. Never serialize this record into an HTTP response. */

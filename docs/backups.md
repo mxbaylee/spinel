@@ -544,19 +544,29 @@ hold, retaining its recovery evidence and permitting a new preparation.
 Missing evidence, expired
 authority or ambiguous ownership keeps the workspace closed.
 
-The confirmation's passkey check also bounds activation. Reading the held source,
-the final capacity check, stopping the application, opening and health-checking
-the candidate, committing, and any original-content recovery after a failed trial
-must all finish within five minutes of that check. If time runs out before
-commit, the restore fails; if original-content recovery then cannot finish in the
-time left, the workspace stays closed as an unresolved restore. The real-process
-acceptance fixture took under a minute from confirmation to commit; no
-measurement exists yet for a large database on the 1 GiB / 0.75 CPU profile.
-Rehearse a restore of a realistically sized backup on the target host before
-relying on this path. If confirmation to commit takes more than about two
-minutes, do not rely on it: a failed trial's original-content recovery needs
-about as long again ([SPN-124](todo/SPN-124.md) separates the work's lifetime from
-the passkey window).
+Two fixed limits bound activation:
+
+- **Five minutes from the passkey check.** Reading the held source, the final
+  capacity check, stopping the application, the work below, and any
+  original-content recovery after a failed trial must all finish within five
+  minutes of the confirmation's passkey check.
+- **Two minutes of custody.** Once the application has stopped, the supervisor
+  allows 120 seconds to preserve the original files, freeze a comparison copy,
+  prepare and activate the candidate, health-check it privately and commit. A
+  failed trial gets a separate 120 seconds to capture and freeze its evidence.
+  Each step's own timeouts also stay inside this budget. The budget is not
+  configurable; it grows with database size only through the time each step takes.
+
+If either limit runs out before commit, the restore fails. If original-content
+recovery then cannot finish in the passkey window's remaining time, the workspace
+stays closed as an unresolved restore. The real-process acceptance fixture took
+under a minute from confirmation to commit; no measurement exists yet for a large
+database on the 1 GiB / 0.75 CPU profile, and SPN-038's launch drill measures it on
+the target host. Rehearse a restore of a realistically sized backup on the target
+host before relying on this path. If confirmation to commit takes more than about
+a minute, do not rely on it: a failed trial's evidence capture and original-content
+recovery need about as long again ([SPN-124](todo/SPN-124.md) separates the work's
+lifetime from the passkey window).
 
 The private journal retains at most **64 restore IDs**, including completed and
 failed attempts. Successful source/custody evidence is deliberately retained;

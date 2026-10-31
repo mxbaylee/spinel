@@ -138,7 +138,6 @@ export interface RestoreAdmission {
   confirmedAt: number;
   preview: RestorePreview;
   previewDatabaseBytes: number;
-  consequenceEnvelope: 1;
   source: RestoreSourceInput;
 }
 interface SupervisorOptions {
@@ -1585,7 +1584,6 @@ export class MaintenanceSupervisor {
       !validRestoreAuthority(request.authority) ||
       !validRestorePreview(request.preview) ||
       !validRestorePreviewBytes(request.previewDatabaseBytes) ||
-      request.consequenceEnvelope !== 1 ||
       !Number.isSafeInteger(request.confirmedAt) ||
       request.confirmedAt > this.now()
     )
@@ -1687,7 +1685,6 @@ export class MaintenanceSupervisor {
         confirmedAt: request.confirmedAt,
         preview: structuredClone(request.preview),
         previewDatabaseBytes: request.previewDatabaseBytes,
-        consequenceEnvelope: request.consequenceEnvelope,
         continuationHash: existing?.intent.continuationHash ?? tokenHash(token!),
       };
       const hash = restoreIntentHash(intent);
@@ -3145,7 +3142,6 @@ export class MaintenanceSupervisor {
             'confirmedAt',
             'preview',
             'previewDatabaseBytes',
-            'consequenceEnvelope',
             'source',
           ])
         )

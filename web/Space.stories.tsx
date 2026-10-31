@@ -452,7 +452,7 @@ export const Empty: Story = {
   },
 };
 
-/** The post-restore Banner sits under the Space header, above the pages control. */
+/** The post-restore Banner sits under the Space header on a view with no open page. */
 const restoreBanner = (
   <RestoreNotice
     notice={{
@@ -469,8 +469,10 @@ const clearRestoreDismissal = () => {
 export const RestoreBanner: Story = {
   args: { banner: restoreBanner },
   beforeEach: clearRestoreDismissal,
-  parameters: { spacePath: spaceHref(root), api: treeApi() },
+  // A Space root with pages opens its first page, which hides the Banner.
+  parameters: { spacePath: spaceHref(root), api: treeApi(tree('owner', [])) },
   play: async ({ canvasElement }) => {
+    await within(canvasElement).findByRole('heading', { name: 'This Space is empty' });
     const banner = await within(canvasElement).findByRole('region', { name: 'Workspace restored' });
     await expect(banner.parentElement).toHaveClass('space-main');
     const header = canvasElement.querySelector('.space-site-header')!;

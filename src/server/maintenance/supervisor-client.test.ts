@@ -274,7 +274,6 @@ function admission() {
     authority: intent.authority,
     confirmedAt: intent.confirmedAt,
     preview: intent.preview,
-    consequenceEnvelope: 1,
     previewDatabaseBytes: 8192,
     source: {
       archive: { ...intent.source.archive, path: '/srv/private/archive.spinel' },

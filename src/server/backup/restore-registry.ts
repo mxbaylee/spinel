@@ -241,7 +241,6 @@ export class RestoreRegistry {
       intent.policy.image === this.options.image &&
       intent.policy.spacesEnabled === this.options.spacesEnabled &&
       intent.policy.consequencesVersion === 1 &&
-      intent.consequenceEnvelope === 1 &&
       Object.keys(admission.preview).every(
         (key) =>
           intent.preview[key as keyof RestorePreview] ===
@@ -915,7 +914,6 @@ export class RestoreRegistry {
           recovery: { ...source.recovery },
         },
         preview: { ...job.public.preview },
-        consequenceEnvelope: 1,
       };
       // An uncertain IPC outcome must not expire the only source or its retention hold.
       this.db

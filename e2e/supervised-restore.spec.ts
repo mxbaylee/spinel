@@ -367,12 +367,17 @@ test('a catalog restore survives double-clicks, cancel and a lost reply, and fen
     await expect(restore.getByText(ready, { exact: true })).toBeVisible({ timeout: 120_000 });
     expect([count('verify'), count('prepare')]).toEqual([2, 2]);
 
-    // The first confirmation never reaches the server; its reply is lost.
-    let dropped = 0;
+    // The first confirmation never reaches the server. The retry does, and the
+    // server takes custody, but its reply is lost too.
+    let confirms = 0;
+    let acceptedStatus: number | undefined;
     await page.route('**/api/admin/restores/preparations/*/confirm', async (route) => {
-      if (dropped++ === 0) await route.abort('connectionreset');
-      else await route.continue();
+      if (confirms++ === 0) return route.abort('connectionreset');
+      acceptedStatus = (await route.fetch()).status();
+      await route.abort('connectionreset');
     });
+    const lost =
+      'The confirmation response was lost. Its outcome is unconfirmed. Refresh status before taking another action.';
     const before = await publicStatus(app.publicOrigin);
     await restore.getByRole('button', { name: 'Review restore', exact: true }).click();
     dialog = page.getByRole('dialog', { name: 'Restore this workspace?', exact: true });
@@ -380,12 +385,7 @@ test('a catalog restore survives double-clicks, cancel and a lost reply, and fen
     await dialog
       .getByRole('button', { name: 'Verify and restore workspace', exact: true })
       .dblclick();
-    await expect(
-      restore.getByText(
-        'The confirmation response was lost. Its outcome is unconfirmed. Refresh status before taking another action.',
-        { exact: true },
-      ),
-    ).toBeVisible();
+    await expect(restore.getByText(lost, { exact: true })).toBeVisible();
     expect([count('verify'), count('confirm')]).toEqual([3, 1]);
 
     // The retry repeats the same confirmation under the original passkey check.
@@ -395,14 +395,14 @@ test('a catalog restore survives double-clicks, cancel and a lost reply, and fen
       dialog.getByText(/The original source and confirmation remain fixed\./),
     ).toBeVisible();
     await dialog.getByRole('checkbox').check();
-    const accepted = page.waitForResponse((response) =>
-      /\/preparations\/[^/]+\/confirm$/.test(new URL(response.url()).pathname),
-    );
     await dialog.getByRole('button', { name: 'Retry confirmed restore', exact: true }).click();
-    expect((await accepted).status()).toBe(202);
+    await expect(dialog).toBeHidden();
+    await expect(restore.getByText(lost, { exact: true })).toBeVisible();
+    await expect.poll(() => acceptedStatus).toBe(202);
     expect([count('verify'), count('confirm')]).toEqual([3, 2]);
 
-    // The supervisor commits the restore once and resumes in a new epoch.
+    // Without either reply, the supervisor commits the accepted restore once
+    // and resumes in a new epoch.
     await expect
       .poll(
         async () => {
