@@ -101,7 +101,7 @@ test.skipIf(process.platform !== 'linux').each(cuts)(
     const originalRecovery = cut === 'original-activation' || cut === 'original-commit';
     const partial = cut === 'activation' || cut === 'original-activation';
     const preActivation = cut === 'custody' || cut === 'freeze';
-    const unresolved = partial || preActivation || cut === 'private-open';
+    const unresolved = partial || cut === 'private-open';
     const directory = await mkdtemp(join(tmpdir(), 'spinel-restore-crash-'));
     const root = join(directory, 'recovery'),
       data = join(directory, 'data');
@@ -400,8 +400,7 @@ test.skipIf(process.platform !== 'linux').each(cuts)(
       if (unresolved) {
         expect(main.restoreJob?.jobId).toBe(prepared.id);
         expect(record()).toEqual(before);
-        // Activation writes the opening barrier; earlier cuts never changed the live file.
-        expect(existsSync(restoreBarrierPath(databasePath))).toBe(!preActivation);
+        expect(existsSync(restoreBarrierPath(databasePath))).toBe(true);
         expect(
           createHash('sha256')
             .update(await readFile(databasePath))
@@ -415,11 +414,34 @@ test.skipIf(process.platform !== 'linux').each(cuts)(
         if (cut === 'admission') {
           expect(record().phase).toBe('failed');
           expect(record().intent).toEqual(before.intent);
+        } else if (preActivation) {
+          // Restart records the untouched original as failed, keeping every piece
+          // of evidence, and leaves it stopped under the restore's own operation.
+          const { phase, revision, updatedAt, execution, ...rest } = before;
+          expect(record()).toEqual({
+            ...rest,
+            phase: 'failed',
+            revision: revision + 1,
+            updatedAt: record().updatedAt,
+            execution: {
+              ...execution,
+              abandoned: { phase, updatedAt, reason: expect.any(String) },
+            },
+          });
+          const reopened = JSON.parse(await readFile(join(root, 'journal.json'), 'utf8'));
+          expect(reopened.restoreJob).toBeNull();
+          expect(reopened.phase).toBe('stopped');
+          expect(reopened.operation.id).toBe(prepared.id);
+          expect(
+            createHash('sha256')
+              .update(await readFile(databasePath))
+              .digest('hex'),
+          ).toBe(liveHash);
         } else expect(record()).toEqual(before);
         expect(existsSync(restoreBarrierPath(databasePath))).toBe(false);
         // Explicit ordinary recovery verifies the selected live content. It must
         // never reinstall the prepared candidate over the HTTP-acknowledged row.
-        const operationId = randomUUID();
+        const operationId = preActivation ? prepared.id : randomUUID();
         for (const action of ['verify', 'start', 'resume'] as const)
           await maintenanceControl(root, { action, operationId });
         await client.authenticate();
@@ -449,7 +471,11 @@ test.skipIf(process.platform !== 'linux').each(cuts)(
           expect(
             database.prepare('SELECT name FROM workspace_items WHERE id=?').get(source.folderId)
               ?.name,
-          ).toBe(cut === 'admission' || originalRecovery ? 'Current folder' : 'Archived folder');
+          ).toBe(
+            cut === 'admission' || preActivation || originalRecovery
+              ? 'Current folder'
+              : 'Archived folder',
+          );
           if (originalRecovery) {
             const key = database
               .prepare('SELECT user_id,public_key,counter FROM auth_passkeys WHERE id=?')

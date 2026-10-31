@@ -871,6 +871,54 @@ linux(
   },
 );
 
+linux('a restore stopped before activation fails once and keeps its evidence', async () => {
+  const f = await preparedFixture();
+  const { record } = f;
+  const id = record.intent.id,
+    hash = record.intentHash;
+  expect(() => f.jobs.abandonUnreplaced(id, hash, record.revision, 'Native /path')).toThrow();
+  // The workspace was never replaced, so an expired confirmation does not matter.
+  f.advance(60_000);
+  const failed = f.jobs.abandonUnreplaced(id, hash, record.revision, 'restore-time-limit');
+  expect(failed).toEqual({
+    ...record,
+    phase: 'failed',
+    revision: record.revision + 1,
+    updatedAt: failed.updatedAt,
+    execution: {
+      ...record.execution,
+      abandoned: { phase: 'prepared', updatedAt: record.updatedAt, reason: 'restore-time-limit' },
+    },
+  });
+  expect(f.openJobs().read(id)).toEqual(failed);
+  expect(() => f.jobs.abandonUnreplaced(id, hash, failed.revision, 'restore-time-limit')).toThrow();
+  for (const mutate of [
+    (value: RestoreJobRecord) => (value.execution!.abandoned!.phase = 'activation-planned'),
+    (value: RestoreJobRecord) => delete value.execution!.abandoned,
+    (value: RestoreJobRecord) => (value.execution!.abandoned!.reason = 'Native /path'),
+    (value: RestoreJobRecord) => (value.execution!.abandoned!.updatedAt = value.updatedAt + 1),
+    (value: RestoreJobRecord) => delete value.execution!.frozen,
+  ]) {
+    const invalid = structuredClone(failed);
+    mutate(invalid);
+    writeFileSync(f.statePath(id), JSON.stringify(invalid));
+    expect(() => f.jobs.read(id)).toThrow();
+  }
+  writeFileSync(f.statePath(id), JSON.stringify(failed));
+  expect(f.jobs.read(id)).toEqual(failed);
+});
+
+linux('activation planning ends the chance to fail without a replacement', async () => {
+  const f = await preparedFixture();
+  const id = f.record.intent.id,
+    hash = f.record.intentHash;
+  const planned = f.jobs.planActivation(id, hash, f.record.revision, attemptFixture());
+  expect(() =>
+    f.jobs.abandonUnreplaced(id, hash, planned.revision, 'restore-time-limit'),
+  ).toThrow();
+  expect(f.jobs.read(id)).toEqual(planned);
+});
+
 async function activatedTrialFixture() {
   const f = await preparedFixture();
   let record = f.record;

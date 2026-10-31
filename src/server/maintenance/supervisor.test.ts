@@ -5,6 +5,7 @@ import type { ChildProcess } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
 import { EventEmitter, once } from 'node:events';
 import {
+  appendFile,
   chmod,
   link,
   lstat,
@@ -1991,6 +1992,25 @@ async function admissionFixture(
   return { ...f, supervisor, request, child };
 }
 
+// A restore that stopped before activation fails its job and reopens the
+// untouched original, so these cases wait for both and return the record.
+async function reopenedOriginal(f: Awaited<ReturnType<typeof admissionFixture>>) {
+  const statePath = join(f.root, 'restore-jobs', f.request.id, 'state.json');
+  await expect
+    .poll(
+      async () =>
+        JSON.parse(await readFile(statePath, 'utf8')).phase === 'failed' &&
+        f.supervisor.status().phase === 'running',
+      { timeout: 30_000 },
+    )
+    .toBe(true);
+  expect(f.supervisor.journal.state.restoreJob).toBeNull();
+  expect(f.supervisor.journal.state.restoreStop).toBeNull();
+  expect(f.supervisor.journal.state.completedOperationId).toBe(f.request.id);
+  expect(() => f.supervisor.journal.assertNoPendingRestoreJobs()).not.toThrow();
+  return JSON.parse(await readFile(statePath, 'utf8'));
+}
+
 test
   .runIf(process.platform === 'linux')
   .each([
@@ -2010,6 +2030,7 @@ test
     'failed-stop-memory',
     'failed-stop-publication-deadline',
     'preparation-diagnostic',
+    'preparation-changed-original',
   ])(
   'complete application and authenticated archive commit and release the selected candidate: %s',
   async (ordering) => {
@@ -2274,11 +2295,14 @@ test
       });
     }
     let preparationRefused = false;
-    if (ordering === 'preparation-diagnostic') {
+    if (ordering.startsWith('preparation-')) {
       const sync = restoreInput.syncRestoreDirectory;
       vi.spyOn(restoreInput, 'syncRestoreDirectory').mockImplementation(async (...args) => {
         if (!preparationRefused && args[0].includes('/prepare-')) {
           preparationRefused = true;
+          // A foreign writer after preservation: the live file no longer matches.
+          if (ordering === 'preparation-changed-original')
+            await appendFile(f.databasePath, Buffer.alloc(1));
           const failure = new RecoveryResourceError('memory-headroom');
           failure.message = '/private/custody SELECT sessions';
           throw failure;
@@ -2410,9 +2434,33 @@ test
     expect(begun.record.phase).toBe('pause-planned');
     const statePath = join(f.root, 'restore-jobs', id, 'state.json');
     if (ordering === 'preparation-diagnostic') {
+      // Preparation never touched the live database, so the supervisor records
+      // the job failed with its diagnostic and reopens the original by itself.
+      await expect.poll(() => supervisor.status().phase, { timeout: 30_000 }).toBe('running');
+      expect(preparationRefused).toBe(true);
+      expect(privateReadyObserved).toBe(false);
+      const retained = JSON.parse(await readFile(statePath, 'utf8'));
+      expect(retained.phase).toBe('failed');
+      expect(retained.execution.abandoned).toEqual({
+        phase: 'preparation-planned',
+        updatedAt: expect.any(Number),
+        reason: 'restore-prep-planned-directory-sync-memory-headroom',
+      });
+      expect(retained.execution.stop.fingerprint).toBe(retained.execution.frozen.fingerprint);
+      expect(retained.execution.preparation.candidate).toBeUndefined();
+      expect(retained.execution.trial).toBeUndefined();
+      expect(supervisor.journal.state.restoreJob).toBeNull();
+      expect(supervisor.journal.state.restoreStop).toBeNull();
+      expect(supervisor.journal.state.completedOperationId).toBe(id);
+      expect(existsSync(restoreBarrierPath(f.databasePath))).toBe(false);
+      return;
+    }
+    if (ordering === 'preparation-changed-original') {
       await expect
         .poll(() => supervisor.status().lastFailure, { timeout: 30_000 })
         .toBe('restore-prep-planned-directory-sync-memory-headroom');
+      // Status runs after the queued release attempt, which must have refused.
+      await supervisor.coldControl({ action: 'status' });
       expect(preparationRefused).toBe(true);
       expect(privateReadyObserved).toBe(false);
       const retained = JSON.parse(await readFile(statePath, 'utf8'));
@@ -3108,14 +3156,10 @@ test('begin acknowledges a durable pause plan before drain and retains the job w
   expect(['running', 'draining']).toContain(f.supervisor.status().phase);
   // This custody fixture deliberately has no valid SQLite candidate. The real
   // controller must retain its original evidence and refuse preparation.
-  await expect
-    .poll(() => f.supervisor.status().phase, { timeout: 15_000 })
-    .toBe('recovery-required');
-  expect(JSON.parse(await readFile(statePath, 'utf8')).phase).toBe('preparation-planned');
+  const completed = await reopenedOriginal(f);
+  expect(completed.execution.abandoned.phase).toBe('preparation-planned');
   expect(witnessedBeforeAck).toBe(true);
   expect(existsSync(join(f.directory, 'witness-ack'))).toBe(true);
-  assertWorkspaceHandlesClosed(f.databasePath);
-  const completed = JSON.parse(await readFile(statePath, 'utf8'));
   expect(completed.intent).toEqual(admitted.record.intent);
   const frozen = completed.execution.frozen;
   expect(frozen.fingerprint).toBe(completed.execution.stop.fingerprint);
@@ -3147,8 +3191,8 @@ test('begin acknowledges a durable pause plan before drain and retains the job w
 
   const retried = await f.supervisor.beginPreparedRestore(begin);
   expect(retried.record).toEqual(completed);
-  expect(f.supervisor.status().epoch).toBe(planned.record.execution!.epoch);
-  expect(f.supervisor.status().phase).toBe('recovery-required');
+  expect(retried.queued).toBe(false);
+  expect(f.supervisor.status().phase).toBe('running');
 }, 60_000);
 
 test('failed job-witness publication never sends the child a custody acknowledgement', async () => {
@@ -3162,17 +3206,13 @@ test('failed job-witness publication never sends the child a custody acknowledge
     intentHash: admitted.record.intentHash,
     continuationToken: admitted.continuationToken!,
   });
-  await expect
-    .poll(() => f.supervisor.status().lastFailure, { timeout: 10_000 })
-    .toBe('restore-stop-requested-unknown');
+  const job = await reopenedOriginal(f);
+  expect(job.execution.abandoned).toMatchObject({
+    phase: 'stop-requested',
+    reason: 'restore-stop-requested-unknown',
+  });
+  expect(job.execution.stop.fingerprint).toBeNull();
   expect(existsSync(join(f.directory, 'witness-ack'))).toBe(false);
-  expect(f.supervisor.journal.state.restoreStop!.fingerprint).toBeNull();
-  const job = JSON.parse(
-    await readFile(join(f.root, 'restore-jobs', f.request.id, 'state.json'), 'utf8'),
-  );
-  expect(job.phase).toBe('stop-requested');
-  assertWorkspaceHandlesClosed(f.databasePath);
-  expect(() => f.supervisor.journal.assertNoPendingRestoreJobs()).toThrow('unfinished restore');
 }, 60_000);
 
 test('a begin retry responds while drain is waiting for that retry to release', async () => {
@@ -3193,17 +3233,7 @@ test('a begin retry responds while drain is waiting for that retry to release', 
   await expect.poll(() => response?.record.phase, { timeout: 3000 }).toBe('pause-planned');
   await retry;
   f.child.send({ releaseHeldDrain: true });
-  await expect
-    .poll(() => f.supervisor.status().phase, { timeout: 15_000 })
-    .toBe('recovery-required');
-  await expect
-    .poll(
-      async () =>
-        JSON.parse(await readFile(join(f.root, 'restore-jobs', request.id, 'state.json'), 'utf8'))
-          .phase,
-      { timeout: 15_000 },
-    )
-    .toBe('preparation-planned');
+  expect((await reopenedOriginal(f)).execution.abandoned.phase).toBe('preparation-planned');
 }, 60_000);
 
 test('a published pause plan followed by failure fences the application without discarding intent', async () => {
@@ -3251,9 +3281,11 @@ test('stop-plan persistence crossing original expiry never dispatches the shutdo
     intentHash: admitted.record.intentHash,
     continuationToken: admitted.continuationToken!,
   });
-  await expect
-    .poll(() => f.supervisor.status().lastFailure, { timeout: 10_000 })
-    .toBe('restore-stop-requested-unknown');
+  const job = await reopenedOriginal(f);
+  expect(job.execution.abandoned).toMatchObject({
+    phase: 'stop-requested',
+    reason: 'restore-stop-requested-unknown',
+  });
   expect(
     send.mock.calls.some(
       ([message]) =>
@@ -3263,13 +3295,8 @@ test('stop-plan persistence crossing original expiry never dispatches the shutdo
         message.kind === 'restore-stop',
     ),
   ).toBe(false);
-  const job = JSON.parse(
-    await readFile(join(f.root, 'restore-jobs', f.request.id, 'state.json'), 'utf8'),
-  );
-  expect(job.phase).toBe('stop-requested');
   expect(job.execution.stop.fingerprint).toBeNull();
   expect(existsSync(join(f.directory, 'witness-ack'))).toBe(false);
-  assertWorkspaceHandlesClosed(f.databasePath);
 }, 60_000);
 
 test('revocation during drain preserves raw current evidence and refuses frozen authority', async () => {
@@ -3280,17 +3307,14 @@ test('revocation during drain preserves raw current evidence and refuses frozen 
     intentHash: admitted.record.intentHash,
     continuationToken: admitted.continuationToken!,
   });
-  await expect
-    .poll(() => f.supervisor.status().lastFailure, { timeout: 15_000 })
-    .toBe('restore-freeze-planned-unknown');
-  const job = JSON.parse(
-    await readFile(join(f.root, 'restore-jobs', f.request.id, 'state.json'), 'utf8'),
-  );
-  expect(job.phase).toBe('freeze-planned');
+  const job = await reopenedOriginal(f);
+  expect(job.execution.abandoned).toMatchObject({
+    phase: 'freeze-planned',
+    reason: 'restore-freeze-planned-unknown',
+  });
   expect(job.execution.originals.id).toBe(f.request.id);
   expect(job.execution.frozen).toBeUndefined();
   expect(job.execution.stop.fingerprint).toMatch(/^[a-f0-9]{64}$/);
-  assertWorkspaceHandlesClosed(f.databasePath);
   const raw = await readFile(join(f.root, `restore-${f.request.id}`, 'original', 'spinel.sqlite'));
   expect(createHash('sha256').update(raw).digest('hex')).toBe(
     job.execution.originals.original['spinel.sqlite'].sha256,
@@ -3322,13 +3346,11 @@ test.each(['publication', 'deadline'])(
       continuationToken: admitted.continuationToken!,
     };
     await f.supervisor.beginPreparedRestore(request);
-    await expect
-      .poll(() => f.supervisor.status().lastFailure, { timeout: 15_000 })
-      .toBe('restore-frozen-unknown');
-    const job = JSON.parse(
-      await readFile(join(f.root, 'restore-jobs', request.id, 'state.json'), 'utf8'),
-    );
-    expect(job.phase).toBe('frozen');
+    const job = await reopenedOriginal(f);
+    expect(job.execution.abandoned).toMatchObject({
+      phase: 'frozen',
+      reason: 'restore-frozen-unknown',
+    });
     const retained = join(f.root, `restore-${request.id}`),
       slot = `freeze-${job.execution.freezeSlot}`;
     expect((await readdir(retained)).filter((name) => name.startsWith('freeze-'))).toEqual([slot]);
@@ -3339,8 +3361,7 @@ test.each(['publication', 'deadline'])(
     expect(retry.record).toEqual(job);
     expect(await readFile(output)).toEqual(before);
     expect((await readdir(retained)).filter((name) => name.startsWith('freeze-'))).toEqual([slot]);
-    expect(f.supervisor.status().phase).toBe('recovery-required');
-    assertWorkspaceHandlesClosed(f.databasePath);
+    expect(f.supervisor.status().phase).toBe('running');
   },
   60_000,
 );
@@ -3481,7 +3502,6 @@ test.each([
   'conflicting-reference',
   'missing-reference-target',
   'multiple',
-  'postexecution',
   'barrier',
   'active-operation',
   'wrong-generation',
@@ -3514,14 +3534,6 @@ test.each([
     if (condition.startsWith('wrong-')) {
       record.intentHash = restoreIntentHash(record.intent);
       main.restoreJob.intentHash = record.intentHash;
-    }
-    if (condition === 'postexecution') {
-      Object.assign(record, {
-        phase: 'pause-planned',
-        execution: { epoch: randomUUID(), child: f.originalChild, stop: null, requestedAt: null },
-      });
-      // The recorded identity remains valid historical evidence after physical exit.
-      expect(f.originalChild).not.toBeNull();
     }
     if (condition === 'multiple') {
       const other = structuredClone(record),
@@ -3561,6 +3573,41 @@ test.each([
   },
   20_000,
 );
+
+test('restart fails a restore that planned a pause but never stopped the workspace', async () => {
+  const f = await unexecutedRestartFixture(),
+    record = {
+      ...structuredClone(f.record),
+      phase: 'pause-planned',
+      // The recorded identity remains valid historical evidence after physical exit.
+      execution: { epoch: randomUUID(), child: f.originalChild, stop: null, requestedAt: null },
+    };
+  expect(f.originalChild).not.toBeNull();
+  await writeFile(f.statePath, JSON.stringify(record), { mode: 0o600 });
+  const bytes = await readFile(f.databasePath);
+  const supervisor = await f.supervisor();
+  expect(supervisor.status().phase).toBe('stopped');
+  expect(supervisor.journal.state.restoreJob).toBeNull();
+  expect(supervisor.journal.state.verifiedAt).toBeNull();
+  expect(() => supervisor.journal.assertNoPendingRestoreJobs()).not.toThrow();
+  const failed = JSON.parse(await readFile(f.statePath, 'utf8'));
+  expect(failed).toEqual({
+    ...record,
+    phase: 'failed',
+    revision: record.revision + 1,
+    updatedAt: expect.any(Number),
+    execution: {
+      ...record.execution,
+      abandoned: {
+        phase: 'pause-planned',
+        updatedAt: record.updatedAt,
+        reason: expect.any(String),
+      },
+    },
+  });
+  expect(await readFile(f.databasePath)).toEqual(bytes);
+  expect(await readFile(join(f.sourcePath, 'source-custody'))).toEqual(f.retained);
+}, 20_000);
 
 function observeFromFixture(
   child: ChildProcess,

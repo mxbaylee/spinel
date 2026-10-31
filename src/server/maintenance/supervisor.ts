@@ -61,7 +61,12 @@ import {
 } from './restore-stop.ts';
 import type { RestoreStopRecord } from './restore-stop.ts';
 import { checkVerificationHeadroom } from '../backup/recovery-worker.ts';
-import { RestoreJobs, isCommittedRestoreJob, selectedRestoreTrial } from './restore-jobs.ts';
+import {
+  RestoreJobs,
+  isCommittedRestoreJob,
+  isUnreplacedRestorePhase,
+  selectedRestoreTrial,
+} from './restore-jobs.ts';
 import type { RestoreJobRecord } from './restore-jobs.ts';
 import { restoreIntentHash } from './restore-job-intent.ts';
 import type { RestoreJobIntent } from './restore-job-intent.ts';
@@ -72,6 +77,7 @@ import {
   captureRestoreOriginals,
   preserveRestoreOriginals,
   commitRestoreFiles,
+  assertRestoreOriginalUnchanged,
 } from './restore-files.ts';
 import type { RestoreSourceInput, RestoreSourceManifest } from './restore-files.ts';
 import { validRestoreAuthority } from './restore-authority.ts';
@@ -465,6 +471,9 @@ export class MaintenanceSupervisor {
     try {
       if (!reconciliationFailure) {
         await this.reconcileCommittedRestore(previous);
+        // An unverified journal cannot vouch for which restore it referenced.
+        if (!this.journal.wasUnverified)
+          await this.releaseUnreplacedRestoreOwned(previous.lastFailure ?? 'supervisor-restarted');
         await this.reconcileUnexecutedRestore();
       }
       this.journal.assertNoPendingRestoreJobs();
@@ -801,7 +810,89 @@ export class MaintenanceSupervisor {
     } catch {
       /* Missing/uncertain evidence cannot prevent fail-closed handling. */
     }
-    this.failure(restoreExecutionFailureReason(phase, error));
+    const reason = restoreExecutionFailureReason(phase, error);
+    this.failure(reason);
+    if (!isUnreplacedRestorePhase(phase)) return;
+    void this.serial(async () => {
+      if (!(await this.releaseUnreplacedRestoreOwned(reason))) return;
+      // Reopen the untouched original exactly as the Operator's commands would.
+      // A refusal leaves it stopped under the same operation for them to retry.
+      await this.verify();
+      await this.start();
+      await this.resume();
+    }).catch(() => {});
+  }
+  /** A restore that stopped before activation planning never touched the live
+   * database. Once the stopped files still match the preserved original and no
+   * opening barrier exists, record the job failed with the reason, which a
+   * later resume clears from status, and leave the workspace stopped under its
+   * operation for ordinary verify, start and resume. Anything else, including a
+   * surviving process, stays fail-closed. */
+  private async releaseUnreplacedRestoreOwned(lastFailure: string) {
+    const reference = this.journal.state.restoreJob;
+    if (!reference) return false;
+    const jobs = new RestoreJobs(this.journal, this.now);
+    try {
+      let record = jobs.read(reference.jobId);
+      const plan = record?.execution;
+      if (
+        !record ||
+        !plan ||
+        record.intentHash !== reference.intentHash ||
+        !(record.phase === 'failed' ? plan.abandoned : isUnreplacedRestorePhase(record.phase))
+      )
+        return false;
+      const target = record.intent.target;
+      const assertClosed = async () => {
+        const state = this.journal.state;
+        if (
+          this.closing ||
+          this.child ||
+          this.childOwned ||
+          this.childReady ||
+          state.child ||
+          state.verifier ||
+          !['stopped', 'recovery-required'].includes(state.phase) ||
+          state.restoreJob?.jobId !== reference.jobId ||
+          state.restoreJob.intentHash !== reference.intentHash ||
+          (state.operation && state.operation.id !== record!.intent.id) ||
+          state.instanceId !== target.instanceId ||
+          state.generationId !== target.generationId ||
+          this.journal.databasePath !== target.databasePath ||
+          !sameFile(state.databaseIdentity, target.identity) ||
+          !sameFile(this.journal.workspaceOwnership().databaseIdentity, target.identity) ||
+          groupMembers(plan.child).length
+        )
+          throw new Error('The unreplaced restore lost its closed original.');
+        this.assertGeneration();
+        assertNoPendingRestore(this.journal.databasePath);
+        assertWorkspaceHandlesClosed(this.journal.databasePath);
+        // Before capture there is no file evidence, but nothing has written since
+        // the application stopped and its own startup verification still runs.
+        if (plan.originals)
+          await assertRestoreOriginalUnchanged(this.journal.databasePath, plan.originals);
+      };
+      await assertClosed();
+      if (record.phase !== 'failed')
+        record = jobs.abandonUnreplaced(
+          record.intent.id,
+          record.intentHash,
+          record.revision,
+          /^[a-z-]{1,64}$/.test(lastFailure) ? lastFailure : 'restore-execution-unresolved',
+        );
+      await assertClosed();
+      this.transition({
+        phase: 'stopped',
+        restoreJob: null,
+        restoreStop: null,
+        verifiedAt: null,
+        lastFailure,
+      });
+      this.journal.assertNoPendingRestoreJobs();
+      return true;
+    } finally {
+      jobs.close();
+    }
   }
   private failure(reason: string) {
     this.childReady = false;

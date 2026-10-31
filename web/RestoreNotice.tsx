@@ -30,7 +30,7 @@ export function RestoreNotice({ notice }: { notice: Notice | null }) {
       {notice.outcome === 'restored' ? (
         <p role="status">
           <strong>{label}.</strong> On {day(notice.at)}, it went back to a backup from{' '}
-          {day(notice.backupCreatedAt)}, discarding later changes and signing everyone out, so
+          {day(notice.backupCreatedAt)}: later changes were discarded, everyone was signed out, and
           personal filing, links or sharing may have changed.
         </p>
       ) : (

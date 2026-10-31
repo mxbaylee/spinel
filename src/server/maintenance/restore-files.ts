@@ -733,6 +733,7 @@ async function noRollbackJournal(databasePath: string) {
   }
   throw new Error('Unexpected rollback journal evidence requires independent recovery.');
 }
+export { unchangedOriginal as assertRestoreOriginalUnchanged };
 async function unchangedOriginal(
   databasePath: string,
   files: RestoreOriginals,

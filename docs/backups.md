@@ -504,7 +504,8 @@ deployment.
    historical completed outcome; later edits may have changed the workspace.
    **Original content was recovered** means the candidate failed and one verified
    original-content recovery completed; access and sessions may still have changed.
-   **Restore did not begin** means that attempt never replaced the workspace.
+   **Restore did not replace the workspace** means that attempt stopped before
+   activation, so the workspace kept its own content and nobody was signed out.
    For 30 days after a restore ends, every account sees a banner after signing in.
    After **Backup restored** it gives the restore date and the backup's date, and
    says later changes were discarded, everyone was signed out and filing, links or
@@ -557,16 +558,29 @@ Two fixed limits bound activation:
   Each step's own timeouts also stay inside this budget. The budget is not
   configurable; it grows with database size only through the time each step takes.
 
-If either limit runs out before commit, the restore fails. If original-content
-recovery then cannot finish in the passkey window's remaining time, the workspace
-stays closed as an unresolved restore. The real-process acceptance fixture took
-under a minute from confirmation to commit; no measurement exists yet for a large
-database on the 1 GiB / 0.75 CPU profile, and SPN-038's launch drill measures it on
-the target host. Rehearse a restore of a realistically sized backup on the target
-host before relying on this path. If confirmation to commit takes more than about
-a minute, do not rely on it: a failed trial's evidence capture and original-content
-recovery need about as long again ([SPN-124](todo/SPN-124.md) separates the work's
-lifetime from the passkey window).
+If either limit runs out before commit, the restore fails. What happens next
+depends on how far it got:
+
+- **Before activation**, the live database is untouched. The supervisor checks
+  that its files still match the preserved original and that no opening barrier
+  exists, records **Restore did not replace the workspace**, and reopens the
+  original through the ordinary verify, start and resume steps. If that check or
+  reopening fails, or the supervisor restarted, the workspace stays stopped until
+  the Operator runs those steps ([runbook](maintenance.md#an-unresolved-restore)).
+- **After a failed trial**, one original-content recovery runs. If it cannot
+  finish in the passkey window's remaining time, the workspace stays closed as an
+  unresolved restore.
+- **Anywhere else after activation** (for example a power loss during the trial),
+  the workspace stays closed as an unresolved restore ([SPN-128](todo/SPN-128.md)).
+
+The real-process acceptance fixture took under a minute from confirmation to
+commit; no measurement exists yet for a large database on the 1 GiB / 0.75 CPU
+profile, and SPN-038's launch drill measures it on the target host. Rehearse a
+restore of a realistically sized backup on the target host before relying on this
+path. If confirmation to commit takes more than about a minute, do not rely on it:
+a failed trial's evidence capture and original-content recovery need about as long
+again ([SPN-124](todo/SPN-124.md) separates the work's lifetime from the passkey
+window).
 
 The private journal retains at most **64 restore IDs**, including completed and
 failed attempts. Successful source/custody evidence is deliberately retained;

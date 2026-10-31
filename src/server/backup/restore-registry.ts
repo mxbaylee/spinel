@@ -439,7 +439,7 @@ export class RestoreRegistry {
             ? 'backup-restored'
             : record.phase === 'original-committed'
               ? 'original-recovered'
-              : record.phase === 'failed' && !record.execution
+              : record.phase === 'failed'
                 ? 'did-not-start'
                 : 'unresolved',
         updatedAt: record.updatedAt,

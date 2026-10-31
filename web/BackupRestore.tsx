@@ -688,7 +688,7 @@ export function BackupRestore({
               : outcome.state === 'original-recovered'
                 ? 'The backup restore did not succeed. Original content was recovered. Access and sessions may have changed.'
                 : outcome.state === 'did-not-start'
-                  ? 'Restore did not begin. This attempt did not replace the workspace.'
+                  ? 'Restore did not replace the workspace. It kept its own content and nobody was signed out.'
                   : 'The restore outcome is unconfirmed. Refresh status or follow the recovery guide before starting another restore.'}
           </p>
           <dl className="restore-source-facts">

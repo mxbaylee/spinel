@@ -27,7 +27,7 @@ export const Restored: Story = {
   play: async ({ canvasElement }) => {
     const status = within(canvasElement).getByRole('status');
     await expect(status).toHaveTextContent('Workspace restored.');
-    await expect(status).toHaveTextContent('discarding later changes and signing everyone out');
+    await expect(status).toHaveTextContent('later changes were discarded');
     await expect(status).toHaveTextContent('everyone was signed out');
     await expect(status).toHaveTextContent('personal filing, links or sharing may have changed');
   },
@@ -41,7 +41,7 @@ export const RestoreUndone: Story = {
     const status = within(canvasElement).getByRole('status');
     await expect(status).toHaveTextContent('Workspace restore undone.');
     await expect(status).toHaveTextContent('kept its own content');
-    await expect(status).toHaveTextContent('Everyone was signed out');
+    await expect(status).toHaveTextContent('everyone was signed out');
     await expect(status).not.toHaveTextContent('backup from');
   },
 };

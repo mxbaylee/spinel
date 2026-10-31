@@ -102,6 +102,8 @@ export interface RestorePausePlan {
   outcome?: { role: 'candidate'; fingerprint: string; committedAt: number };
   failure?: RestoreTrialFailure;
   rollback?: RestoreOriginalAttempt;
+  /** Present only on a failed record: where, when and why it stopped. */
+  abandoned?: { phase: ExecutionPhase; updatedAt: number; reason: string };
 }
 type ExecutionPhase =
   | 'pause-planned'
@@ -182,6 +184,10 @@ const executionPhases: readonly string[] = [
   'trial-ready',
   'candidate-committed',
 ];
+/** Phases that never touched the live database: activation planning comes next. */
+const unreplacedPhases = executionPhases.slice(0, executionPhases.indexOf('activation-planned'));
+export const isUnreplacedRestorePhase = (phase: unknown) =>
+  typeof phase === 'string' && unreplacedPhases.includes(phase);
 const failurePhases: readonly string[] = [
   'trial-stop-requested',
   'trial-witness-accepted',
@@ -233,7 +239,26 @@ function validPreparedImage(
     /^[a-f0-9]{64}$/.test(image.fingerprint)
   );
 }
-function validExecution(record: RestoreJobRecord) {
+function validExecution(record: RestoreJobRecord): boolean {
+  if (record.phase === 'failed' && Object.hasOwn(record, 'execution')) {
+    // A failed execution is judged as the record it was when it stopped.
+    const { abandoned, ...execution } = record.execution ?? ({} as RestorePausePlan);
+    return (
+      !!abandoned &&
+      Object.keys(abandoned).length === 3 &&
+      unreplacedPhases.includes(abandoned.phase) &&
+      typeof abandoned.reason === 'string' &&
+      /^[a-z-]{1,64}$/.test(abandoned.reason) &&
+      Number.isSafeInteger(abandoned.updatedAt) &&
+      abandoned.updatedAt <= record.updatedAt &&
+      validExecution({
+        ...record,
+        phase: abandoned.phase,
+        execution,
+        updatedAt: abandoned.updatedAt,
+      })
+    );
+  }
   if (originalPhases.includes(record.phase)) return validOriginalAttempt(record);
   if (failurePhases.includes(record.phase)) return validTrialFailure(record);
   if (!executionPhases.includes(record.phase)) return !Object.hasOwn(record, 'execution');
@@ -785,12 +810,7 @@ function validRecord(value: unknown, id: string): value is RestoreJobRecord {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
   const record = value as RestoreJobRecord;
   return (
-    Object.keys(record).length ===
-      (executionPhases.includes(record.phase) ||
-      failurePhases.includes(record.phase) ||
-      originalPhases.includes(record.phase)
-        ? 7
-        : 6) &&
+    Object.keys(record).length === (Object.hasOwn(record, 'execution') ? 7 : 6) &&
     record.version === 1 &&
     Number.isSafeInteger(record.revision) &&
     record.revision >= 0 &&
@@ -1336,6 +1356,27 @@ export class RestoreJobs {
     this.closedExecution(result.intent.id, result.intentHash, result.revision, phase);
     this.clock(result.intent);
     return result;
+  }
+  /** The caller has proved the live files are still the original and that no
+   * opening barrier exists. The record keeps its evidence and grants nothing. */
+  abandonUnreplaced(id: string, hash: string, revision: number, reason: string) {
+    const phase = this.read(id)?.phase;
+    if (!phase || !unreplacedPhases.includes(phase)) throw refused();
+    const current = this.executionRecord(id, hash, revision, phase);
+    const now = this.now();
+    if (!Number.isSafeInteger(now)) throw refused();
+    const next: RestoreJobRecord = {
+      ...current,
+      phase: 'failed',
+      execution: {
+        ...current.execution!,
+        abandoned: { phase: phase as ExecutionPhase, updatedAt: current.updatedAt, reason },
+      },
+      revision: current.revision + 1,
+      updatedAt: Math.max(now, current.updatedAt),
+    };
+    this.publish(next);
+    return structuredClone(next);
   }
   planActivation(id: string, hash: string, revision: number, attempt: RestoreAttempt) {
     const current = this.closedExecution(id, hash, revision, 'prepared');

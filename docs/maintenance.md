@@ -204,14 +204,16 @@ cannot prove which generation is intended, so recovery is deliberate:
    barrier or any retained source; do not run another database writer.
 2. Record `node scripts/deploy/maintenance.ts status`, then restart the supervisor
    once. Restart finishes reopening a committed outcome without reinstalling
-   prepared bytes, and marks an admission that never executed as failed and stopped.
+   prepared bytes. It marks an admission that never executed, or a restore that
+   stopped before activation with the live files still matching the preserved
+   original and no opening barrier, as failed and stopped.
 3. If status now shows a stopped operation and no pending restore, run verify,
    start and resume with that operation ID, sign in as the Operator and
    **Refresh restore status**. Only a recorded outcome says which data is live.
-4. If verify still refuses, the restore stopped between preserving the original
+4. If verify still refuses, the restore stopped between activating the candidate
    and committing an outcome, for example when the host lost power during the
    candidate's trial or ran past the [two-minute custody budget or the
-   confirmation's five-minute window](backups.md). The
+   confirmation's five-minute window](backups.md) after activation. The
    preserved original is intact in the recovery root, but no supported command
    reinstalls it yet ([SPN-128](todo/SPN-128.md)); copying those files back by hand
    is not a recovery step. Copy the whole application directory and recovery root
