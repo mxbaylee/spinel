@@ -62,21 +62,31 @@ jobs:
           retention-days: 30
           if-no-files-found: error
 
+  # Metadata gates run only a cheap explanatory step so their distinct names
+  # resolve after classification. Skipping the entire job left literal needs
+  # expressions and six expected required checks in the hosted merge trial.
+  # Actual merge-readiness after an edit must validate this diagnostic.
   backlog:
     name: ${{ needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata' && 'Metadata only - Backlog' || 'Backlog' }}
     needs: changes
-    if: always() && (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
+    if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      - name: Metadata supplies no code evidence
+        if: needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata'
+        run: echo 'Metadata event: no code validation performed by this job.'
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        if: (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
         with:
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        if: (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
       - name: Tickets and index
+        if: (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
         run: npm run backlog:check
 
   pull-request:
@@ -104,32 +114,43 @@ jobs:
   lint:
     name: ${{ needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata' && 'Metadata only - Lint' || 'Lint' }}
     needs: changes
-    if: always() && (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
+    if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
+      - name: Metadata supplies no code evidence
+        if: needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata'
+        run: echo 'Metadata event: no code validation performed by this job.'
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        if: (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
         with:
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        if: (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
       - name: Install
+        if: (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
         run: npm ci
       - name: Lint
+        if: (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
         run: npm run lint
 
   typecheck:
     name: ${{ needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata' && 'Metadata only - Typecheck' || 'Typecheck' }}
     needs: changes
-    if: always() && (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
+    if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 10
     outputs:
       evidence: ${{ steps.typecheck.outcome }}
     steps:
+      - name: Metadata supplies no code evidence
+        if: needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata'
+        run: echo 'Metadata event: no code validation performed by this job.'
       - name: Require complete applicability
+        if: (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
         env:
           CLASSIFICATION: ${{ needs.changes.result }}
           SELECTED: ${{ needs.changes.outputs.typecheck }}
@@ -138,24 +159,24 @@ jobs:
             success:true|success:false) ;;
             *) echo 'Missing successful applicability decision.' >&2; exit 1 ;;
           esac
-      - if: needs.changes.outputs.typecheck == 'true'
+      - if: (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata') && (needs.changes.outputs.typecheck == 'true')
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-      - if: needs.changes.outputs.typecheck == 'true'
+      - if: (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata') && (needs.changes.outputs.typecheck == 'true')
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
       - name: Install
-        if: needs.changes.outputs.typecheck == 'true'
+        if: (needs.changes.outputs.typecheck == 'true') && (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
         run: npm ci
       - name: Typecheck
         id: typecheck
-        if: needs.changes.outputs.typecheck == 'true'
+        if: (needs.changes.outputs.typecheck == 'true') && (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
         run: npm run typecheck
       - name: Documentation-only change
-        if: needs.changes.outputs.typecheck == 'false'
+        if: (needs.changes.outputs.typecheck == 'false') && (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
         run: echo 'Not applicable — only allowlisted documentation changed; Backlog and Lint still run.'
 
   # Separate runners retain maxWorkers: 1 and every case/assertion. Real restore
@@ -226,20 +247,26 @@ jobs:
   unit-tests:
     name: ${{ needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata' && 'Metadata only - Unit tests' || 'Unit tests' }}
     needs: [changes, unit-test-run]
-    if: always() && (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
+    if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
       evidence: ${{ needs.unit-test-run.result }}
     steps:
+      - name: Metadata supplies no code evidence
+        if: needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata'
+        run: echo 'Metadata event: no code validation performed by this job.'
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        if: (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
         with:
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        if: (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
       - name: Verify selected evidence and publish result
+        if: (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
         env:
           CLASSIFICATION: ${{ needs.changes.result }}
           COVERAGE_PLAN: ${{ needs.changes.outputs.plan }}
@@ -247,7 +274,7 @@ jobs:
           COVERAGE_RESULTS: '{"unit-tests":"${{ needs.unit-test-run.result }}"}'
         run: node scripts/ci/coverage-result.ts unit
       - name: Retain coverage result
-        if: always()
+        if: always() && (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: ci-results-unit
@@ -336,18 +363,24 @@ jobs:
   lib-tests:
     name: ${{ needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata' && 'Metadata only - Lib tests' || 'Lib tests' }}
     needs: [changes, lib-test-run]
-    if: always() && (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
+    if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      - name: Metadata supplies no code evidence
+        if: needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata'
+        run: echo 'Metadata event: no code validation performed by this job.'
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        if: (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
         with:
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        if: (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
       - name: Verify selected evidence and publish result
+        if: (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
         env:
           CLASSIFICATION: ${{ needs.changes.result }}
           COVERAGE_PLAN: ${{ needs.changes.outputs.plan }}
@@ -355,7 +388,7 @@ jobs:
           COVERAGE_RESULTS: '{"lib-test-run":"${{ needs.lib-test-run.result }}"}'
         run: node scripts/ci/coverage-result.ts lib
       - name: Retain coverage result
-        if: always()
+        if: always() && (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: ci-results-lib
@@ -743,18 +776,24 @@ jobs:
         doc-responsiveness,
         doc-callback-lifetimes,
       ]
-    if: always() && (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
+    if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      - name: Metadata supplies no code evidence
+        if: needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata'
+        run: echo 'Metadata event: no code validation performed by this job.'
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        if: (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
         with:
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        if: (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
       - name: Verify selected evidence and publish result
+        if: (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
         env:
           CLASSIFICATION: ${{ needs.changes.result }}
           COVERAGE_PLAN: ${{ needs.changes.outputs.plan }}
@@ -763,7 +802,7 @@ jobs:
           COVERAGE_RESULTS: '{"backlog":"${{ needs.backlog.result }}","pull-request":"${{ needs.pull-request.result }}","lint":"${{ needs.lint.result }}","typecheck":"${{ needs.typecheck.outputs.evidence }}","unit-tests":"${{ needs.unit-tests.outputs.evidence }}","lib-test-run":"${{ needs.lib-test-run.result }}","playwright-run":"${{ needs.playwright-run.result }}","container-smoke":"${{ needs.container-smoke.result }}","sync-transition":"${{ needs.sync-transition.result }}","doc-responsiveness":"${{ needs.doc-responsiveness.result }}","doc-callback-lifetimes":"${{ needs.doc-callback-lifetimes.result }}"}'
         run: node scripts/ci/coverage-result.ts browser
       - name: Retain coverage result
-        if: always()
+        if: always() && (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: ci-results-browser
