@@ -238,10 +238,17 @@ export const DownloadFailed: Story = {
   play: async ({ canvasElement }) => {
     const dialog = await openDownloads(canvasElement);
     await expect(await within(dialog).findByRole('alert')).toHaveTextContent(
-      'No complete file was sent',
+      'Its snapshot is no longer available',
     );
     await expect(
       within(dialog).getByRole('button', { name: 'Download user metrics' }),
+    ).toBeDisabled();
+    await expect(
+      within(dialog).getByRole('button', { name: 'Download system metrics' }),
+    ).toBeDisabled();
+    await expect(within(dialog).queryByLabelText('Shared time span')).not.toBeInTheDocument();
+    await expect(
+      within(dialog).getByRole('button', { name: 'Prepare both downloads' }),
     ).toBeEnabled();
   },
 };

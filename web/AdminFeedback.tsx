@@ -132,6 +132,14 @@ export function AdminFeedbackDownloads({
   }
   function failed(cause: unknown, generation: number) {
     if (!mounted.current || generation !== identity.current) return;
+    const lostPair = pairRef.current;
+    if (lostPair) {
+      // An interrupted transfer disposes both server artifacts. A missing response
+      // cannot prove otherwise, so never offer another download from this pair.
+      pairRef.current = null;
+      setPair(null);
+      void cancelPair(lostPair.id);
+    }
     const expiredPair = cause instanceof AdminRequestError && cause.status === 410;
     setExpired(expiredPair);
     setDenied(operatorDenied(cause));
@@ -142,7 +150,9 @@ export function AdminFeedbackDownloads({
           ? 'These downloads expired or diagnostics were cleared. Prepare both again for a new shared time span.'
           : cause instanceof AdminRequestError && cause.status === 409
             ? 'Another diagnostics export is active. Finish or cancel it, then prepare these downloads again.'
-            : 'The download could not be completed. No complete file was sent to your browser. Try again.',
+            : lostPair
+              ? 'This download could not be completed. Its snapshot is no longer available. Prepare both downloads again for a new shared time span. Files already sent to your browser are unchanged.'
+              : 'Preparation could not be completed. Try preparing both downloads again.',
     );
     if (expiredPair) refreshFlags.current();
   }
