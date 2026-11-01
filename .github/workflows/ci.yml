@@ -75,7 +75,7 @@ jobs:
     steps:
       - name: Metadata supplies no code evidence
         if: needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata'
-        run: echo 'Metadata event: no code validation performed by this job.'
+        run: echo 'No code validation is performed by this metadata job.'
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         if: (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
         with:
@@ -120,7 +120,7 @@ jobs:
     steps:
       - name: Metadata supplies no code evidence
         if: needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata'
-        run: echo 'Metadata event: no code validation performed by this job.'
+        run: echo 'No code validation is performed by this metadata job.'
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         if: (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
         with:
@@ -148,7 +148,7 @@ jobs:
     steps:
       - name: Metadata supplies no code evidence
         if: needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata'
-        run: echo 'Metadata event: no code validation performed by this job.'
+        run: echo 'No code validation is performed by this metadata job.'
       - name: Require complete applicability
         if: (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
         env:
@@ -255,7 +255,7 @@ jobs:
     steps:
       - name: Metadata supplies no code evidence
         if: needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata'
-        run: echo 'Metadata event: no code validation performed by this job.'
+        run: echo 'No code validation is performed by this metadata job.'
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         if: (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
         with:
@@ -369,7 +369,7 @@ jobs:
     steps:
       - name: Metadata supplies no code evidence
         if: needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata'
-        run: echo 'Metadata event: no code validation performed by this job.'
+        run: echo 'No code validation is performed by this metadata job.'
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         if: (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
         with:
@@ -782,7 +782,7 @@ jobs:
     steps:
       - name: Metadata supplies no code evidence
         if: needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata'
-        run: echo 'Metadata event: no code validation performed by this job.'
+        run: echo 'No code validation is performed by this metadata job.'
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         if: (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
         with:
