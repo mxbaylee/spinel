@@ -3532,7 +3532,10 @@ test.each(['publication', 'deadline'])(
     ) {
       const result = markFrozen.apply(this, args);
       if (boundary === 'publication') throw new Error('Injected failure after frozen publication');
-      elapsed = 120_001;
+      // Cross this intent's immutable deadline, not the former two-minute
+      // stopped-work default. Retrying must still preserve this exact output.
+      elapsed = f.request.authority.expiresAt - actualNow() + 1;
+      expect(Date.now()).toBeGreaterThanOrEqual(f.request.authority.expiresAt);
       return result;
     });
     const request = {
