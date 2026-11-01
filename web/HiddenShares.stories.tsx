@@ -234,7 +234,7 @@ export const PendingHide: Story = {
     await userEvent.click(canvas.getByRole('button', { name: 'More actions for Journey notes' }));
     await expect(
       await within(document.body).findByRole('menuitem', { name: /^Hide$/ }),
-    ).toBeDisabled();
+    ).toHaveAttribute('aria-disabled', 'true');
     await userEvent.keyboard('{Escape}');
   },
 };
