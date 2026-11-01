@@ -19,6 +19,7 @@ import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { validRestoreJobRecord } from '../src/server/maintenance/restore-jobs.ts';
 import type { RestoreRichMetadata } from '../src/server/maintenance/restore-rich-fixture.ts';
+import type { RestoreSizedFixture } from './restore-sized-fixture.ts';
 
 const directory = '/fixture';
 // Database and Unix control socket require the durable Linux filesystem. The
@@ -31,6 +32,9 @@ const staticDirectory = '/app/dist';
 const image = process.env.SPINEL_IMAGE!;
 if (!/^sha256:[a-f0-9]{64}$/.test(image))
   throw new Error('Actual production image identity required.');
+const sized = process.env.SPINEL_RESTORE_BROWSER_PROFILE === 'images-256m';
+if (process.env.SPINEL_RESTORE_BROWSER_PROFILE && !sized)
+  throw new Error('Unknown restore acceptance workload.');
 type PublicCredential = { credentialId: string; publicKey: string };
 type Bootstrap = PublicCredential & {
   origin: string;
@@ -44,6 +48,9 @@ type Seed = {
   keyFile: string;
   sha256: string;
   rich: RestoreRichMetadata;
+  databaseBytes: number;
+  archiveBytes: number;
+  workload: RestoreSizedFixture | null;
 };
 const input = JSON.parse(await readFile(join(directory, 'bootstrap.json'), 'utf8')) as Bootstrap;
 const origin = new URL(input.origin);
@@ -78,7 +85,8 @@ type ColdGroup = Record<(typeof coldFiles)[number], ColdFile | null>;
 async function closedGroup(base: string, destination?: string): Promise<ColdGroup> {
   const result = {} as ColdGroup;
   let total = 0;
-  const maximum = 64 * 1024 * 1024; // Explicit bound for this small synthetic fixture, not production policy.
+  // Bounds belong to these fixed acceptance fixtures, not production policy.
+  const maximum = (sized ? 768 : 64) * 1024 * 1024;
   const absent = (error: NodeJS.ErrnoException) => {
     if (error.code === 'ENOENT') return null;
     throw error;
@@ -215,6 +223,11 @@ async function seed(): Promise<Seed> {
       parentId: null,
     });
     const rich = await seedRestoreRichFixture({ auth, workspace, ownerId: owner.id });
+    const workload = sized
+      ? await (
+          await import('./restore-sized-fixture.ts')
+        ).seedRestoreSizedFixture(workspace, owner.id)
+      : null;
     const keyFile = join(data, 'archive.key');
     await writeFile(keyFile, key, { flag: 'wx', mode: 0o600 });
     const archive = await makeArchive(db, data, key, {
@@ -225,6 +238,10 @@ async function seed(): Promise<Seed> {
       runtimeEnvironment: 'NODE_ENV=production\n',
       keyId: 'browser-fixture',
     });
+    const databaseBytes =
+      Number(db.prepare('PRAGMA page_count').get()!.page_count) *
+      Number(db.prepare('PRAGMA page_size').get()!.page_size);
+    const archiveBytes = (await lstat(archive.archive)).size;
     workspace.update(owner.id, folder.id, { name: 'Current folder' });
     await mutateRestoreRichCurrent({
       auth,
@@ -248,6 +265,9 @@ async function seed(): Promise<Seed> {
       keyFile,
       sha256: archive.sha256,
       rich,
+      databaseBytes,
+      archiveBytes,
+      workload,
     };
   } finally {
     key.fill(0);
@@ -328,6 +348,7 @@ if (process.argv[2] === '--bootstrap') {
         restoredContent: boolean;
         originalSessionExcluded: boolean;
         counter: unknown;
+        sizedContent?: Omit<RestoreSizedFixture, 'profile' | 'documentIds'>;
       }
     | undefined;
   try {
@@ -404,7 +425,20 @@ if (process.argv[2] === '--bootstrap') {
         counter < 4
       )
         throw new Error('Closed workspace assertions failed.');
-      proof = { committed: true, restoredContent, originalSessionExcluded, counter };
+      const sizedContent = source.workload
+        ? (await import('./restore-sized-fixture.ts')).inspectRestoreSizedFixture(
+            db,
+            source.workload.documentIds,
+          )
+        : undefined;
+      if (
+        sized !== !!sizedContent ||
+        (sizedContent &&
+          (sizedContent.contentSha256 !== source.workload!.contentSha256 ||
+            sizedContent.imageBytes !== source.workload!.imageBytes))
+      )
+        throw new Error('Sized restore changed document snapshots or image bytes.');
+      proof = { committed: true, restoredContent, originalSessionExcluded, counter, sizedContent };
     } finally {
       const priorStage = stage;
       stage = 'database-close';

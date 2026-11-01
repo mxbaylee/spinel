@@ -1,5 +1,6 @@
 import express from 'express';
 import type { NextFunction, Request, Response } from 'express';
+import { extendArchiveBodyDeadline } from '../../../server/http.ts';
 import { AuthError } from '../auth/store.ts';
 import type { AuthStore, Session } from '../auth/store.ts';
 import { cookieToken } from '../auth/routes.ts';
@@ -134,7 +135,6 @@ export function restoreRoutes(auth: AuthStore, registry: RestoreRegistry, origin
   });
   router.post('/preparations/:id/upload', async (request, response) => {
     const current = operator(request);
-    proof(current);
     const length = request.headers['content-length'];
     if (typeof length !== 'string' || !/^[1-9][0-9]{0,10}$/.test(length))
       throw new AuthError(411, 'Supply the encrypted backup size.');
@@ -145,6 +145,7 @@ export function restoreRoutes(auth: AuthStore, registry: RestoreRegistry, origin
       request,
       Number(length),
       () => request.destroy(),
+      () => extendArchiveBodyDeadline(request),
     );
     sameOperator(current);
     response.json(result);

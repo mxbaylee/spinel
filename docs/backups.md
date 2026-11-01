@@ -471,11 +471,11 @@ deployment.
    32-byte recovery key. It needs no automatic backup destination. A bare SQLite
    file is not accepted. Catalog recovery uses the deployment's configured active
    and retained keys; it does not ask the browser for provider credentials.
-2. Complete the fresh Operator passkey check. It lasts five minutes, and upload,
-   verification and the preview must finish within it; otherwise preparation
-   fails saying the passkey check expired. For a large backup over a slow
-   connection, choose a saved backup instead ([SPN-124](todo/SPN-124.md) lifts
-   this limit). Preparation takes private custody,
+2. Complete the fresh Operator passkey check. Its five-minute window admits the
+   preparation; upload, verification and the preview then have one 30-minute
+   deadline, capped by the initiating session's expiry. The deadline cannot be
+   extended by another passkey check or a retried request. Expired preparation
+   asks you to prepare the backup again. Preparation takes private custody,
    checks the encrypted inventory, compatible immutable image/origin and resource
    requirements, and builds a provisional reconciliation preview. The current
    workspace keeps running. The backup retention lease protects the selected
@@ -489,7 +489,7 @@ deployment.
    recovery; a successful estimate does not guarantee completion. A failure names
    its cause where Spinel can tell it safely: a key that cannot decrypt the backup
    (a wrong key and altered bytes look the same), a backup from another workspace
-   address or application image, an expired passkey check, or a memory, time, size
+   address or application image, an expired operation, or a memory, time, size
    or disk limit. No failure message includes paths, contents or native errors.
 3. Select **Review restore**, inspect the source fingerprint, exact target and
    provisional consequences, then freshly authenticate and confirm. Work accepted
@@ -515,6 +515,15 @@ deployment.
    reconciles access the same way. It contains no document names or counts, and
    an open document hides it until the member returns to a list. Dismissing it
    hides it in that browser only.
+
+Fresh confirmation captures a separate operation deadline of at most 30 minutes,
+capped by the current session's expiry. Source handoff, preparation, activation and
+original-content recovery may continue after the passkey's five-minute admission
+window. Individual worker, shutdown and trial phases retain their own shorter
+bounds. Revocation, sign-out, changed verification/account or target, and the
+original operation deadline still stop the next durable cutover. Ordinary
+maintenance keeps its five-minute authority. Older retained restore intents retain
+their original shorter deadlines. See the [lifetime decision](implementation/SPN-124.md#separate-admission-freshness-from-bounded-work).
 
 Current account state and passkeys remain authoritative. Archived credentials
 cannot authorize activation or renew the original confirmation. Sharing is capped

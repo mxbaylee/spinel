@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { afterEach, expect, test, vi } from 'vitest';
 import { openDatabase } from '../../../server/database.ts';
 import { AuthStore } from '../auth/store.ts';
-import { captureRestoreAuthority } from '../maintenance/restore-authority.ts';
+import { captureRestoreAuthority, RESTORE_OPERATION_MS } from '../maintenance/restore-authority.ts';
 import type { RestoreJobRecord } from '../maintenance/restore-jobs.ts';
 import type { RestoreJobIntent } from '../maintenance/restore-job-intent.ts';
 import { restoreIntentHash } from '../maintenance/restore-job-intent.ts';
@@ -264,6 +264,149 @@ test('manual encrypted upload needs no destination/config and erases its private
   expect(f.service.state().owner).toBeNull();
 });
 
+test('upload, verification and preview outlast the passkey window, then confirmation needs fresh proof', async () => {
+  const f = await fixture();
+  const original = f.proof();
+  const created = await f.create();
+  const prepare = f.prepare.getMockImplementation()!;
+  f.prepare.mockImplementationOnce(async (options) => {
+    const result = await prepare(options);
+    f.advance(6 * 60_000);
+    return result;
+  });
+  const preview = f.preview.getMockImplementation()!;
+  f.preview.mockImplementationOnce(async (options) => {
+    const result = await preview(options);
+    f.advance(6 * 60_000);
+    return result;
+  });
+  async function* chunks() {
+    yield Buffer.from('first');
+    f.advance(6 * 60_000);
+    yield Buffer.from('last');
+  }
+  const ready = await f.service.restores.upload(
+    created.id,
+    f.actor.id,
+    f.session.token_hash,
+    chunks(),
+    9,
+  );
+  expect(ready.state).toBe('ready');
+  expect(ready.expiresAt).toBe(created.expiresAt);
+  expect(f.admit).not.toHaveBeenCalled();
+  await expect(
+    f.service.restores.confirm(
+      created.id,
+      f.actor.id,
+      f.session.token_hash,
+      ready.confirmation!,
+      original,
+    ),
+  ).rejects.toThrow('original restore');
+  f.auth.markVerified(f.session, 'passkey');
+  f.admit.mockImplementation(async (request) => f.acknowledge(request));
+  const confirmed = f.proof();
+  expect(
+    (
+      await f.service.restores.confirm(
+        created.id,
+        f.actor.id,
+        f.session.token_hash,
+        ready.confirmation!,
+        confirmed,
+      )
+    ).state,
+  ).toBe('started');
+  expect(f.admit.mock.calls[0][0].authority).toEqual(confirmed);
+});
+
+test.each(['upload', 'verification', 'preview', 'capacity'] as const)(
+  'operation expiry after a slow %s cannot publish readiness or extend custody',
+  async (boundary) => {
+    const f = await fixture();
+    const created = await f.create();
+    // Advance only after receiving the worker/parent result; the production
+    // orchestration still checks its original authority before publishing it.
+    const late =
+      <Args extends unknown[], Result>(work: (...args: Args) => Promise<Result>) =>
+      async (...args: Args) => {
+        const result = await work(...args);
+        f.advance(RESTORE_OPERATION_MS);
+        return result;
+      };
+    if (boundary === 'verification')
+      f.prepare.mockImplementationOnce(late(f.prepare.getMockImplementation()!));
+    if (boundary === 'preview')
+      f.preview.mockImplementationOnce(late(f.preview.getMockImplementation()!));
+    if (boundary === 'capacity') {
+      const result = await f.estimate({
+        ...f.target,
+        archiveBytes: 9,
+        databaseBytes: 4096,
+        previewDatabaseBytes: 4096,
+      });
+      f.estimate.mockImplementationOnce(late(async () => result));
+    }
+    async function* chunks() {
+      yield Buffer.from('first');
+      if (boundary === 'upload') f.advance(RESTORE_OPERATION_MS);
+      yield Buffer.from('last');
+    }
+    const result = await f.service.restores.upload(
+      created.id,
+      f.actor.id,
+      f.session.token_hash,
+      chunks(),
+      9,
+    );
+    expect(result.state).toBe('expired');
+    expect(result.expiresAt).toBe(created.expiresAt);
+    expect(result.confirmation).toBeNull();
+    expect(f.service.state().owner).toBeNull();
+    expect(f.admit).not.toHaveBeenCalled();
+  },
+);
+
+test.each(['session', 'account', 'passkey', 'target'] as const)(
+  'a long upload still refuses changed %s before its next chunk',
+  async (change) => {
+    const f = await fixture();
+    const created = await f.create();
+    async function* chunks() {
+      yield Buffer.from('first');
+      f.advance(6 * 60_000);
+      if (change === 'session') f.auth.revokeSession(f.session.token_hash);
+      if (change === 'account')
+        f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(f.actor.id);
+      if (change === 'passkey') f.db.prepare('DELETE FROM auth_passkeys WHERE id=?').run('passkey');
+      if (change === 'target') f.target.epoch = randomUUID();
+      yield Buffer.from('last');
+    }
+    expect(
+      (await f.service.restores.upload(created.id, f.actor.id, f.session.token_hash, chunks(), 9))
+        .state,
+    ).toBe('failed');
+    expect(f.prepare).not.toHaveBeenCalled();
+    expect(f.service.state().owner).toBeNull();
+  },
+);
+
+test('repeated create and later passkey checks cannot extend the original preparation deadline', async () => {
+  const f = await fixture(),
+    requestId = randomUUID(),
+    key = randomBytes(32);
+  const created = await f.create(requestId, Buffer.from(key));
+  f.advance(6 * 60_000);
+  f.auth.markVerified(f.session, 'passkey');
+  expect(await f.create(requestId, Buffer.from(key))).toEqual(created);
+  f.advance(RESTORE_OPERATION_MS - 6 * 60_000);
+  const expired = await f.upload(created.id);
+  expect(expired.state).toBe('expired');
+  expect(expired.expiresAt).toBe(created.expiresAt);
+  expect(f.admit).not.toHaveBeenCalled();
+});
+
 test('insufficient recovery capacity publishes path-free estimates and releases preparation without admission', async () => {
   const f = await fixture();
   f.estimate.mockResolvedValueOnce({
@@ -322,15 +465,14 @@ test.each(['target', 'authority', 'expiry'] as const)(
       if (scenario === 'target') response.target.epoch = randomUUID();
       if (scenario === 'authority')
         f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(f.actor.id);
-      if (scenario === 'expiry') f.advance(60_001);
+      if (scenario === 'expiry') f.advance(RESTORE_OPERATION_MS + 1);
       return response;
     });
     const created = await f.create();
     const failed = await f.upload(created.id);
-    expect(failed.state).toBe('failed');
+    expect(failed.state).toBe(scenario === 'expiry' ? 'expired' : 'failed');
     expect(failed.confirmation).toBeNull();
-    if (scenario === 'expiry')
-      expect(failed.error).toBe(new RecoveryResourceError('restore-authority').message);
+    if (scenario === 'expiry') expect(failed.error).toBeNull();
     expect(f.admit).not.toHaveBeenCalled();
     expect(f.service.state().owner).toBeNull();
   },
@@ -1069,7 +1211,7 @@ test.each([
       owner = f.service.state().owner;
     record.phase = 'failed';
     if (scenario === 'intent-source') record.intent.source.archive.sha256 = 'f'.repeat(64);
-    if (scenario === 'intent-authority') record.intent.authority.expiresAt++;
+    if (scenario === 'intent-authority') record.intent.authority.expiresAt--;
     if (scenario === 'preview-size') record.intent.previewDatabaseBytes += 4096;
     record.intentHash = restoreIntentHash(record.intent);
     if (scenario === 'target') f.target.generationId = randomUUID();

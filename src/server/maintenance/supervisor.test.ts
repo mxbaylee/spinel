@@ -49,7 +49,7 @@ import { RestoreJobs } from './restore-jobs.ts';
 import type { RestoreStopRequest } from '../../shared/maintenance.ts';
 import { MAINTENANCE_CHANNEL } from './supervisor-client.ts';
 import type { RestoreAuthority } from './restore-authority.ts';
-import { validRestoreAuthority } from './restore-authority.ts';
+import { restoreVerifiedUntil, validRestoreAuthority } from './restore-authority.ts';
 import { applicationPolicy } from '../../../server/application-policy.ts';
 import { prepareRestoreArchive } from '../backup/verification.ts';
 import { restoreJobIntentFixture } from './restore-job-fixture.ts';
@@ -2016,6 +2016,9 @@ test
   .each([
     'ownership-first',
     'readiness-first',
+    'long-preparation',
+    'long-activation',
+    'original-long-recovery',
     'original-recovered',
     'original-commit-publication',
     'wrong-fingerprint',
@@ -2069,7 +2072,22 @@ test
     const applicationUrl = `http://127.0.0.1:${applicationPort}/api/health`;
     const forcedStop = ordering.startsWith('failed-stop-');
     const originalRecovery = ordering.startsWith('original-');
+    const longOperation = ordering.includes('long-');
     const terminalPhase = originalRecovery ? 'original-committed' : 'candidate-committed';
+    // Advance the operation clock at a real cutover; all archive, worker, IPC
+    // and database work still executes. Real resource/timing acceptance is a
+    // separate container check, not this deterministic boundary regression.
+    const wallClock = Date.now.bind(Date);
+    let operationElapsed = 0;
+    let advanced!: () => void;
+    let crossingFailed!: (error: unknown) => void;
+    const oldWindowCrossed = new Promise<void>((resolve, reject) => {
+      advanced = resolve;
+      crossingFailed = reject;
+    });
+    void oldWindowCrossed.catch(() => {});
+    if (longOperation)
+      vi.spyOn(Date, 'now').mockImplementation(() => wallClock() + operationElapsed);
     let privateReadyObserved = false,
       ownershipReordered = false;
     let authorityOffset = 0,
@@ -2254,10 +2272,31 @@ test
         stopMs: forcedStop ? 15_000 : 3000,
         drainMs: 10_000,
         verifyMs: 5000,
-        restoreMs: 30_000,
+        ...(longOperation ? {} : { restoreMs: 30_000 }),
       },
     });
     cleanups.push(() => supervisor.close());
+    if (longOperation) {
+      const boundary =
+        ordering === 'long-preparation'
+          ? 'markFrozen'
+          : ordering === 'long-activation'
+            ? 'markPrepared'
+            : 'markTrialFrozen';
+      const publish = RestoreJobs.prototype[boundary];
+      vi.spyOn(RestoreJobs.prototype, boundary).mockImplementation(function (
+        this: RestoreJobs,
+        ...args: Parameters<typeof publish>
+      ) {
+        const record = Reflect.apply(publish, this, args) as ReturnType<typeof publish>;
+        operationElapsed = 6 * 60_000;
+        expect(Date.now()).toBeGreaterThan(record.intent.authority.verifiedAt + 5 * 60_000);
+        expect(Date.now()).toBeGreaterThan(restoreVerifiedUntil(record.intent.authority));
+        expect(Date.now()).toBeLessThan(record.intent.authority.expiresAt);
+        advanced();
+        return record;
+      });
+    }
     if (ordering === 'failed-stop-memory') {
       const internal = supervisor as unknown as {
         watchRestoreShutdown(
@@ -2456,6 +2495,7 @@ test
       } catch (error) {
         controllerFailure =
           error instanceof Error ? error.message.slice(0, 300) : 'Unknown fixture failure';
+        if (longOperation && operationElapsed === 0) crossingFailed(error);
         throw error;
       }
     });
@@ -2466,6 +2506,7 @@ test
     });
     expect(begun.record.phase).toBe('pause-planned');
     const statePath = join(f.root, 'restore-jobs', id, 'state.json');
+    if (longOperation) await oldWindowCrossed;
     if (ordering.startsWith('staging-')) {
       if (ordering === 'staging-diagnostic' || ordering === 'staging-time-limit') {
         await expect.poll(() => supervisor.status().phase, { timeout: 30_000 }).toBe('running');
@@ -2582,7 +2623,9 @@ test
       expect(clockAdvanced).toBe(ordering === 'failed-stop-publication-deadline');
       return;
     }
-    const failed = !['ownership-first', 'readiness-first', 'original-recovered'].includes(ordering);
+    const failed =
+      !longOperation &&
+      !['ownership-first', 'readiness-first', 'original-recovered'].includes(ordering);
     const uncommitted = [
       'wrong-fingerprint',
       'failed-freeze-publication',
@@ -2613,6 +2656,22 @@ test
     expect(ownershipReordered).toBe(ordering === 'readiness-first');
     const completed = JSON.parse(await readFile(statePath, 'utf8'));
     const selected = originalRecovery ? completed.execution.rollback : completed.execution;
+    if (longOperation) {
+      expect(operationElapsed).toBe(6 * 60_000);
+      expect(completed.intent.authority).toEqual(admitted.record.intent.authority);
+      expect(completed.updatedAt).toBeGreaterThan(
+        completed.intent.authority.verifiedAt + 5 * 60_000,
+      );
+      expect(completed.updatedAt).toBeLessThan(completed.intent.authority.expiresAt);
+      if (ordering === 'long-preparation')
+        expect(completed.execution.preparation.preparedAt).toBeGreaterThan(
+          completed.intent.authority.verifiedAt + 5 * 60_000,
+        );
+      if (ordering === 'original-long-recovery')
+        expect(completed.execution.rollback.preparedAt).toBeGreaterThan(
+          completed.intent.authority.verifiedAt + 5 * 60_000,
+        );
+    }
     expect(completed.execution.frozen.fingerprint).toBe(completed.execution.stop.fingerprint);
     expect(completed.execution.frozen.fingerprint).not.toBe(source.logicalFingerprint);
     expect(completed.intent.source.archive.sha256).toBe(seedSource.sha256);
@@ -3074,6 +3133,72 @@ test('stale generation and policy confirmations cannot create admission records'
   expect(f.supervisor.status().phase).toBe('running');
 });
 
+test.each(['current', 'revoked', 'expired', 'target-changed'] as const)(
+  'source custody crosses the old five-minute window with %s operation authority',
+  async (condition) => {
+    let elapsed = 0;
+    const f = await admissionFixture(
+      condition === 'revoked' ? 2 : undefined,
+      () => Date.now() + elapsed,
+    );
+    const original = structuredClone(f.request.authority);
+    const retain = restoreFiles.retainRestoreSource;
+    vi.spyOn(restoreFiles, 'retainRestoreSource').mockImplementationOnce(async (options) => {
+      const manifest = await retain(options);
+      elapsed = 6 * 60_000;
+      if (condition === 'expired') elapsed = original.expiresAt - Date.now();
+      if (condition === 'target-changed') {
+        f.supervisor.journal.state.epoch = randomUUID();
+        f.supervisor.journal.write();
+      }
+      return manifest;
+    });
+    if (condition === 'current') {
+      const admitted = await f.supervisor.admitPreparedRestore(f.request);
+      expect(admitted.custody).toBe(true);
+      expect(admitted.record.phase).toBe('source-retained');
+      expect(admitted.record.updatedAt).toBeGreaterThan(original.verifiedAt + 5 * 60_000);
+      expect(admitted.record.intent.authority).toEqual(original);
+      expect(await f.supervisor.admitPreparedRestore(f.request)).toEqual(admitted);
+      await expect(
+        f.supervisor.admitPreparedRestore({
+          ...f.request,
+          authority: { ...original, expiresAt: original.expiresAt - 1 },
+        }),
+      ).rejects.toThrow('different intent');
+      const jobs = new RestoreJobs(f.supervisor.journal);
+      try {
+        expect(jobs.read(f.request.id)).toEqual(admitted.record);
+      } finally {
+        jobs.close();
+      }
+    } else {
+      await expect(f.supervisor.admitPreparedRestore(f.request)).rejects.toThrow();
+      const record = JSON.parse(
+        await readFile(join(f.root, 'restore-jobs', f.request.id, 'state.json'), 'utf8'),
+      );
+      expect(record.intent.authority).toEqual(original);
+      expect(record.execution).toBeUndefined();
+      expect(record.phase).toBe(condition === 'target-changed' ? 'accepted' : 'failed');
+    }
+    expect(f.supervisor.journal.state.restoreStop).toBeNull();
+    expect(f.supervisor.status().phase).toBe(
+      condition === 'target-changed' ? 'recovery-required' : 'running',
+    );
+  },
+);
+
+test('an operation deadline does not replace fresh confirmation at admission', async () => {
+  const f = await admissionFixture();
+  const original = f.request.authority;
+  for (const confirmedAt of [original.authorizedAt! - 1, restoreVerifiedUntil(original)])
+    await expect(f.supervisor.admitPreparedRestore({ ...f.request, confirmedAt })).rejects.toThrow(
+      'original confirmation',
+    );
+  expect(await readdir(f.root)).not.toContain('restore-jobs');
+  expect(f.supervisor.status().phase).toBe('running');
+});
+
 test('synchronous expiry after custody checkpoint cannot return an ACK', async () => {
   let elapsed = 0;
   const f = await admissionFixture(undefined, () => Date.now() + elapsed);
@@ -3083,7 +3208,7 @@ test('synchronous expiry after custody checkpoint cannot return an ACK', async (
     ...args: Parameters<RestoreJobs['checkpoint']>
   ) {
     const result = checkpoint.apply(this, args);
-    if (args[3] === 'source-retained') elapsed = 60_000;
+    if (args[3] === 'source-retained') elapsed = f.request.authority.expiresAt - Date.now();
     return result;
   });
   try {
@@ -3159,7 +3284,7 @@ test('retained-source retry rechecks expiry after the final proof promise settle
       // The parent's registered handler resolves its proof promise first. This
       // microtask expires it before admission continues, without firing timers.
       queueMicrotask(() => {
-        elapsed = 60_000;
+        elapsed = f.request.authority.expiresAt - Date.now();
       });
     }
   };
@@ -3958,15 +4083,17 @@ test.each(['recovery-volume', 'shared-volume'] as const)(
 test('capacity probing cannot cross original proof expiry and publish a pause plan', async () => {
   let clock: number | undefined;
   let expire = false;
+  let operationDeadline = 0;
   const f = await admissionFixture(
     undefined,
     () => clock ?? Date.now(),
     {},
     () => {
-      if (expire) clock = Date.now() + 60_000;
+      if (expire) clock = operationDeadline;
       return { device: '1', availableBytes: 10n ** 12n };
     },
   );
+  operationDeadline = f.request.authority.expiresAt;
   const admitted = await f.supervisor.admitPreparedRestore(f.request);
   const pause = vi.spyOn(RestoreJobs.prototype, 'planPause');
   expire = true;
