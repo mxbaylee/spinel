@@ -211,16 +211,19 @@ cannot prove which generation is intended, so recovery is deliberate:
    stopped before replacement (including staging) with the live files still
    matching the preserved original and no opening barrier begun or published,
    as failed and stopped.
-3. If status shows no pending restore, follow [First startup and restart](#first-startup-and-restart)
-   to verify, start and resume the selected live generation. Reuse the current
-   operation ID when status has one. Otherwise run
+3. Run `status` again and read `lastFailure`. If it is `restore-job-pending`
+   or `original-recovery-unresolved`, continue at step 4. Otherwise follow
+   [First startup and restart](#first-startup-and-restart) to verify, start and
+   resume the selected live generation. Reuse `operationId` when status has one. Otherwise run
    `node scripts/deploy/maintenance.ts verify` without an operation ID; it creates
    one and returns the ID to use with start and resume. This also applies to a
    committed backup or original in `recovery-required` after startup cleanup.
    Sign in as the Operator and **Refresh restore status**. Only a recorded
    outcome says which data is live.
-4. If status still reports a pending restore that reached replacement or a
-   private trial, use its exact operation ID and run, as the deployment service UID:
+4. For `restore-job-pending` or `original-recovery-unresolved`, use the exact
+   `operationId` from status and run, as the deployment service UID. If status
+   provides no operation ID, keep the workspace closed and investigate under
+   step 5; do not invent an ID.
 
    ```sh
    node scripts/deploy/maintenance.ts recover-original --operation 00000000-0000-4000-8000-000000000000
