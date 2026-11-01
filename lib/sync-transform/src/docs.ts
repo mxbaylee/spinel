@@ -48,7 +48,13 @@ function transformRichText(
     undo = deleteEntities(theirs, shared);
     theirs = withoutEntities(theirs, shared);
   }
-  const transformed = JSON1.type.transformNoConflict(mine, theirs, side);
+  const upstream = JSON1.type.transformNoConflict(
+    withParagraphSliceMarkers(mine) as Op,
+    withParagraphSliceMarkers(theirs) as Op,
+    side,
+  );
+  const transformed =
+    side === 'right' ? (withoutWinningStyleKeys(upstream, theirs) as Op) : upstream;
   if (JSON1.type.isNoop(transformed) && !undo) return [];
   const merged = withoutTransformClears(transformed, mine, theirs) as Op;
   const moved = side === 'right' ? withPeerParagraphIds(merged, theirs) : merged;
@@ -245,8 +251,28 @@ function withoutTransformClears(op: unknown, input: unknown, peer: unknown): unk
     const e = (component.e ?? []).map((action) => {
       const from = at;
       if (action.t !== 'i') at += action.len;
-      if (action.t !== 'r' || action.coverType === 1 || !action.body) return action;
+      if (action.t !== 'r' || !action.body) return action;
       const own = actionAt(actions, inputPosition(peers.get(path) ?? [], from));
+      if (action.coverType === 1) {
+        const body = { ...action.body };
+        if (
+          Array.isArray(own?.body?.paragraphs) &&
+          own.body.customDecorations === undefined &&
+          isEmpty(body.customDecorations)
+        )
+          delete body.customDecorations;
+        // Stock ActionIterator omits an empty paragraph slice. When TextX
+        // carries that slice past an unstyled retain, preserve its explicit
+        // replacement clear. A peer body invokes TextX's conflict semantics;
+        // do not turn its suppressed metadata back into a new clearing write.
+        if (
+          Array.isArray(own?.body?.paragraphs) &&
+          body.paragraphs === undefined &&
+          !outputActionAt(peers.get(path) ?? [], from)?.body
+        )
+          body.paragraphs = [];
+        return { ...action, body };
+      }
       const body = Object.fromEntries(
         Object.entries(action.body).filter(
           ([key, value]) => !isEmpty(value) || isEmpty(own?.body?.[key]),
@@ -259,6 +285,26 @@ function withoutTransformClears(op: unknown, input: unknown, peer: unknown): unk
 }
 
 const isEmpty = (value: unknown) => Array.isArray(value) && value.length === 0;
+
+/**
+ * Keep a paragraph-replacement slice from being trimmed as an empty operation
+ * before its provenance can restore the explicit clear. This valid empty
+ * decoration field is only a transform marker: withoutTransformClears removes
+ * it before the resulting operation can reach native apply or the wire.
+ */
+function withParagraphSliceMarkers(op: unknown): unknown {
+  return mapText(op, (component) => ({
+    ...component,
+    e: component.e?.map((action) =>
+      action.t === 'r' &&
+      action.coverType === 1 &&
+      Array.isArray(action.body?.paragraphs) &&
+      action.body.customDecorations === undefined
+        ? { ...action, body: { ...action.body, customDecorations: [] } }
+        : action,
+    ),
+  }));
+}
 
 /** The position before `peer` of position `at` after it, inside text it kept. */
 function inputPosition(peer: TextAction[], at: number): number {
@@ -286,6 +332,17 @@ function actionAt(actions: TextAction[], at: number): TextAction | undefined {
   return undefined;
 }
 
+/** The action that produced output position `at`, after its deletes and inserts. */
+function outputActionAt(actions: TextAction[], at: number): TextAction | undefined {
+  let from = 0;
+  for (const action of actions) {
+    if (action.t === 'd') continue;
+    if (at < from + action.len) return action;
+    from += action.len;
+  }
+  return undefined;
+}
+
 /**
  * TextX.transform slices both retains to a common length, the slice drops
  * runs with no style, and a slice left with `textRuns: []` makes it return
@@ -304,6 +361,70 @@ interface TextRun {
   ed: number;
   ts?: Record<string, unknown>;
   sId?: string;
+}
+
+/**
+ * Stock TextX leaves a losing COVER's keys in place when the winning REPLACE
+ * wrote a falsy value. Arbitrate those writes at our mutation boundary: every
+ * explicit key of a winning replacement owns its interval, regardless of its
+ * value. Work in the document after `peer`, where the transformed edit runs.
+ * Only text runs are split, so paragraph clears and other body fields keep
+ * their original extent and semantics.
+ */
+function withoutWinningStyleKeys(op: unknown, peer: unknown): unknown {
+  const replacements = new Map<string, TextRun[]>();
+  forEachText(peer, (component, path) => {
+    const runs: TextRun[] = [];
+    let at = 0;
+    for (const action of component.e ?? []) {
+      if (action.t === 'd') continue;
+      if (action.t === 'r' && action.coverType === 1) {
+        for (const run of (action.body?.textRuns as TextRun[] | undefined) ?? [])
+          runs.push({ ...run, st: at + run.st, ed: at + run.ed });
+      }
+      at += action.len;
+    }
+    replacements.set(path, runs);
+  });
+  return mapText(op, (component, path) => {
+    const winning = replacements.get(path);
+    if (!winning?.length) return component;
+    let at = 0;
+    const e = component.e?.map((action) => {
+      const from = at;
+      if (action.t !== 'i') at += action.len;
+      const runs = action.body?.textRuns as TextRun[] | undefined;
+      if (action.t !== 'r' || action.coverType === 1 || !runs?.length) return action;
+      const textRuns = runs.flatMap((run) => {
+        const overlaps = winning.filter(
+          (other) => other.st < from + run.ed && other.ed > from + run.st,
+        );
+        if (!overlaps.length) return [run];
+        const cuts = [
+          ...new Set([
+            run.st,
+            run.ed,
+            ...overlaps.flatMap((other) => [
+              Math.max(run.st, other.st - from),
+              Math.min(run.ed, other.ed - from),
+            ]),
+          ]),
+        ].sort((a, b) => a - b);
+        return cuts.slice(1).map((ed, i) => {
+          const st = cuts[i];
+          const owners = overlaps.filter((other) => other.st <= from + st && other.ed > from + st);
+          const ts = Object.fromEntries(
+            Object.entries(run.ts ?? {}).filter(
+              ([key]) => !owners.some((owner) => owner.ts?.[key] !== undefined),
+            ),
+          );
+          return { ...run, st, ed, ts };
+        });
+      });
+      return { ...action, body: { ...action.body, textRuns } };
+    });
+    return { ...component, e };
+  });
 }
 
 const styled = ({ ts, sId }: TextRun) => sId != null || Object.keys(ts ?? {}).length > 0;

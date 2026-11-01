@@ -193,16 +193,23 @@ or rewriting references ([decision 39](../../docs/implementation/SPN-056.md#39-r
 
 ## What a sender must do
 
-The server and every client run `@univerjs/core` 1.1.0 with Spinel's patch
-(`scripts/dependencies/patch-univer-core.ts`, applied on install). Stock 1.1.0
-splits a link where a style lands inside it, leaves `$n` range ids that differ
-between screens, can throw `duplicate-custom-range-id` for a single user,
-builds a negative retain when a new link crosses a paragraph break inside an
-old one, and lets a concurrent bold survive on one screen only past a format
-painter's style that sets `bl: 0` and was accepted first. A copy of this lib
-published on its own needs the same patch, until upstream ships the fixes (the
-link fixes are [dream-num/univer#7938](https://github.com/dream-num/univer/pull/7938))
-and SPN-099 removes it.
+The server and every client run the unchanged published `@univerjs/core` 1.1.0.
+Call this package's `installNativeDocCompatibility(univer)` after registering
+native plugins and before creating a unit. It is idempotent for an instance and
+disposes with that instance. The browser editor, server model, confirmed replica
+and native test harness use this same integration.
+
+Public model and state hooks join and name custom-range fragments in the actual
+native model, handle the native hyperlink builder's overlapping paragraph pieces,
+and keep paragraph-bearing history states separate where upstream composition
+would restore removed formatting. Ordinary typing retains its existing history
+grouping. The transform layer preserves replacement style keys (including falsy
+values) and explicit empty paragraph arrays through stock operation slicing.
+Core files, methods, prototypes and subtype registration remain unchanged.
+
+This application boundary is part of the package's contract when used outside
+Spinel. See [SPN-099](../../docs/implementation/SPN-099.md) for release qualification,
+remaining upstream work and native acceptance evidence.
 
 Capture the public `ICommandService.onMutationExecutedForCollab` stream and
 exclude events marked `onlyLocal`, `fromCollab` or `fromChangeset`. Keep

@@ -1,4 +1,5 @@
 export { transform, supportedMutationIds } from './src/transform.ts';
+export { installNativeDocCompatibility, normalizeNativeDocRanges } from './src/native-docs.ts';
 export {
   RefusedEditError,
   UnsupportedMutationError,

@@ -1,5 +1,5 @@
-import { CustomRangeType, JSONX, TextXActionType } from '@univerjs/core';
-import type { IParagraph, TextXAction } from '@univerjs/core';
+import { CustomRangeType, JSONX, TextX, TextXActionType } from '@univerjs/core';
+import type { IDocumentBody, IParagraph, TextXAction } from '@univerjs/core';
 import { expect, test } from 'vitest';
 import { docFormulas } from '@spinel/doc-formulas';
 import { transform } from '../index.ts';
@@ -73,7 +73,7 @@ test('an edit made obsolete by the peer vanishes', () => {
   expect(transform(remove(0, 6), remove(0, 6), 'right')).toEqual([]);
 });
 
-const style = (at: number, len: number, ts: Record<string, number>, coverType = 0) =>
+const style = (at: number, len: number, ts: Record<string, unknown>, coverType = 0) =>
   edit(
     JSONX.getInstance().editOp([
       ...retain(at),
@@ -117,6 +117,82 @@ test('a replaced style with falsy keys converges with a concurrent style over it
     ed: 10,
     ts: { bl: 1, it: 0 },
   });
+});
+
+test('replacement ownership includes false, empty strings, null and zero without clearing peer keys', () => {
+  for (const [key, value, competing] of [
+    ['hidden', false, true],
+    ['ff', '', 'Arial'],
+    ['fs', 0, 14],
+    ['bl', null, 1],
+  ] as const) {
+    const replaced = style(6, 4, { [key]: value }, 1);
+    const covered = style(8, 5, { [key]: competing, it: 1 });
+    const first = merge(replaced, covered).doc.body.textRuns;
+    expect(first).toContainEqual({ st: 8, ed: 10, ts: { [key]: value, it: 1 } });
+    expect(first).toContainEqual({ st: 10, ed: 13, ts: { [key]: competing, it: 1 } });
+    expect(merge(covered, replaced).doc.body.textRuns).toContainEqual({
+      st: 8,
+      ed: 13,
+      ts: { [key]: competing, it: 1 },
+    });
+  }
+});
+
+test('replacement style ownership follows text positions after peer inserts and deletes', () => {
+  const replacement = edit(
+    JSONX.getInstance().editOp([
+      { t: TextXActionType.INSERT, len: 2, body: { dataStream: 'zz' } },
+      { t: TextXActionType.DELETE, len: 1 },
+      { t: TextXActionType.RETAIN, len: 5 },
+      {
+        t: TextXActionType.RETAIN,
+        len: 4,
+        body: { dataStream: '', textRuns: [{ st: 0, ed: 4, ts: { bl: 0 } }] },
+        coverType: 1,
+      },
+    ]),
+  );
+  const { doc } = merge(replacement, style(8, 5, { bl: 1, it: 1 }));
+  expect(doc.body.textRuns).toContainEqual({ st: 9, ed: 11, ts: { bl: 0, it: 1 } });
+  expect(doc.body.dataStream.startsWith('zzlpha ')).toBe(true);
+});
+
+test('an explicit paragraph replacement clear survives slices around a concurrent insert', () => {
+  const clear = edit(
+    JSONX.getInstance().editOp([
+      {
+        t: TextXActionType.RETAIN,
+        len: 4,
+        body: { dataStream: '', paragraphs: [] },
+        coverType: 1,
+      },
+    ]),
+  );
+  const inserted = insert(2, 'x');
+  const initial: IDocumentBody = {
+    dataStream: 'a\rb\r\n',
+    paragraphs: [
+      { startIndex: 1, paragraphId: 'first' },
+      { startIndex: 3, paragraphId: 'second' },
+    ],
+  };
+  const apply = (steps: Mutation[]) =>
+    steps.reduce((body, step) => {
+      const [, component] = step.params.actions as [string, { e: TextXAction[] }];
+      return TextX.apply(body, structuredClone(component.e));
+    }, structuredClone(initial));
+  const transformedClear = transform(clear, inserted, 'left');
+  for (const step of transformedClear) {
+    const [, component] = step.params.actions as [string, { e: TextXAction[] }];
+    for (const action of component.e)
+      if (action.body) expect(action.body).not.toHaveProperty('customDecorations');
+  }
+  const afterInsert = apply([...inserted, ...transformedClear]);
+  const afterClear = apply([...clear, ...transform(inserted, clear, 'right')]);
+  expect(afterInsert).toEqual(afterClear);
+  expect(afterInsert.dataStream).toBe('a\rxb\r\n');
+  expect(afterInsert.paragraphs).toEqual([]);
 });
 
 // As BuildTextUtils.customRange.add builds a link, and DeleteDocHyperLinkCommand
@@ -180,8 +256,8 @@ test('a list the sender sent empty survives the transform', () => {
   }
 });
 
-// Univer's apply splits a link at a style's edges, and its pieces share an id;
-// the core patch (scripts/dependencies/patch-univer-core.ts) joins them again.
+// The native compatibility adapter keeps link ranges canonical after stock
+// mutations, including a style whose edges fall inside the link.
 test('a style inside a concurrent link leaves the link whole on both screens', () => {
   const whole = [
     {

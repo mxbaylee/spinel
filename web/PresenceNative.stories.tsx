@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { installNativeDocCompatibility } from '@spinel/sync-transform';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
@@ -113,6 +114,7 @@ function NativePresenceCanvas({
         presets: [UniverDocsCorePreset({ container: host.current!, disableAutoFocus: true })],
       });
       univer = created.univer;
+      installNativeDocCompatibility(univer);
       installCanvasColors(univer);
       const id = 'native-presence-doc';
       const data = getDocsEmptySnapshot(id, LocaleType.EN_US, 'Autumn plans');

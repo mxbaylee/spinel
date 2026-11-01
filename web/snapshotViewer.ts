@@ -1,4 +1,5 @@
 import { formulaPaperColors } from './DocFormulas.tsx';
+import { installNativeDocCompatibility } from '@spinel/sync-transform';
 import {
   installDocFormulas,
   type DocFormulaController,
@@ -124,6 +125,7 @@ export async function openSnapshotViewer({
           mobileDocPlugins(UniverDocsHyperLinkPreset(), mobile),
         ],
   });
+  installNativeDocCompatibility(univer);
   let formulas: DocFormulaController | undefined;
   let interval: ReturnType<typeof setInterval> | undefined;
   let stopVisibility: (() => void) | undefined;

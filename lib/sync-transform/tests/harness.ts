@@ -17,7 +17,7 @@ import { UniverSheetsPlugin } from '@univerjs/sheets';
 import { UniverSheetsFormulaPlugin } from '@univerjs/sheets-formula';
 import { ISheetDrawingService, UniverSheetsDrawingPlugin } from '@univerjs/sheets-drawing';
 import { expect } from 'vitest';
-import { flip, transform } from '../index.ts';
+import { flip, installNativeDocCompatibility, transform } from '../index.ts';
 import type { BaseCells, Mutation, RefusalReason, Side } from '../index.ts';
 import { seededWorkbook } from './generate.ts';
 
@@ -42,6 +42,7 @@ export class Replica {
     this.univer.registerPlugin(UniverDocsHyperLinkPlugin);
     this.univer.registerPlugin(UniverDrawingPlugin);
     this.univer.registerPlugin(UniverSheetsDrawingPlugin);
+    installNativeDocCompatibility(this.univer);
     if (document.workbook) {
       this.univer.createUnit(UniverInstanceType.UNIVER_SHEET, Tools.deepClone(document.workbook));
     }

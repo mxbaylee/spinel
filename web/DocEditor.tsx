@@ -1,4 +1,5 @@
 import { maintenanceFetch as fetch } from './maintenanceFetch.ts';
+import { installNativeDocCompatibility } from '@spinel/sync-transform';
 import { SaveStatus } from './SaveStatus.tsx';
 import { recordNativeMutationInventory } from './nativeMutationInventory.ts';
 import {
@@ -455,6 +456,7 @@ export function DocEditor({
           mobileDocPlugins(UniverDocsHyperLinkPreset(), mobile),
         ],
       });
+      installNativeDocCompatibility(univer);
       const stopTheme = bindEditorTheme(univer);
       disposeEditor = () => {
         boundedHistory?.dispose();
