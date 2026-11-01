@@ -184,8 +184,9 @@ const executionPhases: readonly string[] = [
   'trial-ready',
   'candidate-committed',
 ];
-/** Phases that never touched the live database: activation planning comes next. */
-const unreplacedPhases = executionPhases.slice(0, executionPhases.indexOf('activation-planned'));
+/** Planning and staging only copy into recovery storage. The supervisor must
+ * also prove that no opening barrier was begun and the live original is intact. */
+const unreplacedPhases = executionPhases.slice(0, executionPhases.indexOf('candidate-replacing'));
 export const isUnreplacedRestorePhase = (phase: unknown) =>
   typeof phase === 'string' && unreplacedPhases.includes(phase);
 const failurePhases: readonly string[] = [

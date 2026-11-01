@@ -205,13 +205,16 @@ cannot prove which generation is intended, so recovery is deliberate:
 2. Record `node scripts/deploy/maintenance.ts status`, then restart the supervisor
    once. Restart finishes reopening a committed outcome without reinstalling
    prepared bytes. It marks an admission that never executed, or a restore that
-   stopped before activation with the live files still matching the preserved
-   original and no opening barrier, as failed and stopped.
+   stopped before replacement (including staging) with the live files still
+   matching the preserved original and no opening barrier begun or published,
+   as failed and stopped.
 3. If status now shows a stopped operation and no pending restore, run verify,
    start and resume with that operation ID, sign in as the Operator and
    **Refresh restore status**. Only a recorded outcome says which data is live.
-4. If verify still refuses, the restore stopped between activating the candidate
-   and committing an outcome, for example when the host lost power during the
+4. If verify still refuses, the supervisor has not proved that reopening is safe.
+   Causes include a begun or published barrier, changed original files, uncertain
+   ownership, or a restore stopped between replacing the candidate and committing
+   an outcome, for example when the host lost power during the
    candidate's trial or ran past the [two-minute custody budget or the
    confirmation's five-minute window](backups.md) after activation. The
    preserved original is intact in the recovery root, but no supported command

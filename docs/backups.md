@@ -556,17 +556,20 @@ Two fixed limits bound activation:
   prepare and activate the candidate, health-check it privately and commit. A
   failed trial gets a separate 120 seconds to capture and freeze its evidence.
   Each step's own timeouts also stay inside this budget. The budget is not
-  configurable; it grows with database size only through the time each step takes.
+  configurable and does not grow with database size; larger databases leave less
+  time for the remaining steps.
 
 If either limit runs out before commit, the restore fails. What happens next
 depends on how far it got:
 
-- **Before activation**, the live database is untouched. The supervisor checks
-  that its files still match the preserved original and that no opening barrier
-  exists, records **Restore did not replace the workspace**, and reopens the
+- **Before replacement, including candidate staging**, the live database is
+  untouched. The supervisor checks that its files still match the preserved
+  original and that no opening barrier exists or was begun, records
+  **Restore did not replace the workspace**, and reopens the
   original through the ordinary verify, start and resume steps. If that check or
   reopening fails, or the supervisor restarted, the workspace stays stopped until
   the Operator runs those steps ([runbook](maintenance.md#an-unresolved-restore)).
+  See the [staging recovery decision](implementation/SPN-112.md#recover-an-untouched-original-after-staging-fails).
 - **After a failed trial**, one original-content recovery runs. If it cannot
   finish in the passkey window's remaining time, the workspace stays closed as an
   unresolved restore.

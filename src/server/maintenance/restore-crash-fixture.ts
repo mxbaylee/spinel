@@ -47,9 +47,16 @@ if (cut === 'admission') {
     return result;
   };
 }
-if (cut === 'custody' || cut === 'freeze') {
+if (cut === 'custody' || cut === 'freeze' || cut === 'activation-plan' || cut === 'staging') {
   // Both cuts precede activation, so the live database is still the original.
-  const method = cut === 'custody' ? 'markOriginalsRetained' : 'markFrozen';
+  const method =
+    cut === 'custody'
+      ? 'markOriginalsRetained'
+      : cut === 'freeze'
+        ? 'markFrozen'
+        : cut === 'activation-plan'
+          ? 'planActivation'
+          : 'markCandidateStaged';
   const reach = RestoreJobs.prototype[method] as (...args: unknown[]) => unknown;
   (RestoreJobs.prototype[method] as unknown) = function (this: RestoreJobs, ...args: unknown[]) {
     const result = reach.apply(this, args);

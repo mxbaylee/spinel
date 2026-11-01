@@ -893,7 +893,7 @@ linux('a restore stopped before activation fails once and keeps its evidence', a
   expect(f.openJobs().read(id)).toEqual(failed);
   expect(() => f.jobs.abandonUnreplaced(id, hash, failed.revision, 'restore-time-limit')).toThrow();
   for (const mutate of [
-    (value: RestoreJobRecord) => (value.execution!.abandoned!.phase = 'activation-planned'),
+    (value: RestoreJobRecord) => (value.execution!.abandoned!.phase = 'candidate-replacing'),
     (value: RestoreJobRecord) => delete value.execution!.abandoned,
     (value: RestoreJobRecord) => (value.execution!.abandoned!.reason = 'Native /path'),
     (value: RestoreJobRecord) => (value.execution!.abandoned!.updatedAt = value.updatedAt + 1),
@@ -908,11 +908,33 @@ linux('a restore stopped before activation fails once and keeps its evidence', a
   expect(f.jobs.read(id)).toEqual(failed);
 });
 
-linux('activation planning ends the chance to fail without a replacement', async () => {
+linux.each(['activation-planned', 'candidate-staged'] as const)(
+  'an untouched %s attempt can fail while retaining its activation evidence',
+  async (phase) => {
+    const f = await preparedFixture();
+    const id = f.record.intent.id,
+      hash = f.record.intentHash;
+    let record = f.jobs.planActivation(id, hash, f.record.revision, attemptFixture());
+    if (phase === 'candidate-staged')
+      record = f.jobs.markCandidateStaged(id, hash, record.revision);
+    f.advance(60_000);
+    const failed = f.jobs.abandonUnreplaced(id, hash, record.revision, 'restore-time-limit');
+    expect(failed.phase).toBe('failed');
+    expect(failed.execution).toEqual({
+      ...record.execution,
+      abandoned: { phase, updatedAt: record.updatedAt, reason: 'restore-time-limit' },
+    });
+    expect(f.openJobs().read(id)).toEqual(failed);
+  },
+);
+
+linux('candidate replacement ends the chance to fail without a replacement', async () => {
   const f = await preparedFixture();
   const id = f.record.intent.id,
     hash = f.record.intentHash;
-  const planned = f.jobs.planActivation(id, hash, f.record.revision, attemptFixture());
+  let planned = f.jobs.planActivation(id, hash, f.record.revision, attemptFixture());
+  planned = f.jobs.markCandidateStaged(id, hash, planned.revision);
+  planned = f.jobs.markCandidateReplacing(id, hash, planned.revision);
   expect(() =>
     f.jobs.abandonUnreplaced(id, hash, planned.revision, 'restore-time-limit'),
   ).toThrow();

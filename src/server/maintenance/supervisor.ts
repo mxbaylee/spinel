@@ -53,7 +53,7 @@ import type {
 } from '../backup/restore-control.ts';
 import { shareWorkspaceOwnership } from './ownership.ts';
 import { processResourcesReleased, waitForProcessInventory } from './process-exit.ts';
-import { assertNoPendingRestore } from './restore-barrier.ts';
+import { assertNoPendingRestore, restoreBarrierPath } from './restore-barrier.ts';
 import {
   sameRestoreStopRequest,
   validRestoreFingerprint,
@@ -822,7 +822,7 @@ export class MaintenanceSupervisor {
       await this.resume();
     }).catch(() => {});
   }
-  /** A restore that stopped before activation planning never touched the live
+  /** A restore that stopped before candidate replacement never touched the live
    * database. Once the stopped files still match the preserved original and no
    * opening barrier exists, record the job failed with the reason, which a
    * later resume clears from status, and leave the workspace stopped under its
@@ -866,6 +866,16 @@ export class MaintenanceSupervisor {
           throw new Error('The unreplaced restore lost its closed original.');
         this.assertGeneration();
         assertNoPendingRestore(this.journal.databasePath);
+        // Barrier publication starts before the replacing checkpoint. An
+        // unpublished marker is ambiguous too: retain custody and stay closed.
+        try {
+          lstatSync(
+            `${restoreBarrierPath(this.journal.databasePath)}.${record!.intent.id}.pending`,
+          );
+          throw new Error('The restore opening barrier was already begun.');
+        } catch (error) {
+          if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+        }
         assertWorkspaceHandlesClosed(this.journal.databasePath);
         // Before capture there is no file evidence, but nothing has written since
         // the application stopped and its own startup verification still runs.

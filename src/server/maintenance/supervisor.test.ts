@@ -2031,6 +2031,11 @@ test
     'failed-stop-publication-deadline',
     'preparation-diagnostic',
     'preparation-changed-original',
+    'staging-diagnostic',
+    'staging-time-limit',
+    'staging-pending-barrier',
+    'staging-published-barrier',
+    'staging-changed-original',
   ])(
   'complete application and authenticated archive commit and release the selected candidate: %s',
   async (ordering) => {
@@ -2295,6 +2300,34 @@ test
       });
     }
     let preparationRefused = false;
+    let stagingRefused = false;
+    if (ordering.startsWith('staging-')) {
+      vi.spyOn(restoreFiles, 'stageRestoreCandidate').mockImplementation(async (control, files) => {
+        stagingRefused = true;
+        if (ordering === 'staging-time-limit') {
+          // A timed-out copy may leave private partial bytes. They are evidence,
+          // not a replacement, and must survive reopening of the original.
+          await writeFile(
+            join(control.root, `restore-${files.id}`, 'candidate.sqlite'),
+            (await readFile(control.candidatePath)).subarray(0, 32),
+            { mode: 0o600, flag: 'wx' },
+          );
+          throw new DOMException('Injected staging deadline.', 'TimeoutError');
+        }
+        if (ordering === 'staging-changed-original')
+          await appendFile(f.databasePath, Buffer.alloc(1));
+        if (ordering === 'staging-pending-barrier' || ordering === 'staging-published-barrier')
+          await writeFile(
+            restoreBarrierPath(f.databasePath) +
+              (ordering === 'staging-pending-barrier' ? `.${files.id}.pending` : ''),
+            'incomplete marker',
+            { mode: 0o600 },
+          );
+        // Simulate capacity disappearing after activation planning, before any
+        // live-file mutation. Marker/foreign-writer cases must still stay closed.
+        throw Object.assign(new Error('Injected staging capacity refusal.'), { code: 'ENOSPC' });
+      });
+    }
     if (ordering.startsWith('preparation-')) {
       const sync = restoreInput.syncRestoreDirectory;
       vi.spyOn(restoreInput, 'syncRestoreDirectory').mockImplementation(async (...args) => {
@@ -2433,6 +2466,43 @@ test
     });
     expect(begun.record.phase).toBe('pause-planned');
     const statePath = join(f.root, 'restore-jobs', id, 'state.json');
+    if (ordering.startsWith('staging-')) {
+      if (ordering === 'staging-diagnostic' || ordering === 'staging-time-limit') {
+        await expect.poll(() => supervisor.status().phase, { timeout: 30_000 }).toBe('running');
+        const retained = JSON.parse(await readFile(statePath, 'utf8'));
+        expect(retained.phase).toBe('failed');
+        expect(retained.execution.abandoned).toEqual({
+          phase: 'activation-planned',
+          updatedAt: expect.any(Number),
+          reason:
+            ordering === 'staging-time-limit'
+              ? 'restore-activation-planned-time-limit'
+              : 'restore-activation-planned-enospc',
+        });
+        expect(supervisor.journal.state.restoreJob).toBeNull();
+        expect(supervisor.journal.state.completedOperationId).toBe(id);
+        if (ordering === 'staging-time-limit')
+          expect((await readFile(join(f.root, `restore-${id}`, 'candidate.sqlite'))).length).toBe(
+            32,
+          );
+      } else {
+        await expect
+          .poll(() => supervisor.status().lastFailure, { timeout: 30_000 })
+          .toBe('restore-activation-planned-enospc');
+        // Serialize behind release so this observes the refused reopen, not the
+        // initial failure transition before its guards have run.
+        await supervisor.coldControl({ action: 'status' });
+        expect(supervisor.status().phase).toBe('recovery-required');
+        expect(supervisor.journal.state.restoreJob?.jobId).toBe(id);
+        expect(JSON.parse(await readFile(statePath, 'utf8')).phase).toBe('activation-planned');
+        await expect(
+          supervisor.coldControl({ action: 'verify', operationId: id }),
+        ).rejects.toThrow();
+      }
+      expect(stagingRefused).toBe(true);
+      expect(privateReadyObserved).toBe(false);
+      return;
+    }
     if (ordering === 'preparation-diagnostic') {
       // Preparation never touched the live database, so the supervisor records
       // the job failed with its diagnostic and reopens the original by itself.

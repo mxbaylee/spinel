@@ -24,6 +24,8 @@ const cuts = [
   'admission',
   'custody',
   'freeze',
+  'activation-plan',
+  'staging',
   'activation',
   'private-open',
   'commit',
@@ -34,6 +36,8 @@ const cuts = [
 const cutPhases: Partial<Record<(typeof cuts)[number], string>> = {
   custody: 'originals-retained',
   freeze: 'frozen',
+  'activation-plan': 'activation-planned',
+  staging: 'candidate-staged',
   activation: 'candidate-replacing',
   'private-open': 'trial-opening',
   'original-activation': 'original-replacing',
@@ -100,7 +104,8 @@ test.skipIf(process.platform !== 'linux').each(cuts)(
   async (cut) => {
     const originalRecovery = cut === 'original-activation' || cut === 'original-commit';
     const partial = cut === 'activation' || cut === 'original-activation';
-    const preActivation = cut === 'custody' || cut === 'freeze';
+    const preActivation =
+      cut === 'custody' || cut === 'freeze' || cut === 'activation-plan' || cut === 'staging';
     const unresolved = partial || cut === 'private-open';
     const directory = await mkdtemp(join(tmpdir(), 'spinel-restore-crash-'));
     const root = join(directory, 'recovery'),
