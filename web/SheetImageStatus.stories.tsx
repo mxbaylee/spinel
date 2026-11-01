@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { SheetImageStatus } from './SheetImageStatus.tsx';
 import './editorFrame.css';
 
@@ -53,10 +53,10 @@ export const DocumentLimit: Story = {
     ).toBeVisible();
     await expect(trigger.getBoundingClientRect().height).toBeGreaterThanOrEqual(44);
     await userEvent.keyboard('{Escape}');
-    await expect(trigger).toHaveFocus();
+    await waitFor(() => expect(trigger).toHaveFocus());
     await userEvent.click(trigger);
     await userEvent.click(await body.findByRole('button', { name: 'Close' }));
-    await expect(trigger).toHaveFocus();
+    await waitFor(() => expect(trigger).toHaveFocus());
     await expect(
       canvasElement.querySelector('.sheet-image-help')!.getBoundingClientRect().toJSON(),
     ).toEqual(bounds);

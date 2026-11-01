@@ -1,0 +1,560 @@
+{
+  "ticket": "SPN-068",
+  "date": "2026-11-01",
+  "applicationTestCommit": "6908f392da45217fc63dbb146b7f66a191ff5365",
+  "baseCommit": "e63956c7ec214af03c825104a81f63517eb87d0b",
+  "scope": "Final PR head and both independent grades are recorded in PR #230. Application/test source is unchanged after the recorded native pass; only the story focus waits, documentation and evidence changed.",
+  "native": {
+    "reportSha256": "dcedd19f345e0df46e75e93f2bda0daba067c780f670c7764671e81abd0d9bba",
+    "stats": {
+      "startTime": "2026-11-01T20:41:41.769Z",
+      "duration": 93172.94499999999,
+      "expected": 10,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "errors": [],
+    "cases": [
+      {
+        "title": "native Sheet image menu saves both placements with undo, peer delivery, reload and history",
+        "file": "sheet-image-insertion.spec.ts",
+        "project": "production",
+        "expectedStatus": "passed",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 22430,
+            "startTime": "2026-11-01T20:41:46.716Z",
+            "errors": []
+          }
+        ]
+      },
+      {
+        "title": "native image cell moves with rows and cut/paste; copying the sheet retains both image kinds",
+        "file": "sheet-image-insertion.spec.ts",
+        "project": "production",
+        "expectedStatus": "passed",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 9324,
+            "startTime": "2026-11-01T20:42:09.320Z",
+            "errors": []
+          }
+        ]
+      },
+      {
+        "title": "Sheet paste and drop store raster files; oversize refuses without inserting or shifting the editor",
+        "file": "sheet-image-insertion.spec.ts",
+        "project": "production",
+        "expectedStatus": "passed",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 5413,
+            "startTime": "2026-11-01T20:42:18.667Z",
+            "errors": []
+          }
+        ]
+      },
+      {
+        "title": "a Sheet image remains navigation-protected after upload until native insertion finishes",
+        "file": "sheet-image-insertion.spec.ts",
+        "project": "production",
+        "expectedStatus": "passed",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 3638,
+            "startTime": "2026-11-01T20:42:24.103Z",
+            "errors": []
+          }
+        ]
+      },
+      {
+        "title": "phone Sheet image insertion and its limit error keep the current layout within the viewport",
+        "file": "sheet-image-insertion.spec.ts",
+        "project": "production",
+        "expectedStatus": "passed",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 4012,
+            "startTime": "2026-11-01T20:42:27.763Z",
+            "errors": []
+          }
+        ]
+      },
+      {
+        "title": "changing the selected cell after upload refuses the late image and a fresh insertion succeeds",
+        "file": "sheet-image-insertion.spec.ts",
+        "project": "production",
+        "expectedStatus": "passed",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 4983,
+            "startTime": "2026-11-01T20:42:31.788Z",
+            "errors": []
+          }
+        ]
+      },
+      {
+        "title": "account viewers, edit-link guests and an offline owner cannot insert dropped images",
+        "file": "sheet-image-insertion.spec.ts",
+        "project": "production",
+        "expectedStatus": "passed",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 8632,
+            "startTime": "2026-11-01T20:42:36.781Z",
+            "errors": []
+          }
+        ]
+      },
+      {
+        "title": "cancelling an image chooser releases it; a peer row insertion while choosing refuses the stale target",
+        "file": "sheet-image-insertion.spec.ts",
+        "project": "production",
+        "expectedStatus": "passed",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 9465,
+            "startTime": "2026-11-01T20:42:45.426Z",
+            "errors": []
+          }
+        ]
+      },
+      {
+        "title": "revoking account edit access after image upload refuses the late native insertion",
+        "file": "sheet-image-insertion.spec.ts",
+        "project": "production",
+        "expectedStatus": "passed",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 9461,
+            "startTime": "2026-11-01T20:42:54.902Z",
+            "errors": []
+          }
+        ]
+      },
+      {
+        "title": "online images inserted into an already downloaded Sheet render after an offline reload",
+        "file": "sheet-image-insertion.spec.ts",
+        "project": "production",
+        "expectedStatus": "passed",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 10412,
+            "startTime": "2026-11-01T20:43:04.375Z",
+            "errors": []
+          }
+        ]
+      }
+    ],
+    "node": "26.12.1",
+    "playwright": "1.64.1",
+    "browser": "Chromium 156.0.8078.4, Playwright build 1248",
+    "workers": 1,
+    "retries": 0,
+    "project": "production",
+    "port": 3168,
+    "desktopViewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "phoneViewport": {
+      "width": 390,
+      "height": 844
+    },
+    "phoneEvidence": "Chromium touch emulation, not a physical device",
+    "browserArguments": [
+      "--js-flags=--max-old-space-size=256 --max-semi-space-size=4"
+    ],
+    "command": "CI=1 SPINEL_E2E_PROJECT=production node scripts/serial.ts node ../spn068-guard.ts npx playwright test --config ../spn068-playwright.config.ts e2e/sheet-image-insertion.spec.ts --workers=1 --retries=0 --max-failures=1",
+    "localConfiguration": "Imports repository playwright.config.ts and its production project/server; overrides port3168, absolute test/output paths and Chromium heap limits only.",
+    "watchdog": {
+      "limitMiB": 2048,
+      "sampleIntervalMs": 500,
+      "peakMiB": 1932.1,
+      "result": "completed"
+    }
+  },
+  "storybook": {
+    "command": "node scripts/serial.ts node ../spn068-guard.ts npm run screenshots -- sheet-image-status--ready sheet-image-status--file-limit sheet-image-status--pixel-limit sheet-image-status--document-limit sheet-image-status--offline sheet-image-status--changed-selection sheet-image-status--access-ended",
+    "source": "Production configuration narrowed locally to SheetImageStatus stories; components unchanged from applicationTestCommit; exact post-commit story hash in sources.",
+    "fullBuild": {
+      "sourceCommit": "6908f392da45217fc63dbb146b7f66a191ff5365",
+      "workflowRun": 41347929136,
+      "artifactId": 13100485674,
+      "artifactSha256": "851003e651f2f391fb36eca1f7defffbc722bce92ebd150c47e305a3e458ec33",
+      "result": "success"
+    },
+    "focusedBuild": {
+      "result": "success",
+      "modules": 2348,
+      "viteDurationSeconds": 2.69,
+      "peakMiB": 1078.8
+    },
+    "reportSha256": "b2e87e3713df3bb395fb028b79717e17dabd3060541f9bbc5326fec2c7d21699",
+    "reviewedAt": "2026-11-01T20:48:17.208Z",
+    "durationMs": 15959,
+    "fixtureTime": "2026-10-20T16:00:00Z",
+    "variants": [
+      "light",
+      "dark",
+      "phone",
+      "phone-dark",
+      "tablet"
+    ],
+    "checked": [
+      {
+        "id": "sheet-image-status--ready",
+        "variant": "light"
+      },
+      {
+        "id": "sheet-image-status--file-limit",
+        "variant": "light"
+      },
+      {
+        "id": "sheet-image-status--pixel-limit",
+        "variant": "light"
+      },
+      {
+        "id": "sheet-image-status--document-limit",
+        "variant": "light"
+      },
+      {
+        "id": "sheet-image-status--offline",
+        "variant": "light"
+      },
+      {
+        "id": "sheet-image-status--changed-selection",
+        "variant": "light"
+      },
+      {
+        "id": "sheet-image-status--access-ended",
+        "variant": "light"
+      },
+      {
+        "id": "sheet-image-status--ready",
+        "variant": "dark"
+      },
+      {
+        "id": "sheet-image-status--file-limit",
+        "variant": "dark"
+      },
+      {
+        "id": "sheet-image-status--pixel-limit",
+        "variant": "dark"
+      },
+      {
+        "id": "sheet-image-status--document-limit",
+        "variant": "dark"
+      },
+      {
+        "id": "sheet-image-status--offline",
+        "variant": "dark"
+      },
+      {
+        "id": "sheet-image-status--changed-selection",
+        "variant": "dark"
+      },
+      {
+        "id": "sheet-image-status--access-ended",
+        "variant": "dark"
+      },
+      {
+        "id": "sheet-image-status--ready",
+        "variant": "phone"
+      },
+      {
+        "id": "sheet-image-status--file-limit",
+        "variant": "phone"
+      },
+      {
+        "id": "sheet-image-status--pixel-limit",
+        "variant": "phone"
+      },
+      {
+        "id": "sheet-image-status--document-limit",
+        "variant": "phone"
+      },
+      {
+        "id": "sheet-image-status--offline",
+        "variant": "phone"
+      },
+      {
+        "id": "sheet-image-status--changed-selection",
+        "variant": "phone"
+      },
+      {
+        "id": "sheet-image-status--access-ended",
+        "variant": "phone"
+      },
+      {
+        "id": "sheet-image-status--ready",
+        "variant": "phone-dark"
+      },
+      {
+        "id": "sheet-image-status--file-limit",
+        "variant": "phone-dark"
+      },
+      {
+        "id": "sheet-image-status--pixel-limit",
+        "variant": "phone-dark"
+      },
+      {
+        "id": "sheet-image-status--document-limit",
+        "variant": "phone-dark"
+      },
+      {
+        "id": "sheet-image-status--offline",
+        "variant": "phone-dark"
+      },
+      {
+        "id": "sheet-image-status--changed-selection",
+        "variant": "phone-dark"
+      },
+      {
+        "id": "sheet-image-status--access-ended",
+        "variant": "phone-dark"
+      },
+      {
+        "id": "sheet-image-status--ready",
+        "variant": "tablet"
+      },
+      {
+        "id": "sheet-image-status--file-limit",
+        "variant": "tablet"
+      },
+      {
+        "id": "sheet-image-status--pixel-limit",
+        "variant": "tablet"
+      },
+      {
+        "id": "sheet-image-status--document-limit",
+        "variant": "tablet"
+      },
+      {
+        "id": "sheet-image-status--offline",
+        "variant": "tablet"
+      },
+      {
+        "id": "sheet-image-status--changed-selection",
+        "variant": "tablet"
+      },
+      {
+        "id": "sheet-image-status--access-ended",
+        "variant": "tablet"
+      }
+    ],
+    "failures": [],
+    "captureCount": 35,
+    "watchdog": {
+      "limitMiB": 2048,
+      "peakMiB": 820.9,
+      "result": "completed"
+    }
+  },
+  "unsuccessfulAttempts": [
+    {
+      "check": "Native browsers before heap tuning",
+      "result": "watchdog-aborted",
+      "peakMiB": [
+        2076.2,
+        2049,
+        2054
+      ],
+      "disposition": "No acceptance claimed; final production run above completed within budget."
+    },
+    {
+      "check": "Default local full Storybook build",
+      "result": "watchdog-aborted",
+      "peakMiB": 2061.6,
+      "disposition": "Full CI build passed; focused local build/checks passed."
+    },
+    {
+      "check": "Full Storybook with512MiB heap",
+      "result": "heap out of memory",
+      "peakMiB": 1342.2,
+      "disposition": "Not a pass; full CI build passed."
+    },
+    {
+      "check": "Full Storybook with768MiB heap",
+      "result": "heap out of memory",
+      "peakMiB": 1576.8,
+      "disposition": "Not a pass; full CI build passed."
+    },
+    {
+      "check": "Initial native Cell Image insert",
+      "result": "resync divergence and lost Undo",
+      "disposition": "Fixed nested display-layout mutation by cloning native cell image render input; exact native Undo/Redo and peer/reload/history assertions passed."
+    },
+    {
+      "check": "Initial long-error story focus check",
+      "result": "33 states passed,2 failed",
+      "disposition": "Wait for asynchronous focus restoration while retaining exact focus assertions; corrected35states all passed."
+    }
+  ],
+  "sources": [
+    {
+      "file": "e2e/sheet-image-insertion.spec.ts",
+      "sha256": "463d906f4cf2b5954ca1e2bfa6f17739512a3f41da5dac6638c81fdfc299033a",
+      "sameAsApplicationTestCommit": true
+    },
+    {
+      "file": "src/server/workspace/documents.test.ts",
+      "sha256": "2bf2885485e490753991139b1fd02ba22caa7295c4ce0c17a16a0419c6da6922",
+      "sameAsApplicationTestCommit": true
+    },
+    {
+      "file": "src/server/workspace/documents.ts",
+      "sha256": "a0c520c5bf3f289b00576101948577672d65907f9e11aa60c6fc7f6c57078804",
+      "sameAsApplicationTestCommit": true
+    },
+    {
+      "file": "src/server/workspace/sharing.test.ts",
+      "sha256": "dbb0f2243d3be86c3db98dc502780066414e9f0eb339d741cc9d009e8e115b30",
+      "sameAsApplicationTestCommit": true
+    },
+    {
+      "file": "src/server/workspace/space-images-portable.test.ts",
+      "sha256": "e3876eb0f1c0f941e494082dc0de64bfd9ab57a26a9e9f46c94b1ed2fcd7b5a3",
+      "sameAsApplicationTestCommit": true
+    },
+    {
+      "file": "web/SheetEditor.tsx",
+      "sha256": "6f31a8e13f077f224e7d049a36d08a2d942b940f87bb0ac31d6e2c57354300ce",
+      "sameAsApplicationTestCommit": true
+    },
+    {
+      "file": "web/SheetImageStatus.stories.tsx",
+      "sha256": "601658d1ab27657c04400c3f335a02bc2d2a5fb87c073849e2e605f4a399be1d",
+      "sameAsApplicationTestCommit": false
+    },
+    {
+      "file": "web/SheetImageStatus.tsx",
+      "sha256": "474d5f8ba06f59451c58afcf12645d2ec3d0a77a5edd6bd1f62d4f2bc4e3d424",
+      "sameAsApplicationTestCommit": true
+    },
+    {
+      "file": "web/editorFrame.css",
+      "sha256": "9a20d58ef96f3c5c0779062dd063105d87561b491f2011e9613bd9e62e461e97",
+      "sameAsApplicationTestCommit": true
+    },
+    {
+      "file": "web/sheetImageInsertion.ts",
+      "sha256": "ae4b4c5880b71f5c85671abb2e6383d171387274bcbf77a6af2985c39b4aeccd",
+      "sameAsApplicationTestCommit": true
+    },
+    {
+      "file": "web/sheetImages.ts",
+      "sha256": "5a479bd762c77ed2df3a2ad3bab85fe09a4bdf40fe4f520dfb9fcd3295f63d31",
+      "sameAsApplicationTestCommit": true
+    }
+  ],
+  "captures": [
+    {
+      "file": "native-menu-light.png",
+      "description": "Native Sheet Image menu; light; actual application",
+      "kind": "application",
+      "sourceCommit": "6908f392da45217fc63dbb146b7f66a191ff5365",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "5675331cc10e74550c06ae5c3e2f007e7028e1ae0ad75c71fd78070c2d627993"
+    },
+    {
+      "file": "native-inserted-light.png",
+      "description": "Native floating and in-cell images; light; actual application",
+      "kind": "application",
+      "sourceCommit": "6908f392da45217fc63dbb146b7f66a191ff5365",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "1a6341b8606f87b4cb6a63920fc22dc9ad646d6120395e2ceccdf793ad6a4549"
+    },
+    {
+      "file": "native-inserted-dark.png",
+      "description": "Native floating and in-cell images; dark; actual application",
+      "kind": "application",
+      "sourceCommit": "6908f392da45217fc63dbb146b7f66a191ff5365",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "f5f78af865736a257cf71d48fad1d0f30f46648fff86ce49d52bdcd295903880"
+    },
+    {
+      "file": "native-menu-phone.png",
+      "description": "Native phone Image chooser; light; actual application",
+      "kind": "application",
+      "sourceCommit": "6908f392da45217fc63dbb146b7f66a191ff5365",
+      "width": 390,
+      "height": 844,
+      "sha256": "58b405284ad9d957dd068a537a98a186776184fee5d4121b3e28d294b20d3cd4"
+    },
+    {
+      "file": "native-inserted-phone.png",
+      "description": "Inserted floating image; phone; light; actual application",
+      "kind": "application",
+      "sourceCommit": "6908f392da45217fc63dbb146b7f66a191ff5365",
+      "width": 390,
+      "height": 844,
+      "sha256": "c99f53523d3f8fa758a0c99499545037a148bdca74f9f443692ccfa0f248f92e"
+    },
+    {
+      "file": "native-limit-details-phone.png",
+      "description": "5 MiB refusal and complete details; phone; light; actual application",
+      "kind": "application",
+      "sourceCommit": "6908f392da45217fc63dbb146b7f66a191ff5365",
+      "width": 390,
+      "height": 844,
+      "sha256": "a98e9f073329d8d50c8e7d1884e1842f91fed0e1cb125afe615eb7aefd1c473b"
+    },
+    {
+      "file": "document-limit-phone.png",
+      "description": "50 MiB retained-image limit with complete recovery text; production component story",
+      "kind": "production-component fixture",
+      "variant": "phone",
+      "componentSourceCommit": "6908f392da45217fc63dbb146b7f66a191ff5365",
+      "storySourceSha256": "601658d1ab27657c04400c3f335a02bc2d2a5fb87c073849e2e605f4a399be1d",
+      "width": 390,
+      "height": 900,
+      "sha256": "e964e7d23379259c7681d3347b0e933ca1c9263e6661336f95beb2f55755bf0b"
+    },
+    {
+      "file": "document-limit-phone-dark.png",
+      "description": "50 MiB retained-image limit with complete recovery text; production component story",
+      "kind": "production-component fixture",
+      "variant": "phone-dark",
+      "componentSourceCommit": "6908f392da45217fc63dbb146b7f66a191ff5365",
+      "storySourceSha256": "601658d1ab27657c04400c3f335a02bc2d2a5fb87c073849e2e605f4a399be1d",
+      "width": 390,
+      "height": 900,
+      "sha256": "ca16dccd8813499278038ee092fac99f03b6a890714908ec3fef246199c984fe"
+    }
+  ]
+}
