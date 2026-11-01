@@ -420,7 +420,8 @@ for (const width of [0, -20] as const) {
         expect(counts[absent], `${stage}: the other drawing must not render`).toBe(0);
       } finally {
         observations.push({ stage, counts: { ...counts } });
-        if (screenshot) await writeFile(info.outputPath(`${stage}.png`), screenshot);
+        if (screenshot)
+          await writeFile(info.outputPath(`retained-drawing-${stage}.png`), screenshot);
       }
     };
     const activate = async (page: Page, name: string) =>
