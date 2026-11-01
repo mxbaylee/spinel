@@ -113,6 +113,21 @@ export const Draft: Story = {
     await compose();
   },
 };
+export const LongMessage: Story = {
+  play: async () => {
+    const dialog = await within(document.body).findByRole('dialog', { name: 'Send feedback' });
+    const field = within(dialog).getByRole('textbox', { name: /^Message$/ });
+    const longToken = 'abcdefghij'.repeat(30);
+    const value = `The first line stays separate.\n${longToken}\nThe last line stays separate.`;
+    await userEvent.type(
+      field,
+      `The first line stays separate.{Enter}${longToken}{Enter}The last line stays separate.`,
+    );
+    await expect(field).toHaveValue(value);
+    await waitFor(() => expect(field.scrollWidth).toBeLessThanOrEqual(field.clientWidth));
+    await assertDialogControls(dialog);
+  },
+};
 export const Loading: Story = {
   args: { scenario: 'loading' },
   play: async () => {

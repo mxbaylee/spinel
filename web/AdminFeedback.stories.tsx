@@ -180,6 +180,7 @@ export const OldFeedbackOnly: Story = {
         ...feedbackPair,
         context: 'feedback-only',
         counts: { user: 1, system: 1, userObservations: 0, systemObservations: 0 },
+        window: { start: feedbackPair.window.start, end: feedbackPair.window.start },
       },
     },
   },
