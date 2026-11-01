@@ -463,7 +463,7 @@ export async function runCapability(
     await record(`${result.stage}:foreground`, { appId: value });
     return value;
   }
-  async function attach(foregroundApp: string) {
+  async function attach(foregroundApp: string): Promise<Row> {
     const value = await command(session('contexts'));
     requireCondition(Array.isArray(value), 'native-contexts-unavailable');
     const contexts = value.map((entry) => (typeof entry === 'string' ? { id: entry } : row(entry)));
