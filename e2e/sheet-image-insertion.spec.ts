@@ -58,6 +58,8 @@ async function selectCell(page: Page, address: string) {
 
 async function openImageMenu(page: Page) {
   const editor = page.getByRole('region', { name: 'Sheet document', exact: true });
+  if ((await editor.getAttribute('data-mobile')) === 'true')
+    await editor.getByRole('button', { name: 'Open sheet tools', exact: true }).tap();
   const insert = editor.getByRole('tab', { name: 'Insert', exact: true });
   await insert.click();
   await expect(insert).toHaveAttribute('aria-selected', 'true');
@@ -73,10 +75,48 @@ async function insertFile(
   mimeType = 'image/png',
 ) {
   await openImageMenu(page);
+  await chooseImageFile(page, mode, buffer, mimeType);
+}
+
+async function chooseImageFile(
+  page: Page,
+  mode: 'Float Image' | 'Cell Image',
+  buffer: Buffer,
+  mimeType = 'image/png',
+) {
   const chooser = page.waitForEvent('filechooser');
   await page.getByText(mode, { exact: true }).click();
   await (await chooser).setFiles({ name: `picture.${mimeType.split('/')[1]}`, mimeType, buffer });
 }
+
+async function holdNativeImageDecode(context: BrowserContext) {
+  await context.addInitScript(() => {
+    const descriptor = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src')!;
+    const waiting: (() => void)[] = [];
+    const gate = {
+      held: 0,
+      release() {
+        Object.defineProperty(HTMLImageElement.prototype, 'src', descriptor);
+        for (const load of waiting.splice(0)) load();
+      },
+    };
+    (window as ImageDecodeWindow).sheetImageDecodeGate = gate;
+    // Hold only the native dimension load. The real server still validates
+    // and stores the upload; no image or document response is fabricated.
+    Object.defineProperty(HTMLImageElement.prototype, 'src', {
+      ...descriptor,
+      set(this: HTMLImageElement, source: string) {
+        if (source.startsWith('blob:')) {
+          gate.held++;
+          waiting.push(() => descriptor.set!.call(this, source));
+        } else descriptor.set!.call(this, source);
+      },
+    });
+  });
+}
+
+const releaseNativeImageDecode = (page: Page) =>
+  page.evaluate(() => (window as ImageDecodeWindow).sheetImageDecodeGate?.release());
 
 async function visibleColors(page: Page, colors: readonly (readonly number[])[]) {
   await expect
@@ -165,7 +205,16 @@ async function fixture(browser: Browser, baseURL: string, info: TestInfo, mobile
   const { item } = (await response.json()) as { item: { id: string } };
   const page = await context.newPage();
   const errors: string[] = [];
-  const observe = (view: Page) => view.on('pageerror', (error) => errors.push(error.message));
+  const observe = (view: Page) => {
+    view.setDefaultTimeout(15_000);
+    view.on('pageerror', (error) => errors.push(error.message));
+    view.on('websocket', (socket) =>
+      socket.on('framereceived', (frame) => {
+        const message = JSON.parse(String(frame.payload));
+        if (message.type === 'resync') errors.push(`Synchronization reset: ${message.reason}`);
+      }),
+    );
+  };
   observe(page);
   const read = async () => {
     const result = await context.request.get(`/api/items/${item.id}/sheet`);
@@ -253,6 +302,7 @@ test('native Sheet image menu saves both placements with undo, peer delivery, re
     await selectCell(f.page, 'H7');
     await visibleColors(f.page, [orange, blue]);
     await visibleColors(peer, [orange, blue]);
+    await peer.context().close();
     await capture(f.page, info, 'inserted-light');
     await f.page.emulateMedia({ colorScheme: 'dark' });
     await nativeTheme(f.page, f.page.locator('.univer-container'), 'dark');
@@ -308,7 +358,11 @@ test('native image cell moves with rows and cut/paste; copying the sheet retains
       button: 'right',
       position: { x: 20, y: 20 + 3 * 80 + 40 },
     });
-    await f.page.getByText('rows above', { exact: true }).click();
+    // The count input occupies the row's center; activate its native action icon.
+    await f.page
+      .getByRole('button')
+      .filter({ hasText: 'rows above' })
+      .click({ position: { x: 20, y: 18 } });
     await expect.poll(async () => cellSources(await f.read(), 4, 1)).toEqual([cellSource]);
     expect(cellSources(await f.read(), 3, 1)).toEqual([]);
     await saved(f.page);
@@ -413,29 +467,7 @@ test('a Sheet image remains navigation-protected after upload until native inser
   test.setTimeout(90_000);
   const f = await fixture(browser, baseURL!, info);
   try {
-    await f.context.addInitScript(() => {
-      const descriptor = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src')!;
-      const waiting: (() => void)[] = [];
-      const gate = {
-        held: 0,
-        release() {
-          Object.defineProperty(HTMLImageElement.prototype, 'src', descriptor);
-          for (const load of waiting.splice(0)) load();
-        },
-      };
-      (window as ImageDecodeWindow).sheetImageDecodeGate = gate;
-      // Hold only the native dimension load. The real server still validates
-      // and stores the upload; no image or document response is fabricated.
-      Object.defineProperty(HTMLImageElement.prototype, 'src', {
-        ...descriptor,
-        set(this: HTMLImageElement, source: string) {
-          if (source.startsWith('blob:')) {
-            gate.held++;
-            waiting.push(() => descriptor.set!.call(this, source));
-          } else descriptor.set!.call(this, source);
-        },
-      });
-    });
+    await holdNativeImageDecode(f.context);
     await f.open();
     await selectCell(f.page, 'B2');
     const upload = f.page.waitForResponse(
@@ -459,15 +491,13 @@ test('a Sheet image remains navigation-protected after upload until native inser
     await f.page.getByRole('button', { name: 'Back to files', exact: true }).click();
     expect((await warning).type()).toBe('confirm');
     await expect(f.page).toHaveURL(new RegExp(f.item.id));
-    await f.page.evaluate(() => (window as ImageDecodeWindow).sheetImageDecodeGate!.release());
+    await releaseNativeImageDecode(f.page);
     await expect.poll(async () => floating(await f.read()).length).toBe(1);
     await saved(f.page);
     await visibleColors(f.page, [orange]);
     expect(f.errors).toEqual([]);
   } finally {
-    await f.page
-      .evaluate(() => (window as ImageDecodeWindow).sheetImageDecodeGate?.release())
-      .catch(() => {});
+    await releaseNativeImageDecode(f.page).catch(() => {});
     await f.close();
   }
 });
@@ -483,7 +513,11 @@ test('phone Sheet image insertion and its limit error keep the current layout wi
     await expect(
       f.page.getByRole('region', { name: 'Sheet document', exact: true }),
     ).toHaveAttribute('data-mobile', 'true');
-    await dropFile(f.page, await raster(orange, 'jpeg'), 'image/jpeg');
+    // Mobile uses its own native action drawer, not the desktop ribbon or a
+    // synthetic drop as a substitute for its visible insertion control.
+    await openImageMenu(f.page);
+    await capture(f.page, info, 'menu-phone');
+    await chooseImageFile(f.page, 'Float Image', await raster(orange, 'jpeg'), 'image/jpeg');
     await expect.poll(async () => floating(await f.read()).length).toBe(1);
     await saved(f.page);
     await visibleColors(f.page, [orange]);
@@ -494,6 +528,236 @@ test('phone Sheet image insertion and its limit error keep the current layout wi
     expect(floating(await f.read()).length).toBe(1);
     expect(await f.page.locator('.univer-container').boundingBox()).toEqual(before);
     await capture(f.page, info, 'limit-phone');
+    const details = f.page.getByRole('button', {
+      name: 'Image not inserted · Details',
+      exact: true,
+    });
+    await details.tap();
+    const popup = f.page.getByRole('dialog', { name: 'Image not inserted · Details', exact: true });
+    await expect(popup).toContainText('Choose an image no larger than 5 MiB.');
+    const popupBounds = (await popup.boundingBox())!;
+    expect(popupBounds.x).toBeGreaterThanOrEqual(0);
+    expect(popupBounds.x + popupBounds.width).toBeLessThanOrEqual(390);
+    await capture(f.page, info, 'limit-details-phone');
+    await popup.getByRole('button', { name: 'Close', exact: true }).tap();
+    await expect(popup).toHaveCount(0);
+    await expect(details).toBeFocused();
+    expect(f.errors).toEqual([]);
+  } finally {
+    await f.close();
+  }
+});
+
+test('changing the selected cell after upload refuses the late image and a fresh insertion succeeds', async ({
+  browser,
+  baseURL,
+}, info) => {
+  test.setTimeout(90_000);
+  const f = await fixture(browser, baseURL!, info);
+  try {
+    await holdNativeImageDecode(f.context);
+    await f.open();
+    await selectCell(f.page, 'B4');
+    const upload = f.page.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname === `/api/items/${f.item.id}/images` &&
+        response.request().method() === 'POST',
+    );
+    const bytes = await raster(blue);
+    await insertFile(f.page, 'Cell Image', bytes);
+    expect((await upload).ok()).toBe(true);
+    await expect
+      .poll(() =>
+        f.page.evaluate(() => (window as ImageDecodeWindow).sheetImageDecodeGate?.held ?? 0),
+      )
+      .toBeGreaterThan(0);
+    await selectCell(f.page, 'C5');
+    await releaseNativeImageDecode(f.page);
+    await expect(f.page.locator('.editor-help[role="alert"]')).toContainText(
+      'The selected cell changed. Select a cell and insert the image again.',
+    );
+    await saved(f.page);
+    const refused = await f.read();
+    expect(cellSources(refused, 3, 1)).toEqual([]);
+    expect(cellSources(refused, 4, 2)).toEqual([]);
+    expect(floating(refused)).toEqual([]);
+
+    // Failure releases the same native insertion path; the stored bytes may be
+    // deduplicated, but only the newly selected target receives a drawing.
+    await insertFile(f.page, 'Cell Image', bytes);
+    await expect.poll(async () => cellSources(await f.read(), 4, 2).length).toBe(1);
+    await saved(f.page);
+    expect(cellSources(await f.read(), 3, 1)).toEqual([]);
+    await expect(f.page.locator('.editor-help[role="alert"]')).toHaveCount(0);
+    await selectCell(f.page, 'H7');
+    await visibleColors(f.page, [blue]);
+    expect(f.errors).toEqual([]);
+  } finally {
+    await releaseNativeImageDecode(f.page).catch(() => {});
+    await f.close();
+  }
+});
+
+test('account viewers, edit-link guests and an offline owner cannot insert dropped images', async ({
+  browser,
+  baseURL,
+}, info) => {
+  test.setTimeout(120_000);
+  const f = await fixture(browser, baseURL!, info);
+  let guest: BrowserContext | undefined;
+  const uploads: string[] = [];
+  const observeUploads = (page: Page) =>
+    page.on('request', (request) => {
+      if (request.method() === 'POST' && new URL(request.url()).pathname.endsWith('/images'))
+        uploads.push(request.url());
+    });
+  const denied = (page: Page) =>
+    expect(page.locator('.editor-help[role="alert"]')).toContainText(
+      'Image insertion needs an account with edit access.',
+    );
+  try {
+    await f.open();
+    const before = await f.read();
+    const bytes = await raster(orange);
+    const viewer = await f.peer('viewer');
+    await expect(viewer.getByRole('status', { name: 'Save status' })).toHaveText(
+      'View only — reload after your access changes.',
+    );
+    observeUploads(viewer);
+    await dropFile(viewer, bytes, 'image/png');
+    await denied(viewer);
+    expect(uploads).toEqual([]);
+    expect(await f.read()).toEqual(before);
+    // Close the viewer before starting another native editor to keep this
+    // authority scenario within the same two-editor memory envelope.
+    await viewer.context().close();
+
+    const linked = await f.context.request.put(`/api/items/${f.item.id}/link`, {
+      headers: f.headers,
+      data: { role: 'editor' },
+    });
+    expect(linked.ok(), await linked.text()).toBe(true);
+    guest = await browser.newContext({ baseURL, viewport: { width: 1440, height: 1000 } });
+    const visitor = await guest.newPage();
+    visitor.on('pageerror', (error) => f.errors.push(error.message));
+    observeUploads(visitor);
+    await visitor.goto((await linked.json()).url);
+    await saved(visitor);
+    await dropFile(visitor, bytes, 'image/png');
+    await denied(visitor);
+    expect(uploads).toEqual([]);
+    expect(await f.read()).toEqual(before);
+    await guest.close();
+    guest = undefined;
+
+    observeUploads(f.page);
+    await f.context.setOffline(true);
+    await expect.poll(() => f.page.evaluate(() => navigator.onLine)).toBe(false);
+    await dropFile(f.page, bytes, 'image/png');
+    await expect(f.page.locator('.editor-help[role="alert"]')).toContainText(
+      'Connect before inserting a new image.',
+    );
+    expect(uploads).toEqual([]);
+    await f.context.setOffline(false);
+    await saved(f.page);
+    expect(await f.read()).toEqual(before);
+    expect(f.errors).toEqual([]);
+  } finally {
+    await f.context.setOffline(false);
+    await guest?.close();
+    await f.close();
+  }
+});
+
+test('cancelling an image chooser releases it; a peer row insertion while choosing refuses the stale target', async ({
+  browser,
+  baseURL,
+}, info) => {
+  test.setTimeout(120_000);
+  const f = await fixture(browser, baseURL!, info);
+  const uploads: string[] = [];
+  const received: { type: string; revision?: number; mutations?: { id: string }[] }[] = [];
+  f.page.on('request', (request) => {
+    if (
+      request.method() === 'POST' &&
+      new URL(request.url()).pathname === `/api/items/${f.item.id}/images`
+    )
+      uploads.push(request.url());
+  });
+  f.page.on('websocket', (socket) =>
+    socket.on('framereceived', (frame) => received.push(JSON.parse(String(frame.payload)))),
+  );
+  try {
+    await f.open();
+    const peer = await f.peer('editor');
+    await saved(peer);
+    await selectCell(f.page, 'B4');
+    const before = await f.read();
+    await openImageMenu(f.page);
+    const cancelledChooser = f.page.waitForEvent('filechooser');
+    await f.page.getByText('Cell Image', { exact: true }).click();
+    // Playwright intercepts the OS chooser. Dispatch its standard input cancel
+    // event on the actual chooser element to exercise production cleanup.
+    await (await cancelledChooser).element().dispatchEvent('cancel');
+    await expect(f.page.locator('.univer-container input[type="file"]')).toHaveCount(0);
+    await saved(f.page);
+    await expect(f.page.locator('.editor-help[role="alert"]')).toHaveCount(0);
+    expect(uploads).toEqual([]);
+    expect(await f.read()).toEqual(before);
+
+    await openImageMenu(f.page);
+    const pendingChooser = f.page.waitForEvent('filechooser');
+    await f.page.getByText('Cell Image', { exact: true }).click();
+    const chooser = await pendingChooser;
+    await selectCell(peer, 'B4');
+    await peer.getByLabel('Spreadsheet grid', { exact: true }).click({
+      button: 'right',
+      position: { x: 20, y: 20 + 3 * 80 + 40 },
+    });
+    await peer
+      .getByRole('button')
+      .filter({ hasText: 'rows above' })
+      .click({ position: { x: 20, y: 18 } });
+    await expect.poll(async () => (await f.read()).sheets.images.rowCount).toBe(25);
+    await saved(peer);
+    // A verified revision follows the owner's native application and hash of
+    // the real peer edit; a server snapshot alone cannot prove this delivery.
+    await expect
+      .poll(() =>
+        received.some(
+          (frame) =>
+            frame.type === 'edit' &&
+            frame.mutations?.some((mutation) => mutation.id === 'sheet.mutation.insert-row') &&
+            received.some(
+              (verification) =>
+                verification.type === 'verified' && verification.revision === frame.revision,
+            ),
+        ),
+      )
+      .toBe(true);
+    const afterRow = await f.read();
+    const bytes = await raster(blue);
+    await chooser.setFiles({ name: 'picture.png', mimeType: 'image/png', buffer: bytes });
+    await expect(f.page.locator('.editor-help[role="alert"]')).toContainText(
+      'The selected cell changed. Select a cell and insert the image again.',
+    );
+    await saved(f.page);
+    expect(uploads).toEqual([]);
+    expect(await f.read()).toEqual(afterRow);
+    expect(floating(afterRow)).toEqual([]);
+    expect(cellSources(afterRow, 3, 1)).toEqual([]);
+    expect(cellSources(afterRow, 4, 1)).toEqual([]);
+    await peer.context().close();
+
+    await selectCell(f.page, 'B5');
+    await insertFile(f.page, 'Cell Image', bytes);
+    await expect.poll(async () => cellSources(await f.read(), 4, 1).length).toBe(1);
+    await saved(f.page);
+    expect(uploads).toHaveLength(1);
+    expect(cellSources(await f.read(), 3, 1)).toEqual([]);
+    await expect(f.page.locator('.editor-help[role="alert"]')).toHaveCount(0);
+    await selectCell(f.page, 'H7');
+    await visibleColors(f.page, [blue]);
     expect(f.errors).toEqual([]);
   } finally {
     await f.close();
