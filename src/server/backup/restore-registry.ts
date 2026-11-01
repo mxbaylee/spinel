@@ -889,7 +889,7 @@ export class RestoreRegistry {
     actor: string,
     session: string,
     confirmation: string,
-    proof: RestoreAuthority,
+    proof: RestoreAuthority | (() => RestoreAuthority),
   ) {
     const job = this.owned(id, actor, session);
     if (confirmation !== job.public.confirmation || !confirmation || !job.public.preview)
@@ -899,6 +899,20 @@ export class RestoreRegistry {
       );
     if (job.public.state === 'started') return structuredClone(job.public);
     if (job.admissionFailureObserved) return structuredClone(job.public);
+    if (job.admission) {
+      // Exact retries reuse the original grant. A fresh ceremony here would
+      // invalidate it and could falsely make a long custody transfer renewable.
+      const original = job.admission.authority;
+      if (this.now() >= original.expiresAt)
+        throw new RestoreRegistryError(428, 'The original restore confirmation expired.');
+      assertRestoreAuthority(this.db, original, this.now);
+      const target = this.control().target();
+      if (
+        target.generationId !== job.admission.generationId ||
+        target.epoch !== job.admission.epoch
+      )
+        throw new RestoreRegistryError(409, 'The original restore target changed.');
+    }
     if (['admitting', 'accepted'].includes(job.public.state) && job.task) {
       await job.task;
       return structuredClone(job.public);
@@ -906,6 +920,7 @@ export class RestoreRegistry {
     if (!['ready', 'admitting', 'accepted'].includes(job.public.state))
       throw new RestoreRegistryError(409, 'Restore preparation is not ready.');
     if (!job.admission) {
+      const fresh = typeof proof === 'function' ? proof() : proof;
       if (
         !job.previewDatabaseBytes ||
         !validRestoreResources(job.public.resources) ||
@@ -913,16 +928,16 @@ export class RestoreRegistry {
         !validRestoreVerification(job.public.verification)
       )
         throw new RestoreRegistryError(409, 'Prepare and verify this restore again.');
-      if (proof.actorId !== actor || proof.sessionHash !== session)
+      if (fresh.actorId !== actor || fresh.sessionHash !== session)
         throw new RestoreRegistryError(409, 'Restore confirmation belongs to another account.');
-      assertFreshRestoreAuthority(this.db, proof, this.now);
-      job.proof = structuredClone(proof);
+      assertFreshRestoreAuthority(this.db, fresh, this.now);
+      job.proof = structuredClone(fresh);
       this.assertActive(job);
       const source = job.prepared!;
       job.admission = {
         id,
         ...job.public.target,
-        authority: structuredClone(proof),
+        authority: structuredClone(fresh),
         confirmedAt: this.now(),
         previewDatabaseBytes: job.previewDatabaseBytes,
         source: {

@@ -13,14 +13,14 @@ export function needsRestoreTiming(paths: readonly string[]): boolean {
         /^web\/(?:admin|Admin|Backup|backup-|auth|Auth|passkey|Passkey|maintenance|Maintenance|api\.)/.test(
           path,
         ) ||
-        /^src\/ui\/redesign\/Controls\./.test(path) ||
+        path.startsWith('src/ui/redesign/Controls.') ||
         /^e2e\/(?:restore-|supervised-restore)/.test(path) ||
         /^e2e\/(?:doc-touch|native-sheet-value)\./.test(path) ||
         /^scripts\/ci\/(?:changes|restore-timing-changes|restore-observer|pid-namespace)/.test(
           path,
         ) ||
-        /^scripts\/dependencies\//.test(path) ||
-        /^scripts\/deploy\/maintenance\./.test(path) ||
+        path.startsWith('scripts/dependencies/') ||
+        path.startsWith('scripts/deploy/maintenance.') ||
         [
           'package.json',
           'package-lock.json',

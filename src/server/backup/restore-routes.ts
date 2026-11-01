@@ -176,7 +176,7 @@ export function restoreRoutes(auth: AuthStore, registry: RestoreRegistry, origin
       current.user_id!,
       current.token_hash,
       request.body.confirmation,
-      proof(current),
+      () => proof(current),
     );
     sameOperator(current);
     response.status(202).json(result);

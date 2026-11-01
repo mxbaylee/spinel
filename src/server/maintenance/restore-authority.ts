@@ -1,9 +1,10 @@
 import type { DatabaseSync } from '../../../server/database.ts';
 import { VERIFICATION_MS } from '../auth/store.ts';
 import type { MaintenanceAuthority, RestoreAuthority } from '../../shared/maintenance.ts';
+import { RESTORE_OPERATION_MS } from '../../shared/restore.ts';
 export type { RestoreAuthority } from '../../shared/maintenance.ts';
+export { RESTORE_OPERATION_MS } from '../../shared/restore.ts';
 
-export const RESTORE_OPERATION_MS = 30 * 60_000;
 const legacyKeys = ['actorId', 'sessionHash', 'expiresAt', 'verifiedPasskeyId', 'verifiedAt'];
 const keys = [...legacyKeys, 'verifiedUntil', 'authorizedAt'];
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;

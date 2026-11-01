@@ -554,19 +554,19 @@ hold, retaining its recovery evidence and permitting a new preparation.
 Missing evidence, expired
 authority or ambiguous ownership keeps the workspace closed.
 
-Two fixed limits bound activation:
+Two independent limits bound activation:
 
-- **Five minutes from the passkey check.** Reading the held source, the final
-  capacity check, stopping the application, the work below, and any
-  original-content recovery after a failed trial must all finish within five
-  minutes of the confirmation's passkey check.
-- **Two minutes of custody.** Once the application has stopped, the supervisor
-  allows 120 seconds to preserve the original files, freeze a comparison copy,
-  prepare and activate the candidate, health-check it privately and commit. A
-  failed trial gets a separate 120 seconds to capture and freeze its evidence.
-  Each step's own timeouts also stay inside this budget. The budget is not
-  configurable and does not grow with database size; larger databases leave less
-  time for the remaining steps.
+- **The original operation deadline.** Fresh confirmation captures at most
+  30 minutes, capped by that session's expiry. Reading the source, the final
+  capacity check, stopping the application, preparation, activation and any
+  original-content recovery must finish within this same deadline. Entering a
+  later phase never starts another 30 minutes.
+- **Phase budgets.** Shutdown, individual verification/preparation work and
+  original-content recovery are each bounded at ten minutes or less, inside the
+  remaining operation lifetime. Trial startup/readiness retains its shorter
+  checks. A failed trial may use a separate ten minutes to capture and freeze
+  negative evidence; that time cannot authorize activation, recovery or reopening
+  after the original operation expires. The bounds do not grow with database size.
 
 If either limit runs out before commit, the restore fails. What happens next
 depends on how far it got:
@@ -580,19 +580,18 @@ depends on how far it got:
   the Operator runs those steps ([runbook](maintenance.md#an-unresolved-restore)).
   See the [staging recovery decision](implementation/SPN-112.md#recover-an-untouched-original-after-staging-fails).
 - **After a failed trial**, one original-content recovery runs. If it cannot
-  finish in the passkey window's remaining time, the workspace stays closed as an
+  finish in the operation's remaining time, the workspace stays closed as an
   unresolved restore.
 - **Anywhere else after activation** (for example a power loss during the trial),
   the workspace stays closed as an unresolved restore ([SPN-128](todo/SPN-128.md)).
 
-The real-process acceptance fixture took under a minute from confirmation to
-commit; no measurement exists yet for a large database on the 1 GiB / 0.75 CPU
-profile, and SPN-038's launch drill measures it on the target host. Rehearse a
-restore of a realistically sized backup on the target host before relying on this
-path. If confirmation to commit takes more than about a minute, do not rely on it:
-a failed trial's evidence capture and original-content recovery need about as long
-again ([SPN-124](todo/SPN-124.md) separates the work's lifetime from the passkey
-window).
+The fixed-size production-image acceptance measures a synthetic image-heavy
+database and encrypted archive over 256 MiB on the 1 GiB / 0.75 CPU profile; its
+actual measurements and final integrity proof belong in the SPN-124 PR evidence.
+This is not a multi-GiB or target-host capacity guarantee. SPN-038's launch drill
+still measures a realistically sized backup on the actual host. Leave time within
+the original operation deadline for failed-trial evidence and original-content
+recovery as well as the successful candidate path.
 
 The private journal retains at most **64 restore IDs**, including completed and
 failed attempts. Successful source/custody evidence is deliberately retained;

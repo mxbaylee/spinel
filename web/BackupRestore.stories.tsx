@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+import { useState } from 'react';
+import { expect, fireEvent, fn, userEvent, waitFor, within } from 'storybook/test';
 import { failure, pending } from '../.storybook/api.ts';
 import type { ApiMock } from '../.storybook/api.ts';
 import { RESTORE_CONSEQUENCES, RESTORE_RESOURCE_MESSAGES } from '../src/shared/restore.ts';
@@ -671,4 +672,225 @@ export const IncompleteObservation: Story = {
     );
     await expect(canvas.getByRole('button', { name: 'Prepare restore' })).toBeDisabled();
   },
+};
+
+/** Advance only AbortSignal deadlines. Real React, UI event timers and Date keep
+ * running normally; each held fetch observes the actual component's composed
+ * signal, unlike the ordinary pending() story response. */
+function heldRestoreAction(action: 'upload' | 'confirm' | 'cancel' | 'proof') {
+  const previousFetch = globalThis.fetch;
+  const previousTimeout = Object.getOwnPropertyDescriptor(AbortSignal, 'timeout')!;
+  const deadlines: Array<{ at: number; controller: AbortController }> = [];
+  let elapsed = 0;
+  let held: AbortSignal | null = null;
+  let rejectHeld: (() => void) | null = null;
+  const timeout = (milliseconds: number) => {
+    const controller = new AbortController();
+    deadlines.push({ at: elapsed + milliseconds, controller });
+    return controller.signal;
+  };
+  Object.defineProperty(AbortSignal, 'timeout', { ...previousTimeout, value: timeout });
+  const path =
+    action === 'proof'
+      ? '/api/auth/reauthentication/options'
+      : `/api/admin/restores/preparations/${job.id}/${action}`;
+  const intercepted: typeof fetch = (input, init) => {
+    if (String(input) !== path || init?.method !== 'POST') return previousFetch(input, init);
+    const signal = init.signal;
+    if (!signal) return Promise.reject(new Error('Restore request has no abort signal.'));
+    held = signal;
+    return new Promise<Response>((_resolve, reject) => {
+      const abort = () => {
+        signal.removeEventListener('abort', abort);
+        rejectHeld = null;
+        reject(signal.reason ?? new DOMException('Request aborted.', 'AbortError'));
+      };
+      rejectHeld = abort;
+      signal.addEventListener('abort', abort, { once: true });
+      if (signal.aborted) abort();
+    });
+  };
+  globalThis.fetch = intercepted;
+  return {
+    signal: () => held,
+    advance(milliseconds: number) {
+      elapsed += milliseconds;
+      for (const deadline of deadlines)
+        if (deadline.at <= elapsed && !deadline.controller.signal.aborted)
+          deadline.controller.abort(new DOMException('Request timed out.', 'TimeoutError'));
+    },
+    close() {
+      if (globalThis.fetch === intercepted) globalThis.fetch = previousFetch;
+      if (AbortSignal.timeout === timeout)
+        Object.defineProperty(AbortSignal, 'timeout', previousTimeout);
+      for (const deadline of deadlines) deadline.controller.abort();
+      rejectHeld?.();
+    },
+  };
+}
+
+const uploadActionApi = {
+  ...read(null),
+  ...verified,
+  'POST /api/admin/restores/preparations': { ...job, state: 'uploading' },
+  [`POST /api/admin/restores/preparations/${job.id}/cancel`]: { ...job, state: 'cancelled' },
+};
+async function startHeldUpload(canvasElement: HTMLElement) {
+  const dialog = await openPreparation(canvasElement);
+  await userEvent.upload(
+    dialog.getByLabelText('Encrypted workspace backup'),
+    new File(['encrypted fixture'], 'workspace.spinel', { type: 'application/octet-stream' }),
+  );
+  await userEvent.upload(
+    dialog.getByLabelText('Separate recovery key'),
+    new File([new Uint8Array(32)], 'recovery.key'),
+  );
+  await userEvent.click(dialog.getByRole('button', { name: 'Verify and prepare' }));
+}
+async function startHeldConfirmation(canvasElement: HTMLElement) {
+  const dialog = await openConfirmation(canvasElement);
+  await userEvent.click(dialog.getByRole('checkbox'));
+  await userEvent.click(dialog.getByRole('button', { name: 'Verify and restore workspace' }));
+}
+async function assertLongActionDeadline(canvasElement: HTMLElement, action: 'upload' | 'confirm') {
+  const clock = heldRestoreAction(action);
+  try {
+    if (action === 'upload') await startHeldUpload(canvasElement);
+    else await startHeldConfirmation(canvasElement);
+    await waitFor(() => expect(clock.signal()).not.toBeNull());
+    clock.advance(6 * 60_000);
+    await expect(clock.signal()!.aborted).toBe(false);
+    // Fixed product budget: 30m operation + 1m ceremony + 30s transport. The
+    // server's shorter/older intent remains authoritative; no wall-clock guess.
+    clock.advance(25 * 60_000 + 29_999);
+    await expect(clock.signal()!.aborted).toBe(false);
+    clock.advance(1);
+    await expect(clock.signal()!.aborted).toBe(true);
+    await expect(
+      await within(canvasElement).findByText(
+        action === 'upload'
+          ? /Passkey verification or preparation did not finish/
+          : /The confirmation response was lost/,
+      ),
+    ).toBeVisible();
+  } finally {
+    clock.close();
+  }
+}
+export const SlowUploadKeepsBoundedLifetime: Story = {
+  args: { authenticate },
+  parameters: { api: uploadActionApi },
+  play: ({ canvasElement }) => assertLongActionDeadline(canvasElement, 'upload'),
+};
+export const SlowConfirmationKeepsBoundedLifetime: Story = {
+  args: { authenticate },
+  parameters: { api: { ...read('ready'), ...verified } },
+  play: ({ canvasElement }) => assertLongActionDeadline(canvasElement, 'confirm'),
+};
+export const SlowUploadStillCancels: Story = {
+  args: { authenticate },
+  parameters: { api: uploadActionApi },
+  play: async ({ canvasElement }) => {
+    const clock = heldRestoreAction('upload');
+    try {
+      await startHeldUpload(canvasElement);
+      await waitFor(() => expect(clock.signal()).not.toBeNull());
+      clock.advance(6 * 60_000);
+      await expect(clock.signal()!.aborted).toBe(false);
+      await userEvent.click(
+        within(canvasElement).getByRole('button', { name: 'Cancel preparation' }),
+      );
+      await expect(clock.signal()!.aborted).toBe(true);
+      await expect(
+        await within(canvasElement).findByText(/Restore preparation was cancelled/),
+      ).toBeVisible();
+    } finally {
+      clock.close();
+    }
+  },
+};
+export const PasskeyCeremonyStillEndsAfterOneMinute: Story = {
+  args: { authenticate },
+  parameters: { api: { ...read('ready'), ...verified } },
+  play: async ({ canvasElement }) => {
+    const clock = heldRestoreAction('proof');
+    try {
+      await startHeldConfirmation(canvasElement);
+      await waitFor(() => expect(clock.signal()).not.toBeNull());
+      clock.advance(59_999);
+      await expect(clock.signal()!.aborted).toBe(false);
+      clock.advance(1);
+      await expect(clock.signal()!.aborted).toBe(true);
+      await expect(
+        await within(document.body).findByText(
+          'Passkey verification did not finish. No restore confirmation was sent.',
+        ),
+      ).toBeVisible();
+    } finally {
+      clock.close();
+    }
+  },
+};
+export const CancellationStillEndsAfterFiveMinutes: Story = {
+  parameters: { api: read('ready') },
+  play: async ({ canvasElement }) => {
+    const clock = heldRestoreAction('cancel');
+    try {
+      await userEvent.click(
+        await within(canvasElement).findByRole('button', { name: 'Cancel preparation' }),
+      );
+      await waitFor(() => expect(clock.signal()).not.toBeNull());
+      clock.advance(5 * 60_000 - 1);
+      await expect(clock.signal()!.aborted).toBe(false);
+      clock.advance(1);
+      await expect(clock.signal()!.aborted).toBe(true);
+      await expect(
+        await within(canvasElement).findByText(/Cancellation could not be confirmed/),
+      ).toBeVisible();
+    } finally {
+      clock.close();
+    }
+  },
+};
+
+function RestoreLifecycle({ change }: { change: 'account' | 'unmount' }) {
+  const [changed, setChanged] = useState(false);
+  return (
+    <>
+      <button data-testid="change-restore-lifecycle" onClick={() => setChanged(true)}>
+        Simulate account navigation
+      </button>
+      {(!changed || change === 'account') && (
+        <BackupRestore
+          currentId={changed ? 'another-operator' : 'operator'}
+          authenticate={authenticate}
+        />
+      )}
+    </>
+  );
+}
+async function assertLongActionLifecycle(canvasElement: HTMLElement) {
+  const clock = heldRestoreAction('confirm');
+  try {
+    await startHeldConfirmation(canvasElement);
+    await waitFor(() => expect(clock.signal()).not.toBeNull());
+    clock.advance(6 * 60_000);
+    await expect(clock.signal()!.aborted).toBe(false);
+    // Navigation is external to the busy modal; fireEvent represents the parent
+    // account/route change rather than clicking through its modal focus guard.
+    fireEvent.click(within(canvasElement).getByTestId('change-restore-lifecycle'));
+    await waitFor(() => expect(clock.signal()!.aborted).toBe(true));
+  } finally {
+    clock.close();
+  }
+}
+export const SlowConfirmationStopsOnAccountChange: Story = {
+  render: () => <RestoreLifecycle change="account" />,
+  parameters: { api: { ...read('ready'), ...verified } },
+  play: ({ canvasElement }) => assertLongActionLifecycle(canvasElement),
+};
+export const SlowConfirmationStopsOnUnmount: Story = {
+  render: () => <RestoreLifecycle change="unmount" />,
+  parameters: { api: { ...read('ready'), ...verified } },
+  play: ({ canvasElement }) => assertLongActionLifecycle(canvasElement),
 };
