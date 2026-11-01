@@ -3,6 +3,9 @@ import type { ItemAccess } from '../src/shared/workspace.ts';
 import { recordNativeMutationInventory } from './nativeMutationInventory.ts';
 import { bindSheetDrawingPermissions, readOnlySheetDrawings } from './readOnlySheetDrawings.ts';
 import { sheetImages } from './sheetImages.ts';
+import { sheetImageInsertion } from './sheetImageInsertion.ts';
+import { SheetImageStatus } from './SheetImageStatus.tsx';
+import { guestItemId } from './documentAccess.ts';
 import sheetDrawingEnglish from '@univerjs/preset-sheets-drawing/locales/en-US';
 import { EditorTools } from './EditorTools.tsx';
 import { useEditorChrome } from './EditorFrame.tsx';
@@ -87,6 +90,7 @@ export function SheetEditor({
     if (mobile && host.current) return bindMobileSheetViewport(host.current);
   }, [mobile]);
   const [people, setPeople] = useState<Collaborator[]>([]);
+  const [imageError, setImageError] = useState('');
   const container = useRef<HTMLDivElement>(null);
   const controller = useRef<ReturnType<typeof watchCollaboration> | null>(null);
   const [reloadGeneration, reload] = useState(0);
@@ -132,6 +136,9 @@ export function SheetEditor({
     editMobileCell.current = () => {};
     setPeople([]);
     let editing = false;
+    let insertingImage = false;
+    let imageInsertion: ReturnType<typeof sheetImageInsertion> | undefined;
+    let imagesWritable = false;
     let freezeAfterEditing = false;
     let disposeEditor: (() => void) | undefined;
     let save: ReturnType<typeof watchCollaboration> | undefined;
@@ -139,7 +146,8 @@ export function SheetEditor({
     const publish = (state: SaveState) => {
       lastState = state;
       if (disposed) return;
-      const dirty = editing || state.dirty;
+      const dirty = editing || insertingImage || state.dirty;
+      if (chrome) chrome.editing.current = editing || insertingImage;
       copyStatus.next(
         copyUnavailable(
           { ...state, dirty, failed: state.failed || Boolean(syncNotice.current) },
@@ -151,7 +159,7 @@ export function SheetEditor({
       onDirty(dirty, Boolean(state.retained));
       setStatus({
         ...state,
-        ...(editing ? { local: undefined } : {}),
+        ...(editing || insertingImage ? { local: undefined } : {}),
         dirty,
         failed: state.failed || (initialized && Boolean(syncNotice.current)),
         message: editing
@@ -160,11 +168,14 @@ export function SheetEditor({
               ? 'Your sign-in ended. Copy the unfinished cell text before signing in again.'
               : 'Copy the unfinished cell text before recovering your offline changes.'
             : `Editing cell — changes not saved yet.${state.failed ? ` ${state.message}` : ''}`
-          : state.failed
-            ? state.message
-            : ((initialized ? syncNotice.current : undefined) ?? state.message),
+          : insertingImage
+            ? 'Inserting image — keep this tab open.'
+            : state.failed
+              ? state.message
+              : ((initialized ? syncNotice.current : undefined) ?? state.message),
       });
     };
+    setImageError('');
     publish(lastState);
     void (async () => {
       const data = await prepareEditor(id, spaceId, () => !disposed, localAccountId);
@@ -174,6 +185,22 @@ export function SheetEditor({
         return;
       }
       const nativePermissions = nativeSyncPermissions(data.unitId, data.access);
+      imagesWritable = data.access !== 'viewer' && !guestItemId();
+      imageInsertion = sheetImageInsertion({
+        id,
+        unitId: data.unitId,
+        spaceId,
+        container: container.current!,
+        offline: data.offline,
+        canInsert: () => !disposed && captureReady && imagesWritable && !freezeAfterEditing,
+        onBusy: (busy) => {
+          insertingImage = busy;
+          publish(lastState);
+        },
+        onError: (message) => {
+          if (!disposed) setImageError(message);
+        },
+      });
       recordNativeMutationInventory();
       const { univer, univerAPI } = createUniver({
         theme: editorTheme(),
@@ -195,7 +222,7 @@ export function SheetEditor({
               ? { initialFormulaComputing: CalculationMode.NO_CALCULATION }
               : undefined,
           ),
-          sheetImages(mobile, data.offline),
+          sheetImages(mobile, data.offline, imagesWritable ? imageInsertion.upload : undefined),
         ],
       });
       // IMAGE formula results use a direct browser Image loader in the OSS
@@ -219,6 +246,7 @@ export function SheetEditor({
       disposeEditor = () => {
         stopMobileCell?.();
         stopDrawingPermissions?.();
+        imageInsertion?.dispose();
         offlineImages?.dispose();
         disposeSpinelSync(univer);
         univer.dispose();
@@ -267,6 +295,7 @@ export function SheetEditor({
       installCanvasColors(univer);
       identifyCollaborator(univer, data.user);
       const readOnly = async (preserveInput = false) => {
+        imagesWritable = false;
         if (preserveInput && editing) {
           // A current native cell editor has not emitted its mutation yet.
           // Keep it available for copying; the expired binding sends no frames.
@@ -299,7 +328,7 @@ export function SheetEditor({
         signal: loading.signal,
         isCurrent: () => !disposed,
         offline: data.offline,
-        canRefresh: () => !editing,
+        canRefresh: () => !editing && !insertingImage,
         lock: () => {
           disposeEditor?.();
           disposeEditor = undefined;
@@ -348,6 +377,7 @@ export function SheetEditor({
       captureReady = true;
       await editorReady(univerAPI);
       if (disposed) return;
+      imageInsertion.attach(univer);
       const interceptor = univer
         .__getInjector()
         .get(SheetInterceptorService)
@@ -399,6 +429,8 @@ export function SheetEditor({
       disposeEditor = () => {
         stopMobileCell?.();
         stopDrawingPermissions?.();
+        imageInsertion?.dispose();
+        offlineImages?.dispose();
         disposeSpinelSync(univer);
         stopTheme();
         interceptor.dispose();
@@ -453,6 +485,7 @@ export function SheetEditor({
       copyStatus.next('This document is closed.');
       copyStatus.complete();
       loading.abort();
+      imageInsertion?.dispose();
       registerGuestEditor?.(null);
       stopPresence?.();
       save?.dispose();
@@ -496,6 +529,7 @@ export function SheetEditor({
           }
         />
       )}
+      <SheetImageStatus error={imageError} />
       <div className="univer-container" ref={container} />
       {mobileCell && (
         <MobileSheetCellBar cell={mobileCell} onEdit={() => editMobileCell.current()} />

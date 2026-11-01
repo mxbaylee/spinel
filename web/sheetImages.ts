@@ -1,5 +1,5 @@
 import { IImageIoService, IURLImageService, ImageUploadStatusType } from '@univerjs/core';
-import type { IURLImageService as URLImages } from '@univerjs/core';
+import type { IURLImageService as URLImages, IImageIoServiceParam } from '@univerjs/core';
 import type { IPreset } from '@univerjs/presets';
 import {
   ImageIoService,
@@ -14,15 +14,24 @@ import {
 } from '@univerjs/preset-sheets-drawing';
 import '@univerjs/preset-sheets-drawing/lib/index.css';
 
-// Existing embedded images arrive through native import. New upload/paste needs
-// its own persistence/navigation flow; never accept ephemeral SDK data URLs.
+// History/viewers keep this refusal. Editable Sheets supply the tracked store;
+// never fall back to the SDK's ephemeral data-URL upload implementation.
 class ExistingSheetImages extends ImageIoService {
   override async saveImage(): Promise<never> {
     throw new Error(ImageUploadStatusType.ERROR_IMAGE);
   }
 }
 export const sheetImageOverride = [IImageIoService, { useClass: ExistingSheetImages }] as const;
-export function sheetImages(mobile: boolean, images?: URLImages): IPreset {
+export function sheetImages(
+  mobile: boolean,
+  images?: URLImages,
+  upload?: (file: File) => Promise<IImageIoServiceParam>,
+): IPreset {
+  class StoredSheetImages extends ImageIoService {
+    override saveImage(file: File) {
+      return upload!(file);
+    }
+  }
   const preset = UniverSheetsDrawingPreset();
   return {
     ...preset,
@@ -34,7 +43,7 @@ export function sheetImages(mobile: boolean, images?: URLImages): IPreset {
           {
             ...config,
             override: [
-              [...sheetImageOverride],
+              upload ? [IImageIoService, { useClass: StoredSheetImages }] : [...sheetImageOverride],
               ...(images ? [[IURLImageService, { useValue: images }]] : []),
             ],
           },
@@ -46,7 +55,7 @@ export function sheetImages(mobile: boolean, images?: URLImages): IPreset {
         {
           ...config,
           menu: {
-            [SHEETS_IMAGE_MENU_ID]: { hidden: true },
+            [SHEETS_IMAGE_MENU_ID]: { hidden: !upload },
             [AddWorksheetBackgroundImageCommand.id]: { hidden: true },
           },
         },
