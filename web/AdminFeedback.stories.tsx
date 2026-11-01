@@ -105,6 +105,25 @@ export const SystemDownload: Story = {
     ).toBeVisible();
   },
 };
+export const ExpandedLimits: Story = {
+  parameters: { api },
+  play: async ({ canvasElement }) => {
+    const dialog = await openDownloads(canvasElement);
+    const content = within(dialog);
+    await content.findByText('User metrics sent to your browser. Check your downloads.');
+    const summary = content.getByText('Collection limits', { selector: 'summary' });
+    const details = summary.closest('details')!;
+    await expect(details).not.toHaveAttribute('open');
+    await userEvent.click(summary);
+    await expect(details).toHaveAttribute('open');
+    for (const limit of feedbackPair.limitations)
+      await expect(content.getByText(limit)).toBeVisible();
+    const bounds = summary.getBoundingClientRect();
+    await expect(bounds.width).toBeGreaterThanOrEqual(44);
+    await expect(bounds.height).toBeGreaterThanOrEqual(44);
+    await assertDialogControls(dialog);
+  },
+};
 export const PairedDownloads: Story = {
   parameters: { api },
   play: async ({ canvasElement }) => {
