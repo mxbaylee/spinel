@@ -130,6 +130,12 @@ file-list view keeps that message in its existing context above the list.
   appears. The same slot holds the Doc help line ("Click the page to write. Type
   / for commands."), which the error replaces while shown.
 
+Sheet image insertion reuses the help slot and existing DetailsPopover: reserve
+44 px in both empty and error states, show **Image not inserted · Details**, and
+open the full limit/recovery sentence on touch or keyboard. Announce the complete
+error without relying on an ellipsized line or hover tooltip. Escape closes the
+popover and restores focus. See [SPN-068](../implementation/SPN-068.md).
+
 **Export as PDF** (SPN-075) downloads a PDF directly for anyone with current
 read access, including account viewers and guests. There is no separate Print
 action or browser print dialog. Guests use the control

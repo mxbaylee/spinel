@@ -22,14 +22,13 @@ import type { OfflineSession } from './offline/OfflineSession.ts';
 const cellImageCommand = 'sheet.command.insert-cell-image';
 const imageTypes = ['image/png', 'image/jpeg', 'image/webp'];
 const changedTarget = 'The selected cell changed. Select a cell and insert the image again.';
-type Target = { subUnitId: string; row: number; col: number; cell: string };
+class SheetImageError extends Error {}
+type Target = { subUnitId: string; row: number; col: number; cell: string; structure: number };
 type Job = {
   file: File;
   target: Target;
   imageId: string;
   cell: boolean;
-  stale: boolean;
-  committing: boolean;
   failed?: boolean;
   preview?: string;
 };
@@ -69,36 +68,38 @@ export function sheetImageInsertion(options: {
   const lifetime = new AbortController();
   let active: Job | undefined;
   let picking = false;
+  let structure = 0;
   let readTarget: (() => Target | undefined) | undefined;
   let stop: (() => void) | undefined;
   const allowed = () => {
     if (lifetime.signal.aborted || !options.canInsert())
-      throw new Error('Image insertion needs an account with edit access.');
+      throw new SheetImageError('Image insertion needs an account with edit access.');
     options.offline?.verifyRemote();
     if (!navigator.onLine || (options.offline?.enabled && !options.offline.online))
-      throw new Error('Connect before inserting a new image.');
+      throw new SheetImageError('Connect before inserting a new image.');
   };
   const verify = (job: Job) => {
     allowed();
     const current = readTarget?.();
     if (
       active !== job ||
-      job.stale ||
+      current?.structure !== job.target.structure ||
       !current ||
       current.subUnitId !== job.target.subUnitId ||
       current.row !== job.target.row ||
       current.col !== job.target.col ||
       (job.cell && current.cell !== job.target.cell)
     )
-      throw new Error(changedTarget);
+      throw new SheetImageError(changedTarget);
   };
   const errorMessage = (error: unknown) =>
-    error instanceof Error && error.name !== 'AbortError' && error.name !== 'TimeoutError'
+    error instanceof SheetImageError
       ? error.message
       : 'The image could not be inserted. Try again.';
   const upload = async (file: File): Promise<IImageIoServiceParam> => {
     const job = active;
-    if (!job || job.file !== file) throw new Error('Use the Image menu to insert a saved image.');
+    if (!job || job.file !== file)
+      throw new SheetImageError('Use the Image menu to insert a saved image.');
     verify(job);
     const signal = AbortSignal.any([lifetime.signal, AbortSignal.timeout(30_000)]);
     const response = await (options.offline?.fetch.bind(options.offline) ?? fetch)(
@@ -107,14 +108,15 @@ export function sheetImageInsertion(options: {
     );
     const image = await response.json();
     verify(job);
-    if (!response.ok) throw new Error(image.error ?? 'The image could not be uploaded. Try again.');
+    if (!response.ok)
+      throw new SheetImageError(image.error ?? 'The image could not be uploaded. Try again.');
     const prefix = `/api/items/${options.id}/images/`;
     if (
       typeof image.url !== 'string' ||
       !image.url.startsWith(prefix) ||
       !/^[a-f\d]{64}$/.test(image.url.slice(prefix.length))
     )
-      throw new Error('The image could not be saved. Try again.');
+      throw new SheetImageError('The image could not be saved. Try again.');
     await options.offline?.prepareImages(image.url, signal);
     verify(job);
     // Decode the validated local file, avoiding an unbounded native Image URL
@@ -161,13 +163,12 @@ export function sheetImageInsertion(options: {
           row,
           col,
           cell: JSON.stringify(sheet.getCell(row, col) ?? null),
+          structure,
         };
       };
       // A late native continuation must never write into a newly selected cell,
       // a changed worksheet, or an editor whose authority ended during upload.
       const fence = commands.beforeCommandExecuted((command) => {
-        const job = active;
-        if (!job) return;
         const params = command.params as
           | {
               unitId?: string;
@@ -175,6 +176,18 @@ export function sheetImageInsertion(options: {
               value?: Record<number, Record<number, ICellData>>;
             }
           | undefined;
+        // Capture structure changes even while the chooser is open, before a
+        // file exists. Sorting also moves blank image targets between rows.
+        if (
+          command.type === CommandType.MUTATION &&
+          params?.unitId === options.unitId &&
+          /^sheet\.mutation\.(insert-(row|col)|remove-(rows|col|sheet)|move-(rows|columns|range)|reorder-range|add-worksheet-merge|remove-worksheet-merge)$/.test(
+            command.id,
+          )
+        )
+          structure++;
+        const job = active;
+        if (!job) return;
         const ownsImage =
           command.id === InsertSheetDrawingCommand.id
             ? params?.drawings?.some((drawing) => drawing.drawingId === job.imageId)
@@ -186,18 +199,10 @@ export function sheetImageInsertion(options: {
           try {
             verify(job);
           } catch (error) {
+            job.failed = true;
+            if (!lifetime.signal.aborted) options.onError(errorMessage(error));
             throw new CustomCommandExecutionError(errorMessage(error));
           }
-          job.committing = true;
-        } else if (
-          !job.committing &&
-          command.type === CommandType.MUTATION &&
-          params?.unitId === options.unitId &&
-          /^sheet\.mutation\.(insert-(row|col)|remove-(rows|col|sheet)|move-(rows|columns|range)|add-worksheet-merge|remove-worksheet-merge)$/.test(
-            command.id,
-          )
-        ) {
-          job.stale = true;
         }
       });
       const insert = async (cell: boolean, files?: File[]) => {
@@ -209,7 +214,7 @@ export function sheetImageInsertion(options: {
         try {
           allowed();
           const target = readTarget!();
-          if (!target) throw new Error('Select a cell before inserting an image.');
+          if (!target) throw new SheetImageError('Select a cell before inserting an image.');
           if (!files) {
             picking = true;
             try {
@@ -220,18 +225,17 @@ export function sheetImageInsertion(options: {
           }
           if (!files.length) return false;
           allowed();
-          if (files.length !== 1) throw new Error('Insert one image at a time.');
+          if (files.length !== 1) throw new SheetImageError('Insert one image at a time.');
           const file = files[0];
-          if (!imageTypes.includes(file.type)) throw new Error('Choose a PNG, JPEG or WebP image.');
+          if (!imageTypes.includes(file.type))
+            throw new SheetImageError('Choose a PNG, JPEG or WebP image.');
           if (!file.size || file.size > 5 * 1024 * 1024)
-            throw new Error('Choose an image no larger than 5 MiB.');
+            throw new SheetImageError('Choose an image no larger than 5 MiB.');
           job = {
             file,
             target,
             imageId: crypto.randomUUID(),
             cell,
-            stale: false,
-            committing: false,
           };
           active = job;
           options.onError('');
@@ -241,9 +245,14 @@ export function sheetImageInsertion(options: {
             .get(IRenderManagerService)
             .getRenderUnitById(options.unitId)
             ?.with(SheetDrawingUpdateController);
-          if (!controller) throw new Error('The image editor is not ready. Try again.');
+          if (!controller) throw new SheetImageError('The image editor is not ready. Try again.');
           const inserted = cell
-            ? await controller.insertCellImageByFile(file, { unitId: options.unitId, ...target })
+            ? await controller.insertCellImageByFile(file, {
+                unitId: options.unitId,
+                subUnitId: target.subUnitId,
+                row: target.row,
+                col: target.col,
+              })
             : await controller.insertFloatImageByFile(file);
           if (!inserted && !lifetime.signal.aborted && !job.failed)
             options.onError('The image could not be inserted. Try again.');
