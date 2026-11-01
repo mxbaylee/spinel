@@ -199,11 +199,12 @@ files for seven days. Extracted artifacts preserve `test-results/` and
 Investigate the first failed attempt and its durations before rerunning;
 `failOnFlakyTests` deliberately keeps a retry-only success red.
 
-Positively classified PR title/body edits run cheap PR validation with isolated
-concurrency and distinct names for nonexecuted code jobs. They cannot cancel or
-replace pending code runs or overwrite failed code evidence. Base retargets,
-ambiguous edits and unavailable ranges require full validation; new code pushes
-still supersede older code runs for that PR. PR policy checks use the event's
+Every PR edit, including title/body changes and base retargets, runs fresh full
+validation. Edits have isolated concurrency so they do not cancel or replace
+pending code runs; new code pushes still supersede older code runs for that PR.
+Cheap text-edit validation remains tracked in [SPN-129](todo/SPN-129.md) after
+hosted trials showed that renamed metadata jobs left required checks unsatisfied.
+PR policy checks use the event's
 immutable base SHA, so an advancing `main` cannot silently change their baseline.
 The digest-bound coverage plan records each suite's dependencies and reason;
 selected missing/failed/cancelled jobs fail the required aggregate. Labels add

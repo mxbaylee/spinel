@@ -345,10 +345,11 @@ toward the reminder.
 
 The [SPN-115 coverage policy](../implementation/SPN-115.md) keeps all seven code
 check names and publishes a digest-bound plan from the immutable event range.
-Only positively proved title/body edits update cheap Pull request validation;
-their nonexecuted code jobs have distinct metadata-only names and isolated
-concurrency, so they cannot replace pending or failed code evidence. Base retargets,
-ambiguous events, unavailable ranges and unknown paths select full coverage.
+All PR edits run fresh full validation, including title/body changes and base
+retargets. Edit concurrency is isolated from code pushes. The cheap metadata
+optimization remains in [SPN-129](SPN-129.md); renamed metadata-only jobs failed
+actual protected-branch readiness and are not used. Ambiguous events,
+unavailable ranges and unknown paths also select full coverage.
 `ci-performance` and `ci-full` add coverage; removing labels never removes
 path-required checks. Weekly and manual runs select the full compatibility plan.
 Candidate native content/access/latency checks remain automatic for application

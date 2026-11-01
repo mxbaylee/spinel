@@ -146,7 +146,9 @@ path-required check. Candidate native content/access/integrity and applicable
 latency checks remain automatic for application changes; historical comparisons
 follow their dependency inputs or additive labels. Weekly/manual full coverage
 is the backstop, not a substitute for applicable PR coverage. Keep the seven
-stable required check names and title/body event isolation. Broad soak, retained
+stable required check names and isolated edit concurrency. PR edits currently
+run full validation; cheap metadata validation requires SPN-129's protected-merge
+proof before it can return. Broad soak, retained
 transition, container, BrowserStack and live-provider scopes are not permission
 to narrow additional coverage without equivalent evidence.
 

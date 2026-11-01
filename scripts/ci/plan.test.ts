@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import { coveragePlan, suiteIds, titleBodyOnly, verifyCoverage } from './plan.ts';
+import { coveragePlan, suiteIds, verifyCoverage } from './plan.ts';
 const base = 'a'.repeat(40),
   head = 'b'.repeat(40);
 const pr = (action = 'synchronize', labels: string[] = [], changes?: unknown) => ({
@@ -16,36 +16,40 @@ const pr = (action = 'synchronize', labels: string[] = [], changes?: unknown) =>
 const all = (plan: ReturnType<typeof coveragePlan>) =>
   Object.fromEntries(suiteIds.map((id) => [id, plan.suites[id].selected ? 'success' : 'skipped']));
 
-test('metadata requires exact title/body edit payload and a proved immutable range', () => {
+test('every PR edit runs full validation, including title/body, base and ambiguous payloads', () => {
   for (const changes of [
     { title: { from: 'Old title' } },
     { body: { from: null } },
     { title: { from: '' }, body: { from: '' } },
-  ]) {
-    const event = pr('edited', ['ci-full'], changes);
-    assert.equal(titleBodyOnly('pull_request', event), true);
-    const plan = coveragePlan('pull_request', event, ['server/app.ts'], head);
-    assert.equal(plan.mode, 'metadata');
-    assert.deepEqual(
-      suiteIds.filter((id) => plan.suites[id].selected),
-      ['pull-request'],
-    );
-    assert.equal(coveragePlan('pull_request', event, null, head).mode, 'full');
-  }
-  for (const changes of [
+    { base: { ref: { from: 'main' } } },
+    { title: { from: 'Old' }, base: {} },
     undefined,
     {},
     [],
-    { base: { ref: { from: 'main' } } },
-    { title: { from: 'Old' }, base: {} },
     { title: {} },
     { title: { from: null } },
     { body: { from: '', surprise: true } },
     { unknown: { from: '' } },
   ]) {
-    const event = pr('edited', [], changes);
-    assert.equal(titleBodyOnly('pull_request', event), false);
-    assert.equal(coveragePlan('pull_request', event, ['docs/notes.md']).mode, 'full');
+    for (const paths of [['docs/notes.md'], ['src/server/auth/session.ts'], null]) {
+      const plan = coveragePlan('pull_request', pr('edited', [], changes), paths, head);
+      assert.equal(plan.mode, 'full');
+      assert.ok(suiteIds.every((id) => plan.suites[id].selected));
+      // A later text edit must revalidate rather than hide failed base/code evidence.
+      assert.throws(
+        () =>
+          verifyCoverage(
+            plan,
+            'success',
+            {
+              ...all(plan),
+              'doc-responsiveness': 'failure',
+            },
+            suiteIds,
+          ),
+        /Incomplete coverage/,
+      );
+    }
   }
 });
 
@@ -158,7 +162,7 @@ test('aggregates require selected success and explicit inapplicable skipped; kno
     assert.throws(() => verifyCoverage(malformed, 'success', result, suiteIds));
 });
 
-test('workflow keeps seven exact code names, unique metadata names and protected concurrency', () => {
+test('workflow keeps seven static code names and protected edit concurrency', () => {
   const workflow = readFileSync(new URL('../../.github/workflows/ci.yml', import.meta.url), 'utf8');
   for (const name of [
     'Backlog',
@@ -168,8 +172,10 @@ test('workflow keeps seven exact code names, unique metadata names and protected
     'Lib tests',
     'Playwright smoke',
   ])
-    assert.ok(workflow.includes(`'Metadata only - ${name}' || '${name}'`), name);
+    assert.ok(workflow.includes(`name: ${name}\n`), name);
   assert.match(workflow, /name: Pull request\n/);
+  assert.ok(!workflow.includes('Metadata only'));
+  assert.ok(!workflow.includes("outputs.mode == 'metadata'"));
   assert.match(workflow, /format\('event-\{0\}', github.run_id\)/);
   assert.match(workflow, /cancel-in-progress:.*github.event.action == 'synchronize'/);
   assert.match(workflow, /types: \[opened, edited, synchronize, reopened, labeled, unlabeled\]/);

@@ -42,7 +42,7 @@ export interface CoveragePlan {
   base: string | null;
   head: string | null;
   tested: string | null;
-  mode: 'metadata' | 'targeted' | 'full';
+  mode: 'targeted' | 'full';
   labels: string[];
   paths: string[] | null;
   suites: Record<SuiteId, SuitePlan>;
@@ -52,29 +52,6 @@ const sha = (v: unknown): v is string =>
 const object = (v: unknown): v is Record<string, unknown> =>
   !!v && typeof v === 'object' && !Array.isArray(v);
 
-/** Positive, closed recognition only. Unknown edited fields and base retargets
- * are code events; no absence-of-base heuristic can classify them as metadata. */
-export function titleBodyOnly(eventName: string, event: unknown): boolean {
-  if (
-    eventName !== 'pull_request' ||
-    !object(event) ||
-    event.action !== 'edited' ||
-    !object(event.changes)
-  )
-    return false;
-  const entries = Object.entries(event.changes);
-  return (
-    entries.length > 0 &&
-    entries.every(
-      ([key, value]) =>
-        ['title', 'body'].includes(key) &&
-        object(value) &&
-        Object.keys(value).length === 1 &&
-        Object.hasOwn(value, 'from') &&
-        (typeof value.from === 'string' || (key === 'body' && value.from === null)),
-    )
-  );
-}
 const performanceInput = (path: string) =>
   /^(web|server|lib|e2e|\.github|\.storybook)\//.test(path) ||
   /^src\/(shared|server\/(sync|history|collaboration))\//.test(path) ||
@@ -125,7 +102,6 @@ export function coveragePlan(
         String(event.action),
       ));
   const reliable = paths !== null && sha(base) && sha(head) && labelsValid;
-  const metadata = reliable && titleBodyOnly(eventName, event);
   const unknown =
     paths?.filter(
       (path) => !documentationOnly([path]) && !performanceInput(path) && !serviceInput(path),
@@ -134,23 +110,22 @@ export function coveragePlan(
     ? 'Scheduled/manual or unsupported event requires full coverage.'
     : !reliable
       ? 'Immutable range or event labels unavailable; full coverage.'
-      : event.action === 'edited' && !metadata
-        ? 'Base retarget or ambiguous edit requires full coverage.'
+      : event.action === 'edited'
+        ? 'PR edits require fresh full coverage until protected metadata isolation is proven.'
         : unknown.length
           ? 'Unknown paths require full coverage.'
-          : !paths?.length && !metadata
+          : !paths?.length
             ? 'Empty change range requires full coverage.'
             : paths?.some(fullInput)
               ? 'Workflow, harness, build, runtime or dependency input requires full coverage.'
               : labels.includes('ci-full')
                 ? 'ci-full adds full coverage.'
                 : null;
-  const full = !metadata && fullReason !== null;
-  const app = !metadata && (full || !documentationOnly(paths ?? []));
-  const performance =
-    !metadata && (full || labels.includes('ci-performance') || !!paths?.some(performanceInput));
+  const full = fullReason !== null;
+  const app = full || !documentationOnly(paths ?? []);
+  const performance = full || labels.includes('ci-performance') || !!paths?.some(performanceInput);
   const candidate = app || performance;
-  const lib = !metadata && (full || !!paths?.some(libraryInput));
+  const lib = full || !!paths?.some(libraryInput);
   const plan: CoveragePlan = {
     version: 1,
     event: eventName,
@@ -158,7 +133,7 @@ export function coveragePlan(
     base: sha(base) ? base : null,
     head: sha(head) ? head : null,
     tested: sha(tested) ? tested : null,
-    mode: metadata ? 'metadata' : full ? 'full' : 'targeted',
+    mode: full ? 'full' : 'targeted',
     labels: [...new Set(labels)].sort(),
     paths: paths === null ? null : [...new Set(paths)].sort(),
     suites: {} as CoveragePlan['suites'],
@@ -167,19 +142,17 @@ export function coveragePlan(
     const selected =
       id === 'pull-request'
         ? eventName === 'pull_request'
-        : metadata
-          ? false
-          : ['backlog', 'lint'].includes(id)
-            ? true
-            : id === 'lib-test-run'
-              ? lib
-              : ['responsiveness-baseline', 'callback-baseline'].includes(id)
-                ? performance
-                : id === 'phone-compatibility'
-                  ? full
-                  : ['doc-responsiveness', 'doc-callback-lifetimes'].includes(id)
-                    ? candidate
-                    : app;
+        : ['backlog', 'lint'].includes(id)
+          ? true
+          : id === 'lib-test-run'
+            ? lib
+            : ['responsiveness-baseline', 'callback-baseline'].includes(id)
+              ? performance
+              : id === 'phone-compatibility'
+                ? full
+                : ['doc-responsiveness', 'doc-callback-lifetimes'].includes(id)
+                  ? candidate
+                  : app;
     const dependencies =
       id === 'lib-test-run'
         ? [
@@ -213,11 +186,8 @@ export function coveragePlan(
       selected,
       dependencies,
       inputs: plan.paths ?? [],
-      reason: metadata
-        ? id === 'pull-request'
-          ? 'Title/body validation only; existing code checks untouched.'
-          : 'Metadata event emits no code evidence.'
-        : id === 'pull-request' && eventName !== 'pull_request'
+      reason:
+        id === 'pull-request' && eventName !== 'pull_request'
           ? 'No pull request on this event.'
           : full
             ? fullReason!
