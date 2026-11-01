@@ -5,22 +5,107 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
+import { createBudgetReport, type QuotaEvidence } from './browserstack-budget.ts';
+import { reserveCapability } from './browserstack-admission.ts';
 
-test('accounting CLI persists measured history, fails unknown admission and never touches devices', async () => {
-  await exercise('new');
+test('quota CLI records the owner estimate and immutable persistence without allocating', async () => {
+  await exercise('new', 'quota');
 });
-test('a null stored ledger cannot erase history by being treated as a new account', async () => {
-  await exercise('invalid');
-  await exercise('literal-null');
-  await exercise('primitive');
+test('capability admission migrates observed v1 history and grants only a verified durable reservation', async () => {
+  await exercise('valid', 'reserve');
+  await exercise('write-denied', 'reserve');
+});
+test('a prepared zero-allocation receipt releases the reservation after an early build failure', async () => {
+  await exercise('reconcile', 'reconcile');
+});
+test('malformed v1/v2 ledgers and literal null cannot reset history or reservation holds', async () => {
+  for (const scenario of ['invalid', 'literal-null', 'primitive', 'invalid-state'] as const)
+    await exercise(scenario, 'reserve');
 });
 
-async function exercise(scenario: 'new' | 'invalid' | 'literal-null' | 'primitive') {
+type Scenario =
+  | 'new'
+  | 'valid'
+  | 'write-denied'
+  | 'reconcile'
+  | 'invalid'
+  | 'literal-null'
+  | 'primitive'
+  | 'invalid-state';
+async function exercise(scenario: Scenario, operation: 'quota' | 'reserve' | 'reconcile') {
   const directory = await mkdtemp(join(tmpdir(), 'spinel-accounting-'));
   try {
     const fixturePath = fileURLToPath(
       new URL('../../docs/implementation/SPN-090-browserstack-history.json', import.meta.url),
     );
+    const fixture = JSON.parse(await readFile(fixturePath, 'utf8')) as QuotaEvidence;
+    const policy = JSON.parse(
+      await readFile(
+        new URL('../../docs/implementation/SPN-090-budget-assumptions.json', import.meta.url),
+        'utf8',
+      ),
+    );
+    const source = {
+      observedAt: new Date(Date.now() - 60_000).toISOString(),
+      sourceSha: 'b'.repeat(40),
+      testedSha: 'c'.repeat(40),
+      run: 'https://github.com/mxbaylee/spinel/actions/runs/123456',
+    };
+    const observed = createBudgetReport({ ...source, evidence: fixture, previousLedger: null });
+    const reserved = reserveCapability({
+      source,
+      evidence: fixture,
+      ledger: observed.ledger,
+      policy,
+      state: null,
+      runId: '123456',
+      attempt: '1',
+    });
+    assert.equal(reserved.created, true);
+    const initial =
+      scenario === 'new'
+        ? ''
+        : scenario === 'literal-null'
+          ? 'null'
+          : scenario === 'primitive'
+            ? '42'
+            : JSON.stringify(
+                scenario === 'invalid'
+                  ? { schemaVersion: 1, ledger: null, latest: {} }
+                  : scenario === 'invalid-state'
+                    ? {
+                        schemaVersion: 2,
+                        ledger: observed.ledger,
+                        admissionState: null,
+                        latest: {},
+                      }
+                    : scenario === 'reconcile'
+                      ? {
+                          schemaVersion: 2,
+                          ledger: observed.ledger,
+                          admissionState: reserved.state,
+                          latest: {},
+                        }
+                      : { schemaVersion: 1, ledger: observed.ledger, latest: {} },
+              );
+    if (operation === 'reconcile') {
+      const { mkdir } = await import('node:fs/promises');
+      await mkdir(join(directory, 'artifacts'));
+      await writeFile(
+        join(directory, 'artifacts/browserstack-capability.json'),
+        JSON.stringify({
+          receipt: {
+            runId: '123456',
+            attempt: '1',
+            sourceSha: source.sourceSha,
+            testedSha: source.testedSha,
+            finishedAt: new Date(Date.now() - 1000).toISOString(),
+            sessionIds: [],
+            uncertainAllocation: false,
+          },
+        }),
+      );
+    }
     const hook = join(directory, 'provider-fixture.ts');
     await writeFile(
       hook,
@@ -29,7 +114,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 const fixture = JSON.parse(readFileSync(${JSON.stringify(fixturePath)}, 'utf8'));
 const calls = [];
 const hash = 'a'.repeat(40);
-let stored = ${JSON.stringify(scenario === 'invalid' ? '{"schemaVersion":1,"ledger":null}' : scenario === 'literal-null' ? 'null' : scenario === 'primitive' ? '42' : '')};
+let stored = ${JSON.stringify(initial)};
 function raw(id) {
   const entry = fixture.history.sessions.find(s => s.sessionId === id);
   const data = entry.observations.find(o => o.evidence.outcome === 'available').evidence.data;
@@ -56,8 +141,15 @@ globalThis.fetch = async (url, init) => {
   const path = parsed.pathname.slice('/repos/mxbaylee/spinel/'.length);
   if (path === 'git/ref/heads/ci/browserstack-accounting') return stored ? Response.json({ object: { sha: hash } }) : new Response('', { status: 404 });
   if (path === 'contents/ledger.json' && method === 'GET') return Response.json({ type: 'file', path: 'ledger.json', encoding: 'base64', sha: hash, size: Buffer.byteLength(stored), content: Buffer.from(stored).toString('base64') });
-  if (${JSON.stringify(scenario)} !== 'new') throw new Error('invalid ledger must not be overwritten');
+  if (${JSON.stringify(scenario)} === 'write-denied') return new Response('unit-github-token', {status: 403});
+  if (!['new','valid','reconcile'].includes(${JSON.stringify(scenario)})) throw new Error('invalid ledger must not be overwritten');
   const body = JSON.parse(init.body);
+  if (path === 'contents/ledger.json' && method === 'PUT') {
+    if (body.sha !== hash || body.branch !== 'ci/browserstack-accounting') throw new Error('missing conflict check');
+    stored = Buffer.from(body.content, 'base64').toString('utf8');
+    writeFileSync(${JSON.stringify(join(directory, 'stored.json'))}, stored);
+    return Response.json({ commit: {sha: hash} });
+  }
   if (path === 'git/trees') {
     if (body.tree.length !== 1 || body.tree[0].path !== 'ledger.json') throw new Error('unexpected path');
     stored = body.tree[0].content;
@@ -75,7 +167,12 @@ globalThis.fetch = async (url, init) => {
     );
     const child = spawnSync(
       process.execPath,
-      ['--import', hook, fileURLToPath(new URL('./browserstack-accounting.ts', import.meta.url))],
+      [
+        '--import',
+        hook,
+        fileURLToPath(new URL('./browserstack-accounting.ts', import.meta.url)),
+        operation,
+      ],
       {
         cwd: directory,
         timeout: 10_000,
@@ -85,8 +182,8 @@ globalThis.fetch = async (url, init) => {
           BS_USERNAME: 'unit-provider-user',
           BS_ACCESS_KEY: 'unit-provider-key',
           GITHUB_TOKEN: 'unit-github-token',
-          SOURCE_SHA: 'b'.repeat(40),
-          GITHUB_SHA: 'c'.repeat(40),
+          SOURCE_SHA: source.sourceSha,
+          GITHUB_SHA: source.testedSha,
           GITHUB_REPOSITORY: 'mxbaylee/spinel',
           GITHUB_RUN_ID: '123456',
           GITHUB_RUN_ATTEMPT: '1',
@@ -95,20 +192,27 @@ globalThis.fetch = async (url, init) => {
         },
       },
     );
-    assert.equal(child.status, 1, child.stderr);
+    const successful = ['new', 'valid', 'reconcile'].includes(scenario);
+    assert.equal(child.status, successful ? 0 : 1, child.stderr + child.stdout);
     assert.equal(child.stderr, '', child.stdout);
+    const basename =
+      operation === 'reconcile' ? 'browserstack-reconciliation' : 'browserstack-admission';
     const report = JSON.parse(
-      await readFile(join(directory, 'artifacts/browserstack-admission.json'), 'utf8'),
+      await readFile(join(directory, `artifacts/${basename}.json`), 'utf8'),
     );
     const calls = JSON.parse(await readFile(join(directory, 'calls.json'), 'utf8')) as {
       host: string;
       path: string;
       method: string;
     }[];
-    assert.equal(report.status, 'blocked');
-    assert.equal(report.allocationAllowed, false);
+    const allocationAllowed = scenario === 'valid';
+    assert.equal(report.allocationAllowed, allocationAllowed);
     assert.equal(report.remainingMinutes, null);
-    assert.equal(await readFile(join(directory, 'output'), 'utf8'), 'allocation_allowed=false\n');
+    assert.equal(report.providerVerified, false);
+    assert.equal(
+      await readFile(join(directory, 'output'), 'utf8'),
+      `allocation_allowed=${allocationAllowed}\n`,
+    );
     assert.match(await readFile(join(directory, 'summary.md'), 'utf8'), /60 lifetime minutes/);
     assert.ok(calls.every((call) => call.host !== 'api.browserstack.com' || call.method === 'GET'));
     assert.ok(
@@ -118,18 +222,32 @@ globalThis.fetch = async (url, init) => {
       JSON.stringify(report) + child.stdout + child.stderr,
       /unit-provider-user|unit-provider-key|unit-github-token/,
     );
-    if (scenario === 'new') {
+    if (successful) {
       assert.equal(report.measuredTerminalSessionSeconds, 241);
       assert.equal(report.measuredTerminalSessions, 15);
+      assert.equal(report.estimate.estimatedRemainingSeconds, 3359);
       assert.equal(report.persistence.status, 'verified');
       const stored = JSON.parse(await readFile(join(directory, 'stored.json'), 'utf8'));
+      assert.equal(stored.schemaVersion, 2);
       assert.equal(stored.ledger.sessions.length, 15);
       assert.equal(stored.latest.evidence.history.builds.length, 5);
       assert.equal(stored.latest.report.allocationAllowed, false);
+      if (operation === 'reserve') {
+        assert.equal(report.status, 'reserved');
+        assert.equal(report.reservation.seconds, 900);
+        assert.deepEqual(report.admissionState, stored.admissionState);
+        assert.equal(report.estimate.outstandingHoldSeconds, 900);
+      } else if (operation === 'reconcile') {
+        assert.equal(report.status, 'reconciled');
+        assert.equal(stored.admissionState.reservations[0].status, 'reconciled');
+        assert.equal(report.estimate.outstandingHoldSeconds, 0);
+      } else assert.equal(report.status, 'estimated');
     } else {
-      assert.ok(report.blockingReasons.includes('invalid-durable-ledger'));
+      assert.equal(report.status, 'blocked');
       assert.equal(report.persistence.status, 'failed');
-      assert.ok(calls.every((call) => call.method === 'GET'));
+      if (scenario === 'write-denied')
+        assert.ok(report.blockingReasons.includes('ledger-http-403'));
+      else assert.ok(calls.every((call) => call.method === 'GET'));
     }
   } finally {
     await rm(directory, { recursive: true, force: true });

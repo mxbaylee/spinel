@@ -334,7 +334,7 @@ test('quota CLI with missing credentials retains a failing report without openin
   }
 });
 
-test('monthly, label and manual triggers serialize through visible quota failure before devices', async () => {
+test('monthly reports and explicit device triggers share reservation, visible refusal and reconciliation', async () => {
   const source = await readFile(
     new URL('../../.github/workflows/browserstack.yml', import.meta.url),
     'utf8',
@@ -343,23 +343,36 @@ test('monthly, label and manual triggers serialize through visible quota failure
   assert.match(source, /cron: '17 9 1 \* \*'/);
   assert.match(source, /group: browserstack-lifetime-account\n/);
   assert.match(source, /cancel-in-progress: false/);
-  const quota = source.split('  accounting:\n')[1].split('  smoke:\n')[0];
+  const quota = source.split('  accounting:\n')[1].split('  capability:\n')[0];
   assert.match(quota, /github.event_name == 'schedule'/);
   assert.match(quota, /github.event_name == 'workflow_dispatch'/);
   assert.match(quota, /github.event.label.name == 'ci-real-devices'/);
   assert.match(quota, /github.event.pull_request.head.repo.full_name == github.repository/);
-  assert.match(quota, /run: node scripts\/ci\/browserstack-accounting.ts/);
+  assert.match(quota, /run: node scripts\/ci\/browserstack-accounting.ts "\$BS_OPERATION"/);
+  assert.match(quota, /inputs.mode == 'capability'/);
   assert.match(quota, /run: test "\$ACCOUNTING_OUTCOME" = success/);
   assert.match(quota, /if: always\(\)/);
   assert.doesNotMatch(quota, /setup-local|setup-env|browserstack.ts (smoke|credentials)|needs:/);
-  const smoke = source.split('  smoke:\n')[1];
-  assert.match(smoke, /needs: accounting/);
-  assert.match(smoke, /needs.accounting.result == 'success'/);
-  assert.match(smoke, /needs.accounting.outputs.allocation_allowed == 'true'/);
-  assert.match(smoke, /github.event_name != 'workflow_dispatch' \|\| inputs.mode == 'smoke'/);
+  const capability = source.split('  capability:\n')[1].split('  reconciliation:\n')[0];
+  assert.match(capability, /needs: accounting/);
+  assert.match(capability, /needs.accounting.result == 'success'/);
+  assert.match(capability, /needs.accounting.outputs.allocation_allowed == 'true'/);
+  assert.ok(
+    capability.indexOf('browserstack-capability.ts prepare') < capability.indexOf('run: npm ci'),
+  );
+  assert.ok(
+    capability.indexOf('run: npm run build') < capability.indexOf('browserstack-capability.ts run'),
+  );
+  const reconciliation = source.split('  reconciliation:\n')[1];
+  assert.match(reconciliation, /needs: \[accounting, capability\]/);
+  assert.match(
+    reconciliation,
+    /if: always\(\) && needs.accounting.outputs.allocation_allowed == 'true'/,
+  );
+  assert.match(reconciliation, /run: node scripts\/ci\/browserstack-accounting.ts reconcile/);
 });
 
-test('direct smoke CLI refuses unknown quota before any provider call', async () => {
+test('direct legacy smoke CLI refuses unreserved allocation before any provider call', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'spinel-smoke-guard-'));
   try {
     const guard = join(directory, 'network-guard.ts');

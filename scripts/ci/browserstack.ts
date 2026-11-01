@@ -11,6 +11,7 @@ export type Target = {
   device: string;
   osVersion: string;
 };
+export type RequestBounds = { timeout?: number; signal?: AbortSignal };
 type SessionResult = Target & {
   status: 'passed' | 'failed';
   tunnelReached: boolean;
@@ -79,14 +80,22 @@ export function clientFor(username: string, accessKey: string, fetcher: typeof f
       result = result.replaceAll(secret, '[redacted]');
     return result.slice(0, 500);
   };
-  async function request(url: string, method = 'GET', body?: unknown, timeout = 30_000) {
+  async function request(
+    url: string,
+    method = 'GET',
+    body?: unknown,
+    timeout = 30_000,
+    signal?: AbortSignal,
+  ) {
     let response: Response;
     try {
       response = await fetcher(url, {
         method,
         headers: { Authorization: `Basic ${encoded}`, 'Content-Type': 'application/json' },
         body: body === undefined ? undefined : JSON.stringify(body),
-        signal: AbortSignal.timeout(timeout),
+        signal: signal
+          ? AbortSignal.any([signal, AbortSignal.timeout(timeout)])
+          : AbortSignal.timeout(timeout),
         redirect: 'error',
       });
     } catch {
@@ -101,14 +110,22 @@ export function clientFor(username: string, accessKey: string, fetcher: typeof f
   }
   return {
     redact,
-    api: (path: string) => request(`https://api.browserstack.com/automate/${path}`),
-    async command(path: string, method = 'GET', body?: unknown) {
+    api: (path: string, method = 'GET', body?: unknown, bounds: RequestBounds = {}) =>
+      request(
+        `https://api.browserstack.com/automate/${path}`,
+        method,
+        body,
+        bounds.timeout ?? 30_000,
+        bounds.signal,
+      ),
+    async command(path: string, method = 'GET', body?: unknown, bounds: RequestBounds = {}) {
       const response = object(
         await request(
           `https://hub.browserstack.com/wd/hub/${path}`,
           method,
           body,
-          path === 'session' ? 120_000 : 30_000,
+          bounds.timeout ?? (path === 'session' ? 120_000 : 30_000),
+          bounds.signal,
         ),
       );
       if (!Object.hasOwn(response, 'value')) throw new Error('invalid-response-shape');
@@ -241,10 +258,9 @@ async function main() {
     status: 'failed',
   };
   try {
-    // Retained execution time does not establish the account's spendable balance.
-    // Keep the smoke implementation/test coverage, but close the direct CLI bypass
-    // until the account baseline, charging rules and a complete-matrix reservation
-    // are actually verified. The accounting workflow reports those blockers.
+    // This legacy smoke path has no durable reservation and stays closed. The
+    // separate capability CLI validates an owner-authorized estimated admission;
+    // retained session time is still not an authoritative provider balance.
     if (mode === 'smoke') requireVerifiedDeviceBudget();
     const client = clientFor(process.env.BS_USERNAME ?? '', process.env.BS_ACCESS_KEY ?? '');
     const plan = object(await client.api('plan.json'));

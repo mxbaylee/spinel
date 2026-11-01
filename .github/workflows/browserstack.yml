@@ -1,13 +1,13 @@
-name: 🧪 BrowserStack lifetime quota
+name: 🧪 BrowserStack lifetime quota and phone capability
 
 on:
   workflow_dispatch:
     inputs:
       mode:
-        description: Check quota or request the device smoke (both require verified admission)
+        description: Report estimated quota or reserve the bounded physical-phone capability spike
         type: choice
         default: quota
-        options: [quota, smoke]
+        options: [quota, capability]
   schedule:
     - cron: '17 9 1 * *'
   pull_request:
@@ -18,7 +18,7 @@ permissions:
   contents: read
 
 concurrency:
-  # All trigger types and branches spend the same lifetime allowance.
+  # Admission, execution and reconciliation share one account-wide workflow lock.
   group: browserstack-lifetime-account
   cancel-in-progress: false
 
@@ -48,7 +48,7 @@ jobs:
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
-      - name: Read usage, preserve the ledger and enforce lifetime admission (no devices or Local)
+      - name: Read usage and commit estimated admission before any device or Local
         id: accounting
         continue-on-error: true
         timeout-minutes: 3
@@ -56,8 +56,9 @@ jobs:
           BS_USERNAME: ${{ secrets.BS_USERNAME }}
           BS_ACCESS_KEY: ${{ secrets.BS_ACCESS_KEY }}
           GITHUB_TOKEN: ${{ github.token }}
-        run: node scripts/ci/browserstack-accounting.ts
-      - name: Retain allowlisted accounting and the human-readable report
+          BS_OPERATION: ${{ (github.event_name == 'pull_request' || inputs.mode == 'capability') && 'reserve' || 'quota' }}
+        run: node scripts/ci/browserstack-accounting.ts "$BS_OPERATION"
+      - name: Retain admission and assumption evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
@@ -65,20 +66,20 @@ jobs:
           path: artifacts/browserstack-admission.*
           if-no-files-found: error
           retention-days: 14
-      - name: Keep unknown or exhausted quota visibly failing
+      - name: Keep insufficient or invalid estimated admission visibly failing
         if: always()
         env:
           ACCOUNTING_OUTCOME: ${{ steps.accounting.outcome }}
         run: test "$ACCOUNTING_OUTCOME" = success
-  smoke:
-    name: BrowserStack credentials and mobile tunnel
+
+  capability:
+    name: Installed-phone capability with disposable CI HTTPS
     needs: accounting
     if: >-
       needs.accounting.result == 'success' &&
-      needs.accounting.outputs.allocation_allowed == 'true' &&
-      (github.event_name != 'workflow_dispatch' || inputs.mode == 'smoke')
+      needs.accounting.outputs.allocation_allowed == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     env:
       SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
@@ -89,18 +90,24 @@ jobs:
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
-      - name: Verify credentials and select real phones
-        timeout-minutes: 2
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: browserstack-accounting-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts
+      - name: Verify reservation and retain a zero-allocation receipt before build/setup
         env:
-          BS_USERNAME: ${{ secrets.BS_USERNAME }}
-          BS_ACCESS_KEY: ${{ secrets.BS_ACCESS_KEY }}
-        run: node scripts/ci/browserstack.ts credentials
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/ci/browserstack-capability.ts prepare
+      - name: Install the production fixture dependencies
+        run: npm ci
+      - name: Build the production application
+        run: npm run build
       - name: Configure BrowserStack
         uses: browserstack/github-actions/setup-env@1fad39ae4755588f7fc6854da6c3efba2bf5d08f
         with:
           username: ${{ secrets.BS_USERNAME }}
           access-key: ${{ secrets.BS_ACCESS_KEY }}
-      - name: Start Local tunnel
+      - name: Start private Local tunnel
         id: tunnel
         timeout-minutes: 3
         uses: browserstack/github-actions/setup-local@1fad39ae4755588f7fc6854da6c3efba2bf5d08f
@@ -109,23 +116,65 @@ jobs:
           local-identifier: random
           local-logging-level: 'false'
           local-args: --force-local --timeout 5
-      - name: Real Android Chrome, Firefox and iPhone Safari smoke
-        timeout-minutes: 12
+      - name: Observe actual installation and same-reservation offline relaunch
+        timeout-minutes: 14
         env:
           BS_USERNAME: ${{ secrets.BS_USERNAME }}
           BS_ACCESS_KEY: ${{ secrets.BS_ACCESS_KEY }}
-        run: node scripts/ci/browserstack.ts smoke
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/ci/browserstack-capability.ts run
       - name: Stop Local tunnel
         if: always() && (steps.tunnel.outcome == 'success' || steps.tunnel.outcome == 'failure' || steps.tunnel.outcome == 'cancelled')
         timeout-minutes: 2
         uses: browserstack/github-actions/setup-local@1fad39ae4755588f7fc6854da6c3efba2bf5d08f
         with:
           local-testing: stop
-      - name: Retain redacted probe results
+      - name: Retain device observations and allocation receipt
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: browserstack-infrastructure-${{ github.run_id }}-${{ github.run_attempt }}
-          path: artifacts/browserstack-*.json
-          if-no-files-found: warn
+          name: browserstack-capability-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            artifacts/browserstack-capability.json
+            artifacts/browserstack-capability/
+          if-no-files-found: error
+          retention-days: 14
+
+  reconciliation:
+    name: Reconcile every capability attempt against lifetime usage
+    needs: [accounting, capability]
+    if: always() && needs.accounting.outputs.allocation_allowed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    env:
+      SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Read receipt if the device job retained one
+        continue-on-error: true
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: browserstack-capability-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts
+      - name: Preserve actual usage and reconcile or retain the hold
+        env:
+          BS_USERNAME: ${{ secrets.BS_USERNAME }}
+          BS_ACCESS_KEY: ${{ secrets.BS_ACCESS_KEY }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/ci/browserstack-accounting.ts reconcile
+      - name: Retain post-run accounting
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: browserstack-reconciliation-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/browserstack-reconciliation.*
+          if-no-files-found: error
           retention-days: 14
