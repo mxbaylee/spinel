@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { mkdir, mkdtemp, open, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -53,6 +53,137 @@ function failure(error: unknown): string {
 }
 function requireCondition(condition: unknown, code: string): asserts condition {
   if (!condition) throw new Error(`capability-${code}`);
+}
+
+type BrowserTaskDiagnostic = {
+  operation: string;
+  transport: 'execute/sync-start-poll';
+  phase:
+    | 'started'
+    | 'fulfilled'
+    | 'rejected'
+    | 'pending-timeout'
+    | 'state-lost'
+    | 'command-failed'
+    | 'cleanup-failed';
+  elapsedMilliseconds: number;
+  failure?: string;
+};
+type SyncExecutor = (script: string, args: unknown[], timeout: number) => Promise<unknown>;
+
+/** Start once, then observe volatile page memory. Never replay a POST or bootstrap. */
+export async function observeBrowserTask(
+  executeSync: SyncExecutor,
+  body: string,
+  args: unknown[],
+  options: {
+    operation: string;
+    deadline: number;
+    diagnostic: (value: BrowserTaskDiagnostic) => Promise<void>;
+  },
+) {
+  const id = randomUUID();
+  const began = Date.now();
+  const deadline = Math.min(options.deadline, began + 10_000);
+  let diagnosedFailure = false;
+  let succeeded = false;
+  let value: unknown;
+  let operationFailed = false;
+  let operationError: unknown;
+  let cleanupFailed = false;
+  const diagnostic = (phase: BrowserTaskDiagnostic['phase'], error?: unknown) =>
+    options.diagnostic({
+      operation: options.operation,
+      transport: 'execute/sync-start-poll',
+      phase,
+      elapsedMilliseconds: Date.now() - began,
+      ...(error ? { failure: failure(error) } : {}),
+    });
+  const timeout = () => Math.max(1, deadline - Date.now());
+  try {
+    requireCondition(deadline > Date.now(), 'browser-task-pending-timeout');
+    const started = row(
+      await executeSync(
+        `
+      const [id,args]=arguments; const slot=Symbol.for('spinel.capability.observations');
+      const tasks=globalThis[slot] ??= Object.create(null);
+      if(Object.hasOwn(tasks,id)) throw new Error('duplicate observation');
+      const state=tasks[id]={phase:'pending'};
+      (async function(){ ${body} }).apply(undefined,args).then(
+        value=>{state.value=value;state.phase='fulfilled';},
+        ()=>{state.phase='rejected';});
+      return {started:true};
+    `,
+        [id, args],
+        timeout(),
+      ),
+    );
+    requireCondition(started.started === true, 'browser-task-start-unverified');
+    await diagnostic('started');
+    while (Date.now() < deadline) {
+      const state = row(
+        await executeSync(
+          `
+        const tasks=globalThis[Symbol.for('spinel.capability.observations')];
+        const state=tasks?.[arguments[0]];
+        if(!state)return {phase:'missing'};
+        return state.phase==='fulfilled' ? {phase:state.phase,value:state.value} : {phase:state.phase};
+      `,
+          [id],
+          timeout(),
+        ),
+      );
+      if (state.phase === 'fulfilled') {
+        await diagnostic('fulfilled');
+        succeeded = true;
+        value = state.value;
+        break;
+      }
+      if (state.phase === 'rejected') {
+        diagnosedFailure = true;
+        await diagnostic('rejected');
+        throw new Error('capability-browser-task-rejected');
+      }
+      if (state.phase !== 'pending') {
+        diagnosedFailure = true;
+        await diagnostic('state-lost');
+        throw new Error('capability-browser-task-state-lost');
+      }
+      await new Promise((done) =>
+        setTimeout(done, Math.max(1, Math.min(100, deadline - Date.now()))),
+      );
+    }
+    if (!succeeded) {
+      diagnosedFailure = true;
+      await diagnostic('pending-timeout');
+      throw new Error('capability-browser-task-pending-timeout');
+    }
+  } catch (error) {
+    operationFailed = true;
+    operationError = error;
+    if (!diagnosedFailure) await diagnostic('command-failed', error);
+  } finally {
+    try {
+      const cleanup = row(
+        await executeSync(
+          `
+        const slot=Symbol.for('spinel.capability.observations');const tasks=globalThis[slot];
+        if(tasks){delete tasks[arguments[0]];if(Object.keys(tasks).length===0)delete globalThis[slot];}
+        return {removed:!tasks || !Object.hasOwn(tasks,arguments[0])};
+      `,
+          [id],
+          5_000,
+        ),
+      );
+      requireCondition(cleanup.removed === true, 'browser-task-cleanup-failed');
+    } catch (error) {
+      cleanupFailed = true;
+      await diagnostic('cleanup-failed', error);
+    }
+  }
+  if (operationFailed) throw operationError;
+  if (cleanupFailed) throw new Error('capability-browser-task-cleanup-failed');
+  return value;
 }
 
 /** A downloaded manifest cannot authorize a different run or a stale durable hold. */
@@ -157,6 +288,36 @@ export function nativeControls(source: unknown): NativeControl[] {
   }
   return controls;
 }
+export const installMenuLabel =
+  /^(?:Install|Install app|Install and create shortcut|Add to Home screen|Add page to)$/i;
+// Google's documented universal menu offers Install, or Create shortcut followed by Add.
+// Prefer an exposed install control even when the shortcut node appears first in XML.
+export const installConfirmationLabels = [
+  /^Install$/i,
+  /^Create shortcut$/i,
+  /^(?:Add|Add to Home screen|Add automatically)$/i,
+];
+export function matchingNativeControl(controls: NativeControl[], patterns: RegExp | RegExp[]) {
+  for (const pattern of Array.isArray(patterns) ? patterns : [patterns]) {
+    for (const control of controls) {
+      const attribute = ['content-desc', 'label', 'name', 'text', 'resource-id'].find((key) =>
+        pattern.test(control.attributes[key] ?? ''),
+      );
+      if (attribute) return { control, attribute, label: control.attributes[attribute] };
+    }
+  }
+  return null;
+}
+export async function openNativeShare(
+  tap: (pattern: RegExp, required?: boolean) => Promise<boolean>,
+) {
+  const share = /^Share(?:…|\.\.\.)?$/i;
+  if (await tap(share, false)) return;
+  // Safari's observed compact toolbar can place Share inside the page menu.
+  // Each candidate still needs an exact, currently exposed native control.
+  await tap(/^(?:Page Menu|Menu|More|More options)$/i);
+  await tap(share);
+}
 function xpathLiteral(value: string): string {
   if (!value.includes("'")) return `'${value}'`;
   if (!value.includes('"')) return `"${value}"`;
@@ -174,8 +335,8 @@ function elementId(value: unknown): string {
 type Observation = { stage: string; value: unknown };
 export type CapabilityResult = {
   target: Target;
-  status: 'passed' | 'failed';
-  startedAt: string;
+  status: 'passed' | 'failed' | 'blocked';
+  startedAt: string | null;
   finishedAt?: string;
   stage: string;
   command: string;
@@ -188,6 +349,54 @@ export type CapabilityResult = {
   screenshots: string[];
   cleanup: { network: string; session: string; fixture: string };
 };
+/** A maintained blocker is evidence, not a successful or silently skipped lane. */
+export async function runCapabilityLane(
+  target: Target,
+  execute: () => Promise<CapabilityResult>,
+): Promise<CapabilityResult> {
+  if (target.browser !== 'firefox') return execute();
+  return {
+    target,
+    status: 'blocked',
+    startedAt: null,
+    stage: 'maintained-native-context-blocker',
+    command: 'not-run',
+    allocation: 'not-started',
+    uncertainAllocation: false,
+    failure: 'capability-firefox-native-context-blocked',
+    nativeActions: [],
+    screenshots: [],
+    cleanup: { network: 'not-allocated', session: 'not-allocated', fixture: 'not-created' },
+    observations: [
+      {
+        stage: 'maintained-blocker',
+        value: {
+          reason:
+            'The recorded real Android Firefox Automate session rejected its native-context command. This remediation does not repeat the unchanged allocation.',
+          evidence: {
+            path: 'docs/implementation/evidence/SPN-090-capability-41361564434.json',
+            sha256: '10b1a93bceb3ed863357aee3c68027c224449a58155ef5f0d8dd31d2b6682485',
+            runId: '41361564434',
+            sourceSha: '1fae4a7e0a6653c4bb9b3c8344fe4389503a3077',
+            testedSha: 'e4804654b385d99bb8f7769a64d0982adbaf0076',
+            sessionId: '6e4005be4ded0e0576b96fae55711fdd4fbaadff',
+            command: 'GET session/{sessionId}/contexts',
+            failure: 'http-400',
+          },
+          removalCondition:
+            'Establish a supported public Automate native Firefox route or choose a native-capable real Firefox runner, then replace this blocker with actual evidence.',
+        },
+      },
+    ],
+  };
+}
+export function capabilityOutcome(lanes: CapabilityResult[]): 'passed' | 'failed' | 'incomplete' {
+  if (lanes.length !== 3 || new Set(lanes.map((lane) => lane.target.browser)).size !== 3)
+    return 'incomplete';
+  if (lanes.some((lane) => lane.status === 'failed')) return 'failed';
+  if (lanes.some((lane) => lane.status === 'blocked')) return 'incomplete';
+  return 'passed';
+}
 /** Link-state alone is insufficient: both independent uncached requests must fail. */
 export function verifyTransportProbe(value: unknown, reachable: boolean) {
   const probe = row(value);
@@ -324,25 +533,36 @@ export async function runCapability(
     requireCondition(left > 0 && !signal.aborted, 'lane-deadline');
     return Math.max(1, Math.min(maximum, left));
   }
-  async function command(path: string, method = 'GET', body?: unknown) {
+  async function command(
+    path: string,
+    method = 'GET',
+    body?: unknown,
+    timeout = path === 'session' ? 45_000 : 15_000,
+  ) {
     result.command = `${method} ${path.replace(result.sessionId ?? '\0', '{sessionId}')}`;
     return client.command(path, method, body, {
-      timeout: remaining(path === 'session' ? 45_000 : 15_000),
+      timeout: remaining(timeout),
       signal,
     });
   }
   const session = (suffix: string) => `session/${result.sessionId}/${suffix}`;
-  const execute = (script: string, args: unknown[] = []) =>
-    command(session('execute/sync'), 'POST', { script, args });
-  const executeAsync = (body: string, args: unknown[] = []) =>
-    command(session('execute/async'), 'POST', {
-      script: `const done = arguments[arguments.length - 1]; (async () => { ${body} })().then(value => done({ok:true,value}), () => done({ok:false}));`,
-      args,
-    }).then((value) => {
-      const answer = row(value);
-      requireCondition(answer.ok === true, 'browser-observation-failed');
-      return answer.value;
-    });
+  const execute = (script: string, args: unknown[] = [], timeout = 15_000) =>
+    command(session('execute/sync'), 'POST', { script, args }, timeout);
+  const executeAsync = (body: string, args: unknown[] = [], operation = 'browser-observation') =>
+    target.browser === 'safari'
+      ? observeBrowserTask(execute, body, args, {
+          operation,
+          deadline,
+          diagnostic: (value) => record(`${result.stage}:async-observation`, value),
+        })
+      : command(session('execute/async'), 'POST', {
+          script: `const done = arguments[arguments.length - 1]; (async () => { ${body} })().then(value => done({ok:true,value}), () => done({ok:false}));`,
+          args,
+        }).then((value) => {
+          const answer = row(value);
+          requireCondition(answer.ok === true, 'browser-observation-failed');
+          return answer.value;
+        });
   async function poll<T>(
     read: () => Promise<T>,
     accepts: (value: T) => boolean,
@@ -391,14 +611,11 @@ export async function runCapability(
     });
     return { parsed, sourceSha256: hash(String(source)) };
   }
-  async function tap(pattern: RegExp, required = true): Promise<boolean> {
+  async function tap(pattern: RegExp | RegExp[], required = true): Promise<boolean> {
     const source = await controls();
-    for (const control of source.parsed) {
-      const attribute = ['content-desc', 'label', 'name', 'text', 'resource-id'].find((key) =>
-        pattern.test(control.attributes[key] ?? ''),
-      );
-      if (!attribute) continue;
-      const label = control.attributes[attribute];
+    const match = matchingNativeControl(source.parsed, pattern);
+    if (match) {
+      const { control, attribute, label } = match;
       const element = await command(session('element'), 'POST', {
         using: 'xpath',
         value: `//*[@${attribute}=${xpathLiteral(label)}]`,
@@ -561,9 +778,20 @@ export async function runCapability(
         (!anonymous || value.anonymousReady === true),
       'secure-worker-unavailable',
     );
+    if (target.browser === 'safari') {
+      requireCondition(
+        (await executeAsync('return await Promise.resolve(true);', [], 'promise-readiness')) ===
+          true,
+        'browser-promise-readiness-failed',
+      );
+    }
     const registration = row(
-      await executeAsync(`const registration = await navigator.serviceWorker.getRegistration('/');
-      return {scope:registration?.scope || null, active:registration?.active?.scriptURL || null, state:registration?.active?.state || null};`),
+      await executeAsync(
+        `const registration = await navigator.serviceWorker.getRegistration('/');
+      return {scope:registration?.scope || null, active:registration?.active?.scriptURL || null, state:registration?.active?.state || null};`,
+        [],
+        'worker-registration',
+      ),
     );
     requireCondition(
       registration.scope === `${fixture.origin}/` &&
@@ -628,6 +856,7 @@ export async function runCapability(
       } finally {database.close();}
     `,
         [fixture.actor.id, items.map((item) => item.id)],
+        'stored-items-read',
       ),
     );
   }
@@ -666,10 +895,14 @@ export async function runCapability(
   }
   async function transportProbe(reachable: boolean) {
     const probe = row(
-      await executeAsync(`const checks=await Promise.all(['/api/auth/session','/capability-network-probe'].map(async path=>{
+      await executeAsync(
+        `const checks=await Promise.all(['/api/auth/session','/capability-network-probe'].map(async path=>{
       const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),2500);
       try {const response=await fetch(path+'?probe='+crypto.randomUUID(),{cache:'no-store',credentials:'include',signal:controller.signal});return {path,reachable:true,status:response.status};}
-      catch{return {path,reachable:false};}finally{clearTimeout(timer);}}));return {online:navigator.onLine,checks};`),
+      catch{return {path,reachable:false};}finally{clearTimeout(timer);}}));return {online:navigator.onLine,checks};`,
+        [],
+        'transport-probe',
+      ),
     );
     await record(`${result.stage}:network`, probe);
     verifyTransportProbe(probe, reachable);
@@ -682,6 +915,7 @@ export async function runCapability(
       const response=await fetch('/sync-api/items/'+encodeURIComponent(item)+'/ticket?unitId='+encodeURIComponent(unit),{method:'POST',credentials:'include',cache:'no-store',headers:{'Content-Type':'application/json'},body:'{}'});
       if(!response.ok)throw new Error('ticket');return await response.json();`,
         [item.id, item.unitId],
+        'socket-ticket',
       ),
     );
     requireCondition(
@@ -706,6 +940,7 @@ export async function runCapability(
       let completed=false;const finish=opened=>{if(completed)return;completed=true;clearTimeout(timer);socket.close();resolve({opened});};
       const timer=setTimeout(()=>finish(false),3500);socket.onopen=()=>finish(true);socket.onerror=()=>finish(false);socket.onclose=()=>finish(false); });`,
       [ticket.url],
+      'socket-probe',
     );
     requireCondition(Date.now() < ticket.expiresAt, 'socket-ticket-expired');
     await record(`${result.stage}:authenticated-socket`, {
@@ -840,26 +1075,19 @@ export async function runCapability(
     requireCondition(Array.isArray(initialContexts), 'native-contexts-unavailable');
     await record('initial-native-contexts', initialContexts);
     await context('NATIVE_APP');
-    await tap(
-      target.browser === 'safari'
-        ? /^Share$/i
-        : /^(?:More options|Menu|Open menu|Customize and control Google Chrome)$|(?:^|:)menu_button$/i,
-    );
-    const install = /^(?:Install|Install app|Add to Home screen|Add to Home Screen|Add page to)$/i;
-    let installed = await tap(install, false);
+    if (target.browser === 'safari') await openNativeShare(tap);
+    else
+      await tap(
+        /^(?:More options|Menu|Open menu|Customize and control Google Chrome)$|(?:^|:)menu_button$/i,
+      );
+    let installed = await tap(installMenuLabel, false);
     for (let count = 0; !installed && count < 2; count++) {
       await scroll();
-      installed = await tap(install, false);
+      installed = await tap(installMenuLabel, false);
     }
     requireCondition(installed, 'native-install-control-unavailable');
     for (let count = 0; count < 2; count++) {
-      if (
-        !(await tap(
-          /^(?:Install|Add|Add to Home screen|Add to Home Screen|Add automatically)$/i,
-          false,
-        ))
-      )
-        break;
+      if (!(await tap(installConfirmationLabels, false))) break;
     }
     await screenshot('installed-native');
     stage('home-launch');
@@ -877,6 +1105,7 @@ export async function runCapability(
       if(!response.ok) throw new Error('bootstrap'); const session=await fetch('/api/auth/session',{cache:'no-store',credentials:'include'});
       if(!session.ok) throw new Error('session'); const body=await session.json();return {actor:body.user?.id || null};`,
         [fixture.loginURL],
+        'installed-authentication',
       ),
     );
     requireCondition(authenticated.actor === fixture.actor.id, 'installed-authentication-failed');
@@ -1022,6 +1251,8 @@ export async function runCapability(
 type Journal = ReservationIdentity & {
   schemaVersion: 1;
   scope: string;
+  allocationPlan: 'two-lane-chrome-safari-remediation';
+  status: 'prepared' | 'running' | 'passed' | 'failed' | 'incomplete';
   stage: string;
   reservationId: string;
   receipt: ReservationReceipt;
@@ -1037,7 +1268,9 @@ export function preparedCapabilityJournal(
     schemaVersion: 1,
     ...identity,
     scope:
-      'Bounded native installation, same-session offline relaunch and production download capability; full SPN-090 acceptance remains separate.',
+      'Two-lane Chrome/Safari capability remediation with the unchanged 900-second reservation. All three required lanes remain reported; Firefox is explicitly blocked by prior evidence. This is not full-matrix acceptance.',
+    allocationPlan: 'two-lane-chrome-safari-remediation',
+    status: 'prepared',
     stage: 'before-device-execution',
     reservationId: reservation.id,
     receipt: {
@@ -1059,6 +1292,8 @@ export function readPreparedCapabilityJournal(
   const receipt = row(journal.receipt);
   requireCondition(
     journal.schemaVersion === 1 &&
+      journal.allocationPlan === 'two-lane-chrome-safari-remediation' &&
+      journal.status === 'prepared' &&
       journal.stage === 'before-device-execution' &&
       journal.reservationId === reservation.id &&
       Array.isArray(journal.lanes) &&
@@ -1148,6 +1383,7 @@ async function main() {
         await rename(`${reportPath}.tmp`, reportPath);
       };
       journal.stage = 'device-execution';
+      journal.status = 'running';
       await persist();
       const directory = await mkdtemp(join(tmpdir(), 'spinel-browserstack-capability-'));
       try {
@@ -1159,38 +1395,54 @@ async function main() {
         );
         await mkdir('artifacts/browserstack-capability', { recursive: true });
         for (const target of targets) {
-          let fixture: BrowserstackFixture;
-          try {
-            fixture = await createBrowserstackFixture(directory);
-          } catch {
-            journal.failure = 'capability-fixture-startup-failed';
-            continue;
-          }
           const index = journal.lanes.length;
-          await runCapability(client, target, fixture, {
-            localIdentifier,
-            buildName: `SPN-090 capability ${identity.runId}-${identity.attempt}`,
-            journal: async (lane) => {
-              journal.lanes[index] = lane;
-              await persist();
-            },
-            screenshot: async (name, data) => {
-              const path = `artifacts/browserstack-capability/${name}.png`;
-              await writeFile(path, Buffer.from(data, 'base64'));
-              return path;
-            },
+          journal.lanes[index] = await runCapabilityLane(target, async () => {
+            let fixture: BrowserstackFixture;
+            try {
+              fixture = await createBrowserstackFixture(directory);
+            } catch {
+              return {
+                target,
+                status: 'failed',
+                startedAt: null,
+                stage: 'fixture-startup',
+                command: 'not-run',
+                allocation: 'not-started',
+                uncertainAllocation: false,
+                failure: 'capability-fixture-startup-failed',
+                observations: [],
+                nativeActions: [],
+                screenshots: [],
+                cleanup: {
+                  network: 'not-allocated',
+                  session: 'not-allocated',
+                  fixture: 'startup-failed',
+                },
+              };
+            }
+            return runCapability(client, target, fixture, {
+              localIdentifier,
+              buildName: `SPN-090 Chrome/Safari remediation ${identity.runId}-${identity.attempt}`,
+              journal: async (lane) => {
+                journal.lanes[index] = lane;
+                await persist();
+              },
+              screenshot: async (name, data) => {
+                const path = `artifacts/browserstack-capability/${name}.png`;
+                await writeFile(path, Buffer.from(data, 'base64'));
+                return path;
+              },
+            });
           });
+          await persist();
         }
         journal.stage = 'finished';
-        if (
-          journal.failure ||
-          journal.lanes.length !== 3 ||
-          journal.lanes.some((lane) => lane.status !== 'passed')
-        )
-          process.exitCode = 1;
+        journal.status = capabilityOutcome(journal.lanes);
+        if (journal.status !== 'passed') process.exitCode = 1;
       } catch (error) {
         journal.failure = failure(error);
         journal.stage = 'failed';
+        journal.status = 'failed';
         process.exitCode = 1;
       } finally {
         await rm(directory, { recursive: true, force: true });

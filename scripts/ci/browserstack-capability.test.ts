@@ -2,13 +2,21 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
+import { createContext, runInContext } from 'node:vm';
 import { readAdmissionPolicy, type ReservationIdentity } from './browserstack-admission.ts';
 import {
+  capabilityOutcome,
+  installConfirmationLabels,
+  installMenuLabel,
   launchedWindow,
+  matchingNativeControl,
   nativeControls,
+  observeBrowserTask,
+  openNativeShare,
   preparedCapabilityJournal,
   readPreparedCapabilityJournal,
   runCapability,
+  runCapabilityLane,
   verifyCapabilityAdmission,
   verifyLaunchedBrowser,
   verifyTransportProbe,
@@ -152,6 +160,216 @@ test('native controls are derived from visible device XML with decoded exact lab
   assert.throws(() => nativeControls({ source: 'not XML' }), /capability-native-source-invalid/);
 });
 
+test('the observed Chrome universal-install label is selected from native XML without accepting unrelated text', () => {
+  const controls = nativeControls(
+    '<hierarchy><node text="Install and create shortcut" visible="false"/><node text="New tab"/><node text="Install and create shortcut" resource-id="com.android.chrome:id/menu_item_text" enabled="true"/></hierarchy>',
+  );
+  const selected = matchingNativeControl(controls, installMenuLabel);
+  assert.equal(selected?.label, 'Install and create shortcut');
+  assert.equal(selected?.attribute, 'text');
+  assert.equal(selected?.control.attributes['resource-id'], 'com.android.chrome:id/menu_item_text');
+  assert.equal(
+    matchingNativeControl(
+      nativeControls('<node text="Do not install this app"/>'),
+      installMenuLabel,
+    ),
+    null,
+  );
+  assert.equal(
+    matchingNativeControl(
+      nativeControls('<Button text="Create shortcut"/><Button text="Install"/>'),
+      installConfirmationLabels,
+    )?.label,
+    'Install',
+  );
+  assert.equal(
+    matchingNativeControl(
+      nativeControls('<Button text="Install" enabled="false"/><Button text="Create shortcut"/>'),
+      installConfirmationLabels,
+    )?.label,
+    'Create shortcut',
+  );
+  assert.equal(
+    matchingNativeControl(
+      nativeControls('<Button text="Cancel"/><Button text="Add"/>'),
+      installConfirmationLabels,
+    )?.label,
+    'Add',
+  );
+});
+
+test('Safari reaches Share only through a visible native direct control or observed page-menu control', async () => {
+  for (const direct of [true, false]) {
+    const pages = direct
+      ? ['<Button label="Share"/>']
+      : ['<Button label="Page Menu"/>', '<Button label="Share…"/>'];
+    const clicks: string[] = [];
+    await openNativeShare(async (pattern, required = true) => {
+      const selected = matchingNativeControl(
+        nativeControls(pages[clicks.length] ?? '<empty/>'),
+        pattern,
+      );
+      if (!selected) {
+        if (required) throw new Error('missing native control');
+        return false;
+      }
+      clicks.push(selected.label);
+      return true;
+    });
+    assert.deepEqual(clicks, direct ? ['Share'] : ['Page Menu', 'Share…']);
+  }
+  let taps = 0;
+  await assert.rejects(
+    openNativeShare(async (_pattern, required = true) => {
+      if (required) throw new Error('missing native control');
+      taps++;
+      return false;
+    }),
+  );
+  assert.equal(taps, 1);
+});
+
+function pageExecutor() {
+  const context = createContext({});
+  let commands = 0;
+  const execute = async (script: string, args: unknown[], timeout: number) => {
+    assert.ok(timeout > 0 && timeout <= 10_000);
+    commands++;
+    context.__commandArgs = args;
+    const value = runInContext(`(function(){${script}}).apply(undefined,__commandArgs)`, context);
+    await Promise.resolve();
+    return structuredClone(value) as unknown;
+  };
+  const clean = () =>
+    runInContext("globalThis[Symbol.for('spinel.capability.observations')] === undefined", context);
+  return { context, execute, clean, commands: () => commands };
+}
+
+test('Safari sync observations start a one-use operation once, poll its real result and remove volatile state', async () => {
+  const page = pageExecutor();
+  let calls = 0;
+  let release: () => void = () => {};
+  const pending = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  page.context.fetch = async (url: string) => {
+    calls++;
+    assert.equal(url, 'private-one-use-url');
+    await pending;
+    return { actor: 'actor' };
+  };
+  const diagnostics: unknown[] = [];
+  const observed = observeBrowserTask(
+    page.execute,
+    'return await fetch(arguments[0]);',
+    ['private-one-use-url'],
+    {
+      operation: 'installed-authentication',
+      deadline: Date.now() + 1000,
+      diagnostic: async (value) => {
+        diagnostics.push(value);
+      },
+    },
+  );
+  setTimeout(release, 10);
+  assert.deepEqual(await observed, { actor: 'actor' });
+  assert.equal(calls, 1);
+  assert.ok(page.commands() >= 4);
+  assert.equal(page.clean(), true);
+  assert.doesNotMatch(JSON.stringify(diagnostics), /private-one-use-url/);
+  assert.deepEqual(
+    diagnostics.map((entry) => (entry as { phase: string }).phase),
+    ['started', 'fulfilled'],
+  );
+});
+
+test('Safari reports rejected, genuinely pending and lost observations separately without fabricating completion', async () => {
+  for (const scenario of ['rejected', 'pending', 'lost']) {
+    const page = pageExecutor();
+    const phases: string[] = [];
+    const execute = async (script: string, args: unknown[], timeout: number) => {
+      if (scenario === 'lost' && page.commands() === 1)
+        runInContext(
+          "delete globalThis[Symbol.for('spinel.capability.observations')]",
+          page.context,
+        );
+      return page.execute(script, args, timeout);
+    };
+    await assert.rejects(
+      observeBrowserTask(
+        execute,
+        scenario === 'rejected'
+          ? "throw new Error('private browser error');"
+          : 'return new Promise(()=>{});',
+        [],
+        {
+          operation: 'worker-registration',
+          deadline: Date.now() + (scenario === 'pending' ? 100 : 1000),
+          diagnostic: async (value) => {
+            phases.push(value.phase);
+          },
+        },
+      ),
+      {
+        message: `capability-browser-task-${scenario === 'pending' ? 'pending-timeout' : scenario === 'lost' ? 'state-lost' : 'rejected'}`,
+      },
+    );
+    assert.ok(!phases.includes('fulfilled'));
+    assert.ok(!phases.includes('command-failed'));
+    assert.equal(page.clean(), true);
+  }
+});
+
+test('an uncertain Safari start command is never replayed and remains a command failure', async () => {
+  const page = pageExecutor();
+  const phases: string[] = [];
+  const execute = async (script: string, args: unknown[], timeout: number) => {
+    const result = await page.execute(script, args, timeout);
+    if (page.commands() === 1) throw new Error('http-408');
+    return result;
+  };
+  await assert.rejects(
+    observeBrowserTask(execute, 'globalThis.started=(globalThis.started||0)+1; return true;', [], {
+      operation: 'socket-ticket',
+      deadline: Date.now() + 1000,
+      diagnostic: async (value) => {
+        phases.push(value.phase);
+      },
+    }),
+    { message: 'http-408' },
+  );
+  assert.equal(page.context.started, 1);
+  assert.deepEqual(phases, ['command-failed']);
+  assert.equal(page.clean(), true);
+});
+
+test('Safari cleanup failures cannot turn a completed observation into a pass or hide its original rejection', async () => {
+  for (const rejected of [false, true]) {
+    const page = pageExecutor();
+    const phases: string[] = [];
+    const execute = async (script: string, args: unknown[], timeout: number) => {
+      const result = await page.execute(script, args, timeout);
+      if (page.commands() === 3) throw new Error('http-500');
+      return result;
+    };
+    await assert.rejects(
+      observeBrowserTask(execute, rejected ? 'throw new Error();' : 'return true;', [], {
+        operation: 'worker-registration',
+        deadline: Date.now() + 1000,
+        diagnostic: async (value) => {
+          phases.push(value.phase);
+        },
+      }),
+      {
+        message: rejected
+          ? 'capability-browser-task-rejected'
+          : 'capability-browser-task-cleanup-failed',
+      },
+    );
+    assert.deepEqual(phases, ['started', rejected ? 'rejected' : 'fulfilled', 'cleanup-failed']);
+  }
+});
+
 test('prepare receipts certify only zero allocations and cannot reset an execution journal', () => {
   const { manifest, durable } = admission();
   const reservation = verifyCapabilityAdmission(manifest, durable, identity, now);
@@ -181,6 +399,47 @@ test('prepare receipts certify only zero allocations and cannot reset an executi
     change(value);
     assert.throws(() => readPreparedCapabilityJournal(value, identity, reservation, now));
   }
+});
+
+test('the maintained Firefox blocker creates no fixture or session and keeps a two-lane success incomplete', async () => {
+  const firefox = { ...target, browser: 'firefox' } as const;
+  let executions = 0;
+  const blocked = await runCapabilityLane(firefox, async () => {
+    executions++;
+    throw new Error('fixture and provider must not execute');
+  });
+  assert.equal(executions, 0);
+  assert.equal(blocked.status, 'blocked');
+  assert.equal(blocked.startedAt, null);
+  assert.equal(blocked.sessionId, undefined);
+  assert.equal(blocked.allocation, 'not-started');
+  assert.equal(blocked.uncertainAllocation, false);
+  assert.equal(blocked.cleanup.fixture, 'not-created');
+  const evidence = (blocked.observations[0].value as { evidence: { path: string; sha256: string } })
+    .evidence;
+  assert.equal(
+    createHash('sha256')
+      .update(readFileSync(new URL('../../' + evidence.path, import.meta.url)))
+      .digest('hex'),
+    evidence.sha256,
+  );
+  const chrome = {
+    ...blocked,
+    target,
+    status: 'passed',
+    sessionId: 'e'.repeat(40),
+    allocation: 'known',
+  } as const;
+  const safari = {
+    ...chrome,
+    target: { browser: 'safari', device: 'iPhone 18 Pro Max', osVersion: '27' },
+    sessionId: 'f'.repeat(40),
+  } as const;
+  assert.equal(capabilityOutcome([chrome, blocked, safari]), 'incomplete');
+  assert.deepEqual(
+    [chrome, blocked, safari].flatMap((lane) => (lane.sessionId ? [lane.sessionId] : [])),
+    ['e'.repeat(40), 'f'.repeat(40)],
+  );
 });
 
 test('a native launch cannot be credited to a stale ambiguous tab or another foreground browser', () => {
