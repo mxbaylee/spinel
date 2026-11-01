@@ -126,9 +126,15 @@ if (cut === 'activation' || cut === 'original-activation' || coldCut === 'cold-a
       const id = main.restoreJob?.jobId;
       if (id) {
         const job = JSON.parse(readFileSync(join(root, 'restore-jobs', id, 'state.json'), 'utf8'));
-        if (coldCut === 'cold-activation' && currentRestoreRecovery(job)?.phase === 'original-replacing')
+        if (
+          coldCut === 'cold-activation' &&
+          currentRestoreRecovery(job)?.phase === 'original-replacing'
+        )
           mark(coldCut, result.bytesWritten);
-        else if (cut && job.phase === (originalRecovery ? 'original-replacing' : 'candidate-replacing'))
+        else if (
+          cut &&
+          job.phase === (originalRecovery ? 'original-replacing' : 'candidate-replacing')
+        )
           mark(cut, result.bytesWritten);
       }
     }
@@ -151,7 +157,8 @@ const supervisor = await MaintenanceSupervisor.open({
       fileURLToPath(
         new URL(
           cut === 'private-open' || coldCut === 'cold-private-open' || offset
-            ? './restore-crash-app-fixture.ts' : '../../../server/index.ts',
+            ? './restore-crash-app-fixture.ts'
+            : '../../../server/index.ts',
           import.meta.url,
         ),
       ),

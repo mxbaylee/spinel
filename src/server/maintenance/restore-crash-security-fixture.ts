@@ -13,13 +13,15 @@ try {
   try {
     const workspace = new WorkspaceStore(new AuthStore(database), { spacesEnabled: true });
     const linked = workspace.create(process.env.SPINEL_TEST_OWNER_ID, {
-      kind: 'doc', name: 'Retained linked document', parentId: null,
+      kind: 'doc',
+      name: 'Retained linked document',
+      parentId: null,
     });
     const change = workspace.links.begin(linked.id, 'viewer');
     workspace.links.finish(linked.id, change.epoch, true);
     workspace.links.exchange(linked.id, change.token);
     await new Promise<void>((resolve, reject) =>
-      process.send!({ linkedId: linked.id }, (error) => error ? reject(error) : resolve()),
+      process.send!({ linkedId: linked.id }, (error) => (error ? reject(error) : resolve())),
     );
   } finally {
     database.close();

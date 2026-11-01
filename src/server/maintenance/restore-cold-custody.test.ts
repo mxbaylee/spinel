@@ -202,8 +202,9 @@ test.each(['changed-wal', 'missing-wal', 'new-sidecar', 'changed-manifest'])(
 );
 
 test('a cancelled cold copy preserves partial bytes and refuses an overwrite retry', async () => {
-  const f = await fixture(),
-    manifest = await captureColdRestoreCustody(f.options),
+  const f = await fixture();
+  await chmod(f.databasePath, 0o644);
+  const manifest = await captureColdRestoreCustody(f.options),
     abort = new AbortController(),
     target = join(f.raw, 'spinel.sqlite');
   f.options.signal = abort.signal;

@@ -14,14 +14,17 @@ const send = process.send.bind(process);
 process.send = ((message: unknown, ...args: unknown[]) => {
   const cold = process.env.SPINEL_TEST_COLD_CRASH_CUT === 'cold-private-open';
   const cut = cold ? 'cold-private-open' : 'private-open';
-  const marker = cold ? process.env.SPINEL_TEST_COLD_CRASH_MARKER : process.env.SPINEL_TEST_CRASH_MARKER;
+  const marker = cold
+    ? process.env.SPINEL_TEST_COLD_CRASH_MARKER
+    : process.env.SPINEL_TEST_CRASH_MARKER;
   if (
     (cold || process.env.SPINEL_TEST_CRASH_CUT === 'private-open') &&
     message &&
     typeof message === 'object' &&
     'kind' in message &&
     message.kind === 'restore-trial-ready' &&
-    (!cold || ('reference' in message && (message.reference as { role: string }).role === 'original'))
+    (!cold ||
+      ('reference' in message && (message.reference as { role: string }).role === 'original'))
   ) {
     if (!marker) throw new Error('Missing private crash marker.');
     const fd = openSync(marker, 'wx', 0o600);

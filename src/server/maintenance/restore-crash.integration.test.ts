@@ -59,7 +59,9 @@ const scenarios: {
 }[] = [
   ...cuts.map((cut) => ({ name: cut, cut })),
   ...(Object.keys(coldPhases) as (keyof typeof coldPhases)[]).map((cold) => ({
-    name: cold, cut: 'original-activation' as const, cold,
+    name: cold,
+    cut: 'original-activation' as const,
+    cold,
   })),
 ];
 const alive = (child: ChildProcess) => child.exitCode === null && child.signalCode === null;
@@ -105,15 +107,25 @@ async function retains(root: string, previous: Record<string, string>) {
   return current;
 }
 async function seedLink(databasePath: string, ownerId: string) {
-  const child = fork(fileURLToPath(new URL('./restore-crash-security-fixture.ts', import.meta.url)), [], {
-    env: { ...process.env, DATABASE_PATH: databasePath, SPINEL_TEST_OWNER_ID: ownerId },
-    execArgv: [], stdio: ['ignore', 'ignore', 'ignore', 'ipc'],
-  });
+  const child = fork(
+    fileURLToPath(new URL('./restore-crash-security-fixture.ts', import.meta.url)),
+    [],
+    {
+      env: { ...process.env, DATABASE_PATH: databasePath, SPINEL_TEST_OWNER_ID: ownerId },
+      execArgv: [],
+      stdio: ['ignore', 'ignore', 'ignore', 'ipc'],
+    },
+  );
   return new Promise<string>((resolve, reject) => {
     let linkedId: string | undefined;
     const timer = setTimeout(() => child.kill('SIGKILL'), 10_000);
     child.on('message', (value: unknown) => {
-      if (value && typeof value === 'object' && 'linkedId' in value && typeof value.linkedId === 'string')
+      if (
+        value &&
+        typeof value === 'object' &&
+        'linkedId' in value &&
+        typeof value.linkedId === 'string'
+      )
         linkedId = value.linkedId;
     });
     child.once('exit', (code) => {
@@ -143,14 +155,20 @@ async function probeCopy(directory: string, databasePath: string, includeWal: bo
   return target;
 }
 async function inspectCopy(
-  directory: string, databasePath: string, includeWal: boolean,
+  directory: string,
+  databasePath: string,
+  includeWal: boolean,
   inspect: (database: DatabaseSync) => void,
 ) {
   const location = pathToFileURL(await probeCopy(directory, databasePath, includeWal));
   location.searchParams.set('mode', 'ro');
   if (!includeWal) location.searchParams.set('immutable', '1');
   const database = new DatabaseSync(location.href);
-  try { inspect(database); } finally { database.close(); }
+  try {
+    inspect(database);
+  } finally {
+    database.close();
+  }
 }
 
 test.skipIf(process.platform !== 'linux').each(scenarios)(
@@ -319,18 +337,37 @@ test.skipIf(process.platform !== 'linux').each(scenarios)(
         expect(liveHash).not.toBe(selected.sha256);
       }
       if (recoversOriginal) {
-        const execution = before.execution!, frozen = execution.frozen!;
-        const original = join(root, `restore-${prepared.id}`, `freeze-${execution.freezeSlot}`, frozen.directory, 'frozen.sqlite');
+        const execution = before.execution!,
+          frozen = execution.frozen!;
+        const original = join(
+          root,
+          `restore-${prepared.id}`,
+          `freeze-${execution.freezeSlot}`,
+          frozen.directory,
+          'frozen.sqlite',
+        );
         const bytes = await readFile(original);
         expect(bytes.length).toBe(frozen.bytes);
         expect(createHash('sha256').update(bytes).digest('hex')).toBe(frozen.sha256);
         expect(frozen.fingerprint).toBe(execution.stop!.fingerprint);
         await inspectCopy(directory, original, false, (database) => {
           expect(restoreSnapshotFingerprint(database)).toBe(execution.stop!.fingerprint);
-          expect(database.prepare('SELECT name FROM workspace_items WHERE id=?').get(source.folderId)?.name).toBe('Current folder');
-          expect(Number(database.prepare('SELECT count(*) AS n FROM auth_sessions').get()!.n)).toBeGreaterThan(0);
-          expect(database.prepare('SELECT state FROM workspace_links WHERE item_id=?').get(linkedId!)?.state).toBe('active');
-          expect(database.prepare('SELECT 1 FROM workspace_guest_sessions WHERE item_id=?').get(linkedId!)).toBeDefined();
+          expect(
+            database.prepare('SELECT name FROM workspace_items WHERE id=?').get(source.folderId)
+              ?.name,
+          ).toBe('Current folder');
+          expect(
+            Number(database.prepare('SELECT count(*) AS n FROM auth_sessions').get()!.n),
+          ).toBeGreaterThan(0);
+          expect(
+            database.prepare('SELECT state FROM workspace_links WHERE item_id=?').get(linkedId!)
+              ?.state,
+          ).toBe('active');
+          expect(
+            database
+              .prepare('SELECT 1 FROM workspace_guest_sessions WHERE item_id=?')
+              .get(linkedId!),
+          ).toBeDefined();
         });
         expect(await readFile(original)).toEqual(bytes);
       }
@@ -543,23 +580,59 @@ test.skipIf(process.platform !== 'linux').each(scenarios)(
         }
       }
       let committed: RestoreJobRecord | undefined;
-      const recover = () => maintenanceControl(root, { action: 'recover-original', operationId: prepared.id });
+      const recover = () =>
+        maintenanceControl(root, { action: 'recover-original', operationId: prepared.id });
       if (recoversOriginal) {
         if (cold) {
+          let earlyFailure: { error?: unknown } | undefined;
           const interrupted = recover().then(
-            (value) => ({ value, error: undefined }),
-            (error: unknown) => ({ value: undefined, error }),
+            () => {
+              earlyFailure = {};
+            },
+            (error: unknown) => {
+              earlyFailure = { error };
+            },
           );
-          await expect.poll(() => existsSync(coldMarker), { timeout: 100_000 }).toBe(true);
+          await expect
+            .poll(() => existsSync(coldMarker) || earlyFailure !== undefined, { timeout: 100_000 })
+            .toBe(true);
+          if (!existsSync(coldMarker))
+            throw (
+              earlyFailure?.error ??
+              new Error('Cold recovery completed without reaching its crash cut.')
+            );
           const coldReached = JSON.parse(await readFile(coldMarker, 'utf8'));
           expect(coldReached.cut).toBe(cold);
-          const attempted = record(), attempt = currentRestoreRecovery(attempted)!;
+          const attempted = record(),
+            attempt = currentRestoreRecovery(attempted)!;
           expect(attempt.phase).toBe(coldPhases[cold]);
           expect(attempted.intent).toEqual(before.intent);
           expect(attempted.execution).toEqual(before.execution);
           expect(attempted.phase).toBe(before.phase);
           expect(attempt.grantedAt).toBeGreaterThan(before.intent.authority.expiresAt);
           expect(attempt.deadline - attempt.grantedAt).toBe(90_000);
+          if (attempt.image) {
+            const preparedPath = join(
+              root,
+              `restore-${prepared.id}`,
+              `cold-${attempt.slot}`,
+              'work',
+              attempt.image.directory,
+              'rollback.sqlite',
+            );
+            const bytes = await readFile(preparedPath);
+            expect(bytes.length).toBe(attempt.image.bytes);
+            expect(createHash('sha256').update(bytes).digest('hex')).toBe(attempt.image.sha256);
+            if (cold === 'cold-prepared')
+              await inspectCopy(directory, preparedPath, false, (database) => {
+                expect(restoreSnapshotFingerprint(database)).toBe(attempt.image!.fingerprint);
+                expect(
+                  database
+                    .prepare('SELECT name FROM workspace_items WHERE id=?')
+                    .get(source.folderId)?.name,
+                ).toBe('Current folder');
+              });
+          }
           const coldMain = JSON.parse(await readFile(join(root, 'journal.json'), 'utf8'));
           if (cold === 'cold-admission') {
             expect(coldMain.operation.actorId).toBe(before.intent.authority.actorId);
@@ -572,7 +645,11 @@ test.skipIf(process.platform !== 'linux').each(scenarios)(
           if (cold === 'cold-activation') {
             expect(coldReached.bytesWritten).toBe(64 * 1024);
             expect(attempt.image!.bytes).toBeGreaterThan(coldReached.bytesWritten);
-            expect(createHash('sha256').update(await readFile(databasePath)).digest('hex')).not.toBe(attempt.image!.sha256);
+            expect(
+              createHash('sha256')
+                .update(await readFile(databasePath))
+                .digest('hex'),
+            ).not.toBe(attempt.image!.sha256);
           }
           if (cold === 'cold-private-open') {
             expect(coldReached.pid).toBe(attempt.trial!.child.pid);
@@ -627,10 +704,17 @@ test.skipIf(process.platform !== 'linux').each(scenarios)(
         assertWorkspaceHandlesClosed(databasePath);
         await inspectCopy(directory, databasePath, true, (database) => {
           expect(restoreSnapshotFingerprint(database)).toBe(recoveredImage.fingerprint);
-          expect(database.prepare('SELECT name FROM workspace_items WHERE id=?').get(source.folderId)?.name).toBe('Current folder');
+          expect(
+            database.prepare('SELECT name FROM workspace_items WHERE id=?').get(source.folderId)
+              ?.name,
+          ).toBe('Current folder');
           expect(database.prepare('SELECT 1 FROM auth_sessions').get()).toBeUndefined();
           expect(database.prepare('SELECT 1 FROM workspace_guest_sessions').get()).toBeUndefined();
-          expect(database.prepare('SELECT state,token_hash,preview_hash FROM workspace_links WHERE item_id=?').get(linkedId!)).toEqual({ state: 'off', token_hash: null, preview_hash: null });
+          expect(
+            database
+              .prepare('SELECT state,token_hash,preview_hash FROM workspace_links WHERE item_id=?')
+              .get(linkedId!),
+          ).toEqual({ state: 'off', token_hash: null, preview_hash: null });
         });
         expect((await recover()).status.phase).toBe('running');
         expect(record()).toEqual(committed);
@@ -638,17 +722,29 @@ test.skipIf(process.platform !== 'linux').each(scenarios)(
         expect((await client.request('/api/auth/session')).status).toBe(401);
         expect((await ownerClient!.request('/api/auth/session')).status).toBe(401);
         await client.authenticate();
-        const status = await client.json<{ outcome: { id: string; state: string }; pending: boolean }>(await client.request('/api/admin/restores'));
+        const status = await client.json<{
+          outcome: { id: string; state: string };
+          pending: boolean;
+        }>(await client.request('/api/admin/restores'));
         expect(status.outcome.id).toBe(prepared.id);
         expect(status.outcome.state).toBe('original-recovered');
         expect(status.pending).toBe(false);
         await ownerClient!.authenticate();
-        const session = await ownerClient!.json<{ restore: { outcome: string } }>(await ownerClient!.request('/api/auth/session'));
+        const session = await ownerClient!.json<{ restore: { outcome: string } }>(
+          await ownerClient!.request('/api/auth/session'),
+        );
         expect(session.restore.outcome).toBe('recovered');
-        const folder = await ownerClient!.json<{ item: { name: string } }>(await ownerClient!.request(`/api/items/${source.folderId}`));
+        const folder = await ownerClient!.json<{ item: { name: string } }>(
+          await ownerClient!.request(`/api/items/${source.folderId}`),
+        );
         expect(folder.item.name).toBe('Current folder');
         const acknowledged = await ownerClient!.json<{ item: { id: string; name: string } }>(
-          await ownerClient!.request('/api/items', { kind: 'folder', name: 'Acknowledged after restore', parentId: null }), 201,
+          await ownerClient!.request('/api/items', {
+            kind: 'folder',
+            name: 'Acknowledged after restore',
+            parentId: null,
+          }),
+          201,
         );
         expect(acknowledged.item.name).toBe('Acknowledged after restore');
         acknowledgedId = acknowledged.item.id;
