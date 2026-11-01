@@ -6,12 +6,15 @@ import { join } from 'node:path';
 import { promisify } from 'node:util';
 import type { MaintenanceAdminStatus } from '../src/shared/maintenance.ts';
 import type { ColdMaintenanceCommand } from '../src/server/maintenance/supervisor.ts';
+import { filesystemIdentity } from '../src/server/backup/filesystem.ts';
 import { projectRoot } from './app-process.ts';
 
 const run = promisify(execFile);
 
-/** The worker never opens SQLite: even a closed libsql handle can retain native FDs. */
-export async function startMaintenanceFixture() {
+/** The worker never opens SQLite: even a closed libsql handle can retain native FDs.
+ * `catalog` configures a private filesystem destination (Linux only) whose saved
+ * backups the restore UI lists; nothing schedules writes into it. */
+export async function startMaintenanceFixture({ catalog = false } = {}) {
   const directory = await realpath(await mkdtemp(join(tmpdir(), 'spinel-maintenance-e2e-')));
   const recoveryRoot = join(directory, 'recovery');
   const workspace = join(directory, 'workspace');
@@ -27,12 +30,17 @@ export async function startMaintenanceFixture() {
   await writeFile(runtimeEnvironmentFile, `APP_ORIGIN=${origin}\nMAINTENANCE_FIXTURE=1\n`, {
     mode: 0o600,
   });
+  const prefix = 'maintenance-fixture';
+  const catalogRoot = join(directory, 'backups');
+  if (catalog) await mkdir(join(catalogRoot, prefix), { recursive: true, mode: 0o700 });
   await writeFile(
     backupConfigPath,
     JSON.stringify({
       version: 1,
-      type: 'manual',
-      prefix: 'maintenance-fixture',
+      ...(catalog
+        ? { type: 'filesystem', ...(await filesystemIdentity(catalogRoot)) }
+        : { type: 'manual' }),
+      prefix,
       dataset: 'workspace',
       keyId: 'maintenance-recovery',
       keyFile,
@@ -170,7 +178,16 @@ export async function startMaintenanceFixture() {
       throw new Error('The application did not start with edits paused.');
     const running = await control({ action: 'resume', operationId });
     if (running.phase !== 'running') throw new Error('The verified application did not resume.');
-    return { origin, publicOrigin, setupLink, running, control, close };
+    return {
+      origin,
+      publicOrigin,
+      setupLink,
+      running,
+      control,
+      close,
+      keyFile,
+      catalogDirectory: catalog ? join(catalogRoot, prefix) : undefined,
+    };
   } catch (error) {
     await close();
     throw error;

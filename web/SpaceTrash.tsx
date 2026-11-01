@@ -38,7 +38,15 @@ export function SpaceTrash({
   const now = Date.now();
   return (
     <section className="space-trash" aria-label="Deleted Space contents">
-      <p>Pages, Sheets and folders can be restored for 30 days. Their contents stay together.</p>
+      <p>
+        Pages, Sheets and folders can normally be restored for 30 days. Their contents stay
+        together.
+      </p>
+      {listing?.items.some((item) => item.heldAfterRecovery) && (
+        <p>
+          Items held after workspace recovery stay until you restore or permanently delete them.
+        </p>
+      )}
       {disabled && <p role="status">Reconnect to restore or permanently delete Space contents.</p>}
       {notice && (
         <p className="space-notice" role="status">
@@ -79,16 +87,22 @@ export function SpaceTrash({
                 </span>
                 <span>
                   Deleted {new Date(item.trashedAt).toLocaleString()} ·{' '}
-                  {item.expiresAt <= now ? 'Recovery ended' : 'Recover until'}{' '}
-                  {new Date(item.expiresAt).toLocaleString()}
+                  {item.heldAfterRecovery ? (
+                    'Held after workspace recovery'
+                  ) : (
+                    <>
+                      {item.expiresAt <= now ? 'Recovery ended' : 'Recover until'}{' '}
+                      {new Date(item.expiresAt).toLocaleString()}
+                    </>
+                  )}
                 </span>
-                {!item.originalLocation && item.expiresAt > now && (
+                {!item.originalLocation && (item.heldAfterRecovery || item.expiresAt > now) && (
                   <span>Restores to {spaceName} because its original location is unavailable.</span>
                 )}
               </div>
               <div className="space-trash-actions">
                 <Button
-                  disabled={disabled || busy || item.expiresAt <= now}
+                  disabled={disabled || busy || (!item.heldAfterRecovery && item.expiresAt <= now)}
                   aria-label={`Restore ${item.name}`}
                   onClick={() => onRestore(item)}
                 >

@@ -68,6 +68,7 @@ export interface SpaceProps {
   onExit(): void;
   onConnectionState?(state: ConnectionState | null): void;
   renderEditor(props: SpaceEditorProps): ReactNode;
+  banner?: ReactNode;
 }
 
 type OpenPage = { spaceId: string; item: SpaceNode; access: ItemAccess };
@@ -81,6 +82,7 @@ export function Space({
   onExit,
   onConnectionState,
   renderEditor,
+  banner,
 }: SpaceProps) {
   const [rootAction, setRootAction] = useState<SpaceRootActionMode | null>(null);
   const rootActionTrigger = useRef<HTMLButtonElement | null>(null);
@@ -735,6 +737,7 @@ export function Space({
       onProfile={profile}
       navigation={navigationView}
       navigationButton={pagesButton}
+      banner={banner}
     >
       {appearanceItem && (
         <ConnectedAppearanceDialog

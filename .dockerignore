@@ -3,6 +3,7 @@ node_modules
 dist
 data
 test-results
+storybook-static
 playwright-report
 .env
 .env.*

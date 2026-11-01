@@ -173,6 +173,16 @@ restore verification shows its own last success, current failure and key identif
 isolated check and its limits. [SPN-082](implementation/SPN-082.md) records the
 layout and asynchronous lifetime decisions without changing authorization.
 
+**Restore workspace** prepares a selected saved backup or a complete encrypted
+upload, shows provisional source/target/access consequences, and requires fresh
+Operator proof before supervised activation. No document content is displayed.
+After service returns, a fresh login can inspect the durable historical outcome;
+a reachable server or accepted confirmation is not proof of successful restore.
+Unknown outcomes block another preparation, and expired confirmation cannot be
+renewed with a new passkey check. Follow the
+[Admin restore guide](backups.md#restore-through-admin) for source/key requirements,
+cancellation, exact-intent retries and independent host recovery.
+
 ## API and storage
 
 - `GET /api/auth/admin/users` returns account/passkey metadata, never

@@ -23,6 +23,8 @@ import { verifyTransitionFixture } from '../../../scripts/sync-transition/verify
 import { digest } from '../backup/archive.ts';
 import { AuthStore } from '../auth/store.ts';
 import { WorkspaceStore } from '../workspace/store.ts';
+import { holdRestoredTrash } from '../workspace/recovery-holds.ts';
+import { restoreFenceSchema } from '../collaboration/restore-fences.ts';
 import { SQLiteSyncStorage } from './store.ts';
 import {
   assertSyncTransitionReady,
@@ -172,6 +174,34 @@ test('all retained metadata and public snapshots survive a source-copy conversio
     expect(messages).not.toContain(secret);
   for (const [event] of progress.mock.calls)
     expect(Object.keys(event).sort()).toEqual(['completed', 'event', 'total']);
+});
+
+test('transition retains populated workspace recovery holds and permanent retry fences', async () => {
+  const f = fixture();
+  holdRestoredTrash(f.data.db);
+  f.data.db.exec(restoreFenceSchema);
+  f.data.db.prepare('INSERT INTO spinel_restore_fences VALUES(?,?)').run('identity', randomUUID());
+  f.data.db.prepare('INSERT INTO spinel_restore_fences VALUES(?,?)').run('request', randomUUID());
+  f.data.db.exec('UPDATE spinel_restore_revision SET revision=500');
+  const fences = f.data.db.prepare('SELECT * FROM spinel_restore_fences ORDER BY kind,id').all();
+  const expected = f.data.db.prepare('SELECT * FROM workspace_recovery_holds').all();
+  expect(expected.length).toBeGreaterThan(0);
+  await exportSyncTransition({ source: f.source, directory: f.bundle, legacy: f.legacy });
+  const result = await importSyncTransition({ directory: f.bundle, destination: f.destination });
+  const db = new DatabaseSync(result.path);
+  try {
+    expect(db.prepare('SELECT * FROM workspace_recovery_holds').all()).toEqual(expected);
+    expect(db.prepare('SELECT revision FROM spinel_restore_revision').get()!.revision).toBe(500);
+    expect(db.prepare('SELECT * FROM spinel_restore_fences ORDER BY kind,id').all()).toEqual(
+      fences,
+    );
+  } finally {
+    db.close();
+  }
+  expect(f.data.db.prepare('SELECT * FROM workspace_recovery_holds').all()).toEqual(expected);
+  expect(f.data.db.prepare('SELECT * FROM spinel_restore_fences ORDER BY kind,id').all()).toEqual(
+    fences,
+  );
 });
 
 test('same-bundle refusal observes newer committed WAL metadata and preserves every native row and durable byte', async () => {

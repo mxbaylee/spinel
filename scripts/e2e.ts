@@ -21,6 +21,7 @@ for (const project of [
   'sync-soak-sheet',
   'sync-soak-doc',
   'offline-upgrade',
+  'supervised-restore',
 ]) {
   const result = spawnSync(
     process.execPath,
