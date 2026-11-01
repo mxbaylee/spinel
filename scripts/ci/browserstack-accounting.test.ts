@@ -6,7 +6,8 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
 import { createBudgetReport, type QuotaEvidence } from './browserstack-budget.ts';
-import { reserveCapability } from './browserstack-admission.ts';
+import { reconcileReservation, reserveCapability } from './browserstack-admission.ts';
+import { retainedSessionIds } from './browserstack-quota.ts';
 
 test('quota CLI records the owner estimate and immutable persistence without allocating', async () => {
   await exercise('new', 'quota');
@@ -22,6 +23,16 @@ test('malformed v1/v2 ledgers and literal null cannot reset history or reservati
   for (const scenario of ['invalid', 'literal-null', 'primitive', 'invalid-state'] as const)
     await exercise(scenario, 'reserve');
 });
+test('quota reuses only prior durable expired history and preserves failed detail reads', async () => {
+  for (const scenario of ['expired', 'expired-seed', 'expired-first-seen', 'expired-auth'] as const)
+    await exercise(scenario, 'quota');
+});
+test('quota and reserve recover retained certain receipts without a new-attempt receipt artifact', async () => {
+  await exercise('held-certain', 'quota');
+  await exercise('held-certain', 'reserve');
+  for (const scenario of ['held-uncertain', 'held-pending', 'held-stale'] as const)
+    await exercise(scenario, 'quota');
+});
 
 type Scenario =
   | 'new'
@@ -31,7 +42,15 @@ type Scenario =
   | 'invalid'
   | 'literal-null'
   | 'primitive'
-  | 'invalid-state';
+  | 'invalid-state'
+  | 'expired'
+  | 'expired-seed'
+  | 'expired-first-seen'
+  | 'expired-auth'
+  | 'held-certain'
+  | 'held-uncertain'
+  | 'held-pending'
+  | 'held-stale';
 async function exercise(scenario: Scenario, operation: 'quota' | 'reserve' | 'reconcile') {
   const directory = await mkdtemp(join(tmpdir(), 'spinel-accounting-'));
   try {
@@ -39,6 +58,17 @@ async function exercise(scenario: Scenario, operation: 'quota' | 'reserve' | 're
       new URL('../../docs/implementation/SPN-090-browserstack-history.json', import.meta.url),
     );
     const fixture = JSON.parse(await readFile(fixturePath, 'utf8')) as QuotaEvidence;
+    const isExpired = scenario.startsWith('expired');
+    const isHeld = scenario.startsWith('held');
+    const canPersist = ![
+      'write-denied',
+      'invalid',
+      'literal-null',
+      'primitive',
+      'invalid-state',
+    ].includes(scenario);
+    const successful =
+      canPersist && !['expired-first-seen', 'expired-auth', 'held-pending'].includes(scenario);
     const policy = JSON.parse(
       await readFile(
         new URL('../../docs/implementation/SPN-090-budget-assumptions.json', import.meta.url),
@@ -52,6 +82,7 @@ async function exercise(scenario: Scenario, operation: 'quota' | 'reserve' | 're
       run: 'https://github.com/mxbaylee/spinel/actions/runs/123456',
     };
     const observed = createBudgetReport({ ...source, evidence: fixture, previousLedger: null });
+    assert.ok(observed.ledger);
     const reserved = reserveCapability({
       source,
       evidence: fixture,
@@ -62,8 +93,78 @@ async function exercise(scenario: Scenario, operation: 'quota' | 'reserve' | 're
       attempt: '1',
     });
     assert.equal(reserved.created, true);
+    let ledger = observed.ledger;
+    let state = reserved.state;
+    const current = structuredClone(fixture);
+    const newId = 'd'.repeat(40);
+    const allocated = structuredClone(fixture);
+    allocated.history.sessions.push({
+      sessionId: newId,
+      buildIds: [allocated.history.builds[0].buildId],
+      conflict: false,
+      observations: [
+        {
+          source: 'build-list',
+          evidence: {
+            outcome: 'available',
+            data: {
+              durationSeconds: 19,
+              providerStatus: 'failed',
+              executionStatus: 'error',
+              createdAt: new Date(Date.now() - 55_000).toISOString(),
+            },
+          },
+        },
+      ],
+    });
+    allocated.history.builds[0].sessionIds.push(newId);
+    if (isExpired) {
+      if (scenario === 'expired-first-seen')
+        ledger.sessions = ledger.sessions.filter(
+          (entry) => entry.sessionId !== retainedSessionIds[0],
+        );
+      for (const build of current.history.builds)
+        build.sessionIds = build.sessionIds.filter(
+          (id) =>
+            !(retainedSessionIds as readonly string[]).includes(id) ||
+            (scenario === 'expired-first-seen' && id === retainedSessionIds[0]),
+        );
+    }
+    if (isHeld) {
+      if (scenario === 'held-stale') {
+        const earlier = createBudgetReport({
+          ...source,
+          observedAt: new Date(Date.now() - 40_000).toISOString(),
+          evidence: allocated,
+          previousLedger: ledger,
+        });
+        assert.ok(earlier.ledger);
+        ledger = earlier.ledger;
+      } else current.history = allocated.history;
+      if (scenario !== 'held-pending') {
+        state = reconcileReservation({
+          source: { ...source, observedAt: new Date(Date.now() - 20_000).toISOString() },
+          ledger,
+          evidence: fixture,
+          policy,
+          state,
+          receipt: {
+            runId: '123456',
+            attempt: '1',
+            sourceSha: source.sourceSha,
+            testedSha: source.testedSha,
+            finishedAt: new Date(Date.now() - 30_000).toISOString(),
+            sessionIds: [newId],
+            uncertainAllocation: scenario === 'held-uncertain',
+          },
+        }).state;
+        assert.equal(state.reservations[0].status, 'held');
+      }
+    }
+    const currentFixturePath = join(directory, 'current.json');
+    await writeFile(currentFixturePath, JSON.stringify(current));
     const initial =
-      scenario === 'new'
+      scenario === 'new' || scenario === 'expired-seed'
         ? ''
         : scenario === 'literal-null'
           ? 'null'
@@ -79,14 +180,14 @@ async function exercise(scenario: Scenario, operation: 'quota' | 'reserve' | 're
                         admissionState: null,
                         latest: {},
                       }
-                    : scenario === 'reconcile'
+                    : scenario === 'reconcile' || isHeld
                       ? {
                           schemaVersion: 2,
-                          ledger: observed.ledger,
-                          admissionState: reserved.state,
+                          ledger,
+                          admissionState: state,
                           latest: {},
                         }
-                      : { schemaVersion: 1, ledger: observed.ledger, latest: {} },
+                      : { schemaVersion: 1, ledger, latest: {} },
               );
     if (operation === 'reconcile') {
       const { mkdir } = await import('node:fs/promises');
@@ -111,7 +212,7 @@ async function exercise(scenario: Scenario, operation: 'quota' | 'reserve' | 're
       hook,
       String.raw`
 import { readFileSync, writeFileSync } from 'node:fs';
-const fixture = JSON.parse(readFileSync(${JSON.stringify(fixturePath)}, 'utf8'));
+const fixture = JSON.parse(readFileSync(${JSON.stringify(currentFixturePath)}, 'utf8'));
 const calls = [];
 const hash = 'a'.repeat(40);
 let stored = ${JSON.stringify(initial)};
@@ -134,7 +235,11 @@ globalThis.fetch = async (url, init) => {
     const build = path.match(/builds\/([a-f0-9]{40})\/sessions.json$/);
     if (build) return Response.json(fixture.history.builds.find(b => b.buildId === build[1]).sessionIds.map(raw));
     const detail = path.match(/sessions\/([a-f0-9]{40}).json$/);
-    if (detail) return Response.json(raw(detail[1]));
+    if (detail) {
+      if (${isExpired} && ${JSON.stringify(retainedSessionIds)}.includes(detail[1]))
+        return new Response('', { status: ${scenario === 'expired-auth' ? 403 : scenario === 'expired-seed' ? 410 : 404} });
+      return Response.json(raw(detail[1]));
+    }
     throw new Error('unknown provider endpoint');
   }
   if (parsed.host !== 'api.github.com' || !parsed.pathname.startsWith('/repos/mxbaylee/spinel/')) throw new Error('unexpected host');
@@ -142,7 +247,7 @@ globalThis.fetch = async (url, init) => {
   if (path === 'git/ref/heads/ci/browserstack-accounting') return stored ? Response.json({ object: { sha: hash } }) : new Response('', { status: 404 });
   if (path === 'contents/ledger.json' && method === 'GET') return Response.json({ type: 'file', path: 'ledger.json', encoding: 'base64', sha: hash, size: Buffer.byteLength(stored), content: Buffer.from(stored).toString('base64') });
   if (${JSON.stringify(scenario)} === 'write-denied') return new Response('unit-github-token', {status: 403});
-  if (!['new','valid','reconcile'].includes(${JSON.stringify(scenario)})) throw new Error('invalid ledger must not be overwritten');
+  if (!${canPersist}) throw new Error('invalid ledger must not be overwritten');
   const body = JSON.parse(init.body);
   if (path === 'contents/ledger.json' && method === 'PUT') {
     if (body.sha !== hash || body.branch !== 'ci/browserstack-accounting') throw new Error('missing conflict check');
@@ -186,13 +291,12 @@ globalThis.fetch = async (url, init) => {
           GITHUB_SHA: source.testedSha,
           GITHUB_REPOSITORY: 'mxbaylee/spinel',
           GITHUB_RUN_ID: '123456',
-          GITHUB_RUN_ATTEMPT: '1',
+          GITHUB_RUN_ATTEMPT: isHeld ? '2' : '1',
           GITHUB_OUTPUT: join(directory, 'output'),
           GITHUB_STEP_SUMMARY: join(directory, 'summary.md'),
         },
       },
     );
-    const successful = ['new', 'valid', 'reconcile'].includes(scenario);
     assert.equal(child.status, successful ? 0 : 1, child.stderr + child.stdout);
     assert.equal(child.stderr, '', child.stdout);
     const basename =
@@ -205,7 +309,7 @@ globalThis.fetch = async (url, init) => {
       path: string;
       method: string;
     }[];
-    const allocationAllowed = scenario === 'valid';
+    const allocationAllowed = successful && operation === 'reserve';
     assert.equal(report.allocationAllowed, allocationAllowed);
     assert.equal(report.remainingMinutes, null);
     assert.equal(report.providerVerified, false);
@@ -215,6 +319,11 @@ globalThis.fetch = async (url, init) => {
     );
     assert.match(await readFile(join(directory, 'summary.md'), 'utf8'), /60 lifetime minutes/);
     assert.ok(calls.every((call) => call.host !== 'api.browserstack.com' || call.method === 'GET'));
+    assert.equal(
+      calls[0].host,
+      'api.github.com',
+      'durable history is loaded before current collection',
+    );
     assert.ok(
       calls.every((call) => ['api.browserstack.com', 'api.github.com'].includes(call.host)),
     );
@@ -222,17 +331,21 @@ globalThis.fetch = async (url, init) => {
       JSON.stringify(report) + child.stdout + child.stderr,
       /unit-provider-user|unit-provider-key|unit-github-token/,
     );
-    if (successful) {
-      assert.equal(report.measuredTerminalSessionSeconds, 241);
-      assert.equal(report.measuredTerminalSessions, 15);
-      assert.equal(report.estimate.estimatedRemainingSeconds, 3359);
+    if (canPersist) {
+      assert.equal(report.measuredTerminalSessionSeconds, isHeld ? 260 : 241);
+      assert.equal(report.measuredTerminalSessions, isHeld ? 16 : 15);
+      assert.equal(
+        report.estimate.estimatedRemainingSeconds,
+        ['expired-first-seen', 'expired-auth'].includes(scenario) ? null : isHeld ? 3340 : 3359,
+      );
       assert.equal(report.persistence.status, 'verified');
       const stored = JSON.parse(await readFile(join(directory, 'stored.json'), 'utf8'));
       assert.equal(stored.schemaVersion, 2);
-      assert.equal(stored.ledger.sessions.length, 15);
+      assert.equal(stored.ledger.sessions.length, isHeld ? 16 : 15);
       assert.equal(stored.latest.evidence.history.builds.length, 5);
       assert.equal(stored.latest.report.allocationAllowed, false);
-      if (operation === 'reserve') {
+      if (!successful) assert.equal(report.status, 'blocked');
+      else if (operation === 'reserve') {
         assert.equal(report.status, 'reserved');
         assert.equal(report.reservation.seconds, 900);
         assert.deepEqual(report.admissionState, stored.admissionState);
@@ -242,6 +355,43 @@ globalThis.fetch = async (url, init) => {
         assert.equal(stored.admissionState.reservations[0].status, 'reconciled');
         assert.equal(report.estimate.outstandingHoldSeconds, 0);
       } else assert.equal(report.status, 'estimated');
+      if (isExpired) {
+        assert.equal(stored.latest.evidence.status, 'failed');
+        assert.ok(stored.latest.report.blockingReasons.includes('current-collection-incomplete'));
+        assert.equal(
+          stored.ledger.sessions.filter(
+            (entry: { readFailures: unknown[] }) => entry.readFailures.length,
+          ).length,
+          6,
+        );
+        assert.equal(stored.latest.estimate.reusedFinalizedHistory.length, successful ? 6 : 0);
+        if (scenario === 'expired-first-seen')
+          assert.ok(
+            stored.latest.evidence.history.sessions
+              .find((entry: { sessionId: string }) => entry.sessionId === retainedSessionIds[0])
+              .observations.some((entry: { source: string }) => entry.source === 'build-list'),
+          );
+      }
+      if (isHeld) {
+        const original = stored.admissionState.reservations[0];
+        assert.equal(original.attempt, '1');
+        assert.equal(original.id, reserved.reservation!.id);
+        if (scenario === 'held-certain') {
+          assert.equal(original.status, 'reconciled');
+          assert.equal(original.finishedAt, state.reservations[0].finishedAt);
+          assert.deepEqual(original.sessionIds, [newId]);
+          assert.deepEqual(report.recoveredReservationIds, [original.id]);
+          assert.equal(report.estimate.outstandingHoldSeconds, operation === 'reserve' ? 900 : 0);
+          if (operation === 'reserve') assert.equal(report.reservation.attempt, '2');
+        } else {
+          assert.equal(original.status, scenario === 'held-pending' ? 'reserved' : 'held');
+          assert.equal(
+            report.estimate.outstandingHoldSeconds,
+            scenario === 'held-pending' ? 900 : 881,
+          );
+          assert.deepEqual(report.recoveredReservationIds, []);
+        }
+      }
     } else {
       assert.equal(report.status, 'blocked');
       assert.equal(report.persistence.status, 'failed');

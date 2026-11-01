@@ -6,10 +6,12 @@ import {
   type BudgetSource,
   type QuotaEvidence,
 } from './browserstack-budget.ts';
+import { retainedSessionIds } from './browserstack-quota.ts';
 import {
   estimateBudget,
   readAdmissionPolicy,
   readAdmissionState,
+  reconcileHeldReservations,
   reconcileReservation,
   reservationForRun,
   reserveCapability,
@@ -42,6 +44,22 @@ function evidence(): QuotaEvidence {
       'utf8',
     ),
   ) as QuotaEvidence;
+}
+function expiredHistory(reason = 'http-404') {
+  const current = evidence();
+  current.status = 'failed';
+  const expired = new Set<string>(retainedSessionIds);
+  for (const entry of current.sessions) entry.evidence = { outcome: 'unavailable', reason };
+  for (const entry of current.history.sessions) {
+    if (!expired.has(entry.sessionId)) continue;
+    entry.buildIds = [];
+    entry.observations = [
+      { source: 'retained-smoke', evidence: { outcome: 'unavailable', reason } },
+    ];
+  }
+  for (const build of current.history.builds)
+    build.sessionIds = build.sessionIds.filter((id) => !expired.has(id));
+  return current;
 }
 function input(current = evidence(), state: AdmissionState | null = null, stamp = source) {
   const ledger = createBudgetReport({ ...stamp, previousLedger: null, evidence: current }).ledger;
@@ -111,6 +129,211 @@ test('owner-authorized estimate uses the retained 241 seconds without relabeling
   assert.ok(
     report.assumptions.some((value) => value.includes('not an authoritative provider balance')),
   );
+});
+
+test('expired retained details reuse only previously finalized durable measurements while preserving raw failures', () => {
+  const previous = input();
+  const current = expiredHistory();
+  const raw = createBudgetReport({
+    ...postSource,
+    previousLedger: previous.ledger,
+    evidence: current,
+  });
+  assert.ok(raw.report.blockingReasons.includes('current-collection-incomplete'));
+  assert.equal(raw.ledger?.sessions.filter((entry) => entry.readFailures.length).length, 6);
+  const report = estimateBudget({ ...previous, evidence: current, source: postSource });
+  assert.equal(report.estimatedRemainingSeconds, 3359);
+  assert.equal(report.capabilitySufficient, true);
+  assert.equal(report.providerVerified, false);
+  assert.equal(current.status, 'failed');
+  assert.deepEqual(
+    report.reusedFinalizedHistory.map((entry) => entry.sessionId).sort(),
+    [...retainedSessionIds].sort(),
+  );
+  assert.ok(
+    report.reusedFinalizedHistory.every(
+      (entry) =>
+        entry.unavailableReason === 'http-404' &&
+        entry.lastMeasured.observedAt === source.observedAt,
+    ),
+  );
+  const repeated = estimateBudget({
+    ...previous,
+    ledger: raw.ledger,
+    evidence: expiredHistory('http-410'),
+    source: { ...postSource, observedAt: '2026-12-01T09:17:00.000Z' },
+  });
+  assert.equal(repeated.estimatedRemainingSeconds, 3359);
+  assert.ok(
+    repeated.reusedFinalizedHistory.every(
+      (entry) =>
+        entry.unavailableReason === 'http-410' &&
+        entry.lastMeasured.observedAt === source.observedAt,
+    ),
+  );
+});
+
+test('expiry cannot excuse unknown, same-collection, nonterminal or conflicting historical measurements', () => {
+  const previous = input();
+  const expired = expiredHistory();
+  const id = retainedSessionIds[0];
+  const missing = structuredClone(previous.ledger);
+  missing.sessions = missing.sessions.filter((entry) => entry.sessionId !== id);
+  const active = structuredClone(previous.ledger);
+  const old = active.sessions.find((entry) => entry.sessionId === id)!;
+  for (const value of old.measurements) {
+    value.durationSeconds = null;
+    value.providerStatus = 'running';
+    value.executionStatus = 'running';
+  }
+  const conflict = structuredClone(previous.ledger);
+  conflict.sessions.find((entry) => entry.sessionId === id)!.collectorConflict = true;
+  const sameCollection = createBudgetReport({
+    ...postSource,
+    previousLedger: previous.ledger,
+    evidence: expired,
+  }).ledger;
+  for (const ledger of [missing, active, conflict, sameCollection]) {
+    const report = estimateBudget({ ...previous, ledger, evidence: expired, source: postSource });
+    assert.equal(report.estimatedRemainingSeconds, null);
+    assert.equal(report.capabilitySufficient, false);
+    assert.ok(report.blockingReasons.includes('current-collection-incomplete'));
+    assert.deepEqual(report.reusedFinalizedHistory, []);
+  }
+  const firstSeenNow = expiredHistory();
+  const terminal = evidence()
+    .history.sessions.find((entry) => entry.sessionId === id)!
+    .observations.find((entry) => entry.evidence.outcome === 'available')!;
+  firstSeenNow.history.sessions
+    .find((entry) => entry.sessionId === id)!
+    .observations.push({
+      ...terminal,
+      source: 'build-list',
+    });
+  const report = estimateBudget({
+    ...previous,
+    ledger: missing,
+    evidence: firstSeenNow,
+    source: postSource,
+  });
+  assert.equal(
+    report.estimatedRemainingSeconds,
+    null,
+    'a new listing cannot create prior durable authority',
+  );
+});
+
+test('expiry does not excuse fresh collection errors, auth/network failures, active use or changed reservation policy', () => {
+  const previous = input();
+  const cases: [string, QuotaEvidence][] = [
+    'http-401',
+    'http-403',
+    'http-500',
+    'request-timeout',
+    'request-failed',
+  ].map((reason) => [reason, expiredHistory(reason)]);
+  const partial = expiredHistory();
+  partial.history.buildPagination = { pages: 1, outcome: 'partial', reason: 'request-timeout' };
+  cases.push(['partial builds', partial]);
+  const unavailablePlan = expiredHistory();
+  unavailablePlan.plan = { outcome: 'unavailable', reason: 'http-403' };
+  cases.push(['unavailable plan', unavailablePlan]);
+  for (const running of [null, 1]) {
+    const busy = expiredHistory();
+    if (busy.plan.outcome !== 'available') throw new Error('fixture');
+    busy.plan.data.runningSessions = running;
+    cases.push([`running count ${running}`, busy]);
+  }
+  const detail = expiredHistory();
+  detail.history.sessions
+    .find(
+      (entry) =>
+        !retainedSessionIds.includes(entry.sessionId as (typeof retainedSessionIds)[number]),
+    )!
+    .observations.push({
+      source: 'detail',
+      evidence: { outcome: 'unavailable', reason: 'http-404' },
+    });
+  cases.push(['fresh detail unavailable', detail]);
+  const live = expiredHistory();
+  live.history.sessions[0].observations.push({
+    source: 'build-list',
+    evidence: {
+      outcome: 'available',
+      data: {
+        durationSeconds: null,
+        providerStatus: 'running',
+        executionStatus: 'running',
+        createdAt: source.observedAt,
+      },
+    },
+  });
+  cases.push(['expired ID freshly active', live]);
+  const freshUnknown = expiredHistory();
+  freshUnknown.history.sessions.push({
+    sessionId: newId,
+    buildIds: [],
+    conflict: false,
+    observations: [{ source: 'detail', evidence: { outcome: 'unavailable', reason: 'http-410' } }],
+  });
+  cases.push(['new unknown ID', freshUnknown]);
+  for (const [label, evidence] of cases) {
+    const report = estimateBudget({ ...previous, evidence, source: postSource });
+    assert.equal(report.estimatedRemainingSeconds, null, label);
+    assert.ok(report.blockingReasons.includes('current-collection-incomplete'), label);
+  }
+  const pending = reserve().state;
+  const blocked = estimateBudget({
+    ...previous,
+    evidence: expiredHistory(),
+    source: postSource,
+    state: pending,
+  });
+  assert.equal(blocked.capabilitySufficient, false);
+  assert.ok(blocked.blockingReasons.includes('pending-reservation'));
+  const changed = estimateBudget({
+    ...previous,
+    evidence: expiredHistory(),
+    source: postSource,
+    state: pending,
+    policy: { ...previous.policy, chargedSecondsPerElapsedSecond: 2 },
+  });
+  assert.equal(changed.estimatedRemainingSeconds, null);
+  assert.ok(changed.blockingReasons.includes('outstanding-reservation-policy-mismatch'));
+});
+
+test('an unrelated expired smoke can use durable history, but receipt sessions still require fresh terminal evidence', () => {
+  const previous = input();
+  const first = reserve();
+  const current = expiredHistory();
+  const newSession = allocated().history.sessions.find((entry) => entry.sessionId === newId)!;
+  current.history.sessions.push(newSession);
+  current.history.builds[0].sessionIds.push(newId);
+  const complete = reconcileReservation({
+    ...previous,
+    state: first.state,
+    evidence: current,
+    source: postSource,
+    receipt: receipt(),
+  });
+  assert.equal(complete.released, true);
+  assert.equal(complete.report.estimatedRemainingSeconds, 3340);
+  const measuredEarlier = createBudgetReport({
+    ...postSource,
+    previousLedger: previous.ledger,
+    evidence: current,
+  }).ledger;
+  const missingNow = reconcileReservation({
+    ...previous,
+    state: first.state,
+    ledger: measuredEarlier,
+    evidence: expiredHistory(),
+    source: { ...postSource, observedAt: '2026-11-01T17:06:00.000Z' },
+    receipt: receipt(),
+  });
+  assert.equal(missingNow.released, false);
+  assert.equal(missingNow.reservation.status, 'held');
+  assert.equal(missingNow.report.outstandingHoldSeconds, 881);
 });
 
 test('one run/attempt can reserve once; source changes cannot replace its pending reservation', () => {
@@ -269,6 +492,97 @@ test('pending, missing-receipt and incomplete-collection states retain their res
   assert.equal(incomplete.released, false);
   assert.equal(incomplete.report.estimatedRemainingSeconds, null);
   assert.ok(incomplete.report.blockingReasons.includes('current-collection-incomplete'));
+});
+
+test('later fresh evidence reconciles a retained certain receipt under its original run identity', () => {
+  const first = reserve();
+  const running = allocated(5);
+  running.status = 'failed';
+  const measurement = running.history.sessions.find((entry) => entry.sessionId === newId)!
+    .observations[0].evidence;
+  if (measurement.outcome !== 'available') throw new Error('fixture');
+  measurement.data.providerStatus = 'running';
+  measurement.data.executionStatus = 'running';
+  const delayed = reconcileReservation({
+    ...input(running, first.state, postSource),
+    receipt: receipt(),
+  });
+  assert.equal(delayed.released, false);
+  assert.equal(delayed.reservation.status, 'held');
+  const original = structuredClone(delayed.state);
+  const later = {
+    ...postSource,
+    observedAt: '2026-11-01T17:06:00.000Z',
+    sourceSha: 'd'.repeat(40),
+    testedSha: 'e'.repeat(40),
+    run: 'https://github.com/mxbaylee/spinel/actions/runs/556',
+  };
+  const previous = input(running, delayed.state, postSource);
+  const recovered = reconcileHeldReservations({
+    ...previous,
+    evidence: allocated(),
+    source: later,
+  });
+  assert.deepEqual(recovered.releasedReservationIds, [delayed.reservation.id]);
+  assert.equal(recovered.state.reservations[0].status, 'reconciled');
+  assert.equal(recovered.state.reservations[0].runId, '555');
+  assert.equal(recovered.state.reservations[0].attempt, '1');
+  assert.equal(recovered.state.reservations[0].sourceSha, source.sourceSha);
+  assert.equal(recovered.state.reservations[0].finishedAt, receipt().finishedAt);
+  assert.equal(recovered.state.reservations[0].reconciledAt, later.observedAt);
+  assert.deepEqual(recovered.state.reservations[0].sessionIds, [newId]);
+  assert.deepEqual(delayed.state, original, 'recovery cannot rewrite the input snapshot');
+  const report = estimateBudget({
+    ...previous,
+    evidence: allocated(),
+    source: later,
+    state: recovered.state,
+  });
+  assert.equal(report.outstandingHoldSeconds, 0);
+  assert.equal(report.estimatedRemainingSeconds, 3340);
+});
+
+test('automatic reconciliation cannot refund missing receipts, uncertain allocations, stale measurements or changed-policy holds', () => {
+  const first = reserve();
+  const held = reconcileReservation({
+    ...input(evidence(), first.state, postSource),
+    receipt: receipt(),
+  });
+  const uncertain = reconcileReservation({
+    ...input(allocated(), first.state, postSource),
+    receipt: receipt([newId], true),
+  });
+  for (const state of [first.state, uncertain.state]) {
+    const result = reconcileHeldReservations(input(allocated(), state, postSource));
+    assert.deepEqual(result.state, state);
+    assert.deepEqual(result.releasedReservationIds, []);
+  }
+  const stale = input(allocated(), held.state, postSource);
+  stale.evidence = evidence();
+  const staleResult = reconcileHeldReservations(stale);
+  assert.deepEqual(
+    staleResult.releasedReservationIds,
+    [],
+    'old ledger duration alone cannot release',
+  );
+  assert.equal(staleResult.state.reservations[0].status, 'held');
+  const partial = allocated();
+  partial.status = 'failed';
+  partial.history.buildPagination = { pages: 1, outcome: 'partial', reason: 'request-timeout' };
+  const incomplete = reconcileHeldReservations(input(partial, held.state, postSource));
+  assert.deepEqual(incomplete.releasedReservationIds, []);
+  const changed = input(allocated(), held.state, postSource);
+  changed.policy.chargedSecondsPerElapsedSecond = 2;
+  const mismatch = reconcileHeldReservations(changed);
+  assert.deepEqual(mismatch.state, held.state);
+  assert.deepEqual(mismatch.releasedReservationIds, []);
+  assert.throws(
+    () =>
+      reconcileHeldReservations(
+        input(allocated(19, newId, '2026-10-28T12:00:00.000Z'), held.state, postSource),
+      ),
+    /receipt-session-predates-reservation/,
+  );
 });
 
 test('a certain empty receipt can release an allocation that never started; an uncertain empty receipt cannot', () => {

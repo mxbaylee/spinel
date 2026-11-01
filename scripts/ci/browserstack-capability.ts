@@ -303,7 +303,18 @@ export function matchingNativeControl(controls: NativeControl[], patterns: RegEx
       const attribute = ['content-desc', 'label', 'name', 'text', 'resource-id'].find((key) =>
         pattern.test(control.attributes[key] ?? ''),
       );
-      if (attribute) return { control, attribute, label: control.attributes[attribute] };
+      if (attribute) {
+        const label = control.attributes[attribute];
+        const predicates = [
+          `name()=${xpathLiteral(control.type)}`,
+          `@${attribute}=${xpathLiteral(label)}`,
+          ...['enabled', 'visible', 'displayed'].map((key) => `not(@${key}='false')`),
+          ...['resource-id', 'class']
+            .filter((key) => control.attributes[key] && key !== attribute)
+            .map((key) => `@${key}=${xpathLiteral(control.attributes[key])}`),
+        ];
+        return { control, attribute, label, selector: `//*[${predicates.join(' and ')}]` };
+      }
     }
   }
   return null;
@@ -615,12 +626,15 @@ export async function runCapability(
     const source = await controls();
     const match = matchingNativeControl(source.parsed, pattern);
     if (match) {
-      const { control, attribute, label } = match;
-      const element = await command(session('element'), 'POST', {
+      const { control, label, selector } = match;
+      const elements = await command(session('elements'), 'POST', {
         using: 'xpath',
-        value: `//*[@${attribute}=${xpathLiteral(label)}]`,
+        value: selector,
       });
-      await command(session(`element/${elementId(element)}/click`), 'POST', {});
+      requireCondition(Array.isArray(elements), 'native-elements-invalid');
+      requireCondition(elements.length > 0, 'native-control-stale');
+      requireCondition(elements.length === 1, 'native-control-ambiguous');
+      await command(session(`element/${elementId(elements[0])}/click`), 'POST', {});
       result.nativeActions.push({
         stage: result.stage,
         label: client.redact(clean(label)),

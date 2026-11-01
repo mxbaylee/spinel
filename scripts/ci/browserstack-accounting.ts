@@ -4,6 +4,7 @@ import {
   estimateBudget,
   readAdmissionPolicy,
   readAdmissionState,
+  reconcileHeldReservations,
   reconcileReservation,
   reserveCapability,
   type AdmissionState,
@@ -33,18 +34,8 @@ async function main() {
       ),
     ),
   );
-  const evidence = await collectQuotaEvidence({
-    username: process.env.BS_USERNAME ?? '',
-    accessKey: process.env.BS_ACCESS_KEY ?? '',
-  });
   const runId = process.env.GITHUB_RUN_ID ?? '';
   const attempt = process.env.GITHUB_RUN_ATTEMPT ?? '';
-  const source = {
-    observedAt: new Date().toISOString(),
-    sourceSha: process.env.SOURCE_SHA ?? '',
-    testedSha: process.env.GITHUB_SHA ?? '',
-    run: `https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${runId}`,
-  };
   const seed = JSON.parse(
     await readFile(
       new URL('../../docs/implementation/SPN-090-browserstack-history.json', import.meta.url),
@@ -104,6 +95,18 @@ async function main() {
     persistence.reason = failure(error);
     blockers.push(persistence.reason);
   }
+  // Load the durable snapshot before collection. Admission must distinguish
+  // previously finalized history from observations first seen in this run.
+  const evidence = await collectQuotaEvidence({
+    username: process.env.BS_USERNAME ?? '',
+    accessKey: process.env.BS_ACCESS_KEY ?? '',
+  });
+  const source = {
+    observedAt: new Date().toISOString(),
+    sourceSha: process.env.SOURCE_SHA ?? '',
+    testedSha: process.env.GITHUB_SHA ?? '',
+    run: `https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${runId}`,
+  };
   const { ledger, report: observedBudget } = createBudgetReport({
     evidence,
     previousLedger,
@@ -115,9 +118,16 @@ async function main() {
   let reservation: Reservation | null = null;
   let created = false;
   let released = false;
+  const recoveredReservationIds: string[] = [];
   if (ledger && admissionState) {
     try {
-      const input = { policy, state: admissionState, ledger, evidence, source };
+      const input = { policy, state: admissionState, ledger: previousLedger, evidence, source };
+      if (operation !== 'reconcile') {
+        const recovered = reconcileHeldReservations(input);
+        admissionState = recovered.state;
+        input.state = admissionState;
+        recoveredReservationIds.push(...recovered.releasedReservationIds);
+      }
       if (operation === 'reserve') {
         const result = reserveCapability({ ...input, runId, attempt });
         admissionState = result.state;
@@ -157,7 +167,13 @@ async function main() {
       // Keep the pre-operation state if parsing/reconciliation rejected a receipt.
       // Pure model functions never mutate caller-owned state on failure.
       try {
-        estimate = estimateBudget({ policy, state: admissionState, ledger, evidence, source });
+        estimate = estimateBudget({
+          policy,
+          state: admissionState,
+          ledger: previousLedger,
+          evidence,
+          source,
+        });
       } catch {}
     }
   }
@@ -171,7 +187,15 @@ async function main() {
             schemaVersion: 2,
             ledger,
             admissionState,
-            latest: { evidence, report: observedBudget, policy, estimate, operation, blockers },
+            latest: {
+              evidence,
+              report: observedBudget,
+              policy,
+              estimate,
+              operation,
+              recoveredReservationIds,
+              blockers,
+            },
           },
           runId,
           attempt,
@@ -216,6 +240,7 @@ async function main() {
     policy,
     admissionState: admissionState ?? null,
     reservation,
+    recoveredReservationIds,
     persistence,
     blockingReasons: [...new Set(blockers)],
     observedBudget,
@@ -239,6 +264,8 @@ async function main() {
     `| Estimated remaining credit | ${estimate?.estimatedRemainingMinutes === null || estimate?.estimatedRemainingMinutes === undefined ? 'Unknown' : estimate.estimatedRemainingMinutes.toFixed(2) + ' minutes'}; provider balance unverified |`,
     `| Safety reserve / outstanding holds | ${estimate?.safetyReserveSeconds ?? 'Unknown'} / ${estimate?.outstandingHoldSeconds ?? 'Unknown'} seconds |`,
     `| Current reservation | ${reservation ? reservation.id + ': ' + reservation.seconds + ' seconds, ' + reservation.status : 'None'} |`,
+    `| Retained certain holds reconciled | ${recoveredReservationIds.length} |`,
+    `| Finalized historical measurements reused after 404/410 | ${estimate?.reusedFinalizedHistory.length ?? 0}; raw failures retained |`,
     `| Additional 15-minute capability reservations | ${estimate?.estimatedAdditionalCapabilityReservations ?? 'Unknown'}; conditional estimate |`,
     '| Full installed-phone matrix cost/successful runs/exhaustion | Unmeasured / Unknown / Unknown |',
     `| Durable accounting | ${persistence.url ? '[Verified commit](' + persistence.url + ')' : persistence.reason} |`,

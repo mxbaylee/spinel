@@ -169,6 +169,10 @@ test('the observed Chrome universal-install label is selected from native XML wi
   assert.equal(selected?.attribute, 'text');
   assert.equal(selected?.control.attributes['resource-id'], 'com.android.chrome:id/menu_item_text');
   assert.equal(
+    selected?.selector,
+    "//*[name()='node' and @text='Install and create shortcut' and not(@enabled='false') and not(@visible='false') and not(@displayed='false') and @resource-id='com.android.chrome:id/menu_item_text']",
+  );
+  assert.equal(
     matchingNativeControl(
       nativeControls('<node text="Do not install this app"/>'),
       installMenuLabel,
@@ -538,6 +542,76 @@ function fixture(onClose: () => void) {
     },
   } as unknown as Parameters<typeof runCapability>[2];
 }
+test('native taps keep the selected XML identity and refuse stale or ambiguous driver matches', async () => {
+  for (const count of [0, 1, 2]) {
+    let lookups = 0,
+      clicks = 0;
+    const origin = 'https://bs-local.com:8176';
+    const client = clientFor('fixture-user', 'fixture-key', async (url, init) => {
+      const path = String(url).split('/wd/hub/')[1] ?? String(url).split('/automate/')[1];
+      let value: unknown = null;
+      if (path === 'session') value = { sessionId, capabilities: { browserName: 'chrome' } };
+      else if (path.endsWith('/execute/sync'))
+        value = {
+          origin,
+          secureContext: true,
+          serviceWorkerAvailable: true,
+          controller: `${origin}/service-worker.js`,
+          anonymousReady: true,
+          userAgent: 'Mozilla/5.0 (Linux; Android 17) AppleWebKit/537.36 Chrome/152.0 Mobile',
+        };
+      else if (path.endsWith('/execute/async'))
+        value = {
+          ok: true,
+          value: { scope: `${origin}/`, active: `${origin}/service-worker.js`, state: 'activated' },
+        };
+      else if (path.endsWith('/window/handles')) value = ['original'];
+      else if (path.endsWith('/contexts')) value = ['NATIVE_APP', 'WEBVIEW_chrome'];
+      else if (path.endsWith('/source'))
+        value =
+          '<hierarchy><node text="More options" visible="false"/><node text="More options" enabled="false"/><node text="More options" resource-id="chrome:menu" enabled="true"/><other text="More options"/></hierarchy>';
+      else if (path.endsWith('/elements')) {
+        lookups++;
+        assert.deepEqual(JSON.parse(String(init?.body)), {
+          using: 'xpath',
+          value:
+            "//*[name()='node' and @text='More options' and not(@enabled='false') and not(@visible='false') and not(@displayed='false') and @resource-id='chrome:menu']",
+        });
+        value = Array.from({ length: count }, (_, index) => ({
+          'element-6066-11e4-a52e-4f735466cecf': `native-${index}`,
+        }));
+      } else if (path.endsWith('/click')) {
+        clicks++;
+        assert.ok(path.endsWith('/element/native-0/click'));
+        // End the one positive control after proving the intended element is clicked.
+        return new Response('', { status: 500 });
+      } else if (path.endsWith('/screenshot')) value = 'aGVsbG8=';
+      return Response.json({ value });
+    });
+    const result = await runCapability(
+      client,
+      target,
+      fixture(() => {}),
+      {
+        localIdentifier: 'local-id',
+        buildName: 'test',
+        journal: async () => {},
+        screenshot: async (name) => name,
+      },
+    );
+    assert.equal(lookups, 1);
+    assert.equal(clicks, count === 1 ? 1 : 0);
+    assert.equal(
+      result.failure,
+      count === 0
+        ? 'capability-native-control-stale'
+        : count === 2
+          ? 'capability-native-control-ambiguous'
+          : 'http-500',
+    );
+    assert.equal(result.cleanup.session, 'deleted');
+  }
+});
 test('known allocations journal their ID before failure and restore then delete within bounded cleanup', async () => {
   for (const deletionFails of [false, true]) {
     const events: string[] = [],

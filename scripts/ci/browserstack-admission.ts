@@ -7,7 +7,7 @@ import {
   type BudgetSource,
   type QuotaEvidence,
 } from './browserstack-budget.ts';
-import { sessionMeasurementConflict } from './browserstack-quota.ts';
+import { retainedSessionIds, sessionMeasurementConflict } from './browserstack-quota.ts';
 
 export type AdmissionPolicy = {
   schemaVersion: 1;
@@ -52,6 +52,7 @@ export type ReservationReceipt = ReservationIdentity & {
 type AdmissionInput = {
   policy: unknown;
   state: unknown | null;
+  // The validated snapshot loaded before collection, never the current merged ledger.
   ledger: unknown;
   evidence: QuotaEvidence;
   source: BudgetSource;
@@ -63,6 +64,12 @@ export type EstimatedBudgetReport = {
   capabilitySufficient: boolean;
   policySha256: string;
   measuredElapsedSeconds: number | null;
+  reusedFinalizedHistory: {
+    sessionId: string;
+    durationSeconds: number;
+    unavailableReason: 'http-404' | 'http-410';
+    lastMeasured: BudgetSource;
+  }[];
   assumedUnobservedUsageSeconds: number;
   chargedSecondsPerElapsedSecond: number;
   estimatedUsedSeconds: number | null;
@@ -325,6 +332,101 @@ function ledgerSessionSeconds(entry: BudgetLedger['sessions'][number]): number |
       ?.durationSeconds ?? null
   );
 }
+function reusableFinalizedHistory(
+  input: AdmissionInput,
+  previous: BudgetLedger,
+): EstimatedBudgetReport['reusedFinalizedHistory'] | null {
+  const { evidence } = input;
+  if (
+    evidence.status !== 'failed' ||
+    previous.lastObserved.observedAt >= input.source.observedAt ||
+    evidence.plan.outcome !== 'available' ||
+    evidence.plan.data.runningSessions !== 0 ||
+    evidence.plan.data.queuedSessions !== 0 ||
+    evidence.history.deadlineExceeded ||
+    evidence.history.buildPagination.outcome !== 'exhausted' ||
+    evidence.history.builds.some(
+      (build) =>
+        build.pagination.outcome !== 'exhausted' ||
+        build.conflict ||
+        build.providerStatuses.some((status) => ['running', 'queued', 'unknown'].includes(status)),
+    ) ||
+    evidence.sessions.length !== retainedSessionIds.length ||
+    new Set(evidence.sessions.map((entry) => entry.sessionId)).size !== retainedSessionIds.length
+  )
+    return null;
+  const reused: EstimatedBudgetReport['reusedFinalizedHistory'] = [];
+  for (const entry of evidence.sessions) {
+    if (!(retainedSessionIds as readonly string[]).includes(entry.sessionId)) return null;
+    if (entry.evidence.outcome === 'available') {
+      if (!terminal(entry.evidence.data)) return null;
+      continue;
+    }
+    const reason = entry.evidence.reason;
+    if (reason !== 'http-404' && reason !== 'http-410') return null;
+    const recorded = previous.sessions.find((value) => value.sessionId === entry.sessionId);
+    const seconds = recorded ? ledgerSessionSeconds(recorded) : null;
+    if (!recorded || seconds === null) return null;
+    const lastMeasured = recorded.measurements
+      .filter(terminal)
+      .sort((a, b) =>
+        b.lastObserved.observedAt.localeCompare(a.lastObserved.observedAt),
+      )[0].lastObserved;
+    if (lastMeasured.observedAt >= input.source.observedAt) return null;
+    reused.push({
+      sessionId: entry.sessionId,
+      durationSeconds: seconds,
+      unavailableReason: reason,
+      lastMeasured,
+    });
+  }
+  if (!reused.length) return null;
+  for (const entry of evidence.history.sessions) {
+    const historical = reused.find((value) => value.sessionId === entry.sessionId);
+    if (
+      entry.conflict ||
+      !entry.observations.length ||
+      entry.observations.some(
+        (value) =>
+          value.evidence.outcome !== 'available' &&
+          (value.source !== 'retained-smoke' ||
+            !historical ||
+            value.evidence.reason !== historical.unavailableReason),
+      )
+    )
+      return null;
+    const measuredNow = entry.observations.some(
+      (value) => value.evidence.outcome === 'available' && terminal(value.evidence.data),
+    );
+    // A fresh listing that is active or missing a duration cannot be replaced
+    // with an older measurement, even for a previously finalized smoke ID.
+    if (
+      !measuredNow &&
+      (!historical ||
+        entry.buildIds.length ||
+        entry.observations.some((value) => value.evidence.outcome === 'available') ||
+        evidence.history.builds.some((build) => build.sessionIds.includes(entry.sessionId)))
+    )
+      return null;
+  }
+  if (
+    reused.some(
+      (entry) =>
+        !evidence.history.sessions.some(
+          (value) =>
+            value.sessionId === entry.sessionId &&
+            value.observations.some(
+              (observation) =>
+                observation.source === 'retained-smoke' &&
+                observation.evidence.outcome === 'unavailable' &&
+                observation.evidence.reason === entry.unavailableReason,
+            ),
+        ),
+    )
+  )
+    return null;
+  return reused;
+}
 function prepare(input: AdmissionInput) {
   const policy = readAdmissionPolicy(input.policy);
   const state =
@@ -338,13 +440,25 @@ function prepare(input: AdmissionInput) {
     previousLedger: previous,
   });
   if (!current.ledger) return fail('invalid-current-ledger');
+  const reusedFinalizedHistory = reusableFinalizedHistory(input, previous);
+  const collectionSufficient =
+    input.evidence.status === 'passed' || reusedFinalizedHistory !== null;
   const policySha256 = createHash('sha256').update(JSON.stringify(policy)).digest('hex');
-  return { policy, state, ledger: current.ledger, raw: current.report, policySha256 };
+  return {
+    policy,
+    state,
+    ledger: current.ledger,
+    raw: current.report,
+    policySha256,
+    collectionSufficient,
+    reusedFinalizedHistory: reusedFinalizedHistory ?? [],
+  };
 }
 function estimate(input: AdmissionInput, prepared = prepare(input)): EstimatedBudgetReport {
   const { policy, state, ledger, raw, policySha256 } = prepared;
   const blockingReasons = raw.blockingReasons.filter(
     (reason) =>
+      !(reason === 'current-collection-incomplete' && prepared.collectionSufficient) &&
       ![
         'authoritative-remaining-balance-unavailable',
         'account-wide-starting-usage-unverified',
@@ -379,7 +493,7 @@ function estimate(input: AdmissionInput, prepared = prepare(input)): EstimatedBu
   const measuredElapsedSeconds = raw.measuredTerminalSessionSeconds;
   const complete =
     !policyMismatch &&
-    input.evidence.status === 'passed' &&
+    prepared.collectionSufficient &&
     raw.unresolvedSessions === 0 &&
     raw.conflictingSessions === 0;
   const used =
@@ -422,6 +536,7 @@ function estimate(input: AdmissionInput, prepared = prepare(input)): EstimatedBu
     capabilitySufficient: blockingReasons.length === 0,
     policySha256,
     measuredElapsedSeconds,
+    reusedFinalizedHistory: prepared.reusedFinalizedHistory,
     assumedUnobservedUsageSeconds: policy.assumedUnobservedUsageSeconds,
     chargedSecondsPerElapsedSecond: policy.chargedSecondsPerElapsedSecond,
     estimatedUsedSeconds,
@@ -444,6 +559,11 @@ function estimate(input: AdmissionInput, prepared = prepare(input)): EstimatedBu
       policy.method,
       'The lifetime allowance never renews at a month boundary.',
       'The owner authorized directional estimation; this is not an authoritative provider balance.',
+      ...(prepared.reusedFinalizedHistory.length
+        ? [
+            'Only 404/410 retained-smoke details reuse terminal measurements recorded before collection; raw failed reads remain in the evidence and ledger.',
+          ]
+        : []),
       'Safety reserve and outstanding reservation holds reduce spendable estimated credit.',
       'A completed uncertain allocation retains its unused hold; a missing receipt leaves a pending reservation.',
       'Capability count/calendar assume one full reservation per future monthly date and no other use; they do not predict successful offline-matrix runs.',
@@ -501,8 +621,10 @@ export function reserveCapability(input: AdmissionInput & { runId: string; attem
   return { state, report, reservation, created: true };
 }
 
-export function reconcileReservation(input: AdmissionInput & { receipt: ReservationReceipt }) {
-  const prepared = prepare(input);
+function reconcile(
+  input: AdmissionInput & { receipt: ReservationReceipt },
+  prepared: ReturnType<typeof prepare>,
+) {
   const receipt = row(
     input.receipt,
     [...identityKeys, 'finishedAt', 'sessionIds', 'uncertainAllocation'],
@@ -547,7 +669,7 @@ export function reconcileReservation(input: AdmissionInput & { receipt: Reservat
   reservation.uncertainAllocation ||= receipt.uncertainAllocation;
   reservation.finishedAt = finishedAt;
   let allMeasuredNow =
-    input.evidence.status === 'passed' &&
+    prepared.collectionSufficient &&
     prepared.raw.conflictingSessions === 0 &&
     prepared.raw.unresolvedSessions === 0;
   for (const id of reservation.sessionIds) {
@@ -592,4 +714,42 @@ export function reconcileReservation(input: AdmissionInput & { receipt: Reservat
     reservation: state.reservations.find((entry) => entry.id === reservation.id)!,
     released,
   };
+}
+
+export function reconcileReservation(input: AdmissionInput & { receipt: ReservationReceipt }) {
+  return reconcile(input, prepare(input));
+}
+
+/** Retry only receipts already durably retained as complete and certain. */
+export function reconcileHeldReservations(input: AdmissionInput) {
+  const prepared = prepare(input);
+  let state = prepared.state;
+  const releasedReservationIds: string[] = [];
+  for (const reservation of prepared.state.reservations) {
+    if (
+      reservation.status !== 'held' ||
+      reservation.uncertainAllocation ||
+      reservation.policySha256 !== prepared.policySha256
+    )
+      continue;
+    const result = reconcile(
+      {
+        ...input,
+        state,
+        receipt: {
+          runId: reservation.runId,
+          attempt: reservation.attempt,
+          sourceSha: reservation.sourceSha,
+          testedSha: reservation.testedSha,
+          finishedAt: reservation.finishedAt!,
+          sessionIds: reservation.sessionIds,
+          uncertainAllocation: false,
+        },
+      },
+      { ...prepared, state },
+    );
+    state = result.state;
+    if (result.released) releasedReservationIds.push(reservation.id);
+  }
+  return { state, releasedReservationIds };
 }
