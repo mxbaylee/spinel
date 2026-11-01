@@ -205,16 +205,22 @@ cannot prove which generation is intended, so recovery is deliberate:
    `restore-*` directories or journals, the `<database>.restore-pending` opening
    barrier or any retained source; do not run another database writer.
 2. Record `node scripts/deploy/maintenance.ts status`, then restart the supervisor
-   once. Restart finishes reopening a committed outcome without reinstalling
-   prepared bytes. It marks an admission that never executed, or a restore that
+   once. Restart finishes commitment cleanup and selects the committed live
+   generation without reinstalling prepared bytes; opening still requires the
+   explicit command below. It marks an admission that never executed, or a restore that
    stopped before replacement (including staging) with the live files still
    matching the preserved original and no opening barrier begun or published,
    as failed and stopped.
-3. If status now shows a stopped operation and no pending restore, run verify,
-   start and resume with that operation ID, sign in as the Operator and
-   **Refresh restore status**. Only a recorded outcome says which data is live.
-4. If the interrupted restore reached replacement or a private trial, use the
-   exact restore operation ID from status and run, as the deployment service UID:
+3. If status shows no pending restore, follow [First startup and restart](#first-startup-and-restart)
+   to verify, start and resume the selected live generation. Reuse the current
+   operation ID when status has one. Otherwise run
+   `node scripts/deploy/maintenance.ts verify` without an operation ID; it creates
+   one and returns the ID to use with start and resume. This also applies to a
+   committed backup or original in `recovery-required` after startup cleanup.
+   Sign in as the Operator and **Refresh restore status**. Only a recorded
+   outcome says which data is live.
+4. If status still reports a pending restore that reached replacement or a
+   private trial, use its exact operation ID and run, as the deployment service UID:
 
    ```sh
    node scripts/deploy/maintenance.ts recover-original --operation 00000000-0000-4000-8000-000000000000
@@ -237,6 +243,7 @@ cannot prove which generation is intended, so recovery is deliberate:
    original already committed, the command only verifies/opens that selected
    live generation. It never reinstalls prepared bytes over later acknowledged
    work, and it refuses to replace a committed backup or a later generation.
+
 5. A refusal for missing/changed evidence, an unknown barrier, changed deployment
    policy, exhausted attempt capacity, or uncertain ownership keeps the workspace
    closed. Do not copy raw files back by hand or delete the barrier. Preserve the

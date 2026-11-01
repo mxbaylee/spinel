@@ -2,7 +2,17 @@ import { fork, type ChildProcess } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
 import { once } from 'node:events';
 import { existsSync, readFileSync, statSync } from 'node:fs';
-import { chmod, copyFile, mkdir, mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
+import {
+  chmod,
+  copyFile,
+  mkdir,
+  mkdtemp,
+  readFile,
+  readdir,
+  rename,
+  rm,
+  writeFile,
+} from 'node:fs/promises';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -135,6 +145,65 @@ async function seedLink(databasePath: string, ownerId: string) {
     });
     child.once('error', reject);
   });
+}
+async function mutateCopiedTrial(databasePath: string, folderId: string) {
+  const child = fork(
+    fileURLToPath(new URL('./restore-crash-tamper-fixture.ts', import.meta.url)),
+    [],
+    {
+      env: { ...process.env, DATABASE_PATH: databasePath, SPINEL_TEST_FOLDER_ID: folderId },
+      execArgv: [],
+      stdio: ['ignore', 'ignore', 'ignore', 'ipc'],
+    },
+  );
+  return new Promise<string>((resolve, reject) => {
+    let fingerprint: string | undefined;
+    const timer = setTimeout(() => child.kill('SIGKILL'), 10_000);
+    child.on('message', (value: unknown) => {
+      if (
+        value &&
+        typeof value === 'object' &&
+        'fingerprint' in value &&
+        typeof value.fingerprint === 'string' &&
+        /^[a-f0-9]{64}$/.test(value.fingerprint)
+      )
+        fingerprint = value.fingerprint;
+    });
+    child.once('exit', (code) => {
+      clearTimeout(timer);
+      if (code === 0 && fingerprint) resolve(fingerprint);
+      else reject(new Error('The copied private-trial mutation did not close successfully.'));
+    });
+    child.once('error', reject);
+  });
+}
+async function liveTuple(databasePath: string) {
+  const result: Record<string, { bytes: Buffer; mode: number } | null> = {};
+  for (const suffix of ['', '-wal', '-shm']) {
+    try {
+      result[suffix] = {
+        bytes: await readFile(databasePath + suffix),
+        mode: statSync(databasePath + suffix).mode & 0o777,
+      };
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+      result[suffix] = null;
+    }
+  }
+  return result;
+}
+async function restoreTestTuple(
+  databasePath: string,
+  tuple: Awaited<ReturnType<typeof liveTuple>>,
+) {
+  assertWorkspaceHandlesClosed(databasePath);
+  for (const [suffix, value] of Object.entries(tuple)) {
+    if (!value) await rm(databasePath + suffix, { force: true });
+    else {
+      await writeFile(databasePath + suffix, value.bytes, { mode: value.mode });
+      await chmod(databasePath + suffix, value.mode);
+    }
+  }
 }
 
 /** Never give the long-lived test process a native handle to the live inode.
@@ -583,6 +652,91 @@ test.skipIf(process.platform !== 'linux').each(scenarios)(
       const recover = () =>
         maintenanceControl(root, { action: 'recover-original', operationId: prepared.id });
       if (recoversOriginal) {
+        const refuseUntrustedEvidence = async () => {
+          const prior = record(),
+            tuple = await liveTuple(databasePath);
+          const barrier = await readFile(restoreBarrierPath(databasePath));
+          assertWorkspaceHandlesClosed(databasePath);
+          await expect(recover()).rejects.toThrow();
+          assertWorkspaceHandlesClosed(databasePath);
+          expect(await liveTuple(databasePath)).toEqual(tuple);
+          expect(await readFile(restoreBarrierPath(databasePath))).toEqual(barrier);
+          expect(statSync(databasePath).ino).toBe(identity.ino);
+          const stopped = JSON.parse(await readFile(join(root, 'journal.json'), 'utf8'));
+          expect(stopped.phase).toBe('recovery-required');
+          expect(stopped.child).toBeNull();
+          expect(stopped.verifier).toBeNull();
+          const refused = record();
+          expect(refused.intent).toEqual(before.intent);
+          expect(refused.intentHash).toBe(before.intentHash);
+          expect(refused.execution).toEqual(before.execution);
+          expect(refused.phase).toBe(before.phase);
+          expect(currentRestoreRecovery(refused)!.outcome).toBeUndefined();
+          const earlier = prior.recovery?.attempts ?? [];
+          expect(refused.recovery!.attempts.slice(0, earlier.length)).toEqual(earlier);
+          return refused;
+        };
+        const restartAfterRefusal = async (refused: RestoreJobRecord) => {
+          // Only test-owned fixture changes have been restored. Every retained
+          // production input and each rejected attempt must remain immutable.
+          completedEvidence = await retains(root, completedEvidence);
+          await close(controller!);
+          await launch(false);
+          assertWorkspaceHandlesClosed(databasePath);
+          expect(record()).toEqual(refused);
+          expect(await evidence(root)).toEqual(completedEvidence);
+        };
+        if (cut === 'activation' && !cold) {
+          const original = join(
+            root,
+            `restore-${prepared.id}`,
+            `freeze-${before.execution!.freezeSlot}`,
+            before.execution!.frozen!.directory,
+            'frozen.sqlite',
+          );
+          const bytes = await readFile(original),
+            held = join(directory, 'held-original.sqlite');
+          for (const mode of ['missing', 'altered'] as const) {
+            let refused: RestoreJobRecord;
+            if (mode === 'missing') await rename(original, held);
+            else {
+              const altered = Buffer.from(bytes);
+              altered[altered.length - 1] ^= 1;
+              await writeFile(original, altered);
+            }
+            try {
+              refused = await refuseUntrustedEvidence();
+            } finally {
+              if (mode === 'missing') await rename(held, original);
+              else await writeFile(original, bytes);
+            }
+            expect(await readFile(original)).toEqual(bytes);
+            await restartAfterRefusal(refused!);
+          }
+        }
+        if (cut === 'private-open') {
+          const tuple = await liveTuple(databasePath);
+          const copy = await probeCopy(directory, databasePath, true);
+          const changedFingerprint = await mutateCopiedTrial(copy, source.folderId);
+          expect(changedFingerprint).not.toBe(
+            before.execution!.preparation!.candidate!.fingerprint,
+          );
+          let refused: RestoreJobRecord;
+          try {
+            assertWorkspaceHandlesClosed(databasePath);
+            await copyFile(copy, databasePath);
+            await rm(databasePath + '-wal', { force: true });
+            await rm(databasePath + '-shm', { force: true });
+            expect(statSync(databasePath).ino).toBe(identity.ino);
+            refused = await refuseUntrustedEvidence();
+          } finally {
+            await restoreTestTuple(databasePath, tuple);
+          }
+          expect(await liveTuple(databasePath)).toEqual(tuple);
+          expect(statSync(databasePath).ino).toBe(identity.ino);
+          await restartAfterRefusal(refused!);
+        }
+        const priorAttempts = structuredClone(record().recovery?.attempts ?? []);
         if (cold) {
           let earlyFailure: { error?: unknown } | undefined;
           const interrupted = recover().then(
@@ -671,7 +825,16 @@ test.skipIf(process.platform !== 'linux').each(scenarios)(
           assertWorkspaceHandlesClosed(databasePath);
           expect(record()).toEqual(attempted);
           expect(await evidence(root)).toEqual(coldEvidence);
+          if (cold === 'cold-trial-planned') {
+            const restarted = JSON.parse(await readFile(join(root, 'journal.json'), 'utf8'));
+            expect(restarted.child).toBeNull();
+            expect(restarted.generationId).toBe(attempt.priorGenerationId);
+            expect(sameProcess(attempt.trial!.child)).toBe(true);
+            expect(processResourcesReleased(String(attempt.trial!.child.pid))).toBe(false);
+          }
           expect((await recover()).status.phase).toBe('running');
+          if (cold === 'cold-trial-planned')
+            expect(processResourcesReleased(String(attempt.trial!.child.pid))).toBe(true);
           if (cold === 'cold-commit') expect(record()).toEqual(attempted);
           else {
             expect(record().recovery!.attempts.slice(0, -1)).toEqual(attempted.recovery!.attempts);
@@ -685,6 +848,9 @@ test.skipIf(process.platform !== 'linux').each(scenarios)(
         expect(restoreJobPhase(committed)).toBe('original-committed');
         expect(committed.intent).toEqual(before.intent);
         expect(committed.execution).toEqual(before.execution);
+        expect((committed.recovery?.attempts ?? []).slice(0, priorAttempts.length)).toEqual(
+          priorAttempts,
+        );
         const current = currentRestoreRecovery(committed);
         if (unresolved) {
           expect(current).toBeDefined();

@@ -73,6 +73,7 @@ import {
   restoreJobOperation,
 } from './restore-jobs.ts';
 import type { RestoreJobRecord } from './restore-jobs.ts';
+import { coldRecoveryPriorGenerations } from './restore-cold-state.ts';
 import { restoreIntentHash } from './restore-job-intent.ts';
 import type { RestoreJobIntent } from './restore-job-intent.ts';
 import {
@@ -2301,11 +2302,33 @@ export class MaintenanceSupervisor {
         record.execution.rollback?.trial?.child,
         ...(record.recovery?.attempts.map((attempt) => attempt.trial?.child) ?? []),
       ];
-      for (const process of priorProcesses)
-        if (process && groupMembers(process).length)
+      const planned = selectedRestoreTrial(record);
+      for (const process of priorProcesses) {
+        if (!process || !groupMembers(process).length) continue;
+        const main = this.journal.state;
+        if (
+          !['trial-planned', 'original-trial-planned'].includes(restoreJobPhase(record)) ||
+          !planned ||
+          !isDeepStrictEqual(process, planned.child) ||
+          !coldRecoveryPriorGenerations(record).includes(main.generationId) ||
+          !isDeepStrictEqual(main.operation, {
+            id,
+            generationId: main.generationId,
+            ...restoreJobOperation(record),
+          })
+        )
           throw new Error(
             'A recorded restore process is still active. Restart the supervisor first.',
           );
+        // The permit is durable before main adopts its child. A crash between
+        // those writes leaves a private process that boot cannot find in main.
+        // Fresh cold-host authority may stop only that exact recorded group;
+        // stopGroup verifies its boot, start time and ownership marker.
+        await this.stopGroup(process);
+        if (this.closing || !isDeepStrictEqual(jobs.read(id), record))
+          throw new Error('Original recovery changed while closing its planned trial.');
+      }
+      this.assertGeneration();
       assertWorkspaceHandlesClosed(this.journal.databasePath);
       const budget = Math.min(600_000, this.options.budgets?.restoreMs ?? 120_000),
         grantedAt = this.now(),

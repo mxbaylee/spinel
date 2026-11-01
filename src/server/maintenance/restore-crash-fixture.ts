@@ -156,7 +156,10 @@ const supervisor = await MaintenanceSupervisor.open({
     const child = fork(
       fileURLToPath(
         new URL(
-          cut === 'private-open' || coldCut === 'cold-private-open' || offset
+          cut === 'private-open' ||
+            coldCut === 'cold-private-open' ||
+            coldCut === 'cold-trial-planned' ||
+            offset
             ? './restore-crash-app-fixture.ts'
             : '../../../server/index.ts',
           import.meta.url,

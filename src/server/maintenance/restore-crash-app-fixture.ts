@@ -10,6 +10,13 @@ const offset = Number(process.env.SPINEL_TEST_CLOCK_OFFSET ?? 0);
 if (!Number.isSafeInteger(offset) || offset < 0) throw new Error('Invalid fixture clock.');
 const realNow = Date.now;
 Date.now = () => realNow() + offset;
+if (
+  process.env.SPINEL_RESTORE_TRIAL === '1' &&
+  process.env.SPINEL_TEST_COLD_CRASH_CUT === 'cold-trial-planned'
+)
+  // The recorded child exists before main adopts it. Hold before any database
+  // import/open, including after IPC disconnect, until exact-group recovery stops it.
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0);
 const send = process.send.bind(process);
 process.send = ((message: unknown, ...args: unknown[]) => {
   const cold = process.env.SPINEL_TEST_COLD_CRASH_CUT === 'cold-private-open';
