@@ -6,7 +6,7 @@ import { closeSync, fsyncSync, openSync, readFileSync, statSync, writeFileSync }
 import { open, unlink } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { RestoreJobs } from './restore-jobs.ts';
+import { currentRestoreRecovery, RestoreJobs } from './restore-jobs.ts';
 import { MaintenanceSupervisor } from './supervisor.ts';
 import { MAINTENANCE_CHANNEL } from './supervisor-client.ts';
 
@@ -14,8 +14,16 @@ const root = process.env.SPINEL_MAINTENANCE_ROOT;
 const databasePath = process.env.DATABASE_PATH;
 const marker = process.env.SPINEL_TEST_CRASH_MARKER;
 const cut = process.env.SPINEL_TEST_CRASH_CUT;
+const coldCut = process.env.SPINEL_TEST_COLD_CRASH_CUT;
+const coldMarker = process.env.SPINEL_TEST_COLD_CRASH_MARKER;
 if (!process.send || !root || !databasePath || !marker)
   throw new Error('Private crash controller required.');
+// Advance only this fixture's wall clock. Expiry acceptance must not spend five
+// real minutes idle, and every application child uses the same virtual clock.
+const offset = Number(process.env.SPINEL_TEST_CLOCK_OFFSET ?? 0);
+if (!Number.isSafeInteger(offset) || offset < 0) throw new Error('Invalid fixture clock.');
+const realNow = Date.now;
+Date.now = () => realNow() + offset;
 const save = (path: string, value: unknown) => {
   const fd = openSync(path, 'wx', 0o600);
   try {
@@ -32,7 +40,9 @@ const save = (path: string, value: unknown) => {
   }
 };
 const mark = (name: string, bytesWritten?: number) => {
-  save(marker, { cut: name, pid: process.pid, bytesWritten });
+  const path = name.startsWith('cold-') ? coldMarker : marker;
+  if (!path) throw new Error('Missing cold crash marker.');
+  save(path, { cut: name, pid: process.pid, bytesWritten });
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0);
 };
 const originalRecovery = cut === 'original-activation' || cut === 'original-commit';
@@ -73,7 +83,32 @@ if (cut === 'commit' || cut === 'original-commit') {
     return result;
   };
 }
-if (cut === 'activation' || cut === 'original-activation') {
+if (coldCut === 'cold-admission') {
+  const begin = RestoreJobs.prototype.beginOriginalRecovery;
+  RestoreJobs.prototype.beginOriginalRecovery = function (...args) {
+    const result = begin.apply(this, args);
+    mark(coldCut);
+    return result;
+  };
+}
+if (coldCut === 'cold-prepared' || coldCut === 'cold-trial-planned') {
+  const checkpoint = RestoreJobs.prototype.checkpointOriginalRecovery;
+  RestoreJobs.prototype.checkpointOriginalRecovery = function (...args) {
+    const result = checkpoint.apply(this, args);
+    if (args[3] === (coldCut === 'cold-prepared' ? 'original-prepared' : 'original-trial-planned'))
+      mark(coldCut);
+    return result;
+  };
+}
+if (coldCut === 'cold-commit') {
+  const commit = RestoreJobs.prototype.markOriginalCommitted;
+  RestoreJobs.prototype.markOriginalCommitted = function (...args) {
+    const result = commit.apply(this, args);
+    if (currentRestoreRecovery(result)) mark(coldCut);
+    return result;
+  };
+}
+if (cut === 'activation' || cut === 'original-activation' || coldCut === 'cold-activation') {
   // Patch only this test process's FileHandle prototype, and match the exact
   // existing live inode plus durable replacing phase before stopping a write.
   const probePath = join(dirname(databasePath), `.crash-probe-${randomUUID()}`);
@@ -91,7 +126,9 @@ if (cut === 'activation' || cut === 'original-activation') {
       const id = main.restoreJob?.jobId;
       if (id) {
         const job = JSON.parse(readFileSync(join(root, 'restore-jobs', id, 'state.json'), 'utf8'));
-        if (job.phase === (originalRecovery ? 'original-replacing' : 'candidate-replacing'))
+        if (coldCut === 'cold-activation' && currentRestoreRecovery(job)?.phase === 'original-replacing')
+          mark(coldCut, result.bytesWritten);
+        else if (cut && job.phase === (originalRecovery ? 'original-replacing' : 'candidate-replacing'))
           mark(cut, result.bytesWritten);
       }
     }
@@ -113,7 +150,8 @@ const supervisor = await MaintenanceSupervisor.open({
     const child = fork(
       fileURLToPath(
         new URL(
-          cut === 'private-open' ? './restore-crash-app-fixture.ts' : '../../../server/index.ts',
+          cut === 'private-open' || coldCut === 'cold-private-open' || offset
+            ? './restore-crash-app-fixture.ts' : '../../../server/index.ts',
           import.meta.url,
         ),
       ),
@@ -125,6 +163,10 @@ const supervisor = await MaintenanceSupervisor.open({
           HOST: '127.0.0.1',
           BACKUP_CONFIG_PATH: join(dirname(databasePath), 'absent-backup-config'),
           SPINEL_TEST_CRASH_MARKER: marker,
+          SPINEL_TEST_CRASH_CUT: cut,
+          SPINEL_TEST_COLD_CRASH_MARKER: coldMarker,
+          SPINEL_TEST_COLD_CRASH_CUT: coldCut,
+          SPINEL_TEST_CLOCK_OFFSET: String(offset),
         },
         execArgv: ['--max-old-space-size=256', '--max-semi-space-size=8'],
         detached: true,

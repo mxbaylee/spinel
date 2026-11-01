@@ -17,6 +17,7 @@ import { restoreSnapshotFingerprint } from '../backup/inventory.ts';
 import type { RestoreTrialStopRequest } from './restore-trial-stop.ts';
 import { restoreTrialReference } from './restore-trial.ts';
 import { processResourcesReleased } from './process-exit.ts';
+import { currentRestoreRecovery, restoreJobPhase } from './restore-jobs.ts';
 import type { RestoreJobRecord } from './restore-jobs.ts';
 import { authenticator, restoreHttpClient, seed, seedOwner } from './restore-http-test-client.ts';
 
@@ -43,6 +44,24 @@ const cutPhases: Partial<Record<(typeof cuts)[number], string>> = {
   'original-activation': 'original-replacing',
   'original-commit': 'original-committed',
 };
+const coldPhases = {
+  'cold-admission': 'original-capture-planned',
+  'cold-prepared': 'original-prepared',
+  'cold-activation': 'original-replacing',
+  'cold-trial-planned': 'original-trial-planned',
+  'cold-private-open': 'original-trial-opening',
+  'cold-commit': 'original-committed',
+} as const;
+const scenarios: {
+  name: string;
+  cut: (typeof cuts)[number];
+  cold?: keyof typeof coldPhases;
+}[] = [
+  ...cuts.map((cut) => ({ name: cut, cut })),
+  ...(Object.keys(coldPhases) as (keyof typeof coldPhases)[]).map((cold) => ({
+    name: cold, cut: 'original-activation' as const, cold,
+  })),
+];
 const alive = (child: ChildProcess) => child.exitCode === null && child.signalCode === null;
 async function kill(child: ChildProcess) {
   if (!alive(child)) return;
@@ -80,6 +99,31 @@ async function evidence(root: string) {
       await walk(join(root, entry.name));
   return result;
 }
+async function retains(root: string, previous: Record<string, string>) {
+  const current = await evidence(root);
+  for (const [path, hash] of Object.entries(previous)) expect(current[path], path).toBe(hash);
+  return current;
+}
+async function seedLink(databasePath: string, ownerId: string) {
+  const child = fork(fileURLToPath(new URL('./restore-crash-security-fixture.ts', import.meta.url)), [], {
+    env: { ...process.env, DATABASE_PATH: databasePath, SPINEL_TEST_OWNER_ID: ownerId },
+    execArgv: [], stdio: ['ignore', 'ignore', 'ignore', 'ipc'],
+  });
+  return new Promise<string>((resolve, reject) => {
+    let linkedId: string | undefined;
+    const timer = setTimeout(() => child.kill('SIGKILL'), 10_000);
+    child.on('message', (value: unknown) => {
+      if (value && typeof value === 'object' && 'linkedId' in value && typeof value.linkedId === 'string')
+        linkedId = value.linkedId;
+    });
+    child.once('exit', (code) => {
+      clearTimeout(timer);
+      if (code === 0 && linkedId) resolve(linkedId);
+      else reject(new Error('Crash security seed did not close successfully.'));
+    });
+    child.once('error', reject);
+  });
+}
 
 /** Never give the long-lived test process a native handle to the live inode.
  * libsql may retain handles beyond close(); observations use disposable copies. */
@@ -98,29 +142,42 @@ async function probeCopy(directory: string, databasePath: string, includeWal: bo
   }
   return target;
 }
+async function inspectCopy(
+  directory: string, databasePath: string, includeWal: boolean,
+  inspect: (database: DatabaseSync) => void,
+) {
+  const location = pathToFileURL(await probeCopy(directory, databasePath, includeWal));
+  location.searchParams.set('mode', 'ro');
+  if (!includeWal) location.searchParams.set('immutable', '1');
+  const database = new DatabaseSync(location.href);
+  try { inspect(database); } finally { database.close(); }
+}
 
-test.skipIf(process.platform !== 'linux').each(cuts)(
-  'real SIGKILL at %s preserves the durable restore decision and all retained evidence',
-  async (cut) => {
+test.skipIf(process.platform !== 'linux').each(scenarios)(
+  'real SIGKILL at $name preserves the durable restore decision and all retained evidence',
+  async ({ cut, cold }) => {
     const originalRecovery = cut === 'original-activation' || cut === 'original-commit';
     const partial = cut === 'activation' || cut === 'original-activation';
     const preActivation =
       cut === 'custody' || cut === 'freeze' || cut === 'activation-plan' || cut === 'staging';
     const unresolved = partial || cut === 'private-open';
+    const recoversOriginal = unresolved || cut === 'original-commit';
     const directory = await mkdtemp(join(tmpdir(), 'spinel-restore-crash-'));
     const root = join(directory, 'recovery'),
       data = join(directory, 'data');
     await mkdir(root, { mode: 0o700 });
     await mkdir(data, { mode: 0o700 });
     const databasePath = join(data, 'workspace.sqlite'),
-      marker = join(directory, 'cut.json');
+      marker = join(directory, 'cut.json'),
+      coldMarker = join(directory, 'cold-cut.json');
     const credential = authenticator();
     const source = await seed(databasePath, credential);
     const ownerCredential = authenticator();
     const ownerId =
-      cut === 'postcommit' || originalRecovery
+      cut === 'postcommit' || recoversOriginal
         ? await seedOwner(databasePath, source.folderId, ownerCredential)
         : undefined;
+    const linkedId = recoversOriginal ? await seedLink(databasePath, ownerId!) : undefined;
     const identity = statSync(databasePath);
     const portProbe = createServer();
     await new Promise<void>((resolve) => portProbe.listen(0, '127.0.0.1', resolve));
@@ -132,7 +189,8 @@ test.skipIf(process.platform !== 'linux').each(cuts)(
     const ownerClient = ownerId ? restoreHttpClient(base, ownerId, ownerCredential) : undefined;
     let controller: ChildProcess | undefined;
     let recoveryComplete = false;
-    const launch = async (initial: boolean) => {
+    let clockOffset = 0;
+    const launch = async (initial: boolean, coldAttempt = false) => {
       const child = fork(
         fileURLToPath(new URL('./restore-crash-fixture.ts', import.meta.url)),
         [],
@@ -144,6 +202,9 @@ test.skipIf(process.platform !== 'linux').each(cuts)(
             SPINEL_TEST_APP_PORT: String(port),
             SPINEL_TEST_CRASH_MARKER: marker,
             SPINEL_TEST_CRASH_CUT: initial ? cut : '',
+            SPINEL_TEST_COLD_CRASH_MARKER: coldMarker,
+            SPINEL_TEST_COLD_CRASH_CUT: coldAttempt ? cold : '',
+            SPINEL_TEST_CLOCK_OFFSET: String(clockOffset),
             SPINEL_TEST_INITIAL_BOOT: initial ? '1' : '0',
           },
           execArgv: [],
@@ -178,6 +239,7 @@ test.skipIf(process.platform !== 'linux').each(cuts)(
       const first = await launch(true);
       const client = restoreHttpClient(base, source.operatorId, credential);
       await client.authenticate();
+      if (recoversOriginal) await ownerClient!.authenticate();
       const prepared = await client.prepare(source);
       const statePath = join(root, 'restore-jobs', prepared.id, 'state.json');
       const record = () => JSON.parse(readFileSync(statePath, 'utf8')) as RestoreJobRecord;
@@ -243,6 +305,7 @@ test.skipIf(process.platform !== 'linux').each(cuts)(
         ? await readFile(join(directory, 'failed-trial-witness.json'))
         : undefined;
       const retained = await evidence(root);
+      let completedEvidence = retained;
       const liveHash = createHash('sha256')
         .update(await readFile(databasePath))
         .digest('hex');
@@ -254,6 +317,22 @@ test.skipIf(process.platform !== 'linux').each(cuts)(
         expect(reached.bytesWritten).toBe(64 * 1024);
         expect(selected.bytes).toBeGreaterThan(reached.bytesWritten!);
         expect(liveHash).not.toBe(selected.sha256);
+      }
+      if (recoversOriginal) {
+        const execution = before.execution!, frozen = execution.frozen!;
+        const original = join(root, `restore-${prepared.id}`, `freeze-${execution.freezeSlot}`, frozen.directory, 'frozen.sqlite');
+        const bytes = await readFile(original);
+        expect(bytes.length).toBe(frozen.bytes);
+        expect(createHash('sha256').update(bytes).digest('hex')).toBe(frozen.sha256);
+        expect(frozen.fingerprint).toBe(execution.stop!.fingerprint);
+        await inspectCopy(directory, original, false, (database) => {
+          expect(restoreSnapshotFingerprint(database)).toBe(execution.stop!.fingerprint);
+          expect(database.prepare('SELECT name FROM workspace_items WHERE id=?').get(source.folderId)?.name).toBe('Current folder');
+          expect(Number(database.prepare('SELECT count(*) AS n FROM auth_sessions').get()!.n)).toBeGreaterThan(0);
+          expect(database.prepare('SELECT state FROM workspace_links WHERE item_id=?').get(linkedId!)?.state).toBe('active');
+          expect(database.prepare('SELECT 1 FROM workspace_guest_sessions WHERE item_id=?').get(linkedId!)).toBeDefined();
+        });
+        expect(await readFile(original)).toEqual(bytes);
       }
       if (originalRecovery) {
         const execution = before.execution!;
@@ -398,7 +477,10 @@ test.skipIf(process.platform !== 'linux').each(cuts)(
       }
       await kill(first);
       await confirmation;
-      await launch(false);
+      // This is clock-controlled expiry, not five minutes of elapsed runtime.
+      // The historical WebAuthn proof stays byte-for-byte unchanged.
+      if (recoversOriginal) clockOffset = 6 * 60_000;
+      await launch(false, Boolean(cold));
       assertWorkspaceHandlesClosed(databasePath);
       expect(statSync(databasePath).ino).toBe(identity.ino);
       expect(await evidence(root)).toEqual(retained);
@@ -446,29 +528,157 @@ test.skipIf(process.platform !== 'linux').each(cuts)(
         expect(existsSync(restoreBarrierPath(databasePath))).toBe(false);
         // Explicit ordinary recovery verifies the selected live content. It must
         // never reinstall the prepared candidate over the HTTP-acknowledged row.
-        const operationId = preActivation ? prepared.id : randomUUID();
-        for (const action of ['verify', 'start', 'resume'] as const)
-          await maintenanceControl(root, { action, operationId });
-        await client.authenticate();
-        if (originalRecovery) {
-          await ownerClient!.authenticate();
-          const current = await ownerClient!.json<{ item: { name: string } }>(
-            await ownerClient!.request(`/api/items/${source.folderId}`),
-          );
-          expect(current.item.name).toBe('Current folder');
+        if (!recoversOriginal) {
+          const operationId = preActivation ? prepared.id : randomUUID();
+          for (const action of ['verify', 'start', 'resume'] as const)
+            await maintenanceControl(root, { action, operationId });
+          await client.authenticate();
+          if (acknowledgedId) {
+            await ownerClient!.authenticate();
+            const read = await ownerClient!.json<{ item: { name: string } }>(
+              await ownerClient!.request(`/api/items/${acknowledgedId}`),
+            );
+            expect(read.item.name).toBe('Acknowledged after restore');
+          }
         }
-        if (acknowledgedId) {
-          await ownerClient!.authenticate();
-          const read = await ownerClient!.json<{ item: { name: string } }>(
-            await ownerClient!.request(`/api/items/${acknowledgedId}`),
+      }
+      let committed: RestoreJobRecord | undefined;
+      const recover = () => maintenanceControl(root, { action: 'recover-original', operationId: prepared.id });
+      if (recoversOriginal) {
+        if (cold) {
+          const interrupted = recover().then(
+            (value) => ({ value, error: undefined }),
+            (error: unknown) => ({ value: undefined, error }),
           );
-          expect(read.item.name).toBe('Acknowledged after restore');
+          await expect.poll(() => existsSync(coldMarker), { timeout: 100_000 }).toBe(true);
+          const coldReached = JSON.parse(await readFile(coldMarker, 'utf8'));
+          expect(coldReached.cut).toBe(cold);
+          const attempted = record(), attempt = currentRestoreRecovery(attempted)!;
+          expect(attempt.phase).toBe(coldPhases[cold]);
+          expect(attempted.intent).toEqual(before.intent);
+          expect(attempted.execution).toEqual(before.execution);
+          expect(attempted.phase).toBe(before.phase);
+          expect(attempt.grantedAt).toBeGreaterThan(before.intent.authority.expiresAt);
+          expect(attempt.deadline - attempt.grantedAt).toBe(90_000);
+          const coldMain = JSON.parse(await readFile(join(root, 'journal.json'), 'utf8'));
+          if (cold === 'cold-admission') {
+            expect(coldMain.operation.actorId).toBe(before.intent.authority.actorId);
+            expect(coldMain.generationId).toBe(attempt.priorGenerationId);
+          }
+          if (cold === 'cold-trial-planned') {
+            expect(coldMain.generationId).toBe(attempt.priorGenerationId);
+            expect(coldMain.child).toBeNull();
+          }
+          if (cold === 'cold-activation') {
+            expect(coldReached.bytesWritten).toBe(64 * 1024);
+            expect(attempt.image!.bytes).toBeGreaterThan(coldReached.bytesWritten);
+            expect(createHash('sha256').update(await readFile(databasePath)).digest('hex')).not.toBe(attempt.image!.sha256);
+          }
+          if (cold === 'cold-private-open') {
+            expect(coldReached.pid).toBe(attempt.trial!.child.pid);
+            expect(coldReached.readiness.reference).toEqual(restoreTrialReference(attempt.trial!));
+            expect(coldReached.readiness.fingerprint).toBe(attempt.image!.fingerprint);
+            expect(attempt.readiness).toBeUndefined();
+            expect(attempt.outcome).toBeUndefined();
+          } else expect(coldReached.pid).toBe(controller!.pid);
+          if (cold === 'cold-commit') {
+            expect(attempt.outcome!.fingerprint).toBe(attempt.image!.fingerprint);
+            expect(coldMain.child).toEqual(attempt.trial!.child);
+            expect(sameProcess(attempt.trial!.child)).toBe(true);
+          }
+          const coldEvidence = await retains(root, retained);
+          await kill(controller!);
+          await interrupted;
+          clockOffset += 6 * 60_000;
+          await launch(false);
+          assertWorkspaceHandlesClosed(databasePath);
+          expect(record()).toEqual(attempted);
+          expect(await evidence(root)).toEqual(coldEvidence);
+          expect((await recover()).status.phase).toBe('running');
+          if (cold === 'cold-commit') expect(record()).toEqual(attempted);
+          else {
+            expect(record().recovery!.attempts.slice(0, -1)).toEqual(attempted.recovery!.attempts);
+            expect(currentRestoreRecovery(record())!.grantedAt).toBeGreaterThan(attempt.deadline);
+            expect(currentRestoreRecovery(record())!.slot).not.toBe(attempt.slot);
+          }
+          completedEvidence = await retains(root, coldEvidence);
+        } else expect((await recover()).status.phase).toBe('running');
+
+        committed = record();
+        expect(restoreJobPhase(committed)).toBe('original-committed');
+        expect(committed.intent).toEqual(before.intent);
+        expect(committed.execution).toEqual(before.execution);
+        const current = currentRestoreRecovery(committed);
+        if (unresolved) {
+          expect(current).toBeDefined();
+          expect(current!.grantedAt).toBeGreaterThan(before.intent.authority.expiresAt);
+          expect(current!.deadline - current!.grantedAt).toBe(90_000);
+          expect(current!.outcome!.role).toBe('original');
+          expect(current!.outcome!.fingerprint).toBe(current!.image!.fingerprint);
+        } else expect(committed).toEqual(before);
+        expect(existsSync(restoreBarrierPath(databasePath))).toBe(false);
+        completedEvidence = await retains(root, completedEvidence);
+        const recoveredImage = current?.image ?? committed.execution!.rollback!.image!;
+        // The recovered image reconciles access and generation fences. Its full
+        // fingerprint differs from raw original content, which was independently
+        // authenticated above against the application's shutdown witness.
+        await close(controller!);
+        await launch(false);
+        assertWorkspaceHandlesClosed(databasePath);
+        await inspectCopy(directory, databasePath, true, (database) => {
+          expect(restoreSnapshotFingerprint(database)).toBe(recoveredImage.fingerprint);
+          expect(database.prepare('SELECT name FROM workspace_items WHERE id=?').get(source.folderId)?.name).toBe('Current folder');
+          expect(database.prepare('SELECT 1 FROM auth_sessions').get()).toBeUndefined();
+          expect(database.prepare('SELECT 1 FROM workspace_guest_sessions').get()).toBeUndefined();
+          expect(database.prepare('SELECT state,token_hash,preview_hash FROM workspace_links WHERE item_id=?').get(linkedId!)).toEqual({ state: 'off', token_hash: null, preview_hash: null });
+        });
+        expect((await recover()).status.phase).toBe('running');
+        expect(record()).toEqual(committed);
+        expect(await evidence(root)).toEqual(completedEvidence);
+        expect((await client.request('/api/auth/session')).status).toBe(401);
+        expect((await ownerClient!.request('/api/auth/session')).status).toBe(401);
+        await client.authenticate();
+        const status = await client.json<{ outcome: { id: string; state: string }; pending: boolean }>(await client.request('/api/admin/restores'));
+        expect(status.outcome.id).toBe(prepared.id);
+        expect(status.outcome.state).toBe('original-recovered');
+        expect(status.pending).toBe(false);
+        await ownerClient!.authenticate();
+        const session = await ownerClient!.json<{ restore: { outcome: string } }>(await ownerClient!.request('/api/auth/session'));
+        expect(session.restore.outcome).toBe('recovered');
+        const folder = await ownerClient!.json<{ item: { name: string } }>(await ownerClient!.request(`/api/items/${source.folderId}`));
+        expect(folder.item.name).toBe('Current folder');
+        const acknowledged = await ownerClient!.json<{ item: { id: string; name: string } }>(
+          await ownerClient!.request('/api/items', { kind: 'folder', name: 'Acknowledged after restore', parentId: null }), 201,
+        );
+        expect(acknowledged.item.name).toBe('Acknowledged after restore');
+        acknowledgedId = acknowledged.item.id;
+        if (cut === 'activation' && !cold) {
+          // A historical successful recovery must not steal a different ordinary
+          // maintenance operation, even though it selected this live generation.
+          const operationId = randomUUID();
+          for (const action of ['pause', 'stop'] as const)
+            await maintenanceControl(root, { action, operationId });
+          const stopped = await readFile(join(root, 'journal.json'));
+          const bytes = await readFile(databasePath);
+          await expect(recover()).rejects.toThrow('exact current maintenance operation');
+          expect(await readFile(join(root, 'journal.json'))).toEqual(stopped);
+          expect(await readFile(databasePath)).toEqual(bytes);
+          expect(record()).toEqual(committed);
+          for (const action of ['verify', 'start', 'resume'] as const)
+            await maintenanceControl(root, { action, operationId });
         }
       }
       await close(controller!);
       await launch(false);
       assertWorkspaceHandlesClosed(databasePath);
-      if (!unresolved) {
+      if (recoversOriginal) {
+        expect((await recover()).status.phase).toBe('running');
+        expect(record()).toEqual(committed);
+        expect(await evidence(root)).toEqual(completedEvidence);
+        await close(controller!);
+        assertWorkspaceHandlesClosed(databasePath);
+      }
+      {
         const location = pathToFileURL(await probeCopy(directory, databasePath, true));
         location.searchParams.set('mode', 'ro');
         const database = new DatabaseSync(location.href);
@@ -477,11 +687,11 @@ test.skipIf(process.platform !== 'linux').each(cuts)(
             database.prepare('SELECT name FROM workspace_items WHERE id=?').get(source.folderId)
               ?.name,
           ).toBe(
-            cut === 'admission' || preActivation || originalRecovery
+            cut === 'admission' || preActivation || recoversOriginal
               ? 'Current folder'
               : 'Archived folder',
           );
-          if (originalRecovery) {
+          if (recoversOriginal) {
             const key = database
               .prepare('SELECT user_id,public_key,counter FROM auth_passkeys WHERE id=?')
               .get(ownerCredential.id);
@@ -503,7 +713,7 @@ test.skipIf(process.platform !== 'linux').each(cuts)(
           database.close();
         }
       }
-      expect(await evidence(root)).toEqual(retained);
+      expect(await evidence(root)).toEqual(completedEvidence);
       if (witnessBytes)
         expect(await readFile(join(directory, 'failed-trial-witness.json'))).toEqual(witnessBytes);
       expect(

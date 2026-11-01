@@ -6,22 +6,32 @@ import { dirname } from 'node:path';
 
 if (!process.send || !process.env.SPINEL_TEST_CRASH_MARKER)
   throw new Error('Private crash fixture required.');
+const offset = Number(process.env.SPINEL_TEST_CLOCK_OFFSET ?? 0);
+if (!Number.isSafeInteger(offset) || offset < 0) throw new Error('Invalid fixture clock.');
+const realNow = Date.now;
+Date.now = () => realNow() + offset;
 const send = process.send.bind(process);
 process.send = ((message: unknown, ...args: unknown[]) => {
+  const cold = process.env.SPINEL_TEST_COLD_CRASH_CUT === 'cold-private-open';
+  const cut = cold ? 'cold-private-open' : 'private-open';
+  const marker = cold ? process.env.SPINEL_TEST_COLD_CRASH_MARKER : process.env.SPINEL_TEST_CRASH_MARKER;
   if (
+    (cold || process.env.SPINEL_TEST_CRASH_CUT === 'private-open') &&
     message &&
     typeof message === 'object' &&
     'kind' in message &&
-    message.kind === 'restore-trial-ready'
+    message.kind === 'restore-trial-ready' &&
+    (!cold || ('reference' in message && (message.reference as { role: string }).role === 'original'))
   ) {
-    const fd = openSync(process.env.SPINEL_TEST_CRASH_MARKER!, 'wx', 0o600);
+    if (!marker) throw new Error('Missing private crash marker.');
+    const fd = openSync(marker, 'wx', 0o600);
     try {
-      writeFileSync(fd, JSON.stringify({ cut: 'private-open', pid: process.pid }));
+      writeFileSync(fd, JSON.stringify({ cut, pid: process.pid, readiness: message }));
       fsyncSync(fd);
     } finally {
       closeSync(fd);
     }
-    const directory = openSync(dirname(process.env.SPINEL_TEST_CRASH_MARKER!), 'r');
+    const directory = openSync(dirname(marker), 'r');
     try {
       fsyncSync(directory);
     } finally {

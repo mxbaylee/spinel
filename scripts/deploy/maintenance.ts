@@ -43,7 +43,7 @@ export async function maintenanceControl(
           'Content-Type': 'application/json',
           'Content-Length': Buffer.byteLength(payload),
         },
-        signal: AbortSignal.timeout(65_000),
+        signal: AbortSignal.timeout(command.action === 'recover-original' ? 610_000 : 65_000),
       },
       (response) => {
         let bytes = 0;
@@ -78,13 +78,15 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1
   const [action, option, value, ...extra] = process.argv.slice(2);
   if (
     !action ||
-    !['status', 'pause', 'stop', 'start', 'verify', 'resume'].includes(action) ||
+    !['status', 'pause', 'stop', 'start', 'verify', 'resume', 'recover-original'].includes(
+      action,
+    ) ||
     extra.length ||
     (option !== undefined && (option !== '--operation' || !value || !uuidPattern.test(value))) ||
     (action === 'status' && option !== undefined)
   )
     throw new Error(
-      'Usage: node scripts/deploy/maintenance.ts status|pause|stop|verify|start|resume [--operation UUID]',
+      'Usage: node scripts/deploy/maintenance.ts status|pause|stop|verify|start|resume|recover-original [--operation UUID]',
     );
   const root = process.env.SPINEL_MAINTENANCE_ROOT;
   if (!root)
