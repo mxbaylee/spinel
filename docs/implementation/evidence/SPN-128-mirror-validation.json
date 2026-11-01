@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "sourceBaseSha": "f3bdf95e1355de5bebf8ee64332b31201555b9c5",
+  "sourceSha256": {
+    "scripts/ci/prefer-ubuntu-archive.ts": "3375720efaac6f2eef1e4614a1d9d2fb6fdd52867f5920222305417ccf0646f5",
+    "scripts/ci/prefer-ubuntu-archive.test.ts": "935ed72db26ae879c69cc48c457303a69b10d1369fa72ff5610f610be3ac076d"
+  },
+  "command": "node scripts/serial.ts bash -c \"node_modules/.bin/prettier --write scripts/ci/prefer-ubuntu-archive.ts scripts/ci/prefer-ubuntu-archive.test.ts && node --test scripts/ci/prefer-ubuntu-archive.test.ts\"",
+  "node": "26.12.1",
+  "tests": {
+    "passed": 12,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "durationMs": 186.720883
+  },
+  "watchdog": {
+    "exitCode": 0,
+    "wallSeconds": 1.0,
+    "peakMiB": 105.3,
+    "limitMiB": 2048,
+    "limitSeconds": 475,
+    "hostProcessAccounting": true
+  },
+  "cases": [
+    "Synthetic profiles without the Azure hostname remain byte-identical",
+    "The recognized Azure/archive priorities change without altering other bytes, including CRLF and spacing",
+    "Already preferred Azure/archive pair remains unchanged",
+    "Nine malformed Azure profiles refuse before the direct entry point can write"
+  ],
+  "limits": [
+    "Synthetic inputs do not establish the original failed runner mirror-file contents.",
+    "Actual candidate package installation and required workloads remain subject to final-head CI."
+  ]
+}

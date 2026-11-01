@@ -133,6 +133,10 @@ async function openPreparedFolder(
   await f.page.getByRole('button', { name: `${folder.name} Folder`, exact: true }).click();
   await expect(f.page.getByRole('heading', { name: folder.name, exact: true })).toBeVisible();
   await expect(f.page.getByRole('button', { name: 'New', exact: true })).toBeVisible();
+  // The heading and New can use the shared-list row while the folder request
+  // is still pending. Load this empty folder's actual contents before disconnecting.
+  await expect(f.page.getByRole('list', { name: 'Folder contents', exact: true })).toHaveCount(1);
+  await expect(f.page.getByText('This folder is empty.', { exact: true })).toBeVisible();
 }
 
 async function readCreated(f: OfflineFixture, id: string, unitId: string) {
