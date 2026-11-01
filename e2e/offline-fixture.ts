@@ -1,3 +1,6 @@
+import { withFixtureCleanup } from './owned-process.ts';
+import { closeFixtureResources, fixturePhase } from './fixture-evidence.ts';
+import { verifyFixtureSession } from './fixture-session.ts';
 import { randomUUID } from 'node:crypto';
 import { writeFile } from 'node:fs/promises';
 import { expect } from '@playwright/test';
@@ -283,291 +286,313 @@ export async function fixture(
   } = {},
 ) {
   const db = openDatabase(options.databasePath ?? `test-results/${info.project.name}/app.sqlite`);
-  const auth = new AuthStore(db);
-  const workspace = new WorkspaceStore(auth, { spacesEnabled: true });
-  const spaces = new SpaceStore(workspace);
-  const owner = auth.createUser(`Offline owner ${info.testId}`);
-  const editor = auth.createUser(`Offline editor ${info.testId}`);
-  const viewer = auth.createUser(`Offline viewer ${info.testId}`);
-  const users = { owner, editor, viewer };
-  const actor = users[options.actor ?? 'owner'];
-  const root = options.space
-    ? spaces.createRoot(owner.id, { name: 'Offline project', parentId: null }).space
-    : undefined;
   const contexts: BrowserContext[] = [];
-  const cookie = (id: string) => ({
-    name: COOKIE_NAME,
-    value: auth.createSession(id).token,
-    url: baseURL.replace('http:', 'https:'),
-    secure: true,
-    httpOnly: true,
-    sameSite: 'Strict' as const,
-  });
-  const account = async (id: string, phone = false) => {
-    const context = await browser.newContext({
-      baseURL,
-      proxy: options.proxy,
-      viewport: { width: 1440, height: 1100 },
-      permissions: ['clipboard-read', 'clipboard-write'],
-      ...(phone
-        ? {
-            viewport: { width: 390, height: 844 },
-            deviceScaleFactor: 1,
-            isMobile: true,
-            hasTouch: true,
-            colorScheme: 'light' as const,
-            reducedMotion: 'reduce' as const,
-          }
-        : {}),
+  try {
+    const auth = new AuthStore(db);
+    const workspace = new WorkspaceStore(auth, { spacesEnabled: true });
+    const spaces = new SpaceStore(workspace);
+    const owner = auth.createUser(`Offline owner ${info.testId}`);
+    const editor = auth.createUser(`Offline editor ${info.testId}`);
+    const viewer = auth.createUser(`Offline viewer ${info.testId}`);
+    const users = { owner, editor, viewer };
+    const actor = users[options.actor ?? 'owner'];
+    const root = options.space
+      ? spaces.createRoot(owner.id, { name: 'Offline project', parentId: null }).space
+      : undefined;
+    const cookie = (id: string) => ({
+      name: COOKIE_NAME,
+      value: auth.createSession(id).token,
+      url: baseURL.replace('http:', 'https:'),
+      secure: true,
+      httpOnly: true,
+      sameSite: 'Strict' as const,
     });
-    contexts.push(context);
-    await context.addCookies([cookie(id)]);
-    return context;
-  };
-  const control = await account(owner.id);
-  let item: { id: string; name: string };
-  if (options.seed) {
-    const files = new PortableFiles(workspace);
-    const prepared = await files.prepare({
-      filename: `Offline ${kind}.univer.json`,
-      snapshot: options.seed,
-    });
-    if (root) {
-      item = spaces.createChild(owner.id, root.id, {
-        name: prepared.name,
-        kind,
-        parentId: root.id,
-      }).item;
-      // Seed a complete validated native fixture before its first collaboration
-      // generation exists. Recovery itself must use the real browser/API path.
-      const snapshot = files.materialize(prepared, item.id);
-      auth.transaction(() => {
-        for (const image of prepared.images.values())
-          db.prepare('INSERT INTO doc_images VALUES(?,?,?,?)').run(
-            item.id,
-            image.id,
-            image.mime,
-            image.data,
-          );
-        db.prepare(
-          `INSERT INTO ${kind === 'doc' ? 'doc_snapshots' : 'sheet_snapshots'} VALUES(?,?,?,?)`,
-        ).run(item.id, JSON.stringify(snapshot), 1, randomUUID());
+    const account = async (id: string, phone = false) => {
+      const context = await browser.newContext({
+        baseURL,
+        proxy: options.proxy,
+        viewport: { width: 1440, height: 1100 },
+        permissions: ['clipboard-read', 'clipboard-write'],
+        ...(phone
+          ? {
+              viewport: { width: 390, height: 844 },
+              deviceScaleFactor: 1,
+              isMobile: true,
+              hasTouch: true,
+              colorScheme: 'light' as const,
+              reducedMotion: 'reduce' as const,
+            }
+          : {}),
       });
-    } else {
-      item = await files.import(
-        owner.id,
-        { filename: `Offline ${kind}.univer.json`, parentId: null, snapshot: options.seed },
-        () => {},
-      );
-    }
-  } else if (options.images) {
-    const snapshot = await offlineSheetImages();
-    const response = await control.request.post('/api/items/import', {
-      headers: { Origin: baseURL },
-      data: {
-        filename: 'Offline images.univer.json',
-        parentId: null,
-        snapshot,
-      },
-    });
-    expect(response.status(), await response.text()).toBe(201);
-    item = (await response.json()).item;
-  } else
-    item = root
-      ? spaces.createChild(owner.id, root.id, { name: `Offline ${kind}`, kind, parentId: root.id })
-          .item
-      : workspace.create(owner.id, { name: `Offline ${kind}`, kind, parentId: null });
-  if (kind === 'doc' && options.flavor !== undefined) {
-    // Visible, valid text lets a real touch choose the native insertion point.
-    // Keep a non-default saved zoom to catch a phone view changing shared data.
-    const snapshot = getDocsEmptySnapshot(item.id, LocaleType.EN_US, item.name, options.flavor);
-    snapshot.settings = { ...snapshot.settings, zoomRatio: options.zoomRatio ?? 1 };
-    const stream = 'Phone journal\rOffline writing keeps the whole saved document.\r';
-    const paragraphIds = new Set<string>();
-    snapshot.body = {
-      ...snapshot.body,
-      dataStream: stream + '\n',
-      paragraphs: Array.from(stream.matchAll(/\r/g), (match) => ({
-        startIndex: match.index!,
-        paragraphId: createParagraphId(paragraphIds),
-      })),
-      sectionBreaks: [{ startIndex: stream.length, sectionId: createSectionId(new Set()) }],
+      contexts.push(context);
+      await context.addCookies([cookie(id)]);
+      await verifyFixtureSession(context, baseURL, id, info);
+      return context;
     };
-    expect(validateDocumentStructure(snapshot)).toEqual([]);
-    new DocumentStore(workspace).save(owner.id, item.id, {
-      snapshot,
-      revision: 0,
-      writeId: randomUUID(),
-    });
-  }
-  for (const [user, role] of [
-    [editor, 'editor'],
-    [viewer, 'viewer'],
-  ] as const)
-    if (root) spaces.share(owner.id, root.id, user.id, role);
-    else workspace.share(owner.id, item.id, user.id, role);
-  const prefix = root ? `/api/spaces/${root.id}/items/${item.id}` : `/api/items/${item.id}`;
-  const syncPrefix = root
-    ? `/sync-api/spaces/${root.id}/items/${item.id}`
-    : `/sync-api/items/${item.id}`;
-  const href = root ? `/spaces/${root.id}?item=${item.id}` : `/?item=${item.id}`;
-  const prepared = await control.request.post(`${prefix}/collaboration`, {
-    headers: { Origin: baseURL },
-    data: {},
-  });
-  expect(prepared.status(), await prepared.text()).toBe(200);
-  const unitId = (await prepared.json()).unitId as string;
-  const context = await account(actor.id, options.phone);
-  await recordNativeSnapshots(context);
-  const network = await syncNetwork(context);
-  const page = await context.newPage();
-  const errors: string[] = [];
-  const consoleErrors: { page: string; message: string }[] = [];
-  const observeErrors = (target: Page) => {
-    target.on('pageerror', (error) => errors.push(error.message));
-    target.on('console', (message) => {
-      if (message.type() === 'error')
-        consoleErrors.push({ page: target.url(), message: message.text() });
-    });
-  };
-  context.on('page', observeErrors);
-  observeErrors(page);
-  const read = async (id = unitId) => {
-    const response = await control.request.get(
-      `${syncPrefix}/snapshot?unitId=${encodeURIComponent(id)}`,
-    );
-    expect(response.status(), await response.text()).toBe(200);
-    return (await response.json()) as { revision: number; snapshot: IWorkbookData & IDocumentData };
-  };
-  const download = async () => {
-    await page.goto(href);
-    const phoneReadOnly =
-      options.flavor === DocumentFlavor.TRADITIONAL &&
-      (await page.evaluate(() => matchMedia('(pointer: coarse) and (max-width: 900px)').matches));
-    await expect(saveStatus(page)).toHaveText(
-      phoneReadOnly
-        ? 'View only on this phone. Edit on a larger screen.'
-        : options.actor === 'viewer'
-          ? 'View only — reload after your access changes.'
-          : 'All changes saved.',
-      { timeout: 30_000 },
-    );
-    await expect
-      .poll(() => page.evaluate(() => Boolean(navigator.serviceWorker.controller)))
-      .toBe(true);
-    const canvas = await page.locator('.univer-container canvas').first().elementHandle();
-    await page.getByRole('button', { name: 'Document actions', exact: true }).click();
-    if (root) {
-      await page.getByRole('menuitem', { name: 'Offline copies', exact: true }).click();
-      const dialog = page.getByRole('dialog', { name: 'Offline copies', exact: true });
-      await dialog
-        .getByRole('button', { name: `Make ${item.name} available offline on this device` })
-        .click();
-      await expect(dialog.getByRole('status')).toHaveText(
-        `${item.name} is available offline on this device.`,
-        { timeout: 120_000 },
-      );
-      await dialog.getByRole('button', { name: 'Close dialog', exact: true }).click();
-    } else {
-      await page
-        .getByRole('menuitem', { name: 'Available offline on this device', exact: true })
-        .click();
-      const dialog = page.getByRole('dialog', { name: 'Offline availability', exact: true });
-      await expect(dialog.getByRole('status')).toHaveText(
-        `${item.name} is available offline on this device.`,
-        { timeout: 120_000 },
-      );
-      await dialog.getByRole('button', { name: 'Done', exact: true }).click();
-    }
-    expect(
-      await page
-        .locator('.univer-container canvas')
-        .first()
-        .evaluate((node, original) => node === original, canvas!),
-    ).toBe(true);
-    await expect
-      .poll(() => page.evaluate(() => localStorage.getItem('spinel.offline.account')))
-      .toBe(actor.id);
-    if (options.actor !== 'viewer') await synced(page);
-  };
-  return {
-    db,
-    auth,
-    workspace,
-    spaces,
-    owner,
-    editor,
-    viewer,
-    actor,
-    root,
-    item,
-    unitId,
-    context,
-    control,
-    page,
-    network,
-    href,
-    prefix,
-    syncPrefix,
-    errors,
-    read,
-    download,
-    cookie,
-    async close(creationTransport?: readonly CreationTransportPost[]) {
-      try {
-        const pages = context.pages();
-        const observed = await Promise.allSettled(
-          pages.map(async (target) => ({
-            ...(await target.evaluate(() => ({
-              url: location.href,
-              online: navigator.onLine,
-              preparedAccount: localStorage.getItem('spinel.offline.account'),
-              native: (window as Window & { nativeSyncEvidence?: unknown }).nativeSyncEvidence,
-              status: document.querySelector('[aria-label="Save status"]')?.textContent,
-              focus: document.activeElement?.outerHTML,
-              layout: [
-                ...document.querySelectorAll(
-                  '.editor-content, [aria-label="Offline copy"], .sheet-editor, .univer-container',
-                ),
-              ].map((node) => ({
-                element: node.tagName,
-                className: node.className,
-                label: node.getAttribute('aria-label'),
-                bounds: node.getBoundingClientRect().toJSON(),
-                canvases: node.querySelectorAll('canvas').length,
-              })),
-            }))),
-            stored: await stored(target, actor.id, item.id).catch((error) => ({
-              error: String(error),
-            })),
-          })),
+    const control = await account(owner.id);
+    let item: { id: string; name: string };
+    if (options.seed) {
+      const files = new PortableFiles(workspace);
+      const prepared = await files.prepare({
+        filename: `Offline ${kind}.univer.json`,
+        snapshot: options.seed,
+      });
+      if (root) {
+        item = spaces.createChild(owner.id, root.id, {
+          name: prepared.name,
+          kind,
+          parentId: root.id,
+        }).item;
+        // Seed a complete validated native fixture before its first collaboration
+        // generation exists. Recovery itself must use the real browser/API path.
+        const snapshot = files.materialize(prepared, item.id);
+        auth.transaction(() => {
+          for (const image of prepared.images.values())
+            db.prepare('INSERT INTO doc_images VALUES(?,?,?,?)').run(
+              item.id,
+              image.id,
+              image.mime,
+              image.data,
+            );
+          db.prepare(
+            `INSERT INTO ${kind === 'doc' ? 'doc_snapshots' : 'sheet_snapshots'} VALUES(?,?,?,?)`,
+          ).run(item.id, JSON.stringify(snapshot), 1, randomUUID());
+        });
+      } else {
+        item = await files.import(
+          owner.id,
+          { filename: `Offline ${kind}.univer.json`, parentId: null, snapshot: options.seed },
+          () => {},
         );
-        // The CI artifact glob retains this filename on both success and failure.
-        // Attachments alone were absent from the archived browser diagnostics.
-        await writeFile(
-          info.outputPath('sync-diagnostics.json'),
-          JSON.stringify(
-            {
-              observed,
-              errors,
-              consoleErrors,
-              outgoing: network.outgoing,
-              incoming: network.incoming,
-              ...(creationTransport ? { creationTransport } : {}),
-            },
-            null,
-            2,
-          ),
-        );
-      } finally {
-        try {
-          await Promise.all(contexts.map((context) => context.close()));
-        } finally {
-          db.close();
-        }
       }
-    },
-  };
+    } else if (options.images) {
+      const snapshot = await offlineSheetImages();
+      const response = await control.request.post('/api/items/import', {
+        headers: { Origin: baseURL },
+        data: {
+          filename: 'Offline images.univer.json',
+          parentId: null,
+          snapshot,
+        },
+      });
+      expect(response.status(), await response.text()).toBe(201);
+      item = (await response.json()).item;
+    } else
+      item = root
+        ? spaces.createChild(owner.id, root.id, {
+            name: `Offline ${kind}`,
+            kind,
+            parentId: root.id,
+          }).item
+        : workspace.create(owner.id, { name: `Offline ${kind}`, kind, parentId: null });
+    if (kind === 'doc' && options.flavor !== undefined) {
+      // Visible, valid text lets a real touch choose the native insertion point.
+      // Keep a non-default saved zoom to catch a phone view changing shared data.
+      const snapshot = getDocsEmptySnapshot(item.id, LocaleType.EN_US, item.name, options.flavor);
+      snapshot.settings = { ...snapshot.settings, zoomRatio: options.zoomRatio ?? 1 };
+      const stream = 'Phone journal\rOffline writing keeps the whole saved document.\r';
+      const paragraphIds = new Set<string>();
+      snapshot.body = {
+        ...snapshot.body,
+        dataStream: stream + '\n',
+        paragraphs: Array.from(stream.matchAll(/\r/g), (match) => ({
+          startIndex: match.index!,
+          paragraphId: createParagraphId(paragraphIds),
+        })),
+        sectionBreaks: [{ startIndex: stream.length, sectionId: createSectionId(new Set()) }],
+      };
+      expect(validateDocumentStructure(snapshot)).toEqual([]);
+      new DocumentStore(workspace).save(owner.id, item.id, {
+        snapshot,
+        revision: 0,
+        writeId: randomUUID(),
+      });
+    }
+    for (const [user, role] of [
+      [editor, 'editor'],
+      [viewer, 'viewer'],
+    ] as const)
+      if (root) spaces.share(owner.id, root.id, user.id, role);
+      else workspace.share(owner.id, item.id, user.id, role);
+    const prefix = root ? `/api/spaces/${root.id}/items/${item.id}` : `/api/items/${item.id}`;
+    const syncPrefix = root
+      ? `/sync-api/spaces/${root.id}/items/${item.id}`
+      : `/sync-api/items/${item.id}`;
+    const href = root ? `/spaces/${root.id}?item=${item.id}` : `/?item=${item.id}`;
+    const prepared = await control.request.post(`${prefix}/collaboration`, {
+      headers: { Origin: baseURL },
+      data: {},
+    });
+    expect(prepared.status(), await prepared.text()).toBe(200);
+    const unitId = (await prepared.json()).unitId as string;
+    const context = await account(actor.id, options.phone);
+    await recordNativeSnapshots(context);
+    const network = await syncNetwork(context);
+    const page = await context.newPage();
+    const errors: string[] = [];
+    const consoleErrors: { page: string; message: string }[] = [];
+    const observeErrors = (target: Page) => {
+      target.on('pageerror', (error) => errors.push(error.message));
+      target.on('console', (message) => {
+        if (message.type() === 'error')
+          consoleErrors.push({ page: target.url(), message: message.text() });
+      });
+    };
+    context.on('page', observeErrors);
+    observeErrors(page);
+    const read = async (id = unitId) => {
+      fixturePhase(info, 'snapshot-observation');
+      const response = await control.request.get(
+        `${syncPrefix}/snapshot?unitId=${encodeURIComponent(id)}`,
+      );
+      expect(response.status(), await response.text()).toBe(200);
+      return (await response.json()) as {
+        revision: number;
+        snapshot: IWorkbookData & IDocumentData;
+      };
+    };
+    const download = async () => {
+      fixturePhase(info, 'offline-download');
+      await page.goto(href);
+      const phoneReadOnly =
+        options.flavor === DocumentFlavor.TRADITIONAL &&
+        (await page.evaluate(() => matchMedia('(pointer: coarse) and (max-width: 900px)').matches));
+      await expect(saveStatus(page)).toHaveText(
+        phoneReadOnly
+          ? 'View only on this phone. Edit on a larger screen.'
+          : options.actor === 'viewer'
+            ? 'View only — reload after your access changes.'
+            : 'All changes saved.',
+        { timeout: 30_000 },
+      );
+      await expect
+        .poll(() => page.evaluate(() => Boolean(navigator.serviceWorker.controller)))
+        .toBe(true);
+      const canvas = await page.locator('.univer-container canvas').first().elementHandle();
+      await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+      if (root) {
+        await page.getByRole('menuitem', { name: 'Offline copies', exact: true }).click();
+        const dialog = page.getByRole('dialog', { name: 'Offline copies', exact: true });
+        await dialog
+          .getByRole('button', { name: `Make ${item.name} available offline on this device` })
+          .click();
+        await expect(dialog.getByRole('status')).toHaveText(
+          `${item.name} is available offline on this device.`,
+          { timeout: 120_000 },
+        );
+        await dialog.getByRole('button', { name: 'Close dialog', exact: true }).click();
+      } else {
+        await page
+          .getByRole('menuitem', { name: 'Available offline on this device', exact: true })
+          .click();
+        const dialog = page.getByRole('dialog', { name: 'Offline availability', exact: true });
+        await expect(dialog.getByRole('status')).toHaveText(
+          `${item.name} is available offline on this device.`,
+          { timeout: 120_000 },
+        );
+        await dialog.getByRole('button', { name: 'Done', exact: true }).click();
+      }
+      expect(
+        await page
+          .locator('.univer-container canvas')
+          .first()
+          .evaluate((node, original) => node === original, canvas!),
+      ).toBe(true);
+      await expect
+        .poll(() => page.evaluate(() => localStorage.getItem('spinel.offline.account')))
+        .toBe(actor.id);
+      if (options.actor !== 'viewer') await synced(page);
+    };
+    let closing: Promise<void> | undefined;
+    return {
+      db,
+      auth,
+      workspace,
+      spaces,
+      owner,
+      editor,
+      viewer,
+      actor,
+      root,
+      item,
+      unitId,
+      context,
+      control,
+      page,
+      network,
+      href,
+      prefix,
+      syncPrefix,
+      errors,
+      read,
+      download,
+      cookie,
+      close(creationTransport?: readonly CreationTransportPost[]) {
+        return (closing ??= closeFixtureResources(info, {
+          capture: async () => {
+            const pages = context.pages();
+            const observed = await Promise.allSettled(
+              pages.map(async (target) => ({
+                ...(await target.evaluate(() => ({
+                  url: location.href,
+                  online: navigator.onLine,
+                  preparedAccount: localStorage.getItem('spinel.offline.account'),
+                  native: (window as Window & { nativeSyncEvidence?: unknown }).nativeSyncEvidence,
+                  status: document.querySelector('[aria-label="Save status"]')?.textContent,
+                  focus: document.activeElement?.outerHTML,
+                  layout: [
+                    ...document.querySelectorAll(
+                      '.editor-content, [aria-label="Offline copy"], .sheet-editor, .univer-container',
+                    ),
+                  ].map((node) => ({
+                    element: node.tagName,
+                    className: node.className,
+                    label: node.getAttribute('aria-label'),
+                    bounds: node.getBoundingClientRect().toJSON(),
+                    canvases: node.querySelectorAll('canvas').length,
+                  })),
+                }))),
+                stored: await stored(target, actor.id, item.id).catch((error) => ({
+                  error: String(error),
+                })),
+              })),
+            );
+            // The CI artifact glob retains this filename on both success and failure.
+            // Attachments alone were absent from the archived browser diagnostics.
+            await writeFile(
+              info.outputPath('sync-diagnostics.json'),
+              JSON.stringify(
+                {
+                  observed,
+                  errors,
+                  consoleErrors,
+                  outgoing: network.outgoing,
+                  incoming: network.incoming,
+                  ...(creationTransport ? { creationTransport } : {}),
+                },
+                null,
+                2,
+              ),
+            );
+          },
+          contexts,
+          dispose: () => db.close(),
+        }));
+      },
+    };
+  } catch (original) {
+    return withFixtureCleanup(
+      async () => {
+        throw original;
+      },
+      () =>
+        closeFixtureResources(info, {
+          capture: async () => {},
+          contexts,
+          dispose: () => db.close(),
+        }),
+    );
+  }
 }
 
 export type OfflineFixture = Awaited<ReturnType<typeof fixture>>;

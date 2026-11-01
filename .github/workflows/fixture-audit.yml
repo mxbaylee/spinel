@@ -45,8 +45,10 @@ jobs:
       - name: Retain the candidate's audit driver and select immutable source
         run: |
           cp scripts/ci/fixture-audit.ts "$RUNNER_TEMP/fixture-audit.ts"
+          cp scripts/ci/fixture-audit-reporter.ts "$RUNNER_TEMP/fixture-audit-reporter.ts"
+          [[ "$AUDIT_HEAD" =~ ^[a-f0-9]{40}$ ]]
           if [ "$AUDIT_SOURCE" = baseline ]; then
-            test -n "$AUDIT_BASE"
+            [[ "$AUDIT_BASE" =~ ^[a-f0-9]{40}$ ]]
             git checkout --detach "$AUDIT_BASE"
           fi
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7

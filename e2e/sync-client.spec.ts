@@ -1,3 +1,6 @@
+import { closeFixtureResources, fixturePhase, withFixtureServer } from './fixture-evidence.ts';
+import { verifyFixtureSession } from './fixture-session.ts';
+import { withFixtureCleanup } from './owned-process.ts';
 import { expect, test } from '@playwright/test';
 import type { Browser, BrowserContext, Page, TestInfo } from '@playwright/test';
 import type { IWorkbookData, IDocumentData } from '@univerjs/core';
@@ -99,128 +102,156 @@ async function fixture(
   snapshot?: IWorkbookData,
 ) {
   const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
-  const auth = new AuthStore(db);
-  const workspace = new WorkspaceStore(auth, { spacesEnabled: true });
-  const owner = auth.createUser('Sync owner');
-  const editor = auth.createUser('Sync collaborator');
-  const profiles = new Profiles(auth);
-  profiles.save(owner.id, { name: owner.name, color: 'primary-strong', icon: 'lucide:flower-2' });
-  profiles.save(editor.id, { name: editor.name, color: 'info-strong', icon: 'lucide:leaf' });
-  const item = workspace.create(owner.id, { kind, name: `Native ${kind} sync`, parentId: null });
-  workspace.share(owner.id, item.id, editor.id, 'editor');
-  if (snapshot)
-    new SheetStore(workspace).save(owner.id, item.id, {
-      snapshot: { ...snapshot, id: item.id },
-      revision: 0,
-      writeId: crypto.randomUUID(),
-    });
   const contexts: BrowserContext[] = [];
-  async function account(user: string) {
-    const context = await browser.newContext({
-      baseURL,
-      viewport: mobile ? { width: 390, height: 844 } : { width: 1440, height: 1100 },
-      isMobile: mobile,
-      hasTouch: mobile,
-      permissions: ['clipboard-read', 'clipboard-write'],
+  try {
+    const auth = new AuthStore(db);
+    const workspace = new WorkspaceStore(auth, { spacesEnabled: true });
+    const owner = auth.createUser('Sync owner');
+    const editor = auth.createUser('Sync collaborator');
+    const profiles = new Profiles(auth);
+    profiles.save(owner.id, { name: owner.name, color: 'primary-strong', icon: 'lucide:flower-2' });
+    profiles.save(editor.id, { name: editor.name, color: 'info-strong', icon: 'lucide:leaf' });
+    const item = workspace.create(owner.id, { kind, name: `Native ${kind} sync`, parentId: null });
+    workspace.share(owner.id, item.id, editor.id, 'editor');
+    if (snapshot)
+      new SheetStore(workspace).save(owner.id, item.id, {
+        snapshot: { ...snapshot, id: item.id },
+        revision: 0,
+        writeId: crypto.randomUUID(),
+      });
+    async function account(user: string) {
+      const context = await browser.newContext({
+        baseURL,
+        viewport: mobile ? { width: 390, height: 844 } : { width: 1440, height: 1100 },
+        isMobile: mobile,
+        hasTouch: mobile,
+        permissions: ['clipboard-read', 'clipboard-write'],
+      });
+      contexts.push(context);
+      await recordNativeSnapshots(context);
+      await context.addCookies([
+        {
+          name: COOKIE_NAME,
+          value: auth.createSession(user).token,
+          url: baseURL.replace('http:', 'https:'),
+          secure: true,
+          httpOnly: true,
+          sameSite: 'Strict',
+        },
+      ]);
+      await verifyFixtureSession(context, baseURL, user, info);
+      return context;
+    }
+    const first = await account(owner.id);
+    const second = await account(editor.id);
+    const network = await syncNetwork(first);
+    const otherNetwork = await syncNetwork(second);
+    const page = await first.newPage(),
+      other = await second.newPage();
+    const errors: string[] = [];
+    for (const target of [page, other])
+      target.on('pageerror', (error) => errors.push(error.message));
+    const prepared = await first.request.post(`/api/items/${item.id}/collaboration`, {
+      headers: { Origin: baseURL },
+      data: {},
     });
-    contexts.push(context);
-    await recordNativeSnapshots(context);
-    await context.addCookies([
-      {
-        name: COOKIE_NAME,
-        value: auth.createSession(user).token,
-        url: baseURL.replace('http:', 'https:'),
-        secure: true,
-        httpOnly: true,
-        sameSite: 'Strict',
-      },
-    ]);
-    return context;
-  }
-  const first = await account(owner.id);
-  const second = await account(editor.id);
-  const network = await syncNetwork(first);
-  const otherNetwork = await syncNetwork(second);
-  const page = await first.newPage(),
-    other = await second.newPage();
-  const errors: string[] = [];
-  for (const target of [page, other]) target.on('pageerror', (error) => errors.push(error.message));
-  const prepared = await first.request.post(`/api/items/${item.id}/collaboration`, {
-    headers: { Origin: baseURL },
-    data: {},
-  });
-  expect(prepared.ok(), await prepared.text()).toBe(true);
-  const data = await prepared.json();
-  expect(data.syncVersion).toBe(1);
-  const read = async () => {
-    const response = await first.request.get(
-      `/sync-api/items/${item.id}/snapshot?unitId=${encodeURIComponent(data.unitId)}`,
-      // Repeat only this read-only observation after ECONNRESET. HTTP failures,
-      // authored writes and native/content assertions retain their failure gates.
-      { maxRetries: 1 },
-    );
-    expect(response.ok()).toBe(true);
-    return (await response.json()) as { revision: number; snapshot: IWorkbookData & IDocumentData };
-  };
-  return {
-    db,
-    auth,
-    workspace,
-    owner,
-    editor,
-    item,
-    unitId: data.unitId as string,
-    first,
-    second,
-    page,
-    other,
-    network,
-    otherNetwork,
-    errors,
-    read,
-    account,
-    async close() {
-      // Preserve actual model/wire evidence before teardown, including failures
-      // that occur before the final full-snapshot assertions can run.
-      const observed = await Promise.allSettled(
-        [page, other].map((target) =>
-          target.evaluate(() => ({
-            native: (window as Window & { nativeSyncEvidence?: unknown }).nativeSyncEvidence,
-            focus: document.activeElement?.outerHTML,
-            status: document.querySelector('[role="status"][aria-label="Save status"]')
-              ?.textContent,
-          })),
-        ),
+    expect(prepared.ok(), await prepared.text()).toBe(true);
+    const data = await prepared.json();
+    expect(data.syncVersion).toBe(1);
+    const read = async () => {
+      fixturePhase(info, 'snapshot-observation');
+      const response = await first.request.get(
+        `/sync-api/items/${item.id}/snapshot?unitId=${encodeURIComponent(data.unitId)}`,
+        { maxRetries: 0 },
       );
-      await writeFile(
-        info.outputPath('sync-diagnostics.json'),
-        JSON.stringify(
-          {
-            observed,
-            delivery: [page, other].map(nativeCellDeliveryTiming),
-            errors,
-            outgoing: network.outgoing,
-            incoming: network.incoming,
-            peerOutgoing: otherNetwork.outgoing,
-            peerIncoming: otherNetwork.incoming,
+      expect(response.ok()).toBe(true);
+      return (await response.json()) as {
+        revision: number;
+        snapshot: IWorkbookData & IDocumentData;
+      };
+    };
+    let closing: Promise<void> | undefined;
+    return {
+      db,
+      auth,
+      workspace,
+      owner,
+      editor,
+      item,
+      unitId: data.unitId as string,
+      first,
+      second,
+      page,
+      other,
+      network,
+      otherNetwork,
+      errors,
+      read,
+      account,
+      close() {
+        return (closing ??= closeFixtureResources(info, {
+          capture: async () => {
+            // Preserve actual model/wire evidence before teardown, including failures
+            // that occur before the final full-snapshot assertions can run.
+            const observed = await Promise.allSettled(
+              [page, other].map((target) =>
+                target.evaluate(() => ({
+                  native: (window as Window & { nativeSyncEvidence?: unknown }).nativeSyncEvidence,
+                  focus: document.activeElement?.outerHTML,
+                  status: document.querySelector('[role="status"][aria-label="Save status"]')
+                    ?.textContent,
+                })),
+              ),
+            );
+            await writeFile(
+              info.outputPath('sync-diagnostics.json'),
+              JSON.stringify(
+                {
+                  observed,
+                  delivery: [page, other].map(nativeCellDeliveryTiming),
+                  errors,
+                  outgoing: network.outgoing,
+                  incoming: network.incoming,
+                  peerOutgoing: otherNetwork.outgoing,
+                  peerIncoming: otherNetwork.incoming,
+                },
+                null,
+                2,
+              ),
+            );
           },
-          null,
-          2,
-        ),
-      );
-      await Promise.all(contexts.map((context) => context.close()));
-      // Workspace parent foreign keys are RESTRICT, so remove this fixture's
-      // descendants before their Space root instead of depending on row order.
-      const leaves = db.prepare(`DELETE FROM workspace_items WHERE owner_id=?
+          contexts,
+          dispose: () => {
+            try {
+              // Workspace parent foreign keys are RESTRICT, so remove this fixture's
+              // descendants before their Space root instead of depending on row order.
+              const leaves = db.prepare(`DELETE FROM workspace_items WHERE owner_id=?
         AND id NOT IN (SELECT parent_id FROM workspace_items WHERE parent_id IS NOT NULL)`);
-      while (leaves.run(owner.id).changes) {
-        /* Continue through this fixture's tree. */
-      }
-      for (const user of [owner, editor])
-        db.prepare('DELETE FROM auth_users WHERE id=?').run(user.id);
-      db.close();
-    },
-  };
+              while (leaves.run(owner.id).changes) {
+                /* Continue through this fixture's tree. */
+              }
+              for (const user of [owner, editor])
+                db.prepare('DELETE FROM auth_users WHERE id=?').run(user.id);
+            } finally {
+              db.close();
+            }
+          },
+        }));
+      },
+    };
+  } catch (original) {
+    return withFixtureCleanup(
+      async () => {
+        throw original;
+      },
+      () =>
+        closeFixtureResources(info, {
+          capture: async () => {},
+          contexts,
+          dispose: () => db.close(),
+        }),
+    );
+  }
 }
 
 for (const kind of ['sheet', 'doc'] as const) {
@@ -347,121 +378,133 @@ test('native Sheets deliver within a second, rebase offline edits, and retry one
   }
 });
 
-test('native Docs preserve concurrent text and undo across reconnect, render profile presence, and capture actual image UI edits', async ({
-  browser,
-  baseURL,
-}, info) => {
-  test.setTimeout(180_000);
-  const f = await fixture(browser, baseURL!, info, 'doc');
-  try {
-    await f.page.goto(`/?item=${f.item.id}`);
-    await saved(f.page);
-    await focusDoc(f.page);
-    await f.page.keyboard.type('Shared anchor');
-    await saved(f.page);
-    await f.other.goto(`/?item=${f.item.id}`);
-    await saved(f.other);
-    await focusDoc(f.page);
-    await f.page.keyboard.press('Home');
-    await focusDoc(f.other);
-    await f.other.keyboard.press('End');
-    await expect(
-      f.page.locator('[data-presence-label]').filter({ hasText: 'Sync collaborator' }),
-    ).toBeVisible();
-    await expect(
-      f.other.locator('[data-presence-label]').filter({ hasText: 'Sync owner' }),
-    ).toBeVisible();
-    await f.page.screenshot({ path: info.outputPath('doc-light-sync-presence.png') });
-    await f.network.setOffline(true);
-    await nativeInput(f.page).focus();
-    await f.page.keyboard.type('Owner ');
-    await nativeInput(f.other).focus();
-    await f.other.keyboard.type(' Collaborator');
-    await saved(f.other);
-    await expect(f.page.getByRole('status', { name: 'Save status' })).toContainText('not saved');
-    await f.network.setOffline(false);
-    await Promise.all([saved(f.page), saved(f.other)]);
-    await expect.poll(() => copyDoc(f.page)).toBe('Owner Shared anchor Collaborator');
-    await expect.poll(() => copyDoc(f.other)).toBe('Owner Shared anchor Collaborator');
-    await f.page.keyboard.press('ArrowRight');
-    await f.page.keyboard.type(' undo-me');
-    await saved(f.page);
-    await f.page.keyboard.press('Control+z');
-    await saved(f.page);
-    await expect.poll(() => copyDoc(f.other)).toBe('Owner Shared anchor Collaborator');
-    await f.other.keyboard.press('ArrowRight');
-    await f.other.keyboard.press('Shift+ArrowLeft');
-    await f.other.keyboard.press('Shift+ArrowLeft');
-    await f.page.getByRole('button', { name: 'People in this document', exact: true }).click();
-    const jump = f.page
-      .getByRole('dialog', { name: 'People in this document', exact: true })
-      .getByRole('button', { name: 'Go to Sync collaborator', exact: true });
-    // Cursor updates are coalesced. Follow the new two-character selection,
-    // not the prior select-all range used by the clipboard assertion.
-    await expect(jump).toHaveAttribute('data-selection', '30:32:1:TEXT::-1');
-    await expect(jump).toBeEnabled();
-    await jump.click();
-    await expect(nativeInput(f.page)).toBeFocused();
-    await f.page.keyboard.type('XX');
-    await saved(f.page);
-    await expect
-      .poll(async () => (await f.read()).snapshot.body!.dataStream)
-      .toBe('Owner Shared anchor CollaboratXX\r\n');
+test.describe('Recorded fixture first attempt', () => {
+  test.use({ trace: 'retain-on-failure' });
+  test('native Docs preserve concurrent text and undo across reconnect, render profile presence, and capture actual image UI edits', async ({
+    browser,
+    baseURL,
+  }, info) => {
+    await withFixtureServer(browser, baseURL!, info, async () => {
+      test.setTimeout(180_000);
+      const f = await fixture(browser, baseURL!, info, 'doc');
+      await withFixtureCleanup(
+        async () => {
+          await f.page.goto(`/?item=${f.item.id}`);
+          await saved(f.page);
+          await focusDoc(f.page);
+          await f.page.keyboard.type('Shared anchor');
+          await saved(f.page);
+          await f.other.goto(`/?item=${f.item.id}`);
+          await saved(f.other);
+          await focusDoc(f.page);
+          await f.page.keyboard.press('Home');
+          await focusDoc(f.other);
+          await f.other.keyboard.press('End');
+          await expect(
+            f.page.locator('[data-presence-label]').filter({ hasText: 'Sync collaborator' }),
+          ).toBeVisible();
+          await expect(
+            f.other.locator('[data-presence-label]').filter({ hasText: 'Sync owner' }),
+          ).toBeVisible();
+          await f.page.screenshot({ path: info.outputPath('doc-light-sync-presence.png') });
+          await f.network.setOffline(true);
+          await nativeInput(f.page).focus();
+          await f.page.keyboard.type('Owner ');
+          await nativeInput(f.other).focus();
+          await f.other.keyboard.type(' Collaborator');
+          await saved(f.other);
+          await expect(f.page.getByRole('status', { name: 'Save status' })).toContainText(
+            'not saved',
+          );
+          await f.network.setOffline(false);
+          await Promise.all([saved(f.page), saved(f.other)]);
+          await expect.poll(() => copyDoc(f.page)).toBe('Owner Shared anchor Collaborator');
+          await expect.poll(() => copyDoc(f.other)).toBe('Owner Shared anchor Collaborator');
+          await f.page.keyboard.press('ArrowRight');
+          await f.page.keyboard.type(' undo-me');
+          await saved(f.page);
+          await f.page.keyboard.press('Control+z');
+          await saved(f.page);
+          await expect.poll(() => copyDoc(f.other)).toBe('Owner Shared anchor Collaborator');
+          await f.other.keyboard.press('ArrowRight');
+          await f.other.keyboard.press('Shift+ArrowLeft');
+          await f.other.keyboard.press('Shift+ArrowLeft');
+          await f.page
+            .getByRole('button', { name: 'People in this document', exact: true })
+            .click();
+          const jump = f.page
+            .getByRole('dialog', { name: 'People in this document', exact: true })
+            .getByRole('button', { name: 'Go to Sync collaborator', exact: true });
+          // Cursor updates are coalesced. Follow the new two-character selection,
+          // not the prior select-all range used by the clipboard assertion.
+          await expect(jump).toHaveAttribute('data-selection', '30:32:1:TEXT::-1');
+          await expect(jump).toBeEnabled();
+          await jump.click();
+          await expect(nativeInput(f.page)).toBeFocused();
+          await f.page.keyboard.type('XX');
+          await saved(f.page);
+          await expect
+            .poll(async () => (await f.read()).snapshot.body!.dataStream)
+            .toBe('Owner Shared anchor CollaboratXX\r\n');
 
-    // The actual image toolbar/selection producer exercises the Doc drawing
-    // controls whose render-only collaboration event must stay out of edits.
-    await f.page.keyboard.press('Control+End');
-    await f.page.keyboard.press('Enter');
-    const region = f.page.getByRole('region', { name: 'Doc document', exact: true });
-    await region.getByRole('tab', { name: 'Insert', exact: true }).click();
-    const chooser = f.page.waitForEvent('filechooser');
-    await region.getByRole('button', { name: 'Image', exact: true }).click();
-    await (
-      await chooser
-    ).setFiles({
-      name: 'marker.png',
-      mimeType: 'image/png',
-      buffer: await sharp({ create: { width: 20, height: 10, channels: 4, background: '#ff9900' } })
-        .png()
-        .toBuffer(),
+          // The actual image toolbar/selection producer exercises the Doc drawing
+          // controls whose render-only collaboration event must stay out of edits.
+          await f.page.keyboard.press('Control+End');
+          await f.page.keyboard.press('Enter');
+          const region = f.page.getByRole('region', { name: 'Doc document', exact: true });
+          await region.getByRole('tab', { name: 'Insert', exact: true }).click();
+          const chooser = f.page.waitForEvent('filechooser');
+          await region.getByRole('button', { name: 'Image', exact: true }).click();
+          await (
+            await chooser
+          ).setFiles({
+            name: 'marker.png',
+            mimeType: 'image/png',
+            buffer: await sharp({
+              create: { width: 20, height: 10, channels: 4, background: '#ff9900' },
+            })
+              .png()
+              .toBuffer(),
+          });
+          await saved(f.page);
+          await expect.poll(async () => (await f.read()).snapshot.drawingsOrder?.length).toBe(1);
+          await focusDoc(f.page);
+          await f.page.keyboard.press('Control+End');
+          await f.page.keyboard.type(' after image');
+          await Promise.all([saved(f.page), saved(f.other)]);
+          const committed = await f.read();
+          expect(committed.snapshot.drawingsOrder).toHaveLength(1);
+          expect(committed.snapshot.body!.dataStream).toContain('after image');
+          const ids = f.network.outgoing
+            .filter((frame) => frame.type === 'submit')
+            .flatMap((frame) => frame.mutations.map((mutation: { id: string }) => mutation.id));
+          expect(ids).toContain('doc.mutation.rich-text-editing');
+          expect(ids).not.toContain('doc.operation.clear-drawing-transformer');
+          for (const wire of [f.network, f.otherNetwork])
+            await expect
+              .poll(() =>
+                wire.incoming.some(
+                  (frame) => frame.type === 'verified' && frame.revision === committed.revision,
+                ),
+              )
+              .toBe(true);
+          await expectNativeSnapshots([f.page, f.other], committed);
+          await Promise.all([f.page.reload(), f.other.reload()]);
+          await Promise.all([saved(f.page), saved(f.other)]);
+          await expectNativeSnapshots([f.page, f.other], committed);
+          expect(await copyDoc(f.page)).toBe(await copyDoc(f.other));
+          expect((await f.read()).snapshot.drawingsOrder).toEqual(committed.snapshot.drawingsOrder);
+          await exportConfirmedPdf(f.page, info, 'doc', [
+            'Owner Shared anchor CollaboratXX',
+            'after image',
+          ]);
+          expect(f.network.incoming.filter((frame) => frame.type === 'resync')).toEqual([]);
+          expect(f.errors).toEqual([]);
+        },
+        () => f.close(),
+      );
     });
-    await saved(f.page);
-    await expect.poll(async () => (await f.read()).snapshot.drawingsOrder?.length).toBe(1);
-    await focusDoc(f.page);
-    await f.page.keyboard.press('Control+End');
-    await f.page.keyboard.type(' after image');
-    await Promise.all([saved(f.page), saved(f.other)]);
-    const committed = await f.read();
-    expect(committed.snapshot.drawingsOrder).toHaveLength(1);
-    expect(committed.snapshot.body!.dataStream).toContain('after image');
-    const ids = f.network.outgoing
-      .filter((frame) => frame.type === 'submit')
-      .flatMap((frame) => frame.mutations.map((mutation: { id: string }) => mutation.id));
-    expect(ids).toContain('doc.mutation.rich-text-editing');
-    expect(ids).not.toContain('doc.operation.clear-drawing-transformer');
-    for (const wire of [f.network, f.otherNetwork])
-      await expect
-        .poll(() =>
-          wire.incoming.some(
-            (frame) => frame.type === 'verified' && frame.revision === committed.revision,
-          ),
-        )
-        .toBe(true);
-    await expectNativeSnapshots([f.page, f.other], committed);
-    await Promise.all([f.page.reload(), f.other.reload()]);
-    await Promise.all([saved(f.page), saved(f.other)]);
-    await expectNativeSnapshots([f.page, f.other], committed);
-    expect(await copyDoc(f.page)).toBe(await copyDoc(f.other));
-    expect((await f.read()).snapshot.drawingsOrder).toEqual(committed.snapshot.drawingsOrder);
-    await exportConfirmedPdf(f.page, info, 'doc', [
-      'Owner Shared anchor CollaboratXX',
-      'after image',
-    ]);
-    expect(f.network.incoming.filter((frame) => frame.type === 'resync')).toEqual([]);
-    expect(f.errors).toEqual([]);
-  } finally {
-    await f.close();
-  }
+  });
 });
 
 test('Space page changes clear room membership and a root link downgrade fences all anonymous child editors', async ({

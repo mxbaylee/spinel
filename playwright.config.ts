@@ -271,29 +271,45 @@ export default defineConfig({
       ignoreHTTPSErrors: true,
       reuseExistingServer: false,
     },
-  ].filter(
-    (server) =>
-      !project ||
-      (project !== 'offline-upgrade' &&
-        project !== 'supervised-restore' &&
-        server.url.includes(
-          project === 'development'
-            ? ':3100/'
-            : project === 'production'
-              ? ':3101/'
-              : project === 'sync-development'
-                ? ':3104/'
-                : project === 'sync-production'
-                  ? ':3105/'
-                  : project === 'sync-soak-sheet'
-                    ? ':3106/'
-                    : project === 'sync-soak-doc'
-                      ? ':3107/'
-                      : project === 'doc-responsiveness'
-                        ? ':3108/'
-                        : project === 'doc-callback-lifetimes'
-                          ? ':3109/'
-                          : ':3103/',
-        )),
-  ),
+  ]
+    .filter(
+      (server) =>
+        !project ||
+        (project !== 'offline-upgrade' &&
+          project !== 'supervised-restore' &&
+          server.url.includes(
+            project === 'development'
+              ? ':3100/'
+              : project === 'production'
+                ? ':3101/'
+                : project === 'sync-development'
+                  ? ':3104/'
+                  : project === 'sync-production'
+                    ? ':3105/'
+                    : project === 'sync-soak-sheet'
+                      ? ':3106/'
+                      : project === 'sync-soak-doc'
+                        ? ':3107/'
+                        : project === 'doc-responsiveness'
+                          ? ':3108/'
+                          : project === 'doc-callback-lifetimes'
+                            ? ':3109/'
+                            : ':3103/',
+          )),
+    )
+    .map((server) => {
+      // Primary timing projects retain their plain server and trace-free execution.
+      if (server.url.startsWith('https:') || /:310[89]\//.test(server.url)) return server;
+      const { url: _url, ...owned } = server;
+      return {
+        ...owned,
+        command:
+          'node --max-old-space-size=64 scripts/e2e-server.ts' +
+          (server.command.includes('--dev') ? ' --dev' : ''),
+        // The child listens before the wrapper writes its evidence. Wait for that
+        // exact boundary, not the earlier successful HTTP availability response.
+        wait: { stdout: /Spinel fixture server ready/ },
+        gracefulShutdown: { signal: 'SIGTERM' as const, timeout: 5_500 },
+      };
+    }),
 });
