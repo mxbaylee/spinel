@@ -222,6 +222,7 @@ async function fixture(browser: Browser, baseURL: string, info: TestInfo, mobile
     return (await result.json()).snapshot as IWorkbookData;
   };
   const peers: BrowserContext[] = [];
+  const peerIds = new Map<Page, string>();
   return {
     page,
     context,
@@ -229,6 +230,7 @@ async function fixture(browser: Browser, baseURL: string, info: TestInfo, mobile
     read,
     headers,
     errors,
+    peerIds,
     async peer(role: 'editor' | 'viewer') {
       const member = auth.createUser(`Sheet image ${role} ${info.testId}`);
       const sharing = await context.request.put(`/api/items/${item.id}/sharing`, {
@@ -240,6 +242,7 @@ async function fixture(browser: Browser, baseURL: string, info: TestInfo, mobile
       peers.push(peer);
       await peer.addCookies([cookie(member.id)]);
       const view = await peer.newPage();
+      peerIds.set(view, member.id);
       observe(view);
       await view.goto(`/?item=${item.id}`);
       await expect(view.getByLabel('Spreadsheet grid', { exact: true })).toBeVisible({
@@ -381,7 +384,10 @@ test('native image cell moves with rows and cut/paste; copying the sheet retains
     await saved(f.page);
     const original = f.page.getByRole('tab', { name: 'Pictures', exact: true });
     await original.click({ button: 'right' });
-    await f.page.getByText('Copy', { exact: true }).click();
+    const sheetMenu = f.page.locator('section').filter({
+      has: f.page.getByRole('button', { name: 'Rename', exact: true }),
+    });
+    await sheetMenu.getByRole('button', { name: 'Copy', exact: true }).click();
     await expect.poll(async () => (await f.read()).sheetOrder.length).toBe(2);
     await saved(f.page);
     const copied = await f.read();
@@ -760,6 +766,148 @@ test('cancelling an image chooser releases it; a peer row insertion while choosi
     await visibleColors(f.page, [blue]);
     expect(f.errors).toEqual([]);
   } finally {
+    await f.close();
+  }
+});
+
+test('revoking account edit access after image upload refuses the late native insertion', async ({
+  browser,
+  baseURL,
+}, info) => {
+  test.setTimeout(120_000);
+  const f = await fixture(browser, baseURL!, info);
+  let editor: Page | undefined;
+  try {
+    await f.open();
+    editor = await f.peer('editor');
+    await holdNativeImageDecode(editor.context());
+    await editor.reload();
+    await saved(editor);
+    await expect(editor.getByRole('button', { name: 'Bold', exact: true })).toBeEnabled();
+    const before = await f.read();
+    await selectCell(editor, 'B4');
+    const upload = editor.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname === `/api/items/${f.item.id}/images` &&
+        response.request().method() === 'POST',
+    );
+    const bytes = await raster(blue);
+    await insertFile(editor, 'Cell Image', bytes);
+    expect((await upload).ok()).toBe(true);
+    await expect
+      .poll(() =>
+        editor!.evaluate(() => (window as ImageDecodeWindow).sheetImageDecodeGate?.held ?? 0),
+      )
+      .toBeGreaterThan(0);
+    expect(await f.read()).toEqual(before);
+
+    await editor.getByRole('tab', { name: 'Start', exact: true }).click();
+    const revoked = await f.context.request.put(`/api/items/${f.item.id}/sharing`, {
+      headers: f.headers,
+      data: { userId: f.peerIds.get(editor), role: 'viewer' },
+    });
+    expect(revoked.ok(), await revoked.text()).toBe(true);
+    // Busy status remains "Inserting image" until decode finishes. Native
+    // formatting becoming disabled proves the mounted editor adopted revocation.
+    await expect(editor.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled({
+      timeout: 15_000,
+    });
+    await releaseNativeImageDecode(editor);
+    await expect(editor.locator('.editor-help[role="alert"]')).toContainText(
+      'Image insertion needs an account with edit access.',
+    );
+    await expect(editor.getByRole('status', { name: 'Save status' })).toContainText(
+      'Access changed.',
+    );
+    expect(await f.read()).toEqual(before);
+    expect(cellSources(await f.read(), 3, 1)).toEqual([]);
+    expect(floating(await f.read())).toEqual([]);
+    await editor.context().close();
+
+    await selectCell(f.page, 'B4');
+    await insertFile(f.page, 'Cell Image', bytes);
+    await expect.poll(async () => cellSources(await f.read(), 3, 1).length).toBe(1);
+    await saved(f.page);
+    await selectCell(f.page, 'H7');
+    await visibleColors(f.page, [blue]);
+    expect(f.errors).toEqual([]);
+  } finally {
+    if (editor) await releaseNativeImageDecode(editor).catch(() => {});
+    await f.close();
+  }
+});
+
+test('online images inserted into an already downloaded Sheet render after an offline reload', async ({
+  browser,
+  baseURL,
+}, info) => {
+  test.skip(info.project.name !== 'production', 'Offline downloads need the production shell.');
+  test.setTimeout(180_000);
+  const f = await fixture(browser, baseURL!, info);
+  try {
+    await f.open();
+    await expect
+      .poll(() => f.page.evaluate(() => Boolean(navigator.serviceWorker.controller)))
+      .toBe(true);
+    await f.page.getByRole('button', { name: 'Document actions', exact: true }).click();
+    await f.page
+      .getByRole('menuitem', { name: 'Available offline on this device', exact: true })
+      .click();
+    const dialog = f.page.getByRole('dialog', { name: 'Offline availability', exact: true });
+    await expect(dialog.getByRole('status')).toHaveText(
+      'Recipe pictures is available offline on this device.',
+      { timeout: 120_000 },
+    );
+    await dialog.getByRole('button', { name: 'Done', exact: true }).click();
+    const status = f.page.getByRole('status', { name: 'Save status' });
+    await expect(status).toHaveText(
+      'Synced. All changes are saved on the server and this device.',
+      {
+        timeout: 30_000,
+      },
+    );
+
+    // Prepare an empty device copy first: neither image may come from the
+    // original bundle or a second explicit download after insertion.
+    expect(floating(await f.read())).toEqual([]);
+    expect(cellSources(await f.read(), 3, 1)).toEqual([]);
+    await selectCell(f.page, 'C2');
+    await insertFile(f.page, 'Float Image', await raster(orange));
+    await expect.poll(async () => floating(await f.read()).length).toBe(1);
+    await expect(status).toHaveText('Synced. All changes are saved on the server and this device.');
+    await selectCell(f.page, 'B4');
+    await insertFile(f.page, 'Cell Image', await raster(blue));
+    await expect.poll(async () => cellSources(await f.read(), 3, 1).length).toBe(1);
+    await expect(status).toHaveText('Synced. All changes are saved on the server and this device.');
+    const inserted = await f.read();
+    const sources = [floating(inserted)[0].source, cellSources(inserted, 3, 1)[0]];
+    for (const source of sources)
+      expect(source).toMatch(new RegExp(`^/api/items/${f.item.id}/images/[a-f0-9]{64}$`));
+
+    const imageRequests: string[] = [];
+    f.page.on('request', (request) => {
+      if (new URL(request.url()).pathname.startsWith(`/api/items/${f.item.id}/images/`))
+        imageRequests.push(request.url());
+    });
+    await f.context.setOffline(true);
+    await f.page.reload();
+    await expect.poll(() => f.page.evaluate(() => navigator.onLine)).toBe(false);
+    await expect(status).toHaveText('Saved on this device — waiting to sync.', { timeout: 30_000 });
+    await expect(f.page.getByLabel('Spreadsheet grid', { exact: true })).toBeVisible();
+    await visibleColors(f.page, [orange, blue]);
+    expect(imageRequests).toEqual([]);
+    await f.context.setOffline(false);
+    await expect(status).toHaveText(
+      'Synced. All changes are saved on the server and this device.',
+      {
+        timeout: 30_000,
+      },
+    );
+    const reopened = await f.read();
+    expect([floating(reopened)[0].source, cellSources(reopened, 3, 1)[0]]).toEqual(sources);
+    expect(f.errors).toEqual([]);
+  } finally {
+    await f.context.setOffline(false);
     await f.close();
   }
 });
