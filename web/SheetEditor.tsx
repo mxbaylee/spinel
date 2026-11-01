@@ -1,9 +1,8 @@
 import { SaveStatus } from './SaveStatus.tsx';
 import { recordNativeMutationInventory } from './nativeMutationInventory.ts';
-import { readOnlySheetDrawings } from './readOnlySheetDrawings.ts';
+import { bindSheetDrawingPermissions, readOnlySheetDrawings } from './readOnlySheetDrawings.ts';
 import { sheetImages } from './sheetImages.ts';
 import sheetDrawingEnglish from '@univerjs/preset-sheets-drawing/locales/en-US';
-import { IDrawingManagerService } from '@univerjs/preset-sheets-drawing';
 import { EditorTools } from './EditorTools.tsx';
 import { useEditorChrome } from './EditorFrame.tsx';
 import { sheetPreset, useMobileSheetControls } from './sheetPreset.ts';
@@ -94,6 +93,7 @@ export function SheetEditor({
       if (!disposed) onConnectionState?.(state);
     };
     let stopPresence: (() => void) | undefined;
+    let stopDrawingPermissions: (() => void) | undefined;
     setPeople([]);
     let editing = false;
     let freezeAfterEditing = false;
@@ -170,6 +170,7 @@ export function SheetEditor({
       // Sheet services are registered lazily when the first sheet is created.
       // Own disposal before awaiting load, then attach display hooks after readiness.
       disposeEditor = () => {
+        stopDrawingPermissions?.();
         offlineImages?.dispose();
         disposeSpinelSync(univer);
         univer.dispose();
@@ -260,13 +261,14 @@ export function SheetEditor({
             message: 'Offline access changed on this device. Reopen the document to continue.',
           });
         },
-        initializeAccess: () => (data.access === 'viewer' ? readOnly() : undefined),
+        initializeAccess: () => {
+          stopDrawingPermissions = bindSheetDrawingPermissions(univer, data.unitId);
+          return data.access === 'viewer' ? readOnly() : undefined;
+        },
         upgradeAccess: (access) => {
           if (disposed) return;
           freezeAfterEditing = false;
-          // Let the SDK's workbook AND worksheet policy observer restore its
-          // drawing controls; never force a protected worksheet to be editable.
-          univer.__getInjector().get(IDrawingManagerService).setDrawingEditable(true);
+          // Both drawing services follow the workbook AND active worksheet policy.
           nativePermissions.setAccess(access);
         },
         onInitialPending: () =>
@@ -345,6 +347,7 @@ export function SheetEditor({
         univerAPI.getActiveWorkbook()?.getActiveSheet()?.refreshCanvas();
       });
       disposeEditor = () => {
+        stopDrawingPermissions?.();
         disposeSpinelSync(univer);
         stopTheme();
         interceptor.dispose();
