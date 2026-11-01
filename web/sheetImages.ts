@@ -49,9 +49,7 @@ class SheetImageLayoutPlugin extends Plugin {
         effect: InterceptorEffectEnum.Style,
         priority: InterceptCellContentPriority.CELL_IMAGE + 1,
         handler(cell, _context, next) {
-          return next(
-            cell && isCellImage(cell.p) ? { ...cell, p: structuredClone(cell.p) } : cell,
-          );
+          return next(cell && isCellImage(cell.p) ? { ...cell, p: structuredClone(cell.p) } : cell);
         },
       }),
     );

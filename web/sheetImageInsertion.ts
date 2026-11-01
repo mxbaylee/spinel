@@ -254,8 +254,12 @@ export function sheetImageInsertion(options: {
                 col: target.col,
               })
             : await controller.insertFloatImageByFile(file);
-          if (!inserted && !lifetime.signal.aborted && !job.failed)
+          if (!inserted && !lifetime.signal.aborted && !job.failed) {
+            // Native permissions can refuse before our final fence runs. Keep
+            // an access/target change actionable instead of suggesting retry.
+            verify(job);
             options.onError('The image could not be inserted. Try again.');
+          }
           return Boolean(inserted);
         } catch (error) {
           if (!lifetime.signal.aborted) options.onError(errorMessage(error));

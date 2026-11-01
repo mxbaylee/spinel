@@ -55,11 +55,13 @@ export const DocumentLimit: Story = {
     await userEvent.keyboard('{Escape}');
     await expect(trigger).toHaveFocus();
     await userEvent.click(trigger);
-    await userEvent.click(await body.findByRole('button', { name: 'Close', exact: true }));
+    await userEvent.click(await body.findByRole('button', { name: 'Close' }));
     await expect(trigger).toHaveFocus();
     await expect(
       canvasElement.querySelector('.sheet-image-help')!.getBoundingClientRect().toJSON(),
     ).toEqual(bounds);
+    // Keep the long, complete explanation visible in light/dark/phone review captures.
+    await userEvent.click(trigger);
   },
 };
 export const Offline: Story = { args: { error: 'Connect before inserting a new image.' } };
