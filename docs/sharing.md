@@ -28,6 +28,27 @@ children; **More → Refresh folder** retrieves new additions. My files lists ow
 items and shared items personally filed there. The Shared with me place adds
 account-only discovery and personal filing, described below alongside guest links.
 
+## Personal hiding and access details
+
+Choose **More → Hide** on a shared row to remove that file from Shared with me
+and search. In Shared with me, **More → Show hidden** includes hidden rows;
+choose a hidden row's **Show** action to restore ordinary discovery. The hidden
+badge and success message make the personal preference visible. Hiding never
+changes ownership, canonical parent, grants or personal filing. A direct account
+address still opens with current authorization, and prepared downloads remain
+available. Normal sign-out and revocation cleanup still applies. Hiding an outer
+Space does not change its internal tree. Hiding a folder hides that row, without
+recursively hiding its descendants or blocking authorized folder search.
+
+**More → Access details…** explains the current account's effective role, such as
+**Editor through Budgets**. It names a granting folder only when that folder is
+currently readable. The strongest grant wins; the nearest matching source is
+shown, with direct access preferred on a tie. Space pages additionally name the
+Space sharing boundary, including when access comes through an outer folder.
+Details are account-only, refresh while open and clear on authorization failure
+or going offline. They do not expose other people's grants or confer access.
+See [SPN-071's decisions](implementation/SPN-071.md).
+
 ## Creating in a shared folder
 
 Inside a folder with Can edit or File admin access, **New** creates a Sheet, Doc,
@@ -59,10 +80,16 @@ item owner's ancestors and does not cache access decisions.
 Downgrades and revocations apply on the next server request, including an existing
 editor's next save. A rejected save locks editing and shows that changes are not
 saved, while keeping local content and the navigation warning. Copy unsaved work
-before leaving. A viewer upgraded to editor reloads to refresh permissions.
+before leaving. An open account viewer upgraded to editor becomes editable within
+the existing access-check interval, on the same native document with selection,
+focus and scroll preserved. Prepared viewers first acquire the exclusive local
+writer and durably update a clean, current copy. The editor stays read-only while
+that admission fails. Traditional-layout Docs on phones retain their existing
+device read-only restriction; Modern Docs can become editable in place.
 Already delivered content cannot be recalled from a browser. Collaboration
-connections revalidate access and close stale sessions; durable commits also
-check the current grant.
+connections revalidate access, admit account-role increases and close revoked or
+downgraded sessions; durable commits also check the current grant. Guest-link
+role or privacy-epoch changes retain their existing close/reopen behavior.
 
 Revision checks remain in force for every writer. Sheets and Docs use the
 shared collaboration service for simultaneous edits; stale offline generations

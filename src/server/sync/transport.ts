@@ -14,6 +14,8 @@ import { Profiles } from '../auth/profile.ts';
 import { profileAvatar } from '../../profile/profile.ts';
 import { MaintenanceGate, MAINTENANCE_HEADER } from '../maintenance/gate.ts';
 import type { MaintenancePublicStatus } from '../../shared/maintenance.ts';
+import type { ItemAccess } from '../../shared/workspace.ts';
+import { isAccessUpgrade } from '../../shared/accessUpgrade.ts';
 
 const TICKET_TTL = 30_000;
 const MAX_TICKETS = 256;
@@ -36,7 +38,7 @@ interface Session {
   unitId: string;
   itemId: string;
   rootId: string;
-  access: string;
+  access: ItemAccess;
   epoch: string;
 }
 interface Ticket {
@@ -119,12 +121,15 @@ export function attachSync(
       session.identity.customData,
     );
     workspace.links.assertEpoch(session.rootId, session.identity.customData.privacyEpoch);
-    if (
-      item.id !== session.itemId ||
-      item.access !== session.access ||
-      collaboration.generations.restoring(item.id)
-    )
+    if (item.id !== session.itemId || collaboration.generations.restoring(item.id))
       throw new SyncError('unavailable');
+    if (item.access !== session.access) {
+      // The same authenticated account may gain authority without replacing its
+      // native unit. A decrease, guest change or expired identity still closes.
+      if (session.identity.customData.guestHash || !isAccessUpgrade(session.access, item.access))
+        throw new SyncError('unavailable');
+      session.access = item.access;
+    }
     return item;
   }
   function identify(

@@ -1165,10 +1165,9 @@ try {
   await expect(readerDoc.getByLabel('Document canvas', { exact: true })).toBeVisible({
     timeout: 30_000,
   });
-  await expect(readerDoc.getByRole('status', { name: 'Save status' })).toHaveText(
-    'View only — reload after your access changes.',
-    { timeout: 30_000 },
-  );
+  await expect(readerDoc.getByRole('status', { name: 'Save status' })).toHaveText('View only.', {
+    timeout: 30_000,
+  });
   await textPoint(reader.page);
   await capture(reader.page, 'restored-reader-document', false);
   artifact.nativeRendering = {

@@ -38,6 +38,7 @@ import { SpaceRootActions } from './SpaceRootActions.tsx';
 import type { SpaceRootActionMode } from './SpaceRootActions.tsx';
 import { EditorFrame } from './EditorFrame.tsx';
 import { AccessState } from './AccessState.tsx';
+import { AccessDetails } from './AccessDetails.tsx';
 import type { ConnectionState } from './connectionState.ts';
 import type { CatalogConnectionDetails } from './ConnectionStatus.tsx';
 import { isNetworkFailure } from './offline/localStart.ts';
@@ -175,6 +176,8 @@ export function Dashboard({
   const [viewMissing, setViewMissing] = useState(false);
   const [refresh, setRefresh] = useState(0);
   const [sharing, setSharing] = useState<FileItem | null>(null);
+  const [accessDetails, setAccessDetails] = useState<FileItem | null>(null);
+  const accessDetailsFocus = useRef<HTMLButtonElement | null>(null);
   const appearanceFocus = useRef<HTMLButtonElement | null>(null);
   const sharingFocus = useRef<HTMLButtonElement | null>(null);
   const offlineFocus = useRef<HTMLButtonElement | null>(null);
@@ -185,6 +188,9 @@ export function Dashboard({
   const [tagging, setTagging] = useState<FileItem | null>(null);
   const [currentId, setCurrentId] = useState<string | null>(selectedId);
   const sharedOpen = currentId === SHARED_VIEW;
+  const [showHidden, setShowHidden] = useState(false);
+  const [shareMessage, setShareMessage] = useState('');
+  const sharedHeading = useRef<HTMLHeadingElement>(null);
   useEffect(
     () => rememberFileView(user.id, currentId === SHARED_VIEW ? null : currentId),
     [user.id, currentId],
@@ -385,6 +391,8 @@ export function Dashboard({
       pendingScroll.current = restored?.scroll ?? 0;
       setCurrentId(selectedId());
       setTagging(null);
+      setAccessDetails(null);
+      setShareMessage('');
       setAction(null);
       setError('');
     };
@@ -393,6 +401,7 @@ export function Dashboard({
   }, []);
   useEffect(() => {
     setSharing(null);
+    setAccessDetails(null);
     setViewed([]);
     setViewMissing(false);
     setViewId(null);
@@ -593,6 +602,8 @@ export function Dashboard({
     history.pushState(null, '', viewUrl(id));
     setCurrentId(id);
     setTagging(null);
+    setAccessDetails(null);
+    setShareMessage('');
     setAction(null);
     setError('');
   }
@@ -758,6 +769,36 @@ export function Dashboard({
       result.push({ label: 'Tags…', onClick: () => setTagging(item), disabled: busy });
     if (item.access !== 'owner') {
       result.push({
+        label: 'Access details…',
+        onClick: (trigger) => {
+          accessDetailsFocus.current = trigger ?? null;
+          setAccessDetails(item);
+        },
+        disabled: busy || connection === 'offline',
+      });
+      if (placement === 'row') {
+        const hidden = shared.items.find((entry) => entry.id === item.id)?.hidden === true;
+        result.push({
+          label: hidden ? 'Show' : 'Hide',
+          disabled: busy || shared.busy || connection === 'offline',
+          onClick: async () => {
+            setShareMessage('Updating shared item…');
+            if (!(await shared.setHidden(item.id, !hidden))) {
+              setShareMessage('');
+              return;
+            }
+            setShareMessage(
+              hidden
+                ? `${item.name} is shown in Shared with me and search.`
+                : `${item.name} is hidden from Shared with me and search.`,
+            );
+            setRefresh((value) => value + 1);
+            if (sharedOpen && !showHidden && !hidden)
+              requestAnimationFrame(() => sharedHeading.current?.focus());
+          },
+        });
+      }
+      result.push({
         label: 'File into folder…',
         onClick: () => edit('file', item),
         disabled: busy || shared.busy,
@@ -848,6 +889,8 @@ export function Dashboard({
     setAction(null);
     setTagging(null);
     setSharing(null);
+    setAccessDetails(null);
+    setShareMessage('');
     setError('');
   }
   function restoreScroll() {
@@ -875,11 +918,11 @@ export function Dashboard({
   const listedItems = sharedOpen
     ? [
         ...new Map(
-          [...shared.items, ...deviceCreatedFiles.filter((item) => item.access !== 'owner')].map(
-            (item) => [item.id, byId.get(item.id) ?? item],
+          [...deviceCreatedFiles.filter((item) => item.access !== 'owner'), ...shared.items].map(
+            (item) => [item.id, { ...(byId.get(item.id) ?? item), hidden: item.hidden }],
           ),
         ).values(),
-      ]
+      ].filter((item) => showHidden || !item.hidden)
     : [...visibleItems].sort(
         (a, b) =>
           Number(b.kind === 'folder') - Number(a.kind === 'folder') ||
@@ -917,11 +960,28 @@ export function Dashboard({
             </nav>
           )}
           <header className="dashboard-heading">
-            <h1>
+            <h1 ref={sharedHeading} tabIndex={-1}>
               {current && !sharedOpen && <ItemIcon {...current} />}{' '}
               {sharedOpen ? 'Shared with me' : (current?.name ?? 'My files')}
             </h1>
             <div className="dashboard-heading-actions">
+              {sharedOpen && (
+                <ActionMenu
+                  label="More actions for Shared with me"
+                  actions={[
+                    {
+                      label: showHidden ? 'Hide hidden' : 'Show hidden',
+                      onClick: () => {
+                        setShowHidden((value) => !value);
+                        setQuery({ ...emptySearch });
+                        setDraft('');
+                        setAllFiles(false);
+                        setShareMessage('');
+                      },
+                    },
+                  ]}
+                />
+              )}
               {!currentId && !local && (
                 <ActionMenu
                   label="More actions for My files"
@@ -969,6 +1029,10 @@ export function Dashboard({
               )}
             </div>
           </header>
+          {sharedOpen && showHidden && !searchActive && (
+            <p role="status">Hidden shares are included.</p>
+          )}
+          {shareMessage && <p role="status">{shareMessage}</p>}
 
           {!currentId && (
             <OfflineRecoveryList downloads={offline.downloads.values()} navigation={navigation} />
@@ -1130,7 +1194,11 @@ export function Dashboard({
                 label={sharedOpen ? 'Shared with me files' : 'Folder contents'}
                 onOpenTrash={!currentId && !local ? () => navigate(TRASH_VIEW) : undefined}
                 emptyMessage={
-                  sharedOpen ? 'Nothing has been shared with you yet.' : 'This folder is empty.'
+                  sharedOpen
+                    ? !showHidden && shared.items.some((item) => item.hidden)
+                      ? 'No visible shares. Choose Show hidden from the view menu.'
+                      : 'Nothing has been shared with you yet.'
+                    : 'This folder is empty.'
                 }
               />
             ))}
@@ -1442,6 +1510,16 @@ export function Dashboard({
           item={sharing}
           onClose={() => setSharing(null)}
           finalFocus={() => (sharingFocus.current?.isConnected ? sharingFocus.current : true)}
+        />
+      )}
+      {accessDetails && (
+        <AccessDetails
+          key={accessDetails.id}
+          item={accessDetails}
+          onClose={() => setAccessDetails(null)}
+          finalFocus={() =>
+            accessDetailsFocus.current?.isConnected ? accessDetailsFocus.current : true
+          }
         />
       )}
       {spaceAction && (

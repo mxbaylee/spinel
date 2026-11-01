@@ -3,6 +3,7 @@ import { recordNativeMutationInventory } from './nativeMutationInventory.ts';
 import { readOnlySheetDrawings } from './readOnlySheetDrawings.ts';
 import { sheetImages } from './sheetImages.ts';
 import sheetDrawingEnglish from '@univerjs/preset-sheets-drawing/locales/en-US';
+import { IDrawingManagerService } from '@univerjs/preset-sheets-drawing';
 import { EditorTools } from './EditorTools.tsx';
 import { useEditorChrome } from './EditorFrame.tsx';
 import { sheetPreset, useMobileSheetControls } from './sheetPreset.ts';
@@ -260,6 +261,14 @@ export function SheetEditor({
           });
         },
         initializeAccess: () => (data.access === 'viewer' ? readOnly() : undefined),
+        upgradeAccess: (access) => {
+          if (disposed) return;
+          freezeAfterEditing = false;
+          // Let the SDK's workbook AND worksheet policy observer restore its
+          // drawing controls; never force a protected worksheet to be editable.
+          univer.__getInjector().get(IDrawingManagerService).setDrawingEditable(true);
+          nativePermissions.setAccess(access);
+        },
         onInitialPending: () =>
           publish({
             dirty: true,

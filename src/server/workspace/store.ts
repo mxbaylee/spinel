@@ -85,6 +85,11 @@ export class WorkspaceStore {
         PRIMARY KEY(user_id,item_id)
       ) STRICT;
       CREATE INDEX IF NOT EXISTS workspace_placements_parent ON workspace_placements(parent_id);
+      CREATE TABLE IF NOT EXISTS workspace_hidden (
+        user_id TEXT NOT NULL REFERENCES auth_users(id) ON DELETE CASCADE,
+        item_id TEXT NOT NULL REFERENCES workspace_items(id) ON DELETE CASCADE,
+        PRIMARY KEY(user_id,item_id)
+      ) STRICT;
     `);
     // Zero records an unknown legacy share date rather than inventing one from
     // document modification time. Role changes preserve it; a new grant records now.
@@ -280,7 +285,17 @@ export class WorkspaceStore {
         }));
     });
   }
-  shared(userId: string): WorkspaceItem[] {
+  hiddenItems(userId: string): Set<string> {
+    this.owner(userId);
+    return new Set(
+      (
+        this.auth.database
+          .prepare('SELECT item_id AS id FROM workspace_hidden WHERE user_id=?')
+          .all(userId) as { id: string }[]
+      ).map((row) => row.id),
+    );
+  }
+  shared(userId: string, includeHidden = false): WorkspaceItem[] {
     this.owner(userId);
     return this.auth.transaction(() => {
       this.cleanPlacements();
@@ -312,7 +327,9 @@ export class WorkspaceStore {
       `,
         )
         .all(userId, userId) as { id: string; sharedAt: number }[];
+      const hidden = this.hiddenItems(userId);
       return rows.flatMap((row) => {
+        if (!includeHidden && hidden.has(row.id)) return [];
         // Discovery can include a Space or malformed descendant, or a direct
         // grant below trash. Apply the same ordinary resolver as document reads.
         if (!this.role(userId, row.id)) return [];
@@ -325,6 +342,7 @@ export class WorkspaceStore {
           {
             ...this.get(userId, row.id),
             sharedAt: row.sharedAt,
+            ...(hidden.has(row.id) ? { hidden: true as const } : {}),
             ...(placement ? { placementParentId: placement.parentId } : {}),
           },
         ];
