@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { installNativeDocCompatibility } from '@spinel/sync-transform';
 import { useEffect, useRef, useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { getDocsEmptySnapshot, ICommandService, LocaleType, type Univer } from '@univerjs/core';
@@ -79,6 +80,7 @@ function NativeDrawingCapture() {
         ],
       });
       univer = created.univer;
+      installNativeDocCompatibility(univer);
       installCanvasColors(univer);
       const file = await imageFile();
       if (disposed) return;

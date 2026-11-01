@@ -21,6 +21,7 @@ import { UniverSheetsDrawingPlugin } from '@univerjs/sheets-drawing';
 import { UniverSheetsFormulaPlugin } from '@univerjs/sheets-formula';
 import { UniverSheetsNumfmtPlugin } from '@univerjs/sheets-numfmt';
 import type { BaseCells, Mutation } from '@spinel/sync-transform';
+import { installNativeDocCompatibility } from '@spinel/sync-transform';
 import { SyncClient } from './client.ts';
 import { captureNative } from './capture.ts';
 import { validateRecoverySnapshot } from './recovery.ts';
@@ -99,6 +100,7 @@ export class NativeReplica implements SyncReplica {
       // Its resource is a serialized copy of the canonical Doc drawing map.
       // Keep it current so reloading cannot restore an older opaque copy.
       this.univer.registerPlugin(UniverDocsDrawingPlugin);
+      installNativeDocCompatibility(this.univer);
       const resources = injector.get(IResourceManagerService);
       const hooks = resources.getAllResourceHooks();
       for (const resource of snapshot.resources ?? []) {

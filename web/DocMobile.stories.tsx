@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { installNativeDocCompatibility } from '@spinel/sync-transform';
 import { useEffect, useRef, useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import {
@@ -155,6 +156,7 @@ function MobileCanvas({
         ],
       });
       univer = created.univer;
+      installNativeDocCompatibility(univer);
       installCanvasColors(univer);
       const doc = created.univerAPI.createDocument(data);
       await editorReady(created.univerAPI);

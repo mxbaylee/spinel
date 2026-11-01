@@ -1,4 +1,5 @@
 import { SaveStatus } from './SaveStatus.tsx';
+import { installNativeDocCompatibility } from '@spinel/sync-transform';
 import { recordNativeMutationInventory } from './nativeMutationInventory.ts';
 import { readOnlySheetDrawings } from './readOnlySheetDrawings.ts';
 import { sheetImages } from './sheetImages.ts';
@@ -150,6 +151,7 @@ export function SheetEditor({
           sheetImages(mobile, data.offline),
         ],
       });
+      installNativeDocCompatibility(univer);
       // IMAGE formula results use a direct browser Image loader in the OSS
       // plugin. Stop only that derived result while local; ordinary formula
       // calculation and lazy native command registration remain untouched.

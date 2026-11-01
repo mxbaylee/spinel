@@ -27,12 +27,15 @@ import { test } from 'node:test';
 import { runInNewContext } from 'node:vm';
 import * as core from '@univerjs/core';
 import type { IDocumentData, JSONXActions } from '@univerjs/core';
+import { RichTextEditingMutation, UniverDocsPlugin } from '@univerjs/docs';
 import type {
   DocStateChangeManagerService,
   IDocStateChangeInfo,
   IDocStateChangeParams,
 } from '@univerjs/docs';
+import { UniverRenderEnginePlugin } from '@univerjs/engine-render';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
+import { installNativeDocCompatibility, normalizeNativeDocRanges } from '@spinel/sync-transform';
 import { patchInstalledDocs, prepareDocsPatch } from './patch-univer-docs.ts';
 
 type Format = 'es' | 'cjs';
@@ -166,10 +169,14 @@ function managerFixture(source: string) {
   };
 }
 
-function apply(snapshot: IDocumentData, actions: JSONXActions) {
+function apply(snapshot: IDocumentData, actions: JSONXActions, nativeCompatibility = true) {
   const model = new core.DocumentDataModel(structuredClone(snapshot));
   try {
     model.apply(structuredClone(actions));
+    // This is the actual application mutation boundary, before publication and
+    // before the next edit's inverse is captured. Change the live model through
+    // the same adapter as the native plugin; comparisons below remain raw.
+    if (nativeCompatibility) normalizeNativeDocRanges(model);
     return structuredClone(model.getSnapshot());
   } finally {
     model.dispose();
@@ -219,7 +226,7 @@ function seed(text = 'alpha\rbravo\r\n') {
   return apply(snapshot, null);
 }
 
-function sequence(requests: Request[], initial = seed()) {
+function sequence(requests: Request[], initial = seed(), nativeCompatibility = true) {
   const snapshots = [initial];
   const states = requests.map((request, index): State => {
     const before = snapshots.at(-1)!;
@@ -227,7 +234,7 @@ function sequence(requests: Request[], initial = seed()) {
     // This is the native mutation's inverse/apply order. Inversion realizes
     // inserted paragraph identities before the same actions are applied.
     const inverse = core.JSONX.invertWithDoc(actions, before);
-    snapshots.push(apply(before, actions));
+    snapshots.push(apply(before, actions, nativeCompatibility));
     return {
       commandId: 'doc.mutation.rich-text-editing',
       unitId,
@@ -258,7 +265,11 @@ function sequence(requests: Request[], initial = seed()) {
   const undoSnapshots: IDocumentData[] = [];
   undoSnapshots[states.length] = snapshots.at(-1)!;
   for (let index = states.length - 1; index >= 0; index--)
-    undoSnapshots[index] = apply(undoSnapshots[index + 1], states[index].undoState.actions);
+    undoSnapshots[index] = apply(
+      undoSnapshots[index + 1],
+      states[index].undoState.actions,
+      nativeCompatibility,
+    );
   return { states, snapshots, undoSnapshots };
 }
 
@@ -347,6 +358,48 @@ const mixed: Request[] = [
   () => null,
   (snapshot) => edit(new core.TextX().retain(snapshot.body!.paragraphs![0].startIndex).delete(1)),
 ];
+
+test('the fixture mutation boundary matches native mixed edits and every inverse replay', () => {
+  const scenario = sequence(mixed);
+  const univer = new core.Univer({ locale: core.LocaleType.EN_US });
+  univer.registerPlugin(UniverRenderEnginePlugin);
+  univer.registerPlugin(UniverDocsPlugin);
+  installNativeDocCompatibility(univer);
+  const document = univer.createUnit<core.IDocumentData, core.DocumentDataModel>(
+    core.UniverInstanceType.UNIVER_DOC,
+    structuredClone(scenario.snapshots[0]),
+  );
+  const commands = univer.__getInjector().get(core.ICommandService);
+  const execute = (actions: JSONXActions) => {
+    assert.ok(
+      commands.syncExecuteCommand(
+        RichTextEditingMutation.id,
+        { unitId, actions: structuredClone(actions) },
+        { onlyLocal: true, fromCollab: true },
+      ),
+    );
+  };
+  try {
+    for (const [index, state] of scenario.states.entries()) {
+      execute(state.redoState.actions);
+      assert.deepEqual(
+        document.getSnapshot(),
+        scenario.snapshots[index + 1],
+        `native forward mutation ${index}: every stored field matches the fixture`,
+      );
+    }
+    for (let index = scenario.states.length - 1; index >= 0; index--) {
+      execute(scenario.states[index].undoState.actions);
+      assert.deepEqual(
+        document.getSnapshot(),
+        scenario.undoSnapshots[index],
+        `native inverse mutation ${index}: every stored field matches the fixture`,
+      );
+    }
+  } finally {
+    univer.dispose();
+  }
+});
 
 function flush(source: string, history: State[], collaboration = history) {
   const fixture = managerFixture(source);
@@ -579,6 +632,33 @@ test('sequential style oracle preserves complete attributes and rejects ambiguou
 });
 
 for (const format of ['es', 'cjs'] as const) {
+  // Both manager-source formats use the production ESM core imported above;
+  // these controls qualify the Docs guard, not a second native CJS runtime.
+  test(`${format} manager fixture: imported stock core retains the unsafe raw sequential range split`, async () => {
+    const { original, patched } = prepareDocsPatch(await readBuild(format), format);
+    const scenario = sequence(mixed.slice(0, 5), seed(), false);
+    const fragments = (snapshot: IDocumentData) =>
+      snapshot
+        .body!.customRanges!.filter((range) => range.rangeId === 'link$1')
+        .map(({ startIndex, endIndex }) => [startIndex, endIndex]);
+    const sequential = scenario.snapshots.at(-1)!;
+    assert.deepEqual(fragments(sequential), [
+      [3, 3],
+      [4, 4],
+    ]);
+    for (const source of [original, patched]) {
+      const output = flush(source, scenario.states);
+      const grouped = apply(
+        scenario.snapshots[0],
+        output.history[0].redoMutations[0].params.actions,
+        false,
+      );
+      assert.deepEqual(fragments(grouped), [[3, 4]]);
+      assert.equal(grouped.body!.dataStream, sequential.body!.dataStream);
+      assert.notDeepEqual(grouped, sequential, 'The independent source defect remains visible.');
+    }
+  });
+
   test(`${format}: native publications preserve mixed operations, independent caches and complete metadata`, async () => {
     const { original, patched } = prepareDocsPatch(await readBuild(format), format);
     assert.deepEqual(flush(patched, []), flush(original, []));

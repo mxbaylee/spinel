@@ -20,6 +20,7 @@ import { UniverSheetsDrawingPlugin } from '@univerjs/sheets-drawing';
 import { CalculationMode, UniverSheetsFormulaPlugin } from '@univerjs/sheets-formula';
 import { UniverSheetsNumfmtPlugin } from '@univerjs/sheets-numfmt';
 import type { Mutation } from '@spinel/sync-transform';
+import { installNativeDocCompatibility } from '@spinel/sync-transform';
 import type { DocumentKind, NativeSnapshot } from './types.ts';
 import { MAX_MERGE_CELLS, MAX_SNAPSHOT_BYTES, MAX_WORKSHEETS, SyncError } from './types.ts';
 import { applySheetOrder } from './order.ts';
@@ -189,6 +190,7 @@ export class NativeModel {
       // Match the browser's canonical drawing map and serialized resource;
       // treating the duplicate as opaque would restore stale drawings on load.
       this.univer.registerPlugin(UniverDocsDrawingPlugin);
+      installNativeDocCompatibility(this.univer);
       this.loader = injector.get(IResourceLoaderService);
       const resources = injector.get(IResourceManagerService);
       const hooks = resources.getAllResourceHooks();

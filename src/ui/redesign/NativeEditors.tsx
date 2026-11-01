@@ -1,4 +1,5 @@
 import { LoadingReview } from './LoadingReview.tsx';
+import { installNativeDocCompatibility } from '@spinel/sync-transform';
 /** Isolated native review editors: no collaboration, authentication or persistence. */
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -250,6 +251,7 @@ export function NativeEditor({
             : [UniverDocsCorePreset({ container, disableAutoFocus: true })],
       });
       univer = created.univer;
+      installNativeDocCompatibility(univer);
       installCanvasColors(univer);
       const api = created.univerAPI;
       // The old editor's cleanup may have just published a newer snapshot.

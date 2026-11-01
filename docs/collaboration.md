@@ -219,37 +219,36 @@ insertion remain guarded until the drawing mutation enters synchronization.
 Presence uses the same saved account profiles and anonymous guest-root rules as
 before; [profile behavior](design/account.md#saved-profile-behaviour-spn-036) applies.
 
-## Pinned open-source paragraph repair
+## Stock core and native Doc integration
 
-`npm ci` runs `scripts/dependencies/patch-univer-core.ts` against Apache-2.0
-`@univerjs/core` 1.1.0 only. The upstream paragraph composer merges attributes
-when an operation requests replacement: leaving a bullet list can look correct
-locally but restore a bullet or heading when saved. Its operation slicer also
-loses explicit empty paragraph replacement arrays. The repair matches the tested
-editor replacement semantics, preserves stable paragraph IDs, and leaves ordinary
-COVER behavior unchanged ([decision #46](implementation/SPN-012.md#legacy-decision-46-guarded-open-source-paragraph-repair)).
-It is not a general proof of operation-algebra equivalence: removing a paragraph
-and then reintroducing it without an ID retains the old ID in composition while
-sequential application leaves it absent. The tested editor operations preserve
-their IDs; content and formatting matched in the independent replacement matrix.
+Spinel installs the published `@univerjs/core` 1.1.0 package unchanged. The core
+ES and CJS hashes are checked against the official package by the dependency
+suite. All Univer packages remain aligned at 1.1.0; SPN-099 does not introduce an
+SDK or offline-format migration.
 
-The same patch fixes how a text style that replaces a run's style (REPLACE, as
-the format painter sends) transforms past a concurrent style that merges
-(COVER): stock 1.1.0 overrides the merged style's keys only where the
-replacing style's value is truthy, so a concurrent bold survived a winning
-`bl: 0` on one screen only. Any key the replacing style sets now wins.
+Each browser, confirmed and server instance installs
+`installNativeDocCompatibility` from `@spinel/sync-transform` after native plugins
+are registered and before a unit is created. Public model and state hooks keep
+custom-range fragments canonical in the actual document, including remote and
+Undo/Redo application. The native link producer's overlapping paragraph pieces
+are bounded before application so they cannot emit a negative retain. Native
+paragraph-bearing history states are published individually to preserve sequential
+replacement semantics; ordinary typing keeps its existing grouping and bounded
+flush policy.
 
-The installer validates the version and whole-file SHA-256 of both ESM and CJS
-builds before writing either, accepts an already repaired installation, and
-rejects unfamiliar bytes. It does not read or modify Pro packages. Docker copies
-the installer before `npm ci`; the dependency's license stays with its package,
-and the patch's attribution is in `THIRD-PARTY-NOTICES.md`.
+The transform layer arbitrates explicit style keys regardless of truthiness, so a
+winning `bl: 0` has the same priority as `bl: 1`. It also preserves explicit empty
+paragraph replacement arrays when stock slicing drops them at unstyled retain
+and insertion boundaries. These are
+application integration rules, not changes to core methods, prototypes or the
+registered TextX subtype. Snapshots, outgoing operations and native Undo/Redo are
+verified through the same integration used in production; tests do not merely
+normalize divergent observations.
 
-The patch is temporary: SPN-099 removes it when Spinel upgrades to a Univer
-release with the fixes. The link fixes are upstream as
-[dream-num/univer#7938](https://github.com/dream-num/univer/pull/7938). If
-upstream fixes any of them another way, Spinel follows upstream rather than
-re-patching. Never bypass the guard just to make an install pass.
+The original link repair remains proposed in
+[dream-num/univer#7938](https://github.com/dream-num/univer/pull/7938). Future SDK
+upgrades must qualify the native integration and independent guards together.
+See [SPN-099's release assessment and review record](implementation/SPN-099.md).
 
 ## Pinned open-source drawing refresh repair
 

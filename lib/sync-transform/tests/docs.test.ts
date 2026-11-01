@@ -1,5 +1,13 @@
-import { CustomRangeType, JSONX, TextXActionType } from '@univerjs/core';
-import type { IParagraph, TextXAction } from '@univerjs/core';
+import {
+  BuildTextUtils,
+  CustomRangeType,
+  DocumentDataModel,
+  JSON1,
+  JSONX,
+  TextX,
+  TextXActionType,
+} from '@univerjs/core';
+import type { IDocumentBody, IParagraph, TextXAction } from '@univerjs/core';
 import { expect, test } from 'vitest';
 import { docFormulas } from '@spinel/doc-formulas';
 import { transform } from '../index.ts';
@@ -73,7 +81,7 @@ test('an edit made obsolete by the peer vanishes', () => {
   expect(transform(remove(0, 6), remove(0, 6), 'right')).toEqual([]);
 });
 
-const style = (at: number, len: number, ts: Record<string, number>, coverType = 0) =>
+const style = (at: number, len: number, ts: Record<string, unknown>, coverType = 0) =>
   edit(
     JSONX.getInstance().editOp([
       ...retain(at),
@@ -117,6 +125,84 @@ test('a replaced style with falsy keys converges with a concurrent style over it
     ed: 10,
     ts: { bl: 1, it: 0 },
   });
+});
+
+test('replacement ownership includes false, empty strings, null and zero without clearing peer keys', () => {
+  for (const [key, value, competing] of [
+    ['hidden', false, true],
+    ['ff', '', 'Arial'],
+    ['fs', 0, 14],
+    ['bl', null, 1],
+  ] as const) {
+    const replaced = style(6, 4, { [key]: value }, 1);
+    const covered = style(8, 5, { [key]: competing, it: 1 });
+    const first = merge(replaced, covered).doc.body.textRuns;
+    expect(first).toContainEqual({ st: 8, ed: 10, ts: { [key]: value, it: 1 } });
+    expect(first).toContainEqual({ st: 10, ed: 13, ts: { [key]: competing, it: 1 } });
+    expect(merge(covered, replaced).doc.body.textRuns).toContainEqual({
+      st: 8,
+      ed: 13,
+      ts: { [key]: competing, it: 1 },
+    });
+  }
+});
+
+test('replacement style ownership follows text positions after peer inserts and deletes', () => {
+  const replacement = edit(
+    JSONX.getInstance().editOp([
+      { t: TextXActionType.INSERT, len: 2, body: { dataStream: 'zz' } },
+      { t: TextXActionType.DELETE, len: 1 },
+      { t: TextXActionType.RETAIN, len: 5 },
+      {
+        t: TextXActionType.RETAIN,
+        len: 4,
+        body: { dataStream: '', textRuns: [{ st: 0, ed: 4, ts: { bl: 0 } }] },
+        coverType: 1,
+      },
+    ]),
+  );
+  const { doc } = merge(replacement, style(8, 5, { bl: 1, it: 1 }));
+  expect(doc.body.textRuns).toContainEqual({ st: 9, ed: 11, ts: { bl: 0, it: 1 } });
+  expect(doc.body.dataStream.startsWith('zzlpha ')).toBe(true);
+});
+
+test('an explicit paragraph replacement clear survives slices around a concurrent insert', () => {
+  const clear = edit(
+    JSONX.getInstance().editOp([
+      {
+        t: TextXActionType.RETAIN,
+        len: 4,
+        body: { dataStream: '', paragraphs: [] },
+        coverType: 1,
+      },
+    ]),
+  );
+  const inserted = insert(2, 'x');
+  const initial: IDocumentBody = {
+    dataStream: 'a\rb\r\n',
+    paragraphs: [
+      { startIndex: 1, paragraphId: 'first' },
+      { startIndex: 3, paragraphId: 'second' },
+    ],
+  };
+  const apply = (steps: Mutation[]) =>
+    steps.reduce((body, step) => {
+      const [, component] = step.params.actions as [string, { e: TextXAction[] }];
+      return TextX.apply(body, structuredClone(component.e));
+    }, structuredClone(initial));
+  const transformedClear = transform(clear, inserted, 'left');
+  for (const step of transformedClear) {
+    const [, component] = step.params.actions as [string, { e: TextXAction[] }];
+    for (const action of component.e)
+      if (action.body) expect(action.body).not.toHaveProperty('customDecorations');
+  }
+  const afterInsert = apply([...inserted, ...transformedClear]);
+  const afterClear = apply([...clear, ...transform(inserted, clear, 'right')]);
+  expect(afterInsert).toEqual(afterClear);
+  expect(afterInsert.dataStream).toBe('a\rxb\r\n');
+  expect(afterInsert.paragraphs).toEqual([]);
+  expect(transform(clear, clear, 'left')).toEqual([]);
+  expect(transform(clear, clear, 'right')).toEqual([]);
 });
 
 // As BuildTextUtils.customRange.add builds a link, and DeleteDocHyperLinkCommand
@@ -180,8 +266,8 @@ test('a list the sender sent empty survives the transform', () => {
   }
 });
 
-// Univer's apply splits a link at a style's edges, and its pieces share an id;
-// the core patch (scripts/dependencies/patch-univer-core.ts) joins them again.
+// The native compatibility adapter keeps link ranges canonical after stock
+// mutations, including a style whose edges fall inside the link.
 test('a style inside a concurrent link leaves the link whole on both screens', () => {
   const whole = [
     {
@@ -207,6 +293,134 @@ const cover = (paragraph: Cover, coverType: number): TextXAction => ({
 const covers = (at: number, paragraph: Cover, coverType: number) =>
   edit(JSONX.getInstance().editOp([...retain(at), cover(paragraph, coverType)]));
 const list = (listId: string) => ({ nestingLevel: 0, listType: 'ORDER_LIST', listId });
+
+test('paragraph slicing markers preserve real decoration writes and sender-authored clears', () => {
+  const decoration = (at: number, id: string) =>
+    edit(
+      JSONX.getInstance().editOp([
+        ...retain(at),
+        {
+          t: TextXActionType.RETAIN,
+          len: 1,
+          body: {
+            dataStream: '',
+            customDecorations: [{ id, type: 0, startIndex: 0, endIndex: 0 }],
+          },
+        },
+      ]),
+    );
+  const paragraph = covers(16, { paragraphId: 'p1', paragraphStyle: {} }, 1);
+  for (const [a, b] of [
+    [[...paragraph, ...decoration(1, 'first')], decoration(8, 'second')],
+    [decoration(8, 'second'), [...paragraph, ...decoration(1, 'first')]],
+  ]) {
+    expect(merge(a!, b!).doc.body.customDecorations).toEqual([
+      { id: 'first', type: 0, startIndex: 1, endIndex: 1 },
+      { id: 'second', type: 0, startIndex: 8, endIndex: 8 },
+    ]);
+  }
+
+  // A sender's actual empty decoration list is not an internal marker.
+  const authoredClear = edit(
+    JSONX.getInstance().editOp([
+      {
+        t: TextXActionType.RETAIN,
+        len: 4,
+        coverType: 1,
+        body: { dataStream: '', paragraphs: [], customDecorations: [] },
+      },
+    ]),
+  );
+  for (const step of transform(authoredClear, insert(2, 'x'), 'left')) {
+    const [, component] = step.params.actions as [string, { e: TextXAction[] }];
+    for (const action of component.e)
+      if (action.body) expect(action.body.customDecorations).toEqual([]);
+  }
+});
+
+test('an uncaptured combined paragraph and decoration replacement retains stock per-order behavior', () => {
+  // Spinel has no comment plugin or captured producer for this combined
+  // REPLACE. Stock apply implicitly clears decorations even when the field is
+  // absent, while stock transform treats absence as no write. The retired core
+  // patch did not change either rule. Preserve this negative control without
+  // claiming convergence, and prove the paragraph marker does not alter it.
+  const decorated = edit(
+    JSONX.getInstance().editOp([
+      ...retain(16),
+      {
+        ...cover({ paragraphId: 'p1', paragraphStyle: {} }, 1),
+        body: {
+          dataStream: '',
+          paragraphs: [{ startIndex: 0, paragraphId: 'p1', paragraphStyle: {} }],
+          customDecorations: [{ id: 'first', type: 0, startIndex: 0, endIndex: 0 }],
+        },
+      },
+    ]),
+  );
+  const plain = covers(16, { paragraphId: 'p1', paragraphStyle: {} }, 1);
+  type Actions = Parameters<DocumentDataModel['apply']>[0];
+  type Op = Parameters<typeof JSON1.type.transformNoConflict>[0];
+  const apply = (first: unknown, second: unknown) => {
+    const model = new DocumentDataModel(structuredClone(document.doc));
+    model.apply(first as Actions);
+    model.apply(second as Actions);
+    return model.getSnapshot().body!;
+  };
+  const comment = [{ id: 'first', type: 0, startIndex: 16, endIndex: 16 }];
+  for (const [a, b] of [
+    [decorated, plain],
+    [plain, decorated],
+  ]) {
+    const own = a![0].params.actions;
+    const peer = b![0].params.actions;
+    const stockLeft = JSON1.type.transformNoConflict(own as Op, peer as Op, 'left');
+    const stockRight = JSON1.type.transformNoConflict(peer as Op, own as Op, 'right');
+    const adaptedLeft = transform(a!, b!, 'left')[0].params.actions;
+    const adaptedRight = transform(b!, a!, 'right')[0].params.actions;
+    expect(adaptedLeft).toEqual(stockLeft);
+    expect(adaptedRight).toEqual(stockRight);
+    const left = apply(peer, stockLeft);
+    const right = apply(own, stockRight);
+    expect(left.customDecorations).toEqual(a === decorated ? comment : []);
+    expect(right.customDecorations).toEqual(a === decorated ? [] : comment);
+    expect(apply(peer, adaptedLeft)).toEqual(left);
+    expect(apply(own, adaptedRight)).toEqual(right);
+  }
+});
+
+test('native paragraph style replacements retain the first-accepted style without inventing a bullet', () => {
+  const nativeStyle = (style: NonNullable<IParagraph['paragraphStyle']>) => {
+    const model = new DocumentDataModel(structuredClone(document.doc));
+    const textX = BuildTextUtils.paragraph.style.set({
+      document: model,
+      textRanges: [{ startOffset: 0, endOffset: 16, collapsed: false }],
+      style,
+    });
+    return edit(JSONX.getInstance().editOp(textX.serialize()));
+  };
+  // The native paragraph style producer tested here replaces a whole style.
+  // Deletion and QuickList COVER producers carry their bullet and inherited
+  // paragraph metadata; the same-text selection.replace SDK helper can also
+  // emit COVER. A hand-written COVER without a bullet can invent a default
+  // list in stock apply, so it does not model this style command. Arbitrary
+  // COVER/COVER style truthiness remains an upstream compatibility concern.
+  const clearedStyle = { outlineLevel: 0 };
+  const styledStyle = { outlineLevel: 1, indentStart: { v: 10 } };
+  const cleared = nativeStyle(clearedStyle);
+  const styled = nativeStyle(styledStyle);
+  const cases: [Mutation[], Mutation[], IParagraph['paragraphStyle']][] = [
+    [cleared, styled, clearedStyle],
+    [styled, cleared, styledStyle],
+  ];
+  for (const [a, b, paragraphStyle] of cases) {
+    const { doc } = merge(a, b);
+    expect(doc.body.paragraphs.find((entry: IParagraph) => entry.startIndex === 16)).toEqual({
+      startIndex: 16,
+      paragraphId: 'p1',
+      paragraphStyle,
+    });
+  }
+});
 
 test('the first accepted edit names a paragraph that a delete merges into', () => {
   // "Alpha beta gamma\r\r\n", where p1 (break at 16) is a list item.
