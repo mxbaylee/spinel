@@ -16,6 +16,8 @@ import { chromium, expect } from '@playwright/test';
 import type { Browser, Page, Request } from '@playwright/test';
 import { validRestoreJobRecord } from '../src/server/maintenance/restore-jobs.ts';
 import type { RestoreRichMetadata } from '../src/server/maintenance/restore-rich-fixture.ts';
+import { RESTORE_RESOURCE_MESSAGES } from '../src/shared/restore.ts';
+import type { RestorePreparation } from '../src/shared/restore.ts';
 import type { RestoreSizedFixture } from './restore-sized-fixture.ts';
 import {
   prepareRichRestoreBoundary,
@@ -512,13 +514,20 @@ async function observeOutcome() {
   };
 }
 async function servingResources() {
-  const number = async (path: string) => {
-    const text = (await servingRead(path)).trim();
+  const counter = (text: string) => {
     if (!/^\d+$/.test(text) || !Number.isSafeInteger(Number(text)))
       throw new Error('Invalid serving resource measurement.');
     return Number(text);
   };
+  const number = async (path: string) => counter((await servingRead(path)).trim());
   // Permitted only before restore or after a selected terminal / closed failure observation.
+  const memoryStatLines = (await servingRead('/sys/fs/cgroup/memory.stat')).trim().split('\n');
+  const memoryStatRecordedAt = new Date().toISOString();
+  const memoryStat = (name: string) => {
+    const matching = memoryStatLines.filter((line) => line.startsWith(`${name} `));
+    if (matching.length !== 1) throw new Error('Invalid serving memory category measurement.');
+    return counter(matching[0].slice(name.length + 1).trim());
+  };
   return {
     memoryLimitBytes: await number('/sys/fs/cgroup/memory.max'),
     swapLimitBytes: await number('/sys/fs/cgroup/memory.swap.max'),
@@ -526,6 +535,18 @@ async function servingResources() {
     pidsMax: await number('/sys/fs/cgroup/pids.max'),
     memoryPeakBytes: await number('/sys/fs/cgroup/memory.peak'),
     memoryCurrentBytes: await number('/sys/fs/cgroup/memory.current'),
+    memoryStatSnapshot: {
+      scope: 'Pre-shutdown snapshot; not a peak breakdown or exact preparation-admission counters',
+      units: 'bytes',
+      recordedAt: memoryStatRecordedAt,
+      anon: memoryStat('anon'),
+      file: memoryStat('file'),
+      shmem: memoryStat('shmem'),
+      inactive_file: memoryStat('inactive_file'),
+      active_file: memoryStat('active_file'),
+      file_dirty: memoryStat('file_dirty'),
+      file_writeback: memoryStat('file_writeback'),
+    },
     peakScope:
       'Serving cgroup through pre-shutdown observation; excludes separate observer and later cold helper',
   };
@@ -1067,6 +1088,17 @@ try {
   };
   const operator = await createActor(credentials.operator, source.operatorId);
   const { page } = operator;
+  type PublicPreparationFailure = {
+    source: 'public-restore-api';
+    route: 'create' | 'upload' | 'status';
+    state: Extract<RestorePreparation['state'], 'failed' | 'expired' | 'cancelled'>;
+    resourceCode: keyof typeof RESTORE_RESOURCE_MESSAGES | null;
+    httpStatus: number;
+    elapsedSincePrepareMs: number;
+  };
+  let preparationStarted: number | undefined;
+  let preparationId: string | undefined;
+  let preparationFailure: PublicPreparationFailure | null = null;
   const restoreHttpTimings: Array<{
     route: 'create' | 'upload' | 'confirm';
     startedAtMs: number;
@@ -1094,14 +1126,55 @@ try {
   page.on('response', (response) => {
     const request = response.request();
     const recorded = requestsStarted.get(request);
-    if (!recorded) return;
-    requestsStarted.delete(request);
-    restoreHttpTimings.push({
-      route: recorded.route,
-      startedAtMs: recorded.at - timingOrigin,
-      elapsedMs: performance.now() - recorded.at,
-      status: response.status(),
-    });
+    if (recorded) {
+      requestsStarted.delete(request);
+      restoreHttpTimings.push({
+        route: recorded.route,
+        startedAtMs: recorded.at - timingOrigin,
+        elapsedMs: performance.now() - recorded.at,
+        status: response.status(),
+      });
+    }
+    if (preparationStarted === undefined) return;
+    const route =
+      recorded?.route === 'create' || recorded?.route === 'upload'
+        ? recorded.route
+        : request.method() === 'GET' && new URL(request.url()).pathname === '/api/admin/restores'
+          ? 'status'
+          : null;
+    if (!route) return;
+    // Upload can return HTTP 200 with a terminal failed DTO. Observe the real
+    // public state instead of waiting the whole preparation budget for a button
+    // which cannot appear. Never persist the DTO, its IDs, or arbitrary errors.
+    void response
+      .json()
+      .then((body: unknown) => {
+        if (preparationStarted === undefined || !body || typeof body !== 'object') return;
+        const candidate: unknown = route === 'status' ? (body as { job?: unknown }).job : body;
+        if (!candidate || typeof candidate !== 'object') return;
+        const job = candidate as Record<string, unknown>;
+        if (route === 'create' && typeof job.id === 'string') preparationId = job.id;
+        // A status response begun before this creation cannot report failure
+        // for a different preparation. The identifier remains private in memory.
+        if (route === 'status' && (!preparationId || job.id !== preparationId)) return;
+        const state = job.state;
+        if (state !== 'failed' && state !== 'expired' && state !== 'cancelled') return;
+        preparationFailure ??= {
+          source: 'public-restore-api',
+          route,
+          state,
+          resourceCode:
+            (
+              Object.keys(RESTORE_RESOURCE_MESSAGES) as Array<
+                keyof typeof RESTORE_RESOURCE_MESSAGES
+              >
+            ).find((code) => RESTORE_RESOURCE_MESSAGES[code] === job.error) ?? null,
+          httpStatus: response.status(),
+          elapsedSincePrepareMs: performance.now() - preparationStarted,
+        };
+        artifact.publicPreparationFailure = preparationFailure;
+      })
+      .catch(() => {});
   });
   artifact.restoreHttpTimings = restoreHttpTimings;
   failurePage = page;
@@ -1129,10 +1202,22 @@ try {
   await preparation.getByLabel('Separate recovery key', { exact: true }).click();
   await (await keyChoice).setFiles(hostFile(source.keyFile));
   const restoreStarted = performance.now();
+  preparationStarted = restoreStarted;
   await preparation.getByRole('button', { name: 'Verify and prepare', exact: true }).click();
-  await expect(restore.getByRole('button', { name: 'Review restore', exact: true })).toBeEnabled({
-    timeout: sized ? 10 * 60_000 : 60_000,
-  });
+  const reviewRestore = restore.getByRole('button', { name: 'Review restore', exact: true });
+  await poll(
+    async () => {
+      if (preparationFailure) return true;
+      return (
+        (await reviewRestore.count()) === 1 && (await reviewRestore.isEnabled({ timeout: 500 }))
+      );
+    },
+    (readyOrFailed) => readyOrFailed,
+    sized ? 10 * 60_000 : 60_000,
+  );
+  preparationStarted = undefined;
+  if (preparationFailure) throw new Error('Public restore preparation reached a terminal failure.');
+  await expect(reviewRestore).toBeEnabled();
   const preparationReady = performance.now();
   await capture(page, 'prepared-source');
   await restore.getByRole('button', { name: 'Review restore', exact: true }).click();

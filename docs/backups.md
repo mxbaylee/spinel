@@ -410,7 +410,11 @@ The child process uses the same pinned SQLite runtime, a 256 MiB JavaScript heap
 a 512 MiB Linux RSS guard and a two-minute deadline. Before launch it requires
 640 MiB of available cgroup capacity and 768 MiB of available host memory; while
 running it stops below 128/256 MiB respectively. Missing cgroup probes retain
-the available host, RSS, heap and time protections. It has scoped file
+the available host, RSS, heap and time protections. Available cgroup capacity
+credits only clean inactive disk-file cache from valid `memory.stat` counters;
+active cache, shared/tmpfs memory, dirty pages and writeback remain charged.
+Missing, malformed or inconsistent cache counters retain raw cgroup usage.
+It has scoped file
 permissions and no Node network permission. Decompression defaults to an 8 GiB
 ceiling. Artifact retrieval and local publication check available destination
 space before and during transfer; decompression also retains a 256 MiB reserve.
