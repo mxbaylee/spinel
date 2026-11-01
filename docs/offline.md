@@ -214,8 +214,9 @@ links and downgrade/revocation cleanup remain unchanged.
 
 Personal **Hide** changes discovery only. Hidden inventory stays in the private
 account catalog for **Show hidden** offline; filtering it does not remove the
-download. Sign-out and revocation still remove private content through the
-existing cleanup paths. See [SPN-071](implementation/SPN-071.md).
+download. Sign-out still locks private access and retains clean copies until
+explicit deletion; observed revocation removes clean copies through the existing
+cleanup path. See [SPN-071](implementation/SPN-071.md).
 
 **Download.** Signed-in, non-admin accounts see **Available offline on this
 device** on each Sheet and Doc they can open (`web/offline/download.ts`). It:

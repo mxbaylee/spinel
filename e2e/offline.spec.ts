@@ -28,10 +28,11 @@ test('hiding preserves a prepared share and its offline discovery preference wit
     parentId: null,
   });
   workspace.share(owner.id, doc.id, reader.id, 'viewer');
+  const session = auth.createSession(reader.id);
   await context.addCookies([
     {
       name: COOKIE_NAME,
-      value: auth.createSession(reader.id).token,
+      value: session.token,
       url: baseURL!.replace('http:', 'https:'),
       secure: true,
       httpOnly: true,
@@ -114,10 +115,39 @@ test('hiding preserves a prepared share and its offline discovery preference wit
     await page.reload();
     await showHidden();
     await download();
+    const retained = await stored(page, reader.id, doc.id);
+    expect(retained?.bundle.access).toBe('viewer');
     await page.goto('/profile');
+    await expect(page.getByRole('heading', { name: 'Your profile', exact: true })).toBeVisible();
+    // Clean downloads are kept and locked by default. Keep logout offline long
+    // enough to exercise the separate, explicit account-data deletion choice.
+    await context.setOffline(true);
     await page.getByRole('button', { name: 'Sign out', exact: true }).click();
     await expect(page).toHaveURL(baseURL! + '/sign-in');
+    await expect(
+      page.getByRole('heading', { name: 'Local access is locked.', exact: true }),
+    ).toBeVisible();
+    await expect(page.getByText(doc.name, { exact: true })).toHaveCount(0);
+    await expect(page.locator('.univer-container')).toHaveCount(0);
+    expect(await page.evaluate(() => localStorage.getItem('spinel.offline.account'))).toBeNull();
+    expect(await stored(page, reader.id, doc.id)).toEqual(retained);
+    await page.getByRole('button', { name: 'Delete offline data…', exact: true }).click();
+    await page
+      .getByRole('dialog', { name: 'Delete this account’s offline data?', exact: true })
+      .getByRole('button', { name: 'Delete offline data', exact: true })
+      .click();
     await expect.poll(() => stored(page, reader.id, doc.id)).toBeUndefined();
+    await expect(
+      page.getByText(
+        'Offline data for this account was deleted from this device. Server documents were not changed.',
+        { exact: true },
+      ),
+    ).toBeVisible();
+    await context.setOffline(false);
+    await expect(
+      page.getByRole('button', { name: 'Sign in with a passkey', exact: true }),
+    ).toBeVisible({ timeout: 30_000 });
+    expect(auth.session(session.token)).toBeUndefined();
   } finally {
     await context.close();
     db.close();
