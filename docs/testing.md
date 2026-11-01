@@ -2,10 +2,36 @@
 
 Use this guide when writing a ticket's **Verify** section, implementing its tests,
 and reviewing the PR. It carries SPN-115's coverage and compute decisions into
-new work; [the implementation record](implementation/SPN-115.md) preserves their
+new and in-progress work; [the implementation record](implementation/SPN-115.md) preserves their
 evidence. A test should protect an observable contract at the cheapest layer
 that can actually detect its failure. More executions are useful only when they
 exercise a different risk.
+
+## Carry the plan through the work
+
+Every open ticket's Verify section is a starting plan, not evidence of execution.
+At kickoff or when resuming an existing PR, confirm its concrete suite and fixture
+paths against current code. Record the contract and negative case, lowest meaningful
+layer, readiness/cleanup boundary, environment owner and source/shared dependencies
+before adding coverage. Use the ticket-specific guidance without replacing its
+existing acceptance requirements. Documentation-only work records instruction/link
+verification and why runtime tests are inapplicable.
+
+Keep a short **Test plan and evidence** entry in the implementation record and PR
+checkpoint: planned contracts/owners; checks actually run with source SHA, run and
+attempt; first failures and their disposition; remaining evidence and next action.
+Update it when a fixture, dependency, environment or acceptance requirement changes,
+and before a handoff. Say planned, passed, failed, resource-aborted or unavailable
+accurately; collection, mocks and old commits do not prove current runtime behavior.
+The final PR replaces stale pending claims with the verified result and limitations.
+
+Review test design with the implementation, not as a cleanup phase after it lands.
+Fix races, redundant executions without distinct coverage, missing cleanup and
+unhelpful failure diagnostics introduced by this ticket in the same PR. A separate
+ticket may own an independently useful pre-existing repair, with evidence and scope
+recorded; it cannot defer a required regression or turn a failed gate into a pass.
+No new tracking service, duplicate evidence ledger or blanket test-count target is
+needed. The ticket, implementation record and PR already hold this information.
 
 ## Plan the regression before the test
 

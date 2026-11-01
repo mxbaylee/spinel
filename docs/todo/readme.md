@@ -4,6 +4,8 @@
 
 How this backlog works: [process.md](process.md). Next ID: **SPN-129**. Grooming: **5** tickets completed since 2026-10-29: SPN-105, SPN-118, SPN-052, SPN-112, SPN-115. Reminder every 7; grooming on request, never a work gate.
 
+Every ticket and resumed PR follows [sustainable testing](../testing.md). Keep its Verify plan and [progress evidence](../testing.md#carry-the-plan-through-the-work) current; repair test weaknesses introduced by the work before landing.
+
 ## Open tickets (22)
 
 Complete each phase before the next. Within a phase, take the highest-ranked ticket that has no listed prerequisites.

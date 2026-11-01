@@ -44,6 +44,11 @@ New or existing tickets for separate work. Persona decisions and their canonical
 
 ## Run checkpoint
 
-For an ongoing backlog run: merged tickets/PRs; branch, SHA and local path;
+For ongoing ticket work, including a resumed PR: merged tickets/PRs; branch, SHA and local path;
 unpushed work; review/check status; execution prerequisites and decision links; next action.
 No secrets. Update before an interruption and after merging.
+
+Test plan and evidence: planned regression contracts and suite/fixture/environment
+owners; readiness/cleanup and routing changes; source/run/attempts actually checked;
+first failures and disposition; remaining evidence and next action. Update as the
+plan changes. Repair test weaknesses introduced here before landing.

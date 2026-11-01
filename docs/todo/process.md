@@ -69,6 +69,7 @@ And ....
 ## Verify
 
 - Contract/negative case: ... Existing suite and lowest meaningful layer: ...
+- Fixture/readiness/cleanup: ...
 - Environment owner and relevant source/shared dependency paths: ...
 - Evidence: ... What a reviewer should see; explain routing changes or why none are needed.
 ```
@@ -82,6 +83,9 @@ And ....
   environments, relevant source/shared dependencies, and what a reviewer should
   see. Follow [sustainable testing](../testing.md); extend existing coverage before
   adding another expensive execution, and keep applicable CI selection complete.
+  This applies to every open ticket and resumed PR as well as new tickets. Keep
+  its test plan and actual evidence current in progress checkpoints; fix test
+  weaknesses introduced by the work before landing, not in a later cleanup ticket.
 
 Aim for 30–50 lines; the checker warns past 50. A ticket needs enough for an
 agent to build it without asking, and no more. Each ticket gets its own emoji,
@@ -200,6 +204,9 @@ place. Owner, chat 2026-10-26; [image-publication decision](../implementation/gr
 2. Branch from `main`. One ticket, one branch, one PR, one squashed commit.
 3. Build it with its tests using [sustainable testing](../testing.md). Keep the
    ticket's Verify contract, environment ownership and dependency routing current.
+   At kickoff/resume, confirm suite/fixture paths and readiness/cleanup boundaries.
+   Update the implementation/PR test-plan checkpoint when these change, recording
+   actual attempts, first failures, dispositions and the next missing evidence.
    Make decisions as they come up (below).
 4. **Split when it grows.** Past ~10k changed lines, or ~3 days in progress, look
    for a split. 100k is the hard limit and CI fails past it. Lockfiles and
@@ -296,6 +303,8 @@ A full requested grooming, recorded in a PR titled `🧹 Groom backlog …`:
 
 - Rechecks every ticket against the code: still true, still needed, sized right.
 - Captures context learned since the last grooming into the tickets it affects.
+- Rechecks each Verify plan against current suites, fixtures and dependency routing;
+  preserves required acceptance when removing duplication or assigning a separate repair.
 - Checks persona coverage: walks each persona's journey (Operator, Owner,
   Collaborator, Link guest), rechecks each ticket's persona impacts, and files
   tickets for what is missing.

@@ -128,11 +128,14 @@ Then <result>.
 
 ## Rules
 
+- Follow [sustainable testing](../testing.md); keep the Verify plan and progress evidence current. [Policy](../implementation/SPN-115.md#guidance-for-every-open-ticket-and-progress-checkpoint), owner 2026-11-01.
+
 ## Out of scope
 
 ## Verify
 
 - Contract/negative case: <behavior>; suite/layer/fixture: <existing owner>.
+- Fixture readiness/cleanup: <observable state and owned resources>.
 - Environment and source/shared dependencies: <coverage owners and inputs>.
 - Evidence: <reviewer-visible result and CI selection, or why routing is unchanged>.
 `,
