@@ -9,7 +9,7 @@ import { withFixtureCleanup } from './owned-process.ts';
 import { mkdir, writeFile } from 'node:fs/promises';
 import sharp from 'sharp';
 import { expect, test } from '@playwright/test';
-import type { Locator, Page, TestInfo } from '@playwright/test';
+import type { BrowserContext, Locator, Page, TestInfo } from '@playwright/test';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
@@ -223,37 +223,7 @@ for (const role of ['editor', 'guest-viewer'] as const) {
         // exhausts 150s at different steps; retain each bounded assertion while
         // budgeting the complete development journey separately from production.
         test.setTimeout(info.project.name === 'development' ? 300_000 : 150_000);
-        const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
-        const auth = new AuthStore(db),
-          store = new WorkspaceStore(auth);
-        const owner = auth.createUser('Private phone Doc owner');
-        const item = store.create(owner.id, {
-          name: 'Phone reading and navigation',
-          kind: 'doc',
-          parentId: null,
-        });
-        await context.addCookies([
-          {
-            name: COOKIE_NAME,
-            value: auth.createSession(owner.id).token,
-            url: baseURL!.replace('http:', 'https:'),
-            secure: true,
-            httpOnly: true,
-            sameSite: 'Strict',
-          },
-        ]);
-        const read = async () => {
-          const response = await context.request.get(`/api/items/${item.id}/doc`);
-          expect(response.status()).toBe(200);
-          return (await response.json()).snapshot;
-        };
-        const guest =
-          role === 'guest-viewer'
-            ? await browser.newContext({ baseURL, viewport: { width: 390, height: 844 } })
-            : undefined;
-        const page = guest ? await guest.newPage() : seed;
-        const errors: string[] = [];
-        page.on('pageerror', (error) => errors.push(error.message));
+        const contexts: BrowserContext[] = [];
         let caretTrace: Awaited<ReturnType<typeof traceCaret>> | undefined;
         let caretEvents: unknown[] = [];
         const finishCaretTrace = async () => {
@@ -263,8 +233,40 @@ for (const role of ['editor', 'guest-viewer'] as const) {
           caretEvents = await trace.evaluate((stop) => stop()).catch(() => caretEvents);
           await trace.dispose().catch(() => {});
         };
+        const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
         await withFixtureCleanup(
           async () => {
+            const auth = new AuthStore(db),
+              store = new WorkspaceStore(auth);
+            const owner = auth.createUser('Private phone Doc owner');
+            const item = store.create(owner.id, {
+              name: 'Phone reading and navigation',
+              kind: 'doc',
+              parentId: null,
+            });
+            await context.addCookies([
+              {
+                name: COOKIE_NAME,
+                value: auth.createSession(owner.id).token,
+                url: baseURL!.replace('http:', 'https:'),
+                secure: true,
+                httpOnly: true,
+                sameSite: 'Strict',
+              },
+            ]);
+            const read = async () => {
+              const response = await context.request.get(`/api/items/${item.id}/doc`);
+              expect(response.status()).toBe(200);
+              return (await response.json()).snapshot;
+            };
+            const guest =
+              role === 'guest-viewer'
+                ? await browser.newContext({ baseURL, viewport: { width: 390, height: 844 } })
+                : undefined;
+            if (guest) contexts.push(guest);
+            const page = guest ? await guest.newPage() : seed;
+            const errors: string[] = [];
+            page.on('pageerror', (error) => errors.push(error.message));
             try {
               await verifyFixtureSession(context, baseURL!, owner.id, info);
               fixturePhase(info, 'phone-seed');
@@ -567,7 +569,7 @@ for (const role of ['editor', 'guest-viewer'] as const) {
           () =>
             closeFixtureResources(info, {
               capture: finishCaretTrace,
-              contexts: guest ? [guest] : [],
+              contexts,
               dispose: () => db.close(),
             }),
         );

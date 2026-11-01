@@ -33,6 +33,7 @@ import { nativeTheme } from './native-theme.ts';
 import { docImageSnapshot } from './doc-image-fixture.ts';
 
 type Change = 'concurrent' | 'restored' | 'trashed' | 'revoked' | 'viewer';
+const recordedTest = test.extend({ trace: 'retain-on-failure' });
 const endpoint = '**/api/items/offline-recovery';
 const offlineText = (kind: Kind) => (kind === 'sheet' ? '731' : 'Offline version 731 ');
 
@@ -394,78 +395,78 @@ test.describe('offline recovery copies', () => {
         });
 
   test.describe('Recorded fixture first attempt', () => {
-    test.use({ trace: 'retain-on-failure' });
-    test('an unfinished native Sheet draft remains copyable before recovery freezes the queued edits', async ({
-      browser,
-      baseURL,
-    }, info) => {
-      await withFixtureServer(browser, baseURL!, info, async () => {
-        const f = await fixture(browser, baseURL!, info, 'sheet', { actor: 'editor' });
-        await withFixtureCleanup(
-          async () => {
-            await f.download();
-            const baseline = await f.read();
-            await localEdit(f, 'sheet');
-            const retained = (await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint;
-            await selectCell(f.page, 'E1');
-            const draft = 'Unfinished travel notes 517';
-            await f.page.keyboard.insertText(draft);
-            const cellInput = f.page.locator(
-              `[id="__editor_${DOCS_NORMAL_EDITOR_UNIT_ID_KEY}"][contenteditable="true"][data-u-comp="editor"]`,
-            );
-            await expect(cellInput).toBeFocused();
-            await changeLive(f, 'sheet', 'concurrent', baseURL!);
-            const original = originalState(f, f.unitId);
-            await f.network.setOffline(false);
-            const warning = 'Copy the unfinished cell text before recovering your offline changes.';
-            await expect(saveStatus(f.page)).toHaveText(warning, { timeout: 30_000 });
-            expect(receipts(f)).toEqual([]);
-            const panel = await details(f.page);
-            await expect(
-              panel.getByRole('button', { name: 'Retry creating copy', exact: true }),
-            ).toBeDisabled();
-            await expect(
-              panel.getByRole('button', { name: 'Export as Univer file', exact: true }),
-            ).toBeDisabled();
-            await panel.getByRole('button', { name: 'Close save details', exact: true }).click();
-            const sentinel = `not-copied-${randomUUID()}`;
-            await f.page.evaluate((text) => navigator.clipboard.writeText(text), sentinel);
-            await cellInput.focus();
-            await f.page.keyboard.press('Control+a');
-            await f.page.keyboard.press('Control+c');
-            await expect
-              .poll(async () =>
-                (await f.page.evaluate(() => navigator.clipboard.readText())).trim(),
-              )
-              .toBe(draft);
-            // Confirming a stale draft cannot commit it into the now frozen model.
-            await f.page.keyboard.press('Enter');
-            await expect(saveStatus(f.page)).toHaveText(warning);
-            expect(
-              (await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint.buffer,
-            ).toEqual(retained.buffer);
-            expect(receipts(f)).toEqual([]);
-            expect(originalState(f, f.unitId)).toEqual(original);
-            // Escape is the user's explicit dismissal of the already copied draft;
-            // the previously durable D1 edit must still become one recoverable copy.
-            await cellInput.focus();
-            await f.page.keyboard.press('Escape');
-            // Automatic recovery can finish as the input closes. Await its outcome
-            // instead of racing a Retry button that can change or disappear.
-            const result = await recovered(f);
-            expectOfflineContent(
-              await copySnapshot(f, result.id, baseURL!),
-              baseline.snapshot,
-              'sheet',
-            );
-            expect(originalState(f, f.unitId)).toEqual(original);
-            expect(f.network.outgoing.filter((frame) => frame.type === 'submit')).toEqual([]);
-            expect(f.errors).toEqual([]);
-          },
-          () => f.close(),
-        );
-      });
-    });
+    recordedTest(
+      'an unfinished native Sheet draft remains copyable before recovery freezes the queued edits',
+      async ({ browser, baseURL }, info) => {
+        await withFixtureServer(browser, baseURL!, info, async () => {
+          const f = await fixture(browser, baseURL!, info, 'sheet', { actor: 'editor' });
+          await withFixtureCleanup(
+            async () => {
+              await f.download();
+              const baseline = await f.read();
+              await localEdit(f, 'sheet');
+              const retained = (await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint;
+              await selectCell(f.page, 'E1');
+              const draft = 'Unfinished travel notes 517';
+              await f.page.keyboard.insertText(draft);
+              const cellInput = f.page.locator(
+                `[id="__editor_${DOCS_NORMAL_EDITOR_UNIT_ID_KEY}"][contenteditable="true"][data-u-comp="editor"]`,
+              );
+              await expect(cellInput).toBeFocused();
+              await changeLive(f, 'sheet', 'concurrent', baseURL!);
+              const original = originalState(f, f.unitId);
+              await f.network.setOffline(false);
+              const warning =
+                'Copy the unfinished cell text before recovering your offline changes.';
+              await expect(saveStatus(f.page)).toHaveText(warning, { timeout: 30_000 });
+              expect(receipts(f)).toEqual([]);
+              const panel = await details(f.page);
+              await expect(
+                panel.getByRole('button', { name: 'Retry creating copy', exact: true }),
+              ).toBeDisabled();
+              await expect(
+                panel.getByRole('button', { name: 'Export as Univer file', exact: true }),
+              ).toBeDisabled();
+              await panel.getByRole('button', { name: 'Close save details', exact: true }).click();
+              const sentinel = `not-copied-${randomUUID()}`;
+              await f.page.evaluate((text) => navigator.clipboard.writeText(text), sentinel);
+              await cellInput.focus();
+              await f.page.keyboard.press('Control+a');
+              await f.page.keyboard.press('Control+c');
+              await expect
+                .poll(async () =>
+                  (await f.page.evaluate(() => navigator.clipboard.readText())).trim(),
+                )
+                .toBe(draft);
+              // Confirming a stale draft cannot commit it into the now frozen model.
+              await f.page.keyboard.press('Enter');
+              await expect(saveStatus(f.page)).toHaveText(warning);
+              expect(
+                (await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint.buffer,
+              ).toEqual(retained.buffer);
+              expect(receipts(f)).toEqual([]);
+              expect(originalState(f, f.unitId)).toEqual(original);
+              // Escape is the user's explicit dismissal of the already copied draft;
+              // the previously durable D1 edit must still become one recoverable copy.
+              await cellInput.focus();
+              await f.page.keyboard.press('Escape');
+              // Automatic recovery can finish as the input closes. Await its outcome
+              // instead of racing a Retry button that can change or disappear.
+              const result = await recovered(f);
+              expectOfflineContent(
+                await copySnapshot(f, result.id, baseURL!),
+                baseline.snapshot,
+                'sheet',
+              );
+              expect(originalState(f, f.unitId)).toEqual(original);
+              expect(f.network.outgoing.filter((frame) => frame.type === 'submit')).toEqual([]);
+              expect(f.errors).toEqual([]);
+            },
+            () => f.close(),
+          );
+        });
+      },
+    );
   });
 
   for (const phone of [false, true]) {

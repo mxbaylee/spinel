@@ -25,6 +25,7 @@ import {
   expectNativeMutationInventory,
 } from './sync-snapshot.ts';
 
+const recordedTest = test.extend({ trace: 'retain-on-failure' });
 const saved = (page: Page) =>
   expect(page.getByRole('status', { name: 'Save status' })).toHaveText('All changes saved.', {
     timeout: 30_000,
@@ -379,132 +380,133 @@ test('native Sheets deliver within a second, rebase offline edits, and retry one
 });
 
 test.describe('Recorded fixture first attempt', () => {
-  test.use({ trace: 'retain-on-failure' });
-  test('native Docs preserve concurrent text and undo across reconnect, render profile presence, and capture actual image UI edits', async ({
-    browser,
-    baseURL,
-  }, info) => {
-    await withFixtureServer(browser, baseURL!, info, async () => {
-      test.setTimeout(180_000);
-      const f = await fixture(browser, baseURL!, info, 'doc');
-      await withFixtureCleanup(
-        async () => {
-          await f.page.goto(`/?item=${f.item.id}`);
-          await saved(f.page);
-          await focusDoc(f.page);
-          await f.page.keyboard.type('Shared anchor');
-          await saved(f.page);
-          await f.other.goto(`/?item=${f.item.id}`);
-          await saved(f.other);
-          await focusDoc(f.page);
-          await f.page.keyboard.press('Home');
-          await focusDoc(f.other);
-          await f.other.keyboard.press('End');
-          await expect(
-            f.page.locator('[data-presence-label]').filter({ hasText: 'Sync collaborator' }),
-          ).toBeVisible();
-          await expect(
-            f.other.locator('[data-presence-label]').filter({ hasText: 'Sync owner' }),
-          ).toBeVisible();
-          await f.page.screenshot({ path: info.outputPath('doc-light-sync-presence.png') });
-          await f.network.setOffline(true);
-          await nativeInput(f.page).focus();
-          await f.page.keyboard.type('Owner ');
-          await nativeInput(f.other).focus();
-          await f.other.keyboard.type(' Collaborator');
-          await saved(f.other);
-          await expect(f.page.getByRole('status', { name: 'Save status' })).toContainText(
-            'not saved',
-          );
-          await f.network.setOffline(false);
-          await Promise.all([saved(f.page), saved(f.other)]);
-          await expect.poll(() => copyDoc(f.page)).toBe('Owner Shared anchor Collaborator');
-          await expect.poll(() => copyDoc(f.other)).toBe('Owner Shared anchor Collaborator');
-          await f.page.keyboard.press('ArrowRight');
-          await f.page.keyboard.type(' undo-me');
-          await saved(f.page);
-          await f.page.keyboard.press('Control+z');
-          await saved(f.page);
-          await expect.poll(() => copyDoc(f.other)).toBe('Owner Shared anchor Collaborator');
-          await f.other.keyboard.press('ArrowRight');
-          await f.other.keyboard.press('Shift+ArrowLeft');
-          await f.other.keyboard.press('Shift+ArrowLeft');
-          await f.page
-            .getByRole('button', { name: 'People in this document', exact: true })
-            .click();
-          const jump = f.page
-            .getByRole('dialog', { name: 'People in this document', exact: true })
-            .getByRole('button', { name: 'Go to Sync collaborator', exact: true });
-          // Cursor updates are coalesced. Follow the new two-character selection,
-          // not the prior select-all range used by the clipboard assertion.
-          await expect(jump).toHaveAttribute('data-selection', '30:32:1:TEXT::-1');
-          await expect(jump).toBeEnabled();
-          await jump.click();
-          await expect(nativeInput(f.page)).toBeFocused();
-          await f.page.keyboard.type('XX');
-          await saved(f.page);
-          await expect
-            .poll(async () => (await f.read()).snapshot.body!.dataStream)
-            .toBe('Owner Shared anchor CollaboratXX\r\n');
-
-          // The actual image toolbar/selection producer exercises the Doc drawing
-          // controls whose render-only collaboration event must stay out of edits.
-          await f.page.keyboard.press('Control+End');
-          await f.page.keyboard.press('Enter');
-          const region = f.page.getByRole('region', { name: 'Doc document', exact: true });
-          await region.getByRole('tab', { name: 'Insert', exact: true }).click();
-          const chooser = f.page.waitForEvent('filechooser');
-          await region.getByRole('button', { name: 'Image', exact: true }).click();
-          await (
-            await chooser
-          ).setFiles({
-            name: 'marker.png',
-            mimeType: 'image/png',
-            buffer: await sharp({
-              create: { width: 20, height: 10, channels: 4, background: '#ff9900' },
-            })
-              .png()
-              .toBuffer(),
-          });
-          await saved(f.page);
-          await expect.poll(async () => (await f.read()).snapshot.drawingsOrder?.length).toBe(1);
-          await focusDoc(f.page);
-          await f.page.keyboard.press('Control+End');
-          await f.page.keyboard.type(' after image');
-          await Promise.all([saved(f.page), saved(f.other)]);
-          const committed = await f.read();
-          expect(committed.snapshot.drawingsOrder).toHaveLength(1);
-          expect(committed.snapshot.body!.dataStream).toContain('after image');
-          const ids = f.network.outgoing
-            .filter((frame) => frame.type === 'submit')
-            .flatMap((frame) => frame.mutations.map((mutation: { id: string }) => mutation.id));
-          expect(ids).toContain('doc.mutation.rich-text-editing');
-          expect(ids).not.toContain('doc.operation.clear-drawing-transformer');
-          for (const wire of [f.network, f.otherNetwork])
+  recordedTest(
+    'native Docs preserve concurrent text and undo across reconnect, render profile presence, and capture actual image UI edits',
+    async ({ browser, baseURL }, info) => {
+      await withFixtureServer(browser, baseURL!, info, async () => {
+        test.setTimeout(180_000);
+        const f = await fixture(browser, baseURL!, info, 'doc');
+        await withFixtureCleanup(
+          async () => {
+            await f.page.goto(`/?item=${f.item.id}`);
+            await saved(f.page);
+            await focusDoc(f.page);
+            await f.page.keyboard.type('Shared anchor');
+            await saved(f.page);
+            await f.other.goto(`/?item=${f.item.id}`);
+            await saved(f.other);
+            await focusDoc(f.page);
+            await f.page.keyboard.press('Home');
+            await focusDoc(f.other);
+            await f.other.keyboard.press('End');
+            await expect(
+              f.page.locator('[data-presence-label]').filter({ hasText: 'Sync collaborator' }),
+            ).toBeVisible();
+            await expect(
+              f.other.locator('[data-presence-label]').filter({ hasText: 'Sync owner' }),
+            ).toBeVisible();
+            await f.page.screenshot({ path: info.outputPath('doc-light-sync-presence.png') });
+            await f.network.setOffline(true);
+            await nativeInput(f.page).focus();
+            await f.page.keyboard.type('Owner ');
+            await nativeInput(f.other).focus();
+            await f.other.keyboard.type(' Collaborator');
+            await saved(f.other);
+            await expect(f.page.getByRole('status', { name: 'Save status' })).toContainText(
+              'not saved',
+            );
+            await f.network.setOffline(false);
+            await Promise.all([saved(f.page), saved(f.other)]);
+            await expect.poll(() => copyDoc(f.page)).toBe('Owner Shared anchor Collaborator');
+            await expect.poll(() => copyDoc(f.other)).toBe('Owner Shared anchor Collaborator');
+            await f.page.keyboard.press('ArrowRight');
+            await f.page.keyboard.type(' undo-me');
+            await saved(f.page);
+            await f.page.keyboard.press('Control+z');
+            await saved(f.page);
+            await expect.poll(() => copyDoc(f.other)).toBe('Owner Shared anchor Collaborator');
+            await f.other.keyboard.press('ArrowRight');
+            await f.other.keyboard.press('Shift+ArrowLeft');
+            await f.other.keyboard.press('Shift+ArrowLeft');
+            await f.page
+              .getByRole('button', { name: 'People in this document', exact: true })
+              .click();
+            const jump = f.page
+              .getByRole('dialog', { name: 'People in this document', exact: true })
+              .getByRole('button', { name: 'Go to Sync collaborator', exact: true });
+            // Cursor updates are coalesced. Follow the new two-character selection,
+            // not the prior select-all range used by the clipboard assertion.
+            await expect(jump).toHaveAttribute('data-selection', '30:32:1:TEXT::-1');
+            await expect(jump).toBeEnabled();
+            await jump.click();
+            await expect(nativeInput(f.page)).toBeFocused();
+            await f.page.keyboard.type('XX');
+            await saved(f.page);
             await expect
-              .poll(() =>
-                wire.incoming.some(
-                  (frame) => frame.type === 'verified' && frame.revision === committed.revision,
-                ),
-              )
-              .toBe(true);
-          await expectNativeSnapshots([f.page, f.other], committed);
-          await Promise.all([f.page.reload(), f.other.reload()]);
-          await Promise.all([saved(f.page), saved(f.other)]);
-          await expectNativeSnapshots([f.page, f.other], committed);
-          expect(await copyDoc(f.page)).toBe(await copyDoc(f.other));
-          expect((await f.read()).snapshot.drawingsOrder).toEqual(committed.snapshot.drawingsOrder);
-          await exportConfirmedPdf(f.page, info, 'doc', [
-            'Owner Shared anchor CollaboratXX',
-            'after image',
-          ]);
-          expect(f.network.incoming.filter((frame) => frame.type === 'resync')).toEqual([]);
-          expect(f.errors).toEqual([]);
-        },
-        () => f.close(),
-      );
-    });
-  });
+              .poll(async () => (await f.read()).snapshot.body!.dataStream)
+              .toBe('Owner Shared anchor CollaboratXX\r\n');
+
+            // The actual image toolbar/selection producer exercises the Doc drawing
+            // controls whose render-only collaboration event must stay out of edits.
+            await f.page.keyboard.press('Control+End');
+            await f.page.keyboard.press('Enter');
+            const region = f.page.getByRole('region', { name: 'Doc document', exact: true });
+            await region.getByRole('tab', { name: 'Insert', exact: true }).click();
+            const chooser = f.page.waitForEvent('filechooser');
+            await region.getByRole('button', { name: 'Image', exact: true }).click();
+            await (
+              await chooser
+            ).setFiles({
+              name: 'marker.png',
+              mimeType: 'image/png',
+              buffer: await sharp({
+                create: { width: 20, height: 10, channels: 4, background: '#ff9900' },
+              })
+                .png()
+                .toBuffer(),
+            });
+            await saved(f.page);
+            await expect.poll(async () => (await f.read()).snapshot.drawingsOrder?.length).toBe(1);
+            await focusDoc(f.page);
+            await f.page.keyboard.press('Control+End');
+            await f.page.keyboard.type(' after image');
+            await Promise.all([saved(f.page), saved(f.other)]);
+            const committed = await f.read();
+            expect(committed.snapshot.drawingsOrder).toHaveLength(1);
+            expect(committed.snapshot.body!.dataStream).toContain('after image');
+            const ids = f.network.outgoing
+              .filter((frame) => frame.type === 'submit')
+              .flatMap((frame) => frame.mutations.map((mutation: { id: string }) => mutation.id));
+            expect(ids).toContain('doc.mutation.rich-text-editing');
+            expect(ids).not.toContain('doc.operation.clear-drawing-transformer');
+            for (const wire of [f.network, f.otherNetwork])
+              await expect
+                .poll(() =>
+                  wire.incoming.some(
+                    (frame) => frame.type === 'verified' && frame.revision === committed.revision,
+                  ),
+                )
+                .toBe(true);
+            await expectNativeSnapshots([f.page, f.other], committed);
+            await Promise.all([f.page.reload(), f.other.reload()]);
+            await Promise.all([saved(f.page), saved(f.other)]);
+            await expectNativeSnapshots([f.page, f.other], committed);
+            expect(await copyDoc(f.page)).toBe(await copyDoc(f.other));
+            expect((await f.read()).snapshot.drawingsOrder).toEqual(
+              committed.snapshot.drawingsOrder,
+            );
+            await exportConfirmedPdf(f.page, info, 'doc', [
+              'Owner Shared anchor CollaboratXX',
+              'after image',
+            ]);
+            expect(f.network.incoming.filter((frame) => frame.type === 'resync')).toEqual([]);
+            expect(f.errors).toEqual([]);
+          },
+          () => f.close(),
+        );
+      });
+    },
+  );
 });
 
 test('Space page changes clear room membership and a root link downgrade fences all anonymous child editors', async ({
