@@ -1,13 +1,15 @@
-name: 🧪 BrowserStack infrastructure
+name: 🧪 BrowserStack lifetime quota
 
 on:
   workflow_dispatch:
     inputs:
       mode:
-        description: Read-only quota evidence or explicitly allocate the existing device smoke
+        description: Check quota or request the device smoke (both require verified admission)
         type: choice
         default: quota
         options: [quota, smoke]
+  schedule:
+    - cron: '17 9 1 * *'
   pull_request:
     branches: [main]
     types: [labeled]
@@ -16,17 +18,28 @@ permissions:
   contents: read
 
 concurrency:
-  group: browserstack-${{ github.event.pull_request.number || github.ref }}
+  # All trigger types and branches spend the same lifetime allowance.
+  group: browserstack-lifetime-account
   cancel-in-progress: false
 
 jobs:
-  quota:
-    name: BrowserStack read-only quota evidence
-    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'quota'
+  accounting:
+    name: BrowserStack quota admission and report
+    if: >-
+      github.event_name == 'schedule' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' &&
+      github.event.action == 'labeled' &&
+      github.event.label.name == 'ci-real-devices' &&
+      github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    outputs:
+      allocation_allowed: ${{ steps.accounting.outputs.allocation_allowed }}
     env:
-      SOURCE_SHA: ${{ github.sha }}
+      SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -35,28 +48,35 @@ jobs:
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
-      - name: Read Plan, known sessions and bounded retained history (no devices or Local)
-        timeout-minutes: 2
+      - name: Read usage, preserve the ledger and enforce lifetime admission (no devices or Local)
+        id: accounting
+        continue-on-error: true
+        timeout-minutes: 3
         env:
           BS_USERNAME: ${{ secrets.BS_USERNAME }}
           BS_ACCESS_KEY: ${{ secrets.BS_ACCESS_KEY }}
-        run: node scripts/ci/browserstack.ts quota
-      - name: Retain allowlisted read-only evidence
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/ci/browserstack-accounting.ts
+      - name: Retain allowlisted accounting and the human-readable report
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: browserstack-quota-${{ github.run_id }}-${{ github.run_attempt }}
-          path: artifacts/browserstack-quota.json
+          name: browserstack-accounting-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/browserstack-admission.*
           if-no-files-found: error
           retention-days: 14
+      - name: Keep unknown or exhausted quota visibly failing
+        if: always()
+        env:
+          ACCOUNTING_OUTCOME: ${{ steps.accounting.outcome }}
+        run: test "$ACCOUNTING_OUTCOME" = success
   smoke:
     name: BrowserStack credentials and mobile tunnel
+    needs: accounting
     if: >-
-      (github.event_name == 'workflow_dispatch' && inputs.mode == 'smoke') ||
-      (github.event_name == 'pull_request' &&
-      github.event.action == 'labeled' &&
-      github.event.label.name == 'ci-real-devices' &&
-      github.event.pull_request.head.repo.full_name == github.repository)
+      needs.accounting.result == 'success' &&
+      needs.accounting.outputs.allocation_allowed == 'true' &&
+      (github.event_name != 'workflow_dispatch' || inputs.mode == 'smoke')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:

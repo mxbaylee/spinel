@@ -32,7 +32,7 @@ function object(value: unknown): JsonObject {
 // Only these locally constructed messages reach logs; remote bodies and errors never do.
 function failure(error: unknown): string {
   const message = error instanceof Error ? error.message : '';
-  return /^(http-\d{3}|invalid-response-shape|request-failed|webdriver-error|unexpected-browser|tunnel-challenge-mismatch|missing-mobile-targets|missing-credentials|missing-local-identifier)$/.test(
+  return /^(http-\d{3}|invalid-response-shape|request-failed|webdriver-error|unexpected-browser|tunnel-challenge-mismatch|missing-mobile-targets|missing-credentials|missing-local-identifier|quota-admission-unavailable)$/.test(
     message,
   )
     ? message
@@ -241,6 +241,11 @@ async function main() {
     status: 'failed',
   };
   try {
+    // Retained execution time does not establish the account's spendable balance.
+    // Keep the smoke implementation/test coverage, but close the direct CLI bypass
+    // until the account baseline, charging rules and a complete-matrix reservation
+    // are actually verified. The accounting workflow reports those blockers.
+    if (mode === 'smoke') requireVerifiedDeviceBudget();
     const client = clientFor(process.env.BS_USERNAME ?? '', process.env.BS_ACCESS_KEY ?? '');
     const plan = object(await client.api('plan.json'));
     report.authentication = 'passed';
@@ -288,6 +293,10 @@ async function main() {
   await writeFile(`artifacts/browserstack-${mode}.json`, `${JSON.stringify(report, null, 2)}\n`);
   console.log(JSON.stringify(report, null, 2));
   if (report.status !== 'passed') process.exitCode = 1;
+}
+
+function requireVerifiedDeviceBudget(): void {
+  throw new Error('quota-admission-unavailable');
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {

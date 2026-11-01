@@ -333,20 +333,61 @@ test('quota CLI with missing credentials retains a failing report without openin
   }
 });
 
-test('manual quota workflow defaults to read-only and has no device or tunnel action', async () => {
+test('monthly, label and manual triggers serialize through visible quota failure before devices', async () => {
   const source = await readFile(
     new URL('../../.github/workflows/browserstack.yml', import.meta.url),
     'utf8',
   );
   assert.match(source, /default: quota/);
-  const quota = source.split('  quota:\n')[1].split('  smoke:\n')[0];
-  assert.match(quota, /if: github.event_name == 'workflow_dispatch' && inputs.mode == 'quota'/);
-  assert.match(quota, /run: node scripts\/ci\/browserstack.ts quota/);
+  assert.match(source, /cron: '17 9 1 \* \*'/);
+  assert.match(source, /group: browserstack-lifetime-account\n/);
+  assert.match(source, /cancel-in-progress: false/);
+  const quota = source.split('  accounting:\n')[1].split('  smoke:\n')[0];
+  assert.match(quota, /github.event_name == 'schedule'/);
+  assert.match(quota, /github.event_name == 'workflow_dispatch'/);
+  assert.match(quota, /github.event.label.name == 'ci-real-devices'/);
+  assert.match(quota, /github.event.pull_request.head.repo.full_name == github.repository/);
+  assert.match(quota, /run: node scripts\/ci\/browserstack-accounting.ts/);
+  assert.match(quota, /run: test "\$ACCOUNTING_OUTCOME" = success/);
+  assert.match(quota, /if: always\(\)/);
   assert.doesNotMatch(quota, /setup-local|setup-env|browserstack.ts (smoke|credentials)|needs:/);
   const smoke = source.split('  smoke:\n')[1];
-  assert.match(smoke, /github.event_name == 'workflow_dispatch' && inputs.mode == 'smoke'/);
-  assert.match(smoke, /github.event.label.name == 'ci-real-devices'/);
-  assert.match(smoke, /github.event.pull_request.head.repo.full_name == github.repository/);
+  assert.match(smoke, /needs: accounting/);
+  assert.match(smoke, /needs.accounting.result == 'success'/);
+  assert.match(smoke, /needs.accounting.outputs.allocation_allowed == 'true'/);
+  assert.match(smoke, /github.event_name != 'workflow_dispatch' \|\| inputs.mode == 'smoke'/);
+});
+
+test('direct smoke CLI refuses unknown quota before any provider call', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'spinel-smoke-guard-'));
+  try {
+    const guard = join(directory, 'network-guard.ts');
+    const { writeFile } = await import('node:fs/promises');
+    await writeFile(
+      guard,
+      "globalThis.fetch = async () => { console.log('NETWORK_ATTEMPT'); throw new Error('mock-network'); };\n",
+    );
+    const child = spawnSync(
+      process.execPath,
+      ['--import', guard, fileURLToPath(new URL('./browserstack.ts', import.meta.url)), 'smoke'],
+      {
+        cwd: directory,
+        timeout: 5000,
+        encoding: 'utf8',
+        env: { ...process.env, BS_USERNAME: 'unit-user', BS_ACCESS_KEY: 'unit-key' },
+      },
+    );
+    assert.equal(child.status, 1, child.stderr);
+    assert.doesNotMatch(child.stdout, /NETWORK_ATTEMPT|unit-user|unit-key/);
+    const report = JSON.parse(
+      await readFile(join(directory, 'artifacts/browserstack-smoke.json'), 'utf8'),
+    );
+    assert.equal(report.failure, 'quota-admission-unavailable');
+    assert.equal(report.status, 'failed');
+    assert.equal(report.authentication, 'not-verified');
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
 });
 
 const observedId = (value: number) => value.toString(16).padStart(40, '0');
