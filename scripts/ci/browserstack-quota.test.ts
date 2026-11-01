@@ -6,6 +6,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
 import { collectQuotaEvidence, quotaLimits, retainedSessionIds } from './browserstack-quota.ts';
+import { createBudgetReport } from './browserstack-budget.ts';
 
 const credentials = { username: 'secret-user', accessKey: 'secret-key' };
 function success(url: string | URL | Request) {
@@ -508,6 +509,89 @@ test('the same session in multiple builds is deduplicated and conflicting measur
     ),
     [10, 20],
   );
+});
+
+test('completion between list and detail reads remains measurable in the durable ledger after a clean collection', async () => {
+  const id = observedId(100);
+  let calls = 0;
+  const collect = (inFlight: boolean) =>
+    collectQuotaEvidence({
+      ...credentials,
+      fetcher: async (url, init) => {
+        calls++;
+        assert.equal(init?.method, 'GET');
+        const path = String(url);
+        if (path.includes('/builds.json?')) return Response.json([buildRow(observedId(1))]);
+        if (path.includes('/sessions.json?'))
+          return Response.json([
+            sessionRow(id, {
+              duration: inFlight ? 3 : 19,
+              status: inFlight ? 'running' : 'done',
+              browserstack_status: inFlight ? 'running' : 'done',
+            }),
+          ]);
+        if (path.endsWith(`sessions/${id}.json`))
+          return Response.json(sessionRow(id, { duration: 19 }));
+        return valid(url);
+      },
+    });
+  const first = await collect(true);
+  assert.equal(first.history.sessions.at(-1)?.conflict, false);
+  assert.equal(first.history.sessions.at(-1)?.observations.length, 2);
+  const source = {
+    sourceSha: 'a'.repeat(40),
+    testedSha: 'b'.repeat(40),
+    run: 'https://github.com/mxbaylee/spinel/actions/runs/1',
+  };
+  const initial = createBudgetReport({
+    ...source,
+    evidence: first,
+    previousLedger: null,
+    observedAt: '2026-11-01T00:00:00.000Z',
+  });
+  const second = await collect(false);
+  assert.equal(second.status, 'passed');
+  const result = createBudgetReport({
+    ...source,
+    evidence: second,
+    previousLedger: initial.ledger,
+    observedAt: '2026-11-01T01:00:00.000Z',
+  });
+  assert.equal(calls, 19);
+  assert.equal(result.report.measuredTerminalSessions, 7);
+  assert.equal(result.report.measuredTerminalSessionSeconds, 94);
+  assert.equal(result.report.conflictingSessions, 0);
+  assert.equal(result.report.unresolvedSessions, 0);
+  assert.equal(result.report.allocationAllowed, false);
+  const saved = result.ledger?.sessions.find((entry) => entry.sessionId === id);
+  assert.equal(saved?.collectorConflict, false);
+  assert.deepEqual(
+    saved?.measurements.map((value) => value.durationSeconds),
+    [3, 19],
+  );
+});
+
+test('mutable test status is compatible, but creation identity and regressing final durations conflict', async () => {
+  for (const change of [
+    { status: 'passed' },
+    { created_at: '2026-10-28T03:28:28Z' },
+    { duration: 13, status: 'running', browserstack_status: 'running' },
+  ]) {
+    const result = await collectQuotaEvidence({
+      ...credentials,
+      fetcher: async (url) => {
+        const path = String(url);
+        if (path.includes('/builds.json?')) return Response.json([buildRow(observedId(1))]);
+        if (path.includes('/sessions.json?'))
+          return Response.json([sessionRow(retainedSessionIds[0], change)]);
+        return valid(url);
+      },
+    });
+    const expectedConflict = change.status !== 'passed';
+    assert.equal(result.history.sessions[0].conflict, expectedConflict);
+    assert.equal(result.status, expectedConflict ? 'failed' : 'passed');
+    assert.equal(result.history.sessions[0].observations.length, 2);
+  }
 });
 
 test('sparse lists get one bounded detail lookup while known failed details are not retried', async () => {

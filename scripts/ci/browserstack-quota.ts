@@ -57,15 +57,20 @@ const identifier = (value: unknown): string => {
     throw new Error('invalid-response');
   return value;
 };
-const conflicts = (a: Session, b: Session) =>
-  (Object.keys(a) as (keyof Session)[]).some(
-    (key) =>
-      a[key] !== null &&
-      b[key] !== null &&
-      a[key] !== 'unknown' &&
-      b[key] !== 'unknown' &&
-      a[key] !== b[key],
-  );
+// Listings and details form a non-atomic snapshot. Status and elapsed duration
+// can advance between reads; only incompatible identity/final-duration facts
+// are permanent conflicts. A terminal duration cannot be less than observed
+// in-flight elapsed time, regardless of the order in which endpoints return it.
+export function sessionMeasurementConflict(a: Session, b: Session): boolean {
+  if (a.createdAt !== null && b.createdAt !== null && a.createdAt !== b.createdAt) return true;
+  if (a.durationSeconds === null || b.durationSeconds === null) return false;
+  const aFinished = ['done', 'error', 'timeout'].includes(a.executionStatus);
+  const bFinished = ['done', 'error', 'timeout'].includes(b.executionStatus);
+  if (aFinished && bFinished) return a.durationSeconds !== b.durationSeconds;
+  if (aFinished) return b.durationSeconds > a.durationSeconds;
+  if (bFinished) return a.durationSeconds > b.durationSeconds;
+  return false;
+}
 
 function row(value: unknown): Row {
   if (!value || typeof value !== 'object' || Array.isArray(value))
@@ -257,7 +262,7 @@ export async function collectQuotaEvidence(options: {
         for (const previous of entry.observations)
           if (
             previous.evidence.outcome === 'available' &&
-            conflicts(previous.evidence.data, evidence.data)
+            sessionMeasurementConflict(previous.evidence.data, evidence.data)
           )
             entry.conflict = true;
       const observation = { source, evidence };

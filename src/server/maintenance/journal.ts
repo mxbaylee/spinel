@@ -17,7 +17,12 @@ import { createServer } from 'node:net';
 import type { Server } from 'node:net';
 import { basename, dirname, isAbsolute, join, resolve, sep } from 'node:path';
 import type { MaintenanceNotice, MaintenancePhase } from '../../shared/maintenance.ts';
+import { assertNoPendingRestore } from './restore-barrier.ts';
+import { validRestoreStopRecord } from './restore-stop.ts';
+import type { RestoreStopRecord } from './restore-stop.ts';
+import { RestoreJobs, isCommittedRestoreJob } from './restore-jobs.ts';
 
+const MAX_JOURNAL_BYTES = 32_768;
 export const AUTHORITY_MS = 5 * 60_000;
 export const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const hashPattern = /^[0-9a-f]{64}$/;
@@ -70,6 +75,10 @@ export interface RecoveryJournalState {
   verifiedAt: number | null;
   lastFailure: string | null;
   updatedAt: number;
+  /** Historical binding survives supervisor epoch changes. Older journals omit it. */
+  restoreStop?: RestoreStopRecord | null;
+  /** Only identity lives here; the separate job owns its restore checkpoint. */
+  restoreJob?: { jobId: string; intentHash: string } | null;
 }
 
 export function maintenanceSupported() {
@@ -178,14 +187,20 @@ export function workspaceOwnershipAddresses(databasePath: string, identity: File
 // Pin the unref'd servers until explicit pre-open/test cleanup or process exit.
 const heldWorkspaceLeases = new Set<WorkspaceLease>();
 
-async function acquireWorkspaceLease(databasePath: string, kind: 'workspace' | 'application') {
+async function acquireWorkspaceLease(
+  databasePath: string,
+  kind: 'workspace' | 'application',
+  supervised = false,
+) {
   const canonical = canonicalDatabasePath(databasePath);
+  if (!supervised) assertNoPendingRestore(canonical);
   const pathLock = await kernelLock(kind, canonical);
   let fileLock: Server | undefined;
   let boundIdentity: FileIdentity | undefined;
   let released = false;
   const bindFile = async (required: boolean) => {
     if (released) throw new Error('Workspace ownership has already been released.');
+    if (!supervised) assertNoPendingRestore(canonical);
     let identity: FileIdentity;
     try {
       identity = fileIdentity(canonical);
@@ -273,6 +288,7 @@ export async function acquireColdWorkspaceFiles(
     if (released) throw new Error('Workspace ownership has already been released.');
     const selected = canonicalDatabasePath(path);
     if (!pathLocks.has(selected)) throw new Error('Workspace path was not reserved.');
+    assertNoPendingRestore(selected);
     let identity: FileIdentity;
     try {
       identity = fileIdentity(selected);
@@ -420,6 +436,21 @@ function validState(value: unknown, databasePath: string): value is RecoveryJour
       (typeof value.lastFailure === 'string' && /^[a-z-]{1,64}$/.test(value.lastFailure))
     ) ||
     !Number.isSafeInteger(value.updatedAt) ||
+    !(
+      value.restoreStop === undefined ||
+      value.restoreStop === null ||
+      validRestoreStopRecord(value.restoreStop)
+    ) ||
+    !(
+      value.restoreJob === undefined ||
+      value.restoreJob === null ||
+      (record(value.restoreJob) &&
+        Object.keys(value.restoreJob).length === 2 &&
+        typeof value.restoreJob.jobId === 'string' &&
+        uuidPattern.test(value.restoreJob.jobId) &&
+        typeof value.restoreJob.intentHash === 'string' &&
+        hashPattern.test(value.restoreJob.intentHash))
+    ) ||
     !Array.isArray(value.receipts) ||
     value.receipts.length > 128 ||
     !value.receipts.every(
@@ -493,7 +524,7 @@ export class RecoveryJournal {
     try {
       const descriptor = openSync(
         this.path('journal.json'),
-        constants.O_RDONLY | constants.O_NOFOLLOW,
+        constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK,
       );
       try {
         const metadata = fstatSync(descriptor);
@@ -501,7 +532,7 @@ export class RecoveryJournal {
           !metadata.isFile() ||
           metadata.uid !== process.getuid!() ||
           metadata.mode & 0o077 ||
-          metadata.size > 32_768
+          metadata.size > MAX_JOURNAL_BYTES
         )
           throw new Error('Invalid recovery journal.');
         loaded = JSON.parse(readFileSync(descriptor, 'utf8'));
@@ -532,6 +563,8 @@ export class RecoveryJournal {
       verifiedAt: null,
       lastFailure: this.corrupted ? 'journal-invalid' : 'generation-unverified',
       updatedAt: Date.now(),
+      restoreStop: null,
+      restoreJob: null,
     };
     if (!loaded && !this.corrupted) this.write();
   }
@@ -579,23 +612,37 @@ export class RecoveryJournal {
         info.isSymbolicLink() ||
         info.uid !== process.getuid!() ||
         info.mode & 0o077 ||
-        info.size > 32_768
+        info.size > MAX_JOURNAL_BYTES
       )
         throw new Error('Invalid interrupted recovery journal.');
       unlinkSync(path);
     }
     fsyncSync(this.handle);
   }
-  path(name: 'journal.json' | 'control.sock' | `pending-${string}` | `rejected-${string}.json`) {
+  path(
+    name:
+      | 'journal.json'
+      | 'control.sock'
+      | 'restore-jobs'
+      | `pending-${string}`
+      | `rejected-${string}.json`,
+  ) {
     return `/proc/self/fd/${this.handle}/${name}`;
+  }
+  syncRoot() {
+    this.checkRoot();
+    fsyncSync(this.handle);
+    this.checkRoot();
   }
   async bindWorkspace() {
     this.checkRoot();
     if (!this.coldWorkspace || !this.liveWorkspace) {
-      const cold = await acquireColdWorkspaceLease(this.databasePath);
+      // Only the supervisor may own an interrupted target for protective rollback.
+      // Its verify/start/resume paths separately refuse unresolved restore evidence.
+      const cold = await acquireWorkspaceLease(this.databasePath, 'workspace', true);
       let live: WorkspaceLease | undefined;
       try {
-        live = await acquireLiveWorkspace(this.databasePath);
+        live = await acquireWorkspaceLease(this.databasePath, 'application', true);
         await cold.bindFile();
         await live.bindFile();
         this.coldWorkspace = cold;
@@ -639,9 +686,40 @@ export class RecoveryJournal {
     )
       throw new Error('Recovery directory is missing or changed.');
   }
+  /** Metadata-only admissions are still unfinished work. Missing/corrupt main
+   * state must not let cold verification silently discard independent records.
+   * Later restore-stage reconciliation will replace this conservative refusal.
+   */
+  assertNoPendingRestoreJobs() {
+    this.checkRoot();
+    let jobs: RestoreJobs | undefined;
+    try {
+      try {
+        lstatSync(this.path('restore-jobs'));
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code === 'ENOENT' && !this.state.restoreJob) return;
+        throw error;
+      }
+      jobs = new RestoreJobs(this);
+      const records = jobs.list();
+      if (
+        this.state.restoreJob ||
+        records.some((record) => record.phase !== 'failed' && !isCommittedRestoreJob(record))
+      )
+        throw new Error('Unreconciled restore admission.');
+    } catch (error) {
+      throw new Error('An unfinished restore job requires supervised recovery before continuing.', {
+        cause: error,
+      });
+    } finally {
+      jobs?.close();
+    }
+  }
   /** Only explicit cold-host verification may replace an unreadable journal. */
   acceptJournal() {
     this.checkRoot();
+    assertNoPendingRestore(this.databasePath);
+    this.assertNoPendingRestoreJobs();
     if (this.corrupted) {
       const info = lstatSync(this.path('journal.json'));
       if (
@@ -663,6 +741,9 @@ export class RecoveryJournal {
     this.checkRoot();
     if (this.corrupted)
       throw new Error('An invalid recovery journal needs cold-host verification.');
+    const text = JSON.stringify(this.state) + '\n';
+    if (Buffer.byteLength(text) > MAX_JOURNAL_BYTES)
+      throw new Error('Recovery journal exceeds its storage budget.');
     const name = `pending-${randomUUID()}` as const;
     const file = this.path(name);
     let descriptor: number | undefined;
@@ -673,7 +754,7 @@ export class RecoveryJournal {
         constants.O_CREAT | constants.O_EXCL | constants.O_WRONLY | constants.O_NOFOLLOW,
         0o600,
       );
-      writeFileSync(descriptor, JSON.stringify(this.state) + '\n');
+      writeFileSync(descriptor, text);
       fsyncSync(descriptor);
       closeSync(descriptor);
       descriptor = undefined;

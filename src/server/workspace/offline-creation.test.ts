@@ -21,6 +21,7 @@ import { OfflineCreations } from './offline-creation.ts';
 import { migrateSpaceSchema } from './space-schema.ts';
 import { SpaceStore } from './spaces.ts';
 import { WorkspaceStore } from './store.ts';
+import { DocumentStore } from './documents.ts';
 
 const cleanup: (() => unknown | Promise<unknown>)[] = [];
 afterEach(async () => {
@@ -55,6 +56,53 @@ async function fixture() {
   });
   return { path, db, auth, workspace, owner, other, operator, collaboration, creations, input };
 }
+
+test.each(['itemId', 'unitId'] as const)(
+  'a permanently retired %s cannot be allocated after its generation data is gone',
+  async (field) => {
+    const f = await fixture(),
+      request = f.input('doc');
+    f.db.prepare("INSERT INTO spinel_restore_fences VALUES('identity',?)").run(request[field]);
+    expect(() => f.creations.create(f.owner.id, request, () => {})).toThrow(
+      expect.objectContaining({ code: 'creation-conflict' }),
+    );
+    expect(f.db.prepare('SELECT * FROM workspace_items').all()).toEqual([]);
+    expect(f.db.prepare('SELECT * FROM spinel_sync_units').all()).toEqual([]);
+    expect(f.db.prepare('SELECT * FROM workspace_offline_creations').all()).toEqual([]);
+  },
+);
+
+test('a fenced unopened document still prepares its retained content under a fresh native generation', async () => {
+  const f = await fixture(),
+    item = f.workspace.create(f.owner.id, { kind: 'doc', name: 'Retained', parentId: null });
+  const documents = new DocumentStore(f.workspace);
+  const snapshot = {
+    id: item.id,
+    title: 'Retained',
+    body: { dataStream: 'Retained\r\n', paragraphs: [{ startIndex: 8 }] },
+  };
+  documents.save(f.owner.id, item.id, { snapshot, revision: 0, writeId: randomUUID() });
+  const retained = f.db.prepare('SELECT * FROM doc_snapshots WHERE item_id=?').get(item.id);
+  const nextUnit = randomUUID();
+  f.db.prepare("INSERT INTO spinel_restore_fences VALUES('identity',?)").run(item.id);
+  f.db.prepare('INSERT INTO spinel_live_units VALUES(?,?,41)').run(item.id, nextUnit);
+  expect(
+    f.db.prepare('SELECT * FROM workspace_collaboration WHERE item_id=?').get(item.id),
+  ).toBeUndefined();
+  await f.collaboration.prepare(f.owner.id, item.id);
+  const loaded = await f.collaboration.load(f.owner.id, item.id);
+  expect((loaded.snapshot as IDocumentData).body?.dataStream).toBe(snapshot.body.dataStream);
+  expect(loaded.revision).toBe(42);
+  expect(f.collaboration.generations.active(item.id)).toEqual({
+    itemId: item.id,
+    unitId: nextUnit,
+    offset: 41,
+  });
+  expect(new SQLiteSyncStorage(f.auth).load(nextUnit)?.snapshot.id).toBe(nextUnit);
+  expect(f.db.prepare('SELECT * FROM doc_snapshots WHERE item_id=?').get(item.id)).toEqual(
+    retained,
+  );
+});
 
 test('the shared Doc base preserves deterministic identities through native normalization', () => {
   const request = { itemId: randomUUID(), kind: 'doc' as const, name: 'Offline journal' };

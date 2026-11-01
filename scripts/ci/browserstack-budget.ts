@@ -1,4 +1,4 @@
-import type { collectQuotaEvidence } from './browserstack-quota.ts';
+import { sessionMeasurementConflict, type collectQuotaEvidence } from './browserstack-quota.ts';
 
 export type QuotaEvidence = Awaited<ReturnType<typeof collectQuotaEvidence>>;
 export type BudgetSource = {
@@ -272,10 +272,11 @@ function sessionUsage(entry: LedgerSession) {
       !['running', 'queued', 'unknown'].includes(value.providerStatus) &&
       ['done', 'error', 'timeout'].includes(value.executionStatus),
   );
-  const identities = new Set(
-    terminal.map((value) => JSON.stringify([value.durationSeconds, value.createdAt])),
-  );
-  const conflict = entry.collectorConflict || identities.size > 1;
+  const conflict =
+    entry.collectorConflict ||
+    entry.measurements.some((value, index) =>
+      entry.measurements.slice(index + 1).some((other) => sessionMeasurementConflict(value, other)),
+    );
   const latestMeasurement = entry.measurements.reduce(
     (latest, value) =>
       value.lastObserved.observedAt > latest ? value.lastObserved.observedAt : latest,

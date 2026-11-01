@@ -172,6 +172,29 @@ test('different terminal durations and collector conflicts stay visible without 
   assert.equal(flaggedSecond.report.measuredTerminalSessionSeconds, null);
 });
 
+test('cross-snapshot identity contradictions and regressing final durations cannot be erased by later clean reads', () => {
+  for (const change of [{ createdAt: '2026-10-28T03:28:28.000Z' }, { durationSeconds: 2 }]) {
+    const current = oneSession();
+    Object.assign(sessionData(current), {
+      durationSeconds: 3,
+      providerStatus: 'running',
+      executionStatus: 'running',
+    });
+    const first = assess(current);
+    Object.assign(sessionData(current), {
+      durationSeconds: 19,
+      providerStatus: 'done',
+      executionStatus: 'done',
+      ...change,
+    });
+    const second = assess(current, first.ledger, nextObserved);
+    const third = assess(current, second.ledger, '2027-01-01T09:17:00.000Z');
+    assert.equal(third.report.conflictingSessions, 1);
+    assert.equal(third.report.measuredTerminalSessionSeconds, null);
+    assert.equal(third.ledger?.sessions[0].measurements.length, 2);
+  }
+});
+
 test('malformed, duplicated or authority-bearing ledgers fail closed and cannot replace durable evidence', () => {
   const valid = assess().ledger as BudgetLedger;
   const malformed: unknown[] = [

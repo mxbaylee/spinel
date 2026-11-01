@@ -77,6 +77,14 @@ same 30 elapsed UTC days to outer Spaces, enclosing folder batches and internal
 deletion batches. Each deadline comes from that batch's original deletion time;
 restoring an outer group or transferring ownership does not renew older internal
 deadlines. Both collections show the recovery date and disable Restore after it.
+Supervised workspace recovery preserves restored trash with an explicit recovery
+hold. Reuse the existing row status line: **Held after workspace recovery** replaces
+the countdown, and Restore remains available under the same current permissions.
+Protected containers receive the same label so a held child is never stranded
+behind an expired parent. A short collection-level explanation says held items
+stay until explicit recovery or permanent deletion; no new date is invented.
+Existing confirmed permanent deletion remains available. See
+[SPN-112's hold decision](../implementation/SPN-112.md#ownership-isolation-and-recovery-holds).
 Bounded startup/daily cleanup validates the complete graph before deletion.
 When Space exposure is explicitly disabled, hidden Spaces and containing groups
 remain protected from ordinary cleanup.
