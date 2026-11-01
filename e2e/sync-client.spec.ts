@@ -3,7 +3,13 @@ import type { Browser, BrowserContext, Page, TestInfo } from '@playwright/test';
 import { DrawingTypeEnum, ImageSourceType, LocaleType } from '@univerjs/core';
 import type { IWorkbookData, IDocumentData } from '@univerjs/core';
 import type { IDrawingJsonUndo1 } from '@univerjs/drawing';
-import { ISheetDrawingService, SheetDrawingAnchorType } from '@univerjs/sheets-drawing';
+import { SheetSkeletonService } from '@univerjs/sheets';
+import {
+  applySheetDrawingPlacement,
+  getSheetDrawingPlacement,
+  ISheetDrawingService,
+  SheetDrawingAnchorType,
+} from '@univerjs/sheets-drawing';
 import type { ISheetImage } from '@univerjs/sheets-drawing';
 import { NativeReplica } from '@spinel/sync-client';
 import sharp from 'sharp';
@@ -321,7 +327,19 @@ async function retainedDrawingFixture(width: 0 | -20): Promise<IWorkbookData> {
         image('drawings', 'visible', sources[1], 1, 0, 80),
       ],
     ]) {
-      const added = service.getBatchAddOp(images) as IDrawingJsonUndo1;
+      const skeleton = seed.univer
+        .__getInjector()
+        .get(SheetSkeletonService)
+        .ensureSkeleton('retained-drawings', images[0].subUnitId);
+      if (!skeleton) throw new Error('Missing native drawing fixture skeleton.');
+      skeleton.calculate();
+      // Start positive controls in the native placement used during activation.
+      const prepared = images.map((drawing) =>
+        (drawing.transform?.width ?? 0) > 0
+          ? applySheetDrawingPlacement(drawing, getSheetDrawingPlacement(drawing), skeleton)
+          : drawing,
+      );
+      const added = service.getBatchAddOp(prepared) as IDrawingJsonUndo1;
       // Native tests cover the concurrent commands that collapse this geometry.
       // This seed isolates its retained activation/reopen behavior in the real UI.
       seed.apply([
