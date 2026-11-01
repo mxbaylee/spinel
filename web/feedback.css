@@ -26,6 +26,13 @@
 .feedback-form textarea[readonly] {
   background: var(--sp-panel);
 }
+.feedback-recovery-link {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  min-width: 44px;
+  min-height: 44px;
+}
 .feedback-actions {
   display: flex;
   flex-wrap: wrap;

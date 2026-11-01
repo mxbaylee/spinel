@@ -131,10 +131,10 @@ The flag's menu offers two SQLite downloads:
 | **Download system metrics** | Every actor's rows and unattributed system rows within the same displayed receipt-time span. |
 
 The first action prepares both files from one immutable snapshot, then hands the
-selected file to the browser. The dialog retains the pair for five minutes and
-shows its shared **server receipt time** interval. Both endpoints are inclusive;
-the minimum and maximum retained receipt times for the selected account define
-the interval. Client clocks do not define it. New collection or observation
+selected file to the browser. The pair expires five minutes after preparation
+starts; the dialog shows its shared **server receipt time** interval. Both
+endpoints are inclusive; the selected account's minimum and maximum retained
+receipt times define the interval. Client clocks do not define it. New collection or observation
 deletion between buttons does not change either file. Close/Cancel, expiry and
 explicit truncation dispose unfinished work. Session loss blocks delivery and
 cancels active preparation/transfer; an idle revoked session's private pair may
@@ -212,10 +212,12 @@ SELECT received_at, name, details, metric_value, metric_unit
 FROM events WHERE metric_kind='gauge' ORDER BY received_at;
 ```
 
-Every record has occurrence and server-receipt timestamps, source/build, schema
-version, registered name and validated JSON details. Actor/file/Space/route/run
-fields are nullable. Logs have explicit severity and static messages. Metric
-names constrain kind/unit/value. See the
+Every record has occurrence and server-receipt timestamps, source/build and a
+schema version. Automatic observation records use registered names and validated
+JSON details. Deliberately submitted feedback uses the separately validated
+`feedback` event described above, outside the lossy collector. Actor/file/Space/
+route/run fields are nullable. Logs have explicit severity and static messages.
+Metric names constrain kind/unit/value. See the
 [public contract](../lib/diagnostics/README.md) before adding instrumentation.
 
 ## Clear, limits and failure handling
@@ -223,9 +225,11 @@ names constrain kind/unit/value. See the
 Truncate requires confirmation. It irreversibly clears diagnostics,
 submitted feedback and corresponding flags. Documents,
 accounts, backups and collaboration state are untouched. Cancel changes nothing.
-The confirmation carries the collection generation: if another clear or export
-intervenes, refresh and confirm again. Old queued events and retries cannot be
-relabelled into the new generation. New observations can appear immediately.
+The confirmation carries the collection generation: if another clear changes
+that generation, refresh and confirm again. A general diagnostics download must
+finish or be cancelled before truncation; successful truncation invalidates
+prepared feedback pairs. Old queued events and retries cannot be relabelled into
+the new generation. New observations can appear immediately.
 Clearing records does not promise that the physical database shrinks.
 
 The initial store has a 64 MiB logical/main-file limit and stops collection at a

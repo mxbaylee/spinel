@@ -218,6 +218,11 @@ export const AccessChanged: Story = {
       'Your account or page access changed',
     );
     await expect(content.getByRole('button', { name: 'Retry feedback' })).toBeDisabled();
+    const recovery = content.getByRole('link', { name: 'Sign in again' });
+    await expect(recovery).toHaveAttribute('href', '/sign-in');
+    const bounds = recovery.getBoundingClientRect();
+    await expect(bounds.width).toBeGreaterThanOrEqual(44);
+    await expect(bounds.height).toBeGreaterThanOrEqual(44);
   },
 };
 export const CancelledSend: Story = {

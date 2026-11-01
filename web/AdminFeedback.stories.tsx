@@ -265,6 +265,11 @@ export const AccessChanged: Story = {
     await expect(await within(dialog).findByRole('alert')).toHaveTextContent(
       'Operator access is unavailable',
     );
+    const recovery = within(dialog).getByRole('link', { name: 'Sign in again' });
+    await expect(recovery).toHaveAttribute('href', '/sign-in');
+    const bounds = recovery.getBoundingClientRect();
+    await expect(bounds.width).toBeGreaterThanOrEqual(44);
+    await expect(bounds.height).toBeGreaterThanOrEqual(44);
   },
 };
 export const CloseRestoresFocus: Story = {

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, fn, within, userEvent } from 'storybook/test';
+import { expect, fn, within, userEvent, waitFor } from 'storybook/test';
 import { Rail } from './Rail.tsx';
 
 const meta = {
@@ -149,7 +149,10 @@ export const Feedback: Story = {
     const dialog = await body.findByRole('dialog', { name: 'Send feedback' });
     await expect(within(dialog).getByRole('textbox', { name: 'Message' })).toBeVisible();
     await userEvent.click(within(dialog).getByRole('button', { name: 'Cancel' }));
-    await expect(canvas.getByRole('button', { name: 'Account actions' })).toHaveFocus();
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
+    await waitFor(() =>
+      expect(canvas.getByRole('button', { name: 'Account actions' })).toHaveFocus(),
+    );
   },
 };
 export const FilesDrawer: Story = {

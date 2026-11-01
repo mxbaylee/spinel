@@ -247,7 +247,11 @@ export function FeedbackDialog({
           </p>
         )}
         {error && <p role="alert">{error}</p>}
-        {denied && <a href="/sign-in">Sign in again</a>}
+        {denied && (
+          <a className="feedback-recovery-link" href="/sign-in">
+            Sign in again
+          </a>
+        )}
         <div className="feedback-actions">
           {sent ? (
             <Button type="button" primary onClick={() => onOpenChange(false)}>

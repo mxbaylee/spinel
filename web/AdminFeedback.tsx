@@ -384,7 +384,11 @@ export function AdminFeedbackDownloads({
         )}
         {error && <p role="alert">{error}</p>}
         {notice && <p role="status">{notice}</p>}
-        {denied && <a href="/sign-in">Sign in again</a>}
+        {denied && (
+          <a className="feedback-recovery-link" href="/sign-in">
+            Sign in again
+          </a>
+        )}
         <div className="feedback-download-buttons">
           <Button disabled={disabled} onClick={() => void download('user')}>
             Download user metrics
