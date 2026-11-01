@@ -398,11 +398,12 @@ test('native paragraph style replacements retain the first-accepted style withou
     });
     return edit(JSONX.getInstance().editOp(textX.serialize()));
   };
-  // Native paragraph style producers replace a whole paragraph style. A
-  // paragraph COVER only comes from deleting a list item and carries its
-  // bullet; a hand-written COVER without that bullet invents a default list
-  // in stock apply and is not a paragraph style command's output. Arbitrary
-  // COVER/COVER paragraph-style truthiness remains an upstream limitation.
+  // The native paragraph style producer tested here replaces a whole style.
+  // Deletion and QuickList COVER producers carry their bullet and inherited
+  // paragraph metadata; the same-text selection.replace SDK helper can also
+  // emit COVER. A hand-written COVER without a bullet can invent a default
+  // list in stock apply, so it does not model this style command. Arbitrary
+  // COVER/COVER style truthiness remains an upstream compatibility concern.
   const clearedStyle = { outlineLevel: 0 };
   const styledStyle = { outlineLevel: 1, indentStart: { v: 10 } };
   const cleared = nativeStyle(clearedStyle);

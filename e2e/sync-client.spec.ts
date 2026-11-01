@@ -1,6 +1,11 @@
 import { expect, test } from '@playwright/test';
 import type { Browser, BrowserContext, Page, TestInfo } from '@playwright/test';
+import { DrawingTypeEnum, ImageSourceType, LocaleType } from '@univerjs/core';
 import type { IWorkbookData, IDocumentData } from '@univerjs/core';
+import type { IDrawingJsonUndo1 } from '@univerjs/drawing';
+import { ISheetDrawingService, SheetDrawingAnchorType } from '@univerjs/sheets-drawing';
+import type { ISheetImage } from '@univerjs/sheets-drawing';
+import { NativeReplica } from '@spinel/sync-client';
 import sharp from 'sharp';
 import { writeFile } from 'node:fs/promises';
 import { openDatabase } from '../server/database.ts';
@@ -8,6 +13,7 @@ import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { Profiles } from '../src/server/auth/profile.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { SheetStore } from '../src/server/workspace/sheets.ts';
+import { PortableFiles } from '../src/server/workspace/portable.ts';
 import { syncSheetMenuFixture } from '../src/ui/syncSheetMenus.fixture.ts';
 import { SpaceStore } from '../src/server/workspace/spaces.ts';
 import { syncNetwork } from './sync-network.ts';
@@ -97,6 +103,7 @@ async function fixture(
   kind: 'sheet' | 'doc',
   mobile = false,
   snapshot?: IWorkbookData,
+  importImages = false,
 ) {
   const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
   const auth = new AuthStore(db);
@@ -106,9 +113,16 @@ async function fixture(
   const profiles = new Profiles(auth);
   profiles.save(owner.id, { name: owner.name, color: 'primary-strong', icon: 'lucide:flower-2' });
   profiles.save(editor.id, { name: editor.name, color: 'info-strong', icon: 'lucide:leaf' });
-  const item = workspace.create(owner.id, { kind, name: `Native ${kind} sync`, parentId: null });
+  const item =
+    snapshot && importImages
+      ? await new PortableFiles(workspace).import(
+          owner.id,
+          { filename: 'Native drawings.univer.json', parentId: null, snapshot },
+          () => {},
+        )
+      : workspace.create(owner.id, { kind, name: `Native ${kind} sync`, parentId: null });
   workspace.share(owner.id, item.id, editor.id, 'editor');
-  if (snapshot)
+  if (snapshot && !importImages)
     new SheetStore(workspace).save(owner.id, item.id, {
       snapshot: { ...snapshot, id: item.id },
       revision: 0,
@@ -221,6 +235,268 @@ async function fixture(
       db.close();
     },
   };
+}
+
+const drawingColors = {
+  collapsed: [231, 39, 155],
+  visible: [34, 187, 102],
+} as const;
+
+async function retainedDrawingFixture(width: 0 | -20): Promise<IWorkbookData> {
+  const sources = await Promise.all(
+    Object.values(drawingColors).map(async ([r, g, b]) => {
+      const bytes = await sharp({
+        create: { width: 80, height: 60, channels: 3, background: { r, g, b } },
+      })
+        .png()
+        .toBuffer();
+      return `data:image/png;base64,${bytes.toString('base64')}`;
+    }),
+  );
+  const seed = new NativeReplica(
+    {
+      id: 'retained-drawings',
+      name: 'Retained drawings',
+      appVersion: '1.1.0',
+      locale: LocaleType.EN_US,
+      sheetOrder: ['control', 'drawings'],
+      styles: {},
+      sheets: Object.fromEntries(
+        [
+          ['control', 'Source control'],
+          ['drawings', 'Retained drawings'],
+        ].map(([id, name]) => [
+          id,
+          {
+            id,
+            name,
+            rowCount: 30,
+            columnCount: 10,
+            defaultColumnWidth: 88,
+            defaultRowHeight: 20,
+            cellData: {},
+          },
+        ]),
+      ),
+    },
+    'sheet',
+  );
+  const image = (
+    subUnitId: string,
+    drawingId: string,
+    source: string,
+    column: number,
+    columnOffset: number,
+    imageWidth: number,
+  ): ISheetImage => {
+    const anchor = {
+      from: { row: 5, column, rowOffset: 0, columnOffset },
+      to: { row: 8, column, rowOffset: 0, columnOffset: columnOffset + imageWidth },
+    };
+    return {
+      unitId: 'retained-drawings',
+      subUnitId,
+      drawingId,
+      drawingType: DrawingTypeEnum.DRAWING_IMAGE,
+      imageSourceType: ImageSourceType.BASE64,
+      source,
+      anchorType: SheetDrawingAnchorType.Position,
+      sheetTransform: anchor,
+      axisAlignSheetTransform: anchor,
+      transform: {
+        left: column * 88 + columnOffset,
+        top: 100,
+        width: imageWidth,
+        height: 60,
+        angle: 0,
+      },
+    };
+  };
+  try {
+    const service = seed.univer.__getInjector().get(ISheetDrawingService);
+    for (const images of [
+      [image('control', 'source-control', sources[0], 3, 0, 80)],
+      [
+        image('drawings', 'collapsed', sources[0], 3, -width, width),
+        image('drawings', 'visible', sources[1], 1, 0, 80),
+      ],
+    ]) {
+      const added = service.getBatchAddOp(images) as IDrawingJsonUndo1;
+      // Native tests cover the concurrent commands that collapse this geometry.
+      // This seed isolates its retained activation/reopen behavior in the real UI.
+      seed.apply([
+        {
+          id: 'sheet.mutation.set-drawing-apply',
+          params: {
+            unitId: 'retained-drawings',
+            subUnitId: images[0].subUnitId,
+            op: added.redo,
+            objects: added.objects,
+            type: 0,
+          },
+        },
+      ]);
+    }
+    return seed.snapshot() as IWorkbookData;
+  } finally {
+    seed.dispose();
+  }
+}
+
+function drawingResource(snapshot: IWorkbookData) {
+  const resource = snapshot.resources?.find((entry) => entry.name === 'SHEET_DRAWING_PLUGIN');
+  expect(resource).toBeDefined();
+  return JSON.parse(resource!.data) as Record<
+    string,
+    { order: string[]; data: Record<string, ISheetImage> }
+  >;
+}
+
+for (const width of [0, -20] as const) {
+  test(`retained collapsed drawing width ${width} survives browser activation and reopen`, async ({
+    browser,
+    baseURL,
+  }, info) => {
+    test.setTimeout(120_000);
+    const f = await fixture(
+      browser,
+      baseURL!,
+      info,
+      'sheet',
+      false,
+      await retainedDrawingFixture(width),
+      true,
+    );
+    const observations: object[] = [];
+    const visiblePixels = async (
+      page: Page,
+      stage: string,
+      visible: keyof typeof drawingColors,
+    ) => {
+      let screenshot: Buffer | undefined;
+      let counts = { collapsed: 0, visible: 0 };
+      try {
+        await expect
+          .poll(
+            async () => {
+              screenshot = await page.locator('.univer-container').screenshot();
+              const { data, info: metadata } = await sharp(screenshot)
+                .removeAlpha()
+                .raw()
+                .toBuffer({ resolveWithObject: true });
+              counts = { collapsed: 0, visible: 0 };
+              for (let offset = 0; offset < data.length; offset += metadata.channels)
+                for (const name of ['collapsed', 'visible'] as const)
+                  if (
+                    drawingColors[name].every(
+                      (channel, index) => Math.abs(data[offset + index] - channel) <= 3,
+                    )
+                  )
+                    counts[name]++;
+              return counts[visible];
+            },
+            { timeout: 20_000 },
+          )
+          .toBeGreaterThan(1000);
+        const absent = visible === 'collapsed' ? 'visible' : 'collapsed';
+        expect(counts[absent], `${stage}: the other drawing must not render`).toBe(0);
+      } finally {
+        observations.push({ stage, counts: { ...counts } });
+        if (screenshot) await writeFile(info.outputPath(`${stage}.png`), screenshot);
+      }
+    };
+    const activate = async (page: Page, name: string) =>
+      page.getByRole('tab', { name, exact: true }).click();
+    try {
+      const original = await f.read();
+      await writeFile(
+        info.outputPath('retained-drawing-initial.json'),
+        JSON.stringify(original, null, 2),
+      );
+      const drawings = drawingResource(original.snapshot);
+      expect(drawings.drawings.order).toEqual(['visible', 'collapsed']);
+      expect(Object.keys(drawings.drawings.data).sort()).toEqual(['collapsed', 'visible']);
+      expect(drawings.drawings.data.collapsed.transform).toEqual({
+        left: 264 - width,
+        top: 100,
+        width,
+        height: 60,
+        angle: 0,
+      });
+      expect(drawings.control.data['source-control'].source).toBe(
+        drawings.drawings.data.collapsed.source,
+      );
+      for (const name of ['collapsed', 'visible'] as const) {
+        const image = drawings.drawings.data[name];
+        expect(image).toMatchObject({
+          unitId: f.unitId,
+          subUnitId: 'drawings',
+          drawingId: name,
+          imageSourceType: ImageSourceType.URL,
+        });
+        expect(image.source).toMatch(new RegExp(`^/api/items/${f.item.id}/images/[a-f0-9]{64}$`));
+        expect(Object.values(image.transform!).every(Number.isFinite)).toBe(true);
+        const response = await f.first.request.get(image.source);
+        expect(response.ok()).toBe(true);
+        const bytes = await sharp(await response.body())
+          .removeAlpha()
+          .raw()
+          .toBuffer();
+        expect([...bytes.subarray(0, 3)]).toEqual(drawingColors[name]);
+      }
+      await Promise.all([f.page.goto(`/?item=${f.item.id}`), f.other.goto(`/?item=${f.item.id}`)]);
+      await Promise.all([saved(f.page), saved(f.other)]);
+      // Render the exact same source at a normal size first. A failed download
+      // or decoder cannot masquerade as correct omission of the retained image.
+      await visiblePixels(f.page, 'source-control', 'collapsed');
+      await Promise.all([f.page, f.other].map((page) => activate(page, 'Retained drawings')));
+      await visiblePixels(f.page, 'activated', 'visible');
+      await visiblePixels(f.other, 'peer-activated', 'visible');
+      await activate(f.page, 'Source control');
+      await visiblePixels(f.page, 'deactivated', 'collapsed');
+      await activate(f.page, 'Retained drawings');
+      await visiblePixels(f.page, 'reactivated', 'visible');
+      await editCell(f.page, 'A14', `after activation ${width}`);
+      await saved(f.page);
+      await expect
+        .poll(async () => (await f.read()).snapshot.sheets.drawings.cellData?.[13]?.[0]?.v)
+        .toBe(`after activation ${width}`);
+      const beforeReopen = await f.read();
+      expect(drawingResource(beforeReopen.snapshot)).toEqual(drawings);
+      await expectNativeSnapshots([f.page, f.other], beforeReopen);
+      expect(await copyCell(f.other, 'A14')).toBe(`after activation ${width}`);
+
+      await Promise.all([f.page.reload(), f.other.reload()]);
+      await Promise.all([saved(f.page), saved(f.other)]);
+      await Promise.all([f.page, f.other].map((page) => activate(page, 'Retained drawings')));
+      await visiblePixels(f.page, 'reopened', 'visible');
+      await visiblePixels(f.other, 'peer-reopened', 'visible');
+      expect(drawingResource((await f.read()).snapshot)).toEqual(drawings);
+      await expectNativeSnapshots([f.page, f.other], beforeReopen);
+
+      await editCell(f.other, 'B15', `after reopen ${width}`);
+      await saved(f.other);
+      await expect
+        .poll(async () => (await f.read()).snapshot.sheets.drawings.cellData?.[14]?.[1]?.v)
+        .toBe(`after reopen ${width}`);
+      const final = await f.read();
+      expect(final.revision).toBeGreaterThan(beforeReopen.revision);
+      expect(drawingResource(final.snapshot)).toEqual(drawings);
+      await expectNativeSnapshots([f.page, f.other], final);
+      expect(await copyCell(f.page, 'B15')).toBe(`after reopen ${width}`);
+      await Promise.all([saved(f.page), saved(f.other)]);
+      expect(f.network.incoming.filter((frame) => frame.type === 'resync')).toEqual([]);
+      expect(f.otherNetwork.incoming.filter((frame) => frame.type === 'resync')).toEqual([]);
+      expect(f.errors).toEqual([]);
+    } finally {
+      const stored = await f.read().catch((error: unknown) => ({ error: String(error) }));
+      await writeFile(
+        info.outputPath('retained-drawing-rendering.json'),
+        JSON.stringify({ width, observations, stored }, null, 2),
+      );
+      await f.close();
+    }
+  });
 }
 
 for (const kind of ['sheet', 'doc'] as const) {

@@ -238,7 +238,8 @@ flush policy.
 
 The transform layer arbitrates explicit style keys regardless of truthiness, so a
 winning `bl: 0` has the same priority as `bl: 1`. It also preserves explicit empty
-paragraph replacement arrays when stock operation slicing drops them. These are
+paragraph replacement arrays when stock slicing drops them at unstyled retain
+and insertion boundaries. These are
 application integration rules, not changes to core methods, prototypes or the
 registered TextX subtype. Snapshots, outgoing operations and native Undo/Redo are
 verified through the same integration used in production; tests do not merely
