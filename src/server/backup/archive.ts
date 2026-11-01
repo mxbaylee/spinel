@@ -208,7 +208,7 @@ export async function restoreArchive(
     let header: Buffer, tag: Buffer, size: number;
     try {
       size = (await handle.stat()).size;
-      if (size < HEADER_SIZE + 17) throw new Error('Truncated backup.');
+      if (size < HEADER_SIZE + 17) throw new RecoveryResourceError('backup-unreadable');
       header = Buffer.alloc(HEADER_SIZE);
       tag = Buffer.alloc(16);
       await handle.read(header, 0, header.length, 0);
@@ -216,7 +216,7 @@ export async function restoreArchive(
     } finally {
       await handle.close();
     }
-    if (!header.subarray(0, 8).equals(MAGIC)) throw new Error('Unsupported backup format.');
+    if (!header.subarray(0, 8).equals(MAGIC)) throw new RecoveryResourceError('backup-unreadable');
     const decipher = createDecipheriv('aes-256-gcm', key, header.subarray(8));
     decipher.setAAD(header);
     decipher.setAuthTag(tag);
@@ -247,14 +247,27 @@ export async function restoreArchive(
         } else callback(null, chunk);
       },
     });
-    await pipeline(
-      createReadStream(archive, { start: HEADER_SIZE, end: size - 17 }),
-      decipher,
-      createGunzip(),
-      bounded,
-      createWriteStream(copy, { flags: 'wx', mode: 0o600 }),
-      { signal: options.signal },
-    );
+    try {
+      await pipeline(
+        createReadStream(archive, { start: HEADER_SIZE, end: size - 17 }),
+        decipher,
+        createGunzip(),
+        bounded,
+        createWriteStream(copy, { flags: 'wx', mode: 0o600 }),
+        { signal: options.signal },
+      );
+    } catch (error) {
+      // GCM cannot tell a wrong key from altered bytes. Keep typed resource,
+      // cancellation and filesystem failures; everything else is unreadable.
+      const code = (error as NodeJS.ErrnoException).code;
+      if (
+        error instanceof RecoveryResourceError ||
+        options.signal?.aborted ||
+        (typeof code === 'string' && /^E[A-Z]+$/.test(code))
+      )
+        throw error;
+      throw new RecoveryResourceError('backup-unreadable');
+    }
     const db = new DatabaseSync(copy);
     let recovery: Recovery;
     try {

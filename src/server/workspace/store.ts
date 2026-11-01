@@ -12,6 +12,7 @@ import { classifyOrdinaryItems, isOrdinaryItem, MAX_ANCESTOR_READS } from './ord
 import type { ItemKind, WorkspaceItem, ItemAccess, SharePerson } from '../../shared/workspace.ts';
 import type { SnapshotSaved } from './snapshots.ts';
 import { resolveSpaceScope } from './space-scope.ts';
+import { recoveryHoldSchema } from './recovery-holds.ts';
 
 const columns =
   'i.id,i.parent_id AS parentId,i.kind,i.name,i.created_at AS createdAt,i.updated_at AS updatedAt';
@@ -131,6 +132,7 @@ export class WorkspaceStore {
     // Retired workspace_pins tables in older databases are left untouched.
     // No feature reads or writes them; existing item/user foreign keys remain safe.
     appearanceSchema(auth.database);
+    recoveryHoldSchema(auth.database);
     this.links = new LinkAccess(auth, this.spacesEnabled);
   }
   ownTags(userId: string, id: string): string[] {
@@ -418,6 +420,13 @@ export class WorkspaceStore {
             ? 'viewer'
             : null;
   }
+  /** Account-only authority query without loading document metadata or tags.
+   * Guest capabilities remain confined to the explicit guest paths in get().
+   */
+  accountAccess(userId: string, id: string): ItemAccess | null {
+    this.owner(userId);
+    return this.role(userId, id);
+  }
   get(
     userId: string,
     id: string,
@@ -445,8 +454,7 @@ export class WorkspaceStore {
         access: guest.role,
       };
     }
-    this.owner(userId);
-    const access = this.role(userId, id);
+    const access = this.accountAccess(userId, id);
     if (!access) throw new AuthError(404, 'This item is not available.');
     if (
       (needed === 'owner' && access !== 'owner') ||

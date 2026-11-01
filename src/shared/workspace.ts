@@ -53,8 +53,9 @@ export const fileKindLabel: Record<FileKind, string> = { ...kindLabel, space: 'S
 
 export type TrashedItem = FileItem & {
   trashedAt: number;
-  /** Every recovery window ends 30 elapsed UTC days after its own deletion. */
+  /** Original 30-day deadline; a recovery hold suspends expiry. */
   expiresAt: number;
+  heldAfterRecovery?: true;
 };
 export interface TrashListing {
   items: TrashedItem[];

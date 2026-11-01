@@ -2,6 +2,7 @@ import { deleteSpaceItems, readSpaceStructure } from './space-structure.ts';
 import type { WorkspaceStore } from './store.ts';
 import { TRASH_RETENTION_MS } from './trash-retention.ts';
 import { observeJob } from '../health/jobs.ts';
+import { cleanRecoveryHolds, recoveryHeld } from './recovery-holds.ts';
 import type { ObserveJob } from '../health/jobs.ts';
 
 // Scan one indexed page of roots and validate at most 10,000 members per Space.
@@ -98,10 +99,22 @@ export class SpaceExpiry {
           const structure = readSpaceStructure(db, root.id, root.ownerId);
           const expired = auth.now() - TRASH_RETENTION_MS;
           const whole = root.trashedAt !== null && root.trashedAt <= expired;
+          // A root deletion cascades through every internal batch. Keep the
+          // complete Space if it would destroy held content, without reporting
+          // an error or starving unrelated Spaces in this sweep.
+          if (
+            whole &&
+            (recoveryHeld(db, root.trashBatch) ||
+              structure.items.some((item) => recoveryHeld(db, item.trashBatch)))
+          )
+            return 0;
           const items = whole
             ? structure.items
             : structure.items.filter(
-                (item) => item.trashedAt !== null && item.trashedAt <= expired,
+                (item) =>
+                  item.trashedAt !== null &&
+                  item.trashedAt <= expired &&
+                  !recoveryHeld(db, item.trashBatch),
               );
           // Validated internal batches have identical timestamps throughout and
           // detached roots. Filtering cannot include part of a retained batch.
@@ -117,6 +130,7 @@ export class SpaceExpiry {
               .run(root.id, root.ownerId, root.trashedAt, root.trashBatch);
             if (removed.changes !== 1) throw new Error('Space deletion identity changed.');
           }
+          cleanRecoveryHolds(db);
           return items.length + Number(whole);
         });
       } catch {

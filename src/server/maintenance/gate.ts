@@ -68,8 +68,10 @@ export class MaintenanceGate {
   private lifecycle = false;
   private closed = false;
   private admissionClosed = false;
-  constructor(bridge?: MaintenanceBridge) {
+  private readonly blocked?: () => boolean;
+  constructor(bridge?: MaintenanceBridge, blocked?: () => boolean) {
     this.bridge = bridge;
+    this.blocked = blocked;
   }
   get status(): MaintenancePublicStatus {
     return this.bridge?.status() ?? { available: false, phase: 'running', epoch: '', notice: null };
@@ -85,6 +87,7 @@ export class MaintenanceGate {
     return (
       !this.closed &&
       !this.admissionClosed &&
+      !this.blocked?.() &&
       (!this.status.available || this.status.phase === 'running')
     );
   }
@@ -137,6 +140,7 @@ export class MaintenanceGate {
     return context.exit(() => this.run(work));
   }
   assertWrite() {
+    if (this.blocked?.() && !this.lifecycle) throw new MaintenanceError();
     if (!this.status.available) return;
     if (this.lifecycle) return;
     const permit = context.getStore();

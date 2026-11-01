@@ -1,0 +1,1910 @@
+{
+  "schemaVersion": 1,
+  "status": "Local and actual Spaces provider acceptance passed. Unit validation is partitioned after the serial job hit its cap and hid one stale HTTP allowlist; current-head CI and final whole-ticket grades remain.",
+  "limitations": [
+    "Actual Spaces acceptance passed at 2c63fea (run 41005346893); it is rerun on the landing commit. Both whole-ticket grades and all seven CI gates are recorded against the landing commit in the PR, not here.",
+    "Historical da/160 preparation failures remain failures; observer interference was reproduced, but their exact denied PID was not recorded.",
+    "The 0d3 browser run failed cold inspection; separate repaired inspection does not rewrite that run as passed.",
+    "Synthetic CDP passkeys and local Linux production images are not physical-device or provider acceptance.",
+    "The separate read-only metadata observer is outside the 1 GiB serving cgroup; its own 32 MiB profile and 11 MiB observed peak are disclosed."
+  ],
+  "crashCuts": {
+    "sourceSha": "15775bccf78493bf74896a7ecc7165ba7412ca6a",
+    "command": [
+      "npx",
+      "vitest",
+      "run",
+      "src/server/maintenance/restore-crash.integration.test.ts",
+      "--maxWorkers=1",
+      "--no-file-parallelism",
+      "--reporter=verbose",
+      "--reporter=json",
+      "--outputFile=/tmp/spn112-crash157-vitest.json"
+    ],
+    "result": {
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "retries": 0,
+      "durationMs": 52304
+    },
+    "cases": [
+      {
+        "title": "real SIGKILL at admission preserves the durable restore decision and all retained evidence",
+        "status": "passed",
+        "durationMs": 4153.54746
+      },
+      {
+        "title": "real SIGKILL at activation preserves the durable restore decision and all retained evidence",
+        "status": "passed",
+        "durationMs": 5701.336836
+      },
+      {
+        "title": "real SIGKILL at private-open preserves the durable restore decision and all retained evidence",
+        "status": "passed",
+        "durationMs": 6270.625419
+      },
+      {
+        "title": "real SIGKILL at commit preserves the durable restore decision and all retained evidence",
+        "status": "passed",
+        "durationMs": 7071.4824199999985
+      },
+      {
+        "title": "real SIGKILL at postcommit preserves the durable restore decision and all retained evidence",
+        "status": "passed",
+        "durationMs": 7247.435753000002
+      },
+      {
+        "title": "real SIGKILL at original-activation preserves the durable restore decision and all retained evidence",
+        "status": "passed",
+        "durationMs": 9850.784046
+      },
+      {
+        "title": "real SIGKILL at original-commit preserves the durable restore decision and all retained evidence",
+        "status": "passed",
+        "durationMs": 11136.983922
+      }
+    ],
+    "sourceFiles": 1179,
+    "sourceManifestSha256": "a85f09a28be968f528e881fa6b3a4160f1233df473084dba40daac4b2c8da5ac",
+    "testResultSha256": "3af76973f74c473c0e4786e39971c675190dc67f86bef053bfd38e0620cc7d95",
+    "installedDependencyIdentity": {
+      "node": "v26.12.1",
+      "installedLock": "7f742d3e1164253e5cb22b87158620f0b19929e4ff2e0da082abcc3e2217d56c",
+      "sourceLock": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf",
+      "workspaces": [
+        {
+          "name": "diagnostics",
+          "symlink": true,
+          "target": "../../lib/diagnostics",
+          "resolved": "/app/lib/diagnostics",
+          "manifest": "301cb9b84dfd4c122e0eca5cd0daa51532d8877a26e186cd4193ac10e9d3e7f5"
+        },
+        {
+          "name": "doc-formulas",
+          "symlink": true,
+          "target": "../../lib/doc-formulas",
+          "resolved": "/app/lib/doc-formulas",
+          "manifest": "c315066d8cefeaf5269f006185f9338fc317a79537022c65c948d56d83beebae"
+        },
+        {
+          "name": "presence-ui",
+          "symlink": true,
+          "target": "../../lib/presence-ui",
+          "resolved": "/app/lib/presence-ui",
+          "manifest": "35f7219e120ffd5d1b7a69ec71d16440626fa42230246a1b8adf517728f61e08"
+        },
+        {
+          "name": "print",
+          "symlink": true,
+          "target": "../../lib/print",
+          "resolved": "/app/lib/print",
+          "manifest": "1f078c54bb81e0eca42292d3a06b707a705adb9af7522dad96003e9102502b56"
+        },
+        {
+          "name": "sync-client",
+          "symlink": true,
+          "target": "../../lib/sync-client",
+          "resolved": "/app/lib/sync-client",
+          "manifest": "3cb7cb2c8076fd1c687a826954901906152a31c08d2b7fbc9cfe680645e7bf9b"
+        },
+        {
+          "name": "sync-server",
+          "symlink": true,
+          "target": "../../lib/sync-server",
+          "resolved": "/app/lib/sync-server",
+          "manifest": "151af56fc001d85852ea363a9d8539c24d0fb2dc0d10838ab9d2ef59ad6fd42d"
+        },
+        {
+          "name": "sync-transform",
+          "symlink": true,
+          "target": "../../lib/sync-transform",
+          "resolved": "/app/lib/sync-transform",
+          "manifest": "2d3059e3504046d1069de8dec5f729a2f19b39ba39db90efd1ca4acbc55a839f"
+        }
+      ]
+    },
+    "dependencyIdentityUnchanged": true,
+    "limits": {
+      "memoryBytes": 1887436800,
+      "swapBytes": 0,
+      "nanoCpus": 2000000000
+    },
+    "memoryPeakBytes": 1091870720,
+    "memoryEvents": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+    "closure": {
+      "Status": "exited",
+      "Running": false,
+      "Pid": 0,
+      "ExitCode": 0,
+      "OOMKilled": false,
+      "StartedAt": "2026-10-30T02:14:39.710184458Z",
+      "FinishedAt": "2026-10-30T02:15:32.264459427Z"
+    }
+  },
+  "browser0d3": {
+    "scope": "Real production Admin browser flow with synthetic CDP passkey, Linux controller and disposable HTTPS proxy; not physical-device or remote-provider acceptance",
+    "startedAt": "2026-10-30T01:38:52.974Z",
+    "completedAt": "2026-10-30T01:40:23.452Z",
+    "image": "sha256:1b41f0aefa995b5c85948a4fbcadbeac6843e6b75b38b28512488ce9842748b5",
+    "sourceBase": "0d3e49b5cdf4248323a7c970dac3661591526bfb",
+    "productionSource": "0d3e49b5cdf4248323a7c970dac3661591526bfb",
+    "containerMemoryMiB": 1024,
+    "containerCpus": 0.75,
+    "containerPids": 128,
+    "supervisorOldSpaceMiB": 64,
+    "persistentServingFixtureProcesses": 0,
+    "servingPid1": {
+      "pid": 1,
+      "parentPid": 0,
+      "userIds": [501, 501, 501, 501],
+      "command": ["node", "--max-old-space-size=64", "/app/server/supervisor.ts"]
+    },
+    "shippedCli": {
+      "initial": "recovery-required",
+      "verify": true,
+      "start": true,
+      "resume": "running"
+    },
+    "richWorkspace": {
+      "sheetContent": true,
+      "docContent": true,
+      "imageSha256": "49e0f79025c2f68f9e0b1a2d6caf30ea62643c2d4be76a3f43f25125825fef91",
+      "historyCheckpoint": true,
+      "retainedViewer": true,
+      "revokedGrantDenied": true,
+      "viewerWriteDenied": true,
+      "revokedGuestDenied": true,
+      "acknowledgedOldCreationRetryDenied": true,
+      "nativeGenerationRenewed": true,
+      "restoredContentUnchanged": true,
+      "documentSnapshotSha256": "815963a236f11ef86fa8b49006d8de3ae1e44208514bf178faff57fecaddcd73",
+      "sheetSnapshotSha256": "e200809db2745b0aad7218868ccf76ed7c89805b405c74ba9f42f492dd764f1c"
+    },
+    "nativeRendering": {
+      "ownerDoc": true,
+      "ownerSheet": true,
+      "readerDoc": true,
+      "visibleDocumentInkPixels": 534,
+      "archivedImageRendered": true,
+      "documentNativeCopy": true,
+      "sheetA1NativeCopy": "Archived budget value",
+      "originalOwnerSessionExcluded": true
+    },
+    "servingResources": {
+      "memoryLimitBytes": 1073741824,
+      "swapLimitBytes": 0,
+      "cpuMax": "75000 100000",
+      "pidsMax": 128,
+      "memoryPeakBytes": 341172224,
+      "memoryCurrentBytes": 226344960,
+      "peakScope": "Serving cgroup through pre-shutdown observation; excludes later cold helper"
+    },
+    "attachedDockerExit": 0,
+    "supervisorClosure": {
+      "running": false,
+      "pid": 0,
+      "exitCode": 0,
+      "oomKilled": false
+    },
+    "serviceDiagnostic": {
+      "errorCode": null,
+      "errno": null,
+      "syscall": null
+    },
+    "pageErrors": 0,
+    "stage": "closing-and-checking-content",
+    "elapsedMs": 90478,
+    "passed": false,
+    "captureCount": 18,
+    "fullEvidenceSha256": "ec60e854797b159e06105ad4f01b1c8e6c7796401eb1f29ee3979983928d94e5"
+  },
+  "coldRepair0d3": {
+    "source": "0d3e49b5cdf4248323a7c970dac3661591526bfb",
+    "image": "sha256:1b41f0aefa995b5c85948a4fbcadbeac6843e6b75b38b28512488ce9842748b5",
+    "originalFixtureSha256": "c8693f78967b969c7c647dd322b647757ec49d268d47d340b84bb3be93c4273c",
+    "repairedHelperSha256": "76ab329a90c94c6138ef46771709e19a6cbb781a54aa1ef8ff471aa0f289bf9b",
+    "sourceMountReadOnly": true,
+    "scope": "Cold-only completion of retained0d3 serving result; no restored app or browser rerun",
+    "passed": true,
+    "diagnostic": {
+      "runId": "70507d28-c0ee-4536-931e-b4e186fefd22",
+      "stage": "complete",
+      "failure": null,
+      "before": {
+        "workspace.sqlite": {
+          "device": "65025",
+          "inode": "557073",
+          "bytes": 573440,
+          "mtime": 1793324422778.411,
+          "ctime": 1793324422778.411,
+          "sha256": "ed2498847bfeec72571d464d866ee672a023ec1a531742d85f49c2bf3d697d14"
+        },
+        "workspace.sqlite-wal": null,
+        "workspace.sqlite-shm": null
+      },
+      "copied": {
+        "workspace.sqlite": {
+          "device": "53",
+          "inode": "557256",
+          "bytes": 573440,
+          "mtime": 1793325539176.06,
+          "ctime": 1793325539176.06,
+          "sha256": "ed2498847bfeec72571d464d866ee672a023ec1a531742d85f49c2bf3d697d14"
+        },
+        "workspace.sqlite-wal": null,
+        "workspace.sqlite-shm": null
+      },
+      "after": {
+        "workspace.sqlite": {
+          "device": "65025",
+          "inode": "557073",
+          "bytes": 573440,
+          "mtime": 1793324422778.411,
+          "ctime": 1793324422778.411,
+          "sha256": "ed2498847bfeec72571d464d866ee672a023ec1a531742d85f49c2bf3d697d14"
+        },
+        "workspace.sqlite-wal": null,
+        "workspace.sqlite-shm": null
+      },
+      "sourceUnchanged": true,
+      "copySidecarsAfterFirstSelect": {
+        "workspace.sqlite-wal": {
+          "present": true,
+          "bytes": 0
+        },
+        "workspace.sqlite-shm": {
+          "present": true,
+          "bytes": 32768
+        }
+      }
+    },
+    "closure": {
+      "Running": false,
+      "Pid": 0,
+      "ExitCode": 0,
+      "OOMKilled": false,
+      "StartedAt": "2026-10-30T01:58:58.896604583Z",
+      "FinishedAt": "2026-10-30T01:58:59.246752833Z"
+    },
+    "actualResources": {
+      "Memory": 1073741824,
+      "MemorySwap": 1073741824,
+      "NanoCpus": 750000000,
+      "PidsLimit": 128
+    },
+    "actualOriginalMountReadOnly": true,
+    "watchdogPeak": "No 2 s RSS sample: helper finished in 0.350 s; exit 0",
+    "originalServingRunStillRecordedFailed": true,
+    "proof": {
+      "committed": true,
+      "restoredContent": true,
+      "originalSessionExcluded": true,
+      "counter": 4,
+      "helperRunId": "70507d28-c0ee-4536-931e-b4e186fefd22",
+      "sourceUnchanged": true,
+      "sourceGroup": {
+        "workspace.sqlite": {
+          "device": "65025",
+          "inode": "557073",
+          "bytes": 573440,
+          "mtime": 1793324422778.411,
+          "ctime": 1793324422778.411,
+          "sha256": "ed2498847bfeec72571d464d866ee672a023ec1a531742d85f49c2bf3d697d14"
+        },
+        "workspace.sqlite-wal": null,
+        "workspace.sqlite-shm": null
+      },
+      "copiedGroup": {
+        "workspace.sqlite": {
+          "device": "53",
+          "inode": "557256",
+          "bytes": 573440,
+          "mtime": 1793325539176.06,
+          "ctime": 1793325539176.06,
+          "sha256": "ed2498847bfeec72571d464d866ee672a023ec1a531742d85f49c2bf3d697d14"
+        },
+        "workspace.sqlite-wal": null,
+        "workspace.sqlite-shm": null
+      },
+      "copySidecarsAfterFirstSelect": {
+        "workspace.sqlite-wal": {
+          "present": true,
+          "bytes": 0
+        },
+        "workspace.sqlite-shm": {
+          "present": true,
+          "bytes": 32768
+        }
+      }
+    },
+    "fullEvidenceSha256": "1188131301481e8238bc7841ad2f7c0f5ac4765233f76298692810181a3ac833"
+  },
+  "browser157": {
+    "scope": "Real production Admin browser flow with synthetic CDP passkey, Linux controller and disposable HTTPS proxy; not physical-device or remote-provider acceptance",
+    "startedAt": "2026-10-30T02:20:10.236Z",
+    "completedAt": "2026-10-30T02:21:40.822Z",
+    "image": "sha256:3fed4791a2291b0cf5f9baf779425ecf193a3d2775c784e26c4e4d773ad63dad",
+    "sourceBase": "15775bccf78493bf74896a7ecc7165ba7412ca6a",
+    "productionSource": "15775bccf78493bf74896a7ecc7165ba7412ca6a",
+    "containerMemoryMiB": 1024,
+    "containerCpus": 0.75,
+    "containerPids": 128,
+    "supervisorOldSpaceMiB": 64,
+    "persistentServingFixtureProcesses": 0,
+    "servingPid1": {
+      "pid": 1,
+      "parentPid": 0,
+      "userIds": [501, 501, 501, 501],
+      "command": ["node", "--max-old-space-size=64", "/app/server/supervisor.ts"]
+    },
+    "shippedCli": {
+      "initial": "recovery-required",
+      "verify": true,
+      "start": true,
+      "resume": "running"
+    },
+    "richWorkspace": {
+      "sheetContent": true,
+      "docContent": true,
+      "imageSha256": "49e0f79025c2f68f9e0b1a2d6caf30ea62643c2d4be76a3f43f25125825fef91",
+      "historyCheckpoint": true,
+      "retainedViewer": true,
+      "revokedGrantDenied": true,
+      "viewerWriteDenied": true,
+      "revokedGuestDenied": true,
+      "acknowledgedOldCreationRetryDenied": true,
+      "nativeGenerationRenewed": true,
+      "restoredContentUnchanged": true,
+      "documentSnapshotSha256": "2088919f0aed702848d122a447b82f6b35ecc943b78e582d028630441090ae08",
+      "sheetSnapshotSha256": "f9837f3efeb9727e4effec46ee0999a5d826f33dc48745695676f559ee562e0a"
+    },
+    "nativeRendering": {
+      "ownerDoc": true,
+      "ownerSheet": true,
+      "readerDoc": true,
+      "visibleDocumentInkPixels": 534,
+      "archivedImageRendered": true,
+      "documentNativeCopy": true,
+      "sheetA1NativeCopy": "Archived budget value",
+      "originalOwnerSessionExcluded": true
+    },
+    "servingResources": {
+      "memoryLimitBytes": 1073741824,
+      "swapLimitBytes": 0,
+      "cpuMax": "75000 100000",
+      "pidsMax": 128,
+      "memoryPeakBytes": 329379840,
+      "memoryCurrentBytes": 214659072,
+      "peakScope": "Serving cgroup through pre-shutdown observation; excludes later cold helper"
+    },
+    "attachedDockerExit": 0,
+    "supervisorClosure": {
+      "running": false,
+      "pid": 0,
+      "exitCode": 0,
+      "oomKilled": false
+    },
+    "coldClosure": {
+      "running": false,
+      "pid": 0,
+      "exitCode": 0,
+      "oomKilled": false
+    },
+    "pageErrors": 0,
+    "stage": "passed",
+    "elapsedMs": 90586,
+    "passed": true,
+    "containerCleanup": {
+      "spinel-restore-browser-13f8823f-0ee5-43d8-8d3d-d6f8a87ee4fa-bootstrap": "confirmed-absent",
+      "spinel-restore-browser-13f8823f-0ee5-43d8-8d3d-d6f8a87ee4fa-init": "confirmed-absent",
+      "spinel-restore-browser-13f8823f-0ee5-43d8-8d3d-d6f8a87ee4fa-cold": "confirmed-absent",
+      "spinel-restore-browser-13f8823f-0ee5-43d8-8d3d-d6f8a87ee4fa": "confirmed-absent"
+    },
+    "privateFixtureRetained": false,
+    "privateVolumeDisposition": "removed",
+    "captureCount": 18,
+    "fullEvidenceSha256": "2671cb9dd2b94368d6904e12f4d5abad49ebc37470c6245dcd3bbde5b1d57dce",
+    "sourceClosureEvidenceSha256": "ba74fff04039d44171ad3409477028ae6f56454e0a3ac98d5a5f70b3011ccbf2"
+  },
+  "storybookCurrent": {
+    "source": "da57183b96b03a43c58e7ec524877d49828ccb23",
+    "checked": 200,
+    "captures": 200,
+    "durationMs": 57318,
+    "failures": [],
+    "variants": ["light", "dark", "phone", "phone-dark", "tablet"],
+    "sourceFilesUnchanged": 1937,
+    "installedLibraryFilesUnchanged": 163,
+    "buildHostPeakMiB": 1684,
+    "captureHostPeakMiB": 1078,
+    "capturesSha256": {
+      "admin-page--health-tablet.png": "95e2774dc48484b4fb5a475b8184887ea95608eefc1a8e40875e24d6e0d97dc1",
+      "admin-backuprestore--verification-failed-dark.png": "4213b7b0b1cc084ffa1a63a3e5f18aac74f38d40e78840a9ea1a249a6040f865",
+      "admin-backuprestore--uploading-light.png": "c244392705622290868ab74b535b0b188bef4752514dde0d13e8f9f885def289",
+      "admin-backuprestore--preparing-dark.png": "a31df4dc40b920090cb0c389aee36e6e9ad7d25a4e5c4df7493c3bc048ca3f10",
+      "admin-backuprestore--expired-original-confirmation-light.png": "42da4e9ec64e0d559fa5029e3058f37acaa43c8eca2fe6c450b418548c51ff9a",
+      "admin-backuprestore--confirmed-disk-shortage-light.png": "6091f1073be28e67e5e8d741192b33331b5f05d3725834959e743434cb26086a",
+      "admin-backuprestore--memory-headroom-refusal-tablet.png": "980e36354943491c9637cd0bcac852f8d3ee445cfda8ec0939f9f91ad824c56f",
+      "admin-backuprestore--session-unavailable-phone.png": "b77c210a727b54af82cde39e1dcab72515d53a54247f8c43ad7f8af3acdc6ac4",
+      "admin-backuprestore--loading-dark.png": "3d09594473b2d44aa8ddc07fffb485c46c1cbd5af02e11479df8d237cd2085d5",
+      "admin-backuprestore--saved-backups-phone-dark.png": "abf887a4e5fca56d7980349f2bcac89413a725a7bc42b3acd5cf93e8d540c644",
+      "admin-backuprestore--admission-needs-attention-phone-dark.png": "0ff7b4df04cac333850360d1427b24fc5e5d85cf66eefc2391d1658ffe2aa67b",
+      "admin-backuprestore--recording-confirmation-light.png": "af7c1ca191b127144b95205fe38c4df3410326023704184f68e87743de3ccaf9",
+      "admin-backuprestore--confirmed-disk-shortage-phone-dark.png": "12b014f747e64bb55f0fdc7fe10dd43c9127ab0054a8d31a77c881d87bad84fa",
+      "admin-backuprestore--pending-without-record-phone-dark.png": "4052dd800461420d162b7ff96e123aeb9099e315ff0ee7e76494b6d26f00f9d5",
+      "admin-backuprestore--saved-backups-loading-dark.png": "ec1be7cb0f427c8bdaf2b08cd2a8537fd62ec7e1efe8f52ef9cd4fb5e6611b27",
+      "admin-backuprestore--cancelled-tablet.png": "c4f647b62123284803b10e1e8ed64053bba1414c68fea665c5b8bd0cf4bb3cc0",
+      "admin-backuprestore--insufficient-disk-space-tablet.png": "18ca1635835881afdedd32a938477547f9b2e66c82b111cb1e6959e2346fdc8e",
+      "admin-backuprestore--manual-upload-tablet.png": "2d1cf71da0c03f8d409d182edbbb8626c64711c9af69759cb732667201c95371",
+      "admin-backuprestore--pending-without-record-phone.png": "72afb7db42736caec7d8f012e42d095d388c34be2aa177fae8137e85f21b06e4",
+      "admin-backuprestore--pending-without-record-light.png": "7e4eb7ce758d2d01894d915533ffcd45270d1e78ada50200a2596dd566b7bca6",
+      "admin-backuprestore--started-outcome-unconfirmed-phone-dark.png": "1c4d655ffbbb512c13bc0fa3d3614c8eda44b80d37d45b498e5cb9fe80859d53",
+      "admin-backuprestore--waiting-for-passkey-dark.png": "5aaa398aa44717bda043ab28392a01aa39f112f957bf0ea1a8e53d6232013898",
+      "admin-backuprestore--original-recovered-tablet.png": "e4329ee10142d87f6e0503fdba51cbcf71a5f273de02670c8bf5cf31df24a429",
+      "admin-backuprestore--failed-dark.png": "b28f25ee642b96a94f81ff03bab556cf0ad3472dbcab7ba69200f6488c175bc0",
+      "admin-backuprestore--unavailable-phone-dark.png": "31ba12821c5f20d2fcb76520de8e3138351f7d1f9703a79b7dd800961fd0589a",
+      "admin-backuprestore--small-backup-phone-dark.png": "8e9c8b068407005218891415ff416ab40fc248b066b5fc86f9464e104402c988",
+      "admin-backuprestore--saved-backups-empty-tablet.png": "0805b3f6414f799a9b93676b5170449f8a6f423475be9d10509a455d97aedce8",
+      "admin-backuprestore--expired-original-confirmation-dark.png": "706b1479fc54a4c4c67288b45454664ef45e3f3efd4a48cdd235b36092607ebe",
+      "admin-backuprestore--backup-restored-phone-dark.png": "14c10bd00f75163011c8ab19816ddf899fa36c40de2115981cb2af9c5677a3a6",
+      "admin-backuprestore--saved-backups-failed-tablet.png": "d93ac335b1aeaba6539d3b72240c1ba09d4448cbc50ed94813e0066cb8b4cbbb",
+      "admin-backuprestore--recording-confirmation-tablet.png": "dfbda9dfdf298d5658cf30373a5f2fb0e916e37a43090ca4d314b034077da4a5",
+      "admin-backuprestore--preparing-tablet.png": "caddc3a3370812bfa6a21efb77939eda8db660d9d2fda79edd17624181231358",
+      "admin-backuprestore--backup-restored-dark.png": "7ff153a2e320005bafa36701b4da0fd7816f0a8aa2876dc258edc077b21ad933",
+      "admin-backuprestore--manual-upload-phone-dark.png": "9f46d5adcb8e4878a501ec0e172794a3b173a6e9346b0bb2f80888c9086f3210",
+      "admin-backuprestore--recording-confirmation-phone.png": "74e637db8d7d94b4192f73e913c49cfae5874ab2ac2d959e8670bc71028595cc",
+      "admin-backuprestore--backup-restored-tablet.png": "0ce23571b5e06ae67dbfe1d67cf155f95f9bf5f0014ef1d0026aa8b1593b28f2",
+      "admin-backuprestore--full-confirmation-tablet.png": "327844297191d26fbe83b366b3679c0a2813a6c6d42c3e20a8647756fd88db76",
+      "admin-backuprestore--waiting-for-passkey-tablet.png": "95f1e3fb135a4006372452a6f42e3b49870e3753140c77460f663415905a6be4",
+      "admin-backuprestore--confirmed-disk-shortage-dark.png": "bc9a65ba80231c183c957a8efbd670028442ec657a33e573b07aeee7b75e11a8",
+      "admin-backuprestore--session-unavailable-light.png": "8e0d804917771133316575abedaf060a9062228fefedc48bd2303c8d76ce3830",
+      "admin-backuprestore--expired-original-confirmation-phone.png": "4e9559e07543ccc322ccb871166f2295a6ee19b895c6cc840f1f0ef0a80fefa2",
+      "admin-backuprestore--uploading-phone.png": "2f5090556c2f083df43070ef6bc039e70a51dd701c4a28964676aa9323c30707",
+      "admin-backuprestore--confirmed-disk-shortage-phone.png": "15a3be9decc3104e009d3020adec01695562e516a42a9f8a18fef3c7a17bd3f4",
+      "admin-backuprestore--full-confirmation-light.png": "bc8f035df64be04128b68e78e314e6295ffeb601d40bfabeff89ae6ffaeefb62",
+      "admin-backuprestore--waiting-for-passkey-phone.png": "6013621fefae44145204ab3179b8981898ba5a17a731c0753a14eaea87b415de",
+      "admin-backuprestore--recording-confirmation-phone-dark.png": "8ce5a2cf6a433c18ebe5a99b407bf6bc42d7af36722b5083fb9ca2ed72c848a4",
+      "admin-backuprestore--unresolved-outcome-phone.png": "db37c2c960fbab9370f34b8c2dfa2fdeb84a411479ee3cc5862f0bad64a92e6d",
+      "admin-backuprestore--started-outcome-unconfirmed-light.png": "6d73acff9607775992cc243bee6a638dc0879d4c266fb1242728731ac6c89c83",
+      "admin-backuprestore--did-not-start-dark.png": "fee370e7ae182299ee5368b89a26813611500b415fea95d5d86fe5cc94ea66d1",
+      "admin-backuprestore--did-not-start-phone.png": "04b5db3457b000b2656fd18b19b244f8de3e60243df8b232eef71dd7f231a225",
+      "admin-backuprestore--available-phone.png": "b49f7620485369640f664a3ae00ddae7d119c724824e0687ec015c4e3d185979",
+      "admin-backuprestore--maintenance-draining-light.png": "0a450eaee96a00fb8efd7abbb17f2777a36841e5851c27a7783f2499d7648271",
+      "admin-backuprestore--expired-light.png": "455dd653fe32f7288cc79723e5587f64dbf4724bbe5e6339ec6b5cad216599b3",
+      "admin-backuprestore--verification-failed-tablet.png": "56ed012028ae6be286c9051c2a6e7a0edfd13a2fed95b059cf55dd5824e40b84",
+      "admin-backuprestore--unresolved-outcome-phone-dark.png": "4b34d9dd1c3e7fdf240a0cf73c768f17c7553a15a7c0f613427ee21206c8973b",
+      "admin-page--health-warning-light.png": "8c9113d38376586433506119c7409d15e2ab4a6cf008d8a92eeedf257ec2e6a5",
+      "admin-backuprestore--incomplete-observation-dark.png": "9c79eadc00c4d7597a37840e14a28c045555a95cf0b424d8001d4591f8843c21",
+      "admin-backuprestore--original-recovered-phone.png": "1dda78a86d8671d800f47d70e9d4ea78b1b4bc19b779eeb2f8f531e65d6ac77a",
+      "admin-backuprestore--cancel-verification-phone-dark.png": "be29143388f5414185b08cb22b7cf28fdb3c33a0dd8f31bcdd7e6dfa27d669d2",
+      "admin-backuprestore--confirmation-review-tablet.png": "e7d50fa497ceee881db32ec39e2471a7e30759944cfcb1b214e24346b1b23e11",
+      "admin-backuprestore--separate-recovery-volume-phone-dark.png": "4c07709e88b575d6abb86cf72b7755c5c6e481c73ecf237d6b39dadbde240f57",
+      "admin-backuprestore--loading-light.png": "ed4db9933b05cae35a7b4916020e28e6a31d285b6479531b91c290172b99fe42",
+      "admin-backuprestore--admission-needs-attention-dark.png": "4cf104175fc00bed5d216d93e3122c8700a02578f6e399618f3b39e052bb65af",
+      "admin-backuprestore--insufficient-disk-space-phone.png": "71c2d3335fdbcbf9fc456ebab40a0d7b856648711a07909b641545de9e8e018d",
+      "admin-backuprestore--unavailable-dark.png": "7a4f628fce77c477f74264fc9f95988b16348be8a068cd0c0684f428e6dc3b09",
+      "admin-backuprestore--admission-needs-attention-phone.png": "14f7e64c2cfc33e50bb8e5b61f20770a3753f183b741f4ba06c3d2b46606222b",
+      "admin-backuprestore--saved-backups-empty-phone.png": "36c61c98dcd044a99f01bdb7f735953f454d8185ffff1d1783760f51d2ba765a",
+      "admin-backuprestore--available-phone-dark.png": "36362348b7ceaac779272c5f19c9475a807a92e0d841302129df6e4717bff529",
+      "admin-backuprestore--insufficient-disk-space-light.png": "34273084c29c475a95271b7c8eae04ddada339fb14b1e13d01735a82e6eaad1b",
+      "admin-backuprestore--saved-backups-empty-light.png": "07ecc29b392fedf612eb0ead77180c4c02cdb3bd2091a8d581f111676ca00467",
+      "admin-backuprestore--admission-needs-attention-light.png": "f696291cdd04d09e20170b549cac0e3b6c7a54be136eb8cdeb9789f042cc1e19",
+      "admin-backuprestore--recording-confirmation-dark.png": "2a37788ba1d49fc1d6016634cf030c73ab6f1e1c9f5b05ef2d39f6811b7a687c",
+      "admin-backuprestore--maintenance-draining-dark.png": "d6795adf3ccc79ecc5228fd89b4d12a26856ee3c4b7676fec05d2ab0d5c6c366",
+      "admin-backuprestore--loading-phone.png": "49c25ac2add0f298d1cd53800ab8136a7d8ab1e718765b541ae6d0fcaa63eeb7",
+      "admin-backuprestore--loading-phone-dark.png": "5f2ebb1bede8eb547e6621744cdf30f144237e5ac976762ef9be932cb2f6e9a1",
+      "admin-backuprestore--original-recovered-light.png": "e48b239c845682433d440ed7f5d6fb550cffdf26fa186cbcfcc46da6718630a0",
+      "admin-backuprestore--did-not-start-phone-dark.png": "b0601d76ae0f2ef37dcb3e2fa7a6ad978b1a3b8c2fc171645b9e9cec01be33de",
+      "admin-backuprestore--status-failed-dark.png": "896ff1a131db8285a0c5459677ce638896a88a582b63ffa82d3bd69d27f43e92",
+      "admin-backuprestore--session-unavailable-tablet.png": "cacbc6662cad31d4cde7d17ba86cb1d274ffb303f2462da35b2a660c023eb71a",
+      "admin-backuprestore--failed-phone-dark.png": "97e6c050bca3f36f1c45e26b69c1d306482abc133ccaeec2357af44c0f677fc8",
+      "admin-page--health-warning-phone.png": "20d6c08d82af9b33a323af192a5ba25e4b267ee243441c22f514ceaeaea060bb",
+      "admin-backuprestore--cancelled-phone-dark.png": "1276f77bed1d4d36c8dbb8d60e7128f1fae69e6fa323ad87347472feca4ba1ac",
+      "admin-backuprestore--did-not-start-light.png": "886949258e651d8ada39e7a1cfed8cc49f311fe41e832473febaa9f904d08250",
+      "admin-page--health-warning-phone-dark.png": "e54fe9dc305c0a6909a998137b70518f3f2756fe36be17e17216c953b6dec4c8",
+      "admin-backuprestore--expired-dark.png": "66ba4593448a23dc8c8e9f39d3122ecba51d4b370d52865b76a5e135e44d8d0d",
+      "admin-page--health-warning-tablet.png": "0edfb55483b822b47c05a5cb58d696dd923430d86ed7fe0ae4b92afc9056f942",
+      "admin-backuprestore--small-backup-tablet.png": "8d1e244b3037b816d71cfb9c2230c63b659262628eee4e1084ac90b811114f8b",
+      "admin-backuprestore--saved-backups-empty-phone-dark.png": "5634b6f9e89c90faa2a9f61c2fdb9877c17e8561ef4a8306e90896eee1bfe56b",
+      "admin-backuprestore--manual-upload-dark.png": "78154d8d8cb80c4c4f836babc022f981e13f26e43e9658bce800e5ed078f9662",
+      "admin-backuprestore--available-light.png": "c6d6f7eba72ff197bbf1d257cbc178352e9619a759dbd3d93ec5792d97bda7c4",
+      "admin-backuprestore--maintenance-draining-phone.png": "4792aa6dc77bf6fcd727092f4b17a9610f4d4523d2347b233f6c3d7c91c07162",
+      "admin-backuprestore--expired-phone.png": "091b1e8801d319ca10a62666861336515d8a10c11db173d018fe48c537c3164c",
+      "admin-page--health-warning-dark.png": "3e40d4eecbe0689513e4d9bc21d468f9fd7e058931e8661b9420ffa64c211623",
+      "admin-backuprestore--started-outcome-unconfirmed-phone.png": "32b06f4a089a9a95dcd1c027729428aff5844b86e933f2efb22a4708610aa104",
+      "admin-backuprestore--original-recovered-dark.png": "b36586d6f782c5fa739f108af1db65e831a80099dbfcd63437166df390d79c96",
+      "admin-backuprestore--full-confirmation-phone.png": "cf6c9b7fc367dc83af08b9a3e2687999435c5d6c881a7c76297c2a9071f46248",
+      "admin-backuprestore--verification-failed-phone-dark.png": "49cc699ce511007a726245e280225d5b3c8d7b82c3c1923e4698e456917e8469",
+      "admin-backuprestore--unresolved-outcome-light.png": "0cdd358f643f709eee2d160d8afaf8045e5432e1fecb0b61a6a264ff364468f5",
+      "admin-backuprestore--uploading-tablet.png": "3befb54fb7e21ad3a9018380c462b6f11b98a51ee98f4606636a011d9f2dd33b",
+      "admin-backuprestore--waiting-for-passkey-light.png": "6bf5a064b1810f982ae182aa64a6e85681770d5c473bd02502c11d8f69eb8518",
+      "admin-backuprestore--unavailable-light.png": "03309246e0f9e72b405713f54e6f9a20ab6346b00988f620c9bdebce5ef6f922",
+      "admin-backuprestore--memory-headroom-refusal-light.png": "6e6837ee3aa400174b3018ff678933f11db8faf5c4ca2ad6101c216c96a64df3",
+      "admin-backuprestore--pending-without-record-tablet.png": "1e55e1646e3fad57b61214d8f02faddb62a504fec6272f5f8d58126a72a92e42",
+      "admin-backuprestore--verification-failed-phone.png": "dc1c8cc0388b1edeca473d6b43732c504385342c8d47f4c3b889bb77a7474681",
+      "admin-backuprestore--cancel-verification-tablet.png": "61af91e9a947428f996dfd4c6abd32af8e540bde586d69a70f7edd81516a5d72",
+      "admin-backuprestore--loading-tablet.png": "15cef681468b2c96239924bea362405b6c5d3ea039860d8750d333185ea8a6a2",
+      "admin-backuprestore--saved-backups-failed-light.png": "7c5937c7d48213e8d2e2add1ff81492e7989da1b37554a24c0e968ece4fdf38b",
+      "admin-backuprestore--available-tablet.png": "db90c24dfa649b3b1a684cde514e52690b7bb7fdb43086f4255353123e4cb459",
+      "admin-backuprestore--full-confirmation-dark.png": "79ef441ab6950168fd5e6ea5b36ec7862ce7741f09112b4bb6b453e8b891759b",
+      "admin-backuprestore--pending-without-record-dark.png": "e4c6c79fc7c0cf97dbb5c3aa80d16100edbc4cead2dbc92a54b3c015c9d7806d",
+      "admin-backuprestore--backup-restored-phone.png": "4eab1cf38c5fa3f273b82f493fc1db1b670bd4a683ce350458df62d1c80de9ce",
+      "admin-backuprestore--failed-light.png": "ca724c8f2a9324cf9c1b5b750a0118340636828955f34f682752891ae359fe4b",
+      "admin-backuprestore--accepted-light.png": "ed50c5aa99e85dc658d16015ea0d6497499f845a2c481202e0767cda22f8ce3b",
+      "admin-backuprestore--cancelled-light.png": "dfeef471059e0dece5565834170106b869a75f70b6eac4a754def97f44914528",
+      "admin-backuprestore--uploading-phone-dark.png": "5f8ececfa78ce8300e6951679419a26b587b759dfe33405d692277b3f3575bb2",
+      "admin-backuprestore--saved-backups-light.png": "d398750d18ba0926291fd5f92cd01bbcbe5b607455d999bc0e664664b46182ad",
+      "admin-backuprestore--status-failed-tablet.png": "ea4c9dc3169d1fe4f4c8068cd5d6d1332a0c52513d55f854a60d9093e92a5604",
+      "admin-backuprestore--memory-headroom-refusal-dark.png": "9639ec50b3d3e701b12d4eb88a245a0c5bc095eeb4480b6617022d11ba0c2c08",
+      "admin-backuprestore--confirmation-review-phone.png": "0e8075181903e491731d82c0425bbf8863e3f08b27c953a6712e78ebeadf73ca",
+      "admin-backuprestore--manual-upload-light.png": "daddfb7e57990f40afa35fa5c931e0097ba671c5bd55938b76f65206ccd54d71",
+      "admin-backuprestore--saved-backups-loading-light.png": "cf1c5397a364501fa9a246df80b7cc230e260c7e15f06f381a2ad0017c915482",
+      "admin-backuprestore--manual-upload-phone.png": "a17464337cd68a9b0762b779c2ddc0f832c7e70aad6a76480f325dcbc645b3c0",
+      "admin-backuprestore--saved-backups-loading-phone.png": "394e52d69af63d09b0389d7b98d2d3d3aed925d15ad87bfb6086749ca4a342b3",
+      "admin-backuprestore--confirmation-review-light.png": "275d52d6e22707c92e5cacee4623b974e641b0c0bc25eeed00a6a4af55c4ec22",
+      "admin-backuprestore--accepted-dark.png": "d42594f5b390c1315c3619be9b3d4c618898b662c4139dc5aa08b0e42495f8fc",
+      "admin-backuprestore--maintenance-draining-tablet.png": "1696147f7bad9863ab7e0a1c9963ce0c307eaa16ebda1a8d8289d11f2f8f2238",
+      "admin-backuprestore--full-confirmation-phone-dark.png": "87cc7f6bbcfcea4471b3d140ff3c28c57e6aeb6817007ac60933da3fbc40b237",
+      "admin-backuprestore--saved-backups-phone.png": "402d4fd02887dffefa391324208a4406b96daaf98228e1ba24e92556427195a3",
+      "admin-backuprestore--separate-recovery-volume-tablet.png": "930732c539df813177dae28016f52ed05eed5b1b14d382e6ad5186a48b4f5c4b",
+      "admin-backuprestore--available-dark.png": "706364ff7513723828a669793c5cc5d2e7fc5b30a01661a651ed7a980cee2d86",
+      "admin-backuprestore--accepted-phone.png": "69b2311abe04ff09f6c1f48dd9cdc011de5f8a76673ee93a84827c184f262c9e",
+      "admin-backuprestore--failed-phone.png": "0d3d6e9016fc3971e8f475a71ede063a6673f6d88cbbd569e94b44168eeebd82",
+      "admin-backuprestore--confirmed-disk-shortage-tablet.png": "3a28e0be433f9bc82da40691f8dc558621a88adb48badf7ce968f44f25c9351f",
+      "admin-backuprestore--unavailable-tablet.png": "3bc7fdaf51125a940f96c938ca9afb49e3410c1ab2767bd07fe9166b0a16a6ad",
+      "admin-backuprestore--cancelled-phone.png": "c901d0a1c2e02fde115f00256a6c016ede3fc06029e0d1384a834d53cb80e36c",
+      "admin-backuprestore--session-unavailable-phone-dark.png": "3f7f59f1fab9ff7a2433bdf6af4c8a3c8eed6852851f27f1a39eebb04cbb9382",
+      "admin-backuprestore--unresolved-outcome-dark.png": "d1fac80aa6703c57cae39606ee2d2819c41291b54da19a541fc37dbdd06423e3",
+      "admin-backuprestore--original-recovered-phone-dark.png": "9d5a62f9b753f2aab9f7180f19080b0b81203a56bd6c47d75dc3dcbb2a8ee869",
+      "admin-backuprestore--memory-headroom-refusal-phone-dark.png": "db12ce927fa030c40b2535948c41631fe139f783bbd54caec72c9951adc3f077",
+      "admin-backuprestore--started-outcome-unconfirmed-dark.png": "2c8ddcb12ad78bc86f3f89fc48074ce93c3f43fb31b4f9a88e3c18e4c399cd8f",
+      "admin-backuprestore--expired-original-confirmation-phone-dark.png": "b8cead0ef76b8958239dae062d32f574cb84f5e16fb7c2b4c390f32a01b92cca",
+      "admin-backuprestore--backup-restored-light.png": "77e559ad04337f8c942b9b59c69a6318af5a8e19334d3b890b8d5eac731f7087",
+      "admin-backuprestore--expired-original-confirmation-tablet.png": "da907d634d0db760d7faf9b8f546b4ebfcb57ee9ba72f26d29d8e7c5e6636ba5",
+      "admin-backuprestore--maintenance-draining-phone-dark.png": "fca622c06315e366faefa7073957a8b0bec9c68ae6ad915ed145c9d944bf7575",
+      "admin-backuprestore--saved-backups-failed-phone.png": "0733eb58106467381a648b51288171ac8c80b551b4eeecce016d3590be0ba1c8",
+      "admin-backuprestore--started-outcome-unconfirmed-tablet.png": "009e6a56deacae6044013a97b65f1d754ee40ee78e004d68d390788afb0cca50",
+      "admin-backuprestore--verification-failed-light.png": "f5b38c9f9202672a6050f12d66245cc10d296053c2e4935190a2de1e6b8cf635",
+      "admin-backuprestore--unavailable-phone.png": "bf91c9909a05f02c03a745818923f94d6d0e538b844d7b28213f2b61f04600a2",
+      "admin-backuprestore--preparing-phone-dark.png": "323c127623bb9817e8998078a492831f4b9140d7a28a228c2ff908bc9caa39db",
+      "admin-backuprestore--did-not-start-tablet.png": "2e7ec35515ec2d4a5ca315fc3552e51e7884a12f74e8c3af29ef1df709a6205a",
+      "admin-backuprestore--memory-headroom-refusal-phone.png": "7a1df94f03073e89d55fa675fea9ebf7b8a9fba8744152a212c95d66fc8f677a",
+      "admin-backuprestore--confirmation-review-dark.png": "78c3f775f1891a8a33cb353e52a2c58a57cc203a33022cb942b1fe8005566017",
+      "admin-backuprestore--incomplete-observation-light.png": "9fa184a61ee9025510a91ae64020f8b0ea91abff3c2f6d3f334751ab62d1fdf0",
+      "admin-page--health-phone-dark.png": "01326a3dc1f64285ae8d317c9a57e207437d57894e26d3d308b11dd876a1c4f9",
+      "admin-backuprestore--ready-phone.png": "1b14915c858dd719745286fe32b21105f8e0197364aa115fc87697027b175aa4",
+      "admin-backuprestore--saved-backups-failed-phone-dark.png": "5ce02051689b073b8023e47b561ffb5efdfc92dfc49d88806421b65cd3648a3d",
+      "admin-backuprestore--cancel-verification-dark.png": "603885c9be6de6b370f18e6b97b2451151f1854024d4c7f5a6f0cb677f7affee",
+      "admin-backuprestore--accepted-tablet.png": "491ebacc6a7a43a841f306688384d32b7d09f98f3012efbbbae54f7a68281653",
+      "admin-backuprestore--ready-dark.png": "5e0e0fecfd755a3bbd714773c21dafc4dc9eaca86777d85fad694d2230067b22",
+      "admin-backuprestore--saved-backups-loading-tablet.png": "0a89785709c6ee503a54ed40febd8ec6c47dae8b704539df88afbf08c5d1d5bb",
+      "admin-backuprestore--small-backup-dark.png": "0c207a1244301f1b79f8a53aca098fc13b3ee5acae8ae032d7eb98ffb97e7178",
+      "admin-backuprestore--unresolved-outcome-tablet.png": "38d5e5e9a55a6b495d2f63658f650f49abc0fd87537cfb1c3dad06b528cc3e60",
+      "admin-backuprestore--small-backup-phone.png": "14e034eac02108021c5ad20b36d0bef1617fd5e55bebbc0e0c96bd5ee6a491be",
+      "admin-backuprestore--waiting-for-passkey-phone-dark.png": "845962b76748f7908de2a9e376f3c5f9494eb2ac39bee24a04dfaa8cf4007b88",
+      "admin-backuprestore--separate-recovery-volume-phone.png": "a55d0813e027865068d46254ca1ad08d4e0fbd2f4937f89ba0aa9a26375dec46",
+      "admin-backuprestore--session-unavailable-dark.png": "d0f7a1974b7b83fc7123b1044dd8df762eff9f1f912cc7b57269072a13c36d10",
+      "admin-backuprestore--ready-tablet.png": "9d96d54594f987fd43a6ab09c25c4c77b966812d5dad0f17960f3424166b185e",
+      "admin-backuprestore--status-failed-phone.png": "3b573d39b9e22989165b790ed8e03837ae2e9aeb0312ca4d454cc06f484c1c85",
+      "admin-backuprestore--cancel-verification-light.png": "c5b22493dbdbb9cb7c235db69f34601d226b40f36e33fcc1c03d3bc391e91543",
+      "admin-backuprestore--separate-recovery-volume-dark.png": "3b5c7463806e58251993387547164db9fa61665f131a0dbecd34c1e593028883",
+      "admin-backuprestore--preparing-light.png": "b7e9f4048132cdafb66aec8a7841f813b0c910eee1e2c6a12c4a4a954d0649f1",
+      "admin-page--health-phone.png": "cd989ba249051fcc09947788403c2f436f185077eb6178e1e66d54f6314e652d",
+      "admin-page--health-light.png": "77303a083358bf0f1d77bc7738594e40ec33bd14a816d105512bba11a3809c8a",
+      "admin-backuprestore--preparing-phone.png": "3abf3341d3191ecfcc2c579e80c150e5a09cf8dcc303c9a5450ad57300b8e3e1",
+      "admin-backuprestore--saved-backups-empty-dark.png": "0dccfbf054cd00cc7ebc531f438bba28c43460649d374b08aaa82fadf27e74c0",
+      "admin-backuprestore--saved-backups-tablet.png": "d6acd742134e81581d93c993e913f6367320977adb6d73a5ee9996dae6a9cb11",
+      "admin-backuprestore--status-failed-light.png": "080a790d57dece2720ca3772e9c1d4b7830c1b50778e5a6be4dd289b13657480",
+      "admin-backuprestore--incomplete-observation-tablet.png": "bfd1a0a869eb743cc611e44573567c0ad8bdc43090ddd6dd99dcf411af789cf4",
+      "admin-backuprestore--cancel-verification-phone.png": "dc67a5326f9a607837582a311aef81c28b1646e1da6adaa3a9fea22f98f17e9e",
+      "admin-backuprestore--confirmation-review-phone-dark.png": "d9118ce8763e43d65399d1f536a7f8813e092b26347d210583da54979a3945ff",
+      "admin-backuprestore--small-backup-light.png": "1b1b4b72b6fefbd0b0a0920c6ba506b0e0f1ee16f585991b7144e925deb21ae4",
+      "admin-backuprestore--accepted-phone-dark.png": "1317951c8c91214fb78bcdc0f460f4686617ffd91f7183556a98e3794251d58c",
+      "admin-backuprestore--failed-tablet.png": "bb7f66161c545aaabfeb19501a849dbd3cc65cc8b0c3dc957361902c84825c1c",
+      "admin-page--health-dark.png": "62c5805e2e3e355e6a682d1ac56f0d5f3c86b5f685085a38a570eb897deb0cb9",
+      "admin-backuprestore--separate-recovery-volume-light.png": "16929f123ed70d7bcb12a18dc6b34b2fc9bc9f759eab849912a9569c19de5fb2",
+      "admin-backuprestore--insufficient-disk-space-dark.png": "743e3eb033d221838a39d1022a60f812c24df3af1728df102aa47c521db8e417",
+      "admin-backuprestore--expired-phone-dark.png": "9db5d2c86fb18c1ac214493a275fa58b47aa8b414501a741ab8f45a7051c3182",
+      "admin-backuprestore--saved-backups-dark.png": "307f208683df2bb4265cff79f493ca0207cf0ddde0c899704efc7e8f826abb62",
+      "admin-backuprestore--saved-backups-loading-phone-dark.png": "621d950de35baff752ccab9d18ed2bcf545ca502f2293cf6a1273aba370bbe6a",
+      "admin-backuprestore--insufficient-disk-space-phone-dark.png": "0503fa1307e889995067b847c1e69f2efc2ee72a5f78aa269357505f8cdba541",
+      "admin-backuprestore--uploading-dark.png": "19d6b1203db22590f00a1f27091753e9d5653b124317aea225d8ef4cd651736b",
+      "admin-backuprestore--status-failed-phone-dark.png": "126d05f744c3f09bdd3d2d020421ebf67eccdb35ded26e4287bed63cc6c65403",
+      "admin-backuprestore--saved-backups-failed-dark.png": "db49a08a14c10d31f586e3371db5cdcd0c7ce82130b6529078b51dbc1918f408",
+      "admin-backuprestore--admission-needs-attention-tablet.png": "a53f42b71f9236abcc4e077171dabd493e0b5b971701d05e5efa105dadfedf76",
+      "admin-backuprestore--ready-light.png": "4ac71045bff859283dd4b3ad2507d9e940b864d7a179c4b0cfb2d9d8c7b222ab",
+      "admin-backuprestore--cancelled-dark.png": "de363cc65c66ee0259f3cf9d91e1c9c4d756606079e681b0b773432920e0e739",
+      "admin-backuprestore--incomplete-observation-phone-dark.png": "d911f7190809055071225f7beb89c9dc6301b35aa0ad151ff3f13723bd7c551a",
+      "admin-backuprestore--ready-phone-dark.png": "db9d502d6db730c98d8353eeeb65e46a9e70a373599df29e3c73f17999867263",
+      "admin-backuprestore--incomplete-observation-phone.png": "ed5140c9e3073fc025b8b12a89526f5dabe16eb9ae7b6b5157a2b0b62cca3b1b",
+      "admin-backuprestore--expired-tablet.png": "4112d53cae7bcd8ea0d31a007fe2f0eb04c94c4b231533b096d1243d112c42b1"
+    },
+    "revalidatedAt": "280d2e72ee07c3f11c3b62049adf57ee2e17fb56",
+    "reuseReview": "D rechecked all 200 hashes and unchanged restore components/stories/styles/shared controls. SPN052 has separate scoped offline-help UI. Approved reuse of the da proposed-state evidence, not a fresh 280 Storybook run."
+  },
+  "productionBuildCurrent": {
+    "source": "280d2e72ee07c3f11c3b62049adf57ee2e17fb56",
+    "context": "/var/folders/ps/901m_rt10gq_nlynvsf_r82m0000gn/T/spinel112-production-280-fskjzwcf",
+    "image": "sha256:0269317f66cdb230a9b41f7cff46e2aafb813efddd4480e58f99d7ba1e8d4fdc",
+    "passed": true,
+    "attempt": 1,
+    "builder": "spinel112-production-160",
+    "reusedTaskCache": true,
+    "resources": {
+      "memory.max": "1887436800",
+      "memory.swap.max": "0",
+      "cpu.max": "200000 100000",
+      "memory.peak": "1613774848",
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0"
+    },
+    "hostClientPeakMiB": 147,
+    "sourceFilesVerified": 2040,
+    "installedLibraryFilesVerified": 222
+  },
+  "browserCurrentFailure": {
+    "scope": "Real production Admin browser flow with synthetic CDP passkey, Linux controller and disposable HTTPS proxy; not physical-device or remote-provider acceptance",
+    "startedAt": "2026-10-30T02:56:26.587Z",
+    "image": "sha256:629bfffd0ddc352964452caa329b0e52a0ae7aae3b9dd0a9078c832876ab1d2a",
+    "productionSource": "da57183b96b03a43c58e7ec524877d49828ccb23",
+    "failureSource": {
+      "file": "restore-browser.acceptance.ts",
+      "line": 263,
+      "column": 9
+    },
+    "pageErrors": 0,
+    "stage": "confirming-and-restoring",
+    "stageTimings": [
+      {
+        "stage": "initializing",
+        "elapsedMs": 0
+      },
+      {
+        "stage": "starting-linux-supervisor",
+        "elapsedMs": 563
+      },
+      {
+        "stage": "bootstrapping-closed-workspace",
+        "elapsedMs": 852
+      },
+      {
+        "stage": "starting-shipped-supervisor",
+        "elapsedMs": 2745
+      },
+      {
+        "stage": "cli-verify",
+        "elapsedMs": 3961
+      },
+      {
+        "stage": "cli-start",
+        "elapsedMs": 4485
+      },
+      {
+        "stage": "cli-resume",
+        "elapsedMs": 6062
+      },
+      {
+        "stage": "authenticating-browser",
+        "elapsedMs": 6296
+      },
+      {
+        "stage": "authenticating-current-owner",
+        "elapsedMs": 14624
+      },
+      {
+        "stage": "preparing-through-admin",
+        "elapsedMs": 25298
+      },
+      {
+        "stage": "confirming-and-restoring",
+        "elapsedMs": 28417
+      }
+    ],
+    "elapsedMs": 169150,
+    "finalStageElapsedMs": 140733,
+    "passed": false,
+    "completedAt": "2026-10-30T02:59:15.737Z",
+    "servingResources": {
+      "memoryLimitBytes": 1073741824,
+      "swapLimitBytes": 0,
+      "cpuMax": "75000 100000",
+      "pidsMax": 128,
+      "memoryPeakBytes": 333574144,
+      "memoryCurrentBytes": 64888832,
+      "peakScope": "Serving cgroup through pre-shutdown observation; excludes later cold helper"
+    },
+    "bootstrapClosure": {
+      "running": false,
+      "pid": 0,
+      "exitCode": 0,
+      "oomKilled": false
+    },
+    "supervisorClosure": {
+      "running": false,
+      "pid": 0,
+      "exitCode": 0,
+      "oomKilled": false
+    },
+    "containerCleanup": {
+      "spinel-restore-browser-b4ef6d60-d1a7-4867-a2ee-37dc907c7299-bootstrap": "confirmed-absent",
+      "spinel-restore-browser-b4ef6d60-d1a7-4867-a2ee-37dc907c7299-init": "confirmed-absent",
+      "spinel-restore-browser-b4ef6d60-d1a7-4867-a2ee-37dc907c7299": "confirmed-absent"
+    },
+    "privateFixtureRetained": true,
+    "privateVolumeDisposition": "retained",
+    "readOnlyInspection": {
+      "journal": {
+        "phase": "recovery-required",
+        "lastFailure": "restore-execution-unresolved",
+        "updatedAt": 1793329016248,
+        "hasChild": false,
+        "hasVerifier": false,
+        "hasRestoreReference": true,
+        "operation": {
+          "kind": null,
+          "phase": null
+        }
+      },
+      "jobs": [
+        {
+          "id": "58692e40-4001-4d16-8829-b1fe5cbbf2a0",
+          "phase": "preparation-planned",
+          "revision": 11,
+          "updatedAt": 1793329016245,
+          "intentHash": "b86775a13b6b83259570f740e527e55be96b087a589e09a7d09b9ff369bad7b2",
+          "sourceSha256": "93632a4c0c2435d40e5686ca070754bb9a861aa276bdaeda450491290f8668ca",
+          "executionKeys": [
+            "epoch",
+            "child",
+            "stop",
+            "requestedAt",
+            "originals",
+            "freezeSlot",
+            "frozen",
+            "preparation"
+          ],
+          "requestedAt": 1793329015195,
+          "originalStop": {
+            "present": true,
+            "fingerprint": "e0b0f39dc5f18df908d68fe8d89c6d4de45f33348aaa43546d9a778d4d5f8a87",
+            "acceptedAt": 1793329015255
+          },
+          "originalsRetained": true,
+          "freezePlanned": true,
+          "frozen": {
+            "bytes": 565248,
+            "sha256": "4f98419257c661a3fcc84de323c8565160af5b1ef0755223f6c2ab9599911ee3",
+            "fingerprint": "e0b0f39dc5f18df908d68fe8d89c6d4de45f33348aaa43546d9a778d4d5f8a87"
+          },
+          "preparation": {
+            "preparedAt": 1793329016243,
+            "candidate": null,
+            "rollback": null
+          },
+          "trial": {
+            "planned": false
+          },
+          "failure": null,
+          "rollback": null,
+          "mainReferenceMatches": true
+        }
+      ],
+      "sourceFiles": [
+        {
+          "role": "journal",
+          "bytes": 1538,
+          "sha256": "06845ac5d95f901db0b5098aff37731c2f629564eb3574f17329519fb7e2726f",
+          "device": 65025,
+          "inode": 557319
+        },
+        {
+          "role": "job-state",
+          "bytes": 3146,
+          "sha256": "947e2c489f8337da09219cde65736167d20df2edea5f9f383b825066f1fac06e",
+          "device": 65025,
+          "inode": 557262
+        }
+      ],
+      "sourceUnchanged": true,
+      "inspection": {
+        "scriptSha256": "ad69fe6477d007cf223e8a967f55cd49fd24440650c903a077ab48b3d2d9da8b",
+        "readOnlyStateVolume": true,
+        "readOnlyContainer": true,
+        "networkMode": "none",
+        "memoryLimitBytes": 1073741824,
+        "memorySwapTotalBytes": 1073741824,
+        "nanoCpus": 750000000,
+        "pidsLimit": 128,
+        "closure": {
+          "Running": false,
+          "Pid": 0,
+          "ExitCode": 0,
+          "OOMKilled": false,
+          "StartedAt": "2026-10-30T03:02:49.603556963Z",
+          "FinishedAt": "2026-10-30T03:02:50.015405004Z"
+        },
+        "sampleNote": "Subsecond helper exited before2s hostRSSsample;0reported isnotzero footprint."
+      }
+    },
+    "readOnlyDirectoryExtension": {
+      "journal": {
+        "phase": "recovery-required",
+        "lastFailure": "restore-execution-unresolved",
+        "updatedAt": 1793329016248,
+        "hasChild": false,
+        "hasVerifier": false,
+        "hasRestoreReference": true,
+        "operation": {
+          "kind": null,
+          "phase": null
+        }
+      },
+      "jobs": [
+        {
+          "preparationDirectory": {
+            "exists": false,
+            "childCount": 0,
+            "reconciled": []
+          },
+          "id": "58692e40-4001-4d16-8829-b1fe5cbbf2a0",
+          "phase": "preparation-planned",
+          "revision": 11,
+          "updatedAt": 1793329016245,
+          "intentHash": "b86775a13b6b83259570f740e527e55be96b087a589e09a7d09b9ff369bad7b2",
+          "sourceSha256": "93632a4c0c2435d40e5686ca070754bb9a861aa276bdaeda450491290f8668ca",
+          "executionKeys": [
+            "epoch",
+            "child",
+            "stop",
+            "requestedAt",
+            "originals",
+            "freezeSlot",
+            "frozen",
+            "preparation"
+          ],
+          "requestedAt": 1793329015195,
+          "originalStop": {
+            "present": true,
+            "fingerprint": "e0b0f39dc5f18df908d68fe8d89c6d4de45f33348aaa43546d9a778d4d5f8a87",
+            "acceptedAt": 1793329015255
+          },
+          "originalsRetained": true,
+          "freezePlanned": true,
+          "frozen": {
+            "bytes": 565248,
+            "sha256": "4f98419257c661a3fcc84de323c8565160af5b1ef0755223f6c2ab9599911ee3",
+            "fingerprint": "e0b0f39dc5f18df908d68fe8d89c6d4de45f33348aaa43546d9a778d4d5f8a87"
+          },
+          "preparation": {
+            "preparedAt": 1793329016243,
+            "candidate": null,
+            "rollback": null
+          },
+          "trial": {
+            "planned": false
+          },
+          "failure": null,
+          "rollback": null,
+          "mainReferenceMatches": true
+        }
+      ],
+      "sourceFiles": [
+        {
+          "role": "journal",
+          "bytes": 1538,
+          "sha256": "06845ac5d95f901db0b5098aff37731c2f629564eb3574f17329519fb7e2726f",
+          "device": 65025,
+          "inode": 557319
+        },
+        {
+          "role": "job-state",
+          "bytes": 3146,
+          "sha256": "947e2c489f8337da09219cde65736167d20df2edea5f9f383b825066f1fac06e",
+          "device": 65025,
+          "inode": 557262
+        }
+      ],
+      "sourceUnchanged": true,
+      "closure": {
+        "Running": false,
+        "Pid": 0,
+        "ExitCode": 0,
+        "OOMKilled": false,
+        "StartedAt": "2026-10-30T03:14:42.417706Z",
+        "FinishedAt": "2026-10-30T03:14:42.82616025Z"
+      },
+      "scriptSha256": "c112700b5d644920c20d768940b6d4eda8c3f41196385acbdd67bdc2f79732f0",
+      "originalInspectionHashesUnchanged": true
+    }
+  },
+  "lastProductionCandidateSha": "280d2e72ee07c3f11c3b62049adf57ee2e17fb56",
+  "diagnosticsAndContainment": {
+    "sourceHashes": {
+      "src/server/maintenance/restore-failure.ts": "c1f849f7055d4101130d7ab5821a32c0fc5c9cda41e8682b2d11232893d398dd",
+      "src/server/maintenance/restore-failure.test.ts": "8720a0ab85ccb20c133a6e352cb653fee7717f8ab3be2ef8d0d19be591fb1dc5",
+      "src/server/maintenance/restore-prepare.ts": "a621a6a8ece10a730603eac1d393e0e0b80b0186a61c89c99bbcfbe5d4aa820c",
+      "src/server/maintenance/restore-prepare.test.ts": "3c180e59220c42366eebde1eff223ab46432ef7846e83b72f1b4892a3ce59998",
+      "src/server/maintenance/supervisor.ts": "53f0ad71f4ce34e603a3e47a25baf8fe16786ec69bc2f9599c5ea105097c1027",
+      "src/server/maintenance/supervisor.test.ts": "e448c0620e068fedf6b0171464a1142151e21781bdfe777558d49fc08e909926"
+    },
+    "sourceReview": "Independent nonimplementing reviewer B approved source/privacy/authority/test design; agent review only, not a whole-ticket grade.",
+    "selectedPassed": 31,
+    "separateCorrectedAssertionPassed": 1,
+    "firstBatch": [
+      {
+        "name": "diagnostics-and-preparation",
+        "command": [
+          "npx",
+          "vitest",
+          "run",
+          "src/server/maintenance/restore-failure.test.ts",
+          "src/server/maintenance/restore-prepare.test.ts",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=verbose",
+          "--reporter=json",
+          "--outputFile=/tmp/spn112-diagnostics-and-preparation-vitest.json"
+        ],
+        "node": "v26.12.1",
+        "dependencyLock": "7f742d3e1164253e5cb22b87158620f0b19929e4ff2e0da082abcc3e2217d56c",
+        "exitCode": 0,
+        "signal": null,
+        "durationMs": 1026,
+        "before": {
+          "memory.current": "136224768",
+          "memory.peak": "136224768",
+          "memory.max": "1887436800",
+          "memory.swap.max": "0",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0"
+        },
+        "after": {
+          "memory.current": "192880640",
+          "memory.peak": "387387392",
+          "memory.max": "1887436800",
+          "memory.swap.max": "0",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0"
+        },
+        "dependencyLockAfter": "7f742d3e1164253e5cb22b87158620f0b19929e4ff2e0da082abcc3e2217d56c"
+      },
+      {
+        "name": "selected-failed-trial-and-terminal-preservation",
+        "command": [
+          "npx",
+          "vitest",
+          "run",
+          "src/server/maintenance/supervisor.test.ts",
+          "-t",
+          "selected candidate: (failed-stop-[a-z-]+|preparation-diagnostic|release-rejected|commit-publication)$",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=verbose",
+          "--reporter=json",
+          "--outputFile=/tmp/spn112-selected-failed-trial-and-terminal-preservation-vitest.json"
+        ],
+        "node": "v26.12.1",
+        "dependencyLock": "7f742d3e1164253e5cb22b87158620f0b19929e4ff2e0da082abcc3e2217d56c",
+        "exitCode": 0,
+        "signal": null,
+        "durationMs": 69781,
+        "before": {
+          "memory.current": "191549440",
+          "memory.peak": "387387392",
+          "memory.max": "1887436800",
+          "memory.swap.max": "0",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0"
+        },
+        "after": {
+          "memory.current": "255528960",
+          "memory.peak": "999432192",
+          "memory.max": "1887436800",
+          "memory.swap.max": "0",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0"
+        },
+        "dependencyLockAfter": "7f742d3e1164253e5cb22b87158620f0b19929e4ff2e0da082abcc3e2217d56c"
+      }
+    ],
+    "separateAssertion": [
+      {
+        "name": "expiry-diagnostic-assertion",
+        "command": [
+          "npx",
+          "vitest",
+          "run",
+          "src/server/maintenance/supervisor.test.ts",
+          "-t",
+          "stop-plan persistence crossing original expiry",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=verbose",
+          "--reporter=json",
+          "--outputFile=/tmp/spn112-expiry-diagnostic-assertion-vitest.json"
+        ],
+        "node": "v26.12.1",
+        "dependencyLock": "7f742d3e1164253e5cb22b87158620f0b19929e4ff2e0da082abcc3e2217d56c",
+        "exitCode": 0,
+        "signal": null,
+        "durationMs": 1035,
+        "before": {
+          "memory.current": "29388800",
+          "memory.peak": "29388800",
+          "memory.max": "1887436800",
+          "memory.swap.max": "0",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0"
+        },
+        "after": {
+          "memory.current": "37277696",
+          "memory.peak": "317632512",
+          "memory.max": "1887436800",
+          "memory.swap.max": "0",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0"
+        },
+        "dependencyLockAfter": "7f742d3e1164253e5cb22b87158620f0b19929e4ff2e0da082abcc3e2217d56c"
+      }
+    ],
+    "typecheck": {
+      "passed": true,
+      "hostPeakMiB": 1514,
+      "logSha256": "43abdf15dc575061545a90d0a5f053992a66ea6716e05c6c07dc65797d561045"
+    },
+    "lint": {
+      "passed": true,
+      "logSha256": "462e7633ef4a8f7acac1e9c759421101257e6c63b1f623624d245d788a4e4d68"
+    },
+    "limitations": [
+      "Memory guard is injected through the measured-memory failure callback; timeout uses the actual 30-second timer.",
+      "Separate older assertion correction follows the first batch and has its own passing run.",
+      "Historical da preparation failure cause remains unproven; no new production/browser run yet."
+    ]
+  },
+  "browser160Failure": {
+    "scope": "Real production Admin browser flow with synthetic CDP passkey, Linux controller and disposable HTTPS proxy; not physical-device or remote-provider acceptance",
+    "startedAt": "2026-10-30T03:36:40.248Z",
+    "image": "sha256:e299149e024bcf56dc24d58cde5f0936f76287637b7f056d547b508e7625ee75",
+    "productionSource": "16089ccbc4c886826e1d3527efc2649c9ba4884a",
+    "failureSource": {
+      "file": "restore-browser.acceptance.ts",
+      "line": 263,
+      "column": 9
+    },
+    "pageErrors": 0,
+    "stage": "confirming-and-restoring",
+    "stageTimings": [
+      {
+        "stage": "initializing",
+        "elapsedMs": 0
+      },
+      {
+        "stage": "starting-linux-supervisor",
+        "elapsedMs": 485
+      },
+      {
+        "stage": "bootstrapping-closed-workspace",
+        "elapsedMs": 708
+      },
+      {
+        "stage": "starting-shipped-supervisor",
+        "elapsedMs": 2855
+      },
+      {
+        "stage": "cli-verify",
+        "elapsedMs": 3933
+      },
+      {
+        "stage": "cli-start",
+        "elapsedMs": 4476
+      },
+      {
+        "stage": "cli-resume",
+        "elapsedMs": 6268
+      },
+      {
+        "stage": "authenticating-browser",
+        "elapsedMs": 6665
+      },
+      {
+        "stage": "authenticating-current-owner",
+        "elapsedMs": 15509
+      },
+      {
+        "stage": "preparing-through-admin",
+        "elapsedMs": 26488
+      },
+      {
+        "stage": "confirming-and-restoring",
+        "elapsedMs": 29522
+      }
+    ],
+    "elapsedMs": 170292,
+    "finalStageElapsedMs": 140770,
+    "passed": false,
+    "completedAt": "2026-10-30T03:39:30.540Z",
+    "servingResources": {
+      "memoryLimitBytes": 1073741824,
+      "swapLimitBytes": 0,
+      "cpuMax": "75000 100000",
+      "pidsMax": 128,
+      "memoryPeakBytes": 319172608,
+      "memoryCurrentBytes": 67031040,
+      "peakScope": "Serving cgroup through pre-shutdown observation; excludes later cold helper"
+    },
+    "bootstrapClosure": {
+      "running": false,
+      "pid": 0,
+      "exitCode": 0,
+      "oomKilled": false
+    },
+    "supervisorClosure": {
+      "running": false,
+      "pid": 0,
+      "exitCode": 0,
+      "oomKilled": false
+    },
+    "containerCleanup": {
+      "spinel-restore-browser-436e8881-fc3d-4f5f-b21b-61510ef9d5e6-bootstrap": "confirmed-absent",
+      "spinel-restore-browser-436e8881-fc3d-4f5f-b21b-61510ef9d5e6-init": "confirmed-absent",
+      "spinel-restore-browser-436e8881-fc3d-4f5f-b21b-61510ef9d5e6": "confirmed-absent"
+    },
+    "privateFixtureRetained": true,
+    "privateVolumeDisposition": "retained",
+    "readOnlyInspection": {
+      "journal": {
+        "phase": "recovery-required",
+        "lastFailure": "restore-prep-planned-authority-eacces",
+        "updatedAt": 1793331432584,
+        "hasChild": false,
+        "hasVerifier": false,
+        "hasRestoreReference": true,
+        "operation": {
+          "kind": null,
+          "phase": null
+        }
+      },
+      "jobs": [
+        {
+          "preparationDirectory": {
+            "exists": true,
+            "isDirectory": true,
+            "device": 65025,
+            "inode": 898462,
+            "childCount": 1,
+            "reconciled": [
+              {
+                "directory": true,
+                "device": 65025,
+                "inode": 898463,
+                "output": {
+                  "bytes": 573440,
+                  "device": 65025,
+                  "inode": 898471
+                }
+              }
+            ]
+          },
+          "id": "16cc0d70-1521-4cf1-9f62-e2354c0e3cdc",
+          "phase": "preparation-planned",
+          "revision": 11,
+          "updatedAt": 1793331431386,
+          "intentHash": "8984617f6c76a5fe02ce39af1f3cfbc32e4ab433df5391ae32aa477a09950845",
+          "sourceSha256": "7948af1eff31226bc1397dd532089172fb986cd5951f10f04c0620debf6157f5",
+          "executionKeys": [
+            "epoch",
+            "child",
+            "stop",
+            "requestedAt",
+            "originals",
+            "freezeSlot",
+            "frozen",
+            "preparation"
+          ],
+          "requestedAt": 1793331429979,
+          "originalStop": {
+            "present": true,
+            "fingerprint": "74446d74c0df9793a753ec0dec9d0efe73f8e73b2dc1db4f63701821cfa34ced",
+            "acceptedAt": 1793331430036
+          },
+          "originalsRetained": true,
+          "freezePlanned": true,
+          "frozen": {
+            "bytes": 565248,
+            "sha256": "ab0460c83a3854809c1d974651d991c0bddac379ad11e12480c99dc4e5ba5bb0",
+            "fingerprint": "74446d74c0df9793a753ec0dec9d0efe73f8e73b2dc1db4f63701821cfa34ced"
+          },
+          "preparation": {
+            "preparedAt": 1793331431385,
+            "candidate": null,
+            "rollback": null
+          },
+          "trial": {
+            "planned": false
+          },
+          "failure": null,
+          "rollback": null,
+          "mainReferenceMatches": true
+        }
+      ],
+      "sourceFiles": [
+        {
+          "role": "journal",
+          "bytes": 1547,
+          "sha256": "0de69eca03d88b393cde6c2d9fbab79685b6a5860183a386b0dbfde606a4e974",
+          "device": 65025,
+          "inode": 898466
+        },
+        {
+          "role": "job-state",
+          "bytes": 3146,
+          "sha256": "58773d1e55cc15332b726262ab17084e05f9f33695a7422ee51b5ccdeb9491e6",
+          "device": 65025,
+          "inode": 898449
+        }
+      ],
+      "sourceUnchanged": true
+    }
+  },
+  "observerInterference": {
+    "source": "16089ccbc4c886826e1d3527efc2649c9ba4884a",
+    "image": "sha256:e299149e024bcf56dc24d58cde5f0936f76287637b7f056d547b508e7625ee75",
+    "firstAttempt": "Inconclusive driver timeout; intermediate logs were not retained. No guard result.",
+    "elapsedMs": 12553,
+    "observerProcesses": 150,
+    "observerErrors": 0,
+    "samples": [
+      {
+        "phase": "baseline",
+        "ok": 565,
+        "failed": 0
+      },
+      {
+        "phase": "observers",
+        "ok": 3555,
+        "failed": 15
+      },
+      {
+        "phase": "settled",
+        "ok": 548,
+        "failed": 0
+      }
+    ],
+    "failures": [
+      {
+        "phase": "observers",
+        "code": "EACCES",
+        "operation": "readdirSync",
+        "pid": 124,
+        "comm": "other",
+        "syscall": "scandir"
+      },
+      {
+        "phase": "observers",
+        "code": "EACCES",
+        "operation": "readdirSync",
+        "pid": 176,
+        "comm": "cat",
+        "syscall": "scandir"
+      },
+      {
+        "phase": "observers",
+        "code": "EACCES",
+        "operation": "readdirSync",
+        "pid": 300,
+        "comm": "other",
+        "syscall": "scandir"
+      },
+      {
+        "phase": "observers",
+        "code": "EACCES",
+        "operation": "readdirSync",
+        "pid": 318,
+        "comm": "other",
+        "syscall": "scandir"
+      },
+      {
+        "phase": "observers",
+        "code": "EACCES",
+        "operation": "readdirSync",
+        "pid": 325,
+        "comm": "other",
+        "syscall": "scandir"
+      },
+      {
+        "phase": "observers",
+        "code": "EACCES",
+        "operation": "readdirSync",
+        "pid": 358,
+        "comm": "other",
+        "syscall": "scandir"
+      },
+      {
+        "phase": "observers",
+        "code": "EACCES",
+        "operation": "readdirSync",
+        "pid": 434,
+        "comm": "other",
+        "syscall": "scandir"
+      },
+      {
+        "phase": "observers",
+        "code": "EACCES",
+        "operation": "readdirSync",
+        "pid": 531,
+        "comm": "other",
+        "syscall": "scandir"
+      },
+      {
+        "phase": "observers",
+        "code": "EACCES",
+        "operation": "readdirSync",
+        "pid": 699,
+        "comm": "other",
+        "syscall": "scandir"
+      },
+      {
+        "phase": "observers",
+        "code": "EACCES",
+        "operation": "readdirSync",
+        "pid": 718,
+        "comm": "other",
+        "syscall": "scandir"
+      },
+      {
+        "phase": "observers",
+        "code": "EACCES",
+        "operation": "readdirSync",
+        "pid": 863,
+        "comm": "sh",
+        "syscall": "scandir"
+      },
+      {
+        "phase": "observers",
+        "code": "EACCES",
+        "operation": "readdirSync",
+        "pid": 875,
+        "comm": "other",
+        "syscall": "scandir"
+      },
+      {
+        "phase": "observers",
+        "code": "EACCES",
+        "operation": "readdirSync",
+        "pid": 893,
+        "comm": "other",
+        "syscall": "scandir"
+      },
+      {
+        "phase": "observers",
+        "code": "EACCES",
+        "operation": "readdirSync",
+        "pid": 905,
+        "comm": "other",
+        "syscall": "scandir"
+      },
+      {
+        "phase": "observers",
+        "code": "EACCES",
+        "operation": "readdirSync",
+        "pid": 941,
+        "comm": "ls",
+        "syscall": "scandir"
+      }
+    ],
+    "allFailurePidsCorrelate": true,
+    "limitation": "Proves this observer mechanism can cause guard refusals; historical da/160 failing PID was not captured."
+  },
+  "observerIsolation": {
+    "source": "16089ccbc4c886826e1d3527efc2649c9ba4884a",
+    "image": "sha256:e299149e024bcf56dc24d58cde5f0936f76287637b7f056d547b508e7625ee75",
+    "metadataReadCycles": 25,
+    "proof": {
+      "event": "result",
+      "ok": 3252,
+      "failures": []
+    },
+    "namespaces": {
+      "serving": "pid:[4026532568]",
+      "observer": "pid:[4026532702]"
+    },
+    "profile": {
+      "memoryBytes": 33554432,
+      "swapBytes": 0,
+      "cpus": 0.1,
+      "pids": 16,
+      "network": "none",
+      "volumeReadOnly": true
+    },
+    "peakBytes": 11587584,
+    "observerClosed": true,
+    "idempotentClose": true,
+    "absenceConfirmed": true,
+    "scope": "Separate read-only metadata observer, not part of serving cgroup. Production guards unchanged. Isolation preceded subsequent cleanup/privacy hardening; final5 Node regressions cover hardening.",
+    "finalSourceHashes": {
+      "e2e/restore-observer.ts": "3426952d21f3603701ac5c286032eb8acbdb427878e07a52f28fe91e54a916e3",
+      "e2e/restore-browser.acceptance.ts": "6d9365b3e0dab5a5e5ffdfd33b9ebbcf48b841a54488fdd91d3a253c9baa983b",
+      "scripts/ci/restore-observer.test.ts": "b55c5e1911b4246064cff0b9cf6bb6173ffde0e95fba774bb44a798609a65ca7"
+    },
+    "regressions": {
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "durationMs": 82.01075,
+      "logSha256": "baee32ceabe81846682e30e1fe3264b1cbd74d66a91a55f69903bd187b3d9694",
+      "hostPeak": "Unmeasured: completed before2-second watchdog sample; printed0MiB is not zero footprint."
+    },
+    "review": "B independently closed cleanup/privacy findings; agent review only, not whole-ticket grade."
+  },
+  "productionBuild160": {
+    "firstAttempt": {
+      "source": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "context": "/var/folders/ps/901m_rt10gq_nlynvsf_r82m0000gn/T/spinel112-production-da-mr2pkqck",
+      "passed": false,
+      "stage": "Pinned Node base layer before app source copy/npm/build",
+      "error": "short read: expected 55892324 bytes but got 7772923: unexpected EOF",
+      "layer": "sha256:cff4327141a2d5ef9643dfe8f22d398ae41dfddd10f8259453d938fa4c325f0b",
+      "base": "node:26.12.1-bookworm-slim@sha256:28147155d47dc31abe0a46e0d12b59b2fb3d0a2dcc5dc65fce76a074180b16fe",
+      "memoryPeakBytes": 191279104,
+      "memoryEvents": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+      "memoryLimitBytes": 1887436800,
+      "swapLimitBytes": 0,
+      "cpuMax": "200000 100000",
+      "hostClientPeakMiB": 162,
+      "imageProduced": false,
+      "browserRunStarted": false,
+      "contextSourcesUnchanged": 1937
+    },
+    "secondAttempt": {
+      "source": "da57183b96b03a43c58e7ec524877d49828ccb23",
+      "context": "/var/folders/ps/901m_rt10gq_nlynvsf_r82m0000gn/T/spinel112-production-da-mr2pkqck",
+      "image": "sha256:629bfffd0ddc352964452caa329b0e52a0ae7aae3b9dd0a9078c832876ab1d2a",
+      "passed": true,
+      "attempt": 2,
+      "firstFailurePreserved": "/tmp/spn112-da-production-build.json",
+      "builder": "spinel112-production-da-retry2",
+      "memoryLimitBytes": 1887436800,
+      "swapLimitBytes": 0,
+      "cpuMax": "200000 100000",
+      "memoryPeakBytes": 1887436800,
+      "memoryEvents": "low 0\nhigh 0\nmax 335\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+      "hostClientPeakMiB": 184
+    }
+  },
+  "browserCurrent": {
+    "source": "280d2e72ee07c3f11c3b62049adf57ee2e17fb56",
+    "image": "sha256:0269317f66cdb230a9b41f7cff46e2aafb813efddd4480e58f99d7ba1e8d4fdc",
+    "passed": true,
+    "elapsedMs": 89510,
+    "pageErrors": 0,
+    "scope": "Real production Admin browser flow with synthetic CDP passkey, Linux controller and disposable HTTPS proxy; not physical-device or remote-provider acceptance",
+    "shippedCli": {
+      "initial": "recovery-required",
+      "verify": true,
+      "start": true,
+      "resume": "running"
+    },
+    "richWorkspace": {
+      "sheetContent": true,
+      "docContent": true,
+      "imageSha256": "49e0f79025c2f68f9e0b1a2d6caf30ea62643c2d4be76a3f43f25125825fef91",
+      "historyCheckpoint": true,
+      "retainedViewer": true,
+      "revokedGrantDenied": true,
+      "viewerWriteDenied": true,
+      "revokedGuestDenied": true,
+      "acknowledgedOldCreationRetryDenied": true,
+      "nativeGenerationRenewed": true,
+      "restoredContentUnchanged": true,
+      "documentSnapshotSha256": "9860607f54b0019c25ac7a3454f12539301e0fff96f73a2320214f05489c220f",
+      "sheetSnapshotSha256": "7f1a17913f91a8a03cf54b3bd2c4ef7a275a7c13c6a923245f6b701b6d99e0fc"
+    },
+    "nativeRendering": {
+      "ownerDoc": true,
+      "ownerSheet": true,
+      "readerDoc": true,
+      "visibleDocumentInkPixels": 534,
+      "archivedImageRendered": true,
+      "documentNativeCopy": true,
+      "sheetA1NativeCopy": "Archived budget value",
+      "originalOwnerSessionExcluded": true
+    },
+    "servingResources": {
+      "memoryLimitBytes": 1073741824,
+      "swapLimitBytes": 0,
+      "cpuMax": "75000 100000",
+      "pidsMax": 128,
+      "memoryPeakBytes": 332079104,
+      "memoryCurrentBytes": 209756160,
+      "peakScope": "Serving cgroup through pre-shutdown observation; excludes separate observer and later cold helper"
+    },
+    "observer": {
+      "scope": "Separate read-only metadata observer; excluded from serving cgroup measurements",
+      "sqliteOpened": false,
+      "identity": {
+        "containerId": "312f502b787f19e38b7325c8c8ec6c03bccde55a7d63b47a9aad622469602fd9",
+        "name": "spinel-restore-browser-11fae6d8-fe52-47b3-b95d-2d29e7ad0650-observer",
+        "image": "sha256:0269317f66cdb230a9b41f7cff46e2aafb813efddd4480e58f99d7ba1e8d4fdc",
+        "user": "501:20",
+        "hostPid": 1319,
+        "pidNamespace": "pid:[4026532704]"
+      },
+      "profile": {
+        "memoryBytes": 33554432,
+        "swapBytes": 0,
+        "cpus": 0.1,
+        "pids": 16,
+        "network": "none",
+        "volumeReadOnly": true
+      },
+      "initialResources": {
+        "memory.current": 1392640,
+        "memory.peak": 8507392,
+        "memory.max": 33554432,
+        "memory.swap.max": 0,
+        "cpu.max": "10000 100000",
+        "pids.max": 16
+      },
+      "logs": {
+        "stdoutBytes": 0,
+        "stderrBytes": 0,
+        "errorCode": null
+      },
+      "finalResources": {
+        "memory.current": 2703360,
+        "memory.peak": 11575296,
+        "memory.max": 33554432,
+        "memory.swap.max": 0,
+        "cpu.max": "10000 100000",
+        "pids.max": 16
+      },
+      "beforeClosure": {
+        "running": true,
+        "pid": 1319,
+        "exitCode": 0,
+        "oomKilled": false
+      },
+      "closure": {
+        "running": false,
+        "pid": 0,
+        "exitCode": 0,
+        "oomKilled": false
+      },
+      "absenceConfirmed": true
+    },
+    "bootstrapClosure": {
+      "running": false,
+      "pid": 0,
+      "exitCode": 0,
+      "oomKilled": false
+    },
+    "supervisorClosure": {
+      "running": false,
+      "pid": 0,
+      "exitCode": 0,
+      "oomKilled": false
+    },
+    "coldClosure": {
+      "running": false,
+      "pid": 0,
+      "exitCode": 0,
+      "oomKilled": false
+    },
+    "closedProof": {
+      "committed": true,
+      "restoredContent": true,
+      "originalSessionExcluded": true,
+      "counter": 4,
+      "helperRunId": "3b09c428-f9fa-4927-92a1-65f668d40b48",
+      "sourceUnchanged": true,
+      "sourceGroup": {
+        "workspace.sqlite": {
+          "device": "65025",
+          "inode": "901035",
+          "bytes": 573440,
+          "mtime": 1793334156502.159,
+          "ctime": 1793334156502.159,
+          "sha256": "ef7f422b62f54e514e2a0d66eb76f07db7405e66882c4c0ea37ff7132e53455b"
+        },
+        "workspace.sqlite-wal": null,
+        "workspace.sqlite-shm": null
+      },
+      "copiedGroup": {
+        "workspace.sqlite": {
+          "device": "53",
+          "inode": "901112",
+          "bytes": 573440,
+          "mtime": 1793334157981.159,
+          "ctime": 1793334157981.159,
+          "sha256": "ef7f422b62f54e514e2a0d66eb76f07db7405e66882c4c0ea37ff7132e53455b"
+        },
+        "workspace.sqlite-wal": null,
+        "workspace.sqlite-shm": null
+      },
+      "copySidecarsAfterFirstSelect": {
+        "workspace.sqlite-wal": {
+          "present": true,
+          "bytes": 0
+        },
+        "workspace.sqlite-shm": {
+          "present": true,
+          "bytes": 32768
+        }
+      },
+      "memoryLimitBytes": 1073741824,
+      "swapLimitBytes": 0,
+      "cpuMax": "75000 100000",
+      "pidsMax": 128,
+      "memoryPeakBytes": 332079104,
+      "memoryCurrentBytes": 209756160,
+      "peakScope": "Serving cgroup through pre-shutdown observation; excludes separate observer and later cold helper"
+    },
+    "containerCleanup": {
+      "spinel-restore-browser-11fae6d8-fe52-47b3-b95d-2d29e7ad0650-bootstrap": "confirmed-absent",
+      "spinel-restore-browser-11fae6d8-fe52-47b3-b95d-2d29e7ad0650-init": "confirmed-absent",
+      "spinel-restore-browser-11fae6d8-fe52-47b3-b95d-2d29e7ad0650-cold": "confirmed-absent",
+      "spinel-restore-browser-11fae6d8-fe52-47b3-b95d-2d29e7ad0650": "confirmed-absent"
+    },
+    "privateFixtureRetained": false,
+    "privateVolumeDisposition": "removed",
+    "sourceClosure": {
+      "source": "280d2e72ee07c3f11c3b62049adf57ee2e17fb56",
+      "image": "sha256:0269317f66cdb230a9b41f7cff46e2aafb813efddd4480e58f99d7ba1e8d4fdc",
+      "sourceFiles": 2040,
+      "installedLibraryFiles": 222,
+      "unchanged": true,
+      "captures": {
+        "prepared-source-light.png": "0b35f8c7cf1e60838128078fa975fdd869c5f9e0ae1c065c8eef051b6c7173e6",
+        "prepared-source-dark.png": "05bd387acc83ca7da4b4c246d6b4c5b90d8d4a0e36ef34210edc911a52114724",
+        "prepared-source-phone.png": "f80c053b2b5a2f432c7220c1f397bd0e471cf612b48a3ab658a52f8f124e98ec",
+        "loss-confirmation-light.png": "36f8b0588a14919cc10fa09ec2578ef2d73e153dc197f2cd471a2852994369da",
+        "loss-confirmation-dark.png": "a313350d61880f943b326363b9d6aaaf7a149070dd34b31238debf68b9941811",
+        "loss-confirmation-phone.png": "d63fbfa259d742328508180c53437a31181c617a9564a3f86220b103152d8c10",
+        "restored-after-sign-in-light.png": "d4be6abb397035b7f8f368b4f10a3d14cb5ac98c4ec7b82d05a091ebd79ae4c8",
+        "restored-after-sign-in-dark.png": "7e8a7ea7821ef9faa12cf75af926d36d35a35b9ea1bda8f39d92da93d78995bc",
+        "restored-after-sign-in-phone.png": "2fb1e1cd854e97fef1949e766ad73a3e4cf959c43173404adc73255da7c6b60d",
+        "restored-owner-document-light.png": "f525d1620680c3678ac0d66d6f9586b6d9219f7c1d8c80073036541efcf7e18c",
+        "restored-owner-document-dark.png": "fe12014f5d7fba8b4ae4d7137b490d1d2c8728c2c3e1a55ecd94ff040c29bc37",
+        "restored-owner-document-phone.png": "9e36b903a772a74531cdc9fcb7208876b7d1d3bca5ec73b0056f519c0707985e",
+        "restored-owner-sheet-light.png": "6405a120b3c07ee744c7a287004672d9abe14aec16298e700d284f40ac100d25",
+        "restored-owner-sheet-dark.png": "2cbaacd74b6737362fc45523d661edae5d25aa1bdbc25c16e5a59ce23b34351d",
+        "restored-owner-sheet-phone.png": "909557b48ef0a83ae2d7a2b59a0755d271a5f41aa33a77a1702b52b41e82a00b",
+        "restored-reader-document-light.png": "87f73abd82742a23a4957bcba3015c9b344c3f9a454fa18d8ae69243fb3b5931",
+        "restored-reader-document-dark.png": "21e3ae4e0cdb344013aeefef7db7f2cd8654c83e3b1003260a1a7909b423a3f0",
+        "restored-reader-document-phone.png": "357008b4117a9c47dc7233273e566a69861ea64a319d84c87b06c126ad8fcd7d"
+      },
+      "captureCount": 18
+    },
+    "evidenceBundle": "../review-assets/spn-112/actual-280-evidence.zip",
+    "evidenceBundleSha256": "d8ca61569b98ab65e73c756418f322887d3d0a966e66ae213af91a690e62fb3e",
+    "evidenceSha256": "9f5927b18f2ce68735eb4ee6c933e364a6df9a5b14919fea37a89b1f8ef34b72",
+    "review": "D inspected all 18 and approved current actual visuals; agent review only. B independently verified acceptance/source/resource/closure evidence."
+  },
+  "provider636": {
+    "runId": 41003825864,
+    "jobId": 123894074553,
+    "head": "63603dceabc9dcdbaea10749551dad3646032f33",
+    "artifactId": 12954652082,
+    "artifactZipSha256": "f1d42b75300d1f665331473c4c3b1cbf38ff69097dccd8b724d816fd80268436",
+    "result": {
+      "status": "failed",
+      "sourceCommit": "63603dceabc9dcdbaea10749551dad3646032f33",
+      "checks": [
+        "bucket-retention-policy",
+        "private-publication-and-readback",
+        "anonymous-access-denial",
+        "authenticated-download-and-encrypted-restore",
+        "paginated-complete-catalog-and-pending-cleanup",
+        "retention-and-deletion",
+        "complete-app-provider-fixture"
+      ],
+      "cleanup": "complete",
+      "archiveBytes": 663,
+      "supervisedRestore": {
+        "status": "failed",
+        "checks": ["complete-app-provider-fixture"],
+        "runtime": "real-app-child-process",
+        "imagePolicy": "synthetic-fixture",
+        "localCleanup": "safe",
+        "archiveBytes": 12315,
+        "sourceSha256": "716209a4886ca58bfeba132f47477a9ad65e83695a49aef2a17aa715e23e3999",
+        "failedStep": "provider-controller-start"
+      },
+      "failedStep": "provider-controller-start",
+      "durationMs": 4720
+    },
+    "cause": "Unproven; original step combined open/verify/start/resume/authentication. No raw diagnostic was retained.",
+    "repairEvidence": {
+      "base": "63603dceabc9dcdbaea10749551dad3646032f33",
+      "sourceHashes": {
+        ".github/workflows/spaces-acceptance.yml": "467263e973d23b38ccf3bf1a422d9844c0f475012f6178ee1e36d50822f2be4f",
+        "scripts/deploy/spaces-restore-acceptance.ts": "4f779e976ccae5ed1f0f6e863df6b930b82d937539cde4a60eb6a4368e0c105f",
+        "scripts/deploy/spaces-restore-acceptance.test.ts": "bd4e052516c98d934c74de2581f3efc9c021dd51796c6f0e82b2f3fa0e128205"
+      },
+      "originalFailureCause": "unproven",
+      "localProbes": [
+        {
+          "kind": "startup",
+          "result": {
+            "stages": ["verify", "start", "resume"],
+            "result": {
+              "status": "failed",
+              "checks": ["complete-app-provider-fixture"],
+              "runtime": "real-app-child-process",
+              "imagePolicy": "synthetic-fixture",
+              "localCleanup": "safe",
+              "archiveBytes": 12310,
+              "sourceSha256": "3c34017823f3af44eff558c26c2909045bd006da37b29af9d4fd7794cb495029",
+              "failedStep": "provider-controller-resume",
+              "failureCode": "restore-unknown-unknown",
+              "controllerPhase": "running"
+            },
+            "durationMs": 2291,
+            "expectedStop": true
+          },
+          "container": {
+            "Status": "exited",
+            "Running": false,
+            "Pid": 0,
+            "ExitCode": 0,
+            "OOMKilled": false
+          },
+          "limits": {
+            "Memory": 1887436800,
+            "MemorySwap": 1887436800,
+            "NanoCpus": 2000000000,
+            "PidsLimit": 128
+          },
+          "scope": "Intermediate fixed-stage diagnostic overlay; actual seed/supervisor/app/auth, synthetic fake publication, no provider network; expected deliberate stop is not complete restore acceptance."
+        },
+        {
+          "kind": "auth",
+          "result": {
+            "stages": ["verify", "start", "resume"],
+            "result": {
+              "status": "failed",
+              "checks": ["complete-app-provider-fixture"],
+              "runtime": "real-app-child-process",
+              "imagePolicy": "synthetic-fixture",
+              "localCleanup": "safe",
+              "archiveBytes": 12309,
+              "sourceSha256": "cb59bf658c54fcd1ba24480bb2fb6841449290fa555f56e8678ff6f49a7284b5",
+              "failedStep": "operator-provider-catalog",
+              "failureCode": "restore-unknown-unknown",
+              "controllerPhase": "running"
+            },
+            "durationMs": 1669,
+            "expectedStop": true
+          },
+          "container": {
+            "Status": "exited",
+            "Running": false,
+            "Pid": 0,
+            "ExitCode": 0,
+            "OOMKilled": false
+          },
+          "limits": {
+            "Memory": 1887436800,
+            "MemorySwap": 1887436800,
+            "NanoCpus": 2000000000,
+            "PidsLimit": 128
+          },
+          "scope": "Intermediate fixed-stage diagnostic overlay; actual seed/supervisor/app/auth, synthetic fake publication, no provider network; expected deliberate stop is not complete restore acceptance."
+        }
+      ],
+      "checks": {
+        "scopedTests": "11/11",
+        "typecheck": "passed; sampled 1615 MiB",
+        "lint": "passed",
+        "format": "passed",
+        "diffCheck": "passed"
+      }
+    },
+    "review": "B independently approved safe diagnostics/unchanged namespace wrapper and cleanup boundaries; agent review only, no provider pass."
+  },
+  "unit636": {
+    "runId": 41003825891,
+    "jobId": 123894159219,
+    "conclusion": "cancelled",
+    "startedAt": "2026-10-30T04:36:43Z",
+    "completedAt": "2026-10-30T04:46:58Z",
+    "reason": "Job reached its 10-minute wall-clock cap. 117 supervisor cases passed in 342709 ms; 32 files reported with no assertion failure before cancellation. Whole suite did not complete.",
+    "logSha256": "8542893f866cbc43c87522173357e645b312ee181610d94e48855c0d7e9b75a3",
+    "repair": "Job cap 15 minutes; individual test limits/assertions unchanged."
+  },
+  "provider2c6": {
+    "runId": 41005346893,
+    "jobId": 123898882208,
+    "attempt": 1,
+    "head": "2c63feac6d5d8fdc4a699a2a20ae9b326c4bb2c1",
+    "artifactId": 12955426900,
+    "artifactZipSha256": "04e55ecb6377d87da25a19dcf2e4ebdddf2b0ba6786e4a9eca8bd7fe69c1ee6a",
+    "result": {
+      "status": "passed",
+      "sourceCommit": "2c63feac6d5d8fdc4a699a2a20ae9b326c4bb2c1",
+      "checks": [
+        "bucket-retention-policy",
+        "private-publication-and-readback",
+        "anonymous-access-denial",
+        "authenticated-download-and-encrypted-restore",
+        "paginated-complete-catalog-and-pending-cleanup",
+        "retention-and-deletion",
+        "complete-app-provider-fixture",
+        "operator-provider-catalog",
+        "catalog-source-preparation",
+        "catalog-confirmation-and-private-release",
+        "provider-restore-session-revocation-and-outcome",
+        "provider-restored-content-and-current-passkey"
+      ],
+      "cleanup": "complete",
+      "archiveBytes": 663,
+      "supervisedRestore": {
+        "status": "passed",
+        "checks": [
+          "complete-app-provider-fixture",
+          "operator-provider-catalog",
+          "catalog-source-preparation",
+          "catalog-confirmation-and-private-release",
+          "provider-restore-session-revocation-and-outcome",
+          "provider-restored-content-and-current-passkey"
+        ],
+        "runtime": "real-app-child-process",
+        "imagePolicy": "synthetic-fixture",
+        "localCleanup": "safe",
+        "archiveBytes": 12309,
+        "sourceSha256": "dae5ab1682138533a9d797e71df05fb1c561c4110e75fbaf5dc1614551da05b2"
+      },
+      "durationMs": 13088
+    }
+  },
+  "unit2c6": {
+    "runId": 41005346913,
+    "attempts": [
+      {
+        "attempt": 1,
+        "jobId": 123899898299,
+        "conclusion": "cancelled",
+        "startedAt": "2026-10-30T04:59:56Z",
+        "completedAt": "2026-10-30T05:15:11Z"
+      },
+      {
+        "attempt": 2,
+        "jobId": 123923216686,
+        "conclusion": "cancelled",
+        "startedAt": "2026-10-30T06:16:25Z",
+        "completedAt": "2026-10-30T06:31:41Z"
+      }
+    ],
+    "reason": "Serial vitest (maxWorkers 1) reached the 15-minute cap; 163 of 221 application files reported.",
+    "failure": "restore-http.integration public preparation key allowlist predated verification/resources fields from 121fb7f.",
+    "repair": "Allowlist plus ready-state validity assertions; three unit partitions with a required aggregate. No case, assertion or deadline changed.",
+    "localLinux": {
+      "image": "node:26.12.1-bookworm",
+      "arch": "arm64",
+      "limits": "2 GiB / 2 CPU",
+      "restoreHttpMs": 4356,
+      "neverReportedFiles": 58,
+      "neverReportedTests": 208,
+      "result": "passed",
+      "excludedSetupArtifacts": [
+        "native bindings outside repository node_modules denied by worker permissions",
+        "stale host body-parser 2.3.0 versus locked 2.4.0"
+      ]
+    }
+  }
+}

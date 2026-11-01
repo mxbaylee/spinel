@@ -6,6 +6,12 @@ import { classifyOrdinaryItems, isOrdinaryItem } from './ordinary-scope.ts';
 import { FileTrash } from './file-trash.ts';
 import { SpaceExpiry } from './space-expiry.ts';
 import { DAY_MS, TRASH_RETENTION_MS } from './trash-retention.ts';
+import {
+  cleanRecoveryHolds,
+  recoveryHoldAncestorsSql,
+  recoveryProtected,
+  recoveryProtectedItems,
+} from './recovery-holds.ts';
 import { observeJob } from '../health/jobs.ts';
 import type { ObserveJob } from '../health/jobs.ts';
 
@@ -41,6 +47,10 @@ export class TrashStore {
     // Internal recovery has its own boundary. Filter before names, tags, counts
     // or confirmation generations can escape through ordinary My files Trash.
     const rows = found.filter((item) => ordinary.has(item.id));
+    const protectedItems = recoveryProtectedItems(
+      database,
+      rows.map((item) => item.id),
+    );
     const tags = database.prepare(
       'SELECT name FROM workspace_tag_assignments WHERE user_id=? AND item_id=? ORDER BY name LIMIT ?',
     );
@@ -56,6 +66,7 @@ export class TrashStore {
           ...item,
           tags: names.map((tag) => String(tag.name)),
           expiresAt: item.trashedAt + TRASH_RETENTION_MS,
+          ...(protectedItems.has(item.id) ? { heldAfterRecovery: true as const } : {}),
         };
       }),
       // Bind confirmation to the exact set, including deletion generations, not just its count.
@@ -102,7 +113,10 @@ export class TrashStore {
       if (!item || !isOrdinaryItem(auth.database, id))
         throw new AuthError(404, 'This item is not in your trash.');
       this.requireOrdinarySubtree(id);
-      if (item.trashed_at + TRASH_RETENTION_MS <= auth.now())
+      if (
+        item.trashed_at + TRASH_RETENTION_MS <= auth.now() &&
+        !recoveryProtected(auth.database, id)
+      )
         throw new AuthError(409, 'The 30-day recovery period has ended.');
       const parent =
         item.parent_id &&
@@ -126,6 +140,7 @@ export class TrashStore {
       ) UPDATE workspace_items SET trashed_at=NULL,trash_batch=NULL WHERE id IN (SELECT id FROM subtree)`,
         )
         .run(id, owner, item.trash_batch);
+      cleanRecoveryHolds(auth.database);
       return this.workspace.get(owner, id);
     });
   }
@@ -147,17 +162,21 @@ export class TrashStore {
       const membership = this.membership('workspace_items');
       const expired = auth.database
         .prepare(
-          `SELECT id FROM workspace_items WHERE trashed_at<=? AND kind<>'space' ${membership}
+          `${recoveryHoldAncestorsSql} SELECT id FROM workspace_items WHERE trashed_at<=? AND kind<>'space' ${membership}
+          AND id NOT IN (SELECT id FROM recovery_hold_ancestors)
           ${this.workspace.spacesEnabled ? '' : 'AND NOT EXISTS(SELECT 1 FROM workspace_retained_trash_batches b WHERE b.batch=workspace_items.trash_batch)'} LIMIT ?`,
         )
         .all(auth.now() - TRASH_RETENTION_MS, MAX_TRASH_ITEMS + 1) as { id: string }[];
-      return this.deleteRows(expired.map((item) => item.id));
+      return this.deleteRows(
+        expired.map((item) => item.id),
+        true,
+      );
     });
     if (spaces.failed)
       throw new Error(`Trash cleanup retained ${spaces.failed} invalid Space groups.`);
     return ordinary + spaces.count;
   }
-  private deleteRows(ids: string[]) {
+  private deleteRows(ids: string[], automatic = false) {
     const db = this.workspace.auth.database;
     if (!ids.length) return 0;
     const graph = this.subtree(ids);
@@ -173,6 +192,11 @@ export class TrashStore {
     // Propagate hidden descendants to their ancestors once, then retain every
     // node of each affected requested subtree. No ancestry is re-read per leaf.
     const unsafe = new Set(graph.filter((row) => !ordinary.has(row.id)).map((row) => row.id));
+    if (automatic) {
+      const held = db.prepare(`SELECT 1 FROM workspace_items i JOIN workspace_recovery_holds h
+        ON h.batch=i.trash_batch WHERE i.id=? AND i.trashed_at IS NOT NULL`);
+      for (const row of graph) if (held.get(row.id)) unsafe.add(row.id);
+    }
     const ancestors = [...unsafe];
     while (ancestors.length) {
       const parent = parents.get(ancestors.pop()!);
@@ -215,6 +239,7 @@ export class TrashStore {
     for (const id of order)
       if (remove.run(id).changes !== 1)
         throw new Error('Trash hierarchy could not be purged safely.');
+    cleanRecoveryHolds(db);
     return order.length;
   }
   private subtree(ids: readonly string[]): TreeRow[] {

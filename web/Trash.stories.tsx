@@ -56,6 +56,38 @@ export const WithItems: Story = {
     );
   },
 };
+export const HeldAfterRecovery: Story = {
+  parameters: {
+    api: {
+      'GET /api/items/trash': {
+        items: [
+          { ...trashed(7, 'Recovered journal', 'doc', 90), heldAfterRecovery: true },
+          items[3],
+        ],
+        version: 'recovery-hold',
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(
+      await canvas.findByRole('button', { name: 'Restore Recovered journal' }),
+    ).toBeEnabled();
+    await expect(canvas.getByText(/Held after workspace recovery/)).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Restore Scratch notes' })).toBeDisabled();
+  },
+};
+export const ConfirmEmptyHeldItems: Story = {
+  parameters: HeldAfterRecovery.parameters,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByRole('button', { name: 'Restore Recovered journal' });
+    await userEvent.click(canvas.getByRole('button', { name: 'Empty trash' }));
+    await expect(
+      await within(document.body).findByRole('button', { name: 'Permanently delete 2 items' }),
+    ).toBeEnabled();
+  },
+};
 /** Empty trash is disabled when there is nothing to delete. */
 export const Empty: Story = {
   parameters: { api: { 'GET /api/items/trash': { items: [], version: 'v0' } } },

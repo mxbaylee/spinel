@@ -119,19 +119,24 @@ test('wrong keys, ciphertext/tag/header tampering and truncation never publish a
   cleanups.push(backup.dispose);
   const bytes = await readFile(backup.archive),
     output = join(f.directory, 'bad');
+  const unreadable = { code: 'backup-unreadable' };
   await expect(
     restoreArchive(backup.archive, randomBytes(32), f.directory, output),
-  ).rejects.toThrow();
+  ).rejects.toMatchObject(unreadable);
   for (const index of [0, 8, 30, bytes.length - 1]) {
     const changed = Buffer.from(bytes);
     changed[index] ^= 1;
     const corrupt = join(f.directory, `corrupt-${index}`);
     await writeFile(corrupt, changed);
-    await expect(restoreArchive(corrupt, key, f.directory, output)).rejects.toThrow();
+    await expect(restoreArchive(corrupt, key, f.directory, output)).rejects.toMatchObject(
+      unreadable,
+    );
   }
   const truncated = join(f.directory, 'truncated');
   await writeFile(truncated, bytes.subarray(0, 25));
-  await expect(restoreArchive(truncated, key, f.directory, output)).rejects.toThrow();
+  await expect(restoreArchive(truncated, key, f.directory, output)).rejects.toMatchObject(
+    unreadable,
+  );
   expect(
     (await readdir(f.directory)).filter((x) => x.startsWith('.restore-') || x === 'bad'),
   ).toEqual([]);
