@@ -94,12 +94,17 @@ export class DocumentStore {
     mime: string,
     customData: Record<string, unknown> = {},
   ) {
-    validateDocumentCredentials(this.workspace, owner, customData, true);
+    const credential = validateDocumentCredentials(this.workspace, owner, customData, true);
     // Retain the admitted credential and exact child through both decode awaits.
     const custom = Object.freeze({ ...customData });
     const access = () => {
       const item = resolveDocument(this.workspace, owner, id, 'edit', custom);
-      if (item.kind !== 'doc') throw new AuthError(400, 'This item is not a document.');
+      if (!['doc', 'sheet'].includes(item.kind))
+        throw new AuthError(400, 'This item cannot contain images.');
+      // SPN-068 permits account editors to add Sheet images. Existing Doc guest
+      // uploads retain their own edit grant; a Sheet edit link grants no upload.
+      if (item.kind === 'sheet' && credential === 'guest')
+        throw new AuthError(403, 'Only account editors can insert images into a Sheet.');
     };
     access();
     if (!Buffer.isBuffer(input) || !input.length || input.length > IMAGE_LIMIT)
@@ -142,7 +147,10 @@ export class DocumentStore {
           .prepare('SELECT coalesce(sum(length(data)),0) AS bytes FROM doc_images WHERE item_id=?')
           .get(id) as { bytes: number };
         if (used.bytes + bytes.length > DOCUMENT_IMAGE_LIMIT)
-          throw new AuthError(413, 'This document has reached its 50 MiB image limit.');
+          throw new AuthError(
+            413,
+            'This image would exceed this document’s 50 MiB image limit. Choose a smaller image or add it to another document.',
+          );
         db.prepare('INSERT INTO doc_images VALUES(?,?,?,?)').run(id, imageId, mime, bytes);
       }
       return { id: imageId, url: `/api/items/${id}/images/${imageId}` };

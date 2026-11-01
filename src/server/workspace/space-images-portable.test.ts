@@ -175,7 +175,7 @@ const imageRows = (db: DatabaseSync) =>
   db.prepare('SELECT * FROM doc_images ORDER BY item_id,id').all();
 
 test.each(['editor', 'admin'] as const)(
-  'Space %s image reads and Doc uploads use the current role and leave ordinary snapshots closed',
+  'Space %s image reads and Doc/Sheet uploads use the current role and leave ordinary snapshots closed',
   async (role) => {
     const f = fixture();
     f.spaces.share(f.owner.id, f.space.id, f.editor.id, role);
@@ -209,12 +209,32 @@ test.each(['editor', 'admin'] as const)(
       }),
     ).toThrow();
     expect(() => f.workspace.get(f.owner.id, f.doc.id)).toThrow();
+    const sheetImage = await f.docs.upload(
+      f.editor.id,
+      f.sheet.id,
+      bytes,
+      'image/png',
+      f.context(f.editor.id, f.sheet.id),
+    );
+    expect(sheetImage.url).toBe(`/api/items/${f.sheet.id}/images/${uploaded.id}`);
+    expect(
+      await f.docs.upload(
+        f.owner.id,
+        f.sheet.id,
+        bytes,
+        'image/png',
+        f.context(f.owner.id, f.sheet.id),
+      ),
+    ).toEqual(sheetImage);
     await expect(
-      f.docs.upload(f.owner.id, f.sheet.id, bytes, 'image/png', f.context(f.owner.id, f.sheet.id)),
+      f.docs.upload(
+        f.viewer.id,
+        f.sheet.id,
+        bytes,
+        'image/png',
+        f.context(f.viewer.id, f.sheet.id),
+      ),
     ).rejects.toThrow();
-    f.db
-      .prepare('INSERT INTO doc_images SELECT ?,id,mime,data FROM doc_images WHERE item_id=?')
-      .run(f.sheet.id, f.doc.id);
     expect(
       Buffer.from(
         f.docs.image(f.viewer.id, f.sheet.id, uploaded.id, f.context(f.viewer.id, f.sheet.id)).data,
@@ -222,6 +242,25 @@ test.each(['editor', 'admin'] as const)(
     ).toEqual(bytes);
   },
 );
+
+test('Sheet uploads require the exact Space child and admitted account credential', async () => {
+  const f = fixture();
+  const bytes = await png();
+  const custom = f.context(f.owner.id, f.sheet.id);
+  for (const invalid of [
+    {},
+    { sessionHash: f.sessions.get(f.owner.id) },
+    { spaceId: f.space.id, spaceItem: f.sheet.id },
+    { ...custom, spaceId: f.otherSpace.id },
+    { ...custom, spaceItem: f.doc.id },
+    { ...custom, sessionHash: f.sessions.get(f.editor.id) },
+    { ...custom, guestHash: 'forged', guestItem: f.space.id },
+  ])
+    await expect(
+      f.docs.upload(f.owner.id, f.sheet.id, bytes, 'image/png', invalid),
+    ).rejects.toThrow();
+  expect(imageRows(f.db)).toEqual([]);
+});
 
 test('Space images require the exact root, child and credential without borrowing an accessible sibling image', async () => {
   const f = fixture();
@@ -271,6 +310,13 @@ test('exact root guests inherit image View/Edit for future children and lose acc
   const f = fixture();
   const bytes = await png();
   const uploaded = await f.docs.upload(f.owner.id, f.doc.id, bytes, 'image/png', f.context());
+  const sheetImage = await f.docs.upload(
+    f.owner.id,
+    f.sheet.id,
+    bytes,
+    'image/png',
+    f.context(f.owner.id, f.sheet.id),
+  );
   const viewer = f.guest('viewer');
   expect(
     Buffer.from(f.docs.image(viewer.user, f.doc.id, uploaded.id, viewer.context).data),
@@ -278,6 +324,11 @@ test('exact root guests inherit image View/Edit for future children and lose acc
   await expect(
     f.docs.upload(viewer.user, f.doc.id, bytes, 'image/png', viewer.context),
   ).rejects.toThrow();
+  const viewerSheet = { ...viewer.context, spaceItem: f.sheet.id };
+  expect(f.docs.image(viewer.user, f.sheet.id, sheetImage.id, viewerSheet).mime).toBe('image/png');
+  await expect(
+    f.docs.upload(viewer.user, f.sheet.id, bytes, 'image/png', viewerSheet),
+  ).rejects.toMatchObject({ status: 403 });
   const editor = f.guest('editor');
   expect(() => f.docs.image(viewer.user, f.doc.id, uploaded.id, viewer.context)).toThrow();
   const future = f.spaces.createChild(f.owner.id, f.space.id, {
@@ -292,6 +343,14 @@ test('exact root guests inherit image View/Edit for future children and lose acc
   expect(Buffer.from(f.docs.image(editor.user, future.id, uploaded.id, custom).data)).toEqual(
     bytes,
   );
+  const editorSheet = { ...editor.context, spaceItem: f.sheet.id };
+  expect(f.docs.image(editor.user, f.sheet.id, sheetImage.id, editorSheet).mime).toBe('image/png');
+  const before = imageRows(f.db);
+  // SPN-068 keeps new Sheet images account-only while retaining Doc guest upload.
+  await expect(
+    f.docs.upload(editor.user, f.sheet.id, bytes, 'image/png', editorSheet),
+  ).rejects.toMatchObject({ status: 403 });
+  expect(imageRows(f.db)).toEqual(before);
   const wrongRoot = f.guest('editor', f.otherSpace.id);
   expect(() =>
     f.docs.image(wrongRoot.user, f.doc.id, uploaded.id, {
@@ -367,20 +426,24 @@ test.each(accessChanges)(
   },
 );
 
-test('the final image transaction checks a downgrade after full decoding', async () => {
-  const f = fixture();
-  const bytes = await png();
-  const decode = sharp.prototype.toBuffer;
-  vi.spyOn(sharp.prototype, 'toBuffer').mockImplementationOnce(async function (this: Sharp) {
-    const decoded = await decode.call(this);
-    f.spaces.share(f.owner.id, f.space.id, f.editor.id, 'viewer');
-    return decoded;
-  });
-  await expect(
-    f.docs.upload(f.editor.id, f.doc.id, bytes, 'image/png', f.context(f.editor.id)),
-  ).rejects.toThrow();
-  expect(imageRows(f.db)).toEqual([]);
-});
+test.each(['doc', 'sheet'] as const)(
+  'the final %s image transaction checks a downgrade after full decoding',
+  async (kind) => {
+    const f = fixture();
+    const id = f[kind].id;
+    const bytes = await png();
+    const decode = sharp.prototype.toBuffer;
+    vi.spyOn(sharp.prototype, 'toBuffer').mockImplementationOnce(async function (this: Sharp) {
+      const decoded = await decode.call(this);
+      f.spaces.share(f.owner.id, f.space.id, f.editor.id, 'viewer');
+      return decoded;
+    });
+    await expect(
+      f.docs.upload(f.editor.id, id, bytes, 'image/png', f.context(f.editor.id, id)),
+    ).rejects.toThrow();
+    expect(imageRows(f.db)).toEqual([]);
+  },
+);
 
 test('an in-flight upload cannot replace its revoked credential with a fresh session', async () => {
   const f = fixture();
