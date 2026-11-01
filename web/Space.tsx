@@ -733,6 +733,9 @@ export function Space({
       user={guest ? undefined : user}
       connection={connection}
       documentOpen={Boolean(visiblePage)}
+      feedbackPage={
+        visiblePage ? { fileId: visiblePage.item.id, spaceId: visiblePage.spaceId } : undefined
+      }
       onExit={exit}
       onProfile={profile}
       navigation={navigationView}
@@ -991,6 +994,7 @@ export function Space({
   return visiblePage ? (
     <EditorFrame
       offlineAccountId={!guest ? user?.id : undefined}
+      feedbackAccountId={!guest ? user?.id : undefined}
       appearanceTarget={
         !denied
           ? { ...visiblePage.item, spaceId: visiblePage.spaceId, guest: Boolean(guest) }

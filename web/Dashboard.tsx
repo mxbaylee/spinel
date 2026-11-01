@@ -1162,6 +1162,7 @@ export function Dashboard({
             appearanceTarget={current}
             appearanceDisabled={!!local || Boolean(currentCreation)}
             offlineAccountId={user.id}
+            feedbackAccountId={user.id}
             key={current.id}
             name={current.name}
             connection={local ? 'offline' : connection}

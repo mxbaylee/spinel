@@ -179,6 +179,7 @@ const modalIcons = {
   upload: 'upload',
   download: 'download',
   info: 'info',
+  feedback: 'message-square',
 } as const;
 
 export function Modal({

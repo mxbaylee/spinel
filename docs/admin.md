@@ -6,11 +6,22 @@ controls, with no query UI. Automatic records may contain user/file IDs and rout
 templates for correlation, but no document content/names, credentials or raw URLs. These
 controls do not expand document-access permissions. Validation status remains in
 [the implementation record](implementation/SPN-032.md).
-SPN-098 adds intentionally submitted feedback text to that same export, with
-availability flags on the admin user list. Truncation deletes feedback as well as
+Intentionally submitted feedback text shares that store. **People** shows a
+**Feedback available** flag with **Download user metrics** and **Download system
+metrics** for one frozen snapshot and the same displayed receipt-time span.
+The second includes all actors and unattributed system rows within that span;
+both are Operator-only. Report text and document details never appear in the
+list. Disabled members' retained reports remain downloadable. Failed flag
+loading is unknown, not an empty result. Truncation deletes feedback as well as
 logs; see [the feedback contract](implementation/SPN-098.md). Automatic document
 capture remains excluded. Health includes separate diagnostics database size/growth,
 application/collaboration storage (including WAL) and volume free space.
+
+The [feedback/download guide](diagnostics.md#send-feedback-and-compare-its-context)
+explains deliberate submissions, immutable retries, paired snapshot expiry,
+empty/feedback-only context and exact retained-row limits. An expired pair needs
+an explicit fresh preparation; an empty account selection offers no system-wide
+fallback. Downloads handed to the browser cannot be erased by truncation.
 
 The Operator's `/admin` page has People, Invites, Connections, and Backups & health
 sections. People lists every account, its Operator/Member role and active/disabled
