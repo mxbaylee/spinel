@@ -632,12 +632,14 @@ test('sequential style oracle preserves complete attributes and rejects ambiguou
 });
 
 for (const format of ['es', 'cjs'] as const) {
-  test(`${format}: stock core retains the unsafe raw sequential range split`, async () => {
+  // Both manager-source formats use the production ESM core imported above;
+  // these controls qualify the Docs guard, not a second native CJS runtime.
+  test(`${format} manager fixture: imported stock core retains the unsafe raw sequential range split`, async () => {
     const { original, patched } = prepareDocsPatch(await readBuild(format), format);
     const scenario = sequence(mixed.slice(0, 5), seed(), false);
     const fragments = (snapshot: IDocumentData) =>
-      snapshot.body!.customRanges!
-        .filter((range) => range.rangeId === 'link$1')
+      snapshot
+        .body!.customRanges!.filter((range) => range.rangeId === 'link$1')
         .map(({ startIndex, endIndex }) => [startIndex, endIndex]);
     const sequential = scenario.snapshots.at(-1)!;
     assert.deepEqual(fragments(sequential), [

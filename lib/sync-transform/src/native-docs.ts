@@ -19,11 +19,14 @@
 import {
   CustomRangeType,
   ICommandService,
+  IUndoRedoService,
   IUniverInstanceService,
   JSONX,
+  Quantity,
   shallowEqual,
   TextXActionType,
   UniverInstanceType,
+  UpdateDocsAttributeType,
 } from '@univerjs/core';
 import type {
   DocumentDataModel,
@@ -35,6 +38,7 @@ import type {
 } from '@univerjs/core';
 import {
   DocStateChangeManagerService,
+  DocStateEmitService,
   IDocStateChangeInterceptorService,
   RichTextEditingMutation,
 } from '@univerjs/docs';
@@ -67,13 +71,14 @@ function textEdits(actions: JSONXActions): Array<{ e: TextXAction[] }> {
  */
 export function canonicalDocRanges(ranges: readonly ICustomRange[]): ICustomRange[] {
   // This listener must never turn a native validation failure into an RxJS
-  // observer exception. Leave malformed input intact for native admission.
+  // observer exception. Leave malformed input intact for caller validation.
   if (
     ranges.some(
       (range) =>
         !range ||
         typeof range.rangeId !== 'string' ||
         !range.rangeId ||
+        range.rangeId.startsWith('$') ||
         !Number.isSafeInteger(range.startIndex) ||
         range.startIndex < 0 ||
         !Number.isSafeInteger(range.endIndex) ||
@@ -134,7 +139,8 @@ export function normalizeNativeDocRanges(document: DocumentDataModel): boolean {
   body(['body'], snapshot.body?.customRanges);
   for (const kind of ['headers', 'footers', 'notes'] as const)
     for (const [id, segment] of Object.entries(snapshot[kind] ?? {}))
-      body([kind, id, 'body'], segment.body?.customRanges);
+      if (segment && typeof segment === 'object')
+        body([kind, id, 'body'], segment.body?.customRanges);
   if (!changes) return false;
   document.apply(changes);
   // Flat JSON1 paths do not rebuild native cached header/footer models. Keep
@@ -142,6 +148,7 @@ export function normalizeNativeDocRanges(document: DocumentDataModel): boolean {
   const current = document.getSnapshot();
   for (const kind of ['headers', 'footers'] as const)
     for (const [id, segment] of Object.entries(current[kind] ?? {})) {
+      if (!segment || typeof segment !== 'object') continue;
       const model = document.getSelfOrHeaderFooterModel(id);
       if (model && model.getBody() !== segment.body)
         model.reset({ ...segment, id: document.getUnitId() });
@@ -155,13 +162,14 @@ export function normalizeNativeDocRanges(document: DocumentDataModel): boolean {
  * pure retains carrying one consistent hyperlink, never mixed content edits.
  */
 function repairLinkRetains(actions: TextXAction[]): TextXAction[] | undefined {
-  if (!actions.some((action) => action.len < 0)) return;
+  if (!actions.some((action) => action?.len < 0)) return;
   let cursor = 0;
   let consumed = 0;
   let identity: ICustomRange | undefined;
   const result: TextXAction[] = [];
   for (const action of actions) {
     if (
+      !action ||
       action.t !== TextXActionType.RETAIN ||
       !Number.isSafeInteger(action.len) ||
       Object.keys(action).some((key) => !['t', 'len', 'body', 'coverType'].includes(key))
@@ -181,6 +189,10 @@ function repairLinkRetains(actions: TextXAction[]): TextXAction[] | undefined {
       body.customRanges?.length !== 1 ||
       !range ||
       range.rangeType !== CustomRangeType.HYPERLINK ||
+      typeof range.rangeId !== 'string' ||
+      !range.rangeId ||
+      range.rangeId.startsWith('$') ||
+      action.coverType !== UpdateDocsAttributeType.COVER ||
       range.startIndex !== 0 ||
       range.endIndex !== action.len - 1 ||
       action.len < 1
@@ -197,8 +209,7 @@ function repairLinkRetains(actions: TextXAction[]): TextXAction[] | undefined {
     const end = cursor + action.len;
     const start = Math.max(cursor, consumed);
     if (end > start) {
-      if (start > consumed)
-        result.push({ t: TextXActionType.RETAIN, len: start - consumed });
+      if (start > consumed) result.push({ t: TextXActionType.RETAIN, len: start - consumed });
       result.push({
         ...action,
         len: end - start,
@@ -214,12 +225,13 @@ function repairLinkRetains(actions: TextXAction[]): TextXAction[] | undefined {
   return identity ? result : undefined;
 }
 
-function containsParagraphChange(actions: JSONXActions): boolean {
+function containsParagraphReplacement(actions: JSONXActions): boolean {
   return textEdits(actions).some(({ e }) =>
     e.some(
       (action) =>
-        Array.isArray(action.body?.paragraphs) &&
-        (action.t === TextXActionType.RETAIN || action.body.paragraphs.length > 0),
+        action.t === TextXActionType.RETAIN &&
+        action.coverType === UpdateDocsAttributeType.REPLACE &&
+        Array.isArray(action.body?.paragraphs),
     ),
   );
 }
@@ -227,8 +239,9 @@ function containsParagraphChange(actions: JSONXActions): boolean {
 const installed = new WeakMap<Univer, IDisposable>();
 
 /**
- * Install once, after registering the native plugins and before creating a unit.
- * The public state interceptor must be present when Docs creates its manager.
+ * Install once, after registering native plugins and before resolving the native
+ * state manager or creating any units. Its public constructor receives the
+ * composed interceptor while the UI's original IME service stays DI-owned.
  * Browser, confirmed and server replicas all use this boundary. Wire operations
  * remain native JSON1/TextX; normalization also runs after remote and undo edits.
  */
@@ -238,6 +251,12 @@ export function installNativeDocCompatibility(univer: Univer): IDisposable {
   const injector = univer.__getInjector();
   let disposed = false;
   const instances = injector.get(IUniverInstanceService);
+  if (
+    [UniverInstanceType.UNIVER_DOC, UniverInstanceType.UNIVER_SHEET].some(
+      (type) => instances.getAllUnitsForType(type).length > 0,
+    )
+  )
+    throw new Error('Install native Doc compatibility before creating any units.');
   const subscriptions = new Map<DocumentDataModel, { unsubscribe(): void }>();
   const normalizing = new Set<DocumentDataModel>();
   const watch = (document: DocumentDataModel) => {
@@ -256,25 +275,18 @@ export function installNativeDocCompatibility(univer: Univer): IDisposable {
     });
     subscriptions.set(document, subscription);
   };
-  const added = instances
-    .getTypeOfUnitAdded$<DocumentDataModel>(UniverInstanceType.UNIVER_DOC)
-    .subscribe(({ unit }) => watch(unit));
-  const removed = instances
-    .getTypeOfUnitDisposed$<DocumentDataModel>(UniverInstanceType.UNIVER_DOC)
-    .subscribe((unit) => {
-      subscriptions.get(unit)?.unsubscribe();
-      subscriptions.delete(unit);
-    });
-  for (const document of instances.getAllUnitsForType<DocumentDataModel>(UniverInstanceType.UNIVER_DOC))
-    watch(document);
+  let nativeInterceptor: IDocStateChangeInterceptorService | null = null;
   const interceptor: IDocStateChangeInterceptorService = {
-    transformChangeStateInfo(state: IDocStateChangeInfo) {
+    transformChangeStateInfo(input: IDocStateChangeInfo) {
+      // DocsUI owns this service for IME composition, including selection and
+      // layout history. Preserve its transformation and native null fallback.
+      const state = nativeInterceptor?.transformChangeStateInfo(input) ?? input;
       if (disposed) return state;
       if (
         !state.isSync &&
         !state.noHistory &&
-        (containsParagraphChange(state.redoState.actions) ||
-          containsParagraphChange(state.undoState.actions))
+        (containsParagraphReplacement(state.redoState.actions) ||
+          containsParagraphReplacement(state.undoState.actions))
       ) {
         // Native compose merges paragraph REPLACE bodies with prior formatting.
         // Keep those states as their own native history group; ordinary typing
@@ -285,7 +297,34 @@ export function installNativeDocCompatibility(univer: Univer): IDisposable {
       return state;
     },
   };
-  injector.add([IDocStateChangeInterceptorService, { useValue: interceptor }]);
+  // Compose the optional existing interceptor through the exported native
+  // constructor. Registering another provider for its single-value token would
+  // conflict with both desktop and mobile DocsUI. The manager's implementation,
+  // subscriptions, caches and disposal remain entirely native.
+  injector.replace([
+    DocStateChangeManagerService,
+    {
+      useFactory: () => {
+        nativeInterceptor = injector.get(IDocStateChangeInterceptorService, Quantity.OPTIONAL);
+        return new DocStateChangeManagerService(
+          injector.get(IUndoRedoService, Quantity.OPTIONAL),
+          injector.get(ICommandService),
+          instances,
+          injector.get(DocStateEmitService),
+          interceptor,
+        );
+      },
+    },
+  ]);
+  const added = instances
+    .getTypeOfUnitAdded$<DocumentDataModel>(UniverInstanceType.UNIVER_DOC)
+    .subscribe(({ unit }) => watch(unit));
+  const removed = instances
+    .getTypeOfUnitDisposed$<DocumentDataModel>(UniverInstanceType.UNIVER_DOC)
+    .subscribe((unit) => {
+      subscriptions.get(unit)?.unsubscribe();
+      subscriptions.delete(unit);
+    });
   const before = injector.get(ICommandService).beforeCommandExecuted((info, options) => {
     if (
       info.id !== RichTextEditingMutation.id ||

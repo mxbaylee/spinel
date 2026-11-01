@@ -56,7 +56,8 @@ function transformRichText(
   const transformed =
     side === 'right' ? (withoutWinningStyleKeys(upstream, theirs) as Op) : upstream;
   if (JSON1.type.isNoop(transformed) && !undo) return [];
-  const merged = withoutTransformClears(transformed, mine, theirs) as Op;
+  const merged = JSON1.type.normalize(withoutTransformClears(transformed, mine, theirs) as Op);
+  if (JSON1.type.isNoop(merged) && !undo) return [];
   const moved = side === 'right' ? withPeerParagraphIds(merged, theirs) : merged;
   const actions = undo ? JSON1.type.compose(undo, moved as Op) : moved;
   const { layoutState: _layoutState, ...params } = a.params;
@@ -255,12 +256,11 @@ function withoutTransformClears(op: unknown, input: unknown, peer: unknown): unk
       const own = actionAt(actions, inputPosition(peers.get(path) ?? [], from));
       if (action.coverType === 1) {
         const body = { ...action.body };
-        if (
+        const marked =
           Array.isArray(own?.body?.paragraphs) &&
           own.body.customDecorations === undefined &&
-          isEmpty(body.customDecorations)
-        )
-          delete body.customDecorations;
+          isEmpty(body.customDecorations);
+        if (marked) delete body.customDecorations;
         // Stock ActionIterator omits an empty paragraph slice. When TextX
         // carries that slice past an unstyled retain, preserve its explicit
         // replacement clear. A peer body invokes TextX's conflict semantics;
@@ -271,6 +271,13 @@ function withoutTransformClears(op: unknown, input: unknown, peer: unknown): unk
           !outputActionAt(peers.get(path) ?? [], from)?.body
         )
           body.paragraphs = [];
+        if (
+          marked &&
+          Object.entries(body).every(([key, value]) => key === 'dataStream' || value === undefined)
+        ) {
+          const { body: _body, ...retained } = action;
+          return retained;
+        }
         return { ...action, body };
       }
       const body = Object.fromEntries(
@@ -280,6 +287,13 @@ function withoutTransformClears(op: unknown, input: unknown, peer: unknown): unk
       );
       return { ...action, body };
     });
+    // Removing an internal slice marker can make a trailing retain empty.
+    // Keep future/unknown action fields rather than assuming they are inert.
+    while (
+      e.at(-1)?.t === 'r' &&
+      Object.keys(e.at(-1)!).every((key) => ['t', 'len', 'coverType'].includes(key))
+    )
+      e.pop();
     return { ...component, e };
   });
 }

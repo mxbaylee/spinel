@@ -3,10 +3,11 @@
 Operational transforms for concurrent [Univer](https://github.com/dream-num/univer)
 1.1.0 Sheet and Doc mutations, so a central sync server can merge two people's
 edits the same way on every screen. Pure TypeScript with no server, DOM or
-rendering dependency. At runtime it imports `@univerjs/core` and, for the cell
-merge, `@univerjs/sheets`; `docs`, `drawing` and `engine-formula` are peers
-too, because the transforms implement their 1.1.0 mutation formats,
-engine-formula's for defined names. The list of commands that make Univer
+rendering dependency. At runtime it imports `@univerjs/core`, `@univerjs/docs`
+for native document integration, and `@univerjs/sheets` for the cell merge.
+`drawing` and `engine-formula` are peers too, because the transforms implement
+their 1.1.0 mutation formats, engine-formula's for defined names. The list of
+commands that make Univer
 rewrite names and formulas comes from `@univerjs/sheets-formula`'s
 `UpdateDefinedNameController` and `UpdateFormulaController`.
 
