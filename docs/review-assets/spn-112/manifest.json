@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 1,
+  "review": "D independently inspected all18 current captures and verified their hashes at280d2e72; agent review only.",
+  "evidenceSha256": "9f5927b18f2ce68735eb4ee6c933e364a6df9a5b14919fea37a89b1f8ef34b72",
+  "images": [
+    {
+      "file": "actual-prepared-source-light.png",
+      "kind": "actual-browser",
+      "state": "prepared-source",
+      "theme": "light",
+      "viewport": {
+        "width": 1280,
+        "height": 1000
+      },
+      "sha256": "0b35f8c7cf1e60838128078fa975fdd869c5f9e0ae1c065c8eef051b6c7173e6",
+      "sourceSha": "280d2e72ee07c3f11c3b62049adf57ee2e17fb56",
+      "image": "sha256:0269317f66cdb230a9b41f7cff46e2aafb813efddd4480e58f99d7ba1e8d4fdc",
+      "caption": "Actual local Chromium/proxy flow with synthetic CDP passkey; not physical-device or provider evidence."
+    },
+    {
+      "file": "actual-prepared-source-dark.png",
+      "kind": "actual-browser",
+      "state": "prepared-source",
+      "theme": "dark",
+      "viewport": {
+        "width": 1280,
+        "height": 1000
+      },
+      "sha256": "05bd387acc83ca7da4b4c246d6b4c5b90d8d4a0e36ef34210edc911a52114724",
+      "sourceSha": "280d2e72ee07c3f11c3b62049adf57ee2e17fb56",
+      "image": "sha256:0269317f66cdb230a9b41f7cff46e2aafb813efddd4480e58f99d7ba1e8d4fdc",
+      "caption": "Actual local Chromium/proxy flow with synthetic CDP passkey; not physical-device or provider evidence."
+    },
+    {
+      "file": "actual-prepared-source-phone.png",
+      "kind": "actual-browser",
+      "state": "prepared-source",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 1000
+      },
+      "sha256": "f80c053b2b5a2f432c7220c1f397bd0e471cf612b48a3ab658a52f8f124e98ec",
+      "sourceSha": "280d2e72ee07c3f11c3b62049adf57ee2e17fb56",
+      "image": "sha256:0269317f66cdb230a9b41f7cff46e2aafb813efddd4480e58f99d7ba1e8d4fdc",
+      "caption": "Actual local Chromium/proxy flow with synthetic CDP passkey; not physical-device or provider evidence."
+    },
+    {
+      "file": "actual-loss-confirmation-dark.png",
+      "kind": "actual-browser",
+      "state": "loss-confirmation",
+      "theme": "dark",
+      "viewport": {
+        "width": 1280,
+        "height": 1000
+      },
+      "sha256": "a313350d61880f943b326363b9d6aaaf7a149070dd34b31238debf68b9941811",
+      "sourceSha": "280d2e72ee07c3f11c3b62049adf57ee2e17fb56",
+      "image": "sha256:0269317f66cdb230a9b41f7cff46e2aafb813efddd4480e58f99d7ba1e8d4fdc",
+      "caption": "Top of scrollable confirmation; Storybook footer capture supplies acknowledgement/actions."
+    },
+    {
+      "file": "actual-loss-confirmation-phone.png",
+      "kind": "actual-browser",
+      "state": "loss-confirmation",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 1000
+      },
+      "sha256": "d63fbfa259d742328508180c53437a31181c617a9564a3f86220b103152d8c10",
+      "sourceSha": "280d2e72ee07c3f11c3b62049adf57ee2e17fb56",
+      "image": "sha256:0269317f66cdb230a9b41f7cff46e2aafb813efddd4480e58f99d7ba1e8d4fdc",
+      "caption": "Top of scrollable confirmation; Storybook footer capture supplies acknowledgement/actions."
+    },
+    {
+      "file": "actual-restored-after-sign-in-phone.png",
+      "kind": "actual-browser",
+      "state": "restored-after-sign-in",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 1000
+      },
+      "sha256": "2fb1e1cd854e97fef1949e766ad73a3e4cf959c43173404adc73255da7c6b60d",
+      "sourceSha": "280d2e72ee07c3f11c3b62049adf57ee2e17fb56",
+      "image": "sha256:0269317f66cdb230a9b41f7cff46e2aafb813efddd4480e58f99d7ba1e8d4fdc",
+      "caption": "Actual local Chromium/proxy flow with synthetic CDP passkey; not physical-device or provider evidence."
+    },
+    {
+      "file": "actual-restored-owner-document-dark.png",
+      "kind": "actual-browser",
+      "state": "restored-owner-document",
+      "theme": "dark",
+      "viewport": {
+        "width": 1280,
+        "height": 1000
+      },
+      "sha256": "fe12014f5d7fba8b4ae4d7137b490d1d2c8728c2c3e1a55ecd94ff040c29bc37",
+      "sourceSha": "280d2e72ee07c3f11c3b62049adf57ee2e17fb56",
+      "image": "sha256:0269317f66cdb230a9b41f7cff46e2aafb813efddd4480e58f99d7ba1e8d4fdc",
+      "caption": "Actual local Chromium/proxy flow with synthetic CDP passkey; not physical-device or provider evidence."
+    },
+    {
+      "file": "actual-restored-owner-sheet-light.png",
+      "kind": "actual-browser",
+      "state": "restored-owner-sheet",
+      "theme": "light",
+      "viewport": {
+        "width": 1280,
+        "height": 1000
+      },
+      "sha256": "6405a120b3c07ee744c7a287004672d9abe14aec16298e700d284f40ac100d25",
+      "sourceSha": "280d2e72ee07c3f11c3b62049adf57ee2e17fb56",
+      "image": "sha256:0269317f66cdb230a9b41f7cff46e2aafb813efddd4480e58f99d7ba1e8d4fdc",
+      "caption": "Actual local Chromium/proxy flow with synthetic CDP passkey; not physical-device or provider evidence."
+    },
+    {
+      "file": "actual-restored-reader-document-light.png",
+      "kind": "actual-browser",
+      "state": "restored-reader-document",
+      "theme": "light",
+      "viewport": {
+        "width": 1280,
+        "height": 1000
+      },
+      "sha256": "87f73abd82742a23a4957bcba3015c9b344c3f9a454fa18d8ae69243fb3b5931",
+      "sourceSha": "280d2e72ee07c3f11c3b62049adf57ee2e17fb56",
+      "image": "sha256:0269317f66cdb230a9b41f7cff46e2aafb813efddd4480e58f99d7ba1e8d4fdc",
+      "caption": "Retained Reader view with transient protection notice."
+    }
+  ],
+  "evidenceBundle": "actual-280-evidence.zip",
+  "evidenceBundleSha256": "d8ca61569b98ab65e73c756418f322887d3d0a966e66ae213af91a690e62fb3e",
+  "sourceClosureSha256": "165ebf9d9299642815aec378ef692aeb2ffd8515d7cc522686da1d4427cb7f17"
+}

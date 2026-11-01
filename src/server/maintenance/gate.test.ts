@@ -228,3 +228,31 @@ test('real callback body parsing works and HTTP disconnect cannot shorten async 
     ).status,
   ).toBe(503);
 });
+
+test('an independent trial latch denies work even when the bridge claims running or unavailable', () => {
+  let blocked = true;
+  let status: MaintenancePublicStatus = {
+    available: true,
+    phase: 'running',
+    epoch: 'trial',
+    notice: null,
+  };
+  const gate = new MaintenanceGate({ status: () => status } as MaintenanceBridge, () => blocked);
+  const database = new DatabaseSync(':memory:');
+  database.exec('CREATE TABLE writes(value TEXT)');
+  database.setMaintenanceGate(gate);
+  cleanups.push(() => database.close());
+  for (const available of [true, false]) {
+    status = { ...status, available };
+    expect(gate.running).toBe(false);
+    expect(() => gate.begin()).toThrow(MaintenanceError);
+    expect(gate.job(() => 'must not run')).toBeUndefined();
+    expect(() => database.prepare('INSERT INTO writes VALUES (?)').run('blocked')).toThrow(
+      MaintenanceError,
+    );
+  }
+  blocked = false;
+  status = { ...status, available: true };
+  gate.run(() => database.prepare('INSERT INTO writes VALUES (?)').run('released'));
+  expect(database.prepare('SELECT value FROM writes').all()).toEqual([{ value: 'released' }]);
+});

@@ -7,6 +7,7 @@ import { deleteSpaceItems, readSpaceStructure } from './space-structure.ts';
 import type { SpaceRecoveryRecord, SpaceStructureItem } from './space-structure.ts';
 import type { WorkspaceStore } from './store.ts';
 import { TRASH_RETENTION_MS } from './trash-retention.ts';
+import { cleanRecoveryHolds, recoveryHeld } from './recovery-holds.ts';
 
 export interface SpaceRecoveryItem {
   readonly id: string;
@@ -14,6 +15,7 @@ export interface SpaceRecoveryItem {
   readonly name: string;
   readonly trashedAt: number;
   readonly expiresAt: number;
+  readonly heldAfterRecovery?: true;
   readonly descendantCount: number;
   /** A current readable location, never a stored historical name or unchecked ID. */
   readonly originalLocation: { id: string; name: string } | null;
@@ -146,7 +148,10 @@ export class SpaceRecoveryStore {
     return auth.transaction(() => {
       const view = this.view(actorId, spaceId, 'edit');
       const record = this.record(view, itemId);
-      if (record.trashedAt + TRASH_RETENTION_MS <= auth.now())
+      if (
+        record.trashedAt + TRASH_RETENTION_MS <= auth.now() &&
+        !recoveryHeld(auth.database, record.trashBatch)
+      )
         throw new AuthError(409, 'The 30-day recovery period has ended.');
       const subtree = this.subtree(view, itemId);
       let original = this.location(view, record);
@@ -181,6 +186,7 @@ export class SpaceRecoveryStore {
         .prepare('DELETE FROM workspace_space_trash WHERE item_id=? AND space_id=?')
         .run(itemId, spaceId);
       this.order(spaceId, parentId, siblings, now);
+      cleanRecoveryHolds(auth.database);
       const restored = resolveSpaceScope(auth, actorId, spaceId, itemId, 'edit');
       const destination: 'original' | 'space-root' = original ? 'original' : 'space-root';
       return {
@@ -208,6 +214,7 @@ export class SpaceRecoveryStore {
       // The validated DFS reversed is leaf-first. Native FKs and existing cleanup
       // triggers run normally; independent recovery roots are not in this subtree.
       deleteSpaceItems(auth.database, spaceId, view.scope.ownerId, this.subtree(view, itemId));
+      cleanRecoveryHolds(auth.database);
       resolveSpaceScope(auth, actorId, spaceId, spaceId, 'owner');
       return { count: preview.counts.total };
     });
@@ -270,6 +277,9 @@ export class SpaceRecoveryStore {
       name: root.name,
       trashedAt: record.trashedAt,
       expiresAt: record.trashedAt + TRASH_RETENTION_MS,
+      ...(recoveryHeld(this.workspace.auth.database, record.trashBatch)
+        ? { heldAfterRecovery: true as const }
+        : {}),
       descendantCount: subtree.length - 1,
       originalLocation: this.location(view, record),
     };

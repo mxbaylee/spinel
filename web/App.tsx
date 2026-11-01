@@ -40,6 +40,8 @@ import { rememberedFileHref } from './fileNavigation.ts';
 import { spaceReviewReturnPath } from '../src/shared/spaceReviewRoute.ts';
 import { OfflineUnreachable } from './OfflineStatus.tsx';
 import { Rail } from './Rail.tsx';
+import { RestoreNotice } from './RestoreNotice.tsx';
+import type { RestoreNotice as RestoreNoticeDetails } from '../src/shared/restore.ts';
 import { useBrowserOnline, useServerConnection } from './useConnectionStatus.ts';
 import type { ConnectionState } from './connectionState.ts';
 import type { CatalogConnectionDetails } from './ConnectionStatus.tsx';
@@ -132,6 +134,7 @@ function AccountApp() {
   const [passkeyAccountReset, setPasskeyAccountReset] = useState(0);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
+  const [restored, setRestored] = useState<RestoreNoticeDetails | null>(null);
   const [busy, setBusy] = useState(false);
   const [finishingRecovery, setFinishingRecovery] = useState(false);
   const attempt = useRef<{ cancelled: boolean; challengeId?: string; finishing?: boolean } | null>(
@@ -225,7 +228,10 @@ function AccountApp() {
             verifyTransition();
             verifySessionEpoch();
           };
-          const { user } = await api<{ user: User }>('session', undefined, verifySession);
+          const { user, restore } = await api<{
+            user: User;
+            restore?: RestoreNoticeDetails | null;
+          }>('session', undefined, verifySession);
           verifySession();
           try {
             claimOnlineAccount(user.id);
@@ -274,6 +280,7 @@ function AccountApp() {
           verifyClaim();
           if (user.isAdmin) clearDashboardNavigation();
           else dashboardSession(user.id);
+          setRestored(restore ?? null);
           setUser(user);
           if (connectRequest && location.pathname === '/sign-in')
             location.assign(`/connect?request=${encodeURIComponent(connectRequest)}`);
@@ -670,6 +677,7 @@ function AccountApp() {
         <Space
           key={user.id}
           user={user}
+          banner={<RestoreNotice notice={restored} />}
           navigation={navigation}
           connection={browserOnline ? (editorConnection ?? serverConnection) : 'offline'}
           onExit={() => location.assign(rememberedFileHref(user.id))}
@@ -746,6 +754,7 @@ function AccountApp() {
         documentOpen={editorConnection !== null}
       />
       <div className="workspace-body">
+        {loaded && !local && <RestoreNotice notice={restored} />}
         <main>
           {!loaded ? (
             <p role="status">Loading…</p>

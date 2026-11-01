@@ -4,6 +4,7 @@ import { verifyCoverage } from './plan.ts';
 import type { SuiteId } from './plan.ts';
 
 const groups: Record<string, readonly SuiteId[]> = {
+  unit: ['unit-tests'],
   lib: ['lib-test-run'],
   browser: [
     'backlog',
@@ -21,7 +22,7 @@ const groups: Record<string, readonly SuiteId[]> = {
 };
 if (import.meta.main) {
   const group = process.argv[2];
-  if (!group || !groups[group]) throw new Error('Expected lib or browser aggregate.');
+  if (!group || !groups[group]) throw new Error('Expected unit, lib or browser aggregate.');
   const raw = process.env.COVERAGE_PLAN ?? '';
   let report: unknown;
   let passed = false;

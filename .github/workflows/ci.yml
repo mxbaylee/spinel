@@ -158,58 +158,102 @@ jobs:
         if: needs.changes.outputs.typecheck == 'false'
         run: echo 'Not applicable — only allowlisted documentation changed; Backlog and Lint still run.'
 
-  unit-tests:
-    name: ${{ needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata' && 'Metadata only - Unit tests' || 'Unit tests' }}
+  # Separate runners retain maxWorkers: 1 and every case/assertion. Real restore
+  # lifecycle cases include bounded physical shutdown/closure waits: the
+  # 117-case supervisor file alone measured 343s and maintenance/backup another
+  # ~260s, so one serial job could not finish within its hosted cap (SPN-112).
+  unit-test-run:
+    name: ${{ needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata' && 'Metadata only - Unit tests' || 'Unit tests' }} (${{ matrix.suite }})
     needs: changes
-    if: always() && (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
+    if: needs.changes.outputs.unit_tests == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-    outputs:
-      evidence: ${{ steps.unit.outcome }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [supervisor, recovery, remaining]
     steps:
-      - name: Require complete applicability
-        env:
-          CLASSIFICATION: ${{ needs.changes.result }}
-          SELECTED: ${{ needs.changes.outputs.unit_tests }}
-        run: |
-          case "$CLASSIFICATION:$SELECTED" in
-            success:true|success:false) ;;
-            *) echo 'Missing successful applicability decision.' >&2; exit 1 ;;
-          esac
-      - if: needs.changes.outputs.unit_tests == 'true'
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-      - if: needs.changes.outputs.unit_tests == 'true'
-        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
       - name: Install
-        if: needs.changes.outputs.unit_tests == 'true'
         run: npm ci
-      # lib/ runs in separate partitions below.
       - name: Install fixture init
-        if: needs.changes.outputs.unit_tests == 'true'
         run: |
           node scripts/ci/prefer-ubuntu-archive.ts
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends tini
+      # lib/ runs in its own partitions below.
       - name: Unit tests
-        id: unit
-        if: needs.changes.outputs.unit_tests == 'true'
-        run: node scripts/ci/pid-namespace.ts npm test -- --exclude 'lib/**'
+        env:
+          SUITE: ${{ matrix.suite }}
+        run: |
+          case "$SUITE" in
+            supervisor)
+              node scripts/ci/pid-namespace.ts npx vitest run src/server/maintenance/supervisor.test.ts
+              ;;
+            recovery)
+              node scripts/ci/pid-namespace.ts npx vitest run src/server/maintenance/ src/server/backup/ \
+                --exclude 'src/server/maintenance/supervisor.test.ts'
+              ;;
+            remaining)
+              # Exact exclusions keep future test files in this partition; it
+              # also runs the node:test script suites.
+              node scripts/ci/pid-namespace.ts npm test -- --exclude 'lib/**' \
+                --exclude 'src/server/maintenance/**' \
+                --exclude 'src/server/backup/**'
+              ;;
+            *)
+              echo "Unknown unit partition: $SUITE" >&2
+              exit 1
+              ;;
+          esac
       - name: PDF collaboration overlap evidence
-        if: always() && needs.changes.outputs.unit_tests == 'true'
+        if: always() && matrix.suite == 'remaining'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: pdf-collaboration-overlap
           path: output/pdf/spn-075-overlap/
           retention-days: 7
           if-no-files-found: warn
-      - name: Documentation-only change
-        if: needs.changes.outputs.unit_tests == 'false'
-        run: echo 'Not applicable — only allowlisted documentation changed; Backlog and Lint still run.'
+
+  # Keep the policy-required check available for branch protection, including
+  # explicit non-applicable runs. Every required partition must succeed.
+  unit-tests:
+    name: ${{ needs.changes.result == 'success' && needs.changes.outputs.mode == 'metadata' && 'Metadata only - Unit tests' || 'Unit tests' }}
+    needs: [changes, unit-test-run]
+    if: always() && (needs.changes.result != 'success' || needs.changes.outputs.mode != 'metadata')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      evidence: ${{ needs.unit-test-run.result }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Verify selected evidence and publish result
+        env:
+          CLASSIFICATION: ${{ needs.changes.result }}
+          COVERAGE_PLAN: ${{ needs.changes.outputs.plan }}
+          COVERAGE_PLAN_SHA256: ${{ needs.changes.outputs.plan_sha256 }}
+          COVERAGE_RESULTS: '{"unit-tests":"${{ needs.unit-test-run.result }}"}'
+        run: node scripts/ci/coverage-result.ts unit
+      - name: Retain coverage result
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ci-results-unit
+          path: ci-results-unit.json
+          retention-days: 30
+          if-no-files-found: warn
 
   # Separate runners retain maxWorkers: 1 and every seed/assertion. The mixed
   # native-history/intent matrix has its own runner so it does not consume the
@@ -361,6 +405,7 @@ jobs:
           - { project: sync-soak-sheet, shard: '' }
           - { project: sync-soak-doc, shard: '' }
           - { project: offline-upgrade, shard: '' }
+          - { project: supervised-restore, shard: '' }
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -376,7 +421,7 @@ jobs:
           node scripts/ci/prefer-ubuntu-archive.ts
           npx playwright install --with-deps chromium
       - name: Install maintenance fixture init
-        if: matrix.project == 'production'
+        if: matrix.project == 'production' || matrix.project == 'supervised-restore'
         run: sudo apt-get install -y --no-install-recommends tini
       - name: Immutable offline source for adoption evidence
         if: matrix.project == 'offline-upgrade'

@@ -68,7 +68,9 @@ And ....
 
 ## Verify
 
-- Unit: ... E2E: ... What a reviewer should see.
+- Contract/negative case: ... Existing suite and lowest meaningful layer: ...
+- Environment owner and relevant source/shared dependency paths: ...
+- Evidence: ... What a reviewer should see; explain routing changes or why none are needed.
 ```
 
 - **Story** is what the person wants and why, without implementation words.
@@ -76,7 +78,10 @@ And ....
 - **Rules** hold decisions and constraints, each with its date and source, linked to its
   decision in `docs/implementation/SPN-NNN.md` (legacy issue links remain valid).
 - **Out of scope** names the nearby work that belongs to other tickets.
-- **Verify** says what proves it: tests, and what a reviewer should see.
+- **Verify** says what proves it: the regression contract, owning suite/layer and
+  environments, relevant source/shared dependencies, and what a reviewer should
+  see. Follow [sustainable testing](../testing.md); extend existing coverage before
+  adding another expensive execution, and keep applicable CI selection complete.
 
 Aim for 30–50 lines; the checker warns past 50. A ticket needs enough for an
 agent to build it without asking, and no more. Each ticket gets its own emoji,
@@ -193,7 +198,9 @@ place. Owner, chat 2026-10-26; [image-publication decision](../implementation/gr
 
 1. Re-read the ticket and check it is still true against the code.
 2. Branch from `main`. One ticket, one branch, one PR, one squashed commit.
-3. Build it with its tests. Make decisions as they come up (below).
+3. Build it with its tests using [sustainable testing](../testing.md). Keep the
+   ticket's Verify contract, environment ownership and dependency routing current.
+   Make decisions as they come up (below).
 4. **Split when it grows.** Past ~10k changed lines, or ~3 days in progress, look
    for a split. 100k is the hard limit and CI fails past it. Lockfiles and
    generated files don't count; the list is in `backlog.json`. Land the coherent

@@ -72,6 +72,10 @@ Check the original ticket against the code and preserve its acceptance criteria
 for review. Weigh the Operator, Owner, Collaborator and Link guest in every
 decision; record decisions as process.md requires. Build the smallest complete
 change that satisfies the ticket, including meaningful tests and maintained docs.
+Apply [sustainable testing](testing.md) to the ticket's Verify plan: choose the
+lowest layer that detects the regression, reuse deterministic fixtures, justify
+each environment and maintain source/shared-dependency routing. Review that plan
+with the implementation; preserve first-attempt failures and fail-closed gates.
 
 Reassess effort when implementation reveals more complexity. Use **XL** for
 sustained algorithmic or architectural investigation and verification, including

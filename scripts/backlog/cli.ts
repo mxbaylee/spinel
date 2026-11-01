@@ -132,7 +132,9 @@ Then <result>.
 
 ## Verify
 
-- <tests and what a reviewer should see>
+- Contract/negative case: <behavior>; suite/layer/fixture: <existing owner>.
+- Environment and source/shared dependencies: <coverage owners and inputs>.
+- Evidence: <reviewer-visible result and CI selection, or why routing is unchanged>.
 `,
   );
   config.next_id += 1;

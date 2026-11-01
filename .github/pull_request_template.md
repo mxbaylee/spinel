@@ -9,6 +9,13 @@ Grooming PRs start "🧹 Groom backlog"; dependency bumps start "⬆️ Bump". C
 
 Checks and evidence for the current head; disclose any missing real-device or external evidence.
 
+Use [sustainable testing](../docs/testing.md) when adding or changing coverage:
+
+- Regression contract and negative case; owning suite/layer and reused fixture.
+- Environment ownership; why any added or removed execution changes coverage.
+- Source/shared dependency paths and CI selection evidence, or why routing is unchanged.
+- Current-head run/attempt and plan/result identities; first-failure/retry disposition.
+
 ## Designs and screenshots
 
 For a UI change, add `visual-review` and embed all proposed designs and actual

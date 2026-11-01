@@ -137,6 +137,10 @@ metadata. See [authentication](authentication.md) for sessions and access rules.
 
 ## Checks
 
+For new work, follow [sustainable testing](testing.md) when choosing a test layer,
+fixture, environment and CI applicability. The ticket's Verify section and PR
+record the regression contract and evidence.
+
 ```sh
 npm run lint
 npm run typecheck
@@ -146,7 +150,8 @@ npm run e2e
 npm run backlog:check
 ```
 
-`npm test` runs the existing Node backlog tests and Vitest server tests.
+`npm test` runs the built-in Node script/backlog tests and Vitest application and
+library tests. CI partitions library validation separately.
 The full browser run includes `offline-upgrade`, which emits the immutable
 SPN-054 client with its own locked dependencies and source-era postinstall patches.
 Prepare that separate build checkout before a local full run (CI does this itself):
@@ -194,12 +199,19 @@ files for seven days. Extracted artifacts preserve `test-results/` and
 Investigate the first failed attempt and its durations before rerunning;
 `failOnFlakyTests` deliberately keeps a retry-only success red.
 
-PR title/body/base edits queue full validation without cancelling an active CI
-run; new code pushes still supersede older PR runs. Edits can still replace a
-pending run. PR policy checks use the event's immutable base SHA, so an advancing
-`main` cannot silently change their baseline. See the
+Positively classified PR title/body edits run cheap PR validation with isolated
+concurrency and distinct names for nonexecuted code jobs. They cannot cancel or
+replace pending code runs or overwrite failed code evidence. Base retargets,
+ambiguous edits and unavailable ranges require full validation; new code pushes
+still supersede older code runs for that PR. PR policy checks use the event's
+immutable base SHA, so an advancing `main` cannot silently change their baseline.
+The digest-bound coverage plan records each suite's dependencies and reason;
+selected missing/failed/cancelled jobs fail the required aggregate. Labels add
+coverage, and weekly/manual runs select the full plan. See
+[sustainable testing](testing.md#keep-coverage-routing-complete) and the
+[SPN-115 record](implementation/SPN-115.md) for the current contract. The earlier
 [main CI audit and bounded resilience changes](implementation/ci-reliability-2026-10-26.md)
-for observed causes, existing mitigations and remaining phone-Doc investigation.
+retain observed causes and earlier mitigations; they do not override this policy.
 
 `sync-development` and `sync-production` run the native UI scenarios in
 `e2e/sync-client.spec.ts`; `sync-soak-sheet` and `sync-soak-doc` run its seeded

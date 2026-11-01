@@ -19,6 +19,7 @@ if (
     'sync-soak-sheet',
     'sync-soak-doc',
     'offline-upgrade',
+    'supervised-restore',
     'doc-responsiveness',
     'doc-callback-lifetimes',
   ].includes(project)
@@ -44,6 +45,7 @@ export default defineConfig({
     project !== 'production' &&
     project !== 'doc-responsiveness' &&
     project !== 'doc-callback-lifetimes' &&
+    project !== 'supervised-restore' &&
     !project?.startsWith('sync-')
       ? 1
       : 0,
@@ -74,6 +76,7 @@ export default defineConfig({
         '**/offline-device.spec.ts',
         '**/offline-sign-out.spec.ts',
         '**/offline-upgrade.spec.ts',
+        '**/supervised-restore.spec.ts',
         '**/sync-client.spec.ts',
         '**/doc-responsiveness*.spec.ts',
       ],
@@ -87,6 +90,7 @@ export default defineConfig({
         '**/offline-creation.spec.ts',
         '**/offline-recovery.spec.ts',
         '**/offline-upgrade.spec.ts',
+        '**/supervised-restore.spec.ts',
         '**/sync-client.spec.ts',
         '**/doc-responsiveness*.spec.ts',
       ],
@@ -148,6 +152,13 @@ export default defineConfig({
       // This suite builds the legacy baseline and two current compatibility
       // fixtures. Its own server/browser must not race a normal webServer.
       testMatch: '**/offline-upgrade.spec.ts',
+      fullyParallel: false,
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'supervised-restore',
+      // Each case starts its own supervisor on a fixed port and needs no webServer.
+      testMatch: '**/supervised-restore.spec.ts',
       fullyParallel: false,
       use: { ...devices['Desktop Chrome'] },
     },
@@ -270,6 +281,7 @@ export default defineConfig({
     (server) =>
       !project ||
       (project !== 'offline-upgrade' &&
+        project !== 'supervised-restore' &&
         server.url.includes(
           project === 'development'
             ? ':3100/'

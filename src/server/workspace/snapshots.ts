@@ -1,5 +1,6 @@
 import { AuthError } from '../auth/store.ts';
 import type { WorkspaceStore } from './store.ts';
+import { restoreFenced, retainRestoreRevision } from '../collaboration/restore-fences.ts';
 
 export type SnapshotSaved = {
   id: string;
@@ -17,6 +18,18 @@ export function commitSnapshot(
 ) {
   return workspace.auth.transaction(() => {
     const db = workspace.auth.database;
+    // A restored unopened document can still use lazy native preparation, but
+    // no old full-snapshot writer may overwrite its archived content first.
+    if (
+      db
+        .prepare("SELECT 1 FROM sqlite_schema WHERE type='table' AND name='spinel_restore_fences'")
+        .get() &&
+      restoreFenced(db, 'identity', id)
+    )
+      throw new AuthError(
+        409,
+        'This document was recovered. Keep this tab open and copy unsaved changes before reloading.',
+      );
     if (
       db
         .prepare(
@@ -51,6 +64,7 @@ export function commitSnapshot(
       .run(workspace.auth.now(), id);
     // Observers run inside this transaction: a failed baseline cannot acknowledge a save.
     workspace.snapshotSaved({ id, before: current, after: { snapshot: text, revision: next } });
+    retainRestoreRevision(db, next);
     return { revision: next };
   });
 }

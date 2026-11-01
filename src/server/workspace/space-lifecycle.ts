@@ -6,6 +6,7 @@ import { deleteSpaceItems, readSpaceStructure } from './space-structure.ts';
 import type { SpaceStructure } from './space-structure.ts';
 import type { WorkspaceStore } from './store.ts';
 import { TRASH_RETENTION_MS } from './trash-retention.ts';
+import { cleanRecoveryHolds, recoveryProtected } from './recovery-holds.ts';
 
 interface DeletedSpace {
   space: SpaceScopeItem;
@@ -65,7 +66,10 @@ export class SpaceLifecycleStore {
     const { auth } = this.workspace;
     return auth.transaction(() => {
       const view = this.deleted(actorId, spaceId);
-      if (view.trashedAt + TRASH_RETENTION_MS <= auth.now())
+      if (
+        view.trashedAt + TRASH_RETENTION_MS <= auth.now() &&
+        !recoveryProtected(auth.database, spaceId)
+      )
         throw new AuthError(409, 'The 30-day recovery period has ended.');
       let parentId = view.space.parentId;
       let original = true;
@@ -92,6 +96,7 @@ export class SpaceLifecycleStore {
         .run(parentId, auth.now(), spaceId, actorId, view.trashBatch, view.trashedAt);
       if (changed.changes !== 1) throw unavailable();
       const restored = resolveSpaceScope(auth, actorId, spaceId, spaceId, 'owner');
+      cleanRecoveryHolds(auth.database);
       return {
         space: restored.space,
         destination: original ? 'original' : 'my-files-root',
@@ -124,6 +129,7 @@ export class SpaceLifecycleStore {
         )
         .run(spaceId, actorId, view.trashBatch, view.trashedAt);
       if (root.changes !== 1) throw unavailable();
+      cleanRecoveryHolds(auth.database);
       return { count: preview.counts.total };
     });
   }

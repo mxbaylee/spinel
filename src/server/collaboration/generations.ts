@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { AuthError } from '../auth/store.ts';
 import type { WorkspaceStore } from '../workspace/store.ts';
 import { resolveDocument } from '../workspace/document-access.ts';
+import { restoreFenceSchema, restoreFenced, retainRestoreRevision } from './restore-fences.ts';
 
 export type LiveGeneration = { itemId: string; unitId: string; offset: number };
 export type RestoreJob = {
@@ -22,6 +23,7 @@ export class CollaborationGenerations {
   private readonly workspace: WorkspaceStore;
   constructor(workspace: WorkspaceStore) {
     this.workspace = workspace;
+    workspace.auth.database.exec(restoreFenceSchema);
     workspace.auth.database.exec(`
       CREATE TABLE IF NOT EXISTS spinel_live_units (
         item_id TEXT PRIMARY KEY REFERENCES workspace_items(id) ON DELETE CASCADE,
@@ -86,6 +88,14 @@ export class CollaborationGenerations {
       .get(id) as RestoreJob | undefined;
   }
 
+  private assertRequestCurrent(id: string) {
+    if (restoreFenced(this.workspace.auth.database, 'request', id))
+      throw new AuthError(
+        409,
+        'Workspace recovery retired this restore request. Start a new restore.',
+      );
+  }
+
   completed(
     user: string,
     itemId: string,
@@ -94,6 +104,7 @@ export class CollaborationGenerations {
     customData: Record<string, unknown> = {},
   ) {
     resolveDocument(this.workspace, user, itemId, 'edit', customData);
+    this.assertRequestCurrent(requestId);
     const job = this.job(requestId);
     if (job && (job.userId !== user || job.itemId !== itemId || job.checkpointId !== checkpointId))
       throw new AuthError(409, 'This restore request has already been used.');
@@ -113,6 +124,7 @@ export class CollaborationGenerations {
     return this.workspace.auth.transaction(() => {
       const item = resolveDocument(this.workspace, userId, itemId, 'edit', customData);
       if (item.kind !== 'sheet' && item.kind !== 'doc') throw new AuthError(404, 'Not a document.');
+      this.assertRequestCurrent(requestId);
       const previous = this.job(requestId);
       if (previous) {
         if (
@@ -160,6 +172,7 @@ export class CollaborationGenerations {
       if (!job) throw new AuthError(404, 'Restore request not found.');
       checkSession();
       resolveDocument(this.workspace, job.userId, job.itemId, 'edit', customData);
+      this.assertRequestCurrent(id);
       if (job.status === 'complete') return job;
       if (job.status !== 'staging' || this.active(job.itemId).unitId !== job.previousUnit)
         throw new AuthError(409, 'Restore was cancelled. Reload and try again.');
@@ -170,6 +183,7 @@ export class CollaborationGenerations {
         `INSERT INTO spinel_live_units VALUES(?,?,?) ON CONFLICT(item_id) DO UPDATE SET
         unit_id=excluded.unit_id,revision_offset=excluded.revision_offset`,
       ).run(job.itemId, job.nextUnit, drainedRevision);
+      retainRestoreRevision(db, drainedRevision + 1);
       db.prepare("UPDATE spinel_restore_jobs SET status='complete',revision=? WHERE id=?").run(
         drainedRevision + 1,
         id,
