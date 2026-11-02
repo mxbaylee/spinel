@@ -5,7 +5,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { mkdir, mkdtemp, realpath, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { afterEach, expect, test } from 'vitest';
+import { afterEach, expect, test, vi } from 'vitest';
 import { RecoveryJournal, fileIdentity, processIdentity } from './journal.ts';
 import { restoreBarrierPath } from './restore-barrier.ts';
 import {
@@ -25,10 +25,22 @@ import { restoreJobIntentFixture } from './restore-job-fixture.ts';
 import { restoreIntentHash } from './restore-job-intent.ts';
 import { restoreTrialReference } from './restore-trial.ts';
 import type { RestoreTrialPermit } from './restore-trial.ts';
+import { prepareColdRestoreOriginal } from './restore-cold.ts';
+import * as restoreFiles from './restore-files.ts';
+import {
+  cleanupPlannedRestoreTrial,
+  finishRestoreCrashCleanup,
+} from './restore-crash-cleanup-fixture.ts';
+import { MaintenanceSupervisor } from './supervisor.ts';
+import { processResourcesReleased } from './process-exit.ts';
 
 const cleanups: Array<() => void | Promise<void>> = [];
 afterEach(async () => {
-  for (const cleanup of cleanups.splice(0).reverse()) await cleanup();
+  try {
+    for (const cleanup of cleanups.splice(0).reverse()) await cleanup();
+  } finally {
+    vi.restoreAllMocks();
+  }
 });
 const linux = test.skipIf(process.platform !== 'linux');
 const attemptIds = () => ({
@@ -224,6 +236,178 @@ async function fixture() {
     },
   };
 }
+
+test('crash cleanup preserves the original failure and every secondary failure', async () => {
+  const primary = new Error('The original assertion failed.');
+  const first = new Error('First cleanup failed.');
+  const last = new Error('Last cleanup failed.');
+  const reached = vi.fn();
+  await expect(
+    finishRestoreCrashCleanup(
+      [
+        async () => {
+          throw first;
+        },
+        async () => {
+          reached();
+        },
+        async () => {
+          throw last;
+        },
+      ],
+      { error: primary },
+    ),
+  ).rejects.toMatchObject({ errors: [primary, first, last], cause: primary });
+  expect(reached).toHaveBeenCalledTimes(1);
+  await expect(
+    finishRestoreCrashCleanup([
+      async () => {
+        throw first;
+      },
+    ]),
+  ).rejects.toMatchObject({ errors: [first], cause: first });
+  await expect(
+    (async () => {
+      try {
+        throw primary;
+      } finally {
+        await finishRestoreCrashCleanup([async () => {}], { error: primary });
+      }
+    })(),
+  ).rejects.toBe(primary);
+});
+
+linux(
+  'failed crash cleanup stops an unadopted planned child and preserves an unrelated group',
+  async () => {
+    const f = await fixture();
+    let record = f.activate();
+    const spawnBlocked = async () => {
+      const token = randomUUID();
+      const child = spawn(
+        process.execPath,
+        [
+          '--input-type=module',
+          '--eval',
+          'process.send({ready:true}, () => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0));',
+        ],
+        {
+          env: { ...process.env, SPINEL_PROCESS_GROUP_TOKEN: token },
+          detached: true,
+          stdio: ['ignore', 'ignore', 'inherit', 'ipc'],
+        },
+      );
+      cleanups.push(async () => {
+        if (child.exitCode !== null || child.signalCode !== null) return;
+        const exited = once(child, 'exit');
+        child.kill('SIGKILL');
+        await exited;
+      });
+      await once(child, 'message');
+      return { child, identity: processIdentity(child.pid!, token)! };
+    };
+    const planned = await spawnBlocked();
+    const unrelated = await spawnBlocked();
+    const recovery = currentRestoreRecovery(record)!;
+    const image = recovery.image!;
+    const permit: RestoreTrialPermit = {
+      version: 1,
+      jobId: record.intent.id,
+      intentHash: record.intentHash,
+      ...recovery.attempt,
+      role: 'original',
+      child: planned.identity,
+      databasePath: record.intent.target.databasePath,
+      identity: record.intent.target.identity,
+      output: { bytes: image.bytes, sha256: image.sha256, fingerprint: image.fingerprint },
+      policy: record.intent.policy,
+      maximumBytes: 1024 * 1024,
+      deadline: recovery.deadline,
+    };
+    writeFileSync(
+      restoreBarrierPath(f.journal.databasePath),
+      JSON.stringify({
+        version: 1,
+        operationId: record.intent.id,
+        identity: record.intent.target.identity,
+      }),
+      { mode: 0o600 },
+    );
+    record = f.jobs.planOriginalTrial(record.intent.id, record.intentHash, record.revision, permit);
+    const retained = readFileSync(f.statePath);
+    const live = readFileSync(f.journal.databasePath);
+    f.jobs.close();
+    await f.journal.close();
+    const supervisor = await MaintenanceSupervisor.open({
+      root: f.root,
+      databasePath: record.intent.target.databasePath,
+      publicPort: 0,
+      budgets: { stopMs: 100 },
+    });
+    cleanups.push(() => supervisor.close());
+    expect(supervisor.journal.state.child).toBeNull();
+    expect(processResourcesReleased(String(planned.child.pid))).toBe(false);
+    const primary = new Error('Injected assertion before recover-original.');
+    await expect(
+      (async () => {
+        try {
+          throw primary;
+        } finally {
+          await finishRestoreCrashCleanup(
+            [() => cleanupPlannedRestoreTrial(supervisor, record.intent.id)],
+            { error: primary },
+          );
+        }
+      })(),
+    ).rejects.toBe(primary);
+    expect(processResourcesReleased(String(planned.child.pid))).toBe(true);
+    expect(processIdentity(unrelated.child.pid!)).toMatchObject({
+      pid: unrelated.identity.pid,
+      boot: unrelated.identity.boot,
+      start: unrelated.identity.start,
+    });
+    expect(processResourcesReleased(String(unrelated.child.pid))).toBe(false);
+    expect(readFileSync(f.statePath)).toEqual(retained);
+    expect(readFileSync(record.intent.target.databasePath)).toEqual(live);
+  },
+  10_000,
+);
+
+linux.each(['operation', 'postcheck', 'both'] as const)(
+  'cold recovery retains the first cause when %s fails',
+  async (failure) => {
+    const f = await fixture();
+    const record = f.begin();
+    f.adopt(record);
+    const primary = new Error('The custody read failed.');
+    const postcheck = new Error('The grant was cancelled during the read.');
+    const abort = new AbortController();
+    const capture = vi
+      .spyOn(restoreFiles, 'captureColdRestoreCustody')
+      .mockImplementation(async () => {
+        if (failure !== 'operation') abort.abort(postcheck);
+        if (failure !== 'postcheck') throw primary;
+        return f.custody(record);
+      });
+    const pending = prepareColdRestoreOriginal({
+      jobs: f.jobs,
+      record,
+      root: f.root,
+      databasePath: record.intent.target.databasePath,
+      now: f.time,
+      signal: abort.signal,
+      assertClosed() {},
+    });
+    if (failure === 'both') {
+      await expect(pending).rejects.toMatchObject({
+        errors: [primary, postcheck],
+        cause: primary,
+      });
+    } else await expect(pending).rejects.toBe(failure === 'operation' ? primary : postcheck);
+    expect(capture).toHaveBeenCalledTimes(1);
+    expect(f.jobs.read(record.intent.id)).toEqual(record);
+  },
+);
 
 linux(
   'a fresh cold grant can recover an expired intent without renewing any original authority',

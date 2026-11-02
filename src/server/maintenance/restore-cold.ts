@@ -161,11 +161,23 @@ export async function prepareColdRestoreOriginal(options: {
   };
   const step = async <T>(action: () => Promise<T>) => {
     active();
+    let result: T;
     try {
-      return await action();
-    } finally {
-      active();
+      result = await action();
+    } catch (error) {
+      try {
+        active();
+      } catch (postcheck) {
+        throw new AggregateError(
+          [error, postcheck],
+          'Cold recovery operation and authorization postcheck failed.',
+          { cause: error },
+        );
+      }
+      throw error;
     }
+    active();
+    return result;
   };
   const checkpoint = (
     phase: Parameters<RestoreJobs['checkpointOriginalRecovery']>[3],

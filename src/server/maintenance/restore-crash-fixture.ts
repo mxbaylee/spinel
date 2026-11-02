@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { currentRestoreRecovery, RestoreJobs } from './restore-jobs.ts';
 import { MaintenanceSupervisor } from './supervisor.ts';
 import { MAINTENANCE_CHANNEL } from './supervisor-client.ts';
+import { cleanupPlannedRestoreTrial } from './restore-crash-cleanup-fixture.ts';
 
 const root = process.env.SPINEL_MAINTENANCE_ROOT;
 const databasePath = process.env.DATABASE_PATH;
@@ -223,6 +224,8 @@ if (process.env.SPINEL_TEST_INITIAL_BOOT === '1') {
   for (const action of ['verify', 'start', 'resume'] as const)
     await supervisor.coldControl({ action, operationId });
 }
+if (process.env.SPINEL_TEST_CLEANUP_OPERATION)
+  await cleanupPlannedRestoreTrial(supervisor, process.env.SPINEL_TEST_CLEANUP_OPERATION);
 process.send({ kind: 'ready', status: supervisor.status() });
 process.on('message', (value: unknown) => {
   if (value && typeof value === 'object' && 'kind' in value && value.kind === 'postcommit-cut') {

@@ -29,6 +29,7 @@ import { restoreTrialReference } from './restore-trial.ts';
 import { processResourcesReleased } from './process-exit.ts';
 import { currentRestoreRecovery, restoreJobPhase } from './restore-jobs.ts';
 import type { RestoreJobRecord } from './restore-jobs.ts';
+import { finishRestoreCrashCleanup } from './restore-crash-cleanup-fixture.ts';
 import { authenticator, restoreHttpClient, seed, seedOwner } from './restore-http-test-client.ts';
 
 const cuts = [
@@ -275,9 +276,11 @@ test.skipIf(process.platform !== 'linux').each(scenarios)(
     const base = `http://127.0.0.1:${port}`;
     const ownerClient = ownerId ? restoreHttpClient(base, ownerId, ownerCredential) : undefined;
     let controller: ChildProcess | undefined;
+    let cleanupOperation: string | undefined;
+    let primaryFailure: { error: unknown } | undefined;
     let recoveryComplete = false;
     let clockOffset = 0;
-    const launch = async (initial: boolean, coldAttempt = false) => {
+    const launch = async (initial: boolean, coldAttempt = false, cleanup = false) => {
       const child = fork(
         fileURLToPath(new URL('./restore-crash-fixture.ts', import.meta.url)),
         [],
@@ -293,6 +296,7 @@ test.skipIf(process.platform !== 'linux').each(scenarios)(
             SPINEL_TEST_COLD_CRASH_CUT: coldAttempt ? cold : '',
             SPINEL_TEST_CLOCK_OFFSET: String(clockOffset),
             SPINEL_TEST_INITIAL_BOOT: initial ? '1' : '0',
+            SPINEL_TEST_CLEANUP_OPERATION: cleanup ? cleanupOperation : undefined,
           },
           execArgv: [],
           stdio: ['ignore', 'ignore', 'ignore', 'ipc'],
@@ -328,6 +332,7 @@ test.skipIf(process.platform !== 'linux').each(scenarios)(
       await client.authenticate();
       if (recoversOriginal) await ownerClient!.authenticate();
       const prepared = await client.prepare(source);
+      cleanupOperation = prepared.id;
       const statePath = join(root, 'restore-jobs', prepared.id, 'state.json');
       const record = () => JSON.parse(readFileSync(statePath, 'utf8')) as RestoreJobRecord;
       // Admission dies before replying to HTTP. Observe that request's eventual
@@ -984,24 +989,48 @@ test.skipIf(process.platform !== 'linux').each(scenarios)(
           .digest('hex'),
       ).toBe(source.sha256);
       recoveryComplete = true;
+    } catch (error) {
+      primaryFailure = { error };
+      throw error;
     } finally {
-      if (controller) await close(controller);
-      if (!recoveryComplete) {
-        // A blocked private child ignores IPC/TERM. Reopen through the actual
-        // supervisor so its identity-checked stopGroup reaps that orphan even
-        // when an assertion failed; preserve all files for diagnosis.
-        try {
-          await launch(false);
-        } finally {
-          if (controller) await close(controller);
-        }
-        assertWorkspaceHandlesClosed(databasePath);
-      }
-      // Never remove evidence beneath a surviving orphan after a failed test.
-      if (recoveryComplete) {
-        assertWorkspaceHandlesClosed(databasePath);
-        await rm(directory, { recursive: true, force: true });
-      }
+      let controllerClosed = false;
+      await finishRestoreCrashCleanup(
+        [
+          async () => {
+            if (controller) await close(controller);
+            controllerClosed = true;
+          },
+          async () => {
+            // Do not open a competing controller or remove evidence if closure failed.
+            if (!controllerClosed) return;
+            if (!recoveryComplete) {
+              // Startup reaps adopted children. The exact recorded planned permit
+              // also owns a child that may not yet appear in main.child.
+              let startupFailure: { error: unknown } | undefined;
+              try {
+                await launch(false, false, true);
+              } catch (error) {
+                startupFailure = { error };
+                throw error;
+              } finally {
+                await finishRestoreCrashCleanup(
+                  [
+                    async () => {
+                      if (controller) await close(controller);
+                    },
+                  ],
+                  startupFailure,
+                );
+              }
+              assertWorkspaceHandlesClosed(databasePath);
+            } else {
+              assertWorkspaceHandlesClosed(databasePath);
+              await rm(directory, { recursive: true, force: true });
+            }
+          },
+        ],
+        primaryFailure,
+      );
     }
   },
   180_000,
