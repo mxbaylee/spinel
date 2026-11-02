@@ -1,0 +1,41 @@
+{
+  "source": "dbbe5ccaf085ce20b79068d3596a35dcf2142223",
+  "diagnosticOnly": true,
+  "attemptsPerPreset": 1,
+  "samples": [
+    "profile"
+  ],
+  "presets": [
+    "desktop"
+  ],
+  "traceCategories": "-*,blink.user_timing,disabled-by-default-v8.gc",
+  "nativeInstrumentation": [
+    {
+      "file": "node_modules/@univerjs/docs/lib/es/index.js",
+      "beforeSha256": "259dd5a4ce24744a442b2cfc7211a89f46437c0257a2ca7b2b9aaaceddd946ba",
+      "afterSha256": "11297b6a87c56fddd72f5cb82f6388fa564ed1b23aa8ac25993b32c46eeba45b"
+    },
+    {
+      "file": "node_modules/@univerjs/docs/lib/cjs/index.js",
+      "beforeSha256": "d96e32ba1177187d3bffa1ac0dce9cbddb589070b5303159b7b6b6b460eb4f92",
+      "afterSha256": "093f3e2255d01d29277d809177d1c975a96cfe8b5450ff98cc8218ae25087459"
+    }
+  ],
+  "originalHarnessSha256": "f7c5a1dc3d22d6a0ef9fb8615d08a4918976a45de7a17f2a941372cf9ecff388",
+  "files": {
+    "e2e/doc-responsiveness.spec.ts": "6c789c5dde51629bc8529906e1704ba2030f3ee35da03f79fc0e80c13fb1eeb1",
+    "e2e/spn135-trace.ts": "da58abde81108ba2fa315aff441c27664f7ffeac009c57278c6a20b421f9f935",
+    "e2e/doc-responsiveness.ts": "38c3cc6bcab8dd6564444cb946784e748899e9560efb7e7dbbed0e21d16ec067",
+    "e2e/doc-responsiveness-fixture.ts": "8a77b15b3fa9ab3961b949cb5fc820f263775ded4952e8f5ef34e4cd02a9b80f",
+    "src/ui/boundedDocHistory.ts": "f4aab2964defd2cb03615c66156d9e5b36eb125b8d9c08c6ab5810326bd4ebf1",
+    "web/DocEditor.tsx": "05b75fce66cdb1346aedfa7414f6db7099e5e508b79b30ff3d057977c4cdb21c",
+    "web/spinelSync.ts": "f311fae970039a4e1bca97f5d84da6e8da21720e10aa6703149bbec0a1fa1310",
+    "web/docResponsivenessEvidence.ts": "4b2b5b6f41b365839733fabb2cb0fc52eaaf81e314f7b9f39b443b8fa6874a08",
+    "scripts/dependencies/patch-univer-docs.ts": "2e39e26da77d0705b73089fc7cef8c695dfef16172094ae5ecc1860f09cf363d",
+    "scripts/dependencies/patch-univer-core.ts": "e3038a7d706acbc0e06c093bc3cda82a3d5ce537f41b04d7c1e8764a43ea8a41",
+    "package-lock.json": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf",
+    "playwright.config.ts": "ebe113d9033e3bf86e5fb709dc38c9a8bf4c7f521bade73cacb49be5a346d7e4",
+    "node_modules/@univerjs/docs/lib/es/index.js": "11297b6a87c56fddd72f5cb82f6388fa564ed1b23aa8ac25993b32c46eeba45b",
+    "node_modules/@univerjs/docs/lib/cjs/index.js": "093f3e2255d01d29277d809177d1c975a96cfe8b5450ff98cc8218ae25087459"
+  }
+}

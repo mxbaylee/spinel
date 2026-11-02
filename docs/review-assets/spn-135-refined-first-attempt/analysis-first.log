@@ -1,0 +1,2 @@
+node: bad option: --experimental-default-type=module
+WATCHDOG: exit=9, signal=null, elapsed=16ms, peak=0.0MiB

@@ -1,0 +1,16 @@
+(node:86093) Warning: Failed to load the ES module: [stdin]. Make sure to set "type": "module" in the nearest package.json file or use the .mjs extension.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[stdin]:1
+import fs from 'node:fs';
+^^^^^^
+
+SyntaxError: Cannot use import statement outside a module
+    at wrapSafe (node:internal/modules/cjs/loader:1900:18)
+    at checkSyntax (node:internal/main/check_syntax:88:3)
+    at node:internal/main/check_syntax:45:5
+    at ReadStream.<anonymous> (node:internal/process/execution:239:5)
+    at ReadStream.emit (node:events:514:20)
+    at endReadableNT (node:internal/streams/readable:2147:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+
+Node.js v26.12.1

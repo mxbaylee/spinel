@@ -1,0 +1,3298 @@
+{
+  "diagnosticOnly": true,
+  "measuredWindowIdleObserved": false,
+  "instantFormPublicationCount": 98,
+  "outsidePaired": [
+    {
+      "name": "spn135-composition-redoState",
+      "startedAt": 55133.285,
+      "durationMs": 0.4,
+      "tracePhase": "b"
+    },
+    {
+      "name": "spn135-composition-undoState",
+      "startedAt": 55133.685,
+      "durationMs": 0.1,
+      "tracePhase": "b"
+    },
+    {
+      "name": "spn135-history-publication",
+      "startedAt": 55133.785,
+      "durationMs": 0.099,
+      "tracePhase": "b"
+    },
+    {
+      "name": "spn135-history",
+      "startedAt": 55133.285,
+      "durationMs": 0.599,
+      "tracePhase": "b"
+    },
+    {
+      "name": "spn135-composition-redoState",
+      "startedAt": 55134.085,
+      "durationMs": 0.2,
+      "tracePhase": "b"
+    },
+    {
+      "name": "spn135-collaboration-publication",
+      "startedAt": 55134.485,
+      "durationMs": 0,
+      "tracePhase": "n"
+    },
+    {
+      "name": "spn135-composition-undoState",
+      "startedAt": 55134.285,
+      "durationMs": 0.2,
+      "tracePhase": "b"
+    },
+    {
+      "name": "spn135-collaboration",
+      "startedAt": 55134.085,
+      "durationMs": 0.4,
+      "tracePhase": "b"
+    }
+  ],
+  "source": "dbbe5ccaf085ce20b79068d3596a35dcf2142223",
+  "errors": [],
+  "preUndoIntegrity": true,
+  "undoRedo": "passed",
+  "budgetResults": {
+    "inputP95": true,
+    "longestTask": true,
+    "capacityFlushP95": true,
+    "idleFlushP95": null,
+    "flushMaximum": true,
+    "boundedHistory": true,
+    "boundedCollaboration": true,
+    "observedCapacityFlushes": true,
+    "browserLocalDrainedWithinOneSecond": true
+  },
+  "traceSha256": "4ae5d2c17ab57ca2dafeb40159c9da5d56364ac64f6d52e6f62df01831a08241",
+  "cacheSha256": "bfeb1cc0625c8929b5457116055c812d8bacea4dfdb018c16a651ef52402f197",
+  "coveredFlushes": 65,
+  "phaseSpans": 593,
+  "clockDriftMs": -0.092,
+  "details": [
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 3399,
+        "durationMs": 7.400000000008731,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 3
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.6
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 4
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 2
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 1.1
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 3.2
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 3956.7000000000116,
+        "durationMs": 4.899999999994179,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1.6
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.6
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 2.2
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 2
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.5
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 2.6
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 4492.900000000009,
+        "durationMs": 2.6999999999970896,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.5
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1.8
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.7
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 0.9
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 5026.900000000009,
+        "durationMs": 5.30000000000291,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.7
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 4
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 4.3
+        }
+      ],
+      "gcUnionOverlapMs": 3.085,
+      "gcNames": [
+        "V8.GC_HEAP_EXTERNAL_PROLOGUE",
+        "V8.GC_HEAP_PROLOGUE",
+        "V8.GC_TIME_TO_SAFEPOINT",
+        "V8.GC_SCAVENGER",
+        "V8.GC_HEAP_PROLOGUE_SAFEPOINT",
+        "V8.GC_SCAVENGER_SCAVENGE",
+        "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_IDENTIFY",
+        "V8.GC_SCAVENGER_TRACED_HANDLES_COMPUTE_WEAKNESS_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_COLLECT_OLD_TO_NEW_PAGES",
+        "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE",
+        "Parallel scavenge started",
+        "V8.GC_SCAVENGER_SCAVENGE_ROOTS",
+        "V8.GC_SCAVENGER_SCAVENGE_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_PROCESS",
+        "V8.GC_SCAVENGER_TRACED_HANDLES_RESET_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_FINALIZE",
+        "V8.GC_SCAVENGER_SCAVENGE_RESTORE_AND_QUARANTINE_PINNED",
+        "V8.GC_SCAVENGER_FREE_REMEMBERED_SET",
+        "V8.GC_SCAVENGER_SWEEP_ARRAY_BUFFERS",
+        "V8.GC_SCAVENGER_RESIZE_NEW_SPACE",
+        "V8.GC_HEAP_EXTERNAL_WEAK_GLOBAL_HANDLES",
+        "V8.GC_HEAP_EPILOGUE_SAFEPOINT",
+        "V8.GC_HEAP_EPILOGUE",
+        "V8.GC_HEAP_DUMP_STATISTICS",
+        "V8.GC_HEAP_EXTERNAL_EPILOGUE",
+        "V8.GCDeoptMarkedAllocationSites"
+      ]
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 5620.100000000006,
+        "durationMs": 13.19999999999709,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 5.8
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.9
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 6.8
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 6
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 6.4
+        }
+      ],
+      "gcUnionOverlapMs": 2.645,
+      "gcNames": [
+        "V8.GC_HEAP_EXTERNAL_PROLOGUE",
+        "V8.GC_HEAP_PROLOGUE",
+        "V8.GC_TIME_TO_SAFEPOINT",
+        "V8.GC_SCAVENGER",
+        "V8.GC_HEAP_PROLOGUE_SAFEPOINT",
+        "V8.GC_SCAVENGER_SCAVENGE",
+        "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_IDENTIFY",
+        "V8.GC_SCAVENGER_TRACED_HANDLES_COMPUTE_WEAKNESS_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_COLLECT_OLD_TO_NEW_PAGES",
+        "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE",
+        "Parallel scavenge started",
+        "V8.GC_SCAVENGER_SCAVENGE_ROOTS",
+        "V8.GC_SCAVENGER_SCAVENGE_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_PROCESS",
+        "V8.GC_SCAVENGER_TRACED_HANDLES_RESET_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_FINALIZE",
+        "V8.GC_SCAVENGER_SCAVENGE_RESTORE_AND_QUARANTINE_PINNED",
+        "V8.GC_SCAVENGER_FREE_REMEMBERED_SET",
+        "V8.GC_SCAVENGER_SWEEP_ARRAY_BUFFERS",
+        "V8.GC_SCAVENGER_RESIZE_NEW_SPACE",
+        "V8.GC_HEAP_EXTERNAL_WEAK_GLOBAL_HANDLES",
+        "V8.GC_HEAP_EPILOGUE_SAFEPOINT",
+        "V8.GC_HEAP_EPILOGUE",
+        "V8.GC_HEAP_DUMP_STATISTICS",
+        "V8.GC_HEAP_EXTERNAL_EPILOGUE"
+      ]
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 6176.900000000009,
+        "durationMs": 3,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1.1
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1.6
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 1.3
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 6733.800000000003,
+        "durationMs": 4.100000000005821,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1.6
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.4
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 2.1
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1.8
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 2
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 7353.200000000012,
+        "durationMs": 3.599999999991269,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1.3
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.4
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1.9
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1.2
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.4
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 1.7
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 8175,
+        "durationMs": 13.60000000000582,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 6.7
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 1.5
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 8.5
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 4
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.9
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 5
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 8848.900000000009,
+        "durationMs": 4.399999999994179,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.8
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1.1
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1.1
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 1.9
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 3.2
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 9554.700000000012,
+        "durationMs": 10,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1.2
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.6
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1.9
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 7.6
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.4
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 8.1
+        }
+      ],
+      "gcUnionOverlapMs": 5.319,
+      "gcNames": [
+        "V8.GC_HEAP_EXTERNAL_PROLOGUE",
+        "V8.GC_HEAP_PROLOGUE",
+        "V8.GC_TIME_TO_SAFEPOINT",
+        "V8.GC_SCAVENGER",
+        "V8.GC_HEAP_PROLOGUE_SAFEPOINT",
+        "V8.GC_SCAVENGER_SCAVENGE",
+        "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_IDENTIFY",
+        "V8.GC_SCAVENGER_TRACED_HANDLES_COMPUTE_WEAKNESS_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_COLLECT_OLD_TO_NEW_PAGES",
+        "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE",
+        "Parallel scavenge started",
+        "V8.GC_SCAVENGER_SCAVENGE_ROOTS",
+        "V8.GC_SCAVENGER_SCAVENGE_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_PROCESS",
+        "V8.GC_SCAVENGER_SCAVENGE_FINALIZE",
+        "V8.GC_SCAVENGER_SCAVENGE_RESTORE_AND_QUARANTINE_PINNED",
+        "V8.GC_SCAVENGER_FREE_REMEMBERED_SET",
+        "V8.GC_SCAVENGER_SWEEP_ARRAY_BUFFERS",
+        "V8.GC_SCAVENGER_RESIZE_NEW_SPACE",
+        "V8.GC_HEAP_EXTERNAL_WEAK_GLOBAL_HANDLES",
+        "V8.GC_HEAP_EPILOGUE_SAFEPOINT",
+        "V8.GC_HEAP_EPILOGUE",
+        "V8.GC_HEAP_DUMP_STATISTICS",
+        "V8.GC_HEAP_EXTERNAL_EPILOGUE"
+      ]
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 10321.200000000012,
+        "durationMs": 3.2999999999883585,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1.3
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.4
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1.8
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1.1
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.4
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 1.5
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 10966.200000000012,
+        "durationMs": 6.7999999999883585,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 2.1
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.5
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 2.9
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 3.5
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 3.9
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 11606.5,
+        "durationMs": 2.8000000000029104,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.8
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1.3
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.4
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 1.4
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 12256.300000000003,
+        "durationMs": 2.1000000000058208,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.7
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.4
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1.2
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.6
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 0.9
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 12904.300000000003,
+        "durationMs": 1.9000000000087311,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.6
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 0.9
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.6
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.4
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 1
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 13756.700000000012,
+        "durationMs": 6.2999999999883585,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 3.7
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.5
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 4.3
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1.7
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 2
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 14339.700000000012,
+        "durationMs": 2.2999999999883585,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.4
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1.5
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.6
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 0.8
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 14910.5,
+        "durationMs": 3.900000000008731,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 2.6
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 2.9
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.7
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 0.9
+        }
+      ],
+      "gcUnionOverlapMs": 1.829,
+      "gcNames": [
+        "V8.GC_HEAP_EXTERNAL_PROLOGUE",
+        "V8.GC_HEAP_PROLOGUE",
+        "V8.GC_TIME_TO_SAFEPOINT",
+        "V8.GC_SCAVENGER",
+        "V8.GC_HEAP_PROLOGUE_SAFEPOINT",
+        "V8.GC_SCAVENGER_SCAVENGE",
+        "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_IDENTIFY",
+        "V8.GC_SCAVENGER_TRACED_HANDLES_COMPUTE_WEAKNESS_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_COLLECT_OLD_TO_NEW_PAGES",
+        "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE",
+        "Parallel scavenge started",
+        "V8.GC_SCAVENGER_SCAVENGE_ROOTS",
+        "V8.GC_SCAVENGER_SCAVENGE_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_PROCESS",
+        "V8.GC_SCAVENGER_TRACED_HANDLES_RESET_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_FINALIZE",
+        "V8.GC_SCAVENGER_SCAVENGE_RESTORE_AND_QUARANTINE_PINNED",
+        "V8.GC_SCAVENGER_FREE_REMEMBERED_SET",
+        "V8.GC_SCAVENGER_SWEEP_ARRAY_BUFFERS",
+        "V8.GC_SCAVENGER_RESIZE_NEW_SPACE",
+        "V8.GC_HEAP_EXTERNAL_WEAK_GLOBAL_HANDLES",
+        "V8.GC_HEAP_EPILOGUE_SAFEPOINT",
+        "V8.GC_HEAP_EPILOGUE",
+        "V8.GC_HEAP_DUMP_STATISTICS",
+        "V8.GC_HEAP_EXTERNAL_EPILOGUE"
+      ]
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 15485.400000000009,
+        "durationMs": 1.8999999999941792,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.8
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1.1
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.5
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 0.8
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 16059.400000000009,
+        "durationMs": 4.599999999991269,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1.9
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 2.4
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1.9
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 2.2
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 16634.90000000001,
+        "durationMs": 1.8000000000029104,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.6
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.6
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 0.7
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 17217.20000000001,
+        "durationMs": 4.5,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.6
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.7
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 2.8
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 3.5
+        }
+      ],
+      "gcUnionOverlapMs": 2.371,
+      "gcNames": [
+        "V8.GC_HEAP_EXTERNAL_PROLOGUE",
+        "V8.GC_HEAP_PROLOGUE",
+        "V8.GC_TIME_TO_SAFEPOINT",
+        "V8.GC_SCAVENGER",
+        "V8.GC_HEAP_PROLOGUE_SAFEPOINT",
+        "V8.GC_SCAVENGER_SCAVENGE",
+        "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_IDENTIFY",
+        "V8.GC_SCAVENGER_TRACED_HANDLES_COMPUTE_WEAKNESS_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_COLLECT_OLD_TO_NEW_PAGES",
+        "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE",
+        "Parallel scavenge started",
+        "V8.GC_SCAVENGER_SCAVENGE_ROOTS",
+        "V8.GC_SCAVENGER_SCAVENGE_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_PROCESS",
+        "V8.GC_SCAVENGER_TRACED_HANDLES_RESET_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_FINALIZE",
+        "V8.GC_SCAVENGER_SCAVENGE_RESTORE_AND_QUARANTINE_PINNED",
+        "V8.GC_SCAVENGER_FREE_REMEMBERED_SET",
+        "V8.GC_SCAVENGER_SWEEP_ARRAY_BUFFERS",
+        "V8.GC_SCAVENGER_RESIZE_NEW_SPACE",
+        "V8.GC_HEAP_EXTERNAL_WEAK_GLOBAL_HANDLES",
+        "V8.GC_HEAP_EPILOGUE_SAFEPOINT",
+        "V8.GC_HEAP_EPILOGUE",
+        "V8.GC_HEAP_DUMP_STATISTICS",
+        "V8.GC_HEAP_EXTERNAL_EPILOGUE"
+      ]
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 17822.20000000001,
+        "durationMs": 4.5,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.7
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 3.3
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 3.5
+        }
+      ],
+      "gcUnionOverlapMs": 2.3,
+      "gcNames": [
+        "V8.GC_HEAP_EXTERNAL_PROLOGUE",
+        "V8.GC_HEAP_PROLOGUE",
+        "V8.GC_TIME_TO_SAFEPOINT",
+        "V8.GC_SCAVENGER",
+        "V8.GC_HEAP_PROLOGUE_SAFEPOINT",
+        "V8.GC_SCAVENGER_SCAVENGE",
+        "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_IDENTIFY",
+        "V8.GC_SCAVENGER_TRACED_HANDLES_COMPUTE_WEAKNESS_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_COLLECT_OLD_TO_NEW_PAGES",
+        "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE",
+        "Parallel scavenge started",
+        "V8.GC_SCAVENGER_SCAVENGE_ROOTS",
+        "V8.GC_SCAVENGER_SCAVENGE_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_PROCESS",
+        "V8.GC_SCAVENGER_TRACED_HANDLES_RESET_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_FINALIZE",
+        "V8.GC_SCAVENGER_SCAVENGE_RESTORE_AND_QUARANTINE_PINNED",
+        "V8.GC_SCAVENGER_FREE_REMEMBERED_SET",
+        "V8.GC_SCAVENGER_SWEEP_ARRAY_BUFFERS",
+        "V8.GC_SCAVENGER_RESIZE_NEW_SPACE",
+        "V8.GC_HEAP_EXTERNAL_WEAK_GLOBAL_HANDLES",
+        "V8.GC_HEAP_EPILOGUE_SAFEPOINT",
+        "V8.GC_HEAP_EPILOGUE",
+        "V8.GC_HEAP_DUMP_STATISTICS",
+        "V8.GC_HEAP_EXTERNAL_EPILOGUE"
+      ]
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 18444.5,
+        "durationMs": 4.100000000005821,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1.8
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 2.1
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1.7
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 2
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 19057.100000000006,
+        "durationMs": 1.8000000000029104,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.6
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.5
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 0.8
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 19656.70000000001,
+        "durationMs": 2.599999999991269,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1.2
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1.6
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.6
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 0.9
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 20300.600000000006,
+        "durationMs": 2,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.7
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1.1
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.5
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 0.9
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 20988,
+        "durationMs": 4.5,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1.8
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.6
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 2.4
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1.8
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 2.1
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 21702.600000000006,
+        "durationMs": 33.30000000000291,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 3.9
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 27.7
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 31.7
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1.1
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.4
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 1.5
+        }
+      ],
+      "gcUnionOverlapMs": 28.992,
+      "gcNames": [
+        "V8.GC_MC_INCREMENTAL",
+        "V8.GC_MC_INCREMENTAL_EMBEDDER_TRACING",
+        "V8.GCHandleGCRequest",
+        "V8.GC_HEAP_EXTERNAL_SECOND_PASS_CALLBACKS",
+        "V8.GC_HEAP_EXTERNAL_PROLOGUE",
+        "V8.GC_HEAP_PROLOGUE",
+        "V8.GC_TIME_TO_SAFEPOINT",
+        "V8.GC_MARK_COMPACTOR",
+        "V8.GC_HEAP_PROLOGUE_SAFEPOINT",
+        "V8.GC_MC_PROLOGUE",
+        "V8.GC_MC_MARK",
+        "V8.GC_MC_MARK_FINISH_INCREMENTAL",
+        "V8.GC_MC_MARK_ROOTS",
+        "V8.GC_MC_MARK_CLIENT_HEAPS",
+        "V8.GC_MC_MARK_RETAIN_MAPS",
+        "V8.GC_MC_MARK_FULL_CLOSURE_PARALLEL",
+        "V8.GCMarkTransitiveClosureFixpoint",
+        "V8.GC_MC_MARK_WEAK_CLOSURE_EPHEMERON_MARKING",
+        "V8.GCReachTransitiveClosureWithEmbedder",
+        "V8.GC_MC_MARK_EMBEDDER_TRACING",
+        "V8.GC_CONSERVATIVE_STACK_SCANNING",
+        "V8.GC_MC_MARK_FULL_CLOSURE_SERIAL",
+        "V8.GC_MC_CLEAR",
+        "V8.GC_MC_CLEAR_JOIN_JOB",
+        "V8.GC_MC_CLEAR_WEAK_COLLECTIONS",
+        "V8.GC_MC_CLEAR_SWEEP_JS_DISPATCH_TABLE",
+        "V8.GC_MC_CLEAR_STRING_TABLE",
+        "V8.GC_MC_CLEAR_WEAK_REFERENCES_NON_TRIVIAL",
+        "V8.GC_MC_SWEEP",
+        "V8.GC_MC_EVACUATE",
+        "V8.GC_MC_EVACUATE_PROLOGUE",
+        "V8.GC_MC_EVACUATE_COPY",
+        "MarkCompactCollector::EvacuatePagesInParallel",
+        "V8.GC_MC_EVACUATE_COPY_PARALLEL",
+        "V8.GC_MC_EVACUATE_UPDATE_POINTERS",
+        "V8.GC_MC_EVACUATE_UPDATE_POINTERS_TO_NEW_ROOTS",
+        "V8.GC_MC_EVACUATE_UPDATE_POINTERS_CLIENT_HEAPS",
+        "V8.GC_MC_EVACUATE_UPDATE_POINTERS_SLOTS_MAIN",
+        "V8.GC_MC_EVACUATE_UPDATE_POINTERS_PARALLEL",
+        "V8.GC_MC_EVACUATE_UPDATE_POINTERS_WEAK",
+        "V8.GC_MC_EVACUATE_UPDATE_POINTERS_POINTER_TABLES",
+        "V8.GC_MC_EVACUATE_CLEAN_UP",
+        "V8.GC_MC_EVACUATE_EPILOGUE",
+        "V8.GC_MC_SWEEP_NEW_LO",
+        "V8.GC_MC_EVACUATE_REBALANCE",
+        "V8.GC_MC_FINISH",
+        "V8.GC_MC_FINISH_SWEEP_ARRAY_BUFFERS",
+        "V8.GC_MC_SWEEP_START_JOBS",
+        "V8.GC_MC_EPILOGUE",
+        "V8.GC_HEAP_EXTERNAL_WEAK_GLOBAL_HANDLES",
+        "V8.GC_HEAP_EMBEDDER_TRACING_EPILOGUE",
+        "V8.GC_HEAP_EPILOGUE_SAFEPOINT",
+        "V8.GC_HEAP_EPILOGUE",
+        "V8.GC_HEAP_DUMP_STATISTICS",
+        "V8.GC_HEAP_EXTERNAL_EPILOGUE"
+      ]
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 22507.20000000001,
+        "durationMs": 2.1999999999970896,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.9
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1.4
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.6
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 0.8
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 23222.20000000001,
+        "durationMs": 1.8999999999941792,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.7
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.6
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 0.9
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 23926.100000000006,
+        "durationMs": 4.399999999994179,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1.8
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.4
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 2.2
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1.7
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 2.2
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 24659.300000000003,
+        "durationMs": 1.9000000000087311,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.7
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.5
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 0.8
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 25412.5,
+        "durationMs": 2.1000000000058208,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.8
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1.1
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.6
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 1
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 26196.600000000006,
+        "durationMs": 2.1000000000058208,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.6
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.7
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.4
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 1.1
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 26984.40000000001,
+        "durationMs": 4.69999999999709,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1.8
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 2.2
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 2.1
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.4
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 2.5
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 27783.600000000006,
+        "durationMs": 2,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.8
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1.1
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.6
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 0.9
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 28599.800000000003,
+        "durationMs": 1.8000000000029104,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.6
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 0.9
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.7
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 0.9
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 29492.90000000001,
+        "durationMs": 2.6999999999970896,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.8
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.5
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1.4
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 1.3
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 30459.90000000001,
+        "durationMs": 4.099999999991269,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1.7
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 2.2
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1.6
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 1.9
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 31377.40000000001,
+        "durationMs": 1.8000000000029104,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.7
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.5
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 0.8
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 32243.600000000006,
+        "durationMs": 1.8999999999941792,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.7
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1.1
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.6
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 0.8
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 33128.90000000001,
+        "durationMs": 1.8999999999941792,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.6
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 0.9
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.7
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 1
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 34050.40000000001,
+        "durationMs": 5.5,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 2.1
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 2.5
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 2.3
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.6
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 3
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 34948.70000000001,
+        "durationMs": 2.099999999991269,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.9
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1.3
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.6
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 0.8
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 35887.70000000001,
+        "durationMs": 2.1999999999970896,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.6
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.8
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 1.2
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 36860.8,
+        "durationMs": 5.100000000005821,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 3.4
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.4
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 3.9
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.9
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 1.2
+        }
+      ],
+      "gcUnionOverlapMs": 2.323,
+      "gcNames": [
+        "V8.GC_HEAP_EXTERNAL_SECOND_PASS_CALLBACKS",
+        "V8.GC_HEAP_EXTERNAL_PROLOGUE",
+        "V8.GC_HEAP_PROLOGUE",
+        "V8.GC_HEAP_ENSURE_SWEEPING_COMPLETED",
+        "V8.GC_MC_COMPLETE_SWEEPING",
+        "V8.GC_MC_SWEEP",
+        "V8.GC_TIME_TO_SAFEPOINT",
+        "V8.GC_SCAVENGER",
+        "V8.GC_HEAP_PROLOGUE_SAFEPOINT",
+        "V8.GC_SCAVENGER_SCAVENGE",
+        "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_IDENTIFY",
+        "V8.GC_SCAVENGER_TRACED_HANDLES_COMPUTE_WEAKNESS_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_COLLECT_OLD_TO_NEW_PAGES",
+        "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE",
+        "Parallel scavenge started",
+        "V8.GC_SCAVENGER_SCAVENGE_ROOTS",
+        "V8.GC_SCAVENGER_SCAVENGE_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_PROCESS",
+        "V8.GC_SCAVENGER_TRACED_HANDLES_RESET_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_FINALIZE",
+        "V8.GC_SCAVENGER_SCAVENGE_RESTORE_AND_QUARANTINE_PINNED",
+        "V8.GC_SCAVENGER_FREE_REMEMBERED_SET",
+        "V8.GC_SCAVENGER_SWEEP_ARRAY_BUFFERS",
+        "V8.GC_SCAVENGER_RESIZE_NEW_SPACE",
+        "V8.GC_HEAP_EXTERNAL_WEAK_GLOBAL_HANDLES",
+        "V8.GC_HEAP_EPILOGUE_SAFEPOINT",
+        "V8.GC_HEAP_EPILOGUE",
+        "V8.GC_HEAP_DUMP_STATISTICS",
+        "V8.GC_HEAP_EXTERNAL_EPILOGUE"
+      ]
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 37841.90000000001,
+        "durationMs": 4.399999999994179,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 2
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.4
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 2.5
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1.6
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 1.9
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 38776.90000000001,
+        "durationMs": 1.8999999999941792,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.7
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1.1
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.5
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 0.8
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 39720,
+        "durationMs": 1.9000000000087311,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.7
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1.1
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.5
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 0.8
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 40681.600000000006,
+        "durationMs": 2.6000000000058208,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.9
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.4
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1.4
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.9
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 1.2
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 41656.3,
+        "durationMs": 8.60000000000582,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 4.5
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.5
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 5.1
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 2.8
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.5
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 3.5
+        }
+      ],
+      "gcUnionOverlapMs": 2.447,
+      "gcNames": [
+        "V8.GC_HEAP_EXTERNAL_SECOND_PASS_CALLBACKS",
+        "V8.GC_HEAP_EXTERNAL_PROLOGUE",
+        "V8.GC_HEAP_PROLOGUE",
+        "V8.GC_TIME_TO_SAFEPOINT",
+        "V8.GC_SCAVENGER",
+        "V8.GC_HEAP_PROLOGUE_SAFEPOINT",
+        "V8.GC_SCAVENGER_SCAVENGE",
+        "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_IDENTIFY",
+        "V8.GC_SCAVENGER_TRACED_HANDLES_COMPUTE_WEAKNESS_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_COLLECT_OLD_TO_NEW_PAGES",
+        "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE",
+        "Parallel scavenge started",
+        "V8.GC_SCAVENGER_SCAVENGE_ROOTS",
+        "V8.GC_SCAVENGER_SCAVENGE_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_PROCESS",
+        "V8.GC_SCAVENGER_TRACED_HANDLES_RESET_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_FINALIZE",
+        "V8.GC_SCAVENGER_SCAVENGE_RESTORE_AND_QUARANTINE_PINNED",
+        "V8.GC_SCAVENGER_FREE_REMEMBERED_SET",
+        "V8.GC_SCAVENGER_SWEEP_ARRAY_BUFFERS",
+        "V8.GC_SCAVENGER_RESIZE_NEW_SPACE",
+        "V8.GC_HEAP_EXTERNAL_WEAK_GLOBAL_HANDLES",
+        "V8.GC_HEAP_EPILOGUE_SAFEPOINT",
+        "V8.GC_HEAP_EPILOGUE",
+        "V8.GC_HEAP_DUMP_STATISTICS",
+        "V8.GC_HEAP_EXTERNAL_EPILOGUE",
+        "V8.GCDeoptMarkedAllocationSites"
+      ]
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 42721.40000000001,
+        "durationMs": 3.3000000000029104,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.9
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.5
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1.4
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1.6
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 1.9
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 43763.100000000006,
+        "durationMs": 1.8000000000029104,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.7
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 0.9
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.5
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 0.8
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 44780.90000000001,
+        "durationMs": 1.8000000000029104,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.7
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.6
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 0.8
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 45820,
+        "durationMs": 1.9000000000087311,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.7
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.6
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 0.9
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 46850.70000000001,
+        "durationMs": 7.19999999999709,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 4.1
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 4.4
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 2.6
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 2.8
+        }
+      ],
+      "gcUnionOverlapMs": 2.117,
+      "gcNames": [
+        "V8.GC_HEAP_EXTERNAL_PROLOGUE",
+        "V8.GC_HEAP_PROLOGUE",
+        "V8.GC_TIME_TO_SAFEPOINT",
+        "V8.GC_SCAVENGER",
+        "V8.GC_HEAP_PROLOGUE_SAFEPOINT",
+        "V8.GC_SCAVENGER_SCAVENGE",
+        "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_IDENTIFY",
+        "V8.GC_SCAVENGER_TRACED_HANDLES_COMPUTE_WEAKNESS_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_COLLECT_OLD_TO_NEW_PAGES",
+        "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE",
+        "Parallel scavenge started",
+        "V8.GC_SCAVENGER_SCAVENGE_ROOTS",
+        "V8.GC_SCAVENGER_SCAVENGE_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_PROCESS",
+        "V8.GC_SCAVENGER_TRACED_HANDLES_RESET_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_FINALIZE",
+        "V8.GC_SCAVENGER_SCAVENGE_RESTORE_AND_QUARANTINE_PINNED",
+        "V8.GC_SCAVENGER_FREE_REMEMBERED_SET",
+        "V8.GC_SCAVENGER_SWEEP_ARRAY_BUFFERS",
+        "V8.GC_SCAVENGER_RESIZE_NEW_SPACE",
+        "V8.GC_HEAP_EXTERNAL_WEAK_GLOBAL_HANDLES",
+        "V8.GC_HEAP_EPILOGUE_SAFEPOINT",
+        "V8.GC_HEAP_EPILOGUE",
+        "V8.GC_HEAP_DUMP_STATISTICS",
+        "V8.GC_HEAP_EXTERNAL_EPILOGUE"
+      ]
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 47959.600000000006,
+        "durationMs": 3.1000000000058208,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1.1
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.5
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1.7
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 1.4
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 49029,
+        "durationMs": 1.9000000000087311,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.7
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.7
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 0.8
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 50094.100000000006,
+        "durationMs": 1.8999999999941792,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.7
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.5
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 0.8
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 51158.5,
+        "durationMs": 4.399999999994179,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 2
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0.099
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 2.399
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1.701
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 2
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 52314.20000000001,
+        "durationMs": 2.5,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.8
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.399
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1.199
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 1
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.301
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 1.301
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 53440.100000000006,
+        "durationMs": 1.7999999999883585,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.7
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.3
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.6
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.199
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 0.799
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 54614.70000000001,
+        "durationMs": 2,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.8
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0.1
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 1.1
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.5
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.301
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 0.801
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    }
+  ]
+}

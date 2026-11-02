@@ -1,0 +1,14 @@
+{
+  "startedAt": "2026-11-02T16:51:58.381Z",
+  "finishedAt": "2026-11-02T16:53:08.736Z",
+  "before": [],
+  "result": {
+    "code": 1,
+    "signal": null
+  },
+  "timedOut": false,
+  "after": [],
+  "remaining": [],
+  "final": [],
+  "scope": "Processes whose cwd is the exact owned runtime checkout or a descendant; not system-wide absence"
+}

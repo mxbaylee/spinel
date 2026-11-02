@@ -1,0 +1,951 @@
+{
+  "counts": {
+    "spn135-clock-start I": 1,
+    "spn135-clock-end I": 1,
+    "spn135-history b": 66,
+    "spn135-flush b": 65,
+    "spn135-composition-redoState b": 132,
+    "spn135-composition-redoState e": 132,
+    "spn135-composition-undoState b": 132,
+    "spn135-composition-undoState e": 132,
+    "spn135-history-publication b": 30,
+    "spn135-history-publication e": 30,
+    "spn135-history e": 66,
+    "spn135-collaboration b": 66,
+    "spn135-collaboration-publication n": 62,
+    "spn135-collaboration e": 66,
+    "spn135-flush e": 65,
+    "spn135-history-publication n": 36,
+    "spn135-collaboration-publication b": 4,
+    "spn135-collaboration-publication e": 4
+  },
+  "first": [
+    {
+      "args": {
+        "data": {
+          "callTime": 82951257,
+          "navigationId": "196CE621F1C0B6CE10899E040C776D21",
+          "sampleTraceId": 8674668995711312,
+          "startTime": 2378.300000000003
+        }
+      },
+      "cat": "blink.user_timing",
+      "name": "spn135-clock-start",
+      "ph": "I",
+      "pid": 3370,
+      "s": "t",
+      "tid": 3370,
+      "ts": 82951238,
+      "tts": 923505
+    },
+    {
+      "args": {
+        "data": {
+          "callTime": 136275851,
+          "navigationId": "196CE621F1C0B6CE10899E040C776D21",
+          "sampleTraceId": 8674668995802813,
+          "startTime": 55703
+        }
+      },
+      "cat": "blink.user_timing",
+      "name": "spn135-clock-end",
+      "ph": "I",
+      "pid": 3370,
+      "s": "t",
+      "tid": 3370,
+      "ts": 136275846,
+      "tts": 52961244
+    },
+    {
+      "args": {
+        "callTime": 83975939,
+        "startTime": 3399,
+        "traceId": 1243269360
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-history",
+      "ph": "b",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 83971923
+    },
+    {
+      "args": {
+        "callTime": 83979253,
+        "startTime": 3399,
+        "traceId": 1796627282
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x12"
+      },
+      "name": "spn135-flush",
+      "ph": "b",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 83971923
+    },
+    {
+      "args": {
+        "callTime": 83974991,
+        "startTime": 3399.100000000006,
+        "traceId": 3654717371
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "spn135-composition-redoState",
+      "ph": "b",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 83972023
+    },
+    {
+      "args": {},
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "spn135-composition-redoState",
+      "ph": "e",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 83975023
+    },
+    {
+      "args": {
+        "callTime": 83975754,
+        "startTime": 3402.200000000012,
+        "traceId": 453056691
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "spn135-composition-undoState",
+      "ph": "b",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 83975123
+    },
+    {
+      "args": {},
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "spn135-composition-undoState",
+      "ph": "e",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 83975723
+    },
+    {
+      "args": {
+        "callTime": 83975930,
+        "startTime": 3402.800000000003,
+        "traceId": 682992637
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "spn135-history-publication",
+      "ph": "b",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 83975723
+    },
+    {
+      "args": {},
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "spn135-history-publication",
+      "ph": "e",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 83975923
+    },
+    {
+      "args": {},
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-history",
+      "ph": "e",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 83975923
+    },
+    {
+      "args": {
+        "callTime": 83979241,
+        "startTime": 3403.100000000006,
+        "traceId": 92701580
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-collaboration",
+      "ph": "b",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 83976023
+    },
+    {
+      "args": {
+        "callTime": 83978050,
+        "startTime": 3403.200000000012,
+        "traceId": 3694802680
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "spn135-composition-redoState",
+      "ph": "b",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 83976123
+    },
+    {
+      "args": {},
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "spn135-composition-redoState",
+      "ph": "e",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 83978123
+    },
+    {
+      "args": {
+        "callTime": 83979193,
+        "startTime": 3405.200000000012,
+        "traceId": 2650680854
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "spn135-composition-undoState",
+      "ph": "b",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 83978123
+    },
+    {
+      "args": {
+        "callTime": 83979230,
+        "startTime": 3406.300000000003,
+        "traceId": 3591908987
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "spn135-collaboration-publication",
+      "ph": "n",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 83979223
+    },
+    {
+      "args": {},
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "spn135-composition-undoState",
+      "ph": "e",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 83979223
+    },
+    {
+      "args": {},
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-collaboration",
+      "ph": "e",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 83979223
+    },
+    {
+      "args": {},
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x12"
+      },
+      "name": "spn135-flush",
+      "ph": "e",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 83979323
+    },
+    {
+      "args": {
+        "callTime": 84531189,
+        "startTime": 3956.700000000012,
+        "traceId": 3106608630
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-composition-redoState",
+      "ph": "b",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 84529623
+    },
+    {
+      "args": {
+        "callTime": 84531871,
+        "startTime": 3956.700000000012,
+        "traceId": 4293582153
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x12"
+      },
+      "name": "spn135-history",
+      "ph": "b",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 84529623
+    },
+    {
+      "args": {
+        "callTime": 84534456,
+        "startTime": 3956.700000000012,
+        "traceId": 1101417598
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "spn135-flush",
+      "ph": "b",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 84529623
+    },
+    {
+      "args": {},
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-composition-redoState",
+      "ph": "e",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 84531223
+    },
+    {
+      "args": {
+        "callTime": 84531795,
+        "startTime": 3958.300000000003,
+        "traceId": 4201735662
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-composition-undoState",
+      "ph": "b",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 84531223
+    },
+    {
+      "args": {
+        "callTime": 84531864,
+        "startTime": 3958.900000000009,
+        "traceId": 62059238
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-history-publication",
+      "ph": "n",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 84531823
+    },
+    {
+      "args": {},
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-composition-undoState",
+      "ph": "e",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 84531823
+    },
+    {
+      "args": {},
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x12"
+      },
+      "name": "spn135-history",
+      "ph": "e",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 84531823
+    },
+    {
+      "args": {
+        "callTime": 84533883,
+        "startTime": 3959,
+        "traceId": 1119956662
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-composition-redoState",
+      "ph": "b",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 84531923
+    },
+    {
+      "args": {
+        "callTime": 84534447,
+        "startTime": 3959,
+        "traceId": 2880860476
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x12"
+      },
+      "name": "spn135-collaboration",
+      "ph": "b",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 84531923
+    },
+    {
+      "args": {},
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-composition-redoState",
+      "ph": "e",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 84533923
+    }
+  ],
+  "last": [
+    {
+      "args": {},
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-composition-undoState",
+      "ph": "e",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 134014822
+    },
+    {
+      "args": {},
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x12"
+      },
+      "name": "spn135-collaboration",
+      "ph": "e",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 134014822
+    },
+    {
+      "args": {},
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "spn135-flush",
+      "ph": "e",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 134014822
+    },
+    {
+      "args": {
+        "callTime": 135188416,
+        "startTime": 54614.70000000001,
+        "traceId": 237098580
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-composition-redoState",
+      "ph": "b",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135187623
+    },
+    {
+      "args": {
+        "callTime": 135188722,
+        "startTime": 54614.70000000001,
+        "traceId": 3840281
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x12"
+      },
+      "name": "spn135-history",
+      "ph": "b",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135187623
+    },
+    {
+      "args": {
+        "callTime": 135189623,
+        "startTime": 54614.70000000001,
+        "traceId": 2203920730
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "spn135-flush",
+      "ph": "b",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135187623
+    },
+    {
+      "args": {},
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-composition-redoState",
+      "ph": "e",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135188423
+    },
+    {
+      "args": {
+        "callTime": 135188674,
+        "startTime": 54615.60000000001,
+        "traceId": 692375175
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-composition-undoState",
+      "ph": "b",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135188523
+    },
+    {
+      "args": {},
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-composition-undoState",
+      "ph": "e",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135188623
+    },
+    {
+      "args": {
+        "callTime": 135188715,
+        "startTime": 54615.70000000001,
+        "traceId": 193035376
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-history-publication",
+      "ph": "b",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135188623
+    },
+    {
+      "args": {},
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-history-publication",
+      "ph": "e",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135188723
+    },
+    {
+      "args": {},
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x12"
+      },
+      "name": "spn135-history",
+      "ph": "e",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135188723
+    },
+    {
+      "args": {
+        "callTime": 135189299,
+        "startTime": 54615.89999999999,
+        "traceId": 4045907256
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-composition-redoState",
+      "ph": "b",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135188822
+    },
+    {
+      "args": {
+        "callTime": 135189618,
+        "startTime": 54615.89999999999,
+        "traceId": 3689794502
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x12"
+      },
+      "name": "spn135-collaboration",
+      "ph": "b",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135188822
+    },
+    {
+      "args": {},
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-composition-redoState",
+      "ph": "e",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135189322
+    },
+    {
+      "args": {
+        "callTime": 135189603,
+        "startTime": 54616.39999999999,
+        "traceId": 3521325574
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-composition-undoState",
+      "ph": "b",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135189322
+    },
+    {
+      "args": {
+        "callTime": 135189613,
+        "startTime": 54616.70000000001,
+        "traceId": 3219192699
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-collaboration-publication",
+      "ph": "n",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135189623
+    },
+    {
+      "args": {},
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-composition-undoState",
+      "ph": "e",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135189623
+    },
+    {
+      "args": {},
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x12"
+      },
+      "name": "spn135-collaboration",
+      "ph": "e",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135189623
+    },
+    {
+      "args": {},
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x13"
+      },
+      "name": "spn135-flush",
+      "ph": "e",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135189623
+    },
+    {
+      "args": {
+        "callTime": 135706590,
+        "startTime": 55133.30000000002,
+        "traceId": 2843399307
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-composition-redoState",
+      "ph": "b",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135706223
+    },
+    {
+      "args": {
+        "callTime": 135706830,
+        "startTime": 55133.30000000002,
+        "traceId": 3007097408
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x12"
+      },
+      "name": "spn135-history",
+      "ph": "b",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135706223
+    },
+    {
+      "args": {},
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-composition-redoState",
+      "ph": "e",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135706623
+    },
+    {
+      "args": {
+        "callTime": 135706752,
+        "startTime": 55133.70000000001,
+        "traceId": 160703305
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-composition-undoState",
+      "ph": "b",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135706623
+    },
+    {
+      "args": {},
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-composition-undoState",
+      "ph": "e",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135706723
+    },
+    {
+      "args": {
+        "callTime": 135706820,
+        "startTime": 55133.80000000002,
+        "traceId": 1965176643
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-history-publication",
+      "ph": "b",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135706723
+    },
+    {
+      "args": {},
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-history-publication",
+      "ph": "e",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135706822
+    },
+    {
+      "args": {},
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x12"
+      },
+      "name": "spn135-history",
+      "ph": "e",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135706822
+    },
+    {
+      "args": {
+        "callTime": 135707219,
+        "startTime": 55134.10000000001,
+        "traceId": 865552207
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-composition-redoState",
+      "ph": "b",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135707023
+    },
+    {
+      "args": {
+        "callTime": 135707353,
+        "startTime": 55134.10000000001,
+        "traceId": 212224879
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x12"
+      },
+      "name": "spn135-collaboration",
+      "ph": "b",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135707023
+    },
+    {
+      "args": {},
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-composition-redoState",
+      "ph": "e",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135707223
+    },
+    {
+      "args": {
+        "callTime": 135707332,
+        "startTime": 55134.30000000002,
+        "traceId": 1185417598
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-composition-undoState",
+      "ph": "b",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135707223
+    },
+    {
+      "args": {
+        "callTime": 135707346,
+        "startTime": 55134.5,
+        "traceId": 3960105669
+      },
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-collaboration-publication",
+      "ph": "n",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135707423
+    },
+    {
+      "args": {},
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x11"
+      },
+      "name": "spn135-composition-undoState",
+      "ph": "e",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135707423
+    },
+    {
+      "args": {},
+      "cat": "blink.user_timing",
+      "id2": {
+        "local": "0x12"
+      },
+      "name": "spn135-collaboration",
+      "ph": "e",
+      "pid": 3370,
+      "tid": 3370,
+      "ts": 135707423
+    }
+  ]
+}
+WATCHDOG: exit=0, signal=null, elapsed=95ms, peak=0.0MiB

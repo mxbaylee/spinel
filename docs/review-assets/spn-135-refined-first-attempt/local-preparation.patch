@@ -1,0 +1,148 @@
+diff --git a/e2e/doc-responsiveness.spec.ts b/e2e/doc-responsiveness.spec.ts
+index 142d43fc..95aa7f4b 100644
+--- a/e2e/doc-responsiveness.spec.ts
++++ b/e2e/doc-responsiveness.spec.ts
+@@ -1,6 +1,7 @@
+ import { createHash, randomUUID } from 'node:crypto';
+ import { execFileSync } from 'node:child_process';
+ import { readFile, writeFile } from 'node:fs/promises';
++import { startDiagnosticTrace } from './spn135-trace.ts';
+ import { arch, cpus, platform, release, totalmem } from 'node:os';
+ import { expect, test } from '@playwright/test';
+ import type { Page, TestInfo } from '@playwright/test';
+@@ -323,7 +324,22 @@ for (const preset of ['desktop', 'mobile'] as const)
+       const cdp = await f.page.context().newCDPSession(f.page);
+       let finishInput: Awaited<ReturnType<typeof observeInput>> | undefined;
+       let profiling = false;
++      let finishTrace: Awaited<ReturnType<typeof startDiagnosticTrace>> | undefined;
+       let profilerClock: ProfilerClockBracket | undefined;
++      let nativeDiagnostic: Record<string, unknown> | undefined;
++      const retainNativeDiagnostic = async () => {
++        if (nativeDiagnostic) return nativeDiagnostic;
++        const capture = await f.page.evaluate(() => {
++          const value = globalThis as unknown as Record<string, unknown>;
++          return { idle: value.__spn135Idle ?? [], phaseError: value.__spn135PhaseError ?? null,
++            captureError: value.__spn135CaptureError ?? null };
++        }).catch(error => ({ collectionError: String(error) }));
++        const bytes = JSON.stringify(capture);
++        await writeFile(info.outputPath('spn135-native-idle.json'), bytes);
++        nativeDiagnostic = { ...capture, sha256: createHash('sha256').update(bytes).digest('hex') };
++        evidence.nativeDiagnostic = nativeDiagnostic;
++        return nativeDiagnostic;
++      };
+       let reloadObservers: ReloadObservers | undefined;
+       let clockOrigins: ClockOrigins | undefined;
+       const drainDiagnostics: DocDrainDiagnostics = {
+@@ -333,7 +349,8 @@ for (const preset of ['desktop', 'mobile'] as const)
+       };
+       const evidence: Record<string, unknown> = {
+         schema: DOC_RESPONSIVENESS_SCHEMA,
+-        role: baseline ? 'baseline-observation' : 'candidate',
++        role: 'diagnostic-only',
++        diagnostic: 'SPN-135 one desktop profile; never acceptance',
+         budgetEnforced: !baseline && !profiled,
+         preset,
+         sample,
+@@ -390,6 +407,7 @@ for (const preset of ['desktop', 'mobile'] as const)
+         },
+         instrumentation: {
+           profiler: profiled,
++          browserTrace: profiled,
+           cpuThrottle: mobile ? 4 : 1,
+           longTaskObserver: true,
+           perKeyRequestAnimationFrame: true,
+@@ -449,6 +467,8 @@ for (const preset of ['desktop', 'mobile'] as const)
+         await cdp.send('Emulation.setCPUThrottlingRate', { rate: mobile ? 4 : 1 });
+         evidence.heapBefore = await cdp.send('Runtime.getHeapUsage');
+         if (profiled) {
++          finishTrace = await startDiagnosticTrace(cdp, info.outputPath('spn135-trace.json'));
++          evidence.traceClockStart = await f.page.evaluate(() => performance.mark('spn135-clock-start').startTime);
+           await cdp.send('Profiler.enable');
+           await cdp.send('Profiler.setSamplingInterval', { interval: 1000 });
+           const beforeMs = await f.page.evaluate(() => performance.now());
+@@ -598,6 +618,11 @@ for (const preset of ['desktop', 'mobile'] as const)
+           evidence.profileSha256 = await retainProfile(profile, profilerClock, info);
+           evidence.compositionCpu = compositionCpu(profile, profilerClock!, input.longTasks);
+         }
++        if (finishTrace) {
++          evidence.traceClockEnd = await f.page.evaluate(() => performance.mark('spn135-clock-end').startTime);
++          evidence.diagnosticTrace = await finishTrace();
++        }
++        await retainNativeDiagnostic();
+         evidence.timingCompleteAt = await now(f.page);
+         evidence.timingComplete = true;
+         const savedStarted = performance.now();
+@@ -724,6 +749,12 @@ for (const preset of ['desktop', 'mobile'] as const)
+         completeReloadObservation(finalReloads);
+         expect(finalReloads.reloads).toEqual(undoRedo.reloads);
+         evidence.reloadObservers = finalReloads.status;
++        expect((evidence.diagnosticTrace as { complete: boolean }).complete).toBe(true);
++        const captured = await retainNativeDiagnostic();
++        expect(captured.collectionError).toBeUndefined();
++        expect(captured.phaseError).toBeNull();
++        expect(captured.captureError).toBeNull();
++        expect((captured.idle as unknown[]).length).toBeGreaterThan(0);
+         evidence.completed = true;
+       } finally {
+         if (finishInput)
+@@ -733,6 +764,9 @@ for (const preset of ['desktop', 'mobile'] as const)
+           if (result)
+             evidence.profileSha256 = await retainProfile(result.profile, profilerClock, info);
+         }
++        if (finishTrace && !evidence.diagnosticTrace) evidence.diagnosticTrace = await finishTrace();
++        try { await retainNativeDiagnostic(); }
++        catch (error) { evidence.nativeDiagnosticRetentionError = String(error); }
+         evidence.errors = f.errors;
+         evidence.finalNative = await readDocResponsiveness(f.page).catch(() => null);
+         if (reloadObservers) {
+diff --git a/src/ui/boundedDocHistory.ts b/src/ui/boundedDocHistory.ts
+index 0f2e690c..36bb3c5f 100644
+--- a/src/ui/boundedDocHistory.ts
++++ b/src/ui/boundedDocHistory.ts
+@@ -57,6 +57,46 @@ export function boundDocHistory(
+     const history = pending.history.length;
+     const collaboration = pending.collaboration.length;
+     flushing = true;
++
++    if (reason === 'idle') {
++      const captureStartedAt = performance.now();
++      const diagnostic = globalThis as unknown as {
++        __spn135Idle?: unknown[]; __spn135CaptureError?: string;
++      };
++      try {
++        let visits = 0;
++        const ancestors = new Set<object>();
++        const encode = (value: unknown): unknown => {
++          if (++visits > 100000) throw new Error('Idle capture exceeds 100000 values');
++          if (value === undefined) return { kind: 'undefined' };
++          if (value === null || typeof value === 'string' || typeof value === 'boolean' ||
++              (typeof value === 'number' && Number.isFinite(value)))
++            return { kind: 'value', value };
++          if (typeof value !== 'object' || ancestors.has(value))
++            throw new Error('Unsupported or cyclic native capture value');
++          ancestors.add(value);
++          try {
++            return { kind: Array.isArray(value) ? 'array' : 'object',
++              entries: Reflect.ownKeys(value).map(key => {
++                const descriptor = Object.getOwnPropertyDescriptor(value, key)!;
++                if (typeof key !== 'string' || !Object.hasOwn(descriptor, 'value'))
++                  throw new Error('Unsupported native capture property');
++                return [key, encode(descriptor.value)];
++              }) };
++          } finally { ancestors.delete(value); }
++        };
++        const cache = encode(pending);
++        const captures = diagnostic.__spn135Idle ??= [];
++        if (captures.length >= 100) throw new Error('Idle capture exceeds 100 intervals');
++        const item = { reason, quietForMs, captureStartedAt, cache,
++          captureEndedAt: performance.now() };
++        if (new TextEncoder().encode(JSON.stringify([...captures, item])).byteLength > 4 * 1024 * 1024)
++          throw new Error('Idle captures exceed 4 MiB');
++        captures.push(item);
++        item.captureEndedAt = performance.now();
++        performance.measure('spn135-idle-capture', { start: captureStartedAt, end: performance.now() });
++      } catch (error) { diagnostic.__spn135CaptureError = String(error); }
++    }
+     const startedAt = performance.now();
+     try {
+       manager.flushPendingChanges(unitId);
