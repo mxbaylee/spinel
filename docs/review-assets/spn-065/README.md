@@ -1,15 +1,15 @@
 # SPN-065 visual evidence
 
-These are actual production-editor captures, not mockups. Capture date:
-2026-10-30. Application source: `de9a1432b07604d0313bad437f7a2bd5e016fada`;
-the final review candidate retains identical application code. The capture/test
+These are actual production-editor captures, not mockups. Native captures refreshed
+2026-11-01 on source `0c0b114abc6e74ac1ed1e1765f3f9200b2bc5af8`, which incorporates
+main `0bdbbcb5ca23b84e172e41a11bd0cf555e911130`. The capture/test
 harness is `e2e/copy.spec.ts`, blob `866da4919f94f5d7e5029854e228286e1e16e927`.
 
-The combined production run passed both copy journeys in 15.3 seconds under the
-2 GiB process-tree watchdog, with peak RSS 1,688,764 KiB. Chromium phone emulation
+The refreshed production run passed both copy journeys in 11.7 seconds under the
+2 GiB process-tree watchdog (12.316 s elapsed), with peak RSS 1,618.5 MiB. Chromium phone emulation
 uses real touch input at 390 × 844; it is not a physical-device result. The desktop
-viewport is 1280 × 900. These local captures use the production build and isolated
-port 32165. Full CI/check/review identities and finding dispositions are maintained
+viewport is 1280 × 900. These local captures use the production build on the
+existing isolated production test port 3101. Full CI/check/review identities and finding dispositions are maintained
 in [PR #221](https://github.com/mxbaylee/spinel/pull/221).
 
 | Files | Theme / viewport | State |
