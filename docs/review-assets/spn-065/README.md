@@ -19,6 +19,11 @@ physical-device claim. The file suffix identifies light or dark theme:
 - `native-doc-copy-unknown-phone-*`: actual server commit followed by dropped
   response; unknown result retained after reopening, one POST and one stored copy.
 
+The later [connection-publication guard](../../implementation/SPN-065.md#repeated-connection-notifications-and-flush-investigation)
+was checked by rerunning both production journeys and recapturing all nine views;
+the PNG bytes are identical. That check passed in 14.0 s (watchdog 14.488 s,
+1,765.5 MiB peak). Component rendering code is unchanged.
+
 ## Current production component captures
 
 Selected production CopyFile/Dashboard components use Storybook source

@@ -187,8 +187,9 @@ export function DocEditor({
       setFormulaOnline(state === 'online');
       if (state !== 'online' && lastConnection === 'online') formulas.current?.clear();
       else if (state === 'online' && lastConnection !== 'online') void formulas.current?.refresh();
+      const connectionChanged = state !== lastConnection;
       lastConnection = state;
-      publish(lastState);
+      if (connectionChanged) publish(lastState);
       onConnectionState?.(state);
     };
     const loading = new AbortController();

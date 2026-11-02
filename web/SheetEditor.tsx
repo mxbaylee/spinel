@@ -98,8 +98,9 @@ export function SheetEditor({
     onConnectionState?.('reconnecting');
     const publishConnection = (state: ConnectionState) => {
       if (!disposed) {
+        const connectionChanged = state !== lastConnection;
         lastConnection = state;
-        publish(lastState);
+        if (connectionChanged) publish(lastState);
         onConnectionState?.(state);
       }
     };
