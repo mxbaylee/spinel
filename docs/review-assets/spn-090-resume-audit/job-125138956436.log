@@ -1,0 +1,515 @@
+﻿2026-11-02T07:01:00.0643533Z Current runner version: '2.338.2'
+2026-11-02T07:01:00.0671613Z ##[group]Runner Image Provisioner
+2026-11-02T07:01:00.0672574Z Hosted Compute Agent
+2026-11-02T07:01:00.0673187Z Version: 20261021.618
+2026-11-02T07:01:00.0673805Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-11-02T07:01:00.0674639Z Build Date: 2026-10-21T00:45:21Z
+2026-11-02T07:01:00.0675340Z Worker ID: {eedc6885-37dc-4a1a-9d73-40e066b849f3}
+2026-11-02T07:01:00.0676094Z Region: eastus
+2026-11-02T07:01:00.0676661Z Cloud: Azure
+2026-11-02T07:01:00.0677274Z ##[endgroup]
+2026-11-02T07:01:00.0679490Z ##[group]Operating System
+2026-11-02T07:01:00.0680150Z Ubuntu
+2026-11-02T07:01:00.0680757Z 24.04.5
+2026-11-02T07:01:00.0681288Z LTS
+2026-11-02T07:01:00.0681846Z ##[endgroup]
+2026-11-02T07:01:00.0682582Z ##[group]Runner Image
+2026-11-02T07:01:00.0683248Z Image: ubuntu-24.04
+2026-11-02T07:01:00.0683799Z Version: 20261025.353.1
+2026-11-02T07:01:00.0685182Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+2026-11-02T07:01:00.0686846Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+2026-11-02T07:01:00.0687818Z ##[endgroup]
+2026-11-02T07:01:00.0689346Z ##[group]GITHUB_TOKEN Permissions
+2026-11-02T07:01:00.0691510Z Contents: read
+2026-11-02T07:01:00.0692288Z Metadata: read
+2026-11-02T07:01:00.0692865Z ##[endgroup]
+2026-11-02T07:01:00.0694972Z Secret source: Actions
+2026-11-02T07:01:00.0696005Z Cache mode: write
+2026-11-02T07:01:00.0697028Z Prepare workflow directory
+2026-11-02T07:01:00.1032577Z Prepare all required actions
+2026-11-02T07:01:00.1081869Z Getting action download info
+2026-11-02T07:01:00.3573084Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-02T07:01:00.4803629Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+2026-11-02T07:01:00.5782559Z Download action repository 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-11-02T07:01:00.7476854Z Complete job name: Unit tests (recovery)
+2026-11-02T07:01:00.8466745Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-02T07:01:00.8468146Z with:
+2026-11-02T07:01:00.8468819Z   persist-credentials: false
+2026-11-02T07:01:00.8469356Z   repository: mxbaylee/spinel
+2026-11-02T07:01:00.8473052Z   token: ***
+2026-11-02T07:01:00.8473490Z   ssh-strict: true
+2026-11-02T07:01:00.8473934Z   ssh-user: git
+2026-11-02T07:01:00.8474362Z   clean: true
+2026-11-02T07:01:00.8474794Z   sparse-checkout-cone-mode: true
+2026-11-02T07:01:00.8475322Z   fetch-depth: 1
+2026-11-02T07:01:00.8475749Z   fetch-tags: false
+2026-11-02T07:01:00.8476190Z   show-progress: true
+2026-11-02T07:01:00.8476633Z   lfs: false
+2026-11-02T07:01:00.8477045Z   submodules: false
+2026-11-02T07:01:00.8477495Z   set-safe-directory: true
+2026-11-02T07:01:00.8477991Z   allow-unsafe-pr-checkout: false
+2026-11-02T07:01:00.8479025Z ##[endgroup]
+2026-11-02T07:01:01.2012632Z Syncing repository: mxbaylee/spinel
+2026-11-02T07:01:01.2014609Z ##[group]Getting Git version info
+2026-11-02T07:01:01.2016059Z Working directory is '/home/runner/work/spinel/spinel'
+2026-11-02T07:01:01.2018180Z [command]/usr/bin/git version
+2026-11-02T07:01:01.2167374Z git version 2.56.0
+2026-11-02T07:01:01.2200200Z ##[endgroup]
+2026-11-02T07:01:01.2208617Z Temporarily overriding HOME='/home/runner/work/_temp/dc877447-c33c-491b-99a4-576869fb3bc7' before making global git config changes
+2026-11-02T07:01:01.2211626Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-02T07:01:01.2214046Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-02T07:01:01.2279547Z Deleting the contents of '/home/runner/work/spinel/spinel'
+2026-11-02T07:01:01.2284026Z ##[group]Determining repository object format
+2026-11-02T07:01:01.2286173Z ##[endgroup]
+2026-11-02T07:01:01.2288655Z ##[group]Initializing the repository
+2026-11-02T07:01:01.2312047Z [command]/usr/bin/git init /home/runner/work/spinel/spinel
+2026-11-02T07:01:01.2455087Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-02T07:01:01.2457181Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-02T07:01:01.2458643Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-02T07:01:01.2460016Z hint: call:
+2026-11-02T07:01:01.2460832Z hint:
+2026-11-02T07:01:01.2461458Z hint: 	git config --global init.defaultBranch <name>
+2026-11-02T07:01:01.2462346Z hint:
+2026-11-02T07:01:01.2463204Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-02T07:01:01.2464918Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-02T07:01:01.2465989Z hint:
+2026-11-02T07:01:01.2466513Z hint: 	git branch -m <name>
+2026-11-02T07:01:01.2467207Z hint:
+2026-11-02T07:01:01.2469066Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-02T07:01:01.2471120Z Initialized empty Git repository in /home/runner/work/spinel/spinel/.git/
+2026-11-02T07:01:01.2489859Z [command]/usr/bin/git remote add origin https://github.com/mxbaylee/spinel
+2026-11-02T07:01:01.2563086Z ##[endgroup]
+2026-11-02T07:01:01.2564462Z ##[group]Disabling automatic garbage collection
+2026-11-02T07:01:01.2568835Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-02T07:01:01.2611489Z ##[endgroup]
+2026-11-02T07:01:01.2613223Z ##[group]Setting up auth
+2026-11-02T07:01:01.2614210Z Removing SSH command configuration
+2026-11-02T07:01:01.2617460Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-02T07:01:01.2666165Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-02T07:01:01.3109695Z Removing HTTP extra header
+2026-11-02T07:01:01.3115895Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-02T07:01:01.3173568Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-02T07:01:01.3411487Z Removing includeIf entries pointing to credentials config files
+2026-11-02T07:01:01.3417611Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-02T07:01:01.3464178Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-02T07:01:01.3707427Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-15c0fb3c-76ec-462d-913e-34234489b5b6.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-02T07:01:01.3757170Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git.path /home/runner/work/_temp/git-credentials-15c0fb3c-76ec-462d-913e-34234489b5b6.config
+2026-11-02T07:01:01.3800499Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-15c0fb3c-76ec-462d-913e-34234489b5b6.config
+2026-11-02T07:01:01.3844443Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-15c0fb3c-76ec-462d-913e-34234489b5b6.config
+2026-11-02T07:01:01.3887675Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-15c0fb3c-76ec-462d-913e-34234489b5b6.config
+2026-11-02T07:01:01.4010102Z ##[endgroup]
+2026-11-02T07:01:01.4010956Z ##[group]Fetching the repository
+2026-11-02T07:01:01.4012476Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +a2c2f52387ec59d1a419a67ba3ef307831de9ba6:refs/remotes/pull/224/merge
+2026-11-02T07:01:03.1599993Z From https://github.com/mxbaylee/spinel
+2026-11-02T07:01:03.1602848Z  * [new ref]         a2c2f52387ec59d1a419a67ba3ef307831de9ba6 -> pull/224/merge
+2026-11-02T07:01:03.1607792Z ##[endgroup]
+2026-11-02T07:01:03.1610029Z ##[group]Determining the checkout info
+2026-11-02T07:01:03.1612327Z ##[endgroup]
+2026-11-02T07:01:03.1613214Z [command]/usr/bin/git sparse-checkout disable
+2026-11-02T07:01:03.1682135Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-02T07:01:03.1730780Z ##[group]Checking out the ref
+2026-11-02T07:01:03.1733826Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/224/merge
+2026-11-02T07:01:03.6798746Z Note: switching to 'refs/remotes/pull/224/merge'.
+2026-11-02T07:01:03.6799485Z 
+2026-11-02T07:01:03.6800092Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-11-02T07:01:03.6801395Z changes and commit them, and you can discard any commits you make in this
+2026-11-02T07:01:03.6802659Z state without impacting any branches by switching back to a branch.
+2026-11-02T07:01:03.6803346Z 
+2026-11-02T07:01:03.6803813Z If you want to create a new branch to retain commits you create, you may
+2026-11-02T07:01:03.6804686Z do so (now or later) by using -c with the switch command. Example:
+2026-11-02T07:01:03.6805262Z 
+2026-11-02T07:01:03.6805550Z   git switch -c <new-branch-name>
+2026-11-02T07:01:03.6806002Z 
+2026-11-02T07:01:03.6806265Z Or undo this operation with:
+2026-11-02T07:01:03.6806681Z 
+2026-11-02T07:01:03.6806916Z   git switch -
+2026-11-02T07:01:03.6807285Z 
+2026-11-02T07:01:03.6807815Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-11-02T07:01:03.6808934Z 
+2026-11-02T07:01:03.6809810Z HEAD is now at a2c2f52 Merge e0abee43dcb5d7edcb2508e940733e730729b01c into df1d910822cba284178f26ac4f6cf359ddcfacef
+2026-11-02T07:01:03.6828766Z ##[endgroup]
+2026-11-02T07:01:03.6897918Z [command]/usr/bin/git log -1 --format=%H
+2026-11-02T07:01:03.6937529Z a2c2f52387ec59d1a419a67ba3ef307831de9ba6
+2026-11-02T07:01:03.6947160Z ##[group]Removing auth
+2026-11-02T07:01:03.6947730Z Removing SSH command configuration
+2026-11-02T07:01:03.6951845Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-02T07:01:03.6994946Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-02T07:01:03.7240153Z Removing HTTP extra header
+2026-11-02T07:01:03.7244550Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-02T07:01:03.7289873Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-02T07:01:03.7535023Z Removing includeIf entries pointing to credentials config files
+2026-11-02T07:01:03.7539016Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-02T07:01:03.7580312Z includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-02T07:01:03.7581197Z includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-02T07:01:03.7581973Z includeif.gitdir:/github/workspace/.git.path
+2026-11-02T07:01:03.7582667Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-02T07:01:03.7592625Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-02T07:01:03.7628614Z /home/runner/work/_temp/git-credentials-15c0fb3c-76ec-462d-913e-34234489b5b6.config
+2026-11-02T07:01:03.7639628Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-15c0fb3c\-76ec\-462d\-913e\-34234489b5b6\.config
+2026-11-02T07:01:03.7690462Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-02T07:01:03.7725679Z /home/runner/work/_temp/git-credentials-15c0fb3c-76ec-462d-913e-34234489b5b6.config
+2026-11-02T07:01:03.7734635Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-15c0fb3c\-76ec\-462d\-913e\-34234489b5b6\.config
+2026-11-02T07:01:03.7782099Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-02T07:01:03.7817124Z /github/runner_temp/git-credentials-15c0fb3c-76ec-462d-913e-34234489b5b6.config
+2026-11-02T07:01:03.7825536Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-15c0fb3c\-76ec\-462d\-913e\-34234489b5b6\.config
+2026-11-02T07:01:03.7874275Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-02T07:01:03.7911275Z /github/runner_temp/git-credentials-15c0fb3c-76ec-462d-913e-34234489b5b6.config
+2026-11-02T07:01:03.7920433Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-15c0fb3c\-76ec\-462d\-913e\-34234489b5b6\.config
+2026-11-02T07:01:03.7966005Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-02T07:01:03.8203288Z Removing credentials config '/home/runner/work/_temp/git-credentials-15c0fb3c-76ec-462d-913e-34234489b5b6.config'
+2026-11-02T07:01:03.8212283Z ##[endgroup]
+2026-11-02T07:01:03.8490351Z ##[group]Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+2026-11-02T07:01:03.8490773Z with:
+2026-11-02T07:01:03.8490983Z   node-version-file: .nvmrc
+2026-11-02T07:01:03.8491237Z   package-manager-cache: false
+2026-11-02T07:01:03.8491481Z   check-latest: false
+2026-11-02T07:01:03.8493917Z   token: ***
+2026-11-02T07:01:03.8494146Z ##[endgroup]
+2026-11-02T07:01:03.9746389Z Node version file is not JSON file
+2026-11-02T07:01:03.9752084Z Node version file is not TOML file
+2026-11-02T07:01:03.9752622Z Resolved .nvmrc as 26.12.1
+2026-11-02T07:01:03.9775514Z Attempting to download 26.12.1...
+2026-11-02T07:01:04.5794338Z Acquiring 26.12.1 - x64 from https://github.com/actions/node-versions/releases/download/26.12.1-39618969937/node-26.12.1-linux-x64.tar.gz
+2026-11-02T07:01:05.0518769Z Extracting ...
+2026-11-02T07:01:05.0669414Z [command]/usr/bin/tar xz --strip 1 --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/bf828773-9815-4652-9cb6-6553b52f4404 -f /home/runner/work/_temp/7c872cd9-6f89-4e67-a0df-808d77a955be
+2026-11-02T07:01:06.5195609Z Adding to the cache ...
+2026-11-02T07:01:08.3209454Z ##[group]Environment details
+2026-11-02T07:01:08.5450135Z node: v26.12.1
+2026-11-02T07:01:08.5450534Z npm: 11.20.0
+2026-11-02T07:01:08.5451056Z yarn: 1.22.22
+2026-11-02T07:01:08.5451977Z ##[endgroup]
+2026-11-02T07:01:08.5645982Z ##[group]Run npm ci
+2026-11-02T07:01:08.5646299Z [36;1mnpm ci[0m
+2026-11-02T07:01:08.5672214Z shell: /usr/bin/bash -e {0}
+2026-11-02T07:01:08.5672491Z ##[endgroup]
+2026-11-02T07:01:22.4202366Z 
+2026-11-02T07:01:22.4210770Z > postinstall
+2026-11-02T07:01:22.4212291Z > node scripts/dependencies/patch-univer-core.ts && node scripts/dependencies/patch-univer-docs.ts && node scripts/dependencies/patch-univer-ui.ts && node scripts/dependencies/patch-univer-drawing.ts && node scripts/dependencies/patch-univer-docs-ui.ts
+2026-11-02T07:01:22.4213321Z 
+2026-11-02T07:01:23.1664763Z 
+2026-11-02T07:01:23.1665752Z added 501 packages, and audited 509 packages in 15s
+2026-11-02T07:01:23.1666321Z 
+2026-11-02T07:01:23.1666886Z 136 packages are looking for funding
+2026-11-02T07:01:23.1667544Z   run `npm fund` for details
+2026-11-02T07:01:23.1944419Z 
+2026-11-02T07:01:23.1945135Z 4 moderate severity vulnerabilities
+2026-11-02T07:01:23.1945396Z 
+2026-11-02T07:01:23.1945752Z To address all issues (including breaking changes), run:
+2026-11-02T07:01:23.1946525Z   npm audit fix --force
+2026-11-02T07:01:23.1946683Z 
+2026-11-02T07:01:23.1946814Z Run `npm audit` for details.
+2026-11-02T07:01:23.1959984Z npm warn install-scripts 2 packages have install scripts not yet covered by allowScripts:
+2026-11-02T07:01:23.1961636Z npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+2026-11-02T07:01:23.1963139Z npm warn install-scripts   protobufjs@7.6.6 (postinstall: node scripts/postinstall)
+2026-11-02T07:01:23.1964253Z npm warn install-scripts
+2026-11-02T07:01:23.1965634Z npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+2026-11-02T07:01:23.2797215Z ##[group]Run node scripts/ci/prefer-ubuntu-archive.ts
+2026-11-02T07:01:23.2797667Z [36;1mnode scripts/ci/prefer-ubuntu-archive.ts[0m
+2026-11-02T07:01:23.2797996Z [36;1msudo apt-get update[0m
+2026-11-02T07:01:23.2798635Z [36;1msudo apt-get install -y --no-install-recommends tini[0m
+2026-11-02T07:01:23.2819484Z shell: /usr/bin/bash -e {0}
+2026-11-02T07:01:23.2819767Z ##[endgroup]
+2026-11-02T07:01:23.3644770Z Preferred the official Ubuntu archive; Azure remains the fallback.
+2026-11-02T07:01:23.4544513Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-11-02T07:01:23.4901659Z Get:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+2026-11-02T07:01:23.5720850Z Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [682 kB]
+2026-11-02T07:01:23.5893143Z Get:8 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [617 kB]
+2026-11-02T07:01:24.0077223Z Hit:2 https://archive.ubuntu.com/ubuntu noble InRelease
+2026-11-02T07:01:24.0951919Z Get:3 https://archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+2026-11-02T07:01:24.3982249Z Get:4 https://archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+2026-11-02T07:01:24.5327879Z Get:5 https://archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+2026-11-02T07:01:24.6616454Z Get:9 https://archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1408 kB]
+2026-11-02T07:01:25.0103684Z Get:10 https://archive.ubuntu.com/ubuntu noble-updates/main Translation-en [311 kB]
+2026-11-02T07:01:25.1029682Z Get:11 https://archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1707 kB]
+2026-11-02T07:01:25.2529125Z Get:12 https://archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [343 kB]
+2026-11-02T07:01:25.3435891Z Get:13 https://archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [1813 kB]
+2026-11-02T07:01:25.4794434Z Get:14 https://archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [412 kB]
+2026-11-02T07:01:25.5712530Z Get:15 https://archive.ubuntu.com/ubuntu noble-updates/multiverse Translation-en [14.3 kB]
+2026-11-02T07:01:25.6524580Z Get:16 https://archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1146 kB]
+2026-11-02T07:01:25.7629100Z Get:17 https://archive.ubuntu.com/ubuntu noble-security/main Translation-en [231 kB]
+2026-11-02T07:01:25.8488740Z Get:18 https://archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1223 kB]
+2026-11-02T07:01:25.9608192Z Get:19 https://archive.ubuntu.com/ubuntu noble-security/universe Translation-en [246 kB]
+2026-11-02T07:01:28.4124872Z Fetched 10.5 MB in 3s (4091 kB/s)
+2026-11-02T07:01:29.4838530Z Reading package lists...
+2026-11-02T07:01:29.5230891Z Reading package lists...
+2026-11-02T07:01:29.7203210Z Building dependency tree...
+2026-11-02T07:01:29.7211078Z Reading state information...
+2026-11-02T07:01:29.8745852Z The following NEW packages will be installed:
+2026-11-02T07:01:29.8746693Z   tini
+2026-11-02T07:01:29.8941164Z 0 upgraded, 1 newly installed, 0 to remove and 6 not upgraded.
+2026-11-02T07:01:29.8941905Z Need to get 276 kB of archives.
+2026-11-02T07:01:29.8942795Z After this operation, 835 kB of additional disk space will be used.
+2026-11-02T07:01:29.8943630Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-11-02T07:01:30.0940005Z Get:2 https://archive.ubuntu.com/ubuntu noble/universe amd64 tini amd64 0.19.0-1 [276 kB]
+2026-11-02T07:01:30.4183223Z Fetched 276 kB in 0s (1034 kB/s)
+2026-11-02T07:01:30.4421267Z Selecting previously unselected package tini.
+2026-11-02T07:01:30.4753693Z (Reading database ... 
+2026-11-02T07:01:30.4754271Z (Reading database ... 5%
+2026-11-02T07:01:30.4754630Z (Reading database ... 10%
+2026-11-02T07:01:30.4754964Z (Reading database ... 15%
+2026-11-02T07:01:30.4755278Z (Reading database ... 20%
+2026-11-02T07:01:30.4755587Z (Reading database ... 25%
+2026-11-02T07:01:30.4755901Z (Reading database ... 30%
+2026-11-02T07:01:30.4756210Z (Reading database ... 35%
+2026-11-02T07:01:30.4757145Z (Reading database ... 40%
+2026-11-02T07:01:30.4757950Z (Reading database ... 45%
+2026-11-02T07:01:30.4758773Z (Reading database ... 50%
+2026-11-02T07:01:30.4814805Z (Reading database ... 55%
+2026-11-02T07:01:30.6080727Z (Reading database ... 60%
+2026-11-02T07:01:30.8064907Z (Reading database ... 65%
+2026-11-02T07:01:31.0159593Z (Reading database ... 70%
+2026-11-02T07:01:31.2100925Z (Reading database ... 75%
+2026-11-02T07:01:31.3611837Z (Reading database ... 80%
+2026-11-02T07:01:31.4495019Z (Reading database ... 85%
+2026-11-02T07:01:31.5208079Z (Reading database ... 90%
+2026-11-02T07:01:31.6731099Z (Reading database ... 95%
+2026-11-02T07:01:31.6731494Z (Reading database ... 100%
+2026-11-02T07:01:31.6732044Z (Reading database ... 215504 files and directories currently installed.)
+2026-11-02T07:01:31.6774039Z Preparing to unpack .../tini_0.19.0-1_amd64.deb ...
+2026-11-02T07:01:31.6798556Z Unpacking tini (0.19.0-1) ...
+2026-11-02T07:01:31.7400837Z Setting up tini (0.19.0-1) ...
+2026-11-02T07:01:32.4455507Z 
+2026-11-02T07:01:32.4456331Z Running kernel seems to be up-to-date.
+2026-11-02T07:01:32.4456793Z 
+2026-11-02T07:01:32.4457125Z No services need to be restarted.
+2026-11-02T07:01:32.4457533Z 
+2026-11-02T07:01:32.4457834Z No containers need to be restarted.
+2026-11-02T07:01:32.4458209Z 
+2026-11-02T07:01:32.4458892Z No user sessions are running outdated binaries.
+2026-11-02T07:01:32.4459381Z 
+2026-11-02T07:01:32.4459970Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+2026-11-02T07:01:33.3453938Z ##[group]Run case "$SUITE" in
+2026-11-02T07:01:33.3454252Z [36;1mcase "$SUITE" in[0m
+2026-11-02T07:01:33.3454481Z [36;1m  supervisor)[0m
+2026-11-02T07:01:33.3454917Z [36;1m    node scripts/ci/pid-namespace.ts npx vitest run src/server/maintenance/supervisor.test.ts[0m
+2026-11-02T07:01:33.3455400Z [36;1m    ;;[0m
+2026-11-02T07:01:33.3455593Z [36;1m  recovery)[0m
+2026-11-02T07:01:33.3456015Z [36;1m    node scripts/ci/pid-namespace.ts npx vitest run src/server/maintenance/ src/server/backup/ \[0m
+2026-11-02T07:01:33.3456592Z [36;1m      --exclude 'src/server/maintenance/supervisor.test.ts'[0m
+2026-11-02T07:01:33.3456927Z [36;1m    ;;[0m
+2026-11-02T07:01:33.3457117Z [36;1m  remaining)[0m
+2026-11-02T07:01:33.3457437Z [36;1m    # Exact exclusions keep future test files in this partition; it[0m
+2026-11-02T07:01:33.3457901Z [36;1m    # also runs the node:test script suites.[0m
+2026-11-02T07:01:33.3458738Z [36;1m    node scripts/ci/pid-namespace.ts npm test -- --exclude 'lib/**' \[0m
+2026-11-02T07:01:33.3459174Z [36;1m      --exclude 'src/server/maintenance/**' \[0m
+2026-11-02T07:01:33.3459491Z [36;1m      --exclude 'src/server/backup/**'[0m
+2026-11-02T07:01:33.3459763Z [36;1m    ;;[0m
+2026-11-02T07:01:33.3459940Z [36;1m  *)[0m
+2026-11-02T07:01:33.3460166Z [36;1m    echo "Unknown unit partition: $SUITE" >&2[0m
+2026-11-02T07:01:33.3460453Z [36;1m    exit 1[0m
+2026-11-02T07:01:33.3460646Z [36;1m    ;;[0m
+2026-11-02T07:01:33.3460821Z [36;1mesac[0m
+2026-11-02T07:01:33.3480797Z shell: /usr/bin/bash -e {0}
+2026-11-02T07:01:33.3481039Z env:
+2026-11-02T07:01:33.3481221Z   SUITE: recovery
+2026-11-02T07:01:33.3481418Z ##[endgroup]
+2026-11-02T07:01:34.1082256Z 
+2026-11-02T07:01:34.1086373Z [1m[30m[46m RUN [49m[39m[22m [36mv5.0.5 [39m[90m/home/runner/work/spinel/spinel[39m
+2026-11-02T07:01:34.1087047Z 
+2026-11-02T07:01:38.3309022Z  [32m✓[39m src/server/maintenance/restore-jobs.test.ts [2m([22m[2m56 tests[22m[2m)[22m[33m 3794[2mms[22m[39m
+2026-11-02T07:01:41.3324421Z  [32m✓[39m src/server/backup/restore-registry.test.ts [2m([22m[2m81 tests[22m[2m)[22m[33m 2252[2mms[22m[39m
+2026-11-02T07:02:01.1716502Z  [32m✓[39m src/server/maintenance/restore-files.test.ts [2m([22m[2m55 tests[22m[2m)[22m[33m 19636[2mms[22m[39m
+2026-11-02T07:02:01.1718791Z    [33m[2m✓[22m[39m source custody retains independent private bytes after application staging is released[33m 648[2mms[22m[39m
+2026-11-02T07:02:01.1720358Z    [33m[2m✓[22m[39m custody preserves original bytes and activates through the leased inode, behind a durable opening barrier[33m 1185[2mms[22m[39m
+2026-11-02T07:02:01.1721975Z    [33m[2m✓[22m[39m original custody precedes candidate generation and staging retries never replace a different attempt[33m 672[2mms[22m[39m
+2026-11-02T07:02:01.1723691Z    [33m[2m✓[22m[39m a pre-captured original manifest resumes only exact completed copies and fills missing files[33m 370[2mms[22m[39m
+2026-11-02T07:02:01.1725477Z    [33m[2m✓[22m[39m malformed supplied custody manifest null cannot become a fresh capture[33m 338[2mms[22m[39m
+2026-11-02T07:02:01.1727019Z    [33m[2m✓[22m[39m malformed supplied custody manifest false cannot become a fresh capture[33m 339[2mms[22m[39m
+2026-11-02T07:02:01.1728087Z    [33m[2m✓[22m[39m malformed supplied custody manifest 0 cannot become a fresh capture[33m 342[2mms[22m[39m
+2026-11-02T07:02:01.1729255Z    [33m[2m✓[22m[39m malformed supplied custody manifest {} cannot become a fresh capture[33m 340[2mms[22m[39m
+2026-11-02T07:02:01.1730186Z    [33m[2m✓[22m[39m malformed supplied custody manifest {"original":null} cannot become a fresh capture[33m 338[2mms[22m[39m
+2026-11-02T07:02:01.1731574Z    [33m[2m✓[22m[39m original custody cancellation is checked before copying and after final closure verification[33m 371[2mms[22m[39m
+2026-11-02T07:02:01.1733866Z    [33m[2m✓[22m[39m cancellation during native copy waits for private durable output before permitting exact retry[33m 358[2mms[22m[39m
+2026-11-02T07:02:01.1736031Z    [33m[2m✓[22m[39m unexpected rollback journals refuse custody and activation while preserving their evidence[33m 357[2mms[22m[39m
+2026-11-02T07:02:01.1737782Z    [33m[2m✓[22m[39m journal failure at replacing retains originals and blocks all ordinary opens[33m 709[2mms[22m[39m
+2026-11-02T07:02:01.1742075Z    [33m[2m✓[22m[39m journal failure at activated retains originals and blocks all ordinary opens[33m 600[2mms[22m[39m
+2026-11-02T07:02:01.1743873Z    [33m[2m✓[22m[39m candidate staging cancel after the first chunk preserves the immutable inputs and refuses partial retry[33m 686[2mms[22m[39m
+2026-11-02T07:02:01.1746072Z    [33m[2m✓[22m[39m candidate staging deadline after the first chunk preserves the immutable inputs and refuses partial retry[33m 651[2mms[22m[39m
+2026-11-02T07:02:01.1748204Z    [33m[2m✓[22m[39m activation cancel after the first write retains the barrier, partial inode and original custody[33m 870[2mms[22m[39m
+2026-11-02T07:02:01.1750685Z    [33m[2m✓[22m[39m activation deadline after the first write retains the barrier, partial inode and original custody[33m 882[2mms[22m[39m
+2026-11-02T07:02:01.1752584Z    [33m[2m✓[22m[39m cancellation during replacing publication cannot start the destructive write[33m 360[2mms[22m[39m
+2026-11-02T07:02:01.1754050Z    [33m[2m✓[22m[39m durable candidate commitment forbids rollback even when marker cleanup has failed[33m 333[2mms[22m[39m
+2026-11-02T07:02:01.1755039Z    [33m[2m✓[22m[39m durable original commitment forbids rollback even when marker cleanup has failed[33m 662[2mms[22m[39m
+2026-11-02T07:02:01.1755917Z    [33m[2m✓[22m[39m rejects changed candidate before the first destructive write[33m 368[2mms[22m[39m
+2026-11-02T07:02:01.1756681Z    [33m[2m✓[22m[39m rejects open handle before the first destructive write[33m 361[2mms[22m[39m
+2026-11-02T07:02:01.1757763Z    [33m[2m✓[22m[39m rejects candidate WAL and source aliases without changing current data[33m 367[2mms[22m[39m
+2026-11-02T07:02:01.1759231Z    [33m[2m✓[22m[39m rejects reused operation IDs without replacing original custody[33m 361[2mms[22m[39m
+2026-11-02T07:02:01.1761100Z    [33m[2m✓[22m[39m identical staging retry reserves no second candidate allocation[33m 368[2mms[22m[39m
+2026-11-02T07:02:01.1763216Z    [33m[2m✓[22m[39m an interrupted temporary marker () never authorizes mutation and can be safely replaced[33m 506[2mms[22m[39m
+2026-11-02T07:02:01.1765631Z    [33m[2m✓[22m[39m an interrupted temporary marker ({"version":) never authorizes mutation and can be safely replaced[33m 510[2mms[22m[39m
+2026-11-02T07:02:01.1767220Z    [33m[2m✓[22m[39m an interrupted temporary marker (complete but not published) never authorizes mutation and can be safely replaced[33m 509[2mms[22m[39m
+2026-11-02T07:02:01.1769003Z    [33m[2m✓[22m[39m capacity lost after preparation refuses activation and retains all source evidence[33m 378[2mms[22m[39m
+2026-11-02T07:02:01.1771160Z    [33m[2m✓[22m[39m prepared original activation retains both raw generations and never reinstalls bytes after original commitment[33m 831[2mms[22m[39m
+2026-11-02T07:02:01.1773279Z    [33m[2m✓[22m[39m capacity lost before prepared original activation refuses mutation and retains raw evidence[33m 854[2mms[22m[39m
+2026-11-02T07:02:01.1775371Z    [33m[2m✓[22m[39m prepared original authority loss after the first chunk retains partial inode, raw evidence and barrier[33m 634[2mms[22m[39m
+2026-11-02T07:02:42.0386008Z  [32m✓[39m src/server/backup/restore-candidate.test.ts [2m([22m[2m17 tests[22m[2m)[22m[33m 36916[2mms[22m[39m
+2026-11-02T07:02:42.0387382Z    [33m[2m✓[22m[39m source verification reads its authenticated private copy after the transfer path changes[33m 1008[2mms[22m[39m
+2026-11-02T07:02:42.0389428Z    [33m[2m✓[22m[39m real rollback worker prepares a closed private original and retires attempted native identities[33m 5579[2mms[22m[39m
+2026-11-02T07:02:42.0390894Z    [33m[2m✓[22m[39m a wrong original witness is rejected by the actual rollback worker with complete staging cleanup[33m 1704[2mms[22m[39m
+2026-11-02T07:02:42.0392504Z    [33m[2m✓[22m[39m isolated startup refuses wrong content, absent assets, malformed results and late cancellation without altering its source[33m 8409[2mms[22m[39m
+2026-11-02T07:02:42.0394081Z    [33m[2m✓[22m[39m actual rollback growth beyond the admitted disk cap fails without retaining output[33m 1762[2mms[22m[39m
+2026-11-02T07:02:42.0396058Z    [33m[2m✓[22m[39m rollback cancellation at source-cleanup never publishes an otherwise valid result[33m 1036[2mms[22m[39m
+2026-11-02T07:02:42.0398588Z    [33m[2m✓[22m[39m rollback retains original ownership, filing and content with only attempted negative evidence[33m 746[2mms[22m[39m
+2026-11-02T07:02:42.0400568Z    [33m[2m✓[22m[39m a late rollback failure invalidates the working copy and leaves all evidence sealed[33m 356[2mms[22m[39m
+2026-11-02T07:02:42.0402358Z    [33m[2m✓[22m[39m composes current authority and Space access with archived content, fresh native identities and verified inventory[33m 308[2mms[22m[39m
+2026-11-02T07:02:42.0404570Z    [33m[2m✓[22m[39m real isolated reconciliation publishes only the closed verified candidate, preserves inputs and removes current authority staging[33m 14900[2mms[22m[39m
+2026-11-02T07:02:44.3777044Z  [32m✓[39m src/server/backup/export-jobs.test.ts [2m([22m[2m16 tests[22m[2m)[22m[33m 2033[2mms[22m[39m
+2026-11-02T07:02:44.3778544Z    [33m[2m✓[22m[39m SIGKILL leaves a real ready archive which the next process startup removes without changing workspace data[33m 343[2mms[22m[39m
+2026-11-02T07:02:57.9425793Z  [32m✓[39m src/server/backup/verification.test.ts [2m([22m[2m17 tests[22m[2m)[22m[33m 12509[2mms[22m[39m
+2026-11-02T07:02:57.9427483Z    [33m[2m✓[22m[39m a real isolated process authenticates inventory, native content, image bytes and access structure[33m 884[2mms[22m[39m
+2026-11-02T07:02:57.9429346Z    [33m[2m✓[22m[39m restore preparation retains verified bytes without activating data or returning deployment secrets[33m 907[2mms[22m[39m
+2026-11-02T07:02:57.9430903Z    [33m[2m✓[22m[39m encrypted candidate preparation preserves a populated recovery hold and permits later authorized recovery[33m 850[2mms[22m[39m
+2026-11-02T07:02:57.9432925Z    [33m[2m✓[22m[39m incompatible or interrupted preparation leaves no candidate and preserves the encrypted source[33m 1531[2mms[22m[39m
+2026-11-02T07:02:57.9435077Z    [33m[2m✓[22m[39m a freshly authenticated but semantically broken snapshot is rejected[33m 811[2mms[22m[39m
+2026-11-02T07:02:57.9437331Z    [33m[2m✓[22m[39m an online snapshot preserves an interrupted staged generation without activating it[33m 896[2mms[22m[39m
+2026-11-02T07:02:57.9439443Z    [33m[2m✓[22m[39m a completed imported head verifies before and after a real native edit, but missing receipts fail[33m 2677[2mms[22m[39m
+2026-11-02T07:02:57.9441417Z    [33m[2m✓[22m[39m wrong key, incompatible image, bounded decompression and killed worker preserve the source[33m 2919[2mms[22m[39m
+2026-11-02T07:02:57.9443138Z    [33m[2m✓[22m[39m an old encrypted bundle restores unchanged but cannot claim complete verification coverage[33m 780[2mms[22m[39m
+2026-11-02T07:05:21.1314747Z  [31m❯[39m src/server/maintenance/restore-crash.integration.test.ts [2m([22m[2m11 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 142870[2mms[22m[39m
+2026-11-02T07:05:21.1316917Z    [33m[2m✓[22m[39m real SIGKILL at admission preserves the durable restore decision and all retained evidence[33m 7117[2mms[22m[39m
+2026-11-02T07:05:21.1319187Z    [33m[2m✓[22m[39m real SIGKILL at custody preserves the durable restore decision and all retained evidence[33m 7242[2mms[22m[39m
+2026-11-02T07:05:21.1321577Z    [33m[2m✓[22m[39m real SIGKILL at freeze preserves the durable restore decision and all retained evidence[33m 8087[2mms[22m[39m
+2026-11-02T07:05:21.1323457Z    [33m[2m✓[22m[39m real SIGKILL at activation-plan preserves the durable restore decision and all retained evidence[33m 13076[2mms[22m[39m
+2026-11-02T07:05:21.1325510Z    [33m[2m✓[22m[39m real SIGKILL at staging preserves the durable restore decision and all retained evidence[33m 13097[2mms[22m[39m
+2026-11-02T07:05:21.1327558Z    [33m[2m✓[22m[39m real SIGKILL at activation preserves the durable restore decision and all retained evidence[33m 11654[2mms[22m[39m
+2026-11-02T07:05:21.1330042Z    [33m[2m✓[22m[39m real SIGKILL at private-open preserves the durable restore decision and all retained evidence[33m 12933[2mms[22m[39m
+2026-11-02T07:05:21.1331145Z    [33m[2m✓[22m[39m real SIGKILL at commit preserves the durable restore decision and all retained evidence[33m 14456[2mms[22m[39m
+2026-11-02T07:05:21.1332308Z [31m   [31m×[31m real SIGKILL at postcommit preserves the durable restore decision and all retained evidence[39m[33m 12971[2mms[22m[39m
+2026-11-02T07:05:21.1333434Z    [33m[2m✓[22m[39m real SIGKILL at original-activation preserves the durable restore decision and all retained evidence[33m 19833[2mms[22m[39m
+2026-11-02T07:05:21.1334566Z    [33m[2m✓[22m[39m real SIGKILL at original-commit preserves the durable restore decision and all retained evidence[33m 22400[2mms[22m[39m
+2026-11-02T07:05:24.2980008Z  [32m✓[39m src/server/maintenance/http.test.ts [2m([22m[2m9 tests[22m[2m)[22m[33m 1620[2mms[22m[39m
+2026-11-02T07:05:24.2981306Z    [33m[2m✓[22m[39m a real socket submission drains to durable acknowledgment while later old-epoch frames are fenced[33m 333[2mms[22m[39m
+2026-11-02T07:05:24.5577083Z  [32m✓[39m src/server/maintenance/supervisor-client.test.ts [2m([22m[2m36 tests[22m[2m)[22m[32m 56[2mms[22m[39m
+2026-11-02T07:05:34.8827651Z  [32m✓[39m src/server/backup/service.test.ts [2m([22m[2m11 tests[22m[2m)[22m[33m 10020[2mms[22m[39m
+2026-11-02T07:05:34.8829947Z    [33m[2m✓[22m[39m actual scheduling publishes and verifies encrypted local archives, catches up and avoids duplicate jobs[33m 1658[2mms[22m[39m
+2026-11-02T07:05:34.8831498Z    [33m[2m✓[22m[39m failed newest recovery retains source and last success; old and new keys remain verifiable after rotation[33m 3832[2mms[22m[39m
+2026-11-02T07:05:34.8832872Z    [33m[2m✓[22m[39m resource refusal reports a safe reason, stops key retries and preserves the last recovery point[33m 880[2mms[22m[39m
+2026-11-02T07:05:34.8834082Z    [33m[2m✓[22m[39m backup and verifier share a real lease, and shutdown drains active retrieval[33m 834[2mms[22m[39m
+2026-11-02T07:05:34.8835555Z    [33m[2m✓[22m[39m a destination cleanup failure releases the lease and keeps the published backup recoverable[33m 842[2mms[22m[39m
+2026-11-02T07:05:34.8837588Z    [33m[2m✓[22m[39m expired verification is visible, retry reconciles only owned staging and preserves foreign paths[33m 1584[2mms[22m[39m
+2026-11-02T07:05:47.6463767Z  [32m✓[39m src/server/backup/restore-http.integration.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 12566[2mms[22m[39m
+2026-11-02T07:05:47.6465773Z    [33m[2m✓[22m[39m real Operator HTTP confirmation crosses custody ACK and Begin into committed private release[33m 12564[2mms[22m[39m
+2026-11-02T07:05:52.5672104Z  [32m✓[39m src/server/backup/routes.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 4460[2mms[22m[39m
+2026-11-02T07:05:52.5673974Z    [33m[2m✓[22m[39m a real backpressured HTTP download releases its archive and lease after disconnect[33m 916[2mms[22m[39m
+2026-11-02T07:05:52.5676063Z    [33m[2m✓[22m[39m a real backpressured HTTP download releases its archive and lease after revocation[33m 1925[2mms[22m[39m
+2026-11-02T07:05:52.5678061Z    [33m[2m✓[22m[39m a real backpressured HTTP download releases its archive and lease after maintenance[33m 966[2mms[22m[39m
+2026-11-02T07:05:52.9954325Z  [32m✓[39m src/server/maintenance/restore-prepare.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 242[2mms[22m[39m
+2026-11-02T07:05:55.1399881Z  [32m✓[39m src/server/backup/restore-generations.test.ts [2m([22m[2m9 tests[22m[2m)[22m[33m 1101[2mms[22m[39m
+2026-11-02T07:05:57.5996026Z  [32m✓[39m src/server/backup/restore-receipts.test.ts [2m([22m[2m18 tests[22m[2m)[22m[33m 1449[2mms[22m[39m
+2026-11-02T07:05:58.6880534Z  [32m✓[39m src/server/backup/restore-grants.test.ts [2m([22m[2m14 tests[22m[2m)[22m[33m 770[2mms[22m[39m
+2026-11-02T07:05:59.7255695Z  [32m✓[39m src/server/backup/restore-ownership.test.ts [2m([22m[2m12 tests[22m[2m)[22m[33m 854[2mms[22m[39m
+2026-11-02T07:06:24.4027142Z  [32m✓[39m src/server/maintenance/restore-trial.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 24519[2mms[22m[39m
+2026-11-02T07:06:24.4030781Z    [33m[2m✓[22m[39m real trial stays private until exact release after barrier cleanup, and repeated release is harmless[33m 2918[2mms[22m[39m
+2026-11-02T07:06:24.4032659Z    [33m[2m✓[22m[39m an unexpected running state cannot open trial HTTP or rehabilitate readiness[33m 2756[2mms[22m[39m
+2026-11-02T07:06:24.4034266Z    [33m[2m✓[22m[39m an unexpected unavailable state cannot open trial HTTP or rehabilitate readiness[33m 2730[2mms[22m[39m
+2026-11-02T07:06:24.4036064Z    [33m[2m✓[22m[39m an unexpected expired state cannot open trial HTTP or rehabilitate readiness[33m 2733[2mms[22m[39m
+2026-11-02T07:06:24.4038195Z    [33m[2m✓[22m[39m permit validation refuses non-scalar role and a process identity that no longer exists[33m 2732[2mms[22m[39m
+2026-11-02T07:06:24.4040208Z    [33m[2m✓[22m[39m a permitted handoff with mismatched bytes never opens SQLite or reports health[33m 3960[2mms[22m[39m
+2026-11-02T07:06:24.4041832Z    [33m[2m✓[22m[39m a permitted handoff with mismatched policy never opens SQLite or reports health[33m 3911[2mms[22m[39m
+2026-11-02T07:06:24.4043859Z    [33m[2m✓[22m[39m failed real app trial records terminal content after expired opening and waits for its exact ACK[33m 2777[2mms[22m[39m
+2026-11-02T07:06:25.4580963Z  [32m✓[39m src/server/backup/restore-credentials.test.ts [2m([22m[2m11 tests[22m[2m)[22m[33m 746[2mms[22m[39m
+2026-11-02T07:06:26.5881846Z  [32m✓[39m src/server/backup/backup.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 838[2mms[22m[39m
+2026-11-02T07:06:29.1831127Z  [32m✓[39m src/server/maintenance/restore-activate.test.ts [2m([22m[2m12 tests[22m[2m)[22m[33m 2438[2mms[22m[39m
+2026-11-02T07:06:29.1832197Z    [33m[2m✓[22m[39m original authority clock crossing after first staging chunk stops before the remaining bytes[33m 519[2mms[22m[39m
+2026-11-02T07:06:29.1833225Z    [33m[2m✓[22m[39m original authority clock crossing after first live chunk stops before the remaining bytes[33m 795[2mms[22m[39m
+2026-11-02T07:06:29.4737171Z  [32m✓[39m src/server/backup/spaces.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 79[2mms[22m[39m
+2026-11-02T07:06:30.9195918Z  [32m✓[39m src/server/backup/restore-routes.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 998[2mms[22m[39m
+2026-11-02T07:06:30.9197558Z    [33m[2m✓[22m[39m only the owned upload continues after the passkey and ordinary HTTP body window[33m 851[2mms[22m[39m
+2026-11-02T07:06:31.2230345Z  [32m✓[39m src/server/maintenance/gate.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 97[2mms[22m[39m
+2026-11-02T07:06:33.0515796Z  [32m✓[39m src/server/maintenance/restore-failed-custody.test.ts [2m([22m[2m16 tests[22m[2m)[22m[33m 1679[2mms[22m[39m
+2026-11-02T07:06:33.0517759Z    [33m[2m✓[22m[39m separately captures exact failed tuple, retains original bytes and retries only its persisted manifest[33m 933[2mms[22m[39m
+2026-11-02T07:06:33.0519545Z    [33m[2m✓[22m[39m a clock boundary after first chunk leaves partial evidence that cannot be overwritten[33m 321[2mms[22m[39m
+2026-11-02T07:06:33.0520945Z    [33m[2m✓[22m[39m a abort boundary after first chunk leaves partial evidence that cannot be overwritten[33m 315[2mms[22m[39m
+2026-11-02T07:06:33.2330224Z  [32m✓[39m src/server/maintenance/restore-capacity.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 24[2mms[22m[39m
+2026-11-02T07:06:47.8165963Z  [32m✓[39m src/server/backup/restore-admission.integration.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 14395[2mms[22m[39m
+2026-11-02T07:06:47.8167157Z    [33m[2m✓[22m[39m real published-failure admission releases only its logical hold and permits a new Operator preparation[33m 6756[2mms[22m[39m
+2026-11-02T07:06:47.8168593Z    [33m[2m✓[22m[39m real full-journal admission releases only its logical hold and permits a new Operator preparation[33m 7637[2mms[22m[39m
+2026-11-02T07:06:48.3002001Z  [32m✓[39m src/server/backup/filesystem.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 281[2mms[22m[39m
+2026-11-02T07:06:48.5001862Z  [32m✓[39m src/server/maintenance/restore-authority.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 60[2mms[22m[39m
+2026-11-02T07:06:54.2176432Z  [32m✓[39m src/server/backup/restore-freeze.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 5570[2mms[22m[39m
+2026-11-02T07:06:54.2182087Z    [33m[2m✓[22m[39m isolated freeze preserves WAL-only authority changes and never modifies original custody[33m 928[2mms[22m[39m
+2026-11-02T07:06:54.2183461Z    [33m[2m✓[22m[39m a clean earlier WAL commit cannot replace the independent current-state witness[33m 822[2mms[22m[39m
+2026-11-02T07:06:54.2184641Z    [33m[2m✓[22m[39m freezes a checkpointed main with an explicitly false empty WAL[33m 768[2mms[22m[39m
+2026-11-02T07:06:54.2185691Z    [33m[2m✓[22m[39m freezes a checkpointed main with an explicitly true empty WAL[33m 782[2mms[22m[39m
+2026-11-02T07:06:54.2187107Z    [33m[2m✓[22m[39m freeze rechecks the original passkey proof against witnessed current data (revoked=false)[33m 1150[2mms[22m[39m
+2026-11-02T07:06:54.2189238Z    [33m[2m✓[22m[39m freeze rechecks the original passkey proof against witnessed current data (revoked=true)[33m 1105[2mms[22m[39m
+2026-11-02T07:06:57.3766924Z  [32m✓[39m src/server/backup/restore-input.test.ts [2m([22m[2m19 tests[22m[2m)[22m[33m 3017[2mms[22m[39m
+2026-11-02T07:06:57.3769682Z    [33m[2m✓[22m[39m copies bounded exact bytes into an exclusive private file without altering original evidence[33m 677[2mms[22m[39m
+2026-11-02T07:06:57.3772131Z    [33m[2m✓[22m[39m refuses even an empty -wal sidecar instead of silently losing committed WAL or rollback state[33m 307[2mms[22m[39m
+2026-11-02T07:06:57.3774490Z    [33m[2m✓[22m[39m refuses even an empty -shm sidecar instead of silently losing committed WAL or rollback state[33m 309[2mms[22m[39m
+2026-11-02T07:06:57.3776662Z    [33m[2m✓[22m[39m copies 70003 raw evidence bytes without treating them as a closed database[33m 312[2mms[22m[39m
+2026-11-02T07:07:03.3862177Z  [32m✓[39m src/server/backup/restore-registry.integration.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 5778[2mms[22m[39m
+2026-11-02T07:07:03.3864269Z    [33m[2m✓[22m[39m complete-app catalog and manual upload converge on the real encrypted preparation boundary[33m 5776[2mms[22m[39m
+2026-11-02T07:07:04.1577405Z  [32m✓[39m src/server/backup/restore-fences.test.ts [2m([22m[2m14 tests[22m[2m)[22m[33m 597[2mms[22m[39m
+2026-11-02T07:07:08.6850306Z  [32m✓[39m src/server/backup/transfer.test.ts [2m([22m[2m9 tests[22m[2m)[22m[33m 4309[2mms[22m[39m
+2026-11-02T07:07:08.6859905Z    [33m[2m✓[22m[39m free-space loss stops a bounded write during a transfer (known size: false)[33m 384[2mms[22m[39m
+2026-11-02T07:07:08.6860866Z    [33m[2m✓[22m[39m free-space loss stops a bounded write during a transfer (known size: true)[33m 327[2mms[22m[39m
+2026-11-02T07:07:08.6895216Z    [33m[2m✓[22m[39m filesystem publication under disk pressure (preflight) removes only its partial copy[33m 1281[2mms[22m[39m
+2026-11-02T07:07:08.6896510Z    [33m[2m✓[22m[39m filesystem publication under disk pressure (stream) removes only its partial copy[33m 1115[2mms[22m[39m
+2026-11-02T07:07:08.6897633Z    [33m[2m✓[22m[39m filesystem retrieval under disk pressure (preflight) deletes the partial download and preserves its source[33m 583[2mms[22m[39m
+2026-11-02T07:07:08.6899422Z    [33m[2m✓[22m[39m filesystem retrieval under disk pressure (stream) deletes the partial download and preserves its source[33m 599[2mms[22m[39m
+2026-11-02T07:07:10.6944341Z  [32m✓[39m src/server/maintenance/restore-rich-fixture.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 450[2mms[22m[39m
+2026-11-02T07:07:10.6946785Z    [33m[2m✓[22m[39m rich phases retain real archived native content, PNG and history while current credentials and revocations differ[33m 449[2mms[22m[39m
+2026-11-02T07:07:10.8522800Z  [32m✓[39m src/server/maintenance/process-exit.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+2026-11-02T07:07:11.3165779Z  [32m✓[39m src/server/backup/restore-operations.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 208[2mms[22m[39m
+2026-11-02T07:07:11.5741194Z  [32m✓[39m src/server/backup/config.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 51[2mms[22m[39m
+2026-11-02T07:07:11.7285949Z  [32m✓[39m src/server/maintenance/restore-job-intent.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+2026-11-02T07:07:11.8848175Z  [32m✓[39m src/server/maintenance/cold-files.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+2026-11-02T07:07:14.0940530Z  [32m✓[39m src/server/backup/recovery-rows.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 2078[2mms[22m[39m
+2026-11-02T07:07:14.0941618Z    [33m[2m✓[22m[39m a native process inventories 512 MiB of payloads below the unchanged 512 MiB worker ceiling[33m 2066[2mms[22m[39m
+2026-11-02T07:07:16.0265270Z  [32m✓[39m src/server/backup/restore-drain-app.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 399[2mms[22m[39m
+2026-11-02T07:07:16.1608784Z  [32m✓[39m src/server/maintenance/restore-failure.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+2026-11-02T07:07:16.3095136Z  [32m✓[39m src/server/backup/restore-notice.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 13[2mms[22m[39m
+2026-11-02T07:07:16.4709933Z  [32m✓[39m src/server/backup/restore-drain.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 30[2mms[22m[39m
+2026-11-02T07:07:16.5993152Z  [32m✓[39m src/server/maintenance/restore-stop.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+2026-11-02T07:07:17.2988055Z  [32m✓[39m src/server/maintenance/cli.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 562[2mms[22m[39m
+2026-11-02T07:07:17.2990090Z    [33m[2m✓[22m[39m cold setup and backup failures exit promptly and release ownership of a corrupt file[33m 561[2mms[22m[39m
+2026-11-02T07:07:17.3054257Z 
+2026-11-02T07:07:17.3055090Z [31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+2026-11-02T07:07:17.3055514Z 
+2026-11-02T07:07:17.3070180Z [41m[1m FAIL [22m[49m src/server/maintenance/restore-crash.integration.test.ts[2m > [22mreal SIGKILL at postcommit preserves the durable restore decision and all retained evidence
+2026-11-02T07:07:17.3071236Z [31m[1mError[22m: Unexpected fixture HTTP status 503.[39m
+2026-11-02T07:07:17.3071990Z [36m [2m❯[22m json src/server/maintenance/restore-http-test-client.ts:[2m204:13[22m[39m
+2026-11-02T07:07:17.3134637Z     [90m202|[39m   const json = async <T>(response: Response, status = 200): Promise<T>…
+2026-11-02T07:07:17.3135433Z     [90m203|[39m     if (response.status !== status)
+2026-11-02T07:07:17.3136467Z     [90m204|[39m       throw new Error(`Unexpected fixture HTTP status ${response.statu…
+2026-11-02T07:07:17.3137368Z     [90m   |[39m             [31m^[39m
+2026-11-02T07:07:17.3138086Z     [90m205|[39m     return response.json() as Promise<T>;
+2026-11-02T07:07:17.3139015Z     [90m206|[39m   };
+2026-11-02T07:07:17.3140371Z [90m [2m❯[22m prove src/server/maintenance/restore-http-test-client.ts:[2m208:27[22m[39m
+2026-11-02T07:07:17.3141917Z [90m [2m❯[22m Object.authenticate src/server/maintenance/restore-http-test-client.ts:[2m225:7[22m[39m
+2026-11-02T07:07:17.3143368Z [90m [2m❯[22m src/server/maintenance/restore-crash.integration.test.ts:[2m206:9[22m[39m
+2026-11-02T07:07:17.3143905Z 
+2026-11-02T07:07:17.3144165Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+2026-11-02T07:07:17.3144421Z 
+2026-11-02T07:07:17.3150060Z [2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m46 passed[39m[22m[90m (47)[39m
+2026-11-02T07:07:17.3154224Z [2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m606 passed[39m[22m[90m (607)[39m
+2026-11-02T07:07:17.3155105Z [2m   Start at [22m 07:01:34
+2026-11-02T07:07:17.3156409Z 
+2026-11-02T07:07:17.3159962Z [2m   Duration [22m 343.17s[2m (tests 95%, import 4%, transform 1%)[22m
+2026-11-02T07:07:17.3173245Z 
+2026-11-02T07:07:17.3194034Z 
+2026-11-02T07:07:17.3219033Z ##[error]Error: Unexpected fixture HTTP status 503.
+ ❯ json src/server/maintenance/restore-http-test-client.ts:204:13
+ ❯ prove src/server/maintenance/restore-http-test-client.ts:208:27
+ ❯ Object.authenticate src/server/maintenance/restore-http-test-client.ts:225:7
+ ❯ src/server/maintenance/restore-crash.integration.test.ts:206:9
+
+
+2026-11-02T07:07:17.3750058Z ##[error]Process completed with exit code 1.
+2026-11-02T07:07:17.3911435Z Post job cleanup.
+2026-11-02T07:07:17.4779623Z [command]/usr/bin/git version
+2026-11-02T07:07:17.4829050Z git version 2.56.0
+2026-11-02T07:07:17.4873563Z Temporarily overriding HOME='/home/runner/work/_temp/3c82ecdd-3d33-4b9f-a1f6-b034a81cd436' before making global git config changes
+2026-11-02T07:07:17.4875448Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-02T07:07:17.4880287Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-02T07:07:17.4918818Z Removing SSH command configuration
+2026-11-02T07:07:17.4924903Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-02T07:07:17.4965598Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-02T07:07:17.5278212Z Removing HTTP extra header
+2026-11-02T07:07:17.5285512Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-02T07:07:17.5370445Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-02T07:07:17.5684240Z Removing includeIf entries pointing to credentials config files
+2026-11-02T07:07:17.5691187Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-02T07:07:17.5764942Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-02T07:07:17.6305645Z Cleaning up orphan processes
