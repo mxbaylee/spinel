@@ -6,6 +6,7 @@ import { createContext, runInContext } from 'node:vm';
 import { readAdmissionPolicy, type ReservationIdentity } from './browserstack-admission.ts';
 import {
   capabilityOutcome,
+  chromeItemNavigationScript,
   installMenuLabel,
   installCandidateDiagnostics,
   itemReadinessScript,
@@ -16,11 +17,13 @@ import {
   matchingNativeControl,
   matchingSafariHomeScreen,
   nativeControls,
+  navigateChromeItem,
   normalizedPngScreenshot,
   observeBrowserTask,
   openNativeShare,
   preparedCapabilityJournal,
   readPreparedCapabilityJournal,
+  readCapabilityScope,
   runCapability,
   runCapabilityLane,
   screenshotResponseShape,
@@ -763,6 +766,230 @@ test('prepare receipts certify only zero allocations and cannot reset an executi
   }
 });
 
+test('Chrome diagnostic scope binds prepare and run, allocates only Chrome and keeps all three lanes incomplete', async () => {
+  assert.equal(readCapabilityScope(undefined), 'all');
+  assert.equal(readCapabilityScope('all'), 'all');
+  assert.equal(readCapabilityScope('chrome-navigation-diagnostic'), 'chrome-navigation-diagnostic');
+  let invalidExecutions = 0;
+  for (const invalid of ['', null, 'chrome', 'safari', {}, ['chrome']]) {
+    assert.throws(() => readCapabilityScope(invalid), /capability-invalid-scope/);
+    await assert.rejects(
+      runCapabilityLane(
+        target,
+        async () => {
+          invalidExecutions++;
+          throw new Error('invalid scope must not execute');
+        },
+        invalid as unknown as Parameters<typeof runCapabilityLane>[2],
+      ),
+      /capability-invalid-scope/,
+    );
+  }
+  assert.equal(invalidExecutions, 0);
+  const { manifest, durable } = admission();
+  const reservation = verifyCapabilityAdmission(manifest, durable, identity, now);
+  const prepared = preparedCapabilityJournal(
+    identity,
+    reservation,
+    now,
+    'chrome-navigation-diagnostic',
+  );
+  assert.equal(prepared.allocationPlan, 'chrome-navigation-diagnostic');
+  assert.deepEqual(
+    readPreparedCapabilityJournal(
+      prepared,
+      identity,
+      reservation,
+      now,
+      'chrome-navigation-diagnostic',
+    ),
+    prepared,
+  );
+  assert.throws(
+    () => readPreparedCapabilityJournal(prepared, identity, reservation, now),
+    /capability-journal-already-used/,
+  );
+  const regular = preparedCapabilityJournal(identity, reservation, now);
+  assert.throws(
+    () =>
+      readPreparedCapabilityJournal(
+        regular,
+        identity,
+        reservation,
+        now,
+        'chrome-navigation-diagnostic',
+      ),
+    /capability-journal-already-used/,
+  );
+  let executed = 0;
+  const firefox = await runCapabilityLane(
+    { ...target, browser: 'firefox' },
+    async () => {
+      throw new Error('Firefox fixture must not run');
+    },
+    'chrome-navigation-diagnostic',
+  );
+  const safari = await runCapabilityLane(
+    { ...target, browser: 'safari' },
+    async () => {
+      throw new Error('Safari fixture must not run');
+    },
+    'chrome-navigation-diagnostic',
+  );
+  const chrome = await runCapabilityLane(
+    target,
+    async () => {
+      executed++;
+      return { ...safari, target, status: 'passed', sessionId, allocation: 'known' };
+    },
+    'chrome-navigation-diagnostic',
+  );
+  assert.equal(executed, 1);
+  assert.equal(firefox.status, 'blocked');
+  assert.equal(safari.status, 'not-run');
+  assert.equal(safari.startedAt, null);
+  assert.equal(safari.sessionId, undefined);
+  assert.equal(safari.cleanup.fixture, 'not-created');
+  assert.equal(capabilityOutcome([chrome, firefox, safari]), 'incomplete');
+  assert.equal(capabilityOutcome([{ ...chrome, status: 'failed' }, firefox, safari]), 'incomplete');
+  assert.deepEqual(
+    [chrome, firefox, safari].flatMap((lane) => (lane.sessionId ? [lane.sessionId] : [])),
+    [sessionId],
+  );
+});
+
+test('Chrome item navigation assigns once in the verified window and observes exact URL continuity without selecting another tab', async (context) => {
+  let clock = Date.now();
+  context.mock.method(Date, 'now', () => clock);
+  const origin = 'https://bs-local.com:8176';
+  for (const mode of [
+    'ready',
+    'delayed',
+    'next-item',
+    'wrong-before-window',
+    'wrong-after-window',
+    'wrong-before-origin',
+    'wrong-previous-item',
+    'changed-script-precondition',
+    'wrong-after-origin',
+    'wrong-after-item',
+    'assignment-http-error',
+    'read-http-error',
+    'pending-deadline',
+  ]) {
+    const began = clock;
+    let href =
+      mode === 'next-item' || mode === 'wrong-previous-item'
+        ? `${origin}/?item=doc`
+        : `${origin}/sign-in`;
+    if (mode === 'wrong-before-origin')
+      href = 'https://private.example/_desktop-login/private-bootstrap';
+    let assignments = 0,
+      scriptCommands = 0,
+      afterReads = 0;
+    const calls: string[] = [];
+    const diagnostic: Record<string, unknown> = {};
+    const itemId = mode === 'next-item' ? 'sheet' : 'doc';
+    const destination = `${origin}/?item=${itemId}`;
+    const page = createContext({
+      location: {
+        get href() {
+          return href;
+        },
+        get origin() {
+          return new URL(href).origin;
+        },
+        assign(value: string) {
+          assignments++;
+          assert.equal(value, destination);
+          if (mode === 'wrong-after-origin') href = 'https://private.example/?token=private';
+          else if (mode === 'wrong-after-item') href = `${origin}/?item=wrong`;
+          else if (mode !== 'delayed' && mode !== 'pending-deadline') href = value;
+        },
+      },
+    });
+    const pending = navigateChromeItem(
+      async (suffix, method, body, timeout) => {
+        calls.push(`${method} ${suffix}`);
+        assert.ok(timeout > 0 && timeout <= 15_000);
+        if (suffix === 'window') {
+          assert.equal(method, 'GET');
+          return mode === 'wrong-before-window' || (mode === 'wrong-after-window' && scriptCommands)
+            ? 'stale-tab'
+            : 'actual-home-window';
+        }
+        if (suffix === 'url') {
+          assert.equal(method, 'GET');
+          if (scriptCommands) {
+            afterReads++;
+            if (mode === 'read-http-error') throw new Error('http-500');
+            if (mode === 'delayed' && afterReads === 2) href = destination;
+            if (mode === 'pending-deadline') clock = began + 15_000;
+          }
+          return href;
+        }
+        assert.equal(suffix, 'execute/sync');
+        assert.equal(method, 'POST');
+        scriptCommands++;
+        const payload = body as { script: string; args: unknown[] };
+        assert.equal(payload.script, chromeItemNavigationScript);
+        if (mode === 'changed-script-precondition') href = `${origin}/?item=changed`;
+        page.args = payload.args;
+        const value = runInContext(`(function(){${payload.script}}).apply(null, args)`, page);
+        if (mode === 'assignment-http-error') throw new Error('http-500');
+        return value;
+      },
+      {
+        origin,
+        itemId,
+        windowHandle: 'actual-home-window',
+        previousURL:
+          mode === 'next-item'
+            ? `${origin}/?item=doc`
+            : mode === 'wrong-previous-item'
+              ? `${origin}/?item=sheet`
+              : undefined,
+        deadline: began + 180_000,
+      },
+      diagnostic,
+    );
+    if (['ready', 'delayed', 'next-item'].includes(mode)) {
+      assert.equal(await pending, destination);
+      assert.equal(diagnostic.phase, 'verified');
+      assert.equal(diagnostic.itemURLMatch, true);
+      assert.equal(assignments, 1);
+    } else {
+      const expected = mode.includes('window')
+        ? 'capability-item-navigation-window-changed'
+        : mode.includes('origin')
+          ? 'capability-item-navigation-origin-changed'
+          : mode === 'wrong-previous-item'
+            ? 'capability-item-navigation-previous-item-changed'
+            : mode === 'changed-script-precondition'
+              ? 'capability-item-navigation-precondition-changed'
+              : mode === 'wrong-after-item'
+                ? 'capability-item-navigation-unexpected-url'
+                : mode === 'pending-deadline'
+                  ? 'capability-item-navigation-deadline'
+                  : 'http-500';
+      await assert.rejects(pending, { message: expected });
+      assert.equal(diagnostic.failure, expected);
+    }
+    assert.ok(scriptCommands <= 1);
+    assert.ok(assignments <= 1);
+    assert.equal(calls.includes('POST url'), false);
+    assert.equal(calls.includes('POST window'), false);
+    if (mode.startsWith('wrong-before') || mode === 'wrong-previous-item')
+      assert.equal(scriptCommands, 0);
+    if (mode === 'changed-script-precondition') assert.equal(assignments, 0);
+    if (mode.endsWith('http-error')) assert.equal(scriptCommands, 1);
+    assert.doesNotMatch(
+      JSON.stringify(diagnostic),
+      /private|bs-local|\/\?item|stale-tab|actual-home-window/,
+    );
+  }
+});
+
 test('the maintained Firefox blocker creates no fixture or session and keeps a two-lane success incomplete', async () => {
   const firefox = { ...target, browser: 'firefox' } as const;
   let executions = 0;
@@ -1328,14 +1555,17 @@ test('confirmation readiness observes the final transition without a third click
     assert.equal(result.cleanup.session, 'deleted');
   }
 });
-test('item readiness preserves the operational failure, buffers only the last observation and does not replay failed commands', async () => {
-  for (const mode of ['http-error', 'storage-error-after-loading']) {
+test('Chrome item navigation and readiness preserve operational failures, buffer observations and never replay failed commands', async () => {
+  for (const mode of ['navigation-http-error', 'http-error', 'storage-error-after-loading']) {
     const testFixture = fixture(() => {});
     const origin = testFixture.origin;
     let clicks = 0,
       homeRequests = 0,
       reads = 0,
-      diagnosticWrites = 0;
+      diagnosticWrites = 0,
+      navigationCommands = 0;
+    let currentURL = `${origin}/sign-in`;
+    const urlWrites: string[] = [];
     const journals: CapabilityResult[] = [];
     const client = clientFor('fixture-user', 'fixture-key', async (url, init) => {
       const path = String(url).split('/wd/hub/')[1] ?? String(url).split('/automate/')[1];
@@ -1343,7 +1573,17 @@ test('item readiness preserves the operational failure, buffers only the last ob
       let value: unknown = null;
       if (path === 'session') value = { sessionId, capabilities: { browserName: 'chrome' } };
       else if (path.endsWith('/execute/sync')) {
-        if (payload.script === itemReadinessScript) {
+        if (payload.script === chromeItemNavigationScript) {
+          navigationCommands++;
+          assert.deepEqual(payload.args, [origin, currentURL, `${origin}/?item=doc`]);
+          if (mode === 'navigation-http-error')
+            return Response.json(
+              { value: { error: 'unknown error', message: 'private navigation details' } },
+              { status: 500 },
+            );
+          currentURL = payload.args[2];
+          value = true;
+        } else if (payload.script === itemReadinessScript) {
           reads++;
           assert.deepEqual(payload.args, [origin]);
           if (mode === 'http-error')
@@ -1389,7 +1629,13 @@ test('item readiness preserves the operational failure, buffers only the last ob
               : { scope: `${origin}/`, active: `${origin}/service-worker.js`, state: 'activated' },
         };
       else if (path.endsWith('/window/handles')) value = ['original'];
-      else if (path.endsWith('/contexts')) value = ['NATIVE_APP', 'WEBVIEW_chrome'];
+      else if (path.endsWith('/window') && init?.method === 'GET') value = 'original';
+      else if (path.endsWith('/url')) {
+        if (init?.method === 'POST') {
+          urlWrites.push(payload.url);
+          currentURL = payload.url;
+        } else value = currentURL;
+      } else if (path.endsWith('/contexts')) value = ['NATIVE_APP', 'WEBVIEW_chrome'];
       else if (path.endsWith('/appium/device/current_package')) value = 'com.android.chrome';
       else if (path.endsWith('/source'))
         value = homeRequests
@@ -1424,35 +1670,50 @@ test('item readiness preserves the operational failure, buffers only the last ob
     assert.equal(result.stage, 'production-downloads');
     assert.equal(
       result.failure,
-      mode === 'http-error' ? 'http-500' : 'capability-production-storage-unavailable',
+      mode === 'storage-error-after-loading'
+        ? 'capability-production-storage-unavailable'
+        : 'http-500',
     );
     assert.equal(result.command, 'POST session/{sessionId}/execute/sync');
-    assert.equal(reads, mode === 'http-error' ? 1 : 2);
+    assert.equal(reads, mode === 'navigation-http-error' ? 0 : mode === 'http-error' ? 1 : 2);
+    assert.equal(navigationCommands, 1);
+    assert.deepEqual(urlWrites, [origin]);
     assert.equal(diagnosticWrites, 0);
     const observations = journals
       .at(-1)!
       .observations.filter((entry) => entry.stage.endsWith(':item-readiness-failure'));
-    assert.equal(observations.length, 1);
-    assert.deepEqual(observations[0].value, {
-      operation: 'item-readiness',
-      offline: false,
-      reads,
-      last:
-        mode === 'http-error'
-          ? null
-          : {
-              phase: 'storage',
-              readyState: 'complete',
-              bodyPresent: true,
-              originMatch: true,
-              documentReady: true,
-              failure: 'storage-unavailable',
-              errorName: 'SecurityError',
-            },
-    });
+    assert.equal(observations.length, mode === 'navigation-http-error' ? 0 : 1);
+    if (mode !== 'navigation-http-error')
+      assert.deepEqual(observations[0].value, {
+        operation: 'item-readiness',
+        offline: false,
+        reads,
+        last:
+          mode === 'http-error'
+            ? null
+            : {
+                phase: 'storage',
+                readyState: 'complete',
+                bodyPresent: true,
+                originMatch: true,
+                documentReady: true,
+                failure: 'storage-unavailable',
+                errorName: 'SecurityError',
+              },
+      });
+    const navigation = result.observations.find((entry) =>
+      entry.stage.endsWith(':item-navigation'),
+    )!.value as Record<string, unknown>;
+    assert.equal(navigation.assignmentAttempted, true);
+    assert.equal(navigation.assignmentAcknowledged, mode !== 'navigation-http-error');
+    assert.equal(navigation.phase, mode === 'navigation-http-error' ? 'assign' : 'verified');
     assert.equal(
       result.timing?.commands.find((entry) => entry.outcome === 'failed')?.webdriverErrorCode,
-      mode === 'http-error' ? 'javascript error' : undefined,
+      mode === 'navigation-http-error'
+        ? 'unknown error'
+        : mode === 'http-error'
+          ? 'javascript error'
+          : undefined,
     );
     assert.equal(result.cleanup.session, 'deleted');
     assert.equal(result.cleanup.network, 'restored-4g-lte-good');

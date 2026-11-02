@@ -515,13 +515,13 @@ test('quota CLI with missing credentials retains a failing report without openin
   }
 });
 
-test('monthly reports, device triggers and read-only diagnostics preserve their boundaries', async () => {
+test('monthly reports, full and Chrome-only devices, and read-only diagnostics preserve their boundaries', async () => {
   const source = await readFile(
     new URL('../../.github/workflows/browserstack.yml', import.meta.url),
     'utf8',
   );
   assert.match(source, /default: quota/);
-  assert.match(source, /options: \[quota, capability, diagnostics\]/);
+  assert.match(source, /options: \[quota, capability, chrome-diagnostic, diagnostics\]/);
   assert.match(
     source,
     /session_id:\n        description:.*\n        type: string\n        required: false/,
@@ -568,9 +568,11 @@ test('monthly reports, device triggers and read-only diagnostics preserve their 
   assert.match(quota, /github.event_name == 'schedule'/);
   assert.match(quota, /github.event_name == 'workflow_dispatch' && inputs.mode != 'diagnostics'/);
   assert.match(quota, /github.event.label.name == 'ci-real-devices'/);
+  assert.match(quota, /github.event.label.name == 'ci-real-devices-chrome'/);
   assert.match(quota, /github.event.pull_request.head.repo.full_name == github.repository/);
   assert.match(quota, /run: node scripts\/ci\/browserstack-accounting.ts "\$BS_OPERATION"/);
   assert.match(quota, /inputs.mode == 'capability'/);
+  assert.match(quota, /inputs.mode == 'chrome-diagnostic'/);
   assert.match(quota, /run: test "\$ACCOUNTING_OUTCOME" = success/);
   assert.match(quota, /if: always\(\)/);
   assert.doesNotMatch(quota, /setup-local|setup-env|browserstack.ts (smoke|credentials)|needs:/);
@@ -596,6 +598,9 @@ test('monthly reports, device triggers and read-only diagnostics preserve their 
     'a verified receipt, dependencies, typecheck and build precede Local/device execution',
   );
   assert.doesNotMatch(capability, /continue-on-error:/);
+  assert.equal([...source.matchAll(/BS_CAPABILITY_SCOPE:/g)].length, 1);
+  const scope = capability.match(/^      BS_CAPABILITY_SCOPE: \$\{\{ (.+) \}\}$/m)?.[1];
+  assert.ok(scope, 'one job-level scope applies to both prepare and run');
   const reconciliation = source.split('  reconciliation:\n')[1];
   assert.match(reconciliation, /needs: \[accounting, capability\]/);
   assert.match(
@@ -605,7 +610,7 @@ test('monthly reports, device triggers and read-only diagnostics preserve their 
   assert.match(reconciliation, /run: node scripts\/ci\/browserstack-accounting.ts reconcile/);
 
   // These predicates use lowercase string equality and boolean operators shared with JS.
-  // A diagnostic event cannot reach admission, device execution or reconciliation.
+  // Read-only diagnostics cannot reach admission; both phone scopes share every gate.
   const condition = (block: string) => {
     const match = block.match(/^    if: (?:>-\n)?([\s\S]*?)\n    runs-on:/m);
     assert.ok(match);
@@ -625,6 +630,7 @@ test('monthly reports, device triggers and read-only diagnostics preserve their 
     label?: string;
     fork?: boolean;
     jobs: string[];
+    scope?: 'all' | 'chrome-navigation-diagnostic';
   }[] = [
     { event: 'schedule', jobs: ['accounting'] },
     { event: 'workflow_dispatch', mode: 'quota', jobs: ['accounting'] },
@@ -633,12 +639,27 @@ test('monthly reports, device triggers and read-only diagnostics preserve their 
       event: 'workflow_dispatch',
       mode: 'capability',
       jobs: ['accounting', 'capability', 'reconciliation'],
+      scope: 'all',
+    },
+    {
+      event: 'workflow_dispatch',
+      mode: 'chrome-diagnostic',
+      jobs: ['accounting', 'capability', 'reconciliation'],
+      scope: 'chrome-navigation-diagnostic',
     },
     {
       event: 'pull_request',
       action: 'labeled',
       label: 'ci-real-devices',
       jobs: ['accounting', 'capability', 'reconciliation'],
+      scope: 'all',
+    },
+    {
+      event: 'pull_request',
+      action: 'labeled',
+      label: 'ci-real-devices-chrome',
+      jobs: ['accounting', 'capability', 'reconciliation'],
+      scope: 'chrome-navigation-diagnostic',
     },
     {
       event: 'pull_request',
@@ -655,8 +676,19 @@ test('monthly reports, device triggers and read-only diagnostics preserve their 
       jobs: [],
     },
     { event: 'pull_request', action: 'labeled', label: 'ci-real-devices', fork: true, jobs: [] },
+    {
+      event: 'pull_request',
+      action: 'labeled',
+      label: 'ci-real-devices-chrome',
+      fork: true,
+      jobs: [],
+    },
+    { event: 'pull_request', action: 'labeled', label: 'ci-real-devices-chrome-extra', jobs: [] },
+    { event: 'pull_request', action: 'labeled', label: 'ci-real-devices-chrom', jobs: [] },
     { event: 'pull_request', action: 'unlabeled', label: 'ci-browserstack-logs', jobs: [] },
+    { event: 'pull_request', action: 'unlabeled', label: 'ci-real-devices-chrome', jobs: [] },
     { event: 'pull_request', action: 'synchronize', label: 'ci-real-devices', jobs: [] },
+    { event: 'pull_request', action: 'synchronize', label: 'ci-real-devices-chrome', jobs: [] },
     { event: 'push', jobs: [] },
   ];
   for (const route of routes) {
@@ -686,6 +718,11 @@ test('monthly reports, device triggers and read-only diagnostics preserve their 
     }
     selected.push(...['capability', 'reconciliation'].filter((name) => evaluate(conditions[name])));
     assert.deepEqual(selected, route.jobs, JSON.stringify(route));
+    assert.equal(
+      selected.includes('capability') ? evaluate(scope) : null,
+      route.scope ?? null,
+      `capability scope: ${JSON.stringify(route)}`,
+    );
   }
 });
 

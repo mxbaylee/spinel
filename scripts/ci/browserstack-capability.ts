@@ -729,7 +729,7 @@ type CapabilityTiming = {
 };
 export type CapabilityResult = {
   target: Target;
-  status: 'passed' | 'failed' | 'blocked';
+  status: 'passed' | 'failed' | 'blocked' | 'not-run';
   startedAt: string | null;
   finishedAt?: string;
   stage: string;
@@ -751,11 +751,42 @@ export type CapabilityResult = {
   screenshots: string[];
   cleanup: { network: string; session: string; fixture: string };
 };
+export type CapabilityScope = 'all' | 'chrome-navigation-diagnostic';
+export function readCapabilityScope(value: unknown): CapabilityScope {
+  requireCondition(
+    value === undefined || value === 'all' || value === 'chrome-navigation-diagnostic',
+    'invalid-scope',
+  );
+  return value === 'chrome-navigation-diagnostic' ? value : 'all';
+}
+function notRunLane(target: Target, stage: string, reason: string): CapabilityResult {
+  return {
+    target,
+    status: 'not-run',
+    startedAt: null,
+    stage,
+    command: 'not-run',
+    allocation: 'not-started',
+    uncertainAllocation: false,
+    observations: [{ stage, value: { reason, currentRunAcceptance: 'not-assessed' } }],
+    nativeActions: [],
+    screenshots: [],
+    cleanup: { network: 'not-allocated', session: 'not-allocated', fixture: 'not-created' },
+  };
+}
 /** A maintained blocker is evidence, not a successful or silently skipped lane. */
 export async function runCapabilityLane(
   target: Target,
   execute: () => Promise<CapabilityResult>,
+  scope: CapabilityScope = 'all',
 ): Promise<CapabilityResult> {
+  readCapabilityScope(scope);
+  if (scope === 'chrome-navigation-diagnostic' && target.browser === 'safari')
+    return notRunLane(
+      target,
+      'chrome-navigation-diagnostic-only',
+      'Safari is not run by this Chrome navigation experiment. Its prior capability result is historical evidence, not acceptance for this source.',
+    );
   if (target.browser !== 'firefox') return execute();
   return {
     target,
@@ -795,6 +826,7 @@ export async function runCapabilityLane(
 export function capabilityOutcome(lanes: CapabilityResult[]): 'passed' | 'failed' | 'incomplete' {
   if (lanes.length !== 3 || new Set(lanes.map((lane) => lane.target.browser)).size !== 3)
     return 'incomplete';
+  if (lanes.some((lane) => lane.status === 'not-run')) return 'incomplete';
   if (lanes.some((lane) => lane.status === 'failed')) return 'failed';
   if (lanes.some((lane) => lane.status === 'blocked')) return 'incomplete';
   return 'passed';
@@ -956,6 +988,115 @@ export function itemReadinessSatisfied(value: Row, offline: boolean) {
   );
 }
 
+export const chromeItemNavigationScript = `
+const [origin, previousURL, itemURL] = arguments;
+if (location.origin !== origin || location.href !== previousURL) return false;
+location.assign(itemURL);
+return true;`;
+type NavigationCommand = (
+  suffix: 'window' | 'url' | 'execute/sync',
+  method: 'GET' | 'POST',
+  body: unknown,
+  timeout: number,
+) => Promise<unknown>;
+/** Candidate experiment: one in-window navigation, followed only by bounded reads.
+ * https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-location-assign
+ * https://www.w3.org/TR/webdriver2/#get-window-handle
+ * https://www.w3.org/TR/webdriver2/#get-current-url
+ */
+export async function navigateChromeItem(
+  command: NavigationCommand,
+  options: {
+    origin: string;
+    itemId: string;
+    windowHandle: unknown;
+    previousURL?: string;
+    deadline: number;
+  },
+  diagnostic: Row,
+): Promise<string> {
+  Object.assign(diagnostic, {
+    operation: 'chrome-item-navigation-experiment',
+    transport: 'location.assign',
+    phase: 'before',
+    assignmentAttempted: false,
+    assignmentAcknowledged: false,
+    reads: 0,
+  });
+  requireCondition(
+    options.origin === browserstackOrigin &&
+      /^[\w-]{1,200}$/.test(options.itemId) &&
+      typeof options.windowHandle === 'string' &&
+      /^[\w:.-]{1,200}$/.test(options.windowHandle),
+    'item-navigation-input-invalid',
+  );
+  const itemURL = `${options.origin}/?item=${options.itemId}`;
+  const until = Math.min(options.deadline, Date.now() + 15_000);
+  const send = async (
+    suffix: 'window' | 'url' | 'execute/sync',
+    method: 'GET' | 'POST',
+    body?: unknown,
+  ) => {
+    const left = until - Date.now();
+    requireCondition(left > 0, 'item-navigation-deadline');
+    const value = await command(suffix, method, body, Math.min(15_000, left));
+    requireCondition(Date.now() < until, 'item-navigation-deadline');
+    return value;
+  };
+  const sameOrigin = (value: unknown) => {
+    if (typeof value !== 'string' || value.length > 4096) return false;
+    try {
+      const url = new URL(value);
+      return url.origin === options.origin && !url.username && !url.password;
+    } catch {
+      return false;
+    }
+  };
+  try {
+    diagnostic.windowMatch = (await send('window', 'GET')) === options.windowHandle;
+    requireCondition(diagnostic.windowMatch, 'item-navigation-window-changed');
+    const before = await send('url', 'GET');
+    diagnostic.originMatch = sameOrigin(before);
+    diagnostic.previousItemMatch =
+      options.previousURL === undefined ? null : before === options.previousURL;
+    requireCondition(diagnostic.originMatch, 'item-navigation-origin-changed');
+    requireCondition(
+      diagnostic.previousItemMatch !== false,
+      'item-navigation-previous-item-changed',
+    );
+    diagnostic.phase = 'assign';
+    // The script repeats the URL/origin precondition immediately before its one
+    // mutation. A command error is uncertain and is never retried.
+    diagnostic.assignmentAttempted = true;
+    const issued = await send('execute/sync', 'POST', {
+      script: chromeItemNavigationScript,
+      args: [options.origin, before, itemURL],
+    });
+    diagnostic.assignmentAcknowledged = issued === true;
+    requireCondition(issued === true, 'item-navigation-precondition-changed');
+    diagnostic.phase = 'after';
+    for (;;) {
+      diagnostic.reads = Number(diagnostic.reads) + 1;
+      diagnostic.windowMatch = (await send('window', 'GET')) === options.windowHandle;
+      requireCondition(diagnostic.windowMatch, 'item-navigation-window-changed');
+      const after = await send('url', 'GET');
+      diagnostic.originMatch = sameOrigin(after);
+      diagnostic.itemURLMatch = after === itemURL;
+      requireCondition(diagnostic.originMatch, 'item-navigation-origin-changed');
+      if (diagnostic.itemURLMatch) {
+        diagnostic.phase = 'verified';
+        return itemURL;
+      }
+      requireCondition(after === before, 'item-navigation-unexpected-url');
+      requireCondition(Date.now() < until, 'item-navigation-deadline');
+      await new Promise((done) => setTimeout(done, Math.min(200, until - Date.now())));
+    }
+  } catch (error) {
+    diagnostic.failure = failure(error);
+    throw error;
+  }
+}
+
 /** No application data is injected: prepare through the production download action. */
 export async function runCapability(
   client: Client,
@@ -1080,6 +1221,28 @@ export async function runCapability(
   const session = (suffix: string) => `session/${result.sessionId}/${suffix}`;
   const execute = (script: string, args: unknown[] = [], timeout = 15_000) =>
     command(session('execute/sync'), 'POST', { script, args }, timeout);
+  async function navigateItem(item: Fixture['items'][number], attached: Row, previousURL?: string) {
+    const itemURL = `${fixture.origin}/?item=${item.id}`;
+    if (target.browser !== 'chrome') {
+      await command(session('url'), 'POST', { url: itemURL });
+      return itemURL;
+    }
+    const diagnostic: Row = { kind: item.kind };
+    // Buffer safe booleans and phases; final journaling preserves a failed
+    // command without another persistence operation masking that failure.
+    result.observations.push({ stage: `${result.stage}:item-navigation`, value: diagnostic });
+    return navigateChromeItem(
+      (suffix, method, body, timeout) => command(session(suffix), method, body, timeout),
+      {
+        origin: fixture.origin,
+        itemId: item.id,
+        windowHandle: attached.windowHandle,
+        previousURL,
+        deadline,
+      },
+      diagnostic,
+    );
+  }
   const executeAsync = (body: string, args: unknown[] = [], operation = 'browser-observation') =>
     target.browser === 'safari'
       ? observeBrowserTask(execute, body, args, {
@@ -1756,8 +1919,9 @@ export async function runCapability(
       method: 'one-use-production-session-bootstrap-in-launched-context',
     });
     stage('production-downloads');
+    let previousItemURL: string | undefined;
     for (const item of prepared) {
-      await command(session('url'), 'POST', { url: `${fixture.origin}/?item=${item.id}` });
+      previousItemURL = await navigateItem(item, launched, previousItemURL);
       await record(`${item.kind}:ready`, await itemReady(false));
       await clickWeb('button', 'Document actions');
       await clickWeb('[role="menuitem"]', 'Available offline on this device');
@@ -1832,8 +1996,9 @@ export async function runCapability(
     checkStored(after, prepared);
     requireCondition(JSON.stringify(after) === JSON.stringify(before), 'retained-bundle-changed');
     await record('retained-after-restart', after);
+    previousItemURL = undefined;
     for (const item of prepared) {
-      await command(session('url'), 'POST', { url: `${fixture.origin}/?item=${item.id}` });
+      previousItemURL = await navigateItem(item, relaunched, previousItemURL);
       const ready = await itemReady(true);
       requireCondition(ready.account === fixture.actor.id, 'retained-account-mismatch');
       await record(`${item.kind}:offline-ready`, ready);
@@ -1906,7 +2071,8 @@ export async function runCapability(
 type Journal = ReservationIdentity & {
   schemaVersion: 1;
   scope: string;
-  allocationPlan: 'two-lane-chrome-safari-remediation';
+  capabilityScope: CapabilityScope;
+  allocationPlan: 'two-lane-chrome-safari-remediation' | 'chrome-navigation-diagnostic';
   status: 'prepared' | 'running' | 'passed' | 'failed' | 'incomplete';
   stage: string;
   reservationId: string;
@@ -1918,13 +2084,19 @@ export function preparedCapabilityJournal(
   identity: ReservationIdentity,
   reservation: Reservation,
   now = Date.now(),
+  scope: CapabilityScope = 'all',
 ): Journal {
+  readCapabilityScope(scope);
   return {
     schemaVersion: 1,
     ...identity,
     scope:
-      'Two-lane Chrome/Safari capability remediation with the unchanged 900-second reservation. All three required lanes remain reported; Firefox is explicitly blocked by prior evidence. This is not full-matrix acceptance.',
-    allocationPlan: 'two-lane-chrome-safari-remediation',
+      scope === 'chrome-navigation-diagnostic'
+        ? 'Chrome-only location.assign navigation experiment with the unchanged 900-second reservation. All three required lanes remain reported; Firefox is blocked and Safari is not run. The outcome remains incomplete, including when Chrome passes.'
+        : 'Two-lane Chrome/Safari capability remediation with the unchanged 900-second reservation. All three required lanes remain reported; Firefox is explicitly blocked by prior evidence. This is not full-matrix acceptance.',
+    capabilityScope: scope,
+    allocationPlan:
+      scope === 'chrome-navigation-diagnostic' ? scope : 'two-lane-chrome-safari-remediation',
     status: 'prepared',
     stage: 'before-device-execution',
     reservationId: reservation.id,
@@ -1942,12 +2114,16 @@ export function readPreparedCapabilityJournal(
   identity: ReservationIdentity,
   reservation: Reservation,
   now = Date.now(),
+  scope: CapabilityScope = 'all',
 ): Journal {
+  readCapabilityScope(scope);
   const journal = row(value);
   const receipt = row(journal.receipt);
   requireCondition(
     journal.schemaVersion === 1 &&
-      journal.allocationPlan === 'two-lane-chrome-safari-remediation' &&
+      journal.capabilityScope === scope &&
+      journal.allocationPlan ===
+        (scope === 'chrome-navigation-diagnostic' ? scope : 'two-lane-chrome-safari-remediation') &&
       journal.status === 'prepared' &&
       journal.stage === 'before-device-execution' &&
       journal.reservationId === reservation.id &&
@@ -2001,6 +2177,7 @@ function identityFromEnvironment(): ReservationIdentity {
 async function main() {
   const mode = process.argv[2];
   requireCondition(mode === 'prepare' || mode === 'run', 'invalid-mode');
+  const scope = readCapabilityScope(process.env.BS_CAPABILITY_SCOPE);
   const identity = identityFromEnvironment();
   const manifest = JSON.parse(
     await readFile('artifacts/browserstack-admission.json', 'utf8'),
@@ -2016,7 +2193,7 @@ async function main() {
     async (reservation) => {
       await mkdir('artifacts', { recursive: true });
       if (mode === 'prepare') {
-        const journal = preparedCapabilityJournal(identity, reservation);
+        const journal = preparedCapabilityJournal(identity, reservation, Date.now(), scope);
         await writeFile(reportPath, `${JSON.stringify(journal, null, 2)}\n`, { flag: 'wx' });
         return;
       }
@@ -2026,6 +2203,8 @@ async function main() {
         JSON.parse(await readFile(reportPath, 'utf8')),
         identity,
         reservation,
+        Date.now(),
+        scope,
       );
       const persist = async () => {
         journal.receipt = {
@@ -2048,47 +2227,67 @@ async function main() {
         const targets = targetsFromInventory(
           await client.api('browsers.json', 'GET', undefined, { timeout: 15_000 }),
         );
+        // Retain all three required lanes before any allocation, including when
+        // a later fixture or command fails before another lane can be visited.
+        journal.lanes = await Promise.all(
+          targets.map((target) =>
+            runCapabilityLane(
+              target,
+              async () =>
+                notRunLane(
+                  target,
+                  'before-lane-execution',
+                  'This lane has not started; no fixture or session has been allocated.',
+                ),
+              scope,
+            ),
+          ),
+        );
+        await persist();
         await mkdir('artifacts/browserstack-capability', { recursive: true });
-        for (const target of targets) {
-          const index = journal.lanes.length;
-          journal.lanes[index] = await runCapabilityLane(target, async () => {
-            let fixture: BrowserstackFixture;
-            try {
-              fixture = await createBrowserstackFixture(directory);
-            } catch {
-              return {
-                target,
-                status: 'failed',
-                startedAt: null,
-                stage: 'fixture-startup',
-                command: 'not-run',
-                allocation: 'not-started',
-                uncertainAllocation: false,
-                failure: 'capability-fixture-startup-failed',
-                observations: [],
-                nativeActions: [],
-                screenshots: [],
-                cleanup: {
-                  network: 'not-allocated',
-                  session: 'not-allocated',
-                  fixture: 'startup-failed',
+        for (const [index, target] of targets.entries()) {
+          journal.lanes[index] = await runCapabilityLane(
+            target,
+            async () => {
+              let fixture: BrowserstackFixture;
+              try {
+                fixture = await createBrowserstackFixture(directory);
+              } catch {
+                return {
+                  target,
+                  status: 'failed',
+                  startedAt: null,
+                  stage: 'fixture-startup',
+                  command: 'not-run',
+                  allocation: 'not-started',
+                  uncertainAllocation: false,
+                  failure: 'capability-fixture-startup-failed',
+                  observations: [],
+                  nativeActions: [],
+                  screenshots: [],
+                  cleanup: {
+                    network: 'not-allocated',
+                    session: 'not-allocated',
+                    fixture: 'startup-failed',
+                  },
+                };
+              }
+              return runCapability(client, target, fixture, {
+                localIdentifier,
+                buildName: `SPN-090 ${scope === 'chrome-navigation-diagnostic' ? 'Chrome navigation diagnostic' : 'Chrome/Safari remediation'} ${identity.runId}-${identity.attempt}`,
+                journal: async (lane) => {
+                  journal.lanes[index] = lane;
+                  await persist();
                 },
-              };
-            }
-            return runCapability(client, target, fixture, {
-              localIdentifier,
-              buildName: `SPN-090 Chrome/Safari remediation ${identity.runId}-${identity.attempt}`,
-              journal: async (lane) => {
-                journal.lanes[index] = lane;
-                await persist();
-              },
-              screenshot: async (name, data) => {
-                const path = `artifacts/browserstack-capability/${name}.png`;
-                await writeFile(path, Buffer.from(data, 'base64'));
-                return path;
-              },
-            });
-          });
+                screenshot: async (name, data) => {
+                  const path = `artifacts/browserstack-capability/${name}.png`;
+                  await writeFile(path, Buffer.from(data, 'base64'));
+                  return path;
+                },
+              });
+            },
+            scope,
+          );
           await persist();
         }
         journal.stage = 'finished';
@@ -2097,7 +2296,7 @@ async function main() {
       } catch (error) {
         journal.failure = failure(error);
         journal.stage = 'failed';
-        journal.status = 'failed';
+        journal.status = scope === 'chrome-navigation-diagnostic' ? 'incomplete' : 'failed';
         process.exitCode = 1;
       } finally {
         await rm(directory, { recursive: true, force: true });

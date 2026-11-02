@@ -4,10 +4,10 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: Report quota, reserve phone capability, or read completed-session diagnostics
+        description: Report quota, run phone capability or Chrome diagnostics, or read completed-session logs
         type: choice
         default: quota
-        options: [quota, capability, diagnostics]
+        options: [quota, capability, chrome-diagnostic, diagnostics]
       session_id:
         description: Completed session for diagnostics; defaults to the retained Chrome attempt 6
         type: string
@@ -73,7 +73,8 @@ jobs:
       (github.event_name == 'workflow_dispatch' && inputs.mode != 'diagnostics') ||
       (github.event_name == 'pull_request' &&
       github.event.action == 'labeled' &&
-      github.event.label.name == 'ci-real-devices' &&
+      (github.event.label.name == 'ci-real-devices' ||
+      github.event.label.name == 'ci-real-devices-chrome') &&
       github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -99,7 +100,7 @@ jobs:
           BS_USERNAME: ${{ secrets.BS_USERNAME }}
           BS_ACCESS_KEY: ${{ secrets.BS_ACCESS_KEY }}
           GITHUB_TOKEN: ${{ github.token }}
-          BS_OPERATION: ${{ (github.event_name == 'pull_request' || inputs.mode == 'capability') && 'reserve' || 'quota' }}
+          BS_OPERATION: ${{ (github.event_name == 'pull_request' || inputs.mode == 'capability' || inputs.mode == 'chrome-diagnostic') && 'reserve' || 'quota' }}
         run: node scripts/ci/browserstack-accounting.ts "$BS_OPERATION"
       - name: Retain admission and assumption evidence
         if: always()
@@ -125,6 +126,8 @@ jobs:
     timeout-minutes: 25
     env:
       SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      # Both scopes retain the same admission, execution, cleanup and reconciliation.
+      BS_CAPABILITY_SCOPE: ${{ ((github.event_name == 'workflow_dispatch' && inputs.mode == 'chrome-diagnostic') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-chrome')) && 'chrome-navigation-diagnostic' || 'all' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
