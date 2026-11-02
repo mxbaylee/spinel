@@ -15,6 +15,7 @@ import {
   createBrowserstackFixture,
   type BrowserstackFixture,
 } from './browserstack-fixture.ts';
+import { observeChromeReadinessFailure } from './browserstack-chrome-readiness.ts';
 import { ledgerClient } from './browserstack-ledger.ts';
 import {
   clientFor,
@@ -1213,6 +1214,8 @@ export async function runCapability(
   const deadline = began + laneMilliseconds;
   const signal = AbortSignal.timeout(laneMilliseconds);
   let previousWindowHandles: string[] = [];
+  let currentItemURL: string | undefined;
+  let chromeReadinessObserved = false;
   const sanitize = (value: unknown): unknown =>
     typeof value === 'string'
       ? client.redact(clean(value))
@@ -1309,13 +1312,13 @@ export async function runCapability(
     const itemURL = `${fixture.origin}/?item=${item.id}`;
     if (target.browser !== 'chrome') {
       await command(session('url'), 'POST', { url: itemURL });
-      return itemURL;
+      return (currentItemURL = itemURL);
     }
     const diagnostic: Row = { kind: item.kind };
     // Buffer safe booleans and phases; final journaling preserves a failed
     // command without another persistence operation masking that failure.
     result.observations.push({ stage: `${result.stage}:item-navigation`, value: diagnostic });
-    return navigateChromeItem(
+    currentItemURL = await navigateChromeItem(
       (suffix, method, body, timeout) => command(session(suffix), method, body, timeout),
       {
         origin: fixture.origin,
@@ -1326,6 +1329,7 @@ export async function runCapability(
       },
       diagnostic,
     );
+    return currentItemURL;
   }
   const executeAsync = (body: string, args: unknown[] = [], operation = 'browser-observation') =>
     target.browser === 'safari'
@@ -1729,6 +1733,30 @@ export async function runCapability(
             ),
         }),
       });
+      if (
+        target.browser === 'chrome' &&
+        !chromeReadinessObserved &&
+        currentItemURL !== undefined &&
+        failure(error) === 'http-500' &&
+        webdriverErrorCode(error) === 'unknown error'
+      ) {
+        chromeReadinessObserved = true;
+        const failedCommand = result.command;
+        try {
+          const diagnostic = await observeChromeReadinessFailure(execute, {
+            expectedItemURL: currentItemURL,
+            deadline,
+          });
+          result.observations.push({
+            stage: `${result.stage}:chrome-readiness-document`,
+            value: diagnostic,
+          });
+        } finally {
+          // A distinct observation must not replace the command that failed.
+          // The helper returns bounded diagnostics, never a new operational error.
+          result.command = failedCommand;
+        }
+      }
       throw error;
     }
   }

@@ -37,6 +37,7 @@ import {
   type CapabilityResult,
 } from './browserstack-capability.ts';
 import { clientFor } from './browserstack.ts';
+import { chromeReadinessFailureScript } from './browserstack-chrome-readiness.ts';
 
 const now = Date.parse('2026-11-01T18:01:00.000Z');
 const identity: ReservationIdentity = {
@@ -1752,13 +1753,24 @@ test('confirmation readiness requires the first action and observes the final tr
   }
 });
 test('Chrome item navigation and readiness preserve operational failures, buffer observations and never replay failed commands', async () => {
-  for (const mode of ['navigation-http-error', 'http-error', 'storage-error-after-loading']) {
+  for (const mode of [
+    'navigation-http-error',
+    'http-error',
+    'storage-error-after-loading',
+    'readiness-ok',
+    'unknown-error-internal',
+    'unknown-error-expected',
+    'unknown-error-probe-failed',
+  ]) {
+    const unknownError = mode.startsWith('unknown-error-');
+    const readinessFailure = mode !== 'navigation-http-error' && mode !== 'readiness-ok';
     const testFixture = fixture(() => {});
     const origin = testFixture.origin;
     let clicks = 0,
       homeRequests = 0,
       reads = 0,
       diagnosticWrites = 0,
+      diagnosticCommands = 0,
       navigationCommands = 0;
     let currentURL = `${origin}/sign-in`;
     const urlWrites: string[] = [];
@@ -1769,7 +1781,24 @@ test('Chrome item navigation and readiness preserve operational failures, buffer
       let value: unknown = null;
       if (path === 'session') value = { sessionId, capabilities: { browserName: 'chrome' } };
       else if (path.endsWith('/execute/sync')) {
-        if (payload.script === chromeItemNavigationScript) {
+        if (payload.script === chromeReadinessFailureScript) {
+          diagnosticCommands++;
+          assert.equal(
+            reads,
+            1,
+            'the new observation must follow the first failed readiness command',
+          );
+          assert.deepEqual(payload.args, [`${origin}/?item=doc`]);
+          if (mode === 'unknown-error-probe-failed')
+            return Response.json(
+              { value: { error: 'javascript error', message: 'private diagnostic details' } },
+              { status: 500 },
+            );
+          value =
+            mode === 'unknown-error-internal'
+              ? 'chrome-error:ERR_CONNECTION_REFUSED'
+              : 'expected-item';
+        } else if (payload.script === chromeItemNavigationScript) {
           navigationCommands++;
           assert.deepEqual(payload.args, [origin, currentURL, `${origin}/?item=doc`]);
           if (mode === 'navigation-http-error')
@@ -1782,30 +1811,41 @@ test('Chrome item navigation and readiness preserve operational failures, buffer
         } else if (payload.script === itemReadinessScript) {
           reads++;
           assert.deepEqual(payload.args, [origin]);
-          if (mode === 'http-error')
+          if (mode === 'http-error' || unknownError)
             return Response.json(
-              { value: { error: 'javascript error', message: 'private script details' } },
+              {
+                value: {
+                  error: unknownError ? 'unknown error' : 'javascript error',
+                  message: 'private script details',
+                },
+              },
               { status: 500 },
             );
           value =
-            reads === 1
-              ? {
-                  phase: 'document',
-                  readyState: 'loading',
-                  bodyPresent: false,
-                  originMatch: true,
-                  documentReady: false,
-                }
-              : {
-                  phase: 'storage',
-                  readyState: 'complete',
-                  bodyPresent: true,
-                  originMatch: true,
-                  documentReady: true,
-                  failure: 'storage-unavailable',
-                  errorName: 'SecurityError',
-                };
-        } else
+            mode === 'readiness-ok'
+              ? { documentReady: true, canvasHeight: 400, phoneReadOnly: false, status: 'Synced.' }
+              : reads === 1
+                ? {
+                    phase: 'document',
+                    readyState: 'loading',
+                    bodyPresent: false,
+                    originMatch: true,
+                    documentReady: false,
+                  }
+                : {
+                    phase: 'storage',
+                    readyState: 'complete',
+                    bodyPresent: true,
+                    originMatch: true,
+                    documentReady: true,
+                    failure: 'storage-unavailable',
+                    errorName: 'SecurityError',
+                  };
+        } else if (mode === 'readiness-ok' && payload.args[1] === 'Document actions')
+          // Stop at the next real guard after proving the healthy path did not
+          // dispatch a diagnostic. No complete phone capability is simulated.
+          value = null;
+        else
           value = {
             origin,
             secureContext: true,
@@ -1854,7 +1894,7 @@ test('Chrome item navigation and readiness preserve operational failures, buffer
       buildName: 'test',
       journal: async (value) => {
         if (
-          value.observations.at(-1)?.stage.endsWith(':item-readiness-failure') &&
+          value.observations.some((entry) => entry.stage.endsWith(':item-readiness-failure')) &&
           !value.finishedAt
         ) {
           diagnosticWrites++;
@@ -1870,24 +1910,30 @@ test('Chrome item navigation and readiness preserve operational failures, buffer
       result.failure,
       mode === 'storage-error-after-loading'
         ? 'capability-production-storage-unavailable'
-        : 'http-500',
+        : mode === 'readiness-ok'
+          ? 'capability-production-control-unavailable'
+          : 'http-500',
     );
     assert.equal(result.command, 'POST session/{sessionId}/execute/sync');
-    assert.equal(reads, mode === 'navigation-http-error' ? 0 : mode === 'http-error' ? 1 : 2);
+    assert.equal(
+      reads,
+      mode === 'navigation-http-error' ? 0 : mode === 'storage-error-after-loading' ? 2 : 1,
+    );
     assert.equal(navigationCommands, 1);
+    assert.equal(diagnosticCommands, unknownError ? 1 : 0);
     assert.deepEqual(urlWrites, [origin]);
     assert.equal(diagnosticWrites, 0);
     const observations = journals
       .at(-1)!
       .observations.filter((entry) => entry.stage.endsWith(':item-readiness-failure'));
-    assert.equal(observations.length, mode === 'navigation-http-error' ? 0 : 1);
-    if (mode !== 'navigation-http-error')
+    assert.equal(observations.length, readinessFailure ? 1 : 0);
+    if (readinessFailure)
       assert.deepEqual(observations[0].value, {
         operation: 'item-readiness',
         offline: false,
         reads,
         last:
-          mode === 'http-error'
+          mode === 'http-error' || unknownError
             ? null
             : {
                 phase: 'storage',
@@ -1909,14 +1955,44 @@ test('Chrome item navigation and readiness preserve operational failures, buffer
       result.timing?.commands.find((entry) => entry.outcome === 'failed')?.webdriverErrorCode,
       mode === 'navigation-http-error'
         ? 'unknown error'
-        : mode === 'http-error'
-          ? 'javascript error'
-          : undefined,
+        : unknownError
+          ? 'unknown error'
+          : mode === 'http-error'
+            ? 'javascript error'
+            : undefined,
     );
+    const diagnostic = result.observations.filter((entry) =>
+      entry.stage.endsWith(':chrome-readiness-document'),
+    );
+    assert.equal(diagnostic.length, unknownError ? 1 : 0);
+    if (unknownError) {
+      const value = diagnostic[0].value as Record<string, unknown>;
+      assert.equal(value.commandAttempted, true);
+      assert.ok(
+        Number(value.timeoutMilliseconds) > 0 && Number(value.timeoutMilliseconds) <= 5_000,
+      );
+      assert.equal(value.status, mode === 'unknown-error-probe-failed' ? 'failed' : 'observed');
+      assert.equal(
+        value.document,
+        mode === 'unknown-error-probe-failed'
+          ? null
+          : mode === 'unknown-error-internal'
+            ? 'chrome-error'
+            : 'expected-item',
+      );
+      assert.equal(
+        value.errorCode,
+        mode === 'unknown-error-internal' ? 'ERR_CONNECTION_REFUSED' : null,
+      );
+      assert.equal(value.failure, mode === 'unknown-error-probe-failed' ? 'command-failed' : null);
+    }
     assert.equal(result.cleanup.session, 'deleted');
     assert.equal(result.cleanup.network, 'restored-4g-lte-good');
     assert.equal(result.cleanup.fixture, 'closed');
-    assert.doesNotMatch(JSON.stringify(result), /private script|private-bootstrap|fixture-key/);
+    assert.doesNotMatch(
+      JSON.stringify(result),
+      /private script|private diagnostic|private-bootstrap|fixture-key/,
+    );
   }
 });
 
