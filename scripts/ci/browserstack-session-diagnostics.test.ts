@@ -34,6 +34,25 @@ function appiumFailure(payload: unknown = body(), wirePath = path, proxyPath = w
     `${stamp}[HTTP] <-- POST ${wirePath} 500 92 ms - 1000`,
   ].join('\n');
 }
+const terminal =
+  'Encountered internal error running command: UnknownError: An unknown server-side error occurred while processing the command. Original error: unknown error: Cannot find context with specified id';
+const terminalLine = (logger = 'W3C (internal)', message = terminal) =>
+  `${stamp}[debug] [${logger}] ${message}`;
+function terminalFailure(logger = 'W3C (internal)', association?: string) {
+  const lines = appiumFailure().split('\n');
+  return [
+    lines[0],
+    ...(association
+      ? [
+          `${stamp}[debug] [${association}] Calling AppiumDriver.execute() with args: ["private script"]`,
+        ]
+      : []),
+    lines[1],
+    `${stamp}[debug] [WD Proxy] Got response with status 500: {truncated private`,
+    terminalLine(logger),
+    lines[3],
+  ].join('\n');
+}
 const unknownLog = appiumFailure(
   body('unknown error', 'an unrecognized private error fixture-key'),
 );
@@ -112,6 +131,8 @@ test('only a matching Appium failed response supplies a cause; request echoes an
       httpStatus: 500,
       webdriverError: 'unknown error',
       cause: 'execution-context-unavailable',
+      source: 'proxy-response',
+      errorClass: null,
     },
   ]);
   assert.deepEqual(analyzed.browserVersions, ['152.0.0.0']);
@@ -164,6 +185,196 @@ test('cause classification uses allowlisted protocol codes and anchored driver m
   }
 });
 
+test('one session-bound terminal error can classify execute HTTP500 while retaining malformed proxy evidence', () => {
+  for (const log of [
+    terminalFailure(),
+    terminalFailure('AndroidUiautomator2Driver@a1b2', 'AndroidUiautomator2Driver@a1b2'),
+  ]) {
+    const result = analyzeSessionLog(log, 'appiumlogs');
+    assert.deepEqual(result.failures, [
+      {
+        command,
+        httpStatus: 500,
+        webdriverError: 'unknown error',
+        cause: 'execution-context-unavailable',
+        source: 'terminal-error',
+        errorClass: 'UnknownError',
+      },
+    ]);
+    assert.equal(result.malformedRecords, 1);
+    assert.equal(result.terminalRecords, 1);
+    assert.equal(result.rejectedTerminalRecords, 0);
+    assert.equal(result.ambiguousTransactions, 0);
+    assert.doesNotMatch(JSON.stringify(result), privateValues);
+  }
+});
+
+test('terminal evidence rejects echoes, foreign or unassociated loggers, duplicates, stale records and incompatible completions', () => {
+  const lines = appiumFailure().split('\n');
+  const direct = (middle: string[]) => [lines[0], ...middle, lines[3]].join('\n');
+  const positive = direct([terminalLine()]);
+  const negative = [
+    direct([
+      `${stamp}[debug] [WD Proxy] Proxying [POST ${path}] to [POST http://127.0.0.1:9515${path}] with body: ${JSON.stringify({ script: terminalLine() })}`,
+    ]),
+    direct([terminalLine('W3C (foreign1)')]),
+    direct([terminalLine('W3C')]),
+    direct([terminalLine('AndroidUiautomator2Driver@a1b2')]),
+    terminalFailure('AndroidUiautomator2Driver@a1b2', 'AndroidUiautomator2Driver@c3d4'),
+    terminalFailure('AndroidUiautomator2Driver@a1b2', 'AndroidUiautomator2Driver@a1b2').replace(
+      '.execute()',
+      '.getTitle()',
+    ),
+    direct([terminalLine(), terminalLine()]),
+    direct([terminalLine(), lines[1], lines[2]]),
+    direct([lines[1], lines[2], terminalLine()]),
+    positive.replaceAll('/execute/sync', '/title'),
+    positive.replaceAll('/execute/sync', '/unrecognized-command'),
+    positive.replace('500 92 ms', '405 92 ms'),
+    positive.replace('500 92 ms', '200 92 ms') + '\n' + [lines[0], lines[3]].join('\n'),
+    [terminalLine(), lines[0], lines[3]].join('\n'),
+    direct([
+      terminalLine(
+        'W3C (internal)',
+        'Encountered internal error running command: TypeError: tab crashed',
+      ),
+    ]),
+    direct([
+      terminalLine(
+        'W3C (internal)',
+        'Encountered internal error running command: UnknownError: private text Original error: tab crashed',
+      ),
+    ]),
+    direct([
+      terminalLine(
+        'W3C (internal)',
+        'Encountered internal error running command: UnknownError: tab crashed ' + 'x'.repeat(8192),
+      ),
+    ]),
+  ];
+  for (const log of negative) {
+    const result = analyzeSessionLog(log, 'appiumlogs');
+    assert.ok(result.failures.every((failure) => failure.cause === 'unclassified'));
+    assert.doesNotMatch(JSON.stringify(result), privateValues);
+  }
+  const mismatch = analyzeSessionLog(
+    [lines[0], terminalLine(), lines[3].replace('/execute/sync', '/source')].join('\n'),
+    'appiumlogs',
+  );
+  assert.deepEqual(mismatch.failures, []);
+  assert.equal(mismatch.ambiguousTransactions, 1);
+  const duplicate = analyzeSessionLog(direct([terminalLine(), terminalLine()]), 'appiumlogs');
+  assert.equal(duplicate.terminalRecords, 2);
+  assert.equal(duplicate.ambiguousTransactions, 1);
+  const current = analyzeSessionLog(
+    direct([
+      `${stamp}[debug] [AndroidUiautomator2Driver@a1b2] Calling AppiumDriver.execute() with args: []`,
+      terminalLine(
+        'AndroidUiautomator2Driver@a1b2',
+        'Encountered internal error running command: UnknownError: unknown error: tab crashed\nprivate stack',
+      ),
+    ]),
+    'appiumlogs',
+  );
+  assert.equal(current.failures[0].cause, 'renderer-crashed');
+  assert.equal(current.failures[0].source, 'terminal-error');
+  assert.doesNotMatch(JSON.stringify(current), privateValues);
+});
+
+test('terminal classification preserves unknown405 and malformed evidence and still retrieves the fallback', async () => {
+  const lines = appiumFailure().split('\n');
+  const rejected = [lines[0], lines[3].replace('500 92 ms', '405 92 ms')].join('\n');
+  let calls = 0;
+  const report = await collectSessionDiagnostics({
+    ...options,
+    fetcher: async () => {
+      calls++;
+      return new Response(
+        calls === 1 ? rejected + '\n' + terminalFailure() : 'private unknown text',
+      );
+    },
+  });
+  assert.equal(calls, 2);
+  assert.equal(report.status, 'available');
+  assert.equal(report.diagnosis, 'partially-classified');
+  assert.equal(report.retrievals[0].analysis?.malformedRecords, 1);
+  assert.deepEqual(
+    report.retrievals[0].analysis?.failures.map((failure) => [
+      failure.httpStatus,
+      failure.source,
+      failure.cause,
+    ]),
+    [
+      [405, 'unclassified', 'unclassified'],
+      [500, 'terminal-error', 'execution-context-unavailable'],
+    ],
+  );
+  assert.equal(report.providerSessionsAllocated, 0);
+  assert.doesNotMatch(JSON.stringify(report), privateValues);
+});
+
+test('response structure retains only MIME and shape enums, counts and BOM without private headers, keys or values', async () => {
+  for (const [text, contentType, expectedShape, expectedMime, newlineStyle] of [
+    [sessionFailure, 'text/plain; token=private', 'line-text', 'plain-text', 'lf'],
+    [
+      JSON.stringify(sessionFailure),
+      'application/json; token=secret',
+      'json-string',
+      'json',
+      'none',
+    ],
+    [
+      JSON.stringify({ privateKey: 'fixture-key', logs: sessionFailure }),
+      'application/json',
+      'json-object',
+      'json',
+      'none',
+    ],
+    [
+      JSON.stringify([{ privateKey: 'fixture-key' }]),
+      'application/json',
+      'json-array',
+      'json',
+      'none',
+    ],
+    ['true', 'application/json', 'json-primitive', 'json', 'none'],
+    [
+      '<!doctype html><html><body>fixture-key</body></html>',
+      'text/html; private=secret',
+      'html',
+      'html',
+      'none',
+    ],
+    [
+      '\ufeffprivate unknown text\r\nprivate',
+      'private/type; secret=value',
+      'line-text',
+      'other',
+      'crlf',
+    ],
+    ['private\rprivate', 'text/plain', 'line-text', 'plain-text', 'cr'],
+    ['private\r\nprivate\nprivate', 'text/plain', 'line-text', 'plain-text', 'mixed'],
+  ]) {
+    const report = await collectSessionDiagnostics({
+      ...options,
+      fetcher: async () => new Response(text, { headers: { 'content-type': contentType } }),
+    });
+    assert.equal(report.retrievals.length, 2);
+    const structure = report.retrievals[1].structure!;
+    assert.equal(structure.bodyShape, expectedShape);
+    assert.equal(structure.mime, expectedMime);
+    assert.equal(structure.lineCount, text.split(/\r\n|\r|\n/).length);
+    assert.equal(structure.bom, text.charCodeAt(0) === 0xfeff);
+    assert.equal(structure.newlineStyle, newlineStyle);
+    if (expectedShape === 'json-string') {
+      assert.equal(structure.decodedString?.counts.request, 1);
+      assert.equal(structure.decodedString?.counts.response, 1);
+      assert.equal(report.retrievals[1].analysis?.recognizedRequests, 0);
+    }
+    assert.doesNotMatch(JSON.stringify(report), privateValues);
+  }
+});
+
 test('stale, overlapping or differently logged proxy responses cannot supply the final failed command cause', () => {
   const lines = appiumFailure().split('\n');
   for (const middle of [
@@ -179,7 +390,14 @@ test('stale, overlapping or differently logged proxy responses cannot supply the
   ]) {
     const result = analyzeSessionLog([lines[0], ...middle, lines[3]].join('\n'), 'appiumlogs');
     assert.deepEqual(result.failures, [
-      { command, httpStatus: 500, webdriverError: null, cause: 'unclassified' },
+      {
+        command,
+        httpStatus: 500,
+        webdriverError: null,
+        cause: 'unclassified',
+        source: 'unclassified',
+        errorClass: null,
+      },
     ]);
     assert.equal(result.ambiguousTransactions, 1);
   }
@@ -188,7 +406,14 @@ test('stale, overlapping or differently logged proxy responses cannot supply the
 test('text logs require an explicit failed response state and all overlapping or malformed records remain unclassified', () => {
   const parsed = analyzeSessionLog(sessionLifecycle + sessionFailure, 'logs');
   assert.deepEqual(parsed.failures, [
-    { command, httpStatus: null, webdriverError: 'unknown error', cause: 'renderer-crashed' },
+    {
+      command,
+      httpStatus: null,
+      webdriverError: 'unknown error',
+      cause: 'renderer-crashed',
+      source: 'session-response',
+      errorClass: null,
+    },
   ]);
   assert.equal(parsed.ambiguousTransactions, 0);
   assert.equal(parsed.unfinishedTransactions, 0);
@@ -225,7 +450,14 @@ test('text logs require an explicit failed response state and all overlapping or
     'logs',
   );
   assert.deepEqual(unknownCommand.failures, [
-    { command: null, httpStatus: null, webdriverError: 'unknown error', cause: 'unclassified' },
+    {
+      command: null,
+      httpStatus: null,
+      webdriverError: 'unknown error',
+      cause: 'unclassified',
+      source: 'session-response',
+      errorClass: null,
+    },
   ]);
   const appium = appiumFailure().split('\n');
   const overlapAppium = [appium[0], appium[0], ...appium.slice(1), appium.at(-1)].join('\n');
@@ -244,7 +476,14 @@ test('text logs require an explicit failed response state and all overlapping or
     'appiumlogs',
   );
   assert.deepEqual(failedMalformed.failures, [
-    { command, httpStatus: 500, webdriverError: null, cause: 'unclassified' },
+    {
+      command,
+      httpStatus: 500,
+      webdriverError: null,
+      cause: 'unclassified',
+      source: 'unclassified',
+      errorClass: null,
+    },
   ]);
   assert.equal(
     analyzeSessionLog('arbitrary private tab crashed text', 'logs').format,

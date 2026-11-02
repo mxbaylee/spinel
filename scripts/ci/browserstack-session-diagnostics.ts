@@ -32,6 +32,8 @@ type FailureRecord = {
   httpStatus: number | null;
   webdriverError: string | null;
   cause: Cause;
+  source: 'proxy-response' | 'session-response' | 'terminal-error' | 'unclassified';
+  errorClass: 'UnknownError' | 'JavaScriptError' | null;
 };
 type Analysis = {
   format: Endpoint | 'unrecognized';
@@ -41,6 +43,8 @@ type Analysis = {
   ambiguousTransactions: number;
   unfinishedTransactions: number;
   malformedRecords: number;
+  terminalRecords: number;
+  rejectedTerminalRecords: number;
   browserVersions: string[];
   chromeDriverVersions: string[];
   pageLoadStrategies: string[];
@@ -54,6 +58,7 @@ type Retrieval = {
   elapsedMilliseconds: number | null;
   failure: string | null;
   analysis: Analysis | null;
+  structure: ReturnType<typeof logStructure> | null;
 };
 export type SessionDiagnostics = {
   schemaVersion: 1;
@@ -92,6 +97,83 @@ const positiveInteger = (value: unknown) =>
   typeof value === 'string' && /^[1-9]\d{0,19}$/.test(value) ? value : null;
 const object = (value: unknown): Row | null =>
   value && typeof value === 'object' && !Array.isArray(value) ? (value as Row) : null;
+const timestampPrefix =
+  /^\d{4}-\d{1,2}-\d{1,2}[ T]\d{1,2}:\d{2}:\d{2}(?:[.:]\d{1,6})?(?:Z)?\s+(?:-\s+)?/;
+const loggerPrefix = /^(?:\[[^\]\r\n]{1,100}\]\s*){1,4}/;
+const terminalPrefix = 'Encountered internal error running command: ';
+const executeCommand = 'POST session/{sessionId}/execute/sync';
+
+function logStructure(text: string, contentType: string | null, bom: boolean) {
+  const mediaType = contentType?.split(';', 1)[0].trim().toLowerCase();
+  const mime = !mediaType
+    ? 'missing'
+    : mediaType === 'text/plain'
+      ? 'plain-text'
+      : mediaType === 'application/json'
+        ? 'json'
+        : mediaType === 'text/html'
+          ? 'html'
+          : 'other';
+  const framing = (value: string) => {
+    const counts = {
+      timestamped: 0,
+      request: 0,
+      response: 0,
+      startSession: 0,
+      appiumHttp: 0,
+      terminalError: 0,
+    };
+    const lines = value.split(/\r\n|\r|\n/);
+    for (const raw of lines) {
+      if (timestampPrefix.test(raw)) counts.timestamped++;
+      const line = raw.replace(timestampPrefix, '');
+      if (/^REQUEST (?:\[[^\]\r\n]{1,50}\]\s+)?(?:GET|POST|DELETE) /.test(line)) counts.request++;
+      if (line.startsWith('RESPONSE ')) counts.response++;
+      if (line === 'START_SESSION') counts.startSession++;
+      const prefix = loggerPrefix.exec(line)?.[0];
+      if (prefix) {
+        const body = line.slice(prefix.length);
+        if (/\[HTTP\]\s*$/.test(prefix) && /^(?:-->|<--) (?:GET|POST|DELETE) /.test(body))
+          counts.appiumHttp++;
+        if (body.startsWith(terminalPrefix)) counts.terminalError++;
+      }
+    }
+    const withoutPairs = value.replace(/\r\n/g, '');
+    const crlf = value.includes('\r\n'),
+      lf = withoutPairs.includes('\n'),
+      cr = withoutPairs.includes('\r');
+    const newlineStyle =
+      Number(crlf) + Number(lf) + Number(cr) > 1
+        ? 'mixed'
+        : crlf
+          ? 'crlf'
+          : lf
+            ? 'lf'
+            : cr
+              ? 'cr'
+              : 'none';
+    return { lineCount: lines.length, newlineStyle, counts };
+  };
+  let bodyShape:
+    'line-text' | 'json-string' | 'json-object' | 'json-array' | 'json-primitive' | 'html' =
+    'line-text';
+  let decodedString: ReturnType<typeof framing> | null = null;
+  try {
+    const parsed: unknown = JSON.parse(text);
+    bodyShape =
+      typeof parsed === 'string'
+        ? 'json-string'
+        : Array.isArray(parsed)
+          ? 'json-array'
+          : object(parsed)
+            ? 'json-object'
+            : 'json-primitive';
+    if (typeof parsed === 'string') decodedString = framing(parsed);
+  } catch {
+    if (/^\s*(?:<!doctype html(?:\s|>)|<html(?:\s|>))/i.test(text)) bodyShape = 'html';
+  }
+  return { mime, bodyShape, bom, ...framing(text), decodedString };
+}
 
 function normalizedCommand(method: string, path: string): string | null {
   if (!['GET', 'POST', 'DELETE'].includes(method)) return null;
@@ -206,9 +288,17 @@ function errorRecord(
   payload: Row | null,
   command: string | null,
   httpStatus: number | null,
+  source: FailureRecord['source'] = 'unclassified',
 ): FailureRecord {
   if (payload?.status === 0 || payload?.state === 'success')
-    return { command, httpStatus, webdriverError: null, cause: 'unclassified' };
+    return {
+      command,
+      httpStatus,
+      webdriverError: null,
+      cause: 'unclassified',
+      source: 'unclassified',
+      errorClass: null,
+    };
   const value = object(payload?.value);
   const code =
     webdriverErrorCode({ webdriverErrorCode: value?.error }) ??
@@ -219,6 +309,41 @@ function errorRecord(
     httpStatus,
     webdriverError: code,
     cause: command ? classifyCause(code, value?.message) : 'unclassified',
+    source: code ? source : 'unclassified',
+    errorClass: null,
+  };
+}
+
+function terminalError(firstLine: string): FailureRecord | null {
+  if (firstLine.length > 8192 || /[\r\n]/.test(firstLine)) return null;
+  // Current producer: appium/appium packages/base-driver/lib/protocol/protocol.ts,
+  // blob 166641e9597a6e87ff3d77f08d7101fd014c23a8. Only this terminal first line
+  // supplies evidence, never arbitrary stack lines or request/response bodies.
+  const named = /^(UnknownError|JavaScriptError): (.*)$/.exec(firstLine);
+  const errorClass = named ? (named[1] as 'UnknownError' | 'JavaScriptError') : null;
+  let message = named ? named[2] : firstLine;
+  // Exact legacy UnknownError wrapper, from appium/appium-base-driver
+  // lib/protocol/errors.js blob fdc2a16d9d915f1a5b91b36406cc8a281c335cb5.
+  const legacy =
+    'An unknown server-side error occurred while processing the command. Original error: ';
+  const code =
+    errorClass === 'JavaScriptError'
+      ? 'javascript error'
+      : errorClass === 'UnknownError' ||
+          message.startsWith(legacy) ||
+          message.startsWith('unknown error: ')
+        ? 'unknown error'
+        : null;
+  if (!code) return null;
+  if (code === 'unknown error' && message.startsWith(legacy))
+    message = message.slice(legacy.length);
+  return {
+    command: executeCommand,
+    httpStatus: 500,
+    webdriverError: code,
+    cause: classifyCause(code, message),
+    source: 'terminal-error',
+    errorClass,
   };
 }
 function versions(payload: Row | null, command: string | null, result: Analysis) {
@@ -254,6 +379,8 @@ export function analyzeSessionLog(text: string, endpoint: Endpoint): Analysis {
     ambiguousTransactions: 0,
     unfinishedTransactions: 0,
     malformedRecords: 0,
+    terminalRecords: 0,
+    rejectedTerminalRecords: 0,
     browserVersions: [],
     chromeDriverVersions: [],
     pageLoadStrategies: [],
@@ -266,6 +393,11 @@ export function analyzeSessionLog(text: string, endpoint: Endpoint): Analysis {
     proxyTransactions: number;
     proxyAmbiguous: boolean;
     error: FailureRecord | null;
+    driverLogger: string | null;
+    driverCalls: number;
+    terminal: FailureRecord | null;
+    terminalCount: number;
+    terminalAmbiguous: boolean;
   };
   let pending: Pending | null = null,
     overlap = 0;
@@ -276,10 +408,7 @@ export function analyzeSessionLog(text: string, endpoint: Endpoint): Analysis {
   for (const raw of text.split(/\r?\n/)) {
     // Dates and logger tags frame the records. Never search the line's body for
     // strings resembling errors or commands, including echoed execute scripts.
-    const line = raw.replace(
-      /^\d{4}-\d{1,2}-\d{1,2}[ T]\d{1,2}:\d{2}:\d{2}(?:[.:]\d{1,6})?(?:Z)?\s+(?:-\s+)?/,
-      '',
-    );
+    const line = raw.replace(timestampPrefix, '');
     if (endpoint === 'logs') {
       // The documented session-text lifecycle ends the creation request with
       // this exact event before GET /session supplies the capabilities response.
@@ -304,6 +433,11 @@ export function analyzeSessionLog(text: string, endpoint: Endpoint): Analysis {
             proxyTransactions: 0,
             proxyAmbiguous: false,
             error: null,
+            driverLogger: null,
+            driverCalls: 0,
+            terminal: null,
+            terminalCount: 0,
+            terminalAmbiguous: false,
           };
         result.recognizedRequests++;
         result.format = endpoint;
@@ -332,14 +466,14 @@ export function analyzeSessionLog(text: string, endpoint: Endpoint): Analysis {
           payload.status <= 34) ||
           (typeof payload?.state === 'string' &&
             webdriverErrorCode({ webdriverErrorCode: payload.state }) !== undefined));
-      if (failed) retain(errorRecord(payload, pending.command, null));
+      if (failed) retain(errorRecord(payload, pending.command, null, 'session-response'));
       else if (payload?.status === 0 || payload?.state === 'success')
         versions(payload, pending.command, result);
       else if (payload) result.malformedRecords++;
       pending = null;
       continue;
     }
-    const prefix = /^(?:\[[^\]\r\n]{1,100}\]\s*){1,4}/.exec(line)?.[0];
+    const prefix = loggerPrefix.exec(line)?.[0];
     if (!prefix) continue;
     const tags = [...prefix.matchAll(/\[([^\]]+)\]/g)].map((entry) => entry[1]);
     const tag = tags.at(-1)!;
@@ -360,6 +494,11 @@ export function analyzeSessionLog(text: string, endpoint: Endpoint): Analysis {
             proxyTransactions: 0,
             proxyAmbiguous: false,
             error: null,
+            driverLogger: null,
+            driverCalls: 0,
+            terminal: null,
+            terminalCount: 0,
+            terminalAmbiguous: false,
           };
         result.recognizedRequests++;
         result.format = endpoint;
@@ -377,10 +516,65 @@ export function analyzeSessionLog(text: string, endpoint: Endpoint): Analysis {
         continue;
       }
       if (Number(response[3]) >= 400) {
-        if (pending.proxyAmbiguous) result.ambiguousTransactions++;
-        retain(pending.error ?? errorRecord(null, pending.command, Number(response[3])));
-      }
+        const ambiguous = pending.proxyAmbiguous || pending.terminalAmbiguous;
+        if (ambiguous) result.ambiguousTransactions++;
+        const terminal = Number(response[3]) === 500 ? pending.terminal : null;
+        if (pending.terminal && !terminal) result.rejectedTerminalRecords++;
+        retain(
+          (!ambiguous && (terminal ?? pending.error)) ||
+            errorRecord(null, pending.command, Number(response[3])),
+        );
+      } else if (pending.terminal) result.rejectedTerminalRecords++;
       pending = null;
+      continue;
+    }
+    const currentDriver = /^AndroidUiautomator2Driver(?:@[a-f0-9]+)?$/.test(tag);
+    if (
+      pending?.command === executeCommand &&
+      currentDriver &&
+      /^Calling (?:AppiumDriver|AndroidUiautomator2Driver)\.execute\(\) with args: /.test(body)
+    ) {
+      pending.driverCalls++;
+      pending.driverLogger = tag;
+      if (pending.driverCalls > 1 || pending.terminalCount) pending.terminalAmbiguous = true;
+      continue;
+    }
+    const legacyLogger = /^W3C(?: \([a-zA-Z0-9-]{1,8}\))?$/.test(tag);
+    if ((legacyLogger || currentDriver) && body.startsWith(terminalPrefix)) {
+      result.terminalRecords++;
+      const internalId = pending
+        ? /^(?:\/wd\/hub)?\/session\/([a-zA-Z0-9-]{1,100})(?:\/|$)/.exec(pending.path)?.[1]
+        : null;
+      // Legacy session logger binds to sessionId.substring(0, 8), as defined in
+      // appium/appium-base-driver lib/protocol/sessions-cache.js.
+      const associated = legacyLogger
+        ? Boolean(internalId && tag === `W3C (${internalId.slice(0, 8)})`)
+        : pending?.driverLogger === tag && pending.driverCalls === 1;
+      if (pending) pending.terminalCount++;
+      const candidate = terminalError(body.slice(terminalPrefix.length));
+      if (
+        !pending ||
+        pending.command !== executeCommand ||
+        !associated ||
+        pending.terminalCount !== 1 ||
+        pending.proxy ||
+        pending.proxyAmbiguous ||
+        !candidate
+      ) {
+        result.rejectedTerminalRecords++;
+        if (pending && (pending.terminalCount > 1 || !associated || pending.proxy))
+          pending.terminalAmbiguous = true;
+        continue;
+      }
+      if (
+        pending.error &&
+        (pending.error.webdriverError !== candidate.webdriverError ||
+          (pending.error.cause !== 'unclassified' &&
+            candidate.cause !== 'unclassified' &&
+            pending.error.cause !== candidate.cause))
+      )
+        pending.terminalAmbiguous = true;
+      pending.terminal = candidate;
       continue;
     }
     if (
@@ -392,6 +586,10 @@ export function analyzeSessionLog(text: string, endpoint: Endpoint): Analysis {
       continue;
     const proxy = /^Proxying \[(GET|POST|DELETE) ([^\] ]+)\] to \[/.exec(body);
     if (proxy) {
+      if (pending.terminalCount) {
+        pending.terminal = null;
+        pending.terminalAmbiguous = true;
+      }
       pending.error = null;
       pending.proxyTransactions++;
       if (pending.proxyTransactions > 1) pending.proxyAmbiguous = true;
@@ -414,7 +612,7 @@ export function analyzeSessionLog(text: string, endpoint: Endpoint): Analysis {
       continue;
     }
     if (Number(response[1]) >= 400 && !pending.proxyAmbiguous && pending.proxyTransactions === 1)
-      pending.error = errorRecord(payload, pending.command, Number(response[1]));
+      pending.error = errorRecord(payload, pending.command, Number(response[1]), 'proxy-response');
     else if (Number(response[1]) === 200) versions(payload, pending.command, result);
   }
   result.unfinishedTransactions = overlap || Number(pending !== null);
@@ -487,12 +685,18 @@ async function retrieve(options: Options, endpoint: Endpoint, deadline: number, 
         }
         if (!entry.bytes) throw new Error('response-empty');
         let text: string;
+        const bytes = Buffer.concat(chunks);
         try {
-          text = new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks));
+          text = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
         } catch {
           throw new Error('response-invalid-encoding');
         }
         if (!text.trim()) throw new Error('response-empty');
+        entry.structure = logStructure(
+          text,
+          response.headers.get('content-type'),
+          bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf,
+        );
         const analysis = analyzeSessionLog(text, endpoint);
         check();
         entry.sha256 = digest.digest('hex');
@@ -601,6 +805,7 @@ export async function collectSessionDiagnostics(options: Options): Promise<Sessi
         elapsedMilliseconds: null,
         failure: null,
         analysis: null,
+        structure: null,
       };
       report.retrievals.push(entry);
       await journal();
@@ -619,6 +824,7 @@ export async function collectSessionDiagnostics(options: Options): Promise<Sessi
         !entry.analysis.ambiguousTransactions &&
         !entry.analysis.malformedRecords &&
         !entry.analysis.unfinishedTransactions &&
+        !entry.analysis.rejectedTerminalRecords &&
         entry.analysis.failures.every((failure) => failure.cause !== 'unclassified')
       )
         break;
@@ -630,7 +836,8 @@ export async function collectSessionDiagnostics(options: Options): Promise<Sessi
         entry.analysis.omittedFailures ||
         entry.analysis.ambiguousTransactions ||
         entry.analysis.malformedRecords ||
-        entry.analysis.unfinishedTransactions,
+        entry.analysis.unfinishedTransactions ||
+        entry.analysis.rejectedTerminalRecords,
     );
     report.diagnosis = !failures.some((entry) => entry.cause !== 'unclassified')
       ? 'unclassified'
