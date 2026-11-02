@@ -46,7 +46,9 @@ function closedState(value: any) {
     oomKilled: value.OOMKilled,
   };
 }
-const idle = 'trap "exit 0" TERM INT; sleep 600 & wait';
+// Outlast the sized driver's 20-minute serving bound; normal and failure paths
+// still explicitly contain this exact observer before accepting any result.
+const idle = 'trap "exit 0" TERM INT; sleep 1800 & wait';
 export class RestoreObserver {
   readonly evidence: Record<string, unknown> = {
     scope: 'Separate read-only metadata observer; excluded from serving cgroup measurements',

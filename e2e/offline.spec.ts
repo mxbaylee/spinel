@@ -8,6 +8,151 @@ import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import type { OfflineBundle } from '../src/shared/offlineBundle.ts';
+import { stored } from './offline-fixture.ts';
+
+test('hiding preserves a prepared share and its offline discovery preference without bypassing revoke or sign-out cleanup', async ({
+  browser,
+  baseURL,
+}, info) => {
+  test.setTimeout(180_000);
+  const context = await browser.newContext({ baseURL, viewport: { width: 1280, height: 900 } });
+  const page = await context.newPage();
+  const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
+  const auth = new AuthStore(db);
+  const workspace = new WorkspaceStore(auth);
+  const owner = auth.createUser(`Hidden copy owner ${info.testId}`);
+  const reader = auth.createUser(`Hidden copy reader ${info.testId}`);
+  const doc = workspace.create(owner.id, {
+    name: 'Kept on this device',
+    kind: 'doc',
+    parentId: null,
+  });
+  workspace.share(owner.id, doc.id, reader.id, 'viewer');
+  const session = auth.createSession(reader.id);
+  await context.addCookies([
+    {
+      name: COOKIE_NAME,
+      value: session.token,
+      url: baseURL!.replace('http:', 'https:'),
+      secure: true,
+      httpOnly: true,
+      sameSite: 'Strict',
+    },
+  ]);
+  const rowAction = async (action: string) => {
+    await page.getByRole('button', { name: `More actions for ${doc.name}`, exact: true }).click();
+    await page.getByRole('menuitem', { name: action, exact: true }).click();
+  };
+  const showHidden = async () => {
+    await page
+      .getByRole('button', { name: 'More actions for Shared with me', exact: true })
+      .click();
+    await page.getByRole('menuitem', { name: 'Show hidden', exact: true }).click();
+  };
+  const download = async () => {
+    await rowAction('Available offline on this device');
+    await expect(page.getByRole('status').filter({ hasText: 'available offline' })).toHaveText(
+      `${doc.name} is available offline on this device.`,
+      { timeout: 120_000 },
+    );
+  };
+  try {
+    await page.goto('/?shared=1');
+    await expect
+      .poll(() => page.evaluate(() => Boolean(navigator.serviceWorker.controller)))
+      .toBe(true);
+    await download();
+    const before = (await stored(page, reader.id, doc.id))!.bundle;
+    await rowAction('Hide');
+    await expect(
+      page.getByText(`${doc.name} is hidden from Shared with me and search.`, { exact: true }),
+    ).toBeVisible();
+    await expect
+      .poll(() =>
+        page.evaluate(
+          ({ accountId, itemId }) =>
+            new Promise<boolean>((resolve, reject) => {
+              const opening = indexedDB.open(`spinel-offline-${accountId}`);
+              opening.onerror = () => reject(opening.error);
+              opening.onsuccess = () => {
+                const db = opening.result;
+                const read = db.transaction('meta').objectStore('meta').get('catalog');
+                read.onerror = () => {
+                  db.close();
+                  reject(read.error);
+                };
+                read.onsuccess = () => {
+                  db.close();
+                  resolve(
+                    read.result.shared.some(
+                      (item: { id: string; hidden?: boolean }) => item.id === itemId && item.hidden,
+                    ),
+                  );
+                };
+              };
+            }),
+          { accountId: reader.id, itemId: doc.id },
+        ),
+      )
+      .toBe(true);
+    expect((await stored(page, reader.id, doc.id))!.bundle).toEqual(before);
+    await context.setOffline(true);
+    await page.reload();
+    await expect(page.getByRole('heading', { name: 'Shared with me', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: `${doc.name} Doc`, exact: true })).toHaveCount(0);
+    await showHidden();
+    await expect(page.getByRole('button', { name: `${doc.name} Doc`, exact: true })).toBeVisible();
+    await page.getByRole('button', { name: `${doc.name} Doc`, exact: true }).click();
+    await expect(page.getByRole('region', { name: 'Offline copy', exact: true })).toBeVisible();
+    expect((await stored(page, reader.id, doc.id))!.bundle).toEqual(before);
+    await context.setOffline(false);
+    workspace.share(owner.id, doc.id, reader.id, null);
+    await page.goto('/?shared=1');
+    await expect.poll(() => stored(page, reader.id, doc.id), { timeout: 30_000 }).toBeUndefined();
+    await showHidden();
+    await expect(page.getByRole('button', { name: `${doc.name} Doc`, exact: true })).toHaveCount(0);
+    workspace.share(owner.id, doc.id, reader.id, 'viewer');
+    await page.reload();
+    await showHidden();
+    await download();
+    const retained = await stored(page, reader.id, doc.id);
+    expect(retained?.bundle.access).toBe('viewer');
+    await page.goto('/profile');
+    await expect(page.getByRole('heading', { name: 'Your profile', exact: true })).toBeVisible();
+    // Clean downloads are kept and locked by default. Keep logout offline long
+    // enough to exercise the separate, explicit account-data deletion choice.
+    await context.setOffline(true);
+    await page.getByRole('button', { name: 'Sign out', exact: true }).click();
+    await expect(page).toHaveURL(baseURL! + '/sign-in');
+    await expect(
+      page.getByRole('heading', { name: 'Local access is locked.', exact: true }),
+    ).toBeVisible();
+    await expect(page.getByText(doc.name, { exact: true })).toHaveCount(0);
+    await expect(page.locator('.univer-container')).toHaveCount(0);
+    expect(await page.evaluate(() => localStorage.getItem('spinel.offline.account'))).toBeNull();
+    expect(await stored(page, reader.id, doc.id)).toEqual(retained);
+    await page.getByRole('button', { name: 'Delete offline data…', exact: true }).click();
+    await page
+      .getByRole('dialog', { name: 'Delete this account’s offline data?', exact: true })
+      .getByRole('button', { name: 'Delete offline data', exact: true })
+      .click();
+    await expect.poll(() => stored(page, reader.id, doc.id)).toBeUndefined();
+    await expect(
+      page.getByText(
+        'Offline data for this account was deleted from this device. Server documents were not changed.',
+        { exact: true },
+      ),
+    ).toBeVisible();
+    await context.setOffline(false);
+    await expect(
+      page.getByRole('button', { name: 'Sign in with a passkey', exact: true }),
+    ).toBeVisible({ timeout: 30_000 });
+    expect(auth.session(session.token)).toBeUndefined();
+  } finally {
+    await context.close();
+    db.close();
+  }
+});
 
 const coverImage = async (background: string) => ({
   data: (

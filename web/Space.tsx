@@ -50,6 +50,8 @@ import type { SpaceLocation } from './spaceNavigation.ts';
 import { SpaceRootActions } from './SpaceRootActions.tsx';
 import { SpaceOfflineActions } from './SpaceOfflineActions.tsx';
 import { AccessState } from './AccessState.tsx';
+import { AccessDetails } from './AccessDetails.tsx';
+import type { AccessDetailsTarget } from './AccessDetails.tsx';
 
 export interface SpaceEditorProps {
   spaceId: string;
@@ -87,6 +89,8 @@ export function Space({
   const [rootAction, setRootAction] = useState<SpaceRootActionMode | null>(null);
   const rootActionTrigger = useRef<HTMLButtonElement | null>(null);
   const [offlineOpen, setOfflineOpen] = useState(false);
+  const [accessDetails, setAccessDetails] = useState<AccessDetailsTarget | null>(null);
+  const accessDetailsFocus = useRef<HTMLButtonElement | null>(null);
   const [route, setRoute] = useState<SpaceLocation>(() => readSpaceLocation(location));
   const routeRef = useRef(route);
   routeRef.current = route;
@@ -156,6 +160,7 @@ export function Space({
     navigationRef.current.dirty(false);
     setRoute(next);
     setAction(null);
+    setAccessDetails(null);
     setPreview(null);
     setActionError('');
     setOperationError('');
@@ -742,6 +747,16 @@ export function Space({
       navigationButton={pagesButton}
       banner={banner}
     >
+      {accessDetails && user && !guest && !denied && (
+        <AccessDetails
+          key={`${accessDetails.spaceId}:${accessDetails.id}`}
+          item={accessDetails}
+          onClose={() => setAccessDetails(null)}
+          finalFocus={() =>
+            accessDetailsFocus.current?.isConnected ? accessDetailsFocus.current : true
+          }
+        />
+      )}
       {appearanceItem && (
         <ConnectedAppearanceDialog
           key={appearanceItem.id}
@@ -1041,6 +1056,18 @@ export function Space({
       onBack={user && !guest ? exit : undefined}
       backLabel="My files"
       actions={[
+        ...(user && !guest && !denied && !selection.missing
+          ? [
+              {
+                label: 'Access details…',
+                disabled: connection === 'offline',
+                onClick: (trigger?: HTMLButtonElement | null) => {
+                  accessDetailsFocus.current = trigger ?? null;
+                  setAccessDetails({ ...visiblePage.item, spaceId: visiblePage.spaceId });
+                },
+              },
+            ]
+          : []),
         ...(user && !guest && canAdminister(rootFile?.access)
           ? (['share', 'rename', 'move', 'trash'] as const).map((mode) => ({
               label: {

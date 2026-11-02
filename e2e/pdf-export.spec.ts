@@ -127,9 +127,7 @@ for (const kind of ['sheet', 'doc'] as const) {
             await page.goto(`/?item=${item.id}`);
           }
           await expect(page.getByRole('status', { name: 'Save status' })).toHaveText(
-            role.endsWith('viewer')
-              ? 'View only — reload after your access changes.'
-              : 'All changes saved.',
+            role.endsWith('viewer') ? 'View only.' : 'All changes saved.',
             { timeout: 30_000 },
           );
           const protectedMessage = 'This content is protected. This action is not allowed.';

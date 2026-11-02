@@ -272,9 +272,18 @@ test('feedback survives a lost acknowledgment and paired user/system downloads p
       await expect(account.getByText('Feedback available', { exact: true })).toBeVisible();
       await expect(page.getByText(message, { exact: true })).toHaveCount(0);
       await expect(page.getByText(file.name, { exact: true })).toHaveCount(0);
+      let preparations = 0;
+      page.on('request', (request) => {
+        if (
+          request.url().endsWith('/api/admin/diagnostics/feedback/prepare') &&
+          request.method() === 'POST'
+        )
+          preparations++;
+      });
       const pairResponse = page.waitForResponse(
         (value) =>
-          value.url().endsWith('/api/admin/diagnostics/feedback/prepare') && value.status() === 200,
+          value.url().endsWith('/api/admin/diagnostics/feedback/prepare') &&
+          value.request().method() === 'POST',
       );
       const user = await feedbackArtifact(
         page,
@@ -284,8 +293,12 @@ test('feedback survives a lost acknowledgment and paired user/system downloads p
             .getByRole('button', { name: `Feedback downloads for ${f.owner.name}`, exact: true })
             .click();
           await page.getByRole('menuitem', { name: 'Download user metrics', exact: true }).click();
+          expect((await pairResponse).status()).toBe(200);
         },
       );
+      // Development StrictMode must not send an aborted mount's preparation:
+      // it can still hold the server lease when the surviving mount starts.
+      expect(preparations).toBe(1);
       const pair = (await (await pairResponse).json()) as FeedbackPair;
       const downloads = page.getByRole('dialog', { name: 'Feedback diagnostics', exact: true });
       await expect(downloads.getByLabel('Shared time span', { exact: true })).toBeVisible();

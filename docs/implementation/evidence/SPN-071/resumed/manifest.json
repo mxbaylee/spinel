@@ -1,0 +1,121 @@
+{
+  "sourceCommit": "f653e24f34e9e7af3d6eb3bdc794fa4178b5bbe8",
+  "baseCommit": "df1d910822cba284178f26ac4f6cf359ddcfacef",
+  "sourceAtExecution": "uncommitted identical source, committed immediately after validation",
+  "runtime": {
+    "node": "26.12.1",
+    "chromium": "156.0.8078.4",
+    "playwright": "1.64.1"
+  },
+  "screenshots": {
+    "build": "ordinary production, VITE_SYNC_EVIDENCE absent",
+    "captureEnvironment": "SPINEL_CAPTURE_SCREENSHOTS=1",
+    "desktop": {
+      "width": 1280,
+      "height": 900
+    },
+    "phone": {
+      "width": 390,
+      "height": 844,
+      "device": "Chromium emulation, not physical hardware"
+    },
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "modifiedImages": false
+  },
+  "runs": [
+    {
+      "name": "focused server/client/native permissions",
+      "source": "7c137138580ebac6fbed947276e2fd9b9538c99f",
+      "passed": 180,
+      "elapsedMs": 25451,
+      "peakMiB": 1246.4
+    },
+    {
+      "name": "ordinary production integrated upgrades, hide/show, native copies",
+      "passed": 7,
+      "playwrightSeconds": 28.2,
+      "elapsedMs": 28692,
+      "peakMiB": 1607.5
+    },
+    {
+      "name": "ordinary production hidden offline lifecycle",
+      "passed": 1,
+      "playwrightSeconds": 6.1,
+      "elapsedMs": 6686,
+      "peakMiB": 1527.2
+    },
+    {
+      "name": "instrumented sync-production prepared upgrades",
+      "passed": 2,
+      "playwrightSeconds": 10.6,
+      "elapsedMs": 11181,
+      "peakMiB": 1521.0
+    },
+    {
+      "name": "typecheck",
+      "passed": true,
+      "elapsedMs": 2128,
+      "peakMiB": 1801.2
+    },
+    {
+      "name": "CI plan tests",
+      "passed": 9,
+      "elapsedMs": 219
+    },
+    {
+      "name": "routine phone project collection",
+      "cases": 6,
+      "elapsedMs": 1049,
+      "peakMiB": 456.2
+    },
+    {
+      "name": "full phone project collection",
+      "cases": 10,
+      "elapsedMs": 685,
+      "peakMiB": 409.8
+    }
+  ],
+  "sourceSHA256": {
+    "web/DocEditor.tsx": "05b75fce66cdb1346aedfa7414f6db7099e5e508b79b30ff3d057977c4cdb21c",
+    "web/SheetEditor.tsx": "92b95411c434d2c022dd4336bf7b0686c44cc9b313f3ded41412f5742d7a1901",
+    "web/Dashboard.tsx": "caab3469d38ecfc97532fb2d1c5083380098e73f02b05f054e20ac97290627c7",
+    "e2e/access-upgrade.spec.ts": "9d6003da01fc764ff59b3d218cdebd1423c44ddc98afbed6533af6ef8dcfe1fd",
+    "e2e/copy.spec.ts": "549d9642bbbaa696581b1caee8d560968d142e62ccf69c8286899c0aa6a97a6e",
+    "e2e/doc-mobile.spec.ts": "b71180f3b206a19f61a5484bf844d03da049758bdc5c55aeb4db362690e80168",
+    "e2e/hidden-shares.spec.ts": "3576f0f52e55176e750f00e513edbd8d96ad353d930f6f4baff95ed36ad12d06",
+    "scripts/ci/plan.test.ts": "f9d7cdc438c94ca361c44716be601206e1a24f142d1bcfd263267aeb92452b08",
+    "package-lock.json": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf"
+  },
+  "artifactSHA256": {
+    "first-failures/copy-stale-status/error-context.md": "128ba27ab7bf719dba64106a2a7ea61a792cdb718dd33282a9250c4755d29563",
+    "first-failures/copy-stale-status/test-failed-1.png": "1f31225ea43543b1fc4d3c20c0f8a7d70e414b9af785bb8f7cae7fe3f48f905f",
+    "first-failures/negative-authoring/error-context.md": "023265e90409bfc0ff34090684c4837552429a33083513665d1cee714abbc020",
+    "first-failures/negative-authoring/test-failed-1.png": "80d3fba66a3fc300dff3bc58911edbddd55248dca095b0ea93ffddacb9037005",
+    "first-failures/negative-done/doc-mobile.spec.ts.txt": "daf5c8c238163112f63df518d15cc2ccb59c4db743f37cbcea4e8777f5d8128d",
+    "first-failures/negative-done/error-context.md": "debbe51fc82501dd14b2158a2c7f490eecd7a7362ccfa5eccae522512e87d1ff",
+    "first-failures/negative-done/test-failed-1.png": "ed3a8443becb3b8e3edfdf033e5b18c5e1692cc7334a25374c5e21dcf71c0349",
+    "first-failures/negative-header/access-upgrade.spec.ts.txt": "790d9cd024e6d8e5d0a1e061ae4523bc9874c7283188a3e1d7af0b4bf9659e58",
+    "first-failures/negative-header/error-context.md": "c7394ed9898c1847df2a5c6a3209489b41053e68fea2388498cdc7bbdde694a6",
+    "first-failures/negative-header/sync-diagnostics.json": "9000f1e86f7abfc24598da92dca261c3acaf455152d2c31f48810212df262533",
+    "first-failures/negative-header/test-failed-1.png": "882aeb2bad817fe287c6d15fba91333f77d2d08cf0a473406759076e1bba1642",
+    "phone-full-collection.txt": "d16c70dcdfd0a9fd81ba721369bd8ce2407602032eeb17771fa05b82af6dfaa5",
+    "phone-routine-collection.txt": "a5b91564a1271aa72c477757889a5b0c459aa5284b0c778356bc5c48dcfe9882",
+    "spn-071-access-details-desktop-dark-production.png": "2379ee3ea3bf3dc9c8a0ac5a3c2a050d9097118dbc0a84e77b8d4ee8bc99b6d0",
+    "spn-071-access-details-desktop-light-production.png": "8f087389e64381e546d8dac549bdffacb4d951524bf1af0be2bced5462ca365a",
+    "spn-071-hidden-shares-phone-dark-production.png": "06528d6c94f39591a6b50b7289b30255840932316111a4d8a38db8324015d751",
+    "spn-071-hidden-shares-phone-light-production.png": "ac56c99db639d02b9b184a1584a3c7aca6329bb412eb82642eece9cb78d5df9f",
+    "spn-071-phone-traditional-upgrade-dark-production.png": "35aadaf8a9034b3ad5a5f28d3a05724f370a82a0f7467f323ad7e36b55392a88",
+    "spn-071-phone-traditional-upgrade-light-production.png": "875f4d3f198ce195fe044c266d09048b88cd1c9b05dec18bd35d3115ddf9df2d",
+    "spn-071-phone-upgraded-editing-dark-production.png": "b41fcc5b24d35101044a5a253f8ffdd47f7710a616bffb9d7639b30e13e9ad67",
+    "spn-071-phone-upgraded-editing-light-production.png": "a339b524100064efab07a6cb098b4539320da216c4611b462a38c684b57dbf55",
+    "spn-071-phone-upgraded-reading-dark-production.png": "88bd616cdd649443824259e74662f93d0c1ae12096bf8c60c50223450ebd7e3d",
+    "spn-071-phone-upgraded-reading-light-production.png": "f20225ce4aa85b65532659120f39aed4a02680b28b833a57f0ff82868d0adb3b",
+    "spn-071-phone-viewer-dark-production.png": "ed421c65f4ad394ebf5c828ff3c6a35e39abb4fe267af2880945defc38637b6e",
+    "spn-071-phone-viewer-light-production.png": "fe6bceedb4f15779a90568d79fabb9bfa0094d07b0208307d3bdb213455a871c",
+    "spn-071-shared-menu-desktop-dark-production.png": "92908492410ce27f58627838bf31abfbe936a2f1c5e535efcc9e8b55af4a3885",
+    "spn-071-shared-menu-desktop-light-production.png": "e0282b440736be29a587248fa2c0a29da241f01604c52148954f3a9651925319"
+  }
+}

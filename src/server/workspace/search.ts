@@ -24,7 +24,7 @@ export class WorkspaceSearch {
           throw error;
         }
       });
-      const catalog = searchCatalog([...owned, ...this.store.shared(userId)]);
+      const catalog = searchCatalog([...owned, ...this.store.shared(userId, true)]);
       return searchItems(catalog, query, this.store.auth.now());
     });
   }

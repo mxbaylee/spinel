@@ -106,14 +106,24 @@ async function keyboardOcclusion(page: Page, height: number) {
   }, height);
 }
 
-async function capture(page: Page, info: TestInfo, name: string) {
+async function capture(page: Page, info: TestInfo, name: string, ticket = 'spn-072') {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await mkdir('test-results/theme-screenshots', { recursive: true });
   await page.screenshot({
-    path: `test-results/theme-screenshots/spn-072-${name}-${info.project.name}.png`,
+    path: `test-results/theme-screenshots/${ticket}-${name}-${info.project.name}.png`,
     fullPage: true,
     animations: 'disabled',
   });
+}
+
+async function captureUpgrade(page: Page, info: TestInfo, name: string) {
+  if (process.env.SPINEL_CAPTURE_SCREENSHOTS !== '1') return;
+  for (const theme of ['light', 'dark'] as const) {
+    await page.emulateMedia({ colorScheme: theme });
+    await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+    await capture(page, info, `${name}-${theme}`, 'spn-071');
+  }
+  await page.emulateMedia({ colorScheme: 'light' });
 }
 
 async function touchTargets(target: Locator) {
@@ -265,6 +275,7 @@ async function fixture(
     return (await response.json()).snapshot as IDocumentData;
   };
   return {
+    auth,
     account,
     page,
     item,
@@ -298,7 +309,7 @@ async function fixture(
 }
 
 for (const zoomRatio of [1, 0.5, 2])
-  test(`phone Docs at saved ${zoomRatio * 100}% zoom keep readable layout, touch formatting and saved settings`, async ({
+  test(`phone Docs at saved ${zoomRatio * 100}% zoom keep readable layout, touch formatting and saved settings @phone-ordinary`, async ({
     browser,
     baseURL,
   }, info) => {
@@ -447,7 +458,9 @@ for (const zoomRatio of [1, 0.5, 2])
       await expect
         .poll(async () => (await f.read()).body!.paragraphs![0]!.paragraphStyle?.namedStyleType)
         .toBe(NamedStyleType.HEADING_1);
-      await page.getByRole('button', { name: 'More', exact: true }).tap();
+      // Copying adds a separate native header More menu; this journey opens
+      // the existing formatting drawer from the editing footer.
+      await page.locator('footer').getByRole('button', { name: 'More', exact: true }).tap();
       await expect(drawer).toBeVisible();
       await expect(input(page)).not.toBeFocused();
       await keyboardOcclusion(page, 0);
@@ -586,7 +599,7 @@ test('phone Doc typing keeps the rendered caret above the emulated keyboard', as
   }
 });
 
-test('phone Doc formulas preserve scalar values, all table rows and usable edit dialogs', async ({
+test('phone Doc formulas preserve scalar values, all table rows and usable edit dialogs @phone-ordinary', async ({
   browser,
   baseURL,
 }, info) => {
@@ -745,8 +758,128 @@ test('phone guest Doc reader cannot write and loses its document when the link i
   }
 });
 
+for (const flavor of [DocumentFlavor.MODERN, DocumentFlavor.TRADITIONAL])
+  test(`a ${flavor === DocumentFlavor.MODERN ? 'modern' : 'traditional'} phone Doc handles a viewer upgrade without replacing its native canvas @phone-ordinary`, async ({
+    browser,
+    baseURL,
+  }, info) => {
+    test.setTimeout(120_000);
+    const f = await fixture(browser, baseURL!, info, false, flavor);
+    try {
+      const viewer = f.auth.createUser('Phone Doc upgrading viewer');
+      const grant = async (role: 'viewer' | 'editor') => {
+        const response = await f.account.request.put(`/api/items/${f.item.id}/sharing`, {
+          headers: { Origin: baseURL! },
+          data: { userId: viewer.id, role },
+        });
+        expect(response.status(), await response.text()).toBe(200);
+      };
+      await grant('viewer');
+      await f.page.close();
+      const reader = await f.phone();
+      await reader.addCookies([
+        {
+          name: COOKIE_NAME,
+          value: f.auth.createSession(viewer.id).token,
+          url: baseURL!.replace('http:', 'https:'),
+          secure: true,
+          httpOnly: true,
+          sameSite: 'Strict',
+        },
+      ]);
+      const page = await reader.newPage();
+      page.on('pageerror', (error) => f.errors.push(error.message));
+      await page.goto(`/?item=${f.item.id}`);
+      const region = page.getByRole('region', { name: 'Doc document', exact: true });
+      const status = page.getByRole('status', { name: 'Save status', exact: true });
+      const phoneFence = 'View only on this phone. Edit on a larger screen.';
+      await expect(region).toHaveAttribute('data-mobile', 'true');
+      await expect(status).toHaveText(
+        flavor === DocumentFlavor.MODERN ? 'View only.' : phoneFence,
+        { timeout: 30_000 },
+      );
+      const canvas = region.getByLabel('Document canvas', { exact: true });
+      const mounted = (await canvas.elementHandle())!;
+      const original = await f.read();
+      const point = await textPoint(page);
+      if (flavor === DocumentFlavor.MODERN) await captureUpgrade(page, info, 'phone-viewer');
+      await page.touchscreen.tap(point.x, point.y);
+      await page.touchscreen.tap(point.x, point.y);
+      await expect(input(page)).not.toBeFocused();
+      let navigations = 0;
+      page.on('framenavigated', (frame) => {
+        if (frame === page.mainFrame()) navigations++;
+      });
+
+      await grant('editor');
+      if (flavor === DocumentFlavor.MODERN) {
+        await expect(status).toHaveText('All changes saved.', { timeout: 5_000 });
+        await expect(page.locator('.editor-access')).toHaveText('Can edit');
+        expect(await canvas.evaluate((node, original) => node === original, mounted)).toBe(true);
+        const edit = region.getByRole('button', { name: 'Edit', exact: true });
+        const done = region.getByRole('button', { name: 'Done', exact: true });
+        await expect(edit).toBeVisible();
+        await edit.tap();
+        await beginWriting(page);
+        // A live grant must restore the native exit control as well as typing.
+        // Copy-enabled viewers retain a header with its editing menu hidden.
+        await expect(done).toBeVisible();
+        await captureUpgrade(page, info, 'phone-upgraded-editing');
+        await done.tap();
+        await expect(input(page)).not.toBeFocused();
+        await expect(edit).toBeVisible();
+        await captureUpgrade(page, info, 'phone-upgraded-reading');
+        // This is the same native phone input that refused a viewer's taps.
+        // The new grant must re-enable its touch route, not only its save label.
+        await beginWriting(page);
+        await page.keyboard.type('Promoted ');
+        await expect
+          .poll(async () => (await f.read()).body!.dataStream)
+          .toBe('Promoted ' + original.body!.dataStream);
+        await saved(page);
+      } else {
+        // Wait for actual access scans so an unchanged phone label cannot hide
+        // a client that simply failed to notice the editor grant.
+        for (let check = 0; check < 2; check++) {
+          const response = await page.waitForResponse(
+            async (response) =>
+              response.request().method() === 'GET' &&
+              new URL(response.url()).pathname === `/api/items/${f.item.id}` &&
+              response.status() === 200 &&
+              (await response.json()).item.access === 'editor',
+            { timeout: 5_000 },
+          );
+          expect(response.status()).toBe(200);
+        }
+        await expect(status).toHaveText(phoneFence);
+        await expect(page.locator('.editor-access')).toHaveText('Can edit');
+        await expect(region.getByRole('button', { name: 'Edit', exact: true })).toHaveCount(0);
+        await expect(region.getByRole('button', { name: 'Format', exact: true })).toHaveCount(0);
+        await page.touchscreen.tap(point.x, point.y);
+        await page.touchscreen.tap(point.x, point.y);
+        await expect(input(page)).not.toBeFocused();
+        await page.keyboard.type('FORBIDDEN PAGINATED UPGRADE');
+        await page.keyboard.press('Enter');
+        await expect(status).toHaveText(phoneFence);
+        expect((await f.read()).body).toEqual(original.body);
+        await captureUpgrade(page, info, 'phone-traditional-upgrade');
+      }
+      const after = await f.read();
+      expect(after.documentStyle).toEqual(original.documentStyle);
+      expect(after.settings).toEqual(original.settings);
+      expect(await canvas.evaluate((node, original) => node === original, mounted)).toBe(true);
+      expect(navigations).toBe(0);
+      await expect(page.getByRole('status', { name: 'Connection status', exact: true })).toHaveText(
+        'Online',
+      );
+      expect(f.errors).toEqual([]);
+    } finally {
+      await f.close();
+    }
+  });
+
 for (const role of ['owner', 'guest-editor'] as const) {
-  test(`traditional phone Doc is locally read-only without revoking its ${role} grant`, async ({
+  test(`traditional phone Doc is locally read-only without revoking its ${role} grant @phone-ordinary`, async ({
     browser,
     baseURL,
   }, info) => {

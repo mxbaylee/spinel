@@ -3,7 +3,9 @@ import { DatabaseSync } from '../../../server/database.ts';
 import { AuthStore, VERIFICATION_MS } from '../auth/store.ts';
 import {
   assertRestoreAuthority,
+  assertFreshRestoreAuthority,
   captureRestoreAuthority,
+  RESTORE_OPERATION_MS,
   validRestoreAuthority,
 } from './restore-authority.ts';
 
@@ -53,12 +55,19 @@ test('captures exact original verification using only guarded reads', () => {
   });
   expect(captureRestoreAuthority(f.database, f.intent, f.now)).toEqual({
     ...f.intent,
+    expiresAt: f.now() + RESTORE_OPERATION_MS,
     verifiedAt: f.now(),
     verifiedPasskeyId: 'first',
+    authorizedAt: f.now(),
+    verifiedUntil: f.intent.expiresAt,
   });
   f.advance(59_999);
-  expect(() => assertRestoreAuthority(f.database, f.proof, f.now)).not.toThrow();
+  expect(() => assertFreshRestoreAuthority(f.database, f.proof, f.now)).not.toThrow();
   f.advance(1);
+  expect(() => assertFreshRestoreAuthority(f.database, f.proof, f.now)).toThrow('original restore');
+  f.advance(VERIFICATION_MS);
+  expect(() => assertRestoreAuthority(f.database, f.proof, f.now)).not.toThrow();
+  f.advance(f.proof.expiresAt - f.now());
   expect(() => assertRestoreAuthority(f.database, f.proof, f.now)).toThrow('original restore');
 });
 
@@ -137,27 +146,71 @@ test('journal proofs have a closed bounded shape', () => {
     { ...f.proof, verifiedPasskeyId: 'x'.repeat(4097) },
     { ...f.proof, verifiedAt: Number.MAX_SAFE_INTEGER },
     { ...f.proof, verifiedAt: -1 },
+    { ...f.proof, authorizedAt: f.proof.verifiedAt - 1 },
+    { ...f.proof, authorizedAt: f.proof.verifiedUntil },
+    { ...f.proof, authorizedAt: Number.MAX_SAFE_INTEGER },
+    { ...f.proof, verifiedUntil: f.proof.verifiedAt + VERIFICATION_MS + 1 },
+    { ...f.proof, expiresAt: f.proof.expiresAt + 1 },
+    { ...f.proof, expiresAt: f.proof.authorizedAt },
     { ...f.proof, sessionHash: 'not-a-hash' },
   ])
     expect(validRestoreAuthority(proof)).toBe(false);
 });
 
-test.each(['capture', 'assert'])('rejects expiry during synchronous %s inspection', (method) => {
-  const f = fixture();
-  const prepare = f.database.prepare.bind(f.database);
-  vi.spyOn(f.database, 'prepare').mockImplementation((sql) => {
-    const statement = prepare(sql);
-    const get = statement.get.bind(statement);
-    vi.spyOn(statement, 'get').mockImplementation((...parameters) => {
-      const row = get(...parameters);
-      f.advance(60_000);
-      return row;
+test.each(['capture', 'assert', 'fresh'])(
+  'rejects expiry during synchronous %s inspection',
+  (method) => {
+    const f = fixture();
+    const prepare = f.database.prepare.bind(f.database);
+    vi.spyOn(f.database, 'prepare').mockImplementation((sql) => {
+      const statement = prepare(sql);
+      const get = statement.get.bind(statement);
+      vi.spyOn(statement, 'get').mockImplementation((...parameters) => {
+        const row = get(...parameters);
+        f.advance(method === 'assert' ? RESTORE_OPERATION_MS : 60_000);
+        return row;
+      });
+      return statement;
     });
-    return statement;
-  });
-  expect(() =>
-    method === 'capture'
-      ? captureRestoreAuthority(f.database, f.intent, f.now)
-      : assertRestoreAuthority(f.database, f.proof, f.now),
-  ).toThrow('original restore');
+    expect(() =>
+      method === 'capture'
+        ? captureRestoreAuthority(f.database, f.intent, f.now)
+        : method === 'fresh'
+          ? assertFreshRestoreAuthority(f.database, f.proof, f.now)
+          : assertRestoreAuthority(f.database, f.proof, f.now),
+    ).toThrow('original restore');
+  },
+);
+
+test('capture caps the immutable deadline at the original session expiry', () => {
+  const f = fixture();
+  const sessionEnd = f.now() + 7 * 60_000;
+  f.database
+    .prepare('UPDATE auth_sessions SET expires_at=? WHERE token_hash=?')
+    .run(sessionEnd, f.session.token_hash);
+  const proof = captureRestoreAuthority(f.database, f.intent, f.now);
+  expect(proof.expiresAt).toBe(sessionEnd);
+  f.advance(VERIFICATION_MS + 1);
+  expect(() => assertRestoreAuthority(f.database, proof, f.now)).not.toThrow();
+  f.advance(sessionEnd - f.now());
+  // Extending the session cannot renew a previously captured operation.
+  f.database
+    .prepare('UPDATE auth_sessions SET expires_at=? WHERE token_hash=?')
+    .run(sessionEnd + RESTORE_OPERATION_MS, f.session.token_hash);
+  expect(() => assertRestoreAuthority(f.database, proof, f.now)).toThrow('original restore');
+});
+
+test('legacy journal proofs keep their original shorter lifetime without acquiring an operation grant', () => {
+  const f = fixture();
+  const { authorizedAt: _authorizedAt, verifiedUntil: _verifiedUntil, ...captured } = f.proof;
+  const legacy = { ...captured, expiresAt: f.intent.expiresAt };
+  expect(validRestoreAuthority(legacy)).toBe(true);
+  expect(validRestoreAuthority(captured)).toBe(false);
+  expect(validRestoreAuthority({ ...legacy, authorizedAt: f.now() })).toBe(false);
+  expect(validRestoreAuthority({ ...legacy, verifiedUntil: f.intent.expiresAt })).toBe(false);
+  expect(() => assertRestoreAuthority(f.database, legacy, f.now)).not.toThrow();
+  f.advance(60_000);
+  expect(() => assertRestoreAuthority(f.database, legacy, f.now)).toThrow('original restore');
+  f.auth.markVerified(f.session, 'first');
+  expect(() => assertRestoreAuthority(f.database, legacy, f.now)).toThrow('original restore');
 });

@@ -115,10 +115,9 @@ test('Doc readers and host-only guests see literal formulas without receiving pr
   }
   const assertReadOnly = async (view: Page, message: string) => {
     const region = view.getByRole('region', { name: 'Doc document', exact: true });
-    await expect(region.getByRole('status', { name: 'Save status' })).toHaveText(
-      'View only — reload after your access changes.',
-      { timeout: 30_000 },
-    );
+    await expect(region.getByRole('status', { name: 'Save status' })).toHaveText('View only.', {
+      timeout: 30_000,
+    });
     if (await view.getByRole('button', { name: 'Document actions', exact: true }).count()) {
       await view.getByRole('button', { name: 'Document actions', exact: true }).click();
       await expect(view.getByRole('menuitem', { name: 'Insert formula', exact: true })).toHaveCount(

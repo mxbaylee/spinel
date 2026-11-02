@@ -29,6 +29,7 @@ import { within } from './offline/shell.ts';
 import { signInPath } from './api.ts';
 import { clearDashboardNavigation } from './dashboardNavigation.ts';
 import { CreationUploadError } from './offline/creation.ts';
+import { isAccessUpgrade } from '../src/shared/accessUpgrade.ts';
 
 interface Watch {
   publish(state: SaveState): void;
@@ -46,6 +47,7 @@ interface Options {
   signal: AbortSignal;
   isCurrent(): boolean;
   initializeAccess?(): void | Promise<void>;
+  upgradeAccess?(access: ItemAccess): void;
   onInitialPending?(): void;
   canRefresh?(): boolean;
   reload(reason: ClientFailure, clean?: boolean): void;
@@ -136,7 +138,14 @@ function bind(
   revision: number,
   maintenanceEpoch: string,
 ) {
-  const { univer, unitId, itemId, spaceId, access, signal, isCurrent } = options;
+  const { univer, unitId, itemId, spaceId, signal, isCurrent } = options;
+  let access = options.access;
+  // A viewer projection caused by a missing writer or a recovery fence is not
+  // a grant upgrade. Remember the original grant through persistence retries.
+  const genuineViewer =
+    options.access !== 'viewer' ||
+    !options.offline?.bundle ||
+    options.offline.bundle.access === 'viewer';
   const path = documentSyncPath(itemId, spaceId);
   let disposed = false;
   let denied = false;
@@ -155,6 +164,7 @@ function bind(
   let requestId: string | undefined;
   let retryDelay = 250;
   let denialMessage = '';
+  let upgradeProblem = '';
   let refreshingClean = false;
   let authenticationEnded = false;
   let endingAuthentication = false;
@@ -237,7 +247,11 @@ function bind(
     );
     if (options.offline?.enabled) {
       const attention =
-        denied || state.resyncing || maintenanceBlocked || Boolean(options.offline.problem);
+        denied ||
+        state.resyncing ||
+        maintenanceBlocked ||
+        Boolean(options.offline.problem) ||
+        Boolean(upgradeProblem);
       const local =
         state.recoveryMissing || state.localPersistence === 'failed'
           ? 'failed'
@@ -270,7 +284,7 @@ function bind(
               : recovery?.phase === 'creating'
                 ? 'Creating an offline copy in My files. Your saved device copy is retained until it finishes.'
                 : attention
-                  ? `Needs attention. ${options.offline.problem || denialMessage || (maintenanceBlocked ? 'Maintenance has paused edits. Your device copy is retained.' : 'The live document changed or an edit could not be synchronized. Your saved device copy is retained.')}`
+                  ? `Needs attention. ${options.offline.problem || upgradeProblem || denialMessage || (maintenanceBlocked ? 'Maintenance has paused edits. Your device copy is retained.' : 'The live document changed or an edit could not be synchronized. Your saved device copy is retained.')}`
                   : access === 'viewer'
                     ? 'View only on this device.'
                     : local === 'synced'
@@ -297,7 +311,7 @@ function bind(
               ? 'Changes not saved yet — keep this tab open.'
               : connected
                 ? access === 'viewer'
-                  ? 'View only — reload after your access changes.'
+                  ? 'View only.'
                   : 'All changes saved.'
                 : 'Connection interrupted. Reconnect to continue.',
     });
@@ -752,7 +766,54 @@ function bind(
       const restored = bundle
         ? data && data.unitId !== unitId
         : data?.live && (data.live.unitId !== unitId || data.live.restoring);
+      const nextAccess = bundle ? data?.access : data?.item?.access;
+      if (
+        response.ok &&
+        !lost &&
+        !restored &&
+        !accountChanged &&
+        !guestItemId() &&
+        genuineViewer &&
+        (bundle ? data?.unitId === unitId : data?.live?.unitId === unitId) &&
+        !state.resyncing &&
+        !options.offline?.problem &&
+        isAccessUpgrade(access, nextAccess) &&
+        options.upgradeAccess
+      ) {
+        const verifyUpgrade = () => {
+          if (!active() || denied || maintenanceBlocked || refreshingClean || state.resyncing)
+            throw closed();
+          if (bundle && (!cleanDownloaded() || options.offline?.problem)) throw closed();
+        };
+        try {
+          verifyUpgrade();
+          if (bundle) {
+            await options.offline!.upgradeAccess(
+              nextAccess,
+              client.confirmedRevision,
+              verifyUpgrade,
+            );
+            verifyUpgrade();
+            // Preserve the current live snapshot before admitting new local input.
+            await client.persistNow();
+            verifyUpgrade();
+          }
+        } catch (error) {
+          if (!active()) return;
+          upgradeProblem =
+            error instanceof Error ? error.message : 'Could not enable editing. Try again.';
+          report();
+          return;
+        }
+        options.upgradeAccess(nextAccess);
+        access = nextAccess;
+        upgradeProblem = '';
+        accessUnreachable = false;
+        report();
+        return;
+      }
       if (lost || changed || restored) {
+        upgradeProblem = '';
         denied = true;
         endConnection();
         if (guestItemId() && (lost || changed)) {
@@ -774,6 +835,7 @@ function bind(
         report();
         await watcher?.readonly(Boolean(options.offline?.enabled));
       } else {
+        upgradeProblem = '';
         accessUnreachable = !response.ok;
         report();
       }

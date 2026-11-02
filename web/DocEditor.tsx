@@ -19,7 +19,8 @@ import {
   formulaPaperColors,
   type FormulaTransport,
 } from './DocFormulas.tsx';
-import { documentPath } from './documentAccess.ts';
+import { documentPath, guestItemId } from './documentAccess.ts';
+import type { ItemAccess } from '../src/shared/workspace.ts';
 import type { OfflineSession } from './offline/OfflineSession.ts';
 import { EditorTools } from './EditorTools.tsx';
 import { useEditorChrome } from './EditorFrame.tsx';
@@ -80,6 +81,7 @@ import '@univerjs/preset-docs-hyper-link/lib/index.css';
 import drawingEnUS from '@univerjs/preset-docs-drawing/locales/en-US';
 import '@univerjs/preset-docs-drawing/lib/index.css';
 import { createUniver, LocaleType, mergeLocales } from '@univerjs/presets';
+import type { IPreset } from '@univerjs/presets';
 import { BuiltInUIPart, IRenderManagerService } from '@univerjs/preset-docs-core';
 import { IContextMenuService } from '@univerjs/ui';
 import { docPreset, mobileDocPlugins, useMobileDocControls } from './docPreset.ts';
@@ -105,6 +107,8 @@ import { observeDocResponsiveness } from './docResponsivenessEvidence.ts';
 import { boundDocHistory, DOC_HISTORY_RETENTION_LIMIT } from '../src/ui/boundedDocHistory.ts';
 import { observeOperation } from '@spinel/diagnostics';
 import { useDiagnostics } from './useDiagnostics.tsx';
+import { BehaviorSubject } from 'rxjs';
+import { copyUnavailable, NativeCopyPlugin } from './nativeCopy.tsx';
 
 export function DocEditor({
   id,
@@ -113,6 +117,7 @@ export function DocEditor({
   onDirty,
   registerGuestEditor,
   onConnectionState,
+  onAccessUpgrade,
   saveStatusTarget,
   localAccountId,
 }: {
@@ -123,6 +128,7 @@ export function DocEditor({
   onDirty: (dirty: boolean, retained?: boolean) => void;
   registerGuestEditor?: RegisterGuestEditor;
   onConnectionState?: (state: ConnectionState | null) => void;
+  onAccessUpgrade?: (access: ItemAccess) => void;
   localAccountId?: string;
 }) {
   const chrome = useEditorChrome();
@@ -170,6 +176,10 @@ export function DocEditor({
     let offlineSession: OfflineSession | undefined;
     let initialized = false;
     let captureReady = false;
+    const copyEnabled = !localAccountId && !guestItemId();
+    const copyStatus = new BehaviorSubject<string | null>(
+      'Wait for the document to finish opening.',
+    );
     const room = `${spaceId ?? ''}/${id}`;
     if (lastRoom.current !== room) syncNotice.current = undefined;
     lastRoom.current = room;
@@ -180,7 +190,9 @@ export function DocEditor({
       setFormulaOnline(state === 'online');
       if (state !== 'online' && lastConnection === 'online') formulas.current?.clear();
       else if (state === 'online' && lastConnection !== 'online') void formulas.current?.refresh();
+      const connectionChanged = state !== lastConnection;
       lastConnection = state;
+      if (connectionChanged) publish(lastState);
       onConnectionState?.(state);
     };
     const loading = new AbortController();
@@ -220,6 +232,13 @@ export function DocEditor({
       const busy =
         uploads > 0 || insertions > 0 || composing || heldComposition || formulaDraftOpen.current;
       const dirty = busy || state.dirty;
+      copyStatus.next(
+        copyUnavailable(
+          { ...state, dirty, failed: state.failed || Boolean(syncNotice.current) },
+          initialized,
+          lastConnection === 'online',
+        ),
+      );
       if (dirty && initialized) syncNotice.current = undefined;
       onDirty(dirty, Boolean(state.retained));
       setStatus({
@@ -421,6 +440,14 @@ export function DocEditor({
         },
         override: [...nativePermissions.override, [IImageIoService, { useClass: StoredImages }]],
         plugins: [
+          ...(copyEnabled
+            ? [
+                [
+                  NativeCopyPlugin,
+                  { id, spaceId, unavailable: copyStatus },
+                ] satisfies IPreset['plugins'][number],
+              ]
+            : []),
           [
             UniverDrawingPlugin,
             {
@@ -440,7 +467,9 @@ export function DocEditor({
           docPreset(
             container.current!,
             mobile,
-            data.access === 'viewer',
+            // Live viewers use the reversible initializeAccess visibility fence.
+            // The snapshot viewer may permanently omit controls; this unit can upgrade.
+            false,
             Object.fromEntries(
               [
                 DOCS_SHAPE_MENU_ID,
@@ -451,6 +480,7 @@ export function DocEditor({
                 `${InsertDocEllipseShapeCommand.id}.below`,
               ].map((id) => [id, { hidden: true }]),
             ),
+            copyEnabled,
           ),
           mobileDocPlugins(UniverDocsHyperLinkPreset(), mobile),
         ],
@@ -526,9 +556,10 @@ export function DocEditor({
         phoneInput?.stopEditing();
         if (mobile)
           univerAPI
-            .setUIVisible(BuiltInUIPart.HEADER, false)
+            .setUIVisible(BuiltInUIPart.HEADER, Boolean(copyEnabled))
+            .setUIVisible(BuiltInUIPart.HEADER_MENU, false)
             .setUIVisible(BuiltInUIPart.FOOTER, false)
-            .setUIVisible(BuiltInUIPart.TOOLBAR, false);
+            .setUIVisible(BuiltInUIPart.TOOLBAR, Boolean(copyEnabled));
         // Local UI state only: changing the shared document's permission rules
         // would also make still-authorized collaborators read-only.
         const permissions = univer.__getInjector().get(IPermissionService);
@@ -585,6 +616,26 @@ export function DocEditor({
           setEditable(false);
         },
         initializeAccess: () => (data.access === 'viewer' ? readonly() : undefined),
+        upgradeAccess: (access) => {
+          if (disposed) return;
+          // The account role changes even when this phone must retain its layout fence.
+          onAccessUpgrade?.(access);
+          // A new grant cannot override this device's retained page-layout fence.
+          // Change local controls only; keep selection, scroll and the native unit.
+          if (deviceReadOnly || layoutChanged) return;
+          inputFrozen = false;
+          phoneInputLocked = false;
+          nativePermissions.setAccess(access);
+          if (mobile)
+            univerAPI
+              .setUIVisible(BuiltInUIPart.HEADER, true)
+              .setUIVisible(BuiltInUIPart.HEADER_MENU, true)
+              .setUIVisible(BuiltInUIPart.FOOTER, true)
+              .setUIVisible(BuiltInUIPart.TOOLBAR, true);
+          canEditFormulas.current = true;
+          setEditable(true);
+          startBoundedHistory();
+        },
         onInitialPending: () =>
           publish({
             dirty: true,
@@ -621,7 +672,8 @@ export function DocEditor({
       captureReady = true;
       if (import.meta.env.VITE_DOC_RESPONSIVENESS_EVIDENCE === '1')
         responsivenessEvidence = observeDocResponsiveness(univer, data.unitId, mobile);
-      if (!inputFrozen && !disposed)
+      function startBoundedHistory() {
+        if (inputFrozen || disposed || boundedHistory) return;
         boundedHistory = boundDocHistory(univer, data.unitId, (flush) => {
           responsivenessEvidence?.flushed(flush);
           const operation = diagnostics.begin();
@@ -639,6 +691,8 @@ export function DocEditor({
               flush.durationMs,
             );
         });
+      }
+      startBoundedHistory();
       const document = univerAPI.getActiveDocument();
       if (!document) throw new Error('Could not load this document.');
       await editorReady(univerAPI);
@@ -942,6 +996,8 @@ export function DocEditor({
     });
     return () => {
       disposed = true;
+      copyStatus.next('This document is closed.');
+      copyStatus.complete();
       discardUnfinishedText.current = undefined;
       formulaDraftChanged.current = undefined;
       editorElement?.removeEventListener('compositionstart', compositionStart, true);

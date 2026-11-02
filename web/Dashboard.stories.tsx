@@ -337,6 +337,28 @@ export const FileViewTargets: Story = {
  * into My files. Opening a sheet or doc would load the Univer editor, so don't.
  */
 export const Populated: Story = { parameters: { api: populated } };
+export const MakeCopy: Story = {
+  parameters: {
+    api: {
+      ...populated,
+      [`GET /api/items/${budget.id}/copy-options`]: {
+        name: `${budget.name} (copy)`,
+        parentId: null,
+        destinations: [household, work, finance],
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      await within(canvasElement).findByRole('button', { name: `More actions for ${budget.name}` }),
+    );
+    const screen = within(canvasElement.ownerDocument.body);
+    await userEvent.click(await screen.findByRole('menuitem', { name: 'Make a copy…' }));
+    const dialog = await screen.findByRole('dialog', { name: 'Make a copy' });
+    await expect(await within(dialog).findByLabelText('Name')).toHaveValue(`${budget.name} (copy)`);
+    await assertDialogControls(dialog);
+  },
+};
 export const NewItem: Story = {
   parameters: { api: populated },
   play: async ({ canvasElement }) => {

@@ -1,0 +1,47 @@
+---
+id: SPN-131
+emoji: 🛠️
+effort: M
+impact_operator: M
+score: 21
+depends_on: []
+decisions: []
+---
+
+# 🛠️ SPN-131 Support the hosted Ubuntu mirror profiles used by browser CI
+
+## Story
+
+As the [Operator](../product/personas.md#operator), I want browser setup to handle the actual hosted Ubuntu mirror configuration, so that required validation does not fail before exercising the application.
+
+## Scenarios
+
+### Supported runner profiles install browser dependencies
+
+Given a supported hosted Ubuntu runner with its original mirror configuration,
+When browser dependency setup prefers a reliable archive,
+Then it preserves valid mirrors and unrelated configuration and completes installation.
+
+### Unknown configuration remains diagnosable
+
+Given an unsupported or malformed mirror configuration,
+When setup inspects it,
+Then it reports useful nonsecret configuration evidence without partially rewriting it or disguising setup failure as passing application tests.
+
+## Rules
+
+- Follow [sustainable testing](../testing.md); keep the Verify plan and progress evidence current. [Policy](../implementation/SPN-115.md#guidance-for-every-open-ticket-and-progress-checkpoint), owner 2026-11-01.
+- Independent recurring infrastructure defect, discovered while validating SPN-124 and SPN-065. [Origin and scope](../implementation/SPN-131.md#hosted-mirror-compatibility), agent judgment 2026-11-01. This is separate from SPN-120's finite browser-fixture inventory; no copy acceptance is transferred here.
+- Run 41381914361, source `a703b1be94d98f827e0c35fa8b6110110da0b17c`, jobs [125074969497](https://github.com/mxbaylee/spinel/actions/runs/41381914361/job/125074969497) and [125074969682](https://github.com/mxbaylee/spinel/actions/runs/41381914361/job/125074969682) failed in `scripts/ci/prefer-ubuntu-archive.ts` before Chromium installation or browser tests: expected exactly one Azure/archive pair with priorities 1 and 2. Logs identify Ubuntu 24.04 image `20261018.96.1` on AWS. Actual mirror contents were not retained; diagnose them before selecting a repair.
+- Preserve the original archive preference's purpose: avoid slow transfers exhausting browser-job bounds. Do not replace this investigation with blanket reruns, larger timeouts, skipped installation, weakened assertions or required-check changes.
+- Capture supported hosted configurations and apply the smallest validated transformation or explicit no-op. Do not infer that AWS alone explains the file shape.
+
+## Out of scope
+
+- Application copy behavior, native desktop identity/storage cleanup, physical phone capability and unrelated CI routing.
+
+## Verify
+
+- Extend the nearest `scripts/ci` Node tests with real redacted configuration fixtures: original pair, already preferred pair, every diagnosed supported profile, duplicate/malformed entries and unchanged unrelated lines. Assert no write on rejected input.
+- Use a bounded hosted first-attempt sample on the relevant runner profiles to verify browser dependency installation and an existing selected smoke workload; declare attempts before execution and preserve every original failure.
+- Keep helper/workflow dependency routing selected. Preserve source, base, merge SHA, image/provider, actual safe mirror contents, installation outcome and cleanup in the implementation record; expiring logs alone are insufficient evidence.

@@ -274,7 +274,12 @@ export function AdminFeedbackDownloads({
   }
   useEffect(() => {
     mounted.current = true;
-    void prepare(initialScope);
+    // StrictMode can dispose this mount immediately. Do not acquire the
+    // server's single export lease for an effect that has already been cleaned up.
+    let active = true;
+    void Promise.resolve().then(() => {
+      if (active) void prepare(initialScope);
+    });
     const cleared = () => {
       cancel();
       setExpired(true);
@@ -282,6 +287,7 @@ export function AdminFeedbackDownloads({
     };
     window.addEventListener(diagnosticsClearedEvent, cleared);
     return () => {
+      active = false;
       mounted.current = false;
       identity.current++;
       action.current?.abort();

@@ -1,6 +1,7 @@
 import { validRestoreResources } from '../../shared/restore.ts';
 import { createHash } from 'node:crypto';
-import { AUTHORITY_MS, uuidPattern } from './journal.ts';
+import { uuidPattern } from './journal.ts';
+import { RESTORE_OPERATION_MS } from './restore-authority.ts';
 import { validRestoreJobRecord } from './restore-jobs.ts';
 import type { RestoreController } from '../backup/restore-control.ts';
 
@@ -14,7 +15,7 @@ export type RestoreRpcResult =
 
 // Admission itself cannot outlive its original authority. A lost IPC reply is
 // uncertain custody, never permission for the registry to discard its source.
-export const RESTORE_RPC_MS = AUTHORITY_MS + 30_000;
+export const RESTORE_RPC_MS = RESTORE_OPERATION_MS + 30_000;
 export const RESTORE_RPC_PENDING = 8;
 export const RESTORE_RPC_BYTES = 128 * 1024;
 export const RESTORE_RPC_ERROR =
