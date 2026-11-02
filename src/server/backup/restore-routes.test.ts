@@ -1,5 +1,5 @@
 import express from 'express';
-import { createServer } from 'node:http';
+import { request as httpRequest } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { randomBytes, randomUUID } from 'node:crypto';
 import { mkdtemp, readdir, rm } from 'node:fs/promises';
@@ -11,6 +11,7 @@ import { AuthStore, COOKIE_NAME } from '../auth/store.ts';
 import { BackupService } from './service.ts';
 import { restoreRoutes } from './restore-routes.ts';
 import * as journal from '../maintenance/journal.ts';
+import { createHttpServer } from '../../../server/http.ts';
 
 const cleanups: Array<() => unknown | Promise<unknown>> = [];
 afterEach(async () => {
@@ -27,7 +28,8 @@ async function fixture(controller = true) {
   const databasePath = join(directory, 'app.sqlite'),
     db = openDatabase(databasePath);
   cleanups.push(() => db.close());
-  const auth = new AuthStore(db),
+  let now = Date.now();
+  const auth = new AuthStore(db, () => now),
     operator = auth.createUser('Operator', true),
     member = auth.createUser('Member');
   db.prepare('INSERT INTO auth_passkeys VALUES(?,?,?,?,?,?,?,?,?,?,?)').run(
@@ -51,6 +53,7 @@ async function fixture(controller = true) {
     databasePath,
     origin,
     image: `sha256:${'a'.repeat(64)}`,
+    now: () => now,
     ...(controller
       ? {
           restoreController: {
@@ -86,8 +89,8 @@ async function fixture(controller = true) {
   });
   cleanups.push(() => service.close());
   const app = express();
+  const server = createHttpServer(app);
   app.use('/restore', restoreRoutes(auth, service.restores, origin));
-  const server = createServer(app);
   await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
   cleanups.push(async () => {
     server.closeAllConnections();
@@ -118,8 +121,75 @@ async function fixture(controller = true) {
     requestId: randomUUID(),
     key: randomBytes(32).toString('base64'),
   });
-  return { directory, db, auth, operator, session, ordinary, member, service, request, body };
+  return {
+    directory,
+    db,
+    auth,
+    operator,
+    session,
+    ordinary,
+    member,
+    service,
+    request,
+    body,
+    url,
+    origin,
+    advance: (ms: number) => {
+      now += ms;
+    },
+  };
 }
+
+test('only the owned upload continues after the passkey and ordinary HTTP body window', async () => {
+  const f = await fixture();
+  f.auth.markVerified(f.session.session, 'operator-key');
+  const created = await (await f.request('/preparations', f.body())).json();
+  f.advance(6 * 60_000);
+  // New admission still requires fresh proof, despite the existing work grant.
+  expect((await f.request('/preparations', f.body())).status).toBe(428);
+  const timer = vi.spyOn(globalThis, 'setTimeout');
+  const upload = vi.spyOn(f.service.restores, 'upload');
+  let client!: ReturnType<typeof httpRequest>;
+  const reply = new Promise<{ status: number; body: string }>((resolve, reject) => {
+    client = httpRequest(
+      `${f.url}/preparations/${created.id}/upload`,
+      {
+        method: 'POST',
+        headers: {
+          Cookie: `${COOKIE_NAME}=${f.session.token}`,
+          Origin: f.origin,
+          'X-Spinel-Account': f.operator.id,
+          'Content-Type': 'application/octet-stream',
+          'Content-Length': 9,
+        },
+      },
+      (response) => {
+        let body = '';
+        response.on('data', (chunk: Buffer) => {
+          body += chunk;
+        });
+        response.on('end', () => resolve({ status: response.statusCode!, body }));
+      },
+    );
+    client.on('error', reject);
+    client.write('first');
+  });
+  try {
+    await vi.waitFor(() => expect(upload).toHaveBeenCalledOnce());
+    const ordinary = timer.mock.calls.find((call) => call[1] === 5 * 60_000);
+    expect(ordinary).toBeDefined();
+    // An already-queued ordinary timeout cannot cut off this admitted body.
+    (ordinary![0] as () => void)();
+    client.end('last');
+    const result = await reply;
+    expect(result.status).toBe(200);
+    // This deliberately invalid ciphertext reaches the real preparation check.
+    expect(JSON.parse(result.body).state).toBe('failed');
+    expect(f.service.state().owner).toBeNull();
+  } finally {
+    client.destroy();
+  }
+});
 
 test('restore routes require current Operator, exact Origin/account and fresh passkey proof', async () => {
   const f = await fixture();

@@ -249,7 +249,12 @@ export async function withCapabilityAdmission<T>(
   return action(verifyCapabilityAdmission(manifest, await readLedger(), identity, now));
 }
 
-export type NativeControl = { type: string; attributes: Record<string, string> };
+export type NativeControl = {
+  type: string;
+  attributes: Record<string, string>;
+  sourceIndex: number;
+  parent?: NativeControl;
+};
 function decodeXML(value: string): string {
   return value.replace(/&(?:quot|apos|lt|gt|amp);|&#(?:x[a-f0-9]+|\d+);/gi, (entity) => {
     const named: Record<string, string> = {
@@ -266,27 +271,81 @@ function decodeXML(value: string): string {
     return number > 0 && number <= 0x10ffff ? String.fromCodePoint(number) : '';
   });
 }
-/** Match only controls actually exposed by the device's native accessibility tree. */
+/** Retain the actual XML parent chain, including unlabeled and unavailable nodes. */
 export function nativeControls(source: unknown): NativeControl[] {
   requireCondition(
     typeof source === 'string' && source.length <= 2_000_000,
     'native-source-invalid',
   );
   const controls: NativeControl[] = [];
-  for (const match of source.matchAll(/<([\w.:-]+)\s+([^<>]*?)\/?\s*>/g)) {
-    const attributes: Record<string, string> = {};
-    for (const attribute of match[2].matchAll(/([\w:-]+)=(?:"([^"]*)"|'([^']*)')/g))
-      attributes[attribute[1]] = decodeXML(attribute[2] ?? attribute[3]);
-    if (
-      attributes.enabled === 'false' ||
-      attributes.visible === 'false' ||
-      attributes.displayed === 'false'
-    )
+  const parents: NativeControl[] = [];
+  let end = 0;
+  for (const match of source.matchAll(
+    /<!--[\s\S]*?-->|<\?[\s\S]*?\?>|<(\/?)([A-Za-z_][\w.:-]*)((?:"[^"]*"|'[^']*'|[^<>"'])*)>/g,
+  )) {
+    requireCondition(!source.slice(end, match.index).includes('<'), 'native-source-invalid');
+    end = match.index + match[0].length;
+    if (match[0].startsWith('<!--') || match[0].startsWith('<?')) continue;
+    if (match[1] === '/') {
+      requireCondition(
+        match[3].trim() === '' && parents.at(-1)?.type === match[2],
+        'native-source-invalid',
+      );
+      parents.pop();
       continue;
-    if (['text', 'content-desc', 'label', 'name', 'resource-id'].some((key) => attributes[key]))
-      controls.push({ type: match[1], attributes });
+    }
+    const selfClosing = /\/\s*$/.test(match[3]);
+    const attributesSource = selfClosing ? match[3].replace(/\/\s*$/, '') : match[3];
+    const attributes: Record<string, string> = {};
+    let attributeEnd = 0;
+    for (const attribute of attributesSource.matchAll(/([\w:-]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g)) {
+      requireCondition(
+        attributesSource.slice(attributeEnd, attribute.index).trim() === '' &&
+          !Object.hasOwn(attributes, attribute[1]),
+        'native-source-invalid',
+      );
+      attributes[attribute[1]] = decodeXML(attribute[2] ?? attribute[3]);
+      attributeEnd = attribute.index + attribute[0].length;
+    }
+    requireCondition(attributesSource.slice(attributeEnd).trim() === '', 'native-source-invalid');
+    const control = {
+      type: match[2],
+      attributes,
+      sourceIndex: controls.length,
+      parent: parents.at(-1),
+    };
+    controls.push(control);
+    if (!selfClosing) parents.push(control);
+    requireCondition(controls.length <= 10_000 && parents.length <= 64, 'native-source-invalid');
   }
+  requireCondition(
+    controls.length > 0 && parents.length === 0 && !source.slice(end).includes('<'),
+    'native-source-invalid',
+  );
   return controls;
+}
+function nativePath(control: NativeControl): NativeControl[] {
+  const path = [];
+  for (let current: NativeControl | undefined = control; current; current = current.parent)
+    path.push(current);
+  return path;
+}
+function nativeUnavailable(control: NativeControl, headings = false) {
+  return nativePath(control).some(
+    ({ attributes }) =>
+      ['enabled', 'visible', 'displayed'].some((key) => attributes[key] === 'false') ||
+      (headings && (attributes.heading === 'true' || attributes.role === 'heading')),
+  );
+}
+function nativeRole(control: NativeControl) {
+  return control.type === 'node' ? control.attributes.class : control.type;
+}
+function nativeExplicitlyAvailable(control: NativeControl) {
+  return (
+    control.attributes.enabled === 'true' &&
+    (control.attributes.visible === 'true' || control.attributes.displayed === 'true') &&
+    !nativeUnavailable(control, true)
+  );
 }
 export const installMenuLabel =
   /^(?:Install|Install app|Install and create shortcut|Add to Home screen|Add page to)$/i;
@@ -304,6 +363,7 @@ export function matchingNativeControl(
 ) {
   for (const pattern of Array.isArray(patterns) ? patterns : [patterns]) {
     for (const control of controls) {
+      if (nativeUnavailable(control)) continue;
       const attribute = labelAttributes.find((key) => pattern.test(control.attributes[key] ?? ''));
       if (attribute) {
         const label = control.attributes[attribute];
@@ -321,47 +381,111 @@ export function matchingNativeControl(
   }
   return null;
 }
+const pinCatalogId = 'com.android.launcher3.widgetpicker:id/pin_widgets_catalog';
+const pinDragLayerId = 'com.google.android.apps.nexuslauncher:id/add_item_drag_layer';
+const pinLabel = 'Add to home screen';
+const androidConfirmationContainers = [
+  'android.widget.Button',
+  'android.view.View',
+  'android.view.ViewGroup',
+  'android.widget.LinearLayout',
+  'android.widget.FrameLayout',
+  'android.widget.RelativeLayout',
+];
+function nativeIdentity(control: NativeControl) {
+  return [
+    `name()=${xpathLiteral(control.type)}`,
+    ...['resource-id', 'class', 'name', 'text', 'content-desc', 'label']
+      .filter((key) => control.attributes[key])
+      .map((key) => `@${key}=${xpathLiteral(control.attributes[key])}`),
+    ...['enabled', 'visible', 'displayed'].map((key) => `not(@${key}='false')`),
+    "not(@heading='true')",
+    "not(@role='heading')",
+  ].join(' and ');
+}
+function matchingPinConfirmation(controls: NativeControl[]) {
+  const labels = controls.filter(
+    (control) =>
+      nativeRole(control) === 'android.widget.TextView' &&
+      control.attributes.text === pinLabel &&
+      nativePath(control).some(({ attributes }) => attributes['resource-id'] === pinCatalogId),
+  );
+  if (!labels.length) return null;
+  requireCondition(labels.length === 1, 'native-confirmation-ambiguous');
+  const labelControl = labels[0];
+  const path = nativePath(labelControl);
+  const catalogIndex = path.findIndex(
+    ({ attributes }) => attributes['resource-id'] === pinCatalogId,
+  );
+  const catalog = path[catalogIndex];
+  const layer = path
+    .slice(catalogIndex + 1)
+    .find(({ attributes }) => attributes['resource-id'] === pinDragLayerId);
+  requireCondition(
+    nativeExplicitlyAvailable(labelControl) &&
+      nativeExplicitlyAvailable(catalog) &&
+      layer &&
+      nativeExplicitlyAvailable(layer),
+    'native-pin-confirmation-unavailable',
+  );
+  // Walk only this label's parents. A clickable sibling or the catalog itself
+  // never supplies an action. The first exposed action must be an allowed role.
+  const targetIndex = path
+    .slice(0, catalogIndex)
+    .findIndex(({ attributes }) => attributes.clickable === 'true');
+  const control = path[targetIndex];
+  requireCondition(
+    control &&
+      nativeExplicitlyAvailable(control) &&
+      (androidConfirmationContainers.includes(nativeRole(control)) || control === labelControl),
+    'native-pin-confirmation-unavailable',
+  );
+  const subtree = controls.filter((candidate) => nativePath(candidate).includes(control));
+  const humanLabels = (candidate: NativeControl) =>
+    ['text', 'content-desc', 'label'].map((key) => candidate.attributes[key]).filter(Boolean);
+  requireCondition(
+    subtree.every((candidate) => humanLabels(candidate).every((label) => label === pinLabel)) &&
+      subtree.filter(
+        (candidate) => candidate !== control && humanLabels(candidate).includes(pinLabel),
+      ).length === Number(control !== labelControl),
+    'native-confirmation-ambiguous',
+  );
+  const descendantPath = path
+    .slice(0, targetIndex)
+    .reverse()
+    .map((entry) => `*[${nativeIdentity(entry)}]`)
+    .join('/');
+  const conflictingLabel = ['text', 'content-desc', 'label']
+    .map(
+      (key) => `(string-length(normalize-space(@${key}))>0 and @${key}!=${xpathLiteral(pinLabel)})`,
+    )
+    .join(' or ');
+  const exactLabel = ['text', 'content-desc', 'label']
+    .map((key) => `@${key}=${xpathLiteral(pinLabel)}`)
+    .join(' or ');
+  const selector =
+    `//*[${nativeIdentity(control)} and @clickable='true' and @enabled='true' and (@visible='true' or @displayed='true')` +
+    (descendantPath ? ` and ./${descendantPath}` : '') +
+    ` and not(${conflictingLabel}) and not(.//*[${conflictingLabel}])` +
+    ` and count(.//*[${exactLabel}])=${Number(control !== labelControl)}` +
+    ` and ancestor::*[${nativeIdentity(catalog)} and @enabled='true' and (@visible='true' or @displayed='true')]` +
+    ` and ancestor::*[${nativeIdentity(layer)}]` +
+    " and not(ancestor::*[@enabled='false' or @visible='false' or @displayed='false' or @heading='true' or @role='heading'])]";
+  return { control, attribute: 'text', label: pinLabel, selector };
+}
 /** Menu titles and sheet headings are not confirmation actions. */
 export function matchingNativeConfirmation(controls: NativeControl[]) {
-  const pinCatalogId = 'com.android.launcher3.widgetpicker:id/pin_widgets_catalog';
-  const pinDragLayerId = 'com.google.android.apps.nexuslauncher:id/add_item_drag_layer';
-  const pinCatalog = controls.find(
-    ({ attributes }) =>
-      attributes['resource-id'] === pinCatalogId &&
-      attributes.enabled === 'true' &&
-      (attributes.visible === 'true' || attributes.displayed === 'true') &&
-      attributes.visible !== 'false' &&
-      attributes.displayed !== 'false',
-  );
   const actionable = controls.filter((control) => {
     const attributes = control.attributes;
     if (
-      ['enabled', 'visible', 'displayed', 'clickable'].some((key) => attributes[key] === 'false') ||
-      attributes.heading === 'true' ||
-      attributes.role === 'heading'
+      nativeUnavailable(control, true) ||
+      attributes.clickable === 'false' ||
+      nativePath(control).some(({ attributes }) => attributes['resource-id'] === pinCatalogId)
     )
       return false;
-    const role = control.type === 'node' ? attributes.class : control.type;
+    const role = nativeRole(control);
     if (role === 'android.widget.Button' || role === 'XCUIElementTypeButton') return true;
-    // The retained pin catalog exposed this TextView label. Its own click
-    // action and live catalog ancestry must both be proved; a text
-    // child without an action never authorizes clicking a guessed ancestor.
-    if (role === 'android.widget.TextView')
-      return (
-        Boolean(pinCatalog) &&
-        attributes.text === 'Add to home screen' &&
-        attributes.clickable === 'true'
-      );
-    return (
-      attributes.clickable === 'true' &&
-      [
-        'android.view.View',
-        'android.view.ViewGroup',
-        'android.widget.LinearLayout',
-        'android.widget.FrameLayout',
-        'android.widget.RelativeLayout',
-      ].includes(role)
-    );
+    return attributes.clickable === 'true' && androidConfirmationContainers.includes(role);
   });
   const match = matchingNativeControl(actionable, installConfirmationLabels, [
     'content-desc',
@@ -371,17 +495,6 @@ export function matchingNativeConfirmation(controls: NativeControl[]) {
   if (match) {
     const identity = ["not(@heading='true')", "not(@role='heading')", "not(@clickable='false')"];
     if (match.control.attributes.clickable === 'true') identity.push("@clickable='true'");
-    const role =
-      match.control.type === 'node' ? match.control.attributes.class : match.control.type;
-    if (role === 'android.widget.TextView') {
-      identity.push(
-        `ancestor::*[@resource-id=${xpathLiteral(pinCatalogId)} and @enabled='true' and (@visible='true' or @displayed='true') and not(@visible='false') and not(@displayed='false')]`,
-      );
-      if (controls.some(({ attributes }) => attributes['resource-id'] === pinDragLayerId))
-        identity.push(
-          `ancestor::*[@resource-id=${xpathLiteral(pinDragLayerId)} and not(@enabled='false') and not(@visible='false') and not(@displayed='false')]`,
-        );
-    }
     // An observed native identifier narrows the selected button; it does not
     // substitute for its visible action label or actionable role.
     if (match.control.attributes.name)
@@ -389,7 +502,7 @@ export function matchingNativeConfirmation(controls: NativeControl[]) {
     if (identity.length)
       match.selector = `${match.selector.slice(0, -1)} and ${identity.join(' and ')}]`;
   }
-  return match;
+  return match ?? matchingPinConfirmation(controls);
 }
 function nativeControlState(control: NativeControl) {
   return Object.fromEntries(
@@ -398,6 +511,18 @@ function nativeControlState(control: NativeControl) {
       return [key, value === undefined ? null : /^(?:true|false)$/.test(value) ? value : 'unknown'];
     }),
   );
+}
+function nativeControlDiagnostic(control: NativeControl) {
+  return {
+    type: control.type,
+    sourceIndex: control.sourceIndex,
+    identity: Object.fromEntries(
+      ['resource-id', 'class', 'name', 'text', 'content-desc', 'label', 'role']
+        .filter((key) => control.attributes[key])
+        .map((key) => [key, clean(control.attributes[key])]),
+    ),
+    state: nativeControlState(control),
+  };
 }
 /** Diagnose response shape without copying screenshot content or arbitrary provider fields. */
 export function screenshotResponseShape(value: unknown): {
@@ -429,6 +554,33 @@ export function screenshotResponseShape(value: unknown): {
       : {}),
   };
 }
+export const screenshotLimits = { rawCharacters: 15_000_000, decodedBytes: 10_000_000 } as const;
+/** CR/LF wrapping is the only permitted transformation; never repair malformed image data. */
+export function normalizedPngScreenshot(value: unknown): string {
+  requireCondition(
+    typeof value === 'string' && value.length > 0 && value.length <= screenshotLimits.rawCharacters,
+    'screenshot-invalid',
+  );
+  const normalized = value.replace(/[\r\n]/g, '');
+  requireCondition(
+    normalized.length > 0 &&
+      normalized.length % 4 === 0 &&
+      /^[A-Za-z0-9+/]*={0,2}$/.test(normalized),
+    'screenshot-invalid',
+  );
+  const padding = normalized.endsWith('==') ? 2 : normalized.endsWith('=') ? 1 : 0;
+  const bytes = (normalized.length / 4) * 3 - padding;
+  requireCondition(bytes >= 45 && bytes <= screenshotLimits.decodedBytes, 'screenshot-invalid');
+  const decoded = Buffer.from(normalized, 'base64');
+  requireCondition(
+    decoded.length === bytes &&
+      decoded.toString('base64') === normalized &&
+      decoded.subarray(0, 8).equals(Buffer.from('89504e470d0a1a0a', 'hex')) &&
+      decoded.subarray(-12).equals(Buffer.from('0000000049454e44ae426082', 'hex')),
+    'screenshot-invalid',
+  );
+  return normalized;
+}
 export async function openNativeShare(
   tap: (pattern: RegExp, required?: boolean) => Promise<boolean>,
 ) {
@@ -454,6 +606,38 @@ function elementId(value: unknown): string {
   return id;
 }
 type Observation = { stage: string; value: unknown };
+type CapabilityTiming = {
+  laneLimitMilliseconds: number;
+  stages: {
+    stage: string;
+    startedElapsedMilliseconds: number;
+    durationMilliseconds: number | null;
+  }[];
+  commands: {
+    stage: string;
+    command: string;
+    startedElapsedMilliseconds: number;
+    durationMilliseconds: number | null;
+    timeoutMilliseconds: number;
+    remainingAtStartMilliseconds: number;
+    remainingAtEndMilliseconds?: number;
+    outcome: 'running' | 'completed' | 'failed';
+    failure?: string;
+    laneAborted?: boolean;
+    commandAborted?: boolean;
+    deadlineReached?: boolean;
+  }[];
+  omittedCommands: number;
+  omittedStages: number;
+  failure?: {
+    elapsedMilliseconds: number;
+    remainingMilliseconds: number;
+    laneAborted: boolean;
+    deadlineReached: boolean;
+  };
+  cleanupElapsedMilliseconds?: number;
+  totalElapsedMilliseconds?: number;
+};
 export type CapabilityResult = {
   target: Target;
   status: 'passed' | 'failed' | 'blocked';
@@ -466,7 +650,15 @@ export type CapabilityResult = {
   uncertainAllocation: boolean;
   failure?: string;
   observations: Observation[];
-  nativeActions: { stage: string; label: string; type: string; sourceSha256: string }[];
+  nativeActions: {
+    stage: string;
+    label: string;
+    type: string;
+    sourceSha256: string;
+    target?: ReturnType<typeof nativeControlDiagnostic>;
+    selectorSha256?: string;
+  }[];
+  timing?: CapabilityTiming;
   screenshots: string[];
   cleanup: { network: string; session: string; fixture: string };
 };
@@ -651,10 +843,18 @@ export async function runCapability(
   fixture: Fixture,
   options: CapabilityOptions,
 ): Promise<CapabilityResult> {
+  const began = Date.now();
+  const timing: CapabilityTiming = {
+    laneLimitMilliseconds: laneMilliseconds,
+    stages: [{ stage: 'preflight', startedElapsedMilliseconds: 0, durationMilliseconds: null }],
+    commands: [],
+    omittedCommands: 0,
+    omittedStages: 0,
+  };
   const result: CapabilityResult = {
     target,
     status: 'failed',
-    startedAt: new Date().toISOString(),
+    startedAt: new Date(began).toISOString(),
     stage: 'preflight',
     command: '',
     allocation: 'not-started',
@@ -662,9 +862,10 @@ export async function runCapability(
     observations: [],
     nativeActions: [],
     screenshots: [],
+    timing,
     cleanup: { network: 'not-allocated', session: 'not-allocated', fixture: 'pending' },
   };
-  const deadline = Date.now() + laneMilliseconds;
+  const deadline = began + laneMilliseconds;
   const signal = AbortSignal.timeout(laneMilliseconds);
   let previousWindowHandles: string[] = [];
   const sanitize = (value: unknown): unknown =>
@@ -680,6 +881,18 @@ export async function runCapability(
     await options.journal(result);
   };
   const stage = (name: string) => {
+    const elapsed = Date.now() - began;
+    const previous = timing.stages.at(-1)!;
+    previous.durationMilliseconds = elapsed - previous.startedElapsedMilliseconds;
+    if (timing.stages.length === 32) {
+      timing.stages.shift();
+      timing.omittedStages++;
+    }
+    timing.stages.push({
+      stage: name,
+      startedElapsedMilliseconds: elapsed,
+      durationMilliseconds: null,
+    });
     result.stage = name;
   };
   function remaining(maximum = 15_000) {
@@ -687,18 +900,61 @@ export async function runCapability(
     requireCondition(left > 0 && !signal.aborted, 'lane-deadline');
     return Math.max(1, Math.min(maximum, left));
   }
-  async function command(
+  async function timedProviderCommand(
+    name: string,
+    timeout: number,
+    action: (options: { timeout: number; signal: AbortSignal }) => Promise<unknown>,
+  ) {
+    result.command = name;
+    const started = Date.now();
+    const entry: CapabilityTiming['commands'][number] = {
+      stage: result.stage,
+      command: name,
+      startedElapsedMilliseconds: started - began,
+      durationMilliseconds: null,
+      timeoutMilliseconds: Math.max(0, Math.min(timeout, deadline - started)),
+      remainingAtStartMilliseconds: Math.max(0, deadline - started),
+      outcome: 'running',
+    };
+    if (timing.commands.length === 512) {
+      timing.commands.shift();
+      timing.omittedCommands++;
+    }
+    timing.commands.push(entry);
+    let commandSignal: AbortSignal | undefined;
+    try {
+      const allotted = remaining(timeout);
+      entry.timeoutMilliseconds = allotted;
+      commandSignal = AbortSignal.timeout(allotted);
+      const value = await action({
+        timeout: allotted,
+        signal: AbortSignal.any([signal, commandSignal]),
+      });
+      entry.outcome = 'completed';
+      return value;
+    } catch (error) {
+      entry.outcome = 'failed';
+      entry.failure = failure(error);
+      entry.laneAborted = signal.aborted;
+      entry.commandAborted = commandSignal?.aborted ?? false;
+      entry.deadlineReached = Date.now() >= deadline;
+      throw error;
+    } finally {
+      entry.durationMilliseconds = Date.now() - started;
+      entry.remainingAtEndMilliseconds = Math.max(0, deadline - Date.now());
+    }
+  }
+  const command = (
     path: string,
     method = 'GET',
     body?: unknown,
     timeout = path === 'session' ? 45_000 : 15_000,
-  ) {
-    result.command = `${method} ${path.replace(result.sessionId ?? '\0', '{sessionId}')}`;
-    return client.command(path, method, body, {
-      timeout: remaining(timeout),
-      signal,
-    });
-  }
+  ) =>
+    timedProviderCommand(
+      `${method} ${path.replace(result.sessionId ?? '\0', '{sessionId}').replace(/\/element\/[^/]+(?=\/|$)/g, '/element/{elementId}')}`,
+      timeout,
+      (options) => client.command(path, method, body, options),
+    );
   const session = (suffix: string) => `session/${result.sessionId}/${suffix}`;
   const execute = (script: string, args: unknown[] = [], timeout = 15_000) =>
     command(session('execute/sync'), 'POST', { script, args }, timeout);
@@ -736,11 +992,9 @@ export async function runCapability(
     try {
       const data = await command(session('screenshot'));
       responseShape = screenshotResponseShape(data);
-      requireCondition(
-        typeof data === 'string' && data.length <= 15_000_000 && /^[A-Za-z0-9+/=]+$/.test(data),
-        'screenshot-invalid',
+      result.screenshots.push(
+        await options.screenshot(`${target.browser}-${name}`, normalizedPngScreenshot(data)),
       );
-      result.screenshots.push(await options.screenshot(`${target.browser}-${name}`, data));
     } catch (error) {
       result.observations.push({
         stage: result.stage,
@@ -772,6 +1026,14 @@ export async function runCapability(
             })),
         )
         .slice(0, 100),
+      pinCandidates: parsed
+        .filter((control) => control.attributes.text === pinLabel)
+        .slice(0, 4)
+        .map((control) => ({
+          candidate: nativeControlDiagnostic(control),
+          ancestors: nativePath(control).slice(1, 17).map(nativeControlDiagnostic),
+          omittedAncestors: Math.max(0, nativePath(control).length - 17),
+        })),
     });
     return { parsed, sourceSha256: hash(String(source)) };
   }
@@ -780,9 +1042,22 @@ export async function runCapability(
     poll(
       async () => {
         const observed = await controls();
-        return { source: observed, match: matchingNativeConfirmation(observed.parsed) };
+        try {
+          return {
+            source: observed,
+            match: matchingNativeConfirmation(observed.parsed),
+            pending: false,
+          };
+        } catch (error) {
+          if (failure(error) !== 'capability-native-pin-confirmation-unavailable') throw error;
+          // A clicked pin sheet can disable or hide its action while closing.
+          // The retained label is still pending, not evidence of disappearance.
+          return { source: observed, match: null, pending: true };
+        }
       },
-      (observed) => !observed.match || !confirmationSelectors.has(observed.match.selector),
+      (observed) =>
+        !observed.pending &&
+        (!observed.match || !confirmationSelectors.has(observed.match.selector)),
       'native-confirmation-unchanged',
     );
   async function tap(
@@ -790,14 +1065,15 @@ export async function runCapability(
     required = true,
     confirmation = false,
   ): Promise<boolean> {
-    let source = await controls();
-    let match = confirmation
-      ? matchingNativeConfirmation(source.parsed)
-      : matchingNativeControl(source.parsed, pattern);
-    if (confirmation && match && confirmationSelectors.has(match.selector)) {
-      const transitioned = await observeConfirmationTransition();
-      source = transitioned.source;
-      match = transitioned.match;
+    let source: Awaited<ReturnType<typeof controls>>;
+    let match: ReturnType<typeof matchingNativeConfirmation>;
+    if (confirmation && confirmationSelectors.size) {
+      ({ source, match } = await observeConfirmationTransition());
+    } else {
+      source = await controls();
+      match = confirmation
+        ? matchingNativeConfirmation(source.parsed)
+        : matchingNativeControl(source.parsed, pattern);
     }
     if (match) {
       const { control, label, selector } = match;
@@ -818,6 +1094,8 @@ export async function runCapability(
         label: client.redact(clean(label)),
         type: control.type,
         sourceSha256: source.sourceSha256,
+        target: nativeControlDiagnostic(control),
+        selectorSha256: hash(selector),
       });
       await options.journal(result);
       return true;
@@ -1270,7 +1548,6 @@ export async function runCapability(
     );
     previousWindowHandles = initialWindows;
     await record('initial-window-handles', initialWindows);
-    await screenshot('anonymous-secure');
     stage('native-install');
     const initialContexts = await command(session('contexts'));
     requireCondition(Array.isArray(initialContexts), 'native-contexts-unavailable');
@@ -1293,10 +1570,8 @@ export async function runCapability(
     // The last allowed click must also finish its native transition. This is
     // observation only: the two-click limit never grows to a third action.
     if (confirmationSelectors.size) await observeConfirmationTransition();
-    await screenshot('installed-native');
     stage('home-launch');
     await home();
-    await screenshot('home-icon');
     await launchIcon();
     const foregroundApp = await foreground();
     const launched = await attach(foregroundApp);
@@ -1335,7 +1610,6 @@ export async function runCapability(
         20_000,
       );
       await clickWeb('[role="dialog"] button', 'Done');
-      await screenshot(`${item.kind}-downloaded`);
     }
     const preparedEnvironment = await secureEnvironment();
     requireCondition(
@@ -1349,12 +1623,16 @@ export async function runCapability(
     await socketProbe(await socketTicket(prepared[0]), true);
     const unusedOfflineTicket = await socketTicket(prepared[0]);
     stage('device-offline');
-    result.command = 'PUT automate/sessions/{sessionId}/update_network.json';
-    await client.api(
-      `sessions/${result.sessionId}/update_network.json`,
-      'PUT',
-      { networkProfile: 'no-network' },
-      { timeout: remaining(), signal },
+    await timedProviderCommand(
+      'PUT automate/sessions/{sessionId}/update_network.json',
+      15_000,
+      (options) =>
+        client.api(
+          `sessions/${result.sessionId}/update_network.json`,
+          'PUT',
+          { networkProfile: 'no-network' },
+          options,
+        ),
     );
     await record('network-control', { networkProfile: 'no-network', androidAirplaneMode: false });
     await socketProbe(unusedOfflineTicket, false);
@@ -1362,7 +1640,6 @@ export async function runCapability(
     const before = await storedItems(prepared);
     checkStored(before, prepared);
     await record('retained-before-restart', before);
-    await screenshot('offline-before-termination');
     stage('same-session-termination');
     const observedForeground = await foreground();
     requireCondition(observedForeground === foregroundApp, 'foreground-app-changed');
@@ -1403,11 +1680,20 @@ export async function runCapability(
     result.status = 'passed';
   } catch (error) {
     result.failure = failure(error);
+    timing.failure = {
+      elapsedMilliseconds: Date.now() - began,
+      remainingMilliseconds: Math.max(0, deadline - Date.now()),
+      laneAborted: signal.aborted,
+      deadlineReached: Date.now() >= deadline,
+    };
     const failedCommand = result.command;
     if (result.sessionId && Date.now() < deadline) await screenshot('failure');
     result.command = failedCommand;
   } finally {
-    const cleanupDeadline = Date.now() + cleanupMilliseconds;
+    const cleanupStarted = Date.now();
+    const previous = timing.stages.at(-1)!;
+    previous.durationMilliseconds = cleanupStarted - began - previous.startedElapsedMilliseconds;
+    const cleanupDeadline = cleanupStarted + cleanupMilliseconds;
     if (result.sessionId) {
       const cleanupSignal = AbortSignal.timeout(cleanupMilliseconds);
       try {
@@ -1446,6 +1732,8 @@ export async function runCapability(
       result.status = 'failed';
       result.failure ??= 'capability-cleanup-failed';
     }
+    timing.cleanupElapsedMilliseconds = Date.now() - cleanupStarted;
+    timing.totalElapsedMilliseconds = Date.now() - began;
     result.finishedAt = new Date().toISOString();
     await options.journal(result);
   }

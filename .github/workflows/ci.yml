@@ -26,6 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
+      restore_timing: ${{ steps.changes.outputs.restore_timing }}
       mode: ${{ steps.changes.outputs.mode }}
       plan: ${{ steps.changes.outputs.plan }}
       plan_sha256: ${{ steps.changes.outputs.plan_sha256 }}
@@ -381,6 +382,47 @@ jobs:
         run: npm ci
       - name: Build and exercise the final image
         run: node scripts/ci/container-smoke.ts
+
+  restore-timing:
+    name: Sized restore acceptance
+    needs: changes
+    if: needs.changes.outputs.restore_timing == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Install acceptance driver and Chromium
+        run: |
+          npm ci
+          node scripts/ci/prefer-ubuntu-archive.ts
+          npx playwright install --with-deps chromium
+      - name: Build the exact production image
+        run: |
+          docker build --pull --label "org.opencontainers.image.revision=$(git rev-parse HEAD)" \
+            --iidfile "$RUNNER_TEMP/restore-image-id" .
+      - name: Measure and verify the real 256 MiB restore
+        env:
+          SPINEL_RESTORE_BROWSER_PROFILE: images-256m
+          SPINEL_RESTORE_BROWSER_EVIDENCE: test-results/spn124-sized-restore
+        run: |
+          export SPINEL_RESTORE_BROWSER_IMAGE="$(cat "$RUNNER_TEMP/restore-image-id")"
+          node e2e/restore-browser.acceptance.ts
+      - name: Preserve safe timing and integrity evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: sized-restore-acceptance
+          path: |
+            test-results/spn124-sized-restore/evidence.json
+            test-results/spn124-sized-restore/failure.png
+          if-no-files-found: warn
+          retention-days: 14
 
   playwright-run:
     needs: changes
@@ -742,6 +784,7 @@ jobs:
         sync-transition,
         doc-responsiveness,
         doc-callback-lifetimes,
+        restore-timing,
       ]
     if: always()
     runs-on: ubuntu-latest
@@ -760,7 +803,7 @@ jobs:
           COVERAGE_PLAN: ${{ needs.changes.outputs.plan }}
           COVERAGE_PLAN_SHA256: ${{ needs.changes.outputs.plan_sha256 }}
           COVERAGE_GATE_RESULTS: '{"typecheck":"${{ needs.typecheck.result }}","unit-tests":"${{ needs.unit-tests.result }}","lib-tests":"${{ needs.lib-tests.result }}"}'
-          COVERAGE_RESULTS: '{"backlog":"${{ needs.backlog.result }}","pull-request":"${{ needs.pull-request.result }}","lint":"${{ needs.lint.result }}","typecheck":"${{ needs.typecheck.outputs.evidence }}","unit-tests":"${{ needs.unit-tests.outputs.evidence }}","lib-test-run":"${{ needs.lib-test-run.result }}","playwright-run":"${{ needs.playwright-run.result }}","container-smoke":"${{ needs.container-smoke.result }}","sync-transition":"${{ needs.sync-transition.result }}","doc-responsiveness":"${{ needs.doc-responsiveness.result }}","doc-callback-lifetimes":"${{ needs.doc-callback-lifetimes.result }}"}'
+          COVERAGE_RESULTS: '{"backlog":"${{ needs.backlog.result }}","pull-request":"${{ needs.pull-request.result }}","lint":"${{ needs.lint.result }}","typecheck":"${{ needs.typecheck.outputs.evidence }}","unit-tests":"${{ needs.unit-tests.outputs.evidence }}","lib-test-run":"${{ needs.lib-test-run.result }}","playwright-run":"${{ needs.playwright-run.result }}","container-smoke":"${{ needs.container-smoke.result }}","restore-timing":"${{ needs.restore-timing.result }}","sync-transition":"${{ needs.sync-transition.result }}","doc-responsiveness":"${{ needs.doc-responsiveness.result }}","doc-callback-lifetimes":"${{ needs.doc-callback-lifetimes.result }}"}'
         run: node scripts/ci/coverage-result.ts browser
       - name: Retain coverage result
         if: always()

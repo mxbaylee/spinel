@@ -655,9 +655,36 @@ persistence results recorded here.
 SPN-090's [BrowserStack CI plan](implementation/SPN-090.md#browserstack-ci-plan)
 uses Automate real mobile browsers and Local from GitHub Actions, with repository
 secrets `BS_USERNAME` and `BS_ACCESS_KEY`. The bounded HTTP infrastructure smoke
-verifies credentials, mobile allocation and runner reachability. Installed-context
-HTTPS/service-worker, Home Screen restart and offline acceptance remain separate,
-uncompleted work; do not infer those passes from a successful tunnel session.
+verifies credentials, mobile allocation and runner reachability. The later
+capability workflow generates disposable CI HTTPS and separately observes the
+actual secure context, worker, native launch and offline storage. A successful
+tunnel session alone establishes none of those contracts.
+
+### Physical capability checkpoint — 2026-11-02
+
+The [fourth bounded capability attempt](implementation/SPN-090.md#fourth-physical-run-safari-offline-relaunch)
+is partial evidence, not a completed lane or full acceptance matrix. Its source
+is `4242a2d69f7a65c75e30ce02baafbbd8def706a0`, tested merge
+`9ed845df8a6f9be6da6607bacc154d06b57f5d61`,
+[run 41368525631 / attempt 1](https://github.com/mxbaylee/spinel/actions/runs/41368525631).
+The linked record retains the raw report, useful image, exact session/accounting
+identities and original failures.
+
+| Physical environment and observed browser | Observed result | Still unverified |
+| --- | --- | --- |
+| Requested Google Pixel 11 Pro XL / Android 17.0; returned Android 17 and serial device name; runtime Chrome 152 | Secure worker-controlled page; actual Add button; launcher pin panel reached | The final launcher label is nonclickable; no installed launch, authenticated preparation or offline reopen |
+| Requested Google Pixel 11 Pro XL, Android Firefox | No new allocation in this attempt; the [first actual Firefox session](implementation/SPN-090.md#first-disposable-https-physical-run) observed the secure worker-controlled page but rejected native-context access with HTTP 400 | A supported native-control route, then the complete installed lifecycle |
+| iPhone 18 Pro Max, requested iOS 27; runtime Safari 27.0 | Installed Home Screen app authenticated and prepared both items; native termination and offline Home Screen relaunch retained both bundles and the bytes of all six images; the Sheet rendered offline | Final Doc offline UI navigation did not complete within the observed lane window; no complete capability pass |
+
+Safari's preparation and relaunch used the same reservation and actual standalone
+storage context. The provider's `no-network` profile was corroborated with
+unreachable fresh app/API/socket probes, not just the browser's link-state flag. Network restoration,
+session deletion, fixture closure and Local shutdown all completed. The report
+does not establish editable modern Docs, repeated offline edits/reopens, stable
+renamed/moved item links, unavailable-item behavior, reconnect outcomes, offline
+creation or permission/account/guest boundaries on the phones. Those remain the
+original SPN-090 acceptance below. The capability attempt did not exercise native
+Doc editing or committed-edit/reconnect acceptance.
 
 The decisive scenario is: download online, terminate, enable airplane mode, launch
 from the home screen, open/edit each document type, close and reopen offline,

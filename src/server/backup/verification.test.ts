@@ -423,6 +423,98 @@ test('a small container and host memory pressure refuse verification before an O
   await expect(checkVerificationHeadroom('start', read, 'darwin')).resolves.toBeUndefined();
 });
 
+test.each(['start', 'running'] as const)(
+  '%s verification can reclaim clean inactive disk cache but preserves other memory charges',
+  async (phase) => {
+    const MiB = 1024 ** 2;
+    const clean = `file ${300 * MiB}\nshmem 0\ninactive_file ${300 * MiB}\nfile_dirty 0\nfile_writeback 0\n`;
+    let stat = clean,
+      host = 'MemAvailable: 8388608 kB\n';
+    const read = async (path: string) => {
+      if (path === '/sys/fs/cgroup/memory.max') return String(1024 * MiB);
+      if (path === '/sys/fs/cgroup/memory.current')
+        return String((phase === 'start' ? 600 : 950) * MiB);
+      if (path === '/sys/fs/cgroup/memory.stat') return stat;
+      if (path === '/proc/meminfo') return host;
+      throw new Error('Unexpected resource path.');
+    };
+    // A synced upload can occupy hundreds of MiB of reclaimable page cache even
+    // though the app and the bounded verification worker fit inside this cgroup.
+    await expect(checkVerificationHeadroom(phase, read, 'linux')).resolves.toBeUndefined();
+    for (const [category, unavailable] of [
+      ['active cache', clean.replace(`inactive_file ${300 * MiB}`, 'inactive_file 0')],
+      ['shared/tmpfs', clean.replace('shmem 0', `shmem ${300 * MiB}`)],
+      ['dirty data', clean.replace('file_dirty 0', `file_dirty ${300 * MiB}`)],
+      ['writeback', clean.replace('file_writeback 0', `file_writeback ${300 * MiB}`)],
+      [
+        'mixed dirty and writeback',
+        clean
+          .replace('file_dirty 0', `file_dirty ${200 * MiB}`)
+          .replace('file_writeback 0', `file_writeback ${100 * MiB}`),
+      ],
+    ]) {
+      stat = unavailable;
+      await expect(checkVerificationHeadroom(phase, read, 'linux'), category).rejects.toEqual(
+        new RecoveryResourceError('memory-headroom'),
+      );
+    }
+    stat = clean;
+    host = 'MemAvailable: 102400 kB\n';
+    await expect(checkVerificationHeadroom(phase, read, 'linux')).rejects.toEqual(
+      new RecoveryResourceError('memory-headroom'),
+    );
+  },
+);
+
+test.each(['start', 'running'] as const)(
+  '%s verification falls back to raw cgroup usage for incomplete or invalid cache counters',
+  async (phase) => {
+    const MiB = 1024 ** 2;
+    const clean = `file ${300 * MiB}\nshmem 0\ninactive_file ${300 * MiB}\nfile_dirty 0\nfile_writeback 0\n`;
+    let stat: string | undefined;
+    const read = async (path: string) => {
+      if (path === '/sys/fs/cgroup/memory.max') return String(1024 * MiB);
+      if (path === '/sys/fs/cgroup/memory.current')
+        return String((phase === 'start' ? 600 : 950) * MiB);
+      if (path === '/sys/fs/cgroup/memory.stat' && stat !== undefined) return stat;
+      if (path === '/proc/meminfo') return 'MemAvailable: 8388608 kB\n';
+      throw new Error('ENOENT');
+    };
+    const cases: Array<[string, string | undefined]> = [
+      ['unavailable', undefined],
+      ['empty', ''],
+      ['duplicate', `${clean}shmem 0\n`],
+      ['malformed duplicate', `${clean}shmem\n`],
+      ['nonnumeric', clean.replace('shmem 0', 'shmem unknown')],
+      ['negative', clean.replace('shmem 0', 'shmem -1')],
+      ['fractional', clean.replace('shmem 0', 'shmem 0.5')],
+      ['unsafe integer', clean.replace('shmem 0', 'shmem 9007199254740992')],
+      ['extra value', clean.replace('shmem 0', 'shmem 0 0')],
+      ['file exceeds usage', clean.replace(`file ${300 * MiB}\n`, `file ${1024 * MiB}\n`)],
+      ['shared exceeds file', clean.replace('shmem 0', `shmem ${301 * MiB}`)],
+      [
+        'inactive exceeds file',
+        clean.replace(`inactive_file ${300 * MiB}`, `inactive_file ${301 * MiB}`),
+      ],
+      ['dirty exceeds file', clean.replace('file_dirty 0', `file_dirty ${301 * MiB}`)],
+      ['writeback exceeds file', clean.replace('file_writeback 0', `file_writeback ${301 * MiB}`)],
+      ...clean
+        .trim()
+        .split('\n')
+        .map((line): [string, string] => [
+          `missing ${line.split(' ')[0]}`,
+          clean.replace(`${line}\n`, ''),
+        ]),
+    ];
+    for (const [category, invalid] of cases) {
+      stat = invalid;
+      await expect(checkVerificationHeadroom(phase, read, 'linux'), category).rejects.toEqual(
+        new RecoveryResourceError('memory-headroom'),
+      );
+    }
+  },
+);
+
 test('wrong key, incompatible image, bounded decompression and killed worker preserve the source', async () => {
   const f = await fixture(),
     archive = await f.archive();

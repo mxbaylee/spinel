@@ -50,6 +50,185 @@ function valid(url: string | URL | Request) {
       })
     : success(url);
 }
+const dedicatedDevice = (extra: Record<string, unknown> = {}) => ({
+  os: 'android',
+  os_version: 'secret-os-version',
+  device: 'secret-device-name',
+  realMobile: true,
+  state: 'available',
+  udid: 'secret-udid',
+  sim_details: [{ phone_number: 'secret-phone-number', carrier: 'secret-carrier' }],
+  in_use_by: 'secret-email@example.test',
+  ...extra,
+});
+
+test('optional dedicated-device inventory keeps only counts without changing quota completeness', async () => {
+  const urls: string[] = [];
+  const report = await collectQuotaEvidence({
+    ...credentials,
+    includeDedicatedDevices: true,
+    fetcher: async (url, init) => {
+      urls.push(String(url));
+      assert.equal(init?.method, 'GET');
+      assert.equal(init?.body, undefined);
+      assert.equal(init?.redirect, 'error');
+      assert.equal(
+        new Headers(init?.headers).get('Authorization'),
+        `Basic ${Buffer.from('secret-user:secret-key').toString('base64')}`,
+      );
+      if (String(url) === 'https://api-cloud.browserstack.com/automate/dedicated_devices')
+        return Response.json([
+          dedicatedDevice(),
+          dedicatedDevice({ os: 'ios' }),
+          dedicatedDevice({ state: 'in use' }),
+          dedicatedDevice({ realMobile: false }),
+        ]);
+      assert.equal(new URL(String(url)).host, 'api.browserstack.com');
+      return valid(url);
+    },
+  });
+  assert.deepEqual(report.dedicatedDevices, {
+    outcome: 'available',
+    data: {
+      returnedEntries: 4,
+      availableRealAndroidEntries: 1,
+      availableRealIosEntries: 1,
+      otherEntries: 2,
+    },
+  });
+  assert.equal(urls.at(-1), 'https://api-cloud.browserstack.com/automate/dedicated_devices');
+  assert.equal(urls.length, 9);
+  assert.equal(report.requests, 9);
+  assert.equal(report.status, 'passed');
+  assert.equal(report.allocationAllowed, false);
+  assert.equal(report.remainingMinutes, null);
+  assert.doesNotMatch(
+    JSON.stringify(report),
+    /secret|udid|sim_details|in_use_by|phone_number|device-name/,
+  );
+});
+
+test('dedicated-device inventory accepts a documented singleton or list and rejects unknown shapes as unknown', async () => {
+  const cases = [
+    { value: dedicatedDevice(), count: 1 },
+    { value: [], count: 0 },
+    ...[
+      null,
+      {},
+      { devices: [dedicatedDevice()] },
+      'secret-body',
+      [null],
+      dedicatedDevice({ realMobile: 'true' }),
+      dedicatedDevice({ os: 'linux' }),
+      dedicatedDevice({ state: 'secret-state' }),
+    ].map((value) => ({ value, count: null })),
+  ];
+  for (const { value, count } of cases) {
+    let inventoryCalls = 0;
+    const report = await collectQuotaEvidence({
+      ...credentials,
+      includeDedicatedDevices: true,
+      fetcher: async (url) => {
+        if (String(url) !== 'https://api-cloud.browserstack.com/automate/dedicated_devices')
+          return valid(url);
+        inventoryCalls++;
+        return Response.json(value);
+      },
+    });
+    assert.equal(inventoryCalls, 1);
+    assert.deepEqual(
+      report.dedicatedDevices,
+      count === null
+        ? { outcome: 'unavailable', reason: 'invalid-response' }
+        : {
+            outcome: 'available',
+            data: {
+              returnedEntries: count,
+              availableRealAndroidEntries: count,
+              availableRealIosEntries: 0,
+              otherEntries: 0,
+            },
+          },
+    );
+    assert.equal(report.status, 'passed');
+    assert.equal(report.allocationAllowed, false);
+    assert.doesNotMatch(JSON.stringify(report), /secret/);
+  }
+});
+
+test('dedicated-device denial, redirects, malformed bodies and byte limits remain independent sanitized observations', async () => {
+  const cases: [string, () => Response][] = [
+    ...[401, 403, 404, 500].map((status): [string, () => Response] => [
+      `http-${status}`,
+      () => new Response('secret-remote-error', { status }),
+    ]),
+    [
+      'http-302',
+      () =>
+        new Response('secret-redirect', {
+          status: 302,
+          headers: { location: 'https://secret-destination.test/' },
+        }),
+    ],
+    ['invalid-response', () => new Response('secret-invalid-json')],
+    [
+      'response-too-large',
+      () =>
+        new Response('secret-body', {
+          headers: { 'content-length': String(quotaLimits.bytes + 1) },
+        }),
+    ],
+    ['response-too-large', () => new Response('s'.repeat(quotaLimits.bytes + 1))],
+  ];
+  for (const [reason, response] of cases) {
+    const urls: string[] = [];
+    const report = await collectQuotaEvidence({
+      ...credentials,
+      includeDedicatedDevices: true,
+      fetcher: async (url, init) => {
+        urls.push(String(url));
+        assert.equal(init?.redirect, 'error');
+        if (String(url) === 'https://api-cloud.browserstack.com/automate/dedicated_devices')
+          return response();
+        assert.equal(new URL(String(url)).host, 'api.browserstack.com');
+        return valid(url);
+      },
+    });
+    assert.equal(urls.length, 9, reason);
+    assert.deepEqual(report.dedicatedDevices, { outcome: 'unavailable', reason });
+    assert.equal(report.status, 'passed');
+    assert.equal(report.history.deadlineExceeded, false);
+    assert.equal(report.allocationAllowed, false);
+    assert.doesNotMatch(JSON.stringify(report), /secret/);
+  }
+});
+
+test('dedicated-device work cannot exceed shared deadlines or change already-complete accounting', async () => {
+  for (const advance of [quotaLimits.requestMs, quotaLimits.totalMs]) {
+    let clock = 0;
+    let calls = 0;
+    const report = await collectQuotaEvidence({
+      ...credentials,
+      includeDedicatedDevices: true,
+      now: () => clock,
+      fetcher: async (url) => {
+        calls++;
+        if (String(url) === 'https://api-cloud.browserstack.com/automate/dedicated_devices') {
+          clock = advance;
+          return Response.json(dedicatedDevice());
+        }
+        return valid(url);
+      },
+    });
+    assert.equal(calls, 9);
+    assert.deepEqual(report.dedicatedDevices, {
+      outcome: 'unavailable',
+      reason: advance === quotaLimits.totalMs ? 'deadline-exceeded' : 'request-timeout',
+    });
+    assert.equal(report.status, 'passed');
+    assert.equal(report.history.deadlineExceeded, false);
+  }
+});
 
 test('fixed provenance GETs plus an empty retained build list; IDs match immutable smoke reports', async () => {
   const ids: string[] = [];
@@ -85,6 +264,7 @@ test('fixed provenance GETs plus an empty retained build list; IDs match immutab
     ),
   );
   assert.equal(result.status, 'passed');
+  assert.deepEqual(result.dedicatedDevices, { outcome: 'not-requested' });
   assert.equal(result.remainingMinutes, null);
   assert.equal(result.allocationAllowed, false);
   assert.equal(result.accountWideHistory, 'unknown');
@@ -690,6 +870,7 @@ test('the global request cap includes provenance, pages and details, retaining e
   const urls: string[] = [];
   const result = await collectQuotaEvidence({
     ...credentials,
+    includeDedicatedDevices: true,
     fetcher: async (url) => {
       const location = new URL(String(url));
       urls.push(String(url));
@@ -713,6 +894,8 @@ test('the global request cap includes provenance, pages and details, retaining e
   assert.equal(result.requests, quotaLimits.requests);
   assert.equal(new Set(urls).size, 64);
   assert.equal(result.status, 'failed');
+  assert.deepEqual(result.dedicatedDevices, { outcome: 'unavailable', reason: 'request-limit' });
+  assert.ok(urls.every((url) => new URL(url).host === 'api.browserstack.com'));
   assert.equal(result.history.sessions.length, 106);
   const unavailable = result.history.sessions
     .flatMap(({ observations }) => observations)

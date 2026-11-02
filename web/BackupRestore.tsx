@@ -4,6 +4,7 @@ import type { PublicKeyCredentialRequestOptionsJSON } from '@simplewebauthn/brow
 import { Button, Choice, Modal } from '../src/ui/redesign/Controls.tsx';
 import {
   RESTORE_CONSEQUENCES,
+  RESTORE_OPERATION_MS,
   RESTORE_RESOURCE_MESSAGES,
   validRestoreOutcome,
   validRestorePreview,
@@ -25,6 +26,10 @@ type Status = RestoreStatus;
 type Entry = { id: string; createdAt: number };
 type Phase = 'idle' | 'verifying' | 'creating' | 'uploading' | 'confirming' | 'cancelling';
 const MAX_ARCHIVE_BYTES = 5 * 1024 ** 3;
+// The server owns each immutable, session-capped deadline. This only bounds the
+// browser wait, allowing the separate 60s ceremony and a 30s transport allowance;
+// browser clock skew and a retry cannot renew the server's original intent.
+const RESTORE_ACTION_MS = RESTORE_OPERATION_MS + 60_000 + 30_000;
 const publicRestoreError = Symbol('public restore response');
 function publicMessage(failure: unknown, fallback: string) {
   return failure instanceof Error && publicRestoreError in failure ? failure.message : fallback;
@@ -330,7 +335,7 @@ export function BackupRestore({
       proofSignal.removeEventListener('abort', cancelCeremony);
     }
   }
-  function beginAction() {
+  function beginAction(timeoutMs = 5 * 60_000) {
     busy.current = true;
     // An older status read cannot replace the result of this mutation.
     reads.current++;
@@ -338,7 +343,7 @@ export function BackupRestore({
     const identity = ++operation.current,
       pending = new AbortController();
     controller.current = pending;
-    const signal = AbortSignal.any([pending.signal, AbortSignal.timeout(5 * 60_000)]);
+    const signal = AbortSignal.any([pending.signal, AbortSignal.timeout(timeoutMs)]);
     const check = () => {
       if (!mounted.current || operation.current !== identity || signal.aborted)
         throw new DOMException('Restore request ended.', 'AbortError');
@@ -368,7 +373,7 @@ export function BackupRestore({
       return;
     }
     if (!resumeUpload && source === 'catalog' && !selection) return;
-    const { identity, signal, check } = beginAction();
+    const { identity, signal, check } = beginAction(RESTORE_ACTION_MS);
     try {
       if (!resumeUpload) await verify(check, signal);
       check();
@@ -442,7 +447,7 @@ export function BackupRestore({
     )
       return;
     const retry = admitted(job) || confirmed.current?.id === job.id;
-    const { identity, signal, check } = beginAction();
+    const { identity, signal, check } = beginAction(RESTORE_ACTION_MS);
     try {
       // Re-verifying an already admitted intent would invalidate its original
       // verified_at. A retry observes/reuses that exact original authorization.

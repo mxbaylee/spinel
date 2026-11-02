@@ -69,7 +69,7 @@ test('CLI binds same-run immutable plan digest/source and publishes all selected
   assert.equal(result.code, 0);
   assert.equal(result.report.passed, true);
   assert.equal(result.report.evidence.plan.tested, head);
-  assert.equal(result.report.evidence.results.length, 11);
+  assert.equal(result.report.evidence.results.length, 12);
   assert.match(result.summary, /doc-responsiveness/);
 });
 test('CLI failure records survive wrong identity, cancelled gate and missing selected evidence', () => {
@@ -89,6 +89,31 @@ test('CLI failure records survive wrong identity, cancelled gate and missing sel
     assert.equal(result.report.passed, false);
     assert.ok(result.report.evidence.error);
     assert.match(result.summary, /"passed": false/);
+  }
+});
+
+test('browser aggregate cannot pass missing, skipped or failed selected sized restore evidence', () => {
+  const plan = coveragePlan(
+    'pull_request',
+    {
+      action: 'synchronize',
+      pull_request: { base: { sha: 'a'.repeat(40) }, head: { sha: head }, labels: [] },
+    },
+    ['src/server/auth/session.ts'],
+    head,
+  );
+  const complete = Object.fromEntries(
+    suiteIds.map((id) => [id, plan.suites[id].selected ? 'success' : 'skipped']),
+  );
+  for (const status of [undefined, 'failure', 'cancelled', 'skipped']) {
+    const result = run({
+      COVERAGE_RESULTS: JSON.stringify({ ...complete, 'restore-timing': status }),
+    });
+    expectFailure(result);
+  }
+  function expectFailure(result: ReturnType<typeof run>) {
+    assert.equal(result.code, 1);
+    assert.match(result.report.evidence.error, /Incomplete coverage restore-timing/);
   }
 });
 

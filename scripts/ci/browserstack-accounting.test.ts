@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
 import { createBudgetReport, type QuotaEvidence } from './browserstack-budget.ts';
 import { reconcileReservation, reserveCapability } from './browserstack-admission.ts';
-import { retainedSessionIds } from './browserstack-quota.ts';
+import { quotaLimits, retainedSessionIds } from './browserstack-quota.ts';
 
 test('quota CLI records the owner estimate and immutable persistence without allocating', async () => {
   await exercise('new', 'quota');
@@ -33,6 +33,11 @@ test('quota and reserve recover retained certain receipts without a new-attempt 
   for (const scenario of ['held-uncertain', 'held-pending', 'held-stale'] as const)
     await exercise(scenario, 'quota');
 });
+test('dedicated inventory observations persist without changing quota or reservation decisions', async () => {
+  for (const inventory of ['denied', 'malformed', 'empty', 'available', 'oversized'] as const)
+    await exercise('valid', 'quota', inventory);
+  await exercise('valid', 'reserve', 'available');
+});
 
 type Scenario =
   | 'new'
@@ -51,7 +56,12 @@ type Scenario =
   | 'held-uncertain'
   | 'held-pending'
   | 'held-stale';
-async function exercise(scenario: Scenario, operation: 'quota' | 'reserve' | 'reconcile') {
+type Inventory = 'denied' | 'malformed' | 'empty' | 'available' | 'oversized';
+async function exercise(
+  scenario: Scenario,
+  operation: 'quota' | 'reserve' | 'reconcile',
+  inventory: Inventory = 'denied',
+) {
   const directory = await mkdtemp(join(tmpdir(), 'spinel-accounting-'));
   try {
     const fixturePath = fileURLToPath(
@@ -227,6 +237,21 @@ globalThis.fetch = async (url, init) => {
   const method = init.method;
   calls.push({ host: parsed.host, path: parsed.pathname, method });
   writeFileSync(${JSON.stringify(join(directory, 'calls.json'))}, JSON.stringify(calls));
+  if (parsed.host === 'api-cloud.browserstack.com') {
+    if (parsed.href !== 'https://api-cloud.browserstack.com/automate/dedicated_devices' ||
+        method !== 'GET' || init.body !== undefined || init.redirect !== 'error')
+      throw new Error('unexpected dedicated inventory request');
+    if (new Headers(init.headers).get('Authorization') !== 'Basic ' + Buffer.from('unit-provider-user:unit-provider-key').toString('base64'))
+      throw new Error('missing inventory authentication');
+    if (${JSON.stringify(operation)} === 'reconcile') throw new Error('reconciliation must not request inventory');
+    if (${JSON.stringify(inventory)} === 'denied') return new Response('inventory-private-error', { status: 403 });
+    if (${JSON.stringify(inventory)} === 'malformed') return Response.json({ devices: [], detail: 'inventory-private-error' });
+    if (${JSON.stringify(inventory)} === 'empty') return Response.json([]);
+    if (${JSON.stringify(inventory)} === 'oversized') return new Response('inventory-private-error', { headers: { 'content-length': '${quotaLimits.bytes + 1}' } });
+    return Response.json({ os: 'android', realMobile: true, state: 'available',
+      device: 'inventory-private-name', udid: 'inventory-private-udid',
+      sim_details: [{ phone_number: 'inventory-private-phone' }], in_use_by: 'inventory-private-email' });
+  }
   if (parsed.host === 'api.browserstack.com') {
     if (method !== 'GET') throw new Error('provider mutation forbidden');
     const path = parsed.pathname;
@@ -318,18 +343,62 @@ globalThis.fetch = async (url, init) => {
       `allocation_allowed=${allocationAllowed}\n`,
     );
     assert.match(await readFile(join(directory, 'summary.md'), 'utf8'), /60 lifetime minutes/);
-    assert.ok(calls.every((call) => call.host !== 'api.browserstack.com' || call.method === 'GET'));
+    assert.match(
+      await readFile(join(directory, 'summary.md'), 'utf8'),
+      /Device Tunnel, native Firefox and charging unverified/,
+    );
+    const inventoryCalls = calls.filter((call) => call.host === 'api-cloud.browserstack.com');
+    assert.deepEqual(
+      inventoryCalls,
+      operation === 'reconcile'
+        ? []
+        : [
+            {
+              host: 'api-cloud.browserstack.com',
+              path: '/automate/dedicated_devices',
+              method: 'GET',
+            },
+          ],
+    );
+    const expectedInventory =
+      operation === 'reconcile'
+        ? { outcome: 'not-requested' }
+        : inventory === 'empty' || inventory === 'available'
+          ? {
+              outcome: 'available',
+              data: {
+                returnedEntries: inventory === 'available' ? 1 : 0,
+                availableRealAndroidEntries: inventory === 'available' ? 1 : 0,
+                availableRealIosEntries: 0,
+                otherEntries: 0,
+              },
+            }
+          : {
+              outcome: 'unavailable',
+              reason:
+                inventory === 'denied'
+                  ? 'http-403'
+                  : inventory === 'oversized'
+                    ? 'response-too-large'
+                    : 'invalid-response',
+            };
+    assert.deepEqual(report.evidence.dedicatedDevices, expectedInventory);
+    assert.ok(calls.every((call) => call.host === 'api.github.com' || call.method === 'GET'));
     assert.equal(
       calls[0].host,
       'api.github.com',
       'durable history is loaded before current collection',
     );
     assert.ok(
-      calls.every((call) => ['api.browserstack.com', 'api.github.com'].includes(call.host)),
+      calls.every((call) =>
+        ['api.browserstack.com', 'api-cloud.browserstack.com', 'api.github.com'].includes(
+          call.host,
+        ),
+      ),
     );
     assert.doesNotMatch(
       JSON.stringify(report) + child.stdout + child.stderr,
-      /unit-provider-user|unit-provider-key|unit-github-token/,
+      /unit-provider-user|unit-provider-key|unit-github-token|inventory-private|udid|sim_details|in_use_by/,
     );
     if (canPersist) {
       assert.equal(report.measuredTerminalSessionSeconds, isHeld ? 260 : 241);
@@ -340,6 +409,8 @@ globalThis.fetch = async (url, init) => {
       );
       assert.equal(report.persistence.status, 'verified');
       const stored = JSON.parse(await readFile(join(directory, 'stored.json'), 'utf8'));
+      assert.deepEqual(stored.latest.evidence.dedicatedDevices, expectedInventory);
+      assert.doesNotMatch(JSON.stringify(stored), /inventory-private|udid|sim_details|in_use_by/);
       assert.equal(stored.schemaVersion, 2);
       assert.equal(stored.ledger.sessions.length, isHeld ? 16 : 15);
       assert.equal(stored.latest.evidence.history.builds.length, 5);

@@ -12,6 +12,7 @@ import {
   matchingNativeConfirmation,
   matchingNativeControl,
   nativeControls,
+  normalizedPngScreenshot,
   observeBrowserTask,
   openNativeShare,
   preparedCapabilityJournal,
@@ -19,6 +20,7 @@ import {
   runCapability,
   runCapabilityLane,
   screenshotResponseShape,
+  screenshotLimits,
   verifyCapabilityAdmission,
   verifyLaunchedBrowser,
   verifyTransportProbe,
@@ -36,6 +38,9 @@ const identity: ReservationIdentity = {
 };
 const sessionId = 'c'.repeat(40);
 const target = { browser: 'chrome', device: 'Google Pixel 10', osVersion: '16' } as const;
+// A complete 1x1 RGBA PNG, including valid IHDR/IDAT/IEND chunks and CRCs.
+const tinyPng =
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNQTl/3HwAEIQI43iG0hQAAAABJRU5ErkJggg==';
 function admission() {
   const policy = readAdmissionPolicy(
     JSON.parse(
@@ -151,15 +156,27 @@ test('wrong run, stale, missing, changed-policy and consumed admissions all deny
   );
 });
 
-test('native controls are derived from visible device XML with decoded exact labels', () => {
+test('native XML retains unavailable and unlabeled parents while matching only available exact controls', () => {
   const controls = nativeControls(
     '<hierarchy><node text="Install &amp; open" content-desc="Add to Home screen" enabled="true"/><node text="Spinel" visible="false"/><XCUIElementTypeButton label="Add" enabled="true"/></hierarchy>',
   );
-  assert.equal(controls.length, 2);
-  assert.equal(controls[0].attributes.text, 'Install & open');
-  assert.equal(controls[0].attributes['content-desc'], 'Add to Home screen');
-  assert.equal(controls[1].type, 'XCUIElementTypeButton');
+  assert.equal(controls.length, 4);
+  assert.equal(controls[1].attributes.text, 'Install & open');
+  assert.equal(controls[1].attributes['content-desc'], 'Add to Home screen');
+  assert.equal(controls[1].parent, controls[0]);
+  assert.equal(controls[2].attributes.visible, 'false');
+  assert.equal(controls[3].type, 'XCUIElementTypeButton');
+  assert.equal(matchingNativeControl(controls, /^Spinel$/), null);
   assert.throws(() => nativeControls({ source: 'not XML' }), /capability-native-source-invalid/);
+  for (const malformed of [
+    '<hierarchy><node text="Add"/></wrong>',
+    '<hierarchy><node text="Add"/>',
+    '<hierarchy><node text="Add" enabled="true" enabled="false"/></hierarchy>',
+    '<hierarchy><node text="unterminated/></hierarchy>',
+    '<hierarchy><node invalid/></hierarchy>',
+    '<hierarchy><!-- unfinished',
+  ])
+    assert.throws(() => nativeControls(malformed), /capability-native-source-invalid/);
 });
 
 test('the observed Chrome universal-install label is selected from native XML without accepting unrelated text', () => {
@@ -212,13 +229,21 @@ const chromeConfirmationXML = `<hierarchy>
   <android.widget.Button class="android.widget.Button" text="Cancel" resource-id="com.android.chrome:id/negative_button" clickable="true" enabled="true"/>
   <android.widget.Button class="android.widget.Button" text="Add" resource-id="com.android.chrome:id/positive_button" clickable="true" enabled="true"/>
 </hierarchy>`;
-// The third device run exposed these labels and container IDs, but did not
-// retain clickability. This fixture tests the conditional candidate only.
-const launcherPinConfirmationXML = `<android.widget.FrameLayout resource-id="com.google.android.apps.nexuslauncher:id/add_item_drag_layer" enabled="true" displayed="true">
-  <android.view.View resource-id="com.android.launcher3.widgetpicker:id/pin_widgets_catalog" enabled="true" displayed="true">
-    <android.widget.TextView text="Add to home screen" clickable="true" enabled="true" displayed="true"/>
+const pinText =
+  '<android.widget.TextView text="Add to home screen" clickable="false" enabled="true" displayed="true"/>';
+const pinTarget = `<android.view.View clickable="true" enabled="true" displayed="true"><android.view.View enabled="true" displayed="true">${pinText}</android.view.View></android.view.View>`;
+// The fourth run proved the label is not clickable but retained no hierarchy.
+// This conditional fixture places the clickable widget-details entry beside
+// the Add path to prove that a sibling cannot supply the missing parent action.
+const pinPanel = (
+  content: string,
+) => `<android.widget.FrameLayout resource-id="com.google.android.apps.nexuslauncher:id/add_item_drag_layer" clickable="false" enabled="true" displayed="true">
+  <android.view.View resource-id="com.android.launcher3.widgetpicker:id/pin_widgets_catalog" clickable="false" enabled="true" displayed="true">
+    <android.view.View resource-id="com.android.launcher3.widgetpicker:id/widget_details" clickable="true" enabled="true" displayed="true"><android.widget.TextView text="Spinel"/></android.view.View>
+    ${content}
   </android.view.View>
 </android.widget.FrameLayout>`;
+const launcherPinConfirmationXML = pinPanel(pinTarget);
 
 test('Chrome confirmation selects the observed Add button rather than the Create shortcut title or name field', () => {
   const selected = matchingNativeConfirmation(nativeControls(chromeConfirmationXML));
@@ -244,49 +269,97 @@ test('Chrome confirmation selects the observed Add button rather than the Create
   );
 });
 
-test('launcher pin confirmation requires its own click action and the observed visible catalog ancestry', () => {
-  const selected = matchingNativeConfirmation(nativeControls(launcherPinConfirmationXML));
+test('launcher pin confirmation selects only the exact label parent path and refuses ambiguous or blocked ancestors', () => {
+  const controls = nativeControls(launcherPinConfirmationXML);
+  const selected = matchingNativeConfirmation(controls);
   assert.equal(selected?.label, 'Add to home screen');
-  assert.equal(selected?.control.type, 'android.widget.TextView');
+  assert.equal(selected?.control.type, 'android.view.View');
+  assert.equal(
+    selected?.control,
+    controls.find((control) => control.attributes.text === 'Add to home screen')?.parent?.parent,
+  );
+  assert.notEqual(
+    selected?.control.attributes['resource-id'],
+    'com.android.launcher3.widgetpicker:id/widget_details',
+  );
   assert.ok(selected?.selector.includes("@clickable='true'"));
   assert.ok(selected?.selector.includes("not(@heading='true')"));
   assert.ok(selected?.selector.includes("not(@role='heading')"));
   assert.ok(
     selected?.selector.includes(
-      "ancestor::*[@resource-id='com.android.launcher3.widgetpicker:id/pin_widgets_catalog'",
+      "@resource-id='com.android.launcher3.widgetpicker:id/pin_widgets_catalog'",
     ),
   );
   assert.ok(
     selected?.selector.includes(
-      "ancestor::*[@resource-id='com.google.android.apps.nexuslauncher:id/add_item_drag_layer'",
+      "@resource-id='com.google.android.apps.nexuslauncher:id/add_item_drag_layer'",
     ),
   );
-  const rejected = [
-    launcherPinConfirmationXML.replace('clickable="true"', 'clickable="false"'),
-    launcherPinConfirmationXML.replace('clickable="true"', ''),
-    launcherPinConfirmationXML.replace('clickable="true"', 'clickable="true" heading="true"'),
-    launcherPinConfirmationXML.replace('clickable="true"', 'clickable="true" role="heading"'),
-    launcherPinConfirmationXML.replace(
-      'clickable="true" enabled="true"',
-      'clickable="true" enabled="false"',
+  assert.ok(selected?.selector.includes('count(.//*'));
+  const unavailable = [
+    pinPanel(pinText),
+    pinPanel(pinTarget.replace('clickable="true"', 'clickable="false"')),
+    pinPanel(pinText).replace(
+      'id/pin_widgets_catalog" clickable="false"',
+      'id/pin_widgets_catalog" clickable="true"',
     ),
-    launcherPinConfirmationXML.replace(
-      'clickable="true" enabled="true" displayed="true"',
-      'clickable="true" enabled="true" displayed="false"',
+    pinPanel(
+      pinTarget.replace('<android.view.View enabled="true"', '<android.view.View enabled="false"'),
     ),
-    launcherPinConfirmationXML.replace('pin_widgets_catalog', 'unrelated_catalog'),
-    launcherPinConfirmationXML.replace(
-      'id/pin_widgets_catalog" enabled="true"',
-      'id/pin_widgets_catalog" enabled="false"',
+    pinPanel(
+      pinTarget.replace(
+        '<android.view.View enabled="true"',
+        '<android.view.View visible="false" enabled="true"',
+      ),
     ),
-    launcherPinConfirmationXML.replace(
-      'id/pin_widgets_catalog" enabled="true" displayed="true"',
-      'id/pin_widgets_catalog" enabled="true" displayed="false"',
+    pinPanel(
+      pinTarget.replace(
+        '<android.view.View enabled="true"',
+        '<android.view.View heading="true" enabled="true"',
+      ),
     ),
-    launcherPinConfirmationXML.replace('Add to home screen', 'Create shortcut'),
-    '<android.widget.TextView text="Add to home screen" clickable="true"/>',
+    pinPanel(
+      pinTarget.replace(
+        '<android.view.View enabled="true"',
+        '<android.view.View role="heading" enabled="true"',
+      ),
+    ),
+    pinPanel(
+      pinTarget.replace('clickable="true" enabled="true"', 'clickable="true" enabled="false"'),
+    ),
+    pinPanel(
+      pinTarget.replace(
+        'clickable="true" enabled="true" displayed="true"',
+        'clickable="true" enabled="true"',
+      ),
+    ),
+    launcherPinConfirmationXML.replace('id/add_item_drag_layer', 'id/wrong_layer'),
+    launcherPinConfirmationXML.replace(
+      'id/pin_widgets_catalog" clickable="false" enabled="true"',
+      'id/pin_widgets_catalog" clickable="false" enabled="false"',
+    ),
   ];
-  for (const source of rejected)
+  for (const source of unavailable)
+    assert.throws(
+      () => matchingNativeConfirmation(nativeControls(source)),
+      /capability-native-pin-confirmation-unavailable/,
+      source,
+    );
+  for (const content of [
+    pinTarget + pinTarget,
+    pinTarget.replace(pinText, pinText + pinText),
+    pinTarget.replace(pinText, pinText + '<android.widget.TextView text="Cancel"/>'),
+    pinTarget.replace('clickable="true"', 'content-desc="Cancel" clickable="true"'),
+  ])
+    assert.throws(
+      () => matchingNativeConfirmation(nativeControls(pinPanel(content))),
+      /capability-native-confirmation-ambiguous/,
+    );
+  for (const source of [
+    launcherPinConfirmationXML.replace('pin_widgets_catalog', 'unrelated_catalog'),
+    launcherPinConfirmationXML.replace('Add to home screen', 'Create shortcut'),
+    pinText,
+  ])
     assert.equal(matchingNativeConfirmation(nativeControls(source)), null, source);
 });
 
@@ -721,7 +794,7 @@ test('launch and screenshot diagnostics retain bounded observations without copy
   });
   assert.deepEqual(screenshotResponseShape(null), { type: 'null' });
   assert.deepEqual(screenshotResponseShape(['private-screenshot']), { type: 'array', length: 1 });
-  const whitespace = screenshotResponseShape('aGVsbG8=\n');
+  const whitespace = screenshotResponseShape(tinyPng + '\n');
   assert.equal(whitespace.sampleHasWhitespace, true);
   assert.equal(whitespace.sampleBase64Alphabet, false);
   const large = screenshotResponseShape('A'.repeat(2000));
@@ -729,6 +802,34 @@ test('launch and screenshot diagnostics retain bounded observations without copy
   assert.equal(large.sampledCharacters, 1024);
   assert.equal(large.sampleBase64Alphabet, true);
   assert.doesNotMatch(JSON.stringify(large), /AAAA/);
+});
+
+test('screenshots accept only bounded canonical PNG Base64 with optional CR/LF wrapping', () => {
+  for (const wrapped of [tinyPng, tinyPng.replace(/(.{12})/g, '$1\r\n'), '\n' + tinyPng + '\r'])
+    assert.equal(normalizedPngScreenshot(wrapped), tinyPng);
+  const invalid = [
+    null,
+    {},
+    '',
+    '\r\n',
+    tinyPng + ' ',
+    tinyPng + '\t',
+    tinyPng + '\u00a0',
+    tinyPng + '\\n',
+    'data:image/png;base64,' + tinyPng,
+    '-' + tinyPng.slice(1),
+    '_' + tinyPng.slice(1),
+    tinyPng + '=',
+    tinyPng.slice(0, -1),
+    tinyPng.slice(0, -4),
+    tinyPng.slice(0, -3) + 'h==',
+    Buffer.alloc(70).toString('base64'),
+    Buffer.from(tinyPng, 'base64').subarray(0, -1).toString('base64'),
+    '\n'.repeat(screenshotLimits.rawCharacters + 1),
+    Buffer.alloc(screenshotLimits.decodedBytes + 1).toString('base64'),
+  ];
+  for (const value of invalid)
+    assert.throws(() => normalizedPngScreenshot(value), /capability-screenshot-invalid/);
 });
 
 test('network checks use transport failures and retain link state without equating it with reachability', () => {
@@ -778,10 +879,19 @@ function fixture(onClose: () => void) {
     },
   } as unknown as Parameters<typeof runCapability>[2];
 }
-test('native taps keep the selected XML identity and refuse stale or ambiguous driver matches', async () => {
-  for (const count of [0, 1, 2]) {
+test('native taps keep the selected XML identity and refuse unsafe, stale or ambiguous ancestor targets with cleanup', async () => {
+  for (const [mode, count] of [
+    ['menu', 0],
+    ['menu', 1],
+    ['menu', 2],
+    ['pin', 0],
+    ['pin', 1],
+    ['pin', 2],
+    ['pin-unsafe', 0],
+  ] as const) {
     let lookups = 0,
       clicks = 0;
+    const stopAt = mode === 'menu' ? 1 : mode === 'pin-unsafe' ? 3 : 4;
     const origin = 'https://bs-local.com:8176';
     const client = clientFor('fixture-user', 'fixture-key', async (url, init) => {
       const path = String(url).split('/wd/hub/')[1] ?? String(url).split('/automate/')[1];
@@ -804,24 +914,43 @@ test('native taps keep the selected XML identity and refuse stale or ambiguous d
       else if (path.endsWith('/window/handles')) value = ['original'];
       else if (path.endsWith('/contexts')) value = ['NATIVE_APP', 'WEBVIEW_chrome'];
       else if (path.endsWith('/source'))
-        value =
-          '<hierarchy><node text="More options" visible="false"/><node text="More options" enabled="false"/><node text="More options" resource-id="chrome:menu" enabled="true"/><other text="More options"/></hierarchy>';
+        value = [
+          '<hierarchy><node text="More options" visible="false"/><node text="More options" enabled="false"/><node text="More options" resource-id="chrome:menu" enabled="true"/><other text="More options"/></hierarchy>',
+          '<android.widget.TextView text="Install and create shortcut"/>',
+          mode === 'pin-unsafe'
+            ? pinPanel(
+                pinTarget.replace(
+                  '<android.view.View enabled="true"',
+                  '<android.view.View enabled="false"',
+                ),
+              )
+            : chromeConfirmationXML,
+          launcherPinConfirmationXML,
+        ][clicks];
       else if (path.endsWith('/elements')) {
         lookups++;
-        assert.deepEqual(JSON.parse(String(init?.body)), {
-          using: 'xpath',
-          value:
-            "//*[name()='node' and @text='More options' and not(@enabled='false') and not(@visible='false') and not(@displayed='false') and @resource-id='chrome:menu']",
-        });
-        value = Array.from({ length: count }, (_, index) => ({
+        if (lookups === 1)
+          assert.deepEqual(JSON.parse(String(init?.body)), {
+            using: 'xpath',
+            value:
+              "//*[name()='node' and @text='More options' and not(@enabled='false') and not(@visible='false') and not(@displayed='false') and @resource-id='chrome:menu']",
+          });
+        if (lookups === 4) {
+          const selector = String(JSON.parse(String(init?.body)).value);
+          assert.ok(selector.includes("@text='Add to home screen'"));
+          assert.ok(selector.includes(' and ./*['));
+          assert.ok(selector.includes('ancestor::*['));
+          assert.ok(!selector.includes('widget_details'));
+        }
+        value = Array.from({ length: lookups === stopAt ? count : 1 }, (_, index) => ({
           'element-6066-11e4-a52e-4f735466cecf': `native-${index}`,
         }));
       } else if (path.endsWith('/click')) {
         clicks++;
         assert.ok(path.endsWith('/element/native-0/click'));
-        // End the one positive control after proving the intended element is clicked.
-        return new Response('', { status: 500 });
-      } else if (path.endsWith('/screenshot')) value = 'aGVsbG8=';
+        // End the positive control after the selected target's actual click request.
+        if (clicks === stopAt) return new Response('', { status: 500 });
+      } else if (path.endsWith('/screenshot')) value = tinyPng;
       return Response.json({ value });
     });
     const result = await runCapability(
@@ -835,31 +964,39 @@ test('native taps keep the selected XML identity and refuse stale or ambiguous d
         screenshot: async (name) => name,
       },
     );
-    assert.equal(lookups, 1);
-    assert.equal(clicks, count === 1 ? 1 : 0);
+    assert.equal(lookups, mode === 'pin-unsafe' ? 2 : stopAt);
+    assert.equal(clicks, stopAt - 1 + Number(count === 1));
     assert.equal(
       result.failure,
-      count === 0
-        ? 'capability-native-control-stale'
-        : count === 2
-          ? 'capability-native-control-ambiguous'
-          : 'http-500',
+      mode === 'pin-unsafe'
+        ? 'capability-native-pin-confirmation-unavailable'
+        : count === 0
+          ? 'capability-native-control-stale'
+          : count === 2
+            ? 'capability-native-control-ambiguous'
+            : 'http-500',
     );
     assert.equal(result.cleanup.session, 'deleted');
+    assert.equal(result.cleanup.network, 'restored-4g-lte-good');
+    assert.equal(result.cleanup.fixture, 'closed');
   }
 });
 test('confirmation readiness observes the final transition without a third click or replay', async (context) => {
   let clock = Date.now();
   context.mock.method(Date, 'now', () => clock);
   for (const transition of [
+    'final-first-followup-unavailable',
     'first-disappeared',
     'first-unchanged',
     'final-disappeared',
     'final-changed',
     'final-unchanged',
+    'final-unavailable-transition',
+    'final-hidden-persistent',
+    'final-disabled-persistent',
   ]) {
     const secondAction = transition.startsWith('final-');
-    const timeout = transition.endsWith('-unchanged');
+    const timeout = transition.endsWith('-unchanged') || transition.endsWith('-persistent');
     const clicked: string[] = [];
     let lookups = 0,
       afterFirstReads = 0,
@@ -917,6 +1054,15 @@ test('confirmation readiness observes the final transition without a third click
           value = chromeConfirmationXML;
           if (clicked.length === 3) {
             afterFirstReads++;
+            if (transition === 'final-first-followup-unavailable' && afterFirstReads < 3)
+              value = pinPanel(
+                pinTarget.replace(
+                  '<android.view.View enabled="true"',
+                  afterFirstReads === 1
+                    ? '<android.view.View enabled="false"'
+                    : '<android.view.View visible="false" enabled="true"',
+                ),
+              );
             if (transition === 'first-unchanged' && afterFirstReads === 2) clock += 15_000;
             else if (transition !== 'first-unchanged' && afterFirstReads >= 3) {
               value = secondAction ? secondConfirmation : '<hierarchy/>';
@@ -925,8 +1071,24 @@ test('confirmation readiness observes the final transition without a third click
           } else if (clicked.length === 4 && secondAction) {
             afterFinalReads++;
             value = secondConfirmation;
-            if (transition === 'final-unchanged' && afterFinalReads === 2) clock += 15_000;
-            else if (transition !== 'final-unchanged' && afterFinalReads >= 3) {
+            if (
+              transition === 'final-unavailable-transition' ||
+              transition.endsWith('-persistent')
+            ) {
+              const hidden =
+                transition === 'final-hidden-persistent' ||
+                (transition === 'final-unavailable-transition' && afterFinalReads === 1);
+              value = pinPanel(
+                pinTarget.replace(
+                  '<android.view.View enabled="true"',
+                  hidden
+                    ? '<android.view.View visible="false" enabled="true"'
+                    : '<android.view.View enabled="false"',
+                ),
+              );
+            }
+            if (timeout && afterFinalReads === 2) clock += 15_000;
+            else if (!timeout && afterFinalReads >= 3) {
               value =
                 transition === 'final-changed'
                   ? '<android.widget.Button text="Add" resource-id="launcher:id/third_action" clickable="true"/>'
@@ -944,11 +1106,11 @@ test('confirmation readiness observes the final transition without a third click
           assert.doesNotMatch(selector, /TextView|shortcut_name|\/title/);
         }
         if (lookups === 4 && secondAction) {
-          assert.ok(selector.includes("name()='android.widget.TextView'"));
+          assert.ok(selector.includes("name()='android.view.View'"));
           assert.ok(selector.includes("@clickable='true'"));
           assert.ok(
             selector.includes(
-              "ancestor::*[@resource-id='com.android.launcher3.widgetpicker:id/pin_widgets_catalog'",
+              "@resource-id='com.android.launcher3.widgetpicker:id/pin_widgets_catalog'",
             ),
           );
         }
@@ -962,7 +1124,7 @@ test('confirmation readiness observes the final transition without a third click
           true,
           'Home must wait for the last clicked confirmation to transition',
         );
-      } else if (path.endsWith('/screenshot')) value = 'aGVsbG8=';
+      } else if (path.endsWith('/screenshot')) value = tinyPng;
       return Response.json({ value });
     });
     const result = await runCapability(client, target, testFixture, {
@@ -985,12 +1147,24 @@ test('confirmation readiness observes the final transition without a third click
           (observation.value as { labels?: { value: string; state: unknown }[] }).labels ?? [],
       );
       assert.deepEqual(observations.find((label) => label.value === 'Add to home screen')?.state, {
-        clickable: 'true',
+        clickable: 'false',
         enabled: 'true',
         visible: null,
         displayed: 'true',
         heading: null,
       });
+      const selected = result.nativeActions.find((action) => action.label === 'Add to home screen');
+      assert.equal(selected?.target?.type, 'android.view.View');
+      assert.equal(selected?.target?.state.clickable, 'true');
+      assert.equal(selected?.target?.identity['resource-id'], undefined);
+      assert.match(selected?.selectorSha256 ?? '', /^[a-f0-9]{64}$/);
+      const candidates = result.observations.flatMap(
+        (observation) =>
+          (observation.value as { pinCandidates?: { ancestors: { sourceIndex: number }[] }[] })
+            .pinCandidates ?? [],
+      );
+      assert.equal(candidates[0]?.ancestors[1]?.sourceIndex, selected?.target?.sourceIndex);
+      assert.ok(!JSON.stringify(candidates[0]?.ancestors).includes('widget_details'));
     }
     const candidate = result.observations.find(
       (observation) => observation.stage === 'home-launch:context-candidate',
@@ -1013,8 +1187,8 @@ test('confirmation readiness observes the final transition without a third click
     assert.equal(result.cleanup.session, 'deleted');
   }
 });
-test('known allocations journal their ID before failure and restore then delete within bounded cleanup', async () => {
-  for (const screenshotResponse of ['http-error', 'invalid-object', 'invalid-base64']) {
+test('known allocations retain original failures and bounded cleanup while validating failure screenshots', async () => {
+  for (const screenshotResponse of ['http-error', 'invalid-object', 'invalid-png', 'wrapped-png']) {
     const deletionFails = screenshotResponse === 'http-error';
     const events: string[] = [],
       journals: CapabilityResult[] = [];
@@ -1045,7 +1219,9 @@ test('known allocations journal their ID before failure and restore then delete 
           value:
             screenshotResponse === 'invalid-object'
               ? { value: 'private screenshot data', token: 'private screenshot token' }
-              : 'aGVsbG8=\n',
+              : screenshotResponse === 'wrapped-png'
+                ? tinyPng.replace(/(.{12})/g, '$1\r\n')
+                : tinyPng + ' ',
         });
       }
       return Response.json({ value: null });
@@ -1060,7 +1236,11 @@ test('known allocations journal their ID before failure and restore then delete 
         journal: async (value) => {
           journals.push(structuredClone(value));
         },
-        screenshot: async (name) => name,
+        screenshot: async (name, data) => {
+          assert.equal(screenshotResponse, 'wrapped-png');
+          assert.equal(data, tinyPng);
+          return name;
+        },
       },
     );
     assert.equal(result.status, 'failed');
@@ -1072,31 +1252,36 @@ test('known allocations journal their ID before failure and restore then delete 
         (observation) =>
           (observation.value as { screenshot?: string })?.screenshot === 'unavailable',
       ),
-      {
-        stage: 'anonymous-https',
-        value: {
-          screenshot: 'unavailable',
-          failure:
-            screenshotResponse === 'http-error' ? 'http-408' : 'capability-screenshot-invalid',
-          ...(screenshotResponse === 'http-error'
-            ? {}
-            : {
-                responseShape:
-                  screenshotResponse === 'invalid-object'
-                    ? { type: 'object', keyCount: 2 }
-                    : {
-                        type: 'string',
-                        length: 9,
-                        sampledCharacters: 9,
-                        sampleBase64Alphabet: false,
-                        sampleHasWhitespace: true,
-                        dataURLPrefix: false,
-                      },
-              }),
-        },
-      },
+      screenshotResponse === 'wrapped-png'
+        ? undefined
+        : {
+            stage: 'anonymous-https',
+            value: {
+              screenshot: 'unavailable',
+              failure:
+                screenshotResponse === 'http-error' ? 'http-408' : 'capability-screenshot-invalid',
+              ...(screenshotResponse === 'http-error'
+                ? {}
+                : {
+                    responseShape:
+                      screenshotResponse === 'invalid-object'
+                        ? { type: 'object', keyCount: 2 }
+                        : {
+                            type: 'string',
+                            length: tinyPng.length + 1,
+                            sampledCharacters: tinyPng.length + 1,
+                            sampleBase64Alphabet: false,
+                            sampleHasWhitespace: true,
+                            dataURLPrefix: false,
+                          },
+                  }),
+            },
+          },
     );
-    assert.deepEqual(result.screenshots, []);
+    assert.deepEqual(
+      result.screenshots,
+      screenshotResponse === 'wrapped-png' ? ['chrome-failure'] : [],
+    );
     assert.equal(result.cleanup.network, 'restored-4g-lte-good');
     assert.equal(result.cleanup.session, deletionFails ? 'delete-failed' : 'deleted');
     assert.equal(result.cleanup.fixture, 'closed');
@@ -1108,9 +1293,75 @@ test('known allocations journal their ID before failure and restore then delete 
     ]);
     assert.doesNotMatch(
       JSON.stringify(result),
-      /fixture-key|private-bootstrap|private provider error|private screenshot|aGVsbG8/,
+      /fixture-key|private-bootstrap|private provider error|private screenshot|iVBORw0KGgo/,
     );
   }
+});
+
+test('buffered command timing records allotted budget and observed deadline flags without replaying or logging bodies', async (context) => {
+  let clock = Date.now();
+  context.mock.method(Date, 'now', () => clock);
+  const calls: string[] = [];
+  const client = clientFor('fixture-user', 'fixture-key', async (url, init) => {
+    const path = String(url).split('/wd/hub/')[1] ?? String(url).split('/automate/')[1];
+    calls.push(`${init?.method} ${path}`);
+    if (path === 'session') {
+      clock += 25;
+      return Response.json({ value: { sessionId, capabilities: { browserName: 'chrome' } } });
+    }
+    if (path.endsWith('/url')) {
+      clock += 179_976;
+      return new Response('private provider detail /_desktop-login/private-bootstrap', {
+        status: 408,
+      });
+    }
+    return Response.json({ value: null });
+  });
+  const result = await runCapability(
+    client,
+    target,
+    fixture(() => {}),
+    {
+      localIdentifier: 'local-id',
+      buildName: 'test',
+      journal: async () => {},
+      screenshot: async () => {
+        throw new Error('A depleted lane cannot attempt a capture.');
+      },
+    },
+  );
+  assert.equal(result.failure, 'http-408');
+  assert.equal(result.timing?.commands.length, 2);
+  assert.equal(result.timing?.commands[0].timeoutMilliseconds, 45_000);
+  assert.deepEqual(result.timing?.commands[1], {
+    stage: 'anonymous-https',
+    command: 'POST session/{sessionId}/url',
+    startedElapsedMilliseconds: 25,
+    durationMilliseconds: 179_976,
+    timeoutMilliseconds: 15_000,
+    remainingAtStartMilliseconds: 179_975,
+    outcome: 'failed',
+    failure: 'http-408',
+    laneAborted: false,
+    commandAborted: false,
+    deadlineReached: true,
+    remainingAtEndMilliseconds: 0,
+  });
+  assert.deepEqual(result.timing?.failure, {
+    elapsedMilliseconds: 180_001,
+    remainingMilliseconds: 0,
+    laneAborted: false,
+    deadlineReached: true,
+  });
+  assert.equal(result.timing?.totalElapsedMilliseconds, 180_001);
+  assert.equal(result.timing?.cleanupElapsedMilliseconds, 0);
+  assert.equal(calls.filter((call) => call.endsWith('/url')).length, 1);
+  assert.equal(calls.filter((call) => call.endsWith('/screenshot')).length, 0);
+  assert.equal(result.cleanup.session, 'deleted');
+  assert.equal(result.cleanup.network, 'restored-4g-lte-good');
+  assert.equal(result.cleanup.fixture, 'closed');
+  assert.doesNotMatch(JSON.stringify(result.timing), /private|fixture-key|bs-local|capabilities/);
+  assert.ok(!JSON.stringify(result.timing).includes(sessionId));
 });
 
 test('uncertain creation remains held and never fabricates a session deletion', async () => {

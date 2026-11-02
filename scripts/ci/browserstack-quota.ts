@@ -90,6 +90,32 @@ function plan(value: unknown): Plan {
     queuedSessions: count(data.queued_sessions),
   };
 }
+function dedicatedDeviceCounts(value: unknown) {
+  // The reference describes a list but illustrates one record. Support only
+  // those two shapes; an unknown envelope is never treated as empty inventory.
+  const entries = Array.isArray(value) ? value : [value];
+  const counts = {
+    returnedEntries: entries.length,
+    availableRealAndroidEntries: 0,
+    availableRealIosEntries: 0,
+    otherEntries: 0,
+  };
+  for (const value of entries) {
+    const entry = row(value);
+    if (
+      !['android', 'ios'].includes(entry.os as string) ||
+      typeof entry.realMobile !== 'boolean' ||
+      !['available', 'in use', 'cleaning', 'offline'].includes(entry.state as string)
+    )
+      throw new Error('invalid-response');
+    if (entry.realMobile && entry.state === 'available') {
+      if (entry.os === 'android') counts.availableRealAndroidEntries++;
+      else counts.availableRealIosEntries++;
+    } else counts.otherEntries++;
+  }
+  // Names, UDIDs, SIM data, occupying users and every other field stay private.
+  return counts;
+}
 function session(value: unknown, expectedId: string): Session {
   const data = row(row(value).automation_session);
   if (data.hashed_id !== expectedId) throw new Error('session-identity-mismatch');
@@ -131,6 +157,7 @@ export async function collectQuotaEvidence(options: {
   accessKey: string;
   fetcher?: typeof fetch;
   now?: () => number;
+  includeDedicatedDevices?: boolean;
 }) {
   const fetcher = options.fetcher ?? fetch;
   const now = options.now ?? (() => performance.now());
@@ -169,7 +196,11 @@ export async function collectQuotaEvidence(options: {
       // Paths use only local endpoints, validated IDs and bounded numeric offsets.
       active();
       requests++;
-      const received = await fetcher(`https://api.browserstack.com/automate/${path}`, {
+      const url =
+        path === 'dedicated_devices'
+          ? 'https://api-cloud.browserstack.com/automate/dedicated_devices'
+          : `https://api.browserstack.com/automate/${path}`;
+      const received = await fetcher(url, {
         method: 'GET',
         headers: { Authorization: authorization, Accept: 'application/json' },
         redirect: 'error',
@@ -410,6 +441,11 @@ export async function collectQuotaEvidence(options: {
             ({ evidence }) => evidence.outcome === 'available' && terminal(evidence.data),
           ),
       );
+    // This independent inventory observation cannot change usage completeness
+    // or grant native-control entitlement. Required accounting reads run first.
+    const dedicatedDevices = options.includeDedicatedDevices
+      ? await read('dedicated_devices', dedicatedDeviceCounts)
+      : { outcome: 'not-requested' as const };
     return {
       mode: 'quota',
       scope:
@@ -418,6 +454,7 @@ export async function collectQuotaEvidence(options: {
       plan: planEvidence,
       sessions,
       history,
+      dedicatedDevices,
       requests,
       limits: quotaLimits,
       coverage: 'credential-visible-retained-records-only-not-lifetime-history',

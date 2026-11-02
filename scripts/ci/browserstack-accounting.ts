@@ -100,6 +100,7 @@ async function main() {
   const evidence = await collectQuotaEvidence({
     username: process.env.BS_USERNAME ?? '',
     accessKey: process.env.BS_ACCESS_KEY ?? '',
+    includeDedicatedDevices: operation !== 'reconcile',
   });
   const source = {
     observedAt: new Date().toISOString(),
@@ -252,6 +253,13 @@ async function main() {
   await writeFile(`artifacts/${basename}.json`, `${JSON.stringify(result, null, 2)}\n`);
   if (process.env.GITHUB_OUTPUT)
     await appendFile(process.env.GITHUB_OUTPUT, `allocation_allowed=${allocationAllowed}\n`);
+  const inventory = evidence.dedicatedDevices;
+  const inventorySummary =
+    inventory.outcome === 'available'
+      ? `${inventory.data.availableRealAndroidEntries} available real Android entries / ${inventory.data.returnedEntries} total entries`
+      : inventory.outcome === 'unavailable'
+        ? `Unknown (${inventory.reason})`
+        : 'Not requested for reconciliation';
   const summary = [
     '# BrowserStack lifetime quota — owner-authorized estimate',
     '',
@@ -260,6 +268,7 @@ async function main() {
     '| Observation | Result |',
     '| --- | --- |',
     `| Accounting operation | ${operation}: ${status} |`,
+    `| Dedicated-device inventory | ${inventorySummary}; Device Tunnel, native Firefox and charging unverified |`,
     `| Measured terminal sessions/time | ${observedBudget.measuredTerminalSessions} / ${observedBudget.measuredTerminalSessionSeconds ?? 'Unknown'} elapsed seconds |`,
     `| Estimated remaining credit | ${estimate?.estimatedRemainingMinutes === null || estimate?.estimatedRemainingMinutes === undefined ? 'Unknown' : estimate.estimatedRemainingMinutes.toFixed(2) + ' minutes'}; provider balance unverified |`,
     `| Safety reserve / outstanding holds | ${estimate?.safetyReserveSeconds ?? 'Unknown'} / ${estimate?.outstandingHoldSeconds ?? 'Unknown'} seconds |`,
