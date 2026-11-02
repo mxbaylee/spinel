@@ -35,6 +35,10 @@ const formats = {
 export function prepareDocsPatch(source: string, format: keyof typeof formats) {
   const json = format === 'cjs' ? '_univerjs_core.JSONX' : 'JSONX';
   const anchor = 'const DEBOUNCE_DELAY = 300;';
+  const markerField = ', "__textXPreserveParagraphIds"';
+  const markerGuard = `
+\t\t// Sync capture marks every insert before native apply; keep the marker intact.
+\t\tif (Object.hasOwn(body, "__textXPreserveParagraphIds") && body.__textXPreserveParagraphIds !== true) return false;`;
   const helper = `${anchor}
 // Modified for Spinel: only plain single-character insert groups have the
 // qualified native action shape. Mixed composition can change own undefined
@@ -63,7 +67,7 @@ function canBalanceDocInserts(states, key) {
 \t\tconst insert = edits[edits.length - 1];
 \t\tif (!hasOnlyDocInsertKeys(insert, ["t", "len", "body", "valueRangeId"]) || !Object.hasOwn(insert, "t") || !Object.hasOwn(insert, "len") || !Object.hasOwn(insert, "body") || insert.t !== "i" || insert.len !== 1 || insert.valueRangeId !== void 0) return false;
 \t\tconst body = insert.body;
-\t\tif (!hasOnlyDocInsertKeys(body, ["dataStream", "textRuns", "paragraphs", "customRanges", "customDecorations", "customBlocks", "sectionBreaks"]) || !Object.hasOwn(body, "dataStream") || typeof body.dataStream !== "string" || body.dataStream.length !== 1) return false;
+\t\tif (!hasOnlyDocInsertKeys(body, ["dataStream", "textRuns", "paragraphs", "customRanges", "customDecorations", "customBlocks", "sectionBreaks"${markerField}]) || !Object.hasOwn(body, "dataStream") || typeof body.dataStream !== "string" || body.dataStream.length !== 1) return false;${markerGuard}
 \t\t// The SDK's structural tokens are C0 controls. Keep all C0/DEL on the native path.
 \t\tconst code = body.dataStream.charCodeAt(0);
 \t\tif (code < 32 || code === 127) return false;
@@ -111,11 +115,13 @@ function composeDocStateActions(states, key) {
       count: 2,
     },
   ];
-  // Recover only these exact substitutions, then verify the complete upstream
-  // file. The recovered original also supplies an executable negative control.
+  // Permit upgrading the exact previous patch during npm install as well as a
+  // fresh npm ci. Both recoveries still verify the complete upstream file.
+  const previousHelper = helper.replace(markerField, '').replace(markerGuard, '');
+  // The recovered original also supplies an executable negative control.
   const original = replacements.reduce(
     (text, { before, after }) => text.replaceAll(after, before),
-    source,
+    source.replaceAll(previousHelper, anchor),
   );
   if (createHash('sha256').update(original).digest('hex') !== formats[format])
     throw new Error(`Unrecognized @univerjs/docs ${format} build; review native composition.`);
@@ -124,11 +130,12 @@ function composeDocStateActions(states, key) {
       throw new Error('Docs composition patch target count changed.');
     return text.replaceAll(before, after);
   }, original);
-  if (source !== original && source !== patched)
+  const previousPatched = patched.replace(helper, previousHelper);
+  if (source !== original && source !== patched && source !== previousPatched)
     throw new Error(
       `Partially modified @univerjs/docs ${format} build; restore the pinned package.`,
     );
-  return { original, patched };
+  return { original, patched, previousPatched };
 }
 
 export async function patchInstalledDocs(root: string) {

@@ -20,6 +20,7 @@
  * dream-num/univer v1.1.0. No Pro package is read or modified.
  */
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
@@ -263,14 +264,17 @@ function sequence(requests: Request[], initial = seed()) {
 }
 
 const edit = (text: core.TextX) => core.JSONX.getInstance().editOp(text.serialize());
-// Public DocInputController's ordinary collapsed keyboard-input body shape.
+// Public DocInputController's collapsed input, after sync capture marks inserts
+// before native apply. Captured browser caches in SPN-132 exposed this field.
 function keyboardBody(index = 0): core.IDocumentBody {
-  return {
+  const body: core.IDocumentBody & { __textXPreserveParagraphIds: true } = {
+    __textXPreserveParagraphIds: true,
     dataStream: 'x',
     textRuns: [{ st: 0, ed: 1, ts: { bl: index % 2 === 0 ? 1 : 0, cl: { rgb: '#123456' } } }],
     customRanges: [],
     customDecorations: [],
   };
+  return body;
 }
 const insertAt =
   (offset: number, body = keyboardBody()): Request =>
@@ -943,16 +947,95 @@ for (const format of ['es', 'cjs'] as const) {
     assert.deepEqual(outputs[1], outputs[0]);
   });
 
-  test(`${format}: guard accepts only the complete pinned original or complete patch`, async () => {
-    const { original, patched } = prepareDocsPatch(await readBuild(format), format);
+  test(`${format}: guard accepts the pinned original and exact current or previous patch`, async () => {
+    const { original, patched, previousPatched } = prepareDocsPatch(
+      await readBuild(format),
+      format,
+    );
+    const previousHash = {
+      es: '1f454109e7520cd09b5b046f45f9ceefbed546d643139d95952157d8e503d747',
+      cjs: '7329999ae29c047b0fcd67a10104f1f48e097313fb9019e72f5868a263c432e4',
+    }[format];
+    assert.equal(createHash('sha256').update(previousPatched).digest('hex'), previousHash);
+    assert.equal(prepareDocsPatch(previousPatched, format).patched, patched);
     assert.equal(prepareDocsPatch(patched, format).patched, patched);
     assert.throws(() => prepareDocsPatch(original + '\n// unknown edit', format), /Unrecognized/);
+    assert.throws(
+      () => prepareDocsPatch(previousPatched + '\n// unknown edit', format),
+      /Unrecognized/,
+    );
     const json = format === 'cjs' ? '_univerjs_core.JSONX' : 'JSONX';
     const partial = patched.replace(
       'composeDocStateActions(cacheStates, "redoState")',
       `cacheStates.reduce((acc, cur) => ${json}.compose(acc, cur.redoState.actions), null)`,
     );
     assert.throws(() => prepareDocsPatch(partial, format), /Partially modified/);
+  });
+
+  test(`${format}: native preservation markers qualify without changing forward or inverse actions`, async () => {
+    const { original, patched, previousPatched } = prepareDocsPatch(
+      await readBuild(format),
+      format,
+    );
+    const marker = '__textXPreserveParagraphIds';
+    for (const length of [3, 32])
+      for (const mode of ['absent', 'true', 'mixed'])
+        for (const inverse of [false, true]) {
+          const initial = seed(inverse ? `${'x'.repeat(length)}\r\n` : '\r\n');
+          initial.body!.customRanges = [];
+          const scenario = sequence(
+            Array.from({ length }, (_, index) =>
+              inverse ? () => edit(new core.TextX().delete(1)) : insertAt(index),
+            ),
+            initial,
+          );
+          for (const [index, state] of scenario.states.entries()) {
+            const edits = (state[inverse ? 'undoState' : 'redoState'].actions as any)[1].e;
+            const body = edits.at(-1).body;
+            if (mode === 'true' || (mode === 'mixed' && index % 2 === 0)) body[marker] = true;
+            else delete body[marker];
+          }
+          const native = measuredFlush(original, scenario.states);
+          const previous = measuredFlush(previousPatched, scenario.states);
+          const candidate = measuredFlush(patched, scenario.states);
+          assertNativePreservation(
+            native.output,
+            candidate.output,
+            scenario,
+            `${mode}/${length}/inverse=${inverse}`,
+          );
+          if (mode === 'absent')
+            assert.deepEqual(
+              candidate,
+              previous,
+              'Existing unmarked behavior and work are unchanged.',
+            );
+          else if (length === 32) {
+            const reduced = (counts: typeof candidate.counts) => {
+              for (const key of ['bodySlices', 'cloneVisits', 'allocations'] as const)
+                assert.ok(
+                  counts[key] < previous.counts[key] * 0.8,
+                  `${mode}/${key}: native marker must not bypass balanced work`,
+                );
+            };
+            reduced(candidate.counts);
+            assert.throws(
+              () => reduced(previous.counts),
+              /must not bypass/,
+              'The exact prior patch must fail the regression criterion.',
+            );
+          }
+        }
+    for (const value of [undefined, false, null, 0, 1, 'true']) {
+      const scenario = sequence(Array.from({ length: 7 }, (_, index) => insertAt(index)));
+      const actions = scenario.states[3].redoState.actions as any;
+      actions[1].e.at(-1).body[marker] = value;
+      assert.deepEqual(
+        measuredFlush(patched, scenario.states),
+        measuredFlush(original, scenario.states),
+        'An unsupported own marker keeps the complete native fold.',
+      );
+    }
   });
 }
 
