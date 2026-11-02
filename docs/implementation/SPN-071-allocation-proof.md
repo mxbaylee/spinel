@@ -76,3 +76,30 @@ and test are diagnostic-only; copies invalidate performance timing and are never
 proposed as production instrumentation. Replay those captured states through
 the native, balanced and prototype managers to check exact parity and actual
 guard activation. Structural groups may correctly retain the fallback.
+
+## Native marker discovery; smaller repair hypothesis
+
+The browser capture passed (8.970 s, 1654.1 MiB watchdog peak), but native replay
+failed: none of eight caches activated either the existing balanced composer or
+the proposed shortcut. Actual keyboard insertion bodies carry the native paragraph-preservation
+marker `__textXPreserveParagraphIds: true`. The existing allowed-field guard
+rejects it, so typing still takes the original fold. Preserve the first replay
+failure; synthetic shortcut success did not establish browser applicability.
+
+Abandon the template shortcut as unnecessary complexity. Reviewer B also found
+its undeclared eligible undo-insertion scope; it is not proposed for production.
+The next finite hypothesis changes only the existing balanced guard: allow the
+known marker when its own value is exactly true, retaining all existing shape,
+structural and unknown-field rejection. Compare the same native captures and
+marker-bearing exact matrix against native/current behavior; require actual work
+reduction. This exercises the already implemented balanced algorithm rather than
+introducing action templates. First capture/replay and all prior failures remain.
+
+
+The first marker proof had an incorrect activation assertion copied from the
+abandoned shortcut: balanced composition changes work per composition, not the
+number of TextX.compose calls. Its work checks already showed 23,436 -> 8,658
+clone allocations for color-only groups, but activation incorrectly failed.
+Keep `marker-proof-first.log`. Revised activation checks execute the actual pure
+eligibility guard for short synthetic groups and compare iterator work for
+32-state captures; exact parity and the >=20% work criterion remain unchanged.
