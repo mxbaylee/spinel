@@ -1,10 +1,11 @@
-export type DiagnosticLoss = 'invalid' | 'queue' | 'storage' | 'unavailable' | 'stale';
+export type DiagnosticLoss = 'invalid' | 'queue' | 'storage' | 'unavailable' | 'stale' | 'expired';
 
 export interface DiagnosticsStatus {
   available: boolean;
   generation: string | null;
   recordCount: number;
   logicalBytes: number;
+  retentionDays: number;
   dropped: Record<DiagnosticLoss, number>;
   exporting: boolean;
 }

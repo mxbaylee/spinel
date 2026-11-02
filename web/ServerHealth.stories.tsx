@@ -43,6 +43,25 @@ export const SpacesDisabled: Story = {
     await expect(await within(canvasElement).findByText('Not configured')).toBeVisible();
   },
 };
+export const DiagnosticsExpiryFailed: Story = {
+  parameters: {
+    api: {
+      'GET /api/admin/health': {
+        ...healthStory,
+        jobs: healthStory.jobs.map((job) =>
+          job.name === 'diagnostics-expiry'
+            ? { ...job, failedSince: healthStoryTime - 600_000 }
+            : job,
+        ),
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByText('Diagnostics expiry')).toBeVisible();
+    await expect(canvas.getByText('Needs attention')).toBeVisible();
+  },
+};
 export const Warning: Story = {
   parameters: {
     api: {

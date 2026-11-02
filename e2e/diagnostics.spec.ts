@@ -437,6 +437,9 @@ test('Operator downloads real correlated diagnostics without document data and c
           .getByRole('region', { name: 'Server health', exact: true })
           .getByRole('heading', { name: 'Maintenance jobs' }),
       ).toBeVisible();
+      await expect(page.getByText('Diagnostics expiry', { exact: true })).toBeVisible();
+      await panel.getByText('Dropped records since server start').click();
+      await expect(panel.getByText('Expired observations', { exact: true })).toBeVisible();
       await expect
         .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
         .toBe(true);

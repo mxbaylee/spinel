@@ -59,7 +59,7 @@ export const Losses: Story = {
     api: {
       'GET /api/admin/diagnostics': {
         ...diagnosticsStory,
-        dropped: { invalid: 3, queue: 12, storage: 89, unavailable: 4, stale: 2 },
+        dropped: { invalid: 3, queue: 12, storage: 89, unavailable: 4, stale: 2, expired: 1024 },
       },
     },
   },
@@ -67,6 +67,8 @@ export const Losses: Story = {
     await userEvent.click(
       await within(canvasElement).findByText('Dropped records since server start'),
     );
+    const row = within(canvasElement).getByText('Expired observations').parentElement!;
+    await expect(within(row).getByText('1024')).toBeVisible();
   },
 };
 export const Confirmation: Story = {

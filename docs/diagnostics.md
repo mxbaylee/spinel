@@ -41,6 +41,12 @@ hidden Space groups are retained. A failure keeps its first observed failure
 time until a successful run. Successful bounded work does not mean all expired
 content or every queued generation has already been removed.
 
+**Diagnostics expiry** runs at startup and every minute under the maintenance
+gate. Each successful pass removes at most 1,024 observations older than the
+configured server-receipt cutoff; a backlog needs further passes. Failures retain
+rows and byte accounting and retry on the next tick. Explicit feedback is excluded.
+See [deployment retention configuration](deployment.md#configure-and-start).
+
 Space cleanup scans an indexed page of at most 256 root metadata rows, validates
 at most 16 eligible graphs per pass and bounds each graph to 10,000 members.
 Collaboration cleanup processes at most 100 ordered queued generations per pass.
@@ -154,11 +160,18 @@ The initial store has a 64 MiB logical/main-file limit and stops collection at a
 one event is at most 8 KiB, one batch 64 events/64 KiB. Ingest accepts at most
 120 events per actor/minute and 600 globally. Writes require 256 MiB free reserve;
 export staging requires 352 MiB. At capacity, observations drop until space is
-available or the Operator clears records. There is no automatic age deletion.
-The [SPN-063 backup-options proposal](implementation/SPN-063-backup-options.md#three-independent-retention-policies)
-discusses seven-day live-event expiry and independent optional archive retention;
-neither is implemented by that writeup.
-Loss counters reset with the process. Diagnostics initialization failure disables
+available, expiry frees logical capacity or the Operator clears records.
+SPN-110 expires observations by trusted server receipt time after seven days by
+default; deployment may configure a shorter whole-day policy. The exact cutoff
+is retained until it is older than the policy. Backward clock changes preserve
+future-receipt rows; forward changes make older observations eligible on the next
+bounded pass. Queue delays do not renew receipt time. Invalid clocks fail cleanup.
+Submitted feedback does not expire with observations, and captured exports and
+remote archives retain their independent lifetimes. The **Expired observations**
+counter records committed expiry and expired queue drops since server start;
+all loss counters reset with the process. They cannot establish historical
+completeness, including after restart. Automatic diagnostics backup remains off.
+Diagnostics initialization failure disables
 collection without preventing app startup. See the
 [implementation limits](implementation/SPN-032.md#concrete-bounds-and-lifecycle)
 for exact failure, cancellation and resource boundaries.

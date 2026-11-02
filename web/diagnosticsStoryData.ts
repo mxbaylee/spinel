@@ -37,6 +37,14 @@ export const healthStory: ServerHealth = {
   },
   jobs: [
     {
+      name: 'diagnostics-expiry',
+      configured: true,
+      running: false,
+      lastAttempt: healthStoryTime - 60_000,
+      lastSuccess: healthStoryTime - 60_000,
+      failedSince: null,
+    },
+    {
       name: 'history-maintenance',
       configured: true,
       running: false,
@@ -75,6 +83,7 @@ export const diagnosticsStory: DiagnosticsStatus = {
   generation: '11111111-1111-4111-8111-111111111111',
   recordCount: 124,
   logicalBytes: 34_500,
-  dropped: { invalid: 0, queue: 0, storage: 0, unavailable: 0, stale: 2 },
+  retentionDays: 7,
+  dropped: { invalid: 0, queue: 0, storage: 0, unavailable: 0, stale: 2, expired: 0 },
   exporting: false,
 };
