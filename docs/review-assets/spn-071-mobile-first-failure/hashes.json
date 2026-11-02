@@ -1,0 +1,26 @@
+{
+  "README.md": {
+    "bytes": 2010,
+    "sha256": "7be1cac95f8484258e107ce030381a1d3294d31cacebb0be023a80b330de0687"
+  },
+  "artifact.zip": {
+    "bytes": 2315735,
+    "sha256": "9d947e82e8158c5d28f433c4008cdfbd52c42cfeca0d69b7b4dd7f12cd9fb45f"
+  },
+  "ci-plan.json": {
+    "bytes": 3902,
+    "sha256": "7fe20131b2c92830ea38e27363c1e0b7a389aafaa2690a197dd8b66f8b806883"
+  },
+  "job.log": {
+    "bytes": 83109,
+    "sha256": "313400af6a6b31f309782cbca9f95ed1defe383d2957be0dc75fe0e71ac3f0d1"
+  },
+  "jobs.json": {
+    "bytes": 101042,
+    "sha256": "6348f38ea6a84f5352305ec58e11e36b1e906a9d13c5cb2571dea8ddf84d55c1"
+  },
+  "run.json": {
+    "bytes": 12174,
+    "sha256": "1de675615132cf3839a1ed62da2f114358db5b975382bb9344f2f523d47f7b38"
+  }
+}
