@@ -323,6 +323,16 @@ export function matchingNativeControl(
 }
 /** Menu titles and sheet headings are not confirmation actions. */
 export function matchingNativeConfirmation(controls: NativeControl[]) {
+  const pinCatalogId = 'com.android.launcher3.widgetpicker:id/pin_widgets_catalog';
+  const pinDragLayerId = 'com.google.android.apps.nexuslauncher:id/add_item_drag_layer';
+  const pinCatalog = controls.find(
+    ({ attributes }) =>
+      attributes['resource-id'] === pinCatalogId &&
+      attributes.enabled === 'true' &&
+      (attributes.visible === 'true' || attributes.displayed === 'true') &&
+      attributes.visible !== 'false' &&
+      attributes.displayed !== 'false',
+  );
   const actionable = controls.filter((control) => {
     const attributes = control.attributes;
     if (
@@ -333,6 +343,15 @@ export function matchingNativeConfirmation(controls: NativeControl[]) {
       return false;
     const role = control.type === 'node' ? attributes.class : control.type;
     if (role === 'android.widget.Button' || role === 'XCUIElementTypeButton') return true;
+    // The retained pin catalog exposed this TextView label. Its own click
+    // action and live catalog ancestry must both be proved; a text
+    // child without an action never authorizes clicking a guessed ancestor.
+    if (role === 'android.widget.TextView')
+      return (
+        Boolean(pinCatalog) &&
+        attributes.text === 'Add to home screen' &&
+        attributes.clickable === 'true'
+      );
     return (
       attributes.clickable === 'true' &&
       [
@@ -350,8 +369,19 @@ export function matchingNativeConfirmation(controls: NativeControl[]) {
     'text',
   ]);
   if (match) {
-    const identity = [];
+    const identity = ["not(@heading='true')", "not(@role='heading')", "not(@clickable='false')"];
     if (match.control.attributes.clickable === 'true') identity.push("@clickable='true'");
+    const role =
+      match.control.type === 'node' ? match.control.attributes.class : match.control.type;
+    if (role === 'android.widget.TextView') {
+      identity.push(
+        `ancestor::*[@resource-id=${xpathLiteral(pinCatalogId)} and @enabled='true' and (@visible='true' or @displayed='true') and not(@visible='false') and not(@displayed='false')]`,
+      );
+      if (controls.some(({ attributes }) => attributes['resource-id'] === pinDragLayerId))
+        identity.push(
+          `ancestor::*[@resource-id=${xpathLiteral(pinDragLayerId)} and not(@enabled='false') and not(@visible='false') and not(@displayed='false')]`,
+        );
+    }
     // An observed native identifier narrows the selected button; it does not
     // substitute for its visible action label or actionable role.
     if (match.control.attributes.name)
@@ -360,6 +390,44 @@ export function matchingNativeConfirmation(controls: NativeControl[]) {
       match.selector = `${match.selector.slice(0, -1)} and ${identity.join(' and ')}]`;
   }
   return match;
+}
+function nativeControlState(control: NativeControl) {
+  return Object.fromEntries(
+    ['clickable', 'enabled', 'visible', 'displayed', 'heading'].map((key) => {
+      const value = control.attributes[key];
+      return [key, value === undefined ? null : /^(?:true|false)$/.test(value) ? value : 'unknown'];
+    }),
+  );
+}
+/** Diagnose response shape without copying screenshot content or arbitrary provider fields. */
+export function screenshotResponseShape(value: unknown): {
+  type: string;
+  length?: number;
+  keyCount?: number;
+  sampledCharacters?: number;
+  sampleBase64Alphabet?: boolean;
+  sampleHasWhitespace?: boolean;
+  dataURLPrefix?: boolean;
+} {
+  const type = value === null ? 'null' : Array.isArray(value) ? 'array' : typeof value;
+  if (typeof value === 'string') {
+    const sample = value.slice(0, 1024);
+    return {
+      type,
+      length: value.length,
+      sampledCharacters: sample.length,
+      sampleBase64Alphabet: /^[A-Za-z0-9+/=]+$/.test(sample),
+      sampleHasWhitespace: /\s/.test(sample),
+      dataURLPrefix: /^data:/i.test(sample),
+    };
+  }
+  return {
+    type,
+    ...(Array.isArray(value) ? { length: value.length } : {}),
+    ...(value !== null && typeof value === 'object' && !Array.isArray(value)
+      ? { keyCount: Object.keys(value).length }
+      : {}),
+  };
 }
 export async function openNativeShare(
   tap: (pattern: RegExp, required?: boolean) => Promise<boolean>,
@@ -489,7 +557,9 @@ export function verifyLaunchedBrowser(
   foreground: string,
   environment: Row,
   bundleId?: unknown,
+  windowRelation?: string,
 ) {
+  requireCondition(environment.origin === browserstackOrigin, 'launched-origin-mismatch');
   const userAgent = String(environment.userAgent ?? '');
   const standalone = environment.standalone === true || environment.navigatorStandalone === true;
   const browser = {
@@ -504,8 +574,17 @@ export function verifyLaunchedBrowser(
       !(target.browser === 'safari' && /CriOS\/|FxiOS\//.test(userAgent)),
     'launched-browser-mismatch',
   );
+  // WebKit 239951@main documents SafariViewService as the shared UIProcess
+  // for iOS Home Screen web apps. Accept only this exact host pair, with a
+  // newly observed window; the origin, browser and standalone gates still apply.
+  // https://github.com/WebKit/WebKit/commit/f8247a6613c1a7ca1720888348231b88b057b613
+  const homeScreenUIProcess =
+    target.browser === 'safari' &&
+    foreground === 'com.apple.webapp' &&
+    bundleId === 'com.apple.SafariViewService' &&
+    windowRelation === 'new-after-native-launch';
   requireCondition(
-    bundleId === undefined || bundleId === null || bundleId === foreground,
+    bundleId === undefined || bundleId === null || bundleId === foreground || homeScreenUIProcess,
     'launched-context-foreground-mismatch',
   );
   const foregroundMatches =
@@ -521,7 +600,29 @@ export function verifyLaunchedBrowser(
     launchMode: standalone ? 'standalone' : 'browser-shortcut',
     nativeForeground: foreground,
     contextBundleId: bundleId ?? null,
+    contextAssociation: homeScreenUIProcess
+      ? 'webkit-home-screen-ui-process'
+      : bundleId == null
+        ? 'bundle-not-exposed'
+        : 'same-native-app',
   };
+}
+export function launchEnvironmentDiagnostic(environment: Row) {
+  return Object.fromEntries([
+    ...['origin', 'path', 'title', 'userAgent', 'controller'].map((key) => [
+      key,
+      typeof environment[key] === 'string' ? clean(environment[key]) : null,
+    ]),
+    ...[
+      'secureContext',
+      'serviceWorkerAvailable',
+      'standalone',
+      'navigatorStandalone',
+      'online',
+      'anonymousReady',
+      'invalidCertificate',
+    ].map((key) => [key, typeof environment[key] === 'boolean' ? environment[key] : null]),
+  ]);
 }
 type CapabilityOptions = {
   localIdentifier: string;
@@ -631,8 +732,10 @@ export async function runCapability(
     throw new Error(`capability-${label}`);
   }
   async function screenshot(name: string) {
+    let responseShape: ReturnType<typeof screenshotResponseShape> | undefined;
     try {
       const data = await command(session('screenshot'));
+      responseShape = screenshotResponseShape(data);
       requireCondition(
         typeof data === 'string' && data.length <= 15_000_000 && /^[A-Za-z0-9+/=]+$/.test(data),
         'screenshot-invalid',
@@ -641,7 +744,11 @@ export async function runCapability(
     } catch (error) {
       result.observations.push({
         stage: result.stage,
-        value: { screenshot: 'unavailable', failure: failure(error) },
+        value: {
+          screenshot: 'unavailable',
+          failure: failure(error),
+          ...(responseShape ? { responseShape } : {}),
+        },
       });
     }
   }
@@ -661,6 +768,7 @@ export async function runCapability(
               type: control.type,
               attribute: key,
               value: clean(control.attributes[key]),
+              state: nativeControlState(control),
             })),
         )
         .slice(0, 100),
@@ -787,12 +895,21 @@ export async function runCapability(
         );
         await command(session('window'), 'POST', { handle: selected.handle });
         const environment = row(await execute(environmentScript));
+        await record(`${result.stage}:context-candidate`, {
+          contextId: clean(entry.id),
+          contextBundleId: clean(entry.bundleId),
+          nativeForeground: foregroundApp,
+          windowHandle: selected.handle,
+          windowRelation: selected.relation,
+          environment: launchEnvironmentDiagnostic(environment),
+        });
         if (environment.origin === fixture.origin) {
           const association = verifyLaunchedBrowser(
             target,
             foregroundApp,
             environment,
             entry.bundleId,
+            selected.relation,
           );
           previousWindowHandles = selected.handles;
           return {

@@ -7,6 +7,7 @@ import { readAdmissionPolicy, type ReservationIdentity } from './browserstack-ad
 import {
   capabilityOutcome,
   installMenuLabel,
+  launchEnvironmentDiagnostic,
   launchedWindow,
   matchingNativeConfirmation,
   matchingNativeControl,
@@ -17,6 +18,7 @@ import {
   readPreparedCapabilityJournal,
   runCapability,
   runCapabilityLane,
+  screenshotResponseShape,
   verifyCapabilityAdmission,
   verifyLaunchedBrowser,
   verifyTransportProbe,
@@ -210,6 +212,13 @@ const chromeConfirmationXML = `<hierarchy>
   <android.widget.Button class="android.widget.Button" text="Cancel" resource-id="com.android.chrome:id/negative_button" clickable="true" enabled="true"/>
   <android.widget.Button class="android.widget.Button" text="Add" resource-id="com.android.chrome:id/positive_button" clickable="true" enabled="true"/>
 </hierarchy>`;
+// The third device run exposed these labels and container IDs, but did not
+// retain clickability. This fixture tests the conditional candidate only.
+const launcherPinConfirmationXML = `<android.widget.FrameLayout resource-id="com.google.android.apps.nexuslauncher:id/add_item_drag_layer" enabled="true" displayed="true">
+  <android.view.View resource-id="com.android.launcher3.widgetpicker:id/pin_widgets_catalog" enabled="true" displayed="true">
+    <android.widget.TextView text="Add to home screen" clickable="true" enabled="true" displayed="true"/>
+  </android.view.View>
+</android.widget.FrameLayout>`;
 
 test('Chrome confirmation selects the observed Add button rather than the Create shortcut title or name field', () => {
   const selected = matchingNativeConfirmation(nativeControls(chromeConfirmationXML));
@@ -233,6 +242,52 @@ test('Chrome confirmation selects the observed Add button rather than the Create
     )?.control.type,
     'android.widget.TextView',
   );
+});
+
+test('launcher pin confirmation requires its own click action and the observed visible catalog ancestry', () => {
+  const selected = matchingNativeConfirmation(nativeControls(launcherPinConfirmationXML));
+  assert.equal(selected?.label, 'Add to home screen');
+  assert.equal(selected?.control.type, 'android.widget.TextView');
+  assert.ok(selected?.selector.includes("@clickable='true'"));
+  assert.ok(selected?.selector.includes("not(@heading='true')"));
+  assert.ok(selected?.selector.includes("not(@role='heading')"));
+  assert.ok(
+    selected?.selector.includes(
+      "ancestor::*[@resource-id='com.android.launcher3.widgetpicker:id/pin_widgets_catalog'",
+    ),
+  );
+  assert.ok(
+    selected?.selector.includes(
+      "ancestor::*[@resource-id='com.google.android.apps.nexuslauncher:id/add_item_drag_layer'",
+    ),
+  );
+  const rejected = [
+    launcherPinConfirmationXML.replace('clickable="true"', 'clickable="false"'),
+    launcherPinConfirmationXML.replace('clickable="true"', ''),
+    launcherPinConfirmationXML.replace('clickable="true"', 'clickable="true" heading="true"'),
+    launcherPinConfirmationXML.replace('clickable="true"', 'clickable="true" role="heading"'),
+    launcherPinConfirmationXML.replace(
+      'clickable="true" enabled="true"',
+      'clickable="true" enabled="false"',
+    ),
+    launcherPinConfirmationXML.replace(
+      'clickable="true" enabled="true" displayed="true"',
+      'clickable="true" enabled="true" displayed="false"',
+    ),
+    launcherPinConfirmationXML.replace('pin_widgets_catalog', 'unrelated_catalog'),
+    launcherPinConfirmationXML.replace(
+      'id/pin_widgets_catalog" enabled="true"',
+      'id/pin_widgets_catalog" enabled="false"',
+    ),
+    launcherPinConfirmationXML.replace(
+      'id/pin_widgets_catalog" enabled="true" displayed="true"',
+      'id/pin_widgets_catalog" enabled="true" displayed="false"',
+    ),
+    launcherPinConfirmationXML.replace('Add to home screen', 'Create shortcut'),
+    '<android.widget.TextView text="Add to home screen" clickable="true"/>',
+  ];
+  for (const source of rejected)
+    assert.equal(matchingNativeConfirmation(nativeControls(source)), null, source);
 });
 
 test('Safari confirmation selects AddToHomeScreenAddButton rather than the sheet navigation bar or static heading', () => {
@@ -584,6 +639,98 @@ test('a native launch cannot be credited to a stale ambiguous tab or another for
   );
 });
 
+test('Safari Home Screen UIProcess association requires the exact host pair, new window and standalone runtime', () => {
+  const safari = { browser: 'safari', device: 'iPhone 18 Pro Max', osVersion: '27' } as const;
+  const environment = {
+    origin: 'https://bs-local.com:8176',
+    userAgent: 'Mozilla/5.0 (iPhone) AppleWebKit/605.1.15 Mobile/23A344',
+    standalone: true,
+    navigatorStandalone: true,
+  };
+  const associated = verifyLaunchedBrowser(
+    safari,
+    'com.apple.webapp',
+    environment,
+    'com.apple.SafariViewService',
+    'new-after-native-launch',
+  );
+  assert.equal(associated.contextAssociation, 'webkit-home-screen-ui-process');
+  assert.equal(associated.launchMode, 'standalone');
+  for (const [foreground, bundleId, relation] of [
+    ['com.apple.webapp', 'com.apple.SafariViewService', undefined],
+    ['com.apple.webapp', 'com.apple.SafariViewService', 'sole-browser-window'],
+    ['com.apple.mobilesafari', 'com.apple.SafariViewService', 'new-after-native-launch'],
+    ['com.apple.webapp.another', 'com.apple.SafariViewService', 'new-after-native-launch'],
+    ['com.apple.webapp', 'com.apple.another-service', 'new-after-native-launch'],
+  ] as const)
+    assert.throws(
+      () => verifyLaunchedBrowser(safari, foreground, environment, bundleId, relation),
+      /capability-launched-context-foreground-mismatch/,
+    );
+  for (const [changed, expected] of [
+    [{ origin: 'https://another-origin.example' }, /capability-launched-origin-mismatch/],
+    [{ userAgent: environment.userAgent + ' FxiOS/145.0' }, /capability-launched-browser-mismatch/],
+    [{ standalone: false, navigatorStandalone: false }, /capability-ios-launch-not-standalone/],
+  ] as const)
+    assert.throws(
+      () =>
+        verifyLaunchedBrowser(
+          safari,
+          'com.apple.webapp',
+          { ...environment, ...changed },
+          'com.apple.SafariViewService',
+          'new-after-native-launch',
+        ),
+      expected,
+    );
+  assert.throws(
+    () =>
+      verifyLaunchedBrowser(
+        target,
+        'com.apple.webapp',
+        { ...environment, userAgent: 'Mozilla/5.0 (Android 17) Chrome/152.0' },
+        'com.apple.SafariViewService',
+        'new-after-native-launch',
+      ),
+    /capability-launched-context-foreground-mismatch/,
+  );
+});
+
+test('launch and screenshot diagnostics retain bounded observations without copying arbitrary provider fields', () => {
+  const environment = launchEnvironmentDiagnostic({
+    origin: 'https://bs-local.com:8176',
+    path: '/_desktop-login/private-bootstrap',
+    userAgent: 'x'.repeat(1000),
+    controller: { token: 'private-controller' },
+    secureContext: true,
+    standalone: false,
+    navigatorStandalone: false,
+    arbitrary: 'private-field',
+  });
+  assert.equal(environment.origin, 'https://bs-local.com:8176');
+  assert.equal(environment.path, '/_desktop-login/[redacted]');
+  assert.equal(String(environment.userAgent).length, 500);
+  assert.equal(environment.secureContext, true);
+  assert.equal(environment.standalone, false);
+  assert.equal(environment.controller, null);
+  assert.equal(environment.online, null);
+  assert.doesNotMatch(JSON.stringify(environment), /private-|arbitrary/);
+  assert.deepEqual(screenshotResponseShape({ value: 'private-screenshot', token: 'private-key' }), {
+    type: 'object',
+    keyCount: 2,
+  });
+  assert.deepEqual(screenshotResponseShape(null), { type: 'null' });
+  assert.deepEqual(screenshotResponseShape(['private-screenshot']), { type: 'array', length: 1 });
+  const whitespace = screenshotResponseShape('aGVsbG8=\n');
+  assert.equal(whitespace.sampleHasWhitespace, true);
+  assert.equal(whitespace.sampleBase64Alphabet, false);
+  const large = screenshotResponseShape('A'.repeat(2000));
+  assert.equal(large.length, 2000);
+  assert.equal(large.sampledCharacters, 1024);
+  assert.equal(large.sampleBase64Alphabet, true);
+  assert.doesNotMatch(JSON.stringify(large), /AAAA/);
+});
+
 test('network checks use transport failures and retain link state without equating it with reachability', () => {
   const probe = (online: boolean, api: boolean, app: boolean) => ({
     online,
@@ -723,8 +870,7 @@ test('confirmation readiness observes the final transition without a third click
     const began = clock;
     const origin = 'https://bs-local.com:8176';
     const testFixture = fixture(() => {});
-    const secondConfirmation =
-      '<android.widget.Button text="Add automatically" resource-id="launcher:id/add_button" clickable="true"/>';
+    const secondConfirmation = launcherPinConfirmationXML;
     const client = clientFor('fixture-user', 'fixture-key', async (url, init) => {
       const path = String(url).split('/wd/hub/')[1] ?? String(url).split('/automate/')[1];
       let value: unknown = null;
@@ -797,8 +943,15 @@ test('confirmation readiness observes the final transition without a third click
           assert.ok(selector.includes("@resource-id='com.android.chrome:id/positive_button'"));
           assert.doesNotMatch(selector, /TextView|shortcut_name|\/title/);
         }
-        if (lookups === 4 && secondAction)
-          assert.ok(selector.includes("@resource-id='launcher:id/add_button'"));
+        if (lookups === 4 && secondAction) {
+          assert.ok(selector.includes("name()='android.widget.TextView'"));
+          assert.ok(selector.includes("@clickable='true'"));
+          assert.ok(
+            selector.includes(
+              "ancestor::*[@resource-id='com.android.launcher3.widgetpicker:id/pin_widgets_catalog'",
+            ),
+          );
+        }
         assert.ok(!selector.includes("@resource-id='launcher:id/third_action'"));
         value = [{ 'element-6066-11e4-a52e-4f735466cecf': `native-${lookups}` }];
       } else if (path.endsWith('/click')) clicked.push(path);
@@ -823,9 +976,28 @@ test('confirmation readiness observes the final transition without a third click
     assert.equal(clicked.length, expectedClicks);
     assert.equal(result.nativeActions.filter((action) => action.label === 'Add').length, 1);
     assert.equal(
-      result.nativeActions.filter((action) => action.label === 'Add automatically').length,
+      result.nativeActions.filter((action) => action.label === 'Add to home screen').length,
       secondAction ? 1 : 0,
     );
+    if (secondAction) {
+      const observations = result.observations.flatMap(
+        (observation) =>
+          (observation.value as { labels?: { value: string; state: unknown }[] }).labels ?? [],
+      );
+      assert.deepEqual(observations.find((label) => label.value === 'Add to home screen')?.state, {
+        clickable: 'true',
+        enabled: 'true',
+        visible: null,
+        displayed: 'true',
+        heading: null,
+      });
+    }
+    const candidate = result.observations.find(
+      (observation) => observation.stage === 'home-launch:context-candidate',
+    )?.value as
+      { environment: { origin: string; standalone: boolean }; windowRelation: string } | undefined;
+    assert.equal(candidate?.environment.origin, timeout ? undefined : origin);
+    assert.equal(candidate?.environment.standalone, timeout ? undefined : false);
     assert.equal(homeRequests, timeout ? 0 : 1);
     assert.equal(authRequests, timeout ? 0 : 1);
     assert.equal(afterFirstReads, transition === 'first-unchanged' ? 2 : secondAction ? 3 : 4);
@@ -842,7 +1014,8 @@ test('confirmation readiness observes the final transition without a third click
   }
 });
 test('known allocations journal their ID before failure and restore then delete within bounded cleanup', async () => {
-  for (const deletionFails of [false, true]) {
+  for (const screenshotResponse of ['http-error', 'invalid-object', 'invalid-base64']) {
+    const deletionFails = screenshotResponse === 'http-error';
     const events: string[] = [],
       journals: CapabilityResult[] = [];
     const client = clientFor('fixture-user', 'fixture-key', async (url, init) => {
@@ -865,8 +1038,16 @@ test('known allocations journal their ID before failure and restore then delete 
       }
       if (init?.method === 'DELETE' && deletionFails)
         return new Response('private provider error', { status: 500 });
-      if (path.endsWith('/screenshot'))
-        return new Response('private screenshot error', { status: 408 });
+      if (path.endsWith('/screenshot')) {
+        if (screenshotResponse === 'http-error')
+          return new Response('private screenshot error', { status: 408 });
+        return Response.json({
+          value:
+            screenshotResponse === 'invalid-object'
+              ? { value: 'private screenshot data', token: 'private screenshot token' }
+              : 'aGVsbG8=\n',
+        });
+      }
       return Response.json({ value: null });
     });
     const result = await runCapability(
@@ -893,9 +1074,29 @@ test('known allocations journal their ID before failure and restore then delete 
       ),
       {
         stage: 'anonymous-https',
-        value: { screenshot: 'unavailable', failure: 'http-408' },
+        value: {
+          screenshot: 'unavailable',
+          failure:
+            screenshotResponse === 'http-error' ? 'http-408' : 'capability-screenshot-invalid',
+          ...(screenshotResponse === 'http-error'
+            ? {}
+            : {
+                responseShape:
+                  screenshotResponse === 'invalid-object'
+                    ? { type: 'object', keyCount: 2 }
+                    : {
+                        type: 'string',
+                        length: 9,
+                        sampledCharacters: 9,
+                        sampleBase64Alphabet: false,
+                        sampleHasWhitespace: true,
+                        dataURLPrefix: false,
+                      },
+              }),
+        },
       },
     );
+    assert.deepEqual(result.screenshots, []);
     assert.equal(result.cleanup.network, 'restored-4g-lte-good');
     assert.equal(result.cleanup.session, deletionFails ? 'delete-failed' : 'deleted');
     assert.equal(result.cleanup.fixture, 'closed');
@@ -907,7 +1108,7 @@ test('known allocations journal their ID before failure and restore then delete 
     ]);
     assert.doesNotMatch(
       JSON.stringify(result),
-      /fixture-key|private-bootstrap|private provider error|private screenshot error/,
+      /fixture-key|private-bootstrap|private provider error|private screenshot|aGVsbG8/,
     );
   }
 });
