@@ -7,7 +7,7 @@ import {
   SHELL_PLACEHOLDER,
 } from './offlineShell.ts';
 import type { ShellManifest } from './offlineShell.ts';
-import { installationAssetName, installationPaths } from './pwa.ts';
+import { installationAssetDigest, installationAssetName, installationPaths } from './pwa.ts';
 
 const manifest: ShellManifest = {
   protocol: 1,
@@ -64,6 +64,68 @@ test('new runtime installation paths bind complete immutable assets while older 
       parseShellManifest(JSON.stringify({ ...current, installation: change })),
     ).toThrow();
   expect(() => parseShellManifest(JSON.stringify({ ...current, files: manifest.files }))).toThrow();
+});
+test.each([1, 2, 3])(
+  'offline-upgrade format %s installation files are isolated and retain full content digests',
+  (format) => {
+    const digest = 'a'.repeat(64);
+    const installation = Object.fromEntries(
+      installationPaths.map((path) => [path, installationAssetName(path, digest, format)]),
+    ) as NonNullable<ShellManifest['installation']>;
+    const current = {
+      ...manifest,
+      compatibility: { ...manifest.compatibility, format },
+      files: [...manifest.files, ...Object.values(installation)],
+      installation,
+    };
+    expect(parseShellManifest(JSON.stringify(current))).toEqual(current);
+    expect(installation['/manifest.webmanifest']).toBe(
+      `/assets/install-manifest-format${format}-${digest}.webmanifest`,
+    );
+    for (const path of installationPaths) {
+      expect(installationAssetDigest(path, installation[path])).toBe(digest);
+      for (const other of [undefined, 1, 2, 3])
+        if (other !== format)
+          expect(installation[path]).not.toBe(installationAssetName(path, digest, other));
+    }
+    expect(installationAssetName('/manifest.webmanifest', digest)).toBe(
+      `/assets/install-manifest-${digest}.webmanifest`,
+    );
+    expect(installationAssetName('/app-icon-192.png', digest)).toBe(
+      `/assets/install-app-icon-192-${digest}.png`,
+    );
+  },
+);
+test.each([
+  'format0',
+  'format4',
+  'format01',
+  'format1.5',
+  'format2-extra',
+  'format2-format1',
+  'preview',
+])('installation descriptors refuse unsupported fixture namespace %s', (namespace) => {
+  const digest = 'a'.repeat(64);
+  const installation = Object.fromEntries(
+    installationPaths.map((path) => [path, installationAssetName(path, digest)]),
+  ) as NonNullable<ShellManifest['installation']>;
+  installation['/manifest.webmanifest'] =
+    `/assets/install-manifest-${namespace}-${digest}.webmanifest`;
+  const current = {
+    ...manifest,
+    files: [...manifest.files, ...Object.values(installation)],
+    installation,
+  };
+  expect(
+    installationAssetDigest('/manifest.webmanifest', installation['/manifest.webmanifest']),
+  ).toBeNull();
+  expect(() => parseShellManifest(JSON.stringify(current))).toThrow();
+});
+test('installation emission refuses unknown fixture formats', () => {
+  for (const format of [0, 4, 1.5, NaN])
+    expect(() => installationAssetName('/manifest.webmanifest', 'a'.repeat(64), format)).toThrow(
+      'Unsupported installation fixture format.',
+    );
 });
 test.each([
   { protocol: 2 },

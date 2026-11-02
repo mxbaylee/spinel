@@ -29,16 +29,29 @@ export type InstallationPath = (typeof installationPaths)[number];
 export const isInstallationPath = (path: string): path is InstallationPath =>
   installationPaths.some((candidate) => candidate === path);
 
-export function installationAssetName(path: InstallationPath, digest: string) {
+export function installationAssetName(
+  path: InstallationPath,
+  digest: string,
+  fixtureFormat?: number,
+) {
+  if (fixtureFormat !== undefined && ![1, 2, 3].includes(fixtureFormat))
+    throw new Error('Unsupported installation fixture format.');
   const name = path === '/manifest.webmanifest' ? 'manifest' : path.slice(1, -4);
   const extension = path === '/manifest.webmanifest' ? 'webmanifest' : 'png';
-  return `/assets/install-${name}-${digest}.${extension}`;
+  // The existing offline-upgrade fixture isolates every file between formats.
+  // Normal production builds have no namespace and keep their original names.
+  const suffix = fixtureFormat === undefined ? '' : `-format${fixtureFormat}`;
+  return `/assets/install-${name}${suffix}-${digest}.${extension}`;
 }
 
 /** Hash-addressed public bytes bind installation assets to the emitted runtime. */
 export function installationAssetDigest(path: InstallationPath, file: string) {
-  const match = file.match(/-([a-f0-9]{64})\.(?:webmanifest|png)$/);
-  return match && installationAssetName(path, match[1]) === file ? match[1] : null;
+  const match = file.match(/(?:-format([123]))?-([a-f0-9]{64})\.(?:webmanifest|png)$/);
+  return match &&
+    installationAssetName(path, match[2], match[1] === undefined ? undefined : Number(match[1])) ===
+      file
+    ? match[2]
+    : null;
 }
 
 /** Retained manifests may use older public copy/colors, but never arbitrary URLs or keys. */

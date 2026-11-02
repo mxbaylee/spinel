@@ -22,7 +22,7 @@ const rendererChunks = {
 
 // Write the offline app shell (docs/offline.md) into the built service worker.
 // Its contents change with every build, so browsers install the new worker.
-function offlineShell(compatibility: RuntimeCompatibility): Plugin {
+function offlineShell(compatibility: RuntimeCompatibility, fixtureFormat?: number): Plugin {
   return {
     name: 'spinel-offline-shell',
     apply: 'build',
@@ -51,6 +51,7 @@ function offlineShell(compatibility: RuntimeCompatibility): Plugin {
           const file = installationAssetName(
             path,
             createHash('sha256').update(bytes).digest('hex'),
+            fixtureFormat,
           );
           installation[path] = file;
           this.emitFile({ type: 'asset', fileName: file.slice(1), source: bytes });
@@ -107,7 +108,10 @@ export default defineConfig(({ mode }) => {
   const fixtureSuffix = mode === 'offline-upgrade' ? `-format${format}` : '';
   return {
     root: fileURLToPath(new URL('./web', import.meta.url)),
-    plugins: [react(), offlineShell(compatibility)],
+    plugins: [
+      react(),
+      offlineShell(compatibility, mode === 'offline-upgrade' ? format : undefined),
+    ],
     define: { __SPINEL_RUNTIME_COMPATIBILITY__: JSON.stringify(compatibility) },
     optimizeDeps: { rolldownOptions: { output: { codeSplitting: rendererChunks } } },
     build: {
