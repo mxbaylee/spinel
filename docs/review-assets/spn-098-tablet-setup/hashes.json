@@ -1,0 +1,14 @@
+{
+  "README.md": {
+    "bytes": 1448,
+    "sha256": "d137b5c3ffd8fae828d4938b2d5c60dbfe837c26e157ebdc61ba156495fc9dd8"
+  },
+  "original-job.json": {
+    "bytes": 2920,
+    "sha256": "4f3ec723b1d4d5263a70c69a24172076d36b5d7c118bf2ebb3c95fc76ec77233"
+  },
+  "original-job.log": {
+    "bytes": 22669,
+    "sha256": "b16944738d546b16d7c2a825ca0fe17b3a0fa6aa48bafcc3c0ba6e65731cda7b"
+  }
+}
