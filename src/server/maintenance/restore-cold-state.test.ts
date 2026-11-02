@@ -37,7 +37,12 @@ import { processResourcesReleased } from './process-exit.ts';
 const cleanups: Array<() => void | Promise<void>> = [];
 afterEach(async () => {
   try {
-    for (const cleanup of cleanups.splice(0).reverse()) await cleanup();
+    await finishRestoreCrashCleanup(
+      cleanups
+        .splice(0)
+        .reverse()
+        .map((cleanup) => async () => cleanup()),
+    );
   } finally {
     vi.restoreAllMocks();
   }
