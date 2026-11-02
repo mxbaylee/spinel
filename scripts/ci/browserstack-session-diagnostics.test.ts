@@ -836,6 +836,37 @@ test('empty-chunk streams cannot starve the monotonic deadline and failed initia
   assert.doesNotMatch(JSON.stringify(failed), privateValues);
 });
 
+test('a fulfilled final journal cannot report available diagnostics after the overall deadline', async (context) => {
+  let clock = 0,
+    calls = 0,
+    finalWrites = 0;
+  let finalSnapshot: SessionDiagnostics | undefined;
+  context.mock.method(performance, 'now', () => clock);
+  const report = await collectSessionDiagnostics({
+    ...options,
+    journal: async (value) => {
+      if (value.stage === 'finished') {
+        finalWrites++;
+        finalSnapshot = value;
+        clock = diagnosticLimits.overallMilliseconds + 1;
+      }
+    },
+    fetcher: async () => {
+      calls++;
+      return new Response(appiumFailure());
+    },
+  });
+  assert.equal(report.status, 'failed');
+  assert.equal(report.failure, 'overall-timeout');
+  assert.equal(report.stage, 'finished');
+  assert.equal(report.providerSessionsAllocated, 0);
+  assert.equal(calls, 1);
+  assert.equal(finalWrites, 1);
+  assert.equal(report.retrievals[0]?.status, 'available');
+  assert.equal(finalSnapshot?.status, 'available');
+  assert.equal(finalSnapshot?.capabilityAcceptance, 'not-assessed');
+});
+
 test('the overall deadline includes a stalled initial journal and makes no provider request', async (context) => {
   let clock = 0,
     calls = 0;

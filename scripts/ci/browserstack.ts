@@ -40,6 +40,16 @@ function failure(error: unknown): string {
     : 'probe-failed';
 }
 
+export function cleanProviderText(value: unknown): string {
+  return String(value ?? '')
+    .replace(/\/_desktop-login\/[^\s"'<>?#]+/g, '/_desktop-login/[redacted]')
+    .replace(
+      /([?&](?:token|key|code|secret|session|credential)[^=\s]*=)[^&\s"'<>]*/gi,
+      '$1[redacted]',
+    )
+    .slice(0, 500);
+}
+
 export function targetsFromInventory(value: unknown): Target[] {
   if (!Array.isArray(value)) throw new Error('invalid-response-shape');
   const phones = value.filter((entry) => {

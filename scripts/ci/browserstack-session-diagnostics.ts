@@ -799,6 +799,10 @@ export async function collectSessionDiagnostics(options: Options): Promise<Sessi
           timer = setTimeout(() => reject(new Error('overall-timeout')), left);
         }),
       ]);
+      // A journal is a snapshot, not acknowledgment that its write finished in
+      // time. On a late final write the returned/logged result and CLI failure
+      // supersede that snapshot; do not retry persistence beyond this bound.
+      if (performance.now() >= deadline) throw new Error('overall-timeout');
     } catch (error) {
       throw new Error(
         error instanceof Error && error.message === 'overall-timeout'

@@ -43,6 +43,7 @@ import {
   type CapabilityResult,
 } from './browserstack-capability.ts';
 import { clientFor } from './browserstack.ts';
+import { createNativeTap, installConfirmationLabels } from './browserstack-native-controls.ts';
 import { chromeReadinessFailureScript } from './browserstack-chrome-readiness.ts';
 import { capabilityScopeDefinition, type CapabilityScope } from './browserstack-scope.ts';
 
@@ -429,6 +430,69 @@ const pinPanel = (
   </android.view.View>
 </android.widget.FrameLayout>`;
 const launcherPinConfirmationXML = pinPanel(pinTarget);
+
+test('native tap callbacks journal observations before clicking and never replay an uncertain confirmation', async () => {
+  for (const failAt of [null, 'observation', 'click', 'action'] as const) {
+    const events: string[] = [];
+    const callbackFailure = new Error('callback failed');
+    const record = (event: string) => {
+      events.push(event);
+      if (event === failAt) throw callbackFailure;
+    };
+    const controller = createNativeTap({
+      readSource: async () => {
+        events.push('source');
+        return chromeConfirmationXML;
+      },
+      async poll(read, accepts, label) {
+        const value = await read();
+        if (!accepts(value)) throw new Error(`capability-${label}`);
+        return value;
+      },
+      click: async (selector) => {
+        assert.ok(selector.includes("@resource-id='com.android.chrome:id/positive_button'"));
+        record('click');
+      },
+      record: async (observation) => {
+        assert.equal(
+          observation.sourceSha256,
+          createHash('sha256').update(chromeConfirmationXML).digest('hex'),
+        );
+        record('observation');
+      },
+      recordAction: async (action) => {
+        assert.equal(action.label, '[Add]');
+        assert.equal(
+          action.target?.identity['resource-id'],
+          'com.android.chrome:id/positive_button',
+        );
+        record('action');
+      },
+      redact: (value) => `[${value}]`,
+    });
+    const attempt = controller.tap(installConfirmationLabels, false, true);
+    if (failAt) await assert.rejects(attempt, (error) => error === callbackFailure);
+    else assert.equal(await attempt, true);
+    assert.deepEqual(
+      events,
+      failAt === 'observation'
+        ? ['source', 'observation']
+        : failAt === 'click'
+          ? ['source', 'observation', 'click']
+          : ['source', 'observation', 'click', 'action'],
+    );
+    if (failAt !== 'observation') {
+      // A provider error or journal error can follow an actual click. Observe
+      // the unchanged confirmation without repeating its uncertain action.
+      events.length = 0;
+      await assert.rejects(
+        controller.tap(installConfirmationLabels, false, true),
+        /capability-native-confirmation-unchanged/,
+      );
+      assert.deepEqual(events, ['source', 'observation']);
+    }
+  }
+});
 
 test('Chrome confirmation selects the observed Add button rather than the Create shortcut title or name field', () => {
   const selected = matchingNativeConfirmation(nativeControls(chromeConfirmationXML));
@@ -824,6 +888,34 @@ test('Safari sync observations start a one-use operation once, poll its real res
     diagnostics.map((entry) => (entry as { phase: string }).phase),
     ['started', 'fulfilled'],
   );
+});
+
+test('Safari rejects a fulfilled observation received after its local deadline without replay', async (context) => {
+  let clock = 100;
+  context.mock.method(Date, 'now', () => clock);
+  const page = pageExecutor();
+  const phases: string[] = [];
+  const execute = async (script: string, args: unknown[], timeout: number) => {
+    const value = await page.execute(script, args, timeout);
+    // The provider can complete after its timeout before the abort timer runs.
+    // The wider lane remains open; the observation still owns its 10s limit.
+    if (page.commands() === 2) clock = 10_101;
+    return value;
+  };
+  await assert.rejects(
+    observeBrowserTask(execute, 'globalThis.started=(globalThis.started||0)+1; return true;', [], {
+      operation: 'worker-registration',
+      deadline: 100_000,
+      diagnostic: async (value) => {
+        phases.push(value.phase);
+      },
+    }),
+    { message: 'capability-browser-task-pending-timeout' },
+  );
+  assert.deepEqual(phases, ['started', 'pending-timeout']);
+  assert.equal(page.context.started, 1);
+  assert.equal(page.commands(), 3, 'start, one late poll and independent cleanup only');
+  assert.equal(page.clean(), true);
 });
 
 test('Safari reports rejected, genuinely pending and lost observations separately without fabricating completion', async () => {
@@ -1678,6 +1770,162 @@ test('Safari prerequisite bounds clip actual provider commands and preserve clea
   }
 });
 
+test('capability and diagnostic scopes reject late provider and poll results while preserving known allocation cleanup', async (context) => {
+  let clock = 100;
+  context.mock.method(Date, 'now', () => clock);
+  for (const scope of ['all', 'chrome-navigation-diagnostic'] as const) {
+    for (const lateAt of [
+      'session-command',
+      'session-lane',
+      'navigation-command',
+      'navigation-lane',
+      'poll',
+      'preflight-journal',
+    ] as const) {
+      clock = 100;
+      const calls: string[] = [];
+      let persistedKnown = false;
+      let environmentReads = 0;
+      const supplied = fixture(() => calls.push('fixture-close'));
+      const client = clientFor('fixture-user', 'fixture-key', async (url, init) => {
+        const path = String(url).split('/wd/hub/')[1] ?? String(url).split('/automate/')[1];
+        calls.push(`${init?.method} ${path}`);
+        if (path === 'session') {
+          if (lateAt === 'session-command') clock += 45_001;
+          if (lateAt === 'session-lane') clock += 180_001;
+          return Response.json({ value: { sessionId, capabilities: { browserName: 'chrome' } } });
+        }
+        if (path.endsWith('/url')) {
+          if (lateAt === 'navigation-command') clock += 15_001;
+          if (lateAt === 'navigation-lane') clock += 180_001;
+        }
+        if (path.endsWith('/execute/sync') && lateAt === 'poll') {
+          environmentReads++;
+          if (environmentReads === 2) clock += 14_000;
+          if (environmentReads === 3) clock += 1_001;
+          return Response.json({
+            value: {
+              origin: supplied.origin,
+              secureContext: true,
+              serviceWorkerAvailable: true,
+              controller: environmentReads === 2 ? null : `${supplied.origin}/service-worker.js`,
+              anonymousReady: true,
+              userAgent: 'Android Chrome/152.0',
+            },
+          });
+        }
+        if (path.endsWith('/screenshot')) return Response.json({ value: tinyPng });
+        return Response.json({ value: null });
+      });
+      const result = await runCapability(client, target, supplied, {
+        scope,
+        localIdentifier: 'local-id',
+        buildName: 'test',
+        journal: async (value) => {
+          if (lateAt === 'preflight-journal' && value.stage === 'preflight') clock = 180_101;
+          if (value.allocation === 'known' && value.sessionId === sessionId) persistedKnown = true;
+        },
+        screenshot: async (name) => name,
+      });
+      assert.equal(result.status, 'failed');
+      assert.equal(
+        result.failure,
+        lateAt.endsWith('-lane') || lateAt === 'preflight-journal'
+          ? 'capability-lane-deadline'
+          : lateAt === 'poll'
+            ? 'capability-secure-worker-unavailable'
+            : 'capability-command-deadline',
+        `${scope}: ${lateAt}`,
+      );
+      if (lateAt === 'preflight-journal') {
+        assert.equal(result.allocation, 'not-started');
+        assert.equal(result.uncertainAllocation, false);
+        assert.deepEqual(calls, ['fixture-close']);
+      } else {
+        assert.equal(
+          persistedKnown,
+          true,
+          'Persist a returned session ID before deadline rejection.',
+        );
+        assert.equal(result.sessionId, sessionId);
+        assert.equal(result.cleanup.network, 'restored-4g-lte-good');
+        assert.equal(result.cleanup.session, 'deleted');
+        assert.equal(result.cleanup.fixture, 'closed');
+        assert.equal(result.uncertainAllocation, false);
+        assert.equal(calls.filter((call) => call === 'POST session').length, 1);
+        if (lateAt.startsWith('session-'))
+          assert.equal(calls.filter((call) => call.endsWith('/url')).length, 0);
+        if (lateAt === 'poll')
+          assert.equal(
+            environmentReads,
+            3,
+            'Only two individually timely reads belong to the expired poll.',
+          );
+        assert.deepEqual(calls.slice(-3), [
+          `PUT sessions/${sessionId}/update_network.json`,
+          `DELETE session/${sessionId}`,
+          'fixture-close',
+        ]);
+      }
+    }
+  }
+});
+
+test('late cleanup responses retain observed effects without claiming timely cleanup or skipping deletion', async (context) => {
+  let clock = 100;
+  context.mock.method(Date, 'now', () => clock);
+  for (const lateAt of ['network', 'network-total', 'delete'] as const) {
+    clock = 100;
+    const calls: string[] = [];
+    const client = clientFor('fixture-user', 'fixture-key', async (url, init) => {
+      const path = String(url).split('/wd/hub/')[1] ?? String(url).split('/automate/')[1];
+      calls.push(`${init?.method} ${path}`);
+      if (path === 'session')
+        return Response.json({ value: { sessionId, capabilities: { browserName: 'chrome' } } });
+      if (path.endsWith('/url')) return new Response('fixture failure', { status: 500 });
+      if (path.endsWith('update_network.json'))
+        clock += lateAt === 'network' ? 7_001 : lateAt === 'network-total' ? 15_001 : 0;
+      if (init?.method === 'DELETE' && lateAt === 'delete') clock += 15_001;
+      return Response.json({ value: null });
+    });
+    const result = await runCapability(
+      client,
+      target,
+      fixture(() => calls.push('fixture-close')),
+      {
+        localIdentifier: 'local-id',
+        buildName: 'test',
+        journal: async () => {},
+        screenshot: async (name) => name,
+      },
+    );
+    assert.equal(
+      result.failure,
+      'http-500',
+      'Cleanup timing must not replace the original failure.',
+    );
+    assert.equal(result.status, 'failed');
+    assert.equal(
+      result.cleanup.network,
+      lateAt === 'delete' ? 'restored-4g-lte-good' : 'restored-after-deadline',
+    );
+    assert.equal(
+      result.cleanup.session,
+      lateAt === 'network' ? 'deleted' : 'deleted-after-deadline',
+    );
+    assert.equal(
+      result.uncertainAllocation,
+      false,
+      'A successful late DELETE is still an observed deletion.',
+    );
+    assert.deepEqual(calls.slice(-3), [
+      `PUT sessions/${sessionId}/update_network.json`,
+      `DELETE session/${sessionId}`,
+      'fixture-close',
+    ]);
+  }
+});
+
 test('Chrome item navigation assigns once in the verified window and observes exact URL continuity without selecting another tab', async (context) => {
   let clock = Date.now();
   context.mock.method(Date, 'now', () => clock);
@@ -2321,6 +2569,7 @@ test('confirmation readiness requires the first action and observes the final tr
       homeRequests = 0,
       authRequests = 0;
     let finalTransitionObserved = false;
+    let observationDeadlineAdvanced = false;
     const began = clock;
     const origin = 'https://bs-local.com:8176';
     const testFixture = fixture(() => {});
@@ -2377,7 +2626,6 @@ test('confirmation readiness requires the first action and observes the final tr
               // proof of either completed installation or eventual readiness.
               value =
                 '<android.widget.Toast text="Just a moment…" enabled="false" displayed="false"/>';
-              if (initialMissing && initialReads === 2) clock += 15_000;
             }
           } else if (clicked.length === 3) {
             afterFirstReads++;
@@ -2390,8 +2638,7 @@ test('confirmation readiness requires the first action and observes the final tr
                     : '<android.view.View visible="false" enabled="true"',
                 ),
               );
-            if (transition === 'first-unchanged' && afterFirstReads === 2) clock += 15_000;
-            else if (transition !== 'first-unchanged' && afterFirstReads >= 3) {
+            if (transition !== 'first-unchanged' && afterFirstReads >= 3) {
               value = secondAction ? secondConfirmation : '<hierarchy/>';
               if (!secondAction) finalTransitionObserved = true;
             }
@@ -2414,8 +2661,7 @@ test('confirmation readiness requires the first action and observes the final tr
                 ),
               );
             }
-            if (timeout && afterFinalReads === 2) clock += 15_000;
-            else if (!timeout && afterFinalReads >= 3) {
+            if (!timeout && afterFinalReads >= 3) {
               value =
                 transition === 'final-changed'
                   ? '<android.widget.Button text="Add" resource-id="launcher:id/third_action" clickable="true"/>'
@@ -2457,7 +2703,20 @@ test('confirmation readiness requires the first action and observes the final tr
     const result = await runCapability(client, target, testFixture, {
       localIdentifier: 'local-id',
       buildName: 'test',
-      journal: async () => {},
+      journal: async (value) => {
+        if (
+          !observationDeadlineAdvanced &&
+          value.observations.at(-1)?.stage === 'native-install:native-controls' &&
+          ((initialMissing && initialReads === 2) ||
+            (transition === 'first-unchanged' && afterFirstReads === 2) ||
+            (timeout && afterFinalReads === 2))
+        ) {
+          // Each provider read completes in time; persistence consumes the
+          // enclosing observation budget without inventing a late command.
+          observationDeadlineAdvanced = true;
+          clock += 15_000;
+        }
+      },
       screenshot: async (name) => name,
     });
     const expectedClicks = initialMissing ? 2 : 3 + Number(secondAction) + Number(!timeout);
