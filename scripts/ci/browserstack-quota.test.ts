@@ -515,7 +515,7 @@ test('quota CLI with missing credentials retains a failing report without openin
   }
 });
 
-test('monthly reports, every phone scope, and read-only diagnostics preserve their boundaries', async () => {
+test('monthly Safari acceptance, quota reports, every phone scope, and read-only diagnostics preserve their boundaries', async () => {
   const source = await readFile(
     new URL('../../.github/workflows/browserstack.yml', import.meta.url),
     'utf8',
@@ -661,11 +661,24 @@ test('monthly reports, every phone scope, and read-only diagnostics preserve the
     label?: string;
     fork?: boolean;
     allocationAllowed?: boolean;
+    operation?: 'quota' | 'reserve';
     jobs: string[];
     scope?: 'all' | 'chrome-navigation-diagnostic' | 'safari-acceptance';
   }[] = [
-    { event: 'schedule', jobs: ['accounting'] },
-    { event: 'workflow_dispatch', mode: 'quota', jobs: ['accounting'] },
+    {
+      event: 'schedule',
+      operation: 'reserve',
+      jobs: ['accounting', 'capability', 'reconciliation'],
+      scope: 'safari-acceptance',
+    },
+    {
+      event: 'schedule',
+      allocationAllowed: false,
+      operation: 'reserve',
+      jobs: ['accounting'],
+    },
+    { event: 'workflow_dispatch', operation: 'quota', jobs: ['accounting'] },
+    { event: 'workflow_dispatch', mode: 'quota', operation: 'quota', jobs: ['accounting'] },
     { event: 'workflow_dispatch', mode: 'diagnostics', jobs: ['diagnostics'] },
     {
       event: 'workflow_dispatch',
@@ -782,9 +795,16 @@ test('monthly reports, every phone scope, and read-only diagnostics preserve the
       runInNewContext(expression, context, { timeout: 1000 });
     const selected = ['diagnostics', 'accounting'].filter((name) => evaluate(conditions[name]));
     if (selected.includes('accounting')) {
+      const selectedOperation = evaluate(operation);
+      if (route.operation)
+        assert.equal(
+          selectedOperation,
+          route.operation,
+          `accounting operation: ${JSON.stringify(route)}`,
+        );
       context.needs.accounting.result = 'success';
       context.needs.accounting.outputs.allocation_allowed =
-        evaluate(operation) === 'reserve' && route.allocationAllowed !== false ? 'true' : 'false';
+        selectedOperation === 'reserve' && route.allocationAllowed !== false ? 'true' : 'false';
     }
     selected.push(...['capability', 'reconciliation'].filter((name) => evaluate(conditions[name])));
     assert.deepEqual(selected, route.jobs, JSON.stringify(route));

@@ -869,7 +869,7 @@ export async function runCapabilityLane(
     return notRunLane(
       target,
       'safari-acceptance-only',
-      'Chrome is not run by this Safari authored acceptance scope. It remains a required physical lane; no historical result is promoted to current-source acceptance.',
+      'Chrome is not run by this Safari authored acceptance scope. Its installed-context coverage remains unobserved by this scope; no historical result is promoted to current-source acceptance.',
     );
   if (target.browser !== 'firefox') return execute();
   return {
@@ -888,8 +888,10 @@ export async function runCapabilityLane(
       {
         stage: 'maintained-blocker',
         value: {
+          classification: 'observed-provider-route-limitation',
+          underlyingCause: 'unclassified',
           reason:
-            'The recorded real Android Firefox Automate session rejected its native-context command. This remediation does not repeat the unchanged allocation.',
+            'The recorded real Android Firefox Automate session rejected its native-context command with HTTP 400. Native launcher control remains unobserved through this route; the response does not establish a general Firefox or BrowserStack limitation. This scope does not repeat the unchanged allocation.',
           evidence: {
             path: 'docs/implementation/evidence/SPN-090-capability-41361564434.json',
             sha256: '10b1a93bceb3ed863357aee3c68027c224449a58155ef5f0d8dd31d2b6682485',
@@ -901,19 +903,64 @@ export async function runCapabilityLane(
             failure: 'http-400',
           },
           removalCondition:
-            'Establish a supported public Automate native Firefox route or choose a native-capable real Firefox runner, then replace this blocker with actual evidence.',
+            'Revisit when concrete public BrowserStack Automate evidence establishes a supported native Firefox control route. Keep this route limitation and unobserved product coverage visible alongside successful supported-scope results.',
         },
       },
     ],
   };
 }
-export function capabilityOutcome(lanes: CapabilityResult[]): 'passed' | 'failed' | 'incomplete' {
-  if (lanes.length !== 3 || new Set(lanes.map((lane) => lane.target.browser)).size !== 3)
-    return 'incomplete';
+type CapabilityOutcome = 'passed' | 'failed' | 'incomplete';
+function completeLaneSet(lanes: CapabilityResult[]) {
+  return (
+    lanes.length === 3 &&
+    ['chrome', 'firefox', 'safari'].every(
+      (browser) => lanes.filter((lane) => lane?.target?.browser === browser).length === 1,
+    ) &&
+    lanes.every((lane) => ['passed', 'failed', 'blocked', 'not-run'].includes(lane.status))
+  );
+}
+function failedLane(lane: CapabilityResult) {
+  return (
+    lane.status === 'failed' ||
+    (lane.status === 'passed' &&
+      (lane.failure !== undefined ||
+        typeof lane.startedAt !== 'string' ||
+        !Number.isFinite(Date.parse(lane.startedAt)) ||
+        typeof lane.finishedAt !== 'string' ||
+        !Number.isFinite(Date.parse(lane.finishedAt)) ||
+        lane.allocation !== 'known' ||
+        !sessionPattern.test(lane.sessionId ?? '') ||
+        lane.uncertainAllocation !== false ||
+        lane.cleanup?.network !== 'restored-4g-lte-good' ||
+        lane.cleanup?.session !== 'deleted' ||
+        lane.cleanup?.fixture !== 'closed'))
+  );
+}
+/** This remains the complete three-browser result, regardless of requested scope. */
+export function capabilityOutcome(lanes: CapabilityResult[]): CapabilityOutcome {
+  if (!completeLaneSet(lanes)) return 'incomplete';
   if (lanes.some((lane) => lane.status === 'not-run')) return 'incomplete';
-  if (lanes.some((lane) => lane.status === 'failed')) return 'failed';
+  if (lanes.some(failedLane)) return 'failed';
   if (lanes.some((lane) => lane.status === 'blocked')) return 'incomplete';
   return 'passed';
+}
+/** The CLI may pass a completed selected scope without claiming full-matrix coverage. */
+export function capabilityRunOutcome(
+  lanes: CapabilityResult[],
+  scope: CapabilityScope = 'all',
+): { status: CapabilityOutcome; fullMatrixStatus: CapabilityOutcome; exitCode: 0 | 1 } {
+  readCapabilityScope(scope);
+  const fullMatrixStatus = capabilityOutcome(lanes);
+  let status = fullMatrixStatus;
+  if (scope !== 'all' && completeLaneSet(lanes)) {
+    const browser = scope === 'safari-acceptance' ? 'safari' : 'chrome';
+    status = lanes.some(failedLane)
+      ? 'failed'
+      : lanes.find((lane) => lane.target.browser === browser)!.status === 'passed'
+        ? 'passed'
+        : 'incomplete';
+  }
+  return { status, fullMatrixStatus, exitCode: status === 'passed' ? 0 : 1 };
 }
 /** Link-state alone is insufficient: both independent uncached requests must fail. */
 export function verifyTransportProbe(value: unknown, reachable: boolean) {
@@ -2459,6 +2506,7 @@ type Journal = ReservationIdentity & {
   allocationPlan:
     'two-lane-chrome-safari-remediation' | 'chrome-navigation-diagnostic' | 'safari-acceptance';
   status: 'prepared' | 'running' | 'passed' | 'failed' | 'incomplete';
+  fullMatrixStatus: CapabilityOutcome;
   stage: string;
   reservationId: string;
   receipt: ReservationReceipt;
@@ -2477,13 +2525,14 @@ export function preparedCapabilityJournal(
     ...identity,
     scope:
       scope === 'chrome-navigation-diagnostic'
-        ? 'Chrome-only location.assign navigation and failure-only document observation with the unchanged 900-second reservation. All three required lanes remain reported; Firefox is blocked and Safari is not run. The outcome remains incomplete, including when Chrome passes.'
+        ? 'Chrome-only location.assign navigation and failure-only document observation with the unchanged 900-second reservation. Selected-scope execution is reported separately from full-matrix coverage. All three lanes remain reported; Firefox has an observed route limitation and Safari is not run. Full-matrix coverage remains incomplete when Chrome passes.'
         : scope === 'safari-acceptance'
-          ? 'Safari-only authored installed-context acceptance with a 780-second operational bound and the unchanged 900-second reservation. All three required lanes remain reported; Firefox is blocked and Chrome is not run. Ordinary browser-tab acceptance and the full monthly physical matrix remain unproven. The outcome remains incomplete, including when Safari passes.'
+          ? 'Safari-only authored installed-context acceptance with a 780-second operational bound and the unchanged 900-second reservation. Selected-scope execution is reported separately from full-matrix coverage. All three lanes remain reported; Firefox has an observed route limitation and Chrome is not run. A Safari pass does not complete ordinary browser-tab acceptance or every contract in the approved coverage map.'
           : 'Two-lane Chrome/Safari capability remediation with the unchanged 900-second reservation. All three required lanes remain reported; Firefox is explicitly blocked by prior evidence. This is not full-matrix acceptance.',
     capabilityScope: scope,
     allocationPlan: scope === 'all' ? 'two-lane-chrome-safari-remediation' : scope,
     status: 'prepared',
+    fullMatrixStatus: 'incomplete',
     stage: 'before-device-execution',
     reservationId: reservation.id,
     receipt: {
@@ -2510,6 +2559,7 @@ export function readPreparedCapabilityJournal(
       journal.capabilityScope === scope &&
       journal.allocationPlan === (scope === 'all' ? 'two-lane-chrome-safari-remediation' : scope) &&
       journal.status === 'prepared' &&
+      journal.fullMatrixStatus === 'incomplete' &&
       journal.stage === 'before-device-execution' &&
       journal.reservationId === reservation.id &&
       Array.isArray(journal.lanes) &&
@@ -2677,12 +2727,15 @@ async function main() {
           await persist();
         }
         journal.stage = 'finished';
-        journal.status = capabilityOutcome(journal.lanes);
-        if (journal.status !== 'passed') process.exitCode = 1;
+        const outcome = capabilityRunOutcome(journal.lanes, scope);
+        journal.status = outcome.status;
+        journal.fullMatrixStatus = outcome.fullMatrixStatus;
+        process.exitCode = outcome.exitCode;
       } catch (error) {
         journal.failure = failure(error);
         journal.stage = 'failed';
-        journal.status = scope === 'all' ? 'failed' : 'incomplete';
+        journal.status = 'failed';
+        journal.fullMatrixStatus = capabilityOutcome(journal.lanes);
         process.exitCode = 1;
       } finally {
         await rm(directory, { recursive: true, force: true });

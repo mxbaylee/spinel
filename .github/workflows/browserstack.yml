@@ -13,6 +13,8 @@ on:
         type: string
         required: false
   schedule:
+    # Monthly main runs own Safari authored installed-context acceptance.
+    # The report retains unobserved Chrome/Firefox and ordinary-tab coverage.
     - cron: '17 9 1 * *'
   pull_request:
     branches: [main]
@@ -101,7 +103,7 @@ jobs:
           BS_USERNAME: ${{ secrets.BS_USERNAME }}
           BS_ACCESS_KEY: ${{ secrets.BS_ACCESS_KEY }}
           GITHUB_TOKEN: ${{ github.token }}
-          BS_OPERATION: ${{ (github.event_name == 'pull_request' || inputs.mode == 'capability' || inputs.mode == 'chrome-diagnostic' || inputs.mode == 'safari-acceptance') && 'reserve' || 'quota' }}
+          BS_OPERATION: ${{ (github.event_name == 'schedule' || github.event_name == 'pull_request' || inputs.mode == 'capability' || inputs.mode == 'chrome-diagnostic' || inputs.mode == 'safari-acceptance') && 'reserve' || 'quota' }}
         run: node scripts/ci/browserstack-accounting.ts "$BS_OPERATION"
       - name: Retain admission and assumption evidence
         if: always()
@@ -128,7 +130,7 @@ jobs:
     env:
       SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
       # Every scope retains the same admission, execution, cleanup and reconciliation.
-      BS_CAPABILITY_SCOPE: ${{ ((github.event_name == 'workflow_dispatch' && inputs.mode == 'chrome-diagnostic') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-chrome')) && 'chrome-navigation-diagnostic' || ((github.event_name == 'workflow_dispatch' && inputs.mode == 'safari-acceptance') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-safari')) && 'safari-acceptance' || 'all' }}
+      BS_CAPABILITY_SCOPE: ${{ ((github.event_name == 'workflow_dispatch' && inputs.mode == 'chrome-diagnostic') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-chrome')) && 'chrome-navigation-diagnostic' || (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'safari-acceptance') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-safari')) && 'safari-acceptance' || 'all' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:

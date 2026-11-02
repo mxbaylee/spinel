@@ -6,6 +6,7 @@ import { createContext, runInContext } from 'node:vm';
 import { readAdmissionPolicy, type ReservationIdentity } from './browserstack-admission.ts';
 import {
   capabilityOutcome,
+  capabilityRunOutcome,
   captureRequiredPngScreenshot,
   chromeItemNavigationScript,
   installMenuLabel,
@@ -907,6 +908,24 @@ test('Safari cleanup failures cannot turn a completed observation into a pass or
   }
 });
 
+function completedCapabilityLane(target: CapabilityResult['target']): CapabilityResult {
+  return {
+    target,
+    status: 'passed',
+    startedAt: new Date(now).toISOString(),
+    finishedAt: new Date(now + 1000).toISOString(),
+    stage: 'capability-complete',
+    command: 'DELETE session/{sessionId}',
+    allocation: 'known',
+    sessionId,
+    uncertainAllocation: false,
+    observations: [],
+    nativeActions: [],
+    screenshots: [],
+    cleanup: { network: 'restored-4g-lte-good', session: 'deleted', fixture: 'closed' },
+  };
+}
+
 test('prepare receipts certify only zero allocations and cannot reset an execution journal', () => {
   const { manifest, durable } = admission();
   const reservation = verifyCapabilityAdmission(manifest, durable, identity, now);
@@ -918,6 +937,7 @@ test('prepare receipts certify only zero allocations and cannot reset an executi
     uncertainAllocation: false,
   });
   assert.deepEqual(readPreparedCapabilityJournal(prepared, identity, reservation, now), prepared);
+  assert.equal(prepared.fullMatrixStatus, 'incomplete');
   for (const change of [
     (value: typeof prepared) => {
       value.stage = 'device-execution';
@@ -930,6 +950,9 @@ test('prepare receipts certify only zero allocations and cannot reset an executi
     },
     (value: typeof prepared) => {
       value.receipt.attempt = '2';
+    },
+    (value: typeof prepared) => {
+      value.fullMatrixStatus = 'passed';
     },
   ]) {
     const value = structuredClone(prepared);
@@ -1012,7 +1035,7 @@ test('Chrome diagnostic scope binds prepare and run, allocates only Chrome and k
     target,
     async () => {
       executed++;
-      return { ...safari, target, status: 'passed', sessionId, allocation: 'known' };
+      return completedCapabilityLane(target);
     },
     'chrome-navigation-diagnostic',
   );
@@ -1024,6 +1047,21 @@ test('Chrome diagnostic scope binds prepare and run, allocates only Chrome and k
   assert.equal(safari.cleanup.fixture, 'not-created');
   assert.equal(capabilityOutcome([chrome, firefox, safari]), 'incomplete');
   assert.equal(capabilityOutcome([{ ...chrome, status: 'failed' }, firefox, safari]), 'incomplete');
+  assert.deepEqual(
+    capabilityRunOutcome([chrome, firefox, safari], 'chrome-navigation-diagnostic'),
+    {
+      status: 'passed',
+      fullMatrixStatus: 'incomplete',
+      exitCode: 0,
+    },
+  );
+  assert.deepEqual(
+    capabilityRunOutcome(
+      [{ ...chrome, status: 'failed', failure: 'http-500' }, firefox, safari],
+      'chrome-navigation-diagnostic',
+    ),
+    { status: 'failed', fullMatrixStatus: 'incomplete', exitCode: 1 },
+  );
   assert.deepEqual(
     [chrome, firefox, safari].flatMap((lane) => (lane.sessionId ? [lane.sessionId] : [])),
     [sessionId],
@@ -1065,13 +1103,7 @@ test('Safari acceptance binds its own receipt, allocates only Safari and cannot 
       async () => {
         executions++;
         assert.equal(browser, 'safari');
-        return {
-          ...lanes[0],
-          target: { ...target, browser },
-          status: 'passed',
-          sessionId,
-          allocation: 'known',
-        };
+        return completedCapabilityLane({ ...target, browser });
       },
       'safari-acceptance',
     );
@@ -1085,12 +1117,87 @@ test('Safari acceptance binds its own receipt, allocates only Safari and cannot 
   assert.equal(lanes[0].cleanup.fixture, 'not-created');
   assert.equal(lanes[1].cleanup.fixture, 'not-created');
   assert.equal(capabilityOutcome(lanes), 'incomplete');
+  assert.deepEqual(capabilityRunOutcome(lanes, 'safari-acceptance'), {
+    status: 'passed',
+    fullMatrixStatus: 'incomplete',
+    exitCode: 0,
+  });
   assert.deepEqual(
     lanes.flatMap((lane) => (lane.sessionId ? [lane.sessionId] : [])),
     [sessionId],
   );
   lanes[2].status = 'failed';
   assert.equal(capabilityOutcome(lanes), 'incomplete');
+  assert.deepEqual(capabilityRunOutcome(lanes, 'safari-acceptance'), {
+    status: 'failed',
+    fullMatrixStatus: 'incomplete',
+    exitCode: 1,
+  });
+});
+
+test('the CLI outcome rejects missing, duplicate, invalid and unrun lanes without weakening full-matrix acceptance', () => {
+  const complete = ['chrome', 'firefox', 'safari'].map((browser) =>
+    completedCapabilityLane({ ...target, browser } as CapabilityResult['target']),
+  );
+  assert.deepEqual(capabilityRunOutcome(complete), {
+    status: 'passed',
+    fullMatrixStatus: 'passed',
+    exitCode: 0,
+  });
+  for (const lanes of [
+    complete.slice(0, 2),
+    [complete[0], complete[1], complete[1]],
+    [complete[0], complete[1], { ...complete[2], target: { ...target, browser: 'unknown' } }],
+    [complete[0], complete[1], { ...complete[2], status: 'unknown' }],
+  ]) {
+    for (const scope of ['all', 'safari-acceptance', 'chrome-navigation-diagnostic'] as const) {
+      assert.deepEqual(capabilityRunOutcome(lanes as CapabilityResult[], scope), {
+        status: 'incomplete',
+        fullMatrixStatus: 'incomplete',
+        exitCode: 1,
+      });
+    }
+  }
+  for (const status of ['blocked', 'not-run'] as const) {
+    const lanes = [...complete.slice(0, 2), { ...complete[2], status }];
+    assert.deepEqual(capabilityRunOutcome(lanes, 'safari-acceptance'), {
+      status: 'incomplete',
+      fullMatrixStatus: 'incomplete',
+      exitCode: 1,
+    });
+    assert.equal(capabilityRunOutcome(lanes).exitCode, 1);
+  }
+  const failed = [...complete.slice(0, 2), { ...complete[2], status: 'failed' as const }];
+  assert.deepEqual(capabilityRunOutcome(failed), {
+    status: 'failed',
+    fullMatrixStatus: 'failed',
+    exitCode: 1,
+  });
+});
+
+test('the CLI outcome never passes a declared success with failed cleanup, unresolved allocation or retained failure', () => {
+  const complete = ['chrome', 'firefox', 'safari'].map((browser) =>
+    completedCapabilityLane({ ...target, browser } as CapabilityResult['target']),
+  );
+  for (const change of [
+    { cleanup: { ...complete[2].cleanup, network: 'restore-failed' } },
+    { cleanup: { ...complete[2].cleanup, session: 'delete-failed' } },
+    { cleanup: { ...complete[2].cleanup, fixture: 'close-failed' } },
+    { uncertainAllocation: true },
+    { allocation: 'uncertain' as const },
+    { sessionId: undefined },
+    { startedAt: null },
+    { finishedAt: undefined },
+    { failure: 'http-500' },
+  ]) {
+    const lanes = [...complete.slice(0, 2), { ...complete[2], ...change }];
+    for (const scope of ['all', 'safari-acceptance'] as const)
+      assert.deepEqual(capabilityRunOutcome(lanes, scope), {
+        status: 'failed',
+        fullMatrixStatus: 'failed',
+        exitCode: 1,
+      });
+  }
 });
 
 test('Safari acceptance preflight refuses another target or an incomplete fixture before provider calls', async () => {
@@ -1379,6 +1486,14 @@ test('the maintained Firefox blocker creates no fixture or session and keeps a t
   assert.equal(blocked.allocation, 'not-started');
   assert.equal(blocked.uncertainAllocation, false);
   assert.equal(blocked.cleanup.fixture, 'not-created');
+  assert.equal(
+    (blocked.observations[0].value as { classification: string }).classification,
+    'observed-provider-route-limitation',
+  );
+  assert.equal(
+    (blocked.observations[0].value as { underlyingCause: string }).underlyingCause,
+    'unclassified',
+  );
   const evidence = (blocked.observations[0].value as { evidence: { path: string; sha256: string } })
     .evidence;
   assert.equal(
@@ -1387,13 +1502,7 @@ test('the maintained Firefox blocker creates no fixture or session and keeps a t
       .digest('hex'),
     evidence.sha256,
   );
-  const chrome = {
-    ...blocked,
-    target,
-    status: 'passed',
-    sessionId: 'e'.repeat(40),
-    allocation: 'known',
-  } as const;
+  const chrome = { ...completedCapabilityLane(target), sessionId: 'e'.repeat(40) };
   const safari = {
     ...chrome,
     target: { browser: 'safari', device: 'iPhone 18 Pro Max', osVersion: '27' },
