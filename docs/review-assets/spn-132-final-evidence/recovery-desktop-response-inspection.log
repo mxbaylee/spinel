@@ -1,0 +1,54 @@
+{
+  "preset": "desktop",
+  "rows": [
+    {
+      "sample": "plain-1",
+      "budgetEnforced": true,
+      "flushMaxMs": 13.399999999906868,
+      "capacityP95": 8.399999999906868,
+      "drainMs": 303.80000000004657,
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "undoRedo": "passed"
+    },
+    {
+      "sample": "plain-2",
+      "budgetEnforced": true,
+      "flushMaxMs": 32.90000000002328,
+      "capacityP95": 10,
+      "drainMs": 303.0999999999767,
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "undoRedo": "passed"
+    },
+    {
+      "sample": "plain-3",
+      "budgetEnforced": true,
+      "flushMaxMs": 18,
+      "capacityP95": 8.79999999993015,
+      "drainMs": 305.69999999995343,
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "undoRedo": "passed"
+    },
+    {
+      "sample": "profile",
+      "budgetEnforced": false,
+      "flushMaxMs": 28,
+      "capacityP95": 9.5,
+      "drainMs": 315,
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "undoRedo": "passed"
+    }
+  ]
+}
+WATCHDOG: exit=0, signal=null, elapsed=81ms, peak=0.0MiB

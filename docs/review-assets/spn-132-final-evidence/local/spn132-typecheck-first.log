@@ -1,0 +1,6 @@
+
+> typecheck
+> tsc -p .
+
+WATCHDOG ABORT: pressure=2, RSS=1301.9375MiB, elapsed=2305ms
+serial: waiting for remaining workers.

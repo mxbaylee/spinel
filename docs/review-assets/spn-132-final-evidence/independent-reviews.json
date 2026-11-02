@@ -1,0 +1,41 @@
+{
+  "source": "a107a2be1aa4c01653edea15f99dc1f7ffa867ce",
+  "agentReviewOnly": true,
+  "reviewerA": {
+    "agent": "/root/spn071_review_a",
+    "score": 100,
+    "rubric": {
+      "scope": 35,
+      "correctness": 25,
+      "regressionEvidence": 20,
+      "ciOperations": 10,
+      "maintainabilityComplexity": 10
+    },
+    "findings": [],
+    "unresolvedBlockers": [],
+    "verifiedRun": 41418346271,
+    "verifiedAttempt": 2,
+    "scope": "SPN-132 only; SPN-071 requires fresh integrated acceptance",
+    "profileLimit": "Recovery mobile profile 144.4 ms is diagnostic-only, budgetEnforced false; no timing acceptance from profile"
+  },
+  "reviewerB": {
+    "agent": "/root/spn071_review_b",
+    "score": 100,
+    "rubric": {
+      "scope": 35,
+      "correctness": 25,
+      "regressionEvidence": 20,
+      "ciOperations": 10,
+      "maintainabilityComplexity": 10
+    },
+    "findings": [],
+    "unresolvedBlockers": [],
+    "verifiedRun": 41418346271,
+    "verifiedAttempt": 2,
+    "scope": "SPN-132 only; SPN-071 requires fresh integrated acceptance",
+    "profileLimit": "Recovery mobile profile 144.4 ms is diagnostic-only, budgetEnforced false; no timing acceptance from profile"
+  },
+  "base": "f5cc10fad474fdf178172f79b3a0dde431cea6ad",
+  "tested": "3be0a2e5d0a5d8f6af0adc825fdb84a361e1494d",
+  "tree": "b26068c862642498b0fc55f01fbef99549f0b566"
+}

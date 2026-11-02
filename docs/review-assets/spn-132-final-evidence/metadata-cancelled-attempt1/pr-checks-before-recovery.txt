@@ -1,0 +1,49 @@
+Typecheck	fail	3s	https://github.com/mxbaylee/spinel/actions/runs/41418346271/job/125187834175	
+Classify changes (41418346271)	fail	34s	https://github.com/mxbaylee/spinel/actions/runs/41418346271/job/125187594763	
+Container smoke	fail	0	https://github.com/mxbaylee/spinel/actions/runs/41418346271/job/125187836096	
+Doc callback lifetimes (${{ matrix.preset }})	fail	0	https://github.com/mxbaylee/spinel/actions/runs/41418346271/job/125187836147	
+Doc responsiveness (${{ matrix.preset }})	fail	0	https://github.com/mxbaylee/spinel/actions/runs/41418346271/job/125187835995	
+Lib tests (${{ matrix.suite }})	fail	0	https://github.com/mxbaylee/spinel/actions/runs/41418346271/job/125187836510	
+Playwright smoke (${{ matrix.project }}${{ ((matrix.shard && format(' {0}', matrix.shard)) || '') }})	fail	0	https://github.com/mxbaylee/spinel/actions/runs/41418346271/job/125187836321	
+Pull request	fail	34s	https://github.com/mxbaylee/spinel/actions/runs/41418346271/job/125187595224	
+Sized restore acceptance	fail	0	https://github.com/mxbaylee/spinel/actions/runs/41418346271/job/125187835929	
+Playwright smoke (offline-upgrade)	pass	1m46s	https://github.com/mxbaylee/spinel/actions/runs/41418146689/job/125187117487	
+Classify changes	pass	14s	https://github.com/mxbaylee/spinel/actions/runs/41418146813/job/125195244268	
+Classify changes (41418146689)	pass	14s	https://github.com/mxbaylee/spinel/actions/runs/41418146689/job/125186925338	
+Playwright smoke (development 2/2)	pass	17m54s	https://github.com/mxbaylee/spinel/actions/runs/41418146689/job/125187117544	
+Build Storybook	pass	46s	https://github.com/mxbaylee/spinel/actions/runs/41418146813/job/125195273261	
+Playwright smoke (mobile-https)	pass	1m44s	https://github.com/mxbaylee/spinel/actions/runs/41418146689/job/125187117398	
+Lib tests (dense-cells)	pass	7m9s	https://github.com/mxbaylee/spinel/actions/runs/41418146689/job/125187117363	
+Doc callback lifetimes (desktop)	pass	8m53s	https://github.com/mxbaylee/spinel/actions/runs/41418146689/job/125187117692	
+Doc responsiveness (mobile)	pass	27m12s	https://github.com/mxbaylee/spinel/actions/runs/41418146689/job/125187117433	
+Lib tests (remaining)	pass	9m55s	https://github.com/mxbaylee/spinel/actions/runs/41418146689/job/125187117256	
+Lint	pass	46s	https://github.com/mxbaylee/spinel/actions/runs/41418346271/job/125187834293	
+Backlog	pass	17s	https://github.com/mxbaylee/spinel/actions/runs/41418346271/job/125187834174	
+Lib tests	pass	13s	https://github.com/mxbaylee/spinel/actions/runs/41418146689/job/125191436991	
+Unit tests (${{ matrix.suite }})	fail	0	https://github.com/mxbaylee/spinel/actions/runs/41418346271/job/125187836121	
+Publish PR preview to GitHub Pages	skipping	0	https://github.com/mxbaylee/spinel/actions/runs/41418146813/job/125195205914	
+Playwright smoke	pass	12s	https://github.com/mxbaylee/spinel/actions/runs/41418146689/job/125200060749	
+Doc responsiveness (desktop)	pass	17m16s	https://github.com/mxbaylee/spinel/actions/runs/41418146689/job/125187117323	
+Lib tests (mixed-fuzz)	pass	7m18s	https://github.com/mxbaylee/spinel/actions/runs/41418146689/job/125187117383	
+Deploy to GitHub Pages	skipping	0	https://github.com/mxbaylee/spinel/actions/runs/41418146813/job/125199111790	
+Lib tests (cells)	pass	5m27s	https://github.com/mxbaylee/spinel/actions/runs/41418146689/job/125187117341	
+Doc callback lifetimes (mobile)	pass	9m49s	https://github.com/mxbaylee/spinel/actions/runs/41418146689/job/125187117365	
+Playwright smoke (development 1/2)	pass	14m48s	https://github.com/mxbaylee/spinel/actions/runs/41418146689/job/125187117564	
+Playwright smoke (production 1/2)	pass	11m56s	https://github.com/mxbaylee/spinel/actions/runs/41418146689/job/125187117409	
+Playwright smoke (production 2/2)	pass	14m23s	https://github.com/mxbaylee/spinel/actions/runs/41418146689/job/125187117597	
+Playwright smoke (supervised-restore)	pass	7m0s	https://github.com/mxbaylee/spinel/actions/runs/41418146689/job/125187117384	
+Playwright smoke (sync-development)	pass	3m7s	https://github.com/mxbaylee/spinel/actions/runs/41418146689/job/125187117393	
+Playwright smoke (sync-production)	pass	11m31s	https://github.com/mxbaylee/spinel/actions/runs/41418146689/job/125187117431	
+Playwright smoke (sync-soak-doc)	pass	1m45s	https://github.com/mxbaylee/spinel/actions/runs/41418146689/job/125187117971	
+Playwright smoke (sync-soak-sheet)	pass	1m52s	https://github.com/mxbaylee/spinel/actions/runs/41418146689/job/125187117639	
+Retained sync transition	pass	38s	https://github.com/mxbaylee/spinel/actions/runs/41418146689/job/125187117402	
+Review Storybook desktop (dark)	pass	8m22s	https://github.com/mxbaylee/spinel/actions/runs/41418146813/job/125195205695	
+Review Storybook desktop (light)	pass	8m43s	https://github.com/mxbaylee/spinel/actions/runs/41418146813/job/125195206570	
+Review Storybook mobile (dark)	pass	7m54s	https://github.com/mxbaylee/spinel/actions/runs/41418146813/job/125195248306	
+Review Storybook mobile (light)	pass	8m16s	https://github.com/mxbaylee/spinel/actions/runs/41418146813/job/125195203847	
+Review Storybook states and interactions	pass	12s	https://github.com/mxbaylee/spinel/actions/runs/41418146813/job/125198991389	
+Review Storybook tablet	pass	8m26s	https://github.com/mxbaylee/spinel/actions/runs/41418146813/job/125195252277	
+Unit tests	pass	23s	https://github.com/mxbaylee/spinel/actions/runs/41418146689/job/125190731345	
+Unit tests (recovery)	pass	3m53s	https://github.com/mxbaylee/spinel/actions/runs/41418146689/job/125187117395	
+Unit tests (remaining)	pass	5m51s	https://github.com/mxbaylee/spinel/actions/runs/41418146689/job/125187117274	
+Unit tests (supervisor)	pass	8m15s	https://github.com/mxbaylee/spinel/actions/runs/41418146689/job/125187117316	

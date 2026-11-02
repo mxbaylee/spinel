@@ -1,0 +1,6 @@
+tree 7da71c4c5caf32a67b380699777c7edcd8437d59
+parent f5cc10fad474fdf178172f79b3a0dde431cea6ad
+author Baylee Schmeisser <github.mx@baylee.dev> 1793610376 -0800
+committer Baylee Schmeisser <github.mx@baylee.dev> 1793610376 -0800
+
+Keep marked native Doc inserts on balanced composition

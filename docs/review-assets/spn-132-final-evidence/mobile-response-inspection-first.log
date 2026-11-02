@@ -1,0 +1,54 @@
+{
+  "preset": "mobile",
+  "rows": [
+    {
+      "sample": "plain-1",
+      "budgetEnforced": true,
+      "flushMaxMs": 53,
+      "capacityP95": 18.5,
+      "drainMs": 306.9000000001397,
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "undoRedo": "passed"
+    },
+    {
+      "sample": "plain-2",
+      "budgetEnforced": true,
+      "flushMaxMs": 26.5999999998603,
+      "capacityP95": 17.300000000046566,
+      "drainMs": 342.30000000004657,
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "undoRedo": "passed"
+    },
+    {
+      "sample": "plain-3",
+      "budgetEnforced": true,
+      "flushMaxMs": 96.69999999995343,
+      "capacityP95": 21.300000000046566,
+      "drainMs": 310.60000000009313,
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "undoRedo": "passed"
+    },
+    {
+      "sample": "profile",
+      "budgetEnforced": false,
+      "flushMaxMs": 60.10000000009313,
+      "capacityP95": 24.199999999953434,
+      "drainMs": 404.10000000009313,
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "undoRedo": "passed"
+    }
+  ]
+}
+WATCHDOG: exit=0, signal=null, elapsed=61ms, peak=0.0MiB

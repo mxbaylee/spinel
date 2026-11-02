@@ -1,0 +1,14 @@
+diff --git a/docs/todo/backlog.json b/docs/todo/backlog.json
+index babb690d..7bb26144 100644
+--- a/docs/todo/backlog.json
++++ b/docs/todo/backlog.json
+@@ -32,7 +32,7 @@
+     ]
+   },
+   "pr_title_exceptions": [
+-    "\ud83e\uddf9 Groom backlog",
+-    "\u2b06\ufe0f Bump"
++    "🧹 Groom backlog",
++    "⬆️ Bump"
+   ]
+ }

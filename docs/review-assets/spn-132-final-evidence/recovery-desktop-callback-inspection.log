@@ -1,0 +1,38 @@
+[
+  {
+    "preset": "desktop",
+    "baseline": false,
+    "source": "3be0a2e5d0a5d8f6af0adc825fdb84a361e1494d",
+    "attempt": 0,
+    "complete": true,
+    "passed": true,
+    "behaviorPassed": true,
+    "bounded": true,
+    "accepted": true,
+    "candidateViolations": [],
+    "collectionError": null,
+    "errors": [],
+    "sha256": "1c561723507239e174da70242a04db582f04ae9757369026a4fb7e3baf05c9ca"
+  },
+  {
+    "preset": "desktop",
+    "baseline": true,
+    "source": "0e1df4725d9eccb77574d25e3eecdf678fe6ff44",
+    "attempt": 0,
+    "complete": true,
+    "passed": true,
+    "behaviorPassed": true,
+    "bounded": false,
+    "accepted": true,
+    "candidateViolations": [
+      "cursor pending high-water 7967 exceeds 4.",
+      "cursor retains callbacks at/after editor disposal.",
+      "cursor fires or installs callbacks after editor disposal.",
+      "zoom-update pending high-water 1972 exceeds 1."
+    ],
+    "collectionError": null,
+    "errors": [],
+    "sha256": "287a02fc04bffc79168d986bceae5f2c86bd0b26acdc1390f1ac5de66e177d84"
+  }
+]
+WATCHDOG: exit=0, signal=null, elapsed=167ms, peak=0.0MiB

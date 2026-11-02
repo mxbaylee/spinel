@@ -1,0 +1,40 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { createHash } from 'node:crypto';
+const root = '/tmp/spn132-review/final-a107';
+const expected = '3be0a2e5d0a5d8f6af0adc825fdb84a361e1494d';
+for (const preset of process.argv.slice(2)) {
+  const directory = path.join(root, `responsiveness-${preset}`);
+  const comparison = JSON.parse(fs.readFileSync(path.join(directory, `test-results/spn108-comparison-${preset}.json`), 'utf8'));
+  assert.equal(comparison.passed, true);
+  assert.equal(comparison.timingValid, true);
+  assert.equal(comparison.candidateIntegrity, true);
+  assert.deepEqual(comparison.failures, []);
+  assert.deepEqual(comparison.unavailable, []);
+  const rows: unknown[] = [];
+  for (const file of fs.readdirSync(path.join(directory, 'test-results'), { recursive: true }).map(String).filter((file) => file.endsWith('spn108-metrics.json'))) {
+    const bytes = fs.readFileSync(path.join(directory, 'test-results', file));
+    const data = JSON.parse(bytes.toString());
+    assert.equal(data.source, expected);
+    assert.equal(data.attempt, 0);
+    assert.equal(data.completed, true);
+    assert.equal(data.preUndoIntegrity.passed, true);
+    assert.equal(data.undoRedo.outcome, 'passed');
+    assert.deepEqual(data.errors, []);
+    assert.deepEqual(data.finalReloads, []);
+    if (data.sample !== 'profile') {
+      assert.equal(data.budgetEnforced, true);
+      for (const [key, value] of Object.entries(data.budgetResults)) assert.equal(value, true, `${preset}/${data.sample}/${key}`);
+    }
+    rows.push({ sample: data.sample, source: data.source, attempt: data.attempt, completed: data.completed,
+      budgetEnforced: data.budgetEnforced, budgets: data.budgets, budgetResults: data.budgetResults,
+      summary: data.summary, highWater: data.native.highWater, correctness: data.correctness,
+      undoRedoOutcome: data.undoRedo.outcome, errors: data.errors, reloads: data.finalReloads,
+      sha256: createHash('sha256').update(bytes).digest('hex'),
+    });
+  }
+  assert.equal(rows.length, 4);
+  fs.writeFileSync(path.join(root, `responsiveness-${preset}-acceptance-summary.json`), JSON.stringify({preset, comparisonPassed:true, rows}, null, 2)+'\n');
+  console.log(JSON.stringify({preset, rows: rows.map((r: any) => ({sample:r.sample, budgetEnforced:r.budgetEnforced, flushMaxMs:r.summary.pairedFlushMaximumMs, capacityP95:r.summary.capacityFlushPairMs?.p95, drainMs:r.summary.firstVerifiedBrowserLocalDrainMs, highWater:r.highWater, undoRedo:r.undoRedoOutcome}))},null,2));
+}

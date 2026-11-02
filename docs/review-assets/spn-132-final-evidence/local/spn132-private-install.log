@@ -1,0 +1,24 @@
+
+> esbuild@0.28.2 postinstall
+> node install.js
+
+
+> protobufjs@7.6.6 postinstall
+> node scripts/postinstall
+
+
+> postinstall
+> node scripts/dependencies/patch-univer-core.ts && node scripts/dependencies/patch-univer-docs.ts && node scripts/dependencies/patch-univer-ui.ts && node scripts/dependencies/patch-univer-drawing.ts && node scripts/dependencies/patch-univer-docs-ui.ts
+
+
+added 493 packages in 7s
+
+132 packages are looking for funding
+  run `npm fund` for details
+npm warn install-scripts 3 packages have install scripts not yet covered by allowScripts:
+npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+npm warn install-scripts   fsevents@2.3.3 (install: (install scripts present))
+npm warn install-scripts   protobufjs@7.6.6 (postinstall: node scripts/postinstall)
+npm warn install-scripts
+npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+WATCHDOG: exit=0, signal=null, elapsed=7070ms, peak=1036.5MiB

@@ -1,0 +1,73 @@
+[
+  {
+    "preset": "desktop",
+    "baseline": false,
+    "source": "3be0a2e5d0a5d8f6af0adc825fdb84a361e1494d",
+    "attempt": 0,
+    "complete": true,
+    "passed": true,
+    "behaviorPassed": true,
+    "bounded": true,
+    "accepted": true,
+    "candidateViolations": [],
+    "collectionError": null,
+    "errors": [],
+    "sha256": "72699aab3e3cff573e1dfe00772d8eef91974f7e299a0a756fa21ba1014492fe"
+  },
+  {
+    "preset": "desktop",
+    "baseline": true,
+    "source": "0e1df4725d9eccb77574d25e3eecdf678fe6ff44",
+    "attempt": 0,
+    "complete": true,
+    "passed": true,
+    "behaviorPassed": true,
+    "bounded": false,
+    "accepted": true,
+    "candidateViolations": [
+      "cursor pending high-water 7865 exceeds 4.",
+      "cursor retains callbacks at/after editor disposal.",
+      "cursor fires or installs callbacks after editor disposal.",
+      "zoom-update pending high-water 1902 exceeds 1."
+    ],
+    "collectionError": null,
+    "errors": [],
+    "sha256": "8b3582464de2eff02fa8861d1489756f605d21817f021a330dc85e06ca84385f"
+  },
+  {
+    "preset": "mobile",
+    "baseline": false,
+    "source": "3be0a2e5d0a5d8f6af0adc825fdb84a361e1494d",
+    "attempt": 0,
+    "complete": true,
+    "passed": true,
+    "behaviorPassed": true,
+    "bounded": true,
+    "accepted": true,
+    "candidateViolations": [],
+    "collectionError": null,
+    "errors": [],
+    "sha256": "f6936918b001cfb3c001bd22d8b438c2c530382517a479e5c188113d75eb2b32"
+  },
+  {
+    "preset": "mobile",
+    "baseline": true,
+    "source": "0e1df4725d9eccb77574d25e3eecdf678fe6ff44",
+    "attempt": 0,
+    "complete": true,
+    "passed": true,
+    "behaviorPassed": true,
+    "bounded": false,
+    "accepted": true,
+    "candidateViolations": [
+      "cursor pending high-water 8346 exceeds 4.",
+      "cursor retains callbacks at/after editor disposal.",
+      "cursor fires or installs callbacks after editor disposal.",
+      "zoom-update pending high-water 2085 exceeds 1."
+    ],
+    "collectionError": null,
+    "errors": [],
+    "sha256": "d0a0292e660edb638c3621233442294f6b5b1949e03a63e1c0d9a2e474ddd922"
+  }
+]
+WATCHDOG: exit=0, signal=null, elapsed=458ms, peak=256.8MiB

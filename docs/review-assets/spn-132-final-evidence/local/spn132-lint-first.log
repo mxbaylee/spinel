@@ -1,0 +1,11 @@
+
+> lint
+> npm run dependencies:check && oxlint --deny-warnings . && npm run format:check
+
+
+> dependencies:check
+> node scripts/dependencies/no-univer-pro.ts
+
+No Univer Pro dependencies in 8 manifests or the resolved lockfile.
+scripts/dependencies/patch-univer-docs.test.ts:271:5: warning unicorn(no-useless-spread): Using a spread operator here creates a new object unnecessarily. help: Consider removing the spread operator.
+WATCHDOG: exit=1, signal=null, elapsed=971ms, peak=244.8MiB
