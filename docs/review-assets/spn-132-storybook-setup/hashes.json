@@ -1,0 +1,18 @@
+{
+  "README.md": {
+    "bytes": 1071,
+    "sha256": "f195b44f60d5f840a9cebefd10b3951c701f36645c3f39c55be2b24d75f04fdc"
+  },
+  "job.log": {
+    "bytes": 22686,
+    "sha256": "f0e5eaf75001fcb0765a1a4fda32f622df1a5269198eab079f4732d853591ee9"
+  },
+  "jobs.json": {
+    "bytes": 24495,
+    "sha256": "077f3035fac0f3b2b410688099fb1e022b997d3f4469a4577fb528ab073bea21"
+  },
+  "run.json": {
+    "bytes": 12192,
+    "sha256": "b897c1f2c018d482e4930f7f4a6c3d41808bece8c89137c5f889c4b5b5935c5c"
+  }
+}
