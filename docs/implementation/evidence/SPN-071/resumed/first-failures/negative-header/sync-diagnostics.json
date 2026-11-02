@@ -1,0 +1,83 @@
+{
+  "kind": "doc",
+  "upgradedInMs": 290,
+  "navigationCount": 1,
+  "navigations": 1,
+  "errors": [],
+  "observed": {
+    "status": "All changes saved.",
+    "focus": "<div contenteditable=\"true\" data-u-comp=\"editor\" id=\"__editor_e84f9c4f-f545-4f69-89dd-c3aaa99ac801\" style=\"position: absolute; overflow: hidden; opacity: 1; background: rgb(0, 0, 0); color: transparent; outline: none; z-index: -2; caret-color: transparent; white-space: pre-wrap; user-select: text;\" tabindex=\"-1\"></div>",
+    "selection": ""
+  },
+  "outgoing": [
+    {
+      "type": "cursor",
+      "selection": "0:0:1:TEXT::-1"
+    },
+    {
+      "type": "cursor",
+      "selection": "2:2:1:TEXT::-1"
+    },
+    {
+      "type": "cursor",
+      "selection": "6:10:1:TEXT::-1"
+    }
+  ],
+  "incoming": [
+    {
+      "type": "resume",
+      "version": 1,
+      "unitId": "e84f9c4f-f545-4f69-89dd-c3aaa99ac801",
+      "fromRevision": 1,
+      "revision": 1,
+      "edits": []
+    },
+    {
+      "type": "presence",
+      "selfId": "3WkfTjU3yBiQvEhK1mnekgai",
+      "members": [
+        {
+          "id": "3WkfTjU3yBiQvEhK1mnekgai",
+          "name": "Upgrade viewer 43b259fe2228301dd04c-1e8a3602f2d9d918a00b",
+          "avatar": "/profile-avatar/user-round/primary-strong.svg"
+        }
+      ]
+    },
+    {
+      "type": "presence",
+      "selfId": "3WkfTjU3yBiQvEhK1mnekgai",
+      "members": [
+        {
+          "id": "3WkfTjU3yBiQvEhK1mnekgai",
+          "name": "Upgrade viewer 43b259fe2228301dd04c-1e8a3602f2d9d918a00b",
+          "avatar": "/profile-avatar/user-round/primary-strong.svg",
+          "selection": "0:0:1:TEXT::-1"
+        }
+      ]
+    },
+    {
+      "type": "presence",
+      "selfId": "3WkfTjU3yBiQvEhK1mnekgai",
+      "members": [
+        {
+          "id": "3WkfTjU3yBiQvEhK1mnekgai",
+          "name": "Upgrade viewer 43b259fe2228301dd04c-1e8a3602f2d9d918a00b",
+          "avatar": "/profile-avatar/user-round/primary-strong.svg",
+          "selection": "2:2:1:TEXT::-1"
+        }
+      ]
+    },
+    {
+      "type": "presence",
+      "selfId": "3WkfTjU3yBiQvEhK1mnekgai",
+      "members": [
+        {
+          "id": "3WkfTjU3yBiQvEhK1mnekgai",
+          "name": "Upgrade viewer 43b259fe2228301dd04c-1e8a3602f2d9d918a00b",
+          "avatar": "/profile-avatar/user-round/primary-strong.svg",
+          "selection": "6:10:1:TEXT::-1"
+        }
+      ]
+    }
+  ]
+}
