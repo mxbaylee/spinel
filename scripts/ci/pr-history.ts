@@ -637,6 +637,8 @@ export async function authenticatedPolicyHistory(
       const candidates: HistoryCheckpoint[] = [];
       if (!Array.isArray(records)) throw new Error('Policy job history is unavailable.');
       const policyJobs = records.filter((job) => object(job) && job.name === 'Pull request');
+      let absentPolicyAttemptPending = false;
+      let initialPolicyMissing = false;
       // Every adoption-capable attempt must positively disclose its marker or
       // settled non-issuance. Missing job/step evidence cannot mean never adopted.
       if (identity.version === 3 && legacyEligible) {
@@ -644,11 +646,41 @@ export async function authenticatedPolicyHistory(
         if (
           !positive(run.run_attempt) ||
           run.run_attempt > 1000 ||
-          attempts.length !== run.run_attempt ||
           new Set(attempts).size !== attempts.length ||
           attempts.some((attempt) => !positive(attempt) || attempt > Number(run.run_attempt))
         )
           throw new Error('Legacy adoption has missing or duplicate attempt evidence.');
+        if (
+          records.some(
+            (job) =>
+              !object(job) ||
+              !positive(job.id) ||
+              job.run_id !== run.id ||
+              job.head_sha !== run.head_sha ||
+              !positive(job.run_attempt) ||
+              job.run_attempt > Number(run.run_attempt) ||
+              (!['Pull request', `Classify PR edit (${run.id})`].includes(String(job.name)) &&
+                !(
+                  identity.action !== 'edited' &&
+                  job.name === 'Classify PR edit (${{ github.run_id }})' &&
+                  job.status === 'completed' &&
+                  job.conclusion === 'skipped'
+                )),
+          ) ||
+          new Set(records.map((job) => (job as Record<string, unknown>).id)).size !== records.length
+        )
+          throw new Error('Legacy adoption has malformed job registration evidence.');
+        initialPolicyMissing = !attempts.includes(1);
+        for (let attempt = 1; attempt <= run.run_attempt; attempt++) {
+          const registered = records.filter((job) => object(job) && job.run_attempt === attempt);
+          if (!registered.length)
+            throw new Error('A workflow attempt has no returned job registration.');
+          if (
+            !attempts.includes(attempt) &&
+            registered.some((job) => object(job) && job.status !== 'completed')
+          )
+            absentPolicyAttemptPending = true;
+        }
       }
       for (const job of policyJobs) {
         if (!object(job) || !Array.isArray(job.steps))
@@ -680,6 +712,27 @@ export async function authenticatedPolicyHistory(
         };
         if (identity.version === 3 && legacyEligible) {
           verifyPolicyIssuer(run, job, check, proofExpected);
+          // GitHub records a non-null started_at even when concurrency cancels
+          // a job before runner assignment. Exact terminal provider bindings
+          // plus explicit zero runner/group identity prove no script executed;
+          // an absent field or an assigned runner with missing steps does not.
+          const completed = time(job.completed_at);
+          if (
+            job.status === 'completed' &&
+            job.conclusion === 'cancelled' &&
+            job.runner_id === 0 &&
+            job.runner_name === '' &&
+            job.runner_group_id === 0 &&
+            job.runner_group_name === '' &&
+            job.steps.length === 0 &&
+            completed !== null &&
+            completed >= Number(time(run.created_at)) &&
+            object(check) &&
+            check.status === 'completed' &&
+            check.conclusion === 'cancelled' &&
+            time(check.completed_at) === completed
+          )
+            continue;
           if (job.steps.some((step) => !object(step) || typeof step.name !== 'string'))
             throw new Error('Legacy adoption has malformed steps.');
           const preparations = job.steps.filter(
@@ -733,7 +786,11 @@ export async function authenticatedPolicyHistory(
           candidates.push(checkpoint);
         }
       }
-      if (!candidates.length) return null;
+      if (!candidates.length) {
+        if (initialPolicyMissing || absentPolicyAttemptPending)
+          throw new Error('An earlier possible first-adoption execution is missing or unresolved.');
+        return null;
+      }
       const accepted = candidates.find((candidate) =>
         candidates.every(
           (other) =>

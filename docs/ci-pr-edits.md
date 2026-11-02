@@ -133,6 +133,20 @@ or positively settled non-issuance; unavailable jobs/steps, duplicate attempts,
 unresolved attempts and conflicting origins block. A completed adoption survives
 failure or cancellation of later steps. The preparation phase cannot certify its
 own current/future attempt, and ordinary retries reuse existing proof.
+Workflow attempts are not policy-job executions: a classifier-only retry retains
+its earlier policy evidence, including while classification is pending or failed.
+Before first adoption, a missing initial policy execution or an active earlier
+attempt whose policy execution is uncertain still blocks. Complete returned job
+registration and settled non-issuance distinguish a retry from missing evidence.
+
+Cancellation before runner assignment has a narrow provider-backed disposition:
+the genuine job and Actions check must both be terminal/cancelled, runner and group
+IDs explicitly zero with empty names, no steps, and consistent completion times.
+`started_at` alone is not execution proof; GitHub populates it for queued jobs.
+An assigned runner with missing preparation/marker evidence does not qualify.
+Cancellation during checkout/setup still needs actual retained skipped-step or
+other positive non-execution evidence; incomplete metadata remains a blocker and
+part of the required hosted cancellation trials.
 
 A distinct successful adoption-marker step establishes the strict boundary using
 its provider-reported completion time. History capture can consume that completed

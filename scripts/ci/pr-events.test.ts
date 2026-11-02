@@ -293,6 +293,7 @@ function legacyScenario() {
     app: { id: 15368 },
     status: 'in_progress',
     conclusion: null as string | null,
+    completed_at: null as string | null,
   };
   const policyChecks: Record<number, typeof check> = { 505: check };
   const get = s.client.get.bind(s.client);
@@ -428,6 +429,9 @@ test('adoption never treats missing modern history or an unresolved earlier atte
       const old = structuredClone(s.job);
       old.run_attempt = 1;
       s.job.run_attempt = s.invocation.attempt = s.policyRun.run_attempt = 2;
+      s.job.id = 506;
+      s.job.check_run_url = s.job.check_run_url.replace('/505', '/507');
+      s.policyChecks[507] = { ...structuredClone(s.check), id: 507 };
       if (kind !== 'prior-job-missing') s.records[500].push(old);
       if (kind === 'prior-step-missing') old.steps = [];
       if (kind === 'foreign-check') {
@@ -454,6 +458,148 @@ test('adoption never treats missing modern history or an unresolved earlier atte
       kind,
     );
   }
+});
+
+test('provider-proved cancellation before runner assignment permits first adoption but missing execution evidence does not', async () => {
+  for (const change of [
+    'none',
+    'assigned',
+    'missing-runner',
+    'missing-completion',
+    'check-failure',
+    'wrong-app',
+  ]) {
+    const s = legacyScenario();
+    // Shape observed on provider job125505126821: started_at is populated even
+    // though runner/group identity is explicitly zero and no steps executed.
+    s.event.action = s.invocation.action = 'synchronize';
+    s.policyRun.display_title = s.policyRun.display_title.replace(
+      'action=edited',
+      'action=synchronize',
+    );
+    s.policyClassifier.name = 'Classify PR edit (${{ github.run_id }})';
+    s.policyClassifier.conclusion = 'skipped';
+    s.policyClassifier.steps = [];
+    Object.assign(s.job, {
+      status: 'completed',
+      conclusion: 'cancelled',
+      runner_id: 0,
+      runner_name: '',
+      runner_group_id: 0,
+      runner_group_name: '',
+      started_at: '2026-11-02T19:31:00Z',
+      completed_at: '2026-11-02T19:31:02Z',
+      steps: [],
+    });
+    Object.assign(s.check, {
+      status: 'completed',
+      conclusion: 'cancelled',
+      completed_at: '2026-11-02T19:31:02Z',
+    });
+    const current = {
+      ...structuredClone(s.job),
+      id: 509,
+      run_attempt: 2,
+      status: 'in_progress',
+      conclusion: null,
+      steps: [
+        {
+          number: 3,
+          name: adoptionValidationStep,
+          status: 'in_progress',
+          conclusion: null,
+          completed_at: null,
+        },
+        { number: 4, name: noAdoptionStep, status: 'queued', conclusion: null, completed_at: null },
+      ],
+    };
+    s.records[500].push(current);
+    s.policyRun.run_attempt = s.invocation.attempt = 2;
+    if (change === 'assigned') Object.assign(s.job, { runner_id: 123, runner_name: 'assigned' });
+    if (change === 'missing-runner') Reflect.deleteProperty(s.job, 'runner_id');
+    if (change === 'missing-completion') Reflect.deleteProperty(s.job, 'completed_at');
+    if (change === 'check-failure') s.check.conclusion = 'failure';
+    if (change === 'wrong-app') s.check.app.id = 1;
+    const prepare = () => prepareLegacyAdoption({ ...s.options, invocation: s.invocation });
+    if (change === 'none') assert.equal(await prepare(), adoptionMarker(16));
+    else await assert.rejects(prepare, Error, change);
+  }
+});
+
+test('classifier-only retries preserve an existing adoption even while the retry is pending or fails', async () => {
+  for (const conclusion of [null, 'failure', 'success']) {
+    const s = legacyScenario();
+    s.issued();
+    s.job.status = s.check.status = 'completed';
+    s.job.conclusion = s.check.conclusion = 'success';
+    s.policyRun.run_attempt = 2;
+    s.records[500].push({
+      ...structuredClone(s.policyClassifier),
+      id: 508,
+      run_attempt: 2,
+      status: conclusion === null ? 'in_progress' : 'completed',
+      conclusion,
+      steps: conclusion === 'success' ? s.policyClassifier.steps : [],
+    });
+    s.fullCoverage();
+    s.run.created_at = '2026-11-02T19:31:03Z';
+    // The retained policy result and code guards consume proof; there is no
+    // invented policy attempt2 invocation or replacement code success.
+    assert.equal((await validatePrPolicy(s.options)).fullAfter, '2026-11-02T19:31:02.000Z');
+    assert.equal(s.run.conclusion, null);
+    assert.deepEqual(s.mutations, []);
+  }
+});
+
+test('before first adoption an active classifier-only attempt remains unresolved until its returned jobs settle', async () => {
+  const s = legacyScenario();
+  s.job.steps[0] = {
+    ...s.job.steps[0],
+    status: 'completed',
+    conclusion: 'failure',
+    completed_at: '2026-11-02T19:31:01Z',
+  };
+  s.job.steps[1] = {
+    ...s.job.steps[1],
+    status: 'completed',
+    conclusion: 'skipped',
+    completed_at: '2026-11-02T19:31:02Z',
+  };
+  s.job.status = s.check.status = 'completed';
+  s.job.conclusion = s.check.conclusion = 'failure';
+  const classifierRetry = {
+    ...structuredClone(s.policyClassifier),
+    id: 508,
+    run_attempt: 2,
+    status: 'in_progress',
+    conclusion: null as string | null,
+    steps: [],
+  };
+  const currentPolicy = {
+    ...structuredClone(s.job),
+    id: 509,
+    run_attempt: 3,
+    status: 'in_progress',
+    conclusion: null,
+    check_run_url: s.job.check_run_url.replace('/505', '/510'),
+    steps: [
+      {
+        number: 3,
+        name: adoptionValidationStep,
+        status: 'in_progress',
+        conclusion: null,
+        completed_at: null,
+      },
+      { number: 4, name: noAdoptionStep, status: 'queued', conclusion: null, completed_at: null },
+    ],
+  };
+  s.records[500].push(classifierRetry, currentPolicy);
+  s.policyRun.run_attempt = s.invocation.attempt = 3;
+  const options = { ...s.options, invocation: s.invocation };
+  await assert.rejects(prepareLegacyAdoption(options), /not sealed/);
+  classifierRetry.status = 'completed';
+  classifierRetry.conclusion = 'failure';
+  assert.equal(await prepareLegacyAdoption(options), adoptionMarker(16));
 });
 
 test('a carrying checkpoint survives original adoption expiry and cannot move the barrier on a later retry', async () => {
