@@ -79,14 +79,34 @@ JPEG or WebP, at most 5 MiB and 16 megapixels each, with a 50 MiB total per docu
 Metadata is stripped when necessary; already sanitized image bytes are preserved.
 Only embedded images are imported: Spinel does not fetch remote URLs. Sheet floating,
 cell and background images use the same item-scoped stored bytes as Doc images.
-Existing images render in live Sheets and isolated history previews; new Sheet
-image upload/paste insertion remains unavailable. Imports, saves and restores
+Existing images render in live Sheets and isolated history previews. Account
+owners and editors insert new Sheet images through **Insert → Image → Float
+Image / Cell Image**. Paste an image file or drop one over the editor to place it
+over the selected cell. Insert one file per action; an image in a cell moves with
+its cell when rows are inserted. Native Undo/Redo, collaboration and history
+preserve both forms. Imports, saves and restores
 validate same-item image sources. Embedded cell Doc identities remain separate
 from workbook IDs. The server accepts an image cell in each mutation that carries
-cell data (set values, move range, insert sheet); the browser flows for cut/paste
-and duplicating a sheet have no end-to-end test yet. Viewers and link guests retain read-only drawing controls,
+cell data (set values, move range, insert sheet). Image-cell cut/paste and
+duplicating a sheet use these same native mutation paths; the
+[validation checkpoint](implementation/SPN-068.md#validation-checkpoint) records
+the current browser evidence.
+Cell-image fitting works on a display copy so rendering cannot rewrite saved
+image geometry or trigger a synchronization reload that loses Undo history.
+The [layout decision](implementation/SPN-068.md#cell-image-layout-and-undo)
+preserves native editing and the existing authored-content hash checks.
+Viewers and view-only link guests retain read-only drawing controls,
 including images that finish loading after permissions are applied; revoking
 access prevents subsequent image reads.
+New-file insertion requires an account with current edit access and a connection;
+Sheet guest uploads are refused even for an edit link. Existing authorized native
+editing of already stored image content is unchanged. Upload and dimension
+decoding keep navigation and refresh guarded until the native mutation enters
+synchronization. A changed target or lost access refuses a late insertion. Image
+errors appear in the fixed editor help slot; **Image not inserted · Details**
+opens the complete limit and next step on touch and keyboard. The document budget
+counts retained image bytes, including history, so deleting a drawing does not
+free its bytes. See [SPN-068](implementation/SPN-068.md).
 Decisions [#89](implementation/SPN-039.md#legacy-decision-89-preserve-existing-sheet-images) and
 [#91](implementation/SPN-039.md#legacy-decision-91-offline-prerequisites-without-partial-completion), 2026-10-18/19, supply the
 existing-image prerequisite for offline documents ([docs/offline.md](offline.md)).
