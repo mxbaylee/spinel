@@ -1,0 +1,302 @@
+{
+  "source": "8d2f994c3ac53c1849bd2b68927059d9c20c99f0",
+  "preset": "mobile",
+  "sample": "profile",
+  "attempt": 0,
+  "diagnosticOnly": true,
+  "completed": true,
+  "errors": [],
+  "preUndoIntegrity": true,
+  "undoRedo": "passed",
+  "budgetResults": {
+    "inputP95": true,
+    "longestTask": true,
+    "capacityFlushP95": true,
+    "idleFlushP95": true,
+    "flushMaximum": true,
+    "boundedHistory": true,
+    "boundedCollaboration": true,
+    "observedCapacityFlushes": true,
+    "browserLocalDrainedWithinOneSecond": true
+  },
+  "traceSha256": "287e4814775205c70f0e9ef54c348dce7ade33ee0f15af2171bac81787baab0e",
+  "coveredFlushes": 66,
+  "nativePhaseSpans": 132,
+  "events": 56682,
+  "offset": 84952854.99999999,
+  "clockDriftMs": 0.08100000001490117,
+  "selected": [
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 10859.300000000003,
+        "durationMs": 48.69999999999709,
+        "history": 32,
+        "collaboration": 32
+      },
+      "nativePhases": [
+        {
+          "name": "spn133-native-history",
+          "durationMs": 29.1
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "durationMs": 19.5
+        }
+      ],
+      "gcUnionOverlapMs": 4.465,
+      "gcNames": [
+        "V8.GC_HEAP_EXTERNAL_PROLOGUE",
+        "V8.GC_HEAP_PROLOGUE",
+        "V8.GC_TIME_TO_SAFEPOINT",
+        "V8.GC_SCAVENGER",
+        "V8.GC_HEAP_PROLOGUE_SAFEPOINT",
+        "V8.GC_SCAVENGER_SCAVENGE",
+        "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_IDENTIFY",
+        "V8.GC_SCAVENGER_TRACED_HANDLES_COMPUTE_WEAKNESS_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_COLLECT_OLD_TO_NEW_PAGES",
+        "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE",
+        "Parallel scavenge started",
+        "V8.GC_SCAVENGER_SCAVENGE_ROOTS",
+        "V8.GC_SCAVENGER_SCAVENGE_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_PROCESS",
+        "V8.GC_SCAVENGER_TRACED_HANDLES_RESET_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_FINALIZE",
+        "V8.GC_SCAVENGER_SCAVENGE_RESTORE_AND_QUARANTINE_PINNED",
+        "V8.GC_SCAVENGER_FREE_REMEMBERED_SET",
+        "V8.GC_SCAVENGER_SWEEP_ARRAY_BUFFERS",
+        "V8.GC_SCAVENGER_RESIZE_NEW_SPACE",
+        "V8.GC_HEAP_EPILOGUE_SAFEPOINT",
+        "V8.GC_HEAP_EPILOGUE",
+        "V8.GC_HEAP_DUMP_STATISTICS",
+        "V8.GC_HEAP_EXTERNAL_EPILOGUE"
+      ]
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 5799.300000000003,
+        "durationMs": 47.5,
+        "history": 32,
+        "collaboration": 32
+      },
+      "nativePhases": [
+        {
+          "name": "spn133-native-history",
+          "durationMs": 23.9
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "durationMs": 22.4
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 101178.6,
+        "durationMs": 46.39999999999418,
+        "history": 32,
+        "collaboration": 32
+      },
+      "nativePhases": [
+        {
+          "name": "spn133-native-history",
+          "durationMs": 29.2
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "durationMs": 17.2
+        }
+      ],
+      "gcUnionOverlapMs": 6.095,
+      "gcNames": [
+        "V8.GC_HEAP_EXTERNAL_PROLOGUE",
+        "V8.GC_HEAP_PROLOGUE",
+        "V8.GC_TIME_TO_SAFEPOINT",
+        "V8.GC_SCAVENGER",
+        "V8.GC_HEAP_PROLOGUE_SAFEPOINT",
+        "V8.GC_SCAVENGER_SCAVENGE",
+        "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_IDENTIFY",
+        "V8.GC_SCAVENGER_TRACED_HANDLES_COMPUTE_WEAKNESS_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_COLLECT_OLD_TO_NEW_PAGES",
+        "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE",
+        "Parallel scavenge started",
+        "V8.GC_SCAVENGER_SCAVENGE_ROOTS",
+        "V8.GC_SCAVENGER_SCAVENGE_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_PROCESS",
+        "V8.GC_SCAVENGER_TRACED_HANDLES_RESET_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_FINALIZE",
+        "V8.GC_SCAVENGER_SCAVENGE_RESTORE_AND_QUARANTINE_PINNED",
+        "V8.GC_SCAVENGER_FREE_REMEMBERED_SET",
+        "V8.GC_SCAVENGER_SWEEP_ARRAY_BUFFERS",
+        "V8.GC_SCAVENGER_RESIZE_NEW_SPACE",
+        "V8.GC_HEAP_EPILOGUE_SAFEPOINT",
+        "V8.GC_HEAP_EPILOGUE",
+        "V8.GC_HEAP_DUMP_STATISTICS",
+        "V8.GC_HEAP_EXTERNAL_EPILOGUE"
+      ]
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 88433.4,
+        "durationMs": 45.40000000002328,
+        "history": 32,
+        "collaboration": 32
+      },
+      "nativePhases": [
+        {
+          "name": "spn133-native-history",
+          "durationMs": 28.9
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "durationMs": 16.4
+        }
+      ],
+      "gcUnionOverlapMs": 5.975,
+      "gcNames": [
+        "V8.GC_HEAP_EXTERNAL_PROLOGUE",
+        "V8.GC_HEAP_PROLOGUE",
+        "V8.GC_HEAP_ENSURE_SWEEPING_COMPLETED",
+        "V8.GC_MC_COMPLETE_SWEEPING",
+        "V8.GC_MC_SWEEP",
+        "V8.GC_TIME_TO_SAFEPOINT",
+        "V8.GC_SCAVENGER",
+        "V8.GC_HEAP_PROLOGUE_SAFEPOINT",
+        "V8.GC_SCAVENGER_SCAVENGE",
+        "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_IDENTIFY",
+        "V8.GC_SCAVENGER_TRACED_HANDLES_COMPUTE_WEAKNESS_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_COLLECT_OLD_TO_NEW_PAGES",
+        "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE",
+        "Parallel scavenge started",
+        "V8.GC_SCAVENGER_SCAVENGE_ROOTS",
+        "V8.GC_SCAVENGER_SCAVENGE_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_PROCESS",
+        "V8.GC_SCAVENGER_TRACED_HANDLES_RESET_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_FINALIZE",
+        "V8.GC_SCAVENGER_SCAVENGE_RESTORE_AND_QUARANTINE_PINNED",
+        "V8.GC_SCAVENGER_FREE_REMEMBERED_SET",
+        "V8.GC_SCAVENGER_SWEEP_ARRAY_BUFFERS",
+        "V8.GC_SCAVENGER_RESIZE_NEW_SPACE",
+        "V8.GC_HEAP_EPILOGUE_SAFEPOINT",
+        "V8.GC_HEAP_EPILOGUE",
+        "V8.GC_HEAP_DUMP_STATISTICS",
+        "V8.GC_HEAP_EXTERNAL_EPILOGUE"
+      ]
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 114685.20000000001,
+        "durationMs": 44.5,
+        "history": 32,
+        "collaboration": 32
+      },
+      "nativePhases": [
+        {
+          "name": "spn133-native-history",
+          "durationMs": 28.1
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "durationMs": 15.6
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 54932.399999999994,
+        "durationMs": 42.20000000001164,
+        "history": 32,
+        "collaboration": 32
+      },
+      "nativePhases": [
+        {
+          "name": "spn133-native-history",
+          "durationMs": 26.701
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "durationMs": 15.4
+        }
+      ],
+      "gcUnionOverlapMs": 5.505,
+      "gcNames": [
+        "V8.GC_HEAP_EXTERNAL_PROLOGUE",
+        "V8.GC_HEAP_PROLOGUE",
+        "V8.GC_TIME_TO_SAFEPOINT",
+        "V8.GC_SCAVENGER",
+        "V8.GC_HEAP_PROLOGUE_SAFEPOINT",
+        "V8.GC_SCAVENGER_SCAVENGE",
+        "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_IDENTIFY",
+        "V8.GC_SCAVENGER_TRACED_HANDLES_COMPUTE_WEAKNESS_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_COLLECT_OLD_TO_NEW_PAGES",
+        "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE",
+        "Parallel scavenge started",
+        "V8.GC_SCAVENGER_SCAVENGE_ROOTS",
+        "V8.GC_SCAVENGER_SCAVENGE_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_PROCESS",
+        "V8.GC_SCAVENGER_TRACED_HANDLES_RESET_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_FINALIZE",
+        "V8.GC_SCAVENGER_SCAVENGE_RESTORE_AND_QUARANTINE_PINNED",
+        "V8.GC_SCAVENGER_FREE_REMEMBERED_SET",
+        "V8.GC_SCAVENGER_SWEEP_ARRAY_BUFFERS",
+        "V8.GC_SCAVENGER_RESIZE_NEW_SPACE",
+        "V8.GC_HEAP_EPILOGUE_SAFEPOINT",
+        "V8.GC_HEAP_EPILOGUE",
+        "V8.GC_HEAP_DUMP_STATISTICS",
+        "V8.GC_HEAP_EXTERNAL_EPILOGUE"
+      ]
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 16630.300000000003,
+        "durationMs": 38.19999999999709,
+        "history": 32,
+        "collaboration": 32
+      },
+      "nativePhases": [
+        {
+          "name": "spn133-native-history",
+          "durationMs": 18.7
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "durationMs": 19.5
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 22714.600000000006,
+        "durationMs": 36.19999999999709,
+        "history": 32,
+        "collaboration": 32
+      },
+      "nativePhases": [
+        {
+          "name": "spn133-native-history",
+          "durationMs": 19.5
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "durationMs": 16.5
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    }
+  ]
+}
+WATCHDOG: exit=0, signal=null, elapsed=143ms, peak=0.0MiB

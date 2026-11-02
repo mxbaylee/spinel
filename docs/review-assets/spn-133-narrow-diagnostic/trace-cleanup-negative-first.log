@@ -1,0 +1,14 @@
+✔ trace retention: complete (3.72225ms)
+✔ trace retention: data-loss (1.335291ms)
+✔ trace retention: missing-stream (0.653833ms)
+✔ file-close failure preserves result and stream cleanup; primary=false (1.659458ms)
+✔ file-close failure preserves result and stream cleanup; primary=true (0.13425ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 74.608333
+WATCHDOG: exit=0, signal=null, elapsed=109ms, peak=0.0MiB

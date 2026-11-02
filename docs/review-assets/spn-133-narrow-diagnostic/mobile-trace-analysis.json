@@ -1,0 +1,953 @@
+{
+  "source": "8d2f994c3ac53c1849bd2b68927059d9c20c99f0",
+  "preset": "mobile",
+  "sample": "profile",
+  "attempt": 0,
+  "diagnosticOnly": true,
+  "completed": true,
+  "errors": [],
+  "preUndoIntegrity": true,
+  "undoRedo": "passed",
+  "budgetResults": {
+    "inputP95": true,
+    "longestTask": true,
+    "capacityFlushP95": true,
+    "idleFlushP95": true,
+    "flushMaximum": true,
+    "boundedHistory": true,
+    "boundedCollaboration": true,
+    "observedCapacityFlushes": true,
+    "browserLocalDrainedWithinOneSecond": true
+  },
+  "traceSha256": "287e4814775205c70f0e9ef54c348dce7ade33ee0f15af2171bac81787baab0e",
+  "coveredFlushes": 66,
+  "nativePhaseSpans": 132,
+  "events": 56682,
+  "offset": 84952854.99999999,
+  "clockDriftMs": 0.08100000001490117,
+  "selected": [
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 10859.300000000003,
+        "durationMs": 48.69999999999709,
+        "history": 32,
+        "collaboration": 32
+      },
+      "nativePhases": [
+        {
+          "name": "spn133-native-history",
+          "durationMs": 29.1
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "durationMs": 19.5
+        }
+      ],
+      "gcUnionOverlapMs": 4.465,
+      "gc": [
+        {
+          "name": "V8.GC_HEAP_EXTERNAL_PROLOGUE",
+          "ts": 95814200,
+          "durationMs": 0.009
+        },
+        {
+          "name": "V8.GC_HEAP_PROLOGUE",
+          "ts": 95814212,
+          "durationMs": 0.003
+        },
+        {
+          "name": "V8.GC_TIME_TO_SAFEPOINT",
+          "ts": 95814219,
+          "durationMs": 0.044
+        },
+        {
+          "name": "V8.GC_SCAVENGER",
+          "ts": 95814276,
+          "durationMs": 4.395
+        },
+        {
+          "name": "V8.GC_HEAP_PROLOGUE_SAFEPOINT",
+          "ts": 95814293,
+          "durationMs": 0.001
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE",
+          "ts": 95814296,
+          "durationMs": 4.357
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_IDENTIFY",
+          "ts": 95814323,
+          "durationMs": 0.113
+        },
+        {
+          "name": "V8.GC_SCAVENGER_TRACED_HANDLES_COMPUTE_WEAKNESS_PARALLEL",
+          "ts": 95814346,
+          "durationMs": 0.083
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_COLLECT_OLD_TO_NEW_PAGES",
+          "ts": 95814437,
+          "durationMs": 0.028
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE",
+          "ts": 95814467,
+          "durationMs": 3.985
+        },
+        {
+          "name": "Parallel scavenge started",
+          "ts": 95814470,
+          "durationMs": 0.001
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_ROOTS",
+          "ts": 95814480,
+          "durationMs": 3.212
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_PARALLEL",
+          "ts": 95817710,
+          "durationMs": 0.737
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_PROCESS",
+          "ts": 95818453,
+          "durationMs": 0.091
+        },
+        {
+          "name": "V8.GC_SCAVENGER_TRACED_HANDLES_RESET_PARALLEL",
+          "ts": 95818473,
+          "durationMs": 0.039
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_FINALIZE",
+          "ts": 95818545,
+          "durationMs": 0.04
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_RESTORE_AND_QUARANTINE_PINNED",
+          "ts": 95818587,
+          "durationMs": 0.004
+        },
+        {
+          "name": "V8.GC_SCAVENGER_FREE_REMEMBERED_SET",
+          "ts": 95818595,
+          "durationMs": 0.01
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SWEEP_ARRAY_BUFFERS",
+          "ts": 95818606,
+          "durationMs": 0.007
+        },
+        {
+          "name": "V8.GC_SCAVENGER_RESIZE_NEW_SPACE",
+          "ts": 95818644,
+          "durationMs": 0.004
+        },
+        {
+          "name": "V8.GC_HEAP_EPILOGUE_SAFEPOINT",
+          "ts": 95818666,
+          "durationMs": 0.003
+        },
+        {
+          "name": "V8.GC_HEAP_EPILOGUE",
+          "ts": 95819488,
+          "durationMs": 0.009
+        },
+        {
+          "name": "V8.GC_HEAP_DUMP_STATISTICS",
+          "ts": 95819552,
+          "durationMs": 0.002
+        },
+        {
+          "name": "V8.GC_HEAP_EXTERNAL_EPILOGUE",
+          "ts": 95819593,
+          "durationMs": 0.003
+        }
+      ],
+      "longest": [
+        {
+          "name": "spn133-native-history",
+          "cat": "blink.user_timing",
+          "ts": 95812234,
+          "durationMs": 29.1
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "cat": "blink.user_timing",
+          "ts": 95841334,
+          "durationMs": 19.5
+        },
+        {
+          "name": "V8.GC_SCAVENGER",
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "ts": 95814276,
+          "durationMs": 4.395
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE",
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "ts": 95814296,
+          "durationMs": 4.357
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE",
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "ts": 95814467,
+          "durationMs": 3.985
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_ROOTS",
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "ts": 95814480,
+          "durationMs": 3.212
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_PARALLEL",
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "ts": 95817710,
+          "durationMs": 0.737
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_IDENTIFY",
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "ts": 95814323,
+          "durationMs": 0.113
+        }
+      ]
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 5799.300000000003,
+        "durationMs": 47.5,
+        "history": 32,
+        "collaboration": 32
+      },
+      "nativePhases": [
+        {
+          "name": "spn133-native-history",
+          "durationMs": 23.9
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "durationMs": 22.4
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gc": [],
+      "longest": [
+        {
+          "name": "spn133-native-history",
+          "cat": "blink.user_timing",
+          "ts": 90752734,
+          "durationMs": 23.9
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "cat": "blink.user_timing",
+          "ts": 90777334,
+          "durationMs": 22.4
+        }
+      ]
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 101178.6,
+        "durationMs": 46.39999999999418,
+        "history": 32,
+        "collaboration": 32
+      },
+      "nativePhases": [
+        {
+          "name": "spn133-native-history",
+          "durationMs": 29.2
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "durationMs": 17.2
+        }
+      ],
+      "gcUnionOverlapMs": 6.095,
+      "gc": [
+        {
+          "name": "V8.GC_HEAP_EXTERNAL_PROLOGUE",
+          "ts": 186153491,
+          "durationMs": 0.012
+        },
+        {
+          "name": "V8.GC_HEAP_PROLOGUE",
+          "ts": 186153505,
+          "durationMs": 0.005
+        },
+        {
+          "name": "V8.GC_TIME_TO_SAFEPOINT",
+          "ts": 186153519,
+          "durationMs": 0.004
+        },
+        {
+          "name": "V8.GC_SCAVENGER",
+          "ts": 186153543,
+          "durationMs": 6.062
+        },
+        {
+          "name": "V8.GC_HEAP_PROLOGUE_SAFEPOINT",
+          "ts": 186153562,
+          "durationMs": 0.002
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE",
+          "ts": 186153566,
+          "durationMs": 6.022
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_IDENTIFY",
+          "ts": 186154389,
+          "durationMs": 0.399
+        },
+        {
+          "name": "V8.GC_SCAVENGER_TRACED_HANDLES_COMPUTE_WEAKNESS_PARALLEL",
+          "ts": 186154724,
+          "durationMs": 0.048
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_COLLECT_OLD_TO_NEW_PAGES",
+          "ts": 186154790,
+          "durationMs": 0.032
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE",
+          "ts": 186154824,
+          "durationMs": 4.003
+        },
+        {
+          "name": "Parallel scavenge started",
+          "ts": 186154827,
+          "durationMs": 0.002
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_ROOTS",
+          "ts": 186154842,
+          "durationMs": 0.136
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_PARALLEL",
+          "ts": 186154982,
+          "durationMs": 0.765
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_PROCESS",
+          "ts": 186158828,
+          "durationMs": 0.064
+        },
+        {
+          "name": "V8.GC_SCAVENGER_TRACED_HANDLES_RESET_PARALLEL",
+          "ts": 186158848,
+          "durationMs": 0.028
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_FINALIZE",
+          "ts": 186158893,
+          "durationMs": 0.038
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_RESTORE_AND_QUARANTINE_PINNED",
+          "ts": 186158933,
+          "durationMs": 0.01
+        },
+        {
+          "name": "V8.GC_SCAVENGER_FREE_REMEMBERED_SET",
+          "ts": 186158953,
+          "durationMs": 0.011
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SWEEP_ARRAY_BUFFERS",
+          "ts": 186158965,
+          "durationMs": 0.008
+        },
+        {
+          "name": "V8.GC_SCAVENGER_RESIZE_NEW_SPACE",
+          "ts": 186158989,
+          "durationMs": 0.594
+        },
+        {
+          "name": "V8.GC_HEAP_EPILOGUE_SAFEPOINT",
+          "ts": 186159590,
+          "durationMs": 0.012
+        },
+        {
+          "name": "V8.GC_HEAP_EPILOGUE",
+          "ts": 186159615,
+          "durationMs": 0.008
+        },
+        {
+          "name": "V8.GC_HEAP_DUMP_STATISTICS",
+          "ts": 186159679,
+          "durationMs": 0.002
+        },
+        {
+          "name": "V8.GC_HEAP_EXTERNAL_EPILOGUE",
+          "ts": 186159727,
+          "durationMs": 0.002
+        }
+      ],
+      "longest": [
+        {
+          "name": "spn133-native-history",
+          "cat": "blink.user_timing",
+          "ts": 186131534,
+          "durationMs": 29.2
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "cat": "blink.user_timing",
+          "ts": 186160734,
+          "durationMs": 17.2
+        },
+        {
+          "name": "V8.GC_SCAVENGER",
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "ts": 186153543,
+          "durationMs": 6.062
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE",
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "ts": 186153566,
+          "durationMs": 6.022
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE",
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "ts": 186154824,
+          "durationMs": 4.003
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_PARALLEL",
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "ts": 186154982,
+          "durationMs": 0.765
+        },
+        {
+          "name": "V8.GC_SCAVENGER_RESIZE_NEW_SPACE",
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "ts": 186158989,
+          "durationMs": 0.594
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_IDENTIFY",
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "ts": 186154389,
+          "durationMs": 0.399
+        }
+      ]
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 88433.4,
+        "durationMs": 45.40000000002328,
+        "history": 32,
+        "collaboration": 32
+      },
+      "nativePhases": [
+        {
+          "name": "spn133-native-history",
+          "durationMs": 28.9
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "durationMs": 16.4
+        }
+      ],
+      "gcUnionOverlapMs": 5.975,
+      "gc": [
+        {
+          "name": "V8.GC_HEAP_EXTERNAL_PROLOGUE",
+          "ts": 173403319,
+          "durationMs": 0.007
+        },
+        {
+          "name": "V8.GC_HEAP_PROLOGUE",
+          "ts": 173403327,
+          "durationMs": 0.003
+        },
+        {
+          "name": "V8.GC_HEAP_ENSURE_SWEEPING_COMPLETED",
+          "ts": 173403333,
+          "durationMs": 0.524
+        },
+        {
+          "name": "V8.GC_MC_COMPLETE_SWEEPING",
+          "ts": 173403340,
+          "durationMs": 0.008
+        },
+        {
+          "name": "V8.GC_MC_SWEEP",
+          "ts": 173403342,
+          "durationMs": 0.002
+        },
+        {
+          "name": "V8.GC_TIME_TO_SAFEPOINT",
+          "ts": 173403890,
+          "durationMs": 0.049
+        },
+        {
+          "name": "V8.GC_SCAVENGER",
+          "ts": 173403955,
+          "durationMs": 5.331
+        },
+        {
+          "name": "V8.GC_HEAP_PROLOGUE_SAFEPOINT",
+          "ts": 173404450,
+          "durationMs": 0.003
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE",
+          "ts": 173404454,
+          "durationMs": 4.824
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_IDENTIFY",
+          "ts": 173404516,
+          "durationMs": 0.455
+        },
+        {
+          "name": "V8.GC_SCAVENGER_TRACED_HANDLES_COMPUTE_WEAKNESS_PARALLEL",
+          "ts": 173404787,
+          "durationMs": 0.181
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_COLLECT_OLD_TO_NEW_PAGES",
+          "ts": 173404972,
+          "durationMs": 0.018
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE",
+          "ts": 173404992,
+          "durationMs": 4.157
+        },
+        {
+          "name": "Parallel scavenge started",
+          "ts": 173404994,
+          "durationMs": 0.004
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_ROOTS",
+          "ts": 173405033,
+          "durationMs": 0.126
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_PARALLEL",
+          "ts": 173405163,
+          "durationMs": 3.982
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_PROCESS",
+          "ts": 173409150,
+          "durationMs": 0.051
+        },
+        {
+          "name": "V8.GC_SCAVENGER_TRACED_HANDLES_RESET_PARALLEL",
+          "ts": 173409165,
+          "durationMs": 0.033
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_FINALIZE",
+          "ts": 173409202,
+          "durationMs": 0.029
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_RESTORE_AND_QUARANTINE_PINNED",
+          "ts": 173409232,
+          "durationMs": 0.009
+        },
+        {
+          "name": "V8.GC_SCAVENGER_FREE_REMEMBERED_SET",
+          "ts": 173409249,
+          "durationMs": 0.005
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SWEEP_ARRAY_BUFFERS",
+          "ts": 173409255,
+          "durationMs": 0.009
+        },
+        {
+          "name": "V8.GC_SCAVENGER_RESIZE_NEW_SPACE",
+          "ts": 173409273,
+          "durationMs": 0.002
+        },
+        {
+          "name": "V8.GC_HEAP_EPILOGUE_SAFEPOINT",
+          "ts": 173409280,
+          "durationMs": 0.004
+        },
+        {
+          "name": "V8.GC_HEAP_EPILOGUE",
+          "ts": 173409847,
+          "durationMs": 0.055
+        },
+        {
+          "name": "V8.GC_HEAP_DUMP_STATISTICS",
+          "ts": 173409966,
+          "durationMs": 0.003
+        },
+        {
+          "name": "V8.GC_HEAP_EXTERNAL_EPILOGUE",
+          "ts": 173410040,
+          "durationMs": 0.003
+        }
+      ],
+      "longest": [
+        {
+          "name": "spn133-native-history",
+          "cat": "blink.user_timing",
+          "ts": 173386334,
+          "durationMs": 28.9
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "cat": "blink.user_timing",
+          "ts": 173415334,
+          "durationMs": 16.4
+        },
+        {
+          "name": "V8.GC_SCAVENGER",
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "ts": 173403955,
+          "durationMs": 5.331
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE",
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "ts": 173404454,
+          "durationMs": 4.824
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE",
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "ts": 173404992,
+          "durationMs": 4.157
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_PARALLEL",
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "ts": 173405163,
+          "durationMs": 3.982
+        },
+        {
+          "name": "V8.GC_HEAP_ENSURE_SWEEPING_COMPLETED",
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "ts": 173403333,
+          "durationMs": 0.524
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_IDENTIFY",
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "ts": 173404516,
+          "durationMs": 0.455
+        }
+      ]
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 114685.20000000001,
+        "durationMs": 44.5,
+        "history": 32,
+        "collaboration": 32
+      },
+      "nativePhases": [
+        {
+          "name": "spn133-native-history",
+          "durationMs": 28.1
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "durationMs": 15.6
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gc": [],
+      "longest": [
+        {
+          "name": "spn133-native-history",
+          "cat": "blink.user_timing",
+          "ts": 199638134,
+          "durationMs": 28.1
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "cat": "blink.user_timing",
+          "ts": 199666334,
+          "durationMs": 15.6
+        }
+      ]
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 54932.399999999994,
+        "durationMs": 42.20000000001164,
+        "history": 32,
+        "collaboration": 32
+      },
+      "nativePhases": [
+        {
+          "name": "spn133-native-history",
+          "durationMs": 26.701
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "durationMs": 15.4
+        }
+      ],
+      "gcUnionOverlapMs": 5.505,
+      "gc": [
+        {
+          "name": "V8.GC_HEAP_EXTERNAL_PROLOGUE",
+          "ts": 139905291,
+          "durationMs": 0.007
+        },
+        {
+          "name": "V8.GC_HEAP_PROLOGUE",
+          "ts": 139905300,
+          "durationMs": 0.004
+        },
+        {
+          "name": "V8.GC_TIME_TO_SAFEPOINT",
+          "ts": 139905307,
+          "durationMs": 0.002
+        },
+        {
+          "name": "V8.GC_SCAVENGER",
+          "ts": 139905322,
+          "durationMs": 5.484
+        },
+        {
+          "name": "V8.GC_HEAP_PROLOGUE_SAFEPOINT",
+          "ts": 139905354,
+          "durationMs": 0.002
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE",
+          "ts": 139905357,
+          "durationMs": 5.442
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_IDENTIFY",
+          "ts": 139905411,
+          "durationMs": 0.09
+        },
+        {
+          "name": "V8.GC_SCAVENGER_TRACED_HANDLES_COMPUTE_WEAKNESS_PARALLEL",
+          "ts": 139905428,
+          "durationMs": 0.051
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_COLLECT_OLD_TO_NEW_PAGES",
+          "ts": 139905502,
+          "durationMs": 0.03
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE",
+          "ts": 139905534,
+          "durationMs": 4.499
+        },
+        {
+          "name": "Parallel scavenge started",
+          "ts": 139905538,
+          "durationMs": 0.002
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_ROOTS",
+          "ts": 139906360,
+          "durationMs": 0.252
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_PARALLEL",
+          "ts": 139906616,
+          "durationMs": 3.413
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_PROCESS",
+          "ts": 139910034,
+          "durationMs": 0.055
+        },
+        {
+          "name": "V8.GC_SCAVENGER_TRACED_HANDLES_RESET_PARALLEL",
+          "ts": 139910050,
+          "durationMs": 0.036
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_FINALIZE",
+          "ts": 139910090,
+          "durationMs": 0.067
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_RESTORE_AND_QUARANTINE_PINNED",
+          "ts": 139910159,
+          "durationMs": 0.015
+        },
+        {
+          "name": "V8.GC_SCAVENGER_FREE_REMEMBERED_SET",
+          "ts": 139910184,
+          "durationMs": 0.016
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SWEEP_ARRAY_BUFFERS",
+          "ts": 139910202,
+          "durationMs": 0.578
+        },
+        {
+          "name": "V8.GC_SCAVENGER_RESIZE_NEW_SPACE",
+          "ts": 139910794,
+          "durationMs": 0.002
+        },
+        {
+          "name": "V8.GC_HEAP_EPILOGUE_SAFEPOINT",
+          "ts": 139910800,
+          "durationMs": 0.005
+        },
+        {
+          "name": "V8.GC_HEAP_EPILOGUE",
+          "ts": 139910809,
+          "durationMs": 0.005
+        },
+        {
+          "name": "V8.GC_HEAP_DUMP_STATISTICS",
+          "ts": 139910859,
+          "durationMs": 0.001
+        },
+        {
+          "name": "V8.GC_HEAP_EXTERNAL_EPILOGUE",
+          "ts": 139910911,
+          "durationMs": 0.002
+        }
+      ],
+      "longest": [
+        {
+          "name": "spn133-native-history",
+          "cat": "blink.user_timing",
+          "ts": 139885333,
+          "durationMs": 26.701
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "cat": "blink.user_timing",
+          "ts": 139912134,
+          "durationMs": 15.4
+        },
+        {
+          "name": "V8.GC_SCAVENGER",
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "ts": 139905322,
+          "durationMs": 5.484
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE",
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "ts": 139905357,
+          "durationMs": 5.442
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE",
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "ts": 139905534,
+          "durationMs": 4.499
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_PARALLEL",
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "ts": 139906616,
+          "durationMs": 3.413
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SWEEP_ARRAY_BUFFERS",
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "ts": 139910202,
+          "durationMs": 0.578
+        },
+        {
+          "name": "V8.GC_SCAVENGER_SCAVENGE_ROOTS",
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "ts": 139906360,
+          "durationMs": 0.252
+        }
+      ]
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 16630.300000000003,
+        "durationMs": 38.19999999999709,
+        "history": 32,
+        "collaboration": 32
+      },
+      "nativePhases": [
+        {
+          "name": "spn133-native-history",
+          "durationMs": 18.7
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "durationMs": 19.5
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gc": [],
+      "longest": [
+        {
+          "name": "spn133-native-collaboration",
+          "cat": "blink.user_timing",
+          "ts": 101601934,
+          "durationMs": 19.5
+        },
+        {
+          "name": "spn133-native-history",
+          "cat": "blink.user_timing",
+          "ts": 101583234,
+          "durationMs": 18.7
+        }
+      ]
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 22714.600000000006,
+        "durationMs": 36.19999999999709,
+        "history": 32,
+        "collaboration": 32
+      },
+      "nativePhases": [
+        {
+          "name": "spn133-native-history",
+          "durationMs": 19.5
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "durationMs": 16.5
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gc": [],
+      "longest": [
+        {
+          "name": "spn133-native-history",
+          "cat": "blink.user_timing",
+          "ts": 107667534,
+          "durationMs": 19.5
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "cat": "blink.user_timing",
+          "ts": 107687134,
+          "durationMs": 16.5
+        }
+      ]
+    }
+  ]
+}

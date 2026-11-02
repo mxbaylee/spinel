@@ -1,0 +1,224 @@
+{
+  "source": "8d2f994c3ac53c1849bd2b68927059d9c20c99f0",
+  "preset": "desktop",
+  "sample": "profile",
+  "attempt": 0,
+  "diagnosticOnly": true,
+  "completed": true,
+  "errors": [],
+  "preUndoIntegrity": true,
+  "undoRedo": "passed",
+  "budgetResults": {
+    "inputP95": true,
+    "longestTask": true,
+    "capacityFlushP95": true,
+    "idleFlushP95": true,
+    "flushMaximum": true,
+    "boundedHistory": true,
+    "boundedCollaboration": true,
+    "observedCapacityFlushes": true,
+    "browserLocalDrainedWithinOneSecond": true
+  },
+  "traceSha256": "ad98130a25994a6ea4175d8d30fee1942e9bb3367dafe2c08a69406d75c2801f",
+  "coveredFlushes": 66,
+  "nativePhaseSpans": 132,
+  "events": 60236,
+  "offset": 85959286,
+  "clockDriftMs": 0.033,
+  "selected": [
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 6486.899999999994,
+        "durationMs": 15.19999999999709,
+        "history": 32,
+        "collaboration": 32
+      },
+      "nativePhases": [
+        {
+          "name": "spn133-native-history",
+          "durationMs": 9.601
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "durationMs": 5.5
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 3559.899999999994,
+        "durationMs": 9.69999999999709,
+        "history": 32,
+        "collaboration": 32
+      },
+      "nativePhases": [
+        {
+          "name": "spn133-native-history",
+          "durationMs": 5.399
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "durationMs": 4
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 40629.3,
+        "durationMs": 9.099999999991269,
+        "history": 32,
+        "collaboration": 32
+      },
+      "nativePhases": [
+        {
+          "name": "spn133-native-history",
+          "durationMs": 2.9
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "durationMs": 6.199
+        }
+      ],
+      "gcUnionOverlapMs": 2.985,
+      "gcNames": [
+        "V8.GC_HEAP_EXTERNAL_PROLOGUE",
+        "V8.GC_HEAP_PROLOGUE",
+        "V8.GC_TIME_TO_SAFEPOINT",
+        "V8.GC_SCAVENGER",
+        "V8.GC_HEAP_PROLOGUE_SAFEPOINT",
+        "V8.GC_SCAVENGER_SCAVENGE",
+        "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_IDENTIFY",
+        "V8.GC_SCAVENGER_TRACED_HANDLES_COMPUTE_WEAKNESS_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_COLLECT_OLD_TO_NEW_PAGES",
+        "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE",
+        "Parallel scavenge started",
+        "V8.GC_SCAVENGER_SCAVENGE_ROOTS",
+        "V8.GC_SCAVENGER_SCAVENGE_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_PROCESS",
+        "V8.GC_SCAVENGER_TRACED_HANDLES_RESET_PARALLEL",
+        "V8.GC_SCAVENGER_SCAVENGE_FINALIZE",
+        "V8.GC_SCAVENGER_SCAVENGE_RESTORE_AND_QUARANTINE_PINNED",
+        "V8.GC_SCAVENGER_FREE_REMEMBERED_SET",
+        "V8.GC_SCAVENGER_SWEEP_ARRAY_BUFFERS",
+        "V8.GC_SCAVENGER_RESIZE_NEW_SPACE",
+        "V8.GC_HEAP_EPILOGUE_SAFEPOINT",
+        "V8.GC_HEAP_EPILOGUE",
+        "V8.GC_HEAP_DUMP_STATISTICS",
+        "V8.GC_HEAP_EXTERNAL_EPILOGUE"
+      ]
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 8218.599999999991,
+        "durationMs": 8.30000000000291,
+        "history": 32,
+        "collaboration": 32
+      },
+      "nativePhases": [
+        {
+          "name": "spn133-native-history",
+          "durationMs": 3.701
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "durationMs": 4.599
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 9630.099999999991,
+        "durationMs": 8.30000000000291,
+        "history": 32,
+        "collaboration": 32
+      },
+      "nativePhases": [
+        {
+          "name": "spn133-native-history",
+          "durationMs": 3.6
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "durationMs": 4.7
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 55367.90000000001,
+        "durationMs": 7.899999999994179,
+        "history": 32,
+        "collaboration": 32
+      },
+      "nativePhases": [
+        {
+          "name": "spn133-native-history",
+          "durationMs": 5.3
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "durationMs": 2.6
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 12818.5,
+        "durationMs": 7.80000000000291,
+        "history": 32,
+        "collaboration": 32
+      },
+      "nativePhases": [
+        {
+          "name": "spn133-native-history",
+          "durationMs": 3.199
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "durationMs": 4.5
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 5737.300000000003,
+        "durationMs": 6.899999999994179,
+        "history": 32,
+        "collaboration": 32
+      },
+      "nativePhases": [
+        {
+          "name": "spn133-native-history",
+          "durationMs": 4.599
+        },
+        {
+          "name": "spn133-native-collaboration",
+          "durationMs": 2.3
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    }
+  ]
+}
+WATCHDOG: exit=0, signal=null, elapsed=124ms, peak=0.0MiB

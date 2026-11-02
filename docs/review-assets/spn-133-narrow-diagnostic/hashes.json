@@ -1,0 +1,54 @@
+{
+  "README.md": {
+    "bytes": 2330,
+    "sha256": "15826bc2ee22f29f38f41530fcb8c9d93043fef00f07583c15aa6dabad1f4f20"
+  },
+  "analyze-trace.ts": {
+    "bytes": 4435,
+    "sha256": "fe50b710220a5f32ebe4a5a52d3b85fcead97714236d3a160a84832ea65b526f"
+  },
+  "desktop-trace-analysis.json": {
+    "bytes": 11658,
+    "sha256": "cc5e0bbdf72c47190a2da6e0b4a16dca129898609ba0be250d0268609b445f03"
+  },
+  "mobile-trace-analysis.json": {
+    "bytes": 25212,
+    "sha256": "724c656c8e61b5ce85825a286483a7f6f9cbaaefcae6fac17d822c3561cd56a8"
+  },
+  "narrow-desktop-analysis-first.log": {
+    "bytes": 5690,
+    "sha256": "4e666fd7c4f7d3882ead45fc67f241b46ccb027b100191883a04ea699734ec29"
+  },
+  "narrow-desktop.log": {
+    "bytes": 68246,
+    "sha256": "d24c0f6d996c5f91f44d35a5b151e06ff03fed122825ed27577fbd7021feedf4"
+  },
+  "narrow-desktop.zip": {
+    "bytes": 12326783,
+    "sha256": "b0e3d8bba4c96442320bafc94038741096c1068d328da5f2e62cedae4fc1b955"
+  },
+  "narrow-jobs.json": {
+    "bytes": 7229,
+    "sha256": "13300a28b15e24f2bb5bee6cce05956b5296ef402b1ffd36e80c1225a36548a1"
+  },
+  "narrow-mobile-analysis-first.log": {
+    "bytes": 9141,
+    "sha256": "65ad020f4170c01062b667470b44614a07fd73c3941e5bbce7e7dff109ec5349"
+  },
+  "narrow-mobile.log": {
+    "bytes": 68239,
+    "sha256": "a3f080f0a991d7dc536c78c77b5c3779f5df21c0fdfe45772c01e4f059a6f277"
+  },
+  "narrow-mobile.zip": {
+    "bytes": 12809384,
+    "sha256": "79d28719e6e8906182f8377adafe812ae0e22c29d7dfb35b29d27aa8b17a9038"
+  },
+  "narrow-run.json": {
+    "bytes": 11762,
+    "sha256": "2c590c45784fe97c2684173019dd1f4249ca2b1a3cca4376702b658d16c3af71"
+  },
+  "trace-cleanup-negative-first.log": {
+    "bytes": 479,
+    "sha256": "c76be7494cf63ce7fe80c2ddf434f11f743c878d260e363abde938a4345741e9"
+  }
+}
