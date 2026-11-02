@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import type { FileItem } from '../src/shared/workspace.ts';
 import { searchCatalog } from '../src/shared/search.ts';
 import { Dashboard } from './Dashboard.tsx';
@@ -181,7 +181,10 @@ export const HideAndShow: Story = {
     await expect(
       canvas.queryByRole('button', { name: 'Journey notes Doc' }),
     ).not.toBeInTheDocument();
-    await expect(canvas.getByRole('heading', { name: 'Shared with me' })).toHaveFocus();
+    // The removed trigger hands focus to the heading on the next animation frame.
+    await waitFor(() =>
+      expect(canvas.getByRole('heading', { name: 'Shared with me' })).toHaveFocus(),
+    );
     await showHidden(canvasElement);
     await userEvent.click(
       await canvas.findByRole('button', { name: 'More actions for Journey notes' }),

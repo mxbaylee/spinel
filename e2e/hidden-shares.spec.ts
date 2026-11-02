@@ -81,6 +81,9 @@ test('a collaborator hides and restores a Doc and Space without changing the own
           exact: true,
         }),
       ).toHaveCount(0);
+      await expect(
+        page.getByRole('heading', { name: 'Shared with me', exact: true }),
+      ).toBeFocused();
     }
     expect(grants()).toEqual(before);
     await page.getByRole('searchbox', { name: 'Search files', exact: true }).fill(doc.name);
