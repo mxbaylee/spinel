@@ -1,0 +1,16 @@
+{
+  "run": 41365993489,
+  "job": 125026157819,
+  "source": "f511b540f26eb21d5067cf5f5259e4a7be34c788",
+  "tested": "7341c9f0d87b1f9abd1dc2d04c0c02ce38c806ed",
+  "finding": "Provider-bound retained log identifies immutable checkout but does not record trigger action. Reviewed source subscribes to six actions with no uniquely opened-only proof; no initial opened inference.",
+  "excerpts": [
+    "2026-11-02T00:14:04.8050194Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/* +7341c9f0d87b1f9abd1dc2d04c0c02ce38c806ed:refs/remotes/pull/231/merge",
+    "2026-11-02T00:14:08.3827463Z  * [new ref]         7341c9f0d87b1f9abd1dc2d04c0c02ce38c806ed -> pull/231/merge",
+    "2026-11-02T00:14:08.9003491Z 7341c9f0d87b1f9abd1dc2d04c0c02ce38c806ed",
+    "2026-11-02T00:14:16.3327905Z Waiting for genuine code-check admission: Waiting for the current CI attempt's code gate: Playwright smoke.",
+    "2026-11-02T00:14:27.6340773Z Waiting for genuine code-check admission: Waiting for the current CI attempt's code gate: Playwright smoke.",
+    "2026-11-02T00:14:38.9197959Z Waiting for genuine code-check admission: Waiting for the current CI attempt's code gate: Playwright smoke.",
+    "2026-11-02T00:14:50.2897736Z Waiting for genuine code-check admission: Waiting for the current CI attempt's code gate: Playwright smoke."
+  ]
+}

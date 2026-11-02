@@ -1,0 +1,117 @@
+✔ classification retains historical base or removed-label obligations without current labels (4.376958ms)
+✔ unavailable or still-pending edit history conservatively selects full coverage (1.039208ms)
+✔ classification rejects stale live source/base before consulting a potentially clear history (1.385583ms)
+✔ only known documentation paths qualify, including the exact backlog JSON (0.40375ms)
+✔ unavailable or unsupported event ranges require full validation (0.324208ms)
+✔ Git ranges include earlier commits, both rename paths, deletions and unusual names (485.026875ms)
+✔ latest CI identity is selected independently of input order and cannot fall back to an old pass (12.627417ms)
+✔ a fresh attempt of an old-base run cannot borrow a newer run identity (0.378333ms)
+✔ full coverage is established by actual selection rather than an event-name flag (1.173375ms)
+✔ all-attempt evidence selects the latest real gate and cannot revive an earlier pass (5.371833ms)
+✔ full requests require a genuinely new eligible run, not a newer attempt of prior full work (0.362209ms)
+✔ matching run identity binds PR, tested merge, head, and immutable base (0.249083ms)
+✔ foreign or malformed scoped responses do not silently disappear during selection (0.399208ms)
+✔ missing run or test merge remains pending; another PR on the same head supplies no evidence (0.162458ms)
+✔ genuine queued, pending, failed and successful code gates retain their existing outcomes (1.325833ms)
+✔ missing required gates are pending only while the selected run remains pending (0.281167ms)
+✔ future attempts, another suite, another source, and foreign apps cannot supply the six gates (0.348583ms)
+✔ failed-job retries retain actual earlier successes in the same run and suite only (0.174ms)
+✔ duplicate gate names and reused identities fail even when all six names are present (0.120334ms)
+✔ skipped, neutral and malformed conclusions never become genuine code admission (0.350083ms)
+✔ non-atomic API snapshots stay pending while code status reconciles (0.15225ms)
+✔ missing or reconciling gates cannot hide malformed evidence elsewhere in the suite (0.135667ms)
+Waiting for genuine code-check admission: Waiting for the current CI attempt's code gate: Playwright smoke.
+Waiting for genuine code-check admission: Waiting for the current CI attempt's code gate: Playwright smoke.
+Waiting for genuine code-check admission: Waiting for PR edit classification in run 500.
+✔ text policy preserves genuine passing, pending and failed code results without mutations (9.710375ms)
+✔ invalid title fails before code admission and corrected text is independently revalidated (1.258334ms)
+✔ base change, new code and text cannot borrow an old-base pass or forget full history without a label (1.970292ms)
+✔ policy fails closed on source drift, late text, missing gates and API failure (1.157375ms)
+✔ pending admission uses a bounded observable retry and validates the final state (1.371375ms)
+✔ policy admission can outlast a sixty-minute worker and ordinary queueing (0.750875ms)
+✔ exact text edits never mint or use the privileged routing capability (0.311083ms)
+✔ base and ambiguous edits use ordinary-token removal then App addition, preserving the obligation (0.575209ms)
+✔ an old base-edit delivery routes the live PR source and does not disguise denied App mutation (0.29125ms)
+✔ missing router key or failed label addition cannot erase an ambiguous edit after a code push (1.089542ms)
+✔ removing the full-revalidation label before a code push cannot narrow validation (0.883625ms)
+✔ an ambiguous edit with no router cannot borrow a prior full pass or its later retry (1.108959ms)
+✔ rapid text supersession waits for independent classification without routing code (0.736292ms)
+✔ router refuses a closed PR or a live non-main target before mutating labels (0.16325ms)
+✔ GitHub client bounds pagination and credentials to the repository API without redirects (24.977458ms)
+✔ history proof remains independent of pending or failed code/title admission (7.834042ms)
+✔ history markers preserve both full-request bounds and reject incomplete or noncanonical certificates (0.3825ms)
+✔ history certificate binds the provider run, job, check, app, source and supported protocol (0.798041ms)
+✔ missing, unsuccessful, duplicated or out-of-order history proof cannot issue a checkpoint (0.442958ms)
+✔ checkpoint coverage cannot omit its issuer, reach unseen future runs, or invent request times (0.439375ms)
+✔ global history includes timestamp ties and ends only at a strict pre-PR predecessor (0.805875ms)
+✔ run one needs independent opening provenance and cannot stand in for late activation (0.31775ms)
+✔ a verified covering checkpoint preserves an expired prefix but never fills a suffix gap (0.35125ms)
+✔ an older later-finishing checkpoint may close a gap left by a newer issuer (0.240708ms)
+✔ a covering checkpoint cannot discard full bounds observed in a weaker anchor (0.528959ms)
+✔ missing, duplicate, foreign and shifted registration history cannot be certified (0.367584ms)
+✔ the current invocation must be registered and covered even when an older checkpoint is available (0.192875ms)
+✔ history scans additional pages only to the needed boundary and caps missing-prefix reads (11.063041ms)
+✔ only exact title/body changes avoid full validation (1.095375ms)
+✔ PR identity keeps immutable sources separate from names and treats metadata as data (0.848125ms)
+✔ missing, substituted or malformed PR identities cannot be silently repaired (0.553333ms)
+✔ uncomputed merge identity stays unavailable rather than falling back to head (1.919083ms)
+✔ run identity preserves base/head/tested/full separately and rejects ambiguous text (0.804583ms)
+✔ reserved route label cannot impersonate a code verdict or policy check (1.04275ms)
+✔ live source guards reject changed bases, heads, repositories, refs and closed PRs (3.890708ms)
+✔ current state requires a complete valid creation time and label inventory (0.464916ms)
+✔ a historical base change or removed label persists without a current label or router capability (3.093042ms)
+✖ ordinary non-edit policy runs do not request full validation while pending or missing markers (1.375ms)
+✔ an uncancelled successful text classifier remains evidence after its policy run is cancelled (0.924541ms)
+✔ classification work that is still pending is distinct from failed or cancelled missing proof (1.294208ms)
+✔ immutable text proof survives pending and failed classifier retries without passing code (1.965542ms)
+✔ failed classification without prior proof cannot establish a text edit (0.303125ms)
+✔ conflicting successful proofs cannot establish a trustworthy history boundary (0.384833ms)
+✔ malformed evidence cannot downgrade conflicting proofs to timestamped full validation (6.921709ms)
+✔ a recorded full marker persists and cannot be replaced by later text classification (1.150042ms)
+✔ missing or contradictory PR associations cannot erase a full edit before a later code run (0.374375ms)
+✔ malformed, duplicate and foreign run or classification bindings conservatively require full validation (1.032625ms)
+✔ unrelated PR runs are ignored but missing or incomplete API history cannot clear an obligation (0.414125ms)
+✔ classification recognizes only exact text changes and known code event actions (0.161875ms)
+✔ history input with invalid creation bounds cannot claim a clear requirement (0.064292ms)
+✔ age alone never replaces complete surviving history with a moving validation deadline (0.314667ms)
+✔ same-source targeted retries fail when a persistent full obligation appeared after their plan (1.242833ms)
+✔ clear or pending text history preserves targeted code while policy owns pending classification (0.403958ms)
+✔ a full plan still checks history freshness and must select every suite (0.507959ms)
+✔ code guards bind plan digest, classifier success and immutable event source before allowing full coverage (2.024334ms)
+✔ code guards re-read the live PR and reject a source change before completing (0.560334ms)
+✔ an ambiguous request requires a genuinely new full run even when source and base are unchanged (1.263875ms)
+✔ every later full request advances the barrier across timeline and policy records in either order (0.505208ms)
+✔ older complete history still scans later full requests and preserves a pending classifier (0.223959ms)
+✔ known creation times bound legacy or failed classification conservatively without blocking fresh full runs forever (1.19225ms)
+✔ trusted router notifications allow equal creation time only after a separately established request (1.116333ms)
+✔ manual, missing and foreign App label evidence keeps strict same-second freshness (0.857125ms)
+✔ a trusted notification never relaxes an actual edit at the same time or a later strict request (0.464708ms)
+✔ reserved-label removal retains the original duty and uses its own time only without another request boundary (0.312167ms)
+ℹ tests 86
+ℹ suites 0
+ℹ pass 85
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 694.034875
+
+✖ failing tests:
+
+test at scripts/ci/pr-state.test.ts:226:1
+✖ ordinary non-edit policy runs do not request full validation while pending or missing markers (1.375ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///Users/mxbaylee/projects/spinel-spn-129/scripts/ci/pr-state.test.ts:242:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+WATCHDOG: exit=1, signal=null, elapsed=752ms, peak=432.1MiB

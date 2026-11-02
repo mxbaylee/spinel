@@ -1,0 +1,30 @@
+Waiting for genuine code-check admission: Waiting for the current CI attempt's code gate: Playwright smoke.
+Waiting for genuine code-check admission: Waiting for the current CI attempt's code gate: Playwright smoke.
+Waiting for genuine code-check admission: Waiting for PR edit classification in run 500.
+✔ history issuance precedes title/code admission without changing genuine code results (7.058458ms)
+✔ unproved classifications, gaps and stale invocation identities cannot issue history (1.766958ms)
+✔ retained checkpoints preserve missing prefix obligations across source changes without admitting code (5.336959ms)
+✔ text policy preserves genuine passing, pending and failed code results without mutations (1.597875ms)
+✔ invalid title fails before code admission and corrected text is independently revalidated (0.483333ms)
+✔ base change, new code and text cannot borrow an old-base pass or forget full history without a label (1.434125ms)
+✔ policy fails closed on source drift, late text, missing gates and API failure (0.772208ms)
+✔ pending admission uses a bounded observable retry and validates the final state (0.8965ms)
+✔ policy admission can outlast a sixty-minute worker and ordinary queueing (0.508125ms)
+✔ exact text edits never mint or use the privileged routing capability (0.278292ms)
+✔ base and ambiguous edits use ordinary-token removal then App addition, preserving the obligation (0.448917ms)
+✔ an old base-edit delivery routes the live PR source and does not disguise denied App mutation (0.205459ms)
+✔ missing router key or failed label addition cannot erase an ambiguous edit after a code push (0.605208ms)
+✔ removing the full-revalidation label before a code push cannot narrow validation (0.551292ms)
+✔ an ambiguous edit with no router cannot borrow a prior full pass or its later retry (0.455792ms)
+✔ rapid text supersession waits for independent classification without routing code (0.5285ms)
+✔ router refuses a closed PR or a live non-main target before mutating labels (0.372125ms)
+✔ GitHub client bounds pagination and credentials to the repository API without redirects (16.723458ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 177.046667
+WATCHDOG: exit=0, signal=null, elapsed=232ms, peak=0.0MiB

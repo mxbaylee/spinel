@@ -1,0 +1,334 @@
+✔ every PR edit runs full validation, including title/body, base and ambiguous payloads (3.564125ms)
+✔ service changes keep candidate correctness and all existing broad checks without historical comparisons (0.29475ms)
+✔ sized restore participates in the immutable plan and fails closed (1.424708ms)
+✔ dependency closure and unknown paths fail closed, including old rename/deleted sides (0.3885ms)
+✔ labels only add coverage; removal recomputes automatic requirements (0.237709ms)
+✔ main ranges, scheduled/manual backstops, unknown events and missing ranges (0.204833ms)
+✔ aggregates require selected success and explicit inapplicable skipped; known regression remains red (0.309583ms)
+✔ workflows have unique ownership of all seven names and text edits never trigger code (0.677416ms)
+✔ reserved base revalidation stays full across a code push or label removal (0.216167ms)
+✔ a persistent or unresolved edit obligation forces full coverage without a current label (0.761416ms)
+✖ every required code job rechecks source/base and digest-bound coverage on its own attempt (2.846083ms)
+✔ phone ownership removes only eight ordinary cases from instrumented duplicate runs (1.304375ms)
+Waiting for genuine code-check admission: Waiting for the current CI attempt's code gate: Playwright smoke.
+Waiting for genuine code-check admission: Waiting for the current CI attempt's code gate: Playwright smoke.
+Waiting for genuine code-check admission: Waiting for PR edit classification in run 500.
+✔ history issuance precedes title/code admission without changing genuine code results (7.90675ms)
+✖ known bounded failed classification skips certificate issuance and still admits genuinely fresh full code (0.518916ms)
+✖ admission consumes its completed checkpoint after prefix expiry while issuance cannot self-certify (1.107542ms)
+✔ unproved classifications, gaps and stale invocation identities cannot issue history (1.549083ms)
+✔ retained checkpoints preserve missing prefix obligations across source changes without admitting code (5.060458ms)
+✔ text policy preserves genuine passing, pending and failed code results without mutations (1.522792ms)
+✔ invalid title fails before code admission and corrected text is independently revalidated (0.868333ms)
+✔ base change, new code and text cannot borrow an old-base pass or forget full history without a label (1.023791ms)
+✔ policy fails closed on source drift, late text, missing gates and API failure (0.766208ms)
+✔ pending admission uses a bounded observable retry and validates the final state (0.96925ms)
+✔ policy admission can outlast a sixty-minute worker and ordinary queueing (0.496625ms)
+✔ exact text edits never mint or use the privileged routing capability (0.191875ms)
+✔ base and ambiguous edits use ordinary-token removal then App addition, preserving the obligation (0.363834ms)
+✔ an old base-edit delivery routes the live PR source and does not disguise denied App mutation (0.189084ms)
+✔ missing router key or failed label addition cannot erase an ambiguous edit after a code push (0.6105ms)
+✔ removing the full-revalidation label before a code push cannot narrow validation (0.526667ms)
+✔ an ambiguous edit with no router cannot borrow a prior full pass or its later retry (0.471125ms)
+✔ rapid text supersession waits for independent classification without routing code (0.833167ms)
+✔ router refuses a closed PR or a live non-main target before mutating labels (0.157542ms)
+✔ GitHub client bounds pagination and credentials to the repository API without redirects (18.398292ms)
+ℹ tests 32
+ℹ suites 0
+ℹ pass 29
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 191.104625
+
+✖ failing tests:
+
+test at scripts/ci/plan.test.ts:261:1
+✖ every required code job rechecks source/base and digest-bound coverage on its own attempt (2.846083ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /permissions:\n  contents: read\n  actions: read\n  pull-requests: read\n  checks: read\n/. Input:
+  
+  'name: 💎 CI\n' +
+    'run-name: >-\n' +
+    "  CI pr=${{ github.event.pull_request.number || 0 }} base=${{ github.event.pull_request.base.sha || github.event.before || github.sha }} head=${{ github.event.pull_request.head.sha || github.sha }} tested=${{ github.sha }} full=${{ (contains(github.event.pull_request.labels.*.name, 'ci-revalidate') || github.event.label.name == 'ci-revalidate') && '1' || '0' }}\n" +
+    '\n' +
+    'on:\n' +
+    '  push:\n' +
+    '    branches: [main]\n' +
+    '  pull_request:\n' +
+    '    branches: [main]\n' +
+    '    # Draft commits already run every check; becoming ready changes no code.\n' +
+    '    types: [opened, synchronize, reopened, labeled, unlabeled]\n' +
+    '  workflow_dispatch:\n' +
+    '  schedule:\n' +
+    "    - cron: '23 9 * * 1'\n" +
+    '\n' +
+    'permissions:\n' +
+    '  contents: read\n' +
+    '  actions: read\n' +
+    '  pull-requests: read\n' +
+    '\n' +
+    'env:\n' +
+    '  SPINEL_CI_ROUTER_APP_ID: ${{ vars.SPINEL_CI_ROUTER_APP_ID }}\n' +
+    '\n' +
+    'concurrency:\n' +
+    '  # Text edits belong only to pr-policy.yml and cannot touch this group.\n' +
+    '  # Every actual code event supersedes older source/base/label plans. Otherwise\n' +
+    '  # an old-base label run could outlive a failed new-base validation.\n' +
+    '  # Every main push keeps its own immutable before/after range; no PR pass reuse.\n' +
+    "  group: ci-${{ github.event_name == 'pull_request' && format('code-{0}', github.event.pull_request.number) || format('event-{0}', github.run_id) }}\n" +
+    "  cancel-in-progress: ${{ github.event_name == 'pull_request' }}\n" +
+    '\n' +
+    'jobs:\n' +
+    '  changes:\n' +
+    '    name: Classify changes (${{ github.run_id }})\n' +
+    '    runs-on: ubuntu-latest\n' +
+    '    timeout-minutes: 5\n' +
+    '    outputs:\n' +
+    '      restore_timing: ${{ steps.changes.outputs.restore_timing }}\n' +
+    '      mode: ${{ steps.changes.outputs.mode }}\n' +
+    '      plan: ${{ steps.changes.outputs.plan }}\n' +
+    '      plan_sha256: ${{ steps.changes.outputs.plan_sha256 }}\n' +
+    '      backlog: ${{ steps.changes.outputs.backlog }}\n' +
+    '      lint: ${{ steps.changes.outputs.lint }}\n' +
+    '      typecheck: ${{ steps.changes.outputs.typecheck }}\n' +
+    '      unit_tests: ${{ steps.changes.outputs.unit_tests }}\n' +
+    '      lib_test_run: ${{ steps.changes.outputs.lib_test_run }}\n' +
+    '      playwright_run: ${{ steps.changes.outputs.playwright_run }}\n' +
+    '      container_smoke: ${{ steps.changes.outputs.container_smoke }}\n' +
+    '      sync_transition: ${{ steps.changes.outputs.sync_transition }}\n' +
+    '      doc_responsiveness: ${{ steps.changes.outputs.doc_responsiveness }}\n' +
+    '      doc_callback_lifetimes: ${{ steps.changes.outputs.doc_callback_lifetimes }}\n' +
+    '      responsiveness_baseline: ${{ steps.changes.outputs.responsiveness_baseline }}\n' +
+    '      callback_baseline: ${{ steps.changes.outputs.callback_baseline }}\n' +
+    '      phone_compatibility: ${{ steps.changes.outputs.phone_compatibility }}\n' +
+    '    steps:\n' +
+    '      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7\n' +
+    '        with:\n' +
+    '          fetch-depth: 0\n' +
+    '          persist-credentials: false\n' +
+    '      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7\n' +
+    '        with:\n' +
+    '          node-version-file: .nvmrc\n' +
+    '          package-manager-cache: false\n' +
+    '      - id: changes\n' +
+    '        env:\n' +
+    '          GH_TOKEN: ${{ github.token }}\n' +
+    '        run: node scripts/ci/changes.ts\n' +
+    "      - name: 'Coverage selected: full'\n" +
+    "        if: steps.changes.outcome == 'success' && steps.changes.outputs.mode == 'full'\n" +
+    "        run: echo 'The immutable coverage plan selects full validation.'\n" +
+    "      - name: 'Coverage selected: targeted'\n" +
+    "        if: steps.changes.outcome == 'success' && steps.changes.outputs.mode == 'targeted'\n" +
+    "        run: echo 'The immutable coverage plan selects path-required validation.'\n" +
+    '      - name: Retain immutable coverage plan\n' +
+    '        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2\n' +
+    '        with:\n' +
+    '          name: ci-plan\n' +
+    '          path: ci-plan.json\n' +
+    '          retention-days: 30\n' +
+    '          if-no-files-found: error\n' +
+    '\n' +
+    '  backlog:\n' +
+    '    name: Backlog\n' +
+    '    needs: changes\n' +
+    '    if: always()\n' +
+    '    runs-on: ubuntu-latest\n' +
+    '    timeout-minutes: 5\n' +
+    '    steps:\n' +
+    '      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7\n' +
+    '        with:\n' +
+    '          persist-credentials: false\n' +
+    '      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7\n' +
+    '        with:\n' +
+    '          node-version-file: .nvmrc\n' +
+    '          package-manager-cache: false\n' +
+    '      - name: Tickets and index\n' +
+    '        run: npm run backlog:check\n' +
+    '      - name: Guard current PR source, base and coverage\n' +
+    "        if: github.event_name == 'pull_request'\n" +
+    '        env:\n' +
+    '          GH_TOKEN: ${{ github.token }}\n' +
+    '          CLASSIFICATION: ${{ needs.changes.result }}\n' +
+    '          COVERAGE_PLAN: ${{ needs.changes.outputs.plan }}\n' +
+    '          COVERAGE_PLAN_SHA256: ${{ needs.changes.outputs.plan_sha256 }}\n' +
+    '        run: node scripts/ci/pr-state.ts guard\n' +
+    '\n' +
+    '  lint:\n' +
+    '    name: Lint\n' +
+    '    needs: changes\n' +
+    '    if: always()\n' +
+    '    runs-on: ubuntu-latest\n' +
+    '    timeout-minutes: 10\n' +
+    '    steps:\n' +
+    '      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7\n' +
+    '        with:\n' +
+    '          persist-credentials: false\n' +
+    '      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7\n' +
+    '        with:\n' +
+    '          node-version-file: .nvmrc\n' +
+    '          package-manager-cache: false\n' +
+    '      - name: Install\n' +
+    '        run: npm ci\n' +
+    '      - name: Lint\n' +
+    '        run: npm run lint\n' +
+    '      - name: Guard current PR source, base and coverage\n' +
+    "        if: github.event_name == 'pull_request'\n" +
+    '        env:\n' +
+    '          GH_TOKEN: ${{ github.token }}\n' +
+    '          CLASSIFICATION: ${{ needs.changes.result }}\n' +
+    '          COVERAGE_PLAN: ${{ needs.changes.outputs.plan }}\n' +
+    '          COVERAGE_PLAN_SHA256: ${{ needs.changes.outputs.plan_sha256 }}\n' +
+    '        run: node scripts/ci/pr-state.ts guard\n' +
+    '\n' +
+    '  typecheck:\n' +
+    '    name: Typecheck\n' +
+    '    needs: changes\n' +
+    '    if: always()\n' +
+    '    runs-on: ubuntu-latest\n' +
+    '    timeout-minutes: 10\n' +
+    '    outputs:\n' +
+    '      evidence: ${{ steps.typecheck.outcome }}\n' +
+    '    steps:\n' +
+    '      - name: Require complete applicability\n' +
+    '        env:\n' +
+    '          CLASSIFICATION: ${{ needs.changes.result }}\n' +
+    '          SELECTED: ${{ needs.changes.outputs.typecheck }}\n' +
+    '        run: |\n' +
+    '          case "$CLASSIFICATION:$SELECTED" in\n' +
+    '            success:true|success:false) ;;\n' +
+    "            *) echo 'Missing successful applicability decision.' >&2; exit 1 ;;\n" +
+    '          esac\n' +
+    '      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7\n' +
+    '        with:\n' +
+    '          persist-credentials: false\n' +
+    '      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7\n' +
+    '        with:\n' +
+    '          node-version-file: .nvmrc\n' +
+    '          package-manager-cache: false\n' +
+    '      - name: Install\n' +
+    "        if: needs.changes.outputs.typecheck == 'true'\n" +
+    '        run: npm ci\n' +
+    '      - name: Typecheck\n' +
+    '        id: typecheck\n' +
+    "        if: needs.changes.outputs.typecheck == 'true'\n" +
+    '        run: npm run typecheck\n' +
+    '      - name: Documentation-only change\n' +
+    "        if: needs.changes.outputs.typecheck == 'false'\n" +
+    "        run: echo 'Not applicable — only allowlisted documentation changed; Backlog and Lint still run.'\n" +
+    '      - name: Guard current PR source, base and coverage\n' +
+    "        if: github.event_name == 'pull_request'\n" +
+    '        env:\n' +
+    '          GH_TOKEN: ${{ github.token }}\n' +
+    '          CLASSIFICATION: ${{ needs.changes.result }}\n' +
+    '          COVERAGE_PLAN: ${{ needs.changes.outputs.plan }}\n' +
+    '          COVERAGE_PLAN_SHA256: ${{ needs.changes.outputs.plan_sha256 }}\n' +
+    '        run: node scripts/ci/pr-state.ts guard\n' +
+    '\n' +
+    '  # Separate runners retain maxWorkers: 1 and every case/assertion. Real restore\n' +
+    '  # lifecycle cases include bounded physical shutdown/closure waits: the\n' +
+    '  # 117-case supervisor file alone measured 343s and maintenance/backup another\n' +
+    '  # ~260s, so one serial job could not finish within its hosted cap (SPN-112).\n' +
+    '  unit-test-run:\n' +
+    '    name: Unit tests (${{ matrix.suite }})\n' +
+    '    needs: changes\n' +
+    "    if: needs.changes.outputs.unit_tests == 'true'\n" +
+    '    runs-on: ubuntu-latest\n' +
+    '    timeout-minutes: 15\n' +
+    '    strategy:\n' +
+    '      fail-fast: false\n' +
+    '      matrix:\n' +
+    '        suite: [supervisor, recovery, remaining]\n' +
+    '    steps:\n' +
+    '      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7\n' +
+    '        with:\n' +
+    '          persist-credentials: false\n' +
+    '      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7\n' +
+    '        with:\n' +
+    '          node-version-file: .nvmrc\n' +
+    '          package-manager-cache: false\n' +
+    '      - name: Install\n' +
+    '        run: npm ci\n' +
+    '      - name: Install fixture init\n' +
+    '        run: |\n' +
+    '          node scripts/ci/prefer-ubuntu-archive.ts\n' +
+    '          sudo apt-get update\n' +
+    '          sudo apt-get install -y --no-install-recommends tini\n' +
+    '      # lib/ runs in its own partitions below.\n' +
+    '      - name: Unit tests\n' +
+    '        env:\n' +
+    '          SUITE: ${{ matrix.suite }}\n' +
+    '        run: |\n' +
+    '          case "$SUITE" in\n' +
+    '            supervisor)\n' +
+    '              node scripts/ci/pid-namespace.ts npx vitest run src/server/maintenance/supervisor.test.ts\n' +
+    '              ;;\n' +
+    '            recovery)\n' +
+    '              node scripts/ci/pid-namespace.ts npx vitest run src/server/maintenance/ src/server/backup/ \\\n' +
+    "                --exclude 'src/server/maintenance/supervisor.test.ts'\n" +
+    '              ;;\n' +
+    '            remaining)\n' +
+    '              # Exact exclusions keep future test files in this partition; it\n' +
+    '              # also runs the node:test script suites.\n' +
+    "              node scripts/ci/pid-namespace.ts npm test -- --exclude 'lib/**' \\\n" +
+    "                --exclude 'src/server/maintenance/**' \\\n" +
+    "                --exclude 'src/server/backup/**'\n" +
+    '              ;;\n' +
+    '            *)\n' +
+    '              echo "Unknown unit partition: $SUITE" >&2\n' +
+    '              exit 1\n' +
+    '              ;;\n' +
+    '          esac\n' +
+    '      - name: PDF collaboration overlap evidence\n' +
+    "        if: always() && matrix.suite == 'remaining'\n" +
+    '        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2\n' +
+    '        with:\n' +
+    '          name: pdf-collaboration-overlap\n' +
+    '          path: output/pdf/spn-075-overlap/\n' +
+    '          retention-days: 7\n' +
+    '          if-no-files-found: warn\n' +
+    '\n' +
+    '  # Keep the policy-required check available for branch protection, including\n' +
+    '  # explicit non-applicable runs. Every required partition must succeed.\n' +
+    '  unit-tests:\n' +
+    '    name: Unit tests\n' +
+    '    needs: [changes, unit-test-run]\n' +
+    '    if: always()\n' +
+    '    runs-on: ubuntu-latest\n' +
+    '    timeout-minutes: 5\n' +
+    '    outputs:\n' +
+    '      evidence: ${{ needs.unit-test-run.result }}\n' +
+    '    steps:\n' +
+    '      - uses: actio'... 26493 more characters
+  
+      at TestContext.<anonymous> (file:///Users/mxbaylee/projects/spinel-spn-129/scripts/ci/plan.test.ts:307:12)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'name: 💎 CI\nrun-name: >-\n  CI pr=${{ github.event.pull_request.number || 0 }} base=${{ github.event.pull_request.base.sha || github.event.before || github.sha }} head=${{ github.event.pull_request.head.sha || github.sha }} tested=${{ github.sha }} full=${{ (contains(github.event.pull_request.labels.*.name, \'ci-revalidate\') || github.event.label.name == \'ci-revalidate\') && \'1\' || \'0\' }}\n\non:\n  push:\n    branches: [main]\n  pull_request:\n    branches: [main]\n    # Draft commits already run every check; becoming ready changes no code.\n    types: [opened, synchronize, reopened, labeled, unlabeled]\n  workflow_dispatch:\n  schedule:\n    - cron: \'23 9 * * 1\'\n\npermissions:\n  contents: read\n  actions: read\n  pull-requests: read\n\nenv:\n  SPINEL_CI_ROUTER_APP_ID: ${{ vars.SPINEL_CI_ROUTER_APP_ID }}\n\nconcurrency:\n  # Text edits belong only to pr-policy.yml and cannot touch this group.\n  # Every actual code event supersedes older source/base/label plans. Otherwise\n  # an old-base label run could outlive a failed new-base validation.\n  # Every main push keeps its own immutable before/after range; no PR pass reuse.\n  group: ci-${{ github.event_name == \'pull_request\' && format(\'code-{0}\', github.event.pull_request.number) || format(\'event-{0}\', github.run_id) }}\n  cancel-in-progress: ${{ github.event_name == \'pull_request\' }}\n\njobs:\n  changes:\n    name: Classify changes (${{ github.run_id }})\n    runs-on: ubuntu-latest\n    timeout-minutes: 5\n    outputs:\n      restore_timing: ${{ steps.changes.outputs.restore_timing }}\n      mode: ${{ steps.changes.outputs.mode }}\n      plan: ${{ steps.changes.outputs.plan }}\n      plan_sha256: ${{ steps.changes.outputs.plan_sha256 }}\n      backlog: ${{ steps.changes.outputs.backlog }}\n      lint: ${{ steps.changes.outputs.lint }}\n      typecheck: ${{ steps.changes.outputs.typecheck }}\n      unit_tests: ${{ steps.changes.outputs.unit_tests }}\n      lib_test_run: ${{ steps.changes.outputs.lib_test_run }}\n      playwright_run: ${{ steps.changes.outputs.playwright_run }}\n      container_smoke: ${{ steps.changes.outputs.container_smoke }}\n      sync_transition: ${{ steps.changes.outputs.sync_transition }}\n      doc_responsiveness: ${{ steps.changes.outputs.doc_responsiveness }}\n      doc_callback_lifetimes: ${{ steps.changes.outputs.doc_callback_lifetimes }}\n      responsiveness_baseline: ${{ steps.changes.outputs.responsiveness_baseline }}\n      callback_baseline: ${{ steps.changes.outputs.callback_baseline }}\n      phone_compatibility: ${{ steps.changes.outputs.phone_compatibility }}\n    steps:\n      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7\n        with:\n          fetch-depth: 0\n          persist-credentials: false\n      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7\n        with:\n          node-version-file: .nvmrc\n          package-manager-cache: false\n      - id: changes\n        env:\n          GH_TOKEN: ${{ github.token }}\n        run: node scripts/ci/changes.ts\n      - name: \'Coverage selected: full\'\n        if: steps.changes.outcome == \'success\' && steps.changes.outputs.mode == \'full\'\n        run: echo \'The immutable coverage plan selects full validation.\'\n      - name: \'Coverage selected: targeted\'\n        if: steps.changes.outcome == \'success\' && steps.changes.outputs.mode == \'targeted\'\n        run: echo \'The immutable coverage plan selects path-required validation.\'\n      - name: Retain immutable coverage plan\n        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2\n        with:\n          name: ci-plan\n          path: ci-plan.json\n          retention-days: 30\n          if-no-files-found: error\n\n  backlog:\n    name: Backlog\n    needs: changes\n    if: always()\n    runs-on: ubuntu-latest\n    timeout-minutes: 5\n    steps:\n      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7\n        with:\n          persist-credentials: false\n      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7\n        with:\n          node-version-file: .nvmrc\n          package-manager-cache: false\n      - name: Tickets and index\n        run: npm run backlog:check\n      - name: Guard current PR source, base and coverage\n        if: github.event_name == \'pull_request\'\n        env:\n          GH_TOKEN: ${{ github.token }}\n          CLASSIFICATION: ${{ needs.changes.result }}\n          COVERAGE_PLAN: ${{ needs.changes.outputs.plan }}\n          COVERAGE_PLAN_SHA256: ${{ needs.changes.outputs.plan_sha256 }}\n        run: node scripts/ci/pr-state.ts guard\n\n  lint:\n    name: Lint\n    needs: changes\n    if: always()\n    runs-on: ubuntu-latest\n    timeout-minutes: 10\n    steps:\n      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7\n        with:\n          persist-credentials: false\n      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7\n        with:\n          node-version-file: .nvmrc\n          package-manager-cache: false\n      - name: Install\n        run: npm ci\n      - name: Lint\n        run: npm run lint\n      - name: Guard current PR source, base and coverage\n        if: github.event_name == \'pull_request\'\n        env:\n          GH_TOKEN: ${{ github.token }}\n          CLASSIFICATION: ${{ needs.changes.result }}\n          COVERAGE_PLAN: ${{ needs.changes.outputs.plan }}\n          COVERAGE_PLAN_SHA256: ${{ needs.changes.outputs.plan_sha256 }}\n        run: node scripts/ci/pr-state.ts guard\n\n  typecheck:\n    name: Typecheck\n    needs: changes\n    if: always()\n    runs-on: ubuntu-latest\n    timeout-minutes: 10\n    outputs:\n      evidence: ${{ steps.typecheck.outcome }}\n    steps:\n      - name: Require complete applicability\n        env:\n          CLASSIFICATION: ${{ needs.changes.result }}\n          SELECTED: ${{ needs.changes.outputs.typecheck }}\n        run: |\n          case "$CLASSIFICATION:$SELECTED" in\n            success:true|success:false) ;;\n            *) echo \'Missing successful applicability decision.\' >&2; exit 1 ;;\n          esac\n      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7\n        with:\n          persist-credentials: false\n      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7\n        with:\n          node-version-file: .nvmrc\n          package-manager-cache: false\n      - name: Install\n        if: needs.changes.outputs.typecheck == \'true\'\n        run: npm ci\n      - name: Typecheck\n        id: typecheck\n        if: needs.changes.outputs.typecheck == \'true\'\n        run: npm run typecheck\n      - name: Documentation-only change\n        if: needs.changes.outputs.typecheck == \'false\'\n        run: echo \'Not applicable — only allowlisted documentation changed; Backlog and Lint still run.\'\n      - name: Guard current PR source, base and coverage\n        if: github.event_name == \'pull_request\'\n        env:\n          GH_TOKEN: ${{ github.token }}\n          CLASSIFICATION: ${{ needs.changes.result }}\n          COVERAGE_PLAN: ${{ needs.changes.outputs.plan }}\n          COVERAGE_PLAN_SHA256: ${{ needs.changes.outputs.plan_sha256 }}\n        run: node scripts/ci/pr-state.ts guard\n\n  # Separate runners retain maxWorkers: 1 and every case/assertion. Real restore\n  # lifecycle cases include bounded physical shutdown/closure waits: the\n  # 117-case supervisor file alone measured 343s and maintenance/backup another\n  # ~260s, so one serial job could not finish within its hosted cap (SPN-112).\n  unit-test-run:\n    name: Unit tests (${{ matrix.suite }})\n    needs: changes\n    if: needs.changes.outputs.unit_tests == \'true\'\n    runs-on: ubuntu-latest\n    timeout-minutes: 15\n    strategy:\n      fail-fast: false\n      matrix:\n        suite: [supervisor, recovery, remaining]\n    steps:\n      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7\n        with:\n          persist-credentials: false\n      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7\n        with:\n          node-version-file: .nvmrc\n          package-manager-cache: false\n      - name: Install\n        run: npm ci\n      - name: Install fixture init\n        run: |\n          node scripts/ci/prefer-ubuntu-archive.ts\n          sudo apt-get update\n          sudo apt-get install -y --no-install-recommends tini\n      # lib/ runs in its own partitions below.\n      - name: Unit tests\n        env:\n          SUITE: ${{ matrix.suite }}\n        run: |\n          case "$SUITE" in\n            supervisor)\n              node scripts/ci/pid-namespace.ts npx vitest run src/server/maintenance/supervisor.test.ts\n              ;;\n            recovery)\n              node scripts/ci/pid-namespace.ts npx vitest run src/server/maintenance/ src/server/backup/ \\\n                --exclude \'src/server/maintenance/supervisor.test.ts\'\n              ;;\n            remaining)\n              # Exact exclusions keep future test files in this partition; it\n              # also runs the node:test script suites.\n              node scripts/ci/pid-namespace.ts npm test -- --exclude \'lib/**\' \\\n                --exclude \'src/server/maintenance/**\' \\\n                --exclude \'src/server/backup/**\'\n              ;;\n            *)\n              echo "Unknown unit partition: $SUITE" >&2\n              exit 1\n              ;;\n          esac\n      - name: PDF collaboration overlap evidence\n        if: always() && matrix.suite == \'remaining\'\n        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2\n        with:\n          name: pdf-collaboration-overlap\n          path: output/pdf/spn-075-overlap/\n          retention-days: 7\n          if-no-files-found: warn\n\n  # Keep the policy-required check available for branch protection, including\n  # explicit non-applicable runs. Every required partition must succeed.\n  unit-tests:\n    name: Unit tests\n    needs: [changes, unit-test-run]\n    if: always()\n    runs-on: ubuntu-latest\n    timeout-minutes: 5\n    outputs:\n      evidence: ${{ needs.unit-test-run.result }}\n    steps:\n      - uses: actio'... 26493 more characters,
+    expected: /permissions:\n  contents: read\n  actions: read\n  pull-requests: read\n  checks: read\n/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at scripts/ci/pr-events.test.ts:278:1
+✖ known bounded failed classification skips certificate issuance and still admits genuinely fresh full code (0.518916ms)
+  Error: PR history was not sealed: A failed, cancelled or incomplete PR edit classification requires full validation.
+      at capturePrHistory (file:///Users/mxbaylee/projects/spinel-spn-129/scripts/ci/pr-policy.ts:222:9)
+      at async TestContext.<anonymous> (file:///Users/mxbaylee/projects/spinel-spn-129/scripts/ci/pr-events.test.ts:282:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at scripts/ci/pr-events.test.ts:293:1
+✖ admission consumes its completed checkpoint after prefix expiry while issuance cannot self-certify (1.107542ms)
+  Error: Code validation was not admitted before the deadline: Could not read complete policy workflow history; full validation is required. Check the CI router credential and current CI run; rerun policy after fixing the prerequisite.
+      at validatePrPolicy (file:///Users/mxbaylee/projects/spinel-spn-129/scripts/ci/pr-policy.ts:174:9)
+      at async TestContext.<anonymous> (file:///Users/mxbaylee/projects/spinel-spn-129/scripts/ci/pr-events.test.ts:320:17)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+WATCHDOG: exit=1, signal=null, elapsed=275ms, peak=79.2MiB
