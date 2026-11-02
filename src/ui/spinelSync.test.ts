@@ -15,6 +15,7 @@ import type { OfflineSession } from '../../web/offline/OfflineSession.ts';
 import type { OfflineCreation } from '../../web/offline/offlineStore.ts';
 import type { OfflineRecoveryRequest } from '../shared/offlineRecovery.ts';
 import type { MaintenancePublicStatus } from '../shared/maintenance.ts';
+import type { ItemAccess } from '../shared/workspace.ts';
 import { isDiagnosticRecord } from '@spinel/diagnostics';
 import type { DiagnosticEvent, DiagnosticRecord, DiagnosticSource } from '@spinel/diagnostics';
 import { AccountDiagnostics, diagnosticsConnectionPolicy } from '../../web/diagnosticsAccount.ts';
@@ -173,6 +174,8 @@ async function fixture({
   canRecover = false,
   canRefresh,
   maintenanceEpoch,
+  access = 'editor',
+  bundleAccess = access,
   diagnostics,
   clock,
   onConnection,
@@ -187,6 +190,8 @@ async function fixture({
   canRecover?: boolean;
   canRefresh?(): boolean;
   maintenanceEpoch?: string;
+  access?: ItemAccess;
+  bundleAccess?: ItemAccess;
   diagnostics?: DiagnosticSource;
   clock?: () => number;
   onConnection?(state: ConnectionState): void;

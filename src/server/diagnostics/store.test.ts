@@ -69,9 +69,13 @@ test('pre-auth maintenance refusal bursts have a fixed write bound, visible loss
     epoch: 'current',
     notice: null,
   };
-  const gate = new MaintenanceGate({ status: () => status } as MaintenanceBridge, (event) => {
-    f.store.recordMaintenance(event as MaintenanceDiagnosticEvent);
-  });
+  const gate = new MaintenanceGate(
+    { status: () => status } as MaintenanceBridge,
+    undefined,
+    (event) => {
+      f.store.recordMaintenance(event as MaintenanceDiagnosticEvent);
+    },
+  );
   f.store.setMaintenanceGate(gate);
   const application = new DatabaseSync(':memory:');
   application.exec('CREATE TABLE content(value TEXT)');

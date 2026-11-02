@@ -81,9 +81,10 @@ no text, selections or edit actions are collected. Collection retains the same
 account and visibility gates. The [SPN-108 benchmark](implementation/SPN-108.md)
 separately captures synthetic input timings, both native queues and CPU profiles.
 
-One browser collector belongs to one authenticated account/session. Hidden,
-offline, disconnected and signed-out states discard its pending observations;
-reconnection obtains a fresh collection binding. This is deliberately lossy
+One browser collector belongs to one authenticated account/session. Browser
+offline, hidden and signed-out states discard its pending observations; resuming
+collection obtains a fresh verified binding. Native editor-room disconnection or
+reconnection alone preserves an already verified HTTP collection. This is deliberately lossy
 operational evidence, independent of durable edit delivery. Dropped records are
 reported rather than retried indefinitely. No browser diagnostic queue persists.
 
