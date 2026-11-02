@@ -26,6 +26,7 @@ function client(
     repository,
     token,
     fetcher: async (url, init) => {
+      init?.signal?.throwIfAborted();
       assert.equal(new Headers(init?.headers).get('Authorization'), `Bearer ${token}`);
       assert.equal(init?.redirect, 'error');
       const prefix = `https://api.github.com/repos/${repository}/`;
@@ -98,6 +99,94 @@ test('an existing ledger uses its old blob SHA and retains the new commit only a
   await store.write(previous, { next: true }, '123', '2');
   assert.equal(calls.length, 4);
   assert.deepEqual(JSON.parse(stored), { next: true });
+});
+
+test('a provider-collection gap cannot expire a later ledger write or immutable readback', async (context) => {
+  let clock = 0;
+  const deadlines: { at: number; controller: AbortController }[] = [];
+  context.mock.method(AbortSignal, 'timeout', (milliseconds: number) => {
+    const controller = new AbortController();
+    deadlines.push({ at: clock + milliseconds, controller });
+    return controller.signal;
+  });
+  let stored = '{"previous":true}\n';
+  const { store, calls } = client((path, method, body) => {
+    if (path.startsWith('git/ref/')) return Response.json({ object: { sha: root } });
+    if (method === 'PUT') {
+      assert.equal(body?.sha, blob);
+      assert.equal(body?.branch, accountingBranch);
+      stored = Buffer.from(body?.content as string, 'base64').toString('utf8');
+      return Response.json({ commit: { sha: commit } });
+    }
+    assert.ok(
+      [`contents/ledger.json?ref=${root}`, `contents/ledger.json?ref=${commit}`].includes(path),
+    );
+    return file(stored);
+  });
+  const previous = await store.read();
+  // Simulate the allowed provider collection interval without a real wait.
+  clock += 60_000;
+  for (const deadline of deadlines) if (deadline.at <= clock) deadline.controller.abort();
+  const value = { partialUsageSeconds: 19, receipt: { uncertainAllocation: true } };
+  const saved = await store.write(previous, value, '123', '1');
+  assert.equal(saved.commit, commit);
+  assert.deepEqual(JSON.parse(stored), value);
+  assert.equal(calls.length, 4, 'read, conditional write and immutable readback have no retries');
+  assert.equal(calls.at(-1)?.path, `contents/ledger.json?ref=${commit}`);
+});
+
+test('active GitHub requests retain their deadline and the write phase includes immutable readback', async (context) => {
+  const deadlines: { milliseconds: number; controller: AbortController }[] = [];
+  context.mock.method(AbortSignal, 'timeout', (milliseconds: number) => {
+    const controller = new AbortController();
+    deadlines.push({ milliseconds, controller });
+    return controller.signal;
+  });
+  for (const operation of ['read', 'write'] as const) {
+    deadlines.length = 0;
+    let waiting!: () => void;
+    const started = new Promise<void>((resolve) => {
+      waiting = resolve;
+    });
+    let calls = 0;
+    const store = ledgerClient({
+      repository,
+      token,
+      fetcher: async (url, init) => {
+        calls++;
+        if (init?.method === 'PUT') return Response.json({ commit: { sha: commit } });
+        if (operation === 'write')
+          assert.ok(String(url).endsWith(`contents/ledger.json?ref=${commit}`));
+        return new Promise<Response>((_resolve, reject) => {
+          const signal = init?.signal;
+          assert.ok(signal);
+          signal.addEventListener('abort', () => reject(new Error(`remote ${token}`)), {
+            once: true,
+          });
+          waiting();
+        });
+      },
+    });
+    const pending =
+      operation === 'read'
+        ? store.read()
+        : store.write({ value: {}, blobSha: blob }, { next: true }, '123', '1');
+    await started;
+    const bound = operation === 'read' ? 8_000 : 60_000;
+    const timeout = deadlines.find((entry) => entry.milliseconds === bound);
+    assert.ok(timeout);
+    timeout.controller.abort();
+    await assert.rejects(pending, /^Error: ledger-request-failed$/);
+    assert.equal(calls, operation === 'read' ? 1 : 2, 'timeouts are not retried');
+  }
+});
+
+test('independent phase deadlines do not reset the shared request cap', async () => {
+  const { store, calls } = client(() => new Response('', { status: 404 }));
+  for (let index = 0; index < 8; index++)
+    assert.deepEqual(await store.read(), { value: null, blobSha: null });
+  await assert.rejects(store.read(), /^Error: ledger-request-limit$/);
+  assert.equal(calls.length, 8);
 });
 
 test('conflicting writes and denied access fail once without exposing raw remote errors', async () => {

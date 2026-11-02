@@ -662,28 +662,27 @@ tunnel session alone establishes none of those contracts.
 
 ### Physical capability checkpoint — 2026-11-02
 
-The [fifth bounded capability attempt](implementation/SPN-090.md#fifth-physical-run-chrome-home-screen-launch)
-ran source `58dfc5390750ff84948fc4c0ad99b31824e4f69a` at tested merge
-`490cacb2aff2031f1673011380fb684609563743` against main
+The [sixth bounded capability attempt](implementation/SPN-090.md#sixth-physical-run-safari-capability-passes)
+ran source `1f6f96a3ce68a3da066c5043e55ed4de0916f0a0` at tested merge
+`e8237f9330b228e9781d3f6aef07bb339181d33f` against main
 `0bdbbcb5ca23b84e172e41a11bd0cf555e911130`:
-[run 41382970257 / attempt 1](https://github.com/mxbaylee/spinel/actions/runs/41382970257).
-It remains partial evidence. The [fourth attempt](implementation/SPN-090.md#fourth-physical-run-safari-offline-relaunch),
-source `4242a2d69f7a65c75e30ce02baafbbd8def706a0`, tested merge
-`9ed845df8a6f9be6da6607bacc154d06b57f5d61`, retains the separate Safari offline
-observations below. Both records preserve original reports, images, failures and
-session/accounting identities; neither proves a completed capability matrix.
+[run 41385636726 / attempt 1](https://github.com/mxbaylee/spinel/actions/runs/41385636726).
+Safari passed the implemented capability checkpoint. Chrome and Firefox remain
+incomplete, as does the original full acceptance matrix. The linked record
+preserves original reports, images, failures and session/accounting identities;
+earlier failed and partial attempts remain separately documented.
 
 | Physical environment and observed browser | Observed result | Still unverified |
 | --- | --- | --- |
-| Requested Google Pixel 11 Pro XL / Android 17.0; runtime Chrome 152 | Fifth attempt: actual launcher confirmation and Home Screen icon click; new secure worker-controlled Chrome window authenticated, explicitly recorded as `browser-shortcut` with `standalone=false` | First item-readiness command failed HTTP 500 on a blank page; no successful preparation or offline reopen in this session |
-| Requested Google Pixel 11 Pro XL, Android Firefox | No new allocation; the [first actual Firefox session](implementation/SPN-090.md#first-disposable-https-physical-run) observed the secure worker-controlled page but rejected native-context access with HTTP 400. Fifth admission's documented dedicated-device inventory GET returned a valid empty list | A supported native-control route, then the complete installed lifecycle; the empty inventory does not establish a general Firefox product limitation |
-| iPhone 18 Pro Max, requested iOS 27; fourth-attempt runtime Safari 27.0 | Fourth attempt: standalone Home Screen app authenticated/prepared both items; termination/offline relaunch retained both bundles and all six images; Sheet rendered offline. Fifth attempt: failed earlier in the local share-sheet matcher while Add to Home Screen was visibly present | Final Doc offline navigation and a complete capability pass remain unverified; the earlier partial result does not replace the fifth failure |
+| Requested Google Pixel 11 Pro XL / Android 17.0; runtime Chrome 152 | Actual launcher confirmation and Home Screen icon click; new secure worker-controlled Chrome window authenticated, explicitly recorded as `browser-shortcut` with `standalone=false` | First item-readiness command returned HTTP 500 / WebDriver `unknown error`, with no script result and a blank image; no successful preparation or offline reopen in this session |
+| Requested Google Pixel 11 Pro XL, Android Firefox | No new allocation; the [first actual Firefox session](implementation/SPN-090.md#first-disposable-https-physical-run) observed the secure worker-controlled page but rejected native-context access with HTTP 400. Both recent admission inventory GETs returned valid empty lists | A supported native-control route, then the complete installed lifecycle; the empty inventory does not establish a general Firefox product limitation |
+| Provider returned iPhone 18 Pro Max / iOS; requested iOS 27; runtime Safari 27.0 | Complete implemented capability: standalone Home Screen authentication and both production downloads, native termination/offline relaunch, matching account/both bundles/all six image byte digests and sizes, both Doc and Sheet offline rendering | Native authored edits, a second committed-edit offline cycle, reconnect/conflict/creation/link/access acceptance and full-matrix measurement remain required |
 
-Fourth-attempt Safari's preparation and relaunch used the same reservation and actual standalone
+Safari's preparation and relaunch used the same reservation and actual standalone
 storage context. The provider's `no-network` profile was corroborated with
 unreachable fresh app/API/socket probes, not just the browser's link-state flag. Network restoration,
 session deletion, fixture closure and Local shutdown all completed. The report
-does not establish editable modern Docs, repeated offline edits/reopens, stable
+does not establish authored native Doc edits, repeated offline edits/reopens, stable
 renamed/moved item links, unavailable-item behavior, reconnect outcomes, offline
 creation or permission/account/guest boundaries on the phones. Those remain the
 original SPN-090 acceptance below. The capability attempt did not exercise native

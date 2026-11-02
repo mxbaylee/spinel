@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { runInNewContext } from 'node:vm';
 import { test } from 'node:test';
 import { collectQuotaEvidence, quotaLimits, retainedSessionIds } from './browserstack-quota.ts';
 import { createBudgetReport } from './browserstack-budget.ts';
@@ -514,18 +515,58 @@ test('quota CLI with missing credentials retains a failing report without openin
   }
 });
 
-test('monthly reports and explicit device triggers share reservation, visible refusal and reconciliation', async () => {
+test('monthly reports, device triggers and read-only diagnostics preserve their boundaries', async () => {
   const source = await readFile(
     new URL('../../.github/workflows/browserstack.yml', import.meta.url),
     'utf8',
   );
   assert.match(source, /default: quota/);
+  assert.match(source, /options: \[quota, capability, diagnostics\]/);
+  assert.match(
+    source,
+    /session_id:\n        description:.*\n        type: string\n        required: false/,
+  );
   assert.match(source, /cron: '17 9 1 \* \*'/);
+  assert.match(source, /pull_request:\n    branches: \[main\]\n    types: \[labeled\]/);
   assert.match(source, /group: browserstack-lifetime-account\n/);
   assert.match(source, /cancel-in-progress: false/);
+  const diagnostics = source.split('  diagnostics:\n')[1].split('  accounting:\n')[0];
+  assert.match(
+    diagnostics,
+    /github.event_name == 'workflow_dispatch' && inputs.mode == 'diagnostics'/,
+  );
+  assert.match(diagnostics, /github.event.action == 'labeled'/);
+  assert.match(diagnostics, /github.event.label.name == 'ci-browserstack-logs'/);
+  assert.match(diagnostics, /github.event.pull_request.head.repo.full_name == github.repository/);
+  assert.match(diagnostics, /permissions:\n      contents: read/);
+  assert.match(diagnostics, /persist-credentials: false/);
+  assert.match(diagnostics, /package-manager-cache: false/);
+  assert.match(
+    diagnostics,
+    /SOURCE_SHA: \$\{\{ github.event.pull_request.head.sha \|\| github.sha \}\}/,
+  );
+  assert.match(
+    diagnostics,
+    /BS_DIAGNOSTIC_SESSION: \$\{\{ inputs.session_id \|\| '5a7cc2cfd951b4b68e24bed95af51e7c64262b17' \}\}/,
+  );
+  assert.deepEqual(
+    [...diagnostics.matchAll(/\buses: ([^@\s]+)@/g)].map((match) => match[1]),
+    ['actions/checkout', 'actions/setup-node', 'actions/upload-artifact'],
+  );
+  assert.deepEqual(
+    [...diagnostics.matchAll(/^\s+run: (.+)$/gm)].map((match) => match[1]),
+    ['node scripts/ci/browserstack-session-diagnostics.ts'],
+  );
+  assert.match(diagnostics, /if: always\(\)/);
+  assert.match(diagnostics, /path: artifacts\/browserstack-session-diagnostics.json\n/);
+  assert.match(diagnostics, /if-no-files-found: error/);
+  assert.doesNotMatch(
+    diagnostics,
+    /contents: write|GITHUB_TOKEN|needs:|continue-on-error:|setup-local|setup-env|npm ci|npm run build|browserstack-(?:accounting|capability)\.ts|ledger\.json/,
+  );
   const quota = source.split('  accounting:\n')[1].split('  capability:\n')[0];
   assert.match(quota, /github.event_name == 'schedule'/);
-  assert.match(quota, /github.event_name == 'workflow_dispatch'/);
+  assert.match(quota, /github.event_name == 'workflow_dispatch' && inputs.mode != 'diagnostics'/);
   assert.match(quota, /github.event.label.name == 'ci-real-devices'/);
   assert.match(quota, /github.event.pull_request.head.repo.full_name == github.repository/);
   assert.match(quota, /run: node scripts\/ci\/browserstack-accounting.ts "\$BS_OPERATION"/);
@@ -562,6 +603,90 @@ test('monthly reports and explicit device triggers share reservation, visible re
     /if: always\(\) && needs.accounting.outputs.allocation_allowed == 'true'/,
   );
   assert.match(reconciliation, /run: node scripts\/ci\/browserstack-accounting.ts reconcile/);
+
+  // These predicates use lowercase string equality and boolean operators shared with JS.
+  // A diagnostic event cannot reach admission, device execution or reconciliation.
+  const condition = (block: string) => {
+    const match = block.match(/^    if: (?:>-\n)?([\s\S]*?)\n    runs-on:/m);
+    assert.ok(match);
+    return match[1];
+  };
+  const conditions = Object.fromEntries(
+    Object.entries({ diagnostics, accounting: quota, capability, reconciliation }).map(
+      ([name, block]) => [name, condition(block)],
+    ),
+  );
+  const operation = quota.match(/BS_OPERATION: \$\{\{ (.+) \}\}/)?.[1];
+  assert.ok(operation);
+  const routes: {
+    event: string;
+    mode?: string;
+    action?: string;
+    label?: string;
+    fork?: boolean;
+    jobs: string[];
+  }[] = [
+    { event: 'schedule', jobs: ['accounting'] },
+    { event: 'workflow_dispatch', mode: 'quota', jobs: ['accounting'] },
+    { event: 'workflow_dispatch', mode: 'diagnostics', jobs: ['diagnostics'] },
+    {
+      event: 'workflow_dispatch',
+      mode: 'capability',
+      jobs: ['accounting', 'capability', 'reconciliation'],
+    },
+    {
+      event: 'pull_request',
+      action: 'labeled',
+      label: 'ci-real-devices',
+      jobs: ['accounting', 'capability', 'reconciliation'],
+    },
+    {
+      event: 'pull_request',
+      action: 'labeled',
+      label: 'ci-browserstack-logs',
+      jobs: ['diagnostics'],
+    },
+    { event: 'pull_request', action: 'labeled', label: 'ci-browserstack-logs-extra', jobs: [] },
+    {
+      event: 'pull_request',
+      action: 'labeled',
+      label: 'ci-browserstack-logs',
+      fork: true,
+      jobs: [],
+    },
+    { event: 'pull_request', action: 'labeled', label: 'ci-real-devices', fork: true, jobs: [] },
+    { event: 'pull_request', action: 'unlabeled', label: 'ci-browserstack-logs', jobs: [] },
+    { event: 'pull_request', action: 'synchronize', label: 'ci-real-devices', jobs: [] },
+    { event: 'push', jobs: [] },
+  ];
+  for (const route of routes) {
+    const context = {
+      github: {
+        event_name: route.event,
+        repository: 'mxbaylee/spinel',
+        event: {
+          action: route.action ?? '',
+          label: { name: route.label ?? '' },
+          pull_request: {
+            head: { repo: { full_name: route.fork ? 'someone/fork' : 'mxbaylee/spinel' } },
+          },
+        },
+      },
+      inputs: { mode: route.mode ?? '' },
+      needs: { accounting: { result: 'skipped', outputs: { allocation_allowed: '' } } },
+      always: () => true,
+    };
+    const evaluate = (expression: string) =>
+      runInNewContext(expression, context, { timeout: 1000 });
+    const selected = ['diagnostics', 'accounting'].filter((name) => evaluate(conditions[name]));
+    if (selected.includes('accounting')) {
+      context.needs.accounting.result = 'success';
+      context.needs.accounting.outputs.allocation_allowed =
+        evaluate(operation) === 'reserve' ? 'true' : 'false';
+    }
+    selected.push(...['capability', 'reconciliation'].filter((name) => evaluate(conditions[name])));
+    assert.deepEqual(selected, route.jobs, JSON.stringify(route));
+  }
 });
 
 test('direct legacy smoke CLI refuses unreserved allocation before any provider call', async () => {

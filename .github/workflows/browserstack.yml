@@ -4,10 +4,14 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: Report estimated quota or reserve the bounded physical-phone capability spike
+        description: Report quota, reserve phone capability, or read completed-session diagnostics
         type: choice
         default: quota
-        options: [quota, capability]
+        options: [quota, capability, diagnostics]
+      session_id:
+        description: Completed session for diagnostics; defaults to the retained Chrome attempt 6
+        type: string
+        required: false
   schedule:
     - cron: '17 9 1 * *'
   pull_request:
@@ -18,16 +22,55 @@ permissions:
   contents: read
 
 concurrency:
-  # Admission, execution and reconciliation share one account-wide workflow lock.
+  # Admission, execution, reconciliation and diagnostics share one account-wide lock.
   group: browserstack-lifetime-account
   cancel-in-progress: false
 
 jobs:
+  diagnostics:
+    name: Read-only completed-session diagnostics
+    if: >-
+      (github.event_name == 'workflow_dispatch' && inputs.mode == 'diagnostics') ||
+      (github.event_name == 'pull_request' &&
+      github.event.action == 'labeled' &&
+      github.event.label.name == 'ci-browserstack-logs' &&
+      github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    env:
+      SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      # Completed Chrome session from capability run 41385636726, attempt 1.
+      BS_DIAGNOSTIC_SESSION: ${{ inputs.session_id || '5a7cc2cfd951b4b68e24bed95af51e7c64262b17' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Read and sanitize completed-session diagnostics
+        timeout-minutes: 3
+        env:
+          BS_USERNAME: ${{ secrets.BS_USERNAME }}
+          BS_ACCESS_KEY: ${{ secrets.BS_ACCESS_KEY }}
+        run: node scripts/ci/browserstack-session-diagnostics.ts
+      - name: Retain sanitized completed-session diagnostics
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: browserstack-session-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/browserstack-session-diagnostics.json
+          if-no-files-found: error
+          retention-days: 14
+
   accounting:
     name: BrowserStack quota admission and report
     if: >-
       github.event_name == 'schedule' ||
-      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_dispatch' && inputs.mode != 'diagnostics') ||
       (github.event_name == 'pull_request' &&
       github.event.action == 'labeled' &&
       github.event.label.name == 'ci-real-devices' &&

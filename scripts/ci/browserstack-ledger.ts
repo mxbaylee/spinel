@@ -17,6 +17,11 @@ function sha(value: unknown): string {
   return value;
 }
 
+/**
+ * Each read()/write() invocation has its own 60-second deadline; write includes
+ * immutable readback. Time between phases does not consume the next deadline.
+ * Requests retain their 8-second limit and the client's shared eight-request cap.
+ */
 export function ledgerClient(options: {
   repository: string;
   token: string;
@@ -29,9 +34,14 @@ export function ledgerClient(options: {
     throw new Error('ledger-missing-credentials');
   const fetcher = options.fetcher ?? fetch;
   const api = `https://api.github.com/repos/${options.repository}`;
-  const overall = AbortSignal.timeout(60_000);
   let requests = 0;
-  async function request(path: string, method = 'GET', body?: unknown, missing = false) {
+  async function request(
+    overall: AbortSignal,
+    path: string,
+    method = 'GET',
+    body?: unknown,
+    missing = false,
+  ) {
     if (++requests > 8) throw new Error('ledger-request-limit');
     const signal = AbortSignal.any([overall, AbortSignal.timeout(8_000)]);
     let response: Response;
@@ -81,8 +91,10 @@ export function ledgerClient(options: {
       void reader.cancel().catch(() => {});
     }
   }
-  async function contents(ref: string) {
-    const data = row(await request(`contents/${ledgerPath}?ref=${encodeURIComponent(ref)}`));
+  async function contents(overall: AbortSignal, ref: string) {
+    const data = row(
+      await request(overall, `contents/${ledgerPath}?ref=${encodeURIComponent(ref)}`),
+    );
     if (
       data.type !== 'file' ||
       data.path !== ledgerPath ||
@@ -101,9 +113,16 @@ export function ledgerClient(options: {
   }
   return {
     async read(): Promise<LedgerSnapshot> {
-      const ref = await request(`git/ref/heads/${accountingBranch}`, 'GET', undefined, true);
+      const overall = AbortSignal.timeout(60_000);
+      const ref = await request(
+        overall,
+        `git/ref/heads/${accountingBranch}`,
+        'GET',
+        undefined,
+        true,
+      );
       if (ref === null) return { value: null, blobSha: null };
-      const data = await contents(sha(row(row(ref).object).sha));
+      const data = await contents(overall, sha(row(row(ref).object).sha));
       try {
         return { value: JSON.parse(data.content) as unknown, blobSha: data.blobSha };
       } catch {
@@ -111,6 +130,7 @@ export function ledgerClient(options: {
       }
     },
     async write(previous: LedgerSnapshot, value: unknown, runId: string, attempt: string) {
+      const overall = AbortSignal.timeout(60_000);
       if (!/^\d+$/.test(runId) || !/^\d+$/.test(attempt)) throw new Error('ledger-invalid-run');
       const content = `${JSON.stringify(value, null, 2)}\n`;
       if (Buffer.byteLength(content) > maxBytes) throw new Error('ledger-full');
@@ -119,7 +139,7 @@ export function ledgerClient(options: {
       if (previous.blobSha) {
         // GitHub rejects a stale content SHA. Never force or retry a conflicting write.
         const result = row(
-          await request(`contents/${ledgerPath}`, 'PUT', {
+          await request(overall, `contents/${ledgerPath}`, 'PUT', {
             message,
             branch: accountingBranch,
             sha: sha(previous.blobSha),
@@ -130,21 +150,24 @@ export function ledgerClient(options: {
       } else {
         // An orphan branch contains accounting only, with no production-source mutation.
         const tree = row(
-          await request('git/trees', 'POST', {
+          await request(overall, 'git/trees', 'POST', {
             tree: [{ path: ledgerPath, mode: '100644', type: 'blob', content }],
           }),
         );
         const created = row(
-          await request('git/commits', 'POST', {
+          await request(overall, 'git/commits', 'POST', {
             message,
             tree: sha(tree.sha),
             parents: [],
           }),
         );
         commit = sha(created.sha);
-        await request('git/refs', 'POST', { ref: `refs/heads/${accountingBranch}`, sha: commit });
+        await request(overall, 'git/refs', 'POST', {
+          ref: `refs/heads/${accountingBranch}`,
+          sha: commit,
+        });
       }
-      const verified = await contents(commit);
+      const verified = await contents(overall, commit);
       if (verified.content !== content) throw new Error('ledger-write-mismatch');
       return {
         commit,
