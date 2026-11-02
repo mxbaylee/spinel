@@ -1,0 +1,42 @@
+{
+  "README.md": {
+    "bytes": 3656,
+    "sha256": "d6d68bf4f49c6ec08a33e18d0d678a6922f96eb018d9999b02afda25c3f984a8"
+  },
+  "analyze-flush-trace.ts.txt": {
+    "bytes": 3367,
+    "sha256": "94088d2410dc14f13c8a9b7c9332760f553ba08d0681e8c2fa623a6620158e7b"
+  },
+  "candidate-analysis.json": {
+    "bytes": 82782,
+    "sha256": "d4035de7a727dcf6f79de8c8cbda8a8a6d5b55f99e32f1fc6a309b20ef798a08"
+  },
+  "job.log": {
+    "bytes": 102171,
+    "sha256": "c9d30632ae44a3143f4e33a0387b6e3a0ab38d745cb89a2d68ce47dc6293cbbe"
+  },
+  "jobs.json": {
+    "bytes": 4500,
+    "sha256": "e63e2488617d13d218e1646af4d071e0f32dfb8e7fc1ffc691756528e523e8e1"
+  },
+  "main-analysis.json": {
+    "bytes": 32682,
+    "sha256": "0dceb84e2c6ff0076a75e2da780e0efe4e8332ed685c6fd22bd79b4449f8f0e2"
+  },
+  "original-artifact.zip": {
+    "bytes": 25326482,
+    "sha256": "a7f5ba20cf583f2e117a7181a39dc7ebcfae9c9027b4025dc1ef9656470fbd8f"
+  },
+  "run.json": {
+    "bytes": 11769,
+    "sha256": "5067a0f8cd7a8f662d322943b7ed55673b61d4cc6473c3618b79af5957c56b7c"
+  },
+  "trace-transport-smoke.jsonl": {
+    "bytes": 1249,
+    "sha256": "45f19c0f5fc2e04cab1c012a99f88874e694d913b774dbce8fd26d3e2fdc441b"
+  },
+  "trace-transport-smoke.ts.txt": {
+    "bytes": 972,
+    "sha256": "37b6da53d1fceb5a9c41ad3038059beb86d2bc57324a1dbe18e3a93a0d763406"
+  }
+}

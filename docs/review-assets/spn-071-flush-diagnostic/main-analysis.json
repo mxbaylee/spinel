@@ -1,0 +1,1415 @@
+{
+  "relative": "main-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+  "source": "df1d910822cba284178f26ac4f6cf359ddcfacef",
+  "diagnosticTrace": {
+    "bytes": 134164567,
+    "events": 579948,
+    "overflow": true,
+    "marks": [
+      {
+        "name": "spn071-clock-start",
+        "pid": 4230,
+        "tid": 4230,
+        "ts": 571266994
+      },
+      {
+        "name": "spn071-clock-end",
+        "pid": 4230,
+        "tid": 4230,
+        "ts": 758374196
+      }
+    ],
+    "clockAligned": true,
+    "dataLossOccurred": false,
+    "complete": false
+  },
+  "traceClockStart": 2377,
+  "traceClockEnd": 189484.19999999995,
+  "totalEvents": 579948,
+  "senderEvents": 366909,
+  "offset": 568889994,
+  "completed": true,
+  "budgetResults": {
+    "inputP95": true,
+    "longestTask": true,
+    "capacityFlushP95": true,
+    "idleFlushP95": true,
+    "flushMaximum": true,
+    "boundedHistory": true,
+    "boundedCollaboration": true,
+    "observedCapacityFlushes": true,
+    "browserLocalDrainedWithinOneSecond": true
+  },
+  "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed",
+  "errors": [],
+  "selected": [
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 5790.5,
+        "durationMs": 63.5,
+        "history": 32,
+        "collaboration": 32
+      },
+      "begin": 574680494,
+      "end": 574743994,
+      "gc": [],
+      "longestOverlaps": [
+        {
+          "args": {
+            "data": {
+              "type": "keypress"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 105201,
+          "name": "EventDispatch",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 105065,
+          "tid": 4230,
+          "ts": 574676741,
+          "tts": 4233994
+        },
+        {
+          "args": {
+            "data": {
+              "type": "textInput"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 105121,
+          "name": "EventDispatch",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 104998,
+          "tid": 4230,
+          "ts": 574676818,
+          "tts": 4234059
+        },
+        {
+          "args": {
+            "data": {
+              "type": "input"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 98553,
+          "name": "EventDispatch",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 98443,
+          "tid": 4230,
+          "ts": 574678230,
+          "tts": 4235460
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 98478,
+          "name": "v8.callFunction",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 98376,
+          "tid": 4230,
+          "ts": 574678266,
+          "tts": 4235492
+        },
+        {
+          "args": {
+            "data": {
+              "columnNumber": 9740,
+              "frame": "D98C83B7506752A4F9D509C76206B292",
+              "functionName": "t",
+              "isolate": "17225318098451811353",
+              "lineNumber": 2,
+              "sampleTraceId": 3712673126972673,
+              "scriptId": "46",
+              "url": "http://localhost:3108/assets/nativeSyncPermissions-CRrWhpT1.js"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 89778,
+          "name": "FunctionCall",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 89687,
+          "tid": 4230,
+          "ts": 574678267,
+          "tts": 4235493
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 882,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 877,
+          "tid": 4230,
+          "ts": 574687931,
+          "tts": 4245159
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 19,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 17,
+          "tid": 4230,
+          "ts": 574718379,
+          "tts": 4275551
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 7,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 6,
+          "tid": 4230,
+          "ts": 574718431,
+          "tts": 4275600
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 6,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 6,
+          "tid": 4230,
+          "ts": 574718481,
+          "tts": 4275649
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 5,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 4,
+          "tid": 4230,
+          "ts": 574718416,
+          "tts": 4275586
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 4,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 4,
+          "tid": 4230,
+          "ts": 574718455,
+          "tts": 4275623
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 4,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 3,
+          "tid": 4230,
+          "ts": 574718497,
+          "tts": 4275664
+        }
+      ]
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 11397.900000000023,
+        "durationMs": 61.09999999997672,
+        "history": 32,
+        "collaboration": 32
+      },
+      "begin": 580287894,
+      "end": 580348994,
+      "gc": [],
+      "longestOverlaps": [
+        {
+          "args": {
+            "data": {
+              "type": "keypress"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 97873,
+          "name": "EventDispatch",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 97777,
+          "tid": 4230,
+          "ts": 580283885,
+          "tts": 9832860
+        },
+        {
+          "args": {
+            "data": {
+              "type": "textInput"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 97803,
+          "name": "EventDispatch",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 97719,
+          "tid": 4230,
+          "ts": 580283952,
+          "tts": 9832916
+        },
+        {
+          "args": {
+            "data": {
+              "type": "input"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 91435,
+          "name": "EventDispatch",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 91363,
+          "tid": 4230,
+          "ts": 580285555,
+          "tts": 9834510
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 91336,
+          "name": "v8.callFunction",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 91275,
+          "tid": 4230,
+          "ts": 580285598,
+          "tts": 9834547
+        },
+        {
+          "args": {
+            "data": {
+              "columnNumber": 9740,
+              "frame": "D98C83B7506752A4F9D509C76206B292",
+              "functionName": "t",
+              "isolate": "17225318098451811353",
+              "lineNumber": 2,
+              "sampleTraceId": 3712673126951003,
+              "scriptId": "46",
+              "url": "http://localhost:3108/assets/nativeSyncPermissions-CRrWhpT1.js"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 82826,
+          "name": "FunctionCall",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 82776,
+          "tid": 4230,
+          "ts": 580285600,
+          "tts": 9834548
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 930,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 929,
+          "tid": 4230,
+          "ts": 580288116,
+          "tts": 9837038
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 735,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 733,
+          "tid": 4230,
+          "ts": 580321253,
+          "tts": 9870170
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 18,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 366,
+          "tid": 4230,
+          "ts": 580322264,
+          "tts": 9871176
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 17,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 16,
+          "tid": 4230,
+          "ts": 580322227,
+          "tts": 9871140
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 9,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 7,
+          "tid": 4230,
+          "ts": 580290377,
+          "tts": 9839295
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 8,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 8,
+          "tid": 4230,
+          "ts": 580322180,
+          "tts": 9871094
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 8,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 7,
+          "tid": 4230,
+          "ts": 580322199,
+          "tts": 9871113
+        }
+      ]
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 70463.90000000002,
+        "durationMs": 34.40000000002328,
+        "history": 32,
+        "collaboration": 32
+      },
+      "begin": 639353894,
+      "end": 639388294,
+      "gc": [
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 9,
+          "name": "V8.GC_HEAP_EXTERNAL_PROLOGUE",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 6,
+          "tid": 4230,
+          "ts": 639372973,
+          "tts": 68857527
+        },
+        {
+          "args": {
+            "type": "allocation failure",
+            "usedHeapSizeAfter": 48835064,
+            "usedHeapSizeBefore": 84944716
+          },
+          "cat": "devtools.timeline,v8",
+          "dur": 7465,
+          "name": "MinorGC",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 7400,
+          "tid": 4230,
+          "ts": 639372984,
+          "tts": 68857535
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 3,
+          "name": "V8.GC_HEAP_PROLOGUE",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 2,
+          "tid": 4230,
+          "ts": 639372990,
+          "tts": 68857541
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 6894,
+          "name": "V8.GCScavenger",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 6834,
+          "tid": 4230,
+          "ts": 639372994,
+          "tts": 68857544
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 2,
+          "name": "V8.GC_TIME_TO_SAFEPOINT",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 1,
+          "tid": 4230,
+          "ts": 639372997,
+          "tts": 68857547
+        },
+        {
+          "args": {
+            "epoch": 109
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 6857,
+          "name": "V8.GC_SCAVENGER",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 6799,
+          "tid": 4230,
+          "ts": 639373027,
+          "tts": 68857576
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 1,
+          "name": "V8.GC_HEAP_PROLOGUE_SAFEPOINT",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 1,
+          "tid": 4230,
+          "ts": 639373040,
+          "tts": 68857588
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 6833,
+          "name": "V8.GC_SCAVENGER_SCAVENGE",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 6778,
+          "tid": 4230,
+          "ts": 639373042,
+          "tts": 68857590
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 669,
+          "name": "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_IDENTIFY",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 666,
+          "tid": 4230,
+          "ts": 639373095,
+          "tts": 68857642
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 642,
+          "name": "V8.GC_SCAVENGER_TRACED_HANDLES_COMPUTE_WEAKNESS_PARALLEL",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 641,
+          "tid": 4230,
+          "ts": 639373119,
+          "tts": 68857664
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 28,
+          "name": "V8.GC_SCAVENGER_SCAVENGE_COLLECT_OLD_TO_NEW_PAGES",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 27,
+          "tid": 4230,
+          "ts": 639373765,
+          "tts": 68858309
+        },
+        {
+          "args": {
+            "UseBackgroundThreads": true
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 925,
+          "name": "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 3802,
+          "tid": 4230,
+          "ts": 639373794,
+          "tts": 68858337
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 1,
+          "name": "Parallel scavenge started",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 1,
+          "tid": 4230,
+          "ts": 639373798,
+          "tts": 68858340
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 240,
+          "name": "V8.GC_SCAVENGER_SCAVENGE_ROOTS",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 241,
+          "tid": 4230,
+          "ts": 639373813,
+          "tts": 68858354
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 596,
+          "name": "V8.GC_SCAVENGER_SCAVENGE_PARALLEL",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 596,
+          "tid": 4230,
+          "ts": 639374057,
+          "tts": 68858598
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 56,
+          "name": "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_PROCESS",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 52,
+          "tid": 4230,
+          "ts": 639377638,
+          "tts": 68862141
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 28,
+          "name": "V8.GC_SCAVENGER_TRACED_HANDLES_RESET_PARALLEL",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 28,
+          "tid": 4230,
+          "ts": 639377661,
+          "tts": 68862161
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 42,
+          "name": "V8.GC_SCAVENGER_SCAVENGE_FINALIZE",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 42,
+          "tid": 4230,
+          "ts": 639377696,
+          "tts": 68862194
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 13,
+          "name": "V8.GC_SCAVENGER_SCAVENGE_RESTORE_AND_QUARANTINE_PINNED",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 13,
+          "tid": 4230,
+          "ts": 639377740,
+          "tts": 68862237
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 11,
+          "name": "V8.GC_SCAVENGER_FREE_REMEMBERED_SET",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 9,
+          "tid": 4230,
+          "ts": 639379829,
+          "tts": 68864326
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 10,
+          "name": "V8.GC_SCAVENGER_SWEEP_ARRAY_BUFFERS",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 11,
+          "tid": 4230,
+          "ts": 639379842,
+          "tts": 68864336
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 4,
+          "name": "V8.GC_SCAVENGER_RESIZE_NEW_SPACE",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 4,
+          "tid": 4230,
+          "ts": 639379868,
+          "tts": 68864361
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 5,
+          "name": "V8.GC_HEAP_EPILOGUE_SAFEPOINT",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 4,
+          "tid": 4230,
+          "ts": 639379878,
+          "tts": 68864370
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 6,
+          "name": "V8.GC_HEAP_EPILOGUE",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 5,
+          "tid": 4230,
+          "ts": 639379889,
+          "tts": 68864379
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 3,
+          "name": "V8.GC_HEAP_DUMP_STATISTICS",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 2,
+          "tid": 4230,
+          "ts": 639379946,
+          "tts": 68864434
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 3,
+          "name": "V8.GC_HEAP_EXTERNAL_EPILOGUE",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 2,
+          "tid": 4230,
+          "ts": 639380451,
+          "tts": 68864937
+        }
+      ],
+      "longestOverlaps": [
+        {
+          "args": {
+            "data": {
+              "type": "keypress"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 91872,
+          "name": "EventDispatch",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 91748,
+          "tid": 4230,
+          "ts": 639350395,
+          "tts": 68834975
+        },
+        {
+          "args": {
+            "data": {
+              "type": "textInput"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 91809,
+          "name": "EventDispatch",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 91695,
+          "tid": 4230,
+          "ts": 639350455,
+          "tts": 68835026
+        },
+        {
+          "args": {
+            "data": {
+              "type": "input"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 90339,
+          "name": "EventDispatch",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 90234,
+          "tid": 4230,
+          "ts": 639351902,
+          "tts": 68836463
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 90251,
+          "name": "v8.callFunction",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 90155,
+          "tid": 4230,
+          "ts": 639351948,
+          "tts": 68836503
+        },
+        {
+          "args": {
+            "data": {
+              "columnNumber": 9740,
+              "frame": "D98C83B7506752A4F9D509C76206B292",
+              "functionName": "t",
+              "isolate": "17225318098451811353",
+              "lineNumber": 2,
+              "sampleTraceId": 3712673127010948,
+              "scriptId": "46",
+              "url": "http://localhost:3108/assets/nativeSyncPermissions-CRrWhpT1.js"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 83587,
+          "name": "FunctionCall",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 83505,
+          "tid": 4230,
+          "ts": 639351950,
+          "tts": 68836504
+        },
+        {
+          "args": {
+            "type": "allocation failure",
+            "usedHeapSizeAfter": 48835064,
+            "usedHeapSizeBefore": 84944716
+          },
+          "cat": "devtools.timeline,v8",
+          "dur": 7465,
+          "name": "MinorGC",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 7400,
+          "tid": 4230,
+          "ts": 639372984,
+          "tts": 68857535
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 6894,
+          "name": "V8.GCScavenger",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 6834,
+          "tid": 4230,
+          "ts": 639372994,
+          "tts": 68857544
+        },
+        {
+          "args": {
+            "epoch": 109
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 6857,
+          "name": "V8.GC_SCAVENGER",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 6799,
+          "tid": 4230,
+          "ts": 639373027,
+          "tts": 68857576
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 6833,
+          "name": "V8.GC_SCAVENGER_SCAVENGE",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 6778,
+          "tid": 4230,
+          "ts": 639373042,
+          "tts": 68857590
+        },
+        {
+          "args": {
+            "UseBackgroundThreads": true
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 925,
+          "name": "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 3802,
+          "tid": 4230,
+          "ts": 639373794,
+          "tts": 68858337
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 669,
+          "name": "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_IDENTIFY",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 666,
+          "tid": 4230,
+          "ts": 639373095,
+          "tts": 68857642
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 642,
+          "name": "V8.GC_SCAVENGER_TRACED_HANDLES_COMPUTE_WEAKNESS_PARALLEL",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 641,
+          "tid": 4230,
+          "ts": 639373119,
+          "tts": 68857664
+        }
+      ]
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 13000.599999999977,
+        "durationMs": 34.300000000046566,
+        "history": 32,
+        "collaboration": 32
+      },
+      "begin": 581890594,
+      "end": 581924894,
+      "gc": [],
+      "longestOverlaps": [
+        {
+          "args": {
+            "data": {
+              "type": "keypress"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 71187,
+          "name": "EventDispatch",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 71124,
+          "tid": 4230,
+          "ts": 581886260,
+          "tts": 11433107
+        },
+        {
+          "args": {
+            "data": {
+              "type": "textInput"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 70456,
+          "name": "EventDispatch",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 70403,
+          "tid": 4230,
+          "ts": 581886986,
+          "tts": 11433824
+        },
+        {
+          "args": {
+            "data": {
+              "type": "input"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 64398,
+          "name": "EventDispatch",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 64356,
+          "tid": 4230,
+          "ts": 581888447,
+          "tts": 11435276
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 63309,
+          "name": "v8.callFunction",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 63277,
+          "tid": 4230,
+          "ts": 581888668,
+          "tts": 11435492
+        },
+        {
+          "args": {
+            "data": {
+              "columnNumber": 9740,
+              "frame": "D98C83B7506752A4F9D509C76206B292",
+              "functionName": "t",
+              "isolate": "17225318098451811353",
+              "lineNumber": 2,
+              "sampleTraceId": 3712673126949864,
+              "scriptId": "46",
+              "url": "http://localhost:3108/assets/nativeSyncPermissions-CRrWhpT1.js"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 55717,
+          "name": "FunctionCall",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 55698,
+          "tid": 4230,
+          "ts": 581888669,
+          "tts": 11435493
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 22,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 20,
+          "tid": 4230,
+          "ts": 581890845,
+          "tts": 11437667
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 21,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 19,
+          "tid": 4230,
+          "ts": 581907578,
+          "tts": 11454399
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 7,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 6,
+          "tid": 4230,
+          "ts": 581890874,
+          "tts": 11437694
+        }
+      ]
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 17598.800000000047,
+        "durationMs": 33.5,
+        "history": 32,
+        "collaboration": 32
+      },
+      "begin": 586488794,
+      "end": 586522294,
+      "gc": [],
+      "longestOverlaps": [
+        {
+          "args": {
+            "data": {
+              "type": "keypress"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 69953,
+          "name": "EventDispatch",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 71202,
+          "tid": 4230,
+          "ts": 586485752,
+          "tts": 16026768
+        },
+        {
+          "args": {
+            "data": {
+              "type": "textInput"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 69179,
+          "name": "EventDispatch",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 70443,
+          "tid": 4230,
+          "ts": 586486524,
+          "tts": 16027525
+        },
+        {
+          "args": {
+            "data": {
+              "type": "input"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 63479,
+          "name": "EventDispatch",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 64757,
+          "tid": 4230,
+          "ts": 586487321,
+          "tts": 16028311
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 63412,
+          "name": "v8.callFunction",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 64700,
+          "tid": 4230,
+          "ts": 586487350,
+          "tts": 16028335
+        },
+        {
+          "args": {
+            "data": {
+              "columnNumber": 9740,
+              "frame": "D98C83B7506752A4F9D509C76206B292",
+              "functionName": "t",
+              "isolate": "17225318098451811353",
+              "lineNumber": 2,
+              "sampleTraceId": 3712673126941591,
+              "scriptId": "46",
+              "url": "http://localhost:3108/assets/nativeSyncPermissions-CRrWhpT1.js"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 54344,
+          "name": "FunctionCall",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 55643,
+          "tid": 4230,
+          "ts": 586487351,
+          "tts": 16028336
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 40,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 39,
+          "tid": 4230,
+          "ts": 586490828,
+          "tts": 16031810
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 35,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4230,
+          "tdur": 8,
+          "tid": 4230,
+          "ts": 586505826,
+          "tts": 16048162
+        }
+      ]
+    }
+  ],
+  "eventNames": [
+    [
+      "v8.callFunction",
+      105868
+    ],
+    [
+      "FunctionCall",
+      104124
+    ],
+    [
+      "TimerInstall",
+      56214
+    ],
+    [
+      "TimerRemove",
+      55840
+    ],
+    [
+      "AnimationFrame",
+      31906
+    ],
+    [
+      "RequestAnimationFrame",
+      24338
+    ],
+    [
+      "FireAnimationFrame",
+      20232
+    ],
+    [
+      "PrePaint",
+      15875
+    ],
+    [
+      "Layerize",
+      13537
+    ],
+    [
+      "UpdateLayoutTree",
+      12696
+    ],
+    [
+      "EventDispatch",
+      12609
+    ],
+    [
+      "Layout",
+      12576
+    ],
+    [
+      "TimerFire",
+      8039
+    ],
+    [
+      "V8.GC_MC_INCREMENTAL",
+      7365
+    ],
+    [
+      "Major concurrent marking rescheduled",
+      7322
+    ],
+    [
+      "CancelAnimationFrame",
+      6226
+    ],
+    [
+      "EventTiming",
+      5577
+    ],
+    [
+      "AnimationFrame::Render",
+      4833
+    ],
+    [
+      "AnimationFrame::StyleAndLayout",
+      4833
+    ],
+    [
+      "AnimationFrame::FirstUIEvent",
+      3395
+    ],
+    [
+      "Responsiveness.Renderer.UserInteraction",
+      3297
+    ],
+    [
+      "HitTest",
+      2667
+    ],
+    [
+      "V8.GCIncrementalMarking",
+      2455
+    ],
+    [
+      "V8.GC_MC_INCREMENTAL_EMBEDDER_TRACING",
+      2455
+    ],
+    [
+      "AnimationFrame::Presentation",
+      2415
+    ],
+    [
+      "V8.GC_SCAVENGER_BACKGROUND_SCAVENGE_PARALLEL",
+      2385
+    ],
+    [
+      "Paint",
+      2186
+    ],
+    [
+      "AnimationFrame::Script::Execute",
+      2154
+    ],
+    [
+      "ComputeWeaknessProcessor start",
+      1857
+    ],
+    [
+      "Parallel scavenge started",
+      1857
+    ],
+    [
+      "ClearWeaknessProcessor start",
+      1857
+    ],
+    [
+      "RememberedSetUpdatingItem::Process",
+      1836
+    ],
+    [
+      "V8.GC_SCAVENGER_SWEEP_ARRAY_BUFFERS",
+      1596
+    ],
+    [
+      "V8.GC_MINOR_MS_BACKGROUND_SWEEPING",
+      1592
+    ],
+    [
+      "IsInputHandling",
+      1247
+    ],
+    [
+      "Evacuator::EvacuatePage",
+      1180
+    ],
+    [
+      "FullEvacuator::RawEvacuatePage",
+      1180
+    ],
+    [
+      "LiveObjectVisitor::VisitMarkedObjectsNoFail",
+      1094
+    ],
+    [
+      "ClearStringTableJob started",
+      984
+    ],
+    [
+      "V8.GC_MC_BACKGROUND_SWEEPING",
+      774
+    ],
+    [
+      "V8.GC_SCAVENGER_SCAVENGE_PARALLEL",
+      716
+    ],
+    [
+      "V8.GC_TIME_TO_SAFEPOINT",
+      705
+    ],
+    [
+      "V8.GC_HEAP_EXTERNAL_PROLOGUE",
+      660
+    ],
+    [
+      "V8.GC_HEAP_PROLOGUE",
+      660
+    ],
+    [
+      "V8.GC_HEAP_PROLOGUE_SAFEPOINT",
+      660
+    ],
+    [
+      "V8.GC_HEAP_EPILOGUE_SAFEPOINT",
+      660
+    ],
+    [
+      "V8.GC_HEAP_EPILOGUE",
+      660
+    ],
+    [
+      "V8.GCTraceGCNVP",
+      660
+    ],
+    [
+      "V8.GC_HEAP_DUMP_STATISTICS",
+      660
+    ],
+    [
+      "V8.GC_Heap_Stats",
+      660
+    ],
+    [
+      "V8.GC_HEAP_EXTERNAL_EPILOGUE",
+      660
+    ],
+    [
+      "MinorGC",
+      619
+    ],
+    [
+      "V8.GCScavenger",
+      619
+    ],
+    [
+      "V8.GC_SCAVENGER",
+      619
+    ],
+    [
+      "V8.GC_SCAVENGER_SCAVENGE",
+      619
+    ],
+    [
+      "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_IDENTIFY",
+      619
+    ],
+    [
+      "V8.GC_SCAVENGER_SCAVENGE_COLLECT_OLD_TO_NEW_PAGES",
+      619
+    ],
+    [
+      "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE",
+      619
+    ],
+    [
+      "V8.GC_SCAVENGER_SCAVENGE_ROOTS",
+      619
+    ],
+    [
+      "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_PROCESS",
+      619
+    ]
+  ]
+}

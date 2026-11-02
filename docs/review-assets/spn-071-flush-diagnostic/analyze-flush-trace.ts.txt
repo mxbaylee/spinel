@@ -1,0 +1,46 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import readline from 'node:readline';
+const root = process.argv[2];
+if (!root) throw new Error('Expected extracted diagnostic artifact root');
+type TraceEvent = { name?: string; cat?: string; pid?: number; tid?: number; ts?: number; dur?: number; ph?: string; args?: unknown };
+for (const relative of fs.readdirSync(root, { recursive: true }).map(String).filter(p => p.endsWith('spn108-metrics.json') && p.includes('plain-3'))) {
+  const file = path.join(root, relative);
+  const metrics = JSON.parse(fs.readFileSync(file, 'utf8'));
+  const tracePath = path.join(path.dirname(file), 'spn071-trace.jsonl');
+  if (!fs.existsSync(tracePath)) { console.log(JSON.stringify({ relative, missingTrace: true })); continue; }
+  const collected: TraceEvent[] = [];
+  let count = 0;
+  const names = new Map<string, number>();
+  for await (const line of readline.createInterface({ input: fs.createReadStream(tracePath), crlfDelay: Infinity })) {
+    if (!line) continue;
+    const batch = JSON.parse(line) as TraceEvent[];
+    for (const event of batch) {
+      count++;
+      names.set(event.name ?? '<unnamed>', (names.get(event.name ?? '<unnamed>') ?? 0) + 1);
+      if (event.pid === metrics.diagnosticTrace?.marks?.[0]?.pid && event.tid === metrics.diagnosticTrace?.marks?.[0]?.tid) collected.push(event);
+    }
+  }
+  collected.sort((a, b) => (a.ts ?? 0) - (b.ts ?? 0));
+  const stack: TraceEvent[] = [];
+  const spans: TraceEvent[] = [];
+  for (const event of collected) {
+    if (event.ph === 'X' && typeof event.dur === 'number') spans.push(event);
+    else if (event.ph === 'B') stack.push(event);
+    else if (event.ph === 'E') {
+      const start = stack.pop();
+      if (start && typeof start.ts === 'number' && typeof event.ts === 'number') spans.push({ ...start, dur: event.ts - start.ts });
+    }
+  }
+  const offset = metrics.diagnosticTrace?.marks?.[0]?.ts - metrics.traceClockStart * 1000;
+  const flushes = [...(metrics.native?.flushes ?? [])].sort((a, b) => b.durationMs - a.durationMs);
+  const selected = flushes.slice(0, 5).map(flush => {
+    const begin = offset + flush.startedAt * 1000;
+    const end = begin + flush.durationMs * 1000;
+    const overlap = spans.filter(e => typeof e.ts === 'number' && e.ts < end && e.ts + (e.dur ?? 0) > begin);
+    return { flush, begin, end, gc: overlap.filter(e => /GC|Scavenge|MarkCompact/i.test(e.name ?? '')), longestOverlaps: overlap.sort((a, b) => (b.dur ?? 0) - (a.dur ?? 0)).slice(0, 12) };
+  });
+  const summary = { relative, source: metrics.source, diagnosticTrace: metrics.diagnosticTrace, traceClockStart: metrics.traceClockStart, traceClockEnd: metrics.traceClockEnd, totalEvents: count, senderEvents: collected.length, offset, completed: metrics.completed, budgetResults: metrics.budgetResults, correctness: metrics.correctness, errors: metrics.errors, selected, eventNames: [...names].sort((a,b)=>b[1]-a[1]).slice(0,60) };
+  fs.writeFileSync(path.join(path.dirname(file), 'spn071-trace-analysis.json'), JSON.stringify(summary, null, 2));
+  console.log(JSON.stringify({ relative, source: metrics.source, traceComplete: metrics.diagnosticTrace?.complete, totalEvents: count, completed: metrics.completed, maxFlush: flushes[0], gcOverlapNames: selected[0]?.gc.map(e=>({name:e.name,durationMs:(e.dur??0)/1000})), failures: metrics.budgetResults }));
+}

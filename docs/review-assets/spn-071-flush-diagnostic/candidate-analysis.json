@@ -1,0 +1,3335 @@
+{
+  "relative": "candidate-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+  "source": "53ad6848d79b7b5034db6f6e99a107a518f5d9e5",
+  "diagnosticTrace": {
+    "bytes": 134174608,
+    "events": 577834,
+    "overflow": true,
+    "marks": [
+      {
+        "name": "spn071-clock-start",
+        "pid": 4847,
+        "tid": 4847,
+        "ts": 1150720996
+      },
+      {
+        "name": "spn071-clock-end",
+        "pid": 4847,
+        "tid": 4847,
+        "ts": 1342944205
+      }
+    ],
+    "clockAligned": true,
+    "dataLossOccurred": false,
+    "complete": false
+  },
+  "traceClockStart": 2513.899999999907,
+  "traceClockEnd": 194737.09999999986,
+  "totalEvents": 577834,
+  "senderEvents": 361824,
+  "offset": 1148207096,
+  "budgetResults": {
+    "inputP95": true,
+    "longestTask": true,
+    "capacityFlushP95": true,
+    "idleFlushP95": true,
+    "flushMaximum": false,
+    "boundedHistory": true,
+    "boundedCollaboration": true,
+    "observedCapacityFlushes": true,
+    "browserLocalDrainedWithinOneSecond": true
+  },
+  "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed",
+  "errors": [],
+  "selected": [
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 109132.8999999999,
+        "durationMs": 197.69999999995343,
+        "history": 32,
+        "collaboration": 32
+      },
+      "begin": 1257339996,
+      "end": 1257537696,
+      "gc": [
+        {
+          "args": {
+            "value": {
+              "gc_reason": "global allocation limit",
+              "global_allocation_limit": 139962713,
+              "global_consumed_bytes": 147503352,
+              "global_space_available": 0,
+              "old_gen_allocation_limit": 101866344,
+              "old_gen_consumed_bytes": 50757924,
+              "old_gen_space_available": 51108420,
+              "reason": "global allocation limit reached"
+            }
+          },
+          "cat": "v8",
+          "dur": 106250,
+          "name": "V8.GCIncrementalMarkingStart",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 106236,
+          "tid": 4847,
+          "ts": 1257341354,
+          "tts": 107327383
+        },
+        {
+          "args": {
+            "epoch": 173,
+            "value": {
+              "epoch": 173,
+              "mode": "unified heap",
+              "sweeping_reason": "start major marking"
+            }
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 103411,
+          "name": "V8.GC_HEAP_ENSURE_SWEEPING_COMPLETED",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 103411,
+          "tid": 4847,
+          "ts": 1257341362,
+          "tts": 107327390
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 4,
+          "name": "V8.GC_TIME_TO_SAFEPOINT",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 3,
+          "tid": 4847,
+          "ts": 1257444776,
+          "tts": 107430803
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 2805,
+          "name": "V8.GC_MC_INCREMENTAL_START",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 2795,
+          "tid": 4847,
+          "ts": 1257444789,
+          "tts": 107430815
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 801,
+          "name": "V8.GC_MC_INCREMENTAL_EXTERNAL_PROLOGUE",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 801,
+          "tid": 4847,
+          "ts": 1257444795,
+          "tts": 107430820
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 4,
+          "name": "V8.GC_MC_MARK_EMBEDDER_PROLOGUE",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 3,
+          "tid": 4847,
+          "ts": 1257445645,
+          "tts": 107431669
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 949,
+          "name": "V8.GC_MC_MARK_ROOTS",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 948,
+          "tid": 4847,
+          "ts": 1257446468,
+          "tts": 107432491
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 146,
+          "name": "V8.GC_MC_MARK_EMBEDDER_PROLOGUE",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 146,
+          "tid": 4847,
+          "ts": 1257447438,
+          "tts": 107433457
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 4,
+          "name": "V8.GC_MC_INCREMENTAL_EXTERNAL_EPILOGUE",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 3,
+          "tid": 4847,
+          "ts": 1257447587,
+          "tts": 107433605
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "v8",
+          "dur": 26,
+          "name": "V8.GCIncrementalMarking",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 22,
+          "tid": 4847,
+          "ts": 1257448048,
+          "tts": 107434064
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 18,
+          "name": "V8.GC_MC_INCREMENTAL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 16,
+          "tid": 4847,
+          "ts": 1257448055,
+          "tts": 107434069
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 8,
+          "name": "V8.GC_MC_INCREMENTAL_EMBEDDER_TRACING",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 8,
+          "tid": 4847,
+          "ts": 1257448058,
+          "tts": 107434072
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "v8",
+          "dur": 15,
+          "name": "V8.GCIncrementalMarking",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 11,
+          "tid": 4847,
+          "ts": 1257448365,
+          "tts": 107434377
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 10,
+          "name": "V8.GC_MC_INCREMENTAL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 8,
+          "tid": 4847,
+          "ts": 1257448369,
+          "tts": 107434379
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 3,
+          "name": "V8.GC_MC_INCREMENTAL_EMBEDDER_TRACING",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 2,
+          "tid": 4847,
+          "ts": 1257448371,
+          "tts": 107434381
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "v8",
+          "dur": 55,
+          "name": "V8.GCIncrementalMarking",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 52,
+          "tid": 4847,
+          "ts": 1257448668,
+          "tts": 107434676
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 51,
+          "name": "V8.GC_MC_INCREMENTAL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 49,
+          "tid": 4847,
+          "ts": 1257448671,
+          "tts": 107434678
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 42,
+          "name": "V8.GC_MC_INCREMENTAL_EMBEDDER_TRACING",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 42,
+          "tid": 4847,
+          "ts": 1257448673,
+          "tts": 107434680
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "v8",
+          "dur": 15,
+          "name": "V8.GCIncrementalMarking",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 10,
+          "tid": 4847,
+          "ts": 1257449035,
+          "tts": 107435040
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 10,
+          "name": "V8.GC_MC_INCREMENTAL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 7,
+          "tid": 4847,
+          "ts": 1257449038,
+          "tts": 107435042
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 3,
+          "name": "V8.GC_MC_INCREMENTAL_EMBEDDER_TRACING",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 2,
+          "tid": 4847,
+          "ts": 1257449040,
+          "tts": 107435043
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "v8",
+          "dur": 13,
+          "name": "V8.GCIncrementalMarking",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 11,
+          "tid": 4847,
+          "ts": 1257449342,
+          "tts": 107435342
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 9,
+          "name": "V8.GC_MC_INCREMENTAL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 8,
+          "tid": 4847,
+          "ts": 1257449345,
+          "tts": 107435344
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 2,
+          "name": "V8.GC_MC_INCREMENTAL_EMBEDDER_TRACING",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 2,
+          "tid": 4847,
+          "ts": 1257449347,
+          "tts": 107435346
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "v8",
+          "dur": 92,
+          "name": "V8.GCIncrementalMarking",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 88,
+          "tid": 4847,
+          "ts": 1257449641,
+          "tts": 107435639
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 88,
+          "name": "V8.GC_MC_INCREMENTAL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 85,
+          "tid": 4847,
+          "ts": 1257449644,
+          "tts": 107435641
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 79,
+          "name": "V8.GC_MC_INCREMENTAL_EMBEDDER_TRACING",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 79,
+          "tid": 4847,
+          "ts": 1257449646,
+          "tts": 107435642
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "v8",
+          "dur": 3109,
+          "name": "V8.GCIncrementalMarking",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 3103,
+          "tid": 4847,
+          "ts": 1257450065,
+          "tts": 107436060
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 3102,
+          "name": "V8.GC_MC_INCREMENTAL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 3100,
+          "tid": 4847,
+          "ts": 1257450069,
+          "tts": 107436062
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 62,
+          "name": "V8.GC_MC_INCREMENTAL_EMBEDDER_TRACING",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 62,
+          "tid": 4847,
+          "ts": 1257450071,
+          "tts": 107436064
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "v8",
+          "dur": 124,
+          "name": "V8.GCIncrementalMarking",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 119,
+          "tid": 4847,
+          "ts": 1257454871,
+          "tts": 107440847
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 118,
+          "name": "V8.GC_MC_INCREMENTAL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 115,
+          "tid": 4847,
+          "ts": 1257454875,
+          "tts": 107440850
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 108,
+          "name": "V8.GC_MC_INCREMENTAL_EMBEDDER_TRACING",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 108,
+          "tid": 4847,
+          "ts": 1257454878,
+          "tts": 107440852
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "v8",
+          "dur": 24,
+          "name": "V8.GCIncrementalMarking",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 21,
+          "tid": 4847,
+          "ts": 1257456608,
+          "tts": 107442580
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 19,
+          "name": "V8.GC_MC_INCREMENTAL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 17,
+          "tid": 4847,
+          "ts": 1257456612,
+          "tts": 107442583
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 10,
+          "name": "V8.GC_MC_INCREMENTAL_EMBEDDER_TRACING",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 10,
+          "tid": 4847,
+          "ts": 1257456615,
+          "tts": 107442585
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "v8",
+          "dur": 16,
+          "name": "V8.GCIncrementalMarking",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 12,
+          "tid": 4847,
+          "ts": 1257458423,
+          "tts": 107444393
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 11,
+          "name": "V8.GC_MC_INCREMENTAL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 8,
+          "tid": 4847,
+          "ts": 1257458427,
+          "tts": 107444396
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 2,
+          "name": "V8.GC_MC_INCREMENTAL_EMBEDDER_TRACING",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 2,
+          "tid": 4847,
+          "ts": 1257458430,
+          "tts": 107444398
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "v8",
+          "dur": 16,
+          "name": "V8.GCIncrementalMarking",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 12,
+          "tid": 4847,
+          "ts": 1257460130,
+          "tts": 107446096
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 11,
+          "name": "V8.GC_MC_INCREMENTAL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 8,
+          "tid": 4847,
+          "ts": 1257460134,
+          "tts": 107446099
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 2,
+          "name": "V8.GC_MC_INCREMENTAL_EMBEDDER_TRACING",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 2,
+          "tid": 4847,
+          "ts": 1257460137,
+          "tts": 107446101
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "v8",
+          "dur": 25,
+          "name": "V8.GCIncrementalMarking",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 20,
+          "tid": 4847,
+          "ts": 1257461902,
+          "tts": 107447834
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 11,
+          "name": "V8.GC_MC_INCREMENTAL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 8,
+          "tid": 4847,
+          "ts": 1257461907,
+          "tts": 107447837
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 2,
+          "name": "V8.GC_MC_INCREMENTAL_EMBEDDER_TRACING",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 2,
+          "tid": 4847,
+          "ts": 1257461910,
+          "tts": 107447839
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "v8",
+          "dur": 16,
+          "name": "V8.GCIncrementalMarking",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 12,
+          "tid": 4847,
+          "ts": 1257463136,
+          "tts": 107449064
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 10,
+          "name": "V8.GC_MC_INCREMENTAL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 8,
+          "tid": 4847,
+          "ts": 1257463141,
+          "tts": 107449067
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 2,
+          "name": "V8.GC_MC_INCREMENTAL_EMBEDDER_TRACING",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 2,
+          "tid": 4847,
+          "ts": 1257463143,
+          "tts": 107449069
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "v8",
+          "dur": 23,
+          "name": "V8.GCIncrementalMarking",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 19,
+          "tid": 4847,
+          "ts": 1257464284,
+          "tts": 107450208
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 11,
+          "name": "V8.GC_MC_INCREMENTAL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 8,
+          "tid": 4847,
+          "ts": 1257464295,
+          "tts": 107450218
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 2,
+          "name": "V8.GC_MC_INCREMENTAL_EMBEDDER_TRACING",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 2,
+          "tid": 4847,
+          "ts": 1257464298,
+          "tts": 107450220
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "v8",
+          "dur": 19,
+          "name": "V8.GCIncrementalMarking",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 14,
+          "tid": 4847,
+          "ts": 1257466352,
+          "tts": 107452272
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 13,
+          "name": "V8.GC_MC_INCREMENTAL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 11,
+          "tid": 4847,
+          "ts": 1257466356,
+          "tts": 107452274
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 5,
+          "name": "V8.GC_MC_INCREMENTAL_EMBEDDER_TRACING",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 5,
+          "tid": 4847,
+          "ts": 1257466358,
+          "tts": 107452276
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "v8",
+          "dur": 19,
+          "name": "V8.GCIncrementalMarking",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 13,
+          "tid": 4847,
+          "ts": 1257467788,
+          "tts": 107453704
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 13,
+          "name": "V8.GC_MC_INCREMENTAL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 10,
+          "tid": 4847,
+          "ts": 1257467792,
+          "tts": 107453706
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 2,
+          "name": "V8.GC_MC_INCREMENTAL_EMBEDDER_TRACING",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 2,
+          "tid": 4847,
+          "ts": 1257467795,
+          "tts": 107453708
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "v8",
+          "dur": 15,
+          "name": "V8.GCIncrementalMarking",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 11,
+          "tid": 4847,
+          "ts": 1257469415,
+          "tts": 107455326
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 10,
+          "name": "V8.GC_MC_INCREMENTAL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 8,
+          "tid": 4847,
+          "ts": 1257469419,
+          "tts": 107455328
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 3,
+          "name": "V8.GC_MC_INCREMENTAL_EMBEDDER_TRACING",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 2,
+          "tid": 4847,
+          "ts": 1257469421,
+          "tts": 107455330
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "v8",
+          "dur": 17,
+          "name": "V8.GCIncrementalMarking",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 12,
+          "tid": 4847,
+          "ts": 1257471023,
+          "tts": 107456930
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 11,
+          "name": "V8.GC_MC_INCREMENTAL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 8,
+          "tid": 4847,
+          "ts": 1257471027,
+          "tts": 107456933
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 3,
+          "name": "V8.GC_MC_INCREMENTAL_EMBEDDER_TRACING",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 2,
+          "tid": 4847,
+          "ts": 1257471029,
+          "tts": 107456935
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "v8",
+          "dur": 351,
+          "name": "V8.GCIncrementalMarking",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 348,
+          "tid": 4847,
+          "ts": 1257472727,
+          "tts": 107458630
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 346,
+          "name": "V8.GC_MC_INCREMENTAL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 344,
+          "tid": 4847,
+          "ts": 1257472731,
+          "tts": 107458633
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 42,
+          "name": "V8.GC_MC_INCREMENTAL_EMBEDDER_TRACING",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 42,
+          "tid": 4847,
+          "ts": 1257472733,
+          "tts": 107458635
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "v8",
+          "dur": 35,
+          "name": "V8.GCIncrementalMarking",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 29,
+          "tid": 4847,
+          "ts": 1257480083,
+          "tts": 107464711
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 29,
+          "name": "V8.GC_MC_INCREMENTAL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 25,
+          "tid": 4847,
+          "ts": 1257480088,
+          "tts": 107464714
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 19,
+          "name": "V8.GC_MC_INCREMENTAL_EMBEDDER_TRACING",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 19,
+          "tid": 4847,
+          "ts": 1257480091,
+          "tts": 107464716
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "v8",
+          "dur": 79,
+          "name": "V8.GCIncrementalMarking",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 73,
+          "tid": 4847,
+          "ts": 1257481212,
+          "tts": 107465834
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 70,
+          "name": "V8.GC_MC_INCREMENTAL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 70,
+          "tid": 4847,
+          "ts": 1257481216,
+          "tts": 107465836
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 56,
+          "name": "V8.GC_MC_INCREMENTAL_EMBEDDER_TRACING",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 55,
+          "tid": 4847,
+          "ts": 1257481218,
+          "tts": 107465838
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "v8",
+          "dur": 61,
+          "name": "V8.GCIncrementalMarking",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 57,
+          "tid": 4847,
+          "ts": 1257482369,
+          "tts": 107466986
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 56,
+          "name": "V8.GC_MC_INCREMENTAL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 54,
+          "tid": 4847,
+          "ts": 1257482373,
+          "tts": 107466988
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 2,
+          "name": "V8.GC_MC_INCREMENTAL_EMBEDDER_TRACING",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 1,
+          "tid": 4847,
+          "ts": 1257482374,
+          "tts": 107466989
+        },
+        {
+          "args": {},
+          "cat": "disabled-by-default-v8.gc",
+          "dur": 40686,
+          "name": "V8.GCHandleGCRequest",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 41117,
+          "tid": 4847,
+          "ts": 1257482439,
+          "tts": 107467052
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 978,
+          "name": "V8.GC_HEAP_EXTERNAL_PROLOGUE",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 979,
+          "tid": 4847,
+          "ts": 1257482442,
+          "tts": 107467055
+        },
+        {
+          "args": {
+            "type": "finalize incremental marking via stack guard",
+            "usedHeapSizeAfter": 48271516,
+            "usedHeapSizeBefore": 72224312
+          },
+          "cat": "devtools.timeline,v8",
+          "dur": 39690,
+          "name": "MajorGC",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 40124,
+          "tid": 4847,
+          "ts": 1257483425,
+          "tts": 107468037
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 2,
+          "name": "V8.GC_HEAP_PROLOGUE",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 2,
+          "tid": 4847,
+          "ts": 1257483430,
+          "tts": 107468041
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 39516,
+          "name": "V8.GCFinalizeMC",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 39955,
+          "tid": 4847,
+          "ts": 1257483436,
+          "tts": 107468047
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 2,
+          "name": "V8.GC_TIME_TO_SAFEPOINT",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 1,
+          "tid": 4847,
+          "ts": 1257483440,
+          "tts": 107468050
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 39496,
+          "name": "V8.GC_MARK_COMPACTOR",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 39938,
+          "tid": 4847,
+          "ts": 1257483450,
+          "tts": 107468059
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 6,
+          "name": "V8.GC_HEAP_PROLOGUE_SAFEPOINT",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 1,
+          "tid": 4847,
+          "ts": 1257483460,
+          "tts": 107468072
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 9,
+          "name": "V8.GC_MC_PROLOGUE",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 9,
+          "tid": 4847,
+          "ts": 1257483469,
+          "tts": 107468075
+        },
+        {
+          "args": {
+            "UseBackgroundThreads": true
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 4370,
+          "name": "V8.GC_MC_MARK",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 4349,
+          "tid": 4847,
+          "ts": 1257483480,
+          "tts": 107468085
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 3,
+          "name": "V8.GC_MC_MARK_FINISH_INCREMENTAL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 3,
+          "tid": 4847,
+          "ts": 1257483483,
+          "tts": 107468087
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 98,
+          "name": "V8.GC_MC_MARK_ROOTS",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 97,
+          "tid": 4847,
+          "ts": 1257484573,
+          "tts": 107469177
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 3,
+          "name": "V8.GC_MC_MARK_CLIENT_HEAPS",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 2,
+          "tid": 4847,
+          "ts": 1257484672,
+          "tts": 107469275
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 709,
+          "name": "V8.GC_MC_MARK_RETAIN_MAPS",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 709,
+          "tid": 4847,
+          "ts": 1257484676,
+          "tts": 107469277
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 2418,
+          "name": "V8.GC_MC_MARK_FULL_CLOSURE_PARALLEL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 2408,
+          "tid": 4847,
+          "ts": 1257485387,
+          "tts": 107469987
+        },
+        {
+          "args": {
+            "iteration": 0
+          },
+          "cat": "disabled-by-default-v8.gc",
+          "dur": 2385,
+          "name": "V8.GCMarkTransitiveClosureFixpoint",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 2381,
+          "tid": 4847,
+          "ts": 1257485402,
+          "tts": 107470001
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 2380,
+          "name": "V8.GC_MC_MARK_WEAK_CLOSURE_EPHEMERON_MARKING",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 2376,
+          "tid": 4847,
+          "ts": 1257485406,
+          "tts": 107470005
+        },
+        {
+          "args": {},
+          "cat": "disabled-by-default-v8.gc",
+          "dur": 2378,
+          "name": "V8.GCReachTransitiveClosureWithEmbedder",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 2375,
+          "tid": 4847,
+          "ts": 1257485407,
+          "tts": 107470006
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 2356,
+          "name": "V8.GC_MC_MARK_EMBEDDER_TRACING",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 2356,
+          "tid": 4847,
+          "ts": 1257485409,
+          "tts": 107470007
+        },
+        {
+          "args": {
+            "iteration": 1
+          },
+          "cat": "disabled-by-default-v8.gc",
+          "dur": 9,
+          "name": "V8.GCMarkTransitiveClosureFixpoint",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 6,
+          "tid": 4847,
+          "ts": 1257487788,
+          "tts": 107472382
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 6,
+          "name": "V8.GC_MC_MARK_WEAK_CLOSURE_EPHEMERON_MARKING",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 5,
+          "tid": 4847,
+          "ts": 1257487790,
+          "tts": 107472383
+        },
+        {
+          "args": {},
+          "cat": "disabled-by-default-v8.gc",
+          "dur": 4,
+          "name": "V8.GCReachTransitiveClosureWithEmbedder",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 4,
+          "tid": 4847,
+          "ts": 1257487791,
+          "tts": 107472384
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 2,
+          "name": "V8.GC_MC_MARK_EMBEDDER_TRACING",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 2,
+          "tid": 4847,
+          "ts": 1257487792,
+          "tts": 107472385
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 4,
+          "name": "V8.GC_MC_MARK_ROOTS",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 3,
+          "tid": 4847,
+          "ts": 1257487806,
+          "tts": 107472396
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 2,
+          "name": "V8.GC_CONSERVATIVE_STACK_SCANNING",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 2,
+          "tid": 4847,
+          "ts": 1257487807,
+          "tts": 107472397
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 11,
+          "name": "V8.GC_MC_MARK_FULL_CLOSURE_SERIAL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 6,
+          "tid": 4847,
+          "ts": 1257487811,
+          "tts": 107472400
+        },
+        {
+          "args": {
+            "iteration": 0
+          },
+          "cat": "disabled-by-default-v8.gc",
+          "dur": 8,
+          "name": "V8.GCMarkTransitiveClosureFixpoint",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 5,
+          "tid": 4847,
+          "ts": 1257487813,
+          "tts": 107472401
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 6,
+          "name": "V8.GC_MC_MARK_WEAK_CLOSURE_EPHEMERON_MARKING",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 4,
+          "tid": 4847,
+          "ts": 1257487814,
+          "tts": 107472402
+        },
+        {
+          "args": {},
+          "cat": "disabled-by-default-v8.gc",
+          "dur": 4,
+          "name": "V8.GCReachTransitiveClosureWithEmbedder",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 3,
+          "tid": 4847,
+          "ts": 1257487815,
+          "tts": 107472403
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 2,
+          "name": "V8.GC_MC_MARK_EMBEDDER_TRACING",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 1,
+          "tid": 4847,
+          "ts": 1257487816,
+          "tts": 107472404
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 4943,
+          "name": "V8.GC_MC_CLEAR",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 4926,
+          "tid": 4847,
+          "ts": 1257487853,
+          "tts": 107472437
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 3816,
+          "name": "V8.GC_MC_CLEAR_JOIN_JOB",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 3811,
+          "tid": 4847,
+          "ts": 1257487885,
+          "tts": 107472457
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 12,
+          "name": "V8.GC_MC_CLEAR_WEAK_COLLECTIONS",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 11,
+          "tid": 4847,
+          "ts": 1257487895,
+          "tts": 107472467
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 269,
+          "name": "V8.GC_MC_CLEAR_MAPS",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 270,
+          "tid": 4847,
+          "ts": 1257487909,
+          "tts": 107472480
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 130,
+          "name": "V8.GC_MC_CLEAR_STRING_TABLE",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 130,
+          "tid": 4847,
+          "ts": 1257488181,
+          "tts": 107472752
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 150,
+          "name": "V8.GC_MC_CLEAR_WEAK_REFERENCES_NON_TRIVIAL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 150,
+          "tid": 4847,
+          "ts": 1257488313,
+          "tts": 107472883
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 129,
+          "name": "V8.GC_MC_CLEAR_STRING_TABLE",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 129,
+          "tid": 4847,
+          "ts": 1257488466,
+          "tts": 107473035
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 3094,
+          "name": "V8.GC_MC_CLEAR_STRING_TABLE",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 3095,
+          "tid": 4847,
+          "ts": 1257488598,
+          "tts": 107473166
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 36,
+          "name": "V8.GC_MC_SWEEP",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 34,
+          "tid": 4847,
+          "ts": 1257496086,
+          "tts": 107480653
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 15388,
+          "name": "V8.GC_MC_EVACUATE",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 15888,
+          "tid": 4847,
+          "ts": 1257496123,
+          "tts": 107480688
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 41,
+          "name": "V8.GC_MC_EVACUATE_PROLOGUE",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 41,
+          "tid": 4847,
+          "ts": 1257496935,
+          "tts": 107481499
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 4557,
+          "name": "V8.GC_MC_EVACUATE_COPY",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 5165,
+          "tid": 4847,
+          "ts": 1257496978,
+          "tts": 107481541
+        },
+        {
+          "args": {
+            "pages": 33
+          },
+          "cat": "disabled-by-default-v8.gc",
+          "dur": 4551,
+          "name": "MarkCompactCollector::EvacuatePagesInParallel",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 5160,
+          "tid": 4847,
+          "ts": 1257496982,
+          "tts": 107481545
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 4487,
+          "name": "V8.GC_MC_EVACUATE_COPY_PARALLEL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 5098,
+          "tid": 4847,
+          "ts": 1257497029,
+          "tts": 107481590
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 9,
+          "name": "V8.GC_MC_SWEEP",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 9,
+          "tid": 4847,
+          "ts": 1257497042,
+          "tts": 107481601
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 24,
+          "name": "V8.GC_MC_SWEEP",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 23,
+          "tid": 4847,
+          "ts": 1257498314,
+          "tts": 107482845
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 9923,
+          "name": "V8.GC_MC_EVACUATE_UPDATE_POINTERS",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 9820,
+          "tid": 4847,
+          "ts": 1257501537,
+          "tts": 107486706
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 6000,
+          "name": "V8.GC_MC_EVACUATE_UPDATE_POINTERS_TO_NEW_ROOTS",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 6001,
+          "tid": 4847,
+          "ts": 1257501540,
+          "tts": 107486709
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 3,
+          "name": "V8.GC_MC_EVACUATE_UPDATE_POINTERS_CLIENT_HEAPS",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 3,
+          "tid": 4847,
+          "ts": 1257507543,
+          "tts": 107492711
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 2212,
+          "name": "V8.GC_MC_EVACUATE_UPDATE_POINTERS_SLOTS_MAIN",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 2113,
+          "tid": 4847,
+          "ts": 1257507547,
+          "tts": 107492715
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 326,
+          "name": "V8.GC_MC_EVACUATE_UPDATE_POINTERS_PARALLEL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 310,
+          "tid": 4847,
+          "ts": 1257507920,
+          "tts": 107493087
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 8,
+          "name": "V8.GC_MC_EVACUATE_UPDATE_POINTERS_WEAK",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 8,
+          "tid": 4847,
+          "ts": 1257509761,
+          "tts": 107494829
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 1679,
+          "name": "V8.GC_MC_EVACUATE_UPDATE_POINTERS_POINTER_TABLES",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 1679,
+          "tid": 4847,
+          "ts": 1257509770,
+          "tts": 107494838
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 3,
+          "name": "V8.GC_MC_EVACUATE_CLEAN_UP",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 3,
+          "tid": 4847,
+          "ts": 1257511461,
+          "tts": 107496527
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 46,
+          "name": "V8.GC_MC_EVACUATE_EPILOGUE",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 45,
+          "tid": 4847,
+          "ts": 1257511465,
+          "tts": 107496530
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 9,
+          "name": "V8.GC_MC_SWEEP",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 8,
+          "tid": 4847,
+          "ts": 1257511514,
+          "tts": 107496577
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 5,
+          "name": "V8.GC_MC_SWEEP_NEW_LO",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 4,
+          "tid": 4847,
+          "ts": 1257511517,
+          "tts": 107496580
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 4,
+          "name": "V8.GC_MC_EVACUATE",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 2,
+          "tid": 4847,
+          "ts": 1257511524,
+          "tts": 107496585
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 2,
+          "name": "V8.GC_MC_EVACUATE_REBALANCE",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 1,
+          "tid": 4847,
+          "ts": 1257511525,
+          "tts": 107496586
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 1012,
+          "name": "V8.GC_MC_FINISH",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 1011,
+          "tid": 4847,
+          "ts": 1257511529,
+          "tts": 107496587
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 8,
+          "name": "V8.GC_MC_FINISH_SWEEP_ARRAY_BUFFERS",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 7,
+          "tid": 4847,
+          "ts": 1257511549,
+          "tts": 107496607
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 833,
+          "name": "V8.GC_MC_SWEEP_START_JOBS",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 833,
+          "tid": 4847,
+          "ts": 1257511580,
+          "tts": 107496637
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 2,
+          "name": "V8.GC_MC_EPILOGUE",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 2,
+          "tid": 4847,
+          "ts": 1257512544,
+          "tts": 107497599
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 48,
+          "name": "V8.GC_HEAP_EXTERNAL_WEAK_GLOBAL_HANDLES",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 45,
+          "tid": 4847,
+          "ts": 1257512559,
+          "tts": 107497615
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 10314,
+          "name": "V8.GC_HEAP_EMBEDDER_TRACING_EPILOGUE",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 10315,
+          "tid": 4847,
+          "ts": 1257512609,
+          "tts": 107497661
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 8,
+          "name": "V8.GC_HEAP_EPILOGUE_SAFEPOINT",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 7,
+          "tid": 4847,
+          "ts": 1257522937,
+          "tts": 107507989
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 5,
+          "name": "V8.GC_HEAP_EPILOGUE",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 5,
+          "tid": 4847,
+          "ts": 1257522955,
+          "tts": 107508004
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 2,
+          "name": "V8.GC_HEAP_DUMP_STATISTICS",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 4,
+          "tid": 4847,
+          "ts": 1257523072,
+          "tts": 107508119
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 5,
+          "name": "V8.GC_HEAP_EXTERNAL_EPILOGUE",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 5,
+          "tid": 4847,
+          "ts": 1257523119,
+          "tts": 107508163
+        }
+      ],
+      "longestOverlaps": [
+        {
+          "args": {
+            "data": {
+              "type": "keypress"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 282768,
+          "name": "EventDispatch",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 281732,
+          "tid": 4847,
+          "ts": 1257336468,
+          "tts": 107322520
+        },
+        {
+          "args": {
+            "data": {
+              "type": "textInput"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 281961,
+          "name": "EventDispatch",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 280934,
+          "tid": 4847,
+          "ts": 1257337273,
+          "tts": 107323317
+        },
+        {
+          "args": {
+            "data": {
+              "type": "input"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 280586,
+          "name": "EventDispatch",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 279566,
+          "tid": 4847,
+          "ts": 1257338621,
+          "tts": 107324658
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 280470,
+          "name": "v8.callFunction",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 279459,
+          "tid": 4847,
+          "ts": 1257338666,
+          "tts": 107324698
+        },
+        {
+          "args": {
+            "data": {
+              "columnNumber": 9740,
+              "frame": "F6029ECFA53BA3DE5A5AA4C29EF3B5FE",
+              "functionName": "t",
+              "isolate": "14684207565633571235",
+              "lineNumber": 2,
+              "sampleTraceId": 540063502610541,
+              "scriptId": "46",
+              "url": "http://localhost:3108/assets/nativeSyncPermissions-RoqYIbvX.js"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 271385,
+          "name": "FunctionCall",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 270386,
+          "tid": 4847,
+          "ts": 1257338667,
+          "tts": 107324699
+        },
+        {
+          "args": {
+            "value": {
+              "gc_reason": "global allocation limit",
+              "global_allocation_limit": 139962713,
+              "global_consumed_bytes": 147503352,
+              "global_space_available": 0,
+              "old_gen_allocation_limit": 101866344,
+              "old_gen_consumed_bytes": 50757924,
+              "old_gen_space_available": 51108420,
+              "reason": "global allocation limit reached"
+            }
+          },
+          "cat": "v8",
+          "dur": 106250,
+          "name": "V8.GCIncrementalMarkingStart",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 106236,
+          "tid": 4847,
+          "ts": 1257341354,
+          "tts": 107327383
+        },
+        {
+          "args": {
+            "epoch": 173,
+            "value": {
+              "epoch": 173,
+              "mode": "unified heap",
+              "sweeping_reason": "start major marking"
+            }
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 103411,
+          "name": "V8.GC_HEAP_ENSURE_SWEEPING_COMPLETED",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 103411,
+          "tid": 4847,
+          "ts": 1257341362,
+          "tts": 107327390
+        },
+        {
+          "args": {},
+          "cat": "disabled-by-default-v8.gc",
+          "dur": 40686,
+          "name": "V8.GCHandleGCRequest",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 41117,
+          "tid": 4847,
+          "ts": 1257482439,
+          "tts": 107467052
+        },
+        {
+          "args": {
+            "type": "finalize incremental marking via stack guard",
+            "usedHeapSizeAfter": 48271516,
+            "usedHeapSizeBefore": 72224312
+          },
+          "cat": "devtools.timeline,v8",
+          "dur": 39690,
+          "name": "MajorGC",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 40124,
+          "tid": 4847,
+          "ts": 1257483425,
+          "tts": 107468037
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 39516,
+          "name": "V8.GCFinalizeMC",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 39955,
+          "tid": 4847,
+          "ts": 1257483436,
+          "tts": 107468047
+        },
+        {
+          "args": {
+            "epoch": 174
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 39496,
+          "name": "V8.GC_MARK_COMPACTOR",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 39938,
+          "tid": 4847,
+          "ts": 1257483450,
+          "tts": 107468059
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 15388,
+          "name": "V8.GC_MC_EVACUATE",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 15888,
+          "tid": 4847,
+          "ts": 1257496123,
+          "tts": 107480688
+        }
+      ]
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 5954.5,
+        "durationMs": 63.299999999813735,
+        "history": 32,
+        "collaboration": 32
+      },
+      "begin": 1154161596,
+      "end": 1154224895.9999998,
+      "gc": [],
+      "longestOverlaps": [
+        {
+          "args": {
+            "data": {
+              "type": "keypress"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 106117,
+          "name": "EventDispatch",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 106035,
+          "tid": 4847,
+          "ts": 1154157477,
+          "tts": 4244767
+        },
+        {
+          "args": {
+            "data": {
+              "type": "textInput"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 105498,
+          "name": "EventDispatch",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 105427,
+          "tid": 4847,
+          "ts": 1154158093,
+          "tts": 4245373
+        },
+        {
+          "args": {
+            "data": {
+              "type": "input"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 99261,
+          "name": "EventDispatch",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 99200,
+          "tid": 4847,
+          "ts": 1154159064,
+          "tts": 4246336
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 98698,
+          "name": "v8.callFunction",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 98650,
+          "tid": 4847,
+          "ts": 1154159123,
+          "tts": 4246387
+        },
+        {
+          "args": {
+            "data": {
+              "columnNumber": 9740,
+              "frame": "F6029ECFA53BA3DE5A5AA4C29EF3B5FE",
+              "functionName": "t",
+              "isolate": "14684207565633571235",
+              "lineNumber": 2,
+              "sampleTraceId": 540063502654401,
+              "scriptId": "46",
+              "url": "http://localhost:3108/assets/nativeSyncPermissions-RoqYIbvX.js"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 87529,
+          "name": "FunctionCall",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 87494,
+          "tid": 4847,
+          "ts": 1154159124,
+          "tts": 4246388
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 111,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 111,
+          "tid": 4847,
+          "ts": 1154199559,
+          "tts": 4286816
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 26,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 25,
+          "tid": 4847,
+          "ts": 1154168851,
+          "tts": 4256112
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 20,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 19,
+          "tid": 4847,
+          "ts": 1154199269,
+          "tts": 4286529
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 7,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 7,
+          "tid": 4847,
+          "ts": 1154199540,
+          "tts": 4286798
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 6,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 6,
+          "tid": 4847,
+          "ts": 1154199710,
+          "tts": 4286966
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 5,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 4,
+          "tid": 4847,
+          "ts": 1154199685,
+          "tts": 4286942
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 4,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 3,
+          "tid": 4847,
+          "ts": 1154199724,
+          "tts": 4286979
+        }
+      ]
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 11613.5,
+        "durationMs": 59.39999999990687,
+        "history": 32,
+        "collaboration": 32
+      },
+      "begin": 1159820596,
+      "end": 1159879996,
+      "gc": [],
+      "longestOverlaps": [
+        {
+          "args": {
+            "data": {
+              "type": "keypress"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 95870,
+          "name": "EventDispatch",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 95759,
+          "tid": 4847,
+          "ts": 1159816811,
+          "tts": 9896508
+        },
+        {
+          "args": {
+            "data": {
+              "type": "textInput"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 95607,
+          "name": "EventDispatch",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 95502,
+          "tid": 4847,
+          "ts": 1159817072,
+          "tts": 9896763
+        },
+        {
+          "args": {
+            "data": {
+              "type": "input"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 89918,
+          "name": "EventDispatch",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 89826,
+          "tid": 4847,
+          "ts": 1159818242,
+          "tts": 9897923
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 89838,
+          "name": "v8.callFunction",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 89753,
+          "tid": 4847,
+          "ts": 1159818285,
+          "tts": 9897962
+        },
+        {
+          "args": {
+            "data": {
+              "columnNumber": 9740,
+              "frame": "F6029ECFA53BA3DE5A5AA4C29EF3B5FE",
+              "functionName": "t",
+              "isolate": "14684207565633571235",
+              "lineNumber": 2,
+              "sampleTraceId": 540063502634517,
+              "scriptId": "46",
+              "url": "http://localhost:3108/assets/nativeSyncPermissions-RoqYIbvX.js"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 81201,
+          "name": "FunctionCall",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 81129,
+          "tid": 4847,
+          "ts": 1159818287,
+          "tts": 9897963
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 723,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 722,
+          "tid": 4847,
+          "ts": 1159852988,
+          "tts": 9932615
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 516,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 515,
+          "tid": 4847,
+          "ts": 1159853814,
+          "tts": 9933437
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 39,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 37,
+          "tid": 4847,
+          "ts": 1159821338,
+          "tts": 9901013
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 23,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 23,
+          "tid": 4847,
+          "ts": 1159854367,
+          "tts": 9933988
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 19,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 17,
+          "tid": 4847,
+          "ts": 1159822941,
+          "tts": 9902613
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 16,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 16,
+          "tid": 4847,
+          "ts": 1159821411,
+          "tts": 9901082
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 14,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 13,
+          "tid": 4847,
+          "ts": 1159853739,
+          "tts": 9933364
+        }
+      ]
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 61086.59999999986,
+        "durationMs": 47.5,
+        "history": 32,
+        "collaboration": 32
+      },
+      "begin": 1209293695.9999998,
+      "end": 1209341195.9999998,
+      "gc": [
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 10,
+          "name": "V8.GC_HEAP_EXTERNAL_PROLOGUE",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 7,
+          "tid": 4847,
+          "ts": 1209314797,
+          "tts": 59335214
+        },
+        {
+          "args": {
+            "type": "allocation failure",
+            "usedHeapSizeAfter": 47496156,
+            "usedHeapSizeBefore": 83869532
+          },
+          "cat": "devtools.timeline,v8",
+          "dur": 10028,
+          "name": "MinorGC",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 9896,
+          "tid": 4847,
+          "ts": 1209314810,
+          "tts": 59335224
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 3,
+          "name": "V8.GC_HEAP_PROLOGUE",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 3,
+          "tid": 4847,
+          "ts": 1209314818,
+          "tts": 59335231
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 9533,
+          "name": "V8.GCScavenger",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 9406,
+          "tid": 4847,
+          "ts": 1209314823,
+          "tts": 59335235
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 3,
+          "name": "V8.GC_TIME_TO_SAFEPOINT",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 2,
+          "tid": 4847,
+          "ts": 1209314829,
+          "tts": 59335241
+        },
+        {
+          "args": {
+            "epoch": 92
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 9501,
+          "name": "V8.GC_SCAVENGER",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 9375,
+          "tid": 4847,
+          "ts": 1209314852,
+          "tts": 59335263
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 3,
+          "name": "V8.GC_HEAP_PROLOGUE_SAFEPOINT",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 3,
+          "tid": 4847,
+          "ts": 1209314890,
+          "tts": 59335300
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 9449,
+          "name": "V8.GC_SCAVENGER_SCAVENGE",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 9328,
+          "tid": 4847,
+          "ts": 1209314895,
+          "tts": 59335304
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 93,
+          "name": "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_IDENTIFY",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 89,
+          "tid": 4847,
+          "ts": 1209315729,
+          "tts": 59336139
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 57,
+          "name": "V8.GC_SCAVENGER_TRACED_HANDLES_COMPUTE_WEAKNESS_PARALLEL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 57,
+          "tid": 4847,
+          "ts": 1209315757,
+          "tts": 59336164
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 605,
+          "name": "V8.GC_SCAVENGER_SCAVENGE_COLLECT_OLD_TO_NEW_PAGES",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 606,
+          "tid": 4847,
+          "ts": 1209315824,
+          "tts": 59336229
+        },
+        {
+          "args": {
+            "UseBackgroundThreads": true
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 1648,
+          "name": "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 1551,
+          "tid": 4847,
+          "ts": 1209316433,
+          "tts": 59336838
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 3,
+          "name": "Parallel scavenge started",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 3,
+          "tid": 4847,
+          "ts": 1209316439,
+          "tts": 59336843
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 256,
+          "name": "V8.GC_SCAVENGER_SCAVENGE_ROOTS",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 257,
+          "tid": 4847,
+          "ts": 1209316456,
+          "tts": 59336859
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 1251,
+          "name": "V8.GC_SCAVENGER_SCAVENGE_PARALLEL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 1251,
+          "tid": 4847,
+          "ts": 1209316718,
+          "tts": 59337120
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 3165,
+          "name": "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_PROCESS",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 3151,
+          "tid": 4847,
+          "ts": 1209318083,
+          "tts": 59338390
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 96,
+          "name": "V8.GC_SCAVENGER_TRACED_HANDLES_RESET_PARALLEL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 95,
+          "tid": 4847,
+          "ts": 1209321133,
+          "tts": 59341438
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 52,
+          "name": "V8.GC_SCAVENGER_SCAVENGE_FINALIZE",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 51,
+          "tid": 4847,
+          "ts": 1209321249,
+          "tts": 59341542
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 16,
+          "name": "V8.GC_SCAVENGER_SCAVENGE_RESTORE_AND_QUARANTINE_PINNED",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 15,
+          "tid": 4847,
+          "ts": 1209321303,
+          "tts": 59341594
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 467,
+          "name": "V8.GC_SCAVENGER_FREE_REMEMBERED_SET",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 466,
+          "tid": 4847,
+          "ts": 1209323847,
+          "tts": 59344138
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 11,
+          "name": "V8.GC_SCAVENGER_SWEEP_ARRAY_BUFFERS",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 10,
+          "tid": 4847,
+          "ts": 1209324316,
+          "tts": 59344606
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 2,
+          "name": "V8.GC_SCAVENGER_RESIZE_NEW_SPACE",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 2,
+          "tid": 4847,
+          "ts": 1209324340,
+          "tts": 59344628
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 5,
+          "name": "V8.GC_HEAP_EPILOGUE_SAFEPOINT",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 4,
+          "tid": 4847,
+          "ts": 1209324346,
+          "tts": 59344633
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 4,
+          "name": "V8.GC_HEAP_EPILOGUE",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 4,
+          "tid": 4847,
+          "ts": 1209324357,
+          "tts": 59344641
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 3,
+          "name": "V8.GC_HEAP_DUMP_STATISTICS",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 2,
+          "tid": 4847,
+          "ts": 1209324797,
+          "tts": 59345081
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 3,
+          "name": "V8.GC_HEAP_EXTERNAL_EPILOGUE",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 2,
+          "tid": 4847,
+          "ts": 1209324840,
+          "tts": 59345122
+        }
+      ],
+      "longestOverlaps": [
+        {
+          "args": {
+            "data": {
+              "type": "keypress"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 105743,
+          "name": "EventDispatch",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 105550,
+          "tid": 4847,
+          "ts": 1209287221,
+          "tts": 59307668
+        },
+        {
+          "args": {
+            "data": {
+              "type": "textInput"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 104916,
+          "name": "EventDispatch",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 104738,
+          "tid": 4847,
+          "ts": 1209288042,
+          "tts": 59308477
+        },
+        {
+          "args": {
+            "data": {
+              "type": "input"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 102851,
+          "name": "EventDispatch",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 102682,
+          "tid": 4847,
+          "ts": 1209290085,
+          "tts": 59310509
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 102750,
+          "name": "v8.callFunction",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 102589,
+          "tid": 4847,
+          "ts": 1209290136,
+          "tts": 59310555
+        },
+        {
+          "args": {
+            "data": {
+              "columnNumber": 9740,
+              "frame": "F6029ECFA53BA3DE5A5AA4C29EF3B5FE",
+              "functionName": "t",
+              "isolate": "14684207565633571235",
+              "lineNumber": 2,
+              "sampleTraceId": 540063502565545,
+              "scriptId": "46",
+              "url": "http://localhost:3108/assets/nativeSyncPermissions-RoqYIbvX.js"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 95721,
+          "name": "FunctionCall",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 95572,
+          "tid": 4847,
+          "ts": 1209290137,
+          "tts": 59310556
+        },
+        {
+          "args": {
+            "type": "allocation failure",
+            "usedHeapSizeAfter": 47496156,
+            "usedHeapSizeBefore": 83869532
+          },
+          "cat": "devtools.timeline,v8",
+          "dur": 10028,
+          "name": "MinorGC",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 9896,
+          "tid": 4847,
+          "ts": 1209314810,
+          "tts": 59335224
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 9533,
+          "name": "V8.GCScavenger",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 9406,
+          "tid": 4847,
+          "ts": 1209314823,
+          "tts": 59335235
+        },
+        {
+          "args": {
+            "epoch": 92
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 9501,
+          "name": "V8.GC_SCAVENGER",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 9375,
+          "tid": 4847,
+          "ts": 1209314852,
+          "tts": 59335263
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 9449,
+          "name": "V8.GC_SCAVENGER_SCAVENGE",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 9328,
+          "tid": 4847,
+          "ts": 1209314895,
+          "tts": 59335304
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 3165,
+          "name": "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_PROCESS",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 3151,
+          "tid": 4847,
+          "ts": 1209318083,
+          "tts": 59338390
+        },
+        {
+          "args": {
+            "UseBackgroundThreads": true
+          },
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 1648,
+          "name": "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 1551,
+          "tid": 4847,
+          "ts": 1209316433,
+          "tts": 59336838
+        },
+        {
+          "args": {},
+          "cat": "devtools.timeline,disabled-by-default-v8.gc",
+          "dur": 1251,
+          "name": "V8.GC_SCAVENGER_SCAVENGE_PARALLEL",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 1251,
+          "tid": 4847,
+          "ts": 1209316718,
+          "tts": 59337120
+        }
+      ]
+    },
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 31687.299999999814,
+        "durationMs": 45.10000000009313,
+        "history": 32,
+        "collaboration": 32
+      },
+      "begin": 1179894395.9999998,
+      "end": 1179939495.9999998,
+      "gc": [],
+      "longestOverlaps": [
+        {
+          "args": {
+            "data": {
+              "type": "keypress"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 101786,
+          "name": "EventDispatch",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 101724,
+          "tid": 4847,
+          "ts": 1179890382,
+          "tts": 29939139
+        },
+        {
+          "args": {
+            "data": {
+              "type": "textInput"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 101117,
+          "name": "EventDispatch",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 101067,
+          "tid": 4847,
+          "ts": 1179891048,
+          "tts": 29939794
+        },
+        {
+          "args": {
+            "data": {
+              "type": "input"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 93079,
+          "name": "EventDispatch",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 93040,
+          "tid": 4847,
+          "ts": 1179892211,
+          "tts": 29940949
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 92979,
+          "name": "v8.callFunction",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 92948,
+          "tid": 4847,
+          "ts": 1179892260,
+          "tts": 29940993
+        },
+        {
+          "args": {
+            "data": {
+              "columnNumber": 9740,
+              "frame": "F6029ECFA53BA3DE5A5AA4C29EF3B5FE",
+              "functionName": "t",
+              "isolate": "14684207565633571235",
+              "lineNumber": 2,
+              "sampleTraceId": 540063502667438,
+              "scriptId": "46",
+              "url": "http://localhost:3108/assets/nativeSyncPermissions-RoqYIbvX.js"
+            }
+          },
+          "cat": "devtools.timeline",
+          "dur": 83864,
+          "name": "FunctionCall",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 83846,
+          "tid": 4847,
+          "ts": 1179892262,
+          "tts": 29940994
+        },
+        {
+          "args": {},
+          "cat": "v8",
+          "dur": 57,
+          "name": "V8.DeoptimizeCode",
+          "ph": "X",
+          "pid": 4847,
+          "tdur": 55,
+          "tid": 4847,
+          "ts": 1179917098,
+          "tts": 29965829
+        }
+      ]
+    }
+  ],
+  "eventNames": [
+    [
+      "v8.callFunction",
+      106229
+    ],
+    [
+      "FunctionCall",
+      104445
+    ],
+    [
+      "TimerInstall",
+      56350
+    ],
+    [
+      "TimerRemove",
+      55952
+    ],
+    [
+      "AnimationFrame",
+      31496
+    ],
+    [
+      "RequestAnimationFrame",
+      24480
+    ],
+    [
+      "FireAnimationFrame",
+      20335
+    ],
+    [
+      "PrePaint",
+      16015
+    ],
+    [
+      "Layerize",
+      13723
+    ],
+    [
+      "UpdateLayoutTree",
+      12675
+    ],
+    [
+      "EventDispatch",
+      12602
+    ],
+    [
+      "Layout",
+      12570
+    ],
+    [
+      "V8.GC_MC_INCREMENTAL",
+      8343
+    ],
+    [
+      "Major concurrent marking rescheduled",
+      8302
+    ],
+    [
+      "TimerFire",
+      8228
+    ],
+    [
+      "CancelAnimationFrame",
+      6264
+    ],
+    [
+      "EventTiming",
+      4707
+    ],
+    [
+      "AnimationFrame::Render",
+      4049
+    ],
+    [
+      "AnimationFrame::StyleAndLayout",
+      4048
+    ],
+    [
+      "AnimationFrame::FirstUIEvent",
+      3422
+    ],
+    [
+      "Responsiveness.Renderer.UserInteraction",
+      3393
+    ],
+    [
+      "V8.GCIncrementalMarking",
+      2781
+    ],
+    [
+      "V8.GC_MC_INCREMENTAL_EMBEDDER_TRACING",
+      2781
+    ],
+    [
+      "HitTest",
+      2632
+    ],
+    [
+      "V8.GC_SCAVENGER_BACKGROUND_SCAVENGE_PARALLEL",
+      2402
+    ],
+    [
+      "Paint",
+      2174
+    ],
+    [
+      "AnimationFrame::Presentation",
+      2024
+    ],
+    [
+      "ComputeWeaknessProcessor start",
+      1830
+    ],
+    [
+      "Parallel scavenge started",
+      1830
+    ],
+    [
+      "ClearWeaknessProcessor start",
+      1830
+    ],
+    [
+      "AnimationFrame::Script::Execute",
+      1817
+    ],
+    [
+      "RememberedSetUpdatingItem::Process",
+      1676
+    ],
+    [
+      "V8.GC_SCAVENGER_SWEEP_ARRAY_BUFFERS",
+      1536
+    ],
+    [
+      "V8.GC_MINOR_MS_BACKGROUND_SWEEPING",
+      1532
+    ],
+    [
+      "IsInputHandling",
+      1039
+    ],
+    [
+      "Evacuator::EvacuatePage",
+      895
+    ],
+    [
+      "FullEvacuator::RawEvacuatePage",
+      895
+    ],
+    [
+      "ClearStringTableJob started",
+      888
+    ],
+    [
+      "LiveObjectVisitor::VisitMarkedObjectsNoFail",
+      813
+    ],
+    [
+      "V8.GC_SCAVENGER_SCAVENGE_PARALLEL",
+      716
+    ],
+    [
+      "V8.GC_TIME_TO_SAFEPOINT",
+      688
+    ],
+    [
+      "V8.GC_HEAP_EXTERNAL_PROLOGUE",
+      647
+    ],
+    [
+      "V8.GC_HEAP_PROLOGUE",
+      647
+    ],
+    [
+      "V8.GC_HEAP_PROLOGUE_SAFEPOINT",
+      647
+    ],
+    [
+      "V8.GC_HEAP_EPILOGUE_SAFEPOINT",
+      647
+    ],
+    [
+      "V8.GC_HEAP_EPILOGUE",
+      647
+    ],
+    [
+      "V8.GCTraceGCNVP",
+      647
+    ],
+    [
+      "V8.GC_HEAP_DUMP_STATISTICS",
+      647
+    ],
+    [
+      "V8.GC_Heap_Stats",
+      647
+    ],
+    [
+      "V8.GC_HEAP_EXTERNAL_EPILOGUE",
+      647
+    ],
+    [
+      "MinorGC",
+      610
+    ],
+    [
+      "V8.GCScavenger",
+      610
+    ],
+    [
+      "V8.GC_SCAVENGER",
+      610
+    ],
+    [
+      "V8.GC_SCAVENGER_SCAVENGE",
+      610
+    ],
+    [
+      "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_IDENTIFY",
+      610
+    ],
+    [
+      "V8.GC_SCAVENGER_SCAVENGE_COLLECT_OLD_TO_NEW_PAGES",
+      610
+    ],
+    [
+      "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE",
+      610
+    ],
+    [
+      "V8.GC_SCAVENGER_SCAVENGE_ROOTS",
+      610
+    ],
+    [
+      "V8.GC_SCAVENGER_SCAVENGE_WEAK_GLOBAL_HANDLES_PROCESS",
+      610
+    ],
+    [
+      "V8.GC_SCAVENGER_SCAVENGE_FINALIZE",
+      610
+    ]
+  ]
+}
