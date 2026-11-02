@@ -1,14 +1,19 @@
 import {
   AuthzIoLocalService,
+  CommandService,
   IAuthzIoService,
+  ICommandService,
+  IConfigService,
+  ILogService,
   IPermissionService,
   IResourceManagerService,
   IUniverInstanceService,
+  Injector,
   PermissionService,
   UniverInstanceType,
   UserManagerService,
 } from '@univerjs/core';
-import type { DependencyOverride, IPermissionPoint } from '@univerjs/core';
+import type { DependencyOverride, IExecutionOptions, IPermissionPoint } from '@univerjs/core';
 import { UnitAction, UnitObject } from '@univerjs/protocol';
 import type { IAllowedRequest, IListPermPointRequest } from '@univerjs/protocol';
 import type { BehaviorSubject } from 'rxjs';
@@ -45,6 +50,41 @@ export function nativeSyncPermissions(unitId: string, access: ItemAccess) {
   const rootPoint = (point: IPermissionPoint<unknown>) =>
     rootTypes.has(point.type) && point.id === `${point.type}.${point.subType}_${unitId}`;
 
+  const skipDocStartup = (id: string, params?: object) =>
+    viewer &&
+    id === 'doc.command.refresh-header-footer-fields' &&
+    params !== null &&
+    params !== undefined &&
+    'unitId' in params &&
+    params.unitId === unitId &&
+    'onOpen' in params &&
+    params.onOpen === true;
+
+  // Refuse the automatic reader-only refresh before native permission listeners
+  // report an edit denial. Every explicit command and mutation still uses the
+  // original service, including its permission checks and denial notifications.
+  class ReaderCommands extends CommandService {
+    override executeCommand<P extends object = object, R = boolean>(
+      id: string,
+      params?: P,
+      options?: IExecutionOptions,
+    ): Promise<R> {
+      return skipDocStartup(id, params)
+        ? Promise.resolve(false as R)
+        : super.executeCommand<P, R>(id, params, options);
+    }
+
+    override syncExecuteCommand<P extends object = object, R = boolean>(
+      id: string,
+      params?: P,
+      options?: IExecutionOptions,
+    ): R {
+      return skipDocStartup(id, params)
+        ? (false as R)
+        : super.syncExecuteCommand<P, R>(id, params, options);
+    }
+  }
+
   // Native controllers re-add points on user changes and can complete a stale
   // async read after downgrade. Project at the public cache write boundary,
   // before observers see it; no document resource or protection rule is edited.
@@ -64,6 +104,14 @@ export function nativeSyncPermissions(unitId: string, access: ItemAccess) {
   }
 
   const override: DependencyOverride = [
+    [
+      ICommandService,
+      {
+        deps: [Injector, ILogService, IConfigService],
+        useFactory: (injector: Injector, log: ILogService, config: IConfigService) =>
+          new ReaderCommands(injector, log, config),
+      },
+    ],
     [IPermissionService, { useFactory: () => (permissions = new GrantPermissions()) }],
     [
       IAuthzIoService,

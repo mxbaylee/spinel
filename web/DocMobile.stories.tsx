@@ -5,6 +5,7 @@ import {
   createParagraphId,
   createSectionId,
   DocumentFlavor,
+  ErrorService,
   getDocsEmptySnapshot,
   LocaleType,
 } from '@univerjs/core';
@@ -50,6 +51,7 @@ interface Observation {
   userZoom: number;
   unchanged: boolean;
   canEdit: boolean;
+  permissionNotices: string[];
 }
 
 // Story-local commands/observations only. No test API or editor reference is
@@ -156,6 +158,14 @@ function MobileCanvas({
       });
       univer = created.univer;
       installCanvasColors(univer);
+      const permissionNotices: string[] = [];
+      const notices = univer
+        .__getInjector()
+        .get(ErrorService)
+        .error$.subscribe((error) => {
+          if (error.code === 'PERMISSION_DENIED') permissionNotices.push(error.errorKey);
+        });
+      cleanups.push(() => notices.unsubscribe());
       const doc = created.univerAPI.createDocument(data);
       await editorReady(created.univerAPI);
       if (abort.signal.aborted) return;
@@ -202,6 +212,7 @@ function MobileCanvas({
             unchanged:
               JSON.stringify([snapshot.body, snapshot.documentStyle, snapshot.settings]) === stored,
             canEdit: doc.getPermission().canEdit(),
+            permissionNotices: [...permissionNotices],
           };
         },
         append() {
@@ -351,6 +362,7 @@ async function ready(
       expect(evidence).not.toBeNull();
       expect(evidence.unchanged).toBe(true);
       expect(evidence.canEdit).toBe(editable);
+      expect(evidence.permissionNotices).toEqual([]);
       expect(evidence.userZoom).toBe(zoomRatio);
       expect(evidence.canvasWidth).toBeLessThanOrEqual(evidence.hostWidth + 1);
       expect(evidence.lines).toBeGreaterThanOrEqual(paragraphs.length);
@@ -413,6 +425,30 @@ export const Viewer: Story = {
     await expect(
       within(canvasElement).queryByRole('button', { name: 'Edit' }),
     ).not.toBeInTheDocument();
+  },
+};
+
+export const ViewerDeniedEdit: Story = {
+  args: { viewer: true },
+  play: async ({ canvasElement }) => {
+    await ready(canvasElement, false, true);
+    const host = canvasElement.querySelector<HTMLElement>('.univer-container')!;
+    const fixture = mobileDocFixtures.get(host)!;
+    const original = fixture.caret().text;
+    // The fixture calls the mounted public Doc API, so an absent keyboard
+    // focus cannot turn this into a no-op that merely appears to deny editing.
+    expect(fixture.append().applied).toBe(false);
+    await waitFor(() => {
+      expect(fixture.caret().text).toBe(original);
+      expect(fixture.observe().unchanged).toBe(true);
+      expect(fixture.observe().permissionNotices).toHaveLength(1);
+      expect(
+        within(canvasElement.ownerDocument.body).getByText(
+          'This content is protected. This action is not allowed.',
+          { exact: true },
+        ),
+      ).toBeVisible();
+    });
   },
 };
 export const Traditional: Story = {
