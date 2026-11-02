@@ -1,8 +1,23 @@
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
+import { ubuntuMirrorEvidence } from './ubuntu-mirror-evidence.ts';
 
 const mirrorFile = '/etc/apt/apt-mirrors.txt';
 const original = readFileSync(mirrorFile, 'utf8');
+// Diagnose the original hosted configuration before the strict validation or any
+// write. A failed setup is retained as failure, never treated as a browser pass.
+console.log(
+  JSON.stringify(
+    {
+      kind: 'ubuntu-mirror-input',
+      imageOS: process.env.ImageOS ?? null,
+      imageVersion: process.env.ImageVersion ?? null,
+      ...ubuntuMirrorEvidence(original),
+    },
+    null,
+    2,
+  ),
+);
 const azure = 'http://azure.archive.ubuntu.com/ubuntu/';
 const archive = 'https://archive.ubuntu.com/ubuntu/';
 const priorities = new Map<string, string>();
