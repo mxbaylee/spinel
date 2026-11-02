@@ -1,0 +1,94 @@
+
+> screenshots
+> node scripts/screenshots.ts sharing-access-details--inherited-folder sharing-access-details--direct-share sharing-access-details--space-through-folder sharing-access-details--space-direct sharing-access-details--owner sharing-access-details--file-admin sharing-access-details--long-names sharing-access-details--loading sharing-access-details--unavailable sharing-access-details--revoked-while-open dashboard-hidden-shares--include-hidden dashboard-hidden-shares--all-shares-hidden dashboard-hidden-shares--hide-and-show dashboard-hidden-shares--failed-hide dashboard-hidden-shares--pending-hide space-review--page-access-details editor-savestatus--view-only
+
+
+(!) build.outDir must not be the same directory of root or a parent directory of root as this could cause Vite to overwriting source files with build outputs.
+
+Review light: sharing-access-details--inherited-folder
+Review light: sharing-access-details--direct-share
+Review light: sharing-access-details--space-through-folder
+Review light: sharing-access-details--space-direct
+Review light: sharing-access-details--owner
+Review light: sharing-access-details--file-admin
+Review light: sharing-access-details--long-names
+Review light: sharing-access-details--loading
+Review light: sharing-access-details--unavailable
+Review light: sharing-access-details--revoked-while-open
+Review light: dashboard-hidden-shares--include-hidden
+Review light: dashboard-hidden-shares--all-shares-hidden
+Review light: dashboard-hidden-shares--hide-and-show
+Review light: dashboard-hidden-shares--failed-hide
+Review light: dashboard-hidden-shares--pending-hide
+Review light: space-review--page-access-details
+Review light: editor-savestatus--view-only
+Review dark: sharing-access-details--inherited-folder
+Review dark: sharing-access-details--direct-share
+Review dark: sharing-access-details--space-through-folder
+Review dark: sharing-access-details--space-direct
+Review dark: sharing-access-details--owner
+Review dark: sharing-access-details--file-admin
+Review dark: sharing-access-details--long-names
+Review dark: sharing-access-details--loading
+Review dark: sharing-access-details--unavailable
+Review dark: sharing-access-details--revoked-while-open
+Review dark: dashboard-hidden-shares--include-hidden
+Review dark: dashboard-hidden-shares--all-shares-hidden
+Review dark: dashboard-hidden-shares--hide-and-show
+Review dark: dashboard-hidden-shares--failed-hide
+Review dark: dashboard-hidden-shares--pending-hide
+Review dark: space-review--page-access-details
+Review dark: editor-savestatus--view-only
+Review phone: sharing-access-details--inherited-folder
+Review phone: sharing-access-details--direct-share
+Review phone: sharing-access-details--space-through-folder
+Review phone: sharing-access-details--space-direct
+Review phone: sharing-access-details--owner
+Review phone: sharing-access-details--file-admin
+Review phone: sharing-access-details--long-names
+Review phone: sharing-access-details--loading
+Review phone: sharing-access-details--unavailable
+Review phone: sharing-access-details--revoked-while-open
+Review phone: dashboard-hidden-shares--include-hidden
+Review phone: dashboard-hidden-shares--all-shares-hidden
+Review phone: dashboard-hidden-shares--hide-and-show
+Review phone: dashboard-hidden-shares--failed-hide
+Review phone: dashboard-hidden-shares--pending-hide
+Review phone: space-review--page-access-details
+Review phone: editor-savestatus--view-only
+Review phone-dark: sharing-access-details--inherited-folder
+Review phone-dark: sharing-access-details--direct-share
+Review phone-dark: sharing-access-details--space-through-folder
+Review phone-dark: sharing-access-details--space-direct
+Review phone-dark: sharing-access-details--owner
+Review phone-dark: sharing-access-details--file-admin
+Review phone-dark: sharing-access-details--long-names
+Review phone-dark: sharing-access-details--loading
+Review phone-dark: sharing-access-details--unavailable
+Review phone-dark: sharing-access-details--revoked-while-open
+Review phone-dark: dashboard-hidden-shares--include-hidden
+Review phone-dark: dashboard-hidden-shares--all-shares-hidden
+Review phone-dark: dashboard-hidden-shares--hide-and-show
+Review phone-dark: dashboard-hidden-shares--failed-hide
+Review phone-dark: dashboard-hidden-shares--pending-hide
+Review phone-dark: space-review--page-access-details
+Review phone-dark: editor-savestatus--view-only
+Review tablet: sharing-access-details--inherited-folder
+Review tablet: sharing-access-details--direct-share
+Review tablet: sharing-access-details--space-through-folder
+Review tablet: sharing-access-details--space-direct
+Review tablet: sharing-access-details--owner
+Review tablet: sharing-access-details--file-admin
+Review tablet: sharing-access-details--long-names
+Review tablet: sharing-access-details--loading
+Review tablet: sharing-access-details--unavailable
+Review tablet: sharing-access-details--revoked-while-open
+Review tablet: dashboard-hidden-shares--include-hidden
+Review tablet: dashboard-hidden-shares--all-shares-hidden
+Review tablet: dashboard-hidden-shares--hide-and-show
+Review tablet: dashboard-hidden-shares--failed-hide
+Review tablet: dashboard-hidden-shares--pending-hide
+Review tablet: space-review--page-access-details
+Review tablet: editor-savestatus--view-only
+Checked 85 story states; captured 85 catalog/error screenshots in /tmp/spn071-review/focus-current-components; 0 additional interaction passes.
+WATCHDOG: exit=0, signal=null, elapsed=33267ms, peak=1164.0MiB

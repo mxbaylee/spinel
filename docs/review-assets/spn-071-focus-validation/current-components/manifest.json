@@ -1,0 +1,890 @@
+{
+  "reviewedAt": "2026-11-02T06:58:50.644Z",
+  "durationMs": 32884,
+  "captureScreenshots": true,
+  "fixtureTime": "2026-10-20T16:00:00Z",
+  "viewport": "all",
+  "theme": "all",
+  "variants": [
+    "light",
+    "dark",
+    "phone",
+    "phone-dark",
+    "tablet"
+  ],
+  "requested": [
+    "sharing-access-details--inherited-folder",
+    "sharing-access-details--direct-share",
+    "sharing-access-details--space-through-folder",
+    "sharing-access-details--space-direct",
+    "sharing-access-details--owner",
+    "sharing-access-details--file-admin",
+    "sharing-access-details--long-names",
+    "sharing-access-details--loading",
+    "sharing-access-details--unavailable",
+    "sharing-access-details--revoked-while-open",
+    "dashboard-hidden-shares--include-hidden",
+    "dashboard-hidden-shares--all-shares-hidden",
+    "dashboard-hidden-shares--hide-and-show",
+    "dashboard-hidden-shares--failed-hide",
+    "dashboard-hidden-shares--pending-hide",
+    "space-review--page-access-details",
+    "editor-savestatus--view-only"
+  ],
+  "checked": [
+    {
+      "id": "sharing-access-details--inherited-folder",
+      "variant": "light"
+    },
+    {
+      "id": "sharing-access-details--direct-share",
+      "variant": "light"
+    },
+    {
+      "id": "sharing-access-details--space-through-folder",
+      "variant": "light"
+    },
+    {
+      "id": "sharing-access-details--space-direct",
+      "variant": "light"
+    },
+    {
+      "id": "sharing-access-details--owner",
+      "variant": "light"
+    },
+    {
+      "id": "sharing-access-details--file-admin",
+      "variant": "light"
+    },
+    {
+      "id": "sharing-access-details--long-names",
+      "variant": "light"
+    },
+    {
+      "id": "sharing-access-details--loading",
+      "variant": "light"
+    },
+    {
+      "id": "sharing-access-details--unavailable",
+      "variant": "light"
+    },
+    {
+      "id": "sharing-access-details--revoked-while-open",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-hidden-shares--include-hidden",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-hidden-shares--all-shares-hidden",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-hidden-shares--hide-and-show",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-hidden-shares--failed-hide",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-hidden-shares--pending-hide",
+      "variant": "light"
+    },
+    {
+      "id": "space-review--page-access-details",
+      "variant": "light"
+    },
+    {
+      "id": "editor-savestatus--view-only",
+      "variant": "light"
+    },
+    {
+      "id": "sharing-access-details--inherited-folder",
+      "variant": "dark"
+    },
+    {
+      "id": "sharing-access-details--direct-share",
+      "variant": "dark"
+    },
+    {
+      "id": "sharing-access-details--space-through-folder",
+      "variant": "dark"
+    },
+    {
+      "id": "sharing-access-details--space-direct",
+      "variant": "dark"
+    },
+    {
+      "id": "sharing-access-details--owner",
+      "variant": "dark"
+    },
+    {
+      "id": "sharing-access-details--file-admin",
+      "variant": "dark"
+    },
+    {
+      "id": "sharing-access-details--long-names",
+      "variant": "dark"
+    },
+    {
+      "id": "sharing-access-details--loading",
+      "variant": "dark"
+    },
+    {
+      "id": "sharing-access-details--unavailable",
+      "variant": "dark"
+    },
+    {
+      "id": "sharing-access-details--revoked-while-open",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-hidden-shares--include-hidden",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-hidden-shares--all-shares-hidden",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-hidden-shares--hide-and-show",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-hidden-shares--failed-hide",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-hidden-shares--pending-hide",
+      "variant": "dark"
+    },
+    {
+      "id": "space-review--page-access-details",
+      "variant": "dark"
+    },
+    {
+      "id": "editor-savestatus--view-only",
+      "variant": "dark"
+    },
+    {
+      "id": "sharing-access-details--inherited-folder",
+      "variant": "phone"
+    },
+    {
+      "id": "sharing-access-details--direct-share",
+      "variant": "phone"
+    },
+    {
+      "id": "sharing-access-details--space-through-folder",
+      "variant": "phone"
+    },
+    {
+      "id": "sharing-access-details--space-direct",
+      "variant": "phone"
+    },
+    {
+      "id": "sharing-access-details--owner",
+      "variant": "phone"
+    },
+    {
+      "id": "sharing-access-details--file-admin",
+      "variant": "phone"
+    },
+    {
+      "id": "sharing-access-details--long-names",
+      "variant": "phone"
+    },
+    {
+      "id": "sharing-access-details--loading",
+      "variant": "phone"
+    },
+    {
+      "id": "sharing-access-details--unavailable",
+      "variant": "phone"
+    },
+    {
+      "id": "sharing-access-details--revoked-while-open",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-hidden-shares--include-hidden",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-hidden-shares--all-shares-hidden",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-hidden-shares--hide-and-show",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-hidden-shares--failed-hide",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-hidden-shares--pending-hide",
+      "variant": "phone"
+    },
+    {
+      "id": "space-review--page-access-details",
+      "variant": "phone"
+    },
+    {
+      "id": "editor-savestatus--view-only",
+      "variant": "phone"
+    },
+    {
+      "id": "sharing-access-details--inherited-folder",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-access-details--direct-share",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-access-details--space-through-folder",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-access-details--space-direct",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-access-details--owner",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-access-details--file-admin",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-access-details--long-names",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-access-details--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-access-details--unavailable",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-access-details--revoked-while-open",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-hidden-shares--include-hidden",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-hidden-shares--all-shares-hidden",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-hidden-shares--hide-and-show",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-hidden-shares--failed-hide",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-hidden-shares--pending-hide",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--page-access-details",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--view-only",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-access-details--inherited-folder",
+      "variant": "tablet"
+    },
+    {
+      "id": "sharing-access-details--direct-share",
+      "variant": "tablet"
+    },
+    {
+      "id": "sharing-access-details--space-through-folder",
+      "variant": "tablet"
+    },
+    {
+      "id": "sharing-access-details--space-direct",
+      "variant": "tablet"
+    },
+    {
+      "id": "sharing-access-details--owner",
+      "variant": "tablet"
+    },
+    {
+      "id": "sharing-access-details--file-admin",
+      "variant": "tablet"
+    },
+    {
+      "id": "sharing-access-details--long-names",
+      "variant": "tablet"
+    },
+    {
+      "id": "sharing-access-details--loading",
+      "variant": "tablet"
+    },
+    {
+      "id": "sharing-access-details--unavailable",
+      "variant": "tablet"
+    },
+    {
+      "id": "sharing-access-details--revoked-while-open",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-hidden-shares--include-hidden",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-hidden-shares--all-shares-hidden",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-hidden-shares--hide-and-show",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-hidden-shares--failed-hide",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-hidden-shares--pending-hide",
+      "variant": "tablet"
+    },
+    {
+      "id": "space-review--page-access-details",
+      "variant": "tablet"
+    },
+    {
+      "id": "editor-savestatus--view-only",
+      "variant": "tablet"
+    }
+  ],
+  "captures": [
+    {
+      "id": "sharing-access-details--inherited-folder",
+      "variant": "light",
+      "filename": "sharing-access-details--inherited-folder-light.png",
+      "title": "Current production/Sharing/Access details / Inherited Folder"
+    },
+    {
+      "id": "sharing-access-details--direct-share",
+      "variant": "light",
+      "filename": "sharing-access-details--direct-share-light.png",
+      "title": "Current production/Sharing/Access details / Direct Share"
+    },
+    {
+      "id": "sharing-access-details--space-through-folder",
+      "variant": "light",
+      "filename": "sharing-access-details--space-through-folder-light.png",
+      "title": "Current production/Sharing/Access details / Space Through Folder"
+    },
+    {
+      "id": "sharing-access-details--space-direct",
+      "variant": "light",
+      "filename": "sharing-access-details--space-direct-light.png",
+      "title": "Current production/Sharing/Access details / Space Direct"
+    },
+    {
+      "id": "sharing-access-details--owner",
+      "variant": "light",
+      "filename": "sharing-access-details--owner-light.png",
+      "title": "Current production/Sharing/Access details / Owner"
+    },
+    {
+      "id": "sharing-access-details--file-admin",
+      "variant": "light",
+      "filename": "sharing-access-details--file-admin-light.png",
+      "title": "Current production/Sharing/Access details / File Admin"
+    },
+    {
+      "id": "sharing-access-details--long-names",
+      "variant": "light",
+      "filename": "sharing-access-details--long-names-light.png",
+      "title": "Current production/Sharing/Access details / Long Names"
+    },
+    {
+      "id": "sharing-access-details--loading",
+      "variant": "light",
+      "filename": "sharing-access-details--loading-light.png",
+      "title": "Current production/Sharing/Access details / Loading"
+    },
+    {
+      "id": "sharing-access-details--unavailable",
+      "variant": "light",
+      "filename": "sharing-access-details--unavailable-light.png",
+      "title": "Current production/Sharing/Access details / Unavailable"
+    },
+    {
+      "id": "sharing-access-details--revoked-while-open",
+      "variant": "light",
+      "filename": "sharing-access-details--revoked-while-open-light.png",
+      "title": "Current production/Sharing/Access details / Revoked While Open"
+    },
+    {
+      "id": "dashboard-hidden-shares--include-hidden",
+      "variant": "light",
+      "filename": "dashboard-hidden-shares--include-hidden-light.png",
+      "title": "Current production/Dashboard/Hidden shares / Include Hidden"
+    },
+    {
+      "id": "dashboard-hidden-shares--all-shares-hidden",
+      "variant": "light",
+      "filename": "dashboard-hidden-shares--all-shares-hidden-light.png",
+      "title": "Current production/Dashboard/Hidden shares / All Shares Hidden"
+    },
+    {
+      "id": "dashboard-hidden-shares--hide-and-show",
+      "variant": "light",
+      "filename": "dashboard-hidden-shares--hide-and-show-light.png",
+      "title": "Current production/Dashboard/Hidden shares / Hide And Show"
+    },
+    {
+      "id": "dashboard-hidden-shares--failed-hide",
+      "variant": "light",
+      "filename": "dashboard-hidden-shares--failed-hide-light.png",
+      "title": "Current production/Dashboard/Hidden shares / Failed Hide"
+    },
+    {
+      "id": "dashboard-hidden-shares--pending-hide",
+      "variant": "light",
+      "filename": "dashboard-hidden-shares--pending-hide-light.png",
+      "title": "Current production/Dashboard/Hidden shares / Pending Hide"
+    },
+    {
+      "id": "space-review--page-access-details",
+      "variant": "light",
+      "filename": "space-review--page-access-details-light.png",
+      "title": "Current production/Spaces/Space / Page Access Details"
+    },
+    {
+      "id": "editor-savestatus--view-only",
+      "variant": "light",
+      "filename": "editor-savestatus--view-only-light.png",
+      "title": "Current production/Editor/SaveStatus / View Only"
+    },
+    {
+      "id": "sharing-access-details--inherited-folder",
+      "variant": "dark",
+      "filename": "sharing-access-details--inherited-folder-dark.png",
+      "title": "Current production/Sharing/Access details / Inherited Folder"
+    },
+    {
+      "id": "sharing-access-details--direct-share",
+      "variant": "dark",
+      "filename": "sharing-access-details--direct-share-dark.png",
+      "title": "Current production/Sharing/Access details / Direct Share"
+    },
+    {
+      "id": "sharing-access-details--space-through-folder",
+      "variant": "dark",
+      "filename": "sharing-access-details--space-through-folder-dark.png",
+      "title": "Current production/Sharing/Access details / Space Through Folder"
+    },
+    {
+      "id": "sharing-access-details--space-direct",
+      "variant": "dark",
+      "filename": "sharing-access-details--space-direct-dark.png",
+      "title": "Current production/Sharing/Access details / Space Direct"
+    },
+    {
+      "id": "sharing-access-details--owner",
+      "variant": "dark",
+      "filename": "sharing-access-details--owner-dark.png",
+      "title": "Current production/Sharing/Access details / Owner"
+    },
+    {
+      "id": "sharing-access-details--file-admin",
+      "variant": "dark",
+      "filename": "sharing-access-details--file-admin-dark.png",
+      "title": "Current production/Sharing/Access details / File Admin"
+    },
+    {
+      "id": "sharing-access-details--long-names",
+      "variant": "dark",
+      "filename": "sharing-access-details--long-names-dark.png",
+      "title": "Current production/Sharing/Access details / Long Names"
+    },
+    {
+      "id": "sharing-access-details--loading",
+      "variant": "dark",
+      "filename": "sharing-access-details--loading-dark.png",
+      "title": "Current production/Sharing/Access details / Loading"
+    },
+    {
+      "id": "sharing-access-details--unavailable",
+      "variant": "dark",
+      "filename": "sharing-access-details--unavailable-dark.png",
+      "title": "Current production/Sharing/Access details / Unavailable"
+    },
+    {
+      "id": "sharing-access-details--revoked-while-open",
+      "variant": "dark",
+      "filename": "sharing-access-details--revoked-while-open-dark.png",
+      "title": "Current production/Sharing/Access details / Revoked While Open"
+    },
+    {
+      "id": "dashboard-hidden-shares--include-hidden",
+      "variant": "dark",
+      "filename": "dashboard-hidden-shares--include-hidden-dark.png",
+      "title": "Current production/Dashboard/Hidden shares / Include Hidden"
+    },
+    {
+      "id": "dashboard-hidden-shares--all-shares-hidden",
+      "variant": "dark",
+      "filename": "dashboard-hidden-shares--all-shares-hidden-dark.png",
+      "title": "Current production/Dashboard/Hidden shares / All Shares Hidden"
+    },
+    {
+      "id": "dashboard-hidden-shares--hide-and-show",
+      "variant": "dark",
+      "filename": "dashboard-hidden-shares--hide-and-show-dark.png",
+      "title": "Current production/Dashboard/Hidden shares / Hide And Show"
+    },
+    {
+      "id": "dashboard-hidden-shares--failed-hide",
+      "variant": "dark",
+      "filename": "dashboard-hidden-shares--failed-hide-dark.png",
+      "title": "Current production/Dashboard/Hidden shares / Failed Hide"
+    },
+    {
+      "id": "dashboard-hidden-shares--pending-hide",
+      "variant": "dark",
+      "filename": "dashboard-hidden-shares--pending-hide-dark.png",
+      "title": "Current production/Dashboard/Hidden shares / Pending Hide"
+    },
+    {
+      "id": "space-review--page-access-details",
+      "variant": "dark",
+      "filename": "space-review--page-access-details-dark.png",
+      "title": "Current production/Spaces/Space / Page Access Details"
+    },
+    {
+      "id": "editor-savestatus--view-only",
+      "variant": "dark",
+      "filename": "editor-savestatus--view-only-dark.png",
+      "title": "Current production/Editor/SaveStatus / View Only"
+    },
+    {
+      "id": "sharing-access-details--inherited-folder",
+      "variant": "phone",
+      "filename": "sharing-access-details--inherited-folder-phone.png",
+      "title": "Current production/Sharing/Access details / Inherited Folder"
+    },
+    {
+      "id": "sharing-access-details--direct-share",
+      "variant": "phone",
+      "filename": "sharing-access-details--direct-share-phone.png",
+      "title": "Current production/Sharing/Access details / Direct Share"
+    },
+    {
+      "id": "sharing-access-details--space-through-folder",
+      "variant": "phone",
+      "filename": "sharing-access-details--space-through-folder-phone.png",
+      "title": "Current production/Sharing/Access details / Space Through Folder"
+    },
+    {
+      "id": "sharing-access-details--space-direct",
+      "variant": "phone",
+      "filename": "sharing-access-details--space-direct-phone.png",
+      "title": "Current production/Sharing/Access details / Space Direct"
+    },
+    {
+      "id": "sharing-access-details--owner",
+      "variant": "phone",
+      "filename": "sharing-access-details--owner-phone.png",
+      "title": "Current production/Sharing/Access details / Owner"
+    },
+    {
+      "id": "sharing-access-details--file-admin",
+      "variant": "phone",
+      "filename": "sharing-access-details--file-admin-phone.png",
+      "title": "Current production/Sharing/Access details / File Admin"
+    },
+    {
+      "id": "sharing-access-details--long-names",
+      "variant": "phone",
+      "filename": "sharing-access-details--long-names-phone.png",
+      "title": "Current production/Sharing/Access details / Long Names"
+    },
+    {
+      "id": "sharing-access-details--loading",
+      "variant": "phone",
+      "filename": "sharing-access-details--loading-phone.png",
+      "title": "Current production/Sharing/Access details / Loading"
+    },
+    {
+      "id": "sharing-access-details--unavailable",
+      "variant": "phone",
+      "filename": "sharing-access-details--unavailable-phone.png",
+      "title": "Current production/Sharing/Access details / Unavailable"
+    },
+    {
+      "id": "sharing-access-details--revoked-while-open",
+      "variant": "phone",
+      "filename": "sharing-access-details--revoked-while-open-phone.png",
+      "title": "Current production/Sharing/Access details / Revoked While Open"
+    },
+    {
+      "id": "dashboard-hidden-shares--include-hidden",
+      "variant": "phone",
+      "filename": "dashboard-hidden-shares--include-hidden-phone.png",
+      "title": "Current production/Dashboard/Hidden shares / Include Hidden"
+    },
+    {
+      "id": "dashboard-hidden-shares--all-shares-hidden",
+      "variant": "phone",
+      "filename": "dashboard-hidden-shares--all-shares-hidden-phone.png",
+      "title": "Current production/Dashboard/Hidden shares / All Shares Hidden"
+    },
+    {
+      "id": "dashboard-hidden-shares--hide-and-show",
+      "variant": "phone",
+      "filename": "dashboard-hidden-shares--hide-and-show-phone.png",
+      "title": "Current production/Dashboard/Hidden shares / Hide And Show"
+    },
+    {
+      "id": "dashboard-hidden-shares--failed-hide",
+      "variant": "phone",
+      "filename": "dashboard-hidden-shares--failed-hide-phone.png",
+      "title": "Current production/Dashboard/Hidden shares / Failed Hide"
+    },
+    {
+      "id": "dashboard-hidden-shares--pending-hide",
+      "variant": "phone",
+      "filename": "dashboard-hidden-shares--pending-hide-phone.png",
+      "title": "Current production/Dashboard/Hidden shares / Pending Hide"
+    },
+    {
+      "id": "space-review--page-access-details",
+      "variant": "phone",
+      "filename": "space-review--page-access-details-phone.png",
+      "title": "Current production/Spaces/Space / Page Access Details"
+    },
+    {
+      "id": "editor-savestatus--view-only",
+      "variant": "phone",
+      "filename": "editor-savestatus--view-only-phone.png",
+      "title": "Current production/Editor/SaveStatus / View Only"
+    },
+    {
+      "id": "sharing-access-details--inherited-folder",
+      "variant": "phone-dark",
+      "filename": "sharing-access-details--inherited-folder-phone-dark.png",
+      "title": "Current production/Sharing/Access details / Inherited Folder"
+    },
+    {
+      "id": "sharing-access-details--direct-share",
+      "variant": "phone-dark",
+      "filename": "sharing-access-details--direct-share-phone-dark.png",
+      "title": "Current production/Sharing/Access details / Direct Share"
+    },
+    {
+      "id": "sharing-access-details--space-through-folder",
+      "variant": "phone-dark",
+      "filename": "sharing-access-details--space-through-folder-phone-dark.png",
+      "title": "Current production/Sharing/Access details / Space Through Folder"
+    },
+    {
+      "id": "sharing-access-details--space-direct",
+      "variant": "phone-dark",
+      "filename": "sharing-access-details--space-direct-phone-dark.png",
+      "title": "Current production/Sharing/Access details / Space Direct"
+    },
+    {
+      "id": "sharing-access-details--owner",
+      "variant": "phone-dark",
+      "filename": "sharing-access-details--owner-phone-dark.png",
+      "title": "Current production/Sharing/Access details / Owner"
+    },
+    {
+      "id": "sharing-access-details--file-admin",
+      "variant": "phone-dark",
+      "filename": "sharing-access-details--file-admin-phone-dark.png",
+      "title": "Current production/Sharing/Access details / File Admin"
+    },
+    {
+      "id": "sharing-access-details--long-names",
+      "variant": "phone-dark",
+      "filename": "sharing-access-details--long-names-phone-dark.png",
+      "title": "Current production/Sharing/Access details / Long Names"
+    },
+    {
+      "id": "sharing-access-details--loading",
+      "variant": "phone-dark",
+      "filename": "sharing-access-details--loading-phone-dark.png",
+      "title": "Current production/Sharing/Access details / Loading"
+    },
+    {
+      "id": "sharing-access-details--unavailable",
+      "variant": "phone-dark",
+      "filename": "sharing-access-details--unavailable-phone-dark.png",
+      "title": "Current production/Sharing/Access details / Unavailable"
+    },
+    {
+      "id": "sharing-access-details--revoked-while-open",
+      "variant": "phone-dark",
+      "filename": "sharing-access-details--revoked-while-open-phone-dark.png",
+      "title": "Current production/Sharing/Access details / Revoked While Open"
+    },
+    {
+      "id": "dashboard-hidden-shares--include-hidden",
+      "variant": "phone-dark",
+      "filename": "dashboard-hidden-shares--include-hidden-phone-dark.png",
+      "title": "Current production/Dashboard/Hidden shares / Include Hidden"
+    },
+    {
+      "id": "dashboard-hidden-shares--all-shares-hidden",
+      "variant": "phone-dark",
+      "filename": "dashboard-hidden-shares--all-shares-hidden-phone-dark.png",
+      "title": "Current production/Dashboard/Hidden shares / All Shares Hidden"
+    },
+    {
+      "id": "dashboard-hidden-shares--hide-and-show",
+      "variant": "phone-dark",
+      "filename": "dashboard-hidden-shares--hide-and-show-phone-dark.png",
+      "title": "Current production/Dashboard/Hidden shares / Hide And Show"
+    },
+    {
+      "id": "dashboard-hidden-shares--failed-hide",
+      "variant": "phone-dark",
+      "filename": "dashboard-hidden-shares--failed-hide-phone-dark.png",
+      "title": "Current production/Dashboard/Hidden shares / Failed Hide"
+    },
+    {
+      "id": "dashboard-hidden-shares--pending-hide",
+      "variant": "phone-dark",
+      "filename": "dashboard-hidden-shares--pending-hide-phone-dark.png",
+      "title": "Current production/Dashboard/Hidden shares / Pending Hide"
+    },
+    {
+      "id": "space-review--page-access-details",
+      "variant": "phone-dark",
+      "filename": "space-review--page-access-details-phone-dark.png",
+      "title": "Current production/Spaces/Space / Page Access Details"
+    },
+    {
+      "id": "editor-savestatus--view-only",
+      "variant": "phone-dark",
+      "filename": "editor-savestatus--view-only-phone-dark.png",
+      "title": "Current production/Editor/SaveStatus / View Only"
+    },
+    {
+      "id": "sharing-access-details--inherited-folder",
+      "variant": "tablet",
+      "filename": "sharing-access-details--inherited-folder-tablet.png",
+      "title": "Current production/Sharing/Access details / Inherited Folder"
+    },
+    {
+      "id": "sharing-access-details--direct-share",
+      "variant": "tablet",
+      "filename": "sharing-access-details--direct-share-tablet.png",
+      "title": "Current production/Sharing/Access details / Direct Share"
+    },
+    {
+      "id": "sharing-access-details--space-through-folder",
+      "variant": "tablet",
+      "filename": "sharing-access-details--space-through-folder-tablet.png",
+      "title": "Current production/Sharing/Access details / Space Through Folder"
+    },
+    {
+      "id": "sharing-access-details--space-direct",
+      "variant": "tablet",
+      "filename": "sharing-access-details--space-direct-tablet.png",
+      "title": "Current production/Sharing/Access details / Space Direct"
+    },
+    {
+      "id": "sharing-access-details--owner",
+      "variant": "tablet",
+      "filename": "sharing-access-details--owner-tablet.png",
+      "title": "Current production/Sharing/Access details / Owner"
+    },
+    {
+      "id": "sharing-access-details--file-admin",
+      "variant": "tablet",
+      "filename": "sharing-access-details--file-admin-tablet.png",
+      "title": "Current production/Sharing/Access details / File Admin"
+    },
+    {
+      "id": "sharing-access-details--long-names",
+      "variant": "tablet",
+      "filename": "sharing-access-details--long-names-tablet.png",
+      "title": "Current production/Sharing/Access details / Long Names"
+    },
+    {
+      "id": "sharing-access-details--loading",
+      "variant": "tablet",
+      "filename": "sharing-access-details--loading-tablet.png",
+      "title": "Current production/Sharing/Access details / Loading"
+    },
+    {
+      "id": "sharing-access-details--unavailable",
+      "variant": "tablet",
+      "filename": "sharing-access-details--unavailable-tablet.png",
+      "title": "Current production/Sharing/Access details / Unavailable"
+    },
+    {
+      "id": "sharing-access-details--revoked-while-open",
+      "variant": "tablet",
+      "filename": "sharing-access-details--revoked-while-open-tablet.png",
+      "title": "Current production/Sharing/Access details / Revoked While Open"
+    },
+    {
+      "id": "dashboard-hidden-shares--include-hidden",
+      "variant": "tablet",
+      "filename": "dashboard-hidden-shares--include-hidden-tablet.png",
+      "title": "Current production/Dashboard/Hidden shares / Include Hidden"
+    },
+    {
+      "id": "dashboard-hidden-shares--all-shares-hidden",
+      "variant": "tablet",
+      "filename": "dashboard-hidden-shares--all-shares-hidden-tablet.png",
+      "title": "Current production/Dashboard/Hidden shares / All Shares Hidden"
+    },
+    {
+      "id": "dashboard-hidden-shares--hide-and-show",
+      "variant": "tablet",
+      "filename": "dashboard-hidden-shares--hide-and-show-tablet.png",
+      "title": "Current production/Dashboard/Hidden shares / Hide And Show"
+    },
+    {
+      "id": "dashboard-hidden-shares--failed-hide",
+      "variant": "tablet",
+      "filename": "dashboard-hidden-shares--failed-hide-tablet.png",
+      "title": "Current production/Dashboard/Hidden shares / Failed Hide"
+    },
+    {
+      "id": "dashboard-hidden-shares--pending-hide",
+      "variant": "tablet",
+      "filename": "dashboard-hidden-shares--pending-hide-tablet.png",
+      "title": "Current production/Dashboard/Hidden shares / Pending Hide"
+    },
+    {
+      "id": "space-review--page-access-details",
+      "variant": "tablet",
+      "filename": "space-review--page-access-details-tablet.png",
+      "title": "Current production/Spaces/Space / Page Access Details"
+    },
+    {
+      "id": "editor-savestatus--view-only",
+      "variant": "tablet",
+      "filename": "editor-savestatus--view-only-tablet.png",
+      "title": "Current production/Editor/SaveStatus / View Only"
+    }
+  ],
+  "verifications": [],
+  "failures": []
+}

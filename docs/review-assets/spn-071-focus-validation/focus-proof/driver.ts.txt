@@ -1,0 +1,71 @@
+import { createRequire } from 'node:module';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { performance } from 'node:perf_hooks';
+const require = createRequire('/Users/mxbaylee/projects/spinel-spn-071/package.json');
+const { chromium, expect } = require('@playwright/test');
+const { preview } = await import(require.resolve('vite'));
+const output = '/tmp/spn071-review/focus-repair-proof';
+await mkdir(output, { recursive: true });
+const server = await preview({
+  configFile: false,
+  root: '/Users/mxbaylee/projects/spinel-spn-071/storybook-static',
+  build: { outDir: '.' },
+  preview: { host: '127.0.0.1', port: 6007, strictPort: true },
+});
+const browser = await chromium.launch();
+const results = [];
+try {
+  // Declared before execution: five fresh tablet contexts, then one negative control.
+  for (let attempt = 1; attempt <= 6; attempt++) {
+    const negative = attempt === 6;
+    const context = await browser.newContext({ viewport: { width: 768, height: 900 } });
+    const page = await context.newPage();
+    const started = performance.now();
+    try {
+      if (negative)
+        await page.addInitScript(() => {
+          const focus = HTMLElement.prototype.focus;
+          HTMLElement.prototype.focus = function (options) {
+            if (this.tagName === 'H1' && this.textContent?.trim() === 'Shared with me') return;
+            focus.call(this, options);
+          };
+        });
+      const id = 'dashboard-hidden-shares--hide-and-show';
+      await page.goto(`http://127.0.0.1:6007/iframe.html?id=${id}&viewMode=story&globals=theme:light`);
+      await page.waitForFunction((storyId) => {
+        const preview = window.__STORYBOOK_PREVIEW__;
+        return preview?.currentRender?.phase === 'finished' &&
+          preview?.channel?.last('storyFinished')?.[0]?.storyId === storyId;
+      }, id);
+      const observed = await page.evaluate(() => {
+        const channel = window.__STORYBOOK_PREVIEW__.channel;
+        const errors = ['playFunctionThrewException', 'unhandledErrorsWhilePlaying']
+          .flatMap((event) => channel.last(event) ?? [])
+          .map((value) => String(value?.message ?? JSON.stringify(value)));
+        return {
+          result: channel.last('storyFinished')?.[0],
+          errors,
+          focusTag: document.activeElement?.tagName,
+          focusText: document.activeElement?.textContent?.slice(0, 100),
+        };
+      });
+      if (negative) {
+        expect(observed.errors.some((error) => error.includes('toHaveFocus'))).toBe(true);
+        await expect(page.getByRole('heading', { name: 'Shared with me', exact: true })).not.toBeFocused();
+        await page.screenshot({ path: `${output}/suppressed-focus.png` });
+      } else {
+        expect(observed.result.status).toBe('success');
+        expect(observed.errors).toEqual([]);
+        await expect(page.getByText('Journey notes is shown in Shared with me and search.', { exact: true })).toBeVisible();
+      }
+      results.push({ attempt, negative, elapsedMs: performance.now() - started, ...observed });
+    } finally {
+      await context.close();
+    }
+  }
+  console.log(JSON.stringify(results.map(({ attempt, negative, elapsedMs, errors }) => ({ attempt, negative, elapsedMs, playErrors: errors.length }))));
+} finally {
+  await writeFile(`${output}/results.json`, JSON.stringify({ scope: 'Five independent fresh tablet contexts, no scenario retries; then a deliberate missing-focus negative control', results }, null, 2) + '\n');
+  await browser.close();
+  await server.httpServer.close();
+}

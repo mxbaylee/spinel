@@ -1,0 +1,73 @@
+{
+  "source": "d75f46fe7648e6dfaa75f8ae8859b87505b20bea",
+  "applicationSourceUnchangedSince": "f653e24f34e9e7af3d6eb3bdc794fa4178b5bbe8",
+  "sourceAtBuildAndProof": "identical uncommitted tree immediately before source commit",
+  "sourceSHA256": {
+    "web/HiddenShares.stories.tsx": "4ee3190a3179eb5b55e3bade0e42580ea3cacf53382c4152b213780f0d0c6e91",
+    "e2e/hidden-shares.spec.ts": "dd69502c9bf0a1c2bee708b77ab7528671d65358d0ecb6de6f0a563eee797d1f"
+  },
+  "local": {
+    "storybookTestBuild": {
+      "elapsedMs": 4457,
+      "peakMiB": 1580.3
+    },
+    "declaredFocusProof": {
+      "freshPositiveContexts": 5,
+      "positiveFailures": 0,
+      "negativeControls": 1,
+      "negativePlayErrors": 1,
+      "elapsedMs": 5556,
+      "peakMiB": 787.2
+    },
+    "ordinaryProductionHiddenShares": {
+      "passed": 1,
+      "retries": 0,
+      "playwrightSeconds": 4.4,
+      "elapsedMs": 5102,
+      "peakMiB": 1459.6,
+      "focusCases": [
+        "Doc hidden",
+        "Space hidden"
+      ]
+    },
+    "typecheck": {
+      "passed": true,
+      "elapsedMs": 2320,
+      "peakMiB": 1885.6
+    },
+    "componentReview": {
+      "checked": 85,
+      "failed": 0,
+      "elapsedMs": 33267,
+      "peakMiB": 1164.0
+    }
+  },
+  "tabletFailure": {
+    "head": "172b94f00b7d4832a1134b4dbbd769416f8f1dae",
+    "run": 41400587432,
+    "job": 125133767183,
+    "artifact": 13121279855,
+    "originalZipSHA256": "781798f9f1be8a82bf982131f9e563bfc9e984a44704845fd73f3611e8a7e1c3",
+    "retention": "full manifest, relevant failure JSON/PNG and job log; unrelated catalog images omitted"
+  },
+  "setupFailure": {
+    "head": "172b94f00b7d4832a1134b4dbbd769416f8f1dae",
+    "run": 41400587421,
+    "job": 125132066759,
+    "owner": "SPN-131",
+    "stage": "Ubuntu mirror profile check before Chromium/test execution",
+    "image": "ubuntu-24.04 20261018.96.1",
+    "provider": "AWS us-east-1"
+  },
+  "repairedRestorePass": {
+    "head": "172b94f00b7d4832a1134b4dbbd769416f8f1dae",
+    "run": 41400587421,
+    "job": 125132066143,
+    "artifact": 13121537055,
+    "zipSHA256": "4a90293881c2ff37ebd63fe422aa0864e49c0be7770896e8b59d0964507c0fc8",
+    "passed": true,
+    "elapsedMs": 279009,
+    "prepareToCommittedMs": 150093.69594,
+    "cleanup": "all owned containers absent, private fixture removed, no OOM"
+  }
+}

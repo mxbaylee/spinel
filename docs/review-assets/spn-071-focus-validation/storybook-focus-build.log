@@ -1,0 +1,718 @@
+
+┌  Building storybook v10.6.2
+│
+◇  Cleaning outputDir: storybook-static
+(node:78732) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+│
+◇  Loading presets
+│
+◇  Building manager..
+│
+●  Building open services..
+│
+●  Building preview..
+│
+▲  No story files found for the specified pattern: lib/**/*.stories.tsx
+Fontconfig error: Cannot load default config file: File not found
+│  Vite vite v8.3.4 building client environment for production...
+transforming...
+✓ 4478 modules transformed.
+rendering chunks...
+│  Vite storybook-static/iframe.html
+│  22.64 kB
+│  storybook-static/assets/StorageHelp-Kf7OmaC_.css
+│  0.27 kB
+│  storybook-static/assets/OfflineRecoveryEntry-6HiDdG-5.css
+│  0.43 kB
+│  storybook-static/assets/ThemeMenu-DuS3AFhY.css
+│  0.49 kB
+│  storybook-static/assets/CopyFile-BQQaXgft.css
+│  0.51 kB
+│  storybook-static/assets/AdminUsers-DHtUNavp.css
+│  0.75 kB
+│  storybook-static/assets/AppearanceReview-CObuc8n4.css
+│  0.76 kB
+│  storybook-static/assets/EntityIcon-BdkcVhUQ.css
+│  0.86 kB
+│  storybook-static/assets/EntryFrame-DB9fT3Gz.css
+│  0.89 kB
+│  storybook-static/assets/SpaceRootActions-CuJND89q.css
+│  0.91 kB
+│  storybook-static/assets/Dashboard-Bhx56Aht.css
+│  1.02 kB
+│  storybook-static/assets/BackupDownloads-CKFNrv5F.css
+│  1.07 kB
+│  storybook-static/assets/GuestLinks-7b9btl2K.css
+│  1.20 kB
+│  storybook-static/assets/AccessState-DDJakJk4.css
+│  1.25 kB
+│  storybook-static/assets/ServerHealth-EMdq8Hsl.css
+│  1.25 kB
+│  storybook-static/assets/RestoreNotice-3ZmiKG4W.css
+│  1.28 kB
+│  storybook-static/assets/nativeEditors-QEvf-p8_.css
+│  1.40 kB
+│  storybook-static/assets/SearchPanel-BHfYMFX1.css
+│  1.41 kB
+│  storybook-static/assets/DocFormulas-fBFn_ung.css
+│  1.80 kB
+│  storybook-static/assets/BackupRestore-hs9pB6ZK.css
+│  1.88 kB
+│  storybook-static/assets/DashboardFiles-ByGYJez6.css
+│  2.06 kB
+│  storybook-static/assets/DeviceStoragePanel-C2NJxWkV.css
+│  2.07 kB
+│  storybook-static/assets/fileDialog-BUnPxS8B.css
+│  2.25 kB
+│  storybook-static/assets/NativeEditors-9tmAv-f-.css
+│  2.29 kB
+│  storybook-static/assets/SaveStatus-mVcC3r32.css
+│  2.53 kB
+│  storybook-static/assets/entryJourney-CJkqs_bu.css
+│  2.74 kB
+│  storybook-static/assets/docPreset-CLa_o6AK.css
+│  3.23 kB
+│  storybook-static/assets/HistoryBrowser-D9Z9OhM7.css
+│  3.36 kB
+│  storybook-static/assets/ShareLink-DvalkekD.css
+│  3.59 kB
+│  storybook-static/assets/administration-WlSsYuOZ.css
+│  3.78 kB
+│  storybook-static/assets/Maintenance-Dp-3-dvQ.css
+│  3.87 kB
+│  storybook-static/assets/Rail-BPy1inxF.css
+│  4.25 kB
+│  storybook-static/assets/Appearance-DXI6v1kJ.css
+│  4.26 kB
+│  storybook-static/assets/editorFrame-Cb7C116V.css
+│  4.47 kB
+│  storybook-static/assets/profile-DeEBLEXH.css
+│  5.27 kB
+│  storybook-static/assets/Controls-6GPmlRwP.css
+│  5.63 kB
+│  storybook-static/assets/spaceOffline-D0YStd95.css
+│  10.04 kB
+│  storybook-static/assets/iframe-mgzSPPzi.css
+│  12.30 kB
+│  storybook-static/assets/lib-Cj-7oXXK.css
+│  13.03 kB
+│  storybook-static/assets/presetStyles-Ctu8Lp02.css
+│  18.84 kB
+│  storybook-static/assets/Controls-qH0tBtVy.css
+│  29.42 kB
+│  storybook-static/assets/documentReady-DJw7JfGZ.css
+│  107.01 kB
+│  storybook-static/assets/sheetPreset-Bvk8UjAd.css
+│  118.94 kB
+│  storybook-static/assets/iframe-DDcovRkg.js
+│  0.04 kB
+│  storybook-static/assets/administration-C1S_hD-g.js
+│  0.09 kB
+│  storybook-static/assets/editorFrame-U16k3Kdj.js
+│  0.09 kB
+│  storybook-static/assets/entryJourney-BWMTHvLU.js
+│  0.09 kB
+│  storybook-static/assets/fileDialog-CfmkpWpi.js
+│  0.09 kB
+│  storybook-static/assets/nativeEditors-CQURLHAQ.js
+│  0.09 kB
+│  storybook-static/assets/profile-BQR24URV.js
+│  0.09 kB
+│  storybook-static/assets/portable-kkPWuy9t.js
+│  0.11 kB
+│  storybook-static/assets/spaceOffline-DQzHufaA.js
+│  0.14 kB
+│  storybook-static/assets/adminAccountLabel-BSuIiUC6.js
+│  0.19 kB
+│  storybook-static/assets/guestRevocation-DqJg0TCz.js
+│  0.24 kB
+│  storybook-static/assets/editorReady-CMid4ivx.js
+│  0.29 kB
+│  storybook-static/assets/workspace-qGa9Un5K.js
+│  0.38 kB
+│  storybook-static/assets/IconPicker.stories-CTOW_r4E.js
+│  0.38 kB
+│  storybook-static/assets/TagLabels.stories-Dg0rVFN4.js
+│  0.45 kB
+│  storybook-static/assets/emoji-D4-LI5S6.js
+│  0.46 kB
+│  storybook-static/assets/documentAccess-dBMpAeSF.js
+│  0.57 kB
+│  storybook-static/assets/fileNavigation-Cr8p9_av.js
+│  0.58 kB
+│  storybook-static/assets/itemsApi-z2VM7WbM.js
+│  0.58 kB
+│  storybook-static/assets/PresenceLabel.stories-CFANxhCB.js
+│  0.59 kB
+│  storybook-static/assets/pa-C54UG8eN-DhHhBwnb.js
+│  0.62 kB
+│  storybook-static/assets/or-50rxpoq4-DafyQLRB.js
+│  0.66 kB
+│  storybook-static/assets/gu-Bjl0l-cf-Nle_6DR6.js
+│  0.66 kB
+│  storybook-static/assets/hi-DsAaTPCC-C69RNUHF.js
+│  0.70 kB
+│  storybook-static/assets/mr-CjWJPVmH-BTYR2v30.js
+│  0.70 kB
+│  storybook-static/assets/ThemeSettings-BJMPIDZM.js
+│  0.70 kB
+│  storybook-static/assets/SharedBadge.stories-B76kF1iv.js
+│  0.70 kB
+│  storybook-static/assets/as-BPtSu6VN-DTmKZT1W.js
+│  0.71 kB
+│  storybook-static/assets/bn-NCLZcWHi-DuVwjTCb.js
+│  0.71 kB
+│  storybook-static/assets/te-B5Spl2Jk-BSXPVPct.js
+│  0.71 kB
+│  storybook-static/assets/kn-C6Lov-DP-C2BcvGb3.js
+│  0.72 kB
+│  storybook-static/assets/guestLinksStoryData-BlVDntHf.js
+│  0.73 kB
+│  storybook-static/assets/historyApi-DrWuvCRF.js
+│  0.73 kB
+│  storybook-static/assets/dialogBounds-B3z7rgYg.js
+│  0.74 kB
+│  storybook-static/assets/OfflineStatus-CWdUarE4.js
+│  0.77 kB
+│  storybook-static/assets/PresenceLabel-DRfSFsWN.js
+│  0.77 kB
+│  storybook-static/assets/OfflineStatus.stories-BTbutrfM.js
+│  0.79 kB
+│  storybook-static/assets/ta-BcghgTbD-D1qU8J-k.js
+│  0.80 kB
+│  storybook-static/assets/react-18-BzitDP7S.js
+│  0.89 kB
+│  storybook-static/assets/gemGeometry-CCewQaPB.js
+│  0.89 kB
+│  storybook-static/assets/ml-2xLVYkVY-0nnGHDFm.js
+│  0.89 kB
+│  storybook-static/assets/pi-B9cgjyG1-CLvqABXC.js
+│  0.94 kB
+│  storybook-static/assets/AccountAccessChanged.stories-Ba1scMW8.js
+│  0.98 kB
+│  storybook-static/assets/appearance-COIc4lGa.js
+│  1.01 kB
+│  storybook-static/assets/AdminAccessTokens.stories-BsXNk9YW.js
+│  1.01 kB
+│  storybook-static/assets/GemLogo-qqeHWIMj.js
+│  1.06 kB
+│  storybook-static/assets/rolldown-runtime-sJBDdmOt.js
+│  1.20 kB
+│  storybook-static/assets/diagnosticsStoryData-DalVM4AX.js
+│  1.29 kB
+│  storybook-static/assets/FileExports.stories-B6QC_MUX.js
+│  1.32 kB
+│  storybook-static/assets/EntryFrame-W_p3_kQX.js
+│  1.33 kB
+│  storybook-static/assets/ProfileSettings.stories-CrV2qpp7.js
+│  1.35 kB
+│  storybook-static/assets/zh-latn-pinyin-BdYb-Ey_-BEIPO3U3.js
+│  1.36 kB
+│  storybook-static/assets/GemLogo.stories-D_SvASsp.js
+│  1.47 kB
+│  storybook-static/assets/workspaceArchiveApi-BrrMKx7Q.js
+│  1.49 kB
+│  storybook-static/assets/FileExports-BUD5WGfC.js
+│  1.53 kB
+│  storybook-static/assets/documentReady-BbpqiiTT.js
+│  1.59 kB
+│  storybook-static/assets/OfflineAvailability-DdD9-Rnu.js
+│  1.60 kB
+│  storybook-static/assets/eu-Ctv_kq9Z-DhZfi4f-.js
+│  1.60 kB
+│  storybook-static/assets/SpaceTrash.stories-Br5i487-.js
+│  1.61 kB
+│  storybook-static/assets/ThemeSettings.stories-DTnlZ0iw.js
+│  1.61 kB
+│  storybook-static/assets/RestoreNotice-B0BFuFk7.js
+│  1.62 kB
+│  storybook-static/assets/ThemeMenu-B3RVKfZZ.js
+│  1.63 kB
+│  storybook-static/assets/preload-helper-2GovK0wV.js
+│  1.64 kB
+│  storybook-static/assets/nativeSyncPermissions-DhYqvTBY.js
+│  1.73 kB
+│  storybook-static/assets/snapshotIdentity-CGJHxBlR.js
+│  1.77 kB
+│  storybook-static/assets/AccessState-D2EcnAOt.js
+│  1.85 kB
+│  storybook-static/assets/useConnectionStatus-DRHb0uE3.js
+│  1.85 kB
+│  storybook-static/assets/OfflineViewer-DgM9DrZ0.js
+│  1.98 kB
+│  storybook-static/assets/StorageHelp-DRMsByCL.js
+│  2.00 kB
+│  storybook-static/assets/ConsoleRecovery.stories-BW8dZKp0.js
+│  2.02 kB
+│  storybook-static/assets/EntityIcon-BfrLGIzo.js
+│  2.03 kB
+│  storybook-static/assets/DocumentTags.stories-C7totglB.js
+│  2.11 kB
+│  storybook-static/assets/RestoreNotice.stories-DxlF0wdi.js
+│  2.14 kB
+│  storybook-static/assets/ThemeMenu.stories-Bkifug1x.js
+│  2.14 kB
+│  storybook-static/assets/SharedItems-XyHSwIj4.js
+│  2.16 kB
+│  storybook-static/assets/Favicon.stories-WCKn_JGp.js
+│  2.18 kB
+│  storybook-static/assets/EditorTools-BAvqYSLm.js
+│  2.18 kB
+│  storybook-static/assets/AppLayout.stories-Aaaaq-Lx.js
+│  2.23 kB
+│  storybook-static/assets/AccessState.stories-CSviVGhP.js
+│  2.25 kB
+│  storybook-static/assets/DocumentTags-B-4Eold6.js
+│  2.29 kB
+│  storybook-static/assets/EntityIcon.stories-Bgq9Vsrc.js
+│  2.33 kB
+│  storybook-static/assets/api-BG_aE5uQ.js
+│  2.33 kB
+│  storybook-static/assets/SpaceOfflineActions-WDrxcfgR.js
+│  2.37 kB
+│  storybook-static/assets/pt-Cum2_NUC-B02AnEkT.js
+│  2.38 kB
+│  storybook-static/assets/AccessDetails-KLb6g2MA.js
+│  2.44 kB
+│  storybook-static/assets/AssistantConnections.stories-BhI6Rtok.js
+│  2.49 kB
+│  storybook-static/assets/ProfilePage.stories-Dyd85TxM.js
+│  2.51 kB
+│  storybook-static/assets/id-DifDyWg9-BCX75Smc.js
+│  2.52 kB
+│  storybook-static/assets/ConnectionStatus-C2uMVmaY.js
+│  2.59 kB
+│  storybook-static/assets/oc-P_i3-xLA-Cwl8Ci8G.js
+│  2.64 kB
+│  storybook-static/assets/OfflineRecoveryList.stories-CkAgmQN_.js
+│  2.74 kB
+│  storybook-static/assets/VersionNames.stories-9dn6mG-s.js
+│  2.77 kB
+│  storybook-static/assets/AssistantConnections-DDg30qmr.js
+│  2.79 kB
+│  storybook-static/assets/kmr-Cfwhwuff-D8-z9dfC.js
+│  2.82 kB
+│  storybook-static/assets/ProfileIcon.stories-CDpy37_C.js
+│  2.88 kB
+│  storybook-static/assets/AdminPage-L1sEtXGI.js
+│  2.94 kB
+│  storybook-static/assets/PdfExport.stories-BHu6RgTI.js
+│  3.06 kB
+│  storybook-static/assets/ConnectAssistant.stories-CPpog8H8.js
+│  3.14 kB
+│  storybook-static/assets/VersionNames-DviUABXn.js
+│  3.16 kB
+│  storybook-static/assets/maintenanceFetch-DbM_VEgn.js
+│  3.16 kB
+│  storybook-static/assets/creation-Rm2txE3t.js
+│  3.26 kB
+│  storybook-static/assets/fi-RW5VB8Yp-BOrI1g-T.js
+│  3.28 kB
+│  storybook-static/assets/la-DuvHjUWw-BcFnDV3S.js
+│  3.28 kB
+│  storybook-static/assets/AccessTokens.stories-hsNp57H6.js
+│  3.30 kB
+│  storybook-static/assets/Trash-CaJ6JKHH.js
+│  3.33 kB
+│  storybook-static/assets/Controls.stories-DkhjcKp9.js
+│  3.45 kB
+│  storybook-static/assets/pms-BRGfm5gS-D6iPNnwZ.js
+│  3.46 kB
+│  storybook-static/assets/SpaceShell-BF-DbCH2.js
+│  3.47 kB
+│  storybook-static/assets/Rail-C_5b3Py4.js
+│  3.52 kB
+│  storybook-static/assets/OfflineRecoveryEntry.stories-Bt_X73Hv.js
+│  3.53 kB
+│  storybook-static/assets/AdminUsers.stories-BJH6zRhP.js
+│  3.62 kB
+│  storybook-static/assets/ConsoleRecovery-c3Vw3XNT.js
+│  3.67 kB
+│  storybook-static/assets/it-Bt_Meacx-BsjjFy9n.js
+│  3.71 kB
+│  storybook-static/assets/rm-C0MIK9N4-D0pKNzgE.js
+│  3.76 kB
+│  storybook-static/assets/mul-ethi-D_CMSMEq-C45ZvRBM.js
+│  3.77 kB
+│  storybook-static/assets/snapshotViewer-DZ1oU3k4.js
+│  3.78 kB
+│  storybook-static/assets/Collaborators.stories-DqP4-rsd.js
+│  3.80 kB
+│  storybook-static/assets/DashboardFiles.stories-Bl52_QE5.js
+│  3.84 kB
+│  storybook-static/assets/ServerHealth.stories-CQ6UiW9w.js
+│  3.86 kB
+│  storybook-static/assets/react-dom-BN0sGe5r.js
+│  3.90 kB
+│  storybook-static/assets/DashboardFiles-Cv9BtTNB.js
+│  3.91 kB
+│  storybook-static/assets/Rail.stories-zC7w0guG.js
+│  3.95 kB
+│  storybook-static/assets/SpaceTrash-V9bkzWQc.js
+│  3.97 kB
+│  storybook-static/assets/fur-AC12wySk-BxuiKzVh.js
+│  3.99 kB
+│  storybook-static/assets/AccessTokens-BQi-epGW.js
+│  4.01 kB
+│  storybook-static/assets/spaceNavigation-Bs_dmASv.js
+│  4.03 kB
+│  storybook-static/assets/ConnectAssistant-BEgNSe19.js
+│  4.04 kB
+│  storybook-static/assets/tr-CIHIuzqc-C2ydaAK0.js
+│  4.05 kB
+│  storybook-static/assets/SaveStatus-CfYd-2Ss.js
+│  4.14 kB
+│  storybook-static/assets/ConnectionStatus.stories-MUuZ2SDw.js
+│  4.24 kB
+│  storybook-static/assets/AccessDetails.stories-BPUYKWcF.js
+│  4.25 kB
+│  storybook-static/assets/DocFormulasNative.stories-Clh2WSRj.js
+│  4.30 kB
+│  storybook-static/assets/Trash.stories-DtPAbKf1.js
+│  4.39 kB
+│  storybook-static/assets/dashboardNavigation-ByXR0CuS.js
+│  4.48 kB
+│  storybook-static/assets/WorkspaceArchive-C_3vAFed.js
+│  4.51 kB
+│  storybook-static/assets/CopyFile-FhtTlhUr.js
+│  4.53 kB
+│  storybook-static/assets/OfflineAvailability.stories-fiuKLBng.js
+│  4.56 kB
+│  storybook-static/assets/restore-DScb1PwJ.js
+│  4.57 kB
+│  storybook-static/assets/MaintenanceBanner.stories-BVv0Ij95.js
+│  4.59 kB
+│  storybook-static/assets/deviceStorage-xuDovkhx.js
+│  4.61 kB
+│  storybook-static/assets/AuthEntry.stories-F2tCWOhR.js
+│  4.67 kB
+│  storybook-static/assets/AccountExit.stories-BmdnQuE6.js
+│  4.69 kB
+│  storybook-static/assets/mn-cyrl-x-lmc-3aetruI8-WDMPfk7R.js
+│  4.91 kB
+│  storybook-static/assets/el-monoton-D3aKqTz2-CYOGzOHF.js
+│  4.96 kB
+│  storybook-static/assets/SpaceRootActions-DEn3aeQT.js
+│  5.04 kB
+│  storybook-static/assets/ImportFile-Dq-RGSda.js
+│  5.14 kB
+│  storybook-static/assets/EditorFrame-5nVBuB2H.js
+│  5.35 kB
+│  storybook-static/assets/PdfExport-D3KV8Luw.js
+│  5.53 kB
+│  storybook-static/assets/OfflineRecoveryEntry-B_c2TiMw.js
+│  5.54 kB
+│  storybook-static/assets/AppearanceReview.stories-BG2Hf-hC.js
+│  5.59 kB
+│  storybook-static/assets/facade-w8LKxg1Q.js
+│  5.63 kB
+│  storybook-static/assets/checkpoint-DOmrlApW.js
+│  5.69 kB
+│  storybook-static/assets/runtime-C6vS-Wg1.js
+│  5.73 kB
+│  storybook-static/assets/HiddenShares.stories-DFRHWcUg.js
+│  5.83 kB
+│  storybook-static/assets/BackupStatus-CUW18d2S.js
+│  6.18 kB
+│  storybook-static/assets/CopyFile.stories-Dxppi2Nk.js
+│  6.27 kB
+│  storybook-static/assets/AdminInvites-CubBHfMk.js
+│  6.29 kB
+│  storybook-static/assets/SearchPanel.stories-CcCTupaH.js
+│  6.36 kB
+│  storybook-static/assets/ImportFile.stories-DdYJd8G_.js
+│  6.36 kB
+│  storybook-static/assets/ia-Cr4TJH0c-CQscbReO.js
+│  6.57 kB
+│  storybook-static/assets/GuestLinks.stories-DyDN6KSi.js
+│  6.61 kB
+│  storybook-static/assets/SheetEditor-DEYCwPbv.js
+│  6.75 kB
+│  storybook-static/assets/AuthEntry-3HUNk4J6.js
+│  6.78 kB
+│  storybook-static/assets/GuestLinks-BTN3Olr6.js
+│  6.81 kB
+│  storybook-static/assets/BackupDownloads.stories-BII0MUl-.js
+│  6.97 kB
+│  storybook-static/assets/cop-C3sk0IUo-_mQKguk_.js
+│  6.97 kB
+│  storybook-static/assets/ProfilePage-Dnml8ydK.js
+│  7.06 kB
+│  storybook-static/assets/DeviceStoragePanel-H7VPqsg8.js
+│  7.14 kB
+│  storybook-static/assets/SpaceGuest.stories-Cb1ShTaO.js
+│  7.15 kB
+│  storybook-static/assets/native-v9V9GsPb.js
+│  7.21 kB
+│  storybook-static/assets/AdminInvites.stories-iMwcWW63.js
+│  7.28 kB
+│  storybook-static/assets/SpaceOfflineActions.stories-BSMUtMUT.js
+│  7.34 kB
+│  storybook-static/assets/ro-0fmdH0HA-BRuFf5Gn.js
+│  7.35 kB
+│  storybook-static/assets/ShareLink-Dq-z0r6a.js
+│  7.85 kB
+│  storybook-static/assets/OfflineSpace.stories-CfA-MxaT.js
+│  7.89 kB
+│  storybook-static/assets/ca-SUf6Y2Om-CDkNkVYr.js
+│  7.91 kB
+│  storybook-static/assets/AdminDiagnostics-BkaDMGTL.js
+│  7.92 kB
+│  storybook-static/assets/spaceCopies-CsukX_sy.js
+│  7.97 kB
+│  storybook-static/assets/AdminDiagnostics.stories-DY7dHKES.js
+│  8.01 kB
+│  storybook-static/assets/SyncNative.stories-NKhiIxeM.js
+│  8.02 kB
+│  storybook-static/assets/OfflineSpace-CiTwZa8g.js
+│  8.17 kB
+│  storybook-static/assets/AdminPage.stories-DEudmkYh.js
+│  8.33 kB
+│  storybook-static/assets/BackupStatus.stories-DuGkJYfy.js
+│  8.45 kB
+│  storybook-static/assets/SpaceRootActions.stories-D1dVxR6s.js
+│  8.45 kB
+│  storybook-static/assets/WorkspaceArchive.stories-D81wWHlC.js
+│  8.60 kB
+│  storybook-static/assets/ServerHealth-Do4nb822.js
+│  8.62 kB
+│  storybook-static/assets/PasskeySettings-DUXxzIJ9.js
+│  8.88 kB
+│  storybook-static/assets/la-x-classic-yTyAOQEt-VG233rrg.js
+│  9.01 kB
+│  storybook-static/assets/esm-BqNeuvTI.js
+│  9.09 kB
+│  storybook-static/assets/DeviceStorage.stories-B_LnVTOI.js
+│  9.41 kB
+│  storybook-static/assets/doc-formulas-NvjQda6Q.js
+│  9.78 kB
+│  storybook-static/assets/sa-CKY9c_Vq-pFHJa-E6.js
+│  9.80 kB
+│  storybook-static/assets/GuestApp.stories-DKTysuWW.js
+│  9.80 kB
+│  storybook-static/assets/PresenceNative.stories-kPFVRphi.js
+│  9.96 kB
+│  storybook-static/assets/download-CzXVLSGs.js
+│  10.22 kB
+│  storybook-static/assets/Collaborators-p_uelwkw.js
+│  10.85 kB
+│  storybook-static/assets/HistoryBrowser.stories-CFKCSj7F.js
+│  11.07 kB
+│  storybook-static/assets/SearchPanel-CcBHVwr5.js
+│  11.13 kB
+│  storybook-static/assets/hr-DT1SBBes-CFUzt-6T.js
+│  11.45 kB
+│  storybook-static/assets/BackupDownloads-Dpe4lowe.js
+│  11.55 kB
+│  storybook-static/assets/hy-e995ysyO-CDwqFnV6.js
+│  12.02 kB
+│  storybook-static/assets/mn-cyrl-lHM4n0oC-KMi7GZ4X.js
+│  12.24 kB
+│  storybook-static/assets/AdminUsers-DLFgOhpo.js
+│  12.39 kB
+│  storybook-static/assets/PasskeySettings.stories-Bu8oXndQ.js
+│  12.41 kB
+│  storybook-static/assets/sl-DpiklF-D-z-QzOoIe.js
+│  12.69 kB
+│  storybook-static/assets/da-CCDXfXtG-BCoUUHmf.js
+│  12.81 kB
+│  storybook-static/assets/DocFormulas-BKwZWZuy.js
+│  12.86 kB
+│  storybook-static/assets/Sharing.stories-CdnmQPq7.js
+│  13.19 kB
+│  storybook-static/assets/Maintenance.stories-BgvihRh-.js
+│  13.36 kB
+│  storybook-static/assets/useDiagnostics-CFSg59mc.js
+│  13.42 kB
+│  storybook-static/assets/AccountExit-DfcFNEnP.js
+│  13.56 kB
+│  storybook-static/assets/AdminAccountRecovery.stories-p1MmsSTb.js
+│  13.63 kB
+│  storybook-static/assets/HistoryBrowser-SL6C_yGC.js
+│  13.64 kB
+│  storybook-static/assets/NativeEditors.stories-VCWyJyUv.js
+│  13.77 kB
+│  storybook-static/assets/hsb-DC_ITc1e-CqU-NPOI.js
+│  14.04 kB
+│  storybook-static/assets/DocMobile.stories-BLwXxdKR.js
+│  14.13 kB
+│  storybook-static/assets/ShareLink.stories-B8YXi0hW.js
+│  14.34 kB
+│  storybook-static/assets/lt-BBe8DlDF-2TXMh6f4.js
+│  14.85 kB
+│  storybook-static/assets/DocFormulas.stories-Dfn7lGWT.js
+│  14.94 kB
+│  storybook-static/assets/DocEditor-ChciTTCL.js
+│  14.99 kB
+│  storybook-static/assets/es-TK9smiUK.js
+│  16.29 kB
+│  storybook-static/assets/tk-BMbKB10q-CZ6Wg3jn.js
+│  17.05 kB
+│  storybook-static/assets/el-polyton-ogVWcTzh-Dp-cv8hL.js
+│  17.71 kB
+│  storybook-static/assets/SharingSources.stories-B9S7zYaL.js
+│  17.83 kB
+│  storybook-static/assets/EditorFrame.stories-D7EzQm3o.js
+│  18.75 kB
+│  storybook-static/assets/SaveStatus.stories-CD0KzwM_.js
+│  19.74 kB
+│  storybook-static/assets/Sharing-DmidLWli.js
+│  19.75 kB
+│  storybook-static/assets/Maintenance-DJFiAWBK.js
+│  19.97 kB
+│  storybook-static/assets/BackupRestore-Co2xN9iH.js
+│  21.23 kB
+│  storybook-static/assets/BackupRestore.stories-Bg8d8Jim.js
+│  22.09 kB
+│  storybook-static/assets/floating-ui.react-dom-437H3l2e.js
+│  22.20 kB
+│  storybook-static/assets/la-x-liturgic-CXeQb4FY-BwUl5yPW.js
+│  22.91 kB
+│  storybook-static/assets/Space-DyXwDeT4.js
+│  24.02 kB
+│  storybook-static/assets/fr-BC2onEz9-DFzBAXBD.js
+│  24.22 kB
+│  storybook-static/assets/Appearance-CVJBsPNy.js
+│  26.04 kB
+│  storybook-static/assets/ka-jyoLzyDE-CIHds7pZ.js
+│  26.27 kB
+│  storybook-static/vite-inject-mocker-entry.js
+│  27.81 kB
+│  storybook-static/assets/be-CrQ0smca-B1VB57Vm.js
+│  27.92 kB
+│  storybook-static/assets/sh-latn-sRy4Tuaj-Bh9BuFlj.js
+│  29.65 kB
+│  storybook-static/assets/Dashboard.stories-6uAHHIhF.js
+│  29.69 kB
+│  storybook-static/assets/offlineStore-BmUXoc9U.js
+│  30.97 kB
+│  storybook-static/assets/sr-cyrl-Dpzrbd0W-JXjto4-9.js
+│  31.44 kB
+│  storybook-static/assets/sk-_iOeDNrQ-B7ub3oKF.js
+│  31.78 kB
+│  storybook-static/assets/sh-cyrl-BpCRFOmq-vAEhzpDk.js
+│  32.36 kB
+│  storybook-static/assets/Dashboard-CIJbA-Nz.js
+│  32.46 kB
+│  storybook-static/assets/es-C-pAvrwg.js
+│  33.37 kB
+│  storybook-static/assets/gl-DZGc-K_G-CzaOh0zr.js
+│  33.73 kB
+│  storybook-static/assets/docPreset-DioKTTGL.js
+│  36.30 kB
+│  storybook-static/assets/cs-CmAteokq-2kYeeSr3.js
+│  39.84 kB
+│  storybook-static/assets/nativeCopy-WSB_ImaD.js
+│  41.83 kB
+│  storybook-static/assets/es-DcaaHPU_-Ds6c0Her.js
+│  44.22 kB
+│  storybook-static/assets/Space.stories-BVZCRnOj.js
+│  45.96 kB
+│  storybook-static/assets/pl-9fg-ESVt-BuGJUVlO.js
+│  46.18 kB
+│  storybook-static/assets/et-B_spaleu-CBItcpuE.js
+│  47.29 kB
+│  storybook-static/assets/is-BT8UVRze-DvXO4TsR.js
+│  48.50 kB
+│  storybook-static/assets/sv-CFm5y56M-JTMsGqdG.js
+│  56.90 kB
+│  storybook-static/assets/bg-CrQqGwni-B9MQ1h1R.js
+│  57.01 kB
+│  storybook-static/assets/sync-client-BMGtHh2k.js
+│  59.60 kB
+│  storybook-static/assets/uk-Dir3oxLs-DFvNjlaW.js
+│  64.08 kB
+│  storybook-static/assets/th-DWX5iPSo-BnT0u8X8.js
+│  68.71 kB
+│  storybook-static/assets/grc-DOlGgO8T-C7cr8x6z.js
+│  71.70 kB
+│  storybook-static/assets/es-CIBRdsWx.js
+│  74.66 kB
+│  storybook-static/assets/cy-BBPa6z2x-C-KuLVN-.js
+│  80.28 kB
+│  storybook-static/assets/ga-Cn6LkudM-CiUSmVqI.js
+│  82.15 kB
+│  storybook-static/assets/ru-v4l-ayaq-zAJw0CEV.js
+│  85.04 kB
+│  storybook-static/assets/Controls-Bw7SJ5N6.js
+│  95.41 kB
+│  storybook-static/assets/PopoverClose-iqG4D6ji.js
+│  95.71 kB
+│  storybook-static/assets/en-gb-B7Al27b_-D3xLFW8k.js
+│  105.46 kB
+│  storybook-static/assets/lv-Q2BBHnzp-B6ZoWVCc.js
+│  112.76 kB
+│  storybook-static/assets/en-US-CAnAsBEY.js
+│  122.23 kB
+│  storybook-static/assets/lib-Dps97LjP.js
+│  133.34 kB
+│  storybook-static/assets/nl-BHQJ6Gvn-D590WKHS.js
+│  138.53 kB
+│  storybook-static/assets/presetStyles-DZhlDZf-.js
+│  158.22 kB
+│  storybook-static/assets/cu-CBUlrW6Y-BOEwHrgr.js
+│  168.89 kB
+│  storybook-static/assets/af-DK_CjRn6-CbZMLB4T.js
+│  179.62 kB
+│  storybook-static/assets/client-DIpmRDBT.js
+│  206.79 kB
+│  storybook-static/assets/sheetPreset-5p6k5-3l.js
+│  225.97 kB
+│  storybook-static/assets/de-ch-1901-hVThVHVb-Bha81e5S.js
+│  264.42 kB
+│  storybook-static/assets/de-1996-BL6awyxG-D4iDvljw.js
+│  267.02 kB
+│  storybook-static/assets/de-1901-CWoAOigE-XdH2niob.js
+│  270.12 kB
+│  storybook-static/assets/es-CtO8S8ow.js
+│  338.14 kB
+│  storybook-static/assets/no-B8ItS0F3-DeDdHxsd.js
+│  341.78 kB
+│  storybook-static/assets/nb-DI8u59ch-CIhq50cY.js
+│  341.80 kB
+│  storybook-static/assets/nn-ntZvarUK-BB7Mkg1a.js
+│  341.80 kB
+│  storybook-static/assets/es-CiDtaHHR.js
+│  498.16 kB
+│  storybook-static/assets/ProfileSettings-An0-djCO.js
+│  581.92 kB
+│  storybook-static/assets/editorTheme-C9F8KMXM.js
+│  605.73 kB
+│  storybook-static/assets/SocialCards.stories-C60VAtyt.js
+│  616.73 kB
+│  storybook-static/assets/hu-DVk7Y_ka-B6OV-py9.js
+│  765.49 kB
+│  storybook-static/assets/ProfileIcon-DKN0l8lj.js
+│  803.22 kB
+│  storybook-static/assets/facade-DlAsXvnz.js
+│  1,144.93 kB
+│  storybook-static/assets/es-Bx7c0sHl.js
+│  1,156.76 kB
+│  storybook-static/assets/iframe-CRGwe9ij.js
+│  1,160.56 kB
+│  storybook-static/assets/es-DSihmESr.js
+│  2,461.50 kB
+
+│
+▲  Vite [plugin builtin:vite-reporter]
+│  (!) Some chunks are larger than 500 kB after minification. Consider:
+│  - Using dynamic import() to code-split the application
+│  - Use build.rolldownOptions.output.codeSplitting to improve chunking:
+│  ]8;;https://rolldown.rs/reference/OutputOptions.codeSplittinghttps://rolldown.rs/reference/OutputOptions.codeSplitting]8;;
+│  - Adjust chunk size limit for this warning via
+│  build.chunkSizeWarningLimit.
+│
+▲  Vite [33m[INEFFECTIVE_DYNAMIC_IMPORT] [0mweb/offline/recovery.ts is
+│  dynamically imported by web/spinelSync.ts but also statically imported
+│  by web/offline/OfflineSession.ts, dynamic import will not move module
+│  into another chunk.
+
+│  Vite ✓ built in 1.58s
+│
+◇  Output directory:
+│  /Users/mxbaylee/projects/spinel-spn-071/storybook-static
+│
+└  Storybook build completed successfully
+
+WATCHDOG: exit=0, signal=null, elapsed=4457ms, peak=1580.3MiB
