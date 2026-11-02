@@ -1349,10 +1349,12 @@ test('native taps keep the selected XML identity and refuse unsafe, stale or amb
     assert.equal(result.cleanup.fixture, 'closed');
   }
 });
-test('confirmation readiness observes the final transition without a third click or replay', async (context) => {
+test('confirmation readiness requires the first action and observes the final transition without replay', async (context) => {
   let clock = Date.now();
   context.mock.method(Date, 'now', () => clock);
   for (const transition of [
+    'initial-delayed',
+    'initial-missing',
     'final-first-followup-unavailable',
     'first-disappeared',
     'first-unchanged',
@@ -1363,10 +1365,13 @@ test('confirmation readiness observes the final transition without a third click
     'final-hidden-persistent',
     'final-disabled-persistent',
   ]) {
+    const initialMissing = transition === 'initial-missing';
     const secondAction = transition.startsWith('final-');
-    const timeout = transition.endsWith('-unchanged') || transition.endsWith('-persistent');
+    const timeout =
+      initialMissing || transition.endsWith('-unchanged') || transition.endsWith('-persistent');
     const clicked: string[] = [];
     let lookups = 0,
+      initialReads = 0,
       afterFirstReads = 0,
       afterFinalReads = 0,
       homeRequests = 0,
@@ -1420,7 +1425,17 @@ test('confirmation readiness observes the final transition without a third click
             '<android.widget.TextView text="Install and create shortcut" resource-id="com.android.chrome:id/menu_item_text"/>';
         else {
           value = chromeConfirmationXML;
-          if (clicked.length === 3) {
+          if (clicked.length === 2) {
+            initialReads++;
+            if (transition.startsWith('initial-') && (initialMissing || initialReads < 3)) {
+              // The seventh phone receipt returned this status without an
+              // actionable confirmation. Its disabled/undisplayed toast is not
+              // proof of either completed installation or eventual readiness.
+              value =
+                '<android.widget.Toast text="Just a moment…" enabled="false" displayed="false"/>';
+              if (initialMissing && initialReads === 2) clock += 15_000;
+            }
+          } else if (clicked.length === 3) {
             afterFirstReads++;
             if (transition === 'final-first-followup-unavailable' && afterFirstReads < 3)
               value = pinPanel(
@@ -1501,10 +1516,13 @@ test('confirmation readiness observes the final transition without a third click
       journal: async () => {},
       screenshot: async (name) => name,
     });
-    const expectedClicks = 3 + Number(secondAction) + Number(!timeout);
+    const expectedClicks = initialMissing ? 2 : 3 + Number(secondAction) + Number(!timeout);
     assert.equal(lookups, expectedClicks);
     assert.equal(clicked.length, expectedClicks);
-    assert.equal(result.nativeActions.filter((action) => action.label === 'Add').length, 1);
+    assert.equal(
+      result.nativeActions.filter((action) => action.label === 'Add').length,
+      initialMissing ? 0 : 1,
+    );
     assert.equal(
       result.nativeActions.filter((action) => action.label === 'Add to home screen').length,
       secondAction ? 1 : 0,
@@ -1542,17 +1560,25 @@ test('confirmation readiness observes the final transition without a third click
     assert.equal(candidate?.environment.standalone, timeout ? undefined : false);
     assert.equal(homeRequests, timeout ? 0 : 1);
     assert.equal(authRequests, timeout ? 0 : 1);
-    assert.equal(afterFirstReads, transition === 'first-unchanged' ? 2 : secondAction ? 3 : 4);
+    assert.equal(initialReads, initialMissing ? 2 : transition === 'initial-delayed' ? 3 : 1);
+    assert.equal(
+      afterFirstReads,
+      initialMissing ? 0 : transition === 'first-unchanged' ? 2 : secondAction ? 3 : 4,
+    );
     assert.equal(afterFinalReads, !secondAction ? 0 : timeout ? 2 : 3);
     assert.equal(result.stage, timeout ? 'native-install' : 'installed-authentication');
     assert.equal(
       result.failure,
-      timeout
-        ? 'capability-native-confirmation-unchanged'
-        : 'capability-installed-authentication-failed',
+      initialMissing
+        ? 'capability-native-first-confirmation-unavailable'
+        : timeout
+          ? 'capability-native-confirmation-unchanged'
+          : 'capability-installed-authentication-failed',
     );
     assert.equal(clock - began, timeout ? 15_000 : 0);
     assert.equal(result.cleanup.session, 'deleted');
+    assert.equal(result.cleanup.network, 'restored-4g-lte-good');
+    assert.equal(result.cleanup.fixture, 'closed');
   }
 });
 test('Chrome item navigation and readiness preserve operational failures, buffer observations and never replay failed commands', async () => {
@@ -1643,6 +1669,7 @@ test('Chrome item navigation and readiness preserve operational failures, buffer
           : [
               '<android.widget.ImageButton content-desc="More options"/>',
               '<android.widget.TextView text="Install and create shortcut"/>',
+              chromeConfirmationXML,
               '<hierarchy/>',
             ][clicks];
       else if (path.endsWith('/elements'))
@@ -1668,6 +1695,7 @@ test('Chrome item navigation and readiness preserve operational failures, buffer
       screenshot: async (name) => name,
     });
     assert.equal(result.stage, 'production-downloads');
+    assert.equal(result.nativeActions.filter((action) => action.label === 'Add').length, 1);
     assert.equal(
       result.failure,
       mode === 'storage-error-after-loading'

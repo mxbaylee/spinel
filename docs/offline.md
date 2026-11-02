@@ -688,6 +688,18 @@ creation or permission/account/guest boundaries on the phones. Those remain the
 original SPN-090 acceptance below. The capability attempt did not exercise native
 Doc editing or committed-edit/reconnect acceptance.
 
+The subsequent [Chrome-only seventh attempt](implementation/SPN-090.md#seventh-physical-run-first-confirmation-readiness),
+[run 41392875495](https://github.com/mxbaylee/spinel/actions/runs/41392875495),
+used source `2718a80749299a6155404867d6f9c9f3972449c7`, tested merge
+`56a2a339c85907fc532cbc958ce4b49b8fa263ba`, and the same main above. It failed
+before the navigation experiment: no first installation confirmation was observed
+or clicked, yet the harness advanced to Home and found no Spinel icon in its
+bounded search. The native source retained an undisplayed, disabled “Just a
+moment…” toast; it does not prove eventual dialog appearance. Cleanup and
+reconciliation succeeded. Firefox was explicitly blocked and Safari not run;
+Safari's preceding pass remains historical evidence for its original revision.
+The first-confirmation readiness repair is recorded with the actual failed run.
+
 The decisive scenario is: download online, terminate, enable airplane mode, launch
 from the home screen, open/edit each document type, close and reopen offline,
 then reconnect twice: once with the live document unchanged (the edits sync

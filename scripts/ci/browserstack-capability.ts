@@ -1356,13 +1356,23 @@ export async function runCapability(
     let match: ReturnType<typeof matchingNativeConfirmation>;
     if (confirmation && confirmationSelectors.size) {
       ({ source, match } = await observeConfirmationTransition());
+    } else if (confirmation) {
+      // Opening the install menu can return before its first confirmation is
+      // present. Absence is pending here, never completed installation. Observe
+      // only; retain the same poll/lane limits and never repeat the menu action.
+      ({ source, match } = await poll(
+        async () => {
+          const observed = await controls();
+          return { source: observed, match: matchingNativeConfirmation(observed.parsed) };
+        },
+        (observed) => observed.match !== null,
+        'native-first-confirmation-unavailable',
+      ));
     } else {
       source = await controls();
       match = safariInstall
         ? matchingSafariHomeScreen(source.parsed)
-        : confirmation
-          ? matchingNativeConfirmation(source.parsed)
-          : matchingNativeControl(source.parsed, pattern);
+        : matchingNativeControl(source.parsed, pattern);
     }
     if (match) {
       const { control, label, selector } = match;
