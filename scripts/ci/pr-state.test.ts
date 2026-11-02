@@ -28,6 +28,7 @@ const rawPr = () => ({
 });
 const policyRun = (overrides: Record<string, unknown> = {}) => ({
   id: 10,
+  run_number: overrides.id ?? 10,
   workflow_id: 42,
   path: '.github/workflows/pr-policy.yml',
   event: 'pull_request',
@@ -73,7 +74,7 @@ function fixture(
     jobsByRun?: Record<number, unknown[]>;
     codeRun?: unknown;
     routerAppId?: number;
-    runsSince?: string;
+    rawRuns?: unknown[];
     failAt?: string;
   } = {},
 ) {
@@ -85,6 +86,28 @@ function fixture(
       calls.push(path);
       if (options.failAt === path) throw new Error('Unavailable capability.');
       if (path === 'pulls/129') return options.pr ?? rawPr();
+      if (path === 'actions/workflows/42/runs?per_page=100&page=1') {
+        const records = options.runs ?? [];
+        const minimum = Math.min(
+          10,
+          ...records.map((run) => Number((run as { run_number?: number })?.run_number ?? 10)),
+        );
+        const predecessor = policyRun({
+          id: 1,
+          run_number: minimum - 1,
+          created_at: '2026-11-01T11:59:59Z',
+          pull_requests: [{ number: 128 }],
+          display_title: 'PR policy v1 pr=128 action=opened',
+        });
+        const rows =
+          options.rawRuns ??
+          [...records, predecessor].sort(
+            (a, b) =>
+              Number((b as { run_number: number }).run_number) -
+              Number((a as { run_number: number }).run_number),
+          );
+        return { total_count: rows.length, workflow_runs: rows };
+      }
       if (path === 'actions/runs/100') return options.codeRun ?? ciRun();
       assert.equal(path, 'actions/workflows/pr-policy.yml');
       return { id: 42, path: '.github/workflows/pr-policy.yml' };
@@ -95,14 +118,6 @@ function fixture(
       if (path === 'issues/129/timeline') {
         assert.equal(key, '');
         return options.timeline ?? [];
-      }
-      if (path.startsWith('actions/workflows/42/runs?')) {
-        assert.equal(key, 'workflow_runs');
-        assert.equal(
-          path,
-          `actions/workflows/42/runs?event=pull_request&created=${encodeURIComponent(`>=${options.runsSince ?? createdAt}`)}`,
-        );
-        return options.runs ?? [];
       }
       const match = /^actions\/runs\/([0-9]+)\/jobs\?filter=all$/.exec(path);
       assert.ok(match);
@@ -591,7 +606,7 @@ test('unrelated PR runs are ignored but missing or incomplete API history cannot
     ).state,
     'clear',
   );
-  const runsPath = `actions/workflows/42/runs?event=pull_request&created=${encodeURIComponent(`>=${createdAt}`)}`;
+  const runsPath = 'actions/workflows/42/runs?per_page=100&page=1';
   for (const failAt of [
     'issues/129/timeline',
     'actions/workflows/pr-policy.yml',
@@ -641,30 +656,27 @@ test('history input with invalid creation bounds cannot claim a clear requiremen
   );
 });
 
-test('expired Actions retention cannot turn empty surviving history into a clear requirement', async () => {
-  const options = { runsSince: createdAt };
-  const { client, calls } = fixture(options);
+test('age alone never replaces complete surviving history with a moving validation deadline', async () => {
+  const { client, calls } = fixture({ runs: [policyRun()], jobs: [classifier()] });
   const state = await currentPullRequest(client, 129);
   const deadline = Date.parse(createdAt) + 24 * 60 * 60_000;
-  assert.equal(
-    (await readFullValidationRequirement(client, state, () => deadline - 1)).state,
-    'clear',
-  );
-  const callsBeforeExpiration = calls.length;
-  for (const currentTime of [deadline, deadline + 1, deadline + 7 * 24 * 60 * 60_000]) {
-    options.runsSince =
-      currentTime === deadline ? createdAt : new Date(currentTime - 24 * 60 * 60_000).toISOString();
+  for (const currentTime of [
+    deadline - 1,
+    deadline,
+    deadline + 1,
+    deadline + 7 * 24 * 60 * 60_000,
+  ]) {
     const result = await readFullValidationRequirement(client, state, () => currentTime);
-    assert.equal(result.state, 'full');
-    assert.match(result.reason, /retention/);
-    assert.equal(result.after, currentTime - 24 * 60 * 60_000);
-    assert.ok(
-      calls.includes(
-        `actions/workflows/42/runs?event=pull_request&created=${encodeURIComponent(`>=${options.runsSince}`)}`,
-      ),
-    );
+    assert.equal(result.state, 'clear');
+    assert.equal(result.after, null);
+    assert.equal(result.checkpoint?.full, false);
   }
-  assert.ok(calls.length > callsBeforeExpiration);
+  assert.ok(calls.includes('actions/workflows/42/runs?per_page=100&page=1'));
+  const missing = fixture({ rawRuns: [] });
+  const result = await readFullValidationRequirement(missing.client, state, () => deadline + 1);
+  assert.equal(result.state, 'full');
+  assert.equal(result.after, null);
+  assert.equal(result.checkpoint, undefined);
 });
 
 test('same-source targeted retries fail when a persistent full obligation appeared after their plan', async () => {
@@ -890,10 +902,9 @@ test('every later full request advances the barrier across timeline and policy r
   assert.equal(laterBase.after, Date.parse('2026-11-01T12:00:55Z'));
 });
 
-test('expired retention still scans later full requests and preserves an additional pending classifier', async () => {
+test('older complete history still scans later full requests and preserves a pending classifier', async () => {
   const recentRequest = '2026-11-02T12:00:20Z';
   const { client } = fixture({
-    runsSince: '2026-11-02T12:00:00.000Z',
     runs: [
       policyRun({ created_at: recentRequest }),
       policyRun({

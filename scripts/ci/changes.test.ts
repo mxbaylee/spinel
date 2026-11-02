@@ -47,6 +47,39 @@ function historyFixture(
       calls.push(path);
       if (options.failAt === path) throw new Error('Required API is unavailable.');
       if (path === 'pulls/231') return options.current ?? sourceEvent().pull_request;
+      if (path === 'actions/workflows/42/runs?per_page=100&page=1') {
+        const predecessor = {
+          id: 9,
+          run_number: 1,
+          run_attempt: 1,
+          workflow_id: 42,
+          path: '.github/workflows/pr-policy.yml',
+          repository: { full_name: repository },
+          created_at: new Date(Date.parse(createdAt) - 1000).toISOString(),
+          display_title: 'PR policy v1 pr=230 action=opened',
+        };
+        const rows = options.pendingEdit
+          ? [
+              {
+                id: 10,
+                run_number: 2,
+                run_attempt: 1,
+                workflow_id: 42,
+                path: '.github/workflows/pr-policy.yml',
+                event: 'pull_request',
+                repository: { full_name: repository },
+                pull_requests: [{ number: 231 }],
+                head_sha: 'b'.repeat(40),
+                created_at: createdAt,
+                display_title: 'PR policy v1 pr=231 action=edited',
+                status: 'queued',
+                conclusion: null,
+              },
+              predecessor,
+            ]
+          : [predecessor];
+        return { total_count: rows.length, workflow_runs: rows };
+      }
       assert.equal(path, 'actions/workflows/pr-policy.yml');
       return { id: 42, path: '.github/workflows/pr-policy.yml' };
     },
@@ -56,27 +89,6 @@ function historyFixture(
       if (path === 'issues/231/timeline') {
         assert.equal(key, '');
         return options.timeline ?? [];
-      }
-      if (path.startsWith('actions/workflows/42/runs?')) {
-        assert.equal(key, 'workflow_runs');
-        return options.pendingEdit
-          ? [
-              {
-                id: 10,
-                workflow_id: 42,
-                path: '.github/workflows/pr-policy.yml',
-                event: 'pull_request',
-                repository: { full_name: repository },
-                pull_requests: [{ number: 231 }],
-                head_sha: 'b'.repeat(40),
-                created_at: createdAt,
-                run_attempt: 1,
-                display_title: 'PR policy v1 pr=231 action=edited',
-                status: 'queued',
-                conclusion: null,
-              },
-            ]
-          : [];
       }
       assert.equal(path, 'actions/runs/10/jobs?filter=all');
       assert.equal(key, 'jobs');

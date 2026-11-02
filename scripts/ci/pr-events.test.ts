@@ -2,11 +2,16 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { codeCheckNames, formatCodeRunName } from './pr-identity.ts';
 import type { PullRequestIdentity } from './pr-identity.ts';
-import { validatePrPolicy } from './pr-policy.ts';
+import { capturePrHistory, validatePrPolicy } from './pr-policy.ts';
+import {
+  historyCheckpointMarker,
+  historyValidationStep,
+  parseHistoryCheckpointMarker,
+} from './pr-history.ts';
 import { routePrEdit } from './pr-revalidate.ts';
 import { PrGitHub } from './pr-github.ts';
 
-function scenario() {
+function scenario(historyV2 = false) {
   const repository = 'owner/repo';
   const createdAt = '2026-11-01T12:00:00Z';
   const base = 'a'.repeat(40),
@@ -89,13 +94,16 @@ function scenario() {
   const timeline: unknown[] = [];
   const policyRun = {
     id: 500,
+    run_number: 2,
     workflow_id: 43,
     path: '.github/workflows/pr-policy.yml',
     event: 'pull_request',
     head_sha: head,
     repository: { full_name: repository },
     pull_requests: [{ number: 129 }],
-    display_title: 'PR policy v1 pr=129 action=edited',
+    display_title: historyV2
+      ? `PR policy v2 pr=129 action=edited base=${base} head=${head} tested=${tested}`
+      : 'PR policy v1 pr=129 action=edited',
     run_attempt: 1,
     created_at: createdAt,
     status: 'completed',
@@ -120,29 +128,39 @@ function scenario() {
   let reads = 0;
   const client = {
     repository,
-    async get(path: string) {
+    async get(path: string): Promise<unknown> {
+      if (path === 'actions/runs/500') return structuredClone(policyRun);
       if (path === 'pulls/129') {
         reads++;
         return structuredClone(pr);
       }
+      if (path === 'actions/workflows/43/runs?per_page=100&page=1')
+        return {
+          total_count: 2,
+          workflow_runs: [
+            structuredClone(policyRun),
+            {
+              ...structuredClone(policyRun),
+              id: 499,
+              run_number: 1,
+              created_at: '2026-11-01T11:59:59Z',
+              pull_requests: [{ number: 128 }],
+              display_title: 'PR policy v1 pr=128 action=opened',
+            },
+          ],
+        };
       if (path === 'actions/workflows/ci.yml') return { id: 42, path: '.github/workflows/ci.yml' };
       if (path === 'actions/workflows/pr-policy.yml')
         return { id: 43, path: '.github/workflows/pr-policy.yml' };
       throw new Error(`Unexpected read ${path}`);
     },
-    async list(path: string, key: string) {
+    async list(path: string, key: string): Promise<unknown[]> {
       if (
         path === `actions/workflows/42/runs?event=pull_request&head_sha=${pr.head.sha}` &&
         key === 'workflow_runs'
       )
         return [structuredClone(run)];
       if (path === 'issues/129/timeline' && key === '') return structuredClone(timeline);
-      if (
-        path ===
-          `actions/workflows/43/runs?event=pull_request&created=${encodeURIComponent(`>=${createdAt}`)}` &&
-        key === 'workflow_runs'
-      )
-        return [structuredClone(policyRun)];
       if (path === 'actions/runs/500/jobs?filter=all' && key === 'jobs')
         return [structuredClone(policyClassifier)];
       if (path === 'actions/runs/100/jobs?filter=all' && key === 'jobs')
@@ -172,6 +190,7 @@ function scenario() {
     now: () => Date.parse(pr.created_at) + 60_000,
     timeoutMs: 0,
   };
+  const invocation = { id: 500, sequence: 2, attempt: 1, action: 'edited', base, head, tested };
   const alignCodeWithCurrent = () => {
     event.pull_request = structuredClone(pr);
     options.tested = pr.merge_commit_sha;
@@ -203,6 +222,7 @@ function scenario() {
     writer,
     mutations,
     options,
+    invocation,
     timeline,
     policyRun,
     policyClassifier,
@@ -211,6 +231,186 @@ function scenario() {
     reads: () => reads,
   };
 }
+
+test('history issuance precedes title/code admission without changing genuine code results', async () => {
+  for (const conclusion of [null, 'success', 'failure', 'cancelled']) {
+    const s = scenario(true);
+    s.pr.title = 'Invalid title';
+    s.options.validateTitle = () => {
+      throw new Error('Invalid title');
+    };
+    for (const item of [s.run, ...s.jobs, ...s.checks]) {
+      item.status = conclusion === null ? 'in_progress' : 'completed';
+      item.conclusion = conclusion;
+    }
+    const before = JSON.stringify([s.run, s.jobs, s.checks]);
+    const list = s.client.list.bind(s.client);
+    s.client.list = async (path, key) => {
+      assert.ok(
+        !path.includes('/42/runs') &&
+          !path.includes('/100/jobs') &&
+          !path.includes('/200/check-runs'),
+        'history issuance must not borrow a code result',
+      );
+      return list(path, key);
+    };
+    assert.deepEqual(
+      parseHistoryCheckpointMarker(
+        await capturePrHistory({ ...s.options, invocation: s.invocation }),
+      ),
+      {
+        sequence: 2,
+        full: false,
+        after: null,
+        atOrAfter: null,
+      },
+    );
+    await assert.rejects(
+      validatePrPolicy({ ...s.options, invocation: s.invocation }),
+      /Invalid title/,
+    );
+    assert.equal(JSON.stringify([s.run, s.jobs, s.checks]), before);
+    assert.deepEqual(s.mutations, []);
+  }
+});
+
+test('unproved classifications, gaps and stale invocation identities cannot issue history', async () => {
+  for (const change of [
+    'pending',
+    'failed',
+    'malformed',
+    'gap',
+    'attempt',
+    'source',
+    'tested',
+    'sequence',
+  ]) {
+    const s = scenario(true);
+    if (change === 'pending') {
+      s.policyClassifier.status = 'in_progress';
+      s.policyClassifier.conclusion = null;
+      s.policyClassifier.steps = [];
+    }
+    if (change === 'failed') {
+      s.policyClassifier.conclusion = 'failure';
+      s.policyClassifier.steps = [];
+    }
+    if (change === 'malformed') s.policyClassifier.steps.push({ ...s.policyClassifier.steps[0] });
+    if (change === 'gap') {
+      s.policyRun.run_number = s.invocation.sequence = 3;
+    }
+    if (change === 'attempt') s.invocation.attempt++;
+    if (change === 'sequence') s.invocation.sequence++;
+    if (change === 'source') s.pr.head.sha = 'd'.repeat(40);
+    if (change === 'tested') s.pr.merge_commit_sha = 'd'.repeat(40);
+    await assert.rejects(
+      capturePrHistory({ ...s.options, invocation: s.invocation }),
+      Error,
+      change,
+    );
+    assert.deepEqual(s.mutations, []);
+  }
+});
+
+test('retained checkpoints preserve missing prefix obligations across source changes without admitting code', async () => {
+  for (const full of [false, true]) {
+    const s = scenario(true);
+    s.policyRun.run_number = s.invocation.sequence = 3;
+    s.policyRun.created_at = '2026-11-01T12:00:30Z';
+    const oldHead = 'e'.repeat(40);
+    const prior = {
+      ...s.policyRun,
+      id: 498,
+      run_number: 2,
+      check_suite_id: 600,
+      head_sha: oldHead,
+      created_at: '2026-11-01T12:00:05Z',
+      display_title: `PR policy v2 pr=129 action=edited base=${'d'.repeat(40)} head=${oldHead} tested=${'f'.repeat(40)}`,
+    };
+    const checkpoint = {
+      sequence: 2,
+      full,
+      after: full ? Date.parse('2026-11-01T12:00:10Z') : null,
+      atOrAfter: full ? Date.parse('2026-11-01T12:00:20Z') : null,
+    };
+    const job = {
+      id: 601,
+      run_id: prior.id,
+      run_attempt: 1,
+      head_sha: oldHead,
+      name: 'Pull request',
+      status: 'completed',
+      conclusion: 'failure',
+      check_run_url: 'https://api.github.com/repos/owner/repo/check-runs/602',
+      steps: [
+        {
+          number: 3,
+          name: historyValidationStep,
+          status: 'completed',
+          conclusion: 'success',
+          completed_at: '2026-11-01T12:00:25Z',
+        },
+        {
+          number: 4,
+          name: historyCheckpointMarker(checkpoint),
+          status: 'completed',
+          conclusion: 'success',
+          completed_at: '2026-11-01T12:00:26Z',
+        },
+      ],
+    };
+    const get = s.client.get.bind(s.client);
+    const list = s.client.list.bind(s.client);
+    s.client.get = async (path) => {
+      if (path === 'actions/workflows/43/runs?per_page=100&page=1')
+        return { total_count: 2, workflow_runs: structuredClone([s.policyRun, prior]) };
+      if (path === 'check-runs/602')
+        return {
+          id: 602,
+          name: 'Pull request',
+          head_sha: oldHead,
+          check_suite: { id: 600 },
+          app: { id: 15368 },
+          status: 'completed',
+          conclusion: 'failure',
+        };
+      return get(path);
+    };
+    s.client.list = async (path, key) => {
+      if (path === 'actions/runs/498/jobs?filter=all') return [structuredClone(job)];
+      return list(path, key);
+    };
+    const captured = parseHistoryCheckpointMarker(
+      await capturePrHistory({ ...s.options, invocation: s.invocation }),
+    );
+    assert.deepEqual(captured, { ...checkpoint, sequence: 3 });
+    if (full) {
+      await assert.rejects(
+        validatePrPolicy({ ...s.options, invocation: s.invocation }),
+        /full.validation|full coverage/i,
+      );
+      s.fullCoverage();
+    }
+    const admitted = await validatePrPolicy({ ...s.options, invocation: s.invocation });
+    assert.equal(admitted.requiredFull, full);
+    assert.equal(s.run.status, 'in_progress');
+    assert.ok(s.checks.every((check) => check.conclusion === null));
+    // A later full edit remains a new obligation even with a valid earlier seal.
+    s.policyClassifier.steps[0].name = 'Edit classification: full';
+    s.policyRun.created_at = '2026-11-01T12:01:30Z';
+    s.options.now = () => Date.parse('2026-11-01T12:02:00Z');
+    await assert.rejects(
+      validatePrPolicy({ ...s.options, invocation: s.invocation }),
+      /fresh|created|full.validation/i,
+    );
+    job.steps[1].conclusion = 'failure';
+    await assert.rejects(
+      capturePrHistory({ ...s.options, invocation: s.invocation }),
+      /history was not sealed/i,
+    );
+    assert.deepEqual(s.mutations, []);
+  }
+});
 
 test('text policy preserves genuine passing, pending and failed code results without mutations', async () => {
   for (const conclusion of [null, 'success', 'failure', 'cancelled']) {

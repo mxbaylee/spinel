@@ -3,6 +3,12 @@ import { createHash } from 'node:crypto';
 import { suiteIds, verifyCoverage, type CoveragePlan } from './plan.ts';
 import { PrGitHub } from './pr-github.ts';
 import {
+  authenticatedPolicyHistory,
+  parsePolicyRunName,
+  type HistoryCheckpoint,
+  type PolicyInvocation,
+} from './pr-history.ts';
+import {
   exactTextEdit,
   parsePullRequestEvent,
   REVALIDATE_LABEL,
@@ -21,6 +27,7 @@ export interface FullValidationRequirement {
   after: number | null;
   atOrAfter: number | null;
   pending: boolean;
+  checkpoint?: HistoryCheckpoint;
 }
 
 const object = (value: unknown): value is Record<string, unknown> =>
@@ -106,8 +113,10 @@ export async function readFullValidationRequirement(
   client: PrReader,
   state: CurrentPullRequest,
   now: () => number = Date.now,
+  invocation?: PolicyInvocation,
 ): Promise<FullValidationRequirement> {
   let reading = 'PR timeline';
+  let sealable = true;
   let after: number | null = null;
   let atOrAfter: number | null = null;
   let removedAt: number | null = null;
@@ -131,14 +140,6 @@ export async function readFullValidationRequirement(
     const createdTime = Date.parse(state.createdAt);
     if (!Number.isFinite(currentTime) || currentTime < createdTime)
       return unknown('PR history has an invalid current time or creation bound.');
-    // Actions retention can remove runs after one day. An older PR can no
-    // longer prove complete edit history from surviving workflow runs alone.
-    const historyFloor = currentTime - 24 * 60 * 60_000;
-    if (historyFloor >= createdTime)
-      recordFull(
-        historyFloor,
-        'PR history exceeds the guaranteed 24-hour Actions retention window.',
-      );
     const timeline = await client.list(`issues/${state.identity.number}/timeline`, '');
     if (!Array.isArray(timeline)) return unknown('PR timeline is unavailable or incomplete.');
     const timelineIds = new Set<number>();
@@ -196,13 +197,21 @@ export async function readFullValidationRequirement(
       workflow.path !== '.github/workflows/pr-policy.yml'
     )
       return unknown('The PR-policy workflow identity is unavailable.');
-    const runsSince =
-      historyFloor > createdTime ? new Date(historyFloor).toISOString() : state.createdAt;
-    const runs = await client.list(
-      `actions/workflows/${workflow.id}/runs?event=pull_request&created=${encodeURIComponent(`>=${runsSince}`)}`,
-      'workflow_runs',
-    );
-    if (!Array.isArray(runs)) return unknown('PR-policy run history is unavailable or incomplete.');
+    const window = await authenticatedPolicyHistory(client, {
+      number: state.identity.number,
+      createdAt: state.createdAt,
+      workflowId: workflow.id,
+      invocation,
+    });
+    if (window.checkpoint?.full) {
+      recordFull(
+        window.checkpoint.after!,
+        'A verified history checkpoint retains full validation.',
+      );
+      if (window.checkpoint.atOrAfter !== null)
+        atOrAfter = Math.max(atOrAfter ?? 0, window.checkpoint.atOrAfter);
+    }
+    const runs = window.runs;
     const runIds = new Set<number>();
     for (const run of runs) {
       if (
@@ -217,16 +226,8 @@ export async function readFullValidationRequirement(
       )
         return unknown('PR-policy history has malformed, duplicate or foreign run bindings.');
       runIds.add(run.id);
-      const name =
-        typeof run.display_title === 'string'
-          ? /^PR policy v1 pr=([1-9][0-9]*) action=(opened|edited|synchronize|reopened|labeled|unlabeled)$/.exec(
-              run.display_title,
-            )
-          : null;
-      const declaredNumber =
-        name && name[0] === run.display_title && positiveInteger(Number(name[1]))
-          ? Number(name[1])
-          : null;
+      const name = parsePolicyRunName(run.display_title);
+      const declaredNumber = name?.number ?? null;
       const associations = Array.isArray(run.pull_requests) ? run.pull_requests : [];
       const associationsValid =
         Array.isArray(run.pull_requests) &&
@@ -247,18 +248,21 @@ export async function readFullValidationRequirement(
         return unknown('A relevant PR-policy run has an unavailable creation timestamp.');
       const requestedAt = Date.parse(run.created_at);
       if (!associated) {
+        sealable = false;
         recordFull(requestedAt, 'A PR-policy run has missing or contradictory PR associations.');
         continue;
       }
       if (!name || declaredNumber !== state.identity.number) {
+        sealable = false;
         recordFull(requestedAt, 'A PR-policy run has an unknown edit classification identity.');
         continue;
       }
       if (!sha(run.head_sha) || !positiveInteger(run.run_attempt)) {
+        sealable = false;
         recordFull(requestedAt, 'A PR-policy run has incomplete immutable metadata.');
         continue;
       }
-      if (name[2] !== 'edited') continue;
+      if (name.action !== 'edited') continue;
 
       reading = `policy classification for run ${run.id}`;
       const runAttempt = run.run_attempt;
@@ -292,6 +296,7 @@ export async function readFullValidationRequirement(
           pendingReason = `Waiting for PR edit classification in run ${run.id}.`;
           continue;
         }
+        sealable = false;
         recordFull(
           requestedAt,
           'A completed or cancelled PR edit lacks successful classification evidence.',
@@ -370,6 +375,7 @@ export async function readFullValidationRequirement(
         pendingReason = `Waiting for PR edit classification in run ${run.id}.`;
         continue;
       }
+      sealable = false;
       recordFull(
         requestedAt,
         'A failed, cancelled or incomplete PR edit classification requires full validation.',
@@ -384,16 +390,26 @@ export async function readFullValidationRequirement(
         removedAt,
         'A removed full-revalidation label is the only available request boundary.',
       );
-    if (fullReason !== null) return full(fullReason, after, pendingReason !== null, atOrAfter);
-    return pendingReason
-      ? { state: 'pending', reason: pendingReason, after: null, atOrAfter: null, pending: true }
-      : {
-          state: 'clear',
-          reason: 'Complete PR history contains no full-validation obligation.',
-          after: null,
-          atOrAfter: null,
-          pending: false,
-        };
+    const result: FullValidationRequirement =
+      fullReason !== null
+        ? full(fullReason, after, pendingReason !== null, atOrAfter)
+        : pendingReason
+          ? { state: 'pending', reason: pendingReason, after: null, atOrAfter: null, pending: true }
+          : {
+              state: 'clear',
+              reason: 'Complete PR history contains no full-validation obligation.',
+              after: null,
+              atOrAfter: null,
+              pending: false,
+            };
+    if (sealable && !result.pending && (result.state === 'clear' || result.after !== null))
+      result.checkpoint = {
+        sequence: window.upperSequence,
+        full: result.state === 'full',
+        after: result.after,
+        atOrAfter: result.atOrAfter,
+      };
+    return result;
   } catch {
     return unknown(`Could not read complete ${reading} history; full validation is required.`);
   }

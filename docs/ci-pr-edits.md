@@ -71,26 +71,35 @@ unavailable history also requires full coverage; a still-pending classification
 is kept explicit. These histories use GitHub's existing
 [issue event types](https://docs.github.com/en/rest/using-the-rest-api/issue-event-types).
 
-Actions history can expire under GitHub's retention settings. This implementation
-uses the shortest supported retention period, one day, as its conservative
-history boundary: PRs at least 24 hours old require full validation even when
-the remaining history looks empty or clear. This adds code-validation cost for
-older PRs. An older targeted pass may need an explicit `ci-revalidate` request
-before policy can admit it; a text edit itself still never requests code work.
-Do not manually delete policy runs for an open PR. If cleanup is necessary,
-first apply `ci-revalidate` so the durable PR timeline retains that requirement.
-See GitHub's [retention policy](https://docs.github.com/en/organizations/managing-organization-settings/configuring-the-retention-period-for-github-actions-artifacts-and-logs-in-your-organization).
+PR age alone does not invalidate existing code evidence. Policy reads the global,
+unfiltered sequence of registered policy runs, including timestamp ties, back to
+a strict pre-PR predecessor, an authenticated initial opening, or a verified
+history checkpoint. Every subsequent run number must be present. The read is
+bounded to ten pages of 100 runs and refreshes its first page to detect changes.
+A gap or unavailable prefix remains blocking; another PR's missing run is not
+assumed irrelevant.
 
-This is an unresolved acceptance limitation: a passing targeted run at PR age
-23 hours cannot be preserved after an otherwise exact text edit at age 25 hours.
-The original ticket's preservation requirement needs durable history evidence
-that distinguishes a real coverage gap from the PR's age. The disclosure here
-does not waive that requirement or make the draft ready for activation.
+The policy job records a versioned history checkpoint before title validation or
+code admission. Successful history steps can therefore remain useful when a later
+step fails or waits for code. Each certificate binds its genuine Actions run, job,
+check, workflow, PR, immutable source/base/tested provenance, covered sequence and
+both full-request bounds. Its issuer cannot use its own current/future attempt to
+prove its prefix. The first run can establish an opening only with the same PR's
+`opened` identity, genuine Actions suite and supported immutable workflow source.
+These contracts rely on the repository's required independent workflow review;
+they are not a signature service resisting an administrator replacing the verifier.
 
-Policy reads the requirement before admission and again before success. Policy-run
-history starts at the later of PR creation and the 24-hour horizon, so an old PR
-does not repeatedly scan weeks of other PRs' runs. Pagination still fails visibly
-if the complete bounded interval cannot be read.
+A checkpoint can cover expired earlier records and can be inherited after a source
+or base change, but never substitutes for current code evidence. Pending, failed
+without proof, malformed or conflicting classification cannot issue a certificate.
+Do not delete policy runs for open PRs: losing both the original prefix and all
+covering certificates cannot be repaired by a label or by merely running fresh code.
+Restore unavailable access or retry the original failed classification when its
+immutable event still exists. Real missing evidence remains an explicit blocker.
+
+Policy reads the requirement before admission and again before success. Hosted
+retention, event-delivery and protected-readiness trials remain required before
+activation; deterministic checkpoint tests alone do not establish that acceptance.
 
 Once policy
 observes a full requirement, it retains it for that invocation. It also retains

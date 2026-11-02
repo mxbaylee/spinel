@@ -76,8 +76,8 @@ export function verifyHistoryCheckpoint(
     workflowId: number;
     createdAt: string;
     upperSequence: number;
-    currentRunId: number;
-    currentAttempt: number;
+    currentRunId?: number;
+    currentAttempt?: number;
   },
 ): HistoryCheckpoint | null {
   if (!object(job) || !Array.isArray(job.steps)) return null;
@@ -93,8 +93,8 @@ export function verifyHistoryCheckpoint(
     !positive(expected.number) ||
     !positive(expected.workflowId) ||
     !positive(expected.upperSequence) ||
-    !positive(expected.currentRunId) ||
-    !positive(expected.currentAttempt)
+    ((expected.currentRunId !== undefined || expected.currentAttempt !== undefined) &&
+      (!positive(expected.currentRunId) || !positive(expected.currentAttempt)))
   )
     return bad();
   const created = time(expected.createdAt);
@@ -130,7 +130,7 @@ export function verifyHistoryCheckpoint(
     job.run_attempt > run.run_attempt ||
     job.head_sha !== run.head_sha ||
     job.name !== 'Pull request' ||
-    (run.id === expected.currentRunId && job.run_attempt >= expected.currentAttempt) ||
+    (run.id === expected.currentRunId && job.run_attempt >= (expected.currentAttempt ?? 0)) ||
     !positive(check.id) ||
     !executed(job) ||
     !executed(check) ||
@@ -340,4 +340,204 @@ export async function readPolicyHistoryWindow(
     if (batch.length < 100) break;
   }
   throw new Error('A complete policy-history prefix is unavailable within the bounded read.');
+}
+
+export interface PolicyInvocation {
+  id: number;
+  sequence: number;
+  attempt: number;
+  action: string;
+  base: string;
+  head: string;
+  tested: string;
+}
+export function parsePolicyRunName(name: unknown) {
+  if (typeof name !== 'string') return null;
+  const match =
+    /^PR policy v([12]) pr=([1-9][0-9]*) action=(opened|edited|synchronize|reopened|labeled|unlabeled)(?: base=([a-f0-9]{40}) head=([a-f0-9]{40}) tested=([a-f0-9]{40}))?$/.exec(
+      name,
+    );
+  if (
+    !match ||
+    match[0] !== name ||
+    !positive(Number(match[2])) ||
+    (match[1] === '2' ? ![match[4], match[5], match[6]].every(sha) : match[4] !== undefined)
+  )
+    return null;
+  return {
+    version: Number(match[1]),
+    number: Number(match[2]),
+    action: match[3],
+    base: match[4],
+    head: match[5],
+    tested: match[6],
+  };
+}
+
+const v1RunName =
+  'run-name: PR policy v1 pr=${{ github.event.pull_request.number }} action=${{ github.event.action }}';
+export const policyRunNameV2 =
+  'run-name: PR policy v2 pr=${{ github.event.pull_request.number }} action=${{ github.event.action }} base=${{ github.event.pull_request.base.sha }} head=${{ github.event.pull_request.head.sha }} tested=${{ github.sha }}';
+
+/** Opening/checkpoint provenance uses provider-owned identities and supported
+ * reviewed workflow contracts. It assumes repository workflow changes receive
+ * the independent source review required by process.md; it is not a signature
+ * service resisting an administrator who can replace the verifier itself. */
+export async function authenticatedPolicyHistory(
+  client: {
+    repository: string;
+    get(path: string): Promise<unknown>;
+    list(path: string, key: string): Promise<unknown[]>;
+  },
+  expected: {
+    number: number;
+    createdAt: string;
+    workflowId: number;
+    invocation?: PolicyInvocation;
+  },
+): Promise<PolicyHistoryWindow> {
+  const invocation = expected.invocation;
+  const jobs = new Map<number, Promise<unknown[]>>();
+  const runJobs = (id: number) => {
+    let pending = jobs.get(id);
+    if (!pending) {
+      pending = client.list(`actions/runs/${id}/jobs?filter=all`, 'jobs');
+      jobs.set(id, pending);
+    }
+    return pending;
+  };
+  const associated = (run: Record<string, unknown>) =>
+    Array.isArray(run.pull_requests) &&
+    run.pull_requests.length === 1 &&
+    object(run.pull_requests[0]) &&
+    run.pull_requests[0].number === expected.number;
+  if (invocation) {
+    const run = await client.get(`actions/runs/${invocation.id}`);
+    const identity = object(run) ? parsePolicyRunName(run.display_title) : null;
+    if (
+      !object(run) ||
+      !identity ||
+      identity.version !== 2 ||
+      identity.number !== expected.number ||
+      identity.action !== invocation.action ||
+      identity.base !== invocation.base ||
+      identity.head !== invocation.head ||
+      identity.tested !== invocation.tested ||
+      run.head_sha !== invocation.head ||
+      run.event !== 'pull_request' ||
+      !associated(run) ||
+      !positive(invocation.attempt) ||
+      !positive(run.run_attempt) ||
+      run.run_attempt !== invocation.attempt
+    )
+      throw new Error('The current policy event does not match its registered immutable identity.');
+  }
+  return readPolicyHistoryWindow(client, {
+    workflowId: expected.workflowId,
+    createdAt: expected.createdAt,
+    currentRun: invocation ? { id: invocation.id, sequence: invocation.sequence } : undefined,
+    async isOpening(run) {
+      const identity = parsePolicyRunName(run.display_title);
+      if (
+        run.run_number !== 1 ||
+        !identity ||
+        identity.number !== expected.number ||
+        identity.action !== 'opened' ||
+        run.event !== 'pull_request' ||
+        !associated(run) ||
+        !sha(run.head_sha) ||
+        !positive(run.check_suite_id) ||
+        (identity.version === 2 && identity.head !== run.head_sha)
+      )
+        return false;
+      const suite = await client.get(`check-suites/${run.check_suite_id}`);
+      if (
+        !object(suite) ||
+        suite.id !== run.check_suite_id ||
+        !object(suite.app) ||
+        suite.app.id !== 15368 ||
+        suite.head_sha !== run.head_sha
+      )
+        throw new Error('The initial policy opening lacks its genuine Actions suite.');
+      const source = await client.get(
+        `contents/.github/workflows/pr-policy.yml?ref=${run.head_sha}`,
+      );
+      if (
+        !object(source) ||
+        source.type !== 'file' ||
+        source.path !== '.github/workflows/pr-policy.yml' ||
+        source.encoding !== 'base64' ||
+        typeof source.content !== 'string' ||
+        source.content.length > 64 * 1024
+      )
+        throw new Error('The initial policy workflow contract is unavailable.');
+      const content = Buffer.from(source.content, 'base64').toString('utf8');
+      const names = content.split('\n').filter((line) => /^\s*run-name:/.test(line));
+      if (names.length !== 1 || names[0] !== (identity.version === 1 ? v1RunName : policyRunNameV2))
+        throw new Error(
+          'The initial policy event was not bound by the supported workflow contract.',
+        );
+      return true;
+    },
+    async checkpoint(run, upperSequence) {
+      const identity = parsePolicyRunName(run.display_title);
+      if (!identity || identity.number !== expected.number || identity.version !== 2) return null;
+      const records = await runJobs(Number(run.id));
+      const candidates: HistoryCheckpoint[] = [];
+      for (const job of records) {
+        if (!object(job) || job.name !== 'Pull request' || !Array.isArray(job.steps)) continue;
+        if (invocation && run.id === invocation.id && Number(job.run_attempt) >= invocation.attempt)
+          continue;
+        const marker = job.steps.some(
+          (step) =>
+            object(step) && typeof step.name === 'string' && step.name.startsWith('PR history '),
+        );
+        if (!marker) continue;
+        if (
+          identity.version !== 2 ||
+          job.steps.some(
+            (step) =>
+              object(step) &&
+              typeof step.name === 'string' &&
+              step.name.startsWith('PR history ') &&
+              !step.name.startsWith(markerPrefix),
+          )
+        )
+          throw new Error('Unsupported history certificate protocol.');
+        const checkId =
+          typeof job.check_run_url === 'string'
+            ? new RegExp(
+                `^https://api\\.github\\.com/repos/${client.repository.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/check-runs/([1-9][0-9]*)$`,
+              ).exec(job.check_run_url)?.[1]
+            : undefined;
+        if (!checkId || !positive(Number(checkId)))
+          throw new Error('History certificate check identity is unavailable.');
+        const check = await client.get(`check-runs/${checkId}`);
+        const checkpoint = verifyHistoryCheckpoint(run, job, check, {
+          repository: client.repository,
+          number: expected.number,
+          workflowId: expected.workflowId,
+          createdAt: expected.createdAt,
+          upperSequence,
+          currentRunId: invocation?.id,
+          currentAttempt: invocation?.attempt,
+        });
+        if (!checkpoint) throw new Error('History certificate has no supported proof.');
+        candidates.push(checkpoint);
+      }
+      if (!candidates.length) return null;
+      const accepted = candidates.find((candidate) =>
+        candidates.every(
+          (other) =>
+            candidate.sequence >= other.sequence &&
+            (!other.full ||
+              (candidate.full &&
+                Number(candidate.after) >= Number(other.after) &&
+                Number(candidate.atOrAfter) >= Number(other.atOrAfter))),
+        ),
+      );
+      if (!accepted) throw new Error('History certificates in one issuer conflict.');
+      return accepted;
+    },
+  });
 }

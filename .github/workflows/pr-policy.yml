@@ -1,5 +1,5 @@
 name: PR policy
-run-name: PR policy v1 pr=${{ github.event.pull_request.number }} action=${{ github.event.action }}
+run-name: PR policy v2 pr=${{ github.event.pull_request.number }} action=${{ github.event.action }} base=${{ github.event.pull_request.base.sha }} head=${{ github.event.pull_request.head.sha }} tested=${{ github.sha }}
 
 on:
   pull_request:
@@ -59,6 +59,15 @@ jobs:
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
+      # Seal complete event history before an invalid title or failed/pending
+      # code outcome can prevent the policy job from finishing successfully.
+      - name: Validate PR history v2
+        id: history
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/ci/pr-policy.ts history
+      - name: ${{ steps.history.outputs.marker }}
+        run: echo 'Complete immutable PR history recorded; code checks remain independent.'
       - name: Validate policy and genuine current-base code admission
         env:
           GH_TOKEN: ${{ github.token }}

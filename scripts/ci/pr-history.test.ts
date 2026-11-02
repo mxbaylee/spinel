@@ -1,11 +1,14 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { readFileSync } from 'node:fs';
 import {
+  authenticatedPolicyHistory,
   historyCheckpointMarker,
   historyValidationStep,
   readPolicyHistoryWindow,
   parseHistoryCheckpointMarker,
   verifyHistoryCheckpoint,
+  policyRunNameV2,
 } from './pr-history.ts';
 
 function fixture(full = false) {
@@ -84,6 +87,91 @@ function fixture(full = false) {
 
 const verify = (value: ReturnType<typeof fixture>) =>
   verifyHistoryCheckpoint(value.run, value.job, value.check, value.expected);
+
+test('only an authenticated same-PR initial opened event can establish the first history prefix', async () => {
+  for (const alteration of [
+    'none',
+    'synchronize',
+    'reopened',
+    'foreign-pr',
+    'foreign-app',
+    'forged-source',
+    'source-unavailable',
+  ]) {
+    const f = fixture();
+    f.run.run_number = 1;
+    f.run.display_title = f.run.display_title.replace('action=edited', 'action=opened');
+    if (alteration === 'synchronize' || alteration === 'reopened')
+      f.run.display_title = f.run.display_title.replace('action=opened', `action=${alteration}`);
+    if (alteration === 'foreign-pr') f.run.pull_requests[0].number = 128;
+    const client = {
+      repository: f.expected.repository,
+      async get(path: string) {
+        if (path === 'actions/workflows/42/runs?per_page=100&page=1')
+          return { total_count: 1, workflow_runs: [structuredClone(f.run)] };
+        if (path === 'check-suites/900')
+          return {
+            id: 900,
+            app: { id: alteration === 'foreign-app' ? 1 : 15368 },
+            head_sha: f.run.head_sha,
+          };
+        if (path === `contents/.github/workflows/pr-policy.yml?ref=${f.run.head_sha}`) {
+          if (alteration === 'source-unavailable') throw new Error('Not found');
+          return {
+            type: 'file',
+            path: '.github/workflows/pr-policy.yml',
+            encoding: 'base64',
+            content: Buffer.from(
+              alteration === 'forged-source'
+                ? 'run-name: PR policy v2 pr=129 action=opened'
+                : policyRunNameV2,
+            ).toString('base64'),
+          };
+        }
+        throw new Error(`Unexpected read ${path}`);
+      },
+      async list(path: string, key: string) {
+        assert.equal(path, 'actions/runs/100/jobs?filter=all');
+        assert.equal(key, 'jobs');
+        return [];
+      },
+    };
+    const read = () => authenticatedPolicyHistory(client, f.expected);
+    if (alteration === 'none') {
+      const result = await read();
+      assert.equal(result.boundary, 'opening');
+      assert.deepEqual(result.runs, [f.run]);
+      // Older v1 opening provenance is also legitimate, even without a job.
+      f.run.display_title = 'PR policy v1 pr=129 action=opened';
+      const get = client.get.bind(client);
+      client.get = async (path) => {
+        const value = await get(path);
+        if (path.startsWith('contents/') && 'content' in value)
+          value.content = Buffer.from(
+            'run-name: PR policy v1 pr=${{ github.event.pull_request.number }} action=${{ github.event.action }}',
+          ).toString('base64');
+        return value;
+      };
+      assert.equal((await read()).boundary, 'opening');
+    } else await assert.rejects(read, Error, alteration);
+  }
+});
+
+test('workflow binds immutable issuer identity and records history before policy/code admission', () => {
+  const workflow = readFileSync(
+    new URL('../../.github/workflows/pr-policy.yml', import.meta.url),
+    'utf8',
+  );
+  assert.ok(workflow.split('\n').includes(policyRunNameV2));
+  const history = workflow.indexOf('- name: Validate PR history v2');
+  const marker = workflow.indexOf('- name: ${{ steps.history.outputs.marker }}');
+  const admission = workflow.indexOf(
+    '- name: Validate policy and genuine current-base code admission',
+  );
+  assert.ok(history > 0 && marker > history && admission > marker);
+  assert.match(workflow.slice(history, marker), /run: node scripts\/ci\/pr-policy.ts history/);
+  assert.doesNotMatch(workflow.slice(history, admission), /continue-on-error:|if:/);
+});
 
 test('history proof remains independent of pending or failed code/title admission', () => {
   for (const full of [false, true]) {
