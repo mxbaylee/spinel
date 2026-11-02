@@ -68,7 +68,18 @@ change(
         expect(captured.collectionError).toBeUndefined();
         expect(captured.phaseError).toBeNull();
         expect(captured.captureError).toBeNull();
-        expect((captured.native as { cache: unknown }[]).filter(entry => entry.cache !== null).length).toBeGreaterThan(0);
+        const terminal = (captured.native as { unitId: string; phase: string; count: number;
+          cache: unknown; phaseStartedAt: number; phaseEndedAt: number }[]).filter(entry =>
+          entry.unitId === native.unitId && entry.phaseStartedAt >= input.keydownAt.at(-1)! &&
+          entry.phaseEndedAt <= (evidence.traceClockEnd as number));
+        expect(terminal.map(entry => entry.phase)).toEqual(['history', 'collaboration']);
+        expect(terminal[0]!.count).toBe(terminal[1]!.count);
+        for (const entry of terminal) {
+          expect(entry.count).toBeGreaterThan(0);
+          expect(entry.count).toBeLessThan(32);
+          expect(entry.cache).not.toBeNull();
+        }
+        evidence.terminalNativeCaptures = terminal;
         evidence.completed = true;`,
 );
 change(

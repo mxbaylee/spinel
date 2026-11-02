@@ -145,3 +145,74 @@ test('native short-cache capture preserves own undefined and survives cache clea
   assert.match(value.context.__spn135CaptureError, /Unsupported/);
   assert.equal(value.instance.getStateCache('unit').history.length, 0);
 });
+
+for (const limit of ['records', 'values', 'bytes', 'capacity'] as const) {
+  test(`capture boundary ${limit} preserves native publication and cache clearing`, () => {
+    const source = readFileSync(
+      resolve(root, 'node_modules/@univerjs/docs/lib/es/index.js'),
+      'utf8',
+    );
+    const original = manager(source, false);
+    const candidate = manager(instrumentNativePhases(source), false);
+    const states = decode(captures.captures[0]).history.slice(0, limit === 'capacity' ? 32 : 6);
+    // Unknown top-level metadata is immaterial to native composition/publication.
+    if (limit === 'values') states[0].captureProof = new Array(100001).fill(null);
+    if (limit === 'capacity')
+      states[0].captureProof = () => {
+        throw new Error('Must not traverse');
+      };
+    for (const value of [original, candidate]) {
+      // Clone the state graph while preserving the inert function used above.
+      const copies = states.map((state: any) => ({
+        ...core.Tools.deepClone(state),
+        captureProof: state.captureProof,
+      }));
+      value.instance._historyStateCache = new Map([['unit', copies]]);
+      value.instance._changeStateCache = new Map([['unit', []]]);
+    }
+    if (limit === 'records') candidate.context.__spn135Native = new Array(1000).fill(null);
+    if (limit === 'bytes') candidate.context.__spn135NativeBytes = 4 * 1024 * 1024;
+    for (const value of [original, candidate])
+      assert.doesNotThrow(() => value.instance.flushPendingChanges('unit'));
+    assert.deepEqual(structuredClone(candidate.published), structuredClone(original.published));
+    assert.deepEqual(structuredClone(candidate.instance.getStateCache('unit')), {
+      history: [],
+      collaboration: [],
+    });
+    if (limit === 'capacity') {
+      assert.equal(candidate.context.__spn135CaptureError, undefined);
+      assert.equal(candidate.context.__spn135Native.length, 1);
+      assert.deepEqual(
+        structuredClone(
+          candidate.context.__spn135Native.map((entry: any) => ({
+            count: entry.count,
+            cache: entry.cache,
+            cacheOmitted: entry.cacheOmitted,
+          })),
+        ),
+        [{ count: 32, cache: null, cacheOmitted: 'capacity-or-larger' }],
+      );
+    } else {
+      assert.match(candidate.context.__spn135CaptureError, /exceeds|exceed/);
+      assert.equal(candidate.context.__spn135Native?.length ?? 0, limit === 'records' ? 1000 : 0);
+    }
+  });
+}
+
+test('invocation origin restores the enclosing context through native publication failure', () => {
+  const source = readFileSync(resolve(root, 'node_modules/@univerjs/docs/lib/es/index.js'), 'utf8');
+  const value = manager(instrumentNativePhases(source), false, 'history');
+  const states = decode(captures.captures[0]).history.slice(0, 6);
+  value.instance._historyStateCache = new Map([['unit', states]]);
+  value.instance._changeStateCache = new Map([['unit', []]]);
+  value.instance._spn135Origin = 'enclosing';
+  assert.throws(
+    () =>
+      value.context.spn135WithOrigin(value.instance, 'history-timer', () =>
+        value.instance.flushPendingChanges('unit'),
+      ),
+    (error) => error === value.failure,
+  );
+  assert.equal(value.instance._spn135Origin, 'enclosing');
+  assert.equal(value.context.__spn135Native[0].origin, 'history-timer');
+});
