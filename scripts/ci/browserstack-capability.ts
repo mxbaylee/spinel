@@ -16,7 +16,12 @@ import {
   type BrowserstackFixture,
 } from './browserstack-fixture.ts';
 import { ledgerClient } from './browserstack-ledger.ts';
-import { clientFor, targetsFromInventory, type Target } from './browserstack.ts';
+import {
+  clientFor,
+  targetsFromInventory,
+  webdriverErrorCode,
+  type Target,
+} from './browserstack.ts';
 
 type Row = Record<string, unknown>;
 type Client = ReturnType<typeof clientFor>;
@@ -330,12 +335,18 @@ function nativePath(control: NativeControl): NativeControl[] {
     path.push(current);
   return path;
 }
-function nativeUnavailable(control: NativeControl, headings = false) {
-  return nativePath(control).some(
-    ({ attributes }) =>
-      ['enabled', 'visible', 'displayed'].some((key) => attributes[key] === 'false') ||
-      (headings && (attributes.heading === 'true' || attributes.role === 'heading')),
+function nativeOwnUnavailable({ attributes }: NativeControl, headings = false) {
+  return (
+    ['enabled', 'visible', 'displayed'].some((key) => attributes[key] === 'false') ||
+    (headings && (attributes.heading === 'true' || attributes.role === 'heading'))
   );
+}
+function nativeUnavailable(control: NativeControl, headings = false) {
+  // WDA's visible value belongs to the element's accessibility snapshot; it
+  // is not guaranteed to propagate through every structural XCUI ancestor.
+  // https://appium.github.io/appium-xcuitest-driver/latest/reference/element-attributes/#visible
+  const path = control.type.startsWith('XCUIElementType') ? [control] : nativePath(control);
+  return path.some((entry) => nativeOwnUnavailable(entry, headings));
 }
 function nativeRole(control: NativeControl) {
   return control.type === 'node' ? control.attributes.class : control.type;
@@ -380,6 +391,38 @@ export function matchingNativeControl(
     }
   }
   return null;
+}
+const safariShareContainerNames = ['ActivityListView', 'ShareSheet.RemoteContainerView'];
+export function matchingSafariHomeScreen(controls: NativeControl[]) {
+  const candidates = controls.filter(
+    (control) =>
+      control.type === 'XCUIElementTypeCell' &&
+      control.attributes.label === 'Add to Home Screen' &&
+      control.attributes.enabled === 'true' &&
+      control.attributes.visible === 'true' &&
+      !nativeOwnUnavailable(control, true),
+  );
+  requireCondition(candidates.length <= 1, 'native-control-ambiguous');
+  const match = matchingNativeControl(candidates, /^Add to Home Screen$/, ['label']);
+  if (match) {
+    // Qualify only containers actually present on this target's parsed path.
+    // Their visibility is not substituted for the selected cell's own state.
+    const containers = nativePath(match.control)
+      .slice(1)
+      .filter((entry) => safariShareContainerNames.includes(entry.attributes.name));
+    const qualifiers = [
+      "@enabled='true'",
+      "@visible='true'",
+      "not(@heading='true')",
+      "not(@role='heading')",
+      ...containers.map(
+        (entry) =>
+          `ancestor::*[name()=${xpathLiteral(entry.type)} and @name=${xpathLiteral(entry.attributes.name)}]`,
+      ),
+    ];
+    match.selector = `${match.selector.slice(0, -1)} and ${qualifiers.join(' and ')}]`;
+  }
+  return match;
 }
 const pinCatalogId = 'com.android.launcher3.widgetpicker:id/pin_widgets_catalog';
 const pinDragLayerId = 'com.google.android.apps.nexuslauncher:id/add_item_drag_layer';
@@ -524,6 +567,51 @@ function nativeControlDiagnostic(control: NativeControl) {
     state: nativeControlState(control),
   };
 }
+export function installCandidateDiagnostics(controls: NativeControl[]) {
+  const candidates = controls.filter((control) =>
+    ['label', 'text', 'content-desc', 'name'].some((key) =>
+      installMenuLabel.test(control.attributes[key] ?? ''),
+    ),
+  );
+  return {
+    status: candidates.length ? 'candidates-observed' : 'missing-label',
+    candidateCount: candidates.length,
+    omittedCandidates: Math.max(0, candidates.length - 12),
+    candidates: candidates.slice(0, 12).map((control) => ({
+      candidate: nativeControlDiagnostic(control),
+      ownUnavailable: nativeOwnUnavailable(control, true),
+      availabilityScope: control.type.startsWith('XCUIElementType')
+        ? 'own-element'
+        : 'parent-chain',
+      safariCellRejection:
+        control.attributes.label !== 'Add to Home Screen'
+          ? 'label'
+          : control.type !== 'XCUIElementTypeCell'
+            ? 'role'
+            : control.attributes.enabled !== 'true' ||
+                control.attributes.visible !== 'true' ||
+                nativeOwnUnavailable(control, true)
+              ? 'own-state'
+              : null,
+      shareContainerQualification: {
+        observedCount: nativePath(control)
+          .slice(1)
+          .filter((entry) => safariShareContainerNames.includes(entry.attributes.name)).length,
+        containers: nativePath(control)
+          .slice(1)
+          .filter((entry) => safariShareContainerNames.includes(entry.attributes.name))
+          .slice(0, 4)
+          .map((entry) => ({
+            type: entry.type,
+            name: entry.attributes.name,
+            sourceIndex: entry.sourceIndex,
+          })),
+      },
+      ancestors: nativePath(control).slice(1, 17).map(nativeControlDiagnostic),
+      omittedAncestors: Math.max(0, nativePath(control).length - 17),
+    })),
+  };
+}
 /** Diagnose response shape without copying screenshot content or arbitrary provider fields. */
 export function screenshotResponseShape(value: unknown): {
   type: string;
@@ -623,6 +711,7 @@ type CapabilityTiming = {
     remainingAtEndMilliseconds?: number;
     outcome: 'running' | 'completed' | 'failed';
     failure?: string;
+    webdriverErrorCode?: string;
     laneAborted?: boolean;
     commandAborted?: boolean;
     deadlineReached?: boolean;
@@ -831,10 +920,41 @@ const environmentScript = `return {
   standalone: matchMedia('(display-mode: standalone)').matches,
   navigatorStandalone: navigator.standalone === true,
   online: navigator.onLine,
-  anonymousReady: document.body.innerText.includes('Your workspace.') &&
+  anonymousReady: (document.body?.innerText || '').includes('Your workspace.') &&
     [...document.querySelectorAll('button')].some(button => button.textContent.trim() === 'Sign in with a passkey' && !button.disabled),
-  invalidCertificate: /certificate|not private|not secure/i.test(document.title + ' ' + document.body.innerText.slice(0, 3000))
+  invalidCertificate: /certificate|not private|not secure/i.test(document.title + ' ' + (document.body?.innerText || '').slice(0, 3000))
 };`;
+export const itemReadinessScript = `
+const observation = {
+  phase: 'document',
+  readyState: ['loading','interactive','complete'].includes(document.readyState) ? document.readyState : 'unknown',
+  bodyPresent: Boolean(document.body), originMatch: location.origin === arguments[0], documentReady: false
+};
+if (!observation.bodyPresent || !observation.originMatch || observation.readyState === 'loading') return observation;
+if (observation.readyState === 'unknown') return {...observation, failure:'document-state-unavailable'};
+observation.documentReady = true;
+let phase = 'dom';
+try {
+  const status = document.querySelector('[aria-label="Save status"]')?.textContent || '';
+  const canvasHeight = Math.max(0,...[...document.querySelectorAll('.univer-container canvas')].map(canvas=>canvas.getBoundingClientRect().height));
+  const phoneReadOnly = document.body.innerText.includes('View only on this phone. Edit on a larger screen.');
+  phase = 'storage';
+  const account = localStorage.getItem('spinel.offline.account');
+  return {...observation, phase:'editor', status, canvasHeight, phoneReadOnly, account};
+} catch (error) {
+  const errorName = ['SecurityError','TypeError','InvalidStateError','NotSupportedError','QuotaExceededError'].includes(error?.name) ? error.name : 'unknown';
+  return {...observation, phase, failure:phase === 'storage' ? 'storage-unavailable' : 'dom-observation-failed', errorName};
+}`;
+export function itemReadinessSatisfied(value: Row, offline: boolean) {
+  return (
+    value.failure === undefined &&
+    value.documentReady === true &&
+    Number(value.canvasHeight) > 100 &&
+    (value.phoneReadOnly === true ||
+      String(value.status).includes(offline ? 'Saved on this device' : 'All changes saved.') ||
+      (!offline && String(value.status).includes('Synced.')))
+  );
+}
 
 /** No application data is injected: prepare through the production download action. */
 export async function runCapability(
@@ -935,6 +1055,8 @@ export async function runCapability(
     } catch (error) {
       entry.outcome = 'failed';
       entry.failure = failure(error);
+      const code = webdriverErrorCode(error);
+      if (code) entry.webdriverErrorCode = code;
       entry.laneAborted = signal.aborted;
       entry.commandAborted = commandSignal?.aborted ?? false;
       entry.deadlineReached = Date.now() >= deadline;
@@ -1034,6 +1156,7 @@ export async function runCapability(
           ancestors: nativePath(control).slice(1, 17).map(nativeControlDiagnostic),
           omittedAncestors: Math.max(0, nativePath(control).length - 17),
         })),
+      installCandidates: installCandidateDiagnostics(parsed),
     });
     return { parsed, sourceSha256: hash(String(source)) };
   }
@@ -1064,6 +1187,7 @@ export async function runCapability(
     pattern: RegExp | RegExp[],
     required = true,
     confirmation = false,
+    safariInstall = false,
   ): Promise<boolean> {
     let source: Awaited<ReturnType<typeof controls>>;
     let match: ReturnType<typeof matchingNativeConfirmation>;
@@ -1071,9 +1195,11 @@ export async function runCapability(
       ({ source, match } = await observeConfirmationTransition());
     } else {
       source = await controls();
-      match = confirmation
-        ? matchingNativeConfirmation(source.parsed)
-        : matchingNativeControl(source.parsed, pattern);
+      match = safariInstall
+        ? matchingSafariHomeScreen(source.parsed)
+        : confirmation
+          ? matchingNativeConfirmation(source.parsed)
+          : matchingNativeControl(source.parsed, pattern);
     }
     if (match) {
       const { control, label, selector } = match;
@@ -1296,21 +1422,58 @@ export async function runCapability(
     await command(session(`element/${elementId(id)}/click`), 'POST', {});
   }
   async function itemReady(offline: boolean) {
-    return poll(
-      async () =>
-        row(
-          await execute(`return {status:document.querySelector('[aria-label="Save status"]')?.textContent || '',
-      canvasHeight:Math.max(0,...[...document.querySelectorAll('.univer-container canvas')].map(canvas=>canvas.getBoundingClientRect().height)),
-      phoneReadOnly:document.body.innerText.includes('View only on this phone. Edit on a larger screen.'),
-      account:localStorage.getItem('spinel.offline.account')};`),
-        ),
-      (value) =>
-        Number(value.canvasHeight) > 100 &&
-        (value.phoneReadOnly === true ||
-          String(value.status).includes(offline ? 'Saved on this device' : 'All changes saved.') ||
-          (!offline && String(value.status).includes('Synced.'))),
-      'production-item-not-ready',
-    );
+    let last: Row | null = null;
+    let reads = 0;
+    try {
+      return await poll(
+        async () => {
+          reads++;
+          last = row(await execute(itemReadinessScript, [fixture.origin]));
+          if (last.failure !== undefined) {
+            const failureCodes: Record<string, string> = {
+              'storage-unavailable': 'production-storage-unavailable',
+              'dom-observation-failed': 'production-dom-observation-failed',
+              'document-state-unavailable': 'production-document-state-unavailable',
+            };
+            throw new Error(
+              `capability-${failureCodes[String(last.failure)] ?? 'production-observation-invalid'}`,
+            );
+          }
+          return last;
+        },
+        (value) => itemReadinessSatisfied(value, offline),
+        'production-item-not-ready',
+      );
+    } catch (error) {
+      // Keep the operational failure primary. The existing final journal flush
+      // persists this buffered diagnostic after cleanup, without an extra write.
+      result.observations.push({
+        stage: `${result.stage}:item-readiness-failure`,
+        value: sanitize({
+          operation: 'item-readiness',
+          offline,
+          reads,
+          last:
+            last &&
+            Object.fromEntries(
+              [
+                'phase',
+                'readyState',
+                'bodyPresent',
+                'originMatch',
+                'documentReady',
+                'failure',
+                'errorName',
+                'canvasHeight',
+                'phoneReadOnly',
+              ]
+                .filter((key) => Object.hasOwn(last!, key))
+                .map((key) => [key, last![key]]),
+            ),
+        }),
+      });
+      throw error;
+    }
   }
   async function storedItems(items: Fixture['items']) {
     return row(
@@ -1558,10 +1721,10 @@ export async function runCapability(
       await tap(
         /^(?:More options|Menu|Open menu|Customize and control Google Chrome)$|(?:^|:)menu_button$/i,
       );
-    let installed = await tap(installMenuLabel, false);
+    let installed = await tap(installMenuLabel, false, false, target.browser === 'safari');
     for (let count = 0; !installed && count < 2; count++) {
       await scroll();
-      installed = await tap(installMenuLabel, false);
+      installed = await tap(installMenuLabel, false, false, target.browser === 'safari');
     }
     requireCondition(installed, 'native-install-control-unavailable');
     for (let count = 0; count < 2; count++) {

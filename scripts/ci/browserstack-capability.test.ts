@@ -7,10 +7,14 @@ import { readAdmissionPolicy, type ReservationIdentity } from './browserstack-ad
 import {
   capabilityOutcome,
   installMenuLabel,
+  installCandidateDiagnostics,
+  itemReadinessScript,
+  itemReadinessSatisfied,
   launchEnvironmentDiagnostic,
   launchedWindow,
   matchingNativeConfirmation,
   matchingNativeControl,
+  matchingSafariHomeScreen,
   nativeControls,
   normalizedPngScreenshot,
   observeBrowserTask,
@@ -387,6 +391,143 @@ test('Safari confirmation selects AddToHomeScreenAddButton rather than the sheet
     )?.control.type,
     'XCUIElementTypeCell',
   );
+});
+
+test('Safari Home Screen selection uses the exact visible cell and records candidates beyond the generic label cap', () => {
+  const cell = '<XCUIElementTypeCell label="Add to Home Screen" enabled="true" visible="true"/>';
+  // WDA does not require structural parent visibility to agree with the child.
+  // This fixture reproduces that supported shape, not an asserted run-5 ancestry.
+  const source = `<XCUIElementTypeApplication name="Safari" enabled="true" visible="true">
+    ${'<XCUIElementTypeStaticText label="Background"/>'.repeat(120)}
+    <XCUIElementTypeOther visible="false" enabled="true" private="do-not-log">
+      <XCUIElementTypeOther name="ActivityListView" enabled="true" visible="true">
+        <XCUIElementTypeOther name="ShareSheet.RemoteContainerView" enabled="true" visible="true">${cell}</XCUIElementTypeOther>
+      </XCUIElementTypeOther>
+    </XCUIElementTypeOther>
+  </XCUIElementTypeApplication>`;
+  const controls = nativeControls(source);
+  const selected = matchingSafariHomeScreen(controls);
+  assert.equal(selected?.control.type, 'XCUIElementTypeCell');
+  assert.equal(selected?.label, 'Add to Home Screen');
+  assert.ok((selected?.control.sourceIndex ?? 0) > 100);
+  assert.ok(selected?.selector.includes("@enabled='true'"));
+  assert.ok(selected?.selector.includes("@visible='true'"));
+  assert.ok(
+    selected?.selector.includes(
+      "ancestor::*[name()='XCUIElementTypeOther' and @name='ActivityListView']",
+    ),
+  );
+  assert.ok(!selected?.selector.includes('not(ancestor::'));
+  assert.ok(
+    matchingSafariHomeScreen(nativeControls(cell)),
+    'Unobserved container names cannot become a new requirement.',
+  );
+  const diagnostic = installCandidateDiagnostics(controls);
+  assert.equal(diagnostic.candidates[0].shareContainerQualification.observedCount, 2);
+  assert.deepEqual(
+    installCandidateDiagnostics(nativeControls(cell)).candidates[0].shareContainerQualification,
+    {
+      observedCount: 0,
+      containers: [],
+    },
+  );
+  assert.equal(diagnostic.candidateCount, 1);
+  assert.equal(diagnostic.candidates[0].safariCellRejection, null);
+  assert.equal(diagnostic.candidates[0].availabilityScope, 'own-element');
+  assert.ok(diagnostic.candidates[0].ancestors.some((entry) => entry.state.visible === 'false'));
+  assert.doesNotMatch(JSON.stringify(diagnostic), /do-not-log|private/);
+  for (const bad of [
+    cell.replace('visible="true"', 'visible="false"'),
+    cell.replace('enabled="true"', 'enabled="false"'),
+    cell.replace('label=', 'name='),
+    cell.replace('XCUIElementTypeCell', 'XCUIElementTypeStaticText'),
+  ])
+    assert.equal(matchingSafariHomeScreen(nativeControls(bad)), null);
+  assert.throws(
+    () => matchingSafariHomeScreen(nativeControls(cell + cell)),
+    /capability-native-control-ambiguous/,
+  );
+  assert.equal(installCandidateDiagnostics(nativeControls('<hierarchy/>')).status, 'missing-label');
+  assert.equal(
+    installCandidateDiagnostics(nativeControls(cell.replace('visible="true"', 'visible="false"')))
+      .candidates[0].safariCellRejection,
+    'own-state',
+  );
+  assert.equal(
+    installCandidateDiagnostics(
+      nativeControls(cell.replace('XCUIElementTypeCell', 'XCUIElementTypeStaticText')),
+    ).candidates[0].safariCellRejection,
+    'role',
+  );
+  assert.equal(
+    matchingNativeConfirmation(
+      nativeControls(
+        '<android.view.View visible="false"><android.widget.Button text="Add" clickable="true" enabled="true" displayed="true"/></android.view.View>',
+      ),
+    ),
+    null,
+  );
+});
+
+test('item readiness waits only for explicit document preconditions and classifies ready-document failures safely', () => {
+  const origin = 'https://bs-local.com:8176';
+  let storageReads = 0;
+  const document = {
+    readyState: 'complete',
+    body: { innerText: '' } as { innerText: string } | null,
+    querySelector: () => ({ textContent: 'All changes saved.' }),
+    querySelectorAll: () => [{ getBoundingClientRect: () => ({ height: 600 }) }],
+  };
+  const context = createContext({
+    document,
+    location: { origin },
+    localStorage: {
+      getItem: () => {
+        storageReads++;
+        return 'actor';
+      },
+    },
+  });
+  const read = () =>
+    JSON.parse(
+      JSON.stringify(
+        runInContext(`(function(){${itemReadinessScript}})(${JSON.stringify(origin)})`, context),
+      ),
+    ) as Record<string, unknown>;
+  document.body = null;
+  assert.equal(read().documentReady, false);
+  assert.equal(storageReads, 0);
+  document.body = { innerText: '' };
+  document.readyState = 'loading';
+  assert.equal(read().documentReady, false);
+  context.location.origin = 'null';
+  document.readyState = 'complete';
+  assert.equal(read().originMatch, false);
+  assert.equal(storageReads, 0);
+  context.location.origin = origin;
+  const ready = read();
+  assert.equal(itemReadinessSatisfied(ready, false), true);
+  assert.equal(itemReadinessSatisfied(ready, true), false);
+  assert.equal(itemReadinessSatisfied({ ...ready, documentReady: false }, false), false);
+  assert.equal(itemReadinessSatisfied({ ...ready, failure: 'storage-unavailable' }, false), false);
+  assert.equal(itemReadinessSatisfied({ ...ready, canvasHeight: 100 }, false), false);
+  assert.equal(itemReadinessSatisfied({ ...ready, status: 'Saved on this device' }, true), true);
+  assert.equal(ready.account, 'actor');
+  context.localStorage.getItem = () => {
+    throw Object.assign(new Error('private bootstrap/token details'), { name: 'SecurityError' });
+  };
+  const denied = read();
+  assert.equal(denied.failure, 'storage-unavailable');
+  assert.equal(denied.phase, 'storage');
+  assert.equal(denied.errorName, 'SecurityError');
+  assert.equal(itemReadinessSatisfied(denied, false), false);
+  document.querySelector = () => {
+    throw new Error('private DOM details');
+  };
+  const broken = read();
+  assert.equal(broken.failure, 'dom-observation-failed');
+  assert.equal(broken.errorName, 'unknown');
+  assert.doesNotMatch(JSON.stringify([denied, broken]), /private|token|stack|message/);
 });
 
 test('confirmation matching refuses headings, images, entry fields and name-only matches without actionable labels', () => {
@@ -1187,6 +1328,139 @@ test('confirmation readiness observes the final transition without a third click
     assert.equal(result.cleanup.session, 'deleted');
   }
 });
+test('item readiness preserves the operational failure, buffers only the last observation and does not replay failed commands', async () => {
+  for (const mode of ['http-error', 'storage-error-after-loading']) {
+    const testFixture = fixture(() => {});
+    const origin = testFixture.origin;
+    let clicks = 0,
+      homeRequests = 0,
+      reads = 0,
+      diagnosticWrites = 0;
+    const journals: CapabilityResult[] = [];
+    const client = clientFor('fixture-user', 'fixture-key', async (url, init) => {
+      const path = String(url).split('/wd/hub/')[1] ?? String(url).split('/automate/')[1];
+      const payload = init?.body ? JSON.parse(String(init.body)) : {};
+      let value: unknown = null;
+      if (path === 'session') value = { sessionId, capabilities: { browserName: 'chrome' } };
+      else if (path.endsWith('/execute/sync')) {
+        if (payload.script === itemReadinessScript) {
+          reads++;
+          assert.deepEqual(payload.args, [origin]);
+          if (mode === 'http-error')
+            return Response.json(
+              { value: { error: 'javascript error', message: 'private script details' } },
+              { status: 500 },
+            );
+          value =
+            reads === 1
+              ? {
+                  phase: 'document',
+                  readyState: 'loading',
+                  bodyPresent: false,
+                  originMatch: true,
+                  documentReady: false,
+                }
+              : {
+                  phase: 'storage',
+                  readyState: 'complete',
+                  bodyPresent: true,
+                  originMatch: true,
+                  documentReady: true,
+                  failure: 'storage-unavailable',
+                  errorName: 'SecurityError',
+                };
+        } else
+          value = {
+            origin,
+            secureContext: true,
+            serviceWorkerAvailable: true,
+            controller: `${origin}/service-worker.js`,
+            anonymousReady: true,
+            standalone: false,
+            navigatorStandalone: false,
+            userAgent: 'Mozilla/5.0 (Linux; Android 17) AppleWebKit/537.36 Chrome/152.0 Mobile',
+          };
+      } else if (path.endsWith('/execute/async'))
+        value = {
+          ok: true,
+          value:
+            payload.args[0] === testFixture.loginURL
+              ? { actor: testFixture.actor.id }
+              : { scope: `${origin}/`, active: `${origin}/service-worker.js`, state: 'activated' },
+        };
+      else if (path.endsWith('/window/handles')) value = ['original'];
+      else if (path.endsWith('/contexts')) value = ['NATIVE_APP', 'WEBVIEW_chrome'];
+      else if (path.endsWith('/appium/device/current_package')) value = 'com.android.chrome';
+      else if (path.endsWith('/source'))
+        value = homeRequests
+          ? '<android.widget.TextView text="Spinel" resource-id="launcher:id/spinel_icon"/>'
+          : [
+              '<android.widget.ImageButton content-desc="More options"/>',
+              '<android.widget.TextView text="Install and create shortcut"/>',
+              '<hierarchy/>',
+            ][clicks];
+      else if (path.endsWith('/elements'))
+        value = [{ 'element-6066-11e4-a52e-4f735466cecf': 'native-control' }];
+      else if (path.endsWith('/click')) clicks++;
+      else if (path.endsWith('/appium/device/press_keycode')) homeRequests++;
+      else if (path.endsWith('/screenshot')) value = tinyPng;
+      return Response.json({ value });
+    });
+    const result = await runCapability(client, target, testFixture, {
+      localIdentifier: 'local-id',
+      buildName: 'test',
+      journal: async (value) => {
+        if (
+          value.observations.at(-1)?.stage.endsWith(':item-readiness-failure') &&
+          !value.finishedAt
+        ) {
+          diagnosticWrites++;
+          throw new Error('diagnostic-journal-unavailable');
+        }
+        journals.push(structuredClone(value));
+      },
+      screenshot: async (name) => name,
+    });
+    assert.equal(result.stage, 'production-downloads');
+    assert.equal(
+      result.failure,
+      mode === 'http-error' ? 'http-500' : 'capability-production-storage-unavailable',
+    );
+    assert.equal(result.command, 'POST session/{sessionId}/execute/sync');
+    assert.equal(reads, mode === 'http-error' ? 1 : 2);
+    assert.equal(diagnosticWrites, 0);
+    const observations = journals
+      .at(-1)!
+      .observations.filter((entry) => entry.stage.endsWith(':item-readiness-failure'));
+    assert.equal(observations.length, 1);
+    assert.deepEqual(observations[0].value, {
+      operation: 'item-readiness',
+      offline: false,
+      reads,
+      last:
+        mode === 'http-error'
+          ? null
+          : {
+              phase: 'storage',
+              readyState: 'complete',
+              bodyPresent: true,
+              originMatch: true,
+              documentReady: true,
+              failure: 'storage-unavailable',
+              errorName: 'SecurityError',
+            },
+    });
+    assert.equal(
+      result.timing?.commands.find((entry) => entry.outcome === 'failed')?.webdriverErrorCode,
+      mode === 'http-error' ? 'javascript error' : undefined,
+    );
+    assert.equal(result.cleanup.session, 'deleted');
+    assert.equal(result.cleanup.network, 'restored-4g-lte-good');
+    assert.equal(result.cleanup.fixture, 'closed');
+    assert.doesNotMatch(JSON.stringify(result), /private script|private-bootstrap|fixture-key/);
+  }
+});
+
 test('known allocations retain original failures and bounded cleanup while validating failure screenshots', async () => {
   for (const screenshotResponse of ['http-error', 'invalid-object', 'invalid-png', 'wrapped-png']) {
     const deletionFails = screenshotResponse === 'http-error';
@@ -1203,7 +1477,16 @@ test('known allocations retain original failures and bounded cleanup while valid
       }
       if (path.endsWith('/url')) {
         assert.equal(journals.at(-1)?.sessionId, sessionId);
-        return new Response('fixture-key /_desktop-login/private-bootstrap', { status: 500 });
+        return Response.json(
+          {
+            value: {
+              error: 'javascript error',
+              message: 'fixture-key /_desktop-login/private-bootstrap',
+              stacktrace: 'private provider stack',
+            },
+          },
+          { status: 500 },
+        );
       }
       if (path.endsWith('update_network.json')) {
         assert.equal(init?.method, 'PUT');
@@ -1247,6 +1530,12 @@ test('known allocations retain original failures and bounded cleanup while valid
     assert.equal(result.stage, 'anonymous-https');
     assert.equal(result.command, 'POST session/{sessionId}/url');
     assert.equal(result.failure, 'http-500');
+    assert.equal(
+      result.timing?.commands.find((entry) => entry.command === 'POST session/{sessionId}/url')
+        ?.webdriverErrorCode,
+      'javascript error',
+    );
+    assert.equal(events.filter((event) => event === `POST session/${sessionId}/url`).length, 1);
     assert.deepEqual(
       result.observations.find(
         (observation) =>

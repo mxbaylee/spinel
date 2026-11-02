@@ -662,21 +662,24 @@ tunnel session alone establishes none of those contracts.
 
 ### Physical capability checkpoint — 2026-11-02
 
-The [fourth bounded capability attempt](implementation/SPN-090.md#fourth-physical-run-safari-offline-relaunch)
-is partial evidence, not a completed lane or full acceptance matrix. Its source
-is `4242a2d69f7a65c75e30ce02baafbbd8def706a0`, tested merge
-`9ed845df8a6f9be6da6607bacc154d06b57f5d61`,
-[run 41368525631 / attempt 1](https://github.com/mxbaylee/spinel/actions/runs/41368525631).
-The linked record retains the raw report, useful image, exact session/accounting
-identities and original failures.
+The [fifth bounded capability attempt](implementation/SPN-090.md#fifth-physical-run-chrome-home-screen-launch)
+ran source `58dfc5390750ff84948fc4c0ad99b31824e4f69a` at tested merge
+`490cacb2aff2031f1673011380fb684609563743` against main
+`0bdbbcb5ca23b84e172e41a11bd0cf555e911130`:
+[run 41382970257 / attempt 1](https://github.com/mxbaylee/spinel/actions/runs/41382970257).
+It remains partial evidence. The [fourth attempt](implementation/SPN-090.md#fourth-physical-run-safari-offline-relaunch),
+source `4242a2d69f7a65c75e30ce02baafbbd8def706a0`, tested merge
+`9ed845df8a6f9be6da6607bacc154d06b57f5d61`, retains the separate Safari offline
+observations below. Both records preserve original reports, images, failures and
+session/accounting identities; neither proves a completed capability matrix.
 
 | Physical environment and observed browser | Observed result | Still unverified |
 | --- | --- | --- |
-| Requested Google Pixel 11 Pro XL / Android 17.0; returned Android 17 and serial device name; runtime Chrome 152 | Secure worker-controlled page; actual Add button; launcher pin panel reached | The final launcher label is nonclickable; no installed launch, authenticated preparation or offline reopen |
-| Requested Google Pixel 11 Pro XL, Android Firefox | No new allocation in this attempt; the [first actual Firefox session](implementation/SPN-090.md#first-disposable-https-physical-run) observed the secure worker-controlled page but rejected native-context access with HTTP 400 | A supported native-control route, then the complete installed lifecycle |
-| iPhone 18 Pro Max, requested iOS 27; runtime Safari 27.0 | Installed Home Screen app authenticated and prepared both items; native termination and offline Home Screen relaunch retained both bundles and the bytes of all six images; the Sheet rendered offline | Final Doc offline UI navigation did not complete within the observed lane window; no complete capability pass |
+| Requested Google Pixel 11 Pro XL / Android 17.0; runtime Chrome 152 | Fifth attempt: actual launcher confirmation and Home Screen icon click; new secure worker-controlled Chrome window authenticated, explicitly recorded as `browser-shortcut` with `standalone=false` | First item-readiness command failed HTTP 500 on a blank page; no successful preparation or offline reopen in this session |
+| Requested Google Pixel 11 Pro XL, Android Firefox | No new allocation; the [first actual Firefox session](implementation/SPN-090.md#first-disposable-https-physical-run) observed the secure worker-controlled page but rejected native-context access with HTTP 400. Fifth admission's documented dedicated-device inventory GET returned a valid empty list | A supported native-control route, then the complete installed lifecycle; the empty inventory does not establish a general Firefox product limitation |
+| iPhone 18 Pro Max, requested iOS 27; fourth-attempt runtime Safari 27.0 | Fourth attempt: standalone Home Screen app authenticated/prepared both items; termination/offline relaunch retained both bundles and all six images; Sheet rendered offline. Fifth attempt: failed earlier in the local share-sheet matcher while Add to Home Screen was visibly present | Final Doc offline navigation and a complete capability pass remain unverified; the earlier partial result does not replace the fifth failure |
 
-Safari's preparation and relaunch used the same reservation and actual standalone
+Fourth-attempt Safari's preparation and relaunch used the same reservation and actual standalone
 storage context. The provider's `no-network` profile was corroborated with
 unreachable fresh app/API/socket probes, not just the browser's link-state flag. Network restoration,
 session deletion, fixture closure and Local shutdown all completed. The report

@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { checkSession, clientFor, targetsFromInventory } from './browserstack.ts';
+import {
+  checkSession,
+  clientFor,
+  targetsFromInventory,
+  webdriverErrorCode,
+} from './browserstack.ts';
 
 test('selects physical phones, excludes beta/tablet/emulator entries, and supports unlisted Firefox', () => {
   assert.deepEqual(
@@ -38,6 +43,148 @@ test('credentials stay in the HTTPS authorization header and remote error text i
   );
   assert.throws(() => clientFor('', 'fixture-key'), /missing-credentials/);
 });
+
+test('WebDriver failures preserve HTTP class and only allowlisted protocol codes without replay or remote details', async () => {
+  for (const [status, code, expected] of [
+    [500, 'javascript error', 'javascript error'],
+    [404, 'no such window', 'no such window'],
+    [500, 'private arbitrary provider value', undefined],
+    [200, 'javascript error', 'javascript error'],
+  ] as const) {
+    let calls = 0;
+    const client = clientFor('fixture-user', 'fixture-key', async () => {
+      calls++;
+      return Response.json(
+        {
+          value: {
+            error: code,
+            message: 'private message fixture-key',
+            stacktrace: 'private stack',
+            data: { url: 'https://private.example/?token=secret' },
+          },
+        },
+        { status },
+      );
+    });
+    await assert.rejects(
+      client.command('session/test-session/execute/sync', 'POST', { script: 'private script' }),
+      (error: unknown) => {
+        assert.ok(error instanceof Error);
+        assert.equal(error.message, status === 200 ? 'webdriver-error' : `http-${status}`);
+        assert.equal(webdriverErrorCode(error), expected);
+        assert.doesNotMatch(JSON.stringify(error), /private|fixture-key|secret|stack|url|message/);
+        return true;
+      },
+    );
+    assert.equal(calls, 1);
+  }
+});
+
+test('WebDriver error diagnostics bound body bytes and discard malformed or oversized payloads', async () => {
+  const payload = JSON.stringify({ value: { error: 'javascript error', message: 'private' } });
+  for (const [body, expected] of [
+    [payload.padEnd(8192, ' '), 'javascript error'],
+    [payload.padEnd(8193, ' '), undefined],
+    ['not JSON private details', undefined],
+    ['{"value":null}', undefined],
+    [null, undefined],
+  ] as const) {
+    const client = clientFor(
+      'fixture-user',
+      'fixture-key',
+      async () => new Response(body, { status: 500 }),
+    );
+    await assert.rejects(
+      client.command('session/test-session/execute/sync', 'POST'),
+      (error: unknown) => {
+        assert.ok(error instanceof Error);
+        assert.equal(error.message, 'http-500');
+        assert.equal(webdriverErrorCode(error), expected);
+        assert.doesNotMatch(JSON.stringify(error), /private/);
+        return true;
+      },
+    );
+  }
+});
+
+test(
+  'a stalled error body is cancelled without replacing the original HTTP failure',
+  { timeout: 2000 },
+  async () => {
+    let cancelled = false;
+    const client = clientFor(
+      'fixture-user',
+      'fixture-key',
+      async () =>
+        new Response(
+          new ReadableStream({
+            cancel() {
+              cancelled = true;
+            },
+          }),
+          { status: 500 },
+        ),
+    );
+    await assert.rejects(
+      client.command('session/test-session/execute/sync', 'POST'),
+      (error: unknown) => {
+        assert.ok(error instanceof Error);
+        assert.equal(error.message, 'http-500');
+        assert.equal(webdriverErrorCode(error), undefined);
+        return true;
+      },
+    );
+    assert.equal(cancelled, true);
+  },
+);
+
+test(
+  'diagnostic stream acquisition, failures and empty chunks cannot replace or indefinitely postpone the HTTP failure',
+  { timeout: 2000 },
+  async () => {
+    for (const mode of ['locked', 'errored', 'empty-chunks', 'cancel-failure']) {
+      let cancelled = false;
+      let pulls = 0;
+      const response = new Response(
+        new ReadableStream<Uint8Array>({
+          start(controller) {
+            if (mode === 'errored') controller.error(new Error('private stream failure'));
+            if (mode === 'cancel-failure') controller.enqueue(new Uint8Array(8193));
+          },
+          pull(controller) {
+            if (mode === 'empty-chunks') {
+              pulls++;
+              controller.enqueue(new Uint8Array());
+            }
+          },
+          cancel() {
+            cancelled = true;
+            if (mode === 'cancel-failure') throw new Error('private cancellation failure');
+          },
+        }),
+        { status: 500 },
+      );
+      const heldReader = mode === 'locked' ? response.body!.getReader() : undefined;
+      try {
+        const client = clientFor('fixture-user', 'fixture-key', async () => response);
+        await assert.rejects(
+          client.command('session/test-session/execute/sync', 'POST'),
+          (error: unknown) => {
+            assert.ok(error instanceof Error);
+            assert.equal(error.message, 'http-500');
+            assert.equal(webdriverErrorCode(error), undefined);
+            assert.doesNotMatch(JSON.stringify(error), /private/);
+            return true;
+          },
+        );
+        if (mode === 'empty-chunks') assert.ok(pulls > 0);
+        if (mode === 'empty-chunks' || mode === 'cancel-failure') assert.equal(cancelled, true);
+      } finally {
+        heldReader?.releaseLock();
+      }
+    }
+  },
+);
 
 test('a wrong runner challenge fails and still deletes the allocated session', async () => {
   const calls: string[] = [];
