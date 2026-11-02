@@ -39,7 +39,7 @@ change(
             captureError: value.__spn135CaptureError ?? null };
         }).catch(error => ({ collectionError: String(error) }));
         const bytes = JSON.stringify(capture);
-        await writeFile(info.outputPath('spn135-native-idle.json'), bytes);
+        await writeFile(info.outputPath('spn135-native-caches.json'), bytes);
         nativeDiagnostic = { ...capture, sha256: createHash('sha256').update(bytes).digest('hex') };
         evidence.nativeDiagnostic = nativeDiagnostic;
         return nativeDiagnostic;

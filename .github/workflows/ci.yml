@@ -42,7 +42,7 @@ jobs:
         run: node scripts/ci/spn135-phase-diagnostic.ts runtime-source
       - name: Verify capture on the existing native timer and frame race controls
         working-directory: runtime-source
-        run: npx vitest run src/ui/boundedDocHistory.test.ts -t 'rendering frames drain a quiet native phrase|native idle winning the race'
+        run: npx vitest run src/ui/boundedDocHistory.test.ts -t 'rendering frames drain a quiet native phrase|native idle winning the race' | tee spn135-native-controls.log
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         if: always()
         with:
@@ -53,6 +53,7 @@ jobs:
             diagnostic-*.txt
             runtime-source/spn135-*.json
             runtime-source/spn135-*.patch
+            runtime-source/spn135-*.log
             runtime-source/e2e/spn135-trace.ts
             runtime-source/test-results/**/spn108-*.json
             runtime-source/test-results/**/spn108-profile.cpuprofile

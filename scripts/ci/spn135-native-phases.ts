@@ -40,7 +40,8 @@ function spn135Capture(manager, unitId, phase) {
 \t\t\tcount: pending.length, cache, cacheOmitted: cache === null ? "capacity-or-larger" : null,
 \t\t\tcaptureStartedAt, captureEndedAt: performance.now() };
 \t\tconst bytes = new TextEncoder().encode(JSON.stringify(item)).byteLength;
-\t\tconst total = (globalThis.__spn135NativeBytes ?? 0) + bytes;
+\t\t// Reserve space for closing timestamps and array punctuation before retaining.
+\t\tconst total = (globalThis.__spn135NativeBytes ?? 0) + bytes + 512;
 \t\tif (total > 4 * 1024 * 1024) throw new Error("Native captures exceed 4 MiB");
 \t\tglobalThis.__spn135NativeBytes = total;
 \t\tcaptures.push(item);
