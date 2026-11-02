@@ -15,7 +15,10 @@ import {
   retainDocCallbackTrace,
 } from './doc-responsiveness-callback-trace.ts';
 import { fixture, focusEmptyDoc, exactText, saved, online } from './doc-responsiveness-fixture.ts';
-import { callbackProgress } from './doc-responsiveness-callback-progress.ts';
+import {
+  callbackProgress,
+  persistCallbackManifest,
+} from './doc-responsiveness-callback-progress.ts';
 import { observeInput, readDocResponsiveness } from './doc-responsiveness.ts';
 
 // Separate traced observations preserve all existing unprofiled SPN-108 gates.
@@ -178,7 +181,10 @@ for (const preset of ['desktop', 'mobile'] as const)
       evidence.phase = name;
       progress.phase(name);
     };
-    const persist = () => writeFile(output, JSON.stringify(evidence, null, 2) + '\n');
+    const persist = async () => {
+      failure = await persistCallbackManifest(output, evidence, failure);
+      if (evidence.manifestPersistenceError) progress.failed('manifest-persistence');
+    };
     try {
       phase('before-navigation');
       await persist();

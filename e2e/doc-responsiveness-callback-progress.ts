@@ -1,8 +1,32 @@
 import { renameSync, writeFileSync } from 'node:fs';
+import { rename, writeFile } from 'node:fs/promises';
 
 type Lifecycle = 'page-crash' | 'page-close' | 'context-close' | 'browser-disconnected';
 type Failure =
-  Lifecycle | 'operation' | 'input-observation' | 'trace' | 'detach' | 'fixture-cleanup';
+  | Lifecycle
+  | 'operation'
+  | 'input-observation'
+  | 'trace'
+  | 'detach'
+  | 'fixture-cleanup'
+  | 'manifest-persistence';
+
+/** Preserve a primary fixture error if writing its evidence also fails. */
+export async function persistCallbackManifest(
+  path: string,
+  evidence: Record<string, unknown>,
+  primary: unknown,
+) {
+  try {
+    await writeFile(`${path}.tmp`, JSON.stringify(evidence, null, 2) + '\n');
+    await rename(`${path}.tmp`, path);
+  } catch {
+    evidence.manifestPersistenceError = true;
+    evidence.passed = false;
+    return primary ?? new Error('Callback acceptance manifest could not be persisted.');
+  }
+  return primary;
+}
 
 /** Node-side observations survive a test-body timeout without querying the renderer.
  * This is diagnostic evidence only: it cannot replace native acceptance results. */

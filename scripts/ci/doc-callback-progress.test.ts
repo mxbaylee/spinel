@@ -6,7 +6,10 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
-import { callbackProgress } from '../../e2e/doc-responsiveness-callback-progress.ts';
+import {
+  callbackProgress,
+  persistCallbackManifest,
+} from '../../e2e/doc-responsiveness-callback-progress.ts';
 
 function fixture(t: { after: (fn: () => void) => void }) {
   const directory = mkdtempSync(join(tmpdir(), 'spn134-progress-'));
@@ -169,3 +172,28 @@ test('failed checkpoint replacement preserves the previous bytes and cannot bypa
   assert.equal(read().persistenceFailure.code, 'EISDIR');
   assert.equal(read().firstFailure.kind, 'trace');
 });
+
+for (const primary of [new Error('original operation failure'), undefined])
+  test(`manifest persistence failure ${primary ? 'preserves the original error' : 'rejects otherwise successful acceptance'} after cleanup`, async (t) => {
+    const { path } = fixture(t);
+    const previous = readFileSync(path, 'utf8');
+    mkdirSync(`${path}.tmp`);
+    const evidence: Record<string, unknown> = { passed: true };
+    let failure: unknown = primary;
+    let cleaned = false;
+    try {
+      failure = await persistCallbackManifest(path, evidence, failure);
+    } finally {
+      cleaned = true;
+      failure = await persistCallbackManifest(path, evidence, failure);
+    }
+    assert.equal(cleaned, true);
+    assert.equal(evidence.passed, false);
+    assert.equal(evidence.manifestPersistenceError, true);
+    assert.equal(readFileSync(path, 'utf8'), previous);
+    if (primary) assert.equal(failure, primary);
+    else assert.match(String(failure), /manifest could not be persisted/);
+    rmSync(`${path}.tmp`, { recursive: true });
+    assert.equal(await persistCallbackManifest(path, evidence, failure), failure);
+    assert.equal(JSON.parse(readFileSync(path, 'utf8')).manifestPersistenceError, true);
+  });
