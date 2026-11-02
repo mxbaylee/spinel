@@ -1029,6 +1029,209 @@ test('Chrome diagnostic scope binds prepare and run, allocates only Chrome and k
   );
 });
 
+test('Safari acceptance binds its own receipt, allocates only Safari and cannot complete the required matrix', async () => {
+  assert.equal(readCapabilityScope('safari-acceptance'), 'safari-acceptance');
+  const { manifest, durable } = admission();
+  const reservation = verifyCapabilityAdmission(manifest, durable, identity, now);
+  const prepared = preparedCapabilityJournal(identity, reservation, now, 'safari-acceptance');
+  assert.equal(prepared.allocationPlan, 'safari-acceptance');
+  assert.deepEqual(
+    readPreparedCapabilityJournal(prepared, identity, reservation, now, 'safari-acceptance'),
+    prepared,
+  );
+  for (const other of ['all', 'chrome-navigation-diagnostic'] as const) {
+    assert.throws(
+      () => readPreparedCapabilityJournal(prepared, identity, reservation, now, other),
+      /capability-journal-already-used/,
+    );
+    assert.throws(
+      () =>
+        readPreparedCapabilityJournal(
+          preparedCapabilityJournal(identity, reservation, now, other),
+          identity,
+          reservation,
+          now,
+          'safari-acceptance',
+        ),
+      /capability-journal-already-used/,
+    );
+  }
+  let executions = 0;
+  const lanes: CapabilityResult[] = [];
+  for (const browser of ['chrome', 'firefox', 'safari'] as const) {
+    const lane = await runCapabilityLane(
+      { ...target, browser },
+      async () => {
+        executions++;
+        assert.equal(browser, 'safari');
+        return {
+          ...lanes[0],
+          target: { ...target, browser },
+          status: 'passed',
+          sessionId,
+          allocation: 'known',
+        };
+      },
+      'safari-acceptance',
+    );
+    lanes.push(lane);
+  }
+  assert.equal(executions, 1);
+  assert.deepEqual(
+    lanes.map((lane) => lane.status),
+    ['not-run', 'blocked', 'passed'],
+  );
+  assert.equal(lanes[0].cleanup.fixture, 'not-created');
+  assert.equal(lanes[1].cleanup.fixture, 'not-created');
+  assert.equal(capabilityOutcome(lanes), 'incomplete');
+  assert.deepEqual(
+    lanes.flatMap((lane) => (lane.sessionId ? [lane.sessionId] : [])),
+    [sessionId],
+  );
+  lanes[2].status = 'failed';
+  assert.equal(capabilityOutcome(lanes), 'incomplete');
+});
+
+test('Safari acceptance preflight refuses another target or an incomplete fixture before provider calls', async () => {
+  let calls = 0;
+  const client = clientFor('fixture-user', 'fixture-key', async () => {
+    calls++;
+    assert.fail('Invalid acceptance preflight must not contact the provider.');
+  });
+  for (const browser of ['chrome', 'safari'] as const) {
+    let closed = 0;
+    const supplied = fixture(() => {
+      closed++;
+    });
+    supplied.items = [
+      ...supplied.items,
+      ...supplied.items.map((item) => ({
+        ...item,
+        id: `${item.id}-conflict`,
+        outcome: 'conflict' as const,
+      })),
+    ];
+    const result = await runCapability(client, { ...target, browser }, supplied, {
+      scope: 'safari-acceptance',
+      localIdentifier: 'local-id',
+      buildName: 'test',
+      journal: async () => {},
+      screenshot: async (name) => name,
+    });
+    assert.equal(
+      result.failure,
+      browser === 'chrome'
+        ? 'capability-scope-target-mismatch'
+        : 'capability-acceptance-fixture-unavailable',
+    );
+    assert.equal(result.allocation, 'not-started');
+    assert.equal(result.uncertainAllocation, false);
+    assert.equal(result.timing?.laneLimitMilliseconds, 780_000);
+    assert.equal(closed, 1);
+  }
+  assert.equal(calls, 0);
+});
+
+test('Safari prerequisite bounds clip actual provider commands and preserve cleanup after a late success', async (context) => {
+  const { DatabaseSync } = await import('../../server/database.ts');
+  const { AuthStore } = await import('../../src/server/auth/store.ts');
+  const { WorkspaceStore } = await import('../../src/server/workspace/store.ts');
+  const { migrateSpaceSchema } = await import('../../src/server/workspace/space-schema.ts');
+  let clock = Date.now();
+  context.mock.method(Date, 'now', () => clock);
+  for (const lateAt of ['session', 'navigation'] as const) {
+    const database = new DatabaseSync(':memory:');
+    const auth = new AuthStore(database);
+    // Match application startup's current schema before seeding a Space.
+    new WorkspaceStore(auth, { spacesEnabled: true });
+    migrateSpaceSchema(database);
+    const owner = auth.createUser('Bound fixture owner');
+    const actor = auth.createUser('Bound fixture collaborator');
+    const began = Date.now();
+    const calls: string[] = [];
+    let persistedKnown = false;
+    const supplied = {
+      ...fixture(() => {
+        calls.push('fixture-close');
+        database.close();
+      }),
+      db: database,
+      owner,
+      actor,
+      read: async () => assert.fail('The expired prerequisite must not reach a server snapshot.'),
+      originalState: () =>
+        assert.fail('The expired prerequisite must not reach a server snapshot.'),
+      recoveryMetadata: () => assert.fail('The expired prerequisite must not reach recovery.'),
+      remoteEdit: async () =>
+        assert.fail('The expired prerequisite must not author a remote edit.'),
+      setOffline: async () => assert.fail('The expired prerequisite must not change transport.'),
+      verifyDisconnected: async () =>
+        assert.fail('The expired prerequisite must not reach transport proof.'),
+    };
+    supplied.items = [
+      ...supplied.items,
+      ...supplied.items.map((item) => ({
+        ...item,
+        id: `${item.id}-conflict`,
+        outcome: 'conflict' as const,
+      })),
+    ];
+    const client = clientFor('fixture-user', 'fixture-key', async (url, init) => {
+      const path = String(url).split('/wd/hub/')[1] ?? String(url).split('/automate/')[1];
+      calls.push(`${init?.method} ${path}`);
+      if (path === 'session') {
+        if (lateAt === 'session') clock += 1_001;
+        return Response.json({ value: { sessionId, capabilities: { browserName: 'safari' } } });
+      }
+      if (path.endsWith('/url')) clock += 1_001;
+      return Response.json({ value: null });
+    });
+    const result = await runCapability(client, { ...target, browser: 'safari' }, supplied, {
+      scope: 'safari-acceptance',
+      localIdentifier: 'local-id',
+      buildName: 'test',
+      journal: async (value) => {
+        if (value.allocation === 'uncertain' && !value.sessionId) clock = began + 239_000;
+        if (value.allocation === 'known' && value.sessionId === sessionId) persistedKnown = true;
+      },
+      screenshot: async () => assert.fail('An expired phase cannot obtain a capture.'),
+    });
+    assert.equal(result.failure, 'capability-phase-deadline');
+    assert.equal(
+      result.command,
+      lateAt === 'session' ? 'POST session' : 'POST session/{sessionId}/url',
+    );
+    assert.equal(result.timing?.laneLimitMilliseconds, 780_000);
+    assert.equal(result.timing?.commands[0].timeoutMilliseconds, 1_000);
+    if (lateAt === 'navigation') {
+      assert.equal(result.timing?.commands[1].timeoutMilliseconds, 1_000);
+      assert.equal(result.timing?.commands[1].outcome, 'failed');
+      assert.equal(
+        result.timing?.commands[1].deadlineReached,
+        false,
+        'The prerequisite expired before the wider operational bound.',
+      );
+    }
+    assert.deepEqual(calls, [
+      'POST session',
+      ...(lateAt === 'navigation' ? [`POST session/${sessionId}/url`] : []),
+      `PUT sessions/${sessionId}/update_network.json`,
+      `DELETE session/${sessionId}`,
+      'fixture-close',
+    ]);
+    assert.equal(result.cleanup.session, 'deleted');
+    assert.equal(result.cleanup.network, 'restored-4g-lte-good');
+    assert.equal(result.cleanup.fixture, 'closed');
+    assert.equal(result.uncertainAllocation, false);
+    assert.equal(result.sessionId, sessionId);
+    assert.equal(
+      persistedKnown,
+      true,
+      'A returned session ID is journaled before deadline rejection and cleanup.',
+    );
+  }
+});
+
 test('Chrome item navigation assigns once in the verified window and observes exact URL continuity without selecting another tab', async (context) => {
   let clock = Date.now();
   context.mock.method(Date, 'now', () => clock);

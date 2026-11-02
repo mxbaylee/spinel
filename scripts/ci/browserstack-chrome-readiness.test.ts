@@ -33,7 +33,7 @@ function page(url: unknown, text: unknown = null, selectorThrows = false) {
     URL: url,
     get body() {
       forbiddenAccesses++;
-      assert.fail('document observation must not inspect arbitrary page text');
+      return assert.fail('document observation must not inspect arbitrary page text');
     },
     querySelector(selector: string) {
       selectors++;
@@ -237,7 +237,7 @@ test('provider errors are suppressed into safe diagnostics without retry or raw 
     privateText,
     {
       get message() {
-        assert.fail('raw provider errors must not be inspected');
+        return assert.fail('raw provider errors must not be inspected');
       },
     },
   ]) {

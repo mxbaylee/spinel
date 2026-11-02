@@ -515,13 +515,16 @@ test('quota CLI with missing credentials retains a failing report without openin
   }
 });
 
-test('monthly reports, full and Chrome-only devices, and read-only diagnostics preserve their boundaries', async () => {
+test('monthly reports, every phone scope, and read-only diagnostics preserve their boundaries', async () => {
   const source = await readFile(
     new URL('../../.github/workflows/browserstack.yml', import.meta.url),
     'utf8',
   );
   assert.match(source, /default: quota/);
-  assert.match(source, /options: \[quota, capability, chrome-diagnostic, diagnostics\]/);
+  assert.match(
+    source,
+    /options: \[quota, capability, chrome-diagnostic, safari-acceptance, diagnostics\]/,
+  );
   assert.match(
     source,
     /session_id:\n        description:.*\n        type: string\n        required: false/,
@@ -569,10 +572,12 @@ test('monthly reports, full and Chrome-only devices, and read-only diagnostics p
   assert.match(quota, /github.event_name == 'workflow_dispatch' && inputs.mode != 'diagnostics'/);
   assert.match(quota, /github.event.label.name == 'ci-real-devices'/);
   assert.match(quota, /github.event.label.name == 'ci-real-devices-chrome'/);
+  assert.match(quota, /github.event.label.name == 'ci-real-devices-safari'/);
   assert.match(quota, /github.event.pull_request.head.repo.full_name == github.repository/);
   assert.match(quota, /run: node scripts\/ci\/browserstack-accounting.ts "\$BS_OPERATION"/);
   assert.match(quota, /inputs.mode == 'capability'/);
   assert.match(quota, /inputs.mode == 'chrome-diagnostic'/);
+  assert.match(quota, /inputs.mode == 'safari-acceptance'/);
   assert.match(quota, /run: test "\$ACCOUNTING_OUTCOME" = success/);
   assert.match(quota, /if: always\(\)/);
   assert.doesNotMatch(quota, /setup-local|setup-env|browserstack.ts (smoke|credentials)|needs:/);
@@ -601,6 +606,31 @@ test('monthly reports, full and Chrome-only devices, and read-only diagnostics p
   assert.equal([...source.matchAll(/BS_CAPABILITY_SCOPE:/g)].length, 1);
   const scope = capability.match(/^      BS_CAPABILITY_SCOPE: \$\{\{ (.+) \}\}$/m)?.[1];
   assert.ok(scope, 'one job-level scope applies to both prepare and run');
+  assert.deepEqual(
+    [...capability.matchAll(/^\s+run: (.*browserstack-capability\.ts.*)$/gm)].map(
+      (match) => match[1],
+    ),
+    [
+      'node scripts/ci/browserstack-capability.ts prepare',
+      'node scripts/ci/browserstack-capability.ts run',
+    ],
+    'prepare and run inherit the same scope without a command-level override',
+  );
+  assert.equal([...source.matchAll(/VITE_SYNC_EVIDENCE:/g)].length, 1);
+  const build = capability.match(
+    /^      - name: Build the production application\n([\s\S]*?)(?=^      - )/m,
+  )?.[1];
+  assert.ok(build, 'the observation flag belongs only to the application build');
+  const evidence = build.match(/^          VITE_SYNC_EVIDENCE: \$\{\{ (.+) \}\}$/m)?.[1];
+  assert.ok(evidence, 'the evidence build flag is conditional on the admitted scope');
+  const stopLocal = capability.match(
+    /^      - name: Stop Local tunnel\n([\s\S]*?)(?=^      - )/m,
+  )?.[1];
+  assert.ok(stopLocal);
+  assert.match(stopLocal, /uses: browserstack\/github-actions\/setup-local@/);
+  assert.match(stopLocal, /local-testing: stop/);
+  const cleanup = stopLocal.match(/^        if: (.+)$/m)?.[1];
+  assert.ok(cleanup, 'every admitted scope retains Local cleanup after an attempted start');
   const reconciliation = source.split('  reconciliation:\n')[1];
   assert.match(reconciliation, /needs: \[accounting, capability\]/);
   assert.match(
@@ -610,7 +640,8 @@ test('monthly reports, full and Chrome-only devices, and read-only diagnostics p
   assert.match(reconciliation, /run: node scripts\/ci\/browserstack-accounting.ts reconcile/);
 
   // These predicates use lowercase string equality and boolean operators shared with JS.
-  // Read-only diagnostics cannot reach admission; both phone scopes share every gate.
+  // Read-only diagnostics cannot reach admission; all phone scopes share every gate.
+  // The shared reserve command's 900-second contract is owned by the accounting tests.
   const condition = (block: string) => {
     const match = block.match(/^    if: (?:>-\n)?([\s\S]*?)\n    runs-on:/m);
     assert.ok(match);
@@ -629,8 +660,9 @@ test('monthly reports, full and Chrome-only devices, and read-only diagnostics p
     action?: string;
     label?: string;
     fork?: boolean;
+    allocationAllowed?: boolean;
     jobs: string[];
-    scope?: 'all' | 'chrome-navigation-diagnostic';
+    scope?: 'all' | 'chrome-navigation-diagnostic' | 'safari-acceptance';
   }[] = [
     { event: 'schedule', jobs: ['accounting'] },
     { event: 'workflow_dispatch', mode: 'quota', jobs: ['accounting'] },
@@ -648,6 +680,12 @@ test('monthly reports, full and Chrome-only devices, and read-only diagnostics p
       scope: 'chrome-navigation-diagnostic',
     },
     {
+      event: 'workflow_dispatch',
+      mode: 'safari-acceptance',
+      jobs: ['accounting', 'capability', 'reconciliation'],
+      scope: 'safari-acceptance',
+    },
+    {
       event: 'pull_request',
       action: 'labeled',
       label: 'ci-real-devices',
@@ -660,6 +698,26 @@ test('monthly reports, full and Chrome-only devices, and read-only diagnostics p
       label: 'ci-real-devices-chrome',
       jobs: ['accounting', 'capability', 'reconciliation'],
       scope: 'chrome-navigation-diagnostic',
+    },
+    {
+      event: 'pull_request',
+      action: 'labeled',
+      label: 'ci-real-devices-safari',
+      jobs: ['accounting', 'capability', 'reconciliation'],
+      scope: 'safari-acceptance',
+    },
+    {
+      event: 'workflow_dispatch',
+      mode: 'safari-acceptance',
+      allocationAllowed: false,
+      jobs: ['accounting'],
+    },
+    {
+      event: 'pull_request',
+      action: 'labeled',
+      label: 'ci-real-devices-safari',
+      allocationAllowed: false,
+      jobs: ['accounting'],
     },
     {
       event: 'pull_request',
@@ -683,12 +741,23 @@ test('monthly reports, full and Chrome-only devices, and read-only diagnostics p
       fork: true,
       jobs: [],
     },
+    {
+      event: 'pull_request',
+      action: 'labeled',
+      label: 'ci-real-devices-safari',
+      fork: true,
+      jobs: [],
+    },
     { event: 'pull_request', action: 'labeled', label: 'ci-real-devices-chrome-extra', jobs: [] },
     { event: 'pull_request', action: 'labeled', label: 'ci-real-devices-chrom', jobs: [] },
+    { event: 'pull_request', action: 'labeled', label: 'ci-real-devices-safari-extra', jobs: [] },
+    { event: 'pull_request', action: 'labeled', label: 'ci-real-devices-safar', jobs: [] },
     { event: 'pull_request', action: 'unlabeled', label: 'ci-browserstack-logs', jobs: [] },
     { event: 'pull_request', action: 'unlabeled', label: 'ci-real-devices-chrome', jobs: [] },
+    { event: 'pull_request', action: 'unlabeled', label: 'ci-real-devices-safari', jobs: [] },
     { event: 'pull_request', action: 'synchronize', label: 'ci-real-devices', jobs: [] },
     { event: 'pull_request', action: 'synchronize', label: 'ci-real-devices-chrome', jobs: [] },
+    { event: 'pull_request', action: 'synchronize', label: 'ci-real-devices-safari', jobs: [] },
     { event: 'push', jobs: [] },
   ];
   for (const route of routes) {
@@ -705,6 +774,7 @@ test('monthly reports, full and Chrome-only devices, and read-only diagnostics p
         },
       },
       inputs: { mode: route.mode ?? '' },
+      env: { BS_CAPABILITY_SCOPE: '' },
       needs: { accounting: { result: 'skipped', outputs: { allocation_allowed: '' } } },
       always: () => true,
     };
@@ -714,15 +784,47 @@ test('monthly reports, full and Chrome-only devices, and read-only diagnostics p
     if (selected.includes('accounting')) {
       context.needs.accounting.result = 'success';
       context.needs.accounting.outputs.allocation_allowed =
-        evaluate(operation) === 'reserve' ? 'true' : 'false';
+        evaluate(operation) === 'reserve' && route.allocationAllowed !== false ? 'true' : 'false';
     }
     selected.push(...['capability', 'reconciliation'].filter((name) => evaluate(conditions[name])));
     assert.deepEqual(selected, route.jobs, JSON.stringify(route));
+    const selectedScope: string | null = selected.includes('capability') ? evaluate(scope) : null;
+    assert.equal(selectedScope, route.scope ?? null, `capability scope: ${JSON.stringify(route)}`);
+    context.env.BS_CAPABILITY_SCOPE = selectedScope ?? '';
     assert.equal(
-      selected.includes('capability') ? evaluate(scope) : null,
-      route.scope ?? null,
-      `capability scope: ${JSON.stringify(route)}`,
+      selectedScope ? evaluate(evidence) : null,
+      route.scope === 'safari-acceptance' ? '1' : route.scope ? '0' : null,
+      `build observation flag: ${JSON.stringify(route)}`,
     );
+  }
+  for (const outcome of ['success', 'failure', 'cancelled', 'skipped', '']) {
+    assert.equal(
+      runInNewContext(
+        cleanup,
+        { always: () => true, steps: { tunnel: { outcome } } },
+        { timeout: 1000 },
+      ),
+      ['success', 'failure', 'cancelled'].includes(outcome),
+      `shared tunnel cleanup: ${outcome}`,
+    );
+  }
+  for (const result of ['success', 'failure', 'cancelled', 'skipped']) {
+    for (const allowed of ['true', 'false', '']) {
+      const context = {
+        needs: { accounting: { result, outputs: { allocation_allowed: allowed } } },
+        always: () => true,
+      };
+      assert.equal(
+        runInNewContext(conditions.capability, context, { timeout: 1000 }),
+        result === 'success' && allowed === 'true',
+        `allocation requires successful admission: ${result}/${allowed}`,
+      );
+      assert.equal(
+        runInNewContext(conditions.reconciliation, context, { timeout: 1000 }),
+        allowed === 'true',
+        `every retained reservation reconciles: ${result}/${allowed}`,
+      );
+    }
   }
 });
 

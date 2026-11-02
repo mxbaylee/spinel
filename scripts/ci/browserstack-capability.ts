@@ -16,6 +16,7 @@ import {
   type BrowserstackFixture,
 } from './browserstack-fixture.ts';
 import { observeChromeReadinessFailure } from './browserstack-chrome-readiness.ts';
+import type { PhoneAcceptanceCases, PhoneAcceptanceDriver } from './browserstack-acceptance.ts';
 import { ledgerClient } from './browserstack-ledger.ts';
 import {
   clientFor,
@@ -30,7 +31,26 @@ type Fixture = Pick<
   BrowserstackFixture,
   'origin' | 'loginURL' | 'actor' | 'items' | 'imageRows' | 'certificate' | 'close'
 >;
+function requireAcceptanceFixture(fixture: Fixture): asserts fixture is BrowserstackFixture {
+  const value = fixture as Partial<BrowserstackFixture>;
+  requireCondition(
+    value.db &&
+      typeof value.db.prepare === 'function' &&
+      typeof value.owner?.id === 'string' &&
+      [
+        'read',
+        'originalState',
+        'recoveryMetadata',
+        'remoteEdit',
+        'setOffline',
+        'verifyDisconnected',
+      ].every((key) => typeof (value as Row)[key] === 'function'),
+    'acceptance-fixture-unavailable',
+  );
+}
 const laneMilliseconds = 180_000;
+const safariAcceptanceMilliseconds = 780_000;
+const safariPrerequisiteMilliseconds = 240_000;
 const cleanupMilliseconds = 15_000;
 const reportPath = 'artifacts/browserstack-capability.json';
 const sessionPattern = /^[a-f0-9]{40}$/;
@@ -752,13 +772,16 @@ export type CapabilityResult = {
   screenshots: string[];
   cleanup: { network: string; session: string; fixture: string };
 };
-export type CapabilityScope = 'all' | 'chrome-navigation-diagnostic';
+export type CapabilityScope = 'all' | 'chrome-navigation-diagnostic' | 'safari-acceptance';
 export function readCapabilityScope(value: unknown): CapabilityScope {
   requireCondition(
-    value === undefined || value === 'all' || value === 'chrome-navigation-diagnostic',
+    value === undefined ||
+      value === 'all' ||
+      value === 'chrome-navigation-diagnostic' ||
+      value === 'safari-acceptance',
     'invalid-scope',
   );
-  return value === 'chrome-navigation-diagnostic' ? value : 'all';
+  return value ?? 'all';
 }
 function notRunLane(target: Target, stage: string, reason: string): CapabilityResult {
   return {
@@ -787,6 +810,12 @@ export async function runCapabilityLane(
       target,
       'chrome-navigation-diagnostic-only',
       'Safari is not run by this Chrome navigation experiment. Its prior capability result is historical evidence, not acceptance for this source.',
+    );
+  if (scope === 'safari-acceptance' && target.browser === 'chrome')
+    return notRunLane(
+      target,
+      'safari-acceptance-only',
+      'Chrome is not run by this Safari authored acceptance scope. It remains a required physical lane; no historical result is promoted to current-source acceptance.',
     );
   if (target.browser !== 'firefox') return execute();
   return {
@@ -939,6 +968,7 @@ export function launchEnvironmentDiagnostic(environment: Row) {
   ]);
 }
 type CapabilityOptions = {
+  scope?: CapabilityScope;
   localIdentifier: string;
   buildName: string;
   journal: (result: CapabilityResult) => Promise<void>;
@@ -1189,9 +1219,12 @@ export async function runCapability(
   fixture: Fixture,
   options: CapabilityOptions,
 ): Promise<CapabilityResult> {
+  const scope = options.scope ?? 'all';
+  const acceptanceScope = scope === 'safari-acceptance';
+  const operationalMilliseconds = acceptanceScope ? safariAcceptanceMilliseconds : laneMilliseconds;
   const began = Date.now();
   const timing: CapabilityTiming = {
-    laneLimitMilliseconds: laneMilliseconds,
+    laneLimitMilliseconds: operationalMilliseconds,
     stages: [{ stage: 'preflight', startedElapsedMilliseconds: 0, durationMilliseconds: null }],
     commands: [],
     omittedCommands: 0,
@@ -1211,8 +1244,10 @@ export async function runCapability(
     timing,
     cleanup: { network: 'not-allocated', session: 'not-allocated', fixture: 'pending' },
   };
-  const deadline = began + laneMilliseconds;
-  const signal = AbortSignal.timeout(laneMilliseconds);
+  const deadline = began + operationalMilliseconds;
+  const signal = AbortSignal.timeout(operationalMilliseconds);
+  let phaseDeadline = acceptanceScope ? began + safariPrerequisiteMilliseconds : deadline;
+  const activeDeadline = () => Math.min(deadline, phaseDeadline);
   let previousWindowHandles: string[] = [];
   let currentItemURL: string | undefined;
   let chromeReadinessObserved = false;
@@ -1228,7 +1263,17 @@ export async function runCapability(
     result.observations.push({ stage, value: sanitize(value) });
     await options.journal(result);
   };
-  const stage = (name: string) => {
+  const stage = (name: string, maximumMilliseconds?: number) => {
+    if (acceptanceScope) {
+      remaining(1);
+      if (maximumMilliseconds !== undefined) {
+        requireCondition(
+          Number.isSafeInteger(maximumMilliseconds) && maximumMilliseconds > 0,
+          'phase-limit-invalid',
+        );
+        phaseDeadline = Math.min(deadline, Date.now() + maximumMilliseconds);
+      }
+    }
     const elapsed = Date.now() - began;
     const previous = timing.stages.at(-1)!;
     previous.durationMilliseconds = elapsed - previous.startedElapsedMilliseconds;
@@ -1246,12 +1291,15 @@ export async function runCapability(
   function remaining(maximum = 15_000) {
     const left = deadline - Date.now();
     requireCondition(left > 0 && !signal.aborted, 'lane-deadline');
-    return Math.max(1, Math.min(maximum, left));
+    const phaseLeft = phaseDeadline - Date.now();
+    requireCondition(phaseLeft > 0, 'phase-deadline');
+    return Math.max(1, Math.min(maximum, left, phaseLeft));
   }
   async function timedProviderCommand(
     name: string,
     timeout: number,
     action: (options: { timeout: number; signal: AbortSignal }) => Promise<unknown>,
+    allocationRequest = false,
   ) {
     result.command = name;
     const started = Date.now();
@@ -1278,6 +1326,9 @@ export async function runCapability(
         timeout: allotted,
         signal: AbortSignal.any([signal, commandSignal]),
       });
+      // A late allocation response can contain the only known session ID.
+      // Persist it first below, then reject the deadline and delete that session.
+      if (acceptanceScope && !allocationRequest) remaining(1);
       entry.outcome = 'completed';
       return value;
     } catch (error) {
@@ -1304,6 +1355,7 @@ export async function runCapability(
       `${method} ${path.replace(result.sessionId ?? '\0', '{sessionId}').replace(/\/element\/[^/]+(?=\/|$)/g, '/element/{elementId}')}`,
       timeout,
       (options) => client.command(path, method, body, options),
+      path === 'session' && method === 'POST',
     );
   const session = (suffix: string) => `session/${result.sessionId}/${suffix}`;
   const execute = (script: string, args: unknown[] = [], timeout = 15_000) =>
@@ -1325,7 +1377,7 @@ export async function runCapability(
         itemId: item.id,
         windowHandle: attached.windowHandle,
         previousURL,
-        deadline,
+        deadline: activeDeadline(),
       },
       diagnostic,
     );
@@ -1335,7 +1387,7 @@ export async function runCapability(
     target.browser === 'safari'
       ? observeBrowserTask(execute, body, args, {
           operation,
-          deadline,
+          deadline: activeDeadline(),
           diagnostic: (value) => record(`${result.stage}:async-observation`, value),
         })
       : command(session('execute/async'), 'POST', {
@@ -1352,9 +1404,13 @@ export async function runCapability(
     label: string,
     maximum = 15_000,
   ): Promise<T> {
-    const until = Math.min(deadline, Date.now() + maximum);
+    const until = Math.min(activeDeadline(), Date.now() + maximum);
     do {
       const value = await read();
+      if (acceptanceScope) {
+        remaining(1);
+        requireCondition(Date.now() < until, label);
+      }
       if (accepts(value)) return value;
       await new Promise((done) => setTimeout(done, 200));
     } while (Date.now() < until);
@@ -1672,13 +1728,19 @@ export async function runCapability(
     });
     return environment;
   }
-  async function clickWeb(selector: string, label: string) {
-    const id = await execute(
-      `const [selector,label] = arguments; const matches = [...document.querySelectorAll(selector)].filter(element =>
+  async function clickWeb(selector: string, label: string, waitForControl = false) {
+    const find = () =>
+      execute(
+        `const [selector,label] = arguments; const matches = [...document.querySelectorAll(selector)].filter(element =>
       (element.getAttribute('aria-label') || element.textContent.trim()) === label && element.getBoundingClientRect().height > 0 && !element.disabled);
       return matches.length === 1 ? matches[0] : null;`,
-      [selector, label],
-    );
+        [selector, label],
+      );
+    // Dashboard data can arrive after navigation. Observe readiness before one
+    // click; never retry a click or reinterpret a stale/ambiguous target as success.
+    const id = waitForControl
+      ? await poll(find, (value) => value !== null, 'production-control-unavailable')
+      : await find();
     requireCondition(id !== null, 'production-control-unavailable');
     await command(session(`element/${elementId(id)}/click`), 'POST', {});
   }
@@ -1880,18 +1942,78 @@ export async function runCapability(
       reachable ? 'socket-baseline-unreachable' : 'device-socket-still-online',
     );
   }
+  async function restartInstalled(foregroundApp: string, prefix = '') {
+    stage(`${prefix}same-session-termination`);
+    const observedForeground = await foreground();
+    requireCondition(observedForeground === foregroundApp, 'foreground-app-changed');
+    const app =
+      target.browser === 'safari'
+        ? { bundleId: observedForeground }
+        : { appId: observedForeground };
+    await command(session('appium/device/terminate_app'), 'POST', app);
+    const state = await command(session('appium/device/app_state'), 'POST', app);
+    await record(`${prefix}terminated-app`, { appId: observedForeground, state });
+    requireCondition(state === 1, 'termination-not-observed');
+    stage(`${prefix}offline-home-relaunch`);
+    await home();
+    await launchIcon();
+    const relaunchedForeground = await foreground();
+    requireCondition(relaunchedForeground === foregroundApp, 'relaunch-foreground-changed');
+    const relaunched = await attach(relaunchedForeground);
+    await recordLaunch(`${prefix}offline-relaunched-context`, relaunched);
+    await secureEnvironment();
+    await transportProbe(false);
+    const installationAssets = await executeAsync(
+      installationAssetsScript,
+      [],
+      'offline-installation-assets',
+    );
+    verifyInstallationAssets(installationAssets);
+    await record(`${prefix}offline-installation-assets`, installationAssets);
+    await record(`${prefix}relaunch-socket`, {
+      status: 'not-retested',
+      reason:
+        'The authenticated unused ticket was tested immediately after no-network; no fresh ticket can be issued offline.',
+    });
+    return relaunched;
+  }
   try {
+    readCapabilityScope(scope);
+    requireCondition(!acceptanceScope || target.browser === 'safari', 'scope-target-mismatch');
     requireCondition(
       fixture.origin === browserstackOrigin && Boolean(options.localIdentifier),
       'fixture-preflight',
     );
-    const prepared = fixture.items.filter((item) => item.outcome === 'normal');
+    const prepared = fixture.items.filter((item) => acceptanceScope || item.outcome === 'normal');
     requireCondition(
-      prepared.length === 2 &&
+      prepared.length === (acceptanceScope ? 4 : 2) &&
         prepared.some((item) => item.kind === 'doc') &&
         prepared.some((item) => item.kind === 'sheet'),
       'fixture-items-missing',
     );
+    let acceptance: typeof import('./browserstack-acceptance.ts') | undefined;
+    let acceptanceFixture: BrowserstackFixture | undefined;
+    let acceptanceCases: PhoneAcceptanceCases | undefined;
+    if (acceptanceScope) {
+      requireAcceptanceFixture(fixture);
+      acceptanceFixture = fixture;
+      acceptance = await import('./browserstack-acceptance.ts');
+      requireCondition(
+        acceptance.phoneAcceptanceLimits.operational === operationalMilliseconds &&
+          acceptance.phoneAcceptanceLimits.prerequisites === safariPrerequisiteMilliseconds,
+        'acceptance-bounds-mismatch',
+      );
+      acceptanceCases = acceptance.seedPhoneAcceptance(fixture);
+      remaining(1);
+      await record('acceptance-contract', {
+        scope,
+        bounds: acceptance.phoneAcceptanceLimits,
+        boundsMeasured: false,
+        build: 'production with read-only VITE_SYNC_EVIDENCE observations',
+        ordinaryBrowserTabAcceptance: 'not-run-by-this-scope',
+        otherPhysicalLanes: 'not-run-by-this-scope',
+      });
+    }
     await record('certificate', fixture.certificate);
     stage('session-creation');
     result.allocation = 'uncertain';
@@ -1914,7 +2036,7 @@ export async function runCapability(
               localIdentifier: options.localIdentifier,
               projectName: 'Spinel',
               buildName: options.buildName,
-              sessionName: `SPN-090 native capability: ${target.browser}`,
+              sessionName: `SPN-090 ${acceptanceScope ? 'authored acceptance' : 'native capability'}: ${target.browser}`,
               idleTimeout: 60,
               networkLogs: true,
               networkLogsOptions: { captureContent: false },
@@ -1931,6 +2053,7 @@ export async function runCapability(
     result.sessionId = created.sessionId;
     result.allocation = 'known';
     await options.journal(result); // Persist known IDs before inspecting any returned capability.
+    if (acceptanceScope) remaining(1);
     const capabilities = row(created.capabilities);
     await record(
       'returned-capabilities',
@@ -2023,6 +2146,7 @@ export async function runCapability(
     await launchIcon();
     const foregroundApp = await foreground();
     const launched = await attach(foregroundApp);
+    let attached = launched;
     await recordLaunch('launched-context', launched);
     await secureEnvironment(true);
     stage('installed-authentication');
@@ -2060,6 +2184,66 @@ export async function runCapability(
       );
       await clickWeb('[role="dialog"] button', 'Done');
     }
+    const acceptanceDriver: PhoneAcceptanceDriver = {
+      execute,
+      executeAsync,
+      command: (suffix, method, body, timeout) => command(session(suffix), method, body, timeout),
+      navigate: async (path) => {
+        requireCondition(
+          /^\/(?:\?item=[\w-]{1,200}|spaces\/[\w-]{1,200}\?item=[\w-]{1,200})?$/.test(path),
+          'acceptance-navigation-invalid',
+        );
+        await command(session('url'), 'POST', { url: fixture.origin + path });
+        currentItemURL = path.includes('?item=') ? fixture.origin + path : undefined;
+      },
+      ready: itemReady,
+      click: (selector, label) => clickWeb(selector, label, true),
+      restart: async () => {
+        attached = await restartInstalled(foregroundApp, 'pending-');
+      },
+      network: async (offline) => {
+        requireCondition(acceptance && acceptanceFixture, 'acceptance-fixture-unavailable');
+        // Before cutting transport again, obtain an unused authenticated ticket
+        // while it is still reachable. No expired/offline ticket is fabricated.
+        const ticket = offline ? await socketTicket(prepared[0]) : undefined;
+        if (!offline)
+          await acceptance.boundedPhoneFixtureOperation(acceptanceDriver, () =>
+            acceptanceFixture!.setOffline(false),
+          );
+        const networkProfile = offline ? 'no-network' : '4g-lte-good';
+        await timedProviderCommand(
+          'PUT automate/sessions/{sessionId}/update_network.json',
+          15_000,
+          (bounds) =>
+            client.api(
+              `sessions/${result.sessionId}/update_network.json`,
+              'PUT',
+              { networkProfile },
+              bounds,
+            ),
+        );
+        await record(`${result.stage}:network-control`, {
+          networkProfile,
+          androidAirplaneMode: false,
+        });
+        if (ticket) await socketProbe(ticket, false);
+        await transportProbe(!offline);
+        if (offline) {
+          await acceptance.boundedPhoneFixtureOperation(acceptanceDriver, () =>
+            acceptanceFixture!.setOffline(true),
+          );
+          await acceptance.boundedPhoneFixtureOperation(acceptanceDriver, () =>
+            acceptanceFixture!.verifyDisconnected(),
+          );
+        } else await socketProbe(await socketTicket(prepared[0]), true);
+      },
+      stage,
+      remaining,
+      record,
+      screenshot,
+    };
+    if (acceptance && acceptanceFixture && acceptanceCases)
+      await acceptance.preparePhoneAcceptance(acceptanceDriver, acceptanceFixture, acceptanceCases);
     const preparedEnvironment = await secureEnvironment();
     requireCondition(
       preparedEnvironment.standalone === launched.standalone &&
@@ -2089,51 +2273,22 @@ export async function runCapability(
     const before = await storedItems(prepared);
     checkStored(before, prepared);
     await record('retained-before-restart', before);
-    stage('same-session-termination');
-    const observedForeground = await foreground();
-    requireCondition(observedForeground === foregroundApp, 'foreground-app-changed');
-    const app =
-      target.browser === 'safari'
-        ? { bundleId: observedForeground }
-        : { appId: observedForeground };
-    await command(session('appium/device/terminate_app'), 'POST', app);
-    const state = await command(session('appium/device/app_state'), 'POST', app);
-    await record('terminated-app', { appId: observedForeground, state });
-    requireCondition(state === 1, 'termination-not-observed');
-    stage('offline-home-relaunch');
-    await home();
-    await launchIcon();
-    const relaunchedForeground = await foreground();
-    requireCondition(relaunchedForeground === foregroundApp, 'relaunch-foreground-changed');
-    const relaunched = await attach(relaunchedForeground);
-    await recordLaunch('offline-relaunched-context', relaunched);
-    await secureEnvironment();
-    await transportProbe(false);
-    const installationAssets = await executeAsync(
-      installationAssetsScript,
-      [],
-      'offline-installation-assets',
-    );
-    verifyInstallationAssets(installationAssets);
-    await record('offline-installation-assets', installationAssets);
-    await record('relaunch-socket', {
-      status: 'not-retested',
-      reason:
-        'The authenticated unused ticket was tested immediately after no-network; no fresh ticket can be issued offline.',
-    });
+    attached = await restartInstalled(foregroundApp);
     const after = await storedItems(prepared);
     checkStored(after, prepared);
     requireCondition(JSON.stringify(after) === JSON.stringify(before), 'retained-bundle-changed');
     await record('retained-after-restart', after);
     previousItemURL = undefined;
     for (const item of prepared) {
-      previousItemURL = await navigateItem(item, relaunched, previousItemURL);
+      previousItemURL = await navigateItem(item, attached, previousItemURL);
       const ready = await itemReady(true);
       requireCondition(ready.account === fixture.actor.id, 'retained-account-mismatch');
       await record(`${item.kind}:offline-ready`, ready);
-      await screenshot(`${item.kind}-offline-reopened`);
+      await screenshot(`${item.kind}${acceptanceScope ? `-${item.outcome}` : ''}-offline-reopened`);
     }
-    stage('capability-complete');
+    if (acceptance && acceptanceFixture && acceptanceCases)
+      await acceptance.runPhoneAcceptance(acceptanceDriver, acceptanceFixture, acceptanceCases);
+    stage(acceptanceScope ? 'safari-acceptance-complete' : 'capability-complete');
     result.status = 'passed';
   } catch (error) {
     result.failure = failure(error);
@@ -2201,7 +2356,8 @@ type Journal = ReservationIdentity & {
   schemaVersion: 1;
   scope: string;
   capabilityScope: CapabilityScope;
-  allocationPlan: 'two-lane-chrome-safari-remediation' | 'chrome-navigation-diagnostic';
+  allocationPlan:
+    'two-lane-chrome-safari-remediation' | 'chrome-navigation-diagnostic' | 'safari-acceptance';
   status: 'prepared' | 'running' | 'passed' | 'failed' | 'incomplete';
   stage: string;
   reservationId: string;
@@ -2221,11 +2377,12 @@ export function preparedCapabilityJournal(
     ...identity,
     scope:
       scope === 'chrome-navigation-diagnostic'
-        ? 'Chrome-only location.assign navigation experiment with the unchanged 900-second reservation. All three required lanes remain reported; Firefox is blocked and Safari is not run. The outcome remains incomplete, including when Chrome passes.'
-        : 'Two-lane Chrome/Safari capability remediation with the unchanged 900-second reservation. All three required lanes remain reported; Firefox is explicitly blocked by prior evidence. This is not full-matrix acceptance.',
+        ? 'Chrome-only location.assign navigation and failure-only document observation with the unchanged 900-second reservation. All three required lanes remain reported; Firefox is blocked and Safari is not run. The outcome remains incomplete, including when Chrome passes.'
+        : scope === 'safari-acceptance'
+          ? 'Safari-only authored installed-context acceptance with a 780-second operational bound and the unchanged 900-second reservation. All three required lanes remain reported; Firefox is blocked and Chrome is not run. Ordinary browser-tab acceptance and the full monthly physical matrix remain unproven. The outcome remains incomplete, including when Safari passes.'
+          : 'Two-lane Chrome/Safari capability remediation with the unchanged 900-second reservation. All three required lanes remain reported; Firefox is explicitly blocked by prior evidence. This is not full-matrix acceptance.',
     capabilityScope: scope,
-    allocationPlan:
-      scope === 'chrome-navigation-diagnostic' ? scope : 'two-lane-chrome-safari-remediation',
+    allocationPlan: scope === 'all' ? 'two-lane-chrome-safari-remediation' : scope,
     status: 'prepared',
     stage: 'before-device-execution',
     reservationId: reservation.id,
@@ -2251,8 +2408,7 @@ export function readPreparedCapabilityJournal(
   requireCondition(
     journal.schemaVersion === 1 &&
       journal.capabilityScope === scope &&
-      journal.allocationPlan ===
-        (scope === 'chrome-navigation-diagnostic' ? scope : 'two-lane-chrome-safari-remediation') &&
+      journal.allocationPlan === (scope === 'all' ? 'two-lane-chrome-safari-remediation' : scope) &&
       journal.status === 'prepared' &&
       journal.stage === 'before-device-execution' &&
       journal.reservationId === reservation.id &&
@@ -2402,8 +2558,9 @@ async function main() {
                 };
               }
               return runCapability(client, target, fixture, {
+                scope,
                 localIdentifier,
-                buildName: `SPN-090 ${scope === 'chrome-navigation-diagnostic' ? 'Chrome navigation diagnostic' : 'Chrome/Safari remediation'} ${identity.runId}-${identity.attempt}`,
+                buildName: `SPN-090 ${scope === 'chrome-navigation-diagnostic' ? 'Chrome navigation diagnostic' : scope === 'safari-acceptance' ? 'Safari authored acceptance' : 'Chrome/Safari remediation'} ${identity.runId}-${identity.attempt}`,
                 journal: async (lane) => {
                   journal.lanes[index] = lane;
                   await persist();
@@ -2425,7 +2582,7 @@ async function main() {
       } catch (error) {
         journal.failure = failure(error);
         journal.stage = 'failed';
-        journal.status = scope === 'chrome-navigation-diagnostic' ? 'incomplete' : 'failed';
+        journal.status = scope === 'all' ? 'failed' : 'incomplete';
         process.exitCode = 1;
       } finally {
         await rm(directory, { recursive: true, force: true });
