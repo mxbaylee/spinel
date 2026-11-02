@@ -19,5 +19,14 @@
       "paired-integration-tests": "\n RUN  v5.0.5 /Users/mxbaylee/projects/spinel-spn-110-feedback-integration\n\n\n Test Files  3 passed (3)\n      Tests  48 passed (48)\n   Start at  13:09:32\n   Duration  3.04s (tests 77%, import 18%, transform 4%)\n\nWATCHDOG: exit=0, signal=null, elapsed=5467ms, peak=454.5MiB\n",
       "integration-dependencies": "WATCHDOG: exit=0, signal=null, elapsed=10718ms, peak=91.0MiB\n"
     }
+  },
+  "committedIntegration": {
+    "head": "f8c4b7461f7df5b9bc35459c0e6b5538c8161115",
+    "retentionSource": "f10ef9ae3fe0af9167d6750c33f2e149f0e43797",
+    "feedbackSource": "1183a71300d9b003960dcdee7f19e5622b982cd4",
+    "command": "node scripts/serial.ts node /tmp/spn124-merge-evidence/watchdog.ts npx vitest run src/server/diagnostics/feedback.test.ts src/server/diagnostics/store.test.ts src/server/diagnostics/capacity.test.ts",
+    "log": "\n RUN  v5.0.5 /Users/mxbaylee/projects/spinel-spn-110-feedback-integration\n\n\n Test Files  3 passed (3)\n      Tests  48 passed (48)\n   Start at  13:13:56\n   Duration  2.57s (tests 92%, import 4%, transform 3%)\n\nWATCHDOG: exit=0, signal=null, elapsed=3201ms, peak=486.3MiB\n",
+    "types": "WATCHDOG: exit=0, signal=null, elapsed=1639ms, peak=184.2MiB\n",
+    "repairLint": "WATCHDOG: exit=0, signal=null, elapsed=564ms, peak=237.3MiB\n"
   }
 }
