@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
@@ -13,6 +13,7 @@ function fixture(t: { after: (fn: () => void) => void }) {
   t.after(() => rmSync(directory, { recursive: true, force: true }));
   const path = join(directory, 'progress.json');
   return {
+    path,
     progress: callbackProgress(path),
     read: () => JSON.parse(readFileSync(path, 'utf8')),
   };
@@ -140,4 +141,31 @@ test('stalled collection', async () => {
   assert.equal(retained.phase, 'trace-completion');
   assert.equal(retained.terminal, 'timedOut');
   assert.equal(retained.firstFailure.kind, 'timedOut');
+});
+
+test('failed checkpoint replacement preserves the previous bytes and cannot bypass cleanup', (t) => {
+  const { progress, read, path } = fixture(t);
+  progress.phase('trace-stream-read');
+  const previous = readFileSync(path, 'utf8');
+  mkdirSync(`${path}.tmp`);
+  let detached = false,
+    closed = false;
+  assert.doesNotThrow(() => {
+    progress.failed('trace');
+    progress.phase('cdp-detach');
+    detached = true;
+    progress.cleanup();
+    closed = true;
+    progress.lifecycle('context-close');
+    progress.terminal('failed');
+  });
+  assert.equal(detached && closed, true);
+  assert.equal(progress.firstFailure?.kind, 'trace');
+  assert.equal(progress.firstFailure?.phase, 'trace-stream-read');
+  assert.equal(progress.persistenceFailure?.code, 'EISDIR');
+  assert.equal(readFileSync(path, 'utf8'), previous);
+  rmSync(`${path}.tmp`, { recursive: true });
+  progress.terminal('failed');
+  assert.equal(read().persistenceFailure.code, 'EISDIR');
+  assert.equal(read().firstFailure.kind, 'trace');
 });

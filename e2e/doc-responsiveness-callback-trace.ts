@@ -241,12 +241,13 @@ export async function retainDocCallbackTrace(
   progress.phase('trace-completion');
   const completion = await completed;
   if (!completion.stream) throw new Error('Tracing completed without its raw stream.');
-  await writeFile(path, '');
   const checksum = createHash('sha256');
   let bytes = 0;
   let streamFailed = false;
   let streamError: unknown;
   try {
+    progress.phase('trace-stream-open');
+    await writeFile(path, '');
     progress.phase('trace-stream-read', bytes);
     for (;;) {
       const chunk = await cdp.send('IO.read', { handle: completion.stream, size: 1024 * 1024 });

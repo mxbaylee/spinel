@@ -85,6 +85,8 @@ test.afterEach(({}, info) => {
     observation.detach();
     observations.delete(info);
   }
+  if (info.status === 'passed' && observation.progress.persistenceFailure)
+    throw new Error('Callback progress evidence could not be persisted.');
 });
 
 test.describe.configure({ retries: 0, mode: 'default' });
@@ -456,6 +458,8 @@ for (const preset of ['desktop', 'mobile'] as const)
         }
         if (progress.firstFailure && !failure)
           failure = new Error(`Unexpected callback lifecycle: ${progress.firstFailure.kind}`);
+        if (progress.persistenceFailure && !failure)
+          failure = new Error('Callback progress evidence could not be persisted.');
         if (failure) evidence.passed = false;
         await persist();
       }

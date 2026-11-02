@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
+import { mkdirSync } from 'node:fs';
 import { EventEmitter } from 'node:events';
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -19,11 +20,19 @@ import type { DocCallbackCallsite } from './doc-callback-lifetimes.ts';
 
 const hash = (value: Buffer) => createHash('sha256').update(value).digest('hex');
 
-for (const scenario of ['complete', 'read-and-close-fail', 'close-fails'] as const)
+for (const scenario of [
+  'complete',
+  'read-and-close-fail',
+  'close-fails',
+  'progress-write-fails',
+  'output-open-fails',
+] as const)
   test(`trace stream ${scenario} retains bytes or the first error through owned close`, async (t) => {
     const directory = await mkdtemp(join(tmpdir(), 'spn134-stream-'));
     t.after(() => rm(directory, { recursive: true, force: true }));
-    const progress = callbackProgress(join(directory, 'progress.json'));
+    const progressPath = join(directory, 'progress.json');
+    const progress = callbackProgress(progressPath);
+    if (scenario === 'progress-write-fails') mkdirSync(`${progressPath}.tmp`);
     const bytes = gzipSync('{"traceEvents":[]}');
     const readError = new Error('original stream read failed');
     const closeError = new Error('later close failed');
@@ -42,14 +51,18 @@ for (const scenario of ['complete', 'read-and-close-fail', 'close-fails'] as con
           return {};
         }
         if (command === 'IO.read') {
-          if (scenario === 'read-and-close-fail') throw readError;
+          if (scenario === 'read-and-close-fail' || scenario === 'progress-write-fails')
+            throw readError;
           return { data: bytes.toString('base64'), base64Encoded: true, eof: true };
         }
         if (command === 'IO.close' && scenario !== 'complete') throw closeError;
         return {};
       },
     }) as unknown as CDPSession;
-    const path = join(directory, 'trace.json.gz');
+    const path = join(
+      directory,
+      ...(scenario === 'output-open-fails' ? ['missing', 'trace.json.gz'] : ['trace.json.gz']),
+    );
     if (scenario === 'complete') {
       const result = await retainDocCallbackTrace(cdp, path, progress);
       assert.equal(result.sha256, hash(bytes));
@@ -57,16 +70,27 @@ for (const scenario of ['complete', 'read-and-close-fail', 'close-fails'] as con
       assert.deepEqual(await readFile(path), bytes);
       assert.equal(progress.firstFailure, null);
     } else {
-      await assert.rejects(
-        retainDocCallbackTrace(cdp, path, progress),
-        (error) => error === (scenario === 'read-and-close-fail' ? readError : closeError),
+      await assert.rejects(retainDocCallbackTrace(cdp, path, progress), (error) =>
+        scenario === 'output-open-fails'
+          ? (error as NodeJS.ErrnoException).code === 'ENOENT'
+          : error === (scenario === 'close-fails' ? closeError : readError),
       );
       assert.equal(
         progress.firstFailure?.phase,
-        scenario === 'read-and-close-fail' ? 'trace-stream-read' : 'trace-stream-close',
+        scenario === 'output-open-fails'
+          ? 'trace-stream-open'
+          : scenario === 'close-fails'
+            ? 'trace-stream-close'
+            : 'trace-stream-read',
       );
     }
-    assert.deepEqual(calls, ['Tracing.end', 'IO.read', 'IO.close']);
+    assert.deepEqual(
+      calls,
+      scenario === 'output-open-fails'
+        ? ['Tracing.end', 'IO.close']
+        : ['Tracing.end', 'IO.read', 'IO.close'],
+    );
+    assert.equal(progress.persistenceFailure !== null, scenario === 'progress-write-fails');
     assert.equal(emitter.listenerCount('Tracing.tracingComplete'), 0);
   });
 const point = (columnNumber: number) => ({

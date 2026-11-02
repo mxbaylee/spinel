@@ -1,4 +1,4 @@
-import { writeFileSync } from 'node:fs';
+import { renameSync, writeFileSync } from 'node:fs';
 
 type Lifecycle = 'page-crash' | 'page-close' | 'context-close' | 'browser-disconnected';
 type Failure =
@@ -20,6 +20,7 @@ export function callbackProgress(path: string) {
   let firstFailure: { atMs: number; phase: string; kind: string } | null = null;
   let droppedEvents = 0;
   let terminal: string | null = null;
+  let persistenceFailure: { atMs: number; phase: string; code: string } | null = null;
   const record = (kind: string, extra: { count?: number; expected?: boolean } = {}) => {
     events.push({ atMs: performance.now() - started, phase, kind, ...extra });
     // Fixed memory/disk bound even if a broken target emits repeated lifecycle events.
@@ -27,10 +28,36 @@ export function callbackProgress(path: string) {
       events.shift();
       droppedEvents++;
     }
-    writeFileSync(
-      path,
-      JSON.stringify({ schema: 1, phase, firstFailure, terminal, droppedEvents, events }) + '\n',
-    );
+    try {
+      // Keep the previous complete checkpoint if a write or rename fails. The
+      // fixed temporary path bounds abandoned storage to one additional file.
+      writeFileSync(
+        `${path}.tmp`,
+        JSON.stringify({
+          schema: 1,
+          phase,
+          firstFailure,
+          persistenceFailure,
+          terminal,
+          droppedEvents,
+          events,
+        }) + '\n',
+      );
+      renameSync(`${path}.tmp`, path);
+    } catch (error) {
+      const code = (error as NodeJS.ErrnoException)?.code;
+      persistenceFailure ??= {
+        atMs: performance.now() - started,
+        phase,
+        code: ['ENOSPC', 'ENOENT', 'EACCES', 'EIO', 'EROFS', 'EMFILE', 'ENFILE', 'EISDIR'].includes(
+          code ?? '',
+        )
+          ? code!
+          : 'unknown',
+      };
+      // Never throw from a lifecycle listener or bypass the owned-resource
+      // cleanup. The test body/terminal hook reject missing evidence afterward.
+    }
   };
   const fail = (kind: string) => {
     firstFailure ??= { atMs: performance.now() - started, phase, kind };
@@ -62,6 +89,9 @@ export function callbackProgress(path: string) {
     },
     get firstFailure() {
       return firstFailure;
+    },
+    get persistenceFailure() {
+      return persistenceFailure;
     },
   };
 }
