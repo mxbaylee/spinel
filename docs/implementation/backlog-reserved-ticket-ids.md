@@ -4,12 +4,12 @@
 
 2026-11-02 — accepted, agent judgment under the authorized backlog run.
 
-SPN-120's current selected validation is blocked by separately owned Safari
-identity and Ubuntu mirror failures. Its proposed prerequisite-registration PR
+At the initial checkpoint, SPN-120's selected validation was blocked by separately
+owned Safari identity and Ubuntu mirror failures. Its proposed prerequisite-registration PR
 passed backlog validation but failed the existing PR check: SPN-130 is below
 main's `next_id` 136. That rule normally prevents ID reuse. Here, the ID was
-already legitimately allocated on an unmerged branch and deliberately reserved
-when SPN-131 landed. Renumbering it would violate the owner's never-reuse rule
+already legitimately allocated on an unmerged branch and deliberately preserved
+by SPN-131's registration. Renumbering it would violate the owner's never-reuse rule
 and lose the existing scope/evidence links. Disabling the checker is rejected.
 
 The actual allocation commit is
@@ -37,7 +37,8 @@ consume the reservation from its **base**, add the matching ticket and remove th
 record. Same-PR self-authorization fails. Existing reservations cannot silently
 change identity or disappear without registration. Normal allocation and the
 monotonic counter remain unchanged; implementation still requires the ticket on
-main. Preserve `next_id: 136`, the last grooming date and all ten completions.
+main. The initial proposal preserved `next_id: 136`, the last grooming date and
+all ten completions; integration below preserves current main's later values.
 
 Schema validation rejects malformed records, noncanonical/future/duplicate IDs,
 unknown fields, mismatched/multiline headings, invalid allocation SHAs, and
@@ -69,5 +70,41 @@ The code change requires current full CI, including all seven gates, and two
 independent nonimplementing reviews on the same SHA. No application/browser
 result is claimed by these local controls. Source changes under scripts/backlog
 retain broad coverage; no routing is narrowed. This grooming does not repair or
-waive SPN-120's Safari or Ubuntu failures. SPN-130 registration and both independent
-repairs remain pending after this prerequisite lands.
+waive SPN-120's failed acceptance. SPN-130 registration and its Safari repair remain
+pending; the subsequently merged Ubuntu repair still requires fresh validation
+on this combined PR source.
+
+## Resume after mirror repair and expose existing dependencies
+
+2026-11-02 — accepted, agent judgment under the backlog run, after the owner
+questioned why the displayed priority did not explain the SPN-131 selection.
+
+SPN-131 PR237 merged as `43299f311d62fb73a5688a49471b71c626ea6e1d`, with
+all seven gates, two independent grades and captured-profile installation proof.
+It was selected as a prerequisite because both SPN-120 and this reservation PR
+had failed before tests at the shared mirror helper. The lower displayed rank
+did not show that repair chain. Its [final evidence](https://github.com/mxbaylee/spinel/tree/5c4977ac9019b2190d4cb7a61a209f3a6612d460/docs/review-assets/spn-131-final-evidence)
+does not convert this PR's original failed/cancelled run into passing acceptance.
+That [first failure remains retained](https://github.com/mxbaylee/spinel/tree/f955396a2e6faf5ece0d6ce00225393b58600b45/docs/review-assets/reservation-first-ci-blocked).
+
+The fresh branch/chat audit found no competing active owner. Integrate current
+main, preserving `next_id: 137`, all eleven completions and grooming date
+2026-10-29. Resolve the configuration-only merge conflict by retaining those main
+values and the existing SPN-130 reservation. SPN-136's retired allocation is not
+reused or registered. The 41 backlog controls passed again on the integrated
+source in 149.789625 ms (watchdog elapsed 190 ms, below its RSS sampling interval).
+Run fresh full CI and obtain both final grades on the combined commit; no old
+result substitutes for that acceptance.
+
+Also make SPN-098's already-recorded SPN-135 prerequisite explicit in `depends_on`.
+Its Rules and SPN-135's maintained record already block that feedback PR pending
+the idle-latency disposition; this corrects index visibility without inventing a
+new product dependency. The generated ordering must expose the same prerequisite
+as the ticket's Rules. SPN-120's SPN-130 dependency belongs in the subsequent
+registration PR, once this base-authorized reservation can be consumed; adding
+a dependency on an absent ticket now would fail backlog validation.
+
+Operator gets an accurate repair order and enforceable IDs. Owner and Collaborator
+retain the existing responsive-document and genuine-validation requirements;
+Link guest's access requirements remain unchanged. This is focused backlog
+maintenance, not a full grooming or a reset of the completion reminder.
