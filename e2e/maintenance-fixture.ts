@@ -10,11 +10,11 @@ import { filesystemIdentity } from '../src/server/backup/filesystem.ts';
 import { projectRoot } from './app-process.ts';
 import { processIdentity } from '../src/server/maintenance/journal.ts';
 import {
-  maintenanceErrorCode,
   maintenanceJournalEvidence,
   maintenanceLogEvidence,
   maintenanceMemoryEvents,
   maintenanceStatusEvidence,
+  readMaintenanceEvidence as evidenceRead,
 } from './maintenance-evidence.ts';
 
 const run = promisify(execFile);
@@ -118,14 +118,6 @@ export async function startMaintenanceFixture({ catalog = false } = {}) {
     { cwd: projectRoot, env, stdio: ['ignore', 'pipe', 'pipe'] },
   );
   const startedAt = performance.now();
-  const observedIdentity = child.pid ? processIdentity(child.pid) : null;
-  const identity = observedIdentity
-    ? {
-        pid: observedIdentity.pid,
-        start: observedIdentity.start,
-        boot: observedIdentity.boot,
-      }
-    : null;
   let exit: { at: number; code: number | null; signal: NodeJS.Signals | null } | null = null;
   let stdoutTail = Buffer.alloc(0),
     stderrTail = Buffer.alloc(0);
@@ -147,13 +139,6 @@ export async function startMaintenanceFixture({ catalog = false } = {}) {
   let cgroupFile: string | undefined;
   let memoryBefore: ReturnType<typeof maintenanceMemoryEvents> | null = null;
   let pidNamespace: string | null = null;
-  const evidenceRead = async <T>(read: () => Promise<T>) => {
-    try {
-      return { ok: true as const, value: await read() };
-    } catch (error) {
-      return { ok: false as const, code: maintenanceErrorCode(error) };
-    }
-  };
   let output = '';
   let startupError: Error | undefined;
   child.on('error', (error) => {
@@ -225,7 +210,15 @@ export async function startMaintenanceFixture({ catalog = false } = {}) {
       child.stdout.on('data', onData);
       child.stderr.on('data', onData);
     });
+    // Lifecycle cleanup is installed before optional /proc reads, and an
+    // unavailable identity is evidence loss rather than a new setup failure.
+    const identityCapturedAt = performance.now();
+    const identity = await evidenceRead(() => {
+      const observed = child.pid ? processIdentity(child.pid) : null;
+      return observed ? { pid: observed.pid, start: observed.start, boot: observed.boot } : null;
+    });
     const memorySetup = await evidenceRead(async () => {
+      if (!identity.ok || !identity.value) throw new Error('Fixture identity is unavailable.');
       pidNamespace = await readlink(`/proc/${child.pid}/ns/pid`);
       const group = /^0::([^\n]+)$/m.exec(
         await readBounded(`/proc/${child.pid}/cgroup`, 4096),
@@ -270,7 +263,7 @@ export async function startMaintenanceFixture({ catalog = false } = {}) {
         capturedAt,
         completedAt: performance.now(),
         clock: 'monotonic milliseconds in the Playwright worker',
-        wrapper: { pid: child.pid ?? null, identity, pidNamespace, exit },
+        wrapper: { pid: child.pid ?? null, identity, identityCapturedAt, pidNamespace, exit },
         journalIdentityDomain:
           process.env.GITHUB_ACTIONS === 'true'
             ? 'private service PID namespace'

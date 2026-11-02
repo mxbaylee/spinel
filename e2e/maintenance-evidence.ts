@@ -24,6 +24,14 @@ export function maintenanceErrorCode(error: unknown) {
   return codes.find((code) => new RegExp(`\\b${code}\\b`).test(message)) ?? 'unclassified';
 }
 
+export async function readMaintenanceEvidence<T>(read: () => T | Promise<T>) {
+  try {
+    return { ok: true as const, value: await read() };
+  } catch (error) {
+    return { ok: false as const, code: maintenanceErrorCode(error) };
+  }
+}
+
 export function maintenanceLogEvidence(tail: Buffer, bytes: number) {
   const text = tail.subarray(-16_384).toString('utf8');
   return {

@@ -6,7 +6,27 @@ import {
   maintenanceLogEvidence,
   maintenanceMemoryEvents,
   maintenanceStatusEvidence,
+  readMaintenanceEvidence,
 } from '../../e2e/maintenance-evidence.ts';
+
+test('optional process evidence failure is reported once without failing fixture setup', async () => {
+  let calls = 0;
+  const failure = new Error('EACCES /proc/private-path private-token');
+  const evidence = await readMaintenanceEvidence(() => {
+    calls++;
+    throw failure;
+  });
+  assert.equal(calls, 1);
+  assert.deepEqual(evidence, { ok: false, code: 'EACCES' });
+  assert.doesNotMatch(JSON.stringify(evidence), /private/);
+  assert.deepEqual(
+    await readMaintenanceEvidence(async () => {
+      throw failure;
+    }),
+    evidence,
+  );
+  assert.deepEqual(await readMaintenanceEvidence(() => null), { ok: true, value: null });
+});
 
 test('fixture log evidence retains fixed failure signals without cookies or content', () => {
   const secret = 'private-cookie-and-document-text';
