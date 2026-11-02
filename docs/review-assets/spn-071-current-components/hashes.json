@@ -1,0 +1,19 @@
+{
+  "README.md": "e13ffc4bfd9f0b3eaa0a820c6dc1f56d781ab0ded151d414fc9b7e2cc143a3ec",
+  "build.log": "864788e1118b62ddc1f9c18c72fe3018632a6e64c1edd3ec4ac10d9b6d6aa8b1",
+  "bundle-size.json": "a81e1540baf6c758c85dfdcab535a3a061ab43108ed6b90b333af44b6ca94544",
+  "dashboard-hidden-shares--all-shares-hidden-phone.png": "944c5a82b2af4a524cac1917b584c815d326b43a5e98b76ce3f54f1ea526944d",
+  "dashboard-hidden-shares--failed-hide-phone-dark.png": "59d1b657596f23d2d63ef9043da9ac9892f05474d63bd91ac543615474da5af2",
+  "dashboard-hidden-shares--include-hidden-dark.png": "04ad43d40f77accdd446499f6cc44d0fefa03f4e20384a34575d4b857e53d7a5",
+  "dashboard-hidden-shares--include-hidden-light.png": "729bc1df38b466dbd5b4bd745b808a2f06ea8b4d059bbb81852d097e7f5fec68",
+  "dashboard-hidden-shares--pending-hide-light.png": "e8885cd7664d011df7c84078c3a345b29e1e7ddd074b8179c3058faee33c1d49",
+  "manifest.json": "eea6ce2bec1d2d2b9ea03239fda8c2e1f793ad063bfc1bf1b184a9ee386ac0fd",
+  "review.log": "33933820dcbeae797fd8a3856a3fc064b56ae66ed1ab9e650a3a471b4158242a",
+  "sharing-access-details--direct-share-dark.png": "f37d26255425d5feddff60c0852b651a9efbbf9324fafbc32838537e1894c57d",
+  "sharing-access-details--inherited-folder-light.png": "e9ef6cfbb6db1b6dd9ae59bcaa80309fdaf0000a438adde9cfdb6b1672448d63",
+  "sharing-access-details--loading-light.png": "fed3ff53526461b3d6166b4a120df57de11ea6222ad8987e53a04fb2e871b856",
+  "sharing-access-details--long-names-phone-dark.png": "4386b25350e0944822d593ed49697b462cfff74bc78f7b133c636f3aae945c99",
+  "sharing-access-details--space-through-folder-phone.png": "98f02894ad115c5bd401d9950bbb380c010cf48e7f63bfe0191ca53666ff0b17",
+  "sharing-access-details--unavailable-dark.png": "fb51bfc2fd9559a23619aaab1a2879dab90b4682327cfe34896946f551225b5b",
+  "source.json": "6157a12c9afecf9d04b958f201033aa6ad877ca700b99a14b05a76b7ba3c5a37"
+}
