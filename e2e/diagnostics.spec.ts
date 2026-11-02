@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { mkdir, mkdtemp, readFile, rm } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { expect, test } from '@playwright/test';
@@ -359,6 +359,24 @@ test('feedback survives a lost acknowledgment and paired user/system downloads p
       ).toBe(true);
       expect(system.rows.some((row) => row.id === laterId)).toBe(false);
       expect(system.manifest.counts).toEqual(user.manifest.counts);
+      // Retain the exact synthetic rows/window after fixture cleanup, so review
+      // can inspect completeness without exporting credentials or a live store.
+      await writeFile(
+        info.outputPath('spn098-feedback-pair.json'),
+        JSON.stringify(
+          {
+            project: info.project.name,
+            attempt: info.retry,
+            initialPreparations: preparations,
+            pairedMembershipVerified: true,
+            user,
+            system,
+            excludedLaterReportId: laterId,
+          },
+          null,
+          2,
+        ) + '\n',
+      );
       const denied = await other.request.post(
         `${f.origin}/api/admin/diagnostics/feedback/${pair.id}/download`,
         { headers: f.headers, data: { scope: 'system' } },
