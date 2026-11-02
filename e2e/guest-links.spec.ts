@@ -4,6 +4,7 @@ import type { Page } from '@playwright/test';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
+import { permissionNotices, recordPermissionNotices } from './permission-notices.ts';
 
 for (const kind of ['sheet', 'doc'] as const) {
   test(`${kind} guest links isolate visitors, preserve tab identities and revoke open editors`, async ({
@@ -21,6 +22,7 @@ for (const kind of ['sheet', 'doc'] as const) {
     const guest = await browser.newContext(),
       first = await guest.newPage(),
       second = await guest.newPage();
+    await recordPermissionNotices(guest);
     const captureGuest = async (role: string) => {
       await mkdir('test-results/theme-screenshots', { recursive: true });
       for (const [theme, width, variant] of [
@@ -34,8 +36,9 @@ for (const kind of ['sheet', 'doc'] as const) {
         await expect(
           first.getByRole('status', { name: 'Connection status', exact: true }),
         ).toHaveText('Online');
-        // The SDK's initial viewer-protection notice can cover the phone header.
-        // Wait for its real dismissal; screenshot CSS must not hide live UI.
+        // Initial loading must not emit a protection notice that later vanishes.
+        // Genuine denied edits remain native permission failures in later controls.
+        expect(await permissionNotices(first)).toEqual([]);
         await expect(
           first.getByText('This content is protected. This action is not allowed.', {
             exact: true,

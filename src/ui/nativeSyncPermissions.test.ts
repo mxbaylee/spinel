@@ -1,4 +1,6 @@
 import {
+  CommandType,
+  ErrorService,
   getDocsEmptySnapshot,
   IAuthzIoService,
   ICommandService,
@@ -44,6 +46,7 @@ const guest = { userID: 'guest-session-42', name: 'Guest', avatar: '' };
 const authzResource = 'SHEET_AuthzIoMockService_PLUGIN';
 const rangeResource = 'SHEET_RANGE_PROTECTION_PLUGIN';
 const docResource = 'DOC_OBJECT_PERMISSION_PLUGIN';
+const refreshFields = 'doc.command.refresh-header-footer-fields';
 type Resources = NonNullable<IWorkbookData['resources']>;
 
 function workbook(resources: Resources = []): IWorkbookData {
@@ -87,6 +90,7 @@ function fixture(
   access: ItemAccess,
   options: {
     bind?: boolean;
+    startupGuard?: boolean;
     resources?: Resources;
     identity?: typeof member;
   } = {},
@@ -96,7 +100,12 @@ function fixture(
   const binding = nativeSyncPermissions(unitId, access);
   const univer = new Univer({
     locale: LocaleType.EN_US,
-    override: options.bind === false ? [] : binding.override,
+    override:
+      options.bind === false
+        ? []
+        : binding.override.filter(
+            ([service]) => options.startupGuard !== false || service !== ICommandService,
+          ),
   });
   const injector = univer.__getInjector();
   injector.get(ILogService).setLogLevel(LogLevel.SILENT);
@@ -197,6 +206,100 @@ test('the OSS local provider denies an ordinary member after native workbook per
     expect(host.content()).toBe('original');
     expect(host.users.getCurrentUser()).toEqual(member);
   } finally {
+    host.dispose();
+  }
+});
+
+test.each([member, guest])(
+  'view-only Doc initialization is refused quietly while explicit edits retain native denial for $name',
+  async (identity) => {
+    const host = fixture('doc', 'viewer', { identity });
+    const errors: string[] = [];
+    const notices = host.injector.get(ErrorService).error$.subscribe((error) => {
+      errors.push(error.code ?? error.errorKey);
+    });
+    const commands = host.injector.get(ICommandService);
+    let executions = 0;
+    const command = commands.registerCommand({
+      id: refreshFields,
+      type: CommandType.COMMAND,
+      handler: () => {
+        executions++;
+        return true;
+      },
+    });
+    try {
+      await host.refresh();
+      const original = host.content();
+      const opening = { unitId: host.unitId, onOpen: true };
+      expect(commands.syncExecuteCommand(refreshFields, opening)).toBe(false);
+      expect(await commands.executeCommand(refreshFields, opening)).toBe(false);
+      expect(executions).toBe(0);
+      expect(errors).toEqual([]);
+      expect(host.content()).toBe(original);
+
+      expect(await host.edit()).toBe(false);
+      expect(errors).toEqual(['PERMISSION_DENIED']);
+      expect(commands.syncExecuteCommand(refreshFields, { unitId: host.unitId })).toBe(false);
+      expect(errors).toEqual(['PERMISSION_DENIED', 'PERMISSION_DENIED']);
+      expect(commands.syncExecuteCommand(refreshFields, { ...opening, onOpen: false })).toBe(false);
+      expect(errors).toEqual(['PERMISSION_DENIED', 'PERMISSION_DENIED', 'PERMISSION_DENIED']);
+      // This binding cannot claim another unit's initialization. The native
+      // service executes the registered handler for an unknown fixture unit.
+      expect(commands.syncExecuteCommand(refreshFields, { ...opening, unitId: 'other' })).toBe(
+        true,
+      );
+      expect(executions).toBe(1);
+      expect(host.content()).toBe(original);
+
+      host.binding.setAccess('editor');
+      expect(commands.syncExecuteCommand(refreshFields, opening)).toBe(true);
+      expect(await commands.executeCommand(refreshFields, opening)).toBe(true);
+      expect(executions).toBe(3);
+      expect(await host.edit()).toBe(true);
+      expect(host.content()).not.toBe(original);
+
+      host.binding.readonly();
+      const afterEdit = host.content();
+      errors.length = 0;
+      expect(commands.syncExecuteCommand(refreshFields, opening)).toBe(false);
+      expect(errors).toEqual([]);
+      expect(await host.edit()).toBe(false);
+      expect(errors).toEqual(['PERMISSION_DENIED']);
+      expect(executions).toBe(3);
+      expect(host.content()).toBe(afterEdit);
+    } finally {
+      command.dispose();
+      notices.unsubscribe();
+      host.dispose();
+    }
+  },
+);
+
+test('the unguarded native startup command emits a protection notice before its no-op handler', () => {
+  const host = fixture('doc', 'viewer', { startupGuard: false });
+  const errors: string[] = [];
+  const notices = host.injector.get(ErrorService).error$.subscribe((error) => {
+    errors.push(error.code ?? error.errorKey);
+  });
+  const commands = host.injector.get(ICommandService);
+  const handler = vi.fn(() => true);
+  const command = commands.registerCommand({
+    id: refreshFields,
+    type: CommandType.COMMAND,
+    handler,
+  });
+  try {
+    const original = host.content();
+    expect(commands.syncExecuteCommand(refreshFields, { unitId: host.unitId, onOpen: true })).toBe(
+      false,
+    );
+    expect(errors).toEqual(['PERMISSION_DENIED']);
+    expect(handler).not.toHaveBeenCalled();
+    expect(host.content()).toBe(original);
+  } finally {
+    command.dispose();
+    notices.unsubscribe();
     host.dispose();
   }
 });

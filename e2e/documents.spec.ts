@@ -1,9 +1,208 @@
 import sharp from 'sharp';
 import { expect, test } from '@playwright/test';
+import type { BrowserContext } from '@playwright/test';
+import { CustomRangeType, getDocsEmptySnapshot, validateDocumentStructure } from '@univerjs/core';
+import type { IDocumentBody, IDocumentData } from '@univerjs/core';
 import { interruptibleNetwork } from './live-network.ts';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
+import { DocumentStore } from '../src/server/workspace/documents.ts';
+import {
+  permissionNotices,
+  protectionMessage,
+  recordPermissionNotices,
+} from './permission-notices.ts';
+import { textPoint } from './doc-touch.ts';
+
+function storedDateField(id: string): IDocumentBody {
+  const cached = '2000-01-01';
+  const dataStream = `\x1f${cached}\x1e\r\n`;
+  return {
+    dataStream,
+    paragraphs: [{ startIndex: dataStream.length - 2, paragraphId: `${id}-paragraph` }],
+    customRanges: [
+      {
+        rangeId: id,
+        rangeType: CustomRangeType.FIELD,
+        startIndex: 0,
+        endIndex: cached.length + 1,
+        wholeEntity: false,
+        properties: {
+          fieldType: 'DATE',
+          instruction: 'DATE \\@ "yyyy-MM-dd"',
+          cachedResult: cached,
+        },
+      },
+    ],
+  };
+}
+
+for (const phone of [false, true])
+  for (const role of ['account', 'guest'] as const)
+    test(`${phone ? 'phone' : 'desktop'} ${role} Doc viewer opens plain and dated documents without a protection warning`, async ({
+      browser,
+      baseURL,
+    }, info) => {
+      test.setTimeout(150_000);
+      const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
+      const auth = new AuthStore(db),
+        workspace = new WorkspaceStore(auth);
+      const owner = auth.createUser(`Startup owner ${info.testId}`);
+      const viewer = auth.createUser(`Startup viewer ${info.testId}`);
+      const contexts: BrowserContext[] = [];
+      const failures: string[] = [];
+      const cookie = (userId: string) => ({
+        name: COOKIE_NAME,
+        value: auth.createSession(userId).token,
+        url: baseURL!.replace('http:', 'https:'),
+        secure: true,
+        httpOnly: true,
+        sameSite: 'Strict' as const,
+      });
+      try {
+        const ownerContext = await browser.newContext({
+          baseURL,
+          viewport: { width: 1280, height: 960 },
+        });
+        contexts.push(ownerContext);
+        await ownerContext.addCookies([cookie(owner.id)]);
+        for (const fields of [true, false]) {
+          const item = workspace.create(owner.id, {
+            name: fields ? 'Saved date fields' : 'Plain reading',
+            kind: 'doc',
+            parentId: null,
+          });
+          const snapshot = getDocsEmptySnapshot(item.id);
+          snapshot.body = {
+            dataStream: 'Phone journal\r\n',
+            paragraphs: [{ startIndex: 13, paragraphId: 'body-paragraph' }],
+            sectionBreaks: [{ startIndex: 14, sectionId: 'body-section' }],
+          };
+          if (fields) {
+            snapshot.headers = { top: { headerId: 'top', body: storedDateField('header-date') } };
+            snapshot.footers = {
+              bottom: { footerId: 'bottom', body: storedDateField('footer-date') },
+            };
+            snapshot.documentStyle.defaultHeaderId = 'top';
+            snapshot.documentStyle.defaultFooterId = 'bottom';
+          }
+          expect(validateDocumentStructure(snapshot)).toEqual([]);
+          new DocumentStore(workspace).save(owner.id, item.id, {
+            snapshot,
+            revision: 0,
+            writeId: crypto.randomUUID(),
+          });
+          workspace.share(owner.id, item.id, viewer.id, 'viewer');
+          const context = await browser.newContext({
+            baseURL,
+            viewport: phone ? { width: 390, height: 844 } : { width: 1280, height: 960 },
+            isMobile: phone,
+            hasTouch: phone,
+            deviceScaleFactor: 1,
+            colorScheme: 'light',
+            reducedMotion: 'reduce',
+          });
+          contexts.push(context);
+          await recordPermissionNotices(context);
+          let path = `/?item=${item.id}`;
+          if (role === 'account') await context.addCookies([cookie(viewer.id)]);
+          else {
+            const link = workspace.links.begin(item.id, 'viewer');
+            workspace.links.finish(item.id, link.epoch, true);
+            path = `/share/${item.id}#${link.token}`;
+          }
+          const read = async () => {
+            const response = await ownerContext.request.get(`/api/items/${item.id}/doc`);
+            expect(response.ok()).toBe(true);
+            return (await response.json()).snapshot as IDocumentData;
+          };
+          const original = await read();
+          const page = await context.newPage();
+          page.on('pageerror', (error) => failures.push(error.message));
+          const status = page.getByRole('status', { name: 'Save status' });
+          await page.goto(path);
+          for (const reload of [false, true]) {
+            if (reload) await page.reload();
+            await expect(status).toContainText('View only', { timeout: 30_000 });
+            await expect(page.getByLabel('Document canvas', { exact: true })).toBeVisible();
+            expect(await permissionNotices(page)).toEqual([]);
+            await expect(page.getByText(protectionMessage, { exact: true })).toHaveCount(0);
+            expect(await read()).toEqual(original);
+          }
+          if (fields && ((role === 'account' && !phone) || (role === 'guest' && phone))) {
+            for (const theme of ['light', 'dark'] as const) {
+              await page.emulateMedia({ colorScheme: theme });
+              await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+              await page.screenshot({
+                path: info.outputPath(
+                  `spn-106-${role}-${phone ? '390px' : 'desktop'}-${theme}.png`,
+                ),
+                fullPage: true,
+              });
+            }
+          }
+          await page
+            .locator('[contenteditable="true"][data-u-comp="editor"]')
+            .dispatchEvent('keydown', {
+              key: 'Enter',
+              code: 'Enter',
+              keyCode: 13,
+              which: 13,
+              bubbles: true,
+              cancelable: true,
+            });
+          await page.keyboard.type('FORBIDDEN VIEWER EDIT');
+          await expect(status).toContainText('View only');
+          if (role === 'account') {
+            const denied = await context.request.put(`/api/items/${item.id}/doc`, {
+              headers: { Origin: baseURL! },
+              data: { snapshot: original, revision: 1, writeId: crypto.randomUUID() },
+            });
+            expect(denied.status()).toBe(403);
+          } else expect((await context.request.get('/api/items')).status()).toBe(401);
+          expect(await read()).toEqual(original);
+
+          if (!fields) {
+            // Keep an authorized native editor alongside the reader; its real
+            // edit must persist while the viewer grant remains unchanged.
+            const editor = await ownerContext.newPage();
+            editor.on('pageerror', (error) => failures.push(error.message));
+            await editor.goto(`/?item=${item.id}`);
+            await expect(editor.getByRole('status', { name: 'Save status' })).toHaveText(
+              'All changes saved.',
+              { timeout: 30_000 },
+            );
+            const point = await textPoint(editor);
+            await editor.mouse.click(point.x, point.y);
+            await editor.keyboard.type('Authorized ');
+            await expect.poll(async () => (await read()).body?.dataStream).toContain('Authorized ');
+            await expect(status).toContainText('View only');
+            if (role === 'guest') {
+              const revoke = await ownerContext.request.put(`/api/items/${item.id}/link`, {
+                headers: { Origin: baseURL! },
+                data: { role: null },
+              });
+              expect(revoke.ok()).toBe(true);
+              await expect(
+                page.getByText('This link no longer works.', { exact: true }),
+              ).toBeVisible({ timeout: 30_000 });
+              await expect(page.getByLabel('Document canvas', { exact: true })).toHaveCount(0);
+            }
+            await editor.close();
+          }
+          await page.close();
+          await context.close();
+        }
+        expect(failures).toEqual([]);
+      } finally {
+        for (const context of contexts) await context.close();
+        db.prepare('DELETE FROM workspace_items WHERE owner_id=?').run(owner.id);
+        for (const user of [owner, viewer])
+          db.prepare('DELETE FROM auth_users WHERE id=?').run(user.id);
+        db.close();
+      }
+    });
 
 test('document UI preserves rich text and embedded images through reload and offline recovery', async ({
   page,
