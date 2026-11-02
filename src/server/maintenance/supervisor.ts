@@ -4,6 +4,7 @@ import { estimateRestoreCapacity, validRestorePreviewBytes } from './restore-cap
 import type { RestoreCapacityVolume } from './restore-capacity.ts';
 import { RecoveryResourceError } from '../backup/resource-error.ts';
 import { prepareAndActivateRestoreOriginal } from './restore-original.ts';
+import { prepareColdRestoreOriginal } from './restore-cold.ts';
 import { fork } from 'node:child_process';
 import type { ChildProcess } from 'node:child_process';
 import { createHash, randomBytes, randomUUID, timingSafeEqual } from 'node:crypto';
@@ -66,8 +67,13 @@ import {
   isCommittedRestoreJob,
   isUnreplacedRestorePhase,
   selectedRestoreTrial,
+  currentRestoreRecovery,
+  restoreJobPhase,
+  restoreJobDeadline,
+  restoreJobOperation,
 } from './restore-jobs.ts';
 import type { RestoreJobRecord } from './restore-jobs.ts';
+import { coldRecoveryPriorGenerations } from './restore-cold-state.ts';
 import { restoreIntentHash } from './restore-job-intent.ts';
 import type { RestoreJobIntent } from './restore-job-intent.ts';
 import {
@@ -137,7 +143,10 @@ const tokenHash = (value: string) => createHash('sha256').update(value).digest('
 
 export type ColdMaintenanceCommand =
   | { action: 'status' }
-  | { action: 'pause' | 'stop' | 'start' | 'verify' | 'resume'; operationId: string };
+  | {
+      action: 'pause' | 'stop' | 'start' | 'verify' | 'resume' | 'recover-original';
+      operationId: string;
+    };
 
 /** Only the trusted app-owned prepared-source registry constructs this private
  * descriptor. HTTP callers never select filesystem paths or authority records. */
@@ -636,7 +645,8 @@ export class MaintenanceSupervisor {
       if (!record || !isCommittedRestoreJob(record)) return;
       const permit = selectedRestoreTrial(record)!,
         original = record.execution!.originals!,
-        operation = previous.operation;
+        operation = previous.operation,
+        expectedOperation = restoreJobOperation(record);
       if (
         this.journal.wasUnverified ||
         record.intentHash !== reference.intentHash ||
@@ -657,10 +667,10 @@ export class MaintenanceSupervisor {
           JSON.stringify(previous.restoreStop) !== JSON.stringify(record.execution!.stop)) ||
         operation?.id !== record.intent.id ||
         operation.generationId !== permit.generationId ||
-        operation.actorId !== record.intent.authority.actorId ||
-        operation.sessionHash !== record.intent.authority.sessionHash ||
-        operation.expiresAt !== record.intent.authority.expiresAt ||
-        operation.tokenHash !== record.intent.continuationHash
+        operation.actorId !== expectedOperation.actorId ||
+        operation.sessionHash !== expectedOperation.sessionHash ||
+        operation.expiresAt !== expectedOperation.expiresAt ||
+        operation.tokenHash !== expectedOperation.tokenHash
       )
         throw new Error('Committed restore does not match the recorded selected generation.');
       const snapshot = JSON.stringify(record);
@@ -1149,6 +1159,11 @@ export class MaintenanceSupervisor {
         throw new Error('Invalid recovery operation.');
       if (command.action === 'status') {
         if (command.operationId !== undefined) throw new Error('Status takes no operation ID.');
+        return { status: this.status() };
+      }
+      if (command.action === 'recover-original') {
+        operationId(command.operationId);
+        await this.recoverOriginalOwned(command.operationId);
         return { status: this.status() };
       }
       if (!['pause', 'stop', 'start', 'verify', 'resume'].includes(String(command.action)))
@@ -2206,6 +2221,215 @@ export class MaintenanceSupervisor {
     }
     return environment;
   }
+  /** Deliberate authority from the private service-UID socket, independent of
+   * restored credentials. A terminal winner is never a replacement source. */
+  private async recoverOriginalOwned(id: string) {
+    const jobs = new RestoreJobs(this.journal, this.now);
+    const controller = new AbortController();
+    try {
+      const record = jobs.read(id);
+      if (!record || this.journal.wasUnverified)
+        throw new Error('The exact restore record is required for original recovery.');
+      const target = record.intent.target,
+        state = this.journal.state,
+        policy = this.applicationPolicy;
+      if (
+        this.closing ||
+        !policy ||
+        policy.origin !== record.intent.policy.origin ||
+        policy.image !== record.intent.policy.image ||
+        policy.spaceReview !== record.intent.policy.spacesEnabled ||
+        policy.staticDirectory !== record.intent.policy.staticDirectory ||
+        state.instanceId !== target.instanceId ||
+        this.journal.databasePath !== target.databasePath ||
+        !sameFile(state.databaseIdentity, target.identity) ||
+        !sameFile(this.journal.workspaceOwnership().databaseIdentity, target.identity)
+      )
+        throw new Error('Original recovery target or deployment policy changed.');
+      this.assertGeneration();
+      if (isCommittedRestoreJob(record)) {
+        if (restoreJobPhase(record) !== 'original-committed')
+          throw new Error('A committed backup cannot be replaced by original recovery.');
+        const permit = selectedRestoreTrial(record)!;
+        if (state.generationId !== permit.generationId)
+          throw new Error('A later generation cannot be replaced by this recovery.');
+        if (state.operation && state.operation.id !== id)
+          throw new Error(
+            'Use the exact current maintenance operation; this restore already completed.',
+          );
+        this.journal.assertNoPendingRestoreJobs();
+        if (state.phase === 'running') return;
+        if (
+          this.child ||
+          state.child ||
+          state.verifier ||
+          state.restoreStop ||
+          state.restoreJob ||
+          !['stopped', 'recovery-required'].includes(state.phase)
+        )
+          throw new Error('Restart the supervisor to reconcile the committed original first.');
+        assertWorkspaceHandlesClosed(this.journal.databasePath);
+        // Restart already selected this winner and removed its barrier. Verify
+        // current live content, including any work acknowledged after commit.
+        this.transition({
+          operation: {
+            id,
+            actorId: 'cold-host',
+            sessionHash: '0'.repeat(64),
+            tokenHash: tokenHash(randomBytes(32).toString('base64url')),
+            expiresAt: this.now() + AUTHORITY_MS,
+            generationId: state.generationId,
+          },
+        });
+        await this.verify();
+        await this.start();
+        await this.resume();
+        return;
+      }
+      if (
+        this.child ||
+        this.childOwned ||
+        this.childReady ||
+        state.child ||
+        state.verifier ||
+        state.verifiedAt !== null ||
+        !['stopped', 'recovery-required'].includes(state.phase) ||
+        state.restoreJob?.jobId !== id ||
+        state.restoreJob.intentHash !== record.intentHash ||
+        !record.execution?.originals ||
+        !record.execution.frozen ||
+        !record.execution.preparation?.candidate ||
+        !record.execution.preparation.rollback ||
+        !record.execution.stop?.fingerprint ||
+        !isDeepStrictEqual(state.restoreStop, record.execution.stop) ||
+        jobs
+          .list()
+          .some(
+            (other) =>
+              other.intent.id !== id && other.phase !== 'failed' && !isCommittedRestoreJob(other),
+          )
+      )
+        throw new Error('Original recovery requires the sole closed, unresolved restore.');
+      const priorProcesses = [
+        record.execution.child,
+        record.execution.trial?.child,
+        record.execution.rollback?.trial?.child,
+        ...(record.recovery?.attempts.map((attempt) => attempt.trial?.child) ?? []),
+      ];
+      const planned = selectedRestoreTrial(record);
+      for (const process of priorProcesses) {
+        if (!process || !groupMembers(process).length) continue;
+        const main = this.journal.state;
+        if (
+          !['trial-planned', 'original-trial-planned'].includes(restoreJobPhase(record)) ||
+          !planned ||
+          !isDeepStrictEqual(process, planned.child) ||
+          !coldRecoveryPriorGenerations(record).includes(main.generationId) ||
+          !isDeepStrictEqual(main.operation, {
+            id,
+            generationId: main.generationId,
+            ...restoreJobOperation(record),
+          })
+        )
+          throw new Error(
+            'A recorded restore process is still active. Restart the supervisor first.',
+          );
+        // The permit is durable before main adopts its child. A crash between
+        // those writes leaves a private process that boot cannot find in main.
+        // Fresh cold-host authority may stop only that exact recorded group;
+        // stopGroup verifies its boot, start time and ownership marker.
+        await this.stopGroup(process);
+        if (this.closing || !isDeepStrictEqual(jobs.read(id), record))
+          throw new Error('Original recovery changed while closing its planned trial.');
+      }
+      this.assertGeneration();
+      assertWorkspaceHandlesClosed(this.journal.databasePath);
+      const budget = Math.min(600_000, this.options.budgets?.restoreMs ?? 120_000),
+        grantedAt = this.now(),
+        deadline = grantedAt + budget;
+      if (!Number.isSafeInteger(budget) || budget < 1)
+        throw new Error('Invalid cold recovery time budget.');
+      const admitted = jobs.beginOriginalRecovery(id, record.intentHash, record.revision, {
+        slot: randomUUID(),
+        bootEpoch: state.epoch,
+        priorGenerationId: state.generationId,
+        grantedAt,
+        deadline,
+        attempt: {
+          attemptId: randomUUID(),
+          generationId: randomUUID(),
+          epoch: randomUUID(),
+          nonce: randomUUID(),
+        },
+      });
+      const grant = currentRestoreRecovery(admitted)!;
+      this.transition({
+        phase: 'stopped',
+        verifiedAt: null,
+        operation: { id, generationId: state.generationId, ...restoreJobOperation(admitted) },
+        lastFailure: null,
+      });
+      this.restoreAdmissionAbort = controller;
+      const signal = AbortSignal.any([controller.signal, AbortSignal.timeout(budget)]);
+      const assertClosed = () => {
+        signal.throwIfAborted();
+        const current = jobs.read(id),
+          main = this.journal.state;
+        if (
+          this.closing ||
+          this.child ||
+          this.childOwned ||
+          this.childReady ||
+          main.child ||
+          main.verifier ||
+          main.verifiedAt !== null ||
+          main.phase !== 'stopped' ||
+          main.instanceId !== target.instanceId ||
+          main.generationId !== grant.priorGenerationId ||
+          main.epoch !== grant.bootEpoch ||
+          main.restoreJob?.jobId !== id ||
+          main.restoreJob.intentHash !== record.intentHash ||
+          !current ||
+          current.intentHash !== record.intentHash ||
+          currentRestoreRecovery(current)?.slot !== grant.slot ||
+          isCommittedRestoreJob(current) ||
+          !isDeepStrictEqual(main.restoreStop, record.execution!.stop) ||
+          !isDeepStrictEqual(main.operation, {
+            id,
+            generationId: grant.priorGenerationId,
+            ...restoreJobOperation(current),
+          }) ||
+          this.now() < Math.max(current.updatedAt, main.updatedAt) ||
+          this.now() >= deadline ||
+          Date.now() >= deadline
+        )
+          throw new Error('Cold original recovery lost its closed grant boundary.');
+        this.assertGeneration();
+        assertWorkspaceHandlesClosed(this.journal.databasePath);
+      };
+      const activated = await prepareColdRestoreOriginal({
+        jobs,
+        record: admitted,
+        root: this.journal.root,
+        databasePath: this.journal.databasePath,
+        now: this.now,
+        signal,
+        assertClosed,
+      });
+      assertClosed();
+      const ready = await this.startRestoreTrialOwned(jobs, activated, signal, deadline);
+      await this.commitRestoreTrialOwned(jobs, ready, signal, deadline);
+    } catch (error) {
+      // Even validation refusal cannot authorize normal opening. Preserve the
+      // exact attempted state; a new deliberate command gets a new grant.
+      if (this.journal.state.restoreJob?.jobId === id) this.failure('original-recovery-unresolved');
+      throw error;
+    } finally {
+      controller.abort();
+      if (this.restoreAdmissionAbort === controller) this.restoreAdmissionAbort = undefined;
+      jobs.close();
+    }
+  }
   private async restoreOriginalOwned(
     jobs: RestoreJobs,
     initial: RestoreJobRecord,
@@ -2291,15 +2515,17 @@ export class MaintenanceSupervisor {
     signal: AbortSignal,
     deadline: number,
   ) {
-    const original = initial.phase === 'original-activated';
-    const selected = original ? initial.execution?.rollback : initial.execution;
+    const original = restoreJobPhase(initial) === 'original-activated';
+    const selected =
+      currentRestoreRecovery(initial) ??
+      (original ? initial.execution?.rollback : initial.execution);
     const attempt = selected?.attempt,
       output = original
-        ? initial.execution?.rollback?.image
+        ? (currentRestoreRecovery(initial) ?? initial.execution?.rollback)?.image
         : initial.execution?.preparation?.candidate,
       operation = this.journal.state.operation;
     if (
-      !['candidate-activated', 'original-activated'].includes(initial.phase) ||
+      !['candidate-activated', 'original-activated'].includes(restoreJobPhase(initial)) ||
       !attempt ||
       !output ||
       !operation ||
@@ -2313,7 +2539,7 @@ export class MaintenanceSupervisor {
     assertWorkspaceHandlesClosed(this.journal.databasePath);
     const trialDeadline = Math.min(
       deadline,
-      initial.intent.authority.expiresAt,
+      restoreJobDeadline(initial),
       Date.now() + (this.options.budgets?.startMs ?? START_MS),
     );
     if (trialDeadline <= Date.now()) throw new Error('Restore trial authority expired.');
@@ -2343,7 +2569,7 @@ export class MaintenanceSupervisor {
         !Number.isSafeInteger(time) ||
         Date.now() >= permit.deadline ||
         time < Math.max(record.updatedAt, this.journal.state.updatedAt) ||
-        time >= initial.intent.authority.expiresAt
+        time >= restoreJobDeadline(initial)
       )
         throw new Error('Restore trial authority expired or changed.');
     };
@@ -2377,12 +2603,12 @@ export class MaintenanceSupervisor {
         state.operation.expiresAt !== operation.expiresAt ||
         state.operation.tokenHash !== operation.tokenHash ||
         !current ||
-        current.phase !== record.phase ||
+        restoreJobPhase(current) !== restoreJobPhase(record) ||
         !(
           original
             ? ['original-trial-planned', 'original-trial-opening']
             : ['trial-planned', 'trial-opening']
-        ).includes(current.phase) ||
+        ).includes(restoreJobPhase(current)) ||
         current.revision !== record.revision ||
         current.intentHash !== initial.intentHash ||
         JSON.stringify(selectedRestoreTrial(current)) !== JSON.stringify(permit)
@@ -2458,7 +2684,10 @@ export class MaintenanceSupervisor {
       clearTimeout(timer);
       this.restoreTrialWaiter = undefined;
       try {
-        if (record.phase === 'trial-opening' || record.phase === 'trial-ready')
+        if (
+          !record.recovery &&
+          (record.phase === 'trial-opening' || record.phase === 'trial-ready')
+        )
           witnessedFailure = await this.stopFailedRestoreTrialOwned(jobs, record);
       } catch {
         // Without its independent final witness this attempt remains unusable
@@ -2723,9 +2952,10 @@ export class MaintenanceSupervisor {
     deadline: number,
   ) {
     const permit = selectedRestoreTrial(initial),
-      child = this.child;
+      child = this.child,
+      expectedOperation = restoreJobOperation(initial);
     if (
-      !['trial-ready', 'original-trial-ready'].includes(initial.phase) ||
+      !['trial-ready', 'original-trial-ready'].includes(restoreJobPhase(initial)) ||
       !permit ||
       !child ||
       !this.childOwned ||
@@ -2742,7 +2972,7 @@ export class MaintenanceSupervisor {
         !Number.isSafeInteger(time) ||
         Date.now() >= Math.min(deadline, permit.deadline) ||
         time < Math.max(record.updatedAt, this.journal.state.updatedAt) ||
-        time >= initial.intent.authority.expiresAt
+        time >= restoreJobDeadline(initial)
       )
         throw new Error('Restore release authority expired or changed.');
     };
@@ -2773,10 +3003,10 @@ export class MaintenanceSupervisor {
         ) ||
         state.operation?.id !== initial.intent.id ||
         state.operation.generationId !== permit.generationId ||
-        state.operation.actorId !== initial.intent.authority.actorId ||
-        state.operation.sessionHash !== initial.intent.authority.sessionHash ||
-        state.operation.expiresAt !== initial.intent.authority.expiresAt ||
-        state.operation.tokenHash !== initial.intent.continuationHash ||
+        state.operation.actorId !== expectedOperation.actorId ||
+        state.operation.sessionHash !== expectedOperation.sessionHash ||
+        state.operation.expiresAt !== expectedOperation.expiresAt ||
+        state.operation.tokenHash !== expectedOperation.tokenHash ||
         (referenceCleared
           ? state.restoreJob !== null
           : state.restoreJob?.jobId !== initial.intent.id ||
@@ -2784,8 +3014,9 @@ export class MaintenanceSupervisor {
         !current ||
         current.intentHash !== record.intentHash ||
         current.revision !== record.revision ||
-        current.phase !== record.phase ||
-        JSON.stringify(current.execution) !== JSON.stringify(record.execution)
+        restoreJobPhase(current) !== restoreJobPhase(record) ||
+        JSON.stringify(current.execution) !== JSON.stringify(record.execution) ||
+        JSON.stringify(current.recovery) !== JSON.stringify(record.recovery)
       )
         throw new Error('Restore candidate commitment lost its selected process.');
       this.assertGeneration();
@@ -2832,8 +3063,8 @@ export class MaintenanceSupervisor {
           },
           readPhase: () => {
             assertCurrent();
-            if (record.phase === 'trial-ready') return 'activated';
-            if (record.phase === 'original-trial-ready') return 'rolled-back';
+            if (restoreJobPhase(record) === 'trial-ready') return 'activated';
+            if (restoreJobPhase(record) === 'original-trial-ready') return 'rolled-back';
             if (isCommittedRestoreJob(record))
               return permit.role === 'candidate' ? 'candidate-committed' : 'original-committed';
             throw new Error('Restore has no eligible terminal decision.');
@@ -2887,7 +3118,7 @@ export class MaintenanceSupervisor {
       clearTimeout(timer);
       this.restoreReleaseWaiter = undefined;
       try {
-        if (record.phase === 'trial-ready')
+        if (!record.recovery && record.phase === 'trial-ready')
           witnessedFailure = await this.stopFailedRestoreTrialOwned(jobs, record);
       } catch {
         // A published candidate winner must never enter this failure branch.

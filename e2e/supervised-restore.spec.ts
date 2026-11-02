@@ -1,10 +1,18 @@
 import { randomUUID } from 'node:crypto';
-import { copyFile, chmod } from 'node:fs/promises';
+import { copyFile, chmod, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { expect, test } from '@playwright/test';
-import type { Browser, BrowserContext, Page, Request, TestInfo } from '@playwright/test';
+import type {
+  APIResponse,
+  Browser,
+  BrowserContext,
+  Page,
+  Request,
+  TestInfo,
+} from '@playwright/test';
 import type { MaintenancePublicStatus } from '../src/shared/maintenance.ts';
 import { startMaintenanceFixture } from './maintenance-fixture.ts';
+import { maintenanceErrorCode } from './maintenance-evidence.ts';
 
 /** SPN-112 and SPN-124 in real browsers against the Linux supervisor: catalog
  * selection, double-click, cancel, a lost confirmation reply, an admitted upload
@@ -249,7 +257,10 @@ const skipUnsupported = (info: TestInfo) =>
     'Supervised restore uses the Linux production supervisor and a filesystem catalog.',
   );
 
-test('a catalog restore survives double-clicks, cancel and a lost reply, and fences old clients', async ({
+// The old snapshot reset had only a passing retry trace. Retain the first failed
+// catalog journey without adding an execution or changing automatic retry policy.
+const it = test.extend({ trace: 'retain-on-failure' as const });
+it('a catalog restore survives double-clicks, cancel and a lost reply, and fences old clients', async ({
   playwright,
 }, info) => {
   skipUnsupported(info);
@@ -257,6 +268,48 @@ test('a catalog restore survives double-clicks, cancel and a lost reply, and fen
   const app = await startMaintenanceFixture({ catalog: true });
   let browser: Browser | undefined;
   const failures: string[] = [];
+  let snapshotPhase = 'before-backup';
+  let snapshotReads = 0;
+  const snapshotRequests: {
+    sequence: number;
+    phase: string;
+    method: 'GET';
+    route: string;
+    startedAt: number;
+    completedAt: number;
+    status?: number;
+    error?: string;
+  }[] = [];
+  let failureEvidence:
+    Awaited<ReturnType<typeof app.diagnostics>> | { captureError: string } | undefined;
+  const snapshotRequest = async (kind: 'sheet' | 'doc', read: () => Promise<APIResponse>) => {
+    const observation = {
+      sequence: ++snapshotReads,
+      phase: snapshotPhase,
+      method: 'GET' as const,
+      route: `/api/items/:id/${kind}`,
+      startedAt: performance.now(),
+      completedAt: 0,
+    };
+    const retain = (outcome: { status?: number; error?: string }) => {
+      snapshotRequests.push({ ...observation, completedAt: performance.now(), ...outcome });
+      if (snapshotRequests.length > 32) snapshotRequests.shift();
+    };
+    try {
+      const response = await read();
+      retain({ status: response.status() });
+      return response;
+    } catch (error) {
+      retain({ error: maintenanceErrorCode(error) });
+      // Observe only the first attempt, before teardown. Never repeat or turn
+      // the failed product observation into setup recovery.
+      if (info.retry === 0 && !failureEvidence)
+        failureEvidence = await app.diagnostics(true).catch((captureError) => ({
+          captureError: maintenanceErrorCode(captureError),
+        }));
+      throw error;
+    }
+  };
   try {
     browser = await playwright.chromium.launch(info.project.use.launchOptions);
     const operator = await enrollOperator(browser, app);
@@ -282,7 +335,9 @@ test('a catalog restore survives double-clicks, cancel and a lost reply, and fen
     for (const page of [owner.page, member])
       page.on('pageerror', (error) => failures.push(error.message));
     const remote = async () => {
-      const response = await memberContext.request.get(`/api/items/${item.id}/sheet`);
+      const response = await snapshotRequest('sheet', () =>
+        memberContext.request.get(`/api/items/${item.id}/sheet`, { maxRetries: 0 }),
+      );
       return response.ok() ? JSON.stringify((await response.json()).snapshot) : '';
     };
     await member.reload();
@@ -307,7 +362,9 @@ test('a catalog restore survives double-clicks, cancel and a lost reply, and fen
     await expect.poll(remote).toContain('Kept by the saved backup');
 
     const docText = async () => {
-      const response = await owner.context.request.get(`/api/items/${owner.item.id}/doc`);
+      const response = await snapshotRequest('doc', () =>
+        owner.context.request.get(`/api/items/${owner.item.id}/doc`, { maxRetries: 0 }),
+      );
       return response.ok() ? String((await response.json()).snapshot?.body?.dataStream ?? '') : '';
     };
     const docTab = owner.page;
@@ -319,6 +376,7 @@ test('a catalog restore survives double-clicks, cancel and a lost reply, and fen
     await expect.poll(docText, { timeout: 30_000 }).toContain('Owner plan in the backup.');
 
     await saveToCatalog(app, await downloadBackup(operator.page));
+    snapshotPhase = 'after-backup';
 
     await docEditor.locator('.univer-container').click({ position: { x: 130, y: 200 } });
     await docTab.keyboard.type(' Acknowledged Owner change.');
@@ -434,6 +492,7 @@ test('a catalog restore survives double-clicks, cancel and a lost reply, and fen
       { timeout: 30_000 },
     );
     expect(await outbox(signedIn, accountId, item.id)).toContain('Queued offline after the backup');
+    snapshotPhase = 'after-restore';
     const restored = await remote();
     expect(restored).toContain('Kept by the saved backup');
     expect(restored).not.toContain('Acknowledged after the backup');
@@ -457,6 +516,41 @@ test('a catalog restore survives double-clicks, cancel and a lost reply, and fen
     await attachFailure(browser, info);
     throw error;
   } finally {
+    if (info.retry === 0) {
+      try {
+        const path = info.outputPath('sync-diagnostics.json');
+        await writeFile(
+          path,
+          JSON.stringify(
+            {
+              kind: 'supervised-restore-first-attempt',
+              sourceSha: process.env.SOURCE_SHA ?? null,
+              testedSha: process.env.GITHUB_SHA ?? null,
+              retry: info.retry,
+              capturedBeforeCleanup: true,
+              snapshotReads,
+              omittedSnapshotReads: snapshotReads - snapshotRequests.length,
+              snapshotRequests,
+              failureEvidence: failureEvidence ?? null,
+              finalEvidence: await app.diagnostics(),
+            },
+            null,
+            2,
+          ),
+        );
+        await info.attach('supervised-restore-first-attempt', {
+          path,
+          contentType: 'application/json',
+        });
+      } catch {
+        // Keep the feature's original rejection. Missing evidence is explicit
+        // and cannot support a diagnostic or merge-acceptance claim.
+        info.annotations.push({
+          type: 'diagnostics-unavailable',
+          description: 'First-attempt fixture evidence could not be retained.',
+        });
+      }
+    }
     await browser?.close();
     await app.close();
   }

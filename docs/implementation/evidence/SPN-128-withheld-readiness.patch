@@ -1,0 +1,60 @@
+--- a/e2e/offline-creation.spec.ts
++++ b/e2e/offline-creation.spec.ts
+@@ -1,6 +1,6 @@
+-import { mkdir } from 'node:fs/promises';
++import { mkdir, writeFile } from 'node:fs/promises';
+ import { expect, test } from '@playwright/test';
+-import type { Page, TestInfo } from '@playwright/test';
++import type { Page, Route, TestInfo } from '@playwright/test';
+ import type { NativeSnapshot } from '@spinel/sync-client';
+ import type { OfflineCreationRequest } from '../src/shared/offlineCreation.ts';
+ import {
+@@ -381,6 +381,12 @@
+         });
+         const appearanceRequests: string[] = [];
+         let createdId: string | undefined;
++        const probe = process.env.SPINEL_READINESS_PROBE;
++        let heldFolder: Route | undefined;
++        const readiness: Record<string, unknown> = {
++          probe, repeatEachIndex: info.repeatEachIndex, retry: info.retry,
++          stage: 'setup', readyReached: false, folderRequestHeld: false,
++        };
+         f.page.on('request', (request) => {
+           if (createdId && new URL(request.url()).pathname === `/api/appearance/items/${createdId}`)
+             appearanceRequests.push(request.url());
+@@ -416,7 +422,14 @@
+                 })
+               : undefined;
+           await f.download();
++          if (probe === 'withheld-readiness')
++            await f.context.route(`**/api/items/${folder.id}`, (route) => {
++              heldFolder = route;
++              readiness.folderRequestHeld = true;
++            });
++          readiness.stage = 'opening-folder';
+           await openPreparedFolder(f, folder, shared);
++          readiness.readyReached = true;
+           await setDisconnected(true);
+           await transport.verifyDisconnected();
+           // A warm disconnected dashboard and a cold offline dashboard must both create.
+@@ -713,7 +726,20 @@
+             ),
+           ).toHaveLength(1);
+           expect(f.errors).toEqual([]);
++        } catch (error) {
++          if (probe) readiness.failure = error instanceof Error ? error.message.slice(0, 4096) : String(error);
++          throw error;
+         } finally {
++          if (probe) {
++            await f.page.screenshot({ path: info.outputPath('withheld-readiness.png'), animations: 'disabled', timeout: 5000 })
++              .catch((error) => { readiness.screenshotFailure = String(error); });
++            if (heldFolder) await heldFolder.abort('internetdisconnected').catch((error) => {
++              readiness.releaseFailure = String(error);
++            });
++            readiness.disconnectProbeSent = transport.posts.some((post) => post.path === '/api/items/offline-create');
++            readiness.created = Boolean(createdId);
++            await writeFile(info.outputPath('readiness-probe.json'), JSON.stringify(readiness, null, 2));
++          }
+           releaseAdmission();
+           try {
+             await f.close(transport.posts);

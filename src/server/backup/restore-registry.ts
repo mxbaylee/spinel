@@ -14,7 +14,11 @@ import {
   validRestoreResources,
   validRestoreVerification,
 } from '../../shared/restore.ts';
-import { validRestoreJobRecord } from '../maintenance/restore-jobs.ts';
+import {
+  validRestoreJobRecord,
+  isCommittedRestoreJob,
+  restoreJobPhase,
+} from '../maintenance/restore-jobs.ts';
 import type { RestoreJobRecord } from '../maintenance/restore-jobs.ts';
 import { processIdentity } from '../maintenance/journal.ts';
 import type { ProcessIdentity } from '../maintenance/journal.ts';
@@ -216,9 +220,8 @@ export class RestoreRegistry {
         (!validRestoreJobRecord(observed.record, observed.record?.intent?.id) ||
           (id !== undefined && observed.record.intent.id !== id) ||
           (!observed.pending &&
-            !['failed', 'candidate-committed', 'original-committed'].includes(
-              observed.record.phase,
-            ))))
+            observed.record.phase !== 'failed' &&
+            !isCommittedRestoreJob(observed.record))))
     )
       throw new RestoreRegistryError(503, 'Restore status could not be verified.');
     return observed;
@@ -446,9 +449,9 @@ export class RestoreRegistry {
       outcome = {
         id: record.intent.id,
         state:
-          record.phase === 'candidate-committed'
+          restoreJobPhase(record) === 'candidate-committed'
             ? 'backup-restored'
-            : record.phase === 'original-committed'
+            : restoreJobPhase(record) === 'original-committed'
               ? 'original-recovered'
               : record.phase === 'failed'
                 ? 'did-not-start'

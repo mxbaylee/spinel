@@ -32,6 +32,28 @@ import { validFailedRestoreCustody } from './restore-failed-custody.ts';
 import type { FailedRestoreCustody } from './restore-failed-custody.ts';
 import { restoreIntentHash, validRestoreJobIntent } from './restore-job-intent.ts';
 import type { RestoreJobIntent } from './restore-job-intent.ts';
+import {
+  coldRecoveryPhases,
+  coldRecoveryPriorGenerations,
+  currentRestoreRecovery,
+  restoreJobDeadline,
+  restoreJobOperation,
+  restoreJobPhase,
+  validRestoreColdRecovery,
+} from './restore-cold-state.ts';
+import type {
+  ColdRecoveryAttempt,
+  ColdRecoveryGrant,
+  ColdRecoveryPatch,
+  ColdRecoveryPhase,
+  RestoreColdRecovery,
+} from './restore-cold-state.ts';
+export {
+  currentRestoreRecovery,
+  restoreJobDeadline,
+  restoreJobOperation,
+  restoreJobPhase,
+} from './restore-cold-state.ts';
 
 /** Closed prepared image inside the one durable preparation slot. The record
  * never accepts an arbitrary output path or permission to activate it. */
@@ -155,6 +177,8 @@ export interface RestoreJobRecord {
   phase: 'accepted' | 'source-retained' | 'failed' | ExecutionPhase;
   execution?: RestorePausePlan;
   updatedAt: number;
+  /** Explicit cold-host grants extend evidence, never the original authorization. */
+  recovery?: RestoreColdRecovery;
 }
 const MAX_JOB_BYTES = 64 * 1024;
 const MAX_JOBS = 64;
@@ -802,6 +826,7 @@ function validOriginalAttempt(record: RestoreJobRecord): boolean {
 }
 /** Select by durable branch, never by a caller-supplied role. */
 export function selectedRestoreTrial(record: RestoreJobRecord) {
+  if (record.recovery) return currentRestoreRecovery(record)?.trial;
   return originalPhases.includes(record.phase)
     ? record.execution?.rollback?.trial
     : record.execution?.trial;
@@ -810,6 +835,22 @@ export { validRecord as validRestoreJobRecord };
 function validRecord(value: unknown, id: string): value is RestoreJobRecord {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
   const record = value as RestoreJobRecord;
+  if (Object.hasOwn(record, 'recovery')) {
+    const { recovery, ...source } = record;
+    if (
+      !recovery ||
+      typeof recovery !== 'object' ||
+      !Number.isSafeInteger(record.revision) ||
+      record.revision > 1_000_000 ||
+      !Number.isSafeInteger(record.updatedAt) ||
+      !validRecord(
+        { ...source, revision: recovery.sourceRevision, updatedAt: recovery.sourceUpdatedAt },
+        id,
+      )
+    )
+      return false;
+    return validRestoreColdRecovery(record);
+  }
   return (
     Object.keys(record).length === (Object.hasOwn(record, 'execution') ? 7 : 6) &&
     record.version === 1 &&
@@ -831,15 +872,13 @@ function validRecord(value: unknown, id: string): value is RestoreJobRecord {
 
 /** Historical terminal evidence remains readable after the child dies or its
  * permit expires. This validates recorded bindings, never current authority. */
-export function isCommittedRestoreJob(value: unknown): value is RestoreJobRecord & {
-  phase: 'candidate-committed' | 'original-committed';
-} {
+export function isCommittedRestoreJob(value: unknown): boolean {
   if (!value || typeof value !== 'object') return false;
   const record = value as RestoreJobRecord;
   return (
-    ['candidate-committed', 'original-committed'].includes(record.phase) &&
     typeof record.intent?.id === 'string' &&
-    validRecord(record, record.intent.id)
+    validRecord(record, record.intent.id) &&
+    ['candidate-committed', 'original-committed'].includes(restoreJobPhase(record))
   );
 }
 
@@ -1103,6 +1142,7 @@ export class RestoreJobs {
     const current = this.read(id);
     if (
       !current ||
+      current.recovery ||
       current.intentHash !== intentHash ||
       current.revision !== revision ||
       !['accepted', 'source-retained'].includes(current.phase) ||
@@ -1134,6 +1174,7 @@ export class RestoreJobs {
     const current = this.read(id);
     if (
       !current ||
+      current.recovery ||
       current.intentHash !== hash ||
       current.revision !== revision ||
       current.phase !== phase
@@ -1176,6 +1217,7 @@ export class RestoreJobs {
     phase: ExecutionPhase,
     execution: RestorePausePlan,
   ) {
+    if (current.recovery) throw refused();
     const now = this.now();
     if (!Number.isSafeInteger(now) || now < current.updatedAt) throw refused();
     const next: RestoreJobRecord = {
@@ -1401,7 +1443,7 @@ export class RestoreJobs {
   private trialClock(record: RestoreJobRecord) {
     const permit = selectedRestoreTrial(record)!;
     const check = () => {
-      const now = this.clock(record.intent);
+      const now = record.recovery ? this.coldRecoveryClock(record) : this.clock(record.intent);
       if (now < record.updatedAt || now >= permit.deadline) throw refused();
       return now;
     };
@@ -1439,7 +1481,7 @@ export class RestoreJobs {
       !record ||
       record.intentHash !== hash ||
       record.revision !== revision ||
-      record.phase !== phase ||
+      restoreJobPhase(record) !== phase ||
       !selectedRestoreTrial(record)
     )
       throw refused();
@@ -1447,7 +1489,8 @@ export class RestoreJobs {
       target = record.intent.target;
     const state = this.journal.state,
       owned = this.journal.workspaceOwnership(),
-      operation = state.operation;
+      operation = state.operation,
+      expectedOperation = restoreJobOperation(record);
     if (
       state.restoreJob?.jobId !== id ||
       state.restoreJob.intentHash !== hash ||
@@ -1462,10 +1505,10 @@ export class RestoreJobs {
       !sameStop(state.restoreStop, record.execution!.stop!) ||
       operation?.id !== id ||
       operation.generationId !== permit.generationId ||
-      operation.actorId !== record.intent.authority.actorId ||
-      operation.sessionHash !== record.intent.authority.sessionHash ||
-      operation.expiresAt !== record.intent.authority.expiresAt ||
-      operation.tokenHash !== record.intent.continuationHash
+      operation.actorId !== expectedOperation.actorId ||
+      operation.sessionHash !== expectedOperation.sessionHash ||
+      operation.expiresAt !== expectedOperation.expiresAt ||
+      operation.tokenHash !== expectedOperation.tokenHash
     )
       throw refused();
     this.trialClock(record);
@@ -1497,6 +1540,7 @@ export class RestoreJobs {
       owned = this.journal.workspaceOwnership();
     if (
       !current ||
+      current.recovery ||
       current.intentHash !== hash ||
       current.revision !== revision ||
       current.phase !== phase ||
@@ -1729,6 +1773,212 @@ export class RestoreJobs {
     this.selectedTrialRecord(id, hash, result.revision, 'candidate-committed', 'paused');
     return result;
   }
+  private coldRecoveryClock(record: RestoreJobRecord) {
+    const attempt = currentRestoreRecovery(record),
+      now = this.now();
+    if (
+      !attempt ||
+      !Number.isSafeInteger(now) ||
+      now < Math.max(record.updatedAt, this.journal.state.updatedAt, attempt.grantedAt) ||
+      now >= restoreJobDeadline(record) ||
+      Date.now() >= restoreJobDeadline(record)
+    )
+      throw new Error('The cold original recovery grant expired or changed.');
+    return now;
+  }
+  private coldRecoveryTarget(record: RestoreJobRecord) {
+    const state = this.journal.state,
+      target = record.intent.target,
+      owned = this.journal.workspaceOwnership();
+    if (
+      this.journal.wasUnverified ||
+      state.restoreJob?.jobId !== record.intent.id ||
+      state.restoreJob.intentHash !== record.intentHash ||
+      state.instanceId !== target.instanceId ||
+      this.journal.databasePath !== target.databasePath ||
+      owned.databasePath !== target.databasePath ||
+      !sameFile(state.databaseIdentity, target.identity) ||
+      !sameFile(owned.databaseIdentity, target.identity) ||
+      !sameStop(state.restoreStop, record.execution!.stop!) ||
+      state.verifier ||
+      state.verifiedAt !== null ||
+      this.list().some(
+        (other) =>
+          other.intent.id !== record.intent.id &&
+          other.phase !== 'failed' &&
+          !isCommittedRestoreJob(other),
+      )
+    )
+      throw refused();
+  }
+  private coldRecoveryClosed(record: RestoreJobRecord) {
+    this.coldRecoveryTarget(record);
+    const attempt = currentRestoreRecovery(record),
+      state = this.journal.state,
+      expected = restoreJobOperation(record),
+      operation = state.operation;
+    if (
+      !attempt ||
+      state.phase !== 'stopped' ||
+      state.child ||
+      state.generationId !== attempt.priorGenerationId ||
+      state.epoch !== attempt.bootEpoch ||
+      operation?.id !== record.intent.id ||
+      operation.generationId !== attempt.priorGenerationId ||
+      operation.actorId !== expected.actorId ||
+      operation.sessionHash !== expected.sessionHash ||
+      operation.expiresAt !== expected.expiresAt ||
+      operation.tokenHash !== expected.tokenHash
+    )
+      throw refused();
+    this.coldRecoveryClock(record);
+  }
+  /** Journal the explicit cold-host decision before main adopts its grant. A
+   * crash here keeps the previous operation authoritative and cannot open a DB. */
+  beginOriginalRecovery(id: string, hash: string, revision: number, grant: ColdRecoveryGrant) {
+    const current = this.read(id),
+      state = this.journal.state,
+      now = this.now();
+    if (
+      !current ||
+      current.intentHash !== hash ||
+      current.revision !== revision ||
+      isCommittedRestoreJob(current) ||
+      !coldRecoveryPriorGenerations(current).includes(state.generationId) ||
+      !['stopped', 'recovery-required'].includes(state.phase) ||
+      state.child ||
+      !Number.isSafeInteger(now) ||
+      now < Math.max(current.updatedAt, state.updatedAt) ||
+      !Number.isSafeInteger(grant.grantedAt) ||
+      grant.grantedAt < Math.max(current.updatedAt, state.updatedAt) ||
+      grant.grantedAt > now ||
+      !Number.isSafeInteger(grant.deadline) ||
+      now >= grant.deadline ||
+      Date.now() >= grant.deadline ||
+      grant.bootEpoch !== state.epoch ||
+      grant.priorGenerationId !== state.generationId
+    )
+      throw refused();
+    this.coldRecoveryTarget(current);
+    const operation = state.operation;
+    const matches = (candidate: ReturnType<typeof restoreJobOperation>) =>
+      operation?.id === id &&
+      operation.generationId === state.generationId &&
+      operation.actorId === candidate.actorId &&
+      operation.sessionHash === candidate.sessionHash &&
+      operation.expiresAt === candidate.expiresAt &&
+      operation.tokenHash === candidate.tokenHash;
+    let authorizedPredecessor = matches(restoreJobOperation(current));
+    const attempts = current.recovery?.attempts ?? [];
+    // Publication can precede main's grant transition. Only a suffix consisting
+    // entirely of unexecuted admission checkpoints permits its older operation.
+    for (let length = attempts.length; !authorizedPredecessor && length > 0; length--) {
+      if (attempts[length - 1].phase !== 'original-capture-planned') break;
+      const previous = {
+        ...current,
+        recovery:
+          length > 1
+            ? { ...current.recovery!, attempts: attempts.slice(0, length - 1) }
+            : undefined,
+      };
+      authorizedPredecessor = matches(restoreJobOperation(previous));
+    }
+    if (!authorizedPredecessor) throw refused();
+    const attempt: ColdRecoveryAttempt = {
+      ...structuredClone(grant),
+      phase: 'original-capture-planned',
+      updatedAt: now,
+    };
+    const next: RestoreJobRecord = {
+      ...current,
+      recovery: {
+        sourceRevision: current.recovery?.sourceRevision ?? current.revision,
+        sourceUpdatedAt: current.recovery?.sourceUpdatedAt ?? current.updatedAt,
+        attempts: [...attempts, attempt],
+      },
+      revision: current.revision + 1,
+      updatedAt: now,
+    };
+    this.publish(next);
+    this.coldRecoveryTarget(next);
+    return structuredClone(next);
+  }
+  /** Each checkpoint only adds that stage's evidence. Historical attempts and
+   * the predecessor are never rewritten, including after their grants expire. */
+  checkpointOriginalRecovery(
+    id: string,
+    hash: string,
+    revision: number,
+    phase: ColdRecoveryPhase,
+    patch: ColdRecoveryPatch = {},
+  ) {
+    const current = this.read(id),
+      attempt = current && currentRestoreRecovery(current);
+    if (
+      !current ||
+      !attempt ||
+      current.intentHash !== hash ||
+      current.revision !== revision ||
+      coldRecoveryPhases.indexOf(phase) !== coldRecoveryPhases.indexOf(attempt.phase) + 1 ||
+      !patch ||
+      typeof patch !== 'object' ||
+      Array.isArray(patch)
+    )
+      throw refused();
+    const fields: Partial<Record<ColdRecoveryPhase, readonly string[]>> = {
+      'original-custody-planned': ['custody'],
+      'original-evidence-ready': ['frozen'],
+      'original-prepared': ['image'],
+      'original-rehearsed': ['rehearsedAt'],
+      'original-trial-planned': ['trial'],
+      'original-trial-opening': ['openingGrantedAt'],
+      'original-trial-ready': ['readiness'],
+      'original-committed': ['outcome'],
+    };
+    if (Object.keys(patch).some((key) => !(fields[phase] ?? []).includes(key))) throw refused();
+    this.coldRecoveryTarget(current);
+    const trialStage =
+      coldRecoveryPhases.indexOf(phase) >= coldRecoveryPhases.indexOf('original-trial-opening');
+    const assertBinding = (record: RestoreJobRecord) => {
+      if (trialStage)
+        this.selectedTrialRecord(
+          id,
+          hash,
+          record.revision,
+          restoreJobPhase(record) as ExecutionPhase,
+          phase === 'original-committed' ? 'paused' : 'starting',
+        );
+      else this.coldRecoveryClosed(record);
+    };
+    assertBinding(current);
+    const now = this.coldRecoveryClock(current);
+    for (const value of [
+      patch.rehearsedAt,
+      patch.openingGrantedAt,
+      patch.readiness?.acceptedAt,
+      patch.outcome?.committedAt,
+    ])
+      if (value !== undefined && (value < current.updatedAt || value > now)) throw refused();
+    const updated: ColdRecoveryAttempt = {
+      ...attempt,
+      ...structuredClone(patch),
+      phase,
+      updatedAt: now,
+    };
+    const next: RestoreJobRecord = {
+      ...current,
+      recovery: {
+        ...current.recovery!,
+        attempts: [...current.recovery!.attempts.slice(0, -1), updated],
+      },
+      revision: current.revision + 1,
+      updatedAt: now,
+    };
+    if (phase === 'original-trial-planned') this.trialClock(next);
+    this.publish(next);
+    assertBinding(next);
+    return structuredClone(next);
+  }
   private originalClock(record: RestoreJobRecord) {
     const time = this.clock(record.intent);
     if (time < record.updatedAt || time >= record.execution!.rollback!.deadline) throw refused();
@@ -1804,6 +2054,10 @@ export class RestoreJobs {
     return this.originalCheckpoint(current, 'original-activated', current.execution!.rollback!);
   }
   planOriginalTrial(id: string, hash: string, revision: number, permit: RestoreTrialPermit) {
+    if (this.read(id)?.recovery)
+      return this.checkpointOriginalRecovery(id, hash, revision, 'original-trial-planned', {
+        trial: permit,
+      });
     const current = this.originalClosed(id, hash, revision, 'original-activated');
     const next = {
       ...current,
@@ -1824,6 +2078,11 @@ export class RestoreJobs {
     return result;
   }
   markOriginalTrialOpening(id: string, hash: string, revision: number) {
+    const recovered = this.read(id);
+    if (recovered?.recovery)
+      return this.checkpointOriginalRecovery(id, hash, revision, 'original-trial-opening', {
+        openingGrantedAt: this.coldRecoveryClock(recovered),
+      });
     const current = this.selectedTrialRecord(
       id,
       hash,
@@ -1845,6 +2104,19 @@ export class RestoreJobs {
     reference: RestoreTrialRelease,
     fingerprint: string,
   ) {
+    const recovered = this.read(id);
+    if (recovered?.recovery) {
+      const permit = selectedRestoreTrial(recovered);
+      if (
+        !permit ||
+        !sameRestoreTrialReference(reference, permit) ||
+        fingerprint !== permit.output.fingerprint
+      )
+        throw refused();
+      return this.checkpointOriginalRecovery(id, hash, revision, 'original-trial-ready', {
+        readiness: { fingerprint, acceptedAt: this.coldRecoveryClock(recovered) },
+      });
+    }
     const current = this.selectedTrialRecord(
       id,
       hash,
@@ -1873,6 +2145,20 @@ export class RestoreJobs {
     revision: number,
     reference: RestoreTrialRelease,
   ) {
+    const recovered = this.read(id);
+    if (recovered?.recovery) {
+      const attempt = currentRestoreRecovery(recovered),
+        permit = selectedRestoreTrial(recovered);
+      if (!permit || !attempt?.readiness || !sameRestoreTrialReference(reference, permit))
+        throw refused();
+      return this.checkpointOriginalRecovery(id, hash, revision, 'original-committed', {
+        outcome: {
+          role: 'original',
+          fingerprint: attempt.readiness.fingerprint,
+          committedAt: this.coldRecoveryClock(recovered),
+        },
+      });
+    }
     const current = this.selectedTrialRecord(id, hash, revision, 'original-trial-ready', 'paused');
     if (!sameRestoreTrialReference(reference, selectedRestoreTrial(current)!)) throw refused();
     const result = this.publishExecution(current, 'original-committed', {

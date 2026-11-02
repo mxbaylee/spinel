@@ -84,7 +84,9 @@ does not depend on another upstream to explain the outage. It does not invent an
 authoritative retry epoch when the controller is unavailable.
 The private `control.sock` within the recovery root is mode 0600 and accepts only
 fixed recovery commands. Possession of the deployment OS account is the cold-host
-authority, separate from any credentials inside a restored database.
+authority, separate from any credentials inside a restored database. The
+`recover-original` command uses a fresh, separately journaled cold-host grant;
+it does not renew the expired passkey confirmation of an interrupted restore.
 
 ## First startup and restart
 
@@ -203,29 +205,59 @@ cannot prove which generation is intended, so recovery is deliberate:
    `restore-*` directories or journals, the `<database>.restore-pending` opening
    barrier or any retained source; do not run another database writer.
 2. Record `node scripts/deploy/maintenance.ts status`, then restart the supervisor
-   once. Restart finishes reopening a committed outcome without reinstalling
-   prepared bytes. It marks an admission that never executed, or a restore that
+   once. Restart finishes commitment cleanup and selects the committed live
+   generation without reinstalling prepared bytes; opening still requires the
+   explicit command below. It marks an admission that never executed, or a restore that
    stopped before replacement (including staging) with the live files still
    matching the preserved original and no opening barrier begun or published,
    as failed and stopped.
-3. If status now shows a stopped operation and no pending restore, run verify,
-   start and resume with that operation ID, sign in as the Operator and
-   **Refresh restore status**. Only a recorded outcome says which data is live.
-4. If verify still refuses, the supervisor has not proved that reopening is safe.
-   Causes include a begun or published barrier, changed original files, uncertain
-   ownership, or a restore stopped between replacing the candidate and committing
-   an outcome, for example when the host lost power during the
-   candidate's trial or ran past an [operation or phase deadline](backups.md)
-   after activation. New restore confirmations have a session-capped 30-minute
-   operation lifetime; retained older confirmations keep their original deadline. The
-   preserved original is intact in the recovery root, but no supported command
-   reinstalls it yet ([SPN-128](todo/SPN-128.md)); copying those files back by hand
-   is not a recovery step. Copy the whole application directory and recovery root
-   read-only to separate encrypted storage, then follow
-   [fresh-host recovery](backups.md#restore-onto-a-fresh-host) from the last
-   verified backup with its access review. That loses work accepted after the
-   backup, so tell the Owner and Collaborators before reopening. Keep the copy
-   until that host is checked; it is the only evidence of the lost work.
+3. Run `status` again and read `lastFailure`. If it is `restore-job-pending`
+   or `original-recovery-unresolved`, continue at step 4. Otherwise follow
+   [First startup and restart](#first-startup-and-restart) to verify, start and
+   resume the selected live generation. Reuse `operationId` when status has one. Otherwise run
+   `node scripts/deploy/maintenance.ts verify` without an operation ID; it creates
+   one and returns the ID to use with start and resume. This also applies to a
+   committed backup or original in `recovery-required` after startup cleanup.
+   Sign in as the Operator and **Refresh restore status**. Only a recorded
+   outcome says which data is live.
+4. For `restore-job-pending` or `original-recovery-unresolved`, use the exact
+   `operationId` from status and run, as the deployment service UID. If status
+   provides no operation ID, keep the workspace closed and investigate under
+   step 5; do not invent an ID.
+
+   ```sh
+   node scripts/deploy/maintenance.ts recover-original --operation 00000000-0000-4000-8000-000000000000
+   ```
+
+   This deliberately authorizes recovery of the preserved original. The
+   supervisor verifies its independently recorded pre-shutdown fingerprint,
+   reconciles access and retry evidence exactly as an in-flight original
+   recovery, and installs a new generation through a private trial. It then
+   records **Original content was recovered** and reopens the workspace with
+   the recovered banner. Sign in again as the Operator and **Refresh restore
+   status**. Existing sessions and guest links are revoked; original accounts,
+   passkeys, content and grants are retained under the normal recovery rules.
+
+   Each command has a fixed time budget (two minutes in the standard supervisor)
+   and its own immutable grant and output slot. A failed or disconnected command
+   is not completion: inspect status and restart the supervisor before retrying
+   the same command/operation ID. Each retry retains earlier evidence and uses a
+   new grant; at most eight attempts are retained for this operation. If the
+   original already committed, the command only verifies/opens that selected
+   live generation. It never reinstalls prepared bytes over later acknowledged
+   work, and it refuses to replace a committed backup or a later generation.
+
+5. A refusal for missing/changed evidence, an unknown barrier, changed deployment
+   policy, exhausted attempt capacity, or uncertain ownership keeps the workspace
+   closed. Do not copy raw files back by hand or delete the barrier. Preserve the
+   whole application directory and recovery root read-only on separate encrypted
+   storage and investigate that reported prerequisite. If the preserved original
+   cannot be proven, use [fresh-host recovery](backups.md#restore-onto-a-fresh-host)
+   from the last verified backup with its access review. That loses work accepted
+   after the backup; tell the Owner and Collaborators before reopening and retain
+   the evidence until recovery is checked. [SPN-128's decision](implementation/SPN-128.md)
+   describes the authority and fingerprint boundary.
+
 
 ## Notices and time zones
 

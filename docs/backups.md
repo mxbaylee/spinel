@@ -585,9 +585,14 @@ depends on how far it got:
   See the [staging recovery decision](implementation/SPN-112.md#recover-an-untouched-original-after-staging-fails).
 - **After a failed trial**, one original-content recovery runs. If it cannot
   finish in the operation's remaining time, the workspace stays closed as an
-  unresolved restore.
+  unresolved restore until the Operator follows the recovery runbook.
 - **Anywhere else after activation** (for example a power loss during the trial),
-  the workspace stays closed as an unresolved restore ([SPN-128](todo/SPN-128.md)).
+  the workspace stays closed as an unresolved restore. The supported
+  `recover-original --operation UUID` host command uses fresh Operator authority
+  to verify the preserved original and reopen a reconciled original-content
+  generation. Follow the [maintenance runbook](maintenance.md#an-unresolved-restore);
+  do not copy raw files over the workspace or remove its opening barrier. A
+  committed winner is never reinstalled, preserving any later acknowledged work.
 
 The fixed-size production-image acceptance measures a synthetic image-heavy
 database and encrypted archive over 256 MiB on the 1 GiB / 0.75 CPU profile; its
