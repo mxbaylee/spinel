@@ -1,0 +1,7 @@
+# SPN-133 first source CI and supersession
+
+Source a75556e08b33e473b90f04ac230dea4850e59656, base8d2f994c3ac53c1849bd2b68927059d9c20c99f0, tested025f8f04dc43a9558f4085d4a4bebe6a5a82c8e4. CI41451696041 attempt1 desktop125298380587 failed strict Ubuntu mirror-profile setup at13:18:10UTC before browser installation/execution; original actual mirror contents were not printed. Imageubuntu24/20261018.96; no inference that provider alone determines configuration. Full log retained.
+
+Source changed toba89b830 for independently reviewed scope split, registeredSPN135 and the exact six-item boundary control. SupersededCI41451696041 andStorybook41451696165 were explicitly cancelled, both terminalcancelledconfirmed. Requiredaggregate failures afterworker cancellation do not indicate application assertion failures. No canceledcheck counts as a pass. Mobile125298380442 had begun its4-test historicalstage at13:19:09 and was cancelled13:23:06; log reports no matching resultartifactfiles, so no completedmetrics/acceptance is claimed or reconstructed. Current-sourceCI41452365054/Storybook41452365057 are separate fresh executions.
+
+The full digest-bound oldplan ZIP SHA256c8d708dbaf17cd4af091b9de59e39207761ff40996bb6ac8f4cc83625aecd579 and final run/job API metadata retain exactattempt/status/identities. This is failure/supersession evidence, not mergeacceptance. SPN131owns mirrorprofile compatibility; originaldesktopidle latency remainsSPN135 and blocksSPN098.
