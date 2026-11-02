@@ -1,0 +1,97 @@
+{
+  "run": 41430568768,
+  "attempt": 1,
+  "job": 125227939343,
+  "artifact": 13135367249,
+  "artifactSha256": "1ede257f919ec37b56bcb9c4a88d2cea9328feac946fd0b13175f401faceb87a",
+  "head": "c51458573f3a2cf2f5ff3701cf27abfcfe035935",
+  "base": "cc8364693791d981b86e80efc40bedba7fff2c08",
+  "tested": "3ddf9dcb01807ce23a78118a9a7c45f7fd164d14",
+  "tree": "58e16d0b5e1c4d34d5d74a4aaf0cfd73c548523d",
+  "files": [
+    {
+      "name": "spn-071-access-details-desktop-dark-production.png",
+      "width": 1280,
+      "height": 900,
+      "sha256": "61afb18200e2a1675bc555458d3c6d135c6fd3f112eeba00f0364e066d2163ff"
+    },
+    {
+      "name": "spn-071-access-details-desktop-light-production.png",
+      "width": 1280,
+      "height": 900,
+      "sha256": "36c617b8e76a98eeafdeb07bf33bdad50bf2ce4d462bbb8dc7d6826015446056"
+    },
+    {
+      "name": "spn-071-hidden-shares-phone-dark-production.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "1d8abc5a8463f45ef02b841846862a1bc6179e8d047cea08d154e8e619ec8c28"
+    },
+    {
+      "name": "spn-071-hidden-shares-phone-light-production.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "ea3d56f074c1654b35aefb6639900f4b3c701aafe66e0b4545e74e418f5ecd09"
+    },
+    {
+      "name": "spn-071-phone-traditional-upgrade-dark-production.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "335e0b03ce86b57a9c7d20970fc1b2571acbd3e5561c6f893e0bdc739a1011b6"
+    },
+    {
+      "name": "spn-071-phone-traditional-upgrade-light-production.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "0099cb625542a73e5d359a3c1534f27db5aa6c3064fe2a07a191a92dab0d458d"
+    },
+    {
+      "name": "spn-071-phone-upgraded-editing-dark-production.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "38a4de3e326b221eeef3212dfb29a3fc2780242d7c65f7d96de39f11db7995bf"
+    },
+    {
+      "name": "spn-071-phone-upgraded-editing-light-production.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "a64d6b7765fa881145110070cd4a53a8117b684cd7027ad56fdeb9186bfcc58c"
+    },
+    {
+      "name": "spn-071-phone-upgraded-reading-dark-production.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "0dfb7216868b16aaa2b254792ffb4d6178a5cab40f450733f860bdb328366e47"
+    },
+    {
+      "name": "spn-071-phone-upgraded-reading-light-production.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "dd560f71b4b70846ed0010b1e5e53e757c9a910fd6269cdb04e099cff2d2fe7a"
+    },
+    {
+      "name": "spn-071-phone-viewer-dark-production.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "1ebca130246f58695c91da46893361d365fdf55f897102ed094ab1d12bdb1664"
+    },
+    {
+      "name": "spn-071-phone-viewer-light-production.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "0f5291da406c29c64092d60b1f35599e854466f7ffaaee647f890bcb4c9dd5e2"
+    },
+    {
+      "name": "spn-071-shared-menu-desktop-dark-production.png",
+      "width": 1280,
+      "height": 900,
+      "sha256": "95d65e5f29488b0e2f91473b07e452eecbdb05166226c633ac6c0f9982c1d94c"
+    },
+    {
+      "name": "spn-071-shared-menu-desktop-light-production.png",
+      "width": 1280,
+      "height": 900,
+      "sha256": "c6eebdd9be63cf1c05b323c9dbc5801e6a5d0e43fde402131db32d056d505f45"
+    }
+  ]
+}
