@@ -1,0 +1,30 @@
+{
+  "README.md": {
+    "bytes": 788,
+    "sha256": "372bd9d315f93e6ad8fb6df46423a8c24bbca6a54021e3cc541f78c3bc4754b1"
+  },
+  "ci-plan.zip": {
+    "bytes": 1111,
+    "sha256": "2540ded65eb83c00bb8381342f50fe4a427edf46fe3c30e4d2580345ee9793c6"
+  },
+  "ci-run.json": {
+    "bytes": 15637,
+    "sha256": "94caa474eb275a7d3ef2c2ce4a84d846f49d07e8853769c026ce83a7036181fa"
+  },
+  "final-check.log": {
+    "bytes": 1757,
+    "sha256": "5040e4ed59a4422a14fb01f10bd08bf4fadbfa38f9ee9d98aebab9a4007798e6"
+  },
+  "final-pr-check.log": {
+    "bytes": 76,
+    "sha256": "c76b1650c548bd5cbc1f2c6c1793ac4a24bb857f112bd17bb67fe7914c0ac7eb"
+  },
+  "plan/ci-plan.json": {
+    "bytes": 5975,
+    "sha256": "259082cec2ac62ebad9cfb308a78a7b53b290de3cbff453b8633196d0971d6c6"
+  },
+  "reviews.json": {
+    "bytes": 382,
+    "sha256": "559c06519d31aba8c418712f9f5090a3ff69ba37469e9e9446cefb6fad56f710"
+  }
+}

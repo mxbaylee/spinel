@@ -1,0 +1,17 @@
+{
+  "source": "862a365caa726a3920a1e3d5d9d096ec20a4fe5f",
+  "reviewers": [
+    {
+      "reviewer": "independent nonimplementing A",
+      "score": 100,
+      "findings": []
+    },
+    {
+      "reviewer": "independent nonimplementing B",
+      "score": 100,
+      "findings": []
+    }
+  ],
+  "disclosure": "agent review only",
+  "scope": "registration only; no runtime acceptance"
+}
