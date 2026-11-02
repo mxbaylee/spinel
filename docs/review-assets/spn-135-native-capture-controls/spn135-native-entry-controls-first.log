@@ -1,0 +1,91 @@
+✔ es: rejects repeat or ambiguous instrumentation (1.620417ms)
+✔ es cache 0: preserves publication, mutation, return/throw (success) (17.42275ms)
+✔ es cache 0: preserves publication, mutation, return/throw (history) (7.214041ms)
+✔ es cache 0: preserves publication, mutation, return/throw (collaboration) (7.221875ms)
+✔ es cache 1: preserves publication, mutation, return/throw (success) (5.610958ms)
+✔ es cache 1: preserves publication, mutation, return/throw (history) (5.172834ms)
+✔ es cache 1: preserves publication, mutation, return/throw (collaboration) (6.130333ms)
+✔ es cache 2: preserves publication, mutation, return/throw (success) (8.999125ms)
+✔ es cache 2: preserves publication, mutation, return/throw (history) (4.867542ms)
+✔ es cache 2: preserves publication, mutation, return/throw (collaboration) (6.404ms)
+✔ es cache 3: preserves publication, mutation, return/throw (success) (7.090583ms)
+✔ es cache 3: preserves publication, mutation, return/throw (history) (5.884958ms)
+✔ es cache 3: preserves publication, mutation, return/throw (collaboration) (8.511667ms)
+✔ es cache 4: preserves publication, mutation, return/throw (success) (14.647ms)
+✔ es cache 4: preserves publication, mutation, return/throw (history) (6.89975ms)
+✔ es cache 4: preserves publication, mutation, return/throw (collaboration) (9.915ms)
+✔ es cache 5: preserves publication, mutation, return/throw (success) (5.510541ms)
+✔ es cache 5: preserves publication, mutation, return/throw (history) (4.67ms)
+✔ es cache 5: preserves publication, mutation, return/throw (collaboration) (4.9445ms)
+✔ es cache 6: preserves publication, mutation, return/throw (success) (7.006167ms)
+✔ es cache 6: preserves publication, mutation, return/throw (history) (4.789667ms)
+✔ es cache 6: preserves publication, mutation, return/throw (collaboration) (4.98025ms)
+✔ es cache 7: preserves publication, mutation, return/throw (success) (4.888459ms)
+✔ es cache 7: preserves publication, mutation, return/throw (history) (4.565209ms)
+✔ es cache 7: preserves publication, mutation, return/throw (collaboration) (7.011917ms)
+✔ cjs: rejects repeat or ambiguous instrumentation (0.891625ms)
+✔ cjs cache 0: preserves publication, mutation, return/throw (success) (5.843375ms)
+✔ cjs cache 0: preserves publication, mutation, return/throw (history) (4.678041ms)
+✔ cjs cache 0: preserves publication, mutation, return/throw (collaboration) (5.11625ms)
+✔ cjs cache 1: preserves publication, mutation, return/throw (success) (7.173125ms)
+✔ cjs cache 1: preserves publication, mutation, return/throw (history) (4.794291ms)
+✔ cjs cache 1: preserves publication, mutation, return/throw (collaboration) (4.793208ms)
+✔ cjs cache 2: preserves publication, mutation, return/throw (success) (4.769541ms)
+✔ cjs cache 2: preserves publication, mutation, return/throw (history) (4.6705ms)
+✔ cjs cache 2: preserves publication, mutation, return/throw (collaboration) (6.962666ms)
+✔ cjs cache 3: preserves publication, mutation, return/throw (success) (4.78925ms)
+✔ cjs cache 3: preserves publication, mutation, return/throw (history) (4.47625ms)
+✔ cjs cache 3: preserves publication, mutation, return/throw (collaboration) (5.034125ms)
+✔ cjs cache 4: preserves publication, mutation, return/throw (success) (11.224375ms)
+✔ cjs cache 4: preserves publication, mutation, return/throw (history) (6.778ms)
+✔ cjs cache 4: preserves publication, mutation, return/throw (collaboration) (9.718583ms)
+✔ cjs cache 5: preserves publication, mutation, return/throw (success) (5.018ms)
+✔ cjs cache 5: preserves publication, mutation, return/throw (history) (5.322333ms)
+✔ cjs cache 5: preserves publication, mutation, return/throw (collaboration) (5.138083ms)
+✔ cjs cache 6: preserves publication, mutation, return/throw (success) (7.1445ms)
+✔ cjs cache 6: preserves publication, mutation, return/throw (history) (5.016041ms)
+✔ cjs cache 6: preserves publication, mutation, return/throw (collaboration) (4.568583ms)
+✔ cjs cache 7: preserves publication, mutation, return/throw (success) (4.845208ms)
+✔ cjs cache 7: preserves publication, mutation, return/throw (history) (4.874375ms)
+✔ cjs cache 7: preserves publication, mutation, return/throw (collaboration) (5.913375ms)
+✖ native short-cache capture preserves own undefined and survives cache clearing (4.49825ms)
+✔ trace retention: complete (8.547417ms)
+✔ trace retention: data-loss (1.131708ms)
+✔ trace retention: missing-stream (0.450792ms)
+✔ file-close failure preserves result and stream cleanup; primary=false (0.841375ms)
+✔ file-close failure preserves result and stream cleanup; primary=true (0.118792ms)
+ℹ tests 56
+ℹ suites 0
+ℹ pass 55
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 781.673792
+
+✖ failing tests:
+
+test at scripts/ci/spn135-native-phases.test.ts:114:1
+✖ native short-cache capture preserves own undefined and survives cache clearing (4.49825ms)
+  AssertionError [ERR_ASSERTION]: Values have same structure but are not reference-equal:
+  
+  [
+    'public-flush',
+    'public-flush'
+  ]
+  
+      at TestContext.<anonymous> (file:///Users/mxbaylee/projects/spinel-spn-135-diagnostic/scripts/ci/spn135-native-phases.test.ts:126:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'public-flush', 'public-flush' ],
+    expected: [ 'public-flush', 'public-flush' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+WATCHDOG: exit=1, signal=null, elapsed=828ms, peak=422.2MiB

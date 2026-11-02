@@ -1,0 +1,460 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 0ef225b1..b54e7a78 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -1,4 +1,4 @@
+-name: SPN-135 one refined desktop diagnostic
++name: SPN-135 native capture controls only
+ on:
+   workflow_dispatch:
+ permissions:
+@@ -34,29 +34,27 @@ jobs:
+           test "$(git -C runtime-source rev-parse HEAD^{tree})" = 45abc48cdb93347a62f514da4773ea7ff5521935
+           test -z "$(git -C runtime-source status --porcelain)"
+           cat /etc/apt/apt-mirrors.txt > diagnostic-mirror-profile.txt
+-      - name: Install original runtime and browser with reviewed setup helper
++      - name: Install original runtime
+         working-directory: runtime-source
+         run: |
+           npm ci --no-audit
+-          node ../scripts/ci/prefer-ubuntu-archive.ts
+-          npx playwright install --with-deps chromium
+       - name: Prepare declared diagnostic overlay
+         run: node scripts/ci/spn135-phase-diagnostic.ts runtime-source
+-      - name: Build original application with diagnostic source maps
++      - name: Verify capture on the existing native timer and frame race controls
+         working-directory: runtime-source
+-        run: npm run build -- --sourcemap
+-      - name: One declared desktop profile with full correctness assertions
+-        run: node scripts/ci/spn135-run.ts runtime-source
++        shell: bash
++        run: npx vitest run src/ui/boundedDocHistory.test.ts -t 'rendering frames drain a quiet native phrase|native idle winning the race' | tee spn135-native-controls.log
+       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+         if: always()
+         with:
+-          name: spn135-refined-desktop-diagnostic
++          name: spn135-native-capture-controls
+           retention-days: 14
+           if-no-files-found: error
+           path: |
+             diagnostic-*.txt
+             runtime-source/spn135-*.json
+             runtime-source/spn135-*.patch
++            runtime-source/spn135-*.log
+             runtime-source/e2e/spn135-trace.ts
+             runtime-source/test-results/**/spn108-*.json
+             runtime-source/test-results/**/spn108-profile.cpuprofile
+diff --git a/scripts/ci/spn135-native-phases.test.ts b/scripts/ci/spn135-native-phases.test.ts
+index c05eb96c..a2b615f1 100644
+--- a/scripts/ci/spn135-native-phases.test.ts
++++ b/scripts/ci/spn135-native-phases.test.ts
+@@ -4,7 +4,7 @@ import { createRequire } from 'node:module';
+ import { resolve } from 'node:path';
+ import { runInNewContext } from 'node:vm';
+ import test from 'node:test';
+-import { instrumentNativePhases, idleCaptureSource } from './spn135-native-phases.ts';
++import { instrumentNativePhases } from './spn135-native-phases.ts';
+ 
+ // Supply a verified, read-only original installation. No install/patch writes here.
+ const root = process.env.SPN135_CONTROL_RUNTIME;
+@@ -27,6 +27,7 @@ function manager(source: string, clockFailure: boolean, publicationFailure?: str
+   assert.ok(start > 0 && end > start && classStart > end && classEnd > classStart);
+   const phases: string[] = [];
+   const context = {
++    TextEncoder,
+     JSONX: core.JSONX,
+     _univerjs_core: core,
+     RxDisposable: core.RxDisposable,
+@@ -61,7 +62,7 @@ function manager(source: string, clockFailure: boolean, publicationFailure?: str
+       if (publicationFailure === 'collaboration') throw failure;
+     },
+   };
+-  return { instance, published, phases, failure };
++  return { instance, published, phases, failure, context: context as Record<string, any> };
+ }
+ 
+ for (const format of ['es', 'cjs']) {
+@@ -110,24 +111,108 @@ for (const format of ['es', 'cjs']) {
+   }
+ }
+ 
+-test('idle capture preserves own undefined, array holes and original cache', () => {
+-  // Node strips the exact TypeScript overlay before VM evaluation.
+-  const { stripTypeScriptTypes } = require('node:module');
+-  const pending = { history: [{ own: undefined, holes: new Array(2) }], collaboration: [] };
+-  const before = structuredClone(pending);
+-  const context: any = {
+-    pending,
+-    reason: 'idle',
+-    quietForMs: 301,
+-    performance: { now: () => 1, measure() {} },
+-    TextEncoder,
+-  };
+-  runInNewContext(stripTypeScriptTypes(idleCaptureSource), context);
+-  assert.equal(context.__spn135CaptureError, undefined);
+-  assert.deepEqual(structuredClone(decode(context.__spn135Idle[0].cache)), before);
+-  assert.deepEqual(pending, before);
+-  context.pending = { history: [() => {}], collaboration: [] };
+-  runInNewContext(stripTypeScriptTypes(idleCaptureSource), context);
+-  assert.match(context.__spn135CaptureError, /Unsupported/);
+-  assert.equal(context.__spn135Idle.length, 1);
++test('native short-cache capture preserves own undefined and survives cache clearing', () => {
++  const source = readFileSync(resolve(root, 'node_modules/@univerjs/docs/lib/es/index.js'), 'utf8');
++  const value = manager(instrumentNativePhases(source), false);
++  const original = decode(captures.captures[0]);
++  const states = original.history.slice(0, 6);
++  states[0].captureProof = { own: undefined, holes: new Array(2) };
++  const before = structuredClone(states);
++  value.instance._historyStateCache = new Map([['unit', states]]);
++  value.instance._changeStateCache = new Map([['unit', structuredClone(states)]]);
++  value.instance.flushPendingChanges('unit');
++  const recorded = value.context.__spn135Native;
++  assert.equal(recorded.length, 2);
++  assert.deepEqual(structuredClone(recorded.map((entry: any) => entry.origin)), [
++    'public-flush',
++    'public-flush',
++  ]);
++  for (const entry of recorded) {
++    assert.equal(entry.count, 6);
++    assert.equal(entry.unitId, 'unit');
++    assert.deepEqual(structuredClone(decode(entry.cache)), before);
++  }
++  assert.deepEqual(structuredClone(value.instance.getStateCache('unit')), {
++    history: [],
++    collaboration: [],
++  });
++  value.instance.flushPendingChanges('unit');
++  assert.equal(recorded.length, 2, 'Empty callbacks must not create substantive captures');
++  const bad = structuredClone(before);
++  bad[0].captureProof = () => {};
++  value.instance._historyStateCache.set('unit', bad);
++  assert.doesNotThrow(() => value.instance.flushPendingChanges('unit'));
++  assert.match(value.context.__spn135CaptureError, /Unsupported/);
++  assert.equal(value.instance.getStateCache('unit').history.length, 0);
++});
++
++for (const limit of ['records', 'values', 'bytes', 'capacity'] as const) {
++  test(`capture boundary ${limit} preserves native publication and cache clearing`, () => {
++    const source = readFileSync(
++      resolve(root, 'node_modules/@univerjs/docs/lib/es/index.js'),
++      'utf8',
++    );
++    const original = manager(source, false);
++    const candidate = manager(instrumentNativePhases(source), false);
++    const states = decode(captures.captures[0]).history.slice(0, limit === 'capacity' ? 32 : 6);
++    // Unknown top-level metadata is immaterial to native composition/publication.
++    if (limit === 'values') states[0].captureProof = new Array(100001).fill(null);
++    if (limit === 'capacity')
++      states[0].captureProof = () => {
++        throw new Error('Must not traverse');
++      };
++    for (const value of [original, candidate]) {
++      // Clone the state graph while preserving the inert function used above.
++      const copies = states.map((state: any) => ({
++        ...core.Tools.deepClone(state),
++        captureProof: state.captureProof,
++      }));
++      value.instance._historyStateCache = new Map([['unit', copies]]);
++      value.instance._changeStateCache = new Map([['unit', []]]);
++    }
++    if (limit === 'records') candidate.context.__spn135Native = new Array(1000).fill(null);
++    if (limit === 'bytes') candidate.context.__spn135NativeBytes = 4 * 1024 * 1024;
++    for (const value of [original, candidate])
++      assert.doesNotThrow(() => value.instance.flushPendingChanges('unit'));
++    assert.deepEqual(structuredClone(candidate.published), structuredClone(original.published));
++    assert.deepEqual(structuredClone(candidate.instance.getStateCache('unit')), {
++      history: [],
++      collaboration: [],
++    });
++    if (limit === 'capacity') {
++      assert.equal(candidate.context.__spn135CaptureError, undefined);
++      assert.equal(candidate.context.__spn135Native.length, 1);
++      assert.deepEqual(
++        structuredClone(
++          candidate.context.__spn135Native.map((entry: any) => ({
++            count: entry.count,
++            cache: entry.cache,
++            cacheOmitted: entry.cacheOmitted,
++          })),
++        ),
++        [{ count: 32, cache: null, cacheOmitted: 'capacity-or-larger' }],
++      );
++    } else {
++      assert.match(candidate.context.__spn135CaptureError, /exceeds|exceed/);
++      assert.equal(candidate.context.__spn135Native?.length ?? 0, limit === 'records' ? 1000 : 0);
++    }
++  });
++}
++
++test('invocation origin restores the enclosing context through native publication failure', () => {
++  const source = readFileSync(resolve(root, 'node_modules/@univerjs/docs/lib/es/index.js'), 'utf8');
++  const value = manager(instrumentNativePhases(source), false, 'history');
++  const states = decode(captures.captures[0]).history.slice(0, 6);
++  value.instance._historyStateCache = new Map([['unit', states]]);
++  value.instance._changeStateCache = new Map([['unit', []]]);
++  value.instance._spn135Origin = 'enclosing';
++  assert.throws(
++    () =>
++      value.context.spn135WithOrigin(value.instance, 'history-timer', () =>
++        value.instance.flushPendingChanges('unit'),
++      ),
++    (error) => error === value.failure,
++  );
++  assert.equal(value.instance._spn135Origin, 'enclosing');
++  assert.equal(value.context.__spn135Native[0].origin, 'history-timer');
+ });
+diff --git a/scripts/ci/spn135-native-phases.ts b/scripts/ci/spn135-native-phases.ts
+index 259df1b5..ed762965 100644
+--- a/scripts/ci/spn135-native-phases.ts
++++ b/scripts/ci/spn135-native-phases.ts
+@@ -7,7 +7,49 @@ export function instrumentNativePhases(installed: string) {
+   };
+   replace(
+     'function composeDocStateActions(states, key) {',
+-    `function spn135Phase(name, invoke) {
++    `function spn135WithOrigin(manager, origin, invoke) {
++\tconst previous = manager._spn135Origin;
++\tmanager._spn135Origin = origin;
++\ttry { return invoke(); } finally { manager._spn135Origin = previous; }
++}
++function spn135Capture(manager, unitId, phase) {
++\tconst pending = (phase === "history" ? manager._historyStateCache : manager._changeStateCache).get(unitId);
++\tif (!Array.isArray(pending) || pending.length === 0) return;
++\tconst captureStartedAt = performance.now();
++\ttry {
++\t\tlet visits = 0;
++\t\tconst ancestors = new Set();
++\t\tfunction encode(value) {
++\t\t\tif (++visits > 100000) throw new Error("Native capture exceeds 100000 values");
++\t\t\tif (value === undefined) return { kind: "undefined" };
++\t\t\tif (value === null || typeof value === "string" || typeof value === "boolean" || typeof value === "number" && Number.isFinite(value)) return { kind: "value", value };
++\t\t\tif (typeof value !== "object" || ancestors.has(value)) throw new Error("Unsupported or cyclic native capture value");
++\t\t\tancestors.add(value);
++\t\t\ttry { return { kind: Array.isArray(value) ? "array" : "object", entries: Reflect.ownKeys(value).map(key => {
++\t\t\t\tconst descriptor = Object.getOwnPropertyDescriptor(value, key);
++\t\t\t\tif (typeof key !== "string" || !Object.hasOwn(descriptor, "value")) throw new Error("Unsupported native capture property");
++\t\t\t\treturn [key, encode(descriptor.value)];
++\t\t\t}) }; } finally { ancestors.delete(value); }
++\t\t}
++\t\tconst captures = globalThis.__spn135Native ??= [];
++\t\tif (captures.length >= 1000) throw new Error("Native capture exceeds 1000 invocations");
++\t\t// The investigation targets the terminal group below capacity32. Keep full
++\t\t// phase/count/origin evidence for capacity groups without copying their state.
++\t\tconst cache = pending.length < 32 ? encode(pending) : null;
++\t\tconst item = { id: captures.length + 1, unitId, phase, origin: manager._spn135Origin ?? "direct",
++\t\t\tcount: pending.length, cache, cacheOmitted: cache === null ? "capacity-or-larger" : null,
++\t\t\tcaptureStartedAt, captureEndedAt: performance.now() };
++\t\tconst bytes = new TextEncoder().encode(JSON.stringify(item)).byteLength;
++\t\t// Reserve space for closing timestamps and array punctuation before retaining.
++\t\tconst total = (globalThis.__spn135NativeBytes ?? 0) + bytes + 512;
++\t\tif (total > 4 * 1024 * 1024) throw new Error("Native captures exceed 4 MiB");
++\t\tglobalThis.__spn135NativeBytes = total;
++\t\tcaptures.push(item);
++\t\titem.captureEndedAt = performance.now();
++\t\treturn item;
++\t} catch (error) { globalThis.__spn135CaptureError = String(error); }
++}
++function spn135Phase(name, invoke) {
+ \tconst start = performance.now();
+ \ttry { return invoke(); }
+ \tfinally {
+@@ -25,14 +67,37 @@ function spn135ComposeDocStateActions(states, key) {`,
+     ['_pushHistory', 'history'],
+     ['_emitChangeState', 'collaboration'],
+   ]) {
++    const invocation = `spn135Phase("${phase}", () => this._spn135${phase}(unitId))`;
++    const body =
++      phase === 'flush'
++        ? `return spn135WithOrigin(this, this._spn135Origin ?? "public-flush", () => ${invocation});`
++        : `const capture = spn135Capture(this, unitId, "${phase}");
++\t\tconst start = performance.now();
++\t\ttry { return ${invocation}; }
++\t\tfinally { if (capture) { capture.phaseStartedAt = start; capture.phaseEndedAt = performance.now(); } }`;
+     replace(
+       `\t${method}(unitId) {`,
+       `\t${method}(unitId) {
+-\t\treturn spn135Phase("${phase}", () => this._spn135${phase}(unitId));
++\t\t${body}
+ \t}
+ \t_spn135${phase}(unitId) {`,
+     );
+   }
++  for (const timer of ['_historyTimer', '_changeStateCacheTimer']) {
++    replace(
++      `this.${timer} = setTimeout(() => {\n\t\t\t\t\tcb(unitId);`,
++      `this.${timer} = setTimeout(() => {\n\t\t\t\t\tspn135WithOrigin(this, type + "-timer", () => cb(unitId));`,
++    );
++  }
++  replace(
++    'segmentId !== changeState.segmentId) cb(unitId);',
++    'segmentId !== changeState.segmentId) spn135WithOrigin(this, "segment-boundary", () => cb(unitId));',
++  );
++  replace('} else cb(unitId);', '} else spn135WithOrigin(this, "immediate", () => cb(unitId));');
++  replace(
++    'const unitId = univerDoc.getUnitId();\n\t\t\t\tthis._pushHistory(unitId);\n\t\t\t\tthis._emitChangeState(unitId);',
++    'const unitId = univerDoc.getUnitId();\n\t\t\t\tspn135WithOrigin(this, "history-command", () => { this._pushHistory(unitId); this._emitChangeState(unitId); });',
++  );
+   replace(
+     '\t\tundoRedoService.pushUndoRedo({\n\t\t\tunitID: unitId,',
+     '\t\tspn135Phase("history-publication", () => undoRedoService.pushUndoRedo({\n\t\t\tunitID: unitId,',
+@@ -48,46 +113,11 @@ function spn135ComposeDocStateActions(states, key) {`,
+   return source;
+ }
+ 
+-// Capture before native reversal/clearing; bound both traversal and retained bytes.
+-// All values are tagged, preserving own undefined fields and array holes/length.
+-export const idleCaptureSource = `
+-    if (reason === 'idle') {
+-      const captureStartedAt = performance.now();
+-      const diagnostic = globalThis as unknown as {
+-        __spn135Idle?: unknown[]; __spn135CaptureError?: string;
+-      };
+-      try {
+-        let visits = 0;
+-        const ancestors = new Set<object>();
+-        const encode = (value: unknown): unknown => {
+-          if (++visits > 100000) throw new Error('Idle capture exceeds 100000 values');
+-          if (value === undefined) return { kind: 'undefined' };
+-          if (value === null || typeof value === 'string' || typeof value === 'boolean' ||
+-              (typeof value === 'number' && Number.isFinite(value)))
+-            return { kind: 'value', value };
+-          if (typeof value !== 'object' || ancestors.has(value))
+-            throw new Error('Unsupported or cyclic native capture value');
+-          ancestors.add(value);
+-          try {
+-            return { kind: Array.isArray(value) ? 'array' : 'object',
+-              entries: Reflect.ownKeys(value).map(key => {
+-                const descriptor = Object.getOwnPropertyDescriptor(value, key)!;
+-                if (typeof key !== 'string' || !Object.hasOwn(descriptor, 'value'))
+-                  throw new Error('Unsupported native capture property');
+-                return [key, encode(descriptor.value)];
+-              }) };
+-          } finally { ancestors.delete(value); }
+-        };
+-        const cache = encode(pending);
+-        const captures = diagnostic.__spn135Idle ??= [];
+-        if (captures.length >= 100) throw new Error('Idle capture exceeds 100 intervals');
+-        const item = { reason, quietForMs, captureStartedAt, cache,
+-          captureEndedAt: performance.now() };
+-        if (new TextEncoder().encode(JSON.stringify([...captures, item])).byteLength > 4 * 1024 * 1024)
+-          throw new Error('Idle captures exceed 4 MiB');
+-        captures.push(item);
+-        item.captureEndedAt = performance.now();
+-        performance.measure('spn135-idle-capture', { start: captureStartedAt, end: performance.now() });
+-      } catch (error) { diagnostic.__spn135CaptureError = String(error); }
+-    }
++// Label the existing public policy call without changing its return/throw path.
++export const policyOriginSource = `
++      const diagnostic = manager as unknown as { _spn135Origin?: string };
++      const previousOrigin = diagnostic._spn135Origin;
++      diagnostic._spn135Origin = 'policy-' + reason;
++      try { manager.flushPendingChanges(unitId); }
++      finally { diagnostic._spn135Origin = previousOrigin; }
+ `;
+diff --git a/scripts/ci/spn135-phase-diagnostic.ts b/scripts/ci/spn135-phase-diagnostic.ts
+index 57c0409f..e4dd4966 100644
+--- a/scripts/ci/spn135-phase-diagnostic.ts
++++ b/scripts/ci/spn135-phase-diagnostic.ts
+@@ -3,7 +3,7 @@ import { execFileSync } from 'node:child_process';
+ import { readFileSync, writeFileSync } from 'node:fs';
+ import { resolve } from 'node:path';
+ import { pathToFileURL } from 'node:url';
+-import { instrumentNativePhases, idleCaptureSource } from './spn135-native-phases.ts';
++import { instrumentNativePhases, policyOriginSource } from './spn135-native-phases.ts';
+ 
+ const root = resolve(process.argv[2] ?? 'runtime-source');
+ const expected = 'dbbe5ccaf085ce20b79068d3596a35dcf2142223';
+@@ -35,11 +35,11 @@ change(
+         if (nativeDiagnostic) return nativeDiagnostic;
+         const capture = await f.page.evaluate(() => {
+           const value = globalThis as unknown as Record<string, unknown>;
+-          return { idle: value.__spn135Idle ?? [], phaseError: value.__spn135PhaseError ?? null,
++          return { native: value.__spn135Native ?? [], phaseError: value.__spn135PhaseError ?? null,
+             captureError: value.__spn135CaptureError ?? null };
+         }).catch(error => ({ collectionError: String(error) }));
+         const bytes = JSON.stringify(capture);
+-        await writeFile(info.outputPath('spn135-native-idle.json'), bytes);
++        await writeFile(info.outputPath('spn135-native-caches.json'), bytes);
+         nativeDiagnostic = { ...capture, sha256: createHash('sha256').update(bytes).digest('hex') };
+         evidence.nativeDiagnostic = nativeDiagnostic;
+         return nativeDiagnostic;
+@@ -68,7 +68,18 @@ change(
+         expect(captured.collectionError).toBeUndefined();
+         expect(captured.phaseError).toBeNull();
+         expect(captured.captureError).toBeNull();
+-        expect((captured.idle as unknown[]).length).toBeGreaterThan(0);
++        const terminal = (captured.native as { unitId: string; phase: string; count: number;
++          cache: unknown; phaseStartedAt: number; phaseEndedAt: number }[]).filter(entry =>
++          entry.unitId === native.unitId && entry.phaseStartedAt >= input.keydownAt.at(-1)! &&
++          entry.phaseEndedAt <= (evidence.traceClockEnd as number));
++        expect(terminal.map(entry => entry.phase)).toEqual(['history', 'collaboration']);
++        expect(terminal[0]!.count).toBe(terminal[1]!.count);
++        for (const entry of terminal) {
++          expect(entry.count).toBeGreaterThan(0);
++          expect(entry.count).toBeLessThan(32);
++          expect(entry.cache).not.toBeNull();
++        }
++        evidence.terminalNativeCaptures = terminal;
+         evidence.completed = true;`,
+ );
+ change(
+@@ -81,9 +92,49 @@ change(
+ writeFileSync(harness, text);
+ const policy = resolve(root, 'src/ui/boundedDocHistory.ts');
+ const policySource = readFileSync(policy, 'utf8');
+-const policyAnchor = '    const startedAt = performance.now();';
++const policyAnchor = '      manager.flushPendingChanges(unitId);';
+ if (policySource.split(policyAnchor).length !== 2) throw new Error('Ambiguous idle capture anchor');
+-writeFileSync(policy, policySource.replace(policyAnchor, idleCaptureSource + policyAnchor));
++writeFileSync(policy, policySource.replace(policyAnchor, policyOriginSource));
++const controls = resolve(root, 'src/ui/boundedDocHistory.test.ts');
++let controlSource = readFileSync(controls, 'utf8');
++function changeControl(before: string, after: string) {
++  if (controlSource.split(before).length !== 2)
++    throw new Error('Ambiguous native race control anchor');
++  controlSource = controlSource.replace(before, after);
++}
++changeControl(
++  'afterEach(() => {',
++  `function assertNativeCapture(count: number, origins: string[]) {
++  const records = (globalThis as unknown as { __spn135Native: {
++    unitId: string; phase: string; origin: string; count: number;
++    cache: { kind: string; entries: [string, { value?: number }][] };
++  }[] }).__spn135Native;
++  expect(records.map(({ unitId, phase, origin, count }) => ({ unitId, phase, origin, count }))).toEqual([
++    { unitId: 'doc', phase: 'history', origin: origins[0], count },
++    { unitId: 'doc', phase: 'collaboration', origin: origins[1], count },
++  ]);
++  for (const record of records) {
++    expect(record.cache.kind).toBe('array');
++    expect(record.cache.entries.find(([key]) => key === 'length')?.[1].value).toBe(count);
++  }
++}
++afterEach(() => {
++  const diagnostic = globalThis as unknown as Record<string, unknown>;
++  for (const key of ['__spn135Native', '__spn135NativeBytes', '__spn135CaptureError', '__spn135PhaseError']) delete diagnostic[key];`,
++);
++changeControl(
++  '    // The original SDK timeouts can still run later without duplicating history.',
++  "    assertNativeCapture(9, ['policy-idle', 'policy-idle']);\n    // The original SDK timeouts can still run later without duplicating history.",
++);
++changeControl(
++  '    // The original SDK timeouts can still run later without duplicating history.\n    await vi.advanceTimersByTimeAsync(350);',
++  "    // The original SDK timeouts can still run later without duplicating history.\n    await vi.advanceTimersByTimeAsync(350);\n    assertNativeCapture(9, ['policy-idle', 'policy-idle']);",
++);
++changeControl(
++  "    expect(f.observations).toEqual([]);\n    expect(f.frames.size).toBe(0);\n    expect(f.manager.getStateCache('doc')).toEqual({ history: [], collaboration: [] });",
++  "    expect(f.observations).toEqual([]);\n    expect(f.frames.size).toBe(0);\n    expect(f.manager.getStateCache('doc')).toEqual({ history: [], collaboration: [] });\n    assertNativeCapture(12, ['history-timer', 'collaboration-timer']);",
++);
++writeFileSync(controls, controlSource);
+ writeFileSync(
+   resolve(root, 'e2e/spn135-trace.ts'),
+   readFileSync(new URL('./spn135-trace.ts', import.meta.url)),
+@@ -108,6 +159,7 @@ const files = [
+   'e2e/doc-responsiveness.ts',
+   'e2e/doc-responsiveness-fixture.ts',
+   'src/ui/boundedDocHistory.ts',
++  'src/ui/boundedDocHistory.test.ts',
+   'web/DocEditor.tsx',
+   'web/spinelSync.ts',
+   'web/docResponsivenessEvidence.ts',

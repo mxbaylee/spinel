@@ -1,0 +1,10 @@
+file:///Users/mxbaylee/projects/spinel-spn-135-diagnostic/scripts/ci/spn135-phase-diagnostic.ts:90
+  if (controlSource.split(before).length !== 2) throw new Error('Ambiguous native race control anchor');
+                                                      ^
+
+Error: Ambiguous native race control anchor
+    at changeControl (file:///Users/mxbaylee/projects/spinel-spn-135-diagnostic/scripts/ci/spn135-phase-diagnostic.ts:90:55)
+    at file:///Users/mxbaylee/projects/spinel-spn-135-diagnostic/scripts/ci/spn135-phase-diagnostic.ts:114:1
+
+Node.js v26.12.1
+WATCHDOG: exit=1, signal=null, elapsed=69ms, peak=0.0MiB
