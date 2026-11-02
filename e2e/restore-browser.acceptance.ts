@@ -13,9 +13,12 @@ import { tmpdir } from 'node:os';
 import { join, relative, resolve } from 'node:path';
 import { promisify } from 'node:util';
 import { chromium, expect } from '@playwright/test';
-import type { Browser, Page } from '@playwright/test';
+import type { Browser, Page, Request } from '@playwright/test';
 import { validRestoreJobRecord } from '../src/server/maintenance/restore-jobs.ts';
 import type { RestoreRichMetadata } from '../src/server/maintenance/restore-rich-fixture.ts';
+import { RESTORE_RESOURCE_MESSAGES } from '../src/shared/restore.ts';
+import type { RestorePreparation } from '../src/shared/restore.ts';
+import type { RestoreSizedFixture } from './restore-sized-fixture.ts';
 import {
   prepareRichRestoreBoundary,
   verifyRestoredRichWorkspace,
@@ -32,6 +35,9 @@ if (!configuredImage || !/^sha256:[a-f0-9]{64}$/.test(configuredImage))
   );
 // Preserve the validated string type across helper closures.
 const image = configuredImage;
+const sized = process.env.SPINEL_RESTORE_BROWSER_PROFILE === 'images-256m';
+if (process.env.SPINEL_RESTORE_BROWSER_PROFILE && !sized)
+  throw new Error('Unknown restore acceptance workload.');
 const project = resolve('.');
 const output = resolve(
   process.env.SPINEL_RESTORE_BROWSER_EVIDENCE ?? 'test-results/spn112-real-browser',
@@ -104,6 +110,7 @@ const artifact: Record<string, unknown> = {
   volume,
   storage:
     'Durable Linux named volume for workspace/recovery; private host bind for source exchange and evidence only',
+  workloadProfile: sized ? 'images-256m' : 'small-rich',
 };
 
 // These are the only source-tree exceptions. They are also literal build-context
@@ -294,13 +301,18 @@ async function capture(page: Page, state: string, restoreRegion = true) {
       await page
         .getByRole('region', { name: 'Restore workspace', exact: true })
         .scrollIntoViewIfNeeded();
-    const filename = `${state}-${variant}.png`;
-    await page.screenshot({
-      path: join(output, filename),
-      animations: 'disabled',
-      fullPage: false,
-    });
-    captures.push({ state, variant, filename });
+    // The fixed-size nonvisual CI acceptance retains layout/interaction checks
+    // and captures failures only. The explicit original visual driver still
+    // records its requested light/dark/phone review assets.
+    if (!sized) {
+      const filename = `${state}-${variant}.png`;
+      await page.screenshot({
+        path: join(output, filename),
+        animations: 'disabled',
+        fullPage: false,
+      });
+      captures.push({ state, variant, filename });
+    }
   }
   await page.setViewportSize({ width: 1280, height: 1000 });
   await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'reduce' });
@@ -349,6 +361,7 @@ async function helper(mode: 'bootstrap' | 'cold') {
   const runId = randomUUID();
   artifact[`${mode}RunId`] = runId;
   helperNames.add(name); // Include uncertain launches in bounded failure containment.
+  const seconds = sized ? (mode === 'bootstrap' ? 240 : 120) : mode === 'bootstrap' ? 40 : 15;
   try {
     await run(
       'docker',
@@ -364,6 +377,8 @@ async function helper(mode: 'bootstrap' | 'cold') {
         '-v',
         `${join(project, 'e2e/restore-browser-fixture.ts')}:/app/e2e/restore-browser-fixture.ts:ro`,
         '-v',
+        `${join(project, 'e2e/restore-sized-fixture.ts')}:/app/e2e/restore-sized-fixture.ts:ro`,
+        '-v',
         `${directory}:/fixture`,
         '-v',
         `${volume}:/state${mode === 'cold' ? ':ro' : ''}`,
@@ -371,17 +386,18 @@ async function helper(mode: 'bootstrap' | 'cold') {
         `SPINEL_IMAGE=${image}`,
         '-e',
         `SPINEL_RESTORE_HELPER_RUN=${runId}`,
+        ...(sized ? ['-e', 'SPINEL_RESTORE_BROWSER_PROFILE=images-256m'] : []),
         '-w',
         '/app',
         image,
         'node',
-        `--process-timeout=${mode === 'bootstrap' ? 40 : 15}s`,
+        `--process-timeout=${seconds}s`,
         `--max-old-space-size=${mode === 'bootstrap' ? 256 : 128}`,
         '--max-semi-space-size=8',
         'e2e/restore-browser-fixture.ts',
         `--${mode}`,
       ],
-      { timeout: mode === 'bootstrap' ? 45_000 : 20_000, maxBuffer: 4096 },
+      { timeout: (seconds + 5) * 1000, maxBuffer: 4096 },
     );
   } catch (error) {
     // execFile can reject before the usual inspection. Preserve bounded typed
@@ -498,13 +514,20 @@ async function observeOutcome() {
   };
 }
 async function servingResources() {
-  const number = async (path: string) => {
-    const text = (await servingRead(path)).trim();
+  const counter = (text: string) => {
     if (!/^\d+$/.test(text) || !Number.isSafeInteger(Number(text)))
       throw new Error('Invalid serving resource measurement.');
     return Number(text);
   };
+  const number = async (path: string) => counter((await servingRead(path)).trim());
   // Permitted only before restore or after a selected terminal / closed failure observation.
+  const memoryStatLines = (await servingRead('/sys/fs/cgroup/memory.stat')).trim().split('\n');
+  const memoryStatRecordedAt = new Date().toISOString();
+  const memoryStat = (name: string) => {
+    const matching = memoryStatLines.filter((line) => line.startsWith(`${name} `));
+    if (matching.length !== 1) throw new Error('Invalid serving memory category measurement.');
+    return counter(matching[0].slice(name.length + 1).trim());
+  };
   return {
     memoryLimitBytes: await number('/sys/fs/cgroup/memory.max'),
     swapLimitBytes: await number('/sys/fs/cgroup/memory.swap.max'),
@@ -512,6 +535,18 @@ async function servingResources() {
     pidsMax: await number('/sys/fs/cgroup/pids.max'),
     memoryPeakBytes: await number('/sys/fs/cgroup/memory.peak'),
     memoryCurrentBytes: await number('/sys/fs/cgroup/memory.current'),
+    memoryStatSnapshot: {
+      scope: 'Pre-shutdown snapshot; not a peak breakdown or exact preparation-admission counters',
+      units: 'bytes',
+      recordedAt: memoryStatRecordedAt,
+      anon: memoryStat('anon'),
+      file: memoryStat('file'),
+      shmem: memoryStat('shmem'),
+      inactive_file: memoryStat('inactive_file'),
+      active_file: memoryStat('active_file'),
+      file_dirty: memoryStat('file_dirty'),
+      file_writeback: memoryStat('file_writeback'),
+    },
     peakScope:
       'Serving cgroup through pre-shutdown observation; excludes separate observer and later cold helper',
   };
@@ -924,10 +959,13 @@ try {
     start: true,
     resume: resumed.phase,
   };
-  servingDeadline = setTimeout(() => {
-    deadlineExpired = true;
-    void shutdown();
-  }, 5 * 60_000);
+  servingDeadline = setTimeout(
+    () => {
+      deadlineExpired = true;
+      void shutdown();
+    },
+    (sized ? 20 : 5) * 60_000,
+  );
   const source = await poll(
     () =>
       privateJson<{
@@ -936,9 +974,33 @@ try {
         keyFile: string;
         sha256: string;
         rich: RestoreRichMetadata;
+        databaseBytes: number;
+        archiveBytes: number;
+        workload: RestoreSizedFixture | null;
       }>('ready.json'),
     (value) => !!value.operatorId,
   );
+  if (
+    !Number.isSafeInteger(source.databaseBytes) ||
+    !Number.isSafeInteger(source.archiveBytes) ||
+    source.databaseBytes <= 0 ||
+    source.archiveBytes <= 0 ||
+    sized !== !!source.workload ||
+    (sized && (source.databaseBytes < 256 * 1024 ** 2 || source.archiveBytes < 250 * 1024 ** 2))
+  )
+    throw new Error('Restore workload did not reach its declared database/archive size.');
+  artifact.sourceSizes = {
+    databaseBytes: source.databaseBytes,
+    archiveBytes: source.archiveBytes,
+    workload: source.workload
+      ? {
+          documents: source.workload.documents,
+          images: source.workload.images,
+          imageBytes: source.workload.imageBytes,
+          contentSha256: source.workload.contentSha256,
+        }
+      : null,
+  };
   const shipped = await privateJson<{
     image: string;
     sourceHashes: Record<string, string>;
@@ -1026,6 +1088,104 @@ try {
   };
   const operator = await createActor(credentials.operator, source.operatorId);
   const { page } = operator;
+  type PublicPreparationFailure = {
+    source: 'public-restore-api';
+    route: 'create' | 'upload' | 'status';
+    state: Extract<RestorePreparation['state'], 'failed' | 'expired' | 'cancelled'>;
+    resourceCode: keyof typeof RESTORE_RESOURCE_MESSAGES | null;
+    httpStatus: number;
+    elapsedSincePrepareMs: number;
+  };
+  let preparationStarted: number | undefined;
+  let preparationId: string | undefined;
+  let preparationFailure: PublicPreparationFailure | null = null;
+  const observePreparation = (
+    body: unknown,
+    route: PublicPreparationFailure['route'],
+    httpStatus: number,
+  ) => {
+    if (preparationStarted === undefined || !body || typeof body !== 'object') return;
+    const candidate: unknown = route === 'status' ? (body as { job?: unknown }).job : body;
+    if (!candidate || typeof candidate !== 'object') return;
+    const job = candidate as Record<string, unknown>;
+    if (route === 'create' && typeof job.id === 'string') preparationId = job.id;
+    // A status response begun before this creation cannot report failure
+    // for a different preparation. The identifier remains private in memory.
+    if (route === 'status' && (!preparationId || job.id !== preparationId)) return;
+    const state = job.state;
+    if (state !== 'failed' && state !== 'expired' && state !== 'cancelled') return;
+    preparationFailure ??= {
+      source: 'public-restore-api',
+      route,
+      state,
+      resourceCode:
+        (
+          Object.keys(RESTORE_RESOURCE_MESSAGES) as Array<keyof typeof RESTORE_RESOURCE_MESSAGES>
+        ).find((code) => RESTORE_RESOURCE_MESSAGES[code] === job.error) ?? null,
+      httpStatus: httpStatus,
+      elapsedSincePrepareMs: performance.now() - preparationStarted,
+    };
+    artifact.publicPreparationFailure = preparationFailure;
+  };
+  const restoreHttpTimings: Array<{
+    route: 'create' | 'upload' | 'confirm';
+    startedAtMs: number;
+    elapsedMs: number;
+    status: number;
+  }> = [];
+  const requestsStarted = new Map<
+    Request,
+    { route: 'create' | 'upload' | 'confirm'; at: number }
+  >();
+  const timingOrigin = performance.now();
+  page.on('request', (request) => {
+    const path = new URL(request.url()).pathname;
+    if (request.method() !== 'POST') return;
+    const route =
+      path === '/api/admin/restores/preparations'
+        ? 'create'
+        : /^\/api\/admin\/restores\/preparations\/[^/]+\/upload$/.test(path)
+          ? 'upload'
+          : /^\/api\/admin\/restores\/preparations\/[^/]+\/confirm$/.test(path)
+            ? 'confirm'
+            : null;
+    if (route) requestsStarted.set(request, { route, at: performance.now() });
+    if (route === 'upload') preparationId = path.split('/').at(-2);
+  });
+  page.on('response', (response) => {
+    const request = response.request();
+    const recorded = requestsStarted.get(request);
+    if (recorded) {
+      requestsStarted.delete(request);
+      restoreHttpTimings.push({
+        route: recorded.route,
+        startedAtMs: recorded.at - timingOrigin,
+        elapsedMs: performance.now() - recorded.at,
+        status: response.status(),
+      });
+    }
+    if (preparationStarted === undefined) return;
+    const route =
+      recorded?.route === 'create' || recorded?.route === 'upload'
+        ? recorded.route
+        : request.method() === 'GET' &&
+            /^\/api\/admin\/restores\/?$/.test(new URL(request.url()).pathname)
+          ? 'status'
+          : null;
+    if (!route) return;
+    // Upload can return HTTP 200 with a terminal failed DTO. Observe the real
+    // public state instead of waiting the whole preparation budget for a button
+    // which cannot appear. Never persist the DTO, its IDs, or arbitrary errors.
+    void response
+      .json()
+      .then((body: unknown) => {
+        observePreparation(body, route, response.status());
+      })
+      .catch(() => {
+        artifact.preparationResponseBodyUnavailable = true;
+      });
+  });
+  artifact.restoreHttpTimings = restoreHttpTimings;
   failurePage = page;
   await page.goto(origin);
   await page.getByRole('button', { name: 'Sign in with a passkey', exact: true }).click();
@@ -1050,10 +1210,39 @@ try {
   const keyChoice = page.waitForEvent('filechooser');
   await preparation.getByLabel('Separate recovery key', { exact: true }).click();
   await (await keyChoice).setFiles(hostFile(source.keyFile));
+  const restoreStarted = performance.now();
+  preparationStarted = restoreStarted;
   await preparation.getByRole('button', { name: 'Verify and prepare', exact: true }).click();
-  await expect(restore.getByRole('button', { name: 'Review restore', exact: true })).toBeEnabled({
-    timeout: 60_000,
-  });
+  const reviewRestore = restore.getByRole('button', { name: 'Review restore', exact: true });
+  await poll(
+    async () => {
+      if (preparationFailure) return true;
+      // Chromium may discard the body of a response associated with a large
+      // upload. Read the same public status with the authenticated context so
+      // terminal failure cannot turn into a ten-minute wait for a ready button.
+      if (preparationId && restoreHttpTimings.some((value) => value.route === 'upload')) {
+        const status = await operator.context.request.get(origin + '/api/admin/restores/', {
+          timeout: 5000,
+        });
+        try {
+          if (!status.ok()) throw new Error('Public preparation status unavailable.');
+          observePreparation(await status.json(), 'status', status.status());
+        } finally {
+          await status.dispose();
+        }
+        if (preparationFailure) return true;
+      }
+      return (
+        (await reviewRestore.count()) === 1 && (await reviewRestore.isEnabled({ timeout: 500 }))
+      );
+    },
+    (readyOrFailed) => readyOrFailed,
+    sized ? 10 * 60_000 : 60_000,
+  );
+  preparationStarted = undefined;
+  if (preparationFailure) throw new Error('Public restore preparation reached a terminal failure.');
+  await expect(reviewRestore).toBeEnabled();
+  const preparationReady = performance.now();
   await capture(page, 'prepared-source');
   await restore.getByRole('button', { name: 'Review restore', exact: true }).click();
   const confirmation = page.getByRole('dialog', { name: 'Restore this workspace?', exact: true });
@@ -1062,6 +1251,7 @@ try {
   await confirmation.getByRole('checkbox').check();
   setStage('confirming-and-restoring');
   servingInspectionAllowed = false;
+  const confirmStarted = performance.now();
   await confirmation
     .getByRole('button', { name: 'Verify and restore workspace', exact: true })
     .click();
@@ -1071,7 +1261,7 @@ try {
       value !== null &&
       (value.closedFailure ||
         (value.outcome === 'candidate-committed' && value.phase === 'running' && value.selected)),
-    140_000,
+    sized ? 10 * 60_000 : 140_000,
   );
   if (terminal?.closedFailure) {
     servingInspectionAllowed = true;
@@ -1080,11 +1270,31 @@ try {
   }
   if (!terminal || terminal.sourceSha256 !== source.sha256)
     throw new Error('Unexpected committed source.');
+  const committedAt = performance.now();
+  for (const [route, status] of [
+    ['create', 202],
+    ['upload', 200],
+    ['confirm', 202],
+  ] as const) {
+    const observed = restoreHttpTimings.filter((value) => value.route === route);
+    if (observed.length !== 1 || observed[0].status !== status)
+      throw new Error('Restore timing requires one successful create, upload and confirmation.');
+  }
+  artifact.restoreTimings = {
+    clock: 'host-monotonic-performance.now',
+    createPasskeyUploadAndPreparationMs: preparationReady - restoreStarted,
+    reviewAndLayoutChecksMs: confirmStarted - preparationReady,
+    confirmPasskeyThroughCommittedRunningMs: committedAt - confirmStarted,
+    prepareClickThroughCommittedRunningMs: committedAt - restoreStarted,
+    start: 'click Verify and prepare',
+    finish: 'canonical candidate-committed, selected, supervisor running',
+  };
   servingInspectionAllowed = true;
   setStage('checking-owner-session-reset');
   expect((await owner.context.request.get(`${origin}/api/auth/session`)).status()).toBe(401);
   setStage('authenticating-after-session-reset');
-  await page.goto(`${origin}/admin#health`);
+  // Anonymous /admin deliberately returns 404; reauthenticate at the public entry.
+  await page.goto(`${origin}/sign-in`);
   await page.getByRole('button', { name: 'Sign in with a passkey', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Administration', exact: true })).toBeVisible();
   await page.goto(`${origin}/admin#health`);
@@ -1165,10 +1375,9 @@ try {
   await expect(readerDoc.getByLabel('Document canvas', { exact: true })).toBeVisible({
     timeout: 30_000,
   });
-  await expect(readerDoc.getByRole('status', { name: 'Save status' })).toHaveText(
-    'View only — reload after your access changes.',
-    { timeout: 30_000 },
-  );
+  await expect(readerDoc.getByRole('status', { name: 'Save status' })).toHaveText('View only.', {
+    timeout: 30_000,
+  });
   await textPoint(reader.page);
   await capture(reader.page, 'restored-reader-document', false);
   artifact.nativeRendering = {
@@ -1199,6 +1408,7 @@ try {
     restoredContent: boolean;
     originalSessionExcluded: boolean;
     counter: number;
+    sizedContent?: Omit<RestoreSizedFixture, 'profile' | 'documentIds'>;
   }>('closed-proof.json');
   const proof = {
     ...coldProof,
@@ -1222,6 +1432,15 @@ try {
     proof.memoryPeakBytes <= 0
   )
     throw new Error('Closed workspace proof did not pass.');
+  if (
+    sized &&
+    (!proof.sizedContent ||
+      proof.sizedContent.contentSha256 !== source.workload!.contentSha256 ||
+      proof.sizedContent.images !== source.workload!.images ||
+      proof.sizedContent.documents !== source.workload!.documents ||
+      proof.sizedContent.imageBytes !== source.workload!.imageBytes)
+  )
+    throw new Error('The sized workload did not retain every document and image.');
   if (
     execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim() !== artifact.sourceBase
   )

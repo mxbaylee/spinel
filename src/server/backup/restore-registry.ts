@@ -18,7 +18,11 @@ import { validRestoreJobRecord } from '../maintenance/restore-jobs.ts';
 import type { RestoreJobRecord } from '../maintenance/restore-jobs.ts';
 import { processIdentity } from '../maintenance/journal.ts';
 import type { ProcessIdentity } from '../maintenance/journal.ts';
-import { assertRestoreAuthority } from '../maintenance/restore-authority.ts';
+import {
+  assertFreshRestoreAuthority,
+  assertRestoreAuthority,
+  RESTORE_OPERATION_MS,
+} from '../maintenance/restore-authority.ts';
 import { restoreIntentHash } from '../maintenance/restore-job-intent.ts';
 import type { RestoreAuthority } from '../maintenance/restore-authority.ts';
 import type {
@@ -41,7 +45,6 @@ import { prepareRestoreArchive, reconcilePreparedRestore } from './verification.
 import type { PreparedRestoreSource } from './verification.ts';
 import { keyIndependent, RecoveryResourceError } from './resource-error.ts';
 
-const LIFETIME_MS = 30 * 60_000;
 const DATABASE_LIMIT = 8 * 1024 ** 3;
 const FAILURE =
   'Restore preparation failed. Check the encrypted backup, key, compatible application image and free space.';
@@ -246,9 +249,17 @@ export class RestoreRegistry {
           intent.preview[key as keyof RestorePreview] ===
           admission.preview[key as keyof RestorePreview],
       ) &&
-      (['actorId', 'sessionHash', 'verifiedAt', 'verifiedPasskeyId', 'expiresAt'] as const).every(
-        (key) => intent.authority[key] === admission.authority[key],
-      ) &&
+      (
+        [
+          'actorId',
+          'sessionHash',
+          'verifiedAt',
+          'verifiedPasskeyId',
+          'expiresAt',
+          'authorizedAt',
+          'verifiedUntil',
+        ] as const
+      ).every((key) => intent.authority[key] === admission.authority[key]) &&
       (!job.ack || job.ack.record.intentHash === record.intentHash)
     );
   }
@@ -489,9 +500,9 @@ export class RestoreRegistry {
         (source.kind === 'catalog' && !/^[a-f0-9]{64}$/.test(source.artifactId))
       )
         throw new RestoreRegistryError(400, 'Invalid restore preparation.');
-      assertRestoreAuthority(this.db, proof, this.now);
-      await this.reconcileAdmission(() => assertRestoreAuthority(this.db, proof, this.now));
-      assertRestoreAuthority(this.db, proof, this.now);
+      assertFreshRestoreAuthority(this.db, proof, this.now);
+      await this.reconcileAdmission(() => assertFreshRestoreAuthority(this.db, proof, this.now));
+      assertFreshRestoreAuthority(this.db, proof, this.now);
       const requestHash = digest(
         source.kind === 'catalog'
           ? source
@@ -513,9 +524,9 @@ export class RestoreRegistry {
       const existing = findExisting();
       if (existing) return await existingResult(existing);
       await this.expire();
-      await this.cleanupOrphans(() => assertRestoreAuthority(this.db, proof, this.now));
+      await this.cleanupOrphans(() => assertFreshRestoreAuthority(this.db, proof, this.now));
       const observation = await this.observe();
-      assertRestoreAuthority(this.db, proof, this.now);
+      assertFreshRestoreAuthority(this.db, proof, this.now);
       if (observation.pending)
         throw new RestoreRegistryError(
           409,
@@ -529,6 +540,7 @@ export class RestoreRegistry {
       ownsCreation = true;
       const now = this.now(),
         id = randomUUID();
+      const expiresAt = Math.min(now + RESTORE_OPERATION_MS, proof.expiresAt);
       let identity: ProcessIdentity | null;
       try {
         identity = processIdentity(process.pid);
@@ -543,7 +555,7 @@ export class RestoreRegistry {
         throw new RestoreRegistryError(503, 'Supervised restore is unavailable.');
       const claim = this.db
         .prepare("UPDATE backup_state SET owner=?,job='restore',lease=? WHERE id=1 AND lease<=?")
-        .run(owner, now + LIFETIME_MS + 60_000, now);
+        .run(owner, expiresAt + 60_000, now);
       if (!claim.changes)
         throw new RestoreRegistryError(409, 'Another backup or recovery operation is active.');
       const job: Job = {
@@ -560,7 +572,7 @@ export class RestoreRegistry {
           state: source.kind === 'upload' ? 'uploading' : 'preparing',
           source: source.kind,
           createdAt: now,
-          expiresAt: now + LIFETIME_MS,
+          expiresAt,
           bytes: null,
           sourceSha256: null,
           sourceCreatedAt: null,
@@ -622,6 +634,7 @@ export class RestoreRegistry {
     chunks: AsyncIterable<Uint8Array>,
     bytes: number,
     disconnect: () => void = () => {},
+    admitBody: () => void = () => {},
   ) {
     const job = this.owned(id, actor, session);
     if (job.public.state !== 'uploading' || job.task)
@@ -637,6 +650,9 @@ export class RestoreRegistry {
       signal.addEventListener('abort', disconnect, { once: true });
       try {
         this.assertActive(job);
+        // Only this exact current preparation can receive a longer HTTP body
+        // window. Its immutable operation timeout still disconnects the upload.
+        admitBody();
         const path = join(job.directory!, 'source.spinel');
         const output = await open(path, 'wx', 0o600);
         const guarded = async function* (self: RestoreRegistry) {
@@ -734,6 +750,7 @@ export class RestoreRegistry {
           stagingRoot: job.directory!,
           expectedOrigin: this.options.origin,
           expectedImage: this.options.image!,
+          timeoutMs: Math.min(600_000, job.public.expiresAt - this.now()),
           signal,
         });
       } catch (error) {
@@ -783,6 +800,7 @@ export class RestoreRegistry {
       expectedImage: this.options.image!,
       spacesEnabled: this.options.spacesEnabled,
       now: this.now(),
+      timeoutMs: Math.min(600_000, job.public.expiresAt - this.now()),
       signal,
     });
     try {
@@ -871,7 +889,7 @@ export class RestoreRegistry {
     actor: string,
     session: string,
     confirmation: string,
-    proof: RestoreAuthority,
+    proof: RestoreAuthority | (() => RestoreAuthority),
   ) {
     const job = this.owned(id, actor, session);
     if (confirmation !== job.public.confirmation || !confirmation || !job.public.preview)
@@ -881,6 +899,20 @@ export class RestoreRegistry {
       );
     if (job.public.state === 'started') return structuredClone(job.public);
     if (job.admissionFailureObserved) return structuredClone(job.public);
+    if (job.admission) {
+      // Exact retries reuse the original grant. A fresh ceremony here would
+      // invalidate it and could falsely make a long custody transfer renewable.
+      const original = job.admission.authority;
+      if (this.now() >= original.expiresAt)
+        throw new RestoreRegistryError(428, 'The original restore confirmation expired.');
+      assertRestoreAuthority(this.db, original, this.now);
+      const target = this.control().target();
+      if (
+        target.generationId !== job.admission.generationId ||
+        target.epoch !== job.admission.epoch
+      )
+        throw new RestoreRegistryError(409, 'The original restore target changed.');
+    }
     if (['admitting', 'accepted'].includes(job.public.state) && job.task) {
       await job.task;
       return structuredClone(job.public);
@@ -888,6 +920,7 @@ export class RestoreRegistry {
     if (!['ready', 'admitting', 'accepted'].includes(job.public.state))
       throw new RestoreRegistryError(409, 'Restore preparation is not ready.');
     if (!job.admission) {
+      const fresh = typeof proof === 'function' ? proof() : proof;
       if (
         !job.previewDatabaseBytes ||
         !validRestoreResources(job.public.resources) ||
@@ -895,15 +928,16 @@ export class RestoreRegistry {
         !validRestoreVerification(job.public.verification)
       )
         throw new RestoreRegistryError(409, 'Prepare and verify this restore again.');
-      if (proof.actorId !== actor || proof.sessionHash !== session)
+      if (fresh.actorId !== actor || fresh.sessionHash !== session)
         throw new RestoreRegistryError(409, 'Restore confirmation belongs to another account.');
-      job.proof = structuredClone(proof);
+      assertFreshRestoreAuthority(this.db, fresh, this.now);
+      job.proof = structuredClone(fresh);
       this.assertActive(job);
       const source = job.prepared!;
       job.admission = {
         id,
         ...job.public.target,
-        authority: structuredClone(proof),
+        authority: structuredClone(fresh),
         confirmedAt: this.now(),
         previewDatabaseBytes: job.previewDatabaseBytes,
         source: {
@@ -1012,6 +1046,9 @@ export class RestoreRegistry {
   private async finish(job: Job, state: 'failed' | 'cancelled' | 'expired', error?: unknown) {
     if (job.admission) return; // ambiguous supervisor custody requires explicit recovery
     if (job.finishing) return job.finishing;
+    // Use the existing expired state for the operation deadline. A stale
+    // passkey window alone no longer makes admitted preparation fail.
+    if (state === 'failed' && this.now() >= job.public.expiresAt) state = 'expired';
     job.controller.abort();
     job.finishing = (async () => {
       try {
@@ -1023,9 +1060,7 @@ export class RestoreRegistry {
             ? null
             : error instanceof RecoveryResourceError
               ? new RecoveryResourceError(error.code).message
-              : this.now() >= job.proof.expiresAt
-                ? new RecoveryResourceError('restore-authority').message
-                : FAILURE;
+              : FAILURE;
       } catch {
         this.db
           .prepare('UPDATE backup_state SET lease=? WHERE id=1 AND owner=?')

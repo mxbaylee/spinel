@@ -201,6 +201,23 @@ SPN-039, 2026-10-19, extended to Space children by SPN-092, 2026-10-22.
 SPN-053 extends the same downloaded copies to native editing and replay. Viewer
 downloads still use the same read-only permission fence.
 
+An online account viewer can gain edit access in the same open native document
+(SPN-071). Before enabling input, the client acquires the existing lifetime writer
+lock under editor admission, verifies the same account, scope, base and native
+generation, updates the clean stored role, then persists its current checkpoint.
+Snapshots, image bytes and revision offsets are retained. A newer stored
+checkpoint, pending/recovery work, uncertain writes, maintenance, resync or a held
+writer lock keeps the viewer read-only and makes the failure visible; a later
+access check can retry. Synthetic viewer mode caused by an unavailable writer
+or local save failure cannot be promoted this way. Device restrictions, guest
+links and downgrade/revocation cleanup remain unchanged.
+
+Personal **Hide** changes discovery only. Hidden inventory stays in the private
+account catalog for **Show hidden** offline; filtering it does not remove the
+download. Sign-out still locks private access and retains clean copies until
+explicit deletion; observed revocation removes clean copies through the existing
+cleanup path. See [SPN-071](implementation/SPN-071.md).
+
 **Download.** Signed-in, non-admin accounts see **Available offline on this
 device** on each Sheet and Doc they can open (`web/offline/download.ts`). It:
 

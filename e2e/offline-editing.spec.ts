@@ -49,6 +49,77 @@ async function phoneText(page: Page, unitId: string) {
 test.describe('downloaded native editors', () => {
   test.setTimeout(180_000);
 
+  for (const kind of ['doc', 'sheet'] as const)
+    test(`a prepared ${kind} viewer upgrades in place and can save new offline work`, async ({
+      browser,
+      baseURL,
+    }, info) => {
+      const f = await fixture(browser, baseURL!, info, kind, { actor: 'viewer' });
+      try {
+        await f.download();
+        await expect(saveStatus(f.page)).toHaveText('View only on this device.');
+        const before = await f.read();
+        const prepared = (await stored(f.page, f.actor.id, f.item.id))!;
+        expect(prepared.bundle).toMatchObject({
+          access: 'viewer',
+          readOnly: true,
+          unitId: f.unitId,
+        });
+        const canvas =
+          kind === 'doc'
+            ? f.page.getByLabel('Document canvas', { exact: true })
+            : f.page.locator('canvas[id^="univer-sheet-main-canvas_"]');
+        const mounted = (await canvas.elementHandle())!;
+        let navigations = 0;
+        f.page.on('framenavigated', (frame) => {
+          if (frame === f.page.mainFrame()) navigations++;
+        });
+        const granted = await f.control.request.put(`/api/items/${f.item.id}/sharing`, {
+          headers: { Origin: baseURL! },
+          data: { userId: f.viewer.id, role: 'editor' },
+        });
+        expect(granted.status(), await granted.text()).toBe(200);
+        await expect(saveStatus(f.page)).toHaveText(
+          'Synced. All changes are saved on the server and this device.',
+          { timeout: 5_000 },
+        );
+        expect(await canvas.evaluate((node, original) => node === original, mounted)).toBe(true);
+        expect(navigations).toBe(0);
+        const promoted = (await stored(f.page, f.actor.id, f.item.id))!;
+        expect(promoted.bundle).toMatchObject({
+          access: 'editor',
+          readOnly: false,
+          unitId: f.unitId,
+        });
+        expect(promoted.bundle.snapshot).toEqual(prepared.bundle.snapshot);
+        expect(await f.read()).toEqual(before);
+
+        await f.network.setOffline(true);
+        const text = 'Work after a viewer upgrade 7314';
+        await edit(f.page, kind, text);
+        await savedLocally(f.page);
+        expect(pending((await stored(f.page, f.actor.id, f.item.id))!.outbox?.checkpoint)).toBe(
+          true,
+        );
+        expect(await f.read()).toEqual(before);
+        await f.network.setOffline(false);
+        await synced(f.page);
+        const committed = await f.read();
+        expect(committed.revision).toBeGreaterThan(before.revision);
+        if (kind === 'doc') expect(committed.snapshot.body!.dataStream.split(text)).toHaveLength(2);
+        else
+          expect(
+            committed.snapshot.sheets[committed.snapshot.sheetOrder[0]].cellData?.[0]?.[3]?.v,
+          ).toBe(text);
+        await matchesServer(f.page, committed);
+        expect(await canvas.evaluate((node, original) => node === original, mounted)).toBe(true);
+        expect(navigations).toBe(0);
+        expect(f.errors).toEqual([]);
+      } finally {
+        await f.close();
+      }
+    });
+
   test('last-copy removal waits for its editor to close and preserves another live editor with pending input', async ({
     browser,
     baseURL,

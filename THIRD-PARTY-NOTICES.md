@@ -7,10 +7,13 @@ ship with them.
 `scripts/dependencies/patch-univer-docs.ts` and its `.test.ts` adapt the
 Apache-2.0 [Univer 1.1.0 native Doc state manager](https://github.com/dream-num/univer/blob/v1.1.0/packages/docs/src/services/doc-state-change-manager.service.ts).
 The version- and hash-checked ES/CJS patch balances qualifying single-character
-insert sequences within the existing history/collaboration composition folds;
-all other sequences retain the original reducer. It preserves native operation
+leading insert sequences within the existing history/collaboration composition
+folds; the first unsupported state and every following state retain the original
+sequential reducer (SPN-133). It preserves native operation
 order, metadata, cache lifetimes and publication. Tests retain the verified
-original manager as a semantic and work-count control. The original license
+original manager as a semantic and work-count control. SPN-132 admits the exact
+native paragraph-preservation marker on otherwise qualifying inserts, preserving
+the field and the existing algorithm. The original license
 headers and notices remain. SPN-122 tracks eventual removal after a suitable
 upstream release; no upstream submission is claimed by this local repair.
 

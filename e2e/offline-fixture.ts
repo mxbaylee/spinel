@@ -461,7 +461,7 @@ export async function fixture(
         phoneReadOnly
           ? 'View only on this phone. Edit on a larger screen.'
           : options.actor === 'viewer'
-            ? 'View only — reload after your access changes.'
+            ? 'View only.'
             : 'All changes saved.',
         { timeout: 30_000 },
       );

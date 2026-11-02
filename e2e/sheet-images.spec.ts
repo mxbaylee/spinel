@@ -228,10 +228,9 @@ for (const mobile of [false, true]) {
         await route.continue();
       });
       await page.goto(`/?item=${item.id}`);
-      await expect(page.getByRole('status', { name: 'Save status' })).toHaveText(
-        'View only — reload after your access changes.',
-        { timeout: 30_000 },
-      );
+      await expect(page.getByRole('status', { name: 'Save status' })).toHaveText('View only.', {
+        timeout: 30_000,
+      });
       await expect.poll(() => heldImages).toBeGreaterThan(0);
       releaseImages();
       await allImagesVisible();
@@ -437,10 +436,9 @@ test('Sheet images survive browser export/import and restore, with scoped revoca
       await route.continue();
     });
     await visitor.goto((await link.json()).url);
-    await expect(visitor.getByRole('status', { name: 'Save status' })).toHaveText(
-      'View only — reload after your access changes.',
-      { timeout: 30_000 },
-    );
+    await expect(visitor.getByRole('status', { name: 'Save status' })).toHaveText('View only.', {
+      timeout: 30_000,
+    });
     await expect.poll(() => held).toBeGreaterThan(0);
     release();
     await visible(visitor);

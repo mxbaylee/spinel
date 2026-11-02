@@ -2,15 +2,19 @@ import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { copyFile, mkdir, mkdtemp, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import type { AddressInfo } from 'node:net';
+import express from 'express';
 import { afterEach, expect, test, vi } from 'vitest';
 import { openDatabase } from '../../../server/database.ts';
-import { AuthStore } from '../auth/store.ts';
-import { captureRestoreAuthority } from '../maintenance/restore-authority.ts';
+import { createHttpServer } from '../../../server/http.ts';
+import { AuthStore, COOKIE_NAME } from '../auth/store.ts';
+import { captureRestoreAuthority, RESTORE_OPERATION_MS } from '../maintenance/restore-authority.ts';
 import type { RestoreJobRecord } from '../maintenance/restore-jobs.ts';
 import type { RestoreJobIntent } from '../maintenance/restore-job-intent.ts';
 import { restoreIntentHash } from '../maintenance/restore-job-intent.ts';
 import { BackupService } from './service.ts';
 import { RestoreRegistry } from './restore-registry.ts';
+import { restoreRoutes } from './restore-routes.ts';
 import { RecoveryResourceError } from './resource-error.ts';
 import type { RestoreController, ConfirmedRestoreAdmission } from './restore-control.ts';
 import * as verification from './verification.ts';
@@ -63,7 +67,7 @@ async function fixture() {
     0,
     'singleDevice',
   );
-  const session = auth.createSession(actor.id, undefined, 'passkey').session;
+  const { session, token } = auth.createSession(actor.id, undefined, 'passkey');
   auth.markVerified(session, 'passkey');
   const proof = () =>
     captureRestoreAuthority(
@@ -200,6 +204,7 @@ async function fixture() {
     auth,
     actor,
     session,
+    token,
     service,
     target,
     estimate,
@@ -216,6 +221,38 @@ async function fixture() {
       now += ms;
     },
   };
+}
+
+/** Real HTTP/auth/registry composition with the same isolated archive and
+ * supervisor boundary fixtures used below. This catches an eager route-level
+ * passkey check even when the registry itself correctly supports exact retries. */
+async function confirmationRoute(
+  f: Awaited<ReturnType<typeof fixture>>,
+  id: string,
+  confirmation: string,
+) {
+  const app = express();
+  const server = createHttpServer(app);
+  app.use('/restore', restoreRoutes(f.auth, f.service.restores, origin));
+  await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
+  cleanups.push(async () => {
+    server.closeAllConnections();
+    await new Promise<void>((resolve, reject) =>
+      server.close((error) => (error ? reject(error) : resolve())),
+    );
+  });
+  const url = `http://127.0.0.1:${(server.address() as AddressInfo).port}/restore/preparations/${id}/confirm`;
+  return () =>
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        Cookie: `${COOKIE_NAME}=${f.token}`,
+        Origin: origin,
+        'X-Spinel-Account': f.actor.id,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ confirmation, consequencesVersion: 1, acceptLostWork: true }),
+    });
 }
 
 test('manual encrypted upload needs no destination/config and erases its private key before ready', async () => {
@@ -262,6 +299,149 @@ test('manual encrypted upload needs no destination/config and erases its private
   expect(f.service.state().job).toBe('restore');
   await f.service.restores.cancel(created.id, f.actor.id, f.session.token_hash);
   expect(f.service.state().owner).toBeNull();
+});
+
+test('upload, verification and preview outlast the passkey window, then confirmation needs fresh proof', async () => {
+  const f = await fixture();
+  const original = f.proof();
+  const created = await f.create();
+  const prepare = f.prepare.getMockImplementation()!;
+  f.prepare.mockImplementationOnce(async (options) => {
+    const result = await prepare(options);
+    f.advance(6 * 60_000);
+    return result;
+  });
+  const preview = f.preview.getMockImplementation()!;
+  f.preview.mockImplementationOnce(async (options) => {
+    const result = await preview(options);
+    f.advance(6 * 60_000);
+    return result;
+  });
+  async function* chunks() {
+    yield Buffer.from('first');
+    f.advance(6 * 60_000);
+    yield Buffer.from('last');
+  }
+  const ready = await f.service.restores.upload(
+    created.id,
+    f.actor.id,
+    f.session.token_hash,
+    chunks(),
+    9,
+  );
+  expect(ready.state).toBe('ready');
+  expect(ready.expiresAt).toBe(created.expiresAt);
+  expect(f.admit).not.toHaveBeenCalled();
+  await expect(
+    f.service.restores.confirm(
+      created.id,
+      f.actor.id,
+      f.session.token_hash,
+      ready.confirmation!,
+      original,
+    ),
+  ).rejects.toThrow('original restore');
+  f.auth.markVerified(f.session, 'passkey');
+  f.admit.mockImplementation(async (request) => f.acknowledge(request));
+  const confirmed = f.proof();
+  expect(
+    (
+      await f.service.restores.confirm(
+        created.id,
+        f.actor.id,
+        f.session.token_hash,
+        ready.confirmation!,
+        confirmed,
+      )
+    ).state,
+  ).toBe('started');
+  expect(f.admit.mock.calls[0][0].authority).toEqual(confirmed);
+});
+
+test.each(['upload', 'verification', 'preview', 'capacity'] as const)(
+  'operation expiry after a slow %s cannot publish readiness or extend custody',
+  async (boundary) => {
+    const f = await fixture();
+    const created = await f.create();
+    // Advance only after receiving the worker/parent result; the production
+    // orchestration still checks its original authority before publishing it.
+    const late =
+      <Args extends unknown[], Result>(work: (...args: Args) => Promise<Result>) =>
+      async (...args: Args) => {
+        const result = await work(...args);
+        f.advance(RESTORE_OPERATION_MS);
+        return result;
+      };
+    if (boundary === 'verification')
+      f.prepare.mockImplementationOnce(late(f.prepare.getMockImplementation()!));
+    if (boundary === 'preview')
+      f.preview.mockImplementationOnce(late(f.preview.getMockImplementation()!));
+    if (boundary === 'capacity') {
+      const result = await f.estimate({
+        ...f.target,
+        archiveBytes: 9,
+        databaseBytes: 4096,
+        previewDatabaseBytes: 4096,
+      });
+      f.estimate.mockImplementationOnce(late(async () => result));
+    }
+    async function* chunks() {
+      yield Buffer.from('first');
+      if (boundary === 'upload') f.advance(RESTORE_OPERATION_MS);
+      yield Buffer.from('last');
+    }
+    const result = await f.service.restores.upload(
+      created.id,
+      f.actor.id,
+      f.session.token_hash,
+      chunks(),
+      9,
+    );
+    expect(result.state).toBe('expired');
+    expect(result.expiresAt).toBe(created.expiresAt);
+    expect(result.confirmation).toBeNull();
+    expect(f.service.state().owner).toBeNull();
+    expect(f.admit).not.toHaveBeenCalled();
+  },
+);
+
+test.each(['session', 'account', 'passkey', 'target'] as const)(
+  'a long upload still refuses changed %s before its next chunk',
+  async (change) => {
+    const f = await fixture();
+    const created = await f.create();
+    async function* chunks() {
+      yield Buffer.from('first');
+      f.advance(6 * 60_000);
+      if (change === 'session') f.auth.revokeSession(f.session.token_hash);
+      if (change === 'account')
+        f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(f.actor.id);
+      if (change === 'passkey') f.db.prepare('DELETE FROM auth_passkeys WHERE id=?').run('passkey');
+      if (change === 'target') f.target.epoch = randomUUID();
+      yield Buffer.from('last');
+    }
+    expect(
+      (await f.service.restores.upload(created.id, f.actor.id, f.session.token_hash, chunks(), 9))
+        .state,
+    ).toBe('failed');
+    expect(f.prepare).not.toHaveBeenCalled();
+    expect(f.service.state().owner).toBeNull();
+  },
+);
+
+test('repeated create and later passkey checks cannot extend the original preparation deadline', async () => {
+  const f = await fixture(),
+    requestId = randomUUID(),
+    key = randomBytes(32);
+  const created = await f.create(requestId, Buffer.from(key));
+  f.advance(6 * 60_000);
+  f.auth.markVerified(f.session, 'passkey');
+  expect(await f.create(requestId, Buffer.from(key))).toEqual(created);
+  f.advance(RESTORE_OPERATION_MS - 6 * 60_000);
+  const expired = await f.upload(created.id);
+  expect(expired.state).toBe('expired');
+  expect(expired.expiresAt).toBe(created.expiresAt);
+  expect(f.admit).not.toHaveBeenCalled();
 });
 
 test('insufficient recovery capacity publishes path-free estimates and releases preparation without admission', async () => {
@@ -322,15 +502,14 @@ test.each(['target', 'authority', 'expiry'] as const)(
       if (scenario === 'target') response.target.epoch = randomUUID();
       if (scenario === 'authority')
         f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(f.actor.id);
-      if (scenario === 'expiry') f.advance(60_001);
+      if (scenario === 'expiry') f.advance(RESTORE_OPERATION_MS + 1);
       return response;
     });
     const created = await f.create();
     const failed = await f.upload(created.id);
-    expect(failed.state).toBe('failed');
+    expect(failed.state).toBe(scenario === 'expiry' ? 'expired' : 'failed');
     expect(failed.confirmation).toBeNull();
-    if (scenario === 'expiry')
-      expect(failed.error).toBe(new RecoveryResourceError('restore-authority').message);
+    if (scenario === 'expiry') expect(failed.error).toBeNull();
     expect(f.admit).not.toHaveBeenCalled();
     expect(f.service.state().owner).toBeNull();
   },
@@ -487,6 +666,82 @@ test('uncertain custody retains source and original request; retry releases only
   expect(f.begin).toHaveBeenCalledOnce();
   expect(JSON.stringify(result)).not.toContain('continuationToken');
 });
+
+test('HTTP first confirmation still requires fresh proof after a long preparation', async () => {
+  const f = await fixture(),
+    created = await f.create(),
+    ready = await f.upload(created.id);
+  const request = await confirmationRoute(f, created.id, ready.confirmation!);
+  f.advance(6 * 60_000);
+  const response = await request();
+  expect(response.status).toBe(428);
+  await response.json();
+  expect(f.admit).not.toHaveBeenCalled();
+  expect(f.service.restores.status(created.id, f.actor.id, f.session.token_hash).state).toBe(
+    'ready',
+  );
+  f.auth.markVerified(f.session, 'passkey');
+  f.admit.mockImplementation(async (admission) => f.acknowledge(admission));
+  const confirmed = await request();
+  expect(confirmed.status).toBe(202);
+  expect((await confirmed.json()).state).toBe('started');
+  expect(f.admit).toHaveBeenCalledOnce();
+});
+
+test.each([
+  ['current', 202],
+  ['session-revoked', 404],
+  ['account-disabled', 404],
+  ['passkey-removed', 404],
+  ['generation-changed', 409],
+  ['epoch-changed', 409],
+  ['reverified', 400],
+  ['expired', 428],
+  ['expired-and-reverified', 428],
+] as const)(
+  'HTTP exact confirmation retry after five minutes keeps original %s authority',
+  async (scenario, status) => {
+    const f = await fixture(),
+      created = await f.create(),
+      ready = await f.upload(created.id);
+    const request = await confirmationRoute(f, created.id, ready.confirmation!);
+    const fresh = vi.spyOn(f.auth, 'requireVerified');
+    f.admit.mockRejectedValueOnce(new Error('Custody response was lost.'));
+    const first = await request();
+    expect(first.status).toBe(202);
+    expect((await first.json()).state).toBe('admitting');
+    const original = structuredClone(f.admit.mock.calls[0][0]);
+    f.advance(scenario.startsWith('expired') ? RESTORE_OPERATION_MS : 6 * 60_000);
+    if (scenario === 'session-revoked')
+      f.db.prepare('DELETE FROM auth_sessions WHERE token_hash=?').run(f.session.token_hash);
+    if (scenario === 'account-disabled')
+      f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(f.actor.id);
+    if (scenario === 'passkey-removed')
+      f.db.prepare('DELETE FROM auth_passkeys WHERE id=?').run('passkey');
+    if (scenario === 'generation-changed') f.target.generationId = randomUUID();
+    if (scenario === 'epoch-changed') f.target.epoch = randomUUID();
+    if (scenario === 'reverified' || scenario === 'expired-and-reverified')
+      f.auth.markVerified(f.session, 'passkey');
+    f.admit.mockImplementation(async (admission) => f.acknowledge(admission));
+    const retried = await request();
+    expect(retried.status).toBe(status);
+    const body = await retried.json();
+    // Neither a stale nor a newly refreshed passkey can recapture the admitted
+    // operation's timestamp or extend its immutable deadline on this route.
+    expect(fresh).toHaveBeenCalledOnce();
+    if (scenario === 'current') {
+      expect(body.state).toBe('started');
+      expect(f.admit.mock.calls[1][0]).toEqual(original);
+      expect(f.begin).toHaveBeenCalledOnce();
+      expect(f.service.state().owner).toBeNull();
+    } else {
+      expect(f.admit).toHaveBeenCalledOnce();
+      expect(f.begin).not.toHaveBeenCalled();
+      expect((await stat(original.source.archive.path)).isFile()).toBe(true);
+      expect(f.service.state().lease).toBe(Number.MAX_SAFE_INTEGER);
+    }
+  },
+);
 
 test.each(['source', 'preview-size'] as const)(
   'a mismatched %s custody ACK cannot erase source or start maintenance',
@@ -1069,7 +1324,7 @@ test.each([
       owner = f.service.state().owner;
     record.phase = 'failed';
     if (scenario === 'intent-source') record.intent.source.archive.sha256 = 'f'.repeat(64);
-    if (scenario === 'intent-authority') record.intent.authority.expiresAt++;
+    if (scenario === 'intent-authority') record.intent.authority.expiresAt--;
     if (scenario === 'preview-size') record.intent.previewDatabaseBytes += 4096;
     record.intentHash = restoreIntentHash(record.intent);
     if (scenario === 'target') f.target.generationId = randomUUID();
