@@ -25,6 +25,7 @@ test('credentials, query strings, arbitrary paths, comments and malformed metada
     'https://archive.ubuntu.com/ubuntu/?private-token priority:1',
     'https://archive.ubuntu.com/private-path/ priority:1',
     '# private-comment',
+    'https://private-host.example/ubuntu/ priority:1',
     'https://archive.ubuntu.com/ubuntu/ priority:private-value',
     'private-unrecognized-configuration',
   ];
