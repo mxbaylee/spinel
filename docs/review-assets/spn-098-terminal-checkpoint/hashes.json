@@ -1,0 +1,342 @@
+{
+  "README.md": {
+    "bytes": 3567,
+    "sha256": "4aa62b4d89366a87d29350fb015a608ab4877fd30a5ba0054809d4f5e7bd675f"
+  },
+  "callback-desktop-acceptance-summary.json": {
+    "bytes": 969043,
+    "sha256": "245343b0073606e94033264172056478786cf38abaac8d08a238fb7c50081478"
+  },
+  "callback-desktop-inspection-first.log": {
+    "bytes": 1109,
+    "sha256": "a6debe6a0c48d7782990da4890c17a710d43ec5812d0a5336f5bb5a506424957"
+  },
+  "callback-mobile-acceptance-summary.json": {
+    "bytes": 971632,
+    "sha256": "ce184847d37e1de60ad93bf42776debe9195224cf1141d0f61ac979f5230b22c"
+  },
+  "callback-mobile-inspection-first.log": {
+    "bytes": 1107,
+    "sha256": "c5bf7e153e9de7112a0c25917a1600d9668bddbe647089c16ca8e192a41bac6e"
+  },
+  "callbacks-desktop/baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json.gz": {
+    "bytes": 915378,
+    "sha256": "0866351f5bc45ac4f1b430212ad6a0f193a57db866ed51a74aa87d447880689c"
+  },
+  "callbacks-desktop/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json.gz": {
+    "bytes": 665107,
+    "sha256": "6f9f9b53aaaf72bfbeac5d627d90bf74d89b0f1181346c5d2afb62c7997b1673"
+  },
+  "callbacks-desktop/test-results/spn113-comparison-desktop.json": {
+    "bytes": 968648,
+    "sha256": "b1ed038b3603f95e6935688e898f410dcee59fb87206f0be91600d24589c14df"
+  },
+  "callbacks-mobile/baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json.gz": {
+    "bytes": 869180,
+    "sha256": "e79c4f07e6fe0fe5a3ddfa9f7486023ec4e1aa5dbffb930464c24b41265900ef"
+  },
+  "callbacks-mobile/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json.gz": {
+    "bytes": 604295,
+    "sha256": "5fa1b695511ee692a5da5897a8b31cdb771b6a875b0e4c84a120a65133aa05a7"
+  },
+  "callbacks-mobile/test-results/spn113-comparison-mobile.json": {
+    "bytes": 971238,
+    "sha256": "00d7d21ec8c82fff1d6a898ea50654bdf9b3f124d36dec60ddb7aea28e904551"
+  },
+  "ci-final-jobs.json": {
+    "bytes": 101405,
+    "sha256": "0c7d25a5308d4c19f017300aa0697111b65072a0c815b8f10f290c0e3afb09c5"
+  },
+  "ci-final-run.json": {
+    "bytes": 12186,
+    "sha256": "f4576e1ccf1e72bb19af0b1260ffdb0b9e2597fda735d621a58732d006037ad4"
+  },
+  "desktop-final-jobs.json": {
+    "bytes": 10098,
+    "sha256": "02181cfa10f2406082c8a17444395c10611c19208ee151243aeb0d657aac0e39"
+  },
+  "desktop-final-run.json": {
+    "bytes": 12210,
+    "sha256": "b9ad3445d1afaaa78f17ed695fa3fe07af518bb4aa596d4e4f935d101f3460fb"
+  },
+  "development-1-job.log": {
+    "bytes": 71367,
+    "sha256": "c217f1f8a1867b88182a2f5707aa1d7a243fcfcd1a92bee3d62596f868ccbd2c"
+  },
+  "development-1/test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development/spn098-feedback-pair.json": {
+    "bytes": 8620,
+    "sha256": "498dde75ca0c601126da18edf09807c9c9c55190c9c23e662d80e1c149ccd61a"
+  },
+  "job-125259725409.log": {
+    "bytes": 119993,
+    "sha256": "20d51d818e1bb987df240eab9f00bf6ffade59233af97175366364394afc8846"
+  },
+  "job-125259725667.log": {
+    "bytes": 118651,
+    "sha256": "968092d1c161a250ddb51525158bd3720cd691c05de164c87c05f34947103788"
+  },
+  "job-125259725751.log": {
+    "bytes": 215271,
+    "sha256": "2ff880417519aed81decb57365b9573d629f82cff8b1a0cee5b2480d05c45f9c"
+  },
+  "job-125260142541.log": {
+    "bytes": 82415,
+    "sha256": "ddbd0f343044b427a509fb8ef49a663661406272005f597f668b89fefbebd9e9"
+  },
+  "job-125260142623.log": {
+    "bytes": 90638,
+    "sha256": "7572ec6abdb311bec7ae92c25ffd768b15216370cc9538bdb6f80943fced479a"
+  },
+  "job-125260142629.log": {
+    "bytes": 62107,
+    "sha256": "aaafc7e5a4f37182249a6659081894fbc07b4b370cb4a01c2de891299635eb7a"
+  },
+  "job-125260142667.log": {
+    "bytes": 82231,
+    "sha256": "52754b744b15c16635db7534936117fc257418139f59c3aeb47484fb4ea0cb31"
+  },
+  "job-125260142761.log": {
+    "bytes": 83056,
+    "sha256": "d53dbe95847fd73361c4b434bd176e2373843c86ed3318f6aae3594ba8a0a039"
+  },
+  "job-125260142963.log": {
+    "bytes": 65765,
+    "sha256": "0e749c017c94f903ecbbe88943d3122b77bfbd9651fe909db26ad97a28a29af1"
+  },
+  "job-125260142972.log": {
+    "bytes": 70373,
+    "sha256": "06c8872883b733fa92f0181c4416503a08eaaea20befdd0b16af7fbe019cc00d"
+  },
+  "job-125260143116.log": {
+    "bytes": 72222,
+    "sha256": "ce9820db8be022089159cd3d6be38c475507c83ae5bdee6ceb3bf79f4f2eacb7"
+  },
+  "job-125264628092.log": {
+    "bytes": 133857,
+    "sha256": "7371a71cc367a808f86b19e310b2493041e0dfb9cbf3dc83b4922f76059775ca"
+  },
+  "job-125272505817.log": {
+    "bytes": 63602,
+    "sha256": "0b04f9036b72e990e299bfacef1607e285fc0943ffa966c8098767e73ee74912"
+  },
+  "local-watchdog.ts.txt": {
+    "bytes": 1390,
+    "sha256": "66da30e9122a520abf50cdba4a6132e2c735d27e260a60b685e15c53ae670f10"
+  },
+  "plan/ci-plan.json": {
+    "bytes": 42883,
+    "sha256": "f5d8db92c2a36c7e1ea129b874a93468b299551c7027bce2b4644a89195e1a95"
+  },
+  "production-1-job.log": {
+    "bytes": 75628,
+    "sha256": "e8814029f185bc8a91a17ffdfc35892948713bef86cf38d6883815bfa876e815"
+  },
+  "production-1/test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production/spn098-feedback-pair.json": {
+    "bytes": 8619,
+    "sha256": "6947bf9af7dc91677d898628154b672331bdab855db789fd105e8ceb9adaf180"
+  },
+  "related-main-failure.md": {
+    "bytes": 688,
+    "sha256": "2ee2d15445c7a6b6584dda9d5c9715ea9ba2bd9ac97f994d6636175b37d8bb5b"
+  },
+  "responsiveness-desktop-inspection-first.log": {
+    "bytes": 816,
+    "sha256": "e72923f6f3f35a137a5285ef43251a474a66d37bcaa225a92a7832034ba2281b"
+  },
+  "responsiveness-desktop/baseline-doc-source/playwright-report/doc-responsiveness.json": {
+    "bytes": 1384025,
+    "sha256": "b4a9ed0b4901d9181f91b8e89cc4b37a543bdaf2c742c1631bdbdb8859aeb7f8"
+  },
+  "responsiveness-desktop/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json": {
+    "bytes": 119179,
+    "sha256": "c6ec655a7e28a5b8bc303429003c3154972d12db839d44456cb5850a2d69b486"
+  },
+  "responsiveness-desktop/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json": {
+    "bytes": 123041,
+    "sha256": "1f0fd7d2089daecea8d968f3cb161caf6d2555a39ad8a8e500bc47937c3087bb"
+  },
+  "responsiveness-desktop/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json": {
+    "bytes": 122120,
+    "sha256": "dddb43cf1656f1f28ce884cc20ba418fde97f989dd75c43d879b35e83002895c"
+  },
+  "responsiveness-desktop/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json": {
+    "bytes": 124287,
+    "sha256": "7695dd0bb4a8872119eda470702ef1a792aabfaa58d022c2c1ab6196e6eb6868"
+  },
+  "responsiveness-desktop/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json": {
+    "bytes": 225,
+    "sha256": "b6713ee3ada6c69ebfb806e358dc10070ff97656dea980883ac2add00ab28ad7"
+  },
+  "responsiveness-desktop/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile": {
+    "bytes": 3722179,
+    "sha256": "579c7a23f0411de588c5bd03f5732286b8a00ac4dde85c44841af696f4ba2332"
+  },
+  "responsiveness-desktop/playwright-report/doc-responsiveness.json": {
+    "bytes": 1418826,
+    "sha256": "8cb60bd3def8daf6a107ba392f9a6ee5225ef6da9403d32851906435bcd59472"
+  },
+  "responsiveness-desktop/test-results/doc-responsiveness/doc-responsiveness-desktop-5f9af--typing-after-a-quiet-pause-doc-responsiveness/spn108-post-burst.json": {
+    "bytes": 131220,
+    "sha256": "7d3d532c9043b7aaa649f4bd6e74ecb3efa918e582a0cc18f57b687f322467c1"
+  },
+  "responsiveness-desktop/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json": {
+    "bytes": 144449,
+    "sha256": "76cf377ef435984d098f1df9d4234f73fcf894dab8539e1fa2812154779875b7"
+  },
+  "responsiveness-desktop/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness/error-context.md": {
+    "bytes": 11845,
+    "sha256": "698e6d0bced798808ed0b2855b161fe92d4ef9acdd048eb7a83b1a7e16c35766"
+  },
+  "responsiveness-desktop/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json": {
+    "bytes": 144507,
+    "sha256": "39a360849fb2e22a548a0ce6329ad725e4c9198da6a9d26443009feb5c76363c"
+  },
+  "responsiveness-desktop/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness/test-failed-1.png": {
+    "bytes": 153698,
+    "sha256": "452ef2d8d59e42c8f606ae3eb98eb50c62a3a95acace0b32b879188fbcb9c466"
+  },
+  "responsiveness-desktop/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness/test-failed-2.png": {
+    "bytes": 153410,
+    "sha256": "3aa0178f5f397f2f123ea069d108ce6eb6e6b71215c462c29094b9e3a5e06b16"
+  },
+  "responsiveness-desktop/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json": {
+    "bytes": 142099,
+    "sha256": "f6058103cb2d1a579240418f3a99d55e068933028a0dfdf12ff427993a0ac430"
+  },
+  "responsiveness-desktop/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json": {
+    "bytes": 144550,
+    "sha256": "068b2c1ef041ad610ddc3d670630aa2f12ddcd108636e3b20eaa7a5378aed492"
+  },
+  "responsiveness-desktop/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json": {
+    "bytes": 236,
+    "sha256": "cc04e2b8fc515e8536a9ab90c2a8e844e7d296151e5ee0fa9738ae3703ad1736"
+  },
+  "responsiveness-desktop/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile": {
+    "bytes": 3227234,
+    "sha256": "f8fd08a79c70c27f6fb0f35164a89a8dd8a1a041d38aeb28056f8769cc790cc2"
+  },
+  "responsiveness-desktop/test-results/doc-responsiveness/doc-responsiveness-native--9dfea-nd-a-late-composition-event-doc-responsiveness/spn108-boundaries.json": {
+    "bytes": 2318,
+    "sha256": "5bde4d53d48fe2235d140914066455221eceeb1730c3811dad47056d8ad50483"
+  },
+  "responsiveness-desktop/test-results/doc-responsiveness/doc-responsiveness-native--b2c01-mit-without-partial-history-doc-responsiveness/spn108-boundaries.json": {
+    "bytes": 67351,
+    "sha256": "b6529da019cc026125c1ef58d55da65d90d137cba1a66c388b87ec98b90fb2fc"
+  },
+  "responsiveness-mobile-acceptance-summary.json": {
+    "bytes": 9410,
+    "sha256": "5c36d13caceea5ab997a7fc5c47a17a4d37925fc73347531ca13bc847957c078"
+  },
+  "responsiveness-mobile-inspection-first.log": {
+    "bytes": 1246,
+    "sha256": "d646c985c43ee0772ed64b7b2bb591f30ccf5f4a635aeb1b8b03b8fa9bab1818"
+  },
+  "responsiveness-mobile/baseline-doc-source/playwright-report/doc-responsiveness.json": {
+    "bytes": 1384019,
+    "sha256": "2df4efc2e3171634ad847c92aa508ae9b3d3e3acf81677a0936b5e61ad3781b9"
+  },
+  "responsiveness-mobile/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json": {
+    "bytes": 228874,
+    "sha256": "df54edc990a72a02770289a993d0fb7a60d119603adb25671146a71562a66c0f"
+  },
+  "responsiveness-mobile/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json": {
+    "bytes": 225630,
+    "sha256": "c41034546633d4124fee37876a691953c6ef451a15ce5b2c6be531566226084c"
+  },
+  "responsiveness-mobile/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json": {
+    "bytes": 226979,
+    "sha256": "6cd8e45c3093267018c90d1eb498adcbfaf99c134003177460911f111906078b"
+  },
+  "responsiveness-mobile/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json": {
+    "bytes": 227685,
+    "sha256": "c3ee89dbd79b8d6cbfdc78b48e25e6c95d48443b5e995d9502dc411b2e4df76d"
+  },
+  "responsiveness-mobile/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json": {
+    "bytes": 227,
+    "sha256": "7478e8dc5465d853adb4d6ca30d2bd88b89d457162b310e9eab15a81da6feadb"
+  },
+  "responsiveness-mobile/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile": {
+    "bytes": 4710253,
+    "sha256": "03fe6ba6be9d83015801ae836e0e9279505a92063b3af33d3bac1888fbe5010e"
+  },
+  "responsiveness-mobile/playwright-report/doc-responsiveness.json": {
+    "bytes": 1414372,
+    "sha256": "cfdce0083d034e9777510ae8d58b0562f158a230fbe73dd1bfc368d5d9b212dc"
+  },
+  "responsiveness-mobile/test-results/doc-responsiveness/doc-responsiveness-mobile--59407--typing-after-a-quiet-pause-doc-responsiveness/spn108-post-burst.json": {
+    "bytes": 200987,
+    "sha256": "f6353790b3b1c596b5ec2b15d7c6974fb2df7338abad185bae5b008328486489"
+  },
+  "responsiveness-mobile/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json": {
+    "bytes": 208762,
+    "sha256": "9e65ebe9cfc5523664619b70dc1bd34dee21c2f42e639afcd413f91644ce90bc"
+  },
+  "responsiveness-mobile/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json": {
+    "bytes": 181676,
+    "sha256": "6facfce1c72a3c3f85cbd6c7be885dd8ba0251c2fe6c542a844f4cc93cf5b806"
+  },
+  "responsiveness-mobile/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json": {
+    "bytes": 184534,
+    "sha256": "1cac17a5d060977167775b636bde1a56feb105cf04f73f03c368455432c1e17d"
+  },
+  "responsiveness-mobile/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json": {
+    "bytes": 198671,
+    "sha256": "27e73e436099b96ecb913ba625a175f7b9a77c7d90fff9624c92ae890e6cd589"
+  },
+  "responsiveness-mobile/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json": {
+    "bytes": 242,
+    "sha256": "4dddaa16dc31543584bea5c5d7477a9b9fb2e7d34d7a5f19ff08249f199f489f"
+  },
+  "responsiveness-mobile/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile": {
+    "bytes": 3669947,
+    "sha256": "cdacfe3f6a5347567d4c7ad0e16f8e2329ceef8c72138d766680fce6afe3e9d5"
+  },
+  "responsiveness-mobile/test-results/doc-responsiveness/doc-responsiveness-native--032b2-nd-a-late-composition-event-doc-responsiveness/spn108-boundaries.json": {
+    "bytes": 2347,
+    "sha256": "dbc89e84022e02a3c2e67c2e573cdd83541770a83b3c41139cbebd0388c73dcb"
+  },
+  "responsiveness-mobile/test-results/doc-responsiveness/doc-responsiveness-native--bfbca-mit-without-partial-history-doc-responsiveness/spn108-boundaries.json": {
+    "bytes": 66213,
+    "sha256": "b08d0639da4fab29fe19c68b7edeede76d09749c71149aeafb96fbfe08835584"
+  },
+  "responsiveness-mobile/test-results/spn108-comparison-mobile.json": {
+    "bytes": 12803,
+    "sha256": "93a802a5215578f5af8a19463ace9bdd5b61ed98a5880601e2086947b7b5d7ec"
+  },
+  "restore/evidence.json": {
+    "bytes": 164650,
+    "sha256": "58925b18b8c3c54f759635be040a778e824b9a8dc41769872742cd23883e8e8d"
+  },
+  "resumed-feedback-repair.diff": {
+    "bytes": 4287,
+    "sha256": "546558678a8eb00b28ee606aa00d4a721b97f2ce324e0c01adfe848540d590c3"
+  },
+  "storybook-attempt1-jobs.json": {
+    "bytes": 24565,
+    "sha256": "d9351b1bf0ebe22cbb79685362f64feb69a85e9ef9062ecba41140da8991e52c"
+  },
+  "storybook-attempt1-run.json": {
+    "bytes": 12199,
+    "sha256": "4824e7511c45dae38bb5c058bae87a708b029b1c957dddff2f1220b6e7bd72dd"
+  },
+  "storybook-final-jobs.json": {
+    "bytes": 24583,
+    "sha256": "67f988a8b269a608a4fe7718af57afecdaab02ea1e1a3f7ba40c9918807d44ee"
+  },
+  "storybook-final-run.json": {
+    "bytes": 12277,
+    "sha256": "3edc2647c17ed447916188b1a8fdc92c6f6c41d18d7e1bbf69500099e06e3662"
+  },
+  "superseded/run-41439715003.json": {
+    "bytes": 12205,
+    "sha256": "1d052d8eda8713d7a740d37c686e213a13552a0424c690e17ec98466b17cd8d2"
+  },
+  "superseded/run-41439715080.json": {
+    "bytes": 12216,
+    "sha256": "6adaead16e7eedd62672cf10dd01084e1604e5361bb0229626169845f7b59fcd"
+  },
+  "superseded/run-41439715179.json": {
+    "bytes": 12192,
+    "sha256": "9a9e69901417e53302dd9cf4a0cfb9971f7ac4d5126b1e6239c071eb8dbcc24a"
+  }
+}

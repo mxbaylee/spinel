@@ -1,0 +1,95 @@
+diff --git a/e2e/diagnostics.spec.ts b/e2e/diagnostics.spec.ts
+index e961f106..a020634b 100644
+--- a/e2e/diagnostics.spec.ts
++++ b/e2e/diagnostics.spec.ts
+@@ -1,5 +1,5 @@
+ import { randomUUID } from 'node:crypto';
+-import { mkdir, mkdtemp, readFile, rm } from 'node:fs/promises';
++import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+ import { tmpdir } from 'node:os';
+ import { join } from 'node:path';
+ import { expect, test } from '@playwright/test';
+@@ -272,9 +272,18 @@ test('feedback survives a lost acknowledgment and paired user/system downloads p
+       await expect(account.getByText('Feedback available', { exact: true })).toBeVisible();
+       await expect(page.getByText(message, { exact: true })).toHaveCount(0);
+       await expect(page.getByText(file.name, { exact: true })).toHaveCount(0);
++      let preparations = 0;
++      page.on('request', (request) => {
++        if (
++          request.url().endsWith('/api/admin/diagnostics/feedback/prepare') &&
++          request.method() === 'POST'
++        )
++          preparations++;
++      });
+       const pairResponse = page.waitForResponse(
+         (value) =>
+-          value.url().endsWith('/api/admin/diagnostics/feedback/prepare') && value.status() === 200,
++          value.url().endsWith('/api/admin/diagnostics/feedback/prepare') &&
++          value.request().method() === 'POST',
+       );
+       const user = await feedbackArtifact(
+         page,
+@@ -284,8 +293,12 @@ test('feedback survives a lost acknowledgment and paired user/system downloads p
+             .getByRole('button', { name: `Feedback downloads for ${f.owner.name}`, exact: true })
+             .click();
+           await page.getByRole('menuitem', { name: 'Download user metrics', exact: true }).click();
++          expect((await pairResponse).status()).toBe(200);
+         },
+       );
++      // Development StrictMode must not send an aborted mount's preparation:
++      // it can still hold the server lease when the surviving mount starts.
++      expect(preparations).toBe(1);
+       const pair = (await (await pairResponse).json()) as FeedbackPair;
+       const downloads = page.getByRole('dialog', { name: 'Feedback diagnostics', exact: true });
+       await expect(downloads.getByLabel('Shared time span', { exact: true })).toBeVisible();
+@@ -346,6 +359,24 @@ test('feedback survives a lost acknowledgment and paired user/system downloads p
+       ).toBe(true);
+       expect(system.rows.some((row) => row.id === laterId)).toBe(false);
+       expect(system.manifest.counts).toEqual(user.manifest.counts);
++      // Retain the exact synthetic rows/window after fixture cleanup, so review
++      // can inspect completeness without exporting credentials or a live store.
++      await writeFile(
++        info.outputPath('spn098-feedback-pair.json'),
++        JSON.stringify(
++          {
++            project: info.project.name,
++            attempt: info.retry,
++            initialPreparations: preparations,
++            pairedMembershipVerified: true,
++            user,
++            system,
++            excludedLaterReportId: laterId,
++          },
++          null,
++          2,
++        ) + '\n',
++      );
+       const denied = await other.request.post(
+         `${f.origin}/api/admin/diagnostics/feedback/${pair.id}/download`,
+         { headers: f.headers, data: { scope: 'system' } },
+diff --git a/web/AdminFeedback.tsx b/web/AdminFeedback.tsx
+index de628a8f..3a2b7e16 100644
+--- a/web/AdminFeedback.tsx
++++ b/web/AdminFeedback.tsx
+@@ -274,7 +274,12 @@ export function AdminFeedbackDownloads({
+   }
+   useEffect(() => {
+     mounted.current = true;
+-    void prepare(initialScope);
++    // StrictMode can dispose this mount immediately. Do not acquire the
++    // server's single export lease for an effect that has already been cleaned up.
++    let active = true;
++    void Promise.resolve().then(() => {
++      if (active) void prepare(initialScope);
++    });
+     const cleared = () => {
+       cancel();
+       setExpired(true);
+@@ -282,6 +287,7 @@ export function AdminFeedbackDownloads({
+     };
+     window.addEventListener(diagnosticsClearedEvent, cleared);
+     return () => {
++      active = false;
+       mounted.current = false;
+       identity.current++;
+       action.current?.abort();

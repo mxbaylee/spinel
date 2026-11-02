@@ -1,0 +1,17 @@
+# SPN-098 terminal validation checkpoint — not merge acceptance
+
+Source24e00a783803749b73483457b923dddafee9996c; base3233f9374c9dc028094f548b308a3f9dda3265ca; tested merge dbbe5ccaf085ce20b79068d3596a35dcf2142223; source/tested tree45abc48cdb93347a62f514da4773ea7ff5521935.
+
+CI41440026607 attempt1 completed with desktop responsiveness failed and required Playwright smoke aggregate failed. Every other worker/gate succeeded. Desktop plain2 idle p95=34.3ms exceeds16ms, attempt0, no retry; content and Undo/Redo passed but completion marker absent after assertion. The temporary inspection script first assumed a comparison JSON existed and failed ENOENT; the job correctly never produced that comparison after its candidate failure. Its inspection error is preserved.
+
+Both full feedback journeys passed attempt0 (development shard1 75passed/3existing skips; production shard1 82passed/3existing skips). Exact synthetic SQLite rows/manifests retain one preparation,2user/3system rows,matching snapshot/generation/inclusive window and exclusion of later ingestion. Whole journeys separately passed authorization,expiry/truncation and recovery; membership JSON alone does not establish all later assertions.
+
+Mobile responsiveness independently passed all three unprofiled samples: maxima31.2/37.9/40ms,capacity p95 22.6/21.3/22ms,drain394.1/320.2/432.1ms,queue highwater32/32,exactcontent+UndoRedo/errors0/reloads0. Profile29.9ms is diagnostic only. Both desktop/mobile callback comparisons completed and accepted currentcandidate4/1/1 bounds withzero postdisposal callbacks; original negative historical baselines remain full rawJSON.
+
+Sized restore passed237910ms,exactcontent/access/native rendering,pageErrors0,allcontainers absent,exit0/noOOM,privatevolume removed. Allthree native desktop browser jobs passed. Storybook41440026548 succeeded after the onepredeclaredtabletsetupretry:1076states/9interactions. Otherfour variants retainattempt1,desktoplight13interactions/others9. OriginaltabletstrictAPTguardfailure remains at4a4d7a1c266109a1106dc7eae04b655a04ad67a5/docs/review-assets/spn-098-tablet-setup.
+
+Current16image gallery/manifest/fullvariantlogs atde8eee363132db7b76ddbbb50441f8c515975878/docs/review-assets/spn-098-current-visuals,PRcomment6576697537. Reviewer/root/spn098_review_a independently approved actual currentlight/dark/phone productioncomponents at24e00a7; syntheticAPIfixtures,Chromiumphoneemulation,agentreviewonly. Both independent reviewers inspected current source and successful evidence,confirmed the desktop failure,and withhold numericalapproval. No merge permitted.
+
+Original91f failures/firstlocalresourceabort:ea4c9afc8b7b23d4d3f48c3ea7c172e0e759f65c/docs/review-assets/spn-098-original-failures. Currentnativeflush/mainmobilefirstfailures:8921e57d7df09ea24a618905bce849d337817850/docs/review-assets/spn-098-native-flush-first-failures. Separatemaincallbackbaseline timeout:d46f15908bc8eabe1c2f121353c0f768862e92f0/docs/review-assets/spn-071-main-callback-baseline. RegistrationPR234 proposes SPN133nativeflushrepair andSPN134callbackdiagnosis; registration is not resolution.
+
+Archive contains selected full metrics,profiles,reports,logs,coverageplan,terminalmetadata and synthetic export evidence. CallbackrawJSON is losslesslygzipped; disposable databases/source-mapbundles and unrelated catalogscreenshots omitted. RawActionsartifacts supplement and expire. No final score, completed ticket or merge is claimed. SPN098 remains draft pending a justified repair,currentbaseintegration and fresh complete validation/reviews.
