@@ -1,0 +1,279 @@
+{
+  "status": "partial diagnostic, not acceptance",
+  "original": {
+    "run": 41384628382,
+    "job": 125082949646,
+    "head": "c3636afe3f21216805af80de0dabe129a92d57c6",
+    "testedMerge": "e8db050a9327357eb0c11b4daba0dcdf12bd73c6",
+    "artifact": 13115832562,
+    "failure": "plain-1 idle flush p95 19.6ms > 16ms; remains unexplained"
+  },
+  "diagnostic": {
+    "run": 41388902239,
+    "job": 125095755773,
+    "helper": "14300eff4b13537dc66fbd8bf038b13c40c90782",
+    "artifact": 13115739733,
+    "attempts": 1,
+    "allTestsFailedTraceExport": true,
+    "samples": {
+      "main": {
+        "source": "0bdbbcb5ca23b84e172e41a11bd0cf555e911130",
+        "identity": {
+          "variant": "main",
+          "source": "0bdbbcb5ca23b84e172e41a11bd0cf555e911130",
+          "expected": "0bdbbcb5ca23b84e172e41a11bd0cf555e911130",
+          "diagnosticOnly": true,
+          "attempts": 1,
+          "selection": "e2e/doc-responsiveness.spec.ts; desktop sustained native typing plain-1$",
+          "files": {
+            "web/DocEditor.tsx": "0afbf4fd8394b56ff21972c94f40961e7a33774fa001ff0b92e25929535cb089",
+            "web/SheetEditor.tsx": "923d3e6292208c6332d5300226fcdc836149087aebe25b7f34e89d20e030f011",
+            "src/ui/boundedDocHistory.ts": "694a133420975a95cf168c8662c0649619396ebd4bc4cacd65885661eff1b27a",
+            "e2e/doc-responsiveness.spec.ts": "d642931743c03a4aee55611bd9e9130e22ef1df3bbe887030ec175d16db25061",
+            "e2e/spn065-trace.ts": "655cae7b382873bc096df67336f8ed79d24486295fa761901bbbdd49e0e749e3",
+            "e2e/doc-responsiveness.ts": "38c3cc6bcab8dd6564444cb946784e748899e9560efb7e7dbbed0e21d16ec067",
+            "e2e/doc-responsiveness-fixture.ts": "8a77b15b3fa9ab3961b949cb5fc820f263775ded4952e8f5ef34e4cd02a9b80f",
+            "web/docResponsivenessEvidence.ts": "4b2b5b6f41b365839733fabb2cb0fc52eaaf81e314f7b9f39b443b8fa6874a08",
+            "playwright.config.ts": "ebe113d9033e3bf86e5fb709dc38c9a8bf4c7f521bade73cacb49be5a346d7e4",
+            "package-lock.json": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf"
+          }
+        },
+        "publications": 4689,
+        "connections": 4688,
+        "observedFlushes": 65,
+        "idleFlushes": 0,
+        "publicationsInsideFlushes": 0,
+        "connectionsInsideFlushes": 0,
+        "summary": {
+          "frameOpportunityMs": {
+            "count": 2086,
+            "p50": 23.900000000023283,
+            "p95": 35.90000000002328,
+            "max": 69.29999999998836,
+            "sum": 51532.49999999882
+          },
+          "interKeyGapMs": {
+            "count": 2085,
+            "p50": 29.70000000001164,
+            "p95": 42.60000000000582,
+            "max": 103.5,
+            "sum": 62946.59999999999
+          },
+          "debounceBreakingGaps": 0,
+          "longTaskMs": {
+            "count": 4,
+            "p50": 50,
+            "p95": 51,
+            "max": 51,
+            "sum": 202
+          },
+          "totalBlockingMs": 2,
+          "capacityFlushPairMs": {
+            "count": 65,
+            "p50": 6.099999999976717,
+            "p95": 10.700000000011642,
+            "max": 21.300000000017462,
+            "sum": 456.2000000000262
+          },
+          "idleFlushPairMs": null,
+          "pairedFlushMaximumMs": 21.300000000017462,
+          "postFinalKeyDrainUpperBoundMs": 476.1000000000058,
+          "firstVerifiedBrowserLocalDrainMs": 303.20000000001164,
+          "lateReadMinusLocalWitnessMs": 172.89999999999418,
+          "drainAcceptanceMetric": "first-verified-browser-local-empty"
+        },
+        "budgets": {
+          "inputP95": true,
+          "longestTask": true,
+          "capacityFlushP95": true,
+          "idleFlushP95": null,
+          "flushMaximum": true,
+          "boundedHistory": true,
+          "boundedCollaboration": true,
+          "observedCapacityFlushes": true,
+          "browserLocalDrainedWithinOneSecond": true
+        },
+        "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed",
+        "scenarioCompleted": true,
+        "testOutcome": "failed",
+        "traceExportError": "Error: Trace extraction timed out."
+      },
+      "candidate": {
+        "source": "c3636afe3f21216805af80de0dabe129a92d57c6",
+        "identity": {
+          "variant": "candidate",
+          "source": "c3636afe3f21216805af80de0dabe129a92d57c6",
+          "expected": "c3636afe3f21216805af80de0dabe129a92d57c6",
+          "diagnosticOnly": true,
+          "attempts": 1,
+          "selection": "e2e/doc-responsiveness.spec.ts; desktop sustained native typing plain-1$",
+          "files": {
+            "web/DocEditor.tsx": "6300fdca8111856bb3a4cbfda28fda5b7ef00145f4095023d9c84bcbaf3aa276",
+            "web/SheetEditor.tsx": "4817a0095b44f7bc7a6876b5cb49da10794f5270260768a731765dcee650d473",
+            "src/ui/boundedDocHistory.ts": "694a133420975a95cf168c8662c0649619396ebd4bc4cacd65885661eff1b27a",
+            "e2e/doc-responsiveness.spec.ts": "d642931743c03a4aee55611bd9e9130e22ef1df3bbe887030ec175d16db25061",
+            "e2e/spn065-trace.ts": "655cae7b382873bc096df67336f8ed79d24486295fa761901bbbdd49e0e749e3",
+            "e2e/doc-responsiveness.ts": "38c3cc6bcab8dd6564444cb946784e748899e9560efb7e7dbbed0e21d16ec067",
+            "e2e/doc-responsiveness-fixture.ts": "8a77b15b3fa9ab3961b949cb5fc820f263775ded4952e8f5ef34e4cd02a9b80f",
+            "web/docResponsivenessEvidence.ts": "4b2b5b6f41b365839733fabb2cb0fc52eaaf81e314f7b9f39b443b8fa6874a08",
+            "playwright.config.ts": "ebe113d9033e3bf86e5fb709dc38c9a8bf4c7f521bade73cacb49be5a346d7e4",
+            "package-lock.json": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf"
+          }
+        },
+        "publications": 9361,
+        "connections": 4680,
+        "observedFlushes": 65,
+        "idleFlushes": 0,
+        "publicationsInsideFlushes": 0,
+        "connectionsInsideFlushes": 0,
+        "summary": {
+          "frameOpportunityMs": {
+            "count": 2086,
+            "p50": 24.400000000023283,
+            "p95": 36,
+            "max": 89.5,
+            "sum": 51843.499999999185
+          },
+          "interKeyGapMs": {
+            "count": 2085,
+            "p50": 29.89999999999418,
+            "p95": 42.29999999998836,
+            "max": 95.79999999998836,
+            "sum": 63078.600000000035
+          },
+          "debounceBreakingGaps": 0,
+          "longTaskMs": {
+            "count": 4,
+            "p50": 53,
+            "p95": 79,
+            "max": 79,
+            "sum": 255
+          },
+          "totalBlockingMs": 55,
+          "capacityFlushPairMs": {
+            "count": 65,
+            "p50": 6.600000000005821,
+            "p95": 12.10000000000582,
+            "max": 24.399999999965075,
+            "sum": 477.4000000000233
+          },
+          "idleFlushPairMs": null,
+          "pairedFlushMaximumMs": 24.399999999965075,
+          "postFinalKeyDrainUpperBoundMs": 452.5,
+          "firstVerifiedBrowserLocalDrainMs": 303.19999999995343,
+          "lateReadMinusLocalWitnessMs": 149.30000000004657,
+          "drainAcceptanceMetric": "first-verified-browser-local-empty"
+        },
+        "budgets": {
+          "inputP95": true,
+          "longestTask": true,
+          "capacityFlushP95": true,
+          "idleFlushP95": null,
+          "flushMaximum": true,
+          "boundedHistory": true,
+          "boundedCollaboration": true,
+          "observedCapacityFlushes": true,
+          "browserLocalDrainedWithinOneSecond": true
+        },
+        "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed",
+        "scenarioCompleted": true,
+        "testOutcome": "failed",
+        "traceExportError": "Error: Trace extraction timed out."
+      },
+      "repaired": {
+        "source": "c3636afe3f21216805af80de0dabe129a92d57c6",
+        "identity": {
+          "variant": "repaired",
+          "source": "c3636afe3f21216805af80de0dabe129a92d57c6",
+          "expected": "c3636afe3f21216805af80de0dabe129a92d57c6",
+          "diagnosticOnly": true,
+          "attempts": 1,
+          "selection": "e2e/doc-responsiveness.spec.ts; desktop sustained native typing plain-1$",
+          "files": {
+            "web/DocEditor.tsx": "31dbc70b8fc2ca05dc75f77205595a18163e0b26887e2ed3cfdb85c899efa194",
+            "web/SheetEditor.tsx": "9176c5a2fde9053ced698e80648a4e84760455fe09faa4ad261eb28f1772def7",
+            "src/ui/boundedDocHistory.ts": "694a133420975a95cf168c8662c0649619396ebd4bc4cacd65885661eff1b27a",
+            "e2e/doc-responsiveness.spec.ts": "d642931743c03a4aee55611bd9e9130e22ef1df3bbe887030ec175d16db25061",
+            "e2e/spn065-trace.ts": "655cae7b382873bc096df67336f8ed79d24486295fa761901bbbdd49e0e749e3",
+            "e2e/doc-responsiveness.ts": "38c3cc6bcab8dd6564444cb946784e748899e9560efb7e7dbbed0e21d16ec067",
+            "e2e/doc-responsiveness-fixture.ts": "8a77b15b3fa9ab3961b949cb5fc820f263775ded4952e8f5ef34e4cd02a9b80f",
+            "web/docResponsivenessEvidence.ts": "4b2b5b6f41b365839733fabb2cb0fc52eaaf81e314f7b9f39b443b8fa6874a08",
+            "playwright.config.ts": "ebe113d9033e3bf86e5fb709dc38c9a8bf4c7f521bade73cacb49be5a346d7e4",
+            "package-lock.json": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf"
+          }
+        },
+        "publications": 4688,
+        "connections": 4684,
+        "observedFlushes": 65,
+        "idleFlushes": 0,
+        "publicationsInsideFlushes": 0,
+        "connectionsInsideFlushes": 0,
+        "summary": {
+          "frameOpportunityMs": {
+            "count": 2086,
+            "p50": 23.900000000023283,
+            "p95": 35.79999999998836,
+            "max": 72.29999999998836,
+            "sum": 50972.00000000192
+          },
+          "interKeyGapMs": {
+            "count": 2085,
+            "p50": 29.399999999965075,
+            "p95": 41.90000000002328,
+            "max": 79.79999999998836,
+            "sum": 62180.70000000001
+          },
+          "debounceBreakingGaps": 0,
+          "longTaskMs": {
+            "count": 3,
+            "p50": 62,
+            "p95": 66,
+            "max": 66,
+            "sum": 179
+          },
+          "totalBlockingMs": 29,
+          "capacityFlushPairMs": {
+            "count": 65,
+            "p50": 5.800000000046566,
+            "p95": 12.400000000023283,
+            "max": 16.899999999965075,
+            "sum": 440.10000000026776
+          },
+          "idleFlushPairMs": null,
+          "pairedFlushMaximumMs": 16.899999999965075,
+          "postFinalKeyDrainUpperBoundMs": 381.5999999999767,
+          "firstVerifiedBrowserLocalDrainMs": 301.79999999998836,
+          "lateReadMinusLocalWitnessMs": 79.79999999998836,
+          "drainAcceptanceMetric": "first-verified-browser-local-empty"
+        },
+        "budgets": {
+          "inputP95": true,
+          "longestTask": true,
+          "capacityFlushP95": true,
+          "idleFlushP95": null,
+          "flushMaximum": true,
+          "boundedHistory": true,
+          "boundedCollaboration": true,
+          "observedCapacityFlushes": true,
+          "browserLocalDrainedWithinOneSecond": true
+        },
+        "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed",
+        "scenarioCompleted": true,
+        "testOutcome": "failed",
+        "traceExportError": "Error: Trace extraction timed out."
+      }
+    }
+  },
+  "archivesSha256": {
+    "original-unprofiled-failure.zip": "a85af77aeb6dc2cdcf71641936917e2f53e9f2f2f59dc7528d1f21ac704a8e62",
+    "partial-matched-diagnostic.zip": "e4aa1544c93fcc4e93d3fb37a29478e229fc2ee3dbfcaec5caccdfb70da13ac3"
+  },
+  "interpretation": [
+    "Candidate doubled total save-status publications; guard restores counts near main.",
+    "Every observed flush had zero publication/connection callbacks within its measured interval. Direct synchronous callback-cost attribution is unsupported.",
+    "No diagnostic sample observed an idle flush. These samples cannot explain the original idle-flush failure.",
+    "All three cases completed correctness and applicable numerical assertions, then failed trace export. No complete browser trace was retained.",
+    "CPU profiles contain negative time deltas; do not use for precise temporal attribution.",
+    "Fresh unprofiled validation must retain unchanged budgets and observe the desktop idle-flush contract. No claim that the guard fixed the original 19.6ms cause."
+  ]
+}
