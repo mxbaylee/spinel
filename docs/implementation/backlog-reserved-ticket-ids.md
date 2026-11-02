@@ -108,3 +108,16 @@ Operator gets an accurate repair order and enforceable IDs. Owner and Collaborat
 retain the existing responsive-document and genuine-validation requirements;
 Link guest's access requirements remain unchanged. This is focused backlog
 maintenance, not a full grooming or a reset of the completion reminder.
+
+After that local test pass, memory pressure rose to level 2. The serial runner
+deferred both index generation and the PR check before launching them; neither
+is recorded as a local pass. A single five-minute-bounded hosted generation job,
+[41481604973](https://github.com/mxbaylee/spinel/actions/runs/41481604973), attempt 1,
+ran the unchanged `npm run backlog:index` and `npm run backlog:check` successfully.
+Its temporary helper `5bfb00381a3d1e3f43eda5cb5d5eeafa44c73726` differs from
+source `54c159a0fefedb16f424d6df07da524d28cfcfca` only in the manual workflow.
+The job verified that provenance and that only the generated index changed.
+The downloaded artifact SHA-256 is
+`5d49fa8ba6e3d1750d62eaa6bf59d6fef8c32fb9e38867c20bd7b1f1f55aed92`;
+its exact CLI-generated index was verified and imported, never hand-edited.
+This generation job does not replace full current-PR validation or either review.
