@@ -427,6 +427,30 @@ export const Viewer: Story = {
     ).not.toBeInTheDocument();
   },
 };
+
+export const ViewerDeniedEdit: Story = {
+  args: { viewer: true },
+  play: async ({ canvasElement }) => {
+    await ready(canvasElement, false, true);
+    const host = canvasElement.querySelector<HTMLElement>('.univer-container')!;
+    const fixture = mobileDocFixtures.get(host)!;
+    const original = fixture.caret().text;
+    // The fixture calls the mounted public Doc API, so an absent keyboard
+    // focus cannot turn this into a no-op that merely appears to deny editing.
+    expect(fixture.append().applied).toBe(false);
+    await waitFor(() => {
+      expect(fixture.caret().text).toBe(original);
+      expect(fixture.observe().unchanged).toBe(true);
+      expect(fixture.observe().permissionNotices).toHaveLength(1);
+      expect(
+        within(canvasElement.ownerDocument.body).getByText(
+          'This content is protected. This action is not allowed.',
+          { exact: true },
+        ),
+      ).toBeVisible();
+    });
+  },
+};
 export const Traditional: Story = {
   args: { traditional: true },
   play: async ({ canvasElement }) => {

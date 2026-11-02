@@ -142,18 +142,9 @@ for (const phone of [false, true])
               });
             }
           }
-          await page
-            .locator('[contenteditable="true"][data-u-comp="editor"]')
-            .dispatchEvent('keydown', {
-              key: 'Enter',
-              code: 'Enter',
-              keyCode: 13,
-              which: 13,
-              bubbles: true,
-              cancelable: true,
-            });
-          await page.keyboard.type('FORBIDDEN VIEWER EDIT');
-          await expect(status).toContainText('View only');
+          // This journey owns startup/persistence and the actual HTTP fence.
+          // Native mutation refusal and its visible warning are exercised by
+          // the ViewerDeniedEdit story through the mounted public Doc API.
           if (role === 'account') {
             const denied = await context.request.put(`/api/items/${item.id}/doc`, {
               headers: { Origin: baseURL! },
