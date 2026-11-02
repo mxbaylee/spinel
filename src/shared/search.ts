@@ -41,6 +41,7 @@ export function searchItems<T extends FileItem>(
   const days = query.modified === 'day' ? 1 : query.modified === 'week' ? 7 : 30;
   return items
     .filter((item) => {
+      if (item.hidden) return false;
       if (query.type && item.kind !== query.type) return false;
       if (query.owner === 'mine' && item.access !== 'owner') return false;
       if (query.owner === 'shared' && item.access === 'owner') return false;

@@ -5,6 +5,7 @@ import type { IWorkbookData } from '@univerjs/core';
 import sharp from 'sharp';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
+import { openNativeCopy } from './native-copy.ts';
 import { nativeTheme } from './native-theme.ts';
 
 const orange = [255, 153, 0] as const;
@@ -492,6 +493,14 @@ test('a Sheet image remains navigation-protected after upload until native inser
       'Inserting image',
     );
     expect(floating(await f.read())).toEqual([]);
+    // Copy admission follows the same pending native insertion, not just upload completion.
+    await f.page.getByRole('tab', { name: 'Start', exact: true }).click();
+    const copy = await openNativeCopy(f.page);
+    await expect(copy).toContainText(
+      'Finish your edit and wait for changes to save before making a copy.',
+    );
+    await expect(copy.getByRole('button', { name: 'Make a copy', exact: true })).toBeDisabled();
+    await copy.getByRole('button', { name: 'Cancel', exact: true }).click();
     const warning = f.page.waitForEvent('dialog');
     f.page.once('dialog', (dialog) => dialog.dismiss());
     await f.page.getByRole('button', { name: 'Back to files', exact: true }).click();
@@ -501,6 +510,9 @@ test('a Sheet image remains navigation-protected after upload until native inser
     await expect.poll(async () => floating(await f.read()).length).toBe(1);
     await saved(f.page);
     await visibleColors(f.page, [orange]);
+    const readyCopy = await openNativeCopy(f.page);
+    await expect(readyCopy.getByRole('button', { name: 'Make a copy', exact: true })).toBeEnabled();
+    await readyCopy.getByRole('button', { name: 'Cancel', exact: true }).click();
     expect(f.errors).toEqual([]);
   } finally {
     await releaseNativeImageDecode(f.page).catch(() => {});
@@ -626,9 +638,7 @@ test('account viewers, edit-link guests and an offline owner cannot insert dropp
     const before = await f.read();
     const bytes = await raster(orange);
     const viewer = await f.peer('viewer');
-    await expect(viewer.getByRole('status', { name: 'Save status' })).toHaveText(
-      'View only — reload after your access changes.',
-    );
+    await expect(viewer.getByRole('status', { name: 'Save status' })).toHaveText('View only.');
     observeUploads(viewer);
     await dropFile(viewer, bytes, 'image/png');
     await denied(viewer);
@@ -908,6 +918,47 @@ test('online images inserted into an already downloaded Sheet render after an of
     expect(f.errors).toEqual([]);
   } finally {
     await f.context.setOffline(false);
+    await f.close();
+  }
+});
+
+test('an account viewer upgraded in place can insert a Sheet image through the native menu', async ({
+  browser,
+  baseURL,
+}, info) => {
+  test.setTimeout(90_000);
+  const f = await fixture(browser, baseURL!, info);
+  try {
+    await f.open();
+    const viewer = await f.peer('viewer');
+    await expect(viewer.getByRole('status', { name: 'Save status' })).toHaveText('View only.');
+    const openedAt = await viewer.evaluate(() => performance.timeOrigin);
+    const grid = await viewer.getByLabel('Spreadsheet grid', { exact: true }).elementHandle();
+    const before = await f.read();
+    await dropFile(viewer, await raster(blue), 'image/png');
+    await expect(viewer.locator('.editor-help[role="alert"]')).toContainText(
+      'Image insertion needs an account with edit access.',
+    );
+    expect(await f.read()).toEqual(before);
+    const grant = await f.context.request.put(`/api/items/${f.item.id}/sharing`, {
+      headers: f.headers,
+      data: { userId: f.peerIds.get(viewer), role: 'editor' },
+    });
+    expect(grant.ok(), await grant.text()).toBe(true);
+    await saved(viewer);
+    expect(await viewer.evaluate(() => performance.timeOrigin)).toBe(openedAt);
+    expect(await grid!.evaluate((element) => element.isConnected)).toBe(true);
+    await selectCell(viewer, 'C3');
+    await insertFile(viewer, 'Float Image', await raster(orange));
+    await saved(viewer);
+    await expect.poll(async () => floating(await f.read()).length).toBe(1);
+    await visibleColors(viewer, [orange]);
+    await visibleColors(f.page, [orange]);
+    expect(await viewer.evaluate(() => performance.timeOrigin)).toBe(openedAt);
+    expect(await grid!.evaluate((element) => element.isConnected)).toBe(true);
+    await grid!.dispose();
+    expect(f.errors).toEqual([]);
+  } finally {
     await f.close();
   }
 });

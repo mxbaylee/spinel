@@ -1,0 +1,90 @@
+{
+  "status": "unprofiled first-attempt failure; diagnostic/repair validation pending",
+  "run": 41384628382,
+  "job": 125082949646,
+  "head": "c3636afe3f21216805af80de0dabe129a92d57c6",
+  "tested": "e8db050a9327357eb0c11b4daba0dcdf12bd73c6",
+  "base": "0bdbbcb5ca23b84e172e41a11bd0cf555e911130",
+  "artifact": 13115832562,
+  "artifactSha256": "a85af77aeb6dc2cdcf71641936917e2f53e9f2f2f59dc7528d1f21ac704a8e62",
+  "artifactExpires": "2026-11-09",
+  "rawMetricsSha256": "25d5456dfea17c46371c221077ea479479612bef2ec556f1732c9676d1795b7b",
+  "summary": {
+    "frameOpportunityMs": {
+      "count": 2086,
+      "p50": 24.29999999993015,
+      "p95": 35.60000000009313,
+      "max": 62.90000000002328,
+      "sum": 51096.199999997974
+    },
+    "interKeyGapMs": {
+      "count": 2085,
+      "p50": 29.20000000006985,
+      "p95": 41.800000000046566,
+      "max": 89.19999999995343,
+      "sum": 61581
+    },
+    "debounceBreakingGaps": 0,
+    "longTaskMs": {
+      "count": 3,
+      "p50": 51,
+      "p95": 115,
+      "max": 115,
+      "sum": 216
+    },
+    "totalBlockingMs": 66,
+    "capacityFlushPairMs": {
+      "count": 65,
+      "p50": 5.900000000023283,
+      "p95": 9.699999999953434,
+      "max": 13.400000000023283,
+      "sum": 411.0999999999767
+    },
+    "idleFlushPairMs": {
+      "count": 1,
+      "p50": 19.599999999976717,
+      "p95": 19.599999999976717,
+      "max": 19.599999999976717,
+      "sum": 19.599999999976717
+    },
+    "pairedFlushMaximumMs": 19.599999999976717,
+    "postFinalKeyDrainUpperBoundMs": 477.5,
+    "firstVerifiedBrowserLocalDrainMs": 362.80000000004657,
+    "lateReadMinusLocalWitnessMs": 114.69999999995343,
+    "drainAcceptanceMetric": "first-verified-browser-local-empty"
+  },
+  "budgetResults": {
+    "inputP95": true,
+    "longestTask": true,
+    "capacityFlushP95": true,
+    "idleFlushP95": false,
+    "flushMaximum": true,
+    "boundedHistory": true,
+    "boundedCollaboration": true,
+    "observedCapacityFlushes": true,
+    "browserLocalDrainedWithinOneSecond": true
+  },
+  "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed",
+  "idleFlushes": [
+    {
+      "reason": "idle",
+      "startedAt": 64298.10000000009,
+      "durationMs": 19.599999999976717,
+      "history": 6,
+      "collaboration": 6,
+      "quietForMs": 338
+    }
+  ],
+  "diagnosticPlan": {
+    "source": "14300eff4b13537dc66fbd8bf038b13c40c90782",
+    "run": 41388902239,
+    "attemptsPerVariant": 1,
+    "variants": [
+      "current main",
+      "reviewed candidate",
+      "candidate with connection-change guards"
+    ],
+    "acceptance": false
+  },
+  "limitsUnchanged": true
+}

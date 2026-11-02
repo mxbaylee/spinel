@@ -1,5 +1,23 @@
 # Editor chrome
 
+## Native copying (SPN-065)
+
+**Make a copy** is an open-source Univer addon in the native toolbar's existing
+Others group. The desktop toolbar can place it in overflow; the phone toolbar
+places it in **More**. Its native dialog/drawer hosts the same production name and
+folder form as the dashboard. It does not add another outer-header action beside
+Share or collaborators. Signed-in phone Doc viewers retain the native toolbar for
+copying, with the Edit header controls and editing footer hidden. Native mutation
+permissions remain read-only; guests retain the prior toolbar policy and no copy
+addon.
+
+Use existing theme tokens, one primary **Make a copy** action, **Cancel**, labelled
+fields and actionable availability/error text. Shared destinations disclose the
+folder owner's ownership and creator attribution. A dismissed in-flight native
+drawer retains its completion, with **Open copy** on reopening and no second
+submission. Pending edits or connectivity changes prevent automatic navigation.
+The action is independent of edit permission. [Decision and persona effects](../implementation/SPN-065.md#embedded-copy-experience).
+
 ## SPN-047 composed redesign proposal
 
 Approved by the owner, 2026-10-21, [decision #126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits). Production implementation remains separate.
