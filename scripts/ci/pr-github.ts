@@ -1,4 +1,5 @@
-/** The privileged caller can mutate only labels in its configured repository.
+/** This client exposes only reserved-label mutations. GitHub's App permission
+ * is Pull requests: write, which is broader than this client interface.
  * Credentials never travel to a payload-controlled URL or a redirect. */
 export class PrGitHub {
   readonly repository: string;
@@ -46,13 +47,13 @@ export class PrGitHub {
       const result = await this.get(
         `${path}${path.includes('?') ? '&' : '?'}per_page=100&page=${page}`,
       );
-      if (
-        !result ||
-        typeof result !== 'object' ||
-        !Array.isArray((result as Record<string, unknown>)[key])
-      )
-        throw new Error(`Missing GitHub collection ${key}.`);
-      const batch = (result as Record<string, unknown>)[key] as unknown[];
+      const batch =
+        key === ''
+          ? result
+          : result && typeof result === 'object'
+            ? (result as Record<string, unknown>)[key]
+            : undefined;
+      if (!Array.isArray(batch)) throw new Error(`Missing GitHub collection ${key}.`);
       items.push(...batch);
       if (batch.length < 100) return items;
     }

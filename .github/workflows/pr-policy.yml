@@ -1,4 +1,5 @@
 name: PR policy
+run-name: PR policy v1 pr=${{ github.event.pull_request.number }} action=${{ github.event.action }}
 
 on:
   pull_request:
@@ -11,16 +12,41 @@ permissions:
   actions: read
   checks: read
 
-concurrency:
-  group: pr-policy-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
-
 jobs:
+  classify:
+    # Do not cancel this cheap payload record when another text edit arrives.
+    # Historical full obligations must survive a superseded policy job.
+    name: Classify PR edit (${{ github.run_id }})
+    if: github.event.action == 'edited'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - id: edit
+        run: node scripts/ci/pr-state.ts classify
+      - name: 'Edit classification: text'
+        if: steps.edit.outputs.kind == 'text'
+        run: echo 'The event contains only exact title/body changes.'
+      - name: 'Edit classification: full'
+        if: steps.edit.outputs.kind != 'text'
+        run: echo 'The event requires full code validation.'
+
   policy:
     # Exactly one workflow owns this seventh required name.
     name: Pull request
+    needs: classify
+    if: always()
+    concurrency:
+      group: pr-policy-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 95
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:

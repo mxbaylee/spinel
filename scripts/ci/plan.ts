@@ -76,13 +76,20 @@ const libraryInput = (path: string) =>
   );
 
 /** Complete immutable diff supplied by changedPaths; null means it could not be
- * proved. There is no changed-file API pagination or current-label lookup. */
+ * proved. Persistent PR history can require full coverage independently of the
+ * current event's labels; it can never reduce path-selected coverage. */
 export function coveragePlan(
   eventName: string,
   raw: unknown,
   paths: string[] | null,
   tested?: string,
+  forceFullReason?: string,
 ): CoveragePlan {
+  if (
+    forceFullReason !== undefined &&
+    (typeof forceFullReason !== 'string' || !forceFullReason.trim())
+  )
+    throw new Error('A forced full-coverage requirement needs an explicit reason.');
   const event = object(raw) ? raw : {};
   const pr = object(event.pull_request) ? event.pull_request : {};
   const base = eventName === 'pull_request' && object(pr.base) ? pr.base.sha : event.before;
@@ -107,24 +114,26 @@ export function coveragePlan(
     paths?.filter(
       (path) => !documentationOnly([path]) && !performanceInput(path) && !serviceInput(path),
     ) ?? [];
-  const fullReason = !knownEvent
-    ? 'Scheduled/manual or unsupported event requires full coverage.'
-    : !reliable
-      ? 'Immutable range or event labels unavailable; full coverage.'
-      : event.action === 'edited'
-        ? 'An edited event reaching code validation requires full coverage; cheap policy has a separate workflow.'
-        : labels.includes(REVALIDATE_LABEL) ||
-            (object(event.label) && event.label.name === REVALIDATE_LABEL)
-          ? 'Base/ambiguous edit revalidation requires full coverage, including reserved-label removal.'
-          : unknown.length
-            ? 'Unknown paths require full coverage.'
-            : !paths?.length
-              ? 'Empty change range requires full coverage.'
-              : paths?.some(fullInput)
-                ? 'Workflow, harness, build, runtime or dependency input requires full coverage.'
-                : labels.includes('ci-full')
-                  ? 'ci-full adds full coverage.'
-                  : null;
+  const fullReason =
+    forceFullReason ??
+    (!knownEvent
+      ? 'Scheduled/manual or unsupported event requires full coverage.'
+      : !reliable
+        ? 'Immutable range or event labels unavailable; full coverage.'
+        : event.action === 'edited'
+          ? 'An edited event reaching code validation requires full coverage; cheap policy has a separate workflow.'
+          : labels.includes(REVALIDATE_LABEL) ||
+              (object(event.label) && event.label.name === REVALIDATE_LABEL)
+            ? 'Base/ambiguous edit revalidation requires full coverage, including reserved-label removal.'
+            : unknown.length
+              ? 'Unknown paths require full coverage.'
+              : !paths?.length
+                ? 'Empty change range requires full coverage.'
+                : paths?.some(fullInput)
+                  ? 'Workflow, harness, build, runtime or dependency input requires full coverage.'
+                  : labels.includes('ci-full')
+                    ? 'ci-full adds full coverage.'
+                    : null);
   const full = fullReason !== null;
   const app = full || !documentationOnly(paths ?? []);
   const performance = full || labels.includes('ci-performance') || !!paths?.some(performanceInput);

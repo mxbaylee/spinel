@@ -122,11 +122,10 @@ export function selectCodeRun(
     declared.number !== identity.number ||
     declared.base !== identity.base ||
     declared.head !== identity.head ||
-    declared.tested !== identity.tested ||
-    (requiredFull && !declared.full)
+    declared.tested !== identity.tested
   )
     return invalid(
-      'The latest CI attempt does not cover the current source, base and full-validation obligation.',
+      'The latest CI attempt does not cover the current source, base and tested merge.',
     );
   if (
     ['requested', 'waiting', 'pending'].includes(String(latest.status)) &&
@@ -150,13 +149,14 @@ export function selectCodeRun(
   };
 }
 
-/** These are the latest jobs and checks in this run's own suite, fully paginated
- * by the caller. GitHub may retain successful jobs when retrying failed jobs;
+/** These are all job attempts and the latest checks in this run's own suite,
+ * fully paginated by the caller. GitHub may retain successes in partial retries;
  * their original checks stay authoritative, without publishing copied passes. */
 export function admitCodeChecks(
   run: AdmittedCodeRun,
   jobs: unknown,
   checks: unknown,
+  requiredFull = false,
 ): CodeAdmission {
   if (!Array.isArray(jobs) || !Array.isArray(checks))
     return invalid('CI jobs or check-suite response is malformed.');
@@ -165,12 +165,78 @@ export function admitCodeChecks(
     checks.some((check) => !object(check) || typeof check.name !== 'string')
   )
     return invalid('CI job or check identity is missing.');
+  const relevantNames = new Set<string>([...codeCheckNames, `Classify changes (${run.id})`]);
+  const observedIds = new Set<number>();
+  for (const job of jobs.filter((job) => relevantNames.has(job.name))) {
+    if (
+      !positiveInteger(job.id) ||
+      observedIds.has(job.id) ||
+      job.run_id !== run.id ||
+      !positiveInteger(job.run_attempt) ||
+      job.run_attempt > run.attempt ||
+      job.head_sha !== run.head
+    )
+      return invalid(
+        'Code evidence belongs to another run, attempt or source, or repeats a job ID.',
+      );
+    observedIds.add(job.id);
+  }
+  const latestJobs = (name: string) => {
+    const matching = jobs.filter((job) => job.name === name);
+    const attempt = Math.max(0, ...matching.map((job) => job.run_attempt));
+    return matching.filter((job) => job.run_attempt === attempt);
+  };
+  if (requiredFull) {
+    // Event names cannot encode history discovered after the workflow starts.
+    // Require the actual successful classifier selection from this same run;
+    // a native partial retry may retain its original successful classifier.
+    const classifiers = latestJobs(`Classify changes (${run.id})`);
+    if (classifiers.length > 1) return invalid('Duplicate CI coverage classifier.');
+    const classifier = classifiers[0];
+    if (!classifier)
+      return run.status === 'completed'
+        ? invalid('Full validation has no actual coverage classifier evidence.')
+        : pending('Waiting for actual full-coverage classifier evidence.');
+    if (
+      !positiveInteger(classifier.id) ||
+      classifier.run_id !== run.id ||
+      !positiveInteger(classifier.run_attempt) ||
+      classifier.run_attempt > run.attempt ||
+      classifier.head_sha !== run.head ||
+      !admittedStatus(classifier)
+    )
+      return invalid('Coverage classifier belongs to another run, attempt or source.');
+    if (classifier.status !== 'completed')
+      return pending('Waiting for the full-coverage classifier to complete.');
+    if (
+      classifier.conclusion !== 'success' ||
+      !Array.isArray(classifier.steps) ||
+      classifier.steps.some((step: unknown) => !object(step) || typeof step.name !== 'string')
+    )
+      return invalid('Full validation lacks a successful coverage classifier.');
+    const markers = classifier.steps.filter((step: Record<string, unknown>) =>
+      ['Coverage selected: full', 'Coverage selected: targeted'].includes(String(step.name)),
+    );
+    if (
+      new Set(markers.map((step: Record<string, unknown>) => step.name)).size !== markers.length ||
+      markers.some(
+        (step: Record<string, unknown>) =>
+          step.status !== 'completed' || !['success', 'skipped'].includes(String(step.conclusion)),
+      )
+    )
+      return invalid('Full-validation classifier markers are malformed or duplicated.');
+    const selected = markers.filter(
+      (step: Record<string, unknown>) => step.conclusion === 'success',
+    );
+    if (selected.length !== 1 || selected[0].name !== 'Coverage selected: full')
+      return invalid('The actual coverage plan does not satisfy the full-validation obligation.');
+  }
   let absent: string | null = null;
   let unsettled: string | null = null;
   const seenJobIds = new Set<number>();
   const seenCheckIds = new Set<number>();
   for (const name of codeCheckNames) {
-    const matchingJobs = jobs.filter((job) => job.name === name);
+    const matchingJobs = latestJobs(name);
     const matchingChecks = checks.filter((check) => check.name === name);
     if (matchingJobs.length > 1 || matchingChecks.length > 1)
       return invalid(`Duplicate required code gate: ${name}.`);

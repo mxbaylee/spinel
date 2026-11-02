@@ -201,6 +201,69 @@ test('reserved base revalidation stays full across a code push or label removal'
   }
 });
 
+test('a persistent or unresolved edit obligation forces full coverage without a current label', () => {
+  const reason = 'The PR has a recorded base change.';
+  for (const paths of [['docs/notes.md'], ['src/server/auth/passkeys.ts']]) {
+    const ordinary = coveragePlan('pull_request', pr('synchronize'), paths, head);
+    assert.equal(ordinary.mode, 'targeted');
+    assert.equal(ordinary.suites['lib-test-run'].selected, false);
+    const forced = coveragePlan('pull_request', pr('synchronize'), paths, head, reason);
+    assert.equal(forced.mode, 'full');
+    assert.deepEqual(forced.labels, []);
+    assert.equal(forced.base, base);
+    assert.equal(forced.head, head);
+    assert.equal(forced.tested, head);
+    assert.ok(suiteIds.every((id) => forced.suites[id].selected));
+    assert.ok(suiteIds.every((id) => forced.suites[id].reason === reason));
+    assert.throws(
+      () =>
+        verifyCoverage(forced, 'success', { ...all(forced), 'lib-test-run': 'skipped' }, suiteIds),
+      /Incomplete coverage lib-test-run/,
+    );
+  }
+  for (const reason of ['', '   '])
+    assert.throws(
+      () => coveragePlan('pull_request', pr(), ['docs/notes.md'], head, reason),
+      /needs an explicit reason/,
+    );
+});
+
+test('every required code job rechecks live source/base on its own attempt, including docs-only jobs', () => {
+  const workflow = readFileSync(new URL('../../.github/workflows/ci.yml', import.meta.url), 'utf8');
+  const job = (id: string) => {
+    const start = workflow.indexOf(`\n  ${id}:\n`);
+    assert.ok(start >= 0, id);
+    return workflow.slice(start + 1).split(/\n  [a-z][a-z0-9-]*:\n/)[0];
+  };
+  for (const id of ['backlog', 'lint', 'typecheck', 'unit-tests', 'lib-tests', 'playwright']) {
+    const block = job(id);
+    const steps = block.split(/^      - /m);
+    assert.equal((block.match(/name: Guard current PR source and base/g) ?? []).length, 1, id);
+    const guard = steps.at(-1)!;
+    assert.match(guard, /^name: Guard current PR source and base\n/, id);
+    assert.match(guard, /if: github.event_name == 'pull_request'/, id);
+    assert.match(guard, /GH_TOKEN: \$\{\{ github.token \}\}/, id);
+    assert.match(guard, /run: node scripts\/ci\/pr-state\.ts guard/, id);
+    assert.doesNotMatch(guard, /continue-on-error|always\(\)/, id);
+  }
+  const typecheck = job('typecheck');
+  assert.match(typecheck, /^      - uses: actions\/checkout@/m);
+  assert.match(typecheck, /^      - uses: actions\/setup-node@/m);
+  assert.match(typecheck, /- name: Install\n        if: needs.changes.outputs.typecheck == 'true'/);
+  const classifier = job('changes');
+  for (const mode of ['full', 'targeted'])
+    assert.ok(
+      classifier.includes(
+        `- name: 'Coverage selected: ${mode}'\n        if: steps.changes.outcome == 'success' && steps.changes.outputs.mode == '${mode}'`,
+      ),
+      mode,
+    );
+  assert.match(
+    workflow,
+    /permissions:\n  contents: read\n  actions: read\n  pull-requests: read\n/,
+  );
+});
+
 test('phone ownership removes only six ordinary cases from instrumented duplicate runs', () => {
   const spec = readFileSync(new URL('../../e2e/doc-mobile.spec.ts', import.meta.url), 'utf8');
   assert.equal(spec.match(/@phone-ordinary/g)?.length, 3); // parameterized 3 zoom + 1 formulas + 2 traditional

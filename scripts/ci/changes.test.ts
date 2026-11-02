@@ -5,7 +5,129 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { assertPullRequestCheckout, changedPaths, documentationOnly } from './changes.ts';
+import {
+  assertPullRequestCheckout,
+  changedPaths,
+  documentationOnly,
+  pullRequestFullReason,
+} from './changes.ts';
+import type { PrReader } from './pr-state.ts';
+
+const repository = 'mxbaylee/spinel';
+const createdAt = '2026-11-01T12:00:00Z';
+const sourceEvent = () => ({
+  action: 'synchronize',
+  number: 231,
+  repository: { full_name: repository },
+  pull_request: {
+    number: 231,
+    base: { sha: 'a'.repeat(40), ref: 'main', repo: { full_name: repository } },
+    head: { sha: 'b'.repeat(40), ref: 'feature', repo: { full_name: repository } },
+    merge_commit_sha: 'c'.repeat(40),
+    state: 'open',
+    title: 'A current title',
+    body: null,
+    labels: [],
+    created_at: createdAt,
+  },
+});
+
+function historyFixture(
+  options: {
+    current?: unknown;
+    timeline?: unknown[];
+    pendingEdit?: boolean;
+    failAt?: string;
+  } = {},
+) {
+  const calls: string[] = [];
+  const client: PrReader = {
+    repository,
+    async get(path) {
+      calls.push(path);
+      if (options.failAt === path) throw new Error('Required API is unavailable.');
+      if (path === 'pulls/231') return options.current ?? sourceEvent().pull_request;
+      assert.equal(path, 'actions/workflows/pr-policy.yml');
+      return { id: 42, path: '.github/workflows/pr-policy.yml' };
+    },
+    async list(path, key) {
+      calls.push(path);
+      if (options.failAt === path) throw new Error('History pagination did not complete.');
+      if (path === 'issues/231/timeline') {
+        assert.equal(key, '');
+        return options.timeline ?? [];
+      }
+      if (path.startsWith('actions/workflows/42/runs?')) {
+        assert.equal(key, 'workflow_runs');
+        return options.pendingEdit
+          ? [
+              {
+                id: 10,
+                workflow_id: 42,
+                path: '.github/workflows/pr-policy.yml',
+                event: 'pull_request',
+                repository: { full_name: repository },
+                pull_requests: [{ number: 231 }],
+                head_sha: 'b'.repeat(40),
+                created_at: createdAt,
+                run_attempt: 1,
+                display_title: 'PR policy v1 pr=231 action=edited',
+                status: 'queued',
+                conclusion: null,
+              },
+            ]
+          : [];
+      }
+      assert.equal(path, 'actions/runs/10/jobs?filter=all');
+      assert.equal(key, 'jobs');
+      return [];
+    },
+  };
+  return { client, calls };
+}
+
+test('classification retains historical base or removed-label obligations without current labels', async () => {
+  for (const entry of [
+    { event: 'base_ref_changed' },
+    { event: 'unlabeled', label: { name: 'ci-revalidate' } },
+  ]) {
+    const { client } = historyFixture({ timeline: [{ id: 1, created_at: createdAt, ...entry }] });
+    const reason = await pullRequestFullReason(sourceEvent(), client);
+    assert.match(reason!, /recorded base change|historical full-revalidation/);
+  }
+  const { client } = historyFixture();
+  assert.equal(await pullRequestFullReason(sourceEvent(), client), undefined);
+});
+
+test('unavailable or still-pending edit history conservatively selects full coverage', async () => {
+  for (const failAt of ['issues/231/timeline', 'actions/workflows/pr-policy.yml']) {
+    const { client } = historyFixture({ failAt });
+    assert.match(
+      (await pullRequestFullReason(sourceEvent(), client))!,
+      /full validation is required/,
+    );
+  }
+  const { client } = historyFixture({ pendingEdit: true });
+  assert.match(
+    (await pullRequestFullReason(sourceEvent(), client))!,
+    /Waiting for PR edit classification/,
+  );
+});
+
+test('classification rejects stale live source/base before consulting a potentially clear history', async () => {
+  const raw = sourceEvent();
+  for (const current of [
+    { ...raw.pull_request, state: 'closed' },
+    { ...raw.pull_request, base: { ...raw.pull_request.base, sha: 'd'.repeat(40) } },
+    { ...raw.pull_request, head: { ...raw.pull_request.head, sha: 'd'.repeat(40) } },
+  ]) {
+    const { client, calls } = historyFixture({ current });
+    await assert.rejects(pullRequestFullReason(raw, client), /source or base changed/);
+    assert.deepEqual(calls, ['pulls/231']);
+  }
+  const { client } = historyFixture({ failAt: 'pulls/231' });
+  await assert.rejects(pullRequestFullReason(raw, client), /Required API is unavailable/);
+});
 
 test('only known documentation paths qualify, including the exact backlog JSON', () => {
   assert.equal(

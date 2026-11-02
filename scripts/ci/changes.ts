@@ -3,7 +3,29 @@ import { appendFileSync, readFileSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 
 import { coveragePlan, documentationOnly } from './plan.ts';
+import { PrGitHub } from './pr-github.ts';
+import { parsePullRequestEvent } from './pr-identity.ts';
+import {
+  assertCurrentSource,
+  currentPullRequest,
+  readFullValidationRequirement,
+  type PrReader,
+} from './pr-state.ts';
 export { documentationOnly } from './plan.ts';
+
+/** Classification must use a current source/base and retain every recorded
+ * full-validation obligation. Code work already runs here, so an unresolved
+ * edit classification selects full coverage rather than waiting or narrowing. */
+export async function pullRequestFullReason(
+  event: unknown,
+  client: PrReader,
+): Promise<string | undefined> {
+  const expected = parsePullRequestEvent(event, client.repository);
+  const current = await currentPullRequest(client, expected.number);
+  assertCurrentSource(expected, current.identity);
+  const requirement = await readFullValidationRequirement(client, current);
+  return requirement.state === 'clear' ? undefined : requirement.reason;
+}
 
 /** A coverage plan may describe only the merge checkout the event actually
  * requested. An unrelated checkout must fail, not fall back to broad coverage. */
@@ -73,6 +95,7 @@ if (import.meta.main) {
   const eventName = process.env.GITHUB_EVENT_NAME ?? '';
   let event: unknown = null;
   let paths: string[] | null = null;
+  let forceFullReason: string | undefined;
   try {
     event = JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH ?? '', 'utf8'));
     paths = changedPaths(eventName, event);
@@ -80,18 +103,16 @@ if (import.meta.main) {
     console.log('Change classification unavailable; running full validation.');
   }
   if (eventName === 'pull_request') {
-    const pr = (event as { pull_request?: { base?: { sha?: string }; head?: { sha?: string } } })
-      ?.pull_request;
-    assertPullRequestCheckout(
-      { base: pr?.base?.sha ?? '', head: pr?.head?.sha ?? '' },
-      process.env.GITHUB_SHA ?? '',
-    );
+    const client = new PrGitHub(process.env.GITHUB_REPOSITORY!, process.env.GH_TOKEN!);
+    const identity = parsePullRequestEvent(event, client.repository);
+    assertPullRequestCheckout(identity, process.env.GITHUB_SHA ?? '');
+    forceFullReason = await pullRequestFullReason(event, client);
   }
-  let plan = coveragePlan(eventName, event, paths, process.env.GITHUB_SHA);
+  let plan = coveragePlan(eventName, event, paths, process.env.GITHUB_SHA, forceFullReason);
   // Actions limits job outputs. Oversized classification must select full, not
   // silently lose a decision or truncate paths into an unsafe narrow plan.
   if (Buffer.byteLength(JSON.stringify(plan)) > 64 * 1024)
-    plan = coveragePlan(eventName, event, null, process.env.GITHUB_SHA);
+    plan = coveragePlan(eventName, event, null, process.env.GITHUB_SHA, forceFullReason);
   const json = JSON.stringify(plan);
   const digest = createHash('sha256').update(json).digest('hex');
   writeFileSync('ci-plan.json', json + '\n');

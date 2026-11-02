@@ -99,17 +99,87 @@ test('a fresh attempt of an old-base run cannot borrow a newer run identity', ()
   assert.equal(selectCodeRun([current, oldRerun], expected).status, 'invalid');
 });
 
-test('full base revalidation cannot be replaced by a targeted code run', () => {
-  assert.equal(
-    selectCodeRun([workflowRun()], { ...expected, requiredFull: true }).status,
-    'invalid',
-  );
+test('full coverage is established by actual selection rather than an event-name flag', () => {
+  assert.equal(selectCodeRun([workflowRun()], { ...expected, requiredFull: true }).status, 'ready');
   assert.equal(
     selectCodeRun([workflowRun({ display_title: runName({ full: true }) })], {
       ...expected,
       requiredFull: true,
     }).status,
     'ready',
+  );
+  const { jobs, checks } = evidence();
+  const classifier = {
+    id: 299,
+    name: 'Classify changes (100)',
+    run_id: 100,
+    run_attempt: 1,
+    head_sha: identity.head,
+    status: 'completed',
+    conclusion: 'success',
+    steps: [{ name: 'Coverage selected: targeted', status: 'completed', conclusion: 'success' }],
+  };
+  assert.equal(
+    admitCodeChecks(admittedRun(), [...jobs, classifier], checks, true).status,
+    'invalid',
+  );
+  classifier.steps[0].name = 'Coverage selected: full';
+  assert.equal(admitCodeChecks(admittedRun(), [...jobs, classifier], checks, true).status, 'ready');
+  classifier.steps[0].conclusion = 'skipped';
+  assert.equal(
+    admitCodeChecks(admittedRun(), [...jobs, classifier], checks, true).status,
+    'invalid',
+  );
+  assert.equal(admitCodeChecks(admittedRun(), jobs, checks, true).status, 'pending');
+});
+
+test('all-attempt evidence selects the latest real gate and cannot revive an earlier pass', () => {
+  const { jobs, checks } = evidence();
+  const retry = admittedRun({
+    run_attempt: 2,
+    run_started_at: '2026-11-01T12:02:00Z',
+    updated_at: '2026-11-01T12:02:00Z',
+  });
+  for (const item of [...jobs, ...checks])
+    Object.assign(item, { status: 'completed', conclusion: 'success' });
+  const failed = {
+    ...jobs[0],
+    id: 399,
+    run_attempt: 2,
+    conclusion: 'failure',
+    check_run_url: 'https://api.github.com/repos/owner/repo/check-runs/499',
+  };
+  Object.assign(checks[0], { id: 499, conclusion: 'failure' });
+  assert.equal(admitCodeChecks(retry, [...jobs, failed], checks).status, 'ready');
+  assert.equal(checks[0].conclusion, 'failure');
+  assert.equal(
+    admitCodeChecks(retry, [...jobs, failed, { ...failed, id: 398 }], checks).status,
+    'invalid',
+  );
+  const classifier = {
+    id: 299,
+    name: 'Classify changes (100)',
+    run_id: 100,
+    run_attempt: 1,
+    head_sha: identity.head,
+    status: 'completed',
+    conclusion: 'success',
+    steps: [{ name: 'Coverage selected: full', status: 'completed', conclusion: 'success' }],
+  };
+  assert.equal(admitCodeChecks(retry, [...jobs, failed, classifier], checks, true).status, 'ready');
+  assert.equal(
+    admitCodeChecks(
+      retry,
+      [
+        ...jobs,
+        failed,
+        classifier,
+        { ...classifier, id: 298, run_attempt: 2, conclusion: 'failure' },
+      ],
+      checks,
+      true,
+    ).status,
+    'invalid',
   );
 });
 

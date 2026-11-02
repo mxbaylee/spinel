@@ -38,7 +38,12 @@ const sha = (value: unknown): value is string =>
 const repository = (value: unknown): value is string =>
   typeof value === 'string' && /^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(value);
 const ref = (value: unknown): value is string =>
-  typeof value === 'string' && value.length > 0 && !/[\x00-\x20\x7f]/.test(value);
+  typeof value === 'string' &&
+  value.length > 0 &&
+  [...value].every((character) => {
+    const code = character.charCodeAt(0);
+    return code > 0x20 && code !== 0x7f;
+  });
 const number = (value: unknown): value is number =>
   typeof value === 'number' && Number.isSafeInteger(value) && value > 0;
 

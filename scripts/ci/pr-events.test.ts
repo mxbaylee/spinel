@@ -8,6 +8,7 @@ import { PrGitHub } from './pr-github.ts';
 
 function scenario() {
   const repository = 'owner/repo';
+  const createdAt = '2026-11-01T12:00:00Z';
   const base = 'a'.repeat(40),
     head = 'b'.repeat(40),
     tested = 'c'.repeat(40);
@@ -20,6 +21,7 @@ function scenario() {
     head: { sha: head, ref: 'feature', repo: { full_name: repository } },
     merge_commit_sha: tested,
     labels: [] as { name: string }[],
+    created_at: createdAt,
   };
   const event = {
     number: 129,
@@ -45,7 +47,7 @@ function scenario() {
     status: 'in_progress',
     conclusion: null as string | null,
   };
-  const jobs = codeCheckNames.map((name, index) => ({
+  const jobs = codeCheckNames.map((name: string, index) => ({
     id: 300 + index,
     name,
     run_id: 100,
@@ -54,7 +56,26 @@ function scenario() {
     check_run_url: `https://api.github.com/repos/owner/repo/check-runs/${400 + index}`,
     status: 'in_progress',
     conclusion: null as string | null,
+    steps: [] as { name: string; status: string; conclusion: string | null }[],
   }));
+  const coverage = {
+    id: 390,
+    name: 'Classify changes (100)',
+    run_id: 100,
+    run_attempt: 1,
+    head_sha: head,
+    check_run_url: 'https://api.github.com/repos/owner/repo/check-runs/490',
+    status: 'completed',
+    conclusion: 'success' as string | null,
+    steps: [
+      {
+        name: 'Coverage selected: targeted',
+        status: 'completed',
+        conclusion: 'success' as string | null,
+      },
+    ],
+  };
+  jobs.unshift(coverage);
   const checks = codeCheckNames.map((name, index) => ({
     id: 400 + index,
     name,
@@ -65,6 +86,37 @@ function scenario() {
     conclusion: null as string | null,
   }));
   const mutations: string[] = [];
+  const timeline: unknown[] = [];
+  const policyRun = {
+    id: 500,
+    workflow_id: 43,
+    path: '.github/workflows/pr-policy.yml',
+    event: 'pull_request',
+    head_sha: head,
+    repository: { full_name: repository },
+    pull_requests: [{ number: 129 }],
+    display_title: 'PR policy v1 pr=129 action=edited',
+    run_attempt: 1,
+    created_at: createdAt,
+    status: 'completed',
+    conclusion: 'success' as string | null,
+  };
+  const policyClassifier = {
+    id: 501,
+    name: 'Classify PR edit (500)',
+    run_id: 500,
+    run_attempt: 1,
+    head_sha: head,
+    status: 'completed',
+    conclusion: 'success' as string | null,
+    steps: [
+      {
+        name: 'Edit classification: text',
+        status: 'completed',
+        conclusion: 'success' as string | null,
+      },
+    ],
+  };
   let reads = 0;
   const client = {
     repository,
@@ -74,15 +126,26 @@ function scenario() {
         return structuredClone(pr);
       }
       if (path === 'actions/workflows/ci.yml') return { id: 42, path: '.github/workflows/ci.yml' };
+      if (path === 'actions/workflows/pr-policy.yml')
+        return { id: 43, path: '.github/workflows/pr-policy.yml' };
       throw new Error(`Unexpected read ${path}`);
     },
     async list(path: string, key: string) {
       if (
-        path === `actions/workflows/42/runs?event=pull_request&head_sha=${head}` &&
+        path === `actions/workflows/42/runs?event=pull_request&head_sha=${pr.head.sha}` &&
         key === 'workflow_runs'
       )
         return [structuredClone(run)];
-      if (path === 'actions/runs/100/jobs?filter=latest' && key === 'jobs')
+      if (path === 'issues/129/timeline' && key === '') return structuredClone(timeline);
+      if (
+        path ===
+          `actions/workflows/43/runs?event=pull_request&created=${encodeURIComponent(`>=${createdAt}`)}` &&
+        key === 'workflow_runs'
+      )
+        return [structuredClone(policyRun)];
+      if (path === 'actions/runs/500/jobs?filter=all' && key === 'jobs')
+        return [structuredClone(policyClassifier)];
+      if (path === 'actions/runs/100/jobs?filter=all' && key === 'jobs')
         return structuredClone(jobs);
       if (path === 'check-suites/200/check-runs?filter=latest' && key === 'check_runs')
         return structuredClone(checks);
@@ -108,7 +171,44 @@ function scenario() {
     validateTitle: (_identity: PullRequestIdentity) => {},
     timeoutMs: 0,
   };
-  return { pr, event, run, jobs, checks, client, writer, mutations, options, reads: () => reads };
+  const alignCodeWithCurrent = () => {
+    event.pull_request = structuredClone(pr);
+    options.tested = pr.merge_commit_sha;
+    run.head_sha = pr.head.sha;
+    run.display_title = formatCodeRunName({
+      number: pr.number,
+      base: pr.base.sha,
+      head: pr.head.sha,
+      tested: pr.merge_commit_sha,
+      full: false,
+    });
+    for (const item of [...jobs, ...checks]) item.head_sha = pr.head.sha;
+  };
+  const fullCoverage = () => {
+    coverage.status = 'completed';
+    coverage.conclusion = 'success';
+    coverage.steps = [
+      { name: 'Coverage selected: full', status: 'completed', conclusion: 'success' },
+    ];
+  };
+  return {
+    pr,
+    event,
+    run,
+    jobs,
+    checks,
+    coverage,
+    client,
+    writer,
+    mutations,
+    options,
+    timeline,
+    policyRun,
+    policyClassifier,
+    alignCodeWithCurrent,
+    fullCoverage,
+    reads: () => reads,
+  };
 }
 
 test('text policy preserves genuine passing, pending and failed code results without mutations', async () => {
@@ -142,29 +242,29 @@ test('invalid title fails before code admission and corrected text is independen
   assert.deepEqual(s.mutations, []);
 });
 
-test('base change followed by text cannot borrow a previous-base pass or a targeted run', async () => {
+test('base change, new code and text cannot borrow an old-base pass or forget full history without a label', async () => {
   const s = scenario();
   s.run.status = 'completed';
   s.run.conclusion = 'success';
   s.pr.base.sha = 'd'.repeat(40);
   s.event.pull_request.base.sha = s.pr.base.sha;
+  s.timeline.push({ id: 1, event: 'base_ref_changed', created_at: s.pr.created_at });
   await assert.rejects(validatePrPolicy(s.options), /current source, base/);
-  s.run.display_title = formatCodeRunName({
-    number: 129,
-    base: s.pr.base.sha,
-    head: s.pr.head.sha,
-    tested: s.pr.merge_commit_sha,
-    full: false,
-  });
-  s.pr.labels.push({ name: 'ci-revalidate' });
-  await assert.rejects(validatePrPolicy(s.options), /full-validation obligation/);
-  s.run.display_title = s.run.display_title.replace('full=0', 'full=1');
+  s.pr.head.sha = 'e'.repeat(40);
+  s.pr.merge_commit_sha = 'f'.repeat(40);
+  s.alignCodeWithCurrent();
+  assert.deepEqual(s.pr.labels, []);
+  await assert.rejects(validatePrPolicy(s.options), /full.validation|full coverage/i);
+  // Historical obligation is not encoded in the static event's run-name flag.
+  assert.match(s.run.display_title, /full=0$/);
+  s.fullCoverage();
   s.run.conclusion = 'failure';
-  for (const item of [...s.jobs, ...s.checks]) {
+  for (const item of [...s.jobs.filter((job) => job.name !== s.coverage.name), ...s.checks]) {
     item.status = 'completed';
     item.conclusion = 'failure';
   }
-  await validatePrPolicy(s.options);
+  const result = await validatePrPolicy(s.options);
+  assert.equal(result.requiredFull, true);
   assert.ok(s.checks.every((check) => check.conclusion === 'failure'));
 });
 
@@ -178,7 +278,7 @@ test('policy fails closed on source drift, late text, missing gates and API fail
     if (path === 'pulls/129' && late.reads() === 2) late.pr.title = 'Changed during admission';
     return get(path);
   };
-  await assert.rejects(validatePrPolicy(late.options), /PR changed before/);
+  await assert.rejects(validatePrPolicy(late.options), /PR (?:text )?changed|text changed/);
   const missing = scenario();
   missing.jobs.pop();
   await assert.rejects(validatePrPolicy(missing.options), /not admitted before the deadline/);
@@ -196,10 +296,11 @@ test('pending admission uses a bounded observable retry and validates the final 
   let pauses = 0;
   const result = await validatePrPolicy({
     ...s.options,
-    timeoutMs: 20_000,
+    timeoutMs: 120_000,
     now: () => now,
     pause: async (ms) => {
       pauses++;
+      assert.equal(ms, 60_000);
       now += ms;
       s.jobs.push(last);
     },
@@ -208,8 +309,27 @@ test('pending admission uses a bounded observable retry and validates the final 
   assert.equal(pauses, 1);
 });
 
+test('policy admission can outlast a sixty-minute worker and ordinary queueing', async () => {
+  const s = scenario();
+  const last = s.jobs.pop()!;
+  let elapsed = 0;
+  const result = await validatePrPolicy({
+    ...s.options,
+    timeoutMs: undefined,
+    now: () => elapsed,
+    pause: async () => {
+      // Simulate a delayed resume after a long legitimate worker plus queueing.
+      elapsed = 66 * 60_000;
+      s.jobs.push(last);
+    },
+  });
+  assert.equal(result.run, 100);
+});
+
 test('exact text edits never mint or use the privileged routing capability', async () => {
   const s = scenario();
+  s.timeline.push({ id: 1, event: 'base_ref_changed', created_at: s.pr.created_at });
+  s.pr.labels.push({ name: 'ci-revalidate' });
   assert.deepEqual(await routePrEdit(s.event, s.client, s.writer), {
     route: 'policy',
     number: 129,
@@ -231,15 +351,18 @@ test('base and ambiguous edits use ordinary-token removal then App addition, pre
   }
 });
 
-test('router never labels a stale source and does not disguise a denied App mutation', async () => {
+test('an old base-edit delivery routes the live PR source and does not disguise denied App mutation', async () => {
   const stale = scenario();
   stale.event.changes = {};
   stale.pr.base.sha = 'd'.repeat(40);
-  await assert.rejects(
-    routePrEdit(stale.event, stale.client, stale.writer),
-    /source or base changed/,
-  );
-  assert.deepEqual(stale.mutations, []);
+  stale.pr.head.sha = 'e'.repeat(40);
+  assert.deepEqual(await routePrEdit(stale.event, stale.client, stale.writer), {
+    route: 'requested',
+    number: 129,
+    base: stale.pr.base.sha,
+    head: stale.pr.head.sha,
+  });
+  assert.deepEqual(stale.mutations, ['app:add:ci-revalidate']);
   const denied = scenario();
   denied.event.changes = {};
   await assert.rejects(
@@ -251,6 +374,95 @@ test('router never labels a stale source and does not disguise a denied App muta
     /403/,
   );
   assert.deepEqual(denied.pr.labels, []);
+});
+
+test('missing router key or failed label addition cannot erase an ambiguous edit after a code push', async () => {
+  for (const unavailable of ['key', 'mutation']) {
+    const s = scenario();
+    s.event.changes = {};
+    s.policyClassifier.steps = [
+      { name: 'Edit classification: full', status: 'completed', conclusion: 'success' },
+    ];
+    if (unavailable === 'key')
+      assert.deepEqual(await routePrEdit(s.event, s.client), { route: 'full', number: 129 });
+    else
+      await assert.rejects(
+        routePrEdit(s.event, s.client, {
+          addLabel: async () => {
+            throw new Error('403');
+          },
+        }),
+        /403/,
+      );
+    assert.deepEqual(s.pr.labels, []);
+    s.pr.head.sha = 'd'.repeat(40);
+    s.pr.merge_commit_sha = 'e'.repeat(40);
+    s.alignCodeWithCurrent();
+    s.event.changes = { title: { from: 'Earlier title' } };
+    await assert.rejects(validatePrPolicy(s.options), /full.validation|full coverage/i);
+    assert.deepEqual(await routePrEdit(s.event, s.client, s.writer), {
+      route: 'policy',
+      number: 129,
+    });
+    assert.deepEqual(s.mutations, []);
+  }
+});
+
+test('removing the full-revalidation label before a code push cannot narrow validation', async () => {
+  const s = scenario();
+  s.timeline.push(
+    { id: 1, event: 'labeled', created_at: s.pr.created_at, label: { name: 'ci-revalidate' } },
+    { id: 2, event: 'unlabeled', created_at: s.pr.created_at, label: { name: 'ci-revalidate' } },
+  );
+  s.pr.head.sha = 'd'.repeat(40);
+  s.alignCodeWithCurrent();
+  await assert.rejects(validatePrPolicy(s.options), /full.validation|full coverage/i);
+  s.fullCoverage();
+  assert.equal((await validatePrPolicy(s.options)).requiredFull, true);
+});
+
+test('rapid text supersession waits for independent classification without routing code', async () => {
+  const s = scenario();
+  s.policyRun.status = 'completed';
+  s.policyRun.conclusion = 'cancelled';
+  s.policyClassifier.status = 'in_progress';
+  s.policyClassifier.conclusion = null;
+  s.policyClassifier.steps = [];
+  assert.deepEqual(await routePrEdit(s.event, s.client, s.writer), {
+    route: 'policy',
+    number: 129,
+  });
+  let now = 0;
+  let pauses = 0;
+  const result = await validatePrPolicy({
+    ...s.options,
+    timeoutMs: 120_000,
+    now: () => now,
+    pause: async (ms) => {
+      assert.equal(ms, 60_000);
+      now += ms;
+      pauses++;
+      s.policyClassifier.status = 'completed';
+      s.policyClassifier.conclusion = 'success';
+      s.policyClassifier.steps = [
+        { name: 'Edit classification: text', status: 'completed', conclusion: 'success' },
+      ];
+    },
+  });
+  assert.equal(pauses, 1);
+  assert.equal(result.requiredFull, false);
+  assert.deepEqual(s.mutations, []);
+});
+
+test('router refuses a closed PR or a live non-main target before mutating labels', async () => {
+  for (const change of ['closed', 'base']) {
+    const s = scenario();
+    s.event.changes = {};
+    if (change === 'closed') s.pr.state = 'closed';
+    else s.pr.base.ref = 'release';
+    await assert.rejects(routePrEdit(s.event, s.client, s.writer));
+    assert.deepEqual(s.mutations, []);
+  }
 });
 
 test('GitHub client bounds pagination and credentials to the repository API without redirects', async () => {
@@ -286,5 +498,33 @@ test('GitHub client bounds pagination and credentials to the repository API with
       error instanceof Error &&
       !error.message.includes('private-token') &&
       error.message.includes('403'),
+  );
+  let pages = 0;
+  const timelineClient = new PrGitHub('owner/repo', 'private-token', async () => {
+    pages++;
+    return new Response(
+      JSON.stringify(
+        pages === 1 ? Array.from({ length: 100 }, (_, id) => ({ id })) : [{ id: 100 }],
+      ),
+      { status: 200 },
+    );
+  });
+  assert.equal((await timelineClient.list('issues/129/timeline', '')).length, 101);
+  assert.equal(pages, 2);
+  let incompletePages = 0;
+  const incompleteTimeline = new PrGitHub('owner/repo', 'private-token', async () => {
+    incompletePages++;
+    return new Response(
+      JSON.stringify(
+        incompletePages === 1
+          ? Array.from({ length: 100 }, (_, id) => ({ id }))
+          : { message: 'incomplete' },
+      ),
+      { status: 200 },
+    );
+  });
+  await assert.rejects(
+    incompleteTimeline.list('issues/129/timeline', ''),
+    /collection|pagination/i,
   );
 });
