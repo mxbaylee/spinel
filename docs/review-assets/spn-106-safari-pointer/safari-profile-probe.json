@@ -1,0 +1,274 @@
+{
+  "scope": "Native ordinary Safari same-profile capability probe, not application acceptance",
+  "sourceSha": "b9e57e465727870542177170b9acdc56656584ab",
+  "testedSha": "36d7e3cada11b2e6bfb964267c723ec92278e93d",
+  "runner": {
+    "label": "macos-15-intel",
+    "arch": "x64",
+    "imageOS": "macos15",
+    "imageVersion": "20260824.0482.1"
+  },
+  "run": "https://github.com/mxbaylee/spinel/actions/runs/41521489376",
+  "status": "passed",
+  "safariTargets": [
+    {
+      "stage": "online",
+      "pid": 2846,
+      "time": "2026-11-02T21:02:12.465Z",
+      "identity": {
+        "pid": 2846,
+        "bundleIdentifier": "com.apple.Safari",
+        "executablePath": "/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/MacOS/Safari",
+        "launchedAt": 1793653327.868006
+      }
+    },
+    {
+      "stage": "offline-restart",
+      "pid": 3437,
+      "time": "2026-11-02T21:03:12.338Z",
+      "identity": {
+        "pid": 3437,
+        "bundleIdentifier": "com.apple.Safari",
+        "executablePath": "/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/MacOS/Safari",
+        "launchedAt": 1793653391.883817
+      }
+    }
+  ],
+  "os": "ProductName:\t\tmacOS\nProductVersion:\t\t15.7.9\nBuildVersion:\t\t24G830",
+  "machine": "x86_64",
+  "version": "27.2",
+  "beforePid": "2846",
+  "automationTitleRequests": [
+    {
+      "attempt": 1,
+      "targetPid": 2846,
+      "timeoutMs": 60000,
+      "startedAt": "2026-11-02T21:02:18.967Z",
+      "phases": [
+        "{\"at\":\"2026-11-02T21:02:28.712Z\",\"phase\":\"application-constructor-begin\"}",
+        "{\"at\":\"2026-11-02T21:02:28.722Z\",\"phase\":\"application-constructor-end\"}",
+        "{\"at\":\"2026-11-02T21:02:29.823Z\",\"phase\":\"title-specifier-ready\"}",
+        "{\"at\":\"2026-11-02T21:02:29.824Z\",\"phase\":\"title-get-begin\"}",
+        "{\"at\":\"2026-11-02T21:02:58.416Z\",\"phase\":\"title-get-end\"}"
+      ],
+      "value": "Spinel desktop profile probe",
+      "finishedAt": "2026-11-02T21:02:58.551Z"
+    }
+  ],
+  "automationPromptChecks": [
+    {
+      "mode": "inspect",
+      "startedAt": "2026-11-02T21:02:18.983Z",
+      "error": {
+        "message": "Command failed: /usr/bin/osascript -e on run argv",
+        "code": null,
+        "signal": "SIGTERM",
+        "killed": true,
+        "stdout": "",
+        "stderr": ""
+      },
+      "finishedAt": "2026-11-02T21:02:29.277Z"
+    },
+    {
+      "mode": "inspect",
+      "startedAt": "2026-11-02T21:02:29.529Z",
+      "error": {
+        "message": "Command failed: /usr/bin/osascript -e on run argv",
+        "code": null,
+        "signal": "SIGTERM",
+        "killed": true,
+        "stdout": "",
+        "stderr": ""
+      },
+      "finishedAt": "2026-11-02T21:02:39.719Z"
+    },
+    {
+      "mode": "inspect",
+      "startedAt": "2026-11-02T21:02:40.013Z",
+      "value": "Recognized hosted-compute-agent control of Safari:  “hosted-compute-agent” wants access to control “Safari”. Allowing control will provide access to documents and data in “Safari”, and to perform actions within that app.",
+      "finishedAt": "2026-11-02T21:02:51.356Z"
+    },
+    {
+      "mode": "capture",
+      "path": "/Users/runner/work/spinel/spinel/artifacts/desktop-offline/safari-automation-prompt-1.png",
+      "startedAt": "2026-11-02T21:02:51.357Z",
+      "value": "captured",
+      "finishedAt": "2026-11-02T21:02:56.082Z"
+    },
+    {
+      "mode": "approve",
+      "startedAt": "2026-11-02T21:02:56.082Z",
+      "value": "Approved hosted-compute-agent control of Safari in the normal ephemeral-runner consent dialog:  “hosted-compute-agent” wants access to control “Safari”. Allowing control will provide access to documents and data in “Safari”, and to perform actions within that app.",
+      "finishedAt": "2026-11-02T21:02:58.403Z"
+    }
+  ],
+  "automationStartedAt": "2026-11-02T21:02:18.966Z",
+  "automationPrompt": "Approved hosted-compute-agent control of Safari in the normal ephemeral-runner consent dialog:  “hosted-compute-agent” wants access to control “Safari”. Allowing control will provide access to documents and data in “Safari”, and to perform actions within that app.",
+  "automationPromptScreenshot": "/Users/runner/work/spinel/spinel/artifacts/desktop-offline/safari-automation-prompt-1.png",
+  "automationReadyTitleRequest": 1,
+  "automationFinishedAt": "2026-11-02T21:02:58.656Z",
+  "firstTitleRequest": {
+    "attempt": 1,
+    "targetPid": 2846,
+    "timeoutMs": 60000,
+    "startedAt": "2026-11-02T21:02:18.967Z",
+    "phases": [
+      "{\"at\":\"2026-11-02T21:02:28.712Z\",\"phase\":\"application-constructor-begin\"}",
+      "{\"at\":\"2026-11-02T21:02:28.722Z\",\"phase\":\"application-constructor-end\"}",
+      "{\"at\":\"2026-11-02T21:02:29.823Z\",\"phase\":\"title-specifier-ready\"}",
+      "{\"at\":\"2026-11-02T21:02:29.824Z\",\"phase\":\"title-get-begin\"}",
+      "{\"at\":\"2026-11-02T21:02:58.416Z\",\"phase\":\"title-get-end\"}"
+    ],
+    "value": "Spinel desktop profile probe",
+    "finishedAt": "2026-11-02T21:02:58.551Z"
+  },
+  "appleEvents": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+  "prepared": {
+    "prepared": true,
+    "persisted": false,
+    "persistenceRequested": false
+  },
+  "paintBaselines": {
+    "online": {
+      "time": "2026-11-02T21:03:06.150Z",
+      "pid": "2846",
+      "state": {
+        "windowId": 34,
+        "bounds": {
+          "x": 298,
+          "y": 40,
+          "width": 1324,
+          "height": 940
+        },
+        "tabIndex": 1,
+        "title": "Spinel desktop profile probe",
+        "url": "http://localhost:8175/",
+        "page": {
+          "url": "http://localhost:8175/",
+          "title": "Spinel desktop profile probe",
+          "readyState": "complete",
+          "visibility": "visible",
+          "hasFocus": true,
+          "text": "Spinel synthetic profile probe\n\nNative Safari paint baseline\n\nSVG\nCanvas 2D with default settings"
+        }
+      },
+      "screenshot": "/Users/runner/work/spinel/spinel/artifacts/desktop-offline/safari-profile-probe-online.png",
+      "canvas2d": {
+        "context": "2d",
+        "options": "default",
+        "width": 320,
+        "height": 120,
+        "contextAvailable": true,
+        "drawCompleted": true,
+        "readbackAfterPhysicalCapture": true,
+        "pixels": [
+          {
+            "x": 80,
+            "y": 80,
+            "rgba": [
+              118,
+              51,
+              213,
+              255
+            ]
+          },
+          {
+            "x": 240,
+            "y": 80,
+            "rgba": [
+              37,
+              99,
+              235,
+              255
+            ]
+          }
+        ]
+      }
+    },
+    "offline": {
+      "time": "2026-11-02T21:03:22.898Z",
+      "pid": "3437",
+      "state": {
+        "windowId": 45,
+        "bounds": {
+          "x": 298,
+          "y": 40,
+          "width": 1324,
+          "height": 940
+        },
+        "tabIndex": 1,
+        "title": "Spinel desktop profile probe",
+        "url": "http://localhost:8175/?offline-restart",
+        "page": {
+          "url": "http://localhost:8175/?offline-restart",
+          "title": "Spinel desktop profile probe",
+          "readyState": "complete",
+          "visibility": "visible",
+          "hasFocus": true,
+          "text": "Spinel synthetic profile probe\n\nNative Safari paint baseline\n\nSVG\nCanvas 2D with default settings"
+        }
+      },
+      "screenshot": "/Users/runner/work/spinel/spinel/artifacts/desktop-offline/safari-profile-probe-offline.png",
+      "canvas2d": {
+        "context": "2d",
+        "options": "default",
+        "width": 320,
+        "height": 120,
+        "contextAvailable": true,
+        "drawCompleted": true,
+        "readbackAfterPhysicalCapture": true,
+        "pixels": [
+          {
+            "x": 80,
+            "y": 80,
+            "rgba": [
+              118,
+              51,
+              213,
+              255
+            ]
+          },
+          {
+            "x": 240,
+            "y": 80,
+            "rgba": [
+              37,
+              99,
+              235,
+              255
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requestsBeforeOffline": 4,
+  "afterPid": "3437",
+  "retained": {
+    "localStorage": "c95b3426-5247-4452-b868-ebd708c6629a",
+    "indexedDB": "c95b3426-5247-4452-b868-ebd708c6629a",
+    "cache": "c95b3426-5247-4452-b868-ebd708c6629a",
+    "worker": true
+  },
+  "automationLog": {
+    "startedAt": "2026-11-02T21:02:18.966Z",
+    "finishedAt": "2026-11-02T21:02:58.656Z",
+    "queryEnd": "2026-11-02T21:02:59.000Z",
+    "requestIds": [],
+    "error": {
+      "message": "Error: Command failed: /usr/bin/log show --start 2026-11-02 21:02:18+0000 --end 2026-11-02 21:02:59+0000 --style compact --info --debug --predicate subsystem == \"com.apple.TCC\" OR process == \"appleeventsd\"",
+      "code": null,
+      "signal": "SIGTERM",
+      "killed": true,
+      "stderr": ""
+    },
+    "sourceComplete": false,
+    "matchedLineCount": 0,
+    "retainedLineCount": 0,
+    "retainedBytes": 0,
+    "headLineCount": 0,
+    "omittedLineCount": 0,
+    "truncated": true,
+    "lines": []
+  }
+}

@@ -1,0 +1,3 @@
+# SPN-106 Safari pointer-delivery failure
+
+Original run 41521489376, job 125538619093, attempt 1. Source b9e57e465727870542177170b9acdc56656584ab. Safari 27.2/macOS 15.7.9 Intel reached the third ordinary-profile launch and passed exact retained data checks. Native input observation then timed out on the conflict Doc; no mousedown was observed. The first three items completed visible retained-content checks. Final screenshot shows the synthetic offline edit and image; it does not pass the failed input or remaining reconnect/storage-loss assertions. Browser-owned teardown completed. No cause or repair is inferred. The known SPN-130 initial identity/storage-cleanup boundaries are distinct.
