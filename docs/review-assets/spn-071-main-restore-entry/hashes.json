@@ -1,0 +1,34 @@
+{
+  "README.md": {
+    "bytes": 2384,
+    "sha256": "e3ed499caa6b81b30908da2d22c40a9497d36ff3a3eff8fb2eb3d115b6a20407"
+  },
+  "artifact.zip": {
+    "bytes": 68479,
+    "sha256": "93c6442f1dab4debe094de1808ab9c0210fc1e89a1959227ccd2d1a75402fc2c"
+  },
+  "extracted/evidence.json": {
+    "bytes": 164452,
+    "sha256": "bf29f0c4079816479d1d6c791f45612e7b67796574fd7b6a494baa5fb3a5963d"
+  },
+  "extracted/failure.png": {
+    "bytes": 6845,
+    "sha256": "afbe51e7b1753732957df53bcf4c81538a1e01d0dfdb29ad0e30ce65e59faae5"
+  },
+  "job.log": {
+    "bytes": 60971,
+    "sha256": "8f50c31a870e2e2083ec051b11831988829e2d1c901077fd66b6bb92f4344d32"
+  },
+  "repair.patch": {
+    "bytes": 1400,
+    "sha256": "fa98a9704ae52eee57656e2f55ff85bf6a706a3a2c27ba2f1d040158951cb027"
+  },
+  "spn071-passing-restore.json": {
+    "bytes": 162804,
+    "sha256": "afde3508538ace6a9232d01ace928aba5c1b5e83d6f79ac8f8ca84e63ff64f55"
+  },
+  "spn071-passing-restore.zip": {
+    "bytes": 68149,
+    "sha256": "1230839adec3e476ccd14ddc41c0264b9b70f4d8236458f6ef959bc54a8dc262"
+  }
+}
