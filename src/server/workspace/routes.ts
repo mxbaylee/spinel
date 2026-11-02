@@ -21,6 +21,7 @@ import { archiveRoutes } from './archive-routes.ts';
 import { pdfRoutes } from '../pdf/routes.ts';
 import { OfflineCreationError, OfflineCreations } from './offline-creation.ts';
 import { SourceSharing } from './source-sharing.ts';
+import { CopyFiles } from './copy.ts';
 
 export function workspaceRoutes(
   auth: AuthStore,
@@ -36,6 +37,7 @@ export function workspaceRoutes(
   const sheets = new SheetStore(store);
   const documents = new DocumentStore(store);
   const files = new PortableFiles(store, collaboration);
+  const copies = new CopyFiles(store, files);
   const creations = collaboration ? new OfflineCreations(store, collaboration) : undefined;
   const sourceSharing = new SourceSharing(store, collaboration);
   const account = (request: Request) => documentIdentity(store, request.headers);
@@ -246,6 +248,30 @@ export function workspaceRoutes(
       throw new AuthError(503, 'History is not available.');
     });
   router.use(express.json({ limit: '8kb', strict: true }));
+  router.get('/:id/copy-options', (request, response) => {
+    const identity = account(request);
+    response.json(copies.options(identity.userId, String(request.params.id), identity.customData));
+  });
+  router.post('/:id/copy', admitTransfer, async (request, response) => {
+    const transfer = transfers.get(response)!;
+    transfer.start();
+    try {
+      const identity = account(request);
+      const item = await copies.copy(
+        identity.userId,
+        String(request.params.id),
+        request.body,
+        () => {
+          if (owner(request) !== identity.userId || response.destroyed)
+            throw new AuthError(401, 'Sign in to continue.');
+        },
+        identity.customData,
+      );
+      response.status(201).json({ item });
+    } finally {
+      transfer.finish();
+    }
+  });
   router.post('/offline-create', (request, response) => {
     const user = owner(request);
     if (request.headers['x-spinel-offline-account'] !== user)

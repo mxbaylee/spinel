@@ -447,7 +447,9 @@ for (const zoomRatio of [1, 0.5, 2])
       await expect
         .poll(async () => (await f.read()).body!.paragraphs![0]!.paragraphStyle?.namedStyleType)
         .toBe(NamedStyleType.HEADING_1);
-      await page.getByRole('button', { name: 'More', exact: true }).tap();
+      // Copying adds a separate native header More menu; this journey opens
+      // the existing formatting drawer from the editing footer.
+      await page.locator('footer').getByRole('button', { name: 'More', exact: true }).tap();
       await expect(drawer).toBeVisible();
       await expect(input(page)).not.toBeFocused();
       await keyboardOcclusion(page, 0);
