@@ -378,7 +378,7 @@ await writeFile(
 if (review.captureScreenshots) {
   await writeFile(
     resolve(directory, 'index.html'),
-    `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Spinel design review</title><style>body{font:16px system-ui;margin:32px;background:#fafafa;color:#222}nav{display:flex;gap:16px;flex-wrap:wrap}section{margin:40px 0} .shots{display:flex;gap:16px;overflow:auto;align-items:start}figure{margin:0;flex:0 0 480px}img{width:100%;border:1px solid #ddd}figcaption{padding:12px}a{color:#8a1d3f}</style><h1>Spinel · component review</h1><p>Current production stories render shipped components with local API fixtures. Native fixtures isolate SDK behavior. Redesign contains only proposals owned by the open ticket shown in each title.</p><h2>All states and sizes</h2><nav>${requested.map((id) => `<a href="#${escape(id)}">${escape(index.entries[id].name)}</a>`).join('')}</nav>${requested
+    `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Spinel design review</title><style>body{font:16px system-ui;margin:32px;background:#fafafa;color:#222}nav{display:flex;gap:16px;flex-wrap:wrap}section{margin:40px 0} .shots{display:flex;gap:16px;overflow:auto;align-items:start}figure{margin:0;flex:0 0 480px}img{width:100%;border:1px solid #ddd}figcaption{padding:12px}a{color:#8a1d3f}</style><h1>Spinel · component review</h1><p>Current production stories render shipped components with local API fixtures. Native fixtures isolate SDK behavior.</p><h2>All states and sizes</h2><nav>${requested.map((id) => `<a href="#${escape(id)}">${escape(index.entries[id].name)}</a>`).join('')}</nav>${requested
       .map(
         (id) =>
           `<section id="${escape(id)}"><h2>${escape(index.entries[id].title)} / ${escape(index.entries[id].name)}</h2><div class="shots">${captures
@@ -392,13 +392,11 @@ if (review.captureScreenshots) {
       .join('')}</html>`,
   );
 }
-// The mockup chunk is isolated from production. Report actual emitted bytes, not npm unpacked size.
+// Report the retained control/story chunks by actual emitted bytes, not npm unpacked size.
 const { readdir } = await import('node:fs/promises');
 const assets = await readdir('storybook-static/assets');
 const bundles = [];
-for (const filename of assets.filter(
-  (name) => /Controls|Mockups/i.test(name) && name.endsWith('.js'),
-)) {
+for (const filename of assets.filter((name) => /Controls/i.test(name) && name.endsWith('.js'))) {
   const bytes = await readFile(resolve('storybook-static/assets', filename));
   bundles.push({ filename, bytes: bytes.length, gzipBytes: gzipSync(bytes).length });
 }
