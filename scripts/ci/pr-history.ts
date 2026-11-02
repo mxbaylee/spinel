@@ -814,6 +814,18 @@ export async function authenticatedPolicyHistory(
           )
             throw new Error('An absent policy execution has no terminal provider attempt proof.');
         }
+        if (absentPolicyAttempts.length) {
+          // The cached inventory predates the terminal lookup: a policy job may
+          // have registered and issued adoption between those reads. Require an
+          // unchanged complete inventory read after terminal proof; otherwise a
+          // fresh poll must authenticate the new evidence before deciding.
+          const settledRecords = await client.list(
+            `actions/runs/${run.id}/jobs?filter=all`,
+            'jobs',
+          );
+          if (JSON.stringify(records) !== JSON.stringify(settledRecords))
+            throw new Error('Policy job history changed while proving absent execution.');
+        }
         return null;
       }
       const accepted = candidates.find((candidate) =>

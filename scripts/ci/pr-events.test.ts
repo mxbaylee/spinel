@@ -557,7 +557,7 @@ test('classifier-only retries preserve an existing adoption even while the retry
   }
 });
 
-test('before first adoption an active classifier-only attempt remains unresolved until its returned jobs settle', async () => {
+function classifierOnlyRetryScenario() {
   const s = legacyScenario();
   s.job.steps[0] = {
     ...s.job.steps[0],
@@ -597,11 +597,17 @@ test('before first adoption an active classifier-only attempt remains unresolved
         completed_at: null,
       },
       { number: 4, name: noAdoptionStep, status: 'queued', conclusion: null, completed_at: null },
-    ],
+    ] as typeof s.job.steps,
   };
   s.records[500].push(classifierRetry, currentPolicy);
   s.policyRun.run_attempt = s.invocation.attempt = 3;
   const options = { ...s.options, invocation: s.invocation };
+  return { ...s, classifierRetry, currentPolicy, options };
+}
+
+test('before first adoption an active classifier-only attempt remains unresolved until its returned jobs settle', async () => {
+  const s = classifierOnlyRetryScenario();
+  const { options, classifierRetry } = s;
   await assert.rejects(prepareLegacyAdoption(options), /not sealed/);
   classifierRetry.status = 'completed';
   classifierRetry.conclusion = 'failure';
@@ -626,6 +632,69 @@ test('before first adoption an active classifier-only attempt remains unresolved
   }
   s.workflowAttempts[2] = attempt;
   assert.equal(await prepareLegacyAdoption(options), adoptionMarker(16));
+});
+
+test('a policy adoption appearing during terminal-attempt lookup invalidates stale absence and retains its origin', async () => {
+  const s = classifierOnlyRetryScenario();
+  s.classifierRetry.status = 'completed';
+  s.classifierRetry.conclusion = 'failure';
+  s.workflowAttempts[2] = {
+    ...structuredClone(s.policyRun),
+    run_attempt: 2,
+    status: 'completed',
+    conclusion: 'failure',
+  };
+  const adopter = {
+    ...structuredClone(s.job),
+    id: 511,
+    run_attempt: 2,
+    check_run_url: s.job.check_run_url.replace('/505', '/512'),
+    steps: [
+      {
+        number: 3,
+        name: adoptionValidationStep,
+        status: 'completed',
+        conclusion: 'success',
+        completed_at: '2026-11-02T19:31:04Z',
+      },
+      {
+        number: 4,
+        name: adoptionMarker(16),
+        status: 'completed',
+        conclusion: 'success',
+        completed_at: '2026-11-02T19:31:05Z',
+      },
+    ],
+  };
+  s.policyChecks[512] = { ...structuredClone(s.check), id: 512 };
+  const get = s.client.get.bind(s.client);
+  let registered = false;
+  s.client.get = async (path) => {
+    if (path === 'actions/runs/500/attempts/2' && !registered) {
+      s.records[500].push(adopter);
+      registered = true;
+    }
+    return get(path);
+  };
+  await assert.rejects(prepareLegacyAdoption(s.options), /not sealed/);
+  assert.equal(registered, true);
+  // A new poll consumes the genuine original adoption, without issuing another.
+  assert.equal(await prepareLegacyAdoption(s.options), null);
+  s.currentPolicy.steps = [
+    { ...adopter.steps[0], completed_at: '2026-11-02T19:31:06Z' },
+    { ...adopter.steps[1], name: noAdoptionStep, conclusion: 'skipped' },
+  ];
+  s.policyChecks[510] = { ...structuredClone(s.check), id: 510 };
+  const checkpoint = parseHistoryCheckpointMarker(await capturePrHistory(s.options));
+  assert.deepEqual(checkpoint?.adoption, {
+    cutoff: legacyHistoryCutoff.runId,
+    run: 500,
+    job: 511,
+    attempt: 2,
+    step: 4,
+    completed: Date.parse('2026-11-02T19:31:05Z'),
+  });
+  assert.deepEqual(s.mutations, []);
 });
 
 test('a carrying checkpoint survives original adoption expiry and cannot move the barrier on a later retry', async () => {
