@@ -1,3 +1,8 @@
+import { createHash } from 'node:crypto';
+import { appendFile, writeFile } from 'node:fs/promises';
+import { basename } from 'node:path';
+import type { CDPSession } from '@playwright/test';
+import type { callbackProgress } from './doc-responsiveness-callback-progress.ts';
 import { createReadStream } from 'node:fs';
 import { createGunzip } from 'node:zlib';
 
@@ -218,4 +223,56 @@ export async function readDocCallbackTrace(
     input.destroy();
     source.destroy();
   }
+}
+
+export async function retainDocCallbackTrace(
+  cdp: CDPSession,
+  path: string,
+  progress: ReturnType<typeof callbackProgress>,
+) {
+  const completed = new Promise<{
+    stream?: string;
+    dataLossOccurred?: boolean;
+    traceFormat?: string;
+    streamCompression?: string;
+  }>((resolve) => cdp.once('Tracing.tracingComplete', resolve));
+  progress.phase('trace-end-request');
+  await cdp.send('Tracing.end');
+  progress.phase('trace-completion');
+  const completion = await completed;
+  if (!completion.stream) throw new Error('Tracing completed without its raw stream.');
+  await writeFile(path, '');
+  const checksum = createHash('sha256');
+  let bytes = 0;
+  let streamFailed = false;
+  let streamError: unknown;
+  try {
+    progress.phase('trace-stream-read', bytes);
+    for (;;) {
+      const chunk = await cdp.send('IO.read', { handle: completion.stream, size: 1024 * 1024 });
+      const value = Buffer.from(chunk.data, chunk.base64Encoded ? 'base64' : 'utf8');
+      checksum.update(value);
+      bytes += value.length;
+      await appendFile(path, value);
+      progress.phase('trace-stream-read', bytes);
+      if (chunk.eof) break;
+    }
+  } catch (error) {
+    streamFailed = true;
+    streamError = error;
+    progress.failed('trace');
+  } finally {
+    progress.phase('trace-stream-close', bytes);
+    try {
+      await cdp.send('IO.close', { handle: completion.stream });
+    } catch (error) {
+      progress.failed('trace');
+      if (!streamFailed) {
+        streamFailed = true;
+        streamError = error;
+      }
+    }
+  }
+  if (streamFailed) throw streamError;
+  return { file: basename(path), completion, bytes, sha256: checksum.digest('hex') };
 }

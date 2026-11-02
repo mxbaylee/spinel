@@ -113,6 +113,7 @@ function evidence(role: 'baselineObservation' | 'candidate'): LoadedDocCallbackE
         'e2e/doc-responsiveness-callbacks.spec.ts',
         'e2e/doc-responsiveness-callback-sources.ts',
         'e2e/doc-responsiveness-callback-trace.ts',
+        'e2e/doc-responsiveness-callback-progress.ts',
         'e2e/doc-responsiveness-fixture.ts',
         'e2e/doc-responsiveness.ts',
         'scripts/ci/doc-callback-lifetimes.ts',
