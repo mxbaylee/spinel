@@ -1,0 +1,494 @@
+﻿2026-11-02T10:49:08.0576662Z Current runner version: '2.338.2'
+2026-11-02T10:49:08.0593188Z ##[group]Runner Image Provisioner
+2026-11-02T10:49:08.0593721Z Hosted Compute Agent
+2026-11-02T10:49:08.0594166Z Version: 20261021.618
+2026-11-02T10:49:08.0594552Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-11-02T10:49:08.0595164Z Build Date: 2026-10-21T00:45:21Z
+2026-11-02T10:49:08.0595629Z Worker ID: {02300832-7e10-4a3d-b9a5-6585d237e19f}
+2026-11-02T10:49:08.0596063Z Region: southcentralus
+2026-11-02T10:49:08.0596490Z Cloud: Azure
+2026-11-02T10:49:08.0596830Z ##[endgroup]
+2026-11-02T10:49:08.0597640Z ##[group]Operating System
+2026-11-02T10:49:08.0598062Z Ubuntu
+2026-11-02T10:49:08.0598396Z 24.04.5
+2026-11-02T10:49:08.0598758Z LTS
+2026-11-02T10:49:08.0599088Z ##[endgroup]
+2026-11-02T10:49:08.0599419Z ##[group]Runner Image
+2026-11-02T10:49:08.0599871Z Image: ubuntu-24.04
+2026-11-02T10:49:08.0600230Z Version: 20261025.353.1
+2026-11-02T10:49:08.0601050Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+2026-11-02T10:49:08.0601916Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+2026-11-02T10:49:08.0602562Z ##[endgroup]
+2026-11-02T10:49:08.0603246Z ##[group]GITHUB_TOKEN Permissions
+2026-11-02T10:49:08.0604479Z Contents: read
+2026-11-02T10:49:08.0605064Z Metadata: read
+2026-11-02T10:49:08.0605508Z ##[endgroup]
+2026-11-02T10:49:08.0606839Z Secret source: Actions
+2026-11-02T10:49:08.0607432Z Cache mode: write
+2026-11-02T10:49:08.0607902Z Prepare workflow directory
+2026-11-02T10:49:08.0858259Z Prepare all required actions
+2026-11-02T10:49:08.0889510Z Getting action download info
+2026-11-02T10:49:08.3492854Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-02T10:49:08.4611643Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+2026-11-02T10:49:08.5562713Z Download action repository 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-11-02T10:49:08.7235433Z Complete job name: Lib tests (remaining)
+2026-11-02T10:49:08.7723573Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-02T10:49:08.7724058Z with:
+2026-11-02T10:49:08.7724293Z   persist-credentials: false
+2026-11-02T10:49:08.7724566Z   repository: mxbaylee/spinel
+2026-11-02T10:49:08.7726795Z   token: ***
+2026-11-02T10:49:08.7727022Z   ssh-strict: true
+2026-11-02T10:49:08.7727249Z   ssh-user: git
+2026-11-02T10:49:08.7727470Z   clean: true
+2026-11-02T10:49:08.7727707Z   sparse-checkout-cone-mode: true
+2026-11-02T10:49:08.7727976Z   fetch-depth: 1
+2026-11-02T10:49:08.7728207Z   fetch-tags: false
+2026-11-02T10:49:08.7728438Z   show-progress: true
+2026-11-02T10:49:08.7728671Z   lfs: false
+2026-11-02T10:49:08.7728885Z   submodules: false
+2026-11-02T10:49:08.7729122Z   set-safe-directory: true
+2026-11-02T10:49:08.7729387Z   allow-unsafe-pr-checkout: false
+2026-11-02T10:49:08.7729776Z ##[endgroup]
+2026-11-02T10:49:08.9640115Z Syncing repository: mxbaylee/spinel
+2026-11-02T10:49:08.9641455Z ##[group]Getting Git version info
+2026-11-02T10:49:08.9641962Z Working directory is '/home/runner/work/spinel/spinel'
+2026-11-02T10:49:08.9642481Z [command]/usr/bin/git version
+2026-11-02T10:49:08.9689825Z git version 2.56.0
+2026-11-02T10:49:08.9703709Z ##[endgroup]
+2026-11-02T10:49:08.9708169Z Temporarily overriding HOME='/home/runner/work/_temp/f4373f3b-3a1a-4dad-8555-b36590deb376' before making global git config changes
+2026-11-02T10:49:08.9709345Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-02T10:49:08.9712847Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-02T10:49:08.9749831Z Deleting the contents of '/home/runner/work/spinel/spinel'
+2026-11-02T10:49:08.9752236Z ##[group]Determining repository object format
+2026-11-02T10:49:08.9753171Z ##[endgroup]
+2026-11-02T10:49:08.9754030Z ##[group]Initializing the repository
+2026-11-02T10:49:08.9756274Z [command]/usr/bin/git init /home/runner/work/spinel/spinel
+2026-11-02T10:49:08.9835885Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-02T10:49:08.9836568Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-02T10:49:08.9837169Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-02T10:49:08.9837760Z hint: call:
+2026-11-02T10:49:08.9838084Z hint:
+2026-11-02T10:49:08.9838464Z hint: 	git config --global init.defaultBranch <name>
+2026-11-02T10:49:08.9838882Z hint:
+2026-11-02T10:49:08.9839284Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-02T10:49:08.9839993Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-02T10:49:08.9840478Z hint:
+2026-11-02T10:49:08.9840801Z hint: 	git branch -m <name>
+2026-11-02T10:49:08.9841150Z hint:
+2026-11-02T10:49:08.9841744Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-02T10:49:08.9842917Z Initialized empty Git repository in /home/runner/work/spinel/spinel/.git/
+2026-11-02T10:49:08.9851084Z [command]/usr/bin/git remote add origin https://github.com/mxbaylee/spinel
+2026-11-02T10:49:09.0007371Z ##[endgroup]
+2026-11-02T10:49:09.0007806Z ##[group]Disabling automatic garbage collection
+2026-11-02T10:49:09.0011034Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-02T10:49:09.0043832Z ##[endgroup]
+2026-11-02T10:49:09.0044959Z ##[group]Setting up auth
+2026-11-02T10:49:09.0045271Z Removing SSH command configuration
+2026-11-02T10:49:09.0049488Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-02T10:49:09.0084496Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-02T10:49:09.0356173Z Removing HTTP extra header
+2026-11-02T10:49:09.0360506Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-02T10:49:09.0412360Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-02T10:49:09.0590602Z Removing includeIf entries pointing to credentials config files
+2026-11-02T10:49:09.0594284Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-02T10:49:09.0630995Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-02T10:49:09.0818838Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-f7d38d89-00a3-4426-adcf-344294d42d19.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-02T10:49:09.0857935Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git.path /home/runner/work/_temp/git-credentials-f7d38d89-00a3-4426-adcf-344294d42d19.config
+2026-11-02T10:49:09.0894921Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-f7d38d89-00a3-4426-adcf-344294d42d19.config
+2026-11-02T10:49:09.0931435Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-f7d38d89-00a3-4426-adcf-344294d42d19.config
+2026-11-02T10:49:09.0971316Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-f7d38d89-00a3-4426-adcf-344294d42d19.config
+2026-11-02T10:49:09.1007702Z ##[endgroup]
+2026-11-02T10:49:09.1008301Z ##[group]Fetching the repository
+2026-11-02T10:49:09.1013253Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +3ddf9dcb01807ce23a78118a9a7c45f7fd164d14:refs/remotes/pull/226/merge
+2026-11-02T10:49:11.4168945Z From https://github.com/mxbaylee/spinel
+2026-11-02T10:49:11.4169768Z  * [new ref]         3ddf9dcb01807ce23a78118a9a7c45f7fd164d14 -> pull/226/merge
+2026-11-02T10:49:11.4172632Z ##[endgroup]
+2026-11-02T10:49:11.4173277Z ##[group]Determining the checkout info
+2026-11-02T10:49:11.4173925Z ##[endgroup]
+2026-11-02T10:49:11.4178294Z [command]/usr/bin/git sparse-checkout disable
+2026-11-02T10:49:11.4232395Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-02T10:49:11.4269227Z ##[group]Checking out the ref
+2026-11-02T10:49:11.4272050Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/226/merge
+2026-11-02T10:49:11.7847119Z Note: switching to 'refs/remotes/pull/226/merge'.
+2026-11-02T10:49:11.7848509Z 
+2026-11-02T10:49:11.7848756Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-11-02T10:49:11.7849264Z changes and commit them, and you can discard any commits you make in this
+2026-11-02T10:49:11.7849859Z state without impacting any branches by switching back to a branch.
+2026-11-02T10:49:11.7850166Z 
+2026-11-02T10:49:11.7850424Z If you want to create a new branch to retain commits you create, you may
+2026-11-02T10:49:11.7850908Z do so (now or later) by using -c with the switch command. Example:
+2026-11-02T10:49:11.7851163Z 
+2026-11-02T10:49:11.7851303Z   git switch -c <new-branch-name>
+2026-11-02T10:49:11.7851511Z 
+2026-11-02T10:49:11.7851648Z Or undo this operation with:
+2026-11-02T10:49:11.7851822Z 
+2026-11-02T10:49:11.7851931Z   git switch -
+2026-11-02T10:49:11.7852092Z 
+2026-11-02T10:49:11.7852363Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-11-02T10:49:11.7852695Z 
+2026-11-02T10:49:11.7853047Z HEAD is now at 3ddf9dc Merge c51458573f3a2cf2f5ff3701cf27abfcfe035935 into cc8364693791d981b86e80efc40bedba7fff2c08
+2026-11-02T10:49:11.7872571Z ##[endgroup]
+2026-11-02T10:49:11.7927217Z [command]/usr/bin/git log -1 --format=%H
+2026-11-02T10:49:11.7961354Z 3ddf9dcb01807ce23a78118a9a7c45f7fd164d14
+2026-11-02T10:49:11.7970787Z ##[group]Removing auth
+2026-11-02T10:49:11.7971125Z Removing SSH command configuration
+2026-11-02T10:49:11.7972439Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-02T10:49:11.8012593Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-02T10:49:11.8208977Z Removing HTTP extra header
+2026-11-02T10:49:11.8209656Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-02T10:49:11.8248603Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-02T10:49:11.8440983Z Removing includeIf entries pointing to credentials config files
+2026-11-02T10:49:11.8442761Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-02T10:49:11.8476155Z includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-02T10:49:11.8483838Z includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-02T10:49:11.8484495Z includeif.gitdir:/github/workspace/.git.path
+2026-11-02T10:49:11.8485365Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-02T10:49:11.8486405Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-02T10:49:11.8513833Z /home/runner/work/_temp/git-credentials-f7d38d89-00a3-4426-adcf-344294d42d19.config
+2026-11-02T10:49:11.8547537Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-f7d38d89\-00a3\-4426\-adcf\-344294d42d19\.config
+2026-11-02T10:49:11.8576772Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-02T10:49:11.8606015Z /home/runner/work/_temp/git-credentials-f7d38d89-00a3-4426-adcf-344294d42d19.config
+2026-11-02T10:49:11.8612205Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-f7d38d89\-00a3\-4426\-adcf\-344294d42d19\.config
+2026-11-02T10:49:11.8652068Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-02T10:49:11.8683506Z /github/runner_temp/git-credentials-f7d38d89-00a3-4426-adcf-344294d42d19.config
+2026-11-02T10:49:11.8691861Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-f7d38d89\-00a3\-4426\-adcf\-344294d42d19\.config
+2026-11-02T10:49:11.8735372Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-02T10:49:11.8767573Z /github/runner_temp/git-credentials-f7d38d89-00a3-4426-adcf-344294d42d19.config
+2026-11-02T10:49:11.8773595Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-f7d38d89\-00a3\-4426\-adcf\-344294d42d19\.config
+2026-11-02T10:49:11.8812177Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-02T10:49:11.9011616Z Removing credentials config '/home/runner/work/_temp/git-credentials-f7d38d89-00a3-4426-adcf-344294d42d19.config'
+2026-11-02T10:49:11.9017491Z ##[endgroup]
+2026-11-02T10:49:11.9203614Z ##[group]Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+2026-11-02T10:49:11.9203866Z with:
+2026-11-02T10:49:11.9204012Z   node-version-file: .nvmrc
+2026-11-02T10:49:11.9204179Z   package-manager-cache: false
+2026-11-02T10:49:11.9204345Z   check-latest: false
+2026-11-02T10:49:11.9205832Z   token: ***
+2026-11-02T10:49:11.9205989Z ##[endgroup]
+2026-11-02T10:49:12.0013425Z Node version file is not JSON file
+2026-11-02T10:49:12.0016200Z Node version file is not TOML file
+2026-11-02T10:49:12.0016539Z Resolved .nvmrc as 26.12.1
+2026-11-02T10:49:12.0028206Z Attempting to download 26.12.1...
+2026-11-02T10:49:12.8193888Z Acquiring 26.12.1 - x64 from https://github.com/actions/node-versions/releases/download/26.12.1-39618969937/node-26.12.1-linux-x64.tar.gz
+2026-11-02T10:49:13.4215334Z Extracting ...
+2026-11-02T10:49:13.4319819Z [command]/usr/bin/tar xz --strip 1 --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/3c1ae830-ef45-4a16-baac-a3b294f85a64 -f /home/runner/work/_temp/770a2192-5465-4fcd-ae66-f9f03498002e
+2026-11-02T10:49:14.3926106Z Adding to the cache ...
+2026-11-02T10:49:16.6060440Z ##[group]Environment details
+2026-11-02T10:49:16.7458478Z node: v26.12.1
+2026-11-02T10:49:16.7458865Z npm: 11.20.0
+2026-11-02T10:49:16.7459037Z yarn: 1.22.22
+2026-11-02T10:49:16.7459709Z ##[endgroup]
+2026-11-02T10:49:16.7660406Z ##[group]Run npm ci
+2026-11-02T10:49:16.7660603Z [36;1mnpm ci[0m
+2026-11-02T10:49:16.7680422Z shell: /usr/bin/bash -e {0}
+2026-11-02T10:49:16.7680586Z ##[endgroup]
+2026-11-02T10:49:23.9622144Z 
+2026-11-02T10:49:23.9626731Z > postinstall
+2026-11-02T10:49:23.9627746Z > node scripts/dependencies/patch-univer-core.ts && node scripts/dependencies/patch-univer-docs.ts && node scripts/dependencies/patch-univer-ui.ts && node scripts/dependencies/patch-univer-drawing.ts && node scripts/dependencies/patch-univer-docs-ui.ts
+2026-11-02T10:49:23.9628250Z 
+2026-11-02T10:49:24.3624215Z 
+2026-11-02T10:49:24.3630104Z added 501 packages, and audited 509 packages in 8s
+2026-11-02T10:49:24.3637471Z 
+2026-11-02T10:49:24.3638610Z 136 packages are looking for funding
+2026-11-02T10:49:24.3647680Z   run `npm fund` for details
+2026-11-02T10:49:24.3782611Z 
+2026-11-02T10:49:24.3783005Z 4 moderate severity vulnerabilities
+2026-11-02T10:49:24.3783236Z 
+2026-11-02T10:49:24.3783520Z To address all issues (including breaking changes), run:
+2026-11-02T10:49:24.3784387Z   npm audit fix --force
+2026-11-02T10:49:24.3784513Z 
+2026-11-02T10:49:24.3784626Z Run `npm audit` for details.
+2026-11-02T10:49:24.3787882Z npm warn install-scripts 2 packages have install scripts not yet covered by allowScripts:
+2026-11-02T10:49:24.3788263Z npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+2026-11-02T10:49:24.3788592Z npm warn install-scripts   protobufjs@7.6.6 (postinstall: node scripts/postinstall)
+2026-11-02T10:49:24.3788829Z npm warn install-scripts
+2026-11-02T10:49:24.3789176Z npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+2026-11-02T10:49:24.4507635Z ##[group]Run case "$SUITE" in
+2026-11-02T10:49:24.4507845Z [36;1mcase "$SUITE" in[0m
+2026-11-02T10:49:24.4507971Z [36;1m  dense-cells)[0m
+2026-11-02T10:49:24.4508193Z [36;1m    npx vitest run lib/sync-transform/tests/cells-dense.test.ts[0m
+2026-11-02T10:49:24.4508387Z [36;1m    ;;[0m
+2026-11-02T10:49:24.4508511Z [36;1m  cells)[0m
+2026-11-02T10:49:24.4508658Z [36;1m    npx vitest run lib/sync-transform/tests/cells.test.ts[0m
+2026-11-02T10:49:24.4508827Z [36;1m    ;;[0m
+2026-11-02T10:49:24.4508935Z [36;1m  mixed-fuzz)[0m
+2026-11-02T10:49:24.4509086Z [36;1m    npx vitest run lib/sync-transform/tests/fuzz.test.ts[0m
+2026-11-02T10:49:24.4509252Z [36;1m    ;;[0m
+2026-11-02T10:49:24.4509355Z [36;1m  remaining)[0m
+2026-11-02T10:49:24.4509540Z [36;1m    # Exact exclusions keep future lib test files in this partition.[0m
+2026-11-02T10:49:24.4509741Z [36;1m    npx vitest run lib/ \[0m
+2026-11-02T10:49:24.4509956Z [36;1m      --exclude 'lib/sync-transform/tests/cells-dense.test.ts' \[0m
+2026-11-02T10:49:24.4510179Z [36;1m      --exclude 'lib/sync-transform/tests/cells.test.ts' \[0m
+2026-11-02T10:49:24.4510384Z [36;1m      --exclude 'lib/sync-transform/tests/fuzz.test.ts'[0m
+2026-11-02T10:49:24.4510544Z [36;1m    ;;[0m
+2026-11-02T10:49:24.4510644Z [36;1m  *)[0m
+2026-11-02T10:49:24.4510776Z [36;1m    echo "Unknown library partition: $SUITE" >&2[0m
+2026-11-02T10:49:24.4510938Z [36;1m    exit 1[0m
+2026-11-02T10:49:24.4511045Z [36;1m    ;;[0m
+2026-11-02T10:49:24.4511143Z [36;1mesac[0m
+2026-11-02T10:49:24.4527142Z shell: /usr/bin/bash -e {0}
+2026-11-02T10:49:24.4527272Z env:
+2026-11-02T10:49:24.4527374Z   SUITE: remaining
+2026-11-02T10:49:24.4527483Z ##[endgroup]
+2026-11-02T10:49:24.8025221Z 
+2026-11-02T10:49:24.8026367Z [1m[30m[46m RUN [49m[39m[22m [36mv5.0.5 [39m[90m/home/runner/work/spinel/spinel[39m
+2026-11-02T10:49:24.8026699Z 
+2026-11-02T10:49:27.4055642Z  [32m✓[39m lib/sync-server/tests/server.test.ts [2m([22m[2m53 tests[22m[2m)[22m[33m 614[2mms[22m[39m
+2026-11-02T10:49:37.6778690Z  [32m✓[39m lib/print/doc-native.test.ts [2m([22m[2m17 tests[22m[2m)[22m[33m 9939[2mms[22m[39m
+2026-11-02T10:49:37.6779532Z    [33m[2m✓[22m[39m stored, fractional, zero-margin and fallback frames reopen at their complete geometry[33m 511[2mms[22m[39m
+2026-11-02T10:49:37.6780333Z    [33m[2m✓[22m[39m complete paragraphs span finite modern pages and preserve explicit breaks[33m 1102[2mms[22m[39m
+2026-11-02T10:49:37.6780865Z    [33m[2m✓[22m[39m rich faces, heading styles, nested lists and deterministic Unicode fallback survive native drawing[33m 407[2mms[22m[39m
+2026-11-02T10:49:37.6781596Z    [33m[2m✓[22m[39m a 30-row wrapped Formula table beginning near a page bottom remains complete[33m 831[2mms[22m[39m
+2026-11-02T10:49:37.6782607Z    [33m[2m✓[22m[39m prepared scalar, array and whole unavailable Formula results expose no source metadata[33m 423[2mms[22m[39m
+2026-11-02T10:49:37.6783394Z    [33m[2m✓[22m[39m a Formula table retains its paragraph page break before the first result row[33m 393[2mms[22m[39m
+2026-11-02T10:49:37.6784101Z    [33m[2m✓[22m[39m modern implicit paragraph spacing survives finite print geometry[33m 390[2mms[22m[39m
+2026-11-02T10:49:37.6784984Z    [33m[2m✓[22m[39m a short Formula table preserves its source paragraph keep-lines group near a page bottom[33m 401[2mms[22m[39m
+2026-11-02T10:49:37.6785857Z    [33m[2m✓[22m[39m a native row taller than a physical page preserves every wrapped word and its following row[33m 561[2mms[22m[39m
+2026-11-02T10:49:37.6786412Z    [33m[2m✓[22m[39m vertical and horizontal merged cells preserve tall content through physical seams[33m 582[2mms[22m[39m
+2026-11-02T10:49:37.6786921Z    [33m[2m✓[22m[39m unsupported appearance, unprepared Formula values and clipped exact rows return no bytes[33m 399[2mms[22m[39m
+2026-11-02T10:49:37.6787772Z    [33m[2m✓[22m[39m resource limits and cancellation publish no partial bytes and restore the shared native runtime[33m 901[2mms[22m[39m
+2026-11-02T10:49:37.6788226Z    [33m[2m✓[22m[39m Doc and Sheet operations share one native registry lock[33m 354[2mms[22m[39m
+2026-11-02T10:49:37.6788912Z    [33m[2m✓[22m[39m tall image-only and captioned anchors continue completely and invalid native anchors fail without bytes[33m 1209[2mms[22m[39m
+2026-11-02T10:49:37.6789801Z    [33m[2m✓[22m[39m nonleading Top-and-bottom and LINE captions retain complete flow and measured origins with repeated headers[33m 558[2mms[22m[39m
+2026-11-02T10:49:37.6790385Z    [33m[2m✓[22m[39m image-only Top-and-bottom flow retains native origins, relative paragraph spacing and small-image struts[33m 537[2mms[22m[39m
+2026-11-02T10:49:37.6790927Z    [33m[2m✓[22m[39m cropped translucent floating images use authorized raster pixels and physical anchors[33m 378[2mms[22m[39m
+2026-11-02T10:49:57.1097407Z  [32m✓[39m lib/sync-transform/tests/names.test.ts [2m([22m[2m72 tests[22m[2m)[22m[33m 18550[2mms[22m[39m
+2026-11-02T10:49:57.1098275Z    [33m[2m✓[22m[39m names converge with row, column, sheet and sheet-name edits[33m 17292[2mms[22m[39m
+2026-11-02T10:51:26.1495914Z  [32m✓[39m lib/sync-transform/tests/schema.test.ts [2m([22m[2m31 tests[22m[2m | [22m[33m2 skipped[39m[2m)[22m[33m 88489[2mms[22m[39m
+2026-11-02T10:51:26.1499636Z    [33m[2m✓[22m[39m schema cell edits converge, as the edits meant[33m 70696[2mms[22m[39m
+2026-11-02T10:51:26.1500324Z    [33m[2m✓[22m[39m schema cell edits converge among row, column and sheet edits[33m 15427[2mms[22m[39m
+2026-11-02T10:51:26.1501026Z    [33m[2m✓[22m[39m a value written with its format cleared on a text cell, against any write[33m 404[2mms[22m[39m
+2026-11-02T10:51:26.1501721Z    [33m[2m✓[22m[39m 'abc and forced text, with a value written after, keep one type[33m 366[2mms[22m[39m
+2026-11-02T10:51:32.3890397Z  [32m✓[39m lib/print/native.test.ts [2m([22m[2m14 tests[22m[2m)[22m[33m 5883[2mms[22m[39m
+2026-11-02T10:51:32.3898536Z    [33m[2m✓[22m[39m candidate PDF reopens every page with ordered text, embedded fonts, image continuation and light margins[33m 471[2mms[22m[39m
+2026-11-02T10:51:32.3899577Z    [33m[2m✓[22m[39m late failures publish no bytes, release native fonts/globals and allow a fresh operation[33m 488[2mms[22m[39m
+2026-11-02T10:51:32.3900454Z    [33m[2m✓[22m[39m large ink rejects a short row while multiline and rotated text remain complete[33m 416[2mms[22m[39m
+2026-11-02T10:51:32.3901343Z    [33m[2m✓[22m[39m a different prepared font in the same process matches its fresh-process text geometry and pixels[33m 691[2mms[22m[39m
+2026-11-02T10:51:32.3902149Z    [33m[2m✓[22m[39m complete wrapped paragraphs fit ordinary and merged cells without dropping their final words[33m 360[2mms[22m[39m
+2026-11-02T10:51:32.3902712Z    [33m[2m✓[22m[39m overfull wrapping fails atomically but tall ordinary and merged glyphs continue through page seams[33m 435[2mms[22m[39m
+2026-11-02T10:51:32.3903242Z    [33m[2m✓[22m[39m rich formatting embeds all prepared faces and renders mixed-family Unicode fallback[33m 390[2mms[22m[39m
+2026-11-02T10:51:32.3903797Z    [33m[2m✓[22m[39m native overflow includes its actual ink and outer thick borders stay inside the complete crop[33m 372[2mms[22m[39m
+2026-11-02T10:51:32.3904573Z    [33m[2m✓[22m[39m a wide worksheet shrinks once across both vertical pages and retains its right edge and final row[33m 388[2mms[22m[39m
+2026-11-02T10:51:32.3905294Z    [33m[2m✓[22m[39m rejects extreme text geometry before native layout and accepts a cleared font size[33m 369[2mms[22m[39m
+2026-11-02T10:51:32.3905843Z    [33m[2m✓[22m[39m formatted display text has one aggregate limit across selected worksheets and cached reads (explicit ids)[33m 364[2mms[22m[39m
+2026-11-02T10:51:32.3906562Z    [33m[2m✓[22m[39m formatted display text has one aggregate limit across selected worksheets and cached reads (omitted ids)[33m 366[2mms[22m[39m
+2026-11-02T10:51:32.3907091Z    [33m[2m✓[22m[39m filter formatting and rendering share a display budget even for rows filtered out[33m 358[2mms[22m[39m
+2026-11-02T10:51:32.3907593Z    [33m[2m✓[22m[39m rich highlights retain overflowing trailing spaces and ordinary tabs remain supported[33m 413[2mms[22m[39m
+2026-11-02T10:51:37.8499764Z  [32m✓[39m lib/print/doc-sections.test.ts [2m([22m[2m11 tests[22m[2m)[22m[33m 4995[2mms[22m[39m
+2026-11-02T10:51:37.8500299Z    [33m[2m✓[22m[39m repeats first, even and default stories with actual page fields and saved date text[33m 495[2mms[22m[39m
+2026-11-02T10:51:37.8500794Z    [33m[2m✓[22m[39m header tables and authorized inline images repeat within their own native reservation[33m 419[2mms[22m[39m
+2026-11-02T10:51:37.8501298Z    [33m[2m✓[22m[39m native section columns use every physical column and retain every source paragraph once[33m 594[2mms[22m[39m
+2026-11-02T10:51:37.8501814Z    [33m[2m✓[22m[39m heterogeneous section dimensions, margins and odd-page starts remain exact[33m 381[2mms[22m[39m
+2026-11-02T10:51:37.8502281Z    [33m[2m✓[22m[39m continuous and next-column section transitions preserve complete source order[33m 389[2mms[22m[39m
+2026-11-02T10:51:37.8502783Z    [33m[2m✓[22m[39m headers and section columns retain a saved oversized row rather than clamping its blank geometry[33m 458[2mms[22m[39m
+2026-11-02T10:51:37.8505084Z    [33m[2m✓[22m[39m auto-height wrapped rows retain every word through header and column reservations[33m 827[2mms[22m[39m
+2026-11-02T10:51:37.8505945Z    [33m[2m✓[22m[39m merged cells retain nested Formula tables and image bands across varying stories, columns and later section geometry[33m 666[2mms[22m[39m
+2026-11-02T10:51:37.8506788Z    [33m[2m✓[22m[39m the same header story follows each section margin even when paper width stays unchanged[33m 399[2mms[22m[39m
+2026-11-02T10:51:37.8507539Z    [33m[2m✓[22m[39m stored next-section hints do not override the following native section transition[33m 358[2mms[22m[39m
+2026-11-02T10:51:43.0771476Z  [32m✓[39m lib/print/doc-fixed-images.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 4922[2mms[22m[39m
+2026-11-02T10:51:43.0772378Z    [33m[2m✓[22m[39m fixed PAGE and MARGIN wrapping retains physical and continuous saved coordinates[33m 1697[2mms[22m[39m
+2026-11-02T10:51:43.0773226Z    [33m[2m✓[22m[39m fixed offsets inside the physical paper retain image ink above the text margin[33m 458[2mms[22m[39m
+2026-11-02T10:51:43.0774113Z    [33m[2m✓[22m[39m continuous fixed locations map to retained header and column flow independently of a distant anchor[33m 1844[2mms[22m[39m
+2026-11-02T10:51:43.0775205Z    [33m[2m✓[22m[39m image-only continuous fixed positions retain authored blank paragraphs and physical stories[33m 922[2mms[22m[39m
+2026-11-02T10:52:23.0429896Z  [32m✓[39m lib/sync-transform/tests/rule-based.test.ts [2m([22m[2m69 tests[22m[2m | [22m[33m1 skipped[39m[2m)[22m[33m 39455[2mms[22m[39m
+2026-11-02T10:52:23.0436200Z    [33m[2m✓[22m[39m rule-based class test: forced text, a concurrent value and a next value keep one type[33m 22250[2mms[22m[39m
+2026-11-02T10:52:23.0437022Z    [33m[2m✓[22m[39m rule-based forced-text three-edit matrix, reduced, keeps one type[33m 16182[2mms[22m[39m
+2026-11-02T10:52:23.4734905Z  [32m✓[39m lib/print/doc-preparation.test.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 50[2mms[22m[39m
+2026-11-02T10:52:27.2171154Z  [32m✓[39m lib/print/doc-image-groups.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 2440[2mms[22m[39m
+2026-11-02T10:52:27.2171738Z    [33m[2m✓[22m[39m group PDFs match native images, nested transforms and complete physical continuation[33m 1508[2mms[22m[39m
+2026-11-02T10:52:27.2172274Z    [33m[2m✓[22m[39m header group copies share authorized leaves and wrapped groups keep one native reservation[33m 470[2mms[22m[39m
+2026-11-02T10:52:27.2173106Z    [33m[2m✓[22m[39m group failures publish no bytes and a following render recovers without decoding inactive leaves[33m 438[2mms[22m[39m
+2026-11-02T10:52:28.2502885Z  [32m✓[39m lib/sync-client/tests/native.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 218[2mms[22m[39m
+2026-11-02T10:52:29.1840635Z  [32m✓[39m lib/sync-client/tests/checkpoint.test.ts [2m([22m[2m26 tests[22m[2m)[22m[33m 422[2mms[22m[39m
+2026-11-02T10:52:29.5346655Z  [32m✓[39m lib/doc-formulas/native.test.ts [2m([22m[2m24 tests[22m[2m)[22m[32m 68[2mms[22m[39m
+2026-11-02T10:52:30.0389693Z  [32m✓[39m lib/sync-transform/tests/transform.test.ts [2m([22m[2m61 tests[22m[2m)[22m[32m 19[2mms[22m[39m
+2026-11-02T10:52:30.4778530Z  [32m✓[39m lib/print/layout.test.ts [2m([22m[2m32 tests[22m[2m)[22m[32m 35[2mms[22m[39m
+2026-11-02T10:52:33.0939307Z  [32m✓[39m lib/print/sheet-image-groups.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 1358[2mms[22m[39m
+2026-11-02T10:52:33.0939939Z    [33m[2m✓[22m[39m grouped Sheets match independent native scenes across saved anchors, nested effects and every continuation[33m 972[2mms[22m[39m
+2026-11-02T10:52:33.0940449Z    [33m[2m✓[22m[39m Sheet group failures release no bytes and a complete export recovers[33m 365[2mms[22m[39m
+2026-11-02T10:52:34.3346649Z  [32m✓[39m lib/sync-client/tests/client.test.ts [2m([22m[2m12 tests[22m[2m)[22m[33m 725[2mms[22m[39m
+2026-11-02T10:52:34.8201770Z  [32m✓[39m lib/sync-transform/tests/state.test.ts [2m([22m[2m28 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+2026-11-02T10:52:35.1170128Z  [32m✓[39m lib/print/preflight.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+2026-11-02T10:52:35.9427558Z  [32m✓[39m lib/sync-client/tests/drawing-queue.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 313[2mms[22m[39m
+2026-11-02T10:52:37.1527844Z  [32m✓[39m lib/sync-client/tests/worksheet-identity.test.ts [2m([22m[2m18 tests[22m[2m)[22m[33m 692[2mms[22m[39m
+2026-11-02T10:52:39.3060278Z  [32m✓[39m lib/print/doc-floating-pages.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 1729[2mms[22m[39m
+2026-11-02T10:52:39.3061550Z    [33m[2m✓[22m[39m authored nonwrapping images continue through physical bodies without moving text or losing front/behind order[33m 888[2mms[22m[39m
+2026-11-02T10:52:39.3062426Z    [33m[2m✓[22m[39m appended floating-image pages preserve inherited terminal spacing, borders and page-break defaults[33m 838[2mms[22m[39m
+2026-11-02T10:52:42.7751849Z  [32m✓[39m lib/print/doc-layout.test.ts [2m([22m[2m7 tests[22m[2m)[22m[33m 3335[2mms[22m[39m
+2026-11-02T10:52:42.7752715Z    [33m[2m✓[22m[39m terminal font padding does not add a page while authored blank and border endings survive[33m 605[2mms[22m[39m
+2026-11-02T10:52:42.7753528Z    [33m[2m✓[22m[39m literal form feeds create distinct physical boundaries without repeated text[33m 759[2mms[22m[39m
+2026-11-02T10:52:42.7754097Z    [33m[2m✓[22m[39m physical continuation retains a heading keep chain and every kept paragraph line[33m 389[2mms[22m[39m
+2026-11-02T10:52:42.7754627Z    [33m[2m✓[22m[39m saved tall row geometry cannot disappear into a virtual-page clamp[33m 379[2mms[22m[39m
+2026-11-02T10:52:42.7755527Z    [33m[2m✓[22m[39m a saved exact tall row retains its complete blank area and background on every continuation[33m 387[2mms[22m[39m
+2026-11-02T10:52:42.7756714Z    [33m[2m✓[22m[39m nested native tables fit their containing cell or fail before clipping empty columns[33m 390[2mms[22m[39m
+2026-11-02T10:52:42.7757496Z    [33m[2m✓[22m[39m a moved first row carries its thick native outer border without orphan ink[33m 424[2mms[22m[39m
+2026-11-02T10:52:51.6355492Z  [32m✓[39m lib/sync-transform/tests/docs.test.ts [2m([22m[2m21 tests[22m[2m)[22m[33m 8348[2mms[22m[39m
+2026-11-02T10:52:51.6356215Z    [33m[2m✓[22m[39m docs converge across two clients[33m 3980[2mms[22m[39m
+2026-11-02T10:52:51.6357221Z    [33m[2m✓[22m[39m docs converge with schema text styles across two clients[33m 4218[2mms[22m[39m
+2026-11-02T10:52:53.7886246Z  [32m✓[39m lib/print/native-images.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 1854[2mms[22m[39m
+2026-11-02T10:52:53.7887165Z    [33m[2m✓[22m[39m every page preserves banded floating image phase, both break edges, corners and the late tail[33m 419[2mms[22m[39m
+2026-11-02T10:52:53.7888141Z    [33m[2m✓[22m[39m background tiles retain worksheet phase through hidden axes and every page (mixed=false)[33m 353[2mms[22m[39m
+2026-11-02T10:52:53.7889021Z    [33m[2m✓[22m[39m background tiles retain worksheet phase through hidden axes and every page (mixed=true)[33m 380[2mms[22m[39m
+2026-11-02T10:52:53.7889885Z    [33m[2m✓[22m[39m rotated image retains corners across negative worksheet extents and the final edge[33m 336[2mms[22m[39m
+2026-11-02T10:52:53.7890812Z    [33m[2m✓[22m[39m cell pictures fit merged hidden anchors and common floating crop/flip/rotation preserves source pixels[33m 364[2mms[22m[39m
+2026-11-02T10:52:54.0691242Z  [32m✓[39m lib/presence-ui/docPresence.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+2026-11-02T10:52:54.6336014Z  [32m✓[39m lib/sync-client/tests/paragraph-capture.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 65[2mms[22m[39m
+2026-11-02T10:52:55.2515443Z  [32m✓[39m lib/print/sheet-source-selection.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 237[2mms[22m[39m
+2026-11-02T10:52:56.5527640Z  [32m✓[39m lib/print/doc-image-clusters.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 1000[2mms[22m[39m
+2026-11-02T10:52:56.5528692Z    [33m[2m✓[22m[39m live wrapping combinations preserve all images, native markers and source flow[33m 999[2mms[22m[39m
+2026-11-02T10:52:57.9805662Z  [32m✓[39m lib/print/doc-multiple-images.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 1133[2mms[22m[39m
+2026-11-02T10:52:57.9806742Z    [33m[2m✓[22m[39m same-paragraph image groups preserve both images, styled text and native stacked flow[33m 1132[2mms[22m[39m
+2026-11-02T10:52:58.6562122Z  [32m✓[39m lib/sync-client/tests/admission.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 135[2mms[22m[39m
+2026-11-02T10:53:01.4288955Z  [32m✓[39m lib/print/doc-nested-formulas.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 2378[2mms[22m[39m
+2026-11-02T10:53:01.4289969Z    [33m[2m✓[22m[39m nested 2-by-2 Formula tables resolve against the actual cell viewport and merged-cell span[33m 542[2mms[22m[39m
+2026-11-02T10:53:01.4290905Z    [33m[2m✓[22m[39m thirty nested Formula rows continue completely without an editor atomic-table height limit[33m 634[2mms[22m[39m
+2026-11-02T10:53:01.4291810Z    [33m[2m✓[22m[39m deeply nested Formula output uses each containing viewport instead of the document width[33m 389[2mms[22m[39m
+2026-11-02T10:53:01.4292735Z    [33m[2m✓[22m[39m explicit nested widths must fit the native cell and failure returns no bytes before recovery[33m 426[2mms[22m[39m
+2026-11-02T10:53:01.4293319Z    [33m[2m✓[22m[39m body Formula tables fit the second native section column without covering adjacent content[33m 386[2mms[22m[39m
+2026-11-02T10:53:02.4439566Z  [32m✓[39m lib/sync-transform/tests/sheet-names.test.ts [2m([22m[2m14 tests[22m[2m)[22m[33m 515[2mms[22m[39m
+2026-11-02T10:53:03.0955795Z  [32m✓[39m lib/sync-transform/tests/reference-undo.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 160[2mms[22m[39m
+2026-11-02T10:53:03.6236859Z  [32m✓[39m lib/print/sheet-filter.test.ts [2m([22m[2m43 tests[22m[2m)[22m[32m 28[2mms[22m[39m
+2026-11-02T10:53:05.5847488Z  [32m✓[39m lib/print/doc-image-spaces.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 1531[2mms[22m[39m
+2026-11-02T10:53:05.5848421Z    [33m[2m✓[22m[39m ordinary spaces, tabs and nonbreaking spaces retain native image flow and decorated paint[33m 1528[2mms[22m[39m
+2026-11-02T10:53:07.3742403Z  [32m✓[39m lib/print/resources.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 1473[2mms[22m[39m
+2026-11-02T10:53:07.3743386Z    [33m[2m✓[22m[39m measures resource failures and cancellation with no partial output or residual native state[33m 459[2mms[22m[39m
+2026-11-02T10:53:07.3744326Z    [33m[2m✓[22m[39m rejects incomplete raster bodies and unresolved formulas without publishing earlier pages[33m 358[2mms[22m[39m
+2026-11-02T10:53:07.3747027Z    [33m[2m✓[22m[39m cleanup failure overrides a rendering rejection and tells the host to discard the process[33m 361[2mms[22m[39m
+2026-11-02T10:53:07.9718371Z  [32m✓[39m lib/sync-client/tests/docs-drawing.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 74[2mms[22m[39m
+2026-11-02T10:53:08.8857342Z  [32m✓[39m lib/sync-client/tests/doc-copy.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 156[2mms[22m[39m
+2026-11-02T10:53:23.5142396Z  [32m✓[39m lib/sync-transform/tests/drawings.test.ts [2m([22m[2m11 tests[22m[2m)[22m[33m 14140[2mms[22m[39m
+2026-11-02T10:53:23.5142940Z    [33m[2m✓[22m[39m sheet drawings converge with concurrent structure edits[33m 13968[2mms[22m[39m
+2026-11-02T10:53:23.6665452Z  [32m✓[39m lib/sync-client/tests/validation-entry.test.ts [2m([22m[2m25 tests[22m[2m)[22m[32m 64[2mms[22m[39m
+2026-11-02T10:53:24.2761836Z  [32m✓[39m lib/sync-transform/tests/content-intent.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 91[2mms[22m[39m
+2026-11-02T10:53:25.2118834Z  [32m✓[39m lib/print/doc-story-geometry.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 539[2mms[22m[39m
+2026-11-02T10:53:25.2119426Z    [33m[2m✓[22m[39m reused image-only headers reserve the complete image independently in each section geometry[33m 521[2mms[22m[39m
+2026-11-02T10:53:25.7091103Z  [32m✓[39m lib/sync-transform/tests/observations.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+2026-11-02T10:53:58.5866892Z  [32m✓[39m lib/sync-transform/tests/merges.test.ts [2m([22m[2m18 tests[22m[2m)[22m[33m 32378[2mms[22m[39m
+2026-11-02T10:53:58.5869163Z    [33m[2m✓[22m[39m merges converge with structural edits[33m 32051[2mms[22m[39m
+2026-11-02T10:53:59.6638791Z  [32m✓[39m lib/print/doc-image-pages.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 758[2mms[22m[39m
+2026-11-02T10:53:59.6639405Z    [33m[2m✓[22m[39m physical headers and columns preserve tall image paragraphs, captions, source area and final content[33m 757[2mms[22m[39m
+2026-11-02T10:54:00.6248120Z  [32m✓[39m lib/sync-transform/tests/axis.test.ts [2m([22m[2m35 tests[22m[2m)[22m[33m 448[2mms[22m[39m
+2026-11-02T10:54:00.8793187Z  [32m✓[39m lib/print/worksheet.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+2026-11-02T10:54:01.4286964Z  [32m✓[39m lib/sync-client/tests/hash.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 40[2mms[22m[39m
+2026-11-02T10:54:02.4383749Z  [32m✓[39m lib/print/doc-square-image.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 706[2mms[22m[39m
+2026-11-02T10:54:02.4386338Z    [33m[2m✓[22m[39m full-column Square preserves styled paragraph text and image geometry through equivalent native flow[33m 705[2mms[22m[39m
+2026-11-02T10:54:02.6909108Z  [32m✓[39m lib/print/doc-source-selection.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+2026-11-02T10:54:03.0392191Z  [32m✓[39m lib/print/images.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 42[2mms[22m[39m
+2026-11-02T10:54:03.6408930Z  [32m✓[39m lib/sync-client/tests/persistence.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 99[2mms[22m[39m
+2026-11-02T10:54:03.8903905Z  [32m✓[39m lib/presence-ui/rendering.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+2026-11-02T10:54:04.4268597Z  [32m✓[39m lib/sync-server/tests/cells.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 62[2mms[22m[39m
+2026-11-02T10:54:04.5091940Z  [32m✓[39m lib/diagnostics/sync.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+2026-11-02T10:54:05.3584572Z  [32m✓[39m lib/print/doc-hyphen-flow.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 548[2mms[22m[39m
+2026-11-02T10:54:05.3585580Z    [33m[2m✓[22m[39m generated hyphens fit narrow native cells deterministically beside Formula text and an inline image[33m 547[2mms[22m[39m
+2026-11-02T10:54:16.0422025Z  [32m✓[39m lib/sync-transform/tests/properties.test.ts [2m([22m[2m18 tests[22m[2m)[22m[33m 10167[2mms[22m[39m
+2026-11-02T10:54:16.0422573Z    [33m[2m✓[22m[39m row and column properties converge with structural edits[33m 9986[2mms[22m[39m
+2026-11-02T10:54:16.3004831Z  [32m✓[39m lib/doc-formulas/model.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+2026-11-02T10:54:16.6584571Z  [32m✓[39m lib/print/doc-hyperlinks.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+2026-11-02T10:54:17.7602483Z  [32m✓[39m lib/print/package.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 808[2mms[22m[39m
+2026-11-02T10:54:17.7603091Z    [33m[2m✓[22m[39m renders from an isolated standalone source package with only its declared runtime dependencies[33m 807[2mms[22m[39m
+2026-11-02T10:54:18.4952292Z  [32m✓[39m lib/sync-client/tests/formula-cache.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 145[2mms[22m[39m
+2026-11-02T10:54:19.2611599Z  [32m✓[39m lib/sync-client/tests/remote-formula.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 239[2mms[22m[39m
+2026-11-02T10:54:19.8762688Z  [32m✓[39m lib/sync-client/tests/bounds.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 112[2mms[22m[39m
+2026-11-02T10:54:20.7235958Z  [32m✓[39m lib/print/sheet-seams.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 541[2mms[22m[39m
+2026-11-02T10:54:20.7236731Z    [33m[2m✓[22m[39m every ordinary row stays pixel-complete at Sheet page seams[33m 540[2mms[22m[39m
+2026-11-02T10:54:31.5444161Z  [32m✓[39m lib/sync-transform/tests/settings.test.ts [2m([22m[2m9 tests[22m[2m)[22m[33m 10323[2mms[22m[39m
+2026-11-02T10:54:31.5445168Z    [33m[2m✓[22m[39m sheet and workbook settings converge with structural edits[33m 10183[2mms[22m[39m
+2026-11-02T10:54:31.9303549Z  [32m✓[39m lib/print/text.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+2026-11-02T10:54:32.0111966Z  [32m✓[39m lib/diagnostics/index.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+2026-11-02T10:54:32.4043861Z  [32m✓[39m lib/print/fonts.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 139[2mms[22m[39m
+2026-11-02T10:54:32.6165146Z  [32m✓[39m lib/print/pdf-geometry.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 79[2mms[22m[39m
+2026-11-02T10:54:33.4076287Z  [32m✓[39m lib/print/selection.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 494[2mms[22m[39m
+2026-11-02T10:54:33.4077112Z    [33m[2m✓[22m[39m reopens ordered subsets, empty sheets and exact sparse hidden-axis crops[33m 493[2mms[22m[39m
+2026-11-02T10:54:33.7758565Z  [32m✓[39m lib/print/doc-story-image.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+2026-11-02T10:54:33.8661771Z  [32m✓[39m lib/doc-formulas/definition.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+2026-11-02T10:54:34.5667471Z  [32m✓[39m lib/sync-transform/tests/generate-history.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 189[2mms[22m[39m
+2026-11-02T10:54:34.6512699Z  [32m✓[39m lib/doc-formulas/completion.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+2026-11-02T10:54:35.2606996Z  [32m✓[39m lib/sync-transform/tests/intent.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 123[2mms[22m[39m
+2026-11-02T10:54:35.5239330Z  [32m✓[39m lib/print/doc-image-anchor.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+2026-11-02T10:54:36.0278053Z  [32m✓[39m lib/doc-formulas/evaluate.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+2026-11-02T10:54:36.1070900Z  [32m✓[39m lib/presence-ui/index.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+2026-11-02T10:54:36.5347126Z  [32m✓[39m lib/print/doc-column-breaks.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+2026-11-02T10:54:36.6158611Z  [32m✓[39m lib/sync-transform/tests/coverage.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+2026-11-02T10:54:37.2290621Z  [32m✓[39m lib/print/entry.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 486[2mms[22m[39m
+2026-11-02T10:54:37.2291194Z    [33m[2m✓[22m[39m the one public entry keeps metadata native-free and first rendering owns inputs before yielding[33m 485[2mms[22m[39m
+2026-11-02T10:55:07.5837493Z  [32m✓[39m lib/sync-transform/tests/structure.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 29836[2mms[22m[39m
+2026-11-02T10:55:07.5838016Z    [33m[2m✓[22m[39m row, column and sheet structure converges across two clients[33m 29775[2mms[22m[39m
+2026-11-02T10:55:08.1458848Z  [32m✓[39m lib/sync-transform/tests/ids.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 33[2mms[22m[39m
+2026-11-02T10:55:08.7724009Z  [32m✓[39m lib/sync-server/tests/headless-formula.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 544[2mms[22m[39m
+2026-11-02T10:55:08.7725362Z    [33m[2m✓[22m[39m headless retained IMAGE formulas and later edits never start browser calculation[33m 543[2mms[22m[39m
+2026-11-02T10:55:08.7769601Z 
+2026-11-02T10:55:08.7772776Z [2m Test Files [22m [1m[32m85 passed[39m[22m[90m (85)[39m
+2026-11-02T10:55:08.7776633Z [2m      Tests [22m [1m[32m953 passed[39m[22m[2m | [22m[33m3 skipped[39m[90m (956)[39m
+2026-11-02T10:55:08.7777349Z [2m   Start at [22m 10:49:24
+2026-11-02T10:55:08.7780779Z [2m   Duration [22m 343.96s[2m (tests 91%, import 8%, transform 1%)[22m
+2026-11-02T10:55:08.7789031Z 
+2026-11-02T10:55:08.8268255Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-02T10:55:08.8268482Z with:
+2026-11-02T10:55:08.8268600Z   name: sheet-pdf-evidence
+2026-11-02T10:55:08.8268871Z   path: output/pdf/spn-101-candidate/*.pdf
+output/pdf/spn-101-candidate/*.png
+output/pdf/spn-101-candidate/*.json
+
+2026-11-02T10:55:08.8269143Z   retention-days: 7
+2026-11-02T10:55:08.8269264Z   if-no-files-found: warn
+2026-11-02T10:55:08.8269391Z   compression-level: 6
+2026-11-02T10:55:08.8269509Z   overwrite: false
+2026-11-02T10:55:08.8269628Z   include-hidden-files: false
+2026-11-02T10:55:08.8269758Z   archive: true
+2026-11-02T10:55:08.8269871Z ##[endgroup]
+2026-11-02T10:55:08.9336857Z With the provided path, there will be 130 files uploaded
+2026-11-02T10:55:08.9340602Z Artifact name is valid!
+2026-11-02T10:55:08.9340913Z Root directory input is valid!
+2026-11-02T10:55:09.2186983Z Uploading artifact: sheet-pdf-evidence.zip
+2026-11-02T10:55:09.2212078Z Beginning upload of artifact content to blob storage
+2026-11-02T10:55:09.6225945Z Uploaded bytes 736834
+2026-11-02T10:55:09.6612357Z Finished uploading artifact content to blob storage!
+2026-11-02T10:55:09.6613136Z SHA256 digest of uploaded artifact is 88dd417d9458d75b95a842d24e8dca82f923e90217b589f983680435d9122535
+2026-11-02T10:55:09.6613655Z Finalizing artifact upload
+2026-11-02T10:55:10.3490824Z Artifact sheet-pdf-evidence successfully finalized. Artifact ID 13134802497
+2026-11-02T10:55:10.3491331Z Artifact sheet-pdf-evidence has been successfully uploaded! Final size is 736834 bytes. Artifact ID is 13134802497
+2026-11-02T10:55:10.3493635Z Artifact download URL: https://github.com/mxbaylee/spinel/actions/runs/41430568768/artifacts/13134802497
+2026-11-02T10:55:10.3635120Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-02T10:55:10.3635355Z with:
+2026-11-02T10:55:10.3635474Z   name: doc-pdf-evidence
+2026-11-02T10:55:10.3635678Z   path: output/pdf/spn-102/*.pdf
+output/pdf/spn-102/*.png
+output/pdf/spn-102/*.json
+
+2026-11-02T10:55:10.3635896Z   retention-days: 7
+2026-11-02T10:55:10.3636016Z   if-no-files-found: warn
+2026-11-02T10:55:10.3636142Z   compression-level: 6
+2026-11-02T10:55:10.3636258Z   overwrite: false
+2026-11-02T10:55:10.3636378Z   include-hidden-files: false
+2026-11-02T10:55:10.3636507Z   archive: true
+2026-11-02T10:55:10.3636614Z ##[endgroup]
+2026-11-02T10:55:10.5259971Z With the provided path, there will be 757 files uploaded
+2026-11-02T10:55:10.5264066Z Artifact name is valid!
+2026-11-02T10:55:10.5264560Z Root directory input is valid!
+2026-11-02T10:55:10.8027411Z Uploading artifact: doc-pdf-evidence.zip
+2026-11-02T10:55:10.8050606Z Beginning upload of artifact content to blob storage
+2026-11-02T10:55:11.6488180Z Uploaded bytes 8388608
+2026-11-02T10:55:11.6918392Z Uploaded bytes 8594209
+2026-11-02T10:55:11.7333538Z Finished uploading artifact content to blob storage!
+2026-11-02T10:55:11.7334164Z SHA256 digest of uploaded artifact is 12277a2c4796732f5f5723568b9b83efc82fb6bc81271d702bcc3113a4467fce
+2026-11-02T10:55:11.7334607Z Finalizing artifact upload
+2026-11-02T10:55:12.3111677Z Artifact doc-pdf-evidence successfully finalized. Artifact ID 13134643236
+2026-11-02T10:55:12.3112339Z Artifact doc-pdf-evidence has been successfully uploaded! Final size is 8594209 bytes. Artifact ID is 13134643236
+2026-11-02T10:55:12.3115439Z Artifact download URL: https://github.com/mxbaylee/spinel/actions/runs/41430568768/artifacts/13134643236
+2026-11-02T10:55:12.3348411Z Post job cleanup.
+2026-11-02T10:55:12.4227675Z Post job cleanup.
+2026-11-02T10:55:12.4909252Z [command]/usr/bin/git version
+2026-11-02T10:55:12.4946900Z git version 2.56.0
+2026-11-02T10:55:12.4970332Z Temporarily overriding HOME='/home/runner/work/_temp/1106f2df-18e4-495e-a3d6-ee0653788b95' before making global git config changes
+2026-11-02T10:55:12.4971173Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-02T10:55:12.4974060Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-02T10:55:12.5008725Z Removing SSH command configuration
+2026-11-02T10:55:12.5014032Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-02T10:55:12.5055821Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-02T10:55:12.5279832Z Removing HTTP extra header
+2026-11-02T10:55:12.5286227Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-02T10:55:12.5341377Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-02T10:55:12.5600152Z Removing includeIf entries pointing to credentials config files
+2026-11-02T10:55:12.5606534Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-02T10:55:12.5656987Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-02T10:55:12.6019054Z Cleaning up orphan processes

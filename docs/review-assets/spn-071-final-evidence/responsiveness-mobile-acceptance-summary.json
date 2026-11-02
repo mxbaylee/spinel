@@ -1,0 +1,314 @@
+{
+  "preset": "mobile",
+  "comparisonPassed": true,
+  "rows": [
+    {
+      "sample": "plain-1",
+      "source": "3ddf9dcb01807ce23a78118a9a7c45f7fd164d14",
+      "attempt": 0,
+      "completed": true,
+      "budgetEnforced": true,
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetResults": {
+        "inputP95": true,
+        "longestTask": true,
+        "capacityFlushP95": true,
+        "idleFlushP95": true,
+        "flushMaximum": true,
+        "boundedHistory": true,
+        "boundedCollaboration": true,
+        "observedCapacityFlushes": true,
+        "browserLocalDrainedWithinOneSecond": true
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 53.0999999998603,
+          "p95": 82.5,
+          "max": 166.19999999995343,
+          "sum": 108787.399999985
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 59.9000000001397,
+          "p95": 89.69999999995343,
+          "max": 221.19999999995343,
+          "sum": 123290.3999999999
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 893,
+          "p50": 61,
+          "p95": 88,
+          "max": 149,
+          "sum": 57809
+        },
+        "totalBlockingMs": 13159,
+        "capacityFlushPairMs": {
+          "count": 65,
+          "p50": 8.900000000139698,
+          "p95": 22.699999999953434,
+          "max": 34.800000000046566,
+          "sum": 772.5000000006985
+        },
+        "idleFlushPairMs": {
+          "count": 1,
+          "p50": 2.4000000001396984,
+          "p95": 2.4000000001396984,
+          "max": 2.4000000001396984,
+          "sum": 2.4000000001396984
+        },
+        "pairedFlushMaximumMs": 34.800000000046566,
+        "postFinalKeyDrainUpperBoundMs": 527.1000000000931,
+        "firstVerifiedBrowserLocalDrainMs": 355,
+        "lateReadMinusLocalWitnessMs": 172.10000000009313,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed",
+      "undoRedoOutcome": "passed",
+      "errors": [],
+      "reloads": [],
+      "sha256": "4911ae22a28c23835964e4ddf5f6d76c8a6aa77a0758615b08a84730b4f615ae"
+    },
+    {
+      "sample": "plain-2",
+      "source": "3ddf9dcb01807ce23a78118a9a7c45f7fd164d14",
+      "attempt": 0,
+      "completed": true,
+      "budgetEnforced": true,
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetResults": {
+        "inputP95": true,
+        "longestTask": true,
+        "capacityFlushP95": true,
+        "idleFlushP95": true,
+        "flushMaximum": true,
+        "boundedHistory": true,
+        "boundedCollaboration": true,
+        "observedCapacityFlushes": true,
+        "browserLocalDrainedWithinOneSecond": true
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 53.5,
+          "p95": 84,
+          "max": 208.4000000001397,
+          "sum": 109605.89999998873
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 60.39999999990687,
+          "p95": 91.80000000004657,
+          "max": 219.80000000004657,
+          "sum": 124152.30000000005
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 869,
+          "p50": 62,
+          "p95": 90,
+          "max": 183,
+          "sum": 57316
+        },
+        "totalBlockingMs": 13866,
+        "capacityFlushPairMs": {
+          "count": 65,
+          "p50": 8.800000000046566,
+          "p95": 23.800000000046566,
+          "max": 36.10000000009313,
+          "sum": 765.9999999997672
+        },
+        "idleFlushPairMs": {
+          "count": 1,
+          "p50": 1.8999999999068677,
+          "p95": 1.8999999999068677,
+          "max": 1.8999999999068677,
+          "sum": 1.8999999999068677
+        },
+        "pairedFlushMaximumMs": 36.10000000009313,
+        "postFinalKeyDrainUpperBoundMs": 773.6999999999534,
+        "firstVerifiedBrowserLocalDrainMs": 429.5999999998603,
+        "lateReadMinusLocalWitnessMs": 344.10000000009313,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed",
+      "undoRedoOutcome": "passed",
+      "errors": [],
+      "reloads": [],
+      "sha256": "e2dec7d67555d1face27bfa3954146be1a0cc14520240e27a82431aa280e6528"
+    },
+    {
+      "sample": "plain-3",
+      "source": "3ddf9dcb01807ce23a78118a9a7c45f7fd164d14",
+      "attempt": 0,
+      "completed": true,
+      "budgetEnforced": true,
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetResults": {
+        "inputP95": true,
+        "longestTask": true,
+        "capacityFlushP95": true,
+        "idleFlushP95": true,
+        "flushMaximum": true,
+        "boundedHistory": true,
+        "boundedCollaboration": true,
+        "observedCapacityFlushes": true,
+        "browserLocalDrainedWithinOneSecond": true
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 53.39999999990687,
+          "p95": 82.60000000009313,
+          "max": 155.79999999981374,
+          "sum": 109255.09999998915
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 60.699999999953434,
+          "p95": 90.60000000009313,
+          "max": 195.19999999995343,
+          "sum": 124016
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 846,
+          "p50": 62,
+          "p95": 87,
+          "max": 138,
+          "sum": 55182
+        },
+        "totalBlockingMs": 12883,
+        "capacityFlushPairMs": {
+          "count": 65,
+          "p50": 9.100000000093132,
+          "p95": 25.5,
+          "max": 33.9000000001397,
+          "sum": 805.7999999998137
+        },
+        "idleFlushPairMs": {
+          "count": 1,
+          "p50": 1.5,
+          "p95": 1.5,
+          "max": 1.5,
+          "sum": 1.5
+        },
+        "pairedFlushMaximumMs": 33.9000000001397,
+        "postFinalKeyDrainUpperBoundMs": 649,
+        "firstVerifiedBrowserLocalDrainMs": 347.5,
+        "lateReadMinusLocalWitnessMs": 301.5,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed",
+      "undoRedoOutcome": "passed",
+      "errors": [],
+      "reloads": [],
+      "sha256": "25755f90e9a5aa64265b5aeac6a941cd4ea4702d297fc94beb0f939085d801b1"
+    },
+    {
+      "sample": "profile",
+      "source": "3ddf9dcb01807ce23a78118a9a7c45f7fd164d14",
+      "attempt": 0,
+      "completed": true,
+      "budgetEnforced": false,
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetResults": {
+        "inputP95": true,
+        "longestTask": true,
+        "capacityFlushP95": true,
+        "idleFlushP95": true,
+        "flushMaximum": true,
+        "boundedHistory": true,
+        "boundedCollaboration": true,
+        "observedCapacityFlushes": true,
+        "browserLocalDrainedWithinOneSecond": true
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 56,
+          "p95": 85.19999999995343,
+          "max": 192.80000000004657,
+          "sum": 114359.49999999302
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 62.9000000001397,
+          "p95": 93.39999999990687,
+          "max": 205.39999999990687,
+          "sum": 129503.80000000005
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 924,
+          "p50": 63,
+          "p95": 91,
+          "max": 160,
+          "sum": 61952
+        },
+        "totalBlockingMs": 15752,
+        "capacityFlushPairMs": {
+          "count": 65,
+          "p50": 11.100000000093132,
+          "p95": 29.199999999953434,
+          "max": 45.5,
+          "sum": 927.4999999995343
+        },
+        "idleFlushPairMs": {
+          "count": 1,
+          "p50": 1.6000000000931323,
+          "p95": 1.6000000000931323,
+          "max": 1.6000000000931323,
+          "sum": 1.6000000000931323
+        },
+        "pairedFlushMaximumMs": 45.5,
+        "postFinalKeyDrainUpperBoundMs": 499.19999999995343,
+        "firstVerifiedBrowserLocalDrainMs": 319.69999999995343,
+        "lateReadMinusLocalWitnessMs": 179.5,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed",
+      "undoRedoOutcome": "passed",
+      "errors": [],
+      "reloads": [],
+      "sha256": "63acf242353089e964bde991972cef96927e2b9ae8e4f5587ed5b9b354cedb03"
+    }
+  ]
+}

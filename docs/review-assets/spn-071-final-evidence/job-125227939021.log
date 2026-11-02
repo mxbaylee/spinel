@@ -1,0 +1,1642 @@
+﻿2026-11-02T10:50:13.9393848Z Current runner version: '2.338.2'
+2026-11-02T10:50:13.9424607Z ##[group]Runner Image Provisioner
+2026-11-02T10:50:13.9425583Z Hosted Compute Agent
+2026-11-02T10:50:13.9426230Z Version: 20261021.618
+2026-11-02T10:50:13.9427534Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-11-02T10:50:13.9428388Z Build Date: 2026-10-21T00:45:21Z
+2026-11-02T10:50:13.9429280Z Worker ID: {36253c16-d8f8-4c46-a186-2bd1f6304f2b}
+2026-11-02T10:50:13.9430114Z Region: westus
+2026-11-02T10:50:13.9430731Z Cloud: Azure
+2026-11-02T10:50:13.9431452Z ##[endgroup]
+2026-11-02T10:50:13.9433111Z ##[group]Operating System
+2026-11-02T10:50:13.9433891Z Ubuntu
+2026-11-02T10:50:13.9434502Z 24.04.5
+2026-11-02T10:50:13.9435080Z LTS
+2026-11-02T10:50:13.9435752Z ##[endgroup]
+2026-11-02T10:50:13.9436381Z ##[group]Runner Image
+2026-11-02T10:50:13.9437404Z Image: ubuntu-24.04
+2026-11-02T10:50:13.9438074Z Version: 20261025.353.1
+2026-11-02T10:50:13.9439636Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+2026-11-02T10:50:13.9441412Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+2026-11-02T10:50:13.9442578Z ##[endgroup]
+2026-11-02T10:50:13.9443799Z ##[group]GITHUB_TOKEN Permissions
+2026-11-02T10:50:13.9446069Z Contents: read
+2026-11-02T10:50:13.9446990Z Metadata: read
+2026-11-02T10:50:13.9447597Z ##[endgroup]
+2026-11-02T10:50:13.9450101Z Secret source: Actions
+2026-11-02T10:50:13.9451204Z Cache mode: write
+2026-11-02T10:50:13.9452026Z Prepare workflow directory
+2026-11-02T10:50:13.9823806Z Prepare all required actions
+2026-11-02T10:50:13.9878684Z Getting action download info
+2026-11-02T10:50:14.3852596Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-02T10:50:14.5107134Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+2026-11-02T10:50:14.6005211Z Download action repository 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-11-02T10:50:14.7788223Z Complete job name: Unit tests (remaining)
+2026-11-02T10:50:14.8698966Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-02T10:50:14.8700081Z with:
+2026-11-02T10:50:14.8700618Z   persist-credentials: false
+2026-11-02T10:50:14.8701183Z   repository: mxbaylee/spinel
+2026-11-02T10:50:14.8705588Z   token: ***
+2026-11-02T10:50:14.8706050Z   ssh-strict: true
+2026-11-02T10:50:14.8706712Z   ssh-user: git
+2026-11-02T10:50:14.8707167Z   clean: true
+2026-11-02T10:50:14.8707641Z   sparse-checkout-cone-mode: true
+2026-11-02T10:50:14.8708207Z   fetch-depth: 1
+2026-11-02T10:50:14.8708663Z   fetch-tags: false
+2026-11-02T10:50:14.8709138Z   show-progress: true
+2026-11-02T10:50:14.8709618Z   lfs: false
+2026-11-02T10:50:14.8710062Z   submodules: false
+2026-11-02T10:50:14.8710541Z   set-safe-directory: true
+2026-11-02T10:50:14.8711083Z   allow-unsafe-pr-checkout: false
+2026-11-02T10:50:14.8711930Z ##[endgroup]
+2026-11-02T10:50:15.2211177Z Syncing repository: mxbaylee/spinel
+2026-11-02T10:50:15.2213833Z ##[group]Getting Git version info
+2026-11-02T10:50:15.2215161Z Working directory is '/home/runner/work/spinel/spinel'
+2026-11-02T10:50:15.2217211Z [command]/usr/bin/git version
+2026-11-02T10:50:15.2305352Z git version 2.56.0
+2026-11-02T10:50:15.2331506Z ##[endgroup]
+2026-11-02T10:50:15.2343273Z Temporarily overriding HOME='/home/runner/work/_temp/6847f442-7cf9-44b3-a71f-e430b3feb1e7' before making global git config changes
+2026-11-02T10:50:15.2345721Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-02T10:50:15.2350770Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-02T10:50:15.2411121Z Deleting the contents of '/home/runner/work/spinel/spinel'
+2026-11-02T10:50:15.2415015Z ##[group]Determining repository object format
+2026-11-02T10:50:15.2416966Z ##[endgroup]
+2026-11-02T10:50:15.2418797Z ##[group]Initializing the repository
+2026-11-02T10:50:15.2421973Z [command]/usr/bin/git init /home/runner/work/spinel/spinel
+2026-11-02T10:50:15.2558671Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-02T10:50:15.2560596Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-02T10:50:15.2563565Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-02T10:50:15.2564920Z hint: call:
+2026-11-02T10:50:15.2565634Z hint:
+2026-11-02T10:50:15.2566833Z hint: 	git config --global init.defaultBranch <name>
+2026-11-02T10:50:15.2568961Z hint:
+2026-11-02T10:50:15.2570391Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-02T10:50:15.2572357Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-02T10:50:15.2574270Z hint:
+2026-11-02T10:50:15.2576846Z hint: 	git branch -m <name>
+2026-11-02T10:50:15.2578288Z hint:
+2026-11-02T10:50:15.2579806Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-02T10:50:15.2592042Z Initialized empty Git repository in /home/runner/work/spinel/spinel/.git/
+2026-11-02T10:50:15.2600390Z [command]/usr/bin/git remote add origin https://github.com/mxbaylee/spinel
+2026-11-02T10:50:15.2660029Z ##[endgroup]
+2026-11-02T10:50:15.2661079Z ##[group]Disabling automatic garbage collection
+2026-11-02T10:50:15.2665628Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-02T10:50:15.2715624Z ##[endgroup]
+2026-11-02T10:50:15.2717496Z ##[group]Setting up auth
+2026-11-02T10:50:15.2718441Z Removing SSH command configuration
+2026-11-02T10:50:15.2723168Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-02T10:50:15.2769523Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-02T10:50:15.3277340Z Removing HTTP extra header
+2026-11-02T10:50:15.3283858Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-02T10:50:15.3347895Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-02T10:50:15.3610002Z Removing includeIf entries pointing to credentials config files
+2026-11-02T10:50:15.3617638Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-02T10:50:15.3669568Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-02T10:50:15.3929967Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-a34a43d8-cf3a-47a2-9a62-460196e94222.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-02T10:50:15.3985950Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git.path /home/runner/work/_temp/git-credentials-a34a43d8-cf3a-47a2-9a62-460196e94222.config
+2026-11-02T10:50:15.4032004Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-a34a43d8-cf3a-47a2-9a62-460196e94222.config
+2026-11-02T10:50:15.4078319Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-a34a43d8-cf3a-47a2-9a62-460196e94222.config
+2026-11-02T10:50:15.4128235Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-a34a43d8-cf3a-47a2-9a62-460196e94222.config
+2026-11-02T10:50:15.4171358Z ##[endgroup]
+2026-11-02T10:50:15.4179331Z ##[group]Fetching the repository
+2026-11-02T10:50:15.4181263Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +3ddf9dcb01807ce23a78118a9a7c45f7fd164d14:refs/remotes/pull/226/merge
+2026-11-02T10:50:18.8971178Z From https://github.com/mxbaylee/spinel
+2026-11-02T10:50:18.8973259Z  * [new ref]         3ddf9dcb01807ce23a78118a9a7c45f7fd164d14 -> pull/226/merge
+2026-11-02T10:50:18.8997360Z ##[endgroup]
+2026-11-02T10:50:18.9008132Z ##[group]Determining the checkout info
+2026-11-02T10:50:18.9009619Z ##[endgroup]
+2026-11-02T10:50:18.9010467Z [command]/usr/bin/git sparse-checkout disable
+2026-11-02T10:50:18.9074737Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-02T10:50:18.9127659Z ##[group]Checking out the ref
+2026-11-02T10:50:18.9134226Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/226/merge
+2026-11-02T10:50:19.4285061Z Note: switching to 'refs/remotes/pull/226/merge'.
+2026-11-02T10:50:19.4286342Z 
+2026-11-02T10:50:19.4287557Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-11-02T10:50:19.4289456Z changes and commit them, and you can discard any commits you make in this
+2026-11-02T10:50:19.4291387Z state without impacting any branches by switching back to a branch.
+2026-11-02T10:50:19.4292426Z 
+2026-11-02T10:50:19.4293271Z If you want to create a new branch to retain commits you create, you may
+2026-11-02T10:50:19.4389829Z do so (now or later) by using -c with the switch command. Example:
+2026-11-02T10:50:19.4391238Z 
+2026-11-02T10:50:19.4391974Z   git switch -c <new-branch-name>
+2026-11-02T10:50:19.4392843Z 
+2026-11-02T10:50:19.4393356Z Or undo this operation with:
+2026-11-02T10:50:19.4393983Z 
+2026-11-02T10:50:19.4394411Z   git switch -
+2026-11-02T10:50:19.4394942Z 
+2026-11-02T10:50:19.4396003Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-11-02T10:50:19.4397500Z 
+2026-11-02T10:50:19.4398680Z HEAD is now at 3ddf9dc Merge c51458573f3a2cf2f5ff3701cf27abfcfe035935 into cc8364693791d981b86e80efc40bedba7fff2c08
+2026-11-02T10:50:19.4403854Z ##[endgroup]
+2026-11-02T10:50:19.4407531Z [command]/usr/bin/git log -1 --format=%H
+2026-11-02T10:50:19.4425367Z 3ddf9dcb01807ce23a78118a9a7c45f7fd164d14
+2026-11-02T10:50:19.4436794Z ##[group]Removing auth
+2026-11-02T10:50:19.4437609Z Removing SSH command configuration
+2026-11-02T10:50:19.4441022Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-02T10:50:19.4486866Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-02T10:50:19.4743768Z Removing HTTP extra header
+2026-11-02T10:50:19.4748168Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-02T10:50:19.4795727Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-02T10:50:19.5051638Z Removing includeIf entries pointing to credentials config files
+2026-11-02T10:50:19.5055519Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-02T10:50:19.5099191Z includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-02T10:50:19.5101139Z includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-02T10:50:19.5103392Z includeif.gitdir:/github/workspace/.git.path
+2026-11-02T10:50:19.5104954Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-02T10:50:19.5109252Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-02T10:50:19.5144852Z /home/runner/work/_temp/git-credentials-a34a43d8-cf3a-47a2-9a62-460196e94222.config
+2026-11-02T10:50:19.5160542Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-a34a43d8\-cf3a\-47a2\-9a62\-460196e94222\.config
+2026-11-02T10:50:19.5211767Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-02T10:50:19.5246169Z /home/runner/work/_temp/git-credentials-a34a43d8-cf3a-47a2-9a62-460196e94222.config
+2026-11-02T10:50:19.5255981Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-a34a43d8\-cf3a\-47a2\-9a62\-460196e94222\.config
+2026-11-02T10:50:19.5309358Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-02T10:50:19.5344466Z /github/runner_temp/git-credentials-a34a43d8-cf3a-47a2-9a62-460196e94222.config
+2026-11-02T10:50:19.5353650Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-a34a43d8\-cf3a\-47a2\-9a62\-460196e94222\.config
+2026-11-02T10:50:19.5400796Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-02T10:50:19.5438104Z /github/runner_temp/git-credentials-a34a43d8-cf3a-47a2-9a62-460196e94222.config
+2026-11-02T10:50:19.5448083Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-a34a43d8\-cf3a\-47a2\-9a62\-460196e94222\.config
+2026-11-02T10:50:19.5492715Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-02T10:50:19.5745751Z Removing credentials config '/home/runner/work/_temp/git-credentials-a34a43d8-cf3a-47a2-9a62-460196e94222.config'
+2026-11-02T10:50:19.5757245Z ##[endgroup]
+2026-11-02T10:50:19.6110510Z ##[group]Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+2026-11-02T10:50:19.6111691Z with:
+2026-11-02T10:50:19.6112531Z   node-version-file: .nvmrc
+2026-11-02T10:50:19.6113462Z   package-manager-cache: false
+2026-11-02T10:50:19.6114391Z   check-latest: false
+2026-11-02T10:50:19.6119130Z   token: ***
+2026-11-02T10:50:19.6120012Z ##[endgroup]
+2026-11-02T10:50:19.7442300Z Node version file is not JSON file
+2026-11-02T10:50:19.7447753Z Node version file is not TOML file
+2026-11-02T10:50:19.7449835Z Resolved .nvmrc as 26.12.1
+2026-11-02T10:50:19.7470581Z Attempting to download 26.12.1...
+2026-11-02T10:50:20.4558483Z Acquiring 26.12.1 - x64 from https://github.com/actions/node-versions/releases/download/26.12.1-39618969937/node-26.12.1-linux-x64.tar.gz
+2026-11-02T10:50:21.0120542Z Extracting ...
+2026-11-02T10:50:21.0272408Z [command]/usr/bin/tar xz --strip 1 --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/2516d184-7254-4f57-acb3-4dd4631835e2 -f /home/runner/work/_temp/6c01b084-defe-4060-8c04-44e26ebc2f83
+2026-11-02T10:50:22.4158049Z Adding to the cache ...
+2026-11-02T10:50:24.2857222Z ##[group]Environment details
+2026-11-02T10:50:24.5265837Z node: v26.12.1
+2026-11-02T10:50:24.5266877Z npm: 11.20.0
+2026-11-02T10:50:24.5267321Z yarn: 1.22.22
+2026-11-02T10:50:24.5268292Z ##[endgroup]
+2026-11-02T10:50:24.5538757Z ##[group]Run npm ci
+2026-11-02T10:50:24.5539154Z [36;1mnpm ci[0m
+2026-11-02T10:50:24.5565521Z shell: /usr/bin/bash -e {0}
+2026-11-02T10:50:24.5565872Z ##[endgroup]
+2026-11-02T10:50:38.9078526Z 
+2026-11-02T10:50:38.9088753Z > postinstall
+2026-11-02T10:50:38.9091536Z > node scripts/dependencies/patch-univer-core.ts && node scripts/dependencies/patch-univer-docs.ts && node scripts/dependencies/patch-univer-ui.ts && node scripts/dependencies/patch-univer-drawing.ts && node scripts/dependencies/patch-univer-docs-ui.ts
+2026-11-02T10:50:38.9093635Z 
+2026-11-02T10:50:39.4956308Z 
+2026-11-02T10:50:39.4957655Z added 501 packages, and audited 509 packages in 15s
+2026-11-02T10:50:39.4958405Z 
+2026-11-02T10:50:39.4958761Z 136 packages are looking for funding
+2026-11-02T10:50:39.4959424Z   run `npm fund` for details
+2026-11-02T10:50:39.5198556Z 
+2026-11-02T10:50:39.5199426Z 4 moderate severity vulnerabilities
+2026-11-02T10:50:39.5199923Z 
+2026-11-02T10:50:39.5200551Z To address all issues (including breaking changes), run:
+2026-11-02T10:50:39.5202276Z   npm audit fix --force
+2026-11-02T10:50:39.5202712Z 
+2026-11-02T10:50:39.5203181Z Run `npm audit` for details.
+2026-11-02T10:50:39.5211376Z npm warn install-scripts 2 packages have install scripts not yet covered by allowScripts:
+2026-11-02T10:50:39.5212805Z npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+2026-11-02T10:50:39.5214010Z npm warn install-scripts   protobufjs@7.6.6 (postinstall: node scripts/postinstall)
+2026-11-02T10:50:39.5214848Z npm warn install-scripts
+2026-11-02T10:50:39.5216018Z npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+2026-11-02T10:50:39.6083207Z ##[group]Run node scripts/ci/prefer-ubuntu-archive.ts
+2026-11-02T10:50:39.6084294Z [36;1mnode scripts/ci/prefer-ubuntu-archive.ts[0m
+2026-11-02T10:50:39.6085147Z [36;1msudo apt-get update[0m
+2026-11-02T10:50:39.6086020Z [36;1msudo apt-get install -y --no-install-recommends tini[0m
+2026-11-02T10:50:39.6108407Z shell: /usr/bin/bash -e {0}
+2026-11-02T10:50:39.6108754Z ##[endgroup]
+2026-11-02T10:50:39.7003451Z Preferred the official Ubuntu archive; Azure remains the fallback.
+2026-11-02T10:50:39.8238135Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-11-02T10:50:39.8377262Z Get:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+2026-11-02T10:50:39.9246977Z Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [682 kB]
+2026-11-02T10:50:39.9391548Z Get:8 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [617 kB]
+2026-11-02T10:50:40.3020191Z Hit:2 https://archive.ubuntu.com/ubuntu noble InRelease
+2026-11-02T10:50:40.3773364Z Get:3 https://archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+2026-11-02T10:50:40.6454151Z Get:4 https://archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+2026-11-02T10:50:40.7624517Z Get:5 https://archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+2026-11-02T10:50:40.8735970Z Get:9 https://archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1408 kB]
+2026-11-02T10:50:41.1760732Z Get:10 https://archive.ubuntu.com/ubuntu noble-updates/main Translation-en [311 kB]
+2026-11-02T10:50:41.2562643Z Get:11 https://archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1707 kB]
+2026-11-02T10:50:41.3858820Z Get:12 https://archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [343 kB]
+2026-11-02T10:50:41.4639179Z Get:13 https://archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [1813 kB]
+2026-11-02T10:50:41.5824538Z Get:14 https://archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [412 kB]
+2026-11-02T10:50:41.6613537Z Get:15 https://archive.ubuntu.com/ubuntu noble-updates/multiverse Translation-en [14.3 kB]
+2026-11-02T10:50:41.7311270Z Get:16 https://archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1146 kB]
+2026-11-02T10:50:41.8603720Z Get:17 https://archive.ubuntu.com/ubuntu noble-security/main Translation-en [231 kB]
+2026-11-02T10:50:41.9503797Z Get:18 https://archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1223 kB]
+2026-11-02T10:50:42.0617503Z Get:19 https://archive.ubuntu.com/ubuntu noble-security/universe Translation-en [246 kB]
+2026-11-02T10:50:45.8051151Z Fetched 10.5 MB in 2s (4488 kB/s)
+2026-11-02T10:50:46.9365244Z Reading package lists...
+2026-11-02T10:50:46.9793585Z Reading package lists...
+2026-11-02T10:50:47.2088627Z Building dependency tree...
+2026-11-02T10:50:47.2096286Z Reading state information...
+2026-11-02T10:50:47.3821215Z The following NEW packages will be installed:
+2026-11-02T10:50:47.3822161Z   tini
+2026-11-02T10:50:47.4044399Z 0 upgraded, 1 newly installed, 0 to remove and 6 not upgraded.
+2026-11-02T10:50:47.4045488Z Need to get 276 kB of archives.
+2026-11-02T10:50:47.4046933Z After this operation, 835 kB of additional disk space will be used.
+2026-11-02T10:50:47.4048175Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-11-02T10:50:48.1588179Z Get:2 https://archive.ubuntu.com/ubuntu noble/universe amd64 tini amd64 0.19.0-1 [276 kB]
+2026-11-02T10:50:48.9917403Z Fetched 276 kB in 1s (211 kB/s)
+2026-11-02T10:50:49.0887061Z Selecting previously unselected package tini.
+2026-11-02T10:50:49.1218062Z (Reading database ... 
+2026-11-02T10:50:49.1218670Z (Reading database ... 5%
+2026-11-02T10:50:49.1219255Z (Reading database ... 10%
+2026-11-02T10:50:49.1219833Z (Reading database ... 15%
+2026-11-02T10:50:49.1220937Z (Reading database ... 20%
+2026-11-02T10:50:49.1221705Z (Reading database ... 25%
+2026-11-02T10:50:49.1222440Z (Reading database ... 30%
+2026-11-02T10:50:49.1223014Z (Reading database ... 35%
+2026-11-02T10:50:49.1224119Z (Reading database ... 40%
+2026-11-02T10:50:49.1224950Z (Reading database ... 45%
+2026-11-02T10:50:49.1226046Z (Reading database ... 50%
+2026-11-02T10:50:49.1281034Z (Reading database ... 55%
+2026-11-02T10:50:49.2847860Z (Reading database ... 60%
+2026-11-02T10:50:49.4492049Z (Reading database ... 65%
+2026-11-02T10:50:49.6898051Z (Reading database ... 70%
+2026-11-02T10:50:49.8979250Z (Reading database ... 75%
+2026-11-02T10:50:49.9997084Z (Reading database ... 80%
+2026-11-02T10:50:50.1018112Z (Reading database ... 85%
+2026-11-02T10:50:50.2435935Z (Reading database ... 90%
+2026-11-02T10:50:50.3938208Z (Reading database ... 95%
+2026-11-02T10:50:50.3939433Z (Reading database ... 100%
+2026-11-02T10:50:50.3941307Z (Reading database ... 215504 files and directories currently installed.)
+2026-11-02T10:50:50.3991299Z Preparing to unpack .../tini_0.19.0-1_amd64.deb ...
+2026-11-02T10:50:50.4015808Z Unpacking tini (0.19.0-1) ...
+2026-11-02T10:50:50.4651744Z Setting up tini (0.19.0-1) ...
+2026-11-02T10:50:51.2024427Z 
+2026-11-02T10:50:51.2025545Z Running kernel seems to be up-to-date.
+2026-11-02T10:50:51.2026733Z 
+2026-11-02T10:50:51.2027263Z No services need to be restarted.
+2026-11-02T10:50:51.2027935Z 
+2026-11-02T10:50:51.2028504Z No containers need to be restarted.
+2026-11-02T10:50:51.2029159Z 
+2026-11-02T10:50:51.2029893Z No user sessions are running outdated binaries.
+2026-11-02T10:50:51.2030504Z 
+2026-11-02T10:50:51.2031281Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+2026-11-02T10:50:52.1531127Z ##[group]Run case "$SUITE" in
+2026-11-02T10:50:52.1531546Z [36;1mcase "$SUITE" in[0m
+2026-11-02T10:50:52.1531871Z [36;1m  supervisor)[0m
+2026-11-02T10:50:52.1532509Z [36;1m    node scripts/ci/pid-namespace.ts npx vitest run src/server/maintenance/supervisor.test.ts[0m
+2026-11-02T10:50:52.1533217Z [36;1m    ;;[0m
+2026-11-02T10:50:52.1533498Z [36;1m  recovery)[0m
+2026-11-02T10:50:52.1534128Z [36;1m    node scripts/ci/pid-namespace.ts npx vitest run src/server/maintenance/ src/server/backup/ \[0m
+2026-11-02T10:50:52.1534961Z [36;1m      --exclude 'src/server/maintenance/supervisor.test.ts'[0m
+2026-11-02T10:50:52.1535454Z [36;1m    ;;[0m
+2026-11-02T10:50:52.1535735Z [36;1m  remaining)[0m
+2026-11-02T10:50:52.1536231Z [36;1m    # Exact exclusions keep future test files in this partition; it[0m
+2026-11-02T10:50:52.1537082Z [36;1m    # also runs the node:test script suites.[0m
+2026-11-02T10:50:52.1537767Z [36;1m    node scripts/ci/pid-namespace.ts npm test -- --exclude 'lib/**' \[0m
+2026-11-02T10:50:52.1538387Z [36;1m      --exclude 'src/server/maintenance/**' \[0m
+2026-11-02T10:50:52.1538849Z [36;1m      --exclude 'src/server/backup/**'[0m
+2026-11-02T10:50:52.1539247Z [36;1m    ;;[0m
+2026-11-02T10:50:52.1539511Z [36;1m  *)[0m
+2026-11-02T10:50:52.1539848Z [36;1m    echo "Unknown unit partition: $SUITE" >&2[0m
+2026-11-02T10:50:52.1540279Z [36;1m    exit 1[0m
+2026-11-02T10:50:52.1540562Z [36;1m    ;;[0m
+2026-11-02T10:50:52.1540827Z [36;1mesac[0m
+2026-11-02T10:50:52.1562272Z shell: /usr/bin/bash -e {0}
+2026-11-02T10:50:52.1562645Z env:
+2026-11-02T10:50:52.1562936Z   SUITE: remaining
+2026-11-02T10:50:52.1563255Z ##[endgroup]
+2026-11-02T10:50:52.4920029Z 
+2026-11-02T10:50:52.4920522Z > test
+2026-11-02T10:50:52.4922813Z > node --test scripts/serial.test.ts scripts/backlog/tests/*.test.ts scripts/deploy/*.test.ts scripts/dependencies/*.test.ts scripts/ci/*.test.ts && vitest run --exclude lib/** --exclude src/server/maintenance/** --exclude src/server/backup/**
+2026-11-02T10:50:52.4924787Z 
+2026-11-02T10:50:52.8941500Z ✔ frontmatter reads lists, booleans, numbers, quoted strings and strips comments (3.729598ms)
+2026-11-02T10:50:52.8942946Z ✔ a well-formed ticket passes (26.913541ms)
+2026-11-02T10:50:52.8943958Z ✔ ticket shape errors are reported (7.158381ms)
+2026-11-02T10:50:52.8945071Z ✔ dependencies must be open tickets and acyclic (0.860937ms)
+2026-11-02T10:50:52.8946756Z ✔ dependencies cannot point to a later lifecycle phase, and cycles still fail (1.077194ms)
+2026-11-02T10:50:52.8948250Z ✔ grooming counter must reference landed IDs (1.848864ms)
+2026-11-02T10:50:52.8978107Z ✔ long tickets and shared emoji warn without failing (0.583978ms)
+2026-11-02T10:50:52.8979654Z ✔ a ticket judges at least one persona, and its impact is the highest (0.700096ms)
+2026-11-02T10:50:52.8981173Z ✔ XL effort is accepted without expanding persona impact sizes (2.009466ms)
+2026-11-02T10:50:52.8982721Z ✔ impact is weighted tenfold and larger effort comes first within each impact (0.610998ms)
+2026-11-02T10:50:52.8984830Z ✔ a prerequisite scores one above everything that depends on it, up the chain (1.130364ms)
+2026-11-02T10:50:52.8986988Z ✔ a written score that differs is stale, and withScore rewrites or adds it (1.561103ms)
+2026-11-02T10:50:52.8988700Z ✔ ranking ties prefer prerequisites, higher impact, larger effort, then lower ID (2.626555ms)
+2026-11-02T10:50:52.8990448Z ✔ a prerequisite outranks a higher-scoring dependent, so the first row is ready (0.581162ms)
+2026-11-02T10:50:52.8992287Z ✔ XL work keeps inherited priority while independent XL work ranks above equivalent L work (1.454263ms)
+2026-11-02T10:50:52.8994157Z ✔ lifecycle phases precede scores while preserving priority and dependency inheritance (0.934095ms)
+2026-11-02T10:50:52.8995905Z ✔ external upstream PRs remain visible after launch without affecting dependency scores (0.827004ms)
+2026-11-02T10:50:52.8997716Z ✔ external prerequisites reject non-PR URLs and malformed lists (1.122049ms)
+2026-11-02T10:50:52.8999505Z ✔ phase order precedes lower ID when scores are equal (0.604706ms)
+2026-11-02T10:50:52.9000829Z ✔ omitting phase keeps the existing pre-launch index and ranking (0.578086ms)
+2026-11-02T10:50:52.9058701Z ✔ an empty backlog says so (0.151185ms)
+2026-11-02T10:50:52.9070907Z ✔ the index lists every open ticket in pick order (0.800414ms)
+2026-11-02T10:50:52.9072608Z ✔ globs match lockfiles anywhere and directory patterns by path (0.495792ms)
+2026-11-02T10:50:52.9074363Z ✔ changed lines skip excluded files, binaries and follow renames (0.55884ms)
+2026-11-02T10:50:52.9075943Z ✔ a ticket PR lands its ticket and advances the grooming count (19.713455ms)
+2026-11-02T10:50:52.9077374Z ✔ ticket PR title problems (10.715364ms)
+2026-11-02T10:50:52.9078795Z ✔ the grooming reminder never blocks the next ticket or backlog maintenance (4.374941ms)
+2026-11-02T10:50:52.9080264Z ✔ exception PRs leave the grooming count alone (0.522151ms)
+2026-11-02T10:50:52.9081654Z ✔ IDs are never reused (0.471155ms)
+2026-11-02T10:50:52.9082763Z ✔ PR size: soft limit warns, hard limit fails (1.290986ms)
+2026-11-02T10:50:52.9084169Z ✔ PR size: effort-S tickets are exempt, judged by the base ticket (0.738248ms)
+2026-11-02T10:50:52.9085515Z ✔ XL effort retains the PR soft-limit split warning (0.280718ms)
+2026-11-02T10:50:52.9086838Z ✔ a PR cannot loosen its own limits (0.813469ms)
+2026-11-02T10:50:52.9111827Z ✔ only grooming PRs remove tickets other than the one landing (0.574139ms)
+2026-11-02T10:50:52.9136082Z ✔ grooming dates never go backwards or into the future (1.216857ms)
+2026-11-02T10:50:52.9168016Z ✔ repeated frontmatter keys are an error (0.21308ms)
+2026-11-02T10:50:52.9197671Z ✔ retired owner-input gates are rejected instead of hidden from the index (0.377359ms)
+2026-11-02T10:50:52.9468512Z ✔ selects physical phones, excludes beta/tablet/emulator entries, and supports unlisted Firefox (16.05615ms)
+2026-11-02T10:50:52.9470773Z ✔ credentials stay in the HTTPS authorization header and remote error text is discarded (4.078814ms)
+2026-11-02T10:50:52.9527689Z ✔ a wrong runner challenge fails and still deletes the allocated session (6.649284ms)
+2026-11-02T10:50:52.9537140Z ✔ real-browser evidence is required and a teardown failure cannot produce a pass (11.823344ms)
+2026-11-02T10:50:52.9538656Z ✔ session creation failures never echo the remote exception or claim cleanup (0.608353ms)
+2026-11-02T10:50:52.9540054Z ✔ malformed success responses and a different Android browser do not pass (2.530334ms)
+2026-11-02T10:50:53.0749178Z ✔ only known documentation paths qualify, including the exact backlog JSON (1.66035ms)
+2026-11-02T10:50:53.0761158Z ✔ unavailable or unsupported event ranges require full validation (0.934056ms)
+2026-11-02T10:50:53.0763233Z ✔ Git ranges include earlier commits, both rename paths, deletions and unusual names (348.479491ms)
+2026-11-02T10:50:55.7608842Z ✔ CLI binds same-run immutable plan digest/source and publishes all selected results (149.316856ms)
+2026-11-02T10:50:55.7621062Z ✔ CLI failure records survive wrong identity, cancelled gate and missing selected evidence (816.036285ms)
+2026-11-02T10:50:55.7634410Z ✔ browser aggregate cannot pass missing, skipped or failed selected sized restore evidence (604.671145ms)
+2026-11-02T10:50:55.7648600Z ✔ unit aggregate requires every selected partition to succeed, retaining failed evidence (830.234997ms)
+2026-11-02T10:50:55.7658658Z ✔ unit partitions may skip only with proven documentation inapplicability (342.668989ms)
+2026-11-02T10:50:55.7813643Z ✔ accepts matched committed first-attempt observations with bounded candidate cleanup (13.302538ms)
+2026-11-02T10:50:55.7816701Z ✔ baseline structural failure stays visible without becoming a candidate waiver (4.495487ms)
+2026-11-02T10:50:55.7819597Z ✔ commit, retry, failed checks, browser errors, missing source and unchecked analysis reject the pair (32.480652ms)
+2026-11-02T10:50:55.7822128Z ✔ discloses unrelated unmapped function positions while requiring proven measured timer ownership (5.148153ms)
+2026-11-02T10:50:55.7825174Z ✔ matching capture omissions or changes cannot replace the registered lossless method (16.938748ms)
+2026-11-02T10:50:55.7827945Z ✔ requires paired runtime, runner, harness and fixture identities, not merely two passing flags (13.05999ms)
+2026-11-02T10:50:55.7830245Z ✔ matching omissions or shortened/corrupt input do not satisfy the original workload (26.805027ms)
+2026-11-02T10:50:55.7832348Z ✔ allows only controlled matched baseline harness copies, including trimmed porcelain output (17.47163ms)
+2026-11-02T10:50:55.7834243Z ✔ loads exactly one case, hashes retained trace/maps/sources and recomputes the callback ledger (62.488149ms)
+2026-11-02T10:50:55.7835998Z ✔ a changed retained build, missing file or incorrect byte count cannot borrow a valid manifest (31.084495ms)
+2026-11-02T10:50:55.7839230Z ✔ stored accepted analysis is checked against raw lifetimes, even when the raw checksum is updated (19.820423ms)
+2026-11-02T10:50:55.7841247Z ✔ artifact resolution rejects traversal and symlinks escaping the retained case (12.174125ms)
+2026-11-02T10:50:55.7842970Z ✔ candidate-only callback evidence retains first-attempt/source/content/bounded-lifetime checks (9.162427ms)
+2026-11-02T10:50:55.7844795Z ✔ accounts for initial/nested hides, retained intervals, source attribution and complete cleanup (8.392219ms)
+2026-11-02T10:50:55.7846286Z ✔ a repeating timer remains pending across every fire until it is removed (0.916592ms)
+2026-11-02T10:50:55.7848435Z ✔ reuse after retirement creates a new generation without confusing another frame or thread (3.020425ms)
+2026-11-02T10:50:55.7850380Z ✔ a duplicate installation never erases evidence of an unretired generation (0.732106ms)
+2026-11-02T10:50:55.7852412Z ✔ repeated removals and clearing an already fired one-shot do not make pending counts negative (0.825471ms)
+2026-11-02T10:50:55.7854102Z ✔ retains nonpositive no-op clears without creating or retiring timer lifetimes (1.615706ms)
+2026-11-02T10:50:55.7856118Z ✔ no-op clear accounting does not excuse invalid identities, unknown sources or positive orphans (4.042724ms)
+2026-11-02T10:50:55.7860714Z ✔ callback attribution uses the install top callsite, not delay or any ancestor function (0.53253ms)
+2026-11-02T10:50:55.7862211Z ✔ pre-mount target work and unknown install source block complete attribution (1.075491ms)
+2026-11-02T10:50:55.7863770Z ✔ unpaired target and unknown callback fires remain incomplete, including retired target reuse (2.2617ms)
+2026-11-02T10:50:55.7865373Z ✔ proven unrelated orphan shell timers remain visible without masking target ownership (2.001231ms)
+2026-11-02T10:50:55.7868754Z ✔ does not classify an orphan by a nested unrelated call when the outer callback is unknown (0.504978ms)
+2026-11-02T10:50:55.7870489Z ✔ baseline observations expose the same structural violations without claiming bounded success (1.281398ms)
+2026-11-02T10:50:55.7872271Z ✔ cleanup fails for residual, firing, and newly installed callbacks after disposal even when later cleared (3.32654ms)
+2026-11-02T10:50:55.7873965Z ✔ separate zoom family caps catch queued updates while preserving owned initialization (0.389952ms)
+2026-11-02T10:50:55.7875471Z ✔ missing family or interval coverage cannot turn a disabled feature into a pass (0.377179ms)
+2026-11-02T10:50:55.7877235Z ✔ trace completion, unique ordered markers, identity and observation duration fail closed (3.281128ms)
+2026-11-02T10:50:55.7878890Z ✔ missing phase boundaries leave derived callback measurements unavailable, never zero (0.747123ms)
+2026-11-02T10:50:55.7880514Z ✔ malformed timer identities, incomplete fires and missing stack frames cannot pass (1.902986ms)
+2026-11-02T10:50:55.7882265Z ✔ task wall union and clipped tails do not sum overlapping spans or attribute all wall time to callbacks (0.53717ms)
+2026-11-02T10:50:55.7884058Z ✔ retains instantaneous tasks and trace-cutoff tasks without inventing complete measured spans (1.6338ms)
+2026-11-02T10:50:55.7885778Z ✔ es original: attributes the actual pinned package and retains exact build/source bytes (138.370009ms)
+2026-11-02T10:50:55.7887958Z ✔ es patched: attributes the actual pinned package and retains exact build/source bytes (85.669524ms)
+2026-11-02T10:50:55.7889684Z ✔ cjs original: attributes the actual pinned package and retains exact build/source bytes (113.958116ms)
+2026-11-02T10:50:55.7891387Z ✔ cjs patched: attributes the actual pinned package and retains exact build/source bytes (71.20789ms)
+2026-11-02T10:50:55.7893041Z ✔ converts one-based Chrome columns once and does not carry mappings across empty lines (9.019911ms)
+2026-11-02T10:50:55.7894807Z ✔ collects only timer top frames and FunctionCall points and deduplicates repeated failures (4.468765ms)
+2026-11-02T10:50:55.7897168Z ✔ rejects malformed raw points, missing maps and generated positions outside the captured file (5.003271ms)
+2026-11-02T10:50:55.7898979Z ✔ a missing or altered package source stays unclassified instead of becoming other (5.75301ms)
+2026-11-02T10:50:55.7900203Z ✔ rejects ambiguous, invalid or out-of-range source maps (11.742395ms)
+2026-11-02T10:50:55.7901187Z ✔ reads only same-origin JavaScript and confines runtime/map real paths to dist (4.881723ms)
+2026-11-02T10:50:55.7902415Z ✔ retains raw query URLs as distinct callsites while hashing each physical file once (3.302438ms)
+2026-11-02T10:50:55.7904382Z ✔ retains every event index, all analyzer inputs and exact top frames without rewriting raw files (41.333176ms)
+2026-11-02T10:50:55.7906091Z ✔ plain and gzip reads handle UTF-8, escaped delimiters and every small chunk boundary (245.530057ms)
+2026-11-02T10:50:55.7907828Z ✔ malformed callback fields remain visible to attribution and lifetime validation (5.055289ms)
+2026-11-02T10:50:55.7909381Z ✔ rejects corrupt events, duplicate arrays, missing separators and every truncated envelope state (49.948915ms)
+2026-11-02T10:50:55.7911041Z ✔ gzip truncation, checksum errors, trailing garbage and corrupt decompressed JSON all fail closed (17.632862ms)
+2026-11-02T10:50:55.7913138Z ✔ bounds individual records and metadata while permitting an arbitrarily chunked larger document (355.164838ms)
+2026-11-02T10:50:55.7915308Z ✔ capture keeps all six categories and explicitly reserves a non-overwriting 1 GiB buffer (0.239099ms)
+2026-11-02T10:50:55.7917361Z ✔ a reducer witness requires its complete uncertain sample interval inside a whole task (3.025325ms)
+2026-11-02T10:50:55.7919617Z ✔ signed CPU deltas keep sample IDs paired with cumulative timestamps without changing raw data (1.43686ms)
+2026-11-02T10:50:55.7921800Z ✔ equal CPU timestamps keep their original sample order after a signed-delta inversion (0.315513ms)
+2026-11-02T10:50:55.7923528Z ✔ every cumulative CPU timestamp must stay inside the profile, even if its final sum is valid (0.331703ms)
+2026-11-02T10:50:55.7925294Z ✔ nonfinite CPU deltas and malformed sample associations remain unavailable (0.540596ms)
+2026-11-02T10:50:55.7927424Z ✔ missing reducer names are unavailable, never zero-time improvements (0.30293ms)
+2026-11-02T10:50:55.7929041Z ✔ paired proof uses the worst entire candidate task and each certain baseline family witness (25.460641ms)
+2026-11-02T10:50:55.7930725Z ✔ a superseded candidate capacity cannot pass on fast timing alone (23.796975ms)
+2026-11-02T10:50:55.7932273Z ✔ schema 4 requires the new chronology rather than reinterpreting schema 3 records (11.496359ms)
+2026-11-02T10:50:55.7934021Z ✔ capacity and idle flush distributions are retained independently (7.622663ms)
+2026-11-02T10:50:55.7935824Z ✔ an idle flush requires a recognized reason, bounded integer work and a full quiet interval (72.939216ms)
+2026-11-02T10:50:55.7938043Z ✔ cheap idle flushes cannot dilute capacity p95, and cheap capacity cannot dilute idle p95 (9.746882ms)
+2026-11-02T10:50:55.7939887Z ✔ an isolated slow idle flush still fails the combined maximum when both p95 values pass (4.245769ms)
+2026-11-02T10:50:55.7941763Z ✔ drain diagnostics require complete ordered polls and the actual first empty snapshot (49.494721ms)
+2026-11-02T10:50:55.7943609Z ✔ poll cache counts, monotonic high-water and the final empty history must be consistent (35.888705ms)
+2026-11-02T10:50:55.7945637Z ✔ browser-local completion requires its original arm, exact terminal count and sealed identity (201.908004ms)
+2026-11-02T10:50:55.7947490Z ✔ a coherent browser-local completion above 1000 ms still fails the unchanged numeric limit (7.184741ms)
+2026-11-02T10:50:55.7949033Z ✔ the prospective browser-local drain gate retains a slow late read as a separate diagnostic (5.198098ms)
+2026-11-02T10:50:55.7950511Z ✔ native history retention is checked separately for candidate and baseline roles (16.95859ms)
+2026-11-02T10:50:55.7952104Z ✔ schema 3 labels the specifically observed baseline redo defect without weakening candidate integrity (8.310335ms)
+2026-11-02T10:50:55.7953894Z ✔ baseline exceptions require the exact reason, unit, phase, recovery and complete reload record (69.078319ms)
+2026-11-02T10:50:55.7955845Z ✔ legacy success strings, failed schema-2 records and incomplete full-group replay cannot be accepted (99.957449ms)
+2026-11-02T10:50:55.7958030Z ✔ stale native snapshots and post-measurement tasks cannot supply an accepted timing window (65.854156ms)
+2026-11-02T10:50:55.7959816Z ✔ an expensive profiled candidate cannot hide behind three fast plain samples (6.46591ms)
+2026-11-02T10:50:55.7961559Z ✔ a profile-only stall or one short plain baseline cannot prove unprofiled improvement (20.504418ms)
+2026-11-02T10:50:55.7963286Z ✔ each plain baseline must improve by 90%, and the aggregate uses its smallest maximum (9.020746ms)
+2026-11-02T10:50:55.7965260Z ✔ missing baseline attribution blocks proof while candidate absence uses an explicit conservative bound (13.645217ms)
+2026-11-02T10:50:55.7967597Z ✔ a small baseline is reported without inventing a percentage or a reproduced stall (6.548424ms)
+2026-11-02T10:50:55.7969316Z ✔ the 50 ms long-task reporting floor is not misreported as zero candidate work (6.286132ms)
+2026-11-02T10:50:55.7971084Z ✔ quantized 49 ms long-task entries are retained while the comparison floor stays 50 ms (14.713066ms)
+2026-11-02T10:50:55.7973043Z ✔ negative and nonfinite raw long-task durations remain invalid (30.271861ms)
+2026-11-02T10:50:55.7974724Z ✔ mismatched lockfiles, incomplete samples and raw profile tampering each block acceptance (25.352968ms)
+2026-11-02T10:50:55.7976890Z ✔ candidate-only evidence preserves all absolute/content/profile gates without inventing a baseline (36.948981ms)
+2026-11-02T10:50:55.7978697Z ✔ archived workspace imports preserve the eager contract and transitive source identity (42.796417ms)
+2026-11-02T10:50:55.7980303Z ✔ an extra current workspace is not exposed to the archived build (14.277457ms)
+2026-11-02T10:50:55.7981624Z ✔ external dependency drift is rejected before creating dependency links (13.15529ms)
+2026-11-02T10:50:55.7983253Z ✔ an isolated historical install preserves transitive externals when the candidate advances (39.661996ms)
+2026-11-02T10:50:55.7984993Z ✔ an uninstalled historical checkout fails before linking with setup guidance (9.711118ms)
+2026-11-02T10:50:55.7986809Z ✔ an archived workspace with missing manifest is rejected before linking (19.342455ms)
+2026-11-02T10:50:55.7988286Z ✔ an archived workspace with wrong name is rejected before linking (44.836669ms)
+2026-11-02T10:50:55.7989672Z ✔ an archived workspace with missing link is rejected before linking (20.293504ms)
+2026-11-02T10:50:55.7991082Z ✔ an archived workspace with escaped link is rejected before linking (16.184306ms)
+2026-11-02T10:50:55.7992512Z ✔ every PR edit runs full validation, including title/body, base and ambiguous payloads (9.314211ms)
+2026-11-02T10:50:55.7994237Z ✔ service changes keep candidate correctness and all existing broad checks without historical comparisons (0.544944ms)
+2026-11-02T10:50:55.7995750Z ✔ sized restore participates in the immutable plan and fails closed (1.713389ms)
+2026-11-02T10:50:55.7997577Z ✔ dependency closure and unknown paths fail closed, including old rename/deleted sides (0.870967ms)
+2026-11-02T10:50:55.7999285Z ✔ labels only add coverage; removal recomputes automatic requirements (0.482987ms)
+2026-11-02T10:50:55.8001311Z ✔ main ranges, scheduled/manual backstops, unknown events and missing ranges (0.510108ms)
+2026-11-02T10:50:55.8003380Z ✔ aggregates require selected success and explicit inapplicable skipped; known regression remains red (0.728098ms)
+2026-11-02T10:50:55.8005268Z ✔ workflow keeps seven static code names and protected edit concurrency (1.34059ms)
+2026-11-02T10:50:55.8007382Z ✔ phone ownership removes only eight ordinary cases from instrumented duplicate runs (1.367619ms)
+2026-11-02T10:50:57.2184524Z ✔ proxy smoke sends the exact deployment Host and preserves the fallback response (33.377793ms)
+2026-11-02T10:50:57.2191548Z ✔ proxy smoke refuses an oversized response and closes its connection (9.423626ms)
+2026-11-02T10:50:57.2193098Z ✔ proxy smoke has a bounded response deadline (2003.089525ms)
+2026-11-02T10:50:57.2348975Z ✔ observer containment still runs when proof write rejected (5.020148ms)
+2026-11-02T10:50:57.2364048Z ✔ observer containment still runs when serving cleanup rejected (4.916859ms)
+2026-11-02T10:50:57.2372733Z ✔ unavailable inventory and rejected stop still force containment of the verified container ID (3.902069ms)
+2026-11-02T10:50:57.2380472Z ✔ published observer diagnostics exclude raw native logs and Docker state errors (2.387815ms)
+2026-11-02T10:50:57.2382699Z ✔ observer cleanup rejection remains recorded and cannot replace an earlier failure (0.366635ms)
+2026-11-02T10:50:57.2384841Z ✔ sized restore follows authority, data, runtime, browser and harness boundaries (1.849018ms)
+2026-11-02T10:50:57.2387327Z ✔ unrelated text and browser work keep the ordinary gates without the sized restore (0.24592ms)
+2026-11-02T10:50:57.2389624Z ✔ a published build identifies its source and replaces both competing favicons (6.406522ms)
+2026-11-02T10:50:57.2391612Z ✔ Redesign examples require an open ticket and disappear when its ticket lands (0.68467ms)
+2026-11-02T10:50:57.2393565Z ✔ the three viewport jobs cover all existing captures and extra interactions once (15.625227ms)
+2026-11-02T10:50:57.2396233Z ✔ default reviews include all stories; focused manual reviews keep their IDs on every viewport (1.890054ms)
+2026-11-02T10:50:57.2398512Z ✔ desktop theme jobs preserve every capture and interaction without duplication (0.740645ms)
+2026-11-02T10:50:57.2400631Z ✔ mobile theme jobs preserve every capture and interaction without duplication (0.328664ms)
+2026-11-02T10:50:57.2402917Z ✔ the five CI partitions retain the complete catalog, variants and once-only journeys (0.473154ms)
+2026-11-02T10:50:57.2404917Z ✔ omitting routine screenshots cannot narrow render, play, native or journey checks (0.573973ms)
+2026-11-02T10:50:57.2407239Z ✔ invalid theme splits cannot silently omit validation (0.249897ms)
+2026-11-02T10:50:57.2409625Z ✔ invalid viewports, repeated viewport flags and unknown stories fail instead of narrowing coverage silently (0.373709ms)
+2026-11-02T10:50:57.2411799Z ✔ the stable gate requires successful classification, build, and all three viewport jobs (1.101089ms)
+2026-11-02T10:50:57.2414819Z ✔ docs-only reviews pass with explicitly skipped shards, but cannot hide failures or missing results (0.579214ms)
+2026-11-02T10:50:57.2417197Z ✔ PR screenshots follow the visual-review label while application checks remain required (0.29395ms)
+2026-11-02T10:50:57.2419053Z ✔ manual capture is explicit and main pushes do not repeat PR screenshots (0.356467ms)
+2026-11-02T10:50:57.2421046Z ✔ clean root and declared workspaces pass without an installed dependency tree (7.47073ms)
+2026-11-02T10:50:57.2422588Z ✔ rejects a direct Pro package in dependencies (2.357057ms)
+2026-11-02T10:50:57.2423895Z ✔ rejects a direct Pro package in devDependencies (1.038742ms)
+2026-11-02T10:50:57.2425362Z ✔ rejects a direct Pro package in optionalDependencies (0.886498ms)
+2026-11-02T10:50:57.2427037Z ✔ rejects a direct Pro package in peerDependencies (1.039574ms)
+2026-11-02T10:50:57.2428461Z ✔ rejects a direct Pro package in peerDependenciesMeta (0.817399ms)
+2026-11-02T10:50:57.2429819Z ✔ rejects a direct Pro package in overrides (0.885516ms)
+2026-11-02T10:50:57.2431361Z ✔ rejects a direct Pro package in resolutions (0.86149ms)
+2026-11-02T10:50:57.2433031Z ✔ inspects every declared workspace instead of assuming the current lib directory (3.014697ms)
+2026-11-02T10:50:57.2434748Z ✔ rejects direct and nested aliases plus bundled package names (3.467434ms)
+2026-11-02T10:50:57.2436898Z ✔ rejects transitive, nested and aliased resolved packages with no direct declaration (5.384961ms)
+2026-11-02T10:50:57.2440274Z ✔ missing resolved inventory fails closed; descriptive provenance is not a dependency (1.520914ms)
+2026-11-02T10:50:57.2442552Z ✔ composed paragraph replacement matches sequential application and preserves identity (7.210633ms)
+2026-11-02T10:50:57.2444505Z ✔ COVER preserves attributes, and both runtime formats use the same REPLACE repair (1.382575ms)
+2026-11-02T10:50:57.2446225Z ✔ install patch is idempotent and rejects changed upstream bytes (80.95095ms)
+2026-11-02T10:50:57.2448218Z ✔ both builds let a REPLACE style's falsy keys win in transformTextRuns (18.315969ms)
+2026-11-02T10:50:57.2450173Z ✔ explicit replacement arrays clear omitted paragraphs while absent arrays preserve them (1.53518ms)
+2026-11-02T10:50:57.2452001Z ✔ a style inside a link leaves it whole, so apply order cannot split it (2.4546ms)
+2026-11-02T10:50:57.2453522Z ✔ a lone piece of a split range takes its root id back (0.348511ms)
+2026-11-02T10:50:57.2455274Z ✔ adding a link across a paragraph that an existing link spans emits no negative retain (2.774989ms)
+2026-11-02T10:50:57.2457368Z ✔ es: callback repair is idempotent and rejects altered or partial builds (72.187804ms)
+2026-11-02T10:50:57.2459398Z ✔ es: cursor timers remain bounded through initial and recurring replacements (78.704429ms)
+2026-11-02T10:50:57.2461437Z ✔ es: original cursor retains the superseded initial and recurring hides (47.60791ms)
+2026-11-02T10:50:57.2463319Z ✔ es: zoom coalesces updates, keeps owned state, and preserves commands and resize (37.60113ms)
+2026-11-02T10:50:57.2465878Z ✔ es: initialization uses the current Sheet and disposal cancels both zoom timers (25.469415ms)
+2026-11-02T10:50:57.2479877Z ✔ es: original zoom retains obsolete work and reads the globally current Doc (17.003204ms)
+2026-11-02T10:50:57.2481686Z ✔ cjs: callback repair is idempotent and rejects altered or partial builds (97.240891ms)
+2026-11-02T10:50:57.2483532Z ✔ cjs: cursor timers remain bounded through initial and recurring replacements (84.86548ms)
+2026-11-02T10:50:57.2485346Z ✔ cjs: original cursor retains the superseded initial and recurring hides (28.004225ms)
+2026-11-02T10:50:57.2487564Z ✔ cjs: zoom coalesces updates, keeps owned state, and preserves commands and resize (32.067212ms)
+2026-11-02T10:50:57.2489574Z ✔ cjs: initialization uses the current Sheet and disposal cancels both zoom timers (18.231678ms)
+2026-11-02T10:50:57.2491630Z ✔ cjs: original zoom retains obsolete work and reads the globally current Doc (20.465579ms)
+2026-11-02T10:50:57.2493747Z ✔ Docs UI installer validates name, version and both complete builds before any writes (176.110058ms)
+2026-11-02T10:50:57.2599495Z ✔ sequential style oracle preserves complete attributes and rejects ambiguous runs (18.754809ms)
+2026-11-02T10:50:57.2602664Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.2604870Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.2607235Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.2609384Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.2611477Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.2613604Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.2616315Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.2618842Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.2621152Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.2623276Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.2625243Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.2627507Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.2629495Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.2631512Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.2633510Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.2635447Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.2637572Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.2639645Z ✔ es: native publications preserve mixed operations, independent caches and complete metadata (164.327944ms)
+2026-11-02T10:50:57.2641500Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.3087290Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.3777697Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.4143780Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.4707372Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.5003214Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.5394793Z ✔ es: real composition work falls for both typed inserts and deletes whose undo inserts (304.914382ms)
+2026-11-02T10:50:57.5518908Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.5566037Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.5688047Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.5731337Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.5939669Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.6009543Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.6130946Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.6202937Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.6350475Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.6427933Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.6688810Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.6775851Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.7019670Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.7109592Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.7270301Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.7322759Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.7388451Z ✔ es: eligible keyboard shapes preserve odd tails, offsets and independent cache folds (205.848992ms)
+2026-11-02T10:50:57.7590803Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.7604085Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.7784705Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.7830042Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.8018417Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.8068937Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.8205058Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.8258012Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.8424111Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.8530017Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.8798385Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.8868113Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.9002395Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.9043299Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.9216011Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.9429751Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.9585443Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.9629101Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.9788306Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.9827840Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:57.9921967Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.0022181Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.0124194Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.0181131Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.0433038Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.0478279Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.0648501Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.0739840Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.0806051Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.0922590Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.1088279Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.1140566Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.1282532Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.1354324Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.1560798Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.1591635Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.1757197Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.1815469Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.1957641Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.2006853Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.2147220Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.2196101Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.2358254Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.2387900Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.2542248Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.2689383Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.2762583Z ▶ es: one ineligible state retains each complete original fold
+2026-11-02T10:50:58.2763640Z   ✔ incompatible offset (20.547374ms)
+2026-11-02T10:50:58.2764366Z   ✔ length two (23.171629ms)
+2026-11-02T10:50:58.2809060Z   ✔ null in typed group (21.071138ms)
+2026-11-02T10:50:58.2865491Z   ✔ replacement (20.320239ms)
+2026-11-02T10:50:58.2873604Z   ✔ attribute retain (32.997968ms)
+2026-11-02T10:50:58.2884207Z   ✔ JSON sibling edit (24.405065ms)
+2026-11-02T10:50:58.2920375Z   ✔ header path (20.397161ms)
+2026-11-02T10:50:58.3007717Z   ✔ defined valueRangeId (37.994967ms)
+2026-11-02T10:50:58.3037296Z   ✔ unknown insert metadata (18.078935ms)
+2026-11-02T10:50:58.3097459Z   ✔ unknown body metadata (16.613476ms)
+2026-11-02T10:50:58.3127644Z   ✔ defined text style ID (19.17744ms)
+2026-11-02T10:50:58.3187589Z   ✔ unknown run metadata (21.328131ms)
+2026-11-02T10:50:58.3203836Z   ✔ paragraph insert (26.699837ms)
+2026-11-02T10:50:58.3242123Z   ✔ CR without supplied paragraphs (20.031276ms)
+2026-11-02T10:50:58.3259616Z   ✔ section insert (27.517582ms)
+2026-11-02T10:50:58.3287563Z   ✔ LF without supplied sections (19.527935ms)
+2026-11-02T10:50:58.3317390Z   ✔ nonempty range (24.997786ms)
+2026-11-02T10:50:58.3339534Z   ✔ nonempty decoration (22.400747ms)
+2026-11-02T10:50:58.3361849Z   ✔ custom block (19.911723ms)
+2026-11-02T10:50:58.3394656Z   ✔ prefix retain own undefined body (17.816425ms)
+2026-11-02T10:50:58.3405324Z   ✔ prefix retain own undefined oldBody (20.267328ms)
+2026-11-02T10:50:58.3437353Z   ✔ prefix retain own undefined coverType (18.029994ms)
+2026-11-02T10:50:58.3451565Z   ✔ prefix retain own undefined rangeUpdates (27.684077ms)
+2026-11-02T10:50:58.3507348Z ✔ es: one ineligible state retains each complete original fold (537.542601ms)
+2026-11-02T10:50:58.3519805Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.3521886Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.3588172Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.3603231Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.3732467Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.3761063Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.3805386Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.3870704Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.3946826Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.4001162Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.4057887Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.4104239Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.4159177Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.4203027Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.4254243Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.4292268Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.4339587Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.4384246Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.4436223Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.4476331Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.4527669Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.4567723Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.4627024Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.4689888Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.4768913Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.4838053Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.4897980Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.5000495Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.5113716Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.5139017Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.5228368Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.5278835Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.5328958Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.5361738Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.5457023Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.5501702Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.5557918Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.5601758Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.5661653Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.5711542Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.5764589Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.5807257Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.5867390Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.5944955Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.6006047Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.6110759Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.6162074Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.6208454Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.6308816Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.6462066Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.6581395Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.6640373Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.6712397Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.6759067Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.6808116Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.6890638Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.6920227Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.6984134Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.7068563Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.7128095Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.7187962Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.7207826Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.7258961Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.7308200Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.7427457Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.7495199Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.7497693Z ▶ es: bare structural and other C0/DEL tokens keep native publication and work
+2026-11-02T10:50:58.7498947Z   ✔ es: U+0000 (18.160558ms)
+2026-11-02T10:50:58.7499704Z   ✔ es: U+0001 (11.531062ms)
+2026-11-02T10:50:58.7500399Z   ✔ es: U+0002 (13.154648ms)
+2026-11-02T10:50:58.7501761Z   ✔ es: U+0003 (14.85502ms)
+2026-11-02T10:50:58.7502349Z   ✔ es: U+0004 (11.013872ms)
+2026-11-02T10:50:58.7502930Z   ✔ es: U+0005 (10.131074ms)
+2026-11-02T10:50:58.7503497Z   ✔ es: U+0006 (9.443067ms)
+2026-11-02T10:50:58.7504098Z   ✔ es: U+0007 (8.360373ms)
+2026-11-02T10:50:58.7504666Z   ✔ es: U+0008 (9.2735ms)
+2026-11-02T10:50:58.7505215Z   ✔ es: U+0009 (9.025286ms)
+2026-11-02T10:50:58.7505766Z   ✔ es: U+000a (9.759519ms)
+2026-11-02T10:50:58.7506720Z   ✔ es: U+000b (9.779106ms)
+2026-11-02T10:50:58.7510572Z   ✔ es: U+000c (14.57967ms)
+2026-11-02T10:50:58.7541776Z   ✔ es: U+000d (22.63723ms)
+2026-11-02T10:50:58.7557138Z   ✔ es: U+000e (8.667049ms)
+2026-11-02T10:50:58.7568804Z   ✔ es: U+000f (9.529569ms)
+2026-11-02T10:50:58.7569571Z   ✔ es: U+0010 (16.442964ms)
+2026-11-02T10:50:58.7580393Z   ✔ es: U+0011 (10.002684ms)
+2026-11-02T10:50:58.7597113Z   ✔ es: U+0012 (10.403333ms)
+2026-11-02T10:50:58.7597585Z   ✔ es: U+0013 (10.094596ms)
+2026-11-02T10:50:58.7598029Z   ✔ es: U+0014 (9.751514ms)
+2026-11-02T10:50:58.7598511Z   ✔ es: U+0015 (13.983231ms)
+2026-11-02T10:50:58.7598976Z   ✔ es: U+0016 (15.375047ms)
+2026-11-02T10:50:58.7599403Z   ✔ es: U+0017 (14.47276ms)
+2026-11-02T10:50:58.7602993Z   ✔ es: U+0018 (20.439219ms)
+2026-11-02T10:50:58.7603631Z   ✔ es: U+0019 (19.533205ms)
+2026-11-02T10:50:58.7604176Z   ✔ es: U+001a (9.362607ms)
+2026-11-02T10:50:58.7604737Z   ✔ es: U+001b (9.290362ms)
+2026-11-02T10:50:58.7605250Z   ✔ es: U+001c (14.750392ms)
+2026-11-02T10:50:58.7605777Z   ✔ es: U+001d (11.427969ms)
+2026-11-02T10:50:58.7606629Z   ✔ es: U+001e (8.555668ms)
+2026-11-02T10:50:58.7607246Z   ✔ es: U+001f (9.265185ms)
+2026-11-02T10:50:58.7609059Z   ✔ es: U+007f (9.152564ms)
+2026-11-02T10:50:58.7610264Z ✔ es: bare structural and other C0/DEL tokens keep native publication and work (467.756442ms)
+2026-11-02T10:50:58.7684683Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.7733767Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.7760105Z ✔ es: native idle, segment, remote and pre-Undo flush boundaries retain their ordering (33.060067ms)
+2026-11-02T10:50:58.8038922Z ✔ es: guard accepts the pinned original and exact current or previous patch (26.665732ms)
+2026-11-02T10:50:58.8105055Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.8188153Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.8227104Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.8310102Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.8338380Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.8368445Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.8435515Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.8462999Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.8488864Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.8589466Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.8638117Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.8672336Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.8733800Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.8784760Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.8816828Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.8840267Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.8866205Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.8925933Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.9188544Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.9558702Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:58.9732155Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.0118519Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.0438445Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.0581316Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.1629306Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.1864252Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.2148439Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.2691873Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.2983115Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.3258482Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.3921555Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.4167108Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.4459943Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.4747958Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.5218665Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.5559461Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.6130928Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.6217986Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.6440452Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.6491283Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.6848432Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.7078541Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.7130361Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.7287415Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.7598271Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.7678095Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.7788105Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.7881023Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.7910473Z ✔ es: native preservation markers qualify without changing forward or inverse actions (987.403365ms)
+2026-11-02T10:50:59.7966312Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.8019626Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.8109650Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.8167774Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.8324355Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.8369309Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.8515738Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.8569285Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.8728938Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.8819257Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.9082046Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.9198140Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.9324033Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.9378017Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.9648587Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:50:59.9818604Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.0028354Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.0059910Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.0088341Z ✔ cjs: native publications preserve mixed operations, independent caches and complete metadata (208.081885ms)
+2026-11-02T10:51:00.0401334Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.0604374Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.0895537Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.1123208Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.1593385Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.1715659Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.1944972Z ✔ cjs: real composition work falls for both typed inserts and deletes whose undo inserts (192.974841ms)
+2026-11-02T10:51:00.2025394Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.2096300Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.2258221Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.2293478Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.2466771Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.2497736Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.2624356Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.2690978Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.2818715Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.2920596Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.3103965Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.3180893Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.3305395Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.3350625Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.3478429Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.3545733Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.3678498Z ✔ cjs: eligible keyboard shapes preserve odd tails, offsets and independent cache folds (170.6334ms)
+2026-11-02T10:51:00.3810447Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.3838048Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.3968161Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.4028011Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.4138691Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.4177853Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.4298758Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.4329866Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.4458404Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.4518159Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.4683850Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.4707249Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.4828152Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.4857967Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.5029368Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.5033785Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.5204283Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.5251005Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.5365736Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.5374568Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.5548646Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.5578093Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.5665407Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.5696755Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.5788063Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.5814388Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.5894795Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.5925282Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.6028365Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.6036987Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.6172341Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.6197968Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.6320465Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.6379303Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.6506333Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.6578598Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.6658773Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.6698592Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.6820523Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.6867745Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.6985653Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.7024513Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.7148572Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.7178093Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.7319136Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.7339981Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.7427392Z ▶ cjs: one ineligible state retains each complete original fold
+2026-11-02T10:51:00.7467582Z   ✔ incompatible offset (16.725788ms)
+2026-11-02T10:51:00.7470098Z   ✔ length two (16.959016ms)
+2026-11-02T10:51:00.7470934Z   ✔ null in typed group (15.440897ms)
+2026-11-02T10:51:00.7544988Z   ✔ replacement (17.257565ms)
+2026-11-02T10:51:00.7638543Z   ✔ attribute retain (16.448531ms)
+2026-11-02T10:51:00.7647033Z   ✔ JSON sibling edit (16.16445ms)
+2026-11-02T10:51:00.7647627Z   ✔ header path (19.245913ms)
+2026-11-02T10:51:00.7648178Z   ✔ defined valueRangeId (17.718286ms)
+2026-11-02T10:51:00.7648770Z   ✔ unknown insert metadata (20.759236ms)
+2026-11-02T10:51:00.7649351Z   ✔ unknown body metadata (15.56099ms)
+2026-11-02T10:51:00.7649983Z   ✔ defined text style ID (15.710381ms)
+2026-11-02T10:51:00.7650551Z   ✔ unknown run metadata (12.160011ms)
+2026-11-02T10:51:00.7651150Z   ✔ paragraph insert (10.802864ms)
+2026-11-02T10:51:00.7700828Z   ✔ CR without supplied paragraphs (10.553657ms)
+2026-11-02T10:51:00.7744778Z   ✔ section insert (16.353744ms)
+2026-11-02T10:51:00.7745503Z   ✔ LF without supplied sections (10.653957ms)
+2026-11-02T10:51:00.7746256Z   ✔ nonempty range (20.825256ms)
+2026-11-02T10:51:00.7754972Z   ✔ nonempty decoration (15.318708ms)
+2026-11-02T10:51:00.7755619Z   ✔ custom block (16.551153ms)
+2026-11-02T10:51:00.7756289Z   ✔ prefix retain own undefined body (16.544852ms)
+2026-11-02T10:51:00.7757291Z   ✔ prefix retain own undefined oldBody (14.890458ms)
+2026-11-02T10:51:00.7758060Z   ✔ prefix retain own undefined coverType (14.67903ms)
+2026-11-02T10:51:00.7758924Z   ✔ prefix retain own undefined rangeUpdates (15.792196ms)
+2026-11-02T10:51:00.7760150Z ✔ cjs: one ineligible state retains each complete original fold (377.975807ms)
+2026-11-02T10:51:00.7817674Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.7860294Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.7915111Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.7968329Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.8040228Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.8089248Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.8116058Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.8157777Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.8248183Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.8259029Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.8306318Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.8343982Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.8417891Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.8426840Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.8460975Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.8529771Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.8620139Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.8699914Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.8718781Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.8758512Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.8806242Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.8884579Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.8977906Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.9037742Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.9067700Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.9128202Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.9228043Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.9389019Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.9430088Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.9431765Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.9490376Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.9532069Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.9585731Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.9639487Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.9707439Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.9737651Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.9784047Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.9823430Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.9864502Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.9918864Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.9978054Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:00.9993910Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.0058278Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.0095415Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.0178065Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.0203642Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.0247878Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.0283196Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.0340400Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.0380683Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.0428098Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.0455858Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.0510894Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.0566939Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.0588707Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.0613783Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.0692803Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.0724404Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.0769212Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.0793558Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.0832547Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.0858857Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.0924997Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.0988385Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.1006357Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.1041497Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.1073023Z ▶ cjs: bare structural and other C0/DEL tokens keep native publication and work
+2026-11-02T10:51:01.1127438Z   ✔ cjs: U+0000 (26.770806ms)
+2026-11-02T10:51:01.1138010Z   ✔ cjs: U+0001 (10.839631ms)
+2026-11-02T10:51:01.1157962Z   ✔ cjs: U+0002 (9.200586ms)
+2026-11-02T10:51:01.1207685Z   ✔ cjs: U+0003 (10.301214ms)
+2026-11-02T10:51:01.1236046Z   ✔ cjs: U+0004 (8.440425ms)
+2026-11-02T10:51:01.1247540Z   ✔ cjs: U+0005 (8.484397ms)
+2026-11-02T10:51:01.1248825Z   ✔ cjs: U+0006 (7.097954ms)
+2026-11-02T10:51:01.1249639Z   ✔ cjs: U+0007 (14.547872ms)
+2026-11-02T10:51:01.1250473Z   ✔ cjs: U+0008 (9.607337ms)
+2026-11-02T10:51:01.1251170Z   ✔ cjs: U+0009 (9.047099ms)
+2026-11-02T10:51:01.1251875Z   ✔ cjs: U+000a (12.632635ms)
+2026-11-02T10:51:01.1252605Z   ✔ cjs: U+000b (9.409507ms)
+2026-11-02T10:51:01.1253286Z   ✔ cjs: U+000c (17.559719ms)
+2026-11-02T10:51:01.1254017Z   ✔ cjs: U+000d (13.672029ms)
+2026-11-02T10:51:01.1254522Z   ✔ cjs: U+000e (12.704219ms)
+2026-11-02T10:51:01.1254957Z   ✔ cjs: U+000f (11.156886ms)
+2026-11-02T10:51:01.1255394Z   ✔ cjs: U+0010 (9.958604ms)
+2026-11-02T10:51:01.1255811Z   ✔ cjs: U+0011 (9.957082ms)
+2026-11-02T10:51:01.1256215Z   ✔ cjs: U+0012 (8.08508ms)
+2026-11-02T10:51:01.1257011Z   ✔ cjs: U+0013 (8.914501ms)
+2026-11-02T10:51:01.1257459Z   ✔ cjs: U+0014 (8.466394ms)
+2026-11-02T10:51:01.1257874Z   ✔ cjs: U+0015 (12.346249ms)
+2026-11-02T10:51:01.1258290Z   ✔ cjs: U+0016 (7.89242ms)
+2026-11-02T10:51:01.1258876Z   ✔ cjs: U+0017 (8.743541ms)
+2026-11-02T10:51:01.1259470Z   ✔ cjs: U+0018 (8.476041ms)
+2026-11-02T10:51:01.1259977Z   ✔ cjs: U+0019 (7.834121ms)
+2026-11-02T10:51:01.1260401Z   ✔ cjs: U+001a (8.847406ms)
+2026-11-02T10:51:01.1261124Z   ✔ cjs: U+001b (6.386464ms)
+2026-11-02T10:51:01.1261868Z   ✔ cjs: U+001c (11.238357ms)
+2026-11-02T10:51:01.1262491Z   ✔ cjs: U+001d (6.6893ms)
+2026-11-02T10:51:01.1262923Z   ✔ cjs: U+001e (8.311794ms)
+2026-11-02T10:51:01.1263341Z   ✔ cjs: U+001f (8.408084ms)
+2026-11-02T10:51:01.1263831Z   ✔ cjs: U+007f (7.302717ms)
+2026-11-02T10:51:01.1265267Z ✔ cjs: bare structural and other C0/DEL tokens keep native publication and work (367.090683ms)
+2026-11-02T10:51:01.1267370Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.1292561Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.1342732Z ✔ cjs: native idle, segment, remote and pre-Undo flush boundaries retain their ordering (26.961028ms)
+2026-11-02T10:51:01.1601930Z ✔ cjs: guard accepts the pinned original and exact current or previous patch (22.881983ms)
+2026-11-02T10:51:01.1651335Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.1728051Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.1751027Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.1829364Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.1867536Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.1901066Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.1959189Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.1987784Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.2016658Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.2088881Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.2108385Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.2117848Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.2212377Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.2229643Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.2240215Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.2518168Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.2548103Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.2592391Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.2818671Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.2942245Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.3030972Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.3248789Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.3561422Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.3788060Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.4055144Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.4293141Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.4618399Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.4970749Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.5188443Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.5469115Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.5869939Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.6128128Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.6433962Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.6723330Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.7047189Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.7339120Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.7600471Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.7680234Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.7768757Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.7792321Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.7867297Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.7907572Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.7992695Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.8047400Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.8193932Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.8213882Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.8284242Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.8325137Z Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+2026-11-02T10:51:01.8358255Z ✔ cjs: native preservation markers qualify without changing forward or inverse actions (678.242489ms)
+2026-11-02T10:51:01.8638339Z ✔ Docs installer validates package identity and both complete builds before any write (28.255207ms)
+2026-11-02T10:51:01.9062477Z ✔ es: both native resize and queued refresh retain finite collapsed geometry (34.884834ms)
+2026-11-02T10:51:01.9065210Z ✔ es: explicit invalid placement and nonfinite retained geometry still fail (4.377242ms)
+2026-11-02T10:51:01.9068219Z ✔ es: the drawing patch is idempotent and rejects changed upstream bytes (10.369803ms)
+2026-11-02T10:51:01.9070648Z ✔ cjs: both native resize and queued refresh retain finite collapsed geometry (17.062588ms)
+2026-11-02T10:51:01.9072085Z ✔ cjs: explicit invalid placement and nonfinite retained geometry still fail (5.538073ms)
+2026-11-02T10:51:01.9073447Z ✔ cjs: the drawing patch is idempotent and rejects changed upstream bytes (3.100468ms)
+2026-11-02T10:51:01.9074614Z ✔ drawing installation validates its version and both formats before changing either (38.386056ms)
+2026-11-02T10:51:01.9075657Z ✔ es: virtual-list resize ignores a cleared ref and still disconnects (19.866131ms)
+2026-11-02T10:51:01.9076959Z ✔ es: the original virtual-list callback reproduces the null clientWidth error (24.544208ms)
+2026-11-02T10:51:01.9077950Z ✔ es: the UI patch is idempotent and rejects changed upstream bytes (27.703192ms)
+2026-11-02T10:51:01.9079144Z ✔ cjs: virtual-list resize ignores a cleared ref and still disconnects (13.444139ms)
+2026-11-02T10:51:01.9080161Z ✔ cjs: the original virtual-list callback reproduces the null clientWidth error (11.62644ms)
+2026-11-02T10:51:01.9081138Z ✔ cjs: the UI patch is idempotent and rejects changed upstream bytes (14.397519ms)
+2026-11-02T10:51:01.9082123Z ✔ UI installation validates its version and both formats before changing either (74.194619ms)
+2026-11-02T10:51:01.9083229Z ✔ manual-only CLI operations fail before opening data and never expose configuration (2178.85914ms)
+2026-11-02T10:51:01.9084510Z ✔ independent CLI filesystem listing/download preserve complete encrypted bytes and refuse overwrite (1731.139829ms)
+2026-11-02T10:51:01.9085863Z ✔ deployment rejects public binds, non-tailnet names, unsafe paths and mutable images (2.338422ms)
+2026-11-02T10:51:01.9087399Z ✔ host preflight rejects missing, plaintext and nested data mounts while accepting encrypted topology (2.442688ms)
+2026-11-02T10:51:01.9088699Z ✔ two named CI secrets support a credential pair and bucket endpoint without guessing credentials (3.247452ms)
+2026-11-02T10:51:01.9089881Z ✔ documented DigitalOcean API and Ansible exports normalize only their credential pair (0.906024ms)
+2026-11-02T10:51:01.9091010Z ✔ credential exports reject mixed sources, undocumented fields and malformed metadata (0.821196ms)
+2026-11-02T10:51:01.9092214Z ✔ missing or malformed external capability is explicit and never includes supplied secret values (0.470569ms)
+2026-11-02T10:51:01.9093416Z ✔ the probe requires a concrete Spaces bucket origin and rejects redirects and custom hosts (0.693698ms)
+2026-11-02T10:51:01.9094666Z ✔ a known authenticated artifact requires explicit anonymous denial rather than a redirect or missing result (0.829742ms)
+2026-11-02T10:51:01.9095764Z ✔ provider acceptance refuses incomplete, foreign or duplicate catalog entries (0.377957ms)
+2026-11-02T10:51:01.9097241Z ✔ CI probe produces only redacted readiness evidence without package installation or provider requests (769.410665ms)
+2026-11-02T10:51:01.9098643Z ✔ provider failure diagnostics retain fixed stage codes without native private details (2.679451ms)
+2026-11-02T10:51:01.9099614Z ✔ only an exact fixed fixture HTTP status and known phase enter the report (0.386001ms)
+2026-11-02T10:51:01.9100539Z ✔ diagnostic accessor or journal failures do not throw or replace containment (0.510425ms)
+2026-11-02T10:51:02.5209605Z ✔ six simultaneous waiters recover a dead owner without overlapping workloads (3122.417689ms)
+2026-11-02T10:51:02.8737882Z ✔ an expired lock never probes or signals its possibly reused live group (353.008998ms)
+2026-11-02T10:51:03.2339465Z ✔ a dead runner past the limit retains its lock until the owned group exits (357.221726ms)
+2026-11-02T10:51:04.0710349Z ✔ an exited command retains its lock until its surviving worker finishes (839.756989ms)
+2026-11-02T10:51:10.3279578Z ✔ the original watchdog still stops a worker after its successful command exits (6260.622457ms)
+2026-11-02T10:51:10.3393735Z ℹ tests 375
+2026-11-02T10:51:10.3394196Z ℹ suites 0
+2026-11-02T10:51:10.3394658Z ℹ pass 375
+2026-11-02T10:51:10.3395082Z ℹ fail 0
+2026-11-02T10:51:10.3395500Z ℹ cancelled 0
+2026-11-02T10:51:10.3395941Z ℹ skipped 0
+2026-11-02T10:51:10.3396554Z ℹ todo 0
+2026-11-02T10:51:10.3397067Z ℹ duration_ms 17810.748217
+2026-11-02T10:51:10.6583828Z 
+2026-11-02T10:51:10.6587375Z [1m[30m[46m RUN [49m[39m[22m [36mv5.0.5 [39m[90m/home/runner/work/spinel/spinel[39m
+2026-11-02T10:51:10.6588066Z 
+2026-11-02T10:51:11.6038202Z  [32m✓[39m src/ui/spinelSync.test.ts [2m([22m[2m81 tests[22m[2m)[22m[33m 311[2mms[22m[39m
+2026-11-02T10:51:31.7085333Z  [32m✓[39m src/server/sync/transport.test.ts [2m([22m[2m23 tests[22m[2m)[22m[33m 15578[2mms[22m[39m
+2026-11-02T10:51:31.7088095Z    [33m[2m✓[22m[39m the native protocol is available by default and the old protocol is retired[33m 303[2mms[22m[39m
+2026-11-02T10:51:31.7089898Z    [33m[2m✓[22m[39m offline replay sends an atomic head fence through the authorized native socket[33m 365[2mms[22m[39m
+2026-11-02T10:51:31.7091883Z    [33m[2m✓[22m[39m two real sockets converge through durable ordering, retry, divergence resync and no duplicate broadcasts[33m 522[2mms[22m[39m
+2026-11-02T10:51:31.7093625Z    [33m[2m✓[22m[39m resume replays exact missing edits before live edits and an unchanged retry returns its original receipt[33m 508[2mms[22m[39m
+2026-11-02T10:51:31.7095171Z    [33m[2m✓[22m[39m a stale initial resume leaves the socket open to recover an old immutable receipt[33m 365[2mms[22m[39m
+2026-11-02T10:51:31.7097088Z    [33m[2m✓[22m[39m only safe IDs from submitted requests correlate refusals; unsolicited and malformed frames do not[33m 329[2mms[22m[39m
+2026-11-02T10:51:31.7098822Z    [33m[2m✓[22m[39m same-account tabs keep distinct ephemeral members with saved profiles and remove closed or expired sessions[33m 571[2mms[22m[39m
+2026-11-02T10:51:31.7100595Z    [33m[2m✓[22m[39m cursor grammar, scope fields, payload size and per-client floods are bounded without persisting presence[33m 738[2mms[22m[39m
+2026-11-02T10:51:31.7102082Z    [33m[2m✓[22m[39m heartbeat removes a dead tab while a responding tab keeps its presence[33m 1106[2mms[22m[39m
+2026-11-02T10:51:31.7103673Z    [33m[2m✓[22m[39m an active guest link anonymizes profiles for every recipient and expiry removes the guest before the next cursor[33m 341[2mms[22m[39m
+2026-11-02T10:51:31.7105602Z    [33m[2m✓[22m[39m supervised expiry admits running cleanup, closes paused guests without writes and cleans up after resume[33m 1613[2mms[22m[39m
+2026-11-02T10:51:31.7108044Z    [33m[2m✓[22m[39m expiry cleanup scan failures stay private, close guests and retry without starving another root[33m 1564[2mms[22m[39m
+2026-11-02T10:51:31.7110662Z    [33m[2m✓[22m[39m expiry cleanup fence failures stay private, close guests and retry without starving another root[33m 1559[2mms[22m[39m
+2026-11-02T10:51:31.7113680Z    [33m[2m✓[22m[39m expiry cleanup finish failures stay private, close guests and retry without starving another root[33m 1570[2mms[22m[39m
+2026-11-02T10:51:31.7116011Z    [33m[2m✓[22m[39m an open account viewer gains editing on the same socket and a later downgrade still closes it[33m 582[2mms[22m[39m
+2026-11-02T10:51:31.7118782Z    [33m[2m✓[22m[39m Origin, one-time tickets, operator/viewer boundaries and revoked recipients are enforced over real ingress[33m 790[2mms[22m[39m
+2026-11-02T10:51:31.7121044Z    [33m[2m✓[22m[39m Space sockets bind root plus child and turn off fences every child, guest and old ticket[33m 642[2mms[22m[39m
+2026-11-02T10:51:31.7123292Z    [33m[2m✓[22m[39m Space sockets bind root plus child and expire fences every child, guest and old ticket[33m 656[2mms[22m[39m
+2026-11-02T10:51:31.7125522Z    [33m[2m✓[22m[39m a root account downgrade and revocation fence every native child connection and old ticket[33m 742[2mms[22m[39m
+2026-11-02T10:51:33.2272093Z [90mstderr[2m | src/server/collaboration/service.test.ts[2m > [22m[2mforeign and external image mutations are permanently rejected before persistence
+2026-11-02T10:51:33.2275544Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:51:33.224Z","stage":"submitChangeset","userID":"f7044c2a-4301-4c05-b714-2f0b83c06d98","unitID":"5d6085bb-63ee-49a3-a74b-6f430144507f"}
+2026-11-02T10:51:33.2277883Z 
+2026-11-02T10:51:33.2376855Z [90mstderr[2m | src/server/collaboration/service.test.ts[2m > [22m[2mforeign and external image mutations are permanently rejected before persistence
+2026-11-02T10:51:33.2380973Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:51:33.237Z","stage":"submitChangeset","userID":"f7044c2a-4301-4c05-b714-2f0b83c06d98","unitID":"5d6085bb-63ee-49a3-a74b-6f430144507f"}
+2026-11-02T10:51:33.2382501Z 
+2026-11-02T10:51:33.5734542Z [90mstderr[2m | src/server/collaboration/service.test.ts[2m > [22m[2mexpired network sessions cannot submit and cross-unit mutations cannot modify another document
+2026-11-02T10:51:33.5739661Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:51:33.572Z","stage":"submitChangeset","userID":"2f920f76-2c1c-41dd-807b-52cf00cb6da5","unitID":"6a6b033b-2b72-4ab5-a776-f1fcda6decaa"}
+2026-11-02T10:51:33.5741503Z 
+2026-11-02T10:51:33.8222117Z [90mstderr[2m | src/server/collaboration/service.test.ts[2m > [22m[2mservice read, edit and lifecycle boundaries reuse current workspace grants
+2026-11-02T10:51:33.8225604Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:51:33.821Z","stage":"submitChangeset","userID":"f92c5a44-a384-4ba6-bffb-d703fb216ef4","unitID":"af66c20c-aaa8-431b-adc8-1dd4c658b7e6"}
+2026-11-02T10:51:33.8227495Z 
+2026-11-02T10:51:34.1672843Z [90mstderr[2m | src/server/collaboration/service.test.ts[2m > [22m[2mguest viewer mutations are denied while the same editor mutation commits
+2026-11-02T10:51:34.1676059Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:51:34.166Z","stage":"submitChangeset","unitID":"b782410a-1ad9-4355-9e6c-2190d3962d8d"}
+2026-11-02T10:51:34.1677603Z 
+2026-11-02T10:51:34.2474404Z [90mstderr[2m | src/server/collaboration/service.test.ts[2m > [22m[2mturn off of a guest link during mutation application prevents the durable commit
+2026-11-02T10:51:34.2476334Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:51:34.246Z","stage":"submitChangeset","unitID":"44335484-5f7e-446e-a846-e10c1f5b4f23"}
+2026-11-02T10:51:34.2477292Z 
+2026-11-02T10:51:34.3240380Z [90mstderr[2m | src/server/collaboration/service.test.ts[2m > [22m[2mexpire of a guest link during mutation application prevents the durable commit
+2026-11-02T10:51:34.3244131Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:51:34.323Z","stage":"submitChangeset","unitID":"475b185b-a50b-4e64-bfba-f98e10ad06e1"}
+2026-11-02T10:51:34.3245288Z 
+2026-11-02T10:51:34.4829724Z [90mstderr[2m | src/server/collaboration/service.test.ts[2m > [22m[2mretained native restore drains accepted edits, fences old IDs and keeps exact recoverable pre-state
+2026-11-02T10:51:34.4834345Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:51:34.482Z","stage":"submitChangeset","userID":"9bd0407c-a05f-4f1c-a081-689370e09a02","unitID":"cbe5e5ba-bdf1-40ba-b205-f4d518bf2f97"}
+2026-11-02T10:51:34.4836121Z 
+2026-11-02T10:51:34.9944563Z [90mstderr[2m | src/server/collaboration/service.test.ts[2m > [22m[2mSheet image validation fences live mutations and preserved resources
+2026-11-02T10:51:34.9948679Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:51:34.993Z","stage":"submitChangeset","userID":"deb0567f-6289-46e4-8edf-b00545e669e6","unitID":"61b62f63-0360-40a7-95a1-2c8ec33e4687"}
+2026-11-02T10:51:34.9950384Z 
+2026-11-02T10:51:35.2142102Z  [32m✓[39m src/server/collaboration/service.test.ts [2m([22m[2m24 tests[22m[2m)[22m[33m 2365[2mms[22m[39m
+2026-11-02T10:51:37.0354848Z [90mstderr[2m | src/server/collaboration/space-native.test.ts[2m > [22m[2mone native engine preserves subtree recovery and deferred checkpoints before scoped history activation
+2026-11-02T10:51:37.0359222Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:51:37.033Z","stage":"submitChangeset","userID":"4e3906d6-c2c2-4227-9ea5-ce5abbb51b2a","unitID":"0e2e18d9-212e-43f2-8d4c-c9d4d7268b70"}
+2026-11-02T10:51:37.0361018Z 
+2026-11-02T10:51:37.2370118Z [90mstderr[2m | src/server/collaboration/space-native.test.ts[2m > [22m[2mpermissions changed during materialization refuse the read and prevent a native commit
+2026-11-02T10:51:37.2374147Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:51:37.236Z","stage":"submitChangeset","userID":"2e579649-4bbf-4577-b835-84c07376b378","unitID":"47bc9db9-0cd0-4393-ad7c-d0f8796782a5"}
+2026-11-02T10:51:37.2375676Z 
+2026-11-02T10:51:39.7712754Z  [32m✓[39m src/server/collaboration/space-native.test.ts [2m([22m[2m9 tests[22m[2m)[22m[33m 3232[2mms[22m[39m
+2026-11-02T10:51:39.7714614Z    [33m[2m✓[22m[39m BackupService restores complete native Space data and SPN-064 transfers its recovery to the new owner[33m 2032[2mms[22m[39m
+2026-11-02T10:51:41.0875346Z  [32m✓[39m src/ui/offlineCreation.test.ts [2m([22m[2m45 tests[22m[2m)[22m[32m 176[2mms[22m[39m
+2026-11-02T10:51:42.7772397Z  [32m✓[39m src/ui/offlineLifecycle.test.ts [2m([22m[2m53 tests[22m[2m)[22m[33m 591[2mms[22m[39m
+2026-11-02T10:51:44.9880643Z [90mstderr[2m | src/server/mcp/mcp.test.ts[2m > [22m[2mSpace MCP final commit rejects root grant, token, owner, downgrade and ancestry changes
+2026-11-02T10:51:44.9884627Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:51:44.986Z","stage":"submitChangeset","userID":"6ddbebc2-f0f7-4721-8e71-9547fdded7d6","unitID":"3104b8ce-fd7d-45c0-8369-41ff73f8bb40"}
+2026-11-02T10:51:44.9886637Z 
+2026-11-02T10:51:45.0150860Z [90mstderr[2m | src/server/mcp/mcp.test.ts[2m > [22m[2mSpace MCP final commit rejects root grant, token, owner, downgrade and ancestry changes
+2026-11-02T10:51:45.0155343Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:51:45.014Z","stage":"submitChangeset","userID":"6ddbebc2-f0f7-4721-8e71-9547fdded7d6","unitID":"3104b8ce-fd7d-45c0-8369-41ff73f8bb40"}
+2026-11-02T10:51:45.0156955Z 
+2026-11-02T10:51:45.0408982Z [90mstderr[2m | src/server/mcp/mcp.test.ts[2m > [22m[2mSpace MCP final commit rejects root grant, token, owner, downgrade and ancestry changes
+2026-11-02T10:51:45.0413105Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:51:45.040Z","stage":"submitChangeset","userID":"6ddbebc2-f0f7-4721-8e71-9547fdded7d6","unitID":"3104b8ce-fd7d-45c0-8369-41ff73f8bb40"}
+2026-11-02T10:51:45.0414468Z 
+2026-11-02T10:51:45.0689856Z [90mstderr[2m | src/server/mcp/mcp.test.ts[2m > [22m[2mSpace MCP final commit rejects root grant, token, owner, downgrade and ancestry changes
+2026-11-02T10:51:45.0693247Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:51:45.067Z","stage":"submitChangeset","userID":"6ddbebc2-f0f7-4721-8e71-9547fdded7d6","unitID":"3104b8ce-fd7d-45c0-8369-41ff73f8bb40"}
+2026-11-02T10:51:45.0695125Z 
+2026-11-02T10:51:45.0949784Z [90mstderr[2m | src/server/mcp/mcp.test.ts[2m > [22m[2mSpace MCP final commit rejects root grant, token, owner, downgrade and ancestry changes
+2026-11-02T10:51:45.0953649Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:51:45.094Z","stage":"submitChangeset","userID":"6ddbebc2-f0f7-4721-8e71-9547fdded7d6","unitID":"3104b8ce-fd7d-45c0-8369-41ff73f8bb40"}
+2026-11-02T10:51:45.0955225Z 
+2026-11-02T10:51:45.3920929Z [90mstderr[2m | src/server/mcp/mcp.test.ts[2m > [22m[2mproduction commit rejects token revocation during asynchronous recipient revalidation
+2026-11-02T10:51:45.3924262Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:51:45.391Z","stage":"submitChangeset","userID":"b1fc3421-1d0f-4e29-85f6-636a7a804080","unitID":"fe0977a7-4a8a-4599-9c4b-309fdd29a7a2"}
+2026-11-02T10:51:45.3925831Z 
+2026-11-02T10:51:45.4732686Z [90mstderr[2m | src/server/mcp/mcp.test.ts[2m > [22m[2mproduction commit rejects account revocation during asynchronous recipient revalidation
+2026-11-02T10:51:45.4736081Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:51:45.472Z","stage":"submitChangeset","userID":"9118a275-bfc7-46c8-a56e-1059a2d42e67","unitID":"db946ea7-ed65-44b7-8a0a-466a21bd3060"}
+2026-11-02T10:51:45.4737932Z 
+2026-11-02T10:51:45.5522089Z [90mstderr[2m | src/server/mcp/mcp.test.ts[2m > [22m[2mproduction commit rejects grant revocation during asynchronous recipient revalidation
+2026-11-02T10:51:45.5525437Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:51:45.551Z","stage":"submitChangeset","userID":"c8629fa9-e90d-4a77-9bf9-5949a1cde23e","unitID":"945b8ac6-1cfd-466c-b456-75a46a791f74"}
+2026-11-02T10:51:45.5527284Z 
+2026-11-02T10:51:45.8320595Z [90mstderr[2m | src/server/mcp/mcp.test.ts[2m > [22m[2mtoken revocation during mutation application prevents durable commit
+2026-11-02T10:51:45.8324116Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:51:45.831Z","stage":"submitChangeset","userID":"7dc7bb6a-261b-4dcf-bb1c-e2174d4507c4","unitID":"27ffecd0-d7ca-4a44-96b2-71b3a8d94b1f"}
+2026-11-02T10:51:45.8325703Z 
+2026-11-02T10:51:45.9143948Z [90mstderr[2m | src/server/mcp/mcp.test.ts[2m > [22m[2maccount revocation during mutation application prevents durable commit
+2026-11-02T10:51:45.9148000Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:51:45.913Z","stage":"submitChangeset","userID":"b067fc8d-28f3-4f69-a7e5-4a6b562c3913","unitID":"f7c773f6-773e-4eae-8501-1ff0ec374916"}
+2026-11-02T10:51:45.9149821Z 
+2026-11-02T10:51:46.0177703Z [90mstderr[2m | src/server/mcp/mcp.test.ts[2m > [22m[2mgrant revocation during mutation application prevents durable commit
+2026-11-02T10:51:46.0181466Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:51:46.016Z","stage":"submitChangeset","userID":"3d5801d6-abc0-4ca5-affb-3dd2c1a5eb2a","unitID":"60d7c907-eded-4834-933f-fd04a25cfe7f"}
+2026-11-02T10:51:46.0183317Z 
+2026-11-02T10:51:46.8008136Z [90mstderr[2m | src/server/mcp/mcp.test.ts[2m > [22m[2mSDK OAuth discovery, browser consent, PKCE, refresh and disconnect reach the production commit boundary
+2026-11-02T10:51:46.8012070Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:51:46.799Z","stage":"submitChangeset","userID":"c4338d95-4724-4abb-b77a-63f72c512b01","unitID":"cc2350ad-bb5a-4cf4-af4c-245d2553ffba"}
+2026-11-02T10:51:46.8013877Z 
+2026-11-02T10:51:46.8081795Z  [32m✓[39m src/server/mcp/mcp.test.ts [2m([22m[2m20 tests[22m[2m)[22m[33m 2571[2mms[22m[39m
+2026-11-02T10:51:48.4584745Z [90mstderr[2m | src/server/sync/transition.test.ts[2m > [22m[2mall retained metadata and public snapshots survive a source-copy conversion and native edit/recovery boundaries
+2026-11-02T10:51:48.4588835Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:51:48.457Z","stage":"submitChangeset","userID":"cfc827bd-2bd8-445b-9233-21ee2706403b","unitID":"e6709763-fc2d-4748-998c-1d802a26dc83"}
+2026-11-02T10:51:48.4590856Z 
+2026-11-02T10:51:48.5585969Z [90mstderr[2m | src/server/sync/transition.test.ts[2m > [22m[2mall retained metadata and public snapshots survive a source-copy conversion and native edit/recovery boundaries
+2026-11-02T10:51:48.5590001Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:51:48.557Z","stage":"submitChangeset","userID":"1e8052df-c9b4-410b-9b43-b43f76235a69","unitID":"40cf90c8-37c9-4faa-aae7-5dc16e7b9535"}
+2026-11-02T10:51:48.5591555Z 
+2026-11-02T10:51:48.5926647Z [90mstderr[2m | src/server/sync/transition.test.ts[2m > [22m[2mall retained metadata and public snapshots survive a source-copy conversion and native edit/recovery boundaries
+2026-11-02T10:51:48.5931070Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:51:48.591Z","stage":"submitChangeset","userID":"0ff70658-fea2-43b6-843c-30312f68adee","unitID":"aad9f073-7db5-40f2-a53d-648a610bdff1"}
+2026-11-02T10:51:48.5932659Z 
+2026-11-02T10:51:54.1003846Z  [32m✓[39m src/server/sync/transition.test.ts [2m([22m[2m22 tests[22m[2m)[22m[33m 6157[2mms[22m[39m
+2026-11-02T10:51:54.1005742Z    [33m[2m✓[22m[39m all retained metadata and public snapshots survive a source-copy conversion and native edit/recovery boundaries[33m 1035[2mms[22m[39m
+2026-11-02T10:51:54.1008835Z    [33m[2m✓[22m[39m same-bundle refusal observes newer committed WAL metadata and preserves every native row and durable byte[33m 1278[2mms[22m[39m
+2026-11-02T10:51:54.1011901Z    [33m[2m✓[22m[39m an opaque name collision cannot conceal an unsafe image and a completed copy is reverified on retry[33m 314[2mms[22m[39m
+2026-11-02T10:52:07.8479664Z [90mstdout[2m | src/server/workspace/archive.test.ts[2m > [22m[2ma 2,176 MiB logical workspace streams one native member at a time within a 512 MiB process budget
+2026-11-02T10:52:07.8482269Z [22m[39mArchive streaming fixture: 2,176 MiB native payload; process RSS baseline 408.9 MiB, peak 431.5 MiB.
+2026-11-02T10:52:07.8483273Z 
+2026-11-02T10:52:08.1871247Z  [32m✓[39m src/server/workspace/archive.test.ts [2m([22m[2m16 tests[22m[2m)[22m[33m 13220[2mms[22m[39m
+2026-11-02T10:52:08.1874517Z    [33m[2m✓[22m[39m the complete metadata budget refuses an oversized workspace without a partial catalog[33m 350[2mms[22m[39m
+2026-11-02T10:52:08.1880210Z    [33m[2m✓[22m[39m a 2,176 MiB logical workspace streams one native member at a time within a 512 MiB process budget[33m 11683[2mms[22m[39m
+2026-11-02T10:52:08.1881999Z    [33m[2m✓[22m[39m a Doc exactly at the 10 MiB native limit round-trips with an unavailable external Formula source[33m 331[2mms[22m[39m
+2026-11-02T10:52:12.1541343Z [90mstderr[2m | server/app.test.ts[2m > [22m[2mVite cannot serve database files, sidecars or server source through its filesystem routes
+2026-11-02T10:52:12.1547028Z [22m[39mThe request id "/home/runner/work/spinel/spinel/test-results/auth-boundary-ugDHNz/private.sqlite" is outside of Vite serving allow list.
+2026-11-02T10:52:12.1549642Z 
+2026-11-02T10:52:12.1550386Z - /home/runner/work/spinel/spinel/web
+2026-11-02T10:52:12.1551402Z - /home/runner/work/spinel/spinel/src/shared
+2026-11-02T10:52:12.1552170Z - /home/runner/work/spinel/spinel/src/ui
+2026-11-02T10:52:12.1552934Z - /home/runner/work/spinel/spinel/node_modules
+2026-11-02T10:52:12.1553385Z 
+2026-11-02T10:52:12.1554428Z Refer to docs https://vite.dev/config/server-options.html#server-fs-allow for configurations and more details.
+2026-11-02T10:52:12.1555119Z 
+2026-11-02T10:52:12.1555126Z 
+2026-11-02T10:52:12.1636121Z [90mstderr[2m | server/app.test.ts[2m > [22m[2mVite cannot serve database files, sidecars or server source through its filesystem routes
+2026-11-02T10:52:12.1639376Z [22m[39mThe request id "/home/runner/work/spinel/spinel/test-results/auth-boundary-ugDHNz/private.sqlite" is outside of Vite serving allow list.
+2026-11-02T10:52:12.1640772Z 
+2026-11-02T10:52:12.2382622Z [90mstderr[2m | server/app.test.ts[2m > [22m[2mVite cannot serve database files, sidecars or server source through its filesystem routes
+2026-11-02T10:52:12.2386754Z [22m[39mThe request id "/home/runner/work/spinel/spinel/test-results/auth-boundary-ugDHNz/private.sqlite-wal" is outside of Vite serving allow list.
+2026-11-02T10:52:12.2388365Z 
+2026-11-02T10:52:12.2446333Z [90mstderr[2m | server/app.test.ts[2m > [22m[2mVite cannot serve database files, sidecars or server source through its filesystem routes
+2026-11-02T10:52:12.2450443Z [22m[39mThe request id "/home/runner/work/spinel/spinel/test-results/auth-boundary-ugDHNz/private.sqlite-wal" is outside of Vite serving allow list.
+2026-11-02T10:52:12.2452259Z 
+2026-11-02T10:52:12.2671678Z [90mstderr[2m | server/app.test.ts[2m > [22m[2mVite cannot serve database files, sidecars or server source through its filesystem routes
+2026-11-02T10:52:12.2674193Z [22m[39mThe request id "/home/runner/work/spinel/spinel/test-results/auth-boundary-ugDHNz/private.sqlite-shm" is outside of Vite serving allow list.
+2026-11-02T10:52:12.2675061Z 
+2026-11-02T10:52:12.2694799Z [90mstderr[2m | server/app.test.ts[2m > [22m[2mVite cannot serve database files, sidecars or server source through its filesystem routes
+2026-11-02T10:52:12.2703624Z [22m[39mThe request id "/home/runner/work/spinel/spinel/test-results/auth-boundary-ugDHNz/private.sqlite-shm" is outside of Vite serving allow list.
+2026-11-02T10:52:12.2715634Z 
+2026-11-02T10:52:12.2765899Z [90mstderr[2m | server/app.test.ts[2m > [22m[2mVite cannot serve database files, sidecars or server source through its filesystem routes
+2026-11-02T10:52:12.2767852Z [22m[39mThe request id "/home/runner/work/spinel/spinel/server/app.ts" is outside of Vite serving allow list.
+2026-11-02T10:52:12.2768523Z 
+2026-11-02T10:52:12.3629507Z [90mstderr[2m | server/app.test.ts[2m > [22m[2mVite cannot serve database files, sidecars or server source through its filesystem routes
+2026-11-02T10:52:12.3631782Z [22m[39mThe request id "/home/runner/work/spinel/spinel/server/app.ts?raw" is outside of Vite serving allow list.
+2026-11-02T10:52:12.3633308Z 
+2026-11-02T10:52:13.3210808Z [90mstdout[2m | server/app.test.ts[2m > [22m[2mpage metadata stays generic with configured-origin assets (production)
+2026-11-02T10:52:13.3212461Z [22m[39m[2m10:52:13 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] bundling dependencies...
+2026-11-02T10:52:13.3213094Z 
+2026-11-02T10:52:13.6632717Z  [32m✓[39m server/app.test.ts [2m([22m[2m22 tests[22m[2m)[22m[33m 3886[2mms[22m[39m
+2026-11-02T10:52:13.6634587Z    [33m[2m✓[22m[39m private restore readiness compares complete startup state without opening writes[33m 327[2mms[22m[39m
+2026-11-02T10:52:13.6636918Z    [33m[2m✓[22m[39m Vite cannot serve database files, sidecars or server source through its filesystem routes[33m 1246[2mms[22m[39m
+2026-11-02T10:52:15.4162431Z  [32m✓[39m src/ui/deviceInventory.test.ts [2m([22m[2m68 tests[22m[2m)[22m[33m 705[2mms[22m[39m
+2026-11-02T10:52:20.4658558Z  [32m✓[39m src/server/workspace/source-sharing.test.ts [2m([22m[2m28 tests[22m[2m)[22m[33m 3931[2mms[22m[39m
+2026-11-02T10:52:20.4660720Z    [33m[2m✓[22m[39m a Space with too many live Docs refuses source review instead of omitting later Docs[33m 574[2mms[22m[39m
+2026-11-02T10:52:20.4663012Z    [33m[2m✓[22m[39m aggregate snapshot budget refuses a Space even when each Doc is below its individual save limit[33m 330[2mms[22m[39m
+2026-11-02T10:52:20.4665365Z    [33m[2m✓[22m[39m the combined ancestry budget refuses otherwise valid deep source paths without partial grants[33m 932[2mms[22m[39m
+2026-11-02T10:52:22.6584384Z  [32m✓[39m src/server/pdf/prepare.test.ts [2m([22m[2m17 tests[22m[2m)[22m[33m 1680[2mms[22m[39m
+2026-11-02T10:52:22.6588498Z    [33m[2m✓[22m[39m formula recalculation can reveal a filtered image after host byte selection[33m 1619[2mms[22m[39m
+2026-11-02T10:52:25.3723007Z  [32m✓[39m src/server/collaboration/offline-bundle.test.ts [2m([22m[2m10 tests[22m[2m)[22m[33m 1377[2mms[22m[39m
+2026-11-02T10:52:25.3727019Z    [33m[2m✓[22m[39m the bundle route enforces sessions, accounts, transfer admission and reproduces images[33m 335[2mms[22m[39m
+2026-11-02T10:52:28.1677659Z  [32m✓[39m src/server/workspace/space-expiry.test.ts [2m([22m[2m25 tests[22m[2m)[22m[33m 1707[2mms[22m[39m
+2026-11-02T10:52:28.1682691Z    [33m[2m✓[22m[39m a oversized recovery tree is retained atomically while unrelated Space and ordinary cleanup progresses[33m 905[2mms[22m[39m
+2026-11-02T10:52:31.1811625Z  [32m✓[39m src/server/formulas/space-service.test.ts [2m([22m[2m30 tests[22m[2m)[22m[33m 2227[2mms[22m[39m
+2026-11-02T10:52:32.4137764Z  [32m✓[39m src/server/workspace/document-access.test.ts [2m([22m[2m49 tests[22m[2m)[22m[33m 977[2mms[22m[39m
+2026-11-02T10:52:35.4762520Z  [32m✓[39m src/server/workspace/spaces.test.ts [2m([22m[2m18 tests[22m[2m)[22m[33m 2858[2mms[22m[39m
+2026-11-02T10:52:35.4765281Z    [33m[2m✓[22m[39m creation refuses to leave a tree larger than the service can safely process[33m 859[2mms[22m[39m
+2026-11-02T10:52:35.4798154Z    [33m[2m✓[22m[39m an outer ancestry beyond the work budget refuses Space creation and move atomically[33m 1294[2mms[22m[39m
+2026-11-02T10:52:36.4709162Z  [32m✓[39m src/server/workspace/space-recovery.test.ts [2m([22m[2m18 tests[22m[2m)[22m[33m 774[2mms[22m[39m
+2026-11-02T10:52:36.4711200Z    [33m[2m✓[22m[39m an oversized Space refuses recovery before storing a deletion batch[33m 339[2mms[22m[39m
+2026-11-02T10:52:38.9208332Z  [32m✓[39m src/server/workspace/offline-creation.test.ts [2m([22m[2m25 tests[22m[2m)[22m[33m 1369[2mms[22m[39m
+2026-11-02T10:52:40.4641193Z  [32m✓[39m src/server/workspace/copy.test.ts [2m([22m[2m22 tests[22m[2m)[22m[33m 744[2mms[22m[39m
+2026-11-02T10:52:41.6067358Z  [32m✓[39m src/ui/offlineRecovery.test.ts [2m([22m[2m38 tests[22m[2m)[22m[32m 183[2mms[22m[39m
+2026-11-02T10:52:42.6867358Z  [32m✓[39m src/ui/accountExit.test.ts [2m([22m[2m34 tests[22m[2m)[22m[33m 924[2mms[22m[39m
+2026-11-02T10:52:42.6870831Z    [33m[2m✓[22m[39m accepted exit locks synchronously, stores identifiers only, and keeps its deletion fence after remote completion[33m 455[2mms[22m[39m
+2026-11-02T10:52:44.9832784Z  [32m✓[39m src/ui/boundedDocHistory.test.ts [2m([22m[2m15 tests[22m[2m)[22m[33m 1284[2mms[22m[39m
+2026-11-02T10:52:44.9842629Z    [33m[2m✓[22m[39m the configured native retention remains finite and evicts only the oldest completed group[33m 958[2mms[22m[39m
+2026-11-02T10:52:45.8065515Z  [32m✓[39m src/server/history/space.test.ts [2m([22m[2m10 tests[22m[2m)[22m[33m 382[2mms[22m[39m
+2026-11-02T10:52:47.4113773Z  [32m✓[39m src/server/workspace/space-images-portable.test.ts [2m([22m[2m32 tests[22m[2m)[22m[33m 793[2mms[22m[39m
+2026-11-02T10:52:48.4671635Z  [32m✓[39m src/server/workspace/portable.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 283[2mms[22m[39m
+2026-11-02T10:52:50.3991821Z  [32m✓[39m src/server/formulas/service.test.ts [2m([22m[2m18 tests[22m[2m)[22m[33m 1250[2mms[22m[39m
+2026-11-02T10:52:55.9912683Z  [32m✓[39m src/server/collaboration/space-transport.test.ts [2m([22m[2m7 tests[22m[2m)[22m[33m 3974[2mms[22m[39m
+2026-11-02T10:52:55.9915069Z    [33m[2m✓[22m[39m scoped native HTTP integrations retain ordinary-route denial and exact child permissions[33m 389[2mms[22m[39m
+2026-11-02T10:52:55.9919350Z    [33m[2m✓[22m[39m Space editor sockets bind the exact root/child and evict changed grants before any later broadcast[33m 1065[2mms[22m[39m
+2026-11-02T10:52:55.9923729Z    [33m[2m✓[22m[39m Space admin sockets bind the exact root/child and evict changed grants before any later broadcast[33m 1084[2mms[22m[39m
+2026-11-02T10:52:55.9928496Z    [33m[2m✓[22m[39m a rotated generation provides scoped native snapshots and ordered replay while old units and revoked unused tickets stay fenced[33m 303[2mms[22m[39m
+2026-11-02T10:52:55.9931673Z    [33m[2m✓[22m[39m one Space guest capability covers its current and future children, with private metadata, images and root-wide revocation[33m 735[2mms[22m[39m
+2026-11-02T10:52:59.4786375Z  [32m✓[39m src/server/workspace/space-boundaries-http.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 1869[2mms[22m[39m
+2026-11-02T10:52:59.4790356Z    [33m[2m✓[22m[39m with Spaces disabled, ordinary HTTP discovery and direct-ID content, grants, exports and formulas refuse hidden Space data[33m 525[2mms[22m[39m
+2026-11-02T10:52:59.4795367Z    [33m[2m✓[22m[39m with Spaces disabled, native snapshots, replay, tickets and guest capabilities close at the real application boundary[33m 1188[2mms[22m[39m
+2026-11-02T10:53:00.0868349Z  [32m✓[39m src/ui/offlineStoreProtection.test.ts [2m([22m[2m68 tests[22m[2m)[22m[32m 43[2mms[22m[39m
+2026-11-02T10:53:05.7521003Z  [32m✓[39m src/server/auth/ownership.test.ts [2m([22m[2m18 tests[22m[2m)[22m[33m 5213[2mms[22m[39m
+2026-11-02T10:53:05.7522772Z    [33m[2m✓[22m[39m oversized metadata sets fail in full and account names become safe recognizable folder names[33m 404[2mms[22m[39m
+2026-11-02T10:53:05.7524490Z    [33m[2m✓[22m[39m recipient discovery remains complete for 9998 transferred + 1 existing rows[33m 2092[2mms[22m[39m
+2026-11-02T10:53:05.7526109Z    [33m[2m✓[22m[39m recipient discovery remains complete for 10000 transferred + 0 existing rows[33m 1769[2mms[22m[39m
+2026-11-02T10:53:05.7528589Z    [33m[2m✓[22m[39m recipient discovery remains complete for 1 transferred + 9999 existing rows[33m 674[2mms[22m[39m
+2026-11-02T10:53:06.8874104Z  [32m✓[39m src/ui/nativeSyncPermissions.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 191[2mms[22m[39m
+2026-11-02T10:53:07.1130093Z [90mstdout[2m | src/server/diagnostics/store.test.ts[2m > [22m[2mthe configured logical ceiling admits its exact final record, drops the next and resumes after clear
+2026-11-02T10:53:07.1134164Z [22m[39m{"probe":"diagnostics-logical-boundary","configuredLogicalBytes":67108864,"boundaryMode":"seeded-counter-not-full-size-store","admittedRecordBytes":211,"admittedMs":1.1499299999999835,"rejectedMs":0.5086210000000051}
+2026-11-02T10:53:07.1136059Z 
+2026-11-02T10:53:07.2661208Z [90mstdout[2m | src/server/diagnostics/store.test.ts[2m > [22m[2ma bounded seeded store exports a standalone consistent SQLite file and reports observed CI costs
+2026-11-02T10:53:07.2667538Z [22m[39m{"probe":"diagnostics-bounded-export","fixtureRows":4097,"fixtureLogicalBytes":864467,"snapshotBytes":1675264,"snapshotDurationMs":97.92922600000003,"rssBeforeBytes":93470720,"rssAfterBytes":114679808,"sampledPeakRssBytes":121663488,"sampleIntervalMs":10,"resourceScope":"test-process-including-export-worker-not-isolated-worker-or-deployment"}
+2026-11-02T10:53:07.2670718Z 
+2026-11-02T10:53:07.3719953Z  [32m✓[39m src/server/diagnostics/store.test.ts [2m([22m[2m13 tests[22m[2m)[22m[33m 329[2mms[22m[39m
+2026-11-02T10:53:09.9154192Z  [32m✓[39m src/server/workspace/space-legacy.test.ts [2m([22m[2m13 tests[22m[2m)[22m[33m 2105[2mms[22m[39m
+2026-11-02T10:53:09.9156294Z    [33m[2m✓[22m[39m a full hidden Space does not consume ordinary discovery capacity[33m 626[2mms[22m[39m
+2026-11-02T10:53:09.9159124Z    [33m[2m✓[22m[39m oversized owned discovery and assignment joins refuse without materializing an unbounded result[33m 925[2mms[22m[39m
+2026-11-02T10:53:11.2888759Z  [32m✓[39m src/server/pdf/service.test.ts [2m([22m[2m16 tests[22m[2m)[22m[33m 777[2mms[22m[39m
+2026-11-02T10:53:12.3939109Z  [32m✓[39m src/ui/preparedImages.test.ts [2m([22m[2m31 tests[22m[2m)[22m[32m 119[2mms[22m[39m
+2026-11-02T10:53:19.5942936Z  [32m✓[39m src/server/sync/store.test.ts [2m([22m[2m21 tests[22m[2m)[22m[33m 6152[2mms[22m[39m
+2026-11-02T10:53:19.5944846Z    [33m[2m✓[22m[39m a competing SQLite writer cannot revoke access between authorization and commit[33m 5040[2mms[22m[39m
+2026-11-02T10:53:19.5947627Z    [33m[2m✓[22m[39m retention bounds before-images while durable edits and retry identities remain[33m 307[2mms[22m[39m
+2026-11-02T10:53:21.0831405Z [90mstderr[2m | src/server/sync/history.test.ts[2m > [22m[2mordinary: restore drains admitted edits, preserves Before restore, fences stale generations and retries safely
+2026-11-02T10:53:21.0834773Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:53:21.081Z","stage":"submitChangeset","userID":"984e935c-2da5-4abe-90ca-3cbd77cba731","unitID":"f0a223b4-5097-4029-b073-7f5c85fe608b"}
+2026-11-02T10:53:21.0836664Z 
+2026-11-02T10:53:21.5507819Z [90mstderr[2m | src/server/sync/history.test.ts[2m > [22m[2mSpace: restore drains admitted edits, preserves Before restore, fences stale generations and retries safely
+2026-11-02T10:53:21.5510971Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:53:21.549Z","stage":"submitChangeset","userID":"31e925e9-802b-486b-9211-785d2ce2cc80","unitID":"d5ab2e3a-53f6-4534-bdb2-e908d6e09c3c"}
+2026-11-02T10:53:21.5512370Z 
+2026-11-02T10:53:22.0385473Z  [32m✓[39m src/server/sync/history.test.ts [2m([22m[2m9 tests[22m[2m)[22m[33m 1367[2mms[22m[39m
+2026-11-02T10:53:23.4901936Z [90mstderr[2m | src/server/sync/service.test.ts[2m > [22m[2mordinary: session revocation during asynchronous preparation is checked again at commit
+2026-11-02T10:53:23.4905628Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:53:23.488Z","stage":"submitChangeset","userID":"8d05f182-e4c7-44d2-9063-36268d71d0d5","unitID":"f66fb33d-f8a5-4197-b4e5-ba8b5e163e27"}
+2026-11-02T10:53:23.4907241Z 
+2026-11-02T10:53:23.5682953Z [90mstderr[2m | src/server/sync/service.test.ts[2m > [22m[2mordinary: grant revocation during asynchronous preparation is checked again at commit
+2026-11-02T10:53:23.5687569Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:53:23.567Z","stage":"submitChangeset","userID":"f229b12f-756d-4f91-8ed7-ce1bd92e92ae","unitID":"1633c86a-ee2e-4e05-9dbc-af6afec8d98b"}
+2026-11-02T10:53:23.5688959Z 
+2026-11-02T10:53:23.6514464Z [90mstderr[2m | src/server/sync/service.test.ts[2m > [22m[2mordinary: epoch revocation during asynchronous preparation is checked again at commit
+2026-11-02T10:53:23.7507319Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:53:23.650Z","stage":"submitChangeset","userID":"d4557f57-99ab-4f88-9cac-fe8a02f90727","unitID":"b6018d9b-e889-4814-9803-09b5a174351b"}
+2026-11-02T10:53:23.7509111Z 
+2026-11-02T10:53:23.7510943Z [90mstderr[2m | src/server/sync/service.test.ts[2m > [22m[2mordinary: root-scoped guest authority is preserved and revoked links cannot write
+2026-11-02T10:53:23.7514075Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:53:23.749Z","stage":"submitChangeset","unitID":"3c39b8e2-5018-4d35-b7cf-96a49eb68eb5"}
+2026-11-02T10:53:23.7515385Z 
+2026-11-02T10:53:24.0087699Z [90mstderr[2m | src/server/sync/service.test.ts[2m > [22m[2mSpace: session revocation during asynchronous preparation is checked again at commit
+2026-11-02T10:53:24.0091165Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:53:24.008Z","stage":"submitChangeset","userID":"3c8b89ce-e3d5-4bec-846c-d86ac7fce608","unitID":"739f9618-71b6-4ba2-aa9b-bca99e8bce56"}
+2026-11-02T10:53:24.0092619Z 
+2026-11-02T10:53:24.0741330Z [90mstderr[2m | src/server/sync/service.test.ts[2m > [22m[2mSpace: grant revocation during asynchronous preparation is checked again at commit
+2026-11-02T10:53:24.0745032Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:53:24.073Z","stage":"submitChangeset","userID":"d66e8341-cde3-4634-8b76-1e728a7d7031","unitID":"8927139d-39b5-4182-bbd0-1f08e50efebf"}
+2026-11-02T10:53:24.0746712Z 
+2026-11-02T10:53:24.1361452Z [90mstderr[2m | src/server/sync/service.test.ts[2m > [22m[2mSpace: epoch revocation during asynchronous preparation is checked again at commit
+2026-11-02T10:53:24.1364781Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:53:24.135Z","stage":"submitChangeset","userID":"411ee899-b593-4111-9b71-af44dd5b4bbd","unitID":"ba733632-7f0e-46e3-9c00-542dbb5b42c0"}
+2026-11-02T10:53:24.1366792Z 
+2026-11-02T10:53:24.2148703Z [90mstderr[2m | src/server/sync/service.test.ts[2m > [22m[2mSpace: root-scoped guest authority is preserved and revoked links cannot write
+2026-11-02T10:53:24.2152097Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:53:24.214Z","stage":"submitChangeset","unitID":"7c2ff8f5-3ec5-46af-9f94-23ec8b60fd27"}
+2026-11-02T10:53:24.2153404Z 
+2026-11-02T10:53:24.2851211Z [90mstderr[2m | src/server/sync/service.test.ts[2m > [22m[2mSpace native service never falls back from wrong, missing or mixed credentials to ordinary access
+2026-11-02T10:53:24.2854674Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:53:24.284Z","stage":"submitChangeset","userID":"bbfda4b2-4474-4b2a-89f6-48664ec0437e","unitID":"8a541e58-2ef0-420c-839b-fc5971492d7f"}
+2026-11-02T10:53:24.2856311Z 
+2026-11-02T10:53:24.2864081Z [90mstderr[2m | src/server/sync/service.test.ts[2m > [22m[2mSpace native service never falls back from wrong, missing or mixed credentials to ordinary access
+2026-11-02T10:53:24.2867425Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:53:24.285Z","stage":"submitChangeset","userID":"bbfda4b2-4474-4b2a-89f6-48664ec0437e","unitID":"8a541e58-2ef0-420c-839b-fc5971492d7f"}
+2026-11-02T10:53:24.2868787Z 
+2026-11-02T10:53:24.2878985Z [90mstderr[2m | src/server/sync/service.test.ts[2m > [22m[2mSpace native service never falls back from wrong, missing or mixed credentials to ordinary access
+2026-11-02T10:53:24.2882090Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:53:24.287Z","stage":"submitChangeset","userID":"bbfda4b2-4474-4b2a-89f6-48664ec0437e","unitID":"8a541e58-2ef0-420c-839b-fc5971492d7f"}
+2026-11-02T10:53:24.2883438Z 
+2026-11-02T10:53:24.2889936Z [90mstderr[2m | src/server/sync/service.test.ts[2m > [22m[2mSpace native service never falls back from wrong, missing or mixed credentials to ordinary access
+2026-11-02T10:53:24.2893670Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:53:24.288Z","stage":"submitChangeset","userID":"bbfda4b2-4474-4b2a-89f6-48664ec0437e","unitID":"8a541e58-2ef0-420c-839b-fc5971492d7f"}
+2026-11-02T10:53:24.2897078Z 
+2026-11-02T10:53:24.2901299Z [90mstderr[2m | src/server/sync/service.test.ts[2m > [22m[2mSpace native service never falls back from wrong, missing or mixed credentials to ordinary access
+2026-11-02T10:53:24.2904252Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:53:24.289Z","stage":"submitChangeset","userID":"bbfda4b2-4474-4b2a-89f6-48664ec0437e","unitID":"8a541e58-2ef0-420c-839b-fc5971492d7f"}
+2026-11-02T10:53:24.2905605Z 
+2026-11-02T10:53:25.0873338Z [90mstderr[2m | src/server/sync/service.test.ts[2m > [22m[2mMCP writes retain exact revision semantics and token-specific durable retry identity
+2026-11-02T10:53:25.0876719Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:53:25.086Z","stage":"submitChangeset","userID":"67467ec0-0789-4753-905e-abfd48d2793a","unitID":"9033d85b-b6d2-4288-a388-edb38489da74"}
+2026-11-02T10:53:25.0878123Z 
+2026-11-02T10:53:25.3444273Z  [32m✓[39m src/server/sync/service.test.ts [2m([22m[2m19 tests[22m[2m)[22m[33m 2235[2mms[22m[39m
+2026-11-02T10:53:25.3446989Z    [33m[2m✓[22m[39m a candidate over 10 MiB and a failed SQLite commit leave the prior native state usable[33m 616[2mms[22m[39m
+2026-11-02T10:53:27.6087494Z  [32m✓[39m src/server/workspace/space-lifecycle.test.ts [2m([22m[2m10 tests[22m[2m)[22m[33m 2029[2mms[22m[39m
+2026-11-02T10:53:27.6089494Z    [33m[2m✓[22m[39m whole lifecycle refuses over-budget persisted trees before trash, restore or deletion[33m 1706[2mms[22m[39m
+2026-11-02T10:53:28.2221097Z  [32m✓[39m src/server/workspace/files.test.ts [2m([22m[2m13 tests[22m[2m)[22m[33m 395[2mms[22m[39m
+2026-11-02T10:53:28.6833383Z  [32m✓[39m src/server/workspace/space-schema.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 268[2mms[22m[39m
+2026-11-02T10:53:29.2993270Z  [32m✓[39m src/ui/offlinePreparation.test.ts [2m([22m[2m28 tests[22m[2m)[22m[32m 81[2mms[22m[39m
+2026-11-02T10:53:48.4779230Z  [32m✓[39m src/server/history/native.test.ts [2m([22m[2m12 tests[22m[2m)[22m[33m 18959[2mms[22m[39m
+2026-11-02T10:53:48.4780587Z    [33m[2m✓[22m[39m a busy week of 64 KiB native documents stays below the documented history storage budget[33m 18366[2mms[22m[39m
+2026-11-02T10:53:49.9688926Z  [32m✓[39m src/server/workspace/space-legacy-direct.test.ts [2m([22m[2m10 tests[22m[2m)[22m[33m 1134[2mms[22m[39m
+2026-11-02T10:53:49.9756103Z    [33m[2m✓[22m[39m an oversized descendant graph is bounded while fetching and refuses before any deletion[33m 699[2mms[22m[39m
+2026-11-02T10:53:50.7656886Z  [32m✓[39m src/ui/offlineClaim.test.ts [2m([22m[2m25 tests[22m[2m)[22m[32m 245[2mms[22m[39m
+2026-11-02T10:53:51.1922564Z  [32m✓[39m src/server/auth/self-access.test.ts [2m([22m[2m26 tests[22m[2m)[22m[32m 151[2mms[22m[39m
+2026-11-02T10:53:52.3702019Z  [32m✓[39m src/server/diagnostics/routes.test.ts [2m([22m[2m7 tests[22m[2m)[22m[33m 803[2mms[22m[39m
+2026-11-02T10:53:52.5941529Z  [32m✓[39m src/server/auth/oauth.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 77[2mms[22m[39m
+2026-11-02T10:53:53.1246949Z  [32m✓[39m src/server/appearance/store.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 287[2mms[22m[39m
+2026-11-02T10:53:54.1818318Z  [32m✓[39m src/server/workspace/offline-recovery.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 265[2mms[22m[39m
+2026-11-02T10:53:54.9332485Z  [32m✓[39m src/server/auth/auth.test.ts [2m([22m[2m17 tests[22m[2m)[22m[33m 437[2mms[22m[39m
+2026-11-02T10:53:54.9333996Z    [33m[2m✓[22m[39m challenges bind to session and ceremony, expire, cannot replay, and cap at 1000[33m 339[2mms[22m[39m
+2026-11-02T10:53:56.8423402Z  [32m✓[39m src/server/workspace/archive-http.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 617[2mms[22m[39m
+2026-11-02T10:53:57.5000720Z  [32m✓[39m src/ui/offlineDownload.test.ts [2m([22m[2m28 tests[22m[2m)[22m[32m 73[2mms[22m[39m
+2026-11-02T10:53:57.8719790Z  [32m✓[39m src/server/workspace/guest-links.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 150[2mms[22m[39m
+2026-11-02T10:53:58.4487571Z  [32m✓[39m src/ui/syncPresence.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+2026-11-02T10:53:58.8244975Z  [32m✓[39m src/server/auth/admin.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 71[2mms[22m[39m
+2026-11-02T10:53:59.0278902Z  [32m✓[39m src/ui/offlineRuntime.test.ts [2m([22m[2m24 tests[22m[2m)[22m[32m 54[2mms[22m[39m
+2026-11-02T10:54:00.2975790Z  [32m✓[39m src/server/formulas/space-routes.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 523[2mms[22m[39m
+2026-11-02T10:54:00.9848336Z  [32m✓[39m src/server/workspace/space-routes.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 289[2mms[22m[39m
+2026-11-02T10:54:01.5262694Z  [32m✓[39m src/server/workspace/recovery-holds.test.ts [2m([22m[2m14 tests[22m[2m)[22m[33m 347[2mms[22m[39m
+2026-11-02T10:54:01.9643745Z  [32m✓[39m src/server/auth/console-recovery.test.ts [2m([22m[2m20 tests[22m[2m)[22m[32m 159[2mms[22m[39m
+2026-11-02T10:54:02.1190728Z  [32m✓[39m src/ui/spaceNavigation.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 19[2mms[22m[39m
+2026-11-02T10:54:03.1275548Z  [32m✓[39m src/ui/offlineWriterHandoff.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 23[2mms[22m[39m
+2026-11-02T10:54:05.0687590Z  [32m✓[39m src/server/workspace/workspace.test.ts [2m([22m[2m7 tests[22m[2m)[22m[33m 379[2mms[22m[39m
+2026-11-02T10:54:06.5537073Z [90mstderr[2m | src/server/sync/mcp.test.ts[2m > [22m[2mordinary: OAuth expiry change after admission is refused at the final own-server boundary
+2026-11-02T10:54:06.5540308Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:54:06.552Z","stage":"submitChangeset","userID":"3ba19f03-0bad-4fc0-86a9-67dbaf2098b8","unitID":"69be339a-4fbb-4761-a15d-c73dfae962ec"}
+2026-11-02T10:54:06.5542203Z 
+2026-11-02T10:54:06.6477900Z [90mstderr[2m | src/server/sync/mcp.test.ts[2m > [22m[2mordinary: OAuth scope change after admission is refused at the final own-server boundary
+2026-11-02T10:54:06.6481642Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:54:06.646Z","stage":"submitChangeset","userID":"0e490940-3669-4cde-ab6e-a8d20e06f927","unitID":"c4c1d887-da53-427c-b984-a44e489f687c"}
+2026-11-02T10:54:06.6483461Z 
+2026-11-02T10:54:06.7504014Z [90mstderr[2m | src/server/sync/mcp.test.ts[2m > [22m[2mordinary: OAuth disconnect change after admission is refused at the final own-server boundary
+2026-11-02T10:54:06.7507262Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:54:06.749Z","stage":"submitChangeset","userID":"c8851e50-3f8a-4f97-84b0-185ade2ce59e","unitID":"4df92b14-7683-4396-a5f4-1e722bd139af"}
+2026-11-02T10:54:06.7508644Z 
+2026-11-02T10:54:06.8305582Z [90mstderr[2m | src/server/sync/mcp.test.ts[2m > [22m[2mordinary: OAuth account change after admission is refused at the final own-server boundary
+2026-11-02T10:54:06.8309282Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:54:06.829Z","stage":"submitChangeset","userID":"3ca4824a-e542-4203-ab9a-1717690f62a1","unitID":"c7b20f86-c3e5-481a-8294-d7dbadf769aa"}
+2026-11-02T10:54:06.8310909Z 
+2026-11-02T10:54:06.9184480Z [90mstderr[2m | src/server/sync/mcp.test.ts[2m > [22m[2mordinary: OAuth grant change after admission is refused at the final own-server boundary
+2026-11-02T10:54:06.9188260Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:54:06.917Z","stage":"submitChangeset","userID":"e03a9218-fc02-43ad-83fb-3eb39985aac2","unitID":"3451bfcd-6258-43a9-aac7-b4e42f8d6ff7"}
+2026-11-02T10:54:06.9189807Z 
+2026-11-02T10:54:07.1995045Z [90mstderr[2m | src/server/sync/mcp.test.ts[2m > [22m[2mSpace: OAuth expiry change after admission is refused at the final own-server boundary
+2026-11-02T10:54:07.1998791Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:54:07.198Z","stage":"submitChangeset","userID":"dfcbe1a6-2b6b-4569-9ce7-5344df26a45a","unitID":"5134a0ba-1914-4c67-989b-19f88ae06b78"}
+2026-11-02T10:54:07.2000246Z 
+2026-11-02T10:54:07.2723361Z [90mstderr[2m | src/server/sync/mcp.test.ts[2m > [22m[2mSpace: OAuth scope change after admission is refused at the final own-server boundary
+2026-11-02T10:54:07.2728010Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:54:07.271Z","stage":"submitChangeset","userID":"1387a557-0730-43ea-8c90-74b358ae3652","unitID":"c104ae21-6350-496e-8cee-dd10279233dd"}
+2026-11-02T10:54:07.2729375Z 
+2026-11-02T10:54:07.3469069Z [90mstderr[2m | src/server/sync/mcp.test.ts[2m > [22m[2mSpace: OAuth disconnect change after admission is refused at the final own-server boundary
+2026-11-02T10:54:07.3472511Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:54:07.346Z","stage":"submitChangeset","userID":"17af90ef-b70a-446f-8f03-b9730aeff01b","unitID":"e5953a77-e6e5-4f64-b0d0-7ce5f0f5977f"}
+2026-11-02T10:54:07.3474319Z 
+2026-11-02T10:54:07.4392057Z [90mstderr[2m | src/server/sync/mcp.test.ts[2m > [22m[2mSpace: OAuth account change after admission is refused at the final own-server boundary
+2026-11-02T10:54:07.4395836Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:54:07.438Z","stage":"submitChangeset","userID":"739692c6-bfc9-4e1e-b044-9194d8aad0a5","unitID":"68f3b4f6-d805-41d8-bbfc-ec40caf6620b"}
+2026-11-02T10:54:07.4397488Z 
+2026-11-02T10:54:07.5151905Z [90mstderr[2m | src/server/sync/mcp.test.ts[2m > [22m[2mSpace: OAuth grant change after admission is refused at the final own-server boundary
+2026-11-02T10:54:07.5154802Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:54:07.514Z","stage":"submitChangeset","userID":"02d7d27d-cfed-4c87-8596-84f1d9437473","unitID":"3935b9d8-44e1-49e1-a1cf-2b6da85114ad"}
+2026-11-02T10:54:07.5156169Z 
+2026-11-02T10:54:07.6555012Z [90mstderr[2m | src/server/sync/mcp.test.ts[2m > [22m[2ma personal access token revoked during own-server preparation cannot commit its MCP write
+2026-11-02T10:54:07.6559068Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:54:07.654Z","stage":"submitChangeset","userID":"cbfcc296-34d8-4633-b4a1-efcbebc89c57","unitID":"89e71540-dea2-4d2f-b790-58b14dfad32a"}
+2026-11-02T10:54:07.6560422Z 
+2026-11-02T10:54:07.6721276Z  [32m✓[39m src/server/sync/mcp.test.ts [2m([22m[2m16 tests[22m[2m)[22m[33m 1510[2mms[22m[39m
+2026-11-02T10:54:07.8717736Z  [32m✓[39m src/server/pdf/runner.test.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 54[2mms[22m[39m
+2026-11-02T10:54:08.2149258Z  [32m✓[39m src/server/workspace/space-scope.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 169[2mms[22m[39m
+2026-11-02T10:54:08.4105606Z  [32m✓[39m src/ui/connectionState.test.ts [2m([22m[2m23 tests[22m[2m)[22m[32m 54[2mms[22m[39m
+2026-11-02T10:54:10.4389313Z [90mstderr[2m | src/server/history/names-http.test.ts[2m > [22m[2mhistory naming routes enforce current access, sessions, origin and document scope
+2026-11-02T10:54:10.4392683Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:54:10.437Z","stage":"submitChangeset","userID":"a249b23a-0e31-464b-af85-d0092cdb2d4f","unitID":"c22f0645-76f8-4e89-bd21-407f6cbd04d5"}
+2026-11-02T10:54:10.4394161Z 
+2026-11-02T10:54:10.5557073Z [90mstderr[2m | src/server/history/names-http.test.ts[2m > [22m[2mhistory naming routes enforce current access, sessions, origin and document scope
+2026-11-02T10:54:10.5560445Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:54:10.553Z","stage":"submitChangeset","userID":"edb6bda6-e732-4e28-91c7-8c76d88ba5fa","unitID":"c22f0645-76f8-4e89-bd21-407f6cbd04d5"}
+2026-11-02T10:54:10.5561852Z 
+2026-11-02T10:54:10.6363506Z  [32m✓[39m src/server/history/names-http.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 640[2mms[22m[39m
+2026-11-02T10:54:10.6364632Z    [33m[2m✓[22m[39m history naming routes enforce current access, sessions, origin and document scope[33m 639[2mms[22m[39m
+2026-11-02T10:54:11.1278743Z  [32m✓[39m src/server/workspace/shared-creation.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 295[2mms[22m[39m
+2026-11-02T10:54:17.7825873Z  [32m✓[39m src/server/pdf/runtime-native.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 6070[2mms[22m[39m
+2026-11-02T10:54:17.7827575Z    [33m[2m✓[22m[39m the disposable production worker renders all Doc pages with runtime fonts and private metadata[33m 1094[2mms[22m[39m
+2026-11-02T10:54:17.7828860Z    [33m[2m✓[22m[39m an actual worker cancelled after fork publishes no PDF and a fresh worker recovers[33m 755[2mms[22m[39m
+2026-11-02T10:54:17.7830054Z    [33m[2m✓[22m[39m the standard modern Doc exports complete link text without its private destination[33m 703[2mms[22m[39m
+2026-11-02T10:54:17.7831426Z    [33m[2m✓[22m[39m runtime font admission follows visible worksheet content and starts fresh after a used unsupported family[33m 1596[2mms[22m[39m
+2026-11-02T10:54:17.7833741Z    [33m[2m✓[22m[39m runtime Doc font admission ignores unused named styles and unreferenced stories but rejects used families[33m 1920[2mms[22m[39m
+2026-11-02T10:54:18.8747229Z  [32m✓[39m src/ui/offlinePersistence.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 86[2mms[22m[39m
+2026-11-02T10:54:19.3284492Z  [32m✓[39m src/server/workspace/sharing.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 227[2mms[22m[39m
+2026-11-02T10:54:19.6991304Z  [32m✓[39m src/server/workspace/trash.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 138[2mms[22m[39m
+2026-11-02T10:54:21.4846141Z  [32m✓[39m src/server/history/store.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 717[2mms[22m[39m
+2026-11-02T10:54:21.4848733Z    [33m[2m✓[22m[39m captures a baseline before editing, every five minutes of work, and at idle breaks; rejects unauthorized reads[33m 328[2mms[22m[39m
+2026-11-02T10:54:21.7787279Z  [32m✓[39m src/server/workspace/links.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 75[2mms[22m[39m
+2026-11-02T10:54:22.3329524Z  [32m✓[39m src/server/auth/self-access-http.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 172[2mms[22m[39m
+2026-11-02T10:54:22.6193520Z  [32m✓[39m src/server/collaboration/generations.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 94[2mms[22m[39m
+2026-11-02T10:54:22.7741524Z  [32m✓[39m src/server/health/monitor.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+2026-11-02T10:54:25.3738622Z  [32m✓[39m src/server/workspace/guest-links-http.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 1014[2mms[22m[39m
+2026-11-02T10:54:25.3740286Z    [33m[2m✓[22m[39m Guest links HTTP inventory is owner-only, secret-free, CSRF-protected and guarded against stale or expired actions[33m 1013[2mms[22m[39m
+2026-11-02T10:54:25.7483453Z  [32m✓[39m src/server/workspace/file-trash.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 176[2mms[22m[39m
+2026-11-02T10:54:28.9484819Z  [32m✓[39m src/server/history/classification.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 2911[2mms[22m[39m
+2026-11-02T10:54:28.9486724Z    [33m[2m✓[22m[39m a full Space checkpoint population cannot starve an ordinary sibling[33m 1900[2mms[22m[39m
+2026-11-02T10:54:28.9488714Z    [33m[2m✓[22m[39m an aggregate ancestry-budget refusal leaves every checkpoint untouched and scan admits no partial batch[33m 901[2mms[22m[39m
+2026-11-02T10:54:29.6327060Z  [32m✓[39m src/server/workspace/file-admin.test.ts [2m([22m[2m12 tests[22m[2m)[22m[33m 442[2mms[22m[39m
+2026-11-02T10:54:29.9442978Z  [32m✓[39m src/server/diagnostics/capacity.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 153[2mms[22m[39m
+2026-11-02T10:54:30.1444087Z  [32m✓[39m src/ui/pdfApi.test.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 49[2mms[22m[39m
+2026-11-02T10:54:47.4494040Z  [32m✓[39m src/ui/docHistorySync.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 16323[2mms[22m[39m
+2026-11-02T10:54:47.4495212Z    [33m[2m✓[22m[39m native full-workload history wire-budget contract (bounded=false)[33m 11210[2mms[22m[39m
+2026-11-02T10:54:47.4496304Z    [33m[2m✓[22m[39m native full-workload history wire-budget contract (bounded=true)[33m 5112[2mms[22m[39m
+2026-11-02T10:54:49.9152316Z  [32m✓[39m src/ui/docDrainEvidence.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 99[2mms[22m[39m
+2026-11-02T10:54:50.5531308Z  [32m✓[39m src/server/workspace/document-catalog.test.ts [2m([22m[2m7 tests[22m[2m)[22m[33m 437[2mms[22m[39m
+2026-11-02T10:54:52.3071316Z  [32m✓[39m src/server/workspace/offline-creation-http.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 467[2mms[22m[39m
+2026-11-02T10:54:54.4911984Z  [32m✓[39m src/server/workspace/sharing-http.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 614[2mms[22m[39m
+2026-11-02T10:54:54.4913411Z    [33m[2m✓[22m[39m HTTP editor sharing enforces current grants on metadata, content and images[33m 381[2mms[22m[39m
+2026-11-02T10:54:55.0321278Z  [32m✓[39m src/server/workspace/documents.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 316[2mms[22m[39m
+2026-11-02T10:54:55.3836911Z  [32m✓[39m src/server/auth/invitations.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 83[2mms[22m[39m
+2026-11-02T10:54:56.8730510Z  [32m✓[39m src/server/workspace/copy-http.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 222[2mms[22m[39m
+2026-11-02T10:54:57.4794628Z  [32m✓[39m src/ui/runtimeAdmission.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 52[2mms[22m[39m
+2026-11-02T10:54:57.8200359Z  [32m✓[39m src/server/workspace/access-details.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 152[2mms[22m[39m
+2026-11-02T10:54:58.3655996Z  [32m✓[39m src/server/auth/admin-recovery-http.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 164[2mms[22m[39m
+2026-11-02T10:54:58.9323387Z  [32m✓[39m src/server/diagnostics/account.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 46[2mms[22m[39m
+2026-11-02T10:55:03.5844072Z  [32m✓[39m src/ui/formulaMaintenance.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 3083[2mms[22m[39m
+2026-11-02T10:55:03.5846623Z    [33m[2m✓[22m[39m default guest Formula transport keeps the supervised Doc epoch and access fence[33m 1760[2mms[22m[39m
+2026-11-02T10:55:03.5849246Z    [33m[2m✓[22m[39m default guest Formula transport keeps the supervised Space child epoch and access fence[33m 1299[2mms[22m[39m
+2026-11-02T10:55:03.7316697Z  [32m✓[39m src/ui/maintenanceDismissal.test.ts [2m([22m[2m31 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+2026-11-02T10:55:05.1155509Z  [32m✓[39m src/server/workspace/space-structure.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 1191[2mms[22m[39m
+2026-11-02T10:55:05.1158088Z    [33m[2m✓[22m[39m all-status capacity includes tombstones before creation and refuses excess fetches[33m 1109[2mms[22m[39m
+2026-11-02T10:55:05.4938637Z  [32m✓[39m src/server/workspace/shared.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 182[2mms[22m[39m
+2026-11-02T10:55:06.9322020Z  [32m✓[39m src/server/workspace/offline-recovery-http.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 160[2mms[22m[39m
+2026-11-02T10:55:07.3521817Z  [32m✓[39m src/server/workspace/hidden.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 186[2mms[22m[39m
+2026-11-02T10:55:08.0124934Z  [32m✓[39m server/database.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 518[2mms[22m[39m
+2026-11-02T10:55:08.0127231Z    [33m[2m✓[22m[39m two application connections preserve integrity through paired writes, closes and repeated reopen[33m 401[2mms[22m[39m
+2026-11-02T10:55:09.9166308Z  [32m✓[39m src/server/workspace/source-sharing-http.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 311[2mms[22m[39m
+2026-11-02T10:55:09.9168661Z    [33m[2m✓[22m[39m source-sharing HTTP keeps host-only writes unchanged and fences explicit source grants[33m 309[2mms[22m[39m
+2026-11-02T10:55:10.2764562Z  [32m✓[39m src/server/workspace/ordinary-scope.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 179[2mms[22m[39m
+2026-11-02T10:55:10.5976276Z  [32m✓[39m src/server/workspace/sheets.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 102[2mms[22m[39m
+2026-11-02T10:55:10.7804187Z  [32m✓[39m src/server/diagnostics/browser.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 46[2mms[22m[39m
+2026-11-02T10:55:11.6449316Z  [32m✓[39m src/server/formulas/diagnostics.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 142[2mms[22m[39m
+2026-11-02T10:55:11.8026974Z  [32m✓[39m src/shared/autosave.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 19[2mms[22m[39m
+2026-11-02T10:55:14.1624649Z  [32m✓[39m src/ui/syncSheetMenus.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 267[2mms[22m[39m
+2026-11-02T10:55:14.5650333Z  [32m✓[39m src/server/workspace/search.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 161[2mms[22m[39m
+2026-11-02T10:55:14.9102327Z  [32m✓[39m src/server/auth/setup.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 72[2mms[22m[39m
+2026-11-02T10:55:16.3598669Z  [32m✓[39m src/server/pdf/routes.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 144[2mms[22m[39m
+2026-11-02T10:55:16.5101420Z  [32m✓[39m src/ui/dashboardNavigation.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+2026-11-02T10:55:17.9984800Z  [32m✓[39m src/profile/profile.test.ts [2m([22m[2m26 tests[22m[2m)[22m[33m 1040[2mms[22m[39m
+2026-11-02T10:55:18.1843163Z  [32m✓[39m src/ui/spacesApi.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 46[2mms[22m[39m
+2026-11-02T10:55:19.3167485Z  [32m✓[39m src/server/workspace/space-discovery.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 951[2mms[22m[39m
+2026-11-02T10:55:19.3170327Z    [33m[2m✓[22m[39m ineligible grant rows still spend the budget before item probes and matching children have an indexed access path[33m 493[2mms[22m[39m
+2026-11-02T10:55:19.4703452Z  [32m✓[39m src/ui/offlineSpace.test.ts [2m([22m[2m18 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+2026-11-02T10:55:20.3226060Z  [32m✓[39m src/server/socialPreview.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 587[2mms[22m[39m
+2026-11-02T10:55:20.3227434Z    [33m[2m✓[22m[39m personalized images use only authorized stored title/kind and are not cached[33m 393[2mms[22m[39m
+2026-11-02T10:55:20.6040718Z  [32m✓[39m src/server/workspace/tags.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 88[2mms[22m[39m
+2026-11-02T10:55:20.7530447Z  [32m✓[39m src/shared/searchInput.test.ts [2m([22m[2m20 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+2026-11-02T10:55:21.3393169Z  [32m✓[39m src/server/appearance/routes.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 172[2mms[22m[39m
+2026-11-02T10:55:24.0367332Z  [32m✓[39m src/server/collaboration/transport.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 1141[2mms[22m[39m
+2026-11-02T10:55:24.0370054Z    [33m[2m✓[22m[39m native ingress authenticates independently and binds one-use tickets to origin, session and exact document[33m 376[2mms[22m[39m
+2026-11-02T10:55:24.0372674Z    [33m[2m✓[22m[39m native sockets reject viewer and revoked writes, audit without content, and cannot join a second document[33m 560[2mms[22m[39m
+2026-11-02T10:55:24.5384778Z  [32m✓[39m src/server/auth/sign-out-http.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 122[2mms[22m[39m
+2026-11-02T10:55:25.2335044Z  [32m✓[39m src/server/collaboration/snapshotIdentity.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+2026-11-02T10:55:27.4422934Z  [32m✓[39m src/server/sync/transition-ownership.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 2062[2mms[22m[39m
+2026-11-02T10:55:27.4425555Z    [33m[2m✓[22m[39m real transition files exclude competing aliases before SQLite opens, across replacements, renames and resume[33m 2060[2mms[22m[39m
+2026-11-02T10:55:29.3066745Z  [32m✓[39m src/server/workspace/trash-http.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 310[2mms[22m[39m
+2026-11-02T10:55:29.3070348Z    [33m[2m✓[22m[39m trash API enforces sessions, owner scope, origin and confirmation; restored state survives server restart[33m 309[2mms[22m[39m
+2026-11-02T10:55:30.8297741Z  [32m✓[39m src/server/workspace/portable-http.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 251[2mms[22m[39m
+2026-11-02T10:55:31.3854640Z  [32m✓[39m src/shared/formulaRequest.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 44[2mms[22m[39m
+2026-11-02T10:55:33.7252553Z [90mstderr[2m | src/server/collaboration/guest-transport.test.ts[2m > [22m[2mguest native HTTP and socket identities stay scoped and link transitions revoke readers, writers and unused tickets
+2026-11-02T10:55:33.7256047Z [22m[39m{"event":"collaboration.edit_denied","at":"2026-11-02T10:55:33.724Z","stage":"submitChangeset","unitID":"c321475f-dcf3-4fd5-a1a1-febd9f80d766"}
+2026-11-02T10:55:33.7257390Z 
+2026-11-02T10:55:33.9338447Z  [32m✓[39m src/server/collaboration/guest-transport.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 1005[2mms[22m[39m
+2026-11-02T10:55:33.9340369Z    [33m[2m✓[22m[39m guest native HTTP and socket identities stay scoped and link transitions revoke readers, writers and unused tickets[33m 1003[2mms[22m[39m
+2026-11-02T10:55:35.8072043Z  [32m✓[39m src/ui/sheetDrawingPermissions.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+2026-11-02T10:55:37.7040181Z  [32m✓[39m src/server/workspace/documents-http.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 320[2mms[22m[39m
+2026-11-02T10:55:37.7042228Z    [33m[2m✓[22m[39m document HTTP routes protect raw uploads and image reads and reject oversized requests[33m 318[2mms[22m[39m
+2026-11-02T10:55:39.0538312Z  [32m✓[39m src/server/workspace/access-details-http.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 105[2mms[22m[39m
+2026-11-02T10:55:39.2217947Z  [32m✓[39m src/ui/presetStyles.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+2026-11-02T10:55:39.3606157Z  [32m✓[39m src/shared/search.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+2026-11-02T10:55:40.4870542Z  [32m✓[39m src/server/pdf/sheet-formulas.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 183[2mms[22m[39m
+2026-11-02T10:55:42.3469544Z  [32m✓[39m src/server/workspace/hidden-http.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 277[2mms[22m[39m
+2026-11-02T10:55:44.7509573Z  [32m✓[39m src/server/formulas/routes.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 839[2mms[22m[39m
+2026-11-02T10:55:44.7510826Z    [33m[2m✓[22m[39m formula HTTP routes require scoped credentials and origin, and never cache results[33m 837[2mms[22m[39m
+2026-11-02T10:55:44.8960799Z  [32m✓[39m src/server/formulas/admission.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+2026-11-02T10:55:45.4362180Z  [32m✓[39m src/ui/offlineTransactionErrors.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+2026-11-02T10:55:45.5750183Z  [32m✓[39m src/ui/offlineAccess.test.ts [2m([22m[2m21 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+2026-11-02T10:55:51.8099056Z  [32m✓[39m src/server/formulas/runner.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 5741[2mms[22m[39m
+2026-11-02T10:55:51.8100967Z    [33m[2m✓[22m[39m the public Univer engine calculates cross-workbook formulas and recalculates source cells[33m 665[2mms[22m[39m
+2026-11-02T10:55:51.8102681Z    [33m[2m✓[22m[39m native range and array formula results use table presentation[33m 1139[2mms[22m[39m
+2026-11-02T10:55:51.8104387Z    [33m[2m✓[22m[39m oversized arrays fail as a whole and source external references cannot reuse cached secrets[33m 1178[2mms[22m[39m
+2026-11-02T10:55:51.8106659Z    [33m[2m✓[22m[39m worker deadlines terminate execution and release admission for the next request[33m 570[2mms[22m[39m
+2026-11-02T10:55:51.8108730Z    [33m[2m✓[22m[39m malformed definitions fail while native engine errors and literal error strings remain readable[33m 2187[2mms[22m[39m
+2026-11-02T10:55:53.5663880Z  [32m✓[39m src/server/auth/admin-http.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 211[2mms[22m[39m
+2026-11-02T10:55:54.6227050Z  [32m✓[39m src/ui/collaborationPending.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 41[2mms[22m[39m
+2026-11-02T10:55:54.7618495Z  [32m✓[39m src/shared/searchScope.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+2026-11-02T10:55:55.4867353Z  [32m✓[39m src/ui/editorTheme.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 25[2mms[22m[39m
+2026-11-02T10:55:55.8400666Z  [32m✓[39m src/server/pwa.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 128[2mms[22m[39m
+2026-11-02T10:55:56.2759070Z  [32m✓[39m src/server/health/routes.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 58[2mms[22m[39m
+2026-11-02T10:55:56.5038264Z  [32m✓[39m src/ui/entityIcon.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 34[2mms[22m[39m
+2026-11-02T10:55:56.6732884Z  [32m✓[39m src/shared/serviceWorker.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 44[2mms[22m[39m
+2026-11-02T10:55:56.8477205Z  [32m✓[39m src/ui/documentAccess.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 43[2mms[22m[39m
+2026-11-02T10:55:57.0700809Z  [32m✓[39m server/http.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 25[2mms[22m[39m
+2026-11-02T10:55:57.2368575Z  [32m✓[39m src/ui/scopedHTTP.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 36[2mms[22m[39m
+2026-11-02T10:56:03.3071316Z  [32m✓[39m server/dev.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 4515[2mms[22m[39m
+2026-11-02T10:56:03.3073125Z    [33m[2m✓[22m[39m development watch mode stays running without a config-bundle restart loop[33m 4513[2mms[22m[39m
+2026-11-02T10:56:03.4462534Z  [32m✓[39m src/ui/fileNavigation.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+2026-11-02T10:56:03.5935456Z  [32m✓[39m src/shared/restore.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+2026-11-02T10:56:04.0985281Z  [32m✓[39m src/ui/guestPendingBuffer.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 10[2mms[22m[39m
+2026-11-02T10:56:04.2615766Z  [32m✓[39m src/ui/maintenanceState.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 39[2mms[22m[39m
+2026-11-02T10:56:04.3908603Z  [32m✓[39m src/shared/spaceReviewRoute.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+2026-11-02T10:56:04.5262590Z  [32m✓[39m src/shared/offlineShell.test.ts [2m([22m[2m19 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+2026-11-02T10:56:07.5520960Z  [32m✓[39m src/server/pdf/concurrency.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 2904[2mms[22m[39m
+2026-11-02T10:56:07.5524370Z    [33m[2m✓[22m[39m two authenticated native editors remain responsive during an admitted PDF, cancellation, and recovery[33m 2902[2mms[22m[39m
+2026-11-02T10:56:07.7075265Z  [32m✓[39m src/ui/maintenanceFetch.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 39[2mms[22m[39m
+2026-11-02T10:56:07.8398138Z  [32m✓[39m src/server/pdf/capacity.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+2026-11-02T10:56:08.3614536Z  [32m✓[39m src/ui/offlineCatalog.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+2026-11-02T10:56:08.4882232Z  [32m✓[39m src/server/history/policy.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+2026-11-02T10:56:08.6208634Z  [32m✓[39m src/shared/historyNavigation.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+2026-11-02T10:56:08.7904110Z  [32m✓[39m src/ui/adminRequest.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 37[2mms[22m[39m
+2026-11-02T10:56:08.9952934Z  [32m✓[39m src/server/workspace/retired-pins.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 25[2mms[22m[39m
+2026-11-02T10:56:09.1333198Z  [32m✓[39m src/ui/syncSoakIntent.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+2026-11-02T10:56:09.2935386Z  [32m✓[39m src/ui/historyAccess.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 33[2mms[22m[39m
+2026-11-02T10:56:09.4393791Z  [32m✓[39m src/server/workspace/archive-storage.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 11[2mms[22m[39m
+2026-11-02T10:56:10.0308800Z  [32m✓[39m src/server/pdf/worker-memory.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 470[2mms[22m[39m
+2026-11-02T10:56:10.0310820Z    [33m[2m✓[22m[39m worker peak excludes the Linux pre-exec parent high-water mark[33m 469[2mms[22m[39m
+2026-11-02T10:56:13.0760002Z  [32m✓[39m server/request-body.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 2920[2mms[22m[39m
+2026-11-02T10:56:13.0761751Z    [33m[2m✓[22m[39m request-body subprocess: trailing compressed bytes[33m 1440[2mms[22m[39m
+2026-11-02T10:56:13.0763435Z    [33m[2m✓[22m[39m request-body subprocess: JSON and access compatibility[33m 1478[2mms[22m[39m
+2026-11-02T10:56:13.2260907Z  [32m✓[39m src/ui/maintenanceTime.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 23[2mms[22m[39m
+2026-11-02T10:56:13.4066161Z  [32m✓[39m src/server/auth/profile.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 13[2mms[22m[39m
+2026-11-02T10:56:13.5528407Z  [32m✓[39m src/server/pdf/fonts.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 12[2mms[22m[39m
+2026-11-02T10:56:13.6808218Z  [32m✓[39m src/ui/theatre.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+2026-11-02T10:56:13.8090890Z  [32m✓[39m src/server/collaboration/audit.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 5[2mms[22m[39m
+2026-11-02T10:56:13.9379053Z  [32m✓[39m src/server/diagnostics/configuration.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 4[2mms[22m[39m
+2026-11-02T10:56:13.9462870Z 
+2026-11-02T10:56:13.9471739Z [2m Test Files [22m [1m[32m182 passed[39m[22m[90m (182)[39m
+2026-11-02T10:56:13.9484535Z [2m      Tests [22m [1m[32m2009 passed[39m[22m[90m (2009)[39m
+2026-11-02T10:56:13.9485339Z [2m   Start at [22m 10:51:10
+2026-11-02T10:56:13.9492115Z [2m   Duration [22m 303.27s[2m (tests 68%, import 29%, transform 3%)[22m
+2026-11-02T10:56:13.9507025Z 
+2026-11-02T10:56:13.9509223Z [2m     Import [22m [33m565 modules were evaluated 879 times[39m[2m · 82.56s total, 29% of tracked time[22m
+2026-11-02T10:56:13.9511379Z [2m            [22m [2m~29.49s faster with [22m[33misolate: false[39m[2m — shared modules are evaluated once per worker instead of once per file[22m
+2026-11-02T10:56:13.9514575Z [2m            [22m [2mlearn more: https://vitest.dev/guide/improving-performance#test-isolation[22m
+2026-11-02T10:56:13.9515312Z 
+2026-11-02T10:56:14.0493780Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-02T10:56:14.0494243Z with:
+2026-11-02T10:56:14.0494476Z   name: pdf-collaboration-overlap
+2026-11-02T10:56:14.0494780Z   path: output/pdf/spn-075-overlap/
+2026-11-02T10:56:14.0495054Z   retention-days: 7
+2026-11-02T10:56:14.0495278Z   if-no-files-found: warn
+2026-11-02T10:56:14.0495524Z   compression-level: 6
+2026-11-02T10:56:14.0495754Z   overwrite: false
+2026-11-02T10:56:14.0495984Z   include-hidden-files: false
+2026-11-02T10:56:14.0496235Z   archive: true
+2026-11-02T10:56:14.0496747Z ##[endgroup]
+2026-11-02T10:56:14.2079088Z With the provided path, there will be 5 files uploaded
+2026-11-02T10:56:14.2085002Z Artifact name is valid!
+2026-11-02T10:56:14.2085673Z Root directory input is valid!
+2026-11-02T10:56:14.5915887Z Uploading artifact: pdf-collaboration-overlap.zip
+2026-11-02T10:56:14.5959105Z Beginning upload of artifact content to blob storage
+2026-11-02T10:56:15.1180777Z Uploaded bytes 164525
+2026-11-02T10:56:15.1943774Z Finished uploading artifact content to blob storage!
+2026-11-02T10:56:15.1945659Z SHA256 digest of uploaded artifact is b4077327219d0e327fd046ba946244b64485d3743f66a3b3f6a7014e980d1c1f
+2026-11-02T10:56:15.1947322Z Finalizing artifact upload
+2026-11-02T10:56:15.8619124Z Artifact pdf-collaboration-overlap successfully finalized. Artifact ID 13135061545
+2026-11-02T10:56:15.8621821Z Artifact pdf-collaboration-overlap has been successfully uploaded! Final size is 164525 bytes. Artifact ID is 13135061545
+2026-11-02T10:56:15.8625398Z Artifact download URL: https://github.com/mxbaylee/spinel/actions/runs/41430568768/artifacts/13135061545
+2026-11-02T10:56:15.8851681Z Post job cleanup.
+2026-11-02T10:56:16.0238698Z Post job cleanup.
+2026-11-02T10:56:16.1254358Z [command]/usr/bin/git version
+2026-11-02T10:56:16.1347137Z git version 2.56.0
+2026-11-02T10:56:16.1391586Z Temporarily overriding HOME='/home/runner/work/_temp/23621246-e121-4274-abfb-168bcf2166f2' before making global git config changes
+2026-11-02T10:56:16.1393495Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-02T10:56:16.1397896Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-02T10:56:16.1448123Z Removing SSH command configuration
+2026-11-02T10:56:16.1457030Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-02T10:56:16.1506894Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-02T10:56:16.1799094Z Removing HTTP extra header
+2026-11-02T10:56:16.1807044Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-02T10:56:16.1855103Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-02T10:56:16.2146693Z Removing includeIf entries pointing to credentials config files
+2026-11-02T10:56:16.2156037Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-02T10:56:16.2203785Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-02T10:56:16.2650610Z Cleaning up orphan processes

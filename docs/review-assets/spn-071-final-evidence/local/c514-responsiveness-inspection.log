@@ -1,0 +1,107 @@
+{
+  "preset": "desktop",
+  "rows": [
+    {
+      "sample": "plain-1",
+      "budgetEnforced": true,
+      "flushMaxMs": 6.199999999953434,
+      "capacityP95": 5.199999999953434,
+      "drainMs": 302,
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "undoRedo": "passed"
+    },
+    {
+      "sample": "plain-2",
+      "budgetEnforced": true,
+      "flushMaxMs": 18,
+      "capacityP95": 5.699999999953434,
+      "drainMs": 301.4000000000233,
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "undoRedo": "passed"
+    },
+    {
+      "sample": "plain-3",
+      "budgetEnforced": true,
+      "flushMaxMs": 8,
+      "capacityP95": 5.400000000023283,
+      "drainMs": 301.69999999995343,
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "undoRedo": "passed"
+    },
+    {
+      "sample": "profile",
+      "budgetEnforced": false,
+      "flushMaxMs": 7.799999999930151,
+      "capacityP95": 5.399999999906868,
+      "drainMs": 301.70000000006985,
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "undoRedo": "passed"
+    }
+  ]
+}
+{
+  "preset": "mobile",
+  "rows": [
+    {
+      "sample": "plain-1",
+      "budgetEnforced": true,
+      "flushMaxMs": 34.800000000046566,
+      "capacityP95": 22.699999999953434,
+      "drainMs": 355,
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "undoRedo": "passed"
+    },
+    {
+      "sample": "plain-2",
+      "budgetEnforced": true,
+      "flushMaxMs": 36.10000000009313,
+      "capacityP95": 23.800000000046566,
+      "drainMs": 429.5999999998603,
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "undoRedo": "passed"
+    },
+    {
+      "sample": "plain-3",
+      "budgetEnforced": true,
+      "flushMaxMs": 33.9000000001397,
+      "capacityP95": 25.5,
+      "drainMs": 347.5,
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "undoRedo": "passed"
+    },
+    {
+      "sample": "profile",
+      "budgetEnforced": false,
+      "flushMaxMs": 45.5,
+      "capacityP95": 29.199999999953434,
+      "drainMs": 319.69999999995343,
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "undoRedo": "passed"
+    }
+  ]
+}
+WATCHDOG: exit=0, signal=null, elapsed=82ms, peak=0.0MiB

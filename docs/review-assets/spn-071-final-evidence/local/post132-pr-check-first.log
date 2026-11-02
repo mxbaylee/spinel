@@ -1,0 +1,6 @@
+
+> backlog:pr
+> node scripts/backlog/cli.ts pr --base origin/main --title 🧺 SPN-071 Hide shares and see where my access comes from
+
+pull request ok
+WATCHDOG: exit=0, signal=null, elapsed=469ms, peak=256.3MiB

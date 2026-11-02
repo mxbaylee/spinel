@@ -1,0 +1,1539 @@
+﻿2026-11-02T10:43:34.1261475Z Current runner version: '2.338.2'
+2026-11-02T10:43:34.1286163Z ##[group]Runner Image Provisioner
+2026-11-02T10:43:34.1287021Z Hosted Compute Agent
+2026-11-02T10:43:34.1287561Z Version: 20261021.618
+2026-11-02T10:43:34.1288274Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-11-02T10:43:34.1289190Z Build Date: 2026-10-21T00:45:21Z
+2026-11-02T10:43:34.1289911Z Worker ID: {f406e6fc-f305-4bae-aada-1f71b7b79c72}
+2026-11-02T10:43:34.1290613Z Region: northcentralus
+2026-11-02T10:43:34.1291163Z Cloud: Azure
+2026-11-02T10:43:34.1291703Z ##[endgroup]
+2026-11-02T10:43:34.1293033Z ##[group]Operating System
+2026-11-02T10:43:34.1293617Z Ubuntu
+2026-11-02T10:43:34.1294118Z 24.04.5
+2026-11-02T10:43:34.1294609Z LTS
+2026-11-02T10:43:34.1295148Z ##[endgroup]
+2026-11-02T10:43:34.1295769Z ##[group]Runner Image
+2026-11-02T10:43:34.1296335Z Image: ubuntu-24.04
+2026-11-02T10:43:34.1296880Z Version: 20261025.353.1
+2026-11-02T10:43:34.1298119Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+2026-11-02T10:43:34.1299773Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+2026-11-02T10:43:34.1300761Z ##[endgroup]
+2026-11-02T10:43:34.1301804Z ##[group]GITHUB_TOKEN Permissions
+2026-11-02T10:43:34.1303790Z Contents: read
+2026-11-02T10:43:34.1304377Z Metadata: read
+2026-11-02T10:43:34.1304905Z ##[endgroup]
+2026-11-02T10:43:34.1306897Z Secret source: Actions
+2026-11-02T10:43:34.1307765Z Cache mode: write
+2026-11-02T10:43:34.1308455Z Prepare workflow directory
+2026-11-02T10:43:34.1636297Z Prepare all required actions
+2026-11-02T10:43:34.1688423Z Getting action download info
+2026-11-02T10:43:34.4174117Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-02T10:43:34.5711010Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+2026-11-02T10:43:34.7541623Z Download action repository 'actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333' (SHA:9000827ccba6bdab643e8b6fd33ac0654aef8333)
+2026-11-02T10:43:35.0912877Z Download action repository 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-11-02T10:43:35.3894365Z Complete job name: Review Storybook tablet
+2026-11-02T10:43:35.4737983Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-02T10:43:35.4739273Z with:
+2026-11-02T10:43:35.4739817Z   persist-credentials: false
+2026-11-02T10:43:35.4740408Z   repository: mxbaylee/spinel
+2026-11-02T10:43:35.4744352Z   token: ***
+2026-11-02T10:43:35.4744876Z   ssh-strict: true
+2026-11-02T10:43:35.4745426Z   ssh-user: git
+2026-11-02T10:43:35.4745923Z   clean: true
+2026-11-02T10:43:35.4746435Z   sparse-checkout-cone-mode: true
+2026-11-02T10:43:35.4747036Z   fetch-depth: 1
+2026-11-02T10:43:35.4747559Z   fetch-tags: false
+2026-11-02T10:43:35.4748053Z   show-progress: true
+2026-11-02T10:43:35.4748635Z   lfs: false
+2026-11-02T10:43:35.4749508Z   submodules: false
+2026-11-02T10:43:35.4750059Z   set-safe-directory: true
+2026-11-02T10:43:35.4750664Z   allow-unsafe-pr-checkout: false
+2026-11-02T10:43:35.4751534Z ##[endgroup]
+2026-11-02T10:43:35.7572442Z Syncing repository: mxbaylee/spinel
+2026-11-02T10:43:35.7575860Z ##[group]Getting Git version info
+2026-11-02T10:43:35.7577256Z Working directory is '/home/runner/work/spinel/spinel'
+2026-11-02T10:43:35.7579476Z [command]/usr/bin/git version
+2026-11-02T10:43:35.7654176Z git version 2.56.0
+2026-11-02T10:43:35.7675986Z ##[endgroup]
+2026-11-02T10:43:35.7687332Z Temporarily overriding HOME='/home/runner/work/_temp/5d290dd7-4a9e-4bd1-bfa5-ff5a50f6652d' before making global git config changes
+2026-11-02T10:43:35.7692048Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-02T10:43:35.7695477Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-02T10:43:35.7741230Z Deleting the contents of '/home/runner/work/spinel/spinel'
+2026-11-02T10:43:35.7748228Z ##[group]Determining repository object format
+2026-11-02T10:43:35.7750990Z ##[endgroup]
+2026-11-02T10:43:35.7752588Z ##[group]Initializing the repository
+2026-11-02T10:43:35.7775621Z [command]/usr/bin/git init /home/runner/work/spinel/spinel
+2026-11-02T10:43:35.8043536Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-02T10:43:35.8046099Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-02T10:43:35.8049173Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-02T10:43:35.8051317Z hint: call:
+2026-11-02T10:43:35.8052139Z hint:
+2026-11-02T10:43:35.8053571Z hint: 	git config --global init.defaultBranch <name>
+2026-11-02T10:43:35.8055208Z hint:
+2026-11-02T10:43:35.8056384Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-02T10:43:35.8058502Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-02T10:43:35.8060534Z hint:
+2026-11-02T10:43:35.8061600Z hint: 	git branch -m <name>
+2026-11-02T10:43:35.8063006Z hint:
+2026-11-02T10:43:35.8064453Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-02T10:43:35.8066710Z Initialized empty Git repository in /home/runner/work/spinel/spinel/.git/
+2026-11-02T10:43:35.8071127Z [command]/usr/bin/git remote add origin https://github.com/mxbaylee/spinel
+2026-11-02T10:43:35.8133183Z ##[endgroup]
+2026-11-02T10:43:35.8134358Z ##[group]Disabling automatic garbage collection
+2026-11-02T10:43:35.8135584Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-02T10:43:35.8172267Z ##[endgroup]
+2026-11-02T10:43:35.8173830Z ##[group]Setting up auth
+2026-11-02T10:43:35.8174860Z Removing SSH command configuration
+2026-11-02T10:43:35.8177967Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-02T10:43:35.8218306Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-02T10:43:35.8570454Z Removing HTTP extra header
+2026-11-02T10:43:35.8575838Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-02T10:43:35.8621540Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-02T10:43:35.8811860Z Removing includeIf entries pointing to credentials config files
+2026-11-02T10:43:35.8816078Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-02T10:43:35.8849978Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-02T10:43:35.9048670Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-53fdcb2a-66fe-4ed9-861d-5cef3bd2d223.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-02T10:43:35.9091470Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git.path /home/runner/work/_temp/git-credentials-53fdcb2a-66fe-4ed9-861d-5cef3bd2d223.config
+2026-11-02T10:43:35.9129305Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-53fdcb2a-66fe-4ed9-861d-5cef3bd2d223.config
+2026-11-02T10:43:35.9166921Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-53fdcb2a-66fe-4ed9-861d-5cef3bd2d223.config
+2026-11-02T10:43:35.9203185Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-53fdcb2a-66fe-4ed9-861d-5cef3bd2d223.config
+2026-11-02T10:43:35.9237206Z ##[endgroup]
+2026-11-02T10:43:35.9239415Z ##[group]Fetching the repository
+2026-11-02T10:43:35.9246173Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +3ddf9dcb01807ce23a78118a9a7c45f7fd164d14:refs/remotes/pull/226/merge
+2026-11-02T10:43:38.6193992Z From https://github.com/mxbaylee/spinel
+2026-11-02T10:43:38.6200444Z  * [new ref]         3ddf9dcb01807ce23a78118a9a7c45f7fd164d14 -> pull/226/merge
+2026-11-02T10:43:38.6202923Z ##[endgroup]
+2026-11-02T10:43:38.6203579Z ##[group]Determining the checkout info
+2026-11-02T10:43:38.6204284Z ##[endgroup]
+2026-11-02T10:43:38.6205057Z [command]/usr/bin/git sparse-checkout disable
+2026-11-02T10:43:38.6260997Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-02T10:43:38.6294831Z ##[group]Checking out the ref
+2026-11-02T10:43:38.6297906Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/226/merge
+2026-11-02T10:43:39.2322190Z Note: switching to 'refs/remotes/pull/226/merge'.
+2026-11-02T10:43:39.2322894Z 
+2026-11-02T10:43:39.2323285Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-11-02T10:43:39.2324158Z changes and commit them, and you can discard any commits you make in this
+2026-11-02T10:43:39.2325097Z state without impacting any branches by switching back to a branch.
+2026-11-02T10:43:39.2325568Z 
+2026-11-02T10:43:39.2326016Z If you want to create a new branch to retain commits you create, you may
+2026-11-02T10:43:39.2326854Z do so (now or later) by using -c with the switch command. Example:
+2026-11-02T10:43:39.2327437Z 
+2026-11-02T10:43:39.2327656Z   git switch -c <new-branch-name>
+2026-11-02T10:43:39.2328040Z 
+2026-11-02T10:43:39.2328231Z Or undo this operation with:
+2026-11-02T10:43:39.2328601Z 
+2026-11-02T10:43:39.2329045Z   git switch -
+2026-11-02T10:43:39.2330858Z 
+2026-11-02T10:43:39.2331342Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-11-02T10:43:39.2331946Z 
+2026-11-02T10:43:39.2332650Z HEAD is now at 3ddf9dc Merge c51458573f3a2cf2f5ff3701cf27abfcfe035935 into cc8364693791d981b86e80efc40bedba7fff2c08
+2026-11-02T10:43:39.2345447Z ##[endgroup]
+2026-11-02T10:43:39.2392732Z [command]/usr/bin/git log -1 --format=%H
+2026-11-02T10:43:39.2429420Z 3ddf9dcb01807ce23a78118a9a7c45f7fd164d14
+2026-11-02T10:43:39.2442606Z ##[group]Removing auth
+2026-11-02T10:43:39.2443438Z Removing SSH command configuration
+2026-11-02T10:43:39.2445011Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-02T10:43:39.2474700Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-02T10:43:39.2672776Z Removing HTTP extra header
+2026-11-02T10:43:39.2676871Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-02T10:43:39.2710495Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-02T10:43:39.2907978Z Removing includeIf entries pointing to credentials config files
+2026-11-02T10:43:39.2912036Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-02T10:43:39.2940970Z includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-02T10:43:39.2941679Z includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-02T10:43:39.2942229Z includeif.gitdir:/github/workspace/.git.path
+2026-11-02T10:43:39.2942679Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-02T10:43:39.2948717Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-02T10:43:39.2974023Z /home/runner/work/_temp/git-credentials-53fdcb2a-66fe-4ed9-861d-5cef3bd2d223.config
+2026-11-02T10:43:39.2984118Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-53fdcb2a\-66fe\-4ed9\-861d\-5cef3bd2d223\.config
+2026-11-02T10:43:39.3031720Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-02T10:43:39.3055705Z /home/runner/work/_temp/git-credentials-53fdcb2a-66fe-4ed9-861d-5cef3bd2d223.config
+2026-11-02T10:43:39.3062401Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-53fdcb2a\-66fe\-4ed9\-861d\-5cef3bd2d223\.config
+2026-11-02T10:43:39.3098420Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-02T10:43:39.3122736Z /github/runner_temp/git-credentials-53fdcb2a-66fe-4ed9-861d-5cef3bd2d223.config
+2026-11-02T10:43:39.3129450Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-53fdcb2a\-66fe\-4ed9\-861d\-5cef3bd2d223\.config
+2026-11-02T10:43:39.3168037Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-02T10:43:39.3192763Z /github/runner_temp/git-credentials-53fdcb2a-66fe-4ed9-861d-5cef3bd2d223.config
+2026-11-02T10:43:39.3200789Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-53fdcb2a\-66fe\-4ed9\-861d\-5cef3bd2d223\.config
+2026-11-02T10:43:39.3238356Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-02T10:43:39.3436721Z Removing credentials config '/home/runner/work/_temp/git-credentials-53fdcb2a-66fe-4ed9-861d-5cef3bd2d223.config'
+2026-11-02T10:43:39.3570387Z ##[endgroup]
+2026-11-02T10:43:39.3897054Z ##[group]Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+2026-11-02T10:43:39.3897521Z with:
+2026-11-02T10:43:39.3897939Z   node-version-file: .nvmrc
+2026-11-02T10:43:39.3898310Z   package-manager-cache: false
+2026-11-02T10:43:39.3898665Z   check-latest: false
+2026-11-02T10:43:39.3901345Z   token: ***
+2026-11-02T10:43:39.3901670Z ##[endgroup]
+2026-11-02T10:43:39.5159551Z Node version file is not JSON file
+2026-11-02T10:43:39.5164292Z Node version file is not TOML file
+2026-11-02T10:43:39.5164991Z Resolved .nvmrc as 26.12.1
+2026-11-02T10:43:39.5187148Z Attempting to download 26.12.1...
+2026-11-02T10:43:40.3340014Z Acquiring 26.12.1 - x64 from https://github.com/actions/node-versions/releases/download/26.12.1-39618969937/node-26.12.1-linux-x64.tar.gz
+2026-11-02T10:43:40.8040789Z Extracting ...
+2026-11-02T10:43:40.8172261Z [command]/usr/bin/tar xz --strip 1 --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/7056a8bf-1841-4457-ab9c-636fa6c3d4ab -f /home/runner/work/_temp/10b5430d-c523-49ad-8454-6c687e6a2ec6
+2026-11-02T10:43:42.3675597Z Adding to the cache ...
+2026-11-02T10:43:44.4776385Z ##[group]Environment details
+2026-11-02T10:43:44.6900650Z node: v26.12.1
+2026-11-02T10:43:44.6901042Z npm: 11.20.0
+2026-11-02T10:43:44.6901454Z yarn: 1.22.22
+2026-11-02T10:43:44.6902300Z ##[endgroup]
+2026-11-02T10:43:44.7053893Z ##[group]Run npm ci --no-audit
+2026-11-02T10:43:44.7054359Z [36;1mnpm ci --no-audit[0m
+2026-11-02T10:43:44.7075555Z shell: /usr/bin/bash -e {0}
+2026-11-02T10:43:44.7076016Z ##[endgroup]
+2026-11-02T10:43:56.6773502Z 
+2026-11-02T10:43:56.6782297Z > postinstall
+2026-11-02T10:43:56.6784520Z > node scripts/dependencies/patch-univer-core.ts && node scripts/dependencies/patch-univer-docs.ts && node scripts/dependencies/patch-univer-ui.ts && node scripts/dependencies/patch-univer-drawing.ts && node scripts/dependencies/patch-univer-docs-ui.ts
+2026-11-02T10:43:56.6785917Z 
+2026-11-02T10:43:57.4058364Z 
+2026-11-02T10:43:57.4059900Z added 501 packages in 13s
+2026-11-02T10:43:57.4060246Z 
+2026-11-02T10:43:57.4060587Z 136 packages are looking for funding
+2026-11-02T10:43:57.4061403Z   run `npm fund` for details
+2026-11-02T10:43:57.4072293Z npm warn install-scripts 2 packages have install scripts not yet covered by allowScripts:
+2026-11-02T10:43:57.4074445Z npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+2026-11-02T10:43:57.4075637Z npm warn install-scripts   protobufjs@7.6.6 (postinstall: node scripts/postinstall)
+2026-11-02T10:43:57.4076690Z npm warn install-scripts
+2026-11-02T10:43:57.4084153Z npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+2026-11-02T10:43:57.4591984Z ##[group]Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+2026-11-02T10:43:57.4592458Z with:
+2026-11-02T10:43:57.4592789Z   name: storybook-review
+2026-11-02T10:43:57.4593114Z   path: storybook-static
+2026-11-02T10:43:57.4593436Z   merge-multiple: false
+2026-11-02T10:43:57.4593801Z   repository: mxbaylee/spinel
+2026-11-02T10:43:57.4594132Z   run-id: 41430568554
+2026-11-02T10:43:57.4594456Z   skip-decompress: false
+2026-11-02T10:43:57.4594774Z   digest-mismatch: error
+2026-11-02T10:43:57.4595139Z ##[endgroup]
+2026-11-02T10:43:57.6011654Z Downloading single artifact
+2026-11-02T10:43:57.7559743Z Preparing to download the following artifacts:
+2026-11-02T10:43:57.7561243Z - storybook-review (ID: 13133923619, Size: 6187018, Expected Digest: sha256:2bef1896d349fc3c4b4556ddb48b74edb424d4e4bc4adebd18a9d01399a77bdb)
+2026-11-02T10:43:58.0143951Z Redirecting to blob download url: https://productionresultssa19.blob.core.windows.net/actions-results/e0ddcda3-6f08-8671-9ae6-d000f27ff5d6/workflow-job-run-27f22d8a-d772-51a2-85aa-44afbe74e539/artifacts/6d6f95fa8818aa5a4d3992582123d79edf1dc1dd62acffb1044992f9a9ee0802.zip
+2026-11-02T10:43:58.0146420Z Starting download of artifact to: /home/runner/work/spinel/spinel/storybook-static
+2026-11-02T10:43:58.1735706Z (node:2536) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+2026-11-02T10:43:58.1737661Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-02T10:43:58.4716269Z SHA256 digest of downloaded artifact is 2bef1896d349fc3c4b4556ddb48b74edb424d4e4bc4adebd18a9d01399a77bdb
+2026-11-02T10:43:58.4717875Z Artifact download completed successfully.
+2026-11-02T10:43:58.4719084Z Total of 1 artifact(s) downloaded
+2026-11-02T10:43:58.4721141Z Download artifact has finished successfully
+2026-11-02T10:43:58.4873689Z ##[group]Run node scripts/ci/prefer-ubuntu-archive.ts
+2026-11-02T10:43:58.4874493Z [36;1mnode scripts/ci/prefer-ubuntu-archive.ts[0m
+2026-11-02T10:43:58.4875235Z [36;1mnpx playwright install --with-deps chromium[0m
+2026-11-02T10:43:58.4891014Z shell: /usr/bin/bash -e {0}
+2026-11-02T10:43:58.4891383Z ##[endgroup]
+2026-11-02T10:43:58.5660858Z Preferred the official Ubuntu archive; Azure remains the fallback.
+2026-11-02T10:43:59.2687605Z Installing dependencies...
+2026-11-02T10:43:59.2764957Z Switching to root user to install dependencies...
+2026-11-02T10:43:59.3881283Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-11-02T10:43:59.4241298Z Get:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+2026-11-02T10:43:59.7852017Z Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [682 kB]
+2026-11-02T10:43:59.8001592Z Get:8 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [617 kB]
+2026-11-02T10:44:00.1080705Z Hit:2 https://archive.ubuntu.com/ubuntu noble InRelease
+2026-11-02T10:44:00.2327412Z Get:3 https://archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+2026-11-02T10:44:00.6738189Z Get:4 https://archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+2026-11-02T10:44:00.8666123Z Get:5 https://archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+2026-11-02T10:44:01.0543937Z Get:9 https://archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1408 kB]
+2026-11-02T10:44:01.5552816Z Get:10 https://archive.ubuntu.com/ubuntu noble-updates/main Translation-en [311 kB]
+2026-11-02T10:44:01.7580156Z Get:11 https://archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1707 kB]
+2026-11-02T10:44:01.9130449Z Get:12 https://archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [343 kB]
+2026-11-02T10:44:02.0483341Z Get:13 https://archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [1813 kB]
+2026-11-02T10:44:02.2493287Z Get:14 https://archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [412 kB]
+2026-11-02T10:44:02.4073489Z Get:15 https://archive.ubuntu.com/ubuntu noble-updates/multiverse Translation-en [14.3 kB]
+2026-11-02T10:44:02.5294315Z Get:16 https://archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1146 kB]
+2026-11-02T10:44:02.6868354Z Get:17 https://archive.ubuntu.com/ubuntu noble-security/main Translation-en [231 kB]
+2026-11-02T10:44:02.8110061Z Get:18 https://archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1223 kB]
+2026-11-02T10:44:02.9715622Z Get:19 https://archive.ubuntu.com/ubuntu noble-security/universe Translation-en [246 kB]
+2026-11-02T10:44:11.0827930Z Fetched 10.5 MB in 4s (2898 kB/s)
+2026-11-02T10:44:12.2103754Z Reading package lists...
+2026-11-02T10:44:12.2463792Z Reading package lists...
+2026-11-02T10:44:12.5054062Z Building dependency tree...
+2026-11-02T10:44:12.5064443Z Reading state information...
+2026-11-02T10:44:12.7018400Z libasound2t64 is already the newest version (1.2.11-1ubuntu0.3).
+2026-11-02T10:44:12.7019538Z libasound2t64 set to manually installed.
+2026-11-02T10:44:12.7020399Z libatk-bridge2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-11-02T10:44:12.7021169Z libatk-bridge2.0-0t64 set to manually installed.
+2026-11-02T10:44:12.7021971Z libatk1.0-0t64 is already the newest version (2.52.0-1build1).
+2026-11-02T10:44:12.7022639Z libatk1.0-0t64 set to manually installed.
+2026-11-02T10:44:12.7023359Z libatspi2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-11-02T10:44:12.7024156Z libatspi2.0-0t64 set to manually installed.
+2026-11-02T10:44:12.7024895Z libcairo2 is already the newest version (1.18.0-3build1).
+2026-11-02T10:44:12.7025646Z libcairo2 set to manually installed.
+2026-11-02T10:44:12.7026186Z libcups2t64 is already the newest version (2.4.7-1.2ubuntu7.14).
+2026-11-02T10:44:12.7026694Z libcups2t64 set to manually installed.
+2026-11-02T10:44:12.7027372Z libdbus-1-3 is already the newest version (1.14.10-4ubuntu4.1).
+2026-11-02T10:44:12.7028912Z libdbus-1-3 set to manually installed.
+2026-11-02T10:44:12.7029673Z libdrm2 is already the newest version (2.4.125-1ubuntu0.1~24.04.2).
+2026-11-02T10:44:12.7030383Z libdrm2 set to manually installed.
+2026-11-02T10:44:12.7031139Z libgbm1 is already the newest version (25.2.8-0ubuntu0.24.04.4).
+2026-11-02T10:44:12.7031642Z libgbm1 set to manually installed.
+2026-11-02T10:44:12.7032177Z libglib2.0-0t64 is already the newest version (2.80.0-6ubuntu3.10).
+2026-11-02T10:44:12.7032668Z libglib2.0-0t64 set to manually installed.
+2026-11-02T10:44:12.7033239Z libnspr4 is already the newest version (2:4.35-1.1build1).
+2026-11-02T10:44:12.7033704Z libnspr4 set to manually installed.
+2026-11-02T10:44:12.7034145Z libnss3 is already the newest version (2:3.98-1ubuntu0.3).
+2026-11-02T10:44:12.7034663Z libnss3 set to manually installed.
+2026-11-02T10:44:12.7035150Z libpango-1.0-0 is already the newest version (1.52.1+ds-1build1).
+2026-11-02T10:44:12.7035676Z libpango-1.0-0 set to manually installed.
+2026-11-02T10:44:12.7036201Z libx11-6 is already the newest version (2:1.8.7-1ubuntu0.1).
+2026-11-02T10:44:12.7036659Z libx11-6 set to manually installed.
+2026-11-02T10:44:12.7037109Z libxcb1 is already the newest version (1.15-1ubuntu2).
+2026-11-02T10:44:12.7037565Z libxcb1 set to manually installed.
+2026-11-02T10:44:12.7038101Z libxcomposite1 is already the newest version (1:0.4.5-1build3).
+2026-11-02T10:44:12.7038581Z libxcomposite1 set to manually installed.
+2026-11-02T10:44:12.7039291Z libxdamage1 is already the newest version (1:1.1.6-1build1).
+2026-11-02T10:44:12.7039791Z libxdamage1 set to manually installed.
+2026-11-02T10:44:12.7040317Z libxext6 is already the newest version (2:1.3.4-1build2).
+2026-11-02T10:44:12.7040916Z libxext6 set to manually installed.
+2026-11-02T10:44:12.7041387Z libxfixes3 is already the newest version (1:6.0.0-2build1).
+2026-11-02T10:44:12.7041866Z libxfixes3 set to manually installed.
+2026-11-02T10:44:12.7042374Z libxkbcommon0 is already the newest version (1.6.0-1build1).
+2026-11-02T10:44:12.7042882Z libxkbcommon0 set to manually installed.
+2026-11-02T10:44:12.7043370Z libxrandr2 is already the newest version (2:1.5.2-2build1).
+2026-11-02T10:44:12.7043853Z libxrandr2 set to manually installed.
+2026-11-02T10:44:12.7044388Z xvfb is already the newest version (2:21.1.12-1ubuntu1.9).
+2026-11-02T10:44:12.7045072Z fonts-noto-color-emoji is already the newest version (2.047-0ubuntu0.24.04.1).
+2026-11-02T10:44:12.7045780Z libfontconfig1 is already the newest version (2.15.0-1.1ubuntu2).
+2026-11-02T10:44:12.7046272Z libfontconfig1 set to manually installed.
+2026-11-02T10:44:12.7046766Z libfreetype6 is already the newest version (2.13.2+dfsg-1ubuntu0.2).
+2026-11-02T10:44:12.7047332Z libfreetype6 set to manually installed.
+2026-11-02T10:44:12.7047837Z fonts-liberation is already the newest version (1:2.1.5-3).
+2026-11-02T10:44:12.7048325Z fonts-liberation set to manually installed.
+2026-11-02T10:44:12.7049083Z The following additional packages will be installed:
+2026-11-02T10:44:12.7049558Z   xfonts-encodings xfonts-utils
+2026-11-02T10:44:12.7049949Z Recommended packages:
+2026-11-02T10:44:12.7050366Z   fonts-ipafont-mincho fonts-tlwg-loma
+2026-11-02T10:44:12.7711059Z The following NEW packages will be installed:
+2026-11-02T10:44:12.7712266Z   fonts-freefont-ttf fonts-ipafont-gothic fonts-tlwg-loma-otf fonts-unifont
+2026-11-02T10:44:12.7725150Z   fonts-wqy-zenhei xfonts-cyrillic xfonts-encodings xfonts-scalable
+2026-11-02T10:44:12.7725645Z   xfonts-utils
+2026-11-02T10:44:12.7923018Z 0 upgraded, 9 newly installed, 0 to remove and 6 not upgraded.
+2026-11-02T10:44:12.7923878Z Need to get 21.1 MB of archives.
+2026-11-02T10:44:12.7924397Z After this operation, 79.5 MB of additional disk space will be used.
+2026-11-02T10:44:12.7925033Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-11-02T10:44:13.0546554Z Get:2 https://archive.ubuntu.com/ubuntu noble/universe amd64 fonts-ipafont-gothic all 00303-21ubuntu1 [3513 kB]
+2026-11-02T10:44:13.2841043Z Get:3 https://archive.ubuntu.com/ubuntu noble/main amd64 fonts-freefont-ttf all 20211204+svn4273-2 [5641 kB]
+2026-11-02T10:44:13.3690145Z Get:4 https://archive.ubuntu.com/ubuntu noble/universe amd64 fonts-tlwg-loma-otf all 1:0.7.3-1 [107 kB]
+2026-11-02T10:44:13.4117978Z Get:5 https://archive.ubuntu.com/ubuntu noble/universe amd64 fonts-unifont all 1:15.1.01-1build1 [2993 kB]
+2026-11-02T10:44:13.4652702Z Get:6 https://archive.ubuntu.com/ubuntu noble/universe amd64 fonts-wqy-zenhei all 0.9.45-8 [7472 kB]
+2026-11-02T10:44:13.5493472Z Get:7 https://archive.ubuntu.com/ubuntu noble/main amd64 xfonts-encodings all 1:1.0.5-0ubuntu2 [578 kB]
+2026-11-02T10:44:13.5817123Z Get:8 https://archive.ubuntu.com/ubuntu noble/main amd64 xfonts-utils amd64 1:7.7+6build3 [94.4 kB]
+2026-11-02T10:44:13.6311335Z Get:9 https://archive.ubuntu.com/ubuntu noble/universe amd64 xfonts-cyrillic all 1:1.0.5+nmu1 [384 kB]
+2026-11-02T10:44:13.6646140Z Get:10 https://archive.ubuntu.com/ubuntu noble/main amd64 xfonts-scalable all 1:1.0.3-1.3 [304 kB]
+2026-11-02T10:44:13.9949377Z Fetched 21.1 MB in 1s (23.7 MB/s)
+2026-11-02T10:44:14.2200775Z Selecting previously unselected package fonts-ipafont-gothic.
+2026-11-02T10:44:14.2793841Z (Reading database ... 
+2026-11-02T10:44:14.2794314Z (Reading database ... 5%
+2026-11-02T10:44:14.2794956Z (Reading database ... 10%
+2026-11-02T10:44:14.2795499Z (Reading database ... 15%
+2026-11-02T10:44:14.2795876Z (Reading database ... 20%
+2026-11-02T10:44:14.2796246Z (Reading database ... 25%
+2026-11-02T10:44:14.2796656Z (Reading database ... 30%
+2026-11-02T10:44:14.2797060Z (Reading database ... 35%
+2026-11-02T10:44:14.2797909Z (Reading database ... 40%
+2026-11-02T10:44:14.2798335Z (Reading database ... 45%
+2026-11-02T10:44:14.2799181Z (Reading database ... 50%
+2026-11-02T10:44:14.3402280Z (Reading database ... 55%
+2026-11-02T10:44:14.7735017Z (Reading database ... 60%
+2026-11-02T10:44:15.1216429Z (Reading database ... 65%
+2026-11-02T10:44:15.4127184Z (Reading database ... 70%
+2026-11-02T10:44:15.6954869Z (Reading database ... 75%
+2026-11-02T10:44:16.2747799Z (Reading database ... 80%
+2026-11-02T10:44:16.9265241Z (Reading database ... 85%
+2026-11-02T10:44:17.7108473Z (Reading database ... 90%
+2026-11-02T10:44:18.4753772Z (Reading database ... 95%
+2026-11-02T10:44:18.4754445Z (Reading database ... 100%
+2026-11-02T10:44:18.4755615Z (Reading database ... 215504 files and directories currently installed.)
+2026-11-02T10:44:18.4804595Z Preparing to unpack .../0-fonts-ipafont-gothic_00303-21ubuntu1_all.deb ...
+2026-11-02T10:44:18.5131882Z Unpacking fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-11-02T10:44:18.8209465Z Selecting previously unselected package fonts-freefont-ttf.
+2026-11-02T10:44:18.8344765Z Preparing to unpack .../1-fonts-freefont-ttf_20211204+svn4273-2_all.deb ...
+2026-11-02T10:44:18.8355259Z Unpacking fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-11-02T10:44:18.9723712Z Selecting previously unselected package fonts-tlwg-loma-otf.
+2026-11-02T10:44:18.9859407Z Preparing to unpack .../2-fonts-tlwg-loma-otf_1%3a0.7.3-1_all.deb ...
+2026-11-02T10:44:18.9870142Z Unpacking fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-11-02T10:44:19.0127372Z Selecting previously unselected package fonts-unifont.
+2026-11-02T10:44:19.0262117Z Preparing to unpack .../3-fonts-unifont_1%3a15.1.01-1build1_all.deb ...
+2026-11-02T10:44:19.0272468Z Unpacking fonts-unifont (1:15.1.01-1build1) ...
+2026-11-02T10:44:19.2649950Z Selecting previously unselected package fonts-wqy-zenhei.
+2026-11-02T10:44:19.2786817Z Preparing to unpack .../4-fonts-wqy-zenhei_0.9.45-8_all.deb ...
+2026-11-02T10:44:19.2886107Z Unpacking fonts-wqy-zenhei (0.9.45-8) ...
+2026-11-02T10:44:19.9031543Z Selecting previously unselected package xfonts-encodings.
+2026-11-02T10:44:19.9167348Z Preparing to unpack .../5-xfonts-encodings_1%3a1.0.5-0ubuntu2_all.deb ...
+2026-11-02T10:44:19.9180273Z Unpacking xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-11-02T10:44:19.9489714Z Selecting previously unselected package xfonts-utils.
+2026-11-02T10:44:19.9625589Z Preparing to unpack .../6-xfonts-utils_1%3a7.7+6build3_amd64.deb ...
+2026-11-02T10:44:19.9636026Z Unpacking xfonts-utils (1:7.7+6build3) ...
+2026-11-02T10:44:20.0767090Z Selecting previously unselected package xfonts-cyrillic.
+2026-11-02T10:44:20.0902904Z Preparing to unpack .../7-xfonts-cyrillic_1%3a1.0.5+nmu1_all.deb ...
+2026-11-02T10:44:20.0914600Z Unpacking xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-11-02T10:44:20.1206501Z Selecting previously unselected package xfonts-scalable.
+2026-11-02T10:44:20.1343653Z Preparing to unpack .../8-xfonts-scalable_1%3a1.0.3-1.3_all.deb ...
+2026-11-02T10:44:20.1353726Z Unpacking xfonts-scalable (1:1.0.3-1.3) ...
+2026-11-02T10:44:20.1858642Z Setting up fonts-wqy-zenhei (0.9.45-8) ...
+2026-11-02T10:44:20.1974268Z Setting up fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-11-02T10:44:20.1995003Z Setting up fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-11-02T10:44:20.2015790Z Setting up xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-11-02T10:44:20.2035474Z Setting up fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-11-02T10:44:20.2096398Z update-alternatives: using /usr/share/fonts/opentype/ipafont-gothic/ipag.ttf to provide /usr/share/fonts/truetype/fonts-japanese-gothic.ttf (fonts-japanese-gothic.ttf) in auto mode
+2026-11-02T10:44:20.2113029Z Setting up fonts-unifont (1:15.1.01-1build1) ...
+2026-11-02T10:44:20.2143208Z Setting up xfonts-utils (1:7.7+6build3) ...
+2026-11-02T10:44:20.2413174Z Setting up xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-11-02T10:44:20.2698064Z Setting up xfonts-scalable (1:1.0.3-1.3) ...
+2026-11-02T10:44:20.2947375Z Processing triggers for man-db (2.12.0-4build2) ...
+2026-11-02T10:44:20.2969056Z Not building database; man-db/auto-update is not 'true'.
+2026-11-02T10:44:20.2985458Z Processing triggers for fontconfig (2.15.0-1.1ubuntu2) ...
+2026-11-02T10:44:21.6625533Z 
+2026-11-02T10:44:21.6626415Z Running kernel seems to be up-to-date.
+2026-11-02T10:44:21.6626808Z 
+2026-11-02T10:44:21.6627192Z No services need to be restarted.
+2026-11-02T10:44:21.6627458Z 
+2026-11-02T10:44:21.6627669Z No containers need to be restarted.
+2026-11-02T10:44:21.6627874Z 
+2026-11-02T10:44:21.6628223Z No user sessions are running outdated binaries.
+2026-11-02T10:44:21.6628548Z 
+2026-11-02T10:44:21.6629061Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+2026-11-02T10:44:22.7242791Z Downloading Chrome for Testing 156.0.8078.4 (playwright chromium v1248) from https://cdn.playwright.dev/builds/cft/156.0.8078.4/linux64/chrome-linux64.zip
+2026-11-02T10:44:23.1661773Z |                                                                                |   0% of 191.1 MiB
+2026-11-02T10:44:23.2856141Z |■■■■■■■■                                                                        |  10% of 191.1 MiB
+2026-11-02T10:44:23.3666443Z |■■■■■■■■■■■■■■■■                                                                |  20% of 191.1 MiB
+2026-11-02T10:44:23.4526489Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 191.1 MiB
+2026-11-02T10:44:23.5475069Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 191.1 MiB
+2026-11-02T10:44:23.6349615Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 191.1 MiB
+2026-11-02T10:44:23.7373375Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 191.1 MiB
+2026-11-02T10:44:23.8231000Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 191.1 MiB
+2026-11-02T10:44:23.9264185Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 191.1 MiB
+2026-11-02T10:44:24.0248313Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 191.1 MiB
+2026-11-02T10:44:24.0981182Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 191.1 MiB
+2026-11-02T10:44:27.3789781Z Chrome for Testing 156.0.8078.4 (playwright chromium v1248) downloaded to /home/runner/.cache/ms-playwright/chromium-1248
+2026-11-02T10:44:27.3792765Z Downloading FFmpeg (playwright ffmpeg v1013) from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1013/ffmpeg-linux.zip
+2026-11-02T10:44:27.7683191Z |                                                                                |   0% of 2.2 MiB
+2026-11-02T10:44:27.7722168Z |■■■■■■■■                                                                        |  10% of 2.2 MiB
+2026-11-02T10:44:27.7747378Z |■■■■■■■■■■■■■■■■                                                                |  20% of 2.2 MiB
+2026-11-02T10:44:27.7773342Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.2 MiB
+2026-11-02T10:44:27.7928383Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.2 MiB
+2026-11-02T10:44:27.7966776Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.2 MiB
+2026-11-02T10:44:27.7988260Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.2 MiB
+2026-11-02T10:44:27.7994932Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.2 MiB
+2026-11-02T10:44:27.8009512Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.2 MiB
+2026-11-02T10:44:27.8019497Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.2 MiB
+2026-11-02T10:44:27.8026899Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.2 MiB
+2026-11-02T10:44:27.8571975Z FFmpeg (playwright ffmpeg v1013) downloaded to /home/runner/.cache/ms-playwright/ffmpeg-1013
+2026-11-02T10:44:27.8575244Z Downloading Chrome Headless Shell 156.0.8078.4 (playwright chromium-headless-shell v1248) from https://cdn.playwright.dev/builds/cft/156.0.8078.4/linux64/chrome-headless-shell-linux64.zip
+2026-11-02T10:44:28.2915960Z |                                                                                |   0% of 120 MiB
+2026-11-02T10:44:28.3724883Z |■■■■■■■■                                                                        |  10% of 120 MiB
+2026-11-02T10:44:28.4292303Z |■■■■■■■■■■■■■■■■                                                                |  20% of 120 MiB
+2026-11-02T10:44:28.4795417Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 120 MiB
+2026-11-02T10:44:28.5490793Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 120 MiB
+2026-11-02T10:44:28.5899425Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 120 MiB
+2026-11-02T10:44:28.6384586Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 120 MiB
+2026-11-02T10:44:28.6998170Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 120 MiB
+2026-11-02T10:44:28.7429925Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 120 MiB
+2026-11-02T10:44:28.7965489Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 120 MiB
+2026-11-02T10:44:28.8695519Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 120 MiB
+2026-11-02T10:44:31.1801023Z Chrome Headless Shell 156.0.8078.4 (playwright chromium-headless-shell v1248) downloaded to /home/runner/.cache/ms-playwright/chromium_headless_shell-1248
+2026-11-02T10:44:31.2084729Z ##[group]Run read -r -a stories <<< "$STORY_IDS"
+2026-11-02T10:44:31.2085209Z [36;1mread -r -a stories <<< "$STORY_IDS"[0m
+2026-11-02T10:44:31.2085620Z [36;1moptions=()[0m
+2026-11-02T10:44:31.2086085Z [36;1mif [ "$CAPTURE_SCREENSHOTS" = false ]; then options+=(--no-screenshots); fi[0m
+2026-11-02T10:44:31.2086840Z [36;1mnpm run screenshots -- --viewport tablet "${options[@]}" "${stories[@]}"[0m
+2026-11-02T10:44:31.2101018Z shell: /usr/bin/bash -e {0}
+2026-11-02T10:44:31.2101401Z env:
+2026-11-02T10:44:31.2101712Z   STORY_IDS: 
+2026-11-02T10:44:31.2102034Z   CAPTURE_SCREENSHOTS: true
+2026-11-02T10:44:31.2102389Z ##[endgroup]
+2026-11-02T10:44:31.3016942Z 
+2026-11-02T10:44:31.3017767Z > screenshots
+2026-11-02T10:44:31.3018449Z > node scripts/screenshots.ts --viewport tablet
+2026-11-02T10:44:31.3018718Z 
+2026-11-02T10:44:31.8255764Z [33m
+2026-11-02T10:44:31.8258049Z (!) build.outDir must not be the same directory of root or a parent directory of root as this could cause Vite to overwriting source files with build outputs.
+2026-11-02T10:44:31.8259663Z [39m
+2026-11-02T10:44:33.4993320Z Review tablet: shell-gemlogo--rail
+2026-11-02T10:44:33.9715728Z Review tablet: shell-gemlogo--large
+2026-11-02T10:44:34.2383268Z Review tablet: shell-gemlogo--tap-replay
+2026-11-02T10:44:34.5548147Z Review tablet: settings-themesettings--default
+2026-11-02T10:44:34.8739464Z Review tablet: settings-themesettings--follow-system
+2026-11-02T10:44:35.1578088Z Review tablet: settings-themesettings--storage-blocked
+2026-11-02T10:44:35.4767693Z Review tablet: redesign-appearance--playground-story
+2026-11-02T10:44:37.3269230Z Review tablet: redesign-appearance--gems-light-and-dark
+2026-11-02T10:44:38.1180292Z Review tablet: redesign-controls--default
+2026-11-02T10:44:38.4587787Z Review tablet: redesign-controls--disabled
+2026-11-02T10:44:38.7586749Z Review tablet: redesign-controls--error
+2026-11-02T10:44:39.0255247Z Review tablet: redesign-controls--long-modal-title
+2026-11-02T10:44:39.4768687Z Review tablet: redesign-theme-control--default
+2026-11-02T10:44:39.7376488Z Review tablet: redesign-theme-control--storage-blocked
+2026-11-02T10:44:40.1064516Z Review tablet: redesign-theme-control--dismiss-storage-warning
+2026-11-02T10:44:40.5047015Z Review tablet: sharing-access-details--inherited-folder
+2026-11-02T10:44:40.7751300Z Review tablet: sharing-access-details--direct-share
+2026-11-02T10:44:41.0588304Z Review tablet: sharing-access-details--space-through-folder
+2026-11-02T10:44:41.3255912Z Review tablet: sharing-access-details--space-direct
+2026-11-02T10:44:41.6092703Z Review tablet: sharing-access-details--owner
+2026-11-02T10:44:41.8584023Z Review tablet: sharing-access-details--file-admin
+2026-11-02T10:44:42.1087704Z Review tablet: sharing-access-details--long-names
+2026-11-02T10:44:42.3610928Z Review tablet: sharing-access-details--loading
+2026-11-02T10:44:42.6421373Z Review tablet: sharing-access-details--unavailable
+2026-11-02T10:44:42.9423995Z Review tablet: sharing-access-details--revoked-while-open
+2026-11-02T10:44:43.3646051Z Review tablet: current-production-guest-accessstate--revoked
+2026-11-02T10:44:43.8081723Z Review tablet: current-production-guest-accessstate--revoked-with-unsaved-input
+2026-11-02T10:44:44.0749042Z Review tablet: current-production-guest-accessstate--loading
+2026-11-02T10:44:44.5092997Z Review tablet: current-production-guest-accessstate--unsupported-browser
+2026-11-02T10:44:44.9410947Z Review tablet: current-production-guest-accessstate--offline
+2026-11-02T10:44:45.3741249Z Review tablet: current-production-guest-accessstate--missing-guest-page
+2026-11-02T10:44:45.7911795Z Review tablet: current-production-guest-accessstate--missing-account-file
+2026-11-02T10:44:46.0570965Z Review tablet: current-production-guest-accessstate--retry
+2026-11-02T10:44:46.3905087Z Review tablet: settings-accesstokens--loaded
+2026-11-02T10:44:46.6459496Z Review tablet: settings-accesstokens--empty
+2026-11-02T10:44:46.8992123Z Review tablet: settings-accesstokens--loading
+2026-11-02T10:44:47.1458684Z Review tablet: settings-accesstokens--load-failed
+2026-11-02T10:44:47.3946518Z Review tablet: settings-accesstokens--creating
+2026-11-02T10:44:47.8690044Z Review tablet: settings-accesstokens--created
+2026-11-02T10:44:48.3715894Z Review tablet: settings-accesstokens--create-failed
+2026-11-02T10:44:48.8634819Z Review tablet: settings-accesstokens--revoking
+2026-11-02T10:44:49.1623398Z Review tablet: settings-accesstokens--revoked
+2026-11-02T10:44:49.4460971Z Review tablet: settings-accesstokens--revoke-failed
+2026-11-02T10:44:49.7794356Z Review tablet: settings-accesstokens--active-limit
+2026-11-02T10:44:50.1275441Z Review tablet: settings-accesstokens--previously-used
+2026-11-02T10:44:50.3624206Z Review tablet: settings-accesstokens--copied
+2026-11-02T10:44:50.9177155Z Review tablet: settings-accesstokens--manual-copy
+2026-11-02T10:44:51.4336053Z Review tablet: account-access-changed--locked
+2026-11-02T10:44:51.7910214Z Review tablet: account-access-changed--phone
+2026-11-02T10:44:52.1077765Z Review tablet: account-exit--pending-changes
+2026-11-02T10:44:52.3929305Z Review tablet: account-exit--checking
+2026-11-02T10:44:52.6582494Z Review tablet: account-exit--counts-unavailable
+2026-11-02T10:44:52.9270265Z Review tablet: account-exit--confirmed-pending-changes
+2026-11-02T10:44:53.1923589Z Review tablet: account-exit--kept-while-offline
+2026-11-02T10:44:53.4924717Z Review tablet: account-exit--retry-confirmed
+2026-11-02T10:44:53.8077330Z Review tablet: account-exit--not-queued
+2026-11-02T10:44:54.0756069Z Review tablet: account-exit--unrecognized-exit
+2026-11-02T10:44:54.3434010Z Review tablet: account-exit--waiting-for-another-sign-in
+2026-11-02T10:44:54.6443731Z Review tablet: account-exit--delete-confirmation
+2026-11-02T10:44:54.9627745Z Review tablet: account-exit--cancel-deletion
+2026-11-02T10:44:55.4097564Z Review tablet: account-exit--deleted
+2026-11-02T10:44:55.7742141Z Review tablet: account-exit--deletion-refused
+2026-11-02T10:44:56.1301056Z Review tablet: account-exit--phone
+2026-11-02T10:44:56.4097507Z Review tablet: admin-accesstokens--loaded
+2026-11-02T10:44:56.6758582Z Review tablet: admin-accesstokens--empty
+2026-11-02T10:44:56.9558027Z Review tablet: admin-accesstokens--loading
+2026-11-02T10:44:57.2223156Z Review tablet: admin-accesstokens--load-failed
+2026-11-02T10:44:57.4557059Z Review tablet: admin-account-recovery--disabled-accounts
+2026-11-02T10:44:57.7817438Z Review tablet: admin-account-recovery--confirm-reactivation
+2026-11-02T10:44:58.3222921Z Review tablet: admin-account-recovery--disabled-admin-reactivation
+2026-11-02T10:44:58.8220701Z Review tablet: admin-account-recovery--reactivation-pending
+2026-11-02T10:44:59.3891799Z Review tablet: admin-account-recovery--reactivation-failed
+2026-11-02T10:44:59.9387069Z Review tablet: admin-account-recovery--reactivation-readback-failed
+2026-11-02T10:45:00.4435518Z Review tablet: admin-account-recovery--reactivation-committed-warning
+2026-11-02T10:45:01.0372770Z Review tablet: admin-account-recovery--reactivated
+2026-11-02T10:45:01.5959468Z Review tablet: admin-account-recovery--transfer-loading
+2026-11-02T10:45:02.0862693Z Review tablet: admin-account-recovery--transfer-load-failed
+2026-11-02T10:45:02.5690725Z Review tablet: admin-account-recovery--retry-transfer-load
+2026-11-02T10:45:03.0538201Z Review tablet: admin-account-recovery--transfer-ready
+2026-11-02T10:45:03.5224162Z Review tablet: admin-account-recovery--transfer-recipient-chosen
+2026-11-02T10:45:04.1879990Z Review tablet: admin-account-recovery--transfer-no-recipients
+2026-11-02T10:45:04.6877261Z Review tablet: admin-account-recovery--transfer-nothing-owned
+2026-11-02T10:45:05.1531317Z Review tablet: admin-account-recovery--transfer-pending
+2026-11-02T10:45:05.8704515Z Review tablet: admin-account-recovery--transfer-failed
+2026-11-02T10:45:06.4707369Z Review tablet: admin-account-recovery--transfer-readback-failed
+2026-11-02T10:45:07.2245466Z Review tablet: admin-account-recovery--transfer-stale
+2026-11-02T10:45:07.9711185Z Review tablet: admin-account-recovery--transfer-committed-warning
+2026-11-02T10:45:08.6357326Z Review tablet: admin-account-recovery--transfer-unconfirmed-response
+2026-11-02T10:45:09.3200362Z Review tablet: admin-account-recovery--transfer-complete
+2026-11-02T10:45:10.0497534Z Review tablet: admin-account-recovery--retry-transfer
+2026-11-02T10:45:10.6495573Z Review tablet: admin-account-recovery--long-account-names
+2026-11-02T10:45:11.2430741Z Review tablet: admin-account-recovery--duplicate-account-names
+2026-11-02T10:45:11.8494670Z Review tablet: admin-account-recovery--duplicate-name-target-submitted
+2026-11-02T10:45:12.4128487Z Review tablet: admin-account-recovery--cancel-returns-focus
+2026-11-02T10:45:12.9818508Z Review tablet: admin-account-recovery--keyboard-recipient-choice
+2026-11-02T10:45:13.5884397Z Review tablet: current-production-admin-diagnostics--ready
+2026-11-02T10:45:13.8577999Z Review tablet: current-production-admin-diagnostics--empty
+2026-11-02T10:45:14.1249217Z Review tablet: current-production-admin-diagnostics--loading
+2026-11-02T10:45:14.3897269Z Review tablet: current-production-admin-diagnostics--unavailable
+2026-11-02T10:45:14.6395707Z Review tablet: current-production-admin-diagnostics--failed
+2026-11-02T10:45:14.9402368Z Review tablet: current-production-admin-diagnostics--expired
+2026-11-02T10:45:15.1896551Z Review tablet: current-production-admin-diagnostics--another-download
+2026-11-02T10:45:15.4585504Z Review tablet: current-production-admin-diagnostics--losses
+2026-11-02T10:45:15.7591712Z Review tablet: current-production-admin-diagnostics--confirmation
+2026-11-02T10:45:16.1975156Z Review tablet: current-production-admin-diagnostics--cancel-clear
+2026-11-02T10:45:16.6909666Z Review tablet: current-production-admin-diagnostics--clearing
+2026-11-02T10:45:17.1802938Z Review tablet: current-production-admin-diagnostics--clear-failed
+2026-11-02T10:45:17.6233949Z Review tablet: current-production-admin-diagnostics--changed-collection
+2026-11-02T10:45:18.1412372Z Review tablet: current-production-admin-diagnostics--cleared
+2026-11-02T10:45:18.5916571Z Review tablet: current-production-admin-diagnostics--downloading
+2026-11-02T10:45:18.9246652Z Review tablet: current-production-admin-diagnostics--download-cancelled
+2026-11-02T10:45:19.2917175Z Review tablet: current-production-admin-diagnostics--download-failed
+2026-11-02T10:45:19.5891536Z Review tablet: current-production-admin-diagnostics--download-ready
+2026-11-02T10:45:19.8745603Z Review tablet: current-production-admin-diagnostics--fresh-confirmation-required
+2026-11-02T10:45:20.5743574Z Review tablet: current-production-admin-diagnostics--clear-committed-readback-failed
+2026-11-02T10:45:21.0732976Z Review tablet: admin-admininvites--loaded
+2026-11-02T10:45:21.3549041Z Review tablet: admin-admininvites--loading
+2026-11-02T10:45:21.6537073Z Review tablet: admin-admininvites--empty
+2026-11-02T10:45:21.9701624Z Review tablet: admin-admininvites--recovery-invite
+2026-11-02T10:45:22.3647238Z Review tablet: admin-admininvites--invite-created
+2026-11-02T10:45:22.7681874Z Review tablet: admin-admininvites--load-failed
+2026-11-02T10:45:23.0210377Z Review tablet: admin-admininvites--create-failed
+2026-11-02T10:45:23.3988663Z Review tablet: admin-admininvites--created-but-readback-failed
+2026-11-02T10:45:23.8605569Z Review tablet: admin-admininvites--created-while-readback-pending
+2026-11-02T10:45:24.3096336Z Review tablet: admin-admininvites--revoked-but-readback-failed
+2026-11-02T10:45:24.7214616Z Review tablet: admin-admininvites--refresh-after-created
+2026-11-02T10:45:25.2096640Z Review tablet: admin-admininvites--refresh-after-revoked
+2026-11-02T10:45:25.7217532Z Review tablet: admin-page--people
+2026-11-02T10:45:26.0269263Z Review tablet: admin-page--loading
+2026-11-02T10:45:26.3228085Z Review tablet: admin-page--error
+2026-11-02T10:45:26.6058671Z Review tablet: admin-page--empty
+2026-11-02T10:45:26.8891804Z Review tablet: admin-page--invites
+2026-11-02T10:45:27.1731549Z Review tablet: admin-page--connections
+2026-11-02T10:45:27.5287995Z Review tablet: admin-page--health
+2026-11-02T10:45:27.9352457Z Review tablet: admin-page--restore-preparation-blocks-navigation
+2026-11-02T10:45:28.5809687Z Review tablet: admin-page--diagnostics-download-blocks-navigation
+2026-11-02T10:45:29.1680605Z Review tablet: admin-page--diagnostics-clear-blocks-navigation
+2026-11-02T10:45:29.9040456Z Review tablet: admin-page--health-warning
+2026-11-02T10:45:30.2978509Z Review tablet: admin-page--phone
+2026-11-02T10:45:30.6264925Z Review tablet: admin-page--recovery-handoff
+2026-11-02T10:45:31.1288182Z Review tablet: admin-page--once-only-invite
+2026-11-02T10:45:31.6897834Z Review tablet: admin-page--creating-invite
+2026-11-02T10:45:32.1776643Z Review tablet: admin-adminusers--loaded
+2026-11-02T10:45:32.4405407Z Review tablet: admin-adminusers--loading
+2026-11-02T10:45:32.6862262Z Review tablet: admin-adminusers--empty
+2026-11-02T10:45:32.9363405Z Review tablet: admin-adminusers--last-admin-passkey
+2026-11-02T10:45:33.4124706Z Review tablet: admin-adminusers--load-failed
+2026-11-02T10:45:33.6695531Z Review tablet: admin-adminusers--confirm-disable
+2026-11-02T10:45:34.1135955Z Review tablet: admin-adminusers--confirm-passkey-removal
+2026-11-02T10:45:34.6489648Z Review tablet: admin-adminusers--removal-failed
+2026-11-02T10:45:35.1297678Z Review tablet: shell-applayout--desktop
+2026-11-02T10:45:35.6130452Z Review tablet: shell-applayout--offline
+2026-11-02T10:45:36.0470951Z Review tablet: shell-applayout--reconnecting
+2026-11-02T10:45:36.4804478Z Review tablet: shell-applayout--tablet
+2026-11-02T10:45:37.0173526Z Review tablet: shell-applayout--phone
+2026-11-02T10:45:37.5152533Z Review tablet: settings-assistantconnections--loaded
+2026-11-02T10:45:37.8109396Z Review tablet: settings-assistantconnections--empty
+2026-11-02T10:45:38.0576592Z Review tablet: settings-assistantconnections--loading
+2026-11-02T10:45:38.3243878Z Review tablet: settings-assistantconnections--load-failed
+2026-11-02T10:45:38.5742270Z Review tablet: settings-assistantconnections--disconnecting
+2026-11-02T10:45:38.8771383Z Review tablet: settings-assistantconnections--disconnected
+2026-11-02T10:45:39.1941176Z Review tablet: settings-assistantconnections--disconnect-failed
+2026-11-02T10:45:39.4942120Z Review tablet: settings-assistantconnections--matching-names
+2026-11-02T10:45:39.7644553Z Review tablet: settings-assistantconnections--previously-used
+2026-11-02T10:45:40.0101755Z Review tablet: settings-assistantconnections--admin-metadata
+2026-11-02T10:45:40.2588239Z Review tablet: settings-assistantconnections--admin-empty
+2026-11-02T10:45:40.5209927Z Review tablet: settings-assistantconnections--admin-loading
+2026-11-02T10:45:40.7713424Z Review tablet: settings-assistantconnections--admin-load-failed
+2026-11-02T10:45:41.0210257Z Review tablet: account-entry--sign-in
+2026-11-02T10:45:41.3404123Z Review tablet: account-entry--loading
+2026-11-02T10:45:41.6058186Z Review tablet: account-entry--pending
+2026-11-02T10:45:41.8740877Z Review tablet: account-entry--finishing
+2026-11-02T10:45:42.1562691Z Review tablet: account-entry--cancelled
+2026-11-02T10:45:42.4242569Z Review tablet: account-entry--failed
+2026-11-02T10:45:42.6903250Z Review tablet: account-entry--unsupported-browser
+2026-11-02T10:45:42.9736601Z Review tablet: account-entry--unreachable
+2026-11-02T10:45:43.2387362Z Review tablet: account-entry--setup
+2026-11-02T10:45:43.5413803Z Review tablet: account-entry--setup-pending
+2026-11-02T10:45:43.8080890Z Review tablet: account-entry--setup-unavailable
+2026-11-02T10:45:44.0721118Z Review tablet: account-entry--setup-failed
+2026-11-02T10:45:44.3412305Z Review tablet: account-entry--invite
+2026-11-02T10:45:44.6067598Z Review tablet: account-entry--invite-loading
+2026-11-02T10:45:44.8885798Z Review tablet: account-entry--invite-unavailable
+2026-11-02T10:45:45.1568330Z Review tablet: account-entry--invite-pending
+2026-11-02T10:45:45.4584880Z Review tablet: account-entry--recovery
+2026-11-02T10:45:45.7408530Z Review tablet: account-entry--recovery-pending
+2026-11-02T10:45:46.0088174Z Review tablet: account-entry--recovery-failed
+2026-11-02T10:45:46.2751676Z Review tablet: account-entry--long-recovery-name
+2026-11-02T10:45:46.5416474Z Review tablet: account-entry--help
+2026-11-02T10:45:46.9110164Z Review tablet: account-entry--operator-help
+2026-11-02T10:45:47.3180638Z Review tablet: account-entry--help-keyboard-return
+2026-11-02T10:45:47.7397770Z Review tablet: account-entry--invite-then-cancel
+2026-11-02T10:45:48.2243755Z Review tablet: admin-backupdownloads--manual-only
+2026-11-02T10:45:48.5391771Z Review tablet: admin-backupdownloads--preparing
+2026-11-02T10:45:48.8220846Z Review tablet: admin-backupdownloads--ready
+2026-11-02T10:45:49.0905871Z Review tablet: admin-backupdownloads--sending-to-browser
+2026-11-02T10:45:49.3560949Z Review tablet: admin-backupdownloads--delivered
+2026-11-02T10:45:49.6556669Z Review tablet: admin-backupdownloads--cancelled
+2026-11-02T10:45:49.9222668Z Review tablet: admin-backupdownloads--expired
+2026-11-02T10:45:50.1888109Z Review tablet: admin-backupdownloads--failed
+2026-11-02T10:45:50.5057395Z Review tablet: admin-backupdownloads--disabled-by-policy
+2026-11-02T10:45:50.7891154Z Review tablet: admin-backupdownloads--ready-download-disabled
+2026-11-02T10:45:51.1075143Z Review tablet: admin-backupdownloads--missing-recovery-key
+2026-11-02T10:45:51.3726452Z Review tablet: admin-backupdownloads--loading
+2026-11-02T10:45:51.6383899Z Review tablet: admin-backupdownloads--status-unavailable
+2026-11-02T10:45:51.9057117Z Review tablet: admin-backupdownloads--fresh-passkey-required
+2026-11-02T10:45:52.2948124Z Review tablet: admin-backupdownloads--waiting-for-passkey
+2026-11-02T10:45:52.7294397Z Review tablet: admin-backupdownloads--cancel-passkey
+2026-11-02T10:45:53.2215606Z Review tablet: admin-backupdownloads--verification-failed
+2026-11-02T10:45:53.6797471Z Review tablet: admin-backupdownloads--job-contended
+2026-11-02T10:45:54.0969447Z Review tablet: admin-backupdownloads--saved-backups
+2026-11-02T10:45:54.4248554Z Review tablet: admin-backupdownloads--saved-backups-empty
+2026-11-02T10:45:54.7404871Z Review tablet: admin-backupdownloads--saved-backups-loading
+2026-11-02T10:45:55.0569286Z Review tablet: admin-backupdownloads--saved-backups-failed
+2026-11-02T10:45:55.3579612Z Review tablet: admin-backuprestore--available
+2026-11-02T10:45:55.6530412Z Review tablet: admin-backuprestore--unavailable
+2026-11-02T10:45:55.9375092Z Review tablet: admin-backuprestore--loading
+2026-11-02T10:45:56.2036734Z Review tablet: admin-backuprestore--status-failed
+2026-11-02T10:45:56.5039874Z Review tablet: admin-backuprestore--session-unavailable
+2026-11-02T10:45:56.8035802Z Review tablet: admin-backuprestore--uploading
+2026-11-02T10:45:57.1335773Z Review tablet: admin-backuprestore--preparing
+2026-11-02T10:45:57.6714181Z Review tablet: admin-backuprestore--maintenance-draining
+2026-11-02T10:45:58.0458592Z Review tablet: admin-backuprestore--ready
+2026-11-02T10:45:58.3943248Z Review tablet: admin-backuprestore--separate-recovery-volume
+2026-11-02T10:45:58.7450746Z Review tablet: admin-backuprestore--insufficient-disk-space
+2026-11-02T10:45:59.0424854Z Review tablet: admin-backuprestore--memory-headroom-refusal
+2026-11-02T10:45:59.3709848Z Review tablet: admin-backuprestore--confirmed-disk-shortage
+2026-11-02T10:45:59.6714919Z Review tablet: admin-backuprestore--small-backup
+2026-11-02T10:46:00.1069088Z Review tablet: admin-backuprestore--cancelled
+2026-11-02T10:46:00.4215641Z Review tablet: admin-backuprestore--expired
+2026-11-02T10:46:00.6876382Z Review tablet: admin-backuprestore--failed
+2026-11-02T10:46:00.9908937Z Review tablet: admin-backuprestore--admission-needs-attention
+2026-11-02T10:46:01.2875796Z Review tablet: admin-backuprestore--accepted
+2026-11-02T10:46:01.5543166Z Review tablet: admin-backuprestore--started-outcome-unconfirmed
+2026-11-02T10:46:01.8738623Z Review tablet: admin-backuprestore--manual-upload
+2026-11-02T10:46:02.2472453Z Review tablet: admin-backuprestore--saved-backups
+2026-11-02T10:46:02.7937730Z Review tablet: admin-backuprestore--saved-backups-empty
+2026-11-02T10:46:03.3102366Z Review tablet: admin-backuprestore--saved-backups-loading
+2026-11-02T10:46:03.8604214Z Review tablet: admin-backuprestore--saved-backups-failed
+2026-11-02T10:46:04.4105429Z Review tablet: admin-backuprestore--confirmation-review
+2026-11-02T10:46:04.8223136Z Review tablet: admin-backuprestore--full-confirmation
+2026-11-02T10:46:05.2884629Z Review tablet: admin-backuprestore--waiting-for-passkey
+2026-11-02T10:46:05.8387556Z Review tablet: admin-backuprestore--cancel-verification
+2026-11-02T10:46:06.3937808Z Review tablet: admin-backuprestore--verification-failed
+2026-11-02T10:46:06.8726256Z Review tablet: admin-backuprestore--recording-confirmation
+2026-11-02T10:46:07.4061095Z Review tablet: admin-backuprestore--expired-original-confirmation
+2026-11-02T10:46:07.8704703Z Review tablet: admin-backuprestore--backup-restored
+2026-11-02T10:46:08.1736302Z Review tablet: admin-backuprestore--original-recovered
+2026-11-02T10:46:08.4909329Z Review tablet: admin-backuprestore--did-not-start
+2026-11-02T10:46:08.7907417Z Review tablet: admin-backuprestore--unresolved-outcome
+2026-11-02T10:46:09.1069148Z Review tablet: admin-backuprestore--pending-without-record
+2026-11-02T10:46:09.4041228Z Review tablet: admin-backuprestore--incomplete-observation
+2026-11-02T10:46:09.7034629Z Review tablet: admin-backuprestore--slow-upload-keeps-bounded-lifetime
+2026-11-02T10:46:10.2223414Z Review tablet: admin-backuprestore--slow-confirmation-keeps-bounded-lifetime
+2026-11-02T10:46:10.7654950Z Review tablet: admin-backuprestore--slow-upload-still-cancels
+2026-11-02T10:46:11.2376373Z Review tablet: admin-backuprestore--passkey-ceremony-still-ends-after-one-minute
+2026-11-02T10:46:11.7369877Z Review tablet: admin-backuprestore--cancellation-still-ends-after-five-minutes
+2026-11-02T10:46:12.1450334Z Review tablet: admin-backuprestore--slow-confirmation-stops-on-account-change
+2026-11-02T10:46:12.7057466Z Review tablet: admin-backuprestore--slow-confirmation-stops-on-unmount
+2026-11-02T10:46:13.2178139Z Review tablet: admin-backupstatus--healthy
+2026-11-02T10:46:13.5226247Z Review tablet: admin-backupstatus--local-backup
+2026-11-02T10:46:13.8254565Z Review tablet: admin-backupstatus--running
+2026-11-02T10:46:14.1072057Z Review tablet: admin-backupstatus--never-run
+2026-11-02T10:46:14.4262741Z Review tablet: admin-backupstatus--overdue
+2026-11-02T10:46:14.6901556Z Review tablet: admin-backupstatus--failed
+2026-11-02T10:46:14.9574280Z Review tablet: admin-backupstatus--not-configured
+2026-11-02T10:46:15.2220850Z Review tablet: admin-backupstatus--configuration-failed
+2026-11-02T10:46:15.4909672Z Review tablet: admin-backupstatus--verification-running
+2026-11-02T10:46:15.8071725Z Review tablet: admin-backupstatus--verification-never-run
+2026-11-02T10:46:16.0719197Z Review tablet: admin-backupstatus--verification-overdue
+2026-11-02T10:46:16.3394449Z Review tablet: admin-backupstatus--verification-failed
+2026-11-02T10:46:16.6393837Z Review tablet: admin-backupstatus--local-verification-failed
+2026-11-02T10:46:16.9080562Z Review tablet: admin-backupstatus--retained-key-verified
+2026-11-02T10:46:17.1894497Z Review tablet: admin-backupstatus--loading
+2026-11-02T10:46:17.4523869Z Review tablet: admin-backupstatus--load-failed
+2026-11-02T10:46:17.7520136Z Review tablet: admin-backupstatus--manual-downloads
+2026-11-02T10:46:18.0834879Z Review tablet: admin-backupstatus--spaces-policy
+2026-11-02T10:46:18.3860388Z Review tablet: admin-backupstatus--download-ready
+2026-11-02T10:46:18.7417729Z Review tablet: admin-backupstatus--maintenance-paused
+2026-11-02T10:46:19.1099873Z Review tablet: admin-backupstatus--maintenance-resumed
+2026-11-02T10:46:19.5037285Z Review tablet: editor-collaborators--empty
+2026-11-02T10:46:20.0168253Z Review tablet: editor-collaborators--alone
+2026-11-02T10:46:20.3834742Z Review tablet: editor-collaborators--two-people
+2026-11-02T10:46:20.6837532Z Review tablet: editor-collaborators--guest-labels
+2026-11-02T10:46:20.9998555Z Review tablet: editor-collaborators--many
+2026-11-02T10:46:21.3165630Z Review tablet: editor-collaborators--many-phone
+2026-11-02T10:46:21.6169187Z Review tablet: editor-collaborators--empty-open
+2026-11-02T10:46:22.0041285Z Review tablet: editor-collaborators--guest-labels-open
+2026-11-02T10:46:22.4053470Z Review tablet: editor-collaborators--long-names-open
+2026-11-02T10:46:22.7886673Z Review tablet: editor-collaborators--doc-cursor-open
+2026-11-02T10:46:23.1550934Z Review tablet: editor-collaborators--sheet-cursor-open
+2026-11-02T10:46:23.5540198Z Review tablet: settings-connectassistant--consent
+2026-11-02T10:46:23.8745906Z Review tablet: settings-connectassistant--read-only
+2026-11-02T10:46:24.1756714Z Review tablet: settings-connectassistant--loading
+2026-11-02T10:46:24.4518556Z Review tablet: settings-connectassistant--load-failed
+2026-11-02T10:46:24.7356080Z Review tablet: settings-connectassistant--expired
+2026-11-02T10:46:25.0530566Z Review tablet: settings-connectassistant--unavailable
+2026-11-02T10:46:25.3525938Z Review tablet: settings-connectassistant--missing-request
+2026-11-02T10:46:25.6361625Z Review tablet: settings-connectassistant--admin-account
+2026-11-02T10:46:25.9201137Z Review tablet: settings-connectassistant--allowing
+2026-11-02T10:46:26.3099335Z Review tablet: settings-connectassistant--cancelling
+2026-11-02T10:46:26.6601792Z Review tablet: settings-connectassistant--submit-failed
+2026-11-02T10:46:27.0098441Z Review tablet: settings-connectassistant--expired-before-allow
+2026-11-02T10:46:27.3532262Z Review tablet: settings-connectassistant--connection-limit
+2026-11-02T10:46:27.7117605Z Review tablet: settings-connectassistant--long-identity
+2026-11-02T10:46:28.0661593Z Review tablet: settings-connectassistant--sign-out-failed
+2026-11-02T10:46:28.3768626Z Review tablet: shell-connectionstatus--online
+2026-11-02T10:46:28.9176070Z Review tablet: shell-connectionstatus--offline
+2026-11-02T10:46:29.4341667Z Review tablet: shell-connectionstatus--reconnecting
+2026-11-02T10:46:29.9673036Z Review tablet: shell-connectionstatus--last-synced-catalog
+2026-11-02T10:46:30.4841852Z Review tablet: shell-connectionstatus--local-mode
+2026-11-02T10:46:31.0195127Z Review tablet: shell-connectionstatus--online-local-mode
+2026-11-02T10:46:31.5361890Z Review tablet: shell-connectionstatus--online-stale-catalog
+2026-11-02T10:46:32.0669395Z Review tablet: shell-connectionstatus--online-pending-save
+2026-11-02T10:46:32.6013631Z Review tablet: shell-connectionstatus--keyboard-details
+2026-11-02T10:46:33.0162563Z Review tablet: shell-connectionstatus--touch-details
+2026-11-02T10:46:33.4711014Z Review tablet: account-console-recovery--ready
+2026-11-02T10:46:33.7570652Z Review tablet: account-console-recovery--loading
+2026-11-02T10:46:34.0916112Z Review tablet: account-console-recovery--missing-link
+2026-11-02T10:46:34.3738735Z Review tablet: account-console-recovery--expired-link
+2026-11-02T10:46:34.6541677Z Review tablet: account-console-recovery--pending
+2026-11-02T10:46:34.9402456Z Review tablet: account-console-recovery--cancelled
+2026-11-02T10:46:35.2232904Z Review tablet: account-console-recovery--retry
+2026-11-02T10:46:35.5567242Z Review tablet: account-console-recovery--phone
+2026-11-02T10:46:35.8732175Z Review tablet: account-console-recovery--finishing
+2026-11-02T10:46:36.1562775Z Review tablet: account-console-recovery--help
+2026-11-02T10:46:36.5104359Z Review tablet: dashboard-copyfile--owned-folder
+2026-11-02T10:46:36.8556340Z Review tablet: dashboard-copyfile--shared-viewer
+2026-11-02T10:46:37.1895343Z Review tablet: dashboard-copyfile--shared-destination
+2026-11-02T10:46:37.5905823Z Review tablet: dashboard-copyfile--loading
+2026-11-02T10:46:37.9206372Z Review tablet: dashboard-copyfile--waiting-for-save
+2026-11-02T10:46:38.2573578Z Review tablet: dashboard-copyfile--offline
+2026-11-02T10:46:38.6061769Z Review tablet: dashboard-copyfile--making-copy
+2026-11-02T10:46:39.0056724Z Review tablet: dashboard-copyfile--source-changed
+2026-11-02T10:46:39.4232660Z Review tablet: dashboard-copyfile--access-lost
+2026-11-02T10:46:39.7545942Z Review tablet: dashboard-copyfile--completed-after-dismissal
+2026-11-02T10:46:40.1214677Z Review tablet: dashboard-copyfile--completed-while-offline
+2026-11-02T10:46:40.4708574Z Review tablet: dashboard-copyfile--outcome-unknown
+2026-11-02T10:46:40.8708176Z Review tablet: dashboard-copyfile--unreadable-receipt
+2026-11-02T10:46:41.2871662Z Review tablet: dashboard-copyfile--unknown-after-dismissal
+2026-11-02T10:46:41.6036663Z Review tablet: dashboard-dashboard--file-view-targets
+2026-11-02T10:46:42.1911159Z Review tablet: dashboard-dashboard--populated
+2026-11-02T10:46:42.6409800Z Review tablet: dashboard-dashboard--make-copy
+2026-11-02T10:46:43.2965606Z Review tablet: dashboard-dashboard--new-item
+2026-11-02T10:46:43.8955188Z Review tablet: dashboard-dashboard--new-doc
+2026-11-02T10:46:44.5625899Z Review tablet: dashboard-dashboard--new-sheet
+2026-11-02T10:46:45.1461334Z Review tablet: dashboard-dashboard--shared-folder-editor
+2026-11-02T10:46:45.7888206Z Review tablet: dashboard-dashboard--shared-folder-admin
+2026-11-02T10:46:46.2898282Z Review tablet: dashboard-dashboard--shared-folder-viewer
+2026-11-02T10:46:46.7888041Z Review tablet: dashboard-dashboard--new-in-shared-folder
+2026-11-02T10:46:47.4612125Z Review tablet: dashboard-dashboard--empty-workspace
+2026-11-02T10:46:47.9034502Z Review tablet: dashboard-dashboard--shared-drawer
+2026-11-02T10:46:48.4053991Z Review tablet: dashboard-dashboard--shared-drawer-loading
+2026-11-02T10:46:48.9199358Z Review tablet: dashboard-dashboard--inside-folder
+2026-11-02T10:46:49.4381204Z Review tablet: dashboard-dashboard--loading
+2026-11-02T10:46:49.9191356Z Review tablet: dashboard-dashboard--load-failed
+2026-11-02T10:46:50.3699898Z Review tablet: dashboard-dashboard--missing-item
+2026-11-02T10:46:51.0015843Z Review tablet: dashboard-dashboard--item-load-failed
+2026-11-02T10:46:51.5342310Z Review tablet: dashboard-dashboard--local-mode
+2026-11-02T10:46:51.9891826Z Review tablet: dashboard-dashboard--new-offline-doc
+2026-11-02T10:46:53.1783649Z Review tablet: dashboard-dashboard--created-offline
+2026-11-02T10:46:53.6966438Z Review tablet: dashboard-dashboard--shared-creation-offline
+2026-11-02T10:46:54.3699953Z Review tablet: dashboard-dashboard--shared-creation-revoked
+2026-11-02T10:46:54.9726429Z Review tablet: dashboard-dashboard--choose-creation-folder
+2026-11-02T10:46:55.6676466Z Review tablet: dashboard-dashboard--creation-parent-now-shared
+2026-11-02T10:46:56.2725570Z Review tablet: dashboard-dashboard--creation-parent-no-longer-listed
+2026-11-02T10:46:56.8556125Z Review tablet: dashboard-dashboard--local-needs-connection
+2026-11-02T10:46:57.3660165Z Review tablet: dashboard-dashboard--local-folder-not-opened
+2026-11-02T10:46:57.9182407Z Review tablet: dashboard-dashboard--space-files
+2026-11-02T10:46:58.3963645Z Review tablet: dashboard-dashboard--new-space
+2026-11-02T10:46:59.0845597Z Review tablet: dashboard-dashboard--open-space-keeps-my-files
+2026-11-02T10:46:59.5973864Z Review tablet: dashboard-dashboard--shared-spaces
+2026-11-02T10:47:00.3584814Z Review tablet: dashboard-dashboard--space-inside-folder
+2026-11-02T10:47:00.8556371Z Review tablet: dashboard-dashboard--local-space-needs-connection
+2026-11-02T10:47:01.5103593Z Review tablet: dashboard-dashboard--local-prepared-space-opens
+2026-11-02T10:47:02.5126441Z Review tablet: dashboard-dashboard--file-admins
+2026-11-02T10:47:03.2482449Z Review tablet: dashboard-dashboard--cancel-admin-move-while-loading
+2026-11-02T10:47:04.1121973Z Review tablet: dashboard-dashboard--file-admin-no-destinations
+2026-11-02T10:47:04.7456847Z Review tablet: dashboard-dashboard--file-admin-personal-filing
+2026-11-02T10:47:05.4883765Z Review tablet: dashboard-dashboard--grid
+2026-11-02T10:47:05.9579818Z Review tablet: dashboard-dashboard--folder-scoped-search
+2026-11-02T10:47:06.7735790Z Review tablet: dashboard-dashboard--import-dialog
+2026-11-02T10:47:07.4113152Z Review tablet: dashboard-dashboard--export-all-files
+2026-11-02T10:47:08.0118616Z Review tablet: dashboard-dashboard--cancel-export-confirmation
+2026-11-02T10:47:08.7254939Z Review tablet: dashboard-dashboard--personal-filing-dialog
+2026-11-02T10:47:09.4083225Z Review tablet: dashboard-dashboard--sharing-dialog
+2026-11-02T10:47:10.1613110Z Review tablet: dashboard-dashboard--shared-grant-ordering
+2026-11-02T10:47:10.6554967Z Review tablet: dashboard-dashboard--cancel-space-action-then-retry
+2026-11-02T10:47:11.7449878Z Review tablet: dashboard-dashboard--clear-empty-global-scope
+2026-11-02T10:47:12.3034176Z Review tablet: dashboard-files--list
+2026-11-02T10:47:12.7050263Z Review tablet: dashboard-files--dark
+2026-11-02T10:47:13.1218440Z Review tablet: dashboard-files--grid
+2026-11-02T10:47:13.5543462Z Review tablet: dashboard-files--phone
+2026-11-02T10:47:13.9384229Z Review tablet: dashboard-files--grid-phone
+2026-11-02T10:47:14.3544972Z Review tablet: dashboard-files--shared
+2026-11-02T10:47:14.7852535Z Review tablet: dashboard-files--creator-attribution
+2026-11-02T10:47:15.2017513Z Review tablet: dashboard-files--search-results
+2026-11-02T10:47:15.6210433Z Review tablet: dashboard-files--empty
+2026-11-02T10:47:16.0320646Z Review tablet: dashboard-files--no-search-results
+2026-11-02T10:47:16.4489599Z Review tablet: dashboard-files--loading
+2026-11-02T10:47:16.8652242Z Review tablet: dashboard-files--error
+2026-11-02T10:47:17.2821470Z Review tablet: dashboard-files--busy
+2026-11-02T10:47:17.6714422Z Review tablet: dashboard-files--offline
+2026-11-02T10:47:18.1226608Z Review tablet: dashboard-files--long-names
+2026-11-02T10:47:18.5332675Z Review tablet: dashboard-files--owner-menu
+2026-11-02T10:47:19.0059758Z Review tablet: dashboard-files--viewer-menu
+2026-11-02T10:47:19.5061918Z Review tablet: dashboard-files--file-admin-menu
+2026-11-02T10:47:20.0067837Z Review tablet: offline-device-storage--loading
+2026-11-02T10:47:20.2853074Z Review tablet: offline-device-storage--empty
+2026-11-02T10:47:20.5689432Z Review tablet: offline-device-storage--documents
+2026-11-02T10:47:20.8548534Z Review tablet: offline-device-storage--space-page
+2026-11-02T10:47:21.1381540Z Review tablet: offline-device-storage--missing-store
+2026-11-02T10:47:21.4897317Z Review tablet: offline-device-storage--startup-metadata-missing
+2026-11-02T10:47:21.7954312Z Review tablet: offline-device-storage--storage-unavailable
+2026-11-02T10:47:22.0876223Z Review tablet: offline-device-storage--storage-preparation-failed
+2026-11-02T10:47:22.3659818Z Review tablet: offline-device-storage--account-locked
+2026-11-02T10:47:22.6491169Z Review tablet: offline-device-storage--protection-denied
+2026-11-02T10:47:22.9555361Z Review tablet: offline-device-storage--protection-unsupported
+2026-11-02T10:47:23.2382504Z Review tablet: offline-device-storage--protection-error
+2026-11-02T10:47:23.5223080Z Review tablet: offline-device-storage--request-protection
+2026-11-02T10:47:23.8732512Z Review tablet: offline-device-storage--about-storage
+2026-11-02T10:47:24.1795323Z Review tablet: offline-device-storage--clean-removal
+2026-11-02T10:47:24.5430759Z Review tablet: offline-device-storage--pending-removal
+2026-11-02T10:47:24.8424667Z Review tablet: offline-device-storage--discard-confirmation
+2026-11-02T10:47:25.1415419Z Review tablet: offline-device-storage--removal-failed
+2026-11-02T10:47:25.4642427Z Review tablet: offline-device-storage--removing
+2026-11-02T10:47:25.8339622Z Review tablet: offline-device-storage--damaged-pending
+2026-11-02T10:47:26.1431212Z Review tablet: offline-device-storage--cancel-keeps-changes
+2026-11-02T10:47:26.6361222Z Review tablet: offline-device-storage--newly-pending-is-kept
+2026-11-02T10:47:27.1057964Z Review tablet: offline-device-storage--removal-returns-focus
+2026-11-02T10:47:27.5862388Z Review tablet: offline-device-storage--long-title-phone
+2026-11-02T10:47:27.9369145Z Review tablet: docs-formulas--insert
+2026-11-02T10:47:28.2879573Z Review tablet: docs-formulas--edit
+2026-11-02T10:47:28.6383343Z Review tablet: docs-formulas--save-returns-focus
+2026-11-02T10:47:29.3672352Z Review tablet: docs-formulas--cancel-returns-focus
+2026-11-02T10:47:29.9494554Z Review tablet: docs-formulas--offline-keeps-draft
+2026-11-02T10:47:30.6057840Z Review tablet: docs-formulas--reconnect-keeps-draft
+2026-11-02T10:47:31.2716972Z Review tablet: docs-formulas--save-busy
+2026-11-02T10:47:31.6564815Z Review tablet: docs-formulas--save-timed-out
+2026-11-02T10:47:32.0574986Z Review tablet: docs-formulas--save-unavailable
+2026-11-02T10:47:32.4387995Z Review tablet: docs-formulas--save-invalid
+2026-11-02T10:47:32.8390924Z Review tablet: docs-formulas--save-private-source
+2026-11-02T10:47:33.2225093Z Review tablet: docs-formulas--save-too-large
+2026-11-02T10:47:33.6215267Z Review tablet: docs-formulas--save-retry
+2026-11-02T10:47:34.0311722Z Review tablet: docs-formulas--save-double-activation
+2026-11-02T10:47:34.4142502Z Review tablet: docs-formulas--save-cancelled-retry
+2026-11-02T10:47:34.8639304Z Review tablet: docs-formulas--save-cancel-pending
+2026-11-02T10:47:35.3145529Z Review tablet: docs-formulas--save-escape-pending
+2026-11-02T10:47:35.6974558Z Review tablet: docs-formulas--loading-sources
+2026-11-02T10:47:36.0908532Z Review tablet: docs-formulas--no-sources
+2026-11-02T10:47:36.4900523Z Review tablet: docs-formulas--source-error
+2026-11-02T10:47:36.8898338Z Review tablet: docs-formulas--dark
+2026-11-02T10:47:37.2370257Z Review tablet: docs-formulas--phone
+2026-11-02T10:47:37.5882232Z Review tablet: docs-formulas--space-sources
+2026-11-02T10:47:38.2392064Z Review tablet: docs-formulas--space-sources-dark
+2026-11-02T10:47:38.9893127Z Review tablet: docs-formulas--space-sources-phone
+2026-11-02T10:47:39.6914726Z Review tablet: docs-formulas--space-source-unavailable
+2026-11-02T10:47:40.0726131Z Review tablet: docs-formulas--space-guest-sources
+2026-11-02T10:47:40.8079588Z Review tablet: docs-formulas--space-guest-sources-dark
+2026-11-02T10:47:41.5235042Z Review tablet: docs-formulas--space-guest-sources-phone
+2026-11-02T10:47:42.2395451Z Review tablet: docs-formulas--space-guest-external-unavailable
+2026-11-02T10:47:42.6549237Z Review tablet: docs-formulas--scalar
+2026-11-02T10:47:42.9480803Z Review tablet: docs-formulas--table
+2026-11-02T10:47:43.2318573Z Review tablet: docs-formulas--thirty-rows
+2026-11-02T10:47:43.5177417Z Review tablet: docs-formulas--empty
+2026-11-02T10:47:43.8638221Z Review tablet: docs-formulas--calculating
+2026-11-02T10:47:44.1467772Z Review tablet: docs-formulas--private-source
+2026-11-02T10:47:44.4979921Z Review tablet: docs-formulas--missing-source
+2026-11-02T10:47:44.7810355Z Review tablet: docs-formulas--invalid-formula
+2026-11-02T10:47:45.0640846Z Review tablet: docs-formulas--too-large
+2026-11-02T10:47:45.3469182Z Review tablet: docs-formulas--busy
+2026-11-02T10:47:45.6466968Z Review tablet: docs-formulas--timed-out
+2026-11-02T10:47:45.9303071Z Review tablet: docs-formulas--unavailable
+2026-11-02T10:47:46.2164541Z Review tablet: docs-native-formulas--inline-and-table
+2026-11-02T10:47:47.6846078Z Review tablet: docs-native-formulas--private
+2026-11-02T10:47:48.9691703Z Review tablet: docs-native-formulas--dark
+2026-11-02T10:47:50.2003548Z Review tablet: docs-native-formulas--phone
+2026-11-02T10:47:51.4013638Z Review tablet: docs-native-formulas--thirty-rows
+2026-11-02T10:47:52.5535382Z Review tablet: docs-native-formulas--styled-scalar
+2026-11-02T10:47:53.7167811Z Review tablet: docs-mobile--reading
+2026-11-02T10:47:54.9900578Z Review tablet: docs-mobile--saved-half-zoom
+2026-11-02T10:47:56.2551457Z Review tablet: docs-mobile--saved-double-zoom
+2026-11-02T10:47:57.4881050Z Review tablet: docs-mobile--viewer
+2026-11-02T10:47:58.5036829Z Review tablet: docs-mobile--traditional
+2026-11-02T10:47:59.4027955Z Review tablet: docs-mobile--layout-changed
+2026-11-02T10:48:00.4224736Z Review tablet: docs-mobile--selection-formatting
+2026-11-02T10:48:01.8336864Z Review tablet: docs-mobile--keyboard-viewport-response
+2026-11-02T10:48:03.0108040Z Review tablet: dashboard-documenttags--no-tags
+2026-11-02T10:48:03.3700258Z Review tablet: dashboard-documenttags--several-tags
+2026-11-02T10:48:03.7226705Z Review tablet: dashboard-documenttags--suggestions-failed
+2026-11-02T10:48:04.0717351Z Review tablet: dashboard-documenttags--adding
+2026-11-02T10:48:04.4860389Z Review tablet: dashboard-documenttags--add-failed
+2026-11-02T10:48:04.9052618Z Review tablet: dashboard-documenttags--personal-space-tags
+2026-11-02T10:48:05.2885016Z Review tablet: editor-frame--default
+2026-11-02T10:48:05.7814368Z Review tablet: editor-frame--dark
+2026-11-02T10:48:06.2654175Z Review tablet: editor-frame--phone
+2026-11-02T10:48:06.7655018Z Review tablet: editor-frame--guest
+2026-11-02T10:48:07.2492073Z Review tablet: editor-frame--reconnecting
+2026-11-02T10:48:07.7320839Z Review tablet: editor-frame--rename
+2026-11-02T10:48:08.2667449Z Review tablet: editor-frame--rename-authority-removed
+2026-11-02T10:48:08.9365721Z Review tablet: editor-frame--versions-dialog
+2026-11-02T10:48:09.6423488Z Review tablet: editor-frame--version-naming-failure
+2026-11-02T10:48:10.5729255Z Review tablet: editor-frame--version-rename
+2026-11-02T10:48:11.2592874Z Review tablet: editor-frame--versions-loading
+2026-11-02T10:48:11.9202439Z Review tablet: editor-frame--export-dialog
+2026-11-02T10:48:12.5710161Z Review tablet: editor-frame--export-waiting-for-save
+2026-11-02T10:48:13.2074103Z Review tablet: editor-frame--pdf-failure
+2026-11-02T10:48:13.8881991Z Review tablet: editor-frame--offline-formulas
+2026-11-02T10:48:14.4191206Z Review tablet: editor-frame--editable-formulas
+2026-11-02T10:48:15.0865391Z Review tablet: editor-frame--offline-availability-success
+2026-11-02T10:48:15.6252472Z Review tablet: editor-frame--offline-availability-failure
+2026-11-02T10:48:16.1190186Z Review tablet: editor-frame--theatre-dialog
+2026-11-02T10:48:16.7468551Z Review tablet: editor-frame--people-and-theatre
+2026-11-02T10:48:17.5804339Z Review tablet: editor-frame--people-dialog
+2026-11-02T10:48:18.1363007Z Review tablet: editor-frame--people-over-presence
+2026-11-02T10:48:18.6693736Z Review tablet: editor-frame--actions-over-presence
+2026-11-02T10:48:19.2324863Z Review tablet: editor-frame--guest-pdf
+2026-11-02T10:48:19.7872640Z Review tablet: editor-frame--personalization
+2026-11-02T10:48:20.8496635Z Review tablet: editor-fileexports--saved
+2026-11-02T10:48:21.1323454Z Review tablet: editor-fileexports--unsaved
+2026-11-02T10:48:21.4163766Z Review tablet: editor-fileexports--download-failed
+2026-11-02T10:48:21.7822008Z Review tablet: editor-fileexports--pdf-failed
+2026-11-02T10:48:22.1656025Z Review tablet: guest-guestapp--loading
+2026-11-02T10:48:22.6310908Z Review tablet: guest-guestapp--link-revoked
+2026-11-02T10:48:23.0982813Z Review tablet: guest-guestapp--connection-interrupted
+2026-11-02T10:48:23.5820977Z Review tablet: guest-guestapp--unsupported-browser
+2026-11-02T10:48:24.0483653Z Review tablet: current-production-account-guest-links--inventory
+2026-11-02T10:48:24.4189170Z Review tablet: current-production-account-guest-links--empty
+2026-11-02T10:48:24.7795834Z Review tablet: current-production-account-guest-links--loading
+2026-11-02T10:48:25.0798077Z Review tablet: current-production-account-guest-links--load-error
+2026-11-02T10:48:25.3797805Z Review tablet: current-production-account-guest-links--load-retry
+2026-11-02T10:48:25.7695108Z Review tablet: current-production-account-guest-links--change-expiry
+2026-11-02T10:48:26.3236359Z Review tablet: current-production-account-guest-links--expiry-saved
+2026-11-02T10:48:26.9372045Z Review tablet: current-production-account-guest-links--saving
+2026-11-02T10:48:27.5231440Z Review tablet: current-production-account-guest-links--uncertain-write
+2026-11-02T10:48:28.0525926Z Review tablet: current-production-account-guest-links--stale-link
+2026-11-02T10:48:28.6870281Z Review tablet: current-production-account-guest-links--turn-off-space
+2026-11-02T10:48:29.2394841Z Review tablet: current-production-account-guest-links--turned-off
+2026-11-02T10:48:29.8344108Z Review tablet: current-production-account-guest-links--expired
+2026-11-02T10:48:30.3137791Z Review tablet: current-production-account-guest-links--phone
+2026-11-02T10:48:30.6030742Z Review tablet: current-production-account-guest-links--stale-account-response
+2026-11-02T10:48:31.1481897Z Review tablet: dashboard-hidden-shares--include-hidden
+2026-11-02T10:48:31.8184443Z Review tablet: dashboard-hidden-shares--all-shares-hidden
+2026-11-02T10:48:32.6869119Z Review tablet: dashboard-hidden-shares--hide-and-show
+2026-11-02T10:48:33.7363360Z Review tablet: dashboard-hidden-shares--failed-hide
+2026-11-02T10:48:34.4187245Z Review tablet: dashboard-hidden-shares--pending-hide
+2026-11-02T10:48:35.1374604Z Review tablet: history-browser--today
+2026-11-02T10:48:36.1877890Z Review tablet: history-browser--dark
+2026-11-02T10:48:37.1716282Z Review tablet: history-browser--phone
+2026-11-02T10:48:38.1721818Z Review tablet: history-browser--calendar
+2026-11-02T10:48:39.2119753Z Review tablet: history-browser--no-older-days
+2026-11-02T10:48:40.2859230Z Review tablet: history-browser--loading
+2026-11-02T10:48:40.6314302Z Review tablet: history-browser--history-failure
+2026-11-02T10:48:41.2299922Z Review tablet: history-browser--empty
+2026-11-02T10:48:41.6639355Z Review tablet: history-browser--unavailable
+2026-11-02T10:48:42.0634839Z Review tablet: history-browser--missing-checkpoint
+2026-11-02T10:48:42.4967013Z Review tablet: history-browser--preview-loading
+2026-11-02T10:48:42.8300854Z Review tablet: history-browser--preview-failure
+2026-11-02T10:48:43.5028417Z Review tablet: history-browser--viewer
+2026-11-02T10:48:44.6205275Z Review tablet: history-browser--name-current
+2026-11-02T10:48:45.6237431Z Review tablet: history-browser--name-failure
+2026-11-02T10:48:46.4573890Z Review tablet: history-browser--naming-focus-return
+2026-11-02T10:48:47.6714055Z Review tablet: history-browser--restore-confirmation
+2026-11-02T10:48:48.7763540Z Review tablet: history-browser--restore-failure
+2026-11-02T10:48:49.8952803Z Review tablet: history-browser--restore-interrupted
+2026-11-02T10:48:51.0289198Z Review tablet: history-browser--restoring
+2026-11-02T10:48:52.1776089Z Review tablet: account-icon-picker--browse
+2026-11-02T10:48:52.6349739Z Review tablet: dashboard-importfile--default
+2026-11-02T10:48:52.9291873Z Review tablet: dashboard-importfile--dialog
+2026-11-02T10:48:53.2992378Z Review tablet: dashboard-importfile--importing-dialog
+2026-11-02T10:48:53.7155169Z Review tablet: dashboard-importfile--limits-open
+2026-11-02T10:48:54.0173701Z Review tablet: dashboard-importfile--unsupported-file
+2026-11-02T10:48:54.4125546Z Review tablet: dashboard-importfile--not-json
+2026-11-02T10:48:54.7955874Z Review tablet: dashboard-importfile--too-many-files
+2026-11-02T10:48:55.1791891Z Review tablet: dashboard-importfile--importing
+2026-11-02T10:48:55.5618017Z Review tablet: dashboard-importfile--import-failed
+2026-11-02T10:48:55.9455556Z Review tablet: dashboard-importfile--archive-importing
+2026-11-02T10:48:56.3665928Z Review tablet: dashboard-importfile--archive-imported
+2026-11-02T10:48:56.7831878Z Review tablet: dashboard-importfile--empty-archive
+2026-11-02T10:48:57.1993351Z Review tablet: dashboard-importfile--archive-failed
+2026-11-02T10:48:57.6162225Z Review tablet: dashboard-importfile--archive-cancelled
+2026-11-02T10:48:58.0837453Z Review tablet: dashboard-importfile--archive-needs-my-files
+2026-11-02T10:48:58.4994990Z Review tablet: dashboard-importfile--archive-too-large
+2026-11-02T10:48:58.9325798Z Review tablet: dashboard-importfile--archive-unconfirmed
+2026-11-02T10:48:59.3515919Z Review tablet: dashboard-importfile--archive-interrupted-by-maintenance
+2026-11-02T10:48:59.7670900Z Review tablet: maintenance-controls--running
+2026-11-02T10:49:00.1472054Z Review tablet: maintenance-controls--scheduled
+2026-11-02T10:49:00.5160339Z Review tablet: maintenance-controls--missed-window
+2026-11-02T10:49:00.8992683Z Review tablet: maintenance-controls--paused
+2026-11-02T10:49:01.2639733Z Review tablet: maintenance-controls--draining
+2026-11-02T10:49:01.5637373Z Review tablet: maintenance-controls--starting
+2026-11-02T10:49:01.8813307Z Review tablet: maintenance-controls--recovery-required
+2026-11-02T10:49:02.1813708Z Review tablet: maintenance-controls--authority-expired
+2026-11-02T10:49:02.4824449Z Review tablet: maintenance-controls--unavailable
+2026-11-02T10:49:02.7974542Z Review tablet: maintenance-controls--loading
+2026-11-02T10:49:03.1119951Z Review tablet: maintenance-controls--load-failed
+2026-11-02T10:49:03.4800963Z Review tablet: maintenance-controls--confirm-pause
+2026-11-02T10:49:03.9201317Z Review tablet: maintenance-controls--pause-and-resume
+2026-11-02T10:49:04.5306258Z Review tablet: maintenance-controls--paused-with-resume
+2026-11-02T10:49:05.0982468Z Review tablet: maintenance-controls--pause-response-lost
+2026-11-02T10:49:05.6804267Z Review tablet: maintenance-controls--cancel-confirmation
+2026-11-02T10:49:06.1463991Z Review tablet: maintenance-controls--notice-form
+2026-11-02T10:49:06.6890370Z Review tablet: maintenance-controls--repeated-time
+2026-11-02T10:49:07.4050741Z Review tablet: maintenance-controls--publish-notice
+2026-11-02T10:49:08.1007257Z Review tablet: maintenance-controls--notice-too-far-ahead
+2026-11-02T10:49:08.7211084Z Review tablet: maintenance-controls--cancel-notice
+2026-11-02T10:49:09.3637527Z Review tablet: maintenance-controls--cancel-notice-while-paused
+2026-11-02T10:49:10.1644215Z Review tablet: maintenance-controls--cancel-notice-without-paused-proof
+2026-11-02T10:49:10.7205901Z Review tablet: maintenance-controls--phone
+2026-11-02T10:49:11.1158452Z Review tablet: maintenance-banner--scheduled
+2026-11-02T10:49:11.4277457Z Review tablet: maintenance-banner--paused
+2026-11-02T10:49:11.7279336Z Review tablet: maintenance-banner--draining
+2026-11-02T10:49:12.0276555Z Review tablet: maintenance-banner--reconnecting
+2026-11-02T10:49:12.3277205Z Review tablet: maintenance-banner--guest-paused
+2026-11-02T10:49:12.7116895Z Review tablet: maintenance-banner--notice-details
+2026-11-02T10:49:13.1179281Z Review tablet: maintenance-banner--cancelled
+2026-11-02T10:49:13.5111986Z Review tablet: maintenance-banner--running
+2026-11-02T10:49:13.8096446Z Review tablet: maintenance-banner--unavailable
+2026-11-02T10:49:14.1931206Z Review tablet: maintenance-banner--paused-dismissed
+2026-11-02T10:49:14.4940325Z Review tablet: maintenance-banner--guest-paused-dismissed
+2026-11-02T10:49:14.7940261Z Review tablet: maintenance-banner--reconnecting-dismissed
+2026-11-02T10:49:15.0941967Z Review tablet: maintenance-banner--dismiss-and-reopen
+2026-11-02T10:49:15.5455741Z Review tablet: maintenance-banner--expired-dismissal
+2026-11-02T10:49:15.8448420Z Review tablet: maintenance-banner--new-pause-resurfaces
+2026-11-02T10:49:16.3942992Z Review tablet: maintenance-banner--replacement-resurfaces
+2026-11-02T10:49:16.8445928Z Review tablet: offline-recovery-entry--missing-device-copy
+2026-11-02T10:49:17.3129238Z Review tablet: offline-recovery-entry--invalid-link
+2026-11-02T10:49:17.7936833Z Review tablet: offline-recovery-entry--no-prepared-account
+2026-11-02T10:49:18.2611610Z Review tablet: offline-recovery-entry--another-account
+2026-11-02T10:49:18.7277090Z Review tablet: offline-recovery-entry--clean-downloaded-copy
+2026-11-02T10:49:19.1952797Z Review tablet: offline-recovery-entry--guarded-return-to-my-files
+2026-11-02T10:49:19.7125349Z Review tablet: offline-recovery-entry--missing-copy-dark
+2026-11-02T10:49:20.1946610Z Review tablet: offline-recovery-entry--invalid-link-phone
+2026-11-02T10:49:20.6608508Z Review tablet: offline-recovery-list--pending-ordinary-and-space
+2026-11-02T10:49:21.1121695Z Review tablet: offline-recovery-list--dark
+2026-11-02T10:49:21.5954924Z Review tablet: offline-recovery-list--clean-downloads
+2026-11-02T10:49:22.0599268Z Review tablet: offline-recovery-list--navigation-guard
+2026-11-02T10:49:22.5621570Z Review tablet: offline-recovery-list--long-title-phone
+2026-11-02T10:49:23.0123259Z Review tablet: space-offline-view--light
+2026-11-02T10:49:23.5321140Z Review tablet: space-offline-view--dark
+2026-11-02T10:49:24.0149456Z Review tablet: space-offline-view--profile-navigation
+2026-11-02T10:49:24.5292130Z Review tablet: space-offline-view--editor-navigation
+2026-11-02T10:49:25.0819630Z Review tablet: space-offline-view--phone
+2026-11-02T10:49:25.6311282Z Review tablet: space-offline-view--attention-held-viewer
+2026-11-02T10:49:26.5812402Z Review tablet: space-offline-view--attention-held-viewer-dark
+2026-11-02T10:49:27.5652847Z Review tablet: space-offline-view--attention-held-viewer-phone
+2026-11-02T10:49:28.4647792Z Review tablet: space-offline-view--explicit-page-not-prepared
+2026-11-02T10:49:28.9624576Z Review tablet: space-offline-view--no-prepared-pages
+2026-11-02T10:49:29.4790284Z Review tablet: space-offline-view--space-index
+2026-11-02T10:49:29.9619644Z Review tablet: space-offline-view--another-account
+2026-11-02T10:49:30.3783103Z Review tablet: dashboard-offlinebadge--available
+2026-11-02T10:49:30.6760883Z Review tablet: dashboard-offlinebadge--pages-available
+2026-11-02T10:49:30.9763506Z Review tablet: dashboard-offlinebadge--needs-connection
+2026-11-02T10:49:31.3432606Z Review tablet: dashboard-offlinebadge--not-synced
+2026-11-02T10:49:31.7262247Z Review tablet: dashboard-offlinebadge--needs-attention
+2026-11-02T10:49:32.0261331Z Review tablet: dashboard-offlinebadge--none
+2026-11-02T10:49:32.3261228Z Review tablet: dashboard-offlinebadge--unreachable
+2026-11-02T10:49:32.6271198Z Review tablet: current-production-account-passkey-security--ready
+2026-11-02T10:49:33.0137215Z Review tablet: current-production-account-passkey-security--loading
+2026-11-02T10:49:33.4118008Z Review tablet: current-production-account-passkey-security--load-error
+2026-11-02T10:49:33.7289182Z Review tablet: current-production-account-passkey-security--empty
+2026-11-02T10:49:34.1285078Z Review tablet: current-production-account-passkey-security--adding
+2026-11-02T10:49:34.4460509Z Review tablet: current-production-account-passkey-security--confirm-removal
+2026-11-02T10:49:35.0361380Z Review tablet: current-production-account-passkey-security--remove-current
+2026-11-02T10:49:35.6030982Z Review tablet: current-production-account-passkey-security--last-passkey
+2026-11-02T10:49:36.1873464Z Review tablet: current-production-account-passkey-security--fresh-verification-required
+2026-11-02T10:49:36.7692891Z Review tablet: current-production-account-passkey-security--verify-before-adding
+2026-11-02T10:49:37.2353937Z Review tablet: current-production-account-passkey-security--verification-pending
+2026-11-02T10:49:37.8040290Z Review tablet: current-production-account-passkey-security--verification-failed
+2026-11-02T10:49:38.4197016Z Review tablet: current-production-account-passkey-security--saving
+2026-11-02T10:49:39.0015855Z Review tablet: current-production-account-passkey-security--refused
+2026-11-02T10:49:39.5521406Z Review tablet: current-production-account-passkey-security--proof-expired
+2026-11-02T10:49:40.1705432Z Review tablet: current-production-account-passkey-security--uncertain
+2026-11-02T10:49:40.8020803Z Review tablet: current-production-account-passkey-security--sign-out-others
+2026-11-02T10:49:41.2519350Z Review tablet: current-production-account-passkey-security--others-signed-out
+2026-11-02T10:49:41.7624962Z Review tablet: current-production-account-passkey-security--removal-cancelled
+2026-11-02T10:49:42.3290699Z Review tablet: current-production-account-passkey-security--verified-then-confirmed
+2026-11-02T10:49:42.9135029Z Review tablet: current-production-account-passkey-security--verification-cancelled
+2026-11-02T10:49:43.4957546Z Review tablet: current-production-account-passkey-security--uncertain-cannot-repeat
+2026-11-02T10:49:44.1467284Z Review tablet: current-production-account-passkey-security--malformed-acknowledgement
+2026-11-02T10:49:44.6637837Z Review tablet: current-production-account-passkey-security--unattributed-session
+2026-11-02T10:49:45.2182803Z Review tablet: current-production-account-passkey-security--registration-proof-invalidated
+2026-11-02T10:49:45.6682087Z Review tablet: current-production-account-passkey-security--read-retry-recovered
+2026-11-02T10:49:46.1126561Z Review tablet: current-production-account-passkey-security--account-changed-before-action
+2026-11-02T10:49:46.5452508Z Review tablet: current-production-account-passkey-security--cookie-changed-during-confirmation
+2026-11-02T10:49:47.0948400Z Review tablet: current-production-account-passkey-security--account-changed-during-registration
+2026-11-02T10:49:47.4792522Z Review tablet: editor-pdfexport--document
+2026-11-02T10:49:47.8593781Z Review tablet: editor-pdfexport--all-visible-worksheets
+2026-11-02T10:49:48.2282736Z Review tablet: editor-pdfexport--worksheet-subset
+2026-11-02T10:49:48.6287941Z Review tablet: editor-pdfexport--no-worksheets-selected
+2026-11-02T10:49:49.1635939Z Review tablet: editor-pdfexport--no-visible-worksheets
+2026-11-02T10:49:49.4607340Z Review tablet: editor-pdfexport--waiting-for-save
+2026-11-02T10:49:49.7604297Z Review tablet: editor-pdfexport--loading-options
+2026-11-02T10:49:50.0595060Z Review tablet: editor-pdfexport--options-failed
+2026-11-02T10:49:50.4436430Z Review tablet: editor-pdfexport--preparing
+2026-11-02T10:49:50.8303526Z Review tablet: editor-pdfexport--cancelled
+2026-11-02T10:49:51.2626267Z Review tablet: editor-pdfexport--export-failed
+2026-11-02T10:49:51.6623396Z Review tablet: editor-pdfexport--download-started
+2026-11-02T10:49:52.0760349Z Review tablet: editor-profile-cursor-label--flower
+2026-11-02T10:49:52.3750463Z Review tablet: editor-profile-cursor-label--cat
+2026-11-02T10:49:52.6754702Z Review tablet: editor-presence-native--doc
+2026-11-02T10:49:53.9827766Z Review tablet: editor-presence-native--doc-selection
+2026-11-02T10:49:55.3544364Z Review tablet: editor-presence-native--doc-guest
+2026-11-02T10:49:56.7321027Z Review tablet: editor-presence-native--doc-disconnected
+2026-11-02T10:49:58.1152658Z Review tablet: editor-presence-native--doc-lifecycle
+2026-11-02T10:49:59.5485032Z Review tablet: editor-presence-native--doc-local-colors
+2026-11-02T10:50:00.8160276Z Review tablet: account-profile-icons--catalog-compatibility
+2026-11-02T10:50:01.1963851Z Review tablet: account-profile-page--profile
+2026-11-02T10:50:01.6829131Z Review tablet: account-profile-page--passkeys
+2026-11-02T10:50:02.2120687Z Review tablet: account-profile-page--this-device
+2026-11-02T10:50:02.6996344Z Review tablet: account-profile-page--connections
+2026-11-02T10:50:03.1993574Z Review tablet: account-profile-page--guest-links
+2026-11-02T10:50:03.6844909Z Review tablet: account-profile-page--guest-links-offline
+2026-11-02T10:50:04.1609862Z Review tablet: account-profile-page--guest-links-operator
+2026-11-02T10:50:04.5821564Z Review tablet: account-profile-page--operator
+2026-11-02T10:50:05.0655715Z Review tablet: account-profile-page--offline
+2026-11-02T10:50:05.5666200Z Review tablet: account-profile-page--phone
+2026-11-02T10:50:05.9822102Z Review tablet: account-profile--ready
+2026-11-02T10:50:06.4620423Z Review tablet: account-profile--loading
+2026-11-02T10:50:06.9105378Z Review tablet: account-profile--load-error
+2026-11-02T10:50:07.3762920Z Review tablet: account-profile--save-error
+2026-11-02T10:50:07.8804510Z Review tablet: account-profile--saving
+2026-11-02T10:50:08.3627205Z Review tablet: account-profile--color-picker
+2026-11-02T10:50:08.8682062Z Review tablet: shell-rail--member
+2026-11-02T10:50:09.1760369Z Review tablet: shell-rail--admin
+2026-11-02T10:50:09.4757022Z Review tablet: shell-rail--offline
+2026-11-02T10:50:09.7762069Z Review tablet: shell-rail--reconnecting
+2026-11-02T10:50:10.0760819Z Review tablet: shell-rail--phone
+2026-11-02T10:50:10.4433567Z Review tablet: shell-rail--signed-out
+2026-11-02T10:50:10.7417010Z Review tablet: shell-rail--compact
+2026-11-02T10:50:11.0420974Z Review tablet: shell-rail--files
+2026-11-02T10:50:11.4253871Z Review tablet: shell-rail--files-collapsed
+2026-11-02T10:50:11.7256389Z Review tablet: shell-rail--files-long-profile-name
+2026-11-02T10:50:12.0256350Z Review tablet: shell-rail--files-phone
+2026-11-02T10:50:12.3416583Z Review tablet: shell-rail--files-drawer
+2026-11-02T10:50:12.7977206Z Review tablet: restore-notice--restored
+2026-11-02T10:50:13.0925850Z Review tablet: restore-notice--dark
+2026-11-02T10:50:13.3925812Z Review tablet: restore-notice--phone
+2026-11-02T10:50:13.7589782Z Review tablet: restore-notice--restore-undone
+2026-11-02T10:50:14.0596408Z Review tablet: restore-notice--restore-undone-dark
+2026-11-02T10:50:14.3594636Z Review tablet: restore-notice--dismissed
+2026-11-02T10:50:14.7577894Z Review tablet: restore-notice--another-restore-after-dismissal
+2026-11-02T10:50:15.0589722Z Review tablet: restore-notice--never-restored
+2026-11-02T10:50:15.4240292Z Review tablet: editor-savestatus--saved
+2026-11-02T10:50:15.7260222Z Review tablet: editor-savestatus--saving-on-device
+2026-11-02T10:50:16.1777293Z Review tablet: editor-savestatus--saved-on-device
+2026-11-02T10:50:16.6107440Z Review tablet: editor-savestatus--synced
+2026-11-02T10:50:17.0446087Z Review tablet: editor-savestatus--needs-attention
+2026-11-02T10:50:17.4948927Z Review tablet: editor-savestatus--creation-needs-attention
+2026-11-02T10:50:18.0624300Z Review tablet: editor-savestatus--recovery-creating
+2026-11-02T10:50:18.6285960Z Review tablet: editor-savestatus--recovery-created
+2026-11-02T10:50:19.0799534Z Review tablet: editor-savestatus--recovery-failed
+2026-11-02T10:50:19.6310409Z Review tablet: editor-savestatus--recovery-exported
+2026-11-02T10:50:20.0653115Z Review tablet: editor-savestatus--recovery-discard-confirmation
+2026-11-02T10:50:20.5803418Z Review tablet: editor-savestatus--recovery-discarded
+2026-11-02T10:50:21.2119859Z Review tablet: editor-savestatus--recovery-expired-account
+2026-11-02T10:50:21.7947330Z Review tablet: editor-savestatus--recovery-unfinished-input
+2026-11-02T10:50:22.3124765Z Review tablet: editor-savestatus--recovery-unfinished-doc-text
+2026-11-02T10:50:23.3669163Z Review tablet: editor-savestatus--recovery-unfinished-doc-text-discarded
+2026-11-02T10:50:24.4119331Z Review tablet: editor-savestatus--expired-unfinished-doc-text
+2026-11-02T10:50:25.4952106Z Review tablet: editor-savestatus--device-save-failed
+2026-11-02T10:50:25.9112834Z Review tablet: editor-savestatus--attention-save-failed
+2026-11-02T10:50:26.3778048Z Review tablet: editor-savestatus--saving
+2026-11-02T10:50:26.8272256Z Review tablet: editor-savestatus--editing-cell
+2026-11-02T10:50:27.2610863Z Review tablet: editor-savestatus--expired-cell-input
+2026-11-02T10:50:27.7107622Z Review tablet: editor-savestatus--expired-saved-work
+2026-11-02T10:50:28.1445235Z Review tablet: editor-savestatus--editing-formula
+2026-11-02T10:50:28.6103628Z Review tablet: editor-savestatus--loading
+2026-11-02T10:50:29.0437290Z Review tablet: editor-savestatus--view-only
+2026-11-02T10:50:29.4931233Z Review tablet: editor-savestatus--failed-save
+2026-11-02T10:50:29.9270374Z Review tablet: editor-savestatus--access-changed
+2026-11-02T10:50:30.3602602Z Review tablet: editor-savestatus--waiting-to-resync
+2026-11-02T10:50:30.8274100Z Review tablet: editor-savestatus--rejected-edits
+2026-11-02T10:50:31.2607578Z Review tablet: editor-savestatus--long-error
+2026-11-02T10:50:31.7152304Z Review tablet: editor-savestatus--stable-geometry-and-retry
+2026-11-02T10:50:32.4254222Z Review tablet: editor-savestatus--keyboard-details
+2026-11-02T10:50:32.9924909Z Review tablet: editor-savestatus--touch-details
+2026-11-02T10:50:33.4759277Z Review tablet: dashboard-searchpanel--empty-query
+2026-11-02T10:50:33.8761016Z Review tablet: dashboard-searchpanel--results
+2026-11-02T10:50:34.5490861Z Review tablet: dashboard-searchpanel--no-results
+2026-11-02T10:50:35.1933917Z Review tablet: dashboard-searchpanel--loading
+2026-11-02T10:50:35.6592700Z Review tablet: dashboard-searchpanel--failed
+2026-11-02T10:50:36.3101225Z Review tablet: dashboard-searchpanel--space-roots-only
+2026-11-02T10:50:36.8100020Z Review tablet: dashboard-searchpanel--active-filters
+2026-11-02T10:50:37.3121514Z Review tablet: dashboard-searchpanel--invalid-draft
+2026-11-02T10:50:37.8267215Z Review tablet: dashboard-searchpanel--long-invalid-draft
+2026-11-02T10:50:38.3253476Z Review tablet: dashboard-searchpanel--search-options
+2026-11-02T10:50:39.1440116Z Review tablet: current-production-admin-serverhealth--healthy
+2026-11-02T10:50:39.5868313Z Review tablet: current-production-admin-serverhealth--spaces-disabled
+2026-11-02T10:50:40.0178661Z Review tablet: current-production-admin-serverhealth--warning
+2026-11-02T10:50:40.3907041Z Review tablet: current-production-admin-serverhealth--unavailable-measurements
+2026-11-02T10:50:40.7437758Z Review tablet: current-production-admin-serverhealth--low-backup-space
+2026-11-02T10:50:41.2041592Z Review tablet: current-production-admin-serverhealth--near-upload-ceiling
+2026-11-02T10:50:41.6551772Z Review tablet: current-production-admin-serverhealth--loading
+2026-11-02T10:50:41.9574390Z Review tablet: current-production-admin-serverhealth--failed
+2026-11-02T10:50:42.3242987Z Review tablet: current-production-admin-serverhealth--expired
+2026-11-02T10:50:42.7076457Z Review tablet: sharing-sharelink--loading
+2026-11-02T10:50:43.0901208Z Review tablet: sharing-sharelink--link-off
+2026-11-02T10:50:43.3913891Z Review tablet: sharing-sharelink--doc-source-limit
+2026-11-02T10:50:43.6925529Z Review tablet: sharing-sharelink--space-source-limit
+2026-11-02T10:50:43.9940476Z Review tablet: sharing-sharelink--link-on-view-only
+2026-11-02T10:50:44.2909150Z Review tablet: sharing-sharelink--link-on-can-edit
+2026-11-02T10:50:44.6906156Z Review tablet: sharing-sharelink--link-on-without-url
+2026-11-02T10:50:44.9905595Z Review tablet: sharing-sharelink--scheduled-expiry
+2026-11-02T10:50:45.3908621Z Review tablet: sharing-sharelink--expired
+2026-11-02T10:50:45.7745277Z Review tablet: sharing-sharelink--create-after-expiry
+2026-11-02T10:50:46.1933668Z Review tablet: sharing-sharelink--failed
+2026-11-02T10:50:46.5242550Z Review tablet: sharing-sharelink--space-view-link
+2026-11-02T10:50:46.8242204Z Review tablet: sharing-sharelink--space-edit-link
+2026-11-02T10:50:47.2246525Z Review tablet: sharing-sharelink--confirm-whole-space
+2026-11-02T10:50:47.6811999Z Review tablet: sharing-sharelink--confirm-replacement-edit-link
+2026-11-02T10:50:48.2145694Z Review tablet: sharing-sharelink--confirm-turn-off-space-link
+2026-11-02T10:50:48.7930384Z Review tablet: sharing-sharelink--load-after-leaving-space
+2026-11-02T10:50:49.2078474Z Review tablet: sharing-sharelink--change-after-replacing-space
+2026-11-02T10:50:49.7607069Z Review tablet: sharing-sharelink--created-link
+2026-11-02T10:50:50.2099662Z Review tablet: sharing-sharelink--replace-fresh-link
+2026-11-02T10:50:50.8767248Z Review tablet: sharing-sharelink--replaced-link
+2026-11-02T10:50:51.4602585Z Review tablet: sharing-sharelink--replacing
+2026-11-02T10:50:51.9985378Z Review tablet: sharing-sharelink--created-space-link-focus
+2026-11-02T10:50:52.5603238Z Review tablet: sharing-sharelink--turned-off-space-link-focus
+2026-11-02T10:50:53.2091714Z Review tablet: sharing-sharelink--no-secret-readback
+2026-11-02T10:50:53.5900667Z Review tablet: sharing-sharelink--creating
+2026-11-02T10:50:54.0084484Z Review tablet: sharing-sharelink--failed-create
+2026-11-02T10:50:54.4414992Z Review tablet: sharing-sharelink--failed-replacement
+2026-11-02T10:50:55.0569474Z Review tablet: sharing-sharelink--failed-replacement-visible
+2026-11-02T10:50:55.6296374Z Review tablet: sharing-sharelink--failed-turn-off
+2026-11-02T10:50:56.1747816Z Review tablet: dashboard-sharedbadge--owned
+2026-11-02T10:50:56.4723787Z Review tablet: dashboard-sharedbadge--shared-with-me
+2026-11-02T10:50:56.7561781Z Review tablet: dashboard-sharedbadge--unknown-owner
+2026-11-02T10:50:57.0559297Z Review tablet: sharing-sharing--loading
+2026-11-02T10:50:57.3769461Z Review tablet: sharing-sharing--owner-only
+2026-11-02T10:50:57.6937602Z Review tablet: sharing-sharing--with-people
+2026-11-02T10:50:58.0130729Z Review tablet: sharing-sharing--folder
+2026-11-02T10:50:58.3295388Z Review tablet: sharing-sharing--failed
+2026-11-02T10:50:58.7276477Z Review tablet: sharing-sharing--whole-space
+2026-11-02T10:50:59.0461706Z Review tablet: sharing-sharing--file-admin
+2026-11-02T10:50:59.3786248Z Review tablet: sharing-sharing--grant-file-admin
+2026-11-02T10:51:00.0292361Z Review tablet: sharing-sharing--admin-revoked-while-applying
+2026-11-02T10:51:00.5794505Z Review tablet: sharing-sharing--composed
+2026-11-02T10:51:01.0789810Z Review tablet: sharing-sharing--access-saving
+2026-11-02T10:51:01.6952961Z Review tablet: sharing-sharing--disabled-account
+2026-11-02T10:51:02.2781731Z Review tablet: sharing-sharing--disabled-account-before-removal
+2026-11-02T10:51:02.7789565Z Review tablet: sharing-sharing--one-recipient-draft
+2026-11-02T10:51:03.6449983Z Review tablet: sharing-sharing--navigation-after-cancel
+2026-11-02T10:51:04.2123202Z Review tablet: sharing-sharing--write-after-leaving
+2026-11-02T10:51:04.8065237Z Review tablet: sharing-sharing--write-after-replacing
+2026-11-02T10:51:05.4952953Z Review tablet: sharing-sharing--failed-write-retry
+2026-11-02T10:51:06.1611801Z Review tablet: sharing-sharing--guest-link-created
+2026-11-02T10:51:06.7139921Z Review tablet: sharing-sharing--existing-guest-link
+2026-11-02T10:51:07.1613557Z Review tablet: sharing-sharing--replace-guest-link
+2026-11-02T10:51:07.7140424Z Review tablet: sharing-sharing--inherited-access-after-removal
+2026-11-02T10:51:08.2295336Z Review tablet: sharing-sharing--equal-inherited-access-after-downgrade
+2026-11-02T10:51:08.7790583Z Review tablet: sharing-formula-sources--overview
+2026-11-02T10:51:09.1936409Z Review tablet: sharing-formula-sources--unchecked
+2026-11-02T10:51:09.7121629Z Review tablet: sharing-formula-sources--checked
+2026-11-02T10:51:10.2454264Z Review tablet: sharing-formula-sources--choose-report-access-first
+2026-11-02T10:51:10.7456972Z Review tablet: sharing-formula-sources--host-only
+2026-11-02T10:51:11.4464367Z Review tablet: sharing-formula-sources--source-only
+2026-11-02T10:51:12.1957807Z Review tablet: sharing-formula-sources--checking
+2026-11-02T10:51:12.6945888Z Review tablet: sharing-formula-sources--check-failed
+2026-11-02T10:51:13.3288307Z Review tablet: sharing-formula-sources--applying
+2026-11-02T10:51:13.9783439Z Review tablet: sharing-formula-sources--existing-access-kept
+2026-11-02T10:51:14.8189904Z Review tablet: sharing-formula-sources--same-space
+2026-11-02T10:51:15.5042747Z Review tablet: sharing-formula-sources--external-space
+2026-11-02T10:51:16.0960722Z Review tablet: sharing-formula-sources--protected-and-unavailable
+2026-11-02T10:51:16.5963192Z Review tablet: sharing-formula-sources--partial
+2026-11-02T10:51:17.1808976Z Review tablet: sharing-formula-sources--changed-after-review
+2026-11-02T10:51:17.8499212Z Review tablet: sharing-formula-sources--lost-acknowledgement
+2026-11-02T10:51:18.4981905Z Review tablet: sharing-formula-sources--missing-result
+2026-11-02T10:51:19.1490458Z Review tablet: sharing-formula-sources--host-only-lost-acknowledgement
+2026-11-02T10:51:19.7809976Z Review tablet: sharing-formula-sources--host-only-authority-lost
+2026-11-02T10:51:20.3956578Z Review tablet: sharing-formula-sources--host-only-source-became-private
+2026-11-02T10:51:20.9982215Z Review tablet: sharing-formula-sources--host-revoked
+2026-11-02T10:51:21.5793841Z Review tablet: sharing-formula-sources--no-stale-source-names
+2026-11-02T10:51:22.2788426Z Review tablet: sharing-formula-sources--consent-and-draft-reset
+2026-11-02T10:51:23.3290914Z Review tablet: sharing-formula-sources--public-link-isolation
+2026-11-02T10:51:24.0298999Z Review tablet: sharing-formula-sources--review-after-leaving
+2026-11-02T10:51:24.5382566Z Review tablet: sharing-formula-sources--review-after-replacing
+2026-11-02T10:51:25.1280900Z Review tablet: space-review--app-loading
+2026-11-02T10:51:25.7551227Z Review tablet: space-review--app-unreachable
+2026-11-02T10:51:26.3892833Z Review tablet: space-review--app-unavailable
+2026-11-02T10:51:26.9385649Z Review tablet: space-review--populated
+2026-11-02T10:51:27.5434770Z Review tablet: space-review--independent-expansion
+2026-11-02T10:51:28.2942706Z Review tablet: space-review--view-only
+2026-11-02T10:51:28.9427432Z Review tablet: space-review--page-access-details
+2026-11-02T10:51:29.7916262Z Review tablet: space-review--empty
+2026-11-02T10:51:30.3740101Z Review tablet: space-review--restore-banner
+2026-11-02T10:51:30.9430737Z Review tablet: space-review--restore-banner-dark
+2026-11-02T10:51:31.5263989Z Review tablet: space-review--restore-banner-phone
+2026-11-02T10:51:32.0928353Z Review tablet: space-review--restore-banner-with-document
+2026-11-02T10:51:32.6754624Z Review tablet: space-review--spaces-index
+2026-11-02T10:51:33.2228953Z Review tablet: space-review--no-spaces
+2026-11-02T10:51:33.7743882Z Review tablet: space-review--new-space
+2026-11-02T10:51:34.5306619Z Review tablet: space-review--new-doc
+2026-11-02T10:51:35.4989579Z Review tablet: space-review--new-sheet
+2026-11-02T10:51:36.4482085Z Review tablet: space-review--new-folder
+2026-11-02T10:51:37.4164494Z Review tablet: space-review--loading
+2026-11-02T10:51:37.9722225Z Review tablet: space-review--unavailable
+2026-11-02T10:51:38.5565054Z Review tablet: space-review--retained-device-page
+2026-11-02T10:51:39.1591054Z Review tablet: space-review--retained-device-page-navigation
+2026-11-02T10:51:39.9248075Z Review tablet: space-review--unreachable
+2026-11-02T10:51:40.4893758Z Review tablet: space-review--guest-viewer
+2026-11-02T10:51:41.0748492Z Review tablet: space-review--guest-editor
+2026-11-02T10:51:41.6579942Z Review tablet: space-review--guest-empty
+2026-11-02T10:51:42.2068138Z Review tablet: space-review--guest-loading
+2026-11-02T10:51:42.7393204Z Review tablet: space-review--guest-revoked
+2026-11-02T10:51:43.3073308Z Review tablet: space-review--guest-unreachable
+2026-11-02T10:51:43.8396699Z Review tablet: space-review--guest-missing-page
+2026-11-02T10:51:44.3940880Z Review tablet: space-review--guest-malformed-route
+2026-11-02T10:51:44.9392485Z Review tablet: space-review--offline
+2026-11-02T10:51:45.6601350Z Review tablet: space-review--deep-tree
+2026-11-02T10:51:46.4942618Z Review tablet: space-review--pages-drawer
+2026-11-02T10:51:47.3096808Z Review tablet: space-review--move-or-reorder
+2026-11-02T10:51:48.2966489Z Review tablet: space-review--metadata-dialog-focus
+2026-11-02T10:51:49.5409810Z Review tablet: space-review--mutation-failure
+2026-11-02T10:51:50.4288514Z Review tablet: space-review--trash-subtree-confirmation
+2026-11-02T10:51:51.2961107Z Review tablet: space-review--trash-owner
+2026-11-02T10:51:51.8924952Z Review tablet: space-review--trash-editor
+2026-11-02T10:51:52.4921818Z Review tablet: space-review--trash-expired
+2026-11-02T10:51:53.1759544Z Review tablet: space-review--trash-expired-editor
+2026-11-02T10:51:53.7763051Z Review tablet: space-review--trash-recovery-ended
+2026-11-02T10:51:54.4266156Z Review tablet: space-review--trash-role-change
+2026-11-02T10:51:55.0094879Z Review tablet: space-review--trash-viewer-denied
+2026-11-02T10:51:55.5881861Z Review tablet: space-review--trash-empty
+2026-11-02T10:51:56.1733711Z Review tablet: space-review--trash-retry
+2026-11-02T10:51:56.8087705Z Review tablet: space-review--trash-offline
+2026-11-02T10:51:57.3936320Z Review tablet: space-review--delete-confirmation
+2026-11-02T10:51:58.1480497Z Review tablet: space-review--cancel-deletion
+2026-11-02T10:51:58.9921965Z Review tablet: space-review--stale-delete-preview
+2026-11-02T10:51:59.8262973Z Review tablet: space-review--file-admin
+2026-11-02T10:52:00.7414724Z Review tablet: space-guest--view-only
+2026-11-02T10:52:01.3750220Z Review tablet: space-guest--view-only-dark
+2026-11-02T10:52:01.9740653Z Review tablet: space-guest--view-only-phone
+2026-11-02T10:52:02.5566235Z Review tablet: space-guest--can-edit
+2026-11-02T10:52:03.1901246Z Review tablet: space-guest--can-edit-dark
+2026-11-02T10:52:03.7899401Z Review tablet: space-guest--can-edit-phone
+2026-11-02T10:52:04.3901197Z Review tablet: space-guest--nested-page
+2026-11-02T10:52:04.9565689Z Review tablet: space-guest--phone-contents
+2026-11-02T10:52:05.6239946Z Review tablet: space-guest--empty
+2026-11-02T10:52:06.1724031Z Review tablet: space-guest--loading
+2026-11-02T10:52:06.7045246Z Review tablet: space-guest--unavailable
+2026-11-02T10:52:07.2726123Z Review tablet: space-guest--recovery-deep-link-refused
+2026-11-02T10:52:07.8050311Z Review tablet: space-offline-actions--ready-to-prepare
+2026-11-02T10:52:08.2039846Z Review tablet: space-offline-actions--waiting-for-save
+2026-11-02T10:52:08.6039946Z Review tablet: space-offline-actions--storage-unavailable
+2026-11-02T10:52:09.0373839Z Review tablet: space-offline-actions--storage-unavailable-dark
+2026-11-02T10:52:09.4708533Z Review tablet: space-offline-actions--storage-unavailable-phone
+2026-11-02T10:52:09.9215042Z Review tablet: space-offline-actions--prepared-pages
+2026-11-02T10:52:10.4221309Z Review tablet: space-offline-actions--prepared-dark
+2026-11-02T10:52:10.9557956Z Review tablet: space-offline-actions--prepared-phone
+2026-11-02T10:52:11.4723878Z Review tablet: space-offline-actions--unmount-during-download
+2026-11-02T10:52:12.0204189Z Review tablet: space-offline-actions--change-account-during-download
+2026-11-02T10:52:12.5374018Z Review tablet: space-offline-actions--sign-out-during-download
+2026-11-02T10:52:13.0738606Z Review tablet: spaces-root-actions--owner
+2026-11-02T10:52:13.4715500Z Review tablet: spaces-root-actions--viewer
+2026-11-02T10:52:13.7861463Z Review tablet: spaces-root-actions--rename
+2026-11-02T10:52:14.3259772Z Review tablet: spaces-root-actions--move
+2026-11-02T10:52:14.9249863Z Review tablet: spaces-root-actions--loading-destinations
+2026-11-02T10:52:15.4920301Z Review tablet: spaces-root-actions--destination-failure
+2026-11-02T10:52:16.0761954Z Review tablet: spaces-root-actions--whole-space-trash
+2026-11-02T10:52:16.6601195Z Review tablet: spaces-root-actions--share-whole-space
+2026-11-02T10:52:17.4757678Z Review tablet: spaces-root-actions--save-failure
+2026-11-02T10:52:18.5282436Z Review tablet: spaces-root-actions--trash-response-after-navigation
+2026-11-02T10:52:19.5545788Z Review tablet: spaces-root-actions--rename-response-after-unmount
+2026-11-02T10:52:20.2386767Z Review tablet: spaces-root-actions--failed-response-after-navigation
+2026-11-02T10:52:20.8774401Z Review tablet: spaces-root-actions--file-admin-move
+2026-11-02T10:52:21.4089790Z Review tablet: spaces-root-actions--file-admin-no-destinations
+2026-11-02T10:52:21.9600191Z Review tablet: current-production-spaces-recovery-holds--held-after-recovery
+2026-11-02T10:52:22.3577244Z Review tablet: current-production-spaces-recovery-holds--editor
+2026-11-02T10:52:22.6411038Z Review tablet: current-production-spaces-recovery-holds--offline
+2026-11-02T10:52:22.9417121Z Review tablet: editor-sync-native--doc-drawing-capture
+2026-11-02T10:52:24.5405553Z Review tablet: dashboard-taglabels--none
+2026-11-02T10:52:24.8192640Z Review tablet: dashboard-taglabels--one
+2026-11-02T10:52:25.1026524Z Review tablet: dashboard-taglabels--several
+2026-11-02T10:52:25.3865020Z Review tablet: dashboard-trash--with-items
+2026-11-02T10:52:25.6949245Z Review tablet: dashboard-trash--held-after-recovery
+2026-11-02T10:52:26.0251608Z Review tablet: dashboard-trash--confirm-empty-held-items
+2026-11-02T10:52:26.3799769Z Review tablet: dashboard-trash--empty
+2026-11-02T10:52:26.6709630Z Review tablet: dashboard-trash--loading
+2026-11-02T10:52:26.9538702Z Review tablet: dashboard-trash--load-failed
+2026-11-02T10:52:27.2373253Z Review tablet: dashboard-trash--confirm-empty
+2026-11-02T10:52:27.6316900Z Review tablet: dashboard-trash--space-recovery-window
+2026-11-02T10:52:27.9420449Z Review tablet: dashboard-trash--expired-space-group
+2026-11-02T10:52:28.2594275Z Review tablet: dashboard-trash--confirm-complete-space-graph
+2026-11-02T10:52:28.6309152Z Review tablet: dashboard-trash--space-graph-changed
+2026-11-02T10:52:29.0761091Z Review tablet: editor-versionnames--closed
+2026-11-02T10:52:29.3520344Z Review tablet: editor-versionnames--open
+2026-11-02T10:52:29.6670543Z Review tablet: editor-versionnames--viewer-open
+2026-11-02T10:52:29.9768409Z Review tablet: editor-versionnames--no-versions
+2026-11-02T10:52:30.3221594Z Review tablet: editor-versionnames--unsaved-changes
+2026-11-02T10:52:30.6444683Z Review tablet: editor-versionnames--loading
+2026-11-02T10:52:30.9714527Z Review tablet: editor-versionnames--load-failed
+2026-11-02T10:52:31.3230376Z Review tablet: editor-versionnames--naming-version
+2026-11-02T10:52:31.6978561Z Review tablet: editor-versionnames--space-editor
+2026-11-02T10:52:32.0425230Z Review tablet: editor-versionnames--space-viewer
+2026-11-02T10:52:32.3933372Z Review tablet: dashboard-workspacearchive--confirmation
+2026-11-02T10:52:32.7249765Z Review tablet: dashboard-workspacearchive--starting
+2026-11-02T10:52:33.1092747Z Review tablet: dashboard-workspacearchive--preparing
+2026-11-02T10:52:33.4925066Z Review tablet: dashboard-workspacearchive--browser-download
+2026-11-02T10:52:33.8919311Z Review tablet: dashboard-workspacearchive--exporting
+2026-11-02T10:52:34.3423781Z Review tablet: dashboard-workspacearchive--completed
+2026-11-02T10:52:34.7590303Z Review tablet: dashboard-workspacearchive--empty-archive
+2026-11-02T10:52:35.2081630Z Review tablet: dashboard-workspacearchive--start-failed
+2026-11-02T10:52:35.5926325Z Review tablet: dashboard-workspacearchive--export-failed
+2026-11-02T10:52:35.9919935Z Review tablet: dashboard-workspacearchive--progress-unavailable
+2026-11-02T10:52:36.5937701Z Review tablet: dashboard-workspacearchive--expired-task
+2026-11-02T10:52:37.4423061Z Review tablet: dashboard-workspacearchive--cancel-expired-task
+2026-11-02T10:52:37.9421671Z Review tablet: dashboard-workspacearchive--retry-progress
+2026-11-02T10:52:38.7916657Z Review tablet: dashboard-workspacearchive--cancelling
+2026-11-02T10:52:39.2086173Z Review tablet: dashboard-workspacearchive--cancelled
+2026-11-02T10:52:39.6585529Z Review tablet: dashboard-workspacearchive--cancel-before-start
+2026-11-02T10:52:40.0929437Z Review tablet: dashboard-workspacearchive--cancellation-failed
+2026-11-02T10:52:40.5429845Z Review tablet: offline-availability--protection-granted
+2026-11-02T10:52:40.8404406Z Review tablet: offline-availability--protection-denied
+2026-11-02T10:52:41.2575947Z Review tablet: offline-availability--protection-unsupported
+2026-11-02T10:52:41.5584319Z Review tablet: offline-availability--protection-error
+2026-11-02T10:52:41.8745826Z Review tablet: offline-availability--storage-guidance
+2026-11-02T10:52:42.2642790Z Review tablet: offline-availability--browser-storage-limits
+2026-11-02T10:52:42.8839991Z Review tablet: offline-availability--pending-removal
+2026-11-02T10:52:43.2412626Z Review tablet: identity-entity-icons--standalone
+2026-11-02T10:52:43.5183093Z Review tablet: identity-entity-icons--lineup
+2026-11-02T10:52:43.8250874Z Review tablet: identity-entity-icons--in-context
+2026-11-02T10:52:44.1068181Z Review tablet: identity-entity-icons--monochrome
+2026-11-02T10:52:44.3855500Z Review tablet: identity-entity-icons--phone
+2026-11-02T10:52:44.6892290Z Review tablet: identity-favicon--light
+2026-11-02T10:52:44.9879356Z Review tablet: identity-favicon--dark
+2026-11-02T10:52:45.2537287Z Review tablet: identity-favicon--automatic
+2026-11-02T10:52:45.5209466Z Review tablet: identity-social-cards--generic
+2026-11-02T10:52:45.8062692Z Review tablet: identity-social-cards--document
+2026-11-02T10:52:46.0888261Z Review tablet: identity-social-cards--spreadsheet
+2026-11-02T10:52:46.3556989Z Review tablet: identity-social-cards--emoji
+2026-11-02T10:52:46.6225561Z Review tablet: identity-social-cards--long-title
+2026-11-02T10:52:46.8900890Z Review tablet: identity-social-cards--long-word
+2026-11-02T10:52:47.1893414Z Review tablet: identity-social-cards--space-preview
+2026-11-02T10:52:47.4713932Z Review tablet: redesign-native-editors--sheet
+2026-11-02T10:52:48.5911589Z Review tablet: redesign-native-editors--doc
+2026-11-02T10:52:50.2325164Z Review tablet: redesign-native-editors--sheet-viewer
+2026-11-02T10:52:51.0944778Z Review tablet: redesign-native-editors--doc-viewer
+2026-11-02T10:52:52.4642223Z Review tablet: redesign-native-editors--sheet-formula
+2026-11-02T10:52:53.3131203Z Review tablet: redesign-native-editors--sheet-copy-available
+2026-11-02T10:52:54.2740826Z Review tablet: redesign-native-editors--sheet-copy-unavailable
+2026-11-02T10:52:56.3128436Z Checked 1041 story states; captured 1041 catalog/error screenshots in /home/runner/work/spinel/spinel/test-results/design-review; 9 additional interaction passes.
+2026-11-02T10:52:56.3539243Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-02T10:52:56.3539672Z with:
+2026-11-02T10:52:56.3539893Z   name: design-review-tablet
+2026-11-02T10:52:56.3540161Z   path: test-results/design-review
+2026-11-02T10:52:56.3540427Z   if-no-files-found: error
+2026-11-02T10:52:56.3540671Z   retention-days: 14
+2026-11-02T10:52:56.3540891Z   compression-level: 6
+2026-11-02T10:52:56.3541110Z   overwrite: false
+2026-11-02T10:52:56.3541330Z   include-hidden-files: false
+2026-11-02T10:52:56.3541567Z   archive: true
+2026-11-02T10:52:56.3541778Z ##[endgroup]
+2026-11-02T10:52:56.6343924Z With the provided path, there will be 1048 files uploaded
+2026-11-02T10:52:56.6345884Z Artifact name is valid!
+2026-11-02T10:52:56.6346698Z Root directory input is valid!
+2026-11-02T10:52:56.9567882Z Uploading artifact: design-review-tablet.zip
+2026-11-02T10:52:56.9605028Z Beginning upload of artifact content to blob storage
+2026-11-02T10:52:57.8687521Z Uploaded bytes 8388608
+2026-11-02T10:52:58.3241421Z Uploaded bytes 16777216
+2026-11-02T10:52:58.3600386Z Uploaded bytes 25165824
+2026-11-02T10:52:58.6751233Z Uploaded bytes 33554432
+2026-11-02T10:52:59.0711693Z Uploaded bytes 41943040
+2026-11-02T10:52:59.1906421Z Uploaded bytes 44796547
+2026-11-02T10:52:59.2224182Z Finished uploading artifact content to blob storage!
+2026-11-02T10:52:59.2231242Z SHA256 digest of uploaded artifact is 1f9467d62d7422b713b4fadde7d4180e27f223d2c6c2d045848dad3a15ae89a3
+2026-11-02T10:52:59.2233057Z Finalizing artifact upload
+2026-11-02T10:52:59.7484247Z Artifact design-review-tablet successfully finalized. Artifact ID 13133804784
+2026-11-02T10:52:59.7485736Z Artifact design-review-tablet has been successfully uploaded! Final size is 44796547 bytes. Artifact ID is 13133804784
+2026-11-02T10:52:59.7491101Z Artifact download URL: https://github.com/mxbaylee/spinel/actions/runs/41430568554/artifacts/13133804784
+2026-11-02T10:52:59.7764387Z Post job cleanup.
+2026-11-02T10:52:59.9146710Z Post job cleanup.
+2026-11-02T10:53:00.0089773Z [command]/usr/bin/git version
+2026-11-02T10:53:00.0132124Z git version 2.56.0
+2026-11-02T10:53:00.0164910Z Temporarily overriding HOME='/home/runner/work/_temp/c6d080b0-c6f6-4198-aa13-04a4a8efc2bd' before making global git config changes
+2026-11-02T10:53:00.0166838Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-02T10:53:00.0169663Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-02T10:53:00.0207160Z Removing SSH command configuration
+2026-11-02T10:53:00.0213974Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-02T10:53:00.0252439Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-02T10:53:00.0490871Z Removing HTTP extra header
+2026-11-02T10:53:00.0496795Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-02T10:53:00.0533737Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-02T10:53:00.0809737Z Removing includeIf entries pointing to credentials config files
+2026-11-02T10:53:00.0817589Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-02T10:53:00.0886070Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-02T10:53:00.1377371Z Cleaning up orphan processes

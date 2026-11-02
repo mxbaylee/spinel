@@ -1,0 +1,1539 @@
+﻿2026-11-02T10:45:54.8738666Z Current runner version: '2.338.2'
+2026-11-02T10:45:54.8764269Z ##[group]Runner Image Provisioner
+2026-11-02T10:45:54.8765158Z Hosted Compute Agent
+2026-11-02T10:45:54.8765761Z Version: 20261021.618
+2026-11-02T10:45:54.8766698Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-11-02T10:45:54.8767483Z Build Date: 2026-10-21T00:45:21Z
+2026-11-02T10:45:54.8768154Z Worker ID: {28a33350-1420-4e69-a59f-1efbbeefc6ae}
+2026-11-02T10:45:54.8768987Z Region: westus
+2026-11-02T10:45:54.8769535Z Cloud: Azure
+2026-11-02T10:45:54.8770165Z ##[endgroup]
+2026-11-02T10:45:54.8771642Z ##[group]Operating System
+2026-11-02T10:45:54.8772286Z Ubuntu
+2026-11-02T10:45:54.8772908Z 24.04.5
+2026-11-02T10:45:54.8773429Z LTS
+2026-11-02T10:45:54.8773982Z ##[endgroup]
+2026-11-02T10:45:54.8774595Z ##[group]Runner Image
+2026-11-02T10:45:54.8775259Z Image: ubuntu-24.04
+2026-11-02T10:45:54.8775911Z Version: 20261025.353.1
+2026-11-02T10:45:54.8777317Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+2026-11-02T10:45:54.8778967Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+2026-11-02T10:45:54.8779939Z ##[endgroup]
+2026-11-02T10:45:54.8781114Z ##[group]GITHUB_TOKEN Permissions
+2026-11-02T10:45:54.8783025Z Contents: read
+2026-11-02T10:45:54.8783786Z Metadata: read
+2026-11-02T10:45:54.8784361Z ##[endgroup]
+2026-11-02T10:45:54.8786682Z Secret source: Actions
+2026-11-02T10:45:54.8787647Z Cache mode: write
+2026-11-02T10:45:54.8788472Z Prepare workflow directory
+2026-11-02T10:45:54.9132393Z Prepare all required actions
+2026-11-02T10:45:54.9204846Z Getting action download info
+2026-11-02T10:45:55.2983271Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-02T10:45:55.4181026Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+2026-11-02T10:45:55.4973084Z Download action repository 'actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333' (SHA:9000827ccba6bdab643e8b6fd33ac0654aef8333)
+2026-11-02T10:45:55.9020979Z Download action repository 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-11-02T10:45:56.0961150Z Complete job name: Review Storybook mobile (dark)
+2026-11-02T10:45:56.1957962Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-02T10:45:56.1959411Z with:
+2026-11-02T10:45:56.1959936Z   persist-credentials: false
+2026-11-02T10:45:56.1960634Z   repository: mxbaylee/spinel
+2026-11-02T10:45:56.1968652Z   token: ***
+2026-11-02T10:45:56.1969174Z   ssh-strict: true
+2026-11-02T10:45:56.1969709Z   ssh-user: git
+2026-11-02T10:45:56.1970205Z   clean: true
+2026-11-02T10:45:56.1970755Z   sparse-checkout-cone-mode: true
+2026-11-02T10:45:56.1971447Z   fetch-depth: 1
+2026-11-02T10:45:56.1971957Z   fetch-tags: false
+2026-11-02T10:45:56.1972501Z   show-progress: true
+2026-11-02T10:45:56.1973113Z   lfs: false
+2026-11-02T10:45:56.1973612Z   submodules: false
+2026-11-02T10:45:56.1974171Z   set-safe-directory: true
+2026-11-02T10:45:56.1974845Z   allow-unsafe-pr-checkout: false
+2026-11-02T10:45:56.1975828Z ##[endgroup]
+2026-11-02T10:45:56.4630982Z Syncing repository: mxbaylee/spinel
+2026-11-02T10:45:56.4634085Z ##[group]Getting Git version info
+2026-11-02T10:45:56.4635496Z Working directory is '/home/runner/work/spinel/spinel'
+2026-11-02T10:45:56.4637686Z [command]/usr/bin/git version
+2026-11-02T10:45:56.4700535Z git version 2.56.0
+2026-11-02T10:45:56.4729159Z ##[endgroup]
+2026-11-02T10:45:56.4740671Z Temporarily overriding HOME='/home/runner/work/_temp/827f0eeb-a8b3-4c9d-9924-94238b577cd0' before making global git config changes
+2026-11-02T10:45:56.4745543Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-02T10:45:56.4749632Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-02T10:45:56.4802514Z Deleting the contents of '/home/runner/work/spinel/spinel'
+2026-11-02T10:45:56.4807093Z ##[group]Determining repository object format
+2026-11-02T10:45:56.4810345Z ##[endgroup]
+2026-11-02T10:45:56.4813128Z ##[group]Initializing the repository
+2026-11-02T10:45:56.4815685Z [command]/usr/bin/git init /home/runner/work/spinel/spinel
+2026-11-02T10:45:56.4925643Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-02T10:45:56.4928112Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-02T10:45:56.4930096Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-02T10:45:56.4931660Z hint: call:
+2026-11-02T10:45:56.4932525Z hint:
+2026-11-02T10:45:56.4933574Z hint: 	git config --global init.defaultBranch <name>
+2026-11-02T10:45:56.4934878Z hint:
+2026-11-02T10:45:56.4936105Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-02T10:45:56.4938337Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-02T10:45:56.4939923Z hint:
+2026-11-02T10:45:56.4940811Z hint: 	git branch -m <name>
+2026-11-02T10:45:56.4941827Z hint:
+2026-11-02T10:45:56.4943157Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-02T10:45:56.4957759Z Initialized empty Git repository in /home/runner/work/spinel/spinel/.git/
+2026-11-02T10:45:56.4971764Z [command]/usr/bin/git remote add origin https://github.com/mxbaylee/spinel
+2026-11-02T10:45:56.5040206Z ##[endgroup]
+2026-11-02T10:45:56.5042559Z ##[group]Disabling automatic garbage collection
+2026-11-02T10:45:56.5044826Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-02T10:45:56.5179111Z ##[endgroup]
+2026-11-02T10:45:56.5181268Z ##[group]Setting up auth
+2026-11-02T10:45:56.5182584Z Removing SSH command configuration
+2026-11-02T10:45:56.5184113Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-02T10:45:56.5191107Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-02T10:45:56.5600511Z Removing HTTP extra header
+2026-11-02T10:45:56.5609402Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-02T10:45:56.5664142Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-02T10:45:56.5902742Z Removing includeIf entries pointing to credentials config files
+2026-11-02T10:45:56.5909858Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-02T10:45:56.5958242Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-02T10:45:56.6203480Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-1b29bf7c-8f05-41b3-89ff-6decbec19103.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-02T10:45:56.6252588Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git.path /home/runner/work/_temp/git-credentials-1b29bf7c-8f05-41b3-89ff-6decbec19103.config
+2026-11-02T10:45:56.6296960Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-1b29bf7c-8f05-41b3-89ff-6decbec19103.config
+2026-11-02T10:45:56.6341615Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-1b29bf7c-8f05-41b3-89ff-6decbec19103.config
+2026-11-02T10:45:56.6387477Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-1b29bf7c-8f05-41b3-89ff-6decbec19103.config
+2026-11-02T10:45:56.6429364Z ##[endgroup]
+2026-11-02T10:45:56.6431158Z ##[group]Fetching the repository
+2026-11-02T10:45:56.6436676Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +3ddf9dcb01807ce23a78118a9a7c45f7fd164d14:refs/remotes/pull/226/merge
+2026-11-02T10:46:00.7694013Z From https://github.com/mxbaylee/spinel
+2026-11-02T10:46:00.7696166Z  * [new ref]         3ddf9dcb01807ce23a78118a9a7c45f7fd164d14 -> pull/226/merge
+2026-11-02T10:46:00.7699017Z ##[endgroup]
+2026-11-02T10:46:00.7699606Z ##[group]Determining the checkout info
+2026-11-02T10:46:00.7700368Z ##[endgroup]
+2026-11-02T10:46:00.7705421Z [command]/usr/bin/git sparse-checkout disable
+2026-11-02T10:46:00.7767990Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-02T10:46:00.7808916Z ##[group]Checking out the ref
+2026-11-02T10:46:00.7813519Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/226/merge
+2026-11-02T10:46:01.2861495Z Note: switching to 'refs/remotes/pull/226/merge'.
+2026-11-02T10:46:01.2862060Z 
+2026-11-02T10:46:01.2862534Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-11-02T10:46:01.2863492Z changes and commit them, and you can discard any commits you make in this
+2026-11-02T10:46:01.2864520Z state without impacting any branches by switching back to a branch.
+2026-11-02T10:46:01.2865155Z 
+2026-11-02T10:46:01.2867726Z If you want to create a new branch to retain commits you create, you may
+2026-11-02T10:46:01.2868719Z do so (now or later) by using -c with the switch command. Example:
+2026-11-02T10:46:01.2869281Z 
+2026-11-02T10:46:01.2869534Z   git switch -c <new-branch-name>
+2026-11-02T10:46:01.2869926Z 
+2026-11-02T10:46:01.2870186Z Or undo this operation with:
+2026-11-02T10:46:01.2870571Z 
+2026-11-02T10:46:01.2870807Z   git switch -
+2026-11-02T10:46:01.2871116Z 
+2026-11-02T10:46:01.2871568Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-11-02T10:46:01.2872234Z 
+2026-11-02T10:46:01.2872921Z HEAD is now at 3ddf9dc Merge c51458573f3a2cf2f5ff3701cf27abfcfe035935 into cc8364693791d981b86e80efc40bedba7fff2c08
+2026-11-02T10:46:01.2896084Z ##[endgroup]
+2026-11-02T10:46:01.2959117Z [command]/usr/bin/git log -1 --format=%H
+2026-11-02T10:46:01.2998257Z 3ddf9dcb01807ce23a78118a9a7c45f7fd164d14
+2026-11-02T10:46:01.3009071Z ##[group]Removing auth
+2026-11-02T10:46:01.3009693Z Removing SSH command configuration
+2026-11-02T10:46:01.3014700Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-02T10:46:01.3061560Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-02T10:46:01.3305263Z Removing HTTP extra header
+2026-11-02T10:46:01.3309203Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-02T10:46:01.3352222Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-02T10:46:01.3592469Z Removing includeIf entries pointing to credentials config files
+2026-11-02T10:46:01.3596020Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-02T10:46:01.3635400Z includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-02T10:46:01.3636696Z includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-02T10:46:01.3637281Z includeif.gitdir:/github/workspace/.git.path
+2026-11-02T10:46:01.3637810Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-02T10:46:01.3645485Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-02T10:46:01.3680517Z /home/runner/work/_temp/git-credentials-1b29bf7c-8f05-41b3-89ff-6decbec19103.config
+2026-11-02T10:46:01.3692766Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-1b29bf7c\-8f05\-41b3\-89ff\-6decbec19103\.config
+2026-11-02T10:46:01.3744147Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-02T10:46:01.3778586Z /home/runner/work/_temp/git-credentials-1b29bf7c-8f05-41b3-89ff-6decbec19103.config
+2026-11-02T10:46:01.3787570Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-1b29bf7c\-8f05\-41b3\-89ff\-6decbec19103\.config
+2026-11-02T10:46:01.3837867Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-02T10:46:01.3872136Z /github/runner_temp/git-credentials-1b29bf7c-8f05-41b3-89ff-6decbec19103.config
+2026-11-02T10:46:01.3880408Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-1b29bf7c\-8f05\-41b3\-89ff\-6decbec19103\.config
+2026-11-02T10:46:01.3929331Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-02T10:46:01.3965813Z /github/runner_temp/git-credentials-1b29bf7c-8f05-41b3-89ff-6decbec19103.config
+2026-11-02T10:46:01.3974930Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-1b29bf7c\-8f05\-41b3\-89ff\-6decbec19103\.config
+2026-11-02T10:46:01.4021643Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-02T10:46:01.4282766Z Removing credentials config '/home/runner/work/_temp/git-credentials-1b29bf7c-8f05-41b3-89ff-6decbec19103.config'
+2026-11-02T10:46:01.4293005Z ##[endgroup]
+2026-11-02T10:46:01.4605476Z ##[group]Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+2026-11-02T10:46:01.4605875Z with:
+2026-11-02T10:46:01.4606079Z   node-version-file: .nvmrc
+2026-11-02T10:46:01.4606627Z   package-manager-cache: false
+2026-11-02T10:46:01.4606892Z   check-latest: false
+2026-11-02T10:46:01.4609264Z   token: ***
+2026-11-02T10:46:01.4609468Z ##[endgroup]
+2026-11-02T10:46:01.5879715Z Node version file is not JSON file
+2026-11-02T10:46:01.5885083Z Node version file is not TOML file
+2026-11-02T10:46:01.5885738Z Resolved .nvmrc as 26.12.1
+2026-11-02T10:46:01.5904847Z Attempting to download 26.12.1...
+2026-11-02T10:46:02.2549247Z Acquiring 26.12.1 - x64 from https://github.com/actions/node-versions/releases/download/26.12.1-39618969937/node-26.12.1-linux-x64.tar.gz
+2026-11-02T10:46:02.7597328Z Extracting ...
+2026-11-02T10:46:02.7736618Z [command]/usr/bin/tar xz --strip 1 --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/84327aad-3008-4bb9-9371-e02ef9d95138 -f /home/runner/work/_temp/42d0f8da-49bf-4076-8b3e-8335d36ba03f
+2026-11-02T10:46:04.1027931Z Adding to the cache ...
+2026-11-02T10:46:05.8767340Z ##[group]Environment details
+2026-11-02T10:46:06.1017049Z node: v26.12.1
+2026-11-02T10:46:06.1017311Z npm: 11.20.0
+2026-11-02T10:46:06.1017508Z yarn: 1.22.22
+2026-11-02T10:46:06.1017971Z ##[endgroup]
+2026-11-02T10:46:06.1209622Z ##[group]Run npm ci --no-audit
+2026-11-02T10:46:06.1209992Z [36;1mnpm ci --no-audit[0m
+2026-11-02T10:46:06.1236033Z shell: /usr/bin/bash -e {0}
+2026-11-02T10:46:06.1236602Z ##[endgroup]
+2026-11-02T10:46:19.1303576Z 
+2026-11-02T10:46:19.1322374Z > postinstall
+2026-11-02T10:46:19.1324721Z > node scripts/dependencies/patch-univer-core.ts && node scripts/dependencies/patch-univer-docs.ts && node scripts/dependencies/patch-univer-ui.ts && node scripts/dependencies/patch-univer-drawing.ts && node scripts/dependencies/patch-univer-docs-ui.ts
+2026-11-02T10:46:19.1326729Z 
+2026-11-02T10:46:19.7444822Z 
+2026-11-02T10:46:19.7445605Z added 501 packages in 14s
+2026-11-02T10:46:19.7459600Z 
+2026-11-02T10:46:19.7460042Z 136 packages are looking for funding
+2026-11-02T10:46:19.7460608Z   run `npm fund` for details
+2026-11-02T10:46:19.7466704Z npm warn install-scripts 2 packages have install scripts not yet covered by allowScripts:
+2026-11-02T10:46:19.7468472Z npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+2026-11-02T10:46:19.7469688Z npm warn install-scripts   protobufjs@7.6.6 (postinstall: node scripts/postinstall)
+2026-11-02T10:46:19.7470570Z npm warn install-scripts
+2026-11-02T10:46:19.7471664Z npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+2026-11-02T10:46:19.8329425Z ##[group]Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+2026-11-02T10:46:19.8330132Z with:
+2026-11-02T10:46:19.8330448Z   name: storybook-review
+2026-11-02T10:46:19.8330827Z   path: storybook-static
+2026-11-02T10:46:19.8331198Z   merge-multiple: false
+2026-11-02T10:46:19.8331571Z   repository: mxbaylee/spinel
+2026-11-02T10:46:19.8331957Z   run-id: 41430568554
+2026-11-02T10:46:19.8332304Z   skip-decompress: false
+2026-11-02T10:46:19.8332666Z   digest-mismatch: error
+2026-11-02T10:46:19.8333039Z ##[endgroup]
+2026-11-02T10:46:19.9806832Z Downloading single artifact
+2026-11-02T10:46:20.2521581Z Preparing to download the following artifacts:
+2026-11-02T10:46:20.2523268Z - storybook-review (ID: 13133923619, Size: 6187018, Expected Digest: sha256:2bef1896d349fc3c4b4556ddb48b74edb424d4e4bc4adebd18a9d01399a77bdb)
+2026-11-02T10:46:20.7812849Z Redirecting to blob download url: https://productionresultssa19.blob.core.windows.net/actions-results/e0ddcda3-6f08-8671-9ae6-d000f27ff5d6/workflow-job-run-27f22d8a-d772-51a2-85aa-44afbe74e539/artifacts/6d6f95fa8818aa5a4d3992582123d79edf1dc1dd62acffb1044992f9a9ee0802.zip
+2026-11-02T10:46:20.7815557Z Starting download of artifact to: /home/runner/work/spinel/spinel/storybook-static
+2026-11-02T10:46:21.2044265Z (node:2555) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+2026-11-02T10:46:21.2046035Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-02T10:46:22.4016048Z SHA256 digest of downloaded artifact is 2bef1896d349fc3c4b4556ddb48b74edb424d4e4bc4adebd18a9d01399a77bdb
+2026-11-02T10:46:22.4017448Z Artifact download completed successfully.
+2026-11-02T10:46:22.4018094Z Total of 1 artifact(s) downloaded
+2026-11-02T10:46:22.4024524Z Download artifact has finished successfully
+2026-11-02T10:46:22.4498985Z ##[group]Run node scripts/ci/prefer-ubuntu-archive.ts
+2026-11-02T10:46:22.4499502Z [36;1mnode scripts/ci/prefer-ubuntu-archive.ts[0m
+2026-11-02T10:46:22.4499958Z [36;1mnpx playwright install --with-deps chromium[0m
+2026-11-02T10:46:22.4545809Z shell: /usr/bin/bash -e {0}
+2026-11-02T10:46:22.4546088Z ##[endgroup]
+2026-11-02T10:46:22.5805888Z Preferred the official Ubuntu archive; Azure remains the fallback.
+2026-11-02T10:46:23.3794732Z Installing dependencies...
+2026-11-02T10:46:23.3947431Z Switching to root user to install dependencies...
+2026-11-02T10:46:23.6228242Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-11-02T10:46:23.6594196Z Get:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+2026-11-02T10:46:23.7344847Z Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [682 kB]
+2026-11-02T10:46:23.7477752Z Get:8 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [617 kB]
+2026-11-02T10:46:24.5022334Z Hit:2 https://archive.ubuntu.com/ubuntu noble InRelease
+2026-11-02T10:46:24.6491601Z Get:3 https://archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+2026-11-02T10:46:25.1629692Z Get:4 https://archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+2026-11-02T10:46:25.3923439Z Get:5 https://archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+2026-11-02T10:46:25.6092534Z Get:9 https://archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1408 kB]
+2026-11-02T10:46:26.2020222Z Get:10 https://archive.ubuntu.com/ubuntu noble-updates/main Translation-en [311 kB]
+2026-11-02T10:46:26.3586491Z Get:11 https://archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1707 kB]
+2026-11-02T10:46:26.6123099Z Get:12 https://archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [343 kB]
+2026-11-02T10:46:26.7661682Z Get:13 https://archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [1813 kB]
+2026-11-02T10:46:26.9965470Z Get:14 https://archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [412 kB]
+2026-11-02T10:46:27.1507116Z Get:15 https://archive.ubuntu.com/ubuntu noble-updates/multiverse Translation-en [14.3 kB]
+2026-11-02T10:46:27.2878575Z Get:16 https://archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1146 kB]
+2026-11-02T10:46:27.4749974Z Get:17 https://archive.ubuntu.com/ubuntu noble-security/main Translation-en [231 kB]
+2026-11-02T10:46:27.6213042Z Get:18 https://archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1223 kB]
+2026-11-02T10:46:27.8119816Z Get:19 https://archive.ubuntu.com/ubuntu noble-security/universe Translation-en [246 kB]
+2026-11-02T10:46:30.0877452Z Fetched 10.5 MB in 4s (2461 kB/s)
+2026-11-02T10:46:31.1088838Z Reading package lists...
+2026-11-02T10:46:31.1392907Z Reading package lists...
+2026-11-02T10:46:31.3288295Z Building dependency tree...
+2026-11-02T10:46:31.3295852Z Reading state information...
+2026-11-02T10:46:31.4629462Z libasound2t64 is already the newest version (1.2.11-1ubuntu0.3).
+2026-11-02T10:46:31.4630456Z libasound2t64 set to manually installed.
+2026-11-02T10:46:31.4631412Z libatk-bridge2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-11-02T10:46:31.4632349Z libatk-bridge2.0-0t64 set to manually installed.
+2026-11-02T10:46:31.4633132Z libatk1.0-0t64 is already the newest version (2.52.0-1build1).
+2026-11-02T10:46:31.4633813Z libatk1.0-0t64 set to manually installed.
+2026-11-02T10:46:31.4634517Z libatspi2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-11-02T10:46:31.4635062Z libatspi2.0-0t64 set to manually installed.
+2026-11-02T10:46:31.4635497Z libcairo2 is already the newest version (1.18.0-3build1).
+2026-11-02T10:46:31.4635902Z libcairo2 set to manually installed.
+2026-11-02T10:46:31.4636708Z libcups2t64 is already the newest version (2.4.7-1.2ubuntu7.14).
+2026-11-02T10:46:31.4637366Z libcups2t64 set to manually installed.
+2026-11-02T10:46:31.4638044Z libdbus-1-3 is already the newest version (1.14.10-4ubuntu4.1).
+2026-11-02T10:46:31.4639306Z libdbus-1-3 set to manually installed.
+2026-11-02T10:46:31.4640074Z libdrm2 is already the newest version (2.4.125-1ubuntu0.1~24.04.2).
+2026-11-02T10:46:31.4640821Z libdrm2 set to manually installed.
+2026-11-02T10:46:31.4641547Z libgbm1 is already the newest version (25.2.8-0ubuntu0.24.04.4).
+2026-11-02T10:46:31.4642266Z libgbm1 set to manually installed.
+2026-11-02T10:46:31.4643072Z libglib2.0-0t64 is already the newest version (2.80.0-6ubuntu3.10).
+2026-11-02T10:46:31.4643869Z libglib2.0-0t64 set to manually installed.
+2026-11-02T10:46:31.4644690Z libnspr4 is already the newest version (2:4.35-1.1build1).
+2026-11-02T10:46:31.4645418Z libnspr4 set to manually installed.
+2026-11-02T10:46:31.4646156Z libnss3 is already the newest version (2:3.98-1ubuntu0.3).
+2026-11-02T10:46:31.4647139Z libnss3 set to manually installed.
+2026-11-02T10:46:31.4647900Z libpango-1.0-0 is already the newest version (1.52.1+ds-1build1).
+2026-11-02T10:46:31.4648666Z libpango-1.0-0 set to manually installed.
+2026-11-02T10:46:31.4649456Z libx11-6 is already the newest version (2:1.8.7-1ubuntu0.1).
+2026-11-02T10:46:31.4650168Z libx11-6 set to manually installed.
+2026-11-02T10:46:31.4650837Z libxcb1 is already the newest version (1.15-1ubuntu2).
+2026-11-02T10:46:31.4651514Z libxcb1 set to manually installed.
+2026-11-02T10:46:31.4652264Z libxcomposite1 is already the newest version (1:0.4.5-1build3).
+2026-11-02T10:46:31.4653030Z libxcomposite1 set to manually installed.
+2026-11-02T10:46:31.4653822Z libxdamage1 is already the newest version (1:1.1.6-1build1).
+2026-11-02T10:46:31.4654547Z libxdamage1 set to manually installed.
+2026-11-02T10:46:31.4655265Z libxext6 is already the newest version (2:1.3.4-1build2).
+2026-11-02T10:46:31.4656562Z libxext6 set to manually installed.
+2026-11-02T10:46:31.4657335Z libxfixes3 is already the newest version (1:6.0.0-2build1).
+2026-11-02T10:46:31.4658089Z libxfixes3 set to manually installed.
+2026-11-02T10:46:31.4658871Z libxkbcommon0 is already the newest version (1.6.0-1build1).
+2026-11-02T10:46:31.4659656Z libxkbcommon0 set to manually installed.
+2026-11-02T10:46:31.4660445Z libxrandr2 is already the newest version (2:1.5.2-2build1).
+2026-11-02T10:46:31.4661176Z libxrandr2 set to manually installed.
+2026-11-02T10:46:31.4661931Z xvfb is already the newest version (2:21.1.12-1ubuntu1.9).
+2026-11-02T10:46:31.4662979Z fonts-noto-color-emoji is already the newest version (2.047-0ubuntu0.24.04.1).
+2026-11-02T10:46:31.4664083Z libfontconfig1 is already the newest version (2.15.0-1.1ubuntu2).
+2026-11-02T10:46:31.4664900Z libfontconfig1 set to manually installed.
+2026-11-02T10:46:31.4665764Z libfreetype6 is already the newest version (2.13.2+dfsg-1ubuntu0.2).
+2026-11-02T10:46:31.4666848Z libfreetype6 set to manually installed.
+2026-11-02T10:46:31.4667619Z fonts-liberation is already the newest version (1:2.1.5-3).
+2026-11-02T10:46:31.4668367Z fonts-liberation set to manually installed.
+2026-11-02T10:46:31.4669103Z The following additional packages will be installed:
+2026-11-02T10:46:31.4669772Z   xfonts-encodings xfonts-utils
+2026-11-02T10:46:31.4670297Z Recommended packages:
+2026-11-02T10:46:31.4670789Z   fonts-ipafont-mincho fonts-tlwg-loma
+2026-11-02T10:46:31.4819114Z The following NEW packages will be installed:
+2026-11-02T10:46:31.4819892Z   fonts-freefont-ttf fonts-ipafont-gothic fonts-tlwg-loma-otf fonts-unifont
+2026-11-02T10:46:31.4824834Z   fonts-wqy-zenhei xfonts-cyrillic xfonts-encodings xfonts-scalable
+2026-11-02T10:46:31.4825511Z   xfonts-utils
+2026-11-02T10:46:31.5020098Z 0 upgraded, 9 newly installed, 0 to remove and 6 not upgraded.
+2026-11-02T10:46:31.5020838Z Need to get 21.1 MB of archives.
+2026-11-02T10:46:31.5021596Z After this operation, 79.5 MB of additional disk space will be used.
+2026-11-02T10:46:31.5022472Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-11-02T10:46:32.2491508Z Get:2 https://archive.ubuntu.com/ubuntu noble/universe amd64 fonts-ipafont-gothic all 00303-21ubuntu1 [3513 kB]
+2026-11-02T10:46:33.4071341Z Get:3 https://archive.ubuntu.com/ubuntu noble/main amd64 fonts-freefont-ttf all 20211204+svn4273-2 [5641 kB]
+2026-11-02T10:46:33.7301736Z Get:4 https://archive.ubuntu.com/ubuntu noble/universe amd64 fonts-tlwg-loma-otf all 1:0.7.3-1 [107 kB]
+2026-11-02T10:46:33.8695337Z Get:5 https://archive.ubuntu.com/ubuntu noble/universe amd64 fonts-unifont all 1:15.1.01-1build1 [2993 kB]
+2026-11-02T10:46:34.0430501Z Get:6 https://archive.ubuntu.com/ubuntu noble/universe amd64 fonts-wqy-zenhei all 0.9.45-8 [7472 kB]
+2026-11-02T10:46:34.2741239Z Get:7 https://archive.ubuntu.com/ubuntu noble/main amd64 xfonts-encodings all 1:1.0.5-0ubuntu2 [578 kB]
+2026-11-02T10:46:34.4141276Z Get:8 https://archive.ubuntu.com/ubuntu noble/main amd64 xfonts-utils amd64 1:7.7+6build3 [94.4 kB]
+2026-11-02T10:46:34.5488664Z Get:9 https://archive.ubuntu.com/ubuntu noble/universe amd64 xfonts-cyrillic all 1:1.0.5+nmu1 [384 kB]
+2026-11-02T10:46:34.6868474Z Get:10 https://archive.ubuntu.com/ubuntu noble/main amd64 xfonts-scalable all 1:1.0.3-1.3 [304 kB]
+2026-11-02T10:46:34.9557778Z Fetched 21.1 MB in 3s (6590 kB/s)
+2026-11-02T10:46:34.9811403Z Selecting previously unselected package fonts-ipafont-gothic.
+2026-11-02T10:46:35.0079510Z (Reading database ... 
+2026-11-02T10:46:35.0080091Z (Reading database ... 5%
+2026-11-02T10:46:35.0080661Z (Reading database ... 10%
+2026-11-02T10:46:35.0081228Z (Reading database ... 15%
+2026-11-02T10:46:35.0081817Z (Reading database ... 20%
+2026-11-02T10:46:35.0082629Z (Reading database ... 25%
+2026-11-02T10:46:35.0083253Z (Reading database ... 30%
+2026-11-02T10:46:35.0083588Z (Reading database ... 35%
+2026-11-02T10:46:35.0083913Z (Reading database ... 40%
+2026-11-02T10:46:35.0084378Z (Reading database ... 45%
+2026-11-02T10:46:35.0085199Z (Reading database ... 50%
+2026-11-02T10:46:35.0120933Z (Reading database ... 55%
+2026-11-02T10:46:35.1469216Z (Reading database ... 60%
+2026-11-02T10:46:35.3515823Z (Reading database ... 65%
+2026-11-02T10:46:35.5600531Z (Reading database ... 70%
+2026-11-02T10:46:35.7543115Z (Reading database ... 75%
+2026-11-02T10:46:35.9492305Z (Reading database ... 80%
+2026-11-02T10:46:36.0910836Z (Reading database ... 85%
+2026-11-02T10:46:36.2486013Z (Reading database ... 90%
+2026-11-02T10:46:36.4509719Z (Reading database ... 95%
+2026-11-02T10:46:36.4510268Z (Reading database ... 100%
+2026-11-02T10:46:36.4511053Z (Reading database ... 215504 files and directories currently installed.)
+2026-11-02T10:46:36.4550812Z Preparing to unpack .../0-fonts-ipafont-gothic_00303-21ubuntu1_all.deb ...
+2026-11-02T10:46:36.4648217Z Unpacking fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-11-02T10:46:36.7040197Z Selecting previously unselected package fonts-freefont-ttf.
+2026-11-02T10:46:36.7180226Z Preparing to unpack .../1-fonts-freefont-ttf_20211204+svn4273-2_all.deb ...
+2026-11-02T10:46:36.7188349Z Unpacking fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-11-02T10:46:36.8013739Z Selecting previously unselected package fonts-tlwg-loma-otf.
+2026-11-02T10:46:36.8154017Z Preparing to unpack .../2-fonts-tlwg-loma-otf_1%3a0.7.3-1_all.deb ...
+2026-11-02T10:46:36.8160545Z Unpacking fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-11-02T10:46:36.8386511Z Selecting previously unselected package fonts-unifont.
+2026-11-02T10:46:36.8525427Z Preparing to unpack .../3-fonts-unifont_1%3a15.1.01-1build1_all.deb ...
+2026-11-02T10:46:36.8533027Z Unpacking fonts-unifont (1:15.1.01-1build1) ...
+2026-11-02T10:46:36.9593609Z Selecting previously unselected package fonts-wqy-zenhei.
+2026-11-02T10:46:36.9735127Z Preparing to unpack .../4-fonts-wqy-zenhei_0.9.45-8_all.deb ...
+2026-11-02T10:46:36.9842677Z Unpacking fonts-wqy-zenhei (0.9.45-8) ...
+2026-11-02T10:46:37.4608860Z Selecting previously unselected package xfonts-encodings.
+2026-11-02T10:46:37.4747439Z Preparing to unpack .../5-xfonts-encodings_1%3a1.0.5-0ubuntu2_all.deb ...
+2026-11-02T10:46:37.4754125Z Unpacking xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-11-02T10:46:37.5050832Z Selecting previously unselected package xfonts-utils.
+2026-11-02T10:46:37.5188447Z Preparing to unpack .../6-xfonts-utils_1%3a7.7+6build3_amd64.deb ...
+2026-11-02T10:46:37.5196031Z Unpacking xfonts-utils (1:7.7+6build3) ...
+2026-11-02T10:46:37.5561686Z Selecting previously unselected package xfonts-cyrillic.
+2026-11-02T10:46:37.5698819Z Preparing to unpack .../7-xfonts-cyrillic_1%3a1.0.5+nmu1_all.deb ...
+2026-11-02T10:46:37.5705294Z Unpacking xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-11-02T10:46:37.6042600Z Selecting previously unselected package xfonts-scalable.
+2026-11-02T10:46:37.6178613Z Preparing to unpack .../8-xfonts-scalable_1%3a1.0.3-1.3_all.deb ...
+2026-11-02T10:46:37.6184633Z Unpacking xfonts-scalable (1:1.0.3-1.3) ...
+2026-11-02T10:46:37.6631995Z Setting up fonts-wqy-zenhei (0.9.45-8) ...
+2026-11-02T10:46:37.6751246Z Setting up fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-11-02T10:46:37.6768893Z Setting up fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-11-02T10:46:37.6785080Z Setting up xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-11-02T10:46:37.6802584Z Setting up fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-11-02T10:46:37.6865540Z update-alternatives: using /usr/share/fonts/opentype/ipafont-gothic/ipag.ttf to provide /usr/share/fonts/truetype/fonts-japanese-gothic.ttf (fonts-japanese-gothic.ttf) in auto mode
+2026-11-02T10:46:37.6881194Z Setting up fonts-unifont (1:15.1.01-1build1) ...
+2026-11-02T10:46:37.6898487Z Setting up xfonts-utils (1:7.7+6build3) ...
+2026-11-02T10:46:37.6936803Z Setting up xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-11-02T10:46:37.7226684Z Setting up xfonts-scalable (1:1.0.3-1.3) ...
+2026-11-02T10:46:37.7513524Z Processing triggers for man-db (2.12.0-4build2) ...
+2026-11-02T10:46:37.7533961Z Not building database; man-db/auto-update is not 'true'.
+2026-11-02T10:46:37.7545754Z Processing triggers for fontconfig (2.15.0-1.1ubuntu2) ...
+2026-11-02T10:46:38.5049475Z 
+2026-11-02T10:46:38.5050073Z Running kernel seems to be up-to-date.
+2026-11-02T10:46:38.5050499Z 
+2026-11-02T10:46:38.5050767Z No services need to be restarted.
+2026-11-02T10:46:38.5051083Z 
+2026-11-02T10:46:38.5051337Z No containers need to be restarted.
+2026-11-02T10:46:38.5051673Z 
+2026-11-02T10:46:38.5052022Z No user sessions are running outdated binaries.
+2026-11-02T10:46:38.5052409Z 
+2026-11-02T10:46:38.5052899Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+2026-11-02T10:46:39.3593599Z Downloading Chrome for Testing 156.0.8078.4 (playwright chromium v1248) from https://cdn.playwright.dev/builds/cft/156.0.8078.4/linux64/chrome-linux64.zip
+2026-11-02T10:46:39.7835845Z |                                                                                |   0% of 191.1 MiB
+2026-11-02T10:46:39.9380271Z |■■■■■■■■                                                                        |  10% of 191.1 MiB
+2026-11-02T10:46:40.0198089Z |■■■■■■■■■■■■■■■■                                                                |  20% of 191.1 MiB
+2026-11-02T10:46:40.1112990Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 191.1 MiB
+2026-11-02T10:46:40.1989312Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 191.1 MiB
+2026-11-02T10:46:40.2912924Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 191.1 MiB
+2026-11-02T10:46:40.3832166Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 191.1 MiB
+2026-11-02T10:46:40.4793620Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 191.1 MiB
+2026-11-02T10:46:40.5622747Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 191.1 MiB
+2026-11-02T10:46:40.6453894Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 191.1 MiB
+2026-11-02T10:46:40.7307480Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 191.1 MiB
+2026-11-02T10:46:43.9030959Z Chrome for Testing 156.0.8078.4 (playwright chromium v1248) downloaded to /home/runner/.cache/ms-playwright/chromium-1248
+2026-11-02T10:46:43.9034739Z Downloading FFmpeg (playwright ffmpeg v1013) from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1013/ffmpeg-linux.zip
+2026-11-02T10:46:44.2529197Z |                                                                                |   0% of 2.2 MiB
+2026-11-02T10:46:44.2574675Z |■■■■■■■■                                                                        |  10% of 2.2 MiB
+2026-11-02T10:46:44.2592647Z |■■■■■■■■■■■■■■■■                                                                |  20% of 2.2 MiB
+2026-11-02T10:46:44.2604719Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.2 MiB
+2026-11-02T10:46:44.2623129Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.2 MiB
+2026-11-02T10:46:44.2636900Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.2 MiB
+2026-11-02T10:46:44.2656818Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.2 MiB
+2026-11-02T10:46:44.2672968Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.2 MiB
+2026-11-02T10:46:44.2691429Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.2 MiB
+2026-11-02T10:46:44.2701312Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.2 MiB
+2026-11-02T10:46:44.2721805Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.2 MiB
+2026-11-02T10:46:44.3289653Z FFmpeg (playwright ffmpeg v1013) downloaded to /home/runner/.cache/ms-playwright/ffmpeg-1013
+2026-11-02T10:46:44.3292710Z Downloading Chrome Headless Shell 156.0.8078.4 (playwright chromium-headless-shell v1248) from https://cdn.playwright.dev/builds/cft/156.0.8078.4/linux64/chrome-headless-shell-linux64.zip
+2026-11-02T10:46:44.7601725Z |                                                                                |   0% of 120 MiB
+2026-11-02T10:46:44.9039606Z |■■■■■■■■                                                                        |  10% of 120 MiB
+2026-11-02T10:46:44.9562795Z |■■■■■■■■■■■■■■■■                                                                |  20% of 120 MiB
+2026-11-02T10:46:45.0363708Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 120 MiB
+2026-11-02T10:46:45.1187314Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 120 MiB
+2026-11-02T10:46:45.1771314Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 120 MiB
+2026-11-02T10:46:45.2448987Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 120 MiB
+2026-11-02T10:46:45.3180186Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 120 MiB
+2026-11-02T10:46:45.3961712Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 120 MiB
+2026-11-02T10:46:45.4437095Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 120 MiB
+2026-11-02T10:46:45.5289773Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 120 MiB
+2026-11-02T10:46:47.8603259Z Chrome Headless Shell 156.0.8078.4 (playwright chromium-headless-shell v1248) downloaded to /home/runner/.cache/ms-playwright/chromium_headless_shell-1248
+2026-11-02T10:46:47.8928729Z ##[group]Run read -r -a stories <<< "$STORY_IDS"
+2026-11-02T10:46:47.8929135Z [36;1mread -r -a stories <<< "$STORY_IDS"[0m
+2026-11-02T10:46:47.8929426Z [36;1moptions=()[0m
+2026-11-02T10:46:47.8929778Z [36;1mif [ "$CAPTURE_SCREENSHOTS" = false ]; then options+=(--no-screenshots); fi[0m
+2026-11-02T10:46:47.8930615Z [36;1mnpm run screenshots -- --viewport mobile --theme "$MOBILE_THEME" "${options[@]}" "${stories[@]}"[0m
+2026-11-02T10:46:47.8950856Z shell: /usr/bin/bash -e {0}
+2026-11-02T10:46:47.8951106Z env:
+2026-11-02T10:46:47.8951291Z   STORY_IDS: 
+2026-11-02T10:46:47.8951497Z   MOBILE_THEME: dark
+2026-11-02T10:46:47.8951717Z   CAPTURE_SCREENSHOTS: true
+2026-11-02T10:46:47.8951949Z ##[endgroup]
+2026-11-02T10:46:47.9899760Z 
+2026-11-02T10:46:47.9900202Z > screenshots
+2026-11-02T10:46:47.9900874Z > node scripts/screenshots.ts --viewport mobile --theme dark
+2026-11-02T10:46:47.9901191Z 
+2026-11-02T10:46:48.5375855Z [33m
+2026-11-02T10:46:48.5378018Z (!) build.outDir must not be the same directory of root or a parent directory of root as this could cause Vite to overwriting source files with build outputs.
+2026-11-02T10:46:48.5379469Z [39m
+2026-11-02T10:46:48.8397593Z Review phone-dark: shell-gemlogo--rail
+2026-11-02T10:46:49.2940074Z Review phone-dark: shell-gemlogo--large
+2026-11-02T10:46:49.5601874Z Review phone-dark: shell-gemlogo--tap-replay
+2026-11-02T10:46:49.8601693Z Review phone-dark: settings-themesettings--default
+2026-11-02T10:46:50.1792501Z Review phone-dark: settings-themesettings--follow-system
+2026-11-02T10:46:50.4625916Z Review phone-dark: settings-themesettings--storage-blocked
+2026-11-02T10:46:50.8000230Z Review phone-dark: redesign-appearance--playground-story
+2026-11-02T10:46:52.3138317Z Review phone-dark: redesign-appearance--gems-light-and-dark
+2026-11-02T10:46:53.0072125Z Review phone-dark: redesign-controls--default
+2026-11-02T10:46:53.3466569Z Review phone-dark: redesign-controls--disabled
+2026-11-02T10:46:53.6136756Z Review phone-dark: redesign-controls--error
+2026-11-02T10:46:53.8804828Z Review phone-dark: redesign-controls--long-modal-title
+2026-11-02T10:46:54.3485514Z Review phone-dark: redesign-theme-control--default
+2026-11-02T10:46:54.6096398Z Review phone-dark: redesign-theme-control--storage-blocked
+2026-11-02T10:46:54.9778299Z Review phone-dark: redesign-theme-control--dismiss-storage-warning
+2026-11-02T10:46:55.3600548Z Review phone-dark: sharing-access-details--inherited-folder
+2026-11-02T10:46:55.6303861Z Review phone-dark: sharing-access-details--direct-share
+2026-11-02T10:46:55.9137059Z Review phone-dark: sharing-access-details--space-through-folder
+2026-11-02T10:46:56.1811527Z Review phone-dark: sharing-access-details--space-direct
+2026-11-02T10:46:56.4476872Z Review phone-dark: sharing-access-details--owner
+2026-11-02T10:46:56.6967571Z Review phone-dark: sharing-access-details--file-admin
+2026-11-02T10:46:56.9470019Z Review phone-dark: sharing-access-details--long-names
+2026-11-02T10:46:57.1997443Z Review phone-dark: sharing-access-details--loading
+2026-11-02T10:46:57.4469158Z Review phone-dark: sharing-access-details--unavailable
+2026-11-02T10:46:57.7472641Z Review phone-dark: sharing-access-details--revoked-while-open
+2026-11-02T10:46:58.0806649Z Review phone-dark: current-production-guest-accessstate--revoked
+2026-11-02T10:46:58.5452507Z Review phone-dark: current-production-guest-accessstate--revoked-with-unsaved-input
+2026-11-02T10:46:58.7786579Z Review phone-dark: current-production-guest-accessstate--loading
+2026-11-02T10:46:59.1779248Z Review phone-dark: current-production-guest-accessstate--unsupported-browser
+2026-11-02T10:46:59.5953749Z Review phone-dark: current-production-guest-accessstate--offline
+2026-11-02T10:46:59.9952700Z Review phone-dark: current-production-guest-accessstate--missing-guest-page
+2026-11-02T10:47:00.3951281Z Review phone-dark: current-production-guest-accessstate--missing-account-file
+2026-11-02T10:47:00.6275087Z Review phone-dark: current-production-guest-accessstate--retry
+2026-11-02T10:47:00.9283458Z Review phone-dark: settings-accesstokens--loaded
+2026-11-02T10:47:01.1672242Z Review phone-dark: settings-accesstokens--empty
+2026-11-02T10:47:01.3988054Z Review phone-dark: settings-accesstokens--loading
+2026-11-02T10:47:01.6317882Z Review phone-dark: settings-accesstokens--load-failed
+2026-11-02T10:47:01.8820334Z Review phone-dark: settings-accesstokens--creating
+2026-11-02T10:47:02.3541902Z Review phone-dark: settings-accesstokens--created
+2026-11-02T10:47:02.8253954Z Review phone-dark: settings-accesstokens--create-failed
+2026-11-02T10:47:03.3009417Z Review phone-dark: settings-accesstokens--revoking
+2026-11-02T10:47:03.5997809Z Review phone-dark: settings-accesstokens--revoked
+2026-11-02T10:47:03.9006149Z Review phone-dark: settings-accesstokens--revoke-failed
+2026-11-02T10:47:04.1837876Z Review phone-dark: settings-accesstokens--active-limit
+2026-11-02T10:47:04.4935716Z Review phone-dark: settings-accesstokens--previously-used
+2026-11-02T10:47:04.8057647Z Review phone-dark: settings-accesstokens--copied
+2026-11-02T10:47:05.3886116Z Review phone-dark: settings-accesstokens--manual-copy
+2026-11-02T10:47:05.9396976Z Review phone-dark: account-access-changed--locked
+2026-11-02T10:47:06.3127532Z Review phone-dark: account-access-changed--phone
+2026-11-02T10:47:06.6333242Z Review phone-dark: account-exit--pending-changes
+2026-11-02T10:47:06.9154165Z Review phone-dark: account-exit--checking
+2026-11-02T10:47:07.1970714Z Review phone-dark: account-exit--counts-unavailable
+2026-11-02T10:47:07.4814358Z Review phone-dark: account-exit--confirmed-pending-changes
+2026-11-02T10:47:07.7301636Z Review phone-dark: account-exit--kept-while-offline
+2026-11-02T10:47:08.0477140Z Review phone-dark: account-exit--retry-confirmed
+2026-11-02T10:47:08.3464368Z Review phone-dark: account-exit--not-queued
+2026-11-02T10:47:08.6142446Z Review phone-dark: account-exit--unrecognized-exit
+2026-11-02T10:47:08.8810531Z Review phone-dark: account-exit--waiting-for-another-sign-in
+2026-11-02T10:47:09.1323728Z Review phone-dark: account-exit--delete-confirmation
+2026-11-02T10:47:09.4511152Z Review phone-dark: account-exit--cancel-deletion
+2026-11-02T10:47:09.8645652Z Review phone-dark: account-exit--deleted
+2026-11-02T10:47:10.2462085Z Review phone-dark: account-exit--deletion-refused
+2026-11-02T10:47:10.5687163Z Review phone-dark: account-exit--phone
+2026-11-02T10:47:10.8482672Z Review phone-dark: admin-accesstokens--loaded
+2026-11-02T10:47:11.0804077Z Review phone-dark: admin-accesstokens--empty
+2026-11-02T10:47:11.3104375Z Review phone-dark: admin-accesstokens--loading
+2026-11-02T10:47:11.5605907Z Review phone-dark: admin-accesstokens--load-failed
+2026-11-02T10:47:11.7941378Z Review phone-dark: admin-account-recovery--disabled-accounts
+2026-11-02T10:47:12.1530910Z Review phone-dark: admin-account-recovery--confirm-reactivation
+2026-11-02T10:47:12.6915650Z Review phone-dark: admin-account-recovery--disabled-admin-reactivation
+2026-11-02T10:47:13.1420314Z Review phone-dark: admin-account-recovery--reactivation-pending
+2026-11-02T10:47:13.6578880Z Review phone-dark: admin-account-recovery--reactivation-failed
+2026-11-02T10:47:14.1594042Z Review phone-dark: admin-account-recovery--reactivation-readback-failed
+2026-11-02T10:47:14.6767963Z Review phone-dark: admin-account-recovery--reactivation-committed-warning
+2026-11-02T10:47:15.1754983Z Review phone-dark: admin-account-recovery--reactivated
+2026-11-02T10:47:15.7160248Z Review phone-dark: admin-account-recovery--transfer-loading
+2026-11-02T10:47:16.1566527Z Review phone-dark: admin-account-recovery--transfer-load-failed
+2026-11-02T10:47:16.6228377Z Review phone-dark: admin-account-recovery--retry-transfer-load
+2026-11-02T10:47:17.1759180Z Review phone-dark: admin-account-recovery--transfer-ready
+2026-11-02T10:47:17.6923406Z Review phone-dark: admin-account-recovery--transfer-recipient-chosen
+2026-11-02T10:47:18.3248877Z Review phone-dark: admin-account-recovery--transfer-no-recipients
+2026-11-02T10:47:18.7765820Z Review phone-dark: admin-account-recovery--transfer-nothing-owned
+2026-11-02T10:47:19.2745091Z Review phone-dark: admin-account-recovery--transfer-pending
+2026-11-02T10:47:19.9915489Z Review phone-dark: admin-account-recovery--transfer-failed
+2026-11-02T10:47:20.6753100Z Review phone-dark: admin-account-recovery--transfer-readback-failed
+2026-11-02T10:47:21.3569807Z Review phone-dark: admin-account-recovery--transfer-stale
+2026-11-02T10:47:22.0580483Z Review phone-dark: admin-account-recovery--transfer-committed-warning
+2026-11-02T10:47:22.6067324Z Review phone-dark: admin-account-recovery--transfer-unconfirmed-response
+2026-11-02T10:47:23.3058756Z Review phone-dark: admin-account-recovery--transfer-complete
+2026-11-02T10:47:24.0544227Z Review phone-dark: admin-account-recovery--retry-transfer
+2026-11-02T10:47:24.8870877Z Review phone-dark: admin-account-recovery--long-account-names
+2026-11-02T10:47:25.5106880Z Review phone-dark: admin-account-recovery--duplicate-account-names
+2026-11-02T10:47:26.1320902Z Review phone-dark: admin-account-recovery--duplicate-name-target-submitted
+2026-11-02T10:47:26.8438426Z Review phone-dark: admin-account-recovery--cancel-returns-focus
+2026-11-02T10:47:27.4199292Z Review phone-dark: admin-account-recovery--keyboard-recipient-choice
+2026-11-02T10:47:28.0082879Z Review phone-dark: current-production-admin-diagnostics--ready
+2026-11-02T10:47:28.2791948Z Review phone-dark: current-production-admin-diagnostics--empty
+2026-11-02T10:47:28.5291365Z Review phone-dark: current-production-admin-diagnostics--loading
+2026-11-02T10:47:28.7777940Z Review phone-dark: current-production-admin-diagnostics--unavailable
+2026-11-02T10:47:29.0283733Z Review phone-dark: current-production-admin-diagnostics--failed
+2026-11-02T10:47:29.2949987Z Review phone-dark: current-production-admin-diagnostics--expired
+2026-11-02T10:47:29.5619714Z Review phone-dark: current-production-admin-diagnostics--another-download
+2026-11-02T10:47:29.8134026Z Review phone-dark: current-production-admin-diagnostics--losses
+2026-11-02T10:47:30.1136830Z Review phone-dark: current-production-admin-diagnostics--confirmation
+2026-11-02T10:47:30.5843023Z Review phone-dark: current-production-admin-diagnostics--cancel-clear
+2026-11-02T10:47:31.1289824Z Review phone-dark: current-production-admin-diagnostics--clearing
+2026-11-02T10:47:31.6171327Z Review phone-dark: current-production-admin-diagnostics--clear-failed
+2026-11-02T10:47:32.0619485Z Review phone-dark: current-production-admin-diagnostics--changed-collection
+2026-11-02T10:47:32.5299206Z Review phone-dark: current-production-admin-diagnostics--cleared
+2026-11-02T10:47:33.0296849Z Review phone-dark: current-production-admin-diagnostics--downloading
+2026-11-02T10:47:33.3133773Z Review phone-dark: current-production-admin-diagnostics--download-cancelled
+2026-11-02T10:47:33.6626687Z Review phone-dark: current-production-admin-diagnostics--download-failed
+2026-11-02T10:47:33.9611224Z Review phone-dark: current-production-admin-diagnostics--download-ready
+2026-11-02T10:47:34.2462445Z Review phone-dark: current-production-admin-diagnostics--fresh-confirmation-required
+2026-11-02T10:47:34.9295402Z Review phone-dark: current-production-admin-diagnostics--clear-committed-readback-failed
+2026-11-02T10:47:35.3786618Z Review phone-dark: admin-admininvites--loaded
+2026-11-02T10:47:35.6290708Z Review phone-dark: admin-admininvites--loading
+2026-11-02T10:47:35.8762764Z Review phone-dark: admin-admininvites--empty
+2026-11-02T10:47:36.1255113Z Review phone-dark: admin-admininvites--recovery-invite
+2026-11-02T10:47:36.4828903Z Review phone-dark: admin-admininvites--invite-created
+2026-11-02T10:47:36.9194097Z Review phone-dark: admin-admininvites--load-failed
+2026-11-02T10:47:37.1597034Z Review phone-dark: admin-admininvites--create-failed
+2026-11-02T10:47:37.5319894Z Review phone-dark: admin-admininvites--created-but-readback-failed
+2026-11-02T10:47:37.9473241Z Review phone-dark: admin-admininvites--created-while-readback-pending
+2026-11-02T10:47:38.3804358Z Review phone-dark: admin-admininvites--revoked-but-readback-failed
+2026-11-02T10:47:38.7430437Z Review phone-dark: admin-admininvites--refresh-after-created
+2026-11-02T10:47:39.2499025Z Review phone-dark: admin-admininvites--refresh-after-revoked
+2026-11-02T10:47:39.7260727Z Review phone-dark: admin-page--people
+2026-11-02T10:47:40.0501148Z Review phone-dark: admin-page--loading
+2026-11-02T10:47:40.3440004Z Review phone-dark: admin-page--error
+2026-11-02T10:47:40.6108413Z Review phone-dark: admin-page--empty
+2026-11-02T10:47:40.8941144Z Review phone-dark: admin-page--invites
+2026-11-02T10:47:41.1614031Z Review phone-dark: admin-page--connections
+2026-11-02T10:47:41.5187570Z Review phone-dark: admin-page--health
+2026-11-02T10:47:41.9014195Z Review phone-dark: admin-page--restore-preparation-blocks-navigation
+2026-11-02T10:47:42.4855951Z Review phone-dark: admin-page--diagnostics-download-blocks-navigation
+2026-11-02T10:47:43.0855424Z Review phone-dark: admin-page--diagnostics-clear-blocks-navigation
+2026-11-02T10:47:43.7563762Z Review phone-dark: admin-page--health-warning
+2026-11-02T10:47:44.1538554Z Review phone-dark: admin-page--phone
+2026-11-02T10:47:44.4667495Z Review phone-dark: admin-page--recovery-handoff
+2026-11-02T10:47:45.0152451Z Review phone-dark: admin-page--once-only-invite
+2026-11-02T10:47:45.5953450Z Review phone-dark: admin-page--creating-invite
+2026-11-02T10:47:46.1472924Z Review phone-dark: admin-adminusers--loaded
+2026-11-02T10:47:46.4127309Z Review phone-dark: admin-adminusers--loading
+2026-11-02T10:47:46.6581834Z Review phone-dark: admin-adminusers--empty
+2026-11-02T10:47:46.9257553Z Review phone-dark: admin-adminusers--last-admin-passkey
+2026-11-02T10:47:47.4334868Z Review phone-dark: admin-adminusers--load-failed
+2026-11-02T10:47:47.7083111Z Review phone-dark: admin-adminusers--confirm-disable
+2026-11-02T10:47:48.1328958Z Review phone-dark: admin-adminusers--confirm-passkey-removal
+2026-11-02T10:47:48.6523006Z Review phone-dark: admin-adminusers--removal-failed
+2026-11-02T10:47:49.1334871Z Review phone-dark: shell-applayout--desktop
+2026-11-02T10:47:49.5871875Z Review phone-dark: shell-applayout--offline
+2026-11-02T10:47:50.0032858Z Review phone-dark: shell-applayout--reconnecting
+2026-11-02T10:47:50.4367016Z Review phone-dark: shell-applayout--tablet
+2026-11-02T10:47:50.8540900Z Review phone-dark: shell-applayout--phone
+2026-11-02T10:47:51.2702947Z Review phone-dark: settings-assistantconnections--loaded
+2026-11-02T10:47:51.5319045Z Review phone-dark: settings-assistantconnections--empty
+2026-11-02T10:47:51.7611349Z Review phone-dark: settings-assistantconnections--loading
+2026-11-02T10:47:51.9949555Z Review phone-dark: settings-assistantconnections--load-failed
+2026-11-02T10:47:52.2289172Z Review phone-dark: settings-assistantconnections--disconnecting
+2026-11-02T10:47:52.4972070Z Review phone-dark: settings-assistantconnections--disconnected
+2026-11-02T10:47:52.7806770Z Review phone-dark: settings-assistantconnections--disconnect-failed
+2026-11-02T10:47:53.0654514Z Review phone-dark: settings-assistantconnections--matching-names
+2026-11-02T10:47:53.3345246Z Review phone-dark: settings-assistantconnections--previously-used
+2026-11-02T10:47:53.5648002Z Review phone-dark: settings-assistantconnections--admin-metadata
+2026-11-02T10:47:53.7969028Z Review phone-dark: settings-assistantconnections--admin-empty
+2026-11-02T10:47:54.0262441Z Review phone-dark: settings-assistantconnections--admin-loading
+2026-11-02T10:47:54.2754682Z Review phone-dark: settings-assistantconnections--admin-load-failed
+2026-11-02T10:47:54.5096413Z Review phone-dark: account-entry--sign-in
+2026-11-02T10:47:54.7615524Z Review phone-dark: account-entry--loading
+2026-11-02T10:47:55.0272686Z Review phone-dark: account-entry--pending
+2026-11-02T10:47:55.2788447Z Review phone-dark: account-entry--finishing
+2026-11-02T10:47:55.5282149Z Review phone-dark: account-entry--cancelled
+2026-11-02T10:47:55.7944498Z Review phone-dark: account-entry--failed
+2026-11-02T10:47:56.0452679Z Review phone-dark: account-entry--unsupported-browser
+2026-11-02T10:47:56.3281132Z Review phone-dark: account-entry--unreachable
+2026-11-02T10:47:56.5770163Z Review phone-dark: account-entry--setup
+2026-11-02T10:47:56.8288249Z Review phone-dark: account-entry--setup-pending
+2026-11-02T10:47:57.0960639Z Review phone-dark: account-entry--setup-unavailable
+2026-11-02T10:47:57.3620892Z Review phone-dark: account-entry--setup-failed
+2026-11-02T10:47:57.6293957Z Review phone-dark: account-entry--invite
+2026-11-02T10:47:57.8777194Z Review phone-dark: account-entry--invite-loading
+2026-11-02T10:47:58.1600376Z Review phone-dark: account-entry--invite-unavailable
+2026-11-02T10:47:58.4112108Z Review phone-dark: account-entry--invite-pending
+2026-11-02T10:47:58.6629330Z Review phone-dark: account-entry--recovery
+2026-11-02T10:47:58.9124515Z Review phone-dark: account-entry--recovery-pending
+2026-11-02T10:47:59.1624528Z Review phone-dark: account-entry--recovery-failed
+2026-11-02T10:47:59.4461791Z Review phone-dark: account-entry--long-recovery-name
+2026-11-02T10:47:59.6963550Z Review phone-dark: account-entry--help
+2026-11-02T10:48:00.0328592Z Review phone-dark: account-entry--operator-help
+2026-11-02T10:48:00.4187700Z Review phone-dark: account-entry--help-keyboard-return
+2026-11-02T10:48:00.8277462Z Review phone-dark: account-entry--invite-then-cancel
+2026-11-02T10:48:01.2956023Z Review phone-dark: admin-backupdownloads--manual-only
+2026-11-02T10:48:01.5765532Z Review phone-dark: admin-backupdownloads--preparing
+2026-11-02T10:48:01.9157070Z Review phone-dark: admin-backupdownloads--ready
+2026-11-02T10:48:02.2449079Z Review phone-dark: admin-backupdownloads--sending-to-browser
+2026-11-02T10:48:02.5774813Z Review phone-dark: admin-backupdownloads--delivered
+2026-11-02T10:48:02.8442137Z Review phone-dark: admin-backupdownloads--cancelled
+2026-11-02T10:48:03.1107241Z Review phone-dark: admin-backupdownloads--expired
+2026-11-02T10:48:03.3606938Z Review phone-dark: admin-backupdownloads--failed
+2026-11-02T10:48:03.6436751Z Review phone-dark: admin-backupdownloads--disabled-by-policy
+2026-11-02T10:48:03.8942419Z Review phone-dark: admin-backupdownloads--ready-download-disabled
+2026-11-02T10:48:04.1625650Z Review phone-dark: admin-backupdownloads--missing-recovery-key
+2026-11-02T10:48:04.4112008Z Review phone-dark: admin-backupdownloads--loading
+2026-11-02T10:48:04.6671325Z Review phone-dark: admin-backupdownloads--status-unavailable
+2026-11-02T10:48:04.9271228Z Review phone-dark: admin-backupdownloads--fresh-passkey-required
+2026-11-02T10:48:05.2655357Z Review phone-dark: admin-backupdownloads--waiting-for-passkey
+2026-11-02T10:48:05.6819625Z Review phone-dark: admin-backupdownloads--cancel-passkey
+2026-11-02T10:48:06.1268163Z Review phone-dark: admin-backupdownloads--verification-failed
+2026-11-02T10:48:06.5329594Z Review phone-dark: admin-backupdownloads--job-contended
+2026-11-02T10:48:06.9326669Z Review phone-dark: admin-backupdownloads--saved-backups
+2026-11-02T10:48:07.2292268Z Review phone-dark: admin-backupdownloads--saved-backups-empty
+2026-11-02T10:48:07.5126498Z Review phone-dark: admin-backupdownloads--saved-backups-loading
+2026-11-02T10:48:07.8118917Z Review phone-dark: admin-backupdownloads--saved-backups-failed
+2026-11-02T10:48:08.0956039Z Review phone-dark: admin-backuprestore--available
+2026-11-02T10:48:08.3594712Z Review phone-dark: admin-backuprestore--unavailable
+2026-11-02T10:48:08.6258965Z Review phone-dark: admin-backuprestore--loading
+2026-11-02T10:48:08.8758313Z Review phone-dark: admin-backuprestore--status-failed
+2026-11-02T10:48:09.1594127Z Review phone-dark: admin-backuprestore--session-unavailable
+2026-11-02T10:48:09.4259075Z Review phone-dark: admin-backuprestore--uploading
+2026-11-02T10:48:09.6765174Z Review phone-dark: admin-backuprestore--preparing
+2026-11-02T10:48:09.9262734Z Review phone-dark: admin-backuprestore--maintenance-draining
+2026-11-02T10:48:10.2508064Z Review phone-dark: admin-backuprestore--ready
+2026-11-02T10:48:10.5659603Z Review phone-dark: admin-backuprestore--separate-recovery-volume
+2026-11-02T10:48:10.8844515Z Review phone-dark: admin-backuprestore--insufficient-disk-space
+2026-11-02T10:48:11.1633276Z Review phone-dark: admin-backuprestore--memory-headroom-refusal
+2026-11-02T10:48:11.4258566Z Review phone-dark: admin-backuprestore--confirmed-disk-shortage
+2026-11-02T10:48:11.6929365Z Review phone-dark: admin-backuprestore--small-backup
+2026-11-02T10:48:12.0524129Z Review phone-dark: admin-backuprestore--cancelled
+2026-11-02T10:48:12.3092022Z Review phone-dark: admin-backuprestore--expired
+2026-11-02T10:48:12.5923251Z Review phone-dark: admin-backuprestore--failed
+2026-11-02T10:48:12.8625947Z Review phone-dark: admin-backuprestore--admission-needs-attention
+2026-11-02T10:48:13.1593333Z Review phone-dark: admin-backuprestore--accepted
+2026-11-02T10:48:13.4089569Z Review phone-dark: admin-backuprestore--started-outcome-unconfirmed
+2026-11-02T10:48:13.6757763Z Review phone-dark: admin-backuprestore--manual-upload
+2026-11-02T10:48:14.0348515Z Review phone-dark: admin-backuprestore--saved-backups
+2026-11-02T10:48:14.5321088Z Review phone-dark: admin-backuprestore--saved-backups-empty
+2026-11-02T10:48:15.0488837Z Review phone-dark: admin-backuprestore--saved-backups-loading
+2026-11-02T10:48:15.5814087Z Review phone-dark: admin-backuprestore--saved-backups-failed
+2026-11-02T10:48:16.0150154Z Review phone-dark: admin-backuprestore--confirmation-review
+2026-11-02T10:48:16.4181164Z Review phone-dark: admin-backuprestore--full-confirmation
+2026-11-02T10:48:16.8683671Z Review phone-dark: admin-backuprestore--waiting-for-passkey
+2026-11-02T10:48:17.3690143Z Review phone-dark: admin-backuprestore--cancel-verification
+2026-11-02T10:48:17.9324408Z Review phone-dark: admin-backuprestore--verification-failed
+2026-11-02T10:48:18.4517969Z Review phone-dark: admin-backuprestore--recording-confirmation
+2026-11-02T10:48:18.9339853Z Review phone-dark: admin-backuprestore--expired-original-confirmation
+2026-11-02T10:48:19.3757712Z Review phone-dark: admin-backuprestore--backup-restored
+2026-11-02T10:48:19.6616915Z Review phone-dark: admin-backuprestore--original-recovered
+2026-11-02T10:48:19.9453455Z Review phone-dark: admin-backuprestore--did-not-start
+2026-11-02T10:48:20.2451426Z Review phone-dark: admin-backuprestore--unresolved-outcome
+2026-11-02T10:48:20.5283025Z Review phone-dark: admin-backuprestore--pending-without-record
+2026-11-02T10:48:20.8091904Z Review phone-dark: admin-backuprestore--incomplete-observation
+2026-11-02T10:48:21.0758950Z Review phone-dark: admin-backuprestore--slow-upload-keeps-bounded-lifetime
+2026-11-02T10:48:21.5936485Z Review phone-dark: admin-backuprestore--slow-confirmation-keeps-bounded-lifetime
+2026-11-02T10:48:22.0366643Z Review phone-dark: admin-backuprestore--slow-upload-still-cancels
+2026-11-02T10:48:22.6251961Z Review phone-dark: admin-backuprestore--passkey-ceremony-still-ends-after-one-minute
+2026-11-02T10:48:23.1017196Z Review phone-dark: admin-backuprestore--cancellation-still-ends-after-five-minutes
+2026-11-02T10:48:23.4504316Z Review phone-dark: admin-backuprestore--slow-confirmation-stops-on-account-change
+2026-11-02T10:48:23.9865652Z Review phone-dark: admin-backuprestore--slow-confirmation-stops-on-unmount
+2026-11-02T10:48:24.3893757Z Review phone-dark: admin-backupstatus--healthy
+2026-11-02T10:48:24.6610033Z Review phone-dark: admin-backupstatus--local-backup
+2026-11-02T10:48:24.9283432Z Review phone-dark: admin-backupstatus--running
+2026-11-02T10:48:25.2110435Z Review phone-dark: admin-backupstatus--never-run
+2026-11-02T10:48:25.4607692Z Review phone-dark: admin-backupstatus--overdue
+2026-11-02T10:48:25.7816170Z Review phone-dark: admin-backupstatus--failed
+2026-11-02T10:48:26.0957472Z Review phone-dark: admin-backupstatus--not-configured
+2026-11-02T10:48:26.4271646Z Review phone-dark: admin-backupstatus--configuration-failed
+2026-11-02T10:48:26.6954888Z Review phone-dark: admin-backupstatus--verification-running
+2026-11-02T10:48:26.9616706Z Review phone-dark: admin-backupstatus--verification-never-run
+2026-11-02T10:48:27.2102486Z Review phone-dark: admin-backupstatus--verification-overdue
+2026-11-02T10:48:27.4948458Z Review phone-dark: admin-backupstatus--verification-failed
+2026-11-02T10:48:27.7617468Z Review phone-dark: admin-backupstatus--local-verification-failed
+2026-11-02T10:48:28.0119413Z Review phone-dark: admin-backupstatus--retained-key-verified
+2026-11-02T10:48:28.2614860Z Review phone-dark: admin-backupstatus--loading
+2026-11-02T10:48:28.5070225Z Review phone-dark: admin-backupstatus--load-failed
+2026-11-02T10:48:28.7904534Z Review phone-dark: admin-backupstatus--manual-downloads
+2026-11-02T10:48:29.1069106Z Review phone-dark: admin-backupstatus--spaces-policy
+2026-11-02T10:48:29.4089853Z Review phone-dark: admin-backupstatus--download-ready
+2026-11-02T10:48:29.6968956Z Review phone-dark: admin-backupstatus--maintenance-paused
+2026-11-02T10:48:30.0637291Z Review phone-dark: admin-backupstatus--maintenance-resumed
+2026-11-02T10:48:30.4265357Z Review phone-dark: editor-collaborators--empty
+2026-11-02T10:48:30.9227071Z Review phone-dark: editor-collaborators--alone
+2026-11-02T10:48:31.2559324Z Review phone-dark: editor-collaborators--two-people
+2026-11-02T10:48:31.5560124Z Review phone-dark: editor-collaborators--guest-labels
+2026-11-02T10:48:31.8393270Z Review phone-dark: editor-collaborators--many
+2026-11-02T10:48:32.1392778Z Review phone-dark: editor-collaborators--many-phone
+2026-11-02T10:48:32.4392077Z Review phone-dark: editor-collaborators--empty-open
+2026-11-02T10:48:32.8098973Z Review phone-dark: editor-collaborators--guest-labels-open
+2026-11-02T10:48:33.1785597Z Review phone-dark: editor-collaborators--long-names-open
+2026-11-02T10:48:33.5445619Z Review phone-dark: editor-collaborators--doc-cursor-open
+2026-11-02T10:48:33.9109085Z Review phone-dark: editor-collaborators--sheet-cursor-open
+2026-11-02T10:48:34.2600646Z Review phone-dark: settings-connectassistant--consent
+2026-11-02T10:48:34.5653501Z Review phone-dark: settings-connectassistant--read-only
+2026-11-02T10:48:34.8480648Z Review phone-dark: settings-connectassistant--loading
+2026-11-02T10:48:35.1082063Z Review phone-dark: settings-connectassistant--load-failed
+2026-11-02T10:48:35.3748528Z Review phone-dark: settings-connectassistant--expired
+2026-11-02T10:48:35.6419990Z Review phone-dark: settings-connectassistant--unavailable
+2026-11-02T10:48:35.9253533Z Review phone-dark: settings-connectassistant--missing-request
+2026-11-02T10:48:36.1759817Z Review phone-dark: settings-connectassistant--admin-account
+2026-11-02T10:48:36.4418224Z Review phone-dark: settings-connectassistant--allowing
+2026-11-02T10:48:36.7641194Z Review phone-dark: settings-connectassistant--cancelling
+2026-11-02T10:48:37.1319385Z Review phone-dark: settings-connectassistant--submit-failed
+2026-11-02T10:48:37.4824658Z Review phone-dark: settings-connectassistant--expired-before-allow
+2026-11-02T10:48:37.7751437Z Review phone-dark: settings-connectassistant--connection-limit
+2026-11-02T10:48:38.1498336Z Review phone-dark: settings-connectassistant--long-identity
+2026-11-02T10:48:38.4704639Z Review phone-dark: settings-connectassistant--sign-out-failed
+2026-11-02T10:48:38.7822270Z Review phone-dark: shell-connectionstatus--online
+2026-11-02T10:48:39.2728560Z Review phone-dark: shell-connectionstatus--offline
+2026-11-02T10:48:39.7899288Z Review phone-dark: shell-connectionstatus--reconnecting
+2026-11-02T10:48:40.2899098Z Review phone-dark: shell-connectionstatus--last-synced-catalog
+2026-11-02T10:48:40.7895389Z Review phone-dark: shell-connectionstatus--local-mode
+2026-11-02T10:48:41.2749747Z Review phone-dark: shell-connectionstatus--online-local-mode
+2026-11-02T10:48:41.7744800Z Review phone-dark: shell-connectionstatus--online-stale-catalog
+2026-11-02T10:48:42.2728110Z Review phone-dark: shell-connectionstatus--online-pending-save
+2026-11-02T10:48:42.7566174Z Review phone-dark: shell-connectionstatus--keyboard-details
+2026-11-02T10:48:43.1060063Z Review phone-dark: shell-connectionstatus--touch-details
+2026-11-02T10:48:43.5251529Z Review phone-dark: account-console-recovery--ready
+2026-11-02T10:48:43.7778441Z Review phone-dark: account-console-recovery--loading
+2026-11-02T10:48:44.0420089Z Review phone-dark: account-console-recovery--missing-link
+2026-11-02T10:48:44.3426983Z Review phone-dark: account-console-recovery--expired-link
+2026-11-02T10:48:44.6101941Z Review phone-dark: account-console-recovery--pending
+2026-11-02T10:48:44.8782205Z Review phone-dark: account-console-recovery--cancelled
+2026-11-02T10:48:45.1451833Z Review phone-dark: account-console-recovery--retry
+2026-11-02T10:48:45.4122511Z Review phone-dark: account-console-recovery--phone
+2026-11-02T10:48:45.7110716Z Review phone-dark: account-console-recovery--finishing
+2026-11-02T10:48:45.9776445Z Review phone-dark: account-console-recovery--help
+2026-11-02T10:48:46.3321046Z Review phone-dark: dashboard-copyfile--owned-folder
+2026-11-02T10:48:46.6442378Z Review phone-dark: dashboard-copyfile--shared-viewer
+2026-11-02T10:48:46.9606610Z Review phone-dark: dashboard-copyfile--shared-destination
+2026-11-02T10:48:47.3277957Z Review phone-dark: dashboard-copyfile--loading
+2026-11-02T10:48:47.6090955Z Review phone-dark: dashboard-copyfile--waiting-for-save
+2026-11-02T10:48:47.9443863Z Review phone-dark: dashboard-copyfile--offline
+2026-11-02T10:48:48.2779744Z Review phone-dark: dashboard-copyfile--making-copy
+2026-11-02T10:48:48.6442660Z Review phone-dark: dashboard-copyfile--source-changed
+2026-11-02T10:48:49.0112612Z Review phone-dark: dashboard-copyfile--access-lost
+2026-11-02T10:48:49.3260992Z Review phone-dark: dashboard-copyfile--completed-after-dismissal
+2026-11-02T10:48:49.6596960Z Review phone-dark: dashboard-copyfile--completed-while-offline
+2026-11-02T10:48:49.9429727Z Review phone-dark: dashboard-copyfile--outcome-unknown
+2026-11-02T10:48:50.3264700Z Review phone-dark: dashboard-copyfile--unreadable-receipt
+2026-11-02T10:48:50.6933886Z Review phone-dark: dashboard-copyfile--unknown-after-dismissal
+2026-11-02T10:48:50.9930417Z Review phone-dark: dashboard-dashboard--file-view-targets
+2026-11-02T10:48:51.5392921Z Review phone-dark: dashboard-dashboard--populated
+2026-11-02T10:48:51.9896927Z Review phone-dark: dashboard-dashboard--make-copy
+2026-11-02T10:48:52.6255737Z Review phone-dark: dashboard-dashboard--new-item
+2026-11-02T10:48:53.2415515Z Review phone-dark: dashboard-dashboard--new-doc
+2026-11-02T10:48:53.8419934Z Review phone-dark: dashboard-dashboard--new-sheet
+2026-11-02T10:48:54.5853430Z Review phone-dark: dashboard-dashboard--shared-folder-editor
+2026-11-02T10:48:55.2285946Z Review phone-dark: dashboard-dashboard--shared-folder-admin
+2026-11-02T10:48:55.7950158Z Review phone-dark: dashboard-dashboard--shared-folder-viewer
+2026-11-02T10:48:56.2783476Z Review phone-dark: dashboard-dashboard--new-in-shared-folder
+2026-11-02T10:48:56.9153939Z Review phone-dark: dashboard-dashboard--empty-workspace
+2026-11-02T10:48:57.3256710Z Review phone-dark: dashboard-dashboard--shared-drawer
+2026-11-02T10:48:57.7941378Z Review phone-dark: dashboard-dashboard--shared-drawer-loading
+2026-11-02T10:48:58.2750299Z Review phone-dark: dashboard-dashboard--inside-folder
+2026-11-02T10:48:58.7930391Z Review phone-dark: dashboard-dashboard--loading
+2026-11-02T10:48:59.2084233Z Review phone-dark: dashboard-dashboard--load-failed
+2026-11-02T10:48:59.6256168Z Review phone-dark: dashboard-dashboard--missing-item
+2026-11-02T10:49:00.2233642Z Review phone-dark: dashboard-dashboard--item-load-failed
+2026-11-02T10:49:00.7232475Z Review phone-dark: dashboard-dashboard--local-mode
+2026-11-02T10:49:01.1669876Z Review phone-dark: dashboard-dashboard--new-offline-doc
+2026-11-02T10:49:02.3210722Z Review phone-dark: dashboard-dashboard--created-offline
+2026-11-02T10:49:02.8258618Z Review phone-dark: dashboard-dashboard--shared-creation-offline
+2026-11-02T10:49:03.4412794Z Review phone-dark: dashboard-dashboard--shared-creation-revoked
+2026-11-02T10:49:04.0219765Z Review phone-dark: dashboard-dashboard--choose-creation-folder
+2026-11-02T10:49:04.6667493Z Review phone-dark: dashboard-dashboard--creation-parent-now-shared
+2026-11-02T10:49:05.2220995Z Review phone-dark: dashboard-dashboard--creation-parent-no-longer-listed
+2026-11-02T10:49:05.7861489Z Review phone-dark: dashboard-dashboard--local-needs-connection
+2026-11-02T10:49:06.3052880Z Review phone-dark: dashboard-dashboard--local-folder-not-opened
+2026-11-02T10:49:06.8066130Z Review phone-dark: dashboard-dashboard--space-files
+2026-11-02T10:49:07.2684383Z Review phone-dark: dashboard-dashboard--new-space
+2026-11-02T10:49:07.8875848Z Review phone-dark: dashboard-dashboard--open-space-keeps-my-files
+2026-11-02T10:49:08.4001931Z Review phone-dark: dashboard-dashboard--shared-spaces
+2026-11-02T10:49:08.9870835Z Review phone-dark: dashboard-dashboard--space-inside-folder
+2026-11-02T10:49:09.4964220Z Review phone-dark: dashboard-dashboard--local-space-needs-connection
+2026-11-02T10:49:09.9888775Z Review phone-dark: dashboard-dashboard--local-prepared-space-opens
+2026-11-02T10:49:10.5243545Z Review phone-dark: dashboard-dashboard--file-admins
+2026-11-02T10:49:11.0844339Z Review phone-dark: dashboard-dashboard--cancel-admin-move-while-loading
+2026-11-02T10:49:11.8910077Z Review phone-dark: dashboard-dashboard--file-admin-no-destinations
+2026-11-02T10:49:12.5578901Z Review phone-dark: dashboard-dashboard--file-admin-personal-filing
+2026-11-02T10:49:13.2782540Z Review phone-dark: dashboard-dashboard--grid
+2026-11-02T10:49:13.7565157Z Review phone-dark: dashboard-dashboard--folder-scoped-search
+2026-11-02T10:49:14.5103288Z Review phone-dark: dashboard-dashboard--import-dialog
+2026-11-02T10:49:15.1581310Z Review phone-dark: dashboard-dashboard--export-all-files
+2026-11-02T10:49:15.7927956Z Review phone-dark: dashboard-dashboard--cancel-export-confirmation
+2026-11-02T10:49:16.4379743Z Review phone-dark: dashboard-dashboard--personal-filing-dialog
+2026-11-02T10:49:17.0630876Z Review phone-dark: dashboard-dashboard--sharing-dialog
+2026-11-02T10:49:17.8751801Z Review phone-dark: dashboard-dashboard--shared-grant-ordering
+2026-11-02T10:49:18.3649948Z Review phone-dark: dashboard-dashboard--cancel-space-action-then-retry
+2026-11-02T10:49:19.5531852Z Review phone-dark: dashboard-dashboard--clear-empty-global-scope
+2026-11-02T10:49:20.1257019Z Review phone-dark: dashboard-files--list
+2026-11-02T10:49:20.5428133Z Review phone-dark: dashboard-files--dark
+2026-11-02T10:49:20.9433079Z Review phone-dark: dashboard-files--grid
+2026-11-02T10:49:21.3657652Z Review phone-dark: dashboard-files--phone
+2026-11-02T10:49:21.7434203Z Review phone-dark: dashboard-files--grid-phone
+2026-11-02T10:49:22.2012791Z Review phone-dark: dashboard-files--shared
+2026-11-02T10:49:22.5906665Z Review phone-dark: dashboard-files--creator-attribution
+2026-11-02T10:49:22.9907995Z Review phone-dark: dashboard-files--search-results
+2026-11-02T10:49:23.3601034Z Review phone-dark: dashboard-files--empty
+2026-11-02T10:49:23.7543474Z Review phone-dark: dashboard-files--no-search-results
+2026-11-02T10:49:24.1375396Z Review phone-dark: dashboard-files--loading
+2026-11-02T10:49:24.5205715Z Review phone-dark: dashboard-files--error
+2026-11-02T10:49:24.8707155Z Review phone-dark: dashboard-files--busy
+2026-11-02T10:49:25.2761861Z Review phone-dark: dashboard-files--offline
+2026-11-02T10:49:25.6763825Z Review phone-dark: dashboard-files--long-names
+2026-11-02T10:49:26.0728287Z Review phone-dark: dashboard-files--owner-menu
+2026-11-02T10:49:26.6893214Z Review phone-dark: dashboard-files--viewer-menu
+2026-11-02T10:49:27.4291144Z Review phone-dark: dashboard-files--file-admin-menu
+2026-11-02T10:49:28.1182722Z Review phone-dark: offline-device-storage--loading
+2026-11-02T10:49:28.3718087Z Review phone-dark: offline-device-storage--empty
+2026-11-02T10:49:28.6738943Z Review phone-dark: offline-device-storage--documents
+2026-11-02T10:49:28.9619796Z Review phone-dark: offline-device-storage--space-page
+2026-11-02T10:49:29.2250542Z Review phone-dark: offline-device-storage--missing-store
+2026-11-02T10:49:29.4918066Z Review phone-dark: offline-device-storage--startup-metadata-missing
+2026-11-02T10:49:29.7852744Z Review phone-dark: offline-device-storage--storage-unavailable
+2026-11-02T10:49:30.0761843Z Review phone-dark: offline-device-storage--storage-preparation-failed
+2026-11-02T10:49:30.3385047Z Review phone-dark: offline-device-storage--account-locked
+2026-11-02T10:49:30.5882514Z Review phone-dark: offline-device-storage--protection-denied
+2026-11-02T10:49:30.8793447Z Review phone-dark: offline-device-storage--protection-unsupported
+2026-11-02T10:49:31.1622859Z Review phone-dark: offline-device-storage--protection-error
+2026-11-02T10:49:31.4789642Z Review phone-dark: offline-device-storage--request-protection
+2026-11-02T10:49:31.8330840Z Review phone-dark: offline-device-storage--about-storage
+2026-11-02T10:49:32.1340307Z Review phone-dark: offline-device-storage--clean-removal
+2026-11-02T10:49:32.4316709Z Review phone-dark: offline-device-storage--pending-removal
+2026-11-02T10:49:32.7118002Z Review phone-dark: offline-device-storage--discard-confirmation
+2026-11-02T10:49:33.0284447Z Review phone-dark: offline-device-storage--removal-failed
+2026-11-02T10:49:33.3155960Z Review phone-dark: offline-device-storage--removing
+2026-11-02T10:49:33.6441822Z Review phone-dark: offline-device-storage--damaged-pending
+2026-11-02T10:49:33.9289897Z Review phone-dark: offline-device-storage--cancel-keeps-changes
+2026-11-02T10:49:34.3917952Z Review phone-dark: offline-device-storage--newly-pending-is-kept
+2026-11-02T10:49:34.8782193Z Review phone-dark: offline-device-storage--removal-returns-focus
+2026-11-02T10:49:35.2917071Z Review phone-dark: offline-device-storage--long-title-phone
+2026-11-02T10:49:35.5590821Z Review phone-dark: docs-formulas--insert
+2026-11-02T10:49:35.8751663Z Review phone-dark: docs-formulas--edit
+2026-11-02T10:49:36.1926411Z Review phone-dark: docs-formulas--save-returns-focus
+2026-11-02T10:49:36.9205879Z Review phone-dark: docs-formulas--cancel-returns-focus
+2026-11-02T10:49:37.4206828Z Review phone-dark: docs-formulas--offline-keeps-draft
+2026-11-02T10:49:38.0586904Z Review phone-dark: docs-formulas--reconnect-keeps-draft
+2026-11-02T10:49:38.6597927Z Review phone-dark: docs-formulas--save-busy
+2026-11-02T10:49:39.0262408Z Review phone-dark: docs-formulas--save-timed-out
+2026-11-02T10:49:39.3761106Z Review phone-dark: docs-formulas--save-unavailable
+2026-11-02T10:49:39.7432477Z Review phone-dark: docs-formulas--save-invalid
+2026-11-02T10:49:40.0765432Z Review phone-dark: docs-formulas--save-private-source
+2026-11-02T10:49:40.4263406Z Review phone-dark: docs-formulas--save-too-large
+2026-11-02T10:49:40.7761317Z Review phone-dark: docs-formulas--save-retry
+2026-11-02T10:49:41.1532170Z Review phone-dark: docs-formulas--save-double-activation
+2026-11-02T10:49:41.4695097Z Review phone-dark: docs-formulas--save-cancelled-retry
+2026-11-02T10:49:41.8696750Z Review phone-dark: docs-formulas--save-cancel-pending
+2026-11-02T10:49:42.2370032Z Review phone-dark: docs-formulas--save-escape-pending
+2026-11-02T10:49:42.5862460Z Review phone-dark: docs-formulas--loading-sources
+2026-11-02T10:49:42.9260041Z Review phone-dark: docs-formulas--no-sources
+2026-11-02T10:49:43.2772093Z Review phone-dark: docs-formulas--source-error
+2026-11-02T10:49:43.6267874Z Review phone-dark: docs-formulas--dark
+2026-11-02T10:49:43.9253048Z Review phone-dark: docs-formulas--phone
+2026-11-02T10:49:44.2255865Z Review phone-dark: docs-formulas--space-sources
+2026-11-02T10:49:44.9086449Z Review phone-dark: docs-formulas--space-sources-dark
+2026-11-02T10:49:45.5755398Z Review phone-dark: docs-formulas--space-sources-phone
+2026-11-02T10:49:46.2429251Z Review phone-dark: docs-formulas--space-source-unavailable
+2026-11-02T10:49:46.5929433Z Review phone-dark: docs-formulas--space-guest-sources
+2026-11-02T10:49:47.2753631Z Review phone-dark: docs-formulas--space-guest-sources-dark
+2026-11-02T10:49:47.8765537Z Review phone-dark: docs-formulas--space-guest-sources-phone
+2026-11-02T10:49:48.5585426Z Review phone-dark: docs-formulas--space-guest-external-unavailable
+2026-11-02T10:49:48.9093933Z Review phone-dark: docs-formulas--scalar
+2026-11-02T10:49:49.2199787Z Review phone-dark: docs-formulas--table
+2026-11-02T10:49:49.4871115Z Review phone-dark: docs-formulas--thirty-rows
+2026-11-02T10:49:49.7712784Z Review phone-dark: docs-formulas--empty
+2026-11-02T10:49:50.0526927Z Review phone-dark: docs-formulas--calculating
+2026-11-02T10:49:50.3195946Z Review phone-dark: docs-formulas--private-source
+2026-11-02T10:49:50.5864857Z Review phone-dark: docs-formulas--missing-source
+2026-11-02T10:49:50.8529734Z Review phone-dark: docs-formulas--invalid-formula
+2026-11-02T10:49:51.1198987Z Review phone-dark: docs-formulas--too-large
+2026-11-02T10:49:51.3864871Z Review phone-dark: docs-formulas--busy
+2026-11-02T10:49:51.6864289Z Review phone-dark: docs-formulas--timed-out
+2026-11-02T10:49:51.9532455Z Review phone-dark: docs-formulas--unavailable
+2026-11-02T10:49:52.2527909Z Review phone-dark: docs-native-formulas--inline-and-table
+2026-11-02T10:49:53.4719310Z Review phone-dark: docs-native-formulas--private
+2026-11-02T10:49:54.6396936Z Review phone-dark: docs-native-formulas--dark
+2026-11-02T10:49:55.7886603Z Review phone-dark: docs-native-formulas--phone
+2026-11-02T10:49:56.8893912Z Review phone-dark: docs-native-formulas--thirty-rows
+2026-11-02T10:49:57.9907915Z Review phone-dark: docs-native-formulas--styled-scalar
+2026-11-02T10:49:59.1053601Z Review phone-dark: docs-mobile--reading
+2026-11-02T10:50:00.3251152Z Review phone-dark: docs-mobile--saved-half-zoom
+2026-11-02T10:50:01.5078909Z Review phone-dark: docs-mobile--saved-double-zoom
+2026-11-02T10:50:02.7084362Z Review phone-dark: docs-mobile--viewer
+2026-11-02T10:50:03.7075019Z Review phone-dark: docs-mobile--traditional
+2026-11-02T10:50:04.5548942Z Review phone-dark: docs-mobile--layout-changed
+2026-11-02T10:50:05.4745526Z Review phone-dark: docs-mobile--selection-formatting
+2026-11-02T10:50:06.7952796Z Review phone-dark: docs-mobile--keyboard-viewport-response
+2026-11-02T10:50:07.9254687Z Review phone-dark: dashboard-documenttags--no-tags
+2026-11-02T10:50:08.2432393Z Review phone-dark: dashboard-documenttags--several-tags
+2026-11-02T10:50:08.5424526Z Review phone-dark: dashboard-documenttags--suggestions-failed
+2026-11-02T10:50:08.8587840Z Review phone-dark: dashboard-documenttags--adding
+2026-11-02T10:50:09.2245511Z Review phone-dark: dashboard-documenttags--add-failed
+2026-11-02T10:50:09.5920986Z Review phone-dark: dashboard-documenttags--personal-space-tags
+2026-11-02T10:50:09.9256760Z Review phone-dark: editor-frame--default
+2026-11-02T10:50:10.3699881Z Review phone-dark: editor-frame--dark
+2026-11-02T10:50:10.8031265Z Review phone-dark: editor-frame--phone
+2026-11-02T10:50:11.2370098Z Review phone-dark: editor-frame--guest
+2026-11-02T10:50:11.6864426Z Review phone-dark: editor-frame--reconnecting
+2026-11-02T10:50:12.1201928Z Review phone-dark: editor-frame--rename
+2026-11-02T10:50:12.6211126Z Review phone-dark: editor-frame--rename-authority-removed
+2026-11-02T10:50:13.2374484Z Review phone-dark: editor-frame--versions-dialog
+2026-11-02T10:50:13.8425338Z Review phone-dark: editor-frame--version-naming-failure
+2026-11-02T10:50:14.7102934Z Review phone-dark: editor-frame--version-rename
+2026-11-02T10:50:15.3608842Z Review phone-dark: editor-frame--versions-loading
+2026-11-02T10:50:15.9415601Z Review phone-dark: editor-frame--export-dialog
+2026-11-02T10:50:16.7438962Z Review phone-dark: editor-frame--export-waiting-for-save
+2026-11-02T10:50:17.5756887Z Review phone-dark: editor-frame--pdf-failure
+2026-11-02T10:50:18.3759359Z Review phone-dark: editor-frame--offline-formulas
+2026-11-02T10:50:18.8735202Z Review phone-dark: editor-frame--editable-formulas
+2026-11-02T10:50:19.4581099Z Review phone-dark: editor-frame--offline-availability-success
+2026-11-02T10:50:19.9074590Z Review phone-dark: editor-frame--offline-availability-failure
+2026-11-02T10:50:20.3571923Z Review phone-dark: editor-frame--theatre-dialog
+2026-11-02T10:50:20.9193312Z Review phone-dark: editor-frame--people-and-theatre
+2026-11-02T10:50:21.7196460Z Review phone-dark: editor-frame--people-dialog
+2026-11-02T10:50:22.1920402Z Review phone-dark: editor-frame--people-over-presence
+2026-11-02T10:50:22.7082966Z Review phone-dark: editor-frame--actions-over-presence
+2026-11-02T10:50:23.2044931Z Review phone-dark: editor-frame--guest-pdf
+2026-11-02T10:50:23.7405622Z Review phone-dark: editor-frame--personalization
+2026-11-02T10:50:24.7373162Z Review phone-dark: editor-fileexports--saved
+2026-11-02T10:50:25.0371841Z Review phone-dark: editor-fileexports--unsaved
+2026-11-02T10:50:25.2879945Z Review phone-dark: editor-fileexports--download-failed
+2026-11-02T10:50:25.6042907Z Review phone-dark: editor-fileexports--pdf-failed
+2026-11-02T10:50:25.9046182Z Review phone-dark: guest-guestapp--loading
+2026-11-02T10:50:26.3532411Z Review phone-dark: guest-guestapp--link-revoked
+2026-11-02T10:50:26.8035112Z Review phone-dark: guest-guestapp--connection-interrupted
+2026-11-02T10:50:27.2201617Z Review phone-dark: guest-guestapp--unsupported-browser
+2026-11-02T10:50:27.6539774Z Review phone-dark: current-production-account-guest-links--inventory
+2026-11-02T10:50:27.9582721Z Review phone-dark: current-production-account-guest-links--empty
+2026-11-02T10:50:28.2193689Z Review phone-dark: current-production-account-guest-links--loading
+2026-11-02T10:50:28.4855907Z Review phone-dark: current-production-account-guest-links--load-error
+2026-11-02T10:50:28.7521707Z Review phone-dark: current-production-account-guest-links--load-retry
+2026-11-02T10:50:29.0914852Z Review phone-dark: current-production-account-guest-links--change-expiry
+2026-11-02T10:50:29.5608815Z Review phone-dark: current-production-account-guest-links--expiry-saved
+2026-11-02T10:50:30.1588070Z Review phone-dark: current-production-account-guest-links--saving
+2026-11-02T10:50:30.6935119Z Review phone-dark: current-production-account-guest-links--uncertain-write
+2026-11-02T10:50:31.1922765Z Review phone-dark: current-production-account-guest-links--stale-link
+2026-11-02T10:50:31.7087186Z Review phone-dark: current-production-account-guest-links--turn-off-space
+2026-11-02T10:50:32.1602430Z Review phone-dark: current-production-account-guest-links--turned-off
+2026-11-02T10:50:32.7232364Z Review phone-dark: current-production-account-guest-links--expired
+2026-11-02T10:50:33.1534261Z Review phone-dark: current-production-account-guest-links--phone
+2026-11-02T10:50:33.4255435Z Review phone-dark: current-production-account-guest-links--stale-account-response
+2026-11-02T10:50:33.9189083Z Review phone-dark: dashboard-hidden-shares--include-hidden
+2026-11-02T10:50:34.5774033Z Review phone-dark: dashboard-hidden-shares--all-shares-hidden
+2026-11-02T10:50:35.2552253Z Review phone-dark: dashboard-hidden-shares--hide-and-show
+2026-11-02T10:50:36.1939470Z Review phone-dark: dashboard-hidden-shares--failed-hide
+2026-11-02T10:50:36.8595059Z Review phone-dark: dashboard-hidden-shares--pending-hide
+2026-11-02T10:50:37.6740802Z Review phone-dark: history-browser--today
+2026-11-02T10:50:38.6598698Z Review phone-dark: history-browser--dark
+2026-11-02T10:50:39.6133656Z Review phone-dark: history-browser--phone
+2026-11-02T10:50:40.5263794Z Review phone-dark: history-browser--calendar
+2026-11-02T10:50:41.5246526Z Review phone-dark: history-browser--no-older-days
+2026-11-02T10:50:42.5427253Z Review phone-dark: history-browser--loading
+2026-11-02T10:50:42.9190921Z Review phone-dark: history-browser--history-failure
+2026-11-02T10:50:43.4695116Z Review phone-dark: history-browser--empty
+2026-11-02T10:50:43.8368284Z Review phone-dark: history-browser--unavailable
+2026-11-02T10:50:44.1858971Z Review phone-dark: history-browser--missing-checkpoint
+2026-11-02T10:50:44.5361456Z Review phone-dark: history-browser--preview-loading
+2026-11-02T10:50:44.8700712Z Review phone-dark: history-browser--preview-failure
+2026-11-02T10:50:45.4926056Z Review phone-dark: history-browser--viewer
+2026-11-02T10:50:46.4076984Z Review phone-dark: history-browser--name-current
+2026-11-02T10:50:47.0117996Z Review phone-dark: history-browser--name-failure
+2026-11-02T10:50:47.6798778Z Review phone-dark: history-browser--naming-focus-return
+2026-11-02T10:50:48.6019972Z Review phone-dark: history-browser--restore-confirmation
+2026-11-02T10:50:49.6804415Z Review phone-dark: history-browser--restore-failure
+2026-11-02T10:50:50.7470696Z Review phone-dark: history-browser--restore-interrupted
+2026-11-02T10:50:51.8302814Z Review phone-dark: history-browser--restoring
+2026-11-02T10:50:52.8636730Z Review phone-dark: account-icon-picker--browse
+2026-11-02T10:50:53.2383684Z Review phone-dark: dashboard-importfile--default
+2026-11-02T10:50:53.5182412Z Review phone-dark: dashboard-importfile--dialog
+2026-11-02T10:50:53.8546545Z Review phone-dark: dashboard-importfile--importing-dialog
+2026-11-02T10:50:54.2207970Z Review phone-dark: dashboard-importfile--limits-open
+2026-11-02T10:50:54.5057420Z Review phone-dark: dashboard-importfile--unsupported-file
+2026-11-02T10:50:54.8183739Z Review phone-dark: dashboard-importfile--not-json
+2026-11-02T10:50:55.1682842Z Review phone-dark: dashboard-importfile--too-many-files
+2026-11-02T10:50:55.5018721Z Review phone-dark: dashboard-importfile--importing
+2026-11-02T10:50:55.8338075Z Review phone-dark: dashboard-importfile--import-failed
+2026-11-02T10:50:56.2013619Z Review phone-dark: dashboard-importfile--archive-importing
+2026-11-02T10:50:56.5550783Z Review phone-dark: dashboard-importfile--archive-imported
+2026-11-02T10:50:56.9385438Z Review phone-dark: dashboard-importfile--empty-archive
+2026-11-02T10:50:57.3051339Z Review phone-dark: dashboard-importfile--archive-failed
+2026-11-02T10:50:57.6885230Z Review phone-dark: dashboard-importfile--archive-cancelled
+2026-11-02T10:50:58.0890832Z Review phone-dark: dashboard-importfile--archive-needs-my-files
+2026-11-02T10:50:58.4552784Z Review phone-dark: dashboard-importfile--archive-too-large
+2026-11-02T10:50:58.8383055Z Review phone-dark: dashboard-importfile--archive-unconfirmed
+2026-11-02T10:50:59.2048049Z Review phone-dark: dashboard-importfile--archive-interrupted-by-maintenance
+2026-11-02T10:50:59.6050940Z Review phone-dark: maintenance-controls--running
+2026-11-02T10:50:59.9183315Z Review phone-dark: maintenance-controls--scheduled
+2026-11-02T10:51:00.1878443Z Review phone-dark: maintenance-controls--missed-window
+2026-11-02T10:51:00.4707471Z Review phone-dark: maintenance-controls--paused
+2026-11-02T10:51:00.7859297Z Review phone-dark: maintenance-controls--draining
+2026-11-02T10:51:01.0693882Z Review phone-dark: maintenance-controls--starting
+2026-11-02T10:51:01.3530442Z Review phone-dark: maintenance-controls--recovery-required
+2026-11-02T10:51:01.6867382Z Review phone-dark: maintenance-controls--authority-expired
+2026-11-02T10:51:02.0042687Z Review phone-dark: maintenance-controls--unavailable
+2026-11-02T10:51:02.3343360Z Review phone-dark: maintenance-controls--loading
+2026-11-02T10:51:02.6007584Z Review phone-dark: maintenance-controls--load-failed
+2026-11-02T10:51:02.9181386Z Review phone-dark: maintenance-controls--confirm-pause
+2026-11-02T10:51:03.2910452Z Review phone-dark: maintenance-controls--pause-and-resume
+2026-11-02T10:51:03.8361567Z Review phone-dark: maintenance-controls--paused-with-resume
+2026-11-02T10:51:04.3362018Z Review phone-dark: maintenance-controls--pause-response-lost
+2026-11-02T10:51:04.9022251Z Review phone-dark: maintenance-controls--cancel-confirmation
+2026-11-02T10:51:05.3184029Z Review phone-dark: maintenance-controls--notice-form
+2026-11-02T10:51:05.8096101Z Review phone-dark: maintenance-controls--repeated-time
+2026-11-02T10:51:06.5414106Z Review phone-dark: maintenance-controls--publish-notice
+2026-11-02T10:51:07.1877357Z Review phone-dark: maintenance-controls--notice-too-far-ahead
+2026-11-02T10:51:07.6751184Z Review phone-dark: maintenance-controls--cancel-notice
+2026-11-02T10:51:08.2183662Z Review phone-dark: maintenance-controls--cancel-notice-while-paused
+2026-11-02T10:51:08.9524985Z Review phone-dark: maintenance-controls--cancel-notice-without-paused-proof
+2026-11-02T10:51:09.4415078Z Review phone-dark: maintenance-controls--phone
+2026-11-02T10:51:09.7872716Z Review phone-dark: maintenance-banner--scheduled
+2026-11-02T10:51:10.0667271Z Review phone-dark: maintenance-banner--paused
+2026-11-02T10:51:10.3498605Z Review phone-dark: maintenance-banner--draining
+2026-11-02T10:51:10.6333344Z Review phone-dark: maintenance-banner--reconnecting
+2026-11-02T10:51:10.9164954Z Review phone-dark: maintenance-banner--guest-paused
+2026-11-02T10:51:11.2506062Z Review phone-dark: maintenance-banner--notice-details
+2026-11-02T10:51:11.5854955Z Review phone-dark: maintenance-banner--cancelled
+2026-11-02T10:51:11.9161540Z Review phone-dark: maintenance-banner--running
+2026-11-02T10:51:12.1823588Z Review phone-dark: maintenance-banner--unavailable
+2026-11-02T10:51:12.5156467Z Review phone-dark: maintenance-banner--paused-dismissed
+2026-11-02T10:51:12.7827105Z Review phone-dark: maintenance-banner--guest-paused-dismissed
+2026-11-02T10:51:13.0662552Z Review phone-dark: maintenance-banner--reconnecting-dismissed
+2026-11-02T10:51:13.3329450Z Review phone-dark: maintenance-banner--dismiss-and-reopen
+2026-11-02T10:51:13.7179105Z Review phone-dark: maintenance-banner--expired-dismissal
+2026-11-02T10:51:13.9998247Z Review phone-dark: maintenance-banner--new-pause-resurfaces
+2026-11-02T10:51:14.4670959Z Review phone-dark: maintenance-banner--replacement-resurfaces
+2026-11-02T10:51:14.8342668Z Review phone-dark: offline-recovery-entry--missing-device-copy
+2026-11-02T10:51:15.2504477Z Review phone-dark: offline-recovery-entry--invalid-link
+2026-11-02T10:51:15.6998351Z Review phone-dark: offline-recovery-entry--no-prepared-account
+2026-11-02T10:51:16.1171012Z Review phone-dark: offline-recovery-entry--another-account
+2026-11-02T10:51:16.6935028Z Review phone-dark: offline-recovery-entry--clean-downloaded-copy
+2026-11-02T10:51:17.3447677Z Review phone-dark: offline-recovery-entry--guarded-return-to-my-files
+2026-11-02T10:51:17.9502329Z Review phone-dark: offline-recovery-entry--missing-copy-dark
+2026-11-02T10:51:18.3507629Z Review phone-dark: offline-recovery-entry--invalid-link-phone
+2026-11-02T10:51:18.7832704Z Review phone-dark: offline-recovery-list--pending-ordinary-and-space
+2026-11-02T10:51:19.1847399Z Review phone-dark: offline-recovery-list--dark
+2026-11-02T10:51:19.6013948Z Review phone-dark: offline-recovery-list--clean-downloads
+2026-11-02T10:51:19.9993286Z Review phone-dark: offline-recovery-list--navigation-guard
+2026-11-02T10:51:20.4512702Z Review phone-dark: offline-recovery-list--long-title-phone
+2026-11-02T10:51:20.8681612Z Review phone-dark: space-offline-view--light
+2026-11-02T10:51:21.3037323Z Review phone-dark: space-offline-view--dark
+2026-11-02T10:51:21.7036885Z Review phone-dark: space-offline-view--profile-navigation
+2026-11-02T10:51:22.1848786Z Review phone-dark: space-offline-view--editor-navigation
+2026-11-02T10:51:22.6707266Z Review phone-dark: space-offline-view--phone
+2026-11-02T10:51:23.1517526Z Review phone-dark: space-offline-view--attention-held-viewer
+2026-11-02T10:51:24.0201733Z Review phone-dark: space-offline-view--attention-held-viewer-dark
+2026-11-02T10:51:24.8703820Z Review phone-dark: space-offline-view--attention-held-viewer-phone
+2026-11-02T10:51:25.7701578Z Review phone-dark: space-offline-view--explicit-page-not-prepared
+2026-11-02T10:51:26.2011313Z Review phone-dark: space-offline-view--no-prepared-pages
+2026-11-02T10:51:26.5844857Z Review phone-dark: space-offline-view--space-index
+2026-11-02T10:51:27.0010572Z Review phone-dark: space-offline-view--another-account
+2026-11-02T10:51:27.4341502Z Review phone-dark: dashboard-offlinebadge--available
+2026-11-02T10:51:27.6993086Z Review phone-dark: dashboard-offlinebadge--pages-available
+2026-11-02T10:51:28.0158133Z Review phone-dark: dashboard-offlinebadge--needs-connection
+2026-11-02T10:51:28.2820730Z Review phone-dark: dashboard-offlinebadge--not-synced
+2026-11-02T10:51:28.5493098Z Review phone-dark: dashboard-offlinebadge--needs-attention
+2026-11-02T10:51:28.8159480Z Review phone-dark: dashboard-offlinebadge--none
+2026-11-02T10:51:29.0825505Z Review phone-dark: dashboard-offlinebadge--unreachable
+2026-11-02T10:51:29.4000593Z Review phone-dark: current-production-account-passkey-security--ready
+2026-11-02T10:51:29.6861219Z Review phone-dark: current-production-account-passkey-security--loading
+2026-11-02T10:51:29.9672377Z Review phone-dark: current-production-account-passkey-security--load-error
+2026-11-02T10:51:30.2510571Z Review phone-dark: current-production-account-passkey-security--empty
+2026-11-02T10:51:30.5346877Z Review phone-dark: current-production-account-passkey-security--adding
+2026-11-02T10:51:30.8193076Z Review phone-dark: current-production-account-passkey-security--confirm-removal
+2026-11-02T10:51:31.2739263Z Review phone-dark: current-production-account-passkey-security--remove-current
+2026-11-02T10:51:31.7570867Z Review phone-dark: current-production-account-passkey-security--last-passkey
+2026-11-02T10:51:32.2403366Z Review phone-dark: current-production-account-passkey-security--fresh-verification-required
+2026-11-02T10:51:32.7240689Z Review phone-dark: current-production-account-passkey-security--verify-before-adding
+2026-11-02T10:51:33.1240590Z Review phone-dark: current-production-account-passkey-security--verification-pending
+2026-11-02T10:51:33.6574237Z Review phone-dark: current-production-account-passkey-security--verification-failed
+2026-11-02T10:51:34.1415314Z Review phone-dark: current-production-account-passkey-security--saving
+2026-11-02T10:51:34.6066911Z Review phone-dark: current-production-account-passkey-security--refused
+2026-11-02T10:51:35.1236861Z Review phone-dark: current-production-account-passkey-security--proof-expired
+2026-11-02T10:51:35.6409619Z Review phone-dark: current-production-account-passkey-security--uncertain
+2026-11-02T10:51:36.1906125Z Review phone-dark: current-production-account-passkey-security--sign-out-others
+2026-11-02T10:51:36.6232240Z Review phone-dark: current-production-account-passkey-security--others-signed-out
+2026-11-02T10:51:37.0527796Z Review phone-dark: current-production-account-passkey-security--removal-cancelled
+2026-11-02T10:51:37.5692205Z Review phone-dark: current-production-account-passkey-security--verified-then-confirmed
+2026-11-02T10:51:38.0692907Z Review phone-dark: current-production-account-passkey-security--verification-cancelled
+2026-11-02T10:51:38.6529981Z Review phone-dark: current-production-account-passkey-security--uncertain-cannot-repeat
+2026-11-02T10:51:39.3533488Z Review phone-dark: current-production-account-passkey-security--malformed-acknowledgement
+2026-11-02T10:51:39.8701412Z Review phone-dark: current-production-account-passkey-security--unattributed-session
+2026-11-02T10:51:40.3564035Z Review phone-dark: current-production-account-passkey-security--registration-proof-invalidated
+2026-11-02T10:51:40.7396468Z Review phone-dark: current-production-account-passkey-security--read-retry-recovered
+2026-11-02T10:51:41.0853806Z Review phone-dark: current-production-account-passkey-security--account-changed-before-action
+2026-11-02T10:51:41.4680065Z Review phone-dark: current-production-account-passkey-security--cookie-changed-during-confirmation
+2026-11-02T10:51:41.9682523Z Review phone-dark: current-production-account-passkey-security--account-changed-during-registration
+2026-11-02T10:51:42.3018464Z Review phone-dark: editor-pdfexport--document
+2026-11-02T10:51:42.5659649Z Review phone-dark: editor-pdfexport--all-visible-worksheets
+2026-11-02T10:51:42.8683808Z Review phone-dark: editor-pdfexport--worksheet-subset
+2026-11-02T10:51:43.2185769Z Review phone-dark: editor-pdfexport--no-worksheets-selected
+2026-11-02T10:51:43.6513715Z Review phone-dark: editor-pdfexport--no-visible-worksheets
+2026-11-02T10:51:43.9001390Z Review phone-dark: editor-pdfexport--waiting-for-save
+2026-11-02T10:51:44.1497563Z Review phone-dark: editor-pdfexport--loading-options
+2026-11-02T10:51:44.3993313Z Review phone-dark: editor-pdfexport--options-failed
+2026-11-02T10:51:44.6661391Z Review phone-dark: editor-pdfexport--preparing
+2026-11-02T10:51:44.9857124Z Review phone-dark: editor-pdfexport--cancelled
+2026-11-02T10:51:45.3757697Z Review phone-dark: editor-pdfexport--export-failed
+2026-11-02T10:51:45.7353430Z Review phone-dark: editor-pdfexport--download-started
+2026-11-02T10:51:46.0488887Z Review phone-dark: editor-profile-cursor-label--flower
+2026-11-02T10:51:46.3152270Z Review phone-dark: editor-profile-cursor-label--cat
+2026-11-02T10:51:46.5814864Z Review phone-dark: editor-presence-native--doc
+2026-11-02T10:51:47.8351002Z Review phone-dark: editor-presence-native--doc-selection
+2026-11-02T10:51:49.0684814Z Review phone-dark: editor-presence-native--doc-guest
+2026-11-02T10:51:50.2706650Z Review phone-dark: editor-presence-native--doc-disconnected
+2026-11-02T10:51:51.4851250Z Review phone-dark: editor-presence-native--doc-lifecycle
+2026-11-02T10:51:52.8357939Z Review phone-dark: editor-presence-native--doc-local-colors
+2026-11-02T10:51:54.0346663Z Review phone-dark: account-profile-icons--catalog-compatibility
+2026-11-02T10:51:54.3947016Z Review phone-dark: account-profile-page--profile
+2026-11-02T10:51:54.8723966Z Review phone-dark: account-profile-page--passkeys
+2026-11-02T10:51:55.3174898Z Review phone-dark: account-profile-page--this-device
+2026-11-02T10:51:55.7722035Z Review phone-dark: account-profile-page--connections
+2026-11-02T10:51:56.2044015Z Review phone-dark: account-profile-page--guest-links
+2026-11-02T10:51:56.6765328Z Review phone-dark: account-profile-page--guest-links-offline
+2026-11-02T10:51:57.1164798Z Review phone-dark: account-profile-page--guest-links-operator
+2026-11-02T10:51:57.5714794Z Review phone-dark: account-profile-page--operator
+2026-11-02T10:51:58.0377050Z Review phone-dark: account-profile-page--offline
+2026-11-02T10:51:58.5052039Z Review phone-dark: account-profile-page--phone
+2026-11-02T10:51:58.9714401Z Review phone-dark: account-profile--ready
+2026-11-02T10:51:59.3852165Z Review phone-dark: account-profile--loading
+2026-11-02T10:51:59.7483341Z Review phone-dark: account-profile--load-error
+2026-11-02T10:52:00.1485072Z Review phone-dark: account-profile--save-error
+2026-11-02T10:52:00.5858687Z Review phone-dark: account-profile--saving
+2026-11-02T10:52:01.0186842Z Review phone-dark: account-profile--color-picker
+2026-11-02T10:52:01.4554170Z Review phone-dark: shell-rail--member
+2026-11-02T10:52:01.7312512Z Review phone-dark: shell-rail--admin
+2026-11-02T10:52:01.9980221Z Review phone-dark: shell-rail--offline
+2026-11-02T10:52:02.2814290Z Review phone-dark: shell-rail--reconnecting
+2026-11-02T10:52:02.6146642Z Review phone-dark: shell-rail--phone
+2026-11-02T10:52:02.8986812Z Review phone-dark: shell-rail--signed-out
+2026-11-02T10:52:03.1643813Z Review phone-dark: shell-rail--compact
+2026-11-02T10:52:03.4477893Z Review phone-dark: shell-rail--files
+2026-11-02T10:52:03.7312260Z Review phone-dark: shell-rail--files-collapsed
+2026-11-02T10:52:04.0652798Z Review phone-dark: shell-rail--files-long-profile-name
+2026-11-02T10:52:04.3482336Z Review phone-dark: shell-rail--files-phone
+2026-11-02T10:52:04.6643482Z Review phone-dark: shell-rail--files-drawer
+2026-11-02T10:52:05.0354391Z Review phone-dark: restore-notice--restored
+2026-11-02T10:52:05.3156641Z Review phone-dark: restore-notice--dark
+2026-11-02T10:52:05.5819544Z Review phone-dark: restore-notice--phone
+2026-11-02T10:52:05.8490690Z Review phone-dark: restore-notice--restore-undone
+2026-11-02T10:52:06.1649152Z Review phone-dark: restore-notice--restore-undone-dark
+2026-11-02T10:52:06.4319851Z Review phone-dark: restore-notice--dismissed
+2026-11-02T10:52:06.7806101Z Review phone-dark: restore-notice--another-restore-after-dismissal
+2026-11-02T10:52:07.0486919Z Review phone-dark: restore-notice--never-restored
+2026-11-02T10:52:07.3135008Z Review phone-dark: editor-savestatus--saved
+2026-11-02T10:52:07.6324249Z Review phone-dark: editor-savestatus--saving-on-device
+2026-11-02T10:52:08.0333421Z Review phone-dark: editor-savestatus--saved-on-device
+2026-11-02T10:52:08.4162504Z Review phone-dark: editor-savestatus--synced
+2026-11-02T10:52:08.7828284Z Review phone-dark: editor-savestatus--needs-attention
+2026-11-02T10:52:09.1835007Z Review phone-dark: editor-savestatus--creation-needs-attention
+2026-11-02T10:52:09.6333513Z Review phone-dark: editor-savestatus--recovery-creating
+2026-11-02T10:52:10.1504039Z Review phone-dark: editor-savestatus--recovery-created
+2026-11-02T10:52:10.5505891Z Review phone-dark: editor-savestatus--recovery-failed
+2026-11-02T10:52:11.0512094Z Review phone-dark: editor-savestatus--recovery-exported
+2026-11-02T10:52:11.4350414Z Review phone-dark: editor-savestatus--recovery-discard-confirmation
+2026-11-02T10:52:11.9018480Z Review phone-dark: editor-savestatus--recovery-discarded
+2026-11-02T10:52:12.5437835Z Review phone-dark: editor-savestatus--recovery-expired-account
+2026-11-02T10:52:13.0515981Z Review phone-dark: editor-savestatus--recovery-unfinished-input
+2026-11-02T10:52:13.5333994Z Review phone-dark: editor-savestatus--recovery-unfinished-doc-text
+2026-11-02T10:52:14.2542746Z Review phone-dark: editor-savestatus--recovery-unfinished-doc-text-discarded
+2026-11-02T10:52:15.2838246Z Review phone-dark: editor-savestatus--expired-unfinished-doc-text
+2026-11-02T10:52:16.3004917Z Review phone-dark: editor-savestatus--device-save-failed
+2026-11-02T10:52:16.7173594Z Review phone-dark: editor-savestatus--attention-save-failed
+2026-11-02T10:52:17.0835757Z Review phone-dark: editor-savestatus--saving
+2026-11-02T10:52:17.4992176Z Review phone-dark: editor-savestatus--editing-cell
+2026-11-02T10:52:17.8826530Z Review phone-dark: editor-savestatus--expired-cell-input
+2026-11-02T10:52:18.2663854Z Review phone-dark: editor-savestatus--expired-saved-work
+2026-11-02T10:52:18.6662132Z Review phone-dark: editor-savestatus--editing-formula
+2026-11-02T10:52:19.0492002Z Review phone-dark: editor-savestatus--loading
+2026-11-02T10:52:19.4488631Z Review phone-dark: editor-savestatus--view-only
+2026-11-02T10:52:19.8488858Z Review phone-dark: editor-savestatus--failed-save
+2026-11-02T10:52:20.2428254Z Review phone-dark: editor-savestatus--access-changed
+2026-11-02T10:52:20.6160627Z Review phone-dark: editor-savestatus--waiting-to-resync
+2026-11-02T10:52:20.9994461Z Review phone-dark: editor-savestatus--rejected-edits
+2026-11-02T10:52:21.6364497Z Review phone-dark: editor-savestatus--long-error
+2026-11-02T10:52:22.2353307Z Review phone-dark: editor-savestatus--stable-geometry-and-retry
+2026-11-02T10:52:23.0318948Z Review phone-dark: editor-savestatus--keyboard-details
+2026-11-02T10:52:23.4653388Z Review phone-dark: editor-savestatus--touch-details
+2026-11-02T10:52:23.8489508Z Review phone-dark: dashboard-searchpanel--empty-query
+2026-11-02T10:52:24.2651855Z Review phone-dark: dashboard-searchpanel--results
+2026-11-02T10:52:24.8890670Z Review phone-dark: dashboard-searchpanel--no-results
+2026-11-02T10:52:25.4667445Z Review phone-dark: dashboard-searchpanel--loading
+2026-11-02T10:52:25.8985494Z Review phone-dark: dashboard-searchpanel--failed
+2026-11-02T10:52:26.4869453Z Review phone-dark: dashboard-searchpanel--space-roots-only
+2026-11-02T10:52:26.9166076Z Review phone-dark: dashboard-searchpanel--active-filters
+2026-11-02T10:52:27.3517485Z Review phone-dark: dashboard-searchpanel--invalid-draft
+2026-11-02T10:52:27.7997765Z Review phone-dark: dashboard-searchpanel--long-invalid-draft
+2026-11-02T10:52:28.2314880Z Review phone-dark: dashboard-searchpanel--search-options
+2026-11-02T10:52:29.0001824Z Review phone-dark: current-production-admin-serverhealth--healthy
+2026-11-02T10:52:29.3684817Z Review phone-dark: current-production-admin-serverhealth--spaces-disabled
+2026-11-02T10:52:29.7329259Z Review phone-dark: current-production-admin-serverhealth--warning
+2026-11-02T10:52:30.0569111Z Review phone-dark: current-production-admin-serverhealth--unavailable-measurements
+2026-11-02T10:52:30.3789311Z Review phone-dark: current-production-admin-serverhealth--low-backup-space
+2026-11-02T10:52:30.7520833Z Review phone-dark: current-production-admin-serverhealth--near-upload-ceiling
+2026-11-02T10:52:31.1200824Z Review phone-dark: current-production-admin-serverhealth--loading
+2026-11-02T10:52:31.3809655Z Review phone-dark: current-production-admin-serverhealth--failed
+2026-11-02T10:52:31.6810265Z Review phone-dark: current-production-admin-serverhealth--expired
+2026-11-02T10:52:31.9972895Z Review phone-dark: sharing-sharelink--loading
+2026-11-02T10:52:32.3132553Z Review phone-dark: sharing-sharelink--link-off
+2026-11-02T10:52:32.5811796Z Review phone-dark: sharing-sharelink--doc-source-limit
+2026-11-02T10:52:32.8480108Z Review phone-dark: sharing-sharelink--space-source-limit
+2026-11-02T10:52:33.1157879Z Review phone-dark: sharing-sharelink--link-on-view-only
+2026-11-02T10:52:33.3804190Z Review phone-dark: sharing-sharelink--link-on-can-edit
+2026-11-02T10:52:33.6972141Z Review phone-dark: sharing-sharelink--link-on-without-url
+2026-11-02T10:52:33.9634750Z Review phone-dark: sharing-sharelink--scheduled-expiry
+2026-11-02T10:52:34.2978447Z Review phone-dark: sharing-sharelink--expired
+2026-11-02T10:52:34.6149263Z Review phone-dark: sharing-sharelink--create-after-expiry
+2026-11-02T10:52:34.9986625Z Review phone-dark: sharing-sharelink--failed
+2026-11-02T10:52:35.2634114Z Review phone-dark: sharing-sharelink--space-view-link
+2026-11-02T10:52:35.5310059Z Review phone-dark: sharing-sharelink--space-edit-link
+2026-11-02T10:52:35.8479727Z Review phone-dark: sharing-sharelink--confirm-whole-space
+2026-11-02T10:52:36.2205747Z Review phone-dark: sharing-sharelink--confirm-replacement-edit-link
+2026-11-02T10:52:36.6369465Z Review phone-dark: sharing-sharelink--confirm-turn-off-space-link
+2026-11-02T10:52:37.1193972Z Review phone-dark: sharing-sharelink--load-after-leaving-space
+2026-11-02T10:52:37.4637092Z Review phone-dark: sharing-sharelink--change-after-replacing-space
+2026-11-02T10:52:37.9660510Z Review phone-dark: sharing-sharelink--created-link
+2026-11-02T10:52:38.3323663Z Review phone-dark: sharing-sharelink--replace-fresh-link
+2026-11-02T10:52:38.9985976Z Review phone-dark: sharing-sharelink--replaced-link
+2026-11-02T10:52:39.4986142Z Review phone-dark: sharing-sharelink--replacing
+2026-11-02T10:52:39.9689599Z Review phone-dark: sharing-sharelink--created-space-link-focus
+2026-11-02T10:52:40.4324908Z Review phone-dark: sharing-sharelink--turned-off-space-link-focus
+2026-11-02T10:52:40.9888038Z Review phone-dark: sharing-sharelink--no-secret-readback
+2026-11-02T10:52:41.3304723Z Review phone-dark: sharing-sharelink--creating
+2026-11-02T10:52:41.6975805Z Review phone-dark: sharing-sharelink--failed-create
+2026-11-02T10:52:42.0484040Z Review phone-dark: sharing-sharelink--failed-replacement
+2026-11-02T10:52:42.6637240Z Review phone-dark: sharing-sharelink--failed-replacement-visible
+2026-11-02T10:52:43.1029750Z Review phone-dark: sharing-sharelink--failed-turn-off
+2026-11-02T10:52:43.5307303Z Review phone-dark: dashboard-sharedbadge--owned
+2026-11-02T10:52:43.7793386Z Review phone-dark: dashboard-sharedbadge--shared-with-me
+2026-11-02T10:52:44.0292148Z Review phone-dark: dashboard-sharedbadge--unknown-owner
+2026-11-02T10:52:44.3294375Z Review phone-dark: sharing-sharing--loading
+2026-11-02T10:52:44.6005477Z Review phone-dark: sharing-sharing--owner-only
+2026-11-02T10:52:44.8838950Z Review phone-dark: sharing-sharing--with-people
+2026-11-02T10:52:45.1531343Z Review phone-dark: sharing-sharing--folder
+2026-11-02T10:52:45.4365428Z Review phone-dark: sharing-sharing--failed
+2026-11-02T10:52:45.7679666Z Review phone-dark: sharing-sharing--whole-space
+2026-11-02T10:52:46.0529260Z Review phone-dark: sharing-sharing--file-admin
+2026-11-02T10:52:46.3350369Z Review phone-dark: sharing-sharing--grant-file-admin
+2026-11-02T10:52:46.9023425Z Review phone-dark: sharing-sharing--admin-revoked-while-applying
+2026-11-02T10:52:47.4031374Z Review phone-dark: sharing-sharing--composed
+2026-11-02T10:52:47.8349537Z Review phone-dark: sharing-sharing--access-saving
+2026-11-02T10:52:48.3843795Z Review phone-dark: sharing-sharing--disabled-account
+2026-11-02T10:52:48.9004145Z Review phone-dark: sharing-sharing--disabled-account-before-removal
+2026-11-02T10:52:49.3022380Z Review phone-dark: sharing-sharing--one-recipient-draft
+2026-11-02T10:52:50.1015187Z Review phone-dark: sharing-sharing--navigation-after-cancel
+2026-11-02T10:52:50.5685003Z Review phone-dark: sharing-sharing--write-after-leaving
+2026-11-02T10:52:51.1132009Z Review phone-dark: sharing-sharing--write-after-replacing
+2026-11-02T10:52:51.6860363Z Review phone-dark: sharing-sharing--failed-write-retry
+2026-11-02T10:52:52.2838611Z Review phone-dark: sharing-sharing--guest-link-created
+2026-11-02T10:52:52.7370872Z Review phone-dark: sharing-sharing--existing-guest-link
+2026-11-02T10:52:53.1343883Z Review phone-dark: sharing-sharing--replace-guest-link
+2026-11-02T10:52:53.5868949Z Review phone-dark: sharing-sharing--inherited-access-after-removal
+2026-11-02T10:52:54.0514152Z Review phone-dark: sharing-sharing--equal-inherited-access-after-downgrade
+2026-11-02T10:52:54.5017259Z Review phone-dark: sharing-formula-sources--overview
+2026-11-02T10:52:54.8502591Z Review phone-dark: sharing-formula-sources--unchecked
+2026-11-02T10:52:55.2859064Z Review phone-dark: sharing-formula-sources--checked
+2026-11-02T10:52:55.7692532Z Review phone-dark: sharing-formula-sources--choose-report-access-first
+2026-11-02T10:52:56.1853870Z Review phone-dark: sharing-formula-sources--host-only
+2026-11-02T10:52:56.8354201Z Review phone-dark: sharing-formula-sources--source-only
+2026-11-02T10:52:57.5022253Z Review phone-dark: sharing-formula-sources--checking
+2026-11-02T10:52:57.9187963Z Review phone-dark: sharing-formula-sources--check-failed
+2026-11-02T10:52:58.4519157Z Review phone-dark: sharing-formula-sources--applying
+2026-11-02T10:52:59.0188993Z Review phone-dark: sharing-formula-sources--existing-access-kept
+2026-11-02T10:52:59.4853679Z Review phone-dark: sharing-formula-sources--same-space
+2026-11-02T10:52:59.9017483Z Review phone-dark: sharing-formula-sources--external-space
+2026-11-02T10:53:00.3860256Z Review phone-dark: sharing-formula-sources--protected-and-unavailable
+2026-11-02T10:53:00.8017877Z Review phone-dark: sharing-formula-sources--partial
+2026-11-02T10:53:01.3544062Z Review phone-dark: sharing-formula-sources--changed-after-review
+2026-11-02T10:53:01.9536971Z Review phone-dark: sharing-formula-sources--lost-acknowledgement
+2026-11-02T10:53:02.5693261Z Review phone-dark: sharing-formula-sources--missing-result
+2026-11-02T10:53:03.1695342Z Review phone-dark: sharing-formula-sources--host-only-lost-acknowledgement
+2026-11-02T10:53:03.7198514Z Review phone-dark: sharing-formula-sources--host-only-authority-lost
+2026-11-02T10:53:04.2506156Z Review phone-dark: sharing-formula-sources--host-only-source-became-private
+2026-11-02T10:53:04.7858766Z Review phone-dark: sharing-formula-sources--host-revoked
+2026-11-02T10:53:05.3337211Z Review phone-dark: sharing-formula-sources--no-stale-source-names
+2026-11-02T10:53:05.9344308Z Review phone-dark: sharing-formula-sources--consent-and-draft-reset
+2026-11-02T10:53:06.9185209Z Review phone-dark: sharing-formula-sources--public-link-isolation
+2026-11-02T10:53:07.5026093Z Review phone-dark: sharing-formula-sources--review-after-leaving
+2026-11-02T10:53:07.9454780Z Review phone-dark: sharing-formula-sources--review-after-replacing
+2026-11-02T10:53:08.5177204Z Review phone-dark: space-review--app-loading
+2026-11-02T10:53:09.0618153Z Review phone-dark: space-review--app-unreachable
+2026-11-02T10:53:09.6459263Z Review phone-dark: space-review--app-unavailable
+2026-11-02T10:53:10.1619877Z Review phone-dark: space-review--populated
+2026-11-02T10:53:10.6978732Z Review phone-dark: space-review--independent-expansion
+2026-11-02T10:53:11.4322563Z Review phone-dark: space-review--view-only
+2026-11-02T10:53:12.0305301Z Review phone-dark: space-review--page-access-details
+2026-11-02T10:53:12.7977057Z Review phone-dark: space-review--empty
+2026-11-02T10:53:13.3471724Z Review phone-dark: space-review--restore-banner
+2026-11-02T10:53:13.8659586Z Review phone-dark: space-review--restore-banner-dark
+2026-11-02T10:53:14.4159103Z Review phone-dark: space-review--restore-banner-phone
+2026-11-02T10:53:14.9494403Z Review phone-dark: space-review--restore-banner-with-document
+2026-11-02T10:53:15.4975400Z Review phone-dark: space-review--spaces-index
+2026-11-02T10:53:16.0461717Z Review phone-dark: space-review--no-spaces
+2026-11-02T10:53:16.5633802Z Review phone-dark: space-review--new-space
+2026-11-02T10:53:17.2696084Z Review phone-dark: space-review--new-doc
+2026-11-02T10:53:18.1869139Z Review phone-dark: space-review--new-sheet
+2026-11-02T10:53:19.0036017Z Review phone-dark: space-review--new-folder
+2026-11-02T10:53:19.9370642Z Review phone-dark: space-review--loading
+2026-11-02T10:53:20.4483380Z Review phone-dark: space-review--unavailable
+2026-11-02T10:53:20.9794754Z Review phone-dark: space-review--retained-device-page
+2026-11-02T10:53:21.5482414Z Review phone-dark: space-review--retained-device-page-navigation
+2026-11-02T10:53:22.2137540Z Review phone-dark: space-review--unreachable
+2026-11-02T10:53:22.7294805Z Review phone-dark: space-review--guest-viewer
+2026-11-02T10:53:23.2643635Z Review phone-dark: space-review--guest-editor
+2026-11-02T10:53:23.7976442Z Review phone-dark: space-review--guest-empty
+2026-11-02T10:53:24.2963889Z Review phone-dark: space-review--guest-loading
+2026-11-02T10:53:24.7955600Z Review phone-dark: space-review--guest-revoked
+2026-11-02T10:53:25.3131899Z Review phone-dark: space-review--guest-unreachable
+2026-11-02T10:53:25.8598032Z Review phone-dark: space-review--guest-missing-page
+2026-11-02T10:53:27.3410768Z Review phone-dark: space-review--guest-malformed-route
+2026-11-02T10:53:27.9871496Z Review phone-dark: space-review--offline
+2026-11-02T10:53:28.8142732Z Review phone-dark: space-review--deep-tree
+2026-11-02T10:53:29.5324689Z Review phone-dark: space-review--pages-drawer
+2026-11-02T10:53:30.2641113Z Review phone-dark: space-review--move-or-reorder
+2026-11-02T10:53:31.1684057Z Review phone-dark: space-review--metadata-dialog-focus
+2026-11-02T10:53:32.0643129Z Review phone-dark: space-review--mutation-failure
+2026-11-02T10:53:33.1353225Z Review phone-dark: space-review--trash-subtree-confirmation
+2026-11-02T10:53:33.9353021Z Review phone-dark: space-review--trash-owner
+2026-11-02T10:53:34.4664693Z Review phone-dark: space-review--trash-editor
+2026-11-02T10:53:35.0331166Z Review phone-dark: space-review--trash-expired
+2026-11-02T10:53:35.6835957Z Review phone-dark: space-review--trash-expired-editor
+2026-11-02T10:53:36.2339006Z Review phone-dark: space-review--trash-recovery-ended
+2026-11-02T10:53:36.8876163Z Review phone-dark: space-review--trash-role-change
+2026-11-02T10:53:37.4163592Z Review phone-dark: space-review--trash-viewer-denied
+2026-11-02T10:53:37.9454156Z Review phone-dark: space-review--trash-empty
+2026-11-02T10:53:38.4636937Z Review phone-dark: space-review--trash-retry
+2026-11-02T10:53:39.0838439Z Review phone-dark: space-review--trash-offline
+2026-11-02T10:53:39.6210898Z Review phone-dark: space-review--delete-confirmation
+2026-11-02T10:53:40.3372594Z Review phone-dark: space-review--cancel-deletion
+2026-11-02T10:53:41.1494636Z Review phone-dark: space-review--stale-delete-preview
+2026-11-02T10:53:41.9022540Z Review phone-dark: space-review--file-admin
+2026-11-02T10:53:42.7139100Z Review phone-dark: space-guest--view-only
+2026-11-02T10:53:43.2462518Z Review phone-dark: space-guest--view-only-dark
+2026-11-02T10:53:43.7622080Z Review phone-dark: space-guest--view-only-phone
+2026-11-02T10:53:44.2630121Z Review phone-dark: space-guest--can-edit
+2026-11-02T10:53:44.7962419Z Review phone-dark: space-guest--can-edit-dark
+2026-11-02T10:53:45.3133510Z Review phone-dark: space-guest--can-edit-phone
+2026-11-02T10:53:45.8464430Z Review phone-dark: space-guest--nested-page
+2026-11-02T10:53:46.3461627Z Review phone-dark: space-guest--phone-contents
+2026-11-02T10:53:46.9461092Z Review phone-dark: space-guest--empty
+2026-11-02T10:53:47.4284510Z Review phone-dark: space-guest--loading
+2026-11-02T10:53:47.9116620Z Review phone-dark: space-guest--unavailable
+2026-11-02T10:53:48.3955880Z Review phone-dark: space-guest--recovery-deep-link-refused
+2026-11-02T10:53:48.8623256Z Review phone-dark: space-offline-actions--ready-to-prepare
+2026-11-02T10:53:49.1772001Z Review phone-dark: space-offline-actions--waiting-for-save
+2026-11-02T10:53:49.4942772Z Review phone-dark: space-offline-actions--storage-unavailable
+2026-11-02T10:53:49.8612305Z Review phone-dark: space-offline-actions--storage-unavailable-dark
+2026-11-02T10:53:50.2284395Z Review phone-dark: space-offline-actions--storage-unavailable-phone
+2026-11-02T10:53:50.6284343Z Review phone-dark: space-offline-actions--prepared-pages
+2026-11-02T10:53:51.0459772Z Review phone-dark: space-offline-actions--prepared-dark
+2026-11-02T10:53:51.4952524Z Review phone-dark: space-offline-actions--prepared-phone
+2026-11-02T10:53:51.8957806Z Review phone-dark: space-offline-actions--unmount-during-download
+2026-11-02T10:53:52.3775885Z Review phone-dark: space-offline-actions--change-account-during-download
+2026-11-02T10:53:52.7944957Z Review phone-dark: space-offline-actions--sign-out-during-download
+2026-11-02T10:53:53.2773939Z Review phone-dark: spaces-root-actions--owner
+2026-11-02T10:53:53.5428566Z Review phone-dark: spaces-root-actions--viewer
+2026-11-02T10:53:53.8098270Z Review phone-dark: spaces-root-actions--rename
+2026-11-02T10:53:54.2487527Z Review phone-dark: spaces-root-actions--move
+2026-11-02T10:53:54.7314059Z Review phone-dark: spaces-root-actions--loading-destinations
+2026-11-02T10:53:55.2168772Z Review phone-dark: spaces-root-actions--destination-failure
+2026-11-02T10:53:55.6818269Z Review phone-dark: spaces-root-actions--whole-space-trash
+2026-11-02T10:53:56.1662728Z Review phone-dark: spaces-root-actions--share-whole-space
+2026-11-02T10:53:56.8008030Z Review phone-dark: spaces-root-actions--save-failure
+2026-11-02T10:53:57.3320500Z Review phone-dark: spaces-root-actions--trash-response-after-navigation
+2026-11-02T10:53:57.8784659Z Review phone-dark: spaces-root-actions--rename-response-after-unmount
+2026-11-02T10:53:58.4293351Z Review phone-dark: spaces-root-actions--failed-response-after-navigation
+2026-11-02T10:53:59.1008410Z Review phone-dark: spaces-root-actions--file-admin-move
+2026-11-02T10:53:59.6148659Z Review phone-dark: spaces-root-actions--file-admin-no-destinations
+2026-11-02T10:54:00.0830901Z Review phone-dark: current-production-spaces-recovery-holds--held-after-recovery
+2026-11-02T10:54:00.4471968Z Review phone-dark: current-production-spaces-recovery-holds--editor
+2026-11-02T10:54:00.7139279Z Review phone-dark: current-production-spaces-recovery-holds--offline
+2026-11-02T10:54:00.9809160Z Review phone-dark: editor-sync-native--doc-drawing-capture
+2026-11-02T10:54:02.5294160Z Review phone-dark: dashboard-taglabels--none
+2026-11-02T10:54:02.7928725Z Review phone-dark: dashboard-taglabels--one
+2026-11-02T10:54:03.0596418Z Review phone-dark: dashboard-taglabels--several
+2026-11-02T10:54:03.3264724Z Review phone-dark: dashboard-trash--with-items
+2026-11-02T10:54:03.6173288Z Review phone-dark: dashboard-trash--held-after-recovery
+2026-11-02T10:54:03.9147528Z Review phone-dark: dashboard-trash--confirm-empty-held-items
+2026-11-02T10:54:04.2677708Z Review phone-dark: dashboard-trash--empty
+2026-11-02T10:54:04.5437549Z Review phone-dark: dashboard-trash--loading
+2026-11-02T10:54:04.8099453Z Review phone-dark: dashboard-trash--load-failed
+2026-11-02T10:54:05.0772807Z Review phone-dark: dashboard-trash--confirm-empty
+2026-11-02T10:54:05.4025403Z Review phone-dark: dashboard-trash--space-recovery-window
+2026-11-02T10:54:05.6816123Z Review phone-dark: dashboard-trash--expired-space-group
+2026-11-02T10:54:05.9991248Z Review phone-dark: dashboard-trash--confirm-complete-space-graph
+2026-11-02T10:54:06.3012039Z Review phone-dark: dashboard-trash--space-graph-changed
+2026-11-02T10:54:06.7162621Z Review phone-dark: editor-versionnames--closed
+2026-11-02T10:54:06.9759366Z Review phone-dark: editor-versionnames--open
+2026-11-02T10:54:07.2642240Z Review phone-dark: editor-versionnames--viewer-open
+2026-11-02T10:54:07.5821421Z Review phone-dark: editor-versionnames--no-versions
+2026-11-02T10:54:07.9284557Z Review phone-dark: editor-versionnames--unsaved-changes
+2026-11-02T10:54:08.2155489Z Review phone-dark: editor-versionnames--loading
+2026-11-02T10:54:08.5281883Z Review phone-dark: editor-versionnames--load-failed
+2026-11-02T10:54:08.8613861Z Review phone-dark: editor-versionnames--naming-version
+2026-11-02T10:54:09.2330175Z Review phone-dark: editor-versionnames--space-editor
+2026-11-02T10:54:09.5307123Z Review phone-dark: editor-versionnames--space-viewer
+2026-11-02T10:54:09.8493109Z Review phone-dark: dashboard-workspacearchive--confirmation
+2026-11-02T10:54:10.1647430Z Review phone-dark: dashboard-workspacearchive--starting
+2026-11-02T10:54:10.5154286Z Review phone-dark: dashboard-workspacearchive--preparing
+2026-11-02T10:54:10.8654940Z Review phone-dark: dashboard-workspacearchive--browser-download
+2026-11-02T10:54:11.2319964Z Review phone-dark: dashboard-workspacearchive--exporting
+2026-11-02T10:54:11.6151624Z Review phone-dark: dashboard-workspacearchive--completed
+2026-11-02T10:54:11.9478047Z Review phone-dark: dashboard-workspacearchive--empty-archive
+2026-11-02T10:54:12.3147565Z Review phone-dark: dashboard-workspacearchive--start-failed
+2026-11-02T10:54:12.6982514Z Review phone-dark: dashboard-workspacearchive--export-failed
+2026-11-02T10:54:13.0649132Z Review phone-dark: dashboard-workspacearchive--progress-unavailable
+2026-11-02T10:54:13.6656538Z Review phone-dark: dashboard-workspacearchive--expired-task
+2026-11-02T10:54:14.4981439Z Review phone-dark: dashboard-workspacearchive--cancel-expired-task
+2026-11-02T10:54:14.9151180Z Review phone-dark: dashboard-workspacearchive--retry-progress
+2026-11-02T10:54:15.7478555Z Review phone-dark: dashboard-workspacearchive--cancelling
+2026-11-02T10:54:16.1488412Z Review phone-dark: dashboard-workspacearchive--cancelled
+2026-11-02T10:54:16.5474765Z Review phone-dark: dashboard-workspacearchive--cancel-before-start
+2026-11-02T10:54:16.9307271Z Review phone-dark: dashboard-workspacearchive--cancellation-failed
+2026-11-02T10:54:17.3493123Z Review phone-dark: offline-availability--protection-granted
+2026-11-02T10:54:17.6805964Z Review phone-dark: offline-availability--protection-denied
+2026-11-02T10:54:18.0975533Z Review phone-dark: offline-availability--protection-unsupported
+2026-11-02T10:54:18.4142670Z Review phone-dark: offline-availability--protection-error
+2026-11-02T10:54:18.6973031Z Review phone-dark: offline-availability--storage-guidance
+2026-11-02T10:54:19.0532553Z Review phone-dark: offline-availability--browser-storage-limits
+2026-11-02T10:54:19.5560116Z Review phone-dark: offline-availability--pending-removal
+2026-11-02T10:54:19.9137847Z Review phone-dark: identity-entity-icons--standalone
+2026-11-02T10:54:20.1753153Z Review phone-dark: identity-entity-icons--lineup
+2026-11-02T10:54:20.4540410Z Review phone-dark: identity-entity-icons--in-context
+2026-11-02T10:54:20.7133549Z Review phone-dark: identity-entity-icons--monochrome
+2026-11-02T10:54:20.9918368Z Review phone-dark: identity-entity-icons--phone
+2026-11-02T10:54:21.2464913Z Review phone-dark: identity-favicon--light
+2026-11-02T10:54:21.5105633Z Review phone-dark: identity-favicon--dark
+2026-11-02T10:54:21.7602362Z Review phone-dark: identity-favicon--automatic
+2026-11-02T10:54:22.0440829Z Review phone-dark: identity-social-cards--generic
+2026-11-02T10:54:22.3099977Z Review phone-dark: identity-social-cards--document
+2026-11-02T10:54:22.5597031Z Review phone-dark: identity-social-cards--spreadsheet
+2026-11-02T10:54:22.8265240Z Review phone-dark: identity-social-cards--emoji
+2026-11-02T10:54:23.1261793Z Review phone-dark: identity-social-cards--long-title
+2026-11-02T10:54:23.3764414Z Review phone-dark: identity-social-cards--long-word
+2026-11-02T10:54:23.6269002Z Review phone-dark: identity-social-cards--space-preview
+2026-11-02T10:54:23.8763021Z Review phone-dark: redesign-native-editors--sheet
+2026-11-02T10:54:25.1612453Z Review phone-dark: redesign-native-editors--doc
+2026-11-02T10:54:26.9308841Z Review phone-dark: redesign-native-editors--sheet-viewer
+2026-11-02T10:54:27.7519421Z Review phone-dark: redesign-native-editors--doc-viewer
+2026-11-02T10:54:29.0815627Z Review phone-dark: redesign-native-editors--sheet-formula
+2026-11-02T10:54:29.9151634Z Review phone-dark: redesign-native-editors--sheet-copy-available
+2026-11-02T10:54:30.8800649Z Review phone-dark: redesign-native-editors--sheet-copy-unavailable
+2026-11-02T10:54:32.8925905Z Checked 1041 story states; captured 1041 catalog/error screenshots in /home/runner/work/spinel/spinel/test-results/design-review; 9 additional interaction passes.
+2026-11-02T10:54:32.9391854Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-02T10:54:32.9392288Z with:
+2026-11-02T10:54:32.9392504Z   name: design-review-mobile-dark
+2026-11-02T10:54:32.9392791Z   path: test-results/design-review
+2026-11-02T10:54:32.9393062Z   if-no-files-found: error
+2026-11-02T10:54:32.9393299Z   retention-days: 14
+2026-11-02T10:54:32.9393522Z   compression-level: 6
+2026-11-02T10:54:32.9393759Z   overwrite: false
+2026-11-02T10:54:32.9393984Z   include-hidden-files: false
+2026-11-02T10:54:32.9394425Z   archive: true
+2026-11-02T10:54:32.9394626Z ##[endgroup]
+2026-11-02T10:54:33.2517913Z With the provided path, there will be 1050 files uploaded
+2026-11-02T10:54:33.2520489Z Artifact name is valid!
+2026-11-02T10:54:33.2521135Z Root directory input is valid!
+2026-11-02T10:54:33.6665262Z Uploading artifact: design-review-mobile-dark.zip
+2026-11-02T10:54:33.6702774Z Beginning upload of artifact content to blob storage
+2026-11-02T10:54:34.9127711Z Uploaded bytes 8388608
+2026-11-02T10:54:35.2895014Z Uploaded bytes 16777216
+2026-11-02T10:54:35.4044037Z Uploaded bytes 25165824
+2026-11-02T10:54:35.6611445Z Uploaded bytes 33554432
+2026-11-02T10:54:36.0433494Z Uploaded bytes 41094333
+2026-11-02T10:54:36.1131036Z Finished uploading artifact content to blob storage!
+2026-11-02T10:54:36.1134390Z SHA256 digest of uploaded artifact is d6f68f94b57bc92d0b55443b98ce399bdc679c7debae498e9b24cc76897ef2d7
+2026-11-02T10:54:36.1137437Z Finalizing artifact upload
+2026-11-02T10:54:36.7490636Z Artifact design-review-mobile-dark successfully finalized. Artifact ID 13134542462
+2026-11-02T10:54:36.7491776Z Artifact design-review-mobile-dark has been successfully uploaded! Final size is 41094333 bytes. Artifact ID is 13134542462
+2026-11-02T10:54:36.7496623Z Artifact download URL: https://github.com/mxbaylee/spinel/actions/runs/41430568554/artifacts/13134542462
+2026-11-02T10:54:36.7776054Z Post job cleanup.
+2026-11-02T10:54:36.9105878Z Post job cleanup.
+2026-11-02T10:54:37.0009449Z [command]/usr/bin/git version
+2026-11-02T10:54:37.0082199Z git version 2.56.0
+2026-11-02T10:54:37.0126111Z Temporarily overriding HOME='/home/runner/work/_temp/aa0a0a35-0407-4bb5-a3ac-220332952d0d' before making global git config changes
+2026-11-02T10:54:37.0128208Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-02T10:54:37.0132551Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-02T10:54:37.0179291Z Removing SSH command configuration
+2026-11-02T10:54:37.0188305Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-02T10:54:37.0264248Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-02T10:54:37.0629982Z Removing HTTP extra header
+2026-11-02T10:54:37.0639065Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-02T10:54:37.0704872Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-02T10:54:37.1089618Z Removing includeIf entries pointing to credentials config files
+2026-11-02T10:54:37.1098757Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-02T10:54:37.1150538Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-02T10:54:37.1538655Z Cleaning up orphan processes
