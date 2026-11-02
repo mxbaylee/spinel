@@ -1,0 +1,51 @@
+﻿2026-11-02T14:40:41.9076507Z Current runner version: '2.338.2'
+2026-11-02T14:40:41.9100748Z ##[group]Runner Image Provisioner
+2026-11-02T14:40:41.9101687Z Hosted Compute Agent
+2026-11-02T14:40:41.9102368Z Version: 20261021.618
+2026-11-02T14:40:41.9102983Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-11-02T14:40:41.9103720Z Build Date: 2026-10-21T00:45:21Z
+2026-11-02T14:40:41.9104397Z Worker ID: {3f4735ea-2941-4924-8f09-0e5a384b5be7}
+2026-11-02T14:40:41.9105143Z Region: westcentralus
+2026-11-02T14:40:41.9105737Z Cloud: Azure
+2026-11-02T14:40:41.9106270Z ##[endgroup]
+2026-11-02T14:40:41.9107567Z ##[group]Operating System
+2026-11-02T14:40:41.9108265Z Ubuntu
+2026-11-02T14:40:41.9108810Z 24.04.5
+2026-11-02T14:40:41.9109375Z LTS
+2026-11-02T14:40:41.9109884Z ##[endgroup]
+2026-11-02T14:40:41.9110682Z ##[group]Runner Image
+2026-11-02T14:40:41.9111397Z Image: ubuntu-24.04
+2026-11-02T14:40:41.9111986Z Version: 20261025.353.1
+2026-11-02T14:40:41.9113274Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+2026-11-02T14:40:41.9114750Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+2026-11-02T14:40:41.9115701Z ##[endgroup]
+
+2026-11-02T14:41:06.3999712Z {
+2026-11-02T14:41:06.4000349Z   "kind": "ubuntu-mirror-input",
+2026-11-02T14:41:06.4001312Z   "imageOS": "ubuntu24",
+2026-11-02T14:41:06.4001941Z   "imageVersion": "20261026.354.1",
+2026-11-02T14:41:06.4002495Z   "bytes": 144,
+2026-11-02T14:41:06.4003215Z   "sha256": "e0d6b0af979e4662d16357a27ae456cc6f21e26da031540f4df8706ebed1d583",
+2026-11-02T14:41:06.4003934Z   "lines": [
+2026-11-02T14:41:06.4004465Z     {
+2026-11-02T14:41:06.4004909Z       "line": 1,
+2026-11-02T14:41:06.4005591Z       "text": "http://azure.archive.ubuntu.com/ubuntu/\tpriority:1"
+2026-11-02T14:41:06.4006229Z     },
+2026-11-02T14:41:06.4006671Z     {
+2026-11-02T14:41:06.4007275Z       "line": 2,
+2026-11-02T14:41:06.4008018Z       "text": "https://archive.ubuntu.com/ubuntu/\tpriority:2"
+2026-11-02T14:41:06.4008618Z     },
+2026-11-02T14:41:06.4008992Z     {
+2026-11-02T14:41:06.4009459Z       "line": 3,
+2026-11-02T14:41:06.4010178Z       "text": "https://security.ubuntu.com/ubuntu/\tpriority:3"
+2026-11-02T14:41:06.4011071Z     },
+2026-11-02T14:41:06.4011502Z     {
+2026-11-02T14:41:06.4011926Z       "line": 4,
+2026-11-02T14:41:06.4012423Z       "text": ""
+2026-11-02T14:41:06.4012852Z     }
+2026-11-02T14:41:06.4013247Z   ]
+2026-11-02T14:41:06.4013638Z }
+2026-11-02T14:41:06.4096366Z Preferred the official Ubuntu archive; Azure remains the fallback.
+2026-11-02T14:41:07.0762424Z Installing dependencies...
+2026-11-02T14:41:07.0843249Z Switching to root user to install dependencies...
+2026-11-02T14:41:07.1642639Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]

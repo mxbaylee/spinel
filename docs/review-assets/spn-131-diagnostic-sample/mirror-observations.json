@@ -1,0 +1,914 @@
+[
+  {
+    "file": "job-125340701679-mirror-excerpt.log",
+    "runnerImage": {
+      "Image": "ubuntu-24.04",
+      "Version": "20261025.353.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md",
+      "Image Release": "https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353"
+    },
+    "strictFailure": false,
+    "records": [
+      {
+        "kind": "ubuntu-mirror-input",
+        "imageOS": "ubuntu24",
+        "imageVersion": "20261026.354.1",
+        "bytes": 144,
+        "sha256": "e0d6b0af979e4662d16357a27ae456cc6f21e26da031540f4df8706ebed1d583",
+        "lines": [
+          {
+            "line": 1,
+            "text": "http://azure.archive.ubuntu.com/ubuntu/\tpriority:1"
+          },
+          {
+            "line": 2,
+            "text": "https://archive.ubuntu.com/ubuntu/\tpriority:2"
+          },
+          {
+            "line": 3,
+            "text": "https://security.ubuntu.com/ubuntu/\tpriority:3"
+          },
+          {
+            "line": 4,
+            "text": ""
+          }
+        ],
+        "reconstructable": true
+      }
+    ]
+  },
+  {
+    "file": "job-125340701760-mirror-excerpt.log",
+    "runnerImage": {
+      "Image": "ubuntu-24.04",
+      "Version": "20261025.353.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md",
+      "Image Release": "https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353"
+    },
+    "strictFailure": false,
+    "records": [
+      {
+        "kind": "ubuntu-mirror-input",
+        "imageOS": "ubuntu24",
+        "imageVersion": "20261026.354.1",
+        "bytes": 144,
+        "sha256": "e0d6b0af979e4662d16357a27ae456cc6f21e26da031540f4df8706ebed1d583",
+        "lines": [
+          {
+            "line": 1,
+            "text": "http://azure.archive.ubuntu.com/ubuntu/\tpriority:1"
+          },
+          {
+            "line": 2,
+            "text": "https://archive.ubuntu.com/ubuntu/\tpriority:2"
+          },
+          {
+            "line": 3,
+            "text": "https://security.ubuntu.com/ubuntu/\tpriority:3"
+          },
+          {
+            "line": 4,
+            "text": ""
+          }
+        ],
+        "reconstructable": true
+      }
+    ]
+  },
+  {
+    "file": "job-125340701853-mirror-excerpt.log",
+    "runnerImage": {
+      "Image": "ubuntu-24.04",
+      "Version": "20261025.353.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md",
+      "Image Release": "https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353"
+    },
+    "strictFailure": false,
+    "records": [
+      {
+        "kind": "ubuntu-mirror-input",
+        "imageOS": "ubuntu24",
+        "imageVersion": "20261026.354.1",
+        "bytes": 144,
+        "sha256": "e0d6b0af979e4662d16357a27ae456cc6f21e26da031540f4df8706ebed1d583",
+        "lines": [
+          {
+            "line": 1,
+            "text": "http://azure.archive.ubuntu.com/ubuntu/\tpriority:1"
+          },
+          {
+            "line": 2,
+            "text": "https://archive.ubuntu.com/ubuntu/\tpriority:2"
+          },
+          {
+            "line": 3,
+            "text": "https://security.ubuntu.com/ubuntu/\tpriority:3"
+          },
+          {
+            "line": 4,
+            "text": ""
+          }
+        ],
+        "reconstructable": true
+      }
+    ]
+  },
+  {
+    "file": "job-125340702121-mirror-excerpt.log",
+    "runnerImage": {
+      "Image": "ubuntu-24.04",
+      "Version": "20261025.353.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md",
+      "Image Release": "https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353"
+    },
+    "strictFailure": false,
+    "records": [
+      {
+        "kind": "ubuntu-mirror-input",
+        "imageOS": "ubuntu24",
+        "imageVersion": "20261026.354.1",
+        "bytes": 144,
+        "sha256": "e0d6b0af979e4662d16357a27ae456cc6f21e26da031540f4df8706ebed1d583",
+        "lines": [
+          {
+            "line": 1,
+            "text": "http://azure.archive.ubuntu.com/ubuntu/\tpriority:1"
+          },
+          {
+            "line": 2,
+            "text": "https://archive.ubuntu.com/ubuntu/\tpriority:2"
+          },
+          {
+            "line": 3,
+            "text": "https://security.ubuntu.com/ubuntu/\tpriority:3"
+          },
+          {
+            "line": 4,
+            "text": ""
+          }
+        ],
+        "reconstructable": true
+      }
+    ]
+  },
+  {
+    "file": "job-125340702152-mirror-excerpt.log",
+    "runnerImage": {
+      "Image": "ubuntu-24.04",
+      "Version": "20261025.353.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md",
+      "Image Release": "https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353"
+    },
+    "strictFailure": false,
+    "records": [
+      {
+        "kind": "ubuntu-mirror-input",
+        "imageOS": "ubuntu24",
+        "imageVersion": "20261026.354.1",
+        "bytes": 144,
+        "sha256": "e0d6b0af979e4662d16357a27ae456cc6f21e26da031540f4df8706ebed1d583",
+        "lines": [
+          {
+            "line": 1,
+            "text": "http://azure.archive.ubuntu.com/ubuntu/\tpriority:1"
+          },
+          {
+            "line": 2,
+            "text": "https://archive.ubuntu.com/ubuntu/\tpriority:2"
+          },
+          {
+            "line": 3,
+            "text": "https://security.ubuntu.com/ubuntu/\tpriority:3"
+          },
+          {
+            "line": 4,
+            "text": ""
+          }
+        ],
+        "reconstructable": true
+      }
+    ]
+  },
+  {
+    "file": "job-125340702221-mirror-excerpt.log",
+    "runnerImage": {
+      "Image": "ubuntu-24.04",
+      "Version": "20261025.353.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md",
+      "Image Release": "https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353"
+    },
+    "strictFailure": false,
+    "records": [
+      {
+        "kind": "ubuntu-mirror-input",
+        "imageOS": "ubuntu24",
+        "imageVersion": "20261026.354.1",
+        "bytes": 144,
+        "sha256": "e0d6b0af979e4662d16357a27ae456cc6f21e26da031540f4df8706ebed1d583",
+        "lines": [
+          {
+            "line": 1,
+            "text": "http://azure.archive.ubuntu.com/ubuntu/\tpriority:1"
+          },
+          {
+            "line": 2,
+            "text": "https://archive.ubuntu.com/ubuntu/\tpriority:2"
+          },
+          {
+            "line": 3,
+            "text": "https://security.ubuntu.com/ubuntu/\tpriority:3"
+          },
+          {
+            "line": 4,
+            "text": ""
+          }
+        ],
+        "reconstructable": true
+      }
+    ]
+  },
+  {
+    "file": "job-125340702287-mirror-excerpt.log",
+    "runnerImage": {
+      "Image": "ubuntu-24.04",
+      "Version": "20261025.353.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md",
+      "Image Release": "https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353"
+    },
+    "strictFailure": false,
+    "records": [
+      {
+        "kind": "ubuntu-mirror-input",
+        "imageOS": "ubuntu24",
+        "imageVersion": "20261026.354.1",
+        "bytes": 144,
+        "sha256": "e0d6b0af979e4662d16357a27ae456cc6f21e26da031540f4df8706ebed1d583",
+        "lines": [
+          {
+            "line": 1,
+            "text": "http://azure.archive.ubuntu.com/ubuntu/\tpriority:1"
+          },
+          {
+            "line": 2,
+            "text": "https://archive.ubuntu.com/ubuntu/\tpriority:2"
+          },
+          {
+            "line": 3,
+            "text": "https://security.ubuntu.com/ubuntu/\tpriority:3"
+          },
+          {
+            "line": 4,
+            "text": ""
+          }
+        ],
+        "reconstructable": true
+      }
+    ]
+  },
+  {
+    "file": "job-125340702357-mirror-excerpt.log",
+    "runnerImage": {
+      "Image": "ubuntu-24.04",
+      "Version": "20261025.353.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md",
+      "Image Release": "https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353"
+    },
+    "strictFailure": false,
+    "records": [
+      {
+        "kind": "ubuntu-mirror-input",
+        "imageOS": "ubuntu24",
+        "imageVersion": "20261026.354.1",
+        "bytes": 144,
+        "sha256": "e0d6b0af979e4662d16357a27ae456cc6f21e26da031540f4df8706ebed1d583",
+        "lines": [
+          {
+            "line": 1,
+            "text": "http://azure.archive.ubuntu.com/ubuntu/\tpriority:1"
+          },
+          {
+            "line": 2,
+            "text": "https://archive.ubuntu.com/ubuntu/\tpriority:2"
+          },
+          {
+            "line": 3,
+            "text": "https://security.ubuntu.com/ubuntu/\tpriority:3"
+          },
+          {
+            "line": 4,
+            "text": ""
+          }
+        ],
+        "reconstructable": true
+      }
+    ]
+  },
+  {
+    "file": "job-125340702446.log",
+    "runnerImage": {
+      "Image": "ubuntu-24.04",
+      "Version": "20261025.353.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md",
+      "Image Release": "https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353"
+    },
+    "strictFailure": false,
+    "records": [
+      {
+        "kind": "ubuntu-mirror-input",
+        "imageOS": "ubuntu24",
+        "imageVersion": "20261026.354.1",
+        "bytes": 144,
+        "sha256": "e0d6b0af979e4662d16357a27ae456cc6f21e26da031540f4df8706ebed1d583",
+        "lines": [
+          {
+            "line": 1,
+            "text": "http://azure.archive.ubuntu.com/ubuntu/\tpriority:1"
+          },
+          {
+            "line": 2,
+            "text": "https://archive.ubuntu.com/ubuntu/\tpriority:2"
+          },
+          {
+            "line": 3,
+            "text": "https://security.ubuntu.com/ubuntu/\tpriority:3"
+          },
+          {
+            "line": 4,
+            "text": ""
+          }
+        ],
+        "reconstructable": true
+      }
+    ]
+  },
+  {
+    "file": "job-125340702462-mirror-excerpt.log",
+    "runnerImage": {
+      "Image": "ubuntu-24.04",
+      "Version": "20261025.353.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md",
+      "Image Release": "https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353"
+    },
+    "strictFailure": false,
+    "records": [
+      {
+        "kind": "ubuntu-mirror-input",
+        "imageOS": "ubuntu24",
+        "imageVersion": "20261026.354.1",
+        "bytes": 144,
+        "sha256": "e0d6b0af979e4662d16357a27ae456cc6f21e26da031540f4df8706ebed1d583",
+        "lines": [
+          {
+            "line": 1,
+            "text": "http://azure.archive.ubuntu.com/ubuntu/\tpriority:1"
+          },
+          {
+            "line": 2,
+            "text": "https://archive.ubuntu.com/ubuntu/\tpriority:2"
+          },
+          {
+            "line": 3,
+            "text": "https://security.ubuntu.com/ubuntu/\tpriority:3"
+          },
+          {
+            "line": 4,
+            "text": ""
+          }
+        ],
+        "reconstructable": true
+      }
+    ]
+  },
+  {
+    "file": "job-125340702467-mirror-excerpt.log",
+    "runnerImage": {
+      "Image": "ubuntu-24.04",
+      "Version": "20261025.353.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md",
+      "Image Release": "https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353"
+    },
+    "strictFailure": false,
+    "records": [
+      {
+        "kind": "ubuntu-mirror-input",
+        "imageOS": "ubuntu24",
+        "imageVersion": "20261026.354.1",
+        "bytes": 144,
+        "sha256": "e0d6b0af979e4662d16357a27ae456cc6f21e26da031540f4df8706ebed1d583",
+        "lines": [
+          {
+            "line": 1,
+            "text": "http://azure.archive.ubuntu.com/ubuntu/\tpriority:1"
+          },
+          {
+            "line": 2,
+            "text": "https://archive.ubuntu.com/ubuntu/\tpriority:2"
+          },
+          {
+            "line": 3,
+            "text": "https://security.ubuntu.com/ubuntu/\tpriority:3"
+          },
+          {
+            "line": 4,
+            "text": ""
+          }
+        ],
+        "reconstructable": true
+      }
+    ]
+  },
+  {
+    "file": "job-125340702509-mirror-excerpt.log",
+    "runnerImage": {
+      "Image": "ubuntu-24.04",
+      "Version": "20261025.353.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md",
+      "Image Release": "https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353"
+    },
+    "strictFailure": false,
+    "records": [
+      {
+        "kind": "ubuntu-mirror-input",
+        "imageOS": "ubuntu24",
+        "imageVersion": "20261026.354.1",
+        "bytes": 144,
+        "sha256": "e0d6b0af979e4662d16357a27ae456cc6f21e26da031540f4df8706ebed1d583",
+        "lines": [
+          {
+            "line": 1,
+            "text": "http://azure.archive.ubuntu.com/ubuntu/\tpriority:1"
+          },
+          {
+            "line": 2,
+            "text": "https://archive.ubuntu.com/ubuntu/\tpriority:2"
+          },
+          {
+            "line": 3,
+            "text": "https://security.ubuntu.com/ubuntu/\tpriority:3"
+          },
+          {
+            "line": 4,
+            "text": ""
+          }
+        ],
+        "reconstructable": true
+      }
+    ]
+  },
+  {
+    "file": "job-125340702511-mirror-excerpt.log",
+    "runnerImage": {
+      "Image": "ubuntu-24.04",
+      "Version": "20261025.353.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md",
+      "Image Release": "https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353"
+    },
+    "strictFailure": false,
+    "records": [
+      {
+        "kind": "ubuntu-mirror-input",
+        "imageOS": "ubuntu24",
+        "imageVersion": "20261026.354.1",
+        "bytes": 144,
+        "sha256": "e0d6b0af979e4662d16357a27ae456cc6f21e26da031540f4df8706ebed1d583",
+        "lines": [
+          {
+            "line": 1,
+            "text": "http://azure.archive.ubuntu.com/ubuntu/\tpriority:1"
+          },
+          {
+            "line": 2,
+            "text": "https://archive.ubuntu.com/ubuntu/\tpriority:2"
+          },
+          {
+            "line": 3,
+            "text": "https://security.ubuntu.com/ubuntu/\tpriority:3"
+          },
+          {
+            "line": 4,
+            "text": ""
+          }
+        ],
+        "reconstructable": true
+      }
+    ]
+  },
+  {
+    "file": "job-125340702538-mirror-excerpt.log",
+    "runnerImage": {
+      "Image": "ubuntu-24.04",
+      "Version": "20261025.353.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md",
+      "Image Release": "https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353"
+    },
+    "strictFailure": false,
+    "records": [
+      {
+        "kind": "ubuntu-mirror-input",
+        "imageOS": "ubuntu24",
+        "imageVersion": "20261026.354.1",
+        "bytes": 144,
+        "sha256": "e0d6b0af979e4662d16357a27ae456cc6f21e26da031540f4df8706ebed1d583",
+        "lines": [
+          {
+            "line": 1,
+            "text": "http://azure.archive.ubuntu.com/ubuntu/\tpriority:1"
+          },
+          {
+            "line": 2,
+            "text": "https://archive.ubuntu.com/ubuntu/\tpriority:2"
+          },
+          {
+            "line": 3,
+            "text": "https://security.ubuntu.com/ubuntu/\tpriority:3"
+          },
+          {
+            "line": 4,
+            "text": ""
+          }
+        ],
+        "reconstructable": true
+      }
+    ]
+  },
+  {
+    "file": "job-125340702576-mirror-excerpt.log",
+    "runnerImage": {
+      "Image": "ubuntu-24.04",
+      "Version": "20261025.353.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md",
+      "Image Release": "https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353"
+    },
+    "strictFailure": false,
+    "records": [
+      {
+        "kind": "ubuntu-mirror-input",
+        "imageOS": "ubuntu24",
+        "imageVersion": "20261026.354.1",
+        "bytes": 144,
+        "sha256": "e0d6b0af979e4662d16357a27ae456cc6f21e26da031540f4df8706ebed1d583",
+        "lines": [
+          {
+            "line": 1,
+            "text": "http://azure.archive.ubuntu.com/ubuntu/\tpriority:1"
+          },
+          {
+            "line": 2,
+            "text": "https://archive.ubuntu.com/ubuntu/\tpriority:2"
+          },
+          {
+            "line": 3,
+            "text": "https://security.ubuntu.com/ubuntu/\tpriority:3"
+          },
+          {
+            "line": 4,
+            "text": ""
+          }
+        ],
+        "reconstructable": true
+      }
+    ]
+  },
+  {
+    "file": "job-125340702662-mirror-excerpt.log",
+    "runnerImage": {
+      "Image": "ubuntu-24.04",
+      "Version": "20261025.353.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md",
+      "Image Release": "https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353"
+    },
+    "strictFailure": false,
+    "records": [
+      {
+        "kind": "ubuntu-mirror-input",
+        "imageOS": "ubuntu24",
+        "imageVersion": "20261026.354.1",
+        "bytes": 144,
+        "sha256": "e0d6b0af979e4662d16357a27ae456cc6f21e26da031540f4df8706ebed1d583",
+        "lines": [
+          {
+            "line": 1,
+            "text": "http://azure.archive.ubuntu.com/ubuntu/\tpriority:1"
+          },
+          {
+            "line": 2,
+            "text": "https://archive.ubuntu.com/ubuntu/\tpriority:2"
+          },
+          {
+            "line": 3,
+            "text": "https://security.ubuntu.com/ubuntu/\tpriority:3"
+          },
+          {
+            "line": 4,
+            "text": ""
+          }
+        ],
+        "reconstructable": true
+      }
+    ]
+  },
+  {
+    "file": "job-125340702679-mirror-excerpt.log",
+    "runnerImage": {
+      "Image": "ubuntu-24.04",
+      "Version": "20261025.353.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md",
+      "Image Release": "https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353"
+    },
+    "strictFailure": false,
+    "records": [
+      {
+        "kind": "ubuntu-mirror-input",
+        "imageOS": "ubuntu24",
+        "imageVersion": "20261026.354.1",
+        "bytes": 144,
+        "sha256": "e0d6b0af979e4662d16357a27ae456cc6f21e26da031540f4df8706ebed1d583",
+        "lines": [
+          {
+            "line": 1,
+            "text": "http://azure.archive.ubuntu.com/ubuntu/\tpriority:1"
+          },
+          {
+            "line": 2,
+            "text": "https://archive.ubuntu.com/ubuntu/\tpriority:2"
+          },
+          {
+            "line": 3,
+            "text": "https://security.ubuntu.com/ubuntu/\tpriority:3"
+          },
+          {
+            "line": 4,
+            "text": ""
+          }
+        ],
+        "reconstructable": true
+      }
+    ]
+  },
+  {
+    "file": "job-125340702720-mirror-excerpt.log",
+    "runnerImage": {
+      "Image": "ubuntu-24.04",
+      "Version": "20261025.353.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md",
+      "Image Release": "https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353"
+    },
+    "strictFailure": false,
+    "records": [
+      {
+        "kind": "ubuntu-mirror-input",
+        "imageOS": "ubuntu24",
+        "imageVersion": "20261026.354.1",
+        "bytes": 144,
+        "sha256": "e0d6b0af979e4662d16357a27ae456cc6f21e26da031540f4df8706ebed1d583",
+        "lines": [
+          {
+            "line": 1,
+            "text": "http://azure.archive.ubuntu.com/ubuntu/\tpriority:1"
+          },
+          {
+            "line": 2,
+            "text": "https://archive.ubuntu.com/ubuntu/\tpriority:2"
+          },
+          {
+            "line": 3,
+            "text": "https://security.ubuntu.com/ubuntu/\tpriority:3"
+          },
+          {
+            "line": 4,
+            "text": ""
+          }
+        ],
+        "reconstructable": true
+      }
+    ]
+  },
+  {
+    "file": "job-125340702748-mirror-excerpt.log",
+    "runnerImage": {
+      "Image": "ubuntu-24.04",
+      "Version": "20261025.353.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md",
+      "Image Release": "https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353"
+    },
+    "strictFailure": false,
+    "records": [
+      {
+        "kind": "ubuntu-mirror-input",
+        "imageOS": "ubuntu24",
+        "imageVersion": "20261026.354.1",
+        "bytes": 144,
+        "sha256": "e0d6b0af979e4662d16357a27ae456cc6f21e26da031540f4df8706ebed1d583",
+        "lines": [
+          {
+            "line": 1,
+            "text": "http://azure.archive.ubuntu.com/ubuntu/\tpriority:1"
+          },
+          {
+            "line": 2,
+            "text": "https://archive.ubuntu.com/ubuntu/\tpriority:2"
+          },
+          {
+            "line": 3,
+            "text": "https://security.ubuntu.com/ubuntu/\tpriority:3"
+          },
+          {
+            "line": 4,
+            "text": ""
+          }
+        ],
+        "reconstructable": true
+      }
+    ]
+  },
+  {
+    "file": "job-125340866339-mirror-excerpt.log",
+    "runnerImage": {
+      "Image": "ubuntu-24.04",
+      "Version": "20261025.353.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md",
+      "Image Release": "https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353"
+    },
+    "strictFailure": false,
+    "records": [
+      {
+        "kind": "ubuntu-mirror-input",
+        "imageOS": "ubuntu24",
+        "imageVersion": "20261026.354.1",
+        "bytes": 144,
+        "sha256": "e0d6b0af979e4662d16357a27ae456cc6f21e26da031540f4df8706ebed1d583",
+        "lines": [
+          {
+            "line": 1,
+            "text": "http://azure.archive.ubuntu.com/ubuntu/\tpriority:1"
+          },
+          {
+            "line": 2,
+            "text": "https://archive.ubuntu.com/ubuntu/\tpriority:2"
+          },
+          {
+            "line": 3,
+            "text": "https://security.ubuntu.com/ubuntu/\tpriority:3"
+          },
+          {
+            "line": 4,
+            "text": ""
+          }
+        ],
+        "reconstructable": true
+      }
+    ]
+  },
+  {
+    "file": "job-125340866427-mirror-excerpt.log",
+    "runnerImage": {
+      "Image": "ubuntu-24.04",
+      "Version": "20261025.353.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md",
+      "Image Release": "https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353"
+    },
+    "strictFailure": false,
+    "records": [
+      {
+        "kind": "ubuntu-mirror-input",
+        "imageOS": "ubuntu24",
+        "imageVersion": "20261026.354.1",
+        "bytes": 144,
+        "sha256": "e0d6b0af979e4662d16357a27ae456cc6f21e26da031540f4df8706ebed1d583",
+        "lines": [
+          {
+            "line": 1,
+            "text": "http://azure.archive.ubuntu.com/ubuntu/\tpriority:1"
+          },
+          {
+            "line": 2,
+            "text": "https://archive.ubuntu.com/ubuntu/\tpriority:2"
+          },
+          {
+            "line": 3,
+            "text": "https://security.ubuntu.com/ubuntu/\tpriority:3"
+          },
+          {
+            "line": 4,
+            "text": ""
+          }
+        ],
+        "reconstructable": true
+      }
+    ]
+  },
+  {
+    "file": "job-125340866435-mirror-excerpt.log",
+    "runnerImage": {
+      "Image": "ubuntu-24.04",
+      "Version": "20261025.353.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md",
+      "Image Release": "https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353"
+    },
+    "strictFailure": false,
+    "records": [
+      {
+        "kind": "ubuntu-mirror-input",
+        "imageOS": "ubuntu24",
+        "imageVersion": "20261026.354.1",
+        "bytes": 144,
+        "sha256": "e0d6b0af979e4662d16357a27ae456cc6f21e26da031540f4df8706ebed1d583",
+        "lines": [
+          {
+            "line": 1,
+            "text": "http://azure.archive.ubuntu.com/ubuntu/\tpriority:1"
+          },
+          {
+            "line": 2,
+            "text": "https://archive.ubuntu.com/ubuntu/\tpriority:2"
+          },
+          {
+            "line": 3,
+            "text": "https://security.ubuntu.com/ubuntu/\tpriority:3"
+          },
+          {
+            "line": 4,
+            "text": ""
+          }
+        ],
+        "reconstructable": true
+      }
+    ]
+  },
+  {
+    "file": "job-125340866480-mirror-excerpt.log",
+    "runnerImage": {
+      "Image": "ubuntu-24.04",
+      "Version": "20261025.353.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md",
+      "Image Release": "https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353"
+    },
+    "strictFailure": false,
+    "records": [
+      {
+        "kind": "ubuntu-mirror-input",
+        "imageOS": "ubuntu24",
+        "imageVersion": "20261026.354.1",
+        "bytes": 144,
+        "sha256": "e0d6b0af979e4662d16357a27ae456cc6f21e26da031540f4df8706ebed1d583",
+        "lines": [
+          {
+            "line": 1,
+            "text": "http://azure.archive.ubuntu.com/ubuntu/\tpriority:1"
+          },
+          {
+            "line": 2,
+            "text": "https://archive.ubuntu.com/ubuntu/\tpriority:2"
+          },
+          {
+            "line": 3,
+            "text": "https://security.ubuntu.com/ubuntu/\tpriority:3"
+          },
+          {
+            "line": 4,
+            "text": ""
+          }
+        ],
+        "reconstructable": true
+      }
+    ]
+  },
+  {
+    "file": "job-125340866511-mirror-excerpt.log",
+    "runnerImage": {
+      "Image": "ubuntu-24.04",
+      "Version": "20261025.353.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md",
+      "Image Release": "https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353"
+    },
+    "strictFailure": false,
+    "records": [
+      {
+        "kind": "ubuntu-mirror-input",
+        "imageOS": "ubuntu24",
+        "imageVersion": "20261026.354.1",
+        "bytes": 144,
+        "sha256": "e0d6b0af979e4662d16357a27ae456cc6f21e26da031540f4df8706ebed1d583",
+        "lines": [
+          {
+            "line": 1,
+            "text": "http://azure.archive.ubuntu.com/ubuntu/\tpriority:1"
+          },
+          {
+            "line": 2,
+            "text": "https://archive.ubuntu.com/ubuntu/\tpriority:2"
+          },
+          {
+            "line": 3,
+            "text": "https://security.ubuntu.com/ubuntu/\tpriority:3"
+          },
+          {
+            "line": 4,
+            "text": ""
+          }
+        ],
+        "reconstructable": true
+      }
+    ]
+  }
+]

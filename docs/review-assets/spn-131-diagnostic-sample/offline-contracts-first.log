@@ -1,0 +1,24 @@
+(node:66628) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ the observed original pair changes only its preference and preserves the security fallback (3.911417ms)
+✔ an already preferred pair performs no write (0.743083ms)
+✔ line endings, spacing and unrelated entries survive unchanged (0.488708ms)
+✔ empty input fails before any write and retains safe original-input evidence (0.619791ms)
+✔ missing archive fails before any write and retains safe original-input evidence (0.470333ms)
+✔ missing Azure fails before any write and retains safe original-input evidence (0.462125ms)
+✔ duplicate Azure fails before any write and retains safe original-input evidence (0.425833ms)
+✔ duplicate archive fails before any write and retains safe original-input evidence (0.367167ms)
+✔ equal priorities fails before any write and retains safe original-input evidence (0.384542ms)
+✔ unsupported priority fails before any write and retains safe original-input evidence (0.426833ms)
+✔ malformed metadata fails before any write and retains safe original-input evidence (0.497333ms)
+✔ public mirror evidence preserves exact line endings, priority and order (4.173ms)
+✔ credentials, query strings, arbitrary paths, comments and malformed metadata stay private (0.193209ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 84.46275
+WATCHDOG: exit=0, signal=null, elapsed=122ms, peak=0.0MiB
