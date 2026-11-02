@@ -103,7 +103,8 @@ synchronization. A changed target or lost access refuses a late insertion. Image
 errors appear in the fixed editor help slot; **Image not inserted · Details**
 opens the complete limit and next step on touch and keyboard. The document budget
 counts retained image bytes, including history, so deleting a drawing does not
-free its bytes. See [SPN-068](implementation/SPN-068.md).
+free its bytes, and neither does an upload whose insertion was refused or aborted
+after the bytes were stored. See [SPN-068](implementation/SPN-068.md).
 Decisions [#89](implementation/SPN-039.md#legacy-decision-89-preserve-existing-sheet-images) and
 [#91](implementation/SPN-039.md#legacy-decision-91-offline-prerequisites-without-partial-completion), 2026-10-18/19, supply the
 existing-image prerequisite for offline documents ([docs/offline.md](offline.md)).

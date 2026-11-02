@@ -3,7 +3,7 @@
   "date": "2026-11-01",
   "applicationTestCommit": "6908f392da45217fc63dbb146b7f66a191ff5365",
   "baseCommit": "e63956c7ec214af03c825104a81f63517eb87d0b",
-  "scope": "Final PR head and both independent grades are recorded in PR #230. Application/test source is unchanged after the recorded native pass; only the story focus waits, documentation and evidence changed.",
+  "scope": "Final PR head and both independent grades are recorded in PR #230. Application/test source matched the recorded native pass at the earlier reviewed head; entries marked changedAfterNativePass differ at the 2026-11-23 rebase (see `rebase`); only the story focus waits, documentation and evidence changed.",
   "native": {
     "reportSha256": "dcedd19f345e0df46e75e93f2bda0daba067c780f670c7764671e81abd0d9bba",
     "stats": {
@@ -193,9 +193,7 @@
       "height": 844
     },
     "phoneEvidence": "Chromium touch emulation, not a physical device",
-    "browserArguments": [
-      "--js-flags=--max-old-space-size=256 --max-semi-space-size=4"
-    ],
+    "browserArguments": ["--js-flags=--max-old-space-size=256 --max-semi-space-size=4"],
     "command": "CI=1 SPINEL_E2E_PROJECT=production node scripts/serial.ts node ../spn068-guard.ts npx playwright test --config ../spn068-playwright.config.ts e2e/sheet-image-insertion.spec.ts --workers=1 --retries=0 --max-failures=1",
     "localConfiguration": "Imports repository playwright.config.ts and its production project/server; overrides port3168, absolute test/output paths and Chromium heap limits only.",
     "watchdog": {
@@ -225,13 +223,7 @@
     "reviewedAt": "2026-11-01T20:48:17.208Z",
     "durationMs": 15959,
     "fixtureTime": "2026-10-20T16:00:00Z",
-    "variants": [
-      "light",
-      "dark",
-      "phone",
-      "phone-dark",
-      "tablet"
-    ],
+    "variants": ["light", "dark", "phone", "phone-dark", "tablet"],
     "checked": [
       {
         "id": "sheet-image-status--ready",
@@ -386,11 +378,7 @@
     {
       "check": "Native browsers before heap tuning",
       "result": "watchdog-aborted",
-      "peakMiB": [
-        2076.2,
-        2049,
-        2054
-      ],
+      "peakMiB": [2076.2, 2049, 2054],
       "disposition": "No acceptance claimed; final production run above completed within budget."
     },
     {
@@ -426,7 +414,8 @@
     {
       "file": "e2e/sheet-image-insertion.spec.ts",
       "sha256": "463d906f4cf2b5954ca1e2bfa6f17739512a3f41da5dac6638c81fdfc299033a",
-      "sameAsApplicationTestCommit": true
+      "sameAsApplicationTestCommit": false,
+      "changedAfterNativePass": true
     },
     {
       "file": "src/server/workspace/documents.test.ts",
@@ -436,7 +425,8 @@
     {
       "file": "src/server/workspace/documents.ts",
       "sha256": "a0c520c5bf3f289b00576101948577672d65907f9e11aa60c6fc7f6c57078804",
-      "sameAsApplicationTestCommit": true
+      "sameAsApplicationTestCommit": false,
+      "changedAfterNativePass": true
     },
     {
       "file": "src/server/workspace/sharing.test.ts",
@@ -451,7 +441,8 @@
     {
       "file": "web/SheetEditor.tsx",
       "sha256": "6f31a8e13f077f224e7d049a36d08a2d942b940f87bb0ac31d6e2c57354300ce",
-      "sameAsApplicationTestCommit": true
+      "sameAsApplicationTestCommit": false,
+      "changedAfterNativePass": true
     },
     {
       "file": "web/SheetImageStatus.stories.tsx",
@@ -471,7 +462,8 @@
     {
       "file": "web/sheetImageInsertion.ts",
       "sha256": "ae4b4c5880b71f5c85671abb2e6383d171387274bcbf77a6af2985c39b4aeccd",
-      "sameAsApplicationTestCommit": true
+      "sameAsApplicationTestCommit": false,
+      "changedAfterNativePass": true
     },
     {
       "file": "web/sheetImages.ts",
@@ -556,5 +548,23 @@
       "height": 900,
       "sha256": "ca16dccd8813499278038ee092fac99f03b6a890714908ec3fef246199c984fe"
     }
-  ]
+  ],
+  "rebase": {
+    "base": "5c26f1da",
+    "date": "2026-11-23",
+    "note": "Source hashes at the rebased, review-repaired tree. Native browser and visual results in this file apply to the earlier recorded source, not to this head; hosted CI is required.",
+    "sourceSha256": {
+      "web/SheetEditor.tsx": "b974a82c6d53d815dbd8deed02db1f49a6c510affae66fa1d7d64aa31c1912e7",
+      "web/sheetImageInsertion.ts": "fcd7ffa7a6339bcd352aa5b51767c540af31dac4adee86db53d016d6857c487c",
+      "web/sheetImages.ts": "5a479bd762c77ed2df3a2ad3bab85fe09a4bdf40fe4f520dfb9fcd3295f63d31",
+      "e2e/sheet-image-insertion.spec.ts": "ba875c9e0e8ee36c964723b30e10d2a39a14e2599c45e69a320c049a7453fb25",
+      "e2e/native-copy.ts": "ffad6397382ed8b3f41a00305970017f22104cdea1cbff7ee0ecc1f478ec1e07",
+      "e2e/copy.spec.ts": "6af3754f888ef96129f0f6ae921fd76b9e241d2df730a721ea7614410ebb0790",
+      "e2e/sheet-image-cleanup.ts": "a066435c5f2d9e16c02a4ba7985ac4bbfd3fd32c3add557788994cefbdcdd45d",
+      "scripts/ci/sheet-image-cleanup.test.ts": "8c5a177e996e13e3807df4697bf2a418359911f1a4a8bdd79aee5b05dc2bcd83",
+      "src/server/workspace/documents.ts": "7e64789309b7efd189aeab260d5280c55e11f4c9ccc4ad654ef944733555a911",
+      "src/shared/sheetImageInput.ts": "212e4750bfa53b541d3b43f8acac95658185eb5bbfe862bbfdec6ae7a9cb5d59",
+      "src/shared/sheetImageInput.test.ts": "095e813745c41487440a0be58c468571427a53063811b50c0705d0e734b5669c"
+    }
+  }
 }

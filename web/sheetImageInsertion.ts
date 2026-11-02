@@ -15,6 +15,12 @@ import {
   InsertSheetDrawingCommand,
   SheetDrawingUpdateController,
 } from '@univerjs/preset-sheets-drawing';
+import {
+  latestChooser,
+  pasteBelongsToCells,
+  storedImageUrl,
+  uploadFailureMessage,
+} from '../src/shared/sheetImageInput.ts';
 import { documentPath } from './documentAccess.ts';
 import { maintenanceFetch as fetch } from './maintenanceFetch.ts';
 import type { OfflineSession } from './offline/OfflineSession.ts';
@@ -67,7 +73,7 @@ export function sheetImageInsertion(options: {
 }) {
   const lifetime = new AbortController();
   let active: Job | undefined;
-  let picking = false;
+  const chooser = latestChooser();
   let structure = 0;
   let readTarget: (() => Target | undefined) | undefined;
   let stop: (() => void) | undefined;
@@ -106,25 +112,23 @@ export function sheetImageInsertion(options: {
       `${documentPath(options.id, options.spaceId)}/images`,
       { method: 'POST', headers: { 'Content-Type': file.type }, body: file, signal },
     );
-    const image = await response.json();
+    // A proxy or maintenance page may answer with a non-JSON body.
+    const image: unknown = await response.json().catch(() => undefined);
+    if (!response.ok) {
+      // Report the server's own limit/access message before a late target change.
+      throw new SheetImageError(uploadFailureMessage(response.status, image));
+    }
     verify(job);
-    if (!response.ok)
-      throw new SheetImageError(image.error ?? 'The image could not be uploaded. Try again.');
-    const prefix = `/api/items/${options.id}/images/`;
-    if (
-      typeof image.url !== 'string' ||
-      !image.url.startsWith(prefix) ||
-      !/^[a-f\d]{64}$/.test(image.url.slice(prefix.length))
-    )
-      throw new SheetImageError('The image could not be saved. Try again.');
-    await options.offline?.prepareImages(image.url, signal);
+    const url = storedImageUrl(options.id, image);
+    if (!url) throw new SheetImageError('The image could not be saved. Try again.');
+    await options.offline?.prepareImages(url, signal);
     verify(job);
     // Decode the validated local file, avoiding an unbounded native Image URL
     // fetch after the upload. Only the canonical stored source enters the model.
     job.preview = URL.createObjectURL(file);
     return {
       imageId: job.imageId,
-      source: options.offline?.toVisible(image.url) ?? image.url,
+      source: options.offline?.toVisible(url) ?? url,
       base64Cache: job.preview,
       imageSourceType: ImageSourceType.URL,
       status: ImageUploadStatusType.SUCCUSS,
@@ -206,7 +210,7 @@ export function sheetImageInsertion(options: {
         }
       });
       const insert = async (cell: boolean, files?: File[]) => {
-        if (active || picking) {
+        if (active) {
           options.onError('An image is still being inserted. Wait before adding another.');
           return false;
         }
@@ -216,13 +220,19 @@ export function sheetImageInsertion(options: {
           const target = readTarget!();
           if (!target) throw new SheetImageError('Select a cell before inserting an image.');
           if (!files) {
-            picking = true;
+            // A newer request replaces a stale chooser; some browsers never fire
+            // `cancel` for a dismissed picker, which must not block later inserts.
+            const pick = chooser.start();
             try {
-              files = await chooseImage(options.container, lifetime.signal);
+              files = await chooseImage(
+                options.container,
+                AbortSignal.any([lifetime.signal, pick.signal]),
+              );
+              if (pick.signal.aborted) return false;
             } finally {
-              picking = false;
+              pick.release();
             }
-          }
+          } else chooser.abort();
           if (!files.length) return false;
           allowed();
           if (files.length !== 1) throw new SheetImageError('Insert one image at a time.');
@@ -287,6 +297,15 @@ export function sheetImageInsertion(options: {
       const paste = (event: ClipboardEvent) => {
         const files = Array.from(event.clipboardData?.files ?? []);
         if (!files.length) return;
+        // Office range copies carry a bitmap beside HTML/text cells; leave those
+        // to native cell paste. A bare file or browser "Copy image" still inserts.
+        if (
+          pasteBelongsToCells({
+            html: event.clipboardData?.getData('text/html') ?? '',
+            text: event.clipboardData?.getData('text/plain') ?? '',
+          })
+        )
+          return;
         event.preventDefault();
         event.stopImmediatePropagation();
         void insert(false, files);

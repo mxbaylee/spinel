@@ -5,7 +5,6 @@ import { bindSheetDrawingPermissions, readOnlySheetDrawings } from './readOnlySh
 import { sheetImages } from './sheetImages.ts';
 import { sheetImageInsertion } from './sheetImageInsertion.ts';
 import { SheetImageStatus } from './SheetImageStatus.tsx';
-import { guestItemId } from './documentAccess.ts';
 import sheetDrawingEnglish from '@univerjs/preset-sheets-drawing/locales/en-US';
 import { EditorTools } from './EditorTools.tsx';
 import { useEditorChrome } from './EditorFrame.tsx';
@@ -91,6 +90,8 @@ export function SheetEditor({
   }, [mobile]);
   const [people, setPeople] = useState<Collaborator[]>([]);
   const [imageError, setImageError] = useState('');
+  // Every reported error remounts the alert, so a repeated identical error is announced again.
+  const [imageAttempt, setImageAttempt] = useState(0);
   const container = useRef<HTMLDivElement>(null);
   const controller = useRef<ReturnType<typeof watchCollaboration> | null>(null);
   const [reloadGeneration, reload] = useState(0);
@@ -198,7 +199,9 @@ export function SheetEditor({
           publish(lastState);
         },
         onError: (message) => {
-          if (!disposed) setImageError(message);
+          if (disposed) return;
+          setImageError(message);
+          if (message) setImageAttempt((attempt) => attempt + 1);
         },
       });
       recordNativeMutationInventory();
@@ -222,7 +225,9 @@ export function SheetEditor({
               ? { initialFormulaComputing: CalculationMode.NO_CALCULATION }
               : undefined,
           ),
-          sheetImages(mobile, data.offline, imagesWritable ? imageInsertion.upload : undefined),
+          // Keep the account upload path installed for a later in-place edit grant.
+          // Native menu permissions and canInsert still refuse every viewer operation.
+          sheetImages(mobile, data.offline, !guestItemId() ? imageInsertion.upload : undefined),
         ],
       });
       // IMAGE formula results use a direct browser Image loader in the OSS
@@ -346,6 +351,7 @@ export function SheetEditor({
         upgradeAccess: (access) => {
           if (disposed) return;
           onAccessUpgrade?.(access);
+          imagesWritable = !guestItemId() && access !== 'viewer';
           freezeAfterEditing = false;
           // Both drawing services follow the workbook AND active worksheet policy.
           nativePermissions.setAccess(access);
@@ -529,7 +535,7 @@ export function SheetEditor({
           }
         />
       )}
-      <SheetImageStatus error={imageError} />
+      <SheetImageStatus key={imageAttempt} error={imageError} />
       <div className="univer-container" ref={container} />
       {mobileCell && (
         <MobileSheetCellBar cell={mobileCell} onEdit={() => editMobileCell.current()} />

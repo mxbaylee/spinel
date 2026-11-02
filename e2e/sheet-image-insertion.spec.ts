@@ -5,6 +5,8 @@ import type { IWorkbookData } from '@univerjs/core';
 import sharp from 'sharp';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
+import { openNativeCopy } from './native-copy.ts';
+import { closeSheetImageFixture } from './sheet-image-cleanup.ts';
 import { nativeTheme } from './native-theme.ts';
 
 const orange = [255, 153, 0] as const;
@@ -153,115 +155,125 @@ async function capture(page: Page, info: TestInfo, state: string) {
 
 async function fixture(browser: Browser, baseURL: string, info: TestInfo, mobile = false) {
   const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
-  const auth = new AuthStore(db);
-  const user = auth.createUser(`Sheet insertion ${info.testId}`);
-  const context = await browser.newContext({
-    baseURL,
-    viewport: mobile ? { width: 390, height: 844 } : { width: 1440, height: 1000 },
-    hasTouch: mobile,
-    permissions: ['clipboard-read', 'clipboard-write'],
-    colorScheme: 'light',
-    reducedMotion: 'reduce',
-  });
-  const cookie = (userId: string) => ({
-    name: COOKIE_NAME,
-    value: auth.createSession(userId).token,
-    url: baseURL.replace('http:', 'https:'),
-    secure: true,
-    httpOnly: true,
-    sameSite: 'Strict' as const,
-  });
-  await context.addCookies([cookie(user.id)]);
-  const headers = { Origin: baseURL };
-  // Only the empty workbook is seeded. Every image below enters the real upload
-  // and native insertion path; the server is never given a prepared image model.
-  const response = await context.request.post('/api/items/import', {
-    headers,
-    data: {
-      filename: 'Recipe pictures.univer.json',
-      parentId: null,
-      snapshot: {
-        id: 'image-insertion-fixture',
-        name: 'Recipe pictures',
-        appVersion: '1.1.0',
-        locale: 'enUS',
-        styles: {},
-        sheetOrder: ['images'],
-        sheets: {
-          images: {
-            id: 'images',
-            name: 'Pictures',
-            rowCount: 24,
-            columnCount: 10,
-            defaultRowHeight: 80,
-            defaultColumnWidth: 140,
-            cellData: { 0: { 0: { v: 'Recipe pictures' } } },
+  const errors: string[] = [];
+  const contexts: BrowserContext[] = [];
+  const close = async (guest?: BrowserContext) => {
+    const failures = await closeSheetImageFixture(
+      () => writeFile(info.outputPath('sheet-image-insertion-errors.json'), JSON.stringify(errors)),
+      guest ? [guest, ...contexts] : contexts,
+      () => db.close(),
+    );
+    // Soft failure records cleanup errors without replacing an in-flight test/setup error.
+    expect.soft(failures, 'Sheet image fixture cleanup').toEqual([]);
+  };
+  try {
+    const auth = new AuthStore(db);
+    const user = auth.createUser(`Sheet insertion ${info.testId}`);
+    const context = await browser.newContext({
+      baseURL,
+      viewport: mobile ? { width: 390, height: 844 } : { width: 1440, height: 1000 },
+      hasTouch: mobile,
+      permissions: ['clipboard-read', 'clipboard-write'],
+      colorScheme: 'light',
+      reducedMotion: 'reduce',
+    });
+    contexts.push(context);
+    const cookie = (userId: string) => ({
+      name: COOKIE_NAME,
+      value: auth.createSession(userId).token,
+      url: baseURL.replace('http:', 'https:'),
+      secure: true,
+      httpOnly: true,
+      sameSite: 'Strict' as const,
+    });
+    await context.addCookies([cookie(user.id)]);
+    const headers = { Origin: baseURL };
+    // Only the empty workbook is seeded. Every image below enters the real upload
+    // and native insertion path; the server is never given a prepared image model.
+    const response = await context.request.post('/api/items/import', {
+      headers,
+      data: {
+        filename: 'Recipe pictures.univer.json',
+        parentId: null,
+        snapshot: {
+          id: 'image-insertion-fixture',
+          name: 'Recipe pictures',
+          appVersion: '1.1.0',
+          locale: 'enUS',
+          styles: {},
+          sheetOrder: ['images'],
+          sheets: {
+            images: {
+              id: 'images',
+              name: 'Pictures',
+              rowCount: 24,
+              columnCount: 10,
+              defaultRowHeight: 80,
+              defaultColumnWidth: 140,
+              cellData: { 0: { 0: { v: 'Recipe pictures' } } },
+            },
           },
         },
       },
-    },
-  });
-  expect(response.status(), await response.text()).toBe(201);
-  const { item } = (await response.json()) as { item: { id: string } };
-  const page = await context.newPage();
-  const errors: string[] = [];
-  const observe = (view: Page) => {
-    view.setDefaultTimeout(15_000);
-    view.on('pageerror', (error) => errors.push(error.message));
-    view.on('websocket', (socket) =>
-      socket.on('framereceived', (frame) => {
-        const message = JSON.parse(String(frame.payload));
-        if (message.type === 'resync') errors.push(`Synchronization reset: ${message.reason}`);
-      }),
-    );
-  };
-  observe(page);
-  const read = async () => {
-    const result = await context.request.get(`/api/items/${item.id}/sheet`);
-    expect(result.ok(), await result.text()).toBe(true);
-    return (await result.json()).snapshot as IWorkbookData;
-  };
-  const peers: BrowserContext[] = [];
-  const peerIds = new Map<Page, string>();
-  return {
-    page,
-    context,
-    item,
-    read,
-    headers,
-    errors,
-    peerIds,
-    async peer(role: 'editor' | 'viewer') {
-      const member = auth.createUser(`Sheet image ${role} ${info.testId}`);
-      const sharing = await context.request.put(`/api/items/${item.id}/sharing`, {
-        headers,
-        data: { userId: member.id, role },
-      });
-      expect(sharing.ok(), await sharing.text()).toBe(true);
-      const peer = await browser.newContext({ baseURL, viewport: { width: 1440, height: 1000 } });
-      peers.push(peer);
-      await peer.addCookies([cookie(member.id)]);
-      const view = await peer.newPage();
-      peerIds.set(view, member.id);
-      observe(view);
-      await view.goto(`/?item=${item.id}`);
-      await expect(view.getByLabel('Spreadsheet grid', { exact: true })).toBeVisible({
-        timeout: 30_000,
-      });
-      return view;
-    },
-    async open() {
-      await page.goto(`/?item=${item.id}`);
-      await saved(page);
-      await expect(page.getByLabel('Spreadsheet grid', { exact: true })).toBeVisible();
-    },
-    async close() {
-      await writeFile(info.outputPath('sheet-image-insertion-errors.json'), JSON.stringify(errors));
-      for (const peer of peers) await peer.close();
-      await context.close();
-      db.close();
-    },
-  };
+    });
+    expect(response.status(), await response.text()).toBe(201);
+    const { item } = (await response.json()) as { item: { id: string } };
+    const page = await context.newPage();
+    const observe = (view: Page) => {
+      view.setDefaultTimeout(15_000);
+      view.on('pageerror', (error) => errors.push(error.message));
+      view.on('websocket', (socket) =>
+        socket.on('framereceived', (frame) => {
+          const message = JSON.parse(String(frame.payload));
+          if (message.type === 'resync') errors.push(`Synchronization reset: ${message.reason}`);
+        }),
+      );
+    };
+    observe(page);
+    const read = async () => {
+      const result = await context.request.get(`/api/items/${item.id}/sheet`);
+      expect(result.ok(), await result.text()).toBe(true);
+      return (await result.json()).snapshot as IWorkbookData;
+    };
+    const peerIds = new Map<Page, string>();
+    return {
+      page,
+      context,
+      item,
+      read,
+      headers,
+      errors,
+      peerIds,
+      async peer(role: 'editor' | 'viewer') {
+        const member = auth.createUser(`Sheet image ${role} ${info.testId}`);
+        const sharing = await context.request.put(`/api/items/${item.id}/sharing`, {
+          headers,
+          data: { userId: member.id, role },
+        });
+        expect(sharing.ok(), await sharing.text()).toBe(true);
+        const peer = await browser.newContext({ baseURL, viewport: { width: 1440, height: 1000 } });
+        contexts.unshift(peer);
+        await peer.addCookies([cookie(member.id)]);
+        const view = await peer.newPage();
+        peerIds.set(view, member.id);
+        observe(view);
+        await view.goto(`/?item=${item.id}`);
+        await expect(view.getByLabel('Spreadsheet grid', { exact: true })).toBeVisible({
+          timeout: 30_000,
+        });
+        return view;
+      },
+      async open() {
+        await page.goto(`/?item=${item.id}`);
+        await saved(page);
+        await expect(page.getByLabel('Spreadsheet grid', { exact: true })).toBeVisible();
+      },
+      close,
+    };
+  } catch (error) {
+    await close();
+    throw error;
+  }
 }
 
 test('native Sheet image menu saves both placements with undo, peer delivery, reload and history', async ({
@@ -425,6 +437,54 @@ async function dropFile(page: Page, buffer: Buffer, mimeType: string) {
   );
 }
 
+test('pasting a spreadsheet range that also carries a bitmap leaves the image path alone', async ({
+  browser,
+  baseURL,
+}, info) => {
+  test.setTimeout(90_000);
+  const f = await fixture(browser, baseURL!, info);
+  const uploads: string[] = [];
+  try {
+    await f.open();
+    f.page.on('request', (request) => {
+      if (request.method() === 'POST' && new URL(request.url()).pathname.endsWith('/images'))
+        uploads.push(request.url());
+    });
+    await selectCell(f.page, 'B2');
+    // Office range copies put a bitmap beside table HTML and tabbed text.
+    await f.page.evaluate(
+      async (base64) => {
+        const bytes = Uint8Array.from(atob(base64), (character) => character.charCodeAt(0));
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            'text/html': new Blob(['<table><tr><td>left</td><td>right</td></tr></table>'], {
+              type: 'text/html',
+            }),
+            'text/plain': new Blob(['left\tright'], { type: 'text/plain' }),
+            'image/png': new Blob([bytes], { type: 'image/png' }),
+          }),
+        ]);
+      },
+      (await raster(orange)).toString('base64'),
+    );
+    await f.page.keyboard.press('Control+v');
+    // The native cell paste is the positive readiness signal; absence checks follow it.
+    await expect
+      .poll(async () => {
+        const cells = (await f.read()).sheets.images.cellData;
+        return [cells?.[1]?.[1]?.v, cells?.[1]?.[2]?.v];
+      })
+      .toEqual(['left', 'right']);
+    await saved(f.page);
+    expect(uploads).toEqual([]);
+    expect(floating(await f.read())).toEqual([]);
+    await expect(f.page.locator('.editor-help[role="alert"]')).toHaveCount(0);
+    expect(f.errors).toEqual([]);
+  } finally {
+    await f.close();
+  }
+});
+
 test('Sheet paste and drop store raster files; oversize refuses without inserting or shifting the editor', async ({
   browser,
   baseURL,
@@ -492,6 +552,14 @@ test('a Sheet image remains navigation-protected after upload until native inser
       'Inserting image',
     );
     expect(floating(await f.read())).toEqual([]);
+    // Copy admission follows the same pending native insertion, not just upload completion.
+    await f.page.getByRole('tab', { name: 'Start', exact: true }).click();
+    const copy = await openNativeCopy(f.page);
+    await expect(copy).toContainText(
+      'Finish your edit and wait for changes to save before making a copy.',
+    );
+    await expect(copy.getByRole('button', { name: 'Make a copy', exact: true })).toBeDisabled();
+    await copy.getByRole('button', { name: 'Cancel', exact: true }).click();
     const warning = f.page.waitForEvent('dialog');
     f.page.once('dialog', (dialog) => dialog.dismiss());
     await f.page.getByRole('button', { name: 'Back to files', exact: true }).click();
@@ -501,6 +569,9 @@ test('a Sheet image remains navigation-protected after upload until native inser
     await expect.poll(async () => floating(await f.read()).length).toBe(1);
     await saved(f.page);
     await visibleColors(f.page, [orange]);
+    const readyCopy = await openNativeCopy(f.page);
+    await expect(readyCopy.getByRole('button', { name: 'Make a copy', exact: true })).toBeEnabled();
+    await readyCopy.getByRole('button', { name: 'Cancel', exact: true }).click();
     expect(f.errors).toEqual([]);
   } finally {
     await releaseNativeImageDecode(f.page).catch(() => {});
@@ -626,9 +697,7 @@ test('account viewers, edit-link guests and an offline owner cannot insert dropp
     const before = await f.read();
     const bytes = await raster(orange);
     const viewer = await f.peer('viewer');
-    await expect(viewer.getByRole('status', { name: 'Save status' })).toHaveText(
-      'View only — reload after your access changes.',
-    );
+    await expect(viewer.getByRole('status', { name: 'Save status' })).toHaveText('View only.');
     observeUploads(viewer);
     await dropFile(viewer, bytes, 'image/png');
     await denied(viewer);
@@ -669,9 +738,7 @@ test('account viewers, edit-link guests and an offline owner cannot insert dropp
     expect(await f.read()).toEqual(before);
     expect(f.errors).toEqual([]);
   } finally {
-    await f.context.setOffline(false);
-    await guest?.close();
-    await f.close();
+    await f.close(guest);
   }
 });
 
@@ -907,7 +974,47 @@ test('online images inserted into an already downloaded Sheet render after an of
     expect([floating(reopened)[0].source, cellSources(reopened, 3, 1)[0]]).toEqual(sources);
     expect(f.errors).toEqual([]);
   } finally {
-    await f.context.setOffline(false);
+    await f.close();
+  }
+});
+
+test('an account viewer upgraded in place can insert a Sheet image through the native menu', async ({
+  browser,
+  baseURL,
+}, info) => {
+  test.setTimeout(90_000);
+  const f = await fixture(browser, baseURL!, info);
+  try {
+    await f.open();
+    const viewer = await f.peer('viewer');
+    await expect(viewer.getByRole('status', { name: 'Save status' })).toHaveText('View only.');
+    const openedAt = await viewer.evaluate(() => performance.timeOrigin);
+    const grid = await viewer.getByLabel('Spreadsheet grid', { exact: true }).elementHandle();
+    const before = await f.read();
+    await dropFile(viewer, await raster(blue), 'image/png');
+    await expect(viewer.locator('.editor-help[role="alert"]')).toContainText(
+      'Image insertion needs an account with edit access.',
+    );
+    expect(await f.read()).toEqual(before);
+    const grant = await f.context.request.put(`/api/items/${f.item.id}/sharing`, {
+      headers: f.headers,
+      data: { userId: f.peerIds.get(viewer), role: 'editor' },
+    });
+    expect(grant.ok(), await grant.text()).toBe(true);
+    await saved(viewer);
+    expect(await viewer.evaluate(() => performance.timeOrigin)).toBe(openedAt);
+    expect(await grid!.evaluate((element) => element.isConnected)).toBe(true);
+    await selectCell(viewer, 'C3');
+    await insertFile(viewer, 'Float Image', await raster(orange));
+    await saved(viewer);
+    await expect.poll(async () => floating(await f.read()).length).toBe(1);
+    await visibleColors(viewer, [orange]);
+    await visibleColors(f.page, [orange]);
+    expect(await viewer.evaluate(() => performance.timeOrigin)).toBe(openedAt);
+    expect(await grid!.evaluate((element) => element.isConnected)).toBe(true);
+    await grid!.dispose();
+    expect(f.errors).toEqual([]);
+  } finally {
     await f.close();
   }
 });

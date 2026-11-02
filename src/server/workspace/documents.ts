@@ -103,7 +103,7 @@ export class DocumentStore {
         throw new AuthError(400, 'This item cannot contain images.');
       // SPN-068 permits account editors to add Sheet images. Existing Doc guest
       // uploads retain their own edit grant; a Sheet edit link grants no upload.
-      if (item.kind === 'sheet' && credential === 'guest')
+      if (item.kind === 'sheet' && credential !== 'account' && credential !== 'trusted')
         throw new AuthError(403, 'Only account editors can insert images into a Sheet.');
     };
     access();
