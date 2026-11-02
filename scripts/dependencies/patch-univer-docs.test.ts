@@ -661,7 +661,7 @@ for (const format of ['es', 'cjs'] as const) {
   });
 
   test(`${format}: eligible keyboard shapes preserve odd tails, offsets and independent cache folds`, async () => {
-    const { original, patched } = prepareDocsPatch(await readBuild(format), format);
+    const { original, patched, markerPatched } = prepareDocsPatch(await readBuild(format), format);
     const cases = [
       { name: 'odd five', length: 5, start: 0 },
       { name: 'six-state tail', length: 6, start: 0 },
@@ -701,6 +701,12 @@ for (const format of ['es', 'cjs'] as const) {
         `${format}: ${name}`,
         historyStart,
       );
+      if (name === 'six-state tail')
+        assert.deepEqual(
+          candidate,
+          measuredFlush(markerPatched, history, scenario.states),
+          'The fully eligible six-state idle path has identical native output and work; SPN-135 retains its unexplained latency obligation.',
+        );
       assert.equal(candidate.counts.textCompose, control.counts.textCompose);
       assert.ok(control.counts.textCompose > 0);
       assert.ok(
