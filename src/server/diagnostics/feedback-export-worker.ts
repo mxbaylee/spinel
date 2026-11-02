@@ -15,6 +15,7 @@ interface Input {
   createdAt: number;
   build: string;
   dropped: DiagnosticsStatus['dropped'];
+  retentionDays?: number;
 }
 const input = workerData as Input;
 const frozenPath = join(input.directory, 'snapshot.sqlite');
@@ -149,7 +150,11 @@ try {
             dropped: { scope: 'global process lifetime before preparation', values: input.dropped },
             retention: {
               feedback: 'until explicit truncate',
-              observations: 'no automatic expiry configured; prior deletion history unknown',
+              observationAgeTargetDays: input.retentionDays ?? null,
+              observations:
+                input.retentionDays === undefined
+                  ? 'no automatic expiry configured; prior deletion history unknown'
+                  : 'server receipt age target; bounded maintenance may lag; prior deletion history unknown',
             },
             limits: {
               sourceBytes: 64 * 1024 * 1024,

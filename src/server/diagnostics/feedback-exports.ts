@@ -116,6 +116,7 @@ export class FeedbackExports {
           actorId,
           generation: state.generation,
           createdAt: startedAt,
+          retentionDays: state.retentionDays,
           build: this.build,
           dropped: state.dropped,
         },
