@@ -606,6 +606,8 @@ export function renderIndex(backlog: Backlog): string {
       `Grooming: **${g.completed_since.length}** tickets completed since ${g.last}${done}. ` +
       `Reminder every ${g.every}; grooming on request, never a work gate.`,
     '',
+    'Every ticket and resumed PR follows [sustainable testing](../testing.md). Keep its Verify plan and [progress evidence](../testing.md#carry-the-plan-through-the-work) current; repair test weaknesses introduced by the work before landing.',
+    '',
     `## Open tickets (${tickets.length})`,
     '',
   ];

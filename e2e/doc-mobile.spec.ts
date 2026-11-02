@@ -298,7 +298,7 @@ async function fixture(
 }
 
 for (const zoomRatio of [1, 0.5, 2])
-  test(`phone Docs at saved ${zoomRatio * 100}% zoom keep readable layout, touch formatting and saved settings`, async ({
+  test(`phone Docs at saved ${zoomRatio * 100}% zoom keep readable layout, touch formatting and saved settings @phone-ordinary`, async ({
     browser,
     baseURL,
   }, info) => {
@@ -586,7 +586,7 @@ test('phone Doc typing keeps the rendered caret above the emulated keyboard', as
   }
 });
 
-test('phone Doc formulas preserve scalar values, all table rows and usable edit dialogs', async ({
+test('phone Doc formulas preserve scalar values, all table rows and usable edit dialogs @phone-ordinary', async ({
   browser,
   baseURL,
 }, info) => {
@@ -746,7 +746,7 @@ test('phone guest Doc reader cannot write and loses its document when the link i
 });
 
 for (const role of ['owner', 'guest-editor'] as const) {
-  test(`traditional phone Doc is locally read-only without revoking its ${role} grant`, async ({
+  test(`traditional phone Doc is locally read-only without revoking its ${role} grant @phone-ordinary`, async ({
     browser,
     baseURL,
   }, info) => {

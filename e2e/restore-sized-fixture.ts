@@ -44,10 +44,14 @@ export function inspectRestoreSizedFixture(db: DatabaseSync, documentIds: readon
     digest.update(JSON.stringify([String(row.item_id), snapshot]));
     documents++;
   }
-  for (const row of db.iterate(
-    `SELECT item_id,id,mime,data FROM doc_images WHERE item_id IN (${placeholders}) ORDER BY item_id,id`,
+  const readImage = db.prepare(
+    'SELECT item_id,id,mime,data FROM doc_images WHERE item_id=? AND id=?',
+  );
+  for (const key of db.iterate(
+    `SELECT item_id,id FROM doc_images WHERE item_id IN (${placeholders}) ORDER BY item_id,id`,
     ...documentIds,
   )) {
+    const row = readImage.get(key.item_id, key.id)!;
     assert.ok(row.data instanceof Uint8Array);
     assert.equal(row.mime, 'image/png');
     const bytes = Buffer.from(row.data);

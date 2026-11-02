@@ -1099,6 +1099,34 @@ try {
   let preparationStarted: number | undefined;
   let preparationId: string | undefined;
   let preparationFailure: PublicPreparationFailure | null = null;
+  const observePreparation = (
+    body: unknown,
+    route: PublicPreparationFailure['route'],
+    httpStatus: number,
+  ) => {
+    if (preparationStarted === undefined || !body || typeof body !== 'object') return;
+    const candidate: unknown = route === 'status' ? (body as { job?: unknown }).job : body;
+    if (!candidate || typeof candidate !== 'object') return;
+    const job = candidate as Record<string, unknown>;
+    if (route === 'create' && typeof job.id === 'string') preparationId = job.id;
+    // A status response begun before this creation cannot report failure
+    // for a different preparation. The identifier remains private in memory.
+    if (route === 'status' && (!preparationId || job.id !== preparationId)) return;
+    const state = job.state;
+    if (state !== 'failed' && state !== 'expired' && state !== 'cancelled') return;
+    preparationFailure ??= {
+      source: 'public-restore-api',
+      route,
+      state,
+      resourceCode:
+        (
+          Object.keys(RESTORE_RESOURCE_MESSAGES) as Array<keyof typeof RESTORE_RESOURCE_MESSAGES>
+        ).find((code) => RESTORE_RESOURCE_MESSAGES[code] === job.error) ?? null,
+      httpStatus: httpStatus,
+      elapsedSincePrepareMs: performance.now() - preparationStarted,
+    };
+    artifact.publicPreparationFailure = preparationFailure;
+  };
   const restoreHttpTimings: Array<{
     route: 'create' | 'upload' | 'confirm';
     startedAtMs: number;
@@ -1122,6 +1150,7 @@ try {
             ? 'confirm'
             : null;
     if (route) requestsStarted.set(request, { route, at: performance.now() });
+    if (route === 'upload') preparationId = path.split('/').at(-2);
   });
   page.on('response', (response) => {
     const request = response.request();
@@ -1139,7 +1168,8 @@ try {
     const route =
       recorded?.route === 'create' || recorded?.route === 'upload'
         ? recorded.route
-        : request.method() === 'GET' && new URL(request.url()).pathname === '/api/admin/restores'
+        : request.method() === 'GET' &&
+            /^\/api\/admin\/restores\/?$/.test(new URL(request.url()).pathname)
           ? 'status'
           : null;
     if (!route) return;
@@ -1149,32 +1179,11 @@ try {
     void response
       .json()
       .then((body: unknown) => {
-        if (preparationStarted === undefined || !body || typeof body !== 'object') return;
-        const candidate: unknown = route === 'status' ? (body as { job?: unknown }).job : body;
-        if (!candidate || typeof candidate !== 'object') return;
-        const job = candidate as Record<string, unknown>;
-        if (route === 'create' && typeof job.id === 'string') preparationId = job.id;
-        // A status response begun before this creation cannot report failure
-        // for a different preparation. The identifier remains private in memory.
-        if (route === 'status' && (!preparationId || job.id !== preparationId)) return;
-        const state = job.state;
-        if (state !== 'failed' && state !== 'expired' && state !== 'cancelled') return;
-        preparationFailure ??= {
-          source: 'public-restore-api',
-          route,
-          state,
-          resourceCode:
-            (
-              Object.keys(RESTORE_RESOURCE_MESSAGES) as Array<
-                keyof typeof RESTORE_RESOURCE_MESSAGES
-              >
-            ).find((code) => RESTORE_RESOURCE_MESSAGES[code] === job.error) ?? null,
-          httpStatus: response.status(),
-          elapsedSincePrepareMs: performance.now() - preparationStarted,
-        };
-        artifact.publicPreparationFailure = preparationFailure;
+        observePreparation(body, route, response.status());
       })
-      .catch(() => {});
+      .catch(() => {
+        artifact.preparationResponseBodyUnavailable = true;
+      });
   });
   artifact.restoreHttpTimings = restoreHttpTimings;
   failurePage = page;
@@ -1208,6 +1217,21 @@ try {
   await poll(
     async () => {
       if (preparationFailure) return true;
+      // Chromium may discard the body of a response associated with a large
+      // upload. Read the same public status with the authenticated context so
+      // terminal failure cannot turn into a ten-minute wait for a ready button.
+      if (preparationId && restoreHttpTimings.some((value) => value.route === 'upload')) {
+        const status = await operator.context.request.get(origin + '/api/admin/restores/', {
+          timeout: 5000,
+        });
+        try {
+          if (!status.ok()) throw new Error('Public preparation status unavailable.');
+          observePreparation(await status.json(), 'status', status.status());
+        } finally {
+          await status.dispose();
+        }
+        if (preparationFailure) return true;
+      }
       return (
         (await reviewRestore.count()) === 1 && (await reviewRestore.isEnabled({ timeout: 500 }))
       );

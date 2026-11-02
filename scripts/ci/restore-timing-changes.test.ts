@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { needsRestoreTiming } from './restore-timing-changes.ts';
+import { needsRestoreTiming } from './plan.ts';
 
 test('sized restore follows authority, data, runtime, browser and harness boundaries', () => {
   for (const path of [
@@ -12,6 +12,9 @@ test('sized restore follows authority, data, runtime, browser and harness bounda
     'server/database.ts',
     'lib/sync-server/src/storage.ts',
     'web/BackupRestore.tsx',
+    'web/Modal.tsx',
+    'web/App.tsx',
+    'web/profile.css',
     'web/admin.css',
     'web/auth.ts',
     'web/maintenanceFetch.ts',
@@ -39,7 +42,7 @@ test('unrelated text and browser work keep the ordinary gates without the sized 
   for (const paths of [
     ['docs/maintenance.md', 'docs/todo/backlog.json'],
     ['README.md', 'AGENTS.md'],
-    ['web/profile.css', 'e2e/profile-navigation.spec.ts'],
+    ['e2e/profile-navigation.spec.ts'],
     ['scripts/backlog/check.ts'],
   ])
     assert.equal(needsRestoreTiming(paths), false, paths.join(', '));
