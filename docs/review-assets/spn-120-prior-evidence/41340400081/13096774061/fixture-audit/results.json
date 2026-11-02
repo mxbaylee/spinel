@@ -1,0 +1,54 @@
+{
+  "source": "baseline",
+  "project": "sync-production",
+  "sourceSha": "e63956c7ec214af03c825104a81f63517eb87d0b",
+  "sourceTree": "6af10323bca2285e7a768c378196d995f87c7c45",
+  "driverSha256": "813ced6ca1dd05fad2cf8252838683cb82d6c81d7ed421638a8070f54e07741e",
+  "lockSha256": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf",
+  "node": "v26.12.1",
+  "repetitions": 2,
+  "retries": 0,
+  "setupRecoveryAllowed": false,
+  "startedAt": "2026-11-01T19:12:06.053Z",
+  "browserVersion": "156.0.8078.4",
+  "baselineDeltaSha256": "6731bb2b78a7e86b0848a928baeac8481ca5ba278302367a599ca7d295f7ecdb",
+  "finishedAt": "2026-11-01T19:13:00.882Z",
+  "expectedAttempts": 4,
+  "attempts": [
+    {
+      "file": "offline-recovery.spec.ts",
+      "title": "an unfinished native Sheet draft remains copyable before recovery freezes the queued edits",
+      "project": "sync-production",
+      "retry": 0,
+      "status": "passed",
+      "durationMs": 10264
+    },
+    {
+      "file": "offline-recovery.spec.ts",
+      "title": "an unfinished native Sheet draft remains copyable before recovery freezes the queued edits",
+      "project": "sync-production",
+      "retry": 0,
+      "status": "passed",
+      "durationMs": 10561
+    },
+    {
+      "file": "sync-client.spec.ts",
+      "title": "native Docs preserve concurrent text and undo across reconnect, render profile presence, and capture actual image UI edits",
+      "project": "sync-production",
+      "retry": 0,
+      "status": "passed",
+      "durationMs": 15017
+    },
+    {
+      "file": "sync-client.spec.ts",
+      "title": "native Docs preserve concurrent text and undo across reconnect, render profile presence, and capture actual image UI edits",
+      "project": "sync-production",
+      "retry": 0,
+      "status": "passed",
+      "durationMs": 12226
+    }
+  ],
+  "exitCode": 0,
+  "signal": null,
+  "complete": true
+}

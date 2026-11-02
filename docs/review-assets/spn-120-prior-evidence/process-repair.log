@@ -1,0 +1,24 @@
+✔ only the complete exact readiness line admits work, including split writes (30.919ms)
+✔ post-readiness pipes keep bounded private tails and publish only safe diagnostics (29.420416ms)
+✔ withheld readiness ("no readiness") fails and closes within its budget (253.84975ms)
+✔ withheld readiness ("Spinel is running at http://localhost:39990\n") fails and closes within its budget (259.092125ms)
+✔ withheld readiness ("Spinel is running at http://localhost:3999") fails and closes within its budget (259.094709ms)
+✔ a crash before readiness preserves the actual exit and its first diagnostic (45.214333ms)
+✔ a wrapper can cancel startup without waiting for the readiness deadline (32.443375ms)
+✔ a post-readiness exit notifies the wrapper and fails its health check (27.905583ms)
+✔ repeated wrapper cancellation closes a ready child without inventing a crash (30.278416ms)
+✔ cleanup is idempotent and forces a child that ignores graceful termination (429.028042ms)
+✔ failed spawn rejects promptly and does not await a nonexistent process forever (1.264083ms)
+✔ an inherited pipe cannot keep cleanup pending beyond its original budget (295.528458ms)
+✔ a feature error remains the original error when cleanup succeeds (0.353375ms)
+✔ cleanup errors retain the initial failure first and as the cause (0.765917ms)
+✔ cleanup alone remains a failure and a successful value survives successful cleanup (0.151958ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1766.874709
+WATCHDOG: exit=0, signal=null, elapsed=1800ms, peak=281.7MiB

@@ -1,0 +1,100 @@
+{
+  "sourceSha": "0e0d0f077089cf3957a1ac2f73a8bbc511f0e3cb",
+  "testId": "d4610c33918c0d3d6a19-d886ccd988b54df0134d",
+  "project": "sync-production",
+  "retry": 0,
+  "repeatEachIndex": 1,
+  "events": [
+    {
+      "elapsedMs": 0,
+      "phase": "server-ready",
+      "server": {
+        "ownerPid": 3294,
+        "runId": "f34862a7-8ab4-46d5-928e-19645e4fd778",
+        "updatedAt": 1793561813696,
+        "pid": 3305,
+        "ready": true,
+        "expectedClose": false,
+        "exited": false,
+        "unexpectedExit": false,
+        "closed": false,
+        "firstFailure": null,
+        "exitCode": null,
+        "signal": null,
+        "stdout": {
+          "bytes": 43,
+          "tail": "[ready]"
+        },
+        "stderr": {
+          "bytes": 0,
+          "tail": ""
+        }
+      }
+    },
+    {
+      "elapsedMs": 78,
+      "phase": "authenticated-setup",
+      "attempt": 1,
+      "status": 200,
+      "identityMatch": true,
+      "result": "verified"
+    },
+    {
+      "elapsedMs": 159,
+      "phase": "authenticated-setup",
+      "attempt": 1,
+      "status": 200,
+      "identityMatch": true,
+      "result": "verified"
+    },
+    {
+      "elapsedMs": 207,
+      "phase": "offline-download"
+    },
+    {
+      "elapsedMs": 4461,
+      "phase": "snapshot-observation"
+    },
+    {
+      "elapsedMs": 7626,
+      "phase": "snapshot-observation"
+    },
+    {
+      "elapsedMs": 10689,
+      "phase": "snapshot-observation"
+    },
+    {
+      "elapsedMs": 12617,
+      "phase": "cleanup",
+      "errors": 0,
+      "contexts": 2
+    },
+    {
+      "elapsedMs": 12618,
+      "phase": "scenario-finished",
+      "server": {
+        "ownerPid": 3294,
+        "runId": "f34862a7-8ab4-46d5-928e-19645e4fd778",
+        "updatedAt": 1793561826226,
+        "pid": 3305,
+        "ready": true,
+        "expectedClose": false,
+        "exited": false,
+        "unexpectedExit": false,
+        "closed": false,
+        "firstFailure": null,
+        "exitCode": null,
+        "signal": null,
+        "stdout": {
+          "bytes": 43,
+          "tail": "[ready]"
+        },
+        "stderr": {
+          "bytes": 0,
+          "tail": ""
+        }
+      }
+    }
+  ],
+  "dropped": 0
+}

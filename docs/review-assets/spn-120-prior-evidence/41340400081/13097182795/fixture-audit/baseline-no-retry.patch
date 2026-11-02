@@ -1,0 +1,13 @@
+diff --git a/e2e/sync-client.spec.ts b/e2e/sync-client.spec.ts
+index a3a3680..8dd755c 100644
+--- a/e2e/sync-client.spec.ts
++++ b/e2e/sync-client.spec.ts
+@@ -157,7 +157,7 @@ async function fixture(
+       `/sync-api/items/${item.id}/snapshot?unitId=${encodeURIComponent(data.unitId)}`,
+       // Repeat only this read-only observation after ECONNRESET. HTTP failures,
+       // authored writes and native/content assertions retain their failure gates.
+-      { maxRetries: 1 },
++      { maxRetries: 0 },
+     );
+     expect(response.ok()).toBe(true);
+     return (await response.json()) as { revision: number; snapshot: IWorkbookData & IDocumentData };

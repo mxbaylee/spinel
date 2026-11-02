@@ -1,0 +1,118 @@
+{
+  "source": "baseline",
+  "project": "production",
+  "sourceSha": "e63956c7ec214af03c825104a81f63517eb87d0b",
+  "sourceTree": "6af10323bca2285e7a768c378196d995f87c7c45",
+  "driverSha256": "813ced6ca1dd05fad2cf8252838683cb82d6c81d7ed421638a8070f54e07741e",
+  "lockSha256": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf",
+  "node": "v26.12.1",
+  "repetitions": 2,
+  "retries": 0,
+  "setupRecoveryAllowed": false,
+  "startedAt": "2026-11-01T19:15:17.733Z",
+  "browserVersion": "156.0.8078.4",
+  "baselineDeltaSha256": "6731bb2b78a7e86b0848a928baeac8481ca5ba278302367a599ca7d295f7ecdb",
+  "finishedAt": "2026-11-01T19:18:18.497Z",
+  "expectedAttempts": 12,
+  "attempts": [
+    {
+      "file": "doc-phone-navigation.spec.ts",
+      "title": "phone Doc light native pan, zoom and editor behavior preserve the document",
+      "project": "production",
+      "retry": 0,
+      "status": "passed",
+      "durationMs": 15694
+    },
+    {
+      "file": "doc-phone-navigation.spec.ts",
+      "title": "phone Doc dark native pan, zoom and editor behavior preserve the document",
+      "project": "production",
+      "retry": 0,
+      "status": "passed",
+      "durationMs": 13436
+    },
+    {
+      "file": "doc-phone-navigation.spec.ts",
+      "title": "phone Doc light native pan, zoom and guest-viewer behavior preserve the document",
+      "project": "production",
+      "retry": 0,
+      "status": "passed",
+      "durationMs": 19245
+    },
+    {
+      "file": "doc-phone-navigation.spec.ts",
+      "title": "phone Doc dark native pan, zoom and guest-viewer behavior preserve the document",
+      "project": "production",
+      "retry": 0,
+      "status": "passed",
+      "durationMs": 18668
+    },
+    {
+      "file": "doc-phone-navigation.spec.ts",
+      "title": "phone Doc light native pan, zoom and editor behavior preserve the document",
+      "project": "production",
+      "retry": 0,
+      "status": "passed",
+      "durationMs": 13553
+    },
+    {
+      "file": "doc-phone-navigation.spec.ts",
+      "title": "phone Doc dark native pan, zoom and editor behavior preserve the document",
+      "project": "production",
+      "retry": 0,
+      "status": "passed",
+      "durationMs": 13121
+    },
+    {
+      "file": "doc-phone-navigation.spec.ts",
+      "title": "phone Doc light native pan, zoom and guest-viewer behavior preserve the document",
+      "project": "production",
+      "retry": 0,
+      "status": "passed",
+      "durationMs": 19063
+    },
+    {
+      "file": "doc-phone-navigation.spec.ts",
+      "title": "phone Doc dark native pan, zoom and guest-viewer behavior preserve the document",
+      "project": "production",
+      "retry": 0,
+      "status": "passed",
+      "durationMs": 19750
+    },
+    {
+      "file": "offline-sign-out.spec.ts",
+      "title": "ordinary passkeys work without Web Locks and an old logout response cannot clear the new cookie",
+      "project": "production",
+      "retry": 0,
+      "status": "passed",
+      "durationMs": 3756
+    },
+    {
+      "file": "offline-sign-out.spec.ts",
+      "title": "ordinary passkeys work without Web Locks and an old logout response cannot clear the new cookie",
+      "project": "production",
+      "retry": 0,
+      "status": "passed",
+      "durationMs": 5181
+    },
+    {
+      "file": "passkey-management.spec.ts",
+      "title": "profile signs out another browser, then verifies and removes its passkey without losing the current account",
+      "project": "production",
+      "retry": 0,
+      "status": "passed",
+      "durationMs": 15214
+    },
+    {
+      "file": "passkey-management.spec.ts",
+      "title": "profile signs out another browser, then verifies and removes its passkey without losing the current account",
+      "project": "production",
+      "retry": 0,
+      "status": "passed",
+      "durationMs": 15189
+    }
+  ],
+  "exitCode": 0,
+  "signal": null,
+  "complete": true
+}

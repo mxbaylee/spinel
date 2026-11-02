@@ -1,0 +1,82 @@
+Listing tests:
+  [development] › doc-phone-navigation.spec.ts:214:5 › phone Doc light native pan, zoom and editor behavior preserve the document
+  [development] › doc-phone-navigation.spec.ts:214:5 › phone Doc dark native pan, zoom and editor behavior preserve the document
+  [development] › doc-phone-navigation.spec.ts:214:5 › phone Doc light native pan, zoom and guest-viewer behavior preserve the document
+  [development] › doc-phone-navigation.spec.ts:214:5 › phone Doc dark native pan, zoom and guest-viewer behavior preserve the document
+  [development] › passkey-management.spec.ts:66:3 › Recorded passkey fixture › profile signs out another browser, then verifies and removes its passkey without losing the current account
+  [development] › passkey-management.spec.ts:348:3 › an old profile cannot end a different account's sessions after an account epoch change
+  [development] › passkey-management.spec.ts:348:3 › an old profile cannot end a different account's sessions after an cookie race change
+  [production] › doc-phone-navigation.spec.ts:214:5 › phone Doc light native pan, zoom and editor behavior preserve the document
+  [production] › doc-phone-navigation.spec.ts:214:5 › phone Doc dark native pan, zoom and editor behavior preserve the document
+  [production] › doc-phone-navigation.spec.ts:214:5 › phone Doc light native pan, zoom and guest-viewer behavior preserve the document
+  [production] › doc-phone-navigation.spec.ts:214:5 › phone Doc dark native pan, zoom and guest-viewer behavior preserve the document
+  [production] › offline-sign-out.spec.ts:102:1 › offline exit locks both tabs, keeps exact Space changes, drains before an invitation and isolates the next account
+  [production] › offline-sign-out.spec.ts:247:1 › locked deletion is explicit, refuses an active writer and clears only this account’s local changes
+  [production] › offline-sign-out.spec.ts:319:3 › Recorded passkey fixture › ordinary passkeys work without Web Locks and an old logout response cannot clear the new cookie
+  [production] › offline-sign-out.spec.ts:428:1 › a crashed local passkey prompt can reopen and complete authentication and logout
+  [production] › offline-sign-out.spec.ts:517:1 › a retained pending exit finishes before a real fresh-instance setup task
+  [production] › passkey-management.spec.ts:66:3 › Recorded passkey fixture › profile signs out another browser, then verifies and removes its passkey without losing the current account
+  [production] › passkey-management.spec.ts:348:3 › an old profile cannot end a different account's sessions after an account epoch change
+  [production] › passkey-management.spec.ts:348:3 › an old profile cannot end a different account's sessions after an cookie race change
+  [sync-development] › sync-client.spec.ts:259:3 › the actual mobile sheet preset has a complete mutation classification
+  [sync-development] › sync-client.spec.ts:259:3 › the actual mobile doc preset has a complete mutation classification
+  [sync-development] › sync-client.spec.ts:279:1 › native Sheets deliver within a second, rebase offline edits, and retry one durable write after a lost acknowledgment
+  [sync-development] › sync-client.spec.ts:383:3 › Recorded fixture first attempt › native Docs preserve concurrent text and undo across reconnect, render profile presence, and capture actual image UI edits
+  [sync-development] › sync-client.spec.ts:512:1 › Space page changes clear room membership and a root link downgrade fences all anonymous child editors
+  [sync-development] › sync-client.spec.ts:597:3 › native sheet viewers cannot enqueue edits during startup or after readiness
+  [sync-development] › sync-client.spec.ts:597:3 › native doc viewers cannot enqueue edits during startup or after readiness
+  [sync-development] › sync-client.spec.ts:638:3 › native sync sheet menus preserve supported commands on desktop
+  [sync-development] › sync-client.spec.ts:638:3 › native sync sheet menus preserve supported commands on phone
+  [sync-production] › offline-recovery.spec.ts:342:9 › offline recovery copies › ordinary sheet: concurrent live document yields one owned copy and leaves original untouched
+  [sync-production] › offline-recovery.spec.ts:342:9 › offline recovery copies › ordinary sheet: restored live document yields one owned copy and leaves original untouched
+  [sync-production] › offline-recovery.spec.ts:342:9 › offline recovery copies › ordinary sheet: trashed live document yields one owned copy and leaves original untouched
+  [sync-production] › offline-recovery.spec.ts:342:9 › offline recovery copies › ordinary sheet: revoked live document yields one owned copy and leaves original untouched
+  [sync-production] › offline-recovery.spec.ts:342:9 › offline recovery copies › ordinary sheet: viewer live document yields one owned copy and leaves original untouched
+  [sync-production] › offline-recovery.spec.ts:342:9 › offline recovery copies › ordinary doc: concurrent live document yields one owned copy and leaves original untouched
+  [sync-production] › offline-recovery.spec.ts:342:9 › offline recovery copies › ordinary doc: restored live document yields one owned copy and leaves original untouched
+  [sync-production] › offline-recovery.spec.ts:342:9 › offline recovery copies › ordinary doc: trashed live document yields one owned copy and leaves original untouched
+  [sync-production] › offline-recovery.spec.ts:342:9 › offline recovery copies › ordinary doc: revoked live document yields one owned copy and leaves original untouched
+  [sync-production] › offline-recovery.spec.ts:342:9 › offline recovery copies › ordinary doc: viewer live document yields one owned copy and leaves original untouched
+  [sync-production] › offline-recovery.spec.ts:342:9 › offline recovery copies › Space child sheet: concurrent live document yields one owned copy and leaves original untouched
+  [sync-production] › offline-recovery.spec.ts:342:9 › offline recovery copies › Space child sheet: restored live document yields one owned copy and leaves original untouched
+  [sync-production] › offline-recovery.spec.ts:342:9 › offline recovery copies › Space child sheet: trashed live document yields one owned copy and leaves original untouched
+  [sync-production] › offline-recovery.spec.ts:342:9 › offline recovery copies › Space child sheet: revoked live document yields one owned copy and leaves original untouched
+  [sync-production] › offline-recovery.spec.ts:342:9 › offline recovery copies › Space child sheet: viewer live document yields one owned copy and leaves original untouched
+  [sync-production] › offline-recovery.spec.ts:342:9 › offline recovery copies › Space child doc: concurrent live document yields one owned copy and leaves original untouched
+  [sync-production] › offline-recovery.spec.ts:342:9 › offline recovery copies › Space child doc: restored live document yields one owned copy and leaves original untouched
+  [sync-production] › offline-recovery.spec.ts:342:9 › offline recovery copies › Space child doc: trashed live document yields one owned copy and leaves original untouched
+  [sync-production] › offline-recovery.spec.ts:342:9 › offline recovery copies › Space child doc: revoked live document yields one owned copy and leaves original untouched
+  [sync-production] › offline-recovery.spec.ts:342:9 › offline recovery copies › Space child doc: viewer live document yields one owned copy and leaves original untouched
+  [sync-production] › offline-recovery.spec.ts:398:5 › offline recovery copies › Recorded fixture first attempt › an unfinished native Sheet draft remains copyable before recovery freezes the queued edits
+  [sync-production] › offline-recovery.spec.ts:474:7 › offline recovery copies › native Doc IME final text survives conflict until explicit unfinished-text discard
+  [sync-production] › offline-recovery.spec.ts:474:7 › offline recovery copies › native Doc IME final text survives expired sign-in until explicit unfinished-text discard
+  [sync-production] › offline-recovery.spec.ts:474:7 › offline recovery copies › native phone Doc IME final text survives conflict until explicit unfinished-text discard
+  [sync-production] › offline-recovery.spec.ts:474:7 › offline recovery copies › native phone Doc IME final text survives expired sign-in until explicit unfinished-text discard
+  [sync-production] › offline-recovery.spec.ts:674:3 › offline recovery copies › native Doc IME capacity refusal retains the exact final text before recovering its applied snapshot
+  [sync-production] › offline-recovery.spec.ts:771:5 › offline recovery copies › native Doc composition-end account lock retires queued freeze work without leaking held text or deleting edits
+  [sync-production] › offline-recovery.spec.ts:771:5 › offline recovery copies › native phone Doc composition-end account lock retires queued freeze work without leaking held text or deleting edits
+  [sync-production] › offline-recovery.spec.ts:870:5 › offline recovery copies › sheet: permission-denied copy exports the complete local version and requires explicit discard
+  [sync-production] › offline-recovery.spec.ts:870:5 › offline recovery copies › doc: oversized copy exports the complete local version and requires explicit discard
+  [sync-production] › offline-recovery.spec.ts:930:3 › offline recovery copies › lost recovery response and reload reuse the same stored request and one durable copy
+  [sync-production] › offline-recovery.spec.ts:973:5 › offline recovery copies › ordinary revoked original: My files recovery survives a lost response and online reload
+  [sync-production] › offline-recovery.spec.ts:973:5 › offline recovery copies › Space child revoked original: My files recovery survives a lost response and online reload
+  [sync-production] › offline-recovery.spec.ts:1039:3 › offline recovery copies › a modified stored recovery request cannot publish or clear edits and export reconstructs the honest checkpoint
+  [sync-production] › offline-recovery.spec.ts:1134:3 › offline recovery copies › failed local recovery cleanup keeps the outbox and retry finishes the same copy
+  [sync-production] › offline-recovery.spec.ts:1177:3 › offline recovery copies › a lost native acknowledgement creates one conservative recovery copy and counts that possible replay crash once
+  [sync-production] › offline-recovery.spec.ts:1218:3 › offline recovery copies › a disabled account retains local export while remote recovery is unavailable
+  [sync-production] › offline-recovery.spec.ts:1254:5 › offline recovery copies › Space sheet: recovery keeps every local image in the new account-owned scope after root revocation
+  [sync-production] › offline-recovery.spec.ts:1254:5 › offline recovery copies › Space doc: recovery keeps every local image in the new account-owned scope after root revocation
+  [sync-production] › offline-recovery.spec.ts:1352:3 › offline recovery copies › Doc recovery and export preserve Formula definitions and recheck source access without cached results
+  [sync-production] › sync-client.spec.ts:259:3 › the actual mobile sheet preset has a complete mutation classification
+  [sync-production] › sync-client.spec.ts:259:3 › the actual mobile doc preset has a complete mutation classification
+  [sync-production] › sync-client.spec.ts:279:1 › native Sheets deliver within a second, rebase offline edits, and retry one durable write after a lost acknowledgment
+  [sync-production] › sync-client.spec.ts:383:3 › Recorded fixture first attempt › native Docs preserve concurrent text and undo across reconnect, render profile presence, and capture actual image UI edits
+  [sync-production] › sync-client.spec.ts:512:1 › Space page changes clear room membership and a root link downgrade fences all anonymous child editors
+  [sync-production] › sync-client.spec.ts:597:3 › native sheet viewers cannot enqueue edits during startup or after readiness
+  [sync-production] › sync-client.spec.ts:597:3 › native doc viewers cannot enqueue edits during startup or after readiness
+  [sync-production] › sync-client.spec.ts:638:3 › native sync sheet menus preserve supported commands on desktop
+  [sync-production] › sync-client.spec.ts:638:3 › native sync sheet menus preserve supported commands on phone
+  [sync-soak-sheet] › sync-client.spec.ts:750:3 › seeded two-editor sheet sync soak survives repeated reconnect and reload
+  [sync-soak-doc] › sync-client.spec.ts:750:3 › seeded two-editor doc sync soak survives repeated reconnect and reload
+Total: 79 tests in 5 files
+WATCHDOG: exit=0, signal=null, elapsed=1223ms, peak=388.8MiB

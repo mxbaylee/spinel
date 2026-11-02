@@ -1,0 +1,61 @@
+{
+  "artifacts": [
+    {
+      "id": 13098141009,
+      "name": "fixture-audit-candidate-development",
+      "size_in_bytes": 327990,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13098141009",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13098141009/zip",
+      "expired": false,
+      "created_at": "2026-11-01T19:31:12Z",
+      "expires_at": "2026-11-15T19:31:11Z",
+      "updated_at": "2026-11-01T19:31:12Z",
+      "digest": "sha256:f2ad5130d9eb1b121766fb6dd86c6ed94b4ab02f46d30cc6e29b914a5f2882d4",
+      "workflow_run": {
+        "id": 41342044627,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-120-fixture-reliability",
+        "head_sha": "5edd3665d32f2a27f490962e5c4a004a706425ec"
+      }
+    },
+    {
+      "id": 13097941379,
+      "name": "fixture-audit-candidate-production",
+      "size_in_bytes": 328103,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13097941379",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13097941379/zip",
+      "expired": false,
+      "created_at": "2026-11-01T19:31:19Z",
+      "expires_at": "2026-11-15T19:31:18Z",
+      "updated_at": "2026-11-01T19:31:19Z",
+      "digest": "sha256:4c24cbbf6ddaf59e2fc59a2ccdb914ccabfc4f2e07f9cccea29c9cd19ddb5994",
+      "workflow_run": {
+        "id": 41342044627,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-120-fixture-reliability",
+        "head_sha": "5edd3665d32f2a27f490962e5c4a004a706425ec"
+      }
+    },
+    {
+      "id": 13097329688,
+      "name": "fixture-audit-candidate-sync-production",
+      "size_in_bytes": 328070,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13097329688",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13097329688/zip",
+      "expired": false,
+      "created_at": "2026-11-01T19:33:48Z",
+      "expires_at": "2026-11-15T19:33:47Z",
+      "updated_at": "2026-11-01T19:33:48Z",
+      "digest": "sha256:f4e4f9b0d8d03365e36094a3d210a52e35689af848ce12757b194ea482f44046",
+      "workflow_run": {
+        "id": 41342044627,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-120-fixture-reliability",
+        "head_sha": "5edd3665d32f2a27f490962e5c4a004a706425ec"
+      }
+    }
+  ]
+}

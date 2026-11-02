@@ -1,0 +1,1 @@
+{"ownerPid":3073,"runId":"c4381c7f-1173-4e5b-b083-93b98b95c894","updatedAt":1793562231489,"pid":3084,"ready":true,"expectedClose":true,"exited":true,"unexpectedExit":false,"closed":true,"firstFailure":null,"exitCode":0,"signal":null,"stdout":{"bytes":154,"tail":"[ready]\n[output redacted]"},"stderr":{"bytes":0,"tail":""}}
