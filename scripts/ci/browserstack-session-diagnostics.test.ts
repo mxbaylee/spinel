@@ -185,6 +185,83 @@ test('cause classification uses allowlisted protocol codes and anchored driver m
   }
 });
 
+test('Chromium function and result failures are classified only from correlated source-anchored errors', () => {
+  const messages = [
+    [
+      'Runtime.callFunctionOn threw exception: TypeError: private fixture-key',
+      'driver-function-exception',
+    ],
+    [
+      'result.deepSerializedValue.value list is missing or empty in Runtime.callFunctionOn response',
+      'driver-result-deserialization-failed',
+    ],
+    [
+      'first element in result.deepSerializedValue.value list must be a dictionary',
+      'driver-result-deserialization-failed',
+    ],
+    [
+      'first element in result.deepSerializedValue.value list must contain a string',
+      'driver-result-deserialization-failed',
+    ],
+    [
+      'cannot deserialize the result value received from Runtime.callFunctionOn',
+      'driver-result-deserialization-failed',
+    ],
+    [
+      'deserialized Runtime.callFunctionOn result is not a dictionary',
+      'driver-result-deserialization-failed',
+    ],
+    ["call function result missing int 'status'", 'driver-result-deserialization-failed'],
+  ];
+  for (const [message, expected] of messages) {
+    const logs = [
+      appiumFailure(body('unknown error', `unknown error: ${message}\nprivate stack`)),
+      terminalFailure().replace(
+        terminal,
+        `Encountered internal error running command: UnknownError: unknown error: ${message}`,
+      ),
+    ];
+    for (const log of logs) {
+      const result = analyzeSessionLog(log, 'appiumlogs');
+      assert.equal(result.failures[0].cause, expected);
+      assert.equal(result.failures[0].command, command);
+      assert.doesNotMatch(JSON.stringify(result), privateValues);
+    }
+    for (const [code, unrelated] of [
+      ['no such frame', message],
+      ['unknown error', `script returned "${message}"`],
+      ['unknown error', `unrecognized private failure\n${message}`],
+      ['unknown error', `unhandled inspector error: ${JSON.stringify({ code: -32000, message })}`],
+      ...(expected === 'driver-result-deserialization-failed'
+        ? [['unknown error', `${message} private suffix`]]
+        : [['unknown error', 'Runtime.callFunctionOn threw exception: ']]),
+    ]) {
+      const result = analyzeSessionLog(appiumFailure(body(code, unrelated)), 'appiumlogs');
+      assert.equal(result.failures[0].cause, 'unclassified');
+      assert.doesNotMatch(JSON.stringify(result), privateValues);
+    }
+  }
+
+  const message = messages[0][0];
+  const lines = appiumFailure(body('unknown error', message)).split('\n');
+  // A script echo and a successful returned object can contain the same text.
+  // Neither is a driver error; a foreign command's failed result is unrelated.
+  const echoed = [
+    lines[0],
+    `${stamp}[debug] [WD Proxy] Proxying [POST ${path}] to [POST http://127.0.0.1:9515${path}] with body: ${JSON.stringify({ script: message })}`,
+    lines[2].replace('status 500:', 'status 200:'),
+    lines[3].replace('500 92 ms', '200 92 ms'),
+  ].join('\n');
+  assert.deepEqual(analyzeSessionLog(echoed, 'appiumlogs').failures, []);
+  assert.equal(
+    analyzeSessionLog(
+      appiumFailure(body('unknown error', message), path, '/session/internal-session/title'),
+      'appiumlogs',
+    ).failures[0].cause,
+    'unclassified',
+  );
+});
+
 test('one session-bound terminal error can classify execute HTTP500 while retaining malformed proxy evidence', () => {
   for (const log of [
     terminalFailure(),

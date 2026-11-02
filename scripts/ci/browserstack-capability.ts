@@ -988,6 +988,90 @@ export function itemReadinessSatisfied(value: Row, offline: boolean) {
   );
 }
 
+/** Observe public installation resources without preparing or writing any cache.
+ * The caller has already proved the device's uncached HTTP/socket outage. Reload
+ * bypasses incidental HTTP cache; only the product's retained runtime can answer.
+ */
+export const installationAssetsScript = `
+const controller = new AbortController();
+const timer = setTimeout(() => controller.abort(), 6000);
+let phase = 'manifest';
+const read = async (path, type, maximum) => {
+  const response = await fetch(path, {cache:'reload',credentials:'omit',redirect:'error',signal:controller.signal});
+  if (!response.ok || response.redirected || response.url !== location.origin + path ||
+      response.headers.get('Content-Type')?.split(';')[0].trim() !== type || !response.body) throw new Error('resource');
+  const reader = response.body.getReader(); const chunks=[]; let size=0;
+  try {
+    for (;;) {
+      controller.signal.throwIfAborted();
+      const part = await reader.read(); if(part.done)break;
+      size += part.value.byteLength; if(size>maximum)throw new Error('size'); chunks.push(part.value);
+    }
+  } finally { await reader.cancel().catch(()=>{}); reader.releaseLock(); }
+  if(!size)throw new Error('empty');
+  const bytes=new Uint8Array(size);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.byteLength;}
+  return bytes;
+};
+const digest = async bytes => [...new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))].map(byte=>byte.toString(16).padStart(2,'0')).join('');
+try {
+  const bytes=await read('/manifest.webmanifest','application/manifest+json',16384);
+  const manifest=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));
+  if(manifest.id!=='/' || manifest.start_url!=='/' || manifest.scope!=='/' || manifest.name!=='Spinel' ||
+      manifest.short_name!=='Spinel' || manifest.display!=='standalone' || !Array.isArray(manifest.icons) || manifest.icons.length!==2)throw new Error('manifest');
+  for(const size of [192,512]){
+    const icons=manifest.icons.filter(icon=>icon.src==='/app-icon-'+size+'.png' && icon.sizes===size+'x'+size && icon.type==='image/png' && icon.purpose==='any maskable');
+    if(icons.length!==1)throw new Error('manifest');
+  }
+  phase='icons';
+  const icons=await Promise.all([180,192,512].map(async size=>{
+    const path='/app-icon-'+size+'.png';const bytes=await read(path,'image/png',100000);
+    if([137,80,78,71,13,10,26,10].some((byte,index)=>bytes[index]!==byte))throw new Error('png');
+    const blobURL=URL.createObjectURL(new Blob([bytes],{type:'image/png'}));
+    let decodeTimer;
+    try {
+      const icon=new Image();icon.src=blobURL;
+      await Promise.race([icon.decode(),new Promise((_,reject)=>{decodeTimer=setTimeout(()=>reject(new Error('decode')),2000);})]);
+      if(icon.naturalWidth!==size || icon.naturalHeight!==size)throw new Error('dimensions');
+      return {path,bytes:bytes.byteLength,width:icon.naturalWidth,height:icon.naturalHeight,sha256:await digest(bytes)};
+    } finally {clearTimeout(decodeTimer);URL.revokeObjectURL(blobURL);}
+  }));
+  return {ok:true,manifest:{path:'/manifest.webmanifest',bytes:bytes.byteLength,sha256:await digest(bytes)},icons};
+} catch {return {ok:false,phase};}
+finally {clearTimeout(timer);controller.abort();}
+`;
+
+export function verifyInstallationAssets(value: unknown) {
+  const observed = row(value);
+  const validDigest = (entry: Row, maximum: number) =>
+    Number.isInteger(entry.bytes) &&
+    Number(entry.bytes) > 0 &&
+    Number(entry.bytes) <= maximum &&
+    typeof entry.sha256 === 'string' &&
+    /^[a-f0-9]{64}$/.test(entry.sha256);
+  requireCondition(observed.ok === true, 'offline-installation-assets-unavailable');
+  const manifest = row(observed.manifest);
+  requireCondition(
+    manifest.path === '/manifest.webmanifest' && validDigest(manifest, 16_384),
+    'offline-installation-manifest-invalid',
+  );
+  requireCondition(
+    Array.isArray(observed.icons) && observed.icons.length === 3,
+    'offline-installation-icons-invalid',
+  );
+  const icons = observed.icons.map(row);
+  for (const size of [180, 192, 512])
+    requireCondition(
+      icons.filter(
+        (icon) =>
+          icon.path === `/app-icon-${size}.png` &&
+          icon.width === size &&
+          icon.height === size &&
+          validDigest(icon, 100_000),
+      ).length === 1,
+      'offline-installation-icons-invalid',
+    );
+}
+
 export const chromeItemNavigationScript = `
 const [origin, previousURL, itemURL] = arguments;
 if (location.origin !== origin || location.href !== previousURL) return false;
@@ -1997,6 +2081,13 @@ export async function runCapability(
     await recordLaunch('offline-relaunched-context', relaunched);
     await secureEnvironment();
     await transportProbe(false);
+    const installationAssets = await executeAsync(
+      installationAssetsScript,
+      [],
+      'offline-installation-assets',
+    );
+    verifyInstallationAssets(installationAssets);
+    await record('offline-installation-assets', installationAssets);
     await record('relaunch-socket', {
       status: 'not-retested',
       reason:

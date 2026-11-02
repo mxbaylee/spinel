@@ -1,6 +1,7 @@
 /// <reference lib="webworker" />
 import { faviconSvg } from '../src/ui/favicon.ts';
 import { offlineErrorMessage } from '../src/shared/offlineError.ts';
+import { isInstallationPath } from '../src/shared/pwa.ts';
 import {
   LEGACY_COMPATIBILITY,
   needsServer,
@@ -22,6 +23,7 @@ import {
 import type { RuntimeState } from './offline/runtimeStore.ts';
 import {
   cachedAsset,
+  cachedInstallationAsset,
   compatibleBuild,
   completeRuntime,
   fillRuntime,
@@ -332,6 +334,18 @@ self.addEventListener('fetch', (event) => {
   if (url.pathname === '/favicon.svg')
     event.respondWith(new Response(faviconSvg(), { headers: { 'Content-Type': 'image/svg+xml' } }));
   else if (event.request.mode === 'navigate') event.respondWith(navigate(event.request, url));
+  else if (isInstallationPath(url.pathname) && !url.search)
+    event.respondWith(
+      (async () => {
+        const state = await readRuntimeState().catch(() => null);
+        const preferred = (
+          observedClients.get(event.clientId) ?? state?.clients[event.clientId]
+        )?.at(-1);
+        return (
+          (await cachedInstallationAsset(url.pathname, preferred, state)) ?? fetch(event.request)
+        );
+      })(),
+    );
   else if (url.pathname.startsWith('/assets/') && !url.search)
     event.respondWith(
       (async () => {

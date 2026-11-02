@@ -564,10 +564,9 @@ for (const kind of ['sheet', 'doc'] as const) {
       await surface.click({ position: { x: 130, y: 200 } });
       await f.other.keyboard.type('viewer cannot write');
       await f.other.keyboard.press('Enter');
-      await expect(f.other.getByRole('status', { name: 'Save status' })).toHaveText(
-        'View only — reload after your access changes.',
-        { timeout: 30_000 },
-      );
+      await expect(f.other.getByRole('status', { name: 'Save status' })).toHaveText('View only.', {
+        timeout: 30_000,
+      });
       const refusal = f.other.getByText(
         'The range is protected, and you do not have edit permission. To edit, please contact the creator.',
         { exact: true },

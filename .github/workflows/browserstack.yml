@@ -9,7 +9,7 @@ on:
         default: quota
         options: [quota, capability, chrome-diagnostic, diagnostics]
       session_id:
-        description: Completed session for diagnostics; defaults to the retained Chrome attempt 6
+        description: Completed session for diagnostics; defaults to the retained Chrome attempt 8
         type: string
         required: false
   schedule:
@@ -41,8 +41,8 @@ jobs:
       contents: read
     env:
       SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-      # Completed Chrome session from capability run 41385636726, attempt 1.
-      BS_DIAGNOSTIC_SESSION: ${{ inputs.session_id || '5a7cc2cfd951b4b68e24bed95af51e7c64262b17' }}
+      # Completed Chrome session from capability run 41395124342, attempt 1.
+      BS_DIAGNOSTIC_SESSION: ${{ inputs.session_id || 'dc1a30f87ce096c3e7ae42bae0fd3349bc24d9ad' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:

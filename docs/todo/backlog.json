@@ -1,7 +1,7 @@
 {
   "name": "Spinel",
   "prefix": "SPN",
-  "next_id": 132,
+  "next_id": 137,
   "personas": "docs/product/personas.md",
   "grooming": {
     "every": 7,
@@ -13,7 +13,11 @@
       "SPN-112",
       "SPN-115",
       "SPN-124",
-      "SPN-065"
+      "SPN-065",
+      "SPN-132",
+      "SPN-071",
+      "SPN-133",
+      "SPN-131"
     ]
   },
   "size": {
@@ -31,7 +35,7 @@
     ]
   },
   "pr_title_exceptions": [
-    "🧹 Groom backlog",
-    "⬆️ Bump"
+    "\ud83e\uddf9 Groom backlog",
+    "\u2b06\ufe0f Bump"
   ]
 }

@@ -1,0 +1,48 @@
+{
+  "runtimeSource": "0d19a0c56cc21e44645567e6393b37718f591777",
+  "cleanupTestSource": "afeb287454863c7e318dba5fd2622bcc3d72cb95",
+  "note": "Later source changes are a Storybook assertion and evidence/docs. These are individual local fixture observations, not performance guarantees.",
+  "desktop": [
+    {
+      "kind": "doc",
+      "upgradedInMs": 98,
+      "navigationCountBeforeGrant": 1,
+      "navigationCountAfterLoss": 1,
+      "browserErrors": [],
+      "finalStatusAfterLoss": "Access changed. Copy unsaved changes before reloading."
+    },
+    {
+      "kind": "sheet",
+      "upgradedInMs": 325,
+      "navigationCountBeforeGrant": 1,
+      "navigationCountAfterLoss": 1,
+      "browserErrors": [],
+      "finalStatusAfterLoss": "Access changed. Copy unsaved changes before reloading."
+    }
+  ],
+  "runs": [
+    {
+      "project": "production",
+      "cases": "Doc/Sheet native upgrade and hide/show/search",
+      "passed": 3,
+      "durationSeconds": 17.6,
+      "peakMiB": 1560,
+      "peakScope": "combined with preceding two native drawing-policy unit tests"
+    },
+    {
+      "project": "sync-production",
+      "cases": "Prepared Doc/Sheet offline continuation; Modern/Traditional phone",
+      "passed": 4,
+      "durationSeconds": 31,
+      "peakMiB": 1855
+    },
+    {
+      "project": "production",
+      "cases": "Hidden prepared-copy retention, cold offline discovery, revoke, account lock, explicit deletion and remote logout",
+      "passed": 1,
+      "durationSeconds": 16.2,
+      "peakMiB": 1809,
+      "peakScope": "combined with following successful typecheck"
+    }
+  ]
+}

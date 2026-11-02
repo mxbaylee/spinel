@@ -1,3 +1,6 @@
+import { installationAssetDigest, installationPaths } from './pwa.ts';
+import type { InstallationPath } from './pwa.ts';
+
 /** Public runtime metadata only. No document, session or entry token belongs here. */
 export type RuntimeCompatibility = { format: number; sdkVersion: string };
 export type ShellManifest = {
@@ -7,6 +10,8 @@ export type ShellManifest = {
   entry: string;
   css: string[];
   files: string[];
+  /** Absent on earlier retained builds; their original completeness contract is unchanged. */
+  installation?: Record<InstallationPath, string>;
 };
 export type AccountRuntimeRequirement =
   | { kind: 'empty' }
@@ -76,7 +81,18 @@ export function parseShellManifest(text: string): ShellManifest | null {
     new Set(value.css).size !== value.css.length ||
     value.css.some(
       (file) => typeof file !== 'string' || !file.endsWith('.css') || !value.files.includes(file),
-    )
+    ) ||
+    (value.installation !== undefined &&
+      (!value.installation ||
+        typeof value.installation !== 'object' ||
+        Array.isArray(value.installation) ||
+        Object.keys(value.installation).length !== installationPaths.length ||
+        installationPaths.some(
+          (path) =>
+            typeof value.installation![path] !== 'string' ||
+            !installationAssetDigest(path, value.installation![path]) ||
+            !value.files.includes(value.installation![path]),
+        )))
   )
     throw new Error('The offline app shell manifest is malformed.');
   return value;

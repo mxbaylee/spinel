@@ -123,15 +123,19 @@ export function nativeSyncPermissions(unitId: string, access: ItemAccess) {
     ],
   ];
 
+  function setAccess(next: ItemAccess) {
+    viewer = next === 'viewer';
+    if (!permissions) return;
+    for (const [id, point] of permissions.getAllPermissionPoint()) {
+      const current = point.getValue();
+      if (rootPoint(current)) permissions.updatePermissionPoint(id, allowed(current.subType));
+    }
+  }
   return {
     override,
+    setAccess,
     readonly() {
-      viewer = true;
-      if (!permissions) return;
-      for (const [id, point] of permissions.getAllPermissionPoint()) {
-        const current = point.getValue();
-        if (rootPoint(current)) permissions.updatePermissionPoint(id, allowed(current.subType));
-      }
+      setAccess('viewer');
     },
   };
 }

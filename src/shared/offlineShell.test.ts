@@ -7,6 +7,7 @@ import {
   SHELL_PLACEHOLDER,
 } from './offlineShell.ts';
 import type { ShellManifest } from './offlineShell.ts';
+import { installationAssetName, installationPaths } from './pwa.ts';
 
 const manifest: ShellManifest = {
   protocol: 1,
@@ -40,6 +41,29 @@ test('development has no manifest; a public production descriptor names a comple
     ),
   ).toEqual(manifest);
   expect(runtimeDescriptor('<html><head></head></html>')).toBeNull();
+});
+test('new runtime installation paths bind complete immutable assets while older descriptors remain valid', () => {
+  const installation = Object.fromEntries(
+    installationPaths.map((path) => [path, installationAssetName(path, 'a'.repeat(64))]),
+  ) as NonNullable<ShellManifest['installation']>;
+  const current = {
+    ...manifest,
+    files: [...manifest.files, ...Object.values(installation)],
+    installation,
+  };
+  expect(parseShellManifest(JSON.stringify(current))).toEqual(current);
+  expect(parseShellManifest(JSON.stringify(manifest))).toEqual(manifest);
+  for (const change of [
+    { ...installation, '/manifest.webmanifest': '/api/items?token=secret' },
+    { ...installation, '/app-icon-180.png': installation['/app-icon-512.png'] },
+    { ...installation, '/app-icon-192.png': installation['/app-icon-192.png'] + '?token=secret' },
+    { ...installation, '/extra': '/assets/extra.js' },
+    { '/manifest.webmanifest': installation['/manifest.webmanifest'] },
+  ])
+    expect(() =>
+      parseShellManifest(JSON.stringify({ ...current, installation: change })),
+    ).toThrow();
+  expect(() => parseShellManifest(JSON.stringify({ ...current, files: manifest.files }))).toThrow();
 });
 test.each([
   { protocol: 2 },

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { createHash } from 'node:crypto';
+import { createHash, webcrypto } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { createContext, runInContext } from 'node:vm';
@@ -9,6 +9,7 @@ import {
   chromeItemNavigationScript,
   installMenuLabel,
   installCandidateDiagnostics,
+  installationAssetsScript,
   itemReadinessScript,
   itemReadinessSatisfied,
   launchEnvironmentDiagnostic,
@@ -29,6 +30,7 @@ import {
   screenshotResponseShape,
   screenshotLimits,
   verifyCapabilityAdmission,
+  verifyInstallationAssets,
   verifyLaunchedBrowser,
   verifyTransportProbe,
   withCapabilityAdmission,
@@ -48,6 +50,174 @@ const target = { browser: 'chrome', device: 'Google Pixel 10', osVersion: '16' }
 // A complete 1x1 RGBA PNG, including valid IHDR/IDAT/IEND chunks and CRCs.
 const tinyPng =
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNQTl/3HwAEIQI43iG0hQAAAABJRU5ErkJggg==';
+
+test('offline installation observation reads only fixed public resources and rejects incomplete or invalid bytes', async () => {
+  const origin = 'https://bs-local.com:8176';
+  const manifest = {
+    id: '/',
+    name: 'Spinel',
+    short_name: 'Spinel',
+    start_url: '/',
+    scope: '/',
+    display: 'standalone',
+    icons: [192, 512].map((size) => ({
+      src: `/app-icon-${size}.png`,
+      sizes: `${size}x${size}`,
+      type: 'image/png',
+      purpose: 'any maskable',
+    })),
+  };
+  for (const scenario of [
+    'complete',
+    'offline-miss',
+    'wrong-manifest',
+    'wrong-mime',
+    'wrong-url',
+    'bad-png',
+    'wrong-size',
+    'oversized',
+  ] as const) {
+    const requests: string[] = [];
+    const urls = new Map<string, number>();
+    let created = 0,
+      revoked = 0;
+    const sandbox = createContext({
+      location: { origin },
+      TextDecoder,
+      Uint8Array,
+      AbortController,
+      setTimeout,
+      clearTimeout,
+      crypto: webcrypto,
+      // The actual byte/decode path runs in the production browser regression;
+      // here these two boundaries isolate protocol/cleanup without a browser.
+      Blob: class {
+        bytes: Uint8Array;
+        constructor(parts: Uint8Array[]) {
+          this.bytes = parts[0];
+        }
+      },
+      URL: {
+        createObjectURL(blob: { bytes: Uint8Array }) {
+          const key = `blob:test-${++created}`;
+          urls.set(key, blob.bytes.at(-1)!);
+          return key;
+        },
+        revokeObjectURL(url: string) {
+          assert.equal(urls.delete(url), true);
+          revoked++;
+        },
+      },
+      Image: class {
+        src = '';
+        naturalWidth = 0;
+        naturalHeight = 0;
+        async decode() {
+          const size = [180, 192, 512][urls.get(this.src)!];
+          this.naturalWidth = scenario === 'wrong-size' ? 1 : size;
+          this.naturalHeight = size;
+        }
+      },
+      fetch: async (path: string, options: RequestInit) => {
+        requests.push(path);
+        assert.deepEqual(
+          { cache: options.cache, credentials: options.credentials, redirect: options.redirect },
+          { cache: 'reload', credentials: 'omit', redirect: 'error' },
+        );
+        assert.ok(options.signal);
+        if (scenario === 'offline-miss') throw new TypeError('Network unavailable');
+        let response: Response;
+        if (path === '/manifest.webmanifest') {
+          const value = structuredClone(manifest);
+          if (scenario === 'wrong-manifest')
+            value.icons[0].src = 'https://private.example/icon.png?token=secret';
+          response = new Response(JSON.stringify(value), {
+            headers: {
+              'Content-Type': scenario === 'wrong-mime' ? 'text/html' : 'application/manifest+json',
+            },
+          });
+        } else {
+          const index = [180, 192, 512].findIndex((size) => path === `/app-icon-${size}.png`);
+          assert.notEqual(index, -1);
+          const bytes =
+            scenario === 'oversized'
+              ? new Uint8Array(100001)
+              : new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10, index]);
+          if (scenario === 'bad-png') bytes[0] = 0;
+          response = new Response(bytes, { headers: { 'Content-Type': 'image/png' } });
+        }
+        Object.defineProperty(response, 'url', {
+          value: scenario === 'wrong-url' ? 'https://foreign.example/' : origin + path,
+        });
+        return response;
+      },
+    });
+    const observed = await runInContext(
+      `(async function(){${installationAssetsScript}})()`,
+      sandbox,
+    );
+    if (scenario === 'complete') {
+      verifyInstallationAssets(observed);
+      assert.deepEqual(requests, [
+        '/manifest.webmanifest',
+        '/app-icon-180.png',
+        '/app-icon-192.png',
+        '/app-icon-512.png',
+      ]);
+      assert.equal(created, 3);
+    } else {
+      assert.equal(observed.ok, false);
+      assert.throws(
+        () => verifyInstallationAssets(observed),
+        /offline-installation-assets-unavailable/,
+      );
+    }
+    assert.equal(created, revoked);
+    assert.doesNotMatch(JSON.stringify(observed), /private|secret|blob:/);
+  }
+});
+
+test('offline installation evidence requires every decoded icon and bounded digests', () => {
+  const complete = {
+    ok: true,
+    manifest: { path: '/manifest.webmanifest', bytes: 400, sha256: 'a'.repeat(64) },
+    icons: [180, 192, 512].map((size) => ({
+      path: `/app-icon-${size}.png`,
+      bytes: 100,
+      width: size,
+      height: size,
+      sha256: 'b'.repeat(64),
+    })),
+  };
+  verifyInstallationAssets(complete);
+  for (const corrupt of [
+    (value: typeof complete) => {
+      value.icons.pop();
+    },
+    (value: typeof complete) => {
+      value.icons[0] = value.icons[1];
+    },
+    (value: typeof complete) => {
+      value.icons[1].width = 1;
+    },
+    (value: typeof complete) => {
+      value.icons[2].bytes = 100001;
+    },
+    (value: typeof complete) => {
+      value.manifest.sha256 = 'not-a-digest';
+    },
+    (value: typeof complete) => {
+      value.manifest.path = '/api/auth/session';
+    },
+  ]) {
+    const value = structuredClone(complete);
+    corrupt(value);
+    assert.throws(
+      () => verifyInstallationAssets(value),
+      /offline-installation-(?:icons|manifest)-invalid/,
+    );
+  }
+});
 function admission() {
   const policy = readAdmissionPolicy(
     JSON.parse(

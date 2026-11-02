@@ -26,6 +26,8 @@ type Cause =
   | 'certificate-error'
   | 'driver-version-mismatch'
   | 'javascript-exception'
+  | 'driver-function-exception'
+  | 'driver-result-deserialization-failed'
   | 'unclassified';
 type FailureRecord = {
   command: string | null;
@@ -241,6 +243,27 @@ function classifyCause(code: string | null, message: unknown): Cause {
   let first = message
     .split(/\r?\n/, 1)[0]
     .replace(/^(?:unknown error|session not created|no such window|no such frame):\s*/i, '');
+  // Chromium WebViewImpl::CallFunctionWithTimeoutInternal, blob
+  // 2b1cfe8355d9e79294ade85bb1332eb38f5aa765:
+  // https://chromium.googlesource.com/chromium/src/+/refs/heads/main/chrome/test/chromedriver/chrome/web_view_impl.cc
+  // These identify the driver boundary, not an application or hosted-version
+  // diagnosis. Discard the exception description; static result errors must
+  // match completely, with no arbitrary trailing provider text.
+  if (code === 'unknown error') {
+    if (/^Runtime\.callFunctionOn threw exception: .+$/.test(first))
+      return 'driver-function-exception';
+    if (
+      [
+        'result.deepSerializedValue.value list is missing or empty in Runtime.callFunctionOn response',
+        'first element in result.deepSerializedValue.value list must be a dictionary',
+        'first element in result.deepSerializedValue.value list must contain a string',
+        'cannot deserialize the result value received from Runtime.callFunctionOn',
+        'deserialized Runtime.callFunctionOn result is not a dictionary',
+        "call function result missing int 'status'",
+      ].includes(first)
+    )
+      return 'driver-result-deserialization-failed';
+  }
   // ChromeDriver can wrap a protocol error. Only its complete structured first
   // line is inspected; arbitrary script text and stack lines are never searched.
   if (first.startsWith('unhandled inspector error: ')) {
@@ -887,6 +910,10 @@ async function main() {
   });
   const summary = `Completed-session diagnostics: ${report.status}; diagnosis: ${report.diagnosis}; requests: ${report.retrievals.length}; capability acceptance: not assessed.\n`;
   console.log(summary.trim());
+  // The receipt contains only validated identities, bounded classifications and
+  // digests. Retain it in job logs too, so diagnosis does not depend on downloading
+  // an expiring artifact. Provider response bodies never enter this report.
+  console.log(JSON.stringify(report, null, 2));
   if (process.env.GITHUB_STEP_SUMMARY) await appendFile(process.env.GITHUB_STEP_SUMMARY, summary);
   if (report.status !== 'available') process.exitCode = 1;
 }

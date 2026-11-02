@@ -1372,7 +1372,7 @@ for (const role of ['editor', 'admin'] as const) {
       await viewer.page.goto(href(space.id, doc.id));
       await expect(
         viewer.page.getByRole('status', { name: 'Save status', exact: true }),
-      ).toHaveText('View only — reload after your access changes.', { timeout: 30_000 });
+      ).toHaveText('View only.', { timeout: 30_000 });
       await expect(
         viewer.page.getByRole('button', { name: 'Save details: View only', exact: true }),
       ).toBeVisible();

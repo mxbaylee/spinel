@@ -3,8 +3,11 @@ import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import type { Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
+import sharp from 'sharp';
 import { shellFiles, SHELL_PLACEHOLDER } from './src/shared/offlineShell.ts';
 import type { RuntimeCompatibility, ShellManifest } from './src/shared/offlineShell.ts';
+import { installationAssetName, installationPaths, pwaManifest } from './src/shared/pwa.ts';
+import { iconSvg } from './src/ui/appIcon.ts';
 
 // Language layout data must arrive with the renderer, before offline editing.
 // Group the open-source renderer's dynamic dictionaries in both build modes.
@@ -25,8 +28,7 @@ function offlineShell(compatibility: RuntimeCompatibility): Plugin {
     apply: 'build',
     generateBundle: {
       order: 'post',
-      handler(_options, bundle) {
-        const files = shellFiles(Object.keys(bundle));
+      async handler(_options, bundle) {
         const worker = bundle['service-worker.js'];
         // Storybook builds with this config but without the service-worker entry.
         if (!worker) return;
@@ -37,6 +39,29 @@ function offlineShell(compatibility: RuntimeCompatibility): Plugin {
         const html = bundle['index.html'];
         if (!application || application.type !== 'chunk' || !html || html.type !== 'asset')
           return this.error('The offline application entry and public HTML were not built.');
+        const installation = {} as NonNullable<ShellManifest['installation']>;
+        for (const path of installationPaths) {
+          const bytes =
+            path === '/manifest.webmanifest'
+              ? Buffer.from(JSON.stringify(pwaManifest))
+              : await sharp(Buffer.from(iconSvg()))
+                  .resize(Number(path.match(/\d+/)![0]))
+                  .png()
+                  .toBuffer();
+          const file = installationAssetName(
+            path,
+            createHash('sha256').update(bytes).digest('hex'),
+          );
+          installation[path] = file;
+          this.emitFile({ type: 'asset', fileName: file.slice(1), source: bytes });
+        }
+        // Stable public URLs resolve to these immutable bytes inside each retained build.
+        const files = shellFiles([
+          ...new Set([
+            ...Object.keys(bundle),
+            ...Object.values(installation).map((file) => file.slice(1)),
+          ]),
+        ]);
         const original =
           typeof html.source === 'string' ? html.source : new TextDecoder().decode(html.source);
         const version = createHash('sha256')
@@ -52,6 +77,7 @@ function offlineShell(compatibility: RuntimeCompatibility): Plugin {
           entry: '/' + application.fileName,
           css: files.filter((file) => file.endsWith('.css')),
           files,
+          installation,
         };
         const token = new RegExp(`(["'\`])${SHELL_PLACEHOLDER}\\1`, 'g');
         const found = worker.code.match(token)?.length ?? 0;

@@ -201,6 +201,23 @@ SPN-039, 2026-10-19, extended to Space children by SPN-092, 2026-10-22.
 SPN-053 extends the same downloaded copies to native editing and replay. Viewer
 downloads still use the same read-only permission fence.
 
+An online account viewer can gain edit access in the same open native document
+(SPN-071). Before enabling input, the client acquires the existing lifetime writer
+lock under editor admission, verifies the same account, scope, base and native
+generation, updates the clean stored role, then persists its current checkpoint.
+Snapshots, image bytes and revision offsets are retained. A newer stored
+checkpoint, pending/recovery work, uncertain writes, maintenance, resync or a held
+writer lock keeps the viewer read-only and makes the failure visible; a later
+access check can retry. Synthetic viewer mode caused by an unavailable writer
+or local save failure cannot be promoted this way. Device restrictions, guest
+links and downgrade/revocation cleanup remain unchanged.
+
+Personal **Hide** changes discovery only. Hidden inventory stays in the private
+account catalog for **Show hidden** offline; filtering it does not remove the
+download. Sign-out still locks private access and retains clean copies until
+explicit deletion; observed revocation removes clean copies through the existing
+cleanup path. See [SPN-071](implementation/SPN-071.md).
+
 **Download.** Signed-in, non-admin accounts see **Available offline on this
 device** on each Sheet and Doc they can open (`web/offline/download.ts`). It:
 
@@ -284,6 +301,18 @@ Preparation fetches allowlisted assets and public `/sign-in` HTML without
 credentials, verifies response types and the matching descriptor, then writes
 HTML last. Redirects, missing assets and HTML masquerading as code fail the whole
 candidate; a failed refresh preserves previous complete builds.
+
+New prepared runtimes also retain the public installation manifest and the 180,
+192 and 512 pixel PNG app icons. The build emits immutable, SHA-256-addressed
+copies and maps the four fixed public URLs in its runtime descriptor. Preparation
+checks their MIME, size, digest and manifest/PNG shape before publishing. The
+worker serves only those exact, query-free URLs from a published runtime;
+reading them neither creates a cache nor changes document access. Earlier
+descriptors without the mapping keep their original completeness requirements.
+This makes the resources available after offline reopening; it does not establish
+that an operating system installed an icon. The production browser case and the
+bounded physical observation are described in the
+[SPN-090 improvement record](implementation/SPN-090.md#resumed-improvement-pass-public-installation-assets-and-driver-evidence).
 
 SPN-055 bounds retention to two complete published builds plus one candidate.
 Account compatibility holds survive sign-out, and actual browser client IDs pin
@@ -714,6 +743,11 @@ reconciliation passed. The full matrix remains blocked on actual Chrome readines
 and an established native-capable Firefox route, with Safari's earlier capability
 pass preserved at its original revision.
 
+The resumed implementation adds explicit prepared-runtime retention and an
+offline observation for the installation manifest and PNGs. The sixth Safari
+receipt predates that observation, so it is not a physical pass for the new
+resource assertion. No new device session was allocated for this repair.
+
 The decisive scenario is: download online, terminate, enable airplane mode, launch
 from the home screen, open/edit each document type, close and reopen offline,
 then reconnect twice: once with the live document unchanged (the edits sync
@@ -721,9 +755,15 @@ exactly once), and once after another editor changed it (the live document is
 untouched and one conflicted copy holds the offline version). Compare both views
 and server state. Include existing images, uncached/removed items, lost
 acknowledgements, a crash between replay and outbox clearing, history restore,
-account switching and revoked/read-only shares. Deterministic CI also exercises
-failed writes, partial downloads, eviction, removal with pending work, repeated
-replay and interrupted application/storage updates.
+account switching and revoked/read-only shares. The original ticket assigns
+those replay/access permutations to deterministic coverage; the
+[suite inventory](implementation/SPN-090.md#acceptance-ownership-without-duplicate-paid-permutations)
+keeps their execution evidence separate from physical lifecycle observations.
+Deterministic CI also exercises failed writes, partial downloads, eviction,
+removal with pending work, repeated replay and interrupted application/storage
+updates. Actual phones still own the installed-context lifecycle, authored
+edits/reopen, core normal/conflicted reconnect, creation, stable links and
+unprepared/removed-item negatives.
 
 ## Ordinary desktop browser tabs
 

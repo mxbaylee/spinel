@@ -547,7 +547,7 @@ test('monthly reports, full and Chrome-only devices, and read-only diagnostics p
   );
   assert.match(
     diagnostics,
-    /BS_DIAGNOSTIC_SESSION: \$\{\{ inputs.session_id \|\| '5a7cc2cfd951b4b68e24bed95af51e7c64262b17' \}\}/,
+    /BS_DIAGNOSTIC_SESSION: \$\{\{ inputs.session_id \|\| 'dc1a30f87ce096c3e7ae42bae0fd3349bc24d9ad' \}\}/,
   );
   assert.deepEqual(
     [...diagnostics.matchAll(/\buses: ([^@\s]+)@/g)].map((match) => match[1]),

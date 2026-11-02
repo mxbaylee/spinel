@@ -179,6 +179,15 @@ are refused before a durable write.
 
 A 500 ms access scan and precommit revalidation close revoked sessions. Local
 permission points make editors read-only without writing shared permission rules.
+SPN-071 allows monotonic account-role increases through that same scan. The client
+uses its existing metadata check to update root permission points on the current
+native unit, preserving selection, scroll and finer document/range policies.
+It does not remount the editor or add a polling service. Upgrades require the same
+account, route scope and native generation, with no maintenance or resync fence.
+Prepared copies additionally require clean durable state and exclusive writer
+admission before input is enabled. Guests, downgrades and replaced generations
+retain their existing termination behavior. See
+[the upgrade decision](implementation/SPN-071.md#live-upgrades-with-current-authority).
 Account users with unsaved work retain the existing copy/recovery guidance;
 revoked guests lose the entire document surface and its private content.
 Credentials, names, mutations and document contents never appear in the fixed

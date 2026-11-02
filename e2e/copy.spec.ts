@@ -417,7 +417,7 @@ test('a phone Doc viewer retains a copy after dismissing its busy native drawer 
     await page.goto(`/?item=${source.id}`);
     expect(await page.evaluate(() => matchMedia('(pointer: coarse)').matches)).toBe(true);
     await expect(page.getByRole('status', { name: 'Save status', exact: true })).toHaveText(
-      'View only — reload after your access changes.',
+      'View only.',
       { timeout: 30_000 },
     );
     await expect(page.getByRole('button', { name: 'Edit', exact: true })).toHaveCount(0);

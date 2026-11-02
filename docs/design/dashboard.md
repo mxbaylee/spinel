@@ -88,6 +88,12 @@ once filed, "Remove from my folder". All four areas are cluttered (owner, chat
   with "Shared by" and the share date in the secondary column. Filing a shared
   reference into a folder (SPN-018) is **File into folder…** in the row menu,
   and filing into a folder from My files remains available. The `↗` handle goes.
+  **Hide** in the shared-row menu removes personal discovery; the place's title
+  menu offers **Show hidden**. Included hidden rows carry a **Hidden** badge and
+  offer **Show**. A failed request preserves the row and offers retry through the
+  same menu; a successful hide announces the result and returns focus to the
+  place heading when the row disappears. This composes the existing row, menu,
+  badge and status patterns; it does not introduce a new navigation place.
 - **Trash** is a permanent folder in My files. The network icon by the gem
   explains connectivity on hover/tap and never claims anything is saved.
 - **Rows** follow the [row pattern](README.md#row). The secondary column is the
@@ -103,7 +109,8 @@ once filed, "Remove from my folder". All four areas are cluttered (owner, chat
 | ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
 | New (primary), search, breadcrumb                                   | New → Folder, Sheet, Doc, Import file…                                                                   |
 | Sidebar: My files, Shared with me, theme, profile; network by gem   | Owned row ⋯ → Open, Tags…, Share…, Rename…, Move…, Available offline on this device, Trash               |
-| Row: icon, name, shared/view-only/offline badges, two tags, date, ⋯ | Shared row ⋯ → Open, Tags…, File into folder… or Remove from my folder, Available offline on this device |
+| Row: icon, name, shared/view-only/offline badges, two tags, date, ⋯ | Shared row ⋯ → Open, Access details…, Tags…, File into folder… or Remove from my folder, Available offline on this device, Hide / Show |
+| Shared with me title                                               | Title ⋯ → Show hidden / Hide hidden                                                                      |
 |                                                                     | Folder ⋯ → the owned-row items that apply to folders, plus Refresh folder                                |
 | Filter chips while searching or filtering                           | Tags chip → tag list                                                                                     |
 
@@ -185,6 +192,7 @@ completion; the actual dashboard journey is `Dashboard/Dashboard` `MakeCopy`.
 
 `Dashboard/Dashboard`, `Dashboard/SearchPanel`, `Dashboard/SharedBadge`, `Dashboard/TagLabels`,
 `Dashboard/DocumentTags`, `Dashboard/Trash`, `Dashboard/ImportFile`,
+`Dashboard/Hidden shares` for personal hide/show, pending and failed changes,
 `Dashboard/OfflineBadge` (also the "You're offline" page), and
 `Shell/ConnectionStatus` for connection and catalog details. Local
 mode: `Dashboard/Dashboard` `LocalMode`, `LocalNeedsConnection` and

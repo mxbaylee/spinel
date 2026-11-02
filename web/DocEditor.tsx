@@ -20,6 +20,7 @@ import {
   type FormulaTransport,
 } from './DocFormulas.tsx';
 import { documentPath, guestItemId } from './documentAccess.ts';
+import type { ItemAccess } from '../src/shared/workspace.ts';
 import type { OfflineSession } from './offline/OfflineSession.ts';
 import { EditorTools } from './EditorTools.tsx';
 import { useEditorChrome } from './EditorFrame.tsx';
@@ -116,6 +117,7 @@ export function DocEditor({
   onDirty,
   registerGuestEditor,
   onConnectionState,
+  onAccessUpgrade,
   saveStatusTarget,
   localAccountId,
 }: {
@@ -126,6 +128,7 @@ export function DocEditor({
   onDirty: (dirty: boolean, retained?: boolean) => void;
   registerGuestEditor?: RegisterGuestEditor;
   onConnectionState?: (state: ConnectionState | null) => void;
+  onAccessUpgrade?: (access: ItemAccess) => void;
   localAccountId?: string;
 }) {
   const chrome = useEditorChrome();
@@ -464,7 +467,9 @@ export function DocEditor({
           docPreset(
             container.current!,
             mobile,
-            data.access === 'viewer',
+            // Live viewers use the reversible initializeAccess visibility fence.
+            // The snapshot viewer may permanently omit controls; this unit can upgrade.
+            false,
             Object.fromEntries(
               [
                 DOCS_SHAPE_MENU_ID,
@@ -611,6 +616,26 @@ export function DocEditor({
           setEditable(false);
         },
         initializeAccess: () => (data.access === 'viewer' ? readonly() : undefined),
+        upgradeAccess: (access) => {
+          if (disposed) return;
+          // The account role changes even when this phone must retain its layout fence.
+          onAccessUpgrade?.(access);
+          // A new grant cannot override this device's retained page-layout fence.
+          // Change local controls only; keep selection, scroll and the native unit.
+          if (deviceReadOnly || layoutChanged) return;
+          inputFrozen = false;
+          phoneInputLocked = false;
+          nativePermissions.setAccess(access);
+          if (mobile)
+            univerAPI
+              .setUIVisible(BuiltInUIPart.HEADER, true)
+              .setUIVisible(BuiltInUIPart.HEADER_MENU, true)
+              .setUIVisible(BuiltInUIPart.FOOTER, true)
+              .setUIVisible(BuiltInUIPart.TOOLBAR, true);
+          canEditFormulas.current = true;
+          setEditable(true);
+          startBoundedHistory();
+        },
         onInitialPending: () =>
           publish({
             dirty: true,
@@ -647,7 +672,8 @@ export function DocEditor({
       captureReady = true;
       if (import.meta.env.VITE_DOC_RESPONSIVENESS_EVIDENCE === '1')
         responsivenessEvidence = observeDocResponsiveness(univer, data.unitId, mobile);
-      if (!inputFrozen && !disposed)
+      function startBoundedHistory() {
+        if (inputFrozen || disposed || boundedHistory) return;
         boundedHistory = boundDocHistory(univer, data.unitId, (flush) => {
           responsivenessEvidence?.flushed(flush);
           const operation = diagnostics.begin();
@@ -665,6 +691,8 @@ export function DocEditor({
               flush.durationMs,
             );
         });
+      }
+      startBoundedHistory();
       const document = univerAPI.getActiveDocument();
       if (!document) throw new Error('Could not load this document.');
       await editorReady(univerAPI);
