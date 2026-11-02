@@ -700,6 +700,20 @@ reconciliation succeeded. Firefox was explicitly blocked and Safari not run;
 Safari's preceding pass remains historical evidence for its original revision.
 The first-confirmation readiness repair is recorded with the actual failed run.
 
+The [eighth Chrome-only attempt](implementation/SPN-090.md#eighth-physical-run-navigation-verified-readiness-still-blocked),
+[run 41395124342](https://github.com/mxbaylee/spinel/actions/runs/41395124342),
+used source `90d7191e552cec23d5375e0b10eca462fb91608e` at tested merge
+`81f007c3d424e444c79561bb24484b06a45a4e70`. Both native confirmations, Home icon
+launch and authenticated shortcut context succeeded; the first confirmation was
+already present in its first observation. One `location.assign` was acknowledged,
+and the same window and exact item URL were verified. The first item-readiness
+script still returned HTTP 500 / `unknown error`, before a document/DOM/storage
+observation. Its blank screenshot does not establish the cause. Chrome has no
+successful download/offline-reopen evidence from this attempt; all cleanup and
+reconciliation passed. The full matrix remains blocked on actual Chrome readiness
+and an established native-capable Firefox route, with Safari's earlier capability
+pass preserved at its original revision.
+
 The decisive scenario is: download online, terminate, enable airplane mode, launch
 from the home screen, open/edit each document type, close and reopen offline,
 then reconnect twice: once with the live document unchanged (the edits sync

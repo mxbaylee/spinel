@@ -40,8 +40,8 @@ rename, move, trash or share those items.
 The creation dialog explains ownership. Account-authorized file rows show
 **Created by <name>**, including when the creator later leaves. Existing items
 without recorded attribution omit it. Guest responses never include this account
-identity. A separate copy action remains SPN-065 and must use the same destination
-and creator rules when implemented.
+identity. [Make a copy](files.md#make-a-copy) uses the same ownership and creator
+rules when an editable shared folder is explicitly selected as its destination.
 
 Prepared [offline creation](offline.md#creating-a-new-document-offline) supports
 Sheets and Docs in cached editable shared folders. Publication rechecks access;

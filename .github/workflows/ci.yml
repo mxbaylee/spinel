@@ -491,6 +491,7 @@ jobs:
           SPINEL_E2E_PROJECT: ${{ matrix.project }}
           SPINEL_CI_FULL_COMPATIBILITY: ${{ needs.changes.outputs.phone_compatibility }}
           SHARD: ${{ matrix.shard }}
+          SPINEL_CAPTURE_SCREENSHOTS: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'visual-review') && '1' || '0' }}
           VITE_DOC_SELECTION_EVIDENCE: ${{ matrix.project == 'production' && '1' || '0' }}
           SPINEL_LEGACY_OFFLINE_SOURCE: ${{ matrix.project == 'offline-upgrade' && format('{0}/legacy-offline-source', github.workspace) || '' }}
         run: npx playwright test --project="$SPINEL_E2E_PROJECT" ${SHARD:+--shard="$SHARD"}
