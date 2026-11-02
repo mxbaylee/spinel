@@ -1,5 +1,27 @@
 # Sharing
 
+## Access details
+
+**2026-11-01 · SPN-071 · accepted agent decision.** Account file menus offer
+**Access details…** using the existing read-only modal, heading, secondary text,
+status and retry patterns. The primary text describes effective access:
+**Editor through Budgets**, **Viewer**, **File admin**, or **Owner**. A direct
+grant says **Shared directly with you.** No new sharing controls appear here.
+
+Only a currently readable granting ancestor may be named. The strongest grant
+wins; direct access wins an equal-strength tie, followed by the nearest matching
+ancestor. A Space page also identifies the Space boundary and explains that its
+access applies to every page and folder. Current authorization is fetched when
+the dialog opens and rechecked while visible. Loading, offline and failed states
+clear the old source rather than leaving stale private names visible. Closing
+returns focus to the originating row or document menu. Guest routes have no
+account access-details action.
+
+Production stories live in `Sharing/Access details` and the Space document-actions
+story. They cover direct/inherited/owner/File admin/Space access, long names,
+loading, failure and stale-response handling. See the rationale and persona
+effects in [SPN-071](../implementation/SPN-071.md#privacy-safe-access-provenance).
+
 ## SPN-047 composed redesign proposal
 
 Approved by the owner, 2026-10-21, [decision #126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits). Production implementation remains separate.

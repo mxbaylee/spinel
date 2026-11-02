@@ -116,6 +116,7 @@ export function DashboardFiles<T extends FileItem>({
                       <span>Owner: {item.ownerName ?? 'Owner unavailable'}</span>
                     )}
                     {item.createdByName && <span>Created by {item.createdByName}</span>}
+                    {item.hidden && <span>Hidden</span>}
                     <OfflineBadge state={offlineState?.(item) ?? null} />
                   </span>
                   {item.tags.length > 0 && (

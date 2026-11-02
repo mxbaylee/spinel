@@ -41,7 +41,9 @@ export function useSharedItems(
     try {
       const cutoff = Math.max(await readRevision.current(), revision.current);
       if (!mounted.current || request !== generation.current || mutating.current) return;
-      const result = await itemsRequest<{ items: FileItem[] }>('/shared');
+      // Retain hidden metadata in the private catalog. Discovery filters it;
+      // download retention and current access do not depend on that preference.
+      const result = await itemsRequest<{ items: FileItem[] }>('/shared?includeHidden=1');
       if (mounted.current && request === generation.current) {
         accept(result.items, cutoff);
         setError('');
@@ -74,7 +76,7 @@ export function useSharedItems(
       document.removeEventListener('visibilitychange', visible);
     };
   }, []);
-  async function place(id: string, parentId: string | null, remove = false): Promise<boolean> {
+  async function change(path: string, method: 'PUT' | 'DELETE', input: object): Promise<boolean> {
     if (mutating.current || offline) return false;
     mutating.current = true;
     generation.current++;
@@ -82,15 +84,11 @@ export function useSharedItems(
     setError('');
     try {
       const cutoff = Math.max(await readRevision.current(), revision.current);
-      const result = await itemsRequest<{ items: FileItem[] }>(
-        `/${id}/placement`,
-        remove ? 'DELETE' : 'PUT',
-        remove ? {} : { parentId },
-      );
+      const result = await itemsRequest<{ items: FileItem[] }>(path, method, input);
       if (mounted.current) accept(result.items, cutoff);
       return true;
     } catch (cause) {
-      const message = cause instanceof Error ? cause.message : 'Could not update your folder.';
+      const message = cause instanceof Error ? cause.message : 'Could not update shared items.';
       mutating.current = false;
       await refresh();
       if (mounted.current) setError(message);
@@ -100,5 +98,8 @@ export function useSharedItems(
       if (mounted.current) setBusy(false);
     }
   }
-  return { ...listing, loaded, busy, error, refresh, place };
+  const place = (id: string, parentId: string | null, remove = false) =>
+    change(`/${id}/placement`, remove ? 'DELETE' : 'PUT', remove ? {} : { parentId });
+  const setHidden = (id: string, hidden: boolean) => change(`/${id}/hidden`, 'PUT', { hidden });
+  return { ...listing, loaded, busy, error, refresh, place, setHidden };
 }

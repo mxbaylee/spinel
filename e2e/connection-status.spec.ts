@@ -458,7 +458,7 @@ for (const width of [1280, 390]) {
 
           // Keep this one catalog request unavailable through connection recovery
           // so its stale timestamp cannot disappear merely because the room joins.
-          await page.route('**/api/items/shared', (route) =>
+          await page.route('**/api/items/shared**', (route) =>
             route.fulfill({
               status: 503,
               json: { error: 'Shared files are temporarily unavailable.' },
@@ -499,7 +499,7 @@ for (const width of [1280, 390]) {
             page.getByRole('dialog', { name: 'Connection details', exact: true }),
           ).toContainText('Files as of');
           await closeDetail(page);
-          await page.unroute('**/api/items/shared');
+          await page.unroute('**/api/items/shared**');
           await expect(refreshShared).toHaveCount(0, { timeout: 10_000 });
           await expect.poll(() => canvas.boundingBox()).toEqual(bounds);
         } finally {

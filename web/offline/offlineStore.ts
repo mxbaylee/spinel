@@ -11,6 +11,7 @@ import type { OfflineCreationRequest } from '../../src/shared/offlineCreation.ts
 import { openExistingDatabase } from './existingDatabase.ts';
 import { releaseAccountRuntime } from './runtime.ts';
 import type { AccountRuntimeRequirement } from './runtime.ts';
+import { isAccessUpgrade } from '../../src/shared/accessUpgrade.ts';
 
 /**
  * Account-scoped IndexedDB storage for documents downloaded on this device
@@ -1394,6 +1395,65 @@ export class OfflineStore {
     verifyCurrent();
     offlineChanged(this.accountId, bundle.itemId);
     return summary(item);
+  }
+  /** Caller owns the item writer; promotion never replaces a base, queue or image. */
+  async upgradeAccess(
+    expected: OfflineBundle,
+    access: ItemAccess,
+    confirmedRevision: number,
+    verifyCurrent: () => void,
+  ) {
+    verifyCurrent();
+    if (
+      expected.accountId !== this.accountId ||
+      !isAccessUpgrade(expected.access, access) ||
+      !Number.isSafeInteger(confirmedRevision) ||
+      confirmedRevision < expected.revision - expected.revisionOffset
+    )
+      throw new Error('This device copy cannot take that access change.');
+    const transaction = this.database.transaction('items', 'readwrite');
+    const completion = done(transaction);
+    try {
+      const items = transaction.objectStore('items');
+      const item = (await request(items.get(expected.itemId))) as StoredItem | undefined;
+      verifyCurrent();
+      if (
+        !item ||
+        downloadSummary(item, this.accountId, expected.itemId).uncertain ||
+        hasProtectedStoredCopy(item, this.accountId, expected.itemId) ||
+        item.bundle.accountId !== expected.accountId ||
+        item.bundle.itemId !== expected.itemId ||
+        item.bundle.spaceId !== expected.spaceId ||
+        item.bundle.unitId !== expected.unitId ||
+        item.bundle.revisionOffset !== expected.revisionOffset ||
+        item.bundle.revision !== expected.revision ||
+        item.bundle.maintenanceEpoch !== expected.maintenanceEpoch ||
+        item.bundle.kind !== expected.kind ||
+        item.bundle.sdkVersion !== expected.sdkVersion ||
+        item.bundle.version !== expected.version ||
+        JSON.stringify(item.bundle.snapshot) !== JSON.stringify(expected.snapshot) ||
+        (item.outbox && item.outbox.checkpoint.revision > confirmedRevision) ||
+        !(
+          (item.bundle.access === expected.access && item.bundle.readOnly === expected.readOnly) ||
+          (item.bundle.access === access && !item.bundle.readOnly)
+        )
+      )
+        throw new Error('This device copy changed. Reopen it before editing.');
+      item.bundle = { ...item.bundle, access, readOnly: false };
+      item.readOnly = false;
+      items.put(item);
+    } catch (error) {
+      try {
+        transaction.abort();
+      } catch {
+        /* Already aborted. */
+      }
+      await completion.catch(() => {});
+      throw error;
+    }
+    await completion;
+    verifyCurrent();
+    offlineChanged(this.accountId, expected.itemId);
   }
   /** Snapshot, queue, retry identity and image bytes commit as one durable unit. */
   async saveCheckpoint(

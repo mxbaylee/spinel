@@ -1,0 +1,12 @@
+Listing tests:
+  [development] › doc-mobile.spec.ts:762:3 › a modern phone Doc handles a viewer upgrade without replacing its native canvas @phone-ordinary
+  [development] › doc-mobile.spec.ts:762:3 › a traditional phone Doc handles a viewer upgrade without replacing its native canvas @phone-ordinary
+  [production] › doc-mobile.spec.ts:762:3 › a modern phone Doc handles a viewer upgrade without replacing its native canvas @phone-ordinary
+  [production] › doc-mobile.spec.ts:762:3 › a traditional phone Doc handles a viewer upgrade without replacing its native canvas @phone-ordinary
+  [sync-development] › doc-mobile.spec.ts:762:3 › a modern phone Doc handles a viewer upgrade without replacing its native canvas @phone-ordinary
+  [sync-development] › doc-mobile.spec.ts:762:3 › a traditional phone Doc handles a viewer upgrade without replacing its native canvas @phone-ordinary
+  [sync-production] › doc-mobile.spec.ts:762:3 › a modern phone Doc handles a viewer upgrade without replacing its native canvas @phone-ordinary
+  [sync-production] › doc-mobile.spec.ts:762:3 › a traditional phone Doc handles a viewer upgrade without replacing its native canvas @phone-ordinary
+  [mobile-https] › doc-mobile.spec.ts:762:3 › a modern phone Doc handles a viewer upgrade without replacing its native canvas @phone-ordinary
+  [mobile-https] › doc-mobile.spec.ts:762:3 › a traditional phone Doc handles a viewer upgrade without replacing its native canvas @phone-ordinary
+Total: 10 tests in 1 file
