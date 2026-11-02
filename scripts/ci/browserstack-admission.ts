@@ -73,6 +73,27 @@ export type SuccessfulScopeCost = ReservationIdentity & {
   measuredElapsedSeconds: number;
   estimatedChargedSeconds: number;
 };
+type CompletePaidCoverage = {
+  kind: 'sum-of-successful-component-samples';
+  sourceSha: string;
+  testedSha: string;
+  matchesReportIdentity: boolean;
+  latestComponentFinishedAt: string;
+  components: SuccessfulScopeCost[];
+  measuredElapsedSeconds: number;
+  forecast: {
+    scenario: 'one-complete-paid-plan-per-month-no-other-use';
+    actualMonthlyScope: 'safari-acceptance';
+    roundedEstimatedComponentCharges: number[];
+    roundedEstimatedBatchChargeSeconds: number;
+    reservationThresholdSeconds: number;
+    requiredStartingUsableSeconds: number;
+    startingUsableSeconds: number;
+    estimatedSuccessfulRuns: number;
+    lastFundableDate: string | null;
+    firstUnfundableDate: string;
+  } | null;
+};
 export type EstimatedBudgetReport = {
   basis: 'owner-authorized-estimate';
   providerVerified: false;
@@ -99,14 +120,25 @@ export type EstimatedBudgetReport = {
   lastEstimatedFundableCapabilityDate: string | null;
   firstEstimatedUnfundableCapabilityDate: string | null;
   nextMonthlyDates: string[];
-  completeOfflineMatrixCostMinutes: null;
-  estimatedSuccessfulCompleteRuns: null;
-  projectedFullMatrixExhaustion: null;
+  // Sum of approved paid-scope samples, not a single observed full-plan execution.
+  completeOfflineMatrixCostMinutes: number | null;
+  estimatedSuccessfulCompleteRuns: number | null;
+  // First unfundable date in the hypothetical complete-plan monthly scenario.
+  // It is neither a zero-balance date nor the actual Safari-only schedule.
+  projectedFullMatrixExhaustion: string | null;
+  completePaidCoverage: CompletePaidCoverage | null;
   successfulScopeCosts: SuccessfulScopeCost[];
   blockingReasons: string[];
   assumptions: string[];
 };
 const identityKeys = ['runId', 'attempt', 'sourceSha', 'testedSha'];
+const approvedPaidScopeOrder = [
+  'safari-acceptance',
+  'chrome-acceptance',
+  'chrome-tab-acceptance',
+  'firefox-tab-acceptance',
+  'safari-tab-acceptance',
+] as const satisfies readonly CapabilityScope[];
 const reservationKeys = [
   ...identityKeys,
   'id',
@@ -423,6 +455,109 @@ function measuredScopeCosts(
       a.finishedAt.localeCompare(b.finishedAt) || a.reservationId.localeCompare(b.reservationId),
   );
 }
+/** Cost evidence for the fixed paid plan; it grants no acceptance or spending authority. */
+function completePaidCoverage(
+  samples: SuccessfulScopeCost[],
+  source: BudgetSource,
+  usableSeconds: number | null,
+  reservationSeconds: number,
+  monthlyDate: (offset: number) => string,
+): CompletePaidCoverage | null {
+  const groups = new Map<string, Map<CapabilityScope, SuccessfulScopeCost>>();
+  for (const sample of samples) {
+    if (!(approvedPaidScopeOrder as readonly CapabilityScope[]).includes(sample.scope)) continue;
+    const key = `${sample.sourceSha}:${sample.testedSha}`;
+    const group = groups.get(key) ?? new Map<CapabilityScope, SuccessfulScopeCost>();
+    const previous = group.get(sample.scope);
+    if (
+      !previous ||
+      sample.finishedAt > previous.finishedAt ||
+      (sample.finishedAt === previous.finishedAt && sample.reservationId > previous.reservationId)
+    )
+      group.set(sample.scope, sample);
+    groups.set(key, group);
+  }
+  let selected: CompletePaidCoverage | null = null;
+  for (const group of groups.values()) {
+    if (approvedPaidScopeOrder.some((scope) => !group.has(scope))) continue;
+    const components = approvedPaidScopeOrder.map((scope) => group.get(scope)!);
+    const measuredElapsedSeconds = components.reduce(
+      (sum, sample) => sum + sample.measuredElapsedSeconds,
+      0,
+    );
+    if (!Number.isSafeInteger(Math.ceil(measuredElapsedSeconds))) continue;
+    const latestComponentFinishedAt = components.reduce(
+      (latest, sample) => (sample.finishedAt > latest ? sample.finishedAt : latest),
+      '',
+    );
+    const candidate: CompletePaidCoverage = {
+      kind: 'sum-of-successful-component-samples',
+      sourceSha: components[0].sourceSha,
+      testedSha: components[0].testedSha,
+      matchesReportIdentity:
+        components[0].sourceSha === source.sourceSha &&
+        components[0].testedSha === source.testedSha,
+      latestComponentFinishedAt,
+      components,
+      measuredElapsedSeconds,
+      forecast: null,
+    };
+    if (
+      !selected ||
+      latestComponentFinishedAt > selected.latestComponentFinishedAt ||
+      (latestComponentFinishedAt === selected.latestComponentFinishedAt &&
+        `${candidate.sourceSha}:${candidate.testedSha}` >
+          `${selected.sourceSha}:${selected.testedSha}`)
+    )
+      selected = candidate;
+  }
+  if (!selected) return null;
+  const charges = selected.components.map((sample) => Math.ceil(sample.estimatedChargedSeconds));
+  const reservationThresholdSeconds = Math.ceil(reservationSeconds);
+  if (
+    usableSeconds === null ||
+    !Number.isFinite(usableSeconds) ||
+    usableSeconds < 0 ||
+    !Number.isSafeInteger(reservationThresholdSeconds) ||
+    reservationThresholdSeconds <= 0 ||
+    charges.some((charge) => !Number.isSafeInteger(charge) || charge <= 0)
+  )
+    return selected;
+  let batchCharges = 0;
+  let requiredStartingUsableSeconds = 0;
+  for (const charge of charges) {
+    requiredStartingUsableSeconds = Math.max(
+      requiredStartingUsableSeconds,
+      batchCharges + reservationThresholdSeconds,
+    );
+    batchCharges += charge;
+  }
+  requiredStartingUsableSeconds = Math.max(requiredStartingUsableSeconds, batchCharges);
+  const startingUsableSeconds = Math.floor(usableSeconds);
+  if (
+    !Number.isSafeInteger(batchCharges) ||
+    !Number.isSafeInteger(requiredStartingUsableSeconds) ||
+    !Number.isSafeInteger(startingUsableSeconds)
+  )
+    return selected;
+  const count =
+    startingUsableSeconds < requiredStartingUsableSeconds
+      ? 0
+      : 1 + Math.floor((startingUsableSeconds - requiredStartingUsableSeconds) / batchCharges);
+  selected.forecast = {
+    scenario: 'one-complete-paid-plan-per-month-no-other-use',
+    actualMonthlyScope: 'safari-acceptance',
+    roundedEstimatedComponentCharges: charges,
+    roundedEstimatedBatchChargeSeconds: batchCharges,
+    reservationThresholdSeconds,
+    requiredStartingUsableSeconds,
+    startingUsableSeconds,
+    estimatedSuccessfulRuns: count,
+    lastFundableDate: count > 0 ? monthlyDate(count - 1) : null,
+    firstUnfundableDate: monthlyDate(count),
+  };
+  return selected;
+}
 function reusableFinalizedHistory(
   input: AdmissionInput,
   previous: BudgetLedger,
@@ -620,6 +755,14 @@ function estimate(input: AdmissionInput, prepared = prepare(input)): EstimatedBu
     date.setUTCMonth(date.getUTCMonth() + offset);
     return date.toISOString();
   };
+  const successfulScopeCosts = measuredScopeCosts(state, ledger, policy);
+  const completeCoverage = completePaidCoverage(
+    successfulScopeCosts,
+    input.source,
+    estimatedUsableSeconds,
+    capabilityReservationSeconds,
+    forecast,
+  );
   return {
     basis: 'owner-authorized-estimate',
     providerVerified: false,
@@ -642,10 +785,13 @@ function estimate(input: AdmissionInput, prepared = prepare(input)): EstimatedBu
     lastEstimatedFundableCapabilityDate: count !== null && count > 0 ? forecast(count - 1) : null,
     firstEstimatedUnfundableCapabilityDate: count === null ? null : forecast(count),
     nextMonthlyDates: nextDates,
-    completeOfflineMatrixCostMinutes: null,
-    estimatedSuccessfulCompleteRuns: null,
-    projectedFullMatrixExhaustion: null,
-    successfulScopeCosts: measuredScopeCosts(state, ledger, policy),
+    completeOfflineMatrixCostMinutes: completeCoverage
+      ? completeCoverage.measuredElapsedSeconds / 60
+      : null,
+    estimatedSuccessfulCompleteRuns: completeCoverage?.forecast?.estimatedSuccessfulRuns ?? null,
+    projectedFullMatrixExhaustion: completeCoverage?.forecast?.firstUnfundableDate ?? null,
+    completePaidCoverage: completeCoverage,
+    successfulScopeCosts,
     blockingReasons,
     assumptions: [
       policy.method,
@@ -661,6 +807,10 @@ function estimate(input: AdmissionInput, prepared = prepare(input)): EstimatedBu
       'Capability count/calendar assume one full reservation per future monthly date and no other use; they do not predict successful offline-matrix runs.',
       'Successful-scope cost uses only a completed passing scope linked to reconciled terminal session measurements; missing historical scope evidence stays unknown.',
       'Successful-scope elapsed seconds are measured, while their charged seconds use the current unverified charging assumption. Scope success does not establish the complete approved coverage matrix.',
+      'Complete paid-plan cost sums the latest eligible successful sample for each of five fixed scopes at one source/tested revision; it is not a single observed full-plan execution or a current acceptance pass.',
+      'The hypothetical complete-plan calendar assumes the fixed scope order, one entire paid plan per month, and no other use. The actual monthly workflow selects Safari acceptance only.',
+      'Complete-plan forecasts round each estimated charge up and usable credit down, retain outstanding holds and the safety reserve, and require a full per-scope reservation before each component. Zero or unavailable cost basis leaves the forecast unknown.',
+      'Projected full-plan exhaustion means the first hypothetical monthly plan that cannot be funded; it does not mean the remaining balance is zero or authorize allocation.',
       'Only a newly created reservation durably committed by the caller can authorize a capability allocation.',
     ],
   };

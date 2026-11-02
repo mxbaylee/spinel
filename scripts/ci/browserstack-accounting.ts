@@ -210,7 +210,15 @@ async function main() {
   if (persistence.status !== 'verified') {
     blockers.push(persistence.reason ?? 'ledger-not-written');
     // Proposed state is not durable proof of a successful-scope measurement.
-    if (estimate) estimate = { ...estimate, successfulScopeCosts: [] };
+    if (estimate)
+      estimate = {
+        ...estimate,
+        successfulScopeCosts: [],
+        completePaidCoverage: null,
+        completeOfflineMatrixCostMinutes: null,
+        estimatedSuccessfulCompleteRuns: null,
+        projectedFullMatrixExhaustion: null,
+      };
   }
   const allocationAllowed =
     operation === 'reserve' && created && persistence.status === 'verified' && !blockers.length;
@@ -268,6 +276,8 @@ async function main() {
   const latestScopeCosts = new Map(
     (estimate?.successfulScopeCosts ?? []).map((sample) => [sample.scope, sample]),
   );
+  const completeCoverage = estimate?.completePaidCoverage;
+  const completeForecast = completeCoverage?.forecast;
   const lastFundableDate =
     estimate?.estimatedAdditionalCapabilityReservations === null ||
     estimate?.estimatedAdditionalCapabilityReservations === undefined
@@ -298,7 +308,18 @@ async function main() {
       : [
           '| Successful selected-scope cost | Unknown; no durable passing scope with reconciled terminal measurements |',
         ]),
-    '| Full installed-phone matrix cost/successful runs/exhaustion | Unmeasured / Unknown / Unknown |',
+    `| Approved paid-plan cost / hypothetical complete runs / first unfundable date | ${estimate?.completeOfflineMatrixCostMinutes === null || estimate?.completeOfflineMatrixCostMinutes === undefined ? 'Unmeasured' : estimate.completeOfflineMatrixCostMinutes.toFixed(2) + ' measured summed minutes'} / ${estimate?.estimatedSuccessfulCompleteRuns ?? 'Unknown'} / ${estimate?.projectedFullMatrixExhaustion ?? 'Unknown'} |`,
+    ...(completeCoverage
+      ? [
+          `| Complete cost provenance | Sum of five successful component samples at source ${completeCoverage.sourceSha}, tested ${completeCoverage.testedSha}; ${completeCoverage.matchesReportIdentity ? 'matches report identity' : 'historical revision'}; cost evidence only, not a current acceptance pass |`,
+          `| Hypothetical complete-plan order | ${completeCoverage.components.map((sample) => sample.scope).join(' → ')} |`,
+        ]
+      : []),
+    ...(completeForecast
+      ? [
+          `| Hypothetical full-plan budget | ${completeForecast.roundedEstimatedBatchChargeSeconds} rounded estimated charged seconds per batch; ${completeForecast.requiredStartingUsableSeconds} required starting usable seconds; ${completeForecast.startingUsableSeconds} usable after holds and reserve; last fundable ${completeForecast.lastFundableDate ?? 'None'} |`,
+        ]
+      : []),
     `| Durable accounting | ${persistence.url ? '[Verified commit](' + persistence.url + ')' : persistence.reason} |`,
     '',
     '## Next monthly checks',
@@ -306,6 +327,7 @@ async function main() {
     ...observedBudget.nextMonthlyDates.map((date) => '- ' + date),
     '',
     'The reservation calendar assumes one full 15-minute reservation per monthly date and no other use. It is a budget scenario, not a forecast of measured successful runs.',
+    'The complete-plan calendar is a separate hypothetical scenario: all five approved paid scopes once per month in the listed order, with no other use and a full reservation before each scope. The actual monthly workflow runs Safari acceptance only. A first unfundable plan date does not mean the balance is zero and grants no spending authority.',
     '',
     '## Current operation blockers',
     '',

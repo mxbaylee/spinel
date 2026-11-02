@@ -150,6 +150,214 @@ function successfulJournal(
   };
 }
 
+const paidScopes = [
+  'safari-acceptance',
+  'chrome-acceptance',
+  'chrome-tab-acceptance',
+  'firefox-tab-acceptance',
+  'safari-tab-acceptance',
+] as const;
+type CostFixture = {
+  scope?: CapabilityScope;
+  seconds?: number;
+  sourceSha?: string;
+  testedSha?: string;
+  held?: boolean;
+};
+// Model durable records here; journal-to-marker validation has its own cases below.
+function costHistory(entries: CostFixture[] = paidScopes.map((scope) => ({ scope }))) {
+  const template = reserve().reservation!;
+  const current = evidence();
+  const reservations = entries.map((entry, index): Reservation => {
+    const runId = String(600 + index);
+    const sourceSha = entry.sourceSha ?? source.sourceSha;
+    const testedSha = entry.testedSha ?? source.testedSha;
+    const time = Date.parse(source.observedAt) + index * 60_000;
+    const stamp = (offset: number) => new Date(time + offset).toISOString();
+    const sessionIds = Array.from({ length: entry.scope === 'all' ? 3 : 1 }, (_, lane) =>
+      (100 + index * 3 + lane).toString(16).padStart(40, '0'),
+    );
+    for (const id of sessionIds) {
+      current.history.sessions.push(
+        allocated(entry.seconds ?? 19, id, stamp(1000)).history.sessions.at(-1)!,
+      );
+      current.history.builds[0].sessionIds.push(id);
+    }
+    return {
+      ...template,
+      id: `${runId}-1-${sourceSha}`,
+      runId,
+      sourceSha,
+      testedSha,
+      reservedAt: stamp(0),
+      sessionIds,
+      status: entry.held ? 'held' : 'reconciled',
+      finishedAt: stamp(20_000),
+      reconciledAt: entry.held ? null : stamp(30_000),
+      ...(entry.scope ? { successfulScope: entry.scope } : {}),
+    };
+  });
+  return input(
+    current,
+    { schemaVersion: 1, reservations },
+    {
+      ...source,
+      observedAt: '2026-11-01T20:00:00.000Z',
+    },
+  );
+}
+
+test('complete paid-plan cost needs all five durable scopes at one source and tested revision', () => {
+  const full = paidScopes.map((scope) => ({ scope }));
+  for (const entries of [
+    full.slice(0, -1),
+    full.map((entry, index) => (index === 4 ? { ...entry, sourceSha: 'e'.repeat(40) } : entry)),
+    full.map((entry, index) => (index === 4 ? { ...entry, testedSha: 'e'.repeat(40) } : entry)),
+    full.map((entry, index) => (index === 4 ? { ...entry, held: true } : entry)),
+    [...full.slice(0, -1), { scope: 'chrome-navigation-diagnostic' as const }],
+    [...full.slice(0, -1), { scope: 'all' as const }],
+    [...full.slice(0, -1), {}],
+    full.map(() => ({ scope: 'safari-acceptance' as const })),
+  ]) {
+    const report = estimateBudget(costHistory(entries));
+    assert.equal(report.completePaidCoverage, null);
+    assert.equal(report.completeOfflineMatrixCostMinutes, null);
+    assert.equal(report.estimatedSuccessfulCompleteRuns, null);
+    assert.equal(report.projectedFullMatrixExhaustion, null);
+    assert.equal(report.allocationAllowed, false);
+  }
+  const result = estimateBudget(costHistory());
+  assert.equal(result.completeOfflineMatrixCostMinutes, 95 / 60);
+  const coverage = result.completePaidCoverage!;
+  assert.equal(coverage.kind, 'sum-of-successful-component-samples');
+  assert.equal(coverage.matchesReportIdentity, true);
+  assert.equal(coverage.sourceSha, source.sourceSha);
+  assert.equal(coverage.testedSha, source.testedSha);
+  assert.deepEqual(coverage.components, result.successfulScopeCosts);
+  assert.deepEqual(
+    coverage.components.map((sample) => sample.scope),
+    paidScopes,
+  );
+  assert.equal(result.allocationAllowed, false);
+});
+
+test('complete cost keeps the latest component of the latest complete revision and exposes historical identity', () => {
+  const first = paidScopes.map((scope) => ({ scope }));
+  const newer = paidScopes.map((scope) => ({ scope, sourceSha: 'e'.repeat(40), seconds: 23 }));
+  const fixture = costHistory([
+    ...first,
+    ...newer,
+    { scope: 'safari-acceptance', sourceSha: 'e'.repeat(40), seconds: 29 },
+    { scope: 'safari-acceptance', sourceSha: 'f'.repeat(40), seconds: 31 },
+  ]);
+  const result = estimateBudget(fixture);
+  const coverage = result.completePaidCoverage!;
+  assert.equal(coverage.sourceSha, 'e'.repeat(40));
+  assert.equal(coverage.testedSha, source.testedSha);
+  assert.equal(coverage.matchesReportIdentity, false);
+  assert.equal(coverage.measuredElapsedSeconds, 121);
+  assert.equal(coverage.components[0].runId, '610');
+  assert.equal(coverage.components[0].measuredElapsedSeconds, 29);
+  assert.equal(coverage.components.length, 5);
+  assert.equal(
+    result.successfulScopeCosts.length,
+    12,
+    'all original measurement provenance remains available',
+  );
+  const reversed = estimateBudget({
+    ...fixture,
+    state: { ...fixture.state!, reservations: [...fixture.state!.reservations].reverse() },
+  });
+  assert.deepEqual(reversed.completePaidCoverage, coverage);
+});
+
+test('complete-plan forecasting accounts for every reservation threshold, holds and safety without granting allocation', () => {
+  const fixture = costHistory();
+  const report = estimateBudget(fixture);
+  assert.equal(report.estimatedUsableSeconds, 2964);
+  assert.deepEqual(report.completePaidCoverage?.forecast, {
+    scenario: 'one-complete-paid-plan-per-month-no-other-use',
+    actualMonthlyScope: 'safari-acceptance',
+    roundedEstimatedComponentCharges: [19, 19, 19, 19, 19],
+    roundedEstimatedBatchChargeSeconds: 95,
+    reservationThresholdSeconds: 900,
+    requiredStartingUsableSeconds: 976,
+    startingUsableSeconds: 2964,
+    estimatedSuccessfulRuns: 21,
+    lastFundableDate: '2028-08-01T09:17:00.000Z',
+    firstUnfundableDate: '2028-09-01T09:17:00.000Z',
+  });
+  for (const [usable, count] of [
+    [975, 0],
+    [976, 1],
+    [1070, 1],
+    [1071, 2],
+  ]) {
+    const result = estimateBudget({
+      ...fixture,
+      policy: { ...policy(), assumedUnobservedUsageSeconds: 2964 - usable },
+    });
+    assert.equal(result.estimatedUsableSeconds, usable);
+    assert.equal(result.estimatedSuccessfulCompleteRuns, count);
+    assert.equal(result.allocationAllowed, false);
+    assert.equal(result.capabilityReservationSeconds, 900);
+    assert.equal(result.safetyReserveSeconds, 300);
+  }
+  const held = estimateBudget(
+    costHistory([...paidScopes.map((scope) => ({ scope })), { held: true }]),
+  );
+  assert.equal(held.outstandingHoldSeconds, 881);
+  assert.equal(held.estimatedUsableSeconds, 2064);
+  assert.equal(held.estimatedSuccessfulCompleteRuns, 12);
+  assert.equal(held.completePaidCoverage?.components.length, 5);
+  const rounded = estimateBudget({
+    ...fixture,
+    policy: { ...policy(), chargedSecondsPerElapsedSecond: 1.01 },
+  });
+  assert.deepEqual(
+    rounded.completePaidCoverage?.forecast?.roundedEstimatedComponentCharges,
+    [20, 20, 20, 20, 20],
+  );
+  assert.equal(rounded.completePaidCoverage?.forecast?.reservationThresholdSeconds, 909);
+  assert.equal(rounded.completePaidCoverage?.forecast?.requiredStartingUsableSeconds, 989);
+  assert.equal(rounded.completePaidCoverage?.forecast?.startingUsableSeconds, 2960);
+});
+
+test('zero, conflicting or unavailable component measurements cannot create a successful-run forecast', () => {
+  const zero = estimateBudget(costHistory(paidScopes.map((scope) => ({ scope, seconds: 0 }))));
+  assert.equal(zero.completeOfflineMatrixCostMinutes, 0);
+  assert.equal(zero.completePaidCoverage?.forecast, null);
+  assert.equal(zero.estimatedSuccessfulCompleteRuns, null);
+  assert.equal(zero.projectedFullMatrixExhaustion, null);
+  const fixture = costHistory();
+  const unpriceable = estimateBudget({
+    ...fixture,
+    policy: { ...policy(), assumedUnobservedUsageSeconds: Number.MAX_SAFE_INTEGER },
+  });
+  assert.equal(unpriceable.completeOfflineMatrixCostMinutes, 95 / 60);
+  assert.equal(unpriceable.completePaidCoverage?.forecast, null);
+  assert.equal(unpriceable.estimatedSuccessfulCompleteRuns, null);
+  const current = structuredClone(fixture.evidence);
+  const measurement = current.history.sessions.at(-1)!.observations[0].evidence;
+  assert.equal(measurement.outcome, 'available');
+  if (measurement.outcome !== 'available') throw new Error('fixture');
+  measurement.data.durationSeconds = 20;
+  const conflict = estimateBudget({ ...fixture, evidence: current });
+  assert.equal(conflict.completePaidCoverage, null);
+  assert.equal(conflict.estimatedSuccessfulCompleteRuns, null);
+  assert.ok(conflict.blockingReasons.includes('conflicting-session-evidence'));
+  measurement.data.durationSeconds = null;
+  measurement.data.providerStatus = 'running';
+  measurement.data.executionStatus = 'running';
+  const pending = estimateBudget({
+    ...fixture,
+    evidence: current,
+    source: { ...fixture.source, observedAt: '2026-11-01T20:01:00.000Z' },
+  });
+  assert.equal(pending.completePaidCoverage, null);
+  assert.equal(pending.projectedFullMatrixExhaustion, null);
+});
+
 test('successful scope cost uses exact reconciled sessions and stays separate from budget authority and full coverage', () => {
   for (const scope of [
     'all',

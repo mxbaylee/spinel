@@ -45,6 +45,10 @@ test('scope costs require durable successful reconciliation and remain available
     await exercise('reconcile', 'reconcile', 'denied', scope);
   await exercise('valid', 'quota', 'denied', 'stored');
 });
+test('complete paid-plan cost and hypothetical forecast appear only after verified durable persistence', async () => {
+  await exercise('valid', 'quota', 'denied', 'complete');
+  await exercise('write-denied', 'quota', 'denied', 'complete');
+});
 
 type Scenario =
   | 'new'
@@ -64,7 +68,7 @@ type Scenario =
   | 'held-pending'
   | 'held-stale';
 type Inventory = 'denied' | 'malformed' | 'empty' | 'available' | 'oversized';
-type ScopeResult = 'passed' | 'failed' | 'unknown' | 'mismatch' | 'stored';
+type ScopeResult = 'passed' | 'failed' | 'unknown' | 'mismatch' | 'stored' | 'complete';
 async function exercise(
   scenario: Scenario,
   operation: 'quota' | 'reserve' | 'reconcile',
@@ -184,7 +188,7 @@ async function exercise(
     };
     if (scope) {
       current.history = allocated.history;
-      if (scope === 'stored') {
+      if (scope === 'stored' || scope === 'complete') {
         const storedSource = { ...source, observedAt: new Date().toISOString() };
         state = reconcileReservation({
           source: storedSource,
@@ -195,6 +199,30 @@ async function exercise(
           receipt: completedReceipt,
           journal: scopeJournal,
         }).state;
+        if (scope === 'complete') {
+          const template = state.reservations[0];
+          const scopes = [
+            'chrome-acceptance',
+            'chrome-tab-acceptance',
+            'firefox-tab-acceptance',
+            'safari-tab-acceptance',
+          ] as const;
+          for (const [index, successfulScope] of scopes.entries()) {
+            const sessionId = (100 + index).toString(16).padStart(40, '0');
+            const runId = String(123457 + index);
+            const session = structuredClone(allocated.history.sessions.at(-1)!);
+            session.sessionId = sessionId;
+            allocated.history.sessions.push(session);
+            allocated.history.builds[0].sessionIds.push(sessionId);
+            state.reservations.push({
+              ...template,
+              id: `${runId}-1-${source.sourceSha}`,
+              runId,
+              sessionIds: [sessionId],
+              successfulScope,
+            });
+          }
+        }
         ledger = createBudgetReport({
           ...storedSource,
           evidence: allocated,
@@ -436,8 +464,13 @@ globalThis.fetch = async (url, init) => {
           summary.includes(date),
           'the conditional reservation dates reach the human report',
         );
-    const hasScopeCost = canPersist && (scope === 'passed' || scope === 'stored');
-    assert.equal(report.estimate?.successfulScopeCosts.length ?? 0, hasScopeCost ? 1 : 0);
+    const hasScopeCost =
+      canPersist && (scope === 'passed' || scope === 'stored' || scope === 'complete');
+    const hasCompleteCost = hasScopeCost && scope === 'complete';
+    assert.equal(
+      report.estimate?.successfulScopeCosts.length ?? 0,
+      hasCompleteCost ? 5 : hasScopeCost ? 1 : 0,
+    );
     if (hasScopeCost) {
       const sample = report.estimate.successfulScopeCosts[0];
       assert.equal(sample.scope, 'safari-acceptance');
@@ -450,10 +483,35 @@ globalThis.fetch = async (url, init) => {
       assert.match(summary, /Latest successful safari-acceptance cost/);
       assert.match(summary, /19 measured elapsed seconds/);
     } else assert.match(summary, /Successful selected-scope cost \| Unknown/);
-    assert.match(
-      summary,
-      /Full installed-phone matrix cost\/successful runs\/exhaustion \| Unmeasured \/ Unknown \/ Unknown/,
-    );
+    if (hasCompleteCost) {
+      assert.equal(report.estimate.completeOfflineMatrixCostMinutes, 95 / 60);
+      assert.equal(report.estimate.estimatedSuccessfulCompleteRuns, 21);
+      assert.equal(report.estimate.completePaidCoverage.components.length, 5);
+      assert.equal(report.estimate.completePaidCoverage.sourceSha, source.sourceSha);
+      assert.equal(report.estimate.completePaidCoverage.testedSha, source.testedSha);
+      assert.equal(report.estimate.completePaidCoverage.matchesReportIdentity, true);
+      assert.equal(
+        report.estimate.completePaidCoverage.forecast.actualMonthlyScope,
+        'safari-acceptance',
+      );
+      assert.match(summary, /1\.58 measured summed minutes \/ 21/);
+      assert.ok(summary.includes(report.estimate.projectedFullMatrixExhaustion));
+      assert.match(summary, /Sum of five successful component samples/);
+      assert.match(
+        summary,
+        /976 required starting usable seconds; 2964 usable after holds and reserve/,
+      );
+    } else {
+      assert.equal(report.estimate?.completePaidCoverage ?? null, null);
+      assert.equal(report.estimate?.completeOfflineMatrixCostMinutes ?? null, null);
+      assert.equal(report.estimate?.estimatedSuccessfulCompleteRuns ?? null, null);
+      assert.equal(report.estimate?.projectedFullMatrixExhaustion ?? null, null);
+      assert.match(
+        summary,
+        /Approved paid-plan cost \/ hypothetical complete runs \/ first unfundable date \| Unmeasured \/ Unknown \/ Unknown/,
+      );
+    }
+    assert.match(summary, /The actual monthly workflow runs Safari acceptance only/);
     const inventoryCalls = calls.filter((call) => call.host === 'api-cloud.browserstack.com');
     assert.deepEqual(
       inventoryCalls,
@@ -508,27 +566,42 @@ globalThis.fetch = async (url, init) => {
       /unit-provider-user|unit-provider-key|unit-github-token|inventory-private|udid|sim_details|in_use_by/,
     );
     if (canPersist) {
-      assert.equal(report.measuredTerminalSessionSeconds, isHeld || scope ? 260 : 241);
-      assert.equal(report.measuredTerminalSessions, isHeld || scope ? 16 : 15);
+      assert.equal(
+        report.measuredTerminalSessionSeconds,
+        scope === 'complete' ? 336 : isHeld || scope ? 260 : 241,
+      );
+      assert.equal(
+        report.measuredTerminalSessions,
+        scope === 'complete' ? 20 : isHeld || scope ? 16 : 15,
+      );
       assert.equal(
         report.estimate.estimatedRemainingSeconds,
         ['expired-first-seen', 'expired-auth'].includes(scenario)
           ? null
-          : isHeld || scope
-            ? 3340
-            : 3359,
+          : scope === 'complete'
+            ? 3264
+            : isHeld || scope
+              ? 3340
+              : 3359,
       );
       assert.equal(report.persistence.status, 'verified');
       const stored = JSON.parse(await readFile(join(directory, 'stored.json'), 'utf8'));
       assert.deepEqual(stored.latest.evidence.dedicatedDevices, expectedInventory);
       assert.doesNotMatch(JSON.stringify(stored), /inventory-private|udid|sim_details|in_use_by/);
       assert.equal(stored.schemaVersion, 2);
-      assert.equal(stored.ledger.sessions.length, isHeld || scope ? 16 : 15);
+      assert.equal(
+        stored.ledger.sessions.length,
+        scope === 'complete' ? 20 : isHeld || scope ? 16 : 15,
+      );
       assert.equal(stored.latest.evidence.history.builds.length, 5);
       assert.equal(stored.latest.report.allocationAllowed, false);
       assert.deepEqual(
         stored.latest.estimate?.successfulScopeCosts ?? [],
         report.estimate?.successfulScopeCosts ?? [],
+      );
+      assert.deepEqual(
+        stored.latest.estimate?.completePaidCoverage ?? null,
+        report.estimate?.completePaidCoverage ?? null,
       );
       if (!successful) assert.equal(report.status, 'blocked');
       else if (operation === 'reserve') {
