@@ -1,0 +1,1571 @@
+﻿2026-11-02T13:25:15.5479124Z Current runner version: '2.338.2'
+2026-11-02T13:25:15.5502879Z ##[group]Runner Image Provisioner
+2026-11-02T13:25:15.5503759Z Hosted Compute Agent
+2026-11-02T13:25:15.5504460Z Version: 20261021.618
+2026-11-02T13:25:15.5505137Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-11-02T13:25:15.5505948Z Build Date: 2026-10-21T00:45:21Z
+2026-11-02T13:25:15.5506744Z Worker ID: {5a15e03c-8832-48d0-aa35-183bcc273635}
+2026-11-02T13:25:15.5507743Z Region: westus2
+2026-11-02T13:25:15.5508361Z Cloud: Azure
+2026-11-02T13:25:15.5508978Z ##[endgroup]
+2026-11-02T13:25:15.5510811Z ##[group]Operating System
+2026-11-02T13:25:15.5511573Z Ubuntu
+2026-11-02T13:25:15.5512122Z 24.04.5
+2026-11-02T13:25:15.5512636Z LTS
+2026-11-02T13:25:15.5513277Z ##[endgroup]
+2026-11-02T13:25:15.5513887Z ##[group]Runner Image
+2026-11-02T13:25:15.5514554Z Image: ubuntu-24.04
+2026-11-02T13:25:15.5515152Z Version: 20261025.353.1
+2026-11-02T13:25:15.5516529Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+2026-11-02T13:25:15.5518352Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+2026-11-02T13:25:15.5519397Z ##[endgroup]
+2026-11-02T13:25:15.5520501Z ##[group]GITHUB_TOKEN Permissions
+2026-11-02T13:25:15.5522511Z Contents: read
+2026-11-02T13:25:15.5523162Z Metadata: read
+2026-11-02T13:25:15.5523734Z ##[endgroup]
+2026-11-02T13:25:15.5525839Z Secret source: Actions
+2026-11-02T13:25:15.5526832Z Cache mode: write
+2026-11-02T13:25:15.5528113Z Prepare workflow directory
+2026-11-02T13:25:15.5908396Z Prepare all required actions
+2026-11-02T13:25:15.5969953Z Getting action download info
+2026-11-02T13:25:15.9763794Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-02T13:25:16.0804423Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+2026-11-02T13:25:16.1711155Z Download action repository 'actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333' (SHA:9000827ccba6bdab643e8b6fd33ac0654aef8333)
+2026-11-02T13:25:16.4223844Z Download action repository 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-11-02T13:25:16.6092778Z Complete job name: Review Storybook desktop (light)
+2026-11-02T13:25:16.7038826Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-02T13:25:16.7039983Z with:
+2026-11-02T13:25:16.7040480Z   persist-credentials: false
+2026-11-02T13:25:16.7041064Z   repository: mxbaylee/spinel
+2026-11-02T13:25:16.7044929Z   token: ***
+2026-11-02T13:25:16.7045403Z   ssh-strict: true
+2026-11-02T13:25:16.7045879Z   ssh-user: git
+2026-11-02T13:25:16.7046344Z   clean: true
+2026-11-02T13:25:16.7046849Z   sparse-checkout-cone-mode: true
+2026-11-02T13:25:16.7047669Z   fetch-depth: 1
+2026-11-02T13:25:16.7048207Z   fetch-tags: false
+2026-11-02T13:25:16.7048699Z   show-progress: true
+2026-11-02T13:25:16.7049220Z   lfs: false
+2026-11-02T13:25:16.7049683Z   submodules: false
+2026-11-02T13:25:16.7050187Z   set-safe-directory: true
+2026-11-02T13:25:16.7050748Z   allow-unsafe-pr-checkout: false
+2026-11-02T13:25:16.7051607Z ##[endgroup]
+2026-11-02T13:25:17.0180346Z Syncing repository: mxbaylee/spinel
+2026-11-02T13:25:17.0182668Z ##[group]Getting Git version info
+2026-11-02T13:25:17.0183792Z Working directory is '/home/runner/work/spinel/spinel'
+2026-11-02T13:25:17.0185055Z [command]/usr/bin/git version
+2026-11-02T13:25:17.0206326Z git version 2.56.0
+2026-11-02T13:25:17.0230211Z ##[endgroup]
+2026-11-02T13:25:17.0241536Z Temporarily overriding HOME='/home/runner/work/_temp/65001897-ac38-4eed-9f7b-8cb4885a0dc0' before making global git config changes
+2026-11-02T13:25:17.0244592Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-02T13:25:17.0248871Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-02T13:25:17.0305707Z Deleting the contents of '/home/runner/work/spinel/spinel'
+2026-11-02T13:25:17.0309832Z ##[group]Determining repository object format
+2026-11-02T13:25:17.0311739Z ##[endgroup]
+2026-11-02T13:25:17.0313228Z ##[group]Initializing the repository
+2026-11-02T13:25:17.0316066Z [command]/usr/bin/git init /home/runner/work/spinel/spinel
+2026-11-02T13:25:17.0448015Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-02T13:25:17.0450192Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-02T13:25:17.0452167Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-02T13:25:17.0453699Z hint: call:
+2026-11-02T13:25:17.0454420Z hint:
+2026-11-02T13:25:17.0455295Z hint: 	git config --global init.defaultBranch <name>
+2026-11-02T13:25:17.0456425Z hint:
+2026-11-02T13:25:17.0457833Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-02T13:25:17.0459745Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-02T13:25:17.0461265Z hint:
+2026-11-02T13:25:17.0462027Z hint: 	git branch -m <name>
+2026-11-02T13:25:17.0462880Z hint:
+2026-11-02T13:25:17.0464042Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-02T13:25:17.0466358Z Initialized empty Git repository in /home/runner/work/spinel/spinel/.git/
+2026-11-02T13:25:17.0471179Z [command]/usr/bin/git remote add origin https://github.com/mxbaylee/spinel
+2026-11-02T13:25:17.0538382Z ##[endgroup]
+2026-11-02T13:25:17.0539903Z ##[group]Disabling automatic garbage collection
+2026-11-02T13:25:17.0541198Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-02T13:25:17.0576186Z ##[endgroup]
+2026-11-02T13:25:17.0578355Z ##[group]Setting up auth
+2026-11-02T13:25:17.0579423Z Removing SSH command configuration
+2026-11-02T13:25:17.0585093Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-02T13:25:17.0638062Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-02T13:25:17.1045933Z Removing HTTP extra header
+2026-11-02T13:25:17.1052293Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-02T13:25:17.1105947Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-02T13:25:17.1339373Z Removing includeIf entries pointing to credentials config files
+2026-11-02T13:25:17.1345805Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-02T13:25:17.1392649Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-02T13:25:17.1635542Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-e4e6d101-689d-4eda-99dc-2dab745b3563.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-02T13:25:17.1686218Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git.path /home/runner/work/_temp/git-credentials-e4e6d101-689d-4eda-99dc-2dab745b3563.config
+2026-11-02T13:25:17.1729810Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-e4e6d101-689d-4eda-99dc-2dab745b3563.config
+2026-11-02T13:25:17.1773344Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-e4e6d101-689d-4eda-99dc-2dab745b3563.config
+2026-11-02T13:25:17.1819118Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-e4e6d101-689d-4eda-99dc-2dab745b3563.config
+2026-11-02T13:25:17.1860661Z ##[endgroup]
+2026-11-02T13:25:17.1861480Z ##[group]Fetching the repository
+2026-11-02T13:25:17.1869747Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +f3e7e99600d09aea8f66eca775894cf1cfc39b06:refs/remotes/pull/235/merge
+2026-11-02T13:25:19.1946039Z From https://github.com/mxbaylee/spinel
+2026-11-02T13:25:19.1947728Z  * [new ref]         f3e7e99600d09aea8f66eca775894cf1cfc39b06 -> pull/235/merge
+2026-11-02T13:25:19.1950755Z ##[endgroup]
+2026-11-02T13:25:19.1951541Z ##[group]Determining the checkout info
+2026-11-02T13:25:19.1952488Z ##[endgroup]
+2026-11-02T13:25:19.1956807Z [command]/usr/bin/git sparse-checkout disable
+2026-11-02T13:25:19.2022564Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-02T13:25:19.2066481Z ##[group]Checking out the ref
+2026-11-02T13:25:19.2071270Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/235/merge
+2026-11-02T13:25:19.7133304Z Note: switching to 'refs/remotes/pull/235/merge'.
+2026-11-02T13:25:19.7134064Z 
+2026-11-02T13:25:19.7134553Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-11-02T13:25:19.7135570Z changes and commit them, and you can discard any commits you make in this
+2026-11-02T13:25:19.7136578Z state without impacting any branches by switching back to a branch.
+2026-11-02T13:25:19.7137162Z 
+2026-11-02T13:25:19.7137871Z If you want to create a new branch to retain commits you create, you may
+2026-11-02T13:25:19.7138757Z do so (now or later) by using -c with the switch command. Example:
+2026-11-02T13:25:19.7139272Z 
+2026-11-02T13:25:19.7139512Z   git switch -c <new-branch-name>
+2026-11-02T13:25:19.7139902Z 
+2026-11-02T13:25:19.7140119Z Or undo this operation with:
+2026-11-02T13:25:19.7140453Z 
+2026-11-02T13:25:19.7140645Z   git switch -
+2026-11-02T13:25:19.7140936Z 
+2026-11-02T13:25:19.7141372Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-11-02T13:25:19.7142020Z 
+2026-11-02T13:25:19.7142726Z HEAD is now at f3e7e99 Merge ba89b8309da85111f05a261dd5e17f658e96dd09 into 8d2f994c3ac53c1849bd2b68927059d9c20c99f0
+2026-11-02T13:25:19.7168344Z ##[endgroup]
+2026-11-02T13:25:19.7226074Z [command]/usr/bin/git log -1 --format=%H
+2026-11-02T13:25:19.7263994Z f3e7e99600d09aea8f66eca775894cf1cfc39b06
+2026-11-02T13:25:19.7273215Z ##[group]Removing auth
+2026-11-02T13:25:19.7273678Z Removing SSH command configuration
+2026-11-02T13:25:19.7277611Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-02T13:25:19.7320731Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-02T13:25:19.7564191Z Removing HTTP extra header
+2026-11-02T13:25:19.7568897Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-02T13:25:19.7612145Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-02T13:25:19.7853954Z Removing includeIf entries pointing to credentials config files
+2026-11-02T13:25:19.7857925Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-02T13:25:19.7896412Z includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-02T13:25:19.7896944Z includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-02T13:25:19.7897938Z includeif.gitdir:/github/workspace/.git.path
+2026-11-02T13:25:19.7898690Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-02T13:25:19.7906286Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-02T13:25:19.7941867Z /home/runner/work/_temp/git-credentials-e4e6d101-689d-4eda-99dc-2dab745b3563.config
+2026-11-02T13:25:19.7953625Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-e4e6d101\-689d\-4eda\-99dc\-2dab745b3563\.config
+2026-11-02T13:25:19.8010155Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-02T13:25:19.8044884Z /home/runner/work/_temp/git-credentials-e4e6d101-689d-4eda-99dc-2dab745b3563.config
+2026-11-02T13:25:19.8054824Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-e4e6d101\-689d\-4eda\-99dc\-2dab745b3563\.config
+2026-11-02T13:25:19.8100191Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-02T13:25:19.8134916Z /github/runner_temp/git-credentials-e4e6d101-689d-4eda-99dc-2dab745b3563.config
+2026-11-02T13:25:19.8144266Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-e4e6d101\-689d\-4eda\-99dc\-2dab745b3563\.config
+2026-11-02T13:25:19.8190734Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-02T13:25:19.8226120Z /github/runner_temp/git-credentials-e4e6d101-689d-4eda-99dc-2dab745b3563.config
+2026-11-02T13:25:19.8236929Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-e4e6d101\-689d\-4eda\-99dc\-2dab745b3563\.config
+2026-11-02T13:25:19.8283441Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-02T13:25:19.8525205Z Removing credentials config '/home/runner/work/_temp/git-credentials-e4e6d101-689d-4eda-99dc-2dab745b3563.config'
+2026-11-02T13:25:19.8533927Z ##[endgroup]
+2026-11-02T13:25:19.8804584Z ##[group]Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+2026-11-02T13:25:19.8805012Z with:
+2026-11-02T13:25:19.8805226Z   node-version-file: .nvmrc
+2026-11-02T13:25:19.8805509Z   package-manager-cache: false
+2026-11-02T13:25:19.8805764Z   check-latest: false
+2026-11-02T13:25:19.8808691Z   token: ***
+2026-11-02T13:25:19.8808925Z ##[endgroup]
+2026-11-02T13:25:20.0088291Z Node version file is not JSON file
+2026-11-02T13:25:20.0093536Z Node version file is not TOML file
+2026-11-02T13:25:20.0094128Z Resolved .nvmrc as 26.12.1
+2026-11-02T13:25:20.0124005Z Attempting to download 26.12.1...
+2026-11-02T13:25:20.9561762Z Acquiring 26.12.1 - x64 from https://github.com/actions/node-versions/releases/download/26.12.1-39618969937/node-26.12.1-linux-x64.tar.gz
+2026-11-02T13:25:21.4468814Z Extracting ...
+2026-11-02T13:25:21.4614473Z [command]/usr/bin/tar xz --strip 1 --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/d22d615f-0f69-41eb-b168-c842ce26cd30 -f /home/runner/work/_temp/eae8edc0-7ff2-47b1-b281-7a76090f0e0f
+2026-11-02T13:25:22.7871921Z Adding to the cache ...
+2026-11-02T13:25:24.6269324Z ##[group]Environment details
+2026-11-02T13:25:24.8512088Z node: v26.12.1
+2026-11-02T13:25:24.8512371Z npm: 11.20.0
+2026-11-02T13:25:24.8512565Z yarn: 1.22.22
+2026-11-02T13:25:24.8513056Z ##[endgroup]
+2026-11-02T13:25:24.8694243Z ##[group]Run npm ci --no-audit
+2026-11-02T13:25:24.8694582Z [36;1mnpm ci --no-audit[0m
+2026-11-02T13:25:24.8720904Z shell: /usr/bin/bash -e {0}
+2026-11-02T13:25:24.8721173Z ##[endgroup]
+2026-11-02T13:25:37.9921214Z 
+2026-11-02T13:25:37.9929643Z > postinstall
+2026-11-02T13:25:37.9931821Z > node scripts/dependencies/patch-univer-core.ts && node scripts/dependencies/patch-univer-docs.ts && node scripts/dependencies/patch-univer-ui.ts && node scripts/dependencies/patch-univer-drawing.ts && node scripts/dependencies/patch-univer-docs-ui.ts
+2026-11-02T13:25:37.9933121Z 
+2026-11-02T13:25:38.5931508Z 
+2026-11-02T13:25:38.5932125Z added 501 packages in 14s
+2026-11-02T13:25:38.5932356Z 
+2026-11-02T13:25:38.5933245Z 136 packages are looking for funding
+2026-11-02T13:25:38.5936796Z   run `npm fund` for details
+2026-11-02T13:25:38.5947520Z npm warn install-scripts 2 packages have install scripts not yet covered by allowScripts:
+2026-11-02T13:25:38.5949337Z npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+2026-11-02T13:25:38.5950593Z npm warn install-scripts   protobufjs@7.6.6 (postinstall: node scripts/postinstall)
+2026-11-02T13:25:38.5951545Z npm warn install-scripts
+2026-11-02T13:25:38.5952724Z npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+2026-11-02T13:25:38.6772470Z ##[group]Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+2026-11-02T13:25:38.6773080Z with:
+2026-11-02T13:25:38.6773290Z   name: storybook-review
+2026-11-02T13:25:38.6773533Z   path: storybook-static
+2026-11-02T13:25:38.6773769Z   merge-multiple: false
+2026-11-02T13:25:38.6774006Z   repository: mxbaylee/spinel
+2026-11-02T13:25:38.6774250Z   run-id: 41452365057
+2026-11-02T13:25:38.6774468Z   skip-decompress: false
+2026-11-02T13:25:38.6774696Z   digest-mismatch: error
+2026-11-02T13:25:38.6774931Z ##[endgroup]
+2026-11-02T13:25:38.8284631Z Downloading single artifact
+2026-11-02T13:25:39.0993760Z Preparing to download the following artifacts:
+2026-11-02T13:25:39.0995775Z - storybook-review (ID: 13145730771, Size: 6187100, Expected Digest: sha256:615abeece7b17326ac8331713c7d5599e5f4ff7ee039ed34cff81f07d65dbc43)
+2026-11-02T13:25:39.6230290Z Redirecting to blob download url: https://productionresultssa12.blob.core.windows.net/actions-results/fac5a4d6-515f-8002-89e3-988e39ec2fbf/workflow-job-run-820b7633-5895-5e70-a548-299dec4410de/artifacts/6d6f95fa8818aa5a4d3992582123d79edf1dc1dd62acffb1044992f9a9ee0802.zip
+2026-11-02T13:25:39.6233163Z Starting download of artifact to: /home/runner/work/spinel/spinel/storybook-static
+2026-11-02T13:25:39.9735084Z (node:2808) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+2026-11-02T13:25:39.9736280Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-02T13:25:40.7596853Z SHA256 digest of downloaded artifact is 615abeece7b17326ac8331713c7d5599e5f4ff7ee039ed34cff81f07d65dbc43
+2026-11-02T13:25:40.7597971Z Artifact download completed successfully.
+2026-11-02T13:25:40.7598362Z Total of 1 artifact(s) downloaded
+2026-11-02T13:25:40.7603260Z Download artifact has finished successfully
+2026-11-02T13:25:40.7778174Z ##[group]Run node scripts/ci/prefer-ubuntu-archive.ts
+2026-11-02T13:25:40.7778656Z [36;1mnode scripts/ci/prefer-ubuntu-archive.ts[0m
+2026-11-02T13:25:40.7779044Z [36;1mnpx playwright install --with-deps chromium[0m
+2026-11-02T13:25:40.7799168Z shell: /usr/bin/bash -e {0}
+2026-11-02T13:25:40.7799438Z ##[endgroup]
+2026-11-02T13:25:40.8689441Z Preferred the official Ubuntu archive; Azure remains the fallback.
+2026-11-02T13:25:41.6270944Z Installing dependencies...
+2026-11-02T13:25:41.6357062Z Switching to root user to install dependencies...
+2026-11-02T13:25:41.7239764Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-11-02T13:25:41.7480089Z Get:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+2026-11-02T13:25:41.8303589Z Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [617 kB]
+2026-11-02T13:25:41.8488808Z Get:8 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [682 kB]
+2026-11-02T13:25:42.3391474Z Hit:2 https://archive.ubuntu.com/ubuntu noble InRelease
+2026-11-02T13:25:42.4136074Z Get:3 https://archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+2026-11-02T13:25:42.6775143Z Get:4 https://archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+2026-11-02T13:25:42.7947480Z Get:5 https://archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+2026-11-02T13:25:42.9048639Z Get:9 https://archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1408 kB]
+2026-11-02T13:25:43.8397163Z Get:10 https://archive.ubuntu.com/ubuntu noble-updates/main Translation-en [311 kB]
+2026-11-02T13:25:43.9186709Z Get:11 https://archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1707 kB]
+2026-11-02T13:25:44.0472430Z Get:12 https://archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [343 kB]
+2026-11-02T13:25:44.1248088Z Get:13 https://archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [1813 kB]
+2026-11-02T13:25:44.5081439Z Get:14 https://archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [412 kB]
+2026-11-02T13:25:44.9200785Z Get:15 https://archive.ubuntu.com/ubuntu noble-updates/multiverse Translation-en [14.3 kB]
+2026-11-02T13:25:45.0356257Z Get:16 https://archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1151 kB]
+2026-11-02T13:25:45.3328316Z Get:17 https://archive.ubuntu.com/ubuntu noble-security/main Translation-en [232 kB]
+2026-11-02T13:25:45.4288721Z Get:18 https://archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1224 kB]
+2026-11-02T13:25:45.6367531Z Get:19 https://archive.ubuntu.com/ubuntu noble-security/universe Translation-en [246 kB]
+2026-11-02T13:25:45.7287460Z Get:20 https://archive.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [1717 kB]
+2026-11-02T13:25:45.8705049Z Get:21 https://archive.ubuntu.com/ubuntu noble-security/restricted Translation-en [394 kB]
+2026-11-02T13:25:45.9484764Z Get:22 https://archive.ubuntu.com/ubuntu noble-security/multiverse Translation-en [12.4 kB]
+2026-11-02T13:25:48.6887977Z Fetched 12.7 MB in 4s (2939 kB/s)
+2026-11-02T13:25:49.7358937Z Reading package lists...
+2026-11-02T13:25:49.7678119Z Reading package lists...
+2026-11-02T13:25:49.9648501Z Building dependency tree...
+2026-11-02T13:25:49.9656181Z Reading state information...
+2026-11-02T13:25:50.1204442Z libasound2t64 is already the newest version (1.2.11-1ubuntu0.3).
+2026-11-02T13:25:50.1205399Z libasound2t64 set to manually installed.
+2026-11-02T13:25:50.1206396Z libatk-bridge2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-11-02T13:25:50.1208120Z libatk-bridge2.0-0t64 set to manually installed.
+2026-11-02T13:25:50.1209027Z libatk1.0-0t64 is already the newest version (2.52.0-1build1).
+2026-11-02T13:25:50.1209724Z libatk1.0-0t64 set to manually installed.
+2026-11-02T13:25:50.1210425Z libatspi2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-11-02T13:25:50.1210945Z libatspi2.0-0t64 set to manually installed.
+2026-11-02T13:25:50.1211374Z libcairo2 is already the newest version (1.18.0-3build1).
+2026-11-02T13:25:50.1212184Z libcairo2 set to manually installed.
+2026-11-02T13:25:50.1212732Z libcups2t64 is already the newest version (2.4.7-1.2ubuntu7.14).
+2026-11-02T13:25:50.1213167Z libcups2t64 set to manually installed.
+2026-11-02T13:25:50.1213597Z libdbus-1-3 is already the newest version (1.14.10-4ubuntu4.1).
+2026-11-02T13:25:50.1214016Z libdbus-1-3 set to manually installed.
+2026-11-02T13:25:50.1214749Z libdrm2 is already the newest version (2.4.125-1ubuntu0.1~24.04.2).
+2026-11-02T13:25:50.1215176Z libdrm2 set to manually installed.
+2026-11-02T13:25:50.1215580Z libgbm1 is already the newest version (25.2.8-0ubuntu0.24.04.4).
+2026-11-02T13:25:50.1215981Z libgbm1 set to manually installed.
+2026-11-02T13:25:50.1216406Z libglib2.0-0t64 is already the newest version (2.80.0-6ubuntu3.10).
+2026-11-02T13:25:50.1216854Z libglib2.0-0t64 set to manually installed.
+2026-11-02T13:25:50.1217651Z libnspr4 is already the newest version (2:4.35-1.1build1).
+2026-11-02T13:25:50.1218203Z libnspr4 set to manually installed.
+2026-11-02T13:25:50.1218607Z libnss3 is already the newest version (2:3.98-1ubuntu0.3).
+2026-11-02T13:25:50.1219006Z libnss3 set to manually installed.
+2026-11-02T13:25:50.1219422Z libpango-1.0-0 is already the newest version (1.52.1+ds-1build1).
+2026-11-02T13:25:50.1220055Z libpango-1.0-0 set to manually installed.
+2026-11-02T13:25:50.1220760Z libx11-6 is already the newest version (2:1.8.7-1ubuntu0.1).
+2026-11-02T13:25:50.1221427Z libx11-6 set to manually installed.
+2026-11-02T13:25:50.1222070Z libxcb1 is already the newest version (1.15-1ubuntu2).
+2026-11-02T13:25:50.1222752Z libxcb1 set to manually installed.
+2026-11-02T13:25:50.1223413Z libxcomposite1 is already the newest version (1:0.4.5-1build3).
+2026-11-02T13:25:50.1223839Z libxcomposite1 set to manually installed.
+2026-11-02T13:25:50.1224263Z libxdamage1 is already the newest version (1:1.1.6-1build1).
+2026-11-02T13:25:50.1224668Z libxdamage1 set to manually installed.
+2026-11-02T13:25:50.1225379Z libxext6 is already the newest version (2:1.3.4-1build2).
+2026-11-02T13:25:50.1226078Z libxext6 set to manually installed.
+2026-11-02T13:25:50.1226805Z libxfixes3 is already the newest version (1:6.0.0-2build1).
+2026-11-02T13:25:50.1247773Z libxfixes3 set to manually installed.
+2026-11-02T13:25:50.1248271Z libxkbcommon0 is already the newest version (1.6.0-1build1).
+2026-11-02T13:25:50.1248736Z libxkbcommon0 set to manually installed.
+2026-11-02T13:25:50.1249188Z libxrandr2 is already the newest version (2:1.5.2-2build1).
+2026-11-02T13:25:50.1249610Z libxrandr2 set to manually installed.
+2026-11-02T13:25:50.1250052Z xvfb is already the newest version (2:21.1.12-1ubuntu1.9).
+2026-11-02T13:25:50.1250661Z fonts-noto-color-emoji is already the newest version (2.047-0ubuntu0.24.04.1).
+2026-11-02T13:25:50.1251269Z libfontconfig1 is already the newest version (2.15.0-1.1ubuntu2).
+2026-11-02T13:25:50.1251724Z libfontconfig1 set to manually installed.
+2026-11-02T13:25:50.1252204Z libfreetype6 is already the newest version (2.13.2+dfsg-1ubuntu0.2).
+2026-11-02T13:25:50.1252674Z libfreetype6 set to manually installed.
+2026-11-02T13:25:50.1253116Z fonts-liberation is already the newest version (1:2.1.5-3).
+2026-11-02T13:25:50.1253942Z fonts-liberation set to manually installed.
+2026-11-02T13:25:50.1254559Z The following additional packages will be installed:
+2026-11-02T13:25:50.1254941Z   xfonts-encodings xfonts-utils
+2026-11-02T13:25:50.1255251Z Recommended packages:
+2026-11-02T13:25:50.1255542Z   fonts-ipafont-mincho fonts-tlwg-loma
+2026-11-02T13:25:50.1415043Z The following NEW packages will be installed:
+2026-11-02T13:25:50.1416003Z   fonts-freefont-ttf fonts-ipafont-gothic fonts-tlwg-loma-otf fonts-unifont
+2026-11-02T13:25:50.1438279Z   fonts-wqy-zenhei xfonts-cyrillic xfonts-encodings xfonts-scalable
+2026-11-02T13:25:50.1439327Z   xfonts-utils
+2026-11-02T13:25:50.1628809Z 0 upgraded, 9 newly installed, 0 to remove and 6 not upgraded.
+2026-11-02T13:25:50.1629583Z Need to get 21.1 MB of archives.
+2026-11-02T13:25:50.1630696Z After this operation, 79.5 MB of additional disk space will be used.
+2026-11-02T13:25:50.1631574Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-11-02T13:25:50.9301468Z Get:2 https://archive.ubuntu.com/ubuntu noble/universe amd64 fonts-ipafont-gothic all 00303-21ubuntu1 [3513 kB]
+2026-11-02T13:25:52.1406525Z Get:3 https://archive.ubuntu.com/ubuntu noble/main amd64 fonts-freefont-ttf all 20211204+svn4273-2 [5641 kB]
+2026-11-02T13:25:52.4804052Z Get:4 https://archive.ubuntu.com/ubuntu noble/universe amd64 fonts-tlwg-loma-otf all 1:0.7.3-1 [107 kB]
+2026-11-02T13:25:52.6215830Z Get:5 https://archive.ubuntu.com/ubuntu noble/universe amd64 fonts-unifont all 1:15.1.01-1build1 [2993 kB]
+2026-11-02T13:25:52.8025863Z Get:6 https://archive.ubuntu.com/ubuntu noble/universe amd64 fonts-wqy-zenhei all 0.9.45-8 [7472 kB]
+2026-11-02T13:25:53.0449574Z Get:7 https://archive.ubuntu.com/ubuntu noble/main amd64 xfonts-encodings all 1:1.0.5-0ubuntu2 [578 kB]
+2026-11-02T13:25:53.1912189Z Get:8 https://archive.ubuntu.com/ubuntu noble/main amd64 xfonts-utils amd64 1:7.7+6build3 [94.4 kB]
+2026-11-02T13:25:53.3321308Z Get:9 https://archive.ubuntu.com/ubuntu noble/universe amd64 xfonts-cyrillic all 1:1.0.5+nmu1 [384 kB]
+2026-11-02T13:25:53.4764674Z Get:10 https://archive.ubuntu.com/ubuntu noble/main amd64 xfonts-scalable all 1:1.0.3-1.3 [304 kB]
+2026-11-02T13:25:53.7436372Z Fetched 21.1 MB in 3s (6334 kB/s)
+2026-11-02T13:25:53.7716322Z Selecting previously unselected package fonts-ipafont-gothic.
+2026-11-02T13:25:53.8007705Z (Reading database ... 
+2026-11-02T13:25:53.8008239Z (Reading database ... 5%
+2026-11-02T13:25:53.8008528Z (Reading database ... 10%
+2026-11-02T13:25:53.8009224Z (Reading database ... 15%
+2026-11-02T13:25:53.8009523Z (Reading database ... 20%
+2026-11-02T13:25:53.8009850Z (Reading database ... 25%
+2026-11-02T13:25:53.8010115Z (Reading database ... 30%
+2026-11-02T13:25:53.8010459Z (Reading database ... 35%
+2026-11-02T13:25:53.8010871Z (Reading database ... 40%
+2026-11-02T13:25:53.8011394Z (Reading database ... 45%
+2026-11-02T13:25:53.8012053Z (Reading database ... 50%
+2026-11-02T13:25:53.8056868Z (Reading database ... 55%
+2026-11-02T13:25:53.9102328Z (Reading database ... 60%
+2026-11-02T13:25:54.0677012Z (Reading database ... 65%
+2026-11-02T13:25:54.2591063Z (Reading database ... 70%
+2026-11-02T13:25:54.4680561Z (Reading database ... 75%
+2026-11-02T13:25:54.6208528Z (Reading database ... 80%
+2026-11-02T13:25:54.7678958Z (Reading database ... 85%
+2026-11-02T13:25:54.9289395Z (Reading database ... 90%
+2026-11-02T13:25:55.1086204Z (Reading database ... 95%
+2026-11-02T13:25:55.1086849Z (Reading database ... 100%
+2026-11-02T13:25:55.1091453Z (Reading database ... 215504 files and directories currently installed.)
+2026-11-02T13:25:55.1128446Z Preparing to unpack .../0-fonts-ipafont-gothic_00303-21ubuntu1_all.deb ...
+2026-11-02T13:25:55.1226626Z Unpacking fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-11-02T13:25:55.3631230Z Selecting previously unselected package fonts-freefont-ttf.
+2026-11-02T13:25:55.3771497Z Preparing to unpack .../1-fonts-freefont-ttf_20211204+svn4273-2_all.deb ...
+2026-11-02T13:25:55.3778003Z Unpacking fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-11-02T13:25:55.4641132Z Selecting previously unselected package fonts-tlwg-loma-otf.
+2026-11-02T13:25:55.4779443Z Preparing to unpack .../2-fonts-tlwg-loma-otf_1%3a0.7.3-1_all.deb ...
+2026-11-02T13:25:55.4786873Z Unpacking fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-11-02T13:25:55.5011225Z Selecting previously unselected package fonts-unifont.
+2026-11-02T13:25:55.5148539Z Preparing to unpack .../3-fonts-unifont_1%3a15.1.01-1build1_all.deb ...
+2026-11-02T13:25:55.5154744Z Unpacking fonts-unifont (1:15.1.01-1build1) ...
+2026-11-02T13:25:55.6305940Z Selecting previously unselected package fonts-wqy-zenhei.
+2026-11-02T13:25:55.6443608Z Preparing to unpack .../4-fonts-wqy-zenhei_0.9.45-8_all.deb ...
+2026-11-02T13:25:55.6550893Z Unpacking fonts-wqy-zenhei (0.9.45-8) ...
+2026-11-02T13:25:56.1309756Z Selecting previously unselected package xfonts-encodings.
+2026-11-02T13:25:56.1448619Z Preparing to unpack .../5-xfonts-encodings_1%3a1.0.5-0ubuntu2_all.deb ...
+2026-11-02T13:25:56.1458088Z Unpacking xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-11-02T13:25:56.1758071Z Selecting previously unselected package xfonts-utils.
+2026-11-02T13:25:56.1898405Z Preparing to unpack .../6-xfonts-utils_1%3a7.7+6build3_amd64.deb ...
+2026-11-02T13:25:56.1904523Z Unpacking xfonts-utils (1:7.7+6build3) ...
+2026-11-02T13:25:56.2296413Z Selecting previously unselected package xfonts-cyrillic.
+2026-11-02T13:25:56.2434035Z Preparing to unpack .../7-xfonts-cyrillic_1%3a1.0.5+nmu1_all.deb ...
+2026-11-02T13:25:56.2440857Z Unpacking xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-11-02T13:25:56.2797018Z Selecting previously unselected package xfonts-scalable.
+2026-11-02T13:25:56.2934155Z Preparing to unpack .../8-xfonts-scalable_1%3a1.0.3-1.3_all.deb ...
+2026-11-02T13:25:56.2941079Z Unpacking xfonts-scalable (1:1.0.3-1.3) ...
+2026-11-02T13:25:56.3394209Z Setting up fonts-wqy-zenhei (0.9.45-8) ...
+2026-11-02T13:25:56.3521754Z Setting up fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-11-02T13:25:56.3540040Z Setting up fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-11-02T13:25:56.3556858Z Setting up xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-11-02T13:25:56.3574805Z Setting up fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-11-02T13:25:56.3641730Z update-alternatives: using /usr/share/fonts/opentype/ipafont-gothic/ipag.ttf to provide /usr/share/fonts/truetype/fonts-japanese-gothic.ttf (fonts-japanese-gothic.ttf) in auto mode
+2026-11-02T13:25:56.3656306Z Setting up fonts-unifont (1:15.1.01-1build1) ...
+2026-11-02T13:25:56.3673957Z Setting up xfonts-utils (1:7.7+6build3) ...
+2026-11-02T13:25:56.3714866Z Setting up xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-11-02T13:25:56.4016710Z Setting up xfonts-scalable (1:1.0.3-1.3) ...
+2026-11-02T13:25:56.4306892Z Processing triggers for man-db (2.12.0-4build2) ...
+2026-11-02T13:25:56.4329266Z Not building database; man-db/auto-update is not 'true'.
+2026-11-02T13:25:56.4343751Z Processing triggers for fontconfig (2.15.0-1.1ubuntu2) ...
+2026-11-02T13:25:57.1939410Z 
+2026-11-02T13:25:57.1940190Z Running kernel seems to be up-to-date.
+2026-11-02T13:25:57.1940706Z 
+2026-11-02T13:25:57.1941043Z No services need to be restarted.
+2026-11-02T13:25:57.1941298Z 
+2026-11-02T13:25:57.1941485Z No containers need to be restarted.
+2026-11-02T13:25:57.1941717Z 
+2026-11-02T13:25:57.1941961Z No user sessions are running outdated binaries.
+2026-11-02T13:25:57.1942238Z 
+2026-11-02T13:25:57.1942613Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+2026-11-02T13:25:58.0575964Z Downloading Chrome for Testing 156.0.8078.4 (playwright chromium v1248) from https://cdn.playwright.dev/builds/cft/156.0.8078.4/linux64/chrome-linux64.zip
+2026-11-02T13:25:58.4730227Z |                                                                                |   0% of 191.1 MiB
+2026-11-02T13:25:58.6265213Z |■■■■■■■■                                                                        |  10% of 191.1 MiB
+2026-11-02T13:25:58.7211175Z |■■■■■■■■■■■■■■■■                                                                |  20% of 191.1 MiB
+2026-11-02T13:25:58.8245327Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 191.1 MiB
+2026-11-02T13:25:58.9579079Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 191.1 MiB
+2026-11-02T13:25:59.0491715Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 191.1 MiB
+2026-11-02T13:25:59.1980798Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 191.1 MiB
+2026-11-02T13:25:59.3123123Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 191.1 MiB
+2026-11-02T13:25:59.4250139Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 191.1 MiB
+2026-11-02T13:25:59.5144227Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 191.1 MiB
+2026-11-02T13:25:59.6159705Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 191.1 MiB
+2026-11-02T13:26:02.8370879Z Chrome for Testing 156.0.8078.4 (playwright chromium v1248) downloaded to /home/runner/.cache/ms-playwright/chromium-1248
+2026-11-02T13:26:02.8373948Z Downloading FFmpeg (playwright ffmpeg v1013) from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1013/ffmpeg-linux.zip
+2026-11-02T13:26:03.3123242Z |                                                                                |   0% of 2.2 MiB
+2026-11-02T13:26:03.3627405Z |■■■■■■■■                                                                        |  10% of 2.2 MiB
+2026-11-02T13:26:03.3847523Z |■■■■■■■■■■■■■■■■                                                                |  20% of 2.2 MiB
+2026-11-02T13:26:03.3989507Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.2 MiB
+2026-11-02T13:26:03.4080598Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.2 MiB
+2026-11-02T13:26:03.4150980Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.2 MiB
+2026-11-02T13:26:03.4220452Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.2 MiB
+2026-11-02T13:26:03.4274622Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.2 MiB
+2026-11-02T13:26:03.4320486Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.2 MiB
+2026-11-02T13:26:03.4359423Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.2 MiB
+2026-11-02T13:26:03.4395875Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.2 MiB
+2026-11-02T13:26:03.4970126Z FFmpeg (playwright ffmpeg v1013) downloaded to /home/runner/.cache/ms-playwright/ffmpeg-1013
+2026-11-02T13:26:03.4973422Z Downloading Chrome Headless Shell 156.0.8078.4 (playwright chromium-headless-shell v1248) from https://cdn.playwright.dev/builds/cft/156.0.8078.4/linux64/chrome-headless-shell-linux64.zip
+2026-11-02T13:26:03.9246711Z |                                                                                |   0% of 120 MiB
+2026-11-02T13:26:04.1639109Z |■■■■■■■■                                                                        |  10% of 120 MiB
+2026-11-02T13:26:04.2840786Z |■■■■■■■■■■■■■■■■                                                                |  20% of 120 MiB
+2026-11-02T13:26:04.4664050Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 120 MiB
+2026-11-02T13:26:04.6986609Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 120 MiB
+2026-11-02T13:26:04.8202307Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 120 MiB
+2026-11-02T13:26:04.9496929Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 120 MiB
+2026-11-02T13:26:05.1199993Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 120 MiB
+2026-11-02T13:26:05.3030175Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 120 MiB
+2026-11-02T13:26:05.3980652Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 120 MiB
+2026-11-02T13:26:05.4914618Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 120 MiB
+2026-11-02T13:26:07.7491422Z Chrome Headless Shell 156.0.8078.4 (playwright chromium-headless-shell v1248) downloaded to /home/runner/.cache/ms-playwright/chromium_headless_shell-1248
+2026-11-02T13:26:07.7841248Z ##[group]Run options=()
+2026-11-02T13:26:07.7841553Z [36;1moptions=()[0m
+2026-11-02T13:26:07.7841930Z [36;1mif [ "$CAPTURE_SCREENSHOTS" = false ]; then options+=(--no-screenshots); fi[0m
+2026-11-02T13:26:07.7842428Z [36;1mnode scripts/ci/icon-screenshots.ts "${options[@]}"[0m
+2026-11-02T13:26:07.7862319Z shell: /usr/bin/bash -e {0}
+2026-11-02T13:26:07.7862571Z env:
+2026-11-02T13:26:07.7862782Z   CAPTURE_SCREENSHOTS: false
+2026-11-02T13:26:07.7863031Z ##[endgroup]
+2026-11-02T13:26:08.2993588Z [33m
+2026-11-02T13:26:08.2995175Z (!) build.outDir must not be the same directory of root or a parent directory of root as this could cause Vite to overwriting source files with build outputs.
+2026-11-02T13:26:08.2996550Z [39m
+2026-11-02T13:26:19.6102215Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-02T13:26:19.6102655Z with:
+2026-11-02T13:26:19.6102866Z   name: entity-icon-checks
+2026-11-02T13:26:19.6103144Z   path: test-results/entity-icons
+2026-11-02T13:26:19.6103415Z   if-no-files-found: error
+2026-11-02T13:26:19.6103662Z   compression-level: 6
+2026-11-02T13:26:19.6103887Z   overwrite: false
+2026-11-02T13:26:19.6104110Z   include-hidden-files: false
+2026-11-02T13:26:19.6104355Z   archive: true
+2026-11-02T13:26:19.6104567Z ##[endgroup]
+2026-11-02T13:26:19.7618669Z With the provided path, there will be 1 file uploaded
+2026-11-02T13:26:19.7628858Z Artifact name is valid!
+2026-11-02T13:26:19.7629769Z Root directory input is valid!
+2026-11-02T13:26:20.1323909Z Uploading artifact: entity-icon-checks.zip
+2026-11-02T13:26:20.1365490Z Beginning upload of artifact content to blob storage
+2026-11-02T13:26:20.4367478Z Uploaded bytes 509
+2026-11-02T13:26:20.5092673Z Finished uploading artifact content to blob storage!
+2026-11-02T13:26:20.5094300Z SHA256 digest of uploaded artifact is 3ec6ea3639d263039a7a402c0ce87b9e4cd016c75743d5577cfbbe9e40e685b4
+2026-11-02T13:26:20.5095499Z Finalizing artifact upload
+2026-11-02T13:26:21.1664351Z Artifact entity-icon-checks successfully finalized. Artifact ID 13146171397
+2026-11-02T13:26:21.1665830Z Artifact entity-icon-checks has been successfully uploaded! Final size is 509 bytes. Artifact ID is 13146171397
+2026-11-02T13:26:21.1667653Z Artifact download URL: https://github.com/mxbaylee/spinel/actions/runs/41452365057/artifacts/13146171397
+2026-11-02T13:26:21.1839651Z ##[group]Run read -r -a stories <<< "$STORY_IDS"
+2026-11-02T13:26:21.1840056Z [36;1mread -r -a stories <<< "$STORY_IDS"[0m
+2026-11-02T13:26:21.1840366Z [36;1moptions=()[0m
+2026-11-02T13:26:21.1840751Z [36;1mif [ "$CAPTURE_SCREENSHOTS" = false ]; then options+=(--no-screenshots); fi[0m
+2026-11-02T13:26:21.1841392Z [36;1mnpm run screenshots -- --viewport desktop --theme "$REVIEW_THEME" "${options[@]}" "${stories[@]}"[0m
+2026-11-02T13:26:21.1861269Z shell: /usr/bin/bash -e {0}
+2026-11-02T13:26:21.1861534Z env:
+2026-11-02T13:26:21.1861732Z   STORY_IDS: 
+2026-11-02T13:26:21.1861941Z   REVIEW_THEME: light
+2026-11-02T13:26:21.1862200Z   CAPTURE_SCREENSHOTS: false
+2026-11-02T13:26:21.1862458Z ##[endgroup]
+2026-11-02T13:26:21.2860647Z 
+2026-11-02T13:26:21.2861279Z > screenshots
+2026-11-02T13:26:21.2862258Z > node scripts/screenshots.ts --viewport desktop --theme light --no-screenshots
+2026-11-02T13:26:21.2862915Z 
+2026-11-02T13:26:21.9007637Z [33m
+2026-11-02T13:26:21.9009506Z (!) build.outDir must not be the same directory of root or a parent directory of root as this could cause Vite to overwriting source files with build outputs.
+2026-11-02T13:26:21.9010783Z [39m
+2026-11-02T13:26:31.4708488Z Review light: shell-gemlogo--rail
+2026-11-02T13:26:31.8403910Z Review light: shell-gemlogo--large
+2026-11-02T13:26:32.0717868Z Review light: shell-gemlogo--tap-replay
+2026-11-02T13:26:32.3549882Z Review light: settings-themesettings--default
+2026-11-02T13:26:32.6550959Z Review light: settings-themesettings--follow-system
+2026-11-02T13:26:32.9219136Z Review light: settings-themesettings--storage-blocked
+2026-11-02T13:26:33.2231158Z Review light: redesign-appearance--playground-story
+2026-11-02T13:26:34.6595701Z Review light: redesign-appearance--gems-light-and-dark
+2026-11-02T13:26:35.0591688Z Review light: redesign-controls--default
+2026-11-02T13:26:35.3765104Z Review light: redesign-controls--disabled
+2026-11-02T13:26:35.6086592Z Review light: redesign-controls--error
+2026-11-02T13:26:35.8423539Z Review light: redesign-controls--long-modal-title
+2026-11-02T13:26:36.2259009Z Review light: redesign-theme-control--default
+2026-11-02T13:26:36.4421557Z Review light: redesign-theme-control--storage-blocked
+2026-11-02T13:26:36.7591827Z Review light: redesign-theme-control--dismiss-storage-warning
+2026-11-02T13:26:37.1252546Z Review light: sharing-access-details--inherited-folder
+2026-11-02T13:26:37.3879448Z Review light: sharing-access-details--direct-share
+2026-11-02T13:26:37.6709951Z Review light: sharing-access-details--space-through-folder
+2026-11-02T13:26:37.9716392Z Review light: sharing-access-details--space-direct
+2026-11-02T13:26:38.2042781Z Review light: sharing-access-details--owner
+2026-11-02T13:26:38.4380078Z Review light: sharing-access-details--file-admin
+2026-11-02T13:26:38.6709526Z Review light: sharing-access-details--long-names
+2026-11-02T13:26:38.9208485Z Review light: sharing-access-details--loading
+2026-11-02T13:26:39.1373858Z Review light: sharing-access-details--unavailable
+2026-11-02T13:26:39.3713117Z Review light: sharing-access-details--revoked-while-open
+2026-11-02T13:26:39.6210128Z Review light: current-production-guest-accessstate--revoked
+2026-11-02T13:26:40.0229563Z Review light: current-production-guest-accessstate--revoked-with-unsaved-input
+2026-11-02T13:26:40.2545114Z Review light: current-production-guest-accessstate--loading
+2026-11-02T13:26:40.6377565Z Review light: current-production-guest-accessstate--unsupported-browser
+2026-11-02T13:26:41.0384611Z Review light: current-production-guest-accessstate--offline
+2026-11-02T13:26:41.4210911Z Review light: current-production-guest-accessstate--missing-guest-page
+2026-11-02T13:26:41.8376695Z Review light: current-production-guest-accessstate--missing-account-file
+2026-11-02T13:26:42.1041822Z Review light: current-production-guest-accessstate--retry
+2026-11-02T13:26:42.4376115Z Review light: settings-accesstokens--loaded
+2026-11-02T13:26:42.6374349Z Review light: settings-accesstokens--empty
+2026-11-02T13:26:42.8376208Z Review light: settings-accesstokens--loading
+2026-11-02T13:26:43.0374850Z Review light: settings-accesstokens--load-failed
+2026-11-02T13:26:43.2375259Z Review light: settings-accesstokens--creating
+2026-11-02T13:26:43.6879095Z Review light: settings-accesstokens--created
+2026-11-02T13:26:44.1375453Z Review light: settings-accesstokens--create-failed
+2026-11-02T13:26:44.5541369Z Review light: settings-accesstokens--revoking
+2026-11-02T13:26:44.8212060Z Review light: settings-accesstokens--revoked
+2026-11-02T13:26:45.0708372Z Review light: settings-accesstokens--revoke-failed
+2026-11-02T13:26:45.3061673Z Review light: settings-accesstokens--active-limit
+2026-11-02T13:26:45.5040468Z Review light: settings-accesstokens--previously-used
+2026-11-02T13:26:45.7205280Z Review light: settings-accesstokens--copied
+2026-11-02T13:26:46.2039741Z Review light: settings-accesstokens--manual-copy
+2026-11-02T13:26:46.6872825Z Review light: account-access-changed--locked
+2026-11-02T13:26:47.0204736Z Review light: account-access-changed--phone
+2026-11-02T13:26:47.2704437Z Review light: account-exit--pending-changes
+2026-11-02T13:26:47.5373423Z Review light: account-exit--checking
+2026-11-02T13:26:47.7705713Z Review light: account-exit--counts-unavailable
+2026-11-02T13:26:48.0040814Z Review light: account-exit--confirmed-pending-changes
+2026-11-02T13:26:48.2367610Z Review light: account-exit--kept-while-offline
+2026-11-02T13:26:48.5541342Z Review light: account-exit--retry-confirmed
+2026-11-02T13:26:48.8871441Z Review light: account-exit--not-queued
+2026-11-02T13:26:49.2038820Z Review light: account-exit--unrecognized-exit
+2026-11-02T13:26:49.4375135Z Review light: account-exit--waiting-for-another-sign-in
+2026-11-02T13:26:49.6871028Z Review light: account-exit--delete-confirmation
+2026-11-02T13:26:50.0045029Z Review light: account-exit--cancel-deletion
+2026-11-02T13:26:50.3707070Z Review light: account-exit--deleted
+2026-11-02T13:26:50.7372108Z Review light: account-exit--deletion-refused
+2026-11-02T13:26:51.0202627Z Review light: account-exit--phone
+2026-11-02T13:26:51.2535208Z Review light: admin-accesstokens--loaded
+2026-11-02T13:26:51.4533853Z Review light: admin-accesstokens--empty
+2026-11-02T13:26:51.6536100Z Review light: admin-accesstokens--loading
+2026-11-02T13:26:51.8536792Z Review light: admin-accesstokens--load-failed
+2026-11-02T13:26:52.0706796Z Review light: admin-account-recovery--disabled-accounts
+2026-11-02T13:26:52.3200866Z Review light: admin-account-recovery--confirm-reactivation
+2026-11-02T13:26:52.7538838Z Review light: admin-account-recovery--disabled-admin-reactivation
+2026-11-02T13:26:53.1871675Z Review light: admin-account-recovery--reactivation-pending
+2026-11-02T13:26:53.6882415Z Review light: admin-account-recovery--reactivation-failed
+2026-11-02T13:26:54.1536067Z Review light: admin-account-recovery--reactivation-readback-failed
+2026-11-02T13:26:54.5704310Z Review light: admin-account-recovery--reactivation-committed-warning
+2026-11-02T13:26:55.0370663Z Review light: admin-account-recovery--reactivated
+2026-11-02T13:26:55.5537707Z Review light: admin-account-recovery--transfer-loading
+2026-11-02T13:26:55.9868296Z Review light: admin-account-recovery--transfer-load-failed
+2026-11-02T13:26:56.4385770Z Review light: admin-account-recovery--retry-transfer-load
+2026-11-02T13:26:56.9538003Z Review light: admin-account-recovery--transfer-ready
+2026-11-02T13:26:57.4211446Z Review light: admin-account-recovery--transfer-recipient-chosen
+2026-11-02T13:26:58.0708952Z Review light: admin-account-recovery--transfer-no-recipients
+2026-11-02T13:26:58.4869013Z Review light: admin-account-recovery--transfer-nothing-owned
+2026-11-02T13:26:58.8873071Z Review light: admin-account-recovery--transfer-pending
+2026-11-02T13:26:59.5228005Z Review light: admin-account-recovery--transfer-failed
+2026-11-02T13:27:00.1370157Z Review light: admin-account-recovery--transfer-readback-failed
+2026-11-02T13:27:00.7032769Z Review light: admin-account-recovery--transfer-stale
+2026-11-02T13:27:01.2038302Z Review light: admin-account-recovery--transfer-committed-warning
+2026-11-02T13:27:01.8371711Z Review light: admin-account-recovery--transfer-unconfirmed-response
+2026-11-02T13:27:02.3536603Z Review light: admin-account-recovery--transfer-complete
+2026-11-02T13:27:02.8867544Z Review light: admin-account-recovery--retry-transfer
+2026-11-02T13:27:03.4201730Z Review light: admin-account-recovery--long-account-names
+2026-11-02T13:27:03.9868679Z Review light: admin-account-recovery--duplicate-account-names
+2026-11-02T13:27:04.5868742Z Review light: admin-account-recovery--duplicate-name-target-submitted
+2026-11-02T13:27:05.1203929Z Review light: admin-account-recovery--cancel-returns-focus
+2026-11-02T13:27:05.5865764Z Review light: admin-account-recovery--keyboard-recipient-choice
+2026-11-02T13:27:06.1365069Z Review light: current-production-admin-diagnostics--ready
+2026-11-02T13:27:06.3885035Z Review light: current-production-admin-diagnostics--empty
+2026-11-02T13:27:06.6195480Z Review light: current-production-admin-diagnostics--loading
+2026-11-02T13:27:06.8362312Z Review light: current-production-admin-diagnostics--unavailable
+2026-11-02T13:27:07.0528636Z Review light: current-production-admin-diagnostics--failed
+2026-11-02T13:27:07.2866891Z Review light: current-production-admin-diagnostics--expired
+2026-11-02T13:27:07.5363096Z Review light: current-production-admin-diagnostics--another-download
+2026-11-02T13:27:07.7528042Z Review light: current-production-admin-diagnostics--losses
+2026-11-02T13:27:08.0363429Z Review light: current-production-admin-diagnostics--confirmation
+2026-11-02T13:27:08.4200610Z Review light: current-production-admin-diagnostics--cancel-clear
+2026-11-02T13:27:08.8699485Z Review light: current-production-admin-diagnostics--clearing
+2026-11-02T13:27:09.3374060Z Review light: current-production-admin-diagnostics--clear-failed
+2026-11-02T13:27:09.8199342Z Review light: current-production-admin-diagnostics--changed-collection
+2026-11-02T13:27:10.3028299Z Review light: current-production-admin-diagnostics--cleared
+2026-11-02T13:27:10.7530903Z Review light: current-production-admin-diagnostics--downloading
+2026-11-02T13:27:11.0532217Z Review light: current-production-admin-diagnostics--download-cancelled
+2026-11-02T13:27:11.3702055Z Review light: current-production-admin-diagnostics--download-failed
+2026-11-02T13:27:11.6530267Z Review light: current-production-admin-diagnostics--download-ready
+2026-11-02T13:27:11.9196481Z Review light: current-production-admin-diagnostics--fresh-confirmation-required
+2026-11-02T13:27:12.6200587Z Review light: current-production-admin-diagnostics--clear-committed-readback-failed
+2026-11-02T13:27:12.9861684Z Review light: admin-admininvites--loaded
+2026-11-02T13:27:13.2359868Z Review light: admin-admininvites--loading
+2026-11-02T13:27:13.4531553Z Review light: admin-admininvites--empty
+2026-11-02T13:27:13.6695645Z Review light: admin-admininvites--recovery-invite
+2026-11-02T13:27:14.0197876Z Review light: admin-admininvites--invite-created
+2026-11-02T13:27:14.4028739Z Review light: admin-admininvites--load-failed
+2026-11-02T13:27:14.6193337Z Review light: admin-admininvites--create-failed
+2026-11-02T13:27:14.9696847Z Review light: admin-admininvites--created-but-readback-failed
+2026-11-02T13:27:15.3527939Z Review light: admin-admininvites--created-while-readback-pending
+2026-11-02T13:27:15.7531188Z Review light: admin-admininvites--revoked-but-readback-failed
+2026-11-02T13:27:16.1357936Z Review light: admin-admininvites--refresh-after-created
+2026-11-02T13:27:16.5697012Z Review light: admin-admininvites--refresh-after-revoked
+2026-11-02T13:27:16.9691056Z Review light: admin-page--people
+2026-11-02T13:27:17.2530865Z Review light: admin-page--loading
+2026-11-02T13:27:17.5193107Z Review light: admin-page--error
+2026-11-02T13:27:17.7860417Z Review light: admin-page--empty
+2026-11-02T13:27:18.0697507Z Review light: admin-page--invites
+2026-11-02T13:27:18.3218415Z Review light: admin-page--connections
+2026-11-02T13:27:18.6196169Z Review light: admin-page--health
+2026-11-02T13:27:18.8862317Z Review light: admin-page--restore-preparation-blocks-navigation
+2026-11-02T13:27:19.3531013Z Review light: admin-page--diagnostics-download-blocks-navigation
+2026-11-02T13:27:19.7863256Z Review light: admin-page--diagnostics-clear-blocks-navigation
+2026-11-02T13:27:20.3026620Z Review light: admin-page--health-warning
+2026-11-02T13:27:20.5859433Z Review light: admin-page--phone
+2026-11-02T13:27:20.8525788Z Review light: admin-page--recovery-handoff
+2026-11-02T13:27:21.2858167Z Review light: admin-page--once-only-invite
+2026-11-02T13:27:21.7698693Z Review light: admin-page--creating-invite
+2026-11-02T13:27:22.2693158Z Review light: admin-adminusers--loaded
+2026-11-02T13:27:22.5026548Z Review light: admin-adminusers--loading
+2026-11-02T13:27:22.7192168Z Review light: admin-adminusers--empty
+2026-11-02T13:27:22.9354333Z Review light: admin-adminusers--last-admin-passkey
+2026-11-02T13:27:23.3859267Z Review light: admin-adminusers--load-failed
+2026-11-02T13:27:23.6023622Z Review light: admin-adminusers--confirm-disable
+2026-11-02T13:27:24.0527827Z Review light: admin-adminusers--confirm-passkey-removal
+2026-11-02T13:27:24.5692266Z Review light: admin-adminusers--removal-failed
+2026-11-02T13:27:25.0862025Z Review light: shell-applayout--desktop
+2026-11-02T13:27:25.5192766Z Review light: shell-applayout--offline
+2026-11-02T13:27:25.9198227Z Review light: shell-applayout--reconnecting
+2026-11-02T13:27:26.3024291Z Review light: shell-applayout--tablet
+2026-11-02T13:27:26.6857442Z Review light: shell-applayout--phone
+2026-11-02T13:27:27.0524354Z Review light: settings-assistantconnections--loaded
+2026-11-02T13:27:27.2525321Z Review light: settings-assistantconnections--empty
+2026-11-02T13:27:27.4688829Z Review light: settings-assistantconnections--loading
+2026-11-02T13:27:27.6686210Z Review light: settings-assistantconnections--load-failed
+2026-11-02T13:27:27.8687599Z Review light: settings-assistantconnections--disconnecting
+2026-11-02T13:27:28.1357045Z Review light: settings-assistantconnections--disconnected
+2026-11-02T13:27:28.3687620Z Review light: settings-assistantconnections--disconnect-failed
+2026-11-02T13:27:28.6187720Z Review light: settings-assistantconnections--matching-names
+2026-11-02T13:27:28.8354227Z Review light: settings-assistantconnections--previously-used
+2026-11-02T13:27:29.0687610Z Review light: settings-assistantconnections--admin-metadata
+2026-11-02T13:27:29.2686222Z Review light: settings-assistantconnections--admin-empty
+2026-11-02T13:27:29.4687442Z Review light: settings-assistantconnections--admin-loading
+2026-11-02T13:27:29.6849977Z Review light: settings-assistantconnections--admin-load-failed
+2026-11-02T13:27:29.9018751Z Review light: account-entry--sign-in
+2026-11-02T13:27:30.1360888Z Review light: account-entry--loading
+2026-11-02T13:27:30.3699196Z Review light: account-entry--pending
+2026-11-02T13:27:30.6023155Z Review light: account-entry--finishing
+2026-11-02T13:27:30.8356039Z Review light: account-entry--cancelled
+2026-11-02T13:27:31.1023424Z Review light: account-entry--failed
+2026-11-02T13:27:31.3357760Z Review light: account-entry--unsupported-browser
+2026-11-02T13:27:31.5685560Z Review light: account-entry--unreachable
+2026-11-02T13:27:31.8016502Z Review light: account-entry--setup
+2026-11-02T13:27:32.0517718Z Review light: account-entry--setup-pending
+2026-11-02T13:27:32.3194750Z Review light: account-entry--setup-unavailable
+2026-11-02T13:27:32.5520828Z Review light: account-entry--setup-failed
+2026-11-02T13:27:32.7849969Z Review light: account-entry--invite
+2026-11-02T13:27:33.0185821Z Review light: account-entry--invite-loading
+2026-11-02T13:27:33.2518677Z Review light: account-entry--invite-unavailable
+2026-11-02T13:27:33.5020370Z Review light: account-entry--invite-pending
+2026-11-02T13:27:33.7352257Z Review light: account-entry--recovery
+2026-11-02T13:27:33.9694787Z Review light: account-entry--recovery-pending
+2026-11-02T13:27:34.2016424Z Review light: account-entry--recovery-failed
+2026-11-02T13:27:34.4355831Z Review light: account-entry--long-recovery-name
+2026-11-02T13:27:34.7021367Z Review light: account-entry--help
+2026-11-02T13:27:35.0022457Z Review light: account-entry--operator-help
+2026-11-02T13:27:35.3688530Z Review light: account-entry--help-keyboard-return
+2026-11-02T13:27:35.7519166Z Review light: account-entry--invite-then-cancel
+2026-11-02T13:27:36.1853349Z Review light: admin-backupdownloads--manual-only
+2026-11-02T13:27:36.4360121Z Review light: admin-backupdownloads--preparing
+2026-11-02T13:27:36.6679308Z Review light: admin-backupdownloads--ready
+2026-11-02T13:27:36.9350028Z Review light: admin-backupdownloads--sending-to-browser
+2026-11-02T13:27:37.1687997Z Review light: admin-backupdownloads--delivered
+2026-11-02T13:27:37.4352539Z Review light: admin-backupdownloads--cancelled
+2026-11-02T13:27:37.6696874Z Review light: admin-backupdownloads--expired
+2026-11-02T13:27:37.9013903Z Review light: admin-backupdownloads--failed
+2026-11-02T13:27:38.1682371Z Review light: admin-backupdownloads--disabled-by-policy
+2026-11-02T13:27:38.4018395Z Review light: admin-backupdownloads--ready-download-disabled
+2026-11-02T13:27:38.6689209Z Review light: admin-backupdownloads--missing-recovery-key
+2026-11-02T13:27:38.9019347Z Review light: admin-backupdownloads--loading
+2026-11-02T13:27:39.1349681Z Review light: admin-backupdownloads--status-unavailable
+2026-11-02T13:27:39.4021885Z Review light: admin-backupdownloads--fresh-passkey-required
+2026-11-02T13:27:39.7926346Z Review light: admin-backupdownloads--waiting-for-passkey
+2026-11-02T13:27:40.2186979Z Review light: admin-backupdownloads--cancel-passkey
+2026-11-02T13:27:40.6850269Z Review light: admin-backupdownloads--verification-failed
+2026-11-02T13:27:41.0351220Z Review light: admin-backupdownloads--job-contended
+2026-11-02T13:27:41.4020236Z Review light: admin-backupdownloads--saved-backups
+2026-11-02T13:27:41.6852179Z Review light: admin-backupdownloads--saved-backups-empty
+2026-11-02T13:27:41.9388845Z Review light: admin-backupdownloads--saved-backups-loading
+2026-11-02T13:27:42.2016378Z Review light: admin-backupdownloads--saved-backups-failed
+2026-11-02T13:27:42.4685035Z Review light: admin-backuprestore--available
+2026-11-02T13:27:42.7184202Z Review light: admin-backuprestore--unavailable
+2026-11-02T13:27:42.9848487Z Review light: admin-backuprestore--loading
+2026-11-02T13:27:43.2177706Z Review light: admin-backuprestore--status-failed
+2026-11-02T13:27:43.4687479Z Review light: admin-backuprestore--session-unavailable
+2026-11-02T13:27:43.7345818Z Review light: admin-backuprestore--uploading
+2026-11-02T13:27:43.9706598Z Review light: admin-backuprestore--preparing
+2026-11-02T13:27:44.2015759Z Review light: admin-backuprestore--maintenance-draining
+2026-11-02T13:27:44.4518305Z Review light: admin-backuprestore--ready
+2026-11-02T13:27:44.7018217Z Review light: admin-backuprestore--separate-recovery-volume
+2026-11-02T13:27:44.9515277Z Review light: admin-backuprestore--insufficient-disk-space
+2026-11-02T13:27:45.2016370Z Review light: admin-backuprestore--memory-headroom-refusal
+2026-11-02T13:27:45.4679719Z Review light: admin-backuprestore--confirmed-disk-shortage
+2026-11-02T13:27:45.7176660Z Review light: admin-backuprestore--small-backup
+2026-11-02T13:27:46.0208448Z Review light: admin-backuprestore--cancelled
+2026-11-02T13:27:46.2514002Z Review light: admin-backuprestore--expired
+2026-11-02T13:27:46.4852290Z Review light: admin-backuprestore--failed
+2026-11-02T13:27:46.7346756Z Review light: admin-backuprestore--admission-needs-attention
+2026-11-02T13:27:46.9846788Z Review light: admin-backuprestore--accepted
+2026-11-02T13:27:47.2343777Z Review light: admin-backuprestore--started-outcome-unconfirmed
+2026-11-02T13:27:47.4844414Z Review light: admin-backuprestore--manual-upload
+2026-11-02T13:27:47.8014917Z Review light: admin-backuprestore--saved-backups
+2026-11-02T13:27:48.2034797Z Review light: admin-backuprestore--saved-backups-empty
+2026-11-02T13:27:48.7015649Z Review light: admin-backuprestore--saved-backups-loading
+2026-11-02T13:27:49.1850690Z Review light: admin-backuprestore--saved-backups-failed
+2026-11-02T13:27:49.6852806Z Review light: admin-backuprestore--confirmation-review
+2026-11-02T13:27:50.0023377Z Review light: admin-backuprestore--full-confirmation
+2026-11-02T13:27:50.4019659Z Review light: admin-backuprestore--waiting-for-passkey
+2026-11-02T13:27:50.8518104Z Review light: admin-backuprestore--cancel-verification
+2026-11-02T13:27:51.3347368Z Review light: admin-backuprestore--verification-failed
+2026-11-02T13:27:51.7684566Z Review light: admin-backuprestore--recording-confirmation
+2026-11-02T13:27:52.2351402Z Review light: admin-backuprestore--expired-original-confirmation
+2026-11-02T13:27:52.6353233Z Review light: admin-backuprestore--backup-restored
+2026-11-02T13:27:52.8845306Z Review light: admin-backuprestore--original-recovered
+2026-11-02T13:27:53.1348141Z Review light: admin-backuprestore--did-not-start
+2026-11-02T13:27:53.3845368Z Review light: admin-backuprestore--unresolved-outcome
+2026-11-02T13:27:53.6515471Z Review light: admin-backuprestore--pending-without-record
+2026-11-02T13:27:53.9013582Z Review light: admin-backuprestore--incomplete-observation
+2026-11-02T13:27:54.1512365Z Review light: admin-backuprestore--slow-upload-keeps-bounded-lifetime
+2026-11-02T13:27:54.6372821Z Review light: admin-backuprestore--slow-confirmation-keeps-bounded-lifetime
+2026-11-02T13:27:55.0681417Z Review light: admin-backuprestore--slow-upload-still-cancels
+2026-11-02T13:27:55.6010688Z Review light: admin-backuprestore--passkey-ceremony-still-ends-after-one-minute
+2026-11-02T13:27:56.0513012Z Review light: admin-backuprestore--cancellation-still-ends-after-five-minutes
+2026-11-02T13:27:56.3676134Z Review light: admin-backuprestore--slow-confirmation-stops-on-account-change
+2026-11-02T13:27:56.8011726Z Review light: admin-backuprestore--slow-confirmation-stops-on-unmount
+2026-11-02T13:27:57.2346276Z Review light: admin-backupstatus--healthy
+2026-11-02T13:27:57.4844676Z Review light: admin-backupstatus--local-backup
+2026-11-02T13:27:57.7378264Z Review light: admin-backupstatus--running
+2026-11-02T13:27:57.9675550Z Review light: admin-backupstatus--never-run
+2026-11-02T13:27:58.2341375Z Review light: admin-backupstatus--overdue
+2026-11-02T13:27:58.4675878Z Review light: admin-backupstatus--failed
+2026-11-02T13:27:58.7009791Z Review light: admin-backupstatus--not-configured
+2026-11-02T13:27:58.9339938Z Review light: admin-backupstatus--configuration-failed
+2026-11-02T13:27:59.1672549Z Review light: admin-backupstatus--verification-running
+2026-11-02T13:27:59.4343462Z Review light: admin-backupstatus--verification-never-run
+2026-11-02T13:27:59.6700197Z Review light: admin-backupstatus--verification-overdue
+2026-11-02T13:27:59.9008762Z Review light: admin-backupstatus--verification-failed
+2026-11-02T13:28:00.1511263Z Review light: admin-backupstatus--local-verification-failed
+2026-11-02T13:28:00.3841852Z Review light: admin-backupstatus--retained-key-verified
+2026-11-02T13:28:00.6510549Z Review light: admin-backupstatus--loading
+2026-11-02T13:28:00.8844627Z Review light: admin-backupstatus--load-failed
+2026-11-02T13:28:01.1339746Z Review light: admin-backupstatus--manual-downloads
+2026-11-02T13:28:01.4017352Z Review light: admin-backupstatus--spaces-policy
+2026-11-02T13:28:01.6343707Z Review light: admin-backupstatus--download-ready
+2026-11-02T13:28:01.9007022Z Review light: admin-backupstatus--maintenance-paused
+2026-11-02T13:28:02.1843656Z Review light: admin-backupstatus--maintenance-resumed
+2026-11-02T13:28:02.5177111Z Review light: editor-collaborators--empty
+2026-11-02T13:28:03.0174851Z Review light: editor-collaborators--alone
+2026-11-02T13:28:03.3836734Z Review light: editor-collaborators--two-people
+2026-11-02T13:28:03.7840633Z Review light: editor-collaborators--guest-labels
+2026-11-02T13:28:04.1504124Z Review light: editor-collaborators--many
+2026-11-02T13:28:04.4488943Z Review light: editor-collaborators--many-phone
+2026-11-02T13:28:04.7339302Z Review light: editor-collaborators--empty-open
+2026-11-02T13:28:05.0840755Z Review light: editor-collaborators--guest-labels-open
+2026-11-02T13:28:05.4176147Z Review light: editor-collaborators--long-names-open
+2026-11-02T13:28:05.7508980Z Review light: editor-collaborators--doc-cursor-open
+2026-11-02T13:28:06.0838069Z Review light: editor-collaborators--sheet-cursor-open
+2026-11-02T13:28:06.4005697Z Review light: settings-connectassistant--consent
+2026-11-02T13:28:06.6337494Z Review light: settings-connectassistant--read-only
+2026-11-02T13:28:06.8671797Z Review light: settings-connectassistant--loading
+2026-11-02T13:28:07.1026329Z Review light: settings-connectassistant--load-failed
+2026-11-02T13:28:07.3672714Z Review light: settings-connectassistant--expired
+2026-11-02T13:28:07.6009586Z Review light: settings-connectassistant--unavailable
+2026-11-02T13:28:07.8504116Z Review light: settings-connectassistant--missing-request
+2026-11-02T13:28:08.0838432Z Review light: settings-connectassistant--admin-account
+2026-11-02T13:28:08.3170811Z Review light: settings-connectassistant--allowing
+2026-11-02T13:28:08.6173259Z Review light: settings-connectassistant--cancelling
+2026-11-02T13:28:08.9171541Z Review light: settings-connectassistant--submit-failed
+2026-11-02T13:28:09.2338885Z Review light: settings-connectassistant--expired-before-allow
+2026-11-02T13:28:09.5340351Z Review light: settings-connectassistant--connection-limit
+2026-11-02T13:28:09.8503883Z Review light: settings-connectassistant--long-identity
+2026-11-02T13:28:10.1169588Z Review light: settings-connectassistant--sign-out-failed
+2026-11-02T13:28:10.3503215Z Review light: shell-connectionstatus--online
+2026-11-02T13:28:10.8512700Z Review light: shell-connectionstatus--offline
+2026-11-02T13:28:11.3170723Z Review light: shell-connectionstatus--reconnecting
+2026-11-02T13:28:11.7857385Z Review light: shell-connectionstatus--last-synced-catalog
+2026-11-02T13:28:12.2503264Z Review light: shell-connectionstatus--local-mode
+2026-11-02T13:28:12.7338102Z Review light: shell-connectionstatus--online-local-mode
+2026-11-02T13:28:13.2170519Z Review light: shell-connectionstatus--online-stale-catalog
+2026-11-02T13:28:13.7003526Z Review light: shell-connectionstatus--online-pending-save
+2026-11-02T13:28:14.1668041Z Review light: shell-connectionstatus--keyboard-details
+2026-11-02T13:28:14.5168412Z Review light: shell-connectionstatus--touch-details
+2026-11-02T13:28:14.9170405Z Review light: account-console-recovery--ready
+2026-11-02T13:28:15.1509456Z Review light: account-console-recovery--loading
+2026-11-02T13:28:15.4002036Z Review light: account-console-recovery--missing-link
+2026-11-02T13:28:15.6332992Z Review light: account-console-recovery--expired-link
+2026-11-02T13:28:15.8999567Z Review light: account-console-recovery--pending
+2026-11-02T13:28:16.1501480Z Review light: account-console-recovery--cancelled
+2026-11-02T13:28:16.3835166Z Review light: account-console-recovery--retry
+2026-11-02T13:28:16.6165460Z Review light: account-console-recovery--phone
+2026-11-02T13:28:16.8501174Z Review light: account-console-recovery--finishing
+2026-11-02T13:28:17.1167748Z Review light: account-console-recovery--help
+2026-11-02T13:28:17.4169653Z Review light: dashboard-copyfile--owned-folder
+2026-11-02T13:28:17.7171085Z Review light: dashboard-copyfile--shared-viewer
+2026-11-02T13:28:18.0003977Z Review light: dashboard-copyfile--shared-destination
+2026-11-02T13:28:18.3669293Z Review light: dashboard-copyfile--loading
+2026-11-02T13:28:18.6334062Z Review light: dashboard-copyfile--waiting-for-save
+2026-11-02T13:28:18.9167096Z Review light: dashboard-copyfile--offline
+2026-11-02T13:28:19.2003061Z Review light: dashboard-copyfile--making-copy
+2026-11-02T13:28:19.5337783Z Review light: dashboard-copyfile--source-changed
+2026-11-02T13:28:19.9187574Z Review light: dashboard-copyfile--access-lost
+2026-11-02T13:28:20.2008226Z Review light: dashboard-copyfile--completed-after-dismissal
+2026-11-02T13:28:20.5335570Z Review light: dashboard-copyfile--completed-while-offline
+2026-11-02T13:28:20.8000003Z Review light: dashboard-copyfile--outcome-unknown
+2026-11-02T13:28:21.1500653Z Review light: dashboard-copyfile--unreadable-receipt
+2026-11-02T13:28:21.5001466Z Review light: dashboard-copyfile--unknown-after-dismissal
+2026-11-02T13:28:21.7666382Z Review light: dashboard-dashboard--file-view-targets
+2026-11-02T13:28:22.2675077Z Review light: dashboard-dashboard--populated
+2026-11-02T13:28:22.6667890Z Review light: dashboard-dashboard--make-copy
+2026-11-02T13:28:23.2336079Z Review light: dashboard-dashboard--new-item
+2026-11-02T13:28:23.8173577Z Review light: dashboard-dashboard--new-doc
+2026-11-02T13:28:24.3504303Z Review light: dashboard-dashboard--new-sheet
+2026-11-02T13:28:24.9167399Z Review light: dashboard-dashboard--shared-folder-editor
+2026-11-02T13:28:25.5001773Z Review light: dashboard-dashboard--shared-folder-admin
+2026-11-02T13:28:25.9501263Z Review light: dashboard-dashboard--shared-folder-viewer
+2026-11-02T13:28:26.4006235Z Review light: dashboard-dashboard--new-in-shared-folder
+2026-11-02T13:28:27.0169663Z Review light: dashboard-dashboard--empty-workspace
+2026-11-02T13:28:27.4164649Z Review light: dashboard-dashboard--shared-drawer
+2026-11-02T13:28:27.8665792Z Review light: dashboard-dashboard--shared-drawer-loading
+2026-11-02T13:28:28.3500069Z Review light: dashboard-dashboard--inside-folder
+2026-11-02T13:28:28.8331314Z Review light: dashboard-dashboard--loading
+2026-11-02T13:28:29.1996382Z Review light: dashboard-dashboard--load-failed
+2026-11-02T13:28:29.6163622Z Review light: dashboard-dashboard--missing-item
+2026-11-02T13:28:30.2166492Z Review light: dashboard-dashboard--item-load-failed
+2026-11-02T13:28:30.6830290Z Review light: dashboard-dashboard--local-mode
+2026-11-02T13:28:31.0837978Z Review light: dashboard-dashboard--new-offline-doc
+2026-11-02T13:28:32.1878167Z Review light: dashboard-dashboard--created-offline
+2026-11-02T13:28:32.6891945Z Review light: dashboard-dashboard--shared-creation-offline
+2026-11-02T13:28:33.5995585Z Review light: dashboard-dashboard--shared-creation-revoked
+2026-11-02T13:28:34.1998055Z Review light: dashboard-dashboard--choose-creation-folder
+2026-11-02T13:28:34.8165520Z Review light: dashboard-dashboard--creation-parent-now-shared
+2026-11-02T13:28:35.3665995Z Review light: dashboard-dashboard--creation-parent-no-longer-listed
+2026-11-02T13:28:35.8996734Z Review light: dashboard-dashboard--local-needs-connection
+2026-11-02T13:28:36.3940196Z Review light: dashboard-dashboard--local-folder-not-opened
+2026-11-02T13:28:36.9161642Z Review light: dashboard-dashboard--space-files
+2026-11-02T13:28:37.2994686Z Review light: dashboard-dashboard--new-space
+2026-11-02T13:28:37.8499546Z Review light: dashboard-dashboard--open-space-keeps-my-files
+2026-11-02T13:28:38.2993659Z Review light: dashboard-dashboard--shared-spaces
+2026-11-02T13:28:38.9168517Z Review light: dashboard-dashboard--space-inside-folder
+2026-11-02T13:28:39.3664544Z Review light: dashboard-dashboard--local-space-needs-connection
+2026-11-02T13:28:39.7829180Z Review light: dashboard-dashboard--local-prepared-space-opens
+2026-11-02T13:28:40.2663765Z Review light: dashboard-dashboard--file-admins
+2026-11-02T13:28:40.7194001Z Review light: dashboard-dashboard--cancel-admin-move-while-loading
+2026-11-02T13:28:41.5160641Z Review light: dashboard-dashboard--file-admin-no-destinations
+2026-11-02T13:28:42.0498781Z Review light: dashboard-dashboard--file-admin-personal-filing
+2026-11-02T13:28:42.6326367Z Review light: dashboard-dashboard--grid
+2026-11-02T13:28:43.0498554Z Review light: dashboard-dashboard--folder-scoped-search
+2026-11-02T13:28:43.7991919Z Review light: dashboard-dashboard--import-dialog
+2026-11-02T13:28:44.3664148Z Review light: dashboard-dashboard--export-all-files
+2026-11-02T13:28:44.9159721Z Review light: dashboard-dashboard--cancel-export-confirmation
+2026-11-02T13:28:45.5826684Z Review light: dashboard-dashboard--personal-filing-dialog
+2026-11-02T13:28:46.1994493Z Review light: dashboard-dashboard--sharing-dialog
+2026-11-02T13:28:46.9495018Z Review light: dashboard-dashboard--shared-grant-ordering
+2026-11-02T13:28:47.4001659Z Review light: dashboard-dashboard--cancel-space-action-then-retry
+2026-11-02T13:28:48.4826083Z Review light: dashboard-dashboard--clear-empty-global-scope
+2026-11-02T13:28:49.0160627Z Review light: dashboard-files--list
+2026-11-02T13:28:49.3666651Z Review light: dashboard-files--dark
+2026-11-02T13:28:49.7656923Z Review light: dashboard-files--grid
+2026-11-02T13:28:50.1331831Z Review light: dashboard-files--phone
+2026-11-02T13:28:50.4991283Z Review light: dashboard-files--grid-phone
+2026-11-02T13:28:50.8491935Z Review light: dashboard-files--shared
+2026-11-02T13:28:51.2489788Z Review light: dashboard-files--creator-attribution
+2026-11-02T13:28:51.6326379Z Review light: dashboard-files--search-results
+2026-11-02T13:28:52.0156346Z Review light: dashboard-files--empty
+2026-11-02T13:28:52.3825462Z Review light: dashboard-files--no-search-results
+2026-11-02T13:28:52.7488570Z Review light: dashboard-files--loading
+2026-11-02T13:28:53.1152629Z Review light: dashboard-files--error
+2026-11-02T13:28:53.4823713Z Review light: dashboard-files--busy
+2026-11-02T13:28:53.8489566Z Review light: dashboard-files--offline
+2026-11-02T13:28:54.2158680Z Review light: dashboard-files--long-names
+2026-11-02T13:28:54.6159576Z Review light: dashboard-files--owner-menu
+2026-11-02T13:28:55.0490886Z Review light: dashboard-files--viewer-menu
+2026-11-02T13:28:55.4824545Z Review light: dashboard-files--file-admin-menu
+2026-11-02T13:28:55.9323947Z Review light: offline-device-storage--loading
+2026-11-02T13:28:56.1656651Z Review light: offline-device-storage--empty
+2026-11-02T13:28:56.4153758Z Review light: offline-device-storage--documents
+2026-11-02T13:28:56.6493082Z Review light: offline-device-storage--space-page
+2026-11-02T13:28:56.8824331Z Review light: offline-device-storage--missing-store
+2026-11-02T13:28:57.1156943Z Review light: offline-device-storage--startup-metadata-missing
+2026-11-02T13:28:57.3490097Z Review light: offline-device-storage--storage-unavailable
+2026-11-02T13:28:57.5819145Z Review light: offline-device-storage--storage-preparation-failed
+2026-11-02T13:28:57.8656606Z Review light: offline-device-storage--account-locked
+2026-11-02T13:28:58.0984486Z Review light: offline-device-storage--protection-denied
+2026-11-02T13:28:58.3316252Z Review light: offline-device-storage--protection-unsupported
+2026-11-02T13:28:58.5648698Z Review light: offline-device-storage--protection-error
+2026-11-02T13:28:58.7986649Z Review light: offline-device-storage--request-protection
+2026-11-02T13:28:59.0988789Z Review light: offline-device-storage--about-storage
+2026-11-02T13:28:59.3486273Z Review light: offline-device-storage--clean-removal
+2026-11-02T13:28:59.5986755Z Review light: offline-device-storage--pending-removal
+2026-11-02T13:28:59.8490899Z Review light: offline-device-storage--discard-confirmation
+2026-11-02T13:29:00.0987320Z Review light: offline-device-storage--removal-failed
+2026-11-02T13:29:00.3819444Z Review light: offline-device-storage--removing
+2026-11-02T13:29:00.6821132Z Review light: offline-device-storage--damaged-pending
+2026-11-02T13:29:00.9316998Z Review light: offline-device-storage--cancel-keeps-changes
+2026-11-02T13:29:01.3653222Z Review light: offline-device-storage--newly-pending-is-kept
+2026-11-02T13:29:01.8161233Z Review light: offline-device-storage--removal-returns-focus
+2026-11-02T13:29:02.2488672Z Review light: offline-device-storage--long-title-phone
+2026-11-02T13:29:02.4985056Z Review light: docs-formulas--insert
+2026-11-02T13:29:02.7988263Z Review light: docs-formulas--edit
+2026-11-02T13:29:03.0819449Z Review light: docs-formulas--save-returns-focus
+2026-11-02T13:29:03.8148822Z Review light: docs-formulas--cancel-returns-focus
+2026-11-02T13:29:04.3319070Z Review light: docs-formulas--offline-keeps-draft
+2026-11-02T13:29:04.9315831Z Review light: docs-formulas--reconnect-keeps-draft
+2026-11-02T13:29:05.4983380Z Review light: docs-formulas--save-busy
+2026-11-02T13:29:05.8156799Z Review light: docs-formulas--save-timed-out
+2026-11-02T13:29:06.1657775Z Review light: docs-formulas--save-unavailable
+2026-11-02T13:29:06.4822176Z Review light: docs-formulas--save-invalid
+2026-11-02T13:29:06.8151150Z Review light: docs-formulas--save-private-source
+2026-11-02T13:29:07.1153511Z Review light: docs-formulas--save-too-large
+2026-11-02T13:29:07.5228102Z Review light: docs-formulas--save-retry
+2026-11-02T13:29:08.7047959Z Review light: docs-formulas--save-double-activation
+2026-11-02T13:29:09.1432997Z Review light: docs-formulas--save-cancelled-retry
+2026-11-02T13:29:09.5484861Z Review light: docs-formulas--save-cancel-pending
+2026-11-02T13:29:09.9147711Z Review light: docs-formulas--save-escape-pending
+2026-11-02T13:29:10.2481313Z Review light: docs-formulas--loading-sources
+2026-11-02T13:29:10.5646102Z Review light: docs-formulas--no-sources
+2026-11-02T13:29:10.8480994Z Review light: docs-formulas--source-error
+2026-11-02T13:29:11.1837608Z Review light: docs-formulas--dark
+2026-11-02T13:29:11.4648303Z Review light: docs-formulas--phone
+2026-11-02T13:29:11.7649305Z Review light: docs-formulas--space-sources
+2026-11-02T13:29:12.3986780Z Review light: docs-formulas--space-sources-dark
+2026-11-02T13:29:13.0314233Z Review light: docs-formulas--space-sources-phone
+2026-11-02T13:29:13.7144660Z Review light: docs-formulas--space-source-unavailable
+2026-11-02T13:29:14.0478714Z Review light: docs-formulas--space-guest-sources
+2026-11-02T13:29:14.7147934Z Review light: docs-formulas--space-guest-sources-dark
+2026-11-02T13:29:15.3816458Z Review light: docs-formulas--space-guest-sources-phone
+2026-11-02T13:29:16.0319713Z Review light: docs-formulas--space-guest-external-unavailable
+2026-11-02T13:29:16.3645792Z Review light: docs-formulas--scalar
+2026-11-02T13:29:16.6647010Z Review light: docs-formulas--table
+2026-11-02T13:29:16.8975139Z Review light: docs-formulas--thirty-rows
+2026-11-02T13:29:17.1479397Z Review light: docs-formulas--empty
+2026-11-02T13:29:17.3973387Z Review light: docs-formulas--calculating
+2026-11-02T13:29:17.6806035Z Review light: docs-formulas--private-source
+2026-11-02T13:29:17.9306218Z Review light: docs-formulas--missing-source
+2026-11-02T13:29:18.1806415Z Review light: docs-formulas--invalid-formula
+2026-11-02T13:29:18.4474391Z Review light: docs-formulas--too-large
+2026-11-02T13:29:18.6980957Z Review light: docs-formulas--busy
+2026-11-02T13:29:18.9973609Z Review light: docs-formulas--timed-out
+2026-11-02T13:29:19.2476198Z Review light: docs-formulas--unavailable
+2026-11-02T13:29:19.4977078Z Review light: docs-native-formulas--inline-and-table
+2026-11-02T13:29:20.6718126Z Review light: docs-native-formulas--private
+2026-11-02T13:29:22.0300958Z Review light: docs-native-formulas--dark
+2026-11-02T13:29:23.3322961Z Review light: docs-native-formulas--phone
+2026-11-02T13:29:24.4856958Z Review light: docs-native-formulas--thirty-rows
+2026-11-02T13:29:25.8093726Z Review light: docs-native-formulas--styled-scalar
+2026-11-02T13:29:27.1371680Z Review light: docs-mobile--reading
+2026-11-02T13:29:28.3818572Z Review light: docs-mobile--saved-half-zoom
+2026-11-02T13:29:29.5656568Z Review light: docs-mobile--saved-double-zoom
+2026-11-02T13:29:30.7474977Z Review light: docs-mobile--viewer
+2026-11-02T13:29:31.7308053Z Review light: docs-mobile--traditional
+2026-11-02T13:29:32.5807495Z Review light: docs-mobile--layout-changed
+2026-11-02T13:29:33.4998671Z Review light: docs-mobile--selection-formatting
+2026-11-02T13:29:34.7864318Z Review light: docs-mobile--keyboard-viewport-response
+2026-11-02T13:29:35.9810214Z Review light: dashboard-documenttags--no-tags
+2026-11-02T13:29:36.2639762Z Review light: dashboard-documenttags--several-tags
+2026-11-02T13:29:36.5473420Z Review light: dashboard-documenttags--suggestions-failed
+2026-11-02T13:29:36.8309085Z Review light: dashboard-documenttags--adding
+2026-11-02T13:29:37.1639344Z Review light: dashboard-documenttags--add-failed
+2026-11-02T13:29:37.5309150Z Review light: dashboard-documenttags--personal-space-tags
+2026-11-02T13:29:37.8309305Z Review light: editor-frame--default
+2026-11-02T13:29:38.2972854Z Review light: editor-frame--dark
+2026-11-02T13:29:38.7306887Z Review light: editor-frame--phone
+2026-11-02T13:29:39.1471590Z Review light: editor-frame--guest
+2026-11-02T13:29:39.5806405Z Review light: editor-frame--reconnecting
+2026-11-02T13:29:40.0138798Z Review light: editor-frame--rename
+2026-11-02T13:29:40.4808360Z Review light: editor-frame--rename-authority-removed
+2026-11-02T13:29:41.0970745Z Review light: editor-frame--versions-dialog
+2026-11-02T13:29:41.6970189Z Review light: editor-frame--version-naming-failure
+2026-11-02T13:29:42.5805514Z Review light: editor-frame--version-rename
+2026-11-02T13:29:43.2136713Z Review light: editor-frame--versions-loading
+2026-11-02T13:29:43.7969898Z Review light: editor-frame--export-dialog
+2026-11-02T13:29:44.3802309Z Review light: editor-frame--export-waiting-for-save
+2026-11-02T13:29:44.9635393Z Review light: editor-frame--pdf-failure
+2026-11-02T13:29:45.5801826Z Review light: editor-frame--offline-formulas
+2026-11-02T13:29:46.0808818Z Review light: editor-frame--editable-formulas
+2026-11-02T13:29:46.6467078Z Review light: editor-frame--offline-availability-success
+2026-11-02T13:29:47.0803985Z Review light: editor-frame--offline-availability-failure
+2026-11-02T13:29:47.5133325Z Review light: editor-frame--theatre-dialog
+2026-11-02T13:29:48.0641104Z Review light: editor-frame--people-and-theatre
+2026-11-02T13:29:48.8635836Z Review light: editor-frame--people-dialog
+2026-11-02T13:29:49.3320059Z Review light: editor-frame--people-over-presence
+2026-11-02T13:29:49.8468140Z Review light: editor-frame--actions-over-presence
+2026-11-02T13:29:50.3301187Z Review light: editor-frame--guest-pdf
+2026-11-02T13:29:50.8467932Z Review light: editor-frame--personalization
+2026-11-02T13:29:51.8799593Z Review light: editor-fileexports--saved
+2026-11-02T13:29:52.1629792Z Review light: editor-fileexports--unsaved
+2026-11-02T13:29:52.3963960Z Review light: editor-fileexports--download-failed
+2026-11-02T13:29:52.6799837Z Review light: editor-fileexports--pdf-failed
+2026-11-02T13:29:52.9796019Z Review light: guest-guestapp--loading
+2026-11-02T13:29:53.4298813Z Review light: guest-guestapp--link-revoked
+2026-11-02T13:29:53.8634128Z Review light: guest-guestapp--connection-interrupted
+2026-11-02T13:29:54.2797710Z Review light: guest-guestapp--unsupported-browser
+2026-11-02T13:29:54.6983750Z Review light: current-production-account-guest-links--inventory
+2026-11-02T13:29:54.9962466Z Review light: current-production-account-guest-links--empty
+2026-11-02T13:29:55.2462076Z Review light: current-production-account-guest-links--loading
+2026-11-02T13:29:55.4961960Z Review light: current-production-account-guest-links--load-error
+2026-11-02T13:29:55.7464103Z Review light: current-production-account-guest-links--load-retry
+2026-11-02T13:29:56.0630276Z Review light: current-production-account-guest-links--change-expiry
+2026-11-02T13:29:56.4638418Z Review light: current-production-account-guest-links--expiry-saved
+2026-11-02T13:29:57.0797913Z Review light: current-production-account-guest-links--saving
+2026-11-02T13:29:57.5964573Z Review light: current-production-account-guest-links--uncertain-write
+2026-11-02T13:29:58.0800837Z Review light: current-production-account-guest-links--stale-link
+2026-11-02T13:29:58.5469247Z Review light: current-production-account-guest-links--turn-off-space
+2026-11-02T13:29:58.9965431Z Review light: current-production-account-guest-links--turned-off
+2026-11-02T13:29:59.5469206Z Review light: current-production-account-guest-links--expired
+2026-11-02T13:29:59.9654536Z Review light: current-production-account-guest-links--phone
+2026-11-02T13:30:00.2134819Z Review light: current-production-account-guest-links--stale-account-response
+2026-11-02T13:30:00.6631132Z Review light: dashboard-hidden-shares--include-hidden
+2026-11-02T13:30:01.3129391Z Review light: dashboard-hidden-shares--all-shares-hidden
+2026-11-02T13:30:02.0462017Z Review light: dashboard-hidden-shares--hide-and-show
+2026-11-02T13:30:03.0795887Z Review light: dashboard-hidden-shares--failed-hide
+2026-11-02T13:30:03.7127725Z Review light: dashboard-hidden-shares--pending-hide
+2026-11-02T13:30:04.3797124Z Review light: history-browser--today
+2026-11-02T13:30:05.6829479Z Review light: history-browser--dark
+2026-11-02T13:30:06.9471063Z Review light: history-browser--phone
+2026-11-02T13:30:08.1831937Z Review light: history-browser--calendar
+2026-11-02T13:30:09.4467923Z Review light: history-browser--no-older-days
+2026-11-02T13:30:10.7793713Z Review light: history-browser--loading
+2026-11-02T13:30:11.0956392Z Review light: history-browser--history-failure
+2026-11-02T13:30:11.5624373Z Review light: history-browser--empty
+2026-11-02T13:30:11.8957047Z Review light: history-browser--unavailable
+2026-11-02T13:30:12.2291383Z Review light: history-browser--missing-checkpoint
+2026-11-02T13:30:12.6130329Z Review light: history-browser--preview-loading
+2026-11-02T13:30:12.8957772Z Review light: history-browser--preview-failure
+2026-11-02T13:30:13.4626939Z Review light: history-browser--viewer
+2026-11-02T13:30:14.7488069Z Review light: history-browser--name-current
+2026-11-02T13:30:15.2960099Z Review light: history-browser--name-failure
+2026-11-02T13:30:15.9290991Z Review light: history-browser--naming-focus-return
+2026-11-02T13:30:16.6456175Z Review light: history-browser--restore-confirmation
+2026-11-02T13:30:17.9155245Z Review light: history-browser--restore-failure
+2026-11-02T13:30:19.1959187Z Review light: history-browser--restore-interrupted
+2026-11-02T13:30:20.5125794Z Review light: history-browser--restoring
+2026-11-02T13:30:21.7959157Z Review light: account-icon-picker--browse
+2026-11-02T13:30:22.1954174Z Review light: dashboard-importfile--default
+2026-11-02T13:30:22.4449181Z Review light: dashboard-importfile--dialog
+2026-11-02T13:30:22.7787383Z Review light: dashboard-importfile--importing-dialog
+2026-11-02T13:30:23.1457002Z Review light: dashboard-importfile--limits-open
+2026-11-02T13:30:23.3953883Z Review light: dashboard-importfile--unsupported-file
+2026-11-02T13:30:23.6948366Z Review light: dashboard-importfile--not-json
+2026-11-02T13:30:24.0117864Z Review light: dashboard-importfile--too-many-files
+2026-11-02T13:30:24.4732909Z Review light: dashboard-importfile--importing
+2026-11-02T13:30:24.9416698Z Review light: dashboard-importfile--import-failed
+2026-11-02T13:30:25.3906053Z Review light: dashboard-importfile--archive-importing
+2026-11-02T13:30:25.8072001Z Review light: dashboard-importfile--archive-imported
+2026-11-02T13:30:26.2136371Z Review light: dashboard-importfile--empty-archive
+2026-11-02T13:30:26.5953134Z Review light: dashboard-importfile--archive-failed
+2026-11-02T13:30:26.9449586Z Review light: dashboard-importfile--archive-cancelled
+2026-11-02T13:30:27.3284130Z Review light: dashboard-importfile--archive-needs-my-files
+2026-11-02T13:30:27.6784483Z Review light: dashboard-importfile--archive-too-large
+2026-11-02T13:30:28.0290990Z Review light: dashboard-importfile--archive-unconfirmed
+2026-11-02T13:30:28.3952179Z Review light: dashboard-importfile--archive-interrupted-by-maintenance
+2026-11-02T13:30:28.7449155Z Review light: maintenance-controls--running
+2026-11-02T13:30:29.0446849Z Review light: maintenance-controls--scheduled
+2026-11-02T13:30:29.3644450Z Review light: maintenance-controls--missed-window
+2026-11-02T13:30:29.6114705Z Review light: maintenance-controls--paused
+2026-11-02T13:30:29.9282099Z Review light: maintenance-controls--draining
+2026-11-02T13:30:30.1785353Z Review light: maintenance-controls--starting
+2026-11-02T13:30:30.4281428Z Review light: maintenance-controls--recovery-required
+2026-11-02T13:30:30.6784607Z Review light: maintenance-controls--authority-expired
+2026-11-02T13:30:30.9452333Z Review light: maintenance-controls--unavailable
+2026-11-02T13:30:31.1949340Z Review light: maintenance-controls--loading
+2026-11-02T13:30:31.4453603Z Review light: maintenance-controls--load-failed
+2026-11-02T13:30:31.7447766Z Review light: maintenance-controls--confirm-pause
+2026-11-02T13:30:32.1283759Z Review light: maintenance-controls--pause-and-resume
+2026-11-02T13:30:32.6281053Z Review light: maintenance-controls--paused-with-resume
+2026-11-02T13:30:33.1282892Z Review light: maintenance-controls--pause-response-lost
+2026-11-02T13:30:33.6782495Z Review light: maintenance-controls--cancel-confirmation
+2026-11-02T13:30:34.0947651Z Review light: maintenance-controls--notice-form
+2026-11-02T13:30:34.5283927Z Review light: maintenance-controls--repeated-time
+2026-11-02T13:30:35.1632105Z Review light: maintenance-controls--publish-notice
+2026-11-02T13:30:35.7950572Z Review light: maintenance-controls--notice-too-far-ahead
+2026-11-02T13:30:36.3285267Z Review light: maintenance-controls--cancel-notice
+2026-11-02T13:30:36.8781581Z Review light: maintenance-controls--cancel-notice-while-paused
+2026-11-02T13:30:37.5785312Z Review light: maintenance-controls--cancel-notice-without-paused-proof
+2026-11-02T13:30:38.0282233Z Review light: maintenance-controls--phone
+2026-11-02T13:30:38.3279600Z Review light: maintenance-banner--scheduled
+2026-11-02T13:30:38.6448138Z Review light: maintenance-banner--paused
+2026-11-02T13:30:38.9282027Z Review light: maintenance-banner--draining
+2026-11-02T13:30:39.1947080Z Review light: maintenance-banner--reconnecting
+2026-11-02T13:30:39.4610874Z Review light: maintenance-banner--guest-paused
+2026-11-02T13:30:39.7947504Z Review light: maintenance-banner--notice-details
+2026-11-02T13:30:40.1112857Z Review light: maintenance-banner--cancelled
+2026-11-02T13:30:40.3610047Z Review light: maintenance-banner--running
+2026-11-02T13:30:40.6616835Z Review light: maintenance-banner--unavailable
+2026-11-02T13:30:40.9109293Z Review light: maintenance-banner--paused-dismissed
+2026-11-02T13:30:41.1610331Z Review light: maintenance-banner--guest-paused-dismissed
+2026-11-02T13:30:41.4612937Z Review light: maintenance-banner--reconnecting-dismissed
+2026-11-02T13:30:41.7111537Z Review light: maintenance-banner--dismiss-and-reopen
+2026-11-02T13:30:42.0614637Z Review light: maintenance-banner--expired-dismissal
+2026-11-02T13:30:42.3113894Z Review light: maintenance-banner--new-pause-resurfaces
+2026-11-02T13:30:42.7783186Z Review light: maintenance-banner--replacement-resurfaces
+2026-11-02T13:30:43.1278116Z Review light: offline-recovery-entry--missing-device-copy
+2026-11-02T13:30:43.5611104Z Review light: offline-recovery-entry--invalid-link
+2026-11-02T13:30:43.9611126Z Review light: offline-recovery-entry--no-prepared-account
+2026-11-02T13:30:44.3614516Z Review light: offline-recovery-entry--another-account
+2026-11-02T13:30:44.7775839Z Review light: offline-recovery-entry--clean-downloaded-copy
+2026-11-02T13:30:45.1785849Z Review light: offline-recovery-entry--guarded-return-to-my-files
+2026-11-02T13:30:45.6276714Z Review light: offline-recovery-entry--missing-copy-dark
+2026-11-02T13:30:46.0277773Z Review light: offline-recovery-entry--invalid-link-phone
+2026-11-02T13:30:46.4449843Z Review light: offline-recovery-list--pending-ordinary-and-space
+2026-11-02T13:30:46.8446383Z Review light: offline-recovery-list--dark
+2026-11-02T13:30:47.2443244Z Review light: offline-recovery-list--clean-downloads
+2026-11-02T13:30:47.5942050Z Review light: offline-recovery-list--navigation-guard
+2026-11-02T13:30:48.0275240Z Review light: offline-recovery-list--long-title-phone
+2026-11-02T13:30:48.4281159Z Review light: space-offline-view--light
+2026-11-02T13:30:48.8448012Z Review light: space-offline-view--dark
+2026-11-02T13:30:49.2617514Z Review light: space-offline-view--profile-navigation
+2026-11-02T13:30:49.7448711Z Review light: space-offline-view--editor-navigation
+2026-11-02T13:30:50.2116926Z Review light: space-offline-view--phone
+2026-11-02T13:30:50.6280487Z Review light: space-offline-view--attention-held-viewer
+2026-11-02T13:30:51.3447093Z Review light: space-offline-view--attention-held-viewer-dark
+2026-11-02T13:30:52.0609060Z Review light: space-offline-view--attention-held-viewer-phone
+2026-11-02T13:30:52.7611111Z Review light: space-offline-view--explicit-page-not-prepared
+2026-11-02T13:30:53.1950674Z Review light: space-offline-view--no-prepared-pages
+2026-11-02T13:30:53.6112628Z Review light: space-offline-view--space-index
+2026-11-02T13:30:54.0275717Z Review light: space-offline-view--another-account
+2026-11-02T13:30:54.4442589Z Review light: dashboard-offlinebadge--available
+2026-11-02T13:30:54.6943867Z Review light: dashboard-offlinebadge--pages-available
+2026-11-02T13:30:54.9441487Z Review light: dashboard-offlinebadge--needs-connection
+2026-11-02T13:30:55.1940909Z Review light: dashboard-offlinebadge--not-synced
+2026-11-02T13:30:55.4440300Z Review light: dashboard-offlinebadge--needs-attention
+2026-11-02T13:30:55.6942091Z Review light: dashboard-offlinebadge--none
+2026-11-02T13:30:55.9608264Z Review light: dashboard-offlinebadge--unreachable
+2026-11-02T13:30:56.2105583Z Review light: current-production-account-passkey-security--ready
+2026-11-02T13:30:56.5108255Z Review light: current-production-account-passkey-security--loading
+2026-11-02T13:30:56.7771865Z Review light: current-production-account-passkey-security--load-error
+2026-11-02T13:30:57.0279750Z Review light: current-production-account-passkey-security--empty
+2026-11-02T13:30:57.2937384Z Review light: current-production-account-passkey-security--adding
+2026-11-02T13:30:57.5439625Z Review light: current-production-account-passkey-security--confirm-removal
+2026-11-02T13:30:58.0109448Z Review light: current-production-account-passkey-security--remove-current
+2026-11-02T13:30:58.4944820Z Review light: current-production-account-passkey-security--last-passkey
+2026-11-02T13:30:58.9276278Z Review light: current-production-account-passkey-security--fresh-verification-required
+2026-11-02T13:30:59.3939499Z Review light: current-production-account-passkey-security--verify-before-adding
+2026-11-02T13:30:59.7613521Z Review light: current-production-account-passkey-security--verification-pending
+2026-11-02T13:31:00.3107642Z Review light: current-production-account-passkey-security--verification-failed
+2026-11-02T13:31:00.7771808Z Review light: current-production-account-passkey-security--saving
+2026-11-02T13:31:01.3106505Z Review light: current-production-account-passkey-security--refused
+2026-11-02T13:31:01.8613851Z Review light: current-production-account-passkey-security--proof-expired
+2026-11-02T13:31:02.3442376Z Review light: current-production-account-passkey-security--uncertain
+2026-11-02T13:31:02.8778652Z Review light: current-production-account-passkey-security--sign-out-others
+2026-11-02T13:31:03.2271220Z Review light: current-production-account-passkey-security--others-signed-out
+2026-11-02T13:31:03.6609635Z Review light: current-production-account-passkey-security--removal-cancelled
+2026-11-02T13:31:04.1610298Z Review light: current-production-account-passkey-security--verified-then-confirmed
+2026-11-02T13:31:04.6605669Z Review light: current-production-account-passkey-security--verification-cancelled
+2026-11-02T13:31:05.1938243Z Review light: current-production-account-passkey-security--uncertain-cannot-repeat
+2026-11-02T13:31:05.8445297Z Review light: current-production-account-passkey-security--malformed-acknowledgement
+2026-11-02T13:31:06.3101585Z Review light: current-production-account-passkey-security--unattributed-session
+2026-11-02T13:31:06.7607727Z Review light: current-production-account-passkey-security--registration-proof-invalidated
+2026-11-02T13:31:07.1271606Z Review light: current-production-account-passkey-security--read-retry-recovered
+2026-11-02T13:31:07.4604301Z Review light: current-production-account-passkey-security--account-changed-before-action
+2026-11-02T13:31:07.8269083Z Review light: current-production-account-passkey-security--cookie-changed-during-confirmation
+2026-11-02T13:31:08.3269679Z Review light: current-production-account-passkey-security--account-changed-during-registration
+2026-11-02T13:31:08.6271442Z Review light: editor-pdfexport--document
+2026-11-02T13:31:08.9269072Z Review light: editor-pdfexport--all-visible-worksheets
+2026-11-02T13:31:09.2104993Z Review light: editor-pdfexport--worksheet-subset
+2026-11-02T13:31:09.5271431Z Review light: editor-pdfexport--no-worksheets-selected
+2026-11-02T13:31:09.9603697Z Review light: editor-pdfexport--no-visible-worksheets
+2026-11-02T13:31:10.2101266Z Review light: editor-pdfexport--waiting-for-save
+2026-11-02T13:31:10.4434324Z Review light: editor-pdfexport--loading-options
+2026-11-02T13:31:10.6932845Z Review light: editor-pdfexport--options-failed
+2026-11-02T13:31:10.9938461Z Review light: editor-pdfexport--preparing
+2026-11-02T13:31:11.3274138Z Review light: editor-pdfexport--cancelled
+2026-11-02T13:31:11.6771951Z Review light: editor-pdfexport--export-failed
+2026-11-02T13:31:12.0258818Z Review light: editor-pdfexport--download-started
+2026-11-02T13:31:12.3433435Z Review light: editor-profile-cursor-label--flower
+2026-11-02T13:31:12.5932439Z Review light: editor-profile-cursor-label--cat
+2026-11-02T13:31:12.8431820Z Review light: editor-presence-native--doc
+2026-11-02T13:31:14.1443802Z Review light: editor-presence-native--doc-selection
+2026-11-02T13:31:15.4283346Z Review light: editor-presence-native--doc-guest
+2026-11-02T13:31:16.6614933Z Review light: editor-presence-native--doc-disconnected
+2026-11-02T13:31:17.8607954Z Review light: editor-presence-native--doc-lifecycle
+2026-11-02T13:31:19.2789443Z Review light: editor-presence-native--doc-local-colors
+2026-11-02T13:31:20.5113159Z Review light: account-profile-icons--catalog-compatibility
+2026-11-02T13:31:20.8266028Z Review light: account-profile-page--profile
+2026-11-02T13:31:21.2598553Z Review light: account-profile-page--passkeys
+2026-11-02T13:31:21.6931789Z Review light: account-profile-page--this-device
+2026-11-02T13:31:22.1268281Z Review light: account-profile-page--connections
+2026-11-02T13:31:22.5771067Z Review light: account-profile-page--guest-links
+2026-11-02T13:31:23.0268968Z Review light: account-profile-page--guest-links-offline
+2026-11-02T13:31:23.4598984Z Review light: account-profile-page--guest-links-operator
+2026-11-02T13:31:23.8932282Z Review light: account-profile-page--operator
+2026-11-02T13:31:24.3268441Z Review light: account-profile-page--offline
+2026-11-02T13:31:24.7605013Z Review light: account-profile-page--phone
+2026-11-02T13:31:25.1765498Z Review light: account-profile--ready
+2026-11-02T13:31:25.5766531Z Review light: account-profile--loading
+2026-11-02T13:31:26.0743233Z Review light: account-profile--load-error
+2026-11-02T13:31:26.5802880Z Review light: account-profile--save-error
+2026-11-02T13:31:27.1807031Z Review light: account-profile--saving
+2026-11-02T13:31:27.7230672Z Review light: account-profile--color-picker
+2026-11-02T13:31:28.1932554Z Review light: shell-rail--member
+2026-11-02T13:31:28.4595363Z Review light: shell-rail--admin
+2026-11-02T13:31:28.7259642Z Review light: shell-rail--offline
+2026-11-02T13:31:28.9763393Z Review light: shell-rail--reconnecting
+2026-11-02T13:31:29.2792742Z Review light: shell-rail--phone
+2026-11-02T13:31:29.5259050Z Review light: shell-rail--signed-out
+2026-11-02T13:31:29.7758560Z Review light: shell-rail--compact
+2026-11-02T13:31:30.0262895Z Review light: shell-rail--files
+2026-11-02T13:31:30.2759204Z Review light: shell-rail--files-collapsed
+2026-11-02T13:31:30.6260050Z Review light: shell-rail--files-long-profile-name
+2026-11-02T13:31:30.8759485Z Review light: shell-rail--files-phone
+2026-11-02T13:31:31.1426936Z Review light: shell-rail--files-drawer
+2026-11-02T13:31:31.3923766Z Review light: restore-notice--restored
+2026-11-02T13:31:31.6421603Z Review light: restore-notice--dark
+2026-11-02T13:31:31.9427700Z Review light: restore-notice--phone
+2026-11-02T13:31:32.1925636Z Review light: restore-notice--restore-undone
+2026-11-02T13:31:32.4425360Z Review light: restore-notice--restore-undone-dark
+2026-11-02T13:31:32.6924733Z Review light: restore-notice--dismissed
+2026-11-02T13:31:32.9923529Z Review light: restore-notice--another-restore-after-dismissal
+2026-11-02T13:31:33.2925820Z Review light: restore-notice--never-restored
+2026-11-02T13:31:33.5421604Z Review light: editor-savestatus--saved
+2026-11-02T13:31:33.7923084Z Review light: editor-savestatus--saving-on-device
+2026-11-02T13:31:34.1606898Z Review light: editor-savestatus--saved-on-device
+2026-11-02T13:31:34.5261657Z Review light: editor-savestatus--synced
+2026-11-02T13:31:34.9093660Z Review light: editor-savestatus--needs-attention
+2026-11-02T13:31:35.2594667Z Review light: editor-savestatus--creation-needs-attention
+2026-11-02T13:31:35.7592174Z Review light: editor-savestatus--recovery-creating
+2026-11-02T13:31:36.2092259Z Review light: editor-savestatus--recovery-created
+2026-11-02T13:31:36.5925940Z Review light: editor-savestatus--recovery-failed
+2026-11-02T13:31:37.0258246Z Review light: editor-savestatus--recovery-exported
+2026-11-02T13:31:37.3925477Z Review light: editor-savestatus--recovery-discard-confirmation
+2026-11-02T13:31:37.8090210Z Review light: editor-savestatus--recovery-discarded
+2026-11-02T13:31:38.2925273Z Review light: editor-savestatus--recovery-expired-account
+2026-11-02T13:31:38.7757781Z Review light: editor-savestatus--recovery-unfinished-input
+2026-11-02T13:31:39.2922062Z Review light: editor-savestatus--recovery-unfinished-doc-text
+2026-11-02T13:31:40.2758253Z Review light: editor-savestatus--recovery-unfinished-doc-text-discarded
+2026-11-02T13:31:41.2754033Z Review light: editor-savestatus--expired-unfinished-doc-text
+2026-11-02T13:31:42.2755429Z Review light: editor-savestatus--device-save-failed
+2026-11-02T13:31:42.6422256Z Review light: editor-savestatus--attention-save-failed
+2026-11-02T13:31:42.9921664Z Review light: editor-savestatus--saving
+2026-11-02T13:31:43.3421147Z Review light: editor-savestatus--editing-cell
+2026-11-02T13:31:43.6920455Z Review light: editor-savestatus--expired-cell-input
+2026-11-02T13:31:44.0754954Z Review light: editor-savestatus--expired-saved-work
+2026-11-02T13:31:44.4433559Z Review light: editor-savestatus--editing-formula
+2026-11-02T13:31:44.7922022Z Review light: editor-savestatus--loading
+2026-11-02T13:31:45.1774699Z Review light: editor-savestatus--view-only
+2026-11-02T13:31:45.5254891Z Review light: editor-savestatus--failed-save
+2026-11-02T13:31:45.8751643Z Review light: editor-savestatus--access-changed
+2026-11-02T13:31:46.2419870Z Review light: editor-savestatus--waiting-to-resync
+2026-11-02T13:31:46.5926057Z Review light: editor-savestatus--rejected-edits
+2026-11-02T13:31:46.9419711Z Review light: editor-savestatus--long-error
+2026-11-02T13:31:47.3086793Z Review light: editor-savestatus--stable-geometry-and-retry
+2026-11-02T13:31:47.9586165Z Review light: editor-savestatus--keyboard-details
+2026-11-02T13:31:48.4276992Z Review light: editor-savestatus--touch-details
+2026-11-02T13:31:48.8250571Z Review light: dashboard-searchpanel--empty-query
+2026-11-02T13:31:49.2252959Z Review light: dashboard-searchpanel--results
+2026-11-02T13:31:49.8094598Z Review light: dashboard-searchpanel--no-results
+2026-11-02T13:31:50.3917742Z Review light: dashboard-searchpanel--loading
+2026-11-02T13:31:50.8085080Z Review light: dashboard-searchpanel--failed
+2026-11-02T13:31:51.3751624Z Review light: dashboard-searchpanel--space-roots-only
+2026-11-02T13:31:51.7750854Z Review light: dashboard-searchpanel--active-filters
+2026-11-02T13:31:52.2085972Z Review light: dashboard-searchpanel--invalid-draft
+2026-11-02T13:31:52.6253146Z Review light: dashboard-searchpanel--long-invalid-draft
+2026-11-02T13:31:53.0917738Z Review light: dashboard-searchpanel--search-options
+2026-11-02T13:31:53.8429467Z Review light: current-production-admin-serverhealth--healthy
+2026-11-02T13:31:54.1590154Z Review light: current-production-admin-serverhealth--spaces-disabled
+2026-11-02T13:31:54.4753734Z Review light: current-production-admin-serverhealth--warning
+2026-11-02T13:31:54.7250104Z Review light: current-production-admin-serverhealth--unavailable-measurements
+2026-11-02T13:31:54.9751987Z Review light: current-production-admin-serverhealth--low-backup-space
+2026-11-02T13:31:55.2750426Z Review light: current-production-admin-serverhealth--near-upload-ceiling
+2026-11-02T13:31:55.5750255Z Review light: current-production-admin-serverhealth--loading
+2026-11-02T13:31:55.8915939Z Review light: current-production-admin-serverhealth--failed
+2026-11-02T13:31:56.1918934Z Review light: current-production-admin-serverhealth--expired
+2026-11-02T13:31:56.4931302Z Review light: sharing-sharelink--loading
+2026-11-02T13:31:56.7420637Z Review light: sharing-sharelink--link-off
+2026-11-02T13:31:56.9914570Z Review light: sharing-sharelink--doc-source-limit
+2026-11-02T13:31:57.3082479Z Review light: sharing-sharelink--space-source-limit
+2026-11-02T13:31:57.5580573Z Review light: sharing-sharelink--link-on-view-only
+2026-11-02T13:31:57.8081297Z Review light: sharing-sharelink--link-on-can-edit
+2026-11-02T13:31:58.0583148Z Review light: sharing-sharelink--link-on-without-url
+2026-11-02T13:31:58.3087492Z Review light: sharing-sharelink--scheduled-expiry
+2026-11-02T13:31:58.6245800Z Review light: sharing-sharelink--expired
+2026-11-02T13:31:58.9270845Z Review light: sharing-sharelink--create-after-expiry
+2026-11-02T13:31:59.2916148Z Review light: sharing-sharelink--failed
+2026-11-02T13:31:59.5413624Z Review light: sharing-sharelink--space-view-link
+2026-11-02T13:31:59.7911968Z Review light: sharing-sharelink--space-edit-link
+2026-11-02T13:32:00.1081756Z Review light: sharing-sharelink--confirm-whole-space
+2026-11-02T13:32:00.4750328Z Review light: sharing-sharelink--confirm-replacement-edit-link
+2026-11-02T13:32:00.9082708Z Review light: sharing-sharelink--confirm-turn-off-space-link
+2026-11-02T13:32:01.3749104Z Review light: sharing-sharelink--load-after-leaving-space
+2026-11-02T13:32:01.7248685Z Review light: sharing-sharelink--change-after-replacing-space
+2026-11-02T13:32:02.2418836Z Review light: sharing-sharelink--created-link
+2026-11-02T13:32:02.6081032Z Review light: sharing-sharelink--replace-fresh-link
+2026-11-02T13:32:03.1913186Z Review light: sharing-sharelink--replaced-link
+2026-11-02T13:32:03.6411283Z Review light: sharing-sharelink--replacing
+2026-11-02T13:32:04.1248261Z Review light: sharing-sharelink--created-space-link-focus
+2026-11-02T13:32:04.5914666Z Review light: sharing-sharelink--turned-off-space-link-focus
+2026-11-02T13:32:05.1579442Z Review light: sharing-sharelink--no-secret-readback
+2026-11-02T13:32:05.4580654Z Review light: sharing-sharelink--creating
+2026-11-02T13:32:05.7915712Z Review light: sharing-sharelink--failed-create
+2026-11-02T13:32:06.1581391Z Review light: sharing-sharelink--failed-replacement
+2026-11-02T13:32:06.7245659Z Review light: sharing-sharelink--failed-replacement-visible
+2026-11-02T13:32:07.1414575Z Review light: sharing-sharelink--failed-turn-off
+2026-11-02T13:32:07.5579378Z Review light: dashboard-sharedbadge--owned
+2026-11-02T13:32:07.7908316Z Review light: dashboard-sharedbadge--shared-with-me
+2026-11-02T13:32:08.0248086Z Review light: dashboard-sharedbadge--unknown-owner
+2026-11-02T13:32:08.3245435Z Review light: sharing-sharing--loading
+2026-11-02T13:32:08.5745938Z Review light: sharing-sharing--owner-only
+2026-11-02T13:32:08.8412035Z Review light: sharing-sharing--with-people
+2026-11-02T13:32:09.1578080Z Review light: sharing-sharing--folder
+2026-11-02T13:32:09.4276943Z Review light: sharing-sharing--failed
+2026-11-02T13:32:09.7579055Z Review light: sharing-sharing--whole-space
+2026-11-02T13:32:10.0246291Z Review light: sharing-sharing--file-admin
+2026-11-02T13:32:10.2743231Z Review light: sharing-sharing--grant-file-admin
+2026-11-02T13:32:10.8411044Z Review light: sharing-sharing--admin-revoked-while-applying
+2026-11-02T13:32:11.3577004Z Review light: sharing-sharing--composed
+2026-11-02T13:32:11.7579572Z Review light: sharing-sharing--access-saving
+2026-11-02T13:32:12.2913368Z Review light: sharing-sharing--disabled-account
+2026-11-02T13:32:12.7911347Z Review light: sharing-sharing--disabled-account-before-removal
+2026-11-02T13:32:13.2413119Z Review light: sharing-sharing--one-recipient-draft
+2026-11-02T13:32:13.8411413Z Review light: sharing-sharing--navigation-after-cancel
+2026-11-02T13:32:14.3411416Z Review light: sharing-sharing--write-after-leaving
+2026-11-02T13:32:14.8746226Z Review light: sharing-sharing--write-after-replacing
+2026-11-02T13:32:15.4747916Z Review light: sharing-sharing--failed-write-retry
+2026-11-02T13:32:16.0573673Z Review light: sharing-sharing--guest-link-created
+2026-11-02T13:32:16.5242164Z Review light: sharing-sharing--existing-guest-link
+2026-11-02T13:32:16.9074422Z Review light: sharing-sharing--replace-guest-link
+2026-11-02T13:32:17.3910921Z Review light: sharing-sharing--inherited-access-after-removal
+2026-11-02T13:32:17.8242044Z Review light: sharing-sharing--equal-inherited-access-after-downgrade
+2026-11-02T13:32:18.2913014Z Review light: sharing-formula-sources--overview
+2026-11-02T13:32:18.6080613Z Review light: sharing-formula-sources--unchecked
+2026-11-02T13:32:19.0412921Z Review light: sharing-formula-sources--checked
+2026-11-02T13:32:19.5076998Z Review light: sharing-formula-sources--choose-report-access-first
+2026-11-02T13:32:19.9245947Z Review light: sharing-formula-sources--host-only
+2026-11-02T13:32:20.5243083Z Review light: sharing-formula-sources--source-only
+2026-11-02T13:32:21.2246639Z Review light: sharing-formula-sources--checking
+2026-11-02T13:32:21.6245073Z Review light: sharing-formula-sources--check-failed
+2026-11-02T13:32:22.1741181Z Review light: sharing-formula-sources--applying
+2026-11-02T13:32:22.7241308Z Review light: sharing-formula-sources--existing-access-kept
+2026-11-02T13:32:23.1913230Z Review light: sharing-formula-sources--same-space
+2026-11-02T13:32:23.6073166Z Review light: sharing-formula-sources--external-space
+2026-11-02T13:32:24.0738977Z Review light: sharing-formula-sources--protected-and-unavailable
+2026-11-02T13:32:24.4905442Z Review light: sharing-formula-sources--partial
+2026-11-02T13:32:25.0408065Z Review light: sharing-formula-sources--changed-after-review
+2026-11-02T13:32:25.6248056Z Review light: sharing-formula-sources--lost-acknowledgement
+2026-11-02T13:32:26.1751959Z Review light: sharing-formula-sources--missing-result
+2026-11-02T13:32:26.7407893Z Review light: sharing-formula-sources--host-only-lost-acknowledgement
+2026-11-02T13:32:27.2910207Z Review light: sharing-formula-sources--host-only-authority-lost
+2026-11-02T13:32:27.7910055Z Review light: sharing-formula-sources--host-only-source-became-private
+2026-11-02T13:32:28.3239706Z Review light: sharing-formula-sources--host-revoked
+2026-11-02T13:32:28.8243699Z Review light: sharing-formula-sources--no-stale-source-names
+2026-11-02T13:32:29.4571374Z Review light: sharing-formula-sources--consent-and-draft-reset
+2026-11-02T13:32:30.4240519Z Review light: sharing-formula-sources--public-link-isolation
+2026-11-02T13:32:31.0071192Z Review light: sharing-formula-sources--review-after-leaving
+2026-11-02T13:32:31.4569762Z Review light: sharing-formula-sources--review-after-replacing
+2026-11-02T13:32:32.0068487Z Review light: space-review--app-loading
+2026-11-02T13:32:32.6241701Z Review light: space-review--app-unreachable
+2026-11-02T13:32:33.2068918Z Review light: space-review--app-unavailable
+2026-11-02T13:32:33.7573265Z Review light: space-review--populated
+2026-11-02T13:32:34.3410146Z Review light: space-review--independent-expansion
+2026-11-02T13:32:35.0405919Z Review light: space-review--view-only
+2026-11-02T13:32:35.6070257Z Review light: space-review--page-access-details
+2026-11-02T13:32:36.3412219Z Review light: space-review--empty
+2026-11-02T13:32:36.9071266Z Review light: space-review--restore-banner
+2026-11-02T13:32:37.4405702Z Review light: space-review--restore-banner-dark
+2026-11-02T13:32:37.9905794Z Review light: space-review--restore-banner-phone
+2026-11-02T13:32:38.5403607Z Review light: space-review--restore-banner-with-document
+2026-11-02T13:32:39.0901881Z Review light: space-review--spaces-index
+2026-11-02T13:32:39.7512461Z Review light: space-review--no-spaces
+2026-11-02T13:32:40.4837094Z Review light: space-review--new-space
+2026-11-02T13:32:41.5571996Z Review light: space-review--new-doc
+2026-11-02T13:32:42.3569741Z Review light: space-review--new-sheet
+2026-11-02T13:32:43.1734281Z Review light: space-review--new-folder
+2026-11-02T13:32:44.0074419Z Review light: space-review--loading
+2026-11-02T13:32:44.5064996Z Review light: space-review--unavailable
+2026-11-02T13:32:45.0235709Z Review light: space-review--retained-device-page
+2026-11-02T13:32:45.5565075Z Review light: space-review--retained-device-page-navigation
+2026-11-02T13:32:46.1742284Z Review light: space-review--unreachable
+2026-11-02T13:32:46.6899533Z Review light: space-review--guest-viewer
+2026-11-02T13:32:47.1901140Z Review light: space-review--guest-editor
+2026-11-02T13:32:47.7064532Z Review light: space-review--guest-empty
+2026-11-02T13:32:48.1393868Z Review light: space-review--guest-loading
+2026-11-02T13:32:48.6229181Z Review light: space-review--guest-revoked
+2026-11-02T13:32:49.1229454Z Review light: space-review--guest-unreachable
+2026-11-02T13:32:49.6067067Z Review light: space-review--guest-missing-page
+2026-11-02T13:32:50.0898045Z Review light: space-review--guest-malformed-route
+2026-11-02T13:32:50.5727357Z Review light: space-review--offline
+2026-11-02T13:32:51.2062649Z Review light: space-review--deep-tree
+2026-11-02T13:32:51.8397471Z Review light: space-review--pages-drawer
+2026-11-02T13:32:52.4903730Z Review light: space-review--move-or-reorder
+2026-11-02T13:32:53.3560760Z Review light: space-review--metadata-dialog-focus
+2026-11-02T13:32:54.3397934Z Review light: space-review--mutation-failure
+2026-11-02T13:32:55.3095901Z Review light: space-review--trash-subtree-confirmation
+2026-11-02T13:32:56.0230288Z Review light: space-review--trash-owner
+2026-11-02T13:32:56.5565133Z Review light: space-review--trash-editor
+2026-11-02T13:32:57.0568954Z Review light: space-review--trash-expired
+2026-11-02T13:32:57.6900726Z Review light: space-review--trash-expired-editor
+2026-11-02T13:32:58.2228613Z Review light: space-review--trash-recovery-ended
+2026-11-02T13:32:58.7894438Z Review light: space-review--trash-role-change
+2026-11-02T13:32:59.3066487Z Review light: space-review--trash-viewer-denied
+2026-11-02T13:32:59.8061995Z Review light: space-review--trash-empty
+2026-11-02T13:33:00.3231835Z Review light: space-review--trash-retry
+2026-11-02T13:33:00.8892907Z Review light: space-review--trash-offline
+2026-11-02T13:33:01.4060019Z Review light: space-review--delete-confirmation
+2026-11-02T13:33:02.1252370Z Review light: space-review--cancel-deletion
+2026-11-02T13:33:02.8896317Z Review light: space-review--stale-delete-preview
+2026-11-02T13:33:03.6561216Z Review light: space-review--file-admin
+2026-11-02T13:33:04.4061061Z Review light: space-guest--view-only
+2026-11-02T13:33:04.9231068Z Review light: space-guest--view-only-dark
+2026-11-02T13:33:05.4223867Z Review light: space-guest--view-only-phone
+2026-11-02T13:33:05.9389906Z Review light: space-guest--can-edit
+2026-11-02T13:33:06.4559534Z Review light: space-guest--can-edit-dark
+2026-11-02T13:33:06.9564553Z Review light: space-guest--can-edit-phone
+2026-11-02T13:33:07.4726492Z Review light: space-guest--nested-page
+2026-11-02T13:33:07.9559681Z Review light: space-guest--phone-contents
+2026-11-02T13:33:08.5729393Z Review light: space-guest--empty
+2026-11-02T13:33:09.0561000Z Review light: space-guest--loading
+2026-11-02T13:33:09.5091576Z Review light: space-guest--unavailable
+2026-11-02T13:33:09.9721531Z Review light: space-guest--recovery-deep-link-refused
+2026-11-02T13:33:10.4221745Z Review light: space-offline-actions--ready-to-prepare
+2026-11-02T13:33:10.7385546Z Review light: space-offline-actions--waiting-for-save
+2026-11-02T13:33:11.0382131Z Review light: space-offline-actions--storage-unavailable
+2026-11-02T13:33:11.4053651Z Review light: space-offline-actions--storage-unavailable-dark
+2026-11-02T13:33:11.7416201Z Review light: space-offline-actions--storage-unavailable-phone
+2026-11-02T13:33:12.1219384Z Review light: space-offline-actions--prepared-pages
+2026-11-02T13:33:12.5387809Z Review light: space-offline-actions--prepared-dark
+2026-11-02T13:33:12.9719136Z Review light: space-offline-actions--prepared-phone
+2026-11-02T13:33:13.3719806Z Review light: space-offline-actions--unmount-during-download
+2026-11-02T13:33:13.8054837Z Review light: space-offline-actions--change-account-during-download
+2026-11-02T13:33:14.2218651Z Review light: space-offline-actions--sign-out-during-download
+2026-11-02T13:33:14.6390380Z Review light: spaces-root-actions--owner
+2026-11-02T13:33:14.8883819Z Review light: spaces-root-actions--viewer
+2026-11-02T13:33:15.1390039Z Review light: spaces-root-actions--rename
+2026-11-02T13:33:15.5724418Z Review light: spaces-root-actions--move
+2026-11-02T13:33:16.0556400Z Review light: spaces-root-actions--loading-destinations
+2026-11-02T13:33:16.4895881Z Review light: spaces-root-actions--destination-failure
+2026-11-02T13:33:16.9386240Z Review light: spaces-root-actions--whole-space-trash
+2026-11-02T13:33:17.3719575Z Review light: spaces-root-actions--share-whole-space
+2026-11-02T13:33:18.0882980Z Review light: spaces-root-actions--save-failure
+2026-11-02T13:33:18.5221642Z Review light: spaces-root-actions--trash-response-after-navigation
+2026-11-02T13:33:19.0548367Z Review light: spaces-root-actions--rename-response-after-unmount
+2026-11-02T13:33:19.5891077Z Review light: spaces-root-actions--failed-response-after-navigation
+2026-11-02T13:33:20.3384172Z Review light: spaces-root-actions--file-admin-move
+2026-11-02T13:33:20.8881885Z Review light: spaces-root-actions--file-admin-no-destinations
+2026-11-02T13:33:21.3551098Z Review light: current-production-spaces-recovery-holds--held-after-recovery
+2026-11-02T13:33:21.7049341Z Review light: current-production-spaces-recovery-holds--editor
+2026-11-02T13:33:21.9549741Z Review light: current-production-spaces-recovery-holds--offline
+2026-11-02T13:33:22.2052630Z Review light: editor-sync-native--doc-drawing-capture
+2026-11-02T13:33:23.7552858Z Review light: dashboard-taglabels--none
+2026-11-02T13:33:24.0046695Z Review light: dashboard-taglabels--one
+2026-11-02T13:33:24.2548832Z Review light: dashboard-taglabels--several
+2026-11-02T13:33:24.5047468Z Review light: dashboard-trash--with-items
+2026-11-02T13:33:24.7723628Z Review light: dashboard-trash--held-after-recovery
+2026-11-02T13:33:25.0380008Z Review light: dashboard-trash--confirm-empty-held-items
+2026-11-02T13:33:25.3718024Z Review light: dashboard-trash--empty
+2026-11-02T13:33:25.6215289Z Review light: dashboard-trash--loading
+2026-11-02T13:33:25.8739082Z Review light: dashboard-trash--load-failed
+2026-11-02T13:33:26.1556361Z Review light: dashboard-trash--confirm-empty
+2026-11-02T13:33:26.4882013Z Review light: dashboard-trash--space-recovery-window
+2026-11-02T13:33:26.7547113Z Review light: dashboard-trash--expired-space-group
+2026-11-02T13:33:27.0215660Z Review light: dashboard-trash--confirm-complete-space-graph
+2026-11-02T13:33:27.3047906Z Review light: dashboard-trash--space-graph-changed
+2026-11-02T13:33:27.7046596Z Review light: editor-versionnames--closed
+2026-11-02T13:33:27.9382946Z Review light: editor-versionnames--open
+2026-11-02T13:33:28.2380325Z Review light: editor-versionnames--viewer-open
+2026-11-02T13:33:28.5232409Z Review light: editor-versionnames--no-versions
+2026-11-02T13:33:28.8211759Z Review light: editor-versionnames--unsaved-changes
+2026-11-02T13:33:29.0884507Z Review light: editor-versionnames--loading
+2026-11-02T13:33:29.4051235Z Review light: editor-versionnames--load-failed
+2026-11-02T13:33:29.6882118Z Review light: editor-versionnames--naming-version
+2026-11-02T13:33:30.0217103Z Review light: editor-versionnames--space-editor
+2026-11-02T13:33:30.3212013Z Review light: editor-versionnames--space-viewer
+2026-11-02T13:33:30.6466273Z Review light: dashboard-workspacearchive--confirmation
+2026-11-02T13:33:30.9376646Z Review light: dashboard-workspacearchive--starting
+2026-11-02T13:33:31.2879197Z Review light: dashboard-workspacearchive--preparing
+2026-11-02T13:33:31.6045732Z Review light: dashboard-workspacearchive--browser-download
+2026-11-02T13:33:31.9546851Z Review light: dashboard-workspacearchive--exporting
+2026-11-02T13:33:32.2878157Z Review light: dashboard-workspacearchive--completed
+2026-11-02T13:33:32.6378115Z Review light: dashboard-workspacearchive--empty-archive
+2026-11-02T13:33:33.0046154Z Review light: dashboard-workspacearchive--start-failed
+2026-11-02T13:33:33.3215929Z Review light: dashboard-workspacearchive--export-failed
+2026-11-02T13:33:33.6879542Z Review light: dashboard-workspacearchive--progress-unavailable
+2026-11-02T13:33:34.2376455Z Review light: dashboard-workspacearchive--expired-task
+2026-11-02T13:33:35.0541496Z Review light: dashboard-workspacearchive--cancel-expired-task
+2026-11-02T13:33:35.4211561Z Review light: dashboard-workspacearchive--retry-progress
+2026-11-02T13:33:36.2541611Z Review light: dashboard-workspacearchive--cancelling
+2026-11-02T13:33:36.5880027Z Review light: dashboard-workspacearchive--cancelled
+2026-11-02T13:33:37.0045644Z Review light: dashboard-workspacearchive--cancel-before-start
+2026-11-02T13:33:37.3878592Z Review light: dashboard-workspacearchive--cancellation-failed
+2026-11-02T13:33:37.7375808Z Review light: offline-availability--protection-granted
+2026-11-02T13:33:38.0054636Z Review light: offline-availability--protection-denied
+2026-11-02T13:33:38.4211353Z Review light: offline-availability--protection-unsupported
+2026-11-02T13:33:38.8099040Z Review light: offline-availability--protection-error
+2026-11-02T13:33:39.2474436Z Review light: offline-availability--storage-guidance
+2026-11-02T13:33:39.7531751Z Review light: offline-availability--browser-storage-limits
+2026-11-02T13:33:40.5542248Z Review light: offline-availability--pending-removal
+2026-11-02T13:33:40.8707983Z Review light: identity-entity-icons--standalone
+2026-11-02T13:33:41.1045880Z Review light: identity-entity-icons--lineup
+2026-11-02T13:33:41.3543094Z Review light: identity-entity-icons--in-context
+2026-11-02T13:33:41.5876987Z Review light: identity-entity-icons--monochrome
+2026-11-02T13:33:41.8204039Z Review light: identity-entity-icons--phone
+2026-11-02T13:33:42.0540539Z Review light: identity-favicon--light
+2026-11-02T13:33:42.3042267Z Review light: identity-favicon--dark
+2026-11-02T13:33:42.5372418Z Review light: identity-favicon--automatic
+2026-11-02T13:33:42.7869642Z Review light: identity-social-cards--generic
+2026-11-02T13:33:43.0204547Z Review light: identity-social-cards--document
+2026-11-02T13:33:43.2708123Z Review light: identity-social-cards--spreadsheet
+2026-11-02T13:33:43.5043833Z Review light: identity-social-cards--emoji
+2026-11-02T13:33:43.7374051Z Review light: identity-social-cards--long-title
+2026-11-02T13:33:43.9702449Z Review light: identity-social-cards--long-word
+2026-11-02T13:33:44.2202223Z Review light: identity-social-cards--space-preview
+2026-11-02T13:33:44.4535390Z Review light: redesign-native-editors--sheet
+2026-11-02T13:33:45.7580706Z Review light: redesign-native-editors--doc
+2026-11-02T13:33:47.3574350Z Review light: redesign-native-editors--sheet-viewer
+2026-11-02T13:33:48.5774152Z Review light: redesign-native-editors--doc-viewer
+2026-11-02T13:33:49.8954680Z Review light: redesign-native-editors--sheet-formula
+2026-11-02T13:33:50.9136026Z Review light: redesign-native-editors--sheet-copy-available
+2026-11-02T13:33:52.0802404Z Review light: redesign-native-editors--sheet-copy-unavailable
+2026-11-02T13:33:54.2655627Z Checked 1041 story states; captured 0 catalog/error screenshots in /home/runner/work/spinel/spinel/test-results/design-review; 13 additional interaction passes.
+2026-11-02T13:33:54.3324846Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-02T13:33:54.3325304Z with:
+2026-11-02T13:33:54.3325539Z   name: storybook-check-desktop-light
+2026-11-02T13:33:54.3325855Z   path: test-results/design-review
+2026-11-02T13:33:54.3326145Z   if-no-files-found: error
+2026-11-02T13:33:54.3326392Z   retention-days: 14
+2026-11-02T13:33:54.3326632Z   compression-level: 6
+2026-11-02T13:33:54.3326863Z   overwrite: false
+2026-11-02T13:33:54.3327095Z   include-hidden-files: false
+2026-11-02T13:33:54.3327661Z   archive: true
+2026-11-02T13:33:54.3327876Z ##[endgroup]
+2026-11-02T13:33:54.4906318Z With the provided path, there will be 3 files uploaded
+2026-11-02T13:33:54.4911288Z Artifact name is valid!
+2026-11-02T13:33:54.4912151Z Root directory input is valid!
+2026-11-02T13:33:54.8486032Z Uploading artifact: storybook-check-desktop-light.zip
+2026-11-02T13:33:54.8517527Z Beginning upload of artifact content to blob storage
+2026-11-02T13:33:55.2191959Z Uploaded bytes 16350
+2026-11-02T13:33:55.2910768Z Finished uploading artifact content to blob storage!
+2026-11-02T13:33:55.2912116Z SHA256 digest of uploaded artifact is 8a8957393fef2cc3ba6c24a9fb30a53a7da1f35c00b785712b4b7b69333a9298
+2026-11-02T13:33:55.2913188Z Finalizing artifact upload
+2026-11-02T13:33:55.8830425Z Artifact storybook-check-desktop-light successfully finalized. Artifact ID 13145951749
+2026-11-02T13:33:55.8832344Z Artifact storybook-check-desktop-light has been successfully uploaded! Final size is 16350 bytes. Artifact ID is 13145951749
+2026-11-02T13:33:55.8834914Z Artifact download URL: https://github.com/mxbaylee/spinel/actions/runs/41452365057/artifacts/13145951749
+2026-11-02T13:33:55.9048707Z Post job cleanup.
+2026-11-02T13:33:56.0351597Z Post job cleanup.
+2026-11-02T13:33:56.1285550Z [command]/usr/bin/git version
+2026-11-02T13:33:56.1334650Z git version 2.56.0
+2026-11-02T13:33:56.1372935Z Temporarily overriding HOME='/home/runner/work/_temp/f61a591a-6fb1-4564-87a7-d150d7e00bcd' before making global git config changes
+2026-11-02T13:33:56.1374499Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-02T13:33:56.1378008Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-02T13:33:56.1414259Z Removing SSH command configuration
+2026-11-02T13:33:56.1422270Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-02T13:33:56.1481346Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-02T13:33:56.1768118Z Removing HTTP extra header
+2026-11-02T13:33:56.1776314Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-02T13:33:56.1800928Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-02T13:33:56.2094761Z Removing includeIf entries pointing to credentials config files
+2026-11-02T13:33:56.2102554Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-02T13:33:56.2241199Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-02T13:33:56.2655118Z Cleaning up orphan processes

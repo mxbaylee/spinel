@@ -1,0 +1,370 @@
+{
+  "passed": true,
+  "evidence": {
+    "planSha256": "06640f172d14e0ce9bf2ddbef1062a5dbfb54e4814b9831441c4a48acbcf5008",
+    "plan": {
+      "version": 1,
+      "event": "pull_request",
+      "action": "synchronize",
+      "base": "8d2f994c3ac53c1849bd2b68927059d9c20c99f0",
+      "head": "ba89b8309da85111f05a261dd5e17f658e96dd09",
+      "tested": "f3e7e99600d09aea8f66eca775894cf1cfc39b06",
+      "mode": "full",
+      "labels": [],
+      "paths": [
+        "THIRD-PARTY-NOTICES.md",
+        "docs/implementation/SPN-133.md",
+        "docs/implementation/SPN-135.md",
+        "docs/todo/SPN-098.md",
+        "docs/todo/SPN-133.md",
+        "docs/todo/SPN-135.md",
+        "docs/todo/backlog.json",
+        "docs/todo/readme.md",
+        "scripts/dependencies/patch-univer-docs.test.ts",
+        "scripts/dependencies/patch-univer-docs.ts"
+      ],
+      "suites": {
+        "backlog": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [
+            "THIRD-PARTY-NOTICES.md",
+            "docs/implementation/SPN-133.md",
+            "docs/implementation/SPN-135.md",
+            "docs/todo/SPN-098.md",
+            "docs/todo/SPN-133.md",
+            "docs/todo/SPN-135.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "scripts/dependencies/patch-univer-docs.test.ts",
+            "scripts/dependencies/patch-univer-docs.ts"
+          ],
+          "reason": "Workflow, harness, build, runtime or dependency input requires full coverage."
+        },
+        "pull-request": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [
+            "THIRD-PARTY-NOTICES.md",
+            "docs/implementation/SPN-133.md",
+            "docs/implementation/SPN-135.md",
+            "docs/todo/SPN-098.md",
+            "docs/todo/SPN-133.md",
+            "docs/todo/SPN-135.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "scripts/dependencies/patch-univer-docs.test.ts",
+            "scripts/dependencies/patch-univer-docs.ts"
+          ],
+          "reason": "Workflow, harness, build, runtime or dependency input requires full coverage."
+        },
+        "lint": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [
+            "THIRD-PARTY-NOTICES.md",
+            "docs/implementation/SPN-133.md",
+            "docs/implementation/SPN-135.md",
+            "docs/todo/SPN-098.md",
+            "docs/todo/SPN-133.md",
+            "docs/todo/SPN-135.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "scripts/dependencies/patch-univer-docs.test.ts",
+            "scripts/dependencies/patch-univer-docs.ts"
+          ],
+          "reason": "Workflow, harness, build, runtime or dependency input requires full coverage."
+        },
+        "typecheck": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "THIRD-PARTY-NOTICES.md",
+            "docs/implementation/SPN-133.md",
+            "docs/implementation/SPN-135.md",
+            "docs/todo/SPN-098.md",
+            "docs/todo/SPN-133.md",
+            "docs/todo/SPN-135.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "scripts/dependencies/patch-univer-docs.test.ts",
+            "scripts/dependencies/patch-univer-docs.ts"
+          ],
+          "reason": "Workflow, harness, build, runtime or dependency input requires full coverage."
+        },
+        "unit-tests": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "THIRD-PARTY-NOTICES.md",
+            "docs/implementation/SPN-133.md",
+            "docs/implementation/SPN-135.md",
+            "docs/todo/SPN-098.md",
+            "docs/todo/SPN-133.md",
+            "docs/todo/SPN-135.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "scripts/dependencies/patch-univer-docs.test.ts",
+            "scripts/dependencies/patch-univer-docs.ts"
+          ],
+          "reason": "Workflow, harness, build, runtime or dependency input requires full coverage."
+        },
+        "lib-test-run": {
+          "selected": true,
+          "dependencies": [
+            "lib/**",
+            "scripts/dependencies/**",
+            "package{,-lock}.json",
+            "vitest.config.ts",
+            "tsconfig.json",
+            ".nvmrc",
+            ".github/workflows/ci.yml"
+          ],
+          "inputs": [
+            "THIRD-PARTY-NOTICES.md",
+            "docs/implementation/SPN-133.md",
+            "docs/implementation/SPN-135.md",
+            "docs/todo/SPN-098.md",
+            "docs/todo/SPN-133.md",
+            "docs/todo/SPN-135.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "scripts/dependencies/patch-univer-docs.test.ts",
+            "scripts/dependencies/patch-univer-docs.ts"
+          ],
+          "reason": "Workflow, harness, build, runtime or dependency input requires full coverage."
+        },
+        "playwright-run": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "THIRD-PARTY-NOTICES.md",
+            "docs/implementation/SPN-133.md",
+            "docs/implementation/SPN-135.md",
+            "docs/todo/SPN-098.md",
+            "docs/todo/SPN-133.md",
+            "docs/todo/SPN-135.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "scripts/dependencies/patch-univer-docs.test.ts",
+            "scripts/dependencies/patch-univer-docs.ts"
+          ],
+          "reason": "Workflow, harness, build, runtime or dependency input requires full coverage."
+        },
+        "container-smoke": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "THIRD-PARTY-NOTICES.md",
+            "docs/implementation/SPN-133.md",
+            "docs/implementation/SPN-135.md",
+            "docs/todo/SPN-098.md",
+            "docs/todo/SPN-133.md",
+            "docs/todo/SPN-135.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "scripts/dependencies/patch-univer-docs.test.ts",
+            "scripts/dependencies/patch-univer-docs.ts"
+          ],
+          "reason": "Workflow, harness, build, runtime or dependency input requires full coverage."
+        },
+        "restore-timing": {
+          "selected": true,
+          "dependencies": [
+            "server/**",
+            "src/{server,shared}/**",
+            "lib/**",
+            "web/** and src/ui/** (shared application/authentication bundle)",
+            "e2e restore/shared helpers",
+            "runtime/build/dependency/workflow inputs"
+          ],
+          "inputs": [
+            "THIRD-PARTY-NOTICES.md",
+            "docs/implementation/SPN-133.md",
+            "docs/implementation/SPN-135.md",
+            "docs/todo/SPN-098.md",
+            "docs/todo/SPN-133.md",
+            "docs/todo/SPN-135.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "scripts/dependencies/patch-univer-docs.test.ts",
+            "scripts/dependencies/patch-univer-docs.ts"
+          ],
+          "reason": "Workflow, harness, build, runtime or dependency input requires full coverage."
+        },
+        "sync-transition": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "THIRD-PARTY-NOTICES.md",
+            "docs/implementation/SPN-133.md",
+            "docs/implementation/SPN-135.md",
+            "docs/todo/SPN-098.md",
+            "docs/todo/SPN-133.md",
+            "docs/todo/SPN-135.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "scripts/dependencies/patch-univer-docs.test.ts",
+            "scripts/dependencies/patch-univer-docs.ts"
+          ],
+          "reason": "Workflow, harness, build, runtime or dependency input requires full coverage."
+        },
+        "doc-responsiveness": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "THIRD-PARTY-NOTICES.md",
+            "docs/implementation/SPN-133.md",
+            "docs/implementation/SPN-135.md",
+            "docs/todo/SPN-098.md",
+            "docs/todo/SPN-133.md",
+            "docs/todo/SPN-135.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "scripts/dependencies/patch-univer-docs.test.ts",
+            "scripts/dependencies/patch-univer-docs.ts"
+          ],
+          "reason": "Workflow, harness, build, runtime or dependency input requires full coverage."
+        },
+        "doc-callback-lifetimes": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "THIRD-PARTY-NOTICES.md",
+            "docs/implementation/SPN-133.md",
+            "docs/implementation/SPN-135.md",
+            "docs/todo/SPN-098.md",
+            "docs/todo/SPN-133.md",
+            "docs/todo/SPN-135.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "scripts/dependencies/patch-univer-docs.test.ts",
+            "scripts/dependencies/patch-univer-docs.ts"
+          ],
+          "reason": "Workflow, harness, build, runtime or dependency input requires full coverage."
+        },
+        "responsiveness-baseline": {
+          "selected": true,
+          "dependencies": [
+            "web/**",
+            "server/**",
+            "lib/**",
+            "e2e/**",
+            "src/shared/**",
+            "src/server/{sync,history,collaboration}/**",
+            "scripts/{ci,dependencies,sync-transition}/**",
+            "build/runtime/dependency/workflow configuration"
+          ],
+          "inputs": [
+            "THIRD-PARTY-NOTICES.md",
+            "docs/implementation/SPN-133.md",
+            "docs/implementation/SPN-135.md",
+            "docs/todo/SPN-098.md",
+            "docs/todo/SPN-133.md",
+            "docs/todo/SPN-135.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "scripts/dependencies/patch-univer-docs.test.ts",
+            "scripts/dependencies/patch-univer-docs.ts"
+          ],
+          "reason": "Workflow, harness, build, runtime or dependency input requires full coverage."
+        },
+        "callback-baseline": {
+          "selected": true,
+          "dependencies": [
+            "web/**",
+            "server/**",
+            "lib/**",
+            "e2e/**",
+            "src/shared/**",
+            "src/server/{sync,history,collaboration}/**",
+            "scripts/{ci,dependencies,sync-transition}/**",
+            "build/runtime/dependency/workflow configuration"
+          ],
+          "inputs": [
+            "THIRD-PARTY-NOTICES.md",
+            "docs/implementation/SPN-133.md",
+            "docs/implementation/SPN-135.md",
+            "docs/todo/SPN-098.md",
+            "docs/todo/SPN-133.md",
+            "docs/todo/SPN-135.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "scripts/dependencies/patch-univer-docs.test.ts",
+            "scripts/dependencies/patch-univer-docs.ts"
+          ],
+          "reason": "Workflow, harness, build, runtime or dependency input requires full coverage."
+        },
+        "phone-compatibility": {
+          "selected": true,
+          "dependencies": [
+            "full plan backstop; ordinary phone owners remain in routine browser coverage"
+          ],
+          "inputs": [
+            "THIRD-PARTY-NOTICES.md",
+            "docs/implementation/SPN-133.md",
+            "docs/implementation/SPN-135.md",
+            "docs/todo/SPN-098.md",
+            "docs/todo/SPN-133.md",
+            "docs/todo/SPN-135.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "scripts/dependencies/patch-univer-docs.test.ts",
+            "scripts/dependencies/patch-univer-docs.ts"
+          ],
+          "reason": "Workflow, harness, build, runtime or dependency input requires full coverage."
+        }
+      }
+    },
+    "gateResults": {},
+    "results": [
+      {
+        "suite": "lib-test-run",
+        "selected": true,
+        "dependencies": [
+          "lib/**",
+          "scripts/dependencies/**",
+          "package{,-lock}.json",
+          "vitest.config.ts",
+          "tsconfig.json",
+          ".nvmrc",
+          ".github/workflows/ci.yml"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/implementation/SPN-133.md",
+          "docs/implementation/SPN-135.md",
+          "docs/todo/SPN-098.md",
+          "docs/todo/SPN-133.md",
+          "docs/todo/SPN-135.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "scripts/dependencies/patch-univer-docs.test.ts",
+          "scripts/dependencies/patch-univer-docs.ts"
+        ],
+        "reason": "Workflow, harness, build, runtime or dependency input requires full coverage.",
+        "result": "success"
+      }
+    ]
+  }
+}

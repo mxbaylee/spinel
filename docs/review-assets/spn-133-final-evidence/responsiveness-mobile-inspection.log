@@ -1,0 +1,82 @@
+{
+  "preset": "mobile",
+  "rows": [
+    {
+      "sample": "plain-1",
+      "budgetEnforced": true,
+      "flushMaxMs": 23.599999999976717,
+      "capacityP95": 15.20000000006985,
+      "idle": {
+        "count": 1,
+        "p50": 1.599999999976717,
+        "p95": 1.599999999976717,
+        "max": 1.599999999976717,
+        "sum": 1.599999999976717
+      },
+      "drainMs": 313.5999999999767,
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "undoRedo": "passed"
+    },
+    {
+      "sample": "plain-2",
+      "budgetEnforced": true,
+      "flushMaxMs": 38,
+      "capacityP95": 16,
+      "idle": {
+        "count": 1,
+        "p50": 0.8999999999068677,
+        "p95": 0.8999999999068677,
+        "max": 0.8999999999068677,
+        "sum": 0.8999999999068677
+      },
+      "drainMs": 348.79999999981374,
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "undoRedo": "passed"
+    },
+    {
+      "sample": "plain-3",
+      "budgetEnforced": true,
+      "flushMaxMs": 22.600000000093132,
+      "capacityP95": 15.400000000139698,
+      "idle": {
+        "count": 1,
+        "p50": 2.699999999953434,
+        "p95": 2.699999999953434,
+        "max": 2.699999999953434,
+        "sum": 2.699999999953434
+      },
+      "drainMs": 395.60000000009313,
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "undoRedo": "passed"
+    },
+    {
+      "sample": "profile",
+      "budgetEnforced": false,
+      "flushMaxMs": 39.89999999990687,
+      "capacityP95": 20.899999999906868,
+      "idle": {
+        "count": 1,
+        "p50": 1.6999999999534339,
+        "p95": 1.6999999999534339,
+        "max": 1.6999999999534339,
+        "sum": 1.6999999999534339
+      },
+      "drainMs": 413,
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "undoRedo": "passed"
+    }
+  ]
+}
+WATCHDOG: exit=0, signal=null, elapsed=78ms, peak=0.0MiB

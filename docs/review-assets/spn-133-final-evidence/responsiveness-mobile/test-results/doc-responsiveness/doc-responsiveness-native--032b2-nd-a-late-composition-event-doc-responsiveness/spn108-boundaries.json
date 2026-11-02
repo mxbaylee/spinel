@@ -1,0 +1,94 @@
+{
+  "preset": "mobile",
+  "physicalIme": false,
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "HeadlessChrome/156.0.8078.4",
+    "revision": "@f842f52ef39fd97b449eb27cff414bf05a98ddce",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+    "jsVersion": "15.6.75"
+  },
+  "pendingBeforeRevocation": {
+    "unitId": "a0ae7c46-7ad3-4496-ab18-ed0ad7b18ca3",
+    "mobile": true,
+    "observedAt": 2063.4000000001397,
+    "pending": {
+      "history": 31,
+      "collaboration": 31
+    },
+    "highWater": {
+      "history": 32,
+      "collaboration": 32
+    },
+    "flushes": [
+      {
+        "reason": "capacity",
+        "startedAt": 1807.6000000000931,
+        "durationMs": 5,
+        "history": 32,
+        "collaboration": 32
+      }
+    ],
+    "history": {
+      "undos": 1,
+      "redos": 0
+    },
+    "drainWitness": null,
+    "selection": {
+      "start": 65,
+      "end": 65,
+      "segmentId": ""
+    }
+  },
+  "correctness": "pending and late guest edits refused; persisted snapshot/revision unchanged; old capability denied",
+  "heldWrites": 1,
+  "forwardedAfterRevocation": [
+    false
+  ],
+  "compositionEvents": {
+    "events": [
+      {
+        "order": 0,
+        "phase": "guest-provisional",
+        "type": "compositionstart",
+        "data": "",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 2032.9000000001397
+      },
+      {
+        "order": 1,
+        "phase": "guest-provisional",
+        "type": "compositionupdate",
+        "data": "保留",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 2033.6999999999534
+      },
+      {
+        "order": 2,
+        "phase": "guest-provisional",
+        "type": "beforeinput",
+        "data": "保留",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 2039.5
+      },
+      {
+        "order": 3,
+        "phase": "guest-provisional",
+        "type": "input",
+        "data": "保留",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 2040
+      }
+    ],
+    "dropped": 0
+  },
+  "errors": []
+}

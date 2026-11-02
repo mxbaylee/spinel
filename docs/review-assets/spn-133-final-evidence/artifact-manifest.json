@@ -1,0 +1,441 @@
+{
+  "artifacts": [
+    {
+      "id": 13146857903,
+      "name": "doc-responsiveness-mobile",
+      "size_in_bytes": 2008527,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13146857903",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13146857903/zip",
+      "expired": false,
+      "created_at": "2026-11-02T13:50:04Z",
+      "expires_at": "2026-11-09T13:50:03Z",
+      "updated_at": "2026-11-02T13:50:04Z",
+      "digest": "sha256:937999f900f2ce5b3217592a30039a6faa442fd6a4eb13f9cced48fb4682b438",
+      "workflow_run": {
+        "id": 41452365054,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-133-native-flush-budgets",
+        "head_sha": "ba89b8309da85111f05a261dd5e17f658e96dd09"
+      }
+    },
+    {
+      "id": 13146528673,
+      "name": "ci-results-browser",
+      "size_in_bytes": 1588,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13146528673",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13146528673/zip",
+      "expired": false,
+      "created_at": "2026-11-02T13:50:22Z",
+      "expires_at": "2026-12-02T13:50:21Z",
+      "updated_at": "2026-11-02T13:50:22Z",
+      "digest": "sha256:4dc0179a2002a2a209d9d9522f695fa344edce6d93e06a59791af0d6ebd9fd7e",
+      "workflow_run": {
+        "id": 41452365054,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-133-native-flush-budgets",
+        "head_sha": "ba89b8309da85111f05a261dd5e17f658e96dd09"
+      }
+    },
+    {
+      "id": 13146446244,
+      "name": "ci-results-lib",
+      "size_in_bytes": 1414,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13146446244",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13146446244/zip",
+      "expired": false,
+      "created_at": "2026-11-02T13:33:30Z",
+      "expires_at": "2026-12-02T13:33:29Z",
+      "updated_at": "2026-11-02T13:33:30Z",
+      "digest": "sha256:3366ad78d217d34c8802c4cbec9f58e191749607a45e1c56c45715cfc963f36c",
+      "workflow_run": {
+        "id": 41452365054,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-133-native-flush-budgets",
+        "head_sha": "ba89b8309da85111f05a261dd5e17f658e96dd09"
+      }
+    },
+    {
+      "id": 13146401006,
+      "name": "doc-callback-lifetimes-desktop",
+      "size_in_bytes": 85031628,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13146401006",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13146401006/zip",
+      "expired": false,
+      "created_at": "2026-11-02T13:31:09Z",
+      "expires_at": "2026-11-09T13:31:03Z",
+      "updated_at": "2026-11-02T13:31:09Z",
+      "digest": "sha256:7edb9e68deb04a44767fccdd4991feb2c05ac80b8919c585fe1c0e7f5b2f2383",
+      "workflow_run": {
+        "id": 41452365054,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-133-native-flush-budgets",
+        "head_sha": "ba89b8309da85111f05a261dd5e17f658e96dd09"
+      }
+    },
+    {
+      "id": 13146318525,
+      "name": "doc-responsiveness-desktop",
+      "size_in_bytes": 1493188,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13146318525",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13146318525/zip",
+      "expired": false,
+      "created_at": "2026-11-02T13:41:29Z",
+      "expires_at": "2026-11-09T13:41:28Z",
+      "updated_at": "2026-11-02T13:41:29Z",
+      "digest": "sha256:4fc09e1ee8ef9dd07e5b41c8be2e629fffc00ffa7e2b73690b64a71263dd398f",
+      "workflow_run": {
+        "id": 41452365054,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-133-native-flush-budgets",
+        "head_sha": "ba89b8309da85111f05a261dd5e17f658e96dd09"
+      }
+    },
+    {
+      "id": 13146281962,
+      "name": "theme-screenshots-production-1",
+      "size_in_bytes": 34931472,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13146281962",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13146281962/zip",
+      "expired": false,
+      "created_at": "2026-11-02T13:36:34Z",
+      "expires_at": "2026-11-09T13:36:32Z",
+      "updated_at": "2026-11-02T13:36:34Z",
+      "digest": "sha256:a443579a9abee864c49a03788297f9021dc6ac5237d9fd27be970a12db782d6e",
+      "workflow_run": {
+        "id": 41452365054,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-133-native-flush-budgets",
+        "head_sha": "ba89b8309da85111f05a261dd5e17f658e96dd09"
+      }
+    },
+    {
+      "id": 13146280494,
+      "name": "theme-screenshots-sync-soak-doc",
+      "size_in_bytes": 337787,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13146280494",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13146280494/zip",
+      "expired": false,
+      "created_at": "2026-11-02T13:26:20Z",
+      "expires_at": "2026-11-09T13:26:19Z",
+      "updated_at": "2026-11-02T13:26:20Z",
+      "digest": "sha256:aee1cae689a286e6539f1b860110eb5a06b843c33fc711df8138ce1e80084a2f",
+      "workflow_run": {
+        "id": 41452365054,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-133-native-flush-budgets",
+        "head_sha": "ba89b8309da85111f05a261dd5e17f658e96dd09"
+      }
+    },
+    {
+      "id": 13146202857,
+      "name": "theme-screenshots-development-1",
+      "size_in_bytes": 33238570,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13146202857",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13146202857/zip",
+      "expired": false,
+      "created_at": "2026-11-02T13:35:41Z",
+      "expires_at": "2026-11-09T13:35:39Z",
+      "updated_at": "2026-11-02T13:35:41Z",
+      "digest": "sha256:54e66074ecdecf0b29078fa2bae9627dea95b97684437058c8a2557324caa43b",
+      "workflow_run": {
+        "id": 41452365054,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-133-native-flush-budgets",
+        "head_sha": "ba89b8309da85111f05a261dd5e17f658e96dd09"
+      }
+    },
+    {
+      "id": 13146161975,
+      "name": "sheet-pdf-evidence",
+      "size_in_bytes": 736826,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13146161975",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13146161975/zip",
+      "expired": false,
+      "created_at": "2026-11-02T13:33:10Z",
+      "expires_at": "2026-11-09T13:33:09Z",
+      "updated_at": "2026-11-02T13:33:10Z",
+      "digest": "sha256:579389ff78ecad54b262386a5590a99bee19915ea4e1e08eda1aa8909b7b4b25",
+      "workflow_run": {
+        "id": 41452365054,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-133-native-flush-budgets",
+        "head_sha": "ba89b8309da85111f05a261dd5e17f658e96dd09"
+      }
+    },
+    {
+      "id": 13146117112,
+      "name": "doc-pdf-evidence",
+      "size_in_bytes": 8594204,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13146117112",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13146117112/zip",
+      "expired": false,
+      "created_at": "2026-11-02T13:33:12Z",
+      "expires_at": "2026-11-09T13:33:11Z",
+      "updated_at": "2026-11-02T13:33:12Z",
+      "digest": "sha256:e67a229c90bb0de961a32f19a6199f4867220c44f9e730f7e88d59c9c22e03a4",
+      "workflow_run": {
+        "id": 41452365054,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-133-native-flush-budgets",
+        "head_sha": "ba89b8309da85111f05a261dd5e17f658e96dd09"
+      }
+    },
+    {
+      "id": 13146097661,
+      "name": "doc-callback-lifetimes-mobile",
+      "size_in_bytes": 80300901,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13146097661",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13146097661/zip",
+      "expired": false,
+      "created_at": "2026-11-02T13:40:06Z",
+      "expires_at": "2026-11-09T13:40:01Z",
+      "updated_at": "2026-11-02T13:40:06Z",
+      "digest": "sha256:81f7b5c7d3ed1be332dcc95c0c6306d4a791ad830d4f078d1220a2ac1624fb45",
+      "workflow_run": {
+        "id": 41452365054,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-133-native-flush-budgets",
+        "head_sha": "ba89b8309da85111f05a261dd5e17f658e96dd09"
+      }
+    },
+    {
+      "id": 13146076130,
+      "name": "theme-screenshots-sync-development",
+      "size_in_bytes": 1995865,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13146076130",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13146076130/zip",
+      "expired": false,
+      "created_at": "2026-11-02T13:28:28Z",
+      "expires_at": "2026-11-09T13:28:27Z",
+      "updated_at": "2026-11-02T13:28:28Z",
+      "digest": "sha256:4b006e00115ef6117c113ae7b4309f718cee704e31169d4064ce7947f7c7c9ef",
+      "workflow_run": {
+        "id": 41452365054,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-133-native-flush-budgets",
+        "head_sha": "ba89b8309da85111f05a261dd5e17f658e96dd09"
+      }
+    },
+    {
+      "id": 13146011751,
+      "name": "theme-screenshots-sync-soak-sheet",
+      "size_in_bytes": 328292,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13146011751",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13146011751/zip",
+      "expired": false,
+      "created_at": "2026-11-02T13:31:06Z",
+      "expires_at": "2026-11-09T13:31:05Z",
+      "updated_at": "2026-11-02T13:31:06Z",
+      "digest": "sha256:be11b9ace5b050b9015b0735cfae737820e7f6b0232cc0f86febaf7f74c48464",
+      "workflow_run": {
+        "id": 41452365054,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-133-native-flush-budgets",
+        "head_sha": "ba89b8309da85111f05a261dd5e17f658e96dd09"
+      }
+    },
+    {
+      "id": 13145958814,
+      "name": "theme-screenshots-sync-production",
+      "size_in_bytes": 4707377,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13145958814",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13145958814/zip",
+      "expired": false,
+      "created_at": "2026-11-02T13:45:04Z",
+      "expires_at": "2026-11-09T13:45:03Z",
+      "updated_at": "2026-11-02T13:45:04Z",
+      "digest": "sha256:74c83e7ab0805bc3bff4f1a40cbcd303baaa45eb20ea52cc1750fbeced39f85e",
+      "workflow_run": {
+        "id": 41452365054,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-133-native-flush-budgets",
+        "head_sha": "ba89b8309da85111f05a261dd5e17f658e96dd09"
+      }
+    },
+    {
+      "id": 13145877345,
+      "name": "ci-results-unit",
+      "size_in_bytes": 1397,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13145877345",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13145877345/zip",
+      "expired": false,
+      "created_at": "2026-11-02T13:35:26Z",
+      "expires_at": "2026-12-02T13:35:26Z",
+      "updated_at": "2026-11-02T13:35:26Z",
+      "digest": "sha256:a70e762699839fac8e756b3b649092e377858bd00cff9e253565bac3c4031efd",
+      "workflow_run": {
+        "id": 41452365054,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-133-native-flush-budgets",
+        "head_sha": "ba89b8309da85111f05a261dd5e17f658e96dd09"
+      }
+    },
+    {
+      "id": 13145743389,
+      "name": "theme-screenshots-development-2",
+      "size_in_bytes": 16545709,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13145743389",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13145743389/zip",
+      "expired": false,
+      "created_at": "2026-11-02T13:41:14Z",
+      "expires_at": "2026-11-09T13:41:13Z",
+      "updated_at": "2026-11-02T13:41:14Z",
+      "digest": "sha256:3fe5c76405c0fe582486641d328699dcee9121b64a9602085da145b50466b6e7",
+      "workflow_run": {
+        "id": 41452365054,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-133-native-flush-budgets",
+        "head_sha": "ba89b8309da85111f05a261dd5e17f658e96dd09"
+      }
+    },
+    {
+      "id": 13145562011,
+      "name": "theme-screenshots-mobile-https",
+      "size_in_bytes": 1372387,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13145562011",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13145562011/zip",
+      "expired": false,
+      "created_at": "2026-11-02T13:30:59Z",
+      "expires_at": "2026-11-09T13:30:58Z",
+      "updated_at": "2026-11-02T13:30:59Z",
+      "digest": "sha256:cd5f403a729fcbacc5c5ae18e4733f21ddb8e466c3aba7d82d9993050d690fe5",
+      "workflow_run": {
+        "id": 41452365054,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-133-native-flush-budgets",
+        "head_sha": "ba89b8309da85111f05a261dd5e17f658e96dd09"
+      }
+    },
+    {
+      "id": 13145541393,
+      "name": "theme-screenshots-offline-upgrade",
+      "size_in_bytes": 239515,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13145541393",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13145541393/zip",
+      "expired": false,
+      "created_at": "2026-11-02T13:26:41Z",
+      "expires_at": "2026-11-09T13:26:39Z",
+      "updated_at": "2026-11-02T13:26:41Z",
+      "digest": "sha256:28e9465d8b24d4f1b359bb872ad98323c28850080fc1cb4f2065a541e29651af",
+      "workflow_run": {
+        "id": 41452365054,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-133-native-flush-budgets",
+        "head_sha": "ba89b8309da85111f05a261dd5e17f658e96dd09"
+      }
+    },
+    {
+      "id": 13145368629,
+      "name": "theme-screenshots-production-2",
+      "size_in_bytes": 18519928,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13145368629",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13145368629/zip",
+      "expired": false,
+      "created_at": "2026-11-02T13:39:01Z",
+      "expires_at": "2026-11-09T13:38:59Z",
+      "updated_at": "2026-11-02T13:39:01Z",
+      "digest": "sha256:8de9963fce7e5d7a3889e32afdfadb64c11c3932ab1c14d5bfde7b3cdf297082",
+      "workflow_run": {
+        "id": 41452365054,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-133-native-flush-budgets",
+        "head_sha": "ba89b8309da85111f05a261dd5e17f658e96dd09"
+      }
+    },
+    {
+      "id": 13145356128,
+      "name": "ci-plan",
+      "size_in_bytes": 1081,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13145356128",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13145356128/zip",
+      "expired": false,
+      "created_at": "2026-11-02T13:24:39Z",
+      "expires_at": "2026-12-02T13:24:38Z",
+      "updated_at": "2026-11-02T13:24:39Z",
+      "digest": "sha256:c49e5437e4d3e08e78bb7c82630456e8948ccdb1b64edefb8b19f5a8402f18a9",
+      "workflow_run": {
+        "id": 41452365054,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-133-native-flush-budgets",
+        "head_sha": "ba89b8309da85111f05a261dd5e17f658e96dd09"
+      }
+    },
+    {
+      "id": 13145019278,
+      "name": "sized-restore-acceptance",
+      "size_in_bytes": 68148,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13145019278",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13145019278/zip",
+      "expired": false,
+      "created_at": "2026-11-02T13:30:58Z",
+      "expires_at": "2026-11-16T13:30:57Z",
+      "updated_at": "2026-11-02T13:30:58Z",
+      "digest": "sha256:f21bed26022b6fc22da9158894152b9d625d5cf4384b8db797dca23386798efa",
+      "workflow_run": {
+        "id": 41452365054,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-133-native-flush-budgets",
+        "head_sha": "ba89b8309da85111f05a261dd5e17f658e96dd09"
+      }
+    },
+    {
+      "id": 13144704069,
+      "name": "theme-screenshots-supervised-restore",
+      "size_in_bytes": 233077,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13144704069",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13144704069/zip",
+      "expired": false,
+      "created_at": "2026-11-02T13:32:05Z",
+      "expires_at": "2026-11-09T13:32:04Z",
+      "updated_at": "2026-11-02T13:32:05Z",
+      "digest": "sha256:ea9ad8cee40af6f1876902ebe351c67238b144ee9d11aff42056fbc3d88a5eec",
+      "workflow_run": {
+        "id": 41452365054,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-133-native-flush-budgets",
+        "head_sha": "ba89b8309da85111f05a261dd5e17f658e96dd09"
+      }
+    },
+    {
+      "id": 13144703840,
+      "name": "pdf-collaboration-overlap",
+      "size_in_bytes": 164525,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13144703840",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13144703840/zip",
+      "expired": false,
+      "created_at": "2026-11-02T13:30:31Z",
+      "expires_at": "2026-11-09T13:30:31Z",
+      "updated_at": "2026-11-02T13:30:31Z",
+      "digest": "sha256:6d75a2debab9833fbcc1228cfca17e61baedb5cbd3078c1cf04edb739a9d5530",
+      "workflow_run": {
+        "id": 41452365054,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-133-native-flush-budgets",
+        "head_sha": "ba89b8309da85111f05a261dd5e17f658e96dd09"
+      }
+    }
+  ]
+}

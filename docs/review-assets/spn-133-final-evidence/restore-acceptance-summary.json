@@ -1,0 +1,59 @@
+{
+  "sourceBase": "f3e7e99600d09aea8f66eca775894cf1cfc39b06",
+  "productionSource": "f3e7e99600d09aea8f66eca775894cf1cfc39b06",
+  "elapsedMs": 282832,
+  "passed": true,
+  "pageErrors": 0,
+  "richWorkspace": {
+    "sheetContent": true,
+    "docContent": true,
+    "imageSha256": "49e0f79025c2f68f9e0b1a2d6caf30ea62643c2d4be76a3f43f25125825fef91",
+    "historyCheckpoint": true,
+    "retainedViewer": true,
+    "revokedGrantDenied": true,
+    "viewerWriteDenied": true,
+    "revokedGuestDenied": true,
+    "acknowledgedOldCreationRetryDenied": true,
+    "nativeGenerationRenewed": true,
+    "restoredContentUnchanged": true,
+    "documentSnapshotSha256": "f23837cfcf40568e93941a7c8761becb4f2e56ef931b9a9892afcc84a0245275",
+    "sheetSnapshotSha256": "538d95dc2a1e9140fb7275dc94fda608399cc0767d86a26c13d37ee7cf5b5fa4"
+  },
+  "nativeRendering": {
+    "ownerDoc": true,
+    "ownerSheet": true,
+    "readerDoc": true,
+    "visibleDocumentInkPixels": 464,
+    "archivedImageRendered": true,
+    "documentNativeCopy": true,
+    "sheetA1NativeCopy": "Archived budget value",
+    "originalOwnerSessionExcluded": true
+  },
+  "containerCleanup": {
+    "spinel-restore-browser-09302556-088f-43d8-82ff-e8f9f2024d9b-bootstrap": "confirmed-absent",
+    "spinel-restore-browser-09302556-088f-43d8-82ff-e8f9f2024d9b-init": "confirmed-absent",
+    "spinel-restore-browser-09302556-088f-43d8-82ff-e8f9f2024d9b-cold": "confirmed-absent",
+    "spinel-restore-browser-09302556-088f-43d8-82ff-e8f9f2024d9b": "confirmed-absent"
+  },
+  "bootstrapClosure": {
+    "running": false,
+    "pid": 0,
+    "exitCode": 0,
+    "oomKilled": false
+  },
+  "supervisorClosure": {
+    "running": false,
+    "pid": 0,
+    "exitCode": 0,
+    "oomKilled": false
+  },
+  "coldClosure": {
+    "running": false,
+    "pid": 0,
+    "exitCode": 0,
+    "oomKilled": false
+  },
+  "privateFixtureRetained": false,
+  "privateVolumeDisposition": "removed",
+  "sha256": "a58a906730af9e3584e9394d038fa028ca56bdce4aebe750b716197e127da6a1"
+}

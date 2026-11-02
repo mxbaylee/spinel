@@ -1,0 +1,76 @@
+{
+  "preset": "desktop",
+  "rows": [
+    {
+      "sample": "plain-1",
+      "budgetEnforced": true,
+      "flushMaxMs": 12.900000000023283,
+      "capacityP95": 8.399999999906868,
+      "idle": null,
+      "drainMs": 301.5999999999767,
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "undoRedo": "passed"
+    },
+    {
+      "sample": "plain-2",
+      "budgetEnforced": true,
+      "flushMaxMs": 13.800000000046566,
+      "capacityP95": 8,
+      "idle": {
+        "count": 1,
+        "p50": 0.8000000000465661,
+        "p95": 0.8000000000465661,
+        "max": 0.8000000000465661,
+        "sum": 0.8000000000465661
+      },
+      "drainMs": 332.29999999993015,
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "undoRedo": "passed"
+    },
+    {
+      "sample": "plain-3",
+      "budgetEnforced": true,
+      "flushMaxMs": 24.199999999953434,
+      "capacityP95": 8.20000000006985,
+      "idle": {
+        "count": 1,
+        "p50": 0.7000000000698492,
+        "p95": 0.7000000000698492,
+        "max": 0.7000000000698492,
+        "sum": 0.7000000000698492
+      },
+      "drainMs": 308.29999999993015,
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "undoRedo": "passed"
+    },
+    {
+      "sample": "profile",
+      "budgetEnforced": false,
+      "flushMaxMs": 11.599999999976717,
+      "capacityP95": 7.900000000023283,
+      "idle": {
+        "count": 1,
+        "p50": 0.7000000000698492,
+        "p95": 0.7000000000698492,
+        "max": 0.7000000000698492,
+        "sum": 0.7000000000698492
+      },
+      "drainMs": 302.20000000006985,
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "undoRedo": "passed"
+    }
+  ]
+}
+WATCHDOG: exit=0, signal=null, elapsed=66ms, peak=0.0MiB

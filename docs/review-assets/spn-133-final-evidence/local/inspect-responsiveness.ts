@@ -1,0 +1,50 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { createHash } from 'node:crypto';
+const root = '/tmp/spn133-review/current-ci-ba89b83';
+const expected = 'f3e7e99600d09aea8f66eca775894cf1cfc39b06';
+for (const preset of process.argv.slice(2)) {
+  const directory = path.join(root, `responsiveness-${preset}`);
+  const comparison = JSON.parse(fs.readFileSync(path.join(directory, `test-results/spn108-comparison-${preset}.json`), 'utf8'));
+  assert.equal(comparison.passed, true);
+  assert.equal(comparison.timingValid, true);
+  assert.equal(comparison.candidateIntegrity, true);
+  assert.deepEqual(comparison.failures, []);
+  assert.deepEqual(comparison.unavailable, []);
+  const rows: unknown[] = [];
+  for (const file of fs.readdirSync(path.join(directory, 'test-results'), { recursive: true }).map(String).filter((file) => file.endsWith('spn108-metrics.json'))) {
+    const bytes = fs.readFileSync(path.join(directory, 'test-results', file));
+    const data = JSON.parse(bytes.toString());
+    assert.equal(data.source, expected);
+    assert.equal(data.attempt, 0);
+    assert.equal(data.completed, true);
+    assert.equal(data.preUndoIntegrity.passed, true);
+    assert.equal(data.undoRedo.outcome, 'passed');
+    assert.deepEqual(data.errors, []);
+    assert.deepEqual(data.finalReloads, []);
+    if (data.sample !== 'profile') {
+      assert.equal(data.budgetEnforced, true);
+      for (const [key, value] of Object.entries(data.budgetResults)) {
+        // The existing protocol records an unobserved idle flush as inapplicable.
+        // Keep that distinct from a passing observed measurement.
+        if (key === 'idleFlushP95' && value === null)
+          assert.equal(data.summary.idleFlushPairMs, null);
+        else assert.equal(value, true, `${preset}/${data.sample}/${key}`);
+      }
+    }
+    rows.push({ sample: data.sample, source: data.source, attempt: data.attempt, completed: data.completed,
+      budgetEnforced: data.budgetEnforced, budgets: data.budgets, budgetResults: data.budgetResults,
+      summary: data.summary, highWater: data.native.highWater, correctness: data.correctness,
+      undoRedoOutcome: data.undoRedo.outcome, errors: data.errors, reloads: data.finalReloads,
+      sha256: createHash('sha256').update(bytes).digest('hex'),
+    });
+  }
+  assert.equal(rows.length, 4);
+  const plain = rows.filter((r: any) => r.sample !== 'profile') as any[];
+  assert.equal(plain.length, 3);
+  assert.ok(plain.every(r => r.summary.capacityFlushPairMs !== null), 'Every plain sample must observe capacity flushes.');
+  assert.ok(plain.some(r => r.summary.idleFlushPairMs !== null), 'At least one unprofiled sample must actually observe idle flushes; otherwise acceptance remains incomplete.');
+  fs.writeFileSync(path.join(root, `responsiveness-${preset}-acceptance-summary.json`), JSON.stringify({preset, comparisonPassed:true, rows}, null, 2)+'\n');
+  console.log(JSON.stringify({preset, rows: rows.map((r: any) => ({sample:r.sample, budgetEnforced:r.budgetEnforced, flushMaxMs:r.summary.pairedFlushMaximumMs, capacityP95:r.summary.capacityFlushPairMs?.p95, idle:r.summary.idleFlushPairMs, drainMs:r.summary.firstVerifiedBrowserLocalDrainMs, highWater:r.highWater, undoRedo:r.undoRedoOutcome}))},null,2));
+}

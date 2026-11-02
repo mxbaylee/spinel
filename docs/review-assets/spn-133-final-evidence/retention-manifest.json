@@ -1,0 +1,428 @@
+[
+  {
+    "path": "artifact-manifest.json",
+    "originalSha256": "739bb355f3e7060ce5af5d79bf8f608d8441097e4a6bb354b8877c7c4f128a17",
+    "storedSha256": "739bb355f3e7060ce5af5d79bf8f608d8441097e4a6bb354b8877c7c4f128a17",
+    "compressed": false
+  },
+  {
+    "path": "callback-desktop-acceptance-summary.json",
+    "originalSha256": "3aa375caecaedeffcbc552b712ec90dbecb7486c4cf2438ca69d97f4b4b8785a",
+    "storedSha256": "3aa375caecaedeffcbc552b712ec90dbecb7486c4cf2438ca69d97f4b4b8785a",
+    "compressed": false
+  },
+  {
+    "path": "callback-desktop-inspection.log",
+    "originalSha256": "2485d1051ad6dec1080fedf32fbf93747469b34664c9fc1c43288f5874fdf78b",
+    "storedSha256": "2485d1051ad6dec1080fedf32fbf93747469b34664c9fc1c43288f5874fdf78b",
+    "compressed": false
+  },
+  {
+    "path": "callback-mobile-acceptance-summary.json",
+    "originalSha256": "271522f9946218b9d1838f692df0b0b3de7617803241c1c52bece354e98f72c7",
+    "storedSha256": "271522f9946218b9d1838f692df0b0b3de7617803241c1c52bece354e98f72c7",
+    "compressed": false
+  },
+  {
+    "path": "callback-mobile-inspection.log",
+    "originalSha256": "6cc453639c517ae08ad951f2eb8ccafe7f92f7eb96f5bfc0ff4ad3613df3a00d",
+    "storedSha256": "6cc453639c517ae08ad951f2eb8ccafe7f92f7eb96f5bfc0ff4ad3613df3a00d",
+    "compressed": false
+  },
+  {
+    "path": "ci-jobs.json",
+    "originalSha256": "639c4550486816508721d2cf0ac149ca674e07fc5f5d1bfb3349a3f798243466",
+    "storedSha256": "639c4550486816508721d2cf0ac149ca674e07fc5f5d1bfb3349a3f798243466",
+    "compressed": false
+  },
+  {
+    "path": "ci-plan.json",
+    "originalSha256": "d97e2ac25fbf590f7851809a86b3ace53ab52038407c8410086dccd8734b189b",
+    "storedSha256": "d97e2ac25fbf590f7851809a86b3ace53ab52038407c8410086dccd8734b189b",
+    "compressed": false
+  },
+  {
+    "path": "ci-plan.zip",
+    "originalSha256": "c49e5437e4d3e08e78bb7c82630456e8948ccdb1b64edefb8b19f5a8402f18a9",
+    "storedSha256": "c49e5437e4d3e08e78bb7c82630456e8948ccdb1b64edefb8b19f5a8402f18a9",
+    "compressed": false
+  },
+  {
+    "path": "ci-run.json",
+    "originalSha256": "2922e166e810ac5a8cbe6a000e3d4911d640206010ba36b61fde78991698b134",
+    "storedSha256": "2922e166e810ac5a8cbe6a000e3d4911d640206010ba36b61fde78991698b134",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-desktop-acceptance-summary.json",
+    "originalSha256": "04c4fecbf0a897014719da6223b99c7f2d3bf9c5d635fc2ae76d5ae2fbe649fa",
+    "storedSha256": "04c4fecbf0a897014719da6223b99c7f2d3bf9c5d635fc2ae76d5ae2fbe649fa",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-desktop-inspection.log",
+    "originalSha256": "ac128a2623151f2e905eb9b53cc996a4f222377456c9ce7fe312e6c93a6d1719",
+    "storedSha256": "ac128a2623151f2e905eb9b53cc996a4f222377456c9ce7fe312e6c93a6d1719",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-desktop.zip",
+    "originalSha256": "4fc09e1ee8ef9dd07e5b41c8be2e629fffc00ffa7e2b73690b64a71263dd398f",
+    "storedSha256": "4fc09e1ee8ef9dd07e5b41c8be2e629fffc00ffa7e2b73690b64a71263dd398f",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-mobile-acceptance-summary.json",
+    "originalSha256": "19ea3d9c07420c01cdb8063766308f7918649ef1d489c1693059369c2cbbf683",
+    "storedSha256": "19ea3d9c07420c01cdb8063766308f7918649ef1d489c1693059369c2cbbf683",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-mobile-inspection.log",
+    "originalSha256": "3f14f6eb2bea3a4b76f9c8ee551c381e125ae17b0b64aa7f54937c67c1054da7",
+    "storedSha256": "3f14f6eb2bea3a4b76f9c8ee551c381e125ae17b0b64aa7f54937c67c1054da7",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-mobile.zip",
+    "originalSha256": "937999f900f2ce5b3217592a30039a6faa442fd6a4eb13f9cced48fb4682b438",
+    "storedSha256": "937999f900f2ce5b3217592a30039a6faa442fd6a4eb13f9cced48fb4682b438",
+    "compressed": false
+  },
+  {
+    "path": "restore-acceptance-summary.json",
+    "originalSha256": "e14bbee7d8512edda237675ef324b5b72f9e55d065870a66084edceda88f52a8",
+    "storedSha256": "e14bbee7d8512edda237675ef324b5b72f9e55d065870a66084edceda88f52a8",
+    "compressed": false
+  },
+  {
+    "path": "restore.zip",
+    "originalSha256": "f21bed26022b6fc22da9158894152b9d625d5cf4384b8db797dca23386798efa",
+    "storedSha256": "f21bed26022b6fc22da9158894152b9d625d5cf4384b8db797dca23386798efa",
+    "compressed": false
+  },
+  {
+    "path": "storybook-125301751956.log",
+    "originalSha256": "5581dcc104e3899bb9496306bee3f6b67005bd62e98b5197579d0fc5925a6ed8",
+    "storedSha256": "5581dcc104e3899bb9496306bee3f6b67005bd62e98b5197579d0fc5925a6ed8",
+    "compressed": false
+  },
+  {
+    "path": "storybook-125301751965.log",
+    "originalSha256": "c961934940fbc53f2f555c229eb6e705033832a8c9a37bd48bbce065617da3ef",
+    "storedSha256": "c961934940fbc53f2f555c229eb6e705033832a8c9a37bd48bbce065617da3ef",
+    "compressed": false
+  },
+  {
+    "path": "storybook-125301751984.log",
+    "originalSha256": "d25414d7513eab5e31c4e2c45db43e1324cd772aa153821599f37fa74ab25838",
+    "storedSha256": "d25414d7513eab5e31c4e2c45db43e1324cd772aa153821599f37fa74ab25838",
+    "compressed": false
+  },
+  {
+    "path": "storybook-125301751991.log",
+    "originalSha256": "47a5c3723e7cbd9e0e2f517ff2d120ec2875e3a2754a63a6d627eeb9d5f1089a",
+    "storedSha256": "47a5c3723e7cbd9e0e2f517ff2d120ec2875e3a2754a63a6d627eeb9d5f1089a",
+    "compressed": false
+  },
+  {
+    "path": "storybook-125301752159.log",
+    "originalSha256": "9ebb6bb9da1efcf428756dd70a47a773c586ddb01df67be1010c81bd75693d66",
+    "storedSha256": "9ebb6bb9da1efcf428756dd70a47a773c586ddb01df67be1010c81bd75693d66",
+    "compressed": false
+  },
+  {
+    "path": "storybook-jobs.json",
+    "originalSha256": "af5dbeb4cb2dfee2d432aeac31c54e23b1cdc9b0ac5029fe6e6ab52e37e1b52e",
+    "storedSha256": "af5dbeb4cb2dfee2d432aeac31c54e23b1cdc9b0ac5029fe6e6ab52e37e1b52e",
+    "compressed": false
+  },
+  {
+    "path": "storybook-run.json",
+    "originalSha256": "7223b194c9a2d1c98a2b344fa75cfdf1302f2e1ef5c372120fe005bf18c1b563",
+    "storedSha256": "7223b194c9a2d1c98a2b344fa75cfdf1302f2e1ef5c372120fe005bf18c1b563",
+    "compressed": false
+  },
+  {
+    "path": "restore/evidence.json",
+    "originalSha256": "a58a906730af9e3584e9394d038fa028ca56bdce4aebe750b716197e127da6a1",
+    "storedSha256": "a58a906730af9e3584e9394d038fa028ca56bdce4aebe750b716197e127da6a1",
+    "compressed": false
+  },
+  {
+    "path": "callbacks-desktop/playwright-report/doc-callback-lifetimes.json",
+    "originalSha256": "9efb35e2447b26f6a64b46e3c0537c52a46a050c88c4b7a50c46ff5a663a3d65",
+    "storedSha256": "9efb35e2447b26f6a64b46e3c0537c52a46a050c88c4b7a50c46ff5a663a3d65",
+    "compressed": false
+  },
+  {
+    "path": "callbacks-desktop/test-results/spn113-comparison-desktop.json",
+    "originalSha256": "943f7242be5b6f08ec74bdc0ad136b091a1d9fadfa9becf9fb0e5436bb3d69ab",
+    "storedSha256": "943f7242be5b6f08ec74bdc0ad136b091a1d9fadfa9becf9fb0e5436bb3d69ab",
+    "compressed": false
+  },
+  {
+    "path": "callbacks-mobile/playwright-report/doc-callback-lifetimes.json",
+    "originalSha256": "32c92cfb9f86d5d423d749df5e011737312f18d826d223f1056903ad95f150f9",
+    "storedSha256": "32c92cfb9f86d5d423d749df5e011737312f18d826d223f1056903ad95f150f9",
+    "compressed": false
+  },
+  {
+    "path": "callbacks-mobile/test-results/spn113-comparison-mobile.json",
+    "originalSha256": "6d1eeddde2d2bf0d485190bcbdb2767bbad6ef2825546caab6f9d0f91cca012f",
+    "storedSha256": "6d1eeddde2d2bf0d485190bcbdb2767bbad6ef2825546caab6f9d0f91cca012f",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-desktop/playwright-report/doc-responsiveness.json",
+    "originalSha256": "5491ca0ea94d7904a996c537e3fb113ed6b3cb217f1d31202f852d08e19ae0e2",
+    "storedSha256": "5491ca0ea94d7904a996c537e3fb113ed6b3cb217f1d31202f852d08e19ae0e2",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-desktop/test-results/spn108-comparison-desktop.json",
+    "originalSha256": "e2b15b0c5b0edcdfa8b462480f2f7401fe1dda239198312935928e6d42641b21",
+    "storedSha256": "e2b15b0c5b0edcdfa8b462480f2f7401fe1dda239198312935928e6d42641b21",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-mobile/playwright-report/doc-responsiveness.json",
+    "originalSha256": "d50570c5ce43f7170af741e03791f2f019fc1e56a8db6f4772af160ed895a467",
+    "storedSha256": "d50570c5ce43f7170af741e03791f2f019fc1e56a8db6f4772af160ed895a467",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-mobile/test-results/spn108-comparison-mobile.json",
+    "originalSha256": "a9c06e6b9f4f37bdbb49862df510c896b186b3fe15f5f842e7dcfe2c45e85936",
+    "storedSha256": "a9c06e6b9f4f37bdbb49862df510c896b186b3fe15f5f842e7dcfe2c45e85936",
+    "compressed": false
+  },
+  {
+    "path": "callbacks-desktop/baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+    "originalSha256": "e812b9aba14b0b437d38113244b332594f4777855214dfeb4724021112feb6af",
+    "storedSha256": "e812b9aba14b0b437d38113244b332594f4777855214dfeb4724021112feb6af",
+    "compressed": false
+  },
+  {
+    "path": "callbacks-mobile/baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+    "originalSha256": "e0dadbc569823314b3c6b63105dfda77a439a4b74efa0e2b3d2e76dd831aade1",
+    "storedSha256": "e0dadbc569823314b3c6b63105dfda77a439a4b74efa0e2b3d2e76dd831aade1",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-desktop/baseline-doc-source/playwright-report/doc-responsiveness.json",
+    "originalSha256": "7d96cf03c64f1a9413bae3e920772e0c70522fd78731f115f62d0173a9ca402b",
+    "storedSha256": "7d96cf03c64f1a9413bae3e920772e0c70522fd78731f115f62d0173a9ca402b",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-mobile/baseline-doc-source/playwright-report/doc-responsiveness.json",
+    "originalSha256": "fb4ea6306f82098eed3d8c1c4457c6f8d6b74d8f5bcc0901b2cd712c2ad941cd",
+    "storedSha256": "fb4ea6306f82098eed3d8c1c4457c6f8d6b74d8f5bcc0901b2cd712c2ad941cd",
+    "compressed": false
+  },
+  {
+    "path": "callbacks-desktop/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json.gz",
+    "originalSha256": "1617d596de3e1ca129e05c6c5adc1fd975e82005e058b724f78467d0f1d6fa05",
+    "storedSha256": "9ee64664ebb4fda4854469dc61f244f903539b59600d583165ebee050c020cdf",
+    "compressed": true
+  },
+  {
+    "path": "callbacks-mobile/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json.gz",
+    "originalSha256": "7eec0ff03f42fff32855f185b172af064070c5d8059daa60506d6b41853afdd1",
+    "storedSha256": "a7dadac4e67c5a11ca8b4420bb4fadc81a50bf5516837104671ac010e2b87159",
+    "compressed": true
+  },
+  {
+    "path": "responsiveness-desktop/test-results/doc-responsiveness/doc-responsiveness-desktop-5f9af--typing-after-a-quiet-pause-doc-responsiveness/spn108-post-burst.json",
+    "originalSha256": "067a2bd22f447db0a1884d84c777fe13644eb2ab2c04ca2915aee7a0e4a8f97e",
+    "storedSha256": "067a2bd22f447db0a1884d84c777fe13644eb2ab2c04ca2915aee7a0e4a8f97e",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-desktop/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+    "originalSha256": "c1e9b98b1e738252fe94a35824afd1e78b3ebe3129753b0b1a7050dc4d2dc0aa",
+    "storedSha256": "c1e9b98b1e738252fe94a35824afd1e78b3ebe3129753b0b1a7050dc4d2dc0aa",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-desktop/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+    "originalSha256": "ef4dcc838e5dd5b4ae0806ce79d957b3dda01088ce1498558e54e07eeca759be",
+    "storedSha256": "ef4dcc838e5dd5b4ae0806ce79d957b3dda01088ce1498558e54e07eeca759be",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-desktop/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+    "originalSha256": "144e90048d0cc69815758c698ac40388fbb9d392e4c84618f442f75bb8c767e6",
+    "storedSha256": "144e90048d0cc69815758c698ac40388fbb9d392e4c84618f442f75bb8c767e6",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-desktop/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+    "originalSha256": "4be04d78282a75872994e6357c2eefac74422ff093378b93f335481b84652141",
+    "storedSha256": "4be04d78282a75872994e6357c2eefac74422ff093378b93f335481b84652141",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-desktop/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+    "originalSha256": "650eea312b30d45f768faa8dd3024c6b2e015477b38f2ae3a525bccb1eae4a41",
+    "storedSha256": "650eea312b30d45f768faa8dd3024c6b2e015477b38f2ae3a525bccb1eae4a41",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-desktop/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile",
+    "originalSha256": "7961f98659fd176296d0e1660fde238edcc5640440aa21ec6283ce4800d1f598",
+    "storedSha256": "7961f98659fd176296d0e1660fde238edcc5640440aa21ec6283ce4800d1f598",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-desktop/test-results/doc-responsiveness/doc-responsiveness-native--9dfea-nd-a-late-composition-event-doc-responsiveness/spn108-boundaries.json",
+    "originalSha256": "e3c0b50c64bd68df37c45460fe33d00e5831cf8bbc93ab4bf9bc645b0baec753",
+    "storedSha256": "e3c0b50c64bd68df37c45460fe33d00e5831cf8bbc93ab4bf9bc645b0baec753",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-desktop/test-results/doc-responsiveness/doc-responsiveness-native--b2c01-mit-without-partial-history-doc-responsiveness/spn108-boundaries.json",
+    "originalSha256": "144401cd62f3b85a734fdb834cf7f8976607d004f39d7fdb9ffaec7853d4e99e",
+    "storedSha256": "144401cd62f3b85a734fdb834cf7f8976607d004f39d7fdb9ffaec7853d4e99e",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-mobile/test-results/doc-responsiveness/doc-responsiveness-mobile--59407--typing-after-a-quiet-pause-doc-responsiveness/spn108-post-burst.json",
+    "originalSha256": "c5d88677c066d7af78489bbae92294a8738b7a15edc43efd1c139d03de2d05ef",
+    "storedSha256": "c5d88677c066d7af78489bbae92294a8738b7a15edc43efd1c139d03de2d05ef",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-mobile/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+    "originalSha256": "8e5aa1b87bdc1f123c657833f03f0c1d0b3a7b6b35f1de5d2006512c695366f2",
+    "storedSha256": "8e5aa1b87bdc1f123c657833f03f0c1d0b3a7b6b35f1de5d2006512c695366f2",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-mobile/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+    "originalSha256": "1b15936aa5592703213b6bba366c517281a78b49b8d96d35dd47afe57a6b3bc2",
+    "storedSha256": "1b15936aa5592703213b6bba366c517281a78b49b8d96d35dd47afe57a6b3bc2",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-mobile/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+    "originalSha256": "0b240293b2a15d4f9ecf40d02f0a11a0e990d71425e67218af1106ebb32ab55a",
+    "storedSha256": "0b240293b2a15d4f9ecf40d02f0a11a0e990d71425e67218af1106ebb32ab55a",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-mobile/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+    "originalSha256": "53a6234d44b8c0f79fa3c317ee1d92200c2f9b152fff1e407a8f9ed81214551b",
+    "storedSha256": "53a6234d44b8c0f79fa3c317ee1d92200c2f9b152fff1e407a8f9ed81214551b",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-mobile/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+    "originalSha256": "0847e199e74be822354a01c8c7dc76261c0249eb5fac4d6c55f628662d828fb8",
+    "storedSha256": "0847e199e74be822354a01c8c7dc76261c0249eb5fac4d6c55f628662d828fb8",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-mobile/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile",
+    "originalSha256": "ed7c7333afca7eeb28b6f1b01e8ebcba80626cf94dbcc0211a9c5769155111e9",
+    "storedSha256": "ed7c7333afca7eeb28b6f1b01e8ebcba80626cf94dbcc0211a9c5769155111e9",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-mobile/test-results/doc-responsiveness/doc-responsiveness-native--032b2-nd-a-late-composition-event-doc-responsiveness/spn108-boundaries.json",
+    "originalSha256": "360142a44fc7f56fc9a53ec67271bc249e28d889a00741fd77e6935901650ba5",
+    "storedSha256": "360142a44fc7f56fc9a53ec67271bc249e28d889a00741fd77e6935901650ba5",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-mobile/test-results/doc-responsiveness/doc-responsiveness-native--bfbca-mit-without-partial-history-doc-responsiveness/spn108-boundaries.json",
+    "originalSha256": "971eb328e58cacd98129db9f487b6d9e089e203ffc6cf58a02dcaf4bc6670dda",
+    "storedSha256": "971eb328e58cacd98129db9f487b6d9e089e203ffc6cf58a02dcaf4bc6670dda",
+    "compressed": false
+  },
+  {
+    "path": "callbacks-desktop/baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json.gz",
+    "originalSha256": "3885200eaeca853585d04ccde696bd2e483d49529276dfe88e8a26d4fc4d562b",
+    "storedSha256": "ae4de25121dbbea34878ba3bd14b28c7a3dc62c585f6fbc0d871252b1e5a921a",
+    "compressed": true
+  },
+  {
+    "path": "callbacks-mobile/baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json.gz",
+    "originalSha256": "3b6f822d5426c17d0cf064c404446251cef8d90324a463367d0a274bbd3560cc",
+    "storedSha256": "2c7c3d07197263a687582788adf32f5c2bce41e2e7f5432a8f538e22fb11efbc",
+    "compressed": true
+  },
+  {
+    "path": "responsiveness-desktop/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+    "originalSha256": "591bce2084fdca3f16b60eb996949456a407510a1b2c5ac4a2216e9c620dcf49",
+    "storedSha256": "591bce2084fdca3f16b60eb996949456a407510a1b2c5ac4a2216e9c620dcf49",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-desktop/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+    "originalSha256": "82f2e600d1a15e2f934c947516e2c55cac553ee9cfe05c2d7210cd091d4be8a7",
+    "storedSha256": "82f2e600d1a15e2f934c947516e2c55cac553ee9cfe05c2d7210cd091d4be8a7",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-desktop/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+    "originalSha256": "4adc9c29684f9f2b006e3d153fd3412a19d078f0163da11c4a604a2315051230",
+    "storedSha256": "4adc9c29684f9f2b006e3d153fd3412a19d078f0163da11c4a604a2315051230",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-desktop/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+    "originalSha256": "df2bd9d43fc0268b846674aee23c090275f79192497adc512324632ab6f731a9",
+    "storedSha256": "df2bd9d43fc0268b846674aee23c090275f79192497adc512324632ab6f731a9",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-desktop/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+    "originalSha256": "ce212f444c1b54d5e3d26587256a9e607360c82e449ae81e5e0ec37c95f5a8c3",
+    "storedSha256": "ce212f444c1b54d5e3d26587256a9e607360c82e449ae81e5e0ec37c95f5a8c3",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-desktop/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile",
+    "originalSha256": "edf0f8168ad9e1dad7fa6641e3e3fa23e1ccd9bfeb7a0b6abf9237852d8a7ad4",
+    "storedSha256": "edf0f8168ad9e1dad7fa6641e3e3fa23e1ccd9bfeb7a0b6abf9237852d8a7ad4",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-mobile/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+    "originalSha256": "74bab552a8f906ff42ff16ff5cb29f84d3aeeccd8b5080fcf619e8d548bf9507",
+    "storedSha256": "74bab552a8f906ff42ff16ff5cb29f84d3aeeccd8b5080fcf619e8d548bf9507",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-mobile/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+    "originalSha256": "efd45cbc632c5e4191dd0a253b3f22ca222c49ccec93bdd19f11ef2b264c8d06",
+    "storedSha256": "efd45cbc632c5e4191dd0a253b3f22ca222c49ccec93bdd19f11ef2b264c8d06",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-mobile/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+    "originalSha256": "0acca311af1028b47a0c3e2e35a4839682ca7d734a7162b34ff6a0e42b8d307f",
+    "storedSha256": "0acca311af1028b47a0c3e2e35a4839682ca7d734a7162b34ff6a0e42b8d307f",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-mobile/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+    "originalSha256": "548fa8f371d9ac3061f10cc567a89633e61b97e28c029833bf7a5a98f703211d",
+    "storedSha256": "548fa8f371d9ac3061f10cc567a89633e61b97e28c029833bf7a5a98f703211d",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-mobile/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+    "originalSha256": "d22c182d3853e792706243f3e8152cad4150b8d1d015bf33eddd3d52c0cf71fd",
+    "storedSha256": "d22c182d3853e792706243f3e8152cad4150b8d1d015bf33eddd3d52c0cf71fd",
+    "compressed": false
+  },
+  {
+    "path": "responsiveness-mobile/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile",
+    "originalSha256": "3dcf58f19f64478f5bc395cb366d7172705c3f0a5940d26fa19e3aa21cd3ae8b",
+    "storedSha256": "3dcf58f19f64478f5bc395cb366d7172705c3f0a5940d26fa19e3aa21cd3ae8b",
+    "compressed": false
+  }
+]
