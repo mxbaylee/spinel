@@ -215,8 +215,9 @@ cannot prove which generation is intended, so recovery is deliberate:
    Causes include a begun or published barrier, changed original files, uncertain
    ownership, or a restore stopped between replacing the candidate and committing
    an outcome, for example when the host lost power during the
-   candidate's trial or ran past the [two-minute custody budget or the
-   confirmation's five-minute window](backups.md) after activation. The
+   candidate's trial or ran past an [operation or phase deadline](backups.md)
+   after activation. New restore confirmations have a session-capped 30-minute
+   operation lifetime; retained older confirmations keep their original deadline. The
    preserved original is intact in the recovery root, but no supported command
    reinstalls it yet ([SPN-128](todo/SPN-128.md)); copying those files back by hand
    is not a recovery step. Copy the whole application directory and recovery root

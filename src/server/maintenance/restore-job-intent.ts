@@ -4,7 +4,11 @@ import { validRestorePreview } from '../../shared/restore.ts';
 import type { RestorePreview } from '../../shared/restore.ts';
 import type { FileIdentity } from './journal.ts';
 import { validRestorePreviewBytes } from './restore-capacity.ts';
-import { validRestoreAuthority } from './restore-authority.ts';
+import {
+  restoreAuthorizedAt,
+  restoreVerifiedUntil,
+  validRestoreAuthority,
+} from './restore-authority.ts';
 import type { RestoreAuthority } from './restore-authority.ts';
 import { validRestoreSourceManifest } from './restore-files.ts';
 import type { RestoreSourceManifest } from './restore-files.ts';
@@ -77,7 +81,8 @@ export function validRestoreJobIntent(value: unknown): value is RestoreJobIntent
     typeof value.continuationHash !== 'string' ||
     !/^[a-f0-9]{64}$/.test(value.continuationHash) ||
     !Number.isSafeInteger(value.confirmedAt) ||
-    Number(value.confirmedAt) < value.authority.verifiedAt ||
+    Number(value.confirmedAt) < restoreAuthorizedAt(value.authority) ||
+    Number(value.confirmedAt) >= restoreVerifiedUntil(value.authority) ||
     Number(value.confirmedAt) >= value.authority.expiresAt
   )
     return false;

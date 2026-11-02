@@ -32,10 +32,16 @@ export interface MaintenanceAuthority {
   expiresAt: number;
 }
 
-/** Original server-captured verification; private restore IPC only. */
+/** Original server-captured verification and bounded work grant; private restore
+ * IPC only. expiresAt is the immutable operation deadline, capped by the session.
+ * verifiedUntil admits a new create/confirm; it does not time out admitted work. */
 export interface RestoreAuthority extends MaintenanceAuthority {
   verifiedPasskeyId: string;
   verifiedAt: number;
+  /** Both fields are absent only on pre-SPN-124 journal proofs. Those retain
+   * their original five-minute expiry and can never acquire a longer lifetime. */
+  verifiedUntil?: number;
+  authorizedAt?: number;
 }
 
 export type MaintenanceCommand =

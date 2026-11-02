@@ -299,7 +299,7 @@ async function fixture(
 }
 
 for (const zoomRatio of [1, 0.5, 2])
-  test(`phone Docs at saved ${zoomRatio * 100}% zoom keep readable layout, touch formatting and saved settings`, async ({
+  test(`phone Docs at saved ${zoomRatio * 100}% zoom keep readable layout, touch formatting and saved settings @phone-ordinary`, async ({
     browser,
     baseURL,
   }, info) => {
@@ -448,7 +448,9 @@ for (const zoomRatio of [1, 0.5, 2])
       await expect
         .poll(async () => (await f.read()).body!.paragraphs![0]!.paragraphStyle?.namedStyleType)
         .toBe(NamedStyleType.HEADING_1);
-      await page.getByRole('button', { name: 'More', exact: true }).tap();
+      // Copying adds a separate native header More menu; this journey opens
+      // the existing formatting drawer from the editing footer.
+      await page.locator('footer').getByRole('button', { name: 'More', exact: true }).tap();
       await expect(drawer).toBeVisible();
       await expect(input(page)).not.toBeFocused();
       await keyboardOcclusion(page, 0);
@@ -587,7 +589,7 @@ test('phone Doc typing keeps the rendered caret above the emulated keyboard', as
   }
 });
 
-test('phone Doc formulas preserve scalar values, all table rows and usable edit dialogs', async ({
+test('phone Doc formulas preserve scalar values, all table rows and usable edit dialogs @phone-ordinary', async ({
   browser,
   baseURL,
 }, info) => {
@@ -850,7 +852,7 @@ for (const flavor of [DocumentFlavor.MODERN, DocumentFlavor.TRADITIONAL])
   });
 
 for (const role of ['owner', 'guest-editor'] as const) {
-  test(`traditional phone Doc is locally read-only without revoking its ${role} grant`, async ({
+  test(`traditional phone Doc is locally read-only without revoking its ${role} grant @phone-ordinary`, async ({
     browser,
     baseURL,
   }, info) => {
