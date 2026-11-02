@@ -275,16 +275,17 @@ test('paired exports contain exact complete receipt-time selections, including t
 });
 
 test.each([undefined, 3])(
-  'old-feedback-only exports report retention %s without borrowing unrelated current metrics',
+  'old-feedback-only exports report retention override %s without borrowing unrelated current metrics',
   async (retentionDays) => {
     const f = fixture();
     try {
       // SPN-110 owns the policy/expiry implementation. This adapter control checks
       // forwarding the deployment-provided policy into both real export files.
       const status = f.store.status.bind(f.store);
+      const policy = retentionDays ?? status().retentionDays;
       const statusSpy = vi
         .spyOn(f.store, 'status')
-        .mockImplementation(() => ({ ...status(), retentionDays }));
+        .mockImplementation(() => ({ ...status(), retentionDays: policy }));
       const report = f.feedback();
       f.time(200);
       f.observation(f.other);
@@ -298,9 +299,9 @@ test.each([undefined, 3])(
       for (const scope of ['user', 'system'] as const) {
         const exported = await f.artifact(pair, scope);
         expect(exported.rows.map((row) => row.id)).toEqual([report.id]);
-        expect(exported.manifest.retention.observationAgeTargetDays).toBe(retentionDays ?? null);
+        expect(exported.manifest.retention.observationAgeTargetDays).toBe(policy ?? null);
         expect(exported.manifest.retention.observations).toContain(
-          retentionDays === undefined
+          policy === undefined
             ? 'no automatic expiry configured'
             : 'server receipt age target',
         );
