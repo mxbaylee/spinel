@@ -59,7 +59,7 @@ change(
 );
 change(
   '        evidence.timingCompleteAt = await now(f.page);',
-  "        if (finishTrace) {\n          evidence.traceClockEnd = await f.page.evaluate(() => performance.mark('spn135-clock-end').startTime);\n          evidence.diagnosticTrace = await finishTrace();\n        }\n        evidence.timingCompleteAt = await now(f.page);",
+  "        if (finishTrace) {\n          evidence.traceClockEnd = await f.page.evaluate(() => performance.mark('spn135-clock-end').startTime);\n          evidence.diagnosticTrace = await finishTrace();\n        }\n        await retainNativeDiagnostic();\n        evidence.timingCompleteAt = await now(f.page);",
 );
 change(
   '        evidence.completed = true;',
