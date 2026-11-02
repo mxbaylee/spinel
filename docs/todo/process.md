@@ -29,6 +29,16 @@ The tickets are authoritative now.
 Create one with `npm run backlog:new -- <emoji> <title>`. That takes the next ID
 and bumps `next_id`. IDs are never reused, renumbered or recycled.
 
+An already allocated ticket stranded on an unmerged branch may be reserved in a
+separate focused grooming PR through `backlog.json`'s optional `reserved_tickets`
+records: exact ID, original heading and immutable allocation commit. Reviewers
+verify the original ticket, the allocation counter advancing, and that the ID was
+never previously landed/completed; a syntactically valid SHA is not that proof.
+Only a later grooming PR may consume a reservation from its base branch to
+register the exact heading, removing the reservation in the same change. It cannot
+add its own exception or lower `next_id`. Ordinary new tickets still use the CLI.
+See [the SPN-130 reservation](../implementation/backlog-reserved-ticket-ids.md).
+
 ```markdown
 ---
 id: SPN-012
