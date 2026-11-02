@@ -522,6 +522,43 @@ const variants: Record<string, (character: string) => core.IDocumentBody> = {
   color: (dataStream) => ({ dataStream, textRuns: [{ st: 0, ed: 1, ts: { cl: { rgb: '#123456' } } }], paragraphs: [], sectionBreaks: [], customBlocks: [], customRanges: [], customDecorations: [] }),
 };
 
+test('captured native mobile caches preserve publications and demonstrate eligibility', async () => {
+  const path = process.env.SPN071_CAPTURE;
+  assert.ok(path, 'Supply the predeclared tagged native capture.');
+  const capture = JSON.parse(await readFile(path, 'utf8'));
+  const decode = (value: any): any => {
+    if (value.kind === 'undefined') return undefined;
+    if (value.kind === 'value') return value.value;
+    const target: any = value.kind === 'array' ? [] : {};
+    for (const [key, child] of value.entries) target[key] = decode(child);
+    return target;
+  };
+  assert.equal(capture.captures.length, 8);
+  for (const format of ['es', 'cjs'] as const) {
+    const { original, patched } = prepareDocsPatch(await readBuild(format), format);
+    const prototype = allocationPrototype(patched, format);
+    let activated = 0;
+    for (const [index, encoded] of capture.captures.entries()) {
+      const cache = decode(encoded);
+      assert.equal(cache.history.length, 32);
+      assert.equal(cache.collaboration.length, 32);
+      const native = measuredFlush(original, cache.history, cache.collaboration);
+      const balanced = measuredFlush(patched, cache.history, cache.collaboration);
+      const candidate = measuredFlush(prototype, cache.history, cache.collaboration);
+      assert.deepEqual(candidate.output, native.output, `capture ${index}: native exact publication`);
+      assert.deepEqual(candidate.output, balanced.output, `capture ${index}: balanced exact publication`);
+      const active = candidate.counts.textCompose < balanced.counts.textCompose;
+      if (active) {
+        activated++;
+        assert.ok(candidate.counts.allocations < balanced.counts.allocations * 0.8);
+      } else assert.deepEqual(candidate.counts, balanced.counts, 'Ineligible cache uses complete fallback.');
+      console.log(JSON.stringify({ format, capture: index, active, native: native.counts, balanced: balanced.counts, prototype: candidate.counts }));
+    }
+    assert.ok(activated >= 6, 'At least six of eight caches must qualify; paragraph groups may fall back.');
+    console.log(JSON.stringify({ format, nativeCapturedCaches: 8, activated }));
+  }
+});
+
 for (const format of ['es', 'cjs'] as const) {
   test(`${format}: finite exact publication and snapshot matrix`, async () => {
     const { original, patched } = prepareDocsPatch(await readBuild(format), format);
@@ -535,8 +572,11 @@ for (const format of ['es', 'cjs'] as const) {
             const scenario = sequence(Array.from({ length }, (_, index) =>
               insertAt(start + (prepend ? 0 : index), body(characters[index % characters.length]))));
             const control = flush(original, scenario.states);
-            assertNativePreservation(control, flush(patched, scenario.states), scenario, `${name}/balanced/${length}/${start}/${prepend}`);
-            assertNativePreservation(control, flush(prototype, scenario.states), scenario, `${name}/prototype/${length}/${start}/${prepend}`);
+            const balanced = measuredFlush(patched, scenario.states);
+            const candidate = measuredFlush(prototype, scenario.states);
+            assertNativePreservation(control, balanced.output, scenario, `${name}/balanced/${length}/${start}/${prepend}`);
+            assertNativePreservation(control, candidate.output, scenario, `${name}/prototype/${length}/${start}/${prepend}`);
+            if (length >= 3) assert.ok(candidate.counts.textCompose < balanced.counts.textCompose, `${name}/${length}/${start}/${prepend}: shortcut must activate`);
             cases++;
           }
     console.log(JSON.stringify({ format, exactMatrixCases: cases }));
@@ -556,9 +596,9 @@ for (const format of ['es', 'cjs'] as const) {
         for (const key of ['bodySlices', 'cloneVisits', 'allocations'] as const)
           assert.ok(counts[key] < balanced.counts[key] * 0.8, `${name}/${key}: at least 20% reduction against balanced`);
       };
+      console.log(JSON.stringify({ format, name, native: native.counts, balanced: balanced.counts, prototype: candidate.counts }));
       reduced(candidate.counts);
       assert.throws(() => reduced(balanced.counts), /at least 20% reduction/, 'Disabling shortcut must fail work criterion.');
-      console.log(JSON.stringify({ format, name, native: native.counts, balanced: balanced.counts, prototype: candidate.counts }));
     }
   });
 

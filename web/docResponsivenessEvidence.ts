@@ -57,6 +57,18 @@ export function observeDocResponsiveness(univer: Univer, unitId: string, mobile:
   const injector = univer.__getInjector();
   // Instantiate the native subscriber before ours so these are post-capture counts.
   const manager = injector.get(DocStateChangeManagerService);
+  // Helper-branch-only diagnostic: first eight full caches, before native flush.
+  // Copies occur in the test listener; timing from this build is not acceptance.
+  const previousFlush = manager.flushPendingChanges;
+  let captured = 0;
+  manager.flushPendingChanges = function (id: string) {
+    const cache = manager.getStateCache(id);
+    if (id === unitId && captured < 8 && cache.history.length === 32) {
+      captured++;
+      window.dispatchEvent(new CustomEvent('spn071-cache-capture', { detail: cache }));
+    }
+    return previousFlush.call(this, id);
+  };
   const highWater = { history: 0, collaboration: 0 };
   const flushes: DocFlushObservation[] = [];
   const undoRedo = injector.get(IUndoRedoService);
@@ -305,6 +317,7 @@ export function observeDocResponsiveness(univer: Univer, unitId: string, mobile:
       if (flushes.length < 4096) flushes.push({ ...value });
     },
     dispose() {
+      manager.flushPendingChanges = previousFlush;
       invalidate('disposed-before-seal');
       disposed = true;
       subscription.unsubscribe();

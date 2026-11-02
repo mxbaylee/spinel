@@ -1080,3 +1080,38 @@ for (const preset of ['desktop', 'mobile'] as const)
 // Keep candidate timing samples ahead of boundary-case server warm-up, matching
 // the baseline sample order while retaining all artifacts in one test run.
 registerDocResponsivenessBoundaries();
+
+// Helper-only shape capture, not a performance acceptance sample.
+test('SPN071 bounded native cache shape capture', async ({ browser, baseURL }, info) => {
+  test.setTimeout(120_000);
+  const f = await fixture(browser, baseURL!, info, true);
+  try {
+    await f.page.addInitScript(() => {
+      const target = window as unknown as { spn071CacheCaptures: unknown[] };
+      target.spn071CacheCaptures = [];
+      const encode = (value: unknown): unknown => {
+        if (value === undefined) return { kind: 'undefined' };
+        if (value === null || typeof value !== 'object') return { kind: 'value', value };
+        return { kind: Array.isArray(value) ? 'array' : 'object', entries: Object.getOwnPropertyNames(value).map((key) => [key, encode((value as Record<string, unknown>)[key])]) };
+      };
+      window.addEventListener('spn071-cache-capture', (event) => {
+        if (target.spn071CacheCaptures.length < 8)
+          target.spn071CacheCaptures.push(encode((event as CustomEvent).detail));
+      });
+    });
+    await f.page.goto(`/?item=${f.item.id}`);
+    await saved(f.page);
+    await online(f.page);
+    await focusEmptyDoc(f.page, true);
+    for (let index = 0; index < 3; index++) {
+      if (index) await f.page.keyboard.press('Enter');
+      await f.page.keyboard.type(paragraphs[index]);
+    }
+    await saved(f.page);
+    const captures = await f.page.evaluate(() => (window as unknown as { spn071CacheCaptures: unknown[] }).spn071CacheCaptures);
+    await writeFile(info.outputPath('spn071-native-cache-shapes.json'), JSON.stringify({ source: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(), captures }, null, 2));
+    expect(captures).toHaveLength(8);
+    await exactText(f.page, paragraphs.slice(0, 3).join('\r') + '\r\n');
+    expect(f.errors).toEqual([]);
+  } finally { await f.close(); }
+});

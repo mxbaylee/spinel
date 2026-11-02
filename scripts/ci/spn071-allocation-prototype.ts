@@ -29,7 +29,6 @@ function uniformPlainInsertActions(states, key) {
   const firstRuns = firstBody.textRuns;
   const firstRun = firstRuns && firstRuns[0];
   if (firstRun && !plainInsertStyle(firstRun.ts)) return null;
-  let text = "";
   const secondEdits = states[1][key].actions[1].e;
   const offset = (edits) => edits.length === 2 ? edits[0].len : 0;
   const prepend = offset(firstEdits) === offset(secondEdits);
@@ -47,26 +46,34 @@ function uniformPlainInsertActions(states, key) {
       const run = runs[0];
       if (!samePlainOwnShape(firstRun, run) || !plainInsertStyle(run.ts) || !samePlainStyle(firstRun.ts, run.ts)) return null;
     }
-    text = prepend ? body.dataStream + text : text + body.dataStream;
   }
   const pair = ${json}.compose(states[0][key].actions, states[1][key].actions);
   if (!Array.isArray(pair) || pair.length !== 2 || pair[0] !== "body" || pair[1].et !== "text-x") return null;
   const pairEdits = pair[1].e;
-  const pairInsert = pairEdits[pairEdits.length - 1];
+  const retained = firstEdits.length === 2 ? 1 : 0;
+  if (pairEdits.length !== retained + 2 || (retained && (pairEdits[0].t !== "r" || pairEdits[0].len !== offset(firstEdits) || !samePlainOwnShape(pairEdits[0], firstEdits[0])))) return null;
+  const left = pairEdits[retained];
+  const right = pairEdits[retained + 1];
   const secondBody = secondEdits[secondEdits.length - 1].body;
-  const pairText = prepend ? secondBody.dataStream + firstBody.dataStream : firstBody.dataStream + secondBody.dataStream;
-  if (pairEdits.length !== firstEdits.length || offset(pairEdits) !== offset(firstEdits) || pairInsert.t !== "i" || pairInsert.len !== 2 || pairInsert.body.dataStream !== pairText) return null;
-  const pairRuns = pairInsert.body.textRuns;
-  if (firstRun) {
-    if (!Array.isArray(pairRuns) || pairRuns.length !== 1 || pairRuns[0].st !== 0 || pairRuns[0].ed !== 2 || !samePlainOwnShape(firstRun, pairRuns[0]) || !samePlainStyle(firstRun.ts, pairRuns[0].ts)) return null;
-  } else if (pairRuns !== void 0 && pairRuns.length !== 0) return null;
-  // Independently own the result of each history/collaboration composition.
+  if (left.t !== "i" || right.t !== "i" || left.len !== 1 || right.len !== 1 || !samePlainOwnShape(left, right)) return null;
+  if (left.body.dataStream !== (prepend ? secondBody.dataStream : firstBody.dataStream) || right.body.dataStream !== (prepend ? firstBody.dataStream : secondBody.dataStream)) return null;
+  // Both canonical templates must match exactly, including own undefined fields.
+  function sameTemplate(a, b, ignoreText = false) {
+    if (a === null || b === null || typeof a !== "object" || typeof b !== "object") return Object.is(a, b);
+    return Array.isArray(a) === Array.isArray(b) && samePlainOwnShape(a, b) && Reflect.ownKeys(a).every((field) => ignoreText && field === "dataStream" || sameTemplate(a[field], b[field]));
+  }
+  if (!Reflect.ownKeys(left).every((field) => field === "body" ? sameTemplate(left.body, right.body, true) : sameTemplate(left[field], right[field]))) return null;
+  // Keep native per-character action and run partitioning. No publication sharing.
   const result = ${tools}.deepClone(pair);
-  const resultEdits = result[1].e;
-  const resultInsert = resultEdits[resultEdits.length - 1];
-  resultInsert.len = states.length;
-  resultInsert.body.dataStream = text;
-  if (firstRun) resultInsert.body.textRuns[0].ed = states.length;
+  const edits = retained ? [result[1].e[0]] : [];
+  for (let index = 0; index < states.length; index++) {
+    const state = states[prepend ? states.length - index - 1 : index];
+    const inputEdits = state[key].actions[1].e;
+    const insert = ${tools}.deepClone(left);
+    insert.body.dataStream = inputEdits[inputEdits.length - 1].body.dataStream;
+    edits.push(insert);
+  }
+  result[1].e = edits;
   return result;
 }
 ${anchor}`).replace(
