@@ -189,6 +189,10 @@ export async function prepareRestoreRollback(options: {
             sessionHash: options.authority.sessionHash,
             verifiedPasskeyId: options.authority.verifiedPasskeyId,
             verifiedAt: options.authority.verifiedAt,
+            ...(options.authority.authorizedAt !== undefined && {
+              verifiedUntil: options.authority.verifiedUntil,
+              authorizedAt: options.authority.authorizedAt,
+            }),
             expiresAt: options.authority.expiresAt,
           },
         }),

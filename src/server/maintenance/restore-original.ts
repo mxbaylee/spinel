@@ -37,7 +37,12 @@ export async function prepareAndActivateRestoreOriginal(options: {
     throw new Error('Invalid original recovery boundary.');
   let record = structuredClone(options.record),
     signal = options.signal;
-  const deadline = Math.min(options.deadline, record.intent.authority.expiresAt);
+  const deadline = Math.min(
+    options.deadline,
+    record.intent.authority.expiresAt,
+    Date.now() + 600_000,
+    now() + 600_000,
+  );
   const assertAuthorized = () => {
     signal.throwIfAborted();
     const time = now();

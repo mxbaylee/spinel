@@ -24,6 +24,14 @@ test('intent identity includes every binding and ignores only object property or
     { ...intent, target: { ...intent.target, identity: { device: '1', inode: '3' } } },
     { ...intent, source: { ...intent.source, archive: { bytes: 101, sha256: 'f'.repeat(64) } } },
     { ...intent, authority: { ...intent.authority, expiresAt: intent.authority.expiresAt - 1 } },
+    {
+      ...intent,
+      authority: { ...intent.authority, authorizedAt: intent.authority.authorizedAt! - 1 },
+    },
+    {
+      ...intent,
+      authority: { ...intent.authority, verifiedUntil: intent.authority.verifiedUntil! - 1 },
+    },
     { ...intent, authority: { ...intent.authority, verifiedPasskeyId: 'other' } },
     { ...intent, policy: { ...intent.policy, spacesEnabled: false } },
     { ...intent, policy: { ...intent.policy, staticDirectory: '/srv/spinel/other-assets' } },
@@ -51,6 +59,8 @@ test('intent validation rejects incomplete, inconsistent and unbounded bindings'
     { ...intent, policy: { ...intent.policy, staticDirectory: 'relative-assets' } },
     { ...intent, policy: { ...intent.policy, consequencesVersion: 2 } },
     { ...intent, confirmedAt: intent.authority.expiresAt },
+    { ...intent, confirmedAt: intent.authority.verifiedUntil },
+    { ...intent, confirmedAt: intent.authority.authorizedAt! - 1 },
     { ...intent, confirmedAt: intent.authority.verifiedAt - 1 },
   ])
     expect(validRestoreJobIntent(invalid)).toBe(false);

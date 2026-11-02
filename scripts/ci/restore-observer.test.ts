@@ -28,7 +28,7 @@ function fixture() {
           Config: {
             User: options.user,
             Entrypoint: ['/bin/sh'],
-            Cmd: ['-c', 'trap "exit 0" TERM INT; sleep 600 & wait'],
+            Cmd: ['-c', 'trap "exit 0" TERM INT; sleep 1800 & wait'],
           },
           HostConfig: {
             NetworkMode: 'none',

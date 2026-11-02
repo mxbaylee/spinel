@@ -6,9 +6,9 @@ import type { Browser, BrowserContext, Page, Request, TestInfo } from '@playwrig
 import type { MaintenancePublicStatus } from '../src/shared/maintenance.ts';
 import { startMaintenanceFixture } from './maintenance-fixture.ts';
 
-/** SPN-112's Verify list in real browsers against the Linux supervisor: catalog
- * selection, double-click, cancel, a lost confirmation reply, an expired passkey
- * window, and old tabs and offline queues meeting the restored workspace. */
+/** SPN-112 and SPN-124 in real browsers against the Linux supervisor: catalog
+ * selection, double-click, cancel, a lost confirmation reply, an admitted upload
+ * outlasting its passkey window, and old clients meeting the restored workspace. */
 
 type Fixture = Awaited<ReturnType<typeof startMaintenanceFixture>>;
 
@@ -462,56 +462,64 @@ test('a catalog restore survives double-clicks, cancel and a lost reply, and fen
   }
 });
 
-test('a passkey check that expires during a slow upload starts no restore', async ({
+test('an admitted upload outlasts its passkey check and can still be cancelled', async ({
   playwright,
 }, info) => {
   skipUnsupported(info);
   test.setTimeout(600_000);
   const app = await startMaintenanceFixture();
   let browser: Browser | undefined;
+  const uploadGate = Promise.withResolvers<boolean>();
+  const heldUploads: Promise<void>[] = [];
+  let uploadHeldAt: number | undefined;
   try {
     browser = await playwright.chromium.launch(info.project.use.launchOptions);
     const { page } = await enrollOperator(browser, app);
     const archive = await downloadBackup(page);
     const count = requests(page);
     const restore = restoreRegion(page);
-    // Hold the upload until the browser's own five-minute bound gives up on it.
-    await page.route('**/api/admin/restores/preparations/*/upload', () => {});
+    // Delay the original request before server receipt. This measures a real
+    // browser wait and late upload admission, not slow streamed-body throughput.
+    await page.route('**/api/admin/restores/preparations/*/upload', (route) => {
+      uploadHeldAt ??= performance.now();
+      const pending = uploadGate.promise.then((send) => (send ? route.continue() : route.abort()));
+      heldUploads.push(pending);
+      return pending;
+    });
     await restore.getByRole('button', { name: 'Prepare restore', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Prepare workspace restore', exact: true });
     await dialog.getByLabel('Encrypted workspace backup', { exact: true }).setInputFiles(archive);
     await dialog.getByLabel('Separate recovery key', { exact: true }).setInputFiles(app.keyFile);
     await dialog.getByRole('button', { name: 'Verify and prepare', exact: true }).click();
     await expect(restore.getByText('Uploading and checking the encrypted backup…')).toBeVisible();
-    await expect(restore.getByRole('alert')).toHaveText(
-      'Passkey verification or preparation did not finish. Refresh restore status before trying another source.',
-      { timeout: 330_000 },
-    );
-    await page.unroute('**/api/admin/restores/preparations/*/upload');
-    await restore.getByRole('button', { name: 'Refresh restore status', exact: true }).click();
-    await expect(
-      restore.getByText('Waiting for the encrypted backup upload.', { exact: true }),
-    ).toBeVisible();
+    await expect.poll(() => uploadHeldAt, { timeout: 15_000 }).toBeDefined();
+    const heldSince = uploadHeldAt!;
+    await expect
+      .poll(() => performance.now() - heldSince, { timeout: 330_000, intervals: [1000] })
+      .toBeGreaterThanOrEqual(305_000);
+    expect(performance.now() - heldSince).toBeGreaterThanOrEqual(305_000);
+    await expect(restore.getByText('Uploading and checking the encrypted backup…')).toBeVisible();
+    await expect(restore.getByRole('alert')).toHaveCount(0);
 
-    // Continuing reuses the expired check, so the server refuses the upload itself.
-    await restore.getByRole('button', { name: 'Continue upload', exact: true }).click();
-    const resume = page.getByRole('dialog', { name: 'Continue encrypted upload', exact: true });
-    await resume.getByLabel('Encrypted workspace backup', { exact: true }).setInputFiles(archive);
-    const refused = page.waitForResponse((response) =>
-      /\/preparations\/[^/]+\/upload$/.test(new URL(response.url()).pathname),
+    // Continue that same request without another passkey ceremony or upload.
+    const uploaded = page.waitForResponse(
+      (response) =>
+        response.request().method() === 'POST' &&
+        /\/preparations\/[^/]+\/upload$/.test(new URL(response.url()).pathname),
+      { timeout: 120_000 },
     );
-    await resume.getByRole('button', { name: 'Upload encrypted backup', exact: true }).click();
-    expect((await refused).status()).toBe(428);
-    await expect(restore.getByRole('alert')).toHaveText(
-      'Passkey verification expired. Refresh restore status before continuing.',
-    );
+    uploadGate.resolve(true);
+    expect((await uploaded).status()).toBe(200);
+    await expect(restore.getByRole('button', { name: 'Review restore', exact: true })).toBeEnabled({
+      timeout: 120_000,
+    });
     await restore.getByRole('button', { name: 'Cancel preparation', exact: true }).click();
     await expect(
       restore.getByText('Restore preparation was cancelled. The live workspace was not replaced.', {
         exact: true,
       }),
     ).toBeVisible();
-    expect([count('verify'), count('upload')]).toEqual([1, 2]);
+    expect([count('verify'), count('upload')]).toEqual([1, 1]);
     expect(count('confirm')).toBe(0);
     const status = await publicStatus(app.publicOrigin);
     expect([status.phase, status.epoch]).toEqual(['running', app.running.epoch]);
@@ -519,6 +527,10 @@ test('a passkey check that expires during a slow upload starts no restore', asyn
     await attachFailure(browser, info);
     throw error;
   } finally {
+    // A failure before release aborts every intercepted request; never leave a
+    // route handler suspended while browser and supervisor cleanup begins.
+    uploadGate.resolve(false);
+    await Promise.all(heldUploads.map((pending) => pending.catch(() => {})));
     await browser?.close();
     await app.close();
   }

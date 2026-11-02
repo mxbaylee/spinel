@@ -71,6 +71,36 @@ test('service changes keep candidate correctness and all existing broad checks w
   assert.equal(plan.suites['phone-compatibility'].selected, false);
 });
 
+test('sized restore participates in the immutable plan and fails closed', () => {
+  for (const path of [
+    'src/server/auth/store.ts',
+    'e2e/restore-browser.acceptance.ts',
+    'web/BackupRestore.tsx',
+    'scripts/ci/plan.ts',
+    'unrecognized/input.ts',
+  ]) {
+    const plan = coveragePlan('pull_request', pr(), [path], head);
+    assert.equal(plan.suites['restore-timing'].selected, true, path);
+    for (const status of [undefined, 'skipped', 'failure', 'cancelled'])
+      assert.throws(
+        () =>
+          verifyCoverage(plan, 'success', { ...all(plan), 'restore-timing': status }, [
+            'restore-timing',
+          ]),
+        /Incomplete coverage restore-timing/,
+      );
+  }
+  assert.equal(
+    coveragePlan('pull_request', pr(), ['docs/backups.md'], head).suites['restore-timing'].selected,
+    false,
+  );
+  const workflow = readFileSync(new URL('../../.github/workflows/ci.yml', import.meta.url), 'utf8');
+  assert.match(workflow, /restore_timing: \$\{\{ steps.changes.outputs.restore_timing \}\}/);
+  assert.match(workflow, /if: needs.changes.outputs.restore_timing == 'true'/);
+  assert.match(workflow, /"restore-timing":"\$\{\{ needs.restore-timing.result \}\}"/);
+  assert.match(workflow.slice(workflow.indexOf('  playwright:\n')), /restore-timing,/);
+});
+
 test('dependency closure and unknown paths fail closed, including old rename/deleted sides', () => {
   for (const path of [
     'web/nativeDocInput.ts',
