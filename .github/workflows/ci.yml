@@ -1,4 +1,4 @@
-name: SPN-135 one refined desktop diagnostic
+name: SPN-135 native capture controls only
 on:
   workflow_dispatch:
 permissions:
@@ -34,23 +34,19 @@ jobs:
           test "$(git -C runtime-source rev-parse HEAD^{tree})" = 45abc48cdb93347a62f514da4773ea7ff5521935
           test -z "$(git -C runtime-source status --porcelain)"
           cat /etc/apt/apt-mirrors.txt > diagnostic-mirror-profile.txt
-      - name: Install original runtime and browser with reviewed setup helper
+      - name: Install original runtime
         working-directory: runtime-source
         run: |
           npm ci --no-audit
-          node ../scripts/ci/prefer-ubuntu-archive.ts
-          npx playwright install --with-deps chromium
       - name: Prepare declared diagnostic overlay
         run: node scripts/ci/spn135-phase-diagnostic.ts runtime-source
-      - name: Build original application with diagnostic source maps
+      - name: Verify capture on the existing native timer and frame race controls
         working-directory: runtime-source
-        run: npm run build -- --sourcemap
-      - name: One declared desktop profile with full correctness assertions
-        run: node scripts/ci/spn135-run.ts runtime-source
+        run: npx vitest run src/ui/boundedDocHistory.test.ts -t 'rendering frames drain a quiet native phrase|native idle winning the race'
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         if: always()
         with:
-          name: spn135-refined-desktop-diagnostic
+          name: spn135-native-capture-controls
           retention-days: 14
           if-no-files-found: error
           path: |

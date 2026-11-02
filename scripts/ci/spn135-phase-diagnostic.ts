@@ -3,7 +3,7 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { instrumentNativePhases, idleCaptureSource } from './spn135-native-phases.ts';
+import { instrumentNativePhases, policyOriginSource } from './spn135-native-phases.ts';
 
 const root = resolve(process.argv[2] ?? 'runtime-source');
 const expected = 'dbbe5ccaf085ce20b79068d3596a35dcf2142223';
@@ -35,7 +35,7 @@ change(
         if (nativeDiagnostic) return nativeDiagnostic;
         const capture = await f.page.evaluate(() => {
           const value = globalThis as unknown as Record<string, unknown>;
-          return { idle: value.__spn135Idle ?? [], phaseError: value.__spn135PhaseError ?? null,
+          return { native: value.__spn135Native ?? [], phaseError: value.__spn135PhaseError ?? null,
             captureError: value.__spn135CaptureError ?? null };
         }).catch(error => ({ collectionError: String(error) }));
         const bytes = JSON.stringify(capture);
@@ -68,7 +68,7 @@ change(
         expect(captured.collectionError).toBeUndefined();
         expect(captured.phaseError).toBeNull();
         expect(captured.captureError).toBeNull();
-        expect((captured.idle as unknown[]).length).toBeGreaterThan(0);
+        expect((captured.native as { cache: unknown }[]).filter(entry => entry.cache !== null).length).toBeGreaterThan(0);
         evidence.completed = true;`,
 );
 change(
@@ -81,9 +81,49 @@ change(
 writeFileSync(harness, text);
 const policy = resolve(root, 'src/ui/boundedDocHistory.ts');
 const policySource = readFileSync(policy, 'utf8');
-const policyAnchor = '    const startedAt = performance.now();';
+const policyAnchor = '      manager.flushPendingChanges(unitId);';
 if (policySource.split(policyAnchor).length !== 2) throw new Error('Ambiguous idle capture anchor');
-writeFileSync(policy, policySource.replace(policyAnchor, idleCaptureSource + policyAnchor));
+writeFileSync(policy, policySource.replace(policyAnchor, policyOriginSource));
+const controls = resolve(root, 'src/ui/boundedDocHistory.test.ts');
+let controlSource = readFileSync(controls, 'utf8');
+function changeControl(before: string, after: string) {
+  if (controlSource.split(before).length !== 2)
+    throw new Error('Ambiguous native race control anchor');
+  controlSource = controlSource.replace(before, after);
+}
+changeControl(
+  'afterEach(() => {',
+  `function assertNativeCapture(count: number, origins: string[]) {
+  const records = (globalThis as unknown as { __spn135Native: {
+    unitId: string; phase: string; origin: string; count: number;
+    cache: { kind: string; entries: [string, { value?: number }][] };
+  }[] }).__spn135Native;
+  expect(records.map(({ unitId, phase, origin, count }) => ({ unitId, phase, origin, count }))).toEqual([
+    { unitId: 'doc', phase: 'history', origin: origins[0], count },
+    { unitId: 'doc', phase: 'collaboration', origin: origins[1], count },
+  ]);
+  for (const record of records) {
+    expect(record.cache.kind).toBe('array');
+    expect(record.cache.entries.find(([key]) => key === 'length')?.[1].value).toBe(count);
+  }
+}
+afterEach(() => {
+  const diagnostic = globalThis as unknown as Record<string, unknown>;
+  for (const key of ['__spn135Native', '__spn135NativeBytes', '__spn135CaptureError', '__spn135PhaseError']) delete diagnostic[key];`,
+);
+changeControl(
+  '    // The original SDK timeouts can still run later without duplicating history.',
+  "    assertNativeCapture(9, ['policy-idle', 'policy-idle']);\n    // The original SDK timeouts can still run later without duplicating history.",
+);
+changeControl(
+  '    // The original SDK timeouts can still run later without duplicating history.\n    await vi.advanceTimersByTimeAsync(350);',
+  "    // The original SDK timeouts can still run later without duplicating history.\n    await vi.advanceTimersByTimeAsync(350);\n    assertNativeCapture(9, ['policy-idle', 'policy-idle']);",
+);
+changeControl(
+  "    expect(f.observations).toEqual([]);\n    expect(f.frames.size).toBe(0);\n    expect(f.manager.getStateCache('doc')).toEqual({ history: [], collaboration: [] });",
+  "    expect(f.observations).toEqual([]);\n    expect(f.frames.size).toBe(0);\n    expect(f.manager.getStateCache('doc')).toEqual({ history: [], collaboration: [] });\n    assertNativeCapture(12, ['history-timer', 'collaboration-timer']);",
+);
+writeFileSync(controls, controlSource);
 writeFileSync(
   resolve(root, 'e2e/spn135-trace.ts'),
   readFileSync(new URL('./spn135-trace.ts', import.meta.url)),
@@ -108,6 +148,7 @@ const files = [
   'e2e/doc-responsiveness.ts',
   'e2e/doc-responsiveness-fixture.ts',
   'src/ui/boundedDocHistory.ts',
+  'src/ui/boundedDocHistory.test.ts',
   'web/DocEditor.tsx',
   'web/spinelSync.ts',
   'web/docResponsivenessEvidence.ts',

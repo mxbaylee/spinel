@@ -4,7 +4,7 @@ import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
 import { runInNewContext } from 'node:vm';
 import test from 'node:test';
-import { instrumentNativePhases, idleCaptureSource } from './spn135-native-phases.ts';
+import { instrumentNativePhases } from './spn135-native-phases.ts';
 
 // Supply a verified, read-only original installation. No install/patch writes here.
 const root = process.env.SPN135_CONTROL_RUNTIME;
@@ -27,6 +27,7 @@ function manager(source: string, clockFailure: boolean, publicationFailure?: str
   assert.ok(start > 0 && end > start && classStart > end && classEnd > classStart);
   const phases: string[] = [];
   const context = {
+    TextEncoder,
     JSONX: core.JSONX,
     _univerjs_core: core,
     RxDisposable: core.RxDisposable,
@@ -61,7 +62,7 @@ function manager(source: string, clockFailure: boolean, publicationFailure?: str
       if (publicationFailure === 'collaboration') throw failure;
     },
   };
-  return { instance, published, phases, failure };
+  return { instance, published, phases, failure, context: context as Record<string, any> };
 }
 
 for (const format of ['es', 'cjs']) {
@@ -110,24 +111,37 @@ for (const format of ['es', 'cjs']) {
   }
 }
 
-test('idle capture preserves own undefined, array holes and original cache', () => {
-  // Node strips the exact TypeScript overlay before VM evaluation.
-  const { stripTypeScriptTypes } = require('node:module');
-  const pending = { history: [{ own: undefined, holes: new Array(2) }], collaboration: [] };
-  const before = structuredClone(pending);
-  const context: any = {
-    pending,
-    reason: 'idle',
-    quietForMs: 301,
-    performance: { now: () => 1, measure() {} },
-    TextEncoder,
-  };
-  runInNewContext(stripTypeScriptTypes(idleCaptureSource), context);
-  assert.equal(context.__spn135CaptureError, undefined);
-  assert.deepEqual(structuredClone(decode(context.__spn135Idle[0].cache)), before);
-  assert.deepEqual(pending, before);
-  context.pending = { history: [() => {}], collaboration: [] };
-  runInNewContext(stripTypeScriptTypes(idleCaptureSource), context);
-  assert.match(context.__spn135CaptureError, /Unsupported/);
-  assert.equal(context.__spn135Idle.length, 1);
+test('native short-cache capture preserves own undefined and survives cache clearing', () => {
+  const source = readFileSync(resolve(root, 'node_modules/@univerjs/docs/lib/es/index.js'), 'utf8');
+  const value = manager(instrumentNativePhases(source), false);
+  const original = decode(captures.captures[0]);
+  const states = original.history.slice(0, 6);
+  states[0].captureProof = { own: undefined, holes: new Array(2) };
+  const before = structuredClone(states);
+  value.instance._historyStateCache = new Map([['unit', states]]);
+  value.instance._changeStateCache = new Map([['unit', structuredClone(states)]]);
+  value.instance.flushPendingChanges('unit');
+  const recorded = value.context.__spn135Native;
+  assert.equal(recorded.length, 2);
+  assert.deepEqual(structuredClone(recorded.map((entry: any) => entry.origin)), [
+    'public-flush',
+    'public-flush',
+  ]);
+  for (const entry of recorded) {
+    assert.equal(entry.count, 6);
+    assert.equal(entry.unitId, 'unit');
+    assert.deepEqual(structuredClone(decode(entry.cache)), before);
+  }
+  assert.deepEqual(structuredClone(value.instance.getStateCache('unit')), {
+    history: [],
+    collaboration: [],
+  });
+  value.instance.flushPendingChanges('unit');
+  assert.equal(recorded.length, 2, 'Empty callbacks must not create substantive captures');
+  const bad = structuredClone(before);
+  bad[0].captureProof = () => {};
+  value.instance._historyStateCache.set('unit', bad);
+  assert.doesNotThrow(() => value.instance.flushPendingChanges('unit'));
+  assert.match(value.context.__spn135CaptureError, /Unsupported/);
+  assert.equal(value.instance.getStateCache('unit').history.length, 0);
 });
