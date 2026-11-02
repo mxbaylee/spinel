@@ -1,0 +1,22 @@
+{
+  "README.md": {
+    "bytes": 2377,
+    "sha256": "3c9fd7035776c8450dc724eb38b542ac73a189e68a7ff7e678af5f32a1b8daa9"
+  },
+  "main-mobile.log": {
+    "bytes": 82316,
+    "sha256": "240e0d588ff1837c1867ed069037595dc48d5fea036cb057bf5aa539d90bbd72"
+  },
+  "main-mobile.zip": {
+    "bytes": 2001157,
+    "sha256": "8308adf82faadb01a7ab7a9e203c21ce18815ab4cdafd4baf6953dc5029727d1"
+  },
+  "spn098-desktop.log": {
+    "bytes": 83056,
+    "sha256": "d53dbe95847fd73361c4b434bd176e2373843c86ed3318f6aae3594ba8a0a039"
+  },
+  "spn098-desktop.zip": {
+    "bytes": 1750811,
+    "sha256": "b16d3244ea9158bf89a55a4f288d7faae8efe2de1a76b92c53b5882c06fc88c4"
+  }
+}
