@@ -1,0 +1,60 @@
+{
+  "scope": "Native ordinary Safari same-profile capability probe, not application acceptance",
+  "sourceSha": "54307c19c075c5dd67a8012341cc7cee716a09a3",
+  "testedSha": "7176d88cc1e82e3416c8f778b48adced8d3daa00",
+  "runner": {
+    "label": "macos-15-intel",
+    "arch": "x64",
+    "imageOS": "macos15",
+    "imageVersion": "20260824.0482.1"
+  },
+  "run": "https://github.com/mxbaylee/spinel/actions/runs/41495432847",
+  "status": "failed",
+  "safariTargets": [
+    {
+      "stage": "online",
+      "pid": 2111,
+      "time": "2026-11-02T17:59:00.063Z",
+      "error": {
+        "message": "Error: Command failed: /usr/bin/osascript -l JavaScript -e ",
+        "code": null,
+        "signal": "SIGTERM",
+        "killed": true,
+        "stdout": "",
+        "stderr": ""
+      }
+    }
+  ],
+  "os": "ProductName:\t\tmacOS\nProductVersion:\t\t15.7.9\nBuildVersion:\t\t24G830",
+  "machine": "x86_64",
+  "version": "27.2",
+  "beforePid": "2111",
+  "error": "Error: Command failed: /usr/bin/osascript -l JavaScript -e \nObjC.import('AppKit');\nfunction run(argv) {\n  var pid = Number(argv[0]);\n  var running = $.NSRunningApplication.runningApplicationWithProcessIdentifier(pid);\n  if (running.isNil() || running.terminated) throw new Error('The observed Safari process exited.');\n  var identity = { pid: running.processIdentifier, bundleIdentifier: ObjC.unwrap(running.bundleIdentifier),\n    executablePath: ObjC.unwrap(running.executableURL.path), launchedAt: running.launchDate.timeIntervalSince1970 };\n  if (identity.pid !== pid || identity.bundleIdentifier !== 'com.apple.Safari' || !Number.isFinite(identity.launchedAt) || identity.launchedAt <= 0)\n    throw new Error('The observed PID is not the expected Safari process: ' + JSON.stringify(identity));\n  if (argv[1] && identity.launchedAt !== Number(argv[1]))\n    throw new Error('The observed Safari PID has been reused: ' + JSON.stringify(identity));\n  if (argv[2] === 'identify') return JSON.stringify(identity);\n  console.log('Safari request target: ' + JSON.stringify(identity));\n  function phase(name) { console.log('Safari request phase: ' + JSON.stringify({ at: new Date().toISOString(), phase: name })); }\n  phase('application-constructor-begin');\n  var app = Application(pid);\n  phase('application-constructor-end');\n  var seconds = Number(argv[4]);\n  if (argv[2] === 'title') {\n    var name = app.documents[0].name;\n    phase('title-specifier-ready');\n    phase('title-get-begin');\n    var title = name({ timeout: seconds });\n    phase('title-get-end');\n    return title;\n  }\n  if (argv[2] === 'evaluate') return app.doJavaScript(argv[3], { in: app.documents[0] }, { timeout: seconds });\n  if (argv[2] === 'quit') { app.quit(); return 'Quit requested'; }\n  if (argv[2] === 'baseline') {\n    var window = app.windows[0];\n    if (window.miniaturized()) window.miniaturized = false;\n    if (!app.frontmost()) app.activate();\n    var tab = window.currentTab();\n    return JSON.stringify({ windowId",
+  "errorDetail": {
+    "code": null,
+    "signal": "SIGTERM",
+    "killed": true,
+    "stderr": ""
+  },
+  "processes": [
+    "  150     1 /System/Library/PrivateFrameworks/TCC.framework/Support/tccd",
+    "  418     1 /System/Library/PrivateFrameworks/TCC.framework/Support/tccd",
+    " 1033     1 /bin/bash",
+    " 2096  1059 /bin/bash",
+    " 2097  2096 node",
+    " 2111     1 /System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/MacOS/Safari",
+    " 2129     1 /System/Cryptexes/App/usr/libexec/com.apple.Safari.History",
+    " 2131     1 /System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/XPCServices/com.apple.Safari.SandboxBroker.xpc/Contents/MacOS/com.apple.Safari.SandboxBroker",
+    " 2132     1 /System/Volumes/Preboot/Cryptexes/App/System/Library/StagedFrameworks/Safari/WebPrivacy.framework/Versions/A/XPCServices/com.apple.WebPrivacy.Service.xpc/Contents/MacOS/com.apple.WebPrivacy.Service",
+    " 2133     1 /System/Volumes/Preboot/Cryptexes/App/System/Library/StagedFrameworks/Safari/WebKit.framework/Versions/A/XPCServices/com.apple.WebKit.WebContent.xpc/Contents/MacOS/com.apple.WebKit.WebContent",
+    " 2134     1 /System/Cryptexes/App/usr/libexec/SafariNotificationAgent",
+    " 2138     1 /System/Cryptexes/App/System/Library/CoreServices/SafariSupport.bundle/Contents/MacOS/SafariBookmarksSyncAgent",
+    " 2141     1 /System/Volumes/Preboot/Cryptexes/App/System/Library/StagedFrameworks/Safari/WebKit.framework/Versions/A/XPCServices/com.apple.WebKit.Networking.xpc/Contents/MacOS/com.apple.WebKit.Networking",
+    " 2142     1 /System/Cryptexes/App/usr/libexec/SafariLaunchAgent",
+    " 2146     1 /System/Volumes/Preboot/Cryptexes/App/System/Library/StagedFrameworks/Safari/WebKit.framework/Versions/A/XPCServices/com.apple.WebKit.GPU.xpc/Contents/MacOS/com.apple.WebKit.GPU",
+    " 2161     1 /System/Volumes/Preboot/Cryptexes/App/System/Library/StagedFrameworks/Safari/SafariShared.framework/Versions/A/XPCServices/com.apple.Safari.SearchHelper.xpc/Contents/MacOS/com.apple.Safari.SearchHelper",
+    " 2184     1 /System/Library/PrivateFrameworks/SafariSafeBrowsing.framework/com.apple.Safari.SafeBrowsing.Service",
+    " 2210     1 /System/Volumes/Preboot/Cryptexes/App/System/Library/StagedFrameworks/Safari/WebKit.framework/Versions/A/XPCServices/com.apple.WebKit.WebContent.xpc/Contents/MacOS/com.apple.WebKit.WebContent"
+  ],
+  "teardownError": "AssertionError [ERR_ASSERTION]: No owned Safari identity is available for teardown."
+}

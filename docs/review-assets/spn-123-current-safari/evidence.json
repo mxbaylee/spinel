@@ -1,0 +1,15 @@
+{
+  "repository": "mxbaylee/spinel",
+  "pr": 220,
+  "source": "54307c19c075c5dd67a8012341cc7cee716a09a3",
+  "tested": "7176d88cc1e82e3416c8f778b48adced8d3daa00",
+  "run": 41495432847,
+  "attempt": 1,
+  "failedJob": 125449563899,
+  "artifact": 13167170705,
+  "failure": "Native Safari same-profile synthetic capability probe, online initial process-identity request; SIGTERM, empty stdout/stderr; application acceptance not reached.",
+  "screenshot": "1920x1080 macos-15-intel screenshot shows the synthetic profile probe with rendered SVG and Canvas 2D. It does not prove native script identity/readiness, restart, persistence or Spinel application behavior.",
+  "cleanup": "Secondary teardown error: no owned Safari identity was available; retained in original JSON.",
+  "passedSiblingJobs": [125449564424, 125449564563],
+  "disposition": "Existing SPN-130 native probe prerequisite must diagnose the initial identity timeout; no retry or timeout increase performed. SPN-123 remains unmerged; required CI and remaining hosted acceptance are not complete."
+}

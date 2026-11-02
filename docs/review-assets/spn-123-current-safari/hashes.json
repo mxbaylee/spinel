@@ -1,0 +1,22 @@
+{
+  "evidence.json": {
+    "bytes": 1059,
+    "sha256": "4c4b291245000ef3093680b5dd4cc738219b031c599bdac7a309cc22b5ecb59a"
+  },
+  "extracted/safari-capability-failure.png": {
+    "bytes": 199175,
+    "sha256": "e5f17bcb72052ebc669fd549102a4ff2b9f35b3a67590e148c334411285af8d1"
+  },
+  "extracted/safari-profile-probe.json": {
+    "bytes": 5510,
+    "sha256": "a07b80c447c1100f9ef50a3f43c11b0cb8581e4138edcbbdf709923db0a89f4c"
+  },
+  "extracted/safari/versions.json": {
+    "bytes": 1136,
+    "sha256": "b0522898d6460193b79a0e4bf298d2ddc14e28a6b1053cf8997324fa6080acab"
+  },
+  "safari-artifact.zip": {
+    "bytes": 171134,
+    "sha256": "f7051e4b71ce308e513bcab69e40dc3f6f67fe03965613d3fda5bbcc0f07a49a"
+  }
+}
