@@ -1,0 +1,12 @@
+{
+  "repository": "mxbaylee/spinel",
+  "pr": 231,
+  "source": "0a7e856cd6495e0297de64e7b728945ed4ad2c95",
+  "base": "18a8759c498574a1d9cc24a969a558cd97a798ed",
+  "priorImplementation": "10f65f29d167a858ee9a63f23e32415baecec6d2",
+  "priorImplementationArchive": "738a0b52d44ccaa188dfbfcdfc33caf8d6c47479",
+  "focusedControls": { "passed": 119, "failed": 0, "elapsedMs": 2337, "sampledPeakMiB": 747.2 },
+  "mapping": "Partial-retry-negative log reproduces the pre-repair defect on10f65f29 plus the new negative control. Final review logs test the repaired tree. Earlier partial logs record intermediate controls; provider JSON is actual v2 cancellation metadata, not a hosted V3 adoption pass.",
+  "providerEvidence": { "run": 41511771000, "jobAndCheck": 125505126821, "source": "96bae9a00d211fa0baf7a6b5a307676613fd855f", "finding": "Terminal cancelled with explicitly zero runner/group IDs, empty names, no steps, matching genuine Actions check/completion; started_at remains populated." },
+  "remaining": ["independent repair revalidation", "provider-shaped assigned-runner setup cancellation disposition", "current hosted checks", "actual V3 adoption and protected retention/partial-retry transitions", "authorized App setup", "original protected event matrix", "cost accounting", "two final grades"]
+}

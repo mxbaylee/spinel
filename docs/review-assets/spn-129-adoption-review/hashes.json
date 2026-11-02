@@ -1,0 +1,66 @@
+{
+  "adoption-cancellation-controls.log": {
+    "bytes": 5068,
+    "sha256": "8bbe868a8d5aa07f8e000c6db78bbf47214c719f7bdcba6a00b667e680e48cc6"
+  },
+  "adoption-partial-controls.log": {
+    "bytes": 4929,
+    "sha256": "ad65617e1ca47374e119893a76000460b6c44d3e9531f4e599a4d579ade012f0"
+  },
+  "adoption-partial-format.log": {
+    "bytes": 126,
+    "sha256": "5713e6c704896a2b39748a9c737f81dffce8d3bb568af917665beb5c249a9249"
+  },
+  "adoption-partial-lint.log": {
+    "bytes": 57,
+    "sha256": "36a559847db5f0899d692d653d96a85c967bb433c71625295efd83b9cfa5bb33"
+  },
+  "adoption-partial-retry-fixed.log": {
+    "bytes": 4815,
+    "sha256": "54319d29e0a1c935584f97dd476875806b21cc62c839a97ad04422b0ee0a93a9"
+  },
+  "adoption-partial-retry-negative.log": {
+    "bytes": 1074,
+    "sha256": "8a44752299f06c84e64822856cd14d2c8fc03e77dc106b5f047b7af068e6d3d4"
+  },
+  "adoption-partial-typecheck.log": {
+    "bytes": 58,
+    "sha256": "11eb81bb5977cb1a3a1c934b07daa8db062532d3f14b6eebab14ce2cf0c6e42f"
+  },
+  "adoption-review-focused.log": {
+    "bytes": 12807,
+    "sha256": "be6a279bac9c06f9e800199b0477607e88cd3038ca8c10b2e30dd504c63cbbb2"
+  },
+  "adoption-review-format.log": {
+    "bytes": 126,
+    "sha256": "f8e4e3d8c8933e3c2a2d6bf261cab1c71570196785fbfa77dfe1b09c0f6d50bc"
+  },
+  "adoption-review-lint.log": {
+    "bytes": 57,
+    "sha256": "890b78cdf18f6e5afcc70ec8378ad4591d5d3911d89497051e2ae35fdad0c5b8"
+  },
+  "adoption-review-typecheck.log": {
+    "bytes": 117,
+    "sha256": "895a07bdb0db21f8e0aec5c5ee37197ce665f6b6ad759349e367bbbe7394e720"
+  },
+  "evidence.json": {
+    "bytes": 1305,
+    "sha256": "578b985eb1cf769643db4a6357266f99d6efd5095c354442810106a87922ca1f"
+  },
+  "unassigned-annotations.json": {
+    "bytes": 193,
+    "sha256": "994bf699df965facf70353552427f3af1cc7a95067eb070407817bc9511654d4"
+  },
+  "unassigned-check.json": {
+    "bytes": 443,
+    "sha256": "c5d51607dfae84492343328c8056f2c59f94e94ec654535a614addd0b3f05ac0"
+  },
+  "unassigned-job.json": {
+    "bytes": 452,
+    "sha256": "e721274cc7dc7b26ac5aef8e2cefc504dbcd0fc58df0786745b87ddb08b1f40e"
+  },
+  "unassigned-run.json": {
+    "bytes": 534,
+    "sha256": "0bf0227066d0efd11baa28ecca6f54baed92b6c680aba823d58b77b519dbba92"
+  }
+}
