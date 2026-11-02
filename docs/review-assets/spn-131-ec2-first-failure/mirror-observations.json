@@ -1,0 +1,40 @@
+[
+  {
+    "file": "job-125363957600.log",
+    "runnerImage": {
+      "Image": "ubuntu-24.04",
+      "Version": "20261018.96.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20261018.96/images/ubuntu/Ubuntu2404-Readme.md",
+      "Image Release": "https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261018.96"
+    },
+    "strictFailure": true,
+    "records": [
+      {
+        "kind": "ubuntu-mirror-input",
+        "imageOS": "ubuntu24",
+        "imageVersion": "20261018.96.1",
+        "bytes": 152,
+        "sha256": "af9816b59bc904eaf28838ae673ac2b625b6628bebfc67a7cbeae78ba06e226a",
+        "lines": [
+          {
+            "line": 1,
+            "text": "http://us-east-2.ec2.archive.ubuntu.com/ubuntu/\tpriority:1"
+          },
+          {
+            "line": 2,
+            "text": "https://archive.ubuntu.com/ubuntu/\tpriority:2"
+          },
+          {
+            "line": 3,
+            "text": "https://security.ubuntu.com/ubuntu/\tpriority:3"
+          },
+          {
+            "line": 4,
+            "text": ""
+          }
+        ],
+        "reconstructable": true
+      }
+    ]
+  }
+]
