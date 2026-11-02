@@ -1,0 +1,92 @@
+name: SPN-071 bounded flush diagnostic
+on:
+  push:
+    branches: [codex/spn-071-flush-diagnostic]
+permissions:
+  contents: read
+jobs:
+  diagnostic:
+    name: Diagnostic only — matched main and candidate mobile sequences
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      VITE_SYNC_EVIDENCE: '0'
+      VITE_DOC_SELECTION_EVIDENCE: '0'
+      VITE_DOC_RESPONSIVENESS_EVIDENCE: '1'
+      SPINEL_E2E_PROJECT: doc-responsiveness
+      SPN108_BASELINE: '0'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: df1d910822cba284178f26ac4f6cf359ddcfacef
+          path: main-source
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: 53ad6848d79b7b5034db6f6e99a107a518f5d9e5
+          path: candidate-source
+          persist-credentials: false
+      - name: Retain actual mirror profile
+        run: cat /etc/apt/apt-mirrors.txt > mirror-profile.txt
+      - name: Install matching browser
+        working-directory: main-source
+        run: |
+          npm ci --no-audit
+          node scripts/ci/prefer-ubuntu-archive.ts
+          npx playwright install --with-deps chromium
+      - name: Prepare identical diagnostic harnesses
+        run: |
+          node scripts/ci/spn071-flush-diagnostic.ts main-source main
+          node scripts/ci/spn071-flush-diagnostic.ts candidate-source candidate
+      - name: Build main
+        working-directory: main-source
+        run: npm run build
+      - name: Main one declared sequence
+        id: main
+        continue-on-error: true
+        working-directory: main-source
+        run: npx playwright test --project=doc-responsiveness e2e/doc-responsiveness.spec.ts --grep 'mobile sustained native typing plain-[123]$' --retries=0
+      - name: Build candidate
+        working-directory: candidate-source
+        run: |
+          npm ci --no-audit
+          npm run build
+      - name: Candidate one declared sequence
+        id: candidate
+        continue-on-error: true
+        working-directory: candidate-source
+        run: npx playwright test --project=doc-responsiveness e2e/doc-responsiveness.spec.ts --grep 'mobile sustained native typing plain-[123]$' --retries=0
+      - name: Retain outcomes without masking failures
+        if: always()
+        env:
+          MAIN: ${{ steps.main.outcome }}
+          CANDIDATE: ${{ steps.candidate.outcome }}
+        run: |
+          printf 'Diagnostic only: main=%s candidate=%s\n' "$MAIN" "$CANDIDATE" > outcomes.txt
+          cat outcomes.txt
+          test "$MAIN" = success && test "$CANDIDATE" = success
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        if: always()
+        with:
+          name: spn071-flush-diagnostic
+          retention-days: 14
+          if-no-files-found: error
+          path: |
+            mirror-profile.txt
+            outcomes.txt
+            *-source/spn071-diagnostic-identity.json
+            *-source/spn071-diagnostic-source.patch
+            *-source/e2e/spn071-trace.ts
+            *-source/test-results/**/spn108-*.json
+            *-source/test-results/**/spn108-profile.cpuprofile
+            *-source/test-results/**/spn071-trace.jsonl
+            *-source/test-results/**/error-context.md
+            *-source/test-results/**/test-failed-*.png
+            *-source/playwright-report/*.json
