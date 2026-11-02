@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "evidence": {
+    "planSha256": "9de8143199725854d7ba1dfecd8614e90704a36a6336fed39f2e64fe526d5b6b",
+    "error": "Error: Incomplete coverage unit-tests: selected=true, result=failure",
+    "results": "{\"unit-tests\":\"failure\"}"
+  }
+}
