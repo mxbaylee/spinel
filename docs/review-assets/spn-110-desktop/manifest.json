@@ -1,0 +1,30 @@
+{
+  "source": "09093eb64c08cd262acc8390c64581a7f82c5fc2",
+  "tested": "0d59eac95a4cdd3439e9a74169b0ea30bd24f15a",
+  "run": 41526830043,
+  "attempt": 1,
+  "scope": "Native macOS ordinary-profile offline restart, content/images, reconnect, storage loss and owned process exit; not retention UI or timer acceptance.",
+  "artifacts": [
+    {
+      "browser": "chrome",
+      "id": 13181321524,
+      "file": "chrome.zip",
+      "sha256": "eaddaaf534fef8f3080d69832b65177a0a6a0e9ba4889d01ac4020e2c07dd9fc",
+      "bytes": 225515
+    },
+    {
+      "browser": "firefox",
+      "id": 13180926685,
+      "file": "firefox.zip",
+      "sha256": "a0b59024a8a3e207738c8f69b77fa99d15c5c22f458c56a31682c84f5d7c7212",
+      "bytes": 450725
+    },
+    {
+      "browser": "safari",
+      "id": 13180448698,
+      "file": "safari.zip",
+      "sha256": "26778fa1f5146cc20eba5bbf56619ccbe6fc7fabf2637efc72429667ba0ebdfe",
+      "bytes": 1041715
+    }
+  ]
+}
