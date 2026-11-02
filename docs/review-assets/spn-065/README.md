@@ -28,17 +28,17 @@ Visual assessment is **agent review only**.
 
 The selected `dashboard-*` and state images come from the actual production
 components in Storybook. Source head:
-`de9a1432b07604d0313bad437f7a2bd5e016fada`; CI merge checkout:
-`5ceaec1781b2daeee96b0991e4f17f3e885deaaf`. Build:
-[run 40987680406](https://github.com/mxbaylee/spinel/actions/runs/40987680406),
-artifact `12948155677`, verified ZIP SHA-256
-`fbc6ce7522f39cd1479dc9f5c2b5130aeb2e8f90c67d864462638a4e7f70560a`.
+`75106818b45a034529694dd7d6ca66c2a9b9efed`; CI merge checkout:
+`cc14a82675612e50bc3a6da5e56559844c73f6dc`. Build:
+[run 41381635491](https://github.com/mxbaylee/spinel/actions/runs/41381635491),
+artifact `13113815506`, verified ZIP SHA-256
+`c3aeb2c1ad382554cf5ce09188979d12f734b1cfd1fea98420be48bb9a404970`.
 
 The local guarded review of that CI build passed **60/60 states**: all eleven
 `CopyFile` stories plus the real `Dashboard/MakeCopy` journey, in desktop light/dark
 (1280 × 900), phone light/dark (390 × 900), and tablet (768 × 900). Captures are full
-page; the dashboard document can exceed the viewport height. Review duration was
-23,439 ms and peak process-tree RSS 968,768 KiB. `production-story-review.json`
+page; the dashboard document can exceed the viewport height. The refreshed review
+used 17,453 ms watchdog elapsed and peak process-tree RSS 1,031.3 MiB. `production-story-review.json`
 preserves all checked state IDs, selected durable-file mappings, and zero failures.
 The complete screenshot archive is supplementary CI evidence with limited retention.
 
