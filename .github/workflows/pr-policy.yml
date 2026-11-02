@@ -1,5 +1,5 @@
 name: PR policy
-run-name: PR policy v2 pr=${{ github.event.pull_request.number }} action=${{ github.event.action }} base=${{ github.event.pull_request.base.sha }} head=${{ github.event.pull_request.head.sha }} tested=${{ github.sha }}
+run-name: PR policy v3 pr=${{ github.event.pull_request.number }} action=${{ github.event.action }} base=${{ github.event.pull_request.base.sha }} head=${{ github.event.pull_request.head.sha }} tested=${{ github.sha }}
 
 on:
   pull_request:
@@ -59,9 +59,19 @@ jobs:
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
+      # A fixed legacy cutoff permits a one-time full-validation obligation,
+      # never a claim that unknown old events were successfully classified.
+      - name: Validate legacy history adoption v1
+        id: adoption
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/ci/pr-policy.ts adoption
+      - name: ${{ steps.adoption.outputs.marker || 'Legacy history adoption not required' }}
+        if: steps.adoption.outputs.marker != ''
+        run: echo 'Legacy history remains unknown; new full code after this completed step is required.'
       # Seal complete event history before an invalid title or failed/pending
       # code outcome can prevent the policy job from finishing successfully.
-      - name: Validate PR history v2
+      - name: Validate PR history v3
         id: history
         env:
           GH_TOKEN: ${{ github.token }}

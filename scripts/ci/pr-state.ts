@@ -8,6 +8,7 @@ import {
   type HistoryCheckpoint,
   type PolicyHistoryContext,
 } from './pr-history.ts';
+import type { LegacyAdoption } from './pr-history-adoption.ts';
 import {
   exactTextEdit,
   parsePullRequestEvent,
@@ -28,6 +29,9 @@ export interface FullValidationRequirement {
   atOrAfter: number | null;
   pending: boolean;
   checkpoint?: HistoryCheckpoint;
+  adoption?: LegacyAdoption;
+  adoptionRequired?: boolean;
+  adoptionReady?: number;
 }
 
 const object = (value: unknown): value is Record<string, unknown> =>
@@ -157,7 +161,8 @@ export async function readFullValidationRequirement(
         !positiveInteger(entry.id) ||
         timelineIds.has(entry.id) ||
         !timestamp(entry.created_at) ||
-        Date.parse(entry.created_at) < createdTime
+        Date.parse(entry.created_at) < createdTime ||
+        Date.parse(entry.created_at) > currentTime
       )
         return unknown('PR timeline has malformed or duplicate change identities.');
       timelineIds.add(entry.id);
@@ -244,7 +249,11 @@ export async function readFullValidationRequirement(
         (associations.length > 0 || declaredNumber !== null)
       )
         continue;
-      if (!timestamp(run.created_at) || Date.parse(run.created_at) < createdTime)
+      if (
+        !timestamp(run.created_at) ||
+        Date.parse(run.created_at) < createdTime ||
+        Date.parse(run.created_at) > currentTime
+      )
         return unknown('A relevant PR-policy run has an unavailable creation timestamp.');
       const requestedAt = Date.parse(run.created_at);
       if (!associated) {
@@ -257,7 +266,7 @@ export async function readFullValidationRequirement(
         recordFull(requestedAt, 'A PR-policy run has an unknown edit classification identity.');
         continue;
       }
-      if (name.version === 2 && name.head !== run.head_sha)
+      if (name.version >= 2 && name.head !== run.head_sha)
         return unknown('A PR-policy run has contradictory immutable source identities.');
       if (!sha(run.head_sha) || !positiveInteger(run.run_attempt)) {
         sealable = false;
@@ -404,12 +413,23 @@ export async function readFullValidationRequirement(
               atOrAfter: null,
               pending: false,
             };
+    if (window.boundary === 'legacy') {
+      return {
+        ...unknown('Legacy history requires an authenticated one-time full-validation adoption.'),
+        adoptionRequired: true,
+        ...(sealable && !result.pending && (result.state === 'clear' || result.after !== null)
+          ? { adoptionReady: window.upperSequence }
+          : {}),
+      };
+    }
+    if (window.checkpoint?.adoption) result.adoption = window.checkpoint.adoption;
     if (sealable && !result.pending && (result.state === 'clear' || result.after !== null))
       result.checkpoint = {
         sequence: window.upperSequence,
         full: result.state === 'full',
         after: result.after,
         atOrAfter: result.atOrAfter,
+        ...(result.adoption ? { adoption: result.adoption } : {}),
       };
     return result;
   } catch {

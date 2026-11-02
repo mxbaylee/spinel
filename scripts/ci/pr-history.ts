@@ -1,3 +1,15 @@
+import {
+  adoptionIdentity,
+  adoptionMarkerPrefix,
+  adoptionValidationStep,
+  eligibleForLegacyAdoption,
+  legacyHistoryCutoff,
+  noAdoptionStep,
+  parseAdoptionMarker,
+  sameAdoption,
+  type LegacyAdoption,
+} from './pr-history-adoption.ts';
+
 /** Versioned history certificates are facts about PR events, never code passes.
  * Only a genuine policy job's successful history steps can issue one. */
 export interface HistoryCheckpoint {
@@ -5,9 +17,11 @@ export interface HistoryCheckpoint {
   full: boolean;
   after: number | null;
   atOrAfter: number | null;
+  adoption?: LegacyAdoption;
 }
 
 export const historyValidationStep = 'Validate PR history v2';
+export const historyValidationStepV3 = 'Validate PR history v3';
 const markerPrefix = 'PR history v2 ';
 const object = (value: unknown): value is Record<string, unknown> =>
   value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -43,10 +57,39 @@ export function historyCheckpointMarker(checkpoint: HistoryCheckpoint): string {
     (!checkpoint.full && checkpoint.atOrAfter !== null)
   )
     throw new Error('Only complete history with a known full-request boundary can be sealed.');
+  if (checkpoint.adoption) {
+    if (!checkpoint.full || Number(checkpoint.after) < checkpoint.adoption.completed)
+      throw new Error('Legacy adoption permanently requires full code after its original barrier.');
+    return `PR history v3 seq=${checkpoint.sequence} full=1 after=${checkpoint.after} notify=${checkpoint.atOrAfter ?? 0} ${adoptionIdentity(checkpoint.adoption)}`;
+  }
   return `${markerPrefix}seq=${checkpoint.sequence} full=${checkpoint.full ? 1 : 0} after=${checkpoint.after ?? 0} notify=${checkpoint.atOrAfter ?? 0}`;
 }
 
 export function parseHistoryCheckpointMarker(name: unknown): HistoryCheckpoint | null {
+  if (typeof name === 'string' && name.startsWith('PR history v3 ')) {
+    const match =
+      /^PR history v3 seq=([1-9][0-9]*) full=1 after=([1-9][0-9]*) notify=(0|[1-9][0-9]*) adopted=([1-9][0-9]*) run=([1-9][0-9]*) job=([1-9][0-9]*) attempt=([1-9][0-9]*) step=([1-9][0-9]*) at=([1-9][0-9]*)$/.exec(
+        name,
+      );
+    if (!match) throw new Error('Malformed adopted-history checkpoint.');
+    const result: HistoryCheckpoint = {
+      sequence: Number(match[1]),
+      full: true,
+      after: Number(match[2]),
+      atOrAfter: match[3] === '0' ? null : Number(match[3]),
+      adoption: {
+        cutoff: Number(match[4]),
+        run: Number(match[5]),
+        job: Number(match[6]),
+        attempt: Number(match[7]),
+        step: Number(match[8]),
+        completed: Number(match[9]),
+      },
+    };
+    if (historyCheckpointMarker(result) !== name)
+      throw new Error('Noncanonical adopted-history checkpoint.');
+    return result;
+  }
   if (typeof name !== 'string' || !name.startsWith(markerPrefix)) return null;
   const match =
     /^PR history v2 seq=([1-9][0-9]*) full=([01]) after=(0|[1-9][0-9]*) notify=(0|[1-9][0-9]*)$/.exec(
@@ -66,25 +109,22 @@ export function parseHistoryCheckpointMarker(name: unknown): HistoryCheckpoint |
 /** Source/base/tested are issuer provenance; a later push may inherit the PR's
  * history, but still has to independently admit its own genuine code results.
  * The consumer must additionally prove a contiguous global sequence suffix. */
-export function verifyHistoryCheckpoint(
+interface HistoryProofExpected {
+  repository: string;
+  number: number;
+  workflowId: number;
+  createdAt: string;
+  upperSequence: number;
+  currentRunId?: number;
+  currentAttempt?: number;
+}
+
+function verifyPolicyIssuer(
   run: unknown,
   job: unknown,
   check: unknown,
-  expected: {
-    repository: string;
-    number: number;
-    workflowId: number;
-    createdAt: string;
-    upperSequence: number;
-    currentRunId?: number;
-    currentAttempt?: number;
-  },
-): HistoryCheckpoint | null {
-  if (!object(job) || !Array.isArray(job.steps)) return null;
-  const markers = job.steps.filter(
-    (step) => object(step) && typeof step.name === 'string' && step.name.startsWith(markerPrefix),
-  );
-  if (!markers.length) return null;
+  expected: HistoryProofExpected,
+) {
   const bad = () => {
     throw new Error('History checkpoint issuer, proof or coverage is invalid.');
   };
@@ -98,19 +138,13 @@ export function verifyHistoryCheckpoint(
   )
     return bad();
   const created = time(expected.createdAt);
-  if (created === null || !object(run) || !object(check)) return bad();
-  const identity =
-    typeof run.display_title === 'string'
-      ? /^PR policy v2 pr=([1-9][0-9]*) action=(opened|edited|synchronize|reopened|labeled|unlabeled) base=([a-f0-9]{40}) head=([a-f0-9]{40}) tested=([a-f0-9]{40})$/.exec(
-          run.display_title,
-        )
-      : null;
+  if (created === null || !object(run) || !object(check) || !object(job)) return bad();
+  const identity = parsePolicyRunName(run.display_title);
   if (
     !identity ||
-    identity[0] !== run.display_title ||
-    Number(identity[1]) !== expected.number ||
-    ![identity[3], identity[4], identity[5]].every(sha) ||
-    run.head_sha !== identity[4] ||
+    identity.version < 2 ||
+    identity.number !== expected.number ||
+    run.head_sha !== identity.head ||
     !positive(run.id) ||
     !positive(run.run_number) ||
     !positive(run.run_attempt) ||
@@ -144,13 +178,38 @@ export function verifyHistoryCheckpoint(
       `https://api.github.com/repos/${expected.repository}/check-runs/${check.id}`
   )
     return bad();
-  const validations = job.steps.filter(
-    (step) => object(step) && step.name === historyValidationStep,
+  return { run, job, identity, created };
+}
+
+function verifyPolicyCertificate(
+  rawRun: unknown,
+  rawJob: unknown,
+  check: unknown,
+  expected: HistoryProofExpected,
+  kind: 'history' | 'adoption',
+): HistoryCheckpoint | null {
+  if (!object(rawJob) || !Array.isArray(rawJob.steps)) return null;
+  const prefix = kind === 'history' ? 'PR history ' : adoptionMarkerPrefix;
+  const markers = rawJob.steps.filter(
+    (step) => object(step) && typeof step.name === 'string' && step.name.startsWith(prefix),
   );
+  if (!markers.length) return null;
+  const { run, job, identity, created } = verifyPolicyIssuer(rawRun, rawJob, check, expected);
+  const bad = () => {
+    throw new Error('History checkpoint issuer, proof or coverage is invalid.');
+  };
+  const steps = rawJob.steps;
+  const validationName =
+    kind === 'adoption'
+      ? adoptionValidationStep
+      : identity.version === 3
+        ? historyValidationStepV3
+        : historyValidationStep;
+  const validations = steps.filter((step) => object(step) && step.name === validationName);
   if (
     markers.length !== 1 ||
     validations.length !== 1 ||
-    job.steps.some((step) => !object(step) || typeof step.name !== 'string')
+    steps.some((step) => !object(step) || typeof step.name !== 'string')
   )
     return bad();
   const marker = markers[0] as Record<string, unknown>;
@@ -172,16 +231,61 @@ export function verifyHistoryCheckpoint(
     Number(marker.number) <= Number(validation.number)
   )
     return bad();
-  const checkpoint = parseHistoryCheckpointMarker(marker.name)!;
+  let checkpoint: HistoryCheckpoint;
+  if (kind === 'adoption') {
+    const sequence = parseAdoptionMarker(marker.name);
+    if (
+      sequence === null ||
+      identity.version !== 3 ||
+      !eligibleForLegacyAdoption(expected.repository, expected.workflowId, expected.createdAt) ||
+      issued < Date.parse(legacyHistoryCutoff.createdAt)
+    )
+      return bad();
+    checkpoint = {
+      sequence,
+      full: true,
+      after: issued,
+      atOrAfter: null,
+      adoption: {
+        cutoff: legacyHistoryCutoff.runId,
+        run: Number(run.id),
+        job: Number(job.id),
+        attempt: Number(job.run_attempt),
+        step: Number(marker.number),
+        completed: issued,
+      },
+    };
+  } else {
+    const parsed = parseHistoryCheckpointMarker(marker.name);
+    if (!parsed) return bad();
+    checkpoint = parsed;
+  }
   if (
-    checkpoint.sequence < run.run_number ||
+    checkpoint.adoption &&
+    (identity.version !== 3 ||
+      !eligibleForLegacyAdoption(expected.repository, expected.workflowId, expected.createdAt) ||
+      checkpoint.adoption.completed > (kind === 'adoption' ? issued : validated))
+  )
+    return bad();
+  if (
+    checkpoint.sequence < Number(run.run_number) ||
     checkpoint.sequence > expected.upperSequence ||
     [checkpoint.after, checkpoint.atOrAfter].some(
-      (bound) => bound !== null && (bound < created || bound > validated),
+      (bound) =>
+        bound !== null && (bound < created || bound > (kind === 'adoption' ? issued : validated)),
     )
   )
     return bad();
   return checkpoint;
+}
+
+export function verifyHistoryCheckpoint(
+  run: unknown,
+  job: unknown,
+  check: unknown,
+  expected: HistoryProofExpected,
+) {
+  return verifyPolicyCertificate(run, job, check, expected, 'history');
 }
 
 export interface PolicyHistoryWindow {
@@ -189,7 +293,7 @@ export interface PolicyHistoryWindow {
   upperSequence: number;
   throughSequence: number;
   checkpoint: HistoryCheckpoint | null;
-  boundary: 'predecessor' | 'opening' | 'checkpoint';
+  boundary: 'predecessor' | 'opening' | 'checkpoint' | 'legacy';
 }
 
 /** Read global, unfiltered registration history. A missing sequence is never
@@ -201,6 +305,7 @@ export async function readPolicyHistoryWindow(
     workflowId: number;
     createdAt: string;
     currentRun?: { id: number; sequence: number };
+    legacyCutoff?: number;
     isOpening(run: Record<string, unknown>): Promise<boolean>;
     checkpoint(
       run: Record<string, unknown>,
@@ -212,6 +317,7 @@ export async function readPolicyHistoryWindow(
   if (
     !positive(expected.workflowId) ||
     created === null ||
+    (expected.legacyCutoff !== undefined && !positive(expected.legacyCutoff)) ||
     (expected.currentRun &&
       (!positive(expected.currentRun.id) || !positive(expected.currentRun.sequence)))
   )
@@ -271,10 +377,11 @@ export async function readPolicyHistoryWindow(
       checkpoint &&
       observedCheckpoints.some(
         (observed) =>
-          observed.full &&
-          (!checkpoint.full ||
-            Number(checkpoint.after) < Number(observed.after) ||
-            Number(checkpoint.atOrAfter) < Number(observed.atOrAfter)),
+          (observed.adoption && !sameAdoption(observed.adoption, checkpoint.adoption)) ||
+          (observed.full &&
+            (!checkpoint.full ||
+              Number(checkpoint.after) < Number(observed.after) ||
+              Number(checkpoint.atOrAfter) < Number(observed.atOrAfter))),
       )
     )
       throw new Error('A covering history checkpoint weakens an observed full requirement.');
@@ -336,6 +443,12 @@ export async function readPolicyHistoryWindow(
       if (started < created) return finish(run.run_number, 'predecessor', null);
       if (run.run_number === 1 && (await expected.isOpening(run)))
         return finish(0, 'opening', null);
+      if (
+        expected.legacyCutoff !== undefined &&
+        upperSequence > expected.legacyCutoff &&
+        completeSuffix(expected.legacyCutoff)
+      )
+        return finish(expected.legacyCutoff, 'legacy', null);
     }
     if (batch.length < 100) break;
   }
@@ -354,19 +467,19 @@ export interface PolicyInvocation {
 
 export interface PolicyHistoryContext {
   invocation: PolicyInvocation;
-  phase: 'issuance' | 'admission';
+  phase: 'adoption' | 'issuance' | 'admission';
 }
 export function parsePolicyRunName(name: unknown) {
   if (typeof name !== 'string') return null;
   const match =
-    /^PR policy v([12]) pr=([1-9][0-9]*) action=(opened|edited|synchronize|reopened|labeled|unlabeled)(?: base=([a-f0-9]{40}) head=([a-f0-9]{40}) tested=([a-f0-9]{40}))?$/.exec(
+    /^PR policy v([123]) pr=([1-9][0-9]*) action=(opened|edited|synchronize|reopened|labeled|unlabeled)(?: base=([a-f0-9]{40}) head=([a-f0-9]{40}) tested=([a-f0-9]{40}))?$/.exec(
       name,
     );
   if (
     !match ||
     match[0] !== name ||
     !positive(Number(match[2])) ||
-    (match[1] === '2' ? ![match[4], match[5], match[6]].every(sha) : match[4] !== undefined)
+    (match[1] !== '1' ? ![match[4], match[5], match[6]].every(sha) : match[4] !== undefined)
   )
     return null;
   return {
@@ -381,6 +494,7 @@ export function parsePolicyRunName(name: unknown) {
 
 export const policyRunNameV2 =
   'run-name: PR policy v2 pr=${{ github.event.pull_request.number }} action=${{ github.event.action }} base=${{ github.event.pull_request.base.sha }} head=${{ github.event.pull_request.head.sha }} tested=${{ github.sha }}';
+export const policyRunNameV3 = policyRunNameV2.replace('v2 ', 'v3 ');
 
 /** Opening/checkpoint provenance uses provider-owned identities and supported
  * reviewed workflow contracts. It assumes repository workflow changes receive
@@ -402,7 +516,13 @@ export async function authenticatedPolicyHistory(
   const invocation = expected.context?.invocation;
   // Issuance cannot prove itself. Admission may consume the marker only after
   // both preceding history steps are reported successfully completed.
-  const issuer = expected.context?.phase === 'issuance' ? invocation : undefined;
+  const issuer =
+    expected.context && expected.context.phase !== 'admission' ? invocation : undefined;
+  const legacyEligible = eligibleForLegacyAdoption(
+    client.repository,
+    expected.workflowId,
+    expected.createdAt,
+  );
   const jobs = new Map<number, Promise<unknown[]>>();
   const runJobs = (id: number) => {
     let pending = jobs.get(id);
@@ -423,7 +543,7 @@ export async function authenticatedPolicyHistory(
     if (
       !object(run) ||
       !identity ||
-      identity.version !== 2 ||
+      identity.version < 2 ||
       identity.number !== expected.number ||
       identity.action !== invocation.action ||
       identity.base !== invocation.base ||
@@ -442,12 +562,13 @@ export async function authenticatedPolicyHistory(
     workflowId: expected.workflowId,
     createdAt: expected.createdAt,
     currentRun: invocation ? { id: invocation.id, sequence: invocation.sequence } : undefined,
+    legacyCutoff: legacyEligible ? legacyHistoryCutoff.sequence : undefined,
     async isOpening(run) {
       const identity = parsePolicyRunName(run.display_title);
       if (
         run.run_number !== 1 ||
         !identity ||
-        identity.version !== 2 ||
+        identity.version < 2 ||
         identity.number !== expected.number ||
         identity.action !== 'opened' ||
         run.event !== 'pull_request' ||
@@ -494,36 +615,53 @@ export async function authenticatedPolicyHistory(
         throw new Error('The initial policy workflow contract is unavailable.');
       const content = Buffer.from(source.content, 'base64').toString('utf8');
       const names = content.split('\n').filter((line) => /^\s*run-name:/.test(line));
-      if (names.length !== 1 || names[0] !== policyRunNameV2)
+      if (
+        names.length !== 1 ||
+        names[0] !== (identity.version === 3 ? policyRunNameV3 : policyRunNameV2)
+      )
         throw new Error(
           'The initial policy event was not bound by the supported workflow contract.',
         );
       return true;
     },
     async checkpoint(run, upperSequence) {
+      if (
+        legacyEligible &&
+        Number(run.run_number) > legacyHistoryCutoff.sequence &&
+        Number(time(run.created_at)) < Date.parse(legacyHistoryCutoff.createdAt)
+      )
+        throw new Error('A modern registration predates the reviewed legacy cutoff.');
       const identity = parsePolicyRunName(run.display_title);
-      if (!identity || identity.number !== expected.number || identity.version !== 2) return null;
+      if (!identity || identity.number !== expected.number || identity.version < 2) return null;
       const records = await runJobs(Number(run.id));
       const candidates: HistoryCheckpoint[] = [];
-      for (const job of records) {
-        if (!object(job) || job.name !== 'Pull request' || !Array.isArray(job.steps)) continue;
-        if (issuer && run.id === issuer.id && Number(job.run_attempt) >= issuer.attempt) continue;
-        const marker = job.steps.some(
+      if (!Array.isArray(records)) throw new Error('Policy job history is unavailable.');
+      const policyJobs = records.filter((job) => object(job) && job.name === 'Pull request');
+      // Every adoption-capable attempt must positively disclose its marker or
+      // settled non-issuance. Missing job/step evidence cannot mean never adopted.
+      if (identity.version === 3 && legacyEligible) {
+        const attempts = policyJobs.map((job) => (object(job) ? job.run_attempt : null));
+        if (
+          !positive(run.run_attempt) ||
+          run.run_attempt > 1000 ||
+          attempts.length !== run.run_attempt ||
+          new Set(attempts).size !== attempts.length ||
+          attempts.some((attempt) => !positive(attempt) || attempt > Number(run.run_attempt))
+        )
+          throw new Error('Legacy adoption has missing or duplicate attempt evidence.');
+      }
+      for (const job of policyJobs) {
+        if (!object(job) || !Array.isArray(job.steps))
+          throw new Error('Policy steps are unavailable.');
+        const ownIssuance =
+          issuer && run.id === issuer.id && Number(job.run_attempt) >= issuer.attempt;
+        if (ownIssuance && expected.context?.phase === 'adoption') continue;
+        const historyMarker = job.steps.some(
           (step) =>
             object(step) && typeof step.name === 'string' && step.name.startsWith('PR history '),
         );
-        if (!marker) continue;
-        if (
-          identity.version !== 2 ||
-          job.steps.some(
-            (step) =>
-              object(step) &&
-              typeof step.name === 'string' &&
-              step.name.startsWith('PR history ') &&
-              !step.name.startsWith(markerPrefix),
-          )
-        )
-          throw new Error('Unsupported history certificate protocol.');
+        if ((!historyMarker || ownIssuance) && !(identity.version === 3 && legacyEligible))
+          continue;
         const checkId =
           typeof job.check_run_url === 'string'
             ? new RegExp(
@@ -533,23 +671,74 @@ export async function authenticatedPolicyHistory(
         if (!checkId || !positive(Number(checkId)))
           throw new Error('History certificate check identity is unavailable.');
         const check = await client.get(`check-runs/${checkId}`);
-        const checkpoint = verifyHistoryCheckpoint(run, job, check, {
+        const proofExpected = {
           repository: client.repository,
           number: expected.number,
           workflowId: expected.workflowId,
           createdAt: expected.createdAt,
           upperSequence,
-          currentRunId: issuer?.id,
-          currentAttempt: issuer?.attempt,
-        });
-        if (!checkpoint) throw new Error('History certificate has no supported proof.');
-        candidates.push(checkpoint);
+        };
+        if (identity.version === 3 && legacyEligible) {
+          verifyPolicyIssuer(run, job, check, proofExpected);
+          if (job.steps.some((step) => !object(step) || typeof step.name !== 'string'))
+            throw new Error('Legacy adoption has malformed steps.');
+          const preparations = job.steps.filter(
+            (step) => object(step) && step.name === adoptionValidationStep,
+          );
+          const markers = job.steps.filter(
+            (step) =>
+              object(step) &&
+              (step.name === noAdoptionStep || String(step.name).startsWith('PR adoption ')),
+          );
+          if (preparations.length !== 1 || markers.length !== 1)
+            throw new Error('Legacy adoption candidate proof is missing or ambiguous.');
+          const preparation = preparations[0] as Record<string, unknown>;
+          const marker = markers[0] as Record<string, unknown>;
+          if (
+            !positive(preparation.number) ||
+            !positive(marker.number) ||
+            marker.number <= preparation.number
+          )
+            throw new Error('Legacy adoption steps are reordered.');
+          if (
+            marker.name !== noAdoptionStep &&
+            !String(marker.name).startsWith(adoptionMarkerPrefix)
+          )
+            throw new Error('Unsupported legacy-adoption protocol.');
+          if (
+            marker.name !== noAdoptionStep &&
+            marker.status === 'completed' &&
+            marker.conclusion === 'success'
+          ) {
+            const adoption = verifyPolicyCertificate(run, job, check, proofExpected, 'adoption');
+            if (!adoption) throw new Error('Legacy adoption has no successful proof.');
+            candidates.push(adoption);
+          } else {
+            if (
+              marker.status !== 'completed' ||
+              !['skipped', 'failure', 'cancelled', 'timed_out'].includes(
+                String(marker.conclusion),
+              ) ||
+              preparation.status !== 'completed' ||
+              !['success', 'skipped', 'failure', 'cancelled', 'timed_out'].includes(
+                String(preparation.conclusion),
+              )
+            )
+              throw new Error('An earlier legacy-adoption attempt has not settled.');
+          }
+        }
+        if (historyMarker && !ownIssuance) {
+          const checkpoint = verifyHistoryCheckpoint(run, job, check, proofExpected);
+          if (!checkpoint) throw new Error('History certificate has no supported proof.');
+          candidates.push(checkpoint);
+        }
       }
       if (!candidates.length) return null;
       const accepted = candidates.find((candidate) =>
         candidates.every(
           (other) =>
             candidate.sequence >= other.sequence &&
+            (!other.adoption || sameAdoption(other.adoption, candidate.adoption)) &&
             (!other.full ||
               (candidate.full &&
                 Number(candidate.after) >= Number(other.after) &&

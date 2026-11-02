@@ -7,6 +7,7 @@ import { exactTextEdit, parsePullRequestEvent, REVALIDATE_LABEL } from './pr-ide
 import type { PullRequestIdentity } from './pr-identity.ts';
 import { PrGitHub } from './pr-github.ts';
 import { historyCheckpointMarker, type PolicyInvocation } from './pr-history.ts';
+import { adoptionMarker } from './pr-history-adoption.ts';
 import {
   assertCurrentSource,
   currentPullRequest,
@@ -180,7 +181,7 @@ export async function validatePrPolicy(options: {
 /** Issue only complete history, independently of title validity or code outcome.
  * A known bounded full obligation may proceed to admission without a certificate.
  * No unknown/pending event can be compressed into a clear prefix. */
-export async function capturePrHistory(options: {
+interface HistoryPhaseOptions {
   client: PrReader;
   event: unknown;
   tested: string;
@@ -188,7 +189,9 @@ export async function capturePrHistory(options: {
   now?: () => number;
   pause?: (milliseconds: number) => Promise<unknown>;
   timeoutMs?: number;
-}) {
+}
+
+async function runHistoryPhase(options: HistoryPhaseOptions, phase: 'adoption' | 'issuance') {
   const now = options.now ?? Date.now;
   const pause = options.pause ?? setTimeout;
   const expected = parsePullRequestEvent(options.event, options.client.repository);
@@ -201,11 +204,19 @@ export async function capturePrHistory(options: {
       throw new Error('History issuer no longer matches the current tested merge.');
     const history = await readFullValidationRequirement(options.client, current, now, {
       invocation: options.invocation,
-      phase: 'issuance',
+      phase,
     });
     reason = history.reason;
     const boundedFull = history.state === 'full' && history.after !== null && !history.pending;
-    if (history.checkpoint || boundedFull) {
+    const marker =
+      phase === 'adoption' && history.adoptionReady !== undefined
+        ? adoptionMarker(history.adoptionReady)
+        : history.checkpoint || boundedFull
+          ? phase === 'issuance' && history.checkpoint
+            ? historyCheckpointMarker(history.checkpoint)
+            : null
+          : undefined;
+    if (marker !== undefined) {
       const final = await currentPullRequest(options.client, expected.number);
       assertCurrentSource(expected, final.identity);
       if (
@@ -214,7 +225,7 @@ export async function capturePrHistory(options: {
         final.identity.body !== current.identity.body
       )
         throw new Error('PR changed before history issuance completed.');
-      return history.checkpoint ? historyCheckpointMarker(history.checkpoint) : null;
+      return marker;
     }
     if (now() >= deadline) break;
     console.log(`Waiting for complete policy history: ${reason}`);
@@ -222,6 +233,11 @@ export async function capturePrHistory(options: {
   } while (now() <= deadline);
   throw new Error(`PR history was not sealed: ${reason}`);
 }
+
+export const capturePrHistory = (options: HistoryPhaseOptions) =>
+  runHistoryPhase(options, 'issuance');
+export const prepareLegacyAdoption = (options: HistoryPhaseOptions) =>
+  runHistoryPhase(options, 'adoption');
 
 if (import.meta.main) {
   if (process.env.GITHUB_EVENT_NAME !== 'pull_request')
@@ -239,8 +255,9 @@ if (import.meta.main) {
     head: identity.head,
     tested: process.env.GITHUB_SHA!,
   };
-  if (process.argv[2] === 'history') {
-    const marker = await capturePrHistory({
+  if (['history', 'adoption'].includes(process.argv[2] ?? '')) {
+    const operation = process.argv[2] === 'adoption' ? prepareLegacyAdoption : capturePrHistory;
+    const marker = await operation({
       client,
       event,
       tested: process.env.GITHUB_SHA!,
@@ -249,7 +266,9 @@ if (import.meta.main) {
     if (!process.env.GITHUB_OUTPUT)
       throw new Error('The checkpoint output channel is unavailable.');
     if (marker) appendFileSync(process.env.GITHUB_OUTPUT, `marker=${marker}\n`);
-    console.log(marker ?? 'No history certificate issued; genuine fresh full code is required.');
+    console.log(
+      marker ?? 'No new history marker issued; ordinary genuine code admission remains required.',
+    );
   } else {
     const result = await validatePrPolicy({
       client,

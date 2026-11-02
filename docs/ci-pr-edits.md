@@ -108,13 +108,49 @@ proved. Pending classification or unknown freshness still blocks admission.
 Legacy runs without an immutable executed revision cannot establish an initial
 opening. In particular, PR #231's first two runs predate even the v1 action-bearing
 name; their original source and retained logs do not prove the trigger action.
-Existing PRs that predate this workflow need a separately reviewed adoption
-protocol before activation. It is not implemented, and creating a later event or
-guessing the opening from timestamps does not supply the missing evidence.
+Existing PRs strictly older than the fixed legacy cutoff can use the candidate
+adoption protocol below. It imposes a new full-validation obligation; it does not
+infer an opening or supply proof of legacy events. Hosted acceptance and final
+independent review remain required before activation.
 
 Policy reads the requirement before admission and again before success. Hosted
 retention, event-delivery and protected-readiness trials remain required before
 activation; deterministic checkpoint tests alone do not establish that acceptance.
+
+### Legacy-history adoption
+
+The reviewed cutoff is workflow `403983940`, sequence **14**, created
+**2026-11-02T19:30:10Z**, in `mxbaylee/spinel`. Its immutable run/source/merge
+identities and verification are [archived together](https://github.com/mxbaylee/spinel/tree/3ad4a4d2ff433b70efa4800593319a1d7745f5ea/docs/review-assets/spn-129-adoption-cutoff).
+The reviewed record remains the authority after that one old registration expires;
+no other missing modern run gains this exception. This is a legacy cutoff, not
+production activation. Other repositories/workflow incarnations and PRs born at
+or after this timestamp are ineligible.
+
+V3 policy validates the complete modern suffix and timeline before proposing first
+adoption. Every earlier adoption-capable attempt must have a successful adoption
+or positively settled non-issuance; unavailable jobs/steps, duplicate attempts,
+unresolved attempts and conflicting origins block. A completed adoption survives
+failure or cancellation of later steps. The preparation phase cannot certify its
+own current/future attempt, and ordinary retries reuse existing proof.
+
+A distinct successful adoption-marker step establishes the strict boundary using
+its provider-reported completion time. History capture can consume that completed
+step on the same attempt. Its adopted-unknown provenance includes the fixed
+authority and original run/job/attempt/step/completion; every descendant checkpoint
+retains it alongside permanent full coverage. Later requests may increase the
+effective bound but never change the original adoption identity or timestamp.
+If the original proof and all carrying checkpoints disappear, policy blocks rather
+than adopting again with a moving deadline.
+
+The concurrently started code run generally predates adoption and cannot pass.
+After observing completed adoption, request a genuine later full PR code event
+through the existing authorized router/manual `ci-revalidate` procedure. CI must
+be created strictly after the marker; timestamp equality and old-run retries are
+insufficient. A failed or pending code check remains failed or pending. This
+one-time onboarding cost is part of hosted accounting and does not recur merely
+because a PR ages or its title/body changes. No extra runner job or writer
+credential is introduced; all phases share the existing 95-minute job cap.
 
 Once policy
 observes a full requirement, it retains it for that invocation. It also retains

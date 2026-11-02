@@ -2,7 +2,13 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { codeCheckNames, formatCodeRunName } from './pr-identity.ts';
 import type { PullRequestIdentity } from './pr-identity.ts';
-import { capturePrHistory, validatePrPolicy } from './pr-policy.ts';
+import { capturePrHistory, prepareLegacyAdoption, validatePrPolicy } from './pr-policy.ts';
+import {
+  adoptionMarker,
+  adoptionValidationStep,
+  legacyHistoryCutoff,
+  noAdoptionStep,
+} from './pr-history-adoption.ts';
 import {
   historyCheckpointMarker,
   historyValidationStep,
@@ -11,8 +17,7 @@ import {
 import { routePrEdit } from './pr-revalidate.ts';
 import { PrGitHub } from './pr-github.ts';
 
-function scenario(historyV2 = false) {
-  const repository = 'owner/repo';
+function scenario(historyV2 = false, repository = 'owner/repo') {
   const createdAt = '2026-11-01T12:00:00Z';
   const base = 'a'.repeat(40),
     head = 'b'.repeat(40),
@@ -232,6 +237,331 @@ function scenario(historyV2 = false) {
     reads: () => reads,
   };
 }
+
+function legacyScenario() {
+  const s = scenario(true, legacyHistoryCutoff.repository);
+  s.policyRun.workflow_id = legacyHistoryCutoff.workflowId;
+  s.policyRun.run_number = s.invocation.sequence = 16;
+  s.policyRun.created_at = '2026-11-02T19:31:00Z';
+  s.policyRun.display_title = s.policyRun.display_title.replace('v2 ', 'v3 ');
+  s.options.now = () => Date.parse('2026-11-02T19:33:00Z');
+  s.run.run_started_at = s.run.updated_at = '2026-11-02T19:32:00Z';
+  for (const job of s.jobs)
+    job.check_run_url = job.check_run_url.replace('owner/repo', s.client.repository);
+  const prior = {
+    ...s.policyRun,
+    id: 499,
+    run_number: 15,
+    created_at: '2026-11-02T19:30:30Z',
+    display_title: s.policyRun.display_title
+      .replace('v3 ', 'v2 ')
+      .replace('action=edited', 'action=synchronize'),
+  };
+  const runs = [s.policyRun, prior];
+  const job = {
+    id: 504,
+    run_id: 500,
+    run_attempt: 1,
+    head_sha: s.policyRun.head_sha,
+    name: 'Pull request',
+    status: 'in_progress',
+    conclusion: null as string | null,
+    check_run_url: `https://api.github.com/repos/${s.client.repository}/check-runs/505`,
+    steps: [
+      {
+        number: 3,
+        name: adoptionValidationStep,
+        status: 'in_progress',
+        conclusion: null as string | null,
+        completed_at: null as string | null,
+      },
+      {
+        number: 4,
+        name: noAdoptionStep,
+        status: 'queued',
+        conclusion: null as string | null,
+        completed_at: null as string | null,
+      },
+    ],
+  };
+  const records: Record<number, unknown[]> = { 500: [s.policyClassifier, job], 499: [] };
+  const check = {
+    id: 505,
+    name: job.name,
+    head_sha: job.head_sha,
+    check_suite: { id: 503 },
+    app: { id: 15368 },
+    status: 'in_progress',
+    conclusion: null as string | null,
+  };
+  const policyChecks: Record<number, typeof check> = { 505: check };
+  const get = s.client.get.bind(s.client);
+  const list = s.client.list.bind(s.client);
+  s.client.get = async (path) => {
+    if (path === `actions/runs/${s.policyRun.id}`) return structuredClone(s.policyRun);
+    if (path === 'actions/workflows/pr-policy.yml')
+      return { id: legacyHistoryCutoff.workflowId, path: '.github/workflows/pr-policy.yml' };
+    if (path === `actions/workflows/${legacyHistoryCutoff.workflowId}/runs?per_page=100&page=1`)
+      return { total_count: runs.length, workflow_runs: structuredClone(runs) };
+    const checkId = /^check-runs\/(\d+)$/.exec(path)?.[1];
+    if (checkId && policyChecks[Number(checkId)])
+      return structuredClone(policyChecks[Number(checkId)]);
+    return get(path);
+  };
+  s.client.list = async (path, key) => {
+    const match = /^actions\/runs\/(\d+)\/jobs\?filter=all$/.exec(path);
+    if (match && records[Number(match[1])]) return structuredClone(records[Number(match[1])]);
+    return list(path, key);
+  };
+  const issued = (marker = adoptionMarker(s.policyRun.run_number)) => {
+    job.steps[0] = {
+      number: 3,
+      name: adoptionValidationStep,
+      status: 'completed',
+      conclusion: 'success',
+      completed_at: '2026-11-02T19:31:01Z',
+    };
+    job.steps[1] = {
+      number: 4,
+      name: marker,
+      status: 'completed',
+      conclusion: 'success',
+      completed_at: '2026-11-02T19:31:02Z',
+    };
+  };
+  return { ...s, runs, prior, job, records, check, policyChecks, issued };
+}
+
+test('legacy adoption requires genuinely later full code and retains its original provider barrier on retry', async () => {
+  const s = legacyScenario();
+  const options = { ...s.options, invocation: s.invocation };
+  const marker = await prepareLegacyAdoption(options);
+  assert.equal(marker, adoptionMarker(16));
+  await assert.rejects(capturePrHistory(options), /not sealed/);
+  s.issued(marker!);
+  const sealed = parseHistoryCheckpointMarker(await capturePrHistory(options));
+  assert.ok(sealed?.adoption);
+  assert.deepEqual(sealed.adoption, {
+    cutoff: legacyHistoryCutoff.runId,
+    run: 500,
+    job: 504,
+    attempt: 1,
+    step: 4,
+    completed: Date.parse('2026-11-02T19:31:02Z'),
+  });
+  assert.equal(sealed.full, true);
+  assert.equal(sealed.after, sealed.adoption.completed);
+  await assert.rejects(validatePrPolicy(options), /full|fresh|created/i);
+  s.fullCoverage();
+  s.run.created_at = '2026-11-02T19:31:02Z';
+  await assert.rejects(validatePrPolicy(options), /full|fresh|created/i);
+  s.run.created_at = '2026-11-02T19:31:03Z';
+  assert.equal((await validatePrPolicy(options)).fullAfter, '2026-11-02T19:31:02.000Z');
+  // A later failed/cancelled job cannot erase its already completed adoption.
+  s.job.status = s.check.status = 'completed';
+  s.job.conclusion = s.check.conclusion = 'cancelled';
+  const later = structuredClone(s.job);
+  later.id = 506;
+  later.run_attempt = 2;
+  later.status = 'in_progress';
+  later.conclusion = null;
+  later.check_run_url = later.check_run_url.replace('/505', '/507');
+  s.policyChecks[507] = {
+    ...structuredClone(s.check),
+    id: 507,
+    status: 'in_progress',
+    conclusion: null,
+  };
+  later.steps = [
+    {
+      number: 3,
+      name: adoptionValidationStep,
+      status: 'in_progress',
+      conclusion: null,
+      completed_at: null,
+    },
+    { number: 4, name: noAdoptionStep, status: 'queued', conclusion: null, completed_at: null },
+  ];
+  s.records[500].push(later);
+  s.policyRun.run_attempt = s.invocation.attempt = 2;
+  assert.equal(await prepareLegacyAdoption(options), null);
+  later.steps[0] = {
+    ...later.steps[0],
+    status: 'completed',
+    conclusion: 'success',
+    completed_at: '2026-11-02T19:32:01Z',
+  };
+  later.steps[1] = {
+    ...later.steps[1],
+    status: 'completed',
+    conclusion: 'skipped',
+    completed_at: '2026-11-02T19:32:02Z',
+  };
+  assert.deepEqual(
+    parseHistoryCheckpointMarker(await capturePrHistory(options))?.adoption,
+    sealed.adoption,
+  );
+  assert.equal((await validatePrPolicy(options)).fullAfter, '2026-11-02T19:31:02.000Z');
+  assert.equal(s.run.conclusion, null);
+  assert.deepEqual(s.mutations, []);
+  s.timeline.push({ id: 44, event: 'base_ref_changed', created_at: '2026-11-02T19:32:20Z' });
+  const laterRequirement = parseHistoryCheckpointMarker(await capturePrHistory(options));
+  assert.deepEqual(laterRequirement?.adoption, sealed.adoption);
+  assert.equal(laterRequirement?.after, Date.parse('2026-11-02T19:32:20Z'));
+  await assert.rejects(validatePrPolicy(options), /full|fresh|created/i);
+});
+
+test('adoption never treats missing modern history or an unresolved earlier attempt as first adoption', async () => {
+  for (const kind of [
+    'gap',
+    'prior-job-missing',
+    'prior-step-missing',
+    'prior-pending',
+    'conflicting-classifier',
+    'foreign-check',
+    'late-pr',
+    'future-request',
+  ]) {
+    const s = legacyScenario();
+    if (kind === 'gap') s.runs.pop();
+    if (kind.startsWith('prior-') || kind === 'foreign-check') {
+      const old = structuredClone(s.job);
+      old.run_attempt = 1;
+      s.job.run_attempt = s.invocation.attempt = s.policyRun.run_attempt = 2;
+      if (kind !== 'prior-job-missing') s.records[500].push(old);
+      if (kind === 'prior-step-missing') old.steps = [];
+      if (kind === 'foreign-check') {
+        old.steps[0] = { ...old.steps[0], status: 'completed', conclusion: 'failure' };
+        old.steps[1] = { ...old.steps[1], status: 'completed', conclusion: 'skipped' };
+        s.check.app.id = 1;
+      }
+    }
+    if (kind === 'conflicting-classifier')
+      s.policyClassifier.steps.push({
+        name: 'Edit classification: full',
+        status: 'completed',
+        conclusion: 'success',
+      });
+    if (kind === 'late-pr') {
+      s.pr.created_at = legacyHistoryCutoff.createdAt;
+      s.event.pull_request.created_at = legacyHistoryCutoff.createdAt;
+    }
+    if (kind === 'future-request')
+      s.timeline.push({ id: 45, event: 'base_ref_changed', created_at: '2026-11-02T19:34:00Z' });
+    await assert.rejects(
+      prepareLegacyAdoption({ ...s.options, invocation: s.invocation }),
+      Error,
+      kind,
+    );
+  }
+});
+
+test('a carrying checkpoint survives original adoption expiry and cannot move the barrier on a later retry', async () => {
+  const s = legacyScenario();
+  s.issued();
+  const original = parseHistoryCheckpointMarker(
+    await capturePrHistory({ ...s.options, invocation: s.invocation }),
+  )!;
+  // Model a later genuine policy job which completed history before old runs
+  // expired. Its carried origin remains independently authenticated by this job.
+  s.policyRun.id = s.invocation.id = 600;
+  s.policyRun.run_number = s.invocation.sequence = 17;
+  s.policyRun.created_at = '2026-11-02T19:32:00Z';
+  s.policyRun.check_suite_id = 603;
+  s.runs.splice(0, s.runs.length, s.policyRun);
+  delete s.records[500];
+  delete s.records[499];
+  delete s.policyChecks[505];
+  const carrier = {
+    ...structuredClone(s.job),
+    id: 604,
+    run_id: 600,
+    status: 'completed',
+    conclusion: 'success',
+    check_run_url: `https://api.github.com/repos/${s.client.repository}/check-runs/605`,
+    steps: [
+      {
+        number: 3,
+        name: adoptionValidationStep,
+        status: 'completed',
+        conclusion: 'success',
+        completed_at: '2026-11-02T19:32:01Z',
+      },
+      {
+        number: 4,
+        name: noAdoptionStep,
+        status: 'completed',
+        conclusion: 'skipped',
+        completed_at: '2026-11-02T19:32:01Z',
+      },
+      {
+        number: 5,
+        name: 'Validate PR history v3',
+        status: 'completed',
+        conclusion: 'success',
+        completed_at: '2026-11-02T19:32:02Z',
+      },
+      {
+        number: 6,
+        name: historyCheckpointMarker({ ...original, sequence: 17 }),
+        status: 'completed',
+        conclusion: 'success',
+        completed_at: '2026-11-02T19:32:03Z',
+      },
+    ],
+  };
+  s.records[600] = [carrier];
+  s.policyChecks[605] = {
+    ...s.check,
+    id: 605,
+    check_suite: { id: 603 },
+    status: 'completed',
+    conclusion: 'success',
+  };
+  s.fullCoverage();
+  s.run.created_at = '2026-11-02T19:31:03Z';
+  assert.equal(
+    (await validatePrPolicy({ ...s.options, invocation: s.invocation })).fullAfter,
+    '2026-11-02T19:31:02.000Z',
+  );
+  const retry = {
+    ...structuredClone(carrier),
+    id: 606,
+    run_attempt: 2,
+    check_run_url: carrier.check_run_url.replace('/605', '/607'),
+    steps: carrier.steps.slice(0, 2),
+  };
+  s.records[600].push(retry);
+  s.policyChecks[607] = { ...structuredClone(s.policyChecks[605]), id: 607 };
+  s.policyRun.run_attempt = s.invocation.attempt = 2;
+  const options = { ...s.options, invocation: s.invocation };
+  assert.equal(await prepareLegacyAdoption(options), null);
+  assert.deepEqual(
+    parseHistoryCheckpointMarker(await capturePrHistory(options))?.adoption,
+    original.adoption,
+  );
+  // Losing every original or carrying proof is unknown, never permission to
+  // make a new deadline that a subsequent text edit can silently move again.
+  carrier.steps = carrier.steps.slice(0, 2);
+  await assert.rejects(prepareLegacyAdoption(options), /not sealed/);
+});
+
+test('conflicting successful adoption origins cannot replace the original with a newer deadline', async () => {
+  const s = legacyScenario();
+  s.issued();
+  const duplicate = structuredClone(s.job);
+  duplicate.id = 506;
+  duplicate.run_attempt = 2;
+  duplicate.check_run_url = duplicate.check_run_url.replace('/505', '/507');
+  duplicate.steps[1].completed_at = '2026-11-02T19:32:02Z';
+  s.records[500].push(duplicate);
+  s.policyChecks[507] = { ...structuredClone(s.check), id: 507 };
+  s.policyRun.run_attempt = s.invocation.attempt = 2;
+  const options = { ...s.options, invocation: s.invocation };
+  assert.equal(await prepareLegacyAdoption(options), null);
+  await assert.rejects(capturePrHistory(options), /not sealed/);
+  await assert.rejects(validatePrPolicy(options), /not admitted/);
+});
 
 test('history issuance precedes title/code admission without changing genuine code results', async () => {
   for (const conclusion of [null, 'success', 'failure', 'cancelled']) {

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
+import { legacyHistoryCutoff } from './pr-history-adoption.ts';
 import {
   authenticatedPolicyHistory,
   historyCheckpointMarker,
@@ -9,6 +10,7 @@ import {
   parseHistoryCheckpointMarker,
   verifyHistoryCheckpoint,
   policyRunNameV2,
+  policyRunNameV3,
 } from './pr-history.ts';
 
 function fixture(full = false) {
@@ -168,17 +170,70 @@ test('workflow binds immutable issuer identity and records history before policy
     new URL('../../.github/workflows/pr-policy.yml', import.meta.url),
     'utf8',
   );
-  assert.ok(workflow.split('\n').includes(policyRunNameV2));
-  const history = workflow.indexOf('- name: Validate PR history v2');
+  assert.ok(workflow.split('\n').includes(policyRunNameV3));
+  const history = workflow.indexOf('- name: Validate PR history v3');
   const marker = workflow.indexOf('- name: ${{ steps.history.outputs.marker }}');
   const admission = workflow.indexOf(
     '- name: Validate policy and genuine current-base code admission',
   );
+  const adoption = workflow.indexOf('- name: Validate legacy history adoption v1');
+  const adoptionMarker = workflow.indexOf(
+    "- name: ${{ steps.adoption.outputs.marker || 'Legacy history adoption not required' }}",
+  );
+  assert.ok(adoption > 0 && adoptionMarker > adoption && history > adoptionMarker);
+  assert.match(
+    workflow.slice(adoption, adoptionMarker),
+    /run: node scripts\/ci\/pr-policy.ts adoption/,
+  );
+  assert.match(workflow.slice(adoptionMarker, history), /if: steps.adoption.outputs.marker != ''/);
+  assert.doesNotMatch(workflow.slice(adoption, history), /continue-on-error:/);
   assert.ok(history > 0 && marker > history && admission > marker);
   assert.match(workflow.slice(history, marker), /run: node scripts\/ci\/pr-policy.ts history/);
   assert.doesNotMatch(workflow.slice(history, marker), /continue-on-error:|if:/);
   assert.match(workflow.slice(marker, admission), /if: steps.history.outputs.marker != ''/);
   assert.doesNotMatch(workflow.slice(history, admission), /continue-on-error:/);
+});
+
+test('adopted checkpoints bind the fixed authority and preserve the original origin below later full bounds', () => {
+  const f = fixture(true);
+  f.run.repository.full_name = f.expected.repository = legacyHistoryCutoff.repository;
+  f.run.workflow_id = f.expected.workflowId = legacyHistoryCutoff.workflowId;
+  f.run.display_title = f.run.display_title.replace('v2 ', 'v3 ');
+  f.run.created_at = '2026-11-02T19:31:00Z';
+  f.job.check_run_url = f.job.check_run_url.replace('owner/repo', legacyHistoryCutoff.repository);
+  f.job.steps[0].name = 'Validate PR history v3';
+  f.job.steps[0].completed_at = '2026-11-02T19:31:02Z';
+  f.job.steps[1].completed_at = '2026-11-02T19:31:03Z';
+  const checkpoint = {
+    sequence: 20,
+    full: true,
+    after: Date.parse('2026-11-02T19:30:59Z'),
+    atOrAfter: null,
+    adoption: {
+      cutoff: legacyHistoryCutoff.runId,
+      run: 90,
+      job: 190,
+      attempt: 1,
+      step: 4,
+      completed: Date.parse('2026-11-02T19:30:50Z'),
+    },
+  };
+  f.job.steps[1].name = historyCheckpointMarker(checkpoint);
+  assert.deepEqual(verify(f), checkpoint);
+  assert.deepEqual(parseHistoryCheckpointMarker(f.job.steps[1].name), checkpoint);
+  for (const bad of [
+    { ...checkpoint, full: false },
+    { ...checkpoint, after: checkpoint.adoption.completed - 1 },
+    { ...checkpoint, adoption: { ...checkpoint.adoption, cutoff: 1 } },
+    { ...checkpoint, adoption: { ...checkpoint.adoption, job: 0 } },
+  ])
+    assert.throws(() => historyCheckpointMarker(bad));
+  f.expected.createdAt = legacyHistoryCutoff.createdAt;
+  assert.throws(() => verify(f), /invalid/);
+  f.expected.createdAt = '2026-11-01T12:00:00Z';
+  f.run.display_title = f.run.display_title.replace('v3 ', 'v2 ');
+  f.job.steps[0].name = historyValidationStep;
+  assert.throws(() => verify(f), /invalid/);
 });
 
 test('history proof remains independent of pending or failed code/title admission', () => {
@@ -201,7 +256,8 @@ test('history markers preserve both full-request bounds and reject incomplete or
   const checkpoint = { sequence: 20, full: true, after: 1793534420000, atOrAfter: 1793534421000 };
   assert.deepEqual(parseHistoryCheckpointMarker(historyCheckpointMarker(checkpoint)), checkpoint);
   assert.equal(parseHistoryCheckpointMarker('An unrelated successful step'), null);
-  assert.equal(parseHistoryCheckpointMarker('PR history v3 seq=20'), null);
+  assert.equal(parseHistoryCheckpointMarker('PR history v4 seq=20'), null);
+  assert.throws(() => parseHistoryCheckpointMarker('PR history v3 seq=20'), /Malformed/);
   for (const value of [
     { ...checkpoint, sequence: 0 },
     { ...checkpoint, sequence: Number.MAX_SAFE_INTEGER + 1 },
