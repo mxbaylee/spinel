@@ -7,6 +7,7 @@ import { preview } from 'vite';
 import { chromium, expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { selectStorybookReview } from './ci/storybook-review.ts';
+import { verifyStoryStyleIsolation } from './ci/storybook-style-isolation.ts';
 
 if (
   process.platform === 'darwin' &&
@@ -334,6 +335,54 @@ try {
         `${variant}: menu/selector keyboard navigation, Escape/focus return, dialog containment and nested themed portal`,
       );
       await page.close();
+    }
+  }
+  if (
+    requested.includes('redesign-controls--default') &&
+    requested.includes('redesign-appearance--playground-story')
+  ) {
+    for (const [theme, width, variant] of variants) {
+      const page = await browser.newPage({
+        viewport: { width, height: 900 },
+        hasTouch: width <= 768,
+        reducedMotion: 'reduce',
+      });
+      try {
+        await page.goto(
+          `http://127.0.0.1:6007/iframe.html?id=redesign-appearance--playground-story&viewMode=story&globals=theme:${theme}`,
+        );
+        await verifyStoryStyleIsolation(
+          page,
+          waitForStory,
+          async (state) => {
+            const filename = `style-isolation-${state}-${variant}.png`;
+            if (
+              await captureScreenshot(page, {
+                path: resolve(directory, filename),
+                fullPage: true,
+                animations: 'disabled',
+              })
+            ) {
+              captures.push({
+                id: 'redesign-appearance--playground-story',
+                variant,
+                filename,
+                title: `Appearance after shared Controls: ${state}`,
+              });
+            }
+          },
+          (observations) =>
+            writeFile(
+              resolve(directory, `style-isolation-${variant}.json`),
+              JSON.stringify(observations, null, 2),
+            ),
+        );
+        verifications.push(`${variant}: Appearance styles survive a same-document Controls visit`);
+      } catch (error) {
+        await recordCaptureFailure(page, 'appearance-style-isolation', variant, error);
+      } finally {
+        await page.close();
+      }
     }
   }
 } catch (error) {
