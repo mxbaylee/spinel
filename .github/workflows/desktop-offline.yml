@@ -8,6 +8,7 @@ on:
       - .github/workflows/desktop-offline.yml
       - scripts/ci/desktop-*.ts
       - scripts/ci/browserstack-fixture.ts
+      - scripts/ci/offline-image-pixels.ts
       - e2e/doc-image-fixture.ts
       - e2e/offline-fixture.ts
       - web/**

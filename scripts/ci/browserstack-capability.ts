@@ -16,6 +16,7 @@ import {
   type BrowserstackFixture,
 } from './browserstack-fixture.ts';
 import { observeChromeReadinessFailure } from './browserstack-chrome-readiness.ts';
+import { countOfflineImagePixels, offlineImagesPainted } from './offline-image-pixels.ts';
 import type { PhoneAcceptanceCases, PhoneAcceptanceDriver } from './browserstack-acceptance.ts';
 import { ledgerClient } from './browserstack-ledger.ts';
 import {
@@ -689,6 +690,59 @@ export function normalizedPngScreenshot(value: unknown): string {
     'screenshot-invalid',
   );
   return normalized;
+}
+
+/** Required acceptance evidence must be captured, decoded and saved successfully. */
+export async function captureRequiredPngScreenshot(
+  read: (timeout: number) => Promise<unknown>,
+  save: (normalized: string) => Promise<string>,
+  deadline = Date.now() + 15_000,
+) {
+  const remaining = () => {
+    const left = deadline - Date.now();
+    requireCondition(Number.isFinite(left) && left > 0, 'screenshot-deadline');
+    return left;
+  };
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const allotted = remaining();
+  const capture = async () => {
+    const normalized = normalizedPngScreenshot(await read(allotted));
+    remaining();
+    const bytes = Buffer.from(normalized, 'base64');
+    const sharp = (await import('sharp')).default;
+    remaining();
+    const decoded = await sharp(bytes, { limitInputPixels: 16_000_000, failOn: 'warning' })
+      .ensureAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true })
+      .catch(() => {
+        throw new Error('capability-screenshot-decode-failed');
+      });
+    remaining();
+    const file = await save(normalized);
+    remaining();
+    requireCondition(typeof file === 'string' && file.length > 0, 'screenshot-save-failed');
+    return {
+      file,
+      sha256: createHash('sha256').update(bytes).digest('hex'),
+      raster: {
+        data: decoded.data,
+        width: decoded.info.width,
+        height: decoded.info.height,
+        channels: decoded.info.channels,
+      },
+    };
+  };
+  try {
+    return await Promise.race([
+      capture(),
+      new Promise<never>((_resolve, reject) => {
+        timer = setTimeout(() => reject(new Error('capability-screenshot-deadline')), allotted);
+      }),
+    ]);
+  } finally {
+    clearTimeout(timer);
+  }
 }
 export async function openNativeShare(
   tap: (pattern: RegExp, required?: boolean) => Promise<boolean>,
@@ -1434,6 +1488,43 @@ export async function runCapability(
         },
       });
     }
+  }
+  async function requiredScreenshot(
+    name: string,
+    captureDeadline = Date.now() + remaining(15_000),
+  ) {
+    const captured = await captureRequiredPngScreenshot(
+      (timeout) => command(session('screenshot'), 'GET', undefined, timeout),
+      (data) => options.screenshot(`${target.browser}-${name}`, data),
+      captureDeadline,
+    );
+    remaining(1);
+    if (!result.screenshots.includes(captured.file)) result.screenshots.push(captured.file);
+    return captured;
+  }
+  async function visibleImages(name: string, kind: 'sheet' | 'doc') {
+    let captures = 0;
+    const imageDeadline = Date.now() + remaining(15_000);
+    const painted = await poll(
+      async () => {
+        const captured = await requiredScreenshot(name, imageDeadline);
+        captures++;
+        return {
+          file: captured.file,
+          sha256: captured.sha256,
+          width: captured.raster.width,
+          height: captured.raster.height,
+          colorPixelCounts: countOfflineImagePixels(captured.raster, kind),
+        };
+      },
+      (value) => offlineImagesPainted(value.colorPixelCounts, kind),
+      'image-pixels-unavailable',
+      15_000,
+    );
+    // Appium captures the actual device screen, including OS chrome. Use the
+    // controlled fixture palette, as desktop acceptance does; do not invent a
+    // DOM-to-screen offset or substitute an offscreen canvas/model for pixels.
+    return { ...painted, captures, source: 'actual-provider-screenshot' };
   }
   async function context(name: string) {
     await command(session('context'), 'POST', { name });
@@ -2240,7 +2331,10 @@ export async function runCapability(
       stage,
       remaining,
       record,
-      screenshot,
+      screenshot: async (name) => {
+        await requiredScreenshot(name);
+      },
+      visibleImages,
     };
     if (acceptance && acceptanceFixture && acceptanceCases)
       await acceptance.preparePhoneAcceptance(acceptanceDriver, acceptanceFixture, acceptanceCases);
@@ -2284,7 +2378,13 @@ export async function runCapability(
       const ready = await itemReady(true);
       requireCondition(ready.account === fixture.actor.id, 'retained-account-mismatch');
       await record(`${item.kind}:offline-ready`, ready);
-      await screenshot(`${item.kind}${acceptanceScope ? `-${item.outcome}` : ''}-offline-reopened`);
+      const captureName = `${item.kind}${acceptanceScope ? `-${item.outcome}` : ''}-offline-reopened`;
+      if (acceptanceScope)
+        await record(
+          `${item.kind}:${item.outcome}:offline-rendering`,
+          await visibleImages(captureName, item.kind),
+        );
+      else await screenshot(captureName);
     }
     if (acceptance && acceptanceFixture && acceptanceCases)
       await acceptance.runPhoneAcceptance(acceptanceDriver, acceptanceFixture, acceptanceCases);

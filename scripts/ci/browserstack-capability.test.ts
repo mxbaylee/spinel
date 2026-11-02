@@ -6,6 +6,7 @@ import { createContext, runInContext } from 'node:vm';
 import { readAdmissionPolicy, type ReservationIdentity } from './browserstack-admission.ts';
 import {
   capabilityOutcome,
+  captureRequiredPngScreenshot,
   chromeItemNavigationScript,
   installMenuLabel,
   installCandidateDiagnostics,
@@ -1572,6 +1573,128 @@ test('screenshots accept only bounded canonical PNG Base64 with optional CR/LF w
   ];
   for (const value of invalid)
     assert.throws(() => normalizedPngScreenshot(value), /capability-screenshot-invalid/);
+});
+
+test('required screenshots reject capture, decode and artifact failures before acceptance', async () => {
+  let writes = 0;
+  const save = async (data: string) => {
+    writes++;
+    assert.equal(data, tinyPng);
+    return 'artifacts/required.png';
+  };
+  const captured = await captureRequiredPngScreenshot(async () => tinyPng + '\r\n', save);
+  assert.equal(captured.file, 'artifacts/required.png');
+  assert.equal(
+    captured.sha256,
+    createHash('sha256').update(Buffer.from(tinyPng, 'base64')).digest('hex'),
+  );
+  assert.equal(captured.raster.width, 1);
+  assert.equal(captured.raster.height, 1);
+  assert.equal(captured.raster.channels, 4);
+  assert.equal(captured.raster.data.length, 4);
+  assert.equal(writes, 1);
+
+  const providerFailure = new Error('provider-capture-failed');
+  await assert.rejects(
+    captureRequiredPngScreenshot(async () => {
+      throw providerFailure;
+    }, save),
+    (error) => error === providerFailure,
+  );
+  await assert.rejects(
+    captureRequiredPngScreenshot(async () => null, save),
+    /screenshot-invalid/,
+  );
+  // Valid Base64, PNG signature and trailer do not establish decodable pixels.
+  const corrupt = Buffer.concat([
+    Buffer.from('89504e470d0a1a0a', 'hex'),
+    Buffer.alloc(50),
+    Buffer.from('0000000049454e44ae426082', 'hex'),
+  ]).toString('base64');
+  assert.equal(normalizedPngScreenshot(corrupt), corrupt);
+  await assert.rejects(
+    captureRequiredPngScreenshot(async () => corrupt, save),
+    /screenshot-decode-failed/,
+  );
+  assert.equal(writes, 1);
+
+  const saveFailure = new Error('artifact-write-failed');
+  await assert.rejects(
+    captureRequiredPngScreenshot(
+      async () => tinyPng,
+      async () => {
+        throw saveFailure;
+      },
+    ),
+    (error) => error === saveFailure,
+  );
+  await assert.rejects(
+    captureRequiredPngScreenshot(
+      async () => tinyPng,
+      async () => '',
+    ),
+    /screenshot-save-failed/,
+  );
+});
+
+test('required screenshot commands use only the remaining image observation window and reject late success', async (context) => {
+  let now = 14_800;
+  context.mock.method(Date, 'now', () => now);
+  let reads = 0;
+  let writes = 0;
+  await assert.rejects(
+    captureRequiredPngScreenshot(
+      async (timeout) => {
+        reads++;
+        assert.equal(timeout, 200, 'A final observation cannot start a fresh 15-second command.');
+        now = 15_001;
+        return tinyPng;
+      },
+      async () => {
+        writes++;
+        return 'late.png';
+      },
+      15_000,
+    ),
+    /screenshot-deadline/,
+  );
+  assert.equal(reads, 1);
+  assert.equal(writes, 0, 'A late capture cannot be saved or become success.');
+
+  now = 20_000;
+  await assert.rejects(
+    captureRequiredPngScreenshot(
+      async () => tinyPng,
+      async () => {
+        now = 20_201;
+        return 'late-write.png';
+      },
+      20_200,
+    ),
+    /screenshot-deadline/,
+  );
+  await assert.rejects(
+    captureRequiredPngScreenshot(
+      async () => assert.fail('An expired window must not capture again.'),
+      async () => assert.fail('An expired window must not write.'),
+      now,
+    ),
+    /screenshot-deadline/,
+  );
+});
+
+test('a nonresponsive required capture cannot prevent its observation deadline from rejecting', async () => {
+  await assert.rejects(
+    captureRequiredPngScreenshot(
+      async (timeout) => {
+        assert.ok(timeout > 0 && timeout <= 20);
+        return new Promise(() => {});
+      },
+      async () => assert.fail('An unresolved capture cannot write evidence.'),
+      Date.now() + 20,
+    ),
+    /screenshot-deadline/,
+  );
 });
 
 test('network checks use transport failures and retain link state without equating it with reachability', () => {

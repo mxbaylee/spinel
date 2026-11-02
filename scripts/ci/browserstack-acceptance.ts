@@ -51,7 +51,9 @@ export type PhoneAcceptanceDriver = {
   stage(name: string, maximumMilliseconds: number): void;
   remaining(maximum?: number): number;
   record(stage: string, value: unknown): Promise<void>;
+  /** Required evidence: capture, decode and write failures reject acceptance. */
   screenshot(name: string): Promise<void>;
+  visibleImages(name: string, kind: Kind): Promise<Row>;
 };
 
 function requireCondition(condition: unknown, code: string): asserts condition {
@@ -175,17 +177,19 @@ export function verifyEditablePhone(value: unknown, kind: Kind) {
   if (kind === 'doc') requireCondition(observed.edit === true, 'native-doc-edit-unavailable');
 }
 
+/** The pinned mobile Doc exposes Edit as an icon-only button's accessible label. */
+export const phoneEditableScript = `
+const [selector,kind]=arguments;const root=document.querySelector(selector);
+const visible=element=>{const box=element.getBoundingClientRect();const style=getComputedStyle(element);
+  return box.width>0 && box.height>0 && style.display!=='none' && style.visibility!=='hidden' &&
+    !element.hidden && !element.disabled && element.getAttribute('aria-disabled')!=='true';};
+return {kind,mobile:root?.getAttribute('data-mobile')==='true',
+  readOnly:!root || /View only|Edit on a larger screen/.test(root.innerText+' '+(document.querySelector('[aria-label="Save status"]')?.textContent || '')),
+  edit:[...root?.querySelectorAll('button') || []].some(button=>(button.getAttribute('aria-label') || button.textContent.trim())==='Edit' && visible(button))};
+`;
+
 async function editable(driver: PhoneAcceptanceDriver, kind: Kind) {
-  const observed = await driver.execute(
-    `
-    const [selector,kind]=arguments;const root=document.querySelector(selector);
-    const visible=element=>element.getBoundingClientRect().height>0 && !element.disabled;
-    return {kind,mobile:root?.getAttribute('data-mobile')==='true',
-      readOnly:!root || /View only|Edit on a larger screen/.test(root.innerText+' '+(document.querySelector('[aria-label="Save status"]')?.textContent || '')),
-      edit:[...root?.querySelectorAll('button') || []].some(button=>button.textContent.trim()==='Edit' && visible(button))};
-  `,
-    [region(kind), kind],
-  );
+  const observed = await driver.execute(phoneEditableScript, [region(kind), kind]);
   verifyEditablePhone(observed, kind);
 }
 
@@ -245,6 +249,18 @@ async function assertNative(
     'native-snapshot-mismatch',
   );
   return { unitId, revision: observed!.revision, snapshotSha256: digest(comparable(expected)) };
+}
+
+/** A retained image graph is incomplete evidence until the visible canvas paints it. */
+export async function assertPhoneImageCheckpoint(
+  driver: PhoneAcceptanceDriver,
+  item: { unitId: string; kind: Kind },
+  expected: NativeSnapshot,
+  name: string,
+) {
+  const native = await assertNative(driver, item.unitId, expected);
+  const rendering = await driver.visibleImages(name, item.kind);
+  return { native, rendering };
 }
 
 async function saved(driver: PhoneAcceptanceDriver, text = 'Saved on this device') {
@@ -939,14 +955,19 @@ export async function runPhoneAcceptance(
     );
     const snapshot =
       expected.get(item.id) ?? drafts.find((draft) => draft.id === item.id)!.expected;
-    const native = await assertNative(driver, item.unitId, snapshot);
-    await driver.screenshot(
-      `${item.kind}-${'outcome' in item ? item.outcome : 'created'}-pending-reopened`,
-    );
+    const name = `${item.kind}-${'outcome' in item ? item.outcome : 'created'}-pending-reopened`;
+    let evidence: { native: Row; rendering?: Row };
+    if ('outcome' in item) {
+      evidence = await assertPhoneImageCheckpoint(driver, item, snapshot, name);
+    } else {
+      const native = await assertNative(driver, item.unitId, snapshot);
+      await driver.screenshot(name);
+      evidence = { native };
+    }
     await driver.record('pending-native-restart-retained', {
       itemId: item.id,
       kind: item.kind,
-      native,
+      ...evidence,
       checkpointSha256: digest(actual.record!.outbox!.checkpoint),
       images: actual.images,
     });
@@ -1074,9 +1095,13 @@ export async function runPhoneAcceptance(
         (value) => value.record === null && value.images.length === 0,
         'recovered-original-still-downloaded',
       );
-      await assertNative(driver, copied.unitId, copied.snapshot);
+      const evidence = await assertPhoneImageCheckpoint(
+        driver,
+        { unitId: copied.unitId, kind: item.kind },
+        copied.snapshot,
+        `${item.kind}-published-offline-copy`,
+      );
       completed.set(copyId, copied);
-      await driver.screenshot(`${item.kind}-published-offline-copy`);
       await driver.record('conflict-copy-preserves-original', {
         itemId: item.id,
         copyId,
@@ -1084,6 +1109,7 @@ export async function runPhoneAcceptance(
         revision: copied.revision,
         snapshotSha256: digest(copiedContent(copied.snapshot)),
         imageHashes: imageHashes(fixture, copyId),
+        ...evidence,
       });
     }
   }

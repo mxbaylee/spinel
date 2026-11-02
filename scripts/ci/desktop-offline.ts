@@ -15,6 +15,7 @@ import { comparable, pending } from '../../e2e/offline-fixture.ts';
 import { createDesktopBrowser } from './desktop-browser.ts';
 import type { DesktopBrowserKind, DesktopBrowserStart } from './desktop-browser.ts';
 import { createDesktopOfflineFixture } from './desktop-offline-fixture.ts';
+import { countOfflineImagePixels, offlineImagesPainted } from './offline-image-pixels.ts';
 
 const kind = process.argv[2] as DesktopBrowserKind;
 assert.ok(['chrome', 'firefox', 'safari'].includes(kind));
@@ -299,14 +300,6 @@ function imageSources(snapshot: NativeSnapshot, itemId: string, hashes: string[]
 
 async function visibleImages(name: string, documentKind: 'sheet' | 'doc') {
   const path = resolve(output, `${name}.png`);
-  const colors =
-    documentKind === 'sheet'
-      ? [
-          [255, 153, 0],
-          [34, 85, 238],
-          [34, 187, 102],
-        ]
-      : [[119, 0, 204]];
   let captures = 0;
   let counts: number[];
   try {
@@ -318,15 +311,9 @@ async function visibleImages(name: string, documentKind: 'sheet' | 'doc') {
           .removeAlpha()
           .raw()
           .toBuffer({ resolveWithObject: true });
-        const counts = colors.map(() => 0);
-        for (let offset = 0; offset < data.length; offset += info.channels)
-          colors.forEach((color, index) => {
-            if (color.every((value, channel) => Math.abs(data[offset + channel] - value) < 12))
-              counts[index]++;
-          });
-        return counts;
+        return countOfflineImagePixels({ data, ...info }, documentKind);
       },
-      (counts) => counts.every((count) => count > 100),
+      (counts) => offlineImagesPainted(counts, documentKind),
       'Existing image pixels must actually paint after native canvas creation',
       15_000,
     );

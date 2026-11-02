@@ -19,8 +19,10 @@ import type { StoredItem } from '../../web/offline/offlineStore.ts';
 import { textPoints } from '../../e2e/doc-touch-raster.ts';
 import {
   phoneAcceptanceLimits,
+  phoneEditableScript,
   phoneLocalCopyScript,
   phoneNativeSnapshotScript,
+  assertPhoneImageCheckpoint,
   observePhoneAcceptance,
   boundedPhoneFixtureOperation,
   readPhoneOpenedCopy,
@@ -157,6 +159,79 @@ test('phone authoring refuses a reader path and requires the observed mobile edi
   );
 });
 
+test('the actual Doc readiness script accepts the icon-only Edit control and rejects unavailable authoring controls', () => {
+  for (const state of [
+    'icon',
+    'text',
+    'wrong-label',
+    'disabled',
+    'aria-disabled',
+    'hidden',
+    'zero-height',
+    'zero-width',
+    'css-hidden',
+    'css-none',
+    'missing',
+    'reader',
+    'save-reader',
+    'desktop',
+    'missing-editor',
+  ]) {
+    const button = {
+      // This is the pinned OSS MobileDocToolbar's actual shape: its WriteIcon
+      // contributes no text, while aria-label supplies the Edit accessible name.
+      textContent: state === 'text' || state === 'wrong-label' ? ' Edit ' : '',
+      hidden: state === 'hidden',
+      disabled: state === 'disabled',
+      getAttribute(name: string) {
+        if (name === 'aria-disabled') return state === 'aria-disabled' ? 'true' : null;
+        assert.equal(name, 'aria-label');
+        return state === 'text' ? null : state === 'wrong-label' ? 'Preview' : 'Edit';
+      },
+      getBoundingClientRect() {
+        return { width: state === 'zero-width' ? 0 : 40, height: state === 'zero-height' ? 0 : 40 };
+      },
+    };
+    const root = {
+      innerText: state === 'reader' ? 'View only' : '',
+      getAttribute(name: string) {
+        assert.equal(name, 'data-mobile');
+        return state === 'desktop' ? 'false' : 'true';
+      },
+      querySelectorAll(selector: string) {
+        assert.equal(selector, 'button');
+        return state === 'missing' ? [] : [button];
+      },
+    };
+    const sandbox = createContext({
+      document: {
+        querySelector(selector: string) {
+          if (selector === '[aria-label="Doc document"]')
+            return state === 'missing-editor' ? null : root;
+          assert.equal(selector, '[aria-label="Save status"]');
+          return { textContent: state === 'save-reader' ? 'Edit on a larger screen' : '' };
+        },
+      },
+      getComputedStyle(element: unknown) {
+        assert.equal(element, button);
+        return {
+          visibility: state === 'css-hidden' ? 'hidden' : 'visible',
+          display: state === 'css-none' ? 'none' : 'block',
+        };
+      },
+    });
+    const observed = runInContext(
+      `(function(){${phoneEditableScript}}).apply(null,['[aria-label="Doc document"]','doc'])`,
+      sandbox,
+    );
+    if (state === 'icon' || state === 'text') {
+      assert.doesNotThrow(() => verifyEditablePhone(observed, 'doc'), state);
+    } else {
+      assert.throws(() => verifyEditablePhone(observed, 'doc'), /capability-acceptance-/, state);
+    }
+  }
+});
+
 function imageDoc() {
   const doc = getDocsEmptySnapshot('unit');
   doc.title = 'Prepared native Doc';
@@ -290,8 +365,7 @@ test('native Sheet acceptance requires the intended A1 value and preserves every
   }
 });
 
-function retained() {
-  const snapshot = getDocsEmptySnapshot('unit');
+function retained(snapshot = getDocsEmptySnapshot('unit')) {
   const expected = insert(snapshot, 'Phone731 ', 0);
   // Native checkpoints start at revision 1, including offline-created items.
   const revision = 1;
@@ -378,6 +452,62 @@ test('durable proof requires the original account, item, generation, write grant
     const changed = structuredClone(copy);
     corrupt(changed);
     assert.throws(() => verifyRetainedEdit(changed, identity), /capability-acceptance-durable-/);
+  }
+});
+
+test('image checkpoints reject missing pixels and failed required captures despite intact retained content', async () => {
+  const { copy, expected } = retained(imageDoc());
+  const source = (expected.drawings!.image as IDocImage).source;
+  const image = { source, sha256: 'a'.repeat(64), size: 3 };
+  copy.record.bundle.images = [
+    { source, sha256: image.sha256, byteLength: image.size, mime: 'image/png' },
+  ];
+  const stored = { ...copy, images: [image] };
+  const before = structuredClone(stored);
+  const snapshot = verifyRetainedEdit(stored, {
+    account: 'actor',
+    item: 'item',
+    unitId: 'unit',
+    kind: 'doc',
+  });
+  assert.ok(!('sheets' in snapshot));
+  // Native reconstruction also materializes plugin resources. Keep every Doc
+  // field compared and verify the image resource agrees with the retained graph.
+  assert.deepEqual({ ...snapshot, resources: undefined }, { ...expected, resources: undefined });
+  const drawingResource = snapshot.resources?.find((entry) => entry.name === 'DOC_DRAWING_PLUGIN');
+  assert.deepEqual(JSON.parse(drawingResource!.data), {
+    data: expected.drawings,
+    order: expected.drawingsOrder,
+  });
+  for (const failure of ['required-image-pixels-missing', 'required-capture-failed']) {
+    const calls: string[] = [];
+    const error = new Error(failure);
+    const driver = {
+      remaining: (maximum: number) => maximum,
+      async execute(script: string, args: unknown[]) {
+        assert.equal(script, phoneNativeSnapshotScript);
+        assert.deepEqual(args, ['unit']);
+        calls.push('native-snapshot');
+        return { unitId: 'unit', revision: 1, snapshot: structuredClone(snapshot) };
+      },
+      async visibleImages(name: string, kind: string) {
+        assert.equal(name, 'doc-pending-reopened');
+        assert.equal(kind, 'doc');
+        calls.push('required-rendering');
+        throw error;
+      },
+    } as unknown as PhoneAcceptanceDriver;
+    await assert.rejects(
+      assertPhoneImageCheckpoint(
+        driver,
+        { unitId: 'unit', kind: 'doc' },
+        snapshot,
+        'doc-pending-reopened',
+      ),
+      (actual) => actual === error,
+    );
+    assert.deepEqual(calls, ['native-snapshot', 'required-rendering']);
+    assert.deepEqual(stored, before, 'Intact records and image metadata cannot replace rendering.');
   }
 });
 

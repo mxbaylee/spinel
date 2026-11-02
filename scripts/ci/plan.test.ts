@@ -151,6 +151,19 @@ test('the extracted Doc touch raster keeps every browser owner and the sized res
     );
 });
 
+test('shared offline image assertions retain ordinary CI and native desktop coverage', () => {
+  const path = 'scripts/ci/offline-image-pixels.ts';
+  const plan = coveragePlan('pull_request', pr(), [path], head);
+  assert.equal(plan.mode, 'full');
+  assert.ok(suiteIds.every((id) => plan.suites[id].selected));
+  const desktop = readFileSync(
+    new URL('../../.github/workflows/desktop-offline.yml', import.meta.url),
+    'utf8',
+  );
+  const paths = desktop.split('    paths:\n')[1].split('  workflow_dispatch:')[0];
+  assert.ok(paths.split('\n').some((line) => line.trim() === `- ${path}`));
+});
+
 test('dependency closure and unknown paths fail closed, including old rename/deleted sides', () => {
   for (const path of [
     'web/nativeDocInput.ts',
