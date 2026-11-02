@@ -1,0 +1,373 @@
+﻿2026-11-02T14:17:35.9482270Z Current runner version: '2.338.2'
+2026-11-02T14:17:35.9518870Z ##[group]Runner Image Provisioner
+2026-11-02T14:17:35.9520280Z Hosted Compute Agent
+2026-11-02T14:17:35.9521060Z Version: 20260819.586
+2026-11-02T14:17:35.9522000Z Commit: 3cc4a88dfa507ef76119ad1bb3eccc6378bb2b76
+2026-11-02T14:17:35.9523150Z Build Date: 2026-08-18T23:20:18Z
+2026-11-02T14:17:35.9524190Z Worker ID: {9c12d5c9-5eca-43b9-8fca-05db76e1e009}
+2026-11-02T14:17:35.9525280Z Azure Region: westus
+2026-11-02T14:17:35.9526050Z ##[endgroup]
+2026-11-02T14:17:35.9528560Z ##[group]Operating System
+2026-11-02T14:17:35.9529930Z macOS
+2026-11-02T14:17:35.9530750Z 15.7.9
+2026-11-02T14:17:35.9531450Z 24G830
+2026-11-02T14:17:35.9532230Z ##[endgroup]
+2026-11-02T14:17:35.9532960Z ##[group]Runner Image
+2026-11-02T14:17:35.9533770Z Image: macos-15
+2026-11-02T14:17:35.9534560Z Version: 20260824.0482.1
+2026-11-02T14:17:35.9536420Z Included Software: https://github.com/actions/runner-images/blob/macos-15/20260824.0482/images/macos/macos-15-Readme.md
+2026-11-02T14:17:35.9539250Z Image Release: https://github.com/actions/runner-images/releases/tag/macos-15%2F20260824.0482
+2026-11-02T14:17:35.9540690Z ##[endgroup]
+2026-11-02T14:17:35.9542320Z ##[group]GITHUB_TOKEN Permissions
+2026-11-02T14:17:35.9545700Z Contents: read
+2026-11-02T14:17:35.9546530Z Metadata: read
+2026-11-02T14:17:35.9547280Z ##[endgroup]
+2026-11-02T14:17:35.9551500Z Secret source: Actions
+2026-11-02T14:17:35.9552810Z Cache mode: write
+2026-11-02T14:17:35.9553810Z Prepare workflow directory
+2026-11-02T14:17:36.0753660Z Prepare all required actions
+2026-11-02T14:17:36.0837490Z Getting action download info
+2026-11-02T14:17:36.6518150Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-02T14:17:37.9053320Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+2026-11-02T14:17:39.2223500Z Download action repository 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-11-02T14:17:40.2459860Z Complete job name: Native desktop offline (safari, macos-15-intel)
+2026-11-02T14:17:40.5890010Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-02T14:17:40.5896770Z with:
+2026-11-02T14:17:40.5899040Z   persist-credentials: false
+2026-11-02T14:17:40.5901970Z   repository: mxbaylee/spinel
+2026-11-02T14:17:40.5928850Z   token: ***
+2026-11-02T14:17:40.5931550Z   ssh-strict: true
+2026-11-02T14:17:40.5934320Z   ssh-user: git
+2026-11-02T14:17:40.5937150Z   clean: true
+2026-11-02T14:17:40.5940040Z   sparse-checkout-cone-mode: true
+2026-11-02T14:17:40.5943510Z   fetch-depth: 1
+2026-11-02T14:17:40.5946680Z   fetch-tags: false
+2026-11-02T14:17:40.5949850Z   show-progress: true
+2026-11-02T14:17:40.5955020Z   lfs: false
+2026-11-02T14:17:40.5957960Z   submodules: false
+2026-11-02T14:17:40.5961980Z   set-safe-directory: true
+2026-11-02T14:17:40.5967310Z   allow-unsafe-pr-checkout: false
+2026-11-02T14:17:40.5973280Z env:
+2026-11-02T14:17:40.5977520Z   SOURCE_SHA: bcc1c17c538756e7886a60a413ee31a8ed5ff2ba
+2026-11-02T14:17:40.5983530Z   DESKTOP_RUNNER: macos-15-intel
+2026-11-02T14:17:40.5987050Z ##[endgroup]
+2026-11-02T14:17:41.6242740Z Syncing repository: mxbaylee/spinel
+2026-11-02T14:17:41.6250660Z ##[group]Getting Git version info
+2026-11-02T14:17:41.6254140Z Working directory is '/Users/runner/work/spinel/spinel'
+2026-11-02T14:17:41.6259360Z [command]/usr/local/bin/git version
+2026-11-02T14:17:41.6262290Z git version 2.55.0
+2026-11-02T14:17:41.6271810Z ##[endgroup]
+2026-11-02T14:17:41.6288150Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/739b47d9-cda9-4ed7-b58b-82ddf1cf8e32/.gitconfig'
+2026-11-02T14:17:41.6296850Z Temporarily overriding HOME='/Users/runner/work/_temp/739b47d9-cda9-4ed7-b58b-82ddf1cf8e32' before making global git config changes
+2026-11-02T14:17:41.6304700Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-02T14:17:41.6313220Z [command]/usr/local/bin/git config --global --add safe.directory /Users/runner/work/spinel/spinel
+2026-11-02T14:17:41.6322360Z Deleting the contents of '/Users/runner/work/spinel/spinel'
+2026-11-02T14:17:41.6328450Z ##[group]Determining repository object format
+2026-11-02T14:17:41.6335190Z ##[endgroup]
+2026-11-02T14:17:41.6343050Z ##[group]Initializing the repository
+2026-11-02T14:17:41.6347220Z [command]/usr/local/bin/git init /Users/runner/work/spinel/spinel
+2026-11-02T14:17:41.6352730Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-02T14:17:41.6357630Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-02T14:17:41.6363410Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-02T14:17:41.6368450Z hint: call:
+2026-11-02T14:17:41.6374720Z hint:
+2026-11-02T14:17:41.6378400Z hint: 	git config --global init.defaultBranch <name>
+2026-11-02T14:17:41.6382910Z hint:
+2026-11-02T14:17:41.6386280Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-02T14:17:41.6391980Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-02T14:17:41.6396610Z hint:
+2026-11-02T14:17:41.6399100Z hint: 	git branch -m <name>
+2026-11-02T14:17:41.6401800Z hint:
+2026-11-02T14:17:41.6405550Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-02T14:17:41.6412280Z Initialized empty Git repository in /Users/runner/work/spinel/spinel/.git/
+2026-11-02T14:17:41.6422340Z [command]/usr/local/bin/git remote add origin https://github.com/mxbaylee/spinel
+2026-11-02T14:17:41.6432350Z ##[endgroup]
+2026-11-02T14:17:41.6436750Z ##[group]Disabling automatic garbage collection
+2026-11-02T14:17:41.6441360Z [command]/usr/local/bin/git config --local gc.auto 0
+2026-11-02T14:17:41.6452600Z ##[endgroup]
+2026-11-02T14:17:41.6456570Z ##[group]Setting up auth
+2026-11-02T14:17:41.6459420Z Removing SSH command configuration
+2026-11-02T14:17:41.6463860Z [command]/usr/local/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-02T14:17:41.6477200Z [command]/usr/local/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-02T14:17:41.9816080Z Removing HTTP extra header
+2026-11-02T14:17:41.9861960Z [command]/usr/local/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-02T14:17:42.0960570Z [command]/usr/local/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-02T14:17:42.1719280Z Removing includeIf entries pointing to credentials config files
+2026-11-02T14:17:42.1776930Z [command]/usr/local/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-02T14:17:42.1899550Z [command]/usr/local/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-02T14:17:42.4549200Z [command]/usr/local/bin/git config --file /Users/runner/work/_temp/git-credentials-073c4cd0-b36c-46bf-a717-d3bdc1f64378.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-02T14:17:42.4805470Z [command]/usr/local/bin/git config --local includeIf.gitdir:/Users/runner/work/spinel/spinel/.git.path /Users/runner/work/_temp/git-credentials-073c4cd0-b36c-46bf-a717-d3bdc1f64378.config
+2026-11-02T14:17:42.4937820Z [command]/usr/local/bin/git config --local includeIf.gitdir:/Users/runner/work/spinel/spinel/.git/worktrees/*.path /Users/runner/work/_temp/git-credentials-073c4cd0-b36c-46bf-a717-d3bdc1f64378.config
+2026-11-02T14:17:42.6009580Z [command]/usr/local/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-073c4cd0-b36c-46bf-a717-d3bdc1f64378.config
+2026-11-02T14:17:42.6253550Z [command]/usr/local/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-073c4cd0-b36c-46bf-a717-d3bdc1f64378.config
+2026-11-02T14:17:42.6265900Z ##[endgroup]
+2026-11-02T14:17:42.6271210Z ##[group]Fetching the repository
+2026-11-02T14:17:42.6276360Z [command]/usr/local/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +495a21a2fc5b16db9754188ed506093daad18dfa:refs/remotes/pull/228/merge
+2026-11-02T14:17:47.0842390Z From https://github.com/mxbaylee/spinel
+2026-11-02T14:17:47.0846230Z  * [new ref]         495a21a2fc5b16db9754188ed506093daad18dfa -> pull/228/merge
+2026-11-02T14:17:47.0850120Z ##[endgroup]
+2026-11-02T14:17:47.0851510Z ##[group]Determining the checkout info
+2026-11-02T14:17:47.0853340Z ##[endgroup]
+2026-11-02T14:17:47.0858290Z [command]/usr/local/bin/git sparse-checkout disable
+2026-11-02T14:17:47.1040360Z [command]/usr/local/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-02T14:17:47.1201930Z ##[group]Checking out the ref
+2026-11-02T14:17:47.1207550Z [command]/usr/local/bin/git checkout --progress --force refs/remotes/pull/228/merge
+2026-11-02T14:17:48.2477180Z Updating files:  30% (679/2191)
+2026-11-02T14:17:48.4021510Z Updating files:  31% (680/2191)
+2026-11-02T14:17:48.4336080Z Updating files:  32% (702/2191)
+2026-11-02T14:17:48.4640640Z Updating files:  33% (724/2191)
+2026-11-02T14:17:48.4994490Z Updating files:  34% (745/2191)
+2026-11-02T14:17:48.6110990Z Updating files:  35% (767/2191)
+2026-11-02T14:17:48.6237080Z Updating files:  36% (789/2191)
+2026-11-02T14:17:48.6351540Z Updating files:  37% (811/2191)
+2026-11-02T14:17:48.6488700Z Updating files:  38% (833/2191)
+2026-11-02T14:17:48.6848920Z Updating files:  39% (855/2191)
+2026-11-02T14:17:48.9289730Z Updating files:  40% (877/2191)
+2026-11-02T14:17:48.9468440Z Updating files:  41% (899/2191)
+2026-11-02T14:17:48.9550260Z Updating files:  42% (921/2191)
+2026-11-02T14:17:48.9654580Z Updating files:  43% (943/2191)
+2026-11-02T14:17:48.9761860Z Updating files:  44% (965/2191)
+2026-11-02T14:17:48.9870830Z Updating files:  45% (986/2191)
+2026-11-02T14:17:48.9978670Z Updating files:  46% (1008/2191)
+2026-11-02T14:17:49.0087680Z Updating files:  47% (1030/2191)
+2026-11-02T14:17:49.0172270Z Updating files:  48% (1052/2191)
+2026-11-02T14:17:49.0393450Z Updating files:  49% (1074/2191)
+2026-11-02T14:17:49.0766650Z Updating files:  50% (1096/2191)
+2026-11-02T14:17:49.0863600Z Updating files:  51% (1118/2191)
+2026-11-02T14:17:49.0949880Z Updating files:  52% (1140/2191)
+2026-11-02T14:17:49.1133700Z Updating files:  53% (1162/2191)
+2026-11-02T14:17:49.1265190Z Updating files:  54% (1184/2191)
+2026-11-02T14:17:49.1405570Z Updating files:  55% (1206/2191)
+2026-11-02T14:17:49.1413180Z Updating files:  55% (1226/2191)
+2026-11-02T14:17:49.2165660Z Updating files:  56% (1227/2191)
+2026-11-02T14:17:49.2405040Z Updating files:  57% (1249/2191)
+2026-11-02T14:17:49.2525190Z Updating files:  58% (1271/2191)
+2026-11-02T14:17:49.2664410Z Updating files:  59% (1293/2191)
+2026-11-02T14:17:49.2897240Z Updating files:  60% (1315/2191)
+2026-11-02T14:17:49.3002420Z Updating files:  61% (1337/2191)
+2026-11-02T14:17:49.3139910Z Updating files:  62% (1359/2191)
+2026-11-02T14:17:49.3213090Z Updating files:  63% (1381/2191)
+2026-11-02T14:17:49.3333920Z Updating files:  64% (1403/2191)
+2026-11-02T14:17:49.3452480Z Updating files:  65% (1425/2191)
+2026-11-02T14:17:49.3555900Z Updating files:  66% (1447/2191)
+2026-11-02T14:17:49.3652560Z Updating files:  67% (1468/2191)
+2026-11-02T14:17:49.3750580Z Updating files:  68% (1490/2191)
+2026-11-02T14:17:49.3836980Z Updating files:  69% (1512/2191)
+2026-11-02T14:17:49.3961700Z Updating files:  70% (1534/2191)
+2026-11-02T14:17:49.4066130Z Updating files:  71% (1556/2191)
+2026-11-02T14:17:49.4200320Z Updating files:  72% (1578/2191)
+2026-11-02T14:17:49.4560080Z Updating files:  73% (1600/2191)
+2026-11-02T14:17:49.5168690Z Updating files:  74% (1622/2191)
+2026-11-02T14:17:49.5282400Z Updating files:  75% (1644/2191)
+2026-11-02T14:17:49.5424500Z Updating files:  76% (1666/2191)
+2026-11-02T14:17:49.5523990Z Updating files:  77% (1688/2191)
+2026-11-02T14:17:49.5654300Z Updating files:  78% (1709/2191)
+2026-11-02T14:17:49.5797010Z Updating files:  79% (1731/2191)
+2026-11-02T14:17:49.6007010Z Updating files:  80% (1753/2191)
+2026-11-02T14:17:49.6199460Z Updating files:  81% (1775/2191)
+2026-11-02T14:17:49.6348060Z Updating files:  82% (1797/2191)
+2026-11-02T14:17:49.8115740Z Updating files:  83% (1819/2191)
+2026-11-02T14:17:49.8284750Z Updating files:  84% (1841/2191)
+2026-11-02T14:17:49.8420000Z Updating files:  85% (1863/2191)
+2026-11-02T14:17:49.8560600Z Updating files:  86% (1885/2191)
+2026-11-02T14:17:49.8722080Z Updating files:  87% (1907/2191)
+2026-11-02T14:17:49.8834070Z Updating files:  88% (1929/2191)
+2026-11-02T14:17:49.8948240Z Updating files:  89% (1950/2191)
+2026-11-02T14:17:49.9110820Z Updating files:  90% (1972/2191)
+2026-11-02T14:17:49.9211310Z Updating files:  91% (1994/2191)
+2026-11-02T14:17:49.9324990Z Updating files:  92% (2016/2191)
+2026-11-02T14:17:49.9407230Z Updating files:  93% (2038/2191)
+2026-11-02T14:17:49.9491890Z Updating files:  94% (2060/2191)
+2026-11-02T14:17:49.9590410Z Updating files:  95% (2082/2191)
+2026-11-02T14:17:49.9725750Z Updating files:  96% (2104/2191)
+2026-11-02T14:17:49.9810380Z Updating files:  97% (2126/2191)
+2026-11-02T14:17:49.9898000Z Updating files:  98% (2148/2191)
+2026-11-02T14:17:49.9981780Z Updating files:  99% (2170/2191)
+2026-11-02T14:17:49.9982750Z Updating files: 100% (2191/2191)
+2026-11-02T14:17:49.9983540Z Updating files: 100% (2191/2191), done.
+2026-11-02T14:17:50.0074460Z HEAD is now at 495a21a Merge bcc1c17c538756e7886a60a413ee31a8ed5ff2ba into 1fca8a98c315d2f715e8051537e50f2efbbe580b
+2026-11-02T14:17:50.0127560Z ##[endgroup]
+2026-11-02T14:17:50.0360650Z [command]/usr/local/bin/git log -1 --format=%H
+2026-11-02T14:17:50.0547470Z 495a21a2fc5b16db9754188ed506093daad18dfa
+2026-11-02T14:17:50.0573980Z ##[group]Removing auth
+2026-11-02T14:17:50.0574800Z Removing SSH command configuration
+2026-11-02T14:17:50.0583340Z [command]/usr/local/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-02T14:17:50.0740530Z [command]/usr/local/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-02T14:17:50.2656000Z Removing HTTP extra header
+2026-11-02T14:17:50.2682100Z [command]/usr/local/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-02T14:17:50.2788320Z [command]/usr/local/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-02T14:17:50.4248360Z Removing includeIf entries pointing to credentials config files
+2026-11-02T14:17:50.4254640Z [command]/usr/local/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-02T14:17:50.4347140Z includeif.gitdir:/Users/runner/work/spinel/spinel/.git.path
+2026-11-02T14:17:50.4349100Z includeif.gitdir:/Users/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-02T14:17:50.4350330Z includeif.gitdir:/github/workspace/.git.path
+2026-11-02T14:17:50.4351290Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-02T14:17:50.4361970Z [command]/usr/local/bin/git config --local --get-all includeif.gitdir:/Users/runner/work/spinel/spinel/.git.path
+2026-11-02T14:17:50.4457750Z /Users/runner/work/_temp/git-credentials-073c4cd0-b36c-46bf-a717-d3bdc1f64378.config
+2026-11-02T14:17:50.4474890Z [command]/usr/local/bin/git config --local --unset includeif.gitdir:/Users/runner/work/spinel/spinel/.git.path \/Users\/runner\/work\/_temp\/git\-credentials\-073c4cd0\-b36c\-46bf\-a717\-d3bdc1f64378\.config
+2026-11-02T14:17:50.4593780Z [command]/usr/local/bin/git config --local --get-all includeif.gitdir:/Users/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-02T14:17:50.4694930Z /Users/runner/work/_temp/git-credentials-073c4cd0-b36c-46bf-a717-d3bdc1f64378.config
+2026-11-02T14:17:50.4708720Z [command]/usr/local/bin/git config --local --unset includeif.gitdir:/Users/runner/work/spinel/spinel/.git/worktrees/*.path \/Users\/runner\/work\/_temp\/git\-credentials\-073c4cd0\-b36c\-46bf\-a717\-d3bdc1f64378\.config
+2026-11-02T14:17:50.4966520Z [command]/usr/local/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-02T14:17:50.5084750Z /github/runner_temp/git-credentials-073c4cd0-b36c-46bf-a717-d3bdc1f64378.config
+2026-11-02T14:17:50.5098560Z [command]/usr/local/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-073c4cd0\-b36c\-46bf\-a717\-d3bdc1f64378\.config
+2026-11-02T14:17:50.5336920Z [command]/usr/local/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-02T14:17:50.5463480Z /github/runner_temp/git-credentials-073c4cd0-b36c-46bf-a717-d3bdc1f64378.config
+2026-11-02T14:17:50.5479950Z [command]/usr/local/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-073c4cd0\-b36c\-46bf\-a717\-d3bdc1f64378\.config
+2026-11-02T14:17:50.5613200Z [command]/usr/local/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-02T14:17:50.7194530Z Removing credentials config '/Users/runner/work/_temp/git-credentials-073c4cd0-b36c-46bf-a717-d3bdc1f64378.config'
+2026-11-02T14:17:50.7224600Z ##[endgroup]
+2026-11-02T14:17:50.8229330Z ##[group]Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+2026-11-02T14:17:50.8230070Z with:
+2026-11-02T14:17:50.8230390Z   node-version-file: .nvmrc
+2026-11-02T14:17:50.8231030Z   package-manager-cache: false
+2026-11-02T14:17:50.8231480Z   check-latest: false
+2026-11-02T14:17:50.8236000Z   token: ***
+2026-11-02T14:17:50.8236330Z env:
+2026-11-02T14:17:50.8237120Z   SOURCE_SHA: bcc1c17c538756e7886a60a413ee31a8ed5ff2ba
+2026-11-02T14:17:50.8237720Z   DESKTOP_RUNNER: macos-15-intel
+2026-11-02T14:17:50.8238150Z ##[endgroup]
+2026-11-02T14:17:51.1453380Z Node version file is not JSON file
+2026-11-02T14:17:51.1518450Z Node version file is not TOML file
+2026-11-02T14:17:51.1519200Z Resolved .nvmrc as 26.12.1
+2026-11-02T14:17:51.1534080Z Attempting to download 26.12.1...
+2026-11-02T14:17:52.4504550Z Acquiring 26.12.1 - x64 from https://github.com/actions/node-versions/releases/download/26.12.1-39618969937/node-26.12.1-darwin-x64.tar.gz
+2026-11-02T14:17:53.5149670Z Extracting ...
+2026-11-02T14:17:53.5421630Z [command]/usr/bin/tar xz --strip 1 -C /Users/runner/work/_temp/deff72b0-8309-41e7-8791-5a97bac85073 -f /Users/runner/work/_temp/c2ef7530-0a93-42eb-85ab-df1f665faf29
+2026-11-02T14:17:57.9804990Z Adding to the cache ...
+2026-11-02T14:18:09.3203850Z ##[group]Environment details
+2026-11-02T14:18:11.2293580Z node: v26.12.1
+2026-11-02T14:18:11.2310560Z npm: 11.20.0
+2026-11-02T14:18:11.2342730Z yarn: 1.22.22
+2026-11-02T14:18:11.2349400Z ##[endgroup]
+2026-11-02T14:18:11.2860830Z ##[group]Run node scripts/ci/desktop-browser-versions.ts "$DESKTOP_BROWSER"
+2026-11-02T14:18:11.2863180Z [36;1mnode scripts/ci/desktop-browser-versions.ts "$DESKTOP_BROWSER"[0m
+2026-11-02T14:18:11.3081300Z shell: /bin/bash -e {0}
+2026-11-02T14:18:11.3081980Z env:
+2026-11-02T14:18:11.3082590Z   SOURCE_SHA: bcc1c17c538756e7886a60a413ee31a8ed5ff2ba
+2026-11-02T14:18:11.3083400Z   DESKTOP_RUNNER: macos-15-intel
+2026-11-02T14:18:11.3084060Z   DESKTOP_BROWSER: safari
+2026-11-02T14:18:11.3084680Z ##[endgroup]
+2026-11-02T14:19:25.0857440Z {
+2026-11-02T14:19:25.1832880Z   "sourceSha": "bcc1c17c538756e7886a60a413ee31a8ed5ff2ba",
+2026-11-02T14:19:25.2224860Z   "checkedAt": "2026-11-02T14:18:11.562Z",
+2026-11-02T14:19:25.2678460Z   "kind": "safari",
+2026-11-02T14:19:25.3050760Z   "status": "passed",
+2026-11-02T14:19:25.3502750Z   "before": "26.6",
+2026-11-02T14:19:25.3782110Z   "releaseSource": "https://support.apple.com/en-us/149527",
+2026-11-02T14:19:25.4214050Z   "requiredStable": "27.2",
+2026-11-02T14:19:25.4476150Z   "availableUpdates": "Software Update Tool\n\nFinding available software\nSoftware Update found the following new or updated software:\n* Label: Safari27.2SequoiaAuto-27.2\n\tTitle: Safari, Version: 27.2, Size: 238722KiB, Recommended: YES, \n* Label: macOS Sequoia 15.8.2-24H232\n\tTitle: macOS Sequoia 15.8.2, Version: 15.8.2, Size: 1107530KiB, Recommended: YES, Action: restart, \n* Label: macOS Tahoe 26.7.2-25G332\n\tTitle: macOS Tahoe 26.7.2, Version: 26.7.2, Size: 5891500KiB, Recommended: YES, Action: restart, \n",
+2026-11-02T14:19:25.4716710Z   "install": "Software Update Tool\n\nFinding available software\nAttempting to quit apps: (\n    \"com.apple.Safari.SafariQuickLookPreview\",\n    \"com.apple.Safari\"\n)\nWaiting for user to quit any relevant apps\nSuccessfully quit all apps\n\nDownloading Safari\nDownloaded Safari\nInstalling Safari\nDone with Safari\nDone.\n",
+2026-11-02T14:19:25.4938420Z   "installed": "27.2"
+2026-11-02T14:19:25.5211140Z }
+2026-11-02T14:19:25.8530130Z ##[group]Run node scripts/ci/desktop-profile-probe.ts
+2026-11-02T14:19:25.8534610Z [36;1mnode scripts/ci/desktop-profile-probe.ts[0m
+2026-11-02T14:19:25.8903500Z shell: /bin/bash -e {0}
+2026-11-02T14:19:25.8904850Z env:
+2026-11-02T14:19:25.8907620Z   SOURCE_SHA: bcc1c17c538756e7886a60a413ee31a8ed5ff2ba
+2026-11-02T14:19:25.8909120Z   DESKTOP_RUNNER: macos-15-intel
+2026-11-02T14:19:25.8944490Z ##[endgroup]
+2026-11-02T14:19:48.8254500Z {
+2026-11-02T14:19:48.9762900Z   "scope": "Native ordinary Safari same-profile capability probe, not application acceptance",
+2026-11-02T14:19:49.0780500Z   "sourceSha": "bcc1c17c538756e7886a60a413ee31a8ed5ff2ba",
+2026-11-02T14:19:49.1757270Z   "testedSha": "495a21a2fc5b16db9754188ed506093daad18dfa",
+2026-11-02T14:19:49.2776370Z   "runner": {
+2026-11-02T14:19:49.3839040Z     "label": "macos-15-intel",
+2026-11-02T14:19:49.4850970Z     "arch": "x64",
+2026-11-02T14:19:49.5900100Z     "imageOS": "macos15",
+2026-11-02T14:19:49.6928820Z     "imageVersion": "20260824.0482.1"
+2026-11-02T14:19:49.8129480Z   },
+2026-11-02T14:19:49.9211440Z   "run": "https://github.com/mxbaylee/spinel/actions/runs/41460301616",
+2026-11-02T14:19:50.0240120Z   "status": "failed",
+2026-11-02T14:19:50.1251180Z   "safariTargets": [
+2026-11-02T14:19:50.2264220Z     {
+2026-11-02T14:19:50.4319070Z       "stage": "online",
+2026-11-02T14:19:50.4320300Z       "pid": 4185,
+2026-11-02T14:19:50.5379490Z       "time": "2026-11-02T14:19:29.639Z",
+2026-11-02T14:19:50.6455930Z       "error": {
+2026-11-02T14:19:50.7466960Z         "message": "Error: Command failed: /usr/bin/osascript -l JavaScript -e ",
+2026-11-02T14:19:50.8476010Z         "code": null,
+2026-11-02T14:19:50.9307210Z         "signal": "SIGTERM",
+2026-11-02T14:19:51.0328640Z         "killed": true,
+2026-11-02T14:19:51.1190180Z         "stdout": "",
+2026-11-02T14:19:51.1536370Z         "stderr": ""
+2026-11-02T14:19:51.2056290Z       }
+2026-11-02T14:19:51.2585430Z     }
+2026-11-02T14:19:51.3130470Z   ],
+2026-11-02T14:19:51.4167960Z   "os": "ProductName:\t\tmacOS\nProductVersion:\t\t15.7.9\nBuildVersion:\t\t24G830",
+2026-11-02T14:19:51.5192460Z   "machine": "x86_64",
+2026-11-02T14:19:51.6236240Z   "version": "27.2",
+2026-11-02T14:19:51.8324840Z   "beforePid": "4185",
+2026-11-02T14:19:51.9357390Z   "error": "Error: Command failed: /usr/bin/osascript -l JavaScript -e \nObjC.import('AppKit');\nfunction run(argv) {\n  var pid = Number(argv[0]);\n  var running = $.NSRunningApplication.runningApplicationWithProcessIdentifier(pid);\n  if (running.isNil() || running.terminated) throw new Error('The observed Safari process exited.');\n  var identity = { pid: running.processIdentifier, bundleIdentifier: ObjC.unwrap(running.bundleIdentifier),\n    executablePath: ObjC.unwrap(running.executableURL.path), launchedAt: running.launchDate.timeIntervalSince1970 };\n  if (identity.pid !== pid || identity.bundleIdentifier !== 'com.apple.Safari' || !Number.isFinite(identity.launchedAt) || identity.launchedAt <= 0)\n    throw new Error('The observed PID is not the expected Safari process: ' + JSON.stringify(identity));\n  if (argv[1] && identity.launchedAt !== Number(argv[1]))\n    throw new Error('The observed Safari PID has been reused: ' + JSON.stringify(identity));\n  if (argv[2] === 'identify') return JSON.stringify(identity);\n  console.log('Safari request target: ' + JSON.stringify(identity));\n  function phase(name) { console.log('Safari request phase: ' + JSON.stringify({ at: new Date().toISOString(), phase: name })); }\n  phase('application-constructor-begin');\n  var app = Application(pid);\n  phase('application-constructor-end');\n  var seconds = Number(argv[4]);\n  if (argv[2] === 'title') {\n    var name = app.documents[0].name;\n    phase('title-specifier-ready');\n    phase('title-get-begin');\n    var title = name({ timeout: seconds });\n    phase('title-get-end');\n    return title;\n  }\n  if (argv[2] === 'evaluate') return app.doJavaScript(argv[3], { in: app.documents[0] }, { timeout: seconds });\n  if (argv[2] === 'quit') { app.quit(); return 'Quit requested'; }\n  if (argv[2] === 'baseline') {\n    var window = app.windows[0];\n    if (window.miniaturized()) window.miniaturized = false;\n    if (!app.frontmost()) app.activate();\n    var tab = window.currentTab();\n    return JSON.stringify({ windowId",
+2026-11-02T14:19:52.0339290Z   "errorDetail": {
+2026-11-02T14:19:52.1276160Z     "code": null,
+2026-11-02T14:19:52.1456570Z     "signal": "SIGTERM",
+2026-11-02T14:19:52.1841930Z     "killed": true,
+2026-11-02T14:19:52.2461420Z     "stderr": ""
+2026-11-02T14:19:52.2718880Z   },
+2026-11-02T14:19:52.2895780Z   "processes": [
+2026-11-02T14:19:52.3092880Z     "  150     1 /System/Library/PrivateFrameworks/TCC.framework/Support/tccd",
+2026-11-02T14:19:52.3434890Z     "  399     1 /System/Library/PrivateFrameworks/TCC.framework/Support/tccd",
+2026-11-02T14:19:52.3748390Z     " 1034     1 /bin/bash",
+2026-11-02T14:19:52.4123560Z     " 4149     1 /System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/Extensions/SafariWidgetExtension.appex/Contents/MacOS/SafariWidgetExtension",
+2026-11-02T14:19:52.4808000Z     " 4162  2503 /bin/bash",
+2026-11-02T14:19:52.5088280Z     " 4164  4162 node",
+2026-11-02T14:19:52.5458910Z     " 4185     1 /System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/MacOS/Safari",
+2026-11-02T14:19:52.5583000Z     " 4216     1 /System/Cryptexes/App/usr/libexec/com.apple.Safari.History",
+2026-11-02T14:19:52.5703460Z     " 4230     1 /System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/XPCServices/com.apple.Safari.SandboxBroker.xpc/Contents/MacOS/com.apple.Safari.SandboxBroker",
+2026-11-02T14:19:52.5833120Z     " 4240     1 /System/Volumes/Preboot/Cryptexes/App/System/Library/StagedFrameworks/Safari/WebPrivacy.framework/Versions/A/XPCServices/com.apple.WebPrivacy.Service.xpc/Contents/MacOS/com.apple.WebPrivacy.Service",
+2026-11-02T14:19:52.5925260Z     " 4245     1 /System/Volumes/Preboot/Cryptexes/App/System/Library/StagedFrameworks/Safari/WebKit.framework/Versions/A/XPCServices/com.apple.WebKit.WebContent.xpc/Contents/MacOS/com.apple.WebKit.WebContent",
+2026-11-02T14:19:52.6347550Z     " 4246     1 /System/Cryptexes/App/usr/libexec/SafariNotificationAgent",
+2026-11-02T14:19:52.6495150Z     " 4255     1 /System/Cryptexes/App/System/Library/CoreServices/SafariSupport.bundle/Contents/MacOS/SafariBookmarksSyncAgent",
+2026-11-02T14:19:52.6615860Z     " 4273     1 /System/Volumes/Preboot/Cryptexes/App/System/Library/StagedFrameworks/Safari/WebKit.framework/Versions/A/XPCServices/com.apple.WebKit.Networking.xpc/Contents/MacOS/com.apple.WebKit.Networking",
+2026-11-02T14:19:52.6784860Z     " 4279     1 /System/Cryptexes/App/usr/libexec/SafariLaunchAgent",
+2026-11-02T14:19:52.7030490Z     " 4342     1 /System/Volumes/Preboot/Cryptexes/App/System/Library/StagedFrameworks/Safari/WebKit.framework/Versions/A/XPCServices/com.apple.WebKit.GPU.xpc/Contents/MacOS/com.apple.WebKit.GPU",
+2026-11-02T14:19:52.7161980Z     " 4370     1 /System/Volumes/Preboot/Cryptexes/App/System/Library/StagedFrameworks/Safari/SafariShared.framework/Versions/A/XPCServices/com.apple.Safari.SearchHelper.xpc/Contents/MacOS/com.apple.Safari.SearchHelper"
+2026-11-02T14:19:52.7265270Z   ],
+2026-11-02T14:19:52.7343930Z   "teardownError": "AssertionError [ERR_ASSERTION]: No owned Safari identity is available for teardown."
+2026-11-02T14:19:52.7459600Z }
+2026-11-02T14:19:52.7628550Z ##[error]Process completed with exit code 1.
+2026-11-02T14:19:52.8273830Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-02T14:19:52.8275110Z with:
+2026-11-02T14:19:52.8276280Z   name: desktop-offline-safari-macos-15-intel-41460301616-1
+2026-11-02T14:19:52.8278230Z   path: artifacts/desktop-offline/
+2026-11-02T14:19:52.8278750Z   if-no-files-found: error
+2026-11-02T14:19:52.8279210Z   retention-days: 14
+2026-11-02T14:19:52.8279900Z   compression-level: 6
+2026-11-02T14:19:52.8280370Z   overwrite: false
+2026-11-02T14:19:52.8280840Z   include-hidden-files: false
+2026-11-02T14:19:52.8281350Z   archive: true
+2026-11-02T14:19:52.8281750Z env:
+2026-11-02T14:19:52.8282550Z   SOURCE_SHA: bcc1c17c538756e7886a60a413ee31a8ed5ff2ba
+2026-11-02T14:19:52.8283180Z   DESKTOP_RUNNER: macos-15-intel
+2026-11-02T14:19:52.8283970Z ##[endgroup]
+2026-11-02T14:19:54.4290530Z With the provided path, there will be 3 files uploaded
+2026-11-02T14:19:54.4440700Z Artifact name is valid!
+2026-11-02T14:19:54.4547860Z Root directory input is valid!
+2026-11-02T14:19:54.9419880Z Uploading artifact: desktop-offline-safari-macos-15-intel-41460301616-1.zip
+2026-11-02T14:19:54.9623880Z Beginning upload of artifact content to blob storage
+2026-11-02T14:19:55.4954780Z Uploaded bytes 121636
+2026-11-02T14:19:55.5705030Z Finished uploading artifact content to blob storage!
+2026-11-02T14:19:55.5784580Z SHA256 digest of uploaded artifact is 3ed4b5d29c03b6f543c397b3cf0d31fb1529ab820d057862a412e274e229439a
+2026-11-02T14:19:55.5959740Z Finalizing artifact upload
+2026-11-02T14:19:56.2137480Z Artifact desktop-offline-safari-macos-15-intel-41460301616-1 successfully finalized. Artifact ID 13148428386
+2026-11-02T14:19:56.2211340Z Artifact desktop-offline-safari-macos-15-intel-41460301616-1 has been successfully uploaded! Final size is 121636 bytes. Artifact ID is 13148428386
+2026-11-02T14:19:56.2295460Z Artifact download URL: https://github.com/mxbaylee/spinel/actions/runs/41460301616/artifacts/13148428386
+2026-11-02T14:19:56.2885760Z Post job cleanup.
+2026-11-02T14:19:56.6861870Z [command]/usr/local/bin/git version
+2026-11-02T14:19:56.7236150Z git version 2.55.0
+2026-11-02T14:19:56.7984280Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/1572723c-2a74-4a13-a82c-7b7816675780/.gitconfig'
+2026-11-02T14:19:56.8129470Z Temporarily overriding HOME='/Users/runner/work/_temp/1572723c-2a74-4a13-a82c-7b7816675780' before making global git config changes
+2026-11-02T14:19:56.8332060Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-02T14:19:56.8460570Z [command]/usr/local/bin/git config --global --add safe.directory /Users/runner/work/spinel/spinel
+2026-11-02T14:19:56.9193960Z Removing SSH command configuration
+2026-11-02T14:19:56.9417780Z [command]/usr/local/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-02T14:19:56.9895640Z [command]/usr/local/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-02T14:19:57.4068350Z Removing HTTP extra header
+2026-11-02T14:19:57.4474790Z [command]/usr/local/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-02T14:19:57.6493950Z [command]/usr/local/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-02T14:19:58.1147480Z Removing includeIf entries pointing to credentials config files
+2026-11-02T14:19:58.1354840Z [command]/usr/local/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-02T14:19:58.1588110Z [command]/usr/local/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-02T14:19:59.2675300Z Cleaning up orphan processes
+2026-11-02T14:20:01.2919880Z Terminate orphan process: pid (4185) (Safari)
