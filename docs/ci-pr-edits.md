@@ -137,7 +137,10 @@ Workflow attempts are not policy-job executions: a classifier-only retry retains
 its earlier policy evidence, including while classification is pending or failed.
 Before first adoption, a missing initial policy execution or an active earlier
 attempt whose policy execution is uncertain still blocks. Complete returned job
-registration and settled non-issuance distinguish a retry from missing evidence.
+registration and the bound provider attempt's terminal status are both required
+before an absent policy job counts as settled non-issuance. Completed classifier
+jobs alone are insufficient because another job might still register. Consumption
+of an existing authenticated origin does not require this new absence proof.
 
 Cancellation before runner assignment has a narrow provider-backed disposition:
 the genuine job and Actions check must both be terminal/cancelled, runner and group

@@ -296,9 +296,15 @@ function legacyScenario() {
     completed_at: null as string | null,
   };
   const policyChecks: Record<number, typeof check> = { 505: check };
+  const workflowAttempts: Record<number, unknown> = {};
   const get = s.client.get.bind(s.client);
   const list = s.client.list.bind(s.client);
   s.client.get = async (path) => {
+    const attempt = new RegExp(`^actions/runs/${s.policyRun.id}/attempts/([1-9][0-9]*)$`).exec(
+      path,
+    )?.[1];
+    if (attempt && workflowAttempts[Number(attempt)])
+      return structuredClone(workflowAttempts[Number(attempt)]);
     if (path === `actions/runs/${s.policyRun.id}`) return structuredClone(s.policyRun);
     if (path === 'actions/workflows/pr-policy.yml')
       return { id: legacyHistoryCutoff.workflowId, path: '.github/workflows/pr-policy.yml' };
@@ -330,7 +336,7 @@ function legacyScenario() {
       completed_at: '2026-11-02T19:31:02Z',
     };
   };
-  return { ...s, runs, prior, job, records, check, policyChecks, issued };
+  return { ...s, runs, prior, job, records, check, policyChecks, workflowAttempts, issued };
 }
 
 test('legacy adoption requires genuinely later full code and retains its original provider barrier on retry', async () => {
@@ -599,6 +605,26 @@ test('before first adoption an active classifier-only attempt remains unresolved
   await assert.rejects(prepareLegacyAdoption(options), /not sealed/);
   classifierRetry.status = 'completed';
   classifierRetry.conclusion = 'failure';
+  const attempt = {
+    ...structuredClone(s.policyRun),
+    run_attempt: 2,
+    status: 'in_progress',
+    conclusion: null as string | null,
+  };
+  s.workflowAttempts[2] = attempt;
+  await assert.rejects(prepareLegacyAdoption(options), /not sealed/);
+  attempt.status = 'completed';
+  attempt.conclusion = 'failure';
+  for (const invalid of [
+    { ...attempt, run_attempt: 3 },
+    { ...attempt, head_sha: 'd'.repeat(40) },
+    { ...attempt, workflow_id: 1 },
+    { ...attempt, repository: { full_name: 'foreign/repo' } },
+  ]) {
+    s.workflowAttempts[2] = invalid;
+    await assert.rejects(prepareLegacyAdoption(options), /not sealed/);
+  }
+  s.workflowAttempts[2] = attempt;
   assert.equal(await prepareLegacyAdoption(options), adoptionMarker(16));
 });
 

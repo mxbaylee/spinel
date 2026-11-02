@@ -639,6 +639,7 @@ export async function authenticatedPolicyHistory(
       const policyJobs = records.filter((job) => object(job) && job.name === 'Pull request');
       let absentPolicyAttemptPending = false;
       let initialPolicyMissing = false;
+      const absentPolicyAttempts: number[] = [];
       // Every adoption-capable attempt must positively disclose its marker or
       // settled non-issuance. Missing job/step evidence cannot mean never adopted.
       if (identity.version === 3 && legacyEligible) {
@@ -680,6 +681,7 @@ export async function authenticatedPolicyHistory(
             registered.some((job) => object(job) && job.status !== 'completed')
           )
             absentPolicyAttemptPending = true;
+          if (!attempts.includes(attempt)) absentPolicyAttempts.push(attempt);
         }
       }
       for (const job of policyJobs) {
@@ -789,6 +791,29 @@ export async function authenticatedPolicyHistory(
       if (!candidates.length) {
         if (initialPolicyMissing || absentPolicyAttemptPending)
           throw new Error('An earlier possible first-adoption execution is missing or unresolved.');
+        // Completed returned jobs alone do not prove that an omitted policy
+        // job cannot still register. Only the bound provider attempt's terminal
+        // state settles that first-adoption race. Existing certificates need no
+        // such new absence proof and keep their immutable origin above.
+        for (const number of absentPolicyAttempts) {
+          const attempt = await client.get(`actions/runs/${run.id}/attempts/${number}`);
+          if (
+            !object(attempt) ||
+            attempt.id !== run.id ||
+            attempt.run_number !== run.run_number ||
+            attempt.run_attempt !== number ||
+            attempt.workflow_id !== expected.workflowId ||
+            attempt.path !== run.path ||
+            attempt.event !== run.event ||
+            attempt.head_sha !== run.head_sha ||
+            attempt.display_title !== run.display_title ||
+            !object(attempt.repository) ||
+            attempt.repository.full_name !== client.repository ||
+            attempt.status !== 'completed' ||
+            !executed(attempt)
+          )
+            throw new Error('An absent policy execution has no terminal provider attempt proof.');
+        }
         return null;
       }
       const accepted = candidates.find((candidate) =>
