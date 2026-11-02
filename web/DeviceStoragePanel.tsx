@@ -1,6 +1,7 @@
 import type { MouseEvent, RefObject } from 'react';
 import { EntityIcon } from '../src/ui/EntityIcon.tsx';
 import { Modal } from '../src/ui/redesign/Controls.tsx';
+import { StorageHelp } from './offline/StorageHelp.tsx';
 import type { DeviceInventory } from './offline/deviceStorage.ts';
 import './deviceStorage.css';
 
@@ -206,40 +207,11 @@ export function DeviceStoragePanel({
         </>
       )}
       {message && !selected && <p role={message.failed ? 'alert' : 'status'}>{message.text}</p>}
-      <Modal
-        title="About device storage"
-        icon="info"
+      <StorageHelp
         open={dialog?.kind === 'about'}
-        onOpenChange={(open) => {
-          if (!open) onOpenDialog(null);
-        }}
+        onDismiss={() => onOpenDialog(null)}
         finalFocus={finalFocus}
-      >
-        <div className="device-storage-dialog">
-          <p>
-            Downloads are kept in this browser for this account. A home-screen shortcut does not
-            download a document.
-          </p>
-          <p>
-            Storage protection asks your browser to keep these files during automatic cleanup. The
-            browser decides whether to grant it.
-          </p>
-          <p>
-            Protection is not a backup or a guarantee. Clearing browser data, browser eviction or
-            losing this device can erase the only copy of unsynced changes. Server backups cannot
-            restore edits that never reached the server.
-          </p>
-          <p>
-            Keep pending changes until they sync, or open recovery to save a copy or export
-            recoverable work before removing it.
-          </p>
-          <div className="sp-actions">
-            <button className="sp-control sp-primary" onClick={() => onOpenDialog(null)}>
-              Done
-            </button>
-          </div>
-        </div>
-      </Modal>
+      />
       {/* A controlled close resolves final focus after a removed row leaves the DOM. */}
       <Modal
         title={

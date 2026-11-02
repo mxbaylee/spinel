@@ -1,3 +1,4 @@
+import { recoveryRows } from './recovery-rows.ts';
 import { createHash } from 'node:crypto';
 import { gunzipSync } from 'node:zlib';
 import sharp from 'sharp';
@@ -157,7 +158,7 @@ export async function verifySemantics(db: DatabaseSync) {
       throw invalid();
   }
   let images = 0;
-  for (const image of db.iterate('SELECT item_id,id,mime,data FROM doc_images')) {
+  for (const image of recoveryRows(db, 'doc_images', 'item_id,id,mime,data')) {
     const item = items.get(String(image.item_id));
     if (
       !item ||
@@ -245,7 +246,7 @@ export async function verifySemantics(db: DatabaseSync) {
     ['sheet_snapshots', 'sheet'],
     ['doc_snapshots', 'doc'],
   ] as const)
-    for (const row of db.iterate(`SELECT item_id,snapshot,revision FROM ${table}`)) {
+    for (const row of recoveryRows(db, table, 'item_id,snapshot,revision')) {
       const item = items.get(String(row.item_id));
       if (
         !item ||
@@ -300,7 +301,7 @@ export async function verifySemantics(db: DatabaseSync) {
       stagedUnits.set(job.next_unit, item);
     }
   if (exists(db, 'spinel_sync_units'))
-    for (const unit of db.iterate('SELECT * FROM spinel_sync_units')) {
+    for (const unit of recoveryRows(db, 'spinel_sync_units')) {
       let item = activeUnits.get(String(unit.unit_id));
       if (!item) {
         // A committed restore/deletion can leave an old unit for the purge outbox.
@@ -364,7 +365,7 @@ export async function verifySemantics(db: DatabaseSync) {
         throw invalid();
     }
   if (exists(db, 'history_checkpoints'))
-    for (const row of db.iterate('SELECT item_id,source,snapshot FROM history_checkpoints')) {
+    for (const row of recoveryRows(db, 'history_checkpoints', 'item_id,source,snapshot')) {
       const item = items.get(String(row.item_id));
       if (!item || !['doc', 'sheet'].includes(item.kind) || !(row.snapshot instanceof Uint8Array))
         throw invalid();
@@ -374,8 +375,10 @@ export async function verifySemantics(db: DatabaseSync) {
       content(item.id, text, item.kind as DocumentKind, item.id, row.source === 'collaboration');
     }
   if (exists(db, 'spinel_generation_resources'))
-    for (const row of db.iterate(
-      'SELECT item_id,unit_id,resources FROM spinel_generation_resources',
+    for (const row of recoveryRows(
+      db,
+      'spinel_generation_resources',
+      'item_id,unit_id,resources',
     )) {
       const item = items.get(String(row.item_id));
       const resources: unknown = JSON.parse(String(row.resources));

@@ -1,6 +1,6 @@
 import { createCipheriv, createHash, randomBytes, randomUUID } from 'node:crypto';
-import { mkdtemp, readFile, readdir, rm, symlink, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { mkdtemp, readFile, readdir, rm, stat, symlink, writeFile } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { gzipSync } from 'node:zlib';
 import { afterEach, expect, test } from 'vitest';
@@ -9,6 +9,8 @@ import { SyncServer } from '@spinel/sync-server';
 import { backup, DatabaseSync, openDatabase } from '../../../server/database.ts';
 import { AuthStore } from '../auth/store.ts';
 import { WorkspaceStore } from '../workspace/store.ts';
+import { TrashStore, DAY_MS } from '../workspace/trash.ts';
+import { holdRestoredTrash } from '../workspace/recovery-holds.ts';
 import { DocumentStore } from '../workspace/documents.ts';
 import { SheetStore } from '../workspace/sheets.ts';
 import { migrateSpaceSchema } from '../workspace/space-schema.ts';
@@ -16,7 +18,7 @@ import { CollaborationGenerations } from '../collaboration/generations.ts';
 import { SQLiteSyncStorage } from '../sync/store.ts';
 import { makeArchive, restoreArchive } from './archive.ts';
 import { verifyInventory } from './inventory.ts';
-import { checkVerificationHeadroom, verifyArchive } from './verification.ts';
+import { checkVerificationHeadroom, prepareRestoreArchive, verifyArchive } from './verification.ts';
 import { verifySemantics } from './verification-semantics.ts';
 import { RecoveryResourceError } from './resource-error.ts';
 
@@ -108,6 +110,139 @@ test('a real isolated process authenticates inventory, native content, image byt
   expect(
     f.db.prepare('SELECT snapshot FROM doc_snapshots WHERE item_id=?').get(f.doc.id)?.snapshot,
   ).toContain('Retained journal');
+}, 30_000);
+
+test('restore preparation retains verified bytes without activating data or returning deployment secrets', async () => {
+  const f = await fixture(),
+    archive = await f.archive();
+  const source = await readFile(archive.archive);
+  f.db.prepare('UPDATE workspace_items SET name=? WHERE id=?').run('Newer work', f.doc.id);
+  const prepared = await prepareRestoreArchive({
+    ...f.options,
+    archive: archive.archive,
+    expectedArchive: { bytes: (await stat(archive.archive)).size, sha256: archive.sha256 },
+  });
+  cleanup.push(prepared.dispose);
+  expect(prepared.archive.path).not.toBe(archive.archive);
+  expect(prepared.archive.bytes).toBe(source.length);
+  expect(prepared.archive.sha256).toBe(archive.sha256);
+  expect(await readFile(prepared.archive.path)).toEqual(source);
+  expect(prepared).toMatchObject({
+    snapshots: 2,
+    images: 1,
+    keyId: 'current',
+    recovery: { createdAt: recovery.createdAt, origin: recovery.origin, image: recovery.image },
+  });
+  expect(JSON.stringify(prepared)).not.toContain('NODE_ENV');
+  expect(Object.keys(prepared.recovery).sort()).toEqual(['createdAt', 'image', 'origin']);
+  expect(await readdir(dirname(prepared.databasePath))).toEqual(['spinel.sqlite']);
+  expect((await stat(prepared.databasePath)).mode & 0o077).toBe(0);
+  const candidate = await readFile(prepared.databasePath);
+  expect(candidate.length).toBe(prepared.databaseBytes);
+  expect(createHash('sha256').update(candidate).digest('hex')).toBe(prepared.databaseSha256);
+  const restored = new DatabaseSync(prepared.databasePath);
+  try {
+    expect(verifyInventory(restored)).toMatchObject({
+      tables: prepared.tables,
+      rows: prepared.rows,
+    });
+    expect(
+      restored.prepare('SELECT name FROM workspace_items WHERE id=?').get(f.doc.id)?.name,
+    ).toBe('Journal');
+  } finally {
+    restored.close();
+  }
+  // Preparation is deliberately separate from permission to discard later work.
+  expect(f.db.prepare('SELECT name FROM workspace_items WHERE id=?').get(f.doc.id)?.name).toBe(
+    'Newer work',
+  );
+  expect(await readFile(archive.archive)).toEqual(source);
+  await archive.dispose();
+  expect(await readFile(prepared.archive.path)).toEqual(source);
+  await prepared.dispose();
+  await prepared.dispose();
+  expect(
+    (await readdir(f.directory)).filter((name) => name.startsWith('.restore-candidate-')),
+  ).toEqual([]);
+}, 30_000);
+
+test('source preparation requires the exact completed encrypted transfer', async () => {
+  const f = await fixture(),
+    archive = await f.archive();
+  const source = await readFile(archive.archive);
+  for (const expectedArchive of [
+    { bytes: source.length, sha256: '0'.repeat(64) },
+    { bytes: source.length + 1, sha256: archive.sha256 },
+  ])
+    await expect(
+      prepareRestoreArchive({ ...f.options, archive: archive.archive, expectedArchive }),
+    ).rejects.toThrow();
+  expect(await readFile(archive.archive)).toEqual(source);
+  expect(
+    (await readdir(f.directory)).filter((name) => name.startsWith('.restore-candidate-')),
+  ).toEqual([]);
+});
+
+test('encrypted candidate preparation preserves a populated recovery hold and permits later authorized recovery', async () => {
+  const f = await fixture();
+  new TrashStore(f.workspace).trash(f.owner.id, f.doc.id);
+  holdRestoredTrash(f.db);
+  const expected = f.db.prepare('SELECT * FROM workspace_recovery_holds').all();
+  const archive = await f.archive();
+  const prepared = await prepareRestoreArchive({
+    ...f.options,
+    archive: archive.archive,
+    expectedArchive: { bytes: (await stat(archive.archive)).size, sha256: archive.sha256 },
+  });
+  cleanup.push(prepared.dispose);
+  const db = new DatabaseSync(prepared.databasePath);
+  try {
+    expect(db.prepare('SELECT * FROM workspace_recovery_holds').all()).toEqual(expected);
+    expect(verifyInventory(db)).toMatchObject({ rows: prepared.rows, tables: prepared.tables });
+    const workspace = new WorkspaceStore(new AuthStore(db, () => Date.now() + 40 * DAY_MS), {
+      spacesEnabled: true,
+    });
+    new TrashStore(workspace).restore(f.owner.id, f.doc.id);
+    expect(workspace.get(f.owner.id, f.doc.id).name).toBe('Journal');
+    expect(db.prepare('SELECT * FROM workspace_recovery_holds').all()).toEqual([]);
+  } finally {
+    db.close();
+  }
+  expect(f.db.prepare('SELECT * FROM workspace_recovery_holds').all()).toEqual(expected);
+}, 30_000);
+
+test('incompatible or interrupted preparation leaves no candidate and preserves the encrypted source', async () => {
+  const f = await fixture(),
+    archive = await f.archive();
+  const source = await readFile(archive.archive);
+  await expect(
+    prepareRestoreArchive({
+      ...f.options,
+      archive: archive.archive,
+      expectedArchive: { bytes: (await stat(archive.archive)).size, sha256: archive.sha256 },
+      expectedImage: `sha256:${'b'.repeat(64)}`,
+    }),
+  ).rejects.toMatchObject({ code: 'backup-image' });
+  await expect(
+    prepareRestoreArchive({
+      ...f.options,
+      archive: archive.archive,
+      expectedArchive: { bytes: (await stat(archive.archive)).size, sha256: archive.sha256 },
+      expectedOrigin: 'https://another.example',
+    }),
+  ).rejects.toMatchObject({ code: 'backup-origin' });
+  await expect(
+    prepareRestoreArchive({
+      ...f.options,
+      archive: archive.archive,
+      expectedArchive: { bytes: (await stat(archive.archive)).size, sha256: archive.sha256 },
+      timeoutMs: 1,
+    }),
+  ).rejects.toEqual(new RecoveryResourceError('time-limit'));
+  expect(
+    (await readdir(f.directory)).filter((name) => name.startsWith('.restore-candidate-')),
+  ).toEqual([]);
+  expect(await readFile(archive.archive)).toEqual(source);
 }, 30_000);
 
 test('inventory covers unknown tables, integer/real precision, data, schema and empty tables', async () => {
@@ -288,6 +423,98 @@ test('a small container and host memory pressure refuse verification before an O
   await expect(checkVerificationHeadroom('start', read, 'darwin')).resolves.toBeUndefined();
 });
 
+test.each(['start', 'running'] as const)(
+  '%s verification can reclaim clean inactive disk cache but preserves other memory charges',
+  async (phase) => {
+    const MiB = 1024 ** 2;
+    const clean = `file ${300 * MiB}\nshmem 0\ninactive_file ${300 * MiB}\nfile_dirty 0\nfile_writeback 0\n`;
+    let stat = clean,
+      host = 'MemAvailable: 8388608 kB\n';
+    const read = async (path: string) => {
+      if (path === '/sys/fs/cgroup/memory.max') return String(1024 * MiB);
+      if (path === '/sys/fs/cgroup/memory.current')
+        return String((phase === 'start' ? 600 : 950) * MiB);
+      if (path === '/sys/fs/cgroup/memory.stat') return stat;
+      if (path === '/proc/meminfo') return host;
+      throw new Error('Unexpected resource path.');
+    };
+    // A synced upload can occupy hundreds of MiB of reclaimable page cache even
+    // though the app and the bounded verification worker fit inside this cgroup.
+    await expect(checkVerificationHeadroom(phase, read, 'linux')).resolves.toBeUndefined();
+    for (const [category, unavailable] of [
+      ['active cache', clean.replace(`inactive_file ${300 * MiB}`, 'inactive_file 0')],
+      ['shared/tmpfs', clean.replace('shmem 0', `shmem ${300 * MiB}`)],
+      ['dirty data', clean.replace('file_dirty 0', `file_dirty ${300 * MiB}`)],
+      ['writeback', clean.replace('file_writeback 0', `file_writeback ${300 * MiB}`)],
+      [
+        'mixed dirty and writeback',
+        clean
+          .replace('file_dirty 0', `file_dirty ${200 * MiB}`)
+          .replace('file_writeback 0', `file_writeback ${100 * MiB}`),
+      ],
+    ]) {
+      stat = unavailable;
+      await expect(checkVerificationHeadroom(phase, read, 'linux'), category).rejects.toEqual(
+        new RecoveryResourceError('memory-headroom'),
+      );
+    }
+    stat = clean;
+    host = 'MemAvailable: 102400 kB\n';
+    await expect(checkVerificationHeadroom(phase, read, 'linux')).rejects.toEqual(
+      new RecoveryResourceError('memory-headroom'),
+    );
+  },
+);
+
+test.each(['start', 'running'] as const)(
+  '%s verification falls back to raw cgroup usage for incomplete or invalid cache counters',
+  async (phase) => {
+    const MiB = 1024 ** 2;
+    const clean = `file ${300 * MiB}\nshmem 0\ninactive_file ${300 * MiB}\nfile_dirty 0\nfile_writeback 0\n`;
+    let stat: string | undefined;
+    const read = async (path: string) => {
+      if (path === '/sys/fs/cgroup/memory.max') return String(1024 * MiB);
+      if (path === '/sys/fs/cgroup/memory.current')
+        return String((phase === 'start' ? 600 : 950) * MiB);
+      if (path === '/sys/fs/cgroup/memory.stat' && stat !== undefined) return stat;
+      if (path === '/proc/meminfo') return 'MemAvailable: 8388608 kB\n';
+      throw new Error('ENOENT');
+    };
+    const cases: Array<[string, string | undefined]> = [
+      ['unavailable', undefined],
+      ['empty', ''],
+      ['duplicate', `${clean}shmem 0\n`],
+      ['malformed duplicate', `${clean}shmem\n`],
+      ['nonnumeric', clean.replace('shmem 0', 'shmem unknown')],
+      ['negative', clean.replace('shmem 0', 'shmem -1')],
+      ['fractional', clean.replace('shmem 0', 'shmem 0.5')],
+      ['unsafe integer', clean.replace('shmem 0', 'shmem 9007199254740992')],
+      ['extra value', clean.replace('shmem 0', 'shmem 0 0')],
+      ['file exceeds usage', clean.replace(`file ${300 * MiB}\n`, `file ${1024 * MiB}\n`)],
+      ['shared exceeds file', clean.replace('shmem 0', `shmem ${301 * MiB}`)],
+      [
+        'inactive exceeds file',
+        clean.replace(`inactive_file ${300 * MiB}`, `inactive_file ${301 * MiB}`),
+      ],
+      ['dirty exceeds file', clean.replace('file_dirty 0', `file_dirty ${301 * MiB}`)],
+      ['writeback exceeds file', clean.replace('file_writeback 0', `file_writeback ${301 * MiB}`)],
+      ...clean
+        .trim()
+        .split('\n')
+        .map((line): [string, string] => [
+          `missing ${line.split(' ')[0]}`,
+          clean.replace(`${line}\n`, ''),
+        ]),
+    ];
+    for (const [category, invalid] of cases) {
+      stat = invalid;
+      await expect(checkVerificationHeadroom(phase, read, 'linux'), category).rejects.toEqual(
+        new RecoveryResourceError('memory-headroom'),
+      );
+    }
+  },
+);
+
 test('wrong key, incompatible image, bounded decompression and killed worker preserve the source', async () => {
   const f = await fixture(),
     archive = await f.archive();
@@ -298,7 +525,7 @@ test('wrong key, incompatible image, bounded decompression and killed worker pre
   const source = await readFile(archive.archive);
   await expect(
     verifyArchive({ ...f.options, archive: archive.archive, keyFile: wrong }),
-  ).rejects.toThrow();
+  ).rejects.toMatchObject({ name: 'RecoveryResourceError', code: 'backup-unreadable' });
   await expect(
     verifyArchive({ ...f.options, archive: archive.archive, keyFile: alias }),
   ).rejects.toThrow();
@@ -308,7 +535,7 @@ test('wrong key, incompatible image, bounded decompression and killed worker pre
       archive: archive.archive,
       expectedImage: `sha256:${'b'.repeat(64)}`,
     }),
-  ).rejects.toThrow();
+  ).rejects.toMatchObject({ code: 'backup-image' });
   await expect(
     restoreArchive(archive.archive, f.key, f.directory, join(f.directory, 'too-large'), {
       maxDatabaseBytes: 4096,

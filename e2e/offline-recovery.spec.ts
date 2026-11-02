@@ -2,16 +2,10 @@ import { createHash, randomUUID } from 'node:crypto';
 import { mkdir, readFile } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 import type { Page, TestInfo } from '@playwright/test';
-import {
-  DOCS_NORMAL_EDITOR_UNIT_ID_KEY,
-  DocumentFlavor,
-  getDocsEmptySnapshot,
-  LocaleType,
-} from '@univerjs/core';
+import { DOCS_NORMAL_EDITOR_UNIT_ID_KEY, DocumentFlavor, LocaleType } from '@univerjs/core';
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
 import { docFormulas } from '@spinel/doc-formulas';
 import type { NativeSnapshot } from '@spinel/sync-client';
-import sharp from 'sharp';
 import { AdminStore } from '../src/server/auth/admin.ts';
 import { InvitationService } from '../src/server/auth/invitations.ts';
 import { COOKIE_NAME } from '../src/server/auth/store.ts';
@@ -34,6 +28,7 @@ import {
 import type { Kind, OfflineFixture } from './offline-fixture.ts';
 import { beginWriting, textPoint } from './doc-touch.ts';
 import { nativeTheme } from './native-theme.ts';
+import { docImageSnapshot } from './doc-image-fixture.ts';
 
 type Change = 'concurrent' | 'restored' | 'trashed' | 'revoked' | 'viewer';
 const endpoint = '**/api/items/offline-recovery';
@@ -333,64 +328,6 @@ async function capture(page: Page, info: TestInfo, state: string, phone = false)
       animations: 'disabled',
     });
   }
-}
-
-async function docImageSnapshot() {
-  const id = 'offline-image-doc';
-  const drawing = async (color: string, subUnitId = id) => ({
-    unitId: id,
-    subUnitId,
-    drawingId: 'picture',
-    drawingType: 0,
-    imageSourceType: 'BASE64',
-    source: `data:image/png;base64,${(
-      await sharp({ create: { width: 80, height: 60, channels: 3, background: color } })
-        .png()
-        .toBuffer()
-    ).toString('base64')}`,
-    layoutType: 0,
-    transform: { left: 0, top: 0, width: 80, height: 60, angle: 0, flipX: false, flipY: false },
-    docTransform: {
-      size: { width: 80, height: 60 },
-      positionH: { relativeFrom: 0, posOffset: 0 },
-      positionV: { relativeFrom: 0, posOffset: 0 },
-      angle: 0,
-    },
-  });
-  const body = await drawing('#7700cc');
-  const header = await drawing('#00aacc', 'header');
-  const footer = await drawing('#cc0077', 'footer');
-  return {
-    ...getDocsEmptySnapshot(id),
-    title: 'Recovery images',
-    body: {
-      dataStream: '\bRecovery base notes\r\n',
-      paragraphs: [{ startIndex: 20 }],
-      customBlocks: [{ startIndex: 0, blockId: 'picture' }],
-    },
-    drawingsOrder: ['picture'],
-    drawings: { picture: body },
-    headers: {
-      header: {
-        headerId: 'header',
-        body: { dataStream: '\r\n', paragraphs: [{ startIndex: 0 }] },
-        drawings: { picture: header },
-      },
-    },
-    footers: {
-      footer: {
-        footerId: 'footer',
-        body: { dataStream: '\r\n', paragraphs: [{ startIndex: 0 }] },
-        drawings: { picture: footer },
-      },
-    },
-    resources: [
-      {
-        name: 'DOC_DRAWING_PLUGIN',
-        data: JSON.stringify({ data: { picture: body }, order: ['picture'] }),
-      },
-    ],
-  } as unknown as IDocumentData;
 }
 
 test.describe('offline recovery copies', () => {
