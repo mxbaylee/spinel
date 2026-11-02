@@ -83,6 +83,7 @@ export const diagnosticsStory: DiagnosticsStatus = {
   generation: '11111111-1111-4111-8111-111111111111',
   recordCount: 124,
   logicalBytes: 34_500,
+  retentionDays: 7,
   dropped: { invalid: 0, queue: 0, storage: 0, unavailable: 0, stale: 2, expired: 0 },
   exporting: false,
 };

@@ -520,6 +520,7 @@ jobs:
             test-results/**/spn-055-*.png
             test-results/**/spn-055-*.json
             test-results/**/sync-diagnostics.json
+            test-results/**/spn098-feedback-pair.json
             test-results/**/phone-doc-caret-events*.json
             test-results/**/phone-doc-selection-evidence*.json
             test-results/**/maintenance-views/*.png

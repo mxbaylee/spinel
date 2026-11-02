@@ -681,7 +681,7 @@ const guestPath = '/share/' + root + '?item=' + id(1);
 const guestBoundaries: NonNullable<Story['play']> = async ({ canvasElement }) => {
   const canvas = within(canvasElement);
   await expect(await canvas.findByRole('region', { name: 'Editor body fixture' })).toBeVisible();
-  for (const name of ['My files', 'Your profile', 'Document actions'])
+  for (const name of ['My files', 'Your profile', 'Document actions', 'Account actions'])
     await expect(canvas.queryByRole('button', { name })).not.toBeInTheDocument();
 };
 export const GuestViewer: Story = {

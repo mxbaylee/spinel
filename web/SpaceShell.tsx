@@ -7,6 +7,7 @@ import { ThemeMenu } from '../src/ui/redesign/ThemeMenu.tsx';
 import { Button } from '../src/ui/redesign/Controls.tsx';
 import { ConnectionStatus } from './ConnectionStatus.tsx';
 import type { ConnectionState } from './connectionState.ts';
+import { FeedbackMenu } from './Feedback.tsx';
 import './space.css';
 
 export interface SpaceUser {
@@ -28,6 +29,7 @@ export function SpaceShell({
   user,
   connection,
   documentOpen,
+  feedbackPage,
   onExit,
   onProfile,
   navigation,
@@ -38,6 +40,7 @@ export function SpaceShell({
   user?: SpaceUser;
   connection: ConnectionState;
   documentOpen: boolean;
+  feedbackPage?: { fileId: string; spaceId: string };
   onExit(): void;
   onProfile(): void;
   navigation?: (close: () => void) => ReactNode;
@@ -115,6 +118,14 @@ export function SpaceShell({
                 <ProfileIcon icon={user.icon ?? 'lucide:user-round'} />
               </span>
             </button>
+          )}
+          {user && (
+            <FeedbackMenu
+              key={user.id}
+              accountId={user.id}
+              documentOpen={documentOpen}
+              page={feedbackPage}
+            />
           )}
         </div>
       </header>

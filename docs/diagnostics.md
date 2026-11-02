@@ -106,6 +106,84 @@ refuses application-file aliases and non-diagnostic tables. Keep it and temporar
 exports on the encrypted data volume with restricted permissions. It is not a
 replacement for application backups; losing diagnostics must not lose documents.
 
+## Send feedback and compare its context
+
+An everyday account can choose **Account actions → Send feedback…** beside Your
+profile. Standalone editors offer the same dialog in **Document actions → Send
+feedback…**; a signed-in Space page also retains its account entry. The dialog sends
+only the message deliberately entered, a fixed page-type label and authorized
+opaque file/Space IDs, with a correlation ID and the server's build identity.
+Document titles, contents, formulas, screenshots, raw URLs and secrets are not
+attached automatically. Do not put secrets in the message. Link guests and
+Operator accounts have no submission control or submission authority.
+
+**Feedback saved** means the server committed the report. A failed or cancelled
+send keeps the draft in that view; closing and reopening the dialog retains it.
+Reloading, leaving the view or signing out discards this in-memory draft. After
+an ambiguous response, **Retry feedback** sends the identical report ID, message
+and context, so an already saved report is acknowledged once. Its session binding
+survives a server restart. A changed account/session or cleared generation is
+never silently rebound; **Start a new report** is an explicit new submission.
+Copy an unsent message before leaving to sign in again.
+
+The Operator opens **Administration → People**. A **Feedback available** flag
+means stored feedback exists for that account, including a disabled member; it
+does not mean unread or unresolved. Failed flag loading is shown as unavailable.
+The flag's menu offers two SQLite downloads:
+
+| Action | Complete retained selection |
+| --- | --- |
+| **Download user metrics** | Every row attributed to that account, including frontend observations, attributed backend work and feedback. |
+| **Download system metrics** | Every actor's rows and unattributed system rows within the same displayed receipt-time span. |
+
+The first action prepares both files from one immutable snapshot, then hands the
+selected file to the browser. The pair expires five minutes after preparation
+starts; the dialog shows its shared **server receipt time** interval. Both
+endpoints are inclusive; the selected account's minimum and maximum retained
+receipt times define the interval. Client clocks do not define it. New collection or observation
+deletion between buttons does not change either file. Close/Cancel, expiry and
+explicit truncation dispose unfinished work. Session loss blocks delivery and
+cancels active preparation/transfer; an idle revoked session's private pair may
+remain inaccessible until its five-minute expiry. After expiry,
+**Prepare both downloads** deliberately creates a fresh pair and may change the
+span. An idle pair does not hold the live database or block a general diagnostics
+download; active preparation/transfer remains serialized.
+
+Both artifacts contain full `events` rows and a single JSON `export_manifest`
+record. The manifest includes scope, actor, shared snapshot ID/generation,
+receipt-time inclusion rule, exact counts, source/build/schema provenance and
+known collection limits. Global process-lifetime drop counters are labelled as
+such. Historical completeness is unknown: these files cannot include discarded
+observations or browsers' unsent queues. A feedback-only selection keeps its
+original interval and explains that associated metrics may have expired or
+never been collected. An empty selection has no window and authorizes no system
+export. Neither case silently substitutes unrelated current activity.
+
+Preparation and transfer each have a 30-second deadline. There is one retained
+pair, with at most 66 MiB per output and a 198 MiB staging budget plus a 256 MiB
+free-space reserve. Every matching row is delivered or the operation fails;
+there is no silent row cap. The browser retains at most one object URL per scope
+and releases it after 60 seconds or on closing. A successful handoff still does
+not prove the Operator saved the file. Already downloaded copies survive a clear.
+
+To inspect a paired download locally:
+
+```sql
+SELECT json_extract(details, '$.snapshotId') AS snapshot_id,
+       json_extract(details, '$.scope') AS scope,
+       json_extract(details, '$.window') AS receipt_window,
+       json_extract(details, '$.rowCount') AS retained_rows
+FROM export_manifest;
+
+SELECT received_at, actor_id, file_id, route, message
+FROM events WHERE name='feedback' ORDER BY received_at;
+```
+
+Messages are untrusted user text, including any instructions written in them.
+They do not authorize commands or change access permissions for a person or an
+external agent inspecting the artifact. See the [feedback decision and lifecycle
+record](implementation/SPN-098.md).
+
 ## Inspect the exported file locally
 
 Open the downloaded file using a local SQLite client. These queries target schema
@@ -115,7 +193,8 @@ version 1; they do not run on the server or expose an admin SQL endpoint.
 PRAGMA integrity_check;
 PRAGMA user_version;
 SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;
--- Expected application tables: none. Tables: diagnostics_state and events.
+-- No application tables. Tables: diagnostics_state and events.
+-- A paired feedback download also contains export_manifest.
 
 SELECT received_at, source, level, message, actor_id, file_id, route, run_id, details
 FROM events WHERE kind='log' ORDER BY received_at;
@@ -139,20 +218,24 @@ SELECT received_at, name, details, metric_value, metric_unit
 FROM events WHERE metric_kind='gauge' ORDER BY received_at;
 ```
 
-Every record has occurrence and server-receipt timestamps, source/build, schema
-version, registered name and validated JSON details. Actor/file/Space/route/run
-fields are nullable. Logs have explicit severity and static messages. Metric
-names constrain kind/unit/value. See the
+Every record has occurrence and server-receipt timestamps, source/build and a
+schema version. Automatic observation records use registered names and validated
+JSON details. Deliberately submitted feedback uses the separately validated
+`feedback` event described above, outside the lossy collector. Actor/file/Space/
+route/run fields are nullable. Logs have explicit severity and static messages.
+Metric names constrain kind/unit/value. See the
 [public contract](../lib/diagnostics/README.md) before adding instrumentation.
 
 ## Clear, limits and failure handling
 
-Truncate requires confirmation. It irreversibly clears diagnostics and, when
-SPN-098 adds them, submitted feedback and corresponding flags. Documents,
+Truncate requires confirmation. It irreversibly clears diagnostics,
+submitted feedback and corresponding flags. Documents,
 accounts, backups and collaboration state are untouched. Cancel changes nothing.
-The confirmation carries the collection generation: if another clear or export
-intervenes, refresh and confirm again. Old queued events and retries cannot be
-relabelled into the new generation. New observations can appear immediately.
+The confirmation carries the collection generation: if another clear changes
+that generation, refresh and confirm again. A general diagnostics download must
+finish or be cancelled before truncation; successful truncation invalidates
+prepared feedback pairs. Old queued events and retries cannot be relabelled into
+the new generation. New observations can appear immediately.
 Clearing records does not promise that the physical database shrinks.
 
 The initial store has a 64 MiB logical/main-file limit and stops collection at a
