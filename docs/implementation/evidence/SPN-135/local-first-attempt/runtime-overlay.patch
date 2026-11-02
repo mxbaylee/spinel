@@ -1,0 +1,243 @@
+diff --git a/e2e/doc-responsiveness.spec.ts b/e2e/doc-responsiveness.spec.ts
+index 142d43fc..4b2fc8ee 100644
+--- a/e2e/doc-responsiveness.spec.ts
++++ b/e2e/doc-responsiveness.spec.ts
+@@ -1,6 +1,9 @@
+ import { createHash, randomUUID } from 'node:crypto';
+ import { execFileSync } from 'node:child_process';
+ import { readFile, writeFile } from 'node:fs/promises';
++import { startDiagnosticTrace } from './spn135-trace.ts';
++import { createDiagnosticSequence } from './spn135-unsampled.ts';
++const diagnosticSequence = createDiagnosticSequence();
+ import { arch, cpus, platform, release, totalmem } from 'node:os';
+ import { expect, test } from '@playwright/test';
+ import type { Page, TestInfo } from '@playwright/test';
+@@ -193,7 +196,7 @@ async function verifyUndoRedo(
+   progress.phase = 'before-undo';
+   const beforeUndoAt = await now(f.page);
+   progress.beforeUndoAt = beforeUndoAt;
+-  await f.page.keyboard.press('Control+z');
++  await f.page.keyboard.press(process.platform === 'darwin' ? 'Meta+z' : 'Control+z');
+   await saved(f.page);
+   const undone = (await readDocResponsiveness(f.page, true))!;
+   expect(undone.text).not.toBe(expectedText);
+@@ -209,7 +212,7 @@ async function verifyUndoRedo(
+     redos: 1,
+   });
+   progress.firstUndo = firstUndo;
+-  for (let group = 1; group < groups; group++) await f.page.keyboard.press('Control+z');
++  for (let group = 1; group < groups; group++) await f.page.keyboard.press(process.platform === 'darwin' ? 'Meta+z' : 'Control+z');
+   await saved(f.page);
+   let undo = firstUndo;
+   if (all) {
+@@ -231,7 +234,7 @@ async function verifyUndoRedo(
+   progress.beforeRedoAt = beforeRedoAt;
+   // Pinned Univer's full-document SharedController binds Ctrl+Y off macOS;
+   // the Shift+Z alternative is registered only for macOS.
+-  for (let group = 0; group < groups; group++) await f.page.keyboard.press('Control+y');
++  for (let group = 0; group < groups; group++) await f.page.keyboard.press(process.platform === 'darwin' ? 'Meta+Shift+z' : 'Control+y');
+   // Observe a concrete outcome. A timeout or generic assertion error can never
+   // select the documented baseline-only capacity-refusal branch.
+   await expect
+@@ -311,19 +314,35 @@ async function verifyUndoRedo(
+ }
+ 
+ for (const preset of ['desktop', 'mobile'] as const)
+-  for (const sample of ['plain-1', 'plain-2', 'plain-3', 'profile'] as const)
++  for (const sample of ['plain-1', 'plain-2'] as const)
+     test(`${preset} sustained native typing ${sample}`, async ({ browser, baseURL }, info) => {
+       // The first throttled baseline spent 255–266 s typing before its existing
+       // native stall. Preserve that workload and allow collection to finish;
+       // candidate case limits and all responsiveness budgets stay unchanged.
+       test.setTimeout(baseline ? 600_000 : 300_000);
+       const mobile = preset === 'mobile',
+-        profiled = sample === 'profile';
++        profiled = false;
++      const sequenceIdentity = diagnosticSequence.begin(sample, info.retry, browser, info.workerIndex, process.pid);
+       const f = await fixture(browser, baseURL!, info, mobile);
+       const cdp = await f.page.context().newCDPSession(f.page);
+       let finishInput: Awaited<ReturnType<typeof observeInput>> | undefined;
+       let profiling = false;
++      let finishTrace: Awaited<ReturnType<typeof startDiagnosticTrace>> | undefined;
+       let profilerClock: ProfilerClockBracket | undefined;
++      let nativeDiagnostic: Record<string, unknown> | undefined;
++      const retainNativeDiagnostic = async () => {
++        if (nativeDiagnostic) return nativeDiagnostic;
++        const capture = await f.page.evaluate(() => {
++          const value = globalThis as unknown as Record<string, unknown>;
++          return { native: value.__spn135Native ?? [], phaseError: value.__spn135PhaseError ?? null,
++            captureError: value.__spn135CaptureError ?? null };
++        }).catch(error => ({ collectionError: String(error) }));
++        const bytes = JSON.stringify(capture);
++        await writeFile(info.outputPath('spn135-native-caches.json'), bytes);
++        nativeDiagnostic = { ...capture, sha256: createHash('sha256').update(bytes).digest('hex') };
++        evidence.nativeDiagnostic = nativeDiagnostic;
++        return nativeDiagnostic;
++      };
+       let reloadObservers: ReloadObservers | undefined;
+       let clockOrigins: ClockOrigins | undefined;
+       const drainDiagnostics: DocDrainDiagnostics = {
+@@ -333,11 +352,13 @@ for (const preset of ['desktop', 'mobile'] as const)
+       };
+       const evidence: Record<string, unknown> = {
+         schema: DOC_RESPONSIVENESS_SCHEMA,
+-        role: baseline ? 'baseline-observation' : 'candidate',
++        role: 'diagnostic-only',
++        diagnostic: 'SPN-135 unsampled candidate prefix; never acceptance',
+         budgetEnforced: !baseline && !profiled,
+         preset,
+         sample,
+         attempt: info.retry,
++        sequenceIdentity,
+         caseObservationTimeoutMs: baseline ? 600_000 : 300_000,
+         nativeDrainObservationTimeoutMs: baseline ? 120_000 : 30_000,
+         drainDiagnostics,
+@@ -390,6 +411,7 @@ for (const preset of ['desktop', 'mobile'] as const)
+         },
+         instrumentation: {
+           profiler: profiled,
++          browserTrace: true,
+           cpuThrottle: mobile ? 4 : 1,
+           longTaskObserver: true,
+           perKeyRequestAnimationFrame: true,
+@@ -448,16 +470,8 @@ for (const preset of ['desktop', 'mobile'] as const)
+         };
+         await cdp.send('Emulation.setCPUThrottlingRate', { rate: mobile ? 4 : 1 });
+         evidence.heapBefore = await cdp.send('Runtime.getHeapUsage');
+-        if (profiled) {
+-          await cdp.send('Profiler.enable');
+-          await cdp.send('Profiler.setSamplingInterval', { interval: 1000 });
+-          const beforeMs = await f.page.evaluate(() => performance.now());
+-          await cdp.send('Profiler.start');
+-          profiling = true;
+-          const afterMs = await f.page.evaluate(() => performance.now());
+-          profilerClock = { beforeMs, afterMs };
+-          evidence.profilerStartBracket = profilerClock;
+-        }
++        finishTrace = await startDiagnosticTrace(cdp, info.outputPath('spn135-trace.json'));
++        evidence.traceClockStart = await f.page.evaluate(() => performance.mark('spn135-clock-start').startTime);
+         const armedNative = await readDocResponsiveness(f.page, false, {
+           action: 'arm',
+           epoch: randomUUID(),
+@@ -592,12 +606,12 @@ for (const preset of ['desktop', 'mobile'] as const)
+           acceptanceGate: false,
+         };
+         evidence.heapAfter = await cdp.send('Runtime.getHeapUsage');
+-        if (profiling) {
+-          const { profile } = await cdp.send('Profiler.stop');
+-          profiling = false;
+-          evidence.profileSha256 = await retainProfile(profile, profilerClock, info);
+-          evidence.compositionCpu = compositionCpu(profile, profilerClock!, input.longTasks);
++
++        if (finishTrace) {
++          evidence.traceClockEnd = await f.page.evaluate(() => performance.mark('spn135-clock-end').startTime);
++          evidence.diagnosticTrace = await finishTrace();
+         }
++        await retainNativeDiagnostic();
+         evidence.timingCompleteAt = await now(f.page);
+         evidence.timingComplete = true;
+         const savedStarted = performance.now();
+@@ -724,15 +738,32 @@ for (const preset of ['desktop', 'mobile'] as const)
+         completeReloadObservation(finalReloads);
+         expect(finalReloads.reloads).toEqual(undoRedo.reloads);
+         evidence.reloadObservers = finalReloads.status;
++        expect((evidence.diagnosticTrace as { complete: boolean }).complete).toBe(true);
++        const captured = await retainNativeDiagnostic();
++        expect(captured.collectionError).toBeUndefined();
++        expect(captured.phaseError).toBeNull();
++        expect(captured.captureError).toBeNull();
++        const terminal = (captured.native as { unitId: string; phase: string; count: number;
++          cache: unknown; phaseStartedAt: number; phaseEndedAt: number }[]).filter(entry =>
++          entry.unitId === native.unitId && entry.phaseStartedAt >= input.keydownAt.at(-1)! &&
++          entry.phaseEndedAt <= (evidence.traceClockEnd as number));
++        expect(terminal.map(entry => entry.phase)).toEqual(['history', 'collaboration']);
++        expect(terminal[0]!.count).toBe(terminal[1]!.count);
++        for (const entry of terminal) {
++          expect(entry.count).toBeGreaterThan(0);
++          expect(entry.count).toBeLessThan(32);
++          expect(entry.cache).not.toBeNull();
++        }
++        evidence.terminalNativeCaptures = terminal;
+         evidence.completed = true;
++        diagnosticSequence.complete(sample);
+       } finally {
+         if (finishInput)
+           evidence.partialInput = await finishInput().catch((error) => ({ error: String(error) }));
+-        if (profiling) {
+-          const result = await cdp.send('Profiler.stop').catch(() => null);
+-          if (result)
+-            evidence.profileSha256 = await retainProfile(result.profile, profilerClock, info);
+-        }
++
++        if (finishTrace && !evidence.diagnosticTrace) evidence.diagnosticTrace = await finishTrace();
++        try { await retainNativeDiagnostic(); }
++        catch (error) { evidence.nativeDiagnosticRetentionError = String(error); }
+         evidence.errors = f.errors;
+         evidence.finalNative = await readDocResponsiveness(f.page).catch(() => null);
+         if (reloadObservers) {
+diff --git a/src/ui/boundedDocHistory.test.ts b/src/ui/boundedDocHistory.test.ts
+index c99fc858..d65a4f27 100644
+--- a/src/ui/boundedDocHistory.test.ts
++++ b/src/ui/boundedDocHistory.test.ts
+@@ -27,7 +27,23 @@ import { turns, wire } from '../../lib/sync-client/tests/fixture.ts';
+ 
+ const limit = DOC_HISTORY_GROUP_LIMIT;
+ 
++function assertNativeCapture(count: number, origins: string[]) {
++  const records = (globalThis as unknown as { __spn135Native: {
++    unitId: string; phase: string; origin: string; count: number;
++    cache: { kind: string; entries: [string, { value?: number }][] };
++  }[] }).__spn135Native;
++  expect(records.map(({ unitId, phase, origin, count }) => ({ unitId, phase, origin, count }))).toEqual([
++    { unitId: 'doc', phase: 'history', origin: origins[0], count },
++    { unitId: 'doc', phase: 'collaboration', origin: origins[1], count },
++  ]);
++  for (const record of records) {
++    expect(record.cache.kind).toBe('array');
++    expect(record.cache.entries.find(([key]) => key === 'length')?.[1].value).toBe(count);
++  }
++}
+ afterEach(() => {
++  const diagnostic = globalThis as unknown as Record<string, unknown>;
++  for (const key of ['__spn135Native', '__spn135NativeBytes', '__spn135CaptureError', '__spn135PhaseError']) delete diagnostic[key];
+   vi.useRealTimers();
+   vi.restoreAllMocks();
+   vi.unstubAllGlobals();
+@@ -175,8 +191,10 @@ test('rendering frames drain a quiet native phrase when SDK timers cannot run, w
+       expect.objectContaining({ reason: 'idle', history: 9, collaboration: 9, quietForMs: 300 }),
+     ]);
+     expect(f.frames.size).toBe(0);
++    assertNativeCapture(9, ['policy-idle', 'policy-idle']);
+     // The original SDK timeouts can still run later without duplicating history.
+     await vi.advanceTimersByTimeAsync(350);
++    assertNativeCapture(9, ['policy-idle', 'policy-idle']);
+     expect(f.history.getUndoRedoStatus('doc').undos).toBe(1);
+     await f.historyCommand('undo');
+     expect(f.text()).toBe('\r\n');
+@@ -220,6 +238,7 @@ test('native idle winning the race stops the owned frame without another flush',
+     expect(f.observations).toEqual([]);
+     expect(f.frames.size).toBe(0);
+     expect(f.manager.getStateCache('doc')).toEqual({ history: [], collaboration: [] });
++    assertNativeCapture(12, ['history-timer', 'collaboration-timer']);
+   } finally {
+     f.close();
+   }
+diff --git a/src/ui/boundedDocHistory.ts b/src/ui/boundedDocHistory.ts
+index 0f2e690c..61f69731 100644
+--- a/src/ui/boundedDocHistory.ts
++++ b/src/ui/boundedDocHistory.ts
+@@ -59,7 +59,13 @@ export function boundDocHistory(
+     flushing = true;
+     const startedAt = performance.now();
+     try {
+-      manager.flushPendingChanges(unitId);
++
++      const diagnostic = manager as unknown as { _spn135Origin?: string };
++      const previousOrigin = diagnostic._spn135Origin;
++      diagnostic._spn135Origin = 'policy-' + reason;
++      try { manager.flushPendingChanges(unitId); }
++      finally { diagnostic._spn135Origin = previousOrigin; }
++
+     } finally {
+       flushing = false;
+     }

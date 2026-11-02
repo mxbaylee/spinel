@@ -1,0 +1,58 @@
+{
+  "diagnosticOnly": true,
+  "ticketAcceptance": false,
+  "source": "dbbe5ccaf085ce20b79068d3596a35dcf2142223",
+  "platform": "darwin-arm64",
+  "result": "resource-aborted",
+  "completedCases": 0,
+  "abortedAtMs": 7631,
+  "pressure": 2,
+  "observedRssKiB": 1778336,
+  "lastSnapshotPeakKiB": 1781264,
+  "cleanup": {
+    "remaining": 0,
+    "port3108Listening": false
+  },
+  "collectionProbe": {
+    "beforePeakKiB": 285376,
+    "afterPeakKiB": 291744,
+    "conclusion": "No demonstrated memory improvement; restored original fixture; not a reason to rerun the browser."
+  },
+  "limits": "No complete timing metrics or trace; original failure unresolved. Local synthetic databases retained only in /tmp/spn135-local-first-attempt, not included in repository evidence.",
+  "hashes": {
+    "spn135-local-processes.ts": "b65a8ad7aae2a77b7bab9c751b0e4b3e9498cb5ce5f478eacf32a6d7104724e1",
+    "spn135-local-watchdog.ts": "a934c87f401ffad03f5eb9edb3aca152302110c0a522781df22881ad91adec20",
+    "spn135-local-cleanup.ts": "1cfbf98dc97815fa294801f0e9027d169b08e0883eb33078f315de1363b2975c",
+    "spn135-local-process-control.ts": "3da492e79715f968ef93e782052ed617a0d7fff08de8b5085e9b45558ebe21bf",
+    "spn135-local-processes.test.ts": "e95d2e0f1d57527e9a5ec2d741b7726a0e92aced8cd5bce59db13a0d50fcef3f",
+    "spn135-local-final-write-control.ts": "0dc7e6100a8dffaea717ae7987518f111a57f59cabf535fa39562901f9c45d24",
+    "spn135-local-build-first.log": "f135d9990ff93fc4233c819e43996534af88b3c66d085c06f7633ec4ef21eda7",
+    "spn135-local-browser-first.log": "c8a7986d1df68a6fec30eb6b4a5e31f0a378a5114016dc777327021da35f452a",
+    "spn135-local-processes.json": "67728e82f6241b10a6765ffff9a3e8b32841cd809e3ad63f4be139d88e2ff145",
+    "spn135-local-cleanup.json": "53653552cfa319c64b3e4d33a3902728ad5731f3c2eebbdcba915e806c64b870",
+    "spn135-local-identity.json": "475c18a600fdce621140cd48507ccece5a354a808f9c3ed055c2a2358c5c8ab4",
+    "spn135-local-assertions.log": "cf13f099e07476839c10b89792c905fcecf7f9f47409fb39fe331655e6d7f5e7",
+    "spn135-local-process-control.log": "fb08a6caba0131a73d845b3212d1b07895a7aed25346aa3b5057db7773ba2b64",
+    "spn135-local-control-processes.json": "a108ce4e9526c5fc80c77543c9b0c217df9bccecc21fbeaa1e7e99cde6440f7e",
+    "spn135-local-control-cleanup.json": "476b1f40a4a20265c4b5eae1536fc0444896bd265959618a9ba75b2bd443a593",
+    "spn135-local-process-control-final.log": "dab388a189f6eabbc7e0b79d91f1bdda7a51f002841753ccfb164e5907e6b6c6",
+    "spn135-local-control-final-processes.json": "8c82b1d00e242f94e4673506de3ba10573528a017be26dbbe91065f4c9108d95",
+    "spn135-local-control-final-cleanup.json": "4c72e1bed365187b0ffd9987ce055273597e49cbf003313419d6d41b59cac3be",
+    "spn135-local-final-write-control.log": "3e0f88931b44e0d53386ba4849cab3acc1bba1f8586a062e092b29120f845bbc",
+    "spn135-local-final-failure-processes.json": "8384efb6ee9e4dc28c6f87126c36dfbf65be90e466f30280fc1492bc122ea2d7",
+    "spn135-local-final-failure-cleanup.json": "3e8d5e84b66d64a3595bfd0e018c2b64099b1c71e31fc5cc5ee9020858cb1679",
+    "spn135-local-process-unit.log": "dfb478498e49ead5dc8f1017ddc73163576d1c92e356abc1c3be803d18ad1dde",
+    "spn135-local-wrapper-types.log": "6359a8340d78a4722d8a63a17b0af92afa7864585dee5617d59f00322df8745e",
+    "spn135-local-wrapper-types-final.log": "07c500918e695596c60d33967b3dc7d56a14071e1a15790347d75bf78ab3eab1",
+    "spn135-local-collection-before.json": "6ef07637880f2e0e81669dd222bdb8cd65d2310fabf7293d9862b58ef1004948",
+    "spn135-local-collection-before.log": "b9bcccea924125a5a9e5e47e37228d3f56a65a6ec32f534ad7d879cca60cc404",
+    "spn135-local-collection-before-processes.json": "1e11264b6259ea2dc68ccfa600392f75c0192f6734652419b55b20b0504a2a7a",
+    "spn135-local-collection-after.json": "23790f44b8c2d1d051d44b4e215792c86767d6344cd24add3588e9bb2792494a",
+    "spn135-local-collection-after.log": "ee982cd985a93a4c789b56ffeb689a72f2f746e190e2916f262cd6aa9c94efd9",
+    "spn135-local-collection-after-processes.json": "10336bb849891bf8cf71326280820e79c06f69473f684b44e855a968069bd934"
+  },
+  "storage": {
+    "sources": "sources.json retains exact TypeScript source strings as inert archival evidence, not additional compiled repository modules.",
+    "logs": "logs.json retains exact raw log strings, including failed attempts. Hash keys name original source/log files."
+  }
+}
