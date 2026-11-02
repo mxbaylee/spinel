@@ -1,0 +1,3 @@
+scripts/ci/pr-events.test.ts(684,28): error TS2322: Type 'string' is not assignable to type 'null'.
+scripts/ci/pr-events.test.ts(685,50): error TS2322: Type 'string' is not assignable to type 'null'.
+WATCHDOG: exit=1, signal=null, elapsed=132ms, peak=0.0MiB

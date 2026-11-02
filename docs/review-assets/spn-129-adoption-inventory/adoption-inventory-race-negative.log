@@ -1,0 +1,26 @@
+✖ a policy adoption appearing during terminal-attempt lookup invalidates stale absence and retains its origin (6.38875ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 152.319
+
+✖ failing tests:
+
+test at scripts/ci/pr-events.test.ts:637:1
+✖ a policy adoption appearing during terminal-attempt lookup invalidates stale absence and retains its origin (6.38875ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///Users/mxbaylee/projects/spinel-spn-129/scripts/ci/pr-events.test.ts:679:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /not sealed/,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+WATCHDOG: exit=1, signal=null, elapsed=213ms, peak=0.0MiB

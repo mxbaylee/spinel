@@ -1,0 +1,32 @@
+{
+  "repository": "mxbaylee/spinel",
+  "pr": 231,
+  "source": "54e3056100868a2cc1d0394e3f795d29500bc24e",
+  "base": "18a8759c498574a1d9cc24a969a558cd97a798ed",
+  "priorSource": "12805c4fa0fc700f712312628949738c4ba49475",
+  "negativeControl": "adoption-inventory-race-negative.log reproduces stale inventory acceptance before the source repair. The repaired control refuses changed evidence and next poll retains the late job original adoption identity.",
+  "validation": {
+    "policyRoutingHistory": 115,
+    "coverageResults": 5,
+    "restoreRouting": 2,
+    "focusedHistoryEvents": 44,
+    "integratedMs": 941,
+    "integratedSampledMiB": 698.1,
+    "strictScopedTypes": "pass",
+    "lint": "pass",
+    "formatting": "pass"
+  },
+  "failures": [
+    "Standalone TypeScript invocation initially omitted --ignoreConfig, then explicit --types node. Corrected invocation exposed null-only fixture step typing; repaired.",
+    "Negative control intentionally fails before source fix."
+  ],
+  "remaining": [
+    "assigned-runner setup cancellation disposition",
+    "current hosted checks",
+    "actual adoption and retention/partial-retry evidence",
+    "authorized App setup",
+    "protected event transition matrix",
+    "operational cost accounting",
+    "two final grades above 95 on same accepted source"
+  ]
+}
