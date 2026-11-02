@@ -1,0 +1,17 @@
+{
+  "repository": "mxbaylee/spinel",
+  "pr": 231,
+  "source": "10f65f29d167a858ee9a63f23e32415baecec6d2",
+  "base": "18a8759c498574a1d9cc24a969a558cd97a798ed",
+  "cutoffAuthorityArchive": "3ad4a4d2ff433b70efa4800593319a1d7745f5ea",
+  "scope": "Candidate legacy-adoption protocol with immutable full-validation barrier; not production activation, hosted acceptance or final approval.",
+  "focusedControls": { "passed": 116, "failed": 0, "elapsedMs": 2450, "sampledPeakMiB": 759.4 },
+  "checks": ["focused Node controls", "scoped strict erasable TypeScript", "scoped Oxlint", "formatting", "PR shape", "git diff whitespace"],
+  "mapping": "Logs describe the implementation tree committed at source. Logs named first retain initial failures, not successful final validation. Integrated-focused precedes the final later-request/future-timestamp assertions; final-focused includes those controls.",
+  "firstFailures": [
+    "First typecheck: validated run_number narrowing did not survive helper return; fixed explicit numeric conversion after validation.",
+    "First regression: old test treated all v3 markers as unsupported; moved unsupported-version control to v4 and retained malformed-v3 rejection.",
+    "First event fixture changed CI creation time but left attempt timestamps earlier; corrected fixture timestamps without weakening strict freshness."
+  ],
+  "remaining": ["two independent implementation reviews", "current hosted CI", "actual legacy adoption and protected retention transitions", "authorized GitHub App setup", "remaining original protected event matrix", "actual runner/API cost accounting", "two final grades on one current SHA"]
+}

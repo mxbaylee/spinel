@@ -1,0 +1,62 @@
+{
+  "adoption-events-first.log": {
+    "bytes": 4156,
+    "sha256": "e5ceee36693401e41ca5d25061d23726c5872425c6e6e055925a85f42e17066d"
+  },
+  "adoption-events-fixtures-fixed.log": {
+    "bytes": 4362,
+    "sha256": "73463936b304493bab8ad5e6b642bedfb20b672fa8a5c667864fbe167e8fd1eb"
+  },
+  "adoption-final-focused.log": {
+    "bytes": 12422,
+    "sha256": "a86d464e6879d7c8720929a6ee700708d3efd947086169a387057448ccab2da6"
+  },
+  "adoption-final-format.log": {
+    "bytes": 95,
+    "sha256": "9dc1b9c308b9ebd1e689a6b9116fa05749b4ba01dc74b986eaf970400dec8a2f"
+  },
+  "adoption-final-typecheck.log": {
+    "bytes": 58,
+    "sha256": "1eb4248076788e86a35a966de26b7ebcc0c7971264a7b6e78a793b9b3eec59ee"
+  },
+  "adoption-first-typecheck.log": {
+    "bytes": 146,
+    "sha256": "13f6dd26d8c84ee5af4bafcba69c8086c11c57cd846b1e35e7c6a115bd44824c"
+  },
+  "adoption-format.log": {
+    "bytes": 255,
+    "sha256": "c4c6c265a6777c842ccb32529aa2904eb89e2f3925de5e14230d6e6cdcf2ed0d"
+  },
+  "adoption-integrated-focused.log": {
+    "bytes": 12437,
+    "sha256": "2f72531722486acb162438dd1c552ccb11d7a9675acab2ccd88e29029494f145"
+  },
+  "adoption-integrated-lint.log": {
+    "bytes": 116,
+    "sha256": "1eccb047d2fa85d53e1fefb8abc4e5a9a38fc63c8edce8ea9290d610f8a3559a"
+  },
+  "adoption-integrated-typecheck.log": {
+    "bytes": 58,
+    "sha256": "ee1f5cda8241ded535f989b5f846b09f2de6f4e40f3539ff4bab302e3040d7c8"
+  },
+  "adoption-pr-shape.log": {
+    "bytes": 76,
+    "sha256": "4d6f6f8ec7fc45720cbd69170539a7b27601aff013e55b642819d25107d31d65"
+  },
+  "adoption-regression-first.log": {
+    "bytes": 12726,
+    "sha256": "a538d1a4577b79836473b529c8308076bb2968338ce96c26250685f0c0c0d930"
+  },
+  "adoption-retention-controls.log": {
+    "bytes": 3021,
+    "sha256": "97901502b6e7c05778b5350d63c401938935ac77b77dcaf7c5683f071b668272"
+  },
+  "adoption-typecheck-fixed.log": {
+    "bytes": 117,
+    "sha256": "813c05f5fa9ed7fbeb90409f0c47f643a686c47c7588dee08e23faf55ad05771"
+  },
+  "evidence.json": {
+    "bytes": 1656,
+    "sha256": "1f14e974cacb436661e626c98839a860546315458c81992b22a79884f6c2a4cb"
+  }
+}

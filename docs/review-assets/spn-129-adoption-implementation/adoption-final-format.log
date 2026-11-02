@@ -1,0 +1,2 @@
+scripts/ci/pr-events.test.ts 166ms
+WATCHDOG: exit=0, signal=null, elapsed=289ms, peak=199.8MiB

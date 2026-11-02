@@ -1,0 +1,59 @@
+Waiting for genuine code-check admission: Waiting for the current CI attempt's code gate: Playwright smoke.
+Waiting for genuine code-check admission: Waiting for the current CI attempt's code gate: Playwright smoke.
+Waiting for genuine code-check admission: Waiting for PR edit classification in run 500.
+✖ legacy adoption requires genuinely later full code and retains its original provider barrier on retry (9.121667ms)
+✔ adoption never treats missing modern history or an unresolved earlier attempt as first adoption (2.742458ms)
+✔ history issuance precedes title/code admission without changing genuine code results (1.798625ms)
+✔ known bounded failed classification skips certificate issuance and still admits genuinely fresh full code (1.799709ms)
+✔ admission consumes its completed checkpoint after prefix expiry while issuance cannot self-certify (1.84425ms)
+✔ unproved classifications, gaps and stale invocation identities cannot issue history (1.457459ms)
+✔ retained checkpoints preserve missing prefix obligations across source changes without admitting code (2.741125ms)
+✔ text policy preserves genuine passing, pending and failed code results without mutations (1.486791ms)
+✔ invalid title fails before code admission and corrected text is independently revalidated (0.463916ms)
+✔ base change, new code and text cannot borrow an old-base pass or forget full history without a label (1.258833ms)
+✔ policy fails closed on source drift, late text, missing gates and API failure (0.704125ms)
+✔ pending admission uses a bounded observable retry and validates the final state (0.895834ms)
+✔ policy admission can outlast a sixty-minute worker and ordinary queueing (0.432333ms)
+✔ exact text edits never mint or use the privileged routing capability (0.174958ms)
+✔ base and ambiguous edits use ordinary-token removal then App addition, preserving the obligation (0.359583ms)
+✔ an old base-edit delivery routes the live PR source and does not disguise denied App mutation (0.189042ms)
+✔ missing router key or failed label addition cannot erase an ambiguous edit after a code push (0.61ms)
+✔ removing the full-revalidation label before a code push cannot narrow validation (0.508584ms)
+✔ an ambiguous edit with no router cannot borrow a prior full pass or its later retry (0.446625ms)
+✔ rapid text supersession waits for independent classification without routing code (0.518334ms)
+✔ router refuses a closed PR or a live non-main target before mutating labels (0.129834ms)
+✔ GitHub client bounds pagination and credentials to the repository API without redirects (17.115708ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 21
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 190.714833
+
+✖ failing tests:
+
+test at scripts/ci/pr-events.test.ts:280:1
+✖ legacy adoption requires genuinely later full code and retains its original provider barrier on retry (9.121667ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /full|fresh|created/i. Input:
+  
+  'Error: CI attempt timestamps are missing, malformed or inconsistent.'
+  
+      at async TestContext.<anonymous> (file:///Users/mxbaylee/projects/spinel-spn-129/scripts/ci/pr-events.test.ts:295:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: CI attempt timestamps are missing, malformed or inconsistent.
+        at validatePrPolicy (file:///Users/mxbaylee/projects/spinel-spn-129/scripts/ci/pr-policy.ts:109:48)
+        at async waitForActual (node:assert:615:5)
+        at async strict.rejects (node:assert:738:25)
+        at async TestContext.<anonymous> (file:///Users/mxbaylee/projects/spinel-spn-129/scripts/ci/pr-events.test.ts:295:3)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3),
+    expected: /full|fresh|created/i,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+WATCHDOG: exit=1, signal=null, elapsed=247ms, peak=0.0MiB

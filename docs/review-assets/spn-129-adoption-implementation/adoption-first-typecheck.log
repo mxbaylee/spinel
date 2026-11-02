@@ -1,0 +1,2 @@
+scripts/ci/pr-history.ts(223,27): error TS18046: 'run.run_number' is of type 'unknown'.
+WATCHDOG: exit=1, signal=null, elapsed=240ms, peak=0.0MiB
