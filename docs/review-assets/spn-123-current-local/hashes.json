@@ -1,0 +1,30 @@
+{
+  "README.md": {
+    "bytes": 2358,
+    "sha256": "c050eb87fc95f885a3b432d91887b2ee8fcd8c5bebc8782edc8ea3cf45a0a3a8"
+  },
+  "diagnostic-contracts-first.log": {
+    "bytes": 465,
+    "sha256": "4894c380a12e8d7980dfaed5e223b7537f7ab7b6b04501b0a3db3c1e6f395dfb"
+  },
+  "focused-integration-first.log": {
+    "bytes": 550,
+    "sha256": "94c7eb8227d6706c2400ee631976f635de7c6bf845bfe691b939c07684dbfc77"
+  },
+  "install-first.log": {
+    "bytes": 1064,
+    "sha256": "9bd64240e249c49e3ab4cff601bb1010f43e2bdc2240e6d4454a5920cb20f4dd"
+  },
+  "lint-first.log": {
+    "bytes": 682,
+    "sha256": "6d2f1986248418010e560439a79821d253631c8b7eb59fa76d9700f26a481029"
+  },
+  "native-docs-first.log": {
+    "bytes": 110089,
+    "sha256": "1382be1fba81f0ebae75328ded4406a5ee6ded0a03e116e8743afc5fa2ffe161"
+  },
+  "typecheck-first.log": {
+    "bytes": 87,
+    "sha256": "465f8c19df9e0b2086bd2d43c3da70837c67bac2e437675a91fc943042125301"
+  }
+}

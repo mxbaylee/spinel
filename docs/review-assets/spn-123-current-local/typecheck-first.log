@@ -1,0 +1,5 @@
+
+> typecheck
+> tsc -p .
+
+WATCHDOG: exit=0, signal=null, elapsed=2865ms, peak=1850.5MiB
