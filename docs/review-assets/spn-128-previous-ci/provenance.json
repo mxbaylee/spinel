@@ -1,0 +1,18 @@
+{
+  "source": "740e97ccff10634227894e31d3bfcf17e7fbe35a",
+  "run": 41349831332,
+  "attempt": 1,
+  "artifacts": [
+    {
+      "id": 13101818203,
+      "bytes": 2477005,
+      "sha256": "3a37bacbaeaa462148ac2488ee7a5f4cdac734559e6c79241c8a66891f98561a"
+    },
+    {
+      "id": 13100558711,
+      "bytes": 564030,
+      "sha256": "3e243193c89dc3525e3c1591f037b9a08d77c7a1895f8df9db406466acf6ec26"
+    }
+  ],
+  "retained": "Selected machine-readable reports, metrics, profile data, error context and redacted job logs. The unredacted raw ZIPs, screenshots and retry-only browser trace are not republished. These sources are historical failures, not current acceptance."
+}

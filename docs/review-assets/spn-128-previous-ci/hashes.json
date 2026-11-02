@@ -1,0 +1,94 @@
+{
+  "artifact-13100558711/playwright-report/supervised-restore.json": {
+    "bytes": 1659523,
+    "sha256": "155be4b5eb379bf5fb8a802d892a3e890de7e2d4e5ffd12bc28c5d5eb658bb90"
+  },
+  "artifact-13100558711/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore/error-context.md": {
+    "bytes": 11967,
+    "sha256": "3aa212d336b43242540c2b1c7b857d92d7fe07e5a8ab28a2f72fd8f925e4cdad"
+  },
+  "artifact-13101818203/baseline-doc-source/playwright-report/doc-responsiveness.json": {
+    "bytes": 30119,
+    "sha256": "f0279c2305f80a84824b06ec151fb9c394fc2509ef9afdce1a2354c2e64b5c06"
+  },
+  "artifact-13101818203/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json": {
+    "bytes": 254559,
+    "sha256": "418030a5aa811f39d3265f43f6eeed634ac9ec7ecabadff819ee9331bf841912"
+  },
+  "artifact-13101818203/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json": {
+    "bytes": 255146,
+    "sha256": "0dea5b689ec396874309257d819989f110e075d3dc5aadcbd7dda9fc434f03a7"
+  },
+  "artifact-13101818203/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json": {
+    "bytes": 263114,
+    "sha256": "ffb6d289f72ab35ef1fd895cd25bb0e17f83161583436ebd827d8ef5c76ba9b6"
+  },
+  "artifact-13101818203/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json": {
+    "bytes": 260896,
+    "sha256": "b21f5d2525b883d3aecde2e44766decd4a6d05d5a505099315ba211a53ace508"
+  },
+  "artifact-13101818203/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json": {
+    "bytes": 230,
+    "sha256": "19df171c21360c10338968a074c505c67def5ea98986ad37a8bc00901ca0bfd8"
+  },
+  "artifact-13101818203/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile": {
+    "bytes": 5889574,
+    "sha256": "3d66e9d1c205b6664bbd67d3b10ac0f5cd37f4cff3a7017b22d43ccf414b1759"
+  },
+  "artifact-13101818203/playwright-report/doc-responsiveness.json": {
+    "bytes": 1396092,
+    "sha256": "29dac2151a15bcd14ad6943ebdd0fd3779f1213e12bb8865805a265388f4d4c3"
+  },
+  "artifact-13101818203/test-results/doc-responsiveness/doc-responsiveness-mobile--59407--typing-after-a-quiet-pause-doc-responsiveness/spn108-post-burst.json": {
+    "bytes": 229458,
+    "sha256": "fc61615c948468eee5e19a67befdac2384634cb42eb253c9f1f24c5199780c50"
+  },
+  "artifact-13101818203/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json": {
+    "bytes": 235585,
+    "sha256": "ac14d31ed6171344e883726a08576f1926542d076f302c1a1a18db10dc3c3dfd"
+  },
+  "artifact-13101818203/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/error-context.md": {
+    "bytes": 11896,
+    "sha256": "19493ff5aab508c830ffc10a3290a6c016b3a0fd2ea49be15ea6034ed994222e"
+  },
+  "artifact-13101818203/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json": {
+    "bytes": 236939,
+    "sha256": "692b18c73188bdc499b77f43feb29e4513a9a63652dd799548cd926b0c20ee8b"
+  },
+  "artifact-13101818203/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json": {
+    "bytes": 237679,
+    "sha256": "c87993cfd3a9d20c1704d32fbf5b652ccb57e8e1ea4fdd373757f287e63fde9a"
+  },
+  "artifact-13101818203/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json": {
+    "bytes": 245751,
+    "sha256": "0b8723c9944083faab5619891003d3da2decaf4050384c5c76e3cee51af9262f"
+  },
+  "artifact-13101818203/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json": {
+    "bytes": 241,
+    "sha256": "7207c268c36cf84c23df04daf01b3b8413c909c54610947befe1c78072ec9bbf"
+  },
+  "artifact-13101818203/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile": {
+    "bytes": 4200635,
+    "sha256": "b9b1e646a01e3415c98ee9b3e11e366ea07c6add011f17c788bd2076c1973742"
+  },
+  "artifact-13101818203/test-results/doc-responsiveness/doc-responsiveness-native--032b2-nd-a-late-composition-event-doc-responsiveness/spn108-boundaries.json": {
+    "bytes": 2319,
+    "sha256": "e214b2a0fb58768d6c2caf7d4573d4f9f38486cfdb98fe8db28bf0d45d6040c2"
+  },
+  "artifact-13101818203/test-results/doc-responsiveness/doc-responsiveness-native--bfbca-mit-without-partial-history-doc-responsiveness/spn108-boundaries.json": {
+    "bytes": 67426,
+    "sha256": "476ced9ed109e4fd22e11ebbdb25272a50dc9d0bbf111daa3940f5239f7735b9"
+  },
+  "job-124977478872-redacted.log": {
+    "bytes": 82590,
+    "sha256": "085316b760753181d5668aea9c17b74326d56304a24432de14aa260e64fdb978"
+  },
+  "job-124977479088-redacted.log": {
+    "bytes": 61409,
+    "sha256": "4114d619bab5946d3c57ecf09c5d4706e9637d7efd23b4f971684d19f185f035"
+  },
+  "provenance.json": {
+    "bytes": 669,
+    "sha256": "a222dcbf11910a6de0973bbf0b951d07dfc0e83c5e0d7d6d4849a6102a5afd3b"
+  }
+}

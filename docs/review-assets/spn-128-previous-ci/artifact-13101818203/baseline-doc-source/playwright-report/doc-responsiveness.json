@@ -1,0 +1,775 @@
+{
+  "config": {
+    "argv": [
+      "/opt/hostedtoolcache/node/26.12.1/x64/bin/node",
+      "/home/runner/work/spinel/spinel/baseline-doc-source/node_modules/.bin/playwright",
+      "test",
+      "--project=doc-responsiveness",
+      "--grep",
+      "mobile sustained native typing"
+    ],
+    "configFile": "/home/runner/work/spinel/spinel/baseline-doc-source/playwright.config.ts",
+    "rootDir": "/home/runner/work/spinel/spinel/baseline-doc-source/e2e",
+    "failOnFlakyTests": true,
+    "forbidOnly": true,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "ci": {
+        "commitHref": "https://github.com/mxbaylee/spinel/commit/4b0ca1da483e4ee2ad7638e1d190515cdc1cdc1d",
+        "commitHash": "4b0ca1da483e4ee2ad7638e1d190515cdc1cdc1d",
+        "prHref": "https://github.com/mxbaylee/spinel/pull/229",
+        "prTitle": "🌷 SPN-128 Reinstall the preserved original after an interrupted restore",
+        "prBaseHash": "e63956c7ec214af03c825104a81f63517eb87d0b",
+        "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41349831332"
+      },
+      "gitCommit": {
+        "shortHash": "2c84a18",
+        "hash": "2c84a18449c7dae09e2817989fac6236be96ef98",
+        "subject": "Observe native drain identically in the uncapped SPN-108 baseline",
+        "body": "Observe native drain identically in the uncapped SPN-108 baseline",
+        "author": {
+          "name": "Baylee Schmeisser",
+          "email": "119542904+mxbaylee@users.noreply.github.com",
+          "time": 1793147022000
+        },
+        "committer": {
+          "name": "Baylee Schmeisser",
+          "email": "119542904+mxbaylee@users.noreply.github.com",
+          "time": 1793147022000
+        },
+        "branch": "HEAD"
+      },
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-doc-source/test-results/doc-responsiveness",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/4b0ca1da483e4ee2ad7638e1d190515cdc1cdc1d",
+            "commitHash": "4b0ca1da483e4ee2ad7638e1d190515cdc1cdc1d",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/229",
+            "prTitle": "🌷 SPN-128 Reinstall the preserved original after an interrupted restore",
+            "prBaseHash": "e63956c7ec214af03c825104a81f63517eb87d0b",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41349831332"
+          },
+          "gitCommit": {
+            "shortHash": "2c84a18",
+            "hash": "2c84a18449c7dae09e2817989fac6236be96ef98",
+            "subject": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "body": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "development",
+        "name": "development",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-doc-source/e2e",
+        "testIgnore": [
+          "**/pwa.spec.ts",
+          "**/offline.spec.ts",
+          "**/offline-editing.spec.ts",
+          "**/offline-creation.spec.ts",
+          "**/offline-recovery.spec.ts",
+          "**/offline-device.spec.ts",
+          "**/offline-sign-out.spec.ts",
+          "**/offline-upgrade.spec.ts",
+          "**/supervised-restore.spec.ts",
+          "**/sync-client.spec.ts",
+          "**/doc-responsiveness*.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-doc-source/test-results/doc-responsiveness",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/4b0ca1da483e4ee2ad7638e1d190515cdc1cdc1d",
+            "commitHash": "4b0ca1da483e4ee2ad7638e1d190515cdc1cdc1d",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/229",
+            "prTitle": "🌷 SPN-128 Reinstall the preserved original after an interrupted restore",
+            "prBaseHash": "e63956c7ec214af03c825104a81f63517eb87d0b",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41349831332"
+          },
+          "gitCommit": {
+            "shortHash": "2c84a18",
+            "hash": "2c84a18449c7dae09e2817989fac6236be96ef98",
+            "subject": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "body": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "production",
+        "name": "production",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-doc-source/e2e",
+        "testIgnore": [
+          "**/pwa.spec.ts",
+          "**/offline-editing.spec.ts",
+          "**/offline-creation.spec.ts",
+          "**/offline-recovery.spec.ts",
+          "**/offline-upgrade.spec.ts",
+          "**/supervised-restore.spec.ts",
+          "**/sync-client.spec.ts",
+          "**/doc-responsiveness*.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-doc-source/test-results/doc-responsiveness",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/4b0ca1da483e4ee2ad7638e1d190515cdc1cdc1d",
+            "commitHash": "4b0ca1da483e4ee2ad7638e1d190515cdc1cdc1d",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/229",
+            "prTitle": "🌷 SPN-128 Reinstall the preserved original after an interrupted restore",
+            "prBaseHash": "e63956c7ec214af03c825104a81f63517eb87d0b",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41349831332"
+          },
+          "gitCommit": {
+            "shortHash": "2c84a18",
+            "hash": "2c84a18449c7dae09e2817989fac6236be96ef98",
+            "subject": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "body": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "sync-development",
+        "name": "sync-development",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-doc-source/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/sync-client.spec.ts",
+          "**/doc-mobile.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-doc-source/test-results/doc-responsiveness",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/4b0ca1da483e4ee2ad7638e1d190515cdc1cdc1d",
+            "commitHash": "4b0ca1da483e4ee2ad7638e1d190515cdc1cdc1d",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/229",
+            "prTitle": "🌷 SPN-128 Reinstall the preserved original after an interrupted restore",
+            "prBaseHash": "e63956c7ec214af03c825104a81f63517eb87d0b",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41349831332"
+          },
+          "gitCommit": {
+            "shortHash": "2c84a18",
+            "hash": "2c84a18449c7dae09e2817989fac6236be96ef98",
+            "subject": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "body": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "sync-production",
+        "name": "sync-production",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-doc-source/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/sync-client.spec.ts",
+          "**/doc-mobile.spec.ts",
+          "**/offline-editing.spec.ts",
+          "**/offline-creation.spec.ts",
+          "**/offline-recovery.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-doc-source/test-results/doc-responsiveness",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/4b0ca1da483e4ee2ad7638e1d190515cdc1cdc1d",
+            "commitHash": "4b0ca1da483e4ee2ad7638e1d190515cdc1cdc1d",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/229",
+            "prTitle": "🌷 SPN-128 Reinstall the preserved original after an interrupted restore",
+            "prBaseHash": "e63956c7ec214af03c825104a81f63517eb87d0b",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41349831332"
+          },
+          "gitCommit": {
+            "shortHash": "2c84a18",
+            "hash": "2c84a18449c7dae09e2817989fac6236be96ef98",
+            "subject": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "body": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "sync-soak-sheet",
+        "name": "sync-soak-sheet",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-doc-source/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/sync-client.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-doc-source/test-results/doc-responsiveness",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/4b0ca1da483e4ee2ad7638e1d190515cdc1cdc1d",
+            "commitHash": "4b0ca1da483e4ee2ad7638e1d190515cdc1cdc1d",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/229",
+            "prTitle": "🌷 SPN-128 Reinstall the preserved original after an interrupted restore",
+            "prBaseHash": "e63956c7ec214af03c825104a81f63517eb87d0b",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41349831332"
+          },
+          "gitCommit": {
+            "shortHash": "2c84a18",
+            "hash": "2c84a18449c7dae09e2817989fac6236be96ef98",
+            "subject": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "body": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "sync-soak-doc",
+        "name": "sync-soak-doc",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-doc-source/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/sync-client.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-doc-source/test-results/doc-responsiveness",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/4b0ca1da483e4ee2ad7638e1d190515cdc1cdc1d",
+            "commitHash": "4b0ca1da483e4ee2ad7638e1d190515cdc1cdc1d",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/229",
+            "prTitle": "🌷 SPN-128 Reinstall the preserved original after an interrupted restore",
+            "prBaseHash": "e63956c7ec214af03c825104a81f63517eb87d0b",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41349831332"
+          },
+          "gitCommit": {
+            "shortHash": "2c84a18",
+            "hash": "2c84a18449c7dae09e2817989fac6236be96ef98",
+            "subject": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "body": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "doc-responsiveness",
+        "name": "doc-responsiveness",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-doc-source/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/doc-responsiveness.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-doc-source/test-results/doc-responsiveness",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/4b0ca1da483e4ee2ad7638e1d190515cdc1cdc1d",
+            "commitHash": "4b0ca1da483e4ee2ad7638e1d190515cdc1cdc1d",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/229",
+            "prTitle": "🌷 SPN-128 Reinstall the preserved original after an interrupted restore",
+            "prBaseHash": "e63956c7ec214af03c825104a81f63517eb87d0b",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41349831332"
+          },
+          "gitCommit": {
+            "shortHash": "2c84a18",
+            "hash": "2c84a18449c7dae09e2817989fac6236be96ef98",
+            "subject": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "body": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "doc-callback-lifetimes",
+        "name": "doc-callback-lifetimes",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-doc-source/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/doc-responsiveness-callbacks.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-doc-source/test-results/doc-responsiveness",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/4b0ca1da483e4ee2ad7638e1d190515cdc1cdc1d",
+            "commitHash": "4b0ca1da483e4ee2ad7638e1d190515cdc1cdc1d",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/229",
+            "prTitle": "🌷 SPN-128 Reinstall the preserved original after an interrupted restore",
+            "prBaseHash": "e63956c7ec214af03c825104a81f63517eb87d0b",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41349831332"
+          },
+          "gitCommit": {
+            "shortHash": "2c84a18",
+            "hash": "2c84a18449c7dae09e2817989fac6236be96ef98",
+            "subject": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "body": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "offline-upgrade",
+        "name": "offline-upgrade",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-doc-source/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/offline-upgrade.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-doc-source/test-results/doc-responsiveness",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/4b0ca1da483e4ee2ad7638e1d190515cdc1cdc1d",
+            "commitHash": "4b0ca1da483e4ee2ad7638e1d190515cdc1cdc1d",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/229",
+            "prTitle": "🌷 SPN-128 Reinstall the preserved original after an interrupted restore",
+            "prBaseHash": "e63956c7ec214af03c825104a81f63517eb87d0b",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41349831332"
+          },
+          "gitCommit": {
+            "shortHash": "2c84a18",
+            "hash": "2c84a18449c7dae09e2817989fac6236be96ef98",
+            "subject": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "body": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "supervised-restore",
+        "name": "supervised-restore",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-doc-source/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/supervised-restore.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-doc-source/test-results/doc-responsiveness",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/4b0ca1da483e4ee2ad7638e1d190515cdc1cdc1d",
+            "commitHash": "4b0ca1da483e4ee2ad7638e1d190515cdc1cdc1d",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/229",
+            "prTitle": "🌷 SPN-128 Reinstall the preserved original after an interrupted restore",
+            "prBaseHash": "e63956c7ec214af03c825104a81f63517eb87d0b",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41349831332"
+          },
+          "gitCommit": {
+            "shortHash": "2c84a18",
+            "hash": "2c84a18449c7dae09e2817989fac6236be96ef98",
+            "subject": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "body": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "mobile-https",
+        "name": "mobile-https",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-doc-source/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/pwa.spec.ts",
+          "**/doc-mobile.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-doc-source/test-results/doc-responsiveness",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/4b0ca1da483e4ee2ad7638e1d190515cdc1cdc1d",
+            "commitHash": "4b0ca1da483e4ee2ad7638e1d190515cdc1cdc1d",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/229",
+            "prTitle": "🌷 SPN-128 Reinstall the preserved original after an interrupted restore",
+            "prBaseHash": "e63956c7ec214af03c825104a81f63517eb87d0b",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41349831332"
+          },
+          "gitCommit": {
+            "shortHash": "2c84a18",
+            "hash": "2c84a18449c7dae09e2817989fac6236be96ef98",
+            "subject": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "body": "Observe native drain identically in the uncapped SPN-108 baseline",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793147022000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "name": "doc-responsiveness",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-doc-source/e2e",
+        "snapshotDir": "/home/runner/work/spinel/spinel/baseline-doc-source/e2e",
+        "testIgnore": [],
+        "testMatch": "**/doc-responsiveness.spec.ts",
+        "timeout": 30000,
+        "use": {
+          "trace": "off",
+          "screenshot": "only-on-failure",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "screen": {
+            "width": 1920,
+            "height": 1080
+          },
+          "deviceScaleFactor": 1,
+          "isMobile": false,
+          "hasTouch": false,
+          "defaultBrowserType": "chromium",
+          "baseURL": "http://localhost:3108"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "doc-responsiveness"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "playwright-report/doc-responsiveness.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "doc-responsiveness.spec.ts",
+      "file": "doc-responsiveness.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "mobile sustained native typing plain-1",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 600000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "doc-responsiveness",
+              "projectName": "doc-responsiveness",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 342083,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-01T21:04:11.171Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a512f986472141d25729-f26e4164a5fdfa9207af",
+          "file": "doc-responsiveness.spec.ts",
+          "line": 315,
+          "column": 5
+        },
+        {
+          "title": "mobile sustained native typing plain-2",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 600000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "doc-responsiveness",
+              "projectName": "doc-responsiveness",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 341993,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-01T21:09:53.546Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a512f986472141d25729-6137e73dbcba638f21c0",
+          "file": "doc-responsiveness.spec.ts",
+          "line": 315,
+          "column": 5
+        },
+        {
+          "title": "mobile sustained native typing plain-3",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 600000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "doc-responsiveness",
+              "projectName": "doc-responsiveness",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 347149,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-01T21:15:35.555Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a512f986472141d25729-8752623ecf9c1be019b6",
+          "file": "doc-responsiveness.spec.ts",
+          "line": 315,
+          "column": 5
+        },
+        {
+          "title": "mobile sustained native typing profile",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 600000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "doc-responsiveness",
+              "projectName": "doc-responsiveness",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 347730,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-01T21:21:22.723Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a512f986472141d25729-12e4ca5509ae91657862",
+          "file": "doc-responsiveness.spec.ts",
+          "line": 315,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-01T21:04:04.564Z",
+    "duration": 1386002.996,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}
