@@ -63,6 +63,112 @@ function fixture(options: { now?: () => number; retentionDays?: number } = {}) {
   };
 }
 
+function seedCopies(db: DatabaseSync, id: string, copies: number) {
+  db.prepare(
+    `WITH RECURSIVE sequence(n) AS (
+    VALUES(1) UNION ALL SELECT n+1 FROM sequence WHERE n < ?
+  ) INSERT INTO events SELECT
+    '00000000-0000-4000-8000-' || printf('%012x',n),
+    schema_version,generation,occurred_at,received_at,name,kind,source,component,build,
+    actor_id,file_id,space_id,route,run_id,level,message,metric_kind,metric_unit,metric_value,details,byte_size
+    FROM sequence CROSS JOIN events WHERE events.id=?`,
+  ).run(copies, id);
+  db.exec('UPDATE diagnostics_state SET logical_bytes=(SELECT sum(byte_size) FROM events)');
+}
+
+test('receipt-index pages pass retained feedback, include equal timestamps and revisit backward-clock arrivals', async () => {
+  let now = 100;
+  const f = fixture({ now: () => now });
+  const db = f.read();
+  try {
+    const actor = randomUUID(),
+      generation = f.store.status().generation!;
+    const seed = record();
+    expect(f.store.ingest([seed], actor, generation).accepted).toBe(1);
+    seedCopies(db, seed.id, DIAGNOSTICS_LIMITS.expiryEvents + 2);
+    db.exec("UPDATE events SET name='feedback'");
+    const observed = record();
+    expect(f.store.ingest([observed], actor, generation).accepted).toBe(1);
+    now = 8 * 86_400_000;
+    expect(f.store.expire()).toEqual({ deleted: 0, remaining: true });
+    // A clock-backward arrival lies before the cursor. It must survive this
+    // sweep, then be visited by the next sweep rather than skipped forever.
+    now = 99;
+    const late = record();
+    expect(f.store.ingest([late], actor, generation).accepted).toBe(1);
+    now = 8 * 86_400_000;
+    expect(f.store.expire()).toEqual({ deleted: 1, remaining: false });
+    expect(db.prepare('SELECT id FROM events WHERE id=?').get(observed.id)).toBeUndefined();
+    expect(db.prepare('SELECT id FROM events WHERE id=?').get(late.id)).toEqual({ id: late.id });
+    expect(f.store.expire()).toEqual({ deleted: 1, remaining: true });
+    expect(f.store.expire()).toEqual({ deleted: 0, remaining: false });
+    expect(f.store.status()).toMatchObject({
+      generation,
+      recordCount: DIAGNOSTICS_LIMITS.expiryEvents + 3,
+      dropped: { expired: 2 },
+    });
+    expect(
+      db.prepare("SELECT count(*) AS count FROM events WHERE name != 'feedback'").get()?.count,
+    ).toBe(0);
+    const plan = db
+      .prepare(
+        'EXPLAIN QUERY PLAN SELECT rowid,received_at,name FROM events INDEXED BY events_time WHERE received_at=? AND rowid>? AND received_at<? ORDER BY rowid LIMIT ?',
+      )
+      .all(100, 1024, now, 1025);
+    expect(plan.map((row) => row.detail).join(' ')).toContain('received_at=? AND rowid>?');
+  } finally {
+    db.close();
+    await f.dispose();
+  }
+});
+
+test('a full existing schema opens and reclaims rows without allocating another index', async () => {
+  let now = 100;
+  const f = fixture({ now: () => now });
+  const db = f.read();
+  let reopened: DiagnosticsStore | undefined;
+  let exec: ReturnType<typeof vi.spyOn> | undefined;
+  try {
+    const original = record(),
+      actor = randomUUID(),
+      generation = f.store.status().generation!;
+    expect(f.store.ingest([original], actor, generation).accepted).toBe(1);
+    seedCopies(db, original.id, 256);
+    await f.store.close();
+    db.exec('PRAGMA wal_checkpoint(TRUNCATE)');
+    const pages = Number(db.prepare('PRAGMA page_count').get()!.page_count);
+    db.exec(`PRAGMA max_page_count=${pages}`);
+    // Real SQLITE_FULL control at a reduced fixture page ceiling. Only the
+    // configured limit is substituted, never SQLite or allocation outcomes.
+    expect(() =>
+      db.exec("CREATE INDEX upgrade_probe ON events(received_at) WHERE name != 'feedback'"),
+    ).toThrow();
+    const execute = DatabaseSync.prototype.exec;
+    exec = vi.spyOn(DatabaseSync.prototype, 'exec').mockImplementation(function (
+      this: DatabaseSync,
+      sql: string,
+    ) {
+      return execute.call(
+        this,
+        /^PRAGMA max_page_count = \d+;$/.test(sql) ? `PRAGMA max_page_count=${pages}` : sql,
+      );
+    });
+    now = 8 * 86_400_000;
+    reopened = new DiagnosticsStore({ path: f.path, build: 'test-build', now: () => now });
+    expect(reopened.status()).toMatchObject({ available: true, generation, recordCount: 257 });
+    expect(reopened.expire()).toEqual({ deleted: 257, remaining: false });
+    expect(reopened.status()).toMatchObject({ logicalBytes: 0, dropped: { expired: 257 } });
+    expect(reopened.ingest([record()], actor, generation).accepted).toBe(1);
+    expect(() => reopened!.truncate()).not.toThrow();
+    expect(db.prepare('PRAGMA page_count').get()?.page_count).toBe(pages);
+  } finally {
+    exec?.mockRestore();
+    await reopened?.close();
+    db.close();
+    await f.dispose();
+  }
+});
+
 test('expiry uses server receipt time, keeps the exact cutoff and feedback, and preserves frozen snapshots', async () => {
   const day = 86_400_000;
   let now = day;

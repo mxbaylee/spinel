@@ -5,6 +5,7 @@ export interface DiagnosticsStatus {
   generation: string | null;
   recordCount: number;
   logicalBytes: number;
+  retentionDays: number;
   dropped: Record<DiagnosticLoss, number>;
   exporting: boolean;
 }

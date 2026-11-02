@@ -69,6 +69,7 @@ export class DiagnosticsStore {
   private readonly build: string;
   private readonly now: () => number;
   private readonly retentionMs: number;
+  private expiryCursor?: { receivedAt: number; rowId: number };
   private queue: Pending[] = [];
   private queuedBytes = 0;
   private scheduled?: NodeJS.Immediate;
@@ -125,11 +126,6 @@ export class DiagnosticsStore {
       );
       const version = Number(database.prepare('PRAGMA user_version').get()?.user_version);
       if (version !== 0 && version !== 1) throw new Error('Unsupported diagnostics schema.');
-      // Bound index creation on an existing store as well as subsequent writes.
-      const pageSize = Number(database.prepare('PRAGMA page_size').get()?.page_size);
-      database.exec(
-        `PRAGMA max_page_count = ${Math.floor(DIAGNOSTICS_LIMITS.storageBytes / pageSize)};`,
-      );
       database.exec(`
         CREATE TABLE IF NOT EXISTS diagnostics_state (
           singleton INTEGER PRIMARY KEY CHECK(singleton = 1),
@@ -146,7 +142,6 @@ export class DiagnosticsStore {
           byte_size INTEGER NOT NULL CHECK(byte_size > 0)
         ) STRICT;
         CREATE INDEX IF NOT EXISTS events_time ON events(received_at);
-        CREATE INDEX IF NOT EXISTS events_observation_time ON events(received_at) WHERE name != 'feedback';
         CREATE INDEX IF NOT EXISTS events_name ON events(name, received_at);
         CREATE INDEX IF NOT EXISTS events_component ON events(component, received_at);
         CREATE INDEX IF NOT EXISTS events_run ON events(run_id, received_at);
@@ -158,6 +153,10 @@ export class DiagnosticsStore {
       this.currentGeneration = String(
         database.prepare('SELECT generation FROM diagnostics_state WHERE singleton=1').get()!
           .generation,
+      );
+      const pageSize = Number(database.prepare('PRAGMA page_size').get()?.page_size);
+      database.exec(
+        `PRAGMA max_page_count = ${Math.floor(DIAGNOSTICS_LIMITS.storageBytes / pageSize)};`,
       );
       // This store has one owning server process; remove its interrupted exports.
       for (const name of readdirSync(dirname(this.path))) {
@@ -180,6 +179,7 @@ export class DiagnosticsStore {
         available: !!row && !this.closed,
         generation: row ? String(row.generation) : null,
         logicalBytes: Number(row?.logical_bytes ?? 0),
+        retentionDays: this.retentionMs / 86_400_000,
         recordCount: Number(
           this.database?.prepare('SELECT count(*) AS count FROM events').get()?.count ?? 0,
         ),
@@ -191,6 +191,7 @@ export class DiagnosticsStore {
         available: false,
         generation: null,
         logicalBytes: 0,
+        retentionDays: this.retentionMs / 86_400_000,
         recordCount: 0,
         dropped: { ...this.dropped },
         exporting: !!this.exportJob,
@@ -451,12 +452,48 @@ export class DiagnosticsStore {
     if (!database || this.closed || !this.isolated())
       throw new DiagnosticsError(503, 'Diagnostics are unavailable.');
     const cutoff = this.receiptTime() - this.retentionMs;
-    const hasExpired = () =>
-      !!database
-        .prepare("SELECT 1 FROM events WHERE name != 'feedback' AND received_at < ? LIMIT 1")
-        .get(cutoff);
     try {
-      if (!hasExpired()) return { deleted: 0, remaining: false };
+      // Read at most one page plus a lookahead through the existing receipt index.
+      // Count retained feedback against the scan budget so it cannot create an
+      // unbounded filter scan or starve later observations. No new index is
+      // required to open/reclaim an already full diagnostics database.
+      const limit = DIAGNOSTICS_LIMITS.expiryEvents + 1;
+      const cursor = this.expiryCursor;
+      const sameTime = cursor
+        ? database
+            .prepare(
+              `
+        SELECT rowid AS row_id, received_at, name FROM events INDEXED BY events_time
+        WHERE received_at = ? AND rowid > ? AND received_at < ? ORDER BY rowid LIMIT ?
+      `,
+            )
+            .all(cursor.receivedAt, cursor.rowId, cutoff, limit)
+        : [];
+      const candidates =
+        sameTime.length === limit
+          ? sameTime
+          : sameTime.concat(
+              database
+                .prepare(
+                  `
+        SELECT rowid AS row_id, received_at, name FROM events INDEXED BY events_time
+        WHERE received_at > ? AND received_at < ? ORDER BY received_at, rowid LIMIT ?
+      `,
+                )
+                .all(cursor?.receivedAt ?? -1, cutoff, limit - sameTime.length),
+            );
+      const remaining = candidates.length === limit;
+      const page = candidates.slice(0, DIAGNOSTICS_LIMITS.expiryEvents);
+      const last = page.at(-1);
+      const nextCursor =
+        remaining && last
+          ? { receivedAt: Number(last.received_at), rowId: Number(last.row_id) }
+          : undefined;
+      const selected = page.filter((row) => row.name !== 'feedback').map((row) => row.row_id);
+      if (!selected.length) {
+        this.expiryCursor = nextCursor;
+        return { deleted: 0, remaining };
+      }
       // Deletion also writes WAL pages. Do not consume the workspace reserve
       // or bypass the existing physical write stop to meet an age target.
       const physicalBytes = this.physicalBytes();
@@ -469,18 +506,18 @@ export class DiagnosticsStore {
       database.exec('BEGIN IMMEDIATE');
       const removed = database
         .prepare(
-          `DELETE FROM events WHERE rowid IN (
-        SELECT rowid FROM events WHERE name != 'feedback' AND received_at < ?
-        ORDER BY received_at LIMIT ?
-      ) RETURNING byte_size`,
+          `DELETE FROM events WHERE rowid IN (${selected.map(() => '?').join(',')})
+           AND name != 'feedback' AND received_at < ? RETURNING byte_size`,
         )
-        .all(cutoff, DIAGNOSTICS_LIMITS.expiryEvents);
+        .all(...selected, cutoff);
       const bytes = removed.reduce((total, row) => total + Number(row.byte_size), 0);
       database
         .prepare('UPDATE diagnostics_state SET logical_bytes=logical_bytes-? WHERE singleton=1')
         .run(bytes);
-      const remaining = hasExpired();
       database.exec('COMMIT');
+      // Restart, a completed scan or explicit truncate begins from the oldest
+      // receipt again. Backward-clock arrivals cannot be permanently skipped.
+      this.expiryCursor = nextCursor;
       this.lose('expired', removed.length);
       return { deleted: removed.length, remaining };
     } catch {
@@ -522,6 +559,7 @@ export class DiagnosticsStore {
     this.queue = [];
     this.queuedBytes = 0;
     this.currentGeneration = generation;
+    this.expiryCursor = undefined;
     return { generation };
   }
 
