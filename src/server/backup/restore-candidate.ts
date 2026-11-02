@@ -45,6 +45,7 @@ function resolverSchema(db: DatabaseSync) {
     'workspace_tag_assignments',
     'workspace_grants',
     'workspace_placements',
+    'workspace_hidden',
     'workspace_items_owner_parent',
     'workspace_items_parent',
     'workspace_tag_assignments_item',

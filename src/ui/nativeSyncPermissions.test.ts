@@ -267,6 +267,31 @@ test.each(['sheet', 'doc'] as const)(
 );
 
 test.each(['sheet', 'doc'] as const)(
+  '%s upgrades the existing native unit and still fences a later downgrade',
+  async (kind) => {
+    const host = fixture(kind, 'viewer');
+    try {
+      await host.refresh();
+      const units = host.injector.get(IUniverInstanceService);
+      const original = units.getUnit(host.unitId);
+      expect(await host.edit()).toBe(false);
+      host.binding.setAccess('editor');
+      expect(units.getUnit(host.unitId)).toBe(original);
+      expect(host.permissions.getPermissionPoint(host.editId)?.value).toBe(true);
+      expect(await host.edit()).toBe(true);
+      const content = host.content();
+      host.binding.readonly();
+      await host.refresh();
+      expect(await host.edit()).toBe(false);
+      expect(host.content()).toBe(content);
+      expect(units.getUnit(host.unitId)).toBe(original);
+    } finally {
+      host.dispose();
+    }
+  },
+);
+
+test.each(['sheet', 'doc'] as const)(
   '%s readonly fences a true response already requested by the real controller',
   async (kind) => {
     const host = fixture(kind, 'editor');
@@ -343,7 +368,7 @@ test('an editor can write unprotected cells while retained native range policies
       },
     ],
   };
-  const host = fixture('sheet', 'editor', {
+  const host = fixture('sheet', 'viewer', {
     resources: [
       { name: authzResource, data: JSON.stringify(policies) },
       { name: rangeResource, data: JSON.stringify(rules) },
@@ -352,6 +377,7 @@ test('an editor can write unprotected cells while retained native range policies
   try {
     const rangeEditId = new RangeProtectionPermissionEditPoint('book', 'one', 'protected').id;
     expect(host.permissions.getPermissionPoint(rangeEditId)?.value).toBe(false);
+    host.binding.setAccess('editor');
     await host.refresh();
     expect(host.permissions.getPermissionPoint(host.editId)?.value).toBe(true);
     expect(host.permissions.getPermissionPoint(rangeEditId)?.value).toBe(false);
@@ -405,13 +431,14 @@ test('document root grants preserve existing protected paragraph bindings throug
     },
   };
   const rules = [{ objectId, objectType: UnitObject.DocumentParagraph, permissionId: 'protected' }];
-  const host = fixture('doc', 'owner', {
+  const host = fixture('doc', 'viewer', {
     resources: [
       { name: authzResource, data: JSON.stringify(policies) },
       { name: docResource, data: JSON.stringify(rules) },
     ],
   });
   try {
+    host.binding.setAccess('editor');
     await host.refresh();
     expect(host.permissions.getPermissionPoint(host.editId)?.value).toBe(true);
     const id = createDocumentPermissionPoint('doc', objectId, UnitAction.Edit).id;

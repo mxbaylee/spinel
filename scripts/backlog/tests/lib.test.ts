@@ -701,3 +701,122 @@ test('retired owner-input gates are rejected instead of hidden from the index', 
     result.errors.some((error) => error.includes('unknown frontmatter field "owner_input"')),
   );
 });
+
+const reservation = {
+  id: 'SPN-003',
+  heading: '🪞 SPN-003 Do the thing',
+  allocation_commit: 'a'.repeat(40),
+};
+
+test('reserved tickets require unique canonical allocated IDs and immutable provenance records', () => {
+  assert.deepEqual(check([], config({ reserved_tickets: [reservation] })).errors, []);
+  const invalid = [
+    null,
+    {},
+    [reservation, reservation],
+    [null],
+    [{ ...reservation, id: 'SPN-0003' }],
+    [{ ...reservation, id: 'SPN-010' }],
+    [{ ...reservation, id: 'SPN-000' }],
+    [{ ...reservation, heading: '🪞 SPN-004 Do the thing' }],
+    [{ ...reservation, heading: reservation.heading + '\nextra' }],
+    [{ ...reservation, allocation_commit: 'a'.repeat(39) }],
+    [{ ...reservation, allocation_commit: '0'.repeat(40) }],
+    [{ ...reservation, unknown: true }],
+  ];
+  for (const value of invalid)
+    assert.ok(
+      check([], config({ reserved_tickets: value as BacklogConfig['reserved_tickets'] })).errors
+        .length,
+      JSON.stringify(value),
+    );
+  assert.match(
+    check([ticket('SPN-003')], config({ reserved_tickets: [reservation] })).errors.join(),
+    /already open or completed/,
+  );
+  assert.match(
+    check(
+      [],
+      config({
+        reserved_tickets: [reservation],
+        grooming: { every: 7, last: '2026-10-17', completed_since: ['SPN-003'] },
+      }),
+    ).errors.join(),
+    /already open or completed/,
+  );
+});
+
+test('a later grooming PR consumes the base reservation for its exact original heading', () => {
+  const baseCfg = config({ reserved_tickets: [reservation] });
+  const head = [ticket('SPN-001'), ticket('SPN-003')];
+  assert.deepEqual(pr('🧹 Groom backlog', { baseCfg, head, headCfg: config() }).errors, []);
+  // The new ID path is unchanged and does not consume unrelated reservations.
+  assert.deepEqual(
+    pr('🧹 Groom backlog', {
+      baseCfg,
+      head: [ticket('SPN-001'), ticket('SPN-010')],
+      headCfg: config({ next_id: 11, reserved_tickets: [reservation] }),
+    }).errors,
+    [],
+  );
+  assert.match(
+    pr('🧹 Groom backlog', { baseCfg, head, headCfg: config({ next_id: 9 }) }).errors.join(),
+    /next_id went down/,
+  );
+});
+
+test('reservations cannot authorize themselves, change identity, or survive consumption', () => {
+  const baseCfg = config({ reserved_tickets: [reservation] });
+  const head = [ticket('SPN-001'), ticket('SPN-003')];
+  assert.match(pr('🧹 Groom backlog', { head, headCfg: baseCfg }).errors.join(), /reuses an ID/);
+  assert.match(
+    pr('🧹 Groom backlog', { baseCfg, head, headCfg: baseCfg }).errors.join(),
+    /reuses an ID/,
+  );
+  assert.match(
+    pr('🧹 Groom backlog', {
+      baseCfg,
+      head: [ticket('SPN-001'), ticket('SPN-003', { emoji: '🍂' })],
+      headCfg: config(),
+    }).errors.join(),
+    /reuses an ID/,
+  );
+  assert.match(
+    pr('⬆️ Bump dependencies', { baseCfg, head, headCfg: config() }).errors.join(),
+    /only a grooming PR/,
+  );
+  assert.match(
+    pr('🧹 Groom backlog', { baseCfg, head: [ticket('SPN-001')], headCfg: config() }).errors.join(),
+    /may only be removed/,
+  );
+  assert.match(
+    pr('🧹 Groom backlog', {
+      baseCfg,
+      head: [ticket('SPN-001')],
+      headCfg: config({
+        reserved_tickets: [{ ...reservation, allocation_commit: 'b'.repeat(40) }],
+      }),
+    }).errors.join(),
+    /retain its reviewed identity/,
+  );
+  // After registration and eventual completion, no reservation remains to admit
+  // a second use of that ID, even after the grooming completion list resets.
+  assert.match(pr('🧹 Groom backlog', { head, headCfg: config() }).errors.join(), /reuses an ID/);
+});
+
+test('reservation creation is grooming-only and does not make the ticket implementation-ready', () => {
+  const headCfg = config({ reserved_tickets: [reservation] });
+  assert.deepEqual(pr('🧹 Groom backlog', { head: [ticket('SPN-001')], headCfg }).errors, []);
+  assert.match(
+    pr('⬆️ Bump dependencies', { head: [ticket('SPN-001')], headCfg }).errors.join(),
+    /only a grooming PR/,
+  );
+  assert.match(
+    pr(reservation.heading, {
+      baseCfg: headCfg,
+      head: [ticket('SPN-001')],
+      headCfg: config(),
+    }).errors.join(),
+    /not an open ticket on the base/,
+  );
+});

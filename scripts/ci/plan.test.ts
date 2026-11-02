@@ -323,9 +323,9 @@ test('every required code job rechecks source/base and digest-bound coverage on 
   assert.equal((storybook.match(/GH_TOKEN:/g) ?? []).length, 1);
 });
 
-test('phone ownership removes only six ordinary cases from instrumented duplicate runs', () => {
+test('phone ownership removes only eight ordinary cases from instrumented duplicate runs', () => {
   const spec = readFileSync(new URL('../../e2e/doc-mobile.spec.ts', import.meta.url), 'utf8');
-  assert.equal(spec.match(/@phone-ordinary/g)?.length, 3); // parameterized 3 zoom + 1 formulas + 2 traditional
+  assert.equal(spec.match(/@phone-ordinary/g)?.length, 4); // 3 zoom + 1 formulas + 2 upgrades + 2 traditional
   for (const title of [
     'phone guest Doc reader cannot write',
     'phone Doc typing keeps the rendered caret',

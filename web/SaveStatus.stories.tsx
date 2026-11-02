@@ -602,7 +602,7 @@ export const ViewOnly: Story = {
     state: {
       dirty: false,
       failed: false,
-      message: 'View only — reload after your access changes.',
+      message: 'View only.',
     },
   },
   play: details,
