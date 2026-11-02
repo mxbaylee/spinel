@@ -13,7 +13,7 @@
       "run": "https://github.com/mxbaylee/spinel/actions/runs/40993658109"
     },
     "lastObserved": {
-      "observedAt": "2026-11-02T00:47:08.570Z",
+      "observedAt": "2026-11-02T00:53:25.673Z",
       "sourceSha": "4242a2d69f7a65c75e30ce02baafbbd8def706a0",
       "testedSha": "9ed845df8a6f9be6da6607bacc154d06b57f5d61",
       "run": "https://github.com/mxbaylee/spinel/actions/runs/41368525631"
@@ -37,7 +37,35 @@
               "run": "https://github.com/mxbaylee/spinel/actions/runs/41366715288"
             },
             "lastObserved": {
-              "observedAt": "2026-11-02T00:47:08.570Z",
+              "observedAt": "2026-11-02T00:53:25.673Z",
+              "sourceSha": "4242a2d69f7a65c75e30ce02baafbbd8def706a0",
+              "testedSha": "9ed845df8a6f9be6da6607bacc154d06b57f5d61",
+              "run": "https://github.com/mxbaylee/spinel/actions/runs/41368525631"
+            }
+          }
+        ],
+        "readFailures": [],
+        "collectorConflict": false
+      },
+      {
+        "sessionId": "0c2ec3705deae9964bc54cef34c60f18fd1c752e",
+        "buildIds": [
+          "d59b94ffb42c4e9931451aabd2e7a04140953bc3"
+        ],
+        "measurements": [
+          {
+            "durationSeconds": 180,
+            "providerStatus": "done",
+            "executionStatus": "done",
+            "createdAt": "2026-11-02T00:49:30.000Z",
+            "firstObserved": {
+              "observedAt": "2026-11-02T00:53:25.673Z",
+              "sourceSha": "4242a2d69f7a65c75e30ce02baafbbd8def706a0",
+              "testedSha": "9ed845df8a6f9be6da6607bacc154d06b57f5d61",
+              "run": "https://github.com/mxbaylee/spinel/actions/runs/41368525631"
+            },
+            "lastObserved": {
+              "observedAt": "2026-11-02T00:53:25.673Z",
               "sourceSha": "4242a2d69f7a65c75e30ce02baafbbd8def706a0",
               "testedSha": "9ed845df8a6f9be6da6607bacc154d06b57f5d61",
               "run": "https://github.com/mxbaylee/spinel/actions/runs/41368525631"
@@ -65,7 +93,7 @@
               "run": "https://github.com/mxbaylee/spinel/actions/runs/40993658109"
             },
             "lastObserved": {
-              "observedAt": "2026-11-02T00:47:08.570Z",
+              "observedAt": "2026-11-02T00:53:25.673Z",
               "sourceSha": "4242a2d69f7a65c75e30ce02baafbbd8def706a0",
               "testedSha": "9ed845df8a6f9be6da6607bacc154d06b57f5d61",
               "run": "https://github.com/mxbaylee/spinel/actions/runs/41368525631"
@@ -93,7 +121,7 @@
               "run": "https://github.com/mxbaylee/spinel/actions/runs/40993658109"
             },
             "lastObserved": {
-              "observedAt": "2026-11-02T00:47:08.570Z",
+              "observedAt": "2026-11-02T00:53:25.673Z",
               "sourceSha": "4242a2d69f7a65c75e30ce02baafbbd8def706a0",
               "testedSha": "9ed845df8a6f9be6da6607bacc154d06b57f5d61",
               "run": "https://github.com/mxbaylee/spinel/actions/runs/41368525631"
@@ -121,7 +149,7 @@
               "run": "https://github.com/mxbaylee/spinel/actions/runs/40993658109"
             },
             "lastObserved": {
-              "observedAt": "2026-11-02T00:47:08.570Z",
+              "observedAt": "2026-11-02T00:53:25.673Z",
               "sourceSha": "4242a2d69f7a65c75e30ce02baafbbd8def706a0",
               "testedSha": "9ed845df8a6f9be6da6607bacc154d06b57f5d61",
               "run": "https://github.com/mxbaylee/spinel/actions/runs/41368525631"
@@ -149,7 +177,7 @@
               "run": "https://github.com/mxbaylee/spinel/actions/runs/40993658109"
             },
             "lastObserved": {
-              "observedAt": "2026-11-02T00:47:08.570Z",
+              "observedAt": "2026-11-02T00:53:25.673Z",
               "sourceSha": "4242a2d69f7a65c75e30ce02baafbbd8def706a0",
               "testedSha": "9ed845df8a6f9be6da6607bacc154d06b57f5d61",
               "run": "https://github.com/mxbaylee/spinel/actions/runs/41368525631"
@@ -177,7 +205,7 @@
               "run": "https://github.com/mxbaylee/spinel/actions/runs/41364540007"
             },
             "lastObserved": {
-              "observedAt": "2026-11-02T00:47:08.570Z",
+              "observedAt": "2026-11-02T00:53:25.673Z",
               "sourceSha": "4242a2d69f7a65c75e30ce02baafbbd8def706a0",
               "testedSha": "9ed845df8a6f9be6da6607bacc154d06b57f5d61",
               "run": "https://github.com/mxbaylee/spinel/actions/runs/41368525631"
@@ -205,7 +233,7 @@
               "run": "https://github.com/mxbaylee/spinel/actions/runs/40993658109"
             },
             "lastObserved": {
-              "observedAt": "2026-11-02T00:47:08.570Z",
+              "observedAt": "2026-11-02T00:53:25.673Z",
               "sourceSha": "4242a2d69f7a65c75e30ce02baafbbd8def706a0",
               "testedSha": "9ed845df8a6f9be6da6607bacc154d06b57f5d61",
               "run": "https://github.com/mxbaylee/spinel/actions/runs/41368525631"
@@ -233,7 +261,7 @@
               "run": "https://github.com/mxbaylee/spinel/actions/runs/40993658109"
             },
             "lastObserved": {
-              "observedAt": "2026-11-02T00:47:08.570Z",
+              "observedAt": "2026-11-02T00:53:25.673Z",
               "sourceSha": "4242a2d69f7a65c75e30ce02baafbbd8def706a0",
               "testedSha": "9ed845df8a6f9be6da6607bacc154d06b57f5d61",
               "run": "https://github.com/mxbaylee/spinel/actions/runs/41368525631"
@@ -261,7 +289,7 @@
               "run": "https://github.com/mxbaylee/spinel/actions/runs/40993658109"
             },
             "lastObserved": {
-              "observedAt": "2026-11-02T00:47:08.570Z",
+              "observedAt": "2026-11-02T00:53:25.673Z",
               "sourceSha": "4242a2d69f7a65c75e30ce02baafbbd8def706a0",
               "testedSha": "9ed845df8a6f9be6da6607bacc154d06b57f5d61",
               "run": "https://github.com/mxbaylee/spinel/actions/runs/41368525631"
@@ -289,7 +317,7 @@
               "run": "https://github.com/mxbaylee/spinel/actions/runs/41361564434"
             },
             "lastObserved": {
-              "observedAt": "2026-11-02T00:47:08.570Z",
+              "observedAt": "2026-11-02T00:53:25.673Z",
               "sourceSha": "4242a2d69f7a65c75e30ce02baafbbd8def706a0",
               "testedSha": "9ed845df8a6f9be6da6607bacc154d06b57f5d61",
               "run": "https://github.com/mxbaylee/spinel/actions/runs/41368525631"
@@ -317,7 +345,7 @@
               "run": "https://github.com/mxbaylee/spinel/actions/runs/40993658109"
             },
             "lastObserved": {
-              "observedAt": "2026-11-02T00:47:08.570Z",
+              "observedAt": "2026-11-02T00:53:25.673Z",
               "sourceSha": "4242a2d69f7a65c75e30ce02baafbbd8def706a0",
               "testedSha": "9ed845df8a6f9be6da6607bacc154d06b57f5d61",
               "run": "https://github.com/mxbaylee/spinel/actions/runs/41368525631"
@@ -345,7 +373,7 @@
               "run": "https://github.com/mxbaylee/spinel/actions/runs/40993658109"
             },
             "lastObserved": {
-              "observedAt": "2026-11-02T00:47:08.570Z",
+              "observedAt": "2026-11-02T00:53:25.673Z",
               "sourceSha": "4242a2d69f7a65c75e30ce02baafbbd8def706a0",
               "testedSha": "9ed845df8a6f9be6da6607bacc154d06b57f5d61",
               "run": "https://github.com/mxbaylee/spinel/actions/runs/41368525631"
@@ -373,7 +401,35 @@
               "run": "https://github.com/mxbaylee/spinel/actions/runs/40993658109"
             },
             "lastObserved": {
-              "observedAt": "2026-11-02T00:47:08.570Z",
+              "observedAt": "2026-11-02T00:53:25.673Z",
+              "sourceSha": "4242a2d69f7a65c75e30ce02baafbbd8def706a0",
+              "testedSha": "9ed845df8a6f9be6da6607bacc154d06b57f5d61",
+              "run": "https://github.com/mxbaylee/spinel/actions/runs/41368525631"
+            }
+          }
+        ],
+        "readFailures": [],
+        "collectorConflict": false
+      },
+      {
+        "sessionId": "8e9b81c078de7af527fe4859f0e1f64e4f25930e",
+        "buildIds": [
+          "d59b94ffb42c4e9931451aabd2e7a04140953bc3"
+        ],
+        "measurements": [
+          {
+            "durationSeconds": 37,
+            "providerStatus": "done",
+            "executionStatus": "done",
+            "createdAt": "2026-11-02T00:48:52.000Z",
+            "firstObserved": {
+              "observedAt": "2026-11-02T00:53:25.673Z",
+              "sourceSha": "4242a2d69f7a65c75e30ce02baafbbd8def706a0",
+              "testedSha": "9ed845df8a6f9be6da6607bacc154d06b57f5d61",
+              "run": "https://github.com/mxbaylee/spinel/actions/runs/41368525631"
+            },
+            "lastObserved": {
+              "observedAt": "2026-11-02T00:53:25.673Z",
               "sourceSha": "4242a2d69f7a65c75e30ce02baafbbd8def706a0",
               "testedSha": "9ed845df8a6f9be6da6607bacc154d06b57f5d61",
               "run": "https://github.com/mxbaylee/spinel/actions/runs/41368525631"
@@ -401,7 +457,7 @@
               "run": "https://github.com/mxbaylee/spinel/actions/runs/41366715288"
             },
             "lastObserved": {
-              "observedAt": "2026-11-02T00:47:08.570Z",
+              "observedAt": "2026-11-02T00:53:25.673Z",
               "sourceSha": "4242a2d69f7a65c75e30ce02baafbbd8def706a0",
               "testedSha": "9ed845df8a6f9be6da6607bacc154d06b57f5d61",
               "run": "https://github.com/mxbaylee/spinel/actions/runs/41368525631"
@@ -429,7 +485,7 @@
               "run": "https://github.com/mxbaylee/spinel/actions/runs/41361564434"
             },
             "lastObserved": {
-              "observedAt": "2026-11-02T00:47:08.570Z",
+              "observedAt": "2026-11-02T00:53:25.673Z",
               "sourceSha": "4242a2d69f7a65c75e30ce02baafbbd8def706a0",
               "testedSha": "9ed845df8a6f9be6da6607bacc154d06b57f5d61",
               "run": "https://github.com/mxbaylee/spinel/actions/runs/41368525631"
@@ -457,7 +513,7 @@
               "run": "https://github.com/mxbaylee/spinel/actions/runs/41364540007"
             },
             "lastObserved": {
-              "observedAt": "2026-11-02T00:47:08.570Z",
+              "observedAt": "2026-11-02T00:53:25.673Z",
               "sourceSha": "4242a2d69f7a65c75e30ce02baafbbd8def706a0",
               "testedSha": "9ed845df8a6f9be6da6607bacc154d06b57f5d61",
               "run": "https://github.com/mxbaylee/spinel/actions/runs/41368525631"
@@ -485,7 +541,7 @@
               "run": "https://github.com/mxbaylee/spinel/actions/runs/40993658109"
             },
             "lastObserved": {
-              "observedAt": "2026-11-02T00:47:08.570Z",
+              "observedAt": "2026-11-02T00:53:25.673Z",
               "sourceSha": "4242a2d69f7a65c75e30ce02baafbbd8def706a0",
               "testedSha": "9ed845df8a6f9be6da6607bacc154d06b57f5d61",
               "run": "https://github.com/mxbaylee/spinel/actions/runs/41368525631"
@@ -513,7 +569,7 @@
               "run": "https://github.com/mxbaylee/spinel/actions/runs/40993658109"
             },
             "lastObserved": {
-              "observedAt": "2026-11-02T00:47:08.570Z",
+              "observedAt": "2026-11-02T00:53:25.673Z",
               "sourceSha": "4242a2d69f7a65c75e30ce02baafbbd8def706a0",
               "testedSha": "9ed845df8a6f9be6da6607bacc154d06b57f5d61",
               "run": "https://github.com/mxbaylee/spinel/actions/runs/41368525631"
@@ -541,7 +597,7 @@
               "run": "https://github.com/mxbaylee/spinel/actions/runs/40993658109"
             },
             "lastObserved": {
-              "observedAt": "2026-11-02T00:47:08.570Z",
+              "observedAt": "2026-11-02T00:53:25.673Z",
               "sourceSha": "4242a2d69f7a65c75e30ce02baafbbd8def706a0",
               "testedSha": "9ed845df8a6f9be6da6607bacc154d06b57f5d61",
               "run": "https://github.com/mxbaylee/spinel/actions/runs/41368525631"
@@ -569,7 +625,7 @@
               "run": "https://github.com/mxbaylee/spinel/actions/runs/40993658109"
             },
             "lastObserved": {
-              "observedAt": "2026-11-02T00:47:08.570Z",
+              "observedAt": "2026-11-02T00:53:25.673Z",
               "sourceSha": "4242a2d69f7a65c75e30ce02baafbbd8def706a0",
               "testedSha": "9ed845df8a6f9be6da6607bacc154d06b57f5d61",
               "run": "https://github.com/mxbaylee/spinel/actions/runs/41368525631"
@@ -597,7 +653,7 @@
               "run": "https://github.com/mxbaylee/spinel/actions/runs/41361564434"
             },
             "lastObserved": {
-              "observedAt": "2026-11-02T00:47:08.570Z",
+              "observedAt": "2026-11-02T00:53:25.673Z",
               "sourceSha": "4242a2d69f7a65c75e30ce02baafbbd8def706a0",
               "testedSha": "9ed845df8a6f9be6da6607bacc154d06b57f5d61",
               "run": "https://github.com/mxbaylee/spinel/actions/runs/41368525631"
@@ -625,7 +681,7 @@
               "run": "https://github.com/mxbaylee/spinel/actions/runs/40993658109"
             },
             "lastObserved": {
-              "observedAt": "2026-11-02T00:47:08.570Z",
+              "observedAt": "2026-11-02T00:53:25.673Z",
               "sourceSha": "4242a2d69f7a65c75e30ce02baafbbd8def706a0",
               "testedSha": "9ed845df8a6f9be6da6607bacc154d06b57f5d61",
               "run": "https://github.com/mxbaylee/spinel/actions/runs/41368525631"
@@ -787,11 +843,14 @@
           "d8b1f51a8d0d854be3e89d0b7d4d6f619cd0f5e8",
           "eebc18376df5dfca0e2f57834b25cc80d9d4c857"
         ],
-        "sessionIds": [],
-        "status": "reserved",
+        "sessionIds": [
+          "8e9b81c078de7af527fe4859f0e1f64e4f25930e",
+          "0c2ec3705deae9964bc54cef34c60f18fd1c752e"
+        ],
+        "status": "reconciled",
         "uncertainAllocation": false,
-        "finishedAt": null,
-        "reconciledAt": null
+        "finishedAt": "2026-11-02T00:52:30.509Z",
+        "reconciledAt": "2026-11-02T00:53:25.673Z"
       }
     ]
   },
@@ -891,6 +950,22 @@
           "reason": null
         },
         "builds": [
+          {
+            "buildId": "d59b94ffb42c4e9931451aabd2e7a04140953bc3",
+            "providerStatuses": [
+              "done"
+            ],
+            "conflict": false,
+            "sessionIds": [
+              "0c2ec3705deae9964bc54cef34c60f18fd1c752e",
+              "8e9b81c078de7af527fe4859f0e1f64e4f25930e"
+            ],
+            "pagination": {
+              "pages": 1,
+              "outcome": "exhausted",
+              "reason": null
+            }
+          },
           {
             "buildId": "62d7e10ff9fa5975f1ab97b6f2c7e9e4ca366d68",
             "providerStatuses": [
@@ -1219,6 +1294,48 @@
                     "providerStatus": "done",
                     "executionStatus": "done",
                     "createdAt": "2026-10-28T03:34:26.000Z"
+                  }
+                }
+              }
+            ],
+            "conflict": false
+          },
+          {
+            "sessionId": "0c2ec3705deae9964bc54cef34c60f18fd1c752e",
+            "buildIds": [
+              "d59b94ffb42c4e9931451aabd2e7a04140953bc3"
+            ],
+            "observations": [
+              {
+                "source": "build-list",
+                "evidence": {
+                  "outcome": "available",
+                  "data": {
+                    "durationSeconds": 180,
+                    "providerStatus": "done",
+                    "executionStatus": "done",
+                    "createdAt": "2026-11-02T00:49:30.000Z"
+                  }
+                }
+              }
+            ],
+            "conflict": false
+          },
+          {
+            "sessionId": "8e9b81c078de7af527fe4859f0e1f64e4f25930e",
+            "buildIds": [
+              "d59b94ffb42c4e9931451aabd2e7a04140953bc3"
+            ],
+            "observations": [
+              {
+                "source": "build-list",
+                "evidence": {
+                  "outcome": "available",
+                  "data": {
+                    "durationSeconds": 37,
+                    "providerStatus": "done",
+                    "executionStatus": "done",
+                    "createdAt": "2026-11-02T00:48:52.000Z"
                   }
                 }
               }
@@ -1564,7 +1681,7 @@
         ],
         "deadlineExceeded": false
       },
-      "requests": 16,
+      "requests": 17,
       "limits": {
         "totalMs": 60000,
         "requestMs": 8000,
@@ -1587,14 +1704,14 @@
       "status": "blocked",
       "allocationAllowed": false,
       "allowanceSeconds": 3600,
-      "observedAt": "2026-11-02T00:47:08.570Z",
+      "observedAt": "2026-11-02T00:53:25.673Z",
       "sourceSha": "4242a2d69f7a65c75e30ce02baafbbd8def706a0",
       "testedSha": "9ed845df8a6f9be6da6607bacc154d06b57f5d61",
       "run": "https://github.com/mxbaylee/spinel/actions/runs/41368525631",
       "ledgerStatus": "available",
-      "measuredTerminalSessionSeconds": 581,
-      "measuredTerminalSessions": 22,
-      "retainedSessions": 22,
+      "measuredTerminalSessionSeconds": 798,
+      "measuredTerminalSessions": 24,
+      "retainedSessions": 24,
       "unresolvedSessions": 0,
       "conflictingSessions": 0,
       "sessionsWithReadFailures": 0,
@@ -1644,18 +1761,18 @@
       "basis": "owner-authorized-estimate",
       "providerVerified": false,
       "allocationAllowed": false,
-      "capabilitySufficient": false,
+      "capabilitySufficient": true,
       "policySha256": "335eb05ef7c32f35bb1c34f5d86bb725ec8f6731246b0d36d7acaa04258ffe86",
-      "measuredElapsedSeconds": 581,
+      "measuredElapsedSeconds": 798,
       "reusedFinalizedHistory": [],
       "assumedUnobservedUsageSeconds": 0,
       "chargedSecondsPerElapsedSecond": 1,
-      "estimatedUsedSeconds": 581,
-      "estimatedRemainingSeconds": 3019,
-      "estimatedRemainingMinutes": 50.31666666666667,
-      "outstandingHoldSeconds": 900,
+      "estimatedUsedSeconds": 798,
+      "estimatedRemainingSeconds": 2802,
+      "estimatedRemainingMinutes": 46.7,
+      "outstandingHoldSeconds": 0,
       "safetyReserveSeconds": 300,
-      "estimatedUsableSeconds": 1819,
+      "estimatedUsableSeconds": 2502,
       "capabilityReservationSeconds": 900,
       "estimatedAdditionalCapabilityReservations": 2,
       "lastEstimatedFundableCapabilityDate": "2027-01-01T09:17:00.000Z",
@@ -1668,9 +1785,7 @@
       "completeOfflineMatrixCostMinutes": null,
       "estimatedSuccessfulCompleteRuns": null,
       "projectedFullMatrixExhaustion": null,
-      "blockingReasons": [
-        "pending-reservation"
-      ],
+      "blockingReasons": [],
       "assumptions": [
         "60 lifetime minutes minus deduplicated observed terminal session seconds; assume zero unobserved starting usage and estimate one charged second per elapsed second. This is not a provider-verified balance.",
         "The lifetime allowance never renews at a month boundary.",
@@ -1681,7 +1796,7 @@
         "Only a newly created reservation durably committed by the caller can authorize a capability allocation."
       ]
     },
-    "operation": "reserve",
+    "operation": "reconcile",
     "recoveredReservationIds": [],
     "blockers": []
   }
