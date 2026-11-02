@@ -395,6 +395,38 @@ test('conflicting successful proofs cannot establish a trustworthy history bound
   }
 });
 
+test('malformed evidence cannot downgrade conflicting proofs to timestamped full validation', async () => {
+  for (const malformedAttempt of [1, 2, 3]) {
+    for (const malformed of [
+      { steps: [null] },
+      { steps: [{ name: 'Edit classification: text', status: 'missing', conclusion: null }] },
+      { head_sha: 'd'.repeat(40) },
+      { id: 50 },
+    ]) {
+      const otherAttempts = [1, 2, 3].filter((attempt) => attempt !== malformedAttempt);
+      const jobs = [
+        classifier({ id: 50, run_attempt: otherAttempts[0] }),
+        classifier({
+          id: 51,
+          run_attempt: otherAttempts[1],
+          steps: [
+            { name: 'Edit classification: full', status: 'completed', conclusion: 'success' },
+          ],
+        }),
+        classifier({ id: 52, run_attempt: malformedAttempt, ...malformed }),
+      ];
+      const history = { runs: [policyRun({ run_attempt: 3 })], jobs };
+      const result = await requirement(history);
+      assert.equal(result.state, 'full');
+      assert.equal(result.after, null);
+      await assert.rejects(
+        guard(fixture(history).client, codePlan(true)),
+        /Unable to establish full-validation freshness/,
+      );
+    }
+  }
+});
+
 test('a recorded full marker persists and cannot be replaced by later text classification', async () => {
   const result = await requirement({
     runs: [policyRun({ id: 11 }), policyRun()],

@@ -275,8 +275,7 @@ export async function readFullValidationRequirement(
             job.head_sha !== run.head_sha,
         )
       ) {
-        recordFull(requestedAt, 'A PR edit has malformed classification jobs.');
-        continue;
+        return unknown('A PR edit has malformed classification jobs.');
       }
       const classifiers = jobs.filter(
         (job) => object(job) && job.name === `Classify PR edit (${run.id})`,
@@ -286,8 +285,7 @@ export async function readFullValidationRequirement(
           classifiers.length ||
         new Set(classifiers.map((job) => (object(job) ? job.id : null))).size !== classifiers.length
       ) {
-        recordFull(requestedAt, 'A PR edit has duplicate classification jobs in one attempt.');
-        continue;
+        return unknown('A PR edit has duplicate classification jobs in one attempt.');
       }
       if (!classifiers.length) {
         if (active(run.status)) {
@@ -362,10 +360,9 @@ export async function readFullValidationRequirement(
         recordedText ||= completed.some((step) => object(step) && step.name === textMarker);
         if (index === 0) latestPending = active(job.status);
       }
-      if (malformed) {
-        recordFull(requestedAt, 'A PR edit has malformed or failed classification evidence.');
-        continue;
-      }
+      // An unreadable attempt can conceal a contradictory proof. Unlike an
+      // ordinary failed execution, it cannot supply a trusted request bound.
+      if (malformed) return unknown('A PR edit has malformed classification evidence.');
       if (recordedFull && recordedText)
         return unknown('One immutable PR edit has conflicting successful classification proofs.');
       if (recordedFull || recordedText) continue;
