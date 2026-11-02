@@ -1,5 +1,14 @@
 import { randomUUID } from 'node:crypto';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { expect, test, vi } from 'vitest';
@@ -99,11 +108,21 @@ test('SPN-110 expiry preserves actual paired snapshots and old feedback while ne
     f.time(8 * 86_400_000);
     const pair = await f.store.prepareFeedback(f.actor, f.operator);
     if (pair.state !== 'ready') throw new Error('Expected captured pair');
-    const before = { user: await f.artifact(pair, 'user'), system: await f.artifact(pair, 'system') };
-    expect(before.user.rows.map(row => row.id).sort()).toEqual([report.id, observation.id].sort());
+    const before = {
+      user: await f.artifact(pair, 'user'),
+      system: await f.artifact(pair, 'system'),
+    };
+    expect(before.user.rows.map((row) => row.id).sort()).toEqual(
+      [report.id, observation.id].sort(),
+    );
     expect(before.system.rows).toEqual(originalRows);
     expect(f.store.expire()).toEqual({ deleted: 2, remaining: false });
-    expect(f.store.status()).toMatchObject({ generation: f.generation, recordCount: 1, retentionDays: 7, dropped: { expired: 2 } });
+    expect(f.store.status()).toMatchObject({
+      generation: f.generation,
+      recordCount: 1,
+      retentionDays: 7,
+      dropped: { expired: 2 },
+    });
     expect(f.db.prepare('SELECT id FROM events').all()).toEqual([{ id: report.id }]);
     expect(f.store.feedbackFlags().actors).toEqual([f.actor]);
     for (const scope of ['user', 'system'] as const) {
@@ -115,27 +134,60 @@ test('SPN-110 expiry preserves actual paired snapshots and old feedback while ne
     await f.store.cancelFeedback(pair.id, f.operator);
     const fresh = await f.store.prepareFeedback(f.actor, f.operator);
     if (fresh.state !== 'ready') throw new Error('Expected feedback-only pair');
-    expect(fresh).toMatchObject({ context: 'feedback-only', counts: { user: 1, system: 1, userObservations: 0, systemObservations: 0 } });
-    const retained = { user: await f.artifact(fresh, 'user'), system: await f.artifact(fresh, 'system') };
+    expect(fresh).toMatchObject({
+      context: 'feedback-only',
+      counts: { user: 1, system: 1, userObservations: 0, systemObservations: 0 },
+    });
+    const retained = {
+      user: await f.artifact(fresh, 'user'),
+      system: await f.artifact(fresh, 'system'),
+    };
     for (const artifact of Object.values(retained)) {
-      expect(artifact.rows.map(row => row.id)).toEqual([report.id]);
+      expect(artifact.rows.map((row) => row.id)).toEqual([report.id]);
       expect(artifact.manifest).toMatchObject({
-        context: 'feedback-only', historicalCompleteness: 'unknown',
+        context: 'feedback-only',
+        historicalCompleteness: 'unknown',
         retention: { observationAgeTargetDays: 7 },
         dropped: { values: { expired: 2 } },
       });
-      expect(artifact.manifest.retention.observations).not.toContain('no automatic expiry configured');
+      expect(artifact.manifest.retention.observations).not.toContain(
+        'no automatic expiry configured',
+      );
       expect(artifact.manifest.limitations.join(' ')).toContain('expiry');
     }
     const cleared = f.store.truncate();
     expect(cleared.generation).not.toBe(f.generation);
-    expect(() => f.store.feedbackDownload(fresh.id, f.operator, 'user')).toThrow('expired or were cleared');
-    expect(() => f.store.feedbackDownload(fresh.id, f.operator, 'system')).toThrow('expired or were cleared');
+    expect(() => f.store.feedbackDownload(fresh.id, f.operator, 'user')).toThrow(
+      'expired or were cleared',
+    );
+    expect(() => f.store.feedbackDownload(fresh.id, f.operator, 'system')).toThrow(
+      'expired or were cleared',
+    );
     expect(f.store.ingest([observation], f.actor, f.generation).accepted).toBe(0);
     mkdirSync('test-results', { recursive: true });
-    const inspect = (value: typeof before) => Object.fromEntries(Object.entries(value).map(([scope, artifact]) => [scope, { rows: artifact.rows, manifest: artifact.manifest, integrity: artifact.check }]));
-    writeFileSync('test-results/spn110-paired-export.json', JSON.stringify({ originalRows, frozen: inspect(before), afterExpiry: inspect(retained), explicitTruncateInvalidatedBoth: true }, null, 2) + '\n');
-  } finally { await f.close(); }
+    const inspect = (value: typeof before) =>
+      Object.fromEntries(
+        Object.entries(value).map(([scope, artifact]) => [
+          scope,
+          { rows: artifact.rows, manifest: artifact.manifest, integrity: artifact.check },
+        ]),
+      );
+    writeFileSync(
+      'test-results/spn110-paired-export.json',
+      JSON.stringify(
+        {
+          originalRows,
+          frozen: inspect(before),
+          afterExpiry: inspect(retained),
+          explicitTruncateInvalidatedBoth: true,
+        },
+        null,
+        2,
+      ) + '\n',
+    );
+  } finally {
+    await f.close();
+  }
 });
 
 test('feedback commits synchronously, preserves exact intentional text and retries only the same payload/actor', async () => {
@@ -353,9 +405,7 @@ test.each([undefined, 3])(
         expect(exported.rows.map((row) => row.id)).toEqual([report.id]);
         expect(exported.manifest.retention.observationAgeTargetDays).toBe(policy ?? null);
         expect(exported.manifest.retention.observations).toContain(
-          policy === undefined
-            ? 'no automatic expiry configured'
-            : 'server receipt age target',
+          policy === undefined ? 'no automatic expiry configured' : 'server receipt age target',
         );
         expect(exported.manifest.historicalCompleteness).toBe('unknown');
       }
