@@ -1293,7 +1293,8 @@ try {
   setStage('checking-owner-session-reset');
   expect((await owner.context.request.get(`${origin}/api/auth/session`)).status()).toBe(401);
   setStage('authenticating-after-session-reset');
-  await page.goto(`${origin}/admin#health`);
+  // Anonymous /admin deliberately returns 404; reauthenticate at the public entry.
+  await page.goto(`${origin}/sign-in`);
   await page.getByRole('button', { name: 'Sign in with a passkey', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Administration', exact: true })).toBeVisible();
   await page.goto(`${origin}/admin#health`);
