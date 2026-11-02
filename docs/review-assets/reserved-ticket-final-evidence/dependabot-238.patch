@@ -1,0 +1,13 @@
+diff --git a/deploy/compose.yaml b/deploy/compose.yaml
+index 83b7aff5..aca1123a 100644
+--- a/deploy/compose.yaml
++++ b/deploy/compose.yaml
+@@ -42,7 +42,7 @@ services:
+         max-size: 10m
+         max-file: '3'
+   caddy:
+-    image: caddy:2-alpine@sha256:eb4d35b7452d1ab6171fbdbe8d9275b2301dad6dad92115d91e19fb9b24d510f
++    image: caddy:2-alpine@sha256:e70b164da81ef698b3ad19af799ea6086ce6d9e48ed4079eb9fe26f6fbf14ee5
+     network_mode: host
+     user: '10001:10001'
+     read_only: true

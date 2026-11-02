@@ -1,0 +1,38 @@
+name: Generate reviewed backlog index
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  index:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Verify source and generate through the existing CLI
+        run: |
+          test "$(git rev-parse HEAD^)" = 54c159a0fefedb16f424d6df07da524d28cfcfca
+          test "$(git diff --name-only HEAD^ HEAD)" = .github/workflows/ci.yml
+          mkdir -p index-evidence
+          git rev-parse HEAD^ > index-evidence/source.txt
+          git rev-parse HEAD > index-evidence/helper.txt
+          npm run backlog:index
+          npm run backlog:check
+          test "$(git diff --name-only)" = docs/todo/readme.md
+          git diff --binary > index-evidence/generated.patch
+          sha256sum docs/todo/readme.md > index-evidence/index.sha256
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: generated-backlog-index
+          path: |
+            docs/todo/readme.md
+            index-evidence/
+          if-no-files-found: error
+          retention-days: 14

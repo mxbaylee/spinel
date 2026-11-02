@@ -1,0 +1,50 @@
+✔ frontmatter reads lists, booleans, numbers, quoted strings and strips comments (1.514875ms)
+✔ a well-formed ticket passes (8.207833ms)
+✔ ticket shape errors are reported (5.178416ms)
+✔ dependencies must be open tickets and acyclic (0.206416ms)
+✔ dependencies cannot point to a later lifecycle phase, and cycles still fail (0.239542ms)
+✔ grooming counter must reference landed IDs (0.22925ms)
+✔ long tickets and shared emoji warn without failing (0.1235ms)
+✔ a ticket judges at least one persona, and its impact is the highest (0.500166ms)
+✔ XL effort is accepted without expanding persona impact sizes (0.377292ms)
+✔ impact is weighted tenfold and larger effort comes first within each impact (0.152ms)
+✔ a prerequisite scores one above everything that depends on it, up the chain (0.21025ms)
+✔ a written score that differs is stale, and withScore rewrites or adds it (0.515584ms)
+✔ ranking ties prefer prerequisites, higher impact, larger effort, then lower ID (0.333625ms)
+✔ a prerequisite outranks a higher-scoring dependent, so the first row is ready (0.0925ms)
+✔ XL work keeps inherited priority while independent XL work ranks above equivalent L work (0.401458ms)
+✔ lifecycle phases precede scores while preserving priority and dependency inheritance (0.250583ms)
+✔ external upstream PRs remain visible after launch without affecting dependency scores (0.205166ms)
+✔ external prerequisites reject non-PR URLs and malformed lists (0.263583ms)
+✔ phase order precedes lower ID when scores are equal (0.085792ms)
+✔ omitting phase keeps the existing pre-launch index and ranking (0.119833ms)
+✔ an empty backlog says so (0.030166ms)
+✔ the index lists every open ticket in pick order (0.168042ms)
+✔ globs match lockfiles anywhere and directory patterns by path (0.159792ms)
+✔ changed lines skip excluded files, binaries and follow renames (0.152875ms)
+✔ a ticket PR lands its ticket and advances the grooming count (6.815333ms)
+✔ ticket PR title problems (4.108416ms)
+✔ the grooming reminder never blocks the next ticket or backlog maintenance (0.580791ms)
+✔ exception PRs leave the grooming count alone (0.468791ms)
+✔ IDs are never reused (0.133375ms)
+✔ PR size: soft limit warns, hard limit fails (0.130708ms)
+✔ PR size: effort-S tickets are exempt, judged by the base ticket (0.157875ms)
+✔ XL effort retains the PR soft-limit split warning (0.055708ms)
+✔ a PR cannot loosen its own limits (0.160375ms)
+✔ only grooming PRs remove tickets other than the one landing (0.119708ms)
+✔ grooming dates never go backwards or into the future (0.169292ms)
+✔ repeated frontmatter keys are an error (0.034625ms)
+✔ retired owner-input gates are rejected instead of hidden from the index (0.067458ms)
+✔ reserved tickets require unique canonical allocated IDs and immutable provenance records (8.993042ms)
+✔ a later grooming PR consumes the base reservation for its exact original heading (0.164542ms)
+✔ reservations cannot authorize themselves, change identity, or survive consumption (0.212667ms)
+✔ reservation creation is grooming-only and does not make the ticket implementation-ready (0.097042ms)
+ℹ tests 41
+ℹ suites 0
+ℹ pass 41
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 149.789625
+WATCHDOG: exit=0, signal=null, elapsed=190ms, peak=0.0MiB

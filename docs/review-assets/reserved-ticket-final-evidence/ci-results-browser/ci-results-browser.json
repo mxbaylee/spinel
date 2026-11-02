@@ -1,0 +1,526 @@
+{
+  "passed": true,
+  "evidence": {
+    "planSha256": "d771abf911760d39affd47b0531ca5fe8bc72fe58c7fe26263b891050100b9c2",
+    "plan": {
+      "version": 1,
+      "event": "pull_request",
+      "action": "synchronize",
+      "base": "43299f311d62fb73a5688a49471b71c626ea6e1d",
+      "head": "7ed82b84ab66ce668b40a35d3db97f0f205f83dd",
+      "tested": "14c2a5712eca6574103773a6ad544995d128c818",
+      "mode": "full",
+      "labels": [],
+      "paths": [
+        "docs/implementation/backlog-reserved-ticket-ids.md",
+        "docs/todo/SPN-098.md",
+        "docs/todo/backlog.json",
+        "docs/todo/process.md",
+        "docs/todo/readme.md",
+        "scripts/backlog/lib.ts",
+        "scripts/backlog/tests/lib.test.ts"
+      ],
+      "suites": {
+        "backlog": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [
+            "docs/implementation/backlog-reserved-ticket-ids.md",
+            "docs/todo/SPN-098.md",
+            "docs/todo/backlog.json",
+            "docs/todo/process.md",
+            "docs/todo/readme.md",
+            "scripts/backlog/lib.ts",
+            "scripts/backlog/tests/lib.test.ts"
+          ],
+          "reason": "Unknown paths require full coverage."
+        },
+        "pull-request": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [
+            "docs/implementation/backlog-reserved-ticket-ids.md",
+            "docs/todo/SPN-098.md",
+            "docs/todo/backlog.json",
+            "docs/todo/process.md",
+            "docs/todo/readme.md",
+            "scripts/backlog/lib.ts",
+            "scripts/backlog/tests/lib.test.ts"
+          ],
+          "reason": "Unknown paths require full coverage."
+        },
+        "lint": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [
+            "docs/implementation/backlog-reserved-ticket-ids.md",
+            "docs/todo/SPN-098.md",
+            "docs/todo/backlog.json",
+            "docs/todo/process.md",
+            "docs/todo/readme.md",
+            "scripts/backlog/lib.ts",
+            "scripts/backlog/tests/lib.test.ts"
+          ],
+          "reason": "Unknown paths require full coverage."
+        },
+        "typecheck": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/implementation/backlog-reserved-ticket-ids.md",
+            "docs/todo/SPN-098.md",
+            "docs/todo/backlog.json",
+            "docs/todo/process.md",
+            "docs/todo/readme.md",
+            "scripts/backlog/lib.ts",
+            "scripts/backlog/tests/lib.test.ts"
+          ],
+          "reason": "Unknown paths require full coverage."
+        },
+        "unit-tests": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/implementation/backlog-reserved-ticket-ids.md",
+            "docs/todo/SPN-098.md",
+            "docs/todo/backlog.json",
+            "docs/todo/process.md",
+            "docs/todo/readme.md",
+            "scripts/backlog/lib.ts",
+            "scripts/backlog/tests/lib.test.ts"
+          ],
+          "reason": "Unknown paths require full coverage."
+        },
+        "lib-test-run": {
+          "selected": true,
+          "dependencies": [
+            "lib/**",
+            "scripts/dependencies/**",
+            "package{,-lock}.json",
+            "vitest.config.ts",
+            "tsconfig.json",
+            ".nvmrc",
+            ".github/workflows/ci.yml"
+          ],
+          "inputs": [
+            "docs/implementation/backlog-reserved-ticket-ids.md",
+            "docs/todo/SPN-098.md",
+            "docs/todo/backlog.json",
+            "docs/todo/process.md",
+            "docs/todo/readme.md",
+            "scripts/backlog/lib.ts",
+            "scripts/backlog/tests/lib.test.ts"
+          ],
+          "reason": "Unknown paths require full coverage."
+        },
+        "playwright-run": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/implementation/backlog-reserved-ticket-ids.md",
+            "docs/todo/SPN-098.md",
+            "docs/todo/backlog.json",
+            "docs/todo/process.md",
+            "docs/todo/readme.md",
+            "scripts/backlog/lib.ts",
+            "scripts/backlog/tests/lib.test.ts"
+          ],
+          "reason": "Unknown paths require full coverage."
+        },
+        "container-smoke": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/implementation/backlog-reserved-ticket-ids.md",
+            "docs/todo/SPN-098.md",
+            "docs/todo/backlog.json",
+            "docs/todo/process.md",
+            "docs/todo/readme.md",
+            "scripts/backlog/lib.ts",
+            "scripts/backlog/tests/lib.test.ts"
+          ],
+          "reason": "Unknown paths require full coverage."
+        },
+        "restore-timing": {
+          "selected": true,
+          "dependencies": [
+            "server/**",
+            "src/{server,shared}/**",
+            "lib/**",
+            "web/** and src/ui/** (shared application/authentication bundle)",
+            "e2e restore/shared helpers",
+            "runtime/build/dependency/workflow inputs"
+          ],
+          "inputs": [
+            "docs/implementation/backlog-reserved-ticket-ids.md",
+            "docs/todo/SPN-098.md",
+            "docs/todo/backlog.json",
+            "docs/todo/process.md",
+            "docs/todo/readme.md",
+            "scripts/backlog/lib.ts",
+            "scripts/backlog/tests/lib.test.ts"
+          ],
+          "reason": "Unknown paths require full coverage."
+        },
+        "sync-transition": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/implementation/backlog-reserved-ticket-ids.md",
+            "docs/todo/SPN-098.md",
+            "docs/todo/backlog.json",
+            "docs/todo/process.md",
+            "docs/todo/readme.md",
+            "scripts/backlog/lib.ts",
+            "scripts/backlog/tests/lib.test.ts"
+          ],
+          "reason": "Unknown paths require full coverage."
+        },
+        "doc-responsiveness": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/implementation/backlog-reserved-ticket-ids.md",
+            "docs/todo/SPN-098.md",
+            "docs/todo/backlog.json",
+            "docs/todo/process.md",
+            "docs/todo/readme.md",
+            "scripts/backlog/lib.ts",
+            "scripts/backlog/tests/lib.test.ts"
+          ],
+          "reason": "Unknown paths require full coverage."
+        },
+        "doc-callback-lifetimes": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/implementation/backlog-reserved-ticket-ids.md",
+            "docs/todo/SPN-098.md",
+            "docs/todo/backlog.json",
+            "docs/todo/process.md",
+            "docs/todo/readme.md",
+            "scripts/backlog/lib.ts",
+            "scripts/backlog/tests/lib.test.ts"
+          ],
+          "reason": "Unknown paths require full coverage."
+        },
+        "responsiveness-baseline": {
+          "selected": true,
+          "dependencies": [
+            "web/**",
+            "server/**",
+            "lib/**",
+            "e2e/**",
+            "src/shared/**",
+            "src/server/{sync,history,collaboration}/**",
+            "scripts/{ci,dependencies,sync-transition}/**",
+            "build/runtime/dependency/workflow configuration"
+          ],
+          "inputs": [
+            "docs/implementation/backlog-reserved-ticket-ids.md",
+            "docs/todo/SPN-098.md",
+            "docs/todo/backlog.json",
+            "docs/todo/process.md",
+            "docs/todo/readme.md",
+            "scripts/backlog/lib.ts",
+            "scripts/backlog/tests/lib.test.ts"
+          ],
+          "reason": "Unknown paths require full coverage."
+        },
+        "callback-baseline": {
+          "selected": true,
+          "dependencies": [
+            "web/**",
+            "server/**",
+            "lib/**",
+            "e2e/**",
+            "src/shared/**",
+            "src/server/{sync,history,collaboration}/**",
+            "scripts/{ci,dependencies,sync-transition}/**",
+            "build/runtime/dependency/workflow configuration"
+          ],
+          "inputs": [
+            "docs/implementation/backlog-reserved-ticket-ids.md",
+            "docs/todo/SPN-098.md",
+            "docs/todo/backlog.json",
+            "docs/todo/process.md",
+            "docs/todo/readme.md",
+            "scripts/backlog/lib.ts",
+            "scripts/backlog/tests/lib.test.ts"
+          ],
+          "reason": "Unknown paths require full coverage."
+        },
+        "phone-compatibility": {
+          "selected": true,
+          "dependencies": [
+            "full plan backstop; ordinary phone owners remain in routine browser coverage"
+          ],
+          "inputs": [
+            "docs/implementation/backlog-reserved-ticket-ids.md",
+            "docs/todo/SPN-098.md",
+            "docs/todo/backlog.json",
+            "docs/todo/process.md",
+            "docs/todo/readme.md",
+            "scripts/backlog/lib.ts",
+            "scripts/backlog/tests/lib.test.ts"
+          ],
+          "reason": "Unknown paths require full coverage."
+        }
+      }
+    },
+    "gateResults": {
+      "typecheck": "success",
+      "unit-tests": "success",
+      "lib-tests": "success"
+    },
+    "results": [
+      {
+        "suite": "backlog",
+        "selected": true,
+        "dependencies": [
+          "complete immutable change range and current event metadata"
+        ],
+        "inputs": [
+          "docs/implementation/backlog-reserved-ticket-ids.md",
+          "docs/todo/SPN-098.md",
+          "docs/todo/backlog.json",
+          "docs/todo/process.md",
+          "docs/todo/readme.md",
+          "scripts/backlog/lib.ts",
+          "scripts/backlog/tests/lib.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage.",
+        "result": "success"
+      },
+      {
+        "suite": "pull-request",
+        "selected": true,
+        "dependencies": [
+          "complete immutable change range and current event metadata"
+        ],
+        "inputs": [
+          "docs/implementation/backlog-reserved-ticket-ids.md",
+          "docs/todo/SPN-098.md",
+          "docs/todo/backlog.json",
+          "docs/todo/process.md",
+          "docs/todo/readme.md",
+          "scripts/backlog/lib.ts",
+          "scripts/backlog/tests/lib.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage.",
+        "result": "success"
+      },
+      {
+        "suite": "lint",
+        "selected": true,
+        "dependencies": [
+          "complete immutable change range and current event metadata"
+        ],
+        "inputs": [
+          "docs/implementation/backlog-reserved-ticket-ids.md",
+          "docs/todo/SPN-098.md",
+          "docs/todo/backlog.json",
+          "docs/todo/process.md",
+          "docs/todo/readme.md",
+          "scripts/backlog/lib.ts",
+          "scripts/backlog/tests/lib.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage.",
+        "result": "success"
+      },
+      {
+        "suite": "typecheck",
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "docs/implementation/backlog-reserved-ticket-ids.md",
+          "docs/todo/SPN-098.md",
+          "docs/todo/backlog.json",
+          "docs/todo/process.md",
+          "docs/todo/readme.md",
+          "scripts/backlog/lib.ts",
+          "scripts/backlog/tests/lib.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage.",
+        "result": "success"
+      },
+      {
+        "suite": "unit-tests",
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "docs/implementation/backlog-reserved-ticket-ids.md",
+          "docs/todo/SPN-098.md",
+          "docs/todo/backlog.json",
+          "docs/todo/process.md",
+          "docs/todo/readme.md",
+          "scripts/backlog/lib.ts",
+          "scripts/backlog/tests/lib.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage.",
+        "result": "success"
+      },
+      {
+        "suite": "lib-test-run",
+        "selected": true,
+        "dependencies": [
+          "lib/**",
+          "scripts/dependencies/**",
+          "package{,-lock}.json",
+          "vitest.config.ts",
+          "tsconfig.json",
+          ".nvmrc",
+          ".github/workflows/ci.yml"
+        ],
+        "inputs": [
+          "docs/implementation/backlog-reserved-ticket-ids.md",
+          "docs/todo/SPN-098.md",
+          "docs/todo/backlog.json",
+          "docs/todo/process.md",
+          "docs/todo/readme.md",
+          "scripts/backlog/lib.ts",
+          "scripts/backlog/tests/lib.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage.",
+        "result": "success"
+      },
+      {
+        "suite": "playwright-run",
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "docs/implementation/backlog-reserved-ticket-ids.md",
+          "docs/todo/SPN-098.md",
+          "docs/todo/backlog.json",
+          "docs/todo/process.md",
+          "docs/todo/readme.md",
+          "scripts/backlog/lib.ts",
+          "scripts/backlog/tests/lib.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage.",
+        "result": "success"
+      },
+      {
+        "suite": "container-smoke",
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "docs/implementation/backlog-reserved-ticket-ids.md",
+          "docs/todo/SPN-098.md",
+          "docs/todo/backlog.json",
+          "docs/todo/process.md",
+          "docs/todo/readme.md",
+          "scripts/backlog/lib.ts",
+          "scripts/backlog/tests/lib.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage.",
+        "result": "success"
+      },
+      {
+        "suite": "restore-timing",
+        "selected": true,
+        "dependencies": [
+          "server/**",
+          "src/{server,shared}/**",
+          "lib/**",
+          "web/** and src/ui/** (shared application/authentication bundle)",
+          "e2e restore/shared helpers",
+          "runtime/build/dependency/workflow inputs"
+        ],
+        "inputs": [
+          "docs/implementation/backlog-reserved-ticket-ids.md",
+          "docs/todo/SPN-098.md",
+          "docs/todo/backlog.json",
+          "docs/todo/process.md",
+          "docs/todo/readme.md",
+          "scripts/backlog/lib.ts",
+          "scripts/backlog/tests/lib.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage.",
+        "result": "success"
+      },
+      {
+        "suite": "sync-transition",
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "docs/implementation/backlog-reserved-ticket-ids.md",
+          "docs/todo/SPN-098.md",
+          "docs/todo/backlog.json",
+          "docs/todo/process.md",
+          "docs/todo/readme.md",
+          "scripts/backlog/lib.ts",
+          "scripts/backlog/tests/lib.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage.",
+        "result": "success"
+      },
+      {
+        "suite": "doc-responsiveness",
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "docs/implementation/backlog-reserved-ticket-ids.md",
+          "docs/todo/SPN-098.md",
+          "docs/todo/backlog.json",
+          "docs/todo/process.md",
+          "docs/todo/readme.md",
+          "scripts/backlog/lib.ts",
+          "scripts/backlog/tests/lib.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage.",
+        "result": "success"
+      },
+      {
+        "suite": "doc-callback-lifetimes",
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "docs/implementation/backlog-reserved-ticket-ids.md",
+          "docs/todo/SPN-098.md",
+          "docs/todo/backlog.json",
+          "docs/todo/process.md",
+          "docs/todo/readme.md",
+          "scripts/backlog/lib.ts",
+          "scripts/backlog/tests/lib.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage.",
+        "result": "success"
+      }
+    ]
+  }
+}

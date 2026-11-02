@@ -1,0 +1,13 @@
+diff --git a/package.json b/package.json
+index f5772edc..0f2804ed 100644
+--- a/package.json
++++ b/package.json
+@@ -42,7 +42,7 @@
+     "@types/yauzl": "3.4.0",
+     "@types/yazl": "3.3.1",
+     "@vitejs/plugin-react": "6.1.2",
+-    "oxlint": "1.88.0",
++    "oxlint": "1.89.0",
+     "pdfjs-dist": "6.4.299",
+     "prettier": "3.9.10",
+     "storybook": "10.6.2",

@@ -1,0 +1,13 @@
+diff --git a/package.json b/package.json
+index f5772edc..788e8fb5 100644
+--- a/package.json
++++ b/package.json
+@@ -48,7 +48,7 @@
+     "storybook": "10.6.2",
+     "typescript": "7.0.2",
+     "typescript-api": "npm:typescript@5.9.3",
+-    "vite": "8.3.4",
++    "vite": "8.3.5",
+     "vitest": "5.0.5"
+   },
+   "dependencies": {
