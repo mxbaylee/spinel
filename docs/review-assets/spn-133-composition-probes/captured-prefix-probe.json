@@ -1,0 +1,6090 @@
+{
+  "diagnosticOnly": true,
+  "captureSource": "cbb5b04473eed437f3a7bc877fcc6f31d5f04992",
+  "captureSha256": "714376723b3ef6a048796f7a1903a58181098960960cecb111e22e0594a2e7c8",
+  "runtime": "SPN098 private clean install at24e00a7, read-only pinned Docs hash verified",
+  "cases": 320,
+  "equal": 320,
+  "results": [
+    {
+      "format": "es",
+      "index": "original-0",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6874,
+        "allocations": 3198,
+        "iteratorNext": 292
+      },
+      "prefixExperiment": {
+        "cloneVisits": 6874,
+        "allocations": 3198,
+        "iteratorNext": 292
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-0",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2347,
+        "allocations": 1113,
+        "iteratorNext": 153
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2347,
+        "allocations": 1113,
+        "iteratorNext": 153
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-0",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6874,
+        "allocations": 3198,
+        "iteratorNext": 292
+      },
+      "prefixExperiment": {
+        "cloneVisits": 6874,
+        "allocations": 3198,
+        "iteratorNext": 292
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-0",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2347,
+        "allocations": 1113,
+        "iteratorNext": 153
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2347,
+        "allocations": 1113,
+        "iteratorNext": 153
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-1",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "prefixExperiment": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-1",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-1",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "prefixExperiment": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-1",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-2",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "prefixExperiment": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-2",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-2",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "prefixExperiment": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-2",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-3",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "prefixExperiment": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-3",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-3",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "prefixExperiment": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-3",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-4",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-4",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2448,
+        "allocations": 1160,
+        "iteratorNext": 159
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2448,
+        "allocations": 1160,
+        "iteratorNext": 159
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-4",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-4",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2448,
+        "allocations": 1160,
+        "iteratorNext": 159
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2448,
+        "allocations": 1160,
+        "iteratorNext": 159
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-5",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "prefixExperiment": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-5",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-5",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "prefixExperiment": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-5",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-6",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "prefixExperiment": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-6",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-6",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "prefixExperiment": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-6",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-7",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "prefixExperiment": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-7",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-7",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "prefixExperiment": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "original-7",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-0",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-0",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2402,
+        "allocations": 1138,
+        "iteratorNext": 157
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2402,
+        "allocations": 1138,
+        "iteratorNext": 157
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-0",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-0",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2402,
+        "allocations": 1138,
+        "iteratorNext": 157
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2402,
+        "allocations": 1138,
+        "iteratorNext": 157
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-1",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-1",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2448,
+        "allocations": 1160,
+        "iteratorNext": 159
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2448,
+        "allocations": 1160,
+        "iteratorNext": 159
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-1",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-1",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2448,
+        "allocations": 1160,
+        "iteratorNext": 159
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2448,
+        "allocations": 1160,
+        "iteratorNext": 159
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-2",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24587,
+        "allocations": 11472,
+        "iteratorNext": 1145
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24587,
+        "allocations": 11472,
+        "iteratorNext": 1145
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-2",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2488,
+        "allocations": 1180,
+        "iteratorNext": 161
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2488,
+        "allocations": 1180,
+        "iteratorNext": 161
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-2",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24587,
+        "allocations": 11472,
+        "iteratorNext": 1145
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24587,
+        "allocations": 11472,
+        "iteratorNext": 1145
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-2",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2488,
+        "allocations": 1180,
+        "iteratorNext": 161
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2488,
+        "allocations": 1180,
+        "iteratorNext": 161
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-3",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24529,
+        "allocations": 11443,
+        "iteratorNext": 1143
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24526,
+        "allocations": 11442,
+        "iteratorNext": 1142
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-3",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2528,
+        "allocations": 1200,
+        "iteratorNext": 163
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2528,
+        "allocations": 1200,
+        "iteratorNext": 163
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-3",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24529,
+        "allocations": 11443,
+        "iteratorNext": 1143
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24526,
+        "allocations": 11442,
+        "iteratorNext": 1142
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-3",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2528,
+        "allocations": 1200,
+        "iteratorNext": 163
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2528,
+        "allocations": 1200,
+        "iteratorNext": 163
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-4",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24471,
+        "allocations": 11414,
+        "iteratorNext": 1141
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24425,
+        "allocations": 11393,
+        "iteratorNext": 1138
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-4",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2568,
+        "allocations": 1220,
+        "iteratorNext": 165
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2568,
+        "allocations": 1220,
+        "iteratorNext": 165
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-4",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24471,
+        "allocations": 11414,
+        "iteratorNext": 1141
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24425,
+        "allocations": 11393,
+        "iteratorNext": 1138
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-4",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2568,
+        "allocations": 1220,
+        "iteratorNext": 165
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2568,
+        "allocations": 1220,
+        "iteratorNext": 165
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-5",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24413,
+        "allocations": 11385,
+        "iteratorNext": 1139
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24318,
+        "allocations": 11342,
+        "iteratorNext": 1132
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-5",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2608,
+        "allocations": 1240,
+        "iteratorNext": 167
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2608,
+        "allocations": 1240,
+        "iteratorNext": 167
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-5",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24413,
+        "allocations": 11385,
+        "iteratorNext": 1139
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24318,
+        "allocations": 11342,
+        "iteratorNext": 1132
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-5",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2608,
+        "allocations": 1240,
+        "iteratorNext": 167
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2608,
+        "allocations": 1240,
+        "iteratorNext": 167
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-6",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24355,
+        "allocations": 11356,
+        "iteratorNext": 1137
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24171,
+        "allocations": 11272,
+        "iteratorNext": 1125
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-6",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2648,
+        "allocations": 1260,
+        "iteratorNext": 169
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2648,
+        "allocations": 1260,
+        "iteratorNext": 169
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-6",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24355,
+        "allocations": 11356,
+        "iteratorNext": 1137
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24171,
+        "allocations": 11272,
+        "iteratorNext": 1125
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-6",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2648,
+        "allocations": 1260,
+        "iteratorNext": 169
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2648,
+        "allocations": 1260,
+        "iteratorNext": 169
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-7",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24297,
+        "allocations": 11327,
+        "iteratorNext": 1135
+      },
+      "prefixExperiment": {
+        "cloneVisits": 23981,
+        "allocations": 11182,
+        "iteratorNext": 1116
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-7",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2688,
+        "allocations": 1280,
+        "iteratorNext": 171
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2688,
+        "allocations": 1280,
+        "iteratorNext": 171
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-7",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24297,
+        "allocations": 11327,
+        "iteratorNext": 1135
+      },
+      "prefixExperiment": {
+        "cloneVisits": 23981,
+        "allocations": 11182,
+        "iteratorNext": 1116
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-7",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2688,
+        "allocations": 1280,
+        "iteratorNext": 171
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2688,
+        "allocations": 1280,
+        "iteratorNext": 171
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-8",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24239,
+        "allocations": 11298,
+        "iteratorNext": 1133
+      },
+      "prefixExperiment": {
+        "cloneVisits": 23751,
+        "allocations": 11073,
+        "iteratorNext": 1106
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-8",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2728,
+        "allocations": 1300,
+        "iteratorNext": 173
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2728,
+        "allocations": 1300,
+        "iteratorNext": 173
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-8",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24239,
+        "allocations": 11298,
+        "iteratorNext": 1133
+      },
+      "prefixExperiment": {
+        "cloneVisits": 23751,
+        "allocations": 11073,
+        "iteratorNext": 1106
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-8",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2728,
+        "allocations": 1300,
+        "iteratorNext": 173
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2728,
+        "allocations": 1300,
+        "iteratorNext": 173
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-9",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24181,
+        "allocations": 11269,
+        "iteratorNext": 1131
+      },
+      "prefixExperiment": {
+        "cloneVisits": 23512,
+        "allocations": 10961,
+        "iteratorNext": 1093
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-9",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2768,
+        "allocations": 1320,
+        "iteratorNext": 175
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2768,
+        "allocations": 1320,
+        "iteratorNext": 175
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-9",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24181,
+        "allocations": 11269,
+        "iteratorNext": 1131
+      },
+      "prefixExperiment": {
+        "cloneVisits": 23512,
+        "allocations": 10961,
+        "iteratorNext": 1093
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-9",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2768,
+        "allocations": 1320,
+        "iteratorNext": 175
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2768,
+        "allocations": 1320,
+        "iteratorNext": 175
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-10",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24123,
+        "allocations": 11240,
+        "iteratorNext": 1129
+      },
+      "prefixExperiment": {
+        "cloneVisits": 23233,
+        "allocations": 10830,
+        "iteratorNext": 1079
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-10",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2808,
+        "allocations": 1340,
+        "iteratorNext": 177
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2808,
+        "allocations": 1340,
+        "iteratorNext": 177
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-10",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24123,
+        "allocations": 11240,
+        "iteratorNext": 1129
+      },
+      "prefixExperiment": {
+        "cloneVisits": 23233,
+        "allocations": 10830,
+        "iteratorNext": 1079
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-10",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2808,
+        "allocations": 1340,
+        "iteratorNext": 177
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2808,
+        "allocations": 1340,
+        "iteratorNext": 177
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-11",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24065,
+        "allocations": 11211,
+        "iteratorNext": 1127
+      },
+      "prefixExperiment": {
+        "cloneVisits": 22911,
+        "allocations": 10679,
+        "iteratorNext": 1063
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-11",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2848,
+        "allocations": 1360,
+        "iteratorNext": 179
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2848,
+        "allocations": 1360,
+        "iteratorNext": 179
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-11",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24065,
+        "allocations": 11211,
+        "iteratorNext": 1127
+      },
+      "prefixExperiment": {
+        "cloneVisits": 22911,
+        "allocations": 10679,
+        "iteratorNext": 1063
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-11",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2848,
+        "allocations": 1360,
+        "iteratorNext": 179
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2848,
+        "allocations": 1360,
+        "iteratorNext": 179
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-12",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24007,
+        "allocations": 11182,
+        "iteratorNext": 1125
+      },
+      "prefixExperiment": {
+        "cloneVisits": 22549,
+        "allocations": 10509,
+        "iteratorNext": 1046
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-12",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2888,
+        "allocations": 1380,
+        "iteratorNext": 181
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2888,
+        "allocations": 1380,
+        "iteratorNext": 181
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-12",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24007,
+        "allocations": 11182,
+        "iteratorNext": 1125
+      },
+      "prefixExperiment": {
+        "cloneVisits": 22549,
+        "allocations": 10509,
+        "iteratorNext": 1046
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-12",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2888,
+        "allocations": 1380,
+        "iteratorNext": 181
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2888,
+        "allocations": 1380,
+        "iteratorNext": 181
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-13",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23949,
+        "allocations": 11153,
+        "iteratorNext": 1123
+      },
+      "prefixExperiment": {
+        "cloneVisits": 22141,
+        "allocations": 10318,
+        "iteratorNext": 1026
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-13",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2928,
+        "allocations": 1400,
+        "iteratorNext": 183
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2928,
+        "allocations": 1400,
+        "iteratorNext": 183
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-13",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23949,
+        "allocations": 11153,
+        "iteratorNext": 1123
+      },
+      "prefixExperiment": {
+        "cloneVisits": 22141,
+        "allocations": 10318,
+        "iteratorNext": 1026
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-13",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2928,
+        "allocations": 1400,
+        "iteratorNext": 183
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2928,
+        "allocations": 1400,
+        "iteratorNext": 183
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-14",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23891,
+        "allocations": 11124,
+        "iteratorNext": 1121
+      },
+      "prefixExperiment": {
+        "cloneVisits": 21693,
+        "allocations": 10108,
+        "iteratorNext": 1005
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-14",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2968,
+        "allocations": 1420,
+        "iteratorNext": 185
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2968,
+        "allocations": 1420,
+        "iteratorNext": 185
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-14",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23891,
+        "allocations": 11124,
+        "iteratorNext": 1121
+      },
+      "prefixExperiment": {
+        "cloneVisits": 21693,
+        "allocations": 10108,
+        "iteratorNext": 1005
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-14",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2968,
+        "allocations": 1420,
+        "iteratorNext": 185
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2968,
+        "allocations": 1420,
+        "iteratorNext": 185
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-15",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23833,
+        "allocations": 11095,
+        "iteratorNext": 1119
+      },
+      "prefixExperiment": {
+        "cloneVisits": 21202,
+        "allocations": 9878,
+        "iteratorNext": 982
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-15",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3008,
+        "allocations": 1440,
+        "iteratorNext": 187
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3008,
+        "allocations": 1440,
+        "iteratorNext": 187
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-15",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23833,
+        "allocations": 11095,
+        "iteratorNext": 1119
+      },
+      "prefixExperiment": {
+        "cloneVisits": 21202,
+        "allocations": 9878,
+        "iteratorNext": 982
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-15",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3008,
+        "allocations": 1440,
+        "iteratorNext": 187
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3008,
+        "allocations": 1440,
+        "iteratorNext": 187
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-16",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23775,
+        "allocations": 11066,
+        "iteratorNext": 1117
+      },
+      "prefixExperiment": {
+        "cloneVisits": 20671,
+        "allocations": 9629,
+        "iteratorNext": 958
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-16",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3048,
+        "allocations": 1460,
+        "iteratorNext": 189
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3048,
+        "allocations": 1460,
+        "iteratorNext": 189
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-16",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23775,
+        "allocations": 11066,
+        "iteratorNext": 1117
+      },
+      "prefixExperiment": {
+        "cloneVisits": 20671,
+        "allocations": 9629,
+        "iteratorNext": 958
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-16",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3048,
+        "allocations": 1460,
+        "iteratorNext": 189
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3048,
+        "allocations": 1460,
+        "iteratorNext": 189
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-17",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23717,
+        "allocations": 11037,
+        "iteratorNext": 1115
+      },
+      "prefixExperiment": {
+        "cloneVisits": 20128,
+        "allocations": 9376,
+        "iteratorNext": 930
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-17",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3088,
+        "allocations": 1480,
+        "iteratorNext": 191
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3088,
+        "allocations": 1480,
+        "iteratorNext": 191
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-17",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23717,
+        "allocations": 11037,
+        "iteratorNext": 1115
+      },
+      "prefixExperiment": {
+        "cloneVisits": 20128,
+        "allocations": 9376,
+        "iteratorNext": 930
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-17",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3088,
+        "allocations": 1480,
+        "iteratorNext": 191
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3088,
+        "allocations": 1480,
+        "iteratorNext": 191
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-18",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23659,
+        "allocations": 11008,
+        "iteratorNext": 1113
+      },
+      "prefixExperiment": {
+        "cloneVisits": 19545,
+        "allocations": 9104,
+        "iteratorNext": 901
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-18",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3128,
+        "allocations": 1500,
+        "iteratorNext": 193
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3128,
+        "allocations": 1500,
+        "iteratorNext": 193
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-18",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23659,
+        "allocations": 11008,
+        "iteratorNext": 1113
+      },
+      "prefixExperiment": {
+        "cloneVisits": 19545,
+        "allocations": 9104,
+        "iteratorNext": 901
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-18",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3128,
+        "allocations": 1500,
+        "iteratorNext": 193
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3128,
+        "allocations": 1500,
+        "iteratorNext": 193
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-19",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23601,
+        "allocations": 10979,
+        "iteratorNext": 1111
+      },
+      "prefixExperiment": {
+        "cloneVisits": 18919,
+        "allocations": 8812,
+        "iteratorNext": 870
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-19",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3168,
+        "allocations": 1520,
+        "iteratorNext": 195
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3168,
+        "allocations": 1520,
+        "iteratorNext": 195
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-19",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23601,
+        "allocations": 10979,
+        "iteratorNext": 1111
+      },
+      "prefixExperiment": {
+        "cloneVisits": 18919,
+        "allocations": 8812,
+        "iteratorNext": 870
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-19",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3168,
+        "allocations": 1520,
+        "iteratorNext": 195
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3168,
+        "allocations": 1520,
+        "iteratorNext": 195
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-20",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23543,
+        "allocations": 10950,
+        "iteratorNext": 1109
+      },
+      "prefixExperiment": {
+        "cloneVisits": 18253,
+        "allocations": 8501,
+        "iteratorNext": 838
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-20",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3208,
+        "allocations": 1540,
+        "iteratorNext": 197
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3208,
+        "allocations": 1540,
+        "iteratorNext": 197
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-20",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23543,
+        "allocations": 10950,
+        "iteratorNext": 1109
+      },
+      "prefixExperiment": {
+        "cloneVisits": 18253,
+        "allocations": 8501,
+        "iteratorNext": 838
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-20",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3208,
+        "allocations": 1540,
+        "iteratorNext": 197
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3208,
+        "allocations": 1540,
+        "iteratorNext": 197
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-21",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23485,
+        "allocations": 10921,
+        "iteratorNext": 1107
+      },
+      "prefixExperiment": {
+        "cloneVisits": 17541,
+        "allocations": 8169,
+        "iteratorNext": 803
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-21",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3248,
+        "allocations": 1560,
+        "iteratorNext": 199
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3248,
+        "allocations": 1560,
+        "iteratorNext": 199
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-21",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23485,
+        "allocations": 10921,
+        "iteratorNext": 1107
+      },
+      "prefixExperiment": {
+        "cloneVisits": 17541,
+        "allocations": 8169,
+        "iteratorNext": 803
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-21",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3248,
+        "allocations": 1560,
+        "iteratorNext": 199
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3248,
+        "allocations": 1560,
+        "iteratorNext": 199
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-22",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23427,
+        "allocations": 10892,
+        "iteratorNext": 1105
+      },
+      "prefixExperiment": {
+        "cloneVisits": 16789,
+        "allocations": 7818,
+        "iteratorNext": 767
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-22",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3288,
+        "allocations": 1580,
+        "iteratorNext": 201
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3288,
+        "allocations": 1580,
+        "iteratorNext": 201
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-22",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23427,
+        "allocations": 10892,
+        "iteratorNext": 1105
+      },
+      "prefixExperiment": {
+        "cloneVisits": 16789,
+        "allocations": 7818,
+        "iteratorNext": 767
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-22",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3288,
+        "allocations": 1580,
+        "iteratorNext": 201
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3288,
+        "allocations": 1580,
+        "iteratorNext": 201
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-23",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23369,
+        "allocations": 10863,
+        "iteratorNext": 1103
+      },
+      "prefixExperiment": {
+        "cloneVisits": 15994,
+        "allocations": 7447,
+        "iteratorNext": 729
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-23",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3328,
+        "allocations": 1600,
+        "iteratorNext": 203
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3328,
+        "allocations": 1600,
+        "iteratorNext": 203
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-23",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23369,
+        "allocations": 10863,
+        "iteratorNext": 1103
+      },
+      "prefixExperiment": {
+        "cloneVisits": 15994,
+        "allocations": 7447,
+        "iteratorNext": 729
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-23",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3328,
+        "allocations": 1600,
+        "iteratorNext": 203
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3328,
+        "allocations": 1600,
+        "iteratorNext": 203
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-24",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23311,
+        "allocations": 10834,
+        "iteratorNext": 1101
+      },
+      "prefixExperiment": {
+        "cloneVisits": 15159,
+        "allocations": 7057,
+        "iteratorNext": 690
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-24",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3368,
+        "allocations": 1620,
+        "iteratorNext": 205
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3368,
+        "allocations": 1620,
+        "iteratorNext": 205
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-24",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23311,
+        "allocations": 10834,
+        "iteratorNext": 1101
+      },
+      "prefixExperiment": {
+        "cloneVisits": 15159,
+        "allocations": 7057,
+        "iteratorNext": 690
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-24",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3368,
+        "allocations": 1620,
+        "iteratorNext": 205
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3368,
+        "allocations": 1620,
+        "iteratorNext": 205
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-25",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23253,
+        "allocations": 10805,
+        "iteratorNext": 1099
+      },
+      "prefixExperiment": {
+        "cloneVisits": 14275,
+        "allocations": 6645,
+        "iteratorNext": 647
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-25",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3408,
+        "allocations": 1640,
+        "iteratorNext": 207
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3408,
+        "allocations": 1640,
+        "iteratorNext": 207
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-25",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23253,
+        "allocations": 10805,
+        "iteratorNext": 1099
+      },
+      "prefixExperiment": {
+        "cloneVisits": 14275,
+        "allocations": 6645,
+        "iteratorNext": 647
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-25",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3408,
+        "allocations": 1640,
+        "iteratorNext": 207
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3408,
+        "allocations": 1640,
+        "iteratorNext": 207
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-26",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23195,
+        "allocations": 10776,
+        "iteratorNext": 1097
+      },
+      "prefixExperiment": {
+        "cloneVisits": 13351,
+        "allocations": 6214,
+        "iteratorNext": 603
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-26",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3448,
+        "allocations": 1660,
+        "iteratorNext": 209
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3448,
+        "allocations": 1660,
+        "iteratorNext": 209
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-26",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23195,
+        "allocations": 10776,
+        "iteratorNext": 1097
+      },
+      "prefixExperiment": {
+        "cloneVisits": 13351,
+        "allocations": 6214,
+        "iteratorNext": 603
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-26",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3448,
+        "allocations": 1660,
+        "iteratorNext": 209
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3448,
+        "allocations": 1660,
+        "iteratorNext": 209
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-27",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23137,
+        "allocations": 10747,
+        "iteratorNext": 1095
+      },
+      "prefixExperiment": {
+        "cloneVisits": 12384,
+        "allocations": 5763,
+        "iteratorNext": 557
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-27",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3488,
+        "allocations": 1680,
+        "iteratorNext": 211
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3488,
+        "allocations": 1680,
+        "iteratorNext": 211
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-27",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23137,
+        "allocations": 10747,
+        "iteratorNext": 1095
+      },
+      "prefixExperiment": {
+        "cloneVisits": 12384,
+        "allocations": 5763,
+        "iteratorNext": 557
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-27",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3488,
+        "allocations": 1680,
+        "iteratorNext": 211
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3488,
+        "allocations": 1680,
+        "iteratorNext": 211
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-28",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23079,
+        "allocations": 10718,
+        "iteratorNext": 1093
+      },
+      "prefixExperiment": {
+        "cloneVisits": 11377,
+        "allocations": 5293,
+        "iteratorNext": 510
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-28",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3528,
+        "allocations": 1700,
+        "iteratorNext": 213
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3528,
+        "allocations": 1700,
+        "iteratorNext": 213
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-28",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23079,
+        "allocations": 10718,
+        "iteratorNext": 1093
+      },
+      "prefixExperiment": {
+        "cloneVisits": 11377,
+        "allocations": 5293,
+        "iteratorNext": 510
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-28",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3528,
+        "allocations": 1700,
+        "iteratorNext": 213
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3528,
+        "allocations": 1700,
+        "iteratorNext": 213
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-29",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23021,
+        "allocations": 10689,
+        "iteratorNext": 1091
+      },
+      "prefixExperiment": {
+        "cloneVisits": 10324,
+        "allocations": 4802,
+        "iteratorNext": 460
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-29",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3568,
+        "allocations": 1720,
+        "iteratorNext": 215
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3568,
+        "allocations": 1720,
+        "iteratorNext": 215
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-29",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23021,
+        "allocations": 10689,
+        "iteratorNext": 1091
+      },
+      "prefixExperiment": {
+        "cloneVisits": 10324,
+        "allocations": 4802,
+        "iteratorNext": 460
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-29",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3568,
+        "allocations": 1720,
+        "iteratorNext": 215
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3568,
+        "allocations": 1720,
+        "iteratorNext": 215
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-30",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 22963,
+        "allocations": 10660,
+        "iteratorNext": 1089
+      },
+      "prefixExperiment": {
+        "cloneVisits": 9231,
+        "allocations": 4292,
+        "iteratorNext": 409
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-30",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3608,
+        "allocations": 1740,
+        "iteratorNext": 217
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3608,
+        "allocations": 1740,
+        "iteratorNext": 217
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-30",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 22963,
+        "allocations": 10660,
+        "iteratorNext": 1089
+      },
+      "prefixExperiment": {
+        "cloneVisits": 9231,
+        "allocations": 4292,
+        "iteratorNext": 409
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-30",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3608,
+        "allocations": 1740,
+        "iteratorNext": 217
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3608,
+        "allocations": 1740,
+        "iteratorNext": 217
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-31",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 22905,
+        "allocations": 10631,
+        "iteratorNext": 1087
+      },
+      "prefixExperiment": {
+        "cloneVisits": 8095,
+        "allocations": 3762,
+        "iteratorNext": 356
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-31",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3602,
+        "allocations": 1738,
+        "iteratorNext": 217
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3602,
+        "allocations": 1738,
+        "iteratorNext": 217
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-31",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 22905,
+        "allocations": 10631,
+        "iteratorNext": 1087
+      },
+      "prefixExperiment": {
+        "cloneVisits": 8095,
+        "allocations": 3762,
+        "iteratorNext": 356
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-31",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3602,
+        "allocations": 1738,
+        "iteratorNext": 217
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3602,
+        "allocations": 1738,
+        "iteratorNext": 217
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-0",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6874,
+        "allocations": 3198,
+        "iteratorNext": 292
+      },
+      "prefixExperiment": {
+        "cloneVisits": 6874,
+        "allocations": 3198,
+        "iteratorNext": 292
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-0",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2347,
+        "allocations": 1113,
+        "iteratorNext": 153
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2347,
+        "allocations": 1113,
+        "iteratorNext": 153
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-0",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6874,
+        "allocations": 3198,
+        "iteratorNext": 292
+      },
+      "prefixExperiment": {
+        "cloneVisits": 6874,
+        "allocations": 3198,
+        "iteratorNext": 292
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-0",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2347,
+        "allocations": 1113,
+        "iteratorNext": 153
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2347,
+        "allocations": 1113,
+        "iteratorNext": 153
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-1",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "prefixExperiment": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-1",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-1",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "prefixExperiment": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-1",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-2",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "prefixExperiment": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-2",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-2",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "prefixExperiment": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-2",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-3",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "prefixExperiment": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-3",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-3",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "prefixExperiment": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-3",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-4",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-4",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2448,
+        "allocations": 1160,
+        "iteratorNext": 159
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2448,
+        "allocations": 1160,
+        "iteratorNext": 159
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-4",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-4",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2448,
+        "allocations": 1160,
+        "iteratorNext": 159
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2448,
+        "allocations": 1160,
+        "iteratorNext": 159
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-5",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "prefixExperiment": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-5",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-5",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "prefixExperiment": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-5",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-6",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "prefixExperiment": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-6",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-6",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "prefixExperiment": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-6",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-7",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "prefixExperiment": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-7",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-7",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "prefixExperiment": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "original-7",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-0",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-0",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2402,
+        "allocations": 1138,
+        "iteratorNext": 157
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2402,
+        "allocations": 1138,
+        "iteratorNext": 157
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-0",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-0",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2402,
+        "allocations": 1138,
+        "iteratorNext": 157
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2402,
+        "allocations": 1138,
+        "iteratorNext": 157
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-1",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-1",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2448,
+        "allocations": 1160,
+        "iteratorNext": 159
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2448,
+        "allocations": 1160,
+        "iteratorNext": 159
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-1",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-1",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2448,
+        "allocations": 1160,
+        "iteratorNext": 159
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2448,
+        "allocations": 1160,
+        "iteratorNext": 159
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-2",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24587,
+        "allocations": 11472,
+        "iteratorNext": 1145
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24587,
+        "allocations": 11472,
+        "iteratorNext": 1145
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-2",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2488,
+        "allocations": 1180,
+        "iteratorNext": 161
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2488,
+        "allocations": 1180,
+        "iteratorNext": 161
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-2",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24587,
+        "allocations": 11472,
+        "iteratorNext": 1145
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24587,
+        "allocations": 11472,
+        "iteratorNext": 1145
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-2",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2488,
+        "allocations": 1180,
+        "iteratorNext": 161
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2488,
+        "allocations": 1180,
+        "iteratorNext": 161
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-3",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24529,
+        "allocations": 11443,
+        "iteratorNext": 1143
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24526,
+        "allocations": 11442,
+        "iteratorNext": 1142
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-3",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2528,
+        "allocations": 1200,
+        "iteratorNext": 163
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2528,
+        "allocations": 1200,
+        "iteratorNext": 163
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-3",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24529,
+        "allocations": 11443,
+        "iteratorNext": 1143
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24526,
+        "allocations": 11442,
+        "iteratorNext": 1142
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-3",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2528,
+        "allocations": 1200,
+        "iteratorNext": 163
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2528,
+        "allocations": 1200,
+        "iteratorNext": 163
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-4",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24471,
+        "allocations": 11414,
+        "iteratorNext": 1141
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24425,
+        "allocations": 11393,
+        "iteratorNext": 1138
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-4",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2568,
+        "allocations": 1220,
+        "iteratorNext": 165
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2568,
+        "allocations": 1220,
+        "iteratorNext": 165
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-4",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24471,
+        "allocations": 11414,
+        "iteratorNext": 1141
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24425,
+        "allocations": 11393,
+        "iteratorNext": 1138
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-4",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2568,
+        "allocations": 1220,
+        "iteratorNext": 165
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2568,
+        "allocations": 1220,
+        "iteratorNext": 165
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-5",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24413,
+        "allocations": 11385,
+        "iteratorNext": 1139
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24318,
+        "allocations": 11342,
+        "iteratorNext": 1132
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-5",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2608,
+        "allocations": 1240,
+        "iteratorNext": 167
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2608,
+        "allocations": 1240,
+        "iteratorNext": 167
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-5",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24413,
+        "allocations": 11385,
+        "iteratorNext": 1139
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24318,
+        "allocations": 11342,
+        "iteratorNext": 1132
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-5",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2608,
+        "allocations": 1240,
+        "iteratorNext": 167
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2608,
+        "allocations": 1240,
+        "iteratorNext": 167
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-6",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24355,
+        "allocations": 11356,
+        "iteratorNext": 1137
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24171,
+        "allocations": 11272,
+        "iteratorNext": 1125
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-6",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2648,
+        "allocations": 1260,
+        "iteratorNext": 169
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2648,
+        "allocations": 1260,
+        "iteratorNext": 169
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-6",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24355,
+        "allocations": 11356,
+        "iteratorNext": 1137
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24171,
+        "allocations": 11272,
+        "iteratorNext": 1125
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-6",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2648,
+        "allocations": 1260,
+        "iteratorNext": 169
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2648,
+        "allocations": 1260,
+        "iteratorNext": 169
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-7",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24297,
+        "allocations": 11327,
+        "iteratorNext": 1135
+      },
+      "prefixExperiment": {
+        "cloneVisits": 23981,
+        "allocations": 11182,
+        "iteratorNext": 1116
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-7",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2688,
+        "allocations": 1280,
+        "iteratorNext": 171
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2688,
+        "allocations": 1280,
+        "iteratorNext": 171
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-7",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24297,
+        "allocations": 11327,
+        "iteratorNext": 1135
+      },
+      "prefixExperiment": {
+        "cloneVisits": 23981,
+        "allocations": 11182,
+        "iteratorNext": 1116
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-7",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2688,
+        "allocations": 1280,
+        "iteratorNext": 171
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2688,
+        "allocations": 1280,
+        "iteratorNext": 171
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-8",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24239,
+        "allocations": 11298,
+        "iteratorNext": 1133
+      },
+      "prefixExperiment": {
+        "cloneVisits": 23751,
+        "allocations": 11073,
+        "iteratorNext": 1106
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-8",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2728,
+        "allocations": 1300,
+        "iteratorNext": 173
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2728,
+        "allocations": 1300,
+        "iteratorNext": 173
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-8",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24239,
+        "allocations": 11298,
+        "iteratorNext": 1133
+      },
+      "prefixExperiment": {
+        "cloneVisits": 23751,
+        "allocations": 11073,
+        "iteratorNext": 1106
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-8",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2728,
+        "allocations": 1300,
+        "iteratorNext": 173
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2728,
+        "allocations": 1300,
+        "iteratorNext": 173
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-9",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24181,
+        "allocations": 11269,
+        "iteratorNext": 1131
+      },
+      "prefixExperiment": {
+        "cloneVisits": 23512,
+        "allocations": 10961,
+        "iteratorNext": 1093
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-9",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2768,
+        "allocations": 1320,
+        "iteratorNext": 175
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2768,
+        "allocations": 1320,
+        "iteratorNext": 175
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-9",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24181,
+        "allocations": 11269,
+        "iteratorNext": 1131
+      },
+      "prefixExperiment": {
+        "cloneVisits": 23512,
+        "allocations": 10961,
+        "iteratorNext": 1093
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-9",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2768,
+        "allocations": 1320,
+        "iteratorNext": 175
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2768,
+        "allocations": 1320,
+        "iteratorNext": 175
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-10",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24123,
+        "allocations": 11240,
+        "iteratorNext": 1129
+      },
+      "prefixExperiment": {
+        "cloneVisits": 23233,
+        "allocations": 10830,
+        "iteratorNext": 1079
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-10",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2808,
+        "allocations": 1340,
+        "iteratorNext": 177
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2808,
+        "allocations": 1340,
+        "iteratorNext": 177
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-10",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24123,
+        "allocations": 11240,
+        "iteratorNext": 1129
+      },
+      "prefixExperiment": {
+        "cloneVisits": 23233,
+        "allocations": 10830,
+        "iteratorNext": 1079
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-10",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2808,
+        "allocations": 1340,
+        "iteratorNext": 177
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2808,
+        "allocations": 1340,
+        "iteratorNext": 177
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-11",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24065,
+        "allocations": 11211,
+        "iteratorNext": 1127
+      },
+      "prefixExperiment": {
+        "cloneVisits": 22911,
+        "allocations": 10679,
+        "iteratorNext": 1063
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-11",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2848,
+        "allocations": 1360,
+        "iteratorNext": 179
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2848,
+        "allocations": 1360,
+        "iteratorNext": 179
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-11",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24065,
+        "allocations": 11211,
+        "iteratorNext": 1127
+      },
+      "prefixExperiment": {
+        "cloneVisits": 22911,
+        "allocations": 10679,
+        "iteratorNext": 1063
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-11",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2848,
+        "allocations": 1360,
+        "iteratorNext": 179
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2848,
+        "allocations": 1360,
+        "iteratorNext": 179
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-12",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24007,
+        "allocations": 11182,
+        "iteratorNext": 1125
+      },
+      "prefixExperiment": {
+        "cloneVisits": 22549,
+        "allocations": 10509,
+        "iteratorNext": 1046
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-12",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2888,
+        "allocations": 1380,
+        "iteratorNext": 181
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2888,
+        "allocations": 1380,
+        "iteratorNext": 181
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-12",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24007,
+        "allocations": 11182,
+        "iteratorNext": 1125
+      },
+      "prefixExperiment": {
+        "cloneVisits": 22549,
+        "allocations": 10509,
+        "iteratorNext": 1046
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-12",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2888,
+        "allocations": 1380,
+        "iteratorNext": 181
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2888,
+        "allocations": 1380,
+        "iteratorNext": 181
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-13",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23949,
+        "allocations": 11153,
+        "iteratorNext": 1123
+      },
+      "prefixExperiment": {
+        "cloneVisits": 22141,
+        "allocations": 10318,
+        "iteratorNext": 1026
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-13",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2928,
+        "allocations": 1400,
+        "iteratorNext": 183
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2928,
+        "allocations": 1400,
+        "iteratorNext": 183
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-13",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23949,
+        "allocations": 11153,
+        "iteratorNext": 1123
+      },
+      "prefixExperiment": {
+        "cloneVisits": 22141,
+        "allocations": 10318,
+        "iteratorNext": 1026
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-13",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2928,
+        "allocations": 1400,
+        "iteratorNext": 183
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2928,
+        "allocations": 1400,
+        "iteratorNext": 183
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-14",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23891,
+        "allocations": 11124,
+        "iteratorNext": 1121
+      },
+      "prefixExperiment": {
+        "cloneVisits": 21693,
+        "allocations": 10108,
+        "iteratorNext": 1005
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-14",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2968,
+        "allocations": 1420,
+        "iteratorNext": 185
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2968,
+        "allocations": 1420,
+        "iteratorNext": 185
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-14",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23891,
+        "allocations": 11124,
+        "iteratorNext": 1121
+      },
+      "prefixExperiment": {
+        "cloneVisits": 21693,
+        "allocations": 10108,
+        "iteratorNext": 1005
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-14",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2968,
+        "allocations": 1420,
+        "iteratorNext": 185
+      },
+      "prefixExperiment": {
+        "cloneVisits": 2968,
+        "allocations": 1420,
+        "iteratorNext": 185
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-15",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23833,
+        "allocations": 11095,
+        "iteratorNext": 1119
+      },
+      "prefixExperiment": {
+        "cloneVisits": 21202,
+        "allocations": 9878,
+        "iteratorNext": 982
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-15",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3008,
+        "allocations": 1440,
+        "iteratorNext": 187
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3008,
+        "allocations": 1440,
+        "iteratorNext": 187
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-15",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23833,
+        "allocations": 11095,
+        "iteratorNext": 1119
+      },
+      "prefixExperiment": {
+        "cloneVisits": 21202,
+        "allocations": 9878,
+        "iteratorNext": 982
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-15",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3008,
+        "allocations": 1440,
+        "iteratorNext": 187
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3008,
+        "allocations": 1440,
+        "iteratorNext": 187
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-16",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23775,
+        "allocations": 11066,
+        "iteratorNext": 1117
+      },
+      "prefixExperiment": {
+        "cloneVisits": 20671,
+        "allocations": 9629,
+        "iteratorNext": 958
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-16",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3048,
+        "allocations": 1460,
+        "iteratorNext": 189
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3048,
+        "allocations": 1460,
+        "iteratorNext": 189
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-16",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23775,
+        "allocations": 11066,
+        "iteratorNext": 1117
+      },
+      "prefixExperiment": {
+        "cloneVisits": 20671,
+        "allocations": 9629,
+        "iteratorNext": 958
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-16",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3048,
+        "allocations": 1460,
+        "iteratorNext": 189
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3048,
+        "allocations": 1460,
+        "iteratorNext": 189
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-17",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23717,
+        "allocations": 11037,
+        "iteratorNext": 1115
+      },
+      "prefixExperiment": {
+        "cloneVisits": 20128,
+        "allocations": 9376,
+        "iteratorNext": 930
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-17",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3088,
+        "allocations": 1480,
+        "iteratorNext": 191
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3088,
+        "allocations": 1480,
+        "iteratorNext": 191
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-17",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23717,
+        "allocations": 11037,
+        "iteratorNext": 1115
+      },
+      "prefixExperiment": {
+        "cloneVisits": 20128,
+        "allocations": 9376,
+        "iteratorNext": 930
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-17",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3088,
+        "allocations": 1480,
+        "iteratorNext": 191
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3088,
+        "allocations": 1480,
+        "iteratorNext": 191
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-18",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23659,
+        "allocations": 11008,
+        "iteratorNext": 1113
+      },
+      "prefixExperiment": {
+        "cloneVisits": 19545,
+        "allocations": 9104,
+        "iteratorNext": 901
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-18",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3128,
+        "allocations": 1500,
+        "iteratorNext": 193
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3128,
+        "allocations": 1500,
+        "iteratorNext": 193
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-18",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23659,
+        "allocations": 11008,
+        "iteratorNext": 1113
+      },
+      "prefixExperiment": {
+        "cloneVisits": 19545,
+        "allocations": 9104,
+        "iteratorNext": 901
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-18",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3128,
+        "allocations": 1500,
+        "iteratorNext": 193
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3128,
+        "allocations": 1500,
+        "iteratorNext": 193
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-19",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23601,
+        "allocations": 10979,
+        "iteratorNext": 1111
+      },
+      "prefixExperiment": {
+        "cloneVisits": 18919,
+        "allocations": 8812,
+        "iteratorNext": 870
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-19",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3168,
+        "allocations": 1520,
+        "iteratorNext": 195
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3168,
+        "allocations": 1520,
+        "iteratorNext": 195
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-19",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23601,
+        "allocations": 10979,
+        "iteratorNext": 1111
+      },
+      "prefixExperiment": {
+        "cloneVisits": 18919,
+        "allocations": 8812,
+        "iteratorNext": 870
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-19",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3168,
+        "allocations": 1520,
+        "iteratorNext": 195
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3168,
+        "allocations": 1520,
+        "iteratorNext": 195
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-20",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23543,
+        "allocations": 10950,
+        "iteratorNext": 1109
+      },
+      "prefixExperiment": {
+        "cloneVisits": 18253,
+        "allocations": 8501,
+        "iteratorNext": 838
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-20",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3208,
+        "allocations": 1540,
+        "iteratorNext": 197
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3208,
+        "allocations": 1540,
+        "iteratorNext": 197
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-20",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23543,
+        "allocations": 10950,
+        "iteratorNext": 1109
+      },
+      "prefixExperiment": {
+        "cloneVisits": 18253,
+        "allocations": 8501,
+        "iteratorNext": 838
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-20",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3208,
+        "allocations": 1540,
+        "iteratorNext": 197
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3208,
+        "allocations": 1540,
+        "iteratorNext": 197
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-21",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23485,
+        "allocations": 10921,
+        "iteratorNext": 1107
+      },
+      "prefixExperiment": {
+        "cloneVisits": 17541,
+        "allocations": 8169,
+        "iteratorNext": 803
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-21",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3248,
+        "allocations": 1560,
+        "iteratorNext": 199
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3248,
+        "allocations": 1560,
+        "iteratorNext": 199
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-21",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23485,
+        "allocations": 10921,
+        "iteratorNext": 1107
+      },
+      "prefixExperiment": {
+        "cloneVisits": 17541,
+        "allocations": 8169,
+        "iteratorNext": 803
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-21",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3248,
+        "allocations": 1560,
+        "iteratorNext": 199
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3248,
+        "allocations": 1560,
+        "iteratorNext": 199
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-22",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23427,
+        "allocations": 10892,
+        "iteratorNext": 1105
+      },
+      "prefixExperiment": {
+        "cloneVisits": 16789,
+        "allocations": 7818,
+        "iteratorNext": 767
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-22",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3288,
+        "allocations": 1580,
+        "iteratorNext": 201
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3288,
+        "allocations": 1580,
+        "iteratorNext": 201
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-22",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23427,
+        "allocations": 10892,
+        "iteratorNext": 1105
+      },
+      "prefixExperiment": {
+        "cloneVisits": 16789,
+        "allocations": 7818,
+        "iteratorNext": 767
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-22",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3288,
+        "allocations": 1580,
+        "iteratorNext": 201
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3288,
+        "allocations": 1580,
+        "iteratorNext": 201
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-23",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23369,
+        "allocations": 10863,
+        "iteratorNext": 1103
+      },
+      "prefixExperiment": {
+        "cloneVisits": 15994,
+        "allocations": 7447,
+        "iteratorNext": 729
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-23",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3328,
+        "allocations": 1600,
+        "iteratorNext": 203
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3328,
+        "allocations": 1600,
+        "iteratorNext": 203
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-23",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23369,
+        "allocations": 10863,
+        "iteratorNext": 1103
+      },
+      "prefixExperiment": {
+        "cloneVisits": 15994,
+        "allocations": 7447,
+        "iteratorNext": 729
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-23",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3328,
+        "allocations": 1600,
+        "iteratorNext": 203
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3328,
+        "allocations": 1600,
+        "iteratorNext": 203
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-24",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23311,
+        "allocations": 10834,
+        "iteratorNext": 1101
+      },
+      "prefixExperiment": {
+        "cloneVisits": 15159,
+        "allocations": 7057,
+        "iteratorNext": 690
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-24",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3368,
+        "allocations": 1620,
+        "iteratorNext": 205
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3368,
+        "allocations": 1620,
+        "iteratorNext": 205
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-24",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23311,
+        "allocations": 10834,
+        "iteratorNext": 1101
+      },
+      "prefixExperiment": {
+        "cloneVisits": 15159,
+        "allocations": 7057,
+        "iteratorNext": 690
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-24",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3368,
+        "allocations": 1620,
+        "iteratorNext": 205
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3368,
+        "allocations": 1620,
+        "iteratorNext": 205
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-25",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23253,
+        "allocations": 10805,
+        "iteratorNext": 1099
+      },
+      "prefixExperiment": {
+        "cloneVisits": 14275,
+        "allocations": 6645,
+        "iteratorNext": 647
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-25",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3408,
+        "allocations": 1640,
+        "iteratorNext": 207
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3408,
+        "allocations": 1640,
+        "iteratorNext": 207
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-25",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23253,
+        "allocations": 10805,
+        "iteratorNext": 1099
+      },
+      "prefixExperiment": {
+        "cloneVisits": 14275,
+        "allocations": 6645,
+        "iteratorNext": 647
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-25",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3408,
+        "allocations": 1640,
+        "iteratorNext": 207
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3408,
+        "allocations": 1640,
+        "iteratorNext": 207
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-26",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23195,
+        "allocations": 10776,
+        "iteratorNext": 1097
+      },
+      "prefixExperiment": {
+        "cloneVisits": 13351,
+        "allocations": 6214,
+        "iteratorNext": 603
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-26",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3448,
+        "allocations": 1660,
+        "iteratorNext": 209
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3448,
+        "allocations": 1660,
+        "iteratorNext": 209
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-26",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23195,
+        "allocations": 10776,
+        "iteratorNext": 1097
+      },
+      "prefixExperiment": {
+        "cloneVisits": 13351,
+        "allocations": 6214,
+        "iteratorNext": 603
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-26",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3448,
+        "allocations": 1660,
+        "iteratorNext": 209
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3448,
+        "allocations": 1660,
+        "iteratorNext": 209
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-27",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23137,
+        "allocations": 10747,
+        "iteratorNext": 1095
+      },
+      "prefixExperiment": {
+        "cloneVisits": 12384,
+        "allocations": 5763,
+        "iteratorNext": 557
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-27",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3488,
+        "allocations": 1680,
+        "iteratorNext": 211
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3488,
+        "allocations": 1680,
+        "iteratorNext": 211
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-27",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23137,
+        "allocations": 10747,
+        "iteratorNext": 1095
+      },
+      "prefixExperiment": {
+        "cloneVisits": 12384,
+        "allocations": 5763,
+        "iteratorNext": 557
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-27",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3488,
+        "allocations": 1680,
+        "iteratorNext": 211
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3488,
+        "allocations": 1680,
+        "iteratorNext": 211
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-28",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23079,
+        "allocations": 10718,
+        "iteratorNext": 1093
+      },
+      "prefixExperiment": {
+        "cloneVisits": 11377,
+        "allocations": 5293,
+        "iteratorNext": 510
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-28",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3528,
+        "allocations": 1700,
+        "iteratorNext": 213
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3528,
+        "allocations": 1700,
+        "iteratorNext": 213
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-28",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23079,
+        "allocations": 10718,
+        "iteratorNext": 1093
+      },
+      "prefixExperiment": {
+        "cloneVisits": 11377,
+        "allocations": 5293,
+        "iteratorNext": 510
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-28",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3528,
+        "allocations": 1700,
+        "iteratorNext": 213
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3528,
+        "allocations": 1700,
+        "iteratorNext": 213
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-29",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23021,
+        "allocations": 10689,
+        "iteratorNext": 1091
+      },
+      "prefixExperiment": {
+        "cloneVisits": 10324,
+        "allocations": 4802,
+        "iteratorNext": 460
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-29",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3568,
+        "allocations": 1720,
+        "iteratorNext": 215
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3568,
+        "allocations": 1720,
+        "iteratorNext": 215
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-29",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23021,
+        "allocations": 10689,
+        "iteratorNext": 1091
+      },
+      "prefixExperiment": {
+        "cloneVisits": 10324,
+        "allocations": 4802,
+        "iteratorNext": 460
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-29",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3568,
+        "allocations": 1720,
+        "iteratorNext": 215
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3568,
+        "allocations": 1720,
+        "iteratorNext": 215
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-30",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 22963,
+        "allocations": 10660,
+        "iteratorNext": 1089
+      },
+      "prefixExperiment": {
+        "cloneVisits": 9231,
+        "allocations": 4292,
+        "iteratorNext": 409
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-30",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3608,
+        "allocations": 1740,
+        "iteratorNext": 217
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3608,
+        "allocations": 1740,
+        "iteratorNext": 217
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-30",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 22963,
+        "allocations": 10660,
+        "iteratorNext": 1089
+      },
+      "prefixExperiment": {
+        "cloneVisits": 9231,
+        "allocations": 4292,
+        "iteratorNext": 409
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-30",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3608,
+        "allocations": 1740,
+        "iteratorNext": 217
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3608,
+        "allocations": 1740,
+        "iteratorNext": 217
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-31",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 22905,
+        "allocations": 10631,
+        "iteratorNext": 1087
+      },
+      "prefixExperiment": {
+        "cloneVisits": 8095,
+        "allocations": 3762,
+        "iteratorNext": 356
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-31",
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3602,
+        "allocations": 1738,
+        "iteratorNext": 217
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3602,
+        "allocations": 1738,
+        "iteratorNext": 217
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-31",
+      "scope": "collaboration",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 22905,
+        "allocations": 10631,
+        "iteratorNext": 1087
+      },
+      "prefixExperiment": {
+        "cloneVisits": 8095,
+        "allocations": 3762,
+        "iteratorNext": 356
+      },
+      "differences": []
+    },
+    {
+      "format": "cjs",
+      "index": "paragraph-position-31",
+      "scope": "collaboration",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 3602,
+        "allocations": 1738,
+        "iteratorNext": 217
+      },
+      "prefixExperiment": {
+        "cloneVisits": 3602,
+        "allocations": 1738,
+        "iteratorNext": 217
+      },
+      "differences": []
+    }
+  ]
+}

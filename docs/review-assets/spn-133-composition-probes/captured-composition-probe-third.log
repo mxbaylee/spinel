@@ -1,0 +1,312 @@
+{
+  "cases": 64,
+  "equal": 64,
+  "mismatches": [],
+  "representative": [
+    {
+      "format": "es",
+      "index": 0,
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6874,
+        "allocations": 3198,
+        "iteratorNext": 292
+      },
+      "forcedBalanced": {
+        "cloneVisits": 6874,
+        "allocations": 3198,
+        "iteratorNext": 292
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": 0,
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2347,
+        "allocations": 1113,
+        "iteratorNext": 153
+      },
+      "forcedBalanced": {
+        "cloneVisits": 2311,
+        "allocations": 1101,
+        "iteratorNext": 145
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": 1,
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "forcedBalanced": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": 1,
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "forcedBalanced": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": 2,
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "forcedBalanced": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": 2,
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "forcedBalanced": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": 3,
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "forcedBalanced": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": 3,
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "forcedBalanced": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": 4,
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "forcedBalanced": {
+        "cloneVisits": 7209,
+        "allocations": 3358,
+        "iteratorNext": 312
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": 4,
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2448,
+        "allocations": 1160,
+        "iteratorNext": 159
+      },
+      "forcedBalanced": {
+        "cloneVisits": 2562,
+        "allocations": 1218,
+        "iteratorNext": 165
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": 5,
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "forcedBalanced": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": 5,
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "forcedBalanced": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": 6,
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "forcedBalanced": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": 6,
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "forcedBalanced": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": 7,
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "forcedBalanced": {
+        "cloneVisits": 6919,
+        "allocations": 3213,
+        "iteratorNext": 302
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": 7,
+      "scope": "history",
+      "key": "undoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "forcedBalanced": {
+        "cloneVisits": 2356,
+        "allocations": 1116,
+        "iteratorNext": 155
+      },
+      "differences": []
+    }
+  ]
+}
+WATCHDOG: exit=0, signal=null, elapsed=380ms, peak=289.1MiB

@@ -1,0 +1,13 @@
+evalmachine.<anonymous>:62
+const IDocStateChangeInterceptorService = createIdentifier("doc.state-change-interceptor-service");
+                                          ^
+
+ReferenceError: createIdentifier is not defined
+    at evalmachine.<anonymous>:62:43
+    at Script.runInContext (node:vm:150:12)
+    at Script.runInNewContext (node:vm:155:17)
+    at runInNewContext (node:vm:311:38)
+    at file:///private/tmp/spn133-review/compose-captured-probe.ts:40:16
+
+Node.js v26.12.1
+WATCHDOG: exit=1, signal=null, elapsed=207ms, peak=0.0MiB

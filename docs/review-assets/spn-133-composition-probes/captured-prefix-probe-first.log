@@ -1,0 +1,160 @@
+{
+  "cases": 320,
+  "equal": 320,
+  "mismatches": [],
+  "representative": [
+    {
+      "format": "es",
+      "index": "original-4",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-0",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-1",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "prefixExperiment": {
+        "cloneVisits": 24645,
+        "allocations": 11501,
+        "iteratorNext": 1147
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-8",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 24239,
+        "allocations": 11298,
+        "iteratorNext": 1133
+      },
+      "prefixExperiment": {
+        "cloneVisits": 23751,
+        "allocations": 11073,
+        "iteratorNext": 1106
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-16",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23775,
+        "allocations": 11066,
+        "iteratorNext": 1117
+      },
+      "prefixExperiment": {
+        "cloneVisits": 20671,
+        "allocations": 9629,
+        "iteratorNext": 958
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-19",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23601,
+        "allocations": 10979,
+        "iteratorNext": 1111
+      },
+      "prefixExperiment": {
+        "cloneVisits": 18919,
+        "allocations": 8812,
+        "iteratorNext": 870
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-24",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 23311,
+        "allocations": 10834,
+        "iteratorNext": 1101
+      },
+      "prefixExperiment": {
+        "cloneVisits": 15159,
+        "allocations": 7057,
+        "iteratorNext": 690
+      },
+      "differences": []
+    },
+    {
+      "format": "es",
+      "index": "paragraph-position-31",
+      "scope": "history",
+      "key": "redoState",
+      "states": 32,
+      "equal": true,
+      "current": {
+        "cloneVisits": 22905,
+        "allocations": 10631,
+        "iteratorNext": 1087
+      },
+      "prefixExperiment": {
+        "cloneVisits": 8095,
+        "allocations": 3762,
+        "iteratorNext": 356
+      },
+      "differences": []
+    }
+  ]
+}
+WATCHDOG: exit=0, signal=null, elapsed=1354ms, peak=411.2MiB

@@ -1,0 +1,19 @@
+node:internal/modules/run_main:111
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+  assert.ok(start>0&&end>start)
+
+    at file:///private/tmp/spn133-review/compose-captured-probe.ts:35:133 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v26.12.1
+WATCHDOG: exit=1, signal=null, elapsed=414ms, peak=187.2MiB
