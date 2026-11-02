@@ -1,0 +1,16 @@
+{
+  "success": true,
+  "source": "91c0efbed06ae8805a998467527d4446a19044df",
+  "tree": "b80eb8706361027b89b14dcb927ee6f4e22de313",
+  "trackedFilesUnchanged": true,
+  "injectedFixture": true,
+  "tests": {
+    "startTime": "2026-11-02T16:09:03.696Z",
+    "duration": 34051.841,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "cleanup": "Playwright-reported test cleanup completed; original mirror file restored and verified."
+}

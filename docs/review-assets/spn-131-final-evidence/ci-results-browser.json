@@ -1,0 +1,610 @@
+{
+  "passed": true,
+  "evidence": {
+    "planSha256": "7fc8e0a4c499cccddfeafca3d743edfd00b718b8b3cbd762da36d86d3ef503c8",
+    "plan": {
+      "version": 1,
+      "event": "pull_request",
+      "action": "synchronize",
+      "base": "1fca8a98c315d2f715e8051537e50f2efbbe580b",
+      "head": "91c0efbed06ae8805a998467527d4446a19044df",
+      "tested": "0ffd348f580eeb4e86ed3d52a06f38d777ee51f0",
+      "mode": "full",
+      "labels": [],
+      "paths": [
+        "docs/development.md",
+        "docs/implementation/SPN-131.md",
+        "docs/implementation/SPN-136.md",
+        "docs/todo/SPN-131.md",
+        "docs/todo/backlog.json",
+        "docs/todo/readme.md",
+        "scripts/ci/prefer-ubuntu-archive.test.ts",
+        "scripts/ci/prefer-ubuntu-archive.ts",
+        "scripts/ci/ubuntu-mirror-evidence.test.ts",
+        "scripts/ci/ubuntu-mirror-evidence.ts"
+      ],
+      "suites": {
+        "backlog": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [
+            "docs/development.md",
+            "docs/implementation/SPN-131.md",
+            "docs/implementation/SPN-136.md",
+            "docs/todo/SPN-131.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "scripts/ci/prefer-ubuntu-archive.test.ts",
+            "scripts/ci/prefer-ubuntu-archive.ts",
+            "scripts/ci/ubuntu-mirror-evidence.test.ts",
+            "scripts/ci/ubuntu-mirror-evidence.ts"
+          ],
+          "reason": "Workflow, harness, build, runtime or dependency input requires full coverage."
+        },
+        "pull-request": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [
+            "docs/development.md",
+            "docs/implementation/SPN-131.md",
+            "docs/implementation/SPN-136.md",
+            "docs/todo/SPN-131.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "scripts/ci/prefer-ubuntu-archive.test.ts",
+            "scripts/ci/prefer-ubuntu-archive.ts",
+            "scripts/ci/ubuntu-mirror-evidence.test.ts",
+            "scripts/ci/ubuntu-mirror-evidence.ts"
+          ],
+          "reason": "Workflow, harness, build, runtime or dependency input requires full coverage."
+        },
+        "lint": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [
+            "docs/development.md",
+            "docs/implementation/SPN-131.md",
+            "docs/implementation/SPN-136.md",
+            "docs/todo/SPN-131.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "scripts/ci/prefer-ubuntu-archive.test.ts",
+            "scripts/ci/prefer-ubuntu-archive.ts",
+            "scripts/ci/ubuntu-mirror-evidence.test.ts",
+            "scripts/ci/ubuntu-mirror-evidence.ts"
+          ],
+          "reason": "Workflow, harness, build, runtime or dependency input requires full coverage."
+        },
+        "typecheck": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/development.md",
+            "docs/implementation/SPN-131.md",
+            "docs/implementation/SPN-136.md",
+            "docs/todo/SPN-131.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "scripts/ci/prefer-ubuntu-archive.test.ts",
+            "scripts/ci/prefer-ubuntu-archive.ts",
+            "scripts/ci/ubuntu-mirror-evidence.test.ts",
+            "scripts/ci/ubuntu-mirror-evidence.ts"
+          ],
+          "reason": "Workflow, harness, build, runtime or dependency input requires full coverage."
+        },
+        "unit-tests": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/development.md",
+            "docs/implementation/SPN-131.md",
+            "docs/implementation/SPN-136.md",
+            "docs/todo/SPN-131.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "scripts/ci/prefer-ubuntu-archive.test.ts",
+            "scripts/ci/prefer-ubuntu-archive.ts",
+            "scripts/ci/ubuntu-mirror-evidence.test.ts",
+            "scripts/ci/ubuntu-mirror-evidence.ts"
+          ],
+          "reason": "Workflow, harness, build, runtime or dependency input requires full coverage."
+        },
+        "lib-test-run": {
+          "selected": true,
+          "dependencies": [
+            "lib/**",
+            "scripts/dependencies/**",
+            "package{,-lock}.json",
+            "vitest.config.ts",
+            "tsconfig.json",
+            ".nvmrc",
+            ".github/workflows/ci.yml"
+          ],
+          "inputs": [
+            "docs/development.md",
+            "docs/implementation/SPN-131.md",
+            "docs/implementation/SPN-136.md",
+            "docs/todo/SPN-131.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "scripts/ci/prefer-ubuntu-archive.test.ts",
+            "scripts/ci/prefer-ubuntu-archive.ts",
+            "scripts/ci/ubuntu-mirror-evidence.test.ts",
+            "scripts/ci/ubuntu-mirror-evidence.ts"
+          ],
+          "reason": "Workflow, harness, build, runtime or dependency input requires full coverage."
+        },
+        "playwright-run": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/development.md",
+            "docs/implementation/SPN-131.md",
+            "docs/implementation/SPN-136.md",
+            "docs/todo/SPN-131.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "scripts/ci/prefer-ubuntu-archive.test.ts",
+            "scripts/ci/prefer-ubuntu-archive.ts",
+            "scripts/ci/ubuntu-mirror-evidence.test.ts",
+            "scripts/ci/ubuntu-mirror-evidence.ts"
+          ],
+          "reason": "Workflow, harness, build, runtime or dependency input requires full coverage."
+        },
+        "container-smoke": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/development.md",
+            "docs/implementation/SPN-131.md",
+            "docs/implementation/SPN-136.md",
+            "docs/todo/SPN-131.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "scripts/ci/prefer-ubuntu-archive.test.ts",
+            "scripts/ci/prefer-ubuntu-archive.ts",
+            "scripts/ci/ubuntu-mirror-evidence.test.ts",
+            "scripts/ci/ubuntu-mirror-evidence.ts"
+          ],
+          "reason": "Workflow, harness, build, runtime or dependency input requires full coverage."
+        },
+        "restore-timing": {
+          "selected": true,
+          "dependencies": [
+            "server/**",
+            "src/{server,shared}/**",
+            "lib/**",
+            "web/** and src/ui/** (shared application/authentication bundle)",
+            "e2e restore/shared helpers",
+            "runtime/build/dependency/workflow inputs"
+          ],
+          "inputs": [
+            "docs/development.md",
+            "docs/implementation/SPN-131.md",
+            "docs/implementation/SPN-136.md",
+            "docs/todo/SPN-131.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "scripts/ci/prefer-ubuntu-archive.test.ts",
+            "scripts/ci/prefer-ubuntu-archive.ts",
+            "scripts/ci/ubuntu-mirror-evidence.test.ts",
+            "scripts/ci/ubuntu-mirror-evidence.ts"
+          ],
+          "reason": "Workflow, harness, build, runtime or dependency input requires full coverage."
+        },
+        "sync-transition": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/development.md",
+            "docs/implementation/SPN-131.md",
+            "docs/implementation/SPN-136.md",
+            "docs/todo/SPN-131.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "scripts/ci/prefer-ubuntu-archive.test.ts",
+            "scripts/ci/prefer-ubuntu-archive.ts",
+            "scripts/ci/ubuntu-mirror-evidence.test.ts",
+            "scripts/ci/ubuntu-mirror-evidence.ts"
+          ],
+          "reason": "Workflow, harness, build, runtime or dependency input requires full coverage."
+        },
+        "doc-responsiveness": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/development.md",
+            "docs/implementation/SPN-131.md",
+            "docs/implementation/SPN-136.md",
+            "docs/todo/SPN-131.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "scripts/ci/prefer-ubuntu-archive.test.ts",
+            "scripts/ci/prefer-ubuntu-archive.ts",
+            "scripts/ci/ubuntu-mirror-evidence.test.ts",
+            "scripts/ci/ubuntu-mirror-evidence.ts"
+          ],
+          "reason": "Workflow, harness, build, runtime or dependency input requires full coverage."
+        },
+        "doc-callback-lifetimes": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/development.md",
+            "docs/implementation/SPN-131.md",
+            "docs/implementation/SPN-136.md",
+            "docs/todo/SPN-131.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "scripts/ci/prefer-ubuntu-archive.test.ts",
+            "scripts/ci/prefer-ubuntu-archive.ts",
+            "scripts/ci/ubuntu-mirror-evidence.test.ts",
+            "scripts/ci/ubuntu-mirror-evidence.ts"
+          ],
+          "reason": "Workflow, harness, build, runtime or dependency input requires full coverage."
+        },
+        "responsiveness-baseline": {
+          "selected": true,
+          "dependencies": [
+            "web/**",
+            "server/**",
+            "lib/**",
+            "e2e/**",
+            "src/shared/**",
+            "src/server/{sync,history,collaboration}/**",
+            "scripts/{ci,dependencies,sync-transition}/**",
+            "build/runtime/dependency/workflow configuration"
+          ],
+          "inputs": [
+            "docs/development.md",
+            "docs/implementation/SPN-131.md",
+            "docs/implementation/SPN-136.md",
+            "docs/todo/SPN-131.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "scripts/ci/prefer-ubuntu-archive.test.ts",
+            "scripts/ci/prefer-ubuntu-archive.ts",
+            "scripts/ci/ubuntu-mirror-evidence.test.ts",
+            "scripts/ci/ubuntu-mirror-evidence.ts"
+          ],
+          "reason": "Workflow, harness, build, runtime or dependency input requires full coverage."
+        },
+        "callback-baseline": {
+          "selected": true,
+          "dependencies": [
+            "web/**",
+            "server/**",
+            "lib/**",
+            "e2e/**",
+            "src/shared/**",
+            "src/server/{sync,history,collaboration}/**",
+            "scripts/{ci,dependencies,sync-transition}/**",
+            "build/runtime/dependency/workflow configuration"
+          ],
+          "inputs": [
+            "docs/development.md",
+            "docs/implementation/SPN-131.md",
+            "docs/implementation/SPN-136.md",
+            "docs/todo/SPN-131.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "scripts/ci/prefer-ubuntu-archive.test.ts",
+            "scripts/ci/prefer-ubuntu-archive.ts",
+            "scripts/ci/ubuntu-mirror-evidence.test.ts",
+            "scripts/ci/ubuntu-mirror-evidence.ts"
+          ],
+          "reason": "Workflow, harness, build, runtime or dependency input requires full coverage."
+        },
+        "phone-compatibility": {
+          "selected": true,
+          "dependencies": [
+            "full plan backstop; ordinary phone owners remain in routine browser coverage"
+          ],
+          "inputs": [
+            "docs/development.md",
+            "docs/implementation/SPN-131.md",
+            "docs/implementation/SPN-136.md",
+            "docs/todo/SPN-131.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md",
+            "scripts/ci/prefer-ubuntu-archive.test.ts",
+            "scripts/ci/prefer-ubuntu-archive.ts",
+            "scripts/ci/ubuntu-mirror-evidence.test.ts",
+            "scripts/ci/ubuntu-mirror-evidence.ts"
+          ],
+          "reason": "Workflow, harness, build, runtime or dependency input requires full coverage."
+        }
+      }
+    },
+    "gateResults": {
+      "typecheck": "success",
+      "unit-tests": "success",
+      "lib-tests": "success"
+    },
+    "results": [
+      {
+        "suite": "backlog",
+        "selected": true,
+        "dependencies": [
+          "complete immutable change range and current event metadata"
+        ],
+        "inputs": [
+          "docs/development.md",
+          "docs/implementation/SPN-131.md",
+          "docs/implementation/SPN-136.md",
+          "docs/todo/SPN-131.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "scripts/ci/prefer-ubuntu-archive.test.ts",
+          "scripts/ci/prefer-ubuntu-archive.ts",
+          "scripts/ci/ubuntu-mirror-evidence.test.ts",
+          "scripts/ci/ubuntu-mirror-evidence.ts"
+        ],
+        "reason": "Workflow, harness, build, runtime or dependency input requires full coverage.",
+        "result": "success"
+      },
+      {
+        "suite": "pull-request",
+        "selected": true,
+        "dependencies": [
+          "complete immutable change range and current event metadata"
+        ],
+        "inputs": [
+          "docs/development.md",
+          "docs/implementation/SPN-131.md",
+          "docs/implementation/SPN-136.md",
+          "docs/todo/SPN-131.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "scripts/ci/prefer-ubuntu-archive.test.ts",
+          "scripts/ci/prefer-ubuntu-archive.ts",
+          "scripts/ci/ubuntu-mirror-evidence.test.ts",
+          "scripts/ci/ubuntu-mirror-evidence.ts"
+        ],
+        "reason": "Workflow, harness, build, runtime or dependency input requires full coverage.",
+        "result": "success"
+      },
+      {
+        "suite": "lint",
+        "selected": true,
+        "dependencies": [
+          "complete immutable change range and current event metadata"
+        ],
+        "inputs": [
+          "docs/development.md",
+          "docs/implementation/SPN-131.md",
+          "docs/implementation/SPN-136.md",
+          "docs/todo/SPN-131.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "scripts/ci/prefer-ubuntu-archive.test.ts",
+          "scripts/ci/prefer-ubuntu-archive.ts",
+          "scripts/ci/ubuntu-mirror-evidence.test.ts",
+          "scripts/ci/ubuntu-mirror-evidence.ts"
+        ],
+        "reason": "Workflow, harness, build, runtime or dependency input requires full coverage.",
+        "result": "success"
+      },
+      {
+        "suite": "typecheck",
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "docs/development.md",
+          "docs/implementation/SPN-131.md",
+          "docs/implementation/SPN-136.md",
+          "docs/todo/SPN-131.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "scripts/ci/prefer-ubuntu-archive.test.ts",
+          "scripts/ci/prefer-ubuntu-archive.ts",
+          "scripts/ci/ubuntu-mirror-evidence.test.ts",
+          "scripts/ci/ubuntu-mirror-evidence.ts"
+        ],
+        "reason": "Workflow, harness, build, runtime or dependency input requires full coverage.",
+        "result": "success"
+      },
+      {
+        "suite": "unit-tests",
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "docs/development.md",
+          "docs/implementation/SPN-131.md",
+          "docs/implementation/SPN-136.md",
+          "docs/todo/SPN-131.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "scripts/ci/prefer-ubuntu-archive.test.ts",
+          "scripts/ci/prefer-ubuntu-archive.ts",
+          "scripts/ci/ubuntu-mirror-evidence.test.ts",
+          "scripts/ci/ubuntu-mirror-evidence.ts"
+        ],
+        "reason": "Workflow, harness, build, runtime or dependency input requires full coverage.",
+        "result": "success"
+      },
+      {
+        "suite": "lib-test-run",
+        "selected": true,
+        "dependencies": [
+          "lib/**",
+          "scripts/dependencies/**",
+          "package{,-lock}.json",
+          "vitest.config.ts",
+          "tsconfig.json",
+          ".nvmrc",
+          ".github/workflows/ci.yml"
+        ],
+        "inputs": [
+          "docs/development.md",
+          "docs/implementation/SPN-131.md",
+          "docs/implementation/SPN-136.md",
+          "docs/todo/SPN-131.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "scripts/ci/prefer-ubuntu-archive.test.ts",
+          "scripts/ci/prefer-ubuntu-archive.ts",
+          "scripts/ci/ubuntu-mirror-evidence.test.ts",
+          "scripts/ci/ubuntu-mirror-evidence.ts"
+        ],
+        "reason": "Workflow, harness, build, runtime or dependency input requires full coverage.",
+        "result": "success"
+      },
+      {
+        "suite": "playwright-run",
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "docs/development.md",
+          "docs/implementation/SPN-131.md",
+          "docs/implementation/SPN-136.md",
+          "docs/todo/SPN-131.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "scripts/ci/prefer-ubuntu-archive.test.ts",
+          "scripts/ci/prefer-ubuntu-archive.ts",
+          "scripts/ci/ubuntu-mirror-evidence.test.ts",
+          "scripts/ci/ubuntu-mirror-evidence.ts"
+        ],
+        "reason": "Workflow, harness, build, runtime or dependency input requires full coverage.",
+        "result": "success"
+      },
+      {
+        "suite": "container-smoke",
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "docs/development.md",
+          "docs/implementation/SPN-131.md",
+          "docs/implementation/SPN-136.md",
+          "docs/todo/SPN-131.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "scripts/ci/prefer-ubuntu-archive.test.ts",
+          "scripts/ci/prefer-ubuntu-archive.ts",
+          "scripts/ci/ubuntu-mirror-evidence.test.ts",
+          "scripts/ci/ubuntu-mirror-evidence.ts"
+        ],
+        "reason": "Workflow, harness, build, runtime or dependency input requires full coverage.",
+        "result": "success"
+      },
+      {
+        "suite": "restore-timing",
+        "selected": true,
+        "dependencies": [
+          "server/**",
+          "src/{server,shared}/**",
+          "lib/**",
+          "web/** and src/ui/** (shared application/authentication bundle)",
+          "e2e restore/shared helpers",
+          "runtime/build/dependency/workflow inputs"
+        ],
+        "inputs": [
+          "docs/development.md",
+          "docs/implementation/SPN-131.md",
+          "docs/implementation/SPN-136.md",
+          "docs/todo/SPN-131.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "scripts/ci/prefer-ubuntu-archive.test.ts",
+          "scripts/ci/prefer-ubuntu-archive.ts",
+          "scripts/ci/ubuntu-mirror-evidence.test.ts",
+          "scripts/ci/ubuntu-mirror-evidence.ts"
+        ],
+        "reason": "Workflow, harness, build, runtime or dependency input requires full coverage.",
+        "result": "success"
+      },
+      {
+        "suite": "sync-transition",
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "docs/development.md",
+          "docs/implementation/SPN-131.md",
+          "docs/implementation/SPN-136.md",
+          "docs/todo/SPN-131.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "scripts/ci/prefer-ubuntu-archive.test.ts",
+          "scripts/ci/prefer-ubuntu-archive.ts",
+          "scripts/ci/ubuntu-mirror-evidence.test.ts",
+          "scripts/ci/ubuntu-mirror-evidence.ts"
+        ],
+        "reason": "Workflow, harness, build, runtime or dependency input requires full coverage.",
+        "result": "success"
+      },
+      {
+        "suite": "doc-responsiveness",
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "docs/development.md",
+          "docs/implementation/SPN-131.md",
+          "docs/implementation/SPN-136.md",
+          "docs/todo/SPN-131.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "scripts/ci/prefer-ubuntu-archive.test.ts",
+          "scripts/ci/prefer-ubuntu-archive.ts",
+          "scripts/ci/ubuntu-mirror-evidence.test.ts",
+          "scripts/ci/ubuntu-mirror-evidence.ts"
+        ],
+        "reason": "Workflow, harness, build, runtime or dependency input requires full coverage.",
+        "result": "success"
+      },
+      {
+        "suite": "doc-callback-lifetimes",
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "docs/development.md",
+          "docs/implementation/SPN-131.md",
+          "docs/implementation/SPN-136.md",
+          "docs/todo/SPN-131.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "scripts/ci/prefer-ubuntu-archive.test.ts",
+          "scripts/ci/prefer-ubuntu-archive.ts",
+          "scripts/ci/ubuntu-mirror-evidence.test.ts",
+          "scripts/ci/ubuntu-mirror-evidence.ts"
+        ],
+        "reason": "Workflow, harness, build, runtime or dependency input requires full coverage.",
+        "result": "success"
+      }
+    ]
+  }
+}

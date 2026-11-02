@@ -1,0 +1,33 @@
+(node:73310) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ the observed original pair changes only its preference and preserves the security fallback (2.255542ms)
+✔ an already preferred pair performs no write (0.460833ms)
+✔ the observed EC2 pair changes only its preference and retains exact input evidence (0.820417ms)
+✔ line endings, spacing and unrelated entries survive unchanged (0.413958ms)
+✔ empty input fails before any write and retains safe original-input evidence (0.619375ms)
+✔ missing archive fails before any write and retains safe original-input evidence (0.4685ms)
+✔ missing Azure fails before any write and retains safe original-input evidence (0.404209ms)
+✔ duplicate Azure fails before any write and retains safe original-input evidence (0.363875ms)
+✔ duplicate archive fails before any write and retains safe original-input evidence (0.388459ms)
+✔ equal priorities fails before any write and retains safe original-input evidence (0.396959ms)
+✔ unsupported priority fails before any write and retains safe original-input evidence (0.401042ms)
+✔ malformed metadata fails before any write and retains safe original-input evidence (0.402167ms)
+✔ duplicate EC2 fails before any write and retains safe original-input evidence (0.362417ms)
+✔ EC2 missing archive fails before any write and retains safe original-input evidence (0.328541ms)
+✔ EC2 equal priorities fails before any write and retains safe original-input evidence (0.334625ms)
+✔ EC2 unsupported priority fails before any write and retains safe original-input evidence (0.30625ms)
+✔ EC2 malformed metadata fails before any write and retains safe original-input evidence (0.303458ms)
+✔ both known fallbacks fails before any write and retains safe original-input evidence (0.298417ms)
+✔ both fallbacks without archive fails before any write and retains safe original-input evidence (0.342208ms)
+✔ unknown replacement fallback fails before any write and retains safe original-input evidence (0.3705ms)
+✔ public mirror evidence preserves exact line endings, priority and order (1.411917ms)
+✔ credentials, query strings, arbitrary paths, comments and malformed metadata stay private (0.158916ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 87.282292
+WATCHDOG: exit=0, signal=null, elapsed=120ms, peak=0.0MiB

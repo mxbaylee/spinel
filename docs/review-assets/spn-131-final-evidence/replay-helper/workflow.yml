@@ -1,0 +1,76 @@
+name: SPN-131 captured mirror replay
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: spn-131-captured-mirror-replay
+  cancel-in-progress: false
+jobs:
+  replay:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: candidate
+    steps:
+      - name: Pin evidence helper
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          path: proof
+          persist-credentials: false
+      - name: Pin unmodified candidate
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: 91c0efbed06ae8805a998467527d4446a19044df
+          path: candidate
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version-file: candidate/.nvmrc
+          package-manager-cache: false
+      - name: Install candidate
+        run: npm ci
+      - name: Preserve host configuration and inject exact observed fixture
+        id: prepare
+        run: node ../proof/scripts/ci/ubuntu-mirror-replay.ts prepare
+      - name: Run unmodified helper and verify exact transformation
+        run: |
+          node scripts/ci/prefer-ubuntu-archive.ts
+          node ../proof/scripts/ci/ubuntu-mirror-replay.ts verify-transform
+      - name: Install Chromium through the transformed mirror file
+        run: npx playwright install --with-deps chromium
+      - name: Immutable offline source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: c2e8cac0fcdec36d992d6ebf3f377c9b579a8002
+          path: candidate/legacy-offline-source
+          persist-credentials: false
+      - name: Install immutable offline dependencies
+        working-directory: candidate/legacy-offline-source
+        run: npm ci
+      - name: Existing two offline-upgrade cases on their first attempt
+        env:
+          SPINEL_E2E_PROJECT: offline-upgrade
+          SPINEL_CI_FULL_COMPATIBILITY: 'true'
+          SPINEL_CAPTURE_SCREENSHOTS: '0'
+          SPINEL_LEGACY_OFFLINE_SOURCE: ${{ github.workspace }}/candidate/legacy-offline-source
+          PLAYWRIGHT_JSON_OUTPUT_FILE: artifacts/ubuntu-mirror-replay/playwright.json
+        run: npx playwright test --project=offline-upgrade --retries=0 --fail-on-flaky-tests --reporter=line,json
+      - name: Restore and verify original host configuration
+        if: always() && steps.prepare.outcome != 'skipped'
+        run: node ../proof/scripts/ci/ubuntu-mirror-replay.ts restore
+      - name: Require complete smoke and cleanup evidence
+        run: node ../proof/scripts/ci/ubuntu-mirror-replay.ts verify-results
+      - name: Preserve safe evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: ubuntu-mirror-replay
+          path: |
+            candidate/artifacts/ubuntu-mirror-replay/
+            candidate/test-results/**/error-context.md
+            candidate/test-results/**/test-failed-*.png
+          if-no-files-found: error
+          retention-days: 14

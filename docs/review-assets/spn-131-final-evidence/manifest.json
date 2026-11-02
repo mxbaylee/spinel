@@ -1,0 +1,44 @@
+{
+  "source": "91c0efbed06ae8805a998467527d4446a19044df",
+  "base": "1fca8a98c315d2f715e8051537e50f2efbbe580b",
+  "tested": "0ffd348f580eeb4e86ed3d52a06f38d777ee51f0",
+  "source_and_tested_tree": "b80eb8706361027b89b14dcb927ee6f4e22de313",
+  "ci_run": 41471965164,
+  "storybook_run": 41471965173,
+  "attempt": 1,
+  "artifact_zips": [
+    {
+      "id": 13155052730,
+      "name": "ci-plan",
+      "sha256": "b1517020208bfdc2ee973d0ba8c35ba12eb01047983afc341e1bf9c6c3b3c136"
+    },
+    {
+      "id": 13155418870,
+      "name": "ci-results-unit",
+      "sha256": "c8c01d11c52e20182d376ec10979b494ae0dd7adc4d50715b12091bc33eb0f0e"
+    },
+    {
+      "id": 13155593716,
+      "name": "ci-results-lib",
+      "sha256": "39a9ce60f71a802e09644cec911724699220dc7c40206f1645826565a27a4339"
+    },
+    {
+      "id": 13157149841,
+      "name": "ci-results-browser",
+      "sha256": "6fc00012791c8f7e38483d0a7e96b8e449034367c3b5f4b11f6a9b6a861df95a"
+    },
+    {
+      "id": 13158072823,
+      "name": "ubuntu-mirror-replay",
+      "sha256": "6679438099673fa6be5312135bc83991540cefdd6ce494201519455f2d0b32ee"
+    }
+  ],
+  "status": "all ordinary checks and single conditional injected-profile replay passed; final independent grades pending",
+  "conditional_replay_helper": "a349ffdad25ca50cd612452bec2f738a309e15d3",
+  "conditional_replay_dispatched": true,
+  "replay_run": 41478437826,
+  "replay_job": 125390060703,
+  "ordinary_observations": 24,
+  "ordinary_profiles": "Azure only",
+  "replay_label": "Injected exact captured EC2 input on an actual Azure hosted Ubuntu24 runner; not natural AWS acceptance"
+}

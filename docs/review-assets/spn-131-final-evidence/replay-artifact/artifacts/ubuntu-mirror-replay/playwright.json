@@ -1,0 +1,712 @@
+{
+  "config": {
+    "argv": [
+      "/opt/hostedtoolcache/node/26.12.1/x64/bin/node",
+      "/home/runner/work/spinel/spinel/candidate/node_modules/.bin/playwright",
+      "test",
+      "--project=offline-upgrade",
+      "--retries=0",
+      "--fail-on-flaky-tests",
+      "--reporter=line,json"
+    ],
+    "configFile": "/home/runner/work/spinel/spinel/candidate/playwright.config.ts",
+    "rootDir": "/home/runner/work/spinel/spinel/candidate/e2e",
+    "failOnFlakyTests": true,
+    "forbidOnly": true,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 1,
+    "metadata": {
+      "ci": {
+        "commitHref": "https://github.com/mxbaylee/spinel/commit/a349ffdad25ca50cd612452bec2f738a309e15d3",
+        "commitHash": "a349ffdad25ca50cd612452bec2f738a309e15d3",
+        "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41478437826"
+      },
+      "gitCommit": {
+        "shortHash": "91c0efb",
+        "hash": "91c0efbed06ae8805a998467527d4446a19044df",
+        "subject": "Support the captured EC2 mirror pair without relaxing validation",
+        "body": "Support the captured EC2 mirror pair without relaxing validation\n",
+        "author": {
+          "name": "Baylee Schmeisser",
+          "email": "github.mx@baylee.dev",
+          "time": 1793633315000
+        },
+        "committer": {
+          "name": "Baylee Schmeisser",
+          "email": "github.mx@baylee.dev",
+          "time": 1793633315000
+        },
+        "branch": "HEAD"
+      },
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/candidate/test-results/offline-upgrade",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/a349ffdad25ca50cd612452bec2f738a309e15d3",
+            "commitHash": "a349ffdad25ca50cd612452bec2f738a309e15d3",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41478437826"
+          },
+          "gitCommit": {
+            "shortHash": "91c0efb",
+            "hash": "91c0efbed06ae8805a998467527d4446a19044df",
+            "subject": "Support the captured EC2 mirror pair without relaxing validation",
+            "body": "Support the captured EC2 mirror pair without relaxing validation\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793633315000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793633315000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "development",
+        "name": "development",
+        "testDir": "/home/runner/work/spinel/spinel/candidate/e2e",
+        "testIgnore": [
+          "**/pwa.spec.ts",
+          "**/offline.spec.ts",
+          "**/offline-editing.spec.ts",
+          "**/offline-creation.spec.ts",
+          "**/offline-recovery.spec.ts",
+          "**/offline-device.spec.ts",
+          "**/offline-sign-out.spec.ts",
+          "**/offline-upgrade.spec.ts",
+          "**/supervised-restore.spec.ts",
+          "**/sync-client.spec.ts",
+          "**/doc-responsiveness*.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/candidate/test-results/offline-upgrade",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/a349ffdad25ca50cd612452bec2f738a309e15d3",
+            "commitHash": "a349ffdad25ca50cd612452bec2f738a309e15d3",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41478437826"
+          },
+          "gitCommit": {
+            "shortHash": "91c0efb",
+            "hash": "91c0efbed06ae8805a998467527d4446a19044df",
+            "subject": "Support the captured EC2 mirror pair without relaxing validation",
+            "body": "Support the captured EC2 mirror pair without relaxing validation\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793633315000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793633315000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "production",
+        "name": "production",
+        "testDir": "/home/runner/work/spinel/spinel/candidate/e2e",
+        "testIgnore": [
+          "**/pwa.spec.ts",
+          "**/offline-editing.spec.ts",
+          "**/offline-creation.spec.ts",
+          "**/offline-recovery.spec.ts",
+          "**/offline-upgrade.spec.ts",
+          "**/supervised-restore.spec.ts",
+          "**/sync-client.spec.ts",
+          "**/doc-responsiveness*.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/candidate/test-results/offline-upgrade",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/a349ffdad25ca50cd612452bec2f738a309e15d3",
+            "commitHash": "a349ffdad25ca50cd612452bec2f738a309e15d3",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41478437826"
+          },
+          "gitCommit": {
+            "shortHash": "91c0efb",
+            "hash": "91c0efbed06ae8805a998467527d4446a19044df",
+            "subject": "Support the captured EC2 mirror pair without relaxing validation",
+            "body": "Support the captured EC2 mirror pair without relaxing validation\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793633315000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793633315000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "sync-development",
+        "name": "sync-development",
+        "testDir": "/home/runner/work/spinel/spinel/candidate/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/sync-client.spec.ts",
+          "**/doc-mobile.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/candidate/test-results/offline-upgrade",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/a349ffdad25ca50cd612452bec2f738a309e15d3",
+            "commitHash": "a349ffdad25ca50cd612452bec2f738a309e15d3",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41478437826"
+          },
+          "gitCommit": {
+            "shortHash": "91c0efb",
+            "hash": "91c0efbed06ae8805a998467527d4446a19044df",
+            "subject": "Support the captured EC2 mirror pair without relaxing validation",
+            "body": "Support the captured EC2 mirror pair without relaxing validation\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793633315000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793633315000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "sync-production",
+        "name": "sync-production",
+        "testDir": "/home/runner/work/spinel/spinel/candidate/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/sync-client.spec.ts",
+          "**/doc-mobile.spec.ts",
+          "**/offline-editing.spec.ts",
+          "**/offline-creation.spec.ts",
+          "**/offline-recovery.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/candidate/test-results/offline-upgrade",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/a349ffdad25ca50cd612452bec2f738a309e15d3",
+            "commitHash": "a349ffdad25ca50cd612452bec2f738a309e15d3",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41478437826"
+          },
+          "gitCommit": {
+            "shortHash": "91c0efb",
+            "hash": "91c0efbed06ae8805a998467527d4446a19044df",
+            "subject": "Support the captured EC2 mirror pair without relaxing validation",
+            "body": "Support the captured EC2 mirror pair without relaxing validation\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793633315000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793633315000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "sync-soak-sheet",
+        "name": "sync-soak-sheet",
+        "testDir": "/home/runner/work/spinel/spinel/candidate/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/sync-client.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/candidate/test-results/offline-upgrade",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/a349ffdad25ca50cd612452bec2f738a309e15d3",
+            "commitHash": "a349ffdad25ca50cd612452bec2f738a309e15d3",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41478437826"
+          },
+          "gitCommit": {
+            "shortHash": "91c0efb",
+            "hash": "91c0efbed06ae8805a998467527d4446a19044df",
+            "subject": "Support the captured EC2 mirror pair without relaxing validation",
+            "body": "Support the captured EC2 mirror pair without relaxing validation\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793633315000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793633315000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "sync-soak-doc",
+        "name": "sync-soak-doc",
+        "testDir": "/home/runner/work/spinel/spinel/candidate/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/sync-client.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/candidate/test-results/offline-upgrade",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/a349ffdad25ca50cd612452bec2f738a309e15d3",
+            "commitHash": "a349ffdad25ca50cd612452bec2f738a309e15d3",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41478437826"
+          },
+          "gitCommit": {
+            "shortHash": "91c0efb",
+            "hash": "91c0efbed06ae8805a998467527d4446a19044df",
+            "subject": "Support the captured EC2 mirror pair without relaxing validation",
+            "body": "Support the captured EC2 mirror pair without relaxing validation\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793633315000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793633315000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "doc-responsiveness",
+        "name": "doc-responsiveness",
+        "testDir": "/home/runner/work/spinel/spinel/candidate/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/doc-responsiveness.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/candidate/test-results/offline-upgrade",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/a349ffdad25ca50cd612452bec2f738a309e15d3",
+            "commitHash": "a349ffdad25ca50cd612452bec2f738a309e15d3",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41478437826"
+          },
+          "gitCommit": {
+            "shortHash": "91c0efb",
+            "hash": "91c0efbed06ae8805a998467527d4446a19044df",
+            "subject": "Support the captured EC2 mirror pair without relaxing validation",
+            "body": "Support the captured EC2 mirror pair without relaxing validation\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793633315000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793633315000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "doc-callback-lifetimes",
+        "name": "doc-callback-lifetimes",
+        "testDir": "/home/runner/work/spinel/spinel/candidate/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/doc-responsiveness-callbacks.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/candidate/test-results/offline-upgrade",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/a349ffdad25ca50cd612452bec2f738a309e15d3",
+            "commitHash": "a349ffdad25ca50cd612452bec2f738a309e15d3",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41478437826"
+          },
+          "gitCommit": {
+            "shortHash": "91c0efb",
+            "hash": "91c0efbed06ae8805a998467527d4446a19044df",
+            "subject": "Support the captured EC2 mirror pair without relaxing validation",
+            "body": "Support the captured EC2 mirror pair without relaxing validation\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793633315000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793633315000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "offline-upgrade",
+        "name": "offline-upgrade",
+        "testDir": "/home/runner/work/spinel/spinel/candidate/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/offline-upgrade.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/candidate/test-results/offline-upgrade",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/a349ffdad25ca50cd612452bec2f738a309e15d3",
+            "commitHash": "a349ffdad25ca50cd612452bec2f738a309e15d3",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41478437826"
+          },
+          "gitCommit": {
+            "shortHash": "91c0efb",
+            "hash": "91c0efbed06ae8805a998467527d4446a19044df",
+            "subject": "Support the captured EC2 mirror pair without relaxing validation",
+            "body": "Support the captured EC2 mirror pair without relaxing validation\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793633315000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793633315000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "supervised-restore",
+        "name": "supervised-restore",
+        "testDir": "/home/runner/work/spinel/spinel/candidate/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/supervised-restore.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/candidate/test-results/offline-upgrade",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/a349ffdad25ca50cd612452bec2f738a309e15d3",
+            "commitHash": "a349ffdad25ca50cd612452bec2f738a309e15d3",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41478437826"
+          },
+          "gitCommit": {
+            "shortHash": "91c0efb",
+            "hash": "91c0efbed06ae8805a998467527d4446a19044df",
+            "subject": "Support the captured EC2 mirror pair without relaxing validation",
+            "body": "Support the captured EC2 mirror pair without relaxing validation\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793633315000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793633315000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "mobile-https",
+        "name": "mobile-https",
+        "testDir": "/home/runner/work/spinel/spinel/candidate/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/pwa.spec.ts",
+          "**/doc-mobile.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/runner/work/spinel/spinel/candidate/test-results/offline-upgrade",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/a349ffdad25ca50cd612452bec2f738a309e15d3",
+            "commitHash": "a349ffdad25ca50cd612452bec2f738a309e15d3",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41478437826"
+          },
+          "gitCommit": {
+            "shortHash": "91c0efb",
+            "hash": "91c0efbed06ae8805a998467527d4446a19044df",
+            "subject": "Support the captured EC2 mirror pair without relaxing validation",
+            "body": "Support the captured EC2 mirror pair without relaxing validation\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793633315000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793633315000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "name": "offline-upgrade",
+        "testDir": "/home/runner/work/spinel/spinel/candidate/e2e",
+        "snapshotDir": "/home/runner/work/spinel/spinel/candidate/e2e",
+        "testIgnore": [],
+        "testMatch": "**/offline-upgrade.spec.ts",
+        "timeout": 30000,
+        "use": {
+          "trace": "on-first-retry",
+          "screenshot": "only-on-failure",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "screen": {
+            "width": 1920,
+            "height": 1080
+          },
+          "deviceScaleFactor": 1,
+          "isMobile": false,
+          "hasTouch": false,
+          "defaultBrowserType": "chromium"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "offline-upgrade"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "offline-upgrade.spec.ts",
+      "file": "offline-upgrade.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "the actual SPN-054 eager client keeps its pending Doc and lazy files during new-host adoption",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "serial",
+                  "location": {
+                    "file": "/home/runner/work/spinel/spinel/candidate/e2e/offline-upgrade.spec.ts",
+                    "line": 0,
+                    "column": 0
+                  }
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "offline-upgrade",
+              "projectName": "offline-upgrade",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8328,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-02T16:09:04.304Z",
+                  "annotations": [
+                    {
+                      "type": "serial",
+                      "location": {
+                        "file": "/home/runner/work/spinel/spinel/candidate/e2e/offline-upgrade.spec.ts",
+                        "line": 0,
+                        "column": 0
+                      }
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "spn-055-legacy-runtime-adoption",
+                      "contentType": "application/json",
+                      "body": "ewogICJzb3VyY2UiOiAiYzJlOGNhYzBmY2RlYzM2ZDk5MmQ2ZWJmM2YzNzdjOWI1NzlhODAwMiIsCiAgImxlZ2FjeUNhY2hlIjogInNwaW5lbC1zaGVsbC04ZTQ1OWVjMjYxYjljZDljIiwKICAibGVnYWN5RmlsZXMiOiBbCiAgICAiL2Fzc2V0cy9Eb2NFZGl0b3ItRFF0QlJwWjQuanMiLAogICAgIi9hc3NldHMvSGlzdG9yeUJyb3dzZXItRDlaOU9oTTcuY3NzIiwKICAgICIvYXNzZXRzL0hpc3RvcnlCcm93c2VyLWtiZDQxZ3FfLmpzIiwKICAgICIvYXNzZXRzL09mZmxpbmVWaWV3ZXItQkxra2hnZE4uanMiLAogICAgIi9hc3NldHMvU2hlZXRFZGl0b3ItQ0syZ1NVV2UuanMiLAogICAgIi9hc3NldHMvZG9jdW1lbnRSZWFkeS1DWk1XaDMtQS5jc3MiLAogICAgIi9hc3NldHMvZG9jdW1lbnRSZWFkeS1ELS1QUnFkOS5qcyIsCiAgICAiL2Fzc2V0cy9mbG9hdGluZy11aS5yZWFjdC1kb20tQ2hoaFZDalguanMiLAogICAgIi9hc3NldHMvZ3Vlc3RQZW5kaW5nQnVmZmVyLW1WY0MzcjMyLmNzcyIsCiAgICAiL2Fzc2V0cy9ndWVzdFBlbmRpbmdCdWZmZXIteGs2d2lfSHcuanMiLAogICAgIi9hc3NldHMvbGliLURHSGYwbWkxLmNzcyIsCiAgICAiL2Fzc2V0cy9saWItRG5FNVZwT1ouanMiLAogICAgIi9hc3NldHMvbWFpbi1CNHc0dDRFcC5qcyIsCiAgICAiL2Fzc2V0cy9tYWluLWg2aVVIQVdkLmNzcyIsCiAgICAiL2Fzc2V0cy9tb2RlbC1CUDJHQ2JiUS5qcyIsCiAgICAiL2Fzc2V0cy9uYXRpdmUtQnVIMTBKS3EuanMiLAogICAgIi9hc3NldHMvbmF0aXZlU3luY1Blcm1pc3Npb25zLUQyS01CNXVHLmpzIiwKICAgICIvYXNzZXRzL29mZmxpbmVTaGVsbC04Z2VuMndySC5qcyIsCiAgICAiL2Fzc2V0cy9yZW5kZXJpbmctQ0N0WmpyeHouanMiLAogICAgIi9hc3NldHMvcm9sbGRvd24tcnVudGltZS1YS3lhSHRsOS5qcyIsCiAgICAiL2Fzc2V0cy91bml2ZXItcmVuZGVyZXItd0ZmbUp4ZHAuanMiCiAgXSwKICAiYWRvcHRlZCI6ICI1NGI1NDM5NzhiZTU4MjJkIiwKICAiaW50ZXJydXB0ZWRDYW5kaWRhdGVQcmVzZXJ2ZWQiOiB0cnVlCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8aa810eefa7d23f01644-0a6357f3ed84c6f0c5ca",
+          "file": "offline-upgrade.spec.ts",
+          "line": 202,
+          "column": 1
+        },
+        {
+          "title": "interrupted emitted updates preserve exact native work, a live old client and cold offline startup",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 420000,
+              "annotations": [
+                {
+                  "type": "serial",
+                  "location": {
+                    "file": "/home/runner/work/spinel/spinel/candidate/e2e/offline-upgrade.spec.ts",
+                    "line": 0,
+                    "column": 0
+                  }
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "offline-upgrade",
+              "projectName": "offline-upgrade",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 19547,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-02T16:09:18.139Z",
+                  "annotations": [
+                    {
+                      "type": "serial",
+                      "location": {
+                        "file": "/home/runner/work/spinel/spinel/candidate/e2e/offline-upgrade.spec.ts",
+                        "line": 0,
+                        "column": 0
+                      }
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "spn-055-emitted-runtime-builds",
+                      "contentType": "application/json",
+                      "body": "ewogICJhIjogewogICAgInByb3RvY29sIjogMSwKICAgICJ2ZXJzaW9uIjogIjU0YjU0Mzk3OGJlNTgyMmQiLAogICAgImNvbXBhdGliaWxpdHkiOiB7CiAgICAgICJmb3JtYXQiOiAxLAogICAgICAic2RrVmVyc2lvbiI6ICIxLjEuMCIKICAgIH0sCiAgICAiZW50cnkiOiAiL2Fzc2V0cy9hcHBsaWNhdGlvbi1mb3JtYXQxLUNZdmlmR3MwLmpzIiwKICAgICJjc3MiOiBbCiAgICAgICIvYXNzZXRzL0NvcHlGaWxlLWZvcm1hdDEtQnA0MXhic3IuY3NzIiwKICAgICAgIi9hc3NldHMvSGlzdG9yeUJyb3dzZXItZm9ybWF0MS1EOVo5T2hNNy5jc3MiLAogICAgICAiL2Fzc2V0cy9hcHBsaWNhdGlvbi1mb3JtYXQxLUI5UHpNaGFrLmNzcyIsCiAgICAgICIvYXNzZXRzL2RvY3VtZW50UmVhZHktZm9ybWF0MS1DWk1XaDMtQS5jc3MiLAogICAgICAiL2Fzc2V0cy9saWItZm9ybWF0MS1ER0hmMG1pMS5jc3MiLAogICAgICAiL2Fzc2V0cy9uYXRpdmVDb3B5LWZvcm1hdDEtbVZjQzNyMzIuY3NzIiwKICAgICAgIi9hc3NldHMvdGhlbWUtZm9ybWF0MS02R1BtbFJ3UC5jc3MiCiAgICBdLAogICAgImZpbGVzIjogWwogICAgICAiL2Fzc2V0cy9Db3B5RmlsZS1mb3JtYXQxLUJwNDF4YnNyLmNzcyIsCiAgICAgICIvYXNzZXRzL0NvcHlGaWxlLWZvcm1hdDEtc2V1TjlLSEUuanMiLAogICAgICAiL2Fzc2V0cy9Eb2NFZGl0b3ItZm9ybWF0MS1DclR2SmEwMy5qcyIsCiAgICAgICIvYXNzZXRzL0hpc3RvcnlCcm93c2VyLWZvcm1hdDEtQnh1Sml1d3cuanMiLAogICAgICAiL2Fzc2V0cy9IaXN0b3J5QnJvd3Nlci1mb3JtYXQxLUQ5WjlPaE03LmNzcyIsCiAgICAgICIvYXNzZXRzL09mZmxpbmVBY2Nlc3MtZm9ybWF0MS02SkJvb0Rpdi5qcyIsCiAgICAgICIvYXNzZXRzL09mZmxpbmVWaWV3ZXItZm9ybWF0MS1CRThxM1NMaC5qcyIsCiAgICAgICIvYXNzZXRzL1ByZXBhcmVkSW1hZ2VzLWZvcm1hdDEtRHhUcURzVEguanMiLAogICAgICAiL2Fzc2V0cy9TaGVldEVkaXRvci1mb3JtYXQxLUJENUxjUUU3LmpzIiwKICAgICAgIi9hc3NldHMvYXBwbGljYXRpb24tZm9ybWF0MS1COVB6TWhhay5jc3MiLAogICAgICAiL2Fzc2V0cy9hcHBsaWNhdGlvbi1mb3JtYXQxLUNZdmlmR3MwLmpzIiwKICAgICAgIi9hc3NldHMvY2hlY2twb2ludC1mb3JtYXQxLUNOQndmd2tpLmpzIiwKICAgICAgIi9hc3NldHMvZG9jdW1lbnRBY2Nlc3MtZm9ybWF0MS1EeDJHekxCeS5qcyIsCiAgICAgICIvYXNzZXRzL2RvY3VtZW50UmVhZHktZm9ybWF0MS1DWk1XaDMtQS5jc3MiLAogICAgICAiL2Fzc2V0cy9kb2N1bWVudFJlYWR5LWZvcm1hdDEtRE0yaEFsYXguanMiLAogICAgICAiL2Fzc2V0cy9kb3dubG9hZC1mb3JtYXQxLUN3Y0dlc2NoLmpzIiwKICAgICAgIi9hc3NldHMvZXMtZm9ybWF0MS1ET2wwQmE0eC5qcyIsCiAgICAgICIvYXNzZXRzL2V4aXN0aW5nRGF0YWJhc2UtZm9ybWF0MS1ENnpFcS1ORi5qcyIsCiAgICAgICIvYXNzZXRzL2Zsb2F0aW5nLXVpLnJlYWN0LWRvbS1mb3JtYXQxLUJCQU9lUjFtLmpzIiwKICAgICAgIi9hc3NldHMvbGliLWZvcm1hdDEtREdIZjBtaTEuY3NzIiwKICAgICAgIi9hc3NldHMvbGliLWZvcm1hdDEtRG9qZEhSX1ouanMiLAogICAgICAiL2Fzc2V0cy9tYWluLWZvcm1hdDEtSlFJMVo5QkUuanMiLAogICAgICAiL2Fzc2V0cy9tb2RlbC1mb3JtYXQxLUQwanY2TGZZLmpzIiwKICAgICAgIi9hc3NldHMvbW9kdWxlLXByZWxvYWQtZm9ybWF0MS1CTGRIYmZkTi5qcyIsCiAgICAgICIvYXNzZXRzL25hdGl2ZS1mb3JtYXQxLURZdmp3V1VsLmpzIiwKICAgICAgIi9hc3NldHMvbmF0aXZlQ29weS1mb3JtYXQxLW1WY0MzcjMyLmNzcyIsCiAgICAgICIvYXNzZXRzL25hdGl2ZUNvcHktZm9ybWF0MS1ydXg1SDMxSi5qcyIsCiAgICAgICIvYXNzZXRzL25hdGl2ZVN5bmNQZXJtaXNzaW9ucy1mb3JtYXQxLW5fTU9mUmlxLmpzIiwKICAgICAgIi9hc3NldHMvb2ZmbGluZUVycm9yLWZvcm1hdDEtQlVrNTZwekMuanMiLAogICAgICAiL2Fzc2V0cy9vZmZsaW5lU3RvcmUtZm9ybWF0MS1EZ3F6UkRsYy5qcyIsCiAgICAgICIvYXNzZXRzL3Byb2ZpbGUtZm9ybWF0MS1DbGJ6TmNnOC5qcyIsCiAgICAgICIvYXNzZXRzL3JlYWN0LWZvcm1hdDEtRmRTLVdVNTcuanMiLAogICAgICAiL2Fzc2V0cy9yZW5kZXJpbmctZm9ybWF0MS11ZERVTjJfci5qcyIsCiAgICAgICIvYXNzZXRzL3JvbGxkb3duLXJ1bnRpbWUtZm9ybWF0MS1YS3lhSHRsOS5qcyIsCiAgICAgICIvYXNzZXRzL3J1bnRpbWUtZm9ybWF0MS1CZHJqNExfZy5qcyIsCiAgICAgICIvYXNzZXRzL3NuYXBzaG90SWRlbnRpdHktZm9ybWF0MS1PTnpxUThSZC5qcyIsCiAgICAgICIvYXNzZXRzL3NwYWNlTmF2aWdhdGlvbi1mb3JtYXQxLUI4ZWFqTEpWLmpzIiwKICAgICAgIi9hc3NldHMvdGhlbWUtZm9ybWF0MS02R1BtbFJ3UC5jc3MiLAogICAgICAiL2Fzc2V0cy90aGVtZS1mb3JtYXQxLUNjWFdMSFVSLmpzIiwKICAgICAgIi9hc3NldHMvdW5pdmVyLXJlbmRlcmVyLWZvcm1hdDEtRDcwZnVkQmUuanMiLAogICAgICAiL2Fzc2V0cy91c2VEaWFnbm9zdGljcy1mb3JtYXQxLUIyaXJhc2h2LmpzIgogICAgXQogIH0sCiAgImIiOiB7CiAgICAicHJvdG9jb2wiOiAxLAogICAgInZlcnNpb24iOiAiY2JkZjE1YTRkN2ZlM2JiOSIsCiAgICAiY29tcGF0aWJpbGl0eSI6IHsKICAgICAgImZvcm1hdCI6IDIsCiAgICAgICJzZGtWZXJzaW9uIjogIjEuMS4wIgogICAgfSwKICAgICJlbnRyeSI6ICIvYXNzZXRzL2FwcGxpY2F0aW9uLWZvcm1hdDItQUhDSDNDWTcuanMiLAogICAgImNzcyI6IFsKICAgICAgIi9hc3NldHMvQ29weUZpbGUtZm9ybWF0Mi1CcDQxeGJzci5jc3MiLAogICAgICAiL2Fzc2V0cy9IaXN0b3J5QnJvd3Nlci1mb3JtYXQyLUQ5WjlPaE03LmNzcyIsCiAgICAgICIvYXNzZXRzL2FwcGxpY2F0aW9uLWZvcm1hdDItQjlQek1oYWsuY3NzIiwKICAgICAgIi9hc3NldHMvZG9jdW1lbnRSZWFkeS1mb3JtYXQyLUNaTVdoMy1BLmNzcyIsCiAgICAgICIvYXNzZXRzL2xpYi1mb3JtYXQyLURHSGYwbWkxLmNzcyIsCiAgICAgICIvYXNzZXRzL25hdGl2ZUNvcHktZm9ybWF0Mi1tVmNDM3IzMi5jc3MiLAogICAgICAiL2Fzc2V0cy90aGVtZS1mb3JtYXQyLTZHUG1sUndQLmNzcyIKICAgIF0sCiAgICAiZmlsZXMiOiBbCiAgICAgICIvYXNzZXRzL0NvcHlGaWxlLWZvcm1hdDItQnA0MXhic3IuY3NzIiwKICAgICAgIi9hc3NldHMvQ29weUZpbGUtZm9ybWF0Mi1CelFJdXZVci5qcyIsCiAgICAgICIvYXNzZXRzL0RvY0VkaXRvci1mb3JtYXQyLURpdnBxajRwLmpzIiwKICAgICAgIi9hc3NldHMvSGlzdG9yeUJyb3dzZXItZm9ybWF0Mi1CTFcxeUpZVy5qcyIsCiAgICAgICIvYXNzZXRzL0hpc3RvcnlCcm93c2VyLWZvcm1hdDItRDlaOU9oTTcuY3NzIiwKICAgICAgIi9hc3NldHMvT2ZmbGluZUFjY2Vzcy1mb3JtYXQyLW92d3dlNFFnLmpzIiwKICAgICAgIi9hc3NldHMvT2ZmbGluZVZpZXdlci1mb3JtYXQyLVNXZUNIZWNlLmpzIiwKICAgICAgIi9hc3NldHMvUHJlcGFyZWRJbWFnZXMtZm9ybWF0Mi1EeFRxRHNUSC5qcyIsCiAgICAgICIvYXNzZXRzL1NoZWV0RWRpdG9yLWZvcm1hdDItQnB3cnNCMXcuanMiLAogICAgICAiL2Fzc2V0cy9hcHBsaWNhdGlvbi1mb3JtYXQyLUFIQ0gzQ1k3LmpzIiwKICAgICAgIi9hc3NldHMvYXBwbGljYXRpb24tZm9ybWF0Mi1COVB6TWhhay5jc3MiLAogICAgICAiL2Fzc2V0cy9jaGVja3BvaW50LWZvcm1hdDItQ05Cd2Z3a2kuanMiLAogICAgICAiL2Fzc2V0cy9kb2N1bWVudEFjY2Vzcy1mb3JtYXQyLUN2T1JfZzdnLmpzIiwKICAgICAgIi9hc3NldHMvZG9jdW1lbnRSZWFkeS1mb3JtYXQyLUNaTVdoMy1BLmNzcyIsCiAgICAgICIvYXNzZXRzL2RvY3VtZW50UmVhZHktZm9ybWF0Mi1Gc2VaR3hXZC5qcyIsCiAgICAgICIvYXNzZXRzL2Rvd25sb2FkLWZvcm1hdDItQ0RxNGtKQ0IuanMiLAogICAgICAiL2Fzc2V0cy9lcy1mb3JtYXQyLURkczFZYnlmLmpzIiwKICAgICAgIi9hc3NldHMvZXhpc3RpbmdEYXRhYmFzZS1mb3JtYXQyLUQ2ekVxLU5GLmpzIiwKICAgICAgIi9hc3NldHMvZmxvYXRpbmctdWkucmVhY3QtZG9tLWZvcm1hdDItQ1lSSzVRcFUuanMiLAogICAgICAiL2Fzc2V0cy9saWItZm9ybWF0Mi1ER0hmMG1pMS5jc3MiLAogICAgICAiL2Fzc2V0cy9saWItZm9ybWF0Mi1EdEk3SGN2RS5qcyIsCiAgICAgICIvYXNzZXRzL21haW4tZm9ybWF0Mi0tLTJoZjZqQy5qcyIsCiAgICAgICIvYXNzZXRzL21vZGVsLWZvcm1hdDItUzc1VVpPYzguanMiLAogICAgICAiL2Fzc2V0cy9tb2R1bGUtcHJlbG9hZC1mb3JtYXQyLUJMZEhiZmROLmpzIiwKICAgICAgIi9hc3NldHMvbmF0aXZlLWZvcm1hdDItQ1k3U2gyTmwuanMiLAogICAgICAiL2Fzc2V0cy9uYXRpdmVDb3B5LWZvcm1hdDItQ0F0SUpKaTIuanMiLAogICAgICAiL2Fzc2V0cy9uYXRpdmVDb3B5LWZvcm1hdDItbVZjQzNyMzIuY3NzIiwKICAgICAgIi9hc3NldHMvbmF0aXZlU3luY1Blcm1pc3Npb25zLWZvcm1hdDItRDZGMm5qWnEuanMiLAogICAgICAiL2Fzc2V0cy9vZmZsaW5lRXJyb3ItZm9ybWF0Mi1CVWs1NnB6Qy5qcyIsCiAgICAgICIvYXNzZXRzL29mZmxpbmVTdG9yZS1mb3JtYXQyLUNkbUhpandSLmpzIiwKICAgICAgIi9hc3NldHMvcHJvZmlsZS1mb3JtYXQyLURPNG9FV2N6LmpzIiwKICAgICAgIi9hc3NldHMvcmVhY3QtZm9ybWF0Mi1CSEc4MDl6dS5qcyIsCiAgICAgICIvYXNzZXRzL3JlbmRlcmluZy1mb3JtYXQyLWM1X1V3T0N0LmpzIiwKICAgICAgIi9hc3NldHMvcm9sbGRvd24tcnVudGltZS1mb3JtYXQyLVhLeWFIdGw5LmpzIiwKICAgICAgIi9hc3NldHMvcnVudGltZS1mb3JtYXQyLUN1OXNhaGFaLmpzIiwKICAgICAgIi9hc3NldHMvc25hcHNob3RJZGVudGl0eS1mb3JtYXQyLUJncHBNNHcxLmpzIiwKICAgICAgIi9hc3NldHMvc3BhY2VOYXZpZ2F0aW9uLWZvcm1hdDItRGRZUkNPT0EuanMiLAogICAgICAiL2Fzc2V0cy90aGVtZS1mb3JtYXQyLTZHUG1sUndQLmNzcyIsCiAgICAgICIvYXNzZXRzL3RoZW1lLWZvcm1hdDItQm5WVWpTT0suanMiLAogICAgICAiL2Fzc2V0cy91bml2ZXItcmVuZGVyZXItZm9ybWF0Mi13b00xLWlHTC5qcyIsCiAgICAgICIvYXNzZXRzL3VzZURpYWdub3N0aWNzLWZvcm1hdDItQ0djUnJUbXcuanMiCiAgICBdCiAgfSwKICAiYWJvcnRlZFNjaGVtYSI6IHsKICAgICJyZXN1bHQiOiAiQWJvcnRFcnJvciIsCiAgICAidmVyc2lvbiI6IDEsCiAgICAic3RvcmVzIjogWwogICAgICAiaW1hZ2VzIiwKICAgICAgIml0ZW1zIiwKICAgICAgIm1ldGEiCiAgICBdCiAgfSwKICAicmVmdXNlZFJlcXVlc3RzIjogWwogICAgewogICAgICAiZmF1bHQiOiAibWlzc2luZy1sYXp5IiwKICAgICAgInBhdGgiOiAiL2Fzc2V0cy9IaXN0b3J5QnJvd3Nlci1mb3JtYXQyLUJMVzF5SllXLmpzIiwKICAgICAgImNyZWRlbnRpYWxlZCI6IGZhbHNlCiAgICB9LAogICAgewogICAgICAiZmF1bHQiOiAiaHRtbC1hc3NldCIsCiAgICAgICJwYXRoIjogIi9hc3NldHMvSGlzdG9yeUJyb3dzZXItZm9ybWF0Mi1CTFcxeUpZVy5qcyIsCiAgICAgICJjcmVkZW50aWFsZWQiOiBmYWxzZQogICAgfSwKICAgIHsKICAgICAgImZhdWx0IjogIndyb25nLWh0bWwiLAogICAgICAicGF0aCI6ICIvc2lnbi1pbiIsCiAgICAgICJjcmVkZW50aWFsZWQiOiBmYWxzZQogICAgfSwKICAgIHsKICAgICAgImZhdWx0IjogInJlZGlyZWN0IiwKICAgICAgInBhdGgiOiAiL3NpZ24taW4iLAogICAgICAiY3JlZGVudGlhbGVkIjogZmFsc2UKICAgIH0sCiAgICB7CiAgICAgICJmYXVsdCI6ICJpbnRlcnJ1cHRlZC1odG1sIiwKICAgICAgInBhdGgiOiAiL3NpZ24taW4iLAogICAgICAiY3JlZGVudGlhbGVkIjogZmFsc2UKICAgIH0KICBdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8aa810eefa7d23f01644-895779b23c5cfcfce4a0",
+          "file": "offline-upgrade.spec.ts",
+          "line": 576,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-02T16:09:03.696Z",
+    "duration": 34051.841,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

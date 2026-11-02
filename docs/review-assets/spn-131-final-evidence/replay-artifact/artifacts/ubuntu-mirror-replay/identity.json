@@ -1,0 +1,25 @@
+{
+  "source": "91c0efbed06ae8805a998467527d4446a19044df",
+  "tree": "b80eb8706361027b89b14dcb927ee6f4e22de313",
+  "workflow": "a349ffdad25ca50cd612452bec2f738a309e15d3",
+  "run": "41478437826",
+  "attempt": "1",
+  "imageOS": "ubuntu24",
+  "imageVersion": "20261026.354.1",
+  "runnerEnvironment": "github-hosted",
+  "platform": "linux",
+  "arch": "x64",
+  "os": "PRETTY_NAME=\"Ubuntu 24.04.5 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.5 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo\n",
+  "routes": [
+    {
+      "path": "/etc/apt/sources.list.d/ubuntu.sources",
+      "route": "mirror+file:/etc/apt/apt-mirrors.txt"
+    },
+    {
+      "path": "/etc/apt/sources.list.d/ubuntu.sources",
+      "route": "mirror+file:/etc/apt/apt-mirrors.txt"
+    }
+  ],
+  "originalSha256": "e0d6b0af979e4662d16357a27ae456cc6f21e26da031540f4df8706ebed1d583",
+  "injectedFixture": true
+}
