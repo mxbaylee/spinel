@@ -1,0 +1,20 @@
+✔ history proof remains independent of pending or failed code/title admission (3.543ms)
+✔ history markers preserve both full-request bounds and reject incomplete or noncanonical certificates (0.354875ms)
+✔ history certificate binds the provider run, job, check, app, source and supported protocol (1.247542ms)
+✔ missing, unsuccessful, duplicated or out-of-order history proof cannot issue a checkpoint (0.389541ms)
+✔ checkpoint coverage cannot omit its issuer, reach unseen future runs, or invent request times (0.397333ms)
+✔ global history includes timestamp ties and ends only at a strict pre-PR predecessor (0.752291ms)
+✔ run one needs independent opening provenance and cannot stand in for late activation (0.292208ms)
+✔ a verified covering checkpoint preserves an expired prefix but never fills a suffix gap (0.320333ms)
+✔ missing, duplicate, foreign and shifted registration history cannot be certified (0.350125ms)
+✔ the current invocation must be registered and covered even when an older checkpoint is available (0.278208ms)
+✔ history scans additional pages only to the needed boundary and caps missing-prefix reads (4.365541ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 129.130375
+WATCHDOG: exit=0, signal=null, elapsed=185ms, peak=0.0MiB
