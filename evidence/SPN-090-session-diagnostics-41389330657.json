@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "operation": "read-completed-session-logs",
+  "execution": {
+    "sourceSha": "e0be6b3afb4a8fc8701d9bbbd5a8788f1b9f9cc0",
+    "testedSha": "22b3d0a720ff9445442bcdae783c69ff585982a3",
+    "runId": "41389330657",
+    "attempt": "1"
+  },
+  "target": {
+    "sessionId": "5a7cc2cfd951b4b68e24bed95af51e7c64262b17"
+  },
+  "startedAt": "2026-11-02T04:36:01.167Z",
+  "finishedAt": "2026-11-02T04:36:01.823Z",
+  "status": "available",
+  "stage": "finished",
+  "failure": null,
+  "diagnosis": "unclassified",
+  "capabilityAcceptance": "not-assessed",
+  "providerSessionsAllocated": 0,
+  "retrievals": [
+    {
+      "endpoint": "appiumlogs",
+      "status": "available",
+      "httpStatus": 200,
+      "bytes": 128591,
+      "sha256": "8f31648ce3f2ce23a01081137b2cf8042a0065c11236451e33319e345d1b18f7",
+      "elapsedMilliseconds": 471,
+      "failure": null,
+      "analysis": {
+        "format": "appiumlogs",
+        "recognizedRequests": 49,
+        "failures": [
+          {
+            "command": "POST session/{sessionId}/execute/sync",
+            "httpStatus": 405,
+            "webdriverError": null,
+            "cause": "unclassified"
+          },
+          {
+            "command": "POST session/{sessionId}/execute/sync",
+            "httpStatus": 405,
+            "webdriverError": null,
+            "cause": "unclassified"
+          },
+          {
+            "command": "POST session/{sessionId}/execute/sync",
+            "httpStatus": 405,
+            "webdriverError": null,
+            "cause": "unclassified"
+          },
+          {
+            "command": "POST session/{sessionId}/execute/sync",
+            "httpStatus": 405,
+            "webdriverError": null,
+            "cause": "unclassified"
+          },
+          {
+            "command": "POST session/{sessionId}/execute/sync",
+            "httpStatus": 500,
+            "webdriverError": null,
+            "cause": "unclassified"
+          }
+        ],
+        "omittedFailures": 0,
+        "ambiguousTransactions": 0,
+        "unfinishedTransactions": 0,
+        "malformedRecords": 8,
+        "browserVersions": [
+          "152.0.7977.54"
+        ],
+        "chromeDriverVersions": [
+          "152.0.7977.54"
+        ],
+        "pageLoadStrategies": [
+          "normal"
+        ]
+      }
+    },
+    {
+      "endpoint": "logs",
+      "status": "available",
+      "httpStatus": 200,
+      "bytes": 151716,
+      "sha256": "904ab37c7807f27e51a73d897ed5322c5ca316764989ae47bbe2055203bc201b",
+      "elapsedMilliseconds": 182,
+      "failure": null,
+      "analysis": {
+        "format": "unrecognized",
+        "recognizedRequests": 0,
+        "failures": [],
+        "omittedFailures": 0,
+        "ambiguousTransactions": 0,
+        "unfinishedTransactions": 0,
+        "malformedRecords": 0,
+        "browserVersions": [],
+        "chromeDriverVersions": [],
+        "pageLoadStrategies": []
+      }
+    }
+  ]
+}
