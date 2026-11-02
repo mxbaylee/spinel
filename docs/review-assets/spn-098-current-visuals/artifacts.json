@@ -1,0 +1,116 @@
+[
+  {
+    "id": 13141051001,
+    "name": "design-review-mobile-light",
+    "size_in_bytes": 42225271,
+    "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13141051001",
+    "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13141051001/zip",
+    "expired": false,
+    "created_at": "2026-11-02T12:02:02Z",
+    "expires_at": "2026-11-16T12:02:00Z",
+    "updated_at": "2026-11-02T12:02:02Z",
+    "digest": "sha256:ea102570f7c81413709e56da4028137d64adeb9c2ca6a0e71035c76dd30d4492",
+    "workflow_run": {
+      "id": 41440026548,
+      "repository_id": 1423484121,
+      "head_repository_id": 1423484121,
+      "head_branch": "codex/spn-098-feedback-diagnostics",
+      "head_sha": "24e00a783803749b73483457b923dddafee9996c"
+    }
+  },
+  {
+    "id": 13140810936,
+    "name": "design-review-desktop-light",
+    "size_in_bytes": 50499678,
+    "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13140810936",
+    "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13140810936/zip",
+    "expired": false,
+    "created_at": "2026-11-02T12:01:25Z",
+    "expires_at": "2026-11-16T12:01:23Z",
+    "updated_at": "2026-11-02T12:01:25Z",
+    "digest": "sha256:79ec22c457dbcbcdcb8bf0db48ff13257d10da867e784cc3779efe4a07009da3",
+    "workflow_run": {
+      "id": 41440026548,
+      "repository_id": 1423484121,
+      "head_repository_id": 1423484121,
+      "head_branch": "codex/spn-098-feedback-diagnostics",
+      "head_sha": "24e00a783803749b73483457b923dddafee9996c"
+    }
+  },
+  {
+    "id": 13140216296,
+    "name": "design-review-mobile-dark",
+    "size_in_bytes": 42706355,
+    "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13140216296",
+    "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13140216296/zip",
+    "expired": false,
+    "created_at": "2026-11-02T12:01:37Z",
+    "expires_at": "2026-11-16T12:01:35Z",
+    "updated_at": "2026-11-02T12:01:37Z",
+    "digest": "sha256:4a1dc9232ab1870b714b06d37dafa3a6a64165c231b73f1038e6f07aee6a5dec",
+    "workflow_run": {
+      "id": 41440026548,
+      "repository_id": 1423484121,
+      "head_repository_id": 1423484121,
+      "head_branch": "codex/spn-098-feedback-diagnostics",
+      "head_sha": "24e00a783803749b73483457b923dddafee9996c"
+    }
+  },
+  {
+    "id": 13139547344,
+    "name": "design-review-desktop-dark",
+    "size_in_bytes": 51153976,
+    "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13139547344",
+    "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13139547344/zip",
+    "expired": false,
+    "created_at": "2026-11-02T12:02:40Z",
+    "expires_at": "2026-11-16T12:02:37Z",
+    "updated_at": "2026-11-02T12:02:40Z",
+    "digest": "sha256:389df1263688dbe7b28373aa0a0a0c61476a668b6be0796063153cf2f597bfbb",
+    "workflow_run": {
+      "id": 41440026548,
+      "repository_id": 1423484121,
+      "head_repository_id": 1423484121,
+      "head_branch": "codex/spn-098-feedback-diagnostics",
+      "head_sha": "24e00a783803749b73483457b923dddafee9996c"
+    }
+  },
+  {
+    "id": 13138591452,
+    "name": "storybook-review",
+    "size_in_bytes": 6203807,
+    "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13138591452",
+    "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13138591452/zip",
+    "expired": false,
+    "created_at": "2026-11-02T11:52:49Z",
+    "expires_at": "2026-11-09T11:52:47Z",
+    "updated_at": "2026-11-02T11:52:49Z",
+    "digest": "sha256:70f1785ab32d3a1996998a26d5e838688bc11cd7225bb8faca3a643849b2d1ab",
+    "workflow_run": {
+      "id": 41440026548,
+      "repository_id": 1423484121,
+      "head_repository_id": 1423484121,
+      "head_branch": "codex/spn-098-feedback-diagnostics",
+      "head_sha": "24e00a783803749b73483457b923dddafee9996c"
+    }
+  },
+  {
+    "id": 13138392635,
+    "name": "entity-icon-screenshots",
+    "size_in_bytes": 2442585,
+    "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13138392635",
+    "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13138392635/zip",
+    "expired": false,
+    "created_at": "2026-11-02T11:53:45Z",
+    "expires_at": "2027-01-31T11:51:07Z",
+    "updated_at": "2026-11-02T11:53:45Z",
+    "digest": "sha256:ffeef7047336dfd3dde559579ac9de8bf067c3e9fc4317276022f23bd93e9b5d",
+    "workflow_run": {
+      "id": 41440026548,
+      "repository_id": 1423484121,
+      "head_repository_id": 1423484121,
+      "head_branch": "codex/spn-098-feedback-diagnostics",
+      "head_sha": "24e00a783803749b73483457b923dddafee9996c"
+    }
+  }
+]
