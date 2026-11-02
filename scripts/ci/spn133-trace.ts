@@ -12,7 +12,9 @@ export async function startDiagnosticTrace(cdp: CDPSession, destination: string)
   cdp.on('Tracing.tracingComplete', finish);
   try {
     await cdp.send('Tracing.start', {
-      categories: 'blink.user_timing,devtools.timeline,v8,disabled-by-default-v8.gc',
+      // The first full timeline exceeded the unchanged cap. Keep GC and clock/
+      // phase spans; omit unrelated per-frame, timer and general function events.
+      categories: '-*,blink.user_timing,disabled-by-default-v8.gc',
       options: 'record-until-full',
       transferMode: 'ReturnAsStream',
       streamFormat: 'json',
