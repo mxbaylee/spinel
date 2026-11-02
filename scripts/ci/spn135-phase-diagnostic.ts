@@ -4,6 +4,11 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { instrumentNativePhases, policyOriginSource } from './spn135-native-phases.ts';
+import {
+  diagnosticSamples,
+  diagnosticDeadlineMs,
+  prepareUnsampledHarness,
+} from './spn135-unsampled.ts';
 
 const root = resolve(process.argv[2] ?? 'runtime-source');
 const expected = 'dbbe5ccaf085ce20b79068d3596a35dcf2142223';
@@ -47,7 +52,7 @@ change(
 );
 change(
   "role: baseline ? 'baseline-observation' : 'candidate',",
-  "role: 'diagnostic-only',\n        diagnostic: 'SPN-135 one desktop profile; never acceptance',",
+  "role: 'diagnostic-only',\n        diagnostic: 'SPN-135 unsampled candidate prefix; never acceptance',",
 );
 change(
   '          profiler: profiled,',
@@ -89,7 +94,7 @@ change(
         catch (error) { evidence.nativeDiagnosticRetentionError = String(error); }
         evidence.errors = f.errors;`,
 );
-writeFileSync(harness, text);
+writeFileSync(harness, prepareUnsampledHarness(text));
 const policy = resolve(root, 'src/ui/boundedDocHistory.ts');
 const policySource = readFileSync(policy, 'utf8');
 const policyAnchor = '      manager.flushPendingChanges(unitId);';
@@ -139,6 +144,10 @@ writeFileSync(
   resolve(root, 'e2e/spn135-trace.ts'),
   readFileSync(new URL('./spn135-trace.ts', import.meta.url)),
 );
+writeFileSync(
+  resolve(root, 'e2e/spn135-unsampled.ts'),
+  readFileSync(new URL('./spn135-unsampled.ts', import.meta.url)),
+);
 const nativeInstrumentation: unknown[] = [];
 for (const format of ['es', 'cjs'] as const) {
   const file = `node_modules/@univerjs/docs/lib/${format}/index.js`;
@@ -156,6 +165,7 @@ for (const format of ['es', 'cjs'] as const) {
 const files = [
   'e2e/doc-responsiveness.spec.ts',
   'e2e/spn135-trace.ts',
+  'e2e/spn135-unsampled.ts',
   'e2e/doc-responsiveness.ts',
   'e2e/doc-responsiveness-fixture.ts',
   'src/ui/boundedDocHistory.ts',
@@ -177,7 +187,9 @@ writeFileSync(
       source,
       diagnosticOnly: true,
       attemptsPerPreset: 1,
-      samples: ['profile'],
+      samples: diagnosticSamples,
+      cpuProfiler: false,
+      diagnosticDeadlineMs,
       presets: ['desktop'],
       traceCategories: '-*,blink.user_timing,disabled-by-default-v8.gc',
       nativeInstrumentation,

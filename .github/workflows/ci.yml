@@ -1,4 +1,4 @@
-name: SPN-135 one terminal native cache collection
+name: SPN-135 one unsampled candidate prefix
 on:
   workflow_dispatch:
 permissions:
@@ -6,7 +6,7 @@ permissions:
 jobs:
   diagnostic:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 30
     env:
       VITE_SYNC_EVIDENCE: '0'
       VITE_DOC_SELECTION_EVIDENCE: '0'
@@ -35,6 +35,7 @@ jobs:
           test -z "$(git -C runtime-source status --porcelain)"
           cat /etc/apt/apt-mirrors.txt > diagnostic-mirror-profile.txt
       - name: Install original runtime and browser with reviewed setup helper
+        timeout-minutes: 8
         working-directory: runtime-source
         run: |
           npm ci --no-audit
@@ -43,14 +44,22 @@ jobs:
       - name: Prepare declared diagnostic overlay
         run: node scripts/ci/spn135-phase-diagnostic.ts runtime-source
       - name: Build original application with diagnostic source maps
+        timeout-minutes: 4
         working-directory: runtime-source
         run: npm run build -- --sourcemap
-      - name: One terminal-cache collection profile with full correctness assertions
+      - name: Verify the exact two-case selection without running browsers
+        working-directory: runtime-source
+        run: |
+          npx playwright test --project=doc-responsiveness e2e/doc-responsiveness.spec.ts --grep 'desktop sustained native typing plain-[12]$' --workers=1 --retries=0 --max-failures=1 --list --reporter=json > spn135-collected.json
+          node ../scripts/ci/spn135-selection.ts spn135-collected.json
+      - name: One unsampled candidate prefix with unchanged assertions; stop on first failure
+        timeout-minutes: 12
         run: node scripts/ci/spn135-run.ts runtime-source
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         if: always()
+        timeout-minutes: 3
         with:
-          name: spn135-terminal-native-cache
+          name: spn135-unsampled-candidate-prefix
           retention-days: 14
           if-no-files-found: error
           path: |
@@ -59,6 +68,7 @@ jobs:
             runtime-source/spn135-*.patch
             runtime-source/spn135-*.log
             runtime-source/e2e/spn135-trace.ts
+            runtime-source/e2e/spn135-unsampled.ts
             runtime-source/test-results/**/spn108-*.json
             runtime-source/test-results/**/spn108-profile.cpuprofile
             runtime-source/test-results/**/spn135-*.json

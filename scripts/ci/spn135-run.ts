@@ -3,6 +3,7 @@ import { readdirSync, readFileSync, readlinkSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path';
 import { spawn } from 'node:child_process';
 import { setTimeout as delay } from 'node:timers/promises';
+import { diagnosticDeadlineMs, diagnosticGrep } from './spn135-unsampled.ts';
 
 if (process.platform !== 'linux') throw new Error('This diagnostic wrapper requires hosted Linux');
 const root = resolve(process.argv[2]);
@@ -36,9 +37,10 @@ const child = spawn(
     '--project=doc-responsiveness',
     'e2e/doc-responsiveness.spec.ts',
     '--grep',
-    'desktop sustained native typing profile$',
+    diagnosticGrep,
     '--workers=1',
     '--retries=0',
+    '--max-failures=1',
   ],
   { cwd: root, stdio: 'inherit', detached: true },
 );
@@ -54,7 +56,7 @@ const timer = setTimeout(() => {
   timedOut = true;
   terminate('SIGTERM');
   killTimer = setTimeout(() => terminate('SIGKILL'), 5000);
-}, 360000);
+}, diagnosticDeadlineMs);
 const result = await new Promise<{ code?: number | null; signal?: string | null; error?: string }>(
   (done) => {
     child.once('error', (error) => done({ error: String(error) }));
@@ -88,6 +90,7 @@ writeFileSync(
       before,
       result,
       timedOut,
+      diagnosticDeadlineMs,
       after,
       remaining,
       final,

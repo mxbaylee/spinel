@@ -1,0 +1,27 @@
+{
+  "protocolCommit": "43ddfde7",
+  "source": "dbbe5ccaf085ce20b79068d3596a35dcf2142223",
+  "diagnosticOnly": true,
+  "browserExecuted": false,
+  "checks": "Four sequence/selection controls passed; exact two-case collection passed; 119 original assertions retained; strict scoped types and oxlint passed. Initial eslint invocation was the wrong tool and failed for lack of ESLint config; use repository oxlint. Very short workloads finished before the first RSS sample; zero recorded peak is not a memory claim.",
+  "logs": {
+    "controls-first": "✔ second case requires successful predecessor in the same browser and worker (2.187708ms)\n✔ retry, repeated first case and unrelated cases fail closed (5.45025ms)\n✔ collection gate rejects omitted, reordered, duplicated or foreign cases (1.257375ms)\n✔ collection gate rejects retries, parallel workers and continuing after failure (0.30025ms)\nℹ tests 4\nℹ suites 0\nℹ pass 4\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 122.877375\nWATCHDOG: exit=0, signal=null, elapsed=176ms, peak=0.0MiB\n",
+    "preparation-first": "WATCHDOG: exit=0, signal=null, elapsed=152ms, peak=0.0MiB\n",
+    "collection": "WATCHDOG: exit=0, signal=null, elapsed=3539ms, peak=462.1MiB\n",
+    "format": ".github/workflows/ci.yml 20ms (unchanged)\nscripts/ci/spn135-unsampled.ts 48ms\nscripts/ci/spn135-unsampled.test.ts 16ms\nscripts/ci/spn135-selection.ts 7ms\nscripts/ci/spn135-phase-diagnostic.ts 11ms\nscripts/ci/spn135-run.ts 12ms (unchanged)\nWATCHDOG: exit=0, signal=null, elapsed=522ms, peak=178.8MiB\n",
+    "types": "WATCHDOG: exit=0, signal=null, elapsed=480ms, peak=180.6MiB\n",
+    "lint": "npm warn exec The following package was not found and will be installed: eslint@10.14.0\n\nOops! Something went wrong! :(\n\nESLint: 10.14.0\n\nESLint couldn't find an eslint.config.* file.\n\nFrom ESLint v9.0.0, the default configuration file is now eslint.config.*.\nIf you are using a .eslintrc.* file, please follow the migration guide\nto update your configuration file to the new format:\n\nhttps://eslint.org/docs/latest/use/configure/migration-guide\n\nIf you still have problems after following the migration guide, please stop by\nhttps://eslint.org/chat/help to chat with the team.\n\nWATCHDOG: exit=2, signal=null, elapsed=1778ms, peak=350.8MiB\n",
+    "oxlint": "WATCHDOG: exit=0, signal=null, elapsed=103ms, peak=0.0MiB\n",
+    "assertions-first": "{\"originalAssertions\":119,\"candidateAssertions\":128,\"allOriginalAssertionsPreserved\":true,\"noProfilerCommands\":true,\"originalSha256\":\"f7c5a1dc3d22d6a0ef9fb8615d08a4918976a45de7a17f2a941372cf9ecff388\",\"candidateSha256\":\"e052f008d944559b364639f36417fd5f984420bd6afc44d1fc94b083187a5d47\"}\nWATCHDOG: exit=0, signal=null, elapsed=295ms, peak=215.3MiB\n"
+  },
+  "sourceSha256": {
+    ".github/workflows/ci.yml": "11cd97fb966d7951f3f97821b1ab1c43155ebea256f918c652923d20bf81705e",
+    "scripts/ci/spn135-phase-diagnostic.ts": "3e0152d4da29d65a248854a33d842afedf7e80efb7e65acf82c59c60f130f0ba",
+    "scripts/ci/spn135-run.ts": "5fe3c9b29e4cc494870f32aff5e1e42bc70640f647d0703c6df30198650c3408",
+    "scripts/ci/spn135-unsampled.ts": "30426cd356d787b5bc8bf4c334a79f6b4b9f3536564bcc8c457f361b5b27779a",
+    "scripts/ci/spn135-unsampled.test.ts": "e18c3a81f1390709f0aaf1597196d43e9f520b282e5d5ebad5de0dc5ffb39aad",
+    "scripts/ci/spn135-selection.ts": "3426e469118c709a96b2dc0704e17a92919449ad2d4684da5270ff424f79014d",
+    "scripts/ci/spn135-native-phases.ts": "a02870e5b8c4bebef4ca7c1922241518dbf204db5aafc85afab5fb5b4074fcb7",
+    "scripts/ci/spn135-trace.ts": "da58abde81108ba2fa315aff441c27664f7ffeac009c57278c6a20b421f9f935"
+  }
+}
