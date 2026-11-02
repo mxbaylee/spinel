@@ -1,0 +1,46 @@
+{
+  "README.md": {
+    "bytes": 1928,
+    "sha256": "e6f8a857ddbbcee08c7162bc58bdfd6057f239da656e738b984f9c2546906462"
+  },
+  "diagnostic-desktop.zip": {
+    "bytes": 17318156,
+    "sha256": "2d44c38c0f1e7f2182ccbb91ec095922396f5e920c00e5a7e94768652363d4b0"
+  },
+  "diagnostic-first-desktop.log": {
+    "bytes": 71524,
+    "sha256": "c0228aa21e8c30abf34bbbbccd798f7d215d0aaf0ee6c8ae83cfb05912f6afc1"
+  },
+  "diagnostic-first-jobs.json": {
+    "bytes": 7229,
+    "sha256": "fa18e056132861848491cd4cd2ba046b523eaa5d4ff06e1b29046cee4857d71b"
+  },
+  "diagnostic-first-mobile.log": {
+    "bytes": 71511,
+    "sha256": "d91df5cb39ad65290ef21d99e5b7d29f66eb284d965b6d0041731d5e783f86b6"
+  },
+  "diagnostic-first-run.json": {
+    "bytes": 11750,
+    "sha256": "b884a1ec3e7c99f5ca66c0033615c7ede98162f470308a9b76117065e8290f3f"
+  },
+  "diagnostic-mobile.zip": {
+    "bytes": 17524883,
+    "sha256": "94fbc55501c9c8e6478894cc528319409ba6782cf16ccfef6418e229a7d61eb9"
+  },
+  "inventory-partial-trace.ts": {
+    "bytes": 1200,
+    "sha256": "db6856ce04b324b34f1e2c6a9d12f2553ba16a76fbfe8a1de9748822b3c1dd84"
+  },
+  "npm-ci-first.log": {
+    "bytes": 101,
+    "sha256": "e2ce4ffdc2e863adf184bf20c93f8c882ccb7974433cdbc164b5df293616ea45"
+  },
+  "partial-desktop-inventory-first.log": {
+    "bytes": 3275,
+    "sha256": "7e67126a32b509d78627775836efe776e5d48a4aaa3c7c91b570eada1f0290a8"
+  },
+  "trace-helper-first.log": {
+    "bytes": 303,
+    "sha256": "0938d88e6ac750a9d44404b39d8801f92f50701888f5677205efa0c74f438a6a"
+  }
+}

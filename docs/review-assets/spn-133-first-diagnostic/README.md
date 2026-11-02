@@ -1,0 +1,11 @@
+# SPN-133 first bounded diagnostic — collection failed
+
+Helper97d5b8202cdedca2277d4ba77455214d2f85f127; runtime8d2f994c3ac53c1849bd2b68927059d9c20c99f0; run41446158031attempt1. Exactlyone full16-paragraph profile sample perdesktop/mobile preset, no retry, unchanged throttle/workload.
+
+Both traces exceeded the declared64MiB retention cap. Collection correctly failed before finalcontent/UndoRedo acceptance; metrics/CPUprofiles and truncatedtracebytes remain evidence of observations only. Neither job passed. OriginalfullZIPs preserve sourceidentity/instrumentationdiff,fullselectedmetrics/profiles,failurecaptures,partialtrace,built sourcemaps andsafe hostedmirrorprofile. No database orrealuserdata. SHA256 desktop2d44c38c0f1e7f2182ccbb91ec095922396f5e920c00e5a7e94768652363d4b0; mobile94fbc55501c9c8e6478894cc528319409ba6782cf16ccfef6418e229a7d61eb9.
+
+Desktop prefix inventory found270344 completeevents and1truncatedline,coveringonly27.6s ofthe64.4styping/draintrace; onlystartclockmark retained. FunctionCall andv8.callFunction accountfor37.7MB ofthisprefix; timer/layout/frameevents addmostremainingvolume. This establishescollectionvolume,not a causeofthe originaltimingfailures. Noendmarkorcompleteintervalcoverage isclaimed.
+
+The temporary analyzer's node --check invocation didnotstripTypeScript; executingit againstanemptyartifactrootverifiedsyntaxonly,nottraceacceptance. Helperretention tests3/3passed,includingdata-loss andmissing-streamfailure;runtimehar nessmutationvalidatedoneexactcheckoutwithoutproductionfilechanges. Firstprivate npmciwasresourceaborted pressure2,RSS679.45MiB,2.039s;noheavy localretry.
+
+Nextdiagnosticrequiresa separatelydeclared instrumentationchange justifiedbythisvolume: focusedGC/user-timingeventsandexplicitnativephase spans,unchanged64MiBcap/workload/timeouts,oneprofileperpreset. Preserve thisfailedsample; do not rerun assertions foracceptance orattributeuntracedfailurestoGC.

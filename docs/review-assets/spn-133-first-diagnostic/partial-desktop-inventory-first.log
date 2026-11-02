@@ -1,0 +1,170 @@
+{
+  "rel": "runtime-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn133-trace.json",
+  "total": 270344,
+  "malformed": 1,
+  "min": 104658892,
+  "max": 132284760,
+  "marks": [
+    {
+      "args": {
+        "data": {
+          "callTime": 104658907,
+          "navigationId": "88AFF69D89E80828372653C5A2E8D80D",
+          "sampleTraceId": 1710236258056480,
+          "startTime": 2500
+        }
+      },
+      "cat": "blink.user_timing",
+      "name": "spn133-clock-start",
+      "ph": "I",
+      "pid": 3832,
+      "s": "t",
+      "tid": 3832,
+      "ts": 104658892,
+      "tts": 1072302
+    }
+  ],
+  "top": [
+    [
+      "devtools.timeline / FunctionCall",
+      {
+        "count": 71977,
+        "bytes": 28559216
+      }
+    ],
+    [
+      "v8 / v8.callFunction",
+      {
+        "count": 72242,
+        "bytes": 9176604
+      }
+    ],
+    [
+      "devtools.timeline / TimerInstall",
+      {
+        "count": 21794,
+        "bytes": 4945710
+      }
+    ],
+    [
+      "devtools.timeline / TimerRemove",
+      {
+        "count": 24231,
+        "bytes": 4689824
+      }
+    ],
+    [
+      "devtools.timeline / Layout",
+      {
+        "count": 9062,
+        "bytes": 3279271
+      }
+    ],
+    [
+      "devtools.timeline / RequestAnimationFrame",
+      {
+        "count": 12446,
+        "bytes": 2470669
+      }
+    ],
+    [
+      "blink,devtools.timeline / UpdateLayoutTree",
+      {
+        "count": 9208,
+        "bytes": 2058290
+      }
+    ],
+    [
+      "devtools.timeline / FireAnimationFrame",
+      {
+        "count": 9627,
+        "bytes": 1997049
+      }
+    ],
+    [
+      "devtools.timeline / PrePaint",
+      {
+        "count": 5889,
+        "bytes": 1618591
+      }
+    ],
+    [
+      "devtools.timeline / Paint",
+      {
+        "count": 3293,
+        "bytes": 1164386
+      }
+    ],
+    [
+      "devtools.timeline / EventDispatch",
+      {
+        "count": 6637,
+        "bytes": 1125098
+      }
+    ],
+    [
+      "devtools.timeline / Layerize",
+      {
+        "count": 3189,
+        "bytes": 876201
+      }
+    ],
+    [
+      "devtools.timeline / CancelAnimationFrame",
+      {
+        "count": 3912,
+        "bytes": 773137
+      }
+    ],
+    [
+      "devtools.timeline / Responsiveness.Renderer.UserInteraction",
+      {
+        "count": 2174,
+        "bytes": 568974
+      }
+    ],
+    [
+      "blink,devtools.timeline / HitTest",
+      {
+        "count": 1659,
+        "bytes": 428459
+      }
+    ],
+    [
+      "disabled-by-default-v8.gc / V8.GCTraceGCNVP",
+      {
+        "count": 170,
+        "bytes": 349942
+      }
+    ],
+    [
+      "disabled-by-default-v8.gc / V8.GC_Heap_Stats",
+      {
+        "count": 170,
+        "bytes": 266945
+      }
+    ],
+    [
+      "devtools.timeline / TimerFire",
+      {
+        "count": 1133,
+        "bytes": 228816
+      }
+    ],
+    [
+      "devtools.timeline,disabled-by-default-v8.gc / V8.GC_SCAVENGER_BACKGROUND_SCAVENGE_PARALLEL",
+      {
+        "count": 554,
+        "bytes": 116327
+      }
+    ],
+    [
+      "devtools.timeline,disabled-by-default-v8.gc / V8.GC_MC_INCREMENTAL_EMBEDDER_TRACING",
+      {
+        "count": 494,
+        "bytes": 93320
+      }
+    ]
+  ]
+}
+WATCHDOG: exit=0, signal=null, elapsed=319ms, peak=174.1MiB
