@@ -1,0 +1,57 @@
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+{"format":"es","capture":0,"active":false,"native":{"textCompose":124,"iteratorNext":2352,"bodySlices":1054,"cloneVisits":49830,"allocations":23244},"balanced":{"textCompose":124,"iteratorNext":2352,"bodySlices":1054,"cloneVisits":49830,"allocations":23244},"prototype":{"textCompose":124,"iteratorNext":2352,"bodySlices":1054,"cloneVisits":49830,"allocations":23244}}
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+{"format":"es","capture":1,"active":false,"native":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":50406,"allocations":23436},"balanced":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":50406,"allocations":23436},"prototype":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":50406,"allocations":23436}}
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+{"format":"es","capture":2,"active":false,"native":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":50406,"allocations":23436},"balanced":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":50406,"allocations":23436},"prototype":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":50406,"allocations":23436}}
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+{"format":"es","capture":3,"active":false,"native":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":50406,"allocations":23436},"balanced":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":50406,"allocations":23436},"prototype":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":50406,"allocations":23436}}
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+{"format":"es","capture":4,"active":false,"native":{"textCompose":124,"iteratorNext":2612,"bodySlices":1120,"cloneVisits":54186,"allocations":25322},"balanced":{"textCompose":124,"iteratorNext":2612,"bodySlices":1120,"cloneVisits":54186,"allocations":25322},"prototype":{"textCompose":124,"iteratorNext":2612,"bodySlices":1120,"cloneVisits":54186,"allocations":25322}}
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+{"format":"es","capture":5,"active":false,"native":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":50406,"allocations":23436},"balanced":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":50406,"allocations":23436},"prototype":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":50406,"allocations":23436}}
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+{"format":"es","capture":6,"active":false,"native":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":50406,"allocations":23436},"balanced":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":50406,"allocations":23436},"prototype":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":50406,"allocations":23436}}
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+{"format":"es","capture":7,"active":false,"native":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":50406,"allocations":23436},"balanced":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":50406,"allocations":23436},"prototype":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":50406,"allocations":23436}}
+✖ captured native mobile caches preserve publications and demonstrate eligibility (279.040541ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 467.325334
+
+✖ failing tests:
+
+test at scripts/dependencies/spn071-allocation-proof.test.ts:525:1
+✖ captured native mobile caches preserve publications and demonstrate eligibility (279.040541ms)
+  AssertionError [ERR_ASSERTION]: At least six of eight caches must qualify; paragraph groups may fall back.
+      at TestContext.<anonymous> (file:///Users/mxbaylee/projects/spinel-spn-071-diagnostic/scripts/dependencies/spn071-allocation-proof.test.ts:557:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+WATCHDOG: exit=1, signal=null, elapsed=516ms, peak=307.9MiB

@@ -1,0 +1,10 @@
+
+> build
+> vite build --sourcemap hidden
+
+vite v8.3.4 building client environment for production...
+transforming...
+✓ 4367 modules transformed.
+rendering chunks...
+WATCHDOG ABORT: pressure=2, RSS=1275.03125MiB, elapsed=1534ms
+serial: waiting for remaining workers.

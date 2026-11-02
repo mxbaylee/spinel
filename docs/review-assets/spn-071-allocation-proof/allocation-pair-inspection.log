@@ -1,0 +1,74 @@
+{
+  left: [
+    'body',
+    {
+      et: 'text-x',
+      e: [
+        { t: 'r', len: 2 },
+        {
+          t: 'i',
+          body: {
+            dataStream: 'a',
+            textRuns: [ { st: 0, ed: 1, ts: {} } ],
+            customRanges: [],
+            customDecorations: []
+          },
+          len: 1
+        }
+      ]
+    }
+  ],
+  right: [
+    'body',
+    {
+      et: 'text-x',
+      e: [
+        { t: 'r', len: 3 },
+        {
+          t: 'i',
+          body: {
+            dataStream: 'b',
+            textRuns: [ { st: 0, ed: 1, ts: {} } ],
+            customRanges: [],
+            customDecorations: []
+          },
+          len: 1
+        }
+      ]
+    }
+  ],
+  pair: [
+    'body',
+    {
+      et: 'text-x',
+      e: [
+        { t: 'r', len: 2 },
+        {
+          t: 'i',
+          body: {
+            dataStream: 'a',
+            textRuns: [],
+            paragraphs: undefined,
+            customDecorations: [],
+            customRanges: [],
+            customBlocks: undefined
+          },
+          len: 1
+        },
+        {
+          t: 'i',
+          body: {
+            dataStream: 'b',
+            textRuns: [],
+            paragraphs: undefined,
+            customDecorations: [],
+            customRanges: [],
+            customBlocks: undefined
+          },
+          len: 1
+        }
+      ]
+    }
+  ]
+}
+WATCHDOG: exit=0, signal=null, elapsed=157ms, peak=0.0MiB

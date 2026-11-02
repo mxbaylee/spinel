@@ -1,0 +1,242 @@
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+✖ captured native mobile caches preserve publications and demonstrate eligibility (76.63775ms)
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+✖ es: finite exact publication and snapshot matrix (29.587667ms)
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+{"format":"es","name":"plain","native":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":31194,"allocations":13830},"balanced":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":31194,"allocations":13830},"prototype":{"textCompose":124,"iteratorNext":914,"bodySlices":320,"cloneVisits":12550,"allocations":5658}}
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+{"format":"es","name":"light","native":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":50406,"allocations":23436},"balanced":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":50406,"allocations":23436},"prototype":{"textCompose":124,"iteratorNext":914,"bodySlices":320,"cloneVisits":18550,"allocations":8658}}
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+{"format":"es","name":"dark","native":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":50406,"allocations":23436},"balanced":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":50406,"allocations":23436},"prototype":{"textCompose":124,"iteratorNext":914,"bodySlices":320,"cloneVisits":18550,"allocations":8658}}
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+{"format":"es","name":"color","native":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":51150,"allocations":24180},"balanced":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":51150,"allocations":24180},"prototype":{"textCompose":124,"iteratorNext":914,"bodySlices":320,"cloneVisits":19294,"allocations":9402}}
+✔ es: marker recognition reduces real work against current fallback; disabled control fails (94.693667ms)
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+✔ es: mismatches and rich/structural states retain native results (47.953208ms)
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+✔ es: empty/divergent cache ownership and publication mutation (102.614208ms)
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+✖ cjs: finite exact publication and snapshot matrix (22.35425ms)
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+{"format":"cjs","name":"plain","native":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":31194,"allocations":13830},"balanced":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":31194,"allocations":13830},"prototype":{"textCompose":124,"iteratorNext":914,"bodySlices":320,"cloneVisits":12550,"allocations":5658}}
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+{"format":"cjs","name":"light","native":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":50406,"allocations":23436},"balanced":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":50406,"allocations":23436},"prototype":{"textCompose":124,"iteratorNext":914,"bodySlices":320,"cloneVisits":18550,"allocations":8658}}
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+{"format":"cjs","name":"dark","native":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":50406,"allocations":23436},"balanced":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":50406,"allocations":23436},"prototype":{"textCompose":124,"iteratorNext":914,"bodySlices":320,"cloneVisits":18550,"allocations":8658}}
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+{"format":"cjs","name":"color","native":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":51150,"allocations":24180},"balanced":{"textCompose":124,"iteratorNext":2480,"bodySlices":1054,"cloneVisits":51150,"allocations":24180},"prototype":{"textCompose":124,"iteratorNext":914,"bodySlices":320,"cloneVisits":19294,"allocations":9402}}
+✔ cjs: marker recognition reduces real work against current fallback; disabled control fails (93.388291ms)
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+✔ cjs: mismatches and rich/structural states retain native results (45.329583ms)
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+Identifier "doc.state-change-interceptor-service" already exists. Returning the cached identifier decorator.
+✔ cjs: empty/divergent cache ownership and publication mutation (97.660042ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 6
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 979.296333
+
+✖ failing tests:
+
+test at scripts/dependencies/spn071-marker-proof.test.ts:525:1
+✖ captured native mobile caches preserve publications and demonstrate eligibility (76.63775ms)
+  AssertionError [ERR_ASSERTION]: Ineligible cache uses complete fallback.
+  + actual - expected
+  
+    {
+  +   allocations: 8622,
+  +   bodySlices: 320,
+  +   cloneVisits: 18442,
+  +   iteratorNext: 890,
+  -   allocations: 23244,
+  -   bodySlices: 1054,
+  -   cloneVisits: 49830,
+  -   iteratorNext: 2352,
+      textCompose: 124
+    }
+  
+      at TestContext.<anonymous> (file:///Users/mxbaylee/projects/spinel-spn-071-diagnostic/scripts/dependencies/spn071-marker-proof.test.ts:554:21)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: { textCompose: 124, iteratorNext: 890, bodySlices: 320, cloneVisits: 18442, allocations: 8622 },
+    expected: { textCompose: 124, iteratorNext: 2352, bodySlices: 1054, cloneVisits: 49830, allocations: 23244 },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/dependencies/spn071-marker-proof.test.ts:563:3
+✖ es: finite exact publication and snapshot matrix (29.587667ms)
+  AssertionError [ERR_ASSERTION]: absent/3/0/false: shortcut must activate
+      at TestContext.<anonymous> (file:///Users/mxbaylee/projects/spinel-spn-071-diagnostic/scripts/dependencies/spn071-marker-proof.test.ts:579:37)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/dependencies/spn071-marker-proof.test.ts:563:3
+✖ cjs: finite exact publication and snapshot matrix (22.35425ms)
+  AssertionError [ERR_ASSERTION]: absent/3/0/false: shortcut must activate
+      at TestContext.<anonymous> (file:///Users/mxbaylee/projects/spinel-spn-071-diagnostic/scripts/dependencies/spn071-marker-proof.test.ts:579:37)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+WATCHDOG: exit=1, signal=null, elapsed=1027ms, peak=396.6MiB
