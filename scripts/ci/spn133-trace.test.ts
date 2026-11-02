@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, readFile, rm } from 'node:fs/promises';
+import { mkdtemp, readFile, rm, open } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
@@ -65,5 +65,44 @@ for (const scenario of ['complete', 'data-loss', 'missing-stream'] as const) {
     } finally {
       await rm(root, { recursive: true, force: true });
     }
+  });
+}
+
+for (const primaryFailure of [false, true]) {
+  test(`file-close failure preserves result and stream cleanup; primary=${primaryFailure}`, async () => {
+    let listener: ((value: unknown) => void) | undefined;
+    let streamClosed = false;
+    const cdp = {
+      on(_event: string, callback: typeof listener) {
+        listener = callback;
+      },
+      off() {
+        listener = undefined;
+      },
+      async send(command: string) {
+        if (command === 'Tracing.end') listener?.({ stream: 'trace', dataLossOccurred: false });
+        if (command === 'IO.read') {
+          if (primaryFailure) throw new Error('original read failure');
+          return { data: '{}', eof: true };
+        }
+        if (command === 'IO.close') streamClosed = true;
+        return {};
+      },
+    } as unknown as CDPSession;
+    const openFile = (async () => ({
+      async writeFile() {},
+      async close() {
+        throw new Error('cleanup close failure');
+      },
+    })) as unknown as typeof open;
+    const stop = await startDiagnosticTrace(cdp, '/unused', openFile);
+    const result = await stop();
+    assert.equal(result.complete, false);
+    assert.equal(await stop(), result);
+    assert.equal(streamClosed, true);
+    assert.equal(listener, undefined);
+    assert.deepEqual(result.cleanupErrors, ['file-close: Error: cleanup close failure']);
+    if (primaryFailure) assert.equal(result.error, 'Error: original read failure');
+    else assert.equal(result.error, undefined);
   });
 }

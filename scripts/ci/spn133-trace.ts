@@ -3,7 +3,11 @@ import type { CDPSession } from '@playwright/test';
 import { createHash } from 'node:crypto';
 import { open } from 'node:fs/promises';
 
-export async function startDiagnosticTrace(cdp: CDPSession, destination: string) {
+export async function startDiagnosticTrace(
+  cdp: CDPSession,
+  destination: string,
+  openTraceFile: typeof open = open,
+) {
   type Completion = { stream?: string; dataLossOccurred: boolean };
   let finish!: (value: Completion) => void;
   const completed = new Promise<Completion>((resolve) => {
@@ -35,7 +39,7 @@ export async function startDiagnosticTrace(cdp: CDPSession, destination: string)
             promise,
             new Promise<never>((_, reject) => {
               timer = setTimeout(
-                () => reject(new Error('Trace collection exceeded 30 s deadline')),
+                () => reject(new Error('Trace CDP collection exceeded 30 s deadline')),
                 Math.max(1, deadline - Date.now()),
               );
             }),
@@ -49,12 +53,14 @@ export async function startDiagnosticTrace(cdp: CDPSession, destination: string)
       let handle: string | undefined;
       let file: Awaited<ReturnType<typeof open>> | undefined;
       let completion: Completion | undefined;
+      let outcome: Record<string, unknown>;
+      const cleanupErrors: string[] = [];
       try {
         await bounded(cdp.send('Tracing.end'));
         completion = await bounded(completed);
         handle = completion.stream;
         if (!handle) throw new Error('Trace completion did not supply a stream');
-        file = await open(destination, 'w');
+        file = await openTraceFile(destination, 'w');
         for (;;) {
           const chunk = await bounded(cdp.send('IO.read', { handle, size: 1024 * 1024 }));
           const buffer = Buffer.from(chunk.data, chunk.base64Encoded ? 'base64' : 'utf8');
@@ -66,9 +72,9 @@ export async function startDiagnosticTrace(cdp: CDPSession, destination: string)
           if (chunk.eof) break;
         }
         if (completion.dataLossOccurred) throw new Error('Chromium reported trace data loss');
-        return { complete: true, bytes, sha256: hash.digest('hex'), dataLossOccurred: false };
+        outcome = { complete: true, bytes, sha256: hash.digest('hex'), dataLossOccurred: false };
       } catch (error) {
-        return {
+        outcome = {
           complete: false,
           bytes,
           dataLossOccurred: completion?.dataLossOccurred ?? null,
@@ -77,17 +83,31 @@ export async function startDiagnosticTrace(cdp: CDPSession, destination: string)
         };
       } finally {
         cdp.off('Tracing.tracingComplete', finish);
-        await file?.close();
+        try {
+          await file?.close();
+        } catch (error) {
+          cleanupErrors.push('file-close: ' + String(error));
+        }
         if (handle) {
           let timer: ReturnType<typeof setTimeout> | undefined;
           await Promise.race([
-            cdp.send('IO.close', { handle }).catch(() => {}),
+            cdp.send('IO.close', { handle }).catch((error) => {
+              cleanupErrors.push('stream-close: ' + String(error));
+            }),
             new Promise<void>((resolve) => {
-              timer = setTimeout(resolve, 2000);
+              timer = setTimeout(() => {
+                cleanupErrors.push('stream-close: exceeded 2 s');
+                resolve();
+              }, 2000);
             }),
           ]);
           clearTimeout(timer);
         }
       }
+      if (cleanupErrors.length) {
+        outcome.complete = false;
+        outcome.cleanupErrors = cleanupErrors;
+      }
+      return outcome;
     })());
 }
