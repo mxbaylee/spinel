@@ -16,6 +16,12 @@ import {
   type BrowserstackFixture,
 } from './browserstack-fixture.ts';
 import { observeChromeReadinessFailure } from './browserstack-chrome-readiness.ts';
+import {
+  capabilityScopeDefinition,
+  readCapabilityScope,
+  type CapabilityScope,
+} from './browserstack-scope.ts';
+export { readCapabilityScope, type CapabilityScope } from './browserstack-scope.ts';
 import { countOfflineImagePixels, offlineImagesPainted } from './offline-image-pixels.ts';
 import type { PhoneAcceptanceCases, PhoneAcceptanceDriver } from './browserstack-acceptance.ts';
 import { ledgerClient } from './browserstack-ledger.ts';
@@ -50,8 +56,8 @@ function requireAcceptanceFixture(fixture: Fixture): asserts fixture is Browsers
   );
 }
 const laneMilliseconds = 180_000;
-const safariAcceptanceMilliseconds = 780_000;
-const safariPrerequisiteMilliseconds = 240_000;
+const authoredAcceptanceMilliseconds = 780_000;
+const authoredPrerequisiteMilliseconds = 240_000;
 const cleanupMilliseconds = 15_000;
 const reportPath = 'artifacts/browserstack-capability.json';
 const sessionPattern = /^[a-f0-9]{40}$/;
@@ -826,17 +832,6 @@ export type CapabilityResult = {
   screenshots: string[];
   cleanup: { network: string; session: string; fixture: string };
 };
-export type CapabilityScope = 'all' | 'chrome-navigation-diagnostic' | 'safari-acceptance';
-export function readCapabilityScope(value: unknown): CapabilityScope {
-  requireCondition(
-    value === undefined ||
-      value === 'all' ||
-      value === 'chrome-navigation-diagnostic' ||
-      value === 'safari-acceptance',
-    'invalid-scope',
-  );
-  return value ?? 'all';
-}
 function notRunLane(target: Target, stage: string, reason: string): CapabilityResult {
   return {
     target,
@@ -859,19 +854,20 @@ export async function runCapabilityLane(
   scope: CapabilityScope = 'all',
 ): Promise<CapabilityResult> {
   readCapabilityScope(scope);
-  if (scope === 'chrome-navigation-diagnostic' && target.browser === 'safari')
+  const selection = capabilityScopeDefinition(scope);
+  if (selection.browser && target.browser !== selection.browser && target.browser !== 'firefox')
     return notRunLane(
       target,
-      'chrome-navigation-diagnostic-only',
-      'Safari is not run by this Chrome navigation experiment. Its prior capability result is historical evidence, not acceptance for this source.',
+      `${scope}-only`,
+      `This ${target.browser} lane is not selected by ${scope}. Historical results are not current-source acceptance.`,
     );
-  if (scope === 'safari-acceptance' && target.browser === 'chrome')
+  if (selection.context === 'ordinary-tab' && target.browser !== selection.browser)
     return notRunLane(
       target,
-      'safari-acceptance-only',
-      'Chrome is not run by this Safari authored acceptance scope. Its installed-context coverage remains unobserved by this scope; no historical result is promoted to current-source acceptance.',
+      `${scope}-only`,
+      `Only the selected ordinary-tab browser is executed. This ${target.browser} lane has no allocation or current-source acceptance.`,
     );
-  if (target.browser !== 'firefox') return execute();
+  if (target.browser !== 'firefox' || selection.context === 'ordinary-tab') return execute();
   return {
     target,
     status: 'blocked',
@@ -953,12 +949,15 @@ export function capabilityRunOutcome(
   const fullMatrixStatus = capabilityOutcome(lanes);
   let status = fullMatrixStatus;
   if (scope !== 'all' && completeLaneSet(lanes)) {
-    const browser = scope === 'safari-acceptance' ? 'safari' : 'chrome';
-    status = lanes.some(failedLane)
-      ? 'failed'
-      : lanes.find((lane) => lane.target.browser === browser)!.status === 'passed'
-        ? 'passed'
-        : 'incomplete';
+    const selection = capabilityScopeDefinition(scope);
+    const selected = lanes.find((lane) => lane.target.browser === selection.browser)!;
+    status =
+      lanes.some(failedLane) ||
+      (selected.status === 'passed' && selected.stage !== selection.completionStage)
+        ? 'failed'
+        : selected.status === 'passed'
+          ? 'passed'
+          : 'incomplete';
   }
   return { status, fullMatrixStatus, exitCode: status === 'passed' ? 0 : 1 };
 }
@@ -1088,6 +1087,112 @@ const environmentScript = `return {
     [...document.querySelectorAll('button')].some(button => button.textContent.trim() === 'Sign in with a passkey' && !button.disabled),
   invalidCertificate: /certificate|not private|not secure/i.test(document.title + ' ' + (document.body?.innerText || '').slice(0, 3000))
 };`;
+function verifyBrowserIdentity(target: Target, environment: Row) {
+  const expected = {
+    chrome: /Android.*Chrome\//,
+    firefox: /Android.*Gecko\/.*Firefox\//,
+    safari: /iPhone.*Version\/.*Safari\//,
+  }[target.browser];
+  const userAgent = String(environment.userAgent);
+  requireCondition(
+    expected.test(userAgent) &&
+      !(target.browser !== 'safari' && /SamsungBrowser\/|EdgA\/|OPR\//.test(userAgent)) &&
+      !(target.browser === 'firefox' && /Chrome\//.test(userAgent)),
+    'unexpected-browser',
+  );
+}
+export function verifyOrdinaryTabContext(target: Target, environment: unknown) {
+  const value = row(environment);
+  verifyBrowserIdentity(target, value);
+  requireCondition(
+    value.origin === browserstackOrigin &&
+      value.secureContext === true &&
+      value.controller === `${browserstackOrigin}/service-worker.js` &&
+      value.standalone === false &&
+      value.navigatorStandalone === false,
+    'ordinary-tab-context-invalid',
+  );
+}
+export const ordinaryTabReloadMarkerScript = `
+if (location.origin !== arguments[0]) return false;
+const key=Symbol.for('spinel.capability.page-lifetime');
+if (Object.hasOwn(globalThis,key)) return false;
+Object.defineProperty(globalThis,key,{value:arguments[1],configurable:true});
+return true;`;
+export const ordinaryTabReloadObservationScript = `return {
+  origin:location.origin, href:location.href, readyState:document.readyState,
+  oldDocumentMarkerPresent:Object.hasOwn(globalThis,Symbol.for('spinel.capability.page-lifetime')),
+  standalone:matchMedia('(display-mode: standalone)').matches,
+  navigatorStandalone:navigator.standalone === true
+};`;
+
+/** A page reload in one actual tab, never an OS/browser-process restart. */
+export async function reloadOrdinaryTab(
+  command: (suffix: string, method: string, body: unknown, timeout: number) => Promise<unknown>,
+  options: { origin: string; windowHandle: unknown; deadline: number },
+) {
+  requireCondition(
+    options.origin === browserstackOrigin &&
+      typeof options.windowHandle === 'string' &&
+      /^[\w:.-]{1,200}$/.test(options.windowHandle),
+    'ordinary-tab-reload-input-invalid',
+  );
+  const until = Math.min(options.deadline, Date.now() + 15_000);
+  const send = async (suffix: string, method = 'GET', body?: unknown) => {
+    const left = until - Date.now();
+    requireCondition(left > 0, 'ordinary-tab-reload-deadline');
+    const value = await command(suffix, method, body, left);
+    requireCondition(Date.now() < until, 'ordinary-tab-reload-deadline');
+    return value;
+  };
+  requireCondition((await send('window')) === options.windowHandle, 'ordinary-tab-window-changed');
+  const before = await send('url');
+  let safeURL = false;
+  if (typeof before === 'string' && before.length <= 4096) {
+    try {
+      const url = new URL(before);
+      safeURL = url.origin === options.origin && !url.username && !url.password;
+    } catch {
+      // The observed URL is a precondition, never a navigation destination.
+    }
+  }
+  requireCondition(safeURL, 'ordinary-tab-origin-changed');
+  requireCondition(
+    (await send('execute/sync', 'POST', {
+      script: ordinaryTabReloadMarkerScript,
+      args: [options.origin, randomUUID()],
+    })) === true,
+    'ordinary-tab-marker-unavailable',
+  );
+  // One normal WebDriver refresh. An uncertain command is never replayed.
+  await send('refresh', 'POST', {});
+  requireCondition((await send('window')) === options.windowHandle, 'ordinary-tab-window-changed');
+  requireCondition((await send('url')) === before, 'ordinary-tab-url-changed');
+  const after = row(
+    await send('execute/sync', 'POST', {
+      script: ordinaryTabReloadObservationScript,
+      args: [],
+    }),
+  );
+  requireCondition(
+    after.origin === options.origin &&
+      after.href === before &&
+      ['interactive', 'complete'].includes(String(after.readyState)) &&
+      after.oldDocumentMarkerPresent === false &&
+      after.standalone === false &&
+      after.navigatorStandalone === false,
+    'ordinary-tab-document-not-replaced',
+  );
+  return {
+    operation: 'webdriver-refresh',
+    sameWindow: true,
+    exactURLRetained: true,
+    oldDocumentDiscarded: true,
+    browserStorageCopied: false,
+    nativeAppTerminationObserved: false,
+    nativeProcessRestartOwner: 'scripts/ci/desktop-offline.ts',
+  };
+}
 export const itemReadinessScript = `
 const observation = {
   phase: 'document',
@@ -1321,8 +1426,12 @@ export async function runCapability(
   options: CapabilityOptions,
 ): Promise<CapabilityResult> {
   const scope = options.scope ?? 'all';
-  const acceptanceScope = scope === 'safari-acceptance';
-  const operationalMilliseconds = acceptanceScope ? safariAcceptanceMilliseconds : laneMilliseconds;
+  const selection = capabilityScopeDefinition(scope);
+  const acceptanceScope = selection?.authored === true;
+  const tabScope = selection?.context === 'ordinary-tab';
+  const operationalMilliseconds = acceptanceScope
+    ? authoredAcceptanceMilliseconds
+    : laneMilliseconds;
   const began = Date.now();
   const timing: CapabilityTiming = {
     laneLimitMilliseconds: operationalMilliseconds,
@@ -1347,7 +1456,7 @@ export async function runCapability(
   };
   const deadline = began + operationalMilliseconds;
   const signal = AbortSignal.timeout(operationalMilliseconds);
-  let phaseDeadline = acceptanceScope ? began + safariPrerequisiteMilliseconds : deadline;
+  let phaseDeadline = acceptanceScope ? began + authoredPrerequisiteMilliseconds : deadline;
   const activeDeadline = () => Math.min(deadline, phaseDeadline);
   let previousWindowHandles: string[] = [];
   let currentItemURL: string | undefined;
@@ -1822,9 +1931,14 @@ export async function runCapability(
     const standalone = environment.standalone === true || environment.navigatorStandalone === true;
     await record(name, {
       ...environment,
-      launchMode: standalone ? 'standalone' : 'browser-shortcut',
+      launchMode: tabScope
+        ? 'ordinary-browser-tab'
+        : standalone
+          ? 'standalone'
+          : 'browser-shortcut',
     });
-    requireCondition(target.browser !== 'safari' || standalone, 'ios-launch-not-standalone');
+    if (tabScope) verifyOrdinaryTabContext(target, environment);
+    else requireCondition(target.browser !== 'safari' || standalone, 'ios-launch-not-standalone');
   }
   async function secureEnvironment(anonymous = false) {
     const environment = await poll(
@@ -2115,9 +2229,32 @@ export async function runCapability(
     });
     return relaunched;
   }
+  async function reloadTab(attached: Row, prefix = '') {
+    stage(`${prefix}offline-page-reload`);
+    const observed = await reloadOrdinaryTab(
+      (suffix, method, body, timeout) => command(session(suffix), method, body, timeout),
+      { origin: fixture.origin, windowHandle: attached.windowHandle, deadline: activeDeadline() },
+    );
+    await record(`${prefix}ordinary-tab-reload`, observed);
+    const environment = await secureEnvironment();
+    verifyOrdinaryTabContext(target, environment);
+    await transportProbe(false);
+    const assets = await executeAsync(installationAssetsScript, [], 'offline-installation-assets');
+    verifyInstallationAssets(assets);
+    await record(`${prefix}offline-installation-assets`, assets);
+    await record(`${prefix}page-reload-socket`, {
+      status: 'not-retested',
+      reason:
+        'The unused authenticated ticket was tested before this page reload; no fresh ticket is issued offline.',
+    });
+    return { ...environment, windowHandle: attached.windowHandle };
+  }
   try {
     readCapabilityScope(scope);
-    requireCondition(!acceptanceScope || target.browser === 'safari', 'scope-target-mismatch');
+    requireCondition(
+      !selection.browser || target.browser === selection.browser,
+      'scope-target-mismatch',
+    );
     requireCondition(
       fixture.origin === browserstackOrigin && Boolean(options.localIdentifier),
       'fixture-preflight',
@@ -2138,7 +2275,7 @@ export async function runCapability(
       acceptance = await import('./browserstack-acceptance.ts');
       requireCondition(
         acceptance.phoneAcceptanceLimits.operational === operationalMilliseconds &&
-          acceptance.phoneAcceptanceLimits.prerequisites === safariPrerequisiteMilliseconds,
+          acceptance.phoneAcceptanceLimits.prerequisites === authoredPrerequisiteMilliseconds,
         'acceptance-bounds-mismatch',
       );
       acceptanceCases = acceptance.seedPhoneAcceptance(fixture);
@@ -2148,7 +2285,14 @@ export async function runCapability(
         bounds: acceptance.phoneAcceptanceLimits,
         boundsMeasured: false,
         build: 'production with read-only VITE_SYNC_EVIDENCE observations',
-        ordinaryBrowserTabAcceptance: 'not-run-by-this-scope',
+        browser: target.browser,
+        launchContext: selection.context,
+        reopenOperation: tabScope ? 'cold-page-reload' : 'native-termination-and-home-relaunch',
+        nativeAppRestart: tabScope ? 'not-observed-by-this-scope' : 'required-before-continuation',
+        ordinaryBrowserTabAcceptance: tabScope
+          ? 'selected-not-yet-observed'
+          : 'not-run-by-this-scope',
+        nativeRestartAlternative: tabScope ? 'scripts/ci/desktop-offline.ts' : null,
         otherPhysicalLanes: 'not-run-by-this-scope',
       });
     }
@@ -2236,20 +2380,7 @@ export async function runCapability(
     )
       await execute('browserstack_executor: {"action":"acceptSsl"}');
     const anonymous = await secureEnvironment(true);
-    const expected = {
-      chrome: /Android.*Chrome\//,
-      firefox: /Android.*Gecko\/.*Firefox\//,
-      safari: /iPhone.*Version\/.*Safari\//,
-    }[target.browser];
-    requireCondition(
-      expected.test(String(anonymous.userAgent)) &&
-        !(
-          target.browser !== 'safari' &&
-          /SamsungBrowser\/|EdgA\/|OPR\//.test(String(anonymous.userAgent))
-        ) &&
-        !(target.browser === 'firefox' && /Chrome\//.test(String(anonymous.userAgent))),
-      'unexpected-browser',
-    );
+    verifyBrowserIdentity(target, anonymous);
     const initialWindows = await command(session('window/handles'));
     requireCondition(
       Array.isArray(initialWindows) && initialWindows.every((handle) => typeof handle === 'string'),
@@ -2257,50 +2388,89 @@ export async function runCapability(
     );
     previousWindowHandles = initialWindows;
     await record('initial-window-handles', initialWindows);
-    stage('native-install');
-    const initialContexts = await command(session('contexts'));
-    requireCondition(Array.isArray(initialContexts), 'native-contexts-unavailable');
-    await record('initial-native-contexts', initialContexts);
-    await context('NATIVE_APP');
-    if (target.browser === 'safari') await openNativeShare(tap);
-    else
-      await tap(
-        /^(?:More options|Menu|Open menu|Customize and control Google Chrome)$|(?:^|:)menu_button$/i,
+    let foregroundApp: string | undefined;
+    let launched: Row;
+    if (tabScope) {
+      stage('ordinary-tab-context');
+      const currentWindow = await command(session('window'));
+      requireCondition(
+        typeof currentWindow === 'string' && initialWindows.includes(currentWindow),
+        'ordinary-tab-window-unavailable',
       );
-    let installed = await tap(installMenuLabel, false, false, target.browser === 'safari');
-    for (let count = 0; !installed && count < 2; count++) {
-      await scroll();
-      installed = await tap(installMenuLabel, false, false, target.browser === 'safari');
+      verifyOrdinaryTabContext(target, anonymous);
+      launched = { ...anonymous, windowHandle: currentWindow };
+      await record('ordinary-tab-context', {
+        ...launched,
+        storageContext: 'actual-current-tab-within-this-device-session',
+        storageTransfer: 'none',
+        nativeContextCommand: 'not-requested',
+        nativeAppRestart: 'not-observed-by-this-scope',
+        nativeRestartAlternative: 'scripts/ci/desktop-offline.ts',
+        firefoxNativeLimit:
+          target.browser === 'firefox'
+            ? {
+                runId: '41361564434',
+                evidencePath: 'docs/implementation/evidence/SPN-090-capability-41361564434.json',
+                command: 'GET session/{sessionId}/contexts',
+                failure: 'http-400',
+                disposition: 'accepted-observation-limit-for-the-attempted-route',
+              }
+            : null,
+      });
+    } else {
+      stage('native-install');
+      const initialContexts = await command(session('contexts'));
+      requireCondition(Array.isArray(initialContexts), 'native-contexts-unavailable');
+      await record('initial-native-contexts', initialContexts);
+      await context('NATIVE_APP');
+      if (target.browser === 'safari') await openNativeShare(tap);
+      else
+        await tap(
+          /^(?:More options|Menu|Open menu|Customize and control Google Chrome)$|(?:^|:)menu_button$/i,
+        );
+      let installed = await tap(installMenuLabel, false, false, target.browser === 'safari');
+      for (let count = 0; !installed && count < 2; count++) {
+        await scroll();
+        installed = await tap(installMenuLabel, false, false, target.browser === 'safari');
+      }
+      requireCondition(installed, 'native-install-control-unavailable');
+      for (let count = 0; count < 2; count++) {
+        if (!(await tap(installConfirmationLabels, false, true))) break;
+      }
+      // The last allowed click must also finish its native transition. This is
+      // observation only: the two-click limit never grows to a third action.
+      if (confirmationSelectors.size) await observeConfirmationTransition();
+      stage('home-launch');
+      await home();
+      await launchIcon();
+      foregroundApp = await foreground();
+      launched = await attach(foregroundApp);
     }
-    requireCondition(installed, 'native-install-control-unavailable');
-    for (let count = 0; count < 2; count++) {
-      if (!(await tap(installConfirmationLabels, false, true))) break;
-    }
-    // The last allowed click must also finish its native transition. This is
-    // observation only: the two-click limit never grows to a third action.
-    if (confirmationSelectors.size) await observeConfirmationTransition();
-    stage('home-launch');
-    await home();
-    await launchIcon();
-    const foregroundApp = await foreground();
-    const launched = await attach(foregroundApp);
     let attached = launched;
     await recordLaunch('launched-context', launched);
     await secureEnvironment(true);
-    stage('installed-authentication');
+    const authenticationStage = tabScope
+      ? 'ordinary-tab-authentication'
+      : 'installed-authentication';
+    stage(authenticationStage);
     const authenticated = row(
       await executeAsync(
         `const response=await fetch(arguments[0],{cache:'no-store',credentials:'include'});
       if(!response.ok) throw new Error('bootstrap'); const session=await fetch('/api/auth/session',{cache:'no-store',credentials:'include'});
       if(!session.ok) throw new Error('session'); const body=await session.json();return {actor:body.user?.id || null};`,
         [fixture.loginURL],
-        'installed-authentication',
+        authenticationStage,
       ),
     );
-    requireCondition(authenticated.actor === fixture.actor.id, 'installed-authentication-failed');
-    await record('installed-authentication', {
+    requireCondition(
+      authenticated.actor === fixture.actor.id,
+      tabScope ? 'ordinary-tab-authentication-failed' : 'installed-authentication-failed',
+    );
+    await record(authenticationStage, {
       actor: authenticated.actor,
-      method: 'one-use-production-session-bootstrap-in-launched-context',
+      method: tabScope
+        ? 'one-use-production-session-bootstrap-in-actual-tab'
+        : 'one-use-production-session-bootstrap-in-launched-context',
     });
     stage('production-downloads');
     let previousItemURL: string | undefined;
@@ -2337,7 +2507,9 @@ export async function runCapability(
       ready: itemReady,
       click: (selector, label) => clickWeb(selector, label, true),
       restart: async () => {
-        attached = await restartInstalled(foregroundApp, 'pending-');
+        attached = tabScope
+          ? await reloadTab(attached, 'pending-')
+          : await restartInstalled(foregroundApp!, 'pending-');
       },
       network: async (offline) => {
         requireCondition(acceptance && acceptanceFixture, 'acceptance-fixture-unavailable');
@@ -2413,12 +2585,12 @@ export async function runCapability(
     await transportProbe(false);
     const before = await storedItems(prepared);
     checkStored(before, prepared);
-    await record('retained-before-restart', before);
-    attached = await restartInstalled(foregroundApp);
+    await record(tabScope ? 'retained-before-page-reload' : 'retained-before-restart', before);
+    attached = tabScope ? await reloadTab(attached) : await restartInstalled(foregroundApp!);
     const after = await storedItems(prepared);
     checkStored(after, prepared);
     requireCondition(JSON.stringify(after) === JSON.stringify(before), 'retained-bundle-changed');
-    await record('retained-after-restart', after);
+    await record(tabScope ? 'retained-after-page-reload' : 'retained-after-restart', after);
     previousItemURL = undefined;
     for (const item of prepared) {
       previousItemURL = await navigateItem(item, attached, previousItemURL);
@@ -2434,8 +2606,13 @@ export async function runCapability(
       else await screenshot(captureName);
     }
     if (acceptance && acceptanceFixture && acceptanceCases)
-      await acceptance.runPhoneAcceptance(acceptanceDriver, acceptanceFixture, acceptanceCases);
-    stage(acceptanceScope ? 'safari-acceptance-complete' : 'capability-complete');
+      await acceptance.runPhoneAcceptance(
+        acceptanceDriver,
+        acceptanceFixture,
+        acceptanceCases,
+        scope,
+      );
+    stage(selection.completionStage);
     result.status = 'passed';
   } catch (error) {
     result.failure = failure(error);
@@ -2503,8 +2680,7 @@ type Journal = ReservationIdentity & {
   schemaVersion: 1;
   scope: string;
   capabilityScope: CapabilityScope;
-  allocationPlan:
-    'two-lane-chrome-safari-remediation' | 'chrome-navigation-diagnostic' | 'safari-acceptance';
+  allocationPlan: 'two-lane-chrome-safari-remediation' | Exclude<CapabilityScope, 'all'>;
   status: 'prepared' | 'running' | 'passed' | 'failed' | 'incomplete';
   fullMatrixStatus: CapabilityOutcome;
   stage: string;
@@ -2520,14 +2696,15 @@ export function preparedCapabilityJournal(
   scope: CapabilityScope = 'all',
 ): Journal {
   readCapabilityScope(scope);
+  const selection = capabilityScopeDefinition(scope);
   return {
     schemaVersion: 1,
     ...identity,
     scope:
       scope === 'chrome-navigation-diagnostic'
         ? 'Chrome-only location.assign navigation and failure-only document observation with the unchanged 900-second reservation. Selected-scope execution is reported separately from full-matrix coverage. All three lanes remain reported; Firefox has an observed route limitation and Safari is not run. Full-matrix coverage remains incomplete when Chrome passes.'
-        : scope === 'safari-acceptance'
-          ? 'Safari-only authored installed-context acceptance with a 780-second operational bound and the unchanged 900-second reservation. Selected-scope execution is reported separately from full-matrix coverage. All three lanes remain reported; Firefox has an observed route limitation and Chrome is not run. A Safari pass does not complete ordinary browser-tab acceptance or every contract in the approved coverage map.'
+        : selection.authored
+          ? `${selection.browser}-only authored ${selection.context} acceptance with a 780-second operational bound and the unchanged 900-second reservation. Selected-scope execution is separate from the three-lane capability aggregate. Other browsers are not allocated. ${selection.context === 'ordinary-tab' ? 'Reopen is a verified cold page reload, not OS termination or a native process restart; native desktop coverage owns that alternative observation. Installed-context acceptance is not run by this scope.' : 'The existing actual installed capability prerequisites must pass before authored continuation. Ordinary-tab acceptance is not run by this scope.'} A selected pass does not complete every contract in the approved coverage map.`
           : 'Two-lane Chrome/Safari capability remediation with the unchanged 900-second reservation. All three required lanes remain reported; Firefox is explicitly blocked by prior evidence. This is not full-matrix acceptance.',
     capabilityScope: scope,
     allocationPlan: scope === 'all' ? 'two-lane-chrome-safari-remediation' : scope,
@@ -2710,7 +2887,7 @@ async function main() {
               return runCapability(client, target, fixture, {
                 scope,
                 localIdentifier,
-                buildName: `SPN-090 ${scope === 'chrome-navigation-diagnostic' ? 'Chrome navigation diagnostic' : scope === 'safari-acceptance' ? 'Safari authored acceptance' : 'Chrome/Safari remediation'} ${identity.runId}-${identity.attempt}`,
+                buildName: `SPN-090 ${scope} ${identity.runId}-${identity.attempt}`,
                 journal: async (lane) => {
                   journal.lanes[index] = lane;
                   await persist();

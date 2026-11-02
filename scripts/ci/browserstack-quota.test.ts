@@ -8,6 +8,7 @@ import { runInNewContext } from 'node:vm';
 import { test } from 'node:test';
 import { collectQuotaEvidence, quotaLimits, retainedSessionIds } from './browserstack-quota.ts';
 import { createBudgetReport } from './browserstack-budget.ts';
+import type { CapabilityScope } from './browserstack-scope.ts';
 
 const credentials = { username: 'secret-user', accessKey: 'secret-key' };
 function success(url: string | URL | Request) {
@@ -521,9 +522,25 @@ test('monthly Safari acceptance, quota reports, every phone scope, and read-only
     'utf8',
   );
   assert.match(source, /default: quota/);
-  assert.match(
-    source,
-    /options: \[quota, capability, chrome-diagnostic, safari-acceptance, diagnostics\]/,
+  const modes = source.match(/options:\s*\[([^\]]+)\]/)?.[1];
+  assert.ok(modes, 'manual choices remain explicit');
+  assert.deepEqual(
+    modes
+      .trim()
+      .replace(/,$/, '')
+      .split(',')
+      .map((value) => value.trim()),
+    [
+      'quota',
+      'capability',
+      'chrome-diagnostic',
+      'safari-acceptance',
+      'chrome-acceptance',
+      'chrome-tab-acceptance',
+      'firefox-tab-acceptance',
+      'safari-tab-acceptance',
+      'diagnostics',
+    ],
   );
   assert.match(
     source,
@@ -623,6 +640,15 @@ test('monthly Safari acceptance, quota reports, every phone scope, and read-only
   assert.ok(build, 'the observation flag belongs only to the application build');
   const evidence = build.match(/^          VITE_SYNC_EVIDENCE: \$\{\{ (.+) \}\}$/m)?.[1];
   assert.ok(evidence, 'the evidence build flag is conditional on the admitted scope');
+  const observation = capability.match(
+    /^      - name: Observe the selected bounded physical-phone scope\n([\s\S]*?)(?=^      - )/m,
+  )?.[1];
+  assert.ok(observation, 'the selected scope has one bounded observation step');
+  const observationTimeout = observation.match(/^        timeout-minutes: \$\{\{ (.+) \}\}$/m)?.[1];
+  assert.ok(
+    observationTimeout,
+    'the observation wrapper must fit the selected authored bound and cleanup',
+  );
   const stopLocal = capability.match(
     /^      - name: Stop Local tunnel\n([\s\S]*?)(?=^      - )/m,
   )?.[1];
@@ -663,7 +689,7 @@ test('monthly Safari acceptance, quota reports, every phone scope, and read-only
     allocationAllowed?: boolean;
     operation?: 'quota' | 'reserve';
     jobs: string[];
-    scope?: 'all' | 'chrome-navigation-diagnostic' | 'safari-acceptance';
+    scope?: CapabilityScope;
   }[] = [
     {
       event: 'schedule',
@@ -773,6 +799,51 @@ test('monthly Safari acceptance, quota reports, every phone scope, and read-only
     { event: 'pull_request', action: 'synchronize', label: 'ci-real-devices-safari', jobs: [] },
     { event: 'push', jobs: [] },
   ];
+  // Each authored route selects one device; exact event/label boundaries prevent
+  // an added mode from expanding a reservation into a multi-device acceptance run.
+  for (const [mode, label] of [
+    ['chrome-acceptance', 'ci-real-devices-chrome-acceptance'],
+    ['chrome-tab-acceptance', 'ci-real-devices-chrome-tab'],
+    ['firefox-tab-acceptance', 'ci-real-devices-firefox-tab'],
+    ['safari-tab-acceptance', 'ci-real-devices-safari-tab'],
+  ] as const) {
+    routes.push(
+      {
+        event: 'workflow_dispatch',
+        mode,
+        operation: 'reserve',
+        jobs: ['accounting', 'capability', 'reconciliation'],
+        scope: mode,
+      },
+      {
+        event: 'workflow_dispatch',
+        mode,
+        allocationAllowed: false,
+        operation: 'reserve',
+        jobs: ['accounting'],
+      },
+      {
+        event: 'pull_request',
+        action: 'labeled',
+        label,
+        operation: 'reserve',
+        jobs: ['accounting', 'capability', 'reconciliation'],
+        scope: mode,
+      },
+      {
+        event: 'pull_request',
+        action: 'labeled',
+        label,
+        allocationAllowed: false,
+        operation: 'reserve',
+        jobs: ['accounting'],
+      },
+      { event: 'pull_request', action: 'labeled', label, fork: true, jobs: [] },
+      { event: 'pull_request', action: 'labeled', label: `${label}-extra`, jobs: [] },
+      { event: 'pull_request', action: 'unlabeled', label, jobs: [] },
+      { event: 'pull_request', action: 'synchronize', label, jobs: [] },
+    );
+  }
   for (const route of routes) {
     const context = {
       github: {
@@ -811,10 +882,24 @@ test('monthly Safari acceptance, quota reports, every phone scope, and read-only
     const selectedScope: string | null = selected.includes('capability') ? evaluate(scope) : null;
     assert.equal(selectedScope, route.scope ?? null, `capability scope: ${JSON.stringify(route)}`);
     context.env.BS_CAPABILITY_SCOPE = selectedScope ?? '';
+    const authored =
+      route.scope !== undefined &&
+      [
+        'safari-acceptance',
+        'chrome-acceptance',
+        'chrome-tab-acceptance',
+        'firefox-tab-acceptance',
+        'safari-tab-acceptance',
+      ].includes(route.scope);
     assert.equal(
       selectedScope ? evaluate(evidence) : null,
-      route.scope === 'safari-acceptance' ? '1' : route.scope ? '0' : null,
+      route.scope ? (authored ? '1' : '0') : null,
       `build observation flag: ${JSON.stringify(route)}`,
+    );
+    assert.equal(
+      selectedScope ? evaluate(observationTimeout) : null,
+      route.scope ? (authored ? 18 : 14) : null,
+      `observation wrapper preserves scope and cleanup budget: ${JSON.stringify(route)}`,
     );
   }
   for (const outcome of ['success', 'failure', 'cancelled', 'skipped', '']) {

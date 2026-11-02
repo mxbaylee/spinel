@@ -8,6 +8,11 @@ import {
   type QuotaEvidence,
 } from './browserstack-budget.ts';
 import { retainedSessionIds, sessionMeasurementConflict } from './browserstack-quota.ts';
+import {
+  capabilityScopeDefinition,
+  readCapabilityScope,
+  type CapabilityScope,
+} from './browserstack-scope.ts';
 
 export type AdmissionPolicy = {
   schemaVersion: 1;
@@ -42,6 +47,8 @@ export type Reservation = ReservationIdentity & {
   uncertainAllocation: boolean;
   finishedAt: string | null;
   reconciledAt: string | null;
+  // Absent on historical/failed/unknown scopes; never inferred from provider status.
+  successfulScope?: CapabilityScope;
 };
 export type AdmissionState = { schemaVersion: 1; reservations: Reservation[] };
 export type ReservationReceipt = ReservationIdentity & {
@@ -56,6 +63,15 @@ type AdmissionInput = {
   ledger: unknown;
   evidence: QuotaEvidence;
   source: BudgetSource;
+};
+export type SuccessfulScopeCost = ReservationIdentity & {
+  scope: CapabilityScope;
+  reservationId: string;
+  sessionIds: string[];
+  finishedAt: string;
+  reconciledAt: string;
+  measuredElapsedSeconds: number;
+  estimatedChargedSeconds: number;
 };
 export type EstimatedBudgetReport = {
   basis: 'owner-authorized-estimate';
@@ -86,6 +102,7 @@ export type EstimatedBudgetReport = {
   completeOfflineMatrixCostMinutes: null;
   estimatedSuccessfulCompleteRuns: null;
   projectedFullMatrixExhaustion: null;
+  successfulScopeCosts: SuccessfulScopeCost[];
   blockingReasons: string[];
   assumptions: string[];
 };
@@ -117,6 +134,19 @@ function row(value: unknown, keys: string[], kind: string): Record<string, unkno
   )
     return fail(kind);
   return value as Record<string, unknown>;
+}
+function record(value: unknown, kind: string): Record<string, unknown> {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return fail(kind);
+  return value as Record<string, unknown>;
+}
+function knownScope(value: unknown): CapabilityScope | undefined {
+  // The runner's omitted scope defaults to all; absent historical evidence cannot.
+  if (typeof value !== 'string') return undefined;
+  try {
+    return readCapabilityScope(value);
+  } catch {
+    return undefined;
+  }
 }
 function bounded(value: unknown, minimum: number, maximum: number, kind: string): number {
   if (typeof value !== 'number' || !Number.isFinite(value) || value < minimum || value > maximum)
@@ -244,7 +274,13 @@ export function readAdmissionState(value: unknown): AdmissionState {
   const runAttempts = new Set<string>(),
     sessionIds = new Set<string>();
   const reservations = entry.reservations.map((value): Reservation => {
-    const data = row(value, reservationKeys, 'invalid-state');
+    const data = row(
+      value,
+      Object.hasOwn(record(value, 'invalid-state'), 'successfulScope')
+        ? [...reservationKeys, 'successfulScope']
+        : reservationKeys,
+      'invalid-state',
+    );
     const identified = identity(data, 'invalid-state');
     const runAttempt = `${identified.runId}-${identified.attempt}`;
     if (runAttempts.has(runAttempt) || data.id !== idFor(identified)) return fail('invalid-state');
@@ -256,6 +292,16 @@ export function readAdmissionState(value: unknown): AdmissionState {
       data.reconciledAt === null ? null : timestamp(data.reconciledAt, 'invalid-state');
     const baselineSessionIds = ids(data.baselineSessionIds, 10_000, 'invalid-state');
     const allocated = ids(data.sessionIds, 3, 'invalid-state');
+    const hasSuccessfulScope = Object.hasOwn(data, 'successfulScope');
+    const successfulScope = hasSuccessfulScope ? data.successfulScope : undefined;
+    if (
+      hasSuccessfulScope &&
+      (knownScope(successfulScope) === undefined ||
+        data.status === 'reserved' ||
+        data.uncertainAllocation !== false ||
+        allocated.length !== (successfulScope === 'all' ? 3 : 1))
+    )
+      return fail('invalid-state');
     if (
       typeof data.uncertainAllocation !== 'boolean' ||
       !['reserved', 'held', 'reconciled'].includes(data.status as string) ||
@@ -287,6 +333,7 @@ export function readAdmissionState(value: unknown): AdmissionState {
       uncertainAllocation: data.uncertainAllocation,
       finishedAt,
       reconciledAt,
+      ...(hasSuccessfulScope ? { successfulScope: successfulScope as CapabilityScope } : {}),
     };
   });
   return { schemaVersion: 1, reservations };
@@ -330,6 +377,50 @@ function ledgerSessionSeconds(entry: BudgetLedger['sessions'][number]): number |
   return (
     entry.measurements.find((value) => terminal(value) && value.lastObserved.observedAt === latest)
       ?.durationSeconds ?? null
+  );
+}
+function measuredScopeCosts(
+  state: AdmissionState,
+  ledger: BudgetLedger,
+  policy: AdmissionPolicy,
+): SuccessfulScopeCost[] {
+  const samples: SuccessfulScopeCost[] = [];
+  for (const reservation of state.reservations) {
+    if (!reservation.successfulScope || reservation.status !== 'reconciled') continue;
+    const durations = reservation.sessionIds.map((id) => {
+      const session = ledger.sessions.find((entry) => entry.sessionId === id);
+      if (
+        !session ||
+        session.measurements.some(
+          (value) =>
+            value.createdAt !== null &&
+            Date.parse(value.createdAt) + 1000 < Date.parse(reservation.reservedAt),
+        )
+      )
+        return null;
+      return ledgerSessionSeconds(session);
+    });
+    if (durations.some((value) => value === null)) continue;
+    const measuredElapsedSeconds = durations.reduce<number>((sum, value) => sum + value!, 0);
+    const estimatedChargedSeconds = measuredElapsedSeconds * policy.chargedSecondsPerElapsedSecond;
+    if (!Number.isSafeInteger(Math.ceil(estimatedChargedSeconds))) continue;
+    samples.push({
+      scope: reservation.successfulScope,
+      reservationId: reservation.id,
+      runId: reservation.runId,
+      attempt: reservation.attempt,
+      sourceSha: reservation.sourceSha,
+      testedSha: reservation.testedSha,
+      sessionIds: [...reservation.sessionIds],
+      finishedAt: reservation.finishedAt!,
+      reconciledAt: reservation.reconciledAt!,
+      measuredElapsedSeconds,
+      estimatedChargedSeconds,
+    });
+  }
+  return samples.sort(
+    (a, b) =>
+      a.finishedAt.localeCompare(b.finishedAt) || a.reservationId.localeCompare(b.reservationId),
   );
 }
 function reusableFinalizedHistory(
@@ -554,6 +645,7 @@ function estimate(input: AdmissionInput, prepared = prepare(input)): EstimatedBu
     completeOfflineMatrixCostMinutes: null,
     estimatedSuccessfulCompleteRuns: null,
     projectedFullMatrixExhaustion: null,
+    successfulScopeCosts: measuredScopeCosts(state, ledger, policy),
     blockingReasons,
     assumptions: [
       policy.method,
@@ -567,6 +659,8 @@ function estimate(input: AdmissionInput, prepared = prepare(input)): EstimatedBu
       'Safety reserve and outstanding reservation holds reduce spendable estimated credit.',
       'A completed uncertain allocation retains its unused hold; a missing receipt leaves a pending reservation.',
       'Capability count/calendar assume one full reservation per future monthly date and no other use; they do not predict successful offline-matrix runs.',
+      'Successful-scope cost uses only a completed passing scope linked to reconciled terminal session measurements; missing historical scope evidence stays unknown.',
+      'Successful-scope elapsed seconds are measured, while their charged seconds use the current unverified charging assumption. Scope success does not establish the complete approved coverage matrix.',
       'Only a newly created reservation durably committed by the caller can authorize a capability allocation.',
     ],
   };
@@ -621,10 +715,96 @@ export function reserveCapability(input: AdmissionInput & { runId: string; attem
   return { state, report, reservation, created: true };
 }
 
-function reconcile(
-  input: AdmissionInput & { receipt: ReservationReceipt },
-  prepared: ReturnType<typeof prepare>,
-) {
+type ReconciliationInput = AdmissionInput & { receipt: ReservationReceipt; journal?: unknown };
+
+/** Read the final journal without importing the device runner or its application dependencies. */
+function successfulScopeFromJournal(
+  input: ReconciliationInput,
+  reservation: Reservation,
+): CapabilityScope | undefined {
+  if (input.journal === undefined) return undefined;
+  const journal = record(input.journal, 'invalid-scope-journal');
+  // Older receipts and failed, partial or unknown scopes still reconcile usage.
+  // None can supply a successful-cost sample.
+  if (
+    journal.schemaVersion !== 1 ||
+    knownScope(journal.capabilityScope) === undefined ||
+    journal.status !== 'passed' ||
+    journal.stage !== 'finished'
+  )
+    return undefined;
+  const scope = journal.capabilityScope as CapabilityScope;
+  const definition = capabilityScopeDefinition(scope);
+  const receipt = input.receipt;
+  const reportedReceipt = row(
+    journal.receipt,
+    [...identityKeys, 'finishedAt', 'sessionIds', 'uncertainAllocation'],
+    'invalid-scope-journal',
+  );
+  const reportedIds = ids(reportedReceipt.sessionIds, 3, 'invalid-scope-journal');
+  const sameIds = (a: string[], b: string[]) =>
+    a.length === b.length && a.every((id) => b.includes(id));
+  if (
+    !sameIdentity(identity(journal, 'invalid-scope-journal'), reservation) ||
+    !sameIdentity(identity(reportedReceipt, 'invalid-scope-journal'), reservation) ||
+    journal.reservationId !== reservation.id ||
+    journal.allocationPlan !== (scope === 'all' ? 'two-lane-chrome-safari-remediation' : scope) ||
+    input.source.sourceSha !== reservation.sourceSha ||
+    input.source.testedSha !== reservation.testedSha ||
+    !input.source.run.endsWith(`/actions/runs/${reservation.runId}`) ||
+    journal.failure !== undefined ||
+    reportedReceipt.finishedAt !== receipt.finishedAt ||
+    reportedReceipt.uncertainAllocation !== false ||
+    receipt.uncertainAllocation !== false ||
+    !sameIds(reportedIds, receipt.sessionIds) ||
+    !sameIds(reportedIds, reservation.sessionIds) ||
+    journal.fullMatrixStatus !== (scope === 'all' ? 'passed' : 'incomplete') ||
+    !Array.isArray(journal.lanes) ||
+    journal.lanes.length !== 3
+  )
+    return fail('scope-journal-mismatch');
+  const lanes = journal.lanes.map((value) => record(value, 'invalid-scope-journal'));
+  const browsers = lanes.map((lane) => record(lane.target, 'invalid-scope-journal').browser);
+  if (!['chrome', 'firefox', 'safari'].every((browser) => browsers.includes(browser)))
+    return fail('scope-journal-mismatch');
+  const selected = scope === 'all' ? browsers : [definition.browser];
+  const selectedIds: string[] = [];
+  for (const [index, lane] of lanes.entries()) {
+    if (!selected.includes(browsers[index])) {
+      if (
+        !['not-run', 'blocked'].includes(lane.status as string) ||
+        lane.sessionId !== undefined ||
+        lane.allocation !== 'not-started' ||
+        lane.uncertainAllocation !== false
+      )
+        return fail('scope-journal-mismatch');
+      continue;
+    }
+    const startedAt = timestamp(lane.startedAt, 'invalid-scope-journal');
+    const finishedAt = timestamp(lane.finishedAt, 'invalid-scope-journal');
+    const cleanup = record(lane.cleanup, 'invalid-scope-journal');
+    if (
+      lane.status !== 'passed' ||
+      lane.stage !== definition.completionStage ||
+      lane.failure !== undefined ||
+      lane.allocation !== 'known' ||
+      lane.uncertainAllocation !== false ||
+      startedAt < reservation.reservedAt ||
+      finishedAt < startedAt ||
+      finishedAt > receipt.finishedAt ||
+      cleanup.network !== 'restored-4g-lte-good' ||
+      cleanup.session !== 'deleted' ||
+      cleanup.fixture !== 'closed'
+    )
+      return fail('scope-journal-mismatch');
+    selectedIds.push(hash(lane.sessionId, 40, 'invalid-scope-journal'));
+  }
+  if (new Set(selectedIds).size !== selectedIds.length || !sameIds(selectedIds, reportedIds))
+    return fail('scope-journal-mismatch');
+  return scope;
+}
+
+function reconcile(input: ReconciliationInput, prepared: ReturnType<typeof prepare>) {
   const receipt = row(
     input.receipt,
     [...identityKeys, 'finishedAt', 'sessionIds', 'uncertainAllocation'],
@@ -643,10 +823,15 @@ function reconcile(
   )
     return fail('receipt-reservation-mismatch');
   if (reservation.status === 'reconciled') {
+    const successfulScope = successfulScopeFromJournal(input, reservation);
     if (
       receipt.uncertainAllocation ||
       allocated.length !== reservation.sessionIds.length ||
-      allocated.some((id) => !reservation.sessionIds.includes(id))
+      allocated.some((id) => !reservation.sessionIds.includes(id)) ||
+      (successfulScope !== undefined && successfulScope !== reservation.successfulScope) ||
+      (input.journal !== undefined &&
+        reservation.successfulScope !== undefined &&
+        successfulScope !== reservation.successfulScope)
     )
       return fail('reconciled-reservation-is-immutable');
     return {
@@ -668,6 +853,12 @@ function reconcile(
   }
   reservation.uncertainAllocation ||= receipt.uncertainAllocation;
   reservation.finishedAt = finishedAt;
+  if (input.journal !== undefined) {
+    const successfulScope = successfulScopeFromJournal(input, reservation);
+    if (reservation.successfulScope && successfulScope !== reservation.successfulScope)
+      return fail('scope-journal-mismatch');
+    if (successfulScope !== undefined) reservation.successfulScope = successfulScope;
+  }
   let allMeasuredNow =
     prepared.collectionSufficient &&
     prepared.raw.conflictingSessions === 0 &&
@@ -716,7 +907,7 @@ function reconcile(
   };
 }
 
-export function reconcileReservation(input: AdmissionInput & { receipt: ReservationReceipt }) {
+export function reconcileReservation(input: ReconciliationInput) {
   return reconcile(input, prepare(input));
 }
 

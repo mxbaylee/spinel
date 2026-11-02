@@ -137,12 +137,13 @@ async function main() {
         if (!created) blockers.push(...result.report.blockingReasons);
       } else if (operation === 'reconcile') {
         let receipt: ReservationReceipt;
+        let journal: unknown;
         try {
-          const result = JSON.parse(
+          journal = JSON.parse(
             await readFile('artifacts/browserstack-capability.json', 'utf8'),
           ) as unknown;
-          if (!object(result) || !object(result.receipt)) throw new Error('missing receipt');
-          receipt = result.receipt as ReservationReceipt;
+          if (!object(journal) || !object(journal.receipt)) throw new Error('missing receipt');
+          receipt = journal.receipt as ReservationReceipt;
         } catch {
           throw new Error('admission-capability-receipt-unavailable');
         }
@@ -153,7 +154,7 @@ async function main() {
           receipt.testedSha !== source.testedSha
         )
           throw new Error('admission-receipt-identity-mismatch');
-        const result = reconcileReservation({ ...input, receipt });
+        const result = reconcileReservation({ ...input, receipt, journal });
         admissionState = result.state;
         reservation = result.reservation;
         released = result.released;
@@ -206,7 +207,11 @@ async function main() {
       persistence.reason = failure(error);
     }
   }
-  if (persistence.status !== 'verified') blockers.push(persistence.reason ?? 'ledger-not-written');
+  if (persistence.status !== 'verified') {
+    blockers.push(persistence.reason ?? 'ledger-not-written');
+    // Proposed state is not durable proof of a successful-scope measurement.
+    if (estimate) estimate = { ...estimate, successfulScopeCosts: [] };
+  }
   const allocationAllowed =
     operation === 'reserve' && created && persistence.status === 'verified' && !blockers.length;
   const successful =
@@ -260,6 +265,14 @@ async function main() {
       : inventory.outcome === 'unavailable'
         ? `Unknown (${inventory.reason})`
         : 'Not requested for reconciliation';
+  const latestScopeCosts = new Map(
+    (estimate?.successfulScopeCosts ?? []).map((sample) => [sample.scope, sample]),
+  );
+  const lastFundableDate =
+    estimate?.estimatedAdditionalCapabilityReservations === null ||
+    estimate?.estimatedAdditionalCapabilityReservations === undefined
+      ? 'Unknown'
+      : (estimate.lastEstimatedFundableCapabilityDate ?? 'None');
   const summary = [
     '# BrowserStack lifetime quota — owner-authorized estimate',
     '',
@@ -276,12 +289,23 @@ async function main() {
     `| Retained certain holds reconciled | ${recoveredReservationIds.length} |`,
     `| Finalized historical measurements reused after 404/410 | ${estimate?.reusedFinalizedHistory.length ?? 0}; raw failures retained |`,
     `| Additional 15-minute capability reservations | ${estimate?.estimatedAdditionalCapabilityReservations ?? 'Unknown'}; conditional estimate |`,
+    `| Conditional reservation calendar | Last fundable: ${lastFundableDate}; first unfundable: ${estimate?.firstEstimatedUnfundableCapabilityDate ?? 'Unknown'} |`,
+    ...(latestScopeCosts.size
+      ? [...latestScopeCosts.values()].map(
+          (sample) =>
+            `| Latest successful ${sample.scope} cost | ${sample.measuredElapsedSeconds} measured elapsed seconds (${(sample.measuredElapsedSeconds / 60).toFixed(2)} minutes); ${(sample.estimatedChargedSeconds / 60).toFixed(2)} estimated charged minutes under the current unverified assumption; run ${sample.runId} / attempt ${sample.attempt}; source ${sample.sourceSha.slice(0, 12)}, tested ${sample.testedSha.slice(0, 12)} |`,
+        )
+      : [
+          '| Successful selected-scope cost | Unknown; no durable passing scope with reconciled terminal measurements |',
+        ]),
     '| Full installed-phone matrix cost/successful runs/exhaustion | Unmeasured / Unknown / Unknown |',
     `| Durable accounting | ${persistence.url ? '[Verified commit](' + persistence.url + ')' : persistence.reason} |`,
     '',
     '## Next monthly checks',
     '',
     ...observedBudget.nextMonthlyDates.map((date) => '- ' + date),
+    '',
+    'The reservation calendar assumes one full 15-minute reservation per monthly date and no other use. It is a budget scenario, not a forecast of measured successful runs.',
     '',
     '## Current operation blockers',
     '',

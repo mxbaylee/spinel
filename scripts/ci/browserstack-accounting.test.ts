@@ -38,6 +38,13 @@ test('dedicated inventory observations persist without changing quota or reserva
     await exercise('valid', 'quota', inventory);
   await exercise('valid', 'reserve', 'available');
 });
+test('scope costs require durable successful reconciliation and remain available to later quota reports', async () => {
+  await exercise('reconcile', 'reconcile', 'denied', 'passed');
+  await exercise('write-denied', 'reconcile', 'denied', 'passed');
+  for (const scope of ['failed', 'unknown', 'mismatch'] as const)
+    await exercise('reconcile', 'reconcile', 'denied', scope);
+  await exercise('valid', 'quota', 'denied', 'stored');
+});
 
 type Scenario =
   | 'new'
@@ -57,10 +64,12 @@ type Scenario =
   | 'held-pending'
   | 'held-stale';
 type Inventory = 'denied' | 'malformed' | 'empty' | 'available' | 'oversized';
+type ScopeResult = 'passed' | 'failed' | 'unknown' | 'mismatch' | 'stored';
 async function exercise(
   scenario: Scenario,
   operation: 'quota' | 'reserve' | 'reconcile',
   inventory: Inventory = 'denied',
+  scope?: ScopeResult,
 ) {
   const directory = await mkdtemp(join(tmpdir(), 'spinel-accounting-'));
   try {
@@ -78,7 +87,9 @@ async function exercise(
       'invalid-state',
     ].includes(scenario);
     const successful =
-      canPersist && !['expired-first-seen', 'expired-auth', 'held-pending'].includes(scenario);
+      canPersist &&
+      !['expired-first-seen', 'expired-auth', 'held-pending'].includes(scenario) &&
+      scope !== 'mismatch';
     const policy = JSON.parse(
       await readFile(
         new URL('../../docs/implementation/SPN-090-budget-assumptions.json', import.meta.url),
@@ -128,6 +139,69 @@ async function exercise(
       ],
     });
     allocated.history.builds[0].sessionIds.push(newId);
+    const completedReceipt = {
+      runId: '123456',
+      attempt: '1',
+      sourceSha: source.sourceSha,
+      testedSha: source.testedSha,
+      finishedAt: new Date(Date.now() - 1000).toISOString(),
+      sessionIds: [newId],
+      uncertainAllocation: false,
+    };
+    const scopeJournal = {
+      schemaVersion: 1,
+      runId: scope === 'mismatch' ? '654321' : completedReceipt.runId,
+      attempt: completedReceipt.attempt,
+      sourceSha: source.sourceSha,
+      testedSha: source.testedSha,
+      reservationId: reserved.reservation!.id,
+      capabilityScope: scope === 'unknown' ? 'unknown' : 'safari-acceptance',
+      allocationPlan: 'safari-acceptance',
+      status: scope === 'failed' ? 'failed' : 'passed',
+      stage: 'finished',
+      fullMatrixStatus: 'incomplete',
+      receipt: completedReceipt,
+      lanes: ['chrome', 'firefox', 'safari'].map((browser) =>
+        browser === 'safari'
+          ? {
+              target: { browser },
+              status: 'passed',
+              stage: 'safari-acceptance-complete',
+              sessionId: newId,
+              allocation: 'known',
+              uncertainAllocation: false,
+              startedAt: new Date(Date.now() - 54_000).toISOString(),
+              finishedAt: new Date(Date.now() - 2000).toISOString(),
+              cleanup: { network: 'restored-4g-lte-good', session: 'deleted', fixture: 'closed' },
+            }
+          : {
+              target: { browser },
+              status: browser === 'firefox' ? 'blocked' : 'not-run',
+              allocation: 'not-started',
+              uncertainAllocation: false,
+            },
+      ),
+    };
+    if (scope) {
+      current.history = allocated.history;
+      if (scope === 'stored') {
+        const storedSource = { ...source, observedAt: new Date().toISOString() };
+        state = reconcileReservation({
+          source: storedSource,
+          ledger,
+          evidence: allocated,
+          policy,
+          state,
+          receipt: completedReceipt,
+          journal: scopeJournal,
+        }).state;
+        ledger = createBudgetReport({
+          ...storedSource,
+          evidence: allocated,
+          previousLedger: ledger,
+        }).ledger!;
+      }
+    }
     if (isExpired) {
       if (scenario === 'expired-first-seen')
         ledger.sessions = ledger.sessions.filter(
@@ -190,7 +264,7 @@ async function exercise(
                         admissionState: null,
                         latest: {},
                       }
-                    : scenario === 'reconcile' || isHeld
+                    : scenario === 'reconcile' || isHeld || scope
                       ? {
                           schemaVersion: 2,
                           ledger,
@@ -204,17 +278,21 @@ async function exercise(
       await mkdir(join(directory, 'artifacts'));
       await writeFile(
         join(directory, 'artifacts/browserstack-capability.json'),
-        JSON.stringify({
-          receipt: {
-            runId: '123456',
-            attempt: '1',
-            sourceSha: source.sourceSha,
-            testedSha: source.testedSha,
-            finishedAt: new Date(Date.now() - 1000).toISOString(),
-            sessionIds: [],
-            uncertainAllocation: false,
-          },
-        }),
+        JSON.stringify(
+          scope
+            ? scopeJournal
+            : {
+                receipt: {
+                  runId: '123456',
+                  attempt: '1',
+                  sourceSha: source.sourceSha,
+                  testedSha: source.testedSha,
+                  finishedAt: new Date(Date.now() - 1000).toISOString(),
+                  sessionIds: [],
+                  uncertainAllocation: false,
+                },
+              },
+        ),
       );
     }
     const hook = join(directory, 'provider-fixture.ts');
@@ -342,10 +420,39 @@ globalThis.fetch = async (url, init) => {
       await readFile(join(directory, 'output'), 'utf8'),
       `allocation_allowed=${allocationAllowed}\n`,
     );
-    assert.match(await readFile(join(directory, 'summary.md'), 'utf8'), /60 lifetime minutes/);
+    const summary = await readFile(join(directory, 'summary.md'), 'utf8');
+    assert.match(summary, /60 lifetime minutes/);
     assert.match(
       await readFile(join(directory, 'summary.md'), 'utf8'),
       /Device Tunnel, native Firefox and charging unverified/,
+    );
+    assert.match(summary, /budget scenario, not a forecast of measured successful runs/);
+    for (const date of [
+      report.estimate?.lastEstimatedFundableCapabilityDate,
+      report.estimate?.firstEstimatedUnfundableCapabilityDate,
+    ])
+      if (date)
+        assert.ok(
+          summary.includes(date),
+          'the conditional reservation dates reach the human report',
+        );
+    const hasScopeCost = canPersist && (scope === 'passed' || scope === 'stored');
+    assert.equal(report.estimate?.successfulScopeCosts.length ?? 0, hasScopeCost ? 1 : 0);
+    if (hasScopeCost) {
+      const sample = report.estimate.successfulScopeCosts[0];
+      assert.equal(sample.scope, 'safari-acceptance');
+      assert.equal(sample.measuredElapsedSeconds, 19);
+      assert.equal(sample.estimatedChargedSeconds, 19);
+      assert.equal(sample.reservationId, reserved.reservation!.id);
+      assert.equal(sample.sourceSha, source.sourceSha);
+      assert.equal(sample.testedSha, source.testedSha);
+      assert.deepEqual(sample.sessionIds, [newId]);
+      assert.match(summary, /Latest successful safari-acceptance cost/);
+      assert.match(summary, /19 measured elapsed seconds/);
+    } else assert.match(summary, /Successful selected-scope cost \| Unknown/);
+    assert.match(
+      summary,
+      /Full installed-phone matrix cost\/successful runs\/exhaustion \| Unmeasured \/ Unknown \/ Unknown/,
     );
     const inventoryCalls = calls.filter((call) => call.host === 'api-cloud.browserstack.com');
     assert.deepEqual(
@@ -401,20 +508,28 @@ globalThis.fetch = async (url, init) => {
       /unit-provider-user|unit-provider-key|unit-github-token|inventory-private|udid|sim_details|in_use_by/,
     );
     if (canPersist) {
-      assert.equal(report.measuredTerminalSessionSeconds, isHeld ? 260 : 241);
-      assert.equal(report.measuredTerminalSessions, isHeld ? 16 : 15);
+      assert.equal(report.measuredTerminalSessionSeconds, isHeld || scope ? 260 : 241);
+      assert.equal(report.measuredTerminalSessions, isHeld || scope ? 16 : 15);
       assert.equal(
         report.estimate.estimatedRemainingSeconds,
-        ['expired-first-seen', 'expired-auth'].includes(scenario) ? null : isHeld ? 3340 : 3359,
+        ['expired-first-seen', 'expired-auth'].includes(scenario)
+          ? null
+          : isHeld || scope
+            ? 3340
+            : 3359,
       );
       assert.equal(report.persistence.status, 'verified');
       const stored = JSON.parse(await readFile(join(directory, 'stored.json'), 'utf8'));
       assert.deepEqual(stored.latest.evidence.dedicatedDevices, expectedInventory);
       assert.doesNotMatch(JSON.stringify(stored), /inventory-private|udid|sim_details|in_use_by/);
       assert.equal(stored.schemaVersion, 2);
-      assert.equal(stored.ledger.sessions.length, isHeld ? 16 : 15);
+      assert.equal(stored.ledger.sessions.length, isHeld || scope ? 16 : 15);
       assert.equal(stored.latest.evidence.history.builds.length, 5);
       assert.equal(stored.latest.report.allocationAllowed, false);
+      assert.deepEqual(
+        stored.latest.estimate?.successfulScopeCosts ?? [],
+        report.estimate?.successfulScopeCosts ?? [],
+      );
       if (!successful) assert.equal(report.status, 'blocked');
       else if (operation === 'reserve') {
         assert.equal(report.status, 'reserved');

@@ -4,10 +4,21 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: Report quota, run phone capability, Chrome diagnostics or Safari acceptance, or read completed-session logs
+        description: Report quota, run one phone capability or authored acceptance scope, or read completed-session logs
         type: choice
         default: quota
-        options: [quota, capability, chrome-diagnostic, safari-acceptance, diagnostics]
+        options:
+          [
+            quota,
+            capability,
+            chrome-diagnostic,
+            safari-acceptance,
+            chrome-acceptance,
+            chrome-tab-acceptance,
+            firefox-tab-acceptance,
+            safari-tab-acceptance,
+            diagnostics,
+          ]
       session_id:
         description: Completed session for diagnostics; defaults to the retained Chrome attempt 8
         type: string
@@ -77,7 +88,11 @@ jobs:
       github.event.action == 'labeled' &&
       (github.event.label.name == 'ci-real-devices' ||
       github.event.label.name == 'ci-real-devices-chrome' ||
-      github.event.label.name == 'ci-real-devices-safari') &&
+      github.event.label.name == 'ci-real-devices-safari' ||
+      github.event.label.name == 'ci-real-devices-chrome-acceptance' ||
+      github.event.label.name == 'ci-real-devices-chrome-tab' ||
+      github.event.label.name == 'ci-real-devices-firefox-tab' ||
+      github.event.label.name == 'ci-real-devices-safari-tab') &&
       github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -103,7 +118,7 @@ jobs:
           BS_USERNAME: ${{ secrets.BS_USERNAME }}
           BS_ACCESS_KEY: ${{ secrets.BS_ACCESS_KEY }}
           GITHUB_TOKEN: ${{ github.token }}
-          BS_OPERATION: ${{ (github.event_name == 'schedule' || github.event_name == 'pull_request' || inputs.mode == 'capability' || inputs.mode == 'chrome-diagnostic' || inputs.mode == 'safari-acceptance') && 'reserve' || 'quota' }}
+          BS_OPERATION: ${{ (github.event_name == 'schedule' || github.event_name == 'pull_request' || inputs.mode == 'capability' || inputs.mode == 'chrome-diagnostic' || inputs.mode == 'safari-acceptance' || inputs.mode == 'chrome-acceptance' || inputs.mode == 'chrome-tab-acceptance' || inputs.mode == 'firefox-tab-acceptance' || inputs.mode == 'safari-tab-acceptance') && 'reserve' || 'quota' }}
         run: node scripts/ci/browserstack-accounting.ts "$BS_OPERATION"
       - name: Retain admission and assumption evidence
         if: always()
@@ -120,7 +135,7 @@ jobs:
         run: test "$ACCOUNTING_OUTCOME" = success
 
   capability:
-    name: Installed-phone capability with disposable CI HTTPS
+    name: Selected phone capability or acceptance with disposable CI HTTPS
     needs: accounting
     if: >-
       needs.accounting.result == 'success' &&
@@ -130,7 +145,7 @@ jobs:
     env:
       SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
       # Every scope retains the same admission, execution, cleanup and reconciliation.
-      BS_CAPABILITY_SCOPE: ${{ ((github.event_name == 'workflow_dispatch' && inputs.mode == 'chrome-diagnostic') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-chrome')) && 'chrome-navigation-diagnostic' || (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'safari-acceptance') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-safari')) && 'safari-acceptance' || 'all' }}
+      BS_CAPABILITY_SCOPE: ${{ ((github.event_name == 'workflow_dispatch' && inputs.mode == 'chrome-diagnostic') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-chrome')) && 'chrome-navigation-diagnostic' || (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'safari-acceptance') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-safari')) && 'safari-acceptance' || ((github.event_name == 'workflow_dispatch' && inputs.mode == 'chrome-acceptance') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-chrome-acceptance')) && 'chrome-acceptance' || ((github.event_name == 'workflow_dispatch' && inputs.mode == 'chrome-tab-acceptance') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-chrome-tab')) && 'chrome-tab-acceptance' || ((github.event_name == 'workflow_dispatch' && inputs.mode == 'firefox-tab-acceptance') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-firefox-tab')) && 'firefox-tab-acceptance' || ((github.event_name == 'workflow_dispatch' && inputs.mode == 'safari-tab-acceptance') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-safari-tab')) && 'safari-tab-acceptance' || 'all' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -154,7 +169,7 @@ jobs:
       - name: Build the production application
         env:
           # Native model reads are observation-only and absent from ordinary builds.
-          VITE_SYNC_EVIDENCE: ${{ env.BS_CAPABILITY_SCOPE == 'safari-acceptance' && '1' || '0' }}
+          VITE_SYNC_EVIDENCE: ${{ (env.BS_CAPABILITY_SCOPE == 'safari-acceptance' || env.BS_CAPABILITY_SCOPE == 'chrome-acceptance' || env.BS_CAPABILITY_SCOPE == 'chrome-tab-acceptance' || env.BS_CAPABILITY_SCOPE == 'firefox-tab-acceptance' || env.BS_CAPABILITY_SCOPE == 'safari-tab-acceptance') && '1' || '0' }}
         run: npm run build
       - name: Configure BrowserStack
         uses: browserstack/github-actions/setup-env@1fad39ae4755588f7fc6854da6c3efba2bf5d08f
@@ -171,9 +186,9 @@ jobs:
           local-logging-level: 'false'
           local-args: --force-local --timeout 5
       - name: Observe the selected bounded physical-phone scope
-        # Safari adds the authored journey, plus the existing unpaid fixture
-        # startup/teardown. Its device operations remain bounded to 780s + cleanup.
-        timeout-minutes: ${{ env.BS_CAPABILITY_SCOPE == 'safari-acceptance' && 18 || 14 }}
+        # Every authored scope adds the journey and unpaid fixture startup/teardown.
+        # Each selected device still has the same 780s operational bound + cleanup.
+        timeout-minutes: ${{ (env.BS_CAPABILITY_SCOPE == 'safari-acceptance' || env.BS_CAPABILITY_SCOPE == 'chrome-acceptance' || env.BS_CAPABILITY_SCOPE == 'chrome-tab-acceptance' || env.BS_CAPABILITY_SCOPE == 'firefox-tab-acceptance' || env.BS_CAPABILITY_SCOPE == 'safari-tab-acceptance') && 18 || 14 }}
         env:
           BS_USERNAME: ${{ secrets.BS_USERNAME }}
           BS_ACCESS_KEY: ${{ secrets.BS_ACCESS_KEY }}

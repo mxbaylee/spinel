@@ -16,6 +16,11 @@ import type { StoredItem } from '../../web/offline/offlineStore.ts';
 import { reconstructOffline } from '../../web/offline/recovery.ts';
 import type { BrowserstackFixture } from './browserstack-fixture.ts';
 import type { DesktopSnapshot } from './desktop-offline-fixture.ts';
+import {
+  capabilityScopeDefinition,
+  readCapabilityScope,
+  type CapabilityScope,
+} from './browserstack-scope.ts';
 
 type Row = Record<string, unknown>;
 type Kind = 'sheet' | 'doc';
@@ -38,7 +43,7 @@ export const phoneAcceptanceLimits = {
   repeat: 30_000,
 } as const;
 
-/** Installation, native lifecycle, network controls and accounting stay in the existing driver. */
+/** Provider launch/reopen, network controls and accounting stay in the existing driver. */
 export type PhoneAcceptanceDriver = {
   execute(script: string, args?: unknown[], timeout?: number): Promise<unknown>;
   executeAsync(body: string, args?: unknown[], operation?: string): Promise<unknown>;
@@ -846,12 +851,17 @@ export function verifyAuthoredContent(
   }
 }
 
-/** Continues only after the existing first installed offline restart has passed. */
+/** Continues only after the selected context's first offline reopen has passed. */
 export async function runPhoneAcceptance(
   driver: PhoneAcceptanceDriver,
   fixture: BrowserstackFixture,
   cases: PhoneAcceptanceCases,
+  scope: CapabilityScope,
 ) {
+  const selection = capabilityScopeDefinition(readCapabilityScope(scope));
+  requireCondition(selection.authored && selection.browser, 'scope-not-authored');
+  const ordinaryTab = selection.context === 'ordinary-tab';
+  const reopenName = ordinaryTab ? 'page-reload' : 'restart';
   const originals = new Map<string, unknown>();
   const retained = new Map<string, LocalCopy>();
   const expected = new Map<string, NativeSnapshot>();
@@ -887,12 +897,12 @@ export async function runPhoneAcceptance(
   same(
     spaceAfterFirstRestart.record?.bundle,
     cases.spacePrepared.record.bundle,
-    'space-first-restart-bundle-mismatch',
+    `space-first-${reopenName}-bundle-mismatch`,
   );
   same(
     spaceAfterFirstRestart.images,
     cases.spacePrepared.images,
-    'space-first-restart-images-mismatch',
+    `space-first-${reopenName}-images-mismatch`,
   );
   cases.spacePrepared = spaceAfterFirstRestart;
   for (const item of fixture.items) {
@@ -939,12 +949,15 @@ export async function runPhoneAcceptance(
     await createDraft(driver, fixture, cases, 'doc'),
   ];
   same(creationReceipts(), [], 'offline-creation-receipt-present');
-  driver.stage('acceptance-pending-native-restart', phoneAcceptanceLimits.restart);
+  driver.stage(
+    ordinaryTab ? 'acceptance-pending-page-reload' : 'acceptance-pending-native-restart',
+    phoneAcceptanceLimits.restart,
+  );
   await driver.restart();
   for (const item of [...fixture.items, ...drafts]) {
     const before = retained.get(item.id) ?? drafts.find((draft) => draft.id === item.id)!.before;
     const restored = await local(driver, fixture, item.id);
-    same(restored, before, 'pending-restart-record-mismatch');
+    same(restored, before, `pending-${reopenName}-record-mismatch`);
     await driver.navigate(itemPath(item.id));
     await driver.ready(true);
     const actual = await local(driver, fixture, item.id);
@@ -964,19 +977,24 @@ export async function runPhoneAcceptance(
       await driver.screenshot(name);
       evidence = { native };
     }
-    await driver.record('pending-native-restart-retained', {
-      itemId: item.id,
-      kind: item.kind,
-      ...evidence,
-      checkpointSha256: digest(actual.record!.outbox!.checkpoint),
-      images: actual.images,
-    });
+    await driver.record(
+      ordinaryTab ? 'pending-page-reload-retained' : 'pending-native-restart-retained',
+      {
+        reopenOperation: ordinaryTab ? 'cold-page-reload' : 'native-termination-and-home-relaunch',
+        nativeAppRestart: ordinaryTab ? 'not-observed-by-this-scope' : 'observed',
+        itemId: item.id,
+        kind: item.kind,
+        ...evidence,
+        checkpointSha256: digest(actual.record!.outbox!.checkpoint),
+        images: actual.images,
+      },
+    );
   }
   requireCondition(cases.spacePrepared?.record, 'space-preparation-missing');
   same(
     await local(driver, fixture, cases.spaceChild.id),
     cases.spacePrepared,
-    'space-first-restart-mismatch',
+    `space-first-${reopenName}-mismatch`,
   );
 
   driver.stage('acceptance-core-reconnect', phoneAcceptanceLimits.reconnect);
@@ -1336,7 +1354,13 @@ export async function runPhoneAcceptance(
     );
   same(recoveryReceipts(), recoveryBefore, 'repeated-reconnect-duplicated-recovery');
   same(creationReceipts(), creationBefore, 'repeated-reconnect-duplicated-creation');
-  await driver.record('acceptance-installed-safari-complete', {
+  await driver.record(`acceptance-${scope}-complete`, {
+    scope,
+    browser: selection.browser,
+    launchContext: selection.context,
+    reopenOperation: ordinaryTab ? 'cold-page-reload' : 'native-termination-and-home-relaunch',
+    nativeAppRestart: ordinaryTab ? 'not-observed-by-this-scope' : 'observed',
+    nativeRestartAlternative: ordinaryTab ? 'scripts/ci/desktop-offline.ts' : null,
     normalItems: fixture.items.filter((item) => item.outcome === 'normal').map((item) => item.id),
     conflictCopies: [...copiedIds],
     creations: drafts.map(({ id, kind, rejected }) => ({
@@ -1346,7 +1370,8 @@ export async function runPhoneAcceptance(
     })),
     stableLinkAndNegativeCases: 'observed',
     repeatedReconnection: 'exact-server-and-receipt-equality',
-    ordinaryBrowserTabAcceptance: 'not-run-by-this-scope',
+    ordinaryBrowserTabAcceptance: ordinaryTab ? 'observed' : 'not-run-by-this-scope',
+    installedContextAcceptance: ordinaryTab ? 'not-run-by-this-scope' : 'observed',
     otherPhysicalLanes: 'not-run-by-this-scope',
   });
 }

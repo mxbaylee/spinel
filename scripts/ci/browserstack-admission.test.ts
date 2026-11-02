@@ -16,8 +16,10 @@ import {
   reservationForRun,
   reserveCapability,
   type AdmissionState,
+  type Reservation,
   type ReservationReceipt,
 } from './browserstack-admission.ts';
+import { capabilityScopeDefinition, type CapabilityScope } from './browserstack-scope.ts';
 
 const source: BudgetSource = {
   observedAt: '2026-11-01T17:00:00.000Z',
@@ -104,6 +106,250 @@ function receipt(sessionIds: string[] = [newId], uncertainAllocation = false): R
 function reserve() {
   return reserveCapability({ ...input(), runId: '555', attempt: '1' });
 }
+function successfulJournal(
+  reservation: Reservation,
+  scope: CapabilityScope = 'safari-acceptance',
+  completed = receipt(),
+) {
+  const definition = capabilityScopeDefinition(scope);
+  let index = 0;
+  return {
+    schemaVersion: 1,
+    runId: completed.runId,
+    attempt: completed.attempt,
+    sourceSha: completed.sourceSha,
+    testedSha: completed.testedSha,
+    reservationId: reservation.id,
+    capabilityScope: scope,
+    allocationPlan: scope === 'all' ? 'two-lane-chrome-safari-remediation' : scope,
+    status: 'passed',
+    fullMatrixStatus: scope === 'all' ? 'passed' : 'incomplete',
+    stage: 'finished',
+    receipt: structuredClone(completed),
+    lanes: ['chrome', 'firefox', 'safari'].map((browser) =>
+      scope === 'all' || browser === definition.browser
+        ? {
+            target: { browser },
+            status: 'passed',
+            stage: definition.completionStage,
+            sessionId: completed.sessionIds[index++],
+            allocation: 'known',
+            uncertainAllocation: false,
+            startedAt: '2026-11-01T17:00:30.000Z',
+            finishedAt: '2026-11-01T17:03:59.000Z',
+            cleanup: { network: 'restored-4g-lte-good', session: 'deleted', fixture: 'closed' },
+          }
+        : {
+            target: { browser },
+            status: browser === 'firefox' ? 'blocked' : 'not-run',
+            stage: 'unselected',
+            allocation: 'not-started',
+            uncertainAllocation: false,
+          },
+    ),
+  };
+}
+
+test('successful scope cost uses exact reconciled sessions and stays separate from budget authority and full coverage', () => {
+  for (const scope of [
+    'all',
+    'chrome-navigation-diagnostic',
+    'safari-acceptance',
+    'chrome-acceptance',
+    'chrome-tab-acceptance',
+    'firefox-tab-acceptance',
+    'safari-tab-acceptance',
+  ] as const) {
+    const reserved = reserve();
+    const current = allocated(19);
+    const completed =
+      scope === 'all' ? receipt([newId, 'd'.repeat(40), 'e'.repeat(40)]) : receipt();
+    if (scope === 'all')
+      for (const id of completed.sessionIds.slice(1)) {
+        const session = structuredClone(current.history.sessions.at(-1)!);
+        session.sessionId = id;
+        current.history.sessions.push(session);
+        current.history.builds[0].sessionIds.push(id);
+      }
+    const measuredElapsedSeconds = 19 * completed.sessionIds.length;
+    const result = reconcileReservation({
+      ...input(current, reserved.state, postSource),
+      receipt: completed,
+      journal: successfulJournal(reserved.reservation!, scope, completed),
+    });
+    assert.equal(result.released, true);
+    assert.equal(result.reservation.successfulScope, scope);
+    assert.deepEqual(result.report.successfulScopeCosts, [
+      {
+        scope,
+        reservationId: reserved.reservation!.id,
+        runId: '555',
+        attempt: '1',
+        sourceSha: source.sourceSha,
+        testedSha: source.testedSha,
+        sessionIds: completed.sessionIds,
+        finishedAt: receipt().finishedAt,
+        reconciledAt: postSource.observedAt,
+        measuredElapsedSeconds,
+        estimatedChargedSeconds: measuredElapsedSeconds,
+      },
+    ]);
+    assert.equal(result.report.estimatedUsedSeconds, 241 + measuredElapsedSeconds);
+    assert.equal(result.report.outstandingHoldSeconds, 0);
+    assert.equal(result.report.capabilityReservationSeconds, 900);
+    assert.equal(result.report.allocationAllowed, false);
+    assert.equal(result.report.completeOfflineMatrixCostMinutes, null);
+    assert.equal(result.report.estimatedSuccessfulCompleteRuns, null);
+    assert.equal(result.report.projectedFullMatrixExhaustion, null);
+    const later = estimateBudget({
+      ...input(current, result.state, { ...postSource, observedAt: '2026-12-01T09:17:00.000Z' }),
+      policy: { ...policy(), chargedSecondsPerElapsedSecond: 2 },
+    });
+    assert.equal(later.successfulScopeCosts[0].measuredElapsedSeconds, measuredElapsedSeconds);
+    assert.equal(later.successfulScopeCosts[0].estimatedChargedSeconds, measuredElapsedSeconds * 2);
+  }
+});
+
+test('failed, partial, unknown and historical scopes count usage without inventing successful cost', () => {
+  for (const change of [
+    undefined,
+    { status: 'failed' },
+    { status: 'incomplete' },
+    { stage: 'device-execution' },
+    { capabilityScope: 'unknown' },
+    { capabilityScope: undefined },
+  ]) {
+    const reserved = reserve();
+    const result = reconcileReservation({
+      ...input(allocated(19), reserved.state, postSource),
+      receipt: receipt(),
+      journal: change && { ...successfulJournal(reserved.reservation!), ...change },
+    });
+    assert.equal(result.released, true);
+    assert.equal(result.reservation.successfulScope, undefined);
+    assert.deepEqual(result.report.successfulScopeCosts, []);
+    assert.equal(result.report.estimatedUsedSeconds, 260);
+    assert.throws(
+      () =>
+        reconcileReservation({
+          ...input(allocated(19), result.state, postSource),
+          receipt: receipt(),
+          journal: successfulJournal(reserved.reservation!),
+        }),
+      /reconciled-reservation-is-immutable/,
+      'A later upload cannot assign success to an already finalized unknown scope.',
+    );
+  }
+});
+
+test('successful cost rejects mismatched provenance, scope, sessions and failed cleanup without changing caller state', () => {
+  const reserved = reserve();
+  for (const mutate of [
+    (value: ReturnType<typeof successfulJournal>) => {
+      value.sourceSha = 'd'.repeat(40);
+    },
+    (value: ReturnType<typeof successfulJournal>) => {
+      value.runId = '556';
+    },
+    (value: ReturnType<typeof successfulJournal>) => {
+      value.reservationId += '-other';
+    },
+    (value: ReturnType<typeof successfulJournal>) => {
+      value.allocationPlan = 'chrome-navigation-diagnostic';
+    },
+    (value: ReturnType<typeof successfulJournal>) => {
+      value.receipt.sessionIds = ['d'.repeat(40)];
+    },
+    (value: ReturnType<typeof successfulJournal>) => {
+      value.receipt.finishedAt = postSource.observedAt;
+    },
+    (value: ReturnType<typeof successfulJournal>) => {
+      value.lanes[2].sessionId = 'd'.repeat(40);
+    },
+    (value: ReturnType<typeof successfulJournal>) => {
+      value.lanes[2].status = 'failed';
+    },
+    (value: ReturnType<typeof successfulJournal>) => {
+      value.lanes[2].cleanup!.session = 'delete-failed';
+    },
+    (value: ReturnType<typeof successfulJournal>) => {
+      value.lanes[2].uncertainAllocation = true;
+    },
+    (value: ReturnType<typeof successfulJournal>) => {
+      value.lanes[2].stage = 'capability-complete';
+    },
+    (value: ReturnType<typeof successfulJournal>) => {
+      value.lanes[0] = value.lanes[2];
+    },
+  ]) {
+    const journal = successfulJournal(reserved.reservation!);
+    mutate(journal);
+    const before = structuredClone(reserved.state);
+    assert.throws(
+      () =>
+        reconcileReservation({
+          ...input(allocated(), reserved.state, postSource),
+          receipt: receipt(),
+          journal,
+        }),
+      /scope-journal/,
+    );
+    assert.deepEqual(reserved.state, before);
+  }
+});
+
+test('a held successful journal produces no cost until its own terminal usage is known and remains invalid after conflicting evidence', () => {
+  const reserved = reserve();
+  const nonterminal = allocated();
+  const observation = nonterminal.history.sessions.at(-1)!.observations[0].evidence;
+  assert.equal(observation.outcome, 'available');
+  if (observation.outcome === 'available') {
+    observation.data.durationSeconds = null;
+    observation.data.providerStatus = 'running';
+    observation.data.executionStatus = 'running';
+  }
+  nonterminal.status = 'failed';
+  const held = reconcileReservation({
+    ...input(nonterminal, reserved.state, postSource),
+    receipt: receipt(),
+    journal: successfulJournal(reserved.reservation!),
+  });
+  assert.equal(held.reservation.status, 'held');
+  assert.equal(held.reservation.successfulScope, 'safari-acceptance');
+  assert.deepEqual(held.report.successfulScopeCosts, []);
+  const unrelated = reconcileHeldReservations({
+    ...input(allocated(19, 'd'.repeat(40)), held.state, postSource),
+  });
+  assert.deepEqual(unrelated.releasedReservationIds, []);
+  assert.deepEqual(
+    estimateBudget({ ...input(allocated(), held.state, postSource) }).successfulScopeCosts,
+    [],
+  );
+  const recovered = reconcileHeldReservations({ ...input(allocated(), held.state, postSource) });
+  assert.deepEqual(recovered.releasedReservationIds, [reserved.reservation!.id]);
+  const measured = input(allocated(), recovered.state, postSource);
+  assert.equal(estimateBudget(measured).successfulScopeCosts[0].measuredElapsedSeconds, 19);
+  const conflict = estimateBudget({
+    ...measured,
+    evidence: allocated(20),
+    source: { ...postSource, observedAt: '2026-11-01T17:06:00.000Z' },
+  });
+  assert.deepEqual(conflict.successfulScopeCosts, []);
+  assert.ok(conflict.blockingReasons.includes('conflicting-session-evidence'));
+  for (const changes of [
+    { successfulScope: 'unrecognized' },
+    { sessionIds: [] },
+    { uncertainAllocation: true },
+  ])
+    assert.throws(
+      () =>
+        readAdmissionState({
+          ...recovered.state,
+          reservations: [{ ...recovered.state.reservations[0], ...changes }],
+        }),
+      /invalid-state/,
+    );
+});
 
 test('owner-authorized estimate uses the retained 241 seconds without relabeling unknown provider credit', () => {
   const current = input();

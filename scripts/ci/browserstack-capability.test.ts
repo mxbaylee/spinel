@@ -23,10 +23,13 @@ import {
   navigateChromeItem,
   normalizedPngScreenshot,
   observeBrowserTask,
+  ordinaryTabReloadMarkerScript,
+  ordinaryTabReloadObservationScript,
   openNativeShare,
   preparedCapabilityJournal,
   readPreparedCapabilityJournal,
   readCapabilityScope,
+  reloadOrdinaryTab,
   runCapability,
   runCapabilityLane,
   screenshotResponseShape,
@@ -34,12 +37,14 @@ import {
   verifyCapabilityAdmission,
   verifyInstallationAssets,
   verifyLaunchedBrowser,
+  verifyOrdinaryTabContext,
   verifyTransportProbe,
   withCapabilityAdmission,
   type CapabilityResult,
 } from './browserstack-capability.ts';
 import { clientFor } from './browserstack.ts';
 import { chromeReadinessFailureScript } from './browserstack-chrome-readiness.ts';
+import { capabilityScopeDefinition, type CapabilityScope } from './browserstack-scope.ts';
 
 const now = Date.parse('2026-11-01T18:01:00.000Z');
 const identity: ReservationIdentity = {
@@ -908,13 +913,16 @@ test('Safari cleanup failures cannot turn a completed observation into a pass or
   }
 });
 
-function completedCapabilityLane(target: CapabilityResult['target']): CapabilityResult {
+function completedCapabilityLane(
+  target: CapabilityResult['target'],
+  scope: CapabilityScope = 'all',
+): CapabilityResult {
   return {
     target,
     status: 'passed',
     startedAt: new Date(now).toISOString(),
     finishedAt: new Date(now + 1000).toISOString(),
-    stage: 'capability-complete',
+    stage: capabilityScopeDefinition(scope).completionStage,
     command: 'DELETE session/{sessionId}',
     allocation: 'known',
     sessionId,
@@ -1103,7 +1111,7 @@ test('Safari acceptance binds its own receipt, allocates only Safari and cannot 
       async () => {
         executions++;
         assert.equal(browser, 'safari');
-        return completedCapabilityLane({ ...target, browser });
+        return completedCapabilityLane({ ...target, browser }, 'safari-acceptance');
       },
       'safari-acceptance',
     );
@@ -1133,6 +1141,207 @@ test('Safari acceptance binds its own receipt, allocates only Safari and cannot 
     fullMatrixStatus: 'incomplete',
     exitCode: 1,
   });
+});
+
+test('each authored browser/context scope executes one selected device and cannot reuse another scope receipt or capability-only success', async () => {
+  const { manifest, durable } = admission();
+  const reservation = verifyCapabilityAdmission(manifest, durable, identity, now);
+  for (const [scope, expectedBrowser, expectedContext] of [
+    ['chrome-acceptance', 'chrome', 'installed'],
+    ['chrome-tab-acceptance', 'chrome', 'ordinary-tab'],
+    ['firefox-tab-acceptance', 'firefox', 'ordinary-tab'],
+    ['safari-tab-acceptance', 'safari', 'ordinary-tab'],
+  ] as const) {
+    const selection = capabilityScopeDefinition(scope);
+    assert.equal(readCapabilityScope(scope), scope);
+    assert.equal(selection.browser, expectedBrowser);
+    assert.equal(selection.context, expectedContext);
+    assert.equal(selection.completionStage, `${scope}-complete`);
+    const prepared = preparedCapabilityJournal(identity, reservation, now, scope);
+    assert.equal(
+      readPreparedCapabilityJournal(prepared, identity, reservation, now, scope),
+      prepared,
+    );
+    assert.equal(prepared.allocationPlan, scope);
+    assert.throws(
+      () =>
+        readPreparedCapabilityJournal(prepared, identity, reservation, now, 'safari-acceptance'),
+      /capability-journal-already-used/,
+    );
+    const allocations: string[] = [];
+    const lanes: CapabilityResult[] = [];
+    for (const browser of ['chrome', 'firefox', 'safari'] as const) {
+      lanes.push(
+        await runCapabilityLane(
+          { ...target, browser },
+          async () => {
+            allocations.push(browser);
+            return completedCapabilityLane({ ...target, browser }, scope);
+          },
+          scope,
+        ),
+      );
+    }
+    assert.deepEqual(allocations, [expectedBrowser]);
+    assert.deepEqual(
+      lanes.flatMap((lane) => (lane.sessionId ? [lane.sessionId] : [])),
+      [sessionId],
+    );
+    assert.deepEqual(capabilityRunOutcome(lanes, scope), {
+      status: 'passed',
+      fullMatrixStatus: 'incomplete',
+      exitCode: 0,
+    });
+    const selected = lanes.find((lane) => lane.target.browser === expectedBrowser)!;
+    selected.stage = 'capability-complete';
+    assert.equal(capabilityRunOutcome(lanes, scope).status, 'failed');
+    selected.stage = selection.completionStage;
+    selected.failure = 'http-500';
+    assert.equal(capabilityRunOutcome(lanes, scope).exitCode, 1);
+    assert.equal(lanes.filter((lane) => lane.startedAt !== null).length, 1);
+    if (expectedContext === 'ordinary-tab')
+      assert.ok(
+        lanes.filter((lane) => lane !== selected).every((lane) => lane.status === 'not-run'),
+      );
+  }
+  for (const invalid of ['firefox-acceptance', 'ordinary-tab', '__proto__', 'constructor'])
+    assert.throws(() => readCapabilityScope(invalid), /capability-invalid-scope/);
+});
+
+test('ordinary tab identity rejects an installed context, foreign worker, desktop or substituted browser', () => {
+  const agents = {
+    chrome: 'Mozilla/5.0 (Linux; Android 17) AppleWebKit/537.36 Chrome/152.0 Mobile',
+    firefox: 'Mozilla/5.0 (Android 17; Mobile; rv:151.0) Gecko/151.0 Firefox/151.0',
+    safari:
+      'Mozilla/5.0 (iPhone; CPU iPhone OS 27_0 like Mac OS X) Version/27.0 Mobile Safari/605.1.15',
+  };
+  for (const browser of ['chrome', 'firefox', 'safari'] as const) {
+    const value = {
+      origin: 'https://bs-local.com:8176',
+      secureContext: true,
+      controller: 'https://bs-local.com:8176/service-worker.js',
+      standalone: false,
+      navigatorStandalone: false,
+      userAgent: agents[browser],
+    };
+    verifyOrdinaryTabContext({ ...target, browser }, value);
+    for (const change of [
+      { origin: 'https://other.example' },
+      { secureContext: false },
+      { controller: 'https://other.example/service-worker.js' },
+      { standalone: true },
+      { navigatorStandalone: true },
+      { userAgent: 'Desktop Firefox/151.0' },
+      { userAgent: browser === 'firefox' ? agents.chrome : agents.firefox },
+    ])
+      assert.throws(() =>
+        verifyOrdinaryTabContext({ ...target, browser }, { ...value, ...change }),
+      );
+  }
+});
+
+test('ordinary tab reload proves a new document in the same window without native commands or storage restoration', async (context) => {
+  let clock = Date.now();
+  context.mock.method(Date, 'now', () => clock);
+  const origin = 'https://bs-local.com:8176';
+  for (const scenario of [
+    'replaced',
+    'same-document',
+    'wrong-window-before',
+    'wrong-window-after',
+    'wrong-origin-before',
+    'changed-url-after',
+    'installed-after',
+    'refresh-failed',
+    'late-refresh',
+  ]) {
+    const began = clock;
+    let href =
+      scenario === 'wrong-origin-before'
+        ? 'https://private.example/?token=secret'
+        : `${origin}/?item=doc`;
+    const pageContext = () =>
+      createContext({
+        location: {
+          get origin() {
+            return new URL(href).origin;
+          },
+          get href() {
+            return href;
+          },
+        },
+        navigator: { standalone: false },
+        document: { readyState: 'complete' },
+        matchMedia: () => ({ matches: scenario === 'installed-after' }),
+      });
+    let page = pageContext();
+    let refreshes = 0;
+    const calls: string[] = [];
+    const pending = reloadOrdinaryTab(
+      async (suffix, method, body, timeout) => {
+        calls.push(`${method} ${suffix}`);
+        assert.ok(timeout > 0 && timeout <= 15_000);
+        if (suffix === 'window')
+          return scenario === 'wrong-window-before' ||
+            (scenario === 'wrong-window-after' && refreshes)
+            ? 'other-tab'
+            : 'actual-tab';
+        if (suffix === 'url') return href;
+        if (suffix === 'refresh') {
+          assert.equal(method, 'POST');
+          assert.deepEqual(body, {});
+          refreshes++;
+          if (scenario === 'refresh-failed') throw new Error('http-500');
+          if (scenario === 'late-refresh') clock = began + 15_001;
+          if (scenario === 'changed-url-after') href = `${origin}/?item=other`;
+          if (scenario !== 'same-document') page = pageContext();
+          return null;
+        }
+        assert.equal(suffix, 'execute/sync');
+        const payload = body as { script: string; args: unknown[] };
+        assert.equal(
+          payload.script,
+          refreshes ? ordinaryTabReloadObservationScript : ordinaryTabReloadMarkerScript,
+        );
+        page.args = payload.args;
+        return structuredClone(
+          runInContext(`(function(){${payload.script}}).apply(null,args)`, page),
+        );
+      },
+      { origin, windowHandle: 'actual-tab', deadline: began + 780_000 },
+    );
+    if (scenario === 'replaced') {
+      const result = await pending;
+      assert.deepEqual(result, {
+        operation: 'webdriver-refresh',
+        sameWindow: true,
+        exactURLRetained: true,
+        oldDocumentDiscarded: true,
+        browserStorageCopied: false,
+        nativeAppTerminationObserved: false,
+        nativeProcessRestartOwner: 'scripts/ci/desktop-offline.ts',
+      });
+      assert.doesNotMatch(JSON.stringify(result), /bs-local|private|token|actual-tab/);
+    } else {
+      await assert.rejects(pending, {
+        message: scenario.includes('window')
+          ? 'capability-ordinary-tab-window-changed'
+          : scenario === 'wrong-origin-before'
+            ? 'capability-ordinary-tab-origin-changed'
+            : scenario === 'changed-url-after'
+              ? 'capability-ordinary-tab-url-changed'
+              : scenario === 'refresh-failed'
+                ? 'http-500'
+                : scenario === 'late-refresh'
+                  ? 'capability-ordinary-tab-reload-deadline'
+                  : 'capability-ordinary-tab-document-not-replaced',
+      });
+    }
+    assert.equal(refreshes, scenario.endsWith('-before') ? 0 : 1);
+    assert.ok(
+      calls.every((call) => /^(?:GET (?:window|url)|POST (?:execute\/sync|refresh))$/.test(call)),
+    );
+  }
 });
 
 test('the CLI outcome rejects missing, duplicate, invalid and unrun lanes without weakening full-matrix acceptance', () => {
@@ -1200,17 +1409,95 @@ test('the CLI outcome never passes a declared success with failed cleanup, unres
   }
 });
 
-test('Safari acceptance preflight refuses another target or an incomplete fixture before provider calls', async () => {
+test('every authored scope refuses another target or an incomplete fixture before provider calls', async () => {
   let calls = 0;
   const client = clientFor('fixture-user', 'fixture-key', async () => {
     calls++;
     assert.fail('Invalid acceptance preflight must not contact the provider.');
   });
-  for (const browser of ['chrome', 'safari'] as const) {
+  for (const scope of [
+    'safari-acceptance',
+    'chrome-acceptance',
+    'chrome-tab-acceptance',
+    'firefox-tab-acceptance',
+    'safari-tab-acceptance',
+  ] as const) {
+    const expectedBrowser = capabilityScopeDefinition(scope).browser!;
+    for (const browser of [
+      expectedBrowser === 'chrome' ? 'safari' : 'chrome',
+      expectedBrowser,
+    ] as const) {
+      let closed = 0;
+      const supplied = fixture(() => {
+        closed++;
+      });
+      supplied.items = [
+        ...supplied.items,
+        ...supplied.items.map((item) => ({
+          ...item,
+          id: `${item.id}-conflict`,
+          outcome: 'conflict' as const,
+        })),
+      ];
+      const result = await runCapability(client, { ...target, browser }, supplied, {
+        scope,
+        localIdentifier: 'local-id',
+        buildName: 'test',
+        journal: async () => {},
+        screenshot: async (name) => name,
+      });
+      assert.equal(
+        result.failure,
+        browser !== expectedBrowser
+          ? 'capability-scope-target-mismatch'
+          : 'capability-acceptance-fixture-unavailable',
+      );
+      assert.equal(result.allocation, 'not-started');
+      assert.equal(result.uncertainAllocation, false);
+      assert.equal(result.timing?.laneLimitMilliseconds, 780_000);
+      assert.equal(closed, 1);
+    }
+  }
+  assert.equal(calls, 0);
+});
+
+test('ordinary tab runners reach the observed web context without installation or Firefox native-context commands', async () => {
+  const { DatabaseSync } = await import('../../server/database.ts');
+  const { AuthStore } = await import('../../src/server/auth/store.ts');
+  const { WorkspaceStore } = await import('../../src/server/workspace/store.ts');
+  const { migrateSpaceSchema } = await import('../../src/server/workspace/space-schema.ts');
+  const origin = 'https://bs-local.com:8176';
+  const agents = {
+    chrome: 'Mozilla/5.0 (Linux; Android 17) AppleWebKit/537.36 Chrome/152.0 Mobile',
+    firefox: 'Mozilla/5.0 (Android 17; Mobile; rv:151.0) Gecko/151.0 Firefox/151.0',
+    safari:
+      'Mozilla/5.0 (iPhone; CPU iPhone OS 27_0 like Mac OS X) Version/27.0 Mobile Safari/605.1.15',
+  };
+  for (const browser of ['chrome', 'firefox', 'safari'] as const) {
+    const database = new DatabaseSync(':memory:');
+    const auth = new AuthStore(database);
+    new WorkspaceStore(auth, { spacesEnabled: true });
+    migrateSpaceSchema(database);
+    const owner = auth.createUser('Tab fixture owner');
+    const actor = auth.createUser('Tab fixture collaborator');
     let closed = 0;
-    const supplied = fixture(() => {
-      closed++;
-    });
+    const notReached = () =>
+      assert.fail('The context negative control must stop before application preparation.');
+    const supplied = {
+      ...fixture(() => {
+        closed++;
+        database.close();
+      }),
+      db: database,
+      owner,
+      actor,
+      read: notReached,
+      originalState: notReached,
+      recoveryMetadata: notReached,
+      remoteEdit: notReached,
+      setOffline: notReached,
+      verifyDisconnected: notReached,
+    };
     supplied.items = [
       ...supplied.items,
       ...supplied.items.map((item) => ({
@@ -1219,25 +1506,76 @@ test('Safari acceptance preflight refuses another target or an incomplete fixtur
         outcome: 'conflict' as const,
       })),
     ];
+    const page = createContext({
+      location: { origin, pathname: '/', href: origin + '/' },
+      document: {
+        title: 'Spinel',
+        body: { innerText: 'Your workspace.' },
+        querySelectorAll: () => [{ textContent: 'Sign in with a passkey', disabled: false }],
+      },
+      navigator: {
+        userAgent: agents[browser],
+        standalone: false,
+        onLine: true,
+        serviceWorker: {
+          controller: { scriptURL: origin + '/service-worker.js' },
+          getRegistration: async () => ({
+            scope: origin + '/',
+            active: { scriptURL: origin + '/service-worker.js', state: 'activated' },
+          }),
+        },
+      },
+      matchMedia: () => ({ matches: false }),
+      isSecureContext: true,
+    });
+    const calls: string[] = [];
+    const client = clientFor('fixture-user', 'fixture-key', async (url, init) => {
+      const path = String(url).split('/wd/hub/')[1] ?? String(url).split('/automate/')[1];
+      calls.push(`${init?.method} ${path}`);
+      assert.doesNotMatch(path, /contexts|\/context$|appium|\/elements?$|\/actions$/);
+      let value: unknown = null;
+      if (path === 'session') value = { sessionId, capabilities: { browserName: browser } };
+      else if (path.endsWith('/window/handles')) value = ['actual-tab'];
+      else if (path.endsWith('/window')) value = 'actual-tab';
+      else if (path.endsWith('/execute/sync') || path.endsWith('/execute/async')) {
+        const payload = JSON.parse(String(init?.body)) as { script: string; args: unknown[] };
+        if (path.endsWith('/execute/async'))
+          value = await new Promise((resolve) => {
+            page.args = [...payload.args, resolve];
+            runInContext(`(function(){${payload.script}}).apply(null,args)`, page);
+          });
+        else {
+          page.args = payload.args;
+          value = await runInContext(`(function(){${payload.script}}).apply(null,args)`, page);
+        }
+      } else if (path.endsWith('/screenshot')) value = tinyPng;
+      return Response.json({ value });
+    });
+    let stopped = false;
     const result = await runCapability(client, { ...target, browser }, supplied, {
-      scope: 'safari-acceptance',
+      scope: `${browser}-tab-acceptance`,
       localIdentifier: 'local-id',
       buildName: 'test',
-      journal: async () => {},
+      journal: async (value) => {
+        if (!stopped && value.observations.at(-1)?.stage === 'ordinary-tab-context') {
+          stopped = true;
+          throw new Error('capability-ordinary-tab-negative-control');
+        }
+      },
       screenshot: async (name) => name,
     });
-    assert.equal(
-      result.failure,
-      browser === 'chrome'
-        ? 'capability-scope-target-mismatch'
-        : 'capability-acceptance-fixture-unavailable',
-    );
-    assert.equal(result.allocation, 'not-started');
-    assert.equal(result.uncertainAllocation, false);
+    assert.equal(result.failure, 'capability-ordinary-tab-negative-control');
+    assert.equal(stopped, true, 'The actual runner must select the web-context path.');
+    assert.equal(result.status, 'failed');
+    assert.equal(result.nativeActions.length, 0);
     assert.equal(result.timing?.laneLimitMilliseconds, 780_000);
+    assert.equal(result.cleanup.session, 'deleted');
+    assert.equal(result.cleanup.network, 'restored-4g-lte-good');
+    assert.equal(result.cleanup.fixture, 'closed');
     assert.equal(closed, 1);
+    assert.equal(calls.filter((call) => call === 'POST session').length, 1);
+    assert.ok(!calls.some((call) => call.endsWith('/refresh')));
   }
-  assert.equal(calls, 0);
 });
 
 test('Safari prerequisite bounds clip actual provider commands and preserve cleanup after a late success', async (context) => {
