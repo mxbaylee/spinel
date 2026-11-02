@@ -1,0 +1,554 @@
+﻿2026-11-02T12:25:24.6532220Z Current runner version: '2.338.2'
+2026-11-02T12:25:24.6557472Z ##[group]Runner Image Provisioner
+2026-11-02T12:25:24.6558317Z Hosted Compute Agent
+2026-11-02T12:25:24.6559038Z Version: 20261021.618
+2026-11-02T12:25:24.6559726Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-11-02T12:25:24.6560559Z Build Date: 2026-10-21T00:45:21Z
+2026-11-02T12:25:24.6561306Z Worker ID: {b65be7f0-96b2-48c7-9ec7-80d64fe4e407}
+2026-11-02T12:25:24.6562412Z Region: eastus2
+2026-11-02T12:25:24.6563144Z Cloud: Azure
+2026-11-02T12:25:24.6563773Z ##[endgroup]
+2026-11-02T12:25:24.6565459Z ##[group]Operating System
+2026-11-02T12:25:24.6566166Z Ubuntu
+2026-11-02T12:25:24.6566705Z 24.04.5
+2026-11-02T12:25:24.6567270Z LTS
+2026-11-02T12:25:24.6567832Z ##[endgroup]
+2026-11-02T12:25:24.6568377Z ##[group]Runner Image
+2026-11-02T12:25:24.6569141Z Image: ubuntu-24.04
+2026-11-02T12:25:24.6569774Z Version: 20261025.353.1
+2026-11-02T12:25:24.6571151Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+2026-11-02T12:25:24.6573028Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+2026-11-02T12:25:24.6574078Z ##[endgroup]
+2026-11-02T12:25:24.6575183Z ##[group]GITHUB_TOKEN Permissions
+2026-11-02T12:25:24.6577475Z Contents: read
+2026-11-02T12:25:24.6578149Z Metadata: read
+2026-11-02T12:25:24.6578807Z ##[endgroup]
+2026-11-02T12:25:24.6582015Z Secret source: Actions
+2026-11-02T12:25:24.6583622Z Cache mode: write
+2026-11-02T12:25:24.6584870Z Prepare workflow directory
+2026-11-02T12:25:24.6917827Z Prepare all required actions
+2026-11-02T12:25:24.6967490Z Getting action download info
+2026-11-02T12:25:24.9443699Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-02T12:25:25.0625042Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+2026-11-02T12:25:25.1587010Z Download action repository 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-11-02T12:25:25.3315180Z Complete job name: Classify changes (41444530403)
+2026-11-02T12:25:25.4207713Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-02T12:25:25.4208780Z with:
+2026-11-02T12:25:25.4209213Z   fetch-depth: 0
+2026-11-02T12:25:25.4209678Z   persist-credentials: false
+2026-11-02T12:25:25.4210207Z   repository: mxbaylee/spinel
+2026-11-02T12:25:25.4214633Z   token: ***
+2026-11-02T12:25:25.4215092Z   ssh-strict: true
+2026-11-02T12:25:25.4215581Z   ssh-user: git
+2026-11-02T12:25:25.4216010Z   clean: true
+2026-11-02T12:25:25.4216465Z   sparse-checkout-cone-mode: true
+2026-11-02T12:25:25.4217004Z   fetch-tags: false
+2026-11-02T12:25:25.4217446Z   show-progress: true
+2026-11-02T12:25:25.4217895Z   lfs: false
+2026-11-02T12:25:25.4218309Z   submodules: false
+2026-11-02T12:25:25.4218767Z   set-safe-directory: true
+2026-11-02T12:25:25.4219299Z   allow-unsafe-pr-checkout: false
+2026-11-02T12:25:25.4220163Z ##[endgroup]
+2026-11-02T12:25:25.7367661Z Syncing repository: mxbaylee/spinel
+2026-11-02T12:25:25.7370958Z ##[group]Getting Git version info
+2026-11-02T12:25:25.7372647Z Working directory is '/home/runner/work/spinel/spinel'
+2026-11-02T12:25:25.7374577Z [command]/usr/bin/git version
+2026-11-02T12:25:25.7494452Z git version 2.56.0
+2026-11-02T12:25:25.7518270Z ##[endgroup]
+2026-11-02T12:25:25.7531617Z Temporarily overriding HOME='/home/runner/work/_temp/864ea010-7759-4fcb-91a5-cdfeb2094455' before making global git config changes
+2026-11-02T12:25:25.7535180Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-02T12:25:25.7541152Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-02T12:25:25.7596323Z Deleting the contents of '/home/runner/work/spinel/spinel'
+2026-11-02T12:25:25.7600484Z ##[group]Determining repository object format
+2026-11-02T12:25:25.7603304Z ##[endgroup]
+2026-11-02T12:25:25.7605677Z ##[group]Initializing the repository
+2026-11-02T12:25:25.7608630Z [command]/usr/bin/git init /home/runner/work/spinel/spinel
+2026-11-02T12:25:25.7759149Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-02T12:25:25.7760971Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-02T12:25:25.7762799Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-02T12:25:25.7763961Z hint: call:
+2026-11-02T12:25:25.7764645Z hint:
+2026-11-02T12:25:25.7765456Z hint: 	git config --global init.defaultBranch <name>
+2026-11-02T12:25:25.7766393Z hint:
+2026-11-02T12:25:25.7767276Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-02T12:25:25.7768581Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-02T12:25:25.7769647Z hint:
+2026-11-02T12:25:25.7770296Z hint: 	git branch -m <name>
+2026-11-02T12:25:25.7771954Z hint:
+2026-11-02T12:25:25.7773229Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-02T12:25:25.7776018Z Initialized empty Git repository in /home/runner/work/spinel/spinel/.git/
+2026-11-02T12:25:25.7787955Z [command]/usr/bin/git remote add origin https://github.com/mxbaylee/spinel
+2026-11-02T12:25:25.7844144Z ##[endgroup]
+2026-11-02T12:25:25.7845784Z ##[group]Disabling automatic garbage collection
+2026-11-02T12:25:25.7848691Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-02T12:25:25.7888709Z ##[endgroup]
+2026-11-02T12:25:25.7890577Z ##[group]Setting up auth
+2026-11-02T12:25:25.7892152Z Removing SSH command configuration
+2026-11-02T12:25:25.7895118Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-02T12:25:25.7936543Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-02T12:25:25.8392919Z Removing HTTP extra header
+2026-11-02T12:25:25.8400101Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-02T12:25:25.8449782Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-02T12:25:25.8700233Z Removing includeIf entries pointing to credentials config files
+2026-11-02T12:25:25.8706135Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-02T12:25:25.8755981Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-02T12:25:25.9001398Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-414a4924-3df0-42ee-8070-3dda8ea6307f.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-02T12:25:25.9052042Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git.path /home/runner/work/_temp/git-credentials-414a4924-3df0-42ee-8070-3dda8ea6307f.config
+2026-11-02T12:25:25.9097394Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-414a4924-3df0-42ee-8070-3dda8ea6307f.config
+2026-11-02T12:25:25.9143832Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-414a4924-3df0-42ee-8070-3dda8ea6307f.config
+2026-11-02T12:25:25.9188954Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-414a4924-3df0-42ee-8070-3dda8ea6307f.config
+2026-11-02T12:25:25.9231139Z ##[endgroup]
+2026-11-02T12:25:25.9232603Z ##[group]Fetching the repository
+2026-11-02T12:25:25.9240345Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/* +f6f55154e65661bede67a7018e28665fe6e7e423:refs/remotes/pull/234/merge
+2026-11-02T12:25:31.1679620Z From https://github.com/mxbaylee/spinel
+2026-11-02T12:25:31.1681585Z  * [new branch]      ci/browserstack-accounting               -> origin/ci/browserstack-accounting
+2026-11-02T12:25:31.1683423Z  * [new branch]      codex/groom-native-validation-registration -> origin/codex/groom-native-validation-registration
+2026-11-02T12:25:31.1684988Z  * [new branch]      codex/spn-068-sheet-images               -> origin/codex/spn-068-sheet-images
+2026-11-02T12:25:31.1686465Z  * [new branch]      codex/spn-090-real-devices               -> origin/codex/spn-090-real-devices
+2026-11-02T12:25:31.1687921Z  * [new branch]      codex/spn-098-feedback-diagnostics       -> origin/codex/spn-098-feedback-diagnostics
+2026-11-02T12:25:31.1689442Z  * [new branch]      codex/spn-099-stock-core                 -> origin/codex/spn-099-stock-core
+2026-11-02T12:25:31.1690861Z  * [new branch]      codex/spn-120-fixture-reliability        -> origin/codex/spn-120-fixture-reliability
+2026-11-02T12:25:31.1692820Z  * [new branch]      codex/spn-123-operation-diagnostics      -> origin/codex/spn-123-operation-diagnostics
+2026-11-02T12:25:31.1694252Z  * [new branch]      codex/spn-128-original-recovery          -> origin/codex/spn-128-original-recovery
+2026-11-02T12:25:31.1695193Z  * [new branch]      codex/spn-129-pr-metadata-validation     -> origin/codex/spn-129-pr-metadata-validation
+2026-11-02T12:25:31.1695962Z  * [new branch]      main                                     -> origin/main
+2026-11-02T12:25:31.1696739Z  * [new tag]         archive/spn-065-final-evidence-be55f33   -> archive/spn-065-final-evidence-be55f33
+2026-11-02T12:25:31.1697701Z  * [new tag]         archive/spn-065-flush-diagnostic-14300ef -> archive/spn-065-flush-diagnostic-14300ef
+2026-11-02T12:25:31.1698648Z  * [new tag]         archive/spn-065-legacy-d37553f           -> archive/spn-065-legacy-d37553f
+2026-11-02T12:25:31.1699647Z  * [new tag]         archive/spn-071-allocation-proof-fdde643 -> archive/spn-071-allocation-proof-fdde643
+2026-11-02T12:25:31.1700868Z  * [new tag]         archive/spn-071-components-c0e2502       -> archive/spn-071-components-c0e2502
+2026-11-02T12:25:31.1702160Z  * [new tag]         archive/spn-071-final-evidence-c514585   -> archive/spn-071-final-evidence-c514585
+2026-11-02T12:25:31.1703162Z  * [new tag]         archive/spn-071-flush-diagnostic-6008c8e -> archive/spn-071-flush-diagnostic-6008c8e
+2026-11-02T12:25:31.1704041Z  * [new tag]         archive/spn-071-focus-proof-d75f46f      -> archive/spn-071-focus-proof-d75f46f
+2026-11-02T12:25:31.1704892Z  * [new tag]         archive/spn-071-hosted-visuals-53ad684   -> archive/spn-071-hosted-visuals-53ad684
+2026-11-02T12:25:31.1705747Z  * [new tag]         archive/spn-071-hosted-visuals-c514585   -> archive/spn-071-hosted-visuals-c514585
+2026-11-02T12:25:31.1706683Z  * [new tag]         archive/spn-071-main-callback-baseline-3233f93 -> archive/spn-071-main-callback-baseline-3233f93
+2026-11-02T12:25:31.1707870Z  * [new tag]         archive/spn-071-main-restore-entry-cc83646 -> archive/spn-071-main-restore-entry-cc83646
+2026-11-02T12:25:31.1708861Z  * [new tag]         archive/spn-071-mobile-failure-53ad684   -> archive/spn-071-mobile-failure-53ad684
+2026-11-02T12:25:31.1709717Z  * [new tag]         archive/spn-071-restore-failure-c0e2502  -> archive/spn-071-restore-failure-c0e2502
+2026-11-02T12:25:31.1710535Z  * [new tag]         archive/spn-090-resume-audit-e0abee4     -> archive/spn-090-resume-audit-e0abee4
+2026-11-02T12:25:31.1711344Z  * [new tag]         archive/spn-098-current-visuals-24e00a7  -> archive/spn-098-current-visuals-24e00a7
+2026-11-02T12:25:31.1712606Z  * [new tag]         archive/spn-098-native-flush-first-failures-24e00a7 -> archive/spn-098-native-flush-first-failures-24e00a7
+2026-11-02T12:25:31.1713705Z  * [new tag]         archive/spn-098-original-failures-91f2d57 -> archive/spn-098-original-failures-91f2d57
+2026-11-02T12:25:31.1714814Z  * [new tag]         archive/spn-098-tablet-setup-24e00a7     -> archive/spn-098-tablet-setup-24e00a7
+2026-11-02T12:25:31.1715891Z  * [new tag]         archive/spn-132-final-evidence-a107a2b   -> archive/spn-132-final-evidence-a107a2b
+2026-11-02T12:25:31.1716716Z  * [new tag]         archive/spn-132-marker-proof-60690a1     -> archive/spn-132-marker-proof-60690a1
+2026-11-02T12:25:31.1717611Z  * [new tag]         archive/spn-132-marker-proof-60690a1-corrected -> archive/spn-132-marker-proof-60690a1-corrected
+2026-11-02T12:25:31.1718510Z  * [new tag]         archive/spn-132-registration-862a365     -> archive/spn-132-registration-862a365
+2026-11-02T12:25:31.1719339Z  * [new tag]         archive/spn-132-storybook-setup-a107a2b  -> archive/spn-132-storybook-setup-a107a2b
+2026-11-02T12:25:31.1720092Z  * [new tag]         review-assets/spn-033                    -> review-assets/spn-033
+2026-11-02T12:25:31.1720739Z  * [new tag]         review-assets/spn-034                    -> review-assets/spn-034
+2026-11-02T12:25:31.1721386Z  * [new tag]         review-assets/spn-036                    -> review-assets/spn-036
+2026-11-02T12:25:31.1722512Z  * [new tag]         review-assets/spn-036-prototype          -> review-assets/spn-036-prototype
+2026-11-02T12:25:31.1723238Z  * [new tag]         review-assets/spn-044                    -> review-assets/spn-044
+2026-11-02T12:25:31.1723907Z  * [new tag]         review-assets/spn-077                    -> review-assets/spn-077
+2026-11-02T12:25:31.1724592Z  * [new ref]         f6f55154e65661bede67a7018e28665fe6e7e423 -> pull/234/merge
+2026-11-02T12:25:31.1726314Z ##[endgroup]
+2026-11-02T12:25:31.1726895Z ##[group]Determining the checkout info
+2026-11-02T12:25:31.1805002Z ##[endgroup]
+2026-11-02T12:25:31.1805765Z [command]/usr/bin/git sparse-checkout disable
+2026-11-02T12:25:31.1810230Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-02T12:25:31.1812998Z ##[group]Checking out the ref
+2026-11-02T12:25:31.1815781Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/234/merge
+2026-11-02T12:25:31.6963447Z Note: switching to 'refs/remotes/pull/234/merge'.
+2026-11-02T12:25:31.6964053Z 
+2026-11-02T12:25:31.6964834Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-11-02T12:25:31.6965658Z changes and commit them, and you can discard any commits you make in this
+2026-11-02T12:25:31.6966436Z state without impacting any branches by switching back to a branch.
+2026-11-02T12:25:31.6966894Z 
+2026-11-02T12:25:31.6967198Z If you want to create a new branch to retain commits you create, you may
+2026-11-02T12:25:31.6967967Z do so (now or later) by using -c with the switch command. Example:
+2026-11-02T12:25:31.6968399Z 
+2026-11-02T12:25:31.6968547Z   git switch -c <new-branch-name>
+2026-11-02T12:25:31.6968799Z 
+2026-11-02T12:25:31.6968942Z Or undo this operation with:
+2026-11-02T12:25:31.6969174Z 
+2026-11-02T12:25:31.6969291Z   git switch -
+2026-11-02T12:25:31.6969463Z 
+2026-11-02T12:25:31.6969790Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-11-02T12:25:31.6970312Z 
+2026-11-02T12:25:31.6970823Z HEAD is now at f6f5515 Merge 9e1a314304d74b66e3e0591c5c99c1a4d8002f58 into 3233f9374c9dc028094f548b308a3f9dda3265ca
+2026-11-02T12:25:31.6997521Z ##[endgroup]
+2026-11-02T12:25:31.7059623Z [command]/usr/bin/git log -1 --format=%H
+2026-11-02T12:25:31.7098352Z f6f55154e65661bede67a7018e28665fe6e7e423
+2026-11-02T12:25:31.7107713Z ##[group]Removing auth
+2026-11-02T12:25:31.7108157Z Removing SSH command configuration
+2026-11-02T12:25:31.7111620Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-02T12:25:31.7155933Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-02T12:25:31.7403199Z Removing HTTP extra header
+2026-11-02T12:25:31.7407333Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-02T12:25:31.7452120Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-02T12:25:31.7694493Z Removing includeIf entries pointing to credentials config files
+2026-11-02T12:25:31.7698004Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-02T12:25:31.7737839Z includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-02T12:25:31.7738904Z includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-02T12:25:31.7739464Z includeif.gitdir:/github/workspace/.git.path
+2026-11-02T12:25:31.7739887Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-02T12:25:31.7747410Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-02T12:25:31.7783171Z /home/runner/work/_temp/git-credentials-414a4924-3df0-42ee-8070-3dda8ea6307f.config
+2026-11-02T12:25:31.7794122Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-414a4924\-3df0\-42ee\-8070\-3dda8ea6307f\.config
+2026-11-02T12:25:31.7847057Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-02T12:25:31.7888292Z /home/runner/work/_temp/git-credentials-414a4924-3df0-42ee-8070-3dda8ea6307f.config
+2026-11-02T12:25:31.7897565Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-414a4924\-3df0\-42ee\-8070\-3dda8ea6307f\.config
+2026-11-02T12:25:31.7944359Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-02T12:25:31.7981542Z /github/runner_temp/git-credentials-414a4924-3df0-42ee-8070-3dda8ea6307f.config
+2026-11-02T12:25:31.7992767Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-414a4924\-3df0\-42ee\-8070\-3dda8ea6307f\.config
+2026-11-02T12:25:31.8042864Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-02T12:25:31.8088533Z /github/runner_temp/git-credentials-414a4924-3df0-42ee-8070-3dda8ea6307f.config
+2026-11-02T12:25:31.8100076Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-414a4924\-3df0\-42ee\-8070\-3dda8ea6307f\.config
+2026-11-02T12:25:31.8147963Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-02T12:25:31.8412311Z Removing credentials config '/home/runner/work/_temp/git-credentials-414a4924-3df0-42ee-8070-3dda8ea6307f.config'
+2026-11-02T12:25:31.8420878Z ##[endgroup]
+2026-11-02T12:25:31.8691886Z ##[group]Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+2026-11-02T12:25:31.8692375Z with:
+2026-11-02T12:25:31.8692590Z   node-version-file: .nvmrc
+2026-11-02T12:25:31.8692855Z   package-manager-cache: false
+2026-11-02T12:25:31.8693101Z   check-latest: false
+2026-11-02T12:25:31.8695495Z   token: ***
+2026-11-02T12:25:31.8695700Z ##[endgroup]
+2026-11-02T12:25:31.9966118Z Node version file is not JSON file
+2026-11-02T12:25:31.9971383Z Node version file is not TOML file
+2026-11-02T12:25:31.9981280Z Resolved .nvmrc as 26.12.1
+2026-11-02T12:25:31.9991020Z Attempting to download 26.12.1...
+2026-11-02T12:25:32.6119742Z Acquiring 26.12.1 - x64 from https://github.com/actions/node-versions/releases/download/26.12.1-39618969937/node-26.12.1-linux-x64.tar.gz
+2026-11-02T12:25:33.0907116Z Extracting ...
+2026-11-02T12:25:33.1094688Z [command]/usr/bin/tar xz --strip 1 --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/7e87b5dc-d8fc-4f53-bea0-1bd1d80f28c9 -f /home/runner/work/_temp/e0ebee03-2ac5-42ec-ba55-4d0cb6fe2e73
+2026-11-02T12:25:34.4556471Z Adding to the cache ...
+2026-11-02T12:25:36.2442823Z ##[group]Environment details
+2026-11-02T12:25:36.4796418Z node: v26.12.1
+2026-11-02T12:25:36.4796815Z npm: 11.20.0
+2026-11-02T12:25:36.4797135Z yarn: 1.22.22
+2026-11-02T12:25:36.4797816Z ##[endgroup]
+2026-11-02T12:25:36.4995674Z ##[group]Run node scripts/ci/changes.ts
+2026-11-02T12:25:36.4996163Z [36;1mnode scripts/ci/changes.ts[0m
+2026-11-02T12:25:36.5022187Z shell: /usr/bin/bash -e {0}
+2026-11-02T12:25:36.5022453Z ##[endgroup]
+2026-11-02T12:25:36.5968787Z {
+2026-11-02T12:25:36.5969352Z   "version": 1,
+2026-11-02T12:25:36.5969774Z   "event": "pull_request",
+2026-11-02T12:25:36.5970230Z   "action": "opened",
+2026-11-02T12:25:36.5970774Z   "base": "3233f9374c9dc028094f548b308a3f9dda3265ca",
+2026-11-02T12:25:36.5971471Z   "head": "9e1a314304d74b66e3e0591c5c99c1a4d8002f58",
+2026-11-02T12:25:36.5972458Z   "tested": "f6f55154e65661bede67a7018e28665fe6e7e423",
+2026-11-02T12:25:36.5973043Z   "mode": "targeted",
+2026-11-02T12:25:36.5973476Z   "labels": [],
+2026-11-02T12:25:36.5973857Z   "paths": [
+2026-11-02T12:25:36.5974345Z     "docs/implementation/SPN-133.md",
+2026-11-02T12:25:36.5974923Z     "docs/implementation/SPN-134.md",
+2026-11-02T12:25:36.5975398Z     "docs/todo/SPN-133.md",
+2026-11-02T12:25:36.5975889Z     "docs/todo/SPN-134.md",
+2026-11-02T12:25:36.5976292Z     "docs/todo/backlog.json",
+2026-11-02T12:25:36.5976679Z     "docs/todo/readme.md"
+2026-11-02T12:25:36.5977053Z   ],
+2026-11-02T12:25:36.5977353Z   "suites": {
+2026-11-02T12:25:36.5977686Z     "backlog": {
+2026-11-02T12:25:36.5978005Z       "selected": true,
+2026-11-02T12:25:36.5978362Z       "dependencies": [
+2026-11-02T12:25:36.5978900Z         "complete immutable change range and current event metadata"
+2026-11-02T12:25:36.5979430Z       ],
+2026-11-02T12:25:36.5979720Z       "inputs": [
+2026-11-02T12:25:36.5980123Z         "docs/implementation/SPN-133.md",
+2026-11-02T12:25:36.5980638Z         "docs/implementation/SPN-134.md",
+2026-11-02T12:25:36.5981161Z         "docs/todo/SPN-133.md",
+2026-11-02T12:25:36.5981623Z         "docs/todo/SPN-134.md",
+2026-11-02T12:25:36.5983016Z         "docs/todo/backlog.json",
+2026-11-02T12:25:36.5983469Z         "docs/todo/readme.md"
+2026-11-02T12:25:36.5984038Z       ],
+2026-11-02T12:25:36.5984586Z       "reason": "Automatic coverage for the complete change range."
+2026-11-02T12:25:36.5985236Z     },
+2026-11-02T12:25:36.5985559Z     "pull-request": {
+2026-11-02T12:25:36.5985939Z       "selected": true,
+2026-11-02T12:25:36.5986318Z       "dependencies": [
+2026-11-02T12:25:36.5986971Z         "complete immutable change range and current event metadata"
+2026-11-02T12:25:36.5987549Z       ],
+2026-11-02T12:25:36.5987903Z       "inputs": [
+2026-11-02T12:25:36.5988400Z         "docs/implementation/SPN-133.md",
+2026-11-02T12:25:36.5988983Z         "docs/implementation/SPN-134.md",
+2026-11-02T12:25:36.5989560Z         "docs/todo/SPN-133.md",
+2026-11-02T12:25:36.5990079Z         "docs/todo/SPN-134.md",
+2026-11-02T12:25:36.5990690Z         "docs/todo/backlog.json",
+2026-11-02T12:25:36.5991175Z         "docs/todo/readme.md"
+2026-11-02T12:25:36.5991567Z       ],
+2026-11-02T12:25:36.5992323Z       "reason": "Automatic coverage for the complete change range."
+2026-11-02T12:25:36.5992951Z     },
+2026-11-02T12:25:36.5993268Z     "lint": {
+2026-11-02T12:25:36.5993601Z       "selected": true,
+2026-11-02T12:25:36.5993983Z       "dependencies": [
+2026-11-02T12:25:36.5994573Z         "complete immutable change range and current event metadata"
+2026-11-02T12:25:36.5995193Z       ],
+2026-11-02T12:25:36.5995571Z       "inputs": [
+2026-11-02T12:25:36.5996113Z         "docs/implementation/SPN-133.md",
+2026-11-02T12:25:36.5996732Z         "docs/implementation/SPN-134.md",
+2026-11-02T12:25:36.5997324Z         "docs/todo/SPN-133.md",
+2026-11-02T12:25:36.5997902Z         "docs/todo/SPN-134.md",
+2026-11-02T12:25:36.5998522Z         "docs/todo/backlog.json",
+2026-11-02T12:25:36.5999040Z         "docs/todo/readme.md"
+2026-11-02T12:25:36.5999483Z       ],
+2026-11-02T12:25:36.6000316Z       "reason": "Automatic coverage for the complete change range."
+2026-11-02T12:25:36.6000890Z     },
+2026-11-02T12:25:36.6001209Z     "typecheck": {
+2026-11-02T12:25:36.6001569Z       "selected": false,
+2026-11-02T12:25:36.6002210Z       "dependencies": [
+2026-11-02T12:25:36.6003223Z         "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-02T12:25:36.6004005Z       ],
+2026-11-02T12:25:36.6004376Z       "inputs": [
+2026-11-02T12:25:36.6004787Z         "docs/implementation/SPN-133.md",
+2026-11-02T12:25:36.6005377Z         "docs/implementation/SPN-134.md",
+2026-11-02T12:25:36.6005958Z         "docs/todo/SPN-133.md",
+2026-11-02T12:25:36.6006487Z         "docs/todo/SPN-134.md",
+2026-11-02T12:25:36.6007001Z         "docs/todo/backlog.json",
+2026-11-02T12:25:36.6007514Z         "docs/todo/readme.md"
+2026-11-02T12:25:36.6007947Z       ],
+2026-11-02T12:25:36.6008618Z       "reason": "No typecheck dependency changed; explicit inapplicability."
+2026-11-02T12:25:36.6009336Z     },
+2026-11-02T12:25:36.6009698Z     "unit-tests": {
+2026-11-02T12:25:36.6010068Z       "selected": false,
+2026-11-02T12:25:36.6010513Z       "dependencies": [
+2026-11-02T12:25:36.6011422Z         "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-02T12:25:36.6012775Z       ],
+2026-11-02T12:25:36.6013157Z       "inputs": [
+2026-11-02T12:25:36.6013642Z         "docs/implementation/SPN-133.md",
+2026-11-02T12:25:36.6014278Z         "docs/implementation/SPN-134.md",
+2026-11-02T12:25:36.6014879Z         "docs/todo/SPN-133.md",
+2026-11-02T12:25:36.6015414Z         "docs/todo/SPN-134.md",
+2026-11-02T12:25:36.6015919Z         "docs/todo/backlog.json",
+2026-11-02T12:25:36.6016439Z         "docs/todo/readme.md"
+2026-11-02T12:25:36.6016969Z       ],
+2026-11-02T12:25:36.6017694Z       "reason": "No unit-tests dependency changed; explicit inapplicability."
+2026-11-02T12:25:36.6018429Z     },
+2026-11-02T12:25:36.6018755Z     "lib-test-run": {
+2026-11-02T12:25:36.6019150Z       "selected": false,
+2026-11-02T12:25:36.6019545Z       "dependencies": [
+2026-11-02T12:25:36.6019914Z         "lib/**",
+2026-11-02T12:25:36.6020260Z         "scripts/dependencies/**",
+2026-11-02T12:25:36.6020818Z         "package{,-lock}.json",
+2026-11-02T12:25:36.6021234Z         "vitest.config.ts",
+2026-11-02T12:25:36.6021611Z         "tsconfig.json",
+2026-11-02T12:25:36.6022438Z         ".nvmrc",
+2026-11-02T12:25:36.6022807Z         ".github/workflows/ci.yml"
+2026-11-02T12:25:36.6023191Z       ],
+2026-11-02T12:25:36.6023476Z       "inputs": [
+2026-11-02T12:25:36.6023857Z         "docs/implementation/SPN-133.md",
+2026-11-02T12:25:36.6024350Z         "docs/implementation/SPN-134.md",
+2026-11-02T12:25:36.6024801Z         "docs/todo/SPN-133.md",
+2026-11-02T12:25:36.6025229Z         "docs/todo/SPN-134.md",
+2026-11-02T12:25:36.6025659Z         "docs/todo/backlog.json",
+2026-11-02T12:25:36.6026087Z         "docs/todo/readme.md"
+2026-11-02T12:25:36.6026487Z       ],
+2026-11-02T12:25:36.6027109Z       "reason": "No lib-test-run dependency changed; explicit inapplicability."
+2026-11-02T12:25:36.6027538Z     },
+2026-11-02T12:25:36.6027742Z     "playwright-run": {
+2026-11-02T12:25:36.6027995Z       "selected": false,
+2026-11-02T12:25:36.6028222Z       "dependencies": [
+2026-11-02T12:25:36.6028673Z         "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-02T12:25:36.6029117Z       ],
+2026-11-02T12:25:36.6029302Z       "inputs": [
+2026-11-02T12:25:36.6029551Z         "docs/implementation/SPN-133.md",
+2026-11-02T12:25:36.6029869Z         "docs/implementation/SPN-134.md",
+2026-11-02T12:25:36.6030160Z         "docs/todo/SPN-133.md",
+2026-11-02T12:25:36.6030415Z         "docs/todo/SPN-134.md",
+2026-11-02T12:25:36.6030682Z         "docs/todo/backlog.json",
+2026-11-02T12:25:36.6030930Z         "docs/todo/readme.md"
+2026-11-02T12:25:36.6031149Z       ],
+2026-11-02T12:25:36.6031510Z       "reason": "No playwright-run dependency changed; explicit inapplicability."
+2026-11-02T12:25:36.6032779Z     },
+2026-11-02T12:25:36.6033096Z     "container-smoke": {
+2026-11-02T12:25:36.6033365Z       "selected": false,
+2026-11-02T12:25:36.6033602Z       "dependencies": [
+2026-11-02T12:25:36.6034211Z         "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-02T12:25:36.6034653Z       ],
+2026-11-02T12:25:36.6034838Z       "inputs": [
+2026-11-02T12:25:36.6035083Z         "docs/implementation/SPN-133.md",
+2026-11-02T12:25:36.6035398Z         "docs/implementation/SPN-134.md",
+2026-11-02T12:25:36.6035687Z         "docs/todo/SPN-133.md",
+2026-11-02T12:25:36.6035947Z         "docs/todo/SPN-134.md",
+2026-11-02T12:25:36.6036210Z         "docs/todo/backlog.json",
+2026-11-02T12:25:36.6036463Z         "docs/todo/readme.md"
+2026-11-02T12:25:36.6036687Z       ],
+2026-11-02T12:25:36.6037062Z       "reason": "No container-smoke dependency changed; explicit inapplicability."
+2026-11-02T12:25:36.6037456Z     },
+2026-11-02T12:25:36.6037650Z     "restore-timing": {
+2026-11-02T12:25:36.6037883Z       "selected": false,
+2026-11-02T12:25:36.6038106Z       "dependencies": [
+2026-11-02T12:25:36.6038463Z         "server/**",
+2026-11-02T12:25:36.6038710Z         "src/{server,shared}/**",
+2026-11-02T12:25:36.6038951Z         "lib/**",
+2026-11-02T12:25:36.6039280Z         "web/** and src/ui/** (shared application/authentication bundle)",
+2026-11-02T12:25:36.6039669Z         "e2e restore/shared helpers",
+2026-11-02T12:25:36.6039991Z         "runtime/build/dependency/workflow inputs"
+2026-11-02T12:25:36.6040267Z       ],
+2026-11-02T12:25:36.6040471Z       "inputs": [
+2026-11-02T12:25:36.6040715Z         "docs/implementation/SPN-133.md",
+2026-11-02T12:25:36.6041019Z         "docs/implementation/SPN-134.md",
+2026-11-02T12:25:36.6041305Z         "docs/todo/SPN-133.md",
+2026-11-02T12:25:36.6041560Z         "docs/todo/SPN-134.md",
+2026-11-02T12:25:36.6042202Z         "docs/todo/backlog.json",
+2026-11-02T12:25:36.6042671Z         "docs/todo/readme.md"
+2026-11-02T12:25:36.6043033Z       ],
+2026-11-02T12:25:36.6043696Z       "reason": "No restore-timing dependency changed; explicit inapplicability."
+2026-11-02T12:25:36.6044410Z     },
+2026-11-02T12:25:36.6044814Z     "sync-transition": {
+2026-11-02T12:25:36.6045257Z       "selected": false,
+2026-11-02T12:25:36.6045731Z       "dependencies": [
+2026-11-02T12:25:36.6046635Z         "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-02T12:25:36.6047455Z       ],
+2026-11-02T12:25:36.6047866Z       "inputs": [
+2026-11-02T12:25:36.6048340Z         "docs/implementation/SPN-133.md",
+2026-11-02T12:25:36.6048905Z         "docs/implementation/SPN-134.md",
+2026-11-02T12:25:36.6049434Z         "docs/todo/SPN-133.md",
+2026-11-02T12:25:36.6049893Z         "docs/todo/SPN-134.md",
+2026-11-02T12:25:36.6050374Z         "docs/todo/backlog.json",
+2026-11-02T12:25:36.6050829Z         "docs/todo/readme.md"
+2026-11-02T12:25:36.6051296Z       ],
+2026-11-02T12:25:36.6052167Z       "reason": "No sync-transition dependency changed; explicit inapplicability."
+2026-11-02T12:25:36.6052908Z     },
+2026-11-02T12:25:36.6053242Z     "doc-responsiveness": {
+2026-11-02T12:25:36.6053647Z       "selected": false,
+2026-11-02T12:25:36.6054024Z       "dependencies": [
+2026-11-02T12:25:36.6054813Z         "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-02T12:25:36.6055586Z       ],
+2026-11-02T12:25:36.6055907Z       "inputs": [
+2026-11-02T12:25:36.6056353Z         "docs/implementation/SPN-133.md",
+2026-11-02T12:25:36.6056894Z         "docs/implementation/SPN-134.md",
+2026-11-02T12:25:36.6057403Z         "docs/todo/SPN-133.md",
+2026-11-02T12:25:36.6058408Z         "docs/todo/SPN-134.md",
+2026-11-02T12:25:36.6058886Z         "docs/todo/backlog.json",
+2026-11-02T12:25:36.6059323Z         "docs/todo/readme.md"
+2026-11-02T12:25:36.6059765Z       ],
+2026-11-02T12:25:36.6060427Z       "reason": "No doc-responsiveness dependency changed; explicit inapplicability."
+2026-11-02T12:25:36.6061391Z     },
+2026-11-02T12:25:36.6061962Z     "doc-callback-lifetimes": {
+2026-11-02T12:25:36.6062388Z       "selected": false,
+2026-11-02T12:25:36.6062801Z       "dependencies": [
+2026-11-02T12:25:36.6063770Z         "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-02T12:25:36.6064633Z       ],
+2026-11-02T12:25:36.6065085Z       "inputs": [
+2026-11-02T12:25:36.6065680Z         "docs/implementation/SPN-133.md",
+2026-11-02T12:25:36.6066453Z         "docs/implementation/SPN-134.md",
+2026-11-02T12:25:36.6066960Z         "docs/todo/SPN-133.md",
+2026-11-02T12:25:36.6067537Z         "docs/todo/SPN-134.md",
+2026-11-02T12:25:36.6068201Z         "docs/todo/backlog.json",
+2026-11-02T12:25:36.6068791Z         "docs/todo/readme.md"
+2026-11-02T12:25:36.6069349Z       ],
+2026-11-02T12:25:36.6070320Z       "reason": "No doc-callback-lifetimes dependency changed; explicit inapplicability."
+2026-11-02T12:25:36.6071276Z     },
+2026-11-02T12:25:36.6072584Z     "responsiveness-baseline": {
+2026-11-02T12:25:36.6073108Z       "selected": false,
+2026-11-02T12:25:36.6073512Z       "dependencies": [
+2026-11-02T12:25:36.6073883Z         "web/**",
+2026-11-02T12:25:36.6074222Z         "server/**",
+2026-11-02T12:25:36.6074595Z         "lib/**",
+2026-11-02T12:25:36.6074926Z         "e2e/**",
+2026-11-02T12:25:36.6075270Z         "src/shared/**",
+2026-11-02T12:25:36.6075748Z         "src/server/{sync,history,collaboration}/**",
+2026-11-02T12:25:36.6076275Z         "scripts/{ci,dependencies,sync-transition}/**",
+2026-11-02T12:25:36.6076995Z         "build/runtime/dependency/workflow configuration"
+2026-11-02T12:25:36.6077559Z       ],
+2026-11-02T12:25:36.6077962Z       "inputs": [
+2026-11-02T12:25:36.6078435Z         "docs/implementation/SPN-133.md",
+2026-11-02T12:25:36.6079021Z         "docs/implementation/SPN-134.md",
+2026-11-02T12:25:36.6079651Z         "docs/todo/SPN-133.md",
+2026-11-02T12:25:36.6080162Z         "docs/todo/SPN-134.md",
+2026-11-02T12:25:36.6080658Z         "docs/todo/backlog.json",
+2026-11-02T12:25:36.6081156Z         "docs/todo/readme.md"
+2026-11-02T12:25:36.6081582Z       ],
+2026-11-02T12:25:36.6082495Z       "reason": "No responsiveness-baseline dependency changed; explicit inapplicability."
+2026-11-02T12:25:36.6083233Z     },
+2026-11-02T12:25:36.6083668Z     "callback-baseline": {
+2026-11-02T12:25:36.6084122Z       "selected": false,
+2026-11-02T12:25:36.6084582Z       "dependencies": [
+2026-11-02T12:25:36.6084991Z         "web/**",
+2026-11-02T12:25:36.6085379Z         "server/**",
+2026-11-02T12:25:36.6085766Z         "lib/**",
+2026-11-02T12:25:36.6086147Z         "e2e/**",
+2026-11-02T12:25:36.6086551Z         "src/shared/**",
+2026-11-02T12:25:36.6087114Z         "src/server/{sync,history,collaboration}/**",
+2026-11-02T12:25:36.6087824Z         "scripts/{ci,dependencies,sync-transition}/**",
+2026-11-02T12:25:36.6088499Z         "build/runtime/dependency/workflow configuration"
+2026-11-02T12:25:36.6089014Z       ],
+2026-11-02T12:25:36.6089320Z       "inputs": [
+2026-11-02T12:25:36.6089742Z         "docs/implementation/SPN-133.md",
+2026-11-02T12:25:36.6090278Z         "docs/implementation/SPN-134.md",
+2026-11-02T12:25:36.6090781Z         "docs/todo/SPN-133.md",
+2026-11-02T12:25:36.6091227Z         "docs/todo/SPN-134.md",
+2026-11-02T12:25:36.6091895Z         "docs/todo/backlog.json",
+2026-11-02T12:25:36.6092337Z         "docs/todo/readme.md"
+2026-11-02T12:25:36.6092721Z       ],
+2026-11-02T12:25:36.6093378Z       "reason": "No callback-baseline dependency changed; explicit inapplicability."
+2026-11-02T12:25:36.6094079Z     },
+2026-11-02T12:25:36.6094415Z     "phone-compatibility": {
+2026-11-02T12:25:36.6094823Z       "selected": false,
+2026-11-02T12:25:36.6095198Z       "dependencies": [
+2026-11-02T12:25:36.6095891Z         "full plan backstop; ordinary phone owners remain in routine browser coverage"
+2026-11-02T12:25:36.6096585Z       ],
+2026-11-02T12:25:36.6096888Z       "inputs": [
+2026-11-02T12:25:36.6097298Z         "docs/implementation/SPN-133.md",
+2026-11-02T12:25:36.6098063Z         "docs/implementation/SPN-134.md",
+2026-11-02T12:25:36.6098556Z         "docs/todo/SPN-133.md",
+2026-11-02T12:25:36.6099004Z         "docs/todo/SPN-134.md",
+2026-11-02T12:25:36.6099470Z         "docs/todo/backlog.json",
+2026-11-02T12:25:36.6099905Z         "docs/todo/readme.md"
+2026-11-02T12:25:36.6100486Z       ],
+2026-11-02T12:25:36.6101498Z       "reason": "Routine phone contract owners cover every assertion; full duplicate compatibility reserved for backstop."
+2026-11-02T12:25:36.6102514Z     }
+2026-11-02T12:25:36.6102744Z   }
+2026-11-02T12:25:36.6102939Z }
+2026-11-02T12:25:36.6265701Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-02T12:25:36.6266130Z with:
+2026-11-02T12:25:36.6266322Z   name: ci-plan
+2026-11-02T12:25:36.6266524Z   path: ci-plan.json
+2026-11-02T12:25:36.6266736Z   retention-days: 30
+2026-11-02T12:25:36.6266947Z   if-no-files-found: error
+2026-11-02T12:25:36.6267178Z   compression-level: 6
+2026-11-02T12:25:36.6267385Z   overwrite: false
+2026-11-02T12:25:36.6267604Z   include-hidden-files: false
+2026-11-02T12:25:36.6267843Z   archive: true
+2026-11-02T12:25:36.6268039Z ##[endgroup]
+2026-11-02T12:25:36.7741545Z With the provided path, there will be 1 file uploaded
+2026-11-02T12:25:36.7769629Z Artifact name is valid!
+2026-11-02T12:25:36.7770320Z Root directory input is valid!
+2026-11-02T12:25:36.9972967Z Uploading artifact: ci-plan.zip
+2026-11-02T12:25:37.0014369Z Beginning upload of artifact content to blob storage
+2026-11-02T12:25:37.0624559Z Uploaded bytes 1115
+2026-11-02T12:25:37.0744211Z Finished uploading artifact content to blob storage!
+2026-11-02T12:25:37.0745839Z SHA256 digest of uploaded artifact is d10198d3f8d2de94edd27e15ee8470835db6297369733ff81f88ae17a600d4b7
+2026-11-02T12:25:37.0747481Z Finalizing artifact upload
+2026-11-02T12:25:37.7156821Z Artifact ci-plan successfully finalized. Artifact ID 13142355494
+2026-11-02T12:25:37.7158454Z Artifact ci-plan has been successfully uploaded! Final size is 1115 bytes. Artifact ID is 13142355494
+2026-11-02T12:25:37.7161433Z Artifact download URL: https://github.com/mxbaylee/spinel/actions/runs/41444530403/artifacts/13142355494
+2026-11-02T12:25:37.7353227Z Post job cleanup.
+2026-11-02T12:25:37.8703929Z Post job cleanup.
+2026-11-02T12:25:37.9636119Z [command]/usr/bin/git version
+2026-11-02T12:25:37.9684984Z git version 2.56.0
+2026-11-02T12:25:37.9728188Z Temporarily overriding HOME='/home/runner/work/_temp/6a9ce7a3-68f6-498f-9360-9029ead539fe' before making global git config changes
+2026-11-02T12:25:37.9729793Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-02T12:25:37.9733949Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-02T12:25:37.9770664Z Removing SSH command configuration
+2026-11-02T12:25:37.9778231Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-02T12:25:37.9833677Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-02T12:25:38.0112713Z Removing HTTP extra header
+2026-11-02T12:25:38.0114387Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-02T12:25:38.0152104Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-02T12:25:38.0453124Z Removing includeIf entries pointing to credentials config files
+2026-11-02T12:25:38.0483115Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-02T12:25:38.0486056Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-02T12:25:38.0944702Z Evaluate and set job outputs
+2026-11-02T12:25:38.0956847Z Set output 'restore_timing'
+2026-11-02T12:25:38.0959168Z Set output 'mode'
+2026-11-02T12:25:38.0980694Z Set output 'plan'
+2026-11-02T12:25:38.0981133Z Set output 'plan_sha256'
+2026-11-02T12:25:38.0981454Z Set output 'backlog'
+2026-11-02T12:25:38.0981978Z Set output 'pull_request'
+2026-11-02T12:25:38.0982286Z Set output 'lint'
+2026-11-02T12:25:38.0982573Z Set output 'typecheck'
+2026-11-02T12:25:38.0982879Z Set output 'unit_tests'
+2026-11-02T12:25:38.0983203Z Set output 'lib_test_run'
+2026-11-02T12:25:38.0983520Z Set output 'playwright_run'
+2026-11-02T12:25:38.0983839Z Set output 'container_smoke'
+2026-11-02T12:25:38.0984155Z Set output 'sync_transition'
+2026-11-02T12:25:38.0984464Z Set output 'doc_responsiveness'
+2026-11-02T12:25:38.0984794Z Set output 'doc_callback_lifetimes'
+2026-11-02T12:25:38.0985141Z Set output 'responsiveness_baseline'
+2026-11-02T12:25:38.0985486Z Set output 'callback_baseline'
+2026-11-02T12:25:38.0985857Z Set output 'phone_compatibility'
+2026-11-02T12:25:38.0986643Z Cleaning up orphan processes
