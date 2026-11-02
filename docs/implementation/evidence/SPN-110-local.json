@@ -1,0 +1,15 @@
+{
+  "date": "2026-11-02",
+  "base": "18a8759c498574a1d9cc24a969a558cd97a798ed",
+  "node": "v26.12.1",
+  "scope": "Working source before commit; local checks are supplementary, hosted gates and visual review remain required.",
+  "logs": {
+    "store-tests": "\n RUN  v5.0.5 /Users/mxbaylee/projects/spinel-spn-110\n\n\n Test Files  4 passed (4)\n      Tests  52 passed (52)\n   Start at  12:58:45\n   Duration  1.49s (tests 47%, import 43%, transform 9%, worker 1%)\n\n    Isolate  4 workers spawned · ~95ms startup each (spawn + environment, per file)\n             at least ~285ms faster with isolate: false — reuses workers across files instead of one per file\n\nWATCHDOG: exit=0, signal=null, elapsed=3431ms, peak=452.9MiB\n",
+    "store-tests-final": "\n RUN  v5.0.5 /Users/mxbaylee/projects/spinel-spn-110\n\n\n Test Files  5 passed (5)\n      Tests  57 passed (57)\n   Start at  13:01:27\n   Duration  1.16s (tests 77%, import 12%, transform 9%, worker 2%)\n\n    Isolate  5 workers spawned · ~91ms startup each (spawn + environment, per file)\n             at least ~365ms faster with isolate: false — reuses workers across files instead of one per file\n\nWATCHDOG: exit=0, signal=null, elapsed=1776ms, peak=442.8MiB\n",
+    "app-test": "\n RUN  v5.0.5 /Users/mxbaylee/projects/spinel-spn-110\n\nWATCHDOG ABORT: pressure=2, RSS=978.984375MiB, elapsed=4815ms\nserial: waiting for remaining workers.\n",
+    "lint": "WATCHDOG: exit=0, signal=null, elapsed=1171ms, peak=235.5MiB\n",
+    "core-types": "error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.\nWATCHDOG: exit=1, signal=null, elapsed=1346ms, peak=184.6MiB\n",
+    "scoped-types": "src/ui/redesign/Controls.tsx(13,8): error TS2882: Cannot find module or type declarations for side-effect import of './controls.css'.\nweb/AdminDiagnostics.stories.tsx(7,8): error TS2882: Cannot find module or type declarations for side-effect import of './administration.css'.\nweb/AdminDiagnostics.tsx(6,8): error TS2882: Cannot find module or type declarations for side-effect import of './diagnostics.css'.\nweb/ServerHealth.stories.tsx(6,8): error TS2882: Cannot find module or type declarations for side-effect import of './administration.css'.\nweb/ServerHealth.tsx(10,8): error TS2882: Cannot find module or type declarations for side-effect import of './diagnostics.css'.\nWATCHDOG: exit=1, signal=null, elapsed=1939ms, peak=768.6MiB\n",
+    "scoped-types-final": "WATCHDOG: exit=0, signal=null, elapsed=1480ms, peak=785.3MiB\n"
+  }
+}

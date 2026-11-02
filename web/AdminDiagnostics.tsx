@@ -280,6 +280,10 @@ export function AdminDiagnostics({ onBusyChange }: { onBusyChange?: (busy: boole
                   <dt>Prior collection</dt>
                   <dd>{status.dropped.stale}</dd>
                 </div>
+                <div>
+                  <dt>Expired observations</dt>
+                  <dd>{status.dropped.expired}</dd>
+                </div>
               </dl>
             </details>
           </>

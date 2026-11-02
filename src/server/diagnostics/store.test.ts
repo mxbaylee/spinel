@@ -15,6 +15,8 @@ import { expect, test, vi } from 'vitest';
 import type { DiagnosticRecord } from '@spinel/diagnostics';
 import { DatabaseSync } from '../../../server/database.ts';
 import { DiagnosticsStore, DIAGNOSTICS_LIMITS } from './store.ts';
+import { MaintenanceGate } from '../maintenance/gate.ts';
+import type { MaintenanceBridge, MaintenancePublicStatus } from '../../shared/maintenance.ts';
 
 const event = {
   name: 'operation.failed',
@@ -44,10 +46,10 @@ test.each(['same', 'symlink', 'hardlink'])(
     }
   },
 );
-function fixture() {
+function fixture(options: { now?: () => number; retentionDays?: number } = {}) {
   const directory = mkdtempSync(join(tmpdir(), 'spinel-diagnostics-'));
   const path = join(directory, 'diagnostics.sqlite');
-  const store = new DiagnosticsStore({ path, build: 'test-build' });
+  const store = new DiagnosticsStore({ path, build: 'test-build', ...options });
   const read = () => new DatabaseSync(path);
   return {
     store,
@@ -60,6 +62,222 @@ function fixture() {
     },
   };
 }
+
+test('expiry uses server receipt time, keeps the exact cutoff and feedback, and preserves frozen snapshots', async () => {
+  const day = 86_400_000;
+  let now = day;
+  const f = fixture({ now: () => now });
+  const db = f.read();
+  try {
+    const generation = f.store.status().generation!,
+      actor = randomUUID();
+    const expired = { ...record(), occurredAt: 100 * day };
+    const cutoff = { ...record(), occurredAt: 0 };
+    const recent = { ...record(), occurredAt: 0 };
+    const feedback = record();
+    expect(f.store.ingest([expired, feedback], actor, generation).accepted).toBe(2);
+    // Seed SPN-098's reserved row name; its actual paired exporter is verified
+    // separately in the integration checkout, not replaced by this fixture.
+    db.prepare("UPDATE events SET name='feedback' WHERE id=?").run(feedback.id);
+    now++;
+    expect(f.store.ingest([cutoff], actor, generation).accepted).toBe(1);
+    now++;
+    expect(f.store.ingest([recent], actor, generation).accepted).toBe(1);
+    const before = db.prepare('SELECT * FROM events ORDER BY id').all();
+    const snapshot = await f.store.snapshot();
+    try {
+      now = 8 * day + 1;
+      expect(f.store.expire()).toEqual({ deleted: 1, remaining: false });
+      const kept = db
+        .prepare('SELECT id FROM events ORDER BY id')
+        .all()
+        .map((row) => row.id);
+      expect(kept).toEqual([cutoff.id, recent.id, feedback.id].sort());
+      expect(f.store.status()).toMatchObject({
+        generation,
+        recordCount: 3,
+        dropped: { expired: 1 },
+        logicalBytes: before
+          .filter((row) => row.id !== expired.id)
+          .reduce((sum, row) => sum + Number(row.byte_size), 0),
+      });
+      const captured = new DatabaseSync(snapshot.path);
+      try {
+        expect(captured.prepare('SELECT * FROM events ORDER BY id').all()).toEqual(before);
+      } finally {
+        captured.close();
+      }
+      expect(() => f.store.truncate()).toThrow('download is active');
+    } finally {
+      await snapshot.dispose();
+    }
+    const next = f.store.truncate().generation;
+    expect(next).not.toBe(generation);
+    expect(f.store.ingest([record()], actor, generation).accepted).toBe(0);
+    expect(f.store.ingest([record()], actor, next).accepted).toBe(1);
+  } finally {
+    db.close();
+    await f.dispose();
+  }
+});
+
+test('queued observations keep receipt time and cannot renew their lifetime during delayed flush', async () => {
+  const day = 86_400_000;
+  let now = day;
+  const f = fixture({ now: () => now, retentionDays: 1 });
+  const db = f.read();
+  try {
+    f.store.record(event, context);
+    now = 2 * day;
+    f.store.flush();
+    expect(db.prepare('SELECT received_at FROM events').get()).toEqual({ received_at: day });
+    expect(f.store.expire()).toEqual({ deleted: 0, remaining: false });
+    f.store.record(event, context);
+    now = 3 * day + 1;
+    f.store.flush();
+    expect(f.store.status()).toMatchObject({ recordCount: 1, dropped: { expired: 1 } });
+    expect(f.store.expire()).toEqual({ deleted: 1, remaining: false });
+    expect(f.store.status()).toMatchObject({
+      logicalBytes: 0,
+      recordCount: 0,
+      dropped: { expired: 2 },
+    });
+  } finally {
+    db.close();
+    await f.dispose();
+  }
+});
+
+test('bounded expiry continues across restart and clock changes without changing generation or accounting', async () => {
+  const day = 86_400_000;
+  let now = day;
+  const f = fixture({ now: () => now });
+  const db = f.read();
+  let reopened: DiagnosticsStore | undefined;
+  try {
+    const generation = f.store.status().generation!,
+      actor = randomUUID();
+    const original = record();
+    expect(f.store.ingest([original], actor, generation).accepted).toBe(1);
+    // Real rows and accounting, bounded fixture independent of ingestion timing.
+    db.prepare(
+      `WITH RECURSIVE sequence(n) AS (
+      VALUES(1) UNION ALL SELECT n+1 FROM sequence WHERE n < ?
+    ) INSERT INTO events SELECT
+      '00000000-0000-4000-8000-' || printf('%012x',n),
+      schema_version,generation,occurred_at,received_at,name,kind,source,component,build,
+      actor_id,file_id,space_id,route,run_id,level,message,metric_kind,metric_unit,metric_value,details,byte_size
+      FROM sequence CROSS JOIN events WHERE events.id=?`,
+    ).run(DIAGNOSTICS_LIMITS.expiryEvents + 3, original.id);
+    db.exec('UPDATE diagnostics_state SET logical_bytes=(SELECT sum(byte_size) FROM events)');
+    now = 0;
+    expect(f.store.expire()).toEqual({ deleted: 0, remaining: false });
+    now = 9 * day;
+    expect(f.store.expire()).toEqual({ deleted: DIAGNOSTICS_LIMITS.expiryEvents, remaining: true });
+    expect(f.store.status()).toMatchObject({
+      generation,
+      recordCount: 4,
+      logicalBytes: 4 * Buffer.byteLength(JSON.stringify(original)),
+    });
+    await f.store.close();
+    reopened = new DiagnosticsStore({ path: f.path, build: 'test-build', now: () => now });
+    expect(reopened.status()).toMatchObject({ generation, dropped: { expired: 0 } });
+    const fresh = record();
+    expect(reopened.ingest([fresh], actor, generation).accepted).toBe(1);
+    expect(reopened.expire()).toEqual({ deleted: 4, remaining: false });
+    expect(db.prepare('SELECT id FROM events').all()).toEqual([{ id: fresh.id }]);
+    expect(reopened.status()).toMatchObject({
+      generation,
+      recordCount: 1,
+      logicalBytes: Buffer.byteLength(JSON.stringify(fresh)),
+    });
+    expect(db.prepare('PRAGMA integrity_check').get()?.integrity_check).toBe('ok');
+  } finally {
+    await reopened?.close();
+    db.close();
+    await f.dispose();
+  }
+});
+
+test('expiry remains behind the maintenance gate while a workspace is paused', async () => {
+  let now = 1;
+  const f = fixture({ now: () => now });
+  let status: MaintenancePublicStatus = {
+    available: true,
+    phase: 'running',
+    epoch: 'before',
+    notice: null,
+  };
+  const gate = new MaintenanceGate({ status: () => status } as MaintenanceBridge);
+  try {
+    expect(f.store.ingest([record()], randomUUID(), f.store.status().generation!).accepted).toBe(1);
+    const before = f.store.status();
+    f.store.setMaintenanceGate(gate);
+    now = 8 * 86_400_000;
+    status = { ...status, phase: 'paused', epoch: 'paused' };
+    expect(gate.job(() => f.store.expire())).toBeUndefined();
+    expect(() => f.store.expire()).toThrow('could not be expired');
+    expect(f.store.status()).toEqual(before);
+    status = { ...status, phase: 'running' };
+    expect(gate.job(() => f.store.expire())).toEqual({ deleted: 1, remaining: false });
+  } finally {
+    await f.dispose();
+  }
+});
+
+test.each(['delete', 'accounting'] as const)(
+  'expiry rolls back %s failures and succeeds on a later pass',
+  async (failure) => {
+    let now = 1;
+    const f = fixture({ now: () => now });
+    const db = f.read();
+    try {
+      const generation = f.store.status().generation!;
+      expect(f.store.ingest([record(), record()], randomUUID(), generation).accepted).toBe(2);
+      const rows = db.prepare('SELECT * FROM events ORDER BY id').all();
+      const before = f.store.status();
+      db.exec(
+        failure === 'delete'
+          ? "CREATE TRIGGER refuse_expiry BEFORE DELETE ON events BEGIN SELECT RAISE(ABORT,'private deletion failure'); END"
+          : "CREATE TRIGGER refuse_expiry BEFORE UPDATE ON diagnostics_state BEGIN SELECT RAISE(ABORT,'private accounting failure'); END",
+      );
+      now = 8 * 86_400_000;
+      expect(() => f.store.expire()).toThrow('Diagnostic observations could not be expired.');
+      expect(f.store.status()).toEqual(before);
+      expect(db.prepare('SELECT * FROM events ORDER BY id').all()).toEqual(rows);
+      db.exec('DROP TRIGGER refuse_expiry');
+      expect(f.store.expire()).toEqual({ deleted: 2, remaining: false });
+      expect(f.store.status()).toMatchObject({
+        generation,
+        logicalBytes: 0,
+        recordCount: 0,
+        dropped: { expired: 2 },
+      });
+    } finally {
+      db.close();
+      await f.dispose();
+    }
+  },
+);
+
+test.each([NaN, Infinity, -1, 1.5, Number.MAX_SAFE_INTEGER + 1])(
+  'invalid server clock %s never expires rows or changes accounting',
+  async (badClock) => {
+    let now = 1;
+    const f = fixture({ now: () => now });
+    try {
+      expect(f.store.ingest([record()], randomUUID(), f.store.status().generation!).accepted).toBe(
+        1,
+      );
+      const before = f.store.status();
+      now = badClock;
+      expect(() => f.store.expire()).toThrow('Diagnostics clock is unavailable.');
+      expect(f.store.status()).toEqual(before);
+    } finally {
+      await f.dispose();
+    }
+  },
+);
 
 test('separate schema stores derived provenance, registered messages and valid JSON without app tables', async () => {
   const f = fixture();

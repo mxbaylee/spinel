@@ -1,4 +1,4 @@
-export type DiagnosticLoss = 'invalid' | 'queue' | 'storage' | 'unavailable' | 'stale';
+export type DiagnosticLoss = 'invalid' | 'queue' | 'storage' | 'unavailable' | 'stale' | 'expired';
 
 export interface DiagnosticsStatus {
   available: boolean;

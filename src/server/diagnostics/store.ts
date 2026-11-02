@@ -27,6 +27,7 @@ export type { DiagnosticLoss, DiagnosticsStatus } from '../../shared/diagnostics
 import { DatabaseSync } from '../../../server/database.ts';
 import type { MaintenanceGate } from '../maintenance/gate.ts';
 import { snapshotDatabase } from './snapshot.ts';
+import { diagnosticsRetentionDays } from './configuration.ts';
 
 const MiB = 1024 * 1024;
 export const DIAGNOSTICS_LIMITS = {
@@ -35,6 +36,7 @@ export const DIAGNOSTICS_LIMITS = {
   queueBytes: MiB,
   queueEvents: 256,
   reserveBytes: 256 * MiB,
+  expiryEvents: 1024,
 } as const;
 interface Attribution {
   source: 'frontend' | 'backend';
@@ -45,6 +47,7 @@ interface Pending {
   attribution: Attribution;
   generation: string;
   bytes: number;
+  receivedAt: number;
 }
 export class DiagnosticsError extends Error {
   readonly status: number;
@@ -65,6 +68,7 @@ export class DiagnosticsStore {
   private currentGeneration: string | null = null;
   private readonly build: string;
   private readonly now: () => number;
+  private readonly retentionMs: number;
   private queue: Pending[] = [];
   private queuedBytes = 0;
   private scheduled?: NodeJS.Immediate;
@@ -77,6 +81,7 @@ export class DiagnosticsStore {
     storage: 0,
     unavailable: 0,
     stale: 0,
+    expired: 0,
   };
 
   constructor(options: {
@@ -84,11 +89,13 @@ export class DiagnosticsStore {
     build: string;
     now?: () => number;
     applicationPath?: string;
+    retentionDays?: number;
   }) {
     this.path = resolve(options.path);
     // Deployment build only: never copy request values, branches or URLs here.
     this.build = /^[a-zA-Z0-9._-]{1,64}$/.test(options.build) ? options.build : 'unknown';
     this.now = options.now ?? Date.now;
+    this.retentionMs = diagnosticsRetentionDays(options.retentionDays) * 86_400_000;
     try {
       if (options.applicationPath) {
         if (this.path === resolve(options.applicationPath))
@@ -118,6 +125,11 @@ export class DiagnosticsStore {
       );
       const version = Number(database.prepare('PRAGMA user_version').get()?.user_version);
       if (version !== 0 && version !== 1) throw new Error('Unsupported diagnostics schema.');
+      // Bound index creation on an existing store as well as subsequent writes.
+      const pageSize = Number(database.prepare('PRAGMA page_size').get()?.page_size);
+      database.exec(
+        `PRAGMA max_page_count = ${Math.floor(DIAGNOSTICS_LIMITS.storageBytes / pageSize)};`,
+      );
       database.exec(`
         CREATE TABLE IF NOT EXISTS diagnostics_state (
           singleton INTEGER PRIMARY KEY CHECK(singleton = 1),
@@ -134,6 +146,7 @@ export class DiagnosticsStore {
           byte_size INTEGER NOT NULL CHECK(byte_size > 0)
         ) STRICT;
         CREATE INDEX IF NOT EXISTS events_time ON events(received_at);
+        CREATE INDEX IF NOT EXISTS events_observation_time ON events(received_at) WHERE name != 'feedback';
         CREATE INDEX IF NOT EXISTS events_name ON events(name, received_at);
         CREATE INDEX IF NOT EXISTS events_component ON events(component, received_at);
         CREATE INDEX IF NOT EXISTS events_run ON events(run_id, received_at);
@@ -145,10 +158,6 @@ export class DiagnosticsStore {
       this.currentGeneration = String(
         database.prepare('SELECT generation FROM diagnostics_state WHERE singleton=1').get()!
           .generation,
-      );
-      const pageSize = Number(database.prepare('PRAGMA page_size').get()?.page_size);
-      database.exec(
-        `PRAGMA max_page_count = ${Math.floor(DIAGNOSTICS_LIMITS.storageBytes / pageSize)};`,
       );
       // This store has one owning server process; remove its interrupted exports.
       for (const name of readdirSync(dirname(this.path))) {
@@ -221,7 +230,8 @@ export class DiagnosticsStore {
         (this.maintenance && !this.maintenance.running)
       )
         return this.lose('unavailable');
-      const record = { id: randomUUID(), occurredAt: this.now(), event, context };
+      const receivedAt = this.receiptTime();
+      const record = { id: randomUUID(), occurredAt: receivedAt, event, context };
       if (!isDiagnosticRecord(record) || (actorId !== undefined && !isUuid(actorId)))
         return this.lose('invalid');
       const encoded = JSON.stringify(record);
@@ -237,6 +247,7 @@ export class DiagnosticsStore {
         attribution: { source: 'backend', ...(actorId ? { actorId } : {}) },
         generation,
         bytes,
+        receivedAt,
       });
       this.queuedBytes += bytes;
       this.scheduled ??= setImmediate(() => {
@@ -265,7 +276,13 @@ export class DiagnosticsStore {
           continue;
         }
         if (
-          this.append({ record, bytes, generation, attribution: { actorId, source: 'frontend' } })
+          this.append({
+            record,
+            bytes,
+            generation,
+            receivedAt: this.receiptTime(),
+            attribution: { actorId, source: 'frontend' },
+          })
         )
           accepted++;
       } catch {
@@ -275,8 +292,15 @@ export class DiagnosticsStore {
     return { accepted, dropped: records.length - accepted };
   }
 
-  private lose(reason: DiagnosticLoss) {
-    this.dropped[reason] = Math.min(Number.MAX_SAFE_INTEGER, this.dropped[reason] + 1);
+  private lose(reason: DiagnosticLoss, count = 1) {
+    this.dropped[reason] = Math.min(Number.MAX_SAFE_INTEGER, this.dropped[reason] + count);
+  }
+
+  private receiptTime() {
+    const now = this.now();
+    if (!Number.isSafeInteger(now) || now < 0)
+      throw new DiagnosticsError(503, 'Diagnostics clock is unavailable.');
+    return now;
   }
 
   flush() {
@@ -309,6 +333,11 @@ export class DiagnosticsStore {
       return false;
     }
     try {
+      // Queue delay must not renew an observation's server-receipt lifetime.
+      if (pending.receivedAt < this.receiptTime() - this.retentionMs) {
+        this.lose('expired');
+        return false;
+      }
       const physicalBytes = this.physicalBytes();
       const volume = statfsSync(dirname(this.path));
       if (volume.bavail * volume.bsize < DIAGNOSTICS_LIMITS.reserveBytes) {
@@ -356,7 +385,7 @@ export class DiagnosticsStore {
           record.id,
           pending.generation,
           record.occurredAt,
-          this.now(),
+          pending.receivedAt,
           event.name,
           metric ? 'metric' : 'level' in event ? 'log' : 'event',
           attribution.source,
@@ -414,6 +443,54 @@ export class DiagnosticsStore {
       tables.length === 2 &&
       tables.every((row) => ['diagnostics_state', 'events'].includes(String(row.name)))
     );
+  }
+
+  /** One bounded pass. Feedback and frozen exports have independent retention. */
+  expire() {
+    const database = this.database;
+    if (!database || this.closed || !this.isolated())
+      throw new DiagnosticsError(503, 'Diagnostics are unavailable.');
+    const cutoff = this.receiptTime() - this.retentionMs;
+    const hasExpired = () =>
+      !!database
+        .prepare("SELECT 1 FROM events WHERE name != 'feedback' AND received_at < ? LIMIT 1")
+        .get(cutoff);
+    try {
+      if (!hasExpired()) return { deleted: 0, remaining: false };
+      // Deletion also writes WAL pages. Do not consume the workspace reserve
+      // or bypass the existing physical write stop to meet an age target.
+      const physicalBytes = this.physicalBytes();
+      const volume = statfsSync(dirname(this.path));
+      if (
+        physicalBytes >= DIAGNOSTICS_LIMITS.physicalBytes ||
+        volume.bavail * volume.bsize < DIAGNOSTICS_LIMITS.reserveBytes
+      )
+        throw new Error('Diagnostics capacity unavailable.');
+      database.exec('BEGIN IMMEDIATE');
+      const removed = database
+        .prepare(
+          `DELETE FROM events WHERE rowid IN (
+        SELECT rowid FROM events WHERE name != 'feedback' AND received_at < ?
+        ORDER BY received_at LIMIT ?
+      ) RETURNING byte_size`,
+        )
+        .all(cutoff, DIAGNOSTICS_LIMITS.expiryEvents);
+      const bytes = removed.reduce((total, row) => total + Number(row.byte_size), 0);
+      database
+        .prepare('UPDATE diagnostics_state SET logical_bytes=logical_bytes-? WHERE singleton=1')
+        .run(bytes);
+      const remaining = hasExpired();
+      database.exec('COMMIT');
+      this.lose('expired', removed.length);
+      return { deleted: removed.length, remaining };
+    } catch {
+      try {
+        database.exec('ROLLBACK');
+      } catch {
+        /* Preserve the original failure. */
+      }
+      throw new DiagnosticsError(503, 'Diagnostic observations could not be expired.');
+    }
   }
 
   truncate() {

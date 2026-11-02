@@ -27,7 +27,7 @@ const event = {
 const context = { component: 'editor' } as const;
 const record = (): DiagnosticRecord => ({ id: randomUUID(), occurredAt: 1234, event, context });
 
-async function fixture() {
+async function fixture(now?: () => number) {
   const original = await vi.importActual<typeof import('node:fs')>('node:fs');
   const directory = mkdtempSync(join(tmpdir(), 'spinel-diagnostics-capacity-'));
   const path = join(directory, 'diagnostics.sqlite');
@@ -60,7 +60,7 @@ async function fixture() {
     }
     return result;
   });
-  const store = new DiagnosticsStore({ path, build: 'capacity-test' });
+  const store = new DiagnosticsStore({ path, build: 'capacity-test', now });
   expect(store.status().available).toBe(true);
   const database = new DatabaseSync(path);
   const rows = () => database.prepare('SELECT * FROM events ORDER BY id').all();
@@ -84,6 +84,45 @@ async function fixture() {
     },
   };
 }
+
+test.each(['physical', 'reserve'] as const)(
+  'expiry preserves accounting under %s pressure and resumes collection after capacity returns',
+  async (limit) => {
+    let now = 1;
+    const f = await fixture(() => now);
+    try {
+      const actor = randomUUID(),
+        generation = f.store.status().generation!;
+      expect(f.store.ingest([record()], actor, generation).accepted).toBe(1);
+      const beforeRows = f.rows(),
+        beforeState = f.state();
+      now = 8 * 86_400_000;
+      if (limit === 'physical') {
+        f.measured.databaseBytes = 48 * 1024 ** 2;
+        f.measured.walBytes = 48 * 1024 ** 2;
+      } else f.measured.freeBytes = DIAGNOSTICS_LIMITS.reserveBytes - 1;
+      expect(() => f.store.expire()).toThrow('could not be expired');
+      expect(f.rows()).toEqual(beforeRows);
+      expect(f.state()).toEqual(beforeState);
+      expect(f.store.status().dropped.expired).toBe(0);
+      expect(f.store.ingest([record()], actor, generation).accepted).toBe(0);
+      f.measured.databaseBytes = undefined;
+      f.measured.walBytes = undefined;
+      f.measured.freeBytes = DIAGNOSTICS_LIMITS.reserveBytes;
+      expect(f.store.expire()).toEqual({ deleted: 1, remaining: false });
+      expect(f.store.status()).toMatchObject({ generation, logicalBytes: 0, recordCount: 0 });
+      const fresh = record();
+      expect(f.store.ingest([fresh], actor, generation).accepted).toBe(1);
+      expect(f.rows().map((row) => row.id)).toEqual([fresh.id]);
+      expect(f.store.status()).toMatchObject({
+        logicalBytes: Buffer.byteLength(JSON.stringify(fresh)),
+        dropped: { expired: 1, storage: 1 },
+      });
+    } finally {
+      await f.dispose();
+    }
+  },
+);
 
 test.each(['database', 'database plus WAL'] as const)(
   'physical %s bytes stop collection at 96 MiB, allow clear and resume only after capacity returns',

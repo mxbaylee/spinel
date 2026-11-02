@@ -19,6 +19,7 @@ import { restoreSnapshotFingerprint } from '../src/server/backup/inventory.ts';
 import type { MaintenanceAdminStatus, MaintenanceBridge } from '../src/shared/maintenance.ts';
 import { publicMaintenance } from '../src/shared/maintenance.ts';
 import { randomUUID } from 'node:crypto';
+import { DiagnosticsStore } from '../src/server/diagnostics/store.ts';
 
 const cleanups: (() => Promise<unknown>)[] = [];
 afterEach(async () => {
@@ -33,6 +34,73 @@ async function temporaryDirectory() {
   cleanups.push(() => rm(directory, { recursive: true, force: true }));
   return directory;
 }
+
+test('the existing maintenance timer expires observations, exposes failure, retries and stops on close', async () => {
+  const directory = await temporaryDirectory();
+  const path = join(directory, 'app.sqlite');
+  await writeFile(join(directory, 'index.html'), 'Retention fixture');
+  vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] });
+  const expire = vi.spyOn(DiagnosticsStore.prototype, 'expire').mockImplementationOnce(() => {
+    throw new Error('Private diagnostics path must not appear');
+  });
+  const app = await createApp({
+    databasePath: path,
+    staticDirectory: directory,
+    diagnosticsRetentionDays: 1,
+  });
+  let closed = false;
+  cleanups.push(async () => {
+    if (!closed) await app.close();
+  });
+  const db = openDatabase(path);
+  cleanups.push(async () => db.close());
+  const auth = new AuthStore(db);
+  const operator = auth.createUser('Operator', true);
+  const session = auth.createSession(operator.id);
+  await new Promise<void>((resolve) => app.server.listen(0, '127.0.0.1', resolve));
+  const origin = 'http://127.0.0.1:' + (app.server.address() as AddressInfo).port;
+  const health = async () => {
+    const response = await fetch(origin + '/api/admin/health', {
+      headers: { Cookie: COOKIE_NAME + '=' + session.token },
+    });
+    expect(response.status).toBe(200);
+    const result = await response.json();
+    expect(JSON.stringify(result)).not.toContain('Private diagnostics path');
+    return result.jobs.find((job: { name: string }) => job.name === 'diagnostics-expiry');
+  };
+  expect(await health()).toMatchObject({
+    configured: true,
+    running: false,
+    failedSince: expect.any(Number),
+    lastSuccess: null,
+  });
+  const diagnostics = new DatabaseSync(join(directory, 'diagnostics.sqlite'));
+  cleanups.push(async () => diagnostics.close());
+  // Existing health instrumentation supplies real rows; make one older than
+  // the configured one-day policy but younger than the seven-day default.
+  const row = diagnostics.prepare('SELECT id FROM events LIMIT 1').get();
+  expect(row).toBeDefined();
+  diagnostics
+    .prepare('UPDATE events SET received_at=? WHERE id=?')
+    .run(Date.now() - 2 * 86_400_000, row!.id);
+  await vi.advanceTimersByTimeAsync(60_000);
+  expect(expire).toHaveBeenCalledTimes(2);
+  expect(await health()).toMatchObject({
+    configured: true,
+    running: false,
+    failedSince: null,
+    lastSuccess: expect.any(Number),
+  });
+  expect(diagnostics.prepare('SELECT id FROM events WHERE id=?').get(row!.id)).toBeUndefined();
+  const accounting = diagnostics.prepare('SELECT logical_bytes FROM diagnostics_state').get()!;
+  expect(accounting.logical_bytes).toBe(
+    diagnostics.prepare('SELECT coalesce(sum(byte_size),0) AS bytes FROM events').get()!.bytes,
+  );
+  await app.close();
+  closed = true;
+  await vi.advanceTimersByTimeAsync(60_000);
+  expect(expire).toHaveBeenCalledTimes(2);
+});
 
 async function restoreStartupFixture() {
   const directory = await temporaryDirectory(),
