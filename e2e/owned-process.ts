@@ -38,7 +38,6 @@ export class AppProcessError extends Error {
 export type OwnedAppProcess = {
   close: () => Promise<void>;
   assertHealthy: () => void;
-  guard: <T>(work: () => Promise<T>) => Promise<T>;
   evidence: () => AppProcessEvidence;
   finished: Promise<void>;
   /** Resolves, never rejects unattended, on the first unexpected process failure. */
@@ -190,14 +189,11 @@ export async function observeAppProcess(
   const failure = new Promise<AppProcessError>((resolve) => {
     resolveFailure = resolve;
   });
-  const guards = new Set<(error: AppProcessError) => void>();
   const fail = (message: string, cause?: unknown) => {
     if (firstFailure) return firstFailure;
     firstFailure = new AppProcessError(message, evidence, cause);
     rejectReady(firstFailure);
     resolveFailure(firstFailure);
-    for (const reject of guards) reject(firstFailure);
-    guards.clear();
     return firstFailure;
   };
   const onData = (stream: 'stdout' | 'stderr', chunk: Buffer) => {
@@ -259,38 +255,10 @@ export async function observeAppProcess(
     if (!ready || expectedClose)
       throw new AppProcessError(ready ? 'App is closing.' : 'App is not ready.', evidence);
   };
-  const guard = async <T>(work: () => Promise<T>): Promise<T> => {
-    assertHealthy();
-    return new Promise<T>((resolve, reject) => {
-      let active = true;
-      const rejectWork = (error: unknown) => {
-        if (!active) return;
-        active = false;
-        guards.delete(rejectWork);
-        reject(error);
-      };
-      guards.add(rejectWork);
-      void Promise.resolve()
-        .then(work)
-        .then((value) => {
-          if (!active) return;
-          try {
-            assertHealthy();
-            active = false;
-            guards.delete(rejectWork);
-            resolve(value);
-          } catch (error) {
-            rejectWork(error);
-          }
-        }, rejectWork);
-    });
-  };
   let closing: Promise<void> | undefined;
   const close = () => {
     if (closing) return closing;
     expectedClose = true;
-    for (const reject of guards) reject(new AppProcessError('App is closing.', evidence));
-    guards.clear();
     closing = (async () => {
       if (closed) return;
       // Keep the original five-second total budget. Reserve its last second
@@ -334,7 +302,7 @@ export async function observeAppProcess(
   try {
     await readiness;
     assertHealthy();
-    return { close, assertHealthy, guard, evidence, finished, failure };
+    return { close, assertHealthy, evidence, finished, failure };
   } catch (original) {
     return await withFixtureCleanup(async () => {
       throw original;

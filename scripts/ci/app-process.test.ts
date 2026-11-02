@@ -57,7 +57,7 @@ test('only the complete exact readiness line admits work, including split writes
   await withFixtureCleanup(async () => {
     assert.equal(app.evidence().ready, true);
     assert.equal(app.evidence().exited, false);
-    assert.equal(await app.guard(async () => 'verified work'), 'verified work');
+    assert.doesNotThrow(app.assertHealthy);
   }, app.close);
   assert.equal(app.evidence().expectedClose, true);
   assert.equal(app.evidence().closed, true);
@@ -156,7 +156,7 @@ test('a wrapper can cancel startup without waiting for the readiness deadline', 
   assert.ok(performance.now() - stopped < 1_000);
 });
 
-test('a post-readiness exit interrupts pending work and forbids another operation', async (t) => {
+test('a post-readiness exit notifies the wrapper and fails its health check', async (t) => {
   const process = child(
     t,
     `${ready} process.stdin.on('data', () => {
@@ -164,28 +164,17 @@ test('a post-readiness exit interrupts pending work and forbids another operatio
      });`,
   );
   const app = await monitor(process);
-  const pending = app.guard(() => new Promise<void>(() => {}));
-  const rejected = assert.rejects(pending, (error: unknown) => {
-    assert.ok(error instanceof AppProcessError);
-    assert.match(error.message, /App exited unexpectedly \(code 19/);
-    return true;
-  });
+  assert.doesNotThrow(app.assertHealthy);
   process.stdin.write('terminate now');
-  await rejected;
   const failure = await app.failure;
+  assert.ok(failure instanceof AppProcessError);
+  assert.match(failure.message, /App exited unexpectedly \(code 19/);
   await app.finished;
   assert.equal(failure.evidence.exitCode, 19);
   assert.equal(failure.evidence.unexpectedExit, true);
   assert.equal(failure.evidence.ready, true);
   assert.match(failure.evidence.stderr.tail, /ECONNRESET/);
-  let invoked = false;
-  await assert.rejects(
-    app.guard(async () => {
-      invoked = true;
-    }),
-    (error: unknown) => error === failure,
-  );
-  assert.equal(invoked, false);
+  assert.throws(app.assertHealthy, (error: unknown) => error === failure);
   await app.close();
   await app.close();
   assert.equal(app.evidence().closed, true);
