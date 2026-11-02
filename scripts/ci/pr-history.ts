@@ -232,6 +232,7 @@ export async function readPolicyHistoryWindow(
   const runs: Record<string, unknown>[] = [];
   const ids = new Set<number>();
   const sequences = new Map<number, number>();
+  const observedCheckpoints: HistoryCheckpoint[] = [];
   const endpoint = `actions/workflows/${expected.workflowId}/runs?per_page=100&page=`;
   let firstPage = '';
   let upperSequence = 0;
@@ -266,6 +267,17 @@ export async function readPolicyHistoryWindow(
     // At most 1,000 records were read; never loop over an attacker-sized range.
     if (!completeSuffix(throughSequence))
       throw new Error('Policy history has a missing registered run.');
+    if (
+      checkpoint &&
+      observedCheckpoints.some(
+        (observed) =>
+          observed.full &&
+          (!checkpoint.full ||
+            Number(checkpoint.after) < Number(observed.after) ||
+            Number(checkpoint.atOrAfter) < Number(observed.atOrAfter)),
+      )
+    )
+      throw new Error('A covering history checkpoint weakens an observed full requirement.');
     if (expected.currentRun) {
       if (
         expected.currentRun.sequence > upperSequence ||
@@ -313,6 +325,7 @@ export async function readPolicyHistoryWindow(
       const checkpoint = await expected.checkpoint(run, upperSequence);
       if (checkpoint) {
         historyCheckpointMarker(checkpoint);
+        observedCheckpoints.push(checkpoint);
         if (checkpoint.sequence < run.run_number || checkpoint.sequence > upperSequence)
           throw new Error('The history checkpoint covers an invalid sequence.');
         // An older issuer can finish later and cover more registered events.

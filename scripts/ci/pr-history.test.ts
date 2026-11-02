@@ -384,6 +384,38 @@ test('an older later-finishing checkpoint may close a gap left by a newer issuer
   );
 });
 
+test('a covering checkpoint cannot discard full bounds observed in a weaker anchor', async () => {
+  const after = Date.parse('2026-11-01T12:00:20Z');
+  const observed = { sequence: 22, full: true, after, atOrAfter: after + 1 };
+  for (const covering of [
+    { sequence: 24, full: false, after: null, atOrAfter: null },
+    { sequence: 24, full: true, after: after - 1, atOrAfter: after + 1 },
+    { sequence: 24, full: true, after, atOrAfter: null },
+  ]) {
+    await assert.rejects(
+      readPolicyHistoryWindow(
+        windowReader([windowRow(25), windowRow(24), windowRow(22), windowRow(18)]),
+        {
+          ...windowOptions(),
+          checkpoint: async (run) =>
+            run.run_number === 22 ? observed : run.run_number === 18 ? covering : null,
+        },
+      ),
+      /weakens an observed full requirement/,
+    );
+  }
+  const covering = { ...observed, sequence: 24, after: after + 2, atOrAfter: after + 3 };
+  const result = await readPolicyHistoryWindow(
+    windowReader([windowRow(25), windowRow(24), windowRow(22), windowRow(18)]),
+    {
+      ...windowOptions(),
+      checkpoint: async (run) =>
+        run.run_number === 22 ? observed : run.run_number === 18 ? covering : null,
+    },
+  );
+  assert.deepEqual(result.checkpoint, covering);
+});
+
 test('missing, duplicate, foreign and shifted registration history cannot be certified', async () => {
   const before = '2026-11-01T11:59:59Z';
   for (const rows of [
