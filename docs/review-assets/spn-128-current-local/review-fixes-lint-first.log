@@ -1,0 +1,16 @@
+
+> lint
+> npm run dependencies:check && oxlint --deny-warnings . && npm run format:check
+
+
+> dependencies:check
+> node scripts/dependencies/no-univer-pro.ts
+
+No Univer Pro dependencies in 8 manifests or the resolved lockfile.
+
+> format:check
+> prettier --check web server src lib e2e .storybook scripts/screenshots.ts scripts/social-preview.ts scripts/passkey-check.ts scripts/e2e.ts scripts/e2e-https.ts scripts/deploy scripts/dependencies scripts/sync-transition scripts/ci scripts/pdf-feasibility scripts/serial.ts scripts/serial.test.ts *.config.ts
+
+Checking formatting...
+All matched files use Prettier code style!
+WATCHDOG: exit=0, signal=null, elapsed=10055ms, peak=844.7MiB

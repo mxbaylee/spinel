@@ -1,0 +1,10 @@
+
+ RUN  v5.0.5 /Users/mxbaylee/projects/spinel-spn-128
+
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 21 skipped (22)
+   Start at  10:14:54
+   Duration  479ms (import 70%, transform 28%, tests 1%)
+
+WATCHDOG: exit=0, signal=null, elapsed=1053ms, peak=445.6MiB
