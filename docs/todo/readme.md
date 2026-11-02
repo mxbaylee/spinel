@@ -15,12 +15,12 @@ Complete each phase before the next. Within a phase, take the highest-ranked tic
 | # | Ticket | Effort | Impact | Score | Waiting on |
 | --- | --- | --- | --- | --- | --- |
 | 1 | 🧪 [SPN-090](SPN-090.md) Verify offline launches on real phones | 🏔️ XL | 💜 M | 23 | — |
-| 2 | 📨 [SPN-098](SPN-098.md) Send user feedback with diagnostic context | 🌳 L | 💜 M | 22 | — |
-| 3 | 🔎 [SPN-120](SPN-120.md) Resolve the remaining recorded browser fixture failures | 🌳 L | 💜 M | 22 | — |
-| 4 | 📊 [SPN-123](SPN-123.md) Complete operation and sync diagnostic coverage | 🌳 L | 💜 M | 22 | — |
-| 5 | 🌷 [SPN-128](SPN-128.md) Reinstall the preserved original after an interrupted restore | 🌳 L | 💜 M | 22 | — |
-| 6 | 🪶 [SPN-129](SPN-129.md) Validate PR text edits without replacing code evidence | 🌳 L | 💜 M | 22 | — |
-| 7 | ⏱️ [SPN-133](SPN-133.md) Keep native Doc flushes within their established budgets | 🌳 L | 💜 M | 22 | — |
+| 2 | ⏱️ [SPN-133](SPN-133.md) Keep native Doc flushes within their established budgets | 🏔️ XL | 💜 M | 23 | — |
+| 3 | 📨 [SPN-098](SPN-098.md) Send user feedback with diagnostic context | 🌳 L | 💜 M | 22 | — |
+| 4 | 🔎 [SPN-120](SPN-120.md) Resolve the remaining recorded browser fixture failures | 🌳 L | 💜 M | 22 | — |
+| 5 | 📊 [SPN-123](SPN-123.md) Complete operation and sync diagnostic coverage | 🌳 L | 💜 M | 22 | — |
+| 6 | 🌷 [SPN-128](SPN-128.md) Reinstall the preserved original after an interrupted restore | 🌳 L | 💜 M | 22 | — |
+| 7 | 🪶 [SPN-129](SPN-129.md) Validate PR text edits without replacing code evidence | 🌳 L | 💜 M | 22 | — |
 | 8 | 🔕 [SPN-106](SPN-106.md) Avoid a protection warning when opening view-only Docs | 🌿 M | 💜 M | 21 | — |
 | 9 | ⏳ [SPN-110](SPN-110.md) Expire diagnostic events after seven days | 🌿 M | 💜 M | 21 | — |
 | 10 | 🛠️ [SPN-131](SPN-131.md) Support the hosted Ubuntu mirror profiles used by browser CI | 🌿 M | 💜 M | 21 | — |
