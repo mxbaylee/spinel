@@ -1,0 +1,46 @@
+{
+  "README.md": {
+    "bytes": 1747,
+    "sha256": "8232b17c0d502d2ad37ffde2e0adfcc81c86b348e6781fd9b953a2c3137f0edf"
+  },
+  "baseline-callback-source/playwright-report/doc-callback-lifetimes.json": {
+    "bytes": 24876,
+    "sha256": "02319fbf7b02994e0a07866bd335a2bf8d693b943a39358522db14ea68888caf"
+  },
+  "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/error-context.md": {
+    "bytes": 3070,
+    "sha256": "8f9262226a5fbe9dbb6dac27fb2fc8471aae860c383fb3454c826654f66af6aa"
+  },
+  "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json.gz": {
+    "bytes": 1825,
+    "sha256": "7a94792e500742e979c39f302c08c2d6153034d3e1fe32339e805156dc952a64"
+  },
+  "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/test-failed-1.png": {
+    "bytes": 37927,
+    "sha256": "2bf517906c81d1ab6885e02edcb52e28942d143a088d38345fe698ae4ac7caea"
+  },
+  "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/test-failed-2.png": {
+    "bytes": 2740,
+    "sha256": "fb32313e11bc8ffbd5310a1660e630b64cedb4622f8462a5eae2d5464ac8279e"
+  },
+  "job.log": {
+    "bytes": 85026,
+    "sha256": "567de3004f3c31ab1c753584f4d1ee92fe12ce2066fd06cb6a3c836ec1614c37"
+  },
+  "playwright-report/doc-callback-lifetimes.json": {
+    "bytes": 22871,
+    "sha256": "dcfd0917c97f1639be5f043c41869d6d4d33eeee8c3d66fd5e2fef9261584743"
+  },
+  "run.json": {
+    "bytes": 11721,
+    "sha256": "26daa1b8680639da746661050abffbcde8098a465f13f102a9ebbcabbc471186"
+  },
+  "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json.gz": {
+    "bytes": 621782,
+    "sha256": "7ceaeea5c9af0d256fc310cd347205e67873a3d557a92fe94d47fde9c7d626d8"
+  },
+  "test-results/spn113-comparison-mobile.json": {
+    "bytes": 5826,
+    "sha256": "d8f1bf8012a787dd68bd148e97606645e452fd7809e469890495bbf9cfccfae6"
+  }
+}
