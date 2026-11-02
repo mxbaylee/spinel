@@ -1,0 +1,5 @@
+# SPN-133 implementation local attempts
+
+Final source a75556e08b33e473b90f04ac230dea4850e59656, base8d2f994c3ac53c1849bd2b68927059d9c20c99f0. Every focused local attempt is retained. First: two obsolete annotated-Undo whole-cache work expectations failed after raw semantic parity passed. Second/third: the new short-prefix work assertion exposed four extra allocations for a three-state prefix before malformed markers. A bounded counter diagnostic records all6marker values in bothformats; fixed production behavior retains original folds for partial prefixes shorter than4. Fourth:180/180pass,0skip/cancel,4.724s,watchdogpeak477.7MiB. Formatting/backlog/PRchecks passed.
+
+Tests read validated private SPN098 node_modules through symlink, execute candidate hash-verified native manager regions in isolated VM contexts, and only install into disposable tempfixtures. No shared or source installation mutation. The resource-aborted SPN133 firstinstall remains separately preserved. No local browser execution. Current hosted acceptance, independent grades and original desktop idle-tail disposition remain pending; this archive is not merge approval.
