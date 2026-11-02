@@ -637,19 +637,37 @@ export class DiagnosticsStore {
       // required to open/reclaim an already full diagnostics database.
       const limit = DIAGNOSTICS_LIMITS.expiryEvents + 1;
       const cursor = this.expiryCursor;
-      const sameTime = cursor ? database.prepare(`
+      const sameTime = cursor
+        ? database
+            .prepare(
+              `
         SELECT rowid AS row_id, received_at, name FROM events INDEXED BY events_time
         WHERE received_at = ? AND rowid > ? AND received_at < ? ORDER BY rowid LIMIT ?
-      `).all(cursor.receivedAt, cursor.rowId, cutoff, limit) : [];
-      const candidates = sameTime.length === limit ? sameTime : sameTime.concat(database.prepare(`
+      `,
+            )
+            .all(cursor.receivedAt, cursor.rowId, cutoff, limit)
+        : [];
+      const candidates =
+        sameTime.length === limit
+          ? sameTime
+          : sameTime.concat(
+              database
+                .prepare(
+                  `
         SELECT rowid AS row_id, received_at, name FROM events INDEXED BY events_time
         WHERE received_at > ? AND received_at < ? ORDER BY received_at, rowid LIMIT ?
-      `).all(cursor?.receivedAt ?? -1, cutoff, limit - sameTime.length));
+      `,
+                )
+                .all(cursor?.receivedAt ?? -1, cutoff, limit - sameTime.length),
+            );
       const remaining = candidates.length === limit;
       const page = candidates.slice(0, DIAGNOSTICS_LIMITS.expiryEvents);
       const last = page.at(-1);
-      const nextCursor = remaining && last ? { receivedAt: Number(last.received_at), rowId: Number(last.row_id) } : undefined;
-      const selected = page.filter(row => row.name !== 'feedback').map(row => row.row_id);
+      const nextCursor =
+        remaining && last
+          ? { receivedAt: Number(last.received_at), rowId: Number(last.row_id) }
+          : undefined;
+      const selected = page.filter((row) => row.name !== 'feedback').map((row) => row.row_id);
       if (!selected.length) {
         this.expiryCursor = nextCursor;
         return { deleted: 0, remaining };
