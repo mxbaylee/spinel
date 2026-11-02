@@ -1,0 +1,33 @@
+{
+  "diagnosticOnly": true,
+  "ticketAcceptance": false,
+  "source": "dbbe5ccaf085ce20b79068d3596a35dcf2142223",
+  "preparedIdentity": "../local-first-attempt/spn135-local-identity.json",
+  "result": "resource-aborted",
+  "completedCases": 0,
+  "abortTrigger": {
+    "elapsedMs": 21432,
+    "pressure": 1,
+    "rssKiB": 2103744
+  },
+  "lastSnapshot": {
+    "elapsedMs": 21467,
+    "pressure": "1",
+    "peakKiB": 2107376
+  },
+  "cleanup": {
+    "snapshot": "/tmp/spn135-post-restart-processes.json",
+    "before": [],
+    "afterTerm": [],
+    "remaining": [],
+    "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+  },
+  "port3108Listening": false,
+  "hashes": {
+    "preflight": "fdfb30ac1fea1f8aadf7d9b72bc4e0792e0de3aea1c4d8e874341e9a3b810335",
+    "processes": "7d5951785da3f578ead15fce786a9552309c26e03b9f269a26d65924a0cdc354",
+    "cleanup": "de6e6b5370bc451ebf64c3346aa662872ca4c67e12b48ab293d36ca6ca28a7e9",
+    "log": "e40d3ba0f5bba8ce26723b873c1da0556fcb980486410d8d473b02811277729d"
+  },
+  "limits": "No full latency metrics or trace. Original 34.3 ms failure unresolved. Raw test output including synthetic databases retained only in /tmp/spn135-local-post-restart; not repository evidence."
+}
