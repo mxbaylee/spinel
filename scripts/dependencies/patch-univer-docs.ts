@@ -14,8 +14,8 @@
  * limitations under the License.
  *
  * Modified for Spinel: compose contiguous, single-character root-body inserts
- * in an order-preserving balanced tree. All other native actions keep their
- * original fold, including deletes and rich metadata. Native grouping, metadata,
+ * in an order-preserving balanced tree up to the first unsupported state. The
+ * remaining actions keep their original fold, including deletes and rich metadata. Native grouping, metadata,
  * cache ownership, publication order and timers remain in the pinned SDK service.
  * Source: packages/docs/src/services/doc-state-change-manager.service.ts,
  * dream-num/univer v1.1.0 (Apache-2.0). No Pro code is read or modified.
@@ -39,7 +39,7 @@ export function prepareDocsPatch(source: string, format: keyof typeof formats) {
   const markerGuard = `
 \t\t// Sync capture marks every insert before native apply; keep the marker intact.
 \t\tif (Object.hasOwn(body, "__textXPreserveParagraphIds") && body.__textXPreserveParagraphIds !== true) return false;`;
-  const helper = `${anchor}
+  const markerHelper = `${anchor}
 // Modified for Spinel: only plain single-character insert groups have the
 // qualified native action shape. Mixed composition can change own undefined
 // body fields, so an ineligible state keeps the entire original cache fold.
@@ -102,6 +102,29 @@ function composeDocStateActions(states, key) {
 \t}
 \treturn composeRange(0, states.length);
 }`;
+  // Keep the exact SPN-132 bytes for install upgrades and regression controls.
+  // Qualification is unchanged; return the length of its leading valid prefix.
+  const helper = markerHelper
+    .replace(
+      '// Modified for Spinel: only plain single-character insert groups have the\n// qualified native action shape. Mixed composition can change own undefined\n// body fields, so an ineligible state keeps the entire original cache fold.',
+      '// Modified for Spinel: balance only the qualified leading insert prefix.\n// Its raw result equals the original fold; keep every remaining call in order.\n// Never balance later islands or reassociate an unsupported native action.',
+    )
+    .replace('canBalanceDocInserts', 'docInsertPrefixLength')
+    .replace('if (states.length < 2) return false;', 'if (states.length < 2) return 0;')
+    .replace(
+      'for (const state of states) {',
+      'for (let index = 0; index < states.length; index++) {\n\t\tconst state = states[index];',
+    )
+    .replaceAll('return false;', 'return index;')
+    .replace('return true;', 'return states.length;')
+    .replace(
+      'if (!canBalanceDocInserts(states, key))',
+      'const prefix = docInsertPrefixLength(states, key);\n\t// Tiny partial trees do not reduce work; preserve their original fold.\n\tif (prefix < 2 || (prefix < 4 && prefix < states.length))',
+    )
+    .replace(
+      'return composeRange(0, states.length);',
+      `let result = composeRange(0, prefix);\n\tfor (let index = prefix; index < states.length; index++) result = ${json}.compose(result, states[index][key].actions);\n\treturn result;`,
+    );
   const replacements = [
     { before: anchor, after: helper, count: 1 },
     {
@@ -117,11 +140,11 @@ function composeDocStateActions(states, key) {
   ];
   // Permit upgrading the exact previous patch during npm install as well as a
   // fresh npm ci. Both recoveries still verify the complete upstream file.
-  const previousHelper = helper.replace(markerField, '').replace(markerGuard, '');
+  const previousHelper = markerHelper.replace(markerField, '').replace(markerGuard, '');
   // The recovered original also supplies an executable negative control.
   const original = replacements.reduce(
     (text, { before, after }) => text.replaceAll(after, before),
-    source.replaceAll(previousHelper, anchor),
+    source.replaceAll(previousHelper, anchor).replaceAll(markerHelper, anchor),
   );
   if (createHash('sha256').update(original).digest('hex') !== formats[format])
     throw new Error(`Unrecognized @univerjs/docs ${format} build; review native composition.`);
@@ -131,11 +154,17 @@ function composeDocStateActions(states, key) {
     return text.replaceAll(before, after);
   }, original);
   const previousPatched = patched.replace(helper, previousHelper);
-  if (source !== original && source !== patched && source !== previousPatched)
+  const markerPatched = patched.replace(helper, markerHelper);
+  if (
+    source !== original &&
+    source !== patched &&
+    source !== previousPatched &&
+    source !== markerPatched
+  )
     throw new Error(
       `Partially modified @univerjs/docs ${format} build; restore the pinned package.`,
     );
-  return { original, patched, previousPatched };
+  return { original, patched, previousPatched, markerPatched };
 }
 
 export async function patchInstalledDocs(root: string) {
