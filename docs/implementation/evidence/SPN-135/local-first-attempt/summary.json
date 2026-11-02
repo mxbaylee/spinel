@@ -49,10 +49,11 @@
     "spn135-local-collection-before-processes.json": "1e11264b6259ea2dc68ccfa600392f75c0192f6734652419b55b20b0504a2a7a",
     "spn135-local-collection-after.json": "23790f44b8c2d1d051d44b4e215792c86767d6344cd24add3588e9bb2792494a",
     "spn135-local-collection-after.log": "ee982cd985a93a4c789b56ffeb689a72f2f746e190e2916f262cd6aa9c94efd9",
-    "spn135-local-collection-after-processes.json": "10336bb849891bf8cf71326280820e79c06f69473f684b44e855a968069bd934"
+    "spn135-local-collection-after-processes.json": "10336bb849891bf8cf71326280820e79c06f69473f684b44e855a968069bd934",
+    "runtime-overlay.patch": "dfe501ae6e24efac5eee6ac06f34ca379a0739e820d594907e9239576947bc26"
   },
   "storage": {
-    "sources": "sources.json retains exact TypeScript source strings as inert archival evidence, not additional compiled repository modules.",
+    "sources": "sources.json retains exact TypeScript source and unified-patch strings as inert archival evidence; no additional compiled repository modules or patch-context whitespace warnings.",
     "logs": "logs.json retains exact raw log strings, including failed attempts. Hash keys name original source/log files."
   }
 }
