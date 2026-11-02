@@ -1,6 +1,7 @@
 # SPN-065 visual evidence
 
-These are actual production-editor captures, not mockups. Native captures refreshed
+These are actual production-editor captures, not mockups. The following capture
+identity is superseded by the uncertain-result repair checkpoint below. Native captures refreshed
 2026-11-01 on source `0c0b114abc6e74ac1ed1e1765f3f9200b2bc5af8`, which incorporates
 main `0bdbbcb5ca23b84e172e41a11bd0cf555e911130`. The capture/test
 harness is `e2e/copy.spec.ts`, blob `866da4919f94f5d7e5029854e228286e1e16e927`.
@@ -79,3 +80,14 @@ The one planned full Sheet restore attempt was resource-aborted at
 before termination. It is not an acceptance pass; full multi-editor validation
 runs in CI. An earlier anchored CLI filter selected no test and was corrected
 before this scenario attempt. Neither condition caused a product-assertion retry.
+
+
+## Uncertain-result repair capture checkpoint
+
+2026-11-01: all nine native captures were regenerated from the repaired production
+build, including the new light/dark phone `native-doc-copy-unknown-phone` images.
+The full two-journey run passed in 14.7 s (15.247 s watchdog, 1,691.6 MiB peak).
+Viewport/theme contracts remain as above. Exact committed source and refreshed
+component evidence will be recorded before final review; the older component
+images currently describe the pre-repair source and are not approval for the new
+uncertain state.

@@ -12,6 +12,8 @@ export interface CopyOptions {
   destinations: WorkspaceItem[];
 }
 
+export type CopyOutcome = { item: WorkspaceItem } | { error: string; uncertain?: boolean };
+
 /** Shared task content; the editor owns its native dialog and the list its Modal. */
 export function CopyFileForm({
   id,
@@ -22,6 +24,7 @@ export function CopyFileForm({
   onClose,
   onBusy,
   initialCreated,
+  initialUncertain,
   onSettled,
 }: {
   id: string;
@@ -32,14 +35,16 @@ export function CopyFileForm({
   onClose: () => void;
   onBusy?: (busy: boolean) => void;
   initialCreated?: WorkspaceItem;
+  initialUncertain?: string;
   /** Native phone drawers can dismiss an in-flight request; retain its outcome. */
-  onSettled?: (result: { item: WorkspaceItem } | { error: string }) => void;
+  onSettled?: (result: CopyOutcome) => void;
 }) {
   const [options, setOptions] = useState<CopyOptions | null>(null);
   const [name, setName] = useState('');
   const [parentId, setParentId] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [uncertain, setUncertain] = useState(initialUncertain ?? '');
   const [created, setCreated] = useState<WorkspaceItem | null>(initialCreated ?? null);
   const [attempt, retry] = useState(0);
   const submitting = useRef(false);
@@ -47,7 +52,7 @@ export function CopyFileForm({
   const input = useRef<HTMLInputElement>(null);
   useEffect(() => {
     current.current = true;
-    if (initialCreated)
+    if (initialCreated || initialUncertain)
       return () => {
         current.current = false;
       };
@@ -74,7 +79,7 @@ export function CopyFileForm({
       current.current = false;
       loading.abort();
     };
-  }, [id, spaceId, attempt, initialCreated]);
+  }, [id, spaceId, attempt, initialCreated, initialUncertain]);
   useEffect(() => {
     if (options) {
       input.current?.focus();
@@ -83,34 +88,55 @@ export function CopyFileForm({
   }, [options]);
 
   async function submit() {
-    if (submitting.current || !options || unavailable || !canSubmit()) return;
+    if (submitting.current || uncertain || !options || unavailable || !canSubmit()) return;
     submitting.current = true;
     setBusy(true);
     onBusy?.(true);
     setError('');
+    let refused = false;
+    let receipt: WorkspaceItem | undefined;
+    const destinationName =
+      options.destinations.find((folder) => folder.id === parentId)?.name ?? 'My files';
+    const unknown = `We could not confirm whether “${name.trim()}” was created. Check ${destinationName} before making another copy.`;
     try {
       const response = await fetch(`${documentPath(id, spaceId)}/copy`, {
         method: 'POST',
+        signal: AbortSignal.timeout(30_000),
         credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: name.trim(), parentId: parentId || null }),
       });
       const result = await response.json();
+      // Only a readable client-error response confirms that publication was refused.
+      // A lost response or server error may follow a successful commit.
+      refused = response.status >= 400 && response.status < 500;
       if (!response.ok) throw new Error(result.error ?? 'Could not make a copy. Try again.');
-      onSettled?.({ item: result.item });
-      if (!current.current) return;
-      setCreated(result.item);
-      onCreated(result.item);
+      if (!result.item?.id || !result.item?.name) throw new Error('Missing copy receipt.');
+      receipt = result.item;
     } catch (failure) {
-      const message =
-        failure instanceof Error ? failure.message : 'Could not make a copy. Try again.';
-      onSettled?.({ error: message });
-      if (current.current) setError(message);
+      const message = refused
+        ? failure instanceof Error
+          ? failure.message
+          : 'Could not make a copy. Try again.'
+        : unknown;
+      onSettled?.({ error: message, uncertain: !refused });
+      if (current.current) {
+        if (refused) setError(message);
+        else setUncertain(message);
+      }
     } finally {
       submitting.current = false;
       onBusy?.(false);
       if (current.current) {
         setBusy(false);
+      }
+    }
+    // Presentation/navigation failures cannot erase a confirmed publication receipt.
+    if (receipt) {
+      onSettled?.({ item: receipt });
+      if (current.current) {
+        setCreated(receipt);
+        onCreated(receipt);
       }
     }
   }
@@ -132,13 +158,20 @@ export function CopyFileForm({
     <form
       className="sp-ui file-dialog copy-file"
       aria-label="Make a copy"
-      aria-busy={busy || (!created && !options && !error)}
+      aria-busy={busy || (!created && !uncertain && !options && !error)}
       onSubmit={(event) => {
         event.preventDefault();
         void submit();
       }}
     >
-      {created ? (
+      {uncertain ? (
+        <>
+          <p role="alert">{uncertain}</p>
+          <div className="copy-file-actions">
+            <Button onClick={onClose}>Close</Button>
+          </div>
+        </>
+      ) : created ? (
         <>
           <p role="status">Created {created.name}.</p>
           <p>

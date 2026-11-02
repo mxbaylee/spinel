@@ -193,3 +193,42 @@ export const CompletedWhileOffline: Story = {
     await assertDialogControls(element);
   },
 };
+
+// A server can commit before a proxy error or unreadable receipt reaches the client.
+export const OutcomeUnknown: Story = {
+  parameters: { api: { ...api, [`POST /api/items/${id}/copy`]: failure('Proxy failed.', 502) } },
+  play: async (context) => {
+    await ready(context);
+    const element = await dialog(context.canvasElement);
+    await userEvent.click(within(element).getByRole('button', { name: 'Make a copy' }));
+    await expect(await within(element).findByRole('alert')).toHaveTextContent(
+      'Check Household before making another copy.',
+    );
+    await expect(
+      within(element).queryByRole('button', { name: 'Make a copy' }),
+    ).not.toBeInTheDocument();
+    await expect(within(element).getByRole('button', { name: /^Close$/ })).toBeEnabled();
+    await assertDialogControls(element);
+  },
+};
+
+export const UnreadableReceipt: Story = {
+  ...OutcomeUnknown,
+  parameters: { api: { ...api, [`POST /api/items/${id}/copy`]: {} } },
+};
+
+export const UnknownAfterDismissal: Story = {
+  args: {
+    initialUncertain:
+      'We could not confirm whether “October budget (copy)” was created. Check Household before making another copy.',
+  },
+  play: async ({ canvasElement }) => {
+    const element = await dialog(canvasElement);
+    await expect(within(element).getByRole('form')).toHaveAttribute('aria-busy', 'false');
+    await expect(within(element).getByRole('alert')).toHaveTextContent('Check Household');
+    await expect(
+      within(element).queryByRole('button', { name: 'Make a copy' }),
+    ).not.toBeInTheDocument();
+    await assertDialogControls(element);
+  },
+};

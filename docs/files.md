@@ -10,6 +10,13 @@ The default name is `<name> (copy)`, placed in the current owned folder or My fi
 The copy opens after success. Changes must be confirmed and the editor connected;
 unfinished cell/text/Formula input, image uploads and recovery block submission.
 
+If the response is lost or cannot confirm creation, the dialog explains that the
+copy may already exist and names the destination to check. It keeps that unknown
+outcome when reopened in the same dashboard/editor session and offers no second
+submission. Close it, check the destination, and reload before starting a new copy
+if one is still needed. A confirmed refusal remains retryable; a confirmed receipt
+still offers **Open copy**. [Why](implementation/SPN-065.md#uncertain-copy-results).
+
 An authorized everyday account can copy with read access, including a Viewer or
 File admin. Guests and Operators cannot. A shared source defaults to the copying
 account's My files. An explicit editable shared-folder destination owns the new

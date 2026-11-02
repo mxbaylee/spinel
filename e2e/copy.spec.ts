@@ -488,6 +488,37 @@ test('a phone Doc viewer retains a copy after dismissing its busy native drawer 
     const body = (await copied.json()) as { snapshot: IDocumentData };
     expect(body.snapshot.body?.dataStream).toBe(`${text}\r\n`);
     expect(body.snapshot.id).not.toBe(snapshot.id);
+
+    // Commit a second operation, then lose only its response. A transport error
+    // cannot prove publication failed or authorize an accidental second POST.
+    let uncertainPosts = 0;
+    let uncertainCopy: WorkspaceItem | undefined;
+    await page.route(`**/api/items/${copy.id}/copy`, async (route) => {
+      uncertainPosts++;
+      const response = await route.fetch();
+      expect(response.status()).toBe(201);
+      uncertainCopy = (await response.json()).item;
+      await route.abort('failed');
+    });
+    const unknown = await openNativeCopy(page, true);
+    await unknown.getByRole('button', { name: 'Make a copy', exact: true }).tap();
+    await expect(unknown.getByRole('alert')).toContainText(
+      'Check My files before making another copy.',
+    );
+    await expect(unknown.getByRole('button', { name: 'Make a copy', exact: true })).toHaveCount(0);
+    await capture(page, info, 'native-doc-copy-unknown-phone');
+    await dismissNativeCopyDrawer(page);
+    await nativeMore.tap();
+    await copyMenu.tap();
+    await expect(unknown.getByRole('alert')).toContainText(
+      'Check My files before making another copy.',
+    );
+    await expect(unknown.getByRole('button', { name: 'Make a copy', exact: true })).toHaveCount(0);
+    expect(uncertainPosts).toBe(1);
+    expect(uncertainCopy?.id).toBeTruthy();
+    expect(
+      workspace.list(viewer.id).filter((item) => item.name === uncertainCopy!.name),
+    ).toHaveLength(1);
     expect(errors).toEqual([]);
   } catch (error) {
     await Promise.allSettled([

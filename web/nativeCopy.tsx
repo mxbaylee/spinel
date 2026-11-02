@@ -15,7 +15,7 @@ import { MessageType } from '@univerjs/design';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import type { SaveState } from '../src/shared/autosave.ts';
 import type { WorkspaceItem } from '../src/shared/workspace.ts';
-import { CopyFileForm } from './CopyFile.tsx';
+import { CopyFileForm, type CopyOutcome } from './CopyFile.tsx';
 
 export const MAKE_COPY_COMMAND = 'spinel.command.make-copy';
 const dialogId = 'spinel.make-copy';
@@ -40,6 +40,7 @@ function NativeCopyForm({
   close,
   onBusy,
   created,
+  uncertain,
   onCreated,
   onSettled,
 }: {
@@ -47,8 +48,9 @@ function NativeCopyForm({
   close: () => void;
   onBusy: (busy: boolean) => void;
   created?: WorkspaceItem;
+  uncertain?: string;
   onCreated: (item: WorkspaceItem) => void;
-  onSettled: (result: { item: WorkspaceItem } | { error: string }) => void;
+  onSettled: (result: CopyOutcome) => void;
 }) {
   const content = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -75,6 +77,7 @@ function NativeCopyForm({
         onBusy={onBusy}
         onClose={close}
         initialCreated={created}
+        initialUncertain={uncertain}
         onCreated={onCreated}
         onSettled={onSettled}
       />
@@ -100,6 +103,7 @@ export class NativeCopyPlugin extends Plugin {
     let open = false;
     let active = true;
     let created: WorkspaceItem | undefined;
+    let uncertain: string | undefined;
     let generation = 0;
     const busy = new BehaviorSubject(false);
     const close = () => {
@@ -137,10 +141,12 @@ export class NativeCopyPlugin extends Plugin {
                   config={this.config}
                   close={close}
                   created={created}
+                  uncertain={uncertain}
                   onBusy={(value) => busy.next(value)}
                   onSettled={(result) => {
                     if (!active) return;
                     if ('item' in result) created = result.item;
+                    else if (result.uncertain) uncertain = result.error;
                     if (!open)
                       messages.show({
                         type: 'item' in result ? MessageType.Success : MessageType.Error,

@@ -197,6 +197,7 @@ export function Dashboard({
   const [newIconColor, setNewIconColor] = useState<string | null>(null);
   const [newIcon, setNewIcon] = useState<string | null>(null);
   const [appearanceItem, setAppearanceItem] = useState<FileItem | null>(null);
+  const [uncertainCopies, setUncertainCopies] = useState<Record<string, string>>({});
   const [copyItem, setCopyItem] = useState<FileItem | null>(null);
   const [copyBusy, setCopyBusy] = useState(false);
   const copyFocus = useRef<HTMLButtonElement | null>(null);
@@ -1272,6 +1273,11 @@ export function Dashboard({
         >
           <CopyFileForm
             id={copyItem.id}
+            initialUncertain={uncertainCopies[copyItem.id]}
+            onSettled={(result) => {
+              if ('error' in result && result.uncertain)
+                setUncertainCopies((previous) => ({ ...previous, [copyItem.id]: result.error }));
+            }}
             unavailable={connection === 'offline' ? 'Reconnect before making a copy.' : null}
             canSubmit={() => connection !== 'offline'}
             onBusy={setCopyBusy}
