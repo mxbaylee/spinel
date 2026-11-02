@@ -1,4 +1,5 @@
 import { SaveStatus } from './SaveStatus.tsx';
+import type { ItemAccess } from '../src/shared/workspace.ts';
 import { recordNativeMutationInventory } from './nativeMutationInventory.ts';
 import { bindSheetDrawingPermissions, readOnlySheetDrawings } from './readOnlySheetDrawings.ts';
 import { sheetImages } from './sheetImages.ts';
@@ -56,6 +57,7 @@ export function SheetEditor({
   spaceId,
   onDirty,
   onConnectionState,
+  onAccessUpgrade,
   saveStatusTarget,
   registerGuestEditor,
   localAccountId,
@@ -66,6 +68,7 @@ export function SheetEditor({
   saveStatusTarget: HTMLElement | null;
   onDirty: (dirty: boolean, retained?: boolean) => void;
   onConnectionState?: (state: ConnectionState | null) => void;
+  onAccessUpgrade?: (access: ItemAccess) => void;
   registerGuestEditor?: RegisterGuestEditor;
   localAccountId?: string;
 }) {
@@ -290,6 +293,7 @@ export function SheetEditor({
         },
         upgradeAccess: (access) => {
           if (disposed) return;
+          onAccessUpgrade?.(access);
           freezeAfterEditing = false;
           // Both drawing services follow the workbook AND active worksheet policy.
           nativePermissions.setAccess(access);

@@ -65,7 +65,7 @@ for (const kind of ['doc', 'sheet'] as const)
     try {
       const folder = await create('folder', 'Upgrade plans', null);
       const item = await create(kind, `Shared ${kind}`, folder.id);
-      const grant = async (role: 'viewer' | 'editor' | null) => {
+      const grant = async (role: 'viewer' | 'editor' | 'admin' | null) => {
         const response = await control.request.put(`/api/items/${folder.id}/sharing`, {
           headers,
           data: { userId: viewer.id, role },
@@ -137,11 +137,18 @@ for (const kind of ['doc', 'sheet'] as const)
       const before = await read();
       navigationCount = navigations;
       const start = Date.now();
-      await grant('editor');
+      await grant(kind === 'doc' ? 'editor' : 'admin');
       // The access scan is already running. Cold startup is excluded from the
       // ticket's requirement that an open viewer picks up a role in a few seconds.
       await expect(status).toHaveText('All changes saved.', { timeout: 5_000 });
       upgradedInMs = Date.now() - start;
+      await expect(page.locator('.editor-access')).toHaveText(
+        kind === 'doc' ? 'Can edit' : 'File admin',
+      );
+      if (kind === 'sheet')
+        await expect(
+          page.getByRole('button', { name: `Rename ${item.name}`, exact: true }),
+        ).toBeVisible();
       expect(await canvas.evaluate((node, original) => node === original, mounted)).toBe(true);
       expect(navigations).toBe(navigationCount);
       expect(await page.evaluate((previous) => document.activeElement === previous, focused)).toBe(

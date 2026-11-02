@@ -3,7 +3,13 @@ import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import { EntityIcon } from '../src/ui/EntityIcon.tsx';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { FILE_KINDS, fileKindLabel, canAdminister, accessLabel } from '../src/shared/workspace.ts';
-import type { FileKind, FileItem, WorkspaceItem, SpaceFile } from '../src/shared/workspace.ts';
+import type {
+  FileKind,
+  FileItem,
+  WorkspaceItem,
+  SpaceFile,
+  ItemAccess,
+} from '../src/shared/workspace.ts';
 
 import { Sharing } from './Sharing.tsx';
 import './fileDialog.css';
@@ -198,6 +204,18 @@ export function Dashboard({
   );
   const currentRef = useRef(currentId);
   currentRef.current = currentId;
+  const upgradeCurrentAccess = (id: string, access: ItemAccess) => {
+    if (currentRef.current !== id) return;
+    const update = (items: FileItem[]) =>
+      items.map((item) => (item.id === id ? { ...item, access } : item));
+    // Native sync has verified this role and kept the same live unit. Refresh
+    // its metadata without the loading path that would remount the editor.
+    setItems(update);
+    setViewed(update);
+    views.current = Object.fromEntries(
+      Object.entries(views.current).map(([key, items]) => [key, update(items)]),
+    );
+  };
   const [action, setAction] = useState<Action | null>(null);
   const [name, setName] = useState('');
   const [newIconColor, setNewIconColor] = useState<string | null>(null);
@@ -1306,6 +1324,7 @@ export function Dashboard({
                   saveStatusTarget={null}
                   onDirty={navigation.dirty}
                   onConnectionState={onConnectionState}
+                  onAccessUpgrade={(access) => upgradeCurrentAccess(current.id, access)}
                 />
               </Suspense>
             ) : (
@@ -1317,6 +1336,7 @@ export function Dashboard({
                   saveStatusTarget={null}
                   onDirty={navigation.dirty}
                   onConnectionState={onConnectionState}
+                  onAccessUpgrade={(access) => upgradeCurrentAccess(current.id, access)}
                 />
               </Suspense>
             )}

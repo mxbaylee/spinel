@@ -106,14 +106,24 @@ async function keyboardOcclusion(page: Page, height: number) {
   }, height);
 }
 
-async function capture(page: Page, info: TestInfo, name: string) {
+async function capture(page: Page, info: TestInfo, name: string, ticket = 'spn-072') {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await mkdir('test-results/theme-screenshots', { recursive: true });
   await page.screenshot({
-    path: `test-results/theme-screenshots/spn-072-${name}-${info.project.name}.png`,
+    path: `test-results/theme-screenshots/${ticket}-${name}-${info.project.name}.png`,
     fullPage: true,
     animations: 'disabled',
   });
+}
+
+async function captureUpgrade(page: Page, info: TestInfo, name: string) {
+  if (process.env.SPINEL_CAPTURE_SCREENSHOTS !== '1') return;
+  for (const theme of ['light', 'dark'] as const) {
+    await page.emulateMedia({ colorScheme: theme });
+    await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+    await capture(page, info, `${name}-${theme}`, 'spn-071');
+  }
+  await page.emulateMedia({ colorScheme: 'light' });
 }
 
 async function touchTargets(target: Locator) {
@@ -749,7 +759,7 @@ test('phone guest Doc reader cannot write and loses its document when the link i
 });
 
 for (const flavor of [DocumentFlavor.MODERN, DocumentFlavor.TRADITIONAL])
-  test(`a ${flavor === DocumentFlavor.MODERN ? 'modern' : 'traditional'} phone Doc handles a viewer upgrade without replacing its native canvas`, async ({
+  test(`a ${flavor === DocumentFlavor.MODERN ? 'modern' : 'traditional'} phone Doc handles a viewer upgrade without replacing its native canvas @phone-ordinary`, async ({
     browser,
     baseURL,
   }, info) => {
@@ -792,6 +802,7 @@ for (const flavor of [DocumentFlavor.MODERN, DocumentFlavor.TRADITIONAL])
       const mounted = (await canvas.elementHandle())!;
       const original = await f.read();
       const point = await textPoint(page);
+      if (flavor === DocumentFlavor.MODERN) await captureUpgrade(page, info, 'phone-viewer');
       await page.touchscreen.tap(point.x, point.y);
       await page.touchscreen.tap(point.x, point.y);
       await expect(input(page)).not.toBeFocused();
@@ -803,7 +814,21 @@ for (const flavor of [DocumentFlavor.MODERN, DocumentFlavor.TRADITIONAL])
       await grant('editor');
       if (flavor === DocumentFlavor.MODERN) {
         await expect(status).toHaveText('All changes saved.', { timeout: 5_000 });
+        await expect(page.locator('.editor-access')).toHaveText('Can edit');
         expect(await canvas.evaluate((node, original) => node === original, mounted)).toBe(true);
+        const edit = region.getByRole('button', { name: 'Edit', exact: true });
+        const done = region.getByRole('button', { name: 'Done', exact: true });
+        await expect(edit).toBeVisible();
+        await edit.tap();
+        await beginWriting(page);
+        // A live grant must restore the native exit control as well as typing.
+        // Copy-enabled viewers retain a header with its editing menu hidden.
+        await expect(done).toBeVisible();
+        await captureUpgrade(page, info, 'phone-upgraded-editing');
+        await done.tap();
+        await expect(input(page)).not.toBeFocused();
+        await expect(edit).toBeVisible();
+        await captureUpgrade(page, info, 'phone-upgraded-reading');
         // This is the same native phone input that refused a viewer's taps.
         // The new grant must re-enable its touch route, not only its save label.
         await beginWriting(page);
@@ -827,6 +852,7 @@ for (const flavor of [DocumentFlavor.MODERN, DocumentFlavor.TRADITIONAL])
           expect(response.status()).toBe(200);
         }
         await expect(status).toHaveText(phoneFence);
+        await expect(page.locator('.editor-access')).toHaveText('Can edit');
         await expect(region.getByRole('button', { name: 'Edit', exact: true })).toHaveCount(0);
         await expect(region.getByRole('button', { name: 'Format', exact: true })).toHaveCount(0);
         await page.touchscreen.tap(point.x, point.y);
@@ -836,6 +862,7 @@ for (const flavor of [DocumentFlavor.MODERN, DocumentFlavor.TRADITIONAL])
         await page.keyboard.press('Enter');
         await expect(status).toHaveText(phoneFence);
         expect((await f.read()).body).toEqual(original.body);
+        await captureUpgrade(page, info, 'phone-traditional-upgrade');
       }
       const after = await f.read();
       expect(after.documentStyle).toEqual(original.documentStyle);

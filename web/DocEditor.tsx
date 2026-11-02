@@ -20,6 +20,7 @@ import {
   type FormulaTransport,
 } from './DocFormulas.tsx';
 import { documentPath, guestItemId } from './documentAccess.ts';
+import type { ItemAccess } from '../src/shared/workspace.ts';
 import type { OfflineSession } from './offline/OfflineSession.ts';
 import { EditorTools } from './EditorTools.tsx';
 import { useEditorChrome } from './EditorFrame.tsx';
@@ -116,6 +117,7 @@ export function DocEditor({
   onDirty,
   registerGuestEditor,
   onConnectionState,
+  onAccessUpgrade,
   saveStatusTarget,
   localAccountId,
 }: {
@@ -126,6 +128,7 @@ export function DocEditor({
   onDirty: (dirty: boolean, retained?: boolean) => void;
   registerGuestEditor?: RegisterGuestEditor;
   onConnectionState?: (state: ConnectionState | null) => void;
+  onAccessUpgrade?: (access: ItemAccess) => void;
   localAccountId?: string;
 }) {
   const chrome = useEditorChrome();
@@ -614,15 +617,19 @@ export function DocEditor({
         },
         initializeAccess: () => (data.access === 'viewer' ? readonly() : undefined),
         upgradeAccess: (access) => {
+          if (disposed) return;
+          // The account role changes even when this phone must retain its layout fence.
+          onAccessUpgrade?.(access);
           // A new grant cannot override this device's retained page-layout fence.
           // Change local controls only; keep selection, scroll and the native unit.
-          if (disposed || deviceReadOnly || layoutChanged) return;
+          if (deviceReadOnly || layoutChanged) return;
           inputFrozen = false;
           phoneInputLocked = false;
           nativePermissions.setAccess(access);
           if (mobile)
             univerAPI
               .setUIVisible(BuiltInUIPart.HEADER, true)
+              .setUIVisible(BuiltInUIPart.HEADER_MENU, true)
               .setUIVisible(BuiltInUIPart.FOOTER, true)
               .setUIVisible(BuiltInUIPart.TOOLBAR, true);
           canEditFormulas.current = true;
