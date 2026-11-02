@@ -1,0 +1,74 @@
+{
+  "README.md": {
+    "bytes": 2388,
+    "sha256": "0c04363dd93fd3520d7b278c267d58d25ff414ee1996f0a177b9d4bf0585a6ed"
+  },
+  "ci-plan.json": {
+    "bytes": 3902,
+    "sha256": "7fe20131b2c92830ea38e27363c1e0b7a389aafaa2690a197dd8b66f8b806883"
+  },
+  "job.log": {
+    "bytes": 75391,
+    "sha256": "50156b80a8812db6b2f45bca13cef8eff9672a6f85963c407c22237b7622d1a0"
+  },
+  "manifest.json": {
+    "bytes": 3057,
+    "sha256": "93ef59ecfa5d6525b82403eda829d477570cf7f166f04f06a1154f13c1e10eaa"
+  },
+  "spn-071-access-details-desktop-dark-production.png": {
+    "bytes": 97477,
+    "sha256": "61afb18200e2a1675bc555458d3c6d135c6fd3f112eeba00f0364e066d2163ff"
+  },
+  "spn-071-access-details-desktop-light-production.png": {
+    "bytes": 93780,
+    "sha256": "36c617b8e76a98eeafdeb07bf33bdad50bf2ce4d462bbb8dc7d6826015446056"
+  },
+  "spn-071-hidden-shares-phone-dark-production.png": {
+    "bytes": 55325,
+    "sha256": "1d8abc5a8463f45ef02b841846862a1bc6179e8d047cea08d154e8e619ec8c28"
+  },
+  "spn-071-hidden-shares-phone-light-production.png": {
+    "bytes": 56145,
+    "sha256": "ea3d56f074c1654b35aefb6639900f4b3c701aafe66e0b4545e74e418f5ecd09"
+  },
+  "spn-071-phone-traditional-upgrade-dark-production.png": {
+    "bytes": 22480,
+    "sha256": "335e0b03ce86b57a9c7d20970fc1b2571acbd3e5561c6f893e0bdc739a1011b6"
+  },
+  "spn-071-phone-traditional-upgrade-light-production.png": {
+    "bytes": 23105,
+    "sha256": "0099cb625542a73e5d359a3c1534f27db5aa6c3064fe2a07a191a92dab0d458d"
+  },
+  "spn-071-phone-upgraded-editing-dark-production.png": {
+    "bytes": 34766,
+    "sha256": "38a4de3e326b221eeef3212dfb29a3fc2780242d7c65f7d96de39f11db7995bf"
+  },
+  "spn-071-phone-upgraded-editing-light-production.png": {
+    "bytes": 35452,
+    "sha256": "62e532cc4905f2685dcf9da97565237410bc50f05fbf19e74adab0159b20ed33"
+  },
+  "spn-071-phone-upgraded-reading-dark-production.png": {
+    "bytes": 33012,
+    "sha256": "0dfb7216868b16aaa2b254792ffb4d6178a5cab40f450733f860bdb328366e47"
+  },
+  "spn-071-phone-upgraded-reading-light-production.png": {
+    "bytes": 33969,
+    "sha256": "dd560f71b4b70846ed0010b1e5e53e757c9a910fd6269cdb04e099cff2d2fe7a"
+  },
+  "spn-071-phone-viewer-dark-production.png": {
+    "bytes": 28935,
+    "sha256": "1ebca130246f58695c91da46893361d365fdf55f897102ed094ab1d12bdb1664"
+  },
+  "spn-071-phone-viewer-light-production.png": {
+    "bytes": 29219,
+    "sha256": "0f5291da406c29c64092d60b1f35599e854466f7ffaaee647f890bcb4c9dd5e2"
+  },
+  "spn-071-shared-menu-desktop-dark-production.png": {
+    "bytes": 104089,
+    "sha256": "95d65e5f29488b0e2f91473b07e452eecbdb05166226c633ac6c0f9982c1d94c"
+  },
+  "spn-071-shared-menu-desktop-light-production.png": {
+    "bytes": 104825,
+    "sha256": "c6eebdd9be63cf1c05b323c9dbc5801e6a5d0e43fde402131db32d056d505f45"
+  }
+}

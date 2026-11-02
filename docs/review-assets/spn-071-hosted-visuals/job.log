@@ -1,0 +1,786 @@
+﻿2026-11-02T07:12:07.6760276Z Current runner version: '2.338.2'
+2026-11-02T07:12:07.6783689Z ##[group]Runner Image Provisioner
+2026-11-02T07:12:07.6784538Z Hosted Compute Agent
+2026-11-02T07:12:07.6785167Z Version: 20261021.618
+2026-11-02T07:12:07.6785776Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-11-02T07:12:07.6786465Z Build Date: 2026-10-21T00:45:21Z
+2026-11-02T07:12:07.6787283Z Worker ID: {ef57075e-4670-4d9e-bd4b-287eb11eb5c0}
+2026-11-02T07:12:07.6787971Z Region: westcentralus
+2026-11-02T07:12:07.6788505Z Cloud: Azure
+2026-11-02T07:12:07.6789120Z ##[endgroup]
+2026-11-02T07:12:07.6790439Z ##[group]Operating System
+2026-11-02T07:12:07.6791080Z Ubuntu
+2026-11-02T07:12:07.6791584Z 24.04.5
+2026-11-02T07:12:07.6792059Z LTS
+2026-11-02T07:12:07.6792628Z ##[endgroup]
+2026-11-02T07:12:07.6793631Z ##[group]Runner Image
+2026-11-02T07:12:07.6794322Z Image: ubuntu-24.04
+2026-11-02T07:12:07.6794875Z Version: 20261025.353.1
+2026-11-02T07:12:07.6796125Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+2026-11-02T07:12:07.6797582Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+2026-11-02T07:12:07.6798508Z ##[endgroup]
+2026-11-02T07:12:07.6799562Z ##[group]GITHUB_TOKEN Permissions
+2026-11-02T07:12:07.6801606Z Contents: read
+2026-11-02T07:12:07.6802154Z Metadata: read
+2026-11-02T07:12:07.6802761Z ##[endgroup]
+2026-11-02T07:12:07.6805073Z Secret source: Actions
+2026-11-02T07:12:07.6805910Z Cache mode: write
+2026-11-02T07:12:07.6806632Z Prepare workflow directory
+2026-11-02T07:12:07.7121160Z Prepare all required actions
+2026-11-02T07:12:07.7171634Z Getting action download info
+2026-11-02T07:12:08.0388800Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-02T07:12:08.2303650Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+2026-11-02T07:12:08.3611133Z Download action repository 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-11-02T07:12:08.5998836Z Complete job name: Playwright smoke (production 1/2)
+2026-11-02T07:12:08.6894675Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-02T07:12:08.6895727Z with:
+2026-11-02T07:12:08.6896319Z   persist-credentials: false
+2026-11-02T07:12:08.6896921Z   repository: mxbaylee/spinel
+2026-11-02T07:12:08.6900700Z   token: ***
+2026-11-02T07:12:08.6901214Z   ssh-strict: true
+2026-11-02T07:12:08.6901715Z   ssh-user: git
+2026-11-02T07:12:08.6902227Z   clean: true
+2026-11-02T07:12:08.6902781Z   sparse-checkout-cone-mode: true
+2026-11-02T07:12:08.6903563Z   fetch-depth: 1
+2026-11-02T07:12:08.6904075Z   fetch-tags: false
+2026-11-02T07:12:08.6904589Z   show-progress: true
+2026-11-02T07:12:08.6905116Z   lfs: false
+2026-11-02T07:12:08.6905585Z   submodules: false
+2026-11-02T07:12:08.6906160Z   set-safe-directory: true
+2026-11-02T07:12:08.6906765Z   allow-unsafe-pr-checkout: false
+2026-11-02T07:12:08.6907566Z ##[endgroup]
+2026-11-02T07:12:09.0536703Z Syncing repository: mxbaylee/spinel
+2026-11-02T07:12:09.0539097Z ##[group]Getting Git version info
+2026-11-02T07:12:09.0540394Z Working directory is '/home/runner/work/spinel/spinel'
+2026-11-02T07:12:09.0541941Z [command]/usr/bin/git version
+2026-11-02T07:12:09.0589235Z git version 2.56.0
+2026-11-02T07:12:09.0609674Z ##[endgroup]
+2026-11-02T07:12:09.0618245Z Temporarily overriding HOME='/home/runner/work/_temp/649c2ecf-0065-4681-be95-cf9a3ea76c9c' before making global git config changes
+2026-11-02T07:12:09.0620898Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-02T07:12:09.0623183Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-02T07:12:09.0673020Z Deleting the contents of '/home/runner/work/spinel/spinel'
+2026-11-02T07:12:09.0676881Z ##[group]Determining repository object format
+2026-11-02T07:12:09.0678977Z ##[endgroup]
+2026-11-02T07:12:09.0680517Z ##[group]Initializing the repository
+2026-11-02T07:12:09.0683390Z [command]/usr/bin/git init /home/runner/work/spinel/spinel
+2026-11-02T07:12:09.0789783Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-02T07:12:09.0791753Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-02T07:12:09.0793182Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-02T07:12:09.0794444Z hint: call:
+2026-11-02T07:12:09.0796169Z hint:
+2026-11-02T07:12:09.0797201Z hint: 	git config --global init.defaultBranch <name>
+2026-11-02T07:12:09.0798599Z hint:
+2026-11-02T07:12:09.0799523Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-02T07:12:09.0800983Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-02T07:12:09.0802177Z hint:
+2026-11-02T07:12:09.0803010Z hint: 	git branch -m <name>
+2026-11-02T07:12:09.0803816Z hint:
+2026-11-02T07:12:09.0804807Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-02T07:12:09.0806238Z Initialized empty Git repository in /home/runner/work/spinel/spinel/.git/
+2026-11-02T07:12:09.0809637Z [command]/usr/bin/git remote add origin https://github.com/mxbaylee/spinel
+2026-11-02T07:12:09.0858577Z ##[endgroup]
+2026-11-02T07:12:09.0860101Z ##[group]Disabling automatic garbage collection
+2026-11-02T07:12:09.0861377Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-02T07:12:09.0904643Z ##[endgroup]
+2026-11-02T07:12:09.0906499Z ##[group]Setting up auth
+2026-11-02T07:12:09.0907759Z Removing SSH command configuration
+2026-11-02T07:12:09.0909153Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-02T07:12:09.0943377Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-02T07:12:09.1277525Z Removing HTTP extra header
+2026-11-02T07:12:09.1283067Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-02T07:12:09.1335025Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-02T07:12:09.1535617Z Removing includeIf entries pointing to credentials config files
+2026-11-02T07:12:09.1541143Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-02T07:12:09.1575601Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-02T07:12:09.1766783Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-93604797-7e24-4d45-90db-bde1c2577c3e.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-02T07:12:09.1806363Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git.path /home/runner/work/_temp/git-credentials-93604797-7e24-4d45-90db-bde1c2577c3e.config
+2026-11-02T07:12:09.1840196Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-93604797-7e24-4d45-90db-bde1c2577c3e.config
+2026-11-02T07:12:09.1872435Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-93604797-7e24-4d45-90db-bde1c2577c3e.config
+2026-11-02T07:12:09.1904311Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-93604797-7e24-4d45-90db-bde1c2577c3e.config
+2026-11-02T07:12:09.1934058Z ##[endgroup]
+2026-11-02T07:12:09.1935033Z ##[group]Fetching the repository
+2026-11-02T07:12:09.1941007Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +511dba1abe8019c699ce9cb08e54255dbafc1fdd:refs/remotes/pull/226/merge
+2026-11-02T07:12:12.6917554Z From https://github.com/mxbaylee/spinel
+2026-11-02T07:12:12.6920208Z  * [new ref]         511dba1abe8019c699ce9cb08e54255dbafc1fdd -> pull/226/merge
+2026-11-02T07:12:12.6925882Z ##[endgroup]
+2026-11-02T07:12:12.6927695Z ##[group]Determining the checkout info
+2026-11-02T07:12:12.6929895Z ##[endgroup]
+2026-11-02T07:12:12.6931283Z [command]/usr/bin/git sparse-checkout disable
+2026-11-02T07:12:12.8825265Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-02T07:12:12.9306888Z ##[group]Checking out the ref
+2026-11-02T07:12:12.9311882Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/226/merge
+2026-11-02T07:12:13.6191966Z Note: switching to 'refs/remotes/pull/226/merge'.
+2026-11-02T07:12:13.6192748Z 
+2026-11-02T07:12:13.6193517Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-11-02T07:12:13.6194453Z changes and commit them, and you can discard any commits you make in this
+2026-11-02T07:12:13.6195402Z state without impacting any branches by switching back to a branch.
+2026-11-02T07:12:13.6196095Z 
+2026-11-02T07:12:13.6196479Z If you want to create a new branch to retain commits you create, you may
+2026-11-02T07:12:13.6197301Z do so (now or later) by using -c with the switch command. Example:
+2026-11-02T07:12:13.6197732Z 
+2026-11-02T07:12:13.6198053Z   git switch -c <new-branch-name>
+2026-11-02T07:12:13.6198381Z 
+2026-11-02T07:12:13.6198782Z Or undo this operation with:
+2026-11-02T07:12:13.6199129Z 
+2026-11-02T07:12:13.6199299Z   git switch -
+2026-11-02T07:12:13.6199709Z 
+2026-11-02T07:12:13.6200113Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-11-02T07:12:13.6200632Z 
+2026-11-02T07:12:13.6201264Z HEAD is now at 511dba1 Merge 53ad6848d79b7b5034db6f6e99a107a518f5d9e5 into df1d910822cba284178f26ac4f6cf359ddcfacef
+2026-11-02T07:12:13.6217099Z ##[endgroup]
+2026-11-02T07:12:13.6263772Z [command]/usr/bin/git log -1 --format=%H
+2026-11-02T07:12:13.6290230Z 511dba1abe8019c699ce9cb08e54255dbafc1fdd
+2026-11-02T07:12:13.6303802Z ##[group]Removing auth
+2026-11-02T07:12:13.6304401Z Removing SSH command configuration
+2026-11-02T07:12:13.6305259Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-02T07:12:13.6336658Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-02T07:12:13.6528097Z Removing HTTP extra header
+2026-11-02T07:12:13.6530833Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-02T07:12:13.6560277Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-02T07:12:13.6756280Z Removing includeIf entries pointing to credentials config files
+2026-11-02T07:12:13.6758776Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-02T07:12:13.6787202Z includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-02T07:12:13.6788251Z includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-02T07:12:13.6789033Z includeif.gitdir:/github/workspace/.git.path
+2026-11-02T07:12:13.6789671Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-02T07:12:13.6795745Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-02T07:12:13.6818646Z /home/runner/work/_temp/git-credentials-93604797-7e24-4d45-90db-bde1c2577c3e.config
+2026-11-02T07:12:13.6829048Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-93604797\-7e24\-4d45\-90db\-bde1c2577c3e\.config
+2026-11-02T07:12:13.6869228Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-02T07:12:13.6891331Z /home/runner/work/_temp/git-credentials-93604797-7e24-4d45-90db-bde1c2577c3e.config
+2026-11-02T07:12:13.6899373Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-93604797\-7e24\-4d45\-90db\-bde1c2577c3e\.config
+2026-11-02T07:12:13.7102586Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-02T07:12:13.7134609Z /github/runner_temp/git-credentials-93604797-7e24-4d45-90db-bde1c2577c3e.config
+2026-11-02T07:12:13.7142303Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-93604797\-7e24\-4d45\-90db\-bde1c2577c3e\.config
+2026-11-02T07:12:13.7181895Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-02T07:12:13.7207128Z /github/runner_temp/git-credentials-93604797-7e24-4d45-90db-bde1c2577c3e.config
+2026-11-02T07:12:13.7214022Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-93604797\-7e24\-4d45\-90db\-bde1c2577c3e\.config
+2026-11-02T07:12:13.7249742Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-02T07:12:13.7441447Z Removing credentials config '/home/runner/work/_temp/git-credentials-93604797-7e24-4d45-90db-bde1c2577c3e.config'
+2026-11-02T07:12:13.7451947Z ##[endgroup]
+2026-11-02T07:12:13.7710968Z ##[group]Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+2026-11-02T07:12:13.7711548Z with:
+2026-11-02T07:12:13.7711893Z   node-version-file: .nvmrc
+2026-11-02T07:12:13.7712277Z   package-manager-cache: false
+2026-11-02T07:12:13.7712697Z   check-latest: false
+2026-11-02T07:12:13.7715521Z   token: ***
+2026-11-02T07:12:13.7715919Z ##[endgroup]
+2026-11-02T07:12:13.8916954Z Node version file is not JSON file
+2026-11-02T07:12:13.8920967Z Node version file is not TOML file
+2026-11-02T07:12:13.8922278Z Resolved .nvmrc as 26.12.1
+2026-11-02T07:12:13.8943604Z Attempting to download 26.12.1...
+2026-11-02T07:12:14.8547814Z Acquiring 26.12.1 - x64 from https://github.com/actions/node-versions/releases/download/26.12.1-39618969937/node-26.12.1-linux-x64.tar.gz
+2026-11-02T07:12:15.4795195Z Extracting ...
+2026-11-02T07:12:15.4913821Z [command]/usr/bin/tar xz --strip 1 --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/e6ec22e6-0e1f-4017-8519-4bdf8efa2825 -f /home/runner/work/_temp/717dfa7c-2686-421f-9230-39c3f6520214
+2026-11-02T07:12:16.9403707Z Adding to the cache ...
+2026-11-02T07:12:19.2323982Z ##[group]Environment details
+2026-11-02T07:12:19.4573471Z node: v26.12.1
+2026-11-02T07:12:19.4574107Z npm: 11.20.0
+2026-11-02T07:12:19.4574712Z yarn: 1.22.22
+2026-11-02T07:12:19.4575873Z ##[endgroup]
+2026-11-02T07:12:19.4802480Z ##[group]Run npm ci
+2026-11-02T07:12:19.4803170Z [36;1mnpm ci[0m
+2026-11-02T07:12:19.4823411Z shell: /usr/bin/bash -e {0}
+2026-11-02T07:12:19.4823917Z ##[endgroup]
+2026-11-02T07:12:31.6274577Z 
+2026-11-02T07:12:31.6284189Z > postinstall
+2026-11-02T07:12:31.6287846Z > node scripts/dependencies/patch-univer-core.ts && node scripts/dependencies/patch-univer-docs.ts && node scripts/dependencies/patch-univer-ui.ts && node scripts/dependencies/patch-univer-drawing.ts && node scripts/dependencies/patch-univer-docs-ui.ts
+2026-11-02T07:12:31.6289458Z 
+2026-11-02T07:12:32.2321663Z 
+2026-11-02T07:12:32.2323131Z added 501 packages, and audited 509 packages in 13s
+2026-11-02T07:12:32.2323894Z 
+2026-11-02T07:12:32.2324636Z 136 packages are looking for funding
+2026-11-02T07:12:32.2325887Z   run `npm fund` for details
+2026-11-02T07:12:32.2573440Z 
+2026-11-02T07:12:32.2574438Z 4 moderate severity vulnerabilities
+2026-11-02T07:12:32.2574978Z 
+2026-11-02T07:12:32.2575782Z To address all issues (including breaking changes), run:
+2026-11-02T07:12:32.2576990Z   npm audit fix --force
+2026-11-02T07:12:32.2577224Z 
+2026-11-02T07:12:32.2577462Z Run `npm audit` for details.
+2026-11-02T07:12:32.2586392Z npm warn install-scripts 2 packages have install scripts not yet covered by allowScripts:
+2026-11-02T07:12:32.2588329Z npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+2026-11-02T07:12:32.2589542Z npm warn install-scripts   protobufjs@7.6.6 (postinstall: node scripts/postinstall)
+2026-11-02T07:12:32.2590501Z npm warn install-scripts
+2026-11-02T07:12:32.2591675Z npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+2026-11-02T07:12:32.3109432Z ##[group]Run node scripts/ci/prefer-ubuntu-archive.ts
+2026-11-02T07:12:32.3109981Z [36;1mnode scripts/ci/prefer-ubuntu-archive.ts[0m
+2026-11-02T07:12:32.3110465Z [36;1mnpx playwright install --with-deps chromium[0m
+2026-11-02T07:12:32.3125451Z shell: /usr/bin/bash -e {0}
+2026-11-02T07:12:32.3125851Z ##[endgroup]
+2026-11-02T07:12:32.3931109Z Preferred the official Ubuntu archive; Azure remains the fallback.
+2026-11-02T07:12:33.1063537Z Installing dependencies...
+2026-11-02T07:12:33.1121616Z Switching to root user to install dependencies...
+2026-11-02T07:12:33.1774216Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-11-02T07:12:33.2124514Z Get:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+2026-11-02T07:12:33.2891321Z Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [617 kB]
+2026-11-02T07:12:33.3040308Z Get:8 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [682 kB]
+2026-11-02T07:12:33.9423463Z Hit:2 https://archive.ubuntu.com/ubuntu noble InRelease
+2026-11-02T07:12:34.0667220Z Get:3 https://archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+2026-11-02T07:12:34.5082181Z Get:4 https://archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+2026-11-02T07:12:34.7018521Z Get:5 https://archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+2026-11-02T07:12:34.8845958Z Get:9 https://archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1408 kB]
+2026-11-02T07:12:35.4125868Z Get:10 https://archive.ubuntu.com/ubuntu noble-updates/main Translation-en [311 kB]
+2026-11-02T07:12:35.5551423Z Get:11 https://archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1707 kB]
+2026-11-02T07:12:35.7976137Z Get:12 https://archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [343 kB]
+2026-11-02T07:12:35.9301219Z Get:13 https://archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [1813 kB]
+2026-11-02T07:12:36.1357856Z Get:14 https://archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [412 kB]
+2026-11-02T07:12:36.2814063Z Get:15 https://archive.ubuntu.com/ubuntu noble-updates/multiverse Translation-en [14.3 kB]
+2026-11-02T07:12:36.4005641Z Get:16 https://archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1146 kB]
+2026-11-02T07:12:36.5702800Z Get:17 https://archive.ubuntu.com/ubuntu noble-security/main Translation-en [231 kB]
+2026-11-02T07:12:36.6980155Z Get:18 https://archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1223 kB]
+2026-11-02T07:12:36.8827869Z Get:19 https://archive.ubuntu.com/ubuntu noble-security/universe Translation-en [246 kB]
+2026-11-02T07:12:39.6417678Z Fetched 10.5 MB in 4s (2791 kB/s)
+2026-11-02T07:12:40.7325027Z Reading package lists...
+2026-11-02T07:12:40.7661554Z Reading package lists...
+2026-11-02T07:12:41.0019207Z Building dependency tree...
+2026-11-02T07:12:41.0027363Z Reading state information...
+2026-11-02T07:12:41.1797581Z libasound2t64 is already the newest version (1.2.11-1ubuntu0.3).
+2026-11-02T07:12:41.1799224Z libasound2t64 set to manually installed.
+2026-11-02T07:12:41.1800895Z libatk-bridge2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-11-02T07:12:41.1802048Z libatk-bridge2.0-0t64 set to manually installed.
+2026-11-02T07:12:41.1803315Z libatk1.0-0t64 is already the newest version (2.52.0-1build1).
+2026-11-02T07:12:41.1804545Z libatk1.0-0t64 set to manually installed.
+2026-11-02T07:12:41.1805170Z libatspi2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-11-02T07:12:41.1805913Z libatspi2.0-0t64 set to manually installed.
+2026-11-02T07:12:41.1806389Z libcairo2 is already the newest version (1.18.0-3build1).
+2026-11-02T07:12:41.1806905Z libcairo2 set to manually installed.
+2026-11-02T07:12:41.1807402Z libcups2t64 is already the newest version (2.4.7-1.2ubuntu7.14).
+2026-11-02T07:12:41.1807931Z libcups2t64 set to manually installed.
+2026-11-02T07:12:41.1808649Z libdbus-1-3 is already the newest version (1.14.10-4ubuntu4.1).
+2026-11-02T07:12:41.1809413Z libdbus-1-3 set to manually installed.
+2026-11-02T07:12:41.1809920Z libdrm2 is already the newest version (2.4.125-1ubuntu0.1~24.04.2).
+2026-11-02T07:12:41.1810530Z libdrm2 set to manually installed.
+2026-11-02T07:12:41.1811291Z libgbm1 is already the newest version (25.2.8-0ubuntu0.24.04.4).
+2026-11-02T07:12:41.1811822Z libgbm1 set to manually installed.
+2026-11-02T07:12:41.1812311Z libglib2.0-0t64 is already the newest version (2.80.0-6ubuntu3.10).
+2026-11-02T07:12:41.1812802Z libglib2.0-0t64 set to manually installed.
+2026-11-02T07:12:41.1813627Z libnspr4 is already the newest version (2:4.35-1.1build1).
+2026-11-02T07:12:41.1814991Z libnspr4 set to manually installed.
+2026-11-02T07:12:41.1815703Z libnss3 is already the newest version (2:3.98-1ubuntu0.3).
+2026-11-02T07:12:41.1816281Z libnss3 set to manually installed.
+2026-11-02T07:12:41.1816984Z libpango-1.0-0 is already the newest version (1.52.1+ds-1build1).
+2026-11-02T07:12:41.1817635Z libpango-1.0-0 set to manually installed.
+2026-11-02T07:12:41.1818130Z libx11-6 is already the newest version (2:1.8.7-1ubuntu0.1).
+2026-11-02T07:12:41.1818765Z libx11-6 set to manually installed.
+2026-11-02T07:12:41.1819453Z libxcb1 is already the newest version (1.15-1ubuntu2).
+2026-11-02T07:12:41.1820138Z libxcb1 set to manually installed.
+2026-11-02T07:12:41.1820652Z libxcomposite1 is already the newest version (1:0.4.5-1build3).
+2026-11-02T07:12:41.1821137Z libxcomposite1 set to manually installed.
+2026-11-02T07:12:41.1821623Z libxdamage1 is already the newest version (1:1.1.6-1build1).
+2026-11-02T07:12:41.1822091Z libxdamage1 set to manually installed.
+2026-11-02T07:12:41.1822643Z libxext6 is already the newest version (2:1.3.4-1build2).
+2026-11-02T07:12:41.1823506Z libxext6 set to manually installed.
+2026-11-02T07:12:41.1824288Z libxfixes3 is already the newest version (1:6.0.0-2build1).
+2026-11-02T07:12:41.1825207Z libxfixes3 set to manually installed.
+2026-11-02T07:12:41.1826018Z libxkbcommon0 is already the newest version (1.6.0-1build1).
+2026-11-02T07:12:41.1826976Z libxkbcommon0 set to manually installed.
+2026-11-02T07:12:41.1827645Z libxrandr2 is already the newest version (2:1.5.2-2build1).
+2026-11-02T07:12:41.1828393Z libxrandr2 set to manually installed.
+2026-11-02T07:12:41.1829044Z xvfb is already the newest version (2:21.1.12-1ubuntu1.9).
+2026-11-02T07:12:41.1829861Z fonts-noto-color-emoji is already the newest version (2.047-0ubuntu0.24.04.1).
+2026-11-02T07:12:41.1830858Z libfontconfig1 is already the newest version (2.15.0-1.1ubuntu2).
+2026-11-02T07:12:41.1831899Z libfontconfig1 set to manually installed.
+2026-11-02T07:12:41.1832660Z libfreetype6 is already the newest version (2.13.2+dfsg-1ubuntu0.2).
+2026-11-02T07:12:41.1833532Z libfreetype6 set to manually installed.
+2026-11-02T07:12:41.1834194Z fonts-liberation is already the newest version (1:2.1.5-3).
+2026-11-02T07:12:41.1835015Z fonts-liberation set to manually installed.
+2026-11-02T07:12:41.1835685Z The following additional packages will be installed:
+2026-11-02T07:12:41.1836324Z   xfonts-encodings xfonts-utils
+2026-11-02T07:12:41.1836871Z Recommended packages:
+2026-11-02T07:12:41.1837428Z   fonts-ipafont-mincho fonts-tlwg-loma
+2026-11-02T07:12:41.1985330Z The following NEW packages will be installed:
+2026-11-02T07:12:41.1986311Z   fonts-freefont-ttf fonts-ipafont-gothic fonts-tlwg-loma-otf fonts-unifont
+2026-11-02T07:12:41.1995310Z   fonts-wqy-zenhei xfonts-cyrillic xfonts-encodings xfonts-scalable
+2026-11-02T07:12:41.1996685Z   xfonts-utils
+2026-11-02T07:12:41.2183411Z 0 upgraded, 9 newly installed, 0 to remove and 6 not upgraded.
+2026-11-02T07:12:41.2184325Z Need to get 21.1 MB of archives.
+2026-11-02T07:12:41.2185153Z After this operation, 79.5 MB of additional disk space will be used.
+2026-11-02T07:12:41.2186059Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-11-02T07:12:42.0529272Z Get:2 https://archive.ubuntu.com/ubuntu noble/universe amd64 fonts-ipafont-gothic all 00303-21ubuntu1 [3513 kB]
+2026-11-02T07:12:43.4391171Z Get:3 https://archive.ubuntu.com/ubuntu noble/main amd64 fonts-freefont-ttf all 20211204+svn4273-2 [5641 kB]
+2026-11-02T07:12:43.8254530Z Get:4 https://archive.ubuntu.com/ubuntu noble/universe amd64 fonts-tlwg-loma-otf all 1:0.7.3-1 [107 kB]
+2026-11-02T07:12:43.9868763Z Get:5 https://archive.ubuntu.com/ubuntu noble/universe amd64 fonts-unifont all 1:15.1.01-1build1 [2993 kB]
+2026-11-02T07:12:44.1942041Z Get:6 https://archive.ubuntu.com/ubuntu noble/universe amd64 fonts-wqy-zenhei all 0.9.45-8 [7472 kB]
+2026-11-02T07:12:44.4714792Z Get:7 https://archive.ubuntu.com/ubuntu noble/main amd64 xfonts-encodings all 1:1.0.5-0ubuntu2 [578 kB]
+2026-11-02T07:12:44.6388296Z Get:8 https://archive.ubuntu.com/ubuntu noble/main amd64 xfonts-utils amd64 1:7.7+6build3 [94.4 kB]
+2026-11-02T07:12:44.8001161Z Get:9 https://archive.ubuntu.com/ubuntu noble/universe amd64 xfonts-cyrillic all 1:1.0.5+nmu1 [384 kB]
+2026-11-02T07:12:44.9653279Z Get:10 https://archive.ubuntu.com/ubuntu noble/main amd64 xfonts-scalable all 1:1.0.3-1.3 [304 kB]
+2026-11-02T07:12:45.2518974Z Fetched 21.1 MB in 4s (5608 kB/s)
+2026-11-02T07:12:45.4470684Z Selecting previously unselected package fonts-ipafont-gothic.
+2026-11-02T07:12:45.4673264Z (Reading database ... 
+2026-11-02T07:12:45.4673926Z (Reading database ... 5%
+2026-11-02T07:12:45.4674472Z (Reading database ... 10%
+2026-11-02T07:12:45.4675290Z (Reading database ... 15%
+2026-11-02T07:12:45.4675936Z (Reading database ... 20%
+2026-11-02T07:12:45.4676577Z (Reading database ... 25%
+2026-11-02T07:12:45.4676959Z (Reading database ... 30%
+2026-11-02T07:12:45.4677326Z (Reading database ... 35%
+2026-11-02T07:12:45.4677830Z (Reading database ... 40%
+2026-11-02T07:12:45.4678488Z (Reading database ... 45%
+2026-11-02T07:12:45.4679074Z (Reading database ... 50%
+2026-11-02T07:12:45.4715698Z (Reading database ... 55%
+2026-11-02T07:12:45.6311123Z (Reading database ... 60%
+2026-11-02T07:12:45.7817292Z (Reading database ... 65%
+2026-11-02T07:12:46.0204840Z (Reading database ... 70%
+2026-11-02T07:12:46.2329291Z (Reading database ... 75%
+2026-11-02T07:12:46.3340691Z (Reading database ... 80%
+2026-11-02T07:12:46.4343920Z (Reading database ... 85%
+2026-11-02T07:12:46.5412540Z (Reading database ... 90%
+2026-11-02T07:12:46.6846377Z (Reading database ... 95%
+2026-11-02T07:12:46.6847030Z (Reading database ... 100%
+2026-11-02T07:12:46.6847810Z (Reading database ... 215504 files and directories currently installed.)
+2026-11-02T07:12:46.6894289Z Preparing to unpack .../0-fonts-ipafont-gothic_00303-21ubuntu1_all.deb ...
+2026-11-02T07:12:46.7034910Z Unpacking fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-11-02T07:12:47.0264527Z Selecting previously unselected package fonts-freefont-ttf.
+2026-11-02T07:12:47.0393675Z Preparing to unpack .../1-fonts-freefont-ttf_20211204+svn4273-2_all.deb ...
+2026-11-02T07:12:47.0403795Z Unpacking fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-11-02T07:12:47.1458949Z Selecting previously unselected package fonts-tlwg-loma-otf.
+2026-11-02T07:12:47.1590675Z Preparing to unpack .../2-fonts-tlwg-loma-otf_1%3a0.7.3-1_all.deb ...
+2026-11-02T07:12:47.1599968Z Unpacking fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-11-02T07:12:47.1793834Z Selecting previously unselected package fonts-unifont.
+2026-11-02T07:12:47.1924958Z Preparing to unpack .../3-fonts-unifont_1%3a15.1.01-1build1_all.deb ...
+2026-11-02T07:12:47.1936618Z Unpacking fonts-unifont (1:15.1.01-1build1) ...
+2026-11-02T07:12:47.4339877Z Selecting previously unselected package fonts-wqy-zenhei.
+2026-11-02T07:12:47.4474327Z Preparing to unpack .../4-fonts-wqy-zenhei_0.9.45-8_all.deb ...
+2026-11-02T07:12:47.4574098Z Unpacking fonts-wqy-zenhei (0.9.45-8) ...
+2026-11-02T07:12:48.0550389Z Selecting previously unselected package xfonts-encodings.
+2026-11-02T07:12:48.0682150Z Preparing to unpack .../5-xfonts-encodings_1%3a1.0.5-0ubuntu2_all.deb ...
+2026-11-02T07:12:48.0694180Z Unpacking xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-11-02T07:12:48.1241934Z Selecting previously unselected package xfonts-utils.
+2026-11-02T07:12:48.1374432Z Preparing to unpack .../6-xfonts-utils_1%3a7.7+6build3_amd64.deb ...
+2026-11-02T07:12:48.1384814Z Unpacking xfonts-utils (1:7.7+6build3) ...
+2026-11-02T07:12:48.1711353Z Selecting previously unselected package xfonts-cyrillic.
+2026-11-02T07:12:48.1844094Z Preparing to unpack .../7-xfonts-cyrillic_1%3a1.0.5+nmu1_all.deb ...
+2026-11-02T07:12:48.1856139Z Unpacking xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-11-02T07:12:48.2125783Z Selecting previously unselected package xfonts-scalable.
+2026-11-02T07:12:48.2257344Z Preparing to unpack .../8-xfonts-scalable_1%3a1.0.3-1.3_all.deb ...
+2026-11-02T07:12:48.2267718Z Unpacking xfonts-scalable (1:1.0.3-1.3) ...
+2026-11-02T07:12:48.2740481Z Setting up fonts-wqy-zenhei (0.9.45-8) ...
+2026-11-02T07:12:48.2853074Z Setting up fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-11-02T07:12:48.2874992Z Setting up fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-11-02T07:12:48.2895013Z Setting up xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-11-02T07:12:48.2916318Z Setting up fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-11-02T07:12:48.2975036Z update-alternatives: using /usr/share/fonts/opentype/ipafont-gothic/ipag.ttf to provide /usr/share/fonts/truetype/fonts-japanese-gothic.ttf (fonts-japanese-gothic.ttf) in auto mode
+2026-11-02T07:12:48.2991422Z Setting up fonts-unifont (1:15.1.01-1build1) ...
+2026-11-02T07:12:48.3011991Z Setting up xfonts-utils (1:7.7+6build3) ...
+2026-11-02T07:12:48.3052347Z Setting up xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-11-02T07:12:48.3327508Z Setting up xfonts-scalable (1:1.0.3-1.3) ...
+2026-11-02T07:12:48.3598063Z Processing triggers for man-db (2.12.0-4build2) ...
+2026-11-02T07:12:48.3620123Z Not building database; man-db/auto-update is not 'true'.
+2026-11-02T07:12:48.3637306Z Processing triggers for fontconfig (2.15.0-1.1ubuntu2) ...
+2026-11-02T07:12:49.0058674Z 
+2026-11-02T07:12:49.0059588Z Running kernel seems to be up-to-date.
+2026-11-02T07:12:49.0060121Z 
+2026-11-02T07:12:49.0060544Z No services need to be restarted.
+2026-11-02T07:12:49.0061084Z 
+2026-11-02T07:12:49.0061381Z No containers need to be restarted.
+2026-11-02T07:12:49.0061661Z 
+2026-11-02T07:12:49.0061999Z No user sessions are running outdated binaries.
+2026-11-02T07:12:49.0062271Z 
+2026-11-02T07:12:49.0062678Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+2026-11-02T07:12:49.9765402Z Downloading Chrome for Testing 156.0.8078.4 (playwright chromium v1248) from https://cdn.playwright.dev/builds/cft/156.0.8078.4/linux64/chrome-linux64.zip
+2026-11-02T07:12:50.4176151Z |                                                                                |   0% of 191.1 MiB
+2026-11-02T07:12:50.5983858Z |■■■■■■■■                                                                        |  10% of 191.1 MiB
+2026-11-02T07:12:50.6489363Z |■■■■■■■■■■■■■■■■                                                                |  20% of 191.1 MiB
+2026-11-02T07:12:50.7227425Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 191.1 MiB
+2026-11-02T07:12:50.7677439Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 191.1 MiB
+2026-11-02T07:12:50.8268253Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 191.1 MiB
+2026-11-02T07:12:50.8848415Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 191.1 MiB
+2026-11-02T07:12:50.9224389Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 191.1 MiB
+2026-11-02T07:12:50.9874991Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 191.1 MiB
+2026-11-02T07:12:51.0321878Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 191.1 MiB
+2026-11-02T07:12:51.0935428Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 191.1 MiB
+2026-11-02T07:12:54.3004518Z Chrome for Testing 156.0.8078.4 (playwright chromium v1248) downloaded to /home/runner/.cache/ms-playwright/chromium-1248
+2026-11-02T07:12:54.3008094Z Downloading FFmpeg (playwright ffmpeg v1013) from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1013/ffmpeg-linux.zip
+2026-11-02T07:12:54.7291203Z |                                                                                |   0% of 2.2 MiB
+2026-11-02T07:12:54.7671939Z |■■■■■■■■                                                                        |  10% of 2.2 MiB
+2026-11-02T07:12:54.7848578Z |■■■■■■■■■■■■■■■■                                                                |  20% of 2.2 MiB
+2026-11-02T07:12:54.7947314Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.2 MiB
+2026-11-02T07:12:54.8020169Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.2 MiB
+2026-11-02T07:12:54.8071415Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.2 MiB
+2026-11-02T07:12:54.8122321Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.2 MiB
+2026-11-02T07:12:54.8178084Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.2 MiB
+2026-11-02T07:12:54.8235511Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.2 MiB
+2026-11-02T07:12:54.8259050Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.2 MiB
+2026-11-02T07:12:54.8285805Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.2 MiB
+2026-11-02T07:12:54.8809672Z FFmpeg (playwright ffmpeg v1013) downloaded to /home/runner/.cache/ms-playwright/ffmpeg-1013
+2026-11-02T07:12:54.8812480Z Downloading Chrome Headless Shell 156.0.8078.4 (playwright chromium-headless-shell v1248) from https://cdn.playwright.dev/builds/cft/156.0.8078.4/linux64/chrome-headless-shell-linux64.zip
+2026-11-02T07:12:55.3049711Z |                                                                                |   0% of 120 MiB
+2026-11-02T07:12:55.4300920Z |■■■■■■■■                                                                        |  10% of 120 MiB
+2026-11-02T07:12:55.4797826Z |■■■■■■■■■■■■■■■■                                                                |  20% of 120 MiB
+2026-11-02T07:12:55.5253786Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 120 MiB
+2026-11-02T07:12:55.5870809Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 120 MiB
+2026-11-02T07:12:55.6120360Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 120 MiB
+2026-11-02T07:12:55.6395006Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 120 MiB
+2026-11-02T07:12:55.6864025Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 120 MiB
+2026-11-02T07:12:55.7097589Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 120 MiB
+2026-11-02T07:12:55.7324974Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 120 MiB
+2026-11-02T07:12:55.7755632Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 120 MiB
+2026-11-02T07:12:58.0370286Z Chrome Headless Shell 156.0.8078.4 (playwright chromium-headless-shell v1248) downloaded to /home/runner/.cache/ms-playwright/chromium_headless_shell-1248
+2026-11-02T07:12:58.0643599Z ##[group]Run sudo apt-get install -y --no-install-recommends tini
+2026-11-02T07:12:58.0644149Z [36;1msudo apt-get install -y --no-install-recommends tini[0m
+2026-11-02T07:12:58.0657997Z shell: /usr/bin/bash -e {0}
+2026-11-02T07:12:58.0658401Z ##[endgroup]
+2026-11-02T07:12:58.0892840Z Reading package lists...
+2026-11-02T07:12:58.3290666Z Building dependency tree...
+2026-11-02T07:12:58.3298206Z Reading state information...
+2026-11-02T07:12:58.5164106Z The following NEW packages will be installed:
+2026-11-02T07:12:58.5164615Z   tini
+2026-11-02T07:12:58.5340611Z 0 upgraded, 1 newly installed, 0 to remove and 6 not upgraded.
+2026-11-02T07:12:58.5341526Z Need to get 276 kB of archives.
+2026-11-02T07:12:58.5342130Z After this operation, 835 kB of additional disk space will be used.
+2026-11-02T07:12:58.5342806Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-11-02T07:12:59.2923491Z Get:2 https://archive.ubuntu.com/ubuntu noble/universe amd64 tini amd64 0.19.0-1 [276 kB]
+2026-11-02T07:13:00.1268427Z Fetched 276 kB in 1s (206 kB/s)
+2026-11-02T07:13:00.1467341Z Selecting previously unselected package tini.
+2026-11-02T07:13:00.1497369Z (Reading database ... 
+2026-11-02T07:13:00.1498194Z (Reading database ... 5%
+2026-11-02T07:13:00.1499165Z (Reading database ... 10%
+2026-11-02T07:13:00.1500082Z (Reading database ... 15%
+2026-11-02T07:13:00.1500745Z (Reading database ... 20%
+2026-11-02T07:13:00.1501252Z (Reading database ... 25%
+2026-11-02T07:13:00.1501887Z (Reading database ... 30%
+2026-11-02T07:13:00.1502376Z (Reading database ... 35%
+2026-11-02T07:13:00.1503446Z (Reading database ... 40%
+2026-11-02T07:13:00.1504320Z (Reading database ... 45%
+2026-11-02T07:13:00.1504839Z (Reading database ... 50%
+2026-11-02T07:13:00.1519470Z (Reading database ... 55%
+2026-11-02T07:13:00.1566831Z (Reading database ... 60%
+2026-11-02T07:13:00.1613359Z (Reading database ... 65%
+2026-11-02T07:13:00.1629293Z (Reading database ... 70%
+2026-11-02T07:13:00.1652846Z (Reading database ... 75%
+2026-11-02T07:13:00.1778180Z (Reading database ... 80%
+2026-11-02T07:13:00.1802801Z (Reading database ... 85%
+2026-11-02T07:13:00.2021576Z (Reading database ... 90%
+2026-11-02T07:13:00.2330253Z (Reading database ... 95%
+2026-11-02T07:13:00.2330875Z (Reading database ... 100%
+2026-11-02T07:13:00.2331429Z (Reading database ... 215771 files and directories currently installed.)
+2026-11-02T07:13:00.2376498Z Preparing to unpack .../tini_0.19.0-1_amd64.deb ...
+2026-11-02T07:13:00.2388471Z Unpacking tini (0.19.0-1) ...
+2026-11-02T07:13:00.3124772Z Setting up tini (0.19.0-1) ...
+2026-11-02T07:13:00.8088502Z 
+2026-11-02T07:13:00.8089472Z Running kernel seems to be up-to-date.
+2026-11-02T07:13:00.8090010Z 
+2026-11-02T07:13:00.8090353Z No services need to be restarted.
+2026-11-02T07:13:00.8090645Z 
+2026-11-02T07:13:00.8090850Z No containers need to be restarted.
+2026-11-02T07:13:00.8091116Z 
+2026-11-02T07:13:00.8091457Z No user sessions are running outdated binaries.
+2026-11-02T07:13:00.8091713Z 
+2026-11-02T07:13:00.8092179Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+2026-11-02T07:13:01.8419523Z ##[group]Run npm run build
+2026-11-02T07:13:01.8419890Z [36;1mnpm run build[0m
+2026-11-02T07:13:01.8433972Z shell: /usr/bin/bash -e {0}
+2026-11-02T07:13:01.8434393Z env:
+2026-11-02T07:13:01.8434680Z   VITE_SYNC_EVIDENCE: 0
+2026-11-02T07:13:01.8434992Z   VITE_DOC_SELECTION_EVIDENCE: 1
+2026-11-02T07:13:01.8435436Z ##[endgroup]
+2026-11-02T07:13:01.9358901Z 
+2026-11-02T07:13:01.9359658Z > build
+2026-11-02T07:13:01.9360330Z > vite build
+2026-11-02T07:13:01.9360561Z 
+2026-11-02T07:13:02.1583016Z [36mvite v8.3.4 [32mbuilding client environment for production...[36m[39m
+2026-11-02T07:13:02.1681240Z transforming...
+2026-11-02T07:13:02.9689971Z ✓ 4367 modules transformed.
+2026-11-02T07:13:03.3508855Z rendering chunks...
+2026-11-02T07:13:04.0840673Z computing gzip size...
+2026-11-02T07:13:04.2569273Z dist/index.html                                    3.50 kB │ gzip:     1.29 kB
+2026-11-02T07:13:04.2570672Z dist/assets/nativeCopy-mVcC3r32.css                2.53 kB │ gzip:     0.88 kB
+2026-11-02T07:13:04.2572225Z dist/assets/HistoryBrowser-D9Z9OhM7.css            3.36 kB │ gzip:     0.96 kB
+2026-11-02T07:13:04.2573509Z dist/assets/theme-6GPmlRwP.css                     5.63 kB │ gzip:     1.61 kB
+2026-11-02T07:13:04.2574241Z dist/assets/CopyFile-Bp41xbsr.css                 16.91 kB │ gzip:     3.69 kB
+2026-11-02T07:13:04.2575012Z dist/assets/application-B9PzMhak.css              58.90 kB │ gzip:    10.58 kB
+2026-11-02T07:13:04.2575751Z dist/assets/documentReady-CZMWh3-A.css           114.43 kB │ gzip:    17.18 kB
+2026-11-02T07:13:04.2576463Z dist/assets/lib-DGHf0mi1.css                     124.16 kB │ gzip:    18.08 kB
+2026-11-02T07:13:04.2577169Z dist/assets/rolldown-runtime-XKyaHtl9.js           0.72 kB │ gzip:     0.42 kB
+2026-11-02T07:13:04.2577859Z dist/assets/offlineError-BUk56pzC.js               1.48 kB │ gzip:     0.76 kB
+2026-11-02T07:13:04.2578636Z dist/assets/module-preload-BLdHbfdN.js             1.51 kB │ gzip:     0.79 kB
+2026-11-02T07:13:04.2579346Z dist/assets/snapshotIdentity-DauYycDk.js           1.70 kB │ gzip:     0.74 kB
+2026-11-02T07:13:04.2580043Z dist/assets/OfflineViewer-CBMYO9r_.js              1.96 kB │ gzip:     1.00 kB
+2026-11-02T07:13:04.2580752Z dist/assets/rendering-BYsIosLH.js                  2.48 kB │ gzip:     1.14 kB
+2026-11-02T07:13:04.2581429Z dist/assets/runtime-BUQS9nEo.js                    2.63 kB │ gzip:     1.08 kB
+2026-11-02T07:13:04.2582127Z dist/assets/OfflineAccess-mOp5M4Iz.js              2.98 kB │ gzip:     1.46 kB
+2026-11-02T07:13:04.2582790Z dist/assets/download-BPGf4w79.js                   3.48 kB │ gzip:     1.69 kB
+2026-11-02T07:13:04.2583853Z dist/assets/documentAccess-BpTD8alm.js             3.54 kB │ gzip:     1.62 kB
+2026-11-02T07:13:04.2584669Z dist/assets/main-eji522Tm.js                       3.75 kB │ gzip:     1.84 kB
+2026-11-02T07:13:04.2585354Z dist/assets/spaceNavigation-BsLiTX-r.js            3.95 kB │ gzip:     1.64 kB
+2026-11-02T07:13:04.2586065Z dist/assets/checkpoint-CNBwfwki.js                 5.36 kB │ gzip:     1.94 kB
+2026-11-02T07:13:04.2587089Z dist/assets/SheetEditor-Bqd03Lwz.js                6.14 kB │ gzip:     2.85 kB
+2026-11-02T07:13:04.2587850Z dist/assets/PreparedImages-DxTqDsTH.js             6.59 kB │ gzip:     2.59 kB
+2026-11-02T07:13:04.2588510Z dist/assets/native-BDuvTBqB.js                     7.10 kB │ gzip:     3.11 kB
+2026-11-02T07:13:04.2589152Z dist/assets/react-DlmbjZJV.js                      7.87 kB │ gzip:     3.00 kB
+2026-11-02T07:13:04.2589886Z dist/assets/existingDatabase-D6zEq-NF.js           8.29 kB │ gzip:     3.10 kB
+2026-11-02T07:13:04.2590565Z dist/assets/useDiagnostics-DuPOOcXt.js            13.20 kB │ gzip:     4.32 kB
+2026-11-02T07:13:04.2591258Z dist/service-worker.js                            15.37 kB │ gzip:     5.88 kB
+2026-11-02T07:13:04.2591895Z dist/assets/DocEditor-BxZ21VPY.js                 16.71 kB │ gzip:     6.95 kB
+2026-11-02T07:13:04.2592605Z dist/assets/HistoryBrowser--LHv7s7U.js            20.97 kB │ gzip:     7.45 kB
+2026-11-02T07:13:04.2593753Z dist/assets/offlineStore-CNblyHxf.js              31.15 kB │ gzip:     9.16 kB
+2026-11-02T07:13:04.2594447Z dist/assets/model-BmaRrXAR.js                    115.56 kB │ gzip:    33.37 kB
+2026-11-02T07:13:04.2595130Z dist/assets/nativeCopy-DZH0Zuci.js               124.52 kB │ gzip:    40.05 kB
+2026-11-02T07:13:04.2595840Z dist/assets/documentReady-8Lhy66aQ.js            178.33 kB │ gzip:    48.46 kB
+2026-11-02T07:13:04.2596528Z dist/assets/floating-ui.react-dom-BtIrzXdr.js    214.31 kB │ gzip:    67.17 kB
+2026-11-02T07:13:04.2597208Z dist/assets/profile-CUeznPAf.js                  282.02 kB │ gzip:    57.72 kB
+2026-11-02T07:13:04.2597907Z dist/assets/application-CzrqEQCy.js              341.50 kB │ gzip:    96.85 kB
+2026-11-02T07:13:04.2598587Z dist/assets/lib-D15qOAFn.js                      378.77 kB │ gzip:   104.54 kB
+2026-11-02T07:13:04.2599226Z dist/assets/theme-CqYTemgo.js                    590.29 kB │ gzip:   151.12 kB
+2026-11-02T07:13:04.2599899Z dist/assets/CopyFile-qR382OFY.js                 637.50 kB │ gzip:   110.32 kB
+2026-11-02T07:13:04.2600601Z dist/assets/es-QsSEw2iP.js                     1,166.05 kB │ gzip:   203.44 kB
+2026-11-02T07:13:04.2601275Z dist/assets/nativeSyncPermissions-DZHf0r-Q.js  3,806.09 kB │ gzip: 1,017.73 kB
+2026-11-02T07:13:04.2601989Z dist/assets/univer-renderer-Cqyj3Y79.js        5,916.00 kB │ gzip: 1,466.42 kB
+2026-11-02T07:13:04.2602317Z 
+2026-11-02T07:13:04.2632553Z [33m[plugin builtin:vite-reporter] 
+2026-11-02T07:13:04.2633707Z (!) Some chunks are larger than 500 kB after minification. Consider:
+2026-11-02T07:13:04.2634296Z - Using dynamic import() to code-split the application
+2026-11-02T07:13:04.2635312Z - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+2026-11-02T07:13:04.2636519Z - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+2026-11-02T07:13:04.2744561Z [33m[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0mweb/offline/recovery.ts is dynamically imported by web/spinelSync.ts but also statically imported by web/offline/OfflineSession.ts, dynamic import will not move module into another chunk.
+2026-11-02T07:13:04.2746518Z [39m
+2026-11-02T07:13:04.2754531Z [32m✓ built in 2.12s[39m
+2026-11-02T07:13:04.3183702Z ##[group]Run npx playwright test --project="$SPINEL_E2E_PROJECT" ${SHARD:+--shard="$SHARD"}
+2026-11-02T07:13:04.3184376Z [36;1mnpx playwright test --project="$SPINEL_E2E_PROJECT" ${SHARD:+--shard="$SHARD"}[0m
+2026-11-02T07:13:04.3198708Z shell: /usr/bin/bash -e {0}
+2026-11-02T07:13:04.3199137Z env:
+2026-11-02T07:13:04.3199831Z   UNSPLASH_ACCESS_KEY: ***
+2026-11-02T07:13:04.3200202Z   SPINEL_E2E_PROJECT: production
+2026-11-02T07:13:04.3200653Z   SPINEL_CI_FULL_COMPATIBILITY: true
+2026-11-02T07:13:04.3201057Z   SHARD: 1/2
+2026-11-02T07:13:04.3201468Z   SPINEL_CAPTURE_SCREENSHOTS: 1
+2026-11-02T07:13:04.3201902Z   VITE_DOC_SELECTION_EVIDENCE: 1
+2026-11-02T07:13:04.3202306Z   SPINEL_LEGACY_OFFLINE_SOURCE: 
+2026-11-02T07:13:04.3202792Z ##[endgroup]
+2026-11-02T07:13:10.7307999Z 
+2026-11-02T07:13:10.7309003Z Running 84 tests using 1 worker, shard 1 of 2
+2026-11-02T07:13:10.7309731Z 
+2026-11-02T07:13:11.0997177Z [1/84] [production] › e2e/access-tokens.spec.ts:7:1 › a member creates and revokes a once-only token while an operator sees only metadata
+2026-11-02T07:13:15.6463549Z [2/84] [production] › e2e/access-upgrade.spec.ts:19:3 › doc viewer gains editing at the same native position, then downgrade still locks it
+2026-11-02T07:13:18.8436284Z [3/84] [production] › e2e/access-upgrade.spec.ts:19:3 › sheet viewer gains editing at the same native position, then revocation still locks it
+2026-11-02T07:13:22.4830344Z [4/84] [production] › e2e/admin-layout.spec.ts:8:3 › administration sections preserve private metadata and keyboard focus at 1280px
+2026-11-02T07:13:25.8870369Z [5/84] [production] › e2e/admin-layout.spec.ts:8:3 › administration sections preserve private metadata and keyboard focus at 390px
+2026-11-02T07:13:29.4235675Z [6/84] [production] › e2e/admin-layout.spec.ts:131:1 › pending invitations prevent section changes, manual copying works, and leaving discards the secret
+2026-11-02T07:13:31.0147974Z [7/84] [production] › e2e/admin-layout.spec.ts:230:1 › a response from an unmounted section cannot redirect a current administration view
+2026-11-02T07:13:31.7785074Z [8/84] [production] › e2e/admin-recovery.spec.ts:58:1 › Operator hands over retained ordinary and Space contents, then recovers the departed account without its old access
+2026-11-02T07:13:48.1488928Z [9/84] [production] › e2e/admin.spec.ts:6:1 › operator removes a passkey from an open editor, then disables the account without deleting its document
+2026-11-02T07:13:54.2671902Z [10/84] [production] › e2e/appearance.spec.ts:17:1 › themes persist, follow the system, and recolour sheet presets without editing documents
+2026-11-02T07:14:05.1279844Z [11/84] [production] › e2e/assistant-connections.spec.ts:8:1 › an assistant returns through passkey sign-in and consent, then can be disconnected
+2026-11-02T07:14:10.4601167Z [12/84] [production] › e2e/backup-downloads.spec.ts:70:1 › Operator creates and downloads a real encrypted workspace without cloud credentials, cancels another and sees key failure
+2026-11-02T07:14:23.1644616Z [13/84] [production] › e2e/backups.spec.ts:14:1 › operator sees missing configuration, backup failure and the last good backup after reopening Admin
+2026-11-02T07:14:26.0254157Z [14/84] [production] › e2e/backups.spec.ts:110:1 › a real scheduled filesystem backup is verified locally and never presented as offsite protection
+2026-11-02T07:14:34.2524094Z [15/84] [production] › e2e/branding.spec.ts:6:1 › public identity assets load and preview clearly in light, dark and phone layouts
+2026-11-02T07:14:36.0545987Z [16/84] [production] › e2e/collaboration.spec.ts:8:1 › two authenticated editors receive each other’s sheet edits without reloading
+2026-11-02T07:15:43.8580693Z [17/84] [production] › e2e/collaboration.spec.ts:200:1 › two document editors merge text and navigate to a collaborator selection
+2026-11-02T07:15:51.7654206Z [18/84] [production] › e2e/collaboration.spec.ts:362:1 › revoking one login preserves another login’s queued edit and stops later broadcasts
+2026-11-02T07:15:56.5441046Z [19/84] [production] › e2e/connection-status.spec.ts:96:1 › dashboard verifies the server before reporting Online and explains a stale file list
+2026-11-02T07:16:06.4646304Z [20/84] [production] › e2e/connection-status.spec.ts:217:7 › 1280px connection geometry › sheet stays still while offline and reconnecting until the room acknowledges JOIN
+2026-11-02T07:16:22.2105284Z [21/84] [production] › e2e/connection-status.spec.ts:217:7 › 1280px connection geometry › doc stays still while offline and reconnecting until the room acknowledges JOIN
+2026-11-02T07:16:38.1882408Z [22/84] [production] › e2e/connection-status.spec.ts:217:7 › 390px connection geometry › sheet stays still while offline and reconnecting until the room acknowledges JOIN
+2026-11-02T07:16:49.0050236Z [23/84] [production] › e2e/connection-status.spec.ts:217:7 › 390px connection geometry › doc stays still while offline and reconnecting until the room acknowledges JOIN
+2026-11-02T07:16:59.9586319Z [24/84] [production] › e2e/console-recovery.spec.ts:13:1 › console recovery replaces a lost admin passkey on the existing account and enables member recovery
+2026-11-02T07:17:06.6874379Z [25/84] [production] › e2e/copy.spec.ts:140:1 › native Sheet copying waits for saved online content, keeps images, and edits an independent same-folder copy
+2026-11-02T07:17:13.2616329Z [26/84] [production] › e2e/copy.spec.ts:334:1 › a phone Doc viewer retains a copy after dismissing its busy native drawer and losing source access
+2026-11-02T07:17:21.0155440Z [27/84] [production] › e2e/dashboard-retrieval.spec.ts:7:1 › folder search preserves draft, scope, view and scroll across browser Back and explicit Space return
+2026-11-02T07:17:24.3240932Z [28/84] [production] › e2e/dashboard-retrieval.spec.ts:103:1 › invalid draft pauses refresh and ignores an old response without dropping filters or widening scope
+2026-11-02T07:17:25.7988839Z [29/84] [production] › e2e/dashboard-visual.spec.ts:13:3 › dashboard composed states light
+2026-11-02T07:17:29.1994227Z [30/84] [production] › e2e/dashboard-visual.spec.ts:13:3 › dashboard composed states dark
+2026-11-02T07:17:32.5829280Z [31/84] [production] › e2e/dashboard-visual.spec.ts:13:3 › dashboard composed states phone-light
+2026-11-02T07:17:35.9108559Z [32/84] [production] › e2e/dashboard-visual.spec.ts:13:3 › dashboard composed states phone-dark
+2026-11-02T07:17:39.2478372Z [33/84] [production] › e2e/dashboard.spec.ts:6:1 › signed-out pages redirect and APIs expose no workspace data
+2026-11-02T07:17:39.8099141Z [34/84] [production] › e2e/dashboard.spec.ts:26:1 › registers two devices, signs in with either, persists and revokes sessions
+2026-11-02T07:17:45.3926085Z [35/84] [production] › e2e/design-inventory.spec.ts:8:1 › capture account and unavailable guest screens for the design review
+2026-11-02T07:17:48.6544038Z [36/84] [production] › e2e/diagnostics.spec.ts:108:1 › Operator downloads real correlated diagnostics without document data and clears only a freshly confirmed generation
+2026-11-02T07:17:58.5671963Z [37/84] [production] › e2e/diagnostics.spec.ts:513:1 › diagnostics failures, cancelled downloads, pending clear navigation and expired Operator sessions stay honest
+2026-11-02T07:18:07.0983635Z [38/84] [production] › e2e/doc-formula-access.spec.ts:12:1 › Doc readers and host-only guests see literal formulas without receiving private source values
+2026-11-02T07:18:14.6476998Z [39/84] [production] › e2e/doc-formulas.spec.ts:14:1 › native Doc formulas render live cells, tables and cross-document totals without sharing source access
+2026-11-02T07:18:31.0909647Z [production] › e2e/doc-formulas.spec.ts:14:1 › native Doc formulas render live cells, tables and cross-document totals without sharing source access
+2026-11-02T07:18:31.0911214Z Formula phone overflow: {
+2026-11-02T07:18:31.0911910Z   viewport: 390,
+2026-11-02T07:18:31.0913623Z   document: 390,
+2026-11-02T07:18:31.0914201Z   overflow: [
+2026-11-02T07:18:31.0915188Z     {
+2026-11-02T07:18:31.0915489Z       tag: 'HEADER',
+2026-11-02T07:18:31.0917712Z       classes: 'univer-sticky univer-top-0 univer-z-10 univer-box-border univer-flex univer-cursor-default univer-items-center univer-justify-between univer-bg-gray-0 univer-p-4 univer-pb-2 univer-text-base univer-font-medium univer-text-gray-800 dark:!univer-bg-gray-900 dark:!univer-text-gray-0',
+2026-11-02T07:18:31.0919467Z       right: 447
+2026-11-02T07:18:31.0919833Z     },
+2026-11-02T07:18:31.0920240Z     {
+2026-11-02T07:18:31.0920580Z       tag: 'BUTTON',
+2026-11-02T07:18:31.0922602Z       classes: 'focus:univer-ring-primary-500/50 univer-flex univer-size-6 univer-cursor-pointer univer-appearance-none univer-items-center univer-justify-center univer-rounded-sm univer-border-none univer-bg-transparent univer-p-0 univer-text-gray-500 focus:univer-outline-none focus:univer-ring-2 dark:!univer-text-gray-300',
+2026-11-02T07:18:31.0925079Z       right: 431
+2026-11-02T07:18:31.0925480Z     },
+2026-11-02T07:18:31.0926088Z     { tag: 'svg', classes: {}, right: 425.65625 },
+2026-11-02T07:18:31.0926818Z     { tag: 'path', classes: {}, right: 423.41680908203125 },
+2026-11-02T07:18:31.0927513Z     {
+2026-11-02T07:18:31.0927919Z       tag: 'SECTION',
+2026-11-02T07:18:31.0928715Z       classes: 'univer-box-border univer-min-w-0 univer-cursor-default univer-px-4',
+2026-11-02T07:18:31.0929455Z       right: 447
+2026-11-02T07:18:31.0929861Z     }
+2026-11-02T07:18:31.0930299Z   ]
+2026-11-02T07:18:31.0930720Z }
+2026-11-02T07:18:31.0930903Z 
+2026-11-02T07:18:36.5118601Z Formula phone overflow: {
+2026-11-02T07:18:36.5119702Z   viewport: 390,
+2026-11-02T07:18:36.5121456Z   document: 390,
+2026-11-02T07:18:36.5122105Z   overflow: [
+2026-11-02T07:18:36.5122778Z     {
+2026-11-02T07:18:36.5123612Z       tag: 'HEADER',
+2026-11-02T07:18:36.5125466Z       classes: 'univer-sticky univer-top-0 univer-z-10 univer-box-border univer-flex univer-cursor-default univer-items-center univer-justify-between univer-bg-gray-0 univer-p-4 univer-pb-2 univer-text-base univer-font-medium univer-text-gray-800 dark:!univer-bg-gray-900 dark:!univer-text-gray-0',
+2026-11-02T07:18:36.5129489Z       right: 447
+2026-11-02T07:18:36.5130018Z     },
+2026-11-02T07:18:36.5130612Z     {
+2026-11-02T07:18:36.5131135Z       tag: 'BUTTON',
+2026-11-02T07:18:36.5133438Z       classes: 'focus:univer-ring-primary-500/50 univer-flex univer-size-6 univer-cursor-pointer univer-appearance-none univer-items-center univer-justify-center univer-rounded-sm univer-border-none univer-bg-transparent univer-p-0 univer-text-gray-500 focus:univer-outline-none focus:univer-ring-2 dark:!univer-text-gray-300',
+2026-11-02T07:18:36.5136464Z       right: 431
+2026-11-02T07:18:36.5137015Z     },
+2026-11-02T07:18:36.5138247Z     { tag: 'svg', classes: {}, right: 425.65625 },
+2026-11-02T07:18:36.5139038Z     { tag: 'path', classes: {}, right: 423.41680908203125 },
+2026-11-02T07:18:36.5139726Z     {
+2026-11-02T07:18:36.5140203Z       tag: 'SECTION',
+2026-11-02T07:18:36.5140962Z       classes: 'univer-box-border univer-min-w-0 univer-cursor-default univer-px-4',
+2026-11-02T07:18:36.5143199Z       right: 447
+2026-11-02T07:18:36.5143622Z     }
+2026-11-02T07:18:36.5144110Z   ]
+2026-11-02T07:18:36.5144480Z }
+2026-11-02T07:18:36.5144739Z 
+2026-11-02T07:18:50.7372364Z Formula phone overflow: {
+2026-11-02T07:18:50.7373572Z   viewport: 390,
+2026-11-02T07:18:50.7374466Z   document: 390,
+2026-11-02T07:18:50.7374905Z   overflow: [
+2026-11-02T07:18:50.7375392Z     {
+2026-11-02T07:18:50.7375905Z       tag: 'HEADER',
+2026-11-02T07:18:50.7377925Z       classes: 'univer-sticky univer-top-0 univer-z-10 univer-box-border univer-flex univer-cursor-default univer-items-center univer-justify-between univer-bg-gray-0 univer-p-4 univer-pb-2 univer-text-base univer-font-medium univer-text-gray-800 dark:!univer-bg-gray-900 dark:!univer-text-gray-0',
+2026-11-02T07:18:50.7379282Z       right: 447
+2026-11-02T07:18:50.7379563Z     },
+2026-11-02T07:18:50.7379912Z     {
+2026-11-02T07:18:50.7380272Z       tag: 'BUTTON',
+2026-11-02T07:18:50.7382277Z       classes: 'focus:univer-ring-primary-500/50 univer-flex univer-size-6 univer-cursor-pointer univer-appearance-none univer-items-center univer-justify-center univer-rounded-sm univer-border-none univer-bg-transparent univer-p-0 univer-text-gray-500 focus:univer-outline-none focus:univer-ring-2 dark:!univer-text-gray-300',
+2026-11-02T07:18:50.7383886Z       right: 431
+2026-11-02T07:18:50.7384168Z     },
+2026-11-02T07:18:50.7384601Z     { tag: 'svg', classes: {}, right: 425.65625 },
+2026-11-02T07:18:50.7385090Z     { tag: 'path', classes: {}, right: 423.41680908203125 },
+2026-11-02T07:18:50.7385482Z     {
+2026-11-02T07:18:50.7385760Z       tag: 'SECTION',
+2026-11-02T07:18:50.7386283Z       classes: 'univer-box-border univer-min-w-0 univer-cursor-default univer-px-4',
+2026-11-02T07:18:50.7386767Z       right: 447
+2026-11-02T07:18:50.7387081Z     }
+2026-11-02T07:18:50.7387460Z   ]
+2026-11-02T07:18:50.7387931Z }
+2026-11-02T07:18:50.7388102Z 
+2026-11-02T07:19:04.6245399Z [40/84] [production] › e2e/doc-formulas.spec.ts:594:1 › rich clipboard creates independent native Formula objects and plain text keeps the expression
+2026-11-02T07:19:10.1740963Z [41/84] [production] › e2e/doc-formulas.spec.ts:742:3 › native Formula busy retains edits and only an explicit retry inserts once
+2026-11-02T07:19:22.3653241Z [42/84] [production] › e2e/doc-formulas.spec.ts:742:3 › native Formula timeout retains edits and only an explicit retry inserts once
+2026-11-02T07:19:27.6587028Z [43/84] [production] › e2e/doc-formulas.spec.ts:742:3 › native Formula unavailable retains edits and only an explicit retry inserts once
+2026-11-02T07:19:33.1705883Z [44/84] [production] › e2e/doc-mobile.spec.ts:312:3 › phone Docs at saved 100% zoom keep readable layout, touch formatting and saved settings @phone-ordinary
+2026-11-02T07:19:40.4573616Z [45/84] [production] › e2e/doc-mobile.spec.ts:312:3 › phone Docs at saved 50% zoom keep readable layout, touch formatting and saved settings @phone-ordinary
+2026-11-02T07:19:47.6171736Z [46/84] [production] › e2e/doc-mobile.spec.ts:312:3 › phone Docs at saved 200% zoom keep readable layout, touch formatting and saved settings @phone-ordinary
+2026-11-02T07:19:54.7877532Z [47/84] [production] › e2e/doc-mobile.spec.ts:501:1 › phone Doc typing keeps the rendered caret above the emulated keyboard
+2026-11-02T07:19:54.7954139Z [48/84] [production] › e2e/doc-mobile.spec.ts:602:1 › phone Doc formulas preserve scalar values, all table rows and usable edit dialogs @phone-ordinary
+2026-11-02T07:19:59.6780048Z [49/84] [production] › e2e/doc-mobile.spec.ts:660:1 › phone guest Doc reader cannot write and loses its document when the link is revoked
+2026-11-02T07:20:03.9887510Z [50/84] [production] › e2e/doc-mobile.spec.ts:762:3 › a modern phone Doc handles a viewer upgrade without replacing its native canvas @phone-ordinary
+2026-11-02T07:20:07.4711387Z [51/84] [production] › e2e/doc-mobile.spec.ts:762:3 › a traditional phone Doc handles a viewer upgrade without replacing its native canvas @phone-ordinary
+2026-11-02T07:20:11.1374685Z [52/84] [production] › e2e/doc-mobile.spec.ts:882:3 › traditional phone Doc is locally read-only without revoking its owner grant @phone-ordinary
+2026-11-02T07:20:15.6700625Z [53/84] [production] › e2e/doc-mobile.spec.ts:882:3 › traditional phone Doc is locally read-only without revoking its guest-editor grant @phone-ordinary
+2026-11-02T07:20:19.3198960Z [54/84] [production] › e2e/doc-mobile.spec.ts:980:3 › a peer-protocol page-layout change preserves queued phone writing and the owner grant
+2026-11-02T07:20:19.3277364Z [55/84] [production] › e2e/doc-mobile.spec.ts:980:3 › a peer-protocol page-layout change preserves native phone composition and the owner grant
+2026-11-02T07:20:19.3385703Z [56/84] [production] › e2e/documents.spec.ts:8:1 › document UI preserves rich text and embedded images through reload and offline recovery
+2026-11-02T07:20:29.4374519Z [57/84] [production] › e2e/editor-theatre.spec.ts:44:1 › Space theatre fills the window and restores its own page navigation
+2026-11-02T07:20:40.2012506Z [58/84] [production] › e2e/editor-theatre.spec.ts:207:5 › sheet theatre preserves the live editor and selection in light
+2026-11-02T07:20:46.1653278Z [59/84] [production] › e2e/editor-theatre.spec.ts:207:5 › sheet theatre preserves the live editor and selection in dark
+2026-11-02T07:20:51.7095621Z [60/84] [production] › e2e/editor-theatre.spec.ts:207:5 › sheet theatre preserves the live editor and selection in phone
+2026-11-02T07:20:59.8135940Z [61/84] [production] › e2e/editor-theatre.spec.ts:502:3 › sheet guest theatre keeps viewer permissions and revocation boundaries
+2026-11-02T07:21:03.7354867Z [62/84] [production] › e2e/editor-theatre.spec.ts:207:5 › doc theatre preserves the live editor and selection in light
+2026-11-02T07:21:08.8080691Z [63/84] [production] › e2e/editor-theatre.spec.ts:207:5 › doc theatre preserves the live editor and selection in dark
+2026-11-02T07:21:13.9246346Z [64/84] [production] › e2e/editor-theatre.spec.ts:207:5 › doc theatre preserves the live editor and selection in phone
+2026-11-02T07:21:21.4044323Z [65/84] [production] › e2e/editor-theatre.spec.ts:502:3 › doc guest theatre keeps viewer permissions and revocation boundaries
+2026-11-02T07:21:27.5894733Z [66/84] [production] › e2e/entry-screens.spec.ts:29:1 › entry keeps cancellation, retry and help on one task without losing the pending request
+2026-11-02T07:21:29.8515077Z [67/84] [production] › e2e/entry-screens.spec.ts:132:1 › an unbound consent request survives Operator sign-out and permits only the everyday account grant
+2026-11-02T07:21:32.5447485Z [68/84] [production] › e2e/entry-screens.spec.ts:228:1 › viewed consent stays bound after account switching and requires a fresh assistant request
+2026-11-02T07:21:34.6378691Z [69/84] [production] › e2e/file-admin.spec.ts:9:1 › Owner delegates file administration on every outer type, administrators manage access and lose downgraded authority
+2026-11-02T07:21:49.3545816Z [70/84] [production] › e2e/folders.spec.ts:5:1 › builds and renames a nested tree, opens all document types, moves safely and persists
+2026-11-02T07:21:57.1409792Z [71/84] [production] › e2e/guest-link-expiry.spec.ts:10:1 › owner guest-link inventory changes expiry without rotating and fences stale profile actions
+2026-11-02T07:21:58.5983604Z [72/84] [production] › e2e/guest-link-expiry.spec.ts:167:3 › expiry hides clean and dirty standalone guest doc and refuses writes, images and previews
+2026-11-02T07:22:04.4518648Z [73/84] [production] › e2e/guest-link-expiry.spec.ts:167:3 › expiry hides clean and dirty standalone guest sheet and refuses writes, images and previews
+2026-11-02T07:22:11.3230100Z [74/84] [production] › e2e/guest-links.spec.ts:9:3 › sheet guest links isolate visitors, preserve tab identities and revoke open editors
+2026-11-02T07:22:25.2181833Z [75/84] [production] › e2e/guest-links.spec.ts:9:3 › doc guest links isolate visitors, preserve tab identities and revoke open editors
+2026-11-02T07:22:41.4599596Z [76/84] [production] › e2e/guest-states.spec.ts:26:1 › generic guest states retain 44px appearance targets at 620px with a fine pointer
+2026-11-02T07:22:42.2319431Z [77/84] [production] › e2e/guest-states.spec.ts:48:1 › guest launch distinguishes offline, retry and authoritative denial without private metadata
+2026-11-02T07:22:46.0285839Z [78/84] [production] › e2e/guest-states.spec.ts:102:1 › a guest Space with an unreachable tree exposes no root identity or account controls
+2026-11-02T07:22:49.9436254Z [79/84] [production] › e2e/guest-states.spec.ts:141:1 › unsupported guest browsers retain the generic guard and never exchange a capability
+2026-11-02T07:22:50.6276142Z [80/84] [production] › e2e/guest-states.spec.ts:165:1 › pending guest bootstrap shows one generic loading state
+2026-11-02T07:22:52.5485680Z [81/84] [production] › e2e/hidden-shares.spec.ts:26:1 › a collaborator hides and restores a Doc and Space without changing the owner’s grants
+2026-11-02T07:22:55.6401797Z [82/84] [production] › e2e/history-browser.spec.ts:7:1 › touch history timeline and calendar preview retained choices without changing live content
+2026-11-02T07:23:08.5104666Z [83/84] [production] › e2e/history-space.spec.ts:17:3 › Space doc history restores images and preserves the exact child and generation boundary
+2026-11-02T07:23:20.9943754Z [84/84] [production] › e2e/history-space.spec.ts:17:3 › Space sheet history restores images and preserves the exact child and generation boundary
+2026-11-02T07:23:32.4413800Z   3 skipped
+2026-11-02T07:23:32.4414246Z   81 passed (10.5m)
+2026-11-02T07:23:32.4884698Z ##[group]Run echo "name=theme-screenshots-$PROJECT${SHARD:+-${SHARD%/*}}" >> "$GITHUB_OUTPUT"
+2026-11-02T07:23:32.4885395Z [36;1mecho "name=theme-screenshots-$PROJECT${SHARD:+-${SHARD%/*}}" >> "$GITHUB_OUTPUT"[0m
+2026-11-02T07:23:32.4899780Z shell: /usr/bin/bash -e {0}
+2026-11-02T07:23:32.4900135Z env:
+2026-11-02T07:23:32.4900488Z   PROJECT: production
+2026-11-02T07:23:32.4900797Z   SHARD: 1/2
+2026-11-02T07:23:32.4901192Z ##[endgroup]
+2026-11-02T07:23:32.5031336Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-02T07:23:32.5031796Z with:
+2026-11-02T07:23:32.5032153Z   name: theme-screenshots-production-1
+2026-11-02T07:23:32.5034621Z   path: test-results/theme-screenshots/*.png
+test-results/**/test-failed-*.png
+test-results/**/*-restore-preview.png
+test-results/**/*-export.pdf
+test-results/**/*-export-opened.png
+test-results/**/*-permission-notices.json
+test-results/**/*-sync-presence.png
+test-results/**/spn-059-sheet-menu-*.png
+test-results/**/spn-053-offline-*.png
+test-results/**/spn-055-*.png
+test-results/**/spn-055-*.json
+test-results/**/sync-diagnostics.json
+test-results/**/phone-doc-caret-events*.json
+test-results/**/phone-doc-selection-evidence*.json
+test-results/**/maintenance-views/*.png
+test-results/**/spn-059-*-soak.json
+test-results/**/error-context.md
+test-results/**/trace.zip
+playwright-report/*.json
+
+2026-11-02T07:23:32.5036961Z   retention-days: 7
+2026-11-02T07:23:32.5037377Z   if-no-files-found: warn
+2026-11-02T07:23:32.5037730Z   compression-level: 6
+2026-11-02T07:23:32.5038035Z   overwrite: false
+2026-11-02T07:23:32.5038382Z   include-hidden-files: false
+2026-11-02T07:23:32.5038736Z   archive: true
+2026-11-02T07:23:32.5039018Z ##[endgroup]
+2026-11-02T07:23:32.7875200Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-11-02T07:23:32.7876718Z The least common ancestor is /home/runner/work/spinel/spinel. This will be the root directory of the artifact
+2026-11-02T07:23:32.7877610Z With the provided path, there will be 502 files uploaded
+2026-11-02T07:23:32.7878282Z Artifact name is valid!
+2026-11-02T07:23:32.7878705Z Root directory input is valid!
+2026-11-02T07:23:33.0894391Z Uploading artifact: theme-screenshots-production-1.zip
+2026-11-02T07:23:33.0944589Z Beginning upload of artifact content to blob storage
+2026-11-02T07:23:34.1934322Z Uploaded bytes 8388608
+2026-11-02T07:23:34.5231158Z Uploaded bytes 16777216
+2026-11-02T07:23:34.7529902Z Uploaded bytes 25165824
+2026-11-02T07:23:34.9664015Z Uploaded bytes 33554432
+2026-11-02T07:23:35.0614733Z Uploaded bytes 36069640
+2026-11-02T07:23:35.1185711Z Finished uploading artifact content to blob storage!
+2026-11-02T07:23:35.1193486Z SHA256 digest of uploaded artifact is 8197d8eb5f1b5f45502ce7708d7ef83ca0ca62094e0ecb126f715defe7ec1468
+2026-11-02T07:23:35.1195287Z Finalizing artifact upload
+2026-11-02T07:23:35.6764835Z Artifact theme-screenshots-production-1 successfully finalized. Artifact ID 13123836219
+2026-11-02T07:23:35.6765889Z Artifact theme-screenshots-production-1 has been successfully uploaded! Final size is 36069640 bytes. Artifact ID is 13123836219
+2026-11-02T07:23:35.6770412Z Artifact download URL: https://github.com/mxbaylee/spinel/actions/runs/41403554716/artifacts/13123836219
+2026-11-02T07:23:35.6988092Z Post job cleanup.
+2026-11-02T07:23:35.8181756Z Post job cleanup.
+2026-11-02T07:23:35.9065121Z [command]/usr/bin/git version
+2026-11-02T07:23:35.9108554Z git version 2.56.0
+2026-11-02T07:23:35.9141059Z Temporarily overriding HOME='/home/runner/work/_temp/87a27918-6a0b-44f5-ad33-e00edc1c01bb' before making global git config changes
+2026-11-02T07:23:35.9142324Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-02T07:23:35.9146549Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-02T07:23:35.9179659Z Removing SSH command configuration
+2026-11-02T07:23:35.9186572Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-02T07:23:35.9220846Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-02T07:23:35.9427841Z Removing HTTP extra header
+2026-11-02T07:23:35.9434746Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-02T07:23:35.9468843Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-02T07:23:35.9683470Z Removing includeIf entries pointing to credentials config files
+2026-11-02T07:23:35.9689865Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-02T07:23:35.9722645Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-02T07:23:36.0170586Z Cleaning up orphan processes
+
