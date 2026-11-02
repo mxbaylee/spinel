@@ -1,54 +1,53 @@
 # SPN-065 visual evidence
 
-These are actual production-editor captures, not mockups. The following capture
-identity is superseded by the uncertain-result repair checkpoint below. Native captures refreshed
-2026-11-01 on source `0c0b114abc6e74ac1ed1e1765f3f9200b2bc5af8`, which incorporates
-main `0bdbbcb5ca23b84e172e41a11bd0cf555e911130`. The capture/test
-harness is `e2e/copy.spec.ts`, blob `866da4919f94f5d7e5029854e228286e1e16e927`.
+## Current native application captures
 
-The refreshed production run passed both copy journeys in 11.7 seconds under the
-2 GiB process-tree watchdog (12.316 s elapsed), with peak RSS 1,618.5 MiB. Chromium phone emulation
-uses real touch input at 390 × 844; it is not a physical-device result. The desktop
-viewport is 1280 × 900. These local captures use the production build on the
-existing isolated production test port 3101. Full CI/check/review identities and finding dispositions are maintained
-in [PR #221](https://github.com/mxbaylee/spinel/pull/221).
+All nine `native-*` PNGs are actual production-editor captures from source
+`fd89edb6647c66fc546c76996159d977f331f9ca`, incorporating main
+`0bdbbcb5ca23b84e172e41a11bd0cf555e911130`. Harness: `e2e/copy.spec.ts`, blob
+`80ffc3940c41513d23323efa2c8d7279c714b0a1`. Captured 2026-11-01 with the existing
+isolated production server on port 3101. Both real copy journeys passed in
+14.7 s; watchdog elapsed 15.247 s, peak process-tree RSS 1,691.6 MiB, no abort.
 
-| Files | Theme / viewport | State |
-| --- | --- | --- |
-| `native-sheet-dialog-desktop-light.png`, `native-sheet-dialog-desktop-dark.png` | Light/dark, 1280 × 900 | Owned Sheet, native copy dialog, default current owned folder, saved content and independent native image fixture. |
-| `native-doc-viewer-menu-phone-light.png` | Light, 390 × 844 | Shared Doc viewer, Make a copy in the native editor More menu; no Edit action. |
-| `native-doc-viewer-dialog-phone-light.png`, `native-doc-viewer-dialog-phone-dark.png` | Light/dark, 390 × 844 | Shared Doc viewer, native bottom drawer, default My files destination and private ownership explanation. |
-| `native-doc-copy-result-phone-light.png`, `native-doc-copy-result-phone-dark.png` | Light/dark, 390 × 844 | Reopened native drawer after dismissing an in-flight copy: retained Created/Open copy result, exactly one POST. |
+Desktop is 1280 × 900. Phone is Chromium touch emulation at 390 × 844, not a
+physical-device claim. The file suffix identifies light or dark theme:
 
-The action/dialog and retained result are captured before continuing the same
-asserted real-editor journeys. Both independent nonimplementing reviewers inspect
-the selected images; the final PR records their reviewed SHA and approval.
-Visual assessment is **agent review only**.
+- `native-sheet-dialog-desktop-*`: owned Sheet, native dialog, current owned folder.
+- `native-doc-viewer-menu-phone-light`: shared Doc viewer's native More action.
+- `native-doc-viewer-dialog-phone-*`: shared viewer, private My files destination.
+- `native-doc-copy-result-phone-*`: confirmed result retained after busy dismissal.
+- `native-doc-copy-unknown-phone-*`: actual server commit followed by dropped
+  response; unknown result retained after reopening, one POST and one stored copy.
 
-## Production component states
+## Current production component captures
 
-The selected `dashboard-*` and state images come from the actual production
-components in Storybook. Source head:
-`75106818b45a034529694dd7d6ca66c2a9b9efed`; CI merge checkout:
-`cc14a82675612e50bc3a6da5e56559844c73f6dc`. Build:
-[run 41381635491](https://github.com/mxbaylee/spinel/actions/runs/41381635491),
-artifact `13113815506`, verified ZIP SHA-256
-`c3aeb2c1ad382554cf5ce09188979d12f734b1cfd1fea98420be48bb9a404970`.
+Selected production CopyFile/Dashboard components use Storybook source
+`fd89edb6647c66fc546c76996159d977f331f9ca`, tested merge
+`ab28c6aa304a6a3bf4f7e9a6a523d63e52dd78c4`, from
+[run 41384065810](https://github.com/mxbaylee/spinel/actions/runs/41384065810).
+Artifact `13114497041` was downloaded and ZIP SHA-256 verified as
+`6ec2ba3f6933ebe14a5a155579736305df18fce22534d27e7356c3cab4997f4c`.
+The hosted artifact expires 2026-11-09; the selected PNGs and safe manifest here
+are durable evidence. These captures use deterministic API fixtures.
 
-The local guarded review of that CI build passed **60/60 states**: all eleven
-`CopyFile` stories plus the real `Dashboard/MakeCopy` journey, in desktop light/dark
-(1280 × 900), phone light/dark (390 × 900), and tablet (768 × 900). Captures are full
-page; the dashboard document can exceed the viewport height. The refreshed review
-used 17,453 ms watchdog elapsed and peak process-tree RSS 1,031.3 MiB. `production-story-review.json`
-preserves all checked state IDs, selected durable-file mappings, and zero failures.
-The complete screenshot archive is supplementary CI evidence with limited retention.
+All **75/75 states** passed: 14 CopyFile stories and Dashboard/MakeCopy, each in
+desktop light/dark (1280 × 900), phone light/dark (390 × 900), and tablet
+(768 × 900). Full-page captures can exceed viewport height. Watchdog elapsed
+21.505 s, peak process-tree RSS 1,058.5 MiB. The manifest records review duration,
+all IDs, zero failures, source identity and the exact selected-file mappings.
 
-Selected images cover the dashboard dialog in both themes and phone widths;
-shared-folder ownership/creator disclosure; loading; waiting for save; offline;
-in-flight copying; changed-source retry; source access lost; and a retained created
-copy that cannot be opened until reconnecting. The native completion captures above
-cover the successful retained result itself. No alternate proposed UI or SPN-065
-Redesign story remains.
+Sixteen selected component images cover dashboard light/dark/phone, shared-folder
+ownership, loading, waiting for save, offline, creating, source conflict, access
+lost, retained result while offline, and unknown outcome in desktop/phone light
+and dark. Proxy failure, missing receipt and reopening uncertainty share the same
+reviewed alert/Close state; all three distinct story interactions passed. There
+is no alternate proposal or SPN-065 Redesign story remaining.
+
+Independent nonimplementing reviewers inspect actual PNGs against the playbook
+and all personas. The final exact reviewed/tested/merged identities, grades,
+finding dispositions and visual approval are maintained in
+[PR #221](https://github.com/mxbaylee/spinel/pull/221). **Agent review only.**
+Earlier captures remain in Git history with their original source provenance.
 
 ## Restore-test keyboard proof
 
@@ -80,14 +79,3 @@ The one planned full Sheet restore attempt was resource-aborted at
 before termination. It is not an acceptance pass; full multi-editor validation
 runs in CI. An earlier anchored CLI filter selected no test and was corrected
 before this scenario attempt. Neither condition caused a product-assertion retry.
-
-
-## Uncertain-result repair capture checkpoint
-
-2026-11-01: all nine native captures were regenerated from the repaired production
-build, including the new light/dark phone `native-doc-copy-unknown-phone` images.
-The full two-journey run passed in 14.7 s (15.247 s watchdog, 1,691.6 MiB peak).
-Viewport/theme contracts remain as above. Exact committed source and refreshed
-component evidence will be recorded before final review; the older component
-images currently describe the pre-repair source and are not approval for the new
-uncertain state.

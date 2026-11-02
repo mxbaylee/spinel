@@ -1,6 +1,6 @@
 {
-  "reviewedAt": "2026-11-02T03:13:01.173Z",
-  "durationMs": 17077,
+  "reviewedAt": "2026-11-02T03:40:44.897Z",
+  "durationMs": 21130,
   "captureScreenshots": true,
   "fixtureTime": "2026-10-20T16:00:00Z",
   "viewport": "all",
@@ -24,6 +24,9 @@
     "dashboard-copyfile--access-lost",
     "dashboard-copyfile--completed-after-dismissal",
     "dashboard-copyfile--completed-while-offline",
+    "dashboard-copyfile--outcome-unknown",
+    "dashboard-copyfile--unreadable-receipt",
+    "dashboard-copyfile--unknown-after-dismissal",
     "dashboard-dashboard--make-copy"
   ],
   "checked": [
@@ -72,6 +75,18 @@
       "variant": "light"
     },
     {
+      "id": "dashboard-copyfile--outcome-unknown",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-copyfile--unreadable-receipt",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-copyfile--unknown-after-dismissal",
+      "variant": "light"
+    },
+    {
       "id": "dashboard-dashboard--make-copy",
       "variant": "light"
     },
@@ -120,6 +135,18 @@
       "variant": "dark"
     },
     {
+      "id": "dashboard-copyfile--outcome-unknown",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-copyfile--unreadable-receipt",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-copyfile--unknown-after-dismissal",
+      "variant": "dark"
+    },
+    {
       "id": "dashboard-dashboard--make-copy",
       "variant": "dark"
     },
@@ -168,6 +195,18 @@
       "variant": "phone"
     },
     {
+      "id": "dashboard-copyfile--outcome-unknown",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-copyfile--unreadable-receipt",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-copyfile--unknown-after-dismissal",
+      "variant": "phone"
+    },
+    {
       "id": "dashboard-dashboard--make-copy",
       "variant": "phone"
     },
@@ -216,6 +255,18 @@
       "variant": "phone-dark"
     },
     {
+      "id": "dashboard-copyfile--outcome-unknown",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-copyfile--unreadable-receipt",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-copyfile--unknown-after-dismissal",
+      "variant": "phone-dark"
+    },
+    {
       "id": "dashboard-dashboard--make-copy",
       "variant": "phone-dark"
     },
@@ -261,6 +312,18 @@
     },
     {
       "id": "dashboard-copyfile--completed-while-offline",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-copyfile--outcome-unknown",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-copyfile--unreadable-receipt",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-copyfile--unknown-after-dismissal",
       "variant": "tablet"
     },
     {
@@ -336,6 +399,24 @@
       "title": "Current production/Dashboard/Make a copy / Completed While Offline"
     },
     {
+      "id": "dashboard-copyfile--outcome-unknown",
+      "variant": "light",
+      "filename": "dashboard-copyfile--outcome-unknown-light.png",
+      "title": "Current production/Dashboard/Make a copy / Outcome Unknown"
+    },
+    {
+      "id": "dashboard-copyfile--unreadable-receipt",
+      "variant": "light",
+      "filename": "dashboard-copyfile--unreadable-receipt-light.png",
+      "title": "Current production/Dashboard/Make a copy / Unreadable Receipt"
+    },
+    {
+      "id": "dashboard-copyfile--unknown-after-dismissal",
+      "variant": "light",
+      "filename": "dashboard-copyfile--unknown-after-dismissal-light.png",
+      "title": "Current production/Dashboard/Make a copy / Unknown After Dismissal"
+    },
+    {
       "id": "dashboard-dashboard--make-copy",
       "variant": "light",
       "filename": "dashboard-dashboard--make-copy-light.png",
@@ -406,6 +487,24 @@
       "variant": "dark",
       "filename": "dashboard-copyfile--completed-while-offline-dark.png",
       "title": "Current production/Dashboard/Make a copy / Completed While Offline"
+    },
+    {
+      "id": "dashboard-copyfile--outcome-unknown",
+      "variant": "dark",
+      "filename": "dashboard-copyfile--outcome-unknown-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Outcome Unknown"
+    },
+    {
+      "id": "dashboard-copyfile--unreadable-receipt",
+      "variant": "dark",
+      "filename": "dashboard-copyfile--unreadable-receipt-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Unreadable Receipt"
+    },
+    {
+      "id": "dashboard-copyfile--unknown-after-dismissal",
+      "variant": "dark",
+      "filename": "dashboard-copyfile--unknown-after-dismissal-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Unknown After Dismissal"
     },
     {
       "id": "dashboard-dashboard--make-copy",
@@ -480,6 +579,24 @@
       "title": "Current production/Dashboard/Make a copy / Completed While Offline"
     },
     {
+      "id": "dashboard-copyfile--outcome-unknown",
+      "variant": "phone",
+      "filename": "dashboard-copyfile--outcome-unknown-phone.png",
+      "title": "Current production/Dashboard/Make a copy / Outcome Unknown"
+    },
+    {
+      "id": "dashboard-copyfile--unreadable-receipt",
+      "variant": "phone",
+      "filename": "dashboard-copyfile--unreadable-receipt-phone.png",
+      "title": "Current production/Dashboard/Make a copy / Unreadable Receipt"
+    },
+    {
+      "id": "dashboard-copyfile--unknown-after-dismissal",
+      "variant": "phone",
+      "filename": "dashboard-copyfile--unknown-after-dismissal-phone.png",
+      "title": "Current production/Dashboard/Make a copy / Unknown After Dismissal"
+    },
+    {
       "id": "dashboard-dashboard--make-copy",
       "variant": "phone",
       "filename": "dashboard-dashboard--make-copy-phone.png",
@@ -550,6 +667,24 @@
       "variant": "phone-dark",
       "filename": "dashboard-copyfile--completed-while-offline-phone-dark.png",
       "title": "Current production/Dashboard/Make a copy / Completed While Offline"
+    },
+    {
+      "id": "dashboard-copyfile--outcome-unknown",
+      "variant": "phone-dark",
+      "filename": "dashboard-copyfile--outcome-unknown-phone-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Outcome Unknown"
+    },
+    {
+      "id": "dashboard-copyfile--unreadable-receipt",
+      "variant": "phone-dark",
+      "filename": "dashboard-copyfile--unreadable-receipt-phone-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Unreadable Receipt"
+    },
+    {
+      "id": "dashboard-copyfile--unknown-after-dismissal",
+      "variant": "phone-dark",
+      "filename": "dashboard-copyfile--unknown-after-dismissal-phone-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Unknown After Dismissal"
     },
     {
       "id": "dashboard-dashboard--make-copy",
@@ -624,6 +759,24 @@
       "title": "Current production/Dashboard/Make a copy / Completed While Offline"
     },
     {
+      "id": "dashboard-copyfile--outcome-unknown",
+      "variant": "tablet",
+      "filename": "dashboard-copyfile--outcome-unknown-tablet.png",
+      "title": "Current production/Dashboard/Make a copy / Outcome Unknown"
+    },
+    {
+      "id": "dashboard-copyfile--unreadable-receipt",
+      "variant": "tablet",
+      "filename": "dashboard-copyfile--unreadable-receipt-tablet.png",
+      "title": "Current production/Dashboard/Make a copy / Unreadable Receipt"
+    },
+    {
+      "id": "dashboard-copyfile--unknown-after-dismissal",
+      "variant": "tablet",
+      "filename": "dashboard-copyfile--unknown-after-dismissal-tablet.png",
+      "title": "Current production/Dashboard/Make a copy / Unknown After Dismissal"
+    },
+    {
       "id": "dashboard-dashboard--make-copy",
       "variant": "tablet",
       "filename": "dashboard-dashboard--make-copy-tablet.png",
@@ -633,13 +786,13 @@
   "verifications": [],
   "failures": [],
   "source": {
-    "head": "75106818b45a034529694dd7d6ca66c2a9b9efed",
-    "checkedOutSha": "cc14a82675612e50bc3a6da5e56559844c73f6dc",
-    "workflowUrl": "https://github.com/mxbaylee/spinel/actions/runs/41381635491",
-    "artifactId": 13113815506,
-    "artifactSha256": "c3aeb2c1ad382554cf5ce09188979d12f734b1cfd1fea98420be48bb9a404970",
-    "peakRssMiB": 1031.3,
-    "watchdogElapsedMs": 17453
+    "head": "fd89edb6647c66fc546c76996159d977f331f9ca",
+    "checkedOutSha": "ab28c6aa304a6a3bf4f7e9a6a523d63e52dd78c4",
+    "workflowUrl": "https://github.com/mxbaylee/spinel/actions/runs/41384065810",
+    "artifactId": 13114497041,
+    "artifactSha256": "6ec2ba3f6933ebe14a5a155579736305df18fce22534d27e7356c3cab4997f4c",
+    "peakRssMiB": 1058.5,
+    "watchdogElapsedMs": 21505
   },
   "durableCaptures": [
     {
@@ -689,6 +842,22 @@
     {
       "original": "dashboard-copyfile--completed-while-offline-phone-dark.png",
       "file": "completed-while-offline-phone-dark.png"
+    },
+    {
+      "original": "dashboard-copyfile--outcome-unknown-light.png",
+      "file": "outcome-unknown-desktop-light.png"
+    },
+    {
+      "original": "dashboard-copyfile--outcome-unknown-dark.png",
+      "file": "outcome-unknown-desktop-dark.png"
+    },
+    {
+      "original": "dashboard-copyfile--outcome-unknown-phone.png",
+      "file": "outcome-unknown-phone-light.png"
+    },
+    {
+      "original": "dashboard-copyfile--outcome-unknown-phone-dark.png",
+      "file": "outcome-unknown-phone-dark.png"
     }
   ]
 }
