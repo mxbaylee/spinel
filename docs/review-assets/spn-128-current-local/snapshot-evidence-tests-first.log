@@ -1,0 +1,13 @@
+✔ fixture log evidence retains fixed failure signals without cookies or content (0.902833ms)
+✔ log tails and memory counters have fixed bounds and content-free fields (0.208917ms)
+✔ journal evidence excludes authority and treats process identity as historical selection (0.19ms)
+✔ status observation retains only the HTTP status and recognized phase (12.797125ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 81.241625
+WATCHDOG: exit=0, signal=null, elapsed=118ms, peak=0.0MiB

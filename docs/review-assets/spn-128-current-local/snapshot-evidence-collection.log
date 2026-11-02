@@ -1,0 +1,5 @@
+Listing tests:
+  [supervised-restore] › supervised-restore.spec.ts:263:1 › a catalog restore survives double-clicks, cancel and a lost reply, and fences old clients
+  [supervised-restore] › supervised-restore.spec.ts:567:1 › an admitted upload outlasts its passkey check and can still be cancelled
+Total: 2 tests in 1 file
+WATCHDOG: exit=0, signal=null, elapsed=1197ms, peak=422.8MiB
