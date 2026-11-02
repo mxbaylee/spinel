@@ -10,6 +10,7 @@ import {
   assertCurrentSource,
   currentPullRequest,
   readFullValidationRequirement,
+  type FullValidationRequirement,
   type PrReader,
 } from './pr-state.ts';
 
@@ -28,6 +29,7 @@ export async function validatePrPolicy(options: {
   timeoutMs?: number;
 }) {
   const { client, event, tested, validateTitle } = options;
+  const now = options.now ?? Date.now;
   const expected = parsePullRequestEvent(event, client.repository);
   expected.tested = tested;
   const first = await currentPullRequest(client, expected.number);
@@ -36,10 +38,21 @@ export async function validatePrPolicy(options: {
   const editedFull = object(event) && event.action === 'edited' && !exactTextEdit(event);
   const labelFull = object(event) && object(event.label) && event.label.name === REVALIDATE_LABEL;
   let requiredFull = editedFull || labelFull || first.labels.includes(REVALIDATE_LABEL);
-  let history = requiredFull
-    ? { state: 'full' as const, reason: 'This event or current label requires full validation.' }
-    : await readFullValidationRequirement(client, first);
+  let history = await readFullValidationRequirement(client, first, now);
   requiredFull ||= history.state === 'full';
+  let fullAfter = history.state === 'full' ? history.after : null;
+  let fullReason = history.reason;
+  const observeHistory = (next: FullValidationRequirement) => {
+    history = next;
+    if (next.state === 'full') {
+      requiredFull = true;
+      fullReason = next.reason;
+      if (next.after !== null) fullAfter = Math.max(fullAfter ?? 0, next.after);
+    }
+  };
+  const unsettledHistory = () =>
+    history.pending ||
+    (requiredFull && (fullAfter === null || (history.state === 'full' && history.after === null)));
   const workflow = await client.get('actions/workflows/ci.yml');
   if (
     !object(workflow) ||
@@ -47,7 +60,6 @@ export async function validatePrPolicy(options: {
     workflow.path !== '.github/workflows/ci.yml'
   )
     throw new Error('The code-validation workflow identity is unavailable.');
-  const now = options.now ?? Date.now;
   const pause = options.pause ?? setTimeout;
   // The longest code worker has a 60-minute limit. Allow aggregate jobs and
   // ordinary queueing too; timeout still fails visibly rather than inventing
@@ -64,17 +76,15 @@ export async function validatePrPolicy(options: {
       throw new Error('PR text changed during validation; the newer policy run owns the result.');
     if (!requiredFull && current.labels.includes(REVALIDATE_LABEL)) {
       requiredFull = true;
-      history = { state: 'full', reason: 'The PR now has a full-revalidation label.' };
+      fullReason = 'The PR now has a full-revalidation label.';
     }
     if (current.identity.tested !== tested)
       throw new Error('Current PR merge identity differs from the immutable event checkout.');
     // Completed full history is monotonic for this invocation. Clear history
     // is read again before admission, not on every poll of slow code workers.
-    if (history.state === 'pending' && !requiredFull) {
-      history = await readFullValidationRequirement(client, current);
-      requiredFull ||= history.state === 'full';
-    }
-    if (history.state === 'pending' && !requiredFull) {
+    if (unsettledHistory())
+      observeHistory(await readFullValidationRequirement(client, current, now));
+    if (unsettledHistory()) {
       reason = history.reason;
     } else {
       const runs = await client.list(
@@ -85,6 +95,7 @@ export async function validatePrPolicy(options: {
         identity: expected,
         workflowId: workflow.id as number,
         requiredFull,
+        fullAfter,
       });
       if (selected.status === 'invalid') throw new Error(selected.reason);
       reason = selected.status === 'pending' ? selected.reason : '';
@@ -105,13 +116,19 @@ export async function validatePrPolicy(options: {
             final.identity.body !== first.identity.body
           )
             throw new Error('PR changed before policy validation completed.');
-          if (!requiredFull) {
-            history = await readFullValidationRequirement(client, final);
-            requiredFull = history.state === 'full';
-            if (requiredFull) admitted = admitCodeChecks(run, jobs, checks, true);
+          observeHistory(await readFullValidationRequirement(client, final, now));
+          if (!unsettledHistory()) {
+            const fresh = selectCodeRun(runs, {
+              identity: expected,
+              workflowId: workflow.id as number,
+              requiredFull,
+              fullAfter,
+            });
+            if (fresh.status === 'invalid') throw new Error(fresh.reason);
+            admitted = admitCodeChecks(run, jobs, checks, requiredFull);
           }
           if (admitted.status === 'invalid') throw new Error(admitted.reason);
-          if (history.state !== 'pending' && admitted.status === 'ready')
+          if (!unsettledHistory() && admitted.status === 'ready')
             return {
               run: run.id,
               attempt: run.attempt,
@@ -124,14 +141,15 @@ export async function validatePrPolicy(options: {
                 tested,
               },
               requiredFull,
-              fullReason: requiredFull ? history.reason : null,
+              fullReason: requiredFull ? fullReason : null,
+              fullAfter:
+                requiredFull && fullAfter !== null ? new Date(fullAfter).toISOString() : null,
             };
-          reason =
-            history.state === 'pending'
-              ? history.reason
-              : admitted.status === 'pending'
-                ? admitted.reason
-                : reason;
+          reason = unsettledHistory()
+            ? history.reason
+            : admitted.status === 'pending'
+              ? admitted.reason
+              : reason;
         } else {
           reason = admitted.reason;
         }

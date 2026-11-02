@@ -41,8 +41,8 @@ function scenario() {
     display_title: formatCodeRunName({ number: 129, base, head, tested, full: false }),
     check_suite_id: 200,
     run_attempt: 1,
-    created_at: '2026-11-01T12:00:00Z',
-    run_started_at: '2026-11-01T12:00:00Z',
+    created_at: '2026-11-01T12:01:00Z',
+    run_started_at: '2026-11-01T12:01:00Z',
     updated_at: '2026-11-01T12:01:00Z',
     status: 'in_progress',
     conclusion: null as string | null,
@@ -169,6 +169,7 @@ function scenario() {
     event,
     tested,
     validateTitle: (_identity: PullRequestIdentity) => {},
+    now: () => Date.parse(pr.created_at) + 60_000,
     timeoutMs: 0,
   };
   const alignCodeWithCurrent = () => {
@@ -286,13 +287,16 @@ test('policy fails closed on source drift, late text, missing gates and API fail
   denied.client.list = async () => {
     throw new Error('403');
   };
-  await assert.rejects(validatePrPolicy(denied.options), /403/);
+  await assert.rejects(
+    validatePrPolicy(denied.options),
+    /Could not read complete PR timeline history/,
+  );
 });
 
 test('pending admission uses a bounded observable retry and validates the final state', async () => {
   const s = scenario();
   const last = s.jobs.pop()!;
-  let now = 0;
+  let now = Date.parse(s.pr.created_at) + 60_000;
   let pauses = 0;
   const result = await validatePrPolicy({
     ...s.options,
@@ -316,7 +320,7 @@ test('policy admission can outlast a sixty-minute worker and ordinary queueing',
   const result = await validatePrPolicy({
     ...s.options,
     timeoutMs: undefined,
-    now: () => elapsed,
+    now: () => Date.parse(s.pr.created_at) + 60_000 + elapsed,
     pause: async () => {
       // Simulate a delayed resume after a long legitimate worker plus queueing.
       elapsed = 66 * 60_000;
@@ -421,18 +425,40 @@ test('removing the full-revalidation label before a code push cannot narrow vali
   assert.equal((await validatePrPolicy(s.options)).requiredFull, true);
 });
 
+test('an ambiguous edit with no router cannot borrow a prior full pass or its later retry', async () => {
+  const s = scenario();
+  s.fullCoverage();
+  s.event.changes = {};
+  s.policyRun.created_at = '2026-11-01T12:02:00Z';
+  s.policyClassifier.steps = [
+    { name: 'Edit classification: full', status: 'completed', conclusion: 'success' },
+  ];
+  s.options.now = () => Date.parse('2026-11-01T12:04:00Z');
+  assert.deepEqual(await routePrEdit(s.event, s.client), { route: 'full', number: 129 });
+  await assert.rejects(validatePrPolicy(s.options), /new eligible CI run/);
+  s.run.run_attempt = 2;
+  s.run.run_started_at = s.run.updated_at = '2026-11-01T12:03:00Z';
+  await assert.rejects(validatePrPolicy(s.options), /new eligible CI run/);
+  s.event.changes = { title: { from: 'Earlier title' } };
+  await assert.rejects(validatePrPolicy(s.options), /new eligible CI run/);
+  assert.deepEqual(s.mutations, []);
+});
+
 test('rapid text supersession waits for independent classification without routing code', async () => {
   const s = scenario();
   s.policyRun.status = 'completed';
   s.policyRun.conclusion = 'cancelled';
   s.policyClassifier.status = 'in_progress';
   s.policyClassifier.conclusion = null;
-  s.policyClassifier.steps = [];
+  s.policyClassifier.steps = [
+    { name: 'Edit classification: text', status: 'pending', conclusion: null },
+    { name: 'Edit classification: full', status: 'pending', conclusion: null },
+  ];
   assert.deepEqual(await routePrEdit(s.event, s.client, s.writer), {
     route: 'policy',
     number: 129,
   });
-  let now = 0;
+  let now = Date.parse(s.pr.created_at) + 60_000;
   let pauses = 0;
   const result = await validatePrPolicy({
     ...s.options,

@@ -19,11 +19,12 @@ export { documentationOnly } from './plan.ts';
 export async function pullRequestFullReason(
   event: unknown,
   client: PrReader,
+  now: () => number = Date.now,
 ): Promise<string | undefined> {
   const expected = parsePullRequestEvent(event, client.repository);
   const current = await currentPullRequest(client, expected.number);
   assertCurrentSource(expected, current.identity);
-  const requirement = await readFullValidationRequirement(client, current);
+  const requirement = await readFullValidationRequirement(client, current, now);
   return requirement.state === 'clear' ? undefined : requirement.reason;
 }
 

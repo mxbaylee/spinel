@@ -20,6 +20,7 @@ export interface CodeRunExpectation {
   identity: PullRequestIdentity;
   workflowId: number;
   requiredFull: boolean;
+  fullAfter?: number | null;
 }
 
 const object = (value: unknown): value is Record<string, unknown> =>
@@ -56,7 +57,7 @@ function timestamp(value: unknown): number | null {
  * its advertised range: an older pass cannot rescue a newer wrong-base run. */
 export function selectCodeRun(
   runs: unknown,
-  { identity, workflowId, requiredFull }: CodeRunExpectation,
+  { identity, workflowId, requiredFull, fullAfter }: CodeRunExpectation,
 ): { status: 'ready'; run: AdmittedCodeRun } | NotReady {
   if (
     !positiveInteger(workflowId) ||
@@ -95,7 +96,20 @@ export function selectCodeRun(
     seen.add(raw.id);
     // A commit may be used by more than one PR. Association identifies which
     // requests to consider; its mutable base fields never supply range proof.
-    if (!raw.pull_requests.some((pr) => object(pr) && pr.number === identity.number)) continue;
+    if (!raw.pull_requests.some((pr) => object(pr) && pr.number === identity.number)) {
+      let declaredNumber: number | null = null;
+      try {
+        declaredNumber = parseCodeRunName(raw.display_title).number;
+      } catch {
+        /* Unknown attribution cannot clear a missing association. */
+      }
+      if (
+        declaredNumber === identity.number ||
+        (raw.pull_requests.length === 0 && declaredNumber === null)
+      )
+        return invalid('A CI run has missing or contradictory PR associations.');
+      continue;
+    }
     const created = timestamp(raw.created_at);
     const started = timestamp(raw.run_started_at);
     const updated = timestamp(raw.updated_at);
@@ -112,6 +126,12 @@ export function selectCodeRun(
   if (!candidates.length) return pending('No CI run is associated with this pull request.');
   candidates.sort((a, b) => b.started - a.started || b.created - a.created || b.id - a.id);
   const latest = candidates[0].raw;
+  if (requiredFull && (typeof fullAfter !== 'number' || !Number.isFinite(fullAfter)))
+    return invalid('The full-validation request has no provable freshness boundary.');
+  if (requiredFull && candidates[0].created <= fullAfter!)
+    return invalid(
+      'Full validation requires a new eligible CI run created after the latest request; retrying an older run is insufficient.',
+    );
   let declared: CodeRunIdentity;
   try {
     declared = parseCodeRunName(latest.display_title);

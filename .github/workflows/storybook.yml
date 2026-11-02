@@ -28,6 +28,8 @@ on:
 
 permissions:
   contents: read
+  actions: read
+  pull-requests: read
 
 concurrency:
   group: storybook-${{ github.event.pull_request.number || github.ref }}
@@ -53,6 +55,8 @@ jobs:
           node-version-file: .nvmrc
           package-manager-cache: false
       - id: changes
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
             node scripts/ci/changes.ts

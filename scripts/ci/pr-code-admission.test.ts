@@ -81,6 +81,12 @@ test('latest CI identity is selected independently of input order and cannot fal
     assert.equal(selectCodeRun(runs, expected).status, 'invalid');
   newer.display_title = 'missing immutable name';
   assert.equal(selectCodeRun([old, newer], expected).status, 'invalid');
+  for (const pull_requests of [[], [{ number: 130 }]])
+    assert.equal(
+      selectCodeRun([old, { ...newer, display_title: runName(), pull_requests }], expected).status,
+      'invalid',
+    );
+  assert.equal(selectCodeRun([old, { ...newer, pull_requests: [] }], expected).status, 'invalid');
 });
 
 test('a fresh attempt of an old-base run cannot borrow a newer run identity', () => {
@@ -100,11 +106,19 @@ test('a fresh attempt of an old-base run cannot borrow a newer run identity', ()
 });
 
 test('full coverage is established by actual selection rather than an event-name flag', () => {
-  assert.equal(selectCodeRun([workflowRun()], { ...expected, requiredFull: true }).status, 'ready');
+  assert.equal(
+    selectCodeRun([workflowRun()], {
+      ...expected,
+      requiredFull: true,
+      fullAfter: Date.parse('2026-11-01T11:59:59Z'),
+    }).status,
+    'ready',
+  );
   assert.equal(
     selectCodeRun([workflowRun({ display_title: runName({ full: true }) })], {
       ...expected,
       requiredFull: true,
+      fullAfter: Date.parse('2026-11-01T11:59:59Z'),
     }).status,
     'ready',
   );
@@ -183,6 +197,34 @@ test('all-attempt evidence selects the latest real gate and cannot revive an ear
   );
 });
 
+test('full requests require a genuinely new eligible run, not a newer attempt of prior full work', () => {
+  const freshness = {
+    ...expected,
+    requiredFull: true,
+    fullAfter: Date.parse('2026-11-01T12:01:00Z'),
+  };
+  const old = workflowRun({
+    display_title: runName({ full: true }),
+    status: 'completed',
+    conclusion: 'success',
+  });
+  assert.equal(selectCodeRun([old], freshness).status, 'invalid');
+  const retried = {
+    ...old,
+    run_attempt: 2,
+    run_started_at: '2026-11-01T12:02:00Z',
+    updated_at: '2026-11-01T12:02:00Z',
+  };
+  assert.equal(selectCodeRun([retried], freshness).status, 'invalid');
+  const fresh = { ...retried, id: 101, run_attempt: 1, created_at: '2026-11-01T12:02:00Z' };
+  assert.equal(selectCodeRun([old, fresh], freshness).status, 'ready');
+  assert.equal(
+    selectCodeRun([fresh], { ...freshness, fullAfter: Date.parse(fresh.created_at) }).status,
+    'invalid',
+  );
+  assert.equal(selectCodeRun([fresh], { ...freshness, fullAfter: null }).status, 'invalid');
+});
+
 test('matching run identity binds PR, tested merge, head, and immutable base', () => {
   for (const mismatch of [
     { number: 130 },
@@ -219,7 +261,10 @@ test('foreign or malformed scoped responses do not silently disappear during sel
 test('missing run or test merge remains pending; another PR on the same head supplies no evidence', () => {
   assert.equal(selectCodeRun([], expected).status, 'pending');
   assert.equal(
-    selectCodeRun([workflowRun({ pull_requests: [{ number: 130 }] })], expected).status,
+    selectCodeRun(
+      [workflowRun({ pull_requests: [{ number: 130 }], display_title: runName({ number: 130 }) })],
+      expected,
+    ).status,
     'pending',
   );
   assert.equal(

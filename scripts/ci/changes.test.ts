@@ -92,24 +92,31 @@ test('classification retains historical base or removed-label obligations withou
     { event: 'unlabeled', label: { name: 'ci-revalidate' } },
   ]) {
     const { client } = historyFixture({ timeline: [{ id: 1, created_at: createdAt, ...entry }] });
-    const reason = await pullRequestFullReason(sourceEvent(), client);
+    const reason = await pullRequestFullReason(
+      sourceEvent(),
+      client,
+      () => Date.parse(createdAt) + 60_000,
+    );
     assert.match(reason!, /recorded base change|historical full-revalidation/);
   }
   const { client } = historyFixture();
-  assert.equal(await pullRequestFullReason(sourceEvent(), client), undefined);
+  assert.equal(
+    await pullRequestFullReason(sourceEvent(), client, () => Date.parse(createdAt) + 60_000),
+    undefined,
+  );
 });
 
 test('unavailable or still-pending edit history conservatively selects full coverage', async () => {
   for (const failAt of ['issues/231/timeline', 'actions/workflows/pr-policy.yml']) {
     const { client } = historyFixture({ failAt });
     assert.match(
-      (await pullRequestFullReason(sourceEvent(), client))!,
+      (await pullRequestFullReason(sourceEvent(), client, () => Date.parse(createdAt) + 60_000))!,
       /full validation is required/,
     );
   }
   const { client } = historyFixture({ pendingEdit: true });
   assert.match(
-    (await pullRequestFullReason(sourceEvent(), client))!,
+    (await pullRequestFullReason(sourceEvent(), client, () => Date.parse(createdAt) + 60_000))!,
     /Waiting for PR edit classification/,
   );
 });

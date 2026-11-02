@@ -91,10 +91,13 @@ jobs:
           package-manager-cache: false
       - name: Tickets and index
         run: npm run backlog:check
-      - name: Guard current PR source and base
+      - name: Guard current PR source, base and coverage
         if: github.event_name == 'pull_request'
         env:
           GH_TOKEN: ${{ github.token }}
+          CLASSIFICATION: ${{ needs.changes.result }}
+          COVERAGE_PLAN: ${{ needs.changes.outputs.plan }}
+          COVERAGE_PLAN_SHA256: ${{ needs.changes.outputs.plan_sha256 }}
         run: node scripts/ci/pr-state.ts guard
 
   lint:
@@ -115,10 +118,13 @@ jobs:
         run: npm ci
       - name: Lint
         run: npm run lint
-      - name: Guard current PR source and base
+      - name: Guard current PR source, base and coverage
         if: github.event_name == 'pull_request'
         env:
           GH_TOKEN: ${{ github.token }}
+          CLASSIFICATION: ${{ needs.changes.result }}
+          COVERAGE_PLAN: ${{ needs.changes.outputs.plan }}
+          COVERAGE_PLAN_SHA256: ${{ needs.changes.outputs.plan_sha256 }}
         run: node scripts/ci/pr-state.ts guard
 
   typecheck:
@@ -156,10 +162,13 @@ jobs:
       - name: Documentation-only change
         if: needs.changes.outputs.typecheck == 'false'
         run: echo 'Not applicable — only allowlisted documentation changed; Backlog and Lint still run.'
-      - name: Guard current PR source and base
+      - name: Guard current PR source, base and coverage
         if: github.event_name == 'pull_request'
         env:
           GH_TOKEN: ${{ github.token }}
+          CLASSIFICATION: ${{ needs.changes.result }}
+          COVERAGE_PLAN: ${{ needs.changes.outputs.plan }}
+          COVERAGE_PLAN_SHA256: ${{ needs.changes.outputs.plan_sha256 }}
         run: node scripts/ci/pr-state.ts guard
 
   # Separate runners retain maxWorkers: 1 and every case/assertion. Real restore
@@ -258,10 +267,13 @@ jobs:
           path: ci-results-unit.json
           retention-days: 30
           if-no-files-found: warn
-      - name: Guard current PR source and base
+      - name: Guard current PR source, base and coverage
         if: github.event_name == 'pull_request'
         env:
           GH_TOKEN: ${{ github.token }}
+          CLASSIFICATION: ${{ needs.changes.result }}
+          COVERAGE_PLAN: ${{ needs.changes.outputs.plan }}
+          COVERAGE_PLAN_SHA256: ${{ needs.changes.outputs.plan_sha256 }}
         run: node scripts/ci/pr-state.ts guard
 
   # Separate runners retain maxWorkers: 1 and every seed/assertion. The mixed
@@ -371,10 +383,13 @@ jobs:
           path: ci-results-lib.json
           retention-days: 30
           if-no-files-found: warn
-      - name: Guard current PR source and base
+      - name: Guard current PR source, base and coverage
         if: github.event_name == 'pull_request'
         env:
           GH_TOKEN: ${{ github.token }}
+          CLASSIFICATION: ${{ needs.changes.result }}
+          COVERAGE_PLAN: ${{ needs.changes.outputs.plan }}
+          COVERAGE_PLAN_SHA256: ${{ needs.changes.outputs.plan_sha256 }}
         run: node scripts/ci/pr-state.ts guard
 
   container-smoke:
@@ -783,8 +798,11 @@ jobs:
           path: ci-results-browser.json
           retention-days: 30
           if-no-files-found: warn
-      - name: Guard current PR source and base
+      - name: Guard current PR source, base and coverage
         if: github.event_name == 'pull_request'
         env:
           GH_TOKEN: ${{ github.token }}
+          CLASSIFICATION: ${{ needs.changes.result }}
+          COVERAGE_PLAN: ${{ needs.changes.outputs.plan }}
+          COVERAGE_PLAN_SHA256: ${{ needs.changes.outputs.plan_sha256 }}
         run: node scripts/ci/pr-state.ts guard

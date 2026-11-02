@@ -228,21 +228,32 @@ test('a persistent or unresolved edit obligation forces full coverage without a 
     );
 });
 
-test('every required code job rechecks live source/base on its own attempt, including docs-only jobs', () => {
+test('every required code job rechecks source/base and digest-bound coverage on its own attempt', () => {
   const workflow = readFileSync(new URL('../../.github/workflows/ci.yml', import.meta.url), 'utf8');
-  const job = (id: string) => {
-    const start = workflow.indexOf(`\n  ${id}:\n`);
+  const storybook = readFileSync(
+    new URL('../../.github/workflows/storybook.yml', import.meta.url),
+    'utf8',
+  );
+  const job = (id: string, source = workflow) => {
+    const start = source.indexOf(`\n  ${id}:\n`);
     assert.ok(start >= 0, id);
-    return workflow.slice(start + 1).split(/\n  [a-z][a-z0-9-]*:\n/)[0];
+    return source.slice(start + 1).split(/\n  [a-z][a-z0-9-]*:\n/)[0];
   };
   for (const id of ['backlog', 'lint', 'typecheck', 'unit-tests', 'lib-tests', 'playwright']) {
     const block = job(id);
     const steps = block.split(/^      - /m);
-    assert.equal((block.match(/name: Guard current PR source and base/g) ?? []).length, 1, id);
+    assert.equal(
+      (block.match(/name: Guard current PR source, base and coverage/g) ?? []).length,
+      1,
+      id,
+    );
     const guard = steps.at(-1)!;
-    assert.match(guard, /^name: Guard current PR source and base\n/, id);
+    assert.match(guard, /^name: Guard current PR source, base and coverage\n/, id);
     assert.match(guard, /if: github.event_name == 'pull_request'/, id);
     assert.match(guard, /GH_TOKEN: \$\{\{ github.token \}\}/, id);
+    assert.match(guard, /CLASSIFICATION: \$\{\{ needs.changes.result \}\}/, id);
+    assert.match(guard, /COVERAGE_PLAN: \$\{\{ needs.changes.outputs.plan \}\}/, id);
+    assert.match(guard, /COVERAGE_PLAN_SHA256: \$\{\{ needs.changes.outputs.plan_sha256 \}\}/, id);
     assert.match(guard, /run: node scripts\/ci\/pr-state\.ts guard/, id);
     assert.doesNotMatch(guard, /continue-on-error|always\(\)/, id);
   }
@@ -258,10 +269,19 @@ test('every required code job rechecks live source/base on its own attempt, incl
       ),
       mode,
     );
-  assert.match(
-    workflow,
-    /permissions:\n  contents: read\n  actions: read\n  pull-requests: read\n/,
-  );
+  for (const source of [workflow, storybook]) {
+    assert.match(
+      source,
+      /permissions:\n  contents: read\n  actions: read\n  pull-requests: read\n/,
+    );
+    const changes = job('changes', source)
+      .split(/^      - /m)
+      .find((step) => step.startsWith('id: changes\n'))!;
+    assert.ok(changes, 'Each changes.ts caller needs a classification step.');
+    assert.match(changes, /GH_TOKEN: \$\{\{ github.token \}\}/);
+    assert.match(changes, /node scripts\/ci\/changes\.ts/);
+  }
+  assert.equal((storybook.match(/GH_TOKEN:/g) ?? []).length, 1);
 });
 
 test('phone ownership removes only six ordinary cases from instrumented duplicate runs', () => {

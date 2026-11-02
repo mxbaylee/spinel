@@ -39,9 +39,9 @@ jobs:
 
   policy:
     # Exactly one workflow owns this seventh required name.
+    # Start this required check immediately; its script waits for independent
+    # classification instead of leaving an older policy pass as the only gate.
     name: Pull request
-    needs: classify
-    if: always()
     concurrency:
       group: pr-policy-${{ github.event.pull_request.number }}
       cancel-in-progress: true
