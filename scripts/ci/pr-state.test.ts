@@ -323,50 +323,76 @@ test('classification work that is still pending is distinct from failed or cance
   }
 });
 
-test('partial retries retain a genuine prior classifier but a newer pending or failed classifier owns its result', async () => {
+test('immutable text proof survives pending and failed classifier retries without passing code', async () => {
   const runs = [policyRun({ run_attempt: 2 })];
   assert.equal((await requirement({ runs, jobs: [classifier()] })).state, 'clear');
-  assert.equal(
-    (await requirement({ runs, jobs: [classifier(), classifier({ id: 51, run_attempt: 2 })] }))
-      .state,
-    'clear',
-  );
-  assert.equal(
-    (
-      await requirement({
-        runs,
-        jobs: [
-          classifier(),
-          classifier({
-            id: 51,
-            run_attempt: 2,
-            status: 'in_progress',
-            conclusion: null,
-            steps: [],
-          }),
-        ],
-      })
-    ).state,
-    'pending',
-  );
-  assert.equal(
-    (
-      await requirement({
-        runs,
-        jobs: [
-          classifier(),
-          classifier({
-            id: 51,
-            run_attempt: 2,
+  for (const retry of [
+    classifier({ id: 51, run_attempt: 2 }),
+    classifier({ id: 51, run_attempt: 2, status: 'in_progress', conclusion: null, steps: [] }),
+    ...['failure', 'cancelled', 'timed_out'].map((conclusion) =>
+      classifier({
+        id: 51,
+        run_attempt: 2,
+        status: 'completed',
+        conclusion,
+        steps: [{ name: 'Edit classification: text', status: 'completed', conclusion }],
+      }),
+    ),
+  ]) {
+    // A retry has the same original payload; it cannot manufacture a new edit.
+    for (const jobs of [
+      [classifier(), retry],
+      [retry, classifier()],
+    ]) {
+      const result = await requirement({ runs, jobs });
+      assert.equal(result.state, 'clear');
+      assert.equal(result.pending, false);
+      assert.equal(result.after, null);
+    }
+  }
+});
+
+test('failed classification without prior proof cannot establish a text edit', async () => {
+  for (const conclusion of ['failure', 'cancelled', 'timed_out']) {
+    const result = await requirement({
+      runs: [policyRun()],
+      jobs: [
+        classifier({
+          status: 'completed',
+          conclusion,
+          steps: [{ name: 'Edit classification: text', status: 'completed', conclusion }],
+        }),
+      ],
+    });
+    assert.equal(result.state, 'full');
+    assert.equal(result.after, Date.parse(createdAt));
+  }
+});
+
+test('conflicting successful proofs cannot establish a trustworthy history boundary', async () => {
+  for (const fullAttempt of [1, 2]) {
+    const jobs = [1, 2].map((run_attempt) =>
+      classifier({
+        id: 50 + run_attempt,
+        run_attempt,
+        steps: [
+          {
+            name:
+              run_attempt === fullAttempt
+                ? 'Edit classification: full'
+                : 'Edit classification: text',
             status: 'completed',
-            conclusion: 'failure',
-            steps: [],
-          }),
+            conclusion: 'success',
+          },
         ],
-      })
-    ).state,
-    'full',
-  );
+      }),
+    );
+    const result = await requirement({ runs: [policyRun({ run_attempt: 2 })], jobs });
+    assert.equal(result.state, 'full');
+    assert.equal(result.pending, false);
+    assert.equal(result.after, null);
+    assert.match(result.reason, /conflicting successful classification proofs/);
+  }
 });
 
 test('a recorded full marker persists and cannot be replaced by later text classification', async () => {
@@ -387,6 +413,7 @@ test('a recorded full marker persists and cannot be replaced by later text class
   assert.equal(result.state, 'full');
   for (const latest of [
     classifier({ id: 51, run_attempt: 2, status: 'in_progress', conclusion: null, steps: [] }),
+    classifier({ id: 51, run_attempt: 2, status: 'completed', conclusion: 'failure', steps: [] }),
     classifier({
       id: 51,
       run_attempt: 2,

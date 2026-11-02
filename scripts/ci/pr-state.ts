@@ -303,9 +303,10 @@ export async function readFullValidationRequirement(
       classifiers.sort(
         (a, b) => Number(object(b) ? b.run_attempt : 0) - Number(object(a) ? a.run_attempt : 0),
       );
-      let latest: 'text' | 'pending' | 'full' = 'full';
+      let latestPending = false;
       let malformed = false;
       let recordedFull = false;
+      let recordedText = false;
       for (const [index, job] of classifiers.entries()) {
         if (
           !object(job) ||
@@ -337,7 +338,9 @@ export async function readFullValidationRequirement(
                 (['pending', 'queued', 'in_progress'].includes(String(step.status)) &&
                   step.conclusion === null) ||
                 (step.status === 'completed' &&
-                  ['success', 'skipped'].includes(String(step.conclusion)))
+                  ['success', 'skipped', 'failure', 'cancelled', 'timed_out'].includes(
+                    String(step.conclusion),
+                  ))
               ),
           )
         ) {
@@ -347,32 +350,29 @@ export async function readFullValidationRequirement(
         const completed = markers.filter(
           (step) => object(step) && step.status === 'completed' && step.conclusion === 'success',
         );
-        // A rerun may replace the latest text proof, but can never erase a
-        // validated full obligation from any earlier classifier attempt.
+        // Classification proves a fact about this immutable event payload.
+        // Retrying its execution creates no new edit: a failed/pending retry
+        // cannot erase a successful proof. Actual code gates separately keep
+        // latest-attempt semantics. A full proof always retains its obligation.
         const fullAttempt = completed.some((step) => object(step) && step.name === fullMarker);
         if (fullAttempt) {
           recordedFull = true;
           recordFull(requestedAt, 'A prior PR edit requires full validation.');
         }
-        if (index === 0)
-          latest = fullAttempt
-            ? 'full'
-            : completed.some((step) => object(step) && step.name === textMarker)
-              ? 'text'
-              : active(job.status)
-                ? 'pending'
-                : 'full';
+        recordedText ||= completed.some((step) => object(step) && step.name === textMarker);
+        if (index === 0) latestPending = active(job.status);
       }
       if (malformed) {
         recordFull(requestedAt, 'A PR edit has malformed or failed classification evidence.');
         continue;
       }
-      if (latest === 'text') continue;
-      if (latest === 'pending') {
+      if (recordedFull && recordedText)
+        return unknown('One immutable PR edit has conflicting successful classification proofs.');
+      if (recordedFull || recordedText) continue;
+      if (latestPending) {
         pendingReason = `Waiting for PR edit classification in run ${run.id}.`;
         continue;
       }
-      if (recordedFull) continue;
       recordFull(
         requestedAt,
         'A failed, cancelled or incomplete PR edit classification requires full validation.',

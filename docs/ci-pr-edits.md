@@ -54,6 +54,12 @@ An independent edited-event classification job records a successful
 metadata. Later text edits may supersede the policy job but do not cancel this
 classification job. A successful text marker survives later policy cancellation;
 unknown, failed, or cancelled work without that marker cannot establish a text edit.
+Classification is a fact about the immutable triggering payload: a successful
+exact-text proof also survives a later pending or failed classifier retry. A
+successful full proof remains full with its original request time. Conflicting
+successful text/full proofs for one event block admission as an integrity error.
+This does not preserve older code-test passes over newer failures: actual code
+checks still select their latest executions as described below.
 
 The PR timeline's `base_ref_changed` and `automatic_base_change_succeeded` events,
 historical additions or removals of
