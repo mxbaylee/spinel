@@ -326,44 +326,54 @@ test('paired exports contain exact complete receipt-time selections, including t
   }
 });
 
-test.each([undefined, 3])('old-feedback-only exports report retention %s without borrowing unrelated current metrics', async (retentionDays) => {
-  const f = fixture();
-  try {
-    // SPN-110 owns the policy/expiry implementation. This adapter control checks
-    // forwarding the deployment-provided policy into both real export files.
-    const status = f.store.status.bind(f.store);
-    const statusSpy = vi.spyOn(f.store, 'status').mockImplementation(() => ({ ...status(), retentionDays }));
-    const report = f.feedback();
-    f.time(200);
-    f.observation(f.other);
-    const pair = await f.store.prepareFeedback(f.actor, f.operator);
-    if (pair.state !== 'ready') throw new Error('Expected feedback pair.');
-    expect(pair).toMatchObject({
-      window: { start: 100, end: 100 },
-      context: 'feedback-only',
-      counts: { user: 1, system: 1, userObservations: 0, systemObservations: 0 },
-    });
-    for (const scope of ['user', 'system'] as const) {
-      const exported = await f.artifact(pair, scope);
-      expect(exported.rows.map((row) => row.id)).toEqual([report.id]);
-      expect(exported.manifest.retention.observationAgeTargetDays).toBe(retentionDays ?? null);
-      expect(exported.manifest.retention.observations).toContain(retentionDays === undefined ? 'no automatic expiry configured' : 'server receipt age target');
-      expect(exported.manifest.historicalCompleteness).toBe('unknown');
+test.each([undefined, 3])(
+  'old-feedback-only exports report retention override %s without borrowing unrelated current metrics',
+  async (retentionDays) => {
+    const f = fixture();
+    try {
+      // SPN-110 owns the policy/expiry implementation. This adapter control checks
+      // forwarding the deployment-provided policy into both real export files.
+      const status = f.store.status.bind(f.store);
+      const policy = retentionDays ?? status().retentionDays;
+      const statusSpy = vi
+        .spyOn(f.store, 'status')
+        .mockImplementation(() => ({ ...status(), retentionDays: policy }));
+      const report = f.feedback();
+      f.time(200);
+      f.observation(f.other);
+      const pair = await f.store.prepareFeedback(f.actor, f.operator);
+      if (pair.state !== 'ready') throw new Error('Expected feedback pair.');
+      expect(pair).toMatchObject({
+        window: { start: 100, end: 100 },
+        context: 'feedback-only',
+        counts: { user: 1, system: 1, userObservations: 0, systemObservations: 0 },
+      });
+      for (const scope of ['user', 'system'] as const) {
+        const exported = await f.artifact(pair, scope);
+        expect(exported.rows.map((row) => row.id)).toEqual([report.id]);
+        expect(exported.manifest.retention.observationAgeTargetDays).toBe(policy ?? null);
+        expect(exported.manifest.retention.observations).toContain(
+          policy === undefined
+            ? 'no automatic expiry configured'
+            : 'server receipt age target',
+        );
+        expect(exported.manifest.historicalCompleteness).toBe('unknown');
+      }
+      statusSpy.mockRestore();
+      await f.store.cancelFeedback(pair.id, f.operator);
+      const empty = await f.store.prepareFeedback(randomUUID(), f.operator);
+      expect(empty).toEqual({ state: 'empty', generation: f.generation });
+      expect(
+        readdirSync(f.directory).filter((name) => name.startsWith('.diagnostics-feedback-')),
+      ).toEqual([]);
+      expect(() => f.store.feedbackDownload(pair.id, f.operator, 'system')).toThrow(
+        'expired or were cleared',
+      );
+    } finally {
+      await f.close();
     }
-    statusSpy.mockRestore();
-    await f.store.cancelFeedback(pair.id, f.operator);
-    const empty = await f.store.prepareFeedback(randomUUID(), f.operator);
-    expect(empty).toEqual({ state: 'empty', generation: f.generation });
-    expect(
-      readdirSync(f.directory).filter((name) => name.startsWith('.diagnostics-feedback-')),
-    ).toEqual([]);
-    expect(() => f.store.feedbackDownload(pair.id, f.operator, 'system')).toThrow(
-      'expired or were cleared',
-    );
-  } finally {
-    await f.close();
-  }
-});
+  },
+);
 
 test('idle pairs retain no generic-download or maintenance lock; bounds prevent concurrent preparation or transfer', async () => {
   const f = fixture();

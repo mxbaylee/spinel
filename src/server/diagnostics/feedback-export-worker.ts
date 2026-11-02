@@ -151,9 +151,10 @@ try {
             retention: {
               feedback: 'until explicit truncate',
               observationAgeTargetDays: input.retentionDays ?? null,
-              observations: input.retentionDays === undefined
-                ? 'no automatic expiry configured; prior deletion history unknown'
-                : 'server receipt age target; bounded maintenance may lag; prior deletion history unknown',
+              observations:
+                input.retentionDays === undefined
+                  ? 'no automatic expiry configured; prior deletion history unknown'
+                  : 'server receipt age target; bounded maintenance may lag; prior deletion history unknown',
             },
             limits: {
               sourceBytes: 64 * 1024 * 1024,
