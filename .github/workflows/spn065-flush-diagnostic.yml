@@ -1,0 +1,105 @@
+name: SPN-065 bounded flush diagnostic
+on:
+  push:
+    branches: [codex/spn-065-flush-diagnostic]
+permissions:
+  contents: read
+jobs:
+  diagnostic:
+    name: Diagnostic only — matched main, candidate and guarded publication
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      VITE_SYNC_EVIDENCE: '0'
+      VITE_DOC_SELECTION_EVIDENCE: '0'
+      VITE_DOC_RESPONSIVENESS_EVIDENCE: '1'
+      SPINEL_E2E_PROJECT: doc-responsiveness
+      SPN108_BASELINE: '0'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: 0bdbbcb5ca23b84e172e41a11bd0cf555e911130
+          path: main-source
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: c3636afe3f21216805af80de0dabe129a92d57c6
+          path: candidate-source
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: c3636afe3f21216805af80de0dabe129a92d57c6
+          path: repaired-source
+          persist-credentials: false
+      - name: Retain actual mirror profile
+        run: cat /etc/apt/apt-mirrors.txt > mirror-profile.txt
+      - name: Install matching browser
+        working-directory: main-source
+        run: |
+          npm ci
+          node scripts/ci/prefer-ubuntu-archive.ts
+          npx playwright install --with-deps chromium
+      - name: Prepare matched diagnostic instrumentation
+        run: |
+          node scripts/ci/spn065-flush-diagnostic.ts main-source main
+          node scripts/ci/spn065-flush-diagnostic.ts candidate-source candidate
+          node scripts/ci/spn065-flush-diagnostic.ts repaired-source repaired
+      - name: Build main
+        working-directory: main-source
+        run: npm run build
+      - name: Main single diagnostic attempt
+        id: main
+        continue-on-error: true
+        working-directory: main-source
+        run: npx playwright test --project=doc-responsiveness e2e/doc-responsiveness.spec.ts --grep 'desktop sustained native typing plain-1$' --retries=0
+      - name: Build candidate
+        working-directory: candidate-source
+        run: |
+          npm ci
+          npm run build
+      - name: Candidate single diagnostic attempt
+        id: candidate
+        continue-on-error: true
+        working-directory: candidate-source
+        run: npx playwright test --project=doc-responsiveness e2e/doc-responsiveness.spec.ts --grep 'desktop sustained native typing plain-1$' --retries=0
+      - name: Build guarded candidate
+        working-directory: repaired-source
+        run: |
+          npm ci
+          npm run build
+      - name: Guarded candidate single diagnostic attempt
+        id: repaired
+        continue-on-error: true
+        working-directory: repaired-source
+        run: npx playwright test --project=doc-responsiveness e2e/doc-responsiveness.spec.ts --grep 'desktop sustained native typing plain-1$' --retries=0
+      - name: Report every attempt without masking failures
+        if: always()
+        env:
+          MAIN: ${{ steps.main.outcome }}
+          CANDIDATE: ${{ steps.candidate.outcome }}
+          REPAIRED: ${{ steps.repaired.outcome }}
+        run: |
+          printf 'Diagnostic only: main=%s candidate=%s repaired=%s\n' "$MAIN" "$CANDIDATE" "$REPAIRED"
+          test "$MAIN" = success && test "$CANDIDATE" = success && test "$REPAIRED" = success
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        if: always()
+        with:
+          name: spn065-flush-diagnostic
+          retention-days: 14
+          if-no-files-found: error
+          path: |
+            mirror-profile.txt
+            *-source/spn065-diagnostic-identity.json
+            *-source/spn065-diagnostic-source.patch
+            *-source/test-results/**/spn108-*.json
+            *-source/test-results/**/spn108-profile.cpuprofile
+            *-source/test-results/**/spn065-browser-trace.json
+            *-source/test-results/**/error-context.md
+            *-source/playwright-report/*.json
