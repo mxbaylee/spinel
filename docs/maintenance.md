@@ -258,6 +258,7 @@ cannot prove which generation is intended, so recovery is deliberate:
    the evidence until recovery is checked. [SPN-128's decision](implementation/SPN-128.md)
    describes the authority and fingerprint boundary.
 
+
 ## Notices and time zones
 
 Notices are one-off announcements. They record a full absolute instant, an IANA

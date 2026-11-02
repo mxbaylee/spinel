@@ -1,0 +1,863 @@
+{
+  "reviewedAt": "2026-11-02T03:40:44.897Z",
+  "durationMs": 21130,
+  "captureScreenshots": true,
+  "fixtureTime": "2026-10-20T16:00:00Z",
+  "viewport": "all",
+  "theme": "all",
+  "variants": [
+    "light",
+    "dark",
+    "phone",
+    "phone-dark",
+    "tablet"
+  ],
+  "requested": [
+    "dashboard-copyfile--owned-folder",
+    "dashboard-copyfile--shared-viewer",
+    "dashboard-copyfile--shared-destination",
+    "dashboard-copyfile--loading",
+    "dashboard-copyfile--waiting-for-save",
+    "dashboard-copyfile--offline",
+    "dashboard-copyfile--making-copy",
+    "dashboard-copyfile--source-changed",
+    "dashboard-copyfile--access-lost",
+    "dashboard-copyfile--completed-after-dismissal",
+    "dashboard-copyfile--completed-while-offline",
+    "dashboard-copyfile--outcome-unknown",
+    "dashboard-copyfile--unreadable-receipt",
+    "dashboard-copyfile--unknown-after-dismissal",
+    "dashboard-dashboard--make-copy"
+  ],
+  "checked": [
+    {
+      "id": "dashboard-copyfile--owned-folder",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-copyfile--shared-viewer",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-copyfile--shared-destination",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-copyfile--loading",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-copyfile--waiting-for-save",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-copyfile--offline",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-copyfile--making-copy",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-copyfile--source-changed",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-copyfile--access-lost",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-copyfile--completed-after-dismissal",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-copyfile--completed-while-offline",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-copyfile--outcome-unknown",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-copyfile--unreadable-receipt",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-copyfile--unknown-after-dismissal",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-dashboard--make-copy",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-copyfile--owned-folder",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-copyfile--shared-viewer",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-copyfile--shared-destination",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-copyfile--loading",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-copyfile--waiting-for-save",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-copyfile--offline",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-copyfile--making-copy",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-copyfile--source-changed",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-copyfile--access-lost",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-copyfile--completed-after-dismissal",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-copyfile--completed-while-offline",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-copyfile--outcome-unknown",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-copyfile--unreadable-receipt",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-copyfile--unknown-after-dismissal",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-dashboard--make-copy",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-copyfile--owned-folder",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-copyfile--shared-viewer",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-copyfile--shared-destination",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-copyfile--loading",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-copyfile--waiting-for-save",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-copyfile--offline",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-copyfile--making-copy",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-copyfile--source-changed",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-copyfile--access-lost",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-copyfile--completed-after-dismissal",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-copyfile--completed-while-offline",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-copyfile--outcome-unknown",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-copyfile--unreadable-receipt",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-copyfile--unknown-after-dismissal",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-dashboard--make-copy",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-copyfile--owned-folder",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-copyfile--shared-viewer",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-copyfile--shared-destination",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-copyfile--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-copyfile--waiting-for-save",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-copyfile--offline",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-copyfile--making-copy",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-copyfile--source-changed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-copyfile--access-lost",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-copyfile--completed-after-dismissal",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-copyfile--completed-while-offline",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-copyfile--outcome-unknown",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-copyfile--unreadable-receipt",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-copyfile--unknown-after-dismissal",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--make-copy",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-copyfile--owned-folder",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-copyfile--shared-viewer",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-copyfile--shared-destination",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-copyfile--loading",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-copyfile--waiting-for-save",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-copyfile--offline",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-copyfile--making-copy",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-copyfile--source-changed",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-copyfile--access-lost",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-copyfile--completed-after-dismissal",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-copyfile--completed-while-offline",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-copyfile--outcome-unknown",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-copyfile--unreadable-receipt",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-copyfile--unknown-after-dismissal",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-dashboard--make-copy",
+      "variant": "tablet"
+    }
+  ],
+  "captures": [
+    {
+      "id": "dashboard-copyfile--owned-folder",
+      "variant": "light",
+      "filename": "dashboard-copyfile--owned-folder-light.png",
+      "title": "Current production/Dashboard/Make a copy / Owned Folder"
+    },
+    {
+      "id": "dashboard-copyfile--shared-viewer",
+      "variant": "light",
+      "filename": "dashboard-copyfile--shared-viewer-light.png",
+      "title": "Current production/Dashboard/Make a copy / Shared Viewer"
+    },
+    {
+      "id": "dashboard-copyfile--shared-destination",
+      "variant": "light",
+      "filename": "dashboard-copyfile--shared-destination-light.png",
+      "title": "Current production/Dashboard/Make a copy / Shared Destination"
+    },
+    {
+      "id": "dashboard-copyfile--loading",
+      "variant": "light",
+      "filename": "dashboard-copyfile--loading-light.png",
+      "title": "Current production/Dashboard/Make a copy / Loading"
+    },
+    {
+      "id": "dashboard-copyfile--waiting-for-save",
+      "variant": "light",
+      "filename": "dashboard-copyfile--waiting-for-save-light.png",
+      "title": "Current production/Dashboard/Make a copy / Waiting For Save"
+    },
+    {
+      "id": "dashboard-copyfile--offline",
+      "variant": "light",
+      "filename": "dashboard-copyfile--offline-light.png",
+      "title": "Current production/Dashboard/Make a copy / Offline"
+    },
+    {
+      "id": "dashboard-copyfile--making-copy",
+      "variant": "light",
+      "filename": "dashboard-copyfile--making-copy-light.png",
+      "title": "Current production/Dashboard/Make a copy / Making Copy"
+    },
+    {
+      "id": "dashboard-copyfile--source-changed",
+      "variant": "light",
+      "filename": "dashboard-copyfile--source-changed-light.png",
+      "title": "Current production/Dashboard/Make a copy / Source Changed"
+    },
+    {
+      "id": "dashboard-copyfile--access-lost",
+      "variant": "light",
+      "filename": "dashboard-copyfile--access-lost-light.png",
+      "title": "Current production/Dashboard/Make a copy / Access Lost"
+    },
+    {
+      "id": "dashboard-copyfile--completed-after-dismissal",
+      "variant": "light",
+      "filename": "dashboard-copyfile--completed-after-dismissal-light.png",
+      "title": "Current production/Dashboard/Make a copy / Completed After Dismissal"
+    },
+    {
+      "id": "dashboard-copyfile--completed-while-offline",
+      "variant": "light",
+      "filename": "dashboard-copyfile--completed-while-offline-light.png",
+      "title": "Current production/Dashboard/Make a copy / Completed While Offline"
+    },
+    {
+      "id": "dashboard-copyfile--outcome-unknown",
+      "variant": "light",
+      "filename": "dashboard-copyfile--outcome-unknown-light.png",
+      "title": "Current production/Dashboard/Make a copy / Outcome Unknown"
+    },
+    {
+      "id": "dashboard-copyfile--unreadable-receipt",
+      "variant": "light",
+      "filename": "dashboard-copyfile--unreadable-receipt-light.png",
+      "title": "Current production/Dashboard/Make a copy / Unreadable Receipt"
+    },
+    {
+      "id": "dashboard-copyfile--unknown-after-dismissal",
+      "variant": "light",
+      "filename": "dashboard-copyfile--unknown-after-dismissal-light.png",
+      "title": "Current production/Dashboard/Make a copy / Unknown After Dismissal"
+    },
+    {
+      "id": "dashboard-dashboard--make-copy",
+      "variant": "light",
+      "filename": "dashboard-dashboard--make-copy-light.png",
+      "title": "Current production/Dashboard/Dashboard / Make Copy"
+    },
+    {
+      "id": "dashboard-copyfile--owned-folder",
+      "variant": "dark",
+      "filename": "dashboard-copyfile--owned-folder-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Owned Folder"
+    },
+    {
+      "id": "dashboard-copyfile--shared-viewer",
+      "variant": "dark",
+      "filename": "dashboard-copyfile--shared-viewer-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Shared Viewer"
+    },
+    {
+      "id": "dashboard-copyfile--shared-destination",
+      "variant": "dark",
+      "filename": "dashboard-copyfile--shared-destination-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Shared Destination"
+    },
+    {
+      "id": "dashboard-copyfile--loading",
+      "variant": "dark",
+      "filename": "dashboard-copyfile--loading-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Loading"
+    },
+    {
+      "id": "dashboard-copyfile--waiting-for-save",
+      "variant": "dark",
+      "filename": "dashboard-copyfile--waiting-for-save-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Waiting For Save"
+    },
+    {
+      "id": "dashboard-copyfile--offline",
+      "variant": "dark",
+      "filename": "dashboard-copyfile--offline-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Offline"
+    },
+    {
+      "id": "dashboard-copyfile--making-copy",
+      "variant": "dark",
+      "filename": "dashboard-copyfile--making-copy-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Making Copy"
+    },
+    {
+      "id": "dashboard-copyfile--source-changed",
+      "variant": "dark",
+      "filename": "dashboard-copyfile--source-changed-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Source Changed"
+    },
+    {
+      "id": "dashboard-copyfile--access-lost",
+      "variant": "dark",
+      "filename": "dashboard-copyfile--access-lost-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Access Lost"
+    },
+    {
+      "id": "dashboard-copyfile--completed-after-dismissal",
+      "variant": "dark",
+      "filename": "dashboard-copyfile--completed-after-dismissal-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Completed After Dismissal"
+    },
+    {
+      "id": "dashboard-copyfile--completed-while-offline",
+      "variant": "dark",
+      "filename": "dashboard-copyfile--completed-while-offline-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Completed While Offline"
+    },
+    {
+      "id": "dashboard-copyfile--outcome-unknown",
+      "variant": "dark",
+      "filename": "dashboard-copyfile--outcome-unknown-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Outcome Unknown"
+    },
+    {
+      "id": "dashboard-copyfile--unreadable-receipt",
+      "variant": "dark",
+      "filename": "dashboard-copyfile--unreadable-receipt-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Unreadable Receipt"
+    },
+    {
+      "id": "dashboard-copyfile--unknown-after-dismissal",
+      "variant": "dark",
+      "filename": "dashboard-copyfile--unknown-after-dismissal-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Unknown After Dismissal"
+    },
+    {
+      "id": "dashboard-dashboard--make-copy",
+      "variant": "dark",
+      "filename": "dashboard-dashboard--make-copy-dark.png",
+      "title": "Current production/Dashboard/Dashboard / Make Copy"
+    },
+    {
+      "id": "dashboard-copyfile--owned-folder",
+      "variant": "phone",
+      "filename": "dashboard-copyfile--owned-folder-phone.png",
+      "title": "Current production/Dashboard/Make a copy / Owned Folder"
+    },
+    {
+      "id": "dashboard-copyfile--shared-viewer",
+      "variant": "phone",
+      "filename": "dashboard-copyfile--shared-viewer-phone.png",
+      "title": "Current production/Dashboard/Make a copy / Shared Viewer"
+    },
+    {
+      "id": "dashboard-copyfile--shared-destination",
+      "variant": "phone",
+      "filename": "dashboard-copyfile--shared-destination-phone.png",
+      "title": "Current production/Dashboard/Make a copy / Shared Destination"
+    },
+    {
+      "id": "dashboard-copyfile--loading",
+      "variant": "phone",
+      "filename": "dashboard-copyfile--loading-phone.png",
+      "title": "Current production/Dashboard/Make a copy / Loading"
+    },
+    {
+      "id": "dashboard-copyfile--waiting-for-save",
+      "variant": "phone",
+      "filename": "dashboard-copyfile--waiting-for-save-phone.png",
+      "title": "Current production/Dashboard/Make a copy / Waiting For Save"
+    },
+    {
+      "id": "dashboard-copyfile--offline",
+      "variant": "phone",
+      "filename": "dashboard-copyfile--offline-phone.png",
+      "title": "Current production/Dashboard/Make a copy / Offline"
+    },
+    {
+      "id": "dashboard-copyfile--making-copy",
+      "variant": "phone",
+      "filename": "dashboard-copyfile--making-copy-phone.png",
+      "title": "Current production/Dashboard/Make a copy / Making Copy"
+    },
+    {
+      "id": "dashboard-copyfile--source-changed",
+      "variant": "phone",
+      "filename": "dashboard-copyfile--source-changed-phone.png",
+      "title": "Current production/Dashboard/Make a copy / Source Changed"
+    },
+    {
+      "id": "dashboard-copyfile--access-lost",
+      "variant": "phone",
+      "filename": "dashboard-copyfile--access-lost-phone.png",
+      "title": "Current production/Dashboard/Make a copy / Access Lost"
+    },
+    {
+      "id": "dashboard-copyfile--completed-after-dismissal",
+      "variant": "phone",
+      "filename": "dashboard-copyfile--completed-after-dismissal-phone.png",
+      "title": "Current production/Dashboard/Make a copy / Completed After Dismissal"
+    },
+    {
+      "id": "dashboard-copyfile--completed-while-offline",
+      "variant": "phone",
+      "filename": "dashboard-copyfile--completed-while-offline-phone.png",
+      "title": "Current production/Dashboard/Make a copy / Completed While Offline"
+    },
+    {
+      "id": "dashboard-copyfile--outcome-unknown",
+      "variant": "phone",
+      "filename": "dashboard-copyfile--outcome-unknown-phone.png",
+      "title": "Current production/Dashboard/Make a copy / Outcome Unknown"
+    },
+    {
+      "id": "dashboard-copyfile--unreadable-receipt",
+      "variant": "phone",
+      "filename": "dashboard-copyfile--unreadable-receipt-phone.png",
+      "title": "Current production/Dashboard/Make a copy / Unreadable Receipt"
+    },
+    {
+      "id": "dashboard-copyfile--unknown-after-dismissal",
+      "variant": "phone",
+      "filename": "dashboard-copyfile--unknown-after-dismissal-phone.png",
+      "title": "Current production/Dashboard/Make a copy / Unknown After Dismissal"
+    },
+    {
+      "id": "dashboard-dashboard--make-copy",
+      "variant": "phone",
+      "filename": "dashboard-dashboard--make-copy-phone.png",
+      "title": "Current production/Dashboard/Dashboard / Make Copy"
+    },
+    {
+      "id": "dashboard-copyfile--owned-folder",
+      "variant": "phone-dark",
+      "filename": "dashboard-copyfile--owned-folder-phone-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Owned Folder"
+    },
+    {
+      "id": "dashboard-copyfile--shared-viewer",
+      "variant": "phone-dark",
+      "filename": "dashboard-copyfile--shared-viewer-phone-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Shared Viewer"
+    },
+    {
+      "id": "dashboard-copyfile--shared-destination",
+      "variant": "phone-dark",
+      "filename": "dashboard-copyfile--shared-destination-phone-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Shared Destination"
+    },
+    {
+      "id": "dashboard-copyfile--loading",
+      "variant": "phone-dark",
+      "filename": "dashboard-copyfile--loading-phone-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Loading"
+    },
+    {
+      "id": "dashboard-copyfile--waiting-for-save",
+      "variant": "phone-dark",
+      "filename": "dashboard-copyfile--waiting-for-save-phone-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Waiting For Save"
+    },
+    {
+      "id": "dashboard-copyfile--offline",
+      "variant": "phone-dark",
+      "filename": "dashboard-copyfile--offline-phone-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Offline"
+    },
+    {
+      "id": "dashboard-copyfile--making-copy",
+      "variant": "phone-dark",
+      "filename": "dashboard-copyfile--making-copy-phone-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Making Copy"
+    },
+    {
+      "id": "dashboard-copyfile--source-changed",
+      "variant": "phone-dark",
+      "filename": "dashboard-copyfile--source-changed-phone-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Source Changed"
+    },
+    {
+      "id": "dashboard-copyfile--access-lost",
+      "variant": "phone-dark",
+      "filename": "dashboard-copyfile--access-lost-phone-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Access Lost"
+    },
+    {
+      "id": "dashboard-copyfile--completed-after-dismissal",
+      "variant": "phone-dark",
+      "filename": "dashboard-copyfile--completed-after-dismissal-phone-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Completed After Dismissal"
+    },
+    {
+      "id": "dashboard-copyfile--completed-while-offline",
+      "variant": "phone-dark",
+      "filename": "dashboard-copyfile--completed-while-offline-phone-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Completed While Offline"
+    },
+    {
+      "id": "dashboard-copyfile--outcome-unknown",
+      "variant": "phone-dark",
+      "filename": "dashboard-copyfile--outcome-unknown-phone-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Outcome Unknown"
+    },
+    {
+      "id": "dashboard-copyfile--unreadable-receipt",
+      "variant": "phone-dark",
+      "filename": "dashboard-copyfile--unreadable-receipt-phone-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Unreadable Receipt"
+    },
+    {
+      "id": "dashboard-copyfile--unknown-after-dismissal",
+      "variant": "phone-dark",
+      "filename": "dashboard-copyfile--unknown-after-dismissal-phone-dark.png",
+      "title": "Current production/Dashboard/Make a copy / Unknown After Dismissal"
+    },
+    {
+      "id": "dashboard-dashboard--make-copy",
+      "variant": "phone-dark",
+      "filename": "dashboard-dashboard--make-copy-phone-dark.png",
+      "title": "Current production/Dashboard/Dashboard / Make Copy"
+    },
+    {
+      "id": "dashboard-copyfile--owned-folder",
+      "variant": "tablet",
+      "filename": "dashboard-copyfile--owned-folder-tablet.png",
+      "title": "Current production/Dashboard/Make a copy / Owned Folder"
+    },
+    {
+      "id": "dashboard-copyfile--shared-viewer",
+      "variant": "tablet",
+      "filename": "dashboard-copyfile--shared-viewer-tablet.png",
+      "title": "Current production/Dashboard/Make a copy / Shared Viewer"
+    },
+    {
+      "id": "dashboard-copyfile--shared-destination",
+      "variant": "tablet",
+      "filename": "dashboard-copyfile--shared-destination-tablet.png",
+      "title": "Current production/Dashboard/Make a copy / Shared Destination"
+    },
+    {
+      "id": "dashboard-copyfile--loading",
+      "variant": "tablet",
+      "filename": "dashboard-copyfile--loading-tablet.png",
+      "title": "Current production/Dashboard/Make a copy / Loading"
+    },
+    {
+      "id": "dashboard-copyfile--waiting-for-save",
+      "variant": "tablet",
+      "filename": "dashboard-copyfile--waiting-for-save-tablet.png",
+      "title": "Current production/Dashboard/Make a copy / Waiting For Save"
+    },
+    {
+      "id": "dashboard-copyfile--offline",
+      "variant": "tablet",
+      "filename": "dashboard-copyfile--offline-tablet.png",
+      "title": "Current production/Dashboard/Make a copy / Offline"
+    },
+    {
+      "id": "dashboard-copyfile--making-copy",
+      "variant": "tablet",
+      "filename": "dashboard-copyfile--making-copy-tablet.png",
+      "title": "Current production/Dashboard/Make a copy / Making Copy"
+    },
+    {
+      "id": "dashboard-copyfile--source-changed",
+      "variant": "tablet",
+      "filename": "dashboard-copyfile--source-changed-tablet.png",
+      "title": "Current production/Dashboard/Make a copy / Source Changed"
+    },
+    {
+      "id": "dashboard-copyfile--access-lost",
+      "variant": "tablet",
+      "filename": "dashboard-copyfile--access-lost-tablet.png",
+      "title": "Current production/Dashboard/Make a copy / Access Lost"
+    },
+    {
+      "id": "dashboard-copyfile--completed-after-dismissal",
+      "variant": "tablet",
+      "filename": "dashboard-copyfile--completed-after-dismissal-tablet.png",
+      "title": "Current production/Dashboard/Make a copy / Completed After Dismissal"
+    },
+    {
+      "id": "dashboard-copyfile--completed-while-offline",
+      "variant": "tablet",
+      "filename": "dashboard-copyfile--completed-while-offline-tablet.png",
+      "title": "Current production/Dashboard/Make a copy / Completed While Offline"
+    },
+    {
+      "id": "dashboard-copyfile--outcome-unknown",
+      "variant": "tablet",
+      "filename": "dashboard-copyfile--outcome-unknown-tablet.png",
+      "title": "Current production/Dashboard/Make a copy / Outcome Unknown"
+    },
+    {
+      "id": "dashboard-copyfile--unreadable-receipt",
+      "variant": "tablet",
+      "filename": "dashboard-copyfile--unreadable-receipt-tablet.png",
+      "title": "Current production/Dashboard/Make a copy / Unreadable Receipt"
+    },
+    {
+      "id": "dashboard-copyfile--unknown-after-dismissal",
+      "variant": "tablet",
+      "filename": "dashboard-copyfile--unknown-after-dismissal-tablet.png",
+      "title": "Current production/Dashboard/Make a copy / Unknown After Dismissal"
+    },
+    {
+      "id": "dashboard-dashboard--make-copy",
+      "variant": "tablet",
+      "filename": "dashboard-dashboard--make-copy-tablet.png",
+      "title": "Current production/Dashboard/Dashboard / Make Copy"
+    }
+  ],
+  "verifications": [],
+  "failures": [],
+  "source": {
+    "head": "fd89edb6647c66fc546c76996159d977f331f9ca",
+    "checkedOutSha": "ab28c6aa304a6a3bf4f7e9a6a523d63e52dd78c4",
+    "workflowUrl": "https://github.com/mxbaylee/spinel/actions/runs/41384065810",
+    "artifactId": 13114497041,
+    "artifactSha256": "6ec2ba3f6933ebe14a5a155579736305df18fce22534d27e7356c3cab4997f4c",
+    "peakRssMiB": 1058.5,
+    "watchdogElapsedMs": 21505
+  },
+  "durableCaptures": [
+    {
+      "original": "dashboard-dashboard--make-copy-light.png",
+      "file": "dashboard-copy-desktop-light.png"
+    },
+    {
+      "original": "dashboard-dashboard--make-copy-dark.png",
+      "file": "dashboard-copy-desktop-dark.png"
+    },
+    {
+      "original": "dashboard-dashboard--make-copy-phone.png",
+      "file": "dashboard-copy-phone-light.png"
+    },
+    {
+      "original": "dashboard-dashboard--make-copy-phone-dark.png",
+      "file": "dashboard-copy-phone-dark.png"
+    },
+    {
+      "original": "dashboard-copyfile--shared-destination-phone.png",
+      "file": "shared-destination-phone-light.png"
+    },
+    {
+      "original": "dashboard-copyfile--loading-light.png",
+      "file": "loading-desktop-light.png"
+    },
+    {
+      "original": "dashboard-copyfile--waiting-for-save-dark.png",
+      "file": "waiting-for-save-desktop-dark.png"
+    },
+    {
+      "original": "dashboard-copyfile--offline-phone.png",
+      "file": "offline-phone-light.png"
+    },
+    {
+      "original": "dashboard-copyfile--making-copy-dark.png",
+      "file": "making-copy-desktop-dark.png"
+    },
+    {
+      "original": "dashboard-copyfile--source-changed-light.png",
+      "file": "source-changed-desktop-light.png"
+    },
+    {
+      "original": "dashboard-copyfile--access-lost-phone.png",
+      "file": "access-lost-phone-light.png"
+    },
+    {
+      "original": "dashboard-copyfile--completed-while-offline-phone-dark.png",
+      "file": "completed-while-offline-phone-dark.png"
+    },
+    {
+      "original": "dashboard-copyfile--outcome-unknown-light.png",
+      "file": "outcome-unknown-desktop-light.png"
+    },
+    {
+      "original": "dashboard-copyfile--outcome-unknown-dark.png",
+      "file": "outcome-unknown-desktop-dark.png"
+    },
+    {
+      "original": "dashboard-copyfile--outcome-unknown-phone.png",
+      "file": "outcome-unknown-phone-light.png"
+    },
+    {
+      "original": "dashboard-copyfile--outcome-unknown-phone-dark.png",
+      "file": "outcome-unknown-phone-dark.png"
+    }
+  ]
+}

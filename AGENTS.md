@@ -41,6 +41,13 @@ that isn't waiting on another is next.
 - **TypeScript only.** Server, frontend, tests, scripts and config are `.ts` or
   `.tsx`, never `.js`, `.mjs` or `.cjs`. Node runs scripts directly, so use only
   syntax it can strip (no enums or namespaces). Owner, chat 2026-10-17.
+- **All new and in-progress work follows [sustainable testing](docs/testing.md).** Name the regression
+  contract, use the lowest meaningful layer, reuse deterministic fixtures and
+  assign each environment a distinct purpose. Keep source/shared dependencies
+  in the CI plan and prove selected missing/failed work cannot pass. Apply this
+  in the ticket's Verify section, progress checkpoints and PR evidence. Repair
+  test weaknesses introduced by the ticket before landing; separate cleanup
+  tickets cannot replace its acceptance. Owner, chat 2026-11-01 (SPN-115).
 - **UI changes follow [docs/design/](docs/design/README.md).** A ticket that
   needs a pattern the playbook doesn't cover adds it there in its own PR first,
   and every new component or state gets a Storybook story. Owner, chat

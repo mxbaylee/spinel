@@ -72,6 +72,14 @@ Check the original ticket against the code and preserve its acceptance criteria
 for review. Weigh the Operator, Owner, Collaborator and Link guest in every
 decision; record decisions as process.md requires. Build the smallest complete
 change that satisfies the ticket, including meaningful tests and maintained docs.
+Apply [sustainable testing](testing.md) to the ticket's Verify plan: choose the
+lowest layer that detects the regression, reuse deterministic fixtures, justify
+each environment and maintain source/shared-dependency routing. Review that plan
+with the implementation; preserve first-attempt failures and fail-closed gates.
+For an existing PR, reconcile its test plan against current main before adding
+more coverage. Keep the [test-plan checkpoint](testing.md#carry-the-plan-through-the-work)
+in the implementation record and PR current as work progresses. Fix test weaknesses
+introduced by this ticket here; a later cleanup task cannot stand in for acceptance.
 
 Reassess effort when implementation reveals more complexity. Use **XL** for
 sustained algorithmic or architectural investigation and verification, including
@@ -293,6 +301,11 @@ path; dirty/unpushed work; last review scores and unresolved findings; exact che
 passed/failed/pending; blocked tickets with decision links; and the next concrete
 action. No secrets. Update the checkpoint after each merged ticket in the PR body
 so an abrupt interruption still leaves a useful trail.
+
+Include **Test plan and evidence**: regression contracts and suite/fixture/environment
+owners, readiness/cleanup and dependency-routing changes, exact source/run/attempts,
+first-failure dispositions, remaining evidence and next action. Distinguish planned
+coverage from executed checks, including unavailable or resource-aborted work.
 
 Resume with **“Read `docs/run-backlog.md` and continue from the checkpoint.”** Verify
 repository/PR state afresh before trusting saved status, then re-enter the loop.

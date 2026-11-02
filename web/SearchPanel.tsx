@@ -87,7 +87,7 @@ export function SearchPanel({
       // Empty supported filters return the complete current authorized outer
       // catalog in one server transaction. Filter after deriving scope, never
       // infer descendants from filtered results or the dashboard's loaded cache.
-      void itemsRequest<{ items: SearchItem<FileItem>[] }>('/search')
+      void itemsRequest<{ items: SearchItem<FileItem>[] }>('/search?includeHidden=1')
         .then((result) => {
           if (!disposed)
             setServer({

@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { recoveryRows } from './recovery-rows.ts';
 import type { DatabaseSync } from '../../../server/database.ts';
 
 const MAX_TABLES = 256;
@@ -39,19 +40,13 @@ export function recoveryInventory(
       ) > MAX_ROW_BYTES
     )
       throw new Error('Recovery inventory exceeds the per-row memory limit.');
-    const primary = columns
-      .filter((column) => Number(column.pk) > 0)
-      .sort((a, b) => Number(a.pk) - Number(b.pk))
-      .map((column) => quote(String(column.name)));
     const selection = identifiers.flatMap((column, i) => [
       `typeof(${column}) AS t${i}`,
       `CASE WHEN typeof(${column})='real' THEN ${column} ELSE CAST(${column} AS BLOB) END AS v${i}`,
     ]);
     const hash = createHash('sha256');
     let rows = 0;
-    for (const row of db.iterate(
-      `SELECT ${selection.join(',')} FROM ${quote(name)} ORDER BY ${primary.length ? primary.join(',') : 'rowid'}`,
-    )) {
+    for (const row of recoveryRows(db, name, selection.join(','))) {
       hash.update('row:');
       for (let i = 0; i < columns.length; i++) {
         const value = row[`v${i}`];
@@ -62,7 +57,11 @@ export function recoveryInventory(
             ? Buffer.alloc(8)
             : value === null
               ? Buffer.alloc(0)
-              : Buffer.from(value as Uint8Array);
+              : Buffer.from(
+                  (value as Uint8Array).buffer,
+                  (value as Uint8Array).byteOffset,
+                  (value as Uint8Array).byteLength,
+                );
         if (typeof value === 'number') data.writeDoubleBE(value);
         hash.update(`${String(row[`t${i}`])}:${data.length}:`);
         hash.update(data);

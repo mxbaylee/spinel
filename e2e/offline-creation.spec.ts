@@ -237,7 +237,7 @@ test.describe('documents created offline', () => {
         await publication;
         return route.fallback();
       });
-      await f.context.route('**/api/items/shared', async (route) => {
+      await f.context.route('**/api/items/shared**', async (route) => {
         if (allowShared) return route.fallback();
         if (disconnected || publish) return route.abort('internetdisconnected');
         // This response is genuinely fetched before publication. Later shared

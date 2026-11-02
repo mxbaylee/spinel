@@ -21,6 +21,7 @@ import { archiveRoutes } from './archive-routes.ts';
 import { pdfRoutes } from '../pdf/routes.ts';
 import { OfflineCreationError, OfflineCreations } from './offline-creation.ts';
 import { SourceSharing } from './source-sharing.ts';
+import { CopyFiles } from './copy.ts';
 
 export function workspaceRoutes(
   auth: AuthStore,
@@ -36,6 +37,7 @@ export function workspaceRoutes(
   const sheets = new SheetStore(store);
   const documents = new DocumentStore(store);
   const files = new PortableFiles(store, collaboration);
+  const copies = new CopyFiles(store, files);
   const creations = collaboration ? new OfflineCreations(store, collaboration) : undefined;
   const sourceSharing = new SourceSharing(store, collaboration);
   const account = (request: Request) => documentIdentity(store, request.headers);
@@ -87,7 +89,29 @@ export function workspaceRoutes(
     );
   };
   router.get('/search', (request, response) => {
+    if (Object.hasOwn(request.query, 'includeHidden')) {
+      if (request.query.includeHidden !== '1' || Object.keys(request.query).length !== 1)
+        throw new AuthError(400, 'Invalid search filters.');
+      // Scoped search needs hidden folders as traversal nodes, while hidden
+      // files are excluded from displayed results. These are current authorized
+      // records, not a cached path supplied by the browser.
+      response.json({ items: catalog.searchCatalog(owner(request)) });
+      return;
+    }
     response.json({ items: catalog.find(owner(request), request.query) });
+  });
+  router.get('/:id/access', (request, response) => {
+    const { spaceId } = request.query;
+    if (
+      Object.keys(request.query).some((key) => key !== 'spaceId') ||
+      (spaceId !== undefined &&
+        (typeof spaceId !== 'string' ||
+          !/^[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}$/.test(spaceId)))
+    )
+      throw new AuthError(400, 'Choose an item to see your access.');
+    response.json({
+      details: catalog.accessDetails(owner(request), String(request.params.id), spaceId),
+    });
   });
   router.get('/:id/sheet', (request, response) => native(request, response, 'sheet'));
   router.put('/:id/sheet', express.json({ limit: '10mb', strict: true }), (request, response) => {
@@ -246,6 +270,30 @@ export function workspaceRoutes(
       throw new AuthError(503, 'History is not available.');
     });
   router.use(express.json({ limit: '8kb', strict: true }));
+  router.get('/:id/copy-options', (request, response) => {
+    const identity = account(request);
+    response.json(copies.options(identity.userId, String(request.params.id), identity.customData));
+  });
+  router.post('/:id/copy', admitTransfer, async (request, response) => {
+    const transfer = transfers.get(response)!;
+    transfer.start();
+    try {
+      const identity = account(request);
+      const item = await copies.copy(
+        identity.userId,
+        String(request.params.id),
+        request.body,
+        () => {
+          if (owner(request) !== identity.userId || response.destroyed)
+            throw new AuthError(401, 'Sign in to continue.');
+        },
+        identity.customData,
+      );
+      response.status(201).json({ item });
+    } finally {
+      transfer.finish();
+    }
+  });
   router.post('/offline-create', (request, response) => {
     const user = owner(request);
     if (request.headers['x-spinel-offline-account'] !== user)
@@ -295,8 +343,22 @@ export function workspaceRoutes(
       throw new AuthError(400, 'Invalid item changes.');
     return body;
   }
-  router.get('/shared', (request, response) =>
-    response.json({ items: catalog.shared(owner(request)) }),
+  router.get('/shared', (request, response) => {
+    if (
+      Object.keys(request.query).some((key) => key !== 'includeHidden') ||
+      (request.query.includeHidden !== undefined && request.query.includeHidden !== '1')
+    )
+      throw new AuthError(400, 'Invalid shared item filters.');
+    response.json({ items: catalog.shared(owner(request), request.query.includeHidden === '1') });
+  });
+  router.put('/:id/hidden', (request, response) =>
+    response.json({
+      items: catalog.setHidden(
+        owner(request),
+        String(request.params.id),
+        payload(request, ['hidden']).hidden,
+      ),
+    }),
   );
   router.put('/:id/placement', (request, response) =>
     response.json({

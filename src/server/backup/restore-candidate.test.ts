@@ -721,16 +721,19 @@ test('late semantic failure publishes no result and makes the partially transfor
   const f = await fixture(),
     candidate = await f.snapshot(),
     current = recoveryInventory(f.db);
-  // Semantic verification streams images, so inject at its actual read seam.
-  const iterate = candidate.iterate.bind(candidate);
-  vi.spyOn(candidate, 'iterate').mockImplementation(function* (sql, ...values) {
-    if (sql === 'SELECT item_id,id,mime,data FROM doc_images')
-      throw new Error('fixture semantic failure');
-    yield* iterate(sql, ...values);
+  // Corrupt the already-transformed disposable candidate as semantics takes
+  // its read-only boundary. Exercise real validation rather than coupling the
+  // injected failure to a particular payload query or driver batch strategy.
+  const exec = candidate.exec.bind(candidate);
+  const corrupt = vi.spyOn(candidate, 'exec').mockImplementation((sql) => {
+    if (sql === 'PRAGMA query_only=ON')
+      candidate.prepare("UPDATE doc_snapshots SET snapshot='{}'").run();
+    exec(sql);
   });
   await expect(reconcileRestoreCandidate(f.db, candidate, options)).rejects.toThrow(
-    'fixture semantic failure',
+    'Recovered application invariants failed',
   );
+  corrupt.mockRestore();
   expect(candidate.prepare('SELECT 1 FROM auth_sessions').get()).toBeUndefined();
   expect(recoveryInventory(f.db)).toEqual(current);
   // Final verification deliberately leaves query_only set; only the worker may

@@ -86,7 +86,12 @@ import {
   assertRestoreOriginalUnchanged,
 } from './restore-files.ts';
 import type { RestoreSourceInput, RestoreSourceManifest } from './restore-files.ts';
-import { validRestoreAuthority } from './restore-authority.ts';
+import {
+  RESTORE_OPERATION_MS,
+  restoreAuthorizedAt,
+  restoreVerifiedUntil,
+  validRestoreAuthority,
+} from './restore-authority.ts';
 import type { ApplicationPolicy } from '../../../server/application-policy.ts';
 import { freezeCurrentRestore } from '../backup/restore-freeze.ts';
 import { prepareRestoreAttempt } from './restore-prepare.ts';
@@ -1435,9 +1440,7 @@ export class MaintenanceSupervisor {
         this.restoreAdmissionAbort = controller;
         const signal = AbortSignal.any([
           controller.signal,
-          AbortSignal.timeout(
-            Math.max(1, Math.min(AUTHORITY_MS, record.intent.authority.expiresAt - this.now())),
-          ),
+          AbortSignal.timeout(Math.max(1, record.intent.authority.expiresAt - this.now())),
         ]);
         await readRetainedRestoreSource({
           root: this.journal.root,
@@ -1562,12 +1565,21 @@ export class MaintenanceSupervisor {
         },
       });
       record = jobs.markStopped(request.id, request.intentHash, record.revision);
-      const budget = this.options.budgets?.restoreMs ?? 120_000;
-      const deadline = Date.now() + budget;
+      // The confirmed deadline includes source retention, pause and shutdown.
+      // Beginning the stopped phase cannot allocate another operation lifetime.
+      const budget = Math.min(
+        this.options.budgets?.restoreMs ?? RESTORE_OPERATION_MS,
+        record.intent.authority.expiresAt - this.now(),
+        record.intent.authority.expiresAt - Date.now(),
+      );
+      if (!Number.isSafeInteger(budget) || budget <= 0 || budget > RESTORE_OPERATION_MS)
+        throw new Error('The original restore operation deadline expired.');
+      const deadline = Math.min(Date.now() + budget, record.intent.authority.expiresAt);
       const signal = AbortSignal.any([controller.signal, AbortSignal.timeout(budget)]);
       const assertBudget = () => {
         signal.throwIfAborted();
-        if (Date.now() >= deadline) throw new Error('Restore custody exceeded its time budget.');
+        if (Date.now() >= deadline || this.now() >= record!.intent.authority.expiresAt)
+          throw new Error('Restore custody exceeded its time budget.');
       };
       const assertClosed = () => {
         assertBudget();
@@ -1625,12 +1637,10 @@ export class MaintenanceSupervisor {
         fingerprint: record.execution!.stop!.fingerprint!,
         authority: record.intent.authority,
         stagingRoot,
-        timeoutMs: Math.max(1, Math.min(budget, deadline - Date.now())),
+        timeoutMs: Math.max(1, Math.min(600_000, budget, deadline - Date.now())),
         signal: AbortSignal.any([
           signal,
-          AbortSignal.timeout(
-            Math.max(1, Math.min(AUTHORITY_MS, record.intent.authority.expiresAt - this.now())),
-          ),
+          AbortSignal.timeout(Math.max(1, record.intent.authority.expiresAt - this.now())),
         ]),
       });
       // Retain successful worker output even if this publication is uncertain.
@@ -1701,6 +1711,8 @@ export class MaintenanceSupervisor {
       !validRestorePreview(request.preview) ||
       !validRestorePreviewBytes(request.previewDatabaseBytes) ||
       !Number.isSafeInteger(request.confirmedAt) ||
+      request.confirmedAt < restoreAuthorizedAt(request.authority) ||
+      request.confirmedAt >= restoreVerifiedUntil(request.authority) ||
       request.confirmedAt > this.now()
     )
       throw new Error('Restore requires captured deployment policy and original confirmation.');
@@ -1776,9 +1788,7 @@ export class MaintenanceSupervisor {
     const controller = new AbortController();
     const signal = AbortSignal.any([
       controller.signal,
-      AbortSignal.timeout(
-        Math.max(1, Math.min(AUTHORITY_MS, request.authority.expiresAt - this.now())),
-      ),
+      AbortSignal.timeout(Math.max(1, request.authority.expiresAt - this.now())),
     ]);
     this.restoreAdmissionAbort = controller;
     try {
@@ -2029,8 +2039,12 @@ export class MaintenanceSupervisor {
       state.operation.expiresAt <= this.now()
     )
       throw new Error('Restore shutdown authority changed during admission.');
-    const budget = this.options.budgets?.restoreMs ?? 120_000;
-    if (!Number.isInteger(budget) || budget < 1 || budget > 600_000)
+    const budget = Math.min(
+      this.options.budgets?.restoreMs ?? 600_000,
+      600_000,
+      state.operation.expiresAt - this.now(),
+    );
+    if (!Number.isSafeInteger(budget) || budget < 1)
       throw new Error('Invalid restore shutdown budget.');
     const record: RestoreStopRecord = {
       request: {
@@ -2038,7 +2052,7 @@ export class MaintenanceSupervisor {
         challengeId: randomUUID(),
         epoch: state.epoch,
         generationId: state.generationId,
-        deadline: this.now() + budget,
+        deadline: Math.min(this.now() + budget, state.operation.expiresAt),
       },
       databaseIdentity: { ...state.databaseIdentity },
       child: { ...identity },
@@ -2816,7 +2830,7 @@ export class MaintenanceSupervisor {
     let record = initial;
     const permit = initial.execution.trial,
       failed = initial.execution.failure.stop;
-    const budget = this.options.budgets?.restoreMs ?? 120_000;
+    const budget = Math.min(this.options.budgets?.restoreMs ?? 600_000, 600_000);
     const deadline = Math.min(this.now(), Date.now()) + budget;
     const signal = AbortSignal.any([
       AbortSignal.timeout(budget),

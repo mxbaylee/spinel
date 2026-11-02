@@ -1,0 +1,1595 @@
+{
+  "schema": 1,
+  "scope": "Historical SPN-115 routing checkpoint; current-main integration and subsequent edits need new same-head CI/reviews.",
+  "method": {
+    "source": "Public GitHub REST workflow run and complete per_page=100 jobs response; plan and result decoded from Actions job logs.",
+    "wallSecondsIncludingQueue": "last allocated job completed_at - run_started_at",
+    "wallSecondsAfterFirstAllocation": "last allocated job completed_at - first allocated job started_at",
+    "runnerSeconds": "sum(completed_at - started_at) for jobs whose REST runner_id is non-null and >0; excludes skipped jobs and is not billed minutes",
+    "failureLatency": "First useful injected Lib tests error at 2026-10-30T04:23:54.4007841Z: 81.4 seconds after run creation; job conclusion at +85 seconds. Positive full/targeted runs had zero failed jobs and no measured time-to-failure.",
+    "resultSummary": "Coverage result and responsiveness summaries retain relevant exact fields; full decoded plan retained, hash checked. Raw logs/artifacts supplement, not implied to remain available permanently."
+  },
+  "limitations": [
+    "Observational full/targeted comparison, not controlled benchmark: SPN-052 and evidence bookkeeping changed between sources.",
+    "Hosted runner variation and full run initial queue (437 seconds) prevent attributing all wall-time difference to routing.",
+    "Successful jobs plus preserved failOnFlakyTests support zero first-attempt acceptance failures; no production flake-rate estimate from these two runs.",
+    "Historical callback/mobile evidence uses emulation, not physical devices.",
+    "Run/PR API pull_requests base/head fields may reflect later current PR metadata; immutable identity comes from retained plans.",
+    "Raw diagnostic artifacts remain supplementary and expire after 7 days; plan/results after 30 days."
+  ],
+  "runs": [
+    {
+      "label": "targeted",
+      "run": 40998449892,
+      "head": "ef1597a5a12fd7af762cdc6f3208246dbc9705dd",
+      "attempt": 1,
+      "conclusion": "success",
+      "created_at": "2026-10-30T03:37:50Z",
+      "started_at": "2026-10-30T03:37:50Z",
+      "updated_at": "2026-10-30T03:56:07Z",
+      "jobs_total": 25,
+      "jobs_returned": 25,
+      "allocated": 24,
+      "wall_seconds_jobs": 1093.0,
+      "wall_seconds_run_start_to_last_job": 1096.0,
+      "runner_seconds": 7421.0,
+      "failed_or_cancelled_jobs": [],
+      "raw_sha256": "0e79ac362700eb8eeed41771af3a93cd0f63d4242a8884ee9251bcfee99c2700",
+      "jobs": [
+        {
+          "id": 123876980680,
+          "name": "Pull request",
+          "conclusion": "success",
+          "started_at": "2026-10-30T03:37:53Z",
+          "completed_at": "2026-10-30T03:38:06Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123876981062,
+          "name": "Classify changes (40998449892)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T03:37:53Z",
+          "completed_at": "2026-10-30T03:38:08Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123877067718,
+          "name": "Unit tests",
+          "conclusion": "success",
+          "started_at": "2026-10-30T03:38:11Z",
+          "completed_at": "2026-10-30T03:45:05Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123877067734,
+          "name": "Lint",
+          "conclusion": "success",
+          "started_at": "2026-10-30T03:38:11Z",
+          "completed_at": "2026-10-30T03:38:58Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123877067744,
+          "name": "Backlog",
+          "conclusion": "success",
+          "started_at": "2026-10-30T03:38:11Z",
+          "completed_at": "2026-10-30T03:38:24Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123877067761,
+          "name": "Typecheck",
+          "conclusion": "success",
+          "started_at": "2026-10-30T03:38:11Z",
+          "completed_at": "2026-10-30T03:38:45Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123877067791,
+          "name": "Doc responsiveness (mobile)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T03:38:11Z",
+          "completed_at": "2026-10-30T03:54:27Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123877067793,
+          "name": "Retained sync transition",
+          "conclusion": "success",
+          "started_at": "2026-10-30T03:38:10Z",
+          "completed_at": "2026-10-30T03:38:48Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123877067814,
+          "name": "Doc responsiveness (desktop)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T03:38:11Z",
+          "completed_at": "2026-10-30T03:46:18Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123877067817,
+          "name": "Doc callback lifetimes (mobile)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T03:38:11Z",
+          "completed_at": "2026-10-30T03:44:30Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123877067823,
+          "name": "Doc callback lifetimes (desktop)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T03:38:11Z",
+          "completed_at": "2026-10-30T03:41:52Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123877067870,
+          "name": "Playwright smoke (production 1/2)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T03:38:11Z",
+          "completed_at": "2026-10-30T03:50:10Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123877067871,
+          "name": "Playwright smoke (development 1/2)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T03:38:11Z",
+          "completed_at": "2026-10-30T03:52:58Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123877067880,
+          "name": "Playwright smoke (mobile-https)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T03:38:11Z",
+          "completed_at": "2026-10-30T03:40:07Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123877067897,
+          "name": "Playwright smoke (production 2/2)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T03:38:11Z",
+          "completed_at": "2026-10-30T03:51:05Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123877067907,
+          "name": "Playwright smoke (offline-upgrade)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T03:38:12Z",
+          "completed_at": "2026-10-30T03:39:54Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123877067929,
+          "name": "Playwright smoke (development 2/2)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T03:38:11Z",
+          "completed_at": "2026-10-30T03:55:49Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123877067940,
+          "name": "Playwright smoke (sync-soak-doc)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T03:38:11Z",
+          "completed_at": "2026-10-30T03:39:41Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123877067965,
+          "name": "Playwright smoke (sync-development)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T03:38:11Z",
+          "completed_at": "2026-10-30T03:41:30Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123877067971,
+          "name": "Playwright smoke (sync-soak-sheet)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T03:38:27Z",
+          "completed_at": "2026-10-30T03:40:25Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123877068014,
+          "name": "Playwright smoke (sync-production)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T03:38:11Z",
+          "completed_at": "2026-10-30T03:48:16Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123877068154,
+          "name": "Lib tests",
+          "conclusion": "success",
+          "started_at": "2026-10-30T03:38:11Z",
+          "completed_at": "2026-10-30T03:38:26Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123877068619,
+          "name": "Container smoke",
+          "conclusion": "success",
+          "started_at": "2026-10-30T03:38:29Z",
+          "completed_at": "2026-10-30T03:39:56Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123882102013,
+          "name": "Playwright smoke",
+          "conclusion": "success",
+          "started_at": "2026-10-30T03:55:52Z",
+          "completed_at": "2026-10-30T03:56:06Z",
+          "allocated_runner": true
+        }
+      ],
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/40998449892",
+      "initial_queue_seconds": 3.0
+    },
+    {
+      "label": "full",
+      "run": 41004498025,
+      "head": "eb6f975fd3acc033e821a9e1bfb8b3a458eee815",
+      "attempt": 1,
+      "conclusion": "success",
+      "created_at": "2026-10-30T04:43:46Z",
+      "started_at": "2026-10-30T04:43:46Z",
+      "updated_at": "2026-10-30T05:15:18Z",
+      "jobs_total": 28,
+      "jobs_returned": 28,
+      "allocated": 28,
+      "wall_seconds_jobs": 1455.0,
+      "wall_seconds_run_start_to_last_job": 1892.0,
+      "runner_seconds": 10214.0,
+      "failed_or_cancelled_jobs": [],
+      "raw_sha256": "b89678062165ed256a2d6a1ad370957dd3d36e6976a94d35bea2bdc1dbadcb3d",
+      "jobs": [
+        {
+          "id": 123898277588,
+          "name": "Pull request",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:51:04Z",
+          "completed_at": "2026-10-30T04:51:20Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123898277715,
+          "name": "Classify changes (41004498025)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:51:03Z",
+          "completed_at": "2026-10-30T04:51:20Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123898369050,
+          "name": "Unit tests",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:51:23Z",
+          "completed_at": "2026-10-30T04:58:19Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123898369086,
+          "name": "Typecheck",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:51:23Z",
+          "completed_at": "2026-10-30T04:51:59Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123898369175,
+          "name": "Lib tests (cells)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:51:22Z",
+          "completed_at": "2026-10-30T04:56:20Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123898369179,
+          "name": "Backlog",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:51:22Z",
+          "completed_at": "2026-10-30T04:51:37Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123898369195,
+          "name": "Lib tests (remaining)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:51:22Z",
+          "completed_at": "2026-10-30T05:01:38Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123898369201,
+          "name": "Lib tests (dense-cells)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:51:22Z",
+          "completed_at": "2026-10-30T04:56:17Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123898369206,
+          "name": "Lib tests (mixed-fuzz)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:51:23Z",
+          "completed_at": "2026-10-30T04:59:17Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123898369214,
+          "name": "Lint",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:51:22Z",
+          "completed_at": "2026-10-30T04:51:54Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123898369219,
+          "name": "Doc callback lifetimes (mobile)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:51:23Z",
+          "completed_at": "2026-10-30T05:05:00Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123898369247,
+          "name": "Doc responsiveness (mobile)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:51:57Z",
+          "completed_at": "2026-10-30T05:14:58Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123898369262,
+          "name": "Container smoke",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:52:01Z",
+          "completed_at": "2026-10-30T04:53:24Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123898369263,
+          "name": "Doc callback lifetimes (desktop)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:53:04Z",
+          "completed_at": "2026-10-30T05:01:42Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123898369282,
+          "name": "Retained sync transition",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:54:20Z",
+          "completed_at": "2026-10-30T04:55:03Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123898369301,
+          "name": "Doc responsiveness (desktop)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:53:06Z",
+          "completed_at": "2026-10-30T05:06:27Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123898369372,
+          "name": "Playwright smoke (development 1/2)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:51:26Z",
+          "completed_at": "2026-10-30T05:01:50Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123898369416,
+          "name": "Playwright smoke (sync-production)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:53:32Z",
+          "completed_at": "2026-10-30T05:07:20Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123898369420,
+          "name": "Playwright smoke (sync-soak-doc)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:53:03Z",
+          "completed_at": "2026-10-30T04:54:39Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123898369422,
+          "name": "Playwright smoke (production 1/2)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:51:40Z",
+          "completed_at": "2026-10-30T05:03:09Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123898369446,
+          "name": "Playwright smoke (sync-soak-sheet)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:53:39Z",
+          "completed_at": "2026-10-30T04:56:08Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123898369465,
+          "name": "Playwright smoke (sync-development)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:52:23Z",
+          "completed_at": "2026-10-30T04:56:23Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123898369491,
+          "name": "Playwright smoke (offline-upgrade)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:53:30Z",
+          "completed_at": "2026-10-30T04:55:17Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123898369519,
+          "name": "Playwright smoke (mobile-https)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:54:40Z",
+          "completed_at": "2026-10-30T04:56:39Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123898369540,
+          "name": "Playwright smoke (production 2/2)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:54:32Z",
+          "completed_at": "2026-10-30T05:05:28Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123898369604,
+          "name": "Playwright smoke (development 2/2)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:55:06Z",
+          "completed_at": "2026-10-30T05:08:40Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123901255034,
+          "name": "Lib tests",
+          "conclusion": "success",
+          "started_at": "2026-10-30T05:03:44Z",
+          "completed_at": "2026-10-30T05:04:01Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123905187381,
+          "name": "Playwright smoke",
+          "conclusion": "success",
+          "started_at": "2026-10-30T05:15:01Z",
+          "completed_at": "2026-10-30T05:15:18Z",
+          "allocated_runner": true
+        }
+      ],
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41004498025",
+      "initial_queue_seconds": 437.0
+    },
+    {
+      "label": "metadata",
+      "run": 40998696318,
+      "head": "ef1597a5a12fd7af762cdc6f3208246dbc9705dd",
+      "attempt": 1,
+      "conclusion": "success",
+      "created_at": "2026-10-30T03:40:30Z",
+      "started_at": "2026-10-30T03:40:30Z",
+      "updated_at": "2026-10-30T03:40:52Z",
+      "jobs_total": 14,
+      "jobs_returned": 14,
+      "allocated": 2,
+      "wall_seconds_jobs": 18.0,
+      "wall_seconds_run_start_to_last_job": 21.0,
+      "runner_seconds": 31.0,
+      "failed_or_cancelled_jobs": [],
+      "raw_sha256": "5a7b9636da6991ac31aee1143a7177ddf4a6b1d1cb06b158c7386daf4d64c92f",
+      "jobs": [
+        {
+          "id": 123877764225,
+          "name": "Pull request",
+          "conclusion": "success",
+          "started_at": "2026-10-30T03:40:33Z",
+          "completed_at": "2026-10-30T03:40:47Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123877764470,
+          "name": "Classify changes (40998696318)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T03:40:34Z",
+          "completed_at": "2026-10-30T03:40:51Z",
+          "allocated_runner": true
+        }
+      ],
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/40998696318",
+      "initial_queue_seconds": 3.0
+    },
+    {
+      "label": "negative",
+      "run": 41002540504,
+      "head": "5a60853631d5103a6c678c331dcd0d2051a7d551",
+      "attempt": 1,
+      "conclusion": "cancelled",
+      "created_at": "2026-10-30T04:22:33Z",
+      "started_at": "2026-10-30T04:22:33Z",
+      "updated_at": "2026-10-30T04:29:43Z",
+      "jobs_total": 25,
+      "jobs_returned": 25,
+      "allocated": 24,
+      "wall_seconds_jobs": 427.0,
+      "wall_seconds_run_start_to_last_job": 430.0,
+      "runner_seconds": 2727.0,
+      "failed_or_cancelled_jobs": [
+        {
+          "name": "Doc callback lifetimes (mobile)",
+          "id": 123890113019,
+          "conclusion": "cancelled",
+          "seconds_since_first_job_start": 189.0
+        },
+        {
+          "name": "Doc responsiveness (mobile)",
+          "id": 123890113029,
+          "conclusion": "cancelled",
+          "seconds_since_first_job_start": 186.0
+        },
+        {
+          "name": "Doc callback lifetimes (desktop)",
+          "id": 123890113070,
+          "conclusion": "cancelled",
+          "seconds_since_first_job_start": 188.0
+        },
+        {
+          "name": "Playwright smoke (sync-development)",
+          "id": 123890113134,
+          "conclusion": "cancelled",
+          "seconds_since_first_job_start": 189.0
+        },
+        {
+          "name": "Doc responsiveness (desktop)",
+          "id": 123890113140,
+          "conclusion": "cancelled",
+          "seconds_since_first_job_start": 188.0
+        },
+        {
+          "name": "Playwright smoke (development 1/2)",
+          "id": 123890113171,
+          "conclusion": "cancelled",
+          "seconds_since_first_job_start": 188.0
+        },
+        {
+          "name": "Playwright smoke (production 1/2)",
+          "id": 123890113223,
+          "conclusion": "cancelled",
+          "seconds_since_first_job_start": 189.0
+        },
+        {
+          "name": "Playwright smoke (development 2/2)",
+          "id": 123890113241,
+          "conclusion": "cancelled",
+          "seconds_since_first_job_start": 188.0
+        },
+        {
+          "name": "Playwright smoke (production 2/2)",
+          "id": 123890113268,
+          "conclusion": "cancelled",
+          "seconds_since_first_job_start": 189.0
+        },
+        {
+          "name": "Playwright smoke (offline-upgrade)",
+          "id": 123890113279,
+          "conclusion": "cancelled",
+          "seconds_since_first_job_start": 182.0
+        },
+        {
+          "name": "Playwright smoke (sync-production)",
+          "id": 123890113308,
+          "conclusion": "cancelled",
+          "seconds_since_first_job_start": 188.0
+        },
+        {
+          "name": "Lib tests",
+          "id": 123890113473,
+          "conclusion": "failure",
+          "seconds_since_first_job_start": 82.0
+        },
+        {
+          "name": "Playwright smoke",
+          "id": 123892019599,
+          "conclusion": "failure",
+          "seconds_since_first_job_start": 427.0
+        }
+      ],
+      "raw_sha256": "557646270c661b59c8ebf0657d689829e86ef358deb74e152e16f2337b393258",
+      "jobs": [
+        {
+          "id": 123890023544,
+          "name": "Pull request",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:22:36Z",
+          "completed_at": "2026-10-30T04:22:50Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123890023776,
+          "name": "Classify changes (41002540504)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:22:36Z",
+          "completed_at": "2026-10-30T04:22:51Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123890112975,
+          "name": "Backlog",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:22:55Z",
+          "completed_at": "2026-10-30T04:23:11Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123890112996,
+          "name": "Container smoke",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:22:54Z",
+          "completed_at": "2026-10-30T04:24:22Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123890113008,
+          "name": "Lint",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:22:55Z",
+          "completed_at": "2026-10-30T04:23:45Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123890113017,
+          "name": "Typecheck",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:22:54Z",
+          "completed_at": "2026-10-30T04:23:22Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123890113019,
+          "name": "Doc callback lifetimes (mobile)",
+          "conclusion": "cancelled",
+          "started_at": "2026-10-30T04:22:55Z",
+          "completed_at": "2026-10-30T04:25:45Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123890113029,
+          "name": "Doc responsiveness (mobile)",
+          "conclusion": "cancelled",
+          "started_at": "2026-10-30T04:22:54Z",
+          "completed_at": "2026-10-30T04:25:42Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123890113043,
+          "name": "Unit tests",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:22:55Z",
+          "completed_at": "2026-10-30T04:29:24Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123890113061,
+          "name": "Retained sync transition",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:22:55Z",
+          "completed_at": "2026-10-30T04:23:41Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123890113070,
+          "name": "Doc callback lifetimes (desktop)",
+          "conclusion": "cancelled",
+          "started_at": "2026-10-30T04:23:24Z",
+          "completed_at": "2026-10-30T04:25:44Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123890113099,
+          "name": "Playwright smoke (mobile-https)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:22:54Z",
+          "completed_at": "2026-10-30T04:24:37Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123890113134,
+          "name": "Playwright smoke (sync-development)",
+          "conclusion": "cancelled",
+          "started_at": "2026-10-30T04:22:55Z",
+          "completed_at": "2026-10-30T04:25:45Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123890113140,
+          "name": "Doc responsiveness (desktop)",
+          "conclusion": "cancelled",
+          "started_at": "2026-10-30T04:22:54Z",
+          "completed_at": "2026-10-30T04:25:44Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123890113171,
+          "name": "Playwright smoke (development 1/2)",
+          "conclusion": "cancelled",
+          "started_at": "2026-10-30T04:22:55Z",
+          "completed_at": "2026-10-30T04:25:44Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123890113214,
+          "name": "Playwright smoke (sync-soak-sheet)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:22:55Z",
+          "completed_at": "2026-10-30T04:24:58Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123890113223,
+          "name": "Playwright smoke (production 1/2)",
+          "conclusion": "cancelled",
+          "started_at": "2026-10-30T04:22:54Z",
+          "completed_at": "2026-10-30T04:25:45Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123890113241,
+          "name": "Playwright smoke (development 2/2)",
+          "conclusion": "cancelled",
+          "started_at": "2026-10-30T04:22:55Z",
+          "completed_at": "2026-10-30T04:25:44Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123890113268,
+          "name": "Playwright smoke (production 2/2)",
+          "conclusion": "cancelled",
+          "started_at": "2026-10-30T04:22:55Z",
+          "completed_at": "2026-10-30T04:25:45Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123890113273,
+          "name": "Playwright smoke (sync-soak-doc)",
+          "conclusion": "success",
+          "started_at": "2026-10-30T04:23:13Z",
+          "completed_at": "2026-10-30T04:24:52Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123890113279,
+          "name": "Playwright smoke (offline-upgrade)",
+          "conclusion": "cancelled",
+          "started_at": "2026-10-30T04:23:47Z",
+          "completed_at": "2026-10-30T04:25:38Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123890113308,
+          "name": "Playwright smoke (sync-production)",
+          "conclusion": "cancelled",
+          "started_at": "2026-10-30T04:23:47Z",
+          "completed_at": "2026-10-30T04:25:44Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123890113473,
+          "name": "Lib tests",
+          "conclusion": "failure",
+          "started_at": "2026-10-30T04:23:43Z",
+          "completed_at": "2026-10-30T04:23:58Z",
+          "allocated_runner": true
+        },
+        {
+          "id": 123892019599,
+          "name": "Playwright smoke",
+          "conclusion": "failure",
+          "started_at": "2026-10-30T04:29:27Z",
+          "completed_at": "2026-10-30T04:29:43Z",
+          "allocated_runner": true
+        }
+      ],
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41002540504",
+      "initial_queue_seconds": 3.0
+    }
+  ],
+  "historicalFull": {
+    "head": "eb6f975fd3acc033e821a9e1bfb8b3a458eee815",
+    "eventBase": "416cf2142018374b2729992b264acf419ffa4553",
+    "testedMerge": "6bdfdddd013215966bff4b293ad9763b3b431382",
+    "planSha256": "51ff5f8537051f63fb6c0516e1575e018bbb594fc8ccc5f92869920bc6f6306b",
+    "plan": {
+      "version": 1,
+      "event": "pull_request",
+      "action": "synchronize",
+      "base": "416cf2142018374b2729992b264acf419ffa4553",
+      "head": "eb6f975fd3acc033e821a9e1bfb8b3a458eee815",
+      "tested": "6bdfdddd013215966bff4b293ad9763b3b431382",
+      "mode": "full",
+      "labels": [
+        "ci-full"
+      ],
+      "paths": [
+        ".github/workflows/ci.yml",
+        "docs/implementation/SPN-115.md",
+        "docs/implementation/evidence/SPN-115-events.json",
+        "docs/implementation/evidence/SPN-115-local.json",
+        "docs/implementation/evidence/SPN-115-targeted-browser.json",
+        "docs/implementation/evidence/SPN-115-targeted-lib.json",
+        "docs/todo/SPN-115.md",
+        "docs/todo/backlog.json",
+        "docs/todo/process.md",
+        "docs/todo/readme.md",
+        "e2e/doc-mobile.spec.ts",
+        "playwright.config.ts",
+        "scripts/ci/changes.test.ts",
+        "scripts/ci/changes.ts",
+        "scripts/ci/coverage-result.test.ts",
+        "scripts/ci/coverage-result.ts",
+        "scripts/ci/doc-callback-comparison.test.ts",
+        "scripts/ci/doc-callback-comparison.ts",
+        "scripts/ci/doc-responsiveness.test.ts",
+        "scripts/ci/doc-responsiveness.ts",
+        "scripts/ci/plan.test.ts",
+        "scripts/ci/plan.ts"
+      ],
+      "suites": {
+        "backlog": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [
+            ".github/workflows/ci.yml",
+            "docs/implementation/SPN-115.md",
+            "docs/implementation/evidence/SPN-115-events.json",
+            "docs/implementation/evidence/SPN-115-local.json",
+            "docs/implementation/evidence/SPN-115-targeted-browser.json",
+            "docs/implementation/evidence/SPN-115-targeted-lib.json",
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/process.md",
+            "docs/todo/readme.md",
+            "e2e/doc-mobile.spec.ts",
+            "playwright.config.ts",
+            "scripts/ci/changes.test.ts",
+            "scripts/ci/changes.ts",
+            "scripts/ci/coverage-result.test.ts",
+            "scripts/ci/coverage-result.ts",
+            "scripts/ci/doc-callback-comparison.test.ts",
+            "scripts/ci/doc-callback-comparison.ts",
+            "scripts/ci/doc-responsiveness.test.ts",
+            "scripts/ci/doc-responsiveness.ts",
+            "scripts/ci/plan.test.ts",
+            "scripts/ci/plan.ts"
+          ],
+          "reason": "Unknown paths require full coverage."
+        },
+        "pull-request": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [
+            ".github/workflows/ci.yml",
+            "docs/implementation/SPN-115.md",
+            "docs/implementation/evidence/SPN-115-events.json",
+            "docs/implementation/evidence/SPN-115-local.json",
+            "docs/implementation/evidence/SPN-115-targeted-browser.json",
+            "docs/implementation/evidence/SPN-115-targeted-lib.json",
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/process.md",
+            "docs/todo/readme.md",
+            "e2e/doc-mobile.spec.ts",
+            "playwright.config.ts",
+            "scripts/ci/changes.test.ts",
+            "scripts/ci/changes.ts",
+            "scripts/ci/coverage-result.test.ts",
+            "scripts/ci/coverage-result.ts",
+            "scripts/ci/doc-callback-comparison.test.ts",
+            "scripts/ci/doc-callback-comparison.ts",
+            "scripts/ci/doc-responsiveness.test.ts",
+            "scripts/ci/doc-responsiveness.ts",
+            "scripts/ci/plan.test.ts",
+            "scripts/ci/plan.ts"
+          ],
+          "reason": "Unknown paths require full coverage."
+        },
+        "lint": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [
+            ".github/workflows/ci.yml",
+            "docs/implementation/SPN-115.md",
+            "docs/implementation/evidence/SPN-115-events.json",
+            "docs/implementation/evidence/SPN-115-local.json",
+            "docs/implementation/evidence/SPN-115-targeted-browser.json",
+            "docs/implementation/evidence/SPN-115-targeted-lib.json",
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/process.md",
+            "docs/todo/readme.md",
+            "e2e/doc-mobile.spec.ts",
+            "playwright.config.ts",
+            "scripts/ci/changes.test.ts",
+            "scripts/ci/changes.ts",
+            "scripts/ci/coverage-result.test.ts",
+            "scripts/ci/coverage-result.ts",
+            "scripts/ci/doc-callback-comparison.test.ts",
+            "scripts/ci/doc-callback-comparison.ts",
+            "scripts/ci/doc-responsiveness.test.ts",
+            "scripts/ci/doc-responsiveness.ts",
+            "scripts/ci/plan.test.ts",
+            "scripts/ci/plan.ts"
+          ],
+          "reason": "Unknown paths require full coverage."
+        },
+        "typecheck": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            ".github/workflows/ci.yml",
+            "docs/implementation/SPN-115.md",
+            "docs/implementation/evidence/SPN-115-events.json",
+            "docs/implementation/evidence/SPN-115-local.json",
+            "docs/implementation/evidence/SPN-115-targeted-browser.json",
+            "docs/implementation/evidence/SPN-115-targeted-lib.json",
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/process.md",
+            "docs/todo/readme.md",
+            "e2e/doc-mobile.spec.ts",
+            "playwright.config.ts",
+            "scripts/ci/changes.test.ts",
+            "scripts/ci/changes.ts",
+            "scripts/ci/coverage-result.test.ts",
+            "scripts/ci/coverage-result.ts",
+            "scripts/ci/doc-callback-comparison.test.ts",
+            "scripts/ci/doc-callback-comparison.ts",
+            "scripts/ci/doc-responsiveness.test.ts",
+            "scripts/ci/doc-responsiveness.ts",
+            "scripts/ci/plan.test.ts",
+            "scripts/ci/plan.ts"
+          ],
+          "reason": "Unknown paths require full coverage."
+        },
+        "unit-tests": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            ".github/workflows/ci.yml",
+            "docs/implementation/SPN-115.md",
+            "docs/implementation/evidence/SPN-115-events.json",
+            "docs/implementation/evidence/SPN-115-local.json",
+            "docs/implementation/evidence/SPN-115-targeted-browser.json",
+            "docs/implementation/evidence/SPN-115-targeted-lib.json",
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/process.md",
+            "docs/todo/readme.md",
+            "e2e/doc-mobile.spec.ts",
+            "playwright.config.ts",
+            "scripts/ci/changes.test.ts",
+            "scripts/ci/changes.ts",
+            "scripts/ci/coverage-result.test.ts",
+            "scripts/ci/coverage-result.ts",
+            "scripts/ci/doc-callback-comparison.test.ts",
+            "scripts/ci/doc-callback-comparison.ts",
+            "scripts/ci/doc-responsiveness.test.ts",
+            "scripts/ci/doc-responsiveness.ts",
+            "scripts/ci/plan.test.ts",
+            "scripts/ci/plan.ts"
+          ],
+          "reason": "Unknown paths require full coverage."
+        },
+        "lib-test-run": {
+          "selected": true,
+          "dependencies": [
+            "lib/**",
+            "scripts/dependencies/**",
+            "package{,-lock}.json",
+            "vitest.config.ts",
+            "tsconfig.json",
+            ".nvmrc",
+            ".github/workflows/ci.yml"
+          ],
+          "inputs": [
+            ".github/workflows/ci.yml",
+            "docs/implementation/SPN-115.md",
+            "docs/implementation/evidence/SPN-115-events.json",
+            "docs/implementation/evidence/SPN-115-local.json",
+            "docs/implementation/evidence/SPN-115-targeted-browser.json",
+            "docs/implementation/evidence/SPN-115-targeted-lib.json",
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/process.md",
+            "docs/todo/readme.md",
+            "e2e/doc-mobile.spec.ts",
+            "playwright.config.ts",
+            "scripts/ci/changes.test.ts",
+            "scripts/ci/changes.ts",
+            "scripts/ci/coverage-result.test.ts",
+            "scripts/ci/coverage-result.ts",
+            "scripts/ci/doc-callback-comparison.test.ts",
+            "scripts/ci/doc-callback-comparison.ts",
+            "scripts/ci/doc-responsiveness.test.ts",
+            "scripts/ci/doc-responsiveness.ts",
+            "scripts/ci/plan.test.ts",
+            "scripts/ci/plan.ts"
+          ],
+          "reason": "Unknown paths require full coverage."
+        },
+        "playwright-run": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            ".github/workflows/ci.yml",
+            "docs/implementation/SPN-115.md",
+            "docs/implementation/evidence/SPN-115-events.json",
+            "docs/implementation/evidence/SPN-115-local.json",
+            "docs/implementation/evidence/SPN-115-targeted-browser.json",
+            "docs/implementation/evidence/SPN-115-targeted-lib.json",
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/process.md",
+            "docs/todo/readme.md",
+            "e2e/doc-mobile.spec.ts",
+            "playwright.config.ts",
+            "scripts/ci/changes.test.ts",
+            "scripts/ci/changes.ts",
+            "scripts/ci/coverage-result.test.ts",
+            "scripts/ci/coverage-result.ts",
+            "scripts/ci/doc-callback-comparison.test.ts",
+            "scripts/ci/doc-callback-comparison.ts",
+            "scripts/ci/doc-responsiveness.test.ts",
+            "scripts/ci/doc-responsiveness.ts",
+            "scripts/ci/plan.test.ts",
+            "scripts/ci/plan.ts"
+          ],
+          "reason": "Unknown paths require full coverage."
+        },
+        "container-smoke": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            ".github/workflows/ci.yml",
+            "docs/implementation/SPN-115.md",
+            "docs/implementation/evidence/SPN-115-events.json",
+            "docs/implementation/evidence/SPN-115-local.json",
+            "docs/implementation/evidence/SPN-115-targeted-browser.json",
+            "docs/implementation/evidence/SPN-115-targeted-lib.json",
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/process.md",
+            "docs/todo/readme.md",
+            "e2e/doc-mobile.spec.ts",
+            "playwright.config.ts",
+            "scripts/ci/changes.test.ts",
+            "scripts/ci/changes.ts",
+            "scripts/ci/coverage-result.test.ts",
+            "scripts/ci/coverage-result.ts",
+            "scripts/ci/doc-callback-comparison.test.ts",
+            "scripts/ci/doc-callback-comparison.ts",
+            "scripts/ci/doc-responsiveness.test.ts",
+            "scripts/ci/doc-responsiveness.ts",
+            "scripts/ci/plan.test.ts",
+            "scripts/ci/plan.ts"
+          ],
+          "reason": "Unknown paths require full coverage."
+        },
+        "sync-transition": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            ".github/workflows/ci.yml",
+            "docs/implementation/SPN-115.md",
+            "docs/implementation/evidence/SPN-115-events.json",
+            "docs/implementation/evidence/SPN-115-local.json",
+            "docs/implementation/evidence/SPN-115-targeted-browser.json",
+            "docs/implementation/evidence/SPN-115-targeted-lib.json",
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/process.md",
+            "docs/todo/readme.md",
+            "e2e/doc-mobile.spec.ts",
+            "playwright.config.ts",
+            "scripts/ci/changes.test.ts",
+            "scripts/ci/changes.ts",
+            "scripts/ci/coverage-result.test.ts",
+            "scripts/ci/coverage-result.ts",
+            "scripts/ci/doc-callback-comparison.test.ts",
+            "scripts/ci/doc-callback-comparison.ts",
+            "scripts/ci/doc-responsiveness.test.ts",
+            "scripts/ci/doc-responsiveness.ts",
+            "scripts/ci/plan.test.ts",
+            "scripts/ci/plan.ts"
+          ],
+          "reason": "Unknown paths require full coverage."
+        },
+        "doc-responsiveness": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            ".github/workflows/ci.yml",
+            "docs/implementation/SPN-115.md",
+            "docs/implementation/evidence/SPN-115-events.json",
+            "docs/implementation/evidence/SPN-115-local.json",
+            "docs/implementation/evidence/SPN-115-targeted-browser.json",
+            "docs/implementation/evidence/SPN-115-targeted-lib.json",
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/process.md",
+            "docs/todo/readme.md",
+            "e2e/doc-mobile.spec.ts",
+            "playwright.config.ts",
+            "scripts/ci/changes.test.ts",
+            "scripts/ci/changes.ts",
+            "scripts/ci/coverage-result.test.ts",
+            "scripts/ci/coverage-result.ts",
+            "scripts/ci/doc-callback-comparison.test.ts",
+            "scripts/ci/doc-callback-comparison.ts",
+            "scripts/ci/doc-responsiveness.test.ts",
+            "scripts/ci/doc-responsiveness.ts",
+            "scripts/ci/plan.test.ts",
+            "scripts/ci/plan.ts"
+          ],
+          "reason": "Unknown paths require full coverage."
+        },
+        "doc-callback-lifetimes": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            ".github/workflows/ci.yml",
+            "docs/implementation/SPN-115.md",
+            "docs/implementation/evidence/SPN-115-events.json",
+            "docs/implementation/evidence/SPN-115-local.json",
+            "docs/implementation/evidence/SPN-115-targeted-browser.json",
+            "docs/implementation/evidence/SPN-115-targeted-lib.json",
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/process.md",
+            "docs/todo/readme.md",
+            "e2e/doc-mobile.spec.ts",
+            "playwright.config.ts",
+            "scripts/ci/changes.test.ts",
+            "scripts/ci/changes.ts",
+            "scripts/ci/coverage-result.test.ts",
+            "scripts/ci/coverage-result.ts",
+            "scripts/ci/doc-callback-comparison.test.ts",
+            "scripts/ci/doc-callback-comparison.ts",
+            "scripts/ci/doc-responsiveness.test.ts",
+            "scripts/ci/doc-responsiveness.ts",
+            "scripts/ci/plan.test.ts",
+            "scripts/ci/plan.ts"
+          ],
+          "reason": "Unknown paths require full coverage."
+        },
+        "responsiveness-baseline": {
+          "selected": true,
+          "dependencies": [
+            "web/**",
+            "server/**",
+            "lib/**",
+            "e2e/**",
+            "src/shared/**",
+            "src/server/{sync,history,collaboration}/**",
+            "scripts/{ci,dependencies,sync-transition}/**",
+            "build/runtime/dependency/workflow configuration"
+          ],
+          "inputs": [
+            ".github/workflows/ci.yml",
+            "docs/implementation/SPN-115.md",
+            "docs/implementation/evidence/SPN-115-events.json",
+            "docs/implementation/evidence/SPN-115-local.json",
+            "docs/implementation/evidence/SPN-115-targeted-browser.json",
+            "docs/implementation/evidence/SPN-115-targeted-lib.json",
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/process.md",
+            "docs/todo/readme.md",
+            "e2e/doc-mobile.spec.ts",
+            "playwright.config.ts",
+            "scripts/ci/changes.test.ts",
+            "scripts/ci/changes.ts",
+            "scripts/ci/coverage-result.test.ts",
+            "scripts/ci/coverage-result.ts",
+            "scripts/ci/doc-callback-comparison.test.ts",
+            "scripts/ci/doc-callback-comparison.ts",
+            "scripts/ci/doc-responsiveness.test.ts",
+            "scripts/ci/doc-responsiveness.ts",
+            "scripts/ci/plan.test.ts",
+            "scripts/ci/plan.ts"
+          ],
+          "reason": "Unknown paths require full coverage."
+        },
+        "callback-baseline": {
+          "selected": true,
+          "dependencies": [
+            "web/**",
+            "server/**",
+            "lib/**",
+            "e2e/**",
+            "src/shared/**",
+            "src/server/{sync,history,collaboration}/**",
+            "scripts/{ci,dependencies,sync-transition}/**",
+            "build/runtime/dependency/workflow configuration"
+          ],
+          "inputs": [
+            ".github/workflows/ci.yml",
+            "docs/implementation/SPN-115.md",
+            "docs/implementation/evidence/SPN-115-events.json",
+            "docs/implementation/evidence/SPN-115-local.json",
+            "docs/implementation/evidence/SPN-115-targeted-browser.json",
+            "docs/implementation/evidence/SPN-115-targeted-lib.json",
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/process.md",
+            "docs/todo/readme.md",
+            "e2e/doc-mobile.spec.ts",
+            "playwright.config.ts",
+            "scripts/ci/changes.test.ts",
+            "scripts/ci/changes.ts",
+            "scripts/ci/coverage-result.test.ts",
+            "scripts/ci/coverage-result.ts",
+            "scripts/ci/doc-callback-comparison.test.ts",
+            "scripts/ci/doc-callback-comparison.ts",
+            "scripts/ci/doc-responsiveness.test.ts",
+            "scripts/ci/doc-responsiveness.ts",
+            "scripts/ci/plan.test.ts",
+            "scripts/ci/plan.ts"
+          ],
+          "reason": "Unknown paths require full coverage."
+        },
+        "phone-compatibility": {
+          "selected": true,
+          "dependencies": [
+            "full plan backstop; ordinary phone owners remain in routine browser coverage"
+          ],
+          "inputs": [
+            ".github/workflows/ci.yml",
+            "docs/implementation/SPN-115.md",
+            "docs/implementation/evidence/SPN-115-events.json",
+            "docs/implementation/evidence/SPN-115-local.json",
+            "docs/implementation/evidence/SPN-115-targeted-browser.json",
+            "docs/implementation/evidence/SPN-115-targeted-lib.json",
+            "docs/todo/SPN-115.md",
+            "docs/todo/backlog.json",
+            "docs/todo/process.md",
+            "docs/todo/readme.md",
+            "e2e/doc-mobile.spec.ts",
+            "playwright.config.ts",
+            "scripts/ci/changes.test.ts",
+            "scripts/ci/changes.ts",
+            "scripts/ci/coverage-result.test.ts",
+            "scripts/ci/coverage-result.ts",
+            "scripts/ci/doc-callback-comparison.test.ts",
+            "scripts/ci/doc-callback-comparison.ts",
+            "scripts/ci/doc-responsiveness.test.ts",
+            "scripts/ci/doc-responsiveness.ts",
+            "scripts/ci/plan.test.ts",
+            "scripts/ci/plan.ts"
+          ],
+          "reason": "Unknown paths require full coverage."
+        }
+      }
+    },
+    "result": {
+      "passed": true,
+      "gateResults": {
+        "typecheck": "success",
+        "unit-tests": "success",
+        "lib-tests": "success"
+      },
+      "results": [
+        {
+          "suite": "backlog",
+          "selected": true,
+          "result": "success",
+          "reason": "Unknown paths require full coverage."
+        },
+        {
+          "suite": "pull-request",
+          "selected": true,
+          "result": "success",
+          "reason": "Unknown paths require full coverage."
+        },
+        {
+          "suite": "lint",
+          "selected": true,
+          "result": "success",
+          "reason": "Unknown paths require full coverage."
+        },
+        {
+          "suite": "typecheck",
+          "selected": true,
+          "result": "success",
+          "reason": "Unknown paths require full coverage."
+        },
+        {
+          "suite": "unit-tests",
+          "selected": true,
+          "result": "success",
+          "reason": "Unknown paths require full coverage."
+        },
+        {
+          "suite": "lib-test-run",
+          "selected": true,
+          "result": "success",
+          "reason": "Unknown paths require full coverage."
+        },
+        {
+          "suite": "playwright-run",
+          "selected": true,
+          "result": "success",
+          "reason": "Unknown paths require full coverage."
+        },
+        {
+          "suite": "container-smoke",
+          "selected": true,
+          "result": "success",
+          "reason": "Unknown paths require full coverage."
+        },
+        {
+          "suite": "sync-transition",
+          "selected": true,
+          "result": "success",
+          "reason": "Unknown paths require full coverage."
+        },
+        {
+          "suite": "doc-responsiveness",
+          "selected": true,
+          "result": "success",
+          "reason": "Unknown paths require full coverage."
+        },
+        {
+          "suite": "doc-callback-lifetimes",
+          "selected": true,
+          "result": "success",
+          "reason": "Unknown paths require full coverage."
+        }
+      ]
+    },
+    "testCounts": {
+      "scriptTests": 359,
+      "applicationUnitTests": 2049,
+      "applicationUnitFiles": 188,
+      "responsiveness": {
+        "eachPreset": {
+          "baseline": 4,
+          "candidate": 7,
+          "retries": 0
+        }
+      },
+      "callback": {
+        "eachPreset": {
+          "baseline": 1,
+          "candidate": 1,
+          "retries": 0
+        }
+      }
+    },
+    "responsivenessSummaries": {
+      "desktop": {
+        "status": "passed",
+        "passed": true,
+        "mode": "paired",
+        "physicalDevice": false,
+        "candidateIntegrity": true,
+        "failures": [],
+        "unavailable": [],
+        "samples": [
+          {
+            "role": "candidate",
+            "sample": "plain-3",
+            "source": "6bdfdddd013215966bff4b293ad9763b3b431382",
+            "inputP95Ms": 30,
+            "longestTaskMs": 51,
+            "capacityPairedFlushMs": {
+              "count": 65,
+              "p50": 4.200000000069849,
+              "p95": 8.5,
+              "max": 10.29999999993015,
+              "sum": 312.4999999998836
+            },
+            "pairedFlushMaximumMs": 10.29999999993015,
+            "firstVerifiedBrowserLocalDrainMs": 303,
+            "redoOutcome": "passed",
+            "undoRedoGroups": 1
+          },
+          {
+            "role": "candidate",
+            "sample": "plain-2",
+            "source": "6bdfdddd013215966bff4b293ad9763b3b431382",
+            "inputP95Ms": 30.599999999976717,
+            "longestTaskMs": 52,
+            "capacityPairedFlushMs": {
+              "count": 65,
+              "p50": 4.300000000046566,
+              "p95": 6.900000000023283,
+              "max": 10.5,
+              "sum": 305.9000000000233
+            },
+            "pairedFlushMaximumMs": 10.5,
+            "firstVerifiedBrowserLocalDrainMs": 302.39999999990687,
+            "redoOutcome": "passed",
+            "undoRedoGroups": 1
+          },
+          {
+            "role": "candidate",
+            "sample": "plain-1",
+            "source": "6bdfdddd013215966bff4b293ad9763b3b431382",
+            "inputP95Ms": 29.599999999976717,
+            "longestTaskMs": 0,
+            "capacityPairedFlushMs": {
+              "count": 65,
+              "p50": 4.2000000000116415,
+              "p95": 6.900000000023283,
+              "max": 9.5,
+              "sum": 300
+            },
+            "pairedFlushMaximumMs": 9.5,
+            "firstVerifiedBrowserLocalDrainMs": 313.10000000009313,
+            "redoOutcome": "passed",
+            "undoRedoGroups": 66
+          }
+        ]
+      },
+      "mobile": {
+        "status": "passed",
+        "passed": true,
+        "mode": "paired",
+        "physicalDevice": false,
+        "candidateIntegrity": true,
+        "failures": [],
+        "unavailable": [],
+        "samples": [
+          {
+            "role": "candidate",
+            "sample": "plain-3",
+            "source": "6bdfdddd013215966bff4b293ad9763b3b431382",
+            "inputP95Ms": 62.10000000009313,
+            "longestTaskMs": 137,
+            "capacityPairedFlushMs": {
+              "count": 65,
+              "p50": 12.100000000093132,
+              "p95": 17.200000000186265,
+              "max": 51.4000000001397,
+              "sum": 893.5999999991618
+            },
+            "pairedFlushMaximumMs": 51.4000000001397,
+            "firstVerifiedBrowserLocalDrainMs": 319.5,
+            "redoOutcome": "passed",
+            "undoRedoGroups": 1
+          },
+          {
+            "role": "candidate",
+            "sample": "plain-2",
+            "source": "6bdfdddd013215966bff4b293ad9763b3b431382",
+            "inputP95Ms": 64.0999999998603,
+            "longestTaskMs": 134,
+            "capacityPairedFlushMs": {
+              "count": 65,
+              "p50": 12,
+              "p95": 22,
+              "max": 48.60000000009313,
+              "sum": 918.7000000003027
+            },
+            "pairedFlushMaximumMs": 48.60000000009313,
+            "firstVerifiedBrowserLocalDrainMs": 327.5999999998603,
+            "redoOutcome": "passed",
+            "undoRedoGroups": 1
+          },
+          {
+            "role": "candidate",
+            "sample": "plain-1",
+            "source": "6bdfdddd013215966bff4b293ad9763b3b431382",
+            "inputP95Ms": 61.60000000009313,
+            "longestTaskMs": 114,
+            "capacityPairedFlushMs": {
+              "count": 65,
+              "p50": 12.199999999953434,
+              "p95": 19.699999999953434,
+              "max": 27.400000000023283,
+              "sum": 853.1999999994878
+            },
+            "pairedFlushMaximumMs": 27.400000000023283,
+            "firstVerifiedBrowserLocalDrainMs": 305.30000000004657,
+            "redoOutcome": "passed",
+            "undoRedoGroups": 66
+          }
+        ]
+      }
+    },
+    "artifactMetadata": [
+      {
+        "id": 12956560464,
+        "name": "doc-responsiveness-mobile",
+        "size_in_bytes": 1503103,
+        "digest": "sha256:b8c92ff684f8e0c7a0b895cc0767a85f595c7da19ed4b457475f5bfa0056a532",
+        "expires_at": "2026-11-06T05:14:54Z"
+      },
+      {
+        "id": 12955865434,
+        "name": "ci-results-lib",
+        "size_in_bytes": 1518,
+        "digest": "sha256:cfda6dfe498f268f8b9f928bee339b23553b4c60716184a9dc8f7a95872478e5",
+        "expires_at": "2026-11-29T05:03:57Z"
+      },
+      {
+        "id": 12955836390,
+        "name": "doc-callback-lifetimes-mobile",
+        "size_in_bytes": 83854639,
+        "digest": "sha256:383d3ba5cb904372f5b053a8abdcee02e7161a0b7e65a8fc81224df2628fa13d",
+        "expires_at": "2026-11-06T05:04:49Z"
+      },
+      {
+        "id": 12955579368,
+        "name": "ci-results-browser",
+        "size_in_bytes": 1718,
+        "digest": "sha256:d9f9f030d8f3f13b96d1e13560ac410f0bac3ab994c2b025b4a9d85f08cf249d",
+        "expires_at": "2026-11-29T05:15:14Z"
+      },
+      {
+        "id": 12955373374,
+        "name": "doc-callback-lifetimes-desktop",
+        "size_in_bytes": 91771511,
+        "digest": "sha256:ad4a223be570d6144366e4ed4212b1593ef1565be5f94b8ad0834c37e77b5c27",
+        "expires_at": "2026-11-06T05:01:33Z"
+      },
+      {
+        "id": 12954994030,
+        "name": "doc-responsiveness-desktop",
+        "size_in_bytes": 1012710,
+        "digest": "sha256:544bcb5ca63df771d4e57960aa297eac64f3c4105e1d1f9ec8b4c26a61006271",
+        "expires_at": "2026-11-06T05:06:22Z"
+      },
+      {
+        "id": 12954683047,
+        "name": "ci-plan",
+        "size_in_bytes": 1094,
+        "digest": "sha256:0cb1df43f5cc04cd4a9885431f75f7531bb2b9cbc1de39035cadf794b76c4c30",
+        "expires_at": "2026-11-29T04:51:16Z"
+      }
+    ]
+  },
+  "observedCostDifference": {
+    "runnerSeconds": 2793,
+    "targetedRunnerSecondsBelowFullPercent": 27.34,
+    "allocatedJobs": 4,
+    "routinePhoneExecutionsRemoved": 12
+  }
+}

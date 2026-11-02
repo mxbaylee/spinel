@@ -11,6 +11,7 @@ import type { WorkspaceStore } from './store.ts';
 import { SpaceStore } from './spaces.ts';
 import { resolveSpaceScope } from './space-scope.ts';
 import type { SpaceScope } from './space-scope.ts';
+import { resolveAccessDetails } from './access-details.ts';
 
 /** Account-only outer metadata. Native services deliberately never use this facade. */
 export class WorkspaceFiles {
@@ -58,6 +59,10 @@ export class WorkspaceFiles {
     return this.project(user, resolveSpaceScope(this.workspace.auth, user, id, id, needed));
   }
 
+  accessDetails(user: string, id: string, spaceId?: string) {
+    return resolveAccessDetails(this.workspace, user, id, spaceId);
+  }
+
   list(user: string): FileItem[] {
     return this.workspace.auth.transaction(() => {
       const ordinary = this.workspace.list(user);
@@ -98,28 +103,53 @@ export class WorkspaceFiles {
     return shared;
   }
 
-  shared(user: string): FileItem[] {
+  shared(user: string, includeHidden = false): FileItem[] {
     return this.workspace.auth.transaction(() => {
-      const ordinary = this.workspace.shared(user);
+      const ordinary = this.workspace.shared(user, includeHidden);
       if (!this.workspace.spacesEnabled) return ordinary;
+      const hidden = this.workspace.hiddenItems(user);
       const placement = this.workspace.auth.database.prepare(
         'SELECT parent_id AS parentId FROM workspace_placements WHERE user_id=? AND item_id=?',
       );
       const roots = this.spaces
         .roots(user)
-        .filter((scope) => scope.access !== 'owner')
+        .filter(
+          (scope) => scope.access !== 'owner' && (includeHidden || !hidden.has(scope.space.id)),
+        )
         .map((scope) => {
           const filed = placement.get(user, scope.space.id) as
             { parentId: string | null } | undefined;
           return {
             ...this.project(user, scope),
             sharedAt: this.sharedAt(user, scope),
+            ...(hidden.has(scope.space.id) ? { hidden: true as const } : {}),
             ...(filed ? { placementParentId: filed.parentId } : {}),
           };
         });
       return [...ordinary, ...roots].sort(
         (a, b) => (b.sharedAt ?? 0) - (a.sharedAt ?? 0) || a.id.localeCompare(b.id),
       );
+    });
+  }
+
+  setHidden(user: string, id: string, hidden: unknown): FileItem[] {
+    return this.workspace.auth.transaction(() => {
+      // The outer-file facade rejects Space children, guests, Operators and
+      // revoked access before a personal preference can be written.
+      const item = this.get(user, id);
+      if (item.access === 'owner')
+        throw new AuthError(400, 'Hide a shared item; your own files stay in My files.');
+      if (typeof hidden !== 'boolean') throw new AuthError(400, 'Choose Hide or Show.');
+      const db = this.workspace.auth.database;
+      if (hidden)
+        db.prepare('INSERT OR IGNORE INTO workspace_hidden(user_id,item_id) VALUES(?,?)').run(
+          user,
+          id,
+        );
+      else db.prepare('DELETE FROM workspace_hidden WHERE user_id=? AND item_id=?').run(user, id);
+      // Keep hidden entries in the private catalog so hiding never looks like
+      // revoked access to the device-copy lifecycle.
+      return this.shared(user, true);
     });
   }
 
@@ -240,7 +270,7 @@ export class WorkspaceFiles {
   place(user: string, id: string, destination: unknown, remove = false): FileItem[] {
     if (!this.root(id)) {
       this.workspace.place(user, id, destination, remove);
-      return this.shared(user);
+      return this.shared(user, true);
     }
     this.enabled();
     return this.workspace.auth.transaction(() => {
@@ -256,7 +286,7 @@ export class WorkspaceFiles {
           `INSERT INTO workspace_placements(user_id,item_id,parent_id) VALUES(?,?,?)
         ON CONFLICT(user_id,item_id) DO UPDATE SET parent_id=excluded.parent_id`,
         ).run(user, id, this.workspace.parent(user, destination));
-      return this.shared(user);
+      return this.shared(user, true);
     });
   }
 
@@ -278,6 +308,13 @@ export class WorkspaceFiles {
     });
   }
 
+  /** Complete current scope graph; clients still exclude hidden result rows. */
+  searchCatalog(user: string) {
+    return this.workspace.auth.transaction(() =>
+      searchCatalog([...this.list(user), ...this.shared(user, true)]),
+    );
+  }
+
   find(user: string, input: Record<string, unknown>) {
     this.workspace.owner(user);
     let query;
@@ -287,11 +324,7 @@ export class WorkspaceFiles {
       throw new AuthError(400, 'Invalid search filters.');
     }
     return this.workspace.auth.transaction(() =>
-      searchItems(
-        searchCatalog([...this.list(user), ...this.shared(user)]),
-        query,
-        this.workspace.auth.now(),
-      ),
+      searchItems(this.searchCatalog(user), query, this.workspace.auth.now()),
     );
   }
 }

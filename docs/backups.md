@@ -410,7 +410,11 @@ The child process uses the same pinned SQLite runtime, a 256 MiB JavaScript heap
 a 512 MiB Linux RSS guard and a two-minute deadline. Before launch it requires
 640 MiB of available cgroup capacity and 768 MiB of available host memory; while
 running it stops below 128/256 MiB respectively. Missing cgroup probes retain
-the available host, RSS, heap and time protections. It has scoped file
+the available host, RSS, heap and time protections. Available cgroup capacity
+credits only clean inactive disk-file cache from valid `memory.stat` counters;
+active cache, shared/tmpfs memory, dirty pages and writeback remain charged.
+Missing, malformed or inconsistent cache counters retain raw cgroup usage.
+It has scoped file
 permissions and no Node network permission. Decompression defaults to an 8 GiB
 ceiling. Artifact retrieval and local publication check available destination
 space before and during transfer; decompression also retains a 256 MiB reserve.
@@ -471,11 +475,11 @@ deployment.
    32-byte recovery key. It needs no automatic backup destination. A bare SQLite
    file is not accepted. Catalog recovery uses the deployment's configured active
    and retained keys; it does not ask the browser for provider credentials.
-2. Complete the fresh Operator passkey check. It lasts five minutes, and upload,
-   verification and the preview must finish within it; otherwise preparation
-   fails saying the passkey check expired. For a large backup over a slow
-   connection, choose a saved backup instead ([SPN-124](todo/SPN-124.md) lifts
-   this limit). Preparation takes private custody,
+2. Complete the fresh Operator passkey check. Its five-minute window admits the
+   preparation; upload, verification and the preview then have one 30-minute
+   deadline, capped by the initiating session's expiry. The deadline cannot be
+   extended by another passkey check or a retried request. Expired preparation
+   asks you to prepare the backup again. Preparation takes private custody,
    checks the encrypted inventory, compatible immutable image/origin and resource
    requirements, and builds a provisional reconciliation preview. The current
    workspace keeps running. The backup retention lease protects the selected
@@ -489,7 +493,7 @@ deployment.
    recovery; a successful estimate does not guarantee completion. A failure names
    its cause where Spinel can tell it safely: a key that cannot decrypt the backup
    (a wrong key and altered bytes look the same), a backup from another workspace
-   address or application image, an expired passkey check, or a memory, time, size
+   address or application image, an expired operation, or a memory, time, size
    or disk limit. No failure message includes paths, contents or native errors.
 3. Select **Review restore**, inspect the source fingerprint, exact target and
    provisional consequences, then freshly authenticate and confirm. Work accepted
@@ -515,6 +519,15 @@ deployment.
    reconciles access the same way. It contains no document names or counts, and
    an open document hides it until the member returns to a list. Dismissing it
    hides it in that browser only.
+
+Fresh confirmation captures a separate operation deadline of at most 30 minutes,
+capped by the current session's expiry. Source handoff, preparation, activation and
+original-content recovery may continue after the passkey's five-minute admission
+window. Individual worker, shutdown and trial phases retain their own shorter
+bounds. Revocation, sign-out, changed verification/account or target, and the
+original operation deadline still stop the next durable cutover. Ordinary
+maintenance keeps its five-minute authority. Older retained restore intents retain
+their original shorter deadlines. See the [lifetime decision](implementation/SPN-124.md#separate-admission-freshness-from-bounded-work).
 
 Current account state and passkeys remain authoritative. Archived credentials
 cannot authorize activation or renew the original confirmation. Sharing is capped
@@ -545,19 +558,19 @@ hold, retaining its recovery evidence and permitting a new preparation.
 Missing evidence, expired
 authority or ambiguous ownership keeps the workspace closed.
 
-Two fixed limits bound activation:
+Two independent limits bound activation:
 
-- **Five minutes from the passkey check.** Reading the held source, the final
-  capacity check, stopping the application, the work below, and any
-  original-content recovery after a failed trial must all finish within five
-  minutes of the confirmation's passkey check.
-- **Two minutes of custody.** Once the application has stopped, the supervisor
-  allows 120 seconds to preserve the original files, freeze a comparison copy,
-  prepare and activate the candidate, health-check it privately and commit. A
-  failed trial gets a separate 120 seconds to capture and freeze its evidence.
-  Each step's own timeouts also stay inside this budget. The budget is not
-  configurable and does not grow with database size; larger databases leave less
-  time for the remaining steps.
+- **The original operation deadline.** Fresh confirmation captures at most
+  30 minutes, capped by that session's expiry. Reading the source, the final
+  capacity check, stopping the application, preparation, activation and any
+  original-content recovery must finish within this same deadline. Entering a
+  later phase never starts another 30 minutes.
+- **Phase budgets.** Shutdown, individual verification/preparation work and
+  original-content recovery are each bounded at ten minutes or less, inside the
+  remaining operation lifetime. Trial startup/readiness retains its shorter
+  checks. A failed trial may use a separate ten minutes to capture and freeze
+  negative evidence; that time cannot authorize activation, recovery or reopening
+  after the original operation expires. The bounds do not grow with database size.
 
 If either limit runs out before commit, the restore fails. What happens next
 depends on how far it got:
@@ -571,7 +584,7 @@ depends on how far it got:
   the Operator runs those steps ([runbook](maintenance.md#an-unresolved-restore)).
   See the [staging recovery decision](implementation/SPN-112.md#recover-an-untouched-original-after-staging-fails).
 - **After a failed trial**, one original-content recovery runs. If it cannot
-  finish in the passkey window's remaining time, the workspace stays closed as an
+  finish in the operation's remaining time, the workspace stays closed as an
   unresolved restore until the Operator follows the recovery runbook.
 - **Anywhere else after activation** (for example a power loss during the trial),
   the workspace stays closed as an unresolved restore. The supported
@@ -581,14 +594,13 @@ depends on how far it got:
   do not copy raw files over the workspace or remove its opening barrier. A
   committed winner is never reinstalled, preserving any later acknowledged work.
 
-The real-process acceptance fixture took under a minute from confirmation to
-commit; no measurement exists yet for a large database on the 1 GiB / 0.75 CPU
-profile, and SPN-038's launch drill measures it on the target host. Rehearse a
-restore of a realistically sized backup on the target host before relying on this
-path. If confirmation to commit takes more than about a minute, do not rely on it:
-a failed trial's evidence capture and original-content recovery need about as long
-again ([SPN-124](todo/SPN-124.md) separates the work's lifetime from the passkey
-window).
+The fixed-size production-image acceptance measures a synthetic image-heavy
+database and encrypted archive over 256 MiB on the 1 GiB / 0.75 CPU profile; its
+actual measurements and final integrity proof belong in the SPN-124 PR evidence.
+This is not a multi-GiB or target-host capacity guarantee. SPN-038's launch drill
+still measures a realistically sized backup on the actual host. Leave time within
+the original operation deadline for failed-trial evidence and original-content
+recovery as well as the successful candidate path.
 
 The private journal retains at most **64 restore IDs**, including completed and
 failed attempts. Successful source/custody evidence is deliberately retained;

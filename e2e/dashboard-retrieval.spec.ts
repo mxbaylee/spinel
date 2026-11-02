@@ -123,7 +123,7 @@ test('invalid draft pauses refresh and ignores an old response without dropping 
   ]);
   let requests = 0;
   let release: (() => void) | undefined;
-  await page.route('**/api/items/search', async (route) => {
+  await page.route('**/api/items/search**', async (route) => {
     requests++;
     const response = await route.fetch();
     await new Promise<void>((resolve) => {
@@ -154,7 +154,7 @@ test('invalid draft pauses refresh and ignores an old response without dropping 
       0,
     );
     await expect(page.getByText('Searching:', { exact: false })).toContainText('Private folder');
-    await page.unroute('**/api/items/search');
+    await page.unroute('**/api/items/search**');
     await page.getByRole('button', { name: 'Search this as plain text', exact: true }).click();
     await expect(query).toHaveAttribute('aria-invalid', 'false');
     await expect(

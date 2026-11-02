@@ -19,6 +19,7 @@ export interface BacklogConfig {
   grooming: { every: number; last?: string; completed_since: string[] };
   size: { soft: number; hard: number; exclude: string[] };
   pr_title_exceptions: string[];
+  reserved_tickets?: { id: string; heading: string; allocation_commit: string }[];
 }
 
 // Fields are typed as validateTicket requires them; it reports any ticket
@@ -392,6 +393,49 @@ export function validateBacklog(backlog: Backlog): Result {
   if (!Number.isInteger(config.next_id) || config.next_id < 1)
     errors.push(`${CONFIG_PATH}: next_id must be a positive integer`);
 
+  const reservations = config.reserved_tickets;
+  if (reservations !== undefined) {
+    if (!Array.isArray(reservations))
+      errors.push(`${CONFIG_PATH}: reserved_tickets must be a list`);
+    else {
+      const seen = new Set<string>();
+      for (const entry of reservations) {
+        if (!entry || typeof entry !== 'object' || Array.isArray(entry)) {
+          errors.push(`${CONFIG_PATH}: reserved ticket must be a record`);
+          continue;
+        }
+        const n = typeof entry.id === 'string' ? idNumber(entry.id, prefix) : null;
+        if (n === null || n >= config.next_id || n < 1 || formatId(prefix, n) !== entry.id)
+          errors.push(
+            `${CONFIG_PATH}: reserved ticket must name an already allocated ${prefix} ID`,
+          );
+        if (seen.has(entry.id))
+          errors.push(`${CONFIG_PATH}: duplicate reserved ticket ${entry.id}`);
+        seen.add(entry.id);
+        if (
+          typeof entry.heading !== 'string' ||
+          /[\r\n]/.test(entry.heading) ||
+          !new RegExp(`^\\p{RGI_Emoji} ${prefix}-\\d{3,} \\S.*$`, 'v').test(entry.heading) ||
+          entry.heading.split(' ')[1] !== entry.id
+        )
+          errors.push(`${CONFIG_PATH}: reserved ticket heading must name its exact ID`);
+        if (
+          typeof entry.allocation_commit !== 'string' ||
+          !/^[a-f0-9]{40}$/.test(entry.allocation_commit) ||
+          /^0+$/.test(entry.allocation_commit)
+        )
+          errors.push(`${CONFIG_PATH}: reserved ticket requires its immutable allocation commit`);
+        if (Object.keys(entry).some((key) => !['id', 'heading', 'allocation_commit'].includes(key)))
+          errors.push(`${CONFIG_PATH}: unknown reserved ticket field`);
+        if (
+          tickets.some((ticket) => ticket.id === entry.id) ||
+          config.grooming.completed_since?.includes(entry.id)
+        )
+          errors.push(`${CONFIG_PATH}: reserved ticket ${entry.id} is already open or completed`);
+      }
+    }
+  }
+
   const anchors = personasText ? headingAnchors(personasText) : null;
   if (!personasText) errors.push(`${config.personas} not found`);
   const personasLink = posix.relative(dirname(CONFIG_PATH), config.personas);
@@ -606,6 +650,8 @@ export function renderIndex(backlog: Backlog): string {
       `Grooming: **${g.completed_since.length}** tickets completed since ${g.last}${done}. ` +
       `Reminder every ${g.every}; grooming on request, never a work gate.`,
     '',
+    'Every ticket and resumed PR follows [sustainable testing](../testing.md). Keep its Verify plan and [progress evidence](../testing.md#carry-the-plan-through-the-work) current; repair test weaknesses introduced by the work before landing.',
+    '',
     `## Open tickets (${tickets.length})`,
     '',
   ];
@@ -700,6 +746,7 @@ const PROTECTED_SETTINGS = [
   'grooming.every',
   'size',
   'pr_title_exceptions',
+  'reserved_tickets',
 ];
 
 function setting(config: BacklogConfig, path: string): string | undefined {
@@ -830,11 +877,40 @@ export function checkPullRequest({
     errors.push(
       `next_id went down from ${rules.next_id} to ${head.config.next_id}; IDs are never reused`,
     );
-  for (const [id] of headTickets)
-    if (!baseTickets.has(id) && (idNumber(id, prefix) ?? 0) < rules.next_id)
+  for (const reservation of rules.reserved_tickets ?? []) {
+    const retained = head.config.reserved_tickets?.find((entry) => entry.id === reservation.id);
+    if (retained) {
+      if (
+        retained.heading !== reservation.heading ||
+        retained.allocation_commit !== reservation.allocation_commit
+      )
+        errors.push(`reserved ticket ${reservation.id} must retain its reviewed identity`);
+    } else if (
+      !grooming ||
+      baseTickets.has(reservation.id) ||
+      headTickets.get(reservation.id)?.heading !== reservation.heading
+    )
       errors.push(
-        `${id} reuses an ID below the base next_id (${rules.next_id}); new tickets take next_id`,
+        `reserved ticket ${reservation.id} may only be removed when a grooming PR registers its exact heading`,
       );
+  }
+  for (const [id, ticket] of headTickets) {
+    if (baseTickets.has(id) || (idNumber(id, prefix) ?? 0) >= rules.next_id) continue;
+    // A separately reviewed reservation on main admits only its exact original
+    // heading. The registering PR cannot authorize its own old ID or retain a
+    // reusable exception after consuming it.
+    const reservation = rules.reserved_tickets?.find((entry) => entry.id === id);
+    if (
+      !grooming ||
+      !reservation ||
+      reservation.heading !== ticket.heading ||
+      head.config.reserved_tickets?.some((entry) => entry.id === id)
+    )
+      errors.push(
+        `${id} reuses an ID below the base next_id (${rules.next_id}); new tickets take next_id, ` +
+          'or a grooming PR consumes a base reservation with its exact heading',
+      );
+  }
 
   if (numstat !== undefined) {
     const { soft, hard, exclude } = rules.size;

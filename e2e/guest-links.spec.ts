@@ -144,7 +144,7 @@ for (const kind of ['sheet', 'doc'] as const) {
         .inputValue();
       await first.goto(viewLink);
       await expect(region(first).getByRole('status', { name: 'Save status' })).toHaveText(
-        'View only — reload after your access changes.',
+        'View only.',
         { timeout: 30_000 },
       );
       await expect(

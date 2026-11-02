@@ -1,4 +1,6 @@
 /** Safe Admin restore DTOs. No source paths, secret keys or private authority. */
+export const RESTORE_OPERATION_MS = 30 * 60_000;
+
 export const RESTORE_RESOURCE_MESSAGES = {
   'memory-headroom':
     'Recovery verification has insufficient memory headroom. Free memory or use a larger recovery host, then retry.',
@@ -18,8 +20,6 @@ export const RESTORE_RESOURCE_MESSAGES = {
     'This backup belongs to a different workspace address. Restore it on the deployment that created it, or use the fresh-host recovery procedure.',
   'backup-image':
     'This backup was made by a different application image. Run the image recorded with the backup, or use the fresh-host recovery procedure.',
-  'restore-authority':
-    'The five-minute passkey check expired before preparation finished. Prepare the restore again, or choose a saved backup instead of a slow upload.',
 } as const;
 
 export interface RestoreResources {

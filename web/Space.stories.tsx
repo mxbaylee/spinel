@@ -445,6 +445,36 @@ export const ViewOnly: Story = {
   },
 };
 
+export const PageAccessDetails: Story = {
+  parameters: {
+    api: {
+      ...treeApi(tree('editor')),
+      [`GET /api/items/${id(1)}/access`]: {
+        details: {
+          access: 'editor',
+          source: { kind: 'folder', id: 'readable-folder', name: 'Budgets' },
+          space: { id: root, name: 'Project Atlas' },
+        },
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    await ready(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(await body.findByRole('button', { name: 'Document actions' }));
+    await userEvent.click(await body.findByRole('menuitem', { name: 'Access details…' }));
+    const dialog = await body.findByRole('dialog', { name: 'Access to Welcome' });
+    await expect(await within(dialog).findByText('Editor through Budgets')).toBeVisible();
+    await expect(
+      within(dialog).getByText(/Access applies to every current and future page and folder in/),
+    ).toHaveTextContent('Project Atlas');
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Close dialog' }));
+    await waitFor(() => expect(body.queryByRole('dialog')).not.toBeInTheDocument());
+    await expect(body.getByRole('button', { name: 'Document actions' })).toHaveFocus();
+    await expect(body.getByRole('textbox', { name: 'Page content fixture' })).toBeVisible();
+  },
+};
+
 export const Empty: Story = {
   parameters: { spacePath: spaceHref(root), api: treeApi(tree('owner', [])) },
   play: async ({ canvasElement }) => {

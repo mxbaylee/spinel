@@ -137,6 +137,10 @@ metadata. See [authentication](authentication.md) for sessions and access rules.
 
 ## Checks
 
+For new work, follow [sustainable testing](testing.md) when choosing a test layer,
+fixture, environment and CI applicability. The ticket's Verify section and PR
+record the regression contract and evidence.
+
 ```sh
 npm run lint
 npm run typecheck
@@ -146,7 +150,8 @@ npm run e2e
 npm run backlog:check
 ```
 
-`npm test` runs the existing Node backlog tests and Vitest server tests.
+`npm test` runs the built-in Node script/backlog tests and Vitest application and
+library tests. CI partitions library validation separately.
 The full browser run includes `offline-upgrade`, which emits the immutable
 SPN-054 client with its own locked dependencies and source-era postinstall patches.
 Prepare that separate build checkout before a local full run (CI does this itself):
@@ -194,12 +199,20 @@ files for seven days. Extracted artifacts preserve `test-results/` and
 Investigate the first failed attempt and its durations before rerunning;
 `failOnFlakyTests` deliberately keeps a retry-only success red.
 
-PR title/body/base edits queue full validation without cancelling an active CI
-run; new code pushes still supersede older PR runs. Edits can still replace a
-pending run. PR policy checks use the event's immutable base SHA, so an advancing
-`main` cannot silently change their baseline. See the
+Every PR edit, including title/body changes and base retargets, runs fresh full
+validation. Edits have isolated concurrency so they do not cancel or replace
+pending code runs; new code pushes still supersede older code runs for that PR.
+Cheap text-edit validation remains tracked in [SPN-129](todo/SPN-129.md) after
+hosted trials showed that renamed metadata jobs left required checks unsatisfied.
+PR policy checks use the event's
+immutable base SHA, so an advancing `main` cannot silently change their baseline.
+The digest-bound coverage plan records each suite's dependencies and reason;
+selected missing/failed/cancelled jobs fail the required aggregate. Labels add
+coverage, and weekly/manual runs select the full plan. See
+[sustainable testing](testing.md#keep-coverage-routing-complete) and the
+[SPN-115 record](implementation/SPN-115.md) for the current contract. The earlier
 [main CI audit and bounded resilience changes](implementation/ci-reliability-2026-10-26.md)
-for observed causes, existing mitigations and remaining phone-Doc investigation.
+retain observed causes and earlier mitigations; they do not override this policy.
 
 `sync-development` and `sync-production` run the native UI scenarios in
 `e2e/sync-client.spec.ts`; `sync-soak-sheet` and `sync-soak-doc` run its seeded
@@ -360,6 +373,18 @@ runs can narrow story IDs; PRs always review the full catalog. See the
 CI requires **Backlog**, **Pull request**, **Lint**, **Typecheck**, **Unit tests**,
 **Lib tests** and **Playwright smoke**. These seven checks are required by the active default-branch ruleset;
 see [the process](todo/process.md#pull-requests-and-main).
+
+Hosted Ubuntu setup uses `scripts/ci/prefer-ubuntu-archive.ts` to prefer the
+official archive within a validated Azure/archive or observed EC2/archive pair.
+The supported EC2 fallback is exactly `http://us-east-2.ec2.archive.ubuntu.com/ubuntu/`;
+other profiles require diagnosis, not provider/region inference. Before validation or
+write it logs the input byte count/hash, exact recognized public Ubuntu mirror
+lines and separate environment image identity. Unknown text is redacted; runner
+headers remain a separate identity observation. Rejected input fails before
+writing and never counts as passing browser validation. Preserve that first
+failure and diagnose actual input before changing supported profiles. The
+[SPN-131 record](implementation/SPN-131.md#captured-ec2-profile-and-direct-repair)
+describes both profiles, the captured rejection and historical evidence limits.
 
 ## Architecture decisions
 

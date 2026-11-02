@@ -1,0 +1,89 @@
+{
+  "source": "6881260d231da906daa1b1a2d3ee7bce0c4d7649",
+  "scenario": "Sheet version preview permission-warning keyboard stimulus",
+  "plannedAttempts": 1,
+  "attempt": 0,
+  "node": "v26.12.1",
+  "browser": "156.0.8078.4",
+  "project": "production",
+  "phase": "Space dismissed warning",
+  "identityVerified": true,
+  "nativeEditors": 1,
+  "printableKeyOpenedWarning": true,
+  "okAutofocused": true,
+  "spaceDismissedWarning": true,
+  "revisionBefore": 1,
+  "revisionAfter": 1,
+  "snapshotUnchanged": true,
+  "outcome": "passed",
+  "pageErrors": [],
+  "events": [
+    {
+      "time": 2352.60000000149,
+      "type": "keydown",
+      "key": "m",
+      "activeTag": "DIV",
+      "activeIsOk": false,
+      "targetIsOk": false,
+      "warningOpen": false,
+      "trusted": true
+    },
+    {
+      "time": 2373.39999999851,
+      "type": "focusin",
+      "activeTag": "BUTTON",
+      "activeIsOk": true,
+      "targetIsOk": true,
+      "warningOpen": true,
+      "trusted": true
+    },
+    {
+      "time": 2380.8000000044703,
+      "type": "keyup",
+      "key": "m",
+      "activeTag": "BUTTON",
+      "activeIsOk": true,
+      "targetIsOk": true,
+      "warningOpen": true,
+      "trusted": true
+    },
+    {
+      "time": 2501.8000000044703,
+      "type": "keydown",
+      "key": " ",
+      "activeTag": "BUTTON",
+      "activeIsOk": true,
+      "targetIsOk": true,
+      "warningOpen": true,
+      "trusted": true
+    },
+    {
+      "time": 2503,
+      "type": "keyup",
+      "key": " ",
+      "activeTag": "BUTTON",
+      "activeIsOk": true,
+      "targetIsOk": true,
+      "warningOpen": true,
+      "trusted": true
+    },
+    {
+      "time": 2503.10000000149,
+      "type": "click",
+      "activeTag": "BUTTON",
+      "activeIsOk": true,
+      "targetIsOk": true,
+      "warningOpen": true,
+      "trusted": true
+    },
+    {
+      "time": 2510.2000000029802,
+      "type": "focusin",
+      "activeTag": "DIV",
+      "activeIsOk": false,
+      "targetIsOk": false,
+      "warningOpen": false,
+      "trusted": true
+    }
+  ]
+}
