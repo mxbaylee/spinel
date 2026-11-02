@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { changedPaths, documentationOnly } from './changes.ts';
+import { assertPullRequestCheckout, changedPaths, documentationOnly } from './changes.ts';
 
 test('only known documentation paths qualify, including the exact backlog JSON', () => {
   assert.equal(
@@ -92,6 +92,21 @@ test('Git ranges include earlier commits, both rename paths, deletions and unusu
         cwd,
       ).sort(),
       paths,
+    );
+    git('merge', '--no-ff', '-m', 'test merge', head);
+    const tested = git('rev-parse', 'HEAD');
+    assertPullRequestCheckout({ base: docsHead, head }, tested, cwd);
+    assert.throws(
+      () => assertPullRequestCheckout({ base: head, head: docsHead }, tested, cwd),
+      /checkout does not match/,
+    );
+    assert.throws(
+      () => assertPullRequestCheckout({ base, head }, tested, cwd),
+      /checkout does not match/,
+    );
+    assert.throws(
+      () => assertPullRequestCheckout({ base: docsHead, head }, head, cwd),
+      /checkout does not match/,
     );
   } finally {
     rmSync(cwd, { recursive: true, force: true });

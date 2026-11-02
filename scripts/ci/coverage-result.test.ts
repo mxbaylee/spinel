@@ -69,7 +69,7 @@ test('CLI binds same-run immutable plan digest/source and publishes all selected
   assert.equal(result.code, 0);
   assert.equal(result.report.passed, true);
   assert.equal(result.report.evidence.plan.tested, head);
-  assert.equal(result.report.evidence.results.length, 11);
+  assert.equal(result.report.evidence.results.length, 10);
   assert.match(result.summary, /doc-responsiveness/);
 });
 test('CLI failure records survive wrong identity, cancelled gate and missing selected evidence', () => {

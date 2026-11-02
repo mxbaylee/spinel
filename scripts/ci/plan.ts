@@ -1,3 +1,5 @@
+import { REVALIDATE_LABEL } from './pr-identity.ts';
+
 // Deliberately narrow: Markdown under docs may describe executable examples,
 // but .ts/.tsx design mockups and unknown JSON still need the full suite.
 export function documentationOnly(paths: string[]): boolean {
@@ -14,7 +16,6 @@ export function documentationOnly(paths: string[]): boolean {
 
 export const suiteIds = [
   'backlog',
-  'pull-request',
   'lint',
   'typecheck',
   'unit-tests',
@@ -36,7 +37,7 @@ export interface SuitePlan {
   inputs: string[];
 }
 export interface CoveragePlan {
-  version: 1;
+  version: 2;
   event: string;
   action: string | null;
   base: string | null;
@@ -111,23 +112,26 @@ export function coveragePlan(
     : !reliable
       ? 'Immutable range or event labels unavailable; full coverage.'
       : event.action === 'edited'
-        ? 'PR edits require fresh full coverage until protected metadata isolation is proven.'
-        : unknown.length
-          ? 'Unknown paths require full coverage.'
-          : !paths?.length
-            ? 'Empty change range requires full coverage.'
-            : paths?.some(fullInput)
-              ? 'Workflow, harness, build, runtime or dependency input requires full coverage.'
-              : labels.includes('ci-full')
-                ? 'ci-full adds full coverage.'
-                : null;
+        ? 'An edited event reaching code validation requires full coverage; cheap policy has a separate workflow.'
+        : labels.includes(REVALIDATE_LABEL) ||
+            (object(event.label) && event.label.name === REVALIDATE_LABEL)
+          ? 'Base/ambiguous edit revalidation requires full coverage, including reserved-label removal.'
+          : unknown.length
+            ? 'Unknown paths require full coverage.'
+            : !paths?.length
+              ? 'Empty change range requires full coverage.'
+              : paths?.some(fullInput)
+                ? 'Workflow, harness, build, runtime or dependency input requires full coverage.'
+                : labels.includes('ci-full')
+                  ? 'ci-full adds full coverage.'
+                  : null;
   const full = fullReason !== null;
   const app = full || !documentationOnly(paths ?? []);
   const performance = full || labels.includes('ci-performance') || !!paths?.some(performanceInput);
   const candidate = app || performance;
   const lib = full || !!paths?.some(libraryInput);
   const plan: CoveragePlan = {
-    version: 1,
+    version: 2,
     event: eventName,
     action: typeof event.action === 'string' ? event.action : null,
     base: sha(base) ? base : null,
@@ -139,20 +143,17 @@ export function coveragePlan(
     suites: {} as CoveragePlan['suites'],
   };
   for (const id of suiteIds) {
-    const selected =
-      id === 'pull-request'
-        ? eventName === 'pull_request'
-        : ['backlog', 'lint'].includes(id)
-          ? true
-          : id === 'lib-test-run'
-            ? lib
-            : ['responsiveness-baseline', 'callback-baseline'].includes(id)
-              ? performance
-              : id === 'phone-compatibility'
-                ? full
-                : ['doc-responsiveness', 'doc-callback-lifetimes'].includes(id)
-                  ? candidate
-                  : app;
+    const selected = ['backlog', 'lint'].includes(id)
+      ? true
+      : id === 'lib-test-run'
+        ? lib
+        : ['responsiveness-baseline', 'callback-baseline'].includes(id)
+          ? performance
+          : id === 'phone-compatibility'
+            ? full
+            : ['doc-responsiveness', 'doc-callback-lifetimes'].includes(id)
+              ? candidate
+              : app;
     const dependencies =
       id === 'lib-test-run'
         ? [
@@ -177,7 +178,7 @@ export function coveragePlan(
             ]
           : id === 'phone-compatibility'
             ? ['full plan backstop; ordinary phone owners remain in routine browser coverage']
-            : ['backlog', 'lint', 'pull-request'].includes(id)
+            : ['backlog', 'lint'].includes(id)
               ? ['complete immutable change range and current event metadata']
               : [
                   'all application, auth, persistence, sync, runtime, build, dependency and harness inputs',
@@ -186,20 +187,15 @@ export function coveragePlan(
       selected,
       dependencies,
       inputs: plan.paths ?? [],
-      reason:
-        id === 'pull-request' && eventName !== 'pull_request'
-          ? 'No pull request on this event.'
-          : full
-            ? fullReason!
-            : selected
-              ? performance && ['responsiveness-baseline', 'callback-baseline'].includes(id)
-                ? 'Performance dependency or additive ci-performance label.'
-                : 'Automatic coverage for the complete change range.'
-              : id === 'pull-request'
-                ? 'No pull request on this event.'
-                : id === 'phone-compatibility'
-                  ? 'Routine phone contract owners cover every assertion; full duplicate compatibility reserved for backstop.'
-                  : `No ${id} dependency changed; explicit inapplicability.`,
+      reason: full
+        ? fullReason!
+        : selected
+          ? performance && ['responsiveness-baseline', 'callback-baseline'].includes(id)
+            ? 'Performance dependency or additive ci-performance label.'
+            : 'Automatic coverage for the complete change range.'
+          : id === 'phone-compatibility'
+            ? 'Routine phone contract owners cover every assertion; full duplicate compatibility reserved for backstop.'
+            : `No ${id} dependency changed; explicit inapplicability.`,
     };
   }
   return plan;
@@ -216,7 +212,7 @@ export function verifyCoverage(
   if (
     classification !== 'success' ||
     !object(plan) ||
-    plan.version !== 1 ||
+    plan.version !== 2 ||
     !['full', 'targeted'].includes(String(plan.mode)) ||
     !object(plan.suites) ||
     Object.keys(plan.suites).length !== suiteIds.length

@@ -8,7 +8,6 @@ const groups: Record<string, readonly SuiteId[]> = {
   lib: ['lib-test-run'],
   browser: [
     'backlog',
-    'pull-request',
     'lint',
     'typecheck',
     'unit-tests',

@@ -5,6 +5,32 @@ import { createHash } from 'node:crypto';
 import { coveragePlan, documentationOnly } from './plan.ts';
 export { documentationOnly } from './plan.ts';
 
+/** A coverage plan may describe only the merge checkout the event actually
+ * requested. An unrelated checkout must fail, not fall back to broad coverage. */
+export function assertPullRequestCheckout(
+  identity: { base: string; head: string },
+  tested: string,
+  cwd = process.cwd(),
+) {
+  if (
+    ![identity.base, identity.head, tested].every(
+      (value) => typeof value === 'string' && /^[a-f0-9]{40}$/.test(value) && !/^0+$/.test(value),
+    )
+  )
+    throw new Error('Invalid immutable PR checkout identity.');
+  const git = (...args: string[]) => execFileSync('git', args, { cwd, encoding: 'utf8' }).trim();
+  const parents = git('show', '-s', '--format=%P', tested).split(' ');
+  if (
+    git('rev-parse', 'HEAD') !== tested ||
+    parents.length !== 2 ||
+    parents[0] !== identity.base ||
+    parents[1] !== identity.head
+  )
+    throw new Error(
+      'PR checkout does not match the event merge and its immutable base/head parents.',
+    );
+}
+
 export function changedPaths(eventName: string, event: unknown, cwd = process.cwd()): string[] {
   const payload = event as {
     before?: string;
@@ -52,6 +78,14 @@ if (import.meta.main) {
     paths = changedPaths(eventName, event);
   } catch {
     console.log('Change classification unavailable; running full validation.');
+  }
+  if (eventName === 'pull_request') {
+    const pr = (event as { pull_request?: { base?: { sha?: string }; head?: { sha?: string } } })
+      ?.pull_request;
+    assertPullRequestCheckout(
+      { base: pr?.base?.sha ?? '', head: pr?.head?.sha ?? '' },
+      process.env.GITHUB_SHA ?? '',
+    );
   }
   let plan = coveragePlan(eventName, event, paths, process.env.GITHUB_SHA);
   // Actions limits job outputs. Oversized classification must select full, not

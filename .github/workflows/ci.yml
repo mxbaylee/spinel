@@ -1,4 +1,6 @@
 name: 💎 CI
+run-name: >-
+  CI pr=${{ github.event.pull_request.number || 0 }} base=${{ github.event.pull_request.base.sha || github.event.before || github.sha }} head=${{ github.event.pull_request.head.sha || github.sha }} tested=${{ github.sha }} full=${{ (contains(github.event.pull_request.labels.*.name, 'ci-revalidate') || github.event.label.name == 'ci-revalidate') && '1' || '0' }}
 
 on:
   push:
@@ -6,7 +8,7 @@ on:
   pull_request:
     branches: [main]
     # Draft commits already run every check; becoming ready changes no code.
-    types: [opened, edited, synchronize, reopened, labeled, unlabeled]
+    types: [opened, synchronize, reopened, labeled, unlabeled]
   workflow_dispatch:
   schedule:
     - cron: '23 9 * * 1'
@@ -15,10 +17,12 @@ permissions:
   contents: read
 
 concurrency:
-  # Edits and label events cannot cancel OR replace a pending code run.
+  # Text edits belong only to pr-policy.yml and cannot touch this group.
+  # Every actual code event supersedes older source/base/label plans. Otherwise
+  # an old-base label run could outlive a failed new-base validation.
   # Every main push keeps its own immutable before/after range; no PR pass reuse.
-  group: ci-${{ github.event_name == 'pull_request' && contains(fromJSON('["opened","synchronize"]'), github.event.action) && format('code-{0}', github.event.pull_request.number) || format('event-{0}', github.run_id) }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' && github.event.action == 'synchronize' }}
+  group: ci-${{ github.event_name == 'pull_request' && format('code-{0}', github.event.pull_request.number) || format('event-{0}', github.run_id) }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   changes:
@@ -30,7 +34,6 @@ jobs:
       plan: ${{ steps.changes.outputs.plan }}
       plan_sha256: ${{ steps.changes.outputs.plan_sha256 }}
       backlog: ${{ steps.changes.outputs.backlog }}
-      pull_request: ${{ steps.changes.outputs.pull_request }}
       lint: ${{ steps.changes.outputs.lint }}
       typecheck: ${{ steps.changes.outputs.typecheck }}
       unit_tests: ${{ steps.changes.outputs.unit_tests }}
@@ -78,28 +81,6 @@ jobs:
           package-manager-cache: false
       - name: Tickets and index
         run: npm run backlog:check
-
-  pull-request:
-    name: Pull request
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
-        with:
-          node-version-file: .nvmrc
-          package-manager-cache: false
-      # Title and immutable event base go through env, never into script text.
-      # origin/main may advance after this run's merge commit was created.
-      - name: Title, ticket, IDs and size
-        env:
-          PR_TITLE: ${{ github.event.pull_request.title }}
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-        run: node scripts/backlog/cli.ts pr --base "$BASE_SHA" --title "$PR_TITLE"
 
   lint:
     name: Lint
@@ -731,7 +712,6 @@ jobs:
       [
         changes,
         backlog,
-        pull-request,
         lint,
         typecheck,
         unit-tests,
@@ -760,7 +740,7 @@ jobs:
           COVERAGE_PLAN: ${{ needs.changes.outputs.plan }}
           COVERAGE_PLAN_SHA256: ${{ needs.changes.outputs.plan_sha256 }}
           COVERAGE_GATE_RESULTS: '{"typecheck":"${{ needs.typecheck.result }}","unit-tests":"${{ needs.unit-tests.result }}","lib-tests":"${{ needs.lib-tests.result }}"}'
-          COVERAGE_RESULTS: '{"backlog":"${{ needs.backlog.result }}","pull-request":"${{ needs.pull-request.result }}","lint":"${{ needs.lint.result }}","typecheck":"${{ needs.typecheck.outputs.evidence }}","unit-tests":"${{ needs.unit-tests.outputs.evidence }}","lib-test-run":"${{ needs.lib-test-run.result }}","playwright-run":"${{ needs.playwright-run.result }}","container-smoke":"${{ needs.container-smoke.result }}","sync-transition":"${{ needs.sync-transition.result }}","doc-responsiveness":"${{ needs.doc-responsiveness.result }}","doc-callback-lifetimes":"${{ needs.doc-callback-lifetimes.result }}"}'
+          COVERAGE_RESULTS: '{"backlog":"${{ needs.backlog.result }}","lint":"${{ needs.lint.result }}","typecheck":"${{ needs.typecheck.outputs.evidence }}","unit-tests":"${{ needs.unit-tests.outputs.evidence }}","lib-test-run":"${{ needs.lib-test-run.result }}","playwright-run":"${{ needs.playwright-run.result }}","container-smoke":"${{ needs.container-smoke.result }}","sync-transition":"${{ needs.sync-transition.result }}","doc-responsiveness":"${{ needs.doc-responsiveness.result }}","doc-callback-lifetimes":"${{ needs.doc-callback-lifetimes.result }}"}'
         run: node scripts/ci/coverage-result.ts browser
       - name: Retain coverage result
         if: always()

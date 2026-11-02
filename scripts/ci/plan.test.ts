@@ -128,9 +128,7 @@ test('main ranges, scheduled/manual backstops, unknown events and missing ranges
   for (const name of ['schedule', 'workflow_dispatch', 'unknown']) {
     const plan = coveragePlan(name, {}, []);
     assert.equal(plan.mode, 'full');
-    assert.ok(
-      suiteIds.filter((id) => id !== 'pull-request').every((id) => plan.suites[id].selected),
-    );
+    assert.ok(suiteIds.every((id) => plan.suites[id].selected));
   }
   for (const [event, paths] of [
     [pr(), null],
@@ -162,8 +160,12 @@ test('aggregates require selected success and explicit inapplicable skipped; kno
     assert.throws(() => verifyCoverage(malformed, 'success', result, suiteIds));
 });
 
-test('workflow keeps seven static code names and protected edit concurrency', () => {
+test('workflows have unique ownership of all seven names and text edits never trigger code', () => {
   const workflow = readFileSync(new URL('../../.github/workflows/ci.yml', import.meta.url), 'utf8');
+  const policy = readFileSync(
+    new URL('../../.github/workflows/pr-policy.yml', import.meta.url),
+    'utf8',
+  );
   for (const name of [
     'Backlog',
     'Lint',
@@ -173,15 +175,30 @@ test('workflow keeps seven static code names and protected edit concurrency', ()
     'Playwright smoke',
   ])
     assert.ok(workflow.includes(`name: ${name}\n`), name);
-  assert.match(workflow, /name: Pull request\n/);
+  assert.ok(!workflow.includes('name: Pull request\n'));
+  assert.match(policy, /name: Pull request\n/);
   assert.ok(!workflow.includes('Metadata only'));
   assert.ok(!workflow.includes("outputs.mode == 'metadata'"));
   assert.match(workflow, /format\('event-\{0\}', github.run_id\)/);
-  assert.match(workflow, /cancel-in-progress:.*github.event.action == 'synchronize'/);
-  assert.match(workflow, /types: \[opened, edited, synchronize, reopened, labeled, unlabeled\]/);
+  assert.match(workflow, /cancel-in-progress:.*github.event_name == 'pull_request'/);
+  assert.match(workflow, /types: \[opened, synchronize, reopened, labeled, unlabeled\]/);
+  assert.match(policy, /types: \[opened, edited, synchronize, reopened, labeled, unlabeled\]/);
+  assert.match(policy, /group: pr-policy-/);
   assert.match(workflow, /workflow_dispatch:/);
   assert.match(workflow, /schedule:/);
   assert.ok(!workflow.includes('needs.changes.outputs.docs_only'));
+});
+
+test('reserved base revalidation stays full across a code push or label removal', () => {
+  for (const event of [
+    pr('labeled', ['ci-revalidate']),
+    pr('synchronize', ['ci-revalidate']),
+    { ...pr('unlabeled'), label: { name: 'ci-revalidate' } },
+  ]) {
+    const plan = coveragePlan('pull_request', event, ['docs/notes.md'], head);
+    assert.equal(plan.mode, 'full');
+    assert.ok(suiteIds.every((id) => plan.suites[id].selected));
+  }
 });
 
 test('phone ownership removes only six ordinary cases from instrumented duplicate runs', () => {

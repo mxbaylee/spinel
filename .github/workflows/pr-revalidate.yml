@@ -1,0 +1,64 @@
+name: Route PR base edits
+
+on:
+  pull_request_target:
+    branches: [main]
+    types: [edited]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  # Preserve an earlier base-routing operation when a later text edit arrives.
+  # The policy gate independently rejects an unvalidated current base.
+  group: pr-router-${{ github.event.pull_request.number }}-${{ github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  route:
+    name: Route edit
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # pull_request_target's immutable base SHA only. Never use PR head/merge
+      # code, install its dependencies, or persist the ordinary token in git.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - id: edit
+        name: Inspect trusted edit payload
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/ci/pr-revalidate.ts plan
+      - name: Require router setup
+        if: steps.edit.outputs.full == 'true'
+        env:
+          APP_ID: ${{ vars.SPINEL_CI_ROUTER_APP_ID }}
+          APP_KEY: ${{ secrets.SPINEL_CI_ROUTER_PRIVATE_KEY }}
+        run: |
+          if [ -z "$APP_ID" ] || [ -z "$APP_KEY" ]; then
+            echo 'Configure the repository-scoped CI router App; see docs/ci-pr-edits.md.' >&2
+            exit 1
+          fi
+      - id: app
+        if: steps.edit.outputs.full == 'true'
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
+        with:
+          app-id: ${{ vars.SPINEL_CI_ROUTER_APP_ID }}
+          private-key: ${{ secrets.SPINEL_CI_ROUTER_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+          permission-pull-requests: write
+          skip-token-revoke: false
+      - name: Request genuine pull-request full validation
+        if: steps.edit.outputs.full == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ROUTER_TOKEN: ${{ steps.app.outputs.token }}
+        run: node scripts/ci/pr-revalidate.ts route
