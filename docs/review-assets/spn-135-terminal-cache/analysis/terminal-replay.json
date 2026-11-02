@@ -1,0 +1,204 @@
+{
+  "diagnosticOnly": true,
+  "browserLatencyAcceptance": false,
+  "historicalFailureAttribution": false,
+  "source": "dbbe5ccaf085ce20b79068d3596a35dcf2142223",
+  "captureSha256": "b8e1d00e34ce70177bb0564fe644d5cd400d2013091cc4d39e1240122950dbc6",
+  "terminalCount": 6,
+  "terminalCacheHashes": [
+    "b4e501458c9a65f9b321ee7eb22ca3c174213e28f12603408e9e24905900ee8a",
+    "b4e501458c9a65f9b321ee7eb22ca3c174213e28f12603408e9e24905900ee8a"
+  ],
+  "completePublicationsEqual": true,
+  "historicalCurrentPrimitiveWorkEqual": true,
+  "primitiveCountMeaning": "Instrumented calls and allocation branches, not actual heap allocations or latency",
+  "inputUnchanged": true,
+  "identities": {
+    "fixtureSha256": "5579315e0d32a5e6f2fd5c61095f84c6f508ffb2d364dd77b4ef7ab791b5035c",
+    "reusedFixtureSha256": "1428022bf7b636e37ccd6f2765dcc4ae9da8914175e34b360d9ef656fd54178c",
+    "patchSha256": "6a0d29df6a9020b39aa3963b957794bb7d2e9ae37f49fb8de405fee466dabb47",
+    "installedCore": {
+      "es": "a019e7eb8b2ba235c7cfd54a19c262377a90c25aca13e5c2e0671a43b709e434",
+      "cjs": "ae2326c195fa7aa89be7199dd2a838d8f267f05c9dfee449a33c5ceae4d4a132"
+    }
+  },
+  "results": [
+    {
+      "format": "es",
+      "qualification": [
+        {
+          "name": "historical",
+          "scope": "history",
+          "key": "redoState",
+          "result": true
+        },
+        {
+          "name": "historical",
+          "scope": "history",
+          "key": "undoState",
+          "result": false
+        },
+        {
+          "name": "historical",
+          "scope": "collaboration",
+          "key": "redoState",
+          "result": true
+        },
+        {
+          "name": "historical",
+          "scope": "collaboration",
+          "key": "undoState",
+          "result": false
+        },
+        {
+          "name": "current",
+          "scope": "history",
+          "key": "redoState",
+          "result": 6
+        },
+        {
+          "name": "current",
+          "scope": "history",
+          "key": "undoState",
+          "result": 0
+        },
+        {
+          "name": "current",
+          "scope": "collaboration",
+          "key": "redoState",
+          "result": 6
+        },
+        {
+          "name": "current",
+          "scope": "collaboration",
+          "key": "undoState",
+          "result": 0
+        }
+      ],
+      "cases": {
+        "original": {
+          "sourceSha256": "84349b3374cafabaf0baee661b97b4a76a2ac47d1bc68e73cef34f9b8c58e145",
+          "publicationSha256": "c69b775ce3d12bfd5d7b7d645e4fcdff9953406cba9ae6cce2dcda1a45d094ee",
+          "counts": {
+            "textCompose": 20,
+            "iteratorNext": 140,
+            "bodySlices": 40,
+            "cloneVisits": 2540,
+            "allocations": 1180
+          }
+        },
+        "historical": {
+          "sourceSha256": "259dd5a4ce24744a442b2cfc7211a89f46437c0257a2ca7b2b9aaaceddd946ba",
+          "publicationSha256": "c69b775ce3d12bfd5d7b7d645e4fcdff9953406cba9ae6cce2dcda1a45d094ee",
+          "counts": {
+            "textCompose": 20,
+            "iteratorNext": 116,
+            "bodySlices": 32,
+            "cloneVisits": 2172,
+            "allocations": 1012
+          }
+        },
+        "current": {
+          "sourceSha256": "fcec465a017cd10498ec794edfd6bc4b364c1418b996e072080cc1bd847cf785",
+          "publicationSha256": "c69b775ce3d12bfd5d7b7d645e4fcdff9953406cba9ae6cce2dcda1a45d094ee",
+          "counts": {
+            "textCompose": 20,
+            "iteratorNext": 116,
+            "bodySlices": 32,
+            "cloneVisits": 2172,
+            "allocations": 1012
+          }
+        }
+      }
+    },
+    {
+      "format": "cjs",
+      "qualification": [
+        {
+          "name": "historical",
+          "scope": "history",
+          "key": "redoState",
+          "result": true
+        },
+        {
+          "name": "historical",
+          "scope": "history",
+          "key": "undoState",
+          "result": false
+        },
+        {
+          "name": "historical",
+          "scope": "collaboration",
+          "key": "redoState",
+          "result": true
+        },
+        {
+          "name": "historical",
+          "scope": "collaboration",
+          "key": "undoState",
+          "result": false
+        },
+        {
+          "name": "current",
+          "scope": "history",
+          "key": "redoState",
+          "result": 6
+        },
+        {
+          "name": "current",
+          "scope": "history",
+          "key": "undoState",
+          "result": 0
+        },
+        {
+          "name": "current",
+          "scope": "collaboration",
+          "key": "redoState",
+          "result": 6
+        },
+        {
+          "name": "current",
+          "scope": "collaboration",
+          "key": "undoState",
+          "result": 0
+        }
+      ],
+      "cases": {
+        "original": {
+          "sourceSha256": "8a3191dee7f9f21c2a2cbb7bb0a7c93af624ef58f2fb8a96af71b27f6cbf5642",
+          "publicationSha256": "c69b775ce3d12bfd5d7b7d645e4fcdff9953406cba9ae6cce2dcda1a45d094ee",
+          "counts": {
+            "textCompose": 20,
+            "iteratorNext": 140,
+            "bodySlices": 40,
+            "cloneVisits": 2540,
+            "allocations": 1180
+          }
+        },
+        "historical": {
+          "sourceSha256": "d96e32ba1177187d3bffa1ac0dce9cbddb589070b5303159b7b6b6b460eb4f92",
+          "publicationSha256": "c69b775ce3d12bfd5d7b7d645e4fcdff9953406cba9ae6cce2dcda1a45d094ee",
+          "counts": {
+            "textCompose": 20,
+            "iteratorNext": 116,
+            "bodySlices": 32,
+            "cloneVisits": 2172,
+            "allocations": 1012
+          }
+        },
+        "current": {
+          "sourceSha256": "5762c96ae5deaa7eb2d421132bb1062dfbe324e40c4a1be1d4a0d7e4972033a0",
+          "publicationSha256": "c69b775ce3d12bfd5d7b7d645e4fcdff9953406cba9ae6cce2dcda1a45d094ee",
+          "counts": {
+            "textCompose": 20,
+            "iteratorNext": 116,
+            "bodySlices": 32,
+            "cloneVisits": 2172,
+            "allocations": 1012
+          }
+        }
+      }
+    }
+  ],
+  "limits": "Newly captured cache, not the missing original failing cache. ES/CJS manager regions share one imported core. No full initial snapshot is retained here; native browser content/Undo/Redo remain separate evidence."
+}

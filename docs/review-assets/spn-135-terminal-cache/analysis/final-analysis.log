@@ -1,0 +1,182 @@
+{
+  "diagnosticOnly": true,
+  "measuredWindowIdleObserved": false,
+  "terminal": [
+    {
+      "id": 131,
+      "unitId": "84b3360b-3594-4a96-9de5-a0b8a2136e2d",
+      "phase": "history",
+      "origin": "history-timer",
+      "count": 6,
+      "rawCacheSha256": "b4e501458c9a65f9b321ee7eb22ca3c174213e28f12603408e9e24905900ee8a",
+      "captureOverheadMs": 0.7999999999883585,
+      "nativeIntervalMs": 0.3000000000174623,
+      "phaseStartedAt": 66222.5,
+      "phaseEndedAt": 66222.80000000002,
+      "inWindow": true,
+      "enclosedByPolicyFlush": false,
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.2
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        }
+      ]
+    },
+    {
+      "id": 132,
+      "unitId": "84b3360b-3594-4a96-9de5-a0b8a2136e2d",
+      "phase": "collaboration",
+      "origin": "collaboration-timer",
+      "count": 6,
+      "rawCacheSha256": "b4e501458c9a65f9b321ee7eb22ca3c174213e28f12603408e9e24905900ee8a",
+      "captureOverheadMs": 0.5,
+      "nativeIntervalMs": 0.20000000001164153,
+      "phaseStartedAt": 66223.4,
+      "phaseEndedAt": 66223.6,
+      "inWindow": true,
+      "enclosedByPolicyFlush": false,
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 0.101
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.1
+        }
+      ]
+    }
+  ],
+  "instantFormPublicationCount": 107,
+  "outsidePaired": [
+    {
+      "name": "spn135-composition-redoState",
+      "startedAt": 66222.55600000001,
+      "durationMs": 0.2,
+      "tracePhase": "b"
+    },
+    {
+      "name": "spn135-composition-undoState",
+      "startedAt": 66222.85600000001,
+      "durationMs": 0,
+      "tracePhase": "n"
+    },
+    {
+      "name": "spn135-history-publication",
+      "startedAt": 66222.85600000001,
+      "durationMs": 0,
+      "tracePhase": "n"
+    },
+    {
+      "name": "spn135-history",
+      "startedAt": 66222.55600000001,
+      "durationMs": 0.3,
+      "tracePhase": "b"
+    },
+    {
+      "name": "spn135-composition-redoState",
+      "startedAt": 66223.45500000002,
+      "durationMs": 0.101,
+      "tracePhase": "b"
+    },
+    {
+      "name": "spn135-collaboration-publication",
+      "startedAt": 66223.65600000002,
+      "durationMs": 0,
+      "tracePhase": "n"
+    },
+    {
+      "name": "spn135-composition-undoState",
+      "startedAt": 66223.55600000001,
+      "durationMs": 0.1,
+      "tracePhase": "b"
+    },
+    {
+      "name": "spn135-collaboration",
+      "startedAt": 66223.45500000002,
+      "durationMs": 0.201,
+      "tracePhase": "b"
+    }
+  ],
+  "source": "dbbe5ccaf085ce20b79068d3596a35dcf2142223",
+  "completed": true,
+  "errors": [],
+  "preUndoIntegrity": true,
+  "undoRedo": "passed",
+  "budgetResults": {
+    "inputP95": true,
+    "longestTask": true,
+    "capacityFlushP95": true,
+    "idleFlushP95": null,
+    "flushMaximum": true,
+    "boundedHistory": true,
+    "boundedCollaboration": true,
+    "observedCapacityFlushes": true,
+    "browserLocalDrainedWithinOneSecond": true
+  },
+  "traceSha256": "b7b61c8c85fe54a95545d5cd787620fb2a82698aafbedc85eb859d16ee084ff3",
+  "cacheSha256": "b8e1d00e34ce70177bb0564fe644d5cd400d2013091cc4d39e1240122950dbc6",
+  "coveredFlushes": 65,
+  "phaseSpans": 593,
+  "clockDriftMs": 1.4901161193847657e-11,
+  "details": [
+    {
+      "flush": {
+        "reason": "capacity",
+        "startedAt": 7052.300000000003,
+        "durationMs": 19.19999999999709,
+        "history": 32,
+        "collaboration": 32
+      },
+      "phases": [
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 11.6
+        },
+        {
+          "name": "spn135-history-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 1
+        },
+        {
+          "name": "spn135-history",
+          "durationMs": 12.7
+        },
+        {
+          "name": "spn135-composition-redoState",
+          "durationMs": 5.4
+        },
+        {
+          "name": "spn135-collaboration-publication",
+          "durationMs": 0
+        },
+        {
+          "name": "spn135-composition-undoState",
+          "durationMs": 0.7
+        },
+        {
+          "name": "spn135-collaboration",
+          "durationMs": 6.2
+        }
+      ],
+      "gcUnionOverlapMs": 0,
+      "gcNames": []
+    }
+  ]
+}
+WATCHDOG: exit=0, signal=null, elapsed=154ms, peak=0.0MiB

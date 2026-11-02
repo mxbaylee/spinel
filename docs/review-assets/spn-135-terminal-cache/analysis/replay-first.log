@@ -1,0 +1,987 @@
+node:internal/modules/run_main:111
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Composition must not mutate native state objects.
+
+... Skipped lines
+[
+  {
+    commandId: 'doc.mutation.rich-text-editing',
+    debounce: true,
+    noHistory: undefined,
+    redoState: {
+      actions: [
+        'body',
+        {
+          e: [
+            {
+              len: 2080,
+              t: 'r'
+            },
+            {
+              body: {
+                __textXPreserveParagraphIds: true,
+                customDecorations: [],
+                customRanges: [],
+                dataStream: 'a',
+                textRuns: [
+                  {
+                    ed: 1,
+                    st: 0,
+                    ts: {
+                      cl: {
+                        rgb: '#221832'
+                      }
+                    }
+                  }
+                ]
+              },
+              len: 1,
+              t: 'i'
+            }
+          ],
+          et: 'text-x'
+        }
+      ],
+      isEditing: true,
+      options: undefined,
+      textRanges: [
+        {
+          collapsed: true,
+          endOffset: 2081,
+          startOffset: 2081
+        }
+      ]
+    },
+    segmentId: '',
+...}
+
+    at flush (evalmachine.<anonymous>:116:12)
+    at measuredFlush (evalmachine.<anonymous>:162:22)
+    at [eval]:92:20
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: [
+    {
+      commandId: 'doc.mutation.rich-text-editing',
+      unitId: '84b3360b-3594-4a96-9de5-a0b8a2136e2d',
+      segmentId: '',
+      trigger: 'doc.command.insert-text',
+      noHistory: undefined,
+      debounce: true,
+      redoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [ { startOffset: 2081, endOffset: 2081, collapsed: true } ],
+        options: undefined,
+        isEditing: true
+      },
+      undoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [
+          {
+            startOffset: 2080,
+            endOffset: 2080,
+            collapsed: true,
+            rangeType: 'TEXT',
+            startNodePosition: [Object],
+            endNodePosition: null,
+            direction: 'none',
+            segmentId: '',
+            segmentPage: -1,
+            style: [Object],
+            isActive: true
+          }
+        ],
+        options: {
+          preserveInputStyle: true,
+          forceFocus: false,
+          shouldFocus: false
+        },
+        isEditing: true
+      }
+    },
+    {
+      commandId: 'doc.mutation.rich-text-editing',
+      unitId: '84b3360b-3594-4a96-9de5-a0b8a2136e2d',
+      segmentId: '',
+      trigger: 'doc.command.insert-text',
+      noHistory: undefined,
+      debounce: true,
+      redoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [ { startOffset: 2082, endOffset: 2082, collapsed: true } ],
+        options: undefined,
+        isEditing: true
+      },
+      undoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [
+          {
+            startOffset: 2081,
+            endOffset: 2081,
+            collapsed: true,
+            rangeType: 'TEXT',
+            startNodePosition: [Object],
+            endNodePosition: null,
+            direction: 'none',
+            segmentId: '',
+            segmentPage: -1,
+            style: [Object],
+            isActive: true
+          }
+        ],
+        options: {
+          preserveInputStyle: true,
+          forceFocus: false,
+          shouldFocus: false
+        },
+        isEditing: true
+      }
+    },
+    {
+      commandId: 'doc.mutation.rich-text-editing',
+      unitId: '84b3360b-3594-4a96-9de5-a0b8a2136e2d',
+      segmentId: '',
+      trigger: 'doc.command.insert-text',
+      noHistory: undefined,
+      debounce: true,
+      redoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [ { startOffset: 2083, endOffset: 2083, collapsed: true } ],
+        options: undefined,
+        isEditing: true
+      },
+      undoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [
+          {
+            startOffset: 2082,
+            endOffset: 2082,
+            collapsed: true,
+            rangeType: 'TEXT',
+            startNodePosition: [Object],
+            endNodePosition: null,
+            direction: 'none',
+            segmentId: '',
+            segmentPage: -1,
+            style: [Object],
+            isActive: true
+          }
+        ],
+        options: {
+          preserveInputStyle: true,
+          forceFocus: false,
+          shouldFocus: false
+        },
+        isEditing: true
+      }
+    },
+    {
+      commandId: 'doc.mutation.rich-text-editing',
+      unitId: '84b3360b-3594-4a96-9de5-a0b8a2136e2d',
+      segmentId: '',
+      trigger: 'doc.command.insert-text',
+      noHistory: undefined,
+      debounce: true,
+      redoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [ { startOffset: 2084, endOffset: 2084, collapsed: true } ],
+        options: undefined,
+        isEditing: true
+      },
+      undoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [
+          {
+            startOffset: 2083,
+            endOffset: 2083,
+            collapsed: true,
+            rangeType: 'TEXT',
+            startNodePosition: [Object],
+            endNodePosition: null,
+            direction: 'none',
+            segmentId: '',
+            segmentPage: -1,
+            style: [Object],
+            isActive: true
+          }
+        ],
+        options: {
+          preserveInputStyle: true,
+          forceFocus: false,
+          shouldFocus: false
+        },
+        isEditing: true
+      }
+    },
+    {
+      commandId: 'doc.mutation.rich-text-editing',
+      unitId: '84b3360b-3594-4a96-9de5-a0b8a2136e2d',
+      segmentId: '',
+      trigger: 'doc.command.insert-text',
+      noHistory: undefined,
+      debounce: true,
+      redoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [ { startOffset: 2085, endOffset: 2085, collapsed: true } ],
+        options: undefined,
+        isEditing: true
+      },
+      undoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [
+          {
+            startOffset: 2084,
+            endOffset: 2084,
+            collapsed: true,
+            rangeType: 'TEXT',
+            startNodePosition: [Object],
+            endNodePosition: null,
+            direction: 'none',
+            segmentId: '',
+            segmentPage: -1,
+            style: [Object],
+            isActive: true
+          }
+        ],
+        options: {
+          preserveInputStyle: true,
+          forceFocus: false,
+          shouldFocus: false
+        },
+        isEditing: true
+      }
+    },
+    {
+      commandId: 'doc.mutation.rich-text-editing',
+      unitId: '84b3360b-3594-4a96-9de5-a0b8a2136e2d',
+      segmentId: '',
+      trigger: 'doc.command.insert-text',
+      noHistory: undefined,
+      debounce: true,
+      redoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [ { startOffset: 2086, endOffset: 2086, collapsed: true } ],
+        options: undefined,
+        isEditing: true
+      },
+      undoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [
+          {
+            startOffset: 2085,
+            endOffset: 2085,
+            collapsed: true,
+            rangeType: 'TEXT',
+            startNodePosition: [Object],
+            endNodePosition: null,
+            direction: 'none',
+            segmentId: '',
+            segmentPage: -1,
+            style: [Object],
+            isActive: true
+          }
+        ],
+        options: {
+          preserveInputStyle: true,
+          forceFocus: false,
+          shouldFocus: false
+        },
+        isEditing: true
+      }
+    },
+    {
+      commandId: 'doc.mutation.rich-text-editing',
+      unitId: '84b3360b-3594-4a96-9de5-a0b8a2136e2d',
+      segmentId: '',
+      trigger: 'doc.command.insert-text',
+      noHistory: undefined,
+      debounce: true,
+      redoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [ { startOffset: 2081, endOffset: 2081, collapsed: true } ],
+        options: undefined,
+        isEditing: true
+      },
+      undoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [
+          {
+            startOffset: 2080,
+            endOffset: 2080,
+            collapsed: true,
+            rangeType: 'TEXT',
+            startNodePosition: [Object],
+            endNodePosition: null,
+            direction: 'none',
+            segmentId: '',
+            segmentPage: -1,
+            style: [Object],
+            isActive: true
+          }
+        ],
+        options: {
+          preserveInputStyle: true,
+          forceFocus: false,
+          shouldFocus: false
+        },
+        isEditing: true
+      }
+    },
+    {
+      commandId: 'doc.mutation.rich-text-editing',
+      unitId: '84b3360b-3594-4a96-9de5-a0b8a2136e2d',
+      segmentId: '',
+      trigger: 'doc.command.insert-text',
+      noHistory: undefined,
+      debounce: true,
+      redoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [ { startOffset: 2082, endOffset: 2082, collapsed: true } ],
+        options: undefined,
+        isEditing: true
+      },
+      undoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [
+          {
+            startOffset: 2081,
+            endOffset: 2081,
+            collapsed: true,
+            rangeType: 'TEXT',
+            startNodePosition: [Object],
+            endNodePosition: null,
+            direction: 'none',
+            segmentId: '',
+            segmentPage: -1,
+            style: [Object],
+            isActive: true
+          }
+        ],
+        options: {
+          preserveInputStyle: true,
+          forceFocus: false,
+          shouldFocus: false
+        },
+        isEditing: true
+      }
+    },
+    {
+      commandId: 'doc.mutation.rich-text-editing',
+      unitId: '84b3360b-3594-4a96-9de5-a0b8a2136e2d',
+      segmentId: '',
+      trigger: 'doc.command.insert-text',
+      noHistory: undefined,
+      debounce: true,
+      redoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [ { startOffset: 2083, endOffset: 2083, collapsed: true } ],
+        options: undefined,
+        isEditing: true
+      },
+      undoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [
+          {
+            startOffset: 2082,
+            endOffset: 2082,
+            collapsed: true,
+            rangeType: 'TEXT',
+            startNodePosition: [Object],
+            endNodePosition: null,
+            direction: 'none',
+            segmentId: '',
+            segmentPage: -1,
+            style: [Object],
+            isActive: true
+          }
+        ],
+        options: {
+          preserveInputStyle: true,
+          forceFocus: false,
+          shouldFocus: false
+        },
+        isEditing: true
+      }
+    },
+    {
+      commandId: 'doc.mutation.rich-text-editing',
+      unitId: '84b3360b-3594-4a96-9de5-a0b8a2136e2d',
+      segmentId: '',
+      trigger: 'doc.command.insert-text',
+      noHistory: undefined,
+      debounce: true,
+      redoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [ { startOffset: 2084, endOffset: 2084, collapsed: true } ],
+        options: undefined,
+        isEditing: true
+      },
+      undoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [
+          {
+            startOffset: 2083,
+            endOffset: 2083,
+            collapsed: true,
+            rangeType: 'TEXT',
+            startNodePosition: [Object],
+            endNodePosition: null,
+            direction: 'none',
+            segmentId: '',
+            segmentPage: -1,
+            style: [Object],
+            isActive: true
+          }
+        ],
+        options: {
+          preserveInputStyle: true,
+          forceFocus: false,
+          shouldFocus: false
+        },
+        isEditing: true
+      }
+    },
+    {
+      commandId: 'doc.mutation.rich-text-editing',
+      unitId: '84b3360b-3594-4a96-9de5-a0b8a2136e2d',
+      segmentId: '',
+      trigger: 'doc.command.insert-text',
+      noHistory: undefined,
+      debounce: true,
+      redoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [ { startOffset: 2085, endOffset: 2085, collapsed: true } ],
+        options: undefined,
+        isEditing: true
+      },
+      undoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [
+          {
+            startOffset: 2084,
+            endOffset: 2084,
+            collapsed: true,
+            rangeType: 'TEXT',
+            startNodePosition: [Object],
+            endNodePosition: null,
+            direction: 'none',
+            segmentId: '',
+            segmentPage: -1,
+            style: [Object],
+            isActive: true
+          }
+        ],
+        options: {
+          preserveInputStyle: true,
+          forceFocus: false,
+          shouldFocus: false
+        },
+        isEditing: true
+      }
+    },
+    {
+      commandId: 'doc.mutation.rich-text-editing',
+      unitId: '84b3360b-3594-4a96-9de5-a0b8a2136e2d',
+      segmentId: '',
+      trigger: 'doc.command.insert-text',
+      noHistory: undefined,
+      debounce: true,
+      redoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [ { startOffset: 2086, endOffset: 2086, collapsed: true } ],
+        options: undefined,
+        isEditing: true
+      },
+      undoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [
+          {
+            startOffset: 2085,
+            endOffset: 2085,
+            collapsed: true,
+            rangeType: 'TEXT',
+            startNodePosition: [Object],
+            endNodePosition: null,
+            direction: 'none',
+            segmentId: '',
+            segmentPage: -1,
+            style: [Object],
+            isActive: true
+          }
+        ],
+        options: {
+          preserveInputStyle: true,
+          forceFocus: false,
+          shouldFocus: false
+        },
+        isEditing: true
+      }
+    }
+  ],
+  expected: [
+    {
+      commandId: 'doc.mutation.rich-text-editing',
+      unitId: '84b3360b-3594-4a96-9de5-a0b8a2136e2d',
+      segmentId: '',
+      trigger: 'doc.command.insert-text',
+      noHistory: undefined,
+      debounce: true,
+      redoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [ { startOffset: 2081, endOffset: 2081, collapsed: true } ],
+        options: undefined,
+        isEditing: true
+      },
+      undoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [
+          {
+            startOffset: 2080,
+            endOffset: 2080,
+            collapsed: true,
+            rangeType: 'TEXT',
+            startNodePosition: [Object],
+            endNodePosition: null,
+            direction: 'none',
+            segmentId: '',
+            segmentPage: -1,
+            style: [Object],
+            isActive: true
+          }
+        ],
+        options: {
+          preserveInputStyle: true,
+          forceFocus: false,
+          shouldFocus: false
+        },
+        isEditing: true
+      }
+    },
+    {
+      commandId: 'doc.mutation.rich-text-editing',
+      unitId: '84b3360b-3594-4a96-9de5-a0b8a2136e2d',
+      segmentId: '',
+      trigger: 'doc.command.insert-text',
+      noHistory: undefined,
+      debounce: true,
+      redoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [ { startOffset: 2082, endOffset: 2082, collapsed: true } ],
+        options: undefined,
+        isEditing: true
+      },
+      undoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [
+          {
+            startOffset: 2081,
+            endOffset: 2081,
+            collapsed: true,
+            rangeType: 'TEXT',
+            startNodePosition: [Object],
+            endNodePosition: null,
+            direction: 'none',
+            segmentId: '',
+            segmentPage: -1,
+            style: [Object],
+            isActive: true
+          }
+        ],
+        options: {
+          preserveInputStyle: true,
+          forceFocus: false,
+          shouldFocus: false
+        },
+        isEditing: true
+      }
+    },
+    {
+      commandId: 'doc.mutation.rich-text-editing',
+      unitId: '84b3360b-3594-4a96-9de5-a0b8a2136e2d',
+      segmentId: '',
+      trigger: 'doc.command.insert-text',
+      noHistory: undefined,
+      debounce: true,
+      redoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [ { startOffset: 2083, endOffset: 2083, collapsed: true } ],
+        options: undefined,
+        isEditing: true
+      },
+      undoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [
+          {
+            startOffset: 2082,
+            endOffset: 2082,
+            collapsed: true,
+            rangeType: 'TEXT',
+            startNodePosition: [Object],
+            endNodePosition: null,
+            direction: 'none',
+            segmentId: '',
+            segmentPage: -1,
+            style: [Object],
+            isActive: true
+          }
+        ],
+        options: {
+          preserveInputStyle: true,
+          forceFocus: false,
+          shouldFocus: false
+        },
+        isEditing: true
+      }
+    },
+    {
+      commandId: 'doc.mutation.rich-text-editing',
+      unitId: '84b3360b-3594-4a96-9de5-a0b8a2136e2d',
+      segmentId: '',
+      trigger: 'doc.command.insert-text',
+      noHistory: undefined,
+      debounce: true,
+      redoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [ { startOffset: 2084, endOffset: 2084, collapsed: true } ],
+        options: undefined,
+        isEditing: true
+      },
+      undoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [
+          {
+            startOffset: 2083,
+            endOffset: 2083,
+            collapsed: true,
+            rangeType: 'TEXT',
+            startNodePosition: [Object],
+            endNodePosition: null,
+            direction: 'none',
+            segmentId: '',
+            segmentPage: -1,
+            style: [Object],
+            isActive: true
+          }
+        ],
+        options: {
+          preserveInputStyle: true,
+          forceFocus: false,
+          shouldFocus: false
+        },
+        isEditing: true
+      }
+    },
+    {
+      commandId: 'doc.mutation.rich-text-editing',
+      unitId: '84b3360b-3594-4a96-9de5-a0b8a2136e2d',
+      segmentId: '',
+      trigger: 'doc.command.insert-text',
+      noHistory: undefined,
+      debounce: true,
+      redoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [ { startOffset: 2085, endOffset: 2085, collapsed: true } ],
+        options: undefined,
+        isEditing: true
+      },
+      undoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [
+          {
+            startOffset: 2084,
+            endOffset: 2084,
+            collapsed: true,
+            rangeType: 'TEXT',
+            startNodePosition: [Object],
+            endNodePosition: null,
+            direction: 'none',
+            segmentId: '',
+            segmentPage: -1,
+            style: [Object],
+            isActive: true
+          }
+        ],
+        options: {
+          preserveInputStyle: true,
+          forceFocus: false,
+          shouldFocus: false
+        },
+        isEditing: true
+      }
+    },
+    {
+      commandId: 'doc.mutation.rich-text-editing',
+      unitId: '84b3360b-3594-4a96-9de5-a0b8a2136e2d',
+      segmentId: '',
+      trigger: 'doc.command.insert-text',
+      noHistory: undefined,
+      debounce: true,
+      redoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [ { startOffset: 2086, endOffset: 2086, collapsed: true } ],
+        options: undefined,
+        isEditing: true
+      },
+      undoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [
+          {
+            startOffset: 2085,
+            endOffset: 2085,
+            collapsed: true,
+            rangeType: 'TEXT',
+            startNodePosition: [Object],
+            endNodePosition: null,
+            direction: 'none',
+            segmentId: '',
+            segmentPage: -1,
+            style: [Object],
+            isActive: true
+          }
+        ],
+        options: {
+          preserveInputStyle: true,
+          forceFocus: false,
+          shouldFocus: false
+        },
+        isEditing: true
+      }
+    },
+    {
+      commandId: 'doc.mutation.rich-text-editing',
+      unitId: '84b3360b-3594-4a96-9de5-a0b8a2136e2d',
+      segmentId: '',
+      trigger: 'doc.command.insert-text',
+      noHistory: undefined,
+      debounce: true,
+      redoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [ { startOffset: 2081, endOffset: 2081, collapsed: true } ],
+        options: undefined,
+        isEditing: true
+      },
+      undoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [
+          {
+            startOffset: 2080,
+            endOffset: 2080,
+            collapsed: true,
+            rangeType: 'TEXT',
+            startNodePosition: [Object],
+            endNodePosition: null,
+            direction: 'none',
+            segmentId: '',
+            segmentPage: -1,
+            style: [Object],
+            isActive: true
+          }
+        ],
+        options: {
+          preserveInputStyle: true,
+          forceFocus: false,
+          shouldFocus: false
+        },
+        isEditing: true
+      }
+    },
+    {
+      commandId: 'doc.mutation.rich-text-editing',
+      unitId: '84b3360b-3594-4a96-9de5-a0b8a2136e2d',
+      segmentId: '',
+      trigger: 'doc.command.insert-text',
+      noHistory: undefined,
+      debounce: true,
+      redoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [ { startOffset: 2082, endOffset: 2082, collapsed: true } ],
+        options: undefined,
+        isEditing: true
+      },
+      undoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [
+          {
+            startOffset: 2081,
+            endOffset: 2081,
+            collapsed: true,
+            rangeType: 'TEXT',
+            startNodePosition: [Object],
+            endNodePosition: null,
+            direction: 'none',
+            segmentId: '',
+            segmentPage: -1,
+            style: [Object],
+            isActive: true
+          }
+        ],
+        options: {
+          preserveInputStyle: true,
+          forceFocus: false,
+          shouldFocus: false
+        },
+        isEditing: true
+      }
+    },
+    {
+      commandId: 'doc.mutation.rich-text-editing',
+      unitId: '84b3360b-3594-4a96-9de5-a0b8a2136e2d',
+      segmentId: '',
+      trigger: 'doc.command.insert-text',
+      noHistory: undefined,
+      debounce: true,
+      redoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [ { startOffset: 2083, endOffset: 2083, collapsed: true } ],
+        options: undefined,
+        isEditing: true
+      },
+      undoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [
+          {
+            startOffset: 2082,
+            endOffset: 2082,
+            collapsed: true,
+            rangeType: 'TEXT',
+            startNodePosition: [Object],
+            endNodePosition: null,
+            direction: 'none',
+            segmentId: '',
+            segmentPage: -1,
+            style: [Object],
+            isActive: true
+          }
+        ],
+        options: {
+          preserveInputStyle: true,
+          forceFocus: false,
+          shouldFocus: false
+        },
+        isEditing: true
+      }
+    },
+    {
+      commandId: 'doc.mutation.rich-text-editing',
+      unitId: '84b3360b-3594-4a96-9de5-a0b8a2136e2d',
+      segmentId: '',
+      trigger: 'doc.command.insert-text',
+      noHistory: undefined,
+      debounce: true,
+      redoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [ { startOffset: 2084, endOffset: 2084, collapsed: true } ],
+        options: undefined,
+        isEditing: true
+      },
+      undoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [
+          {
+            startOffset: 2083,
+            endOffset: 2083,
+            collapsed: true,
+            rangeType: 'TEXT',
+            startNodePosition: [Object],
+            endNodePosition: null,
+            direction: 'none',
+            segmentId: '',
+            segmentPage: -1,
+            style: [Object],
+            isActive: true
+          }
+        ],
+        options: {
+          preserveInputStyle: true,
+          forceFocus: false,
+          shouldFocus: false
+        },
+        isEditing: true
+      }
+    },
+    {
+      commandId: 'doc.mutation.rich-text-editing',
+      unitId: '84b3360b-3594-4a96-9de5-a0b8a2136e2d',
+      segmentId: '',
+      trigger: 'doc.command.insert-text',
+      noHistory: undefined,
+      debounce: true,
+      redoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [ { startOffset: 2085, endOffset: 2085, collapsed: true } ],
+        options: undefined,
+        isEditing: true
+      },
+      undoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [
+          {
+            startOffset: 2084,
+            endOffset: 2084,
+            collapsed: true,
+            rangeType: 'TEXT',
+            startNodePosition: [Object],
+            endNodePosition: null,
+            direction: 'none',
+            segmentId: '',
+            segmentPage: -1,
+            style: [Object],
+            isActive: true
+          }
+        ],
+        options: {
+          preserveInputStyle: true,
+          forceFocus: false,
+          shouldFocus: false
+        },
+        isEditing: true
+      }
+    },
+    {
+      commandId: 'doc.mutation.rich-text-editing',
+      unitId: '84b3360b-3594-4a96-9de5-a0b8a2136e2d',
+      segmentId: '',
+      trigger: 'doc.command.insert-text',
+      noHistory: undefined,
+      debounce: true,
+      redoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [ { startOffset: 2086, endOffset: 2086, collapsed: true } ],
+        options: undefined,
+        isEditing: true
+      },
+      undoState: {
+        actions: [ 'body', { et: 'text-x', e: [Array] } ],
+        textRanges: [
+          {
+            startOffset: 2085,
+            endOffset: 2085,
+            collapsed: true,
+            rangeType: 'TEXT',
+            startNodePosition: [Object],
+            endNodePosition: null,
+            direction: 'none',
+            segmentId: '',
+            segmentPage: -1,
+            style: [Object],
+            isActive: true
+          }
+        ],
+        options: {
+          preserveInputStyle: true,
+          forceFocus: false,
+          shouldFocus: false
+        },
+        isEditing: true
+      }
+    }
+  ],
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v26.12.1
+WATCHDOG: exit=1, signal=null, elapsed=393ms, peak=190.3MiB
