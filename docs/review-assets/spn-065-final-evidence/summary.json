@@ -1,0 +1,714 @@
+{
+  "status": "all seven required checks and all33 current-run jobs passed",
+  "head": "be55f33ebf2a850d0b007f3e05bd66f7a0ed3337",
+  "base": "0bdbbcb5ca23b84e172e41a11bd0cf555e911130",
+  "testedMerge": "c53f3a5ec01d9844795bf31f7b471b82f3b3bf37",
+  "run": 41389297058,
+  "desktop": {
+    "job": 125097743974,
+    "artifact": 13117687415,
+    "sha256": "b70488c192fef079e74e48eb7639f6d82c2c45590d1ba57d3a789b5b3facd89a",
+    "candidateCasesPassed": 7,
+    "metrics": [
+      {
+        "source": "c53f3a5ec01d9844795bf31f7b471b82f3b3bf37",
+        "sample": "plain-1",
+        "role": "candidate",
+        "attempt": 0,
+        "instrumentation": {
+          "profiler": false,
+          "cpuThrottle": 1,
+          "longTaskObserver": true,
+          "perKeyRequestAnimationFrame": true,
+          "playwrightTrace": false,
+          "perMutationSnapshot": false,
+          "physicalDevice": false,
+          "nativeDrainWitness": "browser-local-events-microtask"
+        },
+        "budgets": {
+          "inputP95Ms": 100,
+          "longTaskMaxMs": 200,
+          "flushP95Ms": 16,
+          "flushMaxMs": 50
+        },
+        "summary": {
+          "frameOpportunityMs": {
+            "count": 2086,
+            "p50": 21.399999999965075,
+            "p95": 30.099999999976717,
+            "max": 64.09999999997672,
+            "sum": 44162.000000002794
+          },
+          "interKeyGapMs": {
+            "count": 2085,
+            "p50": 24.800000000046566,
+            "p95": 35.09999999997672,
+            "max": 73,
+            "sum": 51282.99999999994
+          },
+          "debounceBreakingGaps": 0,
+          "longTaskMs": {
+            "count": 2,
+            "p50": 50,
+            "p95": 52,
+            "max": 52,
+            "sum": 102
+          },
+          "totalBlockingMs": 2,
+          "capacityFlushPairMs": {
+            "count": 65,
+            "p50": 4.899999999965075,
+            "p95": 7.799999999930151,
+            "max": 12.300000000046566,
+            "sum": 332.9000000000815
+          },
+          "idleFlushPairMs": null,
+          "pairedFlushMaximumMs": 12.300000000046566,
+          "postFinalKeyDrainUpperBoundMs": 384.9000000000233,
+          "firstVerifiedBrowserLocalDrainMs": 301.30000000004657,
+          "lateReadMinusLocalWitnessMs": 83.59999999997672,
+          "drainAcceptanceMetric": "first-verified-browser-local-empty"
+        },
+        "budgetResults": {
+          "inputP95": true,
+          "longestTask": true,
+          "capacityFlushP95": true,
+          "idleFlushP95": null,
+          "flushMaximum": true,
+          "boundedHistory": true,
+          "boundedCollaboration": true,
+          "observedCapacityFlushes": true,
+          "browserLocalDrainedWithinOneSecond": true
+        },
+        "completed": true,
+        "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed"
+      },
+      {
+        "source": "c53f3a5ec01d9844795bf31f7b471b82f3b3bf37",
+        "sample": "plain-2",
+        "role": "candidate",
+        "attempt": 0,
+        "instrumentation": {
+          "profiler": false,
+          "cpuThrottle": 1,
+          "longTaskObserver": true,
+          "perKeyRequestAnimationFrame": true,
+          "playwrightTrace": false,
+          "perMutationSnapshot": false,
+          "physicalDevice": false,
+          "nativeDrainWitness": "browser-local-events-microtask"
+        },
+        "budgets": {
+          "inputP95Ms": 100,
+          "longTaskMaxMs": 200,
+          "flushP95Ms": 16,
+          "flushMaxMs": 50
+        },
+        "summary": {
+          "frameOpportunityMs": {
+            "count": 2086,
+            "p50": 20.800000000046566,
+            "p95": 30.699999999953434,
+            "max": 54.89999999990687,
+            "sum": 43907.00000000198
+          },
+          "interKeyGapMs": {
+            "count": 2085,
+            "p50": 24.199999999953434,
+            "p95": 35.59999999997672,
+            "max": 66.80000000004657,
+            "sum": 51275.79999999993
+          },
+          "debounceBreakingGaps": 0,
+          "longTaskMs": {
+            "count": 0,
+            "p50": 0,
+            "p95": 0,
+            "max": 0,
+            "sum": 0
+          },
+          "totalBlockingMs": 0,
+          "capacityFlushPairMs": {
+            "count": 65,
+            "p50": 4.100000000093132,
+            "p95": 7.199999999953434,
+            "max": 20.5,
+            "sum": 317.49999999953434
+          },
+          "idleFlushPairMs": null,
+          "pairedFlushMaximumMs": 20.5,
+          "postFinalKeyDrainUpperBoundMs": 384.4000000000233,
+          "firstVerifiedBrowserLocalDrainMs": 301.5999999999767,
+          "lateReadMinusLocalWitnessMs": 82.80000000004657,
+          "drainAcceptanceMetric": "first-verified-browser-local-empty"
+        },
+        "budgetResults": {
+          "inputP95": true,
+          "longestTask": true,
+          "capacityFlushP95": true,
+          "idleFlushP95": null,
+          "flushMaximum": true,
+          "boundedHistory": true,
+          "boundedCollaboration": true,
+          "observedCapacityFlushes": true,
+          "browserLocalDrainedWithinOneSecond": true
+        },
+        "completed": true,
+        "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed"
+      },
+      {
+        "source": "c53f3a5ec01d9844795bf31f7b471b82f3b3bf37",
+        "sample": "plain-3",
+        "role": "candidate",
+        "attempt": 0,
+        "instrumentation": {
+          "profiler": false,
+          "cpuThrottle": 1,
+          "longTaskObserver": true,
+          "perKeyRequestAnimationFrame": true,
+          "playwrightTrace": false,
+          "perMutationSnapshot": false,
+          "physicalDevice": false,
+          "nativeDrainWitness": "browser-local-events-microtask"
+        },
+        "budgets": {
+          "inputP95Ms": 100,
+          "longTaskMaxMs": 200,
+          "flushP95Ms": 16,
+          "flushMaxMs": 50
+        },
+        "summary": {
+          "frameOpportunityMs": {
+            "count": 2086,
+            "p50": 20.599999999976717,
+            "p95": 29.399999999906868,
+            "max": 63,
+            "sum": 43061.50000000093
+          },
+          "interKeyGapMs": {
+            "count": 2085,
+            "p50": 23.800000000046566,
+            "p95": 34.300000000046566,
+            "max": 67.59999999997672,
+            "sum": 50061.29999999993
+          },
+          "debounceBreakingGaps": 0,
+          "longTaskMs": {
+            "count": 1,
+            "p50": 58,
+            "p95": 58,
+            "max": 58,
+            "sum": 58
+          },
+          "totalBlockingMs": 8,
+          "capacityFlushPairMs": {
+            "count": 65,
+            "p50": 4.299999999930151,
+            "p95": 9.900000000023283,
+            "max": 19.100000000093132,
+            "sum": 323.29999999993015
+          },
+          "idleFlushPairMs": {
+            "count": 1,
+            "p50": 1.900000000023283,
+            "p95": 1.900000000023283,
+            "max": 1.900000000023283,
+            "sum": 1.900000000023283
+          },
+          "pairedFlushMaximumMs": 19.100000000093132,
+          "postFinalKeyDrainUpperBoundMs": 421.5999999999767,
+          "firstVerifiedBrowserLocalDrainMs": 308.20000000006985,
+          "lateReadMinusLocalWitnessMs": 113.39999999990687,
+          "drainAcceptanceMetric": "first-verified-browser-local-empty"
+        },
+        "budgetResults": {
+          "inputP95": true,
+          "longestTask": true,
+          "capacityFlushP95": true,
+          "idleFlushP95": true,
+          "flushMaximum": true,
+          "boundedHistory": true,
+          "boundedCollaboration": true,
+          "observedCapacityFlushes": true,
+          "browserLocalDrainedWithinOneSecond": true
+        },
+        "completed": true,
+        "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed"
+      },
+      {
+        "source": "c53f3a5ec01d9844795bf31f7b471b82f3b3bf37",
+        "sample": "profile",
+        "role": "candidate",
+        "attempt": 0,
+        "instrumentation": {
+          "profiler": true,
+          "cpuThrottle": 1,
+          "longTaskObserver": true,
+          "perKeyRequestAnimationFrame": true,
+          "playwrightTrace": false,
+          "perMutationSnapshot": false,
+          "physicalDevice": false,
+          "nativeDrainWitness": "browser-local-events-microtask"
+        },
+        "budgets": {
+          "inputP95Ms": 100,
+          "longTaskMaxMs": 200,
+          "flushP95Ms": 16,
+          "flushMaxMs": 50
+        },
+        "summary": {
+          "frameOpportunityMs": {
+            "count": 2086,
+            "p50": 20.800000000046566,
+            "p95": 30.20000000006985,
+            "max": 70.20000000006985,
+            "sum": 43808.299999997835
+          },
+          "interKeyGapMs": {
+            "count": 2085,
+            "p50": 24.199999999953434,
+            "p95": 34.90000000002328,
+            "max": 80.19999999995343,
+            "sum": 51136.70000000007
+          },
+          "debounceBreakingGaps": 0,
+          "longTaskMs": {
+            "count": 1,
+            "p50": 51,
+            "p95": 51,
+            "max": 51,
+            "sum": 51
+          },
+          "totalBlockingMs": 1,
+          "capacityFlushPairMs": {
+            "count": 65,
+            "p50": 4.800000000046566,
+            "p95": 7.799999999930151,
+            "max": 22,
+            "sum": 352.5000000001164
+          },
+          "idleFlushPairMs": {
+            "count": 1,
+            "p50": 0.8000000000465661,
+            "p95": 0.8000000000465661,
+            "max": 0.8000000000465661,
+            "sum": 0.8000000000465661
+          },
+          "pairedFlushMaximumMs": 22,
+          "postFinalKeyDrainUpperBoundMs": 423.19999999995343,
+          "firstVerifiedBrowserLocalDrainMs": 324.5999999999767,
+          "lateReadMinusLocalWitnessMs": 98.59999999997672,
+          "drainAcceptanceMetric": "first-verified-browser-local-empty"
+        },
+        "budgetResults": {
+          "inputP95": true,
+          "longestTask": true,
+          "capacityFlushP95": true,
+          "idleFlushP95": true,
+          "flushMaximum": true,
+          "boundedHistory": true,
+          "boundedCollaboration": true,
+          "observedCapacityFlushes": true,
+          "browserLocalDrainedWithinOneSecond": true
+        },
+        "completed": true,
+        "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed"
+      }
+    ]
+  },
+  "historicalFailureDisposition": "Original19.6ms idle flush remains unexplained. Duplicate publication removal is independently demonstrated; no causal repair claim. Fresh source attempt0 plain3 observed1.9ms idle flush under unchanged16ms budget. Partial instrumented diagnostics do not replace acceptance.",
+  "testedTree": "101fd50765f59100893a6e76f9a23ea3944ee58f",
+  "headTree": "101fd50765f59100893a6e76f9a23ea3944ee58f",
+  "ciPlan": {
+    "artifact": 13116048870,
+    "sha256": "d292228fe6f6976be66c007380ae607e2dab9f31fdc38627f6e8989ecd40689f",
+    "mode": "full",
+    "action": "edited"
+  },
+  "mobile": {
+    "job": 125097744044,
+    "artifact": 13119096858,
+    "sha256": "97457a813923e5bd847b10cafacd406da9e52836179dd209dfa0c78ba379be50",
+    "candidateCasesPassed": 7,
+    "metrics": [
+      {
+        "source": "c53f3a5ec01d9844795bf31f7b471b82f3b3bf37",
+        "sample": "plain-1",
+        "role": "candidate",
+        "attempt": 0,
+        "instrumentation": {
+          "profiler": false,
+          "cpuThrottle": 4,
+          "longTaskObserver": true,
+          "perKeyRequestAnimationFrame": true,
+          "playwrightTrace": false,
+          "perMutationSnapshot": false,
+          "physicalDevice": false,
+          "nativeDrainWitness": "browser-local-events-microtask"
+        },
+        "budgets": {
+          "inputP95Ms": 200,
+          "longTaskMaxMs": 500,
+          "flushP95Ms": 50,
+          "flushMaxMs": 100
+        },
+        "summary": {
+          "frameOpportunityMs": {
+            "count": 2086,
+            "p50": 73.10000000009313,
+            "p95": 109.60000000009313,
+            "max": 221.9000000001397,
+            "sum": 146388.29999999562
+          },
+          "interKeyGapMs": {
+            "count": 2085,
+            "p50": 82.60000000009313,
+            "p95": 121,
+            "max": 240.69999999995343,
+            "sum": 166583.30000000005
+          },
+          "debounceBreakingGaps": 0,
+          "longTaskMs": {
+            "count": 1329,
+            "p50": 73,
+            "p95": 112,
+            "max": 181,
+            "sum": 100378
+          },
+          "totalBlockingMs": 33928,
+          "capacityFlushPairMs": {
+            "count": 65,
+            "p50": 24.300000000046566,
+            "p95": 48,
+            "max": 75.20000000018626,
+            "sum": 1736.3000000000466
+          },
+          "idleFlushPairMs": {
+            "count": 1,
+            "p50": 5.900000000139698,
+            "p95": 5.900000000139698,
+            "max": 5.900000000139698,
+            "sum": 5.900000000139698
+          },
+          "pairedFlushMaximumMs": 75.20000000018626,
+          "postFinalKeyDrainUpperBoundMs": 1337.8999999999069,
+          "firstVerifiedBrowserLocalDrainMs": 364.69999999995343,
+          "lateReadMinusLocalWitnessMs": 973.1999999999534,
+          "drainAcceptanceMetric": "first-verified-browser-local-empty"
+        },
+        "budgetResults": {
+          "inputP95": true,
+          "longestTask": true,
+          "capacityFlushP95": true,
+          "idleFlushP95": true,
+          "flushMaximum": true,
+          "boundedHistory": true,
+          "boundedCollaboration": true,
+          "observedCapacityFlushes": true,
+          "browserLocalDrainedWithinOneSecond": true
+        },
+        "completed": true,
+        "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed"
+      },
+      {
+        "source": "c53f3a5ec01d9844795bf31f7b471b82f3b3bf37",
+        "sample": "plain-2",
+        "role": "candidate",
+        "attempt": 0,
+        "instrumentation": {
+          "profiler": false,
+          "cpuThrottle": 4,
+          "longTaskObserver": true,
+          "perKeyRequestAnimationFrame": true,
+          "playwrightTrace": false,
+          "perMutationSnapshot": false,
+          "physicalDevice": false,
+          "nativeDrainWitness": "browser-local-events-microtask"
+        },
+        "budgets": {
+          "inputP95Ms": 200,
+          "longTaskMaxMs": 500,
+          "flushP95Ms": 50,
+          "flushMaxMs": 100
+        },
+        "summary": {
+          "frameOpportunityMs": {
+            "count": 2086,
+            "p50": 70.9000000001397,
+            "p95": 107.80000000004657,
+            "max": 225,
+            "sum": 146767.49999999953
+          },
+          "interKeyGapMs": {
+            "count": 2085,
+            "p50": 81.10000000009313,
+            "p95": 118.4000000001397,
+            "max": 241,
+            "sum": 167594.40000000014
+          },
+          "debounceBreakingGaps": 0,
+          "longTaskMs": {
+            "count": 1298,
+            "p50": 73,
+            "p95": 111,
+            "max": 251,
+            "sum": 97742
+          },
+          "totalBlockingMs": 32842,
+          "capacityFlushPairMs": {
+            "count": 65,
+            "p50": 23.899999999906868,
+            "p95": 33.60000000009313,
+            "max": 57.39999999990687,
+            "sum": 1680.3999999999069
+          },
+          "idleFlushPairMs": {
+            "count": 1,
+            "p50": 12.5,
+            "p95": 12.5,
+            "max": 12.5,
+            "sum": 12.5
+          },
+          "pairedFlushMaximumMs": 57.39999999990687,
+          "postFinalKeyDrainUpperBoundMs": 1289.3000000000466,
+          "firstVerifiedBrowserLocalDrainMs": 555.6999999999534,
+          "lateReadMinusLocalWitnessMs": 733.6000000000931,
+          "drainAcceptanceMetric": "first-verified-browser-local-empty"
+        },
+        "budgetResults": {
+          "inputP95": true,
+          "longestTask": true,
+          "capacityFlushP95": true,
+          "idleFlushP95": true,
+          "flushMaximum": true,
+          "boundedHistory": true,
+          "boundedCollaboration": true,
+          "observedCapacityFlushes": true,
+          "browserLocalDrainedWithinOneSecond": true
+        },
+        "completed": true,
+        "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed"
+      },
+      {
+        "source": "c53f3a5ec01d9844795bf31f7b471b82f3b3bf37",
+        "sample": "plain-3",
+        "role": "candidate",
+        "attempt": 0,
+        "instrumentation": {
+          "profiler": false,
+          "cpuThrottle": 4,
+          "longTaskObserver": true,
+          "perKeyRequestAnimationFrame": true,
+          "playwrightTrace": false,
+          "perMutationSnapshot": false,
+          "physicalDevice": false,
+          "nativeDrainWitness": "browser-local-events-microtask"
+        },
+        "budgets": {
+          "inputP95Ms": 200,
+          "longTaskMaxMs": 500,
+          "flushP95Ms": 50,
+          "flushMaxMs": 100
+        },
+        "summary": {
+          "frameOpportunityMs": {
+            "count": 2086,
+            "p50": 71.39999999990687,
+            "p95": 108.8000000002794,
+            "max": 203.89999999990687,
+            "sum": 146741.40000000317
+          },
+          "interKeyGapMs": {
+            "count": 2085,
+            "p50": 81.19999999995343,
+            "p95": 119.39999999990687,
+            "max": 214.79999999981374,
+            "sum": 167845.19999999995
+          },
+          "debounceBreakingGaps": 0,
+          "longTaskMs": {
+            "count": 1317,
+            "p50": 73,
+            "p95": 111,
+            "max": 195,
+            "sum": 99586
+          },
+          "totalBlockingMs": 33736,
+          "capacityFlushPairMs": {
+            "count": 65,
+            "p50": 23.4000000001397,
+            "p95": 36.5999999998603,
+            "max": 70.89999999990687,
+            "sum": 1694.4999999997672
+          },
+          "idleFlushPairMs": {
+            "count": 1,
+            "p50": 1.2999999998137355,
+            "p95": 1.2999999998137355,
+            "max": 1.2999999998137355,
+            "sum": 1.2999999998137355
+          },
+          "pairedFlushMaximumMs": 70.89999999990687,
+          "postFinalKeyDrainUpperBoundMs": 1310.7000000001863,
+          "firstVerifiedBrowserLocalDrainMs": 332.3000000002794,
+          "lateReadMinusLocalWitnessMs": 978.3999999999069,
+          "drainAcceptanceMetric": "first-verified-browser-local-empty"
+        },
+        "budgetResults": {
+          "inputP95": true,
+          "longestTask": true,
+          "capacityFlushP95": true,
+          "idleFlushP95": true,
+          "flushMaximum": true,
+          "boundedHistory": true,
+          "boundedCollaboration": true,
+          "observedCapacityFlushes": true,
+          "browserLocalDrainedWithinOneSecond": true
+        },
+        "completed": true,
+        "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed"
+      },
+      {
+        "source": "c53f3a5ec01d9844795bf31f7b471b82f3b3bf37",
+        "sample": "profile",
+        "role": "candidate",
+        "attempt": 0,
+        "instrumentation": {
+          "profiler": true,
+          "cpuThrottle": 4,
+          "longTaskObserver": true,
+          "perKeyRequestAnimationFrame": true,
+          "playwrightTrace": false,
+          "perMutationSnapshot": false,
+          "physicalDevice": false,
+          "nativeDrainWitness": "browser-local-events-microtask"
+        },
+        "budgets": {
+          "inputP95Ms": 200,
+          "longTaskMaxMs": 500,
+          "flushP95Ms": 50,
+          "flushMaxMs": 100
+        },
+        "summary": {
+          "frameOpportunityMs": {
+            "count": 2086,
+            "p50": 71.79999999981374,
+            "p95": 108.6999999997206,
+            "max": 214.39999999990687,
+            "sum": 147862.90000001574
+          },
+          "interKeyGapMs": {
+            "count": 2085,
+            "p50": 80.60000000009313,
+            "p95": 118.70000000018626,
+            "max": 284.1999999997206,
+            "sum": 168133.2999999998
+          },
+          "debounceBreakingGaps": 0,
+          "longTaskMs": {
+            "count": 1353,
+            "p50": 73,
+            "p95": 110,
+            "max": 202,
+            "sum": 102056
+          },
+          "totalBlockingMs": 34407,
+          "capacityFlushPairMs": {
+            "count": 65,
+            "p50": 26,
+            "p95": 36.60000000009313,
+            "max": 60.09999999962747,
+            "sum": 1806.8999999975786
+          },
+          "idleFlushPairMs": {
+            "count": 1,
+            "p50": 5.699999999720603,
+            "p95": 5.699999999720603,
+            "max": 5.699999999720603,
+            "sum": 5.699999999720603
+          },
+          "pairedFlushMaximumMs": 60.09999999962747,
+          "postFinalKeyDrainUpperBoundMs": 938.4000000003725,
+          "firstVerifiedBrowserLocalDrainMs": 485.20000000018626,
+          "lateReadMinusLocalWitnessMs": 453.20000000018626,
+          "drainAcceptanceMetric": "first-verified-browser-local-empty"
+        },
+        "budgetResults": {
+          "inputP95": true,
+          "longestTask": true,
+          "capacityFlushP95": true,
+          "idleFlushP95": true,
+          "flushMaximum": true,
+          "boundedHistory": true,
+          "boundedCollaboration": true,
+          "observedCapacityFlushes": true,
+          "browserLocalDrainedWithinOneSecond": true
+        },
+        "completed": true,
+        "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed"
+      }
+    ]
+  },
+  "capturedAt": "2026-11-02T05:43:57.129933+00:00",
+  "runMetadata": {
+    "conclusion": "success",
+    "event": "pull_request",
+    "head_sha": "be55f33ebf2a850d0b007f3e05bd66f7a0ed3337",
+    "html_url": "https://github.com/mxbaylee/spinel/actions/runs/41389297058",
+    "id": 41389297058,
+    "run_attempt": 1,
+    "status": "completed"
+  },
+  "requiredChecks": [
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/41389297058/job/125115854895",
+      "name": "Playwright smoke",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/41389297058/job/125106462455",
+      "name": "Unit tests",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/41389297058/job/125104352801",
+      "name": "Lib tests",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/41389297058/job/125097743896",
+      "name": "Backlog",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/41389297058/job/125097743843",
+      "name": "Lint",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/41389297058/job/125097743806",
+      "name": "Typecheck",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/41389159436/job/125097045613",
+      "name": "Pull request",
+      "state": "SUCCESS"
+    }
+  ],
+  "auxiliary": {
+    "storybook": {
+      "run": 41389159449,
+      "status": "success"
+    },
+    "nativeDesktop": {
+      "run": 41389159463,
+      "status": "success"
+    }
+  },
+  "supersededCodeRun": {
+    "run": 41389159436,
+    "status": "cancelled",
+    "reason": "duplicate queued run on same head; not acceptance evidence; its individual Pull request job passed and remains latest required title-check link"
+  }
+}
