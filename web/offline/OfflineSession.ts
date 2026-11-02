@@ -10,7 +10,8 @@ import { validateRecoverySnapshot } from '@spinel/sync-client';
 import type { IURLImageService } from '@univerjs/core';
 import type { OfflineBundleImage } from '../../src/shared/offlineBundle.ts';
 import type { OfflineRecoveryRequest } from '../../src/shared/offlineRecovery.ts';
-import type { WorkspaceItem } from '../../src/shared/workspace.ts';
+import type { ItemAccess, WorkspaceItem } from '../../src/shared/workspace.ts';
+import { isAccessUpgrade } from '../../src/shared/accessUpgrade.ts';
 import { PORTABLE_LIMIT } from '../../src/shared/portable.ts';
 import { mapNativeImageSources } from '../../src/shared/nativeImageSources.ts';
 import { snapshotIdentity } from '../../src/shared/snapshotIdentity.ts';
@@ -320,6 +321,40 @@ export class OfflineSession implements IURLImageService {
       verify();
     } finally {
       release?.();
+    }
+  }
+  /** Verified monotonic authority on the same live unit; keep the downloaded base and images. */
+  async upgradeAccess(access: ItemAccess, confirmedRevision: number, verifyClean: () => void) {
+    this.verifyRemote();
+    const bundle = this.bundle;
+    if (!bundle || !this.store || this.problem || this.pending)
+      throw new Error('This device copy needs attention before editing.');
+    if (bundle.access === access && !this.readOnly) return;
+    if (!isAccessUpgrade(bundle.access, access))
+      throw new Error('This device copy cannot take that access change.');
+    const release = this.releaseWriter
+      ? undefined
+      : await withOfflineEditorAdmission(this.accountId, this.itemId, this.verifyRemote, () =>
+          writerLock(this.accountId, this.itemId),
+        );
+    if (!this.releaseWriter && !release)
+      throw new Error('Close this document in other tabs to enable editing here.');
+    const verify = () => {
+      this.verifyRemote();
+      verifyClean();
+      if (this.bundle !== bundle || this.problem || this.pending)
+        throw new Error('This device copy changed. Reopen it before editing.');
+    };
+    try {
+      verify();
+      await this.store.upgradeAccess(bundle, access, confirmedRevision, verify);
+      verify();
+      this.download!.bundle = { ...bundle, access, readOnly: false };
+      // Keep the exclusive writer for every subsequent native checkpoint.
+      this.releaseWriter ??= release;
+    } catch (error) {
+      release?.();
+      throw error;
     }
   }
   /** Only a frozen, clean native client may replace an expired replay base. */

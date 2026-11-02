@@ -1171,3 +1171,45 @@ test('mismatched lockfiles, incomplete samples and raw profile tampering each bl
     assert.equal(compareDocResponsiveness(f.baseline, f.candidate, 'desktop').passed, false);
   }
 });
+
+test('candidate-only evidence preserves all absolute/content/profile gates without inventing a baseline', () => {
+  const good = fixture();
+  const result = compareDocResponsiveness(null, good.candidate, 'desktop');
+  assert.equal(result.mode, 'candidate-only');
+  assert.equal(result.passed, true, JSON.stringify(result));
+  assert.equal(result.candidateIntegrity, true);
+  assert.deepEqual(result.baselineRedoOutcome, []);
+  assert.equal(result.composition.baseline, null);
+  for (const mutate of [
+    (candidate: BenchmarkArtifact[]) => {
+      candidate.pop();
+    },
+    (candidate: BenchmarkArtifact[]) => {
+      candidate[0]!.metrics.attempt = 1;
+    },
+    (candidate: BenchmarkArtifact[]) => {
+      candidate[0]!.metrics.budgetEnforced = false;
+    },
+    (candidate: BenchmarkArtifact[]) => {
+      candidate[0]!.metrics.completed = false;
+    },
+    (candidate: BenchmarkArtifact[]) => {
+      candidate[0]!.metrics.undoRedo!.outcome = 'baseline-capacity-refusal';
+    },
+    (candidate: BenchmarkArtifact[]) => {
+      candidate[0]!.metrics.native.flushes[0]!.durationMs = 10_000;
+    },
+    (candidate: BenchmarkArtifact[]) => {
+      delete candidate[3]!.profile;
+    },
+  ]) {
+    const f = fixture();
+    mutate(f.candidate);
+    assert.equal(compareDocResponsiveness(null, f.candidate, 'desktop').passed, false);
+  }
+  assert.equal(
+    compareDocResponsiveness([], good.candidate, 'desktop').passed,
+    false,
+    'missing selected baseline is not candidate-only',
+  );
+});

@@ -29,6 +29,16 @@ The tickets are authoritative now.
 Create one with `npm run backlog:new -- <emoji> <title>`. That takes the next ID
 and bumps `next_id`. IDs are never reused, renumbered or recycled.
 
+An already allocated ticket stranded on an unmerged branch may be reserved in a
+separate focused grooming PR through `backlog.json`'s optional `reserved_tickets`
+records: exact ID, original heading and immutable allocation commit. Reviewers
+verify the original ticket, the allocation counter advancing, and that the ID was
+never previously landed/completed; a syntactically valid SHA is not that proof.
+Only a later grooming PR may consume a reservation from its base branch to
+register the exact heading, removing the reservation in the same change. It cannot
+add its own exception or lower `next_id`. Ordinary new tickets still use the CLI.
+See [the SPN-130 reservation](../implementation/backlog-reserved-ticket-ids.md).
+
 ```markdown
 ---
 id: SPN-012
@@ -68,7 +78,10 @@ And ....
 
 ## Verify
 
-- Unit: ... E2E: ... What a reviewer should see.
+- Contract/negative case: ... Existing suite and lowest meaningful layer: ...
+- Fixture/readiness/cleanup: ...
+- Environment owner and relevant source/shared dependency paths: ...
+- Evidence: ... What a reviewer should see; explain routing changes or why none are needed.
 ```
 
 - **Story** is what the person wants and why, without implementation words.
@@ -76,7 +89,13 @@ And ....
 - **Rules** hold decisions and constraints, each with its date and source, linked to its
   decision in `docs/implementation/SPN-NNN.md` (legacy issue links remain valid).
 - **Out of scope** names the nearby work that belongs to other tickets.
-- **Verify** says what proves it: tests, and what a reviewer should see.
+- **Verify** says what proves it: the regression contract, owning suite/layer and
+  environments, relevant source/shared dependencies, and what a reviewer should
+  see. Follow [sustainable testing](../testing.md); extend existing coverage before
+  adding another expensive execution, and keep applicable CI selection complete.
+  This applies to every open ticket and resumed PR as well as new tickets. Keep
+  its test plan and actual evidence current in progress checkpoints; fix test
+  weaknesses introduced by the work before landing, not in a later cleanup ticket.
 
 Aim for 30–50 lines; the checker warns past 50. A ticket needs enough for an
 agent to build it without asking, and no more. Each ticket gets its own emoji,
@@ -97,10 +116,10 @@ reserved.
   main job. A ticket's impact is the highest of its persona impacts. Judge at
   least one; leave out personas it doesn't touch. Owner, chat 2026-10-19.
 
-| Factor | S | M | L | XL |
-| --- | --- | --- | --- | --- |
-| Impact | 🤍 10 | 💜 20 | 🩷 30 | — |
-| Effort | 🌱 0 | 🌿 1 | 🌳 2 | 🏔️ 3 |
+| Factor | S     | M     | L     | XL   |
+| ------ | ----- | ----- | ----- | ---- |
+| Impact | 🤍 10 | 💜 20 | 🩷 30 | —    |
+| Effort | 🌱 0  | 🌿 1  | 🌳 2  | 🏔️ 3 |
 
 A ticket's own points are impact plus effort, from **10 to 33**. Impact is weighted
 one order of magnitude higher than before, and larger effort comes first within
@@ -193,8 +212,13 @@ place. Owner, chat 2026-10-26; [image-publication decision](../implementation/gr
 
 1. Re-read the ticket and check it is still true against the code.
 2. Branch from `main`. One ticket, one branch, one PR, one squashed commit.
-3. Build it with its tests. Make decisions as they come up (below). Maintain
-   diagnostics with the behavior: when a change affects an instrumented
+3. Build it with its tests using [sustainable testing](../testing.md). Keep the
+   ticket's Verify contract, environment ownership and dependency routing current.
+   At kickoff/resume, confirm suite/fixture paths and readiness/cleanup boundaries.
+   Update the implementation/PR test-plan checkpoint when these change, recording
+   actual attempts, first failures, dispositions and the next missing evidence.
+   Make decisions as they come up (below).
+   Maintain diagnostics with the behavior: when a change affects an instrumented
    operation, save, sync, checkpoint, maintenance or runtime boundary, inspect
    its emitter, exact timing/outcome, retry counting and attribution. Update the
    [emitter inventory](../diagnostics.md#emitter-maintenance-inventory) and
@@ -300,6 +324,8 @@ A full requested grooming, recorded in a PR titled `🧹 Groom backlog …`:
 
 - Rechecks every ticket against the code: still true, still needed, sized right.
 - Captures context learned since the last grooming into the tickets it affects.
+- Rechecks each Verify plan against current suites, fixtures and dependency routing;
+  preserves required acceptance when removing duplication or assigning a separate repair.
 - Checks persona coverage: walks each persona's journey (Operator, Owner,
   Collaborator, Link guest), rechecks each ticket's persona impacts, and files
   tickets for what is missing.
@@ -338,14 +364,30 @@ toward the reminder.
   Playwright smoke builds the app and checks development and production servers
   (SPN-001).
 
+The [SPN-115 coverage policy](../implementation/SPN-115.md) keeps all seven code
+check names and publishes a digest-bound plan from the immutable event range.
+All PR edits run fresh full validation, including title/body changes and base
+retargets. Edit concurrency is isolated from code pushes. The cheap metadata
+optimization remains in [SPN-129](SPN-129.md); renamed metadata-only jobs failed
+actual protected-branch readiness and are not used. Ambiguous events,
+unavailable ranges and unknown paths also select full coverage.
+`ci-performance` and `ci-full` add coverage; removing labels never removes
+path-required checks. Weekly and manual runs select the full compatibility plan.
+Candidate native content/access/latency checks remain automatic for application
+changes. Historical comparisons follow performance dependencies or additive
+labels; broad soak, retained transition and container routing stays unchanged.
+Selected evidence must succeed; only explicitly inapplicable evidence may be
+skipped. No result is reused from another run, including after merge to main.
+
 Documentation-only CI keeps Backlog, Pull request and Lint validation, while
 Typecheck, Unit tests, Playwright smoke and Build Storybook report explicitly
 that application validation is not applicable. Storybook still builds and deploys
 on main pushes/manual runs so a docs push cannot displace a queued code deploy. The allowlist is Markdown under
 `docs/`, root `README.md`, `AGENTS.md`, `THIRD-PARTY-NOTICES.md`, and exactly
 `docs/todo/backlog.json` (which still gets backlog validation). Other JSON,
-executable mockups, code, tests, dependencies, workflows and unknown paths run
-the full suite. Classification uses the complete PR/push diff with both sides
+executable mockups, dependencies, workflows and unknown paths run the full
+plan. Other code/test paths retain automatic candidate correctness and their
+applicable historical comparisons under SPN-115. Classification uses the complete PR/push diff with both sides
 of renames; uncertain ranges and manual runs use full validation. A failed or
 cancelled classification never passes the browser gate. This is an applicability
 check, not a waiver for failures. Owner, chat 2026-10-20,

@@ -38,6 +38,8 @@ export interface WorkspaceItem {
   createdByName?: string;
   sharedAt?: number;
   placementParentId?: string | null;
+  /** Personal discovery preference; never changes access or prepared device copies. */
+  hidden?: true;
 }
 /** Outer file metadata only; Space members keep the narrower native item union. */
 export type SpaceFile = Omit<WorkspaceItem, 'kind'> & { kind: 'space' };
@@ -53,8 +55,9 @@ export const fileKindLabel: Record<FileKind, string> = { ...kindLabel, space: 'S
 
 export type TrashedItem = FileItem & {
   trashedAt: number;
-  /** Every recovery window ends 30 elapsed UTC days after its own deletion. */
+  /** Original 30-day deadline; a recovery hold suspends expiry. */
   expiresAt: number;
+  heldAfterRecovery?: true;
 };
 export interface TrashListing {
   items: TrashedItem[];
@@ -64,4 +67,12 @@ export interface TrashListing {
     count: number;
     items: { id: string; name: string; kind: FileKind }[];
   };
+}
+
+/** Account-only, current access information. Never part of a guest or offline catalog. */
+export interface ItemAccessDetails {
+  access: ItemAccess;
+  source: { kind: 'owner' | 'direct' } | { kind: 'folder' | 'space'; id: string; name: string };
+  /** The outer sharing boundary, also when a page inherits through an outer folder. */
+  space?: { id: string; name: string };
 }

@@ -1,6 +1,7 @@
 import { SaveStatus } from './SaveStatus.tsx';
+import type { ItemAccess } from '../src/shared/workspace.ts';
 import { recordNativeMutationInventory } from './nativeMutationInventory.ts';
-import { readOnlySheetDrawings } from './readOnlySheetDrawings.ts';
+import { bindSheetDrawingPermissions, readOnlySheetDrawings } from './readOnlySheetDrawings.ts';
 import { sheetImages } from './sheetImages.ts';
 import sheetDrawingEnglish from '@univerjs/preset-sheets-drawing/locales/en-US';
 import { EditorTools } from './EditorTools.tsx';
@@ -48,6 +49,9 @@ import type { RegisterGuestEditor } from './guestRevocation.ts';
 import { nativeSyncPermissions } from './nativeSyncPermissions.ts';
 import { useDiagnostics } from './useDiagnostics.tsx';
 import { beginOperation, diagnosticSource } from './operationDiagnostics.ts';
+import { BehaviorSubject } from 'rxjs';
+import { copyUnavailable, NativeCopyPlugin } from './nativeCopy.tsx';
+import { guestItemId } from './documentAccess.ts';
 
 export function SheetEditor({
   id,
@@ -55,6 +59,7 @@ export function SheetEditor({
   spaceId,
   onDirty,
   onConnectionState,
+  onAccessUpgrade,
   saveStatusTarget,
   registerGuestEditor,
   localAccountId,
@@ -65,6 +70,7 @@ export function SheetEditor({
   saveStatusTarget: HTMLElement | null;
   onDirty: (dirty: boolean, retained?: boolean) => void;
   onConnectionState?: (state: ConnectionState | null) => void;
+  onAccessUpgrade?: (access: ItemAccess) => void;
   registerGuestEditor?: RegisterGuestEditor;
   localAccountId?: string;
 }) {
@@ -93,15 +99,25 @@ export function SheetEditor({
     let offlineSession: OfflineSession | undefined;
     let initialized = false;
     let captureReady = false;
+    const copyStatus = new BehaviorSubject<string | null>(
+      'Wait for the document to finish opening.',
+    );
+    let lastConnection: ConnectionState = 'reconnecting';
     const loading = new AbortController();
     const room = `${spaceId ?? ''}/${id}`;
     if (lastRoom.current !== room) syncNotice.current = undefined;
     lastRoom.current = room;
     onConnectionState?.('reconnecting');
     const publishConnection = (state: ConnectionState) => {
-      if (!disposed) onConnectionState?.(state);
+      if (!disposed) {
+        const connectionChanged = state !== lastConnection;
+        lastConnection = state;
+        if (connectionChanged) publish(lastState);
+        onConnectionState?.(state);
+      }
     };
     let stopPresence: (() => void) | undefined;
+    let stopDrawingPermissions: (() => void) | undefined;
     setPeople([]);
     let editing = false;
     let freezeAfterEditing = false;
@@ -112,6 +128,13 @@ export function SheetEditor({
       lastState = state;
       if (disposed) return;
       const dirty = editing || state.dirty;
+      copyStatus.next(
+        copyUnavailable(
+          { ...state, dirty, failed: state.failed || Boolean(syncNotice.current) },
+          initialized,
+          lastConnection === 'online',
+        ),
+      );
       if (dirty && initialized) syncNotice.current = undefined;
       onDirty(dirty, Boolean(state.retained));
       setStatus({
@@ -148,6 +171,10 @@ export function SheetEditor({
           [LocaleType.EN_US]: mergeLocales(enUS, sheetDrawingEnglish),
         },
         override: nativePermissions.override,
+        plugins:
+          !localAccountId && !guestItemId()
+            ? [[NativeCopyPlugin, { id, spaceId, unavailable: copyStatus }]]
+            : [],
         presets: [
           sheetPreset(
             container.current!,
@@ -178,6 +205,7 @@ export function SheetEditor({
       // Sheet services are registered lazily when the first sheet is created.
       // Own disposal before awaiting load, then attach display hooks after readiness.
       disposeEditor = () => {
+        stopDrawingPermissions?.();
         offlineImages?.dispose();
         disposeSpinelSync(univer);
         univer.dispose();
@@ -269,7 +297,17 @@ export function SheetEditor({
             message: 'Offline access changed on this device. Reopen the document to continue.',
           });
         },
-        initializeAccess: () => (data.access === 'viewer' ? readOnly() : undefined),
+        initializeAccess: () => {
+          stopDrawingPermissions = bindSheetDrawingPermissions(univer, data.unitId);
+          return data.access === 'viewer' ? readOnly() : undefined;
+        },
+        upgradeAccess: (access) => {
+          if (disposed) return;
+          onAccessUpgrade?.(access);
+          freezeAfterEditing = false;
+          // Both drawing services follow the workbook AND active worksheet policy.
+          nativePermissions.setAccess(access);
+        },
         onInitialPending: () =>
           publish({
             dirty: true,
@@ -346,6 +384,7 @@ export function SheetEditor({
         univerAPI.getActiveWorkbook()?.getActiveSheet()?.refreshCanvas();
       });
       disposeEditor = () => {
+        stopDrawingPermissions?.();
         disposeSpinelSync(univer);
         stopTheme();
         interceptor.dispose();
@@ -385,6 +424,8 @@ export function SheetEditor({
     return () => {
       opened('cancelled');
       disposed = true;
+      copyStatus.next('This document is closed.');
+      copyStatus.complete();
       loading.abort();
       registerGuestEditor?.(null);
       stopPresence?.();

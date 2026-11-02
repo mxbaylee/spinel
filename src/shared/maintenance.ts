@@ -32,6 +32,18 @@ export interface MaintenanceAuthority {
   expiresAt: number;
 }
 
+/** Original server-captured verification and bounded work grant; private restore
+ * IPC only. expiresAt is the immutable operation deadline, capped by the session.
+ * verifiedUntil admits a new create/confirm; it does not time out admitted work. */
+export interface RestoreAuthority extends MaintenanceAuthority {
+  verifiedPasskeyId: string;
+  verifiedAt: number;
+  /** Both fields are absent only on pre-SPN-124 journal proofs. Those retain
+   * their original five-minute expiry and can never acquire a longer lifetime. */
+  verifiedUntil?: number;
+  authorizedAt?: number;
+}
+
 export type MaintenanceCommand =
   | { action: 'pause'; operationId: string; authority: MaintenanceAuthority }
   | { action: 'resume'; operationId: string; actorId: string; resumeToken: string }
@@ -53,6 +65,15 @@ export interface MaintenanceControlResult {
   resumeToken?: string;
 }
 
+/** Private supervisor-to-child shutdown challenge, never public status. */
+export interface RestoreStopRequest {
+  jobId: string;
+  challengeId: string;
+  generationId: string;
+  epoch: string;
+  deadline: number;
+}
+
 export interface MaintenanceBridge {
   status(): MaintenancePublicStatus;
   adminStatus(): MaintenanceAdminStatus;
@@ -62,6 +83,10 @@ export interface MaintenanceBridge {
   ready(): void;
   /** Called only after accepted request, sync and job work has drained. */
   drained(epoch: string): void;
+  /** Read-only recheck of the original proof, never a renewed verification. */
+  onRestoreAuthority?(listener: (proof: RestoreAuthority) => void): void;
+  onRestoreStop?(listener: (request: RestoreStopRequest) => Promise<void>): void;
+  acceptRestoreWitness?(request: RestoreStopRequest, fingerprint: string): Promise<void>;
   /** Fixed, non-sensitive failure; the parent keeps maintenance active. */
   fail(reason: 'drain-failed' | 'storage-failed'): void;
   close(): void;

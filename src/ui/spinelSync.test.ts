@@ -216,8 +216,8 @@ async function fixture({
   let metadata: (input: string) => Promise<Response> = async (input) =>
     Response.json(
       input.endsWith('/collaboration')
-        ? { access: 'editor', unitId: 'unit', user: { id: 'owner' } }
-        : { item: { access: 'editor' }, live: { unitId: 'unit' } },
+        ? { access: bundleAccess, unitId: 'unit', user: { id: 'owner' } }
+        : { item: { access }, live: { unitId: 'unit' } },
     );
   const requests = vi.fn(async (input: string, _init?: RequestInit) => {
     if (input.includes('/snapshot?'))
@@ -257,7 +257,7 @@ async function fixture({
     problem: '',
     accountId: 'owner',
     itemId: space ? child : item,
-    bundle: { access: 'editor', unitId: 'unit', name: 'Offline notes', maintenanceEpoch },
+    bundle: { access: bundleAccess, unitId: 'unit', name: 'Offline notes', maintenanceEpoch },
     creation: undefined as OfflineCreation | undefined,
     recoveryRequest: undefined as OfflineRecoveryRequest | undefined,
     onChange: undefined as (() => void) | undefined,
@@ -295,6 +295,10 @@ async function fixture({
     removeClean: vi.fn(async (verify: () => void) => {
       verify();
     }),
+    upgradeAccess: vi.fn(async (next: ItemAccess, _revision: number, verify: () => void) => {
+      verify();
+      offline.bundle = { ...offline.bundle, access: next };
+    }),
     endAuthentication: vi.fn(),
     stopAuthenticationHTTP: vi.fn(),
     stopRemote: vi.fn((reason: string) => {
@@ -310,16 +314,18 @@ async function fixture({
   });
   const reload = vi.fn();
   const lock = vi.fn();
+  const upgradeAccess = vi.fn();
   await loadSpinelDocument({
     univer,
     unitId: 'unit',
     itemId: space ? child : item,
     spaceId: space ? item : undefined,
-    access: 'editor',
+    access,
     kind: 'doc',
     signal: abort.signal,
     isCurrent: () => current,
     initializeAccess,
+    upgradeAccess,
     onInitialPending,
     reload,
     lock,
@@ -347,6 +353,7 @@ async function fixture({
     connections,
     readonly,
     handle,
+    upgradeAccess,
     abort,
     requests,
     reload,
@@ -954,6 +961,117 @@ test.each(['success', 'failure', 'cancelled'] as const)(
     if (outcome === 'failure') expect(f.client.disposed).toBe(false);
   },
 );
+
+test.each([false, true])(
+  'a %s downloaded viewer upgrades the existing native binding and retains downgrade fences',
+  async (downloaded) => {
+    const f = await fixture({ access: 'viewer', downloaded, space: downloaded });
+    const socket = f.socket();
+    socket.open();
+    socket.frame({
+      type: 'resume',
+      version: 1,
+      unitId: 'unit',
+      fromRevision: 8,
+      revision: 8,
+      edits: [],
+    });
+    await vi.advanceTimersByTimeAsync(0);
+    f.metadata(async () =>
+      Response.json(
+        downloaded
+          ? { access: 'editor', unitId: 'unit', user: { id: 'owner' } }
+          : { item: { access: 'editor' }, live: { unitId: 'unit' } },
+      ),
+    );
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(f.upgradeAccess).toHaveBeenCalledExactlyOnceWith('editor');
+    expect(f.socket()).toBe(socket);
+    expect(f.univer.createUnit).toHaveBeenCalledTimes(1);
+    expect(f.reload).not.toHaveBeenCalled();
+    expect(f.reloadPage).not.toHaveBeenCalled();
+    if (downloaded) {
+      expect(f.offline.upgradeAccess).toHaveBeenCalledWith('editor', 8, expect.any(Function));
+      expect(f.offline.persist).toHaveBeenCalled();
+      expect(f.offline.refreshClean).not.toHaveBeenCalled();
+    }
+    f.pending();
+    f.metadata(async () =>
+      Response.json(
+        downloaded
+          ? { access: 'viewer', unitId: 'unit', user: { id: 'owner' } }
+          : { item: { access: 'viewer' }, live: { unitId: 'unit' } },
+      ),
+    );
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(f.readonly).toHaveBeenCalled();
+    expect(socket.readyState).toBe(3);
+    expect(f.upgradeAccess).toHaveBeenCalledTimes(1);
+  },
+);
+
+test('a prepared upgrade retries failed checkpoint persistence without remounting or enabling input early', async () => {
+  const f = await fixture({ access: 'viewer', downloaded: true });
+  f.offline.persist.mockRejectedValueOnce(new Error('Disk temporarily unavailable'));
+  f.metadata(async () =>
+    Response.json({ access: 'editor', unitId: 'unit', user: { id: 'owner' } }),
+  );
+  await vi.advanceTimersByTimeAsync(1000);
+  expect(f.upgradeAccess).not.toHaveBeenCalled();
+  expect(f.offline.bundle.access).toBe('editor');
+  await vi.advanceTimersByTimeAsync(1000);
+  expect(f.upgradeAccess).toHaveBeenCalledExactlyOnceWith('editor');
+  expect(f.reload).not.toHaveBeenCalled();
+  expect(f.offline.refreshClean).not.toHaveBeenCalled();
+});
+
+test.each(['guest', 'generation', 'account', 'synthetic viewer'] as const)(
+  'an upgrade cannot bypass a %s fence',
+  async (fence) => {
+    const downloaded = fence === 'account' || fence === 'synthetic viewer';
+    const f = await fixture({
+      access: 'viewer',
+      guest: fence === 'guest',
+      downloaded,
+      bundleAccess: fence === 'synthetic viewer' ? 'editor' : 'viewer',
+    });
+    f.metadata(async () =>
+      Response.json(
+        downloaded
+          ? {
+              access: 'editor',
+              unitId: 'unit',
+              user: { id: fence === 'account' ? 'other' : 'owner' },
+            }
+          : {
+              item: { access: 'editor' },
+              live: { unitId: fence === 'generation' ? 'replacement' : 'unit' },
+            },
+      ),
+    );
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(f.upgradeAccess).not.toHaveBeenCalled();
+  },
+);
+
+test('maintenance arriving during a prepared upgrade never enables input', async () => {
+  const f = await fixture({ access: 'viewer', downloaded: true, maintenanceEpoch: 'old' });
+  let finish!: () => void;
+  f.offline.upgradeAccess.mockImplementationOnce(async (_access, _revision, verify) => {
+    await new Promise<void>((resolve) => {
+      finish = resolve;
+    });
+    verify();
+  });
+  f.metadata(async () =>
+    Response.json({ access: 'editor', unitId: 'unit', user: { id: 'owner' } }),
+  );
+  await vi.advanceTimersByTimeAsync(1000);
+  f.maintenance('draining', 'old');
+  finish();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.upgradeAccess).not.toHaveBeenCalled();
+});
 
 test('creation admission updates recovery actions and the original link after a native failure', async () => {
   const f = await fixture({ downloaded: true, canRecover: true });

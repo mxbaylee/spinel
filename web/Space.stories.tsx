@@ -12,6 +12,7 @@ import type {
 import type { ItemAccess } from '../src/shared/workspace.ts';
 import { App } from './App.tsx';
 import { EditorTools } from './EditorTools.tsx';
+import { RestoreNotice, restoreNoticeStorageKey } from './RestoreNotice.tsx';
 import { Space } from './Space.tsx';
 import type { SpaceEditorProps } from './Space.tsx';
 import { spaceHref } from './spaceNavigation.ts';
@@ -444,10 +445,87 @@ export const ViewOnly: Story = {
   },
 };
 
+export const PageAccessDetails: Story = {
+  parameters: {
+    api: {
+      ...treeApi(tree('editor')),
+      [`GET /api/items/${id(1)}/access`]: {
+        details: {
+          access: 'editor',
+          source: { kind: 'folder', id: 'readable-folder', name: 'Budgets' },
+          space: { id: root, name: 'Project Atlas' },
+        },
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    await ready(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(await body.findByRole('button', { name: 'Document actions' }));
+    await userEvent.click(await body.findByRole('menuitem', { name: 'Access details…' }));
+    const dialog = await body.findByRole('dialog', { name: 'Access to Welcome' });
+    await expect(await within(dialog).findByText('Editor through Budgets')).toBeVisible();
+    await expect(
+      within(dialog).getByText(/Access applies to every current and future page and folder in/),
+    ).toHaveTextContent('Project Atlas');
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Close dialog' }));
+    await waitFor(() => expect(body.queryByRole('dialog')).not.toBeInTheDocument());
+    await expect(body.getByRole('button', { name: 'Document actions' })).toHaveFocus();
+    await expect(body.getByRole('textbox', { name: 'Page content fixture' })).toBeVisible();
+  },
+};
+
 export const Empty: Story = {
   parameters: { spacePath: spaceHref(root), api: treeApi(tree('owner', [])) },
   play: async ({ canvasElement }) => {
     await within(canvasElement).findByRole('heading', { name: 'This Space is empty' });
+  },
+};
+
+/** The post-restore Banner sits under the Space header on a view with no open page. */
+const restoreBanner = (
+  <RestoreNotice
+    notice={{
+      outcome: 'restored',
+      at: Date.UTC(2026, 9, 30, 18),
+      backupCreatedAt: '2026-10-28T02:00:00.000Z',
+    }}
+  />
+);
+const clearRestoreDismissal = () => {
+  localStorage.removeItem(restoreNoticeStorageKey);
+  return () => localStorage.removeItem(restoreNoticeStorageKey);
+};
+export const RestoreBanner: Story = {
+  args: { banner: restoreBanner },
+  beforeEach: clearRestoreDismissal,
+  // A Space root with pages opens its first page, which hides the Banner.
+  parameters: { spacePath: spaceHref(root), api: treeApi(tree('owner', [])) },
+  play: async ({ canvasElement }) => {
+    await within(canvasElement).findByRole('heading', { name: 'This Space is empty' });
+    const banner = await within(canvasElement).findByRole('region', { name: 'Workspace restored' });
+    await expect(banner.parentElement).toHaveClass('space-main');
+    const header = canvasElement.querySelector('.space-site-header')!;
+    await expect(banner.getBoundingClientRect().top).toBeGreaterThanOrEqual(
+      header.getBoundingClientRect().bottom,
+    );
+  },
+};
+export const RestoreBannerDark: Story = { ...RestoreBanner, globals: { theme: 'dark' } };
+export const RestoreBannerPhone: Story = {
+  ...RestoreBanner,
+  globals: { viewport: { value: 'phone', isRotated: false } },
+};
+/** An open document keeps the full height; the Banner returns on the Space index. */
+export const RestoreBannerWithDocument: Story = {
+  args: { banner: restoreBanner },
+  beforeEach: clearRestoreDismissal,
+  parameters: { api: treeApi() },
+  play: async ({ canvasElement }) => {
+    await ready(canvasElement);
+    await expect(
+      within(canvasElement).queryByRole('region', { name: 'Workspace restored' }),
+    ).toBeNull();
   },
 };
 

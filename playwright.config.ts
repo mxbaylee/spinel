@@ -1,6 +1,12 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const project = process.env.SPINEL_E2E_PROJECT;
+// Only an explicit routine CI plan reduces duplicate phone executions. Local,
+// manual/full compatibility and unknown settings keep every combination.
+const syncExclusions =
+  process.env.SPINEL_CI_FULL_COMPATIBILITY === 'false'
+    ? /@sync-soak|@phone-ordinary/
+    : /@sync-soak/;
 const shard = process.env.SHARD?.replaceAll('/', '-of-');
 if (
   project &&
@@ -13,6 +19,7 @@ if (
     'sync-soak-sheet',
     'sync-soak-doc',
     'offline-upgrade',
+    'supervised-restore',
     'doc-responsiveness',
     'doc-callback-lifetimes',
   ].includes(project)
@@ -38,6 +45,7 @@ export default defineConfig({
     project !== 'production' &&
     project !== 'doc-responsiveness' &&
     project !== 'doc-callback-lifetimes' &&
+    project !== 'supervised-restore' &&
     !project?.startsWith('sync-')
       ? 1
       : 0,
@@ -68,6 +76,7 @@ export default defineConfig({
         '**/offline-device.spec.ts',
         '**/offline-sign-out.spec.ts',
         '**/offline-upgrade.spec.ts',
+        '**/supervised-restore.spec.ts',
         '**/sync-client.spec.ts',
         '**/doc-responsiveness*.spec.ts',
       ],
@@ -81,6 +90,7 @@ export default defineConfig({
         '**/offline-creation.spec.ts',
         '**/offline-recovery.spec.ts',
         '**/offline-upgrade.spec.ts',
+        '**/supervised-restore.spec.ts',
         '**/sync-client.spec.ts',
         '**/doc-responsiveness*.spec.ts',
       ],
@@ -89,7 +99,7 @@ export default defineConfig({
     {
       name: 'sync-development',
       testMatch: ['**/sync-client.spec.ts', '**/doc-mobile.spec.ts'],
-      grepInvert: /@sync-soak/,
+      grepInvert: syncExclusions,
       use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3104' },
     },
     {
@@ -103,7 +113,7 @@ export default defineConfig({
         '**/offline-creation.spec.ts',
         '**/offline-recovery.spec.ts',
       ],
-      grepInvert: /@sync-soak/,
+      grepInvert: syncExclusions,
       use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3105' },
     },
     ...(['sheet', 'doc'] as const).map((kind) => ({
@@ -142,6 +152,13 @@ export default defineConfig({
       // This suite builds the legacy baseline and two current compatibility
       // fixtures. Its own server/browser must not race a normal webServer.
       testMatch: '**/offline-upgrade.spec.ts',
+      fullyParallel: false,
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'supervised-restore',
+      // Each case starts its own supervisor on a fixed port and needs no webServer.
+      testMatch: '**/supervised-restore.spec.ts',
       fullyParallel: false,
       use: { ...devices['Desktop Chrome'] },
     },
@@ -264,6 +281,7 @@ export default defineConfig({
     (server) =>
       !project ||
       (project !== 'offline-upgrade' &&
+        project !== 'supervised-restore' &&
         server.url.includes(
           project === 'development'
             ? ':3100/'

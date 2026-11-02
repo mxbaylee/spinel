@@ -1,4 +1,5 @@
 import { resolve } from 'node:path';
+import { applicationPolicy } from './application-policy.ts';
 import { MaintenanceSupervisor } from '../src/server/maintenance/supervisor.ts';
 import { supervisorDiagnostics } from '../src/server/diagnostics/supervisor.ts';
 
@@ -17,6 +18,7 @@ const supervisor = await MaintenanceSupervisor.open({
   databasePath,
   publicPort,
   development: process.argv.includes('--dev'),
+  applicationPolicy: applicationPolicy(Number(process.env.PORT ?? 3000)),
   diagnostics: diagnostics.sink,
 }).catch(async (error: unknown) => {
   await diagnostics.close();

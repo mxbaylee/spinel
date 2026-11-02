@@ -335,6 +335,70 @@ test('a viewer cannot remove a copy while another tab holds its writer', async (
   expect(f.store.removeClean).not.toHaveBeenCalled();
 });
 
+test('a downloaded viewer promotion keeps its writer for the current native checkpoint and releases it on close', async () => {
+  let held = false;
+  vi.stubGlobal('navigator', {
+    locks: {
+      request: async (_name: string, _options: unknown, work: (lock: object) => Promise<void>) => {
+        held = true;
+        await work({});
+        held = false;
+      },
+    },
+  });
+  const f = session(false);
+  Object.assign(f.value, { download: { bundle: { ...bundle, access: 'viewer', readOnly: true } } });
+  const original = f.value.bundle!;
+  const upgrade = vi.fn(
+    async (_bundle: unknown, _access: unknown, _revision: unknown, verify: () => void) => {
+      verify();
+      expect(held).toBe(true);
+    },
+  );
+  Object.assign(f.store, { upgradeAccess: upgrade, close: vi.fn() });
+  await f.value.upgradeAccess('editor', 1, () => {});
+  expect(f.value.bundle).toEqual({ ...original, access: 'editor', readOnly: false });
+  expect(f.value.readOnly).toBe(false);
+  expect(held).toBe(true);
+  // A failed checkpoint retry keeps the already-acquired writer and is idempotent.
+  await f.value.upgradeAccess('editor', 1, () => {});
+  expect(upgrade).toHaveBeenCalledTimes(1);
+  f.value.dispose();
+  await vi.waitFor(() => expect(held).toBe(false));
+});
+
+test('an account change during downloaded promotion releases the new writer without enabling editing', async () => {
+  let held = false;
+  vi.stubGlobal('navigator', {
+    locks: {
+      request: async (_name: string, _options: unknown, work: (lock: object) => Promise<void>) => {
+        held = true;
+        await work({});
+        held = false;
+      },
+    },
+  });
+  const f = session(false);
+  Object.assign(f.value, { download: { bundle: { ...bundle, access: 'viewer', readOnly: true } } });
+  const original = f.value.bundle;
+  Object.assign(f.store, {
+    upgradeAccess: async (
+      _bundle: unknown,
+      _access: unknown,
+      _revision: unknown,
+      verify: () => void,
+    ) => {
+      f.value.stopAuthenticationHTTP();
+      verify();
+    },
+  });
+  await expect(f.value.upgradeAccess('editor', 1, () => {})).rejects.toThrow('no longer current');
+  await Promise.resolve();
+  expect(f.value.bundle).toBe(original);
+  expect(f.value.readOnly).toBe(true);
+  expect(held).toBe(false);
+});
+
 /** Exercise guards across the asynchronous IDB read; writes are recorded for assertion. */
 function storage(existing: unknown) {
   vi.stubGlobal('window', new EventTarget());
@@ -377,6 +441,66 @@ function storage(existing: unknown) {
   const store = new OfflineStore(scope.account, database as unknown as IDBDatabase);
   return { store, database, removed, written, aborted: () => aborted };
 }
+
+test.each(['viewer', 'editor'] as const)(
+  'promotion safely adopts a clean stored %s without replacing its base, images or checkpoint',
+  async (storedRole) => {
+    const original = { ...bundle, access: 'viewer' as const, readOnly: true };
+    const stored = {
+      itemId: bundle.itemId,
+      name: bundle.name,
+      kind: bundle.kind,
+      revision: bundle.revision,
+      downloadedAt: 123,
+      readOnly: storedRole === 'viewer',
+      bundle: { ...original, access: storedRole, readOnly: storedRole === 'viewer' },
+      outbox: { version: 1, ...scope, checkpoint },
+    };
+    const f = storage(stored);
+    await f.store.upgradeAccess(original, 'editor', 1, () => {});
+    expect(f.written).toEqual([
+      {
+        ...stored,
+        readOnly: false,
+        bundle: { ...stored.bundle, access: 'editor', readOnly: false },
+      },
+    ]);
+    expect(f.removed).toEqual([]);
+  },
+);
+
+test.each(['pending', 'newer checkpoint', 'generation', 'scope', 'base', 'maintenance'] as const)(
+  'promotion retains an incompatible stored copy: %s',
+  async (changed) => {
+    const original = { ...bundle, access: 'viewer' as const, readOnly: true };
+    const stored = {
+      itemId: bundle.itemId,
+      name: bundle.name,
+      kind: bundle.kind,
+      revision: bundle.revision,
+      downloadedAt: 123,
+      readOnly: true,
+      bundle: structuredClone(original),
+      outbox: { version: 1, ...scope, checkpoint: structuredClone(checkpoint) },
+    };
+    if (changed === 'pending')
+      stored.outbox.checkpoint.buffer = [
+        [{ id: 'doc.mutation.rich-text-editing', params: { unitId: bundle.unitId } }],
+      ];
+    if (changed === 'newer checkpoint') stored.outbox.checkpoint.revision = 2;
+    if (changed === 'generation') stored.bundle.unitId = 'other';
+    if (changed === 'scope') stored.bundle.spaceId = 'other';
+    if (changed === 'base') stored.bundle.revision++;
+    if (changed === 'maintenance') stored.bundle.maintenanceEpoch = 'other';
+    const f = storage(stored);
+    await expect(f.store.upgradeAccess(original, 'editor', 1, () => {})).rejects.toThrow(
+      'device copy changed',
+    );
+    expect(f.written).toEqual([]);
+    expect(f.removed).toEqual([]);
+    expect(f.aborted()).toBe(true);
+  },
+);
 
 test.each(['account', 'itemId', 'spaceId', 'unitId', 'revisionOffset'] as const)(
   'clean removal cannot erase a stored copy after its %s changes',

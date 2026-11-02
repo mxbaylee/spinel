@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { recoveryRows } from './recovery-rows.ts';
 import type { DatabaseSync } from '../../../server/database.ts';
 
 const MAX_TABLES = 256;
@@ -13,11 +14,15 @@ export interface RecoveryInventory {
 /** Hash the immutable snapshot, never the live connection. SQL text conversion
  * preserves INTEGER values outside JavaScript's safe range; blobs remain bytes.
  * Length framing and SQLite types distinguish null, text, numbers and blobs. */
-export function recoveryInventory(db: DatabaseSync): RecoveryInventory {
+export function recoveryInventory(
+  db: DatabaseSync,
+  options: { includeRecovery?: boolean } = {},
+): RecoveryInventory {
   const definitions = db
     .prepare(
       `SELECT type,name,tbl_name,sql FROM sqlite_schema
-       WHERE name<>'spinel_recovery' AND tbl_name<>'spinel_recovery' ORDER BY type,name`,
+       ${options.includeRecovery ? '' : "WHERE name<>'spinel_recovery' AND tbl_name<>'spinel_recovery'"}
+       ORDER BY type,name`,
     )
     .all();
   const names = definitions.filter((row) => row.type === 'table').map((row) => String(row.name));
@@ -35,19 +40,13 @@ export function recoveryInventory(db: DatabaseSync): RecoveryInventory {
       ) > MAX_ROW_BYTES
     )
       throw new Error('Recovery inventory exceeds the per-row memory limit.');
-    const primary = columns
-      .filter((column) => Number(column.pk) > 0)
-      .sort((a, b) => Number(a.pk) - Number(b.pk))
-      .map((column) => quote(String(column.name)));
     const selection = identifiers.flatMap((column, i) => [
       `typeof(${column}) AS t${i}`,
       `CASE WHEN typeof(${column})='real' THEN ${column} ELSE CAST(${column} AS BLOB) END AS v${i}`,
     ]);
     const hash = createHash('sha256');
     let rows = 0;
-    for (const row of db.iterate(
-      `SELECT ${selection.join(',')} FROM ${quote(name)} ORDER BY ${primary.length ? primary.join(',') : 'rowid'}`,
-    )) {
+    for (const row of recoveryRows(db, name, selection.join(','))) {
       hash.update('row:');
       for (let i = 0; i < columns.length; i++) {
         const value = row[`v${i}`];
@@ -58,7 +57,11 @@ export function recoveryInventory(db: DatabaseSync): RecoveryInventory {
             ? Buffer.alloc(8)
             : value === null
               ? Buffer.alloc(0)
-              : Buffer.from(value as Uint8Array);
+              : Buffer.from(
+                  (value as Uint8Array).buffer,
+                  (value as Uint8Array).byteOffset,
+                  (value as Uint8Array).byteLength,
+                );
         if (typeof value === 'number') data.writeDoubleBE(value);
         hash.update(`${String(row[`t${i}`])}:${data.length}:`);
         hash.update(data);
@@ -68,6 +71,21 @@ export function recoveryInventory(db: DatabaseSync): RecoveryInventory {
     return { name, rows, sha256: hash.digest('hex') };
   });
   return { format: 1, schema, tables };
+}
+
+/** Compare complete logical snapshots, including recovery metadata and migration
+ * version. A live drain witness must be taken in a consistent read transaction
+ * after final flush, then bound to the job/epoch before any connection closes.
+ * Computing this only after WAL recovery cannot establish that witness. */
+export function restoreSnapshotFingerprint(db: DatabaseSync): string {
+  return createHash('sha256')
+    .update(
+      JSON.stringify({
+        userVersion: db.prepare('PRAGMA user_version').get()!.user_version,
+        inventory: recoveryInventory(db, { includeRecovery: true }),
+      }),
+    )
+    .digest('hex');
 }
 
 export function writeInventory(db: DatabaseSync) {

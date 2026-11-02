@@ -203,6 +203,23 @@ test('the native protocol is available by default and the old protocol is retire
   ).toBeTruthy();
 });
 
+test('closed admission rejects an otherwise valid socket without consuming its ticket', async () => {
+  const f = await fixture();
+  await f.prepare();
+  const token = await f.ticket();
+  // Gate tests prove the independent restore latch forces running=false even
+  // for running/unavailable bridge states. Here an authenticated positive control
+  // proves transport consults that gate before accepting or consuming the ticket.
+  const blocked = vi.spyOn(f.app.maintenance, 'running', 'get').mockReturnValue(false);
+  try {
+    await f.rejectedSocket(token);
+  } finally {
+    blocked.mockRestore();
+  }
+  const connection = await f.connect(f.prefix, f.sheet.id, f.cookie(), token);
+  expect(connection.socket.readyState).toBe(WebSocket.OPEN);
+});
+
 test('offline replay sends an atomic head fence through the authorized native socket', async () => {
   const f = await fixture();
   await f.prepare();
@@ -969,6 +986,31 @@ test.each(['scan', 'fence', 'finish'] as const)(
     }
   },
 );
+
+test('an open account viewer gains editing on the same socket and a later downgrade still closes it', async () => {
+  const f = await fixture();
+  await f.prepare();
+  const viewer = await f.connect(f.prefix, f.sheet.id, f.cookie(f.viewer.id));
+  const originalMember = presence(viewer.frames)?.selfId;
+  const staleTicket = await f.ticket(f.prefix, f.sheet.id, f.cookie(f.viewer.id));
+  f.workspace.share(f.owner.id, f.sheet.id, f.viewer.id, 'editor');
+  // Capabilities minted before a grant change remain one-use and role-bound.
+  await f.rejectedSocket(staleTicket, f.prefix, f.sheet.id, f.cookie(f.viewer.id));
+  viewer.socket.send(
+    JSON.stringify({
+      type: 'submit',
+      mutationId: randomUUID(),
+      baseRevision: 1,
+      mutations: [f.mutation('Upgraded without reconnecting')],
+    }),
+  );
+  await expect.poll(() => viewer.frames.some((frame) => frame.type === 'ack')).toBe(true);
+  expect(viewer.socket.readyState).toBe(WebSocket.OPEN);
+  expect(presence(viewer.frames)?.selfId).toBe(originalMember);
+  f.workspace.share(f.owner.id, f.sheet.id, f.viewer.id, 'viewer');
+  await expect.poll(() => viewer.socket.readyState).toBe(WebSocket.CLOSED);
+  expect(f.db.prepare('SELECT count(*) AS n FROM spinel_sync_revisions').get()!.n).toBe(1);
+});
 
 test('Origin, one-time tickets, operator/viewer boundaries and revoked recipients are enforced over real ingress', async () => {
   const f = await fixture();

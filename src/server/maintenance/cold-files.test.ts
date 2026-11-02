@@ -2,7 +2,30 @@ import { linkSync, mkdtempSync, renameSync, rmSync, symlinkSync, writeFileSync }
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { expect, test } from 'vitest';
-import { acquireColdWorkspace, acquireColdWorkspaceFiles } from './journal.ts';
+import {
+  acquireColdWorkspace,
+  acquireColdWorkspaceFiles,
+  acquireLiveWorkspace,
+} from './journal.ts';
+import { restoreBarrierPath } from './restore-barrier.ts';
+
+test('ordinary app and cold-operation leases cannot open an interrupted restore', async () => {
+  const directory = mkdtempSync(join(tmpdir(), 'spinel-cold-restore-'));
+  const path = join(directory, 'workspace.sqlite');
+  try {
+    writeFileSync(path, 'Partial generation');
+    writeFileSync(restoreBarrierPath(path), '{}', { mode: 0o600 });
+    await expect(acquireColdWorkspace(path)).rejects.toThrow('unfinished workspace restore');
+    await expect(acquireLiveWorkspace(path)).rejects.toThrow('unfinished workspace restore');
+    await expect(acquireColdWorkspaceFiles([path])).rejects.toThrow('unfinished workspace restore');
+    rmSync(restoreBarrierPath(path));
+    // Refused acquisition must release every reservation, allowing later recovery.
+    const release = await acquireColdWorkspace(path);
+    await release();
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+});
 
 test('batch cold ownership refuses source/target aliases and rolls back every initial reservation', async () => {
   const directory = mkdtempSync(join(tmpdir(), 'spinel-cold-files-'));

@@ -197,7 +197,7 @@ const pageLink = (page: Page, root: string, child: string) =>
   page.locator(`a.space-page-link[href="${guestPath(root, child)}"]`).filter({ visible: true });
 const saved = async (page: Page, access: 'viewer' | 'editor' = 'editor') => {
   await expect(page.getByRole('status', { name: 'Save status', exact: true })).toHaveText(
-    access === 'viewer' ? 'View only — reload after your access changes.' : 'All changes saved.',
+    access === 'viewer' ? 'View only.' : 'All changes saved.',
     { timeout: 30_000 },
   );
   await expect(

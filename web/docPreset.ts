@@ -50,6 +50,7 @@ export function docPreset(
   mobile: boolean,
   readOnly = false,
   menu?: IUniverDocsCorePresetConfig['menu'],
+  copyEnabled = false,
 ): IPreset {
   container.classList.toggle('spinel-mobile-doc', mobile);
   const preset = UniverDocsCorePreset({
@@ -58,7 +59,7 @@ export function docPreset(
     ...(mobile ? { disableAutoFocus: true } : {}),
     // The mobile Edit button is not itself an authorization boundary. Viewers
     // retain the normal permission fence and do not get editing affordances.
-    ...(mobile && readOnly ? { header: false, footer: false, toolbar: false } : {}),
+    ...(mobile && readOnly ? { header: copyEnabled, footer: false, toolbar: copyEnabled } : {}),
   });
   return mobileDocPlugins(
     {
@@ -66,6 +67,8 @@ export function docPreset(
       plugins: [
         ...preset.plugins.map((entry): IPreset['plugins'][number] => {
           const [plugin, options] = Array.isArray(entry) ? entry : [entry, undefined];
+          if (plugin === UniverUIPlugin && mobile && readOnly && copyEnabled)
+            return [plugin, { ...options, headerMenu: false }];
           if (plugin !== UniverDocsUIPlugin) return entry;
           return [
             plugin,
