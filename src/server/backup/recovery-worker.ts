@@ -17,6 +17,7 @@ export async function checkVerificationHeadroom(
     read('/sys/fs/cgroup/memory.max'),
     read('/sys/fs/cgroup/memory.current'),
     read('/proc/meminfo'),
+    read('/sys/fs/cgroup/memory.stat'),
   ]);
   const values = probes.map((probe) => (probe.status === 'fulfilled' ? probe.value.trim() : ''));
   const bytes = (text: string) => {
@@ -25,12 +26,45 @@ export async function checkVerificationHeadroom(
   };
   const maximum = bytes(values[0]),
     used = bytes(values[1]);
+  const counters = values[3].split('\n').map((line) => line.trim().split(/\s+/));
+  const counter = (name: string) => {
+    const matches = counters.filter((fields) => fields[0] === name);
+    return matches.length === 1 && matches[0].length === 2 ? bytes(matches[0][1]) : undefined;
+  };
+  const [file, shared, inactive, dirty, writeback] = [
+    'file',
+    'shmem',
+    'inactive_file',
+    'file_dirty',
+    'file_writeback',
+  ].map(counter);
+  let charged = used;
+  if (
+    used !== undefined &&
+    file !== undefined &&
+    shared !== undefined &&
+    inactive !== undefined &&
+    dirty !== undefined &&
+    writeback !== undefined &&
+    file <= used &&
+    shared <= file &&
+    inactive <= file &&
+    dirty <= file &&
+    writeback <= file
+  ) {
+    // memory.current includes the synced upload's disk cache. Credit only clean
+    // inactive disk-file pages, never active cache, shared/tmpfs, dirty pages or
+    // writeback. Missing, malformed or inconsistent counters retain raw usage.
+    // Subtract dirty/writeback conservatively even when those categories overlap.
+    const reclaimable = Math.max(0, Math.min(inactive, file - shared) - dirty - writeback);
+    charged = used - reclaimable;
+  }
   const availableKiB = bytes(/^MemAvailable:\s+(\d+)\s+kB\s*$/m.exec(values[2])?.[1] ?? '');
   const MiB = 1024 ** 2;
   if (
     (maximum !== undefined &&
-      used !== undefined &&
-      maximum - used < (phase === 'start' ? 640 : 128) * MiB) ||
+      charged !== undefined &&
+      maximum - charged < (phase === 'start' ? 640 : 128) * MiB) ||
     (availableKiB !== undefined && availableKiB * 1024 < (phase === 'start' ? 768 : 256) * MiB)
   )
     throw new RecoveryResourceError('memory-headroom');

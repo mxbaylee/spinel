@@ -14,6 +14,7 @@ const groups: Record<string, readonly SuiteId[]> = {
     'lib-test-run',
     'playwright-run',
     'container-smoke',
+    'restore-timing',
     'sync-transition',
     'doc-responsiveness',
     'doc-callback-lifetimes',

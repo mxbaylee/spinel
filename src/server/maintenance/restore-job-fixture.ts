@@ -33,6 +33,8 @@ export function restoreJobIntentFixture(now = Date.now()): RestoreJobIntent {
       actorId: randomUUID(),
       sessionHash: 'd'.repeat(64),
       verifiedAt: now - 1000,
+      verifiedUntil: now + 60_000,
+      authorizedAt: now,
       verifiedPasskeyId: 'passkey',
       expiresAt: now + 60_000,
     },

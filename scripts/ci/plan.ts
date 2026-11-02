@@ -1,5 +1,35 @@
 import { REVALIDATE_LABEL } from './pr-identity.ts';
 
+/** The expensive fixed-size restore follows its production runtime and browser
+ * entry points. Unknown commit ranges run it; both sides of renames come from
+ * changedPaths. Ordinary browser checks still cover unrelated UI changes. */
+export function needsRestoreTiming(paths: readonly string[]): boolean {
+  return (
+    paths.length === 0 ||
+    paths.some(
+      (path) =>
+        /^(?:server|src\/server|src\/shared|src\/ui|lib|web)\//.test(path) ||
+        /^e2e\/(?:restore-|supervised-restore)/.test(path) ||
+        /^e2e\/(?:doc-touch|native-sheet-value)\./.test(path) ||
+        /^scripts\/ci\/(?:changes|restore-timing-changes|restore-observer|pid-namespace)/.test(
+          path,
+        ) ||
+        path.startsWith('scripts/dependencies/') ||
+        path.startsWith('scripts/deploy/maintenance.') ||
+        [
+          'package.json',
+          'package-lock.json',
+          'Dockerfile',
+          '.dockerignore',
+          '.nvmrc',
+          'vite.config.ts',
+          'tsconfig.json',
+        ].includes(path) ||
+        path === '.github/workflows/ci.yml',
+    )
+  );
+}
+
 // Deliberately narrow: Markdown under docs may describe executable examples,
 // but .ts/.tsx design mockups and unknown JSON still need the full suite.
 export function documentationOnly(paths: string[]): boolean {
@@ -22,6 +52,7 @@ export const suiteIds = [
   'lib-test-run',
   'playwright-run',
   'container-smoke',
+  'restore-timing',
   'sync-transition',
   'doc-responsiveness',
   'doc-callback-lifetimes',
@@ -154,44 +185,55 @@ export function coveragePlan(
   for (const id of suiteIds) {
     const selected = ['backlog', 'lint'].includes(id)
       ? true
-      : id === 'lib-test-run'
-        ? lib
-        : ['responsiveness-baseline', 'callback-baseline'].includes(id)
-          ? performance
-          : id === 'phone-compatibility'
-            ? full
-            : ['doc-responsiveness', 'doc-callback-lifetimes'].includes(id)
-              ? candidate
-              : app;
+      : id === 'restore-timing'
+        ? full || needsRestoreTiming(paths ?? [])
+        : id === 'lib-test-run'
+          ? lib
+          : ['responsiveness-baseline', 'callback-baseline'].includes(id)
+            ? performance
+            : id === 'phone-compatibility'
+              ? full
+              : ['doc-responsiveness', 'doc-callback-lifetimes'].includes(id)
+                ? candidate
+                : app;
     const dependencies =
-      id === 'lib-test-run'
+      id === 'restore-timing'
         ? [
+            'server/**',
+            'src/{server,shared}/**',
             'lib/**',
-            'scripts/dependencies/**',
-            'package{,-lock}.json',
-            'vitest.config.ts',
-            'tsconfig.json',
-            '.nvmrc',
-            '.github/workflows/ci.yml',
+            'web/** and src/ui/** (shared application/authentication bundle)',
+            'e2e restore/shared helpers',
+            'runtime/build/dependency/workflow inputs',
           ]
-        : ['responsiveness-baseline', 'callback-baseline'].includes(id)
+        : id === 'lib-test-run'
           ? [
-              'web/**',
-              'server/**',
               'lib/**',
-              'e2e/**',
-              'src/shared/**',
-              'src/server/{sync,history,collaboration}/**',
-              'scripts/{ci,dependencies,sync-transition}/**',
-              'build/runtime/dependency/workflow configuration',
+              'scripts/dependencies/**',
+              'package{,-lock}.json',
+              'vitest.config.ts',
+              'tsconfig.json',
+              '.nvmrc',
+              '.github/workflows/ci.yml',
             ]
-          : id === 'phone-compatibility'
-            ? ['full plan backstop; ordinary phone owners remain in routine browser coverage']
-            : ['backlog', 'lint'].includes(id)
-              ? ['complete immutable change range and current event metadata']
-              : [
-                  'all application, auth, persistence, sync, runtime, build, dependency and harness inputs',
-                ];
+          : ['responsiveness-baseline', 'callback-baseline'].includes(id)
+            ? [
+                'web/**',
+                'server/**',
+                'lib/**',
+                'e2e/**',
+                'src/shared/**',
+                'src/server/{sync,history,collaboration}/**',
+                'scripts/{ci,dependencies,sync-transition}/**',
+                'build/runtime/dependency/workflow configuration',
+              ]
+            : id === 'phone-compatibility'
+              ? ['full plan backstop; ordinary phone owners remain in routine browser coverage']
+              : ['backlog', 'lint'].includes(id)
+                ? ['complete immutable change range and current event metadata']
+                : [
+                    'all application, auth, persistence, sync, runtime, build, dependency and harness inputs',
+                  ];
     plan.suites[id] = {
       selected,
       dependencies,

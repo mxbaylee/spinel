@@ -75,6 +75,12 @@ Do not manually delete policy runs for an open PR. If cleanup is necessary,
 first apply `ci-revalidate` so the durable PR timeline retains that requirement.
 See GitHub's [retention policy](https://docs.github.com/en/organizations/managing-organization-settings/configuring-the-retention-period-for-github-actions-artifacts-and-logs-in-your-organization).
 
+This is an unresolved acceptance limitation: a passing targeted run at PR age
+23 hours cannot be preserved after an otherwise exact text edit at age 25 hours.
+The original ticket's preservation requirement needs durable history evidence
+that distinguishes a real coverage gap from the PR's age. The disclosure here
+does not waive that requirement or make the draft ready for activation.
+
 Policy reads the requirement before admission and again before success. Policy-run
 history starts at the later of PR creation and the 24-hour horizon, so an old PR
 does not repeatedly scan weeks of other PRs' runs. Pagination still fails visibly
