@@ -522,6 +522,34 @@ const variants: Record<string, (character: string) => core.IDocumentBody> = {
   color: (dataStream) => ({ dataStream, textRuns: [{ st: 0, ed: 1, ts: { cl: { rgb: '#123456' } } }], paragraphs: [], sectionBreaks: [], customBlocks: [], customRanges: [], customDecorations: [] }),
 };
 
+for (const format of ['es', 'cjs'] as const)
+  test(`${format}: marker absence/mixing and deletion-inverse inserts preserve existing semantics`, async () => {
+    const { original, patched } = prepareDocsPatch(await readBuild(format), format);
+    const candidateSource = allocationPrototype(patched, format);
+    const marker = '__textXPreserveParagraphIds';
+    for (const length of [3, 7, 32])
+      for (const mode of ['absent', 'true', 'mixed'])
+        for (const inverse of [false, true]) {
+          const initial = seed(inverse ? `${'x'.repeat(length)}\r\n` : '\r\n');
+          initial.body!.customRanges = [];
+          const scenario = sequence(Array.from({ length }, (_, index) => inverse
+            ? () => edit(new core.TextX().delete(1))
+            : insertAt(index, variants.light('x'))), initial);
+          for (const [index, state] of scenario.states.entries()) {
+            const edits = (state[inverse ? 'undoState' : 'redoState'].actions as any)[1].e;
+            const body = edits.at(-1).body;
+            if (mode === 'true' || mode === 'mixed' && index % 2 === 0) body[marker] = true;
+            else delete body[marker];
+          }
+          const native = measuredFlush(original, scenario.states);
+          const current = measuredFlush(patched, scenario.states);
+          const candidate = measuredFlush(candidateSource, scenario.states);
+          assertNativePreservation(native.output, candidate.output, scenario, `${format}/${mode}/${length}/inverse=${inverse}`);
+          if (mode === 'absent') assert.deepEqual(candidate, current, 'Unmarked existing path is unchanged.');
+          else if (length === 32) assert.ok(candidate.counts.allocations < current.counts.allocations * 0.8, 'Marked forward/inverse group reduces actual clone allocations.');
+        }
+  });
+
 test('captured native mobile caches preserve publications and demonstrate eligibility', async () => {
   const path = process.env.SPN071_CAPTURE;
   assert.ok(path, 'Supply the predeclared tagged native capture.');
