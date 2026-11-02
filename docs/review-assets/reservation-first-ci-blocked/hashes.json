@@ -1,0 +1,30 @@
+{
+  "README.md": {
+    "bytes": 1042,
+    "sha256": "54652e9f83f0ccebea78ea98a3f822f6403e399085bc4a2f1995c2ad2e45f0c8"
+  },
+  "desktop-setup-failure.log": {
+    "bytes": 24432,
+    "sha256": "efff15ea370898d6198fe920ae42e176cde8e4ca208e6f1f608dbf0abbd0dc64"
+  },
+  "jobs-before-cancel.json": {
+    "bytes": 78030,
+    "sha256": "badafc48ae07978720eb8b12d6e8264599928fc09c46672bee192d02b666722d"
+  },
+  "jobs-terminal.json": {
+    "bytes": 85183,
+    "sha256": "9b9e4eb091cb8f5bdfbfdbce8e9127ee6109f39371861777b1b5ab7876e16130"
+  },
+  "local-backlog-tests.log": {
+    "bytes": 3338,
+    "sha256": "c9ea50846598b4a1e57c587b4b9b5af0c0b96d03a270abd9c4116010c3521302"
+  },
+  "run-before-cancel.json": {
+    "bytes": 12186,
+    "sha256": "0c016e46d27f1ddc555d20a6ad445f2051a8ba9b5df047896c3b2b79fcae544f"
+  },
+  "run-terminal.json": {
+    "bytes": 12196,
+    "sha256": "d9dc3d5beacd852d36a747d80d609564ed0e16f99d950b4f7f509c327eaea350"
+  }
+}
