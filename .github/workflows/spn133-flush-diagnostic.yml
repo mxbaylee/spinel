@@ -1,0 +1,71 @@
+name: SPN-133 bounded native flush diagnostic
+on:
+  push:
+    branches: [codex/spn-133-flush-diagnostic]
+permissions:
+  contents: read
+jobs:
+  diagnostic:
+    name: Diagnostic only (${{ matrix.preset }})
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [desktop, mobile]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      VITE_SYNC_EVIDENCE: '0'
+      VITE_DOC_SELECTION_EVIDENCE: '0'
+      VITE_DOC_RESPONSIVENESS_EVIDENCE: '1'
+      SPINEL_E2E_PROJECT: doc-responsiveness
+      SPN108_BASELINE: '0'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: 8d2f994c3ac53c1849bd2b68927059d9c20c99f0
+          path: runtime-source
+          persist-credentials: false
+      - name: Retain actual mirror profile
+        run: cat /etc/apt/apt-mirrors.txt > mirror-profile.txt
+      - name: Install pinned runtime and browser
+        working-directory: runtime-source
+        run: |
+          npm ci --no-audit
+          node scripts/ci/prefer-ubuntu-archive.ts
+          npx playwright install --with-deps chromium
+      - name: Prepare declared diagnostic instrumentation
+        run: node scripts/ci/spn133-flush-diagnostic.ts runtime-source
+      - name: Build exact runtime with diagnostic source maps
+        working-directory: runtime-source
+        run: npm run build -- --sourcemap
+      - name: One declared profile sample with full content assertions
+        working-directory: runtime-source
+        env:
+          PRESET: ${{ matrix.preset }}
+        run: npx playwright test --project=doc-responsiveness e2e/doc-responsiveness.spec.ts --grep "$PRESET sustained native typing profile$" --retries=0
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        if: always()
+        with:
+          name: spn133-flush-diagnostic-${{ matrix.preset }}
+          retention-days: 14
+          if-no-files-found: error
+          path: |
+            mirror-profile.txt
+            runtime-source/spn133-diagnostic-identity.json
+            runtime-source/spn133-diagnostic-source.patch
+            runtime-source/e2e/spn133-trace.ts
+            runtime-source/test-results/**/spn108-*.json
+            runtime-source/test-results/**/spn108-profile.cpuprofile
+            runtime-source/test-results/**/spn133-trace.json
+            runtime-source/test-results/**/error-context.md
+            runtime-source/test-results/**/test-failed-*.png
+            runtime-source/playwright-report/*.json
+            runtime-source/dist/assets/*.js
+            runtime-source/dist/assets/*.map
