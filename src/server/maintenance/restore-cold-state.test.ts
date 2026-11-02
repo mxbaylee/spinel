@@ -35,13 +35,20 @@ import { MaintenanceSupervisor } from './supervisor.ts';
 import { processResourcesReleased } from './process-exit.ts';
 
 const cleanups: Array<() => void | Promise<void>> = [];
+const directories: string[] = [];
 afterEach(async () => {
+  const retained = directories.splice(0);
   try {
     await finishRestoreCrashCleanup(
       cleanups
         .splice(0)
         .reverse()
         .map((cleanup) => async () => cleanup()),
+    );
+    // Every resource cleanup ran above. Any failure skips removal so uncertain
+    // process closure cannot discard the fixture's diagnostic evidence.
+    await finishRestoreCrashCleanup(
+      retained.map((directory) => () => rm(directory, { recursive: true, force: true })),
     );
   } finally {
     vi.restoreAllMocks();
@@ -59,7 +66,7 @@ const attemptIds = () => ({
  * exercised by the SIGKILL integration tests, not inferred from these hashes. */
 async function fixture() {
   const directory = await realpath(await mkdtemp(join(tmpdir(), 'spinel-cold-state-')));
-  cleanups.push(() => rm(directory, { recursive: true, force: true }));
+  directories.push(directory);
   const root = join(directory, 'recovery');
   await mkdir(root, { mode: 0o700 });
   const data = join(directory, 'data');
