@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "operation": "read-completed-session-logs",
+  "execution": {
+    "sourceSha": "a204b38c0106f780df42cde0e8175253375ae939",
+    "testedSha": "f342e2e4e29f1e44c68b07978f7d325cca97169b",
+    "runId": "41390498930",
+    "attempt": "1"
+  },
+  "target": {
+    "sessionId": "5a7cc2cfd951b4b68e24bed95af51e7c64262b17"
+  },
+  "startedAt": "2026-11-02T04:48:58.255Z",
+  "finishedAt": "2026-11-02T04:48:58.866Z",
+  "status": "available",
+  "stage": "finished",
+  "failure": null,
+  "diagnosis": "unclassified",
+  "capabilityAcceptance": "not-assessed",
+  "providerSessionsAllocated": 0,
+  "retrievals": [
+    {
+      "endpoint": "appiumlogs",
+      "status": "available",
+      "httpStatus": 200,
+      "bytes": 128591,
+      "sha256": "8f31648ce3f2ce23a01081137b2cf8042a0065c11236451e33319e345d1b18f7",
+      "elapsedMilliseconds": 441,
+      "failure": null,
+      "analysis": {
+        "format": "appiumlogs",
+        "recognizedRequests": 49,
+        "failures": [
+          {
+            "command": "POST session/{sessionId}/execute/sync",
+            "httpStatus": 405,
+            "webdriverError": null,
+            "cause": "unclassified",
+            "source": "unclassified",
+            "errorClass": null
+          },
+          {
+            "command": "POST session/{sessionId}/execute/sync",
+            "httpStatus": 405,
+            "webdriverError": null,
+            "cause": "unclassified",
+            "source": "unclassified",
+            "errorClass": null
+          },
+          {
+            "command": "POST session/{sessionId}/execute/sync",
+            "httpStatus": 405,
+            "webdriverError": null,
+            "cause": "unclassified",
+            "source": "unclassified",
+            "errorClass": null
+          },
+          {
+            "command": "POST session/{sessionId}/execute/sync",
+            "httpStatus": 405,
+            "webdriverError": null,
+            "cause": "unclassified",
+            "source": "unclassified",
+            "errorClass": null
+          },
+          {
+            "command": "POST session/{sessionId}/execute/sync",
+            "httpStatus": 500,
+            "webdriverError": "unknown error",
+            "cause": "unclassified",
+            "source": "terminal-error",
+            "errorClass": "UnknownError"
+          }
+        ],
+        "omittedFailures": 0,
+        "ambiguousTransactions": 0,
+        "unfinishedTransactions": 0,
+        "malformedRecords": 8,
+        "terminalRecords": 5,
+        "rejectedTerminalRecords": 4,
+        "browserVersions": [
+          "152.0.7977.54"
+        ],
+        "chromeDriverVersions": [
+          "152.0.7977.54"
+        ],
+        "pageLoadStrategies": [
+          "normal"
+        ]
+      },
+      "structure": {
+        "mime": "plain-text",
+        "bodyShape": "line-text",
+        "bom": false,
+        "lineCount": 677,
+        "newlineStyle": "lf",
+        "counts": {
+          "timestamped": 676,
+          "request": 0,
+          "response": 0,
+          "startSession": 0,
+          "appiumHttp": 98,
+          "terminalError": 5
+        },
+        "decodedString": null
+      }
+    },
+    {
+      "endpoint": "logs",
+      "status": "available",
+      "httpStatus": 200,
+      "bytes": 151716,
+      "sha256": "904ab37c7807f27e51a73d897ed5322c5ca316764989ae47bbe2055203bc201b",
+      "elapsedMilliseconds": 167,
+      "failure": null,
+      "analysis": {
+        "format": "unrecognized",
+        "recognizedRequests": 0,
+        "failures": [],
+        "omittedFailures": 0,
+        "ambiguousTransactions": 0,
+        "unfinishedTransactions": 0,
+        "malformedRecords": 0,
+        "terminalRecords": 0,
+        "rejectedTerminalRecords": 0,
+        "browserVersions": [],
+        "chromeDriverVersions": [],
+        "pageLoadStrategies": []
+      },
+      "structure": {
+        "mime": "plain-text",
+        "bodyShape": "line-text",
+        "bom": false,
+        "lineCount": 89,
+        "newlineStyle": "crlf",
+        "counts": {
+          "timestamped": 0,
+          "request": 0,
+          "response": 0,
+          "startSession": 0,
+          "appiumHttp": 0,
+          "terminalError": 0
+        },
+        "decodedString": null
+      }
+    }
+  ]
+}
