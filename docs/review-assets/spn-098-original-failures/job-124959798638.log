@@ -1,0 +1,442 @@
+﻿2026-11-01T19:53:42.8737300Z Current runner version: '2.338.2'
+2026-11-01T19:53:42.8775330Z ##[group]Runner Image Provisioner
+2026-11-01T19:53:42.8776340Z Hosted Compute Agent
+2026-11-01T19:53:42.8776830Z Version: 20261021.618
+2026-11-01T19:53:42.8777420Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-11-01T19:53:42.8778070Z Build Date: 2026-10-21T00:45:21Z
+2026-11-01T19:53:42.8778640Z Worker ID: {29d56b3c-35db-4017-9229-08f791e352db}
+2026-11-01T19:53:42.8779140Z Region: westus
+2026-11-01T19:53:42.8779600Z Cloud: MacCloud
+2026-11-01T19:53:42.8780040Z ##[endgroup]
+2026-11-01T19:53:42.8783840Z ##[group]Operating System
+2026-11-01T19:53:42.8785070Z macOS
+2026-11-01T19:53:42.8786440Z 26.6.2
+2026-11-01T19:53:42.8787560Z 25G83
+2026-11-01T19:53:42.8788500Z ##[endgroup]
+2026-11-01T19:53:42.8789460Z ##[group]Runner Image
+2026-11-01T19:53:42.8792100Z Image: macos-26-arm64
+2026-11-01T19:53:42.8792600Z Version: 20261026.0455.2
+2026-11-01T19:53:42.8793630Z Included Software: https://github.com/actions/runner-images/blob/macos-26-arm64/20261026.0455/images/macos/macos-26-arm64-Readme.md
+2026-11-01T19:53:42.8794870Z Image Release: https://github.com/actions/runner-images/releases/tag/macos-26-arm64%2F20261026.0455
+2026-11-01T19:53:42.8795540Z ##[endgroup]
+2026-11-01T19:53:42.8796380Z ##[group]GITHUB_TOKEN Permissions
+2026-11-01T19:53:42.8798370Z Contents: read
+2026-11-01T19:53:42.8799530Z Metadata: read
+2026-11-01T19:53:42.8799950Z ##[endgroup]
+2026-11-01T19:53:42.8802030Z Secret source: Actions
+2026-11-01T19:53:42.8802840Z Cache mode: write
+2026-11-01T19:53:42.8803530Z Prepare workflow directory
+2026-11-01T19:53:42.9449690Z Prepare all required actions
+2026-11-01T19:53:42.9505900Z Getting action download info
+2026-11-01T19:53:43.0946780Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-01T19:53:43.4131380Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+2026-11-01T19:53:43.5493090Z Download action repository 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-11-01T19:53:43.7047180Z Complete job name: Native desktop offline (firefox, macos-26)
+2026-11-01T19:53:43.7782300Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-01T19:53:43.7783050Z with:
+2026-11-01T19:53:43.7783380Z   persist-credentials: false
+2026-11-01T19:53:43.7783750Z   repository: mxbaylee/spinel
+2026-11-01T19:53:43.7786720Z   token: ***
+2026-11-01T19:53:43.7787100Z   ssh-strict: true
+2026-11-01T19:53:43.7787460Z   ssh-user: git
+2026-11-01T19:53:43.7787870Z   clean: true
+2026-11-01T19:53:43.7788260Z   sparse-checkout-cone-mode: true
+2026-11-01T19:53:43.7788690Z   fetch-depth: 1
+2026-11-01T19:53:43.7789040Z   fetch-tags: false
+2026-11-01T19:53:43.7789400Z   show-progress: true
+2026-11-01T19:53:43.7789770Z   lfs: false
+2026-11-01T19:53:43.7790130Z   submodules: false
+2026-11-01T19:53:43.7790540Z   set-safe-directory: true
+2026-11-01T19:53:43.7790930Z   allow-unsafe-pr-checkout: false
+2026-11-01T19:53:43.7791530Z env:
+2026-11-01T19:53:43.7791880Z   SOURCE_SHA: 91f2d57c107b6138c1eadea9ad5e29a11a017d58
+2026-11-01T19:53:43.7792320Z   DESKTOP_RUNNER: macos-26
+2026-11-01T19:53:43.7792680Z ##[endgroup]
+2026-11-01T19:53:44.5422910Z Syncing repository: mxbaylee/spinel
+2026-11-01T19:53:44.5425480Z ##[group]Getting Git version info
+2026-11-01T19:53:44.5426150Z Working directory is '/Users/runner/work/spinel/spinel'
+2026-11-01T19:53:44.5427140Z [command]/opt/homebrew/bin/git version
+2026-11-01T19:53:44.5732310Z git version 2.56.0
+2026-11-01T19:53:44.5744840Z ##[endgroup]
+2026-11-01T19:53:44.5754050Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/ea37b544-c063-41ac-9be0-0106a664115c/.gitconfig'
+2026-11-01T19:53:44.5760490Z Temporarily overriding HOME='/Users/runner/work/_temp/ea37b544-c063-41ac-9be0-0106a664115c' before making global git config changes
+2026-11-01T19:53:44.5763770Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-01T19:53:44.5767770Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/spinel/spinel
+2026-11-01T19:53:44.5899320Z Deleting the contents of '/Users/runner/work/spinel/spinel'
+2026-11-01T19:53:44.5902900Z ##[group]Determining repository object format
+2026-11-01T19:53:44.5905040Z ##[endgroup]
+2026-11-01T19:53:44.5906960Z ##[group]Initializing the repository
+2026-11-01T19:53:44.5908980Z [command]/opt/homebrew/bin/git init /Users/runner/work/spinel/spinel
+2026-11-01T19:53:44.6172760Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-01T19:53:44.6175550Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-01T19:53:44.6177090Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-01T19:53:44.6178280Z hint: call:
+2026-11-01T19:53:44.6178830Z hint:
+2026-11-01T19:53:44.6179380Z hint: 	git config --global init.defaultBranch <name>
+2026-11-01T19:53:44.6180080Z hint:
+2026-11-01T19:53:44.6180750Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-01T19:53:44.6181900Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-01T19:53:44.6182820Z hint:
+2026-11-01T19:53:44.6262700Z hint: 	git branch -m <name>
+2026-11-01T19:53:44.6264220Z hint:
+2026-11-01T19:53:44.6265820Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-01T19:53:44.6268710Z Initialized empty Git repository in /Users/runner/work/spinel/spinel/.git/
+2026-11-01T19:53:44.6274090Z [command]/opt/homebrew/bin/git remote add origin https://github.com/mxbaylee/spinel
+2026-11-01T19:53:44.6319610Z ##[endgroup]
+2026-11-01T19:53:44.6320580Z ##[group]Disabling automatic garbage collection
+2026-11-01T19:53:44.6322800Z [command]/opt/homebrew/bin/git config --local gc.auto 0
+2026-11-01T19:53:44.6408950Z ##[endgroup]
+2026-11-01T19:53:44.6411040Z ##[group]Setting up auth
+2026-11-01T19:53:44.6411590Z Removing SSH command configuration
+2026-11-01T19:53:44.6414040Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-01T19:53:44.6493510Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-01T19:53:44.8106130Z Removing HTTP extra header
+2026-11-01T19:53:44.8115160Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-01T19:53:44.8202110Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-01T19:53:44.9209610Z Removing includeIf entries pointing to credentials config files
+2026-11-01T19:53:44.9212210Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-01T19:53:44.9301280Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-01T19:53:45.0676590Z [command]/opt/homebrew/bin/git config --file /Users/runner/work/_temp/git-credentials-e463c27a-8429-4657-82ff-493cadb50f60.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-01T19:53:45.0679790Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/Users/runner/work/spinel/spinel/.git.path /Users/runner/work/_temp/git-credentials-e463c27a-8429-4657-82ff-493cadb50f60.config
+2026-11-01T19:53:45.0682580Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/Users/runner/work/spinel/spinel/.git/worktrees/*.path /Users/runner/work/_temp/git-credentials-e463c27a-8429-4657-82ff-493cadb50f60.config
+2026-11-01T19:53:45.0708360Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-e463c27a-8429-4657-82ff-493cadb50f60.config
+2026-11-01T19:53:45.0780240Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-e463c27a-8429-4657-82ff-493cadb50f60.config
+2026-11-01T19:53:45.0847250Z ##[endgroup]
+2026-11-01T19:53:45.0848110Z ##[group]Fetching the repository
+2026-11-01T19:53:45.0853320Z [command]/opt/homebrew/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +dc6fa258e3069ed38b6381ce306ff34a6aed9688:refs/remotes/pull/227/merge
+2026-11-01T19:53:51.1529340Z From https://github.com/mxbaylee/spinel
+2026-11-01T19:53:51.1639240Z  * [new ref]         dc6fa258e3069ed38b6381ce306ff34a6aed9688 -> pull/227/merge
+2026-11-01T19:53:51.2360780Z ##[endgroup]
+2026-11-01T19:53:51.2382730Z ##[group]Determining the checkout info
+2026-11-01T19:53:51.2383650Z ##[endgroup]
+2026-11-01T19:53:51.2384320Z [command]/opt/homebrew/bin/git sparse-checkout disable
+2026-11-01T19:53:51.2782050Z [command]/opt/homebrew/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-01T19:53:51.2928250Z ##[group]Checking out the ref
+2026-11-01T19:53:51.2929820Z [command]/opt/homebrew/bin/git checkout --progress --force refs/remotes/pull/227/merge
+2026-11-01T19:53:52.4203190Z Updating files:  31% (668/2097)
+2026-11-01T19:53:52.6530860Z Updating files:  32% (672/2097)
+2026-11-01T19:53:52.8881320Z Updating files:  33% (693/2097)
+2026-11-01T19:53:53.1158540Z Updating files:  34% (713/2097)
+2026-11-01T19:53:53.1262370Z Updating files:  35% (734/2097)
+2026-11-01T19:53:53.3290730Z Updating files:  36% (755/2097)
+2026-11-01T19:53:53.3411840Z Updating files:  36% (769/2097)
+2026-11-01T19:53:53.3968480Z Updating files:  37% (776/2097)
+2026-11-01T19:53:53.4438850Z Updating files:  38% (797/2097)
+2026-11-01T19:53:53.6299040Z Updating files:  39% (818/2097)
+2026-11-01T19:53:53.7449280Z Updating files:  40% (839/2097)
+2026-11-01T19:53:53.7694830Z Updating files:  41% (860/2097)
+2026-11-01T19:53:54.1699600Z Updating files:  42% (881/2097)
+2026-11-01T19:53:54.2153120Z Updating files:  43% (902/2097)
+2026-11-01T19:53:54.3209850Z Updating files:  44% (923/2097)
+2026-11-01T19:53:54.6894850Z Updating files:  44% (932/2097)
+2026-11-01T19:53:54.7847340Z Updating files:  45% (944/2097)
+2026-11-01T19:53:54.9662750Z Updating files:  46% (965/2097)
+2026-11-01T19:53:55.1656360Z Updating files:  47% (986/2097)
+2026-11-01T19:53:55.2747440Z Updating files:  48% (1007/2097)
+2026-11-01T19:53:55.2874990Z Updating files:  49% (1028/2097)
+2026-11-01T19:53:55.2914680Z Updating files:  50% (1049/2097)
+2026-11-01T19:53:55.2974030Z Updating files:  51% (1070/2097)
+2026-11-01T19:53:55.3167440Z Updating files:  52% (1091/2097)
+2026-11-01T19:53:55.3577320Z Updating files:  52% (1093/2097)
+2026-11-01T19:53:55.3840410Z Updating files:  53% (1112/2097)
+2026-11-01T19:53:55.4233370Z Updating files:  54% (1133/2097)
+2026-11-01T19:53:55.4257940Z Updating files:  55% (1154/2097)
+2026-11-01T19:53:55.4293750Z Updating files:  56% (1175/2097)
+2026-11-01T19:53:55.4330590Z Updating files:  57% (1196/2097)
+2026-11-01T19:53:55.4354290Z Updating files:  58% (1217/2097)
+2026-11-01T19:53:55.4379250Z Updating files:  59% (1238/2097)
+2026-11-01T19:53:55.4413910Z Updating files:  60% (1259/2097)
+2026-11-01T19:53:55.4515030Z Updating files:  61% (1280/2097)
+2026-11-01T19:53:55.4572300Z Updating files:  62% (1301/2097)
+2026-11-01T19:53:55.4637900Z Updating files:  63% (1322/2097)
+2026-11-01T19:53:55.4683520Z Updating files:  64% (1343/2097)
+2026-11-01T19:53:55.4797910Z Updating files:  65% (1364/2097)
+2026-11-01T19:53:55.4932780Z Updating files:  66% (1385/2097)
+2026-11-01T19:53:55.5194900Z Updating files:  67% (1405/2097)
+2026-11-01T19:53:55.5613610Z Updating files:  68% (1426/2097)
+2026-11-01T19:53:55.5801610Z Updating files:  69% (1447/2097)
+2026-11-01T19:53:55.5908690Z Updating files:  70% (1468/2097)
+2026-11-01T19:53:55.6027570Z Updating files:  71% (1489/2097)
+2026-11-01T19:53:55.6147860Z Updating files:  72% (1510/2097)
+2026-11-01T19:53:55.6258350Z Updating files:  73% (1531/2097)
+2026-11-01T19:53:55.6281920Z Updating files:  74% (1552/2097)
+2026-11-01T19:53:55.6389230Z Updating files:  75% (1573/2097)
+2026-11-01T19:53:55.6498710Z Updating files:  76% (1594/2097)
+2026-11-01T19:53:55.6569450Z Updating files:  77% (1615/2097)
+2026-11-01T19:53:55.6671290Z Updating files:  78% (1636/2097)
+2026-11-01T19:53:55.6816800Z Updating files:  79% (1657/2097)
+2026-11-01T19:53:55.7006790Z Updating files:  80% (1678/2097)
+2026-11-01T19:53:55.7191420Z Updating files:  81% (1699/2097)
+2026-11-01T19:53:55.7401380Z Updating files:  82% (1720/2097)
+2026-11-01T19:53:56.1314010Z Updating files:  83% (1741/2097)
+2026-11-01T19:53:56.1417830Z Updating files:  84% (1762/2097)
+2026-11-01T19:53:56.1540000Z Updating files:  85% (1783/2097)
+2026-11-01T19:53:56.1542460Z Updating files:  86% (1804/2097)
+2026-11-01T19:53:56.1683500Z Updating files:  87% (1825/2097)
+2026-11-01T19:53:56.1791950Z Updating files:  88% (1846/2097)
+2026-11-01T19:53:56.1894140Z Updating files:  89% (1867/2097)
+2026-11-01T19:53:56.1995940Z Updating files:  90% (1888/2097)
+2026-11-01T19:53:56.2315960Z Updating files:  91% (1909/2097)
+2026-11-01T19:53:56.2440680Z Updating files:  92% (1930/2097)
+2026-11-01T19:53:56.2542030Z Updating files:  93% (1951/2097)
+2026-11-01T19:53:56.2645560Z Updating files:  94% (1972/2097)
+2026-11-01T19:53:56.2750040Z Updating files:  95% (1993/2097)
+2026-11-01T19:53:56.2852970Z Updating files:  96% (2014/2097)
+2026-11-01T19:53:56.2954710Z Updating files:  97% (2035/2097)
+2026-11-01T19:53:56.3069390Z Updating files:  98% (2056/2097)
+2026-11-01T19:53:56.3171250Z Updating files:  99% (2077/2097)
+2026-11-01T19:53:56.3271530Z Updating files: 100% (2097/2097)
+2026-11-01T19:53:56.3374710Z Updating files: 100% (2097/2097), done.
+2026-11-01T19:53:56.3479060Z HEAD is now at dc6fa25 Merge 91f2d57c107b6138c1eadea9ad5e29a11a017d58 into e63956c7ec214af03c825104a81f63517eb87d0b
+2026-11-01T19:53:56.3727520Z ##[endgroup]
+2026-11-01T19:53:56.3880790Z [command]/opt/homebrew/bin/git log -1 --format=%H
+2026-11-01T19:53:56.3917270Z dc6fa258e3069ed38b6381ce306ff34a6aed9688
+2026-11-01T19:53:56.3997000Z ##[group]Removing auth
+2026-11-01T19:53:56.4013710Z Removing SSH command configuration
+2026-11-01T19:53:56.4016920Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-01T19:53:56.4026870Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-01T19:53:56.5353810Z Removing HTTP extra header
+2026-11-01T19:53:56.5359250Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-01T19:53:56.5548220Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-01T19:53:56.9074190Z Removing includeIf entries pointing to credentials config files
+2026-11-01T19:53:56.9178630Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-01T19:53:56.9280210Z includeif.gitdir:/Users/runner/work/spinel/spinel/.git.path
+2026-11-01T19:53:56.9472160Z includeif.gitdir:/Users/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-01T19:53:56.9574000Z includeif.gitdir:/github/workspace/.git.path
+2026-11-01T19:53:56.9676880Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-01T19:53:56.9983110Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/Users/runner/work/spinel/spinel/.git.path
+2026-11-01T19:53:57.0085340Z /Users/runner/work/_temp/git-credentials-e463c27a-8429-4657-82ff-493cadb50f60.config
+2026-11-01T19:53:57.0393960Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/Users/runner/work/spinel/spinel/.git.path \/Users\/runner\/work\/_temp\/git\-credentials\-e463c27a\-8429\-4657\-82ff\-493cadb50f60\.config
+2026-11-01T19:53:57.0709930Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/Users/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-01T19:53:57.0813780Z /Users/runner/work/_temp/git-credentials-e463c27a-8429-4657-82ff-493cadb50f60.config
+2026-11-01T19:53:57.1125540Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/Users/runner/work/spinel/spinel/.git/worktrees/*.path \/Users\/runner\/work\/_temp\/git\-credentials\-e463c27a\-8429\-4657\-82ff\-493cadb50f60\.config
+2026-11-01T19:53:57.1434730Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-01T19:53:57.1540960Z /github/runner_temp/git-credentials-e463c27a-8429-4657-82ff-493cadb50f60.config
+2026-11-01T19:53:57.1883630Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-e463c27a\-8429\-4657\-82ff\-493cadb50f60\.config
+2026-11-01T19:53:57.2275120Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-01T19:53:57.2377850Z /github/runner_temp/git-credentials-e463c27a-8429-4657-82ff-493cadb50f60.config
+2026-11-01T19:53:57.2706470Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-e463c27a\-8429\-4657\-82ff\-493cadb50f60\.config
+2026-11-01T19:53:57.2914140Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-01T19:53:57.3230440Z Removing credentials config '/Users/runner/work/_temp/git-credentials-e463c27a-8429-4657-82ff-493cadb50f60.config'
+2026-11-01T19:53:57.3408280Z ##[endgroup]
+2026-11-01T19:53:57.4189900Z ##[group]Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+2026-11-01T19:53:57.4191120Z with:
+2026-11-01T19:53:57.4191880Z   node-version-file: .nvmrc
+2026-11-01T19:53:57.4192570Z   package-manager-cache: false
+2026-11-01T19:53:57.4193120Z   check-latest: false
+2026-11-01T19:53:57.4198690Z   token: ***
+2026-11-01T19:53:57.4199090Z env:
+2026-11-01T19:53:57.4199740Z   SOURCE_SHA: 91f2d57c107b6138c1eadea9ad5e29a11a017d58
+2026-11-01T19:53:57.4200390Z   DESKTOP_RUNNER: macos-26
+2026-11-01T19:53:57.4201030Z ##[endgroup]
+2026-11-01T19:53:57.6979800Z Node version file is not JSON file
+2026-11-01T19:53:57.7098240Z Node version file is not TOML file
+2026-11-01T19:53:57.7172660Z Resolved .nvmrc as 26.12.1
+2026-11-01T19:53:57.7174300Z Attempting to download 26.12.1...
+2026-11-01T19:53:59.1650150Z Acquiring 26.12.1 - arm64 from https://github.com/actions/node-versions/releases/download/26.12.1-39618969937/node-26.12.1-darwin-arm64.tar.gz
+2026-11-01T19:54:00.4907380Z Extracting ...
+2026-11-01T19:54:00.5168850Z [command]/usr/bin/tar xz --strip 1 -C /Users/runner/work/_temp/8769511c-502f-40e9-bd0a-936cf297cf1e -f /Users/runner/work/_temp/9b344085-a384-40e9-b633-15be568b2f8d
+2026-11-01T19:54:03.2320520Z Adding to the cache ...
+2026-11-01T19:54:09.7243780Z ##[group]Environment details
+2026-11-01T19:54:10.2672810Z node: v26.12.1
+2026-11-01T19:54:10.2674250Z npm: 11.20.0
+2026-11-01T19:54:10.2674710Z yarn: 1.22.22
+2026-11-01T19:54:10.2677500Z ##[endgroup]
+2026-11-01T19:54:10.3106200Z ##[group]Run node scripts/ci/desktop-browser-versions.ts "$DESKTOP_BROWSER"
+2026-11-01T19:54:10.3106980Z [36;1mnode scripts/ci/desktop-browser-versions.ts "$DESKTOP_BROWSER"[0m
+2026-11-01T19:54:10.3182450Z shell: /bin/bash -e {0}
+2026-11-01T19:54:10.3182870Z env:
+2026-11-01T19:54:10.3183360Z   SOURCE_SHA: 91f2d57c107b6138c1eadea9ad5e29a11a017d58
+2026-11-01T19:54:10.3183850Z   DESKTOP_RUNNER: macos-26
+2026-11-01T19:54:10.3184210Z   DESKTOP_BROWSER: firefox
+2026-11-01T19:54:10.3184630Z ##[endgroup]
+2026-11-01T19:54:57.4484220Z {
+2026-11-01T19:54:57.4493810Z   "sourceSha": "91f2d57c107b6138c1eadea9ad5e29a11a017d58",
+2026-11-01T19:54:57.4494610Z   "checkedAt": "2026-11-01T19:54:10.541Z",
+2026-11-01T19:54:57.4495970Z   "kind": "firefox",
+2026-11-01T19:54:57.4511050Z   "status": "passed",
+2026-11-01T19:54:57.4512020Z   "before": "158.0.1",
+2026-11-01T19:54:57.4514870Z   "releaseSource": "https://product-details.mozilla.org/1.0/firefox_versions.json",
+2026-11-01T19:54:57.4516380Z   "requiredStable": "159.0",
+2026-11-01T19:54:57.4517720Z   "installationCopy": "ditto --norsrc, followed by strict codesign and Gatekeeper assessment",
+2026-11-01T19:54:57.4519530Z   "signature": "/Users/runner/work/spinel/spinel/test-results/desktop-browser-release-firefox/Firefox.app: accepted\nsource=Notarized Developer ID\n",
+2026-11-01T19:54:57.4520670Z   "download": "https://download.mozilla.org/?product=firefox-latest-ssl&os=osx&lang=en-US",
+2026-11-01T19:54:57.4523800Z   "installed": "159.0"
+2026-11-01T19:54:57.4524630Z }
+2026-11-01T19:54:57.5014320Z ##[group]Run npm ci
+2026-11-01T19:54:57.5014680Z [36;1mnpm ci[0m
+2026-11-01T19:54:57.5386530Z shell: /bin/bash -e {0}
+2026-11-01T19:54:57.5386820Z env:
+2026-11-01T19:54:57.5387060Z   SOURCE_SHA: 91f2d57c107b6138c1eadea9ad5e29a11a017d58
+2026-11-01T19:54:57.5387520Z   DESKTOP_RUNNER: macos-26
+2026-11-01T19:54:57.5387730Z ##[endgroup]
+2026-11-01T19:55:13.8257740Z 
+2026-11-01T19:55:13.8259490Z > postinstall
+2026-11-01T19:55:13.8263420Z > node scripts/dependencies/patch-univer-core.ts && node scripts/dependencies/patch-univer-docs.ts && node scripts/dependencies/patch-univer-ui.ts && node scripts/dependencies/patch-univer-drawing.ts && node scripts/dependencies/patch-univer-docs-ui.ts
+2026-11-01T19:55:13.8266520Z 
+2026-11-01T19:55:14.3202470Z 
+2026-11-01T19:55:14.3204180Z added 493 packages, and audited 501 packages in 16s
+2026-11-01T19:55:14.3204890Z 
+2026-11-01T19:55:14.3205420Z 132 packages are looking for funding
+2026-11-01T19:55:14.3206250Z   run `npm fund` for details
+2026-11-01T19:55:14.3345950Z 
+2026-11-01T19:55:14.3347220Z npm warn install-scripts 3 packages have install scripts not yet covered by allowScripts:
+2026-11-01T19:55:14.3348280Z 4 moderate severity vulnerabilities
+2026-11-01T19:55:14.3349230Z npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+2026-11-01T19:55:14.3357130Z 
+2026-11-01T19:55:14.3357720Z npm warn install-scripts   fsevents@2.3.3 (install: (install scripts present))
+2026-11-01T19:55:14.3360420Z To address all issues (including breaking changes), run:
+2026-11-01T19:55:14.3362340Z npm warn install-scripts   protobufjs@7.6.6 (postinstall: node scripts/postinstall)
+2026-11-01T19:55:14.3366730Z   npm audit fix --force
+2026-11-01T19:55:14.3367280Z npm warn install-scripts
+2026-11-01T19:55:14.3367630Z 
+2026-11-01T19:55:14.3368290Z npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+2026-11-01T19:55:14.3369000Z Run `npm audit` for details.
+2026-11-01T19:55:14.4559210Z ##[group]Run npm run build
+2026-11-01T19:55:14.4559550Z [36;1mnpm run build[0m
+2026-11-01T19:55:14.4601800Z shell: /bin/bash -e {0}
+2026-11-01T19:55:14.4602120Z env:
+2026-11-01T19:55:14.4602370Z   SOURCE_SHA: 91f2d57c107b6138c1eadea9ad5e29a11a017d58
+2026-11-01T19:55:14.4602750Z   DESKTOP_RUNNER: macos-26
+2026-11-01T19:55:14.4602990Z   VITE_DOC_SELECTION_EVIDENCE: 1
+2026-11-01T19:55:14.4603280Z ##[endgroup]
+2026-11-01T19:55:14.7175090Z 
+2026-11-01T19:55:14.7176060Z > build
+2026-11-01T19:55:14.7176670Z > vite build
+2026-11-01T19:55:14.7177030Z 
+2026-11-01T19:55:15.0321610Z [36mvite v8.3.4 [32mbuilding client environment for production...[36m[39m
+2026-11-01T19:55:15.0584590Z transforming...
+2026-11-01T19:55:15.8518090Z ✓ 4367 modules transformed.
+2026-11-01T19:55:16.2310290Z rendering chunks...
+2026-11-01T19:55:16.9675090Z computing gzip size...
+2026-11-01T19:55:17.1564750Z dist/index.html                                    3.54 kB │ gzip:     1.30 kB
+2026-11-01T19:55:17.1567060Z dist/assets/guestPendingBuffer-mVcC3r32.css        2.53 kB │ gzip:     0.88 kB
+2026-11-01T19:55:17.1571910Z dist/assets/HistoryBrowser-D9Z9OhM7.css            3.36 kB │ gzip:     0.96 kB
+2026-11-01T19:55:17.1573610Z dist/assets/diagnostics-6GPmlRwP.css               5.63 kB │ gzip:     1.61 kB
+2026-11-01T19:55:17.1577940Z dist/assets/portable-BFpVnKY-.css                 18.19 kB │ gzip:     3.90 kB
+2026-11-01T19:55:17.1578700Z dist/assets/application-B9PzMhak.css              58.90 kB │ gzip:    10.58 kB
+2026-11-01T19:55:17.1579420Z dist/assets/documentReady-CZMWh3-A.css           114.43 kB │ gzip:    17.18 kB
+2026-11-01T19:55:17.1580170Z dist/assets/lib-DGHf0mi1.css                     124.16 kB │ gzip:    18.08 kB
+2026-11-01T19:55:17.1580880Z dist/assets/rolldown-runtime-XKyaHtl9.js           0.72 kB │ gzip:     0.42 kB
+2026-11-01T19:55:17.1581520Z dist/assets/offlineError-BUk56pzC.js               1.48 kB │ gzip:     0.76 kB
+2026-11-01T19:55:17.1582320Z dist/assets/module-preload-BLdHbfdN.js             1.51 kB │ gzip:     0.79 kB
+2026-11-01T19:55:17.1582960Z dist/assets/snapshotIdentity-DauYycDk.js           1.70 kB │ gzip:     0.74 kB
+2026-11-01T19:55:17.1583540Z dist/assets/OfflineViewer-vDwV8lmt.js              1.96 kB │ gzip:     1.00 kB
+2026-11-01T19:55:17.1584110Z dist/assets/rendering-BYsIosLH.js                  2.48 kB │ gzip:     1.14 kB
+2026-11-01T19:55:17.1584720Z dist/assets/runtime-BUQS9nEo.js                    2.63 kB │ gzip:     1.08 kB
+2026-11-01T19:55:17.1585360Z dist/assets/OfflineAccess-mOp5M4Iz.js              2.98 kB │ gzip:     1.46 kB
+2026-11-01T19:55:17.1586030Z dist/assets/download-BPGf4w79.js                   3.48 kB │ gzip:     1.69 kB
+2026-11-01T19:55:17.1586670Z dist/assets/documentAccess-BpTD8alm.js             3.54 kB │ gzip:     1.62 kB
+2026-11-01T19:55:17.1587240Z dist/assets/main-C6Bx7Vcj.js                       3.76 kB │ gzip:     1.84 kB
+2026-11-01T19:55:17.1587890Z dist/assets/spaceNavigation-BsLiTX-r.js            3.95 kB │ gzip:     1.64 kB
+2026-11-01T19:55:17.1589620Z dist/assets/checkpoint-CNBwfwki.js                 5.36 kB │ gzip:     1.94 kB
+2026-11-01T19:55:17.1590540Z dist/assets/useDiagnostics-De7c-7Ry.js             5.60 kB │ gzip:     2.03 kB
+2026-11-01T19:55:17.1591330Z dist/assets/SheetEditor-71_U1paq.js                5.70 kB │ gzip:     2.66 kB
+2026-11-01T19:55:17.1592050Z dist/assets/PreparedImages-DxTqDsTH.js             6.59 kB │ gzip:     2.59 kB
+2026-11-01T19:55:17.1593360Z dist/assets/native-oWGPuXwD.js                     7.10 kB │ gzip:     3.11 kB
+2026-11-01T19:55:17.1594130Z dist/assets/react-DlmbjZJV.js                      7.87 kB │ gzip:     3.00 kB
+2026-11-01T19:55:17.1594850Z dist/assets/existingDatabase-D6zEq-NF.js           8.29 kB │ gzip:     3.10 kB
+2026-11-01T19:55:17.1595430Z dist/service-worker.js                            15.41 kB │ gzip:     5.88 kB
+2026-11-01T19:55:17.1596080Z dist/assets/DocEditor-CjisabXM.js                 16.15 kB │ gzip:     6.77 kB
+2026-11-01T19:55:17.1597300Z dist/assets/HistoryBrowser-Dix1NKtp.js            20.97 kB │ gzip:     7.46 kB
+2026-11-01T19:55:17.1598000Z dist/assets/offlineStore-PEPyZEmx.js              29.85 kB │ gzip:     8.87 kB
+2026-11-01T19:55:17.1598660Z dist/assets/model-BmaRrXAR.js                    115.56 kB │ gzip:    33.37 kB
+2026-11-01T19:55:17.1599360Z dist/assets/guestPendingBuffer-COcaso3e.js       121.01 kB │ gzip:    38.72 kB
+2026-11-01T19:55:17.1600190Z dist/assets/documentReady-qnwliI2S.js            178.32 kB │ gzip:    48.43 kB
+2026-11-01T19:55:17.1600900Z dist/assets/floating-ui.react-dom-BtIrzXdr.js    214.31 kB │ gzip:    67.17 kB
+2026-11-01T19:55:17.1601590Z dist/assets/profile-CUeznPAf.js                  282.02 kB │ gzip:    57.72 kB
+2026-11-01T19:55:17.1602150Z dist/assets/application-DdUNwtno.js              345.97 kB │ gzip:    98.13 kB
+2026-11-01T19:55:17.1602870Z dist/assets/lib-QQxHoqf2.js                      378.19 kB │ gzip:   104.37 kB
+2026-11-01T19:55:17.1603520Z dist/assets/diagnostics-BX4WZY_8.js              598.15 kB │ gzip:   153.59 kB
+2026-11-01T19:55:17.1604240Z dist/assets/portable-wHSLTH94.js                 640.09 kB │ gzip:   111.14 kB
+2026-11-01T19:55:17.1604930Z dist/assets/es-QsSEw2iP.js                     1,166.05 kB │ gzip:   203.44 kB
+2026-11-01T19:55:17.1605730Z dist/assets/nativeSyncPermissions-CZ0hX1OF.js  3,806.03 kB │ gzip: 1,017.70 kB
+2026-11-01T19:55:17.1606850Z dist/assets/univer-renderer-Cqyj3Y79.js        5,916.00 kB │ gzip: 1,466.42 kB
+2026-11-01T19:55:17.1607170Z 
+2026-11-01T19:55:17.1632150Z [33m[plugin builtin:vite-reporter] 
+2026-11-01T19:55:17.1636280Z (!) Some chunks are larger than 500 kB after minification. Consider:
+2026-11-01T19:55:17.1639330Z - Using dynamic import() to code-split the application
+2026-11-01T19:55:17.1643960Z - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+2026-11-01T19:55:17.1653930Z - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+2026-11-01T19:55:17.1743440Z [33m[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0mweb/offline/recovery.ts is dynamically imported by web/spinelSync.ts but also statically imported by web/offline/OfflineSession.ts, dynamic import will not move module into another chunk.
+2026-11-01T19:55:17.1744600Z [32m✓ built in 2.14s[39m
+2026-11-01T19:55:17.1799710Z [39m
+2026-11-01T19:55:17.2702420Z ##[group]Run test "$RUNNER_ENVIRONMENT" = github-hosted
+2026-11-01T19:55:17.2703360Z [36;1mtest "$RUNNER_ENVIRONMENT" = github-hosted[0m
+2026-11-01T19:55:17.2704190Z [36;1mmkdir -p test-results/desktop-tls[0m
+2026-11-01T19:55:17.2705070Z [36;1mopenssl req -x509 -newkey rsa:2048 -nodes \[0m
+2026-11-01T19:55:17.2705900Z [36;1m  -keyout test-results/desktop-tls/key.pem \[0m
+2026-11-01T19:55:17.2706800Z [36;1m  -out test-results/desktop-tls/cert.pem -days 1 \[0m
+2026-11-01T19:55:17.2707770Z [36;1m  -subj /CN=localhost -addext 'subjectAltName=DNS:localhost,IP:127.0.0.1'[0m
+2026-11-01T19:55:17.2708760Z [36;1msudo security add-trusted-cert -d -r trustRoot \[0m
+2026-11-01T19:55:17.2709830Z [36;1m  -k /Library/Keychains/System.keychain test-results/desktop-tls/cert.pem[0m
+2026-11-01T19:55:17.2774880Z shell: /bin/bash -e {0}
+2026-11-01T19:55:17.2775180Z env:
+2026-11-01T19:55:17.2775420Z   SOURCE_SHA: 91f2d57c107b6138c1eadea9ad5e29a11a017d58
+2026-11-01T19:55:17.2775900Z   DESKTOP_RUNNER: macos-26
+2026-11-01T19:55:17.2776110Z ##[endgroup]
+2026-11-01T19:55:17.4043250Z .+...+...........+...+...............+...+....+...+.....+...+...+.......+..+......+.......+..+.......+.....+.+...............+...+..............+.+......+........+++++++++++++++++++++++++++++++++++++++*......+...+.......+........+................+........+.+.....+.+......+...+......+.....+...+.+.....+.+++++++++++++++++++++++++++++++++++++++*......+....+.....+................+............+.....+...+......+.+..+.......+...+..+....+..+............+..........+......+..+...+.+.........+.....++++++
+2026-11-01T19:55:17.4322640Z ...+.+............+...+..+....+.....+++++++++++++++++++++++++++++++++++++++*...+.+.........+++++++++++++++++++++++++++++++++++++++*......+....+.................+....+...+...........+.........+..........+..+......+...................+......+........+.+......+...+..+............+...+...+......+.........+......+..........+.........+.........+.....+...+.......+.......................+.........+...+..........+......+..+...+....+..+.............+..+....+..............+......+.......+.........+......+..............+...+.......+....................+...+.......+........+.+......+...+...+.....++++++
+2026-11-01T19:55:17.4376650Z -----
+2026-11-01T19:55:17.6125330Z ##[group]Run node --max-old-space-size=1024 scripts/ci/desktop-offline.ts "$DESKTOP_BROWSER"
+2026-11-01T19:55:17.6125970Z [36;1mnode --max-old-space-size=1024 scripts/ci/desktop-offline.ts "$DESKTOP_BROWSER"[0m
+2026-11-01T19:55:17.6174910Z shell: /bin/bash -e {0}
+2026-11-01T19:55:17.6175160Z env:
+2026-11-01T19:55:17.6175370Z   SOURCE_SHA: 91f2d57c107b6138c1eadea9ad5e29a11a017d58
+2026-11-01T19:55:17.6175690Z   DESKTOP_RUNNER: macos-26
+2026-11-01T19:55:17.6176310Z   DESKTOP_BROWSER: firefox
+2026-11-01T19:55:17.6176780Z ##[endgroup]
+2026-11-01T19:55:27.9888710Z Desktop firefox: browser-start
+2026-11-01T19:55:32.1612410Z ##[error]The operation was canceled.
+2026-11-01T19:55:32.1859860Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-01T19:55:32.1872320Z with:
+2026-11-01T19:55:32.1872770Z   name: desktop-offline-firefox-macos-26-41343964542-1
+2026-11-01T19:55:32.1873210Z   path: artifacts/desktop-offline/
+2026-11-01T19:55:32.1873580Z   if-no-files-found: error
+2026-11-01T19:55:32.1873910Z   retention-days: 14
+2026-11-01T19:55:32.1874180Z   compression-level: 6
+2026-11-01T19:55:32.1874940Z   overwrite: false
+2026-11-01T19:55:32.1875210Z   include-hidden-files: false
+2026-11-01T19:55:32.1875570Z   archive: true
+2026-11-01T19:55:32.1875770Z env:
+2026-11-01T19:55:32.1876060Z   SOURCE_SHA: 91f2d57c107b6138c1eadea9ad5e29a11a017d58
+2026-11-01T19:55:32.1876360Z   DESKTOP_RUNNER: macos-26
+2026-11-01T19:55:32.1877830Z ##[endgroup]
+2026-11-01T19:55:34.6511800Z With the provided path, there will be 2 files uploaded
+2026-11-01T19:55:34.6527330Z Artifact name is valid!
+2026-11-01T19:55:34.6555260Z Root directory input is valid!
+2026-11-01T19:55:34.7188820Z Uploading artifact: desktop-offline-firefox-macos-26-41343964542-1.zip
+2026-11-01T19:55:34.7205020Z Beginning upload of artifact content to blob storage
+2026-11-01T19:55:34.7207530Z Uploaded bytes 1539
+2026-11-01T19:55:34.7208510Z Finished uploading artifact content to blob storage!
+2026-11-01T19:55:34.7258670Z SHA256 digest of uploaded artifact is d73c13b392ad2110f72c8e5cb12f3113959d613fbdf93cfd017d32343f8fc9ef
+2026-11-01T19:55:34.8111110Z Finalizing artifact upload
+2026-11-01T19:55:34.8140090Z Artifact desktop-offline-firefox-macos-26-41343964542-1 successfully finalized. Artifact ID 13098865321
+2026-11-01T19:55:34.8155530Z Artifact desktop-offline-firefox-macos-26-41343964542-1 has been successfully uploaded! Final size is 1539 bytes. Artifact ID is 13098865321
+2026-11-01T19:55:34.8163340Z Artifact download URL: https://github.com/mxbaylee/spinel/actions/runs/41343964542/artifacts/13098865321
+2026-11-01T19:55:34.8949540Z Post job cleanup.
+2026-11-01T19:55:35.2842490Z [command]/opt/homebrew/bin/git version
+2026-11-01T19:55:35.2917240Z git version 2.56.0
+2026-11-01T19:55:35.3078500Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/fed11574-b001-4725-a2ae-6ee1d1774279/.gitconfig'
+2026-11-01T19:55:35.3079780Z Temporarily overriding HOME='/Users/runner/work/_temp/fed11574-b001-4725-a2ae-6ee1d1774279' before making global git config changes
+2026-11-01T19:55:35.3080850Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-01T19:55:35.3081740Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/spinel/spinel
+2026-11-01T19:55:35.3385530Z Removing SSH command configuration
+2026-11-01T19:55:35.3470570Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-01T19:55:35.3578190Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-01T19:55:35.5426630Z Removing HTTP extra header
+2026-11-01T19:55:35.5427860Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-01T19:55:35.5542760Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-01T19:55:35.7876280Z Removing includeIf entries pointing to credentials config files
+2026-11-01T19:55:35.7980890Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-01T19:55:35.8300380Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-01T19:55:36.0169610Z Cleaning up orphan processes
+2026-11-01T19:55:36.1493540Z Terminate orphan process: pid (4380) (System Events)
+2026-11-01T19:55:36.2226600Z Terminate orphan process: pid (4379) (osascript)
+2026-11-01T19:55:36.5409060Z Terminate orphan process: pid (4291) (plugin-containe)
+2026-11-01T19:55:36.7033550Z Terminate orphan process: pid (4283) (plugin-containe)
+2026-11-01T19:55:36.9802630Z Terminate orphan process: pid (4143) (plugin-containe)
+2026-11-01T19:55:37.0550800Z Terminate orphan process: pid (4142) (plugin-containe)
+2026-11-01T19:55:37.2264950Z Terminate orphan process: pid (4137) (plugin-containe)
+2026-11-01T19:55:37.3239900Z Terminate orphan process: pid (4136) (plugin-containe)
+2026-11-01T19:55:37.4042860Z Terminate orphan process: pid (4135) (plugin-containe)

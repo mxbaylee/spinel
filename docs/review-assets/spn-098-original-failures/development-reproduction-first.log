@@ -1,0 +1,6 @@
+Error: Project(s) "e2e/diagnostics.spec.ts" not found. Available projects: "development", "production", "sync-development", "sync-production", "sync-soak-sheet", "sync-soak-doc", "doc-responsiveness", "doc-callback-lifetimes", "offline-upgrade", "supervised-restore", "mobile-https"
+    at Object.filterProjects (/Users/mxbaylee/projects/spinel-spn-098/node_modules/playwright/lib/runner/index.js:2164:11)
+    at runTests (/Users/mxbaylee/projects/spinel-spn-098/node_modules/playwright/lib/cli/testActions.js:59:30)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at _Command.<anonymous> (/Users/mxbaylee/projects/spinel-spn-098/node_modules/playwright/lib/program.js:55:7)
+WATCHDOG: exit=1, signal=null, elapsed=324ms, peak=248.2MiB

@@ -1,0 +1,16 @@
+[
+  {
+    "time": "2026-11-01T20:49:05.350Z",
+    "method": "POST",
+    "path": "/api/admin/diagnostics/feedback/prepare",
+    "status": -1,
+    "failure": "net::ERR_ABORTED"
+  },
+  {
+    "time": "2026-11-01T20:49:05.352Z",
+    "method": "POST",
+    "path": "/api/admin/diagnostics/feedback/prepare",
+    "status": 409,
+    "failure": null
+  }
+]
