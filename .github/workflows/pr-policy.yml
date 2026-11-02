@@ -67,6 +67,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: node scripts/ci/pr-policy.ts history
       - name: ${{ steps.history.outputs.marker }}
+        if: steps.history.outputs.marker != ''
         run: echo 'Complete immutable PR history recorded; code checks remain independent.'
       - name: Validate policy and genuine current-base code admission
         env:

@@ -31,6 +31,9 @@ export async function validatePrPolicy(options: {
   invocation?: PolicyInvocation;
 }) {
   const { client, event, tested, validateTitle } = options;
+  const historyContext = options.invocation
+    ? { invocation: options.invocation, phase: 'admission' as const }
+    : undefined;
   const now = options.now ?? Date.now;
   const expected = parsePullRequestEvent(event, client.repository);
   expected.tested = tested;
@@ -40,7 +43,7 @@ export async function validatePrPolicy(options: {
   const editedFull = object(event) && event.action === 'edited' && !exactTextEdit(event);
   const labelFull = object(event) && object(event.label) && event.label.name === REVALIDATE_LABEL;
   let requiredFull = editedFull || labelFull || first.labels.includes(REVALIDATE_LABEL);
-  let history = await readFullValidationRequirement(client, first, now, options.invocation);
+  let history = await readFullValidationRequirement(client, first, now, historyContext);
   requiredFull ||= history.state === 'full';
   let fullAfter = history.state === 'full' ? history.after : null;
   let fullAtOrAfter = history.state === 'full' ? history.atOrAfter : null;
@@ -87,7 +90,7 @@ export async function validatePrPolicy(options: {
     // Completed full history is monotonic for this invocation. Clear history
     // is read again before admission, not on every poll of slow code workers.
     if (unsettledHistory())
-      observeHistory(await readFullValidationRequirement(client, current, now, options.invocation));
+      observeHistory(await readFullValidationRequirement(client, current, now, historyContext));
     if (unsettledHistory()) {
       reason = history.reason;
     } else {
@@ -121,9 +124,7 @@ export async function validatePrPolicy(options: {
             final.identity.body !== first.identity.body
           )
             throw new Error('PR changed before policy validation completed.');
-          observeHistory(
-            await readFullValidationRequirement(client, final, now, options.invocation),
-          );
+          observeHistory(await readFullValidationRequirement(client, final, now, historyContext));
           if (!unsettledHistory()) {
             const fresh = selectCodeRun(runs, {
               identity: expected,
@@ -177,6 +178,7 @@ export async function validatePrPolicy(options: {
 }
 
 /** Issue only complete history, independently of title validity or code outcome.
+ * A known bounded full obligation may proceed to admission without a certificate.
  * No unknown/pending event can be compressed into a clear prefix. */
 export async function capturePrHistory(options: {
   client: PrReader;
@@ -197,14 +199,13 @@ export async function capturePrHistory(options: {
     assertCurrentSource(expected, current.identity);
     if (current.identity.tested !== options.tested)
       throw new Error('History issuer no longer matches the current tested merge.');
-    const history = await readFullValidationRequirement(
-      options.client,
-      current,
-      now,
-      options.invocation,
-    );
+    const history = await readFullValidationRequirement(options.client, current, now, {
+      invocation: options.invocation,
+      phase: 'issuance',
+    });
     reason = history.reason;
-    if (history.checkpoint) {
+    const boundedFull = history.state === 'full' && history.after !== null && !history.pending;
+    if (history.checkpoint || boundedFull) {
       const final = await currentPullRequest(options.client, expected.number);
       assertCurrentSource(expected, final.identity);
       if (
@@ -213,7 +214,7 @@ export async function capturePrHistory(options: {
         final.identity.body !== current.identity.body
       )
         throw new Error('PR changed before history issuance completed.');
-      return historyCheckpointMarker(history.checkpoint);
+      return history.checkpoint ? historyCheckpointMarker(history.checkpoint) : null;
     }
     if (now() >= deadline) break;
     console.log(`Waiting for complete policy history: ${reason}`);
@@ -247,8 +248,8 @@ if (import.meta.main) {
     });
     if (!process.env.GITHUB_OUTPUT)
       throw new Error('The checkpoint output channel is unavailable.');
-    appendFileSync(process.env.GITHUB_OUTPUT, `marker=${marker}\n`);
-    console.log(marker);
+    if (marker) appendFileSync(process.env.GITHUB_OUTPUT, `marker=${marker}\n`);
+    console.log(marker ?? 'No history certificate issued; genuine fresh full code is required.');
   } else {
     const result = await validatePrPolicy({
       client,

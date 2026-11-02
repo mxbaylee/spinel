@@ -83,9 +83,13 @@ The policy job records a versioned history checkpoint before title validation or
 code admission. Successful history steps can therefore remain useful when a later
 step fails or waits for code. Each certificate binds its genuine Actions run, job,
 check, workflow, PR, immutable source/base/tested provenance, covered sequence and
-both full-request bounds. Its issuer cannot use its own current/future attempt to
-prove its prefix. The first run can establish an opening only with the same PR's
-`opened` identity, genuine Actions suite and supported immutable workflow source.
+both full-request bounds. Issuance cannot use its own current/future attempt to
+prove its prefix. Later admission can consume the same attempt's provider-confirmed
+successful validation and marker steps, including when an older prefix expires
+while code waits. The first run can establish an opening only with a v2 same-PR
+`opened` identity, genuine Actions suite and supported workflow source at its
+immutable tested merge. That merge must have the declared base/head parents;
+the source branch alone may lack a workflow inherited from base.
 These contracts rely on the repository's required independent workflow review;
 they are not a signature service resisting an administrator replacing the verifier.
 
@@ -96,6 +100,17 @@ Do not delete policy runs for open PRs: losing both the original prefix and all
 covering certificates cannot be repaired by a label or by merely running fresh code.
 Restore unavailable access or retry the original failed classification when its
 immutable event still exists. Real missing evidence remains an explicit blocker.
+When a terminal classifier failure has a known request timestamp, the history step
+returns no marker and admission may still accept genuine full code created after
+that request. This recovers the code gate without pretending the failed event was
+proved. Pending classification or unknown freshness still blocks admission.
+
+Legacy runs without an immutable executed revision cannot establish an initial
+opening. In particular, PR #231's first two runs predate even the v1 action-bearing
+name; their original source and retained logs do not prove the trigger action.
+Existing PRs that predate this workflow need a separately reviewed adoption
+protocol before activation. It is not implemented, and creating a later event or
+guessing the opening from timestamps does not supply the missing evidence.
 
 Policy reads the requirement before admission and again before success. Hosted
 retention, event-delivery and protected-readiness trials remain required before

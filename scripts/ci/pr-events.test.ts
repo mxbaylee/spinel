@@ -94,6 +94,7 @@ function scenario(historyV2 = false) {
   const timeline: unknown[] = [];
   const policyRun = {
     id: 500,
+    check_suite_id: 503,
     run_number: 2,
     workflow_id: 43,
     path: '.github/workflows/pr-policy.yml',
@@ -274,25 +275,103 @@ test('history issuance precedes title/code admission without changing genuine co
   }
 });
 
+test('known bounded failed classification skips certificate issuance and still admits genuinely fresh full code', async () => {
+  const s = scenario(true);
+  s.policyClassifier.conclusion = 'failure';
+  s.policyClassifier.steps = [];
+  assert.equal(await capturePrHistory({ ...s.options, invocation: s.invocation }), null);
+  await assert.rejects(
+    validatePrPolicy({ ...s.options, invocation: s.invocation }),
+    /full.validation|full coverage/i,
+  );
+  s.fullCoverage();
+  s.run.created_at = s.pr.created_at;
+  await assert.rejects(
+    validatePrPolicy({ ...s.options, invocation: s.invocation }),
+    /created|fresh|full.validation/i,
+  );
+  s.run.created_at = '2026-11-01T12:01:00Z';
+  assert.equal(
+    (await validatePrPolicy({ ...s.options, invocation: s.invocation })).requiredFull,
+    true,
+  );
+  assert.equal(s.run.conclusion, null);
+  assert.deepEqual(s.mutations, []);
+});
+
+test('admission consumes its completed checkpoint after prefix expiry while issuance cannot self-certify', async () => {
+  const s = scenario(true);
+  const marker = await capturePrHistory({ ...s.options, invocation: s.invocation });
+  assert.equal(typeof marker, 'string');
+  const job = {
+    id: 504,
+    run_id: 500,
+    run_attempt: 1,
+    head_sha: s.policyRun.head_sha,
+    name: 'Pull request',
+    status: 'in_progress',
+    conclusion: null,
+    check_run_url: 'https://api.github.com/repos/owner/repo/check-runs/505',
+    steps: [
+      {
+        number: 3,
+        name: historyValidationStep,
+        status: 'completed',
+        conclusion: 'success',
+        completed_at: '2026-11-01T12:00:01Z',
+      },
+      {
+        number: 4,
+        name: marker!,
+        status: 'completed',
+        conclusion: 'success',
+        completed_at: '2026-11-01T12:00:02Z',
+      },
+    ],
+  };
+  const get = s.client.get.bind(s.client);
+  const list = s.client.list.bind(s.client);
+  s.client.get = async (path) => {
+    if (path === 'actions/workflows/43/runs?per_page=100&page=1')
+      return { total_count: 1, workflow_runs: [structuredClone(s.policyRun)] };
+    if (path === 'check-runs/505')
+      return {
+        id: 505,
+        name: job.name,
+        head_sha: job.head_sha,
+        check_suite: { id: 503 },
+        app: { id: 15368 },
+        status: 'in_progress',
+        conclusion: null,
+      };
+    return get(path);
+  };
+  s.client.list = async (path, key) =>
+    path === 'actions/runs/500/jobs?filter=all'
+      ? structuredClone([s.policyClassifier, job])
+      : list(path, key);
+  await assert.rejects(
+    capturePrHistory({ ...s.options, invocation: s.invocation }),
+    /history was not sealed/,
+  );
+  assert.equal((await validatePrPolicy({ ...s.options, invocation: s.invocation })).run, 100);
+  for (const conclusion of ['failure', 'skipped']) {
+    job.steps[1].conclusion = conclusion;
+    await assert.rejects(
+      validatePrPolicy({ ...s.options, invocation: s.invocation }),
+      /not admitted/,
+    );
+  }
+  assert.equal(s.run.conclusion, null);
+  assert.deepEqual(s.mutations, []);
+});
+
 test('unproved classifications, gaps and stale invocation identities cannot issue history', async () => {
-  for (const change of [
-    'pending',
-    'failed',
-    'malformed',
-    'gap',
-    'attempt',
-    'source',
-    'tested',
-    'sequence',
-  ]) {
+  for (const change of ['pending', 'malformed', 'gap', 'attempt', 'source', 'tested', 'sequence']) {
     const s = scenario(true);
     if (change === 'pending') {
       s.policyClassifier.status = 'in_progress';
       s.policyClassifier.conclusion = null;
-      s.policyClassifier.steps = [];
-    }
-    if (change === 'failed') {
-      s.policyClassifier.conclusion = 'failure';
       s.policyClassifier.steps = [];
     }
     if (change === 'malformed') s.policyClassifier.steps.push({ ...s.policyClassifier.steps[0] });

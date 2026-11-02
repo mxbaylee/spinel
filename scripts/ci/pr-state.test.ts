@@ -133,6 +133,23 @@ async function requirement(options: Parameters<typeof fixture>[0] = {}) {
   return readFullValidationRequirement(client, state, now);
 }
 
+test('a historical v2 source contradiction cannot become a sealed clear prefix', async () => {
+  for (const action of ['opened', 'synchronize', 'reopened', 'edited']) {
+    const result = await requirement({
+      runs: [
+        policyRun({
+          display_title: `PR policy v2 pr=129 action=${action} base=${'a'.repeat(40)} head=${'d'.repeat(40)} tested=${'c'.repeat(40)}`,
+        }),
+      ],
+      jobs: [classifier()],
+    });
+    assert.equal(result.state, 'full', action);
+    assert.equal(result.after, null, action);
+    assert.equal(result.checkpoint, undefined, action);
+    assert.match(result.reason, /contradictory immutable source/);
+  }
+});
+
 const codeEvent = () => ({
   number: 129,
   repository: { full_name: repository },

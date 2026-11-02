@@ -306,7 +306,7 @@ test('every required code job rechecks source/base and digest-bound coverage on 
   for (const source of [workflow, storybook]) {
     assert.match(
       source,
-      /permissions:\n  contents: read\n  actions: read\n  pull-requests: read\n/,
+      /permissions:\n  contents: read\n  actions: read\n  pull-requests: read\n  checks: read\n/,
     );
     const changes = job('changes', source)
       .split(/^      - /m)

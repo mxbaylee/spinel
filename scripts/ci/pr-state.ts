@@ -6,7 +6,7 @@ import {
   authenticatedPolicyHistory,
   parsePolicyRunName,
   type HistoryCheckpoint,
-  type PolicyInvocation,
+  type PolicyHistoryContext,
 } from './pr-history.ts';
 import {
   exactTextEdit,
@@ -113,7 +113,7 @@ export async function readFullValidationRequirement(
   client: PrReader,
   state: CurrentPullRequest,
   now: () => number = Date.now,
-  invocation?: PolicyInvocation,
+  context?: PolicyHistoryContext,
 ): Promise<FullValidationRequirement> {
   let reading = 'PR timeline';
   let sealable = true;
@@ -201,7 +201,7 @@ export async function readFullValidationRequirement(
       number: state.identity.number,
       createdAt: state.createdAt,
       workflowId: workflow.id,
-      invocation,
+      context,
     });
     if (window.checkpoint?.full) {
       recordFull(
@@ -257,6 +257,8 @@ export async function readFullValidationRequirement(
         recordFull(requestedAt, 'A PR-policy run has an unknown edit classification identity.');
         continue;
       }
+      if (name.version === 2 && name.head !== run.head_sha)
+        return unknown('A PR-policy run has contradictory immutable source identities.');
       if (!sha(run.head_sha) || !positiveInteger(run.run_attempt)) {
         sealable = false;
         recordFull(requestedAt, 'A PR-policy run has incomplete immutable metadata.');

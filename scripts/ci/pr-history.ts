@@ -351,6 +351,11 @@ export interface PolicyInvocation {
   head: string;
   tested: string;
 }
+
+export interface PolicyHistoryContext {
+  invocation: PolicyInvocation;
+  phase: 'issuance' | 'admission';
+}
 export function parsePolicyRunName(name: unknown) {
   if (typeof name !== 'string') return null;
   const match =
@@ -374,8 +379,6 @@ export function parsePolicyRunName(name: unknown) {
   };
 }
 
-const v1RunName =
-  'run-name: PR policy v1 pr=${{ github.event.pull_request.number }} action=${{ github.event.action }}';
 export const policyRunNameV2 =
   'run-name: PR policy v2 pr=${{ github.event.pull_request.number }} action=${{ github.event.action }} base=${{ github.event.pull_request.base.sha }} head=${{ github.event.pull_request.head.sha }} tested=${{ github.sha }}';
 
@@ -393,10 +396,13 @@ export async function authenticatedPolicyHistory(
     number: number;
     createdAt: string;
     workflowId: number;
-    invocation?: PolicyInvocation;
+    context?: PolicyHistoryContext;
   },
 ): Promise<PolicyHistoryWindow> {
-  const invocation = expected.invocation;
+  const invocation = expected.context?.invocation;
+  // Issuance cannot prove itself. Admission may consume the marker only after
+  // both preceding history steps are reported successfully completed.
+  const issuer = expected.context?.phase === 'issuance' ? invocation : undefined;
   const jobs = new Map<number, Promise<unknown[]>>();
   const runJobs = (id: number) => {
     let pending = jobs.get(id);
@@ -441,13 +447,14 @@ export async function authenticatedPolicyHistory(
       if (
         run.run_number !== 1 ||
         !identity ||
+        identity.version !== 2 ||
         identity.number !== expected.number ||
         identity.action !== 'opened' ||
         run.event !== 'pull_request' ||
         !associated(run) ||
         !sha(run.head_sha) ||
         !positive(run.check_suite_id) ||
-        (identity.version === 2 && identity.head !== run.head_sha)
+        identity.head !== run.head_sha
       )
         return false;
       const suite = await client.get(`check-suites/${run.check_suite_id}`);
@@ -459,8 +466,22 @@ export async function authenticatedPolicyHistory(
         suite.head_sha !== run.head_sha
       )
         throw new Error('The initial policy opening lacks its genuine Actions suite.');
+      // pull_request executes the immutable merge revision, which may contain
+      // workflow changes from base that are absent from the source branch.
+      const merge = await client.get(`commits/${identity.tested}`);
+      if (
+        !object(merge) ||
+        merge.sha !== identity.tested ||
+        !Array.isArray(merge.parents) ||
+        merge.parents.length !== 2 ||
+        !object(merge.parents[0]) ||
+        merge.parents[0].sha !== identity.base ||
+        !object(merge.parents[1]) ||
+        merge.parents[1].sha !== identity.head
+      )
+        throw new Error('The initial policy workflow revision lacks its immutable merge parents.');
       const source = await client.get(
-        `contents/.github/workflows/pr-policy.yml?ref=${run.head_sha}`,
+        `contents/.github/workflows/pr-policy.yml?ref=${identity.tested}`,
       );
       if (
         !object(source) ||
@@ -473,7 +494,7 @@ export async function authenticatedPolicyHistory(
         throw new Error('The initial policy workflow contract is unavailable.');
       const content = Buffer.from(source.content, 'base64').toString('utf8');
       const names = content.split('\n').filter((line) => /^\s*run-name:/.test(line));
-      if (names.length !== 1 || names[0] !== (identity.version === 1 ? v1RunName : policyRunNameV2))
+      if (names.length !== 1 || names[0] !== policyRunNameV2)
         throw new Error(
           'The initial policy event was not bound by the supported workflow contract.',
         );
@@ -486,8 +507,7 @@ export async function authenticatedPolicyHistory(
       const candidates: HistoryCheckpoint[] = [];
       for (const job of records) {
         if (!object(job) || job.name !== 'Pull request' || !Array.isArray(job.steps)) continue;
-        if (invocation && run.id === invocation.id && Number(job.run_attempt) >= invocation.attempt)
-          continue;
+        if (issuer && run.id === issuer.id && Number(job.run_attempt) >= issuer.attempt) continue;
         const marker = job.steps.some(
           (step) =>
             object(step) && typeof step.name === 'string' && step.name.startsWith('PR history '),
@@ -519,8 +539,8 @@ export async function authenticatedPolicyHistory(
           workflowId: expected.workflowId,
           createdAt: expected.createdAt,
           upperSequence,
-          currentRunId: invocation?.id,
-          currentAttempt: invocation?.attempt,
+          currentRunId: issuer?.id,
+          currentAttempt: issuer?.attempt,
         });
         if (!checkpoint) throw new Error('History certificate has no supported proof.');
         candidates.push(checkpoint);

@@ -97,6 +97,10 @@ test('only an authenticated same-PR initial opened event can establish the first
     'foreign-app',
     'forged-source',
     'source-unavailable',
+    'wrong-merge',
+    'wrong-parent',
+    'missing-parent',
+    'legacy-v1',
   ]) {
     const f = fixture();
     f.run.run_number = 1;
@@ -104,6 +108,7 @@ test('only an authenticated same-PR initial opened event can establish the first
     if (alteration === 'synchronize' || alteration === 'reopened')
       f.run.display_title = f.run.display_title.replace('action=opened', `action=${alteration}`);
     if (alteration === 'foreign-pr') f.run.pull_requests[0].number = 128;
+    if (alteration === 'legacy-v1') f.run.display_title = 'PR policy v1 pr=129 action=opened';
     const client = {
       repository: f.expected.repository,
       async get(path: string) {
@@ -115,7 +120,18 @@ test('only an authenticated same-PR initial opened event can establish the first
             app: { id: alteration === 'foreign-app' ? 1 : 15368 },
             head_sha: f.run.head_sha,
           };
-        if (path === `contents/.github/workflows/pr-policy.yml?ref=${f.run.head_sha}`) {
+        if (path === `commits/${'c'.repeat(40)}`)
+          return {
+            sha: alteration === 'wrong-merge' ? 'd'.repeat(40) : 'c'.repeat(40),
+            parents:
+              alteration === 'missing-parent'
+                ? []
+                : [
+                    { sha: alteration === 'wrong-parent' ? 'd'.repeat(40) : 'a'.repeat(40) },
+                    { sha: f.run.head_sha },
+                  ],
+          };
+        if (path === `contents/.github/workflows/pr-policy.yml?ref=${'c'.repeat(40)}`) {
           if (alteration === 'source-unavailable') throw new Error('Not found');
           return {
             type: 'file',
@@ -141,18 +157,8 @@ test('only an authenticated same-PR initial opened event can establish the first
       const result = await read();
       assert.equal(result.boundary, 'opening');
       assert.deepEqual(result.runs, [f.run]);
-      // Older v1 opening provenance is also legitimate, even without a job.
-      f.run.display_title = 'PR policy v1 pr=129 action=opened';
-      const get = client.get.bind(client);
-      client.get = async (path) => {
-        const value = await get(path);
-        if (path.startsWith('contents/') && 'content' in value)
-          value.content = Buffer.from(
-            'run-name: PR policy v1 pr=${{ github.event.pull_request.number }} action=${{ github.event.action }}',
-          ).toString('base64');
-        return value;
-      };
-      assert.equal((await read()).boundary, 'opening');
+      // No source-branch workflow read is available: only the executed merge
+      // revision can prove a workflow inherited from base on this opening.
     } else await assert.rejects(read, Error, alteration);
   }
 });
@@ -170,7 +176,9 @@ test('workflow binds immutable issuer identity and records history before policy
   );
   assert.ok(history > 0 && marker > history && admission > marker);
   assert.match(workflow.slice(history, marker), /run: node scripts\/ci\/pr-policy.ts history/);
-  assert.doesNotMatch(workflow.slice(history, admission), /continue-on-error:|if:/);
+  assert.doesNotMatch(workflow.slice(history, marker), /continue-on-error:|if:/);
+  assert.match(workflow.slice(marker, admission), /if: steps.history.outputs.marker != ''/);
+  assert.doesNotMatch(workflow.slice(history, admission), /continue-on-error:/);
 });
 
 test('history proof remains independent of pending or failed code/title admission', () => {
