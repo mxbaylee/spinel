@@ -374,6 +374,16 @@ CI requires **Backlog**, **Pull request**, **Lint**, **Typecheck**, **Unit tests
 **Lib tests** and **Playwright smoke**. These seven checks are required by the active default-branch ruleset;
 see [the process](todo/process.md#pull-requests-and-main).
 
+Hosted Ubuntu setup uses `scripts/ci/prefer-ubuntu-archive.ts` to prefer the
+official archive within the validated Azure/archive pair. Before validation or
+write it logs the input byte count/hash, exact recognized public Ubuntu mirror
+lines and separate environment image identity. Unknown text is redacted; runner
+headers remain a separate identity observation. Rejected input fails before
+writing and never counts as passing browser validation. Preserve that first
+failure and diagnose actual input before changing supported profiles. The
+[SPN-131 record](implementation/SPN-131.md#diagnostics-slice-and-retained-repair)
+describes known-profile coverage and SPN-136's unresolved recurrent rejections.
+
 ## Architecture decisions
 
 - TypeScript, React, Vite, Vitest, Node, Playwright and Prettier mirror
