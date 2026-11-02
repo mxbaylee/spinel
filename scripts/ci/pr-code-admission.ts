@@ -21,6 +21,7 @@ export interface CodeRunExpectation {
   workflowId: number;
   requiredFull: boolean;
   fullAfter?: number | null;
+  fullAtOrAfter?: number | null;
 }
 
 const object = (value: unknown): value is Record<string, unknown> =>
@@ -57,7 +58,7 @@ function timestamp(value: unknown): number | null {
  * its advertised range: an older pass cannot rescue a newer wrong-base run. */
 export function selectCodeRun(
   runs: unknown,
-  { identity, workflowId, requiredFull, fullAfter }: CodeRunExpectation,
+  { identity, workflowId, requiredFull, fullAfter, fullAtOrAfter }: CodeRunExpectation,
 ): { status: 'ready'; run: AdmittedCodeRun } | NotReady {
   if (
     !positiveInteger(workflowId) ||
@@ -132,6 +133,14 @@ export function selectCodeRun(
     return invalid(
       'Full validation requires a new eligible CI run created after the latest request; retrying an older run is insufficient.',
     );
+  if (requiredFull && fullAtOrAfter !== undefined && fullAtOrAfter !== null) {
+    if (!Number.isFinite(fullAtOrAfter))
+      return invalid('The full-validation notification has no valid creation boundary.');
+    if (candidates[0].created < fullAtOrAfter)
+      return invalid(
+        'Full validation requires a CI run created at or after the trusted router notification.',
+      );
+  }
   let declared: CodeRunIdentity;
   try {
     declared = parseCodeRunName(latest.display_title);

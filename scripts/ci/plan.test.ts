@@ -234,6 +234,10 @@ test('every required code job rechecks source/base and digest-bound coverage on 
     new URL('../../.github/workflows/storybook.yml', import.meta.url),
     'utf8',
   );
+  const policy = readFileSync(
+    new URL('../../.github/workflows/pr-policy.yml', import.meta.url),
+    'utf8',
+  );
   const job = (id: string, source = workflow) => {
     const start = source.indexOf(`\n  ${id}:\n`);
     assert.ok(start >= 0, id);
@@ -281,6 +285,11 @@ test('every required code job rechecks source/base and digest-bound coverage on 
     assert.match(changes, /GH_TOKEN: \$\{\{ github.token \}\}/);
     assert.match(changes, /node scripts\/ci\/changes\.ts/);
   }
+  for (const source of [workflow, storybook, policy])
+    assert.match(
+      source,
+      /^env:\n  SPINEL_CI_ROUTER_APP_ID: \$\{\{ vars.SPINEL_CI_ROUTER_APP_ID \}\}\n/m,
+    );
   assert.equal((storybook.match(/GH_TOKEN:/g) ?? []).length, 1);
 });
 

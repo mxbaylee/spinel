@@ -3,13 +3,29 @@
  * Credentials never travel to a payload-controlled URL or a redirect. */
 export class PrGitHub {
   readonly repository: string;
+  readonly routerAppId: number | undefined;
   private readonly token: string;
   private readonly transport: typeof fetch;
 
-  constructor(repository: string, token: string, transport: typeof fetch = fetch) {
+  constructor(
+    repository: string,
+    token: string,
+    transport: typeof fetch = fetch,
+    routerAppId: string | undefined = process.env.SPINEL_CI_ROUTER_APP_ID,
+  ) {
     if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repository) || !token)
       throw new Error('A repository and GitHub token are required.');
+    if (
+      routerAppId !== undefined &&
+      routerAppId !== '' &&
+      (typeof routerAppId !== 'string' ||
+        !/^[1-9][0-9]*$/.test(routerAppId) ||
+        !Number.isSafeInteger(Number(routerAppId)))
+    )
+      throw new Error('The CI router App ID must be a positive safe integer.');
     this.repository = repository;
+    this.routerAppId =
+      routerAppId === undefined || routerAppId === '' ? undefined : Number(routerAppId);
     this.token = token;
     this.transport = transport;
   }

@@ -223,6 +223,20 @@ test('full requests require a genuinely new eligible run, not a newer attempt of
     'invalid',
   );
   assert.equal(selectCodeRun([fresh], { ...freshness, fullAfter: null }).status, 'invalid');
+  const notification = Date.parse(fresh.created_at);
+  assert.equal(
+    selectCodeRun([fresh], { ...freshness, fullAtOrAfter: notification }).status,
+    'ready',
+  );
+  assert.equal(
+    selectCodeRun([fresh], { ...freshness, fullAtOrAfter: notification + 1000 }).status,
+    'invalid',
+  );
+  assert.equal(
+    selectCodeRun([fresh], { ...freshness, fullAfter: notification, fullAtOrAfter: notification })
+      .status,
+    'invalid',
+  );
 });
 
 test('matching run identity binds PR, tested merge, head, and immutable base', () => {

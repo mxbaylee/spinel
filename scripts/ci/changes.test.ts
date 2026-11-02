@@ -97,7 +97,12 @@ test('classification retains historical base or removed-label obligations withou
       client,
       () => Date.parse(createdAt) + 60_000,
     );
-    assert.match(reason!, /recorded base change|historical full-revalidation/);
+    assert.match(
+      reason!,
+      entry.event === 'base_ref_changed'
+        ? /recorded base change/
+        : /removed full-revalidation label is the only available request boundary/,
+    );
   }
   const { client } = historyFixture();
   assert.equal(

@@ -9,7 +9,7 @@ import {
   type PullRequestIdentity,
 } from './pr-identity.ts';
 
-export type PrReader = Pick<PrGitHub, 'repository' | 'get' | 'list'>;
+export type PrReader = Pick<PrGitHub, 'repository' | 'get' | 'list'> & { routerAppId?: number };
 export interface CurrentPullRequest {
   identity: PullRequestIdentity;
   labels: string[];
@@ -19,6 +19,7 @@ export interface FullValidationRequirement {
   state: 'full' | 'clear' | 'pending';
   reason: string;
   after: number | null;
+  atOrAfter: number | null;
   pending: boolean;
 }
 
@@ -34,7 +35,8 @@ const full = (
   reason: string,
   after: number | null = null,
   pending = false,
-): FullValidationRequirement => ({ state: 'full', reason, after, pending });
+  atOrAfter: number | null = null,
+): FullValidationRequirement => ({ state: 'full', reason, after, atOrAfter, pending });
 const textMarker = 'Edit classification: text';
 const fullMarker = 'Edit classification: full';
 
@@ -107,6 +109,8 @@ export async function readFullValidationRequirement(
 ): Promise<FullValidationRequirement> {
   let reading = 'PR timeline';
   let after: number | null = null;
+  let atOrAfter: number | null = null;
+  let removedAt: number | null = null;
   let fullReason: string | null = null;
   let pendingReason: string | null = null;
   const recordFull = (time: number, reason: string) => {
@@ -115,7 +119,7 @@ export async function readFullValidationRequirement(
       fullReason = reason;
     }
   };
-  const unknown = (reason: string) => full(reason, null, pendingReason !== null);
+  const unknown = (reason: string) => full(reason, null, pendingReason !== null, atOrAfter);
   try {
     if (
       state.identity.repository !== client.repository ||
@@ -129,9 +133,10 @@ export async function readFullValidationRequirement(
       return unknown('PR history has an invalid current time or creation bound.');
     // Actions retention can remove runs after one day. An older PR can no
     // longer prove complete edit history from surviving workflow runs alone.
-    if (currentTime - createdTime >= 24 * 60 * 60_000)
+    const historyFloor = currentTime - 24 * 60 * 60_000;
+    if (historyFloor >= createdTime)
       recordFull(
-        currentTime - 24 * 60 * 60_000,
+        historyFloor,
         'PR history exceeds the guaranteed 24-hour Actions retention window.',
       );
     const timeline = await client.list(`issues/${state.identity.number}/timeline`, '');
@@ -163,10 +168,22 @@ export async function readFullValidationRequirement(
         return unknown('PR label history is malformed.');
       if (entry.label.name === REVALIDATE_LABEL) {
         recordedLabel = true;
-        recordFull(
-          Date.parse(entry.created_at),
-          'The PR has a historical full-revalidation request, even if its label was removed.',
-        );
+        const time = Date.parse(entry.created_at);
+        if (entry.event === 'unlabeled') {
+          removedAt = Math.max(removedAt ?? time, time);
+        } else if (
+          positiveInteger(client.routerAppId) &&
+          object(entry.performed_via_github_app) &&
+          entry.performed_via_github_app.id === client.routerAppId
+        ) {
+          atOrAfter = Math.max(atOrAfter ?? time, time);
+          fullReason ??= 'The trusted router notified code validation of a full request.';
+        } else {
+          recordFull(
+            time,
+            'The PR has a full-revalidation label request from an unverified or manual actor.',
+          );
+        }
       }
     }
     const unresolvedLabel = state.labels.includes(REVALIDATE_LABEL) && !recordedLabel;
@@ -179,8 +196,10 @@ export async function readFullValidationRequirement(
       workflow.path !== '.github/workflows/pr-policy.yml'
     )
       return unknown('The PR-policy workflow identity is unavailable.');
+    const runsSince =
+      historyFloor > createdTime ? new Date(historyFloor).toISOString() : state.createdAt;
     const runs = await client.list(
-      `actions/workflows/${workflow.id}/runs?event=pull_request&created=${encodeURIComponent(`>=${state.createdAt}`)}`,
+      `actions/workflows/${workflow.id}/runs?event=pull_request&created=${encodeURIComponent(`>=${runsSince}`)}`,
       'workflow_runs',
     );
     if (!Array.isArray(runs)) return unknown('PR-policy run history is unavailable or incomplete.');
@@ -361,13 +380,21 @@ export async function readFullValidationRequirement(
     }
     if (unresolvedLabel)
       return unknown('The current full-revalidation label has no verified request timestamp.');
-    if (fullReason !== null) return full(fullReason, after, pendingReason !== null);
+    // Removal retains the full duty but does not replace a known request with
+    // a later timestamp. Use it only when complete history offers no request.
+    if (after === null && removedAt !== null)
+      recordFull(
+        removedAt,
+        'A removed full-revalidation label is the only available request boundary.',
+      );
+    if (fullReason !== null) return full(fullReason, after, pendingReason !== null, atOrAfter);
     return pendingReason
-      ? { state: 'pending', reason: pendingReason, after: null, pending: true }
+      ? { state: 'pending', reason: pendingReason, after: null, atOrAfter: null, pending: true }
       : {
           state: 'clear',
           reason: 'Complete PR history contains no full-validation obligation.',
           after: null,
+          atOrAfter: null,
           pending: false,
         };
   } catch {
@@ -432,6 +459,10 @@ export async function guardCurrentCode(
     if (Date.parse(run.created_at) <= requirement.after)
       throw new Error(
         'Full validation requires a new CI run created strictly after the latest request; rerunning an earlier run does not establish freshness.',
+      );
+    if (requirement.atOrAfter !== null && Date.parse(run.created_at) < requirement.atOrAfter)
+      throw new Error(
+        'Full validation requires a CI run created at or after the latest trusted router notification.',
       );
   }
   // Pending classification does not invalidate code results. The independent

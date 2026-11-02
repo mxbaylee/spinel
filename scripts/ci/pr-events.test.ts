@@ -492,6 +492,10 @@ test('router refuses a closed PR or a live non-main target before mutating label
 });
 
 test('GitHub client bounds pagination and credentials to the repository API without redirects', async () => {
+  assert.equal(new PrGitHub('owner/repo', 'private-token', fetch, '123').routerAppId, 123);
+  assert.equal(new PrGitHub('owner/repo', 'private-token', fetch, '').routerAppId, undefined);
+  for (const appId of ['0', '-1', '01', '1e3', 'unsafe', '9007199254740992'])
+    assert.throws(() => new PrGitHub('owner/repo', 'private-token', fetch, appId), /App ID/);
   const requests: { url: string; options?: RequestInit }[] = [];
   const client = new PrGitHub('owner/repo', 'private-token', async (url, options) => {
     requests.push({ url: String(url), options });

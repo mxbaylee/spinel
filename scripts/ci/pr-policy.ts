@@ -41,6 +41,7 @@ export async function validatePrPolicy(options: {
   let history = await readFullValidationRequirement(client, first, now);
   requiredFull ||= history.state === 'full';
   let fullAfter = history.state === 'full' ? history.after : null;
+  let fullAtOrAfter = history.state === 'full' ? history.atOrAfter : null;
   let fullReason = history.reason;
   const observeHistory = (next: FullValidationRequirement) => {
     history = next;
@@ -48,6 +49,7 @@ export async function validatePrPolicy(options: {
       requiredFull = true;
       fullReason = next.reason;
       if (next.after !== null) fullAfter = Math.max(fullAfter ?? 0, next.after);
+      if (next.atOrAfter !== null) fullAtOrAfter = Math.max(fullAtOrAfter ?? 0, next.atOrAfter);
     }
   };
   const unsettledHistory = () =>
@@ -96,6 +98,7 @@ export async function validatePrPolicy(options: {
         workflowId: workflow.id as number,
         requiredFull,
         fullAfter,
+        fullAtOrAfter,
       });
       if (selected.status === 'invalid') throw new Error(selected.reason);
       reason = selected.status === 'pending' ? selected.reason : '';
@@ -123,6 +126,7 @@ export async function validatePrPolicy(options: {
               workflowId: workflow.id as number,
               requiredFull,
               fullAfter,
+              fullAtOrAfter,
             });
             if (fresh.status === 'invalid') throw new Error(fresh.reason);
             admitted = admitCodeChecks(run, jobs, checks, requiredFull);
@@ -144,6 +148,10 @@ export async function validatePrPolicy(options: {
               fullReason: requiredFull ? fullReason : null,
               fullAfter:
                 requiredFull && fullAfter !== null ? new Date(fullAfter).toISOString() : null,
+              fullAtOrAfter:
+                requiredFull && fullAtOrAfter !== null
+                  ? new Date(fullAtOrAfter).toISOString()
+                  : null,
             };
           reason = unsettledHistory()
             ? history.reason

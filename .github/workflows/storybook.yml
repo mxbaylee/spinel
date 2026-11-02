@@ -31,6 +31,9 @@ permissions:
   actions: read
   pull-requests: read
 
+env:
+  SPINEL_CI_ROUTER_APP_ID: ${{ vars.SPINEL_CI_ROUTER_APP_ID }}
+
 concurrency:
   group: storybook-${{ github.event.pull_request.number || github.ref }}
   # A half-finished Pages deploy is worse than a late one.

@@ -18,6 +18,9 @@ permissions:
   actions: read
   pull-requests: read
 
+env:
+  SPINEL_CI_ROUTER_APP_ID: ${{ vars.SPINEL_CI_ROUTER_APP_ID }}
+
 concurrency:
   # Text edits belong only to pr-policy.yml and cannot touch this group.
   # Every actual code event supersedes older source/base/label plans. Otherwise

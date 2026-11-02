@@ -72,12 +72,15 @@ function fixture(
     jobs?: unknown[];
     jobsByRun?: Record<number, unknown[]>;
     codeRun?: unknown;
+    routerAppId?: number;
+    runsSince?: string;
     failAt?: string;
   } = {},
 ) {
   const calls: string[] = [];
   const client: PrReader = {
     repository,
+    routerAppId: options.routerAppId,
     async get(path) {
       calls.push(path);
       if (options.failAt === path) throw new Error('Unavailable capability.');
@@ -97,7 +100,7 @@ function fixture(
         assert.equal(key, 'workflow_runs');
         assert.equal(
           path,
-          `actions/workflows/42/runs?event=pull_request&created=${encodeURIComponent(`>=${createdAt}`)}`,
+          `actions/workflows/42/runs?event=pull_request&created=${encodeURIComponent(`>=${options.runsSince ?? createdAt}`)}`,
         );
         return options.runs ?? [];
       }
@@ -580,7 +583,8 @@ test('history input with invalid creation bounds cannot claim a clear requiremen
 });
 
 test('expired Actions retention cannot turn empty surviving history into a clear requirement', async () => {
-  const { client, calls } = fixture();
+  const options = { runsSince: createdAt };
+  const { client, calls } = fixture(options);
   const state = await currentPullRequest(client, 129);
   const deadline = Date.parse(createdAt) + 24 * 60 * 60_000;
   assert.equal(
@@ -589,10 +593,17 @@ test('expired Actions retention cannot turn empty surviving history into a clear
   );
   const callsBeforeExpiration = calls.length;
   for (const currentTime of [deadline, deadline + 1, deadline + 7 * 24 * 60 * 60_000]) {
+    options.runsSince =
+      currentTime === deadline ? createdAt : new Date(currentTime - 24 * 60 * 60_000).toISOString();
     const result = await readFullValidationRequirement(client, state, () => currentTime);
     assert.equal(result.state, 'full');
     assert.match(result.reason, /retention/);
     assert.equal(result.after, currentTime - 24 * 60 * 60_000);
+    assert.ok(
+      calls.includes(
+        `actions/workflows/42/runs?event=pull_request&created=${encodeURIComponent(`>=${options.runsSince}`)}`,
+      ),
+    );
   }
   assert.ok(calls.length > callsBeforeExpiration);
 });
@@ -823,6 +834,7 @@ test('every later full request advances the barrier across timeline and policy r
 test('expired retention still scans later full requests and preserves an additional pending classifier', async () => {
   const recentRequest = '2026-11-02T12:00:20Z';
   const { client } = fixture({
+    runsSince: '2026-11-02T12:00:00.000Z',
     runs: [
       policyRun({ created_at: recentRequest }),
       policyRun({
@@ -882,4 +894,162 @@ test('known creation times bound legacy or failed classification conservatively 
       /Unable to establish full-validation freshness/,
     );
   }
+});
+
+test('trusted router notifications allow equal creation time only after a separately established request', async () => {
+  const routerAppId = 123;
+  const timeline = [
+    { id: 1, event: 'base_ref_changed', created_at: '2026-11-01T12:00:10Z' },
+    {
+      id: 2,
+      event: 'labeled',
+      label: { name: 'ci-revalidate' },
+      created_at: '2026-11-01T12:00:20Z',
+      performed_via_github_app: { id: routerAppId },
+    },
+    {
+      id: 3,
+      event: 'unlabeled',
+      label: { name: 'ci-revalidate' },
+      created_at: '2026-11-01T12:00:40Z',
+    },
+    {
+      id: 4,
+      event: 'labeled',
+      label: { name: 'ci-revalidate' },
+      created_at: '2026-11-01T12:00:40Z',
+      performed_via_github_app: { id: routerAppId },
+    },
+  ];
+  for (const entries of [timeline, [...timeline].reverse()]) {
+    const result = await guard(
+      fixture({
+        routerAppId,
+        timeline: entries,
+        codeRun: ciRun({ created_at: '2026-11-01T12:00:40Z' }),
+      }).client,
+      codePlan(true),
+    );
+    assert.equal(result.after, Date.parse('2026-11-01T12:00:10Z'));
+    assert.equal(result.atOrAfter, Date.parse('2026-11-01T12:00:40Z'));
+  }
+  await assert.rejects(
+    guard(
+      fixture({ routerAppId, timeline, codeRun: ciRun({ created_at: '2026-11-01T12:00:39Z' }) })
+        .client,
+      codePlan(true),
+    ),
+    /at or after the latest trusted router notification/,
+  );
+  const notificationOnly = fixture({
+    routerAppId,
+    timeline: [timeline[1]],
+    codeRun: ciRun({ created_at: '2026-11-01T12:00:20Z' }),
+  });
+  await assert.rejects(
+    guard(notificationOnly.client, codePlan(true)),
+    /Unable to establish full-validation freshness/,
+  );
+});
+
+test('manual, missing and foreign App label evidence keeps strict same-second freshness', async () => {
+  for (const evidence of [
+    { routerAppId: 123, performed_via_github_app: undefined },
+    { routerAppId: 123, performed_via_github_app: null },
+    { routerAppId: 123, performed_via_github_app: { id: 999 } },
+    { routerAppId: 123, performed_via_github_app: { id: '123' } },
+    { routerAppId: undefined, performed_via_github_app: { id: 123 } },
+  ]) {
+    const history = {
+      routerAppId: evidence.routerAppId,
+      timeline: [
+        { id: 1, event: 'base_ref_changed', created_at: '2026-11-01T12:00:10Z' },
+        {
+          id: 2,
+          event: 'labeled',
+          label: { name: 'ci-revalidate' },
+          created_at: '2026-11-01T12:00:20Z',
+          performed_via_github_app: evidence.performed_via_github_app,
+        },
+      ],
+    };
+    const result = await requirement(history);
+    assert.equal(result.after, Date.parse('2026-11-01T12:00:20Z'));
+    assert.equal(result.atOrAfter, null);
+    await assert.rejects(
+      guard(
+        fixture({ ...history, codeRun: ciRun({ created_at: '2026-11-01T12:00:20Z' }) }).client,
+        codePlan(true),
+      ),
+      /new CI run created strictly after/,
+    );
+  }
+});
+
+test('a trusted notification never relaxes an actual edit at the same time or a later strict request', async () => {
+  for (const requestedAt of ['2026-11-01T12:00:20Z', '2026-11-01T12:00:30Z']) {
+    const history = {
+      routerAppId: 123,
+      timeline: [
+        { id: 1, event: 'base_ref_changed', created_at: '2026-11-01T12:00:10Z' },
+        {
+          id: 2,
+          event: 'labeled',
+          label: { name: 'ci-revalidate' },
+          created_at: '2026-11-01T12:00:20Z',
+          performed_via_github_app: { id: 123 },
+        },
+      ],
+      runs: [policyRun({ created_at: requestedAt })],
+      jobs: [
+        classifier({
+          steps: [
+            { name: 'Edit classification: full', status: 'completed', conclusion: 'success' },
+          ],
+        }),
+      ],
+    };
+    const result = await requirement(history);
+    assert.equal(result.after, Date.parse(requestedAt));
+    assert.equal(result.atOrAfter, Date.parse('2026-11-01T12:00:20Z'));
+    await assert.rejects(
+      guard(
+        fixture({ ...history, codeRun: ciRun({ created_at: requestedAt }) }).client,
+        codePlan(true),
+      ),
+      /new CI run created strictly after/,
+    );
+  }
+});
+
+test('reserved-label removal retains the original duty and uses its own time only without another request boundary', async () => {
+  const removal = {
+    id: 2,
+    event: 'unlabeled',
+    label: { name: 'ci-revalidate' },
+    created_at: '2026-11-01T12:00:30Z',
+  };
+  const manual = {
+    id: 1,
+    event: 'labeled',
+    label: { name: 'ci-revalidate' },
+    created_at: '2026-11-01T12:00:10Z',
+  };
+  const retained = await guard(
+    fixture({ timeline: [manual, removal], codeRun: ciRun({ created_at: '2026-11-01T12:00:30Z' }) })
+      .client,
+    codePlan(true),
+  );
+  assert.equal(retained.after, Date.parse('2026-11-01T12:00:10Z'));
+  const fallback = await requirement({ timeline: [removal] });
+  assert.equal(fallback.state, 'full');
+  assert.equal(fallback.after, Date.parse(removal.created_at));
+  assert.equal(fallback.atOrAfter, null);
+  await assert.rejects(
+    guard(
+      fixture({ timeline: [removal], codeRun: ciRun({ created_at: removal.created_at }) }).client,
+      codePlan(true),
+    ),
+    /new CI run created strictly after/,
+  );
 });

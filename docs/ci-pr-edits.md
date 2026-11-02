@@ -75,12 +75,28 @@ Do not manually delete policy runs for an open PR. If cleanup is necessary,
 first apply `ci-revalidate` so the durable PR timeline retains that requirement.
 See GitHub's [retention policy](https://docs.github.com/en/organizations/managing-organization-settings/configuring-the-retention-period-for-github-actions-artifacts-and-logs-in-your-organization).
 
-Policy reads the requirement before admission and again before success. Once it
+Policy reads the requirement before admission and again before success. Policy-run
+history starts at the later of PR creation and the 24-hour horizon, so an old PR
+does not repeatedly scan weeks of other PRs' runs. Pagination still fails visibly
+if the complete bounded interval cannot be read.
+
+Once policy
 observes a full requirement, it retains it for that invocation. It also retains
 the latest request timestamp across base changes, reserved-label events, and
 ambiguous classifications. A full CI run must have been **created after** that
 request; an old full pass or a later retry of an old run is insufficient. Requests
-in the same timestamp second are treated conservatively as unresolved freshness.
+in the same timestamp second remain conservatively blocked.
+
+The routing label is a notification of that request. A label addition attributed
+by GitHub's timeline to the configured router App may share a timestamp second
+with its genuine CI run, provided the independent strict request boundary is
+also satisfied. The nonsecret App ID is supplied consistently to CI, policy, and
+Storybook. Manual, unidentified, and foreign-App label additions retain strict
+freshness; label removal retains the previous request rather than moving it.
+Missing App attribution cannot grant equality. Verify the actual timeline App
+identity in hosted setup. After fixing credentials, replaying the trusted router
+can create fresh eligible CI without an unrelated source change.
+
 During code waits, pending or unreadable history is retried; code admission is
 polled separately. A later valid title cannot erase or move back a prior boundary.
 If history is incomplete, policy waits and code guards fail visibly rather than
@@ -143,6 +159,7 @@ following actual protected-PR transitions have been demonstrated:
 | Pending or failed code → text edit | Original code remains pending or failed; no copied or substituted results. |
 | Rapid exact text edits | Each edit's classification survives policy supersession; no code run is requested. |
 | Prior full pass → ambiguous edit with missing router | The prior pass and any partial retry stay inadmissible; a genuinely new full run is required. |
+| Router notification and CI share a timestamp second | Trusted App attribution and an earlier strict request admit the genuine run; manual or ambiguous-request equality stays blocked. |
 | Invalid title → corrected title | Policy fails and recovers independently of code. |
 | Base or ambiguous edit | The router creates an eligible PR event and full validation of the exact new source/base. |
 | Failed new-base code → text edit | New-base failure stays blocking; old-base success is not selected. |

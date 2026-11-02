@@ -12,6 +12,9 @@ permissions:
   actions: read
   checks: read
 
+env:
+  SPINEL_CI_ROUTER_APP_ID: ${{ vars.SPINEL_CI_ROUTER_APP_ID }}
+
 jobs:
   classify:
     # Do not cancel this cheap payload record when another text edit arrives.
