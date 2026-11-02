@@ -15,6 +15,15 @@ const preferred =
   'http://azure.archive.ubuntu.com/ubuntu/\tpriority:2\n' +
   'https://archive.ubuntu.com/ubuntu/\tpriority:1\n' +
   'https://security.ubuntu.com/ubuntu/\tpriority:3\n';
+// Exact rejected input from run 41470825163, job 125363957600.
+const ec2Original =
+  'http://us-east-2.ec2.archive.ubuntu.com/ubuntu/\tpriority:1\n' +
+  'https://archive.ubuntu.com/ubuntu/\tpriority:2\n' +
+  'https://security.ubuntu.com/ubuntu/\tpriority:3\n';
+const ec2Preferred =
+  'http://us-east-2.ec2.archive.ubuntu.com/ubuntu/\tpriority:2\n' +
+  'https://archive.ubuntu.com/ubuntu/\tpriority:1\n' +
+  'https://security.ubuntu.com/ubuntu/\tpriority:3\n';
 const entrypoint = readFileSync(new URL('./prefer-ubuntu-archive.ts', import.meta.url), 'utf8');
 const imports = [
   "import { execFileSync } from 'node:child_process';",
@@ -79,6 +88,26 @@ test('an already preferred pair performs no write', () => {
   assert.match(result.logs.at(-1)!, /already has priority 1/);
 });
 
+test('the observed EC2 pair changes only its preference and retains exact input evidence', () => {
+  assert.equal(Buffer.byteLength(ec2Original), 152);
+  assert.equal(
+    createHash('sha256').update(ec2Original).digest('hex'),
+    'af9816b59bc904eaf28838ae673ac2b625b6628bebfc67a7cbeae78ba06e226a',
+  );
+  const result = inspect(ec2Original);
+  assert.equal(result.error, undefined);
+  assert.deepEqual(result.writes, [
+    { command: 'sudo', args: ['-n', 'tee', '--', '/etc/apt/apt-mirrors.txt'], input: ec2Preferred },
+  ]);
+  assert.deepEqual(
+    JSON.parse(result.logs[0]).lines.map((line: { text: string }) => line.text),
+    ec2Original.split('\n'),
+  );
+  const unchanged = inspect(ec2Preferred);
+  assert.equal(unchanged.error, undefined);
+  assert.deepEqual(unchanged.writes, []);
+});
+
 test('line endings, spacing and unrelated entries survive unchanged', () => {
   const prefix = '# Maintained by the runner image\r\n\r\n';
   const suffix = 'https://other.example/ubuntu/\tpriority:4\r\n';
@@ -99,10 +128,27 @@ for (const [name, input] of [
   ['equal priorities', original.replace('priority:2', 'priority:1')],
   ['unsupported priority', original.replace('priority:2', 'priority:4')],
   ['malformed metadata', original.replace('priority:2', 'priority:2 private-token')],
+  ['duplicate EC2', ec2Original + 'http://us-east-2.ec2.archive.ubuntu.com/ubuntu/\tpriority:2\n'],
+  [
+    'EC2 missing archive',
+    ec2Original.replace('https://archive.ubuntu.com/ubuntu/\tpriority:2\n', ''),
+  ],
+  ['EC2 equal priorities', ec2Original.replace('priority:2', 'priority:1')],
+  ['EC2 unsupported priority', ec2Original.replace('priority:1', 'priority:4')],
+  ['EC2 malformed metadata', ec2Original.replace('priority:1', 'priority:1 private-token')],
+  ['both known fallbacks', ec2Original + 'http://azure.archive.ubuntu.com/ubuntu/\tpriority:2\n'],
+  [
+    'both fallbacks without archive',
+    ec2Original.replace(
+      'https://archive.ubuntu.com/ubuntu/',
+      'http://azure.archive.ubuntu.com/ubuntu/',
+    ),
+  ],
+  ['unknown replacement fallback', ec2Original.replace('us-east-2.ec2', 'unobserved.ec2')],
 ] as const) {
   test(`${name} fails before any write and retains safe original-input evidence`, () => {
     const result = inspect(input);
-    assert.match(String(result.error), /Unexpected .*expected one Azure\/archive pair/);
+    assert.match(String(result.error), /Unexpected .*expected one supported hosted\/archive pair/);
     assert.deepEqual(result.writes, []);
     const evidence = JSON.parse(result.logs[0]);
     assert.equal(evidence.sha256, ubuntuMirrorEvidence(input).sha256);
