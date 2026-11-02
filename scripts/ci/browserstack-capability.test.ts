@@ -6,9 +6,9 @@ import { createContext, runInContext } from 'node:vm';
 import { readAdmissionPolicy, type ReservationIdentity } from './browserstack-admission.ts';
 import {
   capabilityOutcome,
-  installConfirmationLabels,
   installMenuLabel,
   launchedWindow,
+  matchingNativeConfirmation,
   matchingNativeControl,
   nativeControls,
   observeBrowserTask,
@@ -180,26 +180,115 @@ test('the observed Chrome universal-install label is selected from native XML wi
     null,
   );
   assert.equal(
-    matchingNativeControl(
-      nativeControls('<Button text="Create shortcut"/><Button text="Install"/>'),
-      installConfirmationLabels,
+    matchingNativeConfirmation(
+      nativeControls(
+        '<android.widget.Button text="Create shortcut"/><android.widget.Button text="Install"/>',
+      ),
     )?.label,
     'Install',
   );
   assert.equal(
-    matchingNativeControl(
-      nativeControls('<Button text="Install" enabled="false"/><Button text="Create shortcut"/>'),
-      installConfirmationLabels,
+    matchingNativeConfirmation(
+      nativeControls(
+        '<android.widget.Button text="Install" enabled="false"/><android.widget.Button text="Create shortcut"/>',
+      ),
     )?.label,
     'Create shortcut',
   );
   assert.equal(
-    matchingNativeControl(
-      nativeControls('<Button text="Cancel"/><Button text="Add"/>'),
-      installConfirmationLabels,
+    matchingNativeConfirmation(
+      nativeControls('<android.widget.Button text="Cancel"/><android.widget.Button text="Add"/>'),
     )?.label,
     'Add',
   );
+});
+
+const chromeConfirmationXML = `<hierarchy>
+  <android.widget.TextView class="android.widget.TextView" text="Create shortcut" resource-id="com.android.chrome:id/title" clickable="false" enabled="true"/>
+  <android.widget.ImageView content-desc="Spinel" resource-id="com.android.chrome:id/icon"/>
+  <android.widget.EditText text="Spinel" resource-id="com.android.chrome:id/shortcut_name"/>
+  <android.widget.Button class="android.widget.Button" text="Cancel" resource-id="com.android.chrome:id/negative_button" clickable="true" enabled="true"/>
+  <android.widget.Button class="android.widget.Button" text="Add" resource-id="com.android.chrome:id/positive_button" clickable="true" enabled="true"/>
+</hierarchy>`;
+
+test('Chrome confirmation selects the observed Add button rather than the Create shortcut title or name field', () => {
+  const selected = matchingNativeConfirmation(nativeControls(chromeConfirmationXML));
+  assert.equal(selected?.label, 'Add');
+  assert.equal(selected?.control.type, 'android.widget.Button');
+  assert.equal(selected?.attribute, 'text');
+  assert.equal(
+    selected?.control.attributes['resource-id'],
+    'com.android.chrome:id/positive_button',
+  );
+  assert.ok(selected?.selector.includes("name()='android.widget.Button'"));
+  assert.ok(selected?.selector.includes("@resource-id='com.android.chrome:id/positive_button'"));
+  assert.ok(selected?.selector.includes("@class='android.widget.Button'"));
+  assert.ok(selected?.selector.includes("@clickable='true'"));
+  assert.equal(
+    matchingNativeControl(
+      nativeControls(
+        '<android.widget.TextView text="Install and create shortcut" resource-id="com.android.chrome:id/menu_item_text"/>',
+      ),
+      installMenuLabel,
+    )?.control.type,
+    'android.widget.TextView',
+  );
+});
+
+test('Safari confirmation selects AddToHomeScreenAddButton rather than the sheet navigation bar or static heading', () => {
+  const selected = matchingNativeConfirmation(
+    nativeControls(`<XCUIElementTypeOther name="AddToHomeScreenView">
+    <XCUIElementTypeNavigationBar name="Add to Home Screen"/>
+    <XCUIElementTypeStaticText label="Add to Home Screen" name="Add to Home Screen"/>
+    <XCUIElementTypeButton label="Cancel" name="AddToHomeScreenCancelButton" enabled="true" visible="true"/>
+    <XCUIElementTypeTextField label="Spinel" name="Add"/>
+    <XCUIElementTypeButton label="Add" name="AddToHomeScreenAddButton" enabled="true" visible="true"/>
+  </XCUIElementTypeOther>`),
+  );
+  assert.equal(selected?.label, 'Add');
+  assert.equal(selected?.attribute, 'label');
+  assert.equal(selected?.control.type, 'XCUIElementTypeButton');
+  assert.equal(selected?.control.attributes.name, 'AddToHomeScreenAddButton');
+  assert.ok(selected?.selector.includes("name()='XCUIElementTypeButton'"));
+  assert.ok(selected?.selector.includes("@label='Add'"));
+  assert.ok(selected?.selector.includes("@name='AddToHomeScreenAddButton'"));
+  assert.equal(
+    matchingNativeControl(
+      nativeControls('<XCUIElementTypeCell label="Add to Home Screen"/>'),
+      installMenuLabel,
+    )?.control.type,
+    'XCUIElementTypeCell',
+  );
+});
+
+test('confirmation matching refuses headings, images, entry fields and name-only matches without actionable labels', () => {
+  const rejected = [
+    '<android.widget.TextView text="Create shortcut" clickable="true"/>',
+    '<android.widget.ImageView content-desc="Add" clickable="true"/>',
+    '<android.widget.EditText text="Add" clickable="true"/>',
+    '<android.view.ViewGroup content-desc="Add"/>',
+    '<android.widget.Button text="Add" clickable="false"/>',
+    '<android.widget.Button text="Add" heading="true"/>',
+    '<android.widget.Button text="Cancel" resource-id="Add"/>',
+    '<XCUIElementTypeNavigationBar label="Add to Home Screen" clickable="true"/>',
+    '<XCUIElementTypeStaticText label="Add" clickable="true"/>',
+    '<XCUIElementTypeImage label="Install" clickable="true"/>',
+    '<XCUIElementTypeTextField label="Add" clickable="true"/>',
+    '<XCUIElementTypeCell label="Add to Home Screen"/>',
+    '<XCUIElementTypeButton label="Cancel" name="Add"/>',
+    '<XCUIElementTypeButton label="Add" enabled="false"/>',
+    '<XCUIElementTypeButton label="Add" visible="false"/>',
+  ];
+  for (const source of rejected)
+    assert.equal(matchingNativeConfirmation(nativeControls(source)), null, source);
+  const clickable = matchingNativeConfirmation(
+    nativeControls(
+      '<node class="android.view.ViewGroup" content-desc="Add" clickable="true" enabled="true"/>',
+    ),
+  );
+  assert.equal(clickable?.label, 'Add');
+  assert.ok(clickable?.selector.includes("@class='android.view.ViewGroup'"));
+  assert.ok(clickable?.selector.includes("@clickable='true'"));
 });
 
 test('Safari reaches Share only through a visible native direct control or observed page-menu control', async () => {
@@ -612,6 +701,146 @@ test('native taps keep the selected XML identity and refuse stale or ambiguous d
     assert.equal(result.cleanup.session, 'deleted');
   }
 });
+test('confirmation readiness observes the final transition without a third click or replay', async (context) => {
+  let clock = Date.now();
+  context.mock.method(Date, 'now', () => clock);
+  for (const transition of [
+    'first-disappeared',
+    'first-unchanged',
+    'final-disappeared',
+    'final-changed',
+    'final-unchanged',
+  ]) {
+    const secondAction = transition.startsWith('final-');
+    const timeout = transition.endsWith('-unchanged');
+    const clicked: string[] = [];
+    let lookups = 0,
+      afterFirstReads = 0,
+      afterFinalReads = 0,
+      homeRequests = 0,
+      authRequests = 0;
+    let finalTransitionObserved = false;
+    const began = clock;
+    const origin = 'https://bs-local.com:8176';
+    const testFixture = fixture(() => {});
+    const secondConfirmation =
+      '<android.widget.Button text="Add automatically" resource-id="launcher:id/add_button" clickable="true"/>';
+    const client = clientFor('fixture-user', 'fixture-key', async (url, init) => {
+      const path = String(url).split('/wd/hub/')[1] ?? String(url).split('/automate/')[1];
+      let value: unknown = null;
+      if (path === 'session') value = { sessionId, capabilities: { browserName: 'chrome' } };
+      else if (path.endsWith('/execute/sync'))
+        value = {
+          origin,
+          secureContext: true,
+          serviceWorkerAvailable: true,
+          controller: `${origin}/service-worker.js`,
+          anonymousReady: true,
+          standalone: false,
+          navigatorStandalone: false,
+          userAgent: 'Mozilla/5.0 (Linux; Android 17) AppleWebKit/537.36 Chrome/152.0 Mobile',
+        };
+      else if (path.endsWith('/execute/async')) {
+        if (JSON.parse(String(init?.body)).args[0] === testFixture.loginURL) {
+          authRequests++;
+          // A deliberate identity mismatch ends the positive native-transition
+          // cases at the next real guard, after a successful Home/icon path.
+          value = { ok: true, value: { actor: 'another-actor' } };
+        } else
+          value = {
+            ok: true,
+            value: {
+              scope: `${origin}/`,
+              active: `${origin}/service-worker.js`,
+              state: 'activated',
+            },
+          };
+      } else if (path.endsWith('/window/handles')) value = ['original'];
+      else if (path.endsWith('/contexts')) value = ['NATIVE_APP', 'WEBVIEW_chrome'];
+      else if (path.endsWith('/appium/device/current_package')) value = 'com.android.chrome';
+      else if (path.endsWith('/source')) {
+        if (homeRequests)
+          value = '<android.widget.TextView text="Spinel" resource-id="launcher:id/spinel_icon"/>';
+        else if (clicked.length === 0)
+          value =
+            '<android.widget.ImageButton content-desc="More options" resource-id="com.android.chrome:id/menu_button"/>';
+        else if (clicked.length === 1)
+          value =
+            '<android.widget.TextView text="Install and create shortcut" resource-id="com.android.chrome:id/menu_item_text"/>';
+        else {
+          value = chromeConfirmationXML;
+          if (clicked.length === 3) {
+            afterFirstReads++;
+            if (transition === 'first-unchanged' && afterFirstReads === 2) clock += 15_000;
+            else if (transition !== 'first-unchanged' && afterFirstReads >= 3) {
+              value = secondAction ? secondConfirmation : '<hierarchy/>';
+              if (!secondAction) finalTransitionObserved = true;
+            }
+          } else if (clicked.length === 4 && secondAction) {
+            afterFinalReads++;
+            value = secondConfirmation;
+            if (transition === 'final-unchanged' && afterFinalReads === 2) clock += 15_000;
+            else if (transition !== 'final-unchanged' && afterFinalReads >= 3) {
+              value =
+                transition === 'final-changed'
+                  ? '<android.widget.Button text="Add" resource-id="launcher:id/third_action" clickable="true"/>'
+                  : '<hierarchy/>';
+              finalTransitionObserved = true;
+            }
+          }
+        }
+      } else if (path.endsWith('/elements')) {
+        lookups++;
+        const selector = String(JSON.parse(String(init?.body)).value);
+        if (lookups === 3) {
+          assert.ok(selector.includes("name()='android.widget.Button'"));
+          assert.ok(selector.includes("@resource-id='com.android.chrome:id/positive_button'"));
+          assert.doesNotMatch(selector, /TextView|shortcut_name|\/title/);
+        }
+        if (lookups === 4 && secondAction)
+          assert.ok(selector.includes("@resource-id='launcher:id/add_button'"));
+        assert.ok(!selector.includes("@resource-id='launcher:id/third_action'"));
+        value = [{ 'element-6066-11e4-a52e-4f735466cecf': `native-${lookups}` }];
+      } else if (path.endsWith('/click')) clicked.push(path);
+      else if (path.endsWith('/appium/device/press_keycode')) {
+        homeRequests++;
+        assert.equal(
+          finalTransitionObserved,
+          true,
+          'Home must wait for the last clicked confirmation to transition',
+        );
+      } else if (path.endsWith('/screenshot')) value = 'aGVsbG8=';
+      return Response.json({ value });
+    });
+    const result = await runCapability(client, target, testFixture, {
+      localIdentifier: 'local-id',
+      buildName: 'test',
+      journal: async () => {},
+      screenshot: async (name) => name,
+    });
+    const expectedClicks = 3 + Number(secondAction) + Number(!timeout);
+    assert.equal(lookups, expectedClicks);
+    assert.equal(clicked.length, expectedClicks);
+    assert.equal(result.nativeActions.filter((action) => action.label === 'Add').length, 1);
+    assert.equal(
+      result.nativeActions.filter((action) => action.label === 'Add automatically').length,
+      secondAction ? 1 : 0,
+    );
+    assert.equal(homeRequests, timeout ? 0 : 1);
+    assert.equal(authRequests, timeout ? 0 : 1);
+    assert.equal(afterFirstReads, transition === 'first-unchanged' ? 2 : secondAction ? 3 : 4);
+    assert.equal(afterFinalReads, !secondAction ? 0 : timeout ? 2 : 3);
+    assert.equal(result.stage, timeout ? 'native-install' : 'installed-authentication');
+    assert.equal(
+      result.failure,
+      timeout
+        ? 'capability-native-confirmation-unchanged'
+        : 'capability-installed-authentication-failed',
+    );
+    assert.equal(clock - began, timeout ? 15_000 : 0);
+    assert.equal(result.cleanup.session, 'deleted');
+  }
+});
 test('known allocations journal their ID before failure and restore then delete within bounded cleanup', async () => {
   for (const deletionFails of [false, true]) {
     const events: string[] = [],
@@ -636,7 +865,9 @@ test('known allocations journal their ID before failure and restore then delete 
       }
       if (init?.method === 'DELETE' && deletionFails)
         return new Response('private provider error', { status: 500 });
-      return Response.json({ value: path.endsWith('/screenshot') ? 'aGVsbG8=' : null });
+      if (path.endsWith('/screenshot'))
+        return new Response('private screenshot error', { status: 408 });
+      return Response.json({ value: null });
     });
     const result = await runCapability(
       client,
@@ -655,6 +886,16 @@ test('known allocations journal their ID before failure and restore then delete 
     assert.equal(result.stage, 'anonymous-https');
     assert.equal(result.command, 'POST session/{sessionId}/url');
     assert.equal(result.failure, 'http-500');
+    assert.deepEqual(
+      result.observations.find(
+        (observation) =>
+          (observation.value as { screenshot?: string })?.screenshot === 'unavailable',
+      ),
+      {
+        stage: 'anonymous-https',
+        value: { screenshot: 'unavailable', failure: 'http-408' },
+      },
+    );
     assert.equal(result.cleanup.network, 'restored-4g-lte-good');
     assert.equal(result.cleanup.session, deletionFails ? 'delete-failed' : 'deleted');
     assert.equal(result.cleanup.fixture, 'closed');
@@ -666,7 +907,7 @@ test('known allocations journal their ID before failure and restore then delete 
     ]);
     assert.doesNotMatch(
       JSON.stringify(result),
-      /fixture-key|private-bootstrap|private provider error/,
+      /fixture-key|private-bootstrap|private provider error|private screenshot error/,
     );
   }
 });

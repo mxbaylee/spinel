@@ -297,12 +297,14 @@ export const installConfirmationLabels = [
   /^Create shortcut$/i,
   /^(?:Add|Add to Home screen|Add automatically)$/i,
 ];
-export function matchingNativeControl(controls: NativeControl[], patterns: RegExp | RegExp[]) {
+export function matchingNativeControl(
+  controls: NativeControl[],
+  patterns: RegExp | RegExp[],
+  labelAttributes = ['content-desc', 'label', 'name', 'text', 'resource-id'],
+) {
   for (const pattern of Array.isArray(patterns) ? patterns : [patterns]) {
     for (const control of controls) {
-      const attribute = ['content-desc', 'label', 'name', 'text', 'resource-id'].find((key) =>
-        pattern.test(control.attributes[key] ?? ''),
-      );
+      const attribute = labelAttributes.find((key) => pattern.test(control.attributes[key] ?? ''));
       if (attribute) {
         const label = control.attributes[attribute];
         const predicates = [
@@ -318,6 +320,46 @@ export function matchingNativeControl(controls: NativeControl[], patterns: RegEx
     }
   }
   return null;
+}
+/** Menu titles and sheet headings are not confirmation actions. */
+export function matchingNativeConfirmation(controls: NativeControl[]) {
+  const actionable = controls.filter((control) => {
+    const attributes = control.attributes;
+    if (
+      ['enabled', 'visible', 'displayed', 'clickable'].some((key) => attributes[key] === 'false') ||
+      attributes.heading === 'true' ||
+      attributes.role === 'heading'
+    )
+      return false;
+    const role = control.type === 'node' ? attributes.class : control.type;
+    if (role === 'android.widget.Button' || role === 'XCUIElementTypeButton') return true;
+    return (
+      attributes.clickable === 'true' &&
+      [
+        'android.view.View',
+        'android.view.ViewGroup',
+        'android.widget.LinearLayout',
+        'android.widget.FrameLayout',
+        'android.widget.RelativeLayout',
+      ].includes(role)
+    );
+  });
+  const match = matchingNativeControl(actionable, installConfirmationLabels, [
+    'content-desc',
+    'label',
+    'text',
+  ]);
+  if (match) {
+    const identity = [];
+    if (match.control.attributes.clickable === 'true') identity.push("@clickable='true'");
+    // An observed native identifier narrows the selected button; it does not
+    // substitute for its visible action label or actionable role.
+    if (match.control.attributes.name)
+      identity.push(`@name=${xpathLiteral(match.control.attributes.name)}`);
+    if (identity.length)
+      match.selector = `${match.selector.slice(0, -1)} and ${identity.join(' and ')}]`;
+  }
+  return match;
 }
 export async function openNativeShare(
   tap: (pattern: RegExp, required?: boolean) => Promise<boolean>,
@@ -596,8 +638,11 @@ export async function runCapability(
         'screenshot-invalid',
       );
       result.screenshots.push(await options.screenshot(`${target.browser}-${name}`, data));
-    } catch {
-      result.observations.push({ stage: result.stage, value: { screenshot: 'unavailable' } });
+    } catch (error) {
+      result.observations.push({
+        stage: result.stage,
+        value: { screenshot: 'unavailable', failure: failure(error) },
+      });
     }
   }
   async function context(name: string) {
@@ -622,11 +667,36 @@ export async function runCapability(
     });
     return { parsed, sourceSha256: hash(String(source)) };
   }
-  async function tap(pattern: RegExp | RegExp[], required = true): Promise<boolean> {
-    const source = await controls();
-    const match = matchingNativeControl(source.parsed, pattern);
+  const confirmationSelectors = new Set<string>();
+  const observeConfirmationTransition = () =>
+    poll(
+      async () => {
+        const observed = await controls();
+        return { source: observed, match: matchingNativeConfirmation(observed.parsed) };
+      },
+      (observed) => !observed.match || !confirmationSelectors.has(observed.match.selector),
+      'native-confirmation-unchanged',
+    );
+  async function tap(
+    pattern: RegExp | RegExp[],
+    required = true,
+    confirmation = false,
+  ): Promise<boolean> {
+    let source = await controls();
+    let match = confirmation
+      ? matchingNativeConfirmation(source.parsed)
+      : matchingNativeControl(source.parsed, pattern);
+    if (confirmation && match && confirmationSelectors.has(match.selector)) {
+      const transitioned = await observeConfirmationTransition();
+      source = transitioned.source;
+      match = transitioned.match;
+    }
     if (match) {
       const { control, label, selector } = match;
+      if (confirmation) {
+        requireCondition(!confirmationSelectors.has(selector), 'native-confirmation-unchanged');
+        confirmationSelectors.add(selector);
+      }
       const elements = await command(session('elements'), 'POST', {
         using: 'xpath',
         value: selector,
@@ -1101,8 +1171,11 @@ export async function runCapability(
     }
     requireCondition(installed, 'native-install-control-unavailable');
     for (let count = 0; count < 2; count++) {
-      if (!(await tap(installConfirmationLabels, false))) break;
+      if (!(await tap(installConfirmationLabels, false, true))) break;
     }
+    // The last allowed click must also finish its native transition. This is
+    // observation only: the two-click limit never grows to a third action.
+    if (confirmationSelectors.size) await observeConfirmationTransition();
     await screenshot('installed-native');
     stage('home-launch');
     await home();

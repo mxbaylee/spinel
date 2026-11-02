@@ -357,12 +357,24 @@ test('monthly reports and explicit device triggers share reservation, visible re
   assert.match(capability, /needs: accounting/);
   assert.match(capability, /needs.accounting.result == 'success'/);
   assert.match(capability, /needs.accounting.outputs.allocation_allowed == 'true'/);
+  const gates = [
+    'browserstack-capability.ts prepare',
+    'run: npm ci',
+    'run: npm run typecheck',
+    'run: npm run build',
+    'browserstack/github-actions/setup-env@',
+    'browserstack/github-actions/setup-local@',
+    'browserstack-capability.ts run',
+  ].map((command) => capability.indexOf(command));
   assert.ok(
-    capability.indexOf('browserstack-capability.ts prepare') < capability.indexOf('run: npm ci'),
+    gates.every((position) => position >= 0),
+    'every preallocation gate is present',
   );
   assert.ok(
-    capability.indexOf('run: npm run build') < capability.indexOf('browserstack-capability.ts run'),
+    gates.every((position, index) => index === 0 || position > gates[index - 1]),
+    'a verified receipt, dependencies, typecheck and build precede Local/device execution',
   );
+  assert.doesNotMatch(capability, /continue-on-error:/);
   const reconciliation = source.split('  reconciliation:\n')[1];
   assert.match(reconciliation, /needs: \[accounting, capability\]/);
   assert.match(
