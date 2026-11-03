@@ -105,12 +105,16 @@ export async function identifySafari(
       { timeout: 8000, maxBuffer: 1024 * 1024, encoding: 'utf8' },
     );
     trace(String(stderr));
+    entry.stdout = String(stdout).slice(-2000);
+    entry.phase = 'host-identity-parse';
     const identity = JSON.parse(String(stdout)) as SafariTarget;
+    entry.phase = 'host-identity-validation';
     assert.equal(identity.pid, Number(pid));
     assert.equal(identity.bundleIdentifier, 'com.apple.Safari');
     assert.ok(identity.executablePath?.startsWith('/'));
     assert.ok(Number.isFinite(identity.launchedAt) && identity.launchedAt > 0);
     entry.identity = identity;
+    entry.phase = 'identity-established';
     return identity;
   } catch (error) {
     const detail = error as Error & {
@@ -120,7 +124,7 @@ export async function identifySafari(
       stdout?: unknown;
       stderr?: unknown;
     };
-    trace(String(detail.stderr ?? ''));
+    if (detail.stderr !== undefined) trace(String(detail.stderr));
     entry.error = {
       message: String(error).split('\n')[0],
       code: detail.code,

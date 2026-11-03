@@ -123,3 +123,25 @@ test('malformed diagnostic output cannot replace the original process failure', 
   assert.match(String(entry.traceError), /SyntaxError/);
   assert.equal(entry.identity, undefined);
 });
+
+for (const [stdout, phase] of [
+  ['invalid json', 'host-identity-parse'],
+  [
+    JSON.stringify({
+      pid: 42,
+      bundleIdentifier: 'other.app',
+      launchedAt: 1234,
+      executablePath: '/other',
+    }),
+    'host-identity-validation',
+  ],
+])
+  test(`${phase} retains the command's output and trace`, async () => {
+    const entry: Record<string, unknown> = {};
+    const stderr = 'Safari request phase: {"phase":"identity-validation-end"}\n';
+    await assert.rejects(identifySafari('42', entry, async () => ({ stdout, stderr })));
+    assert.equal(entry.phase, phase);
+    assert.equal(entry.trace, stderr);
+    assert.equal(entry.stdout, stdout);
+    assert.equal(entry.identity, undefined);
+  });

@@ -1,3 +1,13 @@
+import type { DesktopBrowser } from './desktop-browser.ts';
+
+export function clearDesktopStorage(browser: Pick<DesktopBrowser, 'evaluate'>, database: string) {
+  // One driver request only: an unresponsive/crashed page must not consume a
+  // second script budget trying to recover diagnostic state.
+  return browser.evaluate<StorageDeletion>(
+    `(${deleteDesktopStorage.toString()})(${JSON.stringify(database)})`,
+  );
+}
+
 export type StorageDeletion = {
   status: 'running' | 'passed' | 'failed';
   database: string;
@@ -22,9 +32,6 @@ export async function deleteDesktopStorage(database: string): Promise<StorageDel
     timeoutMs: 28_000,
     operations: [],
   };
-  (
-    globalThis as typeof globalThis & { __spinelDesktopStorageDeletion: StorageDeletion }
-  ).__spinelDesktopStorageDeletion = report;
   let timer: ReturnType<typeof setTimeout>;
   const deadline = new Promise<never>((_resolve, reject) => {
     timer = setTimeout(

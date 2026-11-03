@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { runInNewContext } from 'node:vm';
 import { setImmediate } from 'node:timers/promises';
-import { deleteDesktopStorage, type StorageDeletion } from './desktop-storage.ts';
+import { clearDesktopStorage } from './desktop-storage.ts';
 
 function fixture(fault?: string, rejection = false) {
   let workers = true,
@@ -91,10 +91,10 @@ function fixture(fault?: string, rejection = false) {
         operation('database-names', () => (database ? [{ name: 'private-test' }] : [])),
     },
   };
-  const promise = runInNewContext(
-    `(${deleteDesktopStorage.toString()})('private-test')`,
-    sandbox,
-  ) as Promise<StorageDeletion>;
+  const promise = clearDesktopStorage(
+    { evaluate: async <T>(script: string) => runInNewContext(script, sandbox) as T },
+    'private-test',
+  );
   return { promise, calls, sandbox, expire: () => expire!(), cleared: () => cleared };
 }
 
@@ -156,4 +156,22 @@ test('synchronous storage rejection is retained without continuing to database d
   assert.equal(report.status, 'failed');
   assert.match(report.error!, /localStorage.clear: Error: injected local-storage/);
   assert.ok(!f.calls.includes('database-delete'));
+});
+
+test('crashed or timed-out driver propagates the first error without another diagnostic request', async () => {
+  const original = new Error('driver process exited during deletion');
+  let calls = 0;
+  await assert.rejects(
+    clearDesktopStorage(
+      {
+        evaluate: async () => {
+          calls++;
+          throw original;
+        },
+      },
+      'private-test',
+    ),
+    (error) => error === original,
+  );
+  assert.equal(calls, 1);
 });

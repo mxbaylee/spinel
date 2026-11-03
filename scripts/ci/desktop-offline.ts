@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { deleteDesktopStorage, type StorageDeletion } from './desktop-storage.ts';
+import { clearDesktopStorage } from './desktop-storage.ts';
 import { execFile } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
@@ -705,20 +705,7 @@ async function main() {
       (value) => value === 2,
       'Two normal copies positively advertise availability before storage deletion',
     );
-    let deletion: StorageDeletion;
-    try {
-      deletion = await browser.evaluate<StorageDeletion>(
-        `(${deleteDesktopStorage.toString()})(${JSON.stringify(`spinel-offline-${f.actor.id}`)})`,
-      );
-    } catch (error) {
-      // A crashed page/driver can prevent the normal result from returning.
-      // Preserve the original failure even when this diagnostic also fails.
-      const pending = await browser
-        .evaluate('globalThis.__spinelDesktopStorageDeletion ?? null')
-        .catch((diagnosticError: unknown) => ({ diagnosticError: String(diagnosticError) }));
-      stage('storage-deletion-interrupted', { error: String(error), pending });
-      throw error;
-    }
+    const deletion = await clearDesktopStorage(browser, `spinel-offline-${f.actor.id}`);
     stage('storage-deletion', { deletion });
     assert.equal(deletion.status, 'passed', JSON.stringify(deletion));
     await browser.goto(f.origin + '/');
