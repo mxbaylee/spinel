@@ -90,13 +90,16 @@ that isn't waiting on another is next.
   [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 - **Review locally before pushing.** Run the relevant feasible local checks,
   commit the complete candidate, and obtain two independent nonimplementing
-  reviews, each **above 95/100 on that exact commit**, before the first push or
-  a repair push. Fix findings and have both reviewers revalidate each new head.
-  Keep work local when that gate is not met. Hosted-only or resource-blocked
+  reviews, each **above 95/100 on that exact commit**, before a validation push
+  or repair push intended to run CI. Fix findings and revalidate each new head.
+  Draft checkpoint pushes may save unfinished work remotely with triggered CI
+  deliberately cancelled; record missing checks/grades and verify cancellation.
+  Coordinate agents' validation runs and preserve file-based job selection.
+  Hosted-only or resource-blocked
   acceptance stays explicitly pending; a pre-push grade is not a CI pass.
   All seven current-head CI gates, no unresolved blockers and required visual
   approval remain merge requirements. Local workloads obey the memory watchdog;
   this does not require duplicating the full hosted matrix on the Mac. Owner,
-  chat 2026-11-02; [ordering and evidence](docs/implementation/grooming-2026-11-02.md#review-before-push).
+  chat 2026-11-02–03; [ordering and evidence](docs/implementation/grooming-2026-11-02.md#review-before-push).
   The seventh, Lib tests, runs `lib/` on its own and passes at once when nothing it
   tests changed. Owner, chat 2026-10-22.

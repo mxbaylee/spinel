@@ -118,8 +118,8 @@ resource-aborted checks explicitly. Do not duplicate the entire hosted matrix
 on the Mac or raise its resource limits just to obtain a grade. The
 [review-before-push decision](implementation/grooming-2026-11-02.md#review-before-push)
 supersedes early draft publication as the default: obtain both qualifying reviews
-before pushing even when hosted acceptance remains pending. Missing evidence
-that prevents an honest qualifying assessment blocks publication; an unperformed
+before a validation push even when hosted acceptance remains pending. Missing evidence
+that prevents an honest qualifying assessment blocks that validation push; an unperformed
 hosted check is never a pass. Keep the PR draft until actual acceptance is complete.
 No paid-host or deployment permission is added.
 
@@ -132,9 +132,10 @@ Do not call the ticket landed until GitHub confirms the merge.
 ## 3. Get two independent grades
 
 Commit the complete local candidate, including landing bookkeeping, before final
-grading. Obtain both qualifying reviews before its first push and every later
-repair push. Local commits do not require a prior grade; publication does. A local
-checkpoint may remain unreviewed and unpushed when work pauses. Do not give a
+grading. Obtain both qualifying reviews before its first validation push and every
+later repair push intended to run CI. Local commits and draft checkpoint pushes
+with intentionally cancelled CI may precede grading; record their unfinished state
+under the checkpoint procedure below. Do not give a
 reviewer an older commit while planning to push additional changes.
 
 Use two subagents that did not implement the change, preferably with fresh context.
@@ -173,13 +174,13 @@ commit SHA, deductions and each finding's disposition in the PR. Review uncommit
 work only provisionally; tie both final assessments to the committed diff.
 Owner, chat 2026-10-26; [decision](implementation/backlog-workflow.md#two-independent-grades-on-the-same-commit).
 
-The same numerical gate applies before publication under the owner's 2026-11-02
+The same numerical gate applies before validation pushes under the owner's 2026-11-02
 [ordering decision](implementation/grooming-2026-11-02.md#review-before-push).
 Each review states the local evidence actually checked, findings and their
 disposition, and the hosted/platform acceptance still pending. A pre-push grade
 does not certify those pending checks or authorize merging. After any repair,
 bookkeeping edit or base update, both reviewers revalidate the new committed SHA
-before the next push; focused revalidation may reuse unchanged evidence with its
+before the next validation push; focused revalidation may reuse unchanged evidence with its
 original source identity. Do not inflate a score to get access to CI.
 
 ## 4. Fix here or file separately
@@ -245,8 +246,35 @@ the checker or reuse an ID to avoid this prerequisite.
 Open one PR with the exact ticket heading, both review grades, final behavior, evidence,
 changed-line count and finding dispositions. A draft is appropriate while blocked;
 mark it ready only when its acceptance criteria and both independent reviews are complete.
-Push only the locally reviewed commit after both grades qualify. Do not treat
+For validation, push only the locally reviewed commit after both grades qualify. Do not treat
 opening the PR as completing the ticket.
+
+### Checkpoint pushes and deliberate CI use
+
+CI costs time and money; overlapping runs from multiple agents can delay each
+other. Batch related edits and prepare PR metadata before the validation run.
+Check active repository runs and coordinate with other agents before starting
+expensive validation. Do not cancel another agent's useful run without authority;
+an owner request to stop all repository CI is explicit authority.
+
+A draft checkpoint push may save unfinished or unreviewed work remotely without
+consuming a full validation run. Record the head, missing grades/checks and next
+action, then cancel the runs triggered by that checkpoint. Check again after
+workflow dispatch has had time to occur and verify terminal cancellation, including
+queued jobs and follow-on workflows. Record run IDs and intentional cancellation;
+cancelled, failed, skipped or missing selected checks are not passes. This is a
+checkpoint exception to pre-push grading, not permission to mark work ready or merge.
+
+When the candidate is ready, obtain both qualifying grades and let fresh selected
+CI run to completion on that exact head. If the head has not changed since a
+cancelled checkpoint run, rerun that applicable workflow instead of manufacturing
+a code change. Preserve the repository's file/dependency-based job selection,
+required check names and fail-closed aggregates. Do not add skip directives,
+remove coverage labels or change routing to make a checkpoint look verified.
+Current title/body edits trigger full validation; batch them and cancel superseded
+checkpoint/edit runs before the intended validation run. Cancellation does not
+prove cost savings or replace the final current-head gates. Owner, chat 2026-11-03;
+[decision](implementation/grooming-2026-11-02.md#deliberate-ci-use-and-checkpoint-pushes).
 
 Keep necessary final evidence in the PR description or maintained repository
 files: exact source/tested identities, current-head checks and attempts, both
@@ -308,9 +336,10 @@ by itself is work to do, not a reason to stop. Do not claim that blocked tickets
 are completed, and do not fabricate owner sign-off or long-running test evidence.
 
 Before a foreseeable limit, save work on its ticket branch and, where possible,
-push a draft PR only after the required pre-push checks and both independent grades
-qualify, and only when the owner has not asked to keep it local. Otherwise preserve
-a local commit and record its path, head and missing verification/reviews. Never mark unfinished
+use a draft checkpoint push with intentional CI cancellation when remote preservation
+is useful and the owner has not asked to keep it local. Record its missing grades
+and checks; otherwise preserve a local commit with its path and head. Validation
+pushes still require both qualifying grades. Never mark unfinished
 work complete or merge it just to reach a stopping point. Keep useful worktrees.
 
 Put a **Run checkpoint** in the current PR body when one exists, and in the chat's

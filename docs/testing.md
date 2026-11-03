@@ -156,11 +156,15 @@ to narrow additional coverage without equivalent evidence.
 
 Use the pinned Node version and existing commands in [development](development.md#checks).
 Run focused checks while repairing a concrete failure, commit the candidate and
-obtain [both independent grades before pushing](implementation/grooming-2026-11-02.md#review-before-push),
+obtain [both independent grades before a validation push](implementation/grooming-2026-11-02.md#review-before-push),
 then run the required CI gates and acceptance checks on the published head.
 Reviewers distinguish local evidence from pending hosted acceptance; grades do
 not convert unavailable checks into passes. Prefer hosted CI for heavy work;
 local workloads follow the [shared memory/watchdog rules](run-backlog.md#2-implement-one-ticket).
+Draft [checkpoint pushes](run-backlog.md#checkpoint-pushes-and-deliberate-ci-use)
+can preserve work while cancelling triggered CI. Record that cancellation and
+pending evidence; preserve file-based selection and let fresh applicable checks
+finish on the final reviewed head before merge. Coordinate agents' expensive runs.
 Repeat or broaden a check to resolve a remaining risk or satisfy a gate, with the
 reason recorded. CI changes themselves require full validation.
 

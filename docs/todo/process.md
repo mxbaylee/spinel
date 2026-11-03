@@ -241,10 +241,12 @@ place. Owner, chat 2026-10-26; [image-publication decision](../implementation/gr
    ticket separable work without hiding a blocker. Both reviewers revalidate
    repairs; put both scores, the shared reviewed SHA and every finding's
    disposition in the PR. Obtain both qualifying grades on the exact committed
-   head before its first push and every repair push. Hosted acceptance may remain
+   head before its first validation push and every repair push intended to run CI. Hosted acceptance may remain
    explicitly pending, but must not be represented as passed or waived by a grade.
-   Revalidate landing bookkeeping and base updates before publication too. Keep
-   unqualified work local; see the [ordering decision](../implementation/grooming-2026-11-02.md#review-before-push).
+   Revalidate landing bookkeeping and base updates before validation publication too.
+   Draft checkpoint pushes may preserve unreviewed work with intentional CI
+   cancellation and explicit missing evidence; follow the
+   [checkpoint procedure](../run-backlog.md#checkpoint-pushes-and-deliberate-ci-use).
 6. **Prepare to land.** In the same PR:
    - Delete the ticket file.
    - Move its Rules and their reasons into the maintained docs under `docs/`,
@@ -402,7 +404,10 @@ Owner setup, once, in the repository settings:
 ## Commands
 
 Run relevant feasible local checks and obtain both independent grades before
-pushing the committed candidate. Hosted CI still owns its required gates and
+making a validation push of the committed candidate. Draft checkpoint pushes may
+save unfinished work with intentional CI cancellation under the
+[checkpoint procedure](../run-backlog.md#checkpoint-pushes-and-deliberate-ci-use).
+Hosted CI still owns its required gates and
 checks that cannot run safely or usefully locally; document those as pending.
 Keep incompletely verified PRs draft and retain every CI, review and visual/merge
 gate. Local work follows the [memory watchdog](../run-backlog.md#2-implement-one-ticket);
