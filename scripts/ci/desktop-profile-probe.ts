@@ -1,4 +1,9 @@
 import assert from 'node:assert/strict';
+import {
+  identifySafari as readSafariIdentity,
+  safariRequestScript,
+  type SafariTarget,
+} from './desktop-safari-identity.ts';
 import { execFile } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { mkdir, writeFile } from 'node:fs/promises';
@@ -26,96 +31,17 @@ async function command(file: string, args: string[], timeout = 30_000) {
   return (await run(file, args, { timeout, maxBuffer: 1024 * 1024 })).stdout.trim();
 }
 
-type SafariTarget = {
-  pid: number;
-  bundleIdentifier: string;
-  executablePath: string;
-  launchedAt: number;
-};
 let target: SafariTarget | null = null;
 const targets: Record<string, unknown>[] = [];
 report.safariTargets = targets;
-// Address the observed process, not a Launch Services name lookup after an
-// update. This removes ambiguity; it does not establish why Intel name-based
-// Apple Events timed out, and it does not bypass normal automation consent.
-const safariRequestScript = String.raw`
-ObjC.import('AppKit');
-function run(argv) {
-  var pid = Number(argv[0]);
-  var running = $.NSRunningApplication.runningApplicationWithProcessIdentifier(pid);
-  if (running.isNil() || running.terminated) throw new Error('The observed Safari process exited.');
-  var identity = { pid: running.processIdentifier, bundleIdentifier: ObjC.unwrap(running.bundleIdentifier),
-    executablePath: ObjC.unwrap(running.executableURL.path), launchedAt: running.launchDate.timeIntervalSince1970 };
-  if (identity.pid !== pid || identity.bundleIdentifier !== 'com.apple.Safari' || !Number.isFinite(identity.launchedAt) || identity.launchedAt <= 0)
-    throw new Error('The observed PID is not the expected Safari process: ' + JSON.stringify(identity));
-  if (argv[1] && identity.launchedAt !== Number(argv[1]))
-    throw new Error('The observed Safari PID has been reused: ' + JSON.stringify(identity));
-  if (argv[2] === 'identify') return JSON.stringify(identity);
-  console.log('Safari request target: ' + JSON.stringify(identity));
-  function phase(name) { console.log('Safari request phase: ' + JSON.stringify({ at: new Date().toISOString(), phase: name })); }
-  phase('application-constructor-begin');
-  var app = Application(pid);
-  phase('application-constructor-end');
-  var seconds = Number(argv[4]);
-  if (argv[2] === 'title') {
-    var name = app.documents[0].name;
-    phase('title-specifier-ready');
-    phase('title-get-begin');
-    var title = name({ timeout: seconds });
-    phase('title-get-end');
-    return title;
-  }
-  if (argv[2] === 'evaluate') return app.doJavaScript(argv[3], { in: app.documents[0] }, { timeout: seconds });
-  if (argv[2] === 'quit') { app.quit(); return 'Quit requested'; }
-  if (argv[2] === 'baseline') {
-    var window = app.windows[0];
-    if (window.miniaturized()) window.miniaturized = false;
-    if (!app.frontmost()) app.activate();
-    var tab = window.currentTab();
-    return JSON.stringify({ windowId: window.id(), bounds: window.bounds(), tabIndex: tab.index(), title: tab.name(), url: tab.url(),
-      page: JSON.parse(app.doJavaScript('JSON.stringify({url:location.href,title:document.title,readyState:document.readyState,visibility:document.visibilityState,hasFocus:document.hasFocus(),text:document.body.innerText})', {in:tab})) });
-  }
-  throw new Error('Unknown Safari request.');
-}`;
 async function identifySafari(pid: string, stage: string) {
-  assert.match(pid, /^\d+$/);
   const entry: Record<string, unknown> = {
     stage,
     pid: Number(pid),
     time: new Date().toISOString(),
   };
   targets.push(entry);
-  try {
-    const identity = JSON.parse(
-      await command(
-        '/usr/bin/osascript',
-        ['-l', 'JavaScript', '-e', safariRequestScript, pid, '', 'identify', '', '5'],
-        8000,
-      ),
-    ) as SafariTarget;
-    assert.equal(identity.pid, Number(pid));
-    assert.equal(identity.bundleIdentifier, 'com.apple.Safari');
-    assert.ok(Number.isFinite(identity.launchedAt) && identity.launchedAt > 0);
-    entry.identity = identity;
-    return identity;
-  } catch (error) {
-    const detail = error as Error & {
-      code?: unknown;
-      signal?: unknown;
-      killed?: unknown;
-      stdout?: unknown;
-      stderr?: unknown;
-    };
-    entry.error = {
-      message: String(error).split('\n')[0],
-      code: detail.code,
-      signal: detail.signal,
-      killed: detail.killed,
-      stdout: String(detail.stdout ?? '').slice(-2000),
-      stderr: String(detail.stderr ?? '').slice(-4000),
-    };
-    throw error;
-  }
+  return readSafariIdentity(pid, entry);
 }
 function safariRequest(
   mode: 'title' | 'evaluate' | 'quit' | 'baseline',
