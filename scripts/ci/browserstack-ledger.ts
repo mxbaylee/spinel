@@ -6,6 +6,39 @@ const maxBytes = 1_048_576;
 type Row = Record<string, unknown>;
 export type LedgerSnapshot = { value: unknown | null; blobSha: string | null };
 
+/** Reads a JSON body without buffering past `limit` bytes or past `signal`. */
+export async function readJsonBody(
+  response: Response,
+  signal: AbortSignal,
+  limit: number,
+): Promise<unknown> {
+  if (!response.body) throw new Error('invalid-response');
+  const reader = response.body.getReader();
+  const buffer = Buffer.alloc(limit);
+  let length = 0;
+  try {
+    while (true) {
+      const chunk = await reader.read().catch(() => {
+        throw new Error('request-failed');
+      });
+      if (signal.aborted) throw new Error('request-failed');
+      if (chunk.done) break;
+      length += chunk.value.byteLength;
+      if (length > buffer.length) throw new Error('response-too-large');
+      buffer.set(chunk.value, length - chunk.value.byteLength);
+    }
+  } finally {
+    void reader.cancel().catch(() => {});
+  }
+  try {
+    return JSON.parse(
+      new TextDecoder('utf-8', { fatal: true }).decode(buffer.subarray(0, length)),
+    ) as unknown;
+  } catch {
+    throw new Error('invalid-response');
+  }
+}
+
 function row(value: unknown): Row {
   if (!value || typeof value !== 'object' || Array.isArray(value))
     throw new Error('ledger-invalid-response');
@@ -69,26 +102,10 @@ export function ledgerClient(options: {
       void response.body?.cancel().catch(() => {});
       throw new Error(`ledger-http-${response.status}`);
     }
-    if (!response.body) throw new Error('ledger-invalid-response');
-    const reader = response.body.getReader();
-    const buffer = Buffer.alloc(maxBytes * 2);
-    let length = 0;
     try {
-      while (true) {
-        const chunk = await reader.read();
-        if (signal.aborted) throw new Error('ledger-request-failed');
-        if (chunk.done) break;
-        length += chunk.value.byteLength;
-        if (length > buffer.length) throw new Error('ledger-response-too-large');
-        buffer.set(chunk.value, length - chunk.value.byteLength);
-      }
-      return JSON.parse(
-        new TextDecoder('utf-8', { fatal: true }).decode(buffer.subarray(0, length)),
-      ) as unknown;
+      return await readJsonBody(response, signal, maxBytes * 2);
     } catch {
       throw new Error('ledger-invalid-response');
-    } finally {
-      void reader.cancel().catch(() => {});
     }
   }
   async function contents(overall: AbortSignal, ref: string) {

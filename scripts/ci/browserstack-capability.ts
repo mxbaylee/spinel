@@ -823,6 +823,48 @@ export async function reloadOrdinaryTab(
     nativeProcessRestartOwner: 'scripts/ci/desktop-offline.ts',
   };
 }
+/** Every execute result is checked, including `mobile:` commands; BrowserStack's hub answers its own executor commands. */
+export function checksAppiumEnvelope(path: string, body: unknown): boolean {
+  const script = (body as Row | undefined)?.script;
+  return (
+    /\/execute\/(sync|async)$/.test(path) &&
+    !(typeof script === 'string' && script.startsWith('browserstack_executor:'))
+  );
+}
+
+// Appium 1.x reads every command result as a possible legacy envelope. (Its
+// L319-L324 `protocol` unwrap applies only to Appium's own {protocol, value}
+// wrapper, so a script's own `protocol` key passes through.) A top-level `status`
+// that is not numerically 0 throws UnknownError, which turned a
+// ready document with an empty save status into HTTP 500 (Android Chrome run
+// 41395124342); so does a top-level `value` object with a truthy `error`:
+// https://github.com/appium/appium-base-driver/blob/v5.3.1/lib/protocol/protocol.js#L355-L358
+// Synchronous scripts return none of these keys. Asynchronous results arrive wrapped as
+// {ok, value} or {phase, value}. UiAutomator2 keeps Chrome's execute/sync local and
+// proxies execute/async past these checks (its webview no-proxy list:
+// https://github.com/appium/appium-uiautomator2-driver/blob/v1.44.2/lib/driver.js#L98-L111),
+// but the same rule is applied so Safari and future drivers are safe. On Chrome that is
+// stricter than Appium: an async result whose top-level `value` carries a truthy
+// `error` fails as the envelope rule rather than its own reason. It never passes.
+/** Which Appium 1.x envelope check would throw on this script result, if any. */
+export function appiumEnvelopeHazard(value: unknown): 'status' | 'value-error' | null {
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) return null;
+  const result = value as Row;
+  if (
+    result.status !== undefined &&
+    result.status !== null &&
+    !isNaN(result.status as number) &&
+    parseInt(String(result.status), 10) !== 0
+  )
+    return 'status';
+  const inner = result.value;
+  return inner !== null &&
+    typeof inner === 'object' &&
+    !Array.isArray(inner) &&
+    (inner as Row).error
+    ? 'value-error'
+    : null;
+}
 export const itemReadinessScript = `
 const observation = {
   phase: 'document',
@@ -834,12 +876,12 @@ if (observation.readyState === 'unknown') return {...observation, failure:'docum
 observation.documentReady = true;
 let phase = 'dom';
 try {
-  const status = document.querySelector('[aria-label="Save status"]')?.textContent || '';
+  const saveStatus = document.querySelector('[aria-label="Save status"]')?.textContent || '';
   const canvasHeight = Math.max(0,...[...document.querySelectorAll('.univer-container canvas')].map(canvas=>canvas.getBoundingClientRect().height));
   const phoneReadOnly = document.body.innerText.includes('View only on this phone. Edit on a larger screen.');
   phase = 'storage';
   const account = localStorage.getItem('spinel.offline.account');
-  return {...observation, phase:'editor', status, canvasHeight, phoneReadOnly, account};
+  return {...observation, phase:'editor', saveStatus, canvasHeight, phoneReadOnly, account};
 } catch (error) {
   const errorName = ['SecurityError','TypeError','InvalidStateError','NotSupportedError','QuotaExceededError'].includes(error?.name) ? error.name : 'unknown';
   return {...observation, phase, failure:phase === 'storage' ? 'storage-unavailable' : 'dom-observation-failed', errorName};
@@ -850,8 +892,8 @@ export function itemReadinessSatisfied(value: Row, offline: boolean) {
     value.documentReady === true &&
     Number(value.canvasHeight) > 100 &&
     (value.phoneReadOnly === true ||
-      String(value.status).includes(offline ? 'Saved on this device' : 'All changes saved.') ||
-      (!offline && String(value.status).includes('Synced.')))
+      String(value.saveStatus).includes(offline ? 'Saved on this device' : 'All changes saved.') ||
+      (!offline && String(value.saveStatus).includes('Synced.')))
   );
 }
 
@@ -1204,7 +1246,18 @@ export async function runCapability(
       timeout,
       (options) => client.command(path, method, body, options),
       path === 'session' && method === 'POST',
-    );
+    ).then((value) => {
+      // A result Appium 1.x would misread as an error fails here on every driver,
+      // so a script regression surfaces in tests and on drivers that pass it through.
+      // The reason names the rule that fired. An async body that itself carries a
+      // top-level `error` reports this reason rather than its own; it fails closed
+      // either way, as Appium would.
+      if (checksAppiumEnvelope(path, body)) {
+        const hazard = appiumEnvelopeHazard(value);
+        requireCondition(!hazard, `appium-envelope-${hazard}`);
+      }
+      return value;
+    });
   const session = (suffix: string) => `session/${result.sessionId}/${suffix}`;
   const execute = (script: string, args: unknown[] = [], timeout = 15_000) =>
     command(session('execute/sync'), 'POST', { script, args }, timeout);

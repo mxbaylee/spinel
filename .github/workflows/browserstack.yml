@@ -24,7 +24,8 @@ on:
         type: string
         required: false
   schedule:
-    # Monthly main runs own Safari authored installed-context acceptance.
+    # Monthly main runs Safari authored installed-context acceptance as optional
+    # monitoring; phone runs are not an acceptance requirement (owner, 2026-11-02).
     # The report retains unobserved Chrome/Firefox and ordinary-tab coverage.
     - cron: '17 9 1 * *'
   pull_request:
@@ -35,9 +36,24 @@ permissions:
   contents: read
 
 concurrency:
-  # Admission, execution, reconciliation and diagnostics share one account-wide lock.
-  group: browserstack-lifetime-account
+  # Admission, execution and reconciliation share one account-wide lock.
+  # A fork PR, or a label no job routes on, runs nothing, so it gets its own group.
+  # Diagnostics only read a completed session, so they queue among themselves.
+  # Neither can displace a pending account run. Every other event takes the lock.
+  # Folded to one line: no-op group, then diagnostics, then the account lock.
+  group: >-
+    ${{ github.event_name == 'pull_request' &&
+    (github.event.pull_request.head.repo.full_name != github.repository ||
+    !contains(fromJSON('["ci-browserstack-logs","ci-real-devices","ci-real-devices-chrome","ci-real-devices-safari","ci-real-devices-chrome-acceptance","ci-real-devices-chrome-tab","ci-real-devices-firefox-tab","ci-real-devices-safari-tab"]'), github.event.label.name)) &&
+    format('browserstack-noop-{0}', github.run_id) ||
+    (inputs.mode == 'diagnostics' || github.event.label.name == 'ci-browserstack-logs') &&
+    'browserstack-diagnostics' ||
+    'browserstack-lifetime-account' }}
   cancel-in-progress: false
+
+env:
+  # Authored scopes reserve, build with sync evidence and get the longer wrapper.
+  BS_AUTHORED_SCOPES: '["safari-acceptance","chrome-acceptance","chrome-tab-acceptance","firefox-tab-acceptance","safari-tab-acceptance"]'
 
 jobs:
   diagnostics:
@@ -86,17 +102,13 @@ jobs:
       (github.event_name == 'workflow_dispatch' && inputs.mode != 'diagnostics') ||
       (github.event_name == 'pull_request' &&
       github.event.action == 'labeled' &&
-      (github.event.label.name == 'ci-real-devices' ||
-      github.event.label.name == 'ci-real-devices-chrome' ||
-      github.event.label.name == 'ci-real-devices-safari' ||
-      github.event.label.name == 'ci-real-devices-chrome-acceptance' ||
-      github.event.label.name == 'ci-real-devices-chrome-tab' ||
-      github.event.label.name == 'ci-real-devices-firefox-tab' ||
-      github.event.label.name == 'ci-real-devices-safari-tab') &&
+      contains(fromJSON('["ci-real-devices","ci-real-devices-chrome","ci-real-devices-safari","ci-real-devices-chrome-acceptance","ci-real-devices-chrome-tab","ci-real-devices-firefox-tab","ci-real-devices-safari-tab"]'), github.event.label.name) &&
       github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
+      # Read-only run listing reports runs displaced before they started.
+      actions: read
       contents: write
     outputs:
       allocation_allowed: ${{ steps.accounting.outputs.allocation_allowed }}
@@ -118,7 +130,7 @@ jobs:
           BS_USERNAME: ${{ secrets.BS_USERNAME }}
           BS_ACCESS_KEY: ${{ secrets.BS_ACCESS_KEY }}
           GITHUB_TOKEN: ${{ github.token }}
-          BS_OPERATION: ${{ (github.event_name == 'schedule' || github.event_name == 'pull_request' || inputs.mode == 'capability' || inputs.mode == 'chrome-diagnostic' || inputs.mode == 'safari-acceptance' || inputs.mode == 'chrome-acceptance' || inputs.mode == 'chrome-tab-acceptance' || inputs.mode == 'firefox-tab-acceptance' || inputs.mode == 'safari-tab-acceptance') && 'reserve' || 'quota' }}
+          BS_OPERATION: ${{ (github.event_name == 'schedule' || github.event_name == 'pull_request' || inputs.mode == 'capability' || inputs.mode == 'chrome-diagnostic' || contains(fromJSON(env.BS_AUTHORED_SCOPES), inputs.mode)) && 'reserve' || 'quota' }}
         run: node scripts/ci/browserstack-accounting.ts "$BS_OPERATION"
       - name: Retain admission and assumption evidence
         if: always()
@@ -169,7 +181,7 @@ jobs:
       - name: Build the production application
         env:
           # Native model reads are observation-only and absent from ordinary builds.
-          VITE_SYNC_EVIDENCE: ${{ (env.BS_CAPABILITY_SCOPE == 'safari-acceptance' || env.BS_CAPABILITY_SCOPE == 'chrome-acceptance' || env.BS_CAPABILITY_SCOPE == 'chrome-tab-acceptance' || env.BS_CAPABILITY_SCOPE == 'firefox-tab-acceptance' || env.BS_CAPABILITY_SCOPE == 'safari-tab-acceptance') && '1' || '0' }}
+          VITE_SYNC_EVIDENCE: ${{ contains(fromJSON(env.BS_AUTHORED_SCOPES), env.BS_CAPABILITY_SCOPE) && '1' || '0' }}
         run: npm run build
       - name: Configure BrowserStack
         uses: browserstack/github-actions/setup-env@1fad39ae4755588f7fc6854da6c3efba2bf5d08f
@@ -188,7 +200,7 @@ jobs:
       - name: Observe the selected bounded physical-phone scope
         # Every authored scope adds the journey and unpaid fixture startup/teardown.
         # Each selected device still has the same 780s operational bound + cleanup.
-        timeout-minutes: ${{ (env.BS_CAPABILITY_SCOPE == 'safari-acceptance' || env.BS_CAPABILITY_SCOPE == 'chrome-acceptance' || env.BS_CAPABILITY_SCOPE == 'chrome-tab-acceptance' || env.BS_CAPABILITY_SCOPE == 'firefox-tab-acceptance' || env.BS_CAPABILITY_SCOPE == 'safari-tab-acceptance') && 18 || 14 }}
+        timeout-minutes: ${{ contains(fromJSON(env.BS_AUTHORED_SCOPES), env.BS_CAPABILITY_SCOPE) && 18 || 14 }}
         env:
           BS_USERNAME: ${{ secrets.BS_USERNAME }}
           BS_ACCESS_KEY: ${{ secrets.BS_ACCESS_KEY }}

@@ -92,7 +92,8 @@ export function validateFixtureCertificate(
     validFrom > now ||
     validTo <= now ||
     validTo <= validFrom ||
-    validTo - validFrom > certificateLifetime
+    // OpenSSL reads the clock separately for each bound, so they may straddle a second.
+    validTo - validFrom > certificateLifetime + 1000
   )
     throw new Error('fixture-certificate-invalid-validity');
   return {

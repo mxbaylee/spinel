@@ -14,6 +14,8 @@ import {
   installationAssetsScript,
   itemReadinessScript,
   itemReadinessSatisfied,
+  appiumEnvelopeHazard,
+  checksAppiumEnvelope,
   launchEnvironmentDiagnostic,
   launchedWindow,
   matchingNativeConfirmation,
@@ -750,13 +752,56 @@ test('item readiness waits only for explicit document preconditions and classifi
   assert.equal(read().originMatch, false);
   assert.equal(storageReads, 0);
   context.location.origin = origin;
+  // appium-base-driver v5.3.1 lib/protocol/protocol.js L355-L358.
+  for (const [value, hazard] of [
+    [{ status: '' }, 'status'],
+    [{ status: ' ' }, 'status'],
+    [{ status: 13 }, 'status'],
+    [{ status: '0' }, null],
+    [{ status: 0 }, null],
+    [{ status: 'All changes saved.' }, null],
+    [{ status: null }, null],
+    [{ ok: true, value: { error: 'bootstrap' } }, 'value-error'],
+    [{ ok: true, value: { error: '' } }, null],
+    [{ ok: true, value: ['error'] }, null],
+    [{ saveStatus: '' }, null],
+    // L319-L324 unwraps only Appium's own {protocol, value} wrapper, never the result.
+    [{ protocol: 'W3C', value: 'swapped' }, null],
+    [{ url: { protocol: 'https:' } }, null],
+    [[{ status: '' }], null],
+    ['status', null],
+    [null, null],
+  ] as const)
+    assert.equal(appiumEnvelopeHazard(value), hazard, JSON.stringify(value));
+  // Every page script is checked; the hub's executor (Safari acceptSsl) and other
+  // commands are not, since their response shape was never observed through Appium.
+  for (const [path, body, checked] of [
+    ['session/s/execute/sync', { script: 'return 1', args: [] }, true],
+    ['session/s/execute/async', { script: 'arguments[0](1)', args: [] }, true],
+    ['session/s/execute/sync', { script: 'browserstack_executor: {"action":"acceptSsl"}' }, false],
+    ['session/s/url', { url: 'https://example.test/' }, false],
+    ['session/s/execute/sync', undefined, true],
+  ] as const)
+    assert.equal(checksAppiumEnvelope(path, body), checked, `${path} ${JSON.stringify(body)}`);
+  const savedQuery = document.querySelector;
+  document.querySelector = () => ({ textContent: '' });
+  const blank = read();
+  assert.equal(blank.phase, 'editor');
+  assert.equal(Object.hasOwn(blank, 'status'), false);
+  assert.equal(appiumEnvelopeHazard(blank), null);
+  assert.equal(itemReadinessSatisfied(blank, false), false);
+  document.querySelector = savedQuery;
   const ready = read();
+  assert.equal(Object.hasOwn(ready, 'status'), false);
   assert.equal(itemReadinessSatisfied(ready, false), true);
   assert.equal(itemReadinessSatisfied(ready, true), false);
   assert.equal(itemReadinessSatisfied({ ...ready, documentReady: false }, false), false);
   assert.equal(itemReadinessSatisfied({ ...ready, failure: 'storage-unavailable' }, false), false);
   assert.equal(itemReadinessSatisfied({ ...ready, canvasHeight: 100 }, false), false);
-  assert.equal(itemReadinessSatisfied({ ...ready, status: 'Saved on this device' }, true), true);
+  assert.equal(
+    itemReadinessSatisfied({ ...ready, saveStatus: 'Saved on this device' }, true),
+    true,
+  );
   assert.equal(ready.account, 'actor');
   context.localStorage.getItem = () => {
     throw Object.assign(new Error('private bootstrap/token details'), { name: 'SecurityError' });
@@ -2439,6 +2484,46 @@ function fixture(onClose: () => void) {
     },
   } as unknown as Parameters<typeof runCapability>[2];
 }
+test('an asynchronous script result carrying value.error fails as an Appium envelope hazard', async () => {
+  const origin = 'https://bs-local.com:8176';
+  const asyncCalls: string[] = [];
+  const client = clientFor('fixture-user', 'fixture-key', async (url) => {
+    const path = String(url).split('/wd/hub/')[1] ?? String(url).split('/automate/')[1];
+    let value: unknown = null;
+    if (path === 'session') value = { sessionId, capabilities: { browserName: 'chrome' } };
+    else if (path.endsWith('/execute/sync'))
+      value = {
+        origin,
+        secureContext: true,
+        serviceWorkerAvailable: true,
+        controller: `${origin}/service-worker.js`,
+        anonymousReady: true,
+        userAgent: 'Mozilla/5.0 (Linux; Android 17) AppleWebKit/537.36 Chrome/152.0 Mobile',
+      };
+    else if (path.endsWith('/execute/async')) {
+      asyncCalls.push(path);
+      // Appium 1.x would throw on this wrapped result; a pass-through driver must not.
+      value = { ok: true, value: { error: 'bootstrap' } };
+    } else if (path.endsWith('/window/handles')) value = ['original'];
+    else if (path.endsWith('/screenshot')) value = tinyPng;
+    return Response.json({ value });
+  });
+  const result = await runCapability(
+    client,
+    target,
+    fixture(() => {}),
+    {
+      localIdentifier: 'local-id',
+      buildName: 'test',
+      journal: async () => {},
+      screenshot: async (name) => name,
+    },
+  );
+  assert.equal(asyncCalls.length, 1);
+  assert.equal(result.failure, 'capability-appium-envelope-value-error');
+  assert.equal(result.command, 'POST session/{sessionId}/execute/async');
+  assert.equal(result.cleanup.session, 'deleted');
+});
 test('native taps keep the selected XML identity and refuse unsafe, stale or ambiguous ancestor targets with cleanup', async () => {
   for (const [mode, count] of [
     ['menu', 0],
@@ -2793,6 +2878,7 @@ test('Chrome item navigation and readiness preserve operational failures, buffer
     'unknown-error-internal',
     'unknown-error-expected',
     'unknown-error-probe-failed',
+    'readiness-envelope-status',
   ]) {
     const unknownError = mode.startsWith('unknown-error-');
     const readinessFailure = mode !== 'navigation-http-error' && mode !== 'readiness-ok';
@@ -2853,9 +2939,19 @@ test('Chrome item navigation and readiness preserve operational failures, buffer
               },
               { status: 500 },
             );
+          // A driver that passes the result through must still fail closed.
+          if (mode === 'readiness-envelope-status')
+            return Response.json({
+              value: { phase: 'editor', documentReady: true, canvasHeight: 400, status: '' },
+            });
           value =
             mode === 'readiness-ok'
-              ? { documentReady: true, canvasHeight: 400, phoneReadOnly: false, status: 'Synced.' }
+              ? {
+                  documentReady: true,
+                  canvasHeight: 400,
+                  phoneReadOnly: false,
+                  saveStatus: 'Synced.',
+                }
               : reads === 1
                 ? {
                     phase: 'document',
@@ -2944,7 +3040,9 @@ test('Chrome item navigation and readiness preserve operational failures, buffer
         ? 'capability-production-storage-unavailable'
         : mode === 'readiness-ok'
           ? 'capability-production-control-unavailable'
-          : 'http-500',
+          : mode === 'readiness-envelope-status'
+            ? 'capability-appium-envelope-status'
+            : 'http-500',
     );
     assert.equal(result.command, 'POST session/{sessionId}/execute/sync');
     assert.equal(
@@ -2965,7 +3063,7 @@ test('Chrome item navigation and readiness preserve operational failures, buffer
         offline: false,
         reads,
         last:
-          mode === 'http-error' || unknownError
+          mode === 'http-error' || unknownError || mode === 'readiness-envelope-status'
             ? null
             : {
                 phase: 'storage',

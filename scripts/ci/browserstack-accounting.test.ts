@@ -375,6 +375,9 @@ globalThis.fetch = async (url, init) => {
   }
   if (parsed.host !== 'api.github.com' || !parsed.pathname.startsWith('/repos/mxbaylee/spinel/')) throw new Error('unexpected host');
   const path = parsed.pathname.slice('/repos/mxbaylee/spinel/'.length);
+  // One malformed-inventory case also loses the read-only run listing.
+  if (path.startsWith('actions/') && ${JSON.stringify(inventory)} === 'malformed') return new Response('actions-private-error', { status: 500 });
+  if (path.startsWith('actions/') && method === 'GET') return path.endsWith('/jobs') ? Response.json({ total_count: 0, jobs: [] }) : Response.json({ total_count: 0, workflow_runs: [] });
   if (path === 'git/ref/heads/ci/browserstack-accounting') return stored ? Response.json({ object: { sha: hash } }) : new Response('', { status: 404 });
   if (path === 'contents/ledger.json' && method === 'GET') return Response.json({ type: 'file', path: 'ledger.json', encoding: 'base64', sha: hash, size: Buffer.byteLength(stored), content: Buffer.from(stored).toString('base64') });
   if (${JSON.stringify(scenario)} === 'write-denied') return new Response('unit-github-token', {status: 403});
@@ -411,7 +414,8 @@ globalThis.fetch = async (url, init) => {
       ],
       {
         cwd: directory,
-        timeout: 10_000,
+        // Generous: the suite may share the machine with other serial workloads.
+        timeout: 30_000,
         encoding: 'utf8',
         env: {
           ...process.env,
@@ -450,6 +454,18 @@ globalThis.fetch = async (url, init) => {
     );
     const summary = await readFile(join(directory, 'summary.md'), 'utf8');
     assert.match(summary, /60 lifetime minutes/);
+    // The displaced-run report is appended after admission and never changes it;
+    // reconciliation runs after devices and skips it.
+    if (operation === 'reconcile') assert.doesNotMatch(summary, /Runs cancelled before/);
+    else if (inventory === 'malformed') {
+      // A failed listing still leaves allocation_allowed and the exit as asserted above.
+      assert.match(summary, /- Unavailable \(http-500\); check the group by hand\./);
+      assert.doesNotMatch(summary, /actions-private-error/);
+    } else
+      assert.match(
+        summary,
+        /## Runs cancelled before any job started\n\n- None since \d{4}-\d{2}-\d{2}\./,
+      );
     assert.match(
       await readFile(join(directory, 'summary.md'), 'utf8'),
       /Device Tunnel, native Firefox and charging unverified/,

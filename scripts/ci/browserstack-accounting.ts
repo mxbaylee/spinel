@@ -14,6 +14,7 @@ import {
 } from './browserstack-admission.ts';
 import { ledgerClient, ledgerFailure } from './browserstack-ledger.ts';
 import { collectQuotaEvidence } from './browserstack-quota.ts';
+import { displacedRuns, displacedSummary, displacedWarnings } from './browserstack-displaced.ts';
 
 function failure(error: unknown): string {
   const message = error instanceof Error ? error.message : '';
@@ -283,6 +284,15 @@ async function main() {
     estimate?.estimatedAdditionalCapabilityReservations === undefined
       ? 'Unknown'
       : (estimate.lastEstimatedFundableCapabilityDate ?? 'None');
+  // Read only after admission is decided; it never throws and cannot change it.
+  const displaced =
+    operation === 'reconcile'
+      ? null
+      : await displacedRuns({
+          repository: process.env.GITHUB_REPOSITORY ?? '',
+          token: process.env.GITHUB_TOKEN ?? '',
+          currentRunId: runId,
+        });
   const summary = [
     '# BrowserStack lifetime quota — owner-authorized estimate',
     '',
@@ -329,6 +339,7 @@ async function main() {
     'The reservation calendar assumes one full 15-minute reservation per monthly date and no other use. It is a budget scenario, not a forecast of measured successful runs.',
     'The complete-plan calendar is a separate hypothetical scenario: all five approved paid scopes once per month in the listed order, with no other use and a full reservation before each scope. The actual monthly workflow runs Safari acceptance only. A first unfundable plan date does not mean the balance is zero and grants no spending authority.',
     '',
+    ...(displaced ? displacedSummary(displaced, process.env.GITHUB_REPOSITORY ?? '') : []),
     '## Current operation blockers',
     '',
     ...(result.blockingReasons.length
@@ -357,6 +368,8 @@ async function main() {
       blockingReasons: result.blockingReasons,
     }),
   );
+  // Report-only: a lost monthly run is flagged on the run page as well as in the summary.
+  for (const warning of displaced ? displacedWarnings(displaced) : []) console.log(warning);
   if (!successful) process.exitCode = 1;
 }
 

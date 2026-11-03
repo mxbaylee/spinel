@@ -548,7 +548,31 @@ test('monthly Safari acceptance, quota reports, every phone scope, and read-only
   );
   assert.match(source, /cron: '17 9 1 \* \*'/);
   assert.match(source, /pull_request:\n    branches: \[main\]\n    types: \[labeled\]/);
-  assert.match(source, /group: browserstack-lifetime-account\n/);
+  // The group is a folded scalar: its lines join with single spaces.
+  const folded = /^  group: >-\n((?:    .+\n)+)/m.exec(source)?.[1] ?? '';
+  const group =
+    /^\$\{\{ (.+) \}\}$/.exec(
+      folded
+        .split('\n')
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .join(' '),
+    )?.[1] ?? '';
+  assert.match(group, /'browserstack-lifetime-account'$/);
+  // The lock's label list is exactly the set of labels any job routes on, so a new
+  // account label cannot be added to a job without also taking the lock.
+  const lockLabels: string[] = JSON.parse(/fromJSON\('(\[[^']+\])'\)/.exec(group)?.[1] ?? '[]');
+  // Read from the jobs only, so the group's own clauses cannot satisfy the check.
+  const jobsSource = source.slice(source.indexOf('\njobs:\n'));
+  const routedLabels = [
+    ...[...jobsSource.matchAll(/github\.event\.label\.name == '([^']+)'/g)].map(
+      (match) => match[1],
+    ),
+    ...[...jobsSource.matchAll(/fromJSON\('(\[[^']+\])'\), github\.event\.label\.name\)/g)].flatMap(
+      (match) => JSON.parse(match[1]) as string[],
+    ),
+  ];
+  assert.deepEqual([...new Set(lockLabels)].sort(), [...new Set(routedLabels)].sort());
   assert.match(source, /cancel-in-progress: false/);
   const diagnostics = source.split('  diagnostics:\n')[1].split('  accounting:\n')[0];
   assert.match(
@@ -585,16 +609,23 @@ test('monthly Safari acceptance, quota reports, every phone scope, and read-only
     /contents: write|GITHUB_TOKEN|needs:|continue-on-error:|setup-local|setup-env|npm ci|npm run build|browserstack-(?:accounting|capability)\.ts|ledger\.json/,
   );
   const quota = source.split('  accounting:\n')[1].split('  capability:\n')[0];
+  // Accounting may list runs read-only; no job may write Actions state.
+  assert.match(quota, /permissions:\n      # [^\n]+\n      actions: read\n      contents: write\n/);
+  assert.doesNotMatch(source, /actions: write/);
   assert.match(quota, /github.event_name == 'schedule'/);
   assert.match(quota, /github.event_name == 'workflow_dispatch' && inputs.mode != 'diagnostics'/);
-  assert.match(quota, /github.event.label.name == 'ci-real-devices'/);
-  assert.match(quota, /github.event.label.name == 'ci-real-devices-chrome'/);
-  assert.match(quota, /github.event.label.name == 'ci-real-devices-safari'/);
+  // Admission routes on every account label, i.e. the lock's list without diagnostics.
+  assert.deepEqual(
+    JSON.parse(
+      /contains\(fromJSON\('(\[[^']+\])'\), github\.event\.label\.name\)/.exec(quota)?.[1] ?? '[]',
+    ),
+    lockLabels.filter((label) => label !== 'ci-browserstack-logs'),
+  );
   assert.match(quota, /github.event.pull_request.head.repo.full_name == github.repository/);
   assert.match(quota, /run: node scripts\/ci\/browserstack-accounting.ts "\$BS_OPERATION"/);
   assert.match(quota, /inputs.mode == 'capability'/);
   assert.match(quota, /inputs.mode == 'chrome-diagnostic'/);
-  assert.match(quota, /inputs.mode == 'safari-acceptance'/);
+  assert.match(quota, /contains\(fromJSON\(env.BS_AUTHORED_SCOPES\), inputs.mode\)/);
   assert.match(quota, /run: test "\$ACCOUNTING_OUTCOME" = success/);
   assert.match(quota, /if: always\(\)/);
   assert.doesNotMatch(quota, /setup-local|setup-env|browserstack.ts (smoke|credentials)|needs:/);
@@ -745,6 +776,14 @@ test('monthly Safari acceptance, quota reports, every phone scope, and read-only
       jobs: ['accounting', 'capability', 'reconciliation'],
       scope: 'safari-acceptance',
     },
+    // Label names compare case-insensitively on GitHub, in == chains and contains() alike.
+    {
+      event: 'pull_request',
+      action: 'labeled',
+      label: 'CI-Real-Devices-Safari',
+      jobs: ['accounting', 'capability', 'reconciliation'],
+      scope: 'safari-acceptance',
+    },
     {
       event: 'workflow_dispatch',
       mode: 'safari-acceptance',
@@ -844,11 +883,14 @@ test('monthly Safari acceptance, quota reports, every phone scope, and read-only
       { event: 'pull_request', action: 'synchronize', label, jobs: [] },
     );
   }
+  const authoredScopes: string = source.match(/^  BS_AUTHORED_SCOPES: '(.+)'$/m)?.[1] ?? '';
+  assert.notEqual(authoredScopes, '', 'one workflow-level list owns the authored scopes');
   for (const route of routes) {
     const context = {
       github: {
         event_name: route.event,
         repository: 'mxbaylee/spinel',
+        run_id: 77,
         event: {
           action: route.action ?? '',
           label: { name: route.label ?? '' },
@@ -858,12 +900,29 @@ test('monthly Safari acceptance, quota reports, every phone scope, and read-only
         },
       },
       inputs: { mode: route.mode ?? '' },
-      env: { BS_CAPABILITY_SCOPE: '' },
+      env: { BS_AUTHORED_SCOPES: authoredScopes, BS_CAPABILITY_SCOPE: '' },
       needs: { accounting: { result: 'skipped', outputs: { allocation_allowed: '' } } },
       always: () => true,
+      // GitHub's array contains() compares strings case-insensitively.
+      fromJSON: (value: string) => JSON.parse(value) as unknown,
+      contains: (list: string[], item: string) =>
+        list.some((entry) => entry.toLowerCase() === item.toLowerCase()),
+      equal: (left: unknown, right: string, operator: '==' | '!=') =>
+        (typeof left === 'string' ? left.toLowerCase() === right.toLowerCase() : left === right) ===
+        (operator === '=='),
+      format: (template: string, ...values: unknown[]) =>
+        template.replace(/\{(\d+)\}/g, (_, index: string) => String(values[Number(index)])),
     };
+    // GitHub's == and != also ignore case for strings, so literal comparisons go
+    // through a helper instead of JS equality.
     const evaluate = (expression: string) =>
-      runInNewContext(expression, context, { timeout: 1000 });
+      runInNewContext(
+        expression.replace(/([\w.]+) (==|!=) ('[^']*')/g, "equal($1, $3, '$2')"),
+        context,
+        { timeout: 1000 },
+      );
+    // Any route that runs a job holds the account lock; only no-op labels leave it.
+    const lockGroup = evaluate(group);
     const selected = ['diagnostics', 'accounting'].filter((name) => evaluate(conditions[name]));
     if (selected.includes('accounting')) {
       const selectedOperation = evaluate(operation);
@@ -879,6 +938,30 @@ test('monthly Safari acceptance, quota reports, every phone scope, and read-only
     }
     selected.push(...['capability', 'reconciliation'].filter((name) => evaluate(conditions[name])));
     assert.deepEqual(selected, route.jobs, JSON.stringify(route));
+    // A fork PR or a label no job routes on is a no-op (contains() ignores case).
+    const noopLabel =
+      route.event === 'pull_request' &&
+      (!!route.fork ||
+        !routedLabels.some((label) => label.toLowerCase() === (route.label ?? '').toLowerCase()));
+    if (noopLabel)
+      assert.deepEqual(selected, [], `no-op label ran a job: ${JSON.stringify(route)}`);
+    // Diagnostics only read a completed session; they never share a run with account jobs.
+    const diagnosticsOnly =
+      !noopLabel && (route.mode === 'diagnostics' || route.label === 'ci-browserstack-logs');
+    if (diagnosticsOnly)
+      assert.ok(
+        selected.every((name) => name === 'diagnostics'),
+        `diagnostics group ran an account job: ${JSON.stringify(route)}`,
+      );
+    assert.equal(
+      lockGroup,
+      noopLabel
+        ? 'browserstack-noop-77'
+        : diagnosticsOnly
+          ? 'browserstack-diagnostics'
+          : 'browserstack-lifetime-account',
+      `concurrency group: ${JSON.stringify(route)}`,
+    );
     const selectedScope: string | null = selected.includes('capability') ? evaluate(scope) : null;
     assert.equal(selectedScope, route.scope ?? null, `capability scope: ${JSON.stringify(route)}`);
     context.env.BS_CAPABILITY_SCOPE = selectedScope ?? '';

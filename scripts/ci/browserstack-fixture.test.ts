@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import { generateKeyPairSync, X509Certificate } from 'node:crypto';
 import { mkdir, mkdtemp, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
+import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import {
@@ -66,7 +68,8 @@ test('disposable TLS validates SAN, lifetime and key pairing, then removes only 
     const privateKey = await readFile(tls.keyPath);
     const parsed = new X509Certificate(certificate);
     assert.equal(parsed.checkHost('bs-local.com', { subject: 'never' }), 'bs-local.com');
-    assert.equal(Date.parse(parsed.validTo) - Date.parse(parsed.validFrom), 24 * 60 * 60 * 1000);
+    const lifetime = Date.parse(parsed.validTo) - Date.parse(parsed.validFrom);
+    assert.ok(lifetime === 86_400_000 || lifetime === 86_401_000, String(lifetime));
     assert.equal((await stat(tls.keyPath)).mode & 0o777, 0o600);
     assert.deepEqual(Object.keys(tls.certificate).sort(), [
       'fingerprint256',
@@ -101,6 +104,41 @@ test('disposable TLS validates SAN, lifetime and key pairing, then removes only 
         ),
       { message: 'fixture-certificate-invalid-validity' },
     );
+    // The one-second allowance for OpenSSL's clock reads never admits a longer lifetime.
+    const longDirectory = await mkdtemp(join(tmpdir(), 'spinel-browserstack-long-'));
+    try {
+      const longCert = join(longDirectory, 'cert.pem');
+      const longKey = join(longDirectory, 'key.pem');
+      execFileSync(
+        'openssl',
+        [
+          'req',
+          '-x509',
+          '-newkey',
+          'rsa:2048',
+          '-sha256',
+          '-nodes',
+          '-days',
+          '2',
+          '-subj',
+          '/CN=bs-local.com',
+          '-addext',
+          'subjectAltName=DNS:bs-local.com',
+          '-keyout',
+          longKey,
+          '-out',
+          longCert,
+        ],
+        { stdio: 'ignore' },
+      );
+      assert.throws(
+        () =>
+          validateFixtureCertificate(readFileSync(longCert), readFileSync(longKey), 'bs-local.com'),
+        { message: 'fixture-certificate-invalid-validity' },
+      );
+    } finally {
+      await rm(longDirectory, { recursive: true, force: true });
+    }
     const differentKey = generateKeyPairSync('ec', { namedCurve: 'prime256v1' }).privateKey.export({
       type: 'pkcs8',
       format: 'pem',
