@@ -559,6 +559,16 @@ test('monthly Safari acceptance, quota reports, every phone scope, and read-only
         .join(' '),
     )?.[1] ?? '';
   assert.match(group, /'browserstack-lifetime-account'$/);
+  const runNameFolded = /^run-name: >-\n((?:  .+\n)+)/m.exec(source)?.[1] ?? '';
+  const runName =
+    /^\$\{\{ (.+) \}\}$/.exec(
+      runNameFolded
+        .split('\n')
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .join(' '),
+    )?.[1] ?? '';
+  assert.notEqual(runName, '', 'the run title is one folded expression');
   // The lock's label list is exactly the set of labels any job routes on, so a new
   // account label cannot be added to a job without also taking the lock.
   const lockLabels: string[] = JSON.parse(/fromJSON\('(\[[^']+\])'\)/.exec(group)?.[1] ?? '[]');
@@ -895,6 +905,7 @@ test('monthly Safari acceptance, quota reports, every phone scope, and read-only
           action: route.action ?? '',
           label: { name: route.label ?? '' },
           pull_request: {
+            title: 'Some PR',
             head: { repo: { full_name: route.fork ? 'someone/fork' : 'mxbaylee/spinel' } },
           },
         },
@@ -921,6 +932,16 @@ test('monthly Safari acceptance, quota reports, every phone scope, and read-only
         context,
         { timeout: 1000 },
       );
+    // The title tells the dispatch check which mode or label a pending run has.
+    assert.equal(
+      evaluate(runName),
+      route.event === 'workflow_dispatch'
+        ? `BrowserStack ${route.mode ?? ''}`
+        : route.event === 'schedule'
+          ? 'BrowserStack monthly safari-acceptance'
+          : `BrowserStack ${route.label ?? ''}: Some PR`,
+      `run title: ${JSON.stringify(route)}`,
+    );
     // Any route that runs a job holds the account lock; only no-op labels leave it.
     const lockGroup = evaluate(group);
     const selected = ['diagnostics', 'accounting'].filter((name) => evaluate(conditions[name]));

@@ -1,5 +1,12 @@
 name: 🧪 BrowserStack lifetime quota and phone capability
 
+# Names the mode or label, so a pending account run can be told from diagnostics
+# before dispatching (docs/offline.md#dispatching-browserstack-runs).
+run-name: >-
+  ${{ github.event_name == 'workflow_dispatch' && format('BrowserStack {0}', inputs.mode) ||
+  github.event_name == 'schedule' && 'BrowserStack monthly safari-acceptance' ||
+  format('BrowserStack {0}: {1}', github.event.label.name, github.event.pull_request.title) }}
+
 on:
   workflow_dispatch:
     inputs:

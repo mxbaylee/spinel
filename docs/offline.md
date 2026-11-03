@@ -752,8 +752,10 @@ a newer account run replaces it without failing anything
 
 1. Before dispatching, list every unfinished run:
    `gh run list --workflow browserstack.yml --json databaseId,status,event,displayTitle,headBranch --jq '.[] | select(.status != "completed")'`.
+   Each title names the dispatched mode, the PR label or the monthly run.
    Wait while an account run is `pending`; dispatching now would displace it.
-   Diagnostics and no-op runs use their own groups and can be ignored.
+   Diagnostics (`diagnostics` or `ci-browserstack-logs` in the title) and no-op
+   runs use their own groups and can be ignored.
 2. After dispatching, confirm the expected run reached a job.
 3. Read the "Runs cancelled before any job started" section of each quota or
    reserve summary. A listed `schedule` run means the monthly acceptance run was
