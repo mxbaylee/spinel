@@ -61,6 +61,12 @@ export async function deleteDesktopStorage(database: string): Promise<StorageDel
     }
   }
   try {
+    // A loaded app page rewrites its localStorage keys, which raced the empty-storage
+    // check (Firefox, run 41684932652), so deletion only runs on a script-free page.
+    await step('verify-no-page-scripts', () => {
+      if (document.scripts.length) throw new Error('A page with scripts is still loaded');
+      return location.pathname;
+    });
     const registrations = await step('serviceWorker.getRegistrations', () =>
       navigator.serviceWorker.getRegistrations(),
     );
@@ -101,7 +107,16 @@ export async function deleteDesktopStorage(database: string): Promise<StorageDel
       (await indexedDB.databases()).map((entry) => entry.name),
     );
     await step('verify-storage-empty', () => {
-      const state = { workers, cacheNames, databases, localStorageEntries: localStorage.length };
+      const state = {
+        workers,
+        cacheNames,
+        databases,
+        localStorageEntries: localStorage.length,
+        // Names only, so a leftover entry can be attributed without retaining values.
+        localStorageKeys: Array.from({ length: localStorage.length }, (_, index) =>
+          localStorage.key(index),
+        ),
+      };
       if (
         workers.length ||
         cacheNames.length ||

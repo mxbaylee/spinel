@@ -38,12 +38,14 @@ one account-authorized Space child at a time, with its verified images.
 [SPN-052](implementation/SPN-052.md) verifies the shared lifecycle in ordinary
 desktop Chrome, Firefox and Safari tabs, with observed persistence outcomes and
 in-place retention guidance ([native verification](#native-desktop-verification)).
-The remaining parts of this contract are open, split by the Owner in chat on 2026-10-19 so
-every unmet requirement stays on a ticket:
+The remaining parts of this contract were split by the Owner in chat on 2026-10-19 so
+every unmet requirement stayed on a ticket:
 
-- [SPN-090](todo/SPN-090.md): BrowserStack Android/iPhone launch and stable-link
-  observations, with the [approved coverage map](#browserstack-coverage-boundaries-and-automated-owners)
-  recording observed operation limits, automated alternatives and remaining work.
+- [SPN-090](implementation/SPN-090.md) landed BrowserStack Android/iPhone launch and
+  stable-link observations on 2026-11-03, with the [approved coverage map](#browserstack-coverage-boundaries-and-automated-owners)
+  recording observed operation limits, automated alternatives and the named
+  unobserved, out-of-scope phone observations. Its rules are kept under
+  [real-phone verification rules](#real-phone-verification-rules).
 
 [Decision #91](implementation/SPN-039.md#legacy-decision-91-offline-prerequisites-without-partial-completion) keeps every
 acceptance requirement below.
@@ -761,6 +763,61 @@ a newer account run replaces it without failing anything
    reserve summary. A listed `schedule` run means the monthly acceptance run was
    lost: dispatch `safari-acceptance` by hand, since next month's schedule does
    not stand in for it. Re-dispatch any other listed run that was still needed.
+
+### Real-phone verification rules
+
+📱 These rules come from [SPN-090's ticket at landing](https://github.com/mxbaylee/spinel/blob/d7761a893c70030477df79577f54b23bc0e88fb4/docs/todo/SPN-090.md),
+whose [record](implementation/SPN-090.md) holds the decisions, evidence and personas.
+
+- **Further real-device runs are optional** (owner, chat 2026-11-02, [amendment](implementation/SPN-090.md#owner-approved-browserstack-acceptance-and-review-rubric)).
+  The phone scopes, labels, manual dispatch and monthly schedule stay as
+  monitoring. A later phone result is recorded at its exact source; an unexecuted
+  scope is neither a pass nor a blocker. Native desktop and deterministic owners
+  carry the product contracts, and the mobile-only observations they cannot make
+  stay named as unobserved in the coverage map above.
+- **BrowserStack Automate is the approved mobile environment** (owner, 2026-11-02).
+  No personal phones, manual hardware, other provider, dedicated lab or extra
+  runner is required.
+- **Keep product outcomes intact.** An unavailable operation is recorded with
+  its exact route/device/source evidence, residual limit and named automated
+  owner, never as a pass. The [Firefox native-control limit](implementation/SPN-090.md#firefox-native-control-disposition)
+  is an observed automation boundary, not a Firefox product limitation. Unknown
+  failures stay unresolved; a successful diagnostic never turns a failure into a pass.
+- **Report semantics.** `status` is the selected scope's result and
+  `fullMatrixStatus` the three-browser capability aggregate; neither alone
+  establishes whole authored acceptance. Historical reports keep their schema.
+- **When a phone run happens,** run the [home-screen completion checks](#home-screen-links-and-completion-checks)
+  and record requested/actual OS and browser, install or shortcut actions,
+  persistence and launch context. Prepare downloads in the context that launches;
+  iOS browser tabs and installed apps do not share storage. A CI viewport is not
+  native installation, and a new WebDriver session is not a same-profile restart.
+  Tab scopes prove an exact-window cold page reload, not an OS restart.
+- **Never manufacture retention.** Do not restore browser storage. Observe
+  secure context, worker and authentication in the actual launch context, and keep
+  bootstrap credentials out of the manifest.
+- **Links and icons.** Rename and move keep `/?item=<uuid>` and
+  `/spaces/<spaceId>?item=<itemId>` targets. An unavailable explicit child never
+  opens another page, and creating a shortcut never implies a download.
+- **Capability before authoring.** Each native operation is established in the
+  bounded [capability spike](implementation/SPN-090.md#installed-context-capability-spike),
+  with actual termination, relaunch and network controls in the same reservation.
+  Android airplane mode and iOS no-network are different controls.
+- **Credentials and HTTPS.** Repository secrets are exactly `BS_USERNAME` and
+  `BS_ACCESS_KEY`, mapped into official Local. Use the production build, a
+  matching `APP_ORIGIN`, disposable accounts and on-demand self-signed
+  `https://bs-local.com:8176` ([decision](implementation/SPN-090.md#owner-authorized-estimate-and-disposable-ci-https)).
+- **Lifetime budget.** The account has 60 lifetime minutes with no renewal
+  ([decision](implementation/SPN-090.md#lifetime-budget-and-monthly-reporting)).
+  Every allocation needs a newly committed, read-back, matching reservation; runs
+  serialize on the account group and every status and retry is reconciled. Unknown
+  duration or allocation keeps its hold. Low, exhausted or invalid credit fails
+  visibly before allocation. Without an authoritative balance, use the owner's
+  unverified estimate: no unobserved usage, one charged second per measured
+  second, and a five-minute safety margin. Documentation edits never allocate devices.
+- **Cost reporting.** Successful-scope cost samples come only from a complete
+  matched journal and receipt with known terminal sessions. The [complete-plan forecast](implementation/SPN-090.md#complete-paid-plan-cost-and-final-review-repair)
+  needs all five scopes at one source and stays labelled hypothetical; cost is
+  unknown without those samples. Default manual dispatch is quota-only.
 
 ### Physical capability checkpoint — 2026-11-02
 

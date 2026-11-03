@@ -4,7 +4,7 @@ import { runInNewContext } from 'node:vm';
 import { setImmediate } from 'node:timers/promises';
 import { clearDesktopStorage } from './desktop-storage.ts';
 
-function fixture(fault?: string, rejection = false) {
+function fixture(fault?: string, rejection = false, scripts = 0, rewrite = false) {
   let workers = true,
     cache = true,
     database = true,
@@ -21,6 +21,8 @@ function fixture(fault?: string, rejection = false) {
   const sandbox = {
     performance,
     console,
+    document: { scripts: { length: scripts } },
+    location: { pathname: scripts ? '/' : '/favicon.svg' },
     setTimeout(callback: () => void, timeout: number) {
       assert.equal(timeout, 28000);
       expire = callback;
@@ -61,10 +63,13 @@ function fixture(fault?: string, rejection = false) {
         operation('local-storage', () => {
           entries = 0;
         });
+        // A loaded app writing its key again right after the clear.
+        if (rewrite) queueMicrotask(() => (entries = 1));
       },
       get length() {
         return entries;
       },
+      key: (index: number) => (index < entries ? 'spinel.offline.account' : null),
     },
     indexedDB: {
       deleteDatabase(name: string) {
@@ -108,7 +113,10 @@ test('serialized browser deletion removes every store and proves the resulting s
     cacheNames: [],
     databases: [],
     localStorageEntries: 0,
+    localStorageKeys: [],
   });
+  assert.equal(report.operations[0]!.name, 'verify-no-page-scripts');
+  assert.equal(report.operations[0]!.value, '/favicon.svg');
   assert.ok(f.cleared());
 });
 
@@ -148,6 +156,21 @@ test('a reported deletion success cannot conceal a retained database', async () 
   const report = await fixture('retained').promise;
   assert.equal(report.status, 'failed');
   assert.match(report.error!, /Storage remains after deletion/);
+});
+
+test('deletion refuses a page that runs scripts before touching any store', async () => {
+  const f = fixture(undefined, false, 1);
+  const report = await f.promise;
+  assert.equal(report.status, 'failed');
+  assert.match(report.error!, /verify-no-page-scripts: Error: A page with scripts is still loaded/);
+  assert.deepEqual(f.calls, []);
+});
+
+test('an entry written again after the clear fails and names its key', async () => {
+  const report = await fixture(undefined, false, 0, true).promise;
+  assert.equal(report.status, 'failed');
+  assert.match(report.error!, /Storage remains after deletion/);
+  assert.match(report.error!, /"localStorageKeys":\["spinel\.offline\.account"\]/);
 });
 
 test('synchronous storage rejection is retained without continuing to database deletion', async () => {

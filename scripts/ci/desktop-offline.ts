@@ -692,6 +692,9 @@ async function main() {
       (value) => value === 2,
       'Two normal copies positively advertise availability before storage deletion',
     );
+    // The app is unloaded first: its service worker answers the favicon itself, so
+    // the deletion runs in a script-free document of the same origin.
+    await browser.goto(f.origin + '/favicon.svg');
     const deletion = await clearDesktopStorage(browser, `spinel-offline-${f.actor.id}`);
     stage('storage-deletion', { deletion });
     assert.equal(deletion.status, 'passed', JSON.stringify(deletion));
