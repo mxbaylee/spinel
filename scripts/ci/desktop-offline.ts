@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { clearDesktopStorage } from './desktop-storage.ts';
 import { execFile } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
@@ -691,12 +692,9 @@ async function main() {
       (value) => value === 2,
       'Two normal copies positively advertise availability before storage deletion',
     );
-    await browser.evaluate(`(async () => {
-      for(const registration of await navigator.serviceWorker.getRegistrations()) await registration.unregister();
-      for(const key of await caches.keys()) await caches.delete(key);
-      localStorage.clear();
-      await new Promise((resolve,reject) => { const request=indexedDB.deleteDatabase(${JSON.stringify(`spinel-offline-${f.actor.id}`)}); request.onsuccess=resolve; request.onerror=()=>reject(request.error); request.onblocked=()=>reject(new Error('Private database is still open')); });
-    })()`);
+    const deletion = await clearDesktopStorage(browser, `spinel-offline-${f.actor.id}`);
+    stage('storage-deletion', { deletion });
+    assert.equal(deletion.status, 'passed', JSON.stringify(deletion));
     await browser.goto(f.origin + '/');
     await named('button', 'Shared with me');
     for (const item of f.items)

@@ -1,0 +1,16 @@
+{
+  "snapshot": "/tmp/spn135-local-control-final-processes.json",
+  "before": [
+    {
+      "pid": 81420,
+      "parent": 1,
+      "group": 81420,
+      "rssKiB": 80832,
+      "started": "Mon Nov  2 15:28:26 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node /tmp/spn135-local-process-control.ts detached-child"
+    }
+  ],
+  "afterTerm": [],
+  "remaining": [],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

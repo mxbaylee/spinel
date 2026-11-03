@@ -1,0 +1,30 @@
+{
+  "observedAt": "2026-11-02T22:37:10.454Z",
+  "run": {
+    "id": 41538486722,
+    "source": "0dae3dedf5ad11ceeebb318f5823097a33b24d95",
+    "attempt": 1,
+    "status": "queued",
+    "conclusion": null,
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/41538486722"
+  },
+  "jobs": [
+    {
+      "id": 125596302776,
+      "status": "queued",
+      "conclusion": null,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runnerId": 0,
+      "runnerName": "",
+      "steps": []
+    }
+  ],
+  "repository": {
+    "inProgress": 0,
+    "queued": 53
+  },
+  "pendingDeployments": 0,
+  "limits": "No assigned runner or executed step. Queue reason is not supplied by API. Not proof of a global incident or account quota. No retry or replacement run."
+}
