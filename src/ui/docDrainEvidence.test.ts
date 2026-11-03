@@ -28,7 +28,9 @@ function fixture(expectedCompletedStates = 3, bounded = false) {
   const manager = injector.get(DocStateChangeManagerService);
   vi.stubGlobal('window', new EventTarget());
   const observer = observeDocResponsiveness(replica.univer, 'doc', false);
-  const policy = bounded ? boundDocHistory(replica.univer, 'doc') : undefined;
+  const policy = bounded
+    ? boundDocHistory(replica.univer, 'doc', (value) => observer.flushed(value))
+    : undefined;
   vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
   const request = {
     epoch: 'native-test-epoch',
@@ -91,6 +93,13 @@ test('native timer completion records an actual empty observation and sealing pr
     await vi.advanceTimersByTimeAsync(300);
     const read = f.observer.readDrain()!;
     expect(read.completedStates).toBe(3);
+    expect(read.nativeObservationAvailable).toBe(true);
+    expect(read.idleEpisode).toMatchObject({
+      origin: 'native-timers',
+      history: 3,
+      collaboration: 3,
+    });
+    expect(read.nativeFlushes.filter((value) => value.phase !== 'pair')).toHaveLength(2);
     expect(read.invalidated).toBe(false);
     expect(read.firstEmpty).toMatchObject({
       completedStates: 3,
@@ -262,5 +271,40 @@ test('a same-unit reload invalidates the active witness while another unit canno
     expect(f.text()).toBe('a\r\n');
   } finally {
     f.close();
+  }
+});
+
+test('overflow and a detached native observer cannot yield valid terminal evidence', async () => {
+  const f = fixture();
+  try {
+    f.arm();
+    for (let index = 0; index < 4097; index++)
+      f.observer.flushed({
+        reason: 'idle',
+        startedAt: 0,
+        durationMs: 0,
+        history: 1,
+        collaboration: 1,
+        quietForMs: 300,
+      });
+    expect(
+      f.observer
+        .readDrain()
+        ?.invalidations.some((value) => value.reason === 'policy-flush-overflow'),
+    ).toBe(true);
+  } finally {
+    f.close();
+  }
+  const g = fixture();
+  try {
+    g.arm();
+    for (let index = 0; index < 1366; index++) g.manager.flushPendingChanges('doc');
+    expect(
+      g.observer
+        .readDrain()
+        ?.invalidations.some((value) => value.reason === 'native-flush-overflow'),
+    ).toBe(true);
+  } finally {
+    g.close();
   }
 });

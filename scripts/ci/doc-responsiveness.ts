@@ -5,6 +5,7 @@ import { dirname, join } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
 import {
   compositionCpu,
+  docIdleDurations,
   distribution,
   DOC_RESPONSIVENESS_BASELINE_HISTORY_LIMIT,
   DOC_RESPONSIVENESS_BUDGETS,
@@ -416,6 +417,30 @@ function validDrainWitness(value: BenchmarkMetrics) {
     sealed.completedStates !== 2086 ||
     observed.lastCompletedStateAt !== sealed.lastCompletedStateAt ||
     !isDeepStrictEqual(observed.firstEmpty, first) ||
+    arm.terminal !== null ||
+    arm.nativeFlushes?.length !== 0 ||
+    arm.idleEpisode !== null ||
+    observed.nativeObservationAvailable !== arm.nativeObservationAvailable ||
+    sealed.nativeObservationAvailable !== arm.nativeObservationAvailable ||
+    !isDeepStrictEqual(observed.terminal, sealed.terminal) ||
+    !isDeepStrictEqual(observed.idleEpisode, sealed.idleEpisode) ||
+    !Array.isArray(observed.nativeFlushes) ||
+    !Array.isArray(sealed.nativeFlushes) ||
+    !isDeepStrictEqual(
+      observed.nativeFlushes,
+      sealed.nativeFlushes.slice(0, observed.nativeFlushes.length),
+    ) ||
+    sealed.nativeFlushes
+      .slice(observed.nativeFlushes.length)
+      .some(
+        (entry) =>
+          entry.startedAt < first.observedAt ||
+          entry.outcome !== 'returned' ||
+          entry.before.history !== 0 ||
+          entry.before.collaboration !== 0 ||
+          entry.after.history !== 0 ||
+          entry.after.collaboration !== 0,
+      ) ||
     !finite(sealed.lastCompletedStateAt!) ||
     sealed.lastCompletedStateAt! < lastKey ||
     !finite(first.observedAt) ||
@@ -467,6 +492,8 @@ const requiredHashes = [
   'e2e/doc-responsiveness-fixture.ts',
   'e2e/doc-responsiveness-boundaries.ts',
   'web/docResponsivenessEvidence.ts',
+  'src/ui/docIdleEpisode.ts',
+  'src/ui/nativeDocFlush.ts',
   'playwright.config.ts',
   'package-lock.json',
 ];
@@ -651,15 +678,28 @@ export function compareDocResponsiveness(
     const frame = distribution(value.input.keyToFrameMs);
     const longestTask = Math.max(0, ...value.input.longTasks.map((task) => task.durationMs));
     const capacityFlushes = value.native.flushes.filter((entry) => entry.reason === 'capacity');
-    const idleFlushes = value.native.flushes.filter((entry) => entry.reason === 'idle');
+    let idleDurations: number[] = [];
+    if (value.role === 'candidate') {
+      try {
+        idleDurations = docIdleDurations(value.native);
+        const sealedDurations = docIdleDurations({
+          ...value.native,
+          drainWitness: value.drainWitness,
+        });
+        check(
+          isDeepStrictEqual(idleDurations, sealedDurations),
+          `${label}: sealed idle evidence changed.`,
+        );
+      } catch (error) {
+        check(false, `${label}: missing or invalid terminal idle evidence: ${String(error)}`);
+      }
+    }
     const capacityFlush = capacityFlushes.length
       ? distribution(capacityFlushes.map((entry) => entry.durationMs))
       : null;
-    const idleFlush = idleFlushes.length
-      ? distribution(idleFlushes.map((entry) => entry.durationMs))
-      : null;
+    const idleFlush = idleDurations.length ? distribution(idleDurations) : null;
     const flushMaximum = value.native.flushes.length
-      ? Math.max(...value.native.flushes.map((entry) => entry.durationMs))
+      ? Math.max(...value.native.flushes.map((entry) => entry.durationMs), ...idleDurations)
       : null;
     const drain = value.native.observedAt - value.input.keydownAt.at(-1)!;
     const localDrain = value.drainWitness?.firstEmpty
@@ -707,8 +747,9 @@ export function compareDocResponsiveness(
             Boolean(capacityFlush) &&
             capacityFlush!.p95 <= limits.flushP95Ms &&
             capacityFlush!.max <= limits.flushMaxMs &&
-            (!idleFlush ||
-              (idleFlush.p95 <= limits.flushP95Ms && idleFlush.max <= limits.flushMaxMs)) &&
+            idleFlush !== null &&
+            idleFlush.p95 <= limits.flushP95Ms &&
+            idleFlush.max <= limits.flushMaxMs &&
             flushMaximum !== null &&
             flushMaximum <= limits.flushMaxMs &&
             localDrain !== null &&

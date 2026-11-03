@@ -1,0 +1,7 @@
+{
+  "snapshot": "/tmp/spn135-local-processes.json",
+  "before": [],
+  "afterTerm": [],
+  "remaining": [],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}
