@@ -18,7 +18,7 @@
     "error-context.md": {
       "sha256": "cd7318c451d423e24e4c699c4bdccb6c913c26176eb7ed1a9b4cfc340b29354d",
       "bytes": 12028,
-      "stored": "error-context.md"
+      "stored": "error-context.md.gz"
     },
     "test-failed-1.png": {
       "sha256": "8eba6b277389f9910b93e9275b59e565b60f5dbb0e5e25ec48e66276bf8cbc5c",
