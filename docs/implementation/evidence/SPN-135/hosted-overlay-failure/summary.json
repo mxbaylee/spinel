@@ -1,0 +1,36 @@
+{
+  "run": 41566002361,
+  "job": 125687757840,
+  "attempt": 1,
+  "prHead": "f1bdce177c329873f3d33cf2977bd0eb637f35ce",
+  "testedMerge": "4d2338fbdacfd1d105f01a8d69b8bee39238312a",
+  "baseline": "0e1df4725d9eccb77574d25e3eecdf678fe6ff44",
+  "result": "Both attempt-zero browser cases passed; strict paired comparator rejected an unrelated modified baseline responsiveness spec.",
+  "disposition": "Narrow callback workflow overlay to its five declared E2E harness files; preserve comparator and all acceptance budgets. Fresh hosted validation required.",
+  "artifacts": [
+    {
+      "file": "baseline-manifest.json.gz",
+      "sha256": "cd4115dc1d691b2c0255bf72e30835916327d888c5e7ae3f7aa20bbb0425446e",
+      "bytes": 1048401,
+      "rawSha256": "1ecd2bbfead58aff1c0c89643e8cae8dc3903ed52d3acf1d22ed15bb358b9596",
+      "rawBytes": 23939715,
+      "sourcePath": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json"
+    },
+    {
+      "file": "comparison.json.gz",
+      "sha256": "4f1669cc2ab29a56cad70e7e27673880be3b5d1efe967c89c8dfb82eaed9de88",
+      "bytes": 59075,
+      "rawSha256": "d28c319b7230d78214b885dd911aa96f10bcba2990993e55742af295498d7063",
+      "rawBytes": 968654,
+      "sourcePath": "test-results/spn113-comparison-desktop.json"
+    },
+    {
+      "file": "job.log.gz",
+      "sha256": "98555fd2065886088f956563d89986297c35ba8413e835811c50d959905097d8",
+      "bytes": 18208,
+      "rawSha256": "c10f312ce7b4a6dbeaa76be595efa57eb5540c00869823b404ae0cf7bababbb1",
+      "rawBytes": 84172,
+      "sourcePath": "GitHub job 125687757840 logs"
+    }
+  ]
+}

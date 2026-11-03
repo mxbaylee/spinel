@@ -677,7 +677,7 @@ jobs:
       - name: Match callback workload and read-only observations
         if: needs.changes.outputs.callback_baseline == 'true'
         run: |
-          cp e2e/doc-responsiveness*.ts baseline-callback-source/e2e/
+          cp e2e/doc-responsiveness-callbacks.spec.ts e2e/doc-responsiveness-callback-sources.ts e2e/doc-responsiveness-callback-trace.ts e2e/doc-responsiveness-fixture.ts e2e/doc-responsiveness.ts baseline-callback-source/e2e/
           cp scripts/ci/doc-callback-lifetimes.ts baseline-callback-source/scripts/ci/
           cp web/docResponsivenessEvidence.ts baseline-callback-source/web/
           cp src/ui/docIdleEpisode.ts src/ui/nativeDocFlush.ts baseline-callback-source/src/ui/
