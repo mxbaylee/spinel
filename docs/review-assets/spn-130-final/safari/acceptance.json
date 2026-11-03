@@ -1,0 +1,1336 @@
+{
+  "scope": "Actual macOS ordinary-profile application restart, retained images/edits, reconnect and storage loss",
+  "sourceSha": "d36d44c252061452c2c8487bcc84ad9a55b641e8",
+  "testedSha": "590ef871970c90fb82eb5c4d6a1c3c6251ec3953",
+  "run": "https://github.com/mxbaylee/spinel/actions/runs/41668117254",
+  "attempt": "1",
+  "runner": {
+    "label": "macos-15-intel",
+    "arch": "x64",
+    "imageOS": "macos15",
+    "imageVersion": "20260824.0482.1"
+  },
+  "browser": "safari",
+  "status": "passed",
+  "stages": [
+    {
+      "name": "browser-start",
+      "time": "2026-11-03T15:53:27.822Z",
+      "kind": "safari",
+      "version": "27.2",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+      "profile": {
+        "mode": "ordinary-hosted-safari-user",
+        "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+        "actualPath": "/Users/runner",
+        "directoryDevice": "16777220",
+        "directoryInode": "12884922560"
+      },
+      "browserPid": 4005,
+      "previousBrowserPid": null,
+      "driverPid": null,
+      "driverVersion": null,
+      "startedAt": "2026-11-03T15:53:26.548Z",
+      "browserTab": true,
+      "secureContext": true,
+      "storagePersisted": false
+    },
+    {
+      "name": "safari-online-rendering-baseline",
+      "time": "2026-11-03T15:53:35.262Z",
+      "diagnosticOnly": true,
+      "itemId": "8dd9d503-1f41-45d1-b22d-3ed425284cb4",
+      "kind": "sheet",
+      "file": "sheet-online-before-download.png"
+    },
+    {
+      "name": "safari-online-rendering-baseline",
+      "time": "2026-11-03T15:54:10.146Z",
+      "diagnosticOnly": true,
+      "itemId": "6fba0400-51ea-4a49-a71a-0b45e5e8edde",
+      "kind": "doc",
+      "file": "doc-online-before-download.png"
+    },
+    {
+      "name": "all-four-downloads-complete",
+      "time": "2026-11-03T15:54:35.025Z"
+    },
+    {
+      "name": "transport-disabled-before-quit",
+      "time": "2026-11-03T15:54:35.069Z",
+      "forwardedRequests": 353,
+      "blockedRequests": 2,
+      "forwardedUpgrades": 4,
+      "blockedUpgrades": 1,
+      "logins": 1,
+      "offline": true,
+      "activeBrowserSockets": 0
+    },
+    {
+      "name": "exact-records-captured-before-quit",
+      "time": "2026-11-03T15:54:39.873Z"
+    },
+    {
+      "name": "browser-stop",
+      "time": "2026-11-03T15:54:40.329Z",
+      "kind": "safari",
+      "browserPid": 4005,
+      "driverPid": null,
+      "browserExited": true,
+      "driverExited": true,
+      "stoppedAt": "2026-11-03T15:54:40.329Z"
+    },
+    {
+      "name": "transport-disabled-before-relaunch",
+      "time": "2026-11-03T15:54:40.347Z",
+      "forwardedRequests": 353,
+      "blockedRequests": 37,
+      "forwardedUpgrades": 4,
+      "blockedUpgrades": 2,
+      "logins": 1,
+      "offline": true,
+      "activeBrowserSockets": 0
+    },
+    {
+      "name": "browser-start",
+      "time": "2026-11-03T15:54:46.662Z",
+      "kind": "safari",
+      "version": "27.2",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+      "profile": {
+        "mode": "ordinary-hosted-safari-user",
+        "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+        "actualPath": "/Users/runner",
+        "directoryDevice": "16777220",
+        "directoryInode": "12884922560"
+      },
+      "browserPid": 6021,
+      "previousBrowserPid": 4005,
+      "driverPid": null,
+      "driverVersion": null,
+      "startedAt": "2026-11-03T15:54:46.051Z",
+      "browserTab": true,
+      "secureContext": true,
+      "storagePersisted": false
+    },
+    {
+      "name": "offline-catalog-and-original-records-retained",
+      "time": "2026-11-03T15:54:53.251Z"
+    },
+    {
+      "name": "native-doc-input-caret",
+      "time": "2026-11-03T15:55:31.288Z",
+      "itemId": "6fba0400-51ea-4a49-a71a-0b45e5e8edde",
+      "before": {
+        "unitId": "6fba0400-51ea-4a49-a71a-0b45e5e8edde",
+        "mobile": false,
+        "observedAt": 9413,
+        "currentUnitId": "6fba0400-51ea-4a49-a71a-0b45e5e8edde",
+        "currentLogicalRange": {
+          "start": 20,
+          "end": 20,
+          "collapsed": true,
+          "segmentId": "",
+          "segmentPage": -1
+        },
+        "unitLogicalRanges": [
+          {
+            "start": 20,
+            "end": 20,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          }
+        ],
+        "unitSelectionOptions": {
+          "preserveInputStyle": true
+        },
+        "unitSelectionStyles": [
+          {
+            "stroke": "rgba(0, 0, 0, 1)",
+            "fill": "rgba(128, 188, 254, 0.6)"
+          }
+        ],
+        "nativeRange": {
+          "start": 20,
+          "end": 20,
+          "collapsed": true,
+          "segmentId": "",
+          "segmentPage": -1
+        },
+        "start": 20,
+        "end": 20,
+        "hasAnchor": true,
+        "anchor": {
+          "visible": true,
+          "left": 466.44596831003827,
+          "top": 133.66666666666669,
+          "width": 0,
+          "height": 16.000000000000014
+        },
+        "inputConnected": true,
+        "inputFocused": true,
+        "pointerSelection": false,
+        "pendingSelection": false,
+        "shortcutContext": {
+          "doc": true,
+          "editor": true,
+          "drawing": false,
+          "activated": false,
+          "formulaBar": false
+        },
+        "viewport": {
+          "key": "viewMain",
+          "active": true,
+          "width": 1324,
+          "height": 686,
+          "scrollX": 0,
+          "scrollY": 0,
+          "bounds": {
+            "left": 0,
+            "right": 1324,
+            "top": 0,
+            "bottom": 686
+          }
+        },
+        "scale": {
+          "x": 1,
+          "y": 1
+        },
+        "layout": {
+          "viewportReady": true,
+          "firstNode": {
+            "glyph": 0,
+            "divide": 0,
+            "line": 0,
+            "column": 0,
+            "section": 0,
+            "page": 0,
+            "pageType": 0,
+            "segmentPage": -1,
+            "isBack": true,
+            "path": [
+              "pages",
+              0
+            ]
+          },
+          "progress": null
+        },
+        "commands": [
+          {
+            "at": 3122,
+            "id": "doc.operation.set-selections",
+            "unitId": "6fba0400-51ea-4a49-a71a-0b45e5e8edde"
+          },
+          {
+            "at": 7448,
+            "id": "doc.operation.set-selections",
+            "unitId": "6fba0400-51ea-4a49-a71a-0b45e5e8edde"
+          },
+          {
+            "at": 7473,
+            "id": "doc.operation.set-selections",
+            "unitId": "6fba0400-51ea-4a49-a71a-0b45e5e8edde"
+          }
+        ],
+        "editing": false,
+        "bounds": {
+          "left": 466.44596831003827,
+          "right": 466.44596831003827,
+          "top": 247.66666666666669,
+          "bottom": 310.6666666666667
+        },
+        "scroll": 0,
+        "text": "\bRecovery base notes\r\n"
+      },
+      "caret": {
+        "unitId": "6fba0400-51ea-4a49-a71a-0b45e5e8edde",
+        "mobile": false,
+        "observedAt": 13377,
+        "currentUnitId": "6fba0400-51ea-4a49-a71a-0b45e5e8edde",
+        "currentLogicalRange": {
+          "start": 0,
+          "end": 0,
+          "collapsed": true,
+          "segmentId": "",
+          "segmentPage": -1
+        },
+        "unitLogicalRanges": [
+          {
+            "start": 0,
+            "end": 0,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          }
+        ],
+        "unitSelectionOptions": {
+          "preserveInputStyle": true
+        },
+        "unitSelectionStyles": [
+          {
+            "stroke": "rgba(0, 0, 0, 1)",
+            "fill": "rgba(128, 188, 254, 0.6)"
+          }
+        ],
+        "nativeRange": {
+          "start": 0,
+          "end": 0,
+          "collapsed": true,
+          "segmentId": "",
+          "segmentPage": -1
+        },
+        "start": 0,
+        "end": 0,
+        "hasAnchor": true,
+        "anchor": {
+          "visible": true,
+          "left": 248.66666666666669,
+          "top": 86.66666666666667,
+          "width": 0,
+          "height": 60
+        },
+        "inputConnected": true,
+        "inputFocused": true,
+        "pointerSelection": false,
+        "pendingSelection": false,
+        "shortcutContext": {
+          "doc": true,
+          "editor": true,
+          "drawing": false,
+          "activated": false,
+          "formulaBar": false
+        },
+        "viewport": {
+          "key": "viewMain",
+          "active": true,
+          "width": 1324,
+          "height": 686,
+          "scrollX": 0,
+          "scrollY": 0,
+          "bounds": {
+            "left": 0,
+            "right": 1324,
+            "top": 0,
+            "bottom": 686
+          }
+        },
+        "scale": {
+          "x": 1,
+          "y": 1
+        },
+        "layout": {
+          "viewportReady": true,
+          "firstNode": {
+            "glyph": 0,
+            "divide": 0,
+            "line": 0,
+            "column": 0,
+            "section": 0,
+            "page": 0,
+            "pageType": 0,
+            "segmentPage": -1,
+            "isBack": true,
+            "path": [
+              "pages",
+              0
+            ]
+          },
+          "progress": null
+        },
+        "commands": [
+          {
+            "at": 3122,
+            "id": "doc.operation.set-selections",
+            "unitId": "6fba0400-51ea-4a49-a71a-0b45e5e8edde"
+          },
+          {
+            "at": 7448,
+            "id": "doc.operation.set-selections",
+            "unitId": "6fba0400-51ea-4a49-a71a-0b45e5e8edde"
+          },
+          {
+            "at": 7473,
+            "id": "doc.operation.set-selections",
+            "unitId": "6fba0400-51ea-4a49-a71a-0b45e5e8edde"
+          },
+          {
+            "at": 13357,
+            "id": "doc.operation.move-cursor",
+            "direction": 0,
+            "granularity": "document"
+          },
+          {
+            "at": 13370,
+            "id": "doc.operation.set-selections",
+            "unitId": "6fba0400-51ea-4a49-a71a-0b45e5e8edde"
+          }
+        ],
+        "editing": false,
+        "bounds": {
+          "left": 248.66666666666669,
+          "right": 248.66666666666669,
+          "top": 247.66666666666669,
+          "bottom": 310.6666666666667
+        },
+        "scroll": 0,
+        "text": "\bRecovery base notes\r\n"
+      },
+      "visual": {
+        "file": "6fba0400-51ea-4a49-a71a-0b45e5e8edde-before-doc-input.png",
+        "colorPixelCounts": [
+          4661
+        ],
+        "captures": 1
+      }
+    },
+    {
+      "name": "native-doc-input-caret",
+      "time": "2026-11-03T15:55:45.711Z",
+      "itemId": "591a9f4d-7b76-4d8d-af0d-2e95efdb0cd2",
+      "before": {
+        "unitId": "591a9f4d-7b76-4d8d-af0d-2e95efdb0cd2",
+        "mobile": false,
+        "observedAt": 8999,
+        "currentUnitId": "591a9f4d-7b76-4d8d-af0d-2e95efdb0cd2",
+        "currentLogicalRange": {
+          "start": 20,
+          "end": 20,
+          "collapsed": true,
+          "segmentId": "",
+          "segmentPage": -1
+        },
+        "unitLogicalRanges": [
+          {
+            "start": 20,
+            "end": 20,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          }
+        ],
+        "unitSelectionOptions": {
+          "preserveInputStyle": true
+        },
+        "unitSelectionStyles": [
+          {
+            "stroke": "rgba(0, 0, 0, 1)",
+            "fill": "rgba(128, 188, 254, 0.6)"
+          }
+        ],
+        "nativeRange": {
+          "start": 20,
+          "end": 20,
+          "collapsed": true,
+          "segmentId": "",
+          "segmentPage": -1
+        },
+        "start": 20,
+        "end": 20,
+        "hasAnchor": true,
+        "anchor": {
+          "visible": true,
+          "left": 466.44596831003827,
+          "top": 133.66666666666669,
+          "width": 0,
+          "height": 16.000000000000014
+        },
+        "inputConnected": true,
+        "inputFocused": true,
+        "pointerSelection": false,
+        "pendingSelection": false,
+        "shortcutContext": {
+          "doc": true,
+          "editor": true,
+          "drawing": false,
+          "activated": false,
+          "formulaBar": false
+        },
+        "viewport": {
+          "key": "viewMain",
+          "active": true,
+          "width": 1324,
+          "height": 686,
+          "scrollX": 0,
+          "scrollY": 0,
+          "bounds": {
+            "left": 0,
+            "right": 1324,
+            "top": 0,
+            "bottom": 686
+          }
+        },
+        "scale": {
+          "x": 1,
+          "y": 1
+        },
+        "layout": {
+          "viewportReady": true,
+          "firstNode": {
+            "glyph": 0,
+            "divide": 0,
+            "line": 0,
+            "column": 0,
+            "section": 0,
+            "page": 0,
+            "pageType": 0,
+            "segmentPage": -1,
+            "isBack": true,
+            "path": [
+              "pages",
+              0
+            ]
+          },
+          "progress": null
+        },
+        "commands": [
+          {
+            "at": 2374,
+            "id": "doc.operation.set-selections",
+            "unitId": "591a9f4d-7b76-4d8d-af0d-2e95efdb0cd2"
+          },
+          {
+            "at": 7076,
+            "id": "doc.operation.set-selections",
+            "unitId": "591a9f4d-7b76-4d8d-af0d-2e95efdb0cd2"
+          },
+          {
+            "at": 7097,
+            "id": "doc.operation.set-selections",
+            "unitId": "591a9f4d-7b76-4d8d-af0d-2e95efdb0cd2"
+          }
+        ],
+        "editing": false,
+        "bounds": {
+          "left": 466.44596831003827,
+          "right": 466.44596831003827,
+          "top": 247.66666666666669,
+          "bottom": 310.6666666666667
+        },
+        "scroll": 0,
+        "text": "\bRecovery base notes\r\n"
+      },
+      "caret": {
+        "unitId": "591a9f4d-7b76-4d8d-af0d-2e95efdb0cd2",
+        "mobile": false,
+        "observedAt": 9927,
+        "currentUnitId": "591a9f4d-7b76-4d8d-af0d-2e95efdb0cd2",
+        "currentLogicalRange": {
+          "start": 0,
+          "end": 0,
+          "collapsed": true,
+          "segmentId": "",
+          "segmentPage": -1
+        },
+        "unitLogicalRanges": [
+          {
+            "start": 0,
+            "end": 0,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          }
+        ],
+        "unitSelectionOptions": {
+          "preserveInputStyle": true
+        },
+        "unitSelectionStyles": [
+          {
+            "stroke": "rgba(0, 0, 0, 1)",
+            "fill": "rgba(128, 188, 254, 0.6)"
+          }
+        ],
+        "nativeRange": {
+          "start": 0,
+          "end": 0,
+          "collapsed": true,
+          "segmentId": "",
+          "segmentPage": -1
+        },
+        "start": 0,
+        "end": 0,
+        "hasAnchor": true,
+        "anchor": {
+          "visible": true,
+          "left": 248.66666666666669,
+          "top": 86.66666666666667,
+          "width": 0,
+          "height": 60
+        },
+        "inputConnected": true,
+        "inputFocused": true,
+        "pointerSelection": false,
+        "pendingSelection": false,
+        "shortcutContext": {
+          "doc": true,
+          "editor": true,
+          "drawing": false,
+          "activated": false,
+          "formulaBar": false
+        },
+        "viewport": {
+          "key": "viewMain",
+          "active": true,
+          "width": 1324,
+          "height": 686,
+          "scrollX": 0,
+          "scrollY": 0,
+          "bounds": {
+            "left": 0,
+            "right": 1324,
+            "top": 0,
+            "bottom": 686
+          }
+        },
+        "scale": {
+          "x": 1,
+          "y": 1
+        },
+        "layout": {
+          "viewportReady": true,
+          "firstNode": {
+            "glyph": 0,
+            "divide": 0,
+            "line": 0,
+            "column": 0,
+            "section": 0,
+            "page": 0,
+            "pageType": 0,
+            "segmentPage": -1,
+            "isBack": true,
+            "path": [
+              "pages",
+              0
+            ]
+          },
+          "progress": null
+        },
+        "commands": [
+          {
+            "at": 2374,
+            "id": "doc.operation.set-selections",
+            "unitId": "591a9f4d-7b76-4d8d-af0d-2e95efdb0cd2"
+          },
+          {
+            "at": 7076,
+            "id": "doc.operation.set-selections",
+            "unitId": "591a9f4d-7b76-4d8d-af0d-2e95efdb0cd2"
+          },
+          {
+            "at": 7097,
+            "id": "doc.operation.set-selections",
+            "unitId": "591a9f4d-7b76-4d8d-af0d-2e95efdb0cd2"
+          },
+          {
+            "at": 9762,
+            "id": "doc.operation.move-cursor",
+            "direction": 0,
+            "granularity": "document"
+          },
+          {
+            "at": 9773,
+            "id": "doc.operation.set-selections",
+            "unitId": "591a9f4d-7b76-4d8d-af0d-2e95efdb0cd2"
+          }
+        ],
+        "editing": false,
+        "bounds": {
+          "left": 248.66666666666669,
+          "right": 248.66666666666669,
+          "top": 247.66666666666669,
+          "bottom": 310.6666666666667
+        },
+        "scroll": 0,
+        "text": "\bRecovery base notes\r\n"
+      },
+      "visual": {
+        "file": "591a9f4d-7b76-4d8d-af0d-2e95efdb0cd2-before-doc-input.png",
+        "colorPixelCounts": [
+          4661
+        ],
+        "captures": 1
+      }
+    },
+    {
+      "name": "native-offline-edits-committed",
+      "time": "2026-11-03T15:55:48.299Z"
+    },
+    {
+      "name": "browser-stop",
+      "time": "2026-11-03T15:55:48.798Z",
+      "kind": "safari",
+      "browserPid": 6021,
+      "driverPid": null,
+      "browserExited": true,
+      "driverExited": true,
+      "stoppedAt": "2026-11-03T15:55:48.798Z"
+    },
+    {
+      "name": "transport-still-disabled-before-pending-relaunch",
+      "time": "2026-11-03T15:55:48.812Z",
+      "forwardedRequests": 353,
+      "blockedRequests": 369,
+      "forwardedUpgrades": 4,
+      "blockedUpgrades": 3,
+      "logins": 1,
+      "offline": true,
+      "activeBrowserSockets": 0
+    },
+    {
+      "name": "browser-start",
+      "time": "2026-11-03T15:55:53.865Z",
+      "kind": "safari",
+      "version": "27.2",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+      "profile": {
+        "mode": "ordinary-hosted-safari-user",
+        "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+        "actualPath": "/Users/runner",
+        "directoryDevice": "16777220",
+        "directoryInode": "12884922560"
+      },
+      "browserPid": 7573,
+      "previousBrowserPid": 6021,
+      "driverPid": null,
+      "driverVersion": null,
+      "startedAt": "2026-11-03T15:55:53.237Z",
+      "browserTab": true,
+      "secureContext": true,
+      "storagePersisted": false
+    },
+    {
+      "name": "native-clipboard-content",
+      "time": "2026-11-03T15:56:02.823Z",
+      "kind": "sheet",
+      "text": "731",
+      "selection": null
+    },
+    {
+      "name": "pending-restart-retained",
+      "time": "2026-11-03T15:56:02.824Z",
+      "itemId": "8dd9d503-1f41-45d1-b22d-3ed425284cb4",
+      "kind": "sheet",
+      "outcome": "normal",
+      "checkpointSha256": "feb081b66695e713f84b08b947b691400332241067d5ee014883a8101e3088c1",
+      "imageHashes": [
+        {
+          "source": "/api/items/8dd9d503-1f41-45d1-b22d-3ed425284cb4/images/0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1",
+          "size": 248,
+          "sha256": "0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1"
+        },
+        {
+          "source": "/api/items/8dd9d503-1f41-45d1-b22d-3ed425284cb4/images/882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b",
+          "size": 242,
+          "sha256": "882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b"
+        },
+        {
+          "source": "/api/items/8dd9d503-1f41-45d1-b22d-3ed425284cb4/images/89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f",
+          "size": 247,
+          "sha256": "89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f"
+        }
+      ],
+      "visual": {
+        "file": "sheet-normal-offline.png",
+        "colorPixelCounts": [
+          7200,
+          7081,
+          610532
+        ],
+        "captures": 1
+      }
+    },
+    {
+      "name": "native-clipboard-content",
+      "time": "2026-11-03T15:56:10.595Z",
+      "kind": "sheet",
+      "text": "731",
+      "selection": null
+    },
+    {
+      "name": "pending-restart-retained",
+      "time": "2026-11-03T15:56:10.595Z",
+      "itemId": "a818dd08-25d0-4ea0-9b9f-b1cdd0bfb239",
+      "kind": "sheet",
+      "outcome": "conflict",
+      "checkpointSha256": "ff9358292b181d0378912085457bcabe006ea7f78cf68a6c4b902d1c45bc00ed",
+      "imageHashes": [
+        {
+          "source": "/api/items/a818dd08-25d0-4ea0-9b9f-b1cdd0bfb239/images/0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1",
+          "size": 248,
+          "sha256": "0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1"
+        },
+        {
+          "source": "/api/items/a818dd08-25d0-4ea0-9b9f-b1cdd0bfb239/images/882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b",
+          "size": 242,
+          "sha256": "882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b"
+        },
+        {
+          "source": "/api/items/a818dd08-25d0-4ea0-9b9f-b1cdd0bfb239/images/89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f",
+          "size": 247,
+          "sha256": "89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f"
+        }
+      ],
+      "visual": {
+        "file": "sheet-conflict-offline.png",
+        "colorPixelCounts": [
+          7200,
+          7081,
+          610532
+        ],
+        "captures": 1
+      }
+    },
+    {
+      "name": "native-clipboard-content",
+      "time": "2026-11-03T15:56:20.521Z",
+      "kind": "doc",
+      "text": "Desktop offline 731 Recovery base notes",
+      "selection": {
+        "unitId": "6fba0400-51ea-4a49-a71a-0b45e5e8edde",
+        "nativeRange": {
+          "start": 0,
+          "end": 40,
+          "collapsed": false,
+          "segmentId": "",
+          "segmentPage": -1
+        },
+        "logicalRange": {
+          "start": 0,
+          "end": 40,
+          "collapsed": false,
+          "segmentId": "",
+          "segmentPage": -1
+        },
+        "pendingSelection": false
+      }
+    },
+    {
+      "name": "pending-restart-retained",
+      "time": "2026-11-03T15:56:20.521Z",
+      "itemId": "6fba0400-51ea-4a49-a71a-0b45e5e8edde",
+      "kind": "doc",
+      "outcome": "normal",
+      "checkpointSha256": "c35d56141dcd36f83527fbbc515adee9d3705cd3277876743122d1cb1d569845",
+      "imageHashes": [
+        {
+          "source": "/api/items/6fba0400-51ea-4a49-a71a-0b45e5e8edde/images/385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e",
+          "size": 243,
+          "sha256": "385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e"
+        },
+        {
+          "source": "/api/items/6fba0400-51ea-4a49-a71a-0b45e5e8edde/images/8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955",
+          "size": 244,
+          "sha256": "8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955"
+        },
+        {
+          "source": "/api/items/6fba0400-51ea-4a49-a71a-0b45e5e8edde/images/f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594",
+          "size": 244,
+          "sha256": "f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594"
+        }
+      ],
+      "visual": {
+        "file": "doc-normal-offline.png",
+        "colorPixelCounts": [
+          4661
+        ],
+        "captures": 1
+      }
+    },
+    {
+      "name": "native-clipboard-content",
+      "time": "2026-11-03T15:56:30.149Z",
+      "kind": "doc",
+      "text": "Desktop offline 731 Recovery base notes",
+      "selection": {
+        "unitId": "591a9f4d-7b76-4d8d-af0d-2e95efdb0cd2",
+        "nativeRange": {
+          "start": 0,
+          "end": 40,
+          "collapsed": false,
+          "segmentId": "",
+          "segmentPage": -1
+        },
+        "logicalRange": {
+          "start": 0,
+          "end": 40,
+          "collapsed": false,
+          "segmentId": "",
+          "segmentPage": -1
+        },
+        "pendingSelection": false
+      }
+    },
+    {
+      "name": "pending-restart-retained",
+      "time": "2026-11-03T15:56:30.149Z",
+      "itemId": "591a9f4d-7b76-4d8d-af0d-2e95efdb0cd2",
+      "kind": "doc",
+      "outcome": "conflict",
+      "checkpointSha256": "18648b7c19b5553777652bcd010e715b5c5c6cfd201fe32b2f6ad61fb3646a14",
+      "imageHashes": [
+        {
+          "source": "/api/items/591a9f4d-7b76-4d8d-af0d-2e95efdb0cd2/images/385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e",
+          "size": 243,
+          "sha256": "385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e"
+        },
+        {
+          "source": "/api/items/591a9f4d-7b76-4d8d-af0d-2e95efdb0cd2/images/8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955",
+          "size": 244,
+          "sha256": "8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955"
+        },
+        {
+          "source": "/api/items/591a9f4d-7b76-4d8d-af0d-2e95efdb0cd2/images/f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594",
+          "size": 244,
+          "sha256": "f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594"
+        }
+      ],
+      "visual": {
+        "file": "doc-conflict-offline.png",
+        "colorPixelCounts": [
+          4661
+        ],
+        "captures": 1
+      }
+    },
+    {
+      "name": "transport-restored",
+      "time": "2026-11-03T15:56:31.060Z"
+    },
+    {
+      "name": "normal-reconnect-exact-content-once",
+      "time": "2026-11-03T15:56:38.314Z",
+      "itemId": "8dd9d503-1f41-45d1-b22d-3ed425284cb4",
+      "revision": 2,
+      "snapshotSha256": "30c3cd812592bc6abc4a76bc85c7aa50799312de6661c8499bf98fa88e7d75c5",
+      "images": [
+        {
+          "id": "0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1",
+          "mime": "image/png",
+          "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000AA494441546881EDD751114431084351B4D4D3F3EFE06A5813DBE1A3670601904012E67C3D55B3DE8181C370563A371CD18A4AB3A5B36D9282479256A265B2749E877C4BDFBE61B0A56E4030EB9063B8AB10CC3AE4180EC359E9DC70442B2ACD96CE0335EB1D18380C67A573C311ADA8345B3ADB2629782469255A264BE779C8B7F4ED1B065BEA0604B30E3986BB0AC1AC438EE1309C95CE0D47B4A2D26CE93C50B3DE8181C3707F84E007B28A2747CECEEFC40000000049454E44AE426082"
+        },
+        {
+          "id": "882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b",
+          "mime": "image/png",
+          "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A4494441546881EDD7D11144310842D1DB7F07AFDA6C139BE12367C6021414B0F3F55435EFC0C061382B9D1B8E6845A5D9D2599BA4E091A49568992C9DE721DFD2B7370CB6D40D089A438EE1AE42D01C720C87E1AC746E38A21595664BE7816ADE8181C370563A371CD18A4AB3A5B33649C123492BD132593ACF43BEA56F6F186CA91B1034871CC35D85A039E4180EC359E9DC70442B2ACD96CE03D5BC030387E1FE08C10F1913E3B4726E676D0000000049454E44AE426082"
+        },
+        {
+          "id": "89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f",
+          "mime": "image/png",
+          "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A9494441546881EDD751114431084351B454DC35F9CCAD89EDF0D133830048200973BE9EAA59EFC0C061382B9D1B8E6845A5D9D2D93649C123492BD132593ACF43BEA56FDF30D85237209875C831DC5508661D720C87E1AC746E38A21595664BE7819AF50E0C1C86B3D2B9E18856549A2D9D6D93143C92B4122D93A5F33CE45BFAF60D832D75038259871CC35D8560D621C77018CE4AE786235A5169B6741EA859EFC0C061B83F42F00324F8A99A8D1E4F480000000049454E44AE426082"
+        }
+      ]
+    },
+    {
+      "name": "recovered-original-reconnect-outage",
+      "time": "2026-11-03T15:56:47.444Z",
+      "itemId": "a818dd08-25d0-4ea0-9b9f-b1cdd0bfb239",
+      "forwardedRequests": 446,
+      "blockedRequests": 642,
+      "forwardedUpgrades": 8,
+      "blockedUpgrades": 4,
+      "logins": 1,
+      "offline": true,
+      "activeBrowserSockets": 0
+    },
+    {
+      "name": "native-clipboard-content",
+      "time": "2026-11-03T15:56:58.939Z",
+      "kind": "sheet",
+      "text": "731",
+      "selection": null
+    },
+    {
+      "name": "conflict-copy-preserves-original",
+      "time": "2026-11-03T15:56:58.940Z",
+      "itemId": "a818dd08-25d0-4ea0-9b9f-b1cdd0bfb239",
+      "copyId": "01a04648-2e5d-4625-aab3-b83c35336c58",
+      "receipts": [
+        {
+          "user_id": "584763f6-6f22-4554-be45-38b55fba623e",
+          "recovery_id": "82eb7607-da87-40ec-b714-499d64b37373",
+          "request_hash": "d99c084ba6376fcc5120f92b54dd1abb57c5ff01ed796de74fc00e0f8ce61f27",
+          "item_id": "01a04648-2e5d-4625-aab3-b83c35336c58",
+          "possible_replay_crash": 0
+        }
+      ],
+      "snapshotSha256": "125be41f7e25904b86c1bd49025c9ddb76f2b888d720123b31571d69d9292c78",
+      "images": [
+        {
+          "id": "0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1",
+          "mime": "image/png",
+          "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000AA494441546881EDD751114431084351B4D4D3F3EFE06A5813DBE1A3670601904012E67C3D55B3DE8181C370563A371CD18A4AB3A5B36D9282479256A265B2749E877C4BDFBE61B0A56E4030EB9063B8AB10CC3AE4180EC359E9DC70442B2ACD96CE0335EB1D18380C67A573C311ADA8345B3ADB2629782469255A264BE779C8B7F4ED1B065BEA0604B30E3986BB0AC1AC438EE1309C95CE0D47B4A2D26CE93C50B3DE8181C3707F84E007B28A2747CECEEFC40000000049454E44AE426082"
+        },
+        {
+          "id": "882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b",
+          "mime": "image/png",
+          "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A4494441546881EDD7D11144310842D1DB7F07AFDA6C139BE12367C6021414B0F3F55435EFC0C061382B9D1B8E6845A5D9D2599BA4E091A49568992C9DE721DFD2B7370CB6D40D089A438EE1AE42D01C720C87E1AC746E38A21595664BE7816ADE8181C370563A371CD18A4AB3A5B33649C123492BD132593ACF43BEA56F6F186CA91B1034871CC35D85A039E4180EC359E9DC70442B2ACD96CE03D5BC030387E1FE08C10F1913E3B4726E676D0000000049454E44AE426082"
+        },
+        {
+          "id": "89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f",
+          "mime": "image/png",
+          "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A9494441546881EDD751114431084351B454DC35F9CCAD89EDF0D133830048200973BE9EAA59EFC0C061382B9D1B8E6845A5D9D2D93649C123492BD132593ACF43BEA56FDF30D85237209875C831DC5508661D720C87E1AC746E38A21595664BE7819AF50E0C1C86B3D2B9E18856549A2D9D6D93143C92B4122D93A5F33CE45BFAF60D832D75038259871CC35D8560D621C77018CE4AE786235A5169B6741EA859EFC0C061B83F42F00324F8A99A8D1E4F480000000049454E44AE426082"
+        }
+      ],
+      "visual": {
+        "file": "sheet-recovered-copy.png",
+        "colorPixelCounts": [
+          7200,
+          7081,
+          608551
+        ],
+        "captures": 1
+      }
+    },
+    {
+      "name": "normal-reconnect-exact-content-once",
+      "time": "2026-11-03T15:57:06.592Z",
+      "itemId": "6fba0400-51ea-4a49-a71a-0b45e5e8edde",
+      "revision": 2,
+      "snapshotSha256": "50f30bae16eafe6bdcc6c6ffaded8bf0d4c350b1872577dafc96d419db56679d",
+      "images": [
+        {
+          "id": "385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e",
+          "mime": "image/png",
+          "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A5494441546881EDD7810D03010842D1B7FF289DC5A1BAC43524D79F38808202F2B9FF2AF30E1A580C6BA575C3122DA9B46CE9F63E59F050D252B45496D6F3A06FE9F69E912D791C0273C863D84F2130873C86C5B0565A372CD1924ACB96EEFD65DE41038B61ADB46E58A22595962DDDDE270B1E4A5A8A96CAD27A1EF42DDDDE33B2258F43600E790CFB2904E690C7B018D64AEB86255A5269D9D2BDBFCC3B686031EC3908BEF49E6616807987790000000049454E44AE426082"
+        },
+        {
+          "id": "8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955",
+          "mime": "image/png",
+          "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A6494441546881EDD7C10D0031080341BADE2653D43571118F8C440160836DE64C4FD5AC7760E0309C95CE0D47B4A2D26CE96C9BA4E091A49568992C9DE721DFD2EC1B065BEA0604B30E3986BB0AC1AC438EE1309C95CE0D47B4A2D26CE93C50B3DE8181C370563A371CD18A4AB3A5B36D9282479256A265B2749E877C4BB36F186CA91B10CC3AE418EE2A04B30E3986C370563A371CD18A4AB3A5F340CD7A07060EC3FD08C1075A5DA99A778587790000000049454E44AE426082"
+        },
+        {
+          "id": "f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594",
+          "mime": "image/png",
+          "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A6494441546881EDD7C10D0031080341BA4E935BD43571118F8C440160836DE64C4FD5AC7760E0309C95CE0D47B4A2D26CE96C9BA4E091A49568992C9DE721DFD2EC1B065BEA0604B30E3986BB0AC1AC438EE1309C95CE0D47B4A2D26CE93C50B3DE8181C370563A371CD18A4AB3A5B36D9282479256A265B2749E877C4BB36F186CA91B10CC3AE418EE2A04B30E3986C370563A371CD18A4AB3A5F340CD7A07060EC3FD08C107E61AA99AB09E4A1E0000000049454E44AE426082"
+        }
+      ]
+    },
+    {
+      "name": "recovered-original-reconnect-outage",
+      "time": "2026-11-03T15:57:16.338Z",
+      "itemId": "591a9f4d-7b76-4d8d-af0d-2e95efdb0cd2",
+      "forwardedRequests": 611,
+      "blockedRequests": 643,
+      "forwardedUpgrades": 15,
+      "blockedUpgrades": 5,
+      "logins": 1,
+      "offline": true,
+      "activeBrowserSockets": 0
+    },
+    {
+      "name": "native-clipboard-content",
+      "time": "2026-11-03T15:57:29.621Z",
+      "kind": "doc",
+      "text": "Desktop offline 731 Recovery base notes",
+      "selection": {
+        "unitId": "a28515ed-c974-45ad-b0ee-10d50a8dcc86",
+        "nativeRange": {
+          "start": 0,
+          "end": 40,
+          "collapsed": false,
+          "segmentId": "",
+          "segmentPage": -1
+        },
+        "logicalRange": {
+          "start": 0,
+          "end": 40,
+          "collapsed": false,
+          "segmentId": "",
+          "segmentPage": -1
+        },
+        "pendingSelection": false
+      }
+    },
+    {
+      "name": "conflict-copy-preserves-original",
+      "time": "2026-11-03T15:57:29.622Z",
+      "itemId": "591a9f4d-7b76-4d8d-af0d-2e95efdb0cd2",
+      "copyId": "a28515ed-c974-45ad-b0ee-10d50a8dcc86",
+      "receipts": [
+        {
+          "user_id": "584763f6-6f22-4554-be45-38b55fba623e",
+          "recovery_id": "676dfd99-3168-49f1-93f3-563393da972f",
+          "request_hash": "77e850a543c9d3bd8c2a90311e6cf9f7b4c25b30e026f7b9d2ce9da5954f40cc",
+          "item_id": "a28515ed-c974-45ad-b0ee-10d50a8dcc86",
+          "possible_replay_crash": 0
+        },
+        {
+          "user_id": "584763f6-6f22-4554-be45-38b55fba623e",
+          "recovery_id": "82eb7607-da87-40ec-b714-499d64b37373",
+          "request_hash": "d99c084ba6376fcc5120f92b54dd1abb57c5ff01ed796de74fc00e0f8ce61f27",
+          "item_id": "01a04648-2e5d-4625-aab3-b83c35336c58",
+          "possible_replay_crash": 0
+        }
+      ],
+      "snapshotSha256": "2a2a6153cd741708fdfe244ec52ac0295f88fb5bd7f2a5a3b42a438ca88b7260",
+      "images": [
+        {
+          "id": "385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e",
+          "mime": "image/png",
+          "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A5494441546881EDD7810D03010842D1B7FF289DC5A1BAC43524D79F38808202F2B9FF2AF30E1A580C6BA575C3122DA9B46CE9F63E59F050D252B45496D6F3A06FE9F69E912D791C0273C863D84F2130873C86C5B0565A372CD1924ACB96EEFD65DE41038B61ADB46E58A22595962DDDDE270B1E4A5A8A96CAD27A1EF42DDDDE33B2258F43600E790CFB2904E690C7B018D64AEB86255A5269D9D2BDBFCC3B686031EC3908BEF49E6616807987790000000049454E44AE426082"
+        },
+        {
+          "id": "8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955",
+          "mime": "image/png",
+          "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A6494441546881EDD7C10D0031080341BADE2653D43571118F8C440160836DE64C4FD5AC7760E0309C95CE0D47B4A2D26CE96C9BA4E091A49568992C9DE721DFD2EC1B065BEA0604B30E3986BB0AC1AC438EE1309C95CE0D47B4A2D26CE93C50B3DE8181C370563A371CD18A4AB3A5B36D9282479256A265B2749E877C4BB36F186CA91B10CC3AE418EE2A04B30E3986C370563A371CD18A4AB3A5F340CD7A07060EC3FD08C1075A5DA99A778587790000000049454E44AE426082"
+        },
+        {
+          "id": "f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594",
+          "mime": "image/png",
+          "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A6494441546881EDD7C10D0031080341BA4E935BD43571118F8C440160836DE64C4FD5AC7760E0309C95CE0D47B4A2D26CE96C9BA4E091A49568992C9DE721DFD2EC1B065BEA0604B30E3986BB0AC1AC438EE1309C95CE0D47B4A2D26CE93C50B3DE8181C370563A371CD18A4AB3A5B36D9282479256A265B2749E877C4BB36F186CA91B10CC3AE418EE2A04B30E3986C370563A371CD18A4AB3A5F340CD7A07060EC3FD08C107E61AA99AB09E4A1E0000000049454E44AE426082"
+        }
+      ],
+      "visual": {
+        "file": "doc-recovered-copy.png",
+        "colorPixelCounts": [
+          4661
+        ],
+        "captures": 1
+      }
+    },
+    {
+      "name": "storage-deletion",
+      "time": "2026-11-03T15:57:33.441Z",
+      "deletion": {
+        "status": "passed",
+        "database": "spinel-offline-584763f6-6f22-4554-be45-38b55fba623e",
+        "timeoutMs": 28000,
+        "operations": [
+          {
+            "name": "serviceWorker.getRegistrations",
+            "startedAt": "2026-11-03T15:57:33.215Z",
+            "status": "passed",
+            "value": [
+              "https://localhost:8176/"
+            ],
+            "elapsedMs": 1
+          },
+          {
+            "name": "serviceWorker.unregister:https://localhost:8176/",
+            "startedAt": "2026-11-03T15:57:33.216Z",
+            "status": "passed",
+            "value": true,
+            "elapsedMs": 1
+          },
+          {
+            "name": "caches.keys",
+            "startedAt": "2026-11-03T15:57:33.217Z",
+            "status": "passed",
+            "value": [
+              "spinel-shell-cbbe0552bc81f918"
+            ],
+            "elapsedMs": 0
+          },
+          {
+            "name": "caches.delete:spinel-shell-cbbe0552bc81f918",
+            "startedAt": "2026-11-03T15:57:33.217Z",
+            "status": "passed",
+            "value": true,
+            "elapsedMs": 2
+          },
+          {
+            "name": "localStorage.clear",
+            "startedAt": "2026-11-03T15:57:33.219Z",
+            "status": "passed",
+            "value": 0,
+            "elapsedMs": 0
+          },
+          {
+            "name": "indexedDB.deleteDatabase:spinel-offline-584763f6-6f22-4554-be45-38b55fba623e",
+            "startedAt": "2026-11-03T15:57:33.219Z",
+            "status": "passed",
+            "elapsedMs": 5
+          },
+          {
+            "name": "verify-service-workers",
+            "startedAt": "2026-11-03T15:57:33.224Z",
+            "status": "passed",
+            "value": [],
+            "elapsedMs": 1
+          },
+          {
+            "name": "verify-cache-names",
+            "startedAt": "2026-11-03T15:57:33.225Z",
+            "status": "passed",
+            "value": [],
+            "elapsedMs": 0
+          },
+          {
+            "name": "verify-database-names",
+            "startedAt": "2026-11-03T15:57:33.225Z",
+            "status": "passed",
+            "value": [
+              "UniverLocalStorage",
+              "spinel-offline-runtime"
+            ],
+            "elapsedMs": 4
+          },
+          {
+            "name": "verify-storage-empty",
+            "startedAt": "2026-11-03T15:57:33.229Z",
+            "status": "passed",
+            "value": {
+              "workers": [],
+              "cacheNames": [],
+              "databases": [
+                "UniverLocalStorage",
+                "spinel-offline-runtime"
+              ],
+              "localStorageEntries": 0
+            },
+            "elapsedMs": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "cleared-storage-is-not-advertised",
+      "time": "2026-11-03T15:57:38.147Z",
+      "lost": {
+        "account": null,
+        "available": 0
+      }
+    },
+    {
+      "name": "post-deletion-outage",
+      "time": "2026-11-03T15:57:38.560Z",
+      "forwardedRequests": 746,
+      "blockedRequests": 644,
+      "forwardedUpgrades": 18,
+      "blockedUpgrades": 6,
+      "logins": 1,
+      "offline": true,
+      "activeBrowserSockets": 0
+    },
+    {
+      "name": "missing-data-cannot-open-offline",
+      "time": "2026-11-03T15:57:39.838Z",
+      "message": "You're offline\n\nConnect to the internet, then try again to open this page.\n\nTry again"
+    },
+    {
+      "name": "complete",
+      "time": "2026-11-03T15:57:39.838Z"
+    },
+    {
+      "name": "browser-stop",
+      "time": "2026-11-03T15:57:40.231Z",
+      "kind": "safari",
+      "browserPid": 7573,
+      "driverPid": null,
+      "browserExited": true,
+      "driverExited": true,
+      "stoppedAt": "2026-11-03T15:57:40.231Z"
+    }
+  ],
+  "os": "ProductName:\t\tmacOS\nProductVersion:\t\t15.7.9\nBuildVersion:\t\t24G830",
+  "machine": "x86_64",
+  "release": {
+    "sourceSha": "d36d44c252061452c2c8487bcc84ad9a55b641e8",
+    "checkedAt": "2026-11-03T15:51:36.789Z",
+    "kind": "safari",
+    "status": "passed",
+    "before": "26.6",
+    "releaseSource": "https://support.apple.com/en-us/149527",
+    "requiredStable": "27.2",
+    "availableUpdates": "Software Update Tool\n\nFinding available software\nSoftware Update found the following new or updated software:\n* Label: Safari27.2SequoiaAuto-27.2\n\tTitle: Safari, Version: 27.2, Size: 238722KiB, Recommended: YES, \n* Label: macOS Sequoia 15.8.2-24H232\n\tTitle: macOS Sequoia 15.8.2, Version: 15.8.2, Size: 1107530KiB, Recommended: YES, Action: restart, \n* Label: macOS Tahoe 26.7.2-25G332\n\tTitle: macOS Tahoe 26.7.2, Version: 26.7.2, Size: 5891500KiB, Recommended: YES, Action: restart, \n",
+    "install": "Software Update Tool\n\nFinding available software\nAttempting to quit apps: (\n    \"com.apple.Safari.SafariQuickLookPreview\",\n    \"com.apple.Safari\"\n)\nWaiting for user to quit any relevant apps\nSuccessfully quit all apps\n\nDownloading Safari\nDownloaded Safari\nInstalling Safari\nDone with Safari\nDone.\n",
+    "installed": "27.2"
+  },
+  "actor": {
+    "id": "584763f6-6f22-4554-be45-38b55fba623e",
+    "role": "Collaborator with editor grants",
+    "ownerId": "029eec49-ef0d-41f2-9ec7-196084e8136a"
+  },
+  "persistence": [
+    {
+      "itemId": "8dd9d503-1f41-45d1-b22d-3ed425284cb4",
+      "before": false,
+      "after": false,
+      "permission": null,
+      "message": "Offline availability×Desktop normal sheet is available offline on this device.Your browser did not grant storage protection. It may clear offline documents when space runs low.How to keep themDone"
+    },
+    {
+      "itemId": "a818dd08-25d0-4ea0-9b9f-b1cdd0bfb239",
+      "before": false,
+      "after": false,
+      "permission": null,
+      "message": "Offline availability×Desktop conflict sheet is available offline on this device.Your browser did not grant storage protection. It may clear offline documents when space runs low.How to keep themDone"
+    },
+    {
+      "itemId": "6fba0400-51ea-4a49-a71a-0b45e5e8edde",
+      "before": false,
+      "after": false,
+      "permission": null,
+      "message": "Offline availability×Desktop normal doc is available offline on this device.Your browser did not grant storage protection. It may clear offline documents when space runs low.How to keep themDone"
+    },
+    {
+      "itemId": "591a9f4d-7b76-4d8d-af0d-2e95efdb0cd2",
+      "before": false,
+      "after": false,
+      "permission": null,
+      "message": "Offline availability×Desktop conflict doc is available offline on this device.Your browser did not grant storage protection. It may clear offline documents when space runs low.How to keep themDone"
+    }
+  ],
+  "transport": {
+    "forwardedRequests": 746,
+    "blockedRequests": 648,
+    "forwardedUpgrades": 18,
+    "blockedUpgrades": 6,
+    "logins": 1,
+    "offline": true,
+    "activeBrowserSockets": 0
+  },
+  "launches": [
+    {
+      "kind": "safari",
+      "version": "27.2",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+      "profile": {
+        "mode": "ordinary-hosted-safari-user",
+        "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+        "actualPath": "/Users/runner",
+        "directoryDevice": "16777220",
+        "directoryInode": "12884922560"
+      },
+      "browserPid": 4005,
+      "previousBrowserPid": null,
+      "driverPid": null,
+      "driverVersion": null,
+      "startedAt": "2026-11-03T15:53:26.548Z"
+    },
+    {
+      "kind": "safari",
+      "version": "27.2",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+      "profile": {
+        "mode": "ordinary-hosted-safari-user",
+        "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+        "actualPath": "/Users/runner",
+        "directoryDevice": "16777220",
+        "directoryInode": "12884922560"
+      },
+      "browserPid": 6021,
+      "previousBrowserPid": 4005,
+      "driverPid": null,
+      "driverVersion": null,
+      "startedAt": "2026-11-03T15:54:46.051Z"
+    },
+    {
+      "kind": "safari",
+      "version": "27.2",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+      "profile": {
+        "mode": "ordinary-hosted-safari-user",
+        "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+        "actualPath": "/Users/runner",
+        "directoryDevice": "16777220",
+        "directoryInode": "12884922560"
+      },
+      "browserPid": 7573,
+      "previousBrowserPid": 6021,
+      "driverPid": null,
+      "driverVersion": null,
+      "startedAt": "2026-11-03T15:55:53.237Z"
+    }
+  ]
+}

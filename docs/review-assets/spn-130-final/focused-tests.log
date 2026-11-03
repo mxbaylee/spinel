@@ -1,0 +1,38 @@
+✔ identity phases cover lookup through validation before any Apple Event (4.258083ms)
+✔ wrong PID refuses teardown before sending a quit event (1.555958ms)
+✔ wrong bundle refuses teardown before sending a quit event (1.3265ms)
+✔ exited refuses teardown before sending a quit event (0.955917ms)
+✔ missing launch date refuses teardown before sending a quit event (0.832667ms)
+✔ PID reuse refuses teardown before sending a quit event (0.8105ms)
+✔ positively matched identity permits teardown (0.971541ms)
+✔ withheld launch identity records the exact unfinished phase (0.907166ms)
+✔ eight-second process timeout preserves its first cause and last phase (1.393208ms)
+✔ no script output is explicitly an osascript startup failure, never an owned identity (0.274209ms)
+✔ malformed diagnostic output cannot replace the original process failure (0.213791ms)
+✔ host-identity-parse retains the command's output and trace (0.164875ms)
+✔ host-identity-validation retains the command's output and trace (0.892ms)
+✔ serialized browser deletion removes every store and proves the resulting state (5.673ms)
+✔ workers pending names the first failing operation (0.855916ms)
+✔ workers rejection names the first failing operation (0.656125ms)
+✔ unregister pending names the first failing operation (3.693791ms)
+✔ unregister rejection names the first failing operation (1.0415ms)
+✔ cache-names pending names the first failing operation (1.593084ms)
+✔ cache-names rejection names the first failing operation (0.962125ms)
+✔ cache-delete pending names the first failing operation (0.937375ms)
+✔ cache-delete rejection names the first failing operation (1.05275ms)
+✔ database-delete pending names the first failing operation (1.227542ms)
+✔ database-delete rejection names the first failing operation (1.942708ms)
+✔ database-names pending names the first failing operation (0.946625ms)
+✔ database-names rejection names the first failing operation (1.273417ms)
+✔ blocked IndexedDB fails immediately and retains that cause (0.899625ms)
+✔ a reported deletion success cannot conceal a retained database (0.793917ms)
+✔ synchronous storage rejection is retained without continuing to database deletion (0.639583ms)
+✔ crashed or timed-out driver propagates the first error without another diagnostic request (0.571292ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 148.381041

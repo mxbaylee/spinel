@@ -1,0 +1,14 @@
+{
+  "id": 41668117254,
+  "name": "\ud83d\udcbb Desktop offline",
+  "event": "pull_request",
+  "status": "completed",
+  "conclusion": "success",
+  "head_branch": "codex/spn-130-desktop-boundaries",
+  "head_sha": "d36d44c252061452c2c8487bcc84ad9a55b641e8",
+  "run_attempt": 1,
+  "html_url": "https://github.com/mxbaylee/spinel/actions/runs/41668117254",
+  "created_at": "2026-11-03T15:51:03Z",
+  "updated_at": "2026-11-03T15:57:46Z",
+  "run_started_at": "2026-11-03T15:51:03Z"
+}

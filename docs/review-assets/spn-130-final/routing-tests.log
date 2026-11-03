@@ -1,0 +1,23 @@
+✔ CLI binds same-run immutable plan digest/source and publishes all selected results (95.053917ms)
+✔ CLI failure records survive wrong identity, cancelled gate and missing selected evidence (469.886583ms)
+✔ browser aggregate cannot pass missing, skipped or failed selected sized restore evidence (378.947083ms)
+✔ unit aggregate requires every selected partition to succeed, retaining failed evidence (559.988542ms)
+✔ unit partitions may skip only with proven documentation inapplicability (283.383625ms)
+✔ every PR edit runs full validation, including title/body, base and ambiguous payloads (3.521416ms)
+✔ service changes keep candidate correctness and all existing broad checks without historical comparisons (0.293666ms)
+✔ sized restore participates in the immutable plan and fails closed (1.432333ms)
+✔ dependency closure and unknown paths fail closed, including old rename/deleted sides (0.41675ms)
+✔ labels only add coverage; removal recomputes automatic requirements (0.229292ms)
+✔ main ranges, scheduled/manual backstops, unknown events and missing ranges (0.227375ms)
+✔ aggregates require selected success and explicit inapplicable skipped; known regression remains red (0.305834ms)
+✔ workflow keeps seven static code names and protected edit concurrency (0.351834ms)
+✔ phone ownership removes only eight ordinary cases from instrumented duplicate runs (0.377042ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2008.244125
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":2147,"peakKiB":320528}
