@@ -24,6 +24,7 @@ import {
 export { readCapabilityScope, type CapabilityScope } from './browserstack-scope.ts';
 import { countOfflineImagePixels, offlineImagesPainted } from './offline-image-pixels.ts';
 import type { PhoneAcceptanceCases, PhoneAcceptanceDriver } from './browserstack-acceptance.ts';
+import { prepareDashboardItemOffline } from './browserstack-offline-preparation.ts';
 import { ledgerClient } from './browserstack-ledger.ts';
 import {
   clientFor,
@@ -1090,7 +1091,6 @@ export async function navigateChromeItem(
   }
 }
 
-/** No application data is injected: prepare through the production download action. */
 export async function runCapability(
   client: Client,
   target: Target,
@@ -1580,6 +1580,17 @@ export async function runCapability(
       registration,
     });
     return environment;
+  }
+  // Failure-only evidence keeps the stalled page's screenshot first and leaves
+  // the command that failed as the lane's command.
+  async function diagnose<T>(work: () => Promise<T>): Promise<T> {
+    const failedCommand = result.command;
+    try {
+      await screenshot('download-stalled');
+      return await work();
+    } finally {
+      result.command = failedCommand;
+    }
   }
   async function clickWeb(selector: string, label: string, waitForControl = false) {
     const find = () =>
@@ -2082,20 +2093,17 @@ export async function runCapability(
     for (const item of prepared) {
       previousItemURL = await navigateItem(item, launched, previousItemURL);
       await record(`${item.kind}:ready`, await itemReady(false));
-      await clickWeb('button', 'Document actions');
-      await clickWeb('[role="menuitem"]', 'Available offline on this device');
-      const message = `${item.name} is available offline on this device.`;
-      await poll(
-        () =>
-          execute(
-            'return [...document.querySelectorAll(\'[role="dialog"] [role="status"]\')].some(element => element.textContent.includes(arguments[0]));',
-            [message],
-          ),
-        (value) => value === true,
-        'download-incomplete',
-        20_000,
+      await prepareDashboardItemOffline(
+        {
+          click: (selector, label) => clickWeb(selector, label, true),
+          execute,
+          poll,
+          record,
+          failure: (code) => new Error(`capability-${code}`),
+          diagnose,
+        },
+        item,
       );
-      await clickWeb('[role="dialog"] button', 'Done');
     }
     const acceptanceDriver: PhoneAcceptanceDriver = {
       execute,
@@ -2111,6 +2119,7 @@ export async function runCapability(
       },
       ready: itemReady,
       click: (selector, label) => clickWeb(selector, label, true),
+      diagnose,
       restart: async () => {
         attached = tabScope
           ? await reloadTab(attached, 'pending-')

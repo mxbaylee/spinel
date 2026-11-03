@@ -24,13 +24,16 @@ import {
   phoneNativeSnapshotScript,
   assertPhoneImageCheckpoint,
   observePhoneAcceptance,
+  preparePhoneAcceptance,
   boundedPhoneFixtureOperation,
   readPhoneOpenedCopy,
   verifyAuthoredContent,
   verifyEditablePhone,
   verifyRetainedEdit,
+  type PhoneAcceptanceCases,
   type PhoneAcceptanceDriver,
 } from './browserstack-acceptance.ts';
+import type { BrowserstackFixture } from './browserstack-fixture.ts';
 
 test('recovery content is read only after the phone opens its already-created generation', async () => {
   for (const mode of ['mapped', 'same-id', 'missing'] as const) {
@@ -685,4 +688,38 @@ test('the shared text raster locator rejects images and carets while mapping rea
       }),
     /invalid-text-raster/,
   );
+});
+
+test('acceptance prepares its Space page through the shared Offline copies flow', async () => {
+  const doc = { kind: 'doc', baseline: { snapshot: { documentStyle: { documentFlavor: 2 } } } };
+  const fixture = {
+    items: [doc, doc, { kind: 'sheet' }, { kind: 'sheet' }],
+  } as unknown as BrowserstackFixture;
+  const cases = {
+    space: { id: 'space-1' },
+    spaceChild: { id: 'page-1', name: 'Phone prepared page' },
+  } as unknown as PhoneAcceptanceCases;
+  const visited: string[] = [];
+  const clicks: [string, string][] = [];
+  const stop = new Error('stop-after-space-preparation');
+  const driver = {
+    navigate: async (path: string) => {
+      visited.push(path);
+      if (visited.length > 1) throw stop;
+    },
+    ready: async () => ({}),
+    click: async (selector: string, label: string) => void clicks.push([selector, label]),
+    execute: async () => ({ dialogs: 1, done: true, alert: null }),
+    record: async () => assert.fail('A successful preparation records no failure state.'),
+    remaining: (maximum = 15_000) => maximum,
+  } as unknown as PhoneAcceptanceDriver;
+  await assert.rejects(preparePhoneAcceptance(driver, fixture, cases), stop);
+  assert.deepEqual(visited, ['/spaces/space-1?item=page-1', '/']);
+  // Labels are pinned to the app source in browserstack-offline-preparation.test.ts.
+  assert.deepEqual(clicks, [
+    ['button', 'Document actions'],
+    ['[role="menuitem"]', 'Offline copies'],
+    ['[role="dialog"] button', 'Make Phone prepared page available offline on this device'],
+    ['[role="dialog"] button', 'Close dialog'],
+  ]);
 });

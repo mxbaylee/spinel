@@ -21,6 +21,7 @@ import {
   readCapabilityScope,
   type CapabilityScope,
 } from './browserstack-scope.ts';
+import { prepareSpacePageOffline } from './browserstack-offline-preparation.ts';
 
 type Row = Record<string, unknown>;
 type Kind = 'sheet' | 'doc';
@@ -51,6 +52,8 @@ export type PhoneAcceptanceDriver = {
   navigate(path: string): Promise<void>;
   ready(offline: boolean): Promise<Row>;
   click(selector: string, label: string): Promise<void>;
+  /** Failure-only evidence that keeps the failed command and stalled screenshot. */
+  diagnose?<T>(work: () => Promise<T>): Promise<T>;
   restart(): Promise<void>;
   network(offline: boolean): Promise<void>;
   stage(name: string, maximumMilliseconds: number): void;
@@ -702,10 +705,17 @@ export async function preparePhoneAcceptance(
   const href = `/spaces/${cases.space.id}?item=${cases.spaceChild.id}`;
   await driver.navigate(href);
   await driver.ready(false);
-  await driver.click('button', 'Document actions');
-  await driver.click('[role="menuitem"]', 'Available offline on this device');
-  await bodyIncludes(driver, `${cases.spaceChild.name} is available offline on this device.`);
-  await driver.click('[role="dialog"] button', 'Done');
+  await prepareSpacePageOffline(
+    {
+      click: (selector, label) => driver.click(selector, label),
+      execute: (script, args) => driver.execute(script, args),
+      poll: (read, accepts, label, maximum) => until(driver, read, accepts, label, maximum),
+      record: (stage, value) => driver.record(stage, value),
+      failure: (code) => new Error(`capability-acceptance-${code}`),
+      diagnose: driver.diagnose && ((work) => driver.diagnose!(work)),
+    },
+    { kind: 'doc', name: cases.spaceChild.name },
+  );
   await openFolder(driver, cases.replacementFolder, false);
   await cachedFolder(driver, fixture, cases.replacementFolder);
   await openFolder(driver, cases.rejectedFolder, true);
