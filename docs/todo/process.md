@@ -304,6 +304,22 @@ Implementation records survive ticket deletion. Maintained product/design/proces
 docs still carry the resulting behavior and link to the rationale. An implementation
 note or agent recommendation is never evidence of owner approval or a completed check.
 
+## Documentation style
+
+📝 **Use meaningful emoji cues.** New documentation and substantive updates
+should use relevant emojis in headings, callouts or checklists so readers can scan
+the page more easily. For example, use 🔎 beside verification guidance or ⚠️ beside
+a real warning. Use several cues where a longer document benefits; keep short
+notes proportionate and avoid repeating an emoji on every line.
+
+Keep descriptive words alongside each cue so meaning does not depend on emoji,
+color or a particular renderer. Preserve existing linked heading anchors when
+updating a page; put the cue in a nearby callout if changing the heading would
+break links. Keep ticket headings/identities and the generated index's reserved
+emoji conventions unchanged. This is forward-looking guidance, not a requirement
+to reformat the whole backlog. Owner, chat 2026-11-03;
+[decision](../implementation/grooming-2026-11-02.md#documentation-emoji-guidance).
+
 ## Grooming
 
 After **7** landed tickets, show a nonblocking reminder for the next requested

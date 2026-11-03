@@ -22,6 +22,12 @@ that isn't waiting on another is next.
 
 - **Never edit `docs/todo/readme.md` by hand.** Run `npm run backlog:index`.
 - **Never reuse a ticket ID.** Use `npm run backlog:new`.
+- **📝 Use more meaningful emojis in documentation.** New and substantively
+  updated docs should include relevant emoji cues in headings, callouts or
+  checklists to make them easier to scan. Keep the words clear without the emoji;
+  avoid decorating every line. Preserve existing ticket identities, generated
+  index conventions and linked heading anchors. Owner, chat 2026-11-03;
+  [documentation guidance](docs/todo/process.md#documentation-style).
 - **One ticket per PR**, titled `<ticket emoji> SPN-NNN <ticket title>`. Squash
   merge only.
 - **Size the complete outcome before building.** Include integration, authority,
