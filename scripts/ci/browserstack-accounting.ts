@@ -1,5 +1,5 @@
 import { appendFile, mkdir, readFile, writeFile } from 'node:fs/promises';
-import { createBudgetReport, type QuotaEvidence } from './browserstack-budget.ts';
+import { createBudgetReport, monthlyScope, type QuotaEvidence } from './browserstack-budget.ts';
 import {
   estimateBudget,
   readAdmissionPolicy,
@@ -334,10 +334,10 @@ async function main() {
     '',
     '## Next monthly checks',
     '',
-    ...observedBudget.nextMonthlyDates.map((date) => '- ' + date),
+    ...observedBudget.nextMonthlyDates.map((date) => `- ${date}: \`${monthlyScope(date)}\``),
     '',
-    'The reservation calendar assumes one full 15-minute reservation per monthly date and no other use. It is a budget scenario, not a forecast of measured successful runs.',
-    'The complete-plan calendar is a separate hypothetical scenario: all five approved paid scopes once per month in the listed order, with no other use and a full reservation before each scope. The actual monthly workflow runs Safari acceptance only. A first unfundable plan date does not mean the balance is zero and grants no spending authority.',
+    'The reservation calendar assumes one full 15-minute reservation per scheduled run and no other use. It is a budget scenario, not a forecast of measured successful runs.',
+    'The complete-plan calendar is a separate hypothetical scenario: all five approved paid scopes once per month in the listed order, with no other use and a full reservation before each scope. The actual monthly workflow runs Safari acceptance, Android Chrome acceptance and Android Firefox tab acceptance on consecutive days. A first unfundable plan date does not mean the balance is zero and grants no spending authority.',
     '',
     ...(displaced ? displacedSummary(displaced, process.env.GITHUB_REPOSITORY ?? '') : []),
     '## Current operation blockers',

@@ -7,6 +7,7 @@
  * before starting, which the API cannot tell apart. This never grants or refuses
  * allocation; it can hold the capability job back by at most its 10 s bound.
  */
+import { monthlyScopes } from './browserstack-budget.ts';
 import { readJsonBody } from './browserstack-ledger.ts';
 
 export type DisplacedRun = { id: number; event: string; title: string; createdAt: string };
@@ -132,6 +133,14 @@ export async function displacedRuns(options: {
   }
 }
 
+// A scheduled run's title names its scope; an unreadable title names every monthly scope.
+function lostScope(run: { title: string }): string {
+  const scope = /^BrowserStack monthly ([a-z-]+)$/.exec(run.title)?.[1];
+  return monthlyScopes.some((entry) => entry.scope === scope)
+    ? scope!
+    : monthlyScopes.map((entry) => entry.scope).join(' or ');
+}
+
 export function displacedSummary(report: DisplacedReport, repository: string): string[] {
   const lines = ['## Runs cancelled before any job started', ''];
   if (report.status === 'unavailable')
@@ -141,7 +150,7 @@ export function displacedSummary(report: DisplacedReport, repository: string): s
     ...(report.runs.length
       ? report.runs.map(
           (run) =>
-            `- [${run.id}](https://github.com/${repository}/actions/runs/${run.id}): ${run.event}${run.title ? ` (\`${run.title}\`)` : ''}, created ${run.createdAt}. No device time; ${run.event === 'schedule' ? '**the monthly acceptance run was lost; dispatch `safari-acceptance` unless already re-dispatched**' : 're-dispatch if it was still needed'}.`,
+            `- [${run.id}](https://github.com/${repository}/actions/runs/${run.id}): ${run.event}${run.title ? ` (\`${run.title}\`)` : ''}, created ${run.createdAt}. No device time; ${run.event === 'schedule' ? `**the monthly acceptance run was lost; dispatch \`${lostScope(run)}\` unless already re-dispatched**` : 're-dispatch if it was still needed'}.`,
         )
       : [`- None since ${report.since}${report.unread ? ' among the newest ' + maxRuns : ''}.`]),
     ...(report.unread
@@ -160,6 +169,6 @@ export function displacedWarnings(report: DisplacedReport): string[] {
     .filter((run) => run.event === 'schedule')
     .map(
       (run) =>
-        `::warning title=Monthly BrowserStack run lost::Scheduled run ${run.id} was cancelled before any job started; dispatch safari-acceptance unless already re-dispatched.`,
+        `::warning title=Monthly BrowserStack run lost::Scheduled run ${run.id} was cancelled before any job started; dispatch ${lostScope(run)} unless already re-dispatched.`,
     );
 }

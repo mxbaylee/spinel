@@ -1,8 +1,11 @@
 import { createHash } from 'node:crypto';
 import {
   createBudgetReport,
+  monthlyPlanDate,
+  monthlyScopes,
   nextMonthlyDates,
   readBudgetLedger,
+  scheduledRunDate,
   type BudgetLedger,
   type BudgetSource,
   type QuotaEvidence,
@@ -83,7 +86,7 @@ type CompletePaidCoverage = {
   measuredElapsedSeconds: number;
   forecast: {
     scenario: 'one-complete-paid-plan-per-month-no-other-use';
-    actualMonthlyScope: 'safari-acceptance';
+    actualMonthlyScopes: (typeof monthlyScopes)[number]['scope'][];
     roundedEstimatedComponentCharges: number[];
     roundedEstimatedBatchChargeSeconds: number;
     reservationThresholdSeconds: number;
@@ -546,7 +549,7 @@ function completePaidCoverage(
       : 1 + Math.floor((startingUsableSeconds - requiredStartingUsableSeconds) / batchCharges);
   selected.forecast = {
     scenario: 'one-complete-paid-plan-per-month-no-other-use',
-    actualMonthlyScope: 'safari-acceptance',
+    actualMonthlyScopes: monthlyScopes.map((entry) => entry.scope),
     roundedEstimatedComponentCharges: charges,
     roundedEstimatedBatchChargeSeconds: batchCharges,
     reservationThresholdSeconds,
@@ -750,18 +753,16 @@ function estimate(input: AdmissionInput, prepared = prepare(input)): EstimatedBu
       ? null
       : Math.floor(estimatedUsableSeconds / capabilityReservationSeconds);
   const nextDates = nextMonthlyDates(input.source.observedAt);
-  const forecast = (offset: number) => {
-    const date = new Date(nextDates[0]);
-    date.setUTCMonth(date.getUTCMonth() + offset);
-    return date.toISOString();
-  };
+  // Capability reservations follow the scheduled runs; complete plans are monthly.
+  const forecast = (offset: number) => scheduledRunDate(input.source.observedAt, offset);
+  const planDate = (offset: number) => monthlyPlanDate(input.source.observedAt, offset);
   const successfulScopeCosts = measuredScopeCosts(state, ledger, policy);
   const completeCoverage = completePaidCoverage(
     successfulScopeCosts,
     input.source,
     estimatedUsableSeconds,
     capabilityReservationSeconds,
-    forecast,
+    planDate,
   );
   return {
     basis: 'owner-authorized-estimate',
@@ -804,11 +805,11 @@ function estimate(input: AdmissionInput, prepared = prepare(input)): EstimatedBu
         : []),
       'Safety reserve and outstanding reservation holds reduce spendable estimated credit.',
       'A completed uncertain allocation retains its unused hold; a missing receipt leaves a pending reservation.',
-      'Capability count/calendar assume one full reservation per future monthly date and no other use; they do not predict successful offline-matrix runs.',
+      'Capability count/calendar assume one full reservation per future scheduled run (three a month) and no other use; they do not predict successful offline-matrix runs.',
       'Successful-scope cost uses only a completed passing scope linked to reconciled terminal session measurements; missing historical scope evidence stays unknown.',
       'Successful-scope elapsed seconds are measured, while their charged seconds use the current unverified charging assumption. Scope success does not establish the complete approved coverage matrix.',
       'Complete paid-plan cost sums the latest eligible successful sample for each of five fixed scopes at one source/tested revision; it is not a single observed full-plan execution or a current acceptance pass.',
-      'The hypothetical complete-plan calendar assumes the fixed scope order, one entire paid plan per month, and no other use. The actual monthly workflow selects Safari acceptance only.',
+      'The hypothetical complete-plan calendar assumes the fixed scope order, one entire paid plan per month, and no other use. The actual monthly workflow selects Safari acceptance, Android Chrome acceptance and Android Firefox tab acceptance on consecutive days.',
       'Complete-plan forecasts round each estimated charge up and usable credit down, retain outstanding holds and the safety reserve, and require a full per-scope reservation before each component. Zero or unavailable cost basis leaves the forecast unknown.',
       'Projected full-plan exhaustion means the first hypothetical monthly plan that cannot be funded; it does not mean the remaining balance is zero or authorize allocation.',
       'Only a newly created reservation durably committed by the caller can authorize a capability allocation.',

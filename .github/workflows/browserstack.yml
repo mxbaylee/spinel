@@ -4,7 +4,10 @@ name: 🧪 BrowserStack lifetime quota and phone capability
 # before dispatching (docs/offline.md#dispatching-browserstack-runs).
 run-name: >-
   ${{ github.event_name == 'workflow_dispatch' && format('BrowserStack {0}', inputs.mode) ||
-  github.event_name == 'schedule' && 'BrowserStack monthly safari-acceptance' ||
+  github.event_name == 'schedule' && format('BrowserStack monthly {0}',
+  github.event.schedule == '17 9 2 * *' && 'chrome-acceptance' ||
+  github.event.schedule == '17 9 3 * *' && 'firefox-tab-acceptance' ||
+  'safari-acceptance') ||
   format('BrowserStack {0}: {1}', github.event.label.name, github.event.pull_request.title) }}
 
 on:
@@ -31,10 +34,14 @@ on:
         type: string
         required: false
   schedule:
-    # Monthly main runs Safari authored installed-context acceptance as optional
-    # monitoring; phone runs are not an acceptance requirement (owner, 2026-11-02).
-    # The report retains unobserved Chrome/Firefox and ordinary-tab coverage.
+    # Monthly main verifies one phone scope a day on BrowserStack, spending the
+    # lifetime credit down (owner, 2026-11-03): Safari installed acceptance on the
+    # 1st, Android Chrome installed acceptance on the 2nd and Android Firefox tab
+    # acceptance on the 3rd. A day apart, none displaces another pending run.
+    # scripts/ci/browserstack-budget.ts monthlyScopes lists the same days.
     - cron: '17 9 1 * *'
+    - cron: '17 9 2 * *'
+    - cron: '17 9 3 * *'
   pull_request:
     branches: [main]
     types: [labeled]
@@ -164,7 +171,7 @@ jobs:
     env:
       SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
       # Every scope retains the same admission, execution, cleanup and reconciliation.
-      BS_CAPABILITY_SCOPE: ${{ ((github.event_name == 'workflow_dispatch' && inputs.mode == 'chrome-diagnostic') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-chrome')) && 'chrome-navigation-diagnostic' || (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'safari-acceptance') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-safari')) && 'safari-acceptance' || ((github.event_name == 'workflow_dispatch' && inputs.mode == 'chrome-acceptance') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-chrome-acceptance')) && 'chrome-acceptance' || ((github.event_name == 'workflow_dispatch' && inputs.mode == 'chrome-tab-acceptance') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-chrome-tab')) && 'chrome-tab-acceptance' || ((github.event_name == 'workflow_dispatch' && inputs.mode == 'firefox-tab-acceptance') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-firefox-tab')) && 'firefox-tab-acceptance' || ((github.event_name == 'workflow_dispatch' && inputs.mode == 'safari-tab-acceptance') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-safari-tab')) && 'safari-tab-acceptance' || 'all' }}
+      BS_CAPABILITY_SCOPE: ${{ github.event_name == 'schedule' && (github.event.schedule == '17 9 2 * *' && 'chrome-acceptance' || github.event.schedule == '17 9 3 * *' && 'firefox-tab-acceptance' || 'safari-acceptance') || ((github.event_name == 'workflow_dispatch' && inputs.mode == 'chrome-diagnostic') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-chrome')) && 'chrome-navigation-diagnostic' || ((github.event_name == 'workflow_dispatch' && inputs.mode == 'safari-acceptance') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-safari')) && 'safari-acceptance' || ((github.event_name == 'workflow_dispatch' && inputs.mode == 'chrome-acceptance') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-chrome-acceptance')) && 'chrome-acceptance' || ((github.event_name == 'workflow_dispatch' && inputs.mode == 'chrome-tab-acceptance') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-chrome-tab')) && 'chrome-tab-acceptance' || ((github.event_name == 'workflow_dispatch' && inputs.mode == 'firefox-tab-acceptance') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-firefox-tab')) && 'firefox-tab-acceptance' || ((github.event_name == 'workflow_dispatch' && inputs.mode == 'safari-tab-acceptance') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-safari-tab')) && 'safari-tab-acceptance' || 'all' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:

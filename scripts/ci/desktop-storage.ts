@@ -64,7 +64,9 @@ export async function deleteDesktopStorage(database: string): Promise<StorageDel
     // A loaded app page rewrites its localStorage keys, which raced the empty-storage
     // check (Firefox, run 41684932652), so deletion only runs on a script-free page.
     await step('verify-no-page-scripts', () => {
-      if (document.scripts.length) throw new Error('A page with scripts is still loaded');
+      // Any namespace: document.scripts misses an SVG document's own <script>.
+      if (document.getElementsByTagNameNS('*', 'script').length)
+        throw new Error('A page with scripts is still loaded');
       return location.pathname;
     });
     const registrations = await step('serviceWorker.getRegistrations', () =>

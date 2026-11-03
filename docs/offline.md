@@ -41,10 +41,11 @@ in-place retention guidance ([native verification](#native-desktop-verification)
 The remaining parts of this contract were split by the Owner in chat on 2026-10-19 so
 every unmet requirement stayed on a ticket:
 
-- [SPN-090](implementation/SPN-090.md) landed BrowserStack Android/iPhone launch and
-  stable-link observations on 2026-11-03, with the [approved coverage map](#browserstack-coverage-boundaries-and-automated-owners)
-  recording observed operation limits, automated alternatives and the named
-  unobserved, out-of-scope phone observations. Its rules are kept under
+- [SPN-090](implementation/SPN-090.md) lands BrowserStack Android/iPhone launch and
+  stable-link observations with PR #224, once its three BrowserStack scopes have
+  run there (owner, 2026-11-03). The [approved coverage map](#browserstack-coverage-boundaries-and-automated-owners)
+  records observed operation limits, automated alternatives and the phone
+  observations still unobserved. Its rules are kept under
   [real-phone verification rules](#real-phone-verification-rules).
 
 [Decision #91](implementation/SPN-039.md#legacy-decision-91-offline-prerequisites-without-partial-completion) keeps every
@@ -713,16 +714,17 @@ decision: document data, images, edits, restart recovery, reconnect, creation,
 links and access requirements remain unchanged. An accepted limit needs an exact
 observed operation/environment, the behavior left unobserved and a named automated
 owner. An unexplained failed operation is not automatically a provider limitation.
-On 2026-11-02 the owner also removed further real-device runs from scope
-([amendment](implementation/SPN-090.md#owner-approved-browserstack-acceptance-and-review-rubric)):
-the phone scopes below stay in the harness and the monthly schedule stays enabled
-as optional monitoring, but an unexecuted scope is neither a pass nor a blocker.
+On 2026-11-02 the owner briefly removed further real-device runs from scope,
+then [corrected that](implementation/SPN-090.md#correction--owner-chat-2026-11-03-browserstack-runs-stay-in-scope) on 2026-11-03: BrowserStack is
+used as far as the lifetime credit allows. Safari authored, Android Chrome
+authored and Android Firefox tab acceptance run on PR #224 before it lands, and
+monthly after that.
 
 | Boundary and current disposition                                                                                                                                                                                                                                                                                                                                                                                                                                        | Automated owner and remaining evidence                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Firefox native control: accepted observation limit for the exercised route.** Its first Automate session reached a secure, worker-controlled page but native-context access returned HTTP 400. Empty dedicated-inventory responses establish only the inventory returned to that account at those times. Neither observation establishes a general Firefox product limitation.                                                                                        | The explicit `firefox-tab-acceptance` scope uses ordinary web commands, actual tab preparation/input and verified cold page reloads without retrying native-context access. It is physically unexecuted and out of scope (owner, 2026-11-02). The existing Firefox lane in `scripts/ci/desktop-offline.ts` covers authored Doc/Sheet edits, image retention, process restarts and normal/conflict reconnect in its desktop profile. `e2e/offline-editing.spec.ts`, `offline-recovery.spec.ts`, `offline-creation.spec.ts`, `offline.spec.ts` and `pwa.spec.ts` own the corresponding shared product contracts. Record their actual source/run results separately. The native Firefox Home Screen lifecycle remains unobserved; these alternatives do not claim to have performed it, and another physical runner is not a prerequisite. |
-| **Chrome readiness: diagnosed harness defect, repaired, re-run out of scope.** The eighth attempt completed native shortcut launch/authentication and verified navigation, then its first item-readiness script returned HTTP 500 / `unknown error` without an observation. Appium 1.17 had unwrapped the script's empty top-level `status` as a legacy error ([cause and repair](implementation/SPN-090.md#chrome-readiness-http-500-cause-appium-status-unwrapping)). | The renamed `saveStatus` readiness field is unexercised on a phone, so Android Chrome installed readiness stays unobserved. The explicit `chrome-acceptance` continuation depends on its installed capability steps; `chrome-tab-acceptance` separately requests the ordinary-tab context. Both are unexecuted and out of scope. Desktop/deterministic results remain useful product evidence, but do not turn this unexercised repair into a pass or an accepted provider limitation. Preparation/offline-reopen evidence remains missing for that attempt.                                                                                                                                                                                                                                                                            |
-| **Safari authored continuation: implemented, unexecuted, out of scope.** The sixth attempt observed the earlier install/authenticate/download/terminate/offline-relaunch capability, with both document types and all six image payloads.                                                                                                                                                                                                                               | The `safari-acceptance` scope in the BrowserStack harness owns actual authored edits, a second pending-edit restart, exact normal/conflict reconnect, creation, stable links and negatives, including required rendered-image screenshots. Its updated assertions have not run on a phone; local harness tests and the historical capability pass do not stand in for that, so current-source iOS installed authoring stays unobserved and the native desktop and deterministic owners carry the product contracts. The explicit `safari-tab-acceptance` scope separately prepares and reopens in the actual ordinary tab, with no installed-storage-sharing assumption. It uses verified page reloads and is physically unexecuted.                                                                                                    |
+| **Firefox native control: accepted observation limit for the exercised route.** Its first Automate session reached a secure, worker-controlled page but native-context access returned HTTP 400. Empty dedicated-inventory responses establish only the inventory returned to that account at those times. Neither observation establishes a general Firefox product limitation.                                                                                        | The explicit `firefox-tab-acceptance` scope uses ordinary web commands, actual tab preparation/input and verified cold page reloads without retrying native-context access. It is physically unexecuted and runs on PR #224 before merge (owner, 2026-11-03). The existing Firefox lane in `scripts/ci/desktop-offline.ts` covers authored Doc/Sheet edits, image retention, process restarts and normal/conflict reconnect in its desktop profile. `e2e/offline-editing.spec.ts`, `offline-recovery.spec.ts`, `offline-creation.spec.ts`, `offline.spec.ts` and `pwa.spec.ts` own the corresponding shared product contracts. Record their actual source/run results separately. The native Firefox Home Screen lifecycle remains unobserved; these alternatives do not claim to have performed it, and another physical runner is not a prerequisite. |
+| **Chrome readiness: diagnosed harness defect, repaired, re-run before merge.** The eighth attempt completed native shortcut launch/authentication and verified navigation, then its first item-readiness script returned HTTP 500 / `unknown error` without an observation. Appium 1.17 had unwrapped the script's empty top-level `status` as a legacy error ([cause and repair](implementation/SPN-090.md#chrome-readiness-http-500-cause-appium-status-unwrapping)). | The renamed `saveStatus` readiness field is unexercised on a phone, so Android Chrome installed readiness is unobserved until that run. The explicit `chrome-acceptance` continuation depends on its installed capability steps; `chrome-tab-acceptance` separately requests the ordinary-tab context. Both are unexecuted; `chrome-acceptance` runs on PR #224 before merge (owner, 2026-11-03), and `chrome-tab-acceptance` stays label-only. Desktop/deterministic results remain useful product evidence, but do not turn this unexercised repair into a pass or an accepted provider limitation. Preparation/offline-reopen evidence remains missing for that attempt.                                                                                                                                                                                                                                                                            |
+| **Safari authored continuation: implemented, runs before merge.** The sixth attempt observed the earlier install/authenticate/download/terminate/offline-relaunch capability, with both document types and all six image payloads.                                                                                                                                                                                                                               | The `safari-acceptance` scope in the BrowserStack harness owns actual authored edits, a second pending-edit restart, exact normal/conflict reconnect, creation, stable links and negatives, including required rendered-image screenshots. Its updated assertions have not run on a phone; local harness tests and the historical capability pass do not stand in for that, so current-source iOS installed authoring stays unobserved and the native desktop and deterministic owners carry the product contracts. The explicit `safari-tab-acceptance` scope separately prepares and reopens in the actual ordinary tab, with no installed-storage-sharing assumption. It uses verified page reloads and is physically unexecuted.                                                                                                    |
 | **Installation resources and shared failure/access permutations:** owned at the lowest meaningful automated layer, with supported BrowserStack observations added for mobile context.                                                                                                                                                                                                                                                                                   | `e2e/offline.spec.ts` owns cold-offline manifest/PNG and complete-image checks; descriptor/runtime suites own malformed/incomplete resources. `offline-editing.spec.ts`, `offline-recovery.spec.ts`, `offline-sign-out.spec.ts`, `offline-device.spec.ts`, `offline-creation.spec.ts` and `pwa.spec.ts` own the [specific replay, storage, link and authority contracts](implementation/SPN-090.md#acceptance-ownership-without-duplicate-paid-permutations). Keep actual run evidence distinct from this inventory; the new mobile resource assertion is still unobserved by the historical Safari receipt.                                                                                                                                                                                                                            |
 
 The [explicit context routes](implementation/SPN-090.md#second-review-repair-supported-contexts-and-measured-scope-cost)
@@ -737,12 +739,14 @@ Current BrowserStack reports use `status` for execution of the selected scope an
 `fullMatrixStatus` for the aggregate of the three browser capability lanes. Neither
 field alone establishes whole authored offline acceptance. Preserve historical
 reports with their original schema/meaning, and name unrun lanes and accepted
-observation limits without manufacturing a native pass. The current monthly policy
-routes the existing Safari authored scope through the same reservation, guard and
-reconciliation controls as optional monitoring; its first run is not required. Default manual dispatch
+observation limits without manufacturing a native pass. The monthly policy
+routes Safari authored acceptance on the 1st, Android Chrome authored acceptance
+on the 2nd and Android Firefox tab acceptance on the 3rd through the same
+reservation, guard and reconciliation controls, spending the lifetime credit down;
+its first scheduled run is not required before merge. Default manual dispatch
 remains quota-only, and the earlier monthly quota-only route is historical. No
-successful authored-scope or complete approved-run cost has been measured. A monthly
-Safari success would not observe other mobile/ordinary-tab contexts. The global
+successful authored-scope or complete approved-run cost has been measured. The monthly
+runs do not observe the Chrome or Safari ordinary-tab contexts. The global
 review weights and all current-commit CI, independent-review and merge gates remain
 unchanged.
 
@@ -760,8 +764,9 @@ a newer account run replaces it without failing anything
    runs use their own groups and can be ignored.
 2. After dispatching, confirm the expected run reached a job.
 3. Read the "Runs cancelled before any job started" section of each quota or
-   reserve summary. A listed `schedule` run means the monthly acceptance run was
-   lost: dispatch `safari-acceptance` by hand, since next month's schedule does
+   reserve summary. A listed `schedule` run means a monthly acceptance run was
+   lost: dispatch the scope its title names (`safari-acceptance`,
+   `chrome-acceptance` or `firefox-tab-acceptance`) by hand, since next month's schedule does
    not stand in for it. Re-dispatch any other listed run that was still needed.
 
 ### Real-phone verification rules
@@ -769,12 +774,14 @@ a newer account run replaces it without failing anything
 📱 These rules come from [SPN-090's ticket at landing](https://github.com/mxbaylee/spinel/blob/d7761a893c70030477df79577f54b23bc0e88fb4/docs/todo/SPN-090.md),
 whose [record](implementation/SPN-090.md) holds the decisions, evidence and personas.
 
-- **Further real-device runs are optional** (owner, chat 2026-11-02, [amendment](implementation/SPN-090.md#owner-approved-browserstack-acceptance-and-review-rubric)).
-  The phone scopes, labels, manual dispatch and monthly schedule stay as
-  monitoring. A later phone result is recorded at its exact source; an unexecuted
-  scope is neither a pass nor a blocker. Native desktop and deterministic owners
-  carry the product contracts, and the mobile-only observations they cannot make
-  stay named as unobserved in the coverage map above.
+- **Use BrowserStack as far as the credit allows** (owner, chat 2026-11-03, [correction](implementation/SPN-090.md#correction--owner-chat-2026-11-03-browserstack-runs-stay-in-scope)).
+  There are no physical phones, so BrowserStack's real phones are the
+  verification. Safari authored, Android Chrome authored and Android Firefox tab
+  acceptance run on a PR before it lands and on the monthly schedule. A phone
+  result is recorded at its exact source, and a failure stays a failure. Native
+  desktop and deterministic owners carry the shared product contracts, and
+  mobile-only observations not yet made stay named as unobserved in the coverage
+  map above.
 - **BrowserStack Automate is the approved mobile environment** (owner, 2026-11-02).
   No personal phones, manual hardware, other provider, dedicated lab or extra
   runner is required.
@@ -783,6 +790,11 @@ whose [record](implementation/SPN-090.md) holds the decisions, evidence and pers
   owner, never as a pass. The [Firefox native-control limit](implementation/SPN-090.md#firefox-native-control-disposition)
   is an observed automation boundary, not a Firefox product limitation. Unknown
   failures stay unresolved; a successful diagnostic never turns a failure into a pass.
+- **Keep access boundaries.** Reuse [SPN-055](implementation/SPN-055.md)'s
+  storage, account and runtime lifecycle and SPN-053/SPN-054's durable edits and
+  recovery. Keep viewer restrictions, account isolation and guest/token exclusion.
+  Include SPN-051's offline Sheet/Doc creation, edited reopen, one server
+  publication and rejected-folder recovery.
 - **Report semantics.** `status` is the selected scope's result and
   `fullMatrixStatus` the three-browser capability aggregate; neither alone
   establishes whole authored acceptance. Historical reports keep their schema.
@@ -811,7 +823,10 @@ whose [record](implementation/SPN-090.md) holds the decisions, evidence and pers
   Every allocation needs a newly committed, read-back, matching reservation; runs
   serialize on the account group and every status and retry is reconciled. Unknown
   duration or allocation keeps its hold. Low, exhausted or invalid credit fails
-  visibly before allocation. Without an authoritative balance, use the owner's
+  visibly before allocation. Preserve the deduplicated ledger, starting-usage
+  provenance and historical quota observations; a successful GET, retained
+  elapsed duration or empty inventory is not proof of charged balance, complete
+  history or admission. Without an authoritative balance, use the owner's
   unverified estimate: no unobserved usage, one charged second per measured
   second, and a five-minute safety margin. Documentation edits never allocate devices.
 - **Cost reporting.** Successful-scope cost samples come only from a complete

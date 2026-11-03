@@ -507,8 +507,8 @@ globalThis.fetch = async (url, init) => {
       assert.equal(report.estimate.completePaidCoverage.testedSha, source.testedSha);
       assert.equal(report.estimate.completePaidCoverage.matchesReportIdentity, true);
       assert.equal(
-        report.estimate.completePaidCoverage.forecast.actualMonthlyScope,
-        'safari-acceptance',
+        report.estimate.completePaidCoverage.forecast.actualMonthlyScopes.join(),
+        'safari-acceptance,chrome-acceptance,firefox-tab-acceptance',
       );
       assert.match(summary, /1\.58 measured summed minutes \/ 21/);
       assert.ok(summary.includes(report.estimate.projectedFullMatrixExhaustion));
@@ -527,7 +527,15 @@ globalThis.fetch = async (url, init) => {
         /Approved paid-plan cost \/ hypothetical complete runs \/ first unfundable date \| Unmeasured \/ Unknown \/ Unknown/,
       );
     }
-    assert.match(summary, /The actual monthly workflow runs Safari acceptance only/);
+    assert.match(
+      summary,
+      /The actual monthly workflow runs Safari acceptance, Android Chrome acceptance and Android Firefox tab acceptance on consecutive days/,
+    );
+    // Each scheduled date names the scope that runs on it.
+    assert.match(
+      summary,
+      /- \d{4}-\d{2}-01T09:17:00\.000Z: `safari-acceptance`\n- \d{4}-\d{2}-02T09:17:00\.000Z: `chrome-acceptance`\n- \d{4}-\d{2}-03T09:17:00\.000Z: `firefox-tab-acceptance`/,
+    );
     const inventoryCalls = calls.filter((call) => call.host === 'api-cloud.browserstack.com');
     assert.deepEqual(
       inventoryCalls,

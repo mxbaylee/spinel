@@ -33,7 +33,7 @@ test('only cancelled runs whose jobs never reached a runner are reported', async
   const { fetcher, requests } = github(
     [
       run(1, 'workflow_dispatch', 'BrowserStack `safari` [x](y)\n<b>|'),
-      run(2, 'schedule'),
+      run(2, 'schedule', 'BrowserStack monthly chrome-acceptance'),
       run(3),
       run(4),
       run(5, 'push'),
@@ -69,7 +69,12 @@ test('only cancelled runs whose jobs never reached a runner are reported', async
         title: 'BrowserStack safari x y b',
         createdAt: '2026-11-02T22:25:40Z',
       },
-      { id: 2, event: 'schedule', title: '', createdAt: '2026-11-02T22:25:40Z' },
+      {
+        id: 2,
+        event: 'schedule',
+        title: 'BrowserStack monthly chrome-acceptance',
+        createdAt: '2026-11-02T22:25:40Z',
+      },
     ],
     unread: 0,
   });
@@ -96,14 +101,26 @@ test('only cancelled runs whose jobs never reached a runner are reported', async
   // The one recurring obligation stands out from label and dispatch runs.
   assert.match(
     summary,
-    /: schedule, created [^.]+\. No device time; \*\*the monthly acceptance run was lost; dispatch `safari-acceptance` unless already re-dispatched\*\*\./,
+    /: schedule \(`BrowserStack monthly chrome-acceptance`\), created [^.]+\. No device time; \*\*the monthly acceptance run was lost; dispatch `chrome-acceptance` unless already re-dispatched\*\*\./,
   );
   assert.equal(summary.match(/monthly acceptance run was lost/g)?.length, 1);
   assert.match(summary, /does not affect admission/);
   // Only the lost scheduled run is annotated, by id alone.
   assert.deepEqual(displacedWarnings(report), [
-    '::warning title=Monthly BrowserStack run lost::Scheduled run 2 was cancelled before any job started; dispatch safari-acceptance unless already re-dispatched.',
+    '::warning title=Monthly BrowserStack run lost::Scheduled run 2 was cancelled before any job started; dispatch chrome-acceptance unless already re-dispatched.',
   ]);
+  // A title that names no monthly scope names every one rather than guessing.
+  assert.deepEqual(
+    displacedWarnings({
+      status: 'available',
+      since: '2026-10-02',
+      runs: [{ id: 9, event: 'schedule', title: 'BrowserStack monthly all', createdAt: '' }],
+      unread: 0,
+    }),
+    [
+      '::warning title=Monthly BrowserStack run lost::Scheduled run 9 was cancelled before any job started; dispatch safari-acceptance or chrome-acceptance or firefox-tab-acceptance unless already re-dispatched.',
+    ],
+  );
   assert.deepEqual(displacedWarnings({ status: 'unavailable', reason: 'http-403' }), []);
 });
 

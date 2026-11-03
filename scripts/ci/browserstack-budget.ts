@@ -253,15 +253,43 @@ export function readBudgetLedger(value: unknown): BudgetLedger {
   };
 }
 
+// The monthly phone scopes, one day apart so no scheduled run displaces another
+// pending run in the account lock. The workflow's crons are `17 9 <day> * *`.
+export const monthlyScopes = [
+  { day: 1, scope: 'safari-acceptance' },
+  { day: 2, scope: 'chrome-acceptance' },
+  { day: 3, scope: 'firefox-tab-acceptance' },
+] as const;
+
+/** The scheduled run `offset` runs after `observedAt` (0 is the next one). */
+export function scheduledRunDate(observedAt: string, offset: number): string {
+  const now = Date.parse(timestamp(observedAt));
+  if (!Number.isSafeInteger(offset) || offset < 0) return invalid();
+  const start = new Date(now);
+  for (let month = 0, seen = 0; ; month++)
+    for (const { day } of monthlyScopes) {
+      const date = Date.UTC(start.getUTCFullYear(), start.getUTCMonth() + month, day, 9, 17);
+      if (date > now && seen++ === offset) return new Date(date).toISOString();
+    }
+}
+
+/** One month's scheduled runs; the scope of each follows from its day. */
 export function nextMonthlyDates(observedAt: string): string[] {
+  return monthlyScopes.map((_, offset) => scheduledRunDate(observedAt, offset));
+}
+
+export function monthlyScope(date: string): string {
+  const day = new Date(timestamp(date)).getUTCDate();
+  return monthlyScopes.find((entry) => entry.day === day)?.scope ?? invalid();
+}
+
+/** First-of-month dates for the hypothetical one-complete-plan-per-month scenario. */
+export function monthlyPlanDate(observedAt: string, offset: number): string {
   const now = new Date(timestamp(observedAt));
-  let next = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 9, 17));
+  const next = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 9, 17));
   if (next.getTime() <= now.getTime()) next.setUTCMonth(next.getUTCMonth() + 1);
-  return Array.from({ length: 3 }, () => {
-    const date = next.toISOString();
-    next = new Date(Date.UTC(next.getUTCFullYear(), next.getUTCMonth() + 1, 1, 9, 17));
-    return date;
-  });
+  next.setUTCMonth(next.getUTCMonth() + offset);
+  return next.toISOString();
 }
 
 function sessionUsage(entry: LedgerSession) {
@@ -427,7 +455,7 @@ export function createBudgetReport(
         'Retained history cannot establish deleted, expired or other-account-user usage.',
         'The known subtotal excludes unresolved or conflicting sessions; missing measurements are not zero.',
         'An infrastructure smoke does not measure the complete installed-phone offline matrix.',
-        'Monthly dates are first-of-month 09:17 UTC; GitHub scheduling can be delayed.',
+        'Monthly runs are Safari acceptance on the 1st, Android Chrome acceptance on the 2nd and Android Firefox tab acceptance on the 3rd, each at 09:17 UTC; GitHub scheduling can be delayed.',
         'Unknown sufficient quota blocks devices while the scheduled report remains enabled.',
       ],
     },

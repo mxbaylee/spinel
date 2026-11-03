@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { runInNewContext } from 'node:vm';
 import { test } from 'node:test';
 import { collectQuotaEvidence, quotaLimits, retainedSessionIds } from './browserstack-quota.ts';
-import { createBudgetReport } from './browserstack-budget.ts';
+import { createBudgetReport, monthlyScopes } from './browserstack-budget.ts';
 import type { CapabilityScope } from './browserstack-scope.ts';
 
 const credentials = { username: 'secret-user', accessKey: 'secret-key' };
@@ -516,7 +516,7 @@ test('quota CLI with missing credentials retains a failing report without openin
   }
 });
 
-test('monthly Safari acceptance, quota reports, every phone scope, and read-only diagnostics preserve their boundaries', async () => {
+test('monthly Safari, Chrome and Firefox acceptance, quota reports, every phone scope, and read-only diagnostics preserve their boundaries', async () => {
   const source = await readFile(
     new URL('../../.github/workflows/browserstack.yml', import.meta.url),
     'utf8',
@@ -546,7 +546,11 @@ test('monthly Safari acceptance, quota reports, every phone scope, and read-only
     source,
     /session_id:\n        description:.*\n        type: string\n        required: false/,
   );
-  assert.match(source, /cron: '17 9 1 \* \*'/);
+  // One cron per monthly scope, a day apart, matching the budget calendar.
+  assert.deepEqual(
+    [...source.matchAll(/^    - cron: '(.+)'$/gm)].map((match) => match[1]),
+    monthlyScopes.map((entry) => `17 9 ${entry.day} * *`),
+  );
   assert.match(source, /pull_request:\n    branches: \[main\]\n    types: \[labeled\]/);
   // The group is a folded scalar: its lines join with single spaces.
   const folded = /^  group: >-\n((?:    .+\n)+)/m.exec(source)?.[1] ?? '';
@@ -723,6 +727,7 @@ test('monthly Safari acceptance, quota reports, every phone scope, and read-only
   assert.ok(operation);
   const routes: {
     event: string;
+    schedule?: string;
     mode?: string;
     action?: string;
     label?: string;
@@ -732,18 +737,22 @@ test('monthly Safari acceptance, quota reports, every phone scope, and read-only
     jobs: string[];
     scope?: CapabilityScope;
   }[] = [
-    {
-      event: 'schedule',
-      operation: 'reserve',
-      jobs: ['accounting', 'capability', 'reconciliation'],
-      scope: 'safari-acceptance',
-    },
-    {
-      event: 'schedule',
-      allocationAllowed: false,
-      operation: 'reserve',
-      jobs: ['accounting'],
-    },
+    ...monthlyScopes.flatMap(({ day, scope }) => [
+      {
+        event: 'schedule',
+        schedule: `17 9 ${day} * *`,
+        operation: 'reserve' as const,
+        jobs: ['accounting', 'capability', 'reconciliation'],
+        scope,
+      },
+      {
+        event: 'schedule',
+        schedule: `17 9 ${day} * *`,
+        allocationAllowed: false,
+        operation: 'reserve' as const,
+        jobs: ['accounting'],
+      },
+    ]),
     { event: 'workflow_dispatch', operation: 'quota', jobs: ['accounting'] },
     { event: 'workflow_dispatch', mode: 'quota', operation: 'quota', jobs: ['accounting'] },
     { event: 'workflow_dispatch', mode: 'diagnostics', jobs: ['diagnostics'] },
@@ -902,6 +911,7 @@ test('monthly Safari acceptance, quota reports, every phone scope, and read-only
         repository: 'mxbaylee/spinel',
         run_id: 77,
         event: {
+          schedule: route.schedule ?? '',
           action: route.action ?? '',
           label: { name: route.label ?? '' },
           pull_request: {
@@ -938,7 +948,7 @@ test('monthly Safari acceptance, quota reports, every phone scope, and read-only
       route.event === 'workflow_dispatch'
         ? `BrowserStack ${route.mode ?? ''}`
         : route.event === 'schedule'
-          ? 'BrowserStack monthly safari-acceptance'
+          ? `BrowserStack monthly ${monthlyScopes.find((entry) => `17 9 ${entry.day} * *` === route.schedule)?.scope}`
           : `BrowserStack ${route.label ?? ''}: Some PR`,
       `run title: ${JSON.stringify(route)}`,
     );

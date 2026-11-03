@@ -21,7 +21,11 @@ function fixture(fault?: string, rejection = false, scripts = 0, rewrite = false
   const sandbox = {
     performance,
     console,
-    document: { scripts: { length: scripts } },
+    document: {
+      getElementsByTagNameNS: (namespace: string, name: string) => ({
+        length: namespace === '*' && name === 'script' ? scripts : 0,
+      }),
+    },
     location: { pathname: scripts ? '/' : '/favicon.svg' },
     setTimeout(callback: () => void, timeout: number) {
       assert.equal(timeout, 28000);

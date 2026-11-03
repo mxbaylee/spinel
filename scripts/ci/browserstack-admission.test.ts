@@ -277,7 +277,7 @@ test('complete-plan forecasting accounts for every reservation threshold, holds 
   assert.equal(report.estimatedUsableSeconds, 2964);
   assert.deepEqual(report.completePaidCoverage?.forecast, {
     scenario: 'one-complete-paid-plan-per-month-no-other-use',
-    actualMonthlyScope: 'safari-acceptance',
+    actualMonthlyScopes: ['safari-acceptance', 'chrome-acceptance', 'firefox-tab-acceptance'],
     roundedEstimatedComponentCharges: [19, 19, 19, 19, 19],
     roundedEstimatedBatchChargeSeconds: 95,
     reservationThresholdSeconds: 900,
@@ -568,7 +568,8 @@ test('owner-authorized estimate uses the retained 241 seconds without relabeling
   assert.equal(report.estimatedUsableSeconds, 3059);
   assert.equal(report.capabilityReservationSeconds, 900);
   assert.equal(report.estimatedAdditionalCapabilityReservations, 3);
-  assert.equal(report.firstEstimatedUnfundableCapabilityDate, '2027-03-01T09:17:00.000Z');
+  // Three reservations fund the next three scheduled runs, one per monthly scope.
+  assert.equal(report.firstEstimatedUnfundableCapabilityDate, '2026-12-02T09:17:00.000Z');
   assert.equal(report.capabilitySufficient, true);
   assert.equal(report.allocationAllowed, false, 'estimation alone is not a durable reservation');
   assert.equal(report.providerVerified, false);
@@ -844,7 +845,7 @@ test('lifetime credit does not renew; insufficient and exhausted estimates never
   });
   assert.equal(later.estimatedRemainingSeconds, 0);
   assert.equal(later.estimatedAdditionalCapabilityReservations, 0);
-  assert.equal(later.firstEstimatedUnfundableCapabilityDate, '2027-02-01T09:17:00.000Z');
+  assert.equal(later.firstEstimatedUnfundableCapabilityDate, '2027-01-02T09:17:00.000Z');
 });
 
 test('a complete receipt releases unused capacity only after current terminal session measurement', () => {

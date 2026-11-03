@@ -3,8 +3,11 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import {
   createBudgetReport,
+  monthlyPlanDate,
+  monthlyScope,
   nextMonthlyDates,
   readBudgetLedger,
+  scheduledRunDate,
   type BudgetLedger,
   type QuotaEvidence,
 } from './browserstack-budget.ts';
@@ -247,22 +250,33 @@ test('account activity, incomplete collection and duration overflow remain expli
   assert.ok(report.blockingReasons.includes('measured-duration-overflow'));
 });
 
-test('monthly forecast dates cross years and use the next scheduled instant, never a renewed allowance', () => {
+test('scheduled run dates step through each monthly scope, cross years and never renew the allowance', () => {
   assert.deepEqual(nextMonthlyDates('2026-11-01T09:16:59.999Z'), [
     '2026-11-01T09:17:00.000Z',
-    '2026-12-01T09:17:00.000Z',
-    '2027-01-01T09:17:00.000Z',
+    '2026-11-02T09:17:00.000Z',
+    '2026-11-03T09:17:00.000Z',
   ]);
   assert.deepEqual(nextMonthlyDates('2026-11-01T09:17:00.000Z'), [
+    '2026-11-02T09:17:00.000Z',
+    '2026-11-03T09:17:00.000Z',
     '2026-12-01T09:17:00.000Z',
+  ]);
+  assert.deepEqual(nextMonthlyDates('2026-12-31T23:59:59.999Z'), [
     '2027-01-01T09:17:00.000Z',
-    '2027-02-01T09:17:00.000Z',
+    '2027-01-02T09:17:00.000Z',
+    '2027-01-03T09:17:00.000Z',
   ]);
-  assert.deepEqual(nextMonthlyDates('2028-02-29T23:59:59.999Z'), [
-    '2028-03-01T09:17:00.000Z',
-    '2028-04-01T09:17:00.000Z',
-    '2028-05-01T09:17:00.000Z',
+  assert.equal(scheduledRunDate('2028-02-29T23:59:59.999Z', 4), '2028-04-02T09:17:00.000Z');
+  assert.deepEqual(nextMonthlyDates('2026-11-01T09:16:59.999Z').map(monthlyScope), [
+    'safari-acceptance',
+    'chrome-acceptance',
+    'firefox-tab-acceptance',
   ]);
+  assert.throws(() => monthlyScope('2026-11-04T09:17:00.000Z'), /invalid-budget-ledger/);
+  assert.throws(() => scheduledRunDate('2026-11-01T09:17:00.000Z', -1), /invalid-budget-ledger/);
+  // The complete-plan scenario stays one plan per month.
+  assert.equal(monthlyPlanDate('2026-11-01T09:17:00.000Z', 0), '2026-12-01T09:17:00.000Z');
+  assert.equal(monthlyPlanDate('2028-02-29T23:59:59.999Z', 2), '2028-05-01T09:17:00.000Z');
   assert.throws(() => nextMonthlyDates('2026-02-30T00:00:00.000Z'), /invalid-budget-ledger/);
   assert.equal(assess(evidence(), null, '2027-01-01T09:17:00.000Z').report.allowanceSeconds, 3600);
 });
