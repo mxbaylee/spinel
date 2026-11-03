@@ -41,13 +41,13 @@ affected personas, including denied access, persisted content and recovery where
 relevant. Extend an existing case or fixture when it covers that boundary; do
 not reproduce the implementation's branches as an independent expected result.
 
-| Contract | Usual owner | Add a heavier layer when |
-| --- | --- | --- |
-| Pure transformation, selection policy or validator | Focused unit test; built-in Node tests for scripts | The wiring or runtime boundary can fail independently. |
-| Persistence, authorization or API behavior | Existing server/store integration suite with an isolated database | Browser sessions, lifecycle or native editing change the result. |
-| Component states and interactions | Production-component Storybook stories and interaction checks | The real application or native editor integration is the contract. |
-| Native editing, browser storage, peer updates or recovery | The relevant Playwright project and fixture | Another protocol, build, device or instrumentation mode adds a distinct failure mode. |
-| Input latency or callback lifetime | Existing candidate harness and its validators | A historical comparison is needed to establish the claimed improvement. |
+| Contract                                                  | Usual owner                                                       | Add a heavier layer when                                                              |
+| --------------------------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Pure transformation, selection policy or validator        | Focused unit test; built-in Node tests for scripts                | The wiring or runtime boundary can fail independently.                                |
+| Persistence, authorization or API behavior                | Existing server/store integration suite with an isolated database | Browser sessions, lifecycle or native editing change the result.                      |
+| Component states and interactions                         | Production-component Storybook stories and interaction checks     | The real application or native editor integration is the contract.                    |
+| Native editing, browser storage, peer updates or recovery | The relevant Playwright project and fixture                       | Another protocol, build, device or instrumentation mode adds a distinct failure mode. |
+| Input latency or callback lifetime                        | Existing candidate harness and its validators                     | A historical comparison is needed to establish the claimed improvement.               |
 
 For a repair, reproduce the original failure or use a bounded negative control
 that demonstrates detection. Assert the actual outcome: exact authored/saved/peer
@@ -109,13 +109,13 @@ Most new tests belong to an existing suite and need no new CI job. Check that
 their source and shared dependencies select that suite automatically. The
 maintained routing interfaces are:
 
-| File | Responsibility when a suite or dependency changes |
-| --- | --- |
-| `scripts/ci/plan.ts` | `suiteIds`, dependency predicates and each suite's selected/inapplicable reason, dependency description and inputs. |
-| `scripts/ci/changes.ts` | Complete immutable diff, including old/deleted paths, plan serialization/digest and suite outputs. |
-| `.github/workflows/ci.yml` | Expose outputs, schedule workers, wire `needs`, pass actual results to required aggregates, and retain evidence. |
-| `scripts/ci/coverage-result.ts` | Include required worker results in the appropriate aggregate group and verify the plan's digest and tested identity. |
-| `scripts/ci/plan.test.ts`, `changes.test.ts`, `coverage-result.test.ts` | Prove selection, event boundaries and rejection of incomplete evidence. |
+| File                                                                    | Responsibility when a suite or dependency changes                                                                    |
+| ----------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `scripts/ci/plan.ts`                                                    | `suiteIds`, dependency predicates and each suite's selected/inapplicable reason, dependency description and inputs.  |
+| `scripts/ci/changes.ts`                                                 | Complete immutable diff, including old/deleted paths, plan serialization/digest and suite outputs.                   |
+| `.github/workflows/ci.yml`                                              | Expose outputs, schedule workers, wire `needs`, pass actual results to required aggregates, and retain evidence.     |
+| `scripts/ci/coverage-result.ts`                                         | Include required worker results in the appropriate aggregate group and verify the plan's digest and tested identity. |
+| `scripts/ci/plan.test.ts`, `changes.test.ts`, `coverage-result.test.ts` | Prove selection, event boundaries and rejection of incomplete evidence.                                              |
 
 For example, the `unit-test-run` matrix supplies worker evidence for the plan's
 `unit-tests` suite. The required **Unit tests** aggregate invokes
@@ -155,8 +155,11 @@ to narrow additional coverage without equivalent evidence.
 ## Verify once at the right scope and preserve the result
 
 Use the pinned Node version and existing commands in [development](development.md#checks).
-Run focused checks while repairing a concrete failure, then the required CI gates
-and acceptance checks for the current commit. Prefer hosted CI for heavy work;
+Run focused checks while repairing a concrete failure, commit the candidate and
+obtain [both independent grades before pushing](implementation/grooming-2026-11-02.md#review-before-push),
+then run the required CI gates and acceptance checks on the published head.
+Reviewers distinguish local evidence from pending hosted acceptance; grades do
+not convert unavailable checks into passes. Prefer hosted CI for heavy work;
 local workloads follow the [shared memory/watchdog rules](run-backlog.md#2-implement-one-ticket).
 Repeat or broaden a check to resolve a remaining risk or satisfy a gate, with the
 reason recorded. CI changes themselves require full validation.

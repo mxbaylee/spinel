@@ -2,6 +2,9 @@
 
 **Current policy:** [2026-10-26 standing agent decisions and visual review](grooming-2026-10-26.md#agent-decisions-and-visual-review)
 supersedes historical human sign-off and run-specific delegation requirements.
+[2026-11-02 review before push](grooming-2026-11-02.md#review-before-push) requires
+qualifying local independent grades before publication and supersedes early draft
+publication as the default. Hosted acceptance and memory safeguards remain.
 [Impact-first, larger-effort-first scoring](grooming-2026-10-26.md#impact-first-larger-effort-first)
 supersedes the earlier effort/impact points. Historical sources below remain provenance.
 
@@ -40,6 +43,11 @@ saved documents; Collaborator gains another check of concurrency and durability;
 Link guest gains another check of access, revocation and untrusted-input boundaries.
 
 ## CI as the default validation environment
+
+**Current boundary:** The 2026-11-02 [review-before-push decision](grooming-2026-11-02.md#review-before-push)
+supersedes this record's publication ordering. CI remains available for required,
+heavy and platform-specific verification, with unavailable local checks disclosed;
+it does not remove the new pre-push review gate. The original decision follows.
 
 **Date/status:** 2026-10-23, accepted. **Authority:** Owner, this backlog chat:
 “Yes—run blocked checks in CI” and “of course you can always use ci or even prefer it.”

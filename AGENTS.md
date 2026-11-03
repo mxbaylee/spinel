@@ -88,13 +88,15 @@ that isn't waiting on another is next.
 - **Code copied from Univer Workspace** or any other Apache-2.0 project keeps its
   license header, gets a note saying it was changed, and is listed in
   [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
-- **CI may be the default for validation**, including typecheck, lint, backlog,
-  unit and browser checks. Draft pushes do not require local checks to pass first.
-  Keep unverified work draft; all seven CI gates, two independent nonimplementing
-  subagents each scoring **above 95/100 on the same current commit**, no unresolved
-  blockers and required visual approval remain merge requirements. Owner, chat
-  2026-10-26; [review gate](docs/implementation/backlog-workflow.md#two-independent-grades-on-the-same-commit).
-  Local workloads still obey the memory watchdog. Owner, chat 2026-10-23;
-  [decision](docs/implementation/backlog-workflow.md#ci-as-the-default-validation-environment).
+- **Review locally before pushing.** Run the relevant feasible local checks,
+  commit the complete candidate, and obtain two independent nonimplementing
+  reviews, each **above 95/100 on that exact commit**, before the first push or
+  a repair push. Fix findings and have both reviewers revalidate each new head.
+  Keep work local when that gate is not met. Hosted-only or resource-blocked
+  acceptance stays explicitly pending; a pre-push grade is not a CI pass.
+  All seven current-head CI gates, no unresolved blockers and required visual
+  approval remain merge requirements. Local workloads obey the memory watchdog;
+  this does not require duplicating the full hosted matrix on the Mac. Owner,
+  chat 2026-11-02; [ordering and evidence](docs/implementation/grooming-2026-11-02.md#review-before-push).
   The seventh, Lib tests, runs `lib/` on its own and passes at once when nothing it
   tests changed. Owner, chat 2026-10-22.

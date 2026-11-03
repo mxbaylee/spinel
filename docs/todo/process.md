@@ -116,10 +116,10 @@ reserved.
   main job. A ticket's impact is the highest of its persona impacts. Judge at
   least one; leave out personas it doesn't touch. Owner, chat 2026-10-19.
 
-| Factor | S | M | L | XL |
-| --- | --- | --- | --- | --- |
-| Impact | 🤍 10 | 💜 20 | 🩷 30 | — |
-| Effort | 🌱 0 | 🌿 1 | 🌳 2 | 🏔️ 3 |
+| Factor | S     | M     | L     | XL   |
+| ------ | ----- | ----- | ----- | ---- |
+| Impact | 🤍 10 | 💜 20 | 🩷 30 | —    |
+| Effort | 🌱 0  | 🌿 1  | 🌳 2  | 🏔️ 3 |
 
 A ticket's own points are impact plus effort, from **10 to 33**. Impact is weighted
 one order of magnitude higher than before, and larger effort comes first within
@@ -225,7 +225,9 @@ place. Owner, chat 2026-10-26; [image-publication decision](../implementation/gr
    are exempt: their changes are low effort, such as scaffolding or generated
    code, so a large diff is still easy to review. CI reads the effort from the
    base branch's copy of the ticket.
-5. **Independent review.** Have two subagents that did not implement the change
+5. **Independent review before pushing.** Include the landing bookkeeping in
+   step 6, run relevant feasible local checks and commit the complete candidate.
+   Have two subagents that did not implement the change
    independently inspect and verify it, using the original ticket, full diff and
    evidence, without a prior or hoped-for grade. Require **each score above 95/100
    on the same current commit and no unresolved blockers**; an average does not
@@ -238,7 +240,11 @@ place. Owner, chat 2026-10-26; [image-publication decision](../implementation/gr
    Weigh scope overlap before changed-line limits: fix acceptance gaps here;
    ticket separable work without hiding a blocker. Both reviewers revalidate
    repairs; put both scores, the shared reviewed SHA and every finding's
-   disposition in the PR.
+   disposition in the PR. Obtain both qualifying grades on the exact committed
+   head before its first push and every repair push. Hosted acceptance may remain
+   explicitly pending, but must not be represented as passed or waived by a grade.
+   Revalidate landing bookkeeping and base updates before publication too. Keep
+   unqualified work local; see the [ordering decision](../implementation/grooming-2026-11-02.md#review-before-push).
 6. **Prepare to land.** In the same PR:
    - Delete the ticket file.
    - Move its Rules and their reasons into the maintained docs under `docs/`,
@@ -395,12 +401,13 @@ Owner setup, once, in the repository settings:
 
 ## Commands
 
-CI may be the default for all checks, including typecheck, lint and backlog.
-Draft pushes do not require local checks first. Keep unverified work draft and
-retain every required CI, independent review and visual/merge gate. Local work
-still follows the [memory watchdog](../run-backlog.md#2-implement-one-ticket).
-Owner, chat 2026-10-23;
-[decision](../implementation/backlog-workflow.md#ci-as-the-default-validation-environment).
+Run relevant feasible local checks and obtain both independent grades before
+pushing the committed candidate. Hosted CI still owns its required gates and
+checks that cannot run safely or usefully locally; document those as pending.
+Keep incompletely verified PRs draft and retain every CI, review and visual/merge
+gate. Local work follows the [memory watchdog](../run-backlog.md#2-implement-one-ticket);
+do not duplicate the full hosted matrix on the Mac. Owner, chat 2026-11-02;
+[decision](../implementation/grooming-2026-11-02.md#review-before-push).
 
 ```bash
 npm run typecheck                          # type-check every .ts and .tsx file
