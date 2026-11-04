@@ -179,7 +179,12 @@
         "node": "v26.12.1",
         "cwd": "/workspace/scratch/2ce51b006967/spinel",
         "command": "node",
-        "args": ["scripts/serial.ts", "npm", "run", "build"],
+        "args": [
+          "scripts/serial.ts",
+          "npm",
+          "run",
+          "build"
+        ],
         "elapsedMs": 7734,
         "peakKiB": 1738672,
         "code": 0,
@@ -302,6 +307,58 @@
       "log": "cleanup-static.log.gz",
       "logSha256": "cb043a1e68290382dd1c35b9af4ed5812574843b7b399bebb8199f0a134565ae",
       "compressedSha256": "fbe17394150c5f95ce1169ad6dc12c07b7ac12e355cd9376ab5523032268ac63"
+    },
+    {
+      "name": "main-refresh-index",
+      "status": "passed",
+      "meaning": "Regenerated backlog index after documentation-only main refresh",
+      "watchdog": {
+        "startedAt": "2026-11-04T16:03:47.718Z",
+        "finishedAt": "2026-11-04T16:03:48.284Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/2ce51b006967/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "npm",
+          "run",
+          "backlog:index"
+        ],
+        "elapsedMs": 564,
+        "peakKiB": 329620,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "log": "main-refresh-index.log.gz",
+      "logSha256": "15d22a476ed29a9ac808270eb967561c98bdf5e1c830ba18e5523c39cf2aa5eb",
+      "compressedSha256": "a4c33733775ce92c806565e3cac15f8882b4a1ba714c301af463aa2602842b36"
+    },
+    {
+      "name": "main-refresh-checks",
+      "status": "passed",
+      "meaning": "Backlog, exact-title PR and whitespace checks after documentation-only main refresh",
+      "watchdog": {
+        "startedAt": "2026-11-04T16:04:18.494Z",
+        "finishedAt": "2026-11-04T16:04:19.599Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/2ce51b006967/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "bash",
+          "-c",
+          "npm run backlog:check && npm run backlog:pr -- --base origin/main --title \"\ud83d\udce8 SPN-098 Send user feedback with diagnostic context\" && git diff --check"
+        ],
+        "elapsedMs": 1105,
+        "peakKiB": 336424,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "log": "main-refresh-checks.log.gz",
+      "logSha256": "51effbf13e21512523551be792424f44c26ee75bd556aee734d6309f71e1c4bf",
+      "compressedSha256": "5218d91b1f0c4b164b21332c9b9ab4c30f4a48c7efad3c77d81ecd018ea0bfe0"
     }
   ],
   "fileSha256": {
@@ -322,5 +379,15 @@
     "uniqueTestsAdded": 1,
     "focusedSuiteTests": 3,
     "overlappingEarlierTests": 2
+  },
+  "baseRefresh": {
+    "baseCommit": "642eb32bb52dd7dd13b6582869ef9482910e04ec",
+    "previousCandidate": "066c5353b466f9371759aee52e47d169bc0d5e9a",
+    "upstreamPullRequest": 256,
+    "scope": "Documentation-only SPN-129 retirement; no executable source, test, dependency or workflow changes",
+    "priorHostedRun": 41861310743,
+    "priorTestedMerge": "4502630f58905baabbd62479c6c50fce40a6e544",
+    "priorBrowserResult": "Four diagnostics tests passed on retry zero in each of development and production; supporting unchanged-source evidence, not replacement current-head gates",
+    "freshHostedAcceptance": "required before merge"
   }
 }
