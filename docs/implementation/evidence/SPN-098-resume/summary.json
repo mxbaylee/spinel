@@ -1,0 +1,266 @@
+{
+  "ticket": "SPN-098",
+  "recordedAtUtc": "2026-11-04",
+  "sourceCommit": "e6a6df1325420874b9404b79b93d9287fac18424",
+  "sourceTree": "a87588733c4e597c6665aa96abf7d64bb9fc972e",
+  "equivalentLocalCommit": "f9e07c1c1cdb19087a71afb809730a460589a2cd",
+  "baseCommit": "49c6664393c4ef9154dcb6985d078e9521b5b618",
+  "originalPublishedHead": "1183a71300d9b003960dcdee7f19e5622b982cd4",
+  "runtime": "Node 26.12.1",
+  "checks": [
+    {
+      "name": "diagnostics-tests",
+      "status": "passed",
+      "meaning": "69 tests, 11 files on integrated source before capacity repair",
+      "watchdog": {
+        "startedAt": "2026-11-04T15:30:18.847Z",
+        "finishedAt": "2026-11-04T15:30:35.847Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/2ce51b006967/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "src/server/diagnostics",
+          "src/ui/feedbackContext.test.ts"
+        ],
+        "elapsedMs": 17000,
+        "peakKiB": 729236,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "log": "diagnostics-tests.log.gz",
+      "logSha256": "1229f4f6b20bdb335337e3152c47f28a913fc409411c1345593d65e10cb60248",
+      "compressedSha256": "0d06fa2de609367dd02943879fed7a232462c52b437c3628d95839b0a05c9b20"
+    },
+    {
+      "name": "capacity-negative-control",
+      "status": "expected-failure",
+      "meaning": "Actual SQLite detected startup growth: 10 pages versus 8",
+      "watchdog": {
+        "startedAt": "2026-11-04T15:35:58.049Z",
+        "finishedAt": "2026-11-04T15:35:59.468Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/2ce51b006967/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "src/server/diagnostics/feedback.test.ts",
+          "-t",
+          "a full existing store"
+        ],
+        "elapsedMs": 1418,
+        "peakKiB": 402128,
+        "code": 1,
+        "signal": null,
+        "aborted": null
+      },
+      "log": "capacity-negative-control.log.gz",
+      "logSha256": "663a329eda92697998a56c9e28c66dac3173a84d23f19ae235916973094df794",
+      "compressedSha256": "d3987089568850d2af838e671d9c5113b9800f5241238a102db276f1e39372c0"
+    },
+    {
+      "name": "diagnostics-repaired",
+      "status": "passed",
+      "meaning": "70 tests, 11 files including full-store reopen/export/clear recovery",
+      "watchdog": {
+        "startedAt": "2026-11-04T15:36:31.165Z",
+        "finishedAt": "2026-11-04T15:36:51.243Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/2ce51b006967/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "bash",
+          "-c",
+          "node node_modules/prettier/bin/prettier.cjs --write src/server/diagnostics/feedback.test.ts src/server/diagnostics/store.ts && node node_modules/vitest/vitest.mjs run src/server/diagnostics src/ui/feedbackContext.test.ts"
+        ],
+        "elapsedMs": 20077,
+        "peakKiB": 531968,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "log": "diagnostics-repaired.log.gz",
+      "logSha256": "b521a80e13a0928389a6ee30e649d559c8ab33832df743fd8048b31305c795d2",
+      "compressedSha256": "4d84f2ec159d9ee836bf3857546362c533986ac74073bddad230275f72feab3d"
+    },
+    {
+      "name": "static-checks",
+      "status": "failed-then-repaired",
+      "meaning": "TypeScript, dependency boundary and oxlint passed; one feedback.test.ts format issue was repaired",
+      "watchdog": {
+        "startedAt": "2026-11-04T15:31:01.861Z",
+        "finishedAt": "2026-11-04T15:32:09.172Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/2ce51b006967/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "bash",
+          "-c",
+          "node node_modules/typescript/bin/tsc -p . && npm run lint && npm run backlog:check && npm run backlog:pr -- --base origin/main --title \"\ud83d\udce8 SPN-098 Send user feedback with diagnostic context\""
+        ],
+        "elapsedMs": 67307,
+        "peakKiB": 1961392,
+        "code": 1,
+        "signal": null,
+        "aborted": null
+      },
+      "log": "static-checks.log.gz",
+      "logSha256": "a601216fd45c385159bbdd64b40cf519bf8de2648d9bf88f45c6686d7a6f25f5",
+      "compressedSha256": "c6c055f703e28e9741c75605c8e34cdc9ea93d1f03df2436ae9d4123867b92fe"
+    },
+    {
+      "name": "format-backlog",
+      "status": "passed",
+      "meaning": "Targeted format repair, backlog and exact-title PR checks",
+      "watchdog": {
+        "startedAt": "2026-11-04T15:32:29.875Z",
+        "finishedAt": "2026-11-04T15:32:32.012Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/2ce51b006967/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "bash",
+          "-c",
+          "node node_modules/prettier/bin/prettier.cjs --write src/server/diagnostics/feedback.test.ts && node node_modules/prettier/bin/prettier.cjs --check src/server/diagnostics/feedback.test.ts && npm run backlog:check && npm run backlog:pr -- --base origin/main --title \"\ud83d\udce8 SPN-098 Send user feedback with diagnostic context\""
+        ],
+        "elapsedMs": 2136,
+        "peakKiB": 337492,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "log": "format-backlog.log.gz",
+      "logSha256": "a99c66c89a3cda3cbe5061698dd9883adf7e66e84d344366c174ac499ffc66e9",
+      "compressedSha256": "25f449fef56d6600f03535f47fdc17cb3cecc36f0f81020f6a1e88fa2b4ae50a"
+    },
+    {
+      "name": "final-static",
+      "status": "passed",
+      "meaning": "Full typecheck, changed-source oxlint/format, backlog and PR checks after capacity repair",
+      "watchdog": {
+        "startedAt": "2026-11-04T15:37:20.359Z",
+        "finishedAt": "2026-11-04T15:37:32.906Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/2ce51b006967/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "bash",
+          "-c",
+          "node node_modules/typescript/bin/tsc -p . && node node_modules/oxlint/bin/oxlint --deny-warnings src/server/diagnostics/feedback.test.ts src/server/diagnostics/store.ts && node node_modules/prettier/bin/prettier.cjs --check src/server/diagnostics/feedback.test.ts src/server/diagnostics/store.ts && npm run backlog:check && npm run backlog:pr -- --base origin/main --title \"\ud83d\udce8 SPN-098 Send user feedback with diagnostic context\""
+        ],
+        "elapsedMs": 12546,
+        "peakKiB": 1922884,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "log": "final-static.log.gz",
+      "logSha256": "2bf659aac49486be5db008d8cd6430399a3915c1906d7d829d895ab9fb05029c",
+      "compressedSha256": "dd6084773e1f7c264567f90930027a655c91706782c632647114337e198c310d"
+    },
+    {
+      "name": "build",
+      "status": "passed",
+      "meaning": "Production browser build; subsequent repair touches only server index setup and tests",
+      "watchdog": {
+        "startedAt": "2026-11-04T15:32:13.409Z",
+        "finishedAt": "2026-11-04T15:32:21.143Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/2ce51b006967/spinel",
+        "command": "node",
+        "args": ["scripts/serial.ts", "npm", "run", "build"],
+        "elapsedMs": 7734,
+        "peakKiB": 1738672,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "log": "build.log.gz",
+      "logSha256": "511647e88ece10a7ac968b6962a769929d694d1dd039942b804b760977c272e2",
+      "compressedSha256": "e203c48a9f13061ee280ccacb4c805c9edbb4c0c7a68ba411e4a8d5740d88bd5"
+    },
+    {
+      "name": "browser-production",
+      "status": "environment-blocked",
+      "meaning": "All four private app fixtures failed readiness because the sandbox denied the Linux abstract Unix socket; no browser acceptance",
+      "watchdog": {
+        "startedAt": "2026-11-04T15:32:57.100Z",
+        "finishedAt": "2026-11-04T15:33:19.114Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/2ce51b006967/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "node",
+          "node_modules/playwright/cli.js",
+          "test",
+          "e2e/diagnostics.spec.ts",
+          "--project=production",
+          "--config=output/spn098/playwright.config.ts",
+          "--retries=0"
+        ],
+        "elapsedMs": 22010,
+        "peakKiB": 1230032,
+        "code": 1,
+        "signal": null,
+        "aborted": null
+      },
+      "log": "browser-production.log.gz",
+      "logSha256": "ff9d486be3086855d36465acf92776c88199b7a18276f34026ae53e2b0531508",
+      "compressedSha256": "34a17dc475519e692969df23d4ca7f3cec50753608e07d54c4a9d194cec0d83a"
+    },
+    {
+      "name": "storybook-build",
+      "status": "environment-blocked",
+      "meaning": "Sandbox uv_interface_addresses EPERM before focused build; no current visual acceptance",
+      "watchdog": {
+        "startedAt": "2026-11-04T15:33:44.435Z",
+        "finishedAt": "2026-11-04T15:33:45.440Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/2ce51b006967/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "node",
+          "node_modules/storybook/dist/bin/dispatcher.js",
+          "build",
+          "--config-dir",
+          "output/spn098/storybook",
+          "--output-dir",
+          "storybook-static",
+          "--disable-telemetry"
+        ],
+        "elapsedMs": 1002,
+        "peakKiB": 304876,
+        "code": 1,
+        "signal": null,
+        "aborted": null
+      },
+      "log": "storybook-build.log.gz",
+      "logSha256": "674590ca1668589661719612c58e7f99c3d4a1071fe7fe6b55d4bb3ff78e726e",
+      "compressedSha256": "c913fdce5d00344d7869224f8c6512ade3bebba076fb2dcd58b43c4376fc5f72"
+    }
+  ],
+  "fileSha256": {
+    "src/server/diagnostics/store.ts": "13dd7e2ebade188dc60a5d4577eae59eb3b4b6acd686e0f373d1d5ec4e3c09ce",
+    "src/server/diagnostics/feedback.test.ts": "8f9f3e2a91607cad939d4a8876120962b6b92f7f0ac3a5017b2f8eaff06dbe2d",
+    "e2e/diagnostics.spec.ts": "aa05dfa145fc0d0926d575e58ca239e4ab733ce9078d67453832f0ed69baec63",
+    "web/AdminFeedback.tsx": "76182a4fd2b8063de44b782c942678ded7927a4ff9638b54ed8f8be62b7a71aa",
+    ".github/workflows/ci.yml": "1583dfa501784f0572ae0e11d54ccff2d4f3b608f6e87f3859673e164ece9f59",
+    "package-lock.json": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf"
+  },
+  "prepublicationScope": "Source/local quality review only. Hosted browser, full Storybook/current image review, native acceptance and seven required gates remain separate merge requirements. Final PR description supplies final review and hosted identities.",
+  "permissionDisposition": "Escalated local browser execution was rejected by the workspace approval policy (sandbox_approval false). No restricted Unix socket or interface-enumeration access was bypassed.",
+  "spn110CombinedControl": "f8c4b7461f7df5b9bc35459c0e6b5538c8161115; retain normal-suite combined regression in whichever ticket integrates second."
+}

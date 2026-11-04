@@ -40,8 +40,5 @@
       "docs/todo/readme.md"
     ]
   },
-  "pr_title_exceptions": [
-    "🧹 Groom backlog",
-    "⬆️ Bump"
-  ]
+  "pr_title_exceptions": ["🧹 Groom backlog", "⬆️ Bump"]
 }
