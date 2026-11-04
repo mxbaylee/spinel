@@ -7,9 +7,22 @@ import {
   unregisterDesktopStorageWorkers,
   safariStorageLossTabsScript,
   validateStorageLossTabs,
+  validateStorageLossHandles,
 } from './desktop-storage.ts';
 
 const preparationURL = 'https://localhost/_desktop-storage-loss';
+
+test('window inventory compares handle membership independently of driver ordering', () => {
+  validateStorageLossHandles(['foreground', 'background'], ['background', 'foreground']);
+  for (const after of [
+    [],
+    ['foreground'],
+    ['foreground', 'new'],
+    ['foreground', 'foreground'],
+    ['foreground', null],
+  ])
+    assert.throws(() => validateStorageLossHandles(['foreground', 'background'], after));
+});
 
 function fixture(fault?: string, rejection = false, preparation = false) {
   let workers = preparation || fault === 'registered',

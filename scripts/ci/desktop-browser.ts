@@ -1,5 +1,9 @@
 import assert from 'node:assert/strict';
-import { safariStorageLossTabsScript, validateStorageLossTabs } from './desktop-storage.ts';
+import {
+  safariStorageLossTabsScript,
+  validateStorageLossTabs,
+  validateStorageLossHandles,
+} from './desktop-storage.ts';
 import {
   clickSafariPointer,
   safariPointerIdentityScript,
@@ -1169,7 +1173,7 @@ export function createDesktopBrowser(
         // do not mask the first inventory/navigation error with a restore error.
         await session('window', 'POST', { handle: selected });
         // A tab created during inventory is unaccounted for, not quiescent.
-        assert.deepEqual(await session('window/handles'), handles);
+        validateStorageLossHandles(handles, await session('window/handles'));
         inventory = { before, after };
       }
       validateStorageLossTabs(url, inventory.after);

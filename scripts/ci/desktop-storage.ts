@@ -1,6 +1,19 @@
 import type { DesktopBrowser } from './desktop-browser.ts';
 import assert from 'node:assert/strict';
 
+export function validateStorageLossHandles(before: unknown, after: unknown) {
+  for (const handles of [before, after]) {
+    assert.ok(Array.isArray(handles) && handles.length > 0);
+    assert.ok(handles.every((handle) => typeof handle === 'string' && handle.length > 0));
+    assert.equal(new Set(handles).size, handles.length, 'Duplicate window handles are ambiguous.');
+  }
+  assert.deepEqual(
+    new Set(after as string[]),
+    new Set(before as string[]),
+    'Browser tabs changed during storage preparation.',
+  );
+}
+
 export function validateStorageLossTabs(preparationURL: string, tabs: string[]) {
   assert.ok(tabs.length > 0, 'Storage preparation requires an observed browser tab.');
   const origin = new URL(preparationURL).origin;
