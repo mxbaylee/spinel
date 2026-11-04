@@ -108,9 +108,24 @@ export const MakeCopyDialog: Story = {
     <NativeEditor
       {...args}
       onReady={({ api }) => {
-        // Preview the production dialog through its public command. Real desktop
-        // clicks and phone taps through the toolbar belong to e2e/copy.spec.ts.
-        void api.executeCommand(MAKE_COPY_COMMAND);
+        // Global dialog parts can mount after the document renderer is ready.
+        // Real toolbar clicks and phone taps remain covered by e2e/copy.spec.ts.
+        const steady = api.Enum.LifecycleStages.Steady;
+        const open = () => {
+          void api.executeCommand(MAKE_COPY_COMMAND);
+        };
+        if (api.getCurrentLifecycleStage() >= steady) {
+          open();
+          return;
+        }
+        const listener = api.disposeWithMe(
+          api.addEvent(api.Event.LifeCycleChanged, ({ stage }) => {
+            if (stage >= steady) {
+              listener.dispose();
+              open();
+            }
+          }),
+        );
       }}
     />
   ),
@@ -122,7 +137,8 @@ export const MakeCopyDialog: Story = {
     const document = canvasElement.ownerDocument;
     const mobile = canvasElement.querySelector<HTMLElement>('[data-u-comp="mobile-more-trigger"]');
     const page = within(document.body);
-    const dialog = await page.findByRole('dialog', { name: 'Make a copy' });
+    const dialog = await page.findByRole('dialog', { name: 'Make a copy' }, { timeout: 30_000 });
+    await waitFor(() => expect(dialog).toBeVisible());
     if (mobile) {
       // Univer's mobile drawer owns a plain title region, not a heading.
       // Keep its app-scoped accessible name and verify our actual title content.

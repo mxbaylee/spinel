@@ -1,0 +1,36 @@
+{
+  "purpose": "Finite diagnostic on a derived bundle, not current-head acceptance.",
+  "baseHead": "0106630f07387ef7ddea863c881dc7aedd1b909e",
+  "baseArchiveSha256": "2b8c22dfea761d57d64c094bdd97c510e7caea63805825931b31f7564b2f1888",
+  "hypothesis": "Rendered/document readiness precedes the global dialog component registration debounce; a plain Subject loses the first open event before its subscriber renders. Public Steady must precede the single open command.",
+  "cases": [
+    "baseline-phone-cold",
+    "baseline-phone-warm",
+    "steady-light",
+    "steady-dark",
+    "steady-phone",
+    "steady-phone-dark",
+    "steady-tablet"
+  ],
+  "stop": "Exactly these seven initializations; no retries. Fail if proposed states fail or baseline timing evidence is uninformative. Close each page and both owned servers/browser.",
+  "patches": [
+    {
+      "mode": "baseline",
+      "sdkOriginalSha256": "14f90e77a33eb465e9a64015fd826d93fa8b361cbcb940160e827e56f6bf30f5",
+      "sdkInstrumentedSha256": "3f925854d9e9837388f29d82c726df3a24b9ef5a2cede2d7160fad369e82c77d",
+      "storyOriginalSha256": "6f02385bcb55bd5cc520aa274923c9b9180efbb8d793ec1361497217fb9f0621",
+      "storyDiagnosticSha256": "679c042f17d98f237d79ab6d2ebc18909334c005c7b5bcd5d284b09b937b4488",
+      "onReadyReplacement": "onReady:({api:e})=>{console.info(\"SPN089_READY\",JSON.stringify({time:performance.now(),stage:e.getCurrentLifecycleStage()}));e.executeCommand(ge)}",
+      "dialogWaitMs": 1000
+    },
+    {
+      "mode": "steady",
+      "sdkOriginalSha256": "14f90e77a33eb465e9a64015fd826d93fa8b361cbcb940160e827e56f6bf30f5",
+      "sdkInstrumentedSha256": "3f925854d9e9837388f29d82c726df3a24b9ef5a2cede2d7160fad369e82c77d",
+      "storyOriginalSha256": "6f02385bcb55bd5cc520aa274923c9b9180efbb8d793ec1361497217fb9f0621",
+      "storyDiagnosticSha256": "dd2d328943789d7e5efbca17f905227fee071aa12e795e19fd288b50005d379b",
+      "onReadyReplacement": "onReady:({api:e})=>{console.info(\"SPN089_READY\",JSON.stringify({time:performance.now(),stage:e.getCurrentLifecycleStage()}));const steady=e.Enum.LifecycleStages.Steady;const open=()=>{e.executeCommand(ge)};if(e.getCurrentLifecycleStage()>=steady){open();return}const listener=e.disposeWithMe(e.addEvent(e.Event.LifeCycleChanged,({stage})=>{if(stage>=steady){listener.dispose();console.info(\"SPN089_STEADY\",JSON.stringify({time:performance.now(),stage}));open()}}))}",
+      "dialogWaitMs": 30000
+    }
+  ]
+}

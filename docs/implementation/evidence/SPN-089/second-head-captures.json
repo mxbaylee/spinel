@@ -1,0 +1,18 @@
+{
+  "startedAt": "2026-11-04T21:28:47.924Z",
+  "finishedAt": "2026-11-04T21:29:10.787Z",
+  "node": "v26.12.1",
+  "cwd": "/workspace/scratch/ce40e94380e1/repaired",
+  "command": "node",
+  "args": [
+    "/workspace/scratch/ce40e94380e1/spinel/scripts/serial.ts",
+    "node",
+    "/workspace/scratch/ce40e94380e1/spinel/scripts/screenshots.ts",
+    "redesign-native-editors--make-copy-dialog"
+  ],
+  "elapsedMs": 22862,
+  "peakKiB": 1058768,
+  "code": 1,
+  "signal": null,
+  "aborted": null
+}
