@@ -8,6 +8,9 @@ import {
   capabilityRunOutcome,
   captureRequiredPngScreenshot,
   blankPageDiagnostic,
+  browserPageOpened,
+  offlineNetworkProfile,
+  shortcutIntent,
   blankPageScript,
   deviceOfflineMilliseconds,
   isDeviceOffline,
@@ -3336,6 +3339,7 @@ test('a launched window that is blank at first is attached once Spinel appears, 
           failedPath: '/sign-in',
           textLength: `No internet ${origin}/sign-in?next=private-path ERR_INTERNET_DISCONNECTED`
             .length,
+          browserPageHost: null,
         },
       });
       assert.doesNotMatch(JSON.stringify(result), /private-path/);
@@ -3912,11 +3916,12 @@ test('a blank page keeps only its scheme, error code and failed path', () => {
       errorCode: 'ERR_NAME_NOT_RESOLVED',
       failedPath: '/item/x',
       textLength: 27,
+      browserPageHost: null,
     },
   );
   assert.deepEqual(
     blankPageDiagnostic({ protocol: 'javascript:alert(1)//', text: 42, data: null }, origin),
-    { protocol: 'other', errorCode: null, failedPath: null, textLength: 0 },
+    { protocol: 'other', errorCode: null, failedPath: null, textLength: 0, browserPageHost: null },
   );
   assert.deepEqual(
     blankPageDiagnostic(
@@ -3925,4 +3930,70 @@ test('a blank page keeps only its scheme, error code and failed path', () => {
     ).failedPath,
     null,
   );
+  // Run 41783039128: only a browser page's own host is kept, never a web host.
+  assert.equal(
+    blankPageDiagnostic({ protocol: 'chrome-native:', host: 'newtab', text: '' }, origin)
+      .browserPageHost,
+    'newtab',
+  );
+  for (const page of [
+    { protocol: 'https:', host: 'bs-local.com:8176' },
+    { protocol: 'chrome-error:', host: 'chromewebdata' },
+    { protocol: 'chrome-native:', host: 'evil.example' },
+    { protocol: 'chrome:', host: 42 },
+  ])
+    assert.equal(blankPageDiagnostic({ ...page, text: '' }, origin).browserPageHost, null);
+});
+
+test('Firefox cuts the network with airplane mode; Chrome and Safari keep no-network', () => {
+  assert.deepEqual((['chrome', 'firefox', 'safari'] as const).map(offlineNetworkProfile), [
+    'no-network',
+    'airplane-mode',
+    'no-network',
+  ]);
+  const source = readFileSync(new URL('./browserstack-capability.ts', import.meta.url), 'utf8');
+  // Neither offline cut hard-codes a profile any more.
+  assert.doesNotMatch(source, /networkProfile: 'no-network'/);
+  assert.match(source, /const offlineProfile = offlineNetworkProfile\(target\.browser\);/);
+  assert.match(
+    source,
+    /const networkProfile = offline \? offlineNetworkProfile\(target\.browser\) : '4g-lte-good';/,
+  );
+  assert.equal(source.match(/androidAirplaneMode: \w+ === 'airplane-mode'/g)?.length, 2);
+});
+
+test('only a Chrome icon that opened a browser page falls back to the shortcut intent, once', () => {
+  assert.deepEqual(
+    ['chrome-native:', 'chrome:', 'chrome-error:', 'https:', 'about:', undefined].map(
+      browserPageOpened,
+    ),
+    [true, true, false, false, false, false],
+  );
+  assert.deepEqual(shortcutIntent('https://bs-local.com:8176', 'com.android.chrome'), {
+    url: 'https://bs-local.com:8176/',
+    package: 'com.android.chrome',
+  });
+  assert.throws(
+    () => shortcutIntent('https://bs-local.com:8176', 'com.android.chrome; rm'),
+    /capability-shortcut-package-invalid/,
+  );
+  const source = readFileSync(new URL('./browserstack-capability.ts', import.meta.url), 'utf8');
+  const body = source.slice(
+    source.indexOf('async function attachRelaunched('),
+    source.indexOf('async function reloadTab('),
+  );
+  assert.match(
+    source,
+    /const relaunched = await attachRelaunched\(relaunchedForeground, prefix\);/,
+  );
+  // Everything except a Chrome browser page, a lane abort or the deadline rethrows.
+  assert.match(
+    body,
+    /target\.browser !== 'chrome' \|\|\n\s+!browserPageOpened\(page\?\.protocol\) \|\|\n\s+signal\.aborted \|\|\n\s+Date\.now\(\) >= activeDeadline\(\)\n\s+\)\n\s+throw error;/,
+  );
+  assert.equal(body.match(/mobile: deepLink/g)?.length, 1, 'one intent, no retry loop');
+  assert.equal(body.match(/await attach\(foregroundApp\)/g)?.length, 2);
+  assert.match(body, /method: 'home-screen-icon'/);
+  assert.match(body, /method: 'shortcut-intent-after-icon'/);
+  assert.match(body, /offline-icon-opened-browser-page/);
 });

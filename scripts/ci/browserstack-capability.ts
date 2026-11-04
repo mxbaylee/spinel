@@ -646,7 +646,7 @@ type CapabilityOptions = {
  * `loadTimeData`; only those are kept, never the page text.
  */
 export const blankPageScript = `let data='';try{data=JSON.stringify(window.loadTimeData?.data_??null);}catch{}
-return {protocol:location.protocol,text:String(document.body?.innerText??'').slice(0,20000),data:String(data).slice(0,20000)};`;
+return {protocol:location.protocol,host:location.host.slice(0,40),text:String(document.body?.innerText??'').slice(0,20000),data:String(data).slice(0,20000)};`;
 export function blankPageDiagnostic(value: unknown, origin: string) {
   const page = row(value);
   const text = `${typeof page.text === 'string' ? page.text : ''} ${typeof page.data === 'string' ? page.data : ''}`;
@@ -668,7 +668,40 @@ export function blankPageDiagnostic(value: unknown, origin: string) {
     errorCode: text.match(/\bERR_[A-Z_]{3,60}\b/)?.[0] ?? null,
     failedPath,
     textLength: typeof page.text === 'string' ? page.text.length : 0,
+    // Only a browser page's host (`newtab`, say); a web address's host is never kept.
+    browserPageHost:
+      browserPageOpened(page.protocol) &&
+      typeof page.host === 'string' &&
+      /^[a-z][a-z-]{0,39}$/.test(page.host)
+        ? page.host
+        : null,
   };
+}
+/**
+ * Chrome's own UI rather than a web page. After the offline Home Screen
+ * relaunch in run 41783039128, the only window was `chrome-native:` (Chrome's
+ * native page), not the shortcut's address.
+ */
+export function browserPageOpened(protocol: unknown) {
+  return protocol === 'chrome-native:' || protocol === 'chrome:';
+}
+/**
+ * The intent an Android Home Screen shortcut sends: open the start URL in the
+ * browser that owns it. Used once, only after the icon opened a browser page
+ * (owner, chat 2026-11-04), and recorded as an intent relaunch.
+ */
+export function shortcutIntent(origin: string, browserPackage: string) {
+  requireCondition(/^[A-Za-z][\w.-]{1,200}$/.test(browserPackage), 'shortcut-package-invalid');
+  return { url: `${origin}/`, package: browserPackage };
+}
+/**
+ * BrowserStack's `no-network` profile never reached Firefox: run 41783320538's
+ * ordinary requests kept succeeding for the whole 15 s wait, while Chrome went
+ * offline in 107 ms. Firefox uses BrowserStack's documented Android-only
+ * `airplane-mode` profile on the same endpoint instead (owner, chat 2026-11-04).
+ */
+export function offlineNetworkProfile(browser: Target['browser']) {
+  return browser === 'firefox' ? 'airplane-mode' : 'no-network';
 }
 /** Chrome only: its relaunched window went blank (runs 41748283045, 41772261056). */
 export function offlineWindowReloadProbed(browser: Target['browser']) {
@@ -1240,6 +1273,8 @@ export async function runCapability(
   let allocationCommandDeadline: number | undefined;
   const activeDeadline = () => Math.min(deadline, phaseDeadline);
   let previousWindowHandles: string[] = [];
+  /** The last failed attach's blank-page record, for the Chrome intent relaunch. */
+  let lastAttachPage: unknown;
   let currentItemURL: string | undefined;
   let chromeReadinessObserved = false;
   const sanitize = (value: unknown): unknown =>
@@ -1584,6 +1619,7 @@ export async function runCapability(
       return attached!;
     } catch (error) {
       if (attempts > 0) page = await readBlankPage();
+      lastAttachPage = page;
       throw error;
     } finally {
       // Buffered so a failed wait keeps its original failure.
@@ -2051,7 +2087,7 @@ export async function runCapability(
     await launchIcon();
     const relaunchedForeground = await foreground();
     requireCondition(relaunchedForeground === foregroundApp, 'relaunch-foreground-changed');
-    const relaunched = await attach(relaunchedForeground);
+    const relaunched = await attachRelaunched(relaunchedForeground, prefix);
     await recordLaunch(`${prefix}offline-relaunched-context`, relaunched);
     await secureEnvironment();
     await transportProbe(false);
@@ -2068,6 +2104,62 @@ export async function runCapability(
         'The authenticated unused ticket was tested immediately after no-network; no fresh ticket can be issued offline.',
     });
     return relaunched;
+  }
+  /**
+   * Chrome only: if the icon opened Chrome's own page, records that page and the
+   * Android activity, then sends the shortcut's intent once and attaches again.
+   * Any other attach failure, a lane abort or the phase deadline still fails.
+   */
+  async function attachRelaunched(foregroundApp: string, prefix: string) {
+    try {
+      const attached = await attach(foregroundApp);
+      await record(`${prefix}offline-relaunch-method`, { method: 'home-screen-icon' });
+      return attached;
+    } catch (error) {
+      const page = lastAttachPage === undefined ? undefined : row(lastAttachPage);
+      if (
+        target.browser !== 'chrome' ||
+        !browserPageOpened(page?.protocol) ||
+        signal.aborted ||
+        Date.now() >= activeDeadline()
+      )
+        throw error;
+      await context('NATIVE_APP');
+      let activity: unknown = 'unavailable';
+      try {
+        const value = await command(session('appium/device/current_activity'));
+        if (typeof value === 'string' && /^[\w.$/-]{1,200}$/.test(value)) activity = value;
+      } catch {
+        // The icon's outcome is already recorded; the activity is best effort.
+      }
+      await record(`${prefix}offline-icon-opened-browser-page`, {
+        protocol: page!.protocol,
+        browserPageHost: page!.browserPageHost ?? null,
+        activity,
+      });
+      const contexts = await command(session('contexts'));
+      const web = (Array.isArray(contexts) ? contexts : [])
+        .map((entry) => (typeof entry === 'string' ? entry : row(entry).id))
+        .find((id) => typeof id === 'string' && id !== 'NATIVE_APP');
+      requireCondition(typeof web === 'string', 'native-contexts-unavailable');
+      await context(web);
+      const handles = await command(session('window/handles'));
+      requireCondition(
+        Array.isArray(handles) && handles.every((handle) => typeof handle === 'string'),
+        'window-handles-invalid',
+      );
+      // The browser page's window is not the intent's window.
+      previousWindowHandles = handles;
+      await context('NATIVE_APP');
+      await execute('mobile: deepLink', [shortcutIntent(fixture.origin, foregroundApp)]);
+      requireCondition((await foreground()) === foregroundApp, 'relaunch-foreground-changed');
+      const attached = await attach(foregroundApp);
+      await record(`${prefix}offline-relaunch-method`, {
+        method: 'shortcut-intent-after-icon',
+        iconOpened: page!.protocol,
+      });
+      return attached;
+    }
   }
   async function reloadTab(attached: Row, prefix = '') {
     stage(`${prefix}offline-page-reload`);
@@ -2362,7 +2454,7 @@ export async function runCapability(
           await acceptance.boundedPhoneFixtureOperation(acceptanceDriver, () =>
             acceptanceFixture!.setOffline(false),
           );
-        const networkProfile = offline ? 'no-network' : '4g-lte-good';
+        const networkProfile = offline ? offlineNetworkProfile(target.browser) : '4g-lte-good';
         await timedProviderCommand(
           'PUT automate/sessions/{sessionId}/update_network.json',
           15_000,
@@ -2376,7 +2468,7 @@ export async function runCapability(
         );
         await record(`${result.stage}:network-control`, {
           networkProfile,
-          androidAirplaneMode: false,
+          androidAirplaneMode: networkProfile === 'airplane-mode',
         });
         if (ticket) {
           await awaitDeviceOffline(ticket);
@@ -2414,6 +2506,7 @@ export async function runCapability(
     await socketProbe(await socketTicket(prepared[0]), true);
     const unusedOfflineTicket = await socketTicket(prepared[0]);
     stage('device-offline');
+    const offlineProfile = offlineNetworkProfile(target.browser);
     await timedProviderCommand(
       'PUT automate/sessions/{sessionId}/update_network.json',
       15_000,
@@ -2421,11 +2514,14 @@ export async function runCapability(
         client.api(
           `sessions/${result.sessionId}/update_network.json`,
           'PUT',
-          { networkProfile: 'no-network' },
+          { networkProfile: offlineProfile },
           options,
         ),
     );
-    await record('network-control', { networkProfile: 'no-network', androidAirplaneMode: false });
+    await record('network-control', {
+      networkProfile: offlineProfile,
+      androidAirplaneMode: offlineProfile === 'airplane-mode',
+    });
     await awaitDeviceOffline(unusedOfflineTicket);
     await socketProbe(unusedOfflineTicket, false);
     await transportProbe(false);

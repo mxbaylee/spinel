@@ -30,6 +30,8 @@ import {
   boundedPhoneFixtureOperation,
   phoneActions,
   phoneDoubleTap,
+  tapCalibrationLimit,
+  tapOffset,
   tapTraceDiagnostic,
   tapTraceInstallScript,
   tapTraceReadScript,
@@ -809,30 +811,138 @@ test('a successful action sequence tolerates only an unknown-command release, re
 
 type TraceRow = Record<string, unknown>;
 
-test('a phone double tap sends both taps back to back after tracing the page', async () => {
+test('a phone double tap calibrates its aim once, then taps twice 100 ms apart', async () => {
   const calls: [string, unknown][] = [];
+  const records: [string, unknown][] = [];
+  const landed = {
+    installed: true,
+    events: [{ type: 'pointerdown', pointerType: 'touch', milliseconds: 5, dx: 0, dy: -62 }],
+  };
   const driver = {
     execute: async (script: string, args: unknown[] = []) => {
-      calls.push([script === tapTraceInstallScript ? 'install' : 'hit', args]);
-      return true;
+      const name =
+        script === tapTraceInstallScript
+          ? 'install'
+          : script === tapTraceReadScript
+            ? args[0] === true
+              ? 'peek'
+              : 'read'
+            : 'hit';
+      calls.push([name, args]);
+      return name === 'peek' || name === 'read' ? landed : true;
     },
     command: async (suffix: string, method = 'GET', body?: unknown) => {
       calls.push([`${method} ${suffix}`, body]);
       return null;
     },
-    record: async () => {},
+    remaining: (maximum = 1) => maximum,
+    record: async (stage: string, value: unknown) => {
+      records.push([stage, value]);
+    },
   } as unknown as PhoneAcceptanceDriver;
+  const started = Date.now();
   assert.deepEqual(await phoneDoubleTap(driver, 'canvas', { x: 80.4, y: 39.6 }), { x: 80, y: 40 });
+  assert.ok(Date.now() - started >= 600, "the double tap waits out Univer's 500 ms window");
+  assert.deepEqual(
+    calls.map(([name]) => name),
+    [
+      'hit',
+      'install',
+      'POST actions',
+      'DELETE actions',
+      'peek',
+      'read',
+      'install',
+      'POST actions',
+      'DELETE actions',
+    ],
+  );
+  assert.deepEqual(records, [['native-tap-calibration', landed]]);
+  const sources = calls
+    .filter(([name]) => name === 'POST actions')
+    .map(([, body]) => (body as { actions: { actions: TraceRow[] }[] }).actions[0]!.actions);
+  assert.deepEqual(
+    sources[0]!.map((action) => action.type),
+    ['pointerMove', 'pointerDown', 'pointerUp'],
+  );
+  assert.deepEqual(sources[0]![0], {
+    type: 'pointerMove',
+    origin: 'viewport',
+    duration: 0,
+    x: 80,
+    y: 40,
+  });
+  // Landed 62 px high, so the double tap aims 62 px lower, with a 100 ms gap.
+  assert.deepEqual(sources[1], [
+    { type: 'pointerMove', origin: 'viewport', duration: 0, x: 80, y: 102 },
+    { type: 'pointerDown', button: 0 },
+    { type: 'pointerUp', button: 0 },
+    { type: 'pause', duration: 100 },
+    { type: 'pointerDown', button: 0 },
+    { type: 'pointerUp', button: 0 },
+  ]);
+  assert.deepEqual(
+    calls[6]![1],
+    [{ x: 80, y: 40 }],
+    'the trace measures against the in-page point',
+  );
+  calls.length = 0;
+  await phoneDoubleTap(driver, 'canvas', { x: 10, y: 10 });
   assert.deepEqual(
     calls.map(([name]) => name),
     ['hit', 'install', 'POST actions', 'DELETE actions'],
+    'the session calibrates once',
   );
-  assert.deepEqual(calls[1]![1], [{ x: 80, y: 40 }]);
-  const [source] = (calls[2]![1] as { actions: { actions: TraceRow[] }[] }).actions;
-  // Univer needs both clicks within 500 ms: no pause may sit between the taps.
+});
+
+test('a deadline during tap calibration fails as the deadline, not as an unseen tap', async () => {
+  const deadline = new Error('capability-acceptance-phase-deadline');
+  let reads = 0;
+  const driver = {
+    execute: async (script: string) => {
+      if (script === tapTraceReadScript) reads++;
+      return script === tapTraceReadScript ? { installed: true, events: [] } : true;
+    },
+    command: async () => null,
+    remaining: (maximum = 1) => {
+      if (reads > 0) throw deadline;
+      return maximum;
+    },
+    record: async () => {},
+  } as unknown as PhoneAcceptanceDriver;
+  await assert.rejects(
+    phoneDoubleTap(driver, 'canvas', { x: 5, y: 5 }),
+    (error) => error === deadline,
+  );
+});
+
+test('tap calibration refuses an unseen or implausible landing', () => {
+  const trace = (events: TraceRow[]) => tapTraceDiagnostic({ installed: true, events });
   assert.deepEqual(
-    source!.actions.map((action) => action.type),
-    ['pointerMove', 'pointerDown', 'pointerUp', 'pointerDown', 'pointerUp'],
+    tapOffset(
+      trace([
+        { type: 'click', dx: 1, dy: 1 },
+        { type: 'touchstart', dx: -3, dy: 4 },
+      ]),
+    ),
+    { x: -3, y: 4 },
+  );
+  assert.deepEqual(tapOffset(trace([{ type: 'pointerdown', dx: 0, dy: -tapCalibrationLimit }])), {
+    x: 0,
+    y: -120,
+  });
+  assert.throws(() => tapOffset(trace([])), /native-tap-calibration-unseen/);
+  assert.throws(
+    () => tapOffset(trace([{ type: 'click', dx: 0, dy: 0 }])),
+    /native-tap-calibration-unseen/,
+  );
+  assert.throws(
+    () => tapOffset(trace([{ type: 'pointerdown', dx: null, dy: 0 }])),
+    /native-tap-calibration-unseen/,
+  );
+  assert.throws(
+    () => tapOffset(trace([{ type: 'pointerdown', dx: 0, dy: 121 }])),
+    /native-tap-calibration-offset/,
   );
 });
 
@@ -869,6 +979,9 @@ test('the page tap trace keeps 24 bounded events and removes its listeners when 
   });
   for (let index = 0; index < 30; index++)
     listeners.get('click')!({ type: 'click', pointerType: 'mouse', timeStamp: 1100 });
+  const peeked = run(tapTraceReadScript, [true]) as { events: TraceRow[] };
+  assert.equal(peeked.events.length, 24);
+  assert.deepEqual(removed, [], 'a peek keeps the trace recording');
   const read = run(tapTraceReadScript) as { installed: boolean; events: TraceRow[] };
   assert.equal(read.installed, true);
   assert.equal(read.events.length, 24);

@@ -355,9 +355,10 @@ export const tapTraceInstallScript = `
   window[key]={events,stop:()=>{for(const type of types)window.removeEventListener(type,keep,{capture:true});delete window[key];}};
   return true;
 `;
+/** Returns the trace; `true` as the first argument keeps it recording. */
 export const tapTraceReadScript = `
   const trace=window.__spinelTapTrace;if(!trace)return {installed:false,events:[]};
-  const events=trace.events.slice(0,24);trace.stop();return {installed:true,events};
+  const events=trace.events.slice(0,24);if(arguments[0]!==true)trace.stop();return {installed:true,events};
 `;
 
 /** Keeps only the bounded fields the install script records. */
@@ -385,26 +386,95 @@ export function tapTraceDiagnostic(value: unknown) {
   };
 }
 
+/** Largest believable offset between an aimed and a landed tap, in CSS pixels. */
+export const tapCalibrationLimit = 120;
+const calibrations = new WeakMap<PhoneAcceptanceDriver, Point>();
+
+/**
+ * Where a tap aimed at `point` landed, from the page's own trace: the first
+ * pointerdown or touchstart. Unseen, or further than `tapCalibrationLimit`
+ * away, fails rather than guessing.
+ */
+export function tapOffset(trace: ReturnType<typeof tapTraceDiagnostic>): Point {
+  const landed = trace.events.find(
+    (event) =>
+      (event.type === 'pointerdown' || event.type === 'touchstart') &&
+      event.dx !== null &&
+      event.dy !== null,
+  );
+  requireCondition(landed, 'native-tap-calibration-unseen');
+  requireCondition(
+    Math.abs(landed.dx!) <= tapCalibrationLimit && Math.abs(landed.dy!) <= tapCalibrationLimit,
+    'native-tap-calibration-offset',
+  );
+  return { x: landed.dx!, y: landed.dy! };
+}
+
+const touch = (point: Point, taps: 1 | 2) => ({
+  type: 'pointer',
+  id: 'phone-acceptance-touch',
+  parameters: { pointerType: 'touch' },
+  actions: [
+    { type: 'pointerMove', origin: 'viewport', duration: 0, x: point.x, y: point.y },
+    { type: 'pointerDown', button: 0 },
+    { type: 'pointerUp', button: 0 },
+    ...(taps === 2
+      ? [
+          { type: 'pause', duration: 100 },
+          { type: 'pointerDown', button: 0 },
+          { type: 'pointerUp', button: 0 },
+        ]
+      : []),
+  ],
+});
+
+/**
+ * Once per session: one single tap on the target, measured by the page trace.
+ * Safari run 41782555335 landed 62 px above its aim. The calibration tap only
+ * selects; the double tap starts at least 600 ms later, past Univer's 500 ms
+ * double-click window, so the two never combine.
+ */
+async function calibrate(driver: PhoneAcceptanceDriver, point: Point) {
+  const known = calibrations.get(driver);
+  if (known) return known;
+  await driver.execute(tapTraceInstallScript, [point]);
+  const tapped = Date.now();
+  await actions(driver, touch(point, 1));
+  await until(
+    driver,
+    async () => tapTraceDiagnostic(await driver.execute(tapTraceReadScript, [true])),
+    (trace) =>
+      trace.events.some((event) => event.type === 'pointerdown' || event.type === 'touchstart'),
+    'native-tap-calibration-unseen',
+    3_000,
+  ).catch((error: unknown) => {
+    // Unseen is decided below from the final read; a deadline still fails as itself.
+    if ((error as Error)?.message !== 'capability-acceptance-native-tap-calibration-unseen')
+      throw error;
+  });
+  const trace = tapTraceDiagnostic(await driver.execute(tapTraceReadScript));
+  await driver.record('native-tap-calibration', trace);
+  const offset = tapOffset(trace);
+  calibrations.set(driver, offset);
+  const wait = 600 - (Date.now() - tapped);
+  if (wait > 0)
+    await new Promise((resolve) => setTimeout(resolve, Math.min(wait, driver.remaining(wait))));
+  return offset;
+}
+
 // Univer counts a double click only when both clicks land within 500 ms and
-// 10 px (engine-render InputManager). Safari run 41778562480 opened no Sheet
-// editor after a 100 ms pause between taps, so the taps go back to back, as
-// Playwright's two touchscreen taps do. The page trace says whether it saw both.
+// 10 px (engine-render InputManager). In Safari run 41782555335 the page saw a
+// single tap 62 px above the aim when the taps went back to back, so the gap is
+// back to 100 ms and the aim is corrected by the measured offset (owner, chat
+// 2026-11-04). The page trace still records what each double tap produced.
 async function doubleTap(driver: PhoneAcceptanceDriver, selector: string, point: Point) {
   const actual = { x: Math.round(point.x), y: Math.round(point.y) };
   await hit(driver, selector, actual);
+  const offset = await calibrate(driver, actual);
+  const aimed = { x: actual.x - offset.x, y: actual.y - offset.y };
+  requireCondition(aimed.x >= 0 && aimed.y >= 0, 'native-tap-calibration-offset');
   await driver.execute(tapTraceInstallScript, [actual]);
-  await actions(driver, {
-    type: 'pointer',
-    id: 'phone-acceptance-touch',
-    parameters: { pointerType: 'touch' },
-    actions: [
-      { type: 'pointerMove', origin: 'viewport', duration: 0, ...actual },
-      { type: 'pointerDown', button: 0 },
-      { type: 'pointerUp', button: 0 },
-      { type: 'pointerDown', button: 0 },
-      { type: 'pointerUp', button: 0 },
-    ],
-  });
+  await actions(driver, touch(aimed, 2));
   return actual;
 }
 
