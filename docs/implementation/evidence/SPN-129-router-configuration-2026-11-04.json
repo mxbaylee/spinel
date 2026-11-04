@@ -1,0 +1,149 @@
+{
+  "schema_version": 1,
+  "purpose": "Isolated configuration-availability diagnostic; not a required PR check or SPN-129 acceptance result.",
+  "observed_date_utc": "2026-11-04",
+  "repository": "mxbaylee/spinel",
+  "workflow": {
+    "path": ".github/workflows/spn129-router-configuration-diagnostic.yml",
+    "source_commit": "23c3f101838062ef1d8acf785f2d402096369545",
+    "source_blob": "639afd75cda543bfe0d696d6fa512f1147210f15",
+    "source_sha256": "ff80511b096911074c723ecb924c042d485c851a974bd4f650437fa3dcf3e7db",
+    "branch": "codex/spn-129-router-config-diagnostic-20261104",
+    "trigger": "push to this dedicated branch only",
+    "application_checkout": false,
+    "token_permissions": ["contents: read", "metadata: read"]
+  },
+  "pre_activation_reviews": [
+    {
+      "reviewer": "ci_evidence",
+      "independent": true,
+      "implementer": false,
+      "commit": "23c3f101838062ef1d8acf785f2d402096369545",
+      "score": 99,
+      "unresolved_findings": [],
+      "scope": "Diagnostic activation only; hosted result was pending."
+    },
+    {
+      "reviewer": "validation_requirements",
+      "independent": true,
+      "implementer": false,
+      "commit": "23c3f101838062ef1d8acf785f2d402096369545",
+      "score": 100,
+      "unresolved_findings": [],
+      "scope": "Diagnostic activation only; not final feature acceptance."
+    }
+  ],
+  "run": {
+    "id": 41855374443,
+    "attempt": 1,
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/41855374443",
+    "source_commit": "23c3f101838062ef1d8acf785f2d402096369545",
+    "event": "push",
+    "status": "completed",
+    "conclusion": "failure",
+    "created_at": "2026-11-04T15:12:49Z",
+    "updated_at": "2026-11-04T15:13:08Z",
+    "check_suite_id": 113417213891,
+    "jobs": [
+      {
+        "id": 126662441074,
+        "run_id": 41855374443,
+        "workflow_name": "SPN-129 router configuration diagnostic",
+        "head_branch": "codex/spn-129-router-config-diagnostic-20261104",
+        "run_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/41855374443",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOVNik2c8AAAAdfat4cg",
+        "head_sha": "23c3f101838062ef1d8acf785f2d402096369545",
+        "url": "https://api.github.com/repos/mxbaylee/spinel/actions/jobs/126662441074",
+        "html_url": "https://github.com/mxbaylee/spinel/actions/runs/41855374443/job/126662441074",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-11-04T15:12:50Z",
+        "started_at": "2026-11-04T15:12:53Z",
+        "completed_at": "2026-11-04T15:13:07Z",
+        "name": "Router configuration diagnostic",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-04T15:13:04Z",
+            "completed_at": "2026-11-04T15:13:05Z"
+          },
+          {
+            "name": "Check required configuration presence",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 2,
+            "started_at": "2026-11-04T15:13:05Z",
+            "completed_at": "2026-11-04T15:13:05Z"
+          },
+          {
+            "name": "Verify the existing repository installation with a read-only token",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 3,
+            "started_at": "2026-11-04T15:13:05Z",
+            "completed_at": "2026-11-04T15:13:05Z"
+          },
+          {
+            "name": "Confirm authenticated repository identity",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 4,
+            "started_at": "2026-11-04T15:13:05Z",
+            "completed_at": "2026-11-04T15:13:05Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-04T15:13:05Z",
+            "completed_at": "2026-11-04T15:13:05Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/126662441074",
+        "labels": ["ubuntu-latest"],
+        "runner_id": 1000040546,
+        "runner_name": "GitHub Actions 1000040546",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      }
+    ]
+  },
+  "observed_configuration": {
+    "SPINEL_CI_ROUTER_APP_ID": {
+      "available_as_nonempty_value": false
+    },
+    "SPINEL_CI_ROUTER_PRIVATE_KEY": {
+      "available_as_nonempty_value": false
+    }
+  },
+  "provider_log_excerpt": [
+    "2026-11-04T15:13:05.5176041Z   APP_ID_PRESENT: false",
+    "2026-11-04T15:13:05.5176565Z   PRIVATE_KEY_PRESENT: false",
+    "2026-11-04T15:13:05.5296957Z Router configuration is unavailable to this repository workflow.",
+    "2026-11-04T15:13:05.5297805Z app_id_present=false",
+    "2026-11-04T15:13:05.5298348Z private_key_present=false",
+    "2026-11-04T15:13:05.5315282Z ##[error]Process completed with exit code 1."
+  ],
+  "interpretation": {
+    "conclusion": "Neither required setting was available as a nonempty value to this repository workflow.",
+    "limitation": "Does not establish whether a GitHub App or differently scoped configuration exists elsewhere.",
+    "app_installation_token_minted": false,
+    "token_creation_step": "skipped",
+    "authenticated_identity_step": "skipped",
+    "app_token_revocation": "not applicable; no App token was minted",
+    "required_pr_checks_satisfied": false,
+    "final_feature_review_grades": false
+  },
+  "cleanup": {
+    "workflow_removed_at": "e58514b724357116269c440de21b716a34d0b2d5",
+    "branch_head_readback_confirmed": true,
+    "resulting_tree": "2e8bbd8e9b02516f1ecbe1e6093f23d033f6e43d",
+    "diff": "Only the temporary diagnostic workflow was removed.",
+    "branch_retained": "The connected integration has no branch-ref deletion tool. Keep immutable diagnostic source and result until final task cleanup; do not treat the remaining ref as active configuration."
+  }
+}
