@@ -53,6 +53,11 @@ export type PhoneAcceptanceDriver = {
   navigate(path: string): Promise<void>;
   ready(offline: boolean): Promise<Row>;
   click(selector: string, label: string): Promise<void>;
+  /**
+   * Safari only: one native XCUITest tap or double tap at a screen point, so
+   * the two taps share one gesture instead of two W3C actions calls.
+   */
+  nativeTouch?(point: Point, taps: 1 | 2): Promise<void>;
   /** Failure-only evidence that keeps the failed command and stalled screenshot. */
   diagnose?<T>(work: () => Promise<T>): Promise<T>;
   restart(): Promise<void>;
@@ -430,6 +435,11 @@ const touch = (point: Point, taps: 1 | 2) => ({
   ],
 });
 
+async function press(driver: PhoneAcceptanceDriver, point: Point, taps: 1 | 2) {
+  if (driver.nativeTouch) await driver.nativeTouch(point, taps);
+  else await actions(driver, touch(point, taps));
+}
+
 /**
  * Once per session: one single tap on the target, measured by the page trace.
  * Safari run 41782555335 landed 62 px above its aim. The calibration tap only
@@ -441,7 +451,7 @@ async function calibrate(driver: PhoneAcceptanceDriver, point: Point) {
   if (known) return known;
   await driver.execute(tapTraceInstallScript, [point]);
   const tapped = Date.now();
-  await actions(driver, touch(point, 1));
+  await press(driver, point, 1);
   await until(
     driver,
     async () => tapTraceDiagnostic(await driver.execute(tapTraceReadScript, [true])),
@@ -469,8 +479,11 @@ async function calibrate(driver: PhoneAcceptanceDriver, point: Point) {
 // choices): back to back, run 41782555335 saw one tap 62 px above the aim, so
 // the aim is calibrated; a 100 ms pause, run 41898771272 saw overlapping
 // touches; two separate sequences, run 41903366803 saw two clean taps 715 ms
-// apart, since each Safari actions call takes about 600 ms. So one sequence
-// again, with a 250 ms pause. The page trace records what it produced.
+// apart, since each Safari actions call takes about 600 ms; one sequence with
+// a 250 ms pause, run 41910575626 saw both downs at 460 ms with no up between.
+// So Safari now uses XCUITest's own `mobile: tap` and `mobile: doubleTap`
+// (`nativeTouch`), calibrated the same way; Android keeps the W3C sequence.
+// The page trace records what each produced.
 async function doubleTap(driver: PhoneAcceptanceDriver, selector: string, point: Point) {
   const actual = { x: Math.round(point.x), y: Math.round(point.y) };
   await hit(driver, selector, actual);
@@ -478,7 +491,7 @@ async function doubleTap(driver: PhoneAcceptanceDriver, selector: string, point:
   const aimed = { x: actual.x - offset.x, y: actual.y - offset.y };
   requireCondition(aimed.x >= 0 && aimed.y >= 0, 'native-tap-calibration-offset');
   await driver.execute(tapTraceInstallScript, [actual]);
-  await actions(driver, touch(aimed, 2));
+  await press(driver, aimed, 2);
   return actual;
 }
 

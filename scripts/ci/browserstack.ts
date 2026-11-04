@@ -120,10 +120,38 @@ export function webdriverErrorCode(error: unknown): string | undefined {
     ? allowedWebdriverCode(error.webdriverErrorCode)
     : undefined;
 }
-function providerError(message: string, code?: string): Error {
-  return Object.assign(new Error(message), code ? { webdriverErrorCode: code } : {});
+function providerError(message: string, code?: string, bodyKeys?: string[]): Error {
+  return Object.assign(
+    new Error(message),
+    code ? { webdriverErrorCode: code } : {},
+    bodyKeys ? { providerBodyKeys: bodyKeys } : {},
+  );
+}
+/**
+ * The top-level keys of a failed REST API answer's JSON object: at most eight,
+ * each a short lowercase name, sorted. Never a value. Absent when the body is
+ * not such an object or does not arrive within the bound.
+ */
+export function providerBodyKeys(error: unknown): string[] | undefined {
+  if (!error || typeof error !== 'object' || !('providerBodyKeys' in error)) return undefined;
+  const keys = error.providerBodyKeys;
+  return Array.isArray(keys) && keys.every((key) => typeof key === 'string') ? keys : undefined;
+}
+function boundedKeys(payload: unknown): string[] | undefined {
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) return undefined;
+  const keys = Object.keys(payload);
+  if (keys.length > 8 || !keys.every((key) => /^[a-z][a-z_]{0,31}$/.test(key))) return undefined;
+  return keys.sort();
 }
 async function responseWebdriverCode(response: Response): Promise<string | undefined> {
+  const payload = await boundedPayload(response);
+  if (!payload || typeof payload !== 'object' || !('value' in payload)) return undefined;
+  const value = payload.value;
+  return value && typeof value === 'object' && 'error' in value
+    ? allowedWebdriverCode(value.error)
+    : undefined;
+}
+async function boundedPayload(response: Response): Promise<unknown> {
   let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
   let timer: ReturnType<typeof setTimeout> | undefined;
   const deadline = performance.now() + 250;
@@ -145,12 +173,7 @@ async function responseWebdriverCode(response: Response): Promise<string | undef
         if (size > 8192) return undefined;
         if (chunk.value.byteLength) chunks.push(chunk.value);
       }
-      const payload = JSON.parse(Buffer.concat(chunks).toString('utf8')) as unknown;
-      if (!payload || typeof payload !== 'object' || !('value' in payload)) return undefined;
-      const value = payload.value;
-      return value && typeof value === 'object' && 'error' in value
-        ? allowedWebdriverCode(value.error)
-        : undefined;
+      return JSON.parse(Buffer.concat(chunks).toString('utf8')) as unknown;
     })().catch(() => undefined);
     return await Promise.race([
       read,
@@ -200,13 +223,15 @@ export function clientFor(username: string, accessKey: string, fetcher: typeof f
     } catch {
       throw new Error('request-failed');
     }
-    if (!response.ok)
+    if (!response.ok) {
+      if (url.startsWith('https://hub.browserstack.com/wd/hub/'))
+        throw providerError(`http-${response.status}`, await responseWebdriverCode(response));
       throw providerError(
         `http-${response.status}`,
-        url.startsWith('https://hub.browserstack.com/wd/hub/')
-          ? await responseWebdriverCode(response)
-          : undefined,
+        undefined,
+        boundedKeys(await boundedPayload(response)),
       );
+    }
     try {
       return (await response.json()) as unknown;
     } catch {

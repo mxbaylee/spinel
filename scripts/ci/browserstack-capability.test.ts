@@ -10,6 +10,7 @@ import {
   blankPageDiagnostic,
   browserPageOpened,
   offlineNetworkProfile,
+  applyOfflineProfile,
   socketCloseDiagnostic,
   socketProbeScript,
   storageStateDiagnostic,
@@ -68,7 +69,7 @@ import {
   type CapabilityResult,
   type RunIdentity,
 } from './browserstack-capability.ts';
-import { clientFor } from './browserstack.ts';
+import { clientFor, providerBodyKeys } from './browserstack.ts';
 import { createNativeTap, installConfirmationLabels } from './browserstack-native-controls.ts';
 import { chromeReadinessFailureScript } from './browserstack-chrome-readiness.ts';
 import { capabilityScopeDefinition, type CapabilityScope } from './browserstack-scope.ts';
@@ -3967,11 +3968,10 @@ test('Firefox cuts the network with airplane mode; Chrome and Safari keep no-net
   const source = readFileSync(new URL('./browserstack-capability.ts', import.meta.url), 'utf8');
   // Neither offline cut hard-codes a profile any more.
   assert.doesNotMatch(source, /networkProfile: 'no-network'/);
-  assert.match(source, /const offlineProfile = offlineNetworkProfile\(target\.browser\);/);
-  assert.match(
-    source,
-    /const networkProfile = offline \? offlineNetworkProfile\(target\.browser\) : '4g-lte-good';/,
-  );
+  // Every offline cut goes through the one fallback-aware helper.
+  assert.match(source, /offlineNetworkProfile\(target\.browser\),\n\s+airplaneModeRejected,/);
+  assert.equal(source.match(/await cutNetwork\(\)/g)?.length, 3);
+  assert.match(source, /if \(offline\) networkProfile = await cutNetwork\(\);/);
   assert.equal(source.match(/androidAirplaneMode: \w+ === 'airplane-mode'/g)?.length, 2);
 });
 
@@ -4156,13 +4156,13 @@ test('the Chrome shortcut intent is sent only after the offline cut is applied a
     source.indexOf('async function attachRelaunched('),
     source.indexOf('async function reloadTab('),
   );
-  const cut = body.indexOf('await putNetwork(offlineProfile);');
+  const cut = body.indexOf('const offlineProfile = await cutNetwork();');
   assert.ok(cut > 0 && cut < body.indexOf('mobile: deepLink'));
-  assert.match(body, /const offlineProfile = offlineNetworkProfile\(target\.browser\);/);
   assert.match(body, /offline-intent-network-control/);
   // Every network change goes through the one timed helper; cleanup keeps its own bounded call.
   assert.equal(source.match(/update_network\.json/g)?.length, 3);
-  assert.equal(source.match(/await putNetwork\(/g)?.length, 3);
+  assert.equal(source.match(/await putNetwork\(/g)?.length, 1);
+  assert.equal(source.match(/await cutNetwork\(\)/g)?.length, 3);
 });
 
 test('a refused socket keeps only its close code and two booleans', async () => {
@@ -4292,4 +4292,97 @@ test('a failed stored read records the offline account, database and window coun
   assert.ok(
     body.indexOf('result.command = failedCommand;') > body.indexOf("session('window/handles')"),
   );
+});
+
+test('a 422 for airplane-mode records its body keys, then no-network for the rest of the session', async () => {
+  const puts: string[] = [];
+  const records: unknown[] = [];
+  const rejected = { value: false };
+  const refusal = Object.assign(new Error('http-422'), { providerBodyKeys: ['error', 'message'] });
+  const put = async (profile: string) => {
+    puts.push(profile);
+    if (profile === 'airplane-mode') throw refusal;
+  };
+  const record = async (value: unknown) => {
+    records.push(value);
+  };
+  assert.equal(await applyOfflineProfile('airplane-mode', rejected, put, record), 'no-network');
+  assert.equal(await applyOfflineProfile('airplane-mode', rejected, put, record), 'no-network');
+  assert.deepEqual(puts, ['airplane-mode', 'no-network', 'no-network']);
+  assert.deepEqual(records, [
+    {
+      networkProfile: 'airplane-mode',
+      failure: 'http-422',
+      bodyKeys: ['error', 'message'],
+      fallback: 'no-network',
+    },
+  ]);
+  // Chrome and Safari never try airplane mode; any other failure keeps its own error.
+  const chrome: string[] = [];
+  assert.equal(
+    await applyOfflineProfile(
+      'no-network',
+      { value: false },
+      async (p) => void chrome.push(p),
+      record,
+    ),
+    'no-network',
+  );
+  assert.deepEqual(chrome, ['no-network']);
+  await assert.rejects(
+    applyOfflineProfile(
+      'airplane-mode',
+      { value: false },
+      async () => {
+        throw new Error('http-500');
+      },
+      record,
+    ),
+    /http-500/,
+  );
+  assert.equal(records.length, 1);
+});
+
+test('a failed REST API answer keeps only its short top-level key names', async () => {
+  const answer = (body: string) =>
+    clientFor('user', 'key', async () => new Response(body, { status: 422 })).api('x', 'PUT', {});
+  const keys = async (body: string) => {
+    try {
+      await answer(body);
+    } catch (error) {
+      assert.equal((error as Error).message, 'http-422');
+      return providerBodyKeys(error);
+    }
+    assert.fail('expected a rejection');
+  };
+  assert.deepEqual(await keys('{"message":"private text","error":"also private"}'), [
+    'error',
+    'message',
+  ]);
+  for (const body of [
+    'not json',
+    '[1]',
+    '{"Bad Key":1}',
+    JSON.stringify(
+      Object.fromEntries(Array.from({ length: 9 }, (_, index) => [`k${'a'.repeat(index)}`, 1])),
+    ),
+  ])
+    assert.equal(await keys(body), undefined);
+});
+
+test('Safari alone taps natively, and the first close is preceded by a storage snapshot', () => {
+  const source = readFileSync(new URL('./browserstack-capability.ts', import.meta.url), 'utf8');
+  assert.match(source, /\.\.\.\(target\.browser === 'safari' \? \{ nativeTouch \} : \{\}\),/);
+  const native = source.slice(
+    source.indexOf('async function nativeTouch('),
+    source.indexOf('async function home('),
+  );
+  assert.match(native, /taps === 2 \? 'mobile: doubleTap' : 'mobile: tap'/);
+  assert.ok(native.indexOf("await context('NATIVE_APP');") < native.indexOf('finally'));
+  assert.match(native, /finally \{\n\s+await context\(web\);/);
+  const restart = source.slice(
+    source.indexOf('async function restartInstalled('),
+    source.indexOf('const observedForeground = await foreground();'),
+  );
+  assert.match(restart, /if \(prefix === ''\) await recordStorageState\(\);/);
 });

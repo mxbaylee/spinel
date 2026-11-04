@@ -24,6 +24,7 @@ import {
 import {
   clientFor,
   cleanProviderText as clean,
+  providerBodyKeys,
   targetsFromInventory,
   webdriverErrorCode,
   type Target,
@@ -702,6 +703,41 @@ export function shortcutIntent(origin: string, browserPackage: string) {
  */
 export function offlineNetworkProfile(browser: Target['browser']) {
   return browser === 'firefox' ? 'airplane-mode' : 'no-network';
+}
+/**
+ * Firefox run 41911483521: BrowserStack answered `airplane-mode` with HTTP 422
+ * on the Pixel 11 Pro XL. Owner, chat 2026-11-04: on exactly that answer,
+ * record the status and the body's top-level key names (never values), then
+ * apply `no-network` instead, and keep using it for the rest of the session;
+ * the device-offline wait still decides whether it reached Firefox. Every
+ * other failure keeps its own error. Returns the profile now in effect.
+ */
+export async function applyOfflineProfile(
+  preferred: string,
+  rejected: { value: boolean },
+  put: (networkProfile: string) => Promise<unknown>,
+  record: (value: Row) => Promise<void>,
+) {
+  if (preferred === 'airplane-mode' && !rejected.value) {
+    try {
+      await put(preferred);
+      return preferred;
+    } catch (error) {
+      if (failure(error) !== 'http-422') throw error;
+      rejected.value = true;
+      await record({
+        networkProfile: preferred,
+        failure: 'http-422',
+        bodyKeys: providerBodyKeys(error) ?? 'unavailable',
+        fallback: 'no-network',
+      });
+    }
+  } else if (preferred !== 'airplane-mode') {
+    await put(preferred);
+    return preferred;
+  }
+  await put('no-network');
+  return 'no-network';
 }
 /**
  * Run 41882414827: Chrome's `terminate_app` answered HTTP 500 `unknown error`
@@ -1522,6 +1558,14 @@ export async function runCapability(
       return value;
     });
   const session = (suffix: string) => `session/${result.sessionId}/${suffix}`;
+  const airplaneModeRejected = { value: false };
+  const cutNetwork = () =>
+    applyOfflineProfile(
+      offlineNetworkProfile(target.browser),
+      airplaneModeRejected,
+      putNetwork,
+      (value) => record(`${result.stage}:network-profile-rejected`, value),
+    );
   const putNetwork = (networkProfile: string) =>
     timedProviderCommand(
       'PUT automate/sessions/{sessionId}/update_network.json',
@@ -1709,6 +1753,23 @@ export async function runCapability(
           },
         ],
       });
+    }
+  }
+  /**
+   * One XCUITest `mobile: tap` or `mobile: doubleTap` at a screen point, from
+   * the native context, then back to the web context it was called from.
+   */
+  async function nativeTouch(point: { x: number; y: number }, taps: 1 | 2) {
+    const web = await command(session('context'));
+    requireCondition(
+      typeof web === 'string' && /^WEBVIEW_[\w.-]{1,80}$/.test(web),
+      'native-touch-context-unavailable',
+    );
+    await context('NATIVE_APP');
+    try {
+      await execute(taps === 2 ? 'mobile: doubleTap' : 'mobile: tap', [{ x: point.x, y: point.y }]);
+    } finally {
+      await context(web);
     }
   }
   async function home() {
@@ -2078,7 +2139,8 @@ export async function runCapability(
     }
   }
   /**
-   * Failure-only evidence (owner, chat 2026-11-04): Chrome run 41904306797
+   * Bounded storage evidence (owner, chat 2026-11-04), taken just before the
+   * first close and after a failed stored read: Chrome run 41904306797
    * reopened offline on a blank `/sign-in` page and the stored read failed with
    * its reason discarded. Records whether the offline account and database are
    * still there, how the database opens, the page path and the window count.
@@ -2248,6 +2310,11 @@ export async function runCapability(
     if (prefix === '' && offlineWindowReloadProbed(target.browser))
       await probeInstalledWindowReload(prefix);
     stage(`${prefix}same-session-termination`);
+    // Chrome run 41911112406 reopened with the account marker and databases
+    // gone after the same window had reloaded signed in offline. The snapshot
+    // just before the close says whether they were gone already (owner, chat
+    // 2026-11-04).
+    if (prefix === '') await recordStorageState();
     const observedForeground = await foreground();
     requireCondition(observedForeground === foregroundApp, 'foreground-app-changed');
     const app =
@@ -2337,8 +2404,7 @@ export async function runCapability(
       // applied again first, so a page that still comes up online shows the
       // intent itself lifting it (owner, chat 2026-11-04). The relaunch's own
       // offline checks still decide the outcome.
-      const offlineProfile = offlineNetworkProfile(target.browser);
-      await putNetwork(offlineProfile);
+      const offlineProfile = await cutNetwork();
       await record(`${prefix}offline-intent-network-control`, {
         networkProfile: offlineProfile,
         reappliedBeforeIntent: true,
@@ -2631,6 +2697,7 @@ export async function runCapability(
       },
       ready: itemReady,
       click: (selector, label) => clickWeb(selector, label, true),
+      ...(target.browser === 'safari' ? { nativeTouch } : {}),
       diagnose,
       restart: async () => {
         attached = tabScope
@@ -2646,8 +2713,9 @@ export async function runCapability(
           await acceptance.boundedPhoneFixtureOperation(acceptanceDriver, () =>
             acceptanceFixture!.setOffline(false),
           );
-        const networkProfile = offline ? offlineNetworkProfile(target.browser) : '4g-lte-good';
-        await putNetwork(networkProfile);
+        let networkProfile = '4g-lte-good';
+        if (offline) networkProfile = await cutNetwork();
+        else await putNetwork(networkProfile);
         await record(`${result.stage}:network-control`, {
           networkProfile,
           androidAirplaneMode: networkProfile === 'airplane-mode',
@@ -2688,8 +2756,7 @@ export async function runCapability(
     await socketProbe(await socketTicket(prepared[0]), true);
     const unusedOfflineTicket = await socketTicket(prepared[0]);
     stage('device-offline');
-    const offlineProfile = offlineNetworkProfile(target.browser);
-    await putNetwork(offlineProfile);
+    const offlineProfile = await cutNetwork();
     await record('network-control', {
       networkProfile: offlineProfile,
       androidAirplaneMode: offlineProfile === 'airplane-mode',

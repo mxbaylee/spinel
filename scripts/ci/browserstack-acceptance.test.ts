@@ -812,7 +812,7 @@ test('a successful action sequence tolerates only an unknown-command release, re
 
 type TraceRow = Record<string, unknown>;
 
-test('a phone double tap calibrates its aim once, then taps twice 250 ms apart in one sequence', async () => {
+test('without native touch, a phone double tap calibrates its aim once, then taps twice 250 ms apart in one W3C sequence', async () => {
   const calls: [string, unknown][] = [];
   const records: [string, unknown][] = [];
   const landed = {
@@ -897,6 +897,45 @@ test('a phone double tap calibrates its aim once, then taps twice 250 ms apart i
     ['hit', 'install', 'POST actions', 'DELETE actions'],
     'the session calibrates once',
   );
+});
+
+test('with native touch (Safari), the calibration and the double tap are one native gesture each', async () => {
+  const calls: [string, unknown][] = [];
+  const landed = {
+    installed: true,
+    events: [{ type: 'pointerdown', pointerType: 'touch', milliseconds: 5, dx: 0, dy: -62 }],
+  };
+  const driver = {
+    execute: async (script: string, args: unknown[] = []) => {
+      const name =
+        script === tapTraceInstallScript
+          ? 'install'
+          : script === tapTraceReadScript
+            ? args[0] === true
+              ? 'peek'
+              : 'read'
+            : 'hit';
+      calls.push([name, args]);
+      return name === 'peek' || name === 'read' ? landed : true;
+    },
+    command: async (suffix: string, method = 'GET', body?: unknown) => {
+      calls.push([`${method} ${suffix}`, body]);
+      return null;
+    },
+    nativeTouch: async (point: unknown, taps: number) => {
+      calls.push([`native ${taps}`, point]);
+    },
+    remaining: (maximum = 1) => maximum,
+    record: async () => {},
+  } as unknown as PhoneAcceptanceDriver;
+  await phoneDoubleTap(driver, 'canvas', { x: 80, y: 40 });
+  assert.deepEqual(
+    calls.map(([name]) => name),
+    ['hit', 'install', 'native 1', 'peek', 'read', 'install', 'native 2'],
+  );
+  assert.deepEqual(calls[2]![1], { x: 80, y: 40 });
+  // Calibrated the same way: landed 62 px high, so the double tap aims 62 px lower.
+  assert.deepEqual(calls[6]![1], { x: 80, y: 102 });
 });
 
 test('a deadline during tap calibration fails as the deadline, not as an unseen tap', async () => {
