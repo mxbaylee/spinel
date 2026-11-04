@@ -161,7 +161,7 @@ revocation. None of those protections is optional because a label is absent.
 shared-creation restart preparation boundary exposed while verifying SPN-118.
 It waits for the requested folder's loaded contents before deliberately
 disconnecting; complete draft and browser-restart checks retain the persistence
-contract. [SPN-120](../todo/SPN-120.md) retains this audit's original historical
+contract. [SPN-120](SPN-120.md) retains this audit's original historical
 auth-heading, phone-navigation, offline-recovery-close and snapshot-reset cases,
 their required dispositions and the broader cleanup/negative checks. This is an
 explicit coherent split, not evidence that those historical symptoms are fixed.
