@@ -6,6 +6,7 @@ import { NativeEditor } from './NativeEditors.tsx';
 import type { NativeEditorHandle, NativeEditorProps } from './NativeEditors.tsx';
 import { Button } from './Controls.tsx';
 import { assertDialogTitle } from '../../../.storybook/dialogBounds.ts';
+import { MAKE_COPY_COMMAND } from '../../../web/nativeCopy.tsx';
 
 /** Observation belongs to the isolated story, never a production global. */
 function NativeEditorStory(props: NativeEditorProps) {
@@ -103,6 +104,16 @@ const copyApi = {
 export const MakeCopyDialog: Story = {
   args: { kind: 'doc', copyFileId },
   parameters: { api: copyApi },
+  render: (args) => (
+    <NativeEditor
+      {...args}
+      onReady={({ api }) => {
+        // Preview the production dialog through its public command. Real desktop
+        // clicks and phone taps through the toolbar belong to e2e/copy.spec.ts.
+        void api.executeCommand(MAKE_COPY_COMMAND);
+      }}
+    />
+  ),
   play: async ({ canvasElement }) => {
     await waitFor(
       () => expect(canvasElement.querySelector('[data-native-stage="ready"]')).toBeInTheDocument(),
@@ -110,21 +121,7 @@ export const MakeCopyDialog: Story = {
     );
     const document = canvasElement.ownerDocument;
     const mobile = canvasElement.querySelector<HTMLElement>('[data-u-comp="mobile-more-trigger"]');
-    if (mobile) await userEvent.click(mobile);
-    else {
-      const toolbar = canvasElement.querySelector('[data-u-comp="ribbon-toolbar"]')!;
-      const action = within(toolbar as HTMLElement).queryByRole('button', { name: 'Make a copy' });
-      if (!action || !action.getClientRects().length) {
-        const overflow = toolbar.querySelector<HTMLElement>(
-          ':scope > div > button[aria-haspopup="dialog"]',
-        );
-        await expect(overflow).toBeVisible();
-        await userEvent.click(overflow!);
-      }
-    }
     const page = within(document.body);
-    const action = await page.findByRole('button', { name: 'Make a copy' });
-    await userEvent.click(action);
     const dialog = await page.findByRole('dialog', { name: 'Make a copy' });
     if (mobile) {
       // Univer's mobile drawer owns a plain title region, not a heading.

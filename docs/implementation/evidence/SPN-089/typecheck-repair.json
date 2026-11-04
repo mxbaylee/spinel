@@ -1,0 +1,18 @@
+{
+  "startedAt": "2026-11-04T21:13:56.149Z",
+  "finishedAt": "2026-11-04T21:14:10.369Z",
+  "node": "v26.12.1",
+  "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+  "command": "node",
+  "args": [
+    "scripts/serial.ts",
+    "npm",
+    "run",
+    "typecheck"
+  ],
+  "elapsedMs": 14219,
+  "peakKiB": 1867816,
+  "code": 0,
+  "signal": null,
+  "aborted": null
+}
