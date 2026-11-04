@@ -131,6 +131,7 @@ export {
   until as observePhoneAcceptance,
   fixtureOperation as boundedPhoneFixtureOperation,
   actions as phoneActions,
+  doubleTap as phoneDoubleTap,
 };
 
 /** Open only the existing database and issue readonly transactions. No data is seeded in the phone. */
@@ -336,9 +337,62 @@ async function hit(driver: PhoneAcceptanceDriver, selector: string, point: Point
   requireCondition(visible === true, 'native-touch-target-obscured');
 }
 
+/**
+ * Records, in the page, the input events a double tap produced: type, pointer
+ * type, milliseconds since installation and offset from the tap point. At most
+ * 24 events; no text, target content or URL. A later install replaces it.
+ */
+export const tapTraceInstallScript = `
+  const [point]=arguments;const key='__spinelTapTrace';window[key]?.stop();
+  const origin=performance.now();const events=[];
+  const types=['pointerdown','pointerup','pointercancel','touchstart','touchend','touchcancel','click','dblclick'];
+  const keep=(event)=>{if(events.length>=24)return;const touch=event.changedTouches?.[0];
+    const x=touch?touch.clientX:event.clientX;const y=touch?touch.clientY:event.clientY;
+    events.push({type:event.type,pointerType:typeof event.pointerType==='string'?event.pointerType.slice(0,8):null,
+      milliseconds:Math.round(event.timeStamp-origin),
+      dx:Number.isFinite(x)?Math.round(x-point.x):null,dy:Number.isFinite(y)?Math.round(y-point.y):null});};
+  for(const type of types)window.addEventListener(type,keep,{capture:true,passive:true});
+  window[key]={events,stop:()=>{for(const type of types)window.removeEventListener(type,keep,{capture:true});delete window[key];}};
+  return true;
+`;
+export const tapTraceReadScript = `
+  const trace=window.__spinelTapTrace;if(!trace)return {installed:false,events:[]};
+  const events=trace.events.slice(0,24);trace.stop();return {installed:true,events};
+`;
+
+/** Keeps only the bounded fields the install script records. */
+export function tapTraceDiagnostic(value: unknown) {
+  const observed = value !== null && typeof value === 'object' ? (value as Row) : {};
+  const integer = (field: unknown) =>
+    typeof field === 'number' && Number.isSafeInteger(field) ? field : null;
+  const events = Array.isArray(observed.events) ? observed.events.slice(0, 24) : [];
+  return {
+    installed: observed.installed === true,
+    events: events.map((event) => {
+      const entry = event !== null && typeof event === 'object' ? (event as Row) : {};
+      return {
+        type:
+          typeof entry.type === 'string' && /^[a-z]{1,16}$/.test(entry.type) ? entry.type : 'other',
+        pointerType:
+          typeof entry.pointerType === 'string' && /^[a-z]{1,8}$/.test(entry.pointerType)
+            ? entry.pointerType
+            : null,
+        milliseconds: integer(entry.milliseconds),
+        dx: integer(entry.dx),
+        dy: integer(entry.dy),
+      };
+    }),
+  };
+}
+
+// Univer counts a double click only when both clicks land within 500 ms and
+// 10 px (engine-render InputManager). Safari run 41778562480 opened no Sheet
+// editor after a 100 ms pause between taps, so the taps go back to back, as
+// Playwright's two touchscreen taps do. The page trace says whether it saw both.
 async function doubleTap(driver: PhoneAcceptanceDriver, selector: string, point: Point) {
   const actual = { x: Math.round(point.x), y: Math.round(point.y) };
   await hit(driver, selector, actual);
+  await driver.execute(tapTraceInstallScript, [actual]);
   await actions(driver, {
     type: 'pointer',
     id: 'phone-acceptance-touch',
@@ -347,12 +401,31 @@ async function doubleTap(driver: PhoneAcceptanceDriver, selector: string, point:
       { type: 'pointerMove', origin: 'viewport', duration: 0, ...actual },
       { type: 'pointerDown', button: 0 },
       { type: 'pointerUp', button: 0 },
-      { type: 'pause', duration: 100 },
       { type: 'pointerDown', button: 0 },
       { type: 'pointerUp', button: 0 },
     ],
   });
   return actual;
+}
+
+/** On an editor that did not open, records the page's tap trace, then rethrows. */
+export async function withTapTrace<T>(
+  driver: PhoneAcceptanceDriver,
+  kind: Kind,
+  opened: () => Promise<T>,
+): Promise<T> {
+  try {
+    return await opened();
+  } catch (failure) {
+    let trace: unknown = 'unavailable';
+    try {
+      trace = tapTraceDiagnostic(await driver.execute(tapTraceReadScript));
+    } catch {
+      // The editor failure stays the result.
+    }
+    await driver.record(`native-${kind}-tap-trace`, trace);
+    throw failure;
+  }
 }
 
 async function canvasBox(driver: PhoneAcceptanceDriver, kind: Kind) {
@@ -452,14 +525,16 @@ async function author(
   if (item.kind === 'sheet') {
     const box = await canvasBox(driver, 'sheet');
     point = await doubleTap(driver, canvasSelector('sheet'), { x: box.x + 80, y: box.y + 40 });
-    await until(
-      driver,
-      () =>
-        driver.execute(
-          `return [...document.querySelectorAll('[data-u-comp="mobile-formula-bar"]')].some(node=>node.getBoundingClientRect().height>0);`,
-        ),
-      (value) => value === true,
-      'native-sheet-formula-bar-unavailable',
+    await withTapTrace(driver, 'sheet', () =>
+      until(
+        driver,
+        () =>
+          driver.execute(
+            `return [...document.querySelectorAll('[data-u-comp="mobile-formula-bar"]')].some(node=>node.getBoundingClientRect().height>0);`,
+          ),
+        (value) => value === true,
+        'native-sheet-formula-bar-unavailable',
+      ),
     );
   } else {
     await driver.click(`${region('doc')} button`, 'Edit');
@@ -471,28 +546,30 @@ async function author(
       canvasSelector('doc'),
       box ? { x: box.x + 40, y: box.y + 100 } : await docTextPoint(driver),
     );
-    const selected = await until(
-      driver,
-      async () => {
-        const value = await driver.execute(phoneDocSelectionScript, [item.unitId]);
-        return value === null ? null : row(value);
-      },
-      (value) => {
-        const range = value?.nativeRange as Row | null;
-        const logical = value?.currentLogicalRange as Row | null;
-        return Boolean(
-          value?.inputFocused &&
-          !value.pendingSelection &&
-          range?.collapsed &&
-          logical?.collapsed &&
-          range.start === range.end &&
-          range.start === logical.start &&
-          range.end === logical.end &&
-          range.segmentId === '' &&
-          logical.segmentId === '',
-        );
-      },
-      'native-doc-caret-unavailable',
+    const selected = await withTapTrace(driver, 'doc', () =>
+      until(
+        driver,
+        async () => {
+          const value = await driver.execute(phoneDocSelectionScript, [item.unitId]);
+          return value === null ? null : row(value);
+        },
+        (value) => {
+          const range = value?.nativeRange as Row | null;
+          const logical = value?.currentLogicalRange as Row | null;
+          return Boolean(
+            value?.inputFocused &&
+            !value.pendingSelection &&
+            range?.collapsed &&
+            logical?.collapsed &&
+            range.start === range.end &&
+            range.start === logical.start &&
+            range.end === logical.end &&
+            range.segmentId === '' &&
+            logical.segmentId === '',
+          );
+        },
+        'native-doc-caret-unavailable',
+      ),
     );
     const range = row(selected!.nativeRange);
     caret = Number(range.start);

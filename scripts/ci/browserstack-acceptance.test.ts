@@ -29,6 +29,11 @@ import {
   preparePhoneAcceptance,
   boundedPhoneFixtureOperation,
   phoneActions,
+  phoneDoubleTap,
+  tapTraceDiagnostic,
+  tapTraceInstallScript,
+  tapTraceReadScript,
+  withTapTrace,
   readPhoneOpenedCopy,
   verifyAuthoredContent,
   verifyEditablePhone,
@@ -161,7 +166,7 @@ test('phone authoring refuses a reader path and requires the observed mobile edi
   assert.ok(Object.values(stages).reduce((sum, value) => sum + value, 0) <= operational);
   assert.ok(
     operational + 15_000 < 900_000,
-    'The separate Safari bound and cleanup fit the existing reservation.',
+    'The Safari bound and cleanup stay under 15 minutes, inside the authored step timeout.',
   );
 });
 
@@ -800,4 +805,130 @@ test('a successful action sequence tolerates only an unknown-command release, re
     (error) => error === posted,
   );
   assert.equal(records.length, 1);
+});
+
+type TraceRow = Record<string, unknown>;
+
+test('a phone double tap sends both taps back to back after tracing the page', async () => {
+  const calls: [string, unknown][] = [];
+  const driver = {
+    execute: async (script: string, args: unknown[] = []) => {
+      calls.push([script === tapTraceInstallScript ? 'install' : 'hit', args]);
+      return true;
+    },
+    command: async (suffix: string, method = 'GET', body?: unknown) => {
+      calls.push([`${method} ${suffix}`, body]);
+      return null;
+    },
+    record: async () => {},
+  } as unknown as PhoneAcceptanceDriver;
+  assert.deepEqual(await phoneDoubleTap(driver, 'canvas', { x: 80.4, y: 39.6 }), { x: 80, y: 40 });
+  assert.deepEqual(
+    calls.map(([name]) => name),
+    ['hit', 'install', 'POST actions', 'DELETE actions'],
+  );
+  assert.deepEqual(calls[1]![1], [{ x: 80, y: 40 }]);
+  const [source] = (calls[2]![1] as { actions: { actions: TraceRow[] }[] }).actions;
+  // Univer needs both clicks within 500 ms: no pause may sit between the taps.
+  assert.deepEqual(
+    source!.actions.map((action) => action.type),
+    ['pointerMove', 'pointerDown', 'pointerUp', 'pointerDown', 'pointerUp'],
+  );
+});
+
+test('the page tap trace keeps 24 bounded events and removes its listeners when read', () => {
+  const listeners = new Map<string, (event: unknown) => void>();
+  const removed: string[] = [];
+  const window: Record<string, unknown> = {
+    addEventListener: (type: string, listener: (event: unknown) => void) =>
+      listeners.set(type, listener),
+    removeEventListener: (type: string) => removed.push(type),
+  };
+  const context = createContext({ window, performance: { now: () => 1000 } });
+  const run = (script: string, args: unknown[] = []) =>
+    // WebDriver returns the script's value as JSON.
+    JSON.parse(
+      JSON.stringify(
+        runInContext(`(function(){${script}}).apply(null, args)`, Object.assign(context, { args })),
+      ),
+    );
+  assert.deepEqual(run(tapTraceReadScript), { installed: false, events: [] });
+  assert.equal(run(tapTraceInstallScript, [{ x: 80, y: 40 }]), true);
+  listeners.get('pointerdown')!({
+    type: 'pointerdown',
+    pointerType: 'touch',
+    timeStamp: 1012.4,
+    clientX: 81,
+    clientY: 38,
+    target: { textContent: 'secret' },
+  });
+  listeners.get('touchend')!({
+    type: 'touchend',
+    timeStamp: 1030,
+    changedTouches: [{ clientX: 79, clientY: 40 }],
+  });
+  for (let index = 0; index < 30; index++)
+    listeners.get('click')!({ type: 'click', pointerType: 'mouse', timeStamp: 1100 });
+  const read = run(tapTraceReadScript) as { installed: boolean; events: TraceRow[] };
+  assert.equal(read.installed, true);
+  assert.equal(read.events.length, 24);
+  assert.deepEqual(read.events.slice(0, 2), [
+    { type: 'pointerdown', pointerType: 'touch', milliseconds: 12, dx: 1, dy: -2 },
+    { type: 'touchend', pointerType: null, milliseconds: 30, dx: -1, dy: 0 },
+  ]);
+  assert.equal(JSON.stringify(read).includes('secret'), false);
+  assert.deepEqual(removed.sort(), [...listeners.keys()].sort());
+  assert.equal('__spinelTapTrace' in window, false);
+  assert.deepEqual(
+    tapTraceDiagnostic({
+      installed: true,
+      events: [{ type: 'pointer<down>', pointerType: 'touch-screen', milliseconds: 1.5, dx: 2 }],
+      text: 'leak',
+    }),
+    {
+      installed: true,
+      events: [{ type: 'other', pointerType: null, milliseconds: null, dx: 2, dy: null }],
+    },
+  );
+});
+
+test('an editor that never opens records the tap trace and keeps its own failure', async () => {
+  const records: [string, unknown][] = [];
+  const driver = (read: () => Promise<unknown>) =>
+    ({
+      execute: read,
+      record: async (stage: string, value: unknown) => {
+        records.push([stage, value]);
+      },
+    }) as unknown as PhoneAcceptanceDriver;
+  assert.equal(
+    await withTapTrace(
+      driver(async () => assert.fail('read on success')),
+      'sheet',
+      async () => 7,
+    ),
+    7,
+  );
+  assert.deepEqual(records, []);
+  const failure = new Error('capability-acceptance-native-sheet-formula-bar-unavailable');
+  const traced = driver(async () => ({ installed: true, events: [] }));
+  await assert.rejects(
+    withTapTrace(traced, 'sheet', async () => {
+      throw failure;
+    }),
+    (error) => error === failure,
+  );
+  const unreadable = driver(async () => {
+    throw new Error('http-500');
+  });
+  await assert.rejects(
+    withTapTrace(unreadable, 'doc', async () => {
+      throw failure;
+    }),
+    (error) => error === failure,
+  );
+  assert.deepEqual(records, [
+    ['native-sheet-tap-trace', { installed: true, events: [] }],
+    ['native-doc-tap-trace', 'unavailable'],
+  ]);
 });

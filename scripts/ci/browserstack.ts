@@ -1,4 +1,3 @@
-import { collectQuotaEvidence } from './browserstack-quota.ts';
 import { randomUUID } from 'node:crypto';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
@@ -33,7 +32,7 @@ function object(value: unknown): JsonObject {
 // Only these locally constructed messages reach logs; remote bodies and errors never do.
 function failure(error: unknown): string {
   const message = error instanceof Error ? error.message : '';
-  return /^(http-\d{3}|invalid-response-shape|request-failed|webdriver-error|unexpected-browser|tunnel-challenge-mismatch|missing-mobile-targets|missing-credentials|missing-local-identifier|quota-admission-unavailable)$/.test(
+  return /^(http-\d{3}|invalid-response-shape|request-failed|webdriver-error|unexpected-browser|tunnel-challenge-mismatch|missing-mobile-targets|missing-credentials|missing-local-identifier|legacy-smoke-closed)$/.test(
     message,
   )
     ? message
@@ -335,23 +334,6 @@ export async function checkSession(
 
 async function main() {
   const mode = process.argv[2];
-  if (mode === 'quota') {
-    const report = {
-      ...(await collectQuotaEvidence({
-        username: process.env.BS_USERNAME ?? '',
-        accessKey: process.env.BS_ACCESS_KEY ?? '',
-      })),
-      date: new Date().toISOString(),
-      sourceSha: process.env.SOURCE_SHA,
-      testedSha: process.env.GITHUB_SHA,
-      run: `https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`,
-    };
-    await mkdir('artifacts', { recursive: true });
-    await writeFile('artifacts/browserstack-quota.json', `${JSON.stringify(report, null, 2)}\n`);
-    console.log(JSON.stringify(report, null, 2));
-    if (report.status !== 'passed') process.exitCode = 1;
-    return;
-  }
   if (mode !== 'credentials' && mode !== 'smoke') throw new Error('invalid-mode');
   const report: JsonObject = {
     scope: 'Automate credentials, real mobile browsers and synthetic HTTP runner reachability only',
@@ -364,10 +346,9 @@ async function main() {
     status: 'failed',
   };
   try {
-    // This legacy smoke path has no durable reservation and stays closed. The
-    // separate capability CLI validates an owner-authorized estimated admission;
-    // retained session time is still not an authoritative provider balance.
-    if (mode === 'smoke') requireVerifiedDeviceBudget();
+    // This legacy smoke path stays closed: it has no replay guard, idle-account
+    // pre-flight or workflow lock. Real-phone runs go through the capability CLI.
+    if (mode === 'smoke') refuseLegacySmoke();
     const client = clientFor(process.env.BS_USERNAME ?? '', process.env.BS_ACCESS_KEY ?? '');
     const plan = object(await client.api('plan.json'));
     report.authentication = 'passed';
@@ -417,8 +398,8 @@ async function main() {
   if (report.status !== 'passed') process.exitCode = 1;
 }
 
-function requireVerifiedDeviceBudget(): void {
-  throw new Error('quota-admission-unavailable');
+function refuseLegacySmoke(): void {
+  throw new Error('legacy-smoke-closed');
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {

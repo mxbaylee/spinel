@@ -3,7 +3,6 @@ import { createHash, webcrypto } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { createContext, runInContext } from 'node:vm';
-import { readAdmissionPolicy, type ReservationIdentity } from './browserstack-admission.ts';
 import {
   capabilityOutcome,
   capabilityRunOutcome,
@@ -50,13 +49,14 @@ import {
   runCapabilityLane,
   screenshotResponseShape,
   screenshotLimits,
-  verifyCapabilityAdmission,
   verifyInstallationAssets,
   verifyLaunchedBrowser,
   verifyOrdinaryTabContext,
   verifyTransportProbe,
-  withCapabilityAdmission,
+  checkIdleAccount,
+  type AccountSessions,
   type CapabilityResult,
+  type RunIdentity,
 } from './browserstack-capability.ts';
 import { clientFor } from './browserstack.ts';
 import { createNativeTap, installConfirmationLabels } from './browserstack-native-controls.ts';
@@ -64,7 +64,7 @@ import { chromeReadinessFailureScript } from './browserstack-chrome-readiness.ts
 import { capabilityScopeDefinition, type CapabilityScope } from './browserstack-scope.ts';
 
 const now = Date.parse('2026-11-01T18:01:00.000Z');
-const identity: ReservationIdentity = {
+const identity: RunIdentity = {
   runId: '555',
   attempt: '1',
   sourceSha: 'a'.repeat(40),
@@ -243,121 +243,6 @@ test('offline installation evidence requires every decoded icon and bounded dige
     );
   }
 });
-function admission() {
-  const policy = readAdmissionPolicy(
-    JSON.parse(
-      readFileSync(
-        new URL('../../docs/implementation/SPN-090-budget-assumptions.json', import.meta.url),
-        'utf8',
-      ),
-    ),
-  );
-  const reservation = {
-    ...identity,
-    id: `${identity.runId}-${identity.attempt}-${identity.sourceSha}`,
-    policySha256: createHash('sha256').update(JSON.stringify(policy)).digest('hex'),
-    seconds: 900 * policy.chargedSecondsPerElapsedSecond,
-    reservedAt: '2026-11-01T18:00:00.000Z',
-    baselineSessionIds: [],
-    sessionIds: [],
-    status: 'reserved',
-    uncertainAllocation: false,
-    finishedAt: null,
-    reconciledAt: null,
-  };
-  const admissionState = { schemaVersion: 1, reservations: [reservation] };
-  const manifest = {
-    schemaVersion: 2,
-    ...identity,
-    policy,
-    reservation,
-    admissionState,
-    allocationAllowed: true,
-    persistence: {
-      status: 'verified',
-      commit: 'd'.repeat(40),
-      url: 'https://github.com/mxbaylee/spinel/commit/' + 'd'.repeat(40),
-    },
-  };
-  // The durable accounting envelope deliberately keeps report policy under latest.
-  const durable = { schemaVersion: 2, ledger: {}, admissionState, latest: { policy } };
-  return structuredClone({ manifest, durable, reservation });
-}
-
-test('admission matches the current durable accounting envelope before invoking a provider action', async () => {
-  const { manifest, durable, reservation } = admission();
-  const calls: string[] = [];
-  const result = await withCapabilityAdmission(
-    manifest,
-    identity,
-    async () => {
-      calls.push('ledger-read');
-      return durable;
-    },
-    async (verified) => {
-      calls.push('provider-action');
-      return verified;
-    },
-    now,
-  );
-  assert.deepEqual(result, reservation);
-  assert.deepEqual(calls, ['ledger-read', 'provider-action']);
-});
-
-test('wrong run, stale, missing, changed-policy and consumed admissions all deny before provider calls', async () => {
-  const cases = [
-    (value: ReturnType<typeof admission>) => {
-      value.manifest.attempt = '2';
-    },
-    (value: ReturnType<typeof admission>) => {
-      value.manifest.allocationAllowed = false;
-    },
-    (value: ReturnType<typeof admission>) => {
-      value.manifest.persistence.status = 'failed';
-    },
-    (value: ReturnType<typeof admission>) => {
-      value.manifest.reservation.seconds += 1;
-    },
-    (value: ReturnType<typeof admission>) => {
-      value.durable.admissionState.reservations = [];
-    },
-    (value: ReturnType<typeof admission>) => {
-      value.durable.latest.policy.safetyReserveSeconds += 1;
-    },
-    (value: ReturnType<typeof admission>) => {
-      value.durable.admissionState.reservations[0].status = 'held';
-    },
-    (value: ReturnType<typeof admission>) => {
-      value.manifest.reservation.reservedAt = '2026-10-30T18:00:00.000Z';
-    },
-  ];
-  for (const change of cases) {
-    const value = admission();
-    change(value);
-    let providerCalls = 0;
-    await assert.rejects(
-      withCapabilityAdmission(
-        value.manifest,
-        identity,
-        async () => value.durable,
-        async () => {
-          providerCalls++;
-        },
-        now,
-      ),
-    );
-    assert.equal(providerCalls, 0);
-  }
-  const { manifest, durable } = admission();
-  assert.throws(
-    () => verifyCapabilityAdmission(manifest, durable, identity, now + 25 * 60 * 60 * 1000),
-    /capability-admission-stale/,
-  );
-  assert.throws(() =>
-    verifyCapabilityAdmission(manifest, durable, { ...identity, testedSha: 'e'.repeat(40) }, now),
-  );
-});
-
 test('native XML retains unavailable and unlabeled parents while matching only available exact controls', () => {
   const controls = nativeControls(
     '<hierarchy><node text="Install &amp; open" content-desc="Add to Home screen" enabled="true"/><node text="Spinel" visible="false"/><XCUIElementTypeButton label="Add" enabled="true"/></hierarchy>',
@@ -1109,39 +994,160 @@ function completedCapabilityLane(
   };
 }
 
-test('prepare receipts certify only zero allocations and cannot reset an execution journal', () => {
-  const { manifest, durable } = admission();
-  const reservation = verifyCapabilityAdmission(manifest, durable, identity, now);
-  const prepared = preparedCapabilityJournal(identity, reservation, now);
-  assert.deepEqual(prepared.receipt, {
-    ...identity,
-    finishedAt: new Date(now).toISOString(),
-    sessionIds: [],
-    uncertainAllocation: false,
-  });
-  assert.deepEqual(readPreparedCapabilityJournal(prepared, identity, reservation, now), prepared);
+test('a prepared journal certifies zero allocations for one run and cannot reset an execution journal', () => {
+  const prepared = preparedCapabilityJournal(identity, now);
+  assert.equal(prepared.preparedAt, new Date(now).toISOString());
+  assert.deepEqual(prepared.lanes, []);
+  assert.equal(prepared.accountSessions, undefined);
+  assert.deepEqual(readPreparedCapabilityJournal(prepared, identity, now), prepared);
   assert.equal(prepared.fullMatrixStatus, 'incomplete');
-  for (const change of [
-    (value: typeof prepared) => {
-      value.stage = 'device-execution';
-    },
-    (value: typeof prepared) => {
-      value.receipt.sessionIds = [sessionId];
-    },
-    (value: typeof prepared) => {
-      value.receipt.uncertainAllocation = true;
-    },
-    (value: typeof prepared) => {
-      value.receipt.attempt = '2';
-    },
-    (value: typeof prepared) => {
-      value.fullMatrixStatus = 'passed';
-    },
-  ]) {
+  for (const [change, code] of [
+    [
+      (value: typeof prepared) => {
+        value.stage = 'device-execution';
+      },
+      /capability-journal-already-used/,
+    ],
+    [
+      (value: typeof prepared) => {
+        value.status = 'running';
+      },
+      /capability-journal-already-used/,
+    ],
+    [
+      (value: typeof prepared) => {
+        value.lanes = [completedCapabilityLane(target)];
+      },
+      /capability-journal-already-used/,
+    ],
+    [
+      (value: typeof prepared) => {
+        value.accountSessions = { runningSessions: 0, queuedSessions: 0 };
+      },
+      /capability-journal-already-used/,
+    ],
+    [
+      (value: typeof prepared) => {
+        value.fullMatrixStatus = 'passed';
+      },
+      /capability-journal-already-used/,
+    ],
+    [
+      (value: typeof prepared) => {
+        value.attempt = '2';
+      },
+      /capability-journal-identity-mismatch/,
+    ],
+    [
+      (value: typeof prepared) => {
+        value.testedSha = 'e'.repeat(40);
+      },
+      /capability-journal-identity-mismatch/,
+    ],
+    [
+      (value: typeof prepared) => {
+        value.preparedAt = new Date(now + 60_000).toISOString();
+      },
+      /capability-journal-invalid/,
+    ],
+  ] as const) {
     const value = structuredClone(prepared);
     change(value);
-    assert.throws(() => readPreparedCapabilityJournal(value, identity, reservation, now));
+    assert.throws(() => readPreparedCapabilityJournal(value, identity, now), code);
   }
+  // A journal from another run or attempt cannot start devices in this one.
+  assert.throws(
+    () => readPreparedCapabilityJournal(prepared, { ...identity, runId: '556' }, now),
+    /capability-journal-identity-mismatch/,
+  );
+});
+
+test('the idle-account pre-flight records plan.json session counts and refuses running or queued sessions', async () => {
+  const run = async (plan: unknown) => {
+    const paths: string[] = [];
+    const recorded: AccountSessions[] = [];
+    const result = await checkIdleAccount(
+      async (path) => {
+        paths.push(path);
+        return plan;
+      },
+      async (sessions) => {
+        recorded.push(sessions);
+      },
+    ).then(
+      (value) => ({ value }),
+      (error: Error) => ({ error: error.message }),
+    );
+    return { paths, recorded, result };
+  };
+  const idle = await run({
+    parallel_sessions_running: 0,
+    queued_sessions: 0,
+    parallel_sessions_max_allowed: 5,
+    automate_plan: 'unrelated provider field',
+  });
+  assert.deepEqual(idle.paths, ['plan.json']);
+  assert.deepEqual(idle.recorded, [{ runningSessions: 0, queuedSessions: 0 }]);
+  assert.deepEqual(idle.result, { value: { runningSessions: 0, queuedSessions: 0 } });
+  // Busy accounts are refused, but only after their counts are recorded as evidence.
+  for (const [running, queued] of [
+    [1, 0],
+    [0, 2],
+    [3, 4],
+  ]) {
+    const busy = await run({ parallel_sessions_running: running, queued_sessions: queued });
+    assert.deepEqual(busy.recorded, [{ runningSessions: running, queuedSessions: queued }]);
+    assert.deepEqual(busy.result, { error: 'capability-account-busy' });
+  }
+  // Unknown counts never become zero, and nothing is recorded for them.
+  for (const [plan, code] of [
+    [{}, 'capability-account-sessions-unknown'],
+    [{ parallel_sessions_running: 0 }, 'capability-account-sessions-unknown'],
+    [{ queued_sessions: 0 }, 'capability-account-sessions-unknown'],
+    [{ parallel_sessions_running: '0', queued_sessions: 0 }, 'capability-account-sessions-unknown'],
+    [{ parallel_sessions_running: -1, queued_sessions: 0 }, 'capability-account-sessions-unknown'],
+    [{ parallel_sessions_running: 0, queued_sessions: 0.5 }, 'capability-account-sessions-unknown'],
+    [
+      { parallel_sessions_running: null, queued_sessions: null },
+      'capability-account-sessions-unknown',
+    ],
+    [[], 'invalid-response-shape'],
+    [null, 'invalid-response-shape'],
+  ] as const) {
+    const unknown = await run(plan);
+    assert.deepEqual(unknown.recorded, [], JSON.stringify(plan));
+    assert.deepEqual(unknown.result, { error: code }, JSON.stringify(plan));
+  }
+  // A failed provider read stops the run before any record or allocation.
+  const failed: AccountSessions[] = [];
+  await assert.rejects(
+    checkIdleAccount(
+      async () => {
+        throw new Error('http-401');
+      },
+      async (sessions) => {
+        failed.push(sessions);
+      },
+    ),
+    /http-401/,
+  );
+  assert.deepEqual(failed, []);
+  // The CLI runs the guard once, after the journal is running and before any fixture or session.
+  const source = readFileSync(new URL('./browserstack-capability.ts', import.meta.url), 'utf8');
+  const main = source.slice(source.indexOf('\nasync function main() {'));
+  const order = [
+    "journal.status = 'running';",
+    'await checkIdleAccount(',
+    'createBrowserstackFixture(directory)',
+    'return runCapability(client, target, fixture',
+  ].map((needle) => main.indexOf(needle));
+  assert.ok(
+    order.every((position, index) => position > 0 && (index === 0 || position > order[index - 1])),
+    `pre-flight order: ${JSON.stringify(order)}`,
+  );
+  assert.equal(main.split('checkIdleAccount(').length, 2);
+  // A statement of its own at the try block's level, so no condition can skip it.
+  assert.match(main, /\n {4}await checkIdleAccount\(\n/);
 });
 
 test('Chrome diagnostic scope binds prepare and run, allocates only Chrome and keeps all three lanes incomplete', async () => {
@@ -1164,39 +1170,19 @@ test('Chrome diagnostic scope binds prepare and run, allocates only Chrome and k
     );
   }
   assert.equal(invalidExecutions, 0);
-  const { manifest, durable } = admission();
-  const reservation = verifyCapabilityAdmission(manifest, durable, identity, now);
-  const prepared = preparedCapabilityJournal(
-    identity,
-    reservation,
-    now,
-    'chrome-navigation-diagnostic',
-  );
+  const prepared = preparedCapabilityJournal(identity, now, 'chrome-navigation-diagnostic');
   assert.equal(prepared.allocationPlan, 'chrome-navigation-diagnostic');
   assert.deepEqual(
-    readPreparedCapabilityJournal(
-      prepared,
-      identity,
-      reservation,
-      now,
-      'chrome-navigation-diagnostic',
-    ),
+    readPreparedCapabilityJournal(prepared, identity, now, 'chrome-navigation-diagnostic'),
     prepared,
   );
   assert.throws(
-    () => readPreparedCapabilityJournal(prepared, identity, reservation, now),
+    () => readPreparedCapabilityJournal(prepared, identity, now),
     /capability-journal-already-used/,
   );
-  const regular = preparedCapabilityJournal(identity, reservation, now);
+  const regular = preparedCapabilityJournal(identity, now);
   assert.throws(
-    () =>
-      readPreparedCapabilityJournal(
-        regular,
-        identity,
-        reservation,
-        now,
-        'chrome-navigation-diagnostic',
-      ),
+    () => readPreparedCapabilityJournal(regular, identity, now, 'chrome-navigation-diagnostic'),
     /capability-journal-already-used/,
   );
   let executed = 0;
@@ -1251,27 +1237,24 @@ test('Chrome diagnostic scope binds prepare and run, allocates only Chrome and k
   );
 });
 
-test('Safari acceptance binds its own receipt, allocates only Safari and cannot complete the required matrix', async () => {
+test('Safari acceptance binds its own journal, allocates only Safari and cannot complete the required matrix', async () => {
   assert.equal(readCapabilityScope('safari-acceptance'), 'safari-acceptance');
-  const { manifest, durable } = admission();
-  const reservation = verifyCapabilityAdmission(manifest, durable, identity, now);
-  const prepared = preparedCapabilityJournal(identity, reservation, now, 'safari-acceptance');
+  const prepared = preparedCapabilityJournal(identity, now, 'safari-acceptance');
   assert.equal(prepared.allocationPlan, 'safari-acceptance');
   assert.deepEqual(
-    readPreparedCapabilityJournal(prepared, identity, reservation, now, 'safari-acceptance'),
+    readPreparedCapabilityJournal(prepared, identity, now, 'safari-acceptance'),
     prepared,
   );
   for (const other of ['all', 'chrome-navigation-diagnostic'] as const) {
     assert.throws(
-      () => readPreparedCapabilityJournal(prepared, identity, reservation, now, other),
+      () => readPreparedCapabilityJournal(prepared, identity, now, other),
       /capability-journal-already-used/,
     );
     assert.throws(
       () =>
         readPreparedCapabilityJournal(
-          preparedCapabilityJournal(identity, reservation, now, other),
+          preparedCapabilityJournal(identity, now, other),
           identity,
-          reservation,
           now,
           'safari-acceptance',
         ),
@@ -1318,9 +1301,7 @@ test('Safari acceptance binds its own receipt, allocates only Safari and cannot 
   });
 });
 
-test('each authored browser/context scope executes one selected device and cannot reuse another scope receipt or capability-only success', async () => {
-  const { manifest, durable } = admission();
-  const reservation = verifyCapabilityAdmission(manifest, durable, identity, now);
+test('each authored browser/context scope executes one selected device and cannot reuse another scope journal or capability-only success', async () => {
   for (const [scope, expectedBrowser, expectedContext] of [
     ['chrome-acceptance', 'chrome', 'installed'],
     ['chrome-tab-acceptance', 'chrome', 'ordinary-tab'],
@@ -1332,15 +1313,11 @@ test('each authored browser/context scope executes one selected device and canno
     assert.equal(selection.browser, expectedBrowser);
     assert.equal(selection.context, expectedContext);
     assert.equal(selection.completionStage, `${scope}-complete`);
-    const prepared = preparedCapabilityJournal(identity, reservation, now, scope);
-    assert.equal(
-      readPreparedCapabilityJournal(prepared, identity, reservation, now, scope),
-      prepared,
-    );
+    const prepared = preparedCapabilityJournal(identity, now, scope);
+    assert.equal(readPreparedCapabilityJournal(prepared, identity, now, scope), prepared);
     assert.equal(prepared.allocationPlan, scope);
     assert.throws(
-      () =>
-        readPreparedCapabilityJournal(prepared, identity, reservation, now, 'safari-acceptance'),
+      () => readPreparedCapabilityJournal(prepared, identity, now, 'safari-acceptance'),
       /capability-journal-already-used/,
     );
     const allocations: string[] = [];

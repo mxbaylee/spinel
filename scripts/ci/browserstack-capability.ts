@@ -4,13 +4,6 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import {
-  readAdmissionPolicy,
-  reservationForRun,
-  type Reservation,
-  type ReservationIdentity,
-  type ReservationReceipt,
-} from './browserstack-admission.ts';
-import {
   browserstackOrigin,
   createBrowserstackFixture,
   type BrowserstackFixture,
@@ -28,7 +21,6 @@ import {
   failureDiagnosis,
   prepareDashboardItemOffline,
 } from './browserstack-offline-preparation.ts';
-import { ledgerClient } from './browserstack-ledger.ts';
 import {
   clientFor,
   cleanProviderText as clean,
@@ -94,7 +86,7 @@ function row(value: unknown): Row {
 }
 function failure(error: unknown): string {
   const message = error instanceof Error ? error.message : '';
-  return /^(?:http-\d{3}|request-failed|invalid-response-shape|webdriver-error|capability-[a-z-]+|admission-[a-z-]+)$/.test(
+  return /^(?:http-\d{3}|request-failed|invalid-response-shape|webdriver-error|capability-[a-z-]+)$/.test(
     message,
   )
     ? message
@@ -236,69 +228,6 @@ export async function observeBrowserTask(
   if (operationFailed) throw operationError;
   if (cleanupFailed) throw new Error('capability-browser-task-cleanup-failed');
   return value;
-}
-
-/** A downloaded manifest cannot authorize a different run or a stale durable hold. */
-export function verifyCapabilityAdmission(
-  manifest: unknown,
-  durable: unknown,
-  identity: ReservationIdentity,
-  now = Date.now(),
-): Reservation {
-  const artifact = row(manifest);
-  const ledger = row(durable);
-  const persistence = row(artifact.persistence);
-  requireCondition(
-    artifact.schemaVersion === 2 && artifact.allocationAllowed === true,
-    'admission-not-allowed',
-  );
-  requireCondition(ledger.schemaVersion === 2, 'admission-ledger-version');
-  requireCondition(
-    persistence.status === 'verified' &&
-      typeof persistence.commit === 'string' &&
-      /^[a-f0-9]{40}$/.test(persistence.commit),
-    'admission-not-persisted',
-  );
-  for (const key of ['runId', 'attempt', 'sourceSha', 'testedSha'] as const)
-    requireCondition(artifact[key] === identity[key], 'admission-identity-mismatch');
-  const reservation = reservationForRun(artifact.admissionState, identity);
-  const current = reservationForRun(ledger.admissionState, identity);
-  requireCondition(
-    JSON.stringify(artifact.reservation) === JSON.stringify(reservation),
-    'admission-manifest-mismatch',
-  );
-  requireCondition(
-    JSON.stringify(current) === JSON.stringify(reservation),
-    'admission-durable-mismatch',
-  );
-  const policy = readAdmissionPolicy(artifact.policy);
-  const policyDigest = hash(JSON.stringify(policy));
-  requireCondition(policyDigest === reservation.policySha256, 'admission-policy-mismatch');
-  requireCondition(
-    hash(JSON.stringify(readAdmissionPolicy(row(ledger.latest).policy))) === policyDigest,
-    'admission-policy-mismatch',
-  );
-  requireCondition(
-    reservation.seconds === 900 * policy.chargedSecondsPerElapsedSecond,
-    'admission-reservation-too-small',
-  );
-  const age = now - Date.parse(reservation.reservedAt);
-  requireCondition(
-    Number.isFinite(age) && age >= 0 && age <= 24 * 60 * 60 * 1000,
-    'admission-stale',
-  );
-  return reservation;
-}
-
-/** Keep the provider callback behind the same guard used by both CLI modes. */
-export async function withCapabilityAdmission<T>(
-  manifest: unknown,
-  identity: ReservationIdentity,
-  readLedger: () => Promise<unknown>,
-  action: (reservation: Reservation) => Promise<T>,
-  now = Date.now(),
-): Promise<T> {
-  return action(verifyCapabilityAdmission(manifest, await readLedger(), identity, now));
 }
 
 /** Diagnose response shape without copying screenshot content or arbitrary provider fields. */
@@ -2600,7 +2529,11 @@ export async function runCapability(
   return result;
 }
 
-type Journal = ReservationIdentity & {
+/** The workflow run this journal belongs to; a journal never moves between runs. */
+export type RunIdentity = { runId: string; attempt: string; sourceSha: string; testedSha: string };
+/** Account sessions observed in BrowserStack's plan.json just before any device allocation. */
+export type AccountSessions = { runningSessions: number; queuedSessions: number };
+type Journal = RunIdentity & {
   schemaVersion: 1;
   scope: string;
   capabilityScope: CapabilityScope;
@@ -2608,14 +2541,13 @@ type Journal = ReservationIdentity & {
   status: 'prepared' | 'running' | 'passed' | 'failed' | 'incomplete';
   fullMatrixStatus: CapabilityOutcome;
   stage: string;
-  reservationId: string;
-  receipt: ReservationReceipt;
+  preparedAt: string;
+  accountSessions?: AccountSessions;
   lanes: CapabilityResult[];
   failure?: string;
 };
 export function preparedCapabilityJournal(
-  identity: ReservationIdentity,
-  reservation: Reservation,
+  identity: RunIdentity,
   now = Date.now(),
   scope: CapabilityScope = 'all',
 ): Journal {
@@ -2626,35 +2558,28 @@ export function preparedCapabilityJournal(
     ...identity,
     scope:
       scope === 'chrome-navigation-diagnostic'
-        ? 'Chrome-only location.assign navigation and failure-only document observation with the unchanged 900-second reservation. Selected-scope execution is reported separately from full-matrix coverage. All three lanes remain reported; Firefox has an observed route limitation and Safari is not run. Full-matrix coverage remains incomplete when Chrome passes.'
+        ? 'Chrome-only location.assign navigation and failure-only document observation. Selected-scope execution is reported separately from full-matrix coverage. All three lanes remain reported; Firefox has an observed route limitation and Safari is not run. Full-matrix coverage remains incomplete when Chrome passes.'
         : selection.authored
-          ? `${selection.browser}-only authored ${selection.context} acceptance with a 780-second operational bound and the unchanged 900-second reservation. Selected-scope execution is separate from the three-lane capability aggregate. Other browsers are not allocated. ${selection.context === 'ordinary-tab' ? 'Reopen is a verified cold page reload, not OS termination or a native process restart; native desktop coverage owns that alternative observation. Installed-context acceptance is not run by this scope.' : 'The existing actual installed capability prerequisites must pass before authored continuation. Ordinary-tab acceptance is not run by this scope.'} A selected pass does not complete every contract in the approved coverage map.`
-          : 'Two-lane Chrome/Safari capability remediation with the unchanged 900-second reservation. All three required lanes remain reported; Firefox is explicitly blocked by prior evidence. This is not full-matrix acceptance.',
+          ? `${selection.browser}-only authored ${selection.context} acceptance with a 780-second operational bound. Selected-scope execution is separate from the three-lane capability aggregate. Other browsers are not allocated. ${selection.context === 'ordinary-tab' ? 'Reopen is a verified cold page reload, not OS termination or a native process restart; native desktop coverage owns that alternative observation. Installed-context acceptance is not run by this scope.' : 'The existing actual installed capability prerequisites must pass before authored continuation. Ordinary-tab acceptance is not run by this scope.'} A selected pass does not complete every contract in the approved coverage map.`
+          : 'Two-lane Chrome/Safari capability remediation. All three required lanes remain reported; Firefox is explicitly blocked by prior evidence. This is not full-matrix acceptance.',
     capabilityScope: scope,
     allocationPlan: scope === 'all' ? 'two-lane-chrome-safari-remediation' : scope,
     status: 'prepared',
     fullMatrixStatus: 'incomplete',
     stage: 'before-device-execution',
-    reservationId: reservation.id,
-    receipt: {
-      ...identity,
-      finishedAt: new Date(now).toISOString(),
-      sessionIds: [],
-      uncertainAllocation: false,
-    },
+    preparedAt: new Date(now).toISOString(),
     lanes: [],
   };
 }
+/** Only an unused journal prepared by this run attempt for this scope may start devices. */
 export function readPreparedCapabilityJournal(
   value: unknown,
-  identity: ReservationIdentity,
-  reservation: Reservation,
+  identity: RunIdentity,
   now = Date.now(),
   scope: CapabilityScope = 'all',
 ): Journal {
   readCapabilityScope(scope);
   const journal = row(value);
-  const receipt = row(journal.receipt);
   requireCondition(
     journal.schemaVersion === 1 &&
       journal.capabilityScope === scope &&
@@ -2662,47 +2587,42 @@ export function readPreparedCapabilityJournal(
       journal.status === 'prepared' &&
       journal.fullMatrixStatus === 'incomplete' &&
       journal.stage === 'before-device-execution' &&
-      journal.reservationId === reservation.id &&
+      journal.accountSessions === undefined &&
       Array.isArray(journal.lanes) &&
       journal.lanes.length === 0,
     'journal-already-used',
   );
   requireCondition(
-    receipt.uncertainAllocation === false &&
-      Array.isArray(receipt.sessionIds) &&
-      receipt.sessionIds.length === 0,
-    'journal-already-used',
-  );
-  requireCondition(
-    Object.keys(receipt).sort().join(',') ===
-      [
-        'runId',
-        'attempt',
-        'sourceSha',
-        'testedSha',
-        'finishedAt',
-        'sessionIds',
-        'uncertainAllocation',
-      ]
-        .sort()
-        .join(','),
-    'journal-invalid',
-  );
-  requireCondition(
-    typeof receipt.finishedAt === 'string' &&
-      new Date(Date.parse(receipt.finishedAt)).toISOString() === receipt.finishedAt &&
-      Date.parse(receipt.finishedAt) >= Date.parse(reservation.reservedAt) &&
-      Date.parse(receipt.finishedAt) <= now,
+    typeof journal.preparedAt === 'string' &&
+      new Date(Date.parse(journal.preparedAt)).toISOString() === journal.preparedAt &&
+      Date.parse(journal.preparedAt) <= now,
     'journal-invalid',
   );
   for (const key of ['runId', 'attempt', 'sourceSha', 'testedSha'] as const)
-    requireCondition(
-      journal[key] === identity[key] && receipt[key] === identity[key],
-      'journal-identity-mismatch',
-    );
+    requireCondition(journal[key] === identity[key], 'journal-identity-mismatch');
   return journal as Journal;
 }
-function identityFromEnvironment(): ReservationIdentity {
+const sessionCount = (value: unknown) =>
+  typeof value === 'number' && Number.isSafeInteger(value) && value >= 0 ? value : null;
+/**
+ * A collision guard, not a budget: BrowserStack's own plan.json must report no
+ * running or queued Automate session before this run allocates a device. The
+ * counts are recorded first, so a refusal still leaves its evidence.
+ */
+export async function checkIdleAccount(
+  api: (path: string) => Promise<unknown>,
+  record: (sessions: AccountSessions) => Promise<void>,
+): Promise<AccountSessions> {
+  const plan = row(await api('plan.json'));
+  const runningSessions = sessionCount(plan.parallel_sessions_running);
+  const queuedSessions = sessionCount(plan.queued_sessions);
+  requireCondition(runningSessions !== null && queuedSessions !== null, 'account-sessions-unknown');
+  const sessions = { runningSessions, queuedSessions };
+  await record(sessions);
+  requireCondition(runningSessions === 0 && queuedSessions === 0, 'account-busy');
+  return sessions;
+}
+function identityFromEnvironment(): RunIdentity {
   return {
     runId: process.env.GITHUB_RUN_ID ?? '',
     attempt: process.env.GITHUB_RUN_ATTEMPT ?? '',
@@ -2715,135 +2635,123 @@ async function main() {
   requireCondition(mode === 'prepare' || mode === 'run', 'invalid-mode');
   const scope = readCapabilityScope(process.env.BS_CAPABILITY_SCOPE);
   const identity = identityFromEnvironment();
-  const manifest = JSON.parse(
-    await readFile('artifacts/browserstack-admission.json', 'utf8'),
-  ) as unknown;
-  const ledger = ledgerClient({
-    repository: process.env.GITHUB_REPOSITORY ?? '',
-    token: process.env.GITHUB_TOKEN ?? '',
-  });
-  await withCapabilityAdmission(
-    manifest,
+  await mkdir('artifacts', { recursive: true });
+  if (mode === 'prepare') {
+    const journal = preparedCapabilityJournal(identity, Date.now(), scope);
+    await writeFile(reportPath, `${JSON.stringify(journal, null, 2)}\n`, { flag: 'wx' });
+    return;
+  }
+  const lock = await open('artifacts/browserstack-capability.lock', 'wx');
+  await lock.close(); // Never remove this replay guard during this job.
+  const journal = readPreparedCapabilityJournal(
+    JSON.parse(await readFile(reportPath, 'utf8')),
     identity,
-    async () => (await ledger.read()).value,
-    async (reservation) => {
-      await mkdir('artifacts', { recursive: true });
-      if (mode === 'prepare') {
-        const journal = preparedCapabilityJournal(identity, reservation, Date.now(), scope);
-        await writeFile(reportPath, `${JSON.stringify(journal, null, 2)}\n`, { flag: 'wx' });
-        return;
-      }
-      const lock = await open('artifacts/browserstack-capability.lock', 'wx');
-      await lock.close(); // Never remove this replay guard during this job.
-      const journal = readPreparedCapabilityJournal(
-        JSON.parse(await readFile(reportPath, 'utf8')),
-        identity,
-        reservation,
-        Date.now(),
+    Date.now(),
+    scope,
+  );
+  const persist = async () => {
+    await writeFile(`${reportPath}.tmp`, `${JSON.stringify(journal, null, 2)}\n`);
+    await rename(`${reportPath}.tmp`, reportPath);
+  };
+  journal.stage = 'device-execution';
+  journal.status = 'running';
+  await persist();
+  const directory = await mkdtemp(join(tmpdir(), 'spinel-browserstack-capability-'));
+  try {
+    const localIdentifier = process.env.BROWSERSTACK_LOCAL_IDENTIFIER ?? '';
+    requireCondition(Boolean(localIdentifier), 'missing-local-identifier');
+    const client = clientFor(process.env.BS_USERNAME ?? '', process.env.BS_ACCESS_KEY ?? '');
+    const targets = targetsFromInventory(
+      await client.api('browsers.json', 'GET', undefined, { timeout: 15_000 }),
+    );
+    // Retain all three required lanes before any allocation, including when
+    // a later fixture or command fails before another lane can be visited.
+    journal.lanes = await Promise.all(
+      targets.map((target) =>
+        runCapabilityLane(
+          target,
+          async () =>
+            notRunLane(
+              target,
+              'before-lane-execution',
+              'This lane has not started; no fixture or session has been allocated.',
+            ),
+          scope,
+        ),
+      ),
+    );
+    await persist();
+    // BrowserStack's own limit is the only spend stop; this only refuses to
+    // start beside another run's session (docs/offline.md#dispatching-browserstack-runs).
+    await checkIdleAccount(
+      (path) => client.api(path, 'GET', undefined, { timeout: 15_000 }),
+      async (sessions) => {
+        journal.accountSessions = sessions;
+        await persist();
+      },
+    );
+    await mkdir('artifacts/browserstack-capability', { recursive: true });
+    for (const [index, target] of targets.entries()) {
+      journal.lanes[index] = await runCapabilityLane(
+        target,
+        async () => {
+          let fixture: BrowserstackFixture;
+          try {
+            fixture = await createBrowserstackFixture(directory);
+          } catch {
+            return {
+              target,
+              status: 'failed',
+              startedAt: null,
+              stage: 'fixture-startup',
+              command: 'not-run',
+              allocation: 'not-started',
+              uncertainAllocation: false,
+              failure: 'capability-fixture-startup-failed',
+              observations: [],
+              nativeActions: [],
+              screenshots: [],
+              cleanup: {
+                network: 'not-allocated',
+                session: 'not-allocated',
+                fixture: 'startup-failed',
+              },
+            };
+          }
+          return runCapability(client, target, fixture, {
+            scope,
+            localIdentifier,
+            buildName: `SPN-090 ${scope} ${identity.runId}-${identity.attempt}`,
+            journal: async (lane) => {
+              journal.lanes[index] = lane;
+              await persist();
+            },
+            screenshot: async (name, data) => {
+              const path = `artifacts/browserstack-capability/${name}.png`;
+              await writeFile(path, Buffer.from(data, 'base64'));
+              return path;
+            },
+          });
+        },
         scope,
       );
-      const persist = async () => {
-        journal.receipt = {
-          ...identity,
-          finishedAt: new Date().toISOString(),
-          sessionIds: journal.lanes.flatMap((lane) => (lane.sessionId ? [lane.sessionId] : [])),
-          uncertainAllocation: journal.lanes.some((lane) => lane.uncertainAllocation),
-        };
-        await writeFile(`${reportPath}.tmp`, `${JSON.stringify(journal, null, 2)}\n`);
-        await rename(`${reportPath}.tmp`, reportPath);
-      };
-      journal.stage = 'device-execution';
-      journal.status = 'running';
       await persist();
-      const directory = await mkdtemp(join(tmpdir(), 'spinel-browserstack-capability-'));
-      try {
-        const localIdentifier = process.env.BROWSERSTACK_LOCAL_IDENTIFIER ?? '';
-        requireCondition(Boolean(localIdentifier), 'missing-local-identifier');
-        const client = clientFor(process.env.BS_USERNAME ?? '', process.env.BS_ACCESS_KEY ?? '');
-        const targets = targetsFromInventory(
-          await client.api('browsers.json', 'GET', undefined, { timeout: 15_000 }),
-        );
-        // Retain all three required lanes before any allocation, including when
-        // a later fixture or command fails before another lane can be visited.
-        journal.lanes = await Promise.all(
-          targets.map((target) =>
-            runCapabilityLane(
-              target,
-              async () =>
-                notRunLane(
-                  target,
-                  'before-lane-execution',
-                  'This lane has not started; no fixture or session has been allocated.',
-                ),
-              scope,
-            ),
-          ),
-        );
-        await persist();
-        await mkdir('artifacts/browserstack-capability', { recursive: true });
-        for (const [index, target] of targets.entries()) {
-          journal.lanes[index] = await runCapabilityLane(
-            target,
-            async () => {
-              let fixture: BrowserstackFixture;
-              try {
-                fixture = await createBrowserstackFixture(directory);
-              } catch {
-                return {
-                  target,
-                  status: 'failed',
-                  startedAt: null,
-                  stage: 'fixture-startup',
-                  command: 'not-run',
-                  allocation: 'not-started',
-                  uncertainAllocation: false,
-                  failure: 'capability-fixture-startup-failed',
-                  observations: [],
-                  nativeActions: [],
-                  screenshots: [],
-                  cleanup: {
-                    network: 'not-allocated',
-                    session: 'not-allocated',
-                    fixture: 'startup-failed',
-                  },
-                };
-              }
-              return runCapability(client, target, fixture, {
-                scope,
-                localIdentifier,
-                buildName: `SPN-090 ${scope} ${identity.runId}-${identity.attempt}`,
-                journal: async (lane) => {
-                  journal.lanes[index] = lane;
-                  await persist();
-                },
-                screenshot: async (name, data) => {
-                  const path = `artifacts/browserstack-capability/${name}.png`;
-                  await writeFile(path, Buffer.from(data, 'base64'));
-                  return path;
-                },
-              });
-            },
-            scope,
-          );
-          await persist();
-        }
-        journal.stage = 'finished';
-        const outcome = capabilityRunOutcome(journal.lanes, scope);
-        journal.status = outcome.status;
-        journal.fullMatrixStatus = outcome.fullMatrixStatus;
-        process.exitCode = outcome.exitCode;
-      } catch (error) {
-        journal.failure = failure(error);
-        journal.stage = 'failed';
-        journal.status = 'failed';
-        journal.fullMatrixStatus = capabilityOutcome(journal.lanes);
-        process.exitCode = 1;
-      } finally {
-        await rm(directory, { recursive: true, force: true });
-        await persist();
-      }
-    },
-  );
+    }
+    journal.stage = 'finished';
+    const outcome = capabilityRunOutcome(journal.lanes, scope);
+    journal.status = outcome.status;
+    journal.fullMatrixStatus = outcome.fullMatrixStatus;
+    process.exitCode = outcome.exitCode;
+  } catch (error) {
+    journal.failure = failure(error);
+    journal.stage = 'failed';
+    journal.status = 'failed';
+    journal.fullMatrixStatus = capabilityOutcome(journal.lanes);
+    process.exitCode = 1;
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+    await persist();
+  }
 }
 
 if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url)
