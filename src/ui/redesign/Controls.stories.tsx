@@ -125,6 +125,13 @@ export const LongModalTitle: Story = {
     const title = 'Delete the household planning folder and all its contents permanently?';
     const dialog = await page.findByRole('dialog', { name: title });
     await assertDialogTitle(dialog, title);
+    const titleText = dialog.querySelector('.sp-modal-title-icon')!.nextElementSibling!;
+    const lines = titleText.ownerDocument.createRange();
+    lines.selectNodeContents(titleText);
+    await expect(
+      lines.getClientRects().length,
+      'This fixture exercises a wrapped title',
+    ).toBeGreaterThan(1);
     await assertDialogControls(dialog);
     await userEvent.keyboard('{Escape}');
     // Base UI returns focus after its closing transition has completed.

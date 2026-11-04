@@ -5,7 +5,7 @@ import { useRef, useState } from 'react';
 import { NativeEditor } from './NativeEditors.tsx';
 import type { NativeEditorHandle, NativeEditorProps } from './NativeEditors.tsx';
 import { Button } from './Controls.tsx';
-import { assertDialogTitle } from '../../../.storybook/dialogBounds.ts';
+import { assertDialogCueAlignment, assertDialogTitle } from '../../../.storybook/dialogBounds.ts';
 import { MAKE_COPY_COMMAND } from '../../../web/nativeCopy.tsx';
 
 /** Observation belongs to the isolated story, never a production global. */
@@ -150,6 +150,7 @@ export const MakeCopyDialog: Story = {
       await expect(cue).toBeVisible();
       await expect(cue).toHaveAttribute('aria-hidden', 'true');
       expect(cue?.textContent?.trim() || cue?.querySelector('svg')).toBeTruthy();
+      await assertDialogCueAlignment(cue);
     } else await assertDialogTitle(dialog, 'Make a copy');
     await expect(await within(dialog).findByRole('textbox', { name: 'Name' })).toHaveValue(
       'Autumn plans (copy)',
