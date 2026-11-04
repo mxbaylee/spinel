@@ -1,4 +1,9 @@
 import assert from 'node:assert/strict';
+import {
+  clickSafariPointer,
+  safariPointerIdentityScript,
+  safariPointerPostScript,
+} from './desktop-pointer.ts';
 import { execFile, spawn } from 'node:child_process';
 import type { ChildProcess } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
@@ -282,6 +287,7 @@ export function createDesktopBrowser(
   let safariTab: { windowId: number; tabIndex: number } | null = null;
   let safariCaptureDiagnostics = 0;
   let safariCleanupDiagnostics = 0;
+  let safariPointerDiagnostics = 0;
 
   function safariReference() {
     assert.ok(safariTab, 'The launched Safari tab has not been identified.');
@@ -720,104 +726,92 @@ export function createDesktopBrowser(
       }
       return;
     }
-    // System Events coordinate clicks perform accessibility actions, which do
-    // not initialize canvas selection. Quartz posts actual macOS pointer input.
-    // Native evidence showed a crash during JXA CFRelease after a successful post;
-    // its cause is unknown. Each helper owns at most two events, exits immediately
-    // after posting and is capped at 10 seconds; process exit reclaims allocations.
-    const post = (mode: 'move' | 'click', screenX: number, screenY: number) =>
-      command(
-        '/usr/bin/osascript',
-        [
-          '-l',
-          'JavaScript',
-          '-e',
-          `
-        console.log('pointer: importing frameworks');
-        ObjC.import('CoreGraphics');
-        console.log('pointer: frameworks imported');
-        function run(argv) {
-          var point = { x: Number(argv[1]), y: Number(argv[2]) };
-          console.log('pointer: preflight');
-          if (typeof $.CGPreflightPostEventAccess !== 'function')
-            ObjC.bindFunction('CGPreflightPostEventAccess', ['bool', []]);
-          var permitted = $.CGPreflightPostEventAccess();
-          console.log('pointer: post-event access ' + permitted);
-          if (!permitted) throw new Error('The native input host is not permitted to post pointer events.');
-          var types = argv[0] === 'move' ? [$.kCGEventMouseMoved] : [$.kCGEventLeftMouseDown, $.kCGEventLeftMouseUp];
-          types.forEach(function(type) {
-            console.log('pointer: creating event ' + type);
-            var event = $.CGEventCreateMouseEvent($(), type, point, $.kCGMouseButtonLeft);
-            console.log('pointer: validating event ' + type);
-            // CGEventRef is an opaque C pointer; JXA can expose Ref without ObjC's isNil.
-            if (!event || (typeof event.isNil === 'function' && event.isNil()))
-              throw new Error('Quartz did not return a nonnil bridged event: ' + Automation.getDisplayString(event, true));
-            var actualType = Number($.CGEventGetType(event));
-            if (actualType !== Number(type))
-              throw new Error('Quartz event type differs: expected ' + type + ', received ' + actualType);
-            var location = $.CGEventGetLocation(event);
-            var actualPoint = { x: Number(location.x), y: Number(location.y) };
-            console.log('pointer: validated event ' + actualType + ' at ' + JSON.stringify(actualPoint));
-            if (actualPoint.x !== point.x || actualPoint.y !== point.y)
-              throw new Error('Quartz event location differs: expected ' + JSON.stringify(point) + ', received ' + JSON.stringify(actualPoint));
-            console.log('pointer: posting event ' + type);
-            $.CGEventPost($.kCGHIDEventTap, event);
-            console.log('pointer: posted event ' + type);
-          });
-          return JSON.stringify({ mode: argv[0], point: point, posted: types.length });
-        }
-      `,
-          mode,
-          String(screenX),
-          String(screenY),
-        ],
-        10_000,
-      );
-    const bounds = (
-      await applescript(
-        `tell application "Safari" to get bounds of window id ${safariTab!.windowId}`,
-      )
-    )
-      .split(',')
-      .map(Number);
-    assert.ok(bounds.length === 4 && bounds.every(Number.isFinite));
-    const [left, top, right, bottom] = bounds;
-    assert.ok(right > left && bottom > top);
-    const screen = { x: Math.round((left + right) / 2), y: Math.round((top + bottom) / 2) };
-    const key = JSON.stringify(`__spinelPointer_${randomUUID().replaceAll('-', '')}`);
-    type Pointer = { x: number; y: number; trusted: boolean; target: boolean };
-    await evaluate(`(() => {
-      const element = document.querySelector(${JSON.stringify(selector)});
-      const state = globalThis[${key}] = {};
-      state.observe = event => { state[event.type] = { x: event.clientX, y: event.clientY, trusted: event.isTrusted, target: element.contains(event.target) }; };
-      addEventListener('mousemove', state.observe, true);
-      addEventListener('mousedown', state.observe, true);
-    })()`);
-    try {
-      // Observe a real move inside the current window to locate the viewport;
-      // this avoids guessing toolbar, border or sidebar offsets.
-      await post('move', screen.x, screen.y);
-      const moved = await poll(
-        () => evaluate<Pointer | null>(`globalThis[${key}].mousemove || null`),
-        Boolean,
-        'Safari did not receive native pointer movement',
-      );
-      assert.ok(moved?.trusted, 'Safari pointer movement must be trusted native input.');
-      await post('click', screen.x + point.x - moved.x, screen.y + point.y - moved.y);
-      const clicked = await poll(
-        () => evaluate<Pointer | null>(`globalThis[${key}].mousedown || null`),
-        Boolean,
-        'Safari did not receive the native pointer click',
-      );
-      assert.ok(clicked?.trusted && clicked.target, 'The native click did not reach the target.');
-      assert.ok(Math.abs(clicked.x - point.x) <= 1 && Math.abs(clicked.y - point.y) <= 1);
-    } finally {
-      await evaluate(`(() => {
-        const state = globalThis[${key}];
-        if (state) { removeEventListener('mousemove', state.observe, true); removeEventListener('mousedown', state.observe, true); delete globalThis[${key}]; }
-      })()`);
-    }
+    // Bound fixture evidence before sending input if a future caller loops.
+    assert.ok(++safariPointerDiagnostics <= 64, 'Safari pointer diagnostic limit exceeded.');
+    await clickSafariPointer(
+      {
+        evaluate,
+        poll,
+        identity: async () => {
+          assert.equal(
+            await processIdentity(browserPid!),
+            browserIdentity,
+            'The owned Safari process identity changed before pointer input.',
+          );
+          return JSON.parse(
+            await command(
+              '/usr/bin/osascript',
+              [
+                '-l',
+                'JavaScript',
+                '-e',
+                safariPointerIdentityScript,
+                String(browserPid),
+                String(safariTab!.windowId),
+                String(safariTab!.tabIndex),
+              ],
+              5000,
+            ),
+          );
+        },
+        post: async (mode, location, evidence) => {
+          evidence.mode = mode;
+          evidence.point = location;
+          evidence.timeoutMs = 10_000;
+          try {
+            const { stdout, stderr } = await run(
+              '/usr/bin/osascript',
+              [
+                '-l',
+                'JavaScript',
+                '-e',
+                safariPointerPostScript,
+                mode,
+                String(location.x),
+                String(location.y),
+              ],
+              { timeout: 10_000, maxBuffer: 64 * 1024 },
+            );
+            evidence.trace = stderr.slice(-8000);
+            evidence.result = JSON.parse(stdout);
+            assert.deepEqual(evidence.result, {
+              mode,
+              point: location,
+              posted: mode === 'move' ? 1 : 2,
+            });
+          } catch (error) {
+            const detail = error as Error & {
+              stderr?: string;
+              stdout?: string;
+              signal?: string;
+              killed?: boolean;
+            };
+            evidence.error = {
+              message: String(error).split('\n')[0].slice(0, 1000),
+              stderr: detail.stderr?.slice(-8000),
+              stdout: detail.stdout?.slice(-2000),
+              signal: detail.signal,
+              killed: detail.killed,
+            };
+            throw error;
+          }
+        },
+        record: async (evidence) => {
+          await appendFile(
+            join(outputDir, 'safari-pointer.jsonl'),
+            JSON.stringify({
+              browserPid,
+              target: safariTab,
+              ...evidence,
+            }) + '\n',
+          );
+        },
+      },
+      selector,
+      point,
+    );
   }
+
   async function goto(url: string) {
     assert.ok(browserPid, 'Start the browser before navigating.');
     const target = new URL(url).href;
