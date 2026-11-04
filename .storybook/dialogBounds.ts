@@ -1,4 +1,19 @@
-import { expect } from 'storybook/test';
+import { expect, within } from 'storybook/test';
+
+/** A decorative cue must not replace or duplicate the dialog's textual name. */
+export async function assertDialogTitle(dialog: HTMLElement, title: string) {
+  await expect(dialog).toHaveAccessibleName(title);
+  const heading = within(dialog).getByRole('heading', { name: title });
+  const cue = heading.querySelector('.sp-modal-title-icon');
+  await expect(heading).toBeVisible();
+  await expect(cue).toBeVisible();
+  await expect(cue).toHaveAttribute('aria-hidden', 'true');
+  await expect(cue?.textContent?.trim() || cue?.querySelector('svg')).toBeTruthy();
+  const bounds = heading.getBoundingClientRect();
+  await expect(bounds.left).toBeGreaterThanOrEqual(0);
+  await expect(bounds.right).toBeLessThanOrEqual(innerWidth + 1);
+  await expect(heading.scrollWidth).toBeLessThanOrEqual(heading.clientWidth + 1);
+}
 
 /** Portals must keep real target sizes without depending on a workspace ancestor. */
 export async function assertDialogControls(dialog: HTMLElement) {

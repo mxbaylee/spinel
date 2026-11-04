@@ -50,13 +50,15 @@ Production stories replace the old file dialogs/mutations/recovery, sharing,
 history/version names, formula authoring, profile/icon picker, authentication,
 admin/account actions, connections/tokens, tags, presence and import specimens.
 Unowned loading proposals are retired. SPN-087 removes obsolete fixture CSS and
-source later; it is not a blanket owner for obsolete visible stories. SPN-089
-checks production dialogs and their actual stories.
+source later; it is not a blanket owner for obsolete visible stories. 💬
+[SPN-089](SPN-089.md) checks production dialogs and their actual stories, with
+explicit title cues and named previews that leave the reviewed dialogs open.
 
 Appearance, shared Controls and Theme control already render shipped components
 and move into Current production with their existing IDs retained. Native
 editors remain under Native fixtures with their keyboard, viewer, snapshot and
-native-menu regression checks. Their isolated SDK setup is not the production
-Doc mobile wrapper. Retired-only mock walkthrough assertions and old
+native-menu regression checks. Their ordinary isolated SDK setup is not the production
+Doc mobile wrapper; the opt-in native Make a copy preview uses that production
+wrapper and addon with local API fixtures. Retired-only mock walkthrough assertions and old
 before/proposed report sections are removed; surviving production and native
 checks remain.

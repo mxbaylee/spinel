@@ -64,6 +64,13 @@ async function openNativeCopy(page: Page, mobile = false, info?: TestInfo) {
     has: page.getByRole('form', { name: 'Make a copy', exact: true }),
   });
   await expect(dialog).toBeVisible();
+  await expect(dialog).toHaveAccessibleName('Make a copy');
+  if (!mobile)
+    await expect(dialog.getByRole('heading', { name: 'Make a copy', exact: true })).toBeVisible();
+  // The SDK mobile drawer has a plain title region; the addon still names its dialog.
+  await expect(dialog.locator('.sp-modal-title')).toHaveText('Make a copy');
+  await expect(dialog.locator('.sp-modal-title-icon')).toHaveAttribute('aria-hidden', 'true');
+  await expect(dialog.locator('.sp-modal-title-icon')).toBeVisible();
   await expect(dialog.getByRole('textbox', { name: 'Name', exact: true })).toBeVisible();
   return dialog;
 }

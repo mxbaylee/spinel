@@ -84,7 +84,7 @@ export function EditorTools({
         <Modal
           title={panel}
           onBack={() => setPanel(null)}
-          icon={panel === 'Versions' ? 'history' : panel === 'Formulas' ? 'info' : 'download'}
+          icon={panel === 'Versions' ? 'history' : panel === 'Formulas' ? 'formula' : 'download'}
           open
           onOpenChange={(open) => {
             if (!open) setPanel(null);

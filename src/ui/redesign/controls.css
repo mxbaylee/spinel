@@ -186,6 +186,8 @@
   display: inline-flex;
   flex: 0 0 20px;
   margin-top: 3px;
+  font-size: 20px;
+  line-height: 20px;
   color: var(--sp-muted);
 }
 .sp-modal-heading > button {

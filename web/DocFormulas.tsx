@@ -1,7 +1,7 @@
 import { maintenanceFetch } from './maintenanceFetch.ts';
 import { useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Modal } from '../src/ui/redesign/Controls.tsx';
+import { Modal, ModalTitleContent } from '../src/ui/redesign/Controls.tsx';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import {
   completeFormula,
@@ -159,6 +159,7 @@ export function FormulaDialog({
   const [suggestion, setSuggestion] = useState(0);
   const [focused, setFocused] = useState(false);
   const suggestionId = useId();
+  const titleId = useId();
   const [chosen, setChosen] = useState<{
     start: number;
     itemId: string;
@@ -471,13 +472,15 @@ export function FormulaDialog({
     <dialog
       ref={dialog}
       className="formula-dialog"
-      aria-label={initial ? 'Edit formula' : 'Insert formula'}
+      aria-labelledby={titleId}
       onCancel={(event) => {
         event.preventDefault();
         close();
       }}
     >
-      <h2>{initial ? 'Edit formula' : 'Insert formula'}</h2>
+      <h2 id={titleId} className="sp-modal-title">
+        <ModalTitleContent title={initial ? 'Edit formula' : 'Insert formula'} emoji="🧮" />
+      </h2>
       <p>A single value appears inline. A range or array becomes a table.</p>
       <form
         onSubmit={(event) => {
@@ -721,7 +724,7 @@ export function FormulaReadout({
           </button>
           <Modal
             title="Formulas"
-            icon="info"
+            icon="formula"
             open={open}
             onOpenChange={setOpen}
             onBack={() => setOpen(false)}

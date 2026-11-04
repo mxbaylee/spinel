@@ -180,31 +180,57 @@ const modalIcons = {
   upload: 'upload',
   download: 'download',
   info: 'info',
+  shapes: 'shapes',
+  pages: 'panel-left',
+  search: 'search',
+  formula: 'square-function',
 } as const;
 
-export function Modal({
-  title,
-  icon = 'info',
-  description,
-  trigger,
-  children,
-  open,
-  onOpenChange,
-  dismissDisabled = false,
-  onBack,
-  finalFocus,
-}: {
-  title: string;
-  icon?: keyof typeof modalIcons | EntityKind;
-  description?: string;
-  trigger?: string;
-  children: ReactNode;
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  dismissDisabled?: boolean;
-  onBack?: () => void;
-  finalFocus?: () => HTMLElement | boolean | null;
-}) {
+/** Every dialog chooses a cue; decoration never becomes its accessible name. */
+export type ModalTitleProps = { title: string } & (
+  { icon: keyof typeof modalIcons | EntityKind; emoji?: never } | { emoji: string; icon?: never }
+);
+
+/** Shared by the standard modal and native dialogs that own their focus lifecycle. */
+export function ModalTitleContent({ title, icon, emoji }: ModalTitleProps) {
+  return (
+    <>
+      <span className="sp-modal-title-icon" aria-hidden="true">
+        {emoji !== undefined ? (
+          emoji
+        ) : icon === 'doc' || icon === 'sheet' || icon === 'space' ? (
+          <EntityIcon kind={icon} size={20} />
+        ) : (
+          <ProfileIcon icon={`lucide:${modalIcons[icon]}`} size={20} />
+        )}
+      </span>
+      <span>{title}</span>
+    </>
+  );
+}
+
+export function Modal(
+  props: ModalTitleProps & {
+    description?: string;
+    trigger?: string;
+    children: ReactNode;
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
+    dismissDisabled?: boolean;
+    onBack?: () => void;
+    finalFocus?: () => HTMLElement | boolean | null;
+  },
+) {
+  const {
+    description,
+    trigger,
+    children,
+    open,
+    onOpenChange,
+    dismissDisabled = false,
+    onBack,
+    finalFocus,
+  } = props;
   return (
     <Dialog.Root
       open={open}
@@ -232,14 +258,7 @@ export function Modal({
               </button>
             )}
             <Dialog.Title className="sp-modal-title">
-              <span className="sp-modal-title-icon" aria-hidden="true">
-                {icon === 'doc' || icon === 'sheet' || icon === 'space' ? (
-                  <EntityIcon kind={icon} size={20} />
-                ) : (
-                  <ProfileIcon icon={`lucide:${modalIcons[icon]}`} size={20} />
-                )}
-              </span>
-              <span>{title}</span>
+              <ModalTitleContent {...props} />
             </Dialog.Title>
             <Dialog.Close
               className="sp-control"

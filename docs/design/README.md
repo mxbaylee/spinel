@@ -235,9 +235,14 @@ the button.
 Sharing, tags, rename, move and confirmation all use a panel with a title, the
 form, and actions bottom right: the primary action, then Cancel. Escape cancels.
 A confirmation names the thing and the consequence: "Disable Sam Rivera? Their
-documents and shares are kept." Use the shared semantic title icon without
-duplicating the accessible name. Each screen migration applies it to the dialogs
-it touches; SPN-089 audits and fixes remaining omissions afterward.
+documents and shares are kept." 💬 Every app-owned modal supplies an explicit title
+cue: the shared `Modal` requires exactly one semantic `icon` or literal `emoji`,
+plus its textual `title`. There is no silent default. Keep the cue decorative and
+hidden from assistive technology so the text alone names the dialog. New dialogs
+use this existing component; native formula, picker, navigation and editor-addon
+owners reuse `ModalTitleContent` inside their own heading/title primitive to
+preserve their focus and pending-operation behavior. See the
+[SPN-089 decision and complete production preview inventory](../implementation/SPN-089.md).
 
 ### Chips and badges
 
