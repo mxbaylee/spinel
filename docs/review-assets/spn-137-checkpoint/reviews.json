@@ -1,0 +1,35 @@
+{
+  "source": "6c0080d5aa492e654a225b4d22073f0d251cfb4d",
+  "agentReviewOnly": true,
+  "reviews": [
+    {
+      "reviewer": "/root/review_a",
+      "score": 98,
+      "rubric": [
+        35,
+        25,
+        19,
+        9,
+        10
+      ],
+      "sourceFindings": [],
+      "verification": "Full diff, original ticket/personas/process, emitted scripts, all six original evidence hashes and screenshot; inspected local results, no runtime rerun",
+      "pending": "Native acceptance and current-head CI",
+      "hostedDisposition": "Sample 1 blocked at existing AppKit import before pointer/application acceptance. No evidence-backed in-scope repair or justified rerun. Keep draft; repair identity prerequisite under a new ticket with SPN-130 provenance."
+    },
+    {
+      "reviewer": "/root/review_b",
+      "score": 98,
+      "rubric": [
+        35,
+        25,
+        18,
+        10,
+        10
+      ],
+      "sourceFindings": [],
+      "verification": "Full diff and original evidence, independently reran all 28 pointer controls under serial watchdog: passed",
+      "pending": "Native acceptance and current-head CI"
+    }
+  ]
+}

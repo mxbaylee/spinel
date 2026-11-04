@@ -1,0 +1,230 @@
+{
+  "root": 40930,
+  "started": 1793771354495,
+  "elapsedMs": 2411,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 93888,
+  "peakKiB": 411600,
+  "live": [
+    {
+      "pid": 40930,
+      "parent": 40895,
+      "group": 40930,
+      "rssKiB": 92208,
+      "started": "Tue Nov  3 21:49:14 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn137-final-local-watchdog.json node /tmp/spn137-checks.ts"
+    },
+    {
+      "pid": 41479,
+      "parent": 40930,
+      "group": 40930,
+      "rssKiB": 1680,
+      "started": "Tue Nov  3 21:49:16 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 40930,
+      "parent": 40895,
+      "group": 40930,
+      "rssKiB": 92208,
+      "started": "Tue Nov  3 21:49:14 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn137-final-local-watchdog.json node /tmp/spn137-checks.ts"
+    },
+    {
+      "pid": 40949,
+      "parent": 40930,
+      "group": 40930,
+      "rssKiB": 1680,
+      "started": "Tue Nov  3 21:49:14 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 40975,
+      "parent": 40930,
+      "group": 40930,
+      "rssKiB": 81168,
+      "started": "Tue Nov  3 21:49:14 2026",
+      "command": "node /tmp/spn137-checks.ts"
+    },
+    {
+      "pid": 40994,
+      "parent": 40975,
+      "group": 40930,
+      "rssKiB": 61520,
+      "started": "Tue Nov  3 21:49:14 2026",
+      "command": "node --test scripts/ci/desktop-pointer.test.ts scripts/ci/desktop-safari-identity.test.ts scripts/ci/desktop-storage.test.ts scripts/ci/plan.test.ts scripts/ci/coverage-result.test.ts"
+    },
+    {
+      "pid": 40995,
+      "parent": 40994,
+      "group": 40930,
+      "rssKiB": 93280,
+      "started": "Tue Nov  3 21:49:14 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node --heap-prof-interval=524288 --watch-kill-signal=SIGTERM --inspect-publish-uid=stderr,http --test-timeout=0 --test-concurrency=0 --max-http-header-size=16384 --stack-trace-limit=10 --test-coverage-lines=0 --test-isolation=process --inspect-port=127.0.0.1:9229 --heapsnapshot-near-heap-limit=0 --test-coverage-functions=0 --test-coverage-branches=0 --cpu-prof-interval=1000 --report-signal=SIGUSR2 --experimental-addon-modules --use-largepages=off --network-family-autoselection-attempt-timeout=500 --secure-heap-min=2 --v8-pool-size=4 --secure-heap=0 --tls-cipher-list=TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384:DHE-RSA-AES256-SHA384:ECDHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA256:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA --node-snapshot --trace-event-file-pattern=node_trace.${rotation}.log scripts/ci/coverage-result.test.ts"
+    },
+    {
+      "pid": 41000,
+      "parent": 40995,
+      "group": 40930,
+      "rssKiB": 88864,
+      "started": "Tue Nov  3 21:49:14 2026",
+      "command": "(node)"
+    },
+    {
+      "pid": 41006,
+      "parent": 40930,
+      "group": 40930,
+      "rssKiB": 1680,
+      "started": "Tue Nov  3 21:49:14 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 41018,
+      "parent": 40995,
+      "group": 40930,
+      "rssKiB": 29840,
+      "started": "Tue Nov  3 21:49:15 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node /Users/mxbaylee/projects/spinel-spn-137/scripts/ci/coverage-result.ts browser"
+    },
+    {
+      "pid": 41024,
+      "parent": 40930,
+      "group": 40930,
+      "rssKiB": 1680,
+      "started": "Tue Nov  3 21:49:15 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 41035,
+      "parent": 40995,
+      "group": 40930,
+      "rssKiB": 53040,
+      "started": "Tue Nov  3 21:49:15 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node /Users/mxbaylee/projects/spinel-spn-137/scripts/ci/coverage-result.ts browser"
+    },
+    {
+      "pid": 41041,
+      "parent": 40930,
+      "group": 40930,
+      "rssKiB": 1680,
+      "started": "Tue Nov  3 21:49:15 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 41052,
+      "parent": 40995,
+      "group": 40930,
+      "rssKiB": 76800,
+      "started": "Tue Nov  3 21:49:15 2026",
+      "command": "(node)"
+    },
+    {
+      "pid": 41058,
+      "parent": 40930,
+      "group": 40930,
+      "rssKiB": 1680,
+      "started": "Tue Nov  3 21:49:15 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 41070,
+      "parent": 40995,
+      "group": 40930,
+      "rssKiB": 1328,
+      "started": "Tue Nov  3 21:49:15 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node /Users/mxbaylee/projects/spinel-spn-137/scripts/ci/coverage-result.ts unit"
+    },
+    {
+      "pid": 41076,
+      "parent": 40930,
+      "group": 40930,
+      "rssKiB": 1680,
+      "started": "Tue Nov  3 21:49:15 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 41123,
+      "parent": 40975,
+      "group": 40930,
+      "rssKiB": 62416,
+      "started": "Tue Nov  3 21:49:16 2026",
+      "command": "(node)"
+    },
+    {
+      "pid": 41129,
+      "parent": 40930,
+      "group": 40930,
+      "rssKiB": 1680,
+      "started": "Tue Nov  3 21:49:16 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 41174,
+      "parent": 40975,
+      "group": 40930,
+      "rssKiB": 61680,
+      "started": "Tue Nov  3 21:49:16 2026",
+      "command": "npm   "
+    },
+    {
+      "pid": 41180,
+      "parent": 40930,
+      "group": 40930,
+      "rssKiB": 1680,
+      "started": "Tue Nov  3 21:49:16 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 41218,
+      "parent": 40975,
+      "group": 40930,
+      "rssKiB": 78864,
+      "started": "Tue Nov  3 21:49:16 2026",
+      "command": "npm run backlog:pr --base origin/main --title 🖱️ SPN-137 Diagnose missing Safari pointer delivery after offline restart        "
+    },
+    {
+      "pid": 41230,
+      "parent": 41218,
+      "group": 40930,
+      "rssKiB": 97792,
+      "started": "Tue Nov  3 21:49:16 2026",
+      "command": "node scripts/backlog/cli.ts pr --base origin/main --title 🖱️ SPN-137 Diagnose missing Safari pointer delivery after offline restart"
+    },
+    {
+      "pid": 41236,
+      "parent": 40930,
+      "group": 40930,
+      "rssKiB": 1680,
+      "started": "Tue Nov  3 21:49:16 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 41418,
+      "parent": 41230,
+      "group": 40930,
+      "rssKiB": 7360,
+      "started": "Tue Nov  3 21:49:16 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 41424,
+      "parent": 40930,
+      "group": 40930,
+      "rssKiB": 1680,
+      "started": "Tue Nov  3 21:49:16 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 41479,
+      "parent": 40930,
+      "group": 40930,
+      "rssKiB": 1680,
+      "started": "Tue Nov  3 21:49:16 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

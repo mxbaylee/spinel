@@ -1,0 +1,108 @@
+[
+  {
+    "command": "node",
+    "args": [
+      "--test",
+      "scripts/ci/desktop-pointer.test.ts",
+      "scripts/ci/desktop-safari-identity.test.ts",
+      "scripts/ci/desktop-storage.test.ts",
+      "scripts/ci/plan.test.ts",
+      "scripts/ci/coverage-result.test.ts"
+    ],
+    "status": 0,
+    "signal": null,
+    "stdout": "✔ CLI binds same-run immutable plan digest/source and publishes all selected results (68.643334ms)\n✔ CLI failure records survive wrong identity, cancelled gate and missing selected evidence (288.773166ms)\n✔ browser aggregate cannot pass missing, skipped or failed selected sized restore evidence (239.19275ms)\n✔ unit aggregate requires every selected partition to succeed, retaining failed evidence (345.03475ms)\n✔ unit partitions may skip only with proven documentation inapplicability (174.484667ms)\n✔ posted coordinates, matching trusted delivery, identity and listener cleanup are retained (7.422458ms)\n✔ unrelated movement cannot supply a false viewport offset (2.162417ms)\n✔ missing move rejects without replay and removes its observers (2.260917ms)\n✔ unrelated move rejects without replay and removes its observers (1.82375ms)\n✔ untrusted move rejects without replay and removes its observers (1.807208ms)\n✔ missing click rejects without replay and removes its observers (1.8535ms)\n✔ wrong target rejects without replay and removes its observers (2.40125ms)\n✔ untrusted click rejects without replay and removes its observers (1.122542ms)\n✔ wrong page coordinates rejects without replay and removes its observers (0.924584ms)\n✔ wrong screen coordinates rejects without replay and removes its observers (0.963542ms)\n✔ obscured target after calibration refuses native click (0.864917ms)\n✔ unfocused target after calibration refuses native click (0.775584ms)\n✔ replace target after calibration refuses native click (0.802417ms)\n✔ move target after calibration refuses native click (0.726708ms)\n✔ changed native identity prevents posting to a different window (1.497291ms)\n✔ page replacement and secondary cleanup failures preserve the first posting error (0.522333ms)\n✔ cleanup failure alone cannot report a successful action (0.678292ms)\n✔ bounded observations retain a matching move even after the diagnostic event cap (0.753791ms)\n✔ native identity script rejects frontmost (0.589875ms)\n✔ native identity script rejects window (0.350083ms)\n✔ native identity script rejects tab (0.3615ms)\n✔ native identity script rejects minimized (0.3375ms)\n✔ native identity script rejects hidden (0.344459ms)\n✔ Quartz post script validates native events: none (0.519084ms)\n✔ Quartz post script validates native events: permission (0.323083ms)\n✔ Quartz post script validates native events: nil (0.323958ms)\n✔ Quartz post script validates native events: type (0.313833ms)\n✔ Quartz post script validates native events: location (0.319583ms)\n✔ identity phases cover lookup through validation before any Apple Event (11.956208ms)\n✔ wrong PID refuses teardown before sending a quit event (1.992875ms)\n✔ wrong bundle refuses teardown before sending a quit event (0.711833ms)\n✔ exited refuses teardown before sending a quit event (0.512458ms)\n✔ missing launch date refuses teardown before sending a quit event (0.811084ms)\n✔ PID reuse refuses teardown before sending a quit event (0.754417ms)\n✔ positively matched identity permits teardown (0.621083ms)\n✔ withheld launch identity records the exact unfinished phase (0.621166ms)\n✔ eight-second process timeout preserves its first cause and last phase (1.847166ms)\n✔ no script output is explicitly an osascript startup failure, never an owned identity (0.389917ms)\n✔ malformed diagnostic output cannot replace the original process failure (0.29675ms)\n✔ host-identity-parse retains the command's output and trace (0.203458ms)\n✔ host-identity-validation retains the command's output and trace (0.54425ms)\n✔ serialized browser deletion removes every store and proves the resulting state (5.572417ms)\n✔ workers pending names the first failing operation (0.54175ms)\n✔ workers rejection names the first failing operation (0.3775ms)\n✔ unregister pending names the first failing operation (2.205417ms)\n✔ unregister rejection names the first failing operation (5.75875ms)\n✔ cache-names pending names the first failing operation (1.041708ms)\n✔ cache-names rejection names the first failing operation (1.079375ms)\n✔ cache-delete pending names the first failing operation (0.682041ms)\n✔ cache-delete rejection names the first failing operation (0.703166ms)\n✔ database-delete pending names the first failing operation (0.630666ms)\n✔ database-delete rejection names the first failing operation (2.039666ms)\n✔ database-names pending names the first failing operation (1.068625ms)\n✔ database-names rejection names the first failing operation (0.691ms)\n✔ blocked IndexedDB fails immediately and retains that cause (0.515125ms)\n✔ a reported deletion success cannot conceal a retained database (0.437375ms)\n✔ synchronous storage rejection is retained without continuing to database deletion (0.598417ms)\n✔ crashed or timed-out driver propagates the first error without another diagnostic request (0.234167ms)\n✔ every PR edit runs full validation, including title/body, base and ambiguous payloads (5.380791ms)\n✔ service changes keep candidate correctness and all existing broad checks without historical comparisons (0.208416ms)\n✔ sized restore participates in the immutable plan and fails closed (1.323375ms)\n✔ dependency closure and unknown paths fail closed, including old rename/deleted sides (0.270875ms)\n✔ labels only add coverage; removal recomputes automatic requirements (0.155792ms)\n✔ main ranges, scheduled/manual backstops, unknown events and missing ranges (0.14175ms)\n✔ aggregates require selected success and explicit inapplicable skipped; known regression remains red (0.20775ms)\n✔ workflow keeps seven static code names and protected edit concurrency (0.251958ms)\n✔ phone ownership removes only eight ordinary cases from instrumented duplicate runs (1.460167ms)\nℹ tests 72\nℹ suites 0\nℹ pass 72\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 1231.274292\n",
+    "stderr": "",
+    "elapsedMs": 1266
+  },
+  {
+    "command": "node",
+    "args": [
+      "node_modules/typescript/bin/tsc",
+      "--ignoreConfig",
+      "--target",
+      "es2024",
+      "--lib",
+      "es2024,dom",
+      "--module",
+      "nodenext",
+      "--moduleResolution",
+      "nodenext",
+      "--types",
+      "node",
+      "--strict",
+      "--noEmit",
+      "--allowImportingTsExtensions",
+      "--erasableSyntaxOnly",
+      "--verbatimModuleSyntax",
+      "--skipLibCheck",
+      "scripts/ci/desktop-browser.ts",
+      "scripts/ci/desktop-pointer.ts",
+      "scripts/ci/desktop-pointer.test.ts"
+    ],
+    "status": 0,
+    "signal": null,
+    "stdout": "",
+    "stderr": "",
+    "elapsedMs": 134
+  },
+  {
+    "command": "node",
+    "args": [
+      "node_modules/oxlint/bin/oxlint",
+      "--deny-warnings",
+      "scripts/ci/desktop-browser.ts",
+      "scripts/ci/desktop-pointer.ts",
+      "scripts/ci/desktop-pointer.test.ts"
+    ],
+    "status": 0,
+    "signal": null,
+    "stdout": "",
+    "stderr": "",
+    "elapsedMs": 67
+  },
+  {
+    "command": "node",
+    "args": [
+      "node_modules/prettier/bin/prettier.cjs",
+      "--check",
+      "scripts/ci/desktop-browser.ts",
+      "scripts/ci/desktop-pointer.ts",
+      "scripts/ci/desktop-pointer.test.ts"
+    ],
+    "status": 0,
+    "signal": null,
+    "stdout": "Checking formatting...\nAll matched files use Prettier code style!\n",
+    "stderr": "",
+    "elapsedMs": 182
+  },
+  {
+    "command": "npm",
+    "args": [
+      "run",
+      "backlog:check"
+    ],
+    "status": 0,
+    "signal": null,
+    "stdout": "\n> backlog:check\n> node scripts/backlog/cli.ts check\n\nwarning: SPN-038.md: 70 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-068.md: 66 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-087.md: 61 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-089.md: 63 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-090.md: 73 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-093.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-094.md: 64 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-098.md: 69 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-099.md: 69 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-106.md: 62 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-110.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-114.md: 52 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-119.md: 58 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-120.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-122.md: 57 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-123.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: Grooming reminder: 14 tickets completed since 2026-10-29; review with the owner when they choose. Work may continue.\nbacklog ok: 21 open tickets\n",
+    "stderr": "",
+    "elapsedMs": 216
+  },
+  {
+    "command": "npm",
+    "args": [
+      "run",
+      "backlog:pr",
+      "--",
+      "--base",
+      "origin/main",
+      "--title",
+      "🖱️ SPN-137 Diagnose missing Safari pointer delivery after offline restart"
+    ],
+    "status": 0,
+    "signal": null,
+    "stdout": "\n> backlog:pr\n> node scripts/backlog/cli.ts pr --base origin/main --title 🖱️ SPN-137 Diagnose missing Safari pointer delivery after offline restart\n\npull request ok\n",
+    "stderr": "",
+    "elapsedMs": 402
+  }
+]

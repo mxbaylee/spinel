@@ -1,0 +1,78 @@
+{
+  "source": "6c0080d5aa492e654a225b4d22073f0d251cfb4d",
+  "tested": "1ef685c0cb9b8f613806496356fa4167cb88dbdc",
+  "run": 41781852610,
+  "attempt": 1,
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 3572,
+      "sha256": "26affd68ffe1839610105bd6928073846ae474e4b81307cf3f9eb22f6367fa99"
+    },
+    {
+      "path": "chrome/acceptance.json",
+      "bytes": 48923,
+      "sha256": "76278ca41fb0616c83eea1a63f3fbab95457637402d9c32a3809889c2923c2d7"
+    },
+    {
+      "path": "chrome/versions.json",
+      "bytes": 824,
+      "sha256": "7c2d33aae36bdc274fb002ba60e329702739fa4c743bf8ea3d9cc7389708888c"
+    },
+    {
+      "path": "ci-jobs-checkpoint.json",
+      "bytes": 81454,
+      "sha256": "058bfa46bcd5b2a0b8414c8ff72facd4d4162d1c23d93eafb53a5a23335e034a"
+    },
+    {
+      "path": "firefox/acceptance.json",
+      "bytes": 49867,
+      "sha256": "d83ea26afe5aea1f4228c93047bb5273a185568d8ece329aceac063c0ef46cd5"
+    },
+    {
+      "path": "firefox/versions.json",
+      "bytes": 650,
+      "sha256": "fa45c701ab033ebdb67a9f59895f842f615e79a14e9b67516363d54e7aad1ddb"
+    },
+    {
+      "path": "reviews.json",
+      "bytes": 1144,
+      "sha256": "d73f456d5ca94576f83049554b9d154f71471798d6d16ba6d5e3d87074697dfc"
+    },
+    {
+      "path": "safari/safari/versions.json",
+      "bytes": 1136,
+      "sha256": "443c7822254931cd07f19465da3c02fed47cee47f5128d7670c79d5be22d3df6"
+    },
+    {
+      "path": "safari/safari-capability-failure.png",
+      "bytes": 197233,
+      "sha256": "ff6bb26554e787766be0ca164adb12b5477c0c345b36440827b819c1477cdf88"
+    },
+    {
+      "path": "safari/safari-profile-probe.json",
+      "bytes": 5963,
+      "sha256": "99c901ce2d52e40af34255f8412018372fe13a962e8d8a9a353d8ec96cbc627f"
+    },
+    {
+      "path": "safari-job.log",
+      "bytes": 31589,
+      "sha256": "1bc4286180ca4f4469e45cb17990e08f51f70abd41d4b14439967a3258c7a774"
+    },
+    {
+      "path": "spn137-final-local-watchdog.json",
+      "bytes": 7565,
+      "sha256": "401e9df578cd6fa1d438f7ecb0879d24941a0b6d2489b13694369e951a71b8e1"
+    },
+    {
+      "path": "spn137-local-checks.json",
+      "bytes": 10199,
+      "sha256": "6066110e25378d2fe1c9545c71f232bb05f318de6973206e559813b0177bbfa3"
+    },
+    {
+      "path": "spn137-review-b-watchdog.json",
+      "bytes": 1507,
+      "sha256": "e4a0cc29eb28a82c6569b03680037b64d8c52926fd874b70e5ea5c59ad9099d5"
+    }
+  ]
+}
