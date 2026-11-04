@@ -1,0 +1,26 @@
+{
+  "sourceSha": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+  "baseSha": "642eb32bb52dd7dd13b6582869ef9482910e04ec",
+  "disclosure": "Agent review only; both reviewers independent and nonimplementing",
+  "prePushReviews": [
+    {
+      "reviewer": "/root/spn120_review_a",
+      "score": 98,
+      "rubric": {"scope": 35, "correctnessDataAccess": 25, "regressionEvidence": 18, "ciOperations": 10, "maintainabilityComplexity": 10},
+      "findings": [],
+      "deduction": "Two evidence points withheld pending fresh integrated hosted acceptance; not a merge waiver.",
+      "independentVerification": "Retained bcc1c17 audit: all 24 raw first attempts, real repetition IDs, matching journals, no recovery/retry/dropped events, successful cleanup. 305ms; peak 89.4MiB.",
+      "assessment": "Exact-account verification, setup-only recovery, strict snapshot observations, process lifecycle and bounded cleanup retain assertions and first causes. Helpers have concrete callers; full routing and unprofiled latency owners preserved. All personas considered."
+    },
+    {
+      "reviewer": "/root/spn120_review_b",
+      "score": 98,
+      "rubric": {"scope": 35, "correctnessDataAccess": 25, "regressionEvidence": 18, "ciOperations": 10, "maintainabilityComplexity": 10},
+      "findings": [],
+      "deduction": "Two evidence points withheld pending fresh integrated hosted acceptance; not a merge waiver.",
+      "independentVerification": "Original baseline: 24 raw records using current validator, three ZIP hashes, source and canonical diagnostic-patch hashes. 210ms; peak 88.4MiB.",
+      "probeDisposition": "Initial review probe included a trailing newline in patch hash; corrected to producer's trimmed git diff convention. Review-probe error only; no source change.",
+      "assessment": "Real passkey/content/access assertions intact. Only one classified pre-feature session GET recovery; snapshot retries removed. Owned-process state fails closed. Routing, generated bookkeeping and bounded audit intact; no unnecessary framework or dependency. All personas considered."
+    }
+  ]
+}

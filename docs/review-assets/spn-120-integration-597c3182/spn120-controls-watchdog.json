@@ -1,0 +1,286 @@
+{
+  "root": 50243,
+  "started": 1793811873181,
+  "elapsedMs": 4607,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 95328,
+  "peakKiB": 585392,
+  "live": [
+    {
+      "pid": 50243,
+      "parent": 50183,
+      "group": 50243,
+      "rssKiB": 93664,
+      "started": "Wed Nov  4 09:04:33 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn120-controls-watchdog.json node --test scripts/ci/app-process.test.ts scripts/ci/fixture-audit.test.ts scripts/ci/fixture-evidence.test.ts scripts/ci/fixture-session.test.ts scripts/ci/fixture-session-http.test.ts"
+    },
+    {
+      "pid": 50543,
+      "parent": 50243,
+      "group": 50243,
+      "rssKiB": 1664,
+      "started": "Wed Nov  4 09:04:37 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 50243,
+      "parent": 50183,
+      "group": 50243,
+      "rssKiB": 93664,
+      "started": "Wed Nov  4 09:04:33 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn120-controls-watchdog.json node --test scripts/ci/app-process.test.ts scripts/ci/fixture-audit.test.ts scripts/ci/fixture-evidence.test.ts scripts/ci/fixture-session.test.ts scripts/ci/fixture-session-http.test.ts"
+    },
+    {
+      "pid": 50266,
+      "parent": 50243,
+      "group": 50243,
+      "rssKiB": 1664,
+      "started": "Wed Nov  4 09:04:33 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 50292,
+      "parent": 50243,
+      "group": 50243,
+      "rssKiB": 61328,
+      "started": "Wed Nov  4 09:04:33 2026",
+      "command": "node --test scripts/ci/app-process.test.ts scripts/ci/fixture-audit.test.ts scripts/ci/fixture-evidence.test.ts scripts/ci/fixture-session.test.ts scripts/ci/fixture-session-http.test.ts"
+    },
+    {
+      "pid": 50293,
+      "parent": 50292,
+      "group": 50243,
+      "rssKiB": 96240,
+      "started": "Wed Nov  4 09:04:33 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node --heap-prof-interval=524288 --watch-kill-signal=SIGTERM --inspect-publish-uid=stderr,http --test-timeout=0 --test-concurrency=0 --max-http-header-size=16384 --stack-trace-limit=10 --test-coverage-lines=0 --test-isolation=process --inspect-port=127.0.0.1:9229 --heapsnapshot-near-heap-limit=0 --test-coverage-functions=0 --test-coverage-branches=0 --cpu-prof-interval=1000 --report-signal=SIGUSR2 --experimental-addon-modules --use-largepages=off --network-family-autoselection-attempt-timeout=500 --secure-heap-min=2 --v8-pool-size=4 --secure-heap=0 --tls-cipher-list=TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384:DHE-RSA-AES256-SHA384:ECDHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA256:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA --node-snapshot --trace-event-file-pattern=node_trace.${rotation}.log scripts/ci/app-process.test.ts"
+    },
+    {
+      "pid": 50295,
+      "parent": 50292,
+      "group": 50243,
+      "rssKiB": 95664,
+      "started": "Wed Nov  4 09:04:33 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node --heap-prof-interval=524288 --watch-kill-signal=SIGTERM --inspect-publish-uid=stderr,http --test-timeout=0 --test-concurrency=0 --max-http-header-size=16384 --stack-trace-limit=10 --test-coverage-lines=0 --test-isolation=process --inspect-port=127.0.0.1:9229 --heapsnapshot-near-heap-limit=0 --test-coverage-functions=0 --test-coverage-branches=0 --cpu-prof-interval=1000 --report-signal=SIGUSR2 --experimental-addon-modules --use-largepages=off --network-family-autoselection-attempt-timeout=500 --secure-heap-min=2 --v8-pool-size=4 --secure-heap=0 --tls-cipher-list=TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384:DHE-RSA-AES256-SHA384:ECDHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA256:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA --node-snapshot --trace-event-file-pattern=node_trace.${rotation}.log scripts/ci/fixture-evidence.test.ts"
+    },
+    {
+      "pid": 50296,
+      "parent": 50292,
+      "group": 50243,
+      "rssKiB": 138416,
+      "started": "Wed Nov  4 09:04:33 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node --heap-prof-interval=524288 --watch-kill-signal=SIGTERM --inspect-publish-uid=stderr,http --test-timeout=0 --test-concurrency=0 --max-http-header-size=16384 --stack-trace-limit=10 --test-coverage-lines=0 --test-isolation=process --inspect-port=127.0.0.1:9229 --heapsnapshot-near-heap-limit=0 --test-coverage-functions=0 --test-coverage-branches=0 --cpu-prof-interval=1000 --report-signal=SIGUSR2 --experimental-addon-modules --use-largepages=off --network-family-autoselection-attempt-timeout=500 --secure-heap-min=2 --v8-pool-size=4 --secure-heap=0 --tls-cipher-list=TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384:DHE-RSA-AES256-SHA384:ECDHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA256:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA --node-snapshot --trace-event-file-pattern=node_trace.${rotation}.log scripts/ci/fixture-session-http.test.ts"
+    },
+    {
+      "pid": 50297,
+      "parent": 50292,
+      "group": 50243,
+      "rssKiB": 97296,
+      "started": "Wed Nov  4 09:04:33 2026",
+      "command": "(node)"
+    },
+    {
+      "pid": 50298,
+      "parent": 50293,
+      "group": 50243,
+      "rssKiB": 35616,
+      "started": "Wed Nov  4 09:04:33 2026",
+      "command": "(node)"
+    },
+    {
+      "pid": 50299,
+      "parent": 50295,
+      "group": 50243,
+      "rssKiB": 20944,
+      "started": "Wed Nov  4 09:04:33 2026",
+      "command": "(node)"
+    },
+    {
+      "pid": 50305,
+      "parent": 50243,
+      "group": 50243,
+      "rssKiB": 1664,
+      "started": "Wed Nov  4 09:04:33 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 50315,
+      "parent": 50293,
+      "group": 50243,
+      "rssKiB": 50128,
+      "started": "Wed Nov  4 09:04:33 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node --input-type=module --eval process.stdout.write(\"no readiness\"); process.stdin.resume();"
+    },
+    {
+      "pid": 50321,
+      "parent": 50243,
+      "group": 50243,
+      "rssKiB": 1664,
+      "started": "Wed Nov  4 09:04:33 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 50331,
+      "parent": 50293,
+      "group": 50243,
+      "rssKiB": 50112,
+      "started": "Wed Nov  4 09:04:33 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node --input-type=module --eval process.stdout.write(\"Spinel is running at http://localhost:39990\\n\"); process.stdin.resume();"
+    },
+    {
+      "pid": 50337,
+      "parent": 50243,
+      "group": 50243,
+      "rssKiB": 1664,
+      "started": "Wed Nov  4 09:04:34 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 50345,
+      "parent": 50293,
+      "group": 50243,
+      "rssKiB": 50176,
+      "started": "Wed Nov  4 09:04:34 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node --input-type=module --eval process.stdout.write(\"Spinel is running at http://localhost:3999\"); process.stdin.resume();"
+    },
+    {
+      "pid": 50351,
+      "parent": 50243,
+      "group": 50243,
+      "rssKiB": 1664,
+      "started": "Wed Nov  4 09:04:34 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 50361,
+      "parent": 50293,
+      "group": 50243,
+      "rssKiB": 432,
+      "started": "Wed Nov  4 09:04:34 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node --input-type=module --eval console.log(\"Spinel is running at http://localhost:3999\"); process.stdin.on('data', () => {\\012       console.error('ECONNRESET private-request'); process.exit(19);\\012     });"
+    },
+    {
+      "pid": 50367,
+      "parent": 50243,
+      "group": 50243,
+      "rssKiB": 1664,
+      "started": "Wed Nov  4 09:04:34 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 50376,
+      "parent": 50293,
+      "group": 50243,
+      "rssKiB": 50224,
+      "started": "Wed Nov  4 09:04:34 2026",
+      "command": "(node)"
+    },
+    {
+      "pid": 50382,
+      "parent": 50243,
+      "group": 50243,
+      "rssKiB": 1664,
+      "started": "Wed Nov  4 09:04:34 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 50395,
+      "parent": 50243,
+      "group": 50243,
+      "rssKiB": 1664,
+      "started": "Wed Nov  4 09:04:35 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 50411,
+      "parent": 50243,
+      "group": 50243,
+      "rssKiB": 1664,
+      "started": "Wed Nov  4 09:04:35 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 50424,
+      "parent": 50243,
+      "group": 50243,
+      "rssKiB": 1664,
+      "started": "Wed Nov  4 09:04:35 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 50437,
+      "parent": 50243,
+      "group": 50243,
+      "rssKiB": 1664,
+      "started": "Wed Nov  4 09:04:35 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 50452,
+      "parent": 50243,
+      "group": 50243,
+      "rssKiB": 1664,
+      "started": "Wed Nov  4 09:04:36 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 50465,
+      "parent": 50243,
+      "group": 50243,
+      "rssKiB": 1664,
+      "started": "Wed Nov  4 09:04:36 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 50478,
+      "parent": 50243,
+      "group": 50243,
+      "rssKiB": 1664,
+      "started": "Wed Nov  4 09:04:36 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 50491,
+      "parent": 50243,
+      "group": 50243,
+      "rssKiB": 1664,
+      "started": "Wed Nov  4 09:04:36 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 50504,
+      "parent": 50243,
+      "group": 50243,
+      "rssKiB": 1664,
+      "started": "Wed Nov  4 09:04:37 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 50517,
+      "parent": 50243,
+      "group": 50243,
+      "rssKiB": 1680,
+      "started": "Wed Nov  4 09:04:37 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 50530,
+      "parent": 50243,
+      "group": 50243,
+      "rssKiB": 1664,
+      "started": "Wed Nov  4 09:04:37 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 50543,
+      "parent": 50243,
+      "group": 50243,
+      "rssKiB": 1664,
+      "started": "Wed Nov  4 09:04:37 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

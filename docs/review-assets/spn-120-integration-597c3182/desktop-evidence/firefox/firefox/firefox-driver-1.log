@@ -1,0 +1,17 @@
+1793813045278	geckodriver	INFO	Listening on 127.0.0.1:49196
+1793813045489	mozrunner::runner	INFO	Running command: MOZ_CRASHREPORTER="1" MOZ_CRASHREPORTER_NO_REPORT="1" MOZ_CRASHREPORTER_SHUTDOWN="1" "/Applications/Firefox. ... nette" "--profile" "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile" "-foreground" "-no-remote"
+1793813047670	Marionette	INFO	Marionette enabled
+2026-11-04 17:24:07.911 Firefox GPU Helper[2497:11584] Failure on line 688 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-04 17:24:08.265 Firefox GPU Helper[2497:11597] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-04 17:24:08.265 Firefox GPU Helper[2497:11584] Error received in message reply handler: Connection invalid
+1793813049023	Marionette	INFO	Listening on port 49197
+1793813049138	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: Failed GL context creation for WebRender: 0
+[GFX1-]: Failed to connect WebRenderBridgeChild. isParent=true
+[GFX1-]: Fallback WR to SW-WR
+console.error: "Experiment desktop-release-rollout-show-relay-to-all-browsers-next-sign-up-modal-cta has unknown featureId: email-autocomplete-relay"
+console.error: "Experiment visual-card-updates has unknown featureId: newtabRefinedCardsLayout"
+console.error: "Experiment enable-nimbus-unenrollment-synchronization has unknown featureId: nimbusStore"
+console.error: "Experiment private-window-visual-refresh-design-change-only has unknown featureId: feltPrivacy"
+1793813075026	Marionette	INFO	Stopped listening on port 49197
+1793813075743	webdriver::server	INFO	Shutting down

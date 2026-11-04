@@ -1,0 +1,889 @@
+{
+  "config": {
+    "argv": [
+      "/opt/hostedtoolcache/node/26.12.1/x64/bin/node",
+      "/home/runner/work/spinel/spinel/node_modules/@playwright/test/cli.js",
+      "test",
+      "--project=development",
+      "--grep",
+      "phone Doc (light|dark) native pan, zoom and (editor|guest-viewer) behavior preserve the document",
+      "--repeat-each=2",
+      "--retries=0",
+      "--workers=1",
+      "--max-failures=0",
+      "--trace=retain-on-failure",
+      "--reporter=line,json,/home/runner/work/_temp/fixture-audit-reporter.ts"
+    ],
+    "configFile": "/home/runner/work/spinel/spinel/playwright.config.ts",
+    "rootDir": "/home/runner/work/spinel/spinel/e2e",
+    "failOnFlakyTests": true,
+    "forbidOnly": true,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "ci": {
+        "commitHref": "https://github.com/mxbaylee/spinel/commit/597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+        "commitHash": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+        "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41875292847"
+      },
+      "gitCommit": {
+        "shortHash": "597c318",
+        "hash": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+        "subject": "Integrate current main and preserve SPN-120 validation requirements",
+        "body": "Integrate current main and preserve SPN-120 validation requirements\n",
+        "author": {
+          "name": "Baylee Schmeisser",
+          "email": "github.mx@baylee.dev",
+          "time": 1793811944000
+        },
+        "committer": {
+          "name": "Baylee Schmeisser",
+          "email": "github.mx@baylee.dev",
+          "time": 1793811944000
+        },
+        "branch": "HEAD"
+      },
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/test-results/development",
+        "repeatEach": 2,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "commitHash": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41875292847"
+          },
+          "gitCommit": {
+            "shortHash": "597c318",
+            "hash": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "subject": "Integrate current main and preserve SPN-120 validation requirements",
+            "body": "Integrate current main and preserve SPN-120 validation requirements\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793811944000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793811944000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "development",
+        "name": "development",
+        "testDir": "/home/runner/work/spinel/spinel/e2e",
+        "testIgnore": [
+          "**/pwa.spec.ts",
+          "**/offline.spec.ts",
+          "**/offline-editing.spec.ts",
+          "**/offline-creation.spec.ts",
+          "**/offline-recovery.spec.ts",
+          "**/offline-device.spec.ts",
+          "**/offline-sign-out.spec.ts",
+          "**/offline-upgrade.spec.ts",
+          "**/supervised-restore.spec.ts",
+          "**/sync-client.spec.ts",
+          "**/doc-responsiveness*.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/test-results/development",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "commitHash": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41875292847"
+          },
+          "gitCommit": {
+            "shortHash": "597c318",
+            "hash": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "subject": "Integrate current main and preserve SPN-120 validation requirements",
+            "body": "Integrate current main and preserve SPN-120 validation requirements\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793811944000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793811944000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "production",
+        "name": "production",
+        "testDir": "/home/runner/work/spinel/spinel/e2e",
+        "testIgnore": [
+          "**/pwa.spec.ts",
+          "**/offline-editing.spec.ts",
+          "**/offline-creation.spec.ts",
+          "**/offline-recovery.spec.ts",
+          "**/offline-upgrade.spec.ts",
+          "**/supervised-restore.spec.ts",
+          "**/sync-client.spec.ts",
+          "**/doc-responsiveness*.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/test-results/development",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "commitHash": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41875292847"
+          },
+          "gitCommit": {
+            "shortHash": "597c318",
+            "hash": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "subject": "Integrate current main and preserve SPN-120 validation requirements",
+            "body": "Integrate current main and preserve SPN-120 validation requirements\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793811944000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793811944000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "sync-development",
+        "name": "sync-development",
+        "testDir": "/home/runner/work/spinel/spinel/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/sync-client.spec.ts",
+          "**/doc-mobile.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/test-results/development",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "commitHash": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41875292847"
+          },
+          "gitCommit": {
+            "shortHash": "597c318",
+            "hash": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "subject": "Integrate current main and preserve SPN-120 validation requirements",
+            "body": "Integrate current main and preserve SPN-120 validation requirements\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793811944000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793811944000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "sync-production",
+        "name": "sync-production",
+        "testDir": "/home/runner/work/spinel/spinel/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/sync-client.spec.ts",
+          "**/doc-mobile.spec.ts",
+          "**/offline-editing.spec.ts",
+          "**/offline-creation.spec.ts",
+          "**/offline-recovery.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/test-results/development",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "commitHash": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41875292847"
+          },
+          "gitCommit": {
+            "shortHash": "597c318",
+            "hash": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "subject": "Integrate current main and preserve SPN-120 validation requirements",
+            "body": "Integrate current main and preserve SPN-120 validation requirements\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793811944000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793811944000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "sync-soak-sheet",
+        "name": "sync-soak-sheet",
+        "testDir": "/home/runner/work/spinel/spinel/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/sync-client.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/test-results/development",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "commitHash": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41875292847"
+          },
+          "gitCommit": {
+            "shortHash": "597c318",
+            "hash": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "subject": "Integrate current main and preserve SPN-120 validation requirements",
+            "body": "Integrate current main and preserve SPN-120 validation requirements\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793811944000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793811944000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "sync-soak-doc",
+        "name": "sync-soak-doc",
+        "testDir": "/home/runner/work/spinel/spinel/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/sync-client.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/test-results/development",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "commitHash": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41875292847"
+          },
+          "gitCommit": {
+            "shortHash": "597c318",
+            "hash": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "subject": "Integrate current main and preserve SPN-120 validation requirements",
+            "body": "Integrate current main and preserve SPN-120 validation requirements\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793811944000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793811944000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "doc-responsiveness",
+        "name": "doc-responsiveness",
+        "testDir": "/home/runner/work/spinel/spinel/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/doc-responsiveness.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/test-results/development",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "commitHash": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41875292847"
+          },
+          "gitCommit": {
+            "shortHash": "597c318",
+            "hash": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "subject": "Integrate current main and preserve SPN-120 validation requirements",
+            "body": "Integrate current main and preserve SPN-120 validation requirements\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793811944000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793811944000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "doc-callback-lifetimes",
+        "name": "doc-callback-lifetimes",
+        "testDir": "/home/runner/work/spinel/spinel/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/doc-responsiveness-callbacks.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/test-results/development",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "commitHash": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41875292847"
+          },
+          "gitCommit": {
+            "shortHash": "597c318",
+            "hash": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "subject": "Integrate current main and preserve SPN-120 validation requirements",
+            "body": "Integrate current main and preserve SPN-120 validation requirements\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793811944000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793811944000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "offline-upgrade",
+        "name": "offline-upgrade",
+        "testDir": "/home/runner/work/spinel/spinel/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/offline-upgrade.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/test-results/development",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "commitHash": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41875292847"
+          },
+          "gitCommit": {
+            "shortHash": "597c318",
+            "hash": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "subject": "Integrate current main and preserve SPN-120 validation requirements",
+            "body": "Integrate current main and preserve SPN-120 validation requirements\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793811944000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793811944000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "supervised-restore",
+        "name": "supervised-restore",
+        "testDir": "/home/runner/work/spinel/spinel/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/supervised-restore.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/test-results/development",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "commitHash": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41875292847"
+          },
+          "gitCommit": {
+            "shortHash": "597c318",
+            "hash": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "subject": "Integrate current main and preserve SPN-120 validation requirements",
+            "body": "Integrate current main and preserve SPN-120 validation requirements\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793811944000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793811944000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "mobile-https",
+        "name": "mobile-https",
+        "testDir": "/home/runner/work/spinel/spinel/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/pwa.spec.ts",
+          "**/doc-mobile.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/runner/work/spinel/spinel/test-results/development",
+        "repeatEach": 2,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "commitHash": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41875292847"
+          },
+          "gitCommit": {
+            "shortHash": "597c318",
+            "hash": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+            "subject": "Integrate current main and preserve SPN-120 validation requirements",
+            "body": "Integrate current main and preserve SPN-120 validation requirements\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793811944000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1793811944000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "name": "development",
+        "testDir": "/home/runner/work/spinel/spinel/e2e",
+        "snapshotDir": "/home/runner/work/spinel/spinel/e2e",
+        "testIgnore": [
+          "**/pwa.spec.ts",
+          "**/offline.spec.ts",
+          "**/offline-editing.spec.ts",
+          "**/offline-creation.spec.ts",
+          "**/offline-recovery.spec.ts",
+          "**/offline-device.spec.ts",
+          "**/offline-sign-out.spec.ts",
+          "**/offline-upgrade.spec.ts",
+          "**/supervised-restore.spec.ts",
+          "**/sync-client.spec.ts",
+          "**/doc-responsiveness*.spec.ts"
+        ],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "screen": {
+            "width": 1920,
+            "height": 1080
+          },
+          "deviceScaleFactor": 1,
+          "isMobile": false,
+          "hasTouch": false,
+          "defaultBrowserType": "chromium",
+          "baseURL": "http://localhost:3100"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "development"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line"
+      ],
+      [
+        "json"
+      ],
+      [
+        "/home/runner/work/_temp/fixture-audit-reporter.ts"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "doc-phone-navigation.spec.ts",
+      "file": "doc-phone-navigation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "phone Doc light native pan, zoom and editor behavior preserve the document",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "development",
+              "projectName": "development",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 25323,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-04T17:13:32.538Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7dd7d36b1c104a24ca8b-4585046e84398f9d5443",
+          "file": "doc-phone-navigation.spec.ts",
+          "line": 214,
+          "column": 5
+        },
+        {
+          "title": "phone Doc dark native pan, zoom and editor behavior preserve the document",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "development",
+              "projectName": "development",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 22979,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-04T17:13:57.962Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7dd7d36b1c104a24ca8b-c8ac74dced9b93be918d",
+          "file": "doc-phone-navigation.spec.ts",
+          "line": 214,
+          "column": 5
+        },
+        {
+          "title": "phone Doc light native pan, zoom and guest-viewer behavior preserve the document",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "development",
+              "projectName": "development",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 31797,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-04T17:14:20.956Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7dd7d36b1c104a24ca8b-2281a647679863c311a3",
+          "file": "doc-phone-navigation.spec.ts",
+          "line": 214,
+          "column": 5
+        },
+        {
+          "title": "phone Doc dark native pan, zoom and guest-viewer behavior preserve the document",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "development",
+              "projectName": "development",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 31784,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-04T17:14:52.772Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7dd7d36b1c104a24ca8b-2f5a8b4dff2d8a7ceeed",
+          "file": "doc-phone-navigation.spec.ts",
+          "line": 214,
+          "column": 5
+        },
+        {
+          "title": "phone Doc light native pan, zoom and editor behavior preserve the document",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "development",
+              "projectName": "development",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 23559,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-04T17:15:25.211Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7dd7d36b1c104a24ca8b-baa30983bd59af2f99ff",
+          "file": "doc-phone-navigation.spec.ts",
+          "line": 214,
+          "column": 5
+        },
+        {
+          "title": "phone Doc dark native pan, zoom and editor behavior preserve the document",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "development",
+              "projectName": "development",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 23119,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-04T17:15:48.871Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7dd7d36b1c104a24ca8b-01cf4693b73a1b80e3ad",
+          "file": "doc-phone-navigation.spec.ts",
+          "line": 214,
+          "column": 5
+        },
+        {
+          "title": "phone Doc light native pan, zoom and guest-viewer behavior preserve the document",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "development",
+              "projectName": "development",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 31093,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-04T17:16:12.006Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7dd7d36b1c104a24ca8b-7e4892e56c09f5f88d51",
+          "file": "doc-phone-navigation.spec.ts",
+          "line": 214,
+          "column": 5
+        },
+        {
+          "title": "phone Doc dark native pan, zoom and guest-viewer behavior preserve the document",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "development",
+              "projectName": "development",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 32081,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-04T17:16:43.128Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7dd7d36b1c104a24ca8b-c8510d120689414e6da9",
+          "file": "doc-phone-navigation.spec.ts",
+          "line": 214,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-04T17:13:26.303Z",
+    "duration": 229140.76799999998,
+    "expected": 8,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

@@ -1,0 +1,1306 @@
+{
+  "inspection": {
+    "status": "recognized",
+    "action": "none",
+    "process": {
+      "pid": 2488,
+      "name": "firefox",
+      "bundleIdentifier": "org.mozilla.firefox",
+      "applicationRole": "AXApplication"
+    },
+    "browserChromeObserved": true,
+    "observedText": "Allow localhost:8176 to store data in persistent storage?",
+    "nodes": [
+      {
+        "path": [
+          0
+        ],
+        "role": "AXWindow",
+        "subrole": "AXStandardWindow",
+        "text": [
+          "Desktop normal sheet — Spinel",
+          "standard window"
+        ],
+        "contentText": [
+          "Desktop normal sheet — Spinel"
+        ],
+        "enabled": null,
+        "position": [
+          4,
+          31
+        ],
+        "size": [
+          1280,
+          677
+        ]
+      },
+      {
+        "path": [
+          0,
+          0
+        ],
+        "role": "AXGroup",
+        "subrole": "AXUnknown",
+        "text": [
+          "Desktop normal sheet — Spinel"
+        ],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          4,
+          31
+        ],
+        "size": [
+          1280,
+          677
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          0
+        ],
+        "role": "AXPopover",
+        "subrole": "AXApplicationAlert",
+        "text": [],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          373,
+          96
+        ],
+        "size": [
+          405,
+          130
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "role": "AXGroup",
+        "subrole": "AXUnknown",
+        "text": [
+          "group"
+        ],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          390,
+          113
+        ],
+        "size": [
+          371,
+          16
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "role": "AXStaticText",
+        "subrole": "AXUnknown",
+        "text": [
+          "Allow",
+          "text"
+        ],
+        "contentText": [
+          "Allow"
+        ],
+        "enabled": true,
+        "position": [
+          390,
+          113
+        ],
+        "size": [
+          38,
+          16
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "role": "AXStaticText",
+        "subrole": "AXUnknown",
+        "text": [
+          "localhost:8176",
+          "text"
+        ],
+        "contentText": [
+          "localhost:8176"
+        ],
+        "enabled": true,
+        "position": [
+          428,
+          113
+        ],
+        "size": [
+          93,
+          16
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          0,
+          0,
+          2
+        ],
+        "role": "AXStaticText",
+        "subrole": "AXUnknown",
+        "text": [
+          "to store data in persistent storage?",
+          "text"
+        ],
+        "contentText": [
+          "to store data in persistent storage?"
+        ],
+        "enabled": true,
+        "position": [
+          521,
+          113
+        ],
+        "size": [
+          225,
+          16
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "role": "AXLink",
+        "subrole": "",
+        "text": [
+          "Learn more",
+          "link"
+        ],
+        "contentText": [
+          "Learn more"
+        ],
+        "enabled": true,
+        "position": [
+          390,
+          135
+        ],
+        "size": [
+          68,
+          16
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "role": "AXStaticText",
+        "subrole": "AXUnknown",
+        "text": [
+          "Learn more",
+          "text"
+        ],
+        "contentText": [
+          "Learn more"
+        ],
+        "enabled": true,
+        "position": [
+          390,
+          135
+        ],
+        "size": [
+          68,
+          16
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          0,
+          2
+        ],
+        "role": "AXCheckBox",
+        "subrole": "",
+        "text": [
+          "Remember this decision"
+        ],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          390,
+          159
+        ],
+        "size": [
+          167,
+          18
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          0,
+          3
+        ],
+        "role": "AXGroup",
+        "subrole": "AXUnknown",
+        "text": [],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          643,
+          182
+        ],
+        "size": [
+          59,
+          32
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          0,
+          3,
+          0
+        ],
+        "role": "AXButton",
+        "subrole": "",
+        "text": [
+          "Block",
+          "button"
+        ],
+        "contentText": [
+          "Block"
+        ],
+        "enabled": true,
+        "position": [
+          643,
+          182
+        ],
+        "size": [
+          59,
+          32
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          0,
+          3,
+          0,
+          0
+        ],
+        "role": "AXGroup",
+        "subrole": "AXUnknown",
+        "text": [
+          "group"
+        ],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          655,
+          190
+        ],
+        "size": [
+          35,
+          16
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          0,
+          3,
+          0,
+          0,
+          0
+        ],
+        "role": "AXStaticText",
+        "subrole": "AXUnknown",
+        "text": [
+          "Block",
+          "text"
+        ],
+        "contentText": [
+          "Block"
+        ],
+        "enabled": true,
+        "position": [
+          655,
+          190
+        ],
+        "size": [
+          35,
+          16
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          0,
+          4
+        ],
+        "role": "AXGroup",
+        "subrole": "AXUnknown",
+        "text": [],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          708,
+          182
+        ],
+        "size": [
+          58,
+          32
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          0,
+          4,
+          0
+        ],
+        "role": "AXButton",
+        "subrole": "",
+        "text": [
+          "Allow",
+          "button"
+        ],
+        "contentText": [
+          "Allow"
+        ],
+        "enabled": true,
+        "position": [
+          708,
+          182
+        ],
+        "size": [
+          58,
+          32
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          0,
+          4,
+          0,
+          0
+        ],
+        "role": "AXGroup",
+        "subrole": "AXUnknown",
+        "text": [
+          "group"
+        ],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          720,
+          190
+        ],
+        "size": [
+          34,
+          16
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          0,
+          4,
+          0,
+          0,
+          0
+        ],
+        "role": "AXStaticText",
+        "subrole": "AXUnknown",
+        "text": [
+          "Allow",
+          "text"
+        ],
+        "contentText": [
+          "Allow"
+        ],
+        "enabled": true,
+        "position": [
+          720,
+          190
+        ],
+        "size": [
+          34,
+          16
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          1
+        ],
+        "role": "AXToolbar",
+        "subrole": "",
+        "text": [
+          "Browser tabs"
+        ],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          4,
+          31
+        ],
+        "size": [
+          1280,
+          36
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          1,
+          0
+        ],
+        "role": "AXTabGroup",
+        "subrole": "",
+        "text": [],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          116,
+          31
+        ],
+        "size": [
+          1108,
+          36
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          1,
+          0,
+          0
+        ],
+        "role": "AXRadioButton",
+        "subrole": "AXTabButton",
+        "text": [
+          "Desktop normal sheet — Spinel",
+          "tab"
+        ],
+        "contentText": [
+          "Desktop normal sheet — Spinel"
+        ],
+        "enabled": true,
+        "position": [
+          116,
+          31
+        ],
+        "size": [
+          225,
+          36
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          1,
+          0,
+          0,
+          0
+        ],
+        "role": "AXStaticText",
+        "subrole": "AXUnknown",
+        "text": [
+          "Desktop normal sheet — Spinel",
+          "text"
+        ],
+        "contentText": [
+          "Desktop normal sheet — Spinel"
+        ],
+        "enabled": true,
+        "position": [
+          146,
+          42
+        ],
+        "size": [
+          163,
+          14
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          1,
+          0,
+          0,
+          1
+        ],
+        "role": "AXButton",
+        "subrole": "",
+        "text": [
+          "Close tab",
+          "button"
+        ],
+        "contentText": [
+          "Close tab"
+        ],
+        "enabled": true,
+        "position": [
+          316,
+          39
+        ],
+        "size": [
+          20,
+          20
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          1,
+          0,
+          1
+        ],
+        "role": "AXButton",
+        "subrole": "",
+        "text": [
+          "Open a new tab (⌘T)"
+        ],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          341,
+          31
+        ],
+        "size": [
+          32,
+          36
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          1,
+          1
+        ],
+        "role": "AXSplitter",
+        "subrole": "AXContentSeparator",
+        "text": [],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          1224,
+          31
+        ],
+        "size": [
+          28,
+          36
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          1,
+          2
+        ],
+        "role": "AXButton",
+        "subrole": "",
+        "text": [
+          "List all tabs"
+        ],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          1252,
+          31
+        ],
+        "size": [
+          32,
+          36
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          2
+        ],
+        "role": "AXToolbar",
+        "subrole": "",
+        "text": [
+          "Navigation"
+        ],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          4,
+          67
+        ],
+        "size": [
+          1280,
+          36
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          2,
+          0
+        ],
+        "role": "AXButton",
+        "subrole": "",
+        "text": [
+          "Sidebars"
+        ],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          4,
+          67
+        ],
+        "size": [
+          36,
+          36
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          2,
+          1
+        ],
+        "role": "AXButton",
+        "subrole": "",
+        "text": [
+          "Back"
+        ],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          40,
+          67
+        ],
+        "size": [
+          32,
+          36
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          2,
+          2
+        ],
+        "role": "AXButton",
+        "subrole": "",
+        "text": [
+          "Forward"
+        ],
+        "contentText": [],
+        "enabled": false,
+        "position": [
+          72,
+          67
+        ],
+        "size": [
+          32,
+          36
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          2,
+          3
+        ],
+        "role": "AXButton",
+        "subrole": "",
+        "text": [
+          "Reload"
+        ],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          104,
+          67
+        ],
+        "size": [
+          32,
+          36
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          2,
+          4
+        ],
+        "role": "AXSplitter",
+        "subrole": "AXContentSeparator",
+        "text": [],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          136,
+          67
+        ],
+        "size": [
+          104,
+          36
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          2,
+          5
+        ],
+        "role": "AXGroup",
+        "subrole": "AXUnknown",
+        "text": [],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          245,
+          71
+        ],
+        "size": [
+          830,
+          28
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          2,
+          5,
+          0
+        ],
+        "role": "AXImage",
+        "subrole": "",
+        "text": [
+          "Browser is under remote control (reason: Marionette)",
+          "image"
+        ],
+        "contentText": [
+          "Browser is under remote control (reason: Marionette)"
+        ],
+        "enabled": true,
+        "position": [
+          251,
+          77
+        ],
+        "size": [
+          16,
+          16
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          2,
+          5,
+          1
+        ],
+        "role": "AXButton",
+        "subrole": "",
+        "text": [
+          "View site information"
+        ],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          272,
+          74
+        ],
+        "size": [
+          99,
+          22
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          2,
+          5,
+          1,
+          0
+        ],
+        "role": "AXGroup",
+        "subrole": "AXUnknown",
+        "text": [
+          "group"
+        ],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          294,
+          77
+        ],
+        "size": [
+          71,
+          17
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          2,
+          5,
+          1,
+          0,
+          0
+        ],
+        "role": "AXStaticText",
+        "subrole": "AXUnknown",
+        "text": [
+          "Not Secure",
+          "text"
+        ],
+        "contentText": [
+          "Not Secure"
+        ],
+        "enabled": true,
+        "position": [
+          294,
+          77
+        ],
+        "size": [
+          71,
+          17
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          2,
+          5,
+          2
+        ],
+        "role": "AXButton",
+        "subrole": "",
+        "text": [
+          "Store data in Persistent Storage",
+          "button"
+        ],
+        "contentText": [
+          "Store data in Persistent Storage"
+        ],
+        "enabled": true,
+        "position": [
+          373,
+          74
+        ],
+        "size": [
+          22,
+          22
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          2,
+          5,
+          3
+        ],
+        "role": "AXComboBox",
+        "subrole": "",
+        "text": [
+          "Search or enter address",
+          "localhost:8176/?item=eec438a4-64b3-4cef-8565-debd0c65d739"
+        ],
+        "contentText": [
+          "localhost:8176/?item=eec438a4-64b3-4cef-8565-debd0c65d739"
+        ],
+        "enabled": true,
+        "position": [
+          401,
+          71
+        ],
+        "size": [
+          643,
+          28
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          2,
+          5,
+          3,
+          0
+        ],
+        "role": "AXStaticText",
+        "subrole": "AXUnknown",
+        "text": [
+          "localhost:8176/?item=eec438a4-64b3-4cef-8565-debd0c65d739",
+          "text"
+        ],
+        "contentText": [
+          "localhost:8176/?item=eec438a4-64b3-4cef-8565-debd0c65d739"
+        ],
+        "enabled": true,
+        "position": [
+          401,
+          77
+        ],
+        "size": [
+          425,
+          17
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          2,
+          5,
+          4
+        ],
+        "role": "AXButton",
+        "subrole": "",
+        "text": [
+          "Bookmark this page (⌘D)",
+          "button"
+        ],
+        "contentText": [
+          "Bookmark this page (⌘D)"
+        ],
+        "enabled": true,
+        "position": [
+          1050,
+          74
+        ],
+        "size": [
+          22,
+          22
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          2,
+          6
+        ],
+        "role": "AXSplitter",
+        "subrole": "AXContentSeparator",
+        "text": [],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          1080,
+          67
+        ],
+        "size": [
+          104,
+          36
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          2,
+          7
+        ],
+        "role": "AXButton",
+        "subrole": "",
+        "text": [
+          "Account"
+        ],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          1184,
+          67
+        ],
+        "size": [
+          32,
+          36
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          2,
+          8
+        ],
+        "role": "AXButton",
+        "subrole": "",
+        "text": [
+          "Extensions"
+        ],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          1216,
+          67
+        ],
+        "size": [
+          32,
+          36
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          2,
+          9
+        ],
+        "role": "AXButton",
+        "subrole": "",
+        "text": [
+          "Firefox"
+        ],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          1248,
+          67
+        ],
+        "size": [
+          36,
+          36
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          3
+        ],
+        "role": "AXToolbar",
+        "subrole": "",
+        "text": [],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          4,
+          103
+        ],
+        "size": [
+          1280,
+          0
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          4
+        ],
+        "role": "AXGroup",
+        "subrole": "AXUnknown",
+        "text": [],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          4,
+          103
+        ],
+        "size": [
+          1280,
+          605
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          4,
+          0
+        ],
+        "role": "AXGroup",
+        "subrole": "AXTabPanel",
+        "text": [],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          4,
+          103
+        ],
+        "size": [
+          1280,
+          605
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          4,
+          0,
+          0
+        ],
+        "role": "AXScrollArea",
+        "subrole": "AXUnknown",
+        "text": [],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          4,
+          104
+        ],
+        "size": [
+          1280,
+          604
+        ]
+      },
+      {
+        "path": [
+          0,
+          0,
+          5
+        ],
+        "role": "AXGroup",
+        "subrole": "AXApplicationAlert",
+        "text": [],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          4,
+          708
+        ],
+        "size": [
+          1280,
+          0
+        ]
+      },
+      {
+        "path": [
+          0,
+          1
+        ],
+        "role": "AXButton",
+        "subrole": "AXCloseButton",
+        "text": [
+          "close button"
+        ],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          15,
+          41
+        ],
+        "size": [
+          16,
+          16
+        ]
+      },
+      {
+        "path": [
+          0,
+          2
+        ],
+        "role": "AXButton",
+        "subrole": "AXFullScreenButton",
+        "text": [
+          "full screen button"
+        ],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          61,
+          41
+        ],
+        "size": [
+          16,
+          16
+        ]
+      },
+      {
+        "path": [
+          0,
+          2,
+          0
+        ],
+        "role": "AXGroup",
+        "subrole": "",
+        "text": [
+          "group"
+        ],
+        "contentText": [],
+        "enabled": null,
+        "position": [
+          62,
+          42
+        ],
+        "size": [
+          14,
+          14
+        ]
+      },
+      {
+        "path": [
+          0,
+          3
+        ],
+        "role": "AXButton",
+        "subrole": "AXMinimizeButton",
+        "text": [
+          "minimize button"
+        ],
+        "contentText": [],
+        "enabled": true,
+        "position": [
+          38,
+          41
+        ],
+        "size": [
+          16,
+          16
+        ]
+      }
+    ]
+  }
+}

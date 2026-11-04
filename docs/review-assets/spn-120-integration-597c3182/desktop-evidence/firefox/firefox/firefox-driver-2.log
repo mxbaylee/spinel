@@ -1,0 +1,22 @@
+1793813075988	geckodriver	INFO	Listening on 127.0.0.1:49406
+1793813076228	mozrunner::runner	INFO	Running command: MOZ_CRASHREPORTER="1" MOZ_CRASHREPORTER_NO_REPORT="1" MOZ_CRASHREPORTER_SHUTDOWN="1" "/Applications/Firefox. ... nette" "--profile" "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile" "-foreground" "-no-remote"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1793813077492	Marionette	INFO	Marionette enabled
+2026-11-04 17:24:37.759 Firefox GPU Helper[3007:13627] Failure on line 688 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-04 17:24:38.000 Firefox GPU Helper[3007:13661] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-04 17:24:38.000 Firefox GPU Helper[3007:13627] Error received in message reply handler: Connection invalid
+1793813078533	Marionette	INFO	Listening on port 49407
+1793813078552	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: Failed GL context creation for WebRender: 0
+[GFX1-]: Failed to connect WebRenderBridgeChild. isParent=true
+[GFX1-]: Fallback WR to SW-WR
+console.error: "Experiment desktop-release-rollout-show-relay-to-all-browsers-next-sign-up-modal-cta has unknown featureId: email-autocomplete-relay"
+console.error: "Experiment visual-card-updates has unknown featureId: newtabRefinedCardsLayout"
+console.error: "Experiment enable-nimbus-unenrollment-synchronization has unknown featureId: nimbusStore"
+console.error: "Experiment private-window-visual-refresh-design-change-only has unknown featureId: feltPrivacy"
+1793813096902	Marionette	INFO	Stopped listening on port 49407
+JavaScript warning: https://localhost:8176/assets/nativeSyncPermissions--oYkcOTJ.js, line 2: Script terminated by timeout at:
+t.prototype.flush@https://localhost:8176/assets/nativeSyncPermissions--oYkcOTJ.js:2:7990
+
+1793813097468	webdriver::server	INFO	Shutting down
