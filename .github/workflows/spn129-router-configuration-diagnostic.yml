@@ -13,22 +13,20 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
-      - name: Check configuration presence without disclosing values
+      - name: Check required configuration presence
         id: configuration
         env:
-          APP_ID: ${{ vars.SPINEL_CI_ROUTER_APP_ID }}
-          APP_KEY: ${{ secrets.SPINEL_CI_ROUTER_PRIVATE_KEY }}
+          APP_ID_PRESENT: ${{ vars.SPINEL_CI_ROUTER_APP_ID != '' }}
+          PRIVATE_KEY_PRESENT: ${{ secrets.SPINEL_CI_ROUTER_PRIVATE_KEY != '' }}
         run: |
-          app_id_present=false
-          private_key_present=false
-          if [ -n "$APP_ID" ]; then app_id_present=true; fi
-          if [ -n "$APP_KEY" ]; then private_key_present=true; fi
-          printf 'app_id_present=%s\nprivate_key_present=%s\n' "$app_id_present" "$private_key_present"
-          if [ "$app_id_present" != true ] || [ "$private_key_present" != true ]; then
+          printf 'app_id_present=%s\nprivate_key_present=%s\n' "$APP_ID_PRESENT" "$PRIVATE_KEY_PRESENT"
+          if [ "$APP_ID_PRESENT" != true ] || [ "$PRIVATE_KEY_PRESENT" != true ]; then
             echo 'Router configuration is unavailable to this repository workflow.' >&2
             exit 1
           fi
           echo 'configured=true' >> "$GITHUB_OUTPUT"
+      # App ID is nonsecret and may appear in action inputs. The key and token
+      # remain GitHub-masked; successful revocation needs its observed post log.
       - name: Verify the existing repository installation with a read-only token
         id: app
         if: steps.configuration.outputs.configured == 'true'
