@@ -66,6 +66,25 @@ const readBuild = (format: Format) =>
     'utf8',
   );
 
+// Lossless native capture encoding preserves own undefined fields and arrays.
+function decodeCapture(value: any): any {
+  if (value.kind === 'undefined') return undefined;
+  if (value.kind === 'value') return value.value;
+  assert.ok(value.kind === 'array' || value.kind === 'object');
+  const result: any = value.kind === 'array' ? [] : {};
+  for (const [key, child] of value.entries) {
+    if (Array.isArray(result) && key === 'length') result.length = decodeCapture(child);
+    else
+      Object.defineProperty(result, key, {
+        value: decodeCapture(child),
+        writable: true,
+        enumerable: true,
+        configurable: true,
+      });
+  }
+  return result;
+}
+
 function clock() {
   let now = 0;
   let nextId = 1;
@@ -776,24 +795,6 @@ for (const format of ['es', 'cjs'] as const) {
 
   test(`${format}: retained six-state native caches preserve raw publications with less Undo work`, async () => {
     const { original, patched, prefixPatched } = prepareDocsPatch(await readBuild(format), format);
-    // Lossless tagged archive retains own undefined fields, unlike JSON round trips.
-    function decode(value: any): any {
-      if (value.kind === 'undefined') return undefined;
-      if (value.kind === 'value') return value.value;
-      assert.ok(value.kind === 'array' || value.kind === 'object');
-      const result: any = value.kind === 'array' ? [] : {};
-      for (const [key, child] of value.entries) {
-        if (Array.isArray(result) && key === 'length') result.length = decode(child);
-        else
-          Object.defineProperty(result, key, {
-            value: decode(child),
-            writable: true,
-            enumerable: true,
-            configurable: true,
-          });
-      }
-      return result;
-    }
     const archive = JSON.parse(
       gunzipSync(
         await readFile(
@@ -806,8 +807,10 @@ for (const format of ['es', 'cjs'] as const) {
     );
     const phases = archive.native.filter((entry: any) => entry.count === 6 && entry.cache);
     assert.equal(phases.length, 2);
-    const history = decode(phases.find((entry: any) => entry.phase === 'history').cache) as State[];
-    const collaboration = decode(
+    const history = decodeCapture(
+      phases.find((entry: any) => entry.phase === 'history').cache,
+    ) as State[];
+    const collaboration = decodeCapture(
       phases.find((entry: any) => entry.phase === 'collaboration').cache,
     ) as State[];
     const control = measuredFlush(original, history, collaboration);
@@ -879,12 +882,115 @@ for (const format of ['es', 'cjs'] as const) {
         };
         const candidateStates = makeStates();
         const previousStates = makeStates();
+        const candidate = measuredFlush(patched, candidateStates, candidateStates, true);
+        const previous = measuredFlush(prefixPatched, previousStates, previousStates, true);
         assert.deepEqual(
-          measuredFlush(patched, candidateStates, candidateStates, true),
-          measuredFlush(prefixPatched, previousStates, previousStates, true),
-          `Unsupported raw delete shape ${mutations.indexOf(change)} member ${index} keeps the native fold and work.`,
+          candidate.output,
+          previous.output,
+          `Unsupported raw delete shape ${mutations.indexOf(change)} member ${index} keeps raw publication.`,
         );
+        // Undo folds in reverse order: only the leading plain members qualify.
+        if (history.length - 1 - index < 2) assert.deepEqual(candidate.counts, previous.counts);
+        else assert.ok(candidate.counts.allocations < previous.counts.allocations);
       }
+  });
+
+  test(`${format}: retained capacity caches preserve publications and reduce structural Undo prefix work`, async () => {
+    const { patched, completeDeletePatched } = prepareDocsPatch(await readBuild(format), format);
+    const raw = gunzipSync(
+      await readFile(
+        new URL(
+          '../../docs/implementation/evidence/SPN-142/native-caches.json.gz',
+          import.meta.url,
+        ),
+      ),
+    );
+    assert.equal(
+      createHash('sha256').update(raw).digest('hex'),
+      '714376723b3ef6a048796f7a1903a58181098960960cecb111e22e0594a2e7c8',
+    );
+    const archive = JSON.parse(raw.toString());
+    assert.equal(archive.captures.length, 8);
+    let improved = 0;
+    for (const capture of archive.captures) {
+      const { history, collaboration } = decodeCapture(capture) as {
+        history: State[];
+        collaboration: State[];
+      };
+      assert.equal(history.length, 32);
+      assert.equal(collaboration.length, 32);
+      const before = measuredFlush(completeDeletePatched, history, collaboration);
+      const after = measuredFlush(patched, history, collaboration);
+      assert.deepEqual(after.output, before.output);
+      assert.ok(after.counts.allocations <= before.counts.allocations);
+      if (after.counts.allocations < before.counts.allocations) improved++;
+    }
+    assert.equal(
+      improved,
+      1,
+      'Only the captured paragraph-containing group gains a delete prefix.',
+    );
+  });
+
+  test(`${format}: delete prefixes own their accumulator and preserve every tail call`, async () => {
+    const { patched, completeDeletePatched } = prepareDocsPatch(await readBuild(format), format);
+    const start = patched.indexOf('function hasOnlyDocInsertKeys(');
+    const end = patched.indexOf('const IDocStateChangeInterceptorService =', start);
+    assert.ok(start > 0 && end > start);
+    const calls: { left: JSONXActions; right: JSONXActions }[] = [];
+    const json = {
+      compose(left: JSONXActions, right: JSONXActions) {
+        calls.push({ left: structuredClone(left), right });
+        return core.JSONX.compose(left, right);
+      },
+    };
+    const compose = runInNewContext(patched.slice(start, end) + ';composeDocStateActions;', {
+      ...core,
+      JSONX: json,
+      _univerjs_core: { ...core, JSONX: json },
+      Object,
+      Array,
+    }) as (states: State[], key: 'undoState') => JSONXActions;
+    for (const prefix of [0, 1, 2, 3, 5, 7]) {
+      const scenario = sequence(
+        Array.from({ length: 7 }, (_, i) => insertAt(i, keyboardBody(i))),
+        seed('z\r\n'),
+      );
+      const states = [...scenario.states].reverse();
+      if (prefix < states.length) {
+        // Own unknown fields forbid admission even when native composition ignores them.
+        (states[prefix].undoState.actions as any)[1].e.at(-1).unsupported = undefined;
+      }
+      const before = structuredClone(states);
+      const expected = states.reduce(
+        (a, s) => core.JSONX.compose(a, s.undoState.actions),
+        null as JSONXActions,
+      );
+      calls.length = 0;
+      const actual = compose(states, 'undoState');
+      assert.deepEqual(actual, expected);
+      assert.deepEqual(states, before);
+      const firstTail = prefix >= 2 ? prefix : 0;
+      assert.equal(
+        calls.length,
+        states.length - firstTail,
+        'Do not optimize later eligible islands.',
+      );
+      for (let i = 0; i < calls.length; i++)
+        assert.equal(calls[i].right, states[firstTail + i].undoState.actions);
+      if (prefix >= 2 && calls.length)
+        assert.deepEqual(
+          calls[0].left,
+          states
+            .slice(0, prefix)
+            .reduce((a, s) => core.JSONX.compose(a, s.undoState.actions), null as JSONXActions),
+        );
+      // Mutating the actual result must not mutate even the lowest-offset input body.
+      (actual as any)[1].e.at(-1).body.dataStream = 'changed result';
+      assert.deepEqual(states, before);
+      const control = flush(completeDeletePatched, scenario.states);
+      assert.deepEqual(flush(patched, scenario.states), control);
+    }
   });
 
   test(`${format}: eligible keyboard shapes preserve odd tails, offsets and independent cache folds`, async () => {
@@ -1191,7 +1297,10 @@ for (const format of ['es', 'cjs'] as const) {
   });
 
   test(`${format}: every paragraph position preserves exact native output and reduces eligible prefix work`, async () => {
-    const { original, patched, markerPatched } = prepareDocsPatch(await readBuild(format), format);
+    const { original, patched, markerPatched, completeDeletePatched } = prepareDocsPatch(
+      await readBuild(format),
+      format,
+    );
     for (let position = 0; position < 32; position++) {
       const scenario = sequence(
         Array.from({ length: 32 }, (_, index) => {
@@ -1224,6 +1333,7 @@ for (const format of ['es', 'cjs'] as const) {
       const native = measuredFlush(original, scenario.states);
       const previous = measuredFlush(markerPatched, scenario.states);
       const candidate = measuredFlush(patched, scenario.states);
+      const beforePrefix = measuredFlush(completeDeletePatched, scenario.states);
       assertNativePreservation(
         native.output,
         candidate.output,
@@ -1235,7 +1345,16 @@ for (const format of ['es', 'cjs'] as const) {
         native,
         'The previous patch uses the complete original mixed fold.',
       );
-      if (position < 4) assert.deepEqual(candidate.counts, native.counts);
+      assert.deepEqual(candidate.output, beforePrefix.output);
+      if (position < 30) {
+        const reduced = (counts: typeof candidate.counts) =>
+          assert.ok(
+            counts.allocations < beforePrefix.counts.allocations,
+            'Qualified inverse prefix must reduce actual native allocations.',
+          );
+        reduced(candidate.counts);
+        assert.throws(() => reduced(beforePrefix.counts), /inverse prefix/);
+      } else assert.deepEqual(candidate.counts, beforePrefix.counts);
       if (position >= 5) {
         const reduced = (counts: typeof candidate.counts) =>
           assert.ok(
@@ -1249,7 +1368,7 @@ for (const format of ['es', 'cjs'] as const) {
           'The previous patch fails the work regression.',
         );
       }
-      if (position === 19) {
+      if (position === 5 || position === 19) {
         const historyStart = 7;
         assertNativePreservation(
           flush(original, scenario.states.slice(historyStart), scenario.states),
@@ -1278,20 +1397,25 @@ for (const format of ['es', 'cjs'] as const) {
           native.output,
           `prefix=${length}, marker=${String(value)}`,
         );
-        if (length < 4) assert.deepEqual(candidate.counts, native.counts);
-        else if (length >= 6)
-          assert.ok(
-            candidate.counts.allocations < native.counts.allocations,
-            `prefix=${length}, marker=${String(value)}: ${candidate.counts.allocations} < ${native.counts.allocations}`,
-          );
+        // A short forward prefix still falls back; its inverse may now have a
+        // long qualified delete prefix. Do not confuse their combined work.
+        if (length < 4) assert.equal(candidate.counts.bodySlices, native.counts.bodySlices);
+        assert.ok(
+          candidate.counts.allocations < native.counts.allocations,
+          `prefix=${length}, marker=${String(value)}: ${candidate.counts.allocations} < ${native.counts.allocations}`,
+        );
       }
   });
 
   test(`${format}: guard accepts the pinned original and exact current or previous patch`, async () => {
-    const { original, patched, previousPatched, markerPatched, prefixPatched } = prepareDocsPatch(
-      await readBuild(format),
-      format,
-    );
+    const {
+      original,
+      patched,
+      previousPatched,
+      markerPatched,
+      prefixPatched,
+      completeDeletePatched,
+    } = prepareDocsPatch(await readBuild(format), format);
     const markerHash = {
       es: '259dd5a4ce24744a442b2cfc7211a89f46437c0257a2ca7b2b9aaaceddd946ba',
       cjs: 'd96e32ba1177187d3bffa1ac0dce9cbddb589070b5303159b7b6b6b460eb4f92',
@@ -1299,6 +1423,15 @@ for (const format of ['es', 'cjs'] as const) {
     assert.equal(createHash('sha256').update(markerPatched).digest('hex'), markerHash);
     assert.equal(prepareDocsPatch(markerPatched, format).patched, patched);
     assert.equal(prepareDocsPatch(prefixPatched, format).patched, patched);
+    assert.equal(
+      createHash('sha256').update(completeDeletePatched).digest('hex'),
+      {
+        es: '2288928025f2d6e168613614ec6fe5dd57f8675202d35e5ccff2e189fe391563',
+        cjs: 'f0302d8a70cff8ba33dba075d6b7b4fb52f95bd73b5ed53c835d7cbb2f4db2c3',
+      }[format],
+    );
+    assert.equal(prepareDocsPatch(completeDeletePatched, format).patched, patched);
+    assert.throws(() => prepareDocsPatch(completeDeletePatched + '\n// unknown edit', format));
     assert.throws(() => prepareDocsPatch(prefixPatched + '\n// unknown edit', format));
     assert.throws(
       () => prepareDocsPatch(markerPatched + '\n// unknown edit', format),
@@ -1382,10 +1515,21 @@ for (const format of ['es', 'cjs'] as const) {
       const scenario = sequence(Array.from({ length: 7 }, (_, index) => insertAt(index)));
       const actions = scenario.states[1].redoState.actions as any;
       actions[1].e.at(-1).body[marker] = value;
+      const candidate = measuredFlush(patched, scenario.states);
+      const native = measuredFlush(original, scenario.states);
       assert.deepEqual(
-        measuredFlush(patched, scenario.states),
-        measuredFlush(original, scenario.states),
-        'An unsupported own marker after one insert keeps the complete native fold.',
+        candidate.output,
+        native.output,
+        'An unsupported own marker retains raw publication in both directions.',
+      );
+      assert.equal(
+        candidate.counts.bodySlices,
+        native.counts.bodySlices,
+        'One leading insert retains the complete forward fold.',
+      );
+      assert.ok(
+        candidate.counts.allocations < native.counts.allocations,
+        'The independently qualified inverse prefix still reduces native allocation work.',
       );
     }
   });
@@ -1419,6 +1563,25 @@ test('Docs installer validates package identity and both complete builds before 
   assert.equal(await readFile(cjs, 'utf8'), originals.cjs + '\n// unknown edit');
   await writeFile(cjs, originals.cjs);
   await patchInstalledDocs(root);
+  await patchInstalledDocs(root);
+  for (const format of ['es', 'cjs'] as const)
+    assert.equal(
+      await readFile(resolve(directory, 'lib', format, 'index.js'), 'utf8'),
+      prepareDocsPatch(originals[format], format).patched,
+    );
+  // Existing installs upgrade the exact complete SPN-135 patch, atomically with
+  // respect to validation of both formats, just like fresh upstream installs.
+  for (const format of ['es', 'cjs'] as const)
+    await writeFile(
+      resolve(directory, 'lib', format, 'index.js'),
+      prepareDocsPatch(originals[format], format).completeDeletePatched,
+    );
+  const oldEs = await readFile(resolve(directory, 'lib/es/index.js'), 'utf8');
+  const oldCjs = await readFile(cjs, 'utf8');
+  await writeFile(cjs, oldCjs + '\n// unknown edit');
+  await assert.rejects(patchInstalledDocs(root), /Unrecognized/);
+  assert.equal(await readFile(resolve(directory, 'lib/es/index.js'), 'utf8'), oldEs);
+  await writeFile(cjs, oldCjs);
   await patchInstalledDocs(root);
   for (const format of ['es', 'cjs'] as const)
     assert.equal(
