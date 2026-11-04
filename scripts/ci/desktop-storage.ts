@@ -27,37 +27,93 @@ export function validateStorageLossTabs(preparationURL: string, tabs: string[]) 
   return tabs;
 }
 
-// Serialized native Safari tab inventory. Only the owned fixture origin may be
-// navigated, once per tab; subsequent observations never repeat navigation.
+export type StorageLossTabMode = 'prepare' | 'handoff' | 'verify';
+export type StorageLossDocument = ReturnType<typeof inspectStorageLossDocument>;
+export type StorageLossTabInventory = {
+  before: string[];
+  after: string[];
+  documents?: StorageLossDocument[];
+};
+
+// Serialized into each fixture tab. The marker is page-only, never persisted.
+export function inspectStorageLossDocument(marker: string) {
+  return {
+    url: location.href,
+    fresh: !(globalThis as unknown as Record<string, unknown>)[marker],
+    ready: document.readyState,
+    marker: document.body?.dataset.spinelStorageLoss,
+    scripts: document.scripts.length,
+    controller: navigator.serviceWorker.controller?.scriptURL ?? null,
+  };
+}
+
+export function storageLossDocumentReady(url: string, state: StorageLossDocument) {
+  return (
+    state.url === url &&
+    state.fresh === true &&
+    state.ready === 'complete' &&
+    state.marker === 'inert' &&
+    state.scripts === 0 &&
+    state.controller === null
+  );
+}
+
+// Only owned fixture tabs may be navigated, once each. The handoff also observes
+// a fresh, uncontrolled document in every tab before the browser may shut down.
 export const safariStorageLossTabsScript = String.raw`
 function run(argv) {
   var app = Application(Number(argv[0]));
   var preparationURL = argv[1];
   var originPrefix = argv[2];
+  var mode = argv[3];
+  var marker = argv[4];
+  var inspect = '(' + ${JSON.stringify(inspectStorageLossDocument.toString())} + ')(' + JSON.stringify(marker) + ')';
+  var ready = ${storageLossDocumentReady.toString()};
   function tabs() {
     var result = [];
     app.windows().forEach(function(window) {
-      window.tabs().forEach(function(tab) { result.push(tab); });
+      window.tabs().forEach(function(tab) {
+        result.push({ key: window.id() + ':' + tab.index(), tab: tab });
+      });
     });
     return result;
   }
-  var before = tabs().map(function(tab) { return tab.url(); });
-  if (argv[3] === 'prepare') {
-    tabs().forEach(function(tab) {
+  var initial = tabs();
+  var keys = initial.map(function(entry) { return entry.key; }).sort();
+  if (!keys.length || keys.some(function(key, index) { return index && key === keys[index - 1]; }))
+    throw new Error('Ambiguous Safari tab inventory');
+  var before = initial.map(function(entry) { return entry.tab.url(); });
+  if (mode !== 'verify') {
+    initial.forEach(function(entry) {
+      var tab = entry.tab;
       var url = tab.url();
-      if (url.indexOf(originPrefix) === 0 && url !== preparationURL) tab.url = preparationURL;
+      if (url.indexOf(originPrefix) !== 0) return;
+      if (mode === 'handoff') {
+        app.doJavaScript('globalThis[' + JSON.stringify(marker) + '] = true; void 0;', { in: tab });
+        tab.url = preparationURL;
+      } else if (url !== preparationURL) tab.url = preparationURL;
     });
   }
   var deadline = Date.now() + 2000;
   var after;
+  var documents;
   do {
-    after = tabs().map(function(tab) { return tab.url(); });
-    if (after.every(function(url) { return url.indexOf(originPrefix) !== 0 || url === preparationURL; }))
-      return JSON.stringify({ before: before, after: after });
-    if (argv[3] !== 'prepare') break;
+    var current = tabs();
+    if (JSON.stringify(current.map(function(entry) { return entry.key; }).sort()) !== JSON.stringify(keys))
+      throw new Error('Safari tabs changed during storage preparation');
+    after = current.map(function(entry) { return entry.tab.url(); });
+    documents = mode === 'handoff' ? current.filter(function(entry) {
+      return entry.tab.url().indexOf(originPrefix) === 0;
+    }).map(function(entry) {
+      return JSON.parse(app.doJavaScript('JSON.stringify(' + inspect + ')', { in: entry.tab }));
+    }) : undefined;
+    if (after.every(function(url) { return url.indexOf(originPrefix) !== 0 || url === preparationURL; }) &&
+        (!documents || documents.every(function(state) { return ready(preparationURL, state); })))
+      return JSON.stringify({ before: before, after: after, documents: documents });
+    if (mode === 'verify') break;
     delay(0.05);
   } while (Date.now() < deadline);
-  throw new Error('Another fixture tab remains active: ' + JSON.stringify({ before: before, after: after }));
+  throw new Error('Another fixture tab remains active: ' + JSON.stringify({ before: before, after: after, documents: documents }));
 }`;
 
 export function unregisterDesktopStorageWorkers(
@@ -82,10 +138,20 @@ export function clearDesktopStorage(
   );
 }
 
+export function verifyDesktopStorageQuiescence(
+  browser: Pick<DesktopBrowser, 'evaluate'>,
+  database: string,
+  preparationURL: string,
+) {
+  return browser.evaluate<StorageDeletion>(
+    `(${deleteDesktopStorage.toString()})(${JSON.stringify(database)}, ${JSON.stringify(preparationURL)}, "verify")`,
+  );
+}
+
 export type StorageDeletion = {
   status: 'running' | 'passed' | 'failed';
   database: string;
-  phase: 'unregister' | 'delete';
+  phase: 'unregister' | 'verify' | 'delete';
   timeoutMs: number;
   operations: Array<{
     name: string;
@@ -103,7 +169,7 @@ export type StorageDeletion = {
 export async function deleteDesktopStorage(
   database: string,
   preparationURL: string,
-  phase: 'unregister' | 'delete',
+  phase: StorageDeletion['phase'],
 ): Promise<StorageDeletion> {
   const report: StorageDeletion = {
     status: 'running',
@@ -173,8 +239,8 @@ export async function deleteDesktopStorage(
           throw new Error(`Workers remain registered: ${JSON.stringify(workers)}`);
         return { workers, controller: navigator.serviceWorker.controller?.scriptURL ?? null };
       });
-      // The old controlled document/worker may still execute. The caller must
-      // witness browser shutdown and reopen this inert URL before deletion.
+      // Existing clients remain controlled. The caller must replace every inert
+      // document and verify quiescence before the witnessed shutdown/restart.
       report.status = 'passed';
       return report;
     }
@@ -187,6 +253,10 @@ export async function deleteDesktopStorage(
         throw new Error(`Storage producers are still present: ${JSON.stringify(state)}`);
       return state;
     });
+    if (phase === 'verify') {
+      report.status = 'passed';
+      return report;
+    }
     const keys = await step('caches.keys', () => caches.keys());
     for (const key of keys) {
       await step(`caches.delete:${key}`, async () => {

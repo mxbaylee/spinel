@@ -273,7 +273,7 @@ export async function createDesktopOfflineFixture(options: {
         request.socket.destroy();
         return;
       }
-      if (request.url === storageLossPath && request.method === 'GET') {
+      if (request.url?.split('?')[0] === storageLossPath && request.method === 'GET') {
         response
           .writeHead(200, {
             'Content-Type': 'text/html; charset=utf-8',

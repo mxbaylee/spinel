@@ -8,6 +8,8 @@ import {
   safariStorageLossTabsScript,
   validateStorageLossTabs,
   validateStorageLossHandles,
+  verifyDesktopStorageQuiescence,
+  type StorageLossTabMode,
 } from './desktop-storage.ts';
 
 const preparationURL = 'https://localhost/_desktop-storage-loss';
@@ -24,8 +26,8 @@ test('window inventory compares handle membership independently of driver orderi
     assert.throws(() => validateStorageLossHandles(['foreground', 'background'], after));
 });
 
-function fixture(fault?: string, rejection = false, preparation = false) {
-  let workers = preparation || fault === 'registered',
+function fixture(fault?: string, rejection = false, preparation: boolean | 'verify' = false) {
+  let workers = preparation === true || fault === 'registered',
     cache = true,
     database = true,
     entries = 1;
@@ -57,7 +59,7 @@ function fixture(fault?: string, rejection = false, preparation = false) {
     navigator: {
       serviceWorker: {
         controller:
-          preparation || fault === 'controlled'
+          preparation === true || fault === 'controlled'
             ? { scriptURL: 'https://localhost/worker.js' }
             : null,
         getRegistrations: () =>
@@ -125,7 +127,13 @@ function fixture(fault?: string, rejection = false, preparation = false) {
         operation('database-names', () => (database ? [{ name: 'private-test' }] : [])),
     },
   };
-  const promise = (preparation ? unregisterDesktopStorageWorkers : clearDesktopStorage)(
+  const action =
+    preparation === 'verify'
+      ? verifyDesktopStorageQuiescence
+      : preparation
+        ? unregisterDesktopStorageWorkers
+        : clearDesktopStorage;
+  const promise = action(
     { evaluate: async <T>(script: string) => runInNewContext(script, sandbox) as T },
     'private-test',
     preparationURL,
@@ -265,18 +273,48 @@ test('inert fixture tabs and unrelated origins are explicitly accounted for', ()
   assert.deepEqual(validateStorageLossTabs(preparationURL, urls), urls);
 });
 
-function safariTabs(prepare: boolean, pending = false) {
+function safariTabs(mode: StorageLossTabMode, fault?: string) {
   const current = [preparationURL, 'https://localhost/?item=background', 'https://example.test/'];
   const writes: Array<{ index: number; url: string }> = [];
   let time = 0;
+  let inventories = 0;
+  const contexts = current.map((url) => ({
+    location: { href: url },
+    document: {
+      readyState: 'complete',
+      body: { dataset: { spinelStorageLoss: 'inert' } },
+      scripts: { length: 0 },
+    },
+    navigator: { serviceWorker: { controller: { scriptURL: 'worker.js' } as object | null } },
+  }));
   const tabs = current.map((_url, index) => ({
+    index: () => (index === 0 ? 1 : index),
     get url() {
       return () => current[index];
     },
     set url(value: unknown) {
       assert.equal(typeof value, 'string');
       writes.push({ index, url: value as string });
-      if (!pending) current[index] = value as string;
+      if (fault === 'navigation-error') throw new Error('first navigation error');
+      if (fault === 'pending') return;
+      current[index] = value as string;
+      const old = contexts[index];
+      contexts[index] = {
+        ...old,
+        location: { href: value as string },
+        document: {
+          ...old.document,
+          body: { dataset: { spinelStorageLoss: fault === 'wrong-marker' ? '' : 'inert' } },
+          scripts: { length: fault === 'app-script' ? 1 : 0 },
+        },
+        navigator: {
+          serviceWorker: {
+            controller: fault === 'controlled' ? { scriptURL: 'worker.js' } : null,
+          },
+        },
+      };
+      if (fault !== 'same-document')
+        delete (contexts[index] as unknown as Record<string, unknown>).__handoff;
     },
   }));
   return {
@@ -287,11 +325,32 @@ function safariTabs(prepare: boolean, pending = false) {
         runInNewContext(
           safariStorageLossTabsScript + '; run(args)',
           {
-            args: ['42', preparationURL, 'https://localhost/', prepare ? 'prepare' : 'verify'],
+            args: [
+              '42',
+              mode === 'handoff' ? preparationURL + '?phase=uncontrolled' : preparationURL,
+              'https://localhost/',
+              mode,
+              '__handoff',
+            ],
             Application(pid: number) {
               assert.equal(pid, 42);
               return {
-                windows: () => [{ tabs: () => tabs.slice(0, 1) }, { tabs: () => tabs.slice(1) }],
+                windows: () => {
+                  inventories++;
+                  return [
+                    { id: () => 1, tabs: () => tabs.slice(0, 1) },
+                    {
+                      id: () => 2,
+                      tabs: () => (fault === 'missing-tab' && inventories > 1 ? [] : tabs.slice(1)),
+                    },
+                  ];
+                },
+                doJavaScript(source: string, options: { in: (typeof tabs)[number] }) {
+                  if (fault === 'evaluation-error') throw new Error('first evaluation error');
+                  const index = tabs.indexOf(options.in);
+                  assert.notEqual(index, 2, 'Unrelated tabs must not be evaluated.');
+                  return runInNewContext(source, contexts[index]);
+                },
               };
             },
             Date: { now: () => time },
@@ -307,7 +366,7 @@ function safariTabs(prepare: boolean, pending = false) {
 }
 
 test('native Safari preparation moves background fixture tabs once and preserves unrelated tabs', () => {
-  const f = safariTabs(true);
+  const f = safariTabs('prepare');
   const inventory = f.execute();
   assert.equal(inventory.before[1], 'https://localhost/?item=background');
   assert.deepEqual(f.writes, [{ index: 1, url: preparationURL }]);
@@ -316,13 +375,67 @@ test('native Safari preparation moves background fixture tabs once and preserves
 });
 
 test('post-restart Safari inventory refuses a restored producer without navigating it again', () => {
-  const f = safariTabs(false);
+  const f = safariTabs('verify');
   assert.throws(() => f.execute(), /Another fixture tab remains active/);
   assert.deepEqual(f.writes, []);
 });
 
 test('a background navigation that never settles fails within its bound without another mutation', () => {
-  const f = safariTabs(true, true);
+  const f = safariTabs('prepare', 'pending');
   assert.throws(() => f.execute(), /Another fixture tab remains active/);
   assert.deepEqual(f.writes, [{ index: 1, url: preparationURL }]);
 });
+
+test('fresh-document handoff replaces every controlled fixture tab exactly once', () => {
+  const f = safariTabs('handoff');
+  const inventory = f.execute();
+  assert.deepEqual(f.writes, [
+    { index: 0, url: preparationURL + '?phase=uncontrolled' },
+    { index: 1, url: preparationURL + '?phase=uncontrolled' },
+  ]);
+  assert.equal(inventory.documents.length, 2);
+  for (const state of inventory.documents) {
+    assert.equal(state.fresh, true);
+    assert.equal(state.controller, null);
+    assert.equal(state.marker, 'inert');
+    assert.equal(state.scripts, 0);
+  }
+});
+
+for (const fault of [
+  'pending',
+  'same-document',
+  'wrong-marker',
+  'app-script',
+  'controlled',
+  'missing-tab',
+])
+  test(`handoff rejects ${fault} without repeating navigation`, () => {
+    const f = safariTabs('handoff', fault);
+    assert.throws(() => f.execute(), /Another fixture tab remains active|Safari tabs changed/);
+    assert.equal(f.writes.length, 2);
+  });
+
+for (const fault of ['navigation-error', 'evaluation-error'])
+  test(`handoff preserves ${fault} without retrying the native request`, () => {
+    const f = safariTabs('handoff', fault);
+    assert.throws(() => f.execute(), /first .* error/);
+    assert.equal(f.writes.length, fault === 'navigation-error' ? 1 : 0);
+  });
+
+test('pre-stop quiescence only observes registrations and leaves every store intact', async () => {
+  const f = fixture(undefined, false, 'verify');
+  const report = await f.promise;
+  assert.equal(report.phase, 'verify');
+  assert.equal(report.status, 'passed');
+  assert.deepEqual(f.calls, ['workers']);
+});
+
+for (const fault of ['registered', 'controlled'])
+  test(`pre-stop quiescence rejects ${fault} before any mutation`, async () => {
+    const f = fixture(fault, false, 'verify');
+    const report = await f.promise;
+    assert.equal(report.status, 'failed');
+    assert.match(report.error!, /producers are still present/);
+    assert.deepEqual(f.calls, ['workers']);
+  });
