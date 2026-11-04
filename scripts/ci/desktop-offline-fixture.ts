@@ -261,6 +261,8 @@ export async function createDesktopOfflineFixture(options: {
 
     const loginPath = `/_desktop-login/${randomBytes(32).toString('hex')}`;
     const loginURL = origin + loginPath;
+    const storageLossPath = '/_desktop-storage-loss';
+    const storageLossURL = origin + storageLossPath;
     const certificate = await readFile(options.certPath);
     tls = createServer({ key: await readFile(options.keyPath), cert: certificate });
     tls.on('connection', track);
@@ -269,6 +271,18 @@ export async function createDesktopOfflineFixture(options: {
       if (offline) {
         counts.blockedRequests++;
         request.socket.destroy();
+        return;
+      }
+      if (request.url === storageLossPath && request.method === 'GET') {
+        response
+          .writeHead(200, {
+            'Content-Type': 'text/html; charset=utf-8',
+            'Cache-Control': 'no-store',
+            'Content-Security-Policy': "default-src 'none'; frame-ancestors 'none'",
+          })
+          .end(
+            '<!doctype html><title>Storage-loss preparation</title><body data-spinel-storage-loss="inert">Storage-loss preparation</body>',
+          );
         return;
       }
       if (request.url === loginPath) {
@@ -513,6 +527,7 @@ export async function createDesktopOfflineFixture(options: {
     return {
       origin,
       loginURL,
+      storageLossURL,
       actor,
       owner,
       items,

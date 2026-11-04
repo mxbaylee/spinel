@@ -1,16 +1,31 @@
 import type { DesktopBrowser } from './desktop-browser.ts';
 
-export function clearDesktopStorage(browser: Pick<DesktopBrowser, 'evaluate'>, database: string) {
+export function unregisterDesktopStorageWorkers(
+  browser: Pick<DesktopBrowser, 'evaluate'>,
+  database: string,
+  preparationURL: string,
+) {
+  return browser.evaluate<StorageDeletion>(
+    `(${deleteDesktopStorage.toString()})(${JSON.stringify(database)}, ${JSON.stringify(preparationURL)}, "unregister")`,
+  );
+}
+
+export function clearDesktopStorage(
+  browser: Pick<DesktopBrowser, 'evaluate'>,
+  database: string,
+  preparationURL: string,
+) {
   // One driver request only: an unresponsive/crashed page must not consume a
   // second script budget trying to recover diagnostic state.
   return browser.evaluate<StorageDeletion>(
-    `(${deleteDesktopStorage.toString()})(${JSON.stringify(database)})`,
+    `(${deleteDesktopStorage.toString()})(${JSON.stringify(database)}, ${JSON.stringify(preparationURL)}, "delete")`,
   );
 }
 
 export type StorageDeletion = {
   status: 'running' | 'passed' | 'failed';
   database: string;
+  phase: 'unregister' | 'delete';
   timeoutMs: number;
   operations: Array<{
     name: string;
@@ -25,10 +40,15 @@ export type StorageDeletion = {
 
 // Serialized into the real browser page. Keep this function self-contained.
 // Leave two seconds within the existing 30-second driver bound to return evidence.
-export async function deleteDesktopStorage(database: string): Promise<StorageDeletion> {
+export async function deleteDesktopStorage(
+  database: string,
+  preparationURL: string,
+  phase: 'unregister' | 'delete',
+): Promise<StorageDeletion> {
   const report: StorageDeletion = {
     status: 'running',
     database,
+    phase,
     timeoutMs: 28_000,
     operations: [],
   };
@@ -61,17 +81,52 @@ export async function deleteDesktopStorage(database: string): Promise<StorageDel
     }
   }
   try {
+    await step('verify-preparation-document', () => {
+      const state = {
+        url: location.href,
+        marker: document.body.dataset.spinelStorageLoss,
+        scripts: document.scripts.length,
+      };
+      if (state.url !== preparationURL || state.marker !== 'inert' || state.scripts !== 0)
+        throw new Error(
+          `Storage preparation requires the inert fixture document: ${JSON.stringify(state)}`,
+        );
+      return state;
+    });
     const registrations = await step('serviceWorker.getRegistrations', () =>
       navigator.serviceWorker.getRegistrations(),
     );
     // Native objects are not serializable evidence; record their stable identities.
     report.operations.at(-1)!.value = registrations.map((registration) => registration.scope);
-    for (const registration of registrations) {
-      await step(`serviceWorker.unregister:${registration.scope}`, async () => {
-        if (!(await registration.unregister())) throw new Error('Worker was not unregistered');
-        return true;
+    if (phase === 'unregister') {
+      for (const registration of registrations) {
+        await step(`serviceWorker.unregister:${registration.scope}`, async () => {
+          if (!(await registration.unregister())) throw new Error('Worker was not unregistered');
+          return true;
+        });
+      }
+      await step('verify-unregistered', async () => {
+        const workers = (await navigator.serviceWorker.getRegistrations()).map(
+          (entry) => entry.scope,
+        );
+        if (workers.length)
+          throw new Error(`Workers remain registered: ${JSON.stringify(workers)}`);
+        return { workers, controller: navigator.serviceWorker.controller?.scriptURL ?? null };
       });
+      // The old controlled document/worker may still execute. The caller must
+      // witness browser shutdown and reopen this inert URL before deletion.
+      report.status = 'passed';
+      return report;
     }
+    await step('verify-uncontrolled', () => {
+      const state = {
+        workers: registrations.map((entry) => entry.scope),
+        controller: navigator.serviceWorker.controller?.scriptURL ?? null,
+      };
+      if (state.workers.length || state.controller !== null)
+        throw new Error(`Storage producers are still present: ${JSON.stringify(state)}`);
+      return state;
+    });
     const keys = await step('caches.keys', () => caches.keys());
     for (const key of keys) {
       await step(`caches.delete:${key}`, async () => {

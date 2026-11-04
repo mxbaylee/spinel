@@ -2,10 +2,12 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { runInNewContext } from 'node:vm';
 import { setImmediate } from 'node:timers/promises';
-import { clearDesktopStorage } from './desktop-storage.ts';
+import { clearDesktopStorage, unregisterDesktopStorageWorkers } from './desktop-storage.ts';
 
-function fixture(fault?: string, rejection = false) {
-  let workers = true,
+const preparationURL = 'https://localhost/_desktop-storage-loss';
+
+function fixture(fault?: string, rejection = false, preparation = false) {
+  let workers = preparation || fault === 'registered',
     cache = true,
     database = true,
     entries = 1;
@@ -19,6 +21,11 @@ function fixture(fault?: string, rejection = false) {
     return new Promise<never>(() => {});
   }
   const sandbox = {
+    location: { href: fault === 'wrong-url' ? 'https://localhost/' : preparationURL },
+    document: {
+      body: { dataset: { spinelStorageLoss: fault === 'wrong-document' ? undefined : 'inert' } },
+      scripts: { length: fault === 'app-script' ? 1 : 0 },
+    },
     performance,
     console,
     setTimeout(callback: () => void, timeout: number) {
@@ -31,6 +38,10 @@ function fixture(fault?: string, rejection = false) {
     },
     navigator: {
       serviceWorker: {
+        controller:
+          preparation || fault === 'controlled'
+            ? { scriptURL: 'https://localhost/worker.js' }
+            : null,
         getRegistrations: () =>
           operation('workers', () =>
             workers
@@ -39,7 +50,7 @@ function fixture(fault?: string, rejection = false) {
                     scope: 'https://localhost/',
                     unregister: () =>
                       operation('unregister', () => {
-                        workers = false;
+                        workers = fault === 'reregistered';
                         return true;
                       }),
                   },
@@ -52,7 +63,12 @@ function fixture(fault?: string, rejection = false) {
       keys: () => operation('cache-names', () => (cache ? ['shell'] : [])),
       delete: () =>
         operation('cache-delete', () => {
+          // A writer can recreate a cache even though deletion returned true.
           cache = false;
+          if (fault === 'recreated-cache')
+            queueMicrotask(() => {
+              cache = true;
+            });
           return true;
         }),
     },
@@ -91,9 +107,10 @@ function fixture(fault?: string, rejection = false) {
         operation('database-names', () => (database ? [{ name: 'private-test' }] : [])),
     },
   };
-  const promise = clearDesktopStorage(
+  const promise = (preparation ? unregisterDesktopStorageWorkers : clearDesktopStorage)(
     { evaluate: async <T>(script: string) => runInNewContext(script, sandbox) as T },
     'private-test',
+    preparationURL,
   );
   return { promise, calls, sandbox, expire: () => expire!(), cleared: () => cleared };
 }
@@ -122,7 +139,7 @@ for (const [fault, name] of [
 ]) {
   for (const rejection of [false, true])
     test(`${fault} ${rejection ? 'rejection' : 'pending'} names the first failing operation`, async () => {
-      const f = fixture(fault, rejection);
+      const f = fixture(fault, rejection, fault === 'unregister');
       for (let i = 0; i < 20 && !f.calls.includes(fault); i++) await setImmediate();
       assert.ok(f.calls.includes(fault));
       if (!rejection) f.expire();
@@ -170,8 +187,47 @@ test('crashed or timed-out driver propagates the first error without another dia
         },
       },
       'private-test',
+      preparationURL,
     ),
     (error) => error === original,
   );
   assert.equal(calls, 1);
+});
+
+test('unregistration reports the still-live controller and never starts storage deletion', async () => {
+  const f = fixture(undefined, false, true);
+  const report = await f.promise;
+  assert.equal(report.phase, 'unregister');
+  assert.equal(report.status, 'passed');
+  assert.deepEqual(JSON.parse(JSON.stringify(report.operations.at(-1)!.value)), {
+    workers: [],
+    controller: 'https://localhost/worker.js',
+  });
+  assert.deepEqual(f.calls, ['workers', 'unregister', 'workers']);
+  assert.ok(f.cleared());
+});
+
+test('a worker registered again during preparation fails before deletion', async () => {
+  const f = fixture('reregistered', false, true);
+  const report = await f.promise;
+  assert.equal(report.status, 'failed');
+  assert.match(report.error!, /Workers remain registered/);
+  assert.ok(!f.calls.includes('cache-delete'));
+});
+
+for (const fault of ['wrong-url', 'wrong-document', 'app-script', 'registered', 'controlled'])
+  test(`${fault} refuses storage deletion before any mutation`, async () => {
+    const f = fixture(fault);
+    const report = await f.promise;
+    assert.equal(report.status, 'failed');
+    assert.ok(f.calls.every((name) => name === 'workers'));
+    assert.match(report.error!, /requires the inert fixture document|producers are still present/);
+  });
+
+test('reported cache deletion success cannot conceal recreation or cause another deletion', async () => {
+  const f = fixture('recreated-cache');
+  const report = await f.promise;
+  assert.equal(report.status, 'failed');
+  assert.match(report.error!, /Storage remains after deletion/);
+  assert.equal(f.calls.filter((name) => name === 'cache-delete').length, 1);
 });

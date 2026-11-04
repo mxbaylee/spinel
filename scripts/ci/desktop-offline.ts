@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { clearDesktopStorage } from './desktop-storage.ts';
+import { clearDesktopStorage, unregisterDesktopStorageWorkers } from './desktop-storage.ts';
 import { execFile } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
@@ -705,7 +705,21 @@ async function main() {
       (value) => value === 2,
       'Two normal copies positively advertise availability before storage deletion',
     );
-    const deletion = await clearDesktopStorage(browser, `spinel-offline-${f.actor.id}`);
+    // Unregistration leaves the current controller alive. Leave the app first,
+    // unregister from a script-free document, then witness a same-profile exit
+    // and restart before touching storage. Never race the app's shell refresh.
+    await browser.goto(f.storageLossURL);
+    const privateDatabase = `spinel-offline-${f.actor.id}`;
+    const preparation = await unregisterDesktopStorageWorkers(
+      browser,
+      privateDatabase,
+      f.storageLossURL,
+    );
+    stage('storage-loss-unregistration', { preparation });
+    assert.equal(preparation.status, 'passed', JSON.stringify(preparation));
+    stage('browser-stop-before-storage-loss', await browser.stop());
+    await launch(f.storageLossURL);
+    const deletion = await clearDesktopStorage(browser, privateDatabase, f.storageLossURL);
     stage('storage-deletion', { deletion });
     assert.equal(deletion.status, 'passed', JSON.stringify(deletion));
     await browser.goto(f.origin + '/');
