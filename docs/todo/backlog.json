@@ -1,7 +1,7 @@
 {
   "name": "Spinel",
   "prefix": "SPN",
-  "next_id": 137,
+  "next_id": 142,
   "personas": "docs/product/personas.md",
   "grooming": {
     "every": 7,
@@ -17,7 +17,13 @@
       "SPN-132",
       "SPN-071",
       "SPN-133",
-      "SPN-131"
+      "SPN-131",
+      "SPN-135",
+      "SPN-130",
+      "SPN-138",
+      "SPN-139",
+      "SPN-137",
+      "SPN-134"
     ]
   },
   "size": {
@@ -37,12 +43,5 @@
   "pr_title_exceptions": [
     "🧹 Groom backlog",
     "⬆️ Bump"
-  ],
-  "reserved_tickets": [
-    {
-      "id": "SPN-130",
-      "heading": "🔬 SPN-130 Diagnose the native desktop identity and storage-cleanup timeouts",
-      "allocation_commit": "fefb3660cdfa363f4b80812df33a3a63a404b8ef"
-    }
   ]
 }

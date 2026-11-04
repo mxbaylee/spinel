@@ -15,6 +15,8 @@ import {
   observeDocReloads,
   observeInput,
   readDocResponsiveness,
+  docIdleDurations,
+  docHistoryShortcuts,
 } from './doc-responsiveness.ts';
 import type {
   CpuProfile,
@@ -181,6 +183,9 @@ async function verifyUndoRedo(
   origins: ClockOrigins,
   progress: Record<string, unknown>,
 ): Promise<DocUndoRedoEvidence> {
+  const appVersion = await f.page.evaluate(() => navigator.appVersion);
+  const shortcuts = docHistoryShortcuts(appVersion);
+  progress.shortcuts = { appVersion, ...shortcuts };
   const groups = all ? initial.sender.history.undos : 1;
   expect(groups).toBeGreaterThan(0);
   expect(initial.sender.history.undos).toBeLessThanOrEqual(
@@ -193,7 +198,7 @@ async function verifyUndoRedo(
   progress.phase = 'before-undo';
   const beforeUndoAt = await now(f.page);
   progress.beforeUndoAt = beforeUndoAt;
-  await f.page.keyboard.press('Control+z');
+  await f.page.keyboard.press(shortcuts.undo);
   await saved(f.page);
   const undone = (await readDocResponsiveness(f.page, true))!;
   expect(undone.text).not.toBe(expectedText);
@@ -209,7 +214,7 @@ async function verifyUndoRedo(
     redos: 1,
   });
   progress.firstUndo = firstUndo;
-  for (let group = 1; group < groups; group++) await f.page.keyboard.press('Control+z');
+  for (let group = 1; group < groups; group++) await f.page.keyboard.press(shortcuts.undo);
   await saved(f.page);
   let undo = firstUndo;
   if (all) {
@@ -231,7 +236,7 @@ async function verifyUndoRedo(
   progress.beforeRedoAt = beforeRedoAt;
   // Pinned Univer's full-document SharedController binds Ctrl+Y off macOS;
   // the Shift+Z alternative is registered only for macOS.
-  for (let group = 0; group < groups; group++) await f.page.keyboard.press('Control+y');
+  for (let group = 0; group < groups; group++) await f.page.keyboard.press(shortcuts.redo);
   // Observe a concrete outcome. A timeout or generic assertion error can never
   // select the documented baseline-only capacity-refusal branch.
   await expect
@@ -351,6 +356,8 @@ for (const preset of ['desktop', 'mobile'] as const)
               'e2e/doc-responsiveness-fixture.ts',
               'e2e/doc-responsiveness-boundaries.ts',
               'web/docResponsivenessEvidence.ts',
+              'src/ui/docIdleEpisode.ts',
+              'src/ui/nativeDocFlush.ts',
               'playwright.config.ts',
               'package-lock.json',
             ].map(async (path) => [
@@ -544,15 +551,13 @@ for (const preset of ['desktop', 'mobile'] as const)
         const gaps = input.keydownAt.slice(1).map((at, index) => at - input.keydownAt[index]!);
         const longTasks = distribution(input.longTasks.map((task) => task.durationMs));
         const capacityFlushes = native.flushes.filter((entry) => entry.reason === 'capacity');
-        const idleFlushes = native.flushes.filter((entry) => entry.reason === 'idle');
+        const idleDurations = baseline ? [] : docIdleDurations(native);
         const capacityFlush = capacityFlushes.length
           ? distribution(capacityFlushes.map((entry) => entry.durationMs))
           : null;
-        const idleFlush = idleFlushes.length
-          ? distribution(idleFlushes.map((entry) => entry.durationMs))
-          : null;
+        const idleFlush = idleDurations.length ? distribution(idleDurations) : null;
         const flushMaximum = native.flushes.length
-          ? Math.max(...native.flushes.map((entry) => entry.durationMs))
+          ? Math.max(...native.flushes.map((entry) => entry.durationMs), ...idleDurations)
           : null;
         const drainUpperBoundMs = native.observedAt - input.keydownAt.at(-1)!;
         const localDrainMs = native.drainWitness?.firstEmpty
@@ -683,7 +688,7 @@ for (const preset of ['desktop', 'mobile'] as const)
           undoRedo.outcome === 'passed'
             ? 'exact saved/live peer text, sender/peer selections, undo/redo and Online passed'
             : 'baseline redo refused at capacity; exact prior typing and Undo verified; recovered saved empty state';
-        // Schema 4 retains the strict baseline history outcome and separately
+        // Schema 5 retains the strict baseline history outcome and separately
         // observes capacity/idle work. Drain acceptance now uses the preregistered
         // browser-local witness; the unchanged late-read scalar remains descriptive.
         if (!baseline) {
@@ -711,9 +716,10 @@ for (const preset of ['desktop', 'mobile'] as const)
             // Idle samples must never dilute the registered capacity distribution.
             expect(capacityFlush!.p95).toBeLessThanOrEqual(budgets[preset].flushP95Ms);
             expect(capacityFlush!.max).toBeLessThanOrEqual(budgets[preset].flushMaxMs);
-            if (idleFlush) {
-              expect(idleFlush.p95).toBeLessThanOrEqual(budgets[preset].flushP95Ms);
-              expect(idleFlush.max).toBeLessThanOrEqual(budgets[preset].flushMaxMs);
+            expect(idleFlush).not.toBeNull();
+            {
+              expect(idleFlush!.p95).toBeLessThanOrEqual(budgets[preset].flushP95Ms);
+              expect(idleFlush!.max).toBeLessThanOrEqual(budgets[preset].flushMaxMs);
             }
             expect(flushMaximum!).toBeLessThanOrEqual(budgets[preset].flushMaxMs);
             expect(localDrainMs).not.toBeNull();
@@ -888,6 +894,8 @@ for (const preset of ['desktop', 'mobile'] as const)
             'e2e/doc-responsiveness-fixture.ts',
             'e2e/doc-responsiveness-boundaries.ts',
             'web/docResponsivenessEvidence.ts',
+            'src/ui/docIdleEpisode.ts',
+            'src/ui/nativeDocFlush.ts',
             'playwright.config.ts',
             'package-lock.json',
           ].map(async (path) => [

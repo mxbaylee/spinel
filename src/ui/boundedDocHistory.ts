@@ -1,5 +1,6 @@
 import type { Univer } from '@univerjs/core';
 import { DocStateChangeManagerService, DocStateEmitService } from '@univerjs/docs';
+import type { NativeDocFlushManager } from './nativeDocFlush.ts';
 
 // A long uninterrupted burst must not become one quadratic composition task.
 // Both 64- and 44-state candidates missed the paired-flush p95 budget. Smaller
@@ -59,7 +60,7 @@ export function boundDocHistory(
     flushing = true;
     const startedAt = performance.now();
     try {
-      manager.flushPendingChanges(unitId);
+      (manager as typeof manager & NativeDocFlushManager).flushPendingChanges(unitId, reason);
     } finally {
       flushing = false;
     }
