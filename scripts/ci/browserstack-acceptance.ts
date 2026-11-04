@@ -410,7 +410,7 @@ export function tapOffset(trace: ReturnType<typeof tapTraceDiagnostic>): Point {
   return { x: landed.dx!, y: landed.dy! };
 }
 
-const touch = (point: Point, taps: 1 | 2) => ({
+const touch = (point: Point) => ({
   type: 'pointer',
   id: 'phone-acceptance-touch',
   parameters: { pointerType: 'touch' },
@@ -418,13 +418,6 @@ const touch = (point: Point, taps: 1 | 2) => ({
     { type: 'pointerMove', origin: 'viewport', duration: 0, x: point.x, y: point.y },
     { type: 'pointerDown', button: 0 },
     { type: 'pointerUp', button: 0 },
-    ...(taps === 2
-      ? [
-          { type: 'pause', duration: 100 },
-          { type: 'pointerDown', button: 0 },
-          { type: 'pointerUp', button: 0 },
-        ]
-      : []),
   ],
 });
 
@@ -439,7 +432,7 @@ async function calibrate(driver: PhoneAcceptanceDriver, point: Point) {
   if (known) return known;
   await driver.execute(tapTraceInstallScript, [point]);
   const tapped = Date.now();
-  await actions(driver, touch(point, 1));
+  await actions(driver, touch(point));
   await until(
     driver,
     async () => tapTraceDiagnostic(await driver.execute(tapTraceReadScript, [true])),
@@ -463,10 +456,12 @@ async function calibrate(driver: PhoneAcceptanceDriver, point: Point) {
 }
 
 // Univer counts a double click only when both clicks land within 500 ms and
-// 10 px (engine-render InputManager). In Safari run 41782555335 the page saw a
-// single tap 62 px above the aim when the taps went back to back, so the gap is
-// back to 100 ms and the aim is corrected by the measured offset (owner, chat
-// 2026-11-04). The page trace still records what each double tap produced.
+// 10 px (engine-render InputManager). Safari run 41782555335 saw back-to-back
+// taps as one tap, 62 px above the aim, so the aim is corrected by the measured
+// offset. Run 41898771272 then saw one sequence's two taps arrive as overlapping
+// touches with a cancel. Each tap is now its own single-tap sequence, the second
+// sent as soon as the first is acknowledged (owner, chat 2026-11-04); a single
+// tap arrived cleanly every time. The page trace records the gap between them.
 async function doubleTap(driver: PhoneAcceptanceDriver, selector: string, point: Point) {
   const actual = { x: Math.round(point.x), y: Math.round(point.y) };
   await hit(driver, selector, actual);
@@ -474,7 +469,8 @@ async function doubleTap(driver: PhoneAcceptanceDriver, selector: string, point:
   const aimed = { x: actual.x - offset.x, y: actual.y - offset.y };
   requireCondition(aimed.x >= 0 && aimed.y >= 0, 'native-tap-calibration-offset');
   await driver.execute(tapTraceInstallScript, [actual]);
-  await actions(driver, touch(aimed, 2));
+  await actions(driver, touch(aimed));
+  await actions(driver, touch(aimed));
   return actual;
 }
 

@@ -10,6 +10,8 @@ import {
   blankPageDiagnostic,
   browserPageOpened,
   offlineNetworkProfile,
+  registrationAttemptDiagnostic,
+  registrationAttemptScript,
   terminateApp,
   shortcutIntent,
   blankPageScript,
@@ -3311,8 +3313,14 @@ test('a launched window that is blank at first is attached once Spinel appears, 
       assert.equal(workerStateReads, 1);
       const state = result.observations.find(
         (entry) => entry.stage === 'home-launch:secure-worker-state',
-      )?.value as { last: { controller: unknown }; registrations: unknown };
+      )?.value as {
+        last: { controller: unknown };
+        registrations: unknown;
+        registrationAttempt: unknown;
+      };
       assert.equal(state.last.controller, null);
+      // A registration exists, or its read failed: the app's registration is not repeated.
+      assert.equal(state.registrationAttempt, 'not-attempted');
       if (mode === 'no-controller-read-fails')
         assert.deepEqual(state.registrations, { unavailable: 'http-500' });
       else
@@ -4081,4 +4089,74 @@ test('a Chrome close that answers 500 unknown error is checked, then retried onc
     /await terminateApp\(\n\s+\{\n\s+terminate: \(\) => command\(session\('appium\/device\/terminate_app'\), 'POST', app\),[\s\S]{0,400}\);\n\s+const state = await command\(session\('appium\/device\/app_state'\), 'POST', app\);[\s\S]{0,200}requireCondition\(state === 1, 'termination-not-observed'\);/,
   );
   assert.equal(source.match(/appium\/device\/terminate_app/g)?.length, 1);
+});
+
+test('with no worker registration, the run repeats the app registration once and keeps only its outcome', async () => {
+  async function attempt(register: () => Promise<unknown>) {
+    const context = createContext({ navigator: { serviceWorker: { register } } });
+    const value = await runInContext(`(async () => {${registrationAttemptScript}})()`, context);
+    return registrationAttemptDiagnostic(JSON.parse(JSON.stringify(value)));
+  }
+  const rejected = Object.assign(new Error('private detail https://bs-local.com/x'), {
+    name: 'SecurityError',
+  });
+  assert.deepEqual(
+    await attempt(async () => {
+      throw rejected;
+    }),
+    { outcome: 'rejected', state: null, name: 'SecurityError' },
+  );
+  assert.deepEqual(await attempt(async () => ({ installing: { state: 'installing' } })), {
+    outcome: 'registered',
+    state: 'installing',
+    name: null,
+  });
+  // Unbounded or unknown answers keep nothing.
+  assert.deepEqual(registrationAttemptDiagnostic({ outcome: 'rejected', name: 'Bad name: url' }), {
+    outcome: 'rejected',
+    state: null,
+    name: null,
+  });
+  assert.deepEqual(registrationAttemptDiagnostic({ outcome: 'x', state: 'activated', name: 'A' }), {
+    outcome: 'other',
+    state: null,
+    name: null,
+  });
+  // The same script and options the app registers with.
+  const app = readFileSync(new URL('../../web/installApp.ts', import.meta.url), 'utf8');
+  for (const option of [
+    "'/service-worker.js'",
+    "type: 'module'",
+    "scope: '/'",
+    "updateViaCache: 'none'",
+  ]) {
+    assert.ok(app.includes(option), option);
+    assert.ok(registrationAttemptScript.includes(option), option);
+  }
+  const source = readFileSync(new URL('./browserstack-capability.ts', import.meta.url), 'utf8');
+  const body = source.slice(
+    source.indexOf('async function recordWorkerState('),
+    source.indexOf('const diagnose = failureDiagnosis('),
+  );
+  // Only on no registration, once, and the failed command stays the lane's command.
+  assert.match(body, /if \(row\(registrations\)\.count === 0\) \{/);
+  assert.equal(body.match(/registrationAttemptScript/g)?.length, 1);
+  assert.ok(
+    body.indexOf('result.command = failedCommand;') > body.indexOf('registrationAttemptScript'),
+  );
+});
+
+test('the Chrome shortcut intent is sent only after the offline cut is applied again', () => {
+  const source = readFileSync(new URL('./browserstack-capability.ts', import.meta.url), 'utf8');
+  const body = source.slice(
+    source.indexOf('async function attachRelaunched('),
+    source.indexOf('async function reloadTab('),
+  );
+  const cut = body.indexOf('await putNetwork(offlineProfile);');
+  assert.ok(cut > 0 && cut < body.indexOf('mobile: deepLink'));
+  assert.match(body, /const offlineProfile = offlineNetworkProfile\(target\.browser\);/);
+  assert.match(body, /offline-intent-network-control/);
+  // Every network change goes through the one timed helper; cleanup keeps its own bounded call.
+  assert.equal(source.match(/update_network\.json/g)?.length, 3);
+  assert.equal(source.match(/await putNetwork\(/g)?.length, 3);
 });

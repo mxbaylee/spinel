@@ -1124,6 +1124,38 @@ export function workerStateDiagnostic(value: unknown) {
   };
 }
 /**
+ * Spinel ignores a failed worker registration (`web/installApp.ts` only warns),
+ * so Firefox runs 41749059341 and 41900170993 showed no registration and no
+ * reason. On a failure with no registration, the run repeats the app's own
+ * registration once, same script and options, and keeps only the outcome and
+ * the error's name (owner, chat 2026-11-04). It is recorded, never required.
+ */
+export const registrationAttemptScript = `try {
+  const registration = await navigator.serviceWorker.register('/service-worker.js', {type: 'module', scope: '/', updateViaCache: 'none'});
+  return {outcome: 'registered', state: (registration.installing || registration.waiting || registration.active)?.state || null};
+} catch (error) {
+  return {outcome: 'rejected', name: error?.name};
+}`;
+/** Keeps the outcome, a known worker state and a plain error name only. */
+export function registrationAttemptDiagnostic(value: unknown) {
+  const answer = row(value);
+  const outcome =
+    answer.outcome === 'registered' || answer.outcome === 'rejected' ? answer.outcome : 'other';
+  return {
+    outcome,
+    state:
+      outcome === 'registered' && typeof answer.state === 'string' && workerStates.has(answer.state)
+        ? answer.state
+        : null,
+    name:
+      outcome === 'rejected' &&
+      typeof answer.name === 'string' &&
+      /^[A-Za-z]{1,40}$/.test(answer.name)
+        ? answer.name
+        : null,
+  };
+}
+/**
  * Which navigations use `location.assign` in the attached window rather than
  * WebDriver's `POST /url`. Setup items go in-window on Chrome (HTTP 500 after
  * `POST /url`, run 41395124342) and Safari. Authored acceptance paths go
@@ -1429,6 +1461,18 @@ export async function runCapability(
       return value;
     });
   const session = (suffix: string) => `session/${result.sessionId}/${suffix}`;
+  const putNetwork = (networkProfile: string) =>
+    timedProviderCommand(
+      'PUT automate/sessions/{sessionId}/update_network.json',
+      15_000,
+      (options) =>
+        client.api(
+          `sessions/${result.sessionId}/update_network.json`,
+          'PUT',
+          { networkProfile },
+          options,
+        ),
+    );
   const execute = (script: string, args: unknown[] = [], timeout = 15_000) =>
     command(session('execute/sync'), 'POST', { script, args }, timeout);
   /** `inWindow` (from `navigatesInWindow`) assigns in the attached window; otherwise `POST /url`. */
@@ -1845,15 +1889,28 @@ export async function runCapability(
       );
     } catch (error) {
       registrations = { unavailable: failure(error) };
-    } finally {
-      result.command = failedCommand;
     }
+    let registrationAttempt: unknown = 'not-attempted';
+    if (row(registrations).count === 0) {
+      try {
+        registrationAttempt = registrationAttemptDiagnostic(
+          await executeAsync(registrationAttemptScript, [], 'worker-registration-attempt'),
+        );
+      } catch (error) {
+        registrationAttempt = { unavailable: failure(error) };
+      }
+    }
+    result.command = failedCommand;
     // Buffered, not journaled: a failed journal write cannot replace the
     // original failure, and the final flush persists it. (On Safari the read
     // itself goes through `observeBrowserTask`, which may journal a diagnostic.)
     result.observations.push({
       stage: `${result.stage}:secure-worker-state`,
-      value: sanitize({ last: last ? launchEnvironmentDiagnostic(last) : null, registrations }),
+      value: sanitize({
+        last: last ? launchEnvironmentDiagnostic(last) : null,
+        registrations,
+        registrationAttempt,
+      }),
     });
   }
   const diagnose = failureDiagnosis(result, () => screenshot('download-stalled'));
@@ -2184,6 +2241,16 @@ export async function runCapability(
       // The browser page's window is not the intent's window.
       previousWindowHandles = handles;
       await context('NATIVE_APP');
+      // Run 41899303270's intent opened Spinel online and signed out. The cut is
+      // applied again first, so a page that still comes up online shows the
+      // intent itself lifting it (owner, chat 2026-11-04). The relaunch's own
+      // offline checks still decide the outcome.
+      const offlineProfile = offlineNetworkProfile(target.browser);
+      await putNetwork(offlineProfile);
+      await record(`${prefix}offline-intent-network-control`, {
+        networkProfile: offlineProfile,
+        reappliedBeforeIntent: true,
+      });
       await execute('mobile: deepLink', [shortcutIntent(fixture.origin, foregroundApp)]);
       requireCondition((await foreground()) === foregroundApp, 'relaunch-foreground-changed');
       const attached = await attach(foregroundApp);
@@ -2488,17 +2555,7 @@ export async function runCapability(
             acceptanceFixture!.setOffline(false),
           );
         const networkProfile = offline ? offlineNetworkProfile(target.browser) : '4g-lte-good';
-        await timedProviderCommand(
-          'PUT automate/sessions/{sessionId}/update_network.json',
-          15_000,
-          (bounds) =>
-            client.api(
-              `sessions/${result.sessionId}/update_network.json`,
-              'PUT',
-              { networkProfile },
-              bounds,
-            ),
-        );
+        await putNetwork(networkProfile);
         await record(`${result.stage}:network-control`, {
           networkProfile,
           androidAirplaneMode: networkProfile === 'airplane-mode',
@@ -2540,17 +2597,7 @@ export async function runCapability(
     const unusedOfflineTicket = await socketTicket(prepared[0]);
     stage('device-offline');
     const offlineProfile = offlineNetworkProfile(target.browser);
-    await timedProviderCommand(
-      'PUT automate/sessions/{sessionId}/update_network.json',
-      15_000,
-      (options) =>
-        client.api(
-          `sessions/${result.sessionId}/update_network.json`,
-          'PUT',
-          { networkProfile: offlineProfile },
-          options,
-        ),
-    );
+    await putNetwork(offlineProfile);
     await record('network-control', {
       networkProfile: offlineProfile,
       androidAirplaneMode: offlineProfile === 'airplane-mode',

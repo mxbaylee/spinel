@@ -811,7 +811,7 @@ test('a successful action sequence tolerates only an unknown-command release, re
 
 type TraceRow = Record<string, unknown>;
 
-test('a phone double tap calibrates its aim once, then taps twice 100 ms apart', async () => {
+test('a phone double tap calibrates its aim once, then sends two separate single taps', async () => {
   const calls: [string, unknown][] = [];
   const records: [string, unknown][] = [];
   const landed = {
@@ -855,6 +855,8 @@ test('a phone double tap calibrates its aim once, then taps twice 100 ms apart',
       'install',
       'POST actions',
       'DELETE actions',
+      'POST actions',
+      'DELETE actions',
     ],
   );
   assert.deepEqual(records, [['native-tap-calibration', landed]]);
@@ -872,15 +874,16 @@ test('a phone double tap calibrates its aim once, then taps twice 100 ms apart',
     x: 80,
     y: 40,
   });
-  // Landed 62 px high, so the double tap aims 62 px lower, with a 100 ms gap.
-  assert.deepEqual(sources[1], [
+  // Landed 62 px high, so each of the two taps aims 62 px lower, as its own
+  // single-tap sequence: one sequence's two taps overlapped on Safari.
+  const corrected = [
     { type: 'pointerMove', origin: 'viewport', duration: 0, x: 80, y: 102 },
     { type: 'pointerDown', button: 0 },
     { type: 'pointerUp', button: 0 },
-    { type: 'pause', duration: 100 },
-    { type: 'pointerDown', button: 0 },
-    { type: 'pointerUp', button: 0 },
-  ]);
+  ];
+  assert.equal(sources.length, 3);
+  assert.deepEqual(sources[1], corrected);
+  assert.deepEqual(sources[2], corrected);
   assert.deepEqual(
     calls[6]![1],
     [{ x: 80, y: 40 }],
@@ -890,7 +893,7 @@ test('a phone double tap calibrates its aim once, then taps twice 100 ms apart',
   await phoneDoubleTap(driver, 'canvas', { x: 10, y: 10 });
   assert.deepEqual(
     calls.map(([name]) => name),
-    ['hit', 'install', 'POST actions', 'DELETE actions'],
+    ['hit', 'install', 'POST actions', 'DELETE actions', 'POST actions', 'DELETE actions'],
     'the session calibrates once',
   );
 });
