@@ -22,6 +22,7 @@ import {
   type CapabilityScope,
 } from './browserstack-scope.ts';
 import { prepareSpacePageOffline } from './browserstack-offline-preparation.ts';
+import { webdriverErrorCode } from './browserstack.ts';
 
 type Row = Record<string, unknown>;
 type Kind = 'sheet' | 'doc';
@@ -126,7 +127,11 @@ async function fixtureOperation<T>(driver: PhoneAcceptanceDriver, work: () => Pr
   }
 }
 
-export { until as observePhoneAcceptance, fixtureOperation as boundedPhoneFixtureOperation };
+export {
+  until as observePhoneAcceptance,
+  fixtureOperation as boundedPhoneFixtureOperation,
+  actions as phoneActions,
+};
 
 /** Open only the existing database and issue readonly transactions. No data is seeded in the phone. */
 export const phoneLocalCopyScript = `
@@ -305,10 +310,19 @@ async function actions(driver: PhoneAcceptanceDriver, value: unknown) {
   try {
     await driver.command('actions', 'DELETE');
   } catch (error) {
-    if (!failed) throw error;
+    if (failed) throw original;
+    // Every sequence ends with its own pointerUp or keyUp, so the release is
+    // redundant. Safari's driver answers it with `unknown command` (run
+    // 41771504170); only that answer, after a successful POST, is tolerated.
+    if (webdriverErrorCode(error) !== 'unknown command') throw error;
+    if (!releaseUnsupported.has(driver)) {
+      releaseUnsupported.add(driver);
+      await driver.record('actions-release-unsupported', { webdriverErrorCode: 'unknown command' });
+    }
   }
   if (failed) throw original;
 }
+const releaseUnsupported = new WeakSet<PhoneAcceptanceDriver>();
 
 async function hit(driver: PhoneAcceptanceDriver, selector: string, point: Point) {
   const visible = await driver.execute(

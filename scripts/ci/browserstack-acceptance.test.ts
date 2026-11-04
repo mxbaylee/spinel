@@ -28,6 +28,7 @@ import {
   openFolder,
   preparePhoneAcceptance,
   boundedPhoneFixtureOperation,
+  phoneActions,
   readPhoneOpenedCopy,
   verifyAuthoredContent,
   verifyEditablePhone,
@@ -763,4 +764,40 @@ test('every Shared with me visit on a phone goes through the Browse files drawer
     /<Modal title="Browse files"[^>]*>\s*<div className="file-rail-drawer">\s*\{places\(\)\}/,
   );
   assert.match(rail, /aria-label=\{shared \? 'Shared with me' : 'My files'\}/);
+});
+
+test('a successful action sequence tolerates only an unknown-command release, recorded once', async () => {
+  const records: [string, unknown][] = [];
+  const calls: string[] = [];
+  const coded = (code: string) =>
+    Object.assign(new Error('http-404'), { webdriverErrorCode: code });
+  const driver = (postError?: Error, deleteError?: Error) =>
+    ({
+      command: async (suffix: string, method = 'GET') => {
+        calls.push(`${method} ${suffix}`);
+        if (method === 'POST' && postError) throw postError;
+        if (method === 'DELETE' && deleteError) throw deleteError;
+        return null;
+      },
+      record: async (stage: string, value: unknown) => {
+        records.push([stage, value]);
+      },
+    }) as unknown as PhoneAcceptanceDriver;
+  const safari = driver(undefined, coded('unknown command'));
+  await phoneActions(safari, { type: 'key', id: 'k', actions: [] });
+  await phoneActions(safari, { type: 'key', id: 'k', actions: [] });
+  assert.deepEqual(calls, ['POST actions', 'DELETE actions', 'POST actions', 'DELETE actions']);
+  assert.deepEqual(records, [
+    ['actions-release-unsupported', { webdriverErrorCode: 'unknown command' }],
+  ]);
+  const other = coded('unknown error');
+  await assert.rejects(phoneActions(driver(undefined, other), {}), (error) => error === other);
+  const uncoded = new Error('http-500');
+  await assert.rejects(phoneActions(driver(undefined, uncoded), {}), (error) => error === uncoded);
+  const posted = new Error('http-500');
+  await assert.rejects(
+    phoneActions(driver(posted, coded('unknown command')), {}),
+    (error) => error === posted,
+  );
+  assert.equal(records.length, 1);
 });

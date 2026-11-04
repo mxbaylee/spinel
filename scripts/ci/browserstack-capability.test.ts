@@ -8,6 +8,13 @@ import {
   capabilityOutcome,
   capabilityRunOutcome,
   captureRequiredPngScreenshot,
+  blankPageDiagnostic,
+  blankPageScript,
+  deviceOfflineMilliseconds,
+  isDeviceOffline,
+  offlineWindowReloadProbe,
+  offlineWindowReloadProbed,
+  waitForDeviceOffline,
   environmentScript,
   installedWindowMilliseconds,
   navigatesInWindow,
@@ -3220,6 +3227,12 @@ test('a launched window that is blank at first is attached once Spinel appears, 
             saveStatus: 'Synced.',
           };
         else if (payload.args?.[1] === 'Document actions') value = null;
+        else if (payload.script === blankPageScript)
+          value = {
+            protocol: 'chrome-error:',
+            text: `No internet ${origin}/sign-in?next=private-path ERR_INTERNET_DISCONNECTED`,
+            data: JSON.stringify({ errorCode: 'ERR_INTERNET_DISCONNECTED' }),
+          };
         else {
           // The launched window's first two reads see Chrome's blank page.
           // Only reads after the Home Screen launch belong to the launched window.
@@ -3333,11 +3346,22 @@ test('a launched window that is blank at first is attached once Spinel appears, 
       assert.equal(result.stage, 'home-launch');
       assert.equal(result.failure, 'capability-installed-webview-unavailable');
       assert.ok(candidates.length > 2 && candidates.every((origin) => origin === 'null'));
-      // The failed wait still records how many times it looked.
-      assert.deepEqual(
-        result.observations.find((entry) => entry.stage === 'home-launch:attach-attempts')?.value,
-        { attempts: candidates.length },
-      );
+      // The failed wait still records how many times it looked, and the blank
+      // page's scheme, error code and failed path, never its text or query.
+      const attempts = result.observations.find(
+        (entry) => entry.stage === 'home-launch:attach-attempts',
+      )?.value;
+      assert.deepEqual(attempts, {
+        attempts: candidates.length,
+        page: {
+          protocol: 'chrome-error:',
+          errorCode: 'ERR_INTERNET_DISCONNECTED',
+          failedPath: '/sign-in',
+          textLength: `No internet ${origin}/sign-in?next=private-path ERR_INTERNET_DISCONNECTED`
+            .length,
+        },
+      });
+      assert.doesNotMatch(JSON.stringify(result), /private-path/);
       // Bounded by the wait, not by the phase: about one read per simulated second.
       assert.ok(contextReads <= installedWindowMilliseconds / 1_000 + 1, String(contextReads));
     }
@@ -3763,4 +3787,165 @@ test('only Safari opens acceptance paths in the window; setup items go in-window
     assert.ok(inWindowNavigationPath.test(path), path);
   for (const path of ['/sign-in', '//evil.example/', '/?item=a&x=1', '/spaces/s?item='])
     assert.equal(inWindowNavigationPath.test(path), false, path);
+});
+
+test('the device is offline only once both ordinary requests fail, and the wait reports its attempts within the socket ticket', async () => {
+  const probe = (reachable: boolean) => ({
+    online: true,
+    checks: [
+      { path: '/api/auth/session', reachable },
+      { path: '/capability-network-probe', reachable },
+    ],
+  });
+  assert.equal(isDeviceOffline(probe(false)), true);
+  assert.equal(isDeviceOffline(probe(true)), false);
+  assert.equal(isDeviceOffline({ online: true, checks: [] }), false);
+  // A stand-in for the harness poll: read until accepted or out of reads.
+  const pollFor =
+    (reads: number) => async (read: () => Promise<Record<string, unknown>>, maximum: number) => {
+      limits.push(maximum);
+      for (let index = 0; index < reads; index++) {
+        const value = await read();
+        if (isDeviceOffline(value)) return value;
+      }
+      throw new Error('capability-device-still-online');
+    };
+  const limits: number[] = [];
+  const now = 1_000_000;
+  let reads = 0;
+  const observed: Record<string, unknown>[] = [];
+  const read = async () => probe(++reads < 3);
+  await waitForDeviceOffline({ read, poll: pollFor(10), now: () => now }, now + 30_000, (value) =>
+    observed.push(value),
+  );
+  assert.deepEqual(observed.splice(0), [
+    { attempts: 3, maximumMilliseconds: deviceOfflineMilliseconds, last: probe(false) },
+  ]);
+  // Never offline: the original failure propagates and the last probe is kept.
+  await assert.rejects(
+    waitForDeviceOffline(
+      { read: async () => probe(true), poll: pollFor(4), now: () => now },
+      now + 12_000,
+      (value) => observed.push(value),
+    ),
+    /capability-device-still-online/,
+  );
+  assert.deepEqual(observed, [{ attempts: 4, maximumMilliseconds: 7_000, last: probe(true) }]);
+  // The wait leaves the ticket at least 5 s and never drops below 1 s.
+  await assert.rejects(
+    waitForDeviceOffline(
+      { read: async () => probe(true), poll: pollFor(1), now: () => now },
+      now + 2_000,
+      () => {},
+    ),
+  );
+  assert.deepEqual(limits, [deviceOfflineMilliseconds, 7_000, 1_000]);
+});
+
+test('only Chrome reloads its installed window offline before the first termination, and the result is recorded rather than required', async () => {
+  assert.deepEqual((['chrome', 'firefox', 'safari'] as const).map(offlineWindowReloadProbed), [
+    true,
+    false,
+    false,
+  ]);
+  const calls: string[] = [];
+  const probe = (reload: () => Promise<unknown>, expired = false) => ({
+    windowHandle: async () => (calls.push('window'), 'handle-1'),
+    reload: async (handle: unknown) => (calls.push(`reload ${String(handle)}`), reload()),
+    environment: async () => (calls.push('environment'), { origin: 'spinel', controller: 'sw' }),
+    blankPage: async () => (calls.push('blank'), { protocol: 'chrome-error:' }),
+    expired: () => expired,
+  });
+  assert.deepEqual(await offlineWindowReloadProbe(probe(async () => ({ reloaded: true }))), {
+    outcome: 'loaded',
+    reload: { reloaded: true },
+    environment: { origin: 'spinel', controller: 'sw' },
+  });
+  assert.deepEqual(calls.splice(0), ['window', 'reload handle-1', 'environment']);
+  assert.deepEqual(
+    await offlineWindowReloadProbe(
+      probe(async () => {
+        throw new Error('capability-ordinary-tab-origin-changed');
+      }),
+    ),
+    {
+      outcome: 'failed',
+      failure: 'capability-ordinary-tab-origin-changed',
+      page: { protocol: 'chrome-error:' },
+    },
+  );
+  assert.deepEqual(calls.splice(0), ['window', 'reload handle-1', 'blank']);
+  // The reload's own bound is a recorded result, not a lane failure.
+  assert.deepEqual(
+    await offlineWindowReloadProbe(
+      probe(async () => {
+        throw new Error('capability-ordinary-tab-reload-deadline');
+      }),
+    ),
+    {
+      outcome: 'failed',
+      failure: 'capability-ordinary-tab-reload-deadline',
+      page: { protocol: 'chrome-error:' },
+    },
+  );
+  calls.length = 0;
+  // Once the lane is aborted or out of time, the original error propagates.
+  await assert.rejects(
+    offlineWindowReloadProbe(
+      probe(async () => {
+        throw new Error('http-500');
+      }, true),
+    ),
+    /http-500/,
+  );
+  // The call site runs the probe before termination in every relaunch.
+  const source = readFileSync(new URL('./browserstack-capability.ts', import.meta.url), 'utf8');
+  assert.match(
+    source,
+    /async function restartInstalled\(foregroundApp: string, prefix = ''\) \{\n.*\n {4}if \(prefix === '' && offlineWindowReloadProbed\(target\.browser\)\)\n {6}await probeInstalledWindowReload\(prefix\);\n {4}stage\(`\$\{prefix\}same-session-termination`\);/,
+  );
+  assert.match(
+    source,
+    /await awaitDeviceOffline\(unusedOfflineTicket\);\n {4}await socketProbe\(unusedOfflineTicket, false\);/,
+  );
+  // Both no-network cuts wait for ordinary requests to fail before the socket probe.
+  assert.equal(source.match(/await socketProbe\(\w+, false\)/g)?.length, 2);
+  assert.match(
+    source,
+    /if \(ticket\) \{\n {10}await awaitDeviceOffline\(ticket\);\n {10}await socketProbe\(ticket, false\);/,
+  );
+});
+
+test('a blank page keeps only its scheme, error code and failed path', () => {
+  const origin = 'https://bs-local.com:8176';
+  assert.deepEqual(
+    blankPageDiagnostic(
+      {
+        protocol: 'chrome-error:',
+        text: 'This site cannot be reached',
+        data: JSON.stringify({
+          summary: { failedUrl: `${origin}/item/x?token=private` },
+          errorCode: 'ERR_NAME_NOT_RESOLVED',
+        }),
+      },
+      origin,
+    ),
+    {
+      protocol: 'chrome-error:',
+      errorCode: 'ERR_NAME_NOT_RESOLVED',
+      failedPath: '/item/x',
+      textLength: 27,
+    },
+  );
+  assert.deepEqual(
+    blankPageDiagnostic({ protocol: 'javascript:alert(1)//', text: 42, data: null }, origin),
+    { protocol: 'other', errorCode: null, failedPath: null, textLength: 0 },
+  );
+  assert.deepEqual(
+    blankPageDiagnostic(
+      { protocol: 'about:', text: 'https://elsewhere.example/a', data: '' },
+      origin,
+    ).failedPath,
+    null,
+  );
 });

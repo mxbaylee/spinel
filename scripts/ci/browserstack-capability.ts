@@ -711,6 +711,111 @@ type CapabilityOptions = {
   screenshot: (name: string, data: string) => Promise<string>;
 };
 
+/**
+ * Failure-only read of a page that never became Spinel. Chrome's own error page
+ * (`chrome-error:`) carries its error code and the failed address in text and
+ * `loadTimeData`; only those are kept, never the page text.
+ */
+export const blankPageScript = `let data='';try{data=JSON.stringify(window.loadTimeData?.data_??null);}catch{}
+return {protocol:location.protocol,text:String(document.body?.innerText??'').slice(0,20000),data:String(data).slice(0,20000)};`;
+export function blankPageDiagnostic(value: unknown, origin: string) {
+  const page = row(value);
+  const text = `${typeof page.text === 'string' ? page.text : ''} ${typeof page.data === 'string' ? page.data : ''}`;
+  const escaped = origin.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const address = text.match(new RegExp(`${escaped}/[^\\s"'<>\\\\]{0,400}`))?.[0];
+  let failedPath: string | null = null;
+  if (address) {
+    try {
+      failedPath = new URL(address).pathname.slice(0, 200);
+    } catch {
+      // An unparsable address is reported as absent, never guessed.
+    }
+  }
+  return {
+    protocol:
+      typeof page.protocol === 'string' && /^[a-z][a-z-]{0,19}:$/.test(page.protocol)
+        ? page.protocol
+        : 'other',
+    errorCode: text.match(/\bERR_[A-Z_]{3,60}\b/)?.[0] ?? null,
+    failedPath,
+    textLength: typeof page.text === 'string' ? page.text.length : 0,
+  };
+}
+/** Chrome only: its relaunched window went blank (runs 41748283045, 41772261056). */
+export function offlineWindowReloadProbed(browser: Target['browser']) {
+  return browser === 'chrome';
+}
+/**
+ * Recorded and never required (owner, chat 2026-11-03). One offline reload of
+ * the open installed window, before termination, tells a Spinel offline defect
+ * (this fails too) from a Home Screen relaunch problem (this loads). Only a lane
+ * abort or a passed lane or phase deadline propagates; the reload's own bound
+ * and a stalled command end as a recorded failure.
+ * It reuses `reloadOrdinaryTab`, which expects a non-standalone page, as Chrome's
+ * browser-shortcut launch is (run 41772261056); on a standalone WebAPK launch a
+ * loaded reload would be recorded as failed.
+ */
+export async function offlineWindowReloadProbe(probe: {
+  windowHandle(): Promise<unknown>;
+  reload(windowHandle: unknown): Promise<unknown>;
+  environment(): Promise<unknown>;
+  blankPage(): Promise<unknown>;
+  /** The lane was aborted or its lane or phase deadline has passed. */
+  expired(): boolean;
+}): Promise<Row> {
+  try {
+    const reload = await probe.reload(await probe.windowHandle());
+    return { outcome: 'loaded', reload, environment: await probe.environment() };
+  } catch (error) {
+    // The reload's own 15 s bound or a command bound is a recorded result; only
+    // the lane's own end propagates.
+    if (probe.expired()) throw error;
+    return { outcome: 'failed', failure: failure(error), page: await probe.blankPage() };
+  }
+}
+/** How long the no-network profile may take to cut ordinary requests. */
+export const deviceOfflineMilliseconds = 15_000;
+/** Every check failed: the no-network profile has reached ordinary requests. */
+export function isDeviceOffline(probe: unknown) {
+  try {
+    verifyTransportProbe(probe, false);
+    return true;
+  } catch {
+    return false;
+  }
+}
+/**
+ * BrowserStack's no-network profile can take effect after its API answers: on
+ * Firefox the socket still opened straight afterwards (run 41773348498). Wait up
+ * to `deviceOfflineMilliseconds` for ordinary requests to fail before the single
+ * socket probe, leaving the socket ticket at least 5 s, and report the attempts.
+ */
+export async function waitForDeviceOffline(
+  wait: {
+    read(): Promise<Row>;
+    poll(read: () => Promise<Row>, maximum: number): Promise<Row>;
+    now(): number;
+  },
+  ticketExpiresAt: number,
+  observe: (value: Row) => void,
+) {
+  const maximumMilliseconds = Math.max(
+    1_000,
+    Math.min(deviceOfflineMilliseconds, ticketExpiresAt - wait.now() - 5_000),
+  );
+  let attempts = 0;
+  let last: Row | undefined;
+  const report = () => observe({ attempts, maximumMilliseconds, last });
+  try {
+    return await wait.poll(async () => {
+      attempts += 1;
+      last = await wait.read();
+      return last;
+    }, maximumMilliseconds);
+  } finally {
+    report();
+  }
+}
 export const environmentScript = `return {
   origin: location.origin, path: location.pathname, title: document.title,
   userAgent: navigator.userAgent, secureContext: isSecureContext,
@@ -1539,6 +1644,7 @@ export async function runCapability(
    */
   async function attach(foregroundApp: string): Promise<Row> {
     let attempts = 0;
+    let page: unknown;
     try {
       const attached = await poll(
         () => (attempts++, attachOnce(foregroundApp)),
@@ -1547,10 +1653,42 @@ export async function runCapability(
         installedWindowMilliseconds,
       );
       return attached!;
+    } catch (error) {
+      if (attempts > 0) page = await readBlankPage();
+      throw error;
     } finally {
       // Buffered so a failed wait keeps its original failure.
-      result.observations.push({ stage: `${result.stage}:attach-attempts`, value: { attempts } });
+      result.observations.push({
+        stage: `${result.stage}:attach-attempts`,
+        value: page === undefined ? { attempts } : { attempts, page },
+      });
     }
+  }
+  /** Reads the last candidate window, keeping the failed command. */
+  async function readBlankPage() {
+    const failedCommand = result.command;
+    try {
+      return blankPageDiagnostic(await execute(blankPageScript), fixture.origin);
+    } catch (error) {
+      return { unavailable: failure(error) };
+    } finally {
+      result.command = failedCommand;
+    }
+  }
+  async function probeInstalledWindowReload(prefix: string) {
+    stage(`${prefix}offline-window-reload-probe`);
+    const value = await offlineWindowReloadProbe({
+      windowHandle: () => command(session('window')),
+      reload: (windowHandle) =>
+        reloadOrdinaryTab(
+          (suffix, method, body, timeout) => command(session(suffix), method, body, timeout),
+          { origin: fixture.origin, windowHandle, deadline: activeDeadline() },
+        ),
+      environment: async () => launchEnvironmentDiagnostic(row(await execute(environmentScript))),
+      blankPage: readBlankPage,
+      expired: () => signal.aborted || Date.now() >= activeDeadline(),
+    });
+    await record(`${prefix}offline-window-reload`, value);
   }
   async function attachOnce(foregroundApp: string): Promise<Row | null> {
     const value = await command(session('contexts'));
@@ -1719,7 +1857,8 @@ export async function runCapability(
       result.command = failedCommand;
     }
     // Buffered, not journaled: a failed journal write cannot replace the
-    // original failure, and the final flush persists it.
+    // original failure, and the final flush persists it. (On Safari the read
+    // itself goes through `observeBrowserTask`, which may journal a diagnostic.)
     result.observations.push({
       stage: `${result.stage}:secure-worker-state`,
       value: sanitize({ last: last ? launchEnvironmentDiagnostic(last) : null, registrations }),
@@ -1880,8 +2019,8 @@ export async function runCapability(
       );
     }
   }
-  async function transportProbe(reachable: boolean) {
-    const probe = row(
+  const readTransport = async () =>
+    row(
       await executeAsync(
         `const checks=await Promise.all(['/api/auth/session','/capability-network-probe'].map(async path=>{
       const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),2500);
@@ -1891,8 +2030,31 @@ export async function runCapability(
         'transport-probe',
       ),
     );
+  async function transportProbe(reachable: boolean) {
+    const probe = await readTransport();
     await record(`${result.stage}:network`, probe);
     verifyTransportProbe(probe, reachable);
+  }
+  async function awaitDeviceOffline(ticket: { expiresAt: number }) {
+    const started = Date.now();
+    let observation: Row = {};
+    try {
+      await waitForDeviceOffline(
+        {
+          read: readTransport,
+          poll: (read, maximum) => poll(read, isDeviceOffline, 'device-still-online', maximum),
+          now: () => Date.now(),
+        },
+        ticket.expiresAt,
+        (value) => (observation = value),
+      );
+    } finally {
+      // Buffered, so a failed wait keeps the failed command and original failure.
+      result.observations.push({
+        stage: `${result.stage}:offline-wait`,
+        value: { ...observation, elapsedMilliseconds: Date.now() - started },
+      });
+    }
   }
   async function socketTicket(item: Fixture['items'][number]) {
     const startedAt = Date.now();
@@ -1941,6 +2103,9 @@ export async function runCapability(
     );
   }
   async function restartInstalled(foregroundApp: string, prefix = '') {
+    // The first relaunch only: a pending restart has its own tighter budget.
+    if (prefix === '' && offlineWindowReloadProbed(target.browser))
+      await probeInstalledWindowReload(prefix);
     stage(`${prefix}same-session-termination`);
     const observedForeground = await foreground();
     requireCondition(observedForeground === foregroundApp, 'foreground-app-changed');
@@ -2284,7 +2449,10 @@ export async function runCapability(
           networkProfile,
           androidAirplaneMode: false,
         });
-        if (ticket) await socketProbe(ticket, false);
+        if (ticket) {
+          await awaitDeviceOffline(ticket);
+          await socketProbe(ticket, false);
+        }
         await transportProbe(!offline);
         if (offline) {
           await acceptance.boundedPhoneFixtureOperation(acceptanceDriver, () =>
@@ -2329,6 +2497,7 @@ export async function runCapability(
         ),
     );
     await record('network-control', { networkProfile: 'no-network', androidAirplaneMode: false });
+    await awaitDeviceOffline(unusedOfflineTicket);
     await socketProbe(unusedOfflineTicket, false);
     await transportProbe(false);
     const before = await storedItems(prepared);
