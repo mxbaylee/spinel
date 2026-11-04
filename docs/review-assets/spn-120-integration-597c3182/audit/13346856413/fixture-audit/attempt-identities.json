@@ -1,0 +1,54 @@
+[
+  {
+    "testId": "d4610c33918c0d3d6a19-c2031c9a72e169522ee1",
+    "file": "offline-recovery.spec.ts",
+    "title": "an unfinished native Sheet draft remains copyable before recovery freezes the queued edits",
+    "project": "sync-production",
+    "repeatEachIndex": 0,
+    "retry": 0,
+    "status": "passed",
+    "expectedStatus": "passed",
+    "startTime": "2026-11-04T17:13:21.906Z",
+    "durationMs": 10788,
+    "workerIndex": 0
+  },
+  {
+    "testId": "542c6445fd575a52fb22-9bd4429710c034b4c3c4",
+    "file": "sync-client.spec.ts",
+    "title": "native Docs preserve concurrent text and undo across reconnect, render profile presence, and capture actual image UI edits",
+    "project": "sync-production",
+    "repeatEachIndex": 0,
+    "retry": 0,
+    "status": "passed",
+    "expectedStatus": "passed",
+    "startTime": "2026-11-04T17:13:32.945Z",
+    "durationMs": 12054,
+    "workerIndex": 0
+  },
+  {
+    "testId": "d4610c33918c0d3d6a19-d886ccd988b54df0134d",
+    "file": "offline-recovery.spec.ts",
+    "title": "an unfinished native Sheet draft remains copyable before recovery freezes the queued edits",
+    "project": "sync-production",
+    "repeatEachIndex": 1,
+    "retry": 0,
+    "status": "passed",
+    "expectedStatus": "passed",
+    "startTime": "2026-11-04T17:13:45.724Z",
+    "durationMs": 9187,
+    "workerIndex": 1
+  },
+  {
+    "testId": "542c6445fd575a52fb22-08bba0e21594e3c6e808",
+    "file": "sync-client.spec.ts",
+    "title": "native Docs preserve concurrent text and undo across reconnect, render profile presence, and capture actual image UI edits",
+    "project": "sync-production",
+    "repeatEachIndex": 1,
+    "retry": 0,
+    "status": "passed",
+    "expectedStatus": "passed",
+    "startTime": "2026-11-04T17:13:55.130Z",
+    "durationMs": 11833,
+    "workerIndex": 1
+  }
+]

@@ -1,0 +1,36 @@
+{
+  "sourceSha": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+  "run": "41875292847",
+  "attempt": 1,
+  "total": 24,
+  "complete": true,
+  "summaries": [
+    {
+      "project": "development",
+      "attempts": 8,
+      "node": "v26.12.1",
+      "browser": "156.0.8078.4",
+      "sourceTree": "9fb93e234734661501dd725042e750dc944430ba",
+      "startedAt": "2026-11-04T17:13:24.033Z",
+      "finishedAt": "2026-11-04T17:17:15.477Z"
+    },
+    {
+      "project": "production",
+      "attempts": 12,
+      "node": "v26.12.1",
+      "browser": "156.0.8078.4",
+      "sourceTree": "9fb93e234734661501dd725042e750dc944430ba",
+      "startedAt": "2026-11-04T17:13:35.708Z",
+      "finishedAt": "2026-11-04T17:17:09.283Z"
+    },
+    {
+      "project": "sync-production",
+      "attempts": 4,
+      "node": "v26.12.1",
+      "browser": "156.0.8078.4",
+      "sourceTree": "9fb93e234734661501dd725042e750dc944430ba",
+      "startedAt": "2026-11-04T17:13:18.138Z",
+      "finishedAt": "2026-11-04T17:14:08.376Z"
+    }
+  ]
+}

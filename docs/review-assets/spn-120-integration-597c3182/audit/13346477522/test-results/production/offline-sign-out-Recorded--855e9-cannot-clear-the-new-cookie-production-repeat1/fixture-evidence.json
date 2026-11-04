@@ -1,0 +1,76 @@
+{
+  "sourceSha": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+  "testId": "ccad38f60b47bfc68793-7be8898b7f5fb244873f",
+  "project": "production",
+  "retry": 0,
+  "repeatEachIndex": 1,
+  "events": [
+    {
+      "elapsedMs": 0,
+      "phase": "server-ready",
+      "server": {
+        "ownerPid": 3311,
+        "runId": "70118754-807f-46e1-a4e8-3a21d29cafdc",
+        "updatedAt": 1793812603790,
+        "pid": 3322,
+        "ready": true,
+        "expectedClose": false,
+        "exited": false,
+        "unexpectedExit": false,
+        "closed": false,
+        "firstFailure": null,
+        "exitCode": null,
+        "signal": null,
+        "stdout": {
+          "bytes": 43,
+          "tail": "[ready]"
+        },
+        "stderr": {
+          "bytes": 0,
+          "tail": ""
+        }
+      }
+    },
+    {
+      "elapsedMs": 50,
+      "phase": "invitation-enrollment"
+    },
+    {
+      "elapsedMs": 1384,
+      "phase": "invitation-heading"
+    },
+    {
+      "elapsedMs": 5307,
+      "phase": "cleanup",
+      "errors": 0,
+      "contexts": 1
+    },
+    {
+      "elapsedMs": 5307,
+      "phase": "scenario-finished",
+      "server": {
+        "ownerPid": 3311,
+        "runId": "70118754-807f-46e1-a4e8-3a21d29cafdc",
+        "updatedAt": 1793812609052,
+        "pid": 3322,
+        "ready": true,
+        "expectedClose": false,
+        "exited": false,
+        "unexpectedExit": false,
+        "closed": false,
+        "firstFailure": null,
+        "exitCode": null,
+        "signal": null,
+        "stdout": {
+          "bytes": 43,
+          "tail": "[ready]"
+        },
+        "stderr": {
+          "bytes": 0,
+          "tail": ""
+        }
+      }
+    }
+  ],
+  "dropped": 0
+}

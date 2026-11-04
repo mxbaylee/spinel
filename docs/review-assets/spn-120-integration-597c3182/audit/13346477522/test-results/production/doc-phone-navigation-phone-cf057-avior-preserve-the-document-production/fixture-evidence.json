@@ -1,0 +1,84 @@
+{
+  "sourceSha": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+  "testId": "7dd7d36b1c104a24ca8b-292dc15db9e2dcca8357",
+  "project": "production",
+  "retry": 0,
+  "repeatEachIndex": 0,
+  "events": [
+    {
+      "elapsedMs": 0,
+      "phase": "server-ready",
+      "server": {
+        "ownerPid": 3311,
+        "runId": "70118754-807f-46e1-a4e8-3a21d29cafdc",
+        "updatedAt": 1793812477991,
+        "pid": 3322,
+        "ready": true,
+        "expectedClose": false,
+        "exited": false,
+        "unexpectedExit": false,
+        "closed": false,
+        "firstFailure": null,
+        "exitCode": null,
+        "signal": null,
+        "stdout": {
+          "bytes": 43,
+          "tail": "[ready]"
+        },
+        "stderr": {
+          "bytes": 0,
+          "tail": ""
+        }
+      }
+    },
+    {
+      "elapsedMs": 59,
+      "phase": "authenticated-setup",
+      "attempt": 1,
+      "status": 200,
+      "identityMatch": true,
+      "result": "verified"
+    },
+    {
+      "elapsedMs": 59,
+      "phase": "phone-seed"
+    },
+    {
+      "elapsedMs": 19318,
+      "phase": "phone-reload"
+    },
+    {
+      "elapsedMs": 21786,
+      "phase": "cleanup",
+      "errors": 0,
+      "contexts": 1
+    },
+    {
+      "elapsedMs": 21787,
+      "phase": "scenario-finished",
+      "server": {
+        "ownerPid": 3311,
+        "runId": "70118754-807f-46e1-a4e8-3a21d29cafdc",
+        "updatedAt": 1793812499789,
+        "pid": 3322,
+        "ready": true,
+        "expectedClose": false,
+        "exited": false,
+        "unexpectedExit": false,
+        "closed": false,
+        "firstFailure": null,
+        "exitCode": null,
+        "signal": null,
+        "stdout": {
+          "bytes": 43,
+          "tail": "[ready]"
+        },
+        "stderr": {
+          "bytes": 0,
+          "tail": ""
+        }
+      }
+    }
+  ],
+  "dropped": 0
+}

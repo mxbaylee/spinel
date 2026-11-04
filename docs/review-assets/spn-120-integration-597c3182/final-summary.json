@@ -1,0 +1,75 @@
+{
+  "status": "blocked; not merged",
+  "source": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+  "base": "642eb32bb52dd7dd13b6582869ef9482910e04ec",
+  "testedMerge": "a5a83657bc551b690567ef29bee48015e492d2d3",
+  "sourceAndTestedTree": "9fb93e234734661501dd725042e750dc944430ba",
+  "audit": {
+    "run": 41875292847,
+    "attempt": 1,
+    "passed": 24,
+    "retries": 0,
+    "setupRecovery": 0,
+    "projects": {
+      "production": 12,
+      "development": 8,
+      "sync-production": 4
+    },
+    "node": "26.12.1",
+    "chromium": "156.0.8078.4",
+    "independentReview": "audit-independent-review.md"
+  },
+  "local": {
+    "controls": 62,
+    "controlDurationMs": 4607,
+    "controlPeakKiB": 585392,
+    "lint": "passed after pressure returned normal",
+    "lintDurationMs": 17883,
+    "lintPeakKiB": 824304,
+    "typecheck": "resource-aborted; hosted Typecheck passed",
+    "initialLint": "refused elevated memory pressure",
+    "backlog": "passed",
+    "prCheck": "passed"
+  },
+  "reviews": {
+    "scores": [
+      98,
+      98
+    ],
+    "source": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+    "beforeValidationPush": true,
+    "mergeApproval": false,
+    "disclosure": "agent review only"
+  },
+  "blocker": {
+    "run": 41875200422,
+    "attempt": 1,
+    "job": 126732615140,
+    "artifact": 13346504439,
+    "zipSha256": "14d3be00690da6703ce09480ce54a9beb27aa3d45290b0a1888bf5736085892d",
+    "operation": "Offline-restart retained-storage request; validated identity then JXA Application(pid) construction fails -2700",
+    "initialIdentityMs": 407,
+    "restartIdentityMs": 124,
+    "scope": "Native automation scripts unchanged from base; fails before application setup; separate L repair prerequisite",
+    "rerun": "No unchanged rerun attempted"
+  },
+  "coverage": {
+    "mode": "full",
+    "planSha256": "4424cd7305678b4455f1d7084d2895721ec87d8ec8362c522acb81b3f4506f87",
+    "currentSnapshot": "workflow-records.json; pending jobs are not passes",
+    "sevenRequired": [
+      "Backlog",
+      "Pull request",
+      "Lint",
+      "Typecheck",
+      "Unit tests",
+      "Lib tests",
+      "Playwright smoke"
+    ]
+  },
+  "cleanup": {
+    "branch": "codex/spn-120-fixture-reliability",
+    "retained": "Active draft PR owns branch; not obsolete. Prior three evidence archive tags retain immutable records. No helper branch created in this turn."
+  },
+  "limits": "Historical symptoms were not reproduced in bounded samples; no claim of known causes or universal absence. No retries, assertion weakening, skipped selected evidence or expanded deadlines."
+}
