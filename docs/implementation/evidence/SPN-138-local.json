@@ -1,0 +1,180 @@
+{
+  "ticket": "SPN-138",
+  "kind": "local validation checkpoint before commit; browser acceptance is pending",
+  "registrationCandidate": "68954668c4eb3f5003113c29c7d1e6f45f8daff1",
+  "testSource": {
+    "path": "e2e/offline-creation.spec.ts",
+    "gitBlob": "cb47ea0aaea2c88c1d9bd73fa4aeca208e307750",
+    "sha256": "e2d8157b5cdcceecf20a104203a13677c2ed56ee48dfb95f4ca187e6a924b2ce"
+  },
+  "runtime": {
+    "node": "26.12.1",
+    "playwright": "1.64.1",
+    "requestedChromium": "156.0.8078.4",
+    "requestedChromiumBuild": "1248",
+    "browserExecuted": false
+  },
+  "dependencyPreparation": "Replaced the worktree node_modules symlink with a reflink/copy of the already verified installed dependency tree; package.json and package-lock.json were not changed.",
+  "watchdog": {
+    "path": "/workspace/scratch/01384cef7048/watchdog.ts",
+    "maxProcessTreeKiB": 2097152,
+    "deadlineMs": 480000,
+    "samplingIntervalMs": 100,
+    "innerRunner": "scripts/serial.ts"
+  },
+  "checks": [
+    {
+      "name": "browser-install",
+      "startedAt": "2026-11-04T06:49:05.046Z",
+      "finishedAt": "2026-11-04T06:49:27.549Z",
+      "node": "v26.12.1",
+      "cwd": "/workspace/scratch/01384cef7048/spinel-138",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "node",
+        "node_modules/playwright/cli.js",
+        "install",
+        "chromium"
+      ],
+      "elapsedMs": 22502,
+      "peakKiB": 452368,
+      "code": 1,
+      "signal": null,
+      "aborted": null
+    },
+    {
+      "name": "format",
+      "startedAt": "2026-11-04T06:49:54.058Z",
+      "finishedAt": "2026-11-04T06:49:54.889Z",
+      "node": "v26.12.1",
+      "cwd": "/workspace/scratch/01384cef7048/spinel-138",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "node",
+        "node_modules/prettier/bin/prettier.cjs",
+        "--write",
+        "e2e/offline-creation.spec.ts"
+      ],
+      "elapsedMs": 831,
+      "peakKiB": 320880,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    },
+    {
+      "name": "lint",
+      "startedAt": "2026-11-04T06:50:31.548Z",
+      "finishedAt": "2026-11-04T06:50:31.806Z",
+      "node": "v26.12.1",
+      "cwd": "/workspace/scratch/01384cef7048/spinel-138",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "node",
+        "node_modules/oxlint/bin/oxlint",
+        "--deny-warnings",
+        "e2e/offline-creation.spec.ts"
+      ],
+      "elapsedMs": 257,
+      "peakKiB": 214864,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    },
+    {
+      "name": "typecheck",
+      "startedAt": "2026-11-04T06:50:39.237Z",
+      "finishedAt": "2026-11-04T06:50:45.862Z",
+      "node": "v26.12.1",
+      "cwd": "/workspace/scratch/01384cef7048/spinel-138",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "node",
+        "--max-old-space-size=768",
+        "--max-semi-space-size=8",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "."
+      ],
+      "elapsedMs": 6624,
+      "peakKiB": 2019056,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    },
+    {
+      "name": "collection",
+      "startedAt": "2026-11-04T06:51:18.674Z",
+      "finishedAt": "2026-11-04T06:51:21.528Z",
+      "node": "v26.12.1",
+      "cwd": "/workspace/scratch/01384cef7048/spinel-138",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "node",
+        "node_modules/playwright/cli.js",
+        "test",
+        "e2e/offline-creation.spec.ts",
+        "--project=sync-production",
+        "--grep",
+        "shared folder preparation|sheet: create in a cached shared folder",
+        "--retries=0",
+        "--list"
+      ],
+      "elapsedMs": 2854,
+      "peakKiB": 536392,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    }
+  ],
+  "browserDownloadFailure": {
+    "url": "https://cdn.playwright.dev/builds/cft/156.0.8078.4/linux64/chrome-linux64.zip",
+    "installerError": "End of central directory record signature not found. Either not a zip file, or file is truncated.",
+    "diagnosticRangeRequest": {
+      "httpStatus": 206,
+      "contentType": "text/html",
+      "contentLength": 195,
+      "body": "<html>\n    <head><title>Site Unavailable</title></head>\n    <body>\n      <center>\n        <h1>Site Unavailable</h1>\n        <p>Unable to access this site.</p>\n      </center>\n    </body>\n</html>\n"
+    },
+    "cacheSearch": "No executable found under the primary runtime, workspace, /tmp or /root/.cache; PLAYWRIGHT_BROWSERS_PATH was unset.",
+    "disposition": "Pinned browser unavailable. Installer download retries were not scenario attempts. No alternative browser version was substituted."
+  },
+  "collectedTests": [
+    "shared folder preparation waits for held contents before disconnecting",
+    "shared folder preparation rejects withheld contents within its readiness budget",
+    "sheet: create in a cached shared folder, edit, reload twice offline and upload once"
+  ],
+  "localBrowserAttempts": 0,
+  "hostedProof": {
+    "status": "pending",
+    "predeclaredSamples": 2,
+    "owner": "existing sync-production job",
+    "executions": [
+      "Initial code CI on the independently reviewed source; entire workflow must finish successfully before repetition.",
+      "One deliberate rerun of that successful sync-production job and its dependent aggregate within the same workflow run, retaining the source and tested merge."
+    ],
+    "requiredResults": "Both controls and the original shared-sheet scenario pass at retry=0 in both genuinely new executions. A carried-forward attempt/job row is not a fresh sample. Any first failure remains failed and requires diagnosis.",
+    "preserveBeforeRepeat": [
+      "Complete first browser archive and its report, downloaded and hashed",
+      "Relevant job logs, original plan and aggregate evidence",
+      "Source/base/tested SHAs, workflow run and attempt, job ID, artifact ID, archive digest and artifact creation time"
+    ],
+    "freshExecutionProof": [
+      "New sync-production job execution timestamps",
+      "Distinct new artifact ID with later creation time, selected by ID rather than name",
+      "New Playwright result start times for all three cases"
+    ],
+    "guards": [
+      "Entire first workflow and its selected gates must succeed before the one planned job repeat",
+      "Both uploads and dependent aggregate must succeed with unchanged plan/source/selected-result checks",
+      "Do not delete first artifacts, enable overwrite, ignore failures or run another sample for green",
+      "Recheck current head/base and final gates before merge; source/base changes require fresh review and validation"
+    ],
+    "metadataPolicy": "Description edits still trigger full CI. This narrower sample plan does not suppress or waive any separately triggered validation.",
+    "revisionReason": "Prospective cost reduction before publication or any hosted sample; retains two fresh-profile first attempts."
+  }
+}
