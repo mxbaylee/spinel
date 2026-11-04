@@ -1,0 +1,11 @@
+{
+  "pr": "https://github.com/mxbaylee/spinel/pull/259",
+  "source": "85a0e3c32066abccc913b2756316b2fff9651aea",
+  "base": "13b74ecea5f2552627ff638be9413ad4754ef581",
+  "draftCheckpoint": true,
+  "localChecks": ["57 actual emitted JXA/host/caller controls", "full lint/dependencies/format", "focused three-root types", "backlog/index/PR shape/whitespace"],
+  "currentHeadReviews": "pending; earlier source3c3fc7d8 received98/98 and its three source files are byte-identical, but old grades do not approve this integration",
+  "missing": ["accepted SPN-141 base integration", "fresh exact-head reviews", "full hosted types and all seven gates", "native same-profile and full application acceptance"],
+  "runs": {"ci":41907965643,"storybook":41907965534,"native":41907965533},
+  "disposition": "All three workflows verified completed/cancelled, with no further workflows on this source. Normal cancellation requested for all; force-cancel completed CI always-jobs and native cancellation. Typecheck rejected cancelled classification before compilation; Unit/Lib aggregates rejected the missing plan. No acceptance credit."
+}

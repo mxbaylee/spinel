@@ -1,0 +1,238 @@
+﻿2026-11-04T20:35:23.9096030Z Current runner version: '2.338.2'
+2026-11-04T20:35:23.9118501Z ##[group]Runner Image Provisioner
+2026-11-04T20:35:23.9119294Z Hosted Compute Agent
+2026-11-04T20:35:23.9119890Z Version: 20261021.618
+2026-11-04T20:35:23.9120427Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-11-04T20:35:23.9121052Z Build Date: 2026-10-21T00:45:21Z
+2026-11-04T20:35:23.9121899Z Worker ID: {551c46ee-8460-4d1a-9a8a-39e5db0e30fb}
+2026-11-04T20:35:23.9122560Z Region: westus3
+2026-11-04T20:35:23.9123068Z Cloud: Azure
+2026-11-04T20:35:23.9123557Z ##[endgroup]
+2026-11-04T20:35:23.9124812Z ##[group]Operating System
+2026-11-04T20:35:23.9125453Z Ubuntu
+2026-11-04T20:35:23.9125916Z 24.04.5
+2026-11-04T20:35:23.9126386Z LTS
+2026-11-04T20:35:23.9126865Z ##[endgroup]
+2026-11-04T20:35:23.9127380Z ##[group]Runner Image
+2026-11-04T20:35:23.9127941Z Image: ubuntu-24.04
+2026-11-04T20:35:23.9128436Z Version: 20261025.353.1
+2026-11-04T20:35:23.9129626Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+2026-11-04T20:35:23.9130957Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+2026-11-04T20:35:23.9132027Z ##[endgroup]
+2026-11-04T20:35:23.9133016Z ##[group]GITHUB_TOKEN Permissions
+2026-11-04T20:35:23.9134708Z Contents: read
+2026-11-04T20:35:23.9135230Z Metadata: read
+2026-11-04T20:35:23.9135740Z ##[endgroup]
+2026-11-04T20:35:23.9137556Z Secret source: Actions
+2026-11-04T20:35:23.9138361Z Cache mode: write
+2026-11-04T20:35:23.9139035Z Prepare workflow directory
+2026-11-04T20:35:23.9453327Z Prepare all required actions
+2026-11-04T20:35:23.9493169Z Getting action download info
+2026-11-04T20:35:24.3044834Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-04T20:35:24.4411560Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+2026-11-04T20:35:24.6008308Z Download action repository 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-11-04T20:35:24.8450340Z Complete job name: Lib tests
+2026-11-04T20:35:24.9194159Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-04T20:35:24.9195055Z with:
+2026-11-04T20:35:24.9195467Z   persist-credentials: false
+2026-11-04T20:35:24.9195927Z   repository: mxbaylee/spinel
+2026-11-04T20:35:24.9199526Z   token: ***
+2026-11-04T20:35:24.9199928Z   ssh-strict: true
+2026-11-04T20:35:24.9200326Z   ssh-user: git
+2026-11-04T20:35:24.9200706Z   clean: true
+2026-11-04T20:35:24.9201104Z   sparse-checkout-cone-mode: true
+2026-11-04T20:35:24.9201568Z   fetch-depth: 1
+2026-11-04T20:35:24.9202089Z   fetch-tags: false
+2026-11-04T20:35:24.9202485Z   show-progress: true
+2026-11-04T20:35:24.9202881Z   lfs: false
+2026-11-04T20:35:24.9203263Z   submodules: false
+2026-11-04T20:35:24.9203685Z   set-safe-directory: true
+2026-11-04T20:35:24.9204126Z   allow-unsafe-pr-checkout: false
+2026-11-04T20:35:24.9204812Z ##[endgroup]
+2026-11-04T20:35:25.1256479Z Syncing repository: mxbaylee/spinel
+2026-11-04T20:35:25.1258064Z ##[group]Getting Git version info
+2026-11-04T20:35:25.1258784Z Working directory is '/home/runner/work/spinel/spinel'
+2026-11-04T20:35:25.1259640Z [command]/usr/bin/git version
+2026-11-04T20:35:25.1400272Z git version 2.56.0
+2026-11-04T20:35:25.1417676Z ##[endgroup]
+2026-11-04T20:35:25.1432507Z Temporarily overriding HOME='/home/runner/work/_temp/e70078e2-d51d-4cb1-913d-5e0a7b0272a0' before making global git config changes
+2026-11-04T20:35:25.1439449Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-04T20:35:25.1441373Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-04T20:35:25.1475250Z Deleting the contents of '/home/runner/work/spinel/spinel'
+2026-11-04T20:35:25.1478235Z ##[group]Determining repository object format
+2026-11-04T20:35:25.1479485Z ##[endgroup]
+2026-11-04T20:35:25.1480877Z ##[group]Initializing the repository
+2026-11-04T20:35:25.1483461Z [command]/usr/bin/git init /home/runner/work/spinel/spinel
+2026-11-04T20:35:25.1570973Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-04T20:35:25.1572188Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-04T20:35:25.1573574Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-04T20:35:25.1574253Z hint: call:
+2026-11-04T20:35:25.1574670Z hint:
+2026-11-04T20:35:25.1575294Z hint: 	git config --global init.defaultBranch <name>
+2026-11-04T20:35:25.1575844Z hint:
+2026-11-04T20:35:25.1576669Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-04T20:35:25.1577922Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-04T20:35:25.1578942Z hint:
+2026-11-04T20:35:25.1579557Z hint: 	git branch -m <name>
+2026-11-04T20:35:25.1580196Z hint:
+2026-11-04T20:35:25.1580862Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-04T20:35:25.1581963Z Initialized empty Git repository in /home/runner/work/spinel/spinel/.git/
+2026-11-04T20:35:25.1590829Z [command]/usr/bin/git remote add origin https://github.com/mxbaylee/spinel
+2026-11-04T20:35:25.1643826Z ##[endgroup]
+2026-11-04T20:35:25.1645112Z ##[group]Disabling automatic garbage collection
+2026-11-04T20:35:25.1647820Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-04T20:35:25.1703481Z ##[endgroup]
+2026-11-04T20:35:25.1704698Z ##[group]Setting up auth
+2026-11-04T20:35:25.1705551Z Removing SSH command configuration
+2026-11-04T20:35:25.1706816Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-04T20:35:25.1730122Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-04T20:35:25.2042361Z Removing HTTP extra header
+2026-11-04T20:35:25.2044074Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-04T20:35:25.2082121Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-04T20:35:25.2301440Z Removing includeIf entries pointing to credentials config files
+2026-11-04T20:35:25.2303161Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-04T20:35:25.2343440Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-04T20:35:25.2568209Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-ef7bbbe4-a26b-463e-a909-2149a1fd43dc.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-04T20:35:25.2615021Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git.path /home/runner/work/_temp/git-credentials-ef7bbbe4-a26b-463e-a909-2149a1fd43dc.config
+2026-11-04T20:35:25.2653652Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-ef7bbbe4-a26b-463e-a909-2149a1fd43dc.config
+2026-11-04T20:35:25.2692707Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-ef7bbbe4-a26b-463e-a909-2149a1fd43dc.config
+2026-11-04T20:35:25.2731560Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-ef7bbbe4-a26b-463e-a909-2149a1fd43dc.config
+2026-11-04T20:35:25.2768670Z ##[endgroup]
+2026-11-04T20:35:25.2769735Z ##[group]Fetching the repository
+2026-11-04T20:35:25.2774179Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +f850c78a1d2e1a8e008fd5dc1fb07cbe33ef9cb8:refs/remotes/pull/259/merge
+2026-11-04T20:35:28.5279230Z From https://github.com/mxbaylee/spinel
+2026-11-04T20:35:28.5281240Z  * [new ref]         f850c78a1d2e1a8e008fd5dc1fb07cbe33ef9cb8 -> pull/259/merge
+2026-11-04T20:35:28.5284193Z ##[endgroup]
+2026-11-04T20:35:28.5285074Z ##[group]Determining the checkout info
+2026-11-04T20:35:28.5286030Z ##[endgroup]
+2026-11-04T20:35:28.5288663Z [command]/usr/bin/git sparse-checkout disable
+2026-11-04T20:35:28.5345575Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-04T20:35:28.5384169Z ##[group]Checking out the ref
+2026-11-04T20:35:28.5387503Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/259/merge
+2026-11-04T20:35:28.9914239Z Note: switching to 'refs/remotes/pull/259/merge'.
+2026-11-04T20:35:28.9914615Z 
+2026-11-04T20:35:28.9914821Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-11-04T20:35:28.9915258Z changes and commit them, and you can discard any commits you make in this
+2026-11-04T20:35:28.9915774Z state without impacting any branches by switching back to a branch.
+2026-11-04T20:35:28.9916047Z 
+2026-11-04T20:35:28.9916295Z If you want to create a new branch to retain commits you create, you may
+2026-11-04T20:35:28.9916705Z do so (now or later) by using -c with the switch command. Example:
+2026-11-04T20:35:28.9916922Z 
+2026-11-04T20:35:28.9917049Z   git switch -c <new-branch-name>
+2026-11-04T20:35:28.9917209Z 
+2026-11-04T20:35:28.9917331Z Or undo this operation with:
+2026-11-04T20:35:28.9917489Z 
+2026-11-04T20:35:28.9917593Z   git switch -
+2026-11-04T20:35:28.9917747Z 
+2026-11-04T20:35:28.9917948Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-11-04T20:35:28.9918250Z 
+2026-11-04T20:35:28.9918561Z HEAD is now at f850c78 Merge 85a0e3c32066abccc913b2756316b2fff9651aea into 13b74ecea5f2552627ff638be9413ad4754ef581
+2026-11-04T20:35:28.9947529Z ##[endgroup]
+2026-11-04T20:35:29.0001958Z [command]/usr/bin/git log -1 --format=%H
+2026-11-04T20:35:29.0039230Z f850c78a1d2e1a8e008fd5dc1fb07cbe33ef9cb8
+2026-11-04T20:35:29.0046970Z ##[group]Removing auth
+2026-11-04T20:35:29.0047231Z Removing SSH command configuration
+2026-11-04T20:35:29.0050852Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-04T20:35:29.0087908Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-04T20:35:29.0299309Z Removing HTTP extra header
+2026-11-04T20:35:29.0303135Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-04T20:35:29.0340937Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-04T20:35:29.0552940Z Removing includeIf entries pointing to credentials config files
+2026-11-04T20:35:29.0556168Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-04T20:35:29.0590044Z includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-04T20:35:29.0667135Z includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-04T20:35:29.0667705Z includeif.gitdir:/github/workspace/.git.path
+2026-11-04T20:35:29.0668029Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-04T20:35:29.0669062Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-04T20:35:29.0669578Z /home/runner/work/_temp/git-credentials-ef7bbbe4-a26b-463e-a909-2149a1fd43dc.config
+2026-11-04T20:35:29.0670839Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-ef7bbbe4\-a26b\-463e\-a909\-2149a1fd43dc\.config
+2026-11-04T20:35:29.0693414Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-04T20:35:29.0724784Z /home/runner/work/_temp/git-credentials-ef7bbbe4-a26b-463e-a909-2149a1fd43dc.config
+2026-11-04T20:35:29.0732227Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-ef7bbbe4\-a26b\-463e\-a909\-2149a1fd43dc\.config
+2026-11-04T20:35:29.0772309Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-04T20:35:29.0802153Z /github/runner_temp/git-credentials-ef7bbbe4-a26b-463e-a909-2149a1fd43dc.config
+2026-11-04T20:35:29.0808564Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-ef7bbbe4\-a26b\-463e\-a909\-2149a1fd43dc\.config
+2026-11-04T20:35:29.1378295Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-04T20:35:29.1414590Z /github/runner_temp/git-credentials-ef7bbbe4-a26b-463e-a909-2149a1fd43dc.config
+2026-11-04T20:35:29.1423278Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-ef7bbbe4\-a26b\-463e\-a909\-2149a1fd43dc\.config
+2026-11-04T20:35:29.1886443Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-04T20:35:29.2103353Z Removing credentials config '/home/runner/work/_temp/git-credentials-ef7bbbe4-a26b-463e-a909-2149a1fd43dc.config'
+2026-11-04T20:35:29.2600032Z ##[endgroup]
+2026-11-04T20:35:29.2977981Z ##[group]Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+2026-11-04T20:35:29.2978331Z with:
+2026-11-04T20:35:29.2978516Z   node-version-file: .nvmrc
+2026-11-04T20:35:29.2978732Z   package-manager-cache: false
+2026-11-04T20:35:29.2978947Z   check-latest: false
+2026-11-04T20:35:29.2981209Z   token: ***
+2026-11-04T20:35:29.2981397Z ##[endgroup]
+2026-11-04T20:35:29.4140986Z Node version file is not JSON file
+2026-11-04T20:35:29.4145767Z Node version file is not TOML file
+2026-11-04T20:35:29.4146150Z Resolved .nvmrc as 26.12.1
+2026-11-04T20:35:29.4160851Z Attempting to download 26.12.1...
+2026-11-04T20:35:30.5953089Z Acquiring 26.12.1 - x64 from https://github.com/actions/node-versions/releases/download/26.12.1-39618969937/node-26.12.1-linux-x64.tar.gz
+2026-11-04T20:35:31.2874886Z Extracting ...
+2026-11-04T20:35:31.2989200Z [command]/usr/bin/tar xz --strip 1 --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/7545fb58-c1bc-42a3-9e43-62229e34c6df -f /home/runner/work/_temp/5445731e-3db4-43a7-b2a1-5175e3fc687d
+2026-11-04T20:35:32.4483477Z Adding to the cache ...
+2026-11-04T20:35:34.5980271Z ##[group]Environment details
+2026-11-04T20:35:34.8410120Z node: v26.12.1
+2026-11-04T20:35:34.8410418Z npm: 11.20.0
+2026-11-04T20:35:34.8410645Z yarn: 1.22.22
+2026-11-04T20:35:34.8411203Z ##[endgroup]
+2026-11-04T20:35:34.8606248Z ##[group]Run node scripts/ci/coverage-result.ts lib
+2026-11-04T20:35:34.8606642Z [36;1mnode scripts/ci/coverage-result.ts lib[0m
+2026-11-04T20:35:34.8629112Z shell: /usr/bin/bash -e {0}
+2026-11-04T20:35:34.8629329Z env:
+2026-11-04T20:35:34.8629498Z   CLASSIFICATION: cancelled
+2026-11-04T20:35:34.8652118Z   COVERAGE_PLAN: {"version":1,"event":"pull_request","action":"opened","base":"13b74ecea5f2552627ff638be9413ad4754ef581","head":"85a0e3c32066abccc913b2756316b2fff9651aea","tested":"f850c78a1d2e1a8e008fd5dc1fb07cbe33ef9cb8","mode":"full","labels":[],"paths":["docs/implementation/SPN-140.md","docs/implementation/evidence/SPN-140-checkpoint.json","docs/implementation/evidence/SPN-140-local.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-profile-probe.ts","scripts/ci/desktop-safari-identity.test.ts","scripts/ci/desktop-safari-identity.ts"],"suites":{"backlog":{"selected":true,"dependencies":["complete immutable change range and current event metadata"],"inputs":["docs/implementation/SPN-140.md","docs/implementation/evidence/SPN-140-checkpoint.json","docs/implementation/evidence/SPN-140-local.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-profile-probe.ts","scripts/ci/desktop-safari-identity.test.ts","scripts/ci/desktop-safari-identity.ts"],"reason":"Unknown paths require full coverage."},"pull-request":{"selected":true,"dependencies":["complete immutable change range and current event metadata"],"inputs":["docs/implementation/SPN-140.md","docs/implementation/evidence/SPN-140-checkpoint.json","docs/implementation/evidence/SPN-140-local.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-profile-probe.ts","scripts/ci/desktop-safari-identity.test.ts","scripts/ci/desktop-safari-identity.ts"],"reason":"Unknown paths require full coverage."},"lint":{"selected":true,"dependencies":["complete immutable change range and current event metadata"],"inputs":["docs/implementation/SPN-140.md","docs/implementation/evidence/SPN-140-checkpoint.json","docs/implementation/evidence/SPN-140-local.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-profile-probe.ts","scripts/ci/desktop-safari-identity.test.ts","scripts/ci/desktop-safari-identity.ts"],"reason":"Unknown paths require full coverage."},"typecheck":{"selected":true,"dependencies":["all application, auth, persistence, sync, runtime, build, dependency and harness inputs"],"inputs":["docs/implementation/SPN-140.md","docs/implementation/evidence/SPN-140-checkpoint.json","docs/implementation/evidence/SPN-140-local.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-profile-probe.ts","scripts/ci/desktop-safari-identity.test.ts","scripts/ci/desktop-safari-identity.ts"],"reason":"Unknown paths require full coverage."},"unit-tests":{"selected":true,"dependencies":["all application, auth, persistence, sync, runtime, build, dependency and harness inputs"],"inputs":["docs/implementation/SPN-140.md","docs/implementation/evidence/SPN-140-checkpoint.json","docs/implementation/evidence/SPN-140-local.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-profile-probe.ts","scripts/ci/desktop-safari-identity.test.ts","scripts/ci/desktop-safari-identity.ts"],"reason":"Unknown paths require full coverage."},"lib-test-run":{"selected":true,"dependencies":["lib/**","scripts/dependencies/**","package{,-lock}.json","vitest.config.ts","tsconfig.json",".nvmrc",".github/workflows/ci.yml"],"inputs":["docs/implementation/SPN-140.md","docs/implementation/evidence/SPN-140-checkpoint.json","docs/implementation/evidence/SPN-140-local.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-profile-probe.ts","scripts/ci/desktop-safari-identity.test.ts","scripts/ci/desktop-safari-identity.ts"],"reason":"Unknown paths require full coverage."},"playwright-run":{"selected":true,"dependencies":["all application, auth, persistence, sync, runtime, build, dependency and harness inputs"],"inputs":["docs/implementation/SPN-140.md","docs/implementation/evidence/SPN-140-checkpoint.json","docs/implementation/evidence/SPN-140-local.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-profile-probe.ts","scripts/ci/desktop-safari-identity.test.ts","scripts/ci/desktop-safari-identity.ts"],"reason":"Unknown paths require full coverage."},"container-smoke":{"selected":true,"dependencies":["all application, auth, persistence, sync, runtime, build, dependency and harness inputs"],"inputs":["docs/implementation/SPN-140.md","docs/implementation/evidence/SPN-140-checkpoint.json","docs/implementation/evidence/SPN-140-local.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-profile-probe.ts","scripts/ci/desktop-safari-identity.test.ts","scripts/ci/desktop-safari-identity.ts"],"reason":"Unknown paths require full coverage."},"restore-timing":{"selected":true,"dependencies":["server/**","src/{server,shared}/**","lib/**","web/** and src/ui/** (shared application/authentication bundle)","e2e restore/shared helpers","runtime/build/dependency/workflow inputs"],"inputs":["docs/implementation/SPN-140.md","docs/implementation/evidence/SPN-140-checkpoint.json","docs/implementation/evidence/SPN-140-local.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-profile-probe.ts","scripts/ci/desktop-safari-identity.test.ts","scripts/ci/desktop-safari-identity.ts"],"reason":"Unknown paths require full coverage."},"sync-transition":{"selected":true,"dependencies":["all application, auth, persistence, sync, runtime, build, dependency and harness inputs"],"inputs":["docs/implementation/SPN-140.md","docs/implementation/evidence/SPN-140-checkpoint.json","docs/implementation/evidence/SPN-140-local.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-profile-probe.ts","scripts/ci/desktop-safari-identity.test.ts","scripts/ci/desktop-safari-identity.ts"],"reason":"Unknown paths require full coverage."},"doc-responsiveness":{"selected":true,"dependencies":["all application, auth, persistence, sync, runtime, build, dependency and harness inputs"],"inputs":["docs/implementation/SPN-140.md","docs/implementation/evidence/SPN-140-checkpoint.json","docs/implementation/evidence/SPN-140-local.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-profile-probe.ts","scripts/ci/desktop-safari-identity.test.ts","scripts/ci/desktop-safari-identity.ts"],"reason":"Unknown paths require full coverage."},"doc-callback-lifetimes":{"selected":true,"dependencies":["all application, auth, persistence, sync, runtime, build, dependency and harness inputs"],"inputs":["docs/implementation/SPN-140.md","docs/implementation/evidence/SPN-140-checkpoint.json","docs/implementation/evidence/SPN-140-local.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-profile-probe.ts","scripts/ci/desktop-safari-identity.test.ts","scripts/ci/desktop-safari-identity.ts"],"reason":"Unknown paths require full coverage."},"responsiveness-baseline":{"selected":true,"dependencies":["web/**","server/**","lib/**","e2e/**","src/shared/**","src/server/{sync,history,collaboration}/**","scripts/{ci,dependencies,sync-transition}/**","build/runtime/dependency/workflow configuration"],"inputs":["docs/implementation/SPN-140.md","docs/implementation/evidence/SPN-140-checkpoint.json","docs/implementation/evidence/SPN-140-local.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-profile-probe.ts","scripts/ci/desktop-safari-identity.test.ts","scripts/ci/desktop-safari-identity.ts"],"reason":"Unknown paths require full coverage."},"callback-baseline":{"selected":true,"dependencies":["web/**","server/**","lib/**","e2e/**","src/shared/**","src/server/{sync,history,collaboration}/**","scripts/{ci,dependencies,sync-transition}/**","build/runtime/dependency/workflow configuration"],"inputs":["docs/implementation/SPN-140.md","docs/implementation/evidence/SPN-140-checkpoint.json","docs/implementation/evidence/SPN-140-local.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-profile-probe.ts","scripts/ci/desktop-safari-identity.test.ts","scripts/ci/desktop-safari-identity.ts"],"reason":"Unknown paths require full coverage."},"phone-compatibility":{"selected":true,"dependencies":["full plan backstop; ordinary phone owners remain in routine browser coverage"],"inputs":["docs/implementation/SPN-140.md","docs/implementation/evidence/SPN-140-checkpoint.json","docs/implementation/evidence/SPN-140-local.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-profile-probe.ts","scripts/ci/desktop-safari-identity.test.ts","scripts/ci/desktop-safari-identity.ts"],"reason":"Unknown paths require full coverage."}}}
+2026-11-04T20:35:34.8674429Z   COVERAGE_PLAN_SHA256: c93bbaab11879ab8c2c1c6331d201c3afd600bc34f9df09f0f16a951e1cfcfe8
+2026-11-04T20:35:34.8674805Z   COVERAGE_RESULTS: {"lib-test-run":"cancelled"}
+2026-11-04T20:35:34.8675044Z ##[endgroup]
+2026-11-04T20:35:34.9373820Z {
+2026-11-04T20:35:34.9374241Z   "passed": false,
+2026-11-04T20:35:34.9374518Z   "evidence": {
+2026-11-04T20:35:34.9374976Z     "planSha256": "c93bbaab11879ab8c2c1c6331d201c3afd600bc34f9df09f0f16a951e1cfcfe8",
+2026-11-04T20:35:34.9375446Z     "error": "Error: Coverage plan missing, malformed or not a code run.",
+2026-11-04T20:35:34.9375799Z     "results": "{\"lib-test-run\":\"cancelled\"}"
+2026-11-04T20:35:34.9376039Z   }
+2026-11-04T20:35:34.9376245Z }
+2026-11-04T20:35:34.9444398Z ##[error]Process completed with exit code 1.
+2026-11-04T20:35:34.9543050Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-04T20:35:34.9543380Z with:
+2026-11-04T20:35:34.9543546Z   name: ci-results-lib
+2026-11-04T20:35:34.9543735Z   path: ci-results-lib.json
+2026-11-04T20:35:34.9543933Z   retention-days: 30
+2026-11-04T20:35:34.9544112Z   if-no-files-found: warn
+2026-11-04T20:35:34.9544299Z   compression-level: 6
+2026-11-04T20:35:34.9544467Z   overwrite: false
+2026-11-04T20:35:34.9544645Z   include-hidden-files: false
+2026-11-04T20:35:34.9544835Z   archive: true
+2026-11-04T20:35:34.9545014Z ##[endgroup]
+2026-11-04T20:35:35.0770646Z With the provided path, there will be 1 file uploaded
+2026-11-04T20:35:35.0774810Z Artifact name is valid!
+2026-11-04T20:35:35.0783886Z Root directory input is valid!
+2026-11-04T20:35:35.4344404Z Uploading artifact: ci-results-lib.zip
+2026-11-04T20:35:35.4374344Z Beginning upload of artifact content to blob storage
+2026-11-04T20:35:35.6881860Z Uploaded bytes 345
+2026-11-04T20:35:35.7511483Z Finished uploading artifact content to blob storage!
+2026-11-04T20:35:35.7512427Z SHA256 digest of uploaded artifact is 9e7dfc621bb95dae3b4b2aaa477fd98d7ab7738a1d2a5534e0fc3920660e55bc
+2026-11-04T20:35:35.7513038Z Finalizing artifact upload
+2026-11-04T20:35:36.3533700Z Artifact ci-results-lib successfully finalized. Artifact ID 13360233841
+2026-11-04T20:35:36.3534678Z Artifact ci-results-lib has been successfully uploaded! Final size is 345 bytes. Artifact ID is 13360233841
+2026-11-04T20:35:36.3536883Z Artifact download URL: https://github.com/mxbaylee/spinel/actions/runs/41907965643/artifacts/13360233841
+2026-11-04T20:35:36.3704997Z Post job cleanup.
+2026-11-04T20:35:36.4479139Z [command]/usr/bin/git version
+2026-11-04T20:35:36.4516514Z git version 2.56.0
+2026-11-04T20:35:36.4549939Z Temporarily overriding HOME='/home/runner/work/_temp/46b20d84-77c6-436d-8ac2-a95ec32317fe' before making global git config changes
+2026-11-04T20:35:36.4551061Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-04T20:35:36.4554434Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-04T20:35:36.4593257Z Removing SSH command configuration
+2026-11-04T20:35:36.4598619Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-04T20:35:36.4632578Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-04T20:35:36.4861957Z Removing HTTP extra header
+2026-11-04T20:35:36.4863086Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-04T20:35:36.4894740Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-04T20:35:36.5125029Z Removing includeIf entries pointing to credentials config files
+2026-11-04T20:35:36.5132088Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-04T20:35:36.5171504Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-04T20:35:36.5533497Z Cleaning up orphan processes
+
