@@ -1,0 +1,42 @@
+✔ serialized browser deletion removes every store and proves the resulting state (4.586666ms)
+✔ workers pending names the first failing operation (3.676917ms)
+✔ workers rejection names the first failing operation (0.978209ms)
+✔ unregister pending names the first failing operation (1.246458ms)
+✔ unregister rejection names the first failing operation (0.828208ms)
+✔ cache-names pending names the first failing operation (0.803917ms)
+✔ cache-names rejection names the first failing operation (0.761833ms)
+✔ cache-delete pending names the first failing operation (1.533042ms)
+✔ cache-delete rejection names the first failing operation (0.956417ms)
+✔ database-delete pending names the first failing operation (0.984542ms)
+✔ database-delete rejection names the first failing operation (0.835833ms)
+✔ database-names pending names the first failing operation (0.782458ms)
+✔ database-names rejection names the first failing operation (0.813708ms)
+✔ blocked IndexedDB fails immediately and retains that cause (0.697291ms)
+✔ a reported deletion success cannot conceal a retained database (0.575209ms)
+✔ synchronous storage rejection is retained without continuing to database deletion (0.521916ms)
+✔ crashed or timed-out driver propagates the first error without another diagnostic request (0.326417ms)
+✔ unregistration reports the still-live controller and never starts storage deletion (0.55425ms)
+✔ a worker registered again during preparation fails before deletion (0.481167ms)
+✔ wrong-url refuses storage deletion before any mutation (0.4985ms)
+✔ wrong-document refuses storage deletion before any mutation (0.457583ms)
+✔ app-script refuses storage deletion before any mutation (0.415ms)
+✔ registered refuses storage deletion before any mutation (0.44975ms)
+✔ controlled refuses storage deletion before any mutation (0.45025ms)
+✔ reported cache deletion success cannot conceal recreation or cause another deletion (1.151958ms)
+✔ tab inventory rejects incomplete or active fixture clients: [] (0.576584ms)
+✔ tab inventory rejects incomplete or active fixture clients: ["about:blank"] (0.09425ms)
+✔ tab inventory rejects incomplete or active fixture clients: ["https://localhost/_desktop-storage-loss","https://localhost/?item=background"] (0.404541ms)
+✔ tab inventory rejects incomplete or active fixture clients: ["https://localhost/_desktop-storage-loss",""] (0.065208ms)
+✔ inert fixture tabs and unrelated origins are explicitly accounted for (0.058875ms)
+✔ native Safari preparation moves background fixture tabs once and preserves unrelated tabs (0.95375ms)
+✔ post-restart Safari inventory refuses a restored producer without navigating it again (0.607ms)
+✔ a background navigation that never settles fails within its bound without another mutation (0.726416ms)
+ℹ tests 33
+ℹ suites 0
+ℹ pass 33
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 144.261542
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":300,"peakKiB":91328}

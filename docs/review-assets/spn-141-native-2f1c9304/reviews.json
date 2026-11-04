@@ -1,0 +1,14 @@
+{
+  "scope": "Independent nonimplementing agent reviews; pre-push source approval, not hosted acceptance",
+  "source": "2f1c9304b15adfef833e53f12c4facff9ce14821",
+  "base": "5d8676ec280ac6d5cc9dcedb7e9cc09527b24806",
+  "tested": "a554c611c96556176bcc6b2ba006ea421ee00943",
+  "tree": "faac771987098438ff4f9269ef27d20a1a2bb7e2",
+  "reviews": [
+    {"reviewer":"/root/spn120_review_a","score":99,"rubric":[35,25,19,10,10],"blockers":[],"remaining":"Hosted Typecheck and all selected/native gates; no merge approval implied"},
+    {"reviewer":"/root/spn120_review_b","score":98,"rubric":[35,25,18,10,10],"blockers":[],"remaining":"Hosted Typecheck and all selected/native gates; no merge approval implied"}
+  ],
+  "firstCandidate": {"source":"14147960accca0927f0b61dfd4c66b7de98685ec","scores":[94,92],"finding":"Selected inert tab does not exclude restored/background fixture-origin cache producers","disposition":"Full owned-browser inventory, once-only preparation of other fixture-origin tabs, and read-only rejection after restart; controls added"},
+  "secondCandidate": {"source":"cef07957450cfaddc23014c1533131371b656a3b","scores":[96,98],"finding":"WebDriver window handle order is arbitrary; array equality can falsely fail","disposition":"Validate unique string membership as sets, with reordered-membership positive and changed/duplicate/malformed negatives"},
+  "disclosure":"Agent review only"
+}

@@ -1,0 +1,11 @@
+# 🛠️ SPN-141 provisioning disposition — reviewer B
+
+Independent nonimplementing review, 2026-11-04; agent review only. Reviewed the prospective provisioning plan, raw Firefox job/annotation JSON and exact-source desktop workflow. Accept the narrow infrastructure exception after the plan and evidence are published immutably; no source grade or acceptance status changes.
+
+Job `126767083588`, run `41885019409` attempt 1, reports source `2f1c9304b15adfef833e53f12c4facff9ce14821`, cancelled at `18:31:04Z`, runner ID 0, empty runner name and no steps. The explicit failure annotation attributes this to hosted runner acquisition, accompanied by three macOS ARM64 capacity notices. Its populated `started_at` field does not establish execution in the face of those records. There is no evidence that checkout, dependency installation, Firefox or application assertions ran. This is an unexecuted acceptance owner, not a product failure or pass.
+
+The plan prospectively allows exactly one targeted re-provisioning of that job for the first actual Firefox execution. It keeps the source, macos-26 runner, stable Firefox selection, 25-minute job limit, operation budgets and assertions unchanged; it excludes Chrome/Safari repetition, whole-workflow reruns, runner substitution, waivers and automatic renewal. All four persona implications and the original plan's narrower allowance are stated honestly.
+
+GitHub's [single-job rerun API](https://docs.github.com/en/rest/actions/workflow-runs#re-run-a-job-from-a-workflow-run) reruns the selected job and dependent jobs. The inspected workflow has one independent browser matrix and no downstream dependent jobs, so targeting the Firefox job is consistent with the stated boundary. Verify the resulting attempt's job inventory and source identities after dispatch rather than treating endpoint acceptance as execution or success.
+
+Preserve both the cancelled first attempt and the new attempt's actual outcome. A second acquisition failure or any actual test failure requires fresh diagnosis, without automatic additional execution. Firefox acceptance, overall native completion and merge approval remain pending until observed evidence satisfies every requirement. No runtime or implementation edits were made by this review.

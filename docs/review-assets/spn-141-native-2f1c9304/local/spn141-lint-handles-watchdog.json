@@ -1,0 +1,54 @@
+{
+  "root": 60672,
+  "started": 1793815929165,
+  "elapsedMs": 184,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 91472,
+  "peakKiB": 91472,
+  "live": [
+    {
+      "pid": 60672,
+      "parent": 60636,
+      "group": 60672,
+      "rssKiB": 89904,
+      "started": "Wed Nov  4 10:12:09 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-lint-handles-watchdog.json node node_modules/oxlint/bin/oxlint --deny-warnings scripts/ci/desktop-storage.ts scripts/ci/desktop-storage.test.ts scripts/ci/desktop-browser.ts"
+    },
+    {
+      "pid": 60723,
+      "parent": 60672,
+      "group": 60672,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:12:09 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 60672,
+      "parent": 60636,
+      "group": 60672,
+      "rssKiB": 89904,
+      "started": "Wed Nov  4 10:12:09 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-lint-handles-watchdog.json node node_modules/oxlint/bin/oxlint --deny-warnings scripts/ci/desktop-storage.ts scripts/ci/desktop-storage.test.ts scripts/ci/desktop-browser.ts"
+    },
+    {
+      "pid": 60691,
+      "parent": 60672,
+      "group": 60672,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:12:09 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 60723,
+      "parent": 60672,
+      "group": 60672,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:12:09 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

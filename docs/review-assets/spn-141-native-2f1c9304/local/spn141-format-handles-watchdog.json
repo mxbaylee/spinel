@@ -1,0 +1,70 @@
+{
+  "root": 60474,
+  "started": 1793815922892,
+  "elapsedMs": 419,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 91248,
+  "peakKiB": 216352,
+  "live": [
+    {
+      "pid": 60474,
+      "parent": 60448,
+      "group": 60474,
+      "rssKiB": 89680,
+      "started": "Wed Nov  4 10:12:02 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-format-handles-watchdog.json node node_modules/prettier/bin/prettier.cjs --write scripts/ci/desktop-storage.ts scripts/ci/desktop-storage.test.ts scripts/ci/desktop-browser.ts"
+    },
+    {
+      "pid": 60539,
+      "parent": 60474,
+      "group": 60474,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:12:03 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 60474,
+      "parent": 60448,
+      "group": 60474,
+      "rssKiB": 89680,
+      "started": "Wed Nov  4 10:12:02 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-format-handles-watchdog.json node node_modules/prettier/bin/prettier.cjs --write scripts/ci/desktop-storage.ts scripts/ci/desktop-storage.test.ts scripts/ci/desktop-browser.ts"
+    },
+    {
+      "pid": 60493,
+      "parent": 60474,
+      "group": 60474,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:12:02 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 60519,
+      "parent": 60474,
+      "group": 60474,
+      "rssKiB": 125264,
+      "started": "Wed Nov  4 10:12:02 2026",
+      "command": "node node_modules/prettier/bin/prettier.cjs --write scripts/ci/desktop-storage.ts scripts/ci/desktop-storage.test.ts scripts/ci/desktop-browser.ts"
+    },
+    {
+      "pid": 60525,
+      "parent": 60474,
+      "group": 60474,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:12:03 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 60539,
+      "parent": 60474,
+      "group": 60474,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:12:03 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

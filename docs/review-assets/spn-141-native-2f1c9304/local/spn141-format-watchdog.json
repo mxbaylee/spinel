@@ -1,0 +1,86 @@
+{
+  "root": 57436,
+  "started": 1793815463765,
+  "elapsedMs": 1043,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 92576,
+  "peakKiB": 261056,
+  "live": [
+    {
+      "pid": 57436,
+      "parent": 57409,
+      "group": 57436,
+      "rssKiB": 90944,
+      "started": "Wed Nov  4 10:04:23 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-format-watchdog.json node node_modules/prettier/bin/prettier.cjs --write scripts/ci/desktop-storage.ts scripts/ci/desktop-storage.test.ts scripts/ci/desktop-offline-fixture.ts scripts/ci/desktop-offline.ts docs/implementation/SPN-141.md"
+    },
+    {
+      "pid": 57530,
+      "parent": 57436,
+      "group": 57436,
+      "rssKiB": 1632,
+      "started": "Wed Nov  4 10:04:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 57436,
+      "parent": 57409,
+      "group": 57436,
+      "rssKiB": 90944,
+      "started": "Wed Nov  4 10:04:23 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-format-watchdog.json node node_modules/prettier/bin/prettier.cjs --write scripts/ci/desktop-storage.ts scripts/ci/desktop-storage.test.ts scripts/ci/desktop-offline-fixture.ts scripts/ci/desktop-offline.ts docs/implementation/SPN-141.md"
+    },
+    {
+      "pid": 57455,
+      "parent": 57436,
+      "group": 57436,
+      "rssKiB": 1632,
+      "started": "Wed Nov  4 10:04:23 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 57481,
+      "parent": 57436,
+      "group": 57436,
+      "rssKiB": 169120,
+      "started": "Wed Nov  4 10:04:23 2026",
+      "command": "(node)"
+    },
+    {
+      "pid": 57489,
+      "parent": 57436,
+      "group": 57436,
+      "rssKiB": 1632,
+      "started": "Wed Nov  4 10:04:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 57502,
+      "parent": 57436,
+      "group": 57436,
+      "rssKiB": 1632,
+      "started": "Wed Nov  4 10:04:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 57517,
+      "parent": 57436,
+      "group": 57436,
+      "rssKiB": 1632,
+      "started": "Wed Nov  4 10:04:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 57530,
+      "parent": 57436,
+      "group": 57436,
+      "rssKiB": 1632,
+      "started": "Wed Nov  4 10:04:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

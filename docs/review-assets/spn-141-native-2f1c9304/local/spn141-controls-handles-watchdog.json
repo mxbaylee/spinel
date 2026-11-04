@@ -1,0 +1,54 @@
+{
+  "root": 60572,
+  "started": 1793815923494,
+  "elapsedMs": 301,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 91360,
+  "peakKiB": 91360,
+  "live": [
+    {
+      "pid": 60572,
+      "parent": 60437,
+      "group": 60572,
+      "rssKiB": 89792,
+      "started": "Wed Nov  4 10:12:03 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-controls-handles-watchdog.json node --test scripts/ci/desktop-storage.test.ts"
+    },
+    {
+      "pid": 60624,
+      "parent": 60572,
+      "group": 60572,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:12:03 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 60572,
+      "parent": 60437,
+      "group": 60572,
+      "rssKiB": 89792,
+      "started": "Wed Nov  4 10:12:03 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-controls-handles-watchdog.json node --test scripts/ci/desktop-storage.test.ts"
+    },
+    {
+      "pid": 60591,
+      "parent": 60572,
+      "group": 60572,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:12:03 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 60624,
+      "parent": 60572,
+      "group": 60572,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:12:03 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}
