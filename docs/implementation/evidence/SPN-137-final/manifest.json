@@ -1,0 +1,303 @@
+{
+  "schema": "spinel-final-acceptance-archive-manifest-v1",
+  "provenance": {
+    "sourceSha": "e82257acc4208b116aa44d56e406caee4b61d47b",
+    "baseSha": "f4ccbb699444a86f23a1ea8314d4415739b5fd07",
+    "testedSha": "a343899e253ef10dc7e466459a9934f476219944",
+    "sourceTree": "1aa090c5f192b4659eba290b2b0153a7d7c86d74",
+    "testedTree": "1aa090c5f192b4659eba290b2b0153a7d7c86d74",
+    "testedParents": [
+      "f4ccbb699444a86f23a1ea8314d4415739b5fd07",
+      "e82257acc4208b116aa44d56e406caee4b61d47b"
+    ],
+    "archiveParentSha": "e82257acc4208b116aa44d56e406caee4b61d47b",
+    "native": {
+      "runId": 41829636100,
+      "attempt": 1
+    },
+    "ordinaryCi": {
+      "runId": 41829636104,
+      "attempt": 1
+    },
+    "storybook": {
+      "runId": 41829636123,
+      "attempt": 1
+    }
+  },
+  "scope": "Completed current-source SPN-137 native, ordinary CI and Storybook evidence with explicitly distinguished source/local reviews, processing history and historical/prerequisite context. Archive parent is the reviewed source; archive commit is not the tested candidate or eventual squash.",
+  "archive": {
+    "path": "records.json.xz",
+    "format": "xz",
+    "check": "crc64",
+    "bytes": 158408,
+    "sha256": "1f1e79ef1426b9d9e8b663f26128f6d021880bc136a5684537d8d83638de6053"
+  },
+  "decoded": {
+    "encoding": "utf8",
+    "bytes": 1063359,
+    "sha256": "9ae2164aceb92759ca1f0f3679815c02ab6420dfe0a1c1e3958bfc30fdc28296",
+    "schema": "spinel-final-acceptance-evidence-v1"
+  },
+  "components": [
+    {
+      "path": "native/accepted-receipt.json",
+      "role": "accepted-native-receipt",
+      "scope": "Current source: original complete accepted native receipt; disclosed selected-data transformations retained.",
+      "sourcePath": "/workspace/scratch/01384cef7048/spn137-hosted/integration-e822/native/integrated-native-evidence-receipt.json",
+      "bytes": 45403,
+      "sha256": "19252cbd24c96aacbe1735163ae47fc84e06867ae7230a3e15637be50d3b0eec",
+      "encoding": "utf8"
+    },
+    {
+      "path": "native/decoded-detail.json",
+      "role": "decoded-native-detail",
+      "scope": "Current source: exact decoded detailed JSON from the accepted native receipt, not original ZIP bytes.",
+      "sourcePath": "/workspace/scratch/01384cef7048/spn137-hosted/integration-e822/final-receipt/native-detail.json",
+      "bytes": 215562,
+      "sha256": "689f3685f45c101fb937d65a117cc3718fa7a2d19fbaa1ab386c06f84ac28753",
+      "encoding": "utf8"
+    },
+    {
+      "path": "audits/native-reviewer-b.json",
+      "role": "native-independent-audit",
+      "scope": "Current source: completed independent native originals, visuals and emitted-receipt audit.",
+      "sourcePath": "/workspace/scratch/01384cef7048/spn137-hosted/integration-e822/native/reviewer-b-native-audit.json",
+      "bytes": 16521,
+      "sha256": "f668148bc866627a065af63f804f641f6e783096c58daf9b6fad0919ac869516",
+      "encoding": "utf8"
+    },
+    {
+      "path": "storybook/final-audit.json",
+      "role": "storybook-final-audit",
+      "scope": "Current source: complete derived Storybook acceptance audit.",
+      "sourcePath": "/workspace/scratch/01384cef7048/spn137-hosted/integration-e822/storybook/final-audit.json",
+      "bytes": 15108,
+      "sha256": "2b722e3865c108d478a2fa3fa24dc5743f96f61a99e2b6222a640012a8939496",
+      "encoding": "utf8"
+    },
+    {
+      "path": "audits/storybook-reviewer-b.json",
+      "role": "storybook-independent-audit",
+      "scope": "Current source: independent final Storybook artifact/provider audit.",
+      "sourcePath": "/workspace/scratch/01384cef7048/spn137-hosted/integration-e822/storybook/reviewer-b-storybook-audit.json",
+      "bytes": 22194,
+      "sha256": "c23219269d5aeeb94f40af67ed2f980fef6859ceb99c2e1fb6aec0e34bf27ff4",
+      "encoding": "utf8"
+    },
+    {
+      "path": "local/postcommit-records.json",
+      "role": "local-postcommit-records",
+      "scope": "Current source: exact nine-file postcommit local-validation and capture-failure addendum; original execution attribution retained.",
+      "sourcePath": "/workspace/scratch/01384cef7048/spn137-hosted/integration-139-local/canonical-addendum/records.json",
+      "bytes": 50685,
+      "sha256": "91f65fc218ce0e1a108f060018f2a1e3273be6a3d5d041e8da265e9cf678eede",
+      "encoding": "utf8"
+    },
+    {
+      "path": "local/postcommit-manifest.json",
+      "role": "local-postcommit-encoding-manifest",
+      "scope": "Current source: original encoding manifest for the nine-file postcommit addendum.",
+      "sourcePath": "/workspace/scratch/01384cef7048/spn137-hosted/integration-139-local/canonical-addendum/manifest.json",
+      "bytes": 296,
+      "sha256": "0c88673a2b3c2865e6928499fdff289ff9332f6e610316b399e7c2d7dc30023a",
+      "encoding": "utf8"
+    },
+    {
+      "path": "source/reviewer-a-corrected.json",
+      "role": "corrected-source-review-a",
+      "scope": "Current source, prepublication phase: corrected A source review; hosted gates were pending at the original review time.",
+      "sourcePath": "/workspace/scratch/01384cef7048/spn137-hosted/integration-139-local/reviewer-a-e82257a-v2.json",
+      "bytes": 9686,
+      "sha256": "03bb5c7804d07df87106397298502f247c2daa8b09ae556e61345781b90f0676",
+      "encoding": "utf8"
+    },
+    {
+      "path": "source/prepublication-comment.md",
+      "role": "verified-prepush-comment",
+      "scope": "Current source, historical prepublication checkpoint: exact verified comment containing original A/B source grades and prospective plan; not final hosted acceptance.",
+      "sourcePath": "/workspace/scratch/01384cef7048/spn137-hosted/integration-139-prepush-comment.md",
+      "bytes": 24731,
+      "sha256": "15825fe816e25ff8c3bc6204013f3f14c258ee12f3f27227c6bf9d85e0ec9e69",
+      "encoding": "utf8"
+    },
+    {
+      "path": "historical/7ce-ordinary-ci-disposition.json",
+      "role": "historical-ordinary-ci-disposition",
+      "scope": "Historical source 7ce6870: superseded cancelled ordinary CI with explicit failed/cancelled jobs; no current-source acceptance credit.",
+      "sourcePath": "/workspace/scratch/01384cef7048/spn137-hosted/integration-e822/final-receipt/historical-ci-disposition.json",
+      "bytes": 18001,
+      "sha256": "c9a0c6d8e01d4aa85336b29a0e7d89173cfa9576066a20172568233ad5e01041",
+      "encoding": "utf8"
+    },
+    {
+      "path": "processing/native/records.json",
+      "role": "native-processing-records",
+      "scope": "Current native data-processing history: 12 exact small originals plus explicit helper/input delta; no scenario retry.",
+      "sourcePath": "/workspace/scratch/01384cef7048/spn137-hosted/integration-e822/final-receipt/native-processing/records.json",
+      "bytes": 16778,
+      "sha256": "53071f166d349f50fb6c2438485bcfc7386a4cc92eb50f4e7e936047b6a45685",
+      "encoding": "utf8"
+    },
+    {
+      "path": "processing/native/manifest.json",
+      "role": "native-processing-manifest",
+      "scope": "Current native processing package identity and exact-byte inventory.",
+      "sourcePath": "/workspace/scratch/01384cef7048/spn137-hosted/integration-e822/final-receipt/native-processing/manifest.json",
+      "bytes": 3351,
+      "sha256": "90506a522eeabe79d6d28f9c6648564e7ab52ea114eb20f783bef887dddc7dcc",
+      "encoding": "utf8"
+    },
+    {
+      "path": "processing/native/human-wording.md",
+      "role": "native-processing-human-disposition",
+      "scope": "Current native processing interpretation; original prose is retained as a derived human explanation, not raw scenario output.",
+      "sourcePath": "/workspace/scratch/01384cef7048/spn137-hosted/integration-e822/final-receipt/native-processing/human-wording.md",
+      "bytes": 1220,
+      "sha256": "c3add99c2760ca5ac3ab9fde8e556c102d9efab403268e6f1950860058e86623",
+      "encoding": "utf8"
+    },
+    {
+      "path": "ci/library-skip-reviewer-b.json",
+      "role": "current-library-skip-audit",
+      "scope": "Current source: independent actual worker/log and source-qualified library skip audit.",
+      "sourcePath": "/workspace/scratch/01384cef7048/spn137-hosted/integration-e822/ci/library-skip-audit.json",
+      "bytes": 7076,
+      "sha256": "d0e0e3927e8257bed76487ea7d5eeb8785ef308aeb2ceb04e86e9a497c2cd0c9",
+      "encoding": "utf8"
+    },
+    {
+      "path": "ci/accepted-semantic-receipt.json",
+      "role": "current-ordinary-ci-proof",
+      "scope": "Current source: final complete ordinary-CI semantic receipt, including four exact original plan/aggregate files and disclosed projections.",
+      "sourcePath": "/workspace/scratch/01384cef7048/spn137-hosted/integration-e822/ordinary-ci-proof/receipt.json",
+      "bytes": 279524,
+      "sha256": "ec54d5f9ce2f87ea8ed437cccab5fbf936f3c8d2065dec0d09da2d6214f83bf8",
+      "encoding": "utf8"
+    },
+    {
+      "path": "ci/encoding-manifest.json",
+      "role": "current-ordinary-ci-encoding-manifest",
+      "scope": "Current source: original ordinary proof encoding manifest.",
+      "sourcePath": "/workspace/scratch/01384cef7048/spn137-hosted/integration-e822/ordinary-ci-proof/manifest.json",
+      "bytes": 542,
+      "sha256": "14b610203ac5d89f94139f52cac38f4d025b72a351d383a73cc9bb4124932536",
+      "encoding": "utf8"
+    },
+    {
+      "path": "ci/receipt.base64.txt",
+      "role": "current-ordinary-ci-gzip-base64-export",
+      "scope": "Current source: exact original UTF-8 base64 export of the accepted deterministic gzip ordinary proof.",
+      "sourcePath": "/workspace/scratch/01384cef7048/spn137-hosted/integration-e822/ordinary-ci-proof/receipt.base64.txt",
+      "bytes": 43073,
+      "sha256": "d070da8154be9ed7cb0310535b461a5f73d0776c5b02a4a1e18e297948601b51",
+      "encoding": "utf8"
+    },
+    {
+      "path": "audits/current-browser-reviewer-a.json",
+      "role": "current-browser-corrected-audit",
+      "scope": "Current source: corrected derived browser-report audit, preserving all distinct spec.id/file/title cases and the earlier projection disposition.",
+      "sourcePath": "/workspace/scratch/01384cef7048/spn137-hosted/integration-e822/ci/browser-reports/reviewer-a-browser-audit.json",
+      "bytes": 49482,
+      "sha256": "45bc7944fd7b3908840c6f8c38bf649819bef20cfa5e1198a0f17bba88120a97",
+      "encoding": "utf8"
+    },
+    {
+      "path": "processing/ci/superseded-browser-shard-audit.json",
+      "role": "superseded-current-browser-audit-projection",
+      "scope": "Current-source processing history only: superseded derived shard counts incorrectly collapsed equal file/title cases; not the accepted audit or an altered scenario result.",
+      "sourcePath": "/workspace/scratch/01384cef7048/spn137-hosted/integration-e822/ci/browser-reports/reviewer-a-browser-audit-v1-file-title-projection.json",
+      "bytes": 48537,
+      "sha256": "d4866f4513de27799c7128ab0aee7bb75741e7f96ac17fefbb9be4c9d46ea68c",
+      "encoding": "utf8"
+    },
+    {
+      "path": "processing/ci/collection-dispositions.json",
+      "role": "current-ci-collection-dispositions",
+      "scope": "Current-source data-reader failures and corrections; no product validation or download repetition claimed.",
+      "sourcePath": "/workspace/scratch/01384cef7048/spn137-hosted/integration-e822/ci/collection-dispositions.json",
+      "bytes": 1345,
+      "sha256": "42e3d1a69a46a80752432e5d8204de755f9ccb883f2956854b78fc0f46064e45",
+      "encoding": "utf8"
+    },
+    {
+      "path": "audits/current-ci-stable-input-preaudit-reviewer-b.json",
+      "role": "current-ci-partial-stable-input-audit",
+      "scope": "Current-source earlier partial pre-audit of listed stable inputs only; explicitly incomplete for whole CI, linked by the later complete output audit.",
+      "sourcePath": "/workspace/scratch/01384cef7048/spn137-hosted/integration-e822/ci/reviewer-b-stable-input-audit.json",
+      "bytes": 36661,
+      "sha256": "7990ef87fb32a33a6a19c5b6b30dacf169bbb8d16da723d5d3017c4bd15e8f71",
+      "encoding": "utf8"
+    },
+    {
+      "path": "audits/current-ci-final-output-reviewer-b.json",
+      "role": "current-ci-independent-final-output-audit",
+      "scope": "Current source: completed independent audit of the actual final ordinary proof and all current obligations, with reader dispositions.",
+      "sourcePath": "/workspace/scratch/01384cef7048/spn137-hosted/integration-e822/ordinary-ci-proof/reviewer-b-output-audit.json",
+      "bytes": 17847,
+      "sha256": "3cb9f5536cb98397d1e3c3a3b1963ec91acfbe10dc0cf027f79d43e4054c534f",
+      "encoding": "utf8"
+    },
+    {
+      "path": "historical/spn139-postlanding-context.json",
+      "role": "historical-prerequisite-postlanding-context",
+      "scope": "Historical/prerequisite SPN-139 provider context only: accepted edc84a source, actual f4ccbb6 squash and later jobs; no current SPN-137 or expanded native/per-case/visual acceptance credit.",
+      "sourcePath": "/workspace/scratch/01384cef7048/spn139-hosted/postlanding/final-context.json",
+      "bytes": 52152,
+      "sha256": "04add062fec98077942ea54e37ee7bbe2bed4c43daf3d7aa1048e8dc8934213a",
+      "encoding": "utf8"
+    }
+  ],
+  "readme": {
+    "path": "README.md",
+    "bytes": 30231,
+    "sha256": "4c65727d2d1d8a8da60fb6a8de79993af915e2c031aa11cefad2baa321d7d7c8"
+  },
+  "builder": {
+    "sourcePath": "/workspace/scratch/01384cef7048/spn137-hosted/integration-e822/final-receipt/build-archive.ts",
+    "sha256": "720fc895cbb08071b1b52d258449624df7eeda57718e146f9f0014a3ca0359b6",
+    "nodeVersion": "v26.12.1",
+    "config": {
+      "sourcePath": "/workspace/scratch/01384cef7048/spn137-hosted/integration-e822/final-receipt/archive-config-attempt-2.json",
+      "bytes": 20720,
+      "sha256": "380e65f914c80a4a920084e31d086c9f77d2a122a7ec0cf2ae9f4edfe77cd2f6"
+    },
+    "readmeSource": {
+      "sourcePath": "/workspace/scratch/01384cef7048/spn137-hosted/integration-e822/final-receipt/archive-README.ready.md",
+      "bytes": 30231,
+      "sha256": "4c65727d2d1d8a8da60fb6a8de79993af915e2c031aa11cefad2baa321d7d7c8"
+    },
+    "compression": {
+      "binary": "/usr/bin/xz",
+      "arguments": [
+        "-9",
+        "--threads=1",
+        "--check=crc64",
+        "--stdout"
+      ],
+      "ignoresEnvironmentOptions": [
+        "XZ_OPT",
+        "XZ_DEFAULTS"
+      ]
+    },
+    "checks": {
+      "everyInputHashPinned": true,
+      "exactUtf8Roundtrip": true,
+      "exactXzRoundtrip": true,
+      "everyInputUnchangedAfterAssembly": true,
+      "listedCredentialPatternsFound": 0
+    },
+    "role": "Data packaging only; no API, Git/source mutation or test/scenario execution; not an independent acceptance review."
+  },
+  "limitations": [
+    "The archive preserves exact original UTF-8 input-file bytes. Many inputs are explicitly derived receipts/audits; exact retention of those files does not turn their selected semantic projections into complete raw provider responses or traces.",
+    "The complete original accepted native receipt and its exact decoded detail are retained. Original application PNG hex is replaced only as disclosed there by verified lengths/hashes; original ZIPs, standalone PNGs and native driver/render logs remain expiring supplements. Hashes cannot reconstruct omitted raw image bytes.",
+    "The ordinary proof retains four exact original plan/aggregate files. Provider/log/report fields and twelve raw callback arrays use the explicitly disclosed semantic projection/count/hash representation; raw omitted arrays and supplementary data cannot be reconstructed from hashes.",
+    "Native cursor snapshots are observations, not trusted-delivery acknowledgements or proof of a historical OS cause. Full current probe fields preserve their own bounded 393/336/57 system-log truncation and actual exported/inferred cleanup distinction.",
+    "The exact nine-file local postcommit addendum preserves the ENOBUFS recorder failure, immutable source attribution and after-check reconstruction. Reused focused controls keep their original execution attribution; no combined 63-test local execution is invented.",
+    "Both native processing attempts and collection failures remain exact historical processing records. The first 45,000-character refusal and intermediate ceiling-only copy do not constitute a native retry or a change to any acceptance bound.",
+    "The superseded browser shard audit and earlier partial stable-input audit are retained only as explicitly marked processing/pre-audit history. The corrected and complete output audits govern current interpretation; earlier erroneous derived counts and pending fields are not final acceptance.",
+    "The 7ce ordinary-CI cancellation/failure projection and SPN-139 postlanding context are historical records, not current SPN-137 acceptance. Historical native failures and external partial execution retain their maintained-source dispositions.",
+    "Prepublication source reviews and plan precede hosted acceptance. This package does not embed a review of itself, pre-credit its future archive commit, or establish an eventual guarded squash/cleanup/canonical-description result.",
+    "Listed credential-pattern checks complement independent review and do not constitute a universal secret detector. The builder packages data only; it neither authenticates GitHub nor performs product/native/test execution."
+  ]
+}
