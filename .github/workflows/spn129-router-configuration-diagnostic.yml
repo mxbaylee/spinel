@@ -1,0 +1,47 @@
+name: SPN-129 router configuration diagnostic
+
+on:
+  push:
+    branches: [codex/spn-129-router-config-diagnostic-20261104]
+
+permissions:
+  contents: read
+
+jobs:
+  configuration:
+    name: Router configuration diagnostic
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Check configuration presence without disclosing values
+        id: configuration
+        env:
+          APP_ID: ${{ vars.SPINEL_CI_ROUTER_APP_ID }}
+          APP_KEY: ${{ secrets.SPINEL_CI_ROUTER_PRIVATE_KEY }}
+        run: |
+          app_id_present=false
+          private_key_present=false
+          if [ -n "$APP_ID" ]; then app_id_present=true; fi
+          if [ -n "$APP_KEY" ]; then private_key_present=true; fi
+          printf 'app_id_present=%s\nprivate_key_present=%s\n' "$app_id_present" "$private_key_present"
+          if [ "$app_id_present" != true ] || [ "$private_key_present" != true ]; then
+            echo 'Router configuration is unavailable to this repository workflow.' >&2
+            exit 1
+          fi
+          echo 'configured=true' >> "$GITHUB_OUTPUT"
+      - name: Verify the existing repository installation with a read-only token
+        id: app
+        if: steps.configuration.outputs.configured == 'true'
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349
+        with:
+          app-id: ${{ vars.SPINEL_CI_ROUTER_APP_ID }}
+          private-key: ${{ secrets.SPINEL_CI_ROUTER_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+          permission-pull-requests: read
+          skip-token-revoke: false
+      - name: Confirm authenticated repository identity
+        if: steps.configuration.outputs.configured == 'true'
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+        run: gh api "repos/$GITHUB_REPOSITORY" --jq '{repository:.full_name}'
