@@ -690,6 +690,8 @@ export function browserPageOpened(protocol: unknown) {
  * browser that owns it. Used once, only after the icon opened a browser page
  * (owner, chat 2026-11-04), and recorded as an intent relaunch.
  */
+/** How long one Android Home press may take to bring another app to the front. */
+export const homeWaitMilliseconds = 5_000;
 export function shortcutIntent(origin: string, browserPackage: string) {
   requireCondition(/^[A-Za-z][\w.-]{1,200}$/.test(browserPackage), 'shortcut-package-invalid');
   return { url: `${origin}/`, package: browserPackage };
@@ -1125,6 +1127,23 @@ export function workerStateDiagnostic(value: unknown) {
       }),
   };
 }
+/**
+ * Whether no worker controls the page and none is registering: no registration,
+ * or registrations with no active, installing or waiting worker. Firefox run
+ * 41930403142 kept one such registration for the whole secure-worker wait.
+ */
+export function workerRegistrationStalled(diagnostic: ReturnType<typeof workerStateDiagnostic>) {
+  return (
+    diagnostic.controller === null &&
+    (diagnostic.count === 0 ||
+      (diagnostic.registrations.length > 0 &&
+        diagnostic.registrations.every(
+          (entry) => entry.active === null && entry.installing === null && entry.waiting === null,
+        )))
+  );
+}
+/** How far into the secure-worker wait a stalled registration is repeated. */
+export const workerReregistrationMilliseconds = 7_500;
 /**
  * Opens the authenticated socket once. On no open it keeps the close code and
  * whether an error event or a clean close came first; Firefox runs 41882759778
@@ -1760,10 +1779,50 @@ export async function runCapability(
       await context(web);
     }
   }
+  /**
+   * Presses Home. On Android, run 41930178262 saw Chrome still in front after
+   * the press (the shortcut's "Just a moment…" was showing), so it waits up to
+   * `homeWaitMilliseconds` for another app or a launcher to be in front and
+   * presses once more if not (owner's choice, 2026-11-04). The packages seen
+   * are recorded; the launcher search still decides the outcome.
+   */
   async function home() {
     await context('NATIVE_APP');
-    if (target.browser === 'safari') await execute('mobile: pressButton', [{ name: 'home' }]);
-    else await command(session('appium/device/press_keycode'), 'POST', { keycode: 3 });
+    if (target.browser === 'safari') {
+      await execute('mobile: pressButton', [{ name: 'home' }]);
+      return;
+    }
+    const current = async () => {
+      const value = await command(session('appium/device/current_package'));
+      return typeof value === 'string' && /^[A-Za-z][\w.-]{1,200}$/.test(value) ? value : null;
+    };
+    const before = await current();
+    const seen: (string | null)[] = [];
+    for (let presses = 1; presses <= 2; presses++) {
+      await command(session('appium/device/press_keycode'), 'POST', { keycode: 3 });
+      // Counted reads, 500 ms apart, so the wait holds under any clock.
+      for (let read = 0; read <= homeWaitMilliseconds / 500; read++) {
+        const now = await current();
+        if (seen.at(-1) !== now) seen.push(now);
+        if (now !== null && (now !== before || /launcher/i.test(now))) {
+          await record(`${result.stage}:home`, {
+            presses,
+            before,
+            seen: seen.slice(0, 8),
+            left: true,
+          });
+          return;
+        }
+        if (read < homeWaitMilliseconds / 500)
+          await new Promise((resolve) => setTimeout(resolve, 500));
+      }
+    }
+    await record(`${result.stage}:home`, {
+      presses: 2,
+      before,
+      seen: seen.slice(0, 8),
+      left: false,
+    });
   }
   async function foreground(): Promise<string> {
     await context('NATIVE_APP');
@@ -1936,12 +1995,56 @@ export async function runCapability(
     if (tabScope) verifyOrdinaryTabContext(target, environment);
     else requireCondition(target.browser !== 'safari' || standalone, 'ios-launch-not-standalone');
   }
+  /**
+   * Once per wait, past `workerReregistrationMilliseconds` with no controller:
+   * if the registration has stalled, repeats the app's own registration and
+   * records the outcome (owner's choice, 2026-11-04, after run 41930403142).
+   * The wait's own condition still decides.
+   */
+  async function reregisterStalledWorker(attempting: () => void) {
+    const failedCommand = result.command;
+    const registrations = workerStateDiagnostic(
+      await executeAsync(workerStateScript, [], 'worker-state'),
+    );
+    if (!workerRegistrationStalled(registrations)) return false;
+    attempting();
+    const attempt = registrationAttemptDiagnostic(
+      await executeAsync(registrationAttemptScript, [], 'worker-registration-attempt'),
+    );
+    result.command = failedCommand;
+    await record(`${result.stage}:worker-reregistration`, { registrations, attempt });
+    return true;
+  }
   async function secureEnvironment(anonymous = false) {
     let last: Row | null = null;
     let environment: Row;
+    const started = Date.now();
+    // `checked`: the stall check ran; `reregistered`: the repeat itself ran.
+    let checked = false;
+    let reregistered = false;
     try {
       environment = await poll(
-        async () => (last = row(await execute(environmentScript))),
+        async () => {
+          last = row(await execute(environmentScript));
+          if (
+            !checked &&
+            last.controller == null &&
+            Date.now() - started >= workerReregistrationMilliseconds
+          ) {
+            checked = true;
+            const failedCommand = result.command;
+            try {
+              await reregisterStalledWorker(() => (reregistered = true));
+            } catch (error) {
+              // A failed repeat is evidence, never the wait's own failure.
+              result.command = failedCommand;
+              await record(`${result.stage}:worker-reregistration`, {
+                unavailable: failure(error),
+              });
+            }
+          }
+          return last;
+        },
         (value) =>
           value.origin === fixture.origin &&
           value.secureContext === true &&
@@ -1952,7 +2055,7 @@ export async function runCapability(
         'secure-worker-unavailable',
       );
     } catch (error) {
-      await recordWorkerState(last);
+      await recordWorkerState(last, reregistered);
       throw error;
     }
     if (target.browser === 'safari') {
@@ -1990,7 +2093,7 @@ export async function runCapability(
    * command stays the lane's command, and the original failure stays the
    * result even if this read fails.
    */
-  async function recordWorkerState(last: Row | null) {
+  async function recordWorkerState(last: Row | null, reregistered = false) {
     const failedCommand = result.command;
     let registrations: unknown = 'unavailable';
     try {
@@ -2000,8 +2103,12 @@ export async function runCapability(
     } catch (error) {
       registrations = { unavailable: failure(error) };
     }
-    let registrationAttempt: unknown = 'not-attempted';
-    if (row(registrations).count === 0) {
+    let registrationAttempt: unknown = reregistered ? 'attempted-during-wait' : 'not-attempted';
+    if (
+      !reregistered &&
+      row(registrations).count !== undefined &&
+      workerRegistrationStalled(registrations as ReturnType<typeof workerStateDiagnostic>)
+    ) {
       try {
         registrationAttempt = registrationAttemptDiagnostic(
           await executeAsync(registrationAttemptScript, [], 'worker-registration-attempt'),

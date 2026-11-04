@@ -15,6 +15,10 @@ import {
   storageStateDiagnostic,
   storageStateScript,
   registrationAttemptDiagnostic,
+  workerRegistrationStalled,
+  workerStateDiagnostic,
+  homeWaitMilliseconds,
+  workerReregistrationMilliseconds,
   registrationAttemptScript,
   terminateApp,
   shortcutIntent,
@@ -80,6 +84,16 @@ const identity: RunIdentity = {
   sourceSha: 'a'.repeat(40),
   testedSha: 'b'.repeat(40),
 };
+/**
+ * For the Chrome fakes: the launcher is in front from a Home press until the
+ * next click (the icon tap), so Home's wait for another app ends at once.
+ */
+let launcherInFront = false;
+function noteLauncher(path: string) {
+  if (path.endsWith('/appium/device/press_keycode')) launcherInFront = true;
+  else if (path.endsWith('/click') || path === 'session') launcherInFront = false;
+}
+const atLauncher = (path: string) => path.endsWith('/current_package') && launcherInFront;
 const sessionId = 'c'.repeat(40);
 const target = { browser: 'chrome', device: 'Google Pixel 10', osVersion: '16' } as const;
 // A complete 1x1 RGBA PNG, including valid IHDR/IDAT/IEND chunks and CRCs.
@@ -2709,6 +2723,7 @@ test('confirmation readiness requires the first action and observes the final tr
     const secondConfirmation = launcherPinConfirmationXML;
     const client = clientFor('fixture-user', 'fixture-key', async (url, init) => {
       const path = String(url).split('/wd/hub/')[1] ?? String(url).split('/automate/')[1];
+      noteLauncher(path);
       let value: unknown = null;
       if (path === 'session') value = { sessionId, capabilities: { browserName: 'chrome' } };
       else if (path.endsWith('/execute/sync'))
@@ -2739,7 +2754,8 @@ test('confirmation readiness requires the first action and observes the final tr
           };
       } else if (path.endsWith('/window/handles')) value = ['original'];
       else if (path.endsWith('/contexts')) value = ['NATIVE_APP', 'WEBVIEW_chrome'];
-      else if (path.endsWith('/appium/device/current_package')) value = 'com.android.chrome';
+      else if (path.endsWith('/appium/device/current_package'))
+        value = atLauncher(path) ? 'com.google.android.apps.nexuslauncher' : 'com.android.chrome';
       else if (path.endsWith('/source')) {
         if (homeRequests)
           value = '<android.widget.TextView text="Spinel" resource-id="launcher:id/spinel_icon"/>';
@@ -2943,6 +2959,7 @@ test('Chrome item navigation and readiness preserve operational failures, buffer
     const journals: CapabilityResult[] = [];
     const client = clientFor('fixture-user', 'fixture-key', async (url, init) => {
       const path = String(url).split('/wd/hub/')[1] ?? String(url).split('/automate/')[1];
+      noteLauncher(path);
       const payload = init?.body ? JSON.parse(String(init.body)) : {};
       let value: unknown = null;
       if (path === 'session') value = { sessionId, capabilities: { browserName: 'chrome' } };
@@ -3050,7 +3067,8 @@ test('Chrome item navigation and readiness preserve operational failures, buffer
           currentURL = payload.url;
         } else value = currentURL;
       } else if (path.endsWith('/contexts')) value = ['NATIVE_APP', 'WEBVIEW_chrome'];
-      else if (path.endsWith('/appium/device/current_package')) value = 'com.android.chrome';
+      else if (path.endsWith('/appium/device/current_package'))
+        value = atLauncher(path) ? 'com.google.android.apps.nexuslauncher' : 'com.android.chrome';
       else if (path.endsWith('/source'))
         value = homeRequests
           ? '<android.widget.TextView text="Spinel" resource-id="launcher:id/spinel_icon"/>'
@@ -3198,6 +3216,7 @@ test('a launched window that is blank at first is attached once Spinel appears, 
       // Each provider call takes simulated time, so every real poll ends quickly.
       clock += 500;
       const path = String(url).split('/wd/hub/')[1] ?? String(url).split('/automate/')[1];
+      noteLauncher(path);
       const payload = init?.body ? JSON.parse(String(init.body)) : {};
       let value: unknown = null;
       if (path === 'session') value = { sessionId, capabilities: { browserName: 'chrome' } };
@@ -3273,7 +3292,8 @@ test('a launched window that is blank at first is attached once Spinel appears, 
         contextReads++;
         clock += 1_000;
         value = ['NATIVE_APP', 'WEBVIEW_chrome'];
-      } else if (path.endsWith('/appium/device/current_package')) value = 'com.android.chrome';
+      } else if (path.endsWith('/appium/device/current_package'))
+        value = atLauncher(path) ? 'com.google.android.apps.nexuslauncher' : 'com.android.chrome';
       else if (path.endsWith('/source'))
         value = homeRequests
           ? '<android.widget.TextView text="Spinel" resource-id="launcher:id/spinel_icon"/>'
@@ -3314,7 +3334,8 @@ test('a launched window that is blank at first is attached once Spinel appears, 
       assert.equal(result.stage, 'home-launch');
       assert.equal(result.failure, 'capability-secure-worker-unavailable');
       assert.equal(result.command, 'POST session/{sessionId}/execute/sync');
-      assert.equal(workerStateReads, 1);
+      // Once during the wait, to repeat a stalled registration, and once on failure.
+      assert.equal(workerStateReads, 2);
       const state = result.observations.find(
         (entry) => entry.stage === 'home-launch:secure-worker-state',
       )?.value as {
@@ -4146,8 +4167,12 @@ test('with no worker registration, the run repeats the app registration once and
     source.indexOf('async function recordWorkerState('),
     source.indexOf('const diagnose = failureDiagnosis('),
   );
-  // Only on no registration, once, and the failed command stays the lane's command.
-  assert.match(body, /if \(row\(registrations\)\.count === 0\) \{/);
+  // Only on a stalled registration not already repeated during the wait, once,
+  // and the failed command stays the lane's command.
+  assert.match(
+    body,
+    /!reregistered &&\n\s+row\(registrations\)\.count !== undefined &&\n\s+workerRegistrationStalled\(/,
+  );
   assert.equal(body.match(/registrationAttemptScript/g)?.length, 1);
   assert.ok(
     body.indexOf('result.command = failedCommand;') > body.indexOf('registrationAttemptScript'),
@@ -4336,4 +4361,64 @@ test('Safari alone taps natively, and the first close is preceded by a storage s
     source.indexOf('const observedForeground = await foreground();'),
   );
   assert.match(restart, /if \(prefix === ''\) await recordStorageState\(\);/);
+});
+
+test('a worker registration has stalled only with no controller and no worker registering', () => {
+  const state = (registrations: Record<string, unknown>[], controller: string | null = null) =>
+    workerStateDiagnostic({ controller, count: registrations.length, registrations });
+  const empty = {
+    scope: 'https://bs-local.com:8176/',
+    active: null,
+    installing: null,
+    waiting: null,
+  };
+  // Run 41930403142: one registration, every worker null, no controller.
+  assert.equal(workerRegistrationStalled(state([empty])), true);
+  assert.equal(workerRegistrationStalled(state([])), true);
+  assert.equal(workerRegistrationStalled(state([{ ...empty, installing: 'installing' }])), false);
+  assert.equal(workerRegistrationStalled(state([{ ...empty, waiting: 'installed' }])), false);
+  assert.equal(workerRegistrationStalled(state([{ ...empty, active: 'activated' }])), false);
+  assert.equal(
+    workerRegistrationStalled(state([empty], 'https://bs-local.com:8176/service-worker.js')),
+    false,
+  );
+  assert.equal(workerRegistrationStalled(workerStateDiagnostic({ count: null })), false);
+});
+
+test('Android Home waits for another app and presses at most twice; a stalled worker is registered again once during the wait', () => {
+  const source = readFileSync(new URL('./browserstack-capability.ts', import.meta.url), 'utf8');
+  assert.equal(homeWaitMilliseconds, 5_000);
+  assert.ok(workerReregistrationMilliseconds < 15_000, 'inside the 15 s secure-worker wait');
+  const home = source.slice(
+    source.indexOf('async function home('),
+    source.indexOf('async function foreground('),
+  );
+  assert.match(home, /mobile: pressButton', \[\{ name: 'home' \}\]\);\n\s+return;/);
+  assert.match(home, /for \(let presses = 1; presses <= 2; presses\+\+\)/);
+  assert.equal(home.split("'appium/device/press_keycode'").length - 1, 1);
+  assert.match(home, /now !== before \|\| \/launcher\/i\.test\(now\)/);
+  assert.match(home, /left: false/);
+  const secure = source.slice(
+    source.indexOf('async function secureEnvironment('),
+    source.indexOf(
+      "if (target.browser === 'safari') {\n      requireCondition(\n        (await executeAsync('return await Promise.resolve(true);'",
+    ),
+  );
+  assert.match(secure, /!checked &&\n\s+last\.controller == null &&/);
+  assert.ok(
+    secure.indexOf('checked = true;') <
+      secure.indexOf('await reregisterStalledWorker(() => (reregistered = true));'),
+    'checked once, before the repeat',
+  );
+  assert.match(secure, /catch \(error\) \{\n\s+\/\/ A failed repeat is evidence/);
+  assert.match(secure, /await recordWorkerState\(last, reregistered\);/);
+  const recorded = source.slice(
+    source.indexOf('async function recordWorkerState('),
+    source.indexOf(
+      'result.command = failedCommand;',
+      source.indexOf('async function recordWorkerState('),
+    ),
+  );
+  assert.match(recorded, /reregistered \? 'attempted-during-wait' : 'not-attempted'/);
+  assert.match(recorded, /!reregistered &&/);
 });

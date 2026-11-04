@@ -346,8 +346,9 @@ async function hit(driver: PhoneAcceptanceDriver, selector: string, point: Point
  * Records, in the page, the input events a double tap produced: type, pointer
  * type, milliseconds since installation, offset from the tap point and, given
  * the canvas selector, whether the event's target was that canvas (`grid`),
- * something else beside it (`region`) or neither (`other`). At most 24 events;
- * no text, target content or URL. A later install replaces it.
+ * something else beside it (`region`) or neither (`other`), and the target's
+ * tag with its nearest `data-u-comp` name (`element`). At most 24 events; no
+ * text, target content or URL. A later install replaces it.
  */
 export const tapTraceInstallScript = `
   const [point,selector]=arguments;const key='__spinelTapTrace';window[key]?.stop();
@@ -355,12 +356,15 @@ export const tapTraceInstallScript = `
   const types=['pointerdown','pointerup','pointercancel','touchstart','touchend','touchcancel','click','dblclick'];
   const where=(target)=>{if(typeof selector!=='string')return null;const node=document.querySelector(selector);
     if(!node)return 'other';if(target===node)return 'grid';return node.parentElement?.contains(target)?'region':'other';};
+  const name=(target)=>{if(typeof target?.tagName!=='string'||typeof target.closest!=='function')return null;
+    const comp=target.closest('[data-u-comp]')?.getAttribute('data-u-comp');
+    return target.tagName.toLowerCase().slice(0,16)+(comp?'['+comp.slice(0,40)+']':'');};
   const keep=(event)=>{if(events.length>=24)return;const touch=event.changedTouches?.[0];
     const x=touch?touch.clientX:event.clientX;const y=touch?touch.clientY:event.clientY;
     events.push({type:event.type,pointerType:typeof event.pointerType==='string'?event.pointerType.slice(0,8):null,
       milliseconds:Math.round(event.timeStamp-origin),
       dx:Number.isFinite(x)?Math.round(x-point.x):null,dy:Number.isFinite(y)?Math.round(y-point.y):null,
-      target:where(event.target)});};
+      target:where(event.target),element:name(event.target)});};
   for(const type of types)window.addEventListener(type,keep,{capture:true,passive:true});
   window[key]={events,selector,stop:()=>{for(const type of types)window.removeEventListener(type,keep,{capture:true});delete window[key];}};
   return true;
@@ -410,6 +414,11 @@ export function tapTraceDiagnostic(value: unknown) {
         target: ['grid', 'region', 'other'].includes(entry.target as string)
           ? (entry.target as string)
           : null,
+        element:
+          typeof entry.element === 'string' &&
+          /^[a-z][a-z0-9-]{0,15}(\[[\w-]{1,40}\])?$/.test(entry.element)
+            ? entry.element
+            : null,
       };
     }),
     viewport: measure(observed.viewport, ['scale', 'offsetLeft', 'offsetTop'], 100),
@@ -475,6 +484,7 @@ async function press(driver: PhoneAcceptanceDriver, point: Point, taps: 1 | 2) {
 async function calibrate(driver: PhoneAcceptanceDriver, point: Point, selector: string) {
   const known = calibrations.get(driver);
   if (known) return known;
+  await hit(driver, selector, point);
   await driver.execute(tapTraceInstallScript, [point, selector]);
   const tapped = Date.now();
   await press(driver, point, 1);
@@ -510,10 +520,21 @@ async function calibrate(driver: PhoneAcceptanceDriver, point: Point, selector: 
 // So Safari now uses XCUITest's own `mobile: tap` and `mobile: doubleTap`
 // (`nativeTouch`), calibrated the same way; Android keeps the W3C sequence.
 // The page trace records what each produced.
-async function doubleTap(driver: PhoneAcceptanceDriver, selector: string, point: Point) {
+// Run 41928778203 (owner's choice, 2026-11-04): calibrating on A1 itself
+// landed 62 px higher, on the sheet-tab bar, and every later event targeted
+// something other than the grid. So the sheet calibrates at the grid's middle,
+// where the landing stays in the grid, and the target is checked again after.
+async function doubleTap(
+  driver: PhoneAcceptanceDriver,
+  selector: string,
+  point: Point,
+  calibration: Point = point,
+) {
   const actual = { x: Math.round(point.x), y: Math.round(point.y) };
+  const calibrationPoint = { x: Math.round(calibration.x), y: Math.round(calibration.y) };
   await hit(driver, selector, actual);
-  const offset = await calibrate(driver, actual, selector);
+  const offset = await calibrate(driver, calibrationPoint, selector);
+  await hit(driver, selector, actual);
   const aimed = { x: actual.x - offset.x, y: actual.y - offset.y };
   requireCondition(aimed.x >= 0 && aimed.y >= 0, 'native-tap-calibration-offset');
   await driver.execute(tapTraceInstallScript, [actual, selector]);
@@ -637,7 +658,12 @@ async function author(
   let point: Point;
   if (item.kind === 'sheet') {
     const box = await canvasBox(driver, 'sheet');
-    point = await doubleTap(driver, canvasSelector('sheet'), { x: box.x + 80, y: box.y + 40 });
+    point = await doubleTap(
+      driver,
+      canvasSelector('sheet'),
+      { x: box.x + 80, y: box.y + 40 },
+      { x: box.x + box.width / 2, y: box.y + box.height / 2 },
+    );
     await withTapTrace(driver, 'sheet', () =>
       until(
         driver,

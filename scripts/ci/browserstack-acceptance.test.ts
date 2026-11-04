@@ -848,11 +848,13 @@ test('without native touch, a phone double tap calibrates its aim once, then tap
     calls.map(([name]) => name),
     [
       'hit',
+      'hit',
       'install',
       'POST actions',
       'DELETE actions',
       'peek',
       'read',
+      'hit',
       'install',
       'POST actions',
       'DELETE actions',
@@ -886,7 +888,7 @@ test('without native touch, a phone double tap calibrates its aim once, then tap
   ]);
   assert.ok(doubleTapPauseMilliseconds < 500, "inside Univer's double-click window");
   assert.deepEqual(
-    calls[6]![1],
+    calls[8]![1],
     [{ x: 80, y: 40 }, 'canvas'],
     'the trace measures against the in-page point',
   );
@@ -894,12 +896,12 @@ test('without native touch, a phone double tap calibrates its aim once, then tap
   await phoneDoubleTap(driver, 'canvas', { x: 10, y: 10 });
   assert.deepEqual(
     calls.map(([name]) => name),
-    ['hit', 'install', 'POST actions', 'DELETE actions'],
-    'the session calibrates once',
+    ['hit', 'hit', 'install', 'POST actions', 'DELETE actions'],
+    'the session calibrates once, and checks the target after calibrating',
   );
 });
 
-test('with native touch (Safari), the calibration and the double tap are one native gesture each', async () => {
+test('with native touch (Safari), the calibration and the double tap are one native gesture each, the calibration at its own checked point', async () => {
   const calls: [string, unknown][] = [];
   const landed = {
     installed: true,
@@ -928,14 +930,18 @@ test('with native touch (Safari), the calibration and the double tap are one nat
     remaining: (maximum = 1) => maximum,
     record: async () => {},
   } as unknown as PhoneAcceptanceDriver;
-  await phoneDoubleTap(driver, 'canvas', { x: 80, y: 40 });
+  await phoneDoubleTap(driver, 'canvas', { x: 80, y: 40 }, { x: 220.4, y: 351.6 });
   assert.deepEqual(
     calls.map(([name]) => name),
-    ['hit', 'install', 'native 1', 'peek', 'read', 'install', 'native 2'],
+    ['hit', 'hit', 'install', 'native 1', 'peek', 'read', 'hit', 'install', 'native 2'],
   );
-  assert.deepEqual(calls[2]![1], { x: 80, y: 40 });
+  // Run 41928778203: the A1 aim's calibration landed on the sheet-tab bar, so
+  // the calibration taps its own point, checked first, and the aim is rechecked.
+  assert.deepEqual(calls[1]![1], ['canvas', { x: 220, y: 352 }]);
+  assert.deepEqual(calls[3]![1], { x: 220, y: 352 });
+  assert.deepEqual(calls[6]![1], ['canvas', { x: 80, y: 40 }]);
   // Calibrated the same way: landed 62 px high, so the double tap aims 62 px lower.
-  assert.deepEqual(calls[6]![1], { x: 80, y: 102 });
+  assert.deepEqual(calls[8]![1], { x: 80, y: 102 });
 });
 
 test('a deadline during tap calibration fails as the deadline, not as an unseen tap', async () => {
@@ -1029,8 +1035,24 @@ test('the page tap trace keeps 24 bounded events and removes its listeners when 
   assert.equal(read.installed, true);
   assert.equal(read.events.length, 24);
   assert.deepEqual(read.events.slice(0, 2), [
-    { type: 'pointerdown', pointerType: 'touch', milliseconds: 12, dx: 1, dy: -2, target: null },
-    { type: 'touchend', pointerType: null, milliseconds: 30, dx: -1, dy: 0, target: null },
+    {
+      type: 'pointerdown',
+      pointerType: 'touch',
+      milliseconds: 12,
+      dx: 1,
+      dy: -2,
+      target: null,
+      element: null,
+    },
+    {
+      type: 'touchend',
+      pointerType: null,
+      milliseconds: 30,
+      dx: -1,
+      dy: 0,
+      target: null,
+      element: null,
+    },
   ]);
   assert.deepEqual([(read as TraceRow).viewport, (read as TraceRow).canvas], [null, null]);
   assert.equal(JSON.stringify(read).includes('secret'), false);
@@ -1039,13 +1061,29 @@ test('the page tap trace keeps 24 bounded events and removes its listeners when 
   assert.deepEqual(
     tapTraceDiagnostic({
       installed: true,
-      events: [{ type: 'pointer<down>', pointerType: 'touch-screen', milliseconds: 1.5, dx: 2 }],
+      events: [
+        {
+          type: 'pointer<down>',
+          pointerType: 'touch-screen',
+          milliseconds: 1.5,
+          dx: 2,
+          element: 'div[x]"leak"',
+        },
+      ],
       text: 'leak',
     }),
     {
       installed: true,
       events: [
-        { type: 'other', pointerType: null, milliseconds: null, dx: 2, dy: null, target: null },
+        {
+          type: 'other',
+          pointerType: null,
+          milliseconds: null,
+          dx: 2,
+          dy: null,
+          target: null,
+          element: null,
+        },
       ],
       viewport: null,
       canvas: null,
@@ -1055,8 +1093,16 @@ test('the page tap trace keeps 24 bounded events and removes its listeners when 
 
 test('given the canvas selector, the tap trace names each target and reads the viewport and box', () => {
   const listeners = new Map<string, (event: unknown) => void>();
-  const canvas = { getBoundingClientRect: () => ({ x: 0.4, y: 251.6, width: 440, height: 600 }) };
-  const sibling = {};
+  const named = (tagName: string, comp: string | null) => ({
+    tagName,
+    closest: () => (comp === null ? null : { getAttribute: () => comp }),
+  });
+  const canvas = {
+    ...named('CANVAS', 'sheet-canvas'),
+    getBoundingClientRect: () => ({ x: 0.4, y: 251.6, width: 440, height: 600 }),
+  };
+  const sibling = named('DIV', null);
+  const cover = named('SPAN', 'sheet-bar');
   Object.assign(canvas, { parentElement: { contains: (node: unknown) => node === sibling } });
   const window: Record<string, unknown> = {
     addEventListener: (type: string, listener: (event: unknown) => void) =>
@@ -1073,7 +1119,7 @@ test('given the canvas selector, the tap trace names each target and reads the v
       ),
     );
   run(tapTraceInstallScript, [{ x: 80, y: 40 }, 'canvas']);
-  for (const target of [canvas, sibling, {}])
+  for (const target of [canvas, sibling, cover, {}])
     listeners.get('pointerdown')!({
       type: 'pointerdown',
       timeStamp: 1001,
@@ -1084,7 +1130,11 @@ test('given the canvas selector, the tap trace names each target and reads the v
   const diagnostic = tapTraceDiagnostic(run(tapTraceReadScript));
   assert.deepEqual(
     diagnostic.events.map((event) => event.target),
-    ['grid', 'region', 'other'],
+    ['grid', 'region', 'other', 'other'],
+  );
+  assert.deepEqual(
+    diagnostic.events.map((event) => event.element),
+    ['canvas[sheet-canvas]', 'div', 'span[sheet-bar]', null],
   );
   assert.deepEqual(diagnostic.viewport, { scale: 1.23, offsetLeft: 0, offsetTop: 12.5 });
   assert.deepEqual(diagnostic.canvas, { x: 0, y: 252, width: 440, height: 600 });
