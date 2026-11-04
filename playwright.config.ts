@@ -246,7 +246,8 @@ export default defineConfig({
       reuseExistingServer: false,
     })),
     {
-      command: 'npm start',
+      // Same Node flags as npm start, without an extra persistent npm process.
+      command: 'node --max-old-space-size=256 --max-semi-space-size=8 server/index.ts',
       url: 'http://localhost:3108/sign-in',
       env: {
         PORT: '3108',

@@ -1,0 +1,2686 @@
+{
+  "ticket": "SPN-137",
+  "kind": "Derived evidence extract; not the full artifact or complete raw trace",
+  "createdAtUtc": "2026-11-04T07:04:29Z",
+  "provenance": {
+    "sourceSha": "6c0080d5aa492e654a225b4d22073f0d251cfb4d",
+    "testedSha": "1ef685c0cb9b8f613806496356fa4167cb88dbdc",
+    "baseSha": "77cdd6c556c186cb5705b4d24e312da3aea36d3e",
+    "workflow": {
+      "id": 41781852610,
+      "attempt": 2,
+      "headSha": "6c0080d5aa492e654a225b4d22073f0d251cfb4d",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41781852610",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "actor": "mxbaylee",
+      "triggeringActor": "mxbaylee",
+      "startedAt": "2026-11-04T06:34:18Z",
+      "createdAt": "2026-11-04T06:34:19Z",
+      "updatedAt": "2026-11-04T06:43:24Z"
+    },
+    "freshSafariJob": {
+      "id": 126429445721,
+      "name": "Native desktop offline (safari, macos-15-intel)",
+      "runAttempt": 2,
+      "startedAt": "2026-11-04T06:34:24Z",
+      "completedAt": "2026-11-04T06:43:23Z",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "carriedForwardJobs": [
+      {
+        "id": 126429447116,
+        "name": "Native desktop offline (firefox, macos-26)",
+        "runAttempt": 2,
+        "startedAt": "2026-11-04T05:52:05Z",
+        "completedAt": "2026-11-04T05:55:31Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 126429494298,
+        "name": "Native desktop offline (chrome, macos-26)",
+        "runAttempt": 2,
+        "startedAt": "2026-11-04T05:52:04Z",
+        "completedAt": "2026-11-04T05:55:04Z",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "artifact": {
+      "id": 13301582724,
+      "name": "desktop-offline-safari-macos-15-intel-41781852610-2",
+      "size_in_bytes": 1017988,
+      "digest": "sha256:740a6d93512b9f0bf01280b0ae02e98a00ed3c905e9928b45aa552f767628df7",
+      "created_at": "2026-11-04T06:43:15Z",
+      "expires_at": "2026-11-18T06:43:14Z",
+      "expired": false
+    },
+    "artifactBytesVerifiedAgainstGitHubDigest": true,
+    "originalMembers": [
+      {
+        "path": "safari-automation-prompt-1.png",
+        "bytes": 268688,
+        "sha256": "c84ade616e29dfd49baf19ad1fc09eb2fc5e9684dfde8769773b49c195b9ee71"
+      },
+      {
+        "path": "safari-profile-probe-offline.png",
+        "bytes": 65828,
+        "sha256": "528248b0269fa739bd4a71bf6d0612b503c6d6cb68e76af26d67348eb2fa55a8"
+      },
+      {
+        "path": "safari-profile-probe-online.png",
+        "bytes": 65378,
+        "sha256": "c71482a32fda84243d2d7c39c78e7ea64a1f2056a9a55ebf421f2c68295c2dac"
+      },
+      {
+        "path": "safari-profile-probe.json",
+        "bytes": 75047,
+        "sha256": "26bca01ef452173984ed5def7de91bb7ea6e2f58e2178bf62ed7c5bacf14140b"
+      },
+      {
+        "path": "safari/9be4d2cc-028e-4d1d-a743-c1f0bf262574-before-doc-input.png",
+        "bytes": 81624,
+        "sha256": "338fb99f4a7e02007252c2a9c23d688b75df25e87f47126847a698cfb5c15b1c"
+      },
+      {
+        "path": "safari/acceptance.json",
+        "bytes": 47137,
+        "sha256": "ddb9cfea4b9316c97461d27ef9568a20235679e965a3582da67b01b6f2a82301"
+      },
+      {
+        "path": "safari/c1144a8f-4cbf-4a25-aecd-d9b66b249a77-before-doc-input.png",
+        "bytes": 81338,
+        "sha256": "040ed5e702506f64bada29590b9175ae1ea5aec39cd967c869424e6738892993"
+      },
+      {
+        "path": "safari/doc-conflict-offline.png",
+        "bytes": 82988,
+        "sha256": "d6818da820d47e0e6d8bec083b4546ff5794bfb59f4b2816f33b003c07aa81c8"
+      },
+      {
+        "path": "safari/doc-normal-offline.png",
+        "bytes": 82677,
+        "sha256": "0eb9bbe25519974eb08b5d3fc3dfc50863d4a1508e6c4db6f4705510c5f28d60"
+      },
+      {
+        "path": "safari/doc-online-before-download.png",
+        "bytes": 81639,
+        "sha256": "ac313bc097107603c97bfb98b57ad95ae3bddb675dc3551602779595df534bc4"
+      },
+      {
+        "path": "safari/doc-recovered-copy.png",
+        "bytes": 86735,
+        "sha256": "064e50bdf83f8dd0a4abaa2747474863f619d00583a33ad0edd36e766111ab08"
+      },
+      {
+        "path": "safari/safari-pointer.jsonl",
+        "bytes": 16321,
+        "sha256": "5de665790f3764b4d16619dd3daf4482a4fa086a4476703eb3096c1a233d1dcc"
+      },
+      {
+        "path": "safari/safari-render-state.jsonl",
+        "bytes": 38356,
+        "sha256": "0b5924fb595a92756dd6eba3da3ae21fec604833deb9afbe26bb9e02f5fb1511"
+      },
+      {
+        "path": "safari/sheet-conflict-offline.png",
+        "bytes": 93144,
+        "sha256": "847981896aa6fc693da844e61793bd6d3b22d9589e5ee56f0aaae2a93166123a"
+      },
+      {
+        "path": "safari/sheet-normal-offline.png",
+        "bytes": 92249,
+        "sha256": "b536501270a851063f27ff178e7b54a95fb5a6ccb6b43149e427855d5b3bdbde"
+      },
+      {
+        "path": "safari/sheet-online-before-download.png",
+        "bytes": 92183,
+        "sha256": "2a6b18754962a0a8415ae5cc80f29caafa8bfea30fd558b60c9064a79a978ebc"
+      },
+      {
+        "path": "safari/sheet-recovered-copy.png",
+        "bytes": 97365,
+        "sha256": "8895f0e20143a785fa6e9c1f344cfbbdca8d749bbcf7c154e88bd2c315841135"
+      },
+      {
+        "path": "safari/versions.json",
+        "bytes": 1136,
+        "sha256": "14f666a81e1463f9b40ae91be526dbe730c9852ffe4daf3e1e96b29ce2ef0fe6"
+      }
+    ]
+  },
+  "scopeAndDisposition": {
+    "freshExecution": "Safari only. Chrome and Firefox job rows in attempt 2 carry forward their original execution timestamps.",
+    "sampling": "This externally started unchanged-source Safari-only rerun is an additional actual execution, outside the predeclared complete-workflow sampling protocol; it is not a fresh three-browser repair-proof sample.",
+    "originalAttempt1": "Failed before application or pointer acceptance at appkit-import-begin. Its phase and failed result remain preserved; the native cause remains unresolved.",
+    "historicalMissingPress": "The earlier SPN-106 third-launch conflict-Doc missing press retains an explicit unresolved historical cause; this later pass does not retroactively establish it.",
+    "currentCombinedSourceNativeValidation": "Pending. This older-source external result is not final acceptance for a candidate that later integrates SPN-138 and current main.",
+    "spn138Boundary": "SPN-138 is an ordinary browser shared-folder readiness repair, not an AppKit repair.",
+    "identityContract": "SPN-130 requires identity within the existing bound or its actual failed phase, with cleanup authorized only after positive identity; no broader OS root-cause repair is claimed.",
+    "limits": [
+      "One successful fresh Safari execution does not establish absence of future native delivery or identity failures.",
+      "The recorded long initial AppKit import establishes phase timing, not its cause or grounds for a longer timeout.",
+      "Storage loss is deliberate deletion through browser APIs, not a reproduced browser eviction heuristic.",
+      "Storage persistence was not granted; all four download records retain before=false and after=false.",
+      "This derived extract omits the complete probe automation log, original image bytes and some diagnostic caret fields; use the original artifact or maintained raw evidence for those details."
+    ]
+  },
+  "transformations": [
+    "All 39 acceptance stages preserve their original name and timestamp.",
+    "The two native-doc-input-caret stages retain item identity, before/caret unit identity, selection endpoints, input connection/focus, pending-selection state, synthetic text and visual result; other repeated caret diagnostics and command histories are omitted.",
+    "For the 12 image records in normal reconnect and conflict-copy stages, original hexadecimal PNG bytes are decoded and replaced by byteLength and SHA-256; id and mime are preserved. Every derived SHA-256 equals its original image id. No original PNG byte string is embedded here.",
+    "All five pointer JSONL rows are retained verbatim as parsed JSON objects; key order and whitespace are reformatted by JSON serialization.",
+    "Capability-probe phase trace lines are parsed into phaseEvents without changing their at/phase values. derivedAppKitImportMs is the timestamp difference between appkit-import-begin and appkit-import-end. Identity stdout duplicates the retained identity object and is omitted.",
+    "Original member SHA-256 values and byte counts cover every non-directory ZIP member, independently compared byte-for-byte with the extracted local inputs.",
+    "Derived summary counts and pointer checks are computed from the retained original records, not substitute test executions."
+  ],
+  "acceptance": {
+    "scope": "Actual macOS ordinary-profile application restart, retained images/edits, reconnect and storage loss",
+    "status": "passed",
+    "browser": "safari",
+    "runner": {
+      "label": "macos-15-intel",
+      "arch": "x64",
+      "imageOS": "macos15",
+      "imageVersion": "20260824.0482.1"
+    },
+    "os": "ProductName:\t\tmacOS\nProductVersion:\t\t15.7.9\nBuildVersion:\t\t24G830",
+    "machine": "x86_64",
+    "version": {
+      "installed": "27.2",
+      "requiredStable": "27.2",
+      "checkedAt": "2026-11-04T06:34:55.051Z",
+      "status": "passed"
+    },
+    "actor": {
+      "id": "90ebcf28-b1eb-4e9d-8d52-0efc974e946f",
+      "role": "Collaborator with editor grants",
+      "ownerId": "8c517dcf-439b-4430-8023-b97880faa93f"
+    },
+    "persistence": [
+      {
+        "itemId": "52d4da70-d240-4806-a4b0-0413b41170ed",
+        "before": false,
+        "after": false,
+        "permission": null,
+        "message": "Offline availability×Desktop normal sheet is available offline on this device.Your browser did not grant storage protection. It may clear offline documents when space runs low.How to keep themDone"
+      },
+      {
+        "itemId": "361fbd51-a488-4e82-858e-e6fe7cc24253",
+        "before": false,
+        "after": false,
+        "permission": null,
+        "message": "Offline availability×Desktop conflict sheet is available offline on this device.Your browser did not grant storage protection. It may clear offline documents when space runs low.How to keep themDone"
+      },
+      {
+        "itemId": "c1144a8f-4cbf-4a25-aecd-d9b66b249a77",
+        "before": false,
+        "after": false,
+        "permission": null,
+        "message": "Offline availability×Desktop normal doc is available offline on this device.Your browser did not grant storage protection. It may clear offline documents when space runs low.How to keep themDone"
+      },
+      {
+        "itemId": "9be4d2cc-028e-4d1d-a743-c1f0bf262574",
+        "before": false,
+        "after": false,
+        "permission": null,
+        "message": "Offline availability×Desktop conflict doc is available offline on this device.Your browser did not grant storage protection. It may clear offline documents when space runs low.How to keep themDone"
+      }
+    ],
+    "transport": {
+      "forwardedRequests": 805,
+      "blockedRequests": 723,
+      "forwardedUpgrades": 18,
+      "blockedUpgrades": 6,
+      "logins": 1,
+      "offline": true,
+      "activeBrowserSockets": 0
+    },
+    "launches": [
+      {
+        "kind": "safari",
+        "version": "27.2",
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+        "profile": {
+          "mode": "ordinary-hosted-safari-user",
+          "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+          "actualPath": "/Users/runner",
+          "directoryDevice": "16777220",
+          "directoryInode": "12884922560"
+        },
+        "browserPid": 8638,
+        "previousBrowserPid": null,
+        "driverPid": null,
+        "driverVersion": null,
+        "startedAt": "2026-11-04T06:37:30.393Z"
+      },
+      {
+        "kind": "safari",
+        "version": "27.2",
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+        "profile": {
+          "mode": "ordinary-hosted-safari-user",
+          "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+          "actualPath": "/Users/runner",
+          "directoryDevice": "16777220",
+          "directoryInode": "12884922560"
+        },
+        "browserPid": 11454,
+        "previousBrowserPid": 8638,
+        "driverPid": null,
+        "driverVersion": null,
+        "startedAt": "2026-11-04T06:39:39.331Z"
+      },
+      {
+        "kind": "safari",
+        "version": "27.2",
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+        "profile": {
+          "mode": "ordinary-hosted-safari-user",
+          "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+          "actualPath": "/Users/runner",
+          "directoryDevice": "16777220",
+          "directoryInode": "12884922560"
+        },
+        "browserPid": 13224,
+        "previousBrowserPid": 11454,
+        "driverPid": null,
+        "driverVersion": null,
+        "startedAt": "2026-11-04T06:40:59.879Z"
+      }
+    ],
+    "stageCount": 39,
+    "stages": [
+      {
+        "name": "browser-start",
+        "time": "2026-11-04T06:37:31.648Z",
+        "kind": "safari",
+        "version": "27.2",
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+        "profile": {
+          "mode": "ordinary-hosted-safari-user",
+          "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+          "actualPath": "/Users/runner",
+          "directoryDevice": "16777220",
+          "directoryInode": "12884922560"
+        },
+        "browserPid": 8638,
+        "previousBrowserPid": null,
+        "driverPid": null,
+        "driverVersion": null,
+        "startedAt": "2026-11-04T06:37:30.393Z",
+        "browserTab": true,
+        "secureContext": true,
+        "storagePersisted": false
+      },
+      {
+        "name": "safari-online-rendering-baseline",
+        "time": "2026-11-04T06:37:47.454Z",
+        "diagnosticOnly": true,
+        "itemId": "52d4da70-d240-4806-a4b0-0413b41170ed",
+        "kind": "sheet",
+        "file": "sheet-online-before-download.png"
+      },
+      {
+        "name": "safari-online-rendering-baseline",
+        "time": "2026-11-04T06:38:38.464Z",
+        "diagnosticOnly": true,
+        "itemId": "c1144a8f-4cbf-4a25-aecd-d9b66b249a77",
+        "kind": "doc",
+        "file": "doc-online-before-download.png"
+      },
+      {
+        "name": "all-four-downloads-complete",
+        "time": "2026-11-04T06:39:23.948Z"
+      },
+      {
+        "name": "transport-disabled-before-quit",
+        "time": "2026-11-04T06:39:24.010Z",
+        "forwardedRequests": 411,
+        "blockedRequests": 2,
+        "forwardedUpgrades": 4,
+        "blockedUpgrades": 1,
+        "logins": 1,
+        "offline": true,
+        "activeBrowserSockets": 0
+      },
+      {
+        "name": "exact-records-captured-before-quit",
+        "time": "2026-11-04T06:39:32.366Z"
+      },
+      {
+        "name": "browser-stop",
+        "time": "2026-11-04T06:39:32.947Z",
+        "kind": "safari",
+        "browserPid": 8638,
+        "driverPid": null,
+        "browserExited": true,
+        "driverExited": true,
+        "stoppedAt": "2026-11-04T06:39:32.947Z"
+      },
+      {
+        "name": "transport-disabled-before-relaunch",
+        "time": "2026-11-04T06:39:32.964Z",
+        "forwardedRequests": 411,
+        "blockedRequests": 41,
+        "forwardedUpgrades": 4,
+        "blockedUpgrades": 2,
+        "logins": 1,
+        "offline": true,
+        "activeBrowserSockets": 0
+      },
+      {
+        "name": "browser-start",
+        "time": "2026-11-04T06:39:40.900Z",
+        "kind": "safari",
+        "version": "27.2",
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+        "profile": {
+          "mode": "ordinary-hosted-safari-user",
+          "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+          "actualPath": "/Users/runner",
+          "directoryDevice": "16777220",
+          "directoryInode": "12884922560"
+        },
+        "browserPid": 11454,
+        "previousBrowserPid": 8638,
+        "driverPid": null,
+        "driverVersion": null,
+        "startedAt": "2026-11-04T06:39:39.331Z",
+        "browserTab": true,
+        "secureContext": true,
+        "storagePersisted": false
+      },
+      {
+        "name": "offline-catalog-and-original-records-retained",
+        "time": "2026-11-04T06:39:48.151Z"
+      },
+      {
+        "name": "native-doc-input-caret",
+        "time": "2026-11-04T06:40:29.986Z",
+        "itemId": "c1144a8f-4cbf-4a25-aecd-d9b66b249a77",
+        "before": {
+          "unitId": "c1144a8f-4cbf-4a25-aecd-d9b66b249a77",
+          "currentUnitId": "c1144a8f-4cbf-4a25-aecd-d9b66b249a77",
+          "start": 20,
+          "end": 20,
+          "inputConnected": true,
+          "inputFocused": true,
+          "pendingSelection": false,
+          "text": "\bRecovery base notes\r\n"
+        },
+        "caret": {
+          "unitId": "c1144a8f-4cbf-4a25-aecd-d9b66b249a77",
+          "currentUnitId": "c1144a8f-4cbf-4a25-aecd-d9b66b249a77",
+          "start": 0,
+          "end": 0,
+          "inputConnected": true,
+          "inputFocused": true,
+          "pendingSelection": false,
+          "text": "\bRecovery base notes\r\n"
+        },
+        "visual": {
+          "file": "c1144a8f-4cbf-4a25-aecd-d9b66b249a77-before-doc-input.png",
+          "colorPixelCounts": [
+            4661
+          ],
+          "captures": 1
+        }
+      },
+      {
+        "name": "native-doc-input-caret",
+        "time": "2026-11-04T06:40:48.713Z",
+        "itemId": "9be4d2cc-028e-4d1d-a743-c1f0bf262574",
+        "before": {
+          "unitId": "9be4d2cc-028e-4d1d-a743-c1f0bf262574",
+          "currentUnitId": "9be4d2cc-028e-4d1d-a743-c1f0bf262574",
+          "start": 20,
+          "end": 20,
+          "inputConnected": true,
+          "inputFocused": true,
+          "pendingSelection": false,
+          "text": "\bRecovery base notes\r\n"
+        },
+        "caret": {
+          "unitId": "9be4d2cc-028e-4d1d-a743-c1f0bf262574",
+          "currentUnitId": "9be4d2cc-028e-4d1d-a743-c1f0bf262574",
+          "start": 0,
+          "end": 0,
+          "inputConnected": true,
+          "inputFocused": true,
+          "pendingSelection": false,
+          "text": "\bRecovery base notes\r\n"
+        },
+        "visual": {
+          "file": "9be4d2cc-028e-4d1d-a743-c1f0bf262574-before-doc-input.png",
+          "colorPixelCounts": [
+            4661
+          ],
+          "captures": 1
+        }
+      },
+      {
+        "name": "native-offline-edits-committed",
+        "time": "2026-11-04T06:40:52.220Z"
+      },
+      {
+        "name": "browser-stop",
+        "time": "2026-11-04T06:40:53.221Z",
+        "kind": "safari",
+        "browserPid": 11454,
+        "driverPid": null,
+        "browserExited": true,
+        "driverExited": true,
+        "stoppedAt": "2026-11-04T06:40:53.221Z"
+      },
+      {
+        "name": "transport-still-disabled-before-pending-relaunch",
+        "time": "2026-11-04T06:40:53.270Z",
+        "forwardedRequests": 411,
+        "blockedRequests": 382,
+        "forwardedUpgrades": 4,
+        "blockedUpgrades": 3,
+        "logins": 1,
+        "offline": true,
+        "activeBrowserSockets": 0
+      },
+      {
+        "name": "browser-start",
+        "time": "2026-11-04T06:41:00.939Z",
+        "kind": "safari",
+        "version": "27.2",
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+        "profile": {
+          "mode": "ordinary-hosted-safari-user",
+          "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+          "actualPath": "/Users/runner",
+          "directoryDevice": "16777220",
+          "directoryInode": "12884922560"
+        },
+        "browserPid": 13224,
+        "previousBrowserPid": 11454,
+        "driverPid": null,
+        "driverVersion": null,
+        "startedAt": "2026-11-04T06:40:59.879Z",
+        "browserTab": true,
+        "secureContext": true,
+        "storagePersisted": false
+      },
+      {
+        "name": "native-clipboard-content",
+        "time": "2026-11-04T06:41:13.620Z",
+        "kind": "sheet",
+        "text": "731",
+        "selection": null
+      },
+      {
+        "name": "pending-restart-retained",
+        "time": "2026-11-04T06:41:13.622Z",
+        "itemId": "52d4da70-d240-4806-a4b0-0413b41170ed",
+        "kind": "sheet",
+        "outcome": "normal",
+        "checkpointSha256": "970050b60fec76ff26df3082c876765977d88a2302097e9c9486693963cacf85",
+        "imageHashes": [
+          {
+            "source": "/api/items/52d4da70-d240-4806-a4b0-0413b41170ed/images/0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1",
+            "size": 248,
+            "sha256": "0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1"
+          },
+          {
+            "source": "/api/items/52d4da70-d240-4806-a4b0-0413b41170ed/images/882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b",
+            "size": 242,
+            "sha256": "882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b"
+          },
+          {
+            "source": "/api/items/52d4da70-d240-4806-a4b0-0413b41170ed/images/89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f",
+            "size": 247,
+            "sha256": "89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f"
+          }
+        ],
+        "visual": {
+          "file": "sheet-normal-offline.png",
+          "colorPixelCounts": [
+            7200,
+            7081,
+            610532
+          ],
+          "captures": 1
+        }
+      },
+      {
+        "name": "native-clipboard-content",
+        "time": "2026-11-04T06:41:26.427Z",
+        "kind": "sheet",
+        "text": "731",
+        "selection": null
+      },
+      {
+        "name": "pending-restart-retained",
+        "time": "2026-11-04T06:41:26.427Z",
+        "itemId": "361fbd51-a488-4e82-858e-e6fe7cc24253",
+        "kind": "sheet",
+        "outcome": "conflict",
+        "checkpointSha256": "3cbf63965ec72151b4451483621234d70ae52384691dea010934946f6e27a95c",
+        "imageHashes": [
+          {
+            "source": "/api/items/361fbd51-a488-4e82-858e-e6fe7cc24253/images/0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1",
+            "size": 248,
+            "sha256": "0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1"
+          },
+          {
+            "source": "/api/items/361fbd51-a488-4e82-858e-e6fe7cc24253/images/882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b",
+            "size": 242,
+            "sha256": "882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b"
+          },
+          {
+            "source": "/api/items/361fbd51-a488-4e82-858e-e6fe7cc24253/images/89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f",
+            "size": 247,
+            "sha256": "89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f"
+          }
+        ],
+        "visual": {
+          "file": "sheet-conflict-offline.png",
+          "colorPixelCounts": [
+            7200,
+            7081,
+            610532
+          ],
+          "captures": 1
+        }
+      },
+      {
+        "name": "native-clipboard-content",
+        "time": "2026-11-04T06:41:42.001Z",
+        "kind": "doc",
+        "text": "Desktop offline 731 Recovery base notes",
+        "selection": {
+          "unitId": "c1144a8f-4cbf-4a25-aecd-d9b66b249a77",
+          "nativeRange": {
+            "start": 0,
+            "end": 40,
+            "collapsed": false,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "logicalRange": {
+            "start": 0,
+            "end": 40,
+            "collapsed": false,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "pendingSelection": false
+        }
+      },
+      {
+        "name": "pending-restart-retained",
+        "time": "2026-11-04T06:41:42.001Z",
+        "itemId": "c1144a8f-4cbf-4a25-aecd-d9b66b249a77",
+        "kind": "doc",
+        "outcome": "normal",
+        "checkpointSha256": "0c6b5a4ef6228d7e88c541665a75b00efbbb8034d4ce4dcb248af89d6afc82e0",
+        "imageHashes": [
+          {
+            "source": "/api/items/c1144a8f-4cbf-4a25-aecd-d9b66b249a77/images/385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e",
+            "size": 243,
+            "sha256": "385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e"
+          },
+          {
+            "source": "/api/items/c1144a8f-4cbf-4a25-aecd-d9b66b249a77/images/8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955",
+            "size": 244,
+            "sha256": "8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955"
+          },
+          {
+            "source": "/api/items/c1144a8f-4cbf-4a25-aecd-d9b66b249a77/images/f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594",
+            "size": 244,
+            "sha256": "f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594"
+          }
+        ],
+        "visual": {
+          "file": "doc-normal-offline.png",
+          "colorPixelCounts": [
+            4661
+          ],
+          "captures": 1
+        }
+      },
+      {
+        "name": "native-clipboard-content",
+        "time": "2026-11-04T06:41:58.250Z",
+        "kind": "doc",
+        "text": "Desktop offline 731 Recovery base notes",
+        "selection": {
+          "unitId": "9be4d2cc-028e-4d1d-a743-c1f0bf262574",
+          "nativeRange": {
+            "start": 0,
+            "end": 40,
+            "collapsed": false,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "logicalRange": {
+            "start": 0,
+            "end": 40,
+            "collapsed": false,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "pendingSelection": false
+        }
+      },
+      {
+        "name": "pending-restart-retained",
+        "time": "2026-11-04T06:41:58.250Z",
+        "itemId": "9be4d2cc-028e-4d1d-a743-c1f0bf262574",
+        "kind": "doc",
+        "outcome": "conflict",
+        "checkpointSha256": "f6f3945082ef270ab7ad5f06c59190da64a8f668733cd0280b2a7bd858dfba72",
+        "imageHashes": [
+          {
+            "source": "/api/items/9be4d2cc-028e-4d1d-a743-c1f0bf262574/images/385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e",
+            "size": 243,
+            "sha256": "385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e"
+          },
+          {
+            "source": "/api/items/9be4d2cc-028e-4d1d-a743-c1f0bf262574/images/8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955",
+            "size": 244,
+            "sha256": "8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955"
+          },
+          {
+            "source": "/api/items/9be4d2cc-028e-4d1d-a743-c1f0bf262574/images/f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594",
+            "size": 244,
+            "sha256": "f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594"
+          }
+        ],
+        "visual": {
+          "file": "doc-conflict-offline.png",
+          "colorPixelCounts": [
+            4661
+          ],
+          "captures": 1
+        }
+      },
+      {
+        "name": "transport-restored",
+        "time": "2026-11-04T06:41:59.919Z"
+      },
+      {
+        "name": "normal-reconnect-exact-content-once",
+        "time": "2026-11-04T06:42:09.077Z",
+        "itemId": "52d4da70-d240-4806-a4b0-0413b41170ed",
+        "revision": 2,
+        "snapshotSha256": "7903246f253fc970a61193fd5d934b618f01f50b8a821015d6f1006042d9dae9",
+        "images": [
+          {
+            "id": "0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1",
+            "mime": "image/png",
+            "byteLength": 248,
+            "sha256": "0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1"
+          },
+          {
+            "id": "882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b",
+            "mime": "image/png",
+            "byteLength": 242,
+            "sha256": "882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b"
+          },
+          {
+            "id": "89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f",
+            "mime": "image/png",
+            "byteLength": 247,
+            "sha256": "89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f"
+          }
+        ]
+      },
+      {
+        "name": "recovered-original-reconnect-outage",
+        "time": "2026-11-04T06:42:18.513Z",
+        "itemId": "361fbd51-a488-4e82-858e-e6fe7cc24253",
+        "forwardedRequests": 505,
+        "blockedRequests": 717,
+        "forwardedUpgrades": 8,
+        "blockedUpgrades": 4,
+        "logins": 1,
+        "offline": true,
+        "activeBrowserSockets": 0
+      },
+      {
+        "name": "native-clipboard-content",
+        "time": "2026-11-04T06:42:30.955Z",
+        "kind": "sheet",
+        "text": "731",
+        "selection": null
+      },
+      {
+        "name": "conflict-copy-preserves-original",
+        "time": "2026-11-04T06:42:30.956Z",
+        "itemId": "361fbd51-a488-4e82-858e-e6fe7cc24253",
+        "copyId": "bead187d-e971-41aa-bd0c-6e0a7bd71ce1",
+        "receipts": [
+          {
+            "user_id": "90ebcf28-b1eb-4e9d-8d52-0efc974e946f",
+            "recovery_id": "47bee450-23a0-4e1a-8800-1fc6f1caf936",
+            "request_hash": "cc2dc24b633adc4faf44db1b3789ede20528748e5c969747670aff2e53b5cf2f",
+            "item_id": "bead187d-e971-41aa-bd0c-6e0a7bd71ce1",
+            "possible_replay_crash": 0
+          }
+        ],
+        "snapshotSha256": "a2f518494d36b933f198e6383b87d6d5ea89d5548de8e55e0b7ff2adc6b3cfd5",
+        "images": [
+          {
+            "id": "0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1",
+            "mime": "image/png",
+            "byteLength": 248,
+            "sha256": "0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1"
+          },
+          {
+            "id": "882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b",
+            "mime": "image/png",
+            "byteLength": 242,
+            "sha256": "882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b"
+          },
+          {
+            "id": "89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f",
+            "mime": "image/png",
+            "byteLength": 247,
+            "sha256": "89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f"
+          }
+        ],
+        "visual": {
+          "file": "sheet-recovered-copy.png",
+          "colorPixelCounts": [
+            7200,
+            7081,
+            608551
+          ],
+          "captures": 1
+        }
+      },
+      {
+        "name": "normal-reconnect-exact-content-once",
+        "time": "2026-11-04T06:42:38.761Z",
+        "itemId": "c1144a8f-4cbf-4a25-aecd-d9b66b249a77",
+        "revision": 2,
+        "snapshotSha256": "34d1287f4605e2ec35d8b54b96efedd6992a8db94d2c5c44efb80e2dbd84a19a",
+        "images": [
+          {
+            "id": "385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e",
+            "mime": "image/png",
+            "byteLength": 243,
+            "sha256": "385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e"
+          },
+          {
+            "id": "8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955",
+            "mime": "image/png",
+            "byteLength": 244,
+            "sha256": "8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955"
+          },
+          {
+            "id": "f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594",
+            "mime": "image/png",
+            "byteLength": 244,
+            "sha256": "f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594"
+          }
+        ]
+      },
+      {
+        "name": "recovered-original-reconnect-outage",
+        "time": "2026-11-04T06:42:47.749Z",
+        "itemId": "9be4d2cc-028e-4d1d-a743-c1f0bf262574",
+        "forwardedRequests": 665,
+        "blockedRequests": 718,
+        "forwardedUpgrades": 15,
+        "blockedUpgrades": 5,
+        "logins": 1,
+        "offline": true,
+        "activeBrowserSockets": 0
+      },
+      {
+        "name": "native-clipboard-content",
+        "time": "2026-11-04T06:43:02.682Z",
+        "kind": "doc",
+        "text": "Desktop offline 731 Recovery base notes",
+        "selection": {
+          "unitId": "f7dc5570-2beb-48e4-b223-7725205804c9",
+          "nativeRange": {
+            "start": 0,
+            "end": 40,
+            "collapsed": false,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "logicalRange": {
+            "start": 0,
+            "end": 40,
+            "collapsed": false,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "pendingSelection": false
+        }
+      },
+      {
+        "name": "conflict-copy-preserves-original",
+        "time": "2026-11-04T06:43:02.683Z",
+        "itemId": "9be4d2cc-028e-4d1d-a743-c1f0bf262574",
+        "copyId": "f7dc5570-2beb-48e4-b223-7725205804c9",
+        "receipts": [
+          {
+            "user_id": "90ebcf28-b1eb-4e9d-8d52-0efc974e946f",
+            "recovery_id": "47bee450-23a0-4e1a-8800-1fc6f1caf936",
+            "request_hash": "cc2dc24b633adc4faf44db1b3789ede20528748e5c969747670aff2e53b5cf2f",
+            "item_id": "bead187d-e971-41aa-bd0c-6e0a7bd71ce1",
+            "possible_replay_crash": 0
+          },
+          {
+            "user_id": "90ebcf28-b1eb-4e9d-8d52-0efc974e946f",
+            "recovery_id": "90abee2e-3fb9-433b-a047-4f0ca28a5733",
+            "request_hash": "7f1fd587e889bac9375ee9b498376f4a7b58489fbc9fbf6503a7371b42e0d15a",
+            "item_id": "f7dc5570-2beb-48e4-b223-7725205804c9",
+            "possible_replay_crash": 0
+          }
+        ],
+        "snapshotSha256": "4686d8dbc7f9311b10eb8535b468ea75f35d037085bda2acef8825ed6d6a5234",
+        "images": [
+          {
+            "id": "385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e",
+            "mime": "image/png",
+            "byteLength": 243,
+            "sha256": "385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e"
+          },
+          {
+            "id": "8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955",
+            "mime": "image/png",
+            "byteLength": 244,
+            "sha256": "8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955"
+          },
+          {
+            "id": "f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594",
+            "mime": "image/png",
+            "byteLength": 244,
+            "sha256": "f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594"
+          }
+        ],
+        "visual": {
+          "file": "doc-recovered-copy.png",
+          "colorPixelCounts": [
+            4661
+          ],
+          "captures": 1
+        }
+      },
+      {
+        "name": "storage-deletion",
+        "time": "2026-11-04T06:43:06.927Z",
+        "deletion": {
+          "status": "passed",
+          "database": "spinel-offline-90ebcf28-b1eb-4e9d-8d52-0efc974e946f",
+          "timeoutMs": 28000,
+          "operations": [
+            {
+              "name": "serviceWorker.getRegistrations",
+              "startedAt": "2026-11-04T06:43:06.574Z",
+              "status": "passed",
+              "value": [
+                "https://localhost:8176/"
+              ],
+              "elapsedMs": 3
+            },
+            {
+              "name": "serviceWorker.unregister:https://localhost:8176/",
+              "startedAt": "2026-11-04T06:43:06.577Z",
+              "status": "passed",
+              "value": true,
+              "elapsedMs": 2
+            },
+            {
+              "name": "caches.keys",
+              "startedAt": "2026-11-04T06:43:06.579Z",
+              "status": "passed",
+              "value": [
+                "spinel-shell-cbbe0552bc81f918"
+              ],
+              "elapsedMs": 1
+            },
+            {
+              "name": "caches.delete:spinel-shell-cbbe0552bc81f918",
+              "startedAt": "2026-11-04T06:43:06.580Z",
+              "status": "passed",
+              "value": true,
+              "elapsedMs": 2
+            },
+            {
+              "name": "localStorage.clear",
+              "startedAt": "2026-11-04T06:43:06.582Z",
+              "status": "passed",
+              "value": 0,
+              "elapsedMs": 0
+            },
+            {
+              "name": "indexedDB.deleteDatabase:spinel-offline-90ebcf28-b1eb-4e9d-8d52-0efc974e946f",
+              "startedAt": "2026-11-04T06:43:06.583Z",
+              "status": "passed",
+              "elapsedMs": 9
+            },
+            {
+              "name": "verify-service-workers",
+              "startedAt": "2026-11-04T06:43:06.592Z",
+              "status": "passed",
+              "value": [],
+              "elapsedMs": 1
+            },
+            {
+              "name": "verify-cache-names",
+              "startedAt": "2026-11-04T06:43:06.593Z",
+              "status": "passed",
+              "value": [],
+              "elapsedMs": 0
+            },
+            {
+              "name": "verify-database-names",
+              "startedAt": "2026-11-04T06:43:06.593Z",
+              "status": "passed",
+              "value": [
+                "UniverLocalStorage",
+                "spinel-offline-runtime"
+              ],
+              "elapsedMs": 6
+            },
+            {
+              "name": "verify-storage-empty",
+              "startedAt": "2026-11-04T06:43:06.600Z",
+              "status": "passed",
+              "value": {
+                "workers": [],
+                "cacheNames": [],
+                "databases": [
+                  "UniverLocalStorage",
+                  "spinel-offline-runtime"
+                ],
+                "localStorageEntries": 0
+              },
+              "elapsedMs": 0
+            }
+          ]
+        }
+      },
+      {
+        "name": "cleared-storage-is-not-advertised",
+        "time": "2026-11-04T06:43:11.915Z",
+        "lost": {
+          "account": null,
+          "available": 0
+        }
+      },
+      {
+        "name": "post-deletion-outage",
+        "time": "2026-11-04T06:43:12.289Z",
+        "forwardedRequests": 805,
+        "blockedRequests": 719,
+        "forwardedUpgrades": 18,
+        "blockedUpgrades": 6,
+        "logins": 1,
+        "offline": true,
+        "activeBrowserSockets": 0
+      },
+      {
+        "name": "missing-data-cannot-open-offline",
+        "time": "2026-11-04T06:43:13.582Z",
+        "message": "You're offline\n\nConnect to the internet, then try again to open this page.\n\nTry again"
+      },
+      {
+        "name": "complete",
+        "time": "2026-11-04T06:43:13.582Z"
+      },
+      {
+        "name": "browser-stop",
+        "time": "2026-11-04T06:43:13.969Z",
+        "kind": "safari",
+        "browserPid": 13224,
+        "driverPid": null,
+        "browserExited": true,
+        "driverExited": true,
+        "stoppedAt": "2026-11-04T06:43:13.969Z"
+      }
+    ],
+    "derivedOutcomes": {
+      "retainedItems": 4,
+      "retainedImageRecordsPerItem": 3,
+      "normalReconnectItems": 2,
+      "normalReconnectRevisions": [
+        2,
+        2
+      ],
+      "conflictCopies": 2,
+      "finalRecoveryReceiptCount": 2,
+      "storageDeletionOperations": 10,
+      "allStorageDeletionOperationsPassed": true,
+      "catalogAfterLoss": {
+        "account": null,
+        "available": 0
+      },
+      "ownedExitedPids": [
+        8638,
+        11454,
+        13224
+      ],
+      "allOwnedBrowserAndDriverExitFlagsTrue": true,
+      "completeStagePresent": true
+    },
+    "assertionSource": "https://github.com/mxbaylee/spinel/blob/6c0080d5aa492e654a225b4d22073f0d251cfb4d/scripts/ci/desktop-offline.ts"
+  },
+  "pointer": {
+    "rowCount": 5,
+    "rows": [
+      {
+        "browserPid": 11454,
+        "target": {
+          "moved": {
+            "x": 662,
+            "y": 418,
+            "screenX": 960,
+            "screenY": 510,
+            "trusted": true,
+            "target": true
+          },
+          "clicked": null,
+          "events": [
+            {
+              "type": "mousemove",
+              "x": 662,
+              "y": 418,
+              "screenX": 960,
+              "screenY": 510,
+              "trusted": true,
+              "target": true
+            },
+            {
+              "type": "mousemove",
+              "x": 662,
+              "y": 418,
+              "screenX": 960,
+              "screenY": 510,
+              "trusted": true,
+              "target": true
+            }
+          ],
+          "geometry": {
+            "x": 0,
+            "y": 85,
+            "width": 1324,
+            "height": 803
+          },
+          "ready": true
+        },
+        "time": "2026-11-04T06:40:20.960Z",
+        "point": {
+          "x": 640,
+          "y": 285
+        },
+        "phase": "delivered",
+        "identity": {
+          "pid": 11454,
+          "windowId": 67,
+          "tabIndex": 1,
+          "frontmost": true,
+          "frontWindowId": 67,
+          "visible": true,
+          "minimized": false,
+          "bounds": {
+            "x": 298,
+            "y": 40,
+            "width": 1324,
+            "height": 940
+          }
+        },
+        "calibration": {
+          "x": 960,
+          "y": 510
+        },
+        "movePost": {
+          "mode": "move",
+          "point": {
+            "x": 960,
+            "y": 510
+          },
+          "timeoutMs": 10000,
+          "trace": "pointer: importing frameworks\npointer: frameworks imported\npointer: preflight\npointer: post-event access true\npointer: creating event 5\npointer: validating event 5\npointer: validated event 5 at {\"x\":960,\"y\":510}\npointer: posting event 5\npointer: posted event 5\n",
+          "result": {
+            "mode": "move",
+            "point": {
+              "x": 960,
+              "y": 510
+            },
+            "posted": 1
+          }
+        },
+        "movement": {
+          "moved": {
+            "x": 662,
+            "y": 418,
+            "screenX": 960,
+            "screenY": 510,
+            "trusted": true,
+            "target": true
+          },
+          "clicked": null,
+          "events": [
+            {
+              "type": "mousemove",
+              "x": 662,
+              "y": 418,
+              "screenX": 960,
+              "screenY": 510,
+              "trusted": true,
+              "target": true
+            },
+            {
+              "type": "mousemove",
+              "x": 662,
+              "y": 418,
+              "screenX": 960,
+              "screenY": 510,
+              "trusted": true,
+              "target": true
+            }
+          ],
+          "geometry": {
+            "x": 0,
+            "y": 85,
+            "width": 1324,
+            "height": 803
+          },
+          "ready": true
+        },
+        "click": {
+          "x": 938,
+          "y": 377
+        },
+        "beforeClick": {
+          "pid": 11454,
+          "windowId": 67,
+          "tabIndex": 1,
+          "frontmost": true,
+          "frontWindowId": 67,
+          "visible": true,
+          "minimized": false,
+          "bounds": {
+            "x": 298,
+            "y": 40,
+            "width": 1324,
+            "height": 940
+          }
+        },
+        "clickPost": {
+          "mode": "click",
+          "point": {
+            "x": 938,
+            "y": 377
+          },
+          "timeoutMs": 10000,
+          "trace": "pointer: importing frameworks\npointer: frameworks imported\npointer: preflight\npointer: post-event access true\npointer: creating event 1\npointer: validating event 1\npointer: validated event 1 at {\"x\":938,\"y\":377}\npointer: posting event 1\npointer: posted event 1\npointer: creating event 2\npointer: validating event 2\npointer: validated event 2 at {\"x\":938,\"y\":377}\npointer: posting event 2\npointer: posted event 2\n",
+          "result": {
+            "mode": "click",
+            "point": {
+              "x": 938,
+              "y": 377
+            },
+            "posted": 2
+          }
+        },
+        "clickObservation": {
+          "moved": {
+            "x": 662,
+            "y": 418,
+            "screenX": 960,
+            "screenY": 510,
+            "trusted": true,
+            "target": true
+          },
+          "clicked": {
+            "x": 640,
+            "y": 285,
+            "screenX": 938,
+            "screenY": 377,
+            "trusted": true,
+            "target": true
+          },
+          "events": [
+            {
+              "type": "mousemove",
+              "x": 662,
+              "y": 418,
+              "screenX": 960,
+              "screenY": 510,
+              "trusted": true,
+              "target": true
+            },
+            {
+              "type": "mousemove",
+              "x": 662,
+              "y": 418,
+              "screenX": 960,
+              "screenY": 510,
+              "trusted": true,
+              "target": true
+            },
+            {
+              "type": "mousedown",
+              "x": 640,
+              "y": 285,
+              "screenX": 938,
+              "screenY": 377,
+              "trusted": true,
+              "target": true
+            }
+          ],
+          "geometry": {
+            "x": 0,
+            "y": 85,
+            "width": 1324,
+            "height": 803
+          },
+          "ready": true
+        },
+        "afterClick": {
+          "pid": 11454,
+          "windowId": 67,
+          "tabIndex": 1,
+          "frontmost": true,
+          "frontWindowId": 67,
+          "visible": true,
+          "minimized": false,
+          "bounds": {
+            "x": 298,
+            "y": 40,
+            "width": 1324,
+            "height": 940
+          }
+        },
+        "finalObservation": {
+          "moved": {
+            "x": 662,
+            "y": 418,
+            "screenX": 960,
+            "screenY": 510,
+            "trusted": true,
+            "target": true
+          },
+          "clicked": {
+            "x": 640,
+            "y": 285,
+            "screenX": 938,
+            "screenY": 377,
+            "trusted": true,
+            "target": true
+          },
+          "events": [
+            {
+              "type": "mousemove",
+              "x": 662,
+              "y": 418,
+              "screenX": 960,
+              "screenY": 510,
+              "trusted": true,
+              "target": true
+            },
+            {
+              "type": "mousemove",
+              "x": 662,
+              "y": 418,
+              "screenX": 960,
+              "screenY": 510,
+              "trusted": true,
+              "target": true
+            },
+            {
+              "type": "mousedown",
+              "x": 640,
+              "y": 285,
+              "screenX": 938,
+              "screenY": 377,
+              "trusted": true,
+              "target": true
+            }
+          ],
+          "geometry": {
+            "x": 0,
+            "y": 85,
+            "width": 1324,
+            "height": 803
+          },
+          "ready": true
+        },
+        "observerRemoved": true,
+        "status": "passed"
+      },
+      {
+        "browserPid": 11454,
+        "target": {
+          "moved": {
+            "x": 662,
+            "y": 418,
+            "screenX": 960,
+            "screenY": 510,
+            "trusted": true,
+            "target": true
+          },
+          "clicked": null,
+          "events": [
+            {
+              "type": "mousemove",
+              "x": 662,
+              "y": 418,
+              "screenX": 960,
+              "screenY": 510,
+              "trusted": true,
+              "target": true
+            }
+          ],
+          "geometry": {
+            "x": 0,
+            "y": 85,
+            "width": 1324,
+            "height": 803
+          },
+          "ready": true
+        },
+        "time": "2026-11-04T06:40:40.551Z",
+        "point": {
+          "x": 640,
+          "y": 285
+        },
+        "phase": "delivered",
+        "identity": {
+          "pid": 11454,
+          "windowId": 67,
+          "tabIndex": 1,
+          "frontmost": true,
+          "frontWindowId": 67,
+          "visible": true,
+          "minimized": false,
+          "bounds": {
+            "x": 298,
+            "y": 40,
+            "width": 1324,
+            "height": 940
+          }
+        },
+        "calibration": {
+          "x": 960,
+          "y": 510
+        },
+        "movePost": {
+          "mode": "move",
+          "point": {
+            "x": 960,
+            "y": 510
+          },
+          "timeoutMs": 10000,
+          "trace": "pointer: importing frameworks\npointer: frameworks imported\npointer: preflight\npointer: post-event access true\npointer: creating event 5\npointer: validating event 5\npointer: validated event 5 at {\"x\":960,\"y\":510}\npointer: posting event 5\npointer: posted event 5\n",
+          "result": {
+            "mode": "move",
+            "point": {
+              "x": 960,
+              "y": 510
+            },
+            "posted": 1
+          }
+        },
+        "movement": {
+          "moved": {
+            "x": 662,
+            "y": 418,
+            "screenX": 960,
+            "screenY": 510,
+            "trusted": true,
+            "target": true
+          },
+          "clicked": null,
+          "events": [
+            {
+              "type": "mousemove",
+              "x": 662,
+              "y": 418,
+              "screenX": 960,
+              "screenY": 510,
+              "trusted": true,
+              "target": true
+            }
+          ],
+          "geometry": {
+            "x": 0,
+            "y": 85,
+            "width": 1324,
+            "height": 803
+          },
+          "ready": true
+        },
+        "click": {
+          "x": 938,
+          "y": 377
+        },
+        "beforeClick": {
+          "pid": 11454,
+          "windowId": 67,
+          "tabIndex": 1,
+          "frontmost": true,
+          "frontWindowId": 67,
+          "visible": true,
+          "minimized": false,
+          "bounds": {
+            "x": 298,
+            "y": 40,
+            "width": 1324,
+            "height": 940
+          }
+        },
+        "clickPost": {
+          "mode": "click",
+          "point": {
+            "x": 938,
+            "y": 377
+          },
+          "timeoutMs": 10000,
+          "trace": "pointer: importing frameworks\npointer: frameworks imported\npointer: preflight\npointer: post-event access true\npointer: creating event 1\npointer: validating event 1\npointer: validated event 1 at {\"x\":938,\"y\":377}\npointer: posting event 1\npointer: posted event 1\npointer: creating event 2\npointer: validating event 2\npointer: validated event 2 at {\"x\":938,\"y\":377}\npointer: posting event 2\npointer: posted event 2\n",
+          "result": {
+            "mode": "click",
+            "point": {
+              "x": 938,
+              "y": 377
+            },
+            "posted": 2
+          }
+        },
+        "clickObservation": {
+          "moved": {
+            "x": 662,
+            "y": 418,
+            "screenX": 960,
+            "screenY": 510,
+            "trusted": true,
+            "target": true
+          },
+          "clicked": {
+            "x": 640,
+            "y": 285,
+            "screenX": 938,
+            "screenY": 377,
+            "trusted": true,
+            "target": true
+          },
+          "events": [
+            {
+              "type": "mousemove",
+              "x": 662,
+              "y": 418,
+              "screenX": 960,
+              "screenY": 510,
+              "trusted": true,
+              "target": true
+            },
+            {
+              "type": "mousedown",
+              "x": 640,
+              "y": 285,
+              "screenX": 938,
+              "screenY": 377,
+              "trusted": true,
+              "target": true
+            }
+          ],
+          "geometry": {
+            "x": 0,
+            "y": 85,
+            "width": 1324,
+            "height": 803
+          },
+          "ready": true
+        },
+        "afterClick": {
+          "pid": 11454,
+          "windowId": 67,
+          "tabIndex": 1,
+          "frontmost": true,
+          "frontWindowId": 67,
+          "visible": true,
+          "minimized": false,
+          "bounds": {
+            "x": 298,
+            "y": 40,
+            "width": 1324,
+            "height": 940
+          }
+        },
+        "finalObservation": {
+          "moved": {
+            "x": 662,
+            "y": 418,
+            "screenX": 960,
+            "screenY": 510,
+            "trusted": true,
+            "target": true
+          },
+          "clicked": {
+            "x": 640,
+            "y": 285,
+            "screenX": 938,
+            "screenY": 377,
+            "trusted": true,
+            "target": true
+          },
+          "events": [
+            {
+              "type": "mousemove",
+              "x": 662,
+              "y": 418,
+              "screenX": 960,
+              "screenY": 510,
+              "trusted": true,
+              "target": true
+            },
+            {
+              "type": "mousedown",
+              "x": 640,
+              "y": 285,
+              "screenX": 938,
+              "screenY": 377,
+              "trusted": true,
+              "target": true
+            }
+          ],
+          "geometry": {
+            "x": 0,
+            "y": 85,
+            "width": 1324,
+            "height": 803
+          },
+          "ready": true
+        },
+        "observerRemoved": true,
+        "status": "passed"
+      },
+      {
+        "browserPid": 13224,
+        "target": {
+          "moved": {
+            "x": 662,
+            "y": 418,
+            "screenX": 960,
+            "screenY": 510,
+            "trusted": true,
+            "target": true
+          },
+          "clicked": null,
+          "events": [
+            {
+              "type": "mousemove",
+              "x": 662,
+              "y": 418,
+              "screenX": 960,
+              "screenY": 510,
+              "trusted": true,
+              "target": true
+            }
+          ],
+          "geometry": {
+            "x": 0,
+            "y": 85,
+            "width": 1324,
+            "height": 803
+          },
+          "ready": true
+        },
+        "time": "2026-11-04T06:41:35.085Z",
+        "point": {
+          "x": 640,
+          "y": 285
+        },
+        "phase": "delivered",
+        "identity": {
+          "pid": 13224,
+          "windowId": 82,
+          "tabIndex": 1,
+          "frontmost": true,
+          "frontWindowId": 82,
+          "visible": true,
+          "minimized": false,
+          "bounds": {
+            "x": 298,
+            "y": 40,
+            "width": 1324,
+            "height": 940
+          }
+        },
+        "calibration": {
+          "x": 960,
+          "y": 510
+        },
+        "movePost": {
+          "mode": "move",
+          "point": {
+            "x": 960,
+            "y": 510
+          },
+          "timeoutMs": 10000,
+          "trace": "pointer: importing frameworks\npointer: frameworks imported\npointer: preflight\npointer: post-event access true\npointer: creating event 5\npointer: validating event 5\npointer: validated event 5 at {\"x\":960,\"y\":510}\npointer: posting event 5\npointer: posted event 5\n",
+          "result": {
+            "mode": "move",
+            "point": {
+              "x": 960,
+              "y": 510
+            },
+            "posted": 1
+          }
+        },
+        "movement": {
+          "moved": {
+            "x": 662,
+            "y": 418,
+            "screenX": 960,
+            "screenY": 510,
+            "trusted": true,
+            "target": true
+          },
+          "clicked": null,
+          "events": [
+            {
+              "type": "mousemove",
+              "x": 662,
+              "y": 418,
+              "screenX": 960,
+              "screenY": 510,
+              "trusted": true,
+              "target": true
+            }
+          ],
+          "geometry": {
+            "x": 0,
+            "y": 85,
+            "width": 1324,
+            "height": 803
+          },
+          "ready": true
+        },
+        "click": {
+          "x": 938,
+          "y": 377
+        },
+        "beforeClick": {
+          "pid": 13224,
+          "windowId": 82,
+          "tabIndex": 1,
+          "frontmost": true,
+          "frontWindowId": 82,
+          "visible": true,
+          "minimized": false,
+          "bounds": {
+            "x": 298,
+            "y": 40,
+            "width": 1324,
+            "height": 940
+          }
+        },
+        "clickPost": {
+          "mode": "click",
+          "point": {
+            "x": 938,
+            "y": 377
+          },
+          "timeoutMs": 10000,
+          "trace": "pointer: importing frameworks\npointer: frameworks imported\npointer: preflight\npointer: post-event access true\npointer: creating event 1\npointer: validating event 1\npointer: validated event 1 at {\"x\":938,\"y\":377}\npointer: posting event 1\npointer: posted event 1\npointer: creating event 2\npointer: validating event 2\npointer: validated event 2 at {\"x\":938,\"y\":377}\npointer: posting event 2\npointer: posted event 2\n",
+          "result": {
+            "mode": "click",
+            "point": {
+              "x": 938,
+              "y": 377
+            },
+            "posted": 2
+          }
+        },
+        "clickObservation": {
+          "moved": {
+            "x": 662,
+            "y": 418,
+            "screenX": 960,
+            "screenY": 510,
+            "trusted": true,
+            "target": true
+          },
+          "clicked": {
+            "x": 640,
+            "y": 285,
+            "screenX": 938,
+            "screenY": 377,
+            "trusted": true,
+            "target": true
+          },
+          "events": [
+            {
+              "type": "mousemove",
+              "x": 662,
+              "y": 418,
+              "screenX": 960,
+              "screenY": 510,
+              "trusted": true,
+              "target": true
+            },
+            {
+              "type": "mousedown",
+              "x": 640,
+              "y": 285,
+              "screenX": 938,
+              "screenY": 377,
+              "trusted": true,
+              "target": true
+            }
+          ],
+          "geometry": {
+            "x": 0,
+            "y": 85,
+            "width": 1324,
+            "height": 803
+          },
+          "ready": true
+        },
+        "afterClick": {
+          "pid": 13224,
+          "windowId": 82,
+          "tabIndex": 1,
+          "frontmost": true,
+          "frontWindowId": 82,
+          "visible": true,
+          "minimized": false,
+          "bounds": {
+            "x": 298,
+            "y": 40,
+            "width": 1324,
+            "height": 940
+          }
+        },
+        "finalObservation": {
+          "moved": {
+            "x": 662,
+            "y": 418,
+            "screenX": 960,
+            "screenY": 510,
+            "trusted": true,
+            "target": true
+          },
+          "clicked": {
+            "x": 640,
+            "y": 285,
+            "screenX": 938,
+            "screenY": 377,
+            "trusted": true,
+            "target": true
+          },
+          "events": [
+            {
+              "type": "mousemove",
+              "x": 662,
+              "y": 418,
+              "screenX": 960,
+              "screenY": 510,
+              "trusted": true,
+              "target": true
+            },
+            {
+              "type": "mousedown",
+              "x": 640,
+              "y": 285,
+              "screenX": 938,
+              "screenY": 377,
+              "trusted": true,
+              "target": true
+            }
+          ],
+          "geometry": {
+            "x": 0,
+            "y": 85,
+            "width": 1324,
+            "height": 803
+          },
+          "ready": true
+        },
+        "observerRemoved": true,
+        "status": "passed"
+      },
+      {
+        "browserPid": 13224,
+        "target": {
+          "moved": {
+            "x": 662,
+            "y": 418,
+            "screenX": 960,
+            "screenY": 510,
+            "trusted": true,
+            "target": true
+          },
+          "clicked": null,
+          "events": [
+            {
+              "type": "mousemove",
+              "x": 662,
+              "y": 418,
+              "screenX": 960,
+              "screenY": 510,
+              "trusted": true,
+              "target": true
+            }
+          ],
+          "geometry": {
+            "x": 0,
+            "y": 85,
+            "width": 1324,
+            "height": 803
+          },
+          "ready": true
+        },
+        "time": "2026-11-04T06:41:50.970Z",
+        "point": {
+          "x": 640,
+          "y": 285
+        },
+        "phase": "delivered",
+        "identity": {
+          "pid": 13224,
+          "windowId": 82,
+          "tabIndex": 1,
+          "frontmost": true,
+          "frontWindowId": 82,
+          "visible": true,
+          "minimized": false,
+          "bounds": {
+            "x": 298,
+            "y": 40,
+            "width": 1324,
+            "height": 940
+          }
+        },
+        "calibration": {
+          "x": 960,
+          "y": 510
+        },
+        "movePost": {
+          "mode": "move",
+          "point": {
+            "x": 960,
+            "y": 510
+          },
+          "timeoutMs": 10000,
+          "trace": "pointer: importing frameworks\npointer: frameworks imported\npointer: preflight\npointer: post-event access true\npointer: creating event 5\npointer: validating event 5\npointer: validated event 5 at {\"x\":960,\"y\":510}\npointer: posting event 5\npointer: posted event 5\n",
+          "result": {
+            "mode": "move",
+            "point": {
+              "x": 960,
+              "y": 510
+            },
+            "posted": 1
+          }
+        },
+        "movement": {
+          "moved": {
+            "x": 662,
+            "y": 418,
+            "screenX": 960,
+            "screenY": 510,
+            "trusted": true,
+            "target": true
+          },
+          "clicked": null,
+          "events": [
+            {
+              "type": "mousemove",
+              "x": 662,
+              "y": 418,
+              "screenX": 960,
+              "screenY": 510,
+              "trusted": true,
+              "target": true
+            }
+          ],
+          "geometry": {
+            "x": 0,
+            "y": 85,
+            "width": 1324,
+            "height": 803
+          },
+          "ready": true
+        },
+        "click": {
+          "x": 938,
+          "y": 377
+        },
+        "beforeClick": {
+          "pid": 13224,
+          "windowId": 82,
+          "tabIndex": 1,
+          "frontmost": true,
+          "frontWindowId": 82,
+          "visible": true,
+          "minimized": false,
+          "bounds": {
+            "x": 298,
+            "y": 40,
+            "width": 1324,
+            "height": 940
+          }
+        },
+        "clickPost": {
+          "mode": "click",
+          "point": {
+            "x": 938,
+            "y": 377
+          },
+          "timeoutMs": 10000,
+          "trace": "pointer: importing frameworks\npointer: frameworks imported\npointer: preflight\npointer: post-event access true\npointer: creating event 1\npointer: validating event 1\npointer: validated event 1 at {\"x\":938,\"y\":377}\npointer: posting event 1\npointer: posted event 1\npointer: creating event 2\npointer: validating event 2\npointer: validated event 2 at {\"x\":938,\"y\":377}\npointer: posting event 2\npointer: posted event 2\n",
+          "result": {
+            "mode": "click",
+            "point": {
+              "x": 938,
+              "y": 377
+            },
+            "posted": 2
+          }
+        },
+        "clickObservation": {
+          "moved": {
+            "x": 662,
+            "y": 418,
+            "screenX": 960,
+            "screenY": 510,
+            "trusted": true,
+            "target": true
+          },
+          "clicked": {
+            "x": 640,
+            "y": 285,
+            "screenX": 938,
+            "screenY": 377,
+            "trusted": true,
+            "target": true
+          },
+          "events": [
+            {
+              "type": "mousemove",
+              "x": 662,
+              "y": 418,
+              "screenX": 960,
+              "screenY": 510,
+              "trusted": true,
+              "target": true
+            },
+            {
+              "type": "mousedown",
+              "x": 640,
+              "y": 285,
+              "screenX": 938,
+              "screenY": 377,
+              "trusted": true,
+              "target": true
+            }
+          ],
+          "geometry": {
+            "x": 0,
+            "y": 85,
+            "width": 1324,
+            "height": 803
+          },
+          "ready": true
+        },
+        "afterClick": {
+          "pid": 13224,
+          "windowId": 82,
+          "tabIndex": 1,
+          "frontmost": true,
+          "frontWindowId": 82,
+          "visible": true,
+          "minimized": false,
+          "bounds": {
+            "x": 298,
+            "y": 40,
+            "width": 1324,
+            "height": 940
+          }
+        },
+        "finalObservation": {
+          "moved": {
+            "x": 662,
+            "y": 418,
+            "screenX": 960,
+            "screenY": 510,
+            "trusted": true,
+            "target": true
+          },
+          "clicked": {
+            "x": 640,
+            "y": 285,
+            "screenX": 938,
+            "screenY": 377,
+            "trusted": true,
+            "target": true
+          },
+          "events": [
+            {
+              "type": "mousemove",
+              "x": 662,
+              "y": 418,
+              "screenX": 960,
+              "screenY": 510,
+              "trusted": true,
+              "target": true
+            },
+            {
+              "type": "mousedown",
+              "x": 640,
+              "y": 285,
+              "screenX": 938,
+              "screenY": 377,
+              "trusted": true,
+              "target": true
+            }
+          ],
+          "geometry": {
+            "x": 0,
+            "y": 85,
+            "width": 1324,
+            "height": 803
+          },
+          "ready": true
+        },
+        "observerRemoved": true,
+        "status": "passed"
+      },
+      {
+        "browserPid": 13224,
+        "target": {
+          "moved": {
+            "x": 662,
+            "y": 418,
+            "screenX": 960,
+            "screenY": 510,
+            "trusted": true,
+            "target": true
+          },
+          "clicked": null,
+          "events": [
+            {
+              "type": "mousemove",
+              "x": 662,
+              "y": 418,
+              "screenX": 960,
+              "screenY": 510,
+              "trusted": true,
+              "target": true
+            }
+          ],
+          "geometry": {
+            "x": 0,
+            "y": 87,
+            "width": 1324,
+            "height": 801
+          },
+          "ready": true
+        },
+        "time": "2026-11-04T06:42:57.095Z",
+        "point": {
+          "x": 640,
+          "y": 287
+        },
+        "phase": "delivered",
+        "identity": {
+          "pid": 13224,
+          "windowId": 82,
+          "tabIndex": 1,
+          "frontmost": true,
+          "frontWindowId": 82,
+          "visible": true,
+          "minimized": false,
+          "bounds": {
+            "x": 298,
+            "y": 40,
+            "width": 1324,
+            "height": 940
+          }
+        },
+        "calibration": {
+          "x": 960,
+          "y": 510
+        },
+        "movePost": {
+          "mode": "move",
+          "point": {
+            "x": 960,
+            "y": 510
+          },
+          "timeoutMs": 10000,
+          "trace": "pointer: importing frameworks\npointer: frameworks imported\npointer: preflight\npointer: post-event access true\npointer: creating event 5\npointer: validating event 5\npointer: validated event 5 at {\"x\":960,\"y\":510}\npointer: posting event 5\npointer: posted event 5\n",
+          "result": {
+            "mode": "move",
+            "point": {
+              "x": 960,
+              "y": 510
+            },
+            "posted": 1
+          }
+        },
+        "movement": {
+          "moved": {
+            "x": 662,
+            "y": 418,
+            "screenX": 960,
+            "screenY": 510,
+            "trusted": true,
+            "target": true
+          },
+          "clicked": null,
+          "events": [
+            {
+              "type": "mousemove",
+              "x": 662,
+              "y": 418,
+              "screenX": 960,
+              "screenY": 510,
+              "trusted": true,
+              "target": true
+            }
+          ],
+          "geometry": {
+            "x": 0,
+            "y": 87,
+            "width": 1324,
+            "height": 801
+          },
+          "ready": true
+        },
+        "click": {
+          "x": 938,
+          "y": 379
+        },
+        "beforeClick": {
+          "pid": 13224,
+          "windowId": 82,
+          "tabIndex": 1,
+          "frontmost": true,
+          "frontWindowId": 82,
+          "visible": true,
+          "minimized": false,
+          "bounds": {
+            "x": 298,
+            "y": 40,
+            "width": 1324,
+            "height": 940
+          }
+        },
+        "clickPost": {
+          "mode": "click",
+          "point": {
+            "x": 938,
+            "y": 379
+          },
+          "timeoutMs": 10000,
+          "trace": "pointer: importing frameworks\npointer: frameworks imported\npointer: preflight\npointer: post-event access true\npointer: creating event 1\npointer: validating event 1\npointer: validated event 1 at {\"x\":938,\"y\":379}\npointer: posting event 1\npointer: posted event 1\npointer: creating event 2\npointer: validating event 2\npointer: validated event 2 at {\"x\":938,\"y\":379}\npointer: posting event 2\npointer: posted event 2\n",
+          "result": {
+            "mode": "click",
+            "point": {
+              "x": 938,
+              "y": 379
+            },
+            "posted": 2
+          }
+        },
+        "clickObservation": {
+          "moved": {
+            "x": 662,
+            "y": 418,
+            "screenX": 960,
+            "screenY": 510,
+            "trusted": true,
+            "target": true
+          },
+          "clicked": {
+            "x": 640,
+            "y": 287,
+            "screenX": 938,
+            "screenY": 379,
+            "trusted": true,
+            "target": true
+          },
+          "events": [
+            {
+              "type": "mousemove",
+              "x": 662,
+              "y": 418,
+              "screenX": 960,
+              "screenY": 510,
+              "trusted": true,
+              "target": true
+            },
+            {
+              "type": "mousedown",
+              "x": 640,
+              "y": 287,
+              "screenX": 938,
+              "screenY": 379,
+              "trusted": true,
+              "target": true
+            }
+          ],
+          "geometry": {
+            "x": 0,
+            "y": 87,
+            "width": 1324,
+            "height": 801
+          },
+          "ready": true
+        },
+        "afterClick": {
+          "pid": 13224,
+          "windowId": 82,
+          "tabIndex": 1,
+          "frontmost": true,
+          "frontWindowId": 82,
+          "visible": true,
+          "minimized": false,
+          "bounds": {
+            "x": 298,
+            "y": 40,
+            "width": 1324,
+            "height": 940
+          }
+        },
+        "finalObservation": {
+          "moved": {
+            "x": 662,
+            "y": 418,
+            "screenX": 960,
+            "screenY": 510,
+            "trusted": true,
+            "target": true
+          },
+          "clicked": {
+            "x": 640,
+            "y": 287,
+            "screenX": 938,
+            "screenY": 379,
+            "trusted": true,
+            "target": true
+          },
+          "events": [
+            {
+              "type": "mousemove",
+              "x": 662,
+              "y": 418,
+              "screenX": 960,
+              "screenY": 510,
+              "trusted": true,
+              "target": true
+            },
+            {
+              "type": "mousedown",
+              "x": 640,
+              "y": 287,
+              "screenX": 938,
+              "screenY": 379,
+              "trusted": true,
+              "target": true
+            }
+          ],
+          "geometry": {
+            "x": 0,
+            "y": 87,
+            "width": 1324,
+            "height": 801
+          },
+          "ready": true
+        },
+        "observerRemoved": true,
+        "status": "passed"
+      }
+    ],
+    "derivedChecks": [
+      {
+        "row": 1,
+        "checks": {
+          "deliveredAndPassed": true,
+          "observerRemoved": true,
+          "identityUnchanged": true,
+          "ownedPidMatches": true,
+          "frontmostVisibleUnminimized": true,
+          "geometryUnchanged": true,
+          "trustedTargetMovement": true,
+          "calibrationScreenMatches": true,
+          "trustedTargetPress": true,
+          "clickPageMatches": true,
+          "clickScreenMatches": true,
+          "nativePostedCounts": true
+        }
+      },
+      {
+        "row": 2,
+        "checks": {
+          "deliveredAndPassed": true,
+          "observerRemoved": true,
+          "identityUnchanged": true,
+          "ownedPidMatches": true,
+          "frontmostVisibleUnminimized": true,
+          "geometryUnchanged": true,
+          "trustedTargetMovement": true,
+          "calibrationScreenMatches": true,
+          "trustedTargetPress": true,
+          "clickPageMatches": true,
+          "clickScreenMatches": true,
+          "nativePostedCounts": true
+        }
+      },
+      {
+        "row": 3,
+        "checks": {
+          "deliveredAndPassed": true,
+          "observerRemoved": true,
+          "identityUnchanged": true,
+          "ownedPidMatches": true,
+          "frontmostVisibleUnminimized": true,
+          "geometryUnchanged": true,
+          "trustedTargetMovement": true,
+          "calibrationScreenMatches": true,
+          "trustedTargetPress": true,
+          "clickPageMatches": true,
+          "clickScreenMatches": true,
+          "nativePostedCounts": true
+        }
+      },
+      {
+        "row": 4,
+        "checks": {
+          "deliveredAndPassed": true,
+          "observerRemoved": true,
+          "identityUnchanged": true,
+          "ownedPidMatches": true,
+          "frontmostVisibleUnminimized": true,
+          "geometryUnchanged": true,
+          "trustedTargetMovement": true,
+          "calibrationScreenMatches": true,
+          "trustedTargetPress": true,
+          "clickPageMatches": true,
+          "clickScreenMatches": true,
+          "nativePostedCounts": true
+        }
+      },
+      {
+        "row": 5,
+        "checks": {
+          "deliveredAndPassed": true,
+          "observerRemoved": true,
+          "identityUnchanged": true,
+          "ownedPidMatches": true,
+          "frontmostVisibleUnminimized": true,
+          "geometryUnchanged": true,
+          "trustedTargetMovement": true,
+          "calibrationScreenMatches": true,
+          "trustedTargetPress": true,
+          "clickPageMatches": true,
+          "clickScreenMatches": true,
+          "nativePostedCounts": true
+        }
+      }
+    ]
+  },
+  "capabilityProbe": {
+    "scope": "Native ordinary Safari same-profile capability probe, not application acceptance",
+    "status": "passed",
+    "sourceSha": "6c0080d5aa492e654a225b4d22073f0d251cfb4d",
+    "testedSha": "1ef685c0cb9b8f613806496356fa4167cb88dbdc",
+    "runtime": {
+      "runner": {
+        "label": "macos-15-intel",
+        "arch": "x64",
+        "imageOS": "macos15",
+        "imageVersion": "20260824.0482.1"
+      },
+      "os": "ProductName:\t\tmacOS\nProductVersion:\t\t15.7.9\nBuildVersion:\t\t24G830",
+      "machine": "x86_64",
+      "version": "27.2"
+    },
+    "targets": [
+      {
+        "stage": "online",
+        "pid": 7050,
+        "time": "2026-11-04T06:35:55.882Z",
+        "phase": "identity-established",
+        "timeoutMs": 8000,
+        "identity": {
+          "pid": 7050,
+          "bundleIdentifier": "com.apple.Safari",
+          "executablePath": "/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/MacOS/Safari",
+          "launchedAt": 1793774154.469774
+        },
+        "elapsedMs": 7355,
+        "phaseEvents": [
+          {
+            "at": "2026-11-04T06:35:56.104Z",
+            "phase": "appkit-import-begin"
+          },
+          {
+            "at": "2026-11-04T06:36:03.214Z",
+            "phase": "appkit-import-end"
+          },
+          {
+            "at": "2026-11-04T06:36:03.215Z",
+            "phase": "process-lookup-begin"
+          },
+          {
+            "at": "2026-11-04T06:36:03.220Z",
+            "phase": "process-lookup-end"
+          },
+          {
+            "at": "2026-11-04T06:36:03.220Z",
+            "phase": "process-liveness-begin"
+          },
+          {
+            "at": "2026-11-04T06:36:03.221Z",
+            "phase": "process-liveness-end"
+          },
+          {
+            "at": "2026-11-04T06:36:03.222Z",
+            "phase": "pid-read-begin"
+          },
+          {
+            "at": "2026-11-04T06:36:03.223Z",
+            "phase": "pid-read-end"
+          },
+          {
+            "at": "2026-11-04T06:36:03.223Z",
+            "phase": "bundle-read-begin"
+          },
+          {
+            "at": "2026-11-04T06:36:03.224Z",
+            "phase": "bundle-read-end"
+          },
+          {
+            "at": "2026-11-04T06:36:03.224Z",
+            "phase": "executable-read-begin"
+          },
+          {
+            "at": "2026-11-04T06:36:03.229Z",
+            "phase": "executable-read-end"
+          },
+          {
+            "at": "2026-11-04T06:36:03.230Z",
+            "phase": "launch-date-read-begin"
+          },
+          {
+            "at": "2026-11-04T06:36:03.232Z",
+            "phase": "launch-date-read-end"
+          },
+          {
+            "at": "2026-11-04T06:36:03.232Z",
+            "phase": "identity-validation-begin"
+          },
+          {
+            "at": "2026-11-04T06:36:03.233Z",
+            "phase": "identity-validation-end"
+          }
+        ],
+        "derivedAppKitImportMs": 7110
+      },
+      {
+        "stage": "offline-restart",
+        "pid": 7303,
+        "time": "2026-11-04T06:36:10.443Z",
+        "phase": "identity-established",
+        "timeoutMs": 8000,
+        "identity": {
+          "pid": 7303,
+          "bundleIdentifier": "com.apple.Safari",
+          "executablePath": "/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/MacOS/Safari",
+          "launchedAt": 1793774170.318944
+        },
+        "elapsedMs": 459,
+        "phaseEvents": [
+          {
+            "at": "2026-11-04T06:36:10.489Z",
+            "phase": "appkit-import-begin"
+          },
+          {
+            "at": "2026-11-04T06:36:10.732Z",
+            "phase": "appkit-import-end"
+          },
+          {
+            "at": "2026-11-04T06:36:10.735Z",
+            "phase": "process-lookup-begin"
+          },
+          {
+            "at": "2026-11-04T06:36:10.740Z",
+            "phase": "process-lookup-end"
+          },
+          {
+            "at": "2026-11-04T06:36:10.741Z",
+            "phase": "process-liveness-begin"
+          },
+          {
+            "at": "2026-11-04T06:36:10.745Z",
+            "phase": "process-liveness-end"
+          },
+          {
+            "at": "2026-11-04T06:36:10.746Z",
+            "phase": "pid-read-begin"
+          },
+          {
+            "at": "2026-11-04T06:36:10.747Z",
+            "phase": "pid-read-end"
+          },
+          {
+            "at": "2026-11-04T06:36:10.748Z",
+            "phase": "bundle-read-begin"
+          },
+          {
+            "at": "2026-11-04T06:36:10.750Z",
+            "phase": "bundle-read-end"
+          },
+          {
+            "at": "2026-11-04T06:36:10.751Z",
+            "phase": "executable-read-begin"
+          },
+          {
+            "at": "2026-11-04T06:36:10.756Z",
+            "phase": "executable-read-end"
+          },
+          {
+            "at": "2026-11-04T06:36:10.757Z",
+            "phase": "launch-date-read-begin"
+          },
+          {
+            "at": "2026-11-04T06:36:10.759Z",
+            "phase": "launch-date-read-end"
+          },
+          {
+            "at": "2026-11-04T06:36:10.760Z",
+            "phase": "identity-validation-begin"
+          },
+          {
+            "at": "2026-11-04T06:36:10.890Z",
+            "phase": "identity-validation-end"
+          }
+        ],
+        "derivedAppKitImportMs": 243
+      }
+    ],
+    "beforePid": "7050",
+    "afterPid": "7303",
+    "prepared": {
+      "prepared": true,
+      "persisted": false,
+      "persistenceRequested": false
+    },
+    "retained": {
+      "localStorage": "8d2b9165-3f1d-4a11-a7cf-01b83db4d90d",
+      "indexedDB": "8d2b9165-3f1d-4a11-a7cf-01b83db4d90d",
+      "cache": "8d2b9165-3f1d-4a11-a7cf-01b83db4d90d",
+      "worker": true
+    },
+    "firstTitleRequest": {
+      "attempt": 1,
+      "targetPid": 7050,
+      "timeoutMs": 60000,
+      "startedAt": "2026-11-04T06:36:03.241Z",
+      "finishedAt": "2026-11-04T06:36:06.992Z",
+      "value": "Spinel desktop profile probe"
+    },
+    "automationPrompt": "Approved hosted-compute-agent control of Safari in the normal ephemeral-runner consent dialog:  “hosted-compute-agent” wants access to control “Safari”. Allowing control will provide access to documents and data in “Safari”, and to perform actions within that app.",
+    "automationLogSummary": {
+      "startedAt": "2026-11-04T06:36:03.240Z",
+      "finishedAt": "2026-11-04T06:36:07.209Z",
+      "sourceComplete": true,
+      "matchedLineCount": 301,
+      "retainedLineCount": 301,
+      "retainedBytes": 57370,
+      "omittedLineCount": 0,
+      "truncated": false
+    }
+  },
+  "preservedOriginalAttempt1": {
+    "sourceSha": "6c0080d5aa492e654a225b4d22073f0d251cfb4d",
+    "testedSha": "1ef685c0cb9b8f613806496356fa4167cb88dbdc",
+    "runId": 41781852610,
+    "attempt": 1,
+    "safariJobId": 126414974164,
+    "status": "failed",
+    "runner": {
+      "label": "macos-15-intel",
+      "arch": "x64",
+      "imageOS": "macos15",
+      "imageVersion": "20260824.0482.1"
+    },
+    "version": "27.2",
+    "os": "ProductName:\t\tmacOS\nProductVersion:\t\t15.7.9\nBuildVersion:\t\t24G830",
+    "machine": "x86_64",
+    "safariTargets": [
+      {
+        "stage": "online",
+        "pid": 8443,
+        "time": "2026-11-04T05:53:25.648Z",
+        "phase": "appkit-import-begin",
+        "timeoutMs": 8000,
+        "trace": "Safari request phase: {\"at\":\"2026-11-04T05:53:27.049Z\",\"phase\":\"appkit-import-begin\"}\n",
+        "error": {
+          "message": "Error: Command failed: /usr/bin/osascript -l JavaScript -e ",
+          "code": null,
+          "signal": "SIGTERM",
+          "killed": true,
+          "stdout": "",
+          "stderr": "Safari request phase: {\"at\":\"2026-11-04T05:53:27.049Z\",\"phase\":\"appkit-import-begin\"}\n"
+        },
+        "elapsedMs": 8022
+      }
+    ],
+    "teardownError": "AssertionError [ERR_ASSERTION]: No owned Safari identity is available for teardown.",
+    "applicationAcceptanceExecuted": false,
+    "pointerAcceptanceExecuted": false,
+    "nativeCause": "Unresolved",
+    "immutableProbe": "https://github.com/mxbaylee/spinel/blob/beb0a4e9a35a5c622f244cdf844b561243a74105/docs/review-assets/spn-137-checkpoint/safari/safari-profile-probe.json"
+  }
+}

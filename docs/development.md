@@ -225,8 +225,9 @@ new invocation; a later green retry never explains or removes an earlier failure
 Every PR edit, including title/body changes and base retargets, runs fresh full
 validation. Edits have isolated concurrency so they do not cancel or replace
 pending code runs; new code pushes still supersede older code runs for that PR.
-Cheap text-edit validation remains tracked in [SPN-129](todo/SPN-129.md) after
-hosted trials showed that renamed metadata jobs left required checks unsatisfied.
+🪶 The [SPN-129 text-edit optimization was retired](implementation/SPN-129.md#retire-the-metadata-validation-system)
+on 2026-11-04 because its complexity outweighed unproven savings. Batch PR text
+updates; the existing full-edit validation behavior remains in place.
 PR policy checks use the event's
 immutable base SHA, so an advancing `main` cannot silently change their baseline.
 The digest-bound coverage plan records each suite's dependencies and reason;
@@ -396,6 +397,18 @@ runs can narrow story IDs; PRs always review the full catalog. See the
 CI requires **Backlog**, **Pull request**, **Lint**, **Typecheck**, **Unit tests**,
 **Lib tests** and **Playwright smoke**. These seven checks are required by the active default-branch ruleset;
 see [the process](todo/process.md#pull-requests-and-main).
+
+Hosted Ubuntu setup uses `scripts/ci/prefer-ubuntu-archive.ts` to prefer the
+official archive within a validated Azure/archive or observed EC2/archive pair.
+The supported EC2 fallback is exactly `http://us-east-2.ec2.archive.ubuntu.com/ubuntu/`;
+other profiles require diagnosis, not provider/region inference. Before validation or
+write it logs the input byte count/hash, exact recognized public Ubuntu mirror
+lines and separate environment image identity. Unknown text is redacted; runner
+headers remain a separate identity observation. Rejected input fails before
+writing and never counts as passing browser validation. Preserve that first
+failure and diagnose actual input before changing supported profiles. The
+[SPN-131 record](implementation/SPN-131.md#captured-ec2-profile-and-direct-repair)
+describes both profiles, the captured rejection and historical evidence limits.
 
 ## Architecture decisions
 
