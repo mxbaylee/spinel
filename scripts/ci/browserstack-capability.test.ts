@@ -10,6 +10,7 @@ import {
   blankPageDiagnostic,
   browserPageOpened,
   offlineNetworkProfile,
+  terminateApp,
   shortcutIntent,
   blankPageScript,
   deviceOfflineMilliseconds,
@@ -3996,4 +3997,88 @@ test('only a Chrome icon that opened a browser page falls back to the shortcut i
   assert.match(body, /method: 'home-screen-icon'/);
   assert.match(body, /method: 'shortcut-intent-after-icon'/);
   assert.match(body, /offline-icon-opened-browser-page/);
+});
+
+test('a Chrome close that answers 500 unknown error is checked, then retried once only while the app runs', async () => {
+  const providerFailure = (message: string, code?: string) =>
+    Object.assign(new Error(message), code ? { webdriverErrorCode: code } : {});
+  async function run(terminations: unknown[], state: unknown) {
+    const calls: string[] = [];
+    const records: unknown[] = [];
+    const outcome = await terminateApp(
+      {
+        terminate: async () => {
+          calls.push('terminate');
+          const next = terminations.shift();
+          if (next instanceof Error) throw next;
+        },
+        state: async () => {
+          calls.push('state');
+          return state;
+        },
+      },
+      async (value) => void records.push(value),
+    ).then(
+      () => 'closed',
+      (error: Error) => error.message,
+    );
+    return { outcome, calls, records };
+  }
+  const unknown = () => providerFailure('http-500', 'unknown error');
+  // A clean close needs no state read and records nothing.
+  assert.deepEqual(await run([undefined], 1), {
+    outcome: 'closed',
+    calls: ['terminate'],
+    records: [],
+  });
+  // Still running after the 500: one more close, recorded.
+  assert.deepEqual(await run([unknown(), undefined], 4), {
+    outcome: 'closed',
+    calls: ['terminate', 'state', 'terminate'],
+    records: [
+      {
+        firstFailure: 'http-500',
+        webdriverErrorCode: 'unknown error',
+        stateAfterFailure: 4,
+        retried: true,
+      },
+    ],
+  });
+  // Already closed despite the 500: no second close.
+  assert.deepEqual(await run([unknown()], 1), {
+    outcome: 'closed',
+    calls: ['terminate', 'state'],
+    records: [
+      {
+        firstFailure: 'http-500',
+        webdriverErrorCode: 'unknown error',
+        stateAfterFailure: 1,
+        retried: false,
+      },
+    ],
+  });
+  // A failed retry keeps its own failure; there is no third close.
+  const again = await run([unknown(), providerFailure('http-500', 'unknown error')], 'x');
+  assert.equal(again.outcome, 'http-500');
+  assert.deepEqual(again.calls, ['terminate', 'state', 'terminate']);
+  assert.equal((again.records[0] as Record<string, unknown>).stateAfterFailure, 'unrecognized');
+  // Any other failure is not retried and reads no state.
+  for (const other of [
+    providerFailure('http-500', 'unknown command'),
+    providerFailure('http-500'),
+    providerFailure('http-404', 'unknown error'),
+    new Error('capability-phase-deadline'),
+  ])
+    assert.deepEqual(await run([other], 4), {
+      outcome: other.message,
+      calls: ['terminate'],
+      records: [],
+    });
+  const source = readFileSync(new URL('./browserstack-capability.ts', import.meta.url), 'utf8');
+  // The relaunch closes through the helper and still requires state 1 afterwards.
+  assert.match(
+    source,
+    /await terminateApp\(\n\s+\{\n\s+terminate: \(\) => command\(session\('appium\/device\/terminate_app'\), 'POST', app\),[\s\S]{0,400}\);\n\s+const state = await command\(session\('appium\/device\/app_state'\), 'POST', app\);[\s\S]{0,200}requireCondition\(state === 1, 'termination-not-observed'\);/,
+  );
+  assert.equal(source.match(/appium\/device\/terminate_app/g)?.length, 1);
 });

@@ -703,6 +703,33 @@ export function shortcutIntent(origin: string, browserPackage: string) {
 export function offlineNetworkProfile(browser: Target['browser']) {
   return browser === 'firefox' ? 'airplane-mode' : 'no-network';
 }
+/**
+ * Run 41882414827: Chrome's `terminate_app` answered HTTP 500 `unknown error`
+ * once, with no reason; the same call worked on the run before. Owner, chat
+ * 2026-11-04: on exactly that failure, read the app state and send the call once
+ * more only while the app still runs. Every other failure, and a failed retry,
+ * keeps its own error; the caller still requires the state to read 1.
+ */
+export async function terminateApp(
+  operations: { terminate: () => Promise<unknown>; state: () => Promise<unknown> },
+  record: (value: Row) => Promise<void>,
+) {
+  try {
+    await operations.terminate();
+    return;
+  } catch (error) {
+    if (failure(error) !== 'http-500' || webdriverErrorCode(error) !== 'unknown error') throw error;
+  }
+  const state = await operations.state();
+  const retried = state !== 1;
+  await record({
+    firstFailure: 'http-500',
+    webdriverErrorCode: 'unknown error',
+    stateAfterFailure: typeof state === 'number' ? state : 'unrecognized',
+    retried,
+  });
+  if (retried) await operations.terminate();
+}
 /** Chrome only: its relaunched window went blank (runs 41748283045, 41772261056). */
 export function offlineWindowReloadProbed(browser: Target['browser']) {
   return browser === 'chrome';
@@ -2078,7 +2105,13 @@ export async function runCapability(
       target.browser === 'safari'
         ? { bundleId: observedForeground }
         : { appId: observedForeground };
-    await command(session('appium/device/terminate_app'), 'POST', app);
+    await terminateApp(
+      {
+        terminate: () => command(session('appium/device/terminate_app'), 'POST', app),
+        state: () => command(session('appium/device/app_state'), 'POST', app),
+      },
+      (value) => record(`${prefix}termination-retry`, value),
+    );
     const state = await command(session('appium/device/app_state'), 'POST', app);
     await record(`${prefix}terminated-app`, { appId: observedForeground, state });
     requireCondition(state === 1, 'termination-not-observed');
