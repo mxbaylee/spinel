@@ -1,19 +1,98 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
+import { mkdirSync } from 'node:fs';
+import { EventEmitter } from 'node:events';
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import type { TestContext } from 'node:test';
 import { gzipSync } from 'node:zlib';
+import type { CDPSession } from '@playwright/test';
 import {
   DOC_CALLBACK_TRACE_SETTINGS,
   readDocCallbackTrace,
+  retainDocCallbackTrace,
 } from '../../e2e/doc-responsiveness-callback-trace.ts';
+import { callbackProgress } from '../../e2e/doc-responsiveness-callback-progress.ts';
 import { analyzeDocCallbackLifetimes, DOC_CALLBACK_MARKERS } from './doc-callback-lifetimes.ts';
 import type { DocCallbackCallsite } from './doc-callback-lifetimes.ts';
 
 const hash = (value: Buffer) => createHash('sha256').update(value).digest('hex');
+
+for (const scenario of [
+  'complete',
+  'read-and-close-fail',
+  'close-fails',
+  'progress-write-fails',
+  'output-open-fails',
+] as const)
+  test(`trace stream ${scenario} retains bytes or the first error through owned close`, async (t) => {
+    const directory = await mkdtemp(join(tmpdir(), 'spn134-stream-'));
+    t.after(() => rm(directory, { recursive: true, force: true }));
+    const progressPath = join(directory, 'progress.json');
+    const progress = callbackProgress(progressPath);
+    if (scenario === 'progress-write-fails') mkdirSync(`${progressPath}.tmp`);
+    const bytes = gzipSync('{"traceEvents":[]}');
+    const readError = new Error('original stream read failed');
+    const closeError = new Error('later close failed');
+    const emitter = new EventEmitter();
+    const calls: string[] = [];
+    const cdp = Object.assign(emitter, {
+      async send(command: string) {
+        calls.push(command);
+        if (command === 'Tracing.end') {
+          emitter.emit('Tracing.tracingComplete', {
+            stream: 'owned-stream',
+            dataLossOccurred: false,
+            traceFormat: 'json',
+            streamCompression: 'gzip',
+          });
+          return {};
+        }
+        if (command === 'IO.read') {
+          if (scenario === 'read-and-close-fail' || scenario === 'progress-write-fails')
+            throw readError;
+          return { data: bytes.toString('base64'), base64Encoded: true, eof: true };
+        }
+        if (command === 'IO.close' && scenario !== 'complete') throw closeError;
+        return {};
+      },
+    }) as unknown as CDPSession;
+    const path = join(
+      directory,
+      ...(scenario === 'output-open-fails' ? ['missing', 'trace.json.gz'] : ['trace.json.gz']),
+    );
+    if (scenario === 'complete') {
+      const result = await retainDocCallbackTrace(cdp, path, progress);
+      assert.equal(result.sha256, hash(bytes));
+      assert.equal(result.bytes, bytes.length);
+      assert.deepEqual(await readFile(path), bytes);
+      assert.equal(progress.firstFailure, null);
+    } else {
+      await assert.rejects(retainDocCallbackTrace(cdp, path, progress), (error) =>
+        scenario === 'output-open-fails'
+          ? (error as NodeJS.ErrnoException).code === 'ENOENT'
+          : error === (scenario === 'close-fails' ? closeError : readError),
+      );
+      assert.equal(
+        progress.firstFailure?.phase,
+        scenario === 'output-open-fails'
+          ? 'trace-stream-open'
+          : scenario === 'close-fails'
+            ? 'trace-stream-close'
+            : 'trace-stream-read',
+      );
+    }
+    assert.deepEqual(
+      calls,
+      scenario === 'output-open-fails'
+        ? ['Tracing.end', 'IO.close']
+        : ['Tracing.end', 'IO.read', 'IO.close'],
+    );
+    assert.equal(progress.persistenceFailure !== null, scenario === 'progress-write-fails');
+    assert.equal(emitter.listenerCount('Tracing.tracingComplete'), 0);
+  });
 const point = (columnNumber: number) => ({
   url: 'https://spinel.test/assets/exact-build.js',
   lineNumber: 12,
