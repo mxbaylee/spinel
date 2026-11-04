@@ -30,6 +30,7 @@ import {
   boundedPhoneFixtureOperation,
   phoneActions,
   phoneDoubleTap,
+  doubleTapPauseMilliseconds,
   tapCalibrationLimit,
   tapOffset,
   tapTraceDiagnostic,
@@ -811,7 +812,7 @@ test('a successful action sequence tolerates only an unknown-command release, re
 
 type TraceRow = Record<string, unknown>;
 
-test('a phone double tap calibrates its aim once, then sends two separate single taps', async () => {
+test('a phone double tap calibrates its aim once, then taps twice 250 ms apart in one sequence', async () => {
   const calls: [string, unknown][] = [];
   const records: [string, unknown][] = [];
   const landed = {
@@ -855,8 +856,6 @@ test('a phone double tap calibrates its aim once, then sends two separate single
       'install',
       'POST actions',
       'DELETE actions',
-      'POST actions',
-      'DELETE actions',
     ],
   );
   assert.deepEqual(records, [['native-tap-calibration', landed]]);
@@ -874,16 +873,18 @@ test('a phone double tap calibrates its aim once, then sends two separate single
     x: 80,
     y: 40,
   });
-  // Landed 62 px high, so each of the two taps aims 62 px lower, as its own
-  // single-tap sequence: one sequence's two taps overlapped on Safari.
-  const corrected = [
+  // Landed 62 px high, so the double tap aims 62 px lower. One sequence, since
+  // separate calls arrived 715 ms apart; 250 ms apart, since 100 ms overlapped.
+  assert.equal(sources.length, 2);
+  assert.deepEqual(sources[1], [
     { type: 'pointerMove', origin: 'viewport', duration: 0, x: 80, y: 102 },
     { type: 'pointerDown', button: 0 },
     { type: 'pointerUp', button: 0 },
-  ];
-  assert.equal(sources.length, 3);
-  assert.deepEqual(sources[1], corrected);
-  assert.deepEqual(sources[2], corrected);
+    { type: 'pause', duration: 250 },
+    { type: 'pointerDown', button: 0 },
+    { type: 'pointerUp', button: 0 },
+  ]);
+  assert.ok(doubleTapPauseMilliseconds < 500, "inside Univer's double-click window");
   assert.deepEqual(
     calls[6]![1],
     [{ x: 80, y: 40 }],
@@ -893,7 +894,7 @@ test('a phone double tap calibrates its aim once, then sends two separate single
   await phoneDoubleTap(driver, 'canvas', { x: 10, y: 10 });
   assert.deepEqual(
     calls.map(([name]) => name),
-    ['hit', 'install', 'POST actions', 'DELETE actions', 'POST actions', 'DELETE actions'],
+    ['hit', 'install', 'POST actions', 'DELETE actions'],
     'the session calibrates once',
   );
 });

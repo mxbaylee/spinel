@@ -10,6 +10,10 @@ import {
   blankPageDiagnostic,
   browserPageOpened,
   offlineNetworkProfile,
+  socketCloseDiagnostic,
+  socketProbeScript,
+  storageStateDiagnostic,
+  storageStateScript,
   registrationAttemptDiagnostic,
   registrationAttemptScript,
   terminateApp,
@@ -4159,4 +4163,133 @@ test('the Chrome shortcut intent is sent only after the offline cut is applied a
   // Every network change goes through the one timed helper; cleanup keeps its own bounded call.
   assert.equal(source.match(/update_network\.json/g)?.length, 3);
   assert.equal(source.match(/await putNetwork\(/g)?.length, 3);
+});
+
+test('a refused socket keeps only its close code and two booleans', async () => {
+  async function probe(behaviour: (socket: Record<string, (event?: unknown) => void>) => void) {
+    class FakeSocket {
+      onopen?: () => void;
+      onerror?: () => void;
+      onclose?: (event: unknown) => void;
+      constructor() {
+        queueMicrotask(() =>
+          behaviour(this as unknown as Record<string, (event?: unknown) => void>),
+        );
+      }
+      close() {}
+    }
+    const context = createContext({
+      WebSocket: FakeSocket,
+      setTimeout,
+      clearTimeout,
+      queueMicrotask,
+    });
+    const value = await runInContext(
+      `(async function () {${socketProbeScript}})('wss://x')`,
+      context,
+    );
+    return JSON.parse(JSON.stringify(value)) as Record<string, unknown>;
+  }
+  const refused = await probe((socket) => {
+    socket.onerror!();
+    socket.onclose!({ code: 1006, wasClean: false, reason: 'private' });
+  });
+  assert.deepEqual(socketCloseDiagnostic(refused), {
+    closeCode: 1006,
+    wasClean: false,
+    errorEvent: true,
+  });
+  const opened = await probe((socket) => socket.onopen!());
+  assert.equal(opened.opened, true);
+  assert.deepEqual(socketCloseDiagnostic(opened), {});
+  assert.deepEqual(
+    socketCloseDiagnostic({ opened: false, closeCode: 70000, wasClean: 'no', errorEvent: 1 }),
+    { closeCode: null, wasClean: null, errorEvent: false },
+  );
+  const source = readFileSync(new URL('./browserstack-capability.ts', import.meta.url), 'utf8');
+  assert.match(source, /\.\.\.socketCloseDiagnostic\(observed\),/);
+  assert.doesNotMatch(socketProbeScript, /reason/);
+});
+
+test('a failed stored read records the offline account, database and window count, then fails as itself', async () => {
+  function storage(marker: string | null, databases: string[], stores: string[] | null) {
+    const indexedDB = {
+      databases: async () => databases.map((name) => ({ name })),
+      open: () => {
+        const request: Record<string, unknown> = {};
+        queueMicrotask(() => {
+          if (stores === null) {
+            request.transaction = { abort() {} };
+            (request.onupgradeneeded as () => void)();
+          } else {
+            request.result = {
+              objectStoreNames: { contains: (name: string) => stores.includes(name) },
+              close() {},
+            };
+            (request.onsuccess as () => void)();
+          }
+        });
+        return request;
+      },
+    };
+    return createContext({
+      indexedDB,
+      localStorage: { getItem: () => marker },
+      location: { pathname: '/sign-in' },
+      queueMicrotask,
+    });
+  }
+  const read = async (context: object) =>
+    storageStateDiagnostic(
+      JSON.parse(
+        JSON.stringify(
+          await runInContext(`(async function () {${storageStateScript}})('a1')`, context),
+        ),
+      ),
+    );
+  assert.deepEqual(await read(storage(null, ['other'], null)), {
+    marker: 'absent',
+    offlineDatabases: 0,
+    accountDatabase: false,
+    open: 'missing',
+    path: '/sign-in',
+  });
+  assert.deepEqual(await read(storage('a1', ['spinel-offline-a1'], ['items', 'images'])), {
+    marker: 'matches',
+    offlineDatabases: 1,
+    accountDatabase: true,
+    open: 'opened',
+    path: '/sign-in',
+  });
+  assert.equal(
+    (await read(storage('b2', ['spinel-offline-a1'], ['items']))).open,
+    'stores-missing',
+  );
+  assert.deepEqual(
+    storageStateDiagnostic({
+      marker: 'x',
+      listed: { offlineDatabases: -1 },
+      open: 'y',
+      path: '/?item=1',
+    }),
+    {
+      marker: 'other',
+      offlineDatabases: null,
+      accountDatabase: null,
+      open: 'other',
+      path: 'other',
+    },
+  );
+  const source = readFileSync(new URL('./browserstack-capability.ts', import.meta.url), 'utf8');
+  const body = source.slice(
+    source.indexOf('async function storedItems('),
+    source.indexOf('async function readStoredItems('),
+  );
+  assert.match(
+    body,
+    /return await readStoredItems\(items\);\n\s+\} catch \(error\) \{\n\s+await recordStorageState\(\);\n\s+throw error;/,
+  );
+  assert.ok(
+    body.indexOf('result.command = failedCommand;') > body.indexOf("session('window/handles')"),
+  );
 });

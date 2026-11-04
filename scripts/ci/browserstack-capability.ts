@@ -1124,6 +1124,67 @@ export function workerStateDiagnostic(value: unknown) {
   };
 }
 /**
+ * Opens the authenticated socket once. On no open it keeps the close code and
+ * whether an error event or a clean close came first; Firefox runs 41882759778
+ * and 41904979072 were refused online in about 100 ms (owner, chat 2026-11-04).
+ */
+export const socketProbeScript = `return await new Promise(resolve=>{ const socket=new WebSocket(arguments[0]);
+  let completed=false;let errored=false;
+  const finish=(opened,event)=>{if(completed)return;completed=true;clearTimeout(timer);socket.close();
+    resolve({opened,closeCode:event?.code??null,wasClean:event?.wasClean??null,errorEvent:errored});};
+  const timer=setTimeout(()=>finish(false),3500);socket.onopen=()=>finish(true);
+  socket.onerror=()=>{errored=true;};socket.onclose=(event)=>finish(false,event); });`;
+/** Only a WebSocket close code (0–4999) and two booleans; never a reason text. */
+export function socketCloseDiagnostic(value: unknown) {
+  const answer = row(value);
+  if (answer.opened === true) return {};
+  return {
+    closeCode:
+      typeof answer.closeCode === 'number' &&
+      Number.isInteger(answer.closeCode) &&
+      answer.closeCode >= 0 &&
+      answer.closeCode < 5000
+        ? answer.closeCode
+        : null,
+    wasClean: typeof answer.wasClean === 'boolean' ? answer.wasClean : null,
+    errorEvent: answer.errorEvent === true,
+  };
+}
+/** The offline account marker, the account's database and its two stores, bounded. */
+export const storageStateScript = `const [account]=arguments;const name='spinel-offline-'+account;
+let marker='unavailable';try{const value=localStorage.getItem('spinel.offline.account');marker=value===null?'absent':value===account?'matches':'other';}catch{}
+let listed=null;try{const list=await indexedDB.databases();listed={offlineDatabases:list.filter(entry=>typeof entry.name==='string'&&entry.name.startsWith('spinel-offline-')).length,accountDatabase:list.some(entry=>entry.name===name)};}catch{}
+const open=await new Promise(resolve=>{let request;try{request=indexedDB.open(name);}catch{resolve({outcome:'unavailable'});return;}
+  request.onupgradeneeded=()=>{request.transaction.abort();resolve({outcome:'missing'});};
+  request.onerror=()=>resolve({outcome:'unavailable'});
+  request.onsuccess=()=>{const database=request.result;const stores=['items','images'].every(store=>database.objectStoreNames.contains(store));database.close();resolve({outcome:stores?'opened':'stores-missing'});};});
+return {marker,listed,open:open.outcome,path:location.pathname};`;
+const storageOpenOutcomes = new Set(['opened', 'stores-missing', 'missing', 'unavailable']);
+/** Keeps known outcomes, small counts and a plain path only. */
+export function storageStateDiagnostic(value: unknown) {
+  const answer = row(value);
+  const listed =
+    answer.listed && typeof answer.listed === 'object' ? (answer.listed as Row) : undefined;
+  return {
+    marker: ['absent', 'matches', 'other', 'unavailable'].includes(answer.marker as string)
+      ? answer.marker
+      : 'other',
+    offlineDatabases:
+      typeof listed?.offlineDatabases === 'number' &&
+      Number.isInteger(listed.offlineDatabases) &&
+      listed.offlineDatabases >= 0 &&
+      listed.offlineDatabases < 100
+        ? listed.offlineDatabases
+        : null,
+    accountDatabase: typeof listed?.accountDatabase === 'boolean' ? listed.accountDatabase : null,
+    open: storageOpenOutcomes.has(answer.open as string) ? answer.open : 'other',
+    path:
+      typeof answer.path === 'string' && /^\/[a-z-]{0,40}$/.test(answer.path)
+        ? answer.path
+        : 'other',
+  };
+}
+/**
  * Spinel ignores a failed worker registration (`web/installApp.ts` only warns),
  * so Firefox runs 41749059341 and 41900170993 showed no registration and no
  * reason. On a failure with no registration, the run repeats the app's own
@@ -2009,6 +2070,42 @@ export async function runCapability(
     }
   }
   async function storedItems(items: Fixture['items']) {
+    try {
+      return await readStoredItems(items);
+    } catch (error) {
+      await recordStorageState();
+      throw error;
+    }
+  }
+  /**
+   * Failure-only evidence (owner, chat 2026-11-04): Chrome run 41904306797
+   * reopened offline on a blank `/sign-in` page and the stored read failed with
+   * its reason discarded. Records whether the offline account and database are
+   * still there, how the database opens, the page path and the window count.
+   * The failed command and the original failure stay the lane's.
+   */
+  async function recordStorageState() {
+    const failedCommand = result.command;
+    let page: unknown = 'unavailable';
+    let windows: unknown = 'unavailable';
+    try {
+      page = storageStateDiagnostic(
+        await executeAsync(storageStateScript, [fixture.actor.id], 'storage-state'),
+      );
+    } catch (error) {
+      page = { unavailable: failure(error) };
+    }
+    try {
+      const handles = await command(session('window/handles'));
+      if (Array.isArray(handles)) windows = handles.length;
+    } catch (error) {
+      windows = { unavailable: failure(error) };
+    }
+    result.command = failedCommand;
+    // Buffered, like the worker state: a journal failure cannot replace the original failure.
+    result.observations.push({ stage: `${result.stage}:storage-state`, value: { page, windows } });
+  }
+  async function readStoredItems(items: Fixture['items']) {
     return row(
       await executeAsync(
         `
@@ -2133,16 +2230,11 @@ export async function runCapability(
   }
   async function socketProbe(ticket: { url: string; expiresAt: number }, reachable: boolean) {
     requireCondition(Date.now() + 4_000 < ticket.expiresAt, 'socket-ticket-expired');
-    const observed = await executeAsync(
-      `return await new Promise(resolve=>{ const socket=new WebSocket(arguments[0]);
-      let completed=false;const finish=opened=>{if(completed)return;completed=true;clearTimeout(timer);socket.close();resolve({opened});};
-      const timer=setTimeout(()=>finish(false),3500);socket.onopen=()=>finish(true);socket.onerror=()=>finish(false);socket.onclose=()=>finish(false); });`,
-      [ticket.url],
-      'socket-probe',
-    );
+    const observed = await executeAsync(socketProbeScript, [ticket.url], 'socket-probe');
     requireCondition(Date.now() < ticket.expiresAt, 'socket-ticket-expired');
     await record(`${result.stage}:authenticated-socket`, {
       opened: row(observed).opened,
+      ...socketCloseDiagnostic(observed),
       ticketValidThroughoutProbe: true,
       credentialsRecorded: false,
     });
