@@ -5,8 +5,21 @@ import {
   clickSafariPointer,
   safariPointerIdentityScript,
   safariPointerPostScript,
+  safariPointerSnapshotScript,
+  validateSafariCursorSnapshot,
 } from './desktop-pointer.ts';
 import type { PointerBoundary } from './desktop-pointer.ts';
+
+function cursorSnapshot(phase = 'move-observation-failure') {
+  return {
+    method: 'CGEventGetLocation(CGEventCreate(NULL))',
+    coordinateSpace: 'Quartz global display',
+    phase,
+    time: '2026-11-04T10:00:00.000Z',
+    available: true,
+    point: { x: 938.25, y: 377.5 },
+  };
+}
 
 function fixture() {
   const listeners = new Map<string, Set<(event: unknown) => void>>();
@@ -17,6 +30,7 @@ function fixture() {
   let replaced = false;
   let offset = 0;
   let reads = 0;
+  let snapshots = 0;
   class Element {
     isConnected = true;
     getClientRects() {
@@ -81,6 +95,10 @@ function fixture() {
       evidence.posted = mode === 'move' ? 1 : 2;
       emit(mode === 'move' ? 'mousemove' : 'mousedown', point);
     },
+    snapshot: async () => {
+      snapshots++;
+      return cursorSnapshot();
+    },
     poll: async (read, accept, label) => {
       // Deterministic withheld-event control; production supplies the existing 30s poll.
       for (let i = 0; i < 3; i++) {
@@ -111,6 +129,7 @@ function fixture() {
       replaced = true;
     },
     reads: () => reads,
+    snapshots: () => snapshots,
     move: () => {
       offset = 10;
     },
@@ -130,6 +149,7 @@ test('posted coordinates, matching trusted delivery, identity and listener clean
   ]);
   assert.equal(f.records[0].phase, 'delivered');
   assert.equal(f.records[0].observerRemoved, true);
+  assert.equal(f.snapshots(), 0);
   assert.equal(
     (f.records[0].clickObservation as { clicked: { target: boolean } }).clicked.target,
     true,
@@ -241,7 +261,62 @@ test('page replacement and secondary cleanup failures preserve the first posting
   assert.equal(f.records[0].phase, 'move-post');
   assert.match(String(f.records[0].cleanupError), /page disappeared/);
   assert.match(String(f.records[0].observationError), /page disappeared/);
+  assert.equal(f.snapshots(), 0);
 });
+
+for (const diagnostic of ['available', 'unavailable', 'failed', 'malformed'] as const)
+  test(`missing movement retains ${diagnostic} diagnostics without replacing its first cause`, async () => {
+    const f = fixture(),
+      first = new Error('original movement observation failed'),
+      snapshot = f.boundary.snapshot,
+      identity = f.boundary.identity;
+    let identities = 0;
+    f.boundary.post = async (mode, point, evidence) => {
+      f.posts.push({ mode, point });
+      evidence.posted = 1;
+      // The native post returns, but no page mouse event arrives.
+    };
+    f.boundary.poll = async (read) => {
+      await read();
+      throw first;
+    };
+    f.boundary.snapshot = async () => {
+      const value = (await snapshot()) as ReturnType<typeof cursorSnapshot>;
+      if (diagnostic === 'failed') throw new Error('native snapshot command timed out');
+      if (diagnostic === 'unavailable') {
+        return { ...value, point: undefined, available: false, error: 'default event unavailable' };
+      }
+      return diagnostic === 'malformed' ? { ...value, point: { x: Infinity, y: 0 } } : value;
+    };
+    f.boundary.identity = async () => {
+      if (++identities > 1 && diagnostic !== 'available')
+        throw new Error('passive native identity unavailable');
+      return identity();
+    };
+    await assert.rejects(f.click(), (error) => error === first);
+    assert.deepEqual(f.posts, [{ mode: 'move', point: { x: 600, y: 500 } }]);
+    assert.equal(f.snapshots(), 1);
+    assert.equal(identities, 2);
+    const record = f.records[0];
+    assert.equal(record.phase, 'move-observation');
+    assert.equal(record.error, String(first));
+    assert.equal(record.status, 'failed');
+    assert.equal(record.observerRemoved, true);
+    assert.equal((record.finalObservation as { moved: unknown }).moved, null);
+    if (diagnostic === 'available') {
+      assert.deepEqual(record.failureCursor, cursorSnapshot());
+      assert.ok(record.failureIdentity);
+    } else {
+      assert.match(String(record.failureIdentityError), /passive native identity unavailable/);
+      if (diagnostic === 'unavailable' || diagnostic === 'failed') {
+        validateSafariCursorSnapshot(record.failureCursor, 'move-observation-failure');
+        assert.equal((record.failureCursor as { available: boolean }).available, false);
+      }
+      if (diagnostic === 'failed' || diagnostic === 'malformed')
+        assert.ok(record.failureCursorError);
+    }
+    assert.ok(f.clean());
+  });
 
 test('cleanup failure alone cannot report a successful action', async () => {
   const f = fixture(),
@@ -318,10 +393,133 @@ for (const defect of ['none', 'permission', 'nil', 'type', 'location'] as const)
         { timeout: 100 },
       );
     if (defect === 'none') {
-      assert.equal(JSON.parse(execute()).posted, 2);
+      const result = JSON.parse(execute());
+      assert.equal(result.posted, 2);
+      assert.equal(result.cursorBefore, undefined);
+      assert.equal(result.cursorAfter, undefined);
       assert.equal(posted.length, 2);
     } else {
       assert.throws(execute);
       assert.equal(posted.length, 0);
     }
   });
+
+function quartzSnapshots(defect = 'none', postError?: Error) {
+  const operations: string[] = [];
+  const posted: unknown[] = [];
+  let samples = 0;
+  const points = [
+    { x: 938.25, y: 377.5 },
+    { x: 941.5, y: 389.25 },
+  ];
+  const $ = Object.assign(() => null, {
+    CGPreflightPostEventAccess: () => true,
+    kCGEventMouseMoved: 5,
+    kCGMouseButtonLeft: 0,
+    kCGHIDEventTap: 0,
+    CGEventCreateMouseEvent: (_source: unknown, type: number, point: unknown) => ({ type, point }),
+    CGEventGetType: (event: { type: number }) => event.type,
+    CGEventCreate: () => {
+      operations.push('snapshot');
+      const index = samples++;
+      return defect === 'nil' ? null : { snapshot: true, point: points[index] };
+    },
+    CGEventGetLocation: (event: { snapshot?: boolean; point: unknown }) => {
+      if (event.snapshot && defect === 'failed') throw new Error('native location read failed');
+      if (event.snapshot && defect === 'nonfinite') return { x: NaN, y: Infinity };
+      return event.point;
+    },
+    CGEventPost: (_tap: unknown, event: unknown) => {
+      operations.push('post');
+      if (postError) throw postError;
+      // Copy values across the emitted script's VM realm, like its JSON receipt.
+      posted.push(structuredClone(event));
+    },
+  });
+  return {
+    operations,
+    posted,
+    execute: (script = safariPointerPostScript, call = 'run(["move", "960", "510"])') =>
+      JSON.parse(
+        runInNewContext(
+          script + '; ' + call,
+          {
+            $,
+            ObjC: { import: (name: string) => assert.equal(name, 'CoreGraphics') },
+            console: { log: () => {} },
+            Automation: { getDisplayString: () => 'nil' },
+          },
+          { timeout: 100 },
+        ),
+      ),
+  };
+}
+
+test('independent native snapshots bracket one unchanged move without claiming delivery', () => {
+  const f = quartzSnapshots();
+  const result = f.execute();
+  assert.deepEqual(f.operations, ['snapshot', 'post', 'snapshot']);
+  assert.deepEqual(f.posted, [{ type: 5, point: { x: 960, y: 510 } }]);
+  assert.deepEqual(
+    { mode: result.mode, point: result.point, posted: result.posted },
+    {
+      mode: 'move',
+      point: { x: 960, y: 510 },
+      posted: 1,
+    },
+  );
+  validateSafariCursorSnapshot(result.cursorBefore, 'before-move-post');
+  validateSafariCursorSnapshot(result.cursorAfter, 'after-move-post');
+  assert.deepEqual(result.cursorBefore.point, { x: 938.25, y: 377.5 });
+  assert.deepEqual(result.cursorAfter.point, { x: 941.5, y: 389.25 });
+});
+
+for (const defect of ['nil', 'failed', 'nonfinite'])
+  test(`${defect} native cursor snapshots stay unavailable without blocking or replaying the move`, () => {
+    const f = quartzSnapshots(defect);
+    const result = f.execute();
+    assert.deepEqual(f.operations, ['snapshot', 'post', 'snapshot']);
+    assert.equal(f.posted.length, 1);
+    for (const [field, phase] of [
+      ['cursorBefore', 'before-move-post'],
+      ['cursorAfter', 'after-move-post'],
+    ] as const) {
+      validateSafariCursorSnapshot(result[field], phase);
+      assert.equal(result[field].available, false);
+      assert.ok(result[field].error);
+    }
+  });
+
+test('an unavailable pre-post snapshot cannot replace a native posting error', () => {
+  const first = new Error('original native post failure');
+  const f = quartzSnapshots('failed', first);
+  assert.throws(
+    () => f.execute(),
+    (error) => error === first,
+  );
+  assert.deepEqual(f.operations, ['snapshot', 'post']);
+});
+
+test('failure-only cursor script takes one read-only snapshot', () => {
+  const f = quartzSnapshots();
+  const result = f.execute(safariPointerSnapshotScript, 'run()');
+  validateSafariCursorSnapshot(result, 'move-observation-failure');
+  assert.deepEqual(result.point, { x: 938.25, y: 377.5 });
+  assert.deepEqual(f.operations, ['snapshot']);
+  assert.deepEqual(f.posted, []);
+});
+
+test('cursor evidence validation rejects wrong provenance, missing errors and invalid coordinates', () => {
+  const valid = cursorSnapshot();
+  for (const changed of [
+    { method: 'constructed posted event' },
+    { coordinateSpace: 'page' },
+    { phase: 'before-move-post' },
+    { time: 'invalid' },
+    { available: false },
+    { point: { x: Infinity, y: 0 } },
+  ])
+    assert.throws(() =>
+      validateSafariCursorSnapshot({ ...valid, ...changed }, 'move-observation-failure'),
+    );
+});

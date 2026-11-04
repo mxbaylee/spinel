@@ -10,6 +10,29 @@ type Observation = {
   ready: boolean;
 };
 
+const cursorMethod = 'CGEventGetLocation(CGEventCreate(NULL))';
+const cursorCoordinates = 'Quartz global display';
+type CursorPhase = 'before-move-post' | 'after-move-post' | 'move-observation-failure';
+
+export function validateSafariCursorSnapshot(value: unknown, phase: CursorPhase) {
+  assert.ok(value && typeof value === 'object', 'Missing native cursor snapshot.');
+  const snapshot = value as Record<string, unknown>;
+  assert.equal(snapshot.method, cursorMethod);
+  assert.equal(snapshot.coordinateSpace, cursorCoordinates);
+  assert.equal(snapshot.phase, phase);
+  assert.ok(typeof snapshot.time === 'string' && Number.isFinite(Date.parse(snapshot.time)));
+  assert.equal(new Date(snapshot.time).toISOString(), snapshot.time);
+  assert.equal(typeof snapshot.available, 'boolean');
+  if (snapshot.available) {
+    const point = snapshot.point as Point | undefined;
+    assert.ok(point && Number.isFinite(point.x) && Number.isFinite(point.y));
+    assert.equal(snapshot.error, undefined);
+  } else {
+    assert.ok(typeof snapshot.error === 'string' && snapshot.error.length > 0);
+    assert.equal(snapshot.point, undefined);
+  }
+}
+
 // Read without activating or repairing focus: a changed native target must fail.
 export const safariPointerIdentityScript = String.raw`
 function run(argv) {
@@ -31,6 +54,7 @@ export type PointerBoundary = {
     [key: string]: unknown;
   }>;
   post(mode: 'move' | 'click', point: Point, evidence: Record<string, unknown>): Promise<void>;
+  snapshot(): Promise<unknown>;
   poll<T>(read: () => Promise<T>, accept: (value: T) => boolean, label: string): Promise<T>;
   record(evidence: Record<string, unknown>): Promise<void>;
 };
@@ -148,6 +172,28 @@ export async function clickSafariPointer(
   } catch (error) {
     failure = error;
     evidence.error = String(error).slice(0, 2000);
+    if (evidence.phase === 'move-observation') {
+      const time = new Date().toISOString();
+      try {
+        evidence.failureCursor = await boundary.snapshot();
+        validateSafariCursorSnapshot(evidence.failureCursor, 'move-observation-failure');
+      } catch (diagnosticError) {
+        evidence.failureCursorError = String(diagnosticError).slice(0, 2000);
+        evidence.failureCursor ??= {
+          method: cursorMethod,
+          coordinateSpace: cursorCoordinates,
+          phase: 'move-observation-failure',
+          time,
+          available: false,
+          error: evidence.failureCursorError,
+        };
+      }
+      try {
+        evidence.failureIdentity = await boundary.identity();
+      } catch (diagnosticError) {
+        evidence.failureIdentityError = String(diagnosticError).slice(0, 2000);
+      }
+    }
   } finally {
     if (installed) {
       try {
@@ -181,12 +227,51 @@ export async function clickSafariPointer(
   if (failure) throw failure;
 }
 
-// Quartz sends real native input; each short-lived helper owns at most two events.
+// A fresh default event supplies an independent cursor snapshot, as used by
+// WebRTC's macOS cursor monitor. Apple's creation prose does not promise current
+// cursor state; this observation is not a native or DOM delivery acknowledgment.
+// time marks the read attempt, including when a read is unavailable.
+const safariCursorSnapshotFunction = String.raw`
+        function cursorSnapshot(phase) {
+          var snapshot = { method: ${JSON.stringify(cursorMethod)},
+            coordinateSpace: ${JSON.stringify(cursorCoordinates)}, phase: phase,
+            time: new Date().toISOString(), available: false };
+          console.log('pointer: cursor snapshot ' + phase);
+          try {
+            var event = $.CGEventCreate($());
+            if (!event || (typeof event.isNil === 'function' && event.isNil()))
+              throw new Error('Quartz did not return a nonnil default event.');
+            var location = $.CGEventGetLocation(event);
+            var point = { x: Number(location.x), y: Number(location.y) };
+            if (!Number.isFinite(point.x) || !Number.isFinite(point.y))
+              throw new Error('Quartz returned a nonfinite default-event location.');
+            snapshot.point = point;
+            snapshot.available = true;
+          } catch (error) {
+            snapshot.error = String(error).slice(0, 2000);
+          }
+          console.log('pointer: cursor snapshot result ' + JSON.stringify(snapshot));
+          return snapshot;
+        }
+`;
+
+// One read only: no posting, focus repair or polling after an observation failure.
+export const safariPointerSnapshotScript = String.raw`
+        ObjC.import('CoreGraphics');
+        ${safariCursorSnapshotFunction}
+        function run() {
+          return JSON.stringify(cursorSnapshot('move-observation-failure'));
+        }
+`;
+
+// Quartz sends real native input; a move owns one posted and two snapshot events,
+// while a click owns only its two posted events. The helpers are short-lived.
 // Do not CFRelease through JXA: a prior native crash followed a successful post.
 export const safariPointerPostScript = String.raw`
         console.log('pointer: importing frameworks');
         ObjC.import('CoreGraphics');
         console.log('pointer: frameworks imported');
+        ${safariCursorSnapshotFunction}
         function run(argv) {
           var point = { x: Number(argv[1]), y: Number(argv[2]) };
           console.log('pointer: preflight');
@@ -196,6 +281,7 @@ export const safariPointerPostScript = String.raw`
           console.log('pointer: post-event access ' + permitted);
           if (!permitted) throw new Error('The native input host is not permitted to post pointer events.');
           var types = argv[0] === 'move' ? [$.kCGEventMouseMoved] : [$.kCGEventLeftMouseDown, $.kCGEventLeftMouseUp];
+          var result = { mode: argv[0], point: point, posted: types.length };
           types.forEach(function(type) {
             console.log('pointer: creating event ' + type);
             var event = $.CGEventCreateMouseEvent($(), type, point, $.kCGMouseButtonLeft);
@@ -211,10 +297,12 @@ export const safariPointerPostScript = String.raw`
             console.log('pointer: validated event ' + actualType + ' at ' + JSON.stringify(actualPoint));
             if (actualPoint.x !== point.x || actualPoint.y !== point.y)
               throw new Error('Quartz event location differs: expected ' + JSON.stringify(point) + ', received ' + JSON.stringify(actualPoint));
+            if (argv[0] === 'move') result.cursorBefore = cursorSnapshot('before-move-post');
             console.log('pointer: posting event ' + type);
             $.CGEventPost($.kCGHIDEventTap, event);
             console.log('pointer: posted event ' + type);
+            if (argv[0] === 'move') result.cursorAfter = cursorSnapshot('after-move-post');
           });
-          return JSON.stringify({ mode: argv[0], point: point, posted: types.length });
+          return JSON.stringify(result);
         }
 `;

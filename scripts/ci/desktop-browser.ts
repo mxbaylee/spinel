@@ -3,6 +3,8 @@ import {
   clickSafariPointer,
   safariPointerIdentityScript,
   safariPointerPostScript,
+  safariPointerSnapshotScript,
+  validateSafariCursorSnapshot,
 } from './desktop-pointer.ts';
 import { execFile, spawn } from 'node:child_process';
 import type { ChildProcess } from 'node:child_process';
@@ -754,6 +756,14 @@ export function createDesktopBrowser(
             ),
           );
         },
+        snapshot: async () =>
+          JSON.parse(
+            await command(
+              '/usr/bin/osascript',
+              ['-l', 'JavaScript', '-e', safariPointerSnapshotScript],
+              5000,
+            ),
+          ),
         post: async (mode, location, evidence) => {
           evidence.mode = mode;
           evidence.point = location;
@@ -773,12 +783,28 @@ export function createDesktopBrowser(
               { timeout: 10_000, maxBuffer: 64 * 1024 },
             );
             evidence.trace = stderr.slice(-8000);
-            evidence.result = JSON.parse(stdout);
-            assert.deepEqual(evidence.result, {
-              mode,
-              point: location,
-              posted: mode === 'move' ? 1 : 2,
-            });
+            const result = JSON.parse(stdout);
+            evidence.result = result;
+            assert.deepEqual(
+              { mode: result.mode, point: result.point, posted: result.posted },
+              {
+                mode,
+                point: location,
+                posted: mode === 'move' ? 1 : 2,
+              },
+            );
+            if (mode === 'move') {
+              for (const [field, phase] of [
+                ['cursorBefore', 'before-move-post'],
+                ['cursorAfter', 'after-move-post'],
+              ] as const) {
+                try {
+                  validateSafariCursorSnapshot(result[field], phase);
+                } catch (error) {
+                  evidence[`${field}ValidationError`] = String(error).slice(0, 2000);
+                }
+              }
+            }
           } catch (error) {
             const detail = error as Error & {
               stderr?: string;
