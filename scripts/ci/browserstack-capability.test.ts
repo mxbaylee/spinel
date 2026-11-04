@@ -8,7 +8,12 @@ import {
   capabilityOutcome,
   capabilityRunOutcome,
   captureRequiredPngScreenshot,
-  chromeItemNavigationScript,
+  environmentScript,
+  installedWindowMilliseconds,
+  navigatesInWindow,
+  workerStateScript,
+  inWindowNavigationPath,
+  inWindowNavigationScript,
   chromeMenuLabel,
   installMenuLabel,
   installCandidateDiagnostics,
@@ -23,7 +28,8 @@ import {
   matchingNativeControl,
   matchingSafariHomeScreen,
   nativeControls,
-  navigateChromeItem,
+  navigateInWindow,
+  newDocumentScript,
   normalizedPngScreenshot,
   observeBrowserTask,
   ordinaryTabReloadMarkerScript,
@@ -1996,7 +2002,7 @@ test('late cleanup responses retain observed effects without claiming timely cle
   }
 });
 
-test('Chrome item navigation assigns once in the verified window and observes exact URL continuity without selecting another tab', async (context) => {
+test('in-window navigation assigns once in the verified window and waits for the URL and a new document without selecting another tab', async (context) => {
   let clock = Date.now();
   context.mock.method(Date, 'now', () => clock);
   const origin = 'https://bs-local.com:8176';
@@ -2014,16 +2020,19 @@ test('Chrome item navigation assigns once in the verified window and observes ex
     'assignment-http-error',
     'read-http-error',
     'pending-deadline',
+    'same-url',
+    'same-url-old-document',
   ]) {
     const began = clock;
     let href =
-      mode === 'next-item' || mode === 'wrong-previous-item'
+      mode === 'next-item' || mode === 'wrong-previous-item' || mode.startsWith('same-url')
         ? `${origin}/?item=doc`
         : `${origin}/sign-in`;
     if (mode === 'wrong-before-origin')
       href = 'https://private.example/_desktop-login/private-bootstrap';
     let assignments = 0,
       scriptCommands = 0,
+      documentReads = 0,
       afterReads = 0;
     const calls: string[] = [];
     const diagnostic: Record<string, unknown> = {};
@@ -2042,11 +2051,21 @@ test('Chrome item navigation assigns once in the verified window and observes ex
           assert.equal(value, destination);
           if (mode === 'wrong-after-origin') href = 'https://private.example/?token=private';
           else if (mode === 'wrong-after-item') href = `${origin}/?item=wrong`;
-          else if (mode !== 'delayed' && mode !== 'pending-deadline') href = value;
+          else if (
+            mode !== 'delayed' &&
+            mode !== 'pending-deadline' &&
+            !mode.startsWith('same-url')
+          )
+            newDocument(value);
         },
       },
     });
-    const pending = navigateChromeItem(
+    // A new document replaces the page's globals, so the navigation marker goes.
+    const newDocument = (value: string) => {
+      href = value;
+      delete page.__spinelNavigationPending;
+    };
+    const pending = navigateInWindow(
       async (suffix, method, body, timeout) => {
         calls.push(`${method} ${suffix}`);
         assert.ok(timeout > 0 && timeout <= 15_000);
@@ -2061,16 +2080,23 @@ test('Chrome item navigation assigns once in the verified window and observes ex
           if (scriptCommands) {
             afterReads++;
             if (mode === 'read-http-error') throw new Error('http-500');
-            if (mode === 'delayed' && afterReads === 2) href = destination;
+            if (mode === 'delayed' && afterReads === 2) newDocument(destination);
+            // A same-URL reload keeps the URL; only the old document's marker shows it is pending.
+            if (mode === 'same-url' && afterReads === 2) newDocument(destination);
+            if (mode === 'same-url-old-document' && afterReads === 3) clock = began + 15_000;
             if (mode === 'pending-deadline') clock = began + 15_000;
           }
           return href;
         }
         assert.equal(suffix, 'execute/sync');
         assert.equal(method, 'POST');
-        scriptCommands++;
         const payload = body as { script: string; args: unknown[] };
-        assert.equal(payload.script, chromeItemNavigationScript);
+        if (payload.script === newDocumentScript) {
+          documentReads++;
+          return runInContext(`(function(){${payload.script}})()`, page);
+        }
+        scriptCommands++;
+        assert.equal(payload.script, inWindowNavigationScript);
         if (mode === 'changed-script-precondition') href = `${origin}/?item=changed`;
         page.args = payload.args;
         const value = runInContext(`(function(){${payload.script}}).apply(null, args)`, page);
@@ -2079,7 +2105,7 @@ test('Chrome item navigation assigns once in the verified window and observes ex
       },
       {
         origin,
-        itemId,
+        path: `/?item=${itemId}`,
         windowHandle: 'actual-home-window',
         previousURL:
           mode === 'next-item'
@@ -2091,11 +2117,14 @@ test('Chrome item navigation assigns once in the verified window and observes ex
       },
       diagnostic,
     );
-    if (['ready', 'delayed', 'next-item'].includes(mode)) {
+    if (['ready', 'delayed', 'next-item', 'same-url'].includes(mode)) {
       assert.equal(await pending, destination);
       assert.equal(diagnostic.phase, 'verified');
       assert.equal(diagnostic.itemURLMatch, true);
+      assert.equal(diagnostic.newDocument, true);
       assert.equal(assignments, 1);
+      // Same URL: the first read still saw the old document, so it waited.
+      if (mode === 'same-url') assert.equal(documentReads, 2);
     } else {
       const expected = mode.includes('window')
         ? 'capability-item-navigation-window-changed'
@@ -2107,7 +2136,7 @@ test('Chrome item navigation assigns once in the verified window and observes ex
               ? 'capability-item-navigation-precondition-changed'
               : mode === 'wrong-after-item'
                 ? 'capability-item-navigation-unexpected-url'
-                : mode === 'pending-deadline'
+                : mode === 'pending-deadline' || mode === 'same-url-old-document'
                   ? 'capability-item-navigation-deadline'
                   : 'http-500';
       await assert.rejects(pending, { message: expected });
@@ -2941,7 +2970,9 @@ test('Chrome item navigation and readiness preserve operational failures, buffer
             mode === 'unknown-error-internal'
               ? 'chrome-error:ERR_CONNECTION_REFUSED'
               : 'expected-item';
-        } else if (payload.script === chromeItemNavigationScript) {
+        } else if (payload.script === newDocumentScript) {
+          value = true;
+        } else if (payload.script === inWindowNavigationScript) {
           navigationCommands++;
           assert.deepEqual(payload.args, [origin, currentURL, `${origin}/?item=doc`]);
           if (mode === 'navigation-http-error')
@@ -3148,6 +3179,172 @@ test('Chrome item navigation and readiness preserve operational failures, buffer
       JSON.stringify(result),
       /private script|private diagnostic|private-bootstrap|fixture-key/,
     );
+  }
+});
+
+test('a launched window that is blank at first is attached once Spinel appears, fails only after the wait, and an uncontrolled page records its worker state', async (context) => {
+  let clock = Date.now();
+  context.mock.method(Date, 'now', () => clock);
+  for (const mode of [
+    'blank-then-ready',
+    'always-blank',
+    'no-controller',
+    'no-controller-read-fails',
+  ] as const) {
+    const uncontrolled = mode.startsWith('no-controller');
+    const testFixture = fixture(() => {});
+    const origin = testFixture.origin;
+    let clicks = 0,
+      homeRequests = 0,
+      contextReads = 0,
+      environmentReads = 0,
+      workerStateReads = 0;
+    let currentURL = `${origin}/sign-in`;
+    const client = clientFor('fixture-user', 'fixture-key', async (url, init) => {
+      // Each provider call takes simulated time, so every real poll ends quickly.
+      clock += 500;
+      const path = String(url).split('/wd/hub/')[1] ?? String(url).split('/automate/')[1];
+      const payload = init?.body ? JSON.parse(String(init.body)) : {};
+      let value: unknown = null;
+      if (path === 'session') value = { sessionId, capabilities: { browserName: 'chrome' } };
+      else if (path.endsWith('/execute/sync')) {
+        if (payload.script === newDocumentScript) value = true;
+        else if (payload.script === inWindowNavigationScript) {
+          currentURL = payload.args[2];
+          value = true;
+        } else if (payload.script === itemReadinessScript)
+          value = {
+            documentReady: true,
+            canvasHeight: 400,
+            phoneReadOnly: false,
+            saveStatus: 'Synced.',
+          };
+        else if (payload.args?.[1] === 'Document actions') value = null;
+        else {
+          // The launched window's first two reads see Chrome's blank page.
+          // Only reads after the Home Screen launch belong to the launched window.
+          const reading = payload.script === environmentScript && homeRequests > 0;
+          if (reading) {
+            environmentReads++;
+            clock += 1_000;
+          }
+          const blank = reading && (mode === 'always-blank' || environmentReads <= 2);
+          value = {
+            origin: blank ? 'null' : origin,
+            secureContext: !blank,
+            serviceWorkerAvailable: true,
+            controller:
+              blank || (uncontrolled && homeRequests > 0) ? null : `${origin}/service-worker.js`,
+            anonymousReady: !blank,
+            standalone: false,
+            navigatorStandalone: false,
+            userAgent: 'Mozilla/5.0 (Linux; Android 17) AppleWebKit/537.36 Chrome/152.0 Mobile',
+          };
+        }
+      } else if (path.endsWith('/execute/async')) {
+        if (payload.script.includes(workerStateScript)) {
+          workerStateReads++;
+          if (mode === 'no-controller-read-fails')
+            return Response.json(
+              { value: { error: 'javascript error', message: 'private worker details' } },
+              { status: 500 },
+            );
+        }
+        value = {
+          ok: true,
+          value: payload.script.includes(workerStateScript)
+            ? {
+                controller: null,
+                count: 1,
+                registrations: [
+                  { scope: `${origin}/`, active: null, installing: 'installing', waiting: 'bogus' },
+                ],
+              }
+            : payload.args[0] === testFixture.loginURL
+              ? { actor: testFixture.actor.id }
+              : { scope: `${origin}/`, active: `${origin}/service-worker.js`, state: 'activated' },
+        };
+      } else if (path.endsWith('/window/handles')) value = ['original'];
+      else if (path.endsWith('/window') && init?.method === 'GET') value = 'original';
+      else if (path.endsWith('/url')) {
+        if (init?.method === 'POST') currentURL = payload.url;
+        else value = currentURL;
+      } else if (path.endsWith('/contexts')) {
+        contextReads++;
+        clock += 1_000;
+        value = ['NATIVE_APP', 'WEBVIEW_chrome'];
+      } else if (path.endsWith('/appium/device/current_package')) value = 'com.android.chrome';
+      else if (path.endsWith('/source'))
+        value = homeRequests
+          ? '<android.widget.TextView text="Spinel" resource-id="launcher:id/spinel_icon"/>'
+          : [
+              '<android.widget.ImageButton content-desc="More options"/>',
+              '<android.widget.TextView text="Install and create shortcut"/>',
+              chromeConfirmationXML,
+              '<hierarchy/>',
+            ][clicks];
+      else if (path.endsWith('/elements'))
+        value = [{ 'element-6066-11e4-a52e-4f735466cecf': 'native-control' }];
+      else if (path.endsWith('/click')) clicks++;
+      else if (path.endsWith('/appium/device/press_keycode')) homeRequests++;
+      else if (path.endsWith('/screenshot')) value = tinyPng;
+      return Response.json({ value });
+    });
+    const result = await runCapability(client, target, testFixture, {
+      localIdentifier: 'local-id',
+      buildName: 'test',
+      journal: async () => {},
+      screenshot: async (name) => name,
+    });
+    const candidates = result.observations
+      .filter((entry) => entry.stage === 'home-launch:context-candidate')
+      .map((entry) => (entry.value as { environment: { origin: unknown } }).environment.origin);
+    if (mode === 'blank-then-ready') {
+      // Attached on the third read and carried on to the next real guard.
+      assert.equal(result.stage, 'production-downloads');
+      assert.equal(result.failure, 'capability-production-control-unavailable');
+      assert.deepEqual(candidates, ['null', 'null', origin]);
+      assert.deepEqual(
+        result.observations.find((entry) => entry.stage === 'home-launch:attach-attempts')?.value,
+        { attempts: 3 },
+      );
+    } else if (uncontrolled) {
+      // Attached, then the page never gained a controller: the state is read
+      // once, and a failed read keeps the original failure and command.
+      assert.equal(result.stage, 'home-launch');
+      assert.equal(result.failure, 'capability-secure-worker-unavailable');
+      assert.equal(result.command, 'POST session/{sessionId}/execute/sync');
+      assert.equal(workerStateReads, 1);
+      const state = result.observations.find(
+        (entry) => entry.stage === 'home-launch:secure-worker-state',
+      )?.value as { last: { controller: unknown }; registrations: unknown };
+      assert.equal(state.last.controller, null);
+      if (mode === 'no-controller-read-fails')
+        assert.deepEqual(state.registrations, { unavailable: 'http-500' });
+      else
+        assert.deepEqual(state.registrations, {
+          controller: null,
+          count: 1,
+          registrations: [
+            { scope: `${origin}/`, active: null, installing: 'installing', waiting: 'other' },
+          ],
+        });
+    } else {
+      assert.equal(result.stage, 'home-launch');
+      assert.equal(result.failure, 'capability-installed-webview-unavailable');
+      assert.ok(candidates.length > 2 && candidates.every((origin) => origin === 'null'));
+      // The failed wait still records how many times it looked.
+      assert.deepEqual(
+        result.observations.find((entry) => entry.stage === 'home-launch:attach-attempts')?.value,
+        { attempts: candidates.length },
+      );
+      // Bounded by the wait, not by the phase: about one read per simulated second.
+      assert.ok(contextReads <= installedWindowMilliseconds / 1_000 + 1, String(contextReads));
+    }
+    if (!uncontrolled) assert.equal(workerStateReads, 0);
+    assert.doesNotMatch(JSON.stringify(result), /private worker details/);
+    assert.equal(result.cleanup.session, 'deleted');
+    assert.equal(result.cleanup.fixture, 'closed');
   }
 });
 
@@ -3397,4 +3594,173 @@ test('a failed preallocation journal prevents the allocation request and still c
   );
   assert.equal(providerCalls, 0);
   assert.equal(closed, true);
+});
+
+test('Safari and Chrome open setup items in the attached window; only Firefox sends POST /url', async () => {
+  // Safari's POST /url took about 13.8 s each (runs 41736478986 and 41746157790).
+  const { DatabaseSync } = await import('../../server/database.ts');
+  const { AuthStore } = await import('../../src/server/auth/store.ts');
+  const { WorkspaceStore } = await import('../../src/server/workspace/store.ts');
+  const { migrateSpaceSchema } = await import('../../src/server/workspace/space-schema.ts');
+  const origin = 'https://bs-local.com:8176';
+  const agents = {
+    chrome: 'Mozilla/5.0 (Linux; Android 17) AppleWebKit/537.36 Chrome/152.0 Mobile',
+    firefox: 'Mozilla/5.0 (Android 17; Mobile; rv:151.0) Gecko/151.0 Firefox/151.0',
+    safari:
+      'Mozilla/5.0 (iPhone; CPU iPhone OS 27_0 like Mac OS X) Version/27.0 Mobile Safari/605.1.15',
+  };
+  for (const browser of ['chrome', 'firefox', 'safari'] as const) {
+    const database = new DatabaseSync(':memory:');
+    const auth = new AuthStore(database);
+    new WorkspaceStore(auth, { spacesEnabled: true });
+    migrateSpaceSchema(database);
+    const owner = auth.createUser('Tab fixture owner');
+    const actor = auth.createUser('Tab fixture collaborator');
+    const notReached = () => assert.fail('The run must stop at the first item readiness read.');
+    const supplied = {
+      ...fixture(() => database.close()),
+      db: database,
+      owner,
+      actor,
+      read: notReached,
+      originalState: notReached,
+      recoveryMetadata: notReached,
+      remoteEdit: notReached,
+      setOffline: notReached,
+      verifyDisconnected: notReached,
+    };
+    supplied.items = [
+      ...supplied.items,
+      ...supplied.items.map((item) => ({
+        ...item,
+        id: `${item.id}-conflict`,
+        outcome: 'conflict' as const,
+      })),
+    ];
+    const location = {
+      origin,
+      pathname: '/',
+      href: origin + '/',
+      assign(url: string) {
+        // A new document replaces the old one and its navigation marker.
+        location.href = url;
+        location.pathname = new URL(url).pathname;
+        delete (page as Record<string, unknown>).__spinelNavigationPending;
+        assigned.push(url);
+      },
+    };
+    const assigned: string[] = [];
+    const page = createContext({
+      location,
+      document: {
+        title: 'Spinel',
+        body: { innerText: 'Your workspace.' },
+        querySelectorAll: () => [{ textContent: 'Sign in with a passkey', disabled: false }],
+      },
+      navigator: {
+        userAgent: agents[browser],
+        standalone: false,
+        onLine: true,
+        serviceWorker: {
+          controller: { scriptURL: origin + '/service-worker.js' },
+          getRegistration: async () => ({
+            scope: origin + '/',
+            active: { scriptURL: origin + '/service-worker.js', state: 'activated' },
+          }),
+        },
+      },
+      fetch: async () => ({ ok: true, json: async () => ({ user: { id: actor.id } }) }),
+      matchMedia: () => ({ matches: false }),
+      isSecureContext: true,
+    });
+    const urlWrites: string[] = [];
+    let readinessReads = 0;
+    const client = clientFor('fixture-user', 'fixture-key', async (url, init) => {
+      const path = String(url).split('/wd/hub/')[1] ?? String(url).split('/automate/')[1];
+      let value: unknown = null;
+      if (path === 'session') value = { sessionId, capabilities: { browserName: browser } };
+      else if (path.endsWith('/window/handles')) value = ['actual-tab'];
+      else if (path.endsWith('/window')) value = 'actual-tab';
+      else if (path.endsWith('/url')) {
+        if (init?.method === 'POST') {
+          const { url: written } = JSON.parse(String(init.body)) as { url: string };
+          urlWrites.push(written);
+          location.href = written;
+          location.pathname = new URL(written).pathname;
+        } else value = location.href;
+      } else if (path.endsWith('/execute/sync') || path.endsWith('/execute/async')) {
+        const payload = JSON.parse(String(init?.body)) as { script: string; args: unknown[] };
+        if (payload.script === itemReadinessScript) {
+          // Stop here: the first item's navigation is the contract under test.
+          readinessReads++;
+          return Response.json(
+            { value: { error: 'javascript error', message: 'stop' } },
+            { status: 500 },
+          );
+        }
+        if (path.endsWith('/execute/async'))
+          value = await new Promise((resolve) => {
+            page.args = [...payload.args, resolve];
+            runInContext(`(function(){${payload.script}}).apply(null,args)`, page);
+          });
+        else {
+          page.args = payload.args;
+          value = await runInContext(`(function(){${payload.script}}).apply(null,args)`, page);
+        }
+      } else if (path.endsWith('/screenshot')) value = tinyPng;
+      return Response.json({ value });
+    });
+    const result = await runCapability(client, { ...target, browser }, supplied, {
+      scope: `${browser}-tab-acceptance`,
+      localIdentifier: 'local-id',
+      buildName: 'test',
+      journal: async () => {},
+      screenshot: async (name) => name,
+    });
+    assert.equal(result.stage, 'production-downloads', `${browser}: ${result.failure}`);
+    assert.equal(readinessReads, 1, browser);
+    const itemURL = `${origin}/?item=${supplied.items[0].id}`;
+    if (browser === 'firefox') {
+      assert.deepEqual(urlWrites.slice(-1), [itemURL]);
+      assert.deepEqual(assigned, []);
+    } else {
+      // Only the first page load uses POST /url; the item opens in the same window.
+      assert.ok(!urlWrites.includes(itemURL), browser);
+      assert.deepEqual(assigned, [itemURL]);
+      const navigation = result.observations.find(
+        (entry) => entry.stage === 'production-downloads:item-navigation',
+      );
+      assert.ok(navigation, browser);
+      assert.equal((navigation.value as Record<string, unknown>).phase, 'verified');
+    }
+    assert.equal(result.cleanup.session, 'deleted');
+  }
+});
+
+test('only Safari opens acceptance paths in the window; setup items go in-window on Chrome and Safari', () => {
+  // Safari's POST /url took about 13.8 s; Chrome's acceptance route stays on
+  // POST /url (owner, 2026-11-03). Setup items are driven end to end above.
+  assert.deepEqual(
+    (['chrome', 'firefox', 'safari'] as const).map((browser) => [
+      browser,
+      navigatesInWindow(browser, 'item'),
+      navigatesInWindow(browser, 'acceptance'),
+    ]),
+    [
+      ['chrome', true, false],
+      ['firefox', false, false],
+      ['safari', true, true],
+    ],
+  );
+  // The authored driver needs a complete phone fixture, so only its wiring to
+  // that decision is pinned.
+  const source = readFileSync(new URL('./browserstack-capability.ts', import.meta.url), 'utf8');
+  assert.match(
+    source,
+    /navigatePath\(\s*path,\s*attached,\s*'acceptance',\s*navigatesInWindow\(target\.browser, 'acceptance'\),?\s*\)/,
+  );
+  for (const path of ['/', '/?item=a-1', '/spaces/s-1?item=a-1'])
+    assert.ok(inWindowNavigationPath.test(path), path);
+  for (const path of ['/sign-in', '//evil.example/', '/?item=a&x=1', '/spaces/s?item='])
+    assert.equal(inWindowNavigationPath.test(path), false, path);
 });

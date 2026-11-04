@@ -711,7 +711,7 @@ type CapabilityOptions = {
   screenshot: (name: string, data: string) => Promise<string>;
 };
 
-const environmentScript = `return {
+export const environmentScript = `return {
   origin: location.origin, path: location.pathname, title: document.title,
   userAgent: navigator.userAgent, secureContext: isSecureContext,
   serviceWorkerAvailable: 'serviceWorker' in navigator,
@@ -987,27 +987,93 @@ export function verifyInstallationAssets(value: unknown) {
     );
 }
 
-export const chromeItemNavigationScript = `
-const [origin, previousURL, itemURL] = arguments;
+/** Every registration's worker states and the page's controller, bounded. */
+export const workerStateScript = `const registrations = await navigator.serviceWorker.getRegistrations();
+return {
+  controller: navigator.serviceWorker.controller?.scriptURL || null,
+  count: registrations.length,
+  registrations: registrations.slice(0, 4).map(registration => ({
+    scope: registration.scope,
+    active: registration.active?.state || null,
+    installing: registration.installing?.state || null,
+    waiting: registration.waiting?.state || null,
+  })),
+};`;
+const workerStates = new Set([
+  'parsed',
+  'installing',
+  'installed',
+  'activating',
+  'activated',
+  'redundant',
+]);
+/** Keeps only bounded strings and known worker states from the page's answer. */
+export function workerStateDiagnostic(value: unknown) {
+  const answer = row(value);
+  const text = (entry: unknown) => (typeof entry === 'string' ? entry.slice(0, 200) : null);
+  const state = (entry: unknown) =>
+    typeof entry === 'string' && workerStates.has(entry) ? entry : entry == null ? null : 'other';
+  return {
+    controller: text(answer.controller),
+    count: typeof answer.count === 'number' ? answer.count : null,
+    registrations: (Array.isArray(answer.registrations) ? answer.registrations : [])
+      .slice(0, 4)
+      .map((entry) => {
+        const registration = row(entry);
+        return {
+          scope: text(registration.scope),
+          active: state(registration.active),
+          installing: state(registration.installing),
+          waiting: state(registration.waiting),
+        };
+      }),
+  };
+}
+/**
+ * Which navigations use `location.assign` in the attached window rather than
+ * WebDriver's `POST /url`. Setup items go in-window on Chrome (HTTP 500 after
+ * `POST /url`, run 41395124342) and Safari. Authored acceptance paths go
+ * in-window on Safari only, where each `POST /url` took about 13.8 s (runs
+ * 41736478986, 41746157790); Chrome's took under 0.5 s, so its proven route
+ * stays (owner, chat 2026-11-03). Firefox always keeps `POST /url`.
+ */
+export function navigatesInWindow(browser: Target['browser'], purpose: 'item' | 'acceptance') {
+  return purpose === 'item' ? browser !== 'firefox' : browser === 'safari';
+}
+/** How long a launched or relaunched window may stay blank before attach fails. */
+export const installedWindowMilliseconds = 15_000;
+// The marker lives only in the document that asked to navigate, so its
+// absence proves a new document even when the URL does not change.
+export const inWindowNavigationScript = `
+const [origin, previousURL, targetURL] = arguments;
 if (location.origin !== origin || location.href !== previousURL) return false;
-location.assign(itemURL);
+globalThis.__spinelNavigationPending = true;
+location.assign(targetURL);
 return true;`;
+export const newDocumentScript = 'return globalThis.__spinelNavigationPending !== true;';
+/** The same app paths the acceptance driver may open. */
+export const inWindowNavigationPath =
+  /^\/(?:\?item=[\w-]{1,200}|spaces\/[\w-]{1,200}\?item=[\w-]{1,200})?$/;
 type NavigationCommand = (
   suffix: 'window' | 'url' | 'execute/sync',
   method: 'GET' | 'POST',
   body: unknown,
   timeout: number,
 ) => Promise<unknown>;
-/** Candidate experiment: one in-window navigation, followed only by bounded reads.
+/**
+ * One in-window navigation, followed only by bounded reads. Chrome uses it
+ * after `POST /url` returned HTTP 500; Safari uses it because every `POST /url`
+ * took about 13.8 s (runs 41736478986 and 41746157790), which alone exceeded
+ * the authored prerequisite bound.
  * https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-location-assign
  * https://www.w3.org/TR/webdriver2/#get-window-handle
  * https://www.w3.org/TR/webdriver2/#get-current-url
  */
-export async function navigateChromeItem(
+export async function navigateInWindow(
   command: NavigationCommand,
   options: {
     origin: string;
-    itemId: string;
+    path: string;
     windowHandle: unknown;
     previousURL?: string;
     deadline: number;
@@ -1015,7 +1081,7 @@ export async function navigateChromeItem(
   diagnostic: Row,
 ): Promise<string> {
   Object.assign(diagnostic, {
-    operation: 'chrome-item-navigation-experiment',
+    operation: 'in-window-navigation',
     transport: 'location.assign',
     phase: 'before',
     assignmentAttempted: false,
@@ -1024,12 +1090,12 @@ export async function navigateChromeItem(
   });
   requireCondition(
     options.origin === browserstackOrigin &&
-      /^[\w-]{1,200}$/.test(options.itemId) &&
+      inWindowNavigationPath.test(options.path) &&
       typeof options.windowHandle === 'string' &&
       /^[\w:.-]{1,200}$/.test(options.windowHandle),
     'item-navigation-input-invalid',
   );
-  const itemURL = `${options.origin}/?item=${options.itemId}`;
+  const itemURL = options.origin + options.path;
   const until = Math.min(options.deadline, Date.now() + 15_000);
   const send = async (
     suffix: 'window' | 'url' | 'execute/sync',
@@ -1068,7 +1134,7 @@ export async function navigateChromeItem(
     // mutation. A command error is uncertain and is never retried.
     diagnostic.assignmentAttempted = true;
     const issued = await send('execute/sync', 'POST', {
-      script: chromeItemNavigationScript,
+      script: inWindowNavigationScript,
       args: [options.origin, before, itemURL],
     });
     diagnostic.assignmentAcknowledged = issued === true;
@@ -1083,10 +1149,13 @@ export async function navigateChromeItem(
       diagnostic.itemURLMatch = after === itemURL;
       requireCondition(diagnostic.originMatch, 'item-navigation-origin-changed');
       if (diagnostic.itemURLMatch) {
-        diagnostic.phase = 'verified';
-        return itemURL;
-      }
-      requireCondition(after === before, 'item-navigation-unexpected-url');
+        diagnostic.newDocument =
+          (await send('execute/sync', 'POST', { script: newDocumentScript, args: [] })) === true;
+        if (diagnostic.newDocument) {
+          diagnostic.phase = 'verified';
+          return itemURL;
+        }
+      } else requireCondition(after === before, 'item-navigation-unexpected-url');
       requireCondition(Date.now() < until, 'item-navigation-deadline');
       await new Promise((done) => setTimeout(done, Math.min(200, until - Date.now())));
     }
@@ -1266,28 +1335,43 @@ export async function runCapability(
   const session = (suffix: string) => `session/${result.sessionId}/${suffix}`;
   const execute = (script: string, args: unknown[] = [], timeout = 15_000) =>
     command(session('execute/sync'), 'POST', { script, args }, timeout);
-  async function navigateItem(item: Fixture['items'][number], attached: Row, previousURL?: string) {
-    const itemURL = `${fixture.origin}/?item=${item.id}`;
-    if (target.browser !== 'chrome') {
-      await command(session('url'), 'POST', { url: itemURL });
-      return (currentItemURL = itemURL);
+  /** `inWindow` (from `navigatesInWindow`) assigns in the attached window; otherwise `POST /url`. */
+  async function navigatePath(
+    path: string,
+    attached: Row,
+    kind: string,
+    inWindow: boolean,
+    previousURL?: string,
+  ) {
+    const url = fixture.origin + path;
+    if (!inWindow) {
+      await command(session('url'), 'POST', { url });
+      return url;
     }
-    const diagnostic: Row = { kind: item.kind };
+    const diagnostic: Row = { kind, path };
     // Buffer safe booleans and phases; final journaling preserves a failed
     // command without another persistence operation masking that failure.
     result.observations.push({ stage: `${result.stage}:item-navigation`, value: diagnostic });
-    currentItemURL = await navigateChromeItem(
+    return navigateInWindow(
       (suffix, method, body, timeout) => command(session(suffix), method, body, timeout),
       {
         origin: fixture.origin,
-        itemId: item.id,
+        path,
         windowHandle: attached.windowHandle,
         previousURL,
         deadline: activeDeadline(),
       },
       diagnostic,
     );
-    return currentItemURL;
+  }
+  async function navigateItem(item: Fixture['items'][number], attached: Row, previousURL?: string) {
+    return (currentItemURL = await navigatePath(
+      `/?item=${item.id}`,
+      attached,
+      item.kind,
+      navigatesInWindow(target.browser, 'item'),
+      previousURL,
+    ));
   }
   const executeAsync = (body: string, args: unknown[] = [], operation = 'browser-observation') =>
     target.browser === 'safari'
@@ -1446,7 +1530,29 @@ export async function runCapability(
     await record(`${result.stage}:foreground`, { appId: value });
     return value;
   }
+  /**
+   * Waits up to `installedWindowMilliseconds` for the launched window to show
+   * Spinel. After the offline relaunch on 7d348d6 (run 41748283045), Chrome's
+   * only web context was still blank (origin `null`) when first read. Every
+   * attempt records its contexts and candidates, and the attempt count is kept
+   * whether or not Spinel appears.
+   */
   async function attach(foregroundApp: string): Promise<Row> {
+    let attempts = 0;
+    try {
+      const attached = await poll(
+        () => (attempts++, attachOnce(foregroundApp)),
+        (value): value is Row => value !== null,
+        'installed-webview-unavailable',
+        installedWindowMilliseconds,
+      );
+      return attached!;
+    } finally {
+      // Buffered so a failed wait keeps its original failure.
+      result.observations.push({ stage: `${result.stage}:attach-attempts`, value: { attempts } });
+    }
+  }
+  async function attachOnce(foregroundApp: string): Promise<Row | null> {
     const value = await command(session('contexts'));
     requireCondition(Array.isArray(value), 'native-contexts-unavailable');
     const contexts = value.map((entry) => (typeof entry === 'string' ? { id: entry } : row(entry)));
@@ -1501,7 +1607,7 @@ export async function runCapability(
         });
       }
     }
-    throw new Error('capability-installed-webview-unavailable');
+    return null;
   }
   async function launchIcon() {
     if (await tap(/^Spinel$/i, false)) return;
@@ -1547,17 +1653,24 @@ export async function runCapability(
     else requireCondition(target.browser !== 'safari' || standalone, 'ios-launch-not-standalone');
   }
   async function secureEnvironment(anonymous = false) {
-    const environment = await poll(
-      async () => row(await execute(environmentScript)),
-      (value) =>
-        value.origin === fixture.origin &&
-        value.secureContext === true &&
-        value.serviceWorkerAvailable === true &&
-        typeof value.controller === 'string' &&
-        value.controller === `${fixture.origin}/service-worker.js` &&
-        (!anonymous || value.anonymousReady === true),
-      'secure-worker-unavailable',
-    );
+    let last: Row | null = null;
+    let environment: Row;
+    try {
+      environment = await poll(
+        async () => (last = row(await execute(environmentScript))),
+        (value) =>
+          value.origin === fixture.origin &&
+          value.secureContext === true &&
+          value.serviceWorkerAvailable === true &&
+          typeof value.controller === 'string' &&
+          value.controller === `${fixture.origin}/service-worker.js` &&
+          (!anonymous || value.anonymousReady === true),
+        'secure-worker-unavailable',
+      );
+    } catch (error) {
+      await recordWorkerState(last);
+      throw error;
+    }
     if (target.browser === 'safari') {
       requireCondition(
         (await executeAsync('return await Promise.resolve(true);', [], 'promise-readiness')) ===
@@ -1585,6 +1698,32 @@ export async function runCapability(
       registration,
     });
     return environment;
+  }
+  /**
+   * Failure-only evidence: whether the worker never registered, is still
+   * installing or waiting, or is active without controlling the page. Firefox
+   * run 41749059341 kept a null controller for the whole wait. The failed
+   * command stays the lane's command, and the original failure stays the
+   * result even if this read fails.
+   */
+  async function recordWorkerState(last: Row | null) {
+    const failedCommand = result.command;
+    let registrations: unknown = 'unavailable';
+    try {
+      registrations = workerStateDiagnostic(
+        await executeAsync(workerStateScript, [], 'worker-state'),
+      );
+    } catch (error) {
+      registrations = { unavailable: failure(error) };
+    } finally {
+      result.command = failedCommand;
+    }
+    // Buffered, not journaled: a failed journal write cannot replace the
+    // original failure, and the final flush persists it.
+    result.observations.push({
+      stage: `${result.stage}:secure-worker-state`,
+      value: sanitize({ last: last ? launchEnvironmentDiagnostic(last) : null, registrations }),
+    });
   }
   const diagnose = failureDiagnosis(result, () => screenshot('download-stalled'));
   async function clickWeb(selector: string, label: string, waitForControl = false) {
@@ -2103,11 +2242,13 @@ export async function runCapability(
       executeAsync,
       command: (suffix, method, body, timeout) => command(session(suffix), method, body, timeout),
       navigate: async (path) => {
-        requireCondition(
-          /^\/(?:\?item=[\w-]{1,200}|spaces\/[\w-]{1,200}\?item=[\w-]{1,200})?$/.test(path),
-          'acceptance-navigation-invalid',
+        requireCondition(inWindowNavigationPath.test(path), 'acceptance-navigation-invalid');
+        await navigatePath(
+          path,
+          attached,
+          'acceptance',
+          navigatesInWindow(target.browser, 'acceptance'),
         );
-        await command(session('url'), 'POST', { url: fixture.origin + path });
         currentItemURL = path.includes('?item=') ? fixture.origin + path : undefined;
       },
       ready: itemReady,
