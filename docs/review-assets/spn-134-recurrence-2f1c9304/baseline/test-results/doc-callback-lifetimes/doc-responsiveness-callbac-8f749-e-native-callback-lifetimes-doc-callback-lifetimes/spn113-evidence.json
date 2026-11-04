@@ -1,0 +1,120 @@
+{
+  "schema": 1,
+  "role": "baselineObservation",
+  "preset": "mobile",
+  "attempt": 0,
+  "runner": {
+    "run": "41885019303",
+    "attempt": "1",
+    "name": "GitHub Actions 1000040840"
+  },
+  "source": "0e1df4725d9eccb77574d25e3eecdf678fe6ff44",
+  "dirtyPaths": "M e2e/doc-responsiveness.ts\n M package-lock.json\n M playwright.config.ts\n M web/docResponsivenessEvidence.ts\n?? e2e/doc-responsiveness-callback-sources.ts\n?? e2e/doc-responsiveness-callback-trace.ts\n?? e2e/doc-responsiveness-callbacks.spec.ts\n?? scripts/ci/doc-callback-lifetimes.ts\n?? src/ui/docIdleEpisode.ts\n?? src/ui/nativeDocFlush.ts",
+  "browser": "156.0.8078.4",
+  "runtime": "v26.12.1",
+  "playwright": "1.64.1",
+  "harnessSha256": {
+    "e2e/doc-responsiveness-callbacks.spec.ts": "d402eb3b2a4646f1e3a96f2fb312072df29f08f4d79ebfefca06dca111f4fef8",
+    "e2e/doc-responsiveness-callback-sources.ts": "00e1abe33b46d745d01ecee18889c9e9e99cbc235c5a17c65ebcd992e6553b31",
+    "e2e/doc-responsiveness-callback-trace.ts": "ffebefbc04bde0f07140229e0ff9938691e54c154ba0af7d73c914cc50be3e94",
+    "e2e/doc-responsiveness-fixture.ts": "8a77b15b3fa9ab3961b949cb5fc820f263775ded4952e8f5ef34e4cd02a9b80f",
+    "e2e/doc-responsiveness.ts": "6440df100d657ea5d808e7f558e05d3dce315aeca1037807ec4e924a0cbea3fd",
+    "scripts/ci/doc-callback-lifetimes.ts": "f35be9f51f6940c4bc0c9dbc07a9657d661c68a63ef2efe0cd3e8d8e8bcd8c68",
+    "web/docResponsivenessEvidence.ts": "adc715b697a09b97333d6943b11431b511a3b94e41b8e2060068352b6c8d4e3c",
+    "src/ui/docIdleEpisode.ts": "87625be81fb86bf7a982d855a3153e963ebaf895ddc3ce605bee3dae024bbce1",
+    "src/ui/nativeDocFlush.ts": "626d22d13fc08c00cb4c080a30f7d201cac8438b0416473f2069691c18681875",
+    "playwright.config.ts": "8e49913b74aad03e810d7c993715688800507fa0cd28452477797bf4d293ea84",
+    "package-lock.json": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf"
+  },
+  "fixture": {
+    "paragraphs": 16,
+    "typedCharacters": 2071,
+    "enterKeys": 15,
+    "nativeKeydowns": 2086,
+    "nativeTextLength": 2088,
+    "sha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+    "input": "keyboard.type, zero requested delay; Enter between all sixteen paragraphs"
+  },
+  "instrumentation": {
+    "categories": [
+      "devtools.timeline",
+      "disabled-by-default-devtools.timeline.stack",
+      "toplevel",
+      "v8",
+      "blink.user_timing",
+      "disabled-by-default-renderer.scheduler"
+    ],
+    "traceConfig": {
+      "recordMode": "recordUntilFull",
+      "traceBufferSizeInKb": 1048576,
+      "includedCategories": [
+        "devtools.timeline",
+        "disabled-by-default-devtools.timeline.stack",
+        "toplevel",
+        "v8",
+        "blink.user_timing",
+        "disabled-by-default-renderer.scheduler"
+      ]
+    },
+    "transferMode": "ReturnAsStream",
+    "streamFormat": "json",
+    "streamCompression": "gzip",
+    "bufferUsageReportingInterval": 1000,
+    "sourceMaps": "hidden; exact built bundle source content",
+    "cpuThrottle": 4,
+    "mountedEditors": 1,
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "touch": true,
+    "deviceScaleFactor": 1,
+    "playwrightTrace": false,
+    "latencyBudgetsEnforced": false,
+    "postDisposalMs": 1200,
+    "buildFlags": {
+      "VITE_DOC_RESPONSIVENESS_EVIDENCE": "1",
+      "VITE_DOC_SELECTION_EVIDENCE": "1",
+      "VITE_SYNC_EVIDENCE": "0"
+    }
+  },
+  "heapLimitations": "Renderer heap snapshots without forced GC; not retained-object ownership.",
+  "complete": false,
+  "passed": false,
+  "phase": "typing",
+  "traceBufferUsage": [
+    {
+      "percentFull": 0.00045383814722299576,
+      "eventCount": 0,
+      "value": 0.00045383814722299576
+    },
+    {
+      "percentFull": 0.0012280326336622238,
+      "eventCount": 0,
+      "value": 0.0012280326336622238
+    },
+    {
+      "percentFull": 0.0019984133541584015,
+      "eventCount": 0,
+      "value": 0.0019984133541584015
+    }
+  ],
+  "traceCategoryEnumeration": {
+    "categories": []
+  },
+  "frameId": "90BC891DBA558B34BD293DF0D8D58A19",
+  "timeOrigin": 1793816706829.4,
+  "environment": {
+    "coarsePointer": true,
+    "devicePixelRatio": 1,
+    "maxTouchPoints": 1,
+    "visibility": "visible",
+    "focused": true
+  },
+  "heapBefore": {
+    "usedSize": 38542836,
+    "totalSize": 55754752,
+    "embedderHeapUsedSize": 4888048,
+    "backingStorageSize": 13274369
+  }
+}

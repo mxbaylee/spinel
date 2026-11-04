@@ -1,0 +1,326 @@
+{
+  "root": 65603,
+  "started": 1793818116874,
+  "elapsedMs": 8492,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 91552,
+  "peakKiB": 431600,
+  "live": [
+    {
+      "pid": 65603,
+      "parent": 65565,
+      "group": 65603,
+      "rssKiB": 89984,
+      "started": "Wed Nov  4 10:48:36 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-evidence/callback-read-watchdog.json node --max-old-space-size=700 /tmp/spn141-evidence/profile-callback-read.ts"
+    },
+    {
+      "pid": 66083,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:45 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 65603,
+      "parent": 65565,
+      "group": 65603,
+      "rssKiB": 89984,
+      "started": "Wed Nov  4 10:48:36 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-evidence/callback-read-watchdog.json node --max-old-space-size=700 /tmp/spn141-evidence/profile-callback-read.ts"
+    },
+    {
+      "pid": 65622,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:36 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 65648,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 341200,
+      "started": "Wed Nov  4 10:48:36 2026",
+      "command": "node --max-old-space-size=700 /tmp/spn141-evidence/profile-callback-read.ts"
+    },
+    {
+      "pid": 65654,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:37 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 65667,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:37 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 65680,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:37 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 65693,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:37 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 65706,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:38 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 65719,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:38 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 65732,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:38 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 65745,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:38 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 65758,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:39 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 65771,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:39 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 65784,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:39 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 65797,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:39 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 65810,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:40 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 65823,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:40 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 65836,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:40 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 65849,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:40 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 65862,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:41 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 65875,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:41 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 65888,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:41 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 65901,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:41 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 65914,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:42 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 65927,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:42 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 65940,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:42 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 65953,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:42 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 65966,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:43 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 65979,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:43 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 65992,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:43 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 66005,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:43 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 66018,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:44 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 66031,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:44 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 66044,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:44 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 66057,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:44 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 66070,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:45 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 66083,
+      "parent": 65603,
+      "group": 65603,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 10:48:45 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

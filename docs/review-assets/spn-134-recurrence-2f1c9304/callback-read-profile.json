@@ -1,0 +1,20 @@
+{
+  "scope": "One offline read of retained failed baseline trace, not hosted acceptance or source attribution",
+  "source": "2f1c9304b15adfef833e53f12c4facff9ce14821",
+  "runtime": "v26.12.1",
+  "elapsedMs": 8271.193833000001,
+  "memory": {
+    "rss": 351518720,
+    "heapTotal": 249020416,
+    "heapUsed": 216994888,
+    "external": 11046356,
+    "arrayBuffers": 4990746
+  },
+  "summary": {
+    "sourceEvents": 999293,
+    "retainedEvents": 999293,
+    "callbackEvents": 167638,
+    "uncompressedBytes": 607927866,
+    "maxEventBytes": 17411
+  }
+}

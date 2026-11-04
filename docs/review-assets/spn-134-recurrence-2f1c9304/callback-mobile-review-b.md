@@ -1,0 +1,23 @@
+# 🔎 SPN-141 mobile callback blocker — harness review B
+
+Independent nonimplementing read-only review, 2026-11-04. No browser/test run, source edit or grade change. CI run `41885019303`, mobile callback job `126767285654`, SPN-141 source `2f1c9304b15adfef833e53f12c4facff9ce14821`, tested merge `a554c611c96556176bcc6b2ba006ea421ee00943`.
+
+## Evidence and attribution
+
+The retained Playwright report records immutable historical baseline `0e1df4725d9eccb77574d25e3eecdf678fe6ff44` timing out at 420000 ms (observed duration 420038 ms), retry 0. The candidate completed, but the paired comparison correctly rejects incomplete baseline evidence. SPN-141's complete diff changes native desktop storage preparation and documentation; it does not change this callback harness or application runtime. The workflow explicitly overlays the matched measurement harness onto the historical baseline. This is a separately owned pre-existing callback-completion problem, not evidence of a SPN-141 storage regression.
+
+The persisted baseline `phase: typing` does not locate the timeout. In `e2e/doc-responsiveness-callbacks.spec.ts`, persistence occurs before navigation and at typing start, then only after final trace collection/analysis and cleanup. Later live-caret, zoom and route-disposal phases update the in-memory object without immediate persistence. The retained My files snapshot is compatible with later route disposal; it does not prove final assertions or cleanup passed. Missing error/counter/completion fields are unavailable observations, not proof of browser errors or actual lost trace events. The comparator's rejection strings must not be promoted into unsupported causal diagnoses.
+
+The source creates the raw trace file inside `retainTrace()` in `finally`, after requesting tracing completion; it then streams bytes, closes the stream, parses the trace, attributes sources, writes source artifacts, analyzes callbacks, detaches CDP, closes the fixture and finally persists JSON. A substantial trace with no final manifest/source artifacts therefore warrants inspection of collection/finalization rather than assuming typing stalled. Exact attribution remains unresolved from these files alone.
+
+Reviewer A separately reports a bounded retained-gzip scan with input-start/final-key/disposed/end markers in the same renderer, 291.546 seconds of typing, end 14.992 seconds after final key, and valid gzip EOF/CRC. I did not duplicate that scan or claim it proves full JSON/analysis completion. Those findings reinforce the later collection/finalization investigation boundary.
+
+## Prospective next action
+
+`docs/testing.md` permits retry only for a specifically diagnosed safe transient operation and requires first failures, existing budgets and meaningful acceptance to remain intact. This case actually executed for seven minutes; it is unlike Firefox's unacquired-runner failure. Current evidence establishes neither transient runner failure nor a safe reason to rerun this unchanged callback job. Do not raise the timeout, narrow trace categories/workload, waive the paired comparison or replace the first failure with a later pass.
+
+Existing SPN-134, “Diagnose incomplete historical mobile callback runs,” already owns this exact class of historical 420000-ms timeout and sparse phase evidence. Use its retained-artifact-first plan: complete bounded offline trace/collection timing analysis under coordinated watchdog limits; if attribution remains insufficient, implement only necessary nonsecret phase/owned-process observations with first-cause and incomplete-input/trace/exit negative controls. Reassess scope before broader investigation. Keep the baseline, workload, throttle, first-attempt/no-retry policy, callback caps and operation/test budgets unchanged.
+
+Before any new browser execution, record the concrete hypothesis, fixed diagnostic sample, source/browser/runtime and expected distinguishing observations. A repaired final source must still complete the existing mobile historical/candidate comparison with full input/content/callback and cleanup evidence. Register SPN-134 as an acceptance prerequisite where appropriate; an ownership link itself does not satisfy the currently failed required gate. Preserve this original job, reports, raw evidence and failure disposition in immutable maintained evidence.
+
+Operator receives an attributable investigation instead of uncertain repeated compute. Owner and Collaborator retain content and recovery checks; Link guest authority remains unchanged. Overall SPN-141 merge acceptance remains blocked by the required callback comparison pending diagnosis and valid completion.
