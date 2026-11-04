@@ -1,0 +1,17 @@
+[
+  {
+    "browser": "chrome",
+    "artifact": 13357198921,
+    "sha256": "3b6dd7eff992932403db70d65c98eb1d0c807da8193d25f10eae91fdb4ad0860"
+  },
+  {
+    "browser": "firefox",
+    "artifact": 13358265712,
+    "sha256": "f73492237ce2940146554a531498ed0a213d4b8f4d5ae21daaf22b94548f3176"
+  },
+  {
+    "browser": "safari",
+    "artifact": 13359075911,
+    "sha256": "0c0148ac6d286b3d5f5c01c55ff152054c6f61f458d5f557f125a05107e0b318"
+  }
+]

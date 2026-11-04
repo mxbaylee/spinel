@@ -1,0 +1,41 @@
+{
+  "source": "388262cc619f6caa162bc71881f22a714d0ddf69",
+  "base": "13b74ecea5f2552627ff638be9413ad4754ef581",
+  "tested": "b684654080d4f22cc1cf8d03e56cc523f4df3d57",
+  "tree": "179b7a51a4dd021dd62a42847c91b9575d76eb1a",
+  "reviews": [
+    {
+      "reviewer": "/root/spn120_review_a",
+      "score": 98,
+      "rubric": [
+        35,
+        25,
+        18,
+        10,
+        10
+      ],
+      "blockers": [],
+      "prePush": true
+    },
+    {
+      "reviewer": "/root/spn120_review_b",
+      "score": 98,
+      "rubric": [
+        35,
+        25,
+        18,
+        10,
+        10
+      ],
+      "blockers": [],
+      "prePush": true
+    }
+  ],
+  "runs": {
+    "ci": 41900102989,
+    "native": 41900102794,
+    "storybook": 41900102783
+  },
+  "metadata": "Refreshed description on old2f1c head while PR had base conflicts; no new old-head metadata run observed as of synchronization. Recheck before final disposition.",
+  "protocol": "One fresh current-source validation synchronization/all three native owners. No additional unchanged scenario/provisioning retries declared. Prior results are not reused."
+}
