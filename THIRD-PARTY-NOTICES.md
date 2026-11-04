@@ -13,7 +13,9 @@ folds; the first unsupported state and every following state retain the original
 sequential reducer (SPN-133). SPN-135 also aggregates fully qualified descending
 single-character deletes, retaining the lowest-offset native deleted body; SPN-142
 extends this to qualified leading delete prefixes with the original sequential
-tail, preserving every unsupported action's call order. SPN-135 also
+tail, preserving every unsupported action's call order. SPN-142 reuses private
+fixed qualification lists without changing their contents or iteration order.
+SPN-135 also
 adds opt-in scalar flush observations covering native timer and public entry paths.
 It preserves native operation
 order, metadata, cache lifetimes and publication. Tests retain the verified

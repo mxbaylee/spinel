@@ -185,7 +185,7 @@ function isPlainDocDeleteData(value, depth = 0) {
     )
     .replaceAll('return false;', 'return index;')
     .replace('return true;', 'return states.length;');
-  const helper = completeDeleteHelper
+  const deletePrefixHelper = completeDeleteHelper
     .replace(deleteGuard, deletePrefixGuard)
     .replace(
       'if (canCombineDocDeletes(states, key)) {',
@@ -198,6 +198,32 @@ function isPlainDocDeleteData(value, depth = 0) {
     .replace(
       'edits[edits.length - 1].len = states.length;',
       `edits[edits.length - 1].len = deletePrefix;\n\t\tfor (let index = deletePrefix; index < states.length; index++) result = ${json}.compose(result, states[index][key].actions);`,
+    );
+  // Retain the exact first SPN-142 candidate for install upgrades and controls.
+  // These private read-only lists are module constants: qualification preserves
+  // the same includes/iteration order without rebuilding them for every state.
+  const guardLists = [
+    ['docActionKeys', '["0", "1", "length"]'],
+    ['docComponentKeys', '["et", "e"]'],
+    ['docRetainKeys', '["t", "len"]'],
+    ['docEditKeys', '["t", "len", "body", "valueRangeId"]'],
+    [
+      'docBodyKeys',
+      '["dataStream", "textRuns", "paragraphs", "customRanges", "customDecorations", "customBlocks", "sectionBreaks", "__textXPreserveParagraphIds"]',
+    ],
+    [
+      'docEmptyBodyFields',
+      '["paragraphs", "customRanges", "customDecorations", "customBlocks", "sectionBreaks"]',
+    ],
+    ['docEmptyArrayKeys', '["length"]'],
+    ['docRunArrayKeys', '["0", "length"]'],
+    ['docRunKeys', '["st", "ed", "ts", "sId"]'],
+  ];
+  const helper = guardLists
+    .reduce((text, [name, literal]) => text.replaceAll(literal, name), deletePrefixHelper)
+    .replace(
+      anchor,
+      anchor + '\n' + guardLists.map(([name, literal]) => `const ${name} = ${literal};`).join('\n'),
     );
   const replacements = [
     { before: anchor, after: helper, count: 1 },
@@ -220,6 +246,7 @@ function isPlainDocDeleteData(value, depth = 0) {
     (text, { before, after }) => text.replaceAll(after, before),
     docFlushObservationReplacements
       .reduce((text, { before, after }) => text.replaceAll(after, before), source)
+      .replaceAll(deletePrefixHelper, anchor)
       .replaceAll(completeDeleteHelper, anchor)
       .replaceAll(previousHelper, anchor)
       .replaceAll(markerHelper, anchor)
@@ -241,10 +268,12 @@ function isPlainDocDeleteData(value, depth = 0) {
     return text.replaceAll(before, after);
   }, composed);
   const completeDeletePatched = patched.replace(helper, completeDeleteHelper);
+  const deletePrefixPatched = patched.replace(helper, deletePrefixHelper);
   if (
     source !== original &&
     source !== patched &&
     source !== completeDeletePatched &&
+    source !== deletePrefixPatched &&
     source !== previousPatched &&
     source !== markerPatched &&
     source !== prefixPatched
@@ -259,6 +288,7 @@ function isPlainDocDeleteData(value, depth = 0) {
     markerPatched,
     prefixPatched,
     completeDeletePatched,
+    deletePrefixPatched,
   };
 }
 

@@ -116,7 +116,12 @@ function clock() {
 
 function managerFixture(
   source: string,
-  costs: { history?: number; historyError?: Error; collaboration?: number } = {},
+  costs: {
+    history?: number;
+    historyError?: Error;
+    collaboration?: number;
+    listEvaluation?: () => void;
+  } = {},
 ) {
   const marker = '//#region src/services/doc-state-change-manager.service.ts\n';
   const start = source.indexOf(marker);
@@ -127,6 +132,10 @@ function managerFixture(
   const ManagerClass = runInNewContext(
     `${source.slice(start + marker.length, end)}\nDocStateChangeManagerService;`,
     {
+      __spn142List: <T>(value: T): T => {
+        costs.listEvaluation?.();
+        return value;
+      },
       ...contextCore,
       Object,
       Array,
@@ -389,6 +398,24 @@ const mixed: Request[] = [
   (snapshot) => edit(new core.TextX().retain(snapshot.body!.paragraphs![0].startIndex).delete(1)),
 ];
 
+function ownDataShape(value: unknown, seen = new Map<object, number>()): unknown {
+  if (value === null || typeof value !== 'object') return value;
+  if (seen.has(value)) return { reference: seen.get(value) };
+  seen.set(value, seen.size);
+  return {
+    prototype: Object.getPrototypeOf(value),
+    properties: Reflect.ownKeys(value).map((key) => {
+      const descriptor = Object.getOwnPropertyDescriptor(value, key)!;
+      return [
+        key,
+        'value' in descriptor
+          ? { ...descriptor, value: ownDataShape(descriptor.value, seen) }
+          : descriptor,
+      ];
+    }),
+  };
+}
+
 function flush(source: string, history: State[], collaboration = history, raw = false) {
   const fixture = managerFixture(source);
   try {
@@ -397,8 +424,15 @@ function flush(source: string, history: State[], collaboration = history, raw = 
     const cache = raw ? inputCache : structuredClone(inputCache);
     const retainedStates = [...cache.history, ...cache.collaboration];
     const before = structuredClone(retainedStates);
+    const shapeBefore = raw ? ownDataShape(retainedStates) : undefined;
     fixture.manager.setStateCache(unitId, cache);
     fixture.manager.flushPendingChanges(unitId);
+    if (raw)
+      assert.deepEqual(
+        ownDataShape(retainedStates),
+        shapeBefore,
+        'Own keys, descriptors and prototypes remain unchanged without reading accessors.',
+      );
     assert.deepEqual(
       raw ? structuredClone(retainedStates) : retainedStates,
       before,
@@ -873,6 +907,9 @@ for (const format of ['es', 'cjs'] as const) {
         });
       },
     ];
+    mutations.push((edits: any[]) => {
+      edits.at(-1)[Symbol.for('spn142-unsupported')] = undefined;
+    });
     for (const change of mutations)
       for (let index = 0; index < history.length; index++) {
         const makeStates = () => {
@@ -893,6 +930,83 @@ for (const format of ['es', 'cjs'] as const) {
         if (history.length - 1 - index < 2) assert.deepEqual(candidate.counts, previous.counts);
         else assert.ok(candidate.counts.allocations < previous.counts.allocations);
       }
+  });
+
+  test(`${format}: qualification reuses fixed lists across actual manager flushes`, async () => {
+    const { patched, deletePrefixPatched } = prepareDocsPatch(await readBuild(format), format);
+    const archive = JSON.parse(
+      gunzipSync(
+        await readFile(
+          new URL(
+            '../../docs/implementation/evidence/SPN-135/corrected-3g/plain-2/spn135-native-caches.json.gz',
+            import.meta.url,
+          ),
+        ),
+      ).toString(),
+    );
+    const phases = archive.native.filter((entry: any) => entry.count === 6 && entry.cache);
+    const history = decodeCapture(
+      phases.find((entry: any) => entry.phase === 'history').cache,
+    ) as State[];
+    const collaboration = decodeCapture(
+      phases.find((entry: any) => entry.phase === 'collaboration').cache,
+    ) as State[];
+    const outputs = [];
+    const work: { initialization: number; flushes: number[] }[] = [];
+    for (const source of [deletePrefixPatched, patched]) {
+      const start = source.indexOf('const DEBOUNCE_DELAY = 300;');
+      const end = source.indexOf('const IDocStateChangeInterceptorService =', start);
+      assert.ok(start > 0 && end > start);
+      const helper = source.slice(start, end);
+      // Count executed string-list expressions, not native allocations or time.
+      const instrumented = helper.replace(
+        /\[(?:"[^"]*"(?:,\s*)?)+\]/g,
+        (literal) => `__spn142List(${literal})`,
+      );
+      assert.notEqual(instrumented, helper);
+      let evaluations = 0;
+      const fixture = managerFixture(source.replace(helper, instrumented), {
+        listEvaluation: () => {
+          evaluations++;
+        },
+      });
+      const initialization = evaluations;
+      try {
+        const flushes = [];
+        for (let flushIndex = 0; flushIndex < 2; flushIndex++) {
+          evaluations = 0;
+          fixture.manager.setStateCache(unitId, structuredClone({ history, collaboration }));
+          fixture.manager.flushPendingChanges(unitId);
+          flushes.push(evaluations);
+        }
+        outputs.push(
+          structuredClone({
+            history: fixture.history,
+            changes: fixture.changes,
+            publication: fixture.publication,
+          }),
+        );
+        work.push({ initialization, flushes });
+      } finally {
+        fixture.close();
+      }
+    }
+    assert.deepEqual(outputs[1], outputs[0]);
+    assert.equal(work[0].initialization, 0);
+    assert.equal(work[1].initialization, 9);
+    const noRepeatedLists = (counts: (typeof work)[number]) =>
+      assert.deepEqual(counts.flushes, [0, 0]);
+    noRepeatedLists(work[1]);
+    assert.throws(
+      () => noRepeatedLists(work[0]),
+      'Exact pre-hoist build fails the repeated-work contract.',
+    );
+    assert.deepEqual(work[0].flushes, [274, 274]);
+    // Uninstrumented execution remains the semantic oracle, and no native work changes.
+    assert.deepEqual(
+      measuredFlush(patched, history, collaboration),
+      measuredFlush(deletePrefixPatched, history, collaboration),
+    );
   });
 
   test(`${format}: retained capacity caches preserve publications and reduce structural Undo prefix work`, async () => {
@@ -934,7 +1048,7 @@ for (const format of ['es', 'cjs'] as const) {
 
   test(`${format}: delete prefixes own their accumulator and preserve every tail call`, async () => {
     const { patched, completeDeletePatched } = prepareDocsPatch(await readBuild(format), format);
-    const start = patched.indexOf('function hasOnlyDocInsertKeys(');
+    const start = patched.indexOf('const DEBOUNCE_DELAY = 300;');
     const end = patched.indexOf('const IDocStateChangeInterceptorService =', start);
     assert.ok(start > 0 && end > start);
     const calls: { left: JSONXActions; right: JSONXActions }[] = [];
@@ -1415,6 +1529,7 @@ for (const format of ['es', 'cjs'] as const) {
       markerPatched,
       prefixPatched,
       completeDeletePatched,
+      deletePrefixPatched,
     } = prepareDocsPatch(await readBuild(format), format);
     const markerHash = {
       es: '259dd5a4ce24744a442b2cfc7211a89f46437c0257a2ca7b2b9aaaceddd946ba',
@@ -1431,6 +1546,15 @@ for (const format of ['es', 'cjs'] as const) {
       }[format],
     );
     assert.equal(prepareDocsPatch(completeDeletePatched, format).patched, patched);
+    assert.equal(
+      createHash('sha256').update(deletePrefixPatched).digest('hex'),
+      {
+        es: 'fe7b6b735d8e5f2ef1979fb3bd97267c3c9d53ce0d107ff7473b140f5d3eafb1',
+        cjs: 'ce23b364acdd917ab0b4c645092b64c974567fc0ffea7aec94e3bd1bdfb0bb02',
+      }[format],
+    );
+    assert.equal(prepareDocsPatch(deletePrefixPatched, format).patched, patched);
+    assert.throws(() => prepareDocsPatch(deletePrefixPatched + '\n// unknown edit', format));
     assert.throws(() => prepareDocsPatch(completeDeletePatched + '\n// unknown edit', format));
     assert.throws(() => prepareDocsPatch(prefixPatched + '\n// unknown edit', format));
     assert.throws(
@@ -1569,23 +1693,25 @@ test('Docs installer validates package identity and both complete builds before 
       await readFile(resolve(directory, 'lib', format, 'index.js'), 'utf8'),
       prepareDocsPatch(originals[format], format).patched,
     );
-  // Existing installs upgrade the exact complete SPN-135 patch, atomically with
-  // respect to validation of both formats, just like fresh upstream installs.
-  for (const format of ['es', 'cjs'] as const)
-    await writeFile(
-      resolve(directory, 'lib', format, 'index.js'),
-      prepareDocsPatch(originals[format], format).completeDeletePatched,
-    );
-  const oldEs = await readFile(resolve(directory, 'lib/es/index.js'), 'utf8');
-  const oldCjs = await readFile(cjs, 'utf8');
-  await writeFile(cjs, oldCjs + '\n// unknown edit');
-  await assert.rejects(patchInstalledDocs(root), /Unrecognized/);
-  assert.equal(await readFile(resolve(directory, 'lib/es/index.js'), 'utf8'), oldEs);
-  await writeFile(cjs, oldCjs);
-  await patchInstalledDocs(root);
-  for (const format of ['es', 'cjs'] as const)
-    assert.equal(
-      await readFile(resolve(directory, 'lib', format, 'index.js'), 'utf8'),
-      prepareDocsPatch(originals[format], format).patched,
-    );
+  for (const previous of ['completeDeletePatched', 'deletePrefixPatched'] as const) {
+    // Existing installs upgrade exact complete prior patches, atomically with
+    // respect to validation of both formats, just like fresh upstream installs.
+    for (const format of ['es', 'cjs'] as const)
+      await writeFile(
+        resolve(directory, 'lib', format, 'index.js'),
+        prepareDocsPatch(originals[format], format)[previous],
+      );
+    const oldEs = await readFile(resolve(directory, 'lib/es/index.js'), 'utf8');
+    const oldCjs = await readFile(cjs, 'utf8');
+    await writeFile(cjs, oldCjs + '\n// unknown edit');
+    await assert.rejects(patchInstalledDocs(root), /Unrecognized/);
+    assert.equal(await readFile(resolve(directory, 'lib/es/index.js'), 'utf8'), oldEs);
+    await writeFile(cjs, oldCjs);
+    await patchInstalledDocs(root);
+    for (const format of ['es', 'cjs'] as const)
+      assert.equal(
+        await readFile(resolve(directory, 'lib', format, 'index.js'), 'utf8'),
+        prepareDocsPatch(originals[format], format).patched,
+      );
+  }
 });
