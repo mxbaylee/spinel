@@ -250,6 +250,58 @@
       "log": "storybook-build.log.gz",
       "logSha256": "674590ca1668589661719612c58e7f99c3d4a1071fe7fe6b55d4bb3ff78e726e",
       "compressedSha256": "c913fdce5d00344d7869224f8c6512ade3bebba076fb2dcd58b43c4376fc5f72"
+    },
+    {
+      "name": "cleanup-regression",
+      "status": "passed",
+      "meaning": "3 capacity cases passed, including one new cleanup-denial regression; two overlap the earlier 70-test run",
+      "watchdog": {
+        "startedAt": "2026-11-04T15:43:52.474Z",
+        "finishedAt": "2026-11-04T15:43:55.637Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/2ce51b006967/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "bash",
+          "-c",
+          "node node_modules/prettier/bin/prettier.cjs --write src/server/diagnostics/feedback-capacity.test.ts && node node_modules/vitest/vitest.mjs run src/server/diagnostics/feedback-capacity.test.ts"
+        ],
+        "elapsedMs": 3162,
+        "peakKiB": 429736,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "log": "cleanup-regression.log.gz",
+      "logSha256": "59e6c4c211fe4d9478e4a10587f4e8e4f5d3ccb2639935a2887d2b40669744f4",
+      "compressedSha256": "6f994c34a5b92091d20f20a3ef929c0cabc76ae2229503696d3543e2e34608fc"
+    },
+    {
+      "name": "cleanup-static",
+      "status": "passed",
+      "meaning": "Full typecheck and changed-test lint/format after cleanup-denial coverage",
+      "watchdog": {
+        "startedAt": "2026-11-04T15:44:04.826Z",
+        "finishedAt": "2026-11-04T15:44:14.928Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/2ce51b006967/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "bash",
+          "-c",
+          "node node_modules/typescript/bin/tsc -p . && node node_modules/oxlint/bin/oxlint --deny-warnings src/server/diagnostics/feedback-capacity.test.ts && node node_modules/prettier/bin/prettier.cjs --check src/server/diagnostics/feedback-capacity.test.ts"
+        ],
+        "elapsedMs": 10102,
+        "peakKiB": 1985636,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "log": "cleanup-static.log.gz",
+      "logSha256": "cb043a1e68290382dd1c35b9af4ed5812574843b7b399bebb8199f0a134565ae",
+      "compressedSha256": "fbe17394150c5f95ce1169ad6dc12c07b7ac12e355cd9376ab5523032268ac63"
     }
   ],
   "fileSha256": {
@@ -258,9 +310,17 @@
     "e2e/diagnostics.spec.ts": "aa05dfa145fc0d0926d575e58ca239e4ab733ce9078d67453832f0ed69baec63",
     "web/AdminFeedback.tsx": "76182a4fd2b8063de44b782c942678ded7927a4ff9638b54ed8f8be62b7a71aa",
     ".github/workflows/ci.yml": "1583dfa501784f0572ae0e11d54ccff2d4f3b608f6e87f3859673e164ece9f59",
-    "package-lock.json": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf"
+    "package-lock.json": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf",
+    "src/server/diagnostics/feedback-capacity.test.ts": "e90f205a344a4a7661f8ac7b77ee77b1bd4cf22d1d2eee9fec6bbc922fd3da1d"
   },
   "prepublicationScope": "Source/local quality review only. Hosted browser, full Storybook/current image review, native acceptance and seven required gates remain separate merge requirements. Final PR description supplies final review and hosted identities.",
   "permissionDisposition": "Escalated local browser execution was rejected by the workspace approval policy (sandbox_approval false). No restricted Unix socket or interface-enumeration access was bypassed.",
-  "spn110CombinedControl": "f8c4b7461f7df5b9bc35459c0e6b5538c8161115; retain normal-suite combined regression in whichever ticket integrates second."
+  "spn110CombinedControl": "f8c4b7461f7df5b9bc35459c0e6b5538c8161115; retain normal-suite combined regression in whichever ticket integrates second.",
+  "supplementalTestDelta": {
+    "file": "src/server/diagnostics/feedback-capacity.test.ts",
+    "reason": "Independent security review identified missing direct cleanup-denial recovery control. Production code remains identical to sourceCommit.",
+    "uniqueTestsAdded": 1,
+    "focusedSuiteTests": 3,
+    "overlappingEarlierTests": 2
+  }
 }

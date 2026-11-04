@@ -10,7 +10,11 @@ import { DiagnosticsStore, DIAGNOSTICS_LIMITS } from './store.ts';
 // Model the capacity boundary, while all SQLite files and workers stay real.
 vi.mock('node:fs', async (importOriginal) => {
   const original = await importOriginal<typeof import('node:fs')>();
-  return { ...original, statfsSync: vi.fn(original.statfsSync) };
+  return {
+    ...original,
+    statfsSync: vi.fn(original.statfsSync),
+    rmSync: vi.fn(original.rmSync),
+  };
 });
 
 async function fixture() {
@@ -84,6 +88,56 @@ test('a real source failure after staging begins cannot publish either artifact 
     );
     expect(f.exports()).toEqual([]);
   } finally {
+    await f.close();
+  }
+});
+
+test('failed cleanup fences the old pair and staging allocation until removal succeeds', async () => {
+  const f = await fixture();
+  const original = await vi.importActual<typeof import('node:fs')>('node:fs');
+  let denyRemoval = true;
+  try {
+    const pair = await f.store.prepareFeedback(f.actor, f.operator);
+    expect(pair.state).toBe('ready');
+    if (pair.state !== 'ready') throw new Error('Expected complete pair.');
+    const staged = f.exports();
+    expect(staged).toHaveLength(1);
+    // Fail only disposal of this real prepared pair. Keep SQLite, the worker,
+    // its internal frozen-source removal and all other filesystem work real.
+    vi.mocked(rmSync).mockImplementation((target, options) => {
+      if (
+        denyRemoval &&
+        typeof target === 'string' &&
+        target.startsWith(join(f.directory, '.diagnostics-feedback-'))
+      ) {
+        throw Object.assign(new Error('Synthetic removal denial'), { code: 'EACCES' });
+      }
+      return original.rmSync(target, options);
+    });
+    await expect(f.store.cancelFeedback(pair.id, f.operator)).rejects.toThrow(
+      'Temporary feedback downloads could not be removed',
+    );
+    expect(() => f.store.feedbackDownload(pair.id, f.operator, 'user')).toThrow(
+      'expired or were cleared',
+    );
+    await expect(f.store.prepareFeedback(f.actor, f.operator)).rejects.toThrow(
+      'Temporary feedback downloads could not be removed',
+    );
+    expect(f.exports()).toEqual(staged);
+
+    denyRemoval = false;
+    await f.store.cancelFeedback(pair.id, f.operator);
+    expect(f.exports()).toEqual([]);
+    const recovered = await f.store.prepareFeedback(f.actor, f.operator);
+    expect(recovered.state).toBe('ready');
+    if (recovered.state !== 'ready') throw new Error('Expected fresh complete pair.');
+    expect(recovered.id).not.toBe(pair.id);
+    expect(recovered.counts.user).toBe(1);
+    await f.store.cancelFeedback(recovered.id, f.operator);
+    expect(f.exports()).toEqual([]);
+  } finally {
+    denyRemoval = false;
+    vi.mocked(rmSync).mockImplementation(original.rmSync);
     await f.close();
   }
 });
