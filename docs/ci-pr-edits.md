@@ -86,7 +86,8 @@ check, workflow, PR, immutable source/base/tested provenance, covered sequence a
 both full-request bounds. Issuance cannot use its own current/future attempt to
 prove its prefix. Later admission can consume the same attempt's provider-confirmed
 successful validation and marker steps, including when an older prefix expires
-while code waits. The first run can establish an opening only with a v2 same-PR
+while code waits. The first run can establish an opening only with a supported v2
+or v3 same-PR
 `opened` identity, genuine Actions suite and supported workflow source at its
 immutable tested merge. That merge must have the declared base/head parents;
 the source branch alone may lack a workflow inherited from base.

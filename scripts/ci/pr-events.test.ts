@@ -10,8 +10,10 @@ import {
   noAdoptionStep,
 } from './pr-history-adoption.ts';
 import {
+  authenticatedPolicyHistory,
   historyCheckpointMarker,
   historyValidationStep,
+  historyValidationStepV3,
   parseHistoryCheckpointMarker,
 } from './pr-history.ts';
 import { routePrEdit } from './pr-revalidate.ts';
@@ -266,6 +268,7 @@ function legacyScenario() {
     name: 'Pull request',
     status: 'in_progress',
     conclusion: null as string | null,
+    completed_at: null as string | null,
     check_run_url: `https://api.github.com/repos/${s.client.repository}/check-runs/505`,
     steps: [
       {
@@ -338,6 +341,133 @@ function legacyScenario() {
   };
   return { ...s, runs, prior, job, records, check, policyChecks, workflowAttempts, issued };
 }
+
+function nonIssuedHistoryScenario(markerConclusion = 'cancelled') {
+  const s = legacyScenario();
+  s.issued();
+  const adoption = {
+    cutoff: legacyHistoryCutoff.runId,
+    run: s.policyRun.id,
+    job: s.job.id,
+    attempt: s.job.run_attempt,
+    step: 4,
+    completed: Date.parse('2026-11-02T19:31:02Z'),
+  };
+  const checkpoint = {
+    sequence: s.policyRun.run_number,
+    full: true,
+    after: adoption.completed,
+    atOrAfter: null,
+    adoption,
+  };
+  s.job.status = s.check.status = 'completed';
+  s.job.conclusion = s.check.conclusion =
+    markerConclusion === 'skipped' ? 'failure' : markerConclusion;
+  s.job.completed_at = s.check.completed_at = '2026-11-02T19:31:05Z';
+  s.job.steps.push(
+    {
+      number: 5,
+      name: historyValidationStepV3,
+      status: 'completed',
+      conclusion: 'success',
+      completed_at: '2026-11-02T19:31:03Z',
+    },
+    {
+      number: 6,
+      // An unissued marker's later bound must not replace the genuine origin.
+      name: historyCheckpointMarker({
+        ...checkpoint,
+        after: Date.parse('2026-11-02T19:31:03Z'),
+      }),
+      status: 'completed',
+      conclusion: markerConclusion,
+      completed_at: '2026-11-02T19:31:04Z',
+    },
+  );
+  const read = () =>
+    authenticatedPolicyHistory(s.client, {
+      number: s.pr.number,
+      createdAt: s.pr.created_at,
+      workflowId: s.policyRun.workflow_id,
+    });
+  return { ...s, checkpoint, read };
+}
+
+test('terminal unsuccessful history issuance preserves genuine adoption and still requires fresh full code', async () => {
+  for (const conclusion of ['cancelled', 'failure', 'skipped', 'timed_out']) {
+    const s = nonIssuedHistoryScenario(conclusion);
+    const options = { ...s.options, invocation: s.invocation };
+    // The later marker did not issue a certificate. Its failure cannot erase
+    // the earlier successful adoption or move that original full-code barrier.
+    assert.deepEqual((await s.read()).checkpoint, s.checkpoint);
+    s.fullCoverage();
+    s.run.created_at = '2026-11-02T19:31:02Z';
+    await assert.rejects(validatePrPolicy(options), /created after|fresh/i);
+    s.run.created_at = '2026-11-02T19:31:03Z';
+    s.coverage.steps[0].name = 'Coverage selected: targeted';
+    await assert.rejects(validatePrPolicy(options), /full.validation|full.coverage/i);
+    s.fullCoverage();
+    const admitted = await validatePrPolicy(options);
+    assert.equal(admitted.requiredFull, true);
+    assert.equal(admitted.fullAfter, '2026-11-02T19:31:02.000Z');
+    assert.equal(s.run.conclusion, null);
+    assert.deepEqual(s.mutations, []);
+  }
+});
+
+test('unresolved or malformed history non-issuance cannot discard missing evidence', async () => {
+  const corruptions: ((s: ReturnType<typeof nonIssuedHistoryScenario>) => void)[] = [
+    (s) => {
+      s.job.status = s.check.status = 'in_progress';
+      s.job.conclusion = s.check.conclusion = null;
+      s.job.completed_at = s.check.completed_at = null;
+    },
+    (s) => {
+      s.check.conclusion = 'failure';
+    },
+    (s) => {
+      s.check.completed_at = '2026-11-02T19:31:06Z';
+    },
+    (s) => {
+      s.job.completed_at = null;
+    },
+    (s) => {
+      s.job.completed_at = s.check.completed_at = '2026-11-02T19:31:03Z';
+    },
+    (s) => {
+      s.check.app.id = 1;
+    },
+    (s) => {
+      s.job.steps[2].status = 'in_progress';
+      s.job.steps[2].conclusion = null;
+    },
+    (s) => {
+      s.job.steps[3].status = 'in_progress';
+      s.job.steps[3].conclusion = null;
+    },
+    (s) => {
+      s.job.steps[3].name = 'PR history unsupported';
+    },
+    (s) => {
+      s.job.steps[3].completed_at = '2026-11-02T19:31:02Z';
+    },
+    (s) => {
+      s.job.steps.push({ ...s.job.steps[3] });
+    },
+    (s) => {
+      s.job.steps.splice(2, 1);
+    },
+    (s) => {
+      // An unsuccessful carrying marker cannot stand in for its lost origin.
+      s.job.steps.splice(1, 1);
+    },
+  ];
+  for (const corrupt of corruptions) {
+    const s = nonIssuedHistoryScenario();
+    corrupt(s);
+    await assert.rejects(s.read, /invalid|missing|ambiguous|proof/i);
+  }
+});
 
 test('legacy adoption requires genuinely later full code and retains its original provider barrier on retry', async () => {
   const s = legacyScenario();
@@ -466,10 +596,12 @@ test('adoption never treats missing modern history or an unresolved earlier atte
   }
 });
 
-test('provider-proved cancellation before runner assignment permits first adoption but missing execution evidence does not', async () => {
+test('provider-proved cancellation permits first adoption only with explicit non-execution or non-issuance', async () => {
   for (const change of [
     'none',
     'assigned',
+    'assigned-settled',
+    'assigned-missing-marker',
     'missing-runner',
     'missing-completion',
     'check-failure',
@@ -521,13 +653,43 @@ test('provider-proved cancellation before runner assignment permits first adopti
     };
     s.records[500].push(current);
     s.policyRun.run_attempt = s.invocation.attempt = 2;
-    if (change === 'assigned') Object.assign(s.job, { runner_id: 123, runner_name: 'assigned' });
+    if (change.startsWith('assigned'))
+      Object.assign(s.job, { runner_id: 123, runner_name: 'assigned' });
+    if (change === 'assigned-settled' || change === 'assigned-missing-marker') {
+      // This fixture checks the explicit skipped-step contract; it is not
+      // provider evidence that checkout cancellation returns this inventory.
+      s.job.steps = [
+        {
+          number: 2,
+          name: 'Run actions/checkout',
+          status: 'completed',
+          conclusion: 'cancelled',
+          completed_at: '2026-11-02T19:31:01Z',
+        },
+        {
+          number: 3,
+          name: adoptionValidationStep,
+          status: 'completed',
+          conclusion: 'skipped',
+          completed_at: '2026-11-02T19:31:02Z',
+        },
+        {
+          number: 4,
+          name: noAdoptionStep,
+          status: 'completed',
+          conclusion: 'skipped',
+          completed_at: '2026-11-02T19:31:02Z',
+        },
+      ];
+      if (change === 'assigned-missing-marker') s.job.steps.pop();
+    }
     if (change === 'missing-runner') Reflect.deleteProperty(s.job, 'runner_id');
     if (change === 'missing-completion') Reflect.deleteProperty(s.job, 'completed_at');
     if (change === 'check-failure') s.check.conclusion = 'failure';
     if (change === 'wrong-app') s.check.app.id = 1;
     const prepare = () => prepareLegacyAdoption({ ...s.options, invocation: s.invocation });
-    if (change === 'none') assert.equal(await prepare(), adoptionMarker(16));
+    if (change === 'none' || change === 'assigned-settled')
+      assert.equal(await prepare(), adoptionMarker(16));
     else await assert.rejects(prepare, Error, change);
   }
 });

@@ -1,0 +1,741 @@
+{
+  "observed_at": "2026-11-04",
+  "repository": "mxbaylee/spinel",
+  "pr": 231,
+  "head_sha": "54e3056100868a2cc1d0394e3f795d29500bc24e",
+  "last_tested_base_sha": "18a8759c498574a1d9cc24a969a558cd97a798ed",
+  "current_main_sha": "49c6664393c4ef9154dcb6985d078e9521b5b618",
+  "tested_merge_sha": "c1e8bc262924cf9479844cae1e106872cac711df",
+  "status": "draft, mergeable_state dirty; no current-head passing required code evidence",
+  "ruleset": {
+    "id": 25319790,
+    "name": "Protect Default Branch",
+    "target": "branch",
+    "source_type": "Repository",
+    "source": "mxbaylee/spinel",
+    "enforcement": "active",
+    "conditions": {
+      "ref_name": {
+        "exclude": [],
+        "include": ["~DEFAULT_BRANCH"]
+      }
+    },
+    "rules": [
+      {
+        "type": "deletion"
+      },
+      {
+        "type": "pull_request",
+        "parameters": {
+          "required_approving_review_count": 0,
+          "dismiss_stale_reviews_on_push": false,
+          "required_reviewers": [],
+          "require_code_owner_review": false,
+          "require_last_push_approval": false,
+          "required_review_thread_resolution": true,
+          "require_extra_approval_for_unattributed_changes": false,
+          "allowed_merge_methods": ["squash"]
+        }
+      },
+      {
+        "type": "required_linear_history"
+      },
+      {
+        "type": "required_status_checks",
+        "parameters": {
+          "strict_required_status_checks_policy": true,
+          "do_not_enforce_on_create": false,
+          "required_status_checks": [
+            {
+              "context": "Backlog",
+              "integration_id": 15368
+            },
+            {
+              "context": "Pull request",
+              "integration_id": 15368
+            },
+            {
+              "context": "Lint",
+              "integration_id": 15368
+            },
+            {
+              "context": "Typecheck",
+              "integration_id": 15368
+            },
+            {
+              "context": "Unit tests",
+              "integration_id": 15368
+            },
+            {
+              "context": "Playwright smoke",
+              "integration_id": 15368
+            },
+            {
+              "context": "Lib tests",
+              "integration_id": 15368
+            }
+          ]
+        }
+      },
+      {
+        "type": "non_fast_forward"
+      }
+    ],
+    "node_id": "RRS_lACqUmVwb3NpdG9yec5U2KTZzgGCWW4",
+    "created_at": "2026-10-17T14:21:31.747-07:00",
+    "updated_at": "2026-10-25T19:31:06.538-07:00",
+    "bypass_actors": [],
+    "current_user_can_bypass": "never",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/mxbaylee/spinel/rulesets/25319790"
+      },
+      "html": {
+        "href": "https://github.com/mxbaylee/spinel/rules/25319790"
+      }
+    }
+  },
+  "failure_disposition": {
+    "backlog": "Run 41518484597 job 125558250072: coverage-plan guard failed, 'Coverage plan digest changed or missing.' Classifier cancelled; failure is expected closed admission rather than app regression.",
+    "typecheck": "Run 41518484597 job 125558250216: Require complete applicability failed after cancelled classifier.",
+    "lint": "Run 41518484597 job 125558250497: coverage-plan guard failed after cancelled classifier.",
+    "unit_lib_playwright": "Required aggregate jobs failed selected evidence gates after cancelled/missing classifier/workers.",
+    "policy19": "Successful initial legacy adoption and history marker, then admission correctly rejected CI created before strict adoption boundary.",
+    "policy20": "Retained original adoption origin, then spent ~57m44s in admission polling; latest code run never received jobs before cancellation.",
+    "unavailable_classifier_log": "Run 41518484597 classifier job 125544861928 logs endpoint returned BlobNotFound 404. Do not invent execution evidence."
+  },
+  "unresolved_acceptance": [
+    "Fresh complete current integrated-source code CI with required gates.",
+    "Router GitHub App setup, actual trusted event delivery, effective Actions policy, and timeline App attribution.",
+    "Protected transition matrix including failed/pending code plus text, base/ambiguous edits and rapid edits.",
+    "Retention/expiry/native partial retry and assigned-runner early-cancellation trials.",
+    "Full active metadata runner and wait cost accounting and independent final grades."
+  ],
+  "notes": [
+    "Branch-protection endpoint returned integration 403, but active ruleset endpoint succeeded and showed all seven required checks, strict policy, no bypass actors.",
+    "App ID environment is blank in actual policy logs; that proves it was unset for those executions, not current secret configuration.",
+    "No mutations or reruns performed by this audit."
+  ],
+  "scope": "Read-only provider audit of the previous source, not validation of the 2026-11-04 integration or router activation.",
+  "workflow_runs": [
+    {
+      "id": 41527303262,
+      "name": "\ud83e\uddea BrowserStack infrastructure",
+      "event": null,
+      "head_sha": null,
+      "run_number": 50,
+      "run_attempt": null,
+      "status": "completed",
+      "conclusion": "skipped",
+      "created_at": null,
+      "updated_at": null,
+      "html_url": null
+    },
+    {
+      "id": 41527303122,
+      "name": "CI pr=231 base=18a8759c498574a1d9cc24a969a558cd97a798ed head=54e3056100868a2cc1d0394e3f795d29500bc24e tested=c1e8bc262924cf9479844cae1e106872cac711df full=0",
+      "event": null,
+      "head_sha": null,
+      "run_number": 1768,
+      "run_attempt": null,
+      "status": "completed",
+      "conclusion": "cancelled",
+      "created_at": null,
+      "updated_at": null,
+      "html_url": null
+    },
+    {
+      "id": 41527303408,
+      "name": "PR policy v3 pr=231 action=labeled base=18a8759c498574a1d9cc24a969a558cd97a798ed head=54e3056100868a2cc1d0394e3f795d29500bc24e tested=c1e8bc262924cf9479844cae1e106872cac711df",
+      "event": null,
+      "head_sha": null,
+      "run_number": 20,
+      "run_attempt": null,
+      "status": "completed",
+      "conclusion": "cancelled",
+      "created_at": null,
+      "updated_at": null,
+      "html_url": null
+    },
+    {
+      "id": 41527303251,
+      "name": "\ud83d\udcda Storybook",
+      "event": null,
+      "head_sha": null,
+      "run_number": 1024,
+      "run_attempt": null,
+      "status": "completed",
+      "conclusion": "cancelled",
+      "created_at": null,
+      "updated_at": null,
+      "html_url": null
+    },
+    {
+      "id": 41518702280,
+      "name": "PR policy v3 pr=231 action=edited base=18a8759c498574a1d9cc24a969a558cd97a798ed head=54e3056100868a2cc1d0394e3f795d29500bc24e tested=c1e8bc262924cf9479844cae1e106872cac711df",
+      "event": null,
+      "head_sha": null,
+      "run_number": 19,
+      "run_attempt": null,
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": null,
+      "updated_at": null,
+      "html_url": null
+    },
+    {
+      "id": 41518484774,
+      "name": "\ud83d\udcda Storybook",
+      "event": null,
+      "head_sha": null,
+      "run_number": 1010,
+      "run_attempt": null,
+      "status": "completed",
+      "conclusion": "cancelled",
+      "created_at": null,
+      "updated_at": null,
+      "html_url": null
+    },
+    {
+      "id": 41518484871,
+      "name": "PR policy v3 pr=231 action=synchronize base=18a8759c498574a1d9cc24a969a558cd97a798ed head=54e3056100868a2cc1d0394e3f795d29500bc24e tested=c1e8bc262924cf9479844cae1e106872cac711df",
+      "event": null,
+      "head_sha": null,
+      "run_number": 18,
+      "run_attempt": null,
+      "status": "completed",
+      "conclusion": "cancelled",
+      "created_at": null,
+      "updated_at": null,
+      "html_url": null
+    },
+    {
+      "id": 41518484597,
+      "name": "CI pr=231 base=18a8759c498574a1d9cc24a969a558cd97a798ed head=54e3056100868a2cc1d0394e3f795d29500bc24e tested=c1e8bc262924cf9479844cae1e106872cac711df full=0",
+      "event": null,
+      "head_sha": null,
+      "run_number": 1750,
+      "run_attempt": null,
+      "status": "completed",
+      "conclusion": "cancelled",
+      "created_at": null,
+      "updated_at": null,
+      "html_url": null
+    }
+  ],
+  "latest_ci_all_jobs": {
+    "total_count": 0,
+    "jobs": []
+  },
+  "policy18_jobs": [
+    {
+      "id": 125528057171,
+      "run_id": 41518484871,
+      "run_attempt": 1,
+      "name": "Pull request",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "runner_id": 0,
+      "runner_group_id": 0,
+      "runner_name": "",
+      "runner_group_name": "",
+      "started_at": "2026-11-02T20:21:35Z",
+      "completed_at": "2026-11-02T20:23:09Z",
+      "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/125528057171",
+      "steps": []
+    },
+    {
+      "id": 125528059619,
+      "run_id": 41518484871,
+      "run_attempt": 1,
+      "name": "Classify PR edit (${{ github.run_id }})",
+      "status": "completed",
+      "conclusion": "skipped",
+      "runner_id": null,
+      "runner_group_id": null,
+      "runner_name": null,
+      "runner_group_name": null,
+      "started_at": "2026-11-02T20:21:35Z",
+      "completed_at": "2026-11-02T20:21:35Z",
+      "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/125528059619",
+      "steps": []
+    }
+  ],
+  "policy19_jobs": [
+    {
+      "id": 125528819513,
+      "run_id": 41518702280,
+      "run_attempt": 1,
+      "name": "Classify PR edit (41518702280)",
+      "status": "completed",
+      "conclusion": "success",
+      "runner_id": 1000038053,
+      "runner_group_id": 0,
+      "runner_name": "GitHub Actions 1000038053",
+      "runner_group_name": "GitHub Actions",
+      "started_at": "2026-11-02T20:38:12Z",
+      "completed_at": "2026-11-02T20:38:23Z",
+      "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/125528819513",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-02T20:38:13Z",
+          "completed_at": "2026-11-02T20:38:14Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-02T20:38:14Z",
+          "completed_at": "2026-11-02T20:38:17Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-02T20:38:17Z",
+          "completed_at": "2026-11-02T20:38:22Z"
+        },
+        {
+          "name": "Run node scripts/ci/pr-state.ts classify",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-02T20:38:22Z",
+          "completed_at": "2026-11-02T20:38:22Z"
+        },
+        {
+          "name": "Edit classification: text",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-02T20:38:22Z",
+          "completed_at": "2026-11-02T20:38:22Z"
+        },
+        {
+          "name": "Edit classification: full",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 6,
+          "started_at": "2026-11-02T20:38:22Z",
+          "completed_at": "2026-11-02T20:38:22Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-02T20:38:22Z",
+          "completed_at": "2026-11-02T20:38:22Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-02T20:38:22Z",
+          "completed_at": "2026-11-02T20:38:22Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-02T20:38:22Z",
+          "completed_at": "2026-11-02T20:38:22Z"
+        }
+      ]
+    },
+    {
+      "id": 125528819833,
+      "run_id": 41518702280,
+      "run_attempt": 1,
+      "name": "Pull request",
+      "status": "completed",
+      "conclusion": "failure",
+      "runner_id": 1000038054,
+      "runner_group_id": 0,
+      "runner_name": "GitHub Actions 1000038054",
+      "runner_group_name": "GitHub Actions",
+      "started_at": "2026-11-02T20:38:15Z",
+      "completed_at": "2026-11-02T20:38:50Z",
+      "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/125528819833",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-02T20:38:15Z",
+          "completed_at": "2026-11-02T20:38:16Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-02T20:38:16Z",
+          "completed_at": "2026-11-02T20:38:27Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-02T20:38:27Z",
+          "completed_at": "2026-11-02T20:38:32Z"
+        },
+        {
+          "name": "Validate legacy history adoption v1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-02T20:38:32Z",
+          "completed_at": "2026-11-02T20:38:39Z"
+        },
+        {
+          "name": "PR adoption v1 cutoff=41510513950 seq=19",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-02T20:38:39Z",
+          "completed_at": "2026-11-02T20:38:39Z"
+        },
+        {
+          "name": "Validate PR history v3",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-02T20:38:39Z",
+          "completed_at": "2026-11-02T20:38:43Z"
+        },
+        {
+          "name": "PR history v3 seq=19 full=1 after=1793651919000 notify=0 adopted=41510513950 run=41518702280 job=125528819833 attempt=1 step=5 at=1793651919000",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-02T20:38:43Z",
+          "completed_at": "2026-11-02T20:38:43Z"
+        },
+        {
+          "name": "Validate policy and genuine current-base code admission",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 8,
+          "started_at": "2026-11-02T20:38:43Z",
+          "completed_at": "2026-11-02T20:38:48Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 15,
+          "started_at": "2026-11-02T20:38:48Z",
+          "completed_at": "2026-11-02T20:38:48Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-11-02T20:38:48Z",
+          "completed_at": "2026-11-02T20:38:48Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-11-02T20:38:48Z",
+          "completed_at": "2026-11-02T20:38:48Z"
+        }
+      ]
+    }
+  ],
+  "policy20_jobs": [
+    {
+      "id": 125558248618,
+      "run_id": 41527303408,
+      "run_attempt": 1,
+      "name": "Pull request",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "runner_id": 1000038492,
+      "runner_group_id": 0,
+      "runner_name": "GitHub Actions 1000038492",
+      "runner_group_name": "GitHub Actions",
+      "started_at": "2026-11-02T22:39:07Z",
+      "completed_at": "2026-11-02T23:37:18Z",
+      "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/125558248618",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-02T22:39:08Z",
+          "completed_at": "2026-11-02T22:39:09Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-02T22:39:09Z",
+          "completed_at": "2026-11-02T22:39:19Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-02T22:39:19Z",
+          "completed_at": "2026-11-02T22:39:24Z"
+        },
+        {
+          "name": "Validate legacy history adoption v1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-02T22:39:24Z",
+          "completed_at": "2026-11-02T22:39:28Z"
+        },
+        {
+          "name": "Legacy history adoption not required",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 5,
+          "started_at": "2026-11-02T22:39:28Z",
+          "completed_at": "2026-11-02T22:39:28Z"
+        },
+        {
+          "name": "Validate PR history v3",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-02T22:39:28Z",
+          "completed_at": "2026-11-02T22:39:32Z"
+        },
+        {
+          "name": "PR history v3 seq=20 full=1 after=1793651919000 notify=0 adopted=41510513950 run=41518702280 job=125528819833 attempt=1 step=5 at=1793651919000",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-02T22:39:32Z",
+          "completed_at": "2026-11-02T22:39:32Z"
+        },
+        {
+          "name": "Validate policy and genuine current-base code admission",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "number": 8,
+          "started_at": "2026-11-02T22:39:32Z",
+          "completed_at": "2026-11-02T23:37:16Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 15,
+          "started_at": "2026-11-02T23:37:16Z",
+          "completed_at": "2026-11-02T23:37:16Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-11-02T23:37:16Z",
+          "completed_at": "2026-11-02T23:37:16Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-11-02T23:37:16Z",
+          "completed_at": "2026-11-02T23:37:16Z"
+        }
+      ]
+    },
+    {
+      "id": 125558313989,
+      "run_id": 41527303408,
+      "run_attempt": 1,
+      "name": "Classify PR edit (${{ github.run_id }})",
+      "status": "completed",
+      "conclusion": "skipped",
+      "runner_id": null,
+      "runner_group_id": null,
+      "runner_name": null,
+      "runner_group_name": null,
+      "started_at": "2026-11-02T21:19:42Z",
+      "completed_at": "2026-11-02T21:19:34Z",
+      "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/125558313989",
+      "steps": []
+    }
+  ],
+  "policy_log_evidence": [
+    {
+      "kind": "policy_failed_log",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41518702280/job/125528819833",
+      "relevant_lines": [
+        "2026-11-02T20:38:39.1541483Z PR adoption v1 cutoff=41510513950 seq=19",
+        "2026-11-02T20:38:43.6279408Z PR history v3 seq=19 full=1 after=1793651919000 notify=0 adopted=41510513950 run=41518702280 job=125528819833 attempt=1 step=5 at=1793651919000",
+        "2026-11-02T20:38:48.5506442Z Error: Full validation requires a new eligible CI run created after the latest request; retrying an older run is insufficient.",
+        "2026-11-02T20:38:48.5579475Z ##[error]Process completed with exit code 1."
+      ]
+    },
+    {
+      "kind": "policy_cancel_log",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41527303408/job/125558248618",
+      "relevant_lines": [
+        "2026-11-02T22:39:28.4960325Z No new history marker issued; ordinary genuine code admission remains required.",
+        "2026-11-02T22:39:32.4945891Z PR history v3 seq=20 full=1 after=1793651919000 notify=0 adopted=41510513950 run=41518702280 job=125528819833 attempt=1 step=5 at=1793651919000",
+        "2026-11-02T22:39:36.9147571Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T22:40:37.8065198Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T22:41:38.9732509Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T22:42:39.8841838Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T22:43:40.8642453Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T22:44:41.7907291Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T22:45:42.6658192Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T22:46:43.8085132Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T22:47:45.0808364Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T22:48:46.1793484Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T22:49:47.2189452Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T22:50:48.4336100Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T22:51:49.5687957Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T22:52:50.7298062Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T22:53:51.8505982Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T22:54:52.9645438Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T22:55:53.8962827Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T22:56:54.7885877Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T22:57:55.6967860Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T22:58:56.6562081Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T22:59:57.6231268Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:00:58.6337911Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:01:59.6028524Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:03:00.5708005Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:04:01.5389680Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:05:02.5172756Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:06:03.3641014Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:07:04.2324742Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:08:05.4722324Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:09:06.6124780Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:10:07.9469314Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:11:09.1171682Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:12:10.2790098Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:13:11.4817030Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:14:12.6966181Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:15:13.8379736Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:16:15.0821294Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:17:16.2814705Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:18:17.3697491Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:19:18.4446167Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:20:19.6225525Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:21:20.7608924Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:22:21.8716895Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:23:22.9859535Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:24:23.7681775Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:25:24.6717554Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:26:25.4636894Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:27:26.3406049Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:28:27.2179911Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:29:28.1190585Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:30:29.0388636Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:31:29.9002918Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:32:30.6638876Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:33:31.5136374Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:34:32.4432887Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:35:33.2145417Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:36:33.9762654Z Waiting for genuine code-check admission: The current CI attempt is waiting to be admitted by GitHub.",
+        "2026-11-02T23:37:16.2733401Z ##[error]The operation was canceled."
+      ]
+    }
+  ],
+  "observed_check_count": 38,
+  "latest_required_checks": [
+    {
+      "id": 125558250072,
+      "name": "Backlog",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41518484597/job/125558250072",
+      "check_suite_id": 112511000724,
+      "app_id": 15368,
+      "started_at": "2026-11-02T22:40:14Z",
+      "completed_at": "2026-11-02T22:40:47Z"
+    },
+    {
+      "id": 125558248618,
+      "name": "Pull request",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41527303408/job/125558248618",
+      "check_suite_id": 112534701079,
+      "app_id": 15368,
+      "started_at": "2026-11-02T22:39:07Z",
+      "completed_at": "2026-11-02T23:37:18Z"
+    },
+    {
+      "id": 125558250497,
+      "name": "Lint",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41518484597/job/125558250497",
+      "check_suite_id": 112511000724,
+      "app_id": 15368,
+      "started_at": "2026-11-02T22:44:26Z",
+      "completed_at": "2026-11-02T22:45:26Z"
+    },
+    {
+      "id": 125558250216,
+      "name": "Typecheck",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41518484597/job/125558250216",
+      "check_suite_id": 112511000724,
+      "app_id": 15368,
+      "started_at": "2026-11-02T22:41:34Z",
+      "completed_at": "2026-11-02T22:41:36Z"
+    },
+    {
+      "id": 125558251680,
+      "name": "Unit tests",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41518484597/job/125558251680",
+      "check_suite_id": 112511000724,
+      "app_id": 15368,
+      "started_at": "2026-11-02T22:45:22Z",
+      "completed_at": "2026-11-02T22:46:18Z"
+    },
+    {
+      "id": 125558252013,
+      "name": "Lib tests",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41518484597/job/125558252013",
+      "check_suite_id": 112511000724,
+      "app_id": 15368,
+      "started_at": "2026-11-02T22:45:29Z",
+      "completed_at": "2026-11-02T22:45:47Z"
+    },
+    {
+      "id": 125601564046,
+      "name": "Playwright smoke",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41518484597/job/125601564046",
+      "check_suite_id": 112511000724,
+      "app_id": 15368,
+      "started_at": "2026-11-02T23:37:36Z",
+      "completed_at": "2026-11-02T23:37:53Z"
+    }
+  ]
+}

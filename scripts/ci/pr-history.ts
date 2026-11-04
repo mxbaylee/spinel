@@ -215,8 +215,7 @@ function verifyPolicyCertificate(
   const marker = markers[0] as Record<string, unknown>;
   const validation = validations[0] as Record<string, unknown>;
   for (const step of [validation, marker]) {
-    if (step.status !== 'completed' || step.conclusion !== 'success' || !positive(step.number))
-      return bad();
+    if (step.status !== 'completed' || !positive(step.number)) return bad();
   }
   const issued = time(marker.completed_at);
   const validated = time(validation.completed_at);
@@ -276,6 +275,30 @@ function verifyPolicyCertificate(
     )
   )
     return bad();
+  if (validation.conclusion !== 'success' || marker.conclusion !== 'success') {
+    const completed = time(job.completed_at);
+    // A terminal failed issuance is not a certificate. Once its exact job and
+    // genuine check agree, continue reading independent adoption/event proof
+    // instead of letting this unsuccessful marker poison the entire history.
+    // It cannot fill a prefix gap, move a full-code barrier or replace an origin.
+    if (
+      kind === 'history' &&
+      ['skipped', 'failure', 'cancelled', 'timed_out'].includes(String(marker.conclusion)) &&
+      ['success', 'skipped', 'failure', 'cancelled', 'timed_out'].includes(
+        String(validation.conclusion),
+      ) &&
+      job.status === 'completed' &&
+      ['failure', 'cancelled', 'timed_out'].includes(String(job.conclusion)) &&
+      completed !== null &&
+      completed >= issued &&
+      object(check) &&
+      check.status === 'completed' &&
+      check.conclusion === job.conclusion &&
+      time(check.completed_at) === completed
+    )
+      return null;
+    return bad();
+  }
   return checkpoint;
 }
 
@@ -784,8 +807,7 @@ export async function authenticatedPolicyHistory(
         }
         if (historyMarker && !ownIssuance) {
           const checkpoint = verifyHistoryCheckpoint(run, job, check, proofExpected);
-          if (!checkpoint) throw new Error('History certificate has no supported proof.');
-          candidates.push(checkpoint);
+          if (checkpoint) candidates.push(checkpoint);
         }
       }
       if (!candidates.length) {
