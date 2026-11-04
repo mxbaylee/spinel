@@ -1,0 +1,310 @@
+{
+  "head": "066c5353b466f9371759aee52e47d169bc0d5e9a",
+  "tested": "4502630f58905baabbd62479c6c50fce40a6e544",
+  "runId": 41861310743,
+  "runAttempt": 1,
+  "environments": {
+    "development": {
+      "reportStats": {
+        "startTime": "2026-11-04T15:48:45.226Z",
+        "duration": 643999.589,
+        "expected": 75,
+        "skipped": 3,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "diagnostics": [
+        {
+          "title": "feedback survives a lost acknowledgment and paired user/system downloads preserve one complete snapshot",
+          "file": "diagnostics.spec.ts",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 7147,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "truncation clears feedback flags and an unconfirmed old report needs deliberate new submission",
+          "file": "diagnostics.spec.ts",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 4142,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "Operator downloads real correlated diagnostics without document data and clears only a freshly confirmed generation",
+          "file": "diagnostics.spec.ts",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 11097,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "diagnostics failures, cancelled downloads, pending clear navigation and expired Operator sessions stay honest",
+          "file": "diagnostics.spec.ts",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 9041,
+              "errors": []
+            }
+          ]
+        }
+      ],
+      "skipped": [
+        {
+          "title": "phone Doc typing keeps the rendered caret above the emulated keyboard",
+          "file": "doc-mobile.spec.ts",
+          "status": "skipped",
+          "results": [
+            {
+              "status": "skipped",
+              "retry": 0,
+              "duration": 0,
+              "errors": []
+            }
+          ],
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 505,
+                "column": 8
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves queued phone writing and the owner grant",
+          "file": "doc-mobile.spec.ts",
+          "status": "skipped",
+          "results": [
+            {
+              "status": "skipped",
+              "retry": 0,
+              "duration": 1,
+              "errors": []
+            }
+          ],
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves native phone composition and the owner grant",
+          "file": "doc-mobile.spec.ts",
+          "status": "skipped",
+          "results": [
+            {
+              "status": "skipped",
+              "retry": 0,
+              "duration": 0,
+              "errors": []
+            }
+          ],
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        }
+      ],
+      "pair": {
+        "initialPreparations": 1,
+        "pairedMembershipVerified": true,
+        "userRows": 2,
+        "systemRows": 3,
+        "snapshotId": "abe961cd-a60e-40ff-8469-11e7745d857f",
+        "generation": "e12c77dd-6860-4418-aa9f-1f2476a0032c",
+        "window": {
+          "start": 1793807641609,
+          "end": 1793807643209
+        },
+        "laterReportExcluded": true
+      }
+    },
+    "production": {
+      "reportStats": {
+        "startTime": "2026-11-04T15:48:23.902Z",
+        "duration": 649128.783,
+        "expected": 82,
+        "skipped": 3,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "diagnostics": [
+        {
+          "title": "feedback survives a lost acknowledgment and paired user/system downloads preserve one complete snapshot",
+          "file": "diagnostics.spec.ts",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 6448,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "truncation clears feedback flags and an unconfirmed old report needs deliberate new submission",
+          "file": "diagnostics.spec.ts",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 3781,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "Operator downloads real correlated diagnostics without document data and clears only a freshly confirmed generation",
+          "file": "diagnostics.spec.ts",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 10263,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "diagnostics failures, cancelled downloads, pending clear navigation and expired Operator sessions stay honest",
+          "file": "diagnostics.spec.ts",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 8366,
+              "errors": []
+            }
+          ]
+        }
+      ],
+      "skipped": [
+        {
+          "title": "phone Doc typing keeps the rendered caret above the emulated keyboard",
+          "file": "doc-mobile.spec.ts",
+          "status": "skipped",
+          "results": [
+            {
+              "status": "skipped",
+              "retry": 0,
+              "duration": 1,
+              "errors": []
+            }
+          ],
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 505,
+                "column": 8
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves queued phone writing and the owner grant",
+          "file": "doc-mobile.spec.ts",
+          "status": "skipped",
+          "results": [
+            {
+              "status": "skipped",
+              "retry": 0,
+              "duration": 1,
+              "errors": []
+            }
+          ],
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves native phone composition and the owner grant",
+          "file": "doc-mobile.spec.ts",
+          "status": "skipped",
+          "results": [
+            {
+              "status": "skipped",
+              "retry": 0,
+              "duration": 0,
+              "errors": []
+            }
+          ],
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        }
+      ],
+      "pair": {
+        "initialPreparations": 1,
+        "pairedMembershipVerified": true,
+        "userRows": 2,
+        "systemRows": 3,
+        "snapshotId": "849d89e4-b348-4e9d-8de5-239024f84b85",
+        "generation": "fd66a82c-5ee8-4c8e-a172-7d32b2016807",
+        "window": {
+          "start": 1793807602489,
+          "end": 1793807604136
+        },
+        "laterReportExcluded": true
+      }
+    }
+  }
+}
