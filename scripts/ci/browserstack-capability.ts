@@ -24,7 +24,6 @@ import {
 import {
   clientFor,
   cleanProviderText as clean,
-  providerBodyKeys,
   targetsFromInventory,
   webdriverErrorCode,
   type Target,
@@ -696,48 +695,15 @@ export function shortcutIntent(origin: string, browserPackage: string) {
   return { url: `${origin}/`, package: browserPackage };
 }
 /**
- * BrowserStack's `no-network` profile never reached Firefox: run 41783320538's
- * ordinary requests kept succeeding for the whole 15 s wait, while Chrome went
- * offline in 107 ms. Firefox uses BrowserStack's documented Android-only
- * `airplane-mode` profile on the same endpoint instead (owner, chat 2026-11-04).
+ * No BrowserStack profile reaches Firefox: `no-network` left its ordinary
+ * requests answering for 15 s (runs 41783320538, 41923855981) and
+ * `airplane-mode` answered HTTP 422 (run 41911483521). Owner, chat 2026-11-04:
+ * Firefox's cut is the test server refusing every connection instead, recorded
+ * as such; the device network stays up and is not claimed as cut. `null` means
+ * that server refusal.
  */
 export function offlineNetworkProfile(browser: Target['browser']) {
-  return browser === 'firefox' ? 'airplane-mode' : 'no-network';
-}
-/**
- * Firefox run 41911483521: BrowserStack answered `airplane-mode` with HTTP 422
- * on the Pixel 11 Pro XL. Owner, chat 2026-11-04: on exactly that answer,
- * record the status and the body's top-level key names (never values), then
- * apply `no-network` instead, and keep using it for the rest of the session;
- * the device-offline wait still decides whether it reached Firefox. Every
- * other failure keeps its own error. Returns the profile now in effect.
- */
-export async function applyOfflineProfile(
-  preferred: string,
-  rejected: { value: boolean },
-  put: (networkProfile: string) => Promise<unknown>,
-  record: (value: Row) => Promise<void>,
-) {
-  if (preferred === 'airplane-mode' && !rejected.value) {
-    try {
-      await put(preferred);
-      return preferred;
-    } catch (error) {
-      if (failure(error) !== 'http-422') throw error;
-      rejected.value = true;
-      await record({
-        networkProfile: preferred,
-        failure: 'http-422',
-        bodyKeys: providerBodyKeys(error) ?? 'unavailable',
-        fallback: 'no-network',
-      });
-    }
-  } else if (preferred !== 'airplane-mode') {
-    await put(preferred);
-    return preferred;
-  }
-  await put('no-network');
-  return 'no-network';
+  return browser === 'firefox' ? null : 'no-network';
 }
 /**
  * Run 41882414827: Chrome's `terminate_app` answered HTTP 500 `unknown error`
@@ -1186,7 +1152,12 @@ export function socketCloseDiagnostic(value: unknown) {
     errorEvent: answer.errorEvent === true,
   };
 }
-/** The offline account marker, the account's database and its two stores, bounded. */
+/**
+ * The offline account marker, the account's database and its two stores, and
+ * the origin's storage quota, usage and persistence, bounded. Chrome run
+ * 41922691566 had both before its close and neither after; the quota tells a
+ * different kind of storage from the same one emptied (owner, chat 2026-11-04).
+ */
 export const storageStateScript = `const [account]=arguments;const name='spinel-offline-'+account;
 let marker='unavailable';try{const value=localStorage.getItem('spinel.offline.account');marker=value===null?'absent':value===account?'matches':'other';}catch{}
 let listed=null;try{const list=await indexedDB.databases();listed={offlineDatabases:list.filter(entry=>typeof entry.name==='string'&&entry.name.startsWith('spinel-offline-')).length,accountDatabase:list.some(entry=>entry.name===name)};}catch{}
@@ -1194,13 +1165,17 @@ const open=await new Promise(resolve=>{let request;try{request=indexedDB.open(na
   request.onupgradeneeded=()=>{request.transaction.abort();resolve({outcome:'missing'});};
   request.onerror=()=>resolve({outcome:'unavailable'});
   request.onsuccess=()=>{const database=request.result;const stores=['items','images'].every(store=>database.objectStoreNames.contains(store));database.close();resolve({outcome:stores?'opened':'stores-missing'});};});
-return {marker,listed,open:open.outcome,path:location.pathname};`;
+let estimate=null;try{const value=await navigator.storage.estimate();estimate={quota:value.quota,usage:value.usage};}catch{}
+let persisted=null;try{persisted=await navigator.storage.persisted();}catch{}
+return {marker,listed,open:open.outcome,path:location.pathname,estimate,persisted};`;
 const storageOpenOutcomes = new Set(['opened', 'stores-missing', 'missing', 'unavailable']);
 /** Keeps known outcomes, small counts and a plain path only. */
 export function storageStateDiagnostic(value: unknown) {
   const answer = row(value);
   const listed =
     answer.listed && typeof answer.listed === 'object' ? (answer.listed as Row) : undefined;
+  const estimate =
+    answer.estimate && typeof answer.estimate === 'object' ? (answer.estimate as Row) : undefined;
   return {
     marker: ['absent', 'matches', 'other', 'unavailable'].includes(answer.marker as string)
       ? answer.marker
@@ -1218,7 +1193,16 @@ export function storageStateDiagnostic(value: unknown) {
       typeof answer.path === 'string' && /^\/[a-z-]{0,40}$/.test(answer.path)
         ? answer.path
         : 'other',
+    quotaMegabytes: megabytes(estimate?.quota, 1),
+    usageMegabytes: megabytes(estimate?.usage, 10),
+    persisted: typeof answer.persisted === 'boolean' ? answer.persisted : null,
   };
+}
+/** Bytes as megabytes, rounded to `1 / scale`; null unless a finite non-negative number. */
+function megabytes(bytes: unknown, scale: number) {
+  return typeof bytes === 'number' && Number.isFinite(bytes) && bytes >= 0
+    ? Math.round((bytes / 1_048_576) * scale) / scale
+    : null;
 }
 /**
  * Spinel ignores a failed worker registration (`web/installApp.ts` only warns),
@@ -1558,14 +1542,18 @@ export async function runCapability(
       return value;
     });
   const session = (suffix: string) => `session/${result.sessionId}/${suffix}`;
-  const airplaneModeRejected = { value: false };
-  const cutNetwork = () =>
-    applyOfflineProfile(
-      offlineNetworkProfile(target.browser),
-      airplaneModeRejected,
-      putNetwork,
-      (value) => record(`${result.stage}:network-profile-rejected`, value),
-    );
+  /** Set once the acceptance fixture exists: makes the test server refuse every connection. */
+  let serverRefusal: (() => Promise<void>) | undefined;
+  const cutNetwork = async () => {
+    const networkProfile = offlineNetworkProfile(target.browser);
+    if (networkProfile) {
+      await putNetwork(networkProfile);
+      return { networkProfile, serverRefusal: false };
+    }
+    requireCondition(serverRefusal, 'server-refusal-unavailable');
+    await serverRefusal();
+    return { networkProfile: null, serverRefusal: true };
+  };
   const putNetwork = (networkProfile: string) =>
     timedProviderCommand(
       'PUT automate/sessions/{sessionId}/update_network.json',
@@ -2404,9 +2392,8 @@ export async function runCapability(
       // applied again first, so a page that still comes up online shows the
       // intent itself lifting it (owner, chat 2026-11-04). The relaunch's own
       // offline checks still decide the outcome.
-      const offlineProfile = await cutNetwork();
       await record(`${prefix}offline-intent-network-control`, {
-        networkProfile: offlineProfile,
+        ...(await cutNetwork()),
         reappliedBeforeIntent: true,
       });
       await execute('mobile: deepLink', [shortcutIntent(fixture.origin, foregroundApp)]);
@@ -2462,6 +2449,7 @@ export async function runCapability(
     if (acceptanceScope) {
       requireAcceptanceFixture(fixture);
       acceptanceFixture = fixture;
+      serverRefusal = () => fixture.setOffline(true);
       acceptance = await import('./browserstack-acceptance.ts');
       requireCondition(
         acceptance.phoneAcceptanceLimits.operational === operationalMilliseconds &&
@@ -2713,13 +2701,11 @@ export async function runCapability(
           await acceptance.boundedPhoneFixtureOperation(acceptanceDriver, () =>
             acceptanceFixture!.setOffline(false),
           );
-        let networkProfile = '4g-lte-good';
-        if (offline) networkProfile = await cutNetwork();
-        else await putNetwork(networkProfile);
-        await record(`${result.stage}:network-control`, {
-          networkProfile,
-          androidAirplaneMode: networkProfile === 'airplane-mode',
-        });
+        if (!offline) await putNetwork('4g-lte-good');
+        await record(
+          `${result.stage}:network-control`,
+          offline ? await cutNetwork() : { networkProfile: '4g-lte-good', serverRefusal: false },
+        );
         if (ticket) {
           await awaitDeviceOffline(ticket);
           await socketProbe(ticket, false);
@@ -2756,11 +2742,7 @@ export async function runCapability(
     await socketProbe(await socketTicket(prepared[0]), true);
     const unusedOfflineTicket = await socketTicket(prepared[0]);
     stage('device-offline');
-    const offlineProfile = await cutNetwork();
-    await record('network-control', {
-      networkProfile: offlineProfile,
-      androidAirplaneMode: offlineProfile === 'airplane-mode',
-    });
+    await record('network-control', await cutNetwork());
     await awaitDeviceOffline(unusedOfflineTicket);
     await socketProbe(unusedOfflineTicket, false);
     await transportProbe(false);

@@ -858,7 +858,7 @@ test('without native touch, a phone double tap calibrates its aim once, then tap
       'DELETE actions',
     ],
   );
-  assert.deepEqual(records, [['native-tap-calibration', landed]]);
+  assert.deepEqual(records, [['native-tap-calibration', tapTraceDiagnostic(landed)]]);
   const sources = calls
     .filter(([name]) => name === 'POST actions')
     .map(([, body]) => (body as { actions: { actions: TraceRow[] }[] }).actions[0]!.actions);
@@ -887,7 +887,7 @@ test('without native touch, a phone double tap calibrates its aim once, then tap
   assert.ok(doubleTapPauseMilliseconds < 500, "inside Univer's double-click window");
   assert.deepEqual(
     calls[6]![1],
-    [{ x: 80, y: 40 }],
+    [{ x: 80, y: 40 }, 'canvas'],
     'the trace measures against the in-page point',
   );
   calls.length = 0;
@@ -1029,9 +1029,10 @@ test('the page tap trace keeps 24 bounded events and removes its listeners when 
   assert.equal(read.installed, true);
   assert.equal(read.events.length, 24);
   assert.deepEqual(read.events.slice(0, 2), [
-    { type: 'pointerdown', pointerType: 'touch', milliseconds: 12, dx: 1, dy: -2 },
-    { type: 'touchend', pointerType: null, milliseconds: 30, dx: -1, dy: 0 },
+    { type: 'pointerdown', pointerType: 'touch', milliseconds: 12, dx: 1, dy: -2, target: null },
+    { type: 'touchend', pointerType: null, milliseconds: 30, dx: -1, dy: 0, target: null },
   ]);
+  assert.deepEqual([(read as TraceRow).viewport, (read as TraceRow).canvas], [null, null]);
   assert.equal(JSON.stringify(read).includes('secret'), false);
   assert.deepEqual(removed.sort(), [...listeners.keys()].sort());
   assert.equal('__spinelTapTrace' in window, false);
@@ -1043,9 +1044,50 @@ test('the page tap trace keeps 24 bounded events and removes its listeners when 
     }),
     {
       installed: true,
-      events: [{ type: 'other', pointerType: null, milliseconds: null, dx: 2, dy: null }],
+      events: [
+        { type: 'other', pointerType: null, milliseconds: null, dx: 2, dy: null, target: null },
+      ],
+      viewport: null,
+      canvas: null,
     },
   );
+});
+
+test('given the canvas selector, the tap trace names each target and reads the viewport and box', () => {
+  const listeners = new Map<string, (event: unknown) => void>();
+  const canvas = { getBoundingClientRect: () => ({ x: 0.4, y: 251.6, width: 440, height: 600 }) };
+  const sibling = {};
+  Object.assign(canvas, { parentElement: { contains: (node: unknown) => node === sibling } });
+  const window: Record<string, unknown> = {
+    addEventListener: (type: string, listener: (event: unknown) => void) =>
+      listeners.set(type, listener),
+    removeEventListener: () => {},
+    visualViewport: { scale: 1.23456, offsetLeft: 0, offsetTop: 12.5 },
+  };
+  const document = { querySelector: (selector: string) => (selector === 'canvas' ? canvas : null) };
+  const context = createContext({ window, document, performance: { now: () => 1000 } });
+  const run = (script: string, args: unknown[] = []) =>
+    JSON.parse(
+      JSON.stringify(
+        runInContext(`(function(){${script}}).apply(null, args)`, Object.assign(context, { args })),
+      ),
+    );
+  run(tapTraceInstallScript, [{ x: 80, y: 40 }, 'canvas']);
+  for (const target of [canvas, sibling, {}])
+    listeners.get('pointerdown')!({
+      type: 'pointerdown',
+      timeStamp: 1001,
+      clientX: 80,
+      clientY: 40,
+      target,
+    });
+  const diagnostic = tapTraceDiagnostic(run(tapTraceReadScript));
+  assert.deepEqual(
+    diagnostic.events.map((event) => event.target),
+    ['grid', 'region', 'other'],
+  );
+  assert.deepEqual(diagnostic.viewport, { scale: 1.23, offsetLeft: 0, offsetTop: 12.5 });
+  assert.deepEqual(diagnostic.canvas, { x: 0, y: 252, width: 440, height: 600 });
 });
 
 test('an editor that never opens records the tap trace and keeps its own failure', async () => {
@@ -1084,7 +1126,7 @@ test('an editor that never opens records the tap trace and keeps its own failure
     (error) => error === failure,
   );
   assert.deepEqual(records, [
-    ['native-sheet-tap-trace', { installed: true, events: [] }],
+    ['native-sheet-tap-trace', { installed: true, events: [], viewport: null, canvas: null }],
     ['native-doc-tap-trace', 'unavailable'],
   ]);
 });

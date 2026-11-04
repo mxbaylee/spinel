@@ -10,7 +10,6 @@ import {
   blankPageDiagnostic,
   browserPageOpened,
   offlineNetworkProfile,
-  applyOfflineProfile,
   socketCloseDiagnostic,
   socketProbeScript,
   storageStateDiagnostic,
@@ -69,7 +68,7 @@ import {
   type CapabilityResult,
   type RunIdentity,
 } from './browserstack-capability.ts';
-import { clientFor, providerBodyKeys } from './browserstack.ts';
+import { clientFor } from './browserstack.ts';
 import { createNativeTap, installConfirmationLabels } from './browserstack-native-controls.ts';
 import { chromeReadinessFailureScript } from './browserstack-chrome-readiness.ts';
 import { capabilityScopeDefinition, type CapabilityScope } from './browserstack-scope.ts';
@@ -3959,20 +3958,25 @@ test('a blank page keeps only its scheme, error code and failed path', () => {
     assert.equal(blankPageDiagnostic({ ...page, text: '' }, origin).browserPageHost, null);
 });
 
-test('Firefox cuts the network with airplane mode; Chrome and Safari keep no-network', () => {
+test('Firefox is cut by the test server refusing connections; Chrome and Safari keep no-network', () => {
   assert.deepEqual((['chrome', 'firefox', 'safari'] as const).map(offlineNetworkProfile), [
     'no-network',
-    'airplane-mode',
+    null,
     'no-network',
   ]);
   const source = readFileSync(new URL('./browserstack-capability.ts', import.meta.url), 'utf8');
-  // Neither offline cut hard-codes a profile any more.
+  // Neither offline cut hard-codes a profile, and no airplane-mode request is left.
   assert.doesNotMatch(source, /networkProfile: 'no-network'/);
-  // Every offline cut goes through the one fallback-aware helper.
-  assert.match(source, /offlineNetworkProfile\(target\.browser\),\n\s+airplaneModeRejected,/);
+  assert.doesNotMatch(source, /'airplane-mode'/);
+  const cut = source.slice(
+    source.indexOf('const cutNetwork = async () => {'),
+    source.indexOf('const putNetwork = (networkProfile: string) =>'),
+  );
+  assert.match(cut, /return \{ networkProfile, serverRefusal: false \};/);
+  assert.match(cut, /requireCondition\(serverRefusal, 'server-refusal-unavailable'\);/);
+  assert.match(cut, /return \{ networkProfile: null, serverRefusal: true \};/);
+  assert.match(source, /serverRefusal = \(\) => fixture\.setOffline\(true\);/);
   assert.equal(source.match(/await cutNetwork\(\)/g)?.length, 3);
-  assert.match(source, /if \(offline\) networkProfile = await cutNetwork\(\);/);
-  assert.equal(source.match(/androidAirplaneMode: \w+ === 'airplane-mode'/g)?.length, 2);
 });
 
 test('only a Chrome icon that opened a browser page falls back to the shortcut intent, once', () => {
@@ -4156,12 +4160,12 @@ test('the Chrome shortcut intent is sent only after the offline cut is applied a
     source.indexOf('async function attachRelaunched('),
     source.indexOf('async function reloadTab('),
   );
-  const cut = body.indexOf('const offlineProfile = await cutNetwork();');
+  const cut = body.indexOf('...(await cutNetwork()),');
   assert.ok(cut > 0 && cut < body.indexOf('mobile: deepLink'));
   assert.match(body, /offline-intent-network-control/);
   // Every network change goes through the one timed helper; cleanup keeps its own bounded call.
   assert.equal(source.match(/update_network\.json/g)?.length, 3);
-  assert.equal(source.match(/await putNetwork\(/g)?.length, 1);
+  assert.equal(source.match(/await putNetwork\(/g)?.length, 2);
   assert.equal(source.match(/await cutNetwork\(\)/g)?.length, 3);
 });
 
@@ -4212,7 +4216,12 @@ test('a refused socket keeps only its close code and two booleans', async () => 
 });
 
 test('a failed stored read records the offline account, database and window count, then fails as itself', async () => {
-  function storage(marker: string | null, databases: string[], stores: string[] | null) {
+  function storage(
+    marker: string | null,
+    databases: string[],
+    stores: string[] | null,
+    navigator?: object,
+  ) {
     const indexedDB = {
       databases: async () => databases.map((name) => ({ name })),
       open: () => {
@@ -4237,6 +4246,7 @@ test('a failed stored read records the offline account, database and window coun
       localStorage: { getItem: () => marker },
       location: { pathname: '/sign-in' },
       queueMicrotask,
+      ...(navigator ? { navigator } : {}),
     });
   }
   const read = async (context: object) =>
@@ -4247,20 +4257,34 @@ test('a failed stored read records the offline account, database and window coun
         ),
       ),
     );
+  const unknownStorage = { quotaMegabytes: null, usageMegabytes: null, persisted: null };
   assert.deepEqual(await read(storage(null, ['other'], null)), {
     marker: 'absent',
     offlineDatabases: 0,
     accountDatabase: false,
     open: 'missing',
     path: '/sign-in',
+    ...unknownStorage,
   });
-  assert.deepEqual(await read(storage('a1', ['spinel-offline-a1'], ['items', 'images'])), {
-    marker: 'matches',
-    offlineDatabases: 1,
-    accountDatabase: true,
-    open: 'opened',
-    path: '/sign-in',
-  });
+  const navigator = {
+    storage: {
+      estimate: async () => ({ quota: 128 * 1_048_576 + 1, usage: 1_572_864 }),
+      persisted: async () => false,
+    },
+  };
+  assert.deepEqual(
+    await read(storage('a1', ['spinel-offline-a1'], ['items', 'images'], navigator)),
+    {
+      marker: 'matches',
+      offlineDatabases: 1,
+      accountDatabase: true,
+      open: 'opened',
+      path: '/sign-in',
+      quotaMegabytes: 128,
+      usageMegabytes: 1.5,
+      persisted: false,
+    },
+  );
   assert.equal(
     (await read(storage('b2', ['spinel-offline-a1'], ['items']))).open,
     'stores-missing',
@@ -4271,6 +4295,8 @@ test('a failed stored read records the offline account, database and window coun
       listed: { offlineDatabases: -1 },
       open: 'y',
       path: '/?item=1',
+      estimate: { quota: -1, usage: 'many' },
+      persisted: 'yes',
     }),
     {
       marker: 'other',
@@ -4278,6 +4304,7 @@ test('a failed stored read records the offline account, database and window coun
       accountDatabase: null,
       open: 'other',
       path: 'other',
+      ...unknownStorage,
     },
   );
   const source = readFileSync(new URL('./browserstack-capability.ts', import.meta.url), 'utf8');
@@ -4292,82 +4319,6 @@ test('a failed stored read records the offline account, database and window coun
   assert.ok(
     body.indexOf('result.command = failedCommand;') > body.indexOf("session('window/handles')"),
   );
-});
-
-test('a 422 for airplane-mode records its body keys, then no-network for the rest of the session', async () => {
-  const puts: string[] = [];
-  const records: unknown[] = [];
-  const rejected = { value: false };
-  const refusal = Object.assign(new Error('http-422'), { providerBodyKeys: ['error', 'message'] });
-  const put = async (profile: string) => {
-    puts.push(profile);
-    if (profile === 'airplane-mode') throw refusal;
-  };
-  const record = async (value: unknown) => {
-    records.push(value);
-  };
-  assert.equal(await applyOfflineProfile('airplane-mode', rejected, put, record), 'no-network');
-  assert.equal(await applyOfflineProfile('airplane-mode', rejected, put, record), 'no-network');
-  assert.deepEqual(puts, ['airplane-mode', 'no-network', 'no-network']);
-  assert.deepEqual(records, [
-    {
-      networkProfile: 'airplane-mode',
-      failure: 'http-422',
-      bodyKeys: ['error', 'message'],
-      fallback: 'no-network',
-    },
-  ]);
-  // Chrome and Safari never try airplane mode; any other failure keeps its own error.
-  const chrome: string[] = [];
-  assert.equal(
-    await applyOfflineProfile(
-      'no-network',
-      { value: false },
-      async (p) => void chrome.push(p),
-      record,
-    ),
-    'no-network',
-  );
-  assert.deepEqual(chrome, ['no-network']);
-  await assert.rejects(
-    applyOfflineProfile(
-      'airplane-mode',
-      { value: false },
-      async () => {
-        throw new Error('http-500');
-      },
-      record,
-    ),
-    /http-500/,
-  );
-  assert.equal(records.length, 1);
-});
-
-test('a failed REST API answer keeps only its short top-level key names', async () => {
-  const answer = (body: string) =>
-    clientFor('user', 'key', async () => new Response(body, { status: 422 })).api('x', 'PUT', {});
-  const keys = async (body: string) => {
-    try {
-      await answer(body);
-    } catch (error) {
-      assert.equal((error as Error).message, 'http-422');
-      return providerBodyKeys(error);
-    }
-    assert.fail('expected a rejection');
-  };
-  assert.deepEqual(await keys('{"message":"private text","error":"also private"}'), [
-    'error',
-    'message',
-  ]);
-  for (const body of [
-    'not json',
-    '[1]',
-    '{"Bad Key":1}',
-    JSON.stringify(
-      Object.fromEntries(Array.from({ length: 9 }, (_, index) => [`k${'a'.repeat(index)}`, 1])),
-    ),
-  ])
-    assert.equal(await keys(body), undefined);
 });
 
 test('Safari alone taps natively, and the first close is preceded by a storage snapshot', () => {

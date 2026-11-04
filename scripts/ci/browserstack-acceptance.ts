@@ -344,26 +344,38 @@ async function hit(driver: PhoneAcceptanceDriver, selector: string, point: Point
 
 /**
  * Records, in the page, the input events a double tap produced: type, pointer
- * type, milliseconds since installation and offset from the tap point. At most
- * 24 events; no text, target content or URL. A later install replaces it.
+ * type, milliseconds since installation, offset from the tap point and, given
+ * the canvas selector, whether the event's target was that canvas (`grid`),
+ * something else beside it (`region`) or neither (`other`). At most 24 events;
+ * no text, target content or URL. A later install replaces it.
  */
 export const tapTraceInstallScript = `
-  const [point]=arguments;const key='__spinelTapTrace';window[key]?.stop();
+  const [point,selector]=arguments;const key='__spinelTapTrace';window[key]?.stop();
   const origin=performance.now();const events=[];
   const types=['pointerdown','pointerup','pointercancel','touchstart','touchend','touchcancel','click','dblclick'];
+  const where=(target)=>{if(typeof selector!=='string')return null;const node=document.querySelector(selector);
+    if(!node)return 'other';if(target===node)return 'grid';return node.parentElement?.contains(target)?'region':'other';};
   const keep=(event)=>{if(events.length>=24)return;const touch=event.changedTouches?.[0];
     const x=touch?touch.clientX:event.clientX;const y=touch?touch.clientY:event.clientY;
     events.push({type:event.type,pointerType:typeof event.pointerType==='string'?event.pointerType.slice(0,8):null,
       milliseconds:Math.round(event.timeStamp-origin),
-      dx:Number.isFinite(x)?Math.round(x-point.x):null,dy:Number.isFinite(y)?Math.round(y-point.y):null});};
+      dx:Number.isFinite(x)?Math.round(x-point.x):null,dy:Number.isFinite(y)?Math.round(y-point.y):null,
+      target:where(event.target)});};
   for(const type of types)window.addEventListener(type,keep,{capture:true,passive:true});
-  window[key]={events,stop:()=>{for(const type of types)window.removeEventListener(type,keep,{capture:true});delete window[key];}};
+  window[key]={events,selector,stop:()=>{for(const type of types)window.removeEventListener(type,keep,{capture:true});delete window[key];}};
   return true;
 `;
-/** Returns the trace; `true` as the first argument keeps it recording. */
+/**
+ * Returns the trace, the visual viewport and the canvas box; `true` as the
+ * first argument keeps it recording.
+ */
 export const tapTraceReadScript = `
   const trace=window.__spinelTapTrace;if(!trace)return {installed:false,events:[]};
-  const events=trace.events.slice(0,24);if(arguments[0]!==true)trace.stop();return {installed:true,events};
+  const events=trace.events.slice(0,24);const view=window.visualViewport;
+  const node=typeof trace.selector==='string'?document.querySelector(trace.selector):null;const box=node?.getBoundingClientRect();
+  const viewport=view?{scale:view.scale,offsetLeft:view.offsetLeft,offsetTop:view.offsetTop}:null;
+  const canvas=box?{x:box.x,y:box.y,width:box.width,height:box.height}:null;
+  if(arguments[0]!==true)trace.stop();return {installed:true,events,viewport,canvas};
 `;
 
 /** Keeps only the bounded fields the install script records. */
@@ -371,6 +383,15 @@ export function tapTraceDiagnostic(value: unknown) {
   const observed = value !== null && typeof value === 'object' ? (value as Row) : {};
   const integer = (field: unknown) =>
     typeof field === 'number' && Number.isSafeInteger(field) ? field : null;
+  const measure = (field: unknown, keys: string[], scale: number) => {
+    if (field === null || typeof field !== 'object') return null;
+    const entry = field as Row;
+    if (!keys.every((key) => typeof entry[key] === 'number' && Number.isFinite(entry[key])))
+      return null;
+    return Object.fromEntries(
+      keys.map((key) => [key, Math.round((entry[key] as number) * scale) / scale]),
+    );
+  };
   const events = Array.isArray(observed.events) ? observed.events.slice(0, 24) : [];
   return {
     installed: observed.installed === true,
@@ -386,8 +407,13 @@ export function tapTraceDiagnostic(value: unknown) {
         milliseconds: integer(entry.milliseconds),
         dx: integer(entry.dx),
         dy: integer(entry.dy),
+        target: ['grid', 'region', 'other'].includes(entry.target as string)
+          ? (entry.target as string)
+          : null,
       };
     }),
+    viewport: measure(observed.viewport, ['scale', 'offsetLeft', 'offsetTop'], 100),
+    canvas: measure(observed.canvas, ['x', 'y', 'width', 'height'], 1),
   };
 }
 
@@ -446,10 +472,10 @@ async function press(driver: PhoneAcceptanceDriver, point: Point, taps: 1 | 2) {
  * selects; the double tap starts at least 600 ms later, past Univer's 500 ms
  * double-click window, so the two never combine.
  */
-async function calibrate(driver: PhoneAcceptanceDriver, point: Point) {
+async function calibrate(driver: PhoneAcceptanceDriver, point: Point, selector: string) {
   const known = calibrations.get(driver);
   if (known) return known;
-  await driver.execute(tapTraceInstallScript, [point]);
+  await driver.execute(tapTraceInstallScript, [point, selector]);
   const tapped = Date.now();
   await press(driver, point, 1);
   await until(
@@ -487,10 +513,10 @@ async function calibrate(driver: PhoneAcceptanceDriver, point: Point) {
 async function doubleTap(driver: PhoneAcceptanceDriver, selector: string, point: Point) {
   const actual = { x: Math.round(point.x), y: Math.round(point.y) };
   await hit(driver, selector, actual);
-  const offset = await calibrate(driver, actual);
+  const offset = await calibrate(driver, actual, selector);
   const aimed = { x: actual.x - offset.x, y: actual.y - offset.y };
   requireCondition(aimed.x >= 0 && aimed.y >= 0, 'native-tap-calibration-offset');
-  await driver.execute(tapTraceInstallScript, [actual]);
+  await driver.execute(tapTraceInstallScript, [actual, selector]);
   await press(driver, aimed, 2);
   return actual;
 }
@@ -682,7 +708,9 @@ async function author(
     text,
     point,
     caret: caret ?? null,
-    transport: 'W3C touch and key actions; native mobile editor',
+    transport: driver.nativeTouch
+      ? 'XCUITest native taps and W3C key actions; native mobile editor'
+      : 'W3C touch and key actions; native mobile editor',
     softwareKeyboardTyping: 'not-claimed',
   });
   return caret;
