@@ -1,0 +1,20 @@
+{
+  "zipCRC": "Both evidence packages passed unzip -tqq",
+  "memberPolicy": "No SQLite DB/WAL/SHM or last-run marker; all original evidence/trace/source/progress files retained",
+  "packages": [
+    {
+      "preset": "desktop",
+      "file": "desktop-evidence.zip",
+      "bytes": 94359873,
+      "sha256": "b225d51d19e893e90da721245739b6e97ca823ce3d29ff7ae505953f331d70e3",
+      "members": 77
+    },
+    {
+      "preset": "mobile",
+      "file": "mobile-evidence.zip",
+      "bytes": 87185534,
+      "sha256": "c0001ba0eeafd8382b29956ab0106867d0330a7a2df94ec18ffffbf8fa53a4c1",
+      "members": 77
+    }
+  ]
+}

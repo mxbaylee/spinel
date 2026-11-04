@@ -1,0 +1,45 @@
+{
+  "source": "97b0db550385b51cdbc8f0543aaa21524c1e05dc",
+  "base": "5d8676ec280ac6d5cc9dcedb7e9cc09527b24806",
+  "tested": "7d82b64590a3efe8b537d878e612bac3700a743e",
+  "tree": "dfeb3d10b8367f2edf331a0bfc76bc8a2ac70a9b",
+  "reviews": [
+    {
+      "reviewer": "/root/spn120_review_a",
+      "score": 98,
+      "rubric": [
+        35,
+        25,
+        18,
+        10,
+        10
+      ],
+      "blockers": [],
+      "prePush": true
+    },
+    {
+      "reviewer": "/root/spn120_review_b",
+      "score": 97,
+      "rubric": [
+        34,
+        25,
+        18,
+        10,
+        10
+      ],
+      "blockers": [],
+      "prePush": true
+    }
+  ],
+  "limits": [
+    "Agent review only",
+    "Exact interrupted historical collection operation unknown",
+    "Hosted full types and all selected acceptance pending"
+  ],
+  "runs": {
+    "ci": 41891902390,
+    "storybook": 41891902285,
+    "oldHeadMetadata": 41891848554
+  },
+  "metadataDisposition": "Description refreshed on old f432 head before synchronization. New metadata run only became visible after synchronization; cancellation requested immediately then verified separately. Not acceptance."
+}
