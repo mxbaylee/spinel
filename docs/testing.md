@@ -147,8 +147,8 @@ latency checks remain automatic for application changes; historical comparisons
 follow their dependency inputs or additive labels. Weekly/manual full coverage
 is the backstop, not a substitute for applicable PR coverage. Keep the seven
 stable required check names and isolated edit concurrency. PR edits currently
-run full validation; cheap metadata validation requires SPN-129's protected-merge
-proof before it can return. Broad soak, retained
+run full validation. 🪶 [SPN-129's proposed metadata optimization was retired](implementation/SPN-129.md#retire-the-metadata-validation-system);
+there is no pending router setup or exception to these gates. Broad soak, retained
 transition, container, BrowserStack and live-provider scopes are not permission
 to narrow additional coverage without equivalent evidence.
 
