@@ -1,0 +1,12 @@
+deleting: baseline-callback-source/test-results/doc-callback-lifetimes/app.sqlite
+deleting: baseline-callback-source/test-results/doc-callback-lifetimes/app.sqlite-shm
+deleting: baseline-callback-source/test-results/doc-callback-lifetimes/app.sqlite-wal
+deleting: baseline-callback-source/test-results/doc-callback-lifetimes/diagnostics.sqlite
+deleting: baseline-callback-source/test-results/doc-callback-lifetimes/diagnostics.sqlite-wal
+deleting: baseline-callback-source/test-results/doc-callback-lifetimes/diagnostics.sqlite-shm
+deleting: test-results/doc-callback-lifetimes/app.sqlite
+deleting: test-results/doc-callback-lifetimes/app.sqlite-shm
+deleting: test-results/doc-callback-lifetimes/app.sqlite-wal
+deleting: test-results/doc-callback-lifetimes/diagnostics.sqlite
+deleting: test-results/doc-callback-lifetimes/diagnostics.sqlite-shm
+deleting: test-results/doc-callback-lifetimes/diagnostics.sqlite-wal

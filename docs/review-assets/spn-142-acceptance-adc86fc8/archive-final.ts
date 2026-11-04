@@ -1,0 +1,16 @@
+import {execFileSync} from 'node:child_process';
+import {readFileSync,writeFileSync,readdirSync,existsSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+import assert from 'node:assert/strict';
+const root='/tmp/spn142-guard-hosted',prefix='docs/review-assets/spn-142-acceptance-adc86fc8';
+const run=JSON.parse(readFileSync(root+'/ci-run-final.json','utf8'));assert.equal(run.conclusion,'success');assert.equal(run.head_sha,'adc86fc835e93f1960b1b1133864fb43b0aa69e7');assert.equal(run.run_attempt,1);
+const jobs=JSON.parse(readFileSync(root+'/ci-jobs-final.json','utf8')).flatMap((p:any)=>p.jobs);assert.equal(jobs.length,33);assert.ok(jobs.every((j:any)=>j.conclusion==='success'));
+const story=JSON.parse(readFileSync(root+'/storybook-run.json','utf8'));assert.equal(story.conclusion,'success');assert.equal(story.head_sha,run.head_sha);assert.equal(story.run_attempt,1);
+const canceled=JSON.parse(readFileSync(root+'/receipt-cancel-run.json','utf8'));assert.equal(canceled.status,'completed');assert.equal(canceled.conclusion,'cancelled');
+for(const n of ['desktop-acceptance-a.md','mobile-acceptance-b.md','callback-desktop-acceptance-a.md','callback-mobile-acceptance-b.md','final-readiness-a.md','final-readiness-b.md','README.md','mobile.zip'])assert.ok(existsSync(root+'/'+n),n);
+const required=['Pull request','Backlog','Lint','Typecheck','Unit tests','Lib tests','Playwright smoke'];writeFileSync(root+'/required-gates.json',JSON.stringify(jobs.filter((j:any)=>required.includes(j.name)).map((j:any)=>({id:j.id,name:j.name,conclusion:j.conclusion,html_url:j.html_url})),null,2)+'\n');assert.equal(jobs.filter((j:any)=>required.includes(j.name)).length,7);
+const omitted=new Set(['callback-desktop.zip','callback-mobile.zip','ci-watch.log','archive-commit.txt','SHA256SUMS','final-body.md']);
+const files=readdirSync(root,{recursive:true,withFileTypes:true}).filter(e=>e.isFile()).map(e=>`${e.parentPath}/${e.name}`.slice(root.length+1)).filter(n=>!omitted.has(n)).sort();assert.ok(!files.some(n=>n.includes('.sqlite')));
+writeFileSync(root+'/SHA256SUMS',files.map(n=>`${createHash('sha256').update(readFileSync(root+'/'+n)).digest('hex')}  ${n}`).join('\n')+'\n');
+const env={...process.env,GIT_INDEX_FILE:'/tmp/spn142-guard-final.index'};const git=(...a:string[])=>execFileSync('git',a,{env,encoding:'utf8'}).trim();git('read-tree','--empty');for(const n of [...files,'SHA256SUMS'])git('update-index','--add','--cacheinfo','100644',git('hash-object','-w',root+'/'+n),prefix+'/'+n);
+const commit=git('commit-tree',git('write-tree'),'-m','Preserve complete first-attempt SPN-142 acceptance for adc86fc8');writeFileSync(root+'/archive-commit.txt',commit+'\n');console.log(commit);

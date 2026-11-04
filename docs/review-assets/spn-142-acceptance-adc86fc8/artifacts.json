@@ -1,0 +1,20 @@
+{
+  "desktop": {
+    "id": 13370534367,
+    "originalZipSha256": "2a43cd4433dfd8eae7073cc225db5fef8b7783e6e5ad3eb98343a8b38ddc7d2d"
+  },
+  "callbackDesktop": {
+    "id": 13371706976,
+    "originalZipSha256": "5c66412be921e16bcd23f94c8ea253c9afcf72efc8be4a517571e1501a832a1c",
+    "filteredZipSha256": "9e910d6ef39f16879554a65ab371e7d781d920275940b938ecdd2e27f1fa9af0"
+  },
+  "callbackMobile": {
+    "id": 13371796617,
+    "originalZipSha256": "809c9ff8d50ca44ba6e176ad95e44838b4718ecb06d19e158f6d7885b4134bdb",
+    "filteredZipSha256": "ec52181004b6e9e1a1fd74e4f3b4b0a5291769fdacd201f90eb8ce8cbccce520"
+  },
+  "mobile": {
+    "id": 13371558876,
+    "originalZipSha256": "f08f0fcc167526209b5e7cc9f2c9744449dc6776293f9efbf2e82238cd881fcd"
+  }
+}

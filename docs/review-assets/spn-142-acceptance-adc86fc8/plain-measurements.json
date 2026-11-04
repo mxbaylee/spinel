@@ -1,0 +1,74 @@
+[
+  {
+    "preset": "desktop",
+    "sample": "plain-1",
+    "attempt": 0,
+    "completed": true,
+    "inputP95": 27,
+    "longTaskMaximum": 0,
+    "capacityP95": 5.099999999976717,
+    "capacityMaximum": 6.5,
+    "idleMaximum": 0.3999999999650754,
+    "localDrain": 308.5
+  },
+  {
+    "preset": "desktop",
+    "sample": "plain-2",
+    "attempt": 0,
+    "completed": true,
+    "inputP95": 28.20000000001164,
+    "longTaskMaximum": 0,
+    "capacityP95": 4.400000000023283,
+    "capacityMaximum": 6.199999999953434,
+    "idleMaximum": 2.6000000000349246,
+    "localDrain": 328.8999999999651
+  },
+  {
+    "preset": "desktop",
+    "sample": "plain-3",
+    "attempt": 0,
+    "completed": true,
+    "inputP95": 27.900000000023283,
+    "longTaskMaximum": 55,
+    "capacityP95": 5.099999999976717,
+    "capacityMaximum": 7,
+    "idleMaximum": 0.6000000000931323,
+    "localDrain": 301.30000000004657
+  },
+  {
+    "preset": "mobile",
+    "sample": "plain-1",
+    "attempt": 0,
+    "completed": true,
+    "inputP95": 79.39999999990687,
+    "longTaskMaximum": 163,
+    "capacityP95": 19.800000000046566,
+    "capacityMaximum": 27.800000000046566,
+    "idleMaximum": 2.3999999999068677,
+    "localDrain": 380.5
+  },
+  {
+    "preset": "mobile",
+    "sample": "plain-2",
+    "attempt": 0,
+    "completed": true,
+    "inputP95": 79.29999999981374,
+    "longTaskMaximum": 205,
+    "capacityP95": 17.800000000046566,
+    "capacityMaximum": 27.100000000093132,
+    "idleMaximum": 2.199999999953434,
+    "localDrain": 412.80000000004657
+  },
+  {
+    "preset": "mobile",
+    "sample": "plain-3",
+    "attempt": 0,
+    "completed": true,
+    "inputP95": 87.69999999995343,
+    "longTaskMaximum": 136,
+    "capacityP95": 26.399999999906868,
+    "capacityMaximum": 46.89999999990687,
+    "idleMaximum": 2.199999999953434,
+    "localDrain": 408.20000000018626
+  }
+]
