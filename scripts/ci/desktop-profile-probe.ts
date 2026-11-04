@@ -2,6 +2,9 @@ import assert from 'node:assert/strict';
 import {
   identifySafari as readSafariIdentity,
   requestSafari,
+  waitForSafariValue as until,
+  observeSafariTitle,
+  readSafariBaseline,
   type SafariTarget,
 } from './desktop-safari-identity.ts';
 import { execFile } from 'node:child_process';
@@ -68,21 +71,6 @@ function safariRequest(
 
 async function evaluate(source: string) {
   return safariRequest('evaluate', source);
-}
-
-async function until(check: () => Promise<string>, predicate: (value: string) => boolean) {
-  const deadline = Date.now() + 30_000;
-  let latest = '';
-  while (Date.now() < deadline) {
-    try {
-      latest = await check();
-      if (predicate(latest)) return latest;
-    } catch (error) {
-      latest = String(error);
-    }
-    await new Promise((resolve) => setTimeout(resolve, 250));
-  }
-  throw new Error(`Timed out: ${latest.slice(0, 1000)}`);
 }
 
 async function safariPid() {
@@ -187,24 +175,16 @@ async function allowHostedSafariAutomation() {
     titleRequests.push(entry);
     // Keep one initial request alive while cold System Events initializes. The
     // original 90-second total deadline still bounds every request and UI check.
-    const promise = safariRequest('title', '', timeout, (stderr) => {
-      entry.phases = stderr
-        .split('\n')
-        .filter((line) => line.startsWith('Safari request phase: '))
-        .map((line) => line.slice('Safari request phase: '.length));
-    })
-      .then(
-        (value) => {
-          entry.value = value;
-        },
-        (error) => {
-          entry.error = describe(error);
-        },
-      )
-      .finally(() => {
-        entry.finishedAt = new Date().toISOString();
-      });
-    return { entry, promise };
+    const observation = observeSafariTitle(
+      safariRequest('title', '', timeout, (stderr) => {
+        entry.phases = stderr
+          .split('\n')
+          .filter((line) => line.startsWith('Safari request phase: '))
+          .map((line) => line.slice('Safari request phase: '.length));
+      }),
+      entry,
+    );
+    return { entry, ...observation };
   }
   async function inspect(mode: 'inspect' | 'approve') {
     const entry: Record<string, unknown> = { mode, startedAt: new Date().toISOString() };
@@ -230,7 +210,7 @@ async function allowHostedSafariAutomation() {
   try {
     while (Date.now() < deadline) {
       // A successful title proves consent is already available, with no extra UI action.
-      if (request.entry.value === 'Spinel desktop profile probe') {
+      if (request.value() === 'Spinel desktop profile probe') {
         report.automationReadyTitleRequest = request.entry.attempt;
         return;
       }
@@ -264,6 +244,7 @@ async function allowHostedSafariAutomation() {
       }
       await new Promise((resolve) => setTimeout(resolve, budget(250)));
     }
+    request.value(); // Retain a completed request failure instead of a generic deadline error.
     throw new Error(
       'Safari automation consent did not become usable within 90 seconds; all native observations are retained in automationPromptChecks and automationTitleRequests.',
     );
@@ -279,13 +260,10 @@ async function capturePaintBaseline(stage: 'online' | 'offline', pid: unknown) {
   const baseline: Record<string, unknown> = { time: new Date().toISOString(), pid };
   const baselines = (report.paintBaselines ??= {}) as Record<string, unknown>;
   baselines[stage] = baseline;
+  assert.equal(target?.pid, Number(pid));
+  const state = await readSafariBaseline(() => safariRequest('baseline', '', 5000), baseline);
+  const { x, y, width, height } = state.bounds;
   try {
-    assert.equal(target?.pid, Number(pid));
-    const state = JSON.parse(await safariRequest('baseline', '', 5000));
-    baseline.state = state;
-    assert.equal(state.title, 'Spinel desktop profile probe');
-    const { x, y, width, height } = state.bounds;
-    assert.ok([x, y, width, height].every(Number.isFinite) && width > 0 && height > 0);
     const path = resolve(output, `safari-profile-probe-${stage}.png`);
     await command('/usr/sbin/screencapture', ['-x', `-R${x},${y},${width},${height}`, path], 5000);
     baseline.screenshot = path;
@@ -306,7 +284,7 @@ async function capturePaintBaseline(stage: 'online' | 'offline', pid: unknown) {
     // The capability result still measures the original stores. These captures
     // diagnose whether simple native Safari content paints before app acceptance.
     const detail = error as Error & { code?: unknown; signal?: unknown; stderr?: unknown };
-    baseline.error = {
+    baseline.captureError = {
       message: String(error).slice(0, 1000),
       code: detail.code,
       signal: detail.signal,

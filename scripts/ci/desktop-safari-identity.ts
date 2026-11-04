@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { createHash } from 'node:crypto';
+import { setTimeout as delay } from 'node:timers/promises';
 
 export type SafariTarget = {
   pid: number;
@@ -112,6 +113,88 @@ function run(argv) {
 }`;
 
 const run = promisify(execFile);
+
+export async function waitForSafariValue(
+  check: () => Promise<string>,
+  predicate: (value: string) => boolean,
+) {
+  const deadline = Date.now() + 30_000;
+  let latest = '';
+  while (Date.now() < deadline) {
+    // Only successful values may be polled. Identity, consent, dispatch and
+    // host-process failures remain fatal at the actual caller boundary.
+    latest = await check();
+    if (predicate(latest)) return latest;
+    await delay(250);
+  }
+  throw new Error(`Timed out: ${latest.slice(0, 1000)}`);
+}
+
+function describeRequestFailure(error: unknown) {
+  const failure = error as Error & {
+    code?: unknown;
+    signal?: unknown;
+    killed?: unknown;
+    stdout?: unknown;
+    stderr?: unknown;
+  };
+  return {
+    message: String(failure.message ?? error).split('\n')[0],
+    code: failure.code ?? null,
+    signal: failure.signal ?? null,
+    killed: failure.killed ?? false,
+    stdout: String(failure.stdout ?? ''),
+    stderr: String(failure.stderr ?? ''),
+  };
+}
+
+/** Observe the one pending title while the normal consent UI is serviced. */
+export function observeSafariTitle(work: Promise<string>, entry: Record<string, unknown>) {
+  let failed = false;
+  let failure: unknown;
+  const promise = work
+    .then(
+      (value) => {
+        entry.value = value;
+      },
+      (error) => {
+        failed = true;
+        failure = error;
+        entry.error = describeRequestFailure(error);
+      },
+    )
+    .finally(() => {
+      entry.finishedAt = new Date().toISOString();
+    });
+  return {
+    promise,
+    value() {
+      if (failed) throw failure;
+      return entry.value;
+    },
+  };
+}
+
+/** The required native helper is distinct from optional screenshot/readback diagnostics. */
+export async function readSafariBaseline(
+  read: () => Promise<string>,
+  entry: Record<string, unknown>,
+) {
+  try {
+    const state = JSON.parse(await read()) as {
+      title: string;
+      bounds: { x: number; y: number; width: number; height: number };
+    };
+    assert.equal(state.title, 'Spinel desktop profile probe');
+    const { x, y, width, height } = state.bounds;
+    assert.ok([x, y, width, height].every(Number.isFinite) && width > 0 && height > 0);
+    entry.state = state;
+    return state;
+  } catch (error) {
+    entry.error = describeRequestFailure(error);
+    throw error;
+  }
+}
 
 export async function requestSafari(
   target: SafariTarget,

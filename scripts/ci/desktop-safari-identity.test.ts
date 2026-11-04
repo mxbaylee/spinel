@@ -1,7 +1,14 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { runInNewContext } from 'node:vm';
-import { identifySafari, requestSafari, safariRequestScript } from './desktop-safari-identity.ts';
+import {
+  identifySafari,
+  requestSafari,
+  safariRequestScript,
+  waitForSafariValue,
+  observeSafariTitle,
+  readSafariBaseline,
+} from './desktop-safari-identity.ts';
 
 type LoaderFailure =
   | 'nil bundle'
@@ -36,7 +43,7 @@ function fixture(
   };
   const page = {
     url: 'http://localhost:8176/probe',
-    title: 'Capability probe',
+    title: 'Spinel desktop profile probe',
     readyState: 'complete',
     visibility: 'visible',
     hasFocus: true,
@@ -51,7 +58,7 @@ function fixture(
     miniaturized: () => true,
     currentTab: () => tab,
     id: () => 19,
-    bounds: () => [0, 25, 1280, 900],
+    bounds: () => ({ x: 0, y: 25, width: 1280, height: 900 }),
   };
   const document = {
     name: ({ timeout }: { timeout: number }) => {
@@ -279,6 +286,117 @@ const target = {
   launchedAt: 1234,
   executablePath: '/Applications/Safari.app/Contents/MacOS/Safari',
 };
+
+for (const failure of [
+  new Error('identity changed'),
+  Object.assign(new Error('denied'), { code: -1743 }),
+  notFound(),
+  Object.assign(new Error('host timeout'), { killed: true }),
+])
+  test(`value polling propagates ${failure.message} without a second native request`, async () => {
+    let invocations = 0;
+    await assert.rejects(
+      waitForSafariValue(
+        () =>
+          requestSafari(target, 'evaluate', 'document.title', 8000, {}, async () => {
+            invocations++;
+            throw failure;
+          }),
+        Boolean,
+      ),
+      (error) => error === failure,
+    );
+    assert.equal(invocations, 1);
+  });
+
+test('readiness still polls successful values until the requested state arrives', async () => {
+  let reads = 0;
+  assert.equal(
+    await waitForSafariValue(async () => (++reads === 1 ? '' : 'ready'), Boolean),
+    'ready',
+  );
+  assert.equal(reads, 2);
+});
+
+test('normal consent can inspect one pending request and observe its eventual success', async () => {
+  let resolve!: (value: string) => void;
+  const entry: Record<string, unknown> = {};
+  const observation = observeSafariTitle(
+    new Promise<string>((done) => {
+      resolve = done;
+    }),
+    entry,
+  );
+  assert.equal(observation.value(), undefined);
+  assert.equal(entry.finishedAt, undefined);
+  resolve('Spinel desktop profile probe');
+  await observation.promise;
+  assert.equal(observation.value(), 'Spinel desktop profile probe');
+  assert.equal(typeof entry.finishedAt, 'string');
+});
+
+test('the consent-loop observation throws the original failed request before it can be renewed', async () => {
+  const failure = Object.assign(new Error('denied after dispatch'), {
+    stderr: 'action-dispatch-begin',
+  });
+  let invocations = 0;
+  const entry: Record<string, unknown> = {};
+  const observation = observeSafariTitle(
+    requestSafari(target, 'title', '', 60000, {}, async () => {
+      invocations++;
+      throw failure;
+    }),
+    entry,
+  );
+  await observation.promise;
+  assert.throws(
+    () => observation.value(),
+    (error) => error === failure,
+  );
+  assert.equal(invocations, 1);
+  assert.equal((entry.error as { stderr: string }).stderr, failure.stderr);
+});
+
+test('a valid required baseline is retained before optional capture diagnostics', async () => {
+  const f = fixture();
+  const entry: Record<string, unknown> = {};
+  const state = await readSafariBaseline(
+    async () => f.execute(['42', '1234', 'baseline', '', '5']),
+    entry,
+  );
+  assert.equal(state.title, 'Spinel desktop profile probe');
+  assert.deepEqual(state.bounds, { x: 0, y: 25, width: 1280, height: 900 });
+  assert.equal(entry.state, state);
+});
+
+for (const value of [
+  'not json',
+  '{}',
+  JSON.stringify({ title: 'wrong', bounds: { x: 0, y: 0, width: 1, height: 1 } }),
+  JSON.stringify({
+    title: 'Spinel desktop profile probe',
+    bounds: { x: 0, y: 0, width: 0, height: 1 },
+  }),
+])
+  test(`invalid baseline cannot become passed evidence: ${value}`, async () => {
+    const entry: Record<string, unknown> = {};
+    await assert.rejects(readSafariBaseline(async () => value, entry));
+    assert.equal(entry.state, undefined);
+    assert.ok(entry.error);
+  });
+
+test('a post-dispatch baseline failure is fatal and preserves its cause without another request', async () => {
+  const failure = notFound();
+  const f = fixture({}, undefined, { actionFailure: failure });
+  const entry: Record<string, unknown> = {};
+  await assert.rejects(
+    readSafariBaseline(async () => f.execute(['42', '1234', 'baseline', '', '5']), entry),
+    (error) => error === failure,
+  );
+  assert.equal(f.calls.filter(([name]) => name === 'baseline-page').length, 1);
+  assert.equal(entry.state, undefined);
+  assert.ok(entry.error);
+});
 test('successful host request retains constructor trace and exact original timeout/target', async () => {
   const entry: Record<string, unknown> = {};
   const trace =
@@ -426,7 +544,7 @@ test('baseline preserves native window, tab and page state after checked loading
   const f = fixture();
   assert.deepEqual(JSON.parse(f.execute(['42', '1234', 'baseline', '', '5'])), {
     windowId: 19,
-    bounds: [0, 25, 1280, 900],
+    bounds: { x: 0, y: 25, width: 1280, height: 900 },
     tabIndex: 1,
     title: f.page.title,
     url: f.page.url,
