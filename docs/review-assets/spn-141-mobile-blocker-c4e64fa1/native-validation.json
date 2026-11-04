@@ -1,0 +1,634 @@
+{
+  "scope": "Retained record/source identity and lifecycle checks; full snapshot assertions belong to the exact executed harness",
+  "source": "c4e64fa110a57d70fb682649d7f4d45ca3d20951",
+  "tested": "4be35332dda5e805c7fd8c45d69099b535c3000f",
+  "owners": [
+    {
+      "browser": "safari",
+      "source": "c4e64fa110a57d70fb682649d7f4d45ca3d20951",
+      "tested": "4be35332dda5e805c7fd8c45d69099b535c3000f",
+      "attempt": "1",
+      "version": "27.2",
+      "profile": {
+        "mode": "ordinary-hosted-safari-user",
+        "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+        "actualPath": "/Users/runner",
+        "directoryDevice": "16777221",
+        "directoryInode": "12884922560"
+      },
+      "launchPids": [
+        3635,
+        5832,
+        7349,
+        10325
+      ],
+      "stages": 46,
+      "preparation": {
+        "status": "passed",
+        "database": "spinel-offline-9e0c0b04-cb19-4cd3-abea-14e01d46b43d",
+        "phase": "unregister",
+        "timeoutMs": 28000,
+        "operations": [
+          {
+            "name": "verify-preparation-document",
+            "startedAt": "2026-11-04T20:18:09.828Z",
+            "status": "passed",
+            "value": {
+              "url": "https://localhost:8176/_desktop-storage-loss",
+              "marker": "inert",
+              "scripts": 0
+            },
+            "elapsedMs": 2
+          },
+          {
+            "name": "serviceWorker.getRegistrations",
+            "startedAt": "2026-11-04T20:18:09.829Z",
+            "status": "passed",
+            "value": [
+              "https://localhost:8176/"
+            ],
+            "elapsedMs": 1
+          },
+          {
+            "name": "serviceWorker.unregister:https://localhost:8176/",
+            "startedAt": "2026-11-04T20:18:09.830Z",
+            "status": "passed",
+            "value": true,
+            "elapsedMs": 2
+          },
+          {
+            "name": "verify-unregistered",
+            "startedAt": "2026-11-04T20:18:09.832Z",
+            "status": "passed",
+            "value": {
+              "workers": [],
+              "controller": "https://localhost:8176/service-worker.js"
+            },
+            "elapsedMs": 0
+          }
+        ]
+      },
+      "quiescence": {
+        "status": "passed",
+        "database": "spinel-offline-9e0c0b04-cb19-4cd3-abea-14e01d46b43d",
+        "phase": "verify",
+        "timeoutMs": 28000,
+        "operations": [
+          {
+            "name": "verify-preparation-document",
+            "startedAt": "2026-11-04T20:18:10.470Z",
+            "status": "passed",
+            "value": {
+              "url": "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled",
+              "marker": "inert",
+              "scripts": 0
+            },
+            "elapsedMs": 0
+          },
+          {
+            "name": "serviceWorker.getRegistrations",
+            "startedAt": "2026-11-04T20:18:10.470Z",
+            "status": "passed",
+            "value": [],
+            "elapsedMs": 0
+          },
+          {
+            "name": "verify-uncontrolled",
+            "startedAt": "2026-11-04T20:18:10.471Z",
+            "status": "passed",
+            "value": {
+              "workers": [],
+              "controller": null
+            },
+            "elapsedMs": 0
+          }
+        ]
+      },
+      "deletion": {
+        "status": "passed",
+        "database": "spinel-offline-9e0c0b04-cb19-4cd3-abea-14e01d46b43d",
+        "phase": "delete",
+        "timeoutMs": 28000,
+        "operations": [
+          {
+            "name": "verify-preparation-document",
+            "startedAt": "2026-11-04T20:18:15.885Z",
+            "status": "passed",
+            "value": {
+              "url": "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled",
+              "marker": "inert",
+              "scripts": 0
+            },
+            "elapsedMs": 0
+          },
+          {
+            "name": "serviceWorker.getRegistrations",
+            "startedAt": "2026-11-04T20:18:15.885Z",
+            "status": "passed",
+            "value": [],
+            "elapsedMs": 1
+          },
+          {
+            "name": "verify-uncontrolled",
+            "startedAt": "2026-11-04T20:18:15.886Z",
+            "status": "passed",
+            "value": {
+              "workers": [],
+              "controller": null
+            },
+            "elapsedMs": 0
+          },
+          {
+            "name": "caches.keys",
+            "startedAt": "2026-11-04T20:18:15.886Z",
+            "status": "passed",
+            "value": [
+              "spinel-shell-cbbe0552bc81f918"
+            ],
+            "elapsedMs": 6
+          },
+          {
+            "name": "caches.delete:spinel-shell-cbbe0552bc81f918",
+            "startedAt": "2026-11-04T20:18:15.892Z",
+            "status": "passed",
+            "value": true,
+            "elapsedMs": 2
+          },
+          {
+            "name": "localStorage.clear",
+            "startedAt": "2026-11-04T20:18:15.894Z",
+            "status": "passed",
+            "value": 0,
+            "elapsedMs": 0
+          },
+          {
+            "name": "indexedDB.deleteDatabase:spinel-offline-9e0c0b04-cb19-4cd3-abea-14e01d46b43d",
+            "startedAt": "2026-11-04T20:18:15.894Z",
+            "status": "passed",
+            "elapsedMs": 6
+          },
+          {
+            "name": "verify-service-workers",
+            "startedAt": "2026-11-04T20:18:15.900Z",
+            "status": "passed",
+            "value": [],
+            "elapsedMs": 0
+          },
+          {
+            "name": "verify-cache-names",
+            "startedAt": "2026-11-04T20:18:15.900Z",
+            "status": "passed",
+            "value": [],
+            "elapsedMs": 1
+          },
+          {
+            "name": "verify-database-names",
+            "startedAt": "2026-11-04T20:18:15.901Z",
+            "status": "passed",
+            "value": [
+              "UniverLocalStorage",
+              "spinel-offline-runtime"
+            ],
+            "elapsedMs": 6
+          },
+          {
+            "name": "verify-storage-empty",
+            "startedAt": "2026-11-04T20:18:15.907Z",
+            "status": "passed",
+            "value": {
+              "workers": [],
+              "cacheNames": [],
+              "databases": [
+                "UniverLocalStorage",
+                "spinel-offline-runtime"
+              ],
+              "localStorageEntries": 0
+            },
+            "elapsedMs": 0
+          }
+        ]
+      },
+      "postLoss": "You're offline\n\nConnect to the internet, then try again to open this page.\n\nTry again",
+      "status": "passed"
+    },
+    {
+      "browser": "chrome",
+      "source": "c4e64fa110a57d70fb682649d7f4d45ca3d20951",
+      "tested": "4be35332dda5e805c7fd8c45d69099b535c3000f",
+      "attempt": "1",
+      "version": "157.0.8103.39",
+      "profile": {
+        "mode": "explicit-directory",
+        "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-chrome/profile",
+        "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-chrome/profile",
+        "directoryDevice": "16777230",
+        "directoryInode": "3039070"
+      },
+      "launchPids": [
+        2745,
+        3147,
+        3536,
+        4424
+      ],
+      "stages": 44,
+      "preparation": {
+        "database": "spinel-offline-c29a46c3-470c-4712-be13-48de87333a94",
+        "operations": [
+          {
+            "elapsedMs": 0,
+            "name": "verify-preparation-document",
+            "startedAt": "2026-11-04T20:22:00.704Z",
+            "status": "passed",
+            "value": {
+              "marker": "inert",
+              "scripts": 0,
+              "url": "https://localhost:8176/_desktop-storage-loss"
+            }
+          },
+          {
+            "elapsedMs": 1,
+            "name": "serviceWorker.getRegistrations",
+            "startedAt": "2026-11-04T20:22:00.704Z",
+            "status": "passed",
+            "value": [
+              "https://localhost:8176/"
+            ]
+          },
+          {
+            "elapsedMs": 1999,
+            "name": "serviceWorker.unregister:https://localhost:8176/",
+            "startedAt": "2026-11-04T20:22:00.705Z",
+            "status": "passed",
+            "value": true
+          },
+          {
+            "elapsedMs": 2,
+            "name": "verify-unregistered",
+            "startedAt": "2026-11-04T20:22:02.705Z",
+            "status": "passed",
+            "value": {
+              "controller": "https://localhost:8176/service-worker.js",
+              "workers": []
+            }
+          }
+        ],
+        "phase": "unregister",
+        "status": "passed",
+        "timeoutMs": 28000
+      },
+      "quiescence": {
+        "database": "spinel-offline-c29a46c3-470c-4712-be13-48de87333a94",
+        "operations": [
+          {
+            "elapsedMs": 0,
+            "name": "verify-preparation-document",
+            "startedAt": "2026-11-04T20:22:02.858Z",
+            "status": "passed",
+            "value": {
+              "marker": "inert",
+              "scripts": 0,
+              "url": "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+            }
+          },
+          {
+            "elapsedMs": 1,
+            "name": "serviceWorker.getRegistrations",
+            "startedAt": "2026-11-04T20:22:02.858Z",
+            "status": "passed",
+            "value": []
+          },
+          {
+            "elapsedMs": 0,
+            "name": "verify-uncontrolled",
+            "startedAt": "2026-11-04T20:22:02.859Z",
+            "status": "passed",
+            "value": {
+              "controller": null,
+              "workers": []
+            }
+          }
+        ],
+        "phase": "verify",
+        "status": "passed",
+        "timeoutMs": 28000
+      },
+      "deletion": {
+        "database": "spinel-offline-c29a46c3-470c-4712-be13-48de87333a94",
+        "operations": [
+          {
+            "elapsedMs": 0,
+            "name": "verify-preparation-document",
+            "startedAt": "2026-11-04T20:22:06.207Z",
+            "status": "passed",
+            "value": {
+              "marker": "inert",
+              "scripts": 0,
+              "url": "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+            }
+          },
+          {
+            "elapsedMs": 1,
+            "name": "serviceWorker.getRegistrations",
+            "startedAt": "2026-11-04T20:22:06.208Z",
+            "status": "passed",
+            "value": []
+          },
+          {
+            "elapsedMs": 0,
+            "name": "verify-uncontrolled",
+            "startedAt": "2026-11-04T20:22:06.209Z",
+            "status": "passed",
+            "value": {
+              "controller": null,
+              "workers": []
+            }
+          },
+          {
+            "elapsedMs": 2,
+            "name": "caches.keys",
+            "startedAt": "2026-11-04T20:22:06.209Z",
+            "status": "passed",
+            "value": [
+              "spinel-shell-cbbe0552bc81f918"
+            ]
+          },
+          {
+            "elapsedMs": 2,
+            "name": "caches.delete:spinel-shell-cbbe0552bc81f918",
+            "startedAt": "2026-11-04T20:22:06.210Z",
+            "status": "passed",
+            "value": true
+          },
+          {
+            "elapsedMs": 1,
+            "name": "localStorage.clear",
+            "startedAt": "2026-11-04T20:22:06.212Z",
+            "status": "passed",
+            "value": 0
+          },
+          {
+            "elapsedMs": 18,
+            "name": "indexedDB.deleteDatabase:spinel-offline-c29a46c3-470c-4712-be13-48de87333a94",
+            "startedAt": "2026-11-04T20:22:06.213Z",
+            "status": "passed",
+            "value": null
+          },
+          {
+            "elapsedMs": 1,
+            "name": "verify-service-workers",
+            "startedAt": "2026-11-04T20:22:06.230Z",
+            "status": "passed",
+            "value": []
+          },
+          {
+            "elapsedMs": 1,
+            "name": "verify-cache-names",
+            "startedAt": "2026-11-04T20:22:06.231Z",
+            "status": "passed",
+            "value": []
+          },
+          {
+            "elapsedMs": 1,
+            "name": "verify-database-names",
+            "startedAt": "2026-11-04T20:22:06.232Z",
+            "status": "passed",
+            "value": [
+              "UniverLocalStorage",
+              "spinel-offline-runtime"
+            ]
+          },
+          {
+            "elapsedMs": 0,
+            "name": "verify-storage-empty",
+            "startedAt": "2026-11-04T20:22:06.232Z",
+            "status": "passed",
+            "value": {
+              "cacheNames": [],
+              "databases": [
+                "UniverLocalStorage",
+                "spinel-offline-runtime"
+              ],
+              "localStorageEntries": 0,
+              "workers": []
+            }
+          }
+        ],
+        "phase": "delete",
+        "status": "passed",
+        "timeoutMs": 28000
+      },
+      "postLoss": "You're offline\n\nConnect to the internet, then try again to open this page.\n\nTry again",
+      "status": "passed"
+    },
+    {
+      "browser": "firefox",
+      "source": "c4e64fa110a57d70fb682649d7f4d45ca3d20951",
+      "tested": "4be35332dda5e805c7fd8c45d69099b535c3000f",
+      "attempt": "1",
+      "version": "159.0.1",
+      "profile": {
+        "mode": "explicit-directory",
+        "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+        "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+        "directoryDevice": "16777227",
+        "directoryInode": "3036844"
+      },
+      "launchPids": [
+        2472,
+        3443,
+        4161,
+        5767
+      ],
+      "stages": 44,
+      "preparation": {
+        "database": "spinel-offline-26aac723-41fc-46cd-aba8-bde0f6e1d0dc",
+        "operations": [
+          {
+            "elapsedMs": 0,
+            "name": "verify-preparation-document",
+            "startedAt": "2026-11-04T20:15:15.529Z",
+            "status": "passed",
+            "value": {
+              "marker": "inert",
+              "scripts": 0,
+              "url": "https://localhost:8176/_desktop-storage-loss"
+            }
+          },
+          {
+            "elapsedMs": 1,
+            "name": "serviceWorker.getRegistrations",
+            "startedAt": "2026-11-04T20:15:15.529Z",
+            "status": "passed",
+            "value": [
+              "https://localhost:8176/"
+            ]
+          },
+          {
+            "elapsedMs": 27,
+            "name": "serviceWorker.unregister:https://localhost:8176/",
+            "startedAt": "2026-11-04T20:15:15.531Z",
+            "status": "passed",
+            "value": true
+          },
+          {
+            "elapsedMs": 1,
+            "name": "verify-unregistered",
+            "startedAt": "2026-11-04T20:15:15.558Z",
+            "status": "passed",
+            "value": {
+              "controller": "https://localhost:8176/service-worker.js",
+              "workers": []
+            }
+          }
+        ],
+        "phase": "unregister",
+        "status": "passed",
+        "timeoutMs": 28000
+      },
+      "quiescence": {
+        "database": "spinel-offline-26aac723-41fc-46cd-aba8-bde0f6e1d0dc",
+        "operations": [
+          {
+            "elapsedMs": 1,
+            "name": "verify-preparation-document",
+            "startedAt": "2026-11-04T20:15:15.746Z",
+            "status": "passed",
+            "value": {
+              "marker": "inert",
+              "scripts": 0,
+              "url": "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+            }
+          },
+          {
+            "elapsedMs": 2,
+            "name": "serviceWorker.getRegistrations",
+            "startedAt": "2026-11-04T20:15:15.746Z",
+            "status": "passed",
+            "value": []
+          },
+          {
+            "elapsedMs": 0,
+            "name": "verify-uncontrolled",
+            "startedAt": "2026-11-04T20:15:15.749Z",
+            "status": "passed",
+            "value": {
+              "controller": null,
+              "workers": []
+            }
+          }
+        ],
+        "phase": "verify",
+        "status": "passed",
+        "timeoutMs": 28000
+      },
+      "deletion": {
+        "database": "spinel-offline-26aac723-41fc-46cd-aba8-bde0f6e1d0dc",
+        "operations": [
+          {
+            "elapsedMs": 0,
+            "name": "verify-preparation-document",
+            "startedAt": "2026-11-04T20:15:24.339Z",
+            "status": "passed",
+            "value": {
+              "marker": "inert",
+              "scripts": 0,
+              "url": "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+            }
+          },
+          {
+            "elapsedMs": 2,
+            "name": "serviceWorker.getRegistrations",
+            "startedAt": "2026-11-04T20:15:24.339Z",
+            "status": "passed",
+            "value": []
+          },
+          {
+            "elapsedMs": 0,
+            "name": "verify-uncontrolled",
+            "startedAt": "2026-11-04T20:15:24.340Z",
+            "status": "passed",
+            "value": {
+              "controller": null,
+              "workers": []
+            }
+          },
+          {
+            "elapsedMs": 9,
+            "name": "caches.keys",
+            "startedAt": "2026-11-04T20:15:24.340Z",
+            "status": "passed",
+            "value": [
+              "spinel-shell-cbbe0552bc81f918"
+            ]
+          },
+          {
+            "elapsedMs": 3,
+            "name": "caches.delete:spinel-shell-cbbe0552bc81f918",
+            "startedAt": "2026-11-04T20:15:24.349Z",
+            "status": "passed",
+            "value": true
+          },
+          {
+            "elapsedMs": 2,
+            "name": "localStorage.clear",
+            "startedAt": "2026-11-04T20:15:24.353Z",
+            "status": "passed",
+            "value": 0
+          },
+          {
+            "elapsedMs": 3,
+            "name": "indexedDB.deleteDatabase:spinel-offline-26aac723-41fc-46cd-aba8-bde0f6e1d0dc",
+            "startedAt": "2026-11-04T20:15:24.355Z",
+            "status": "passed",
+            "value": null
+          },
+          {
+            "elapsedMs": 0,
+            "name": "verify-service-workers",
+            "startedAt": "2026-11-04T20:15:24.358Z",
+            "status": "passed",
+            "value": []
+          },
+          {
+            "elapsedMs": 29,
+            "name": "verify-cache-names",
+            "startedAt": "2026-11-04T20:15:24.358Z",
+            "status": "passed",
+            "value": []
+          },
+          {
+            "elapsedMs": 2,
+            "name": "verify-database-names",
+            "startedAt": "2026-11-04T20:15:24.386Z",
+            "status": "passed",
+            "value": [
+              "UniverLocalStorage",
+              "spinel-offline-runtime"
+            ]
+          },
+          {
+            "elapsedMs": 0,
+            "name": "verify-storage-empty",
+            "startedAt": "2026-11-04T20:15:24.389Z",
+            "status": "passed",
+            "value": {
+              "cacheNames": [],
+              "databases": [
+                "UniverLocalStorage",
+                "spinel-offline-runtime"
+              ],
+              "localStorageEntries": 0,
+              "workers": []
+            }
+          }
+        ],
+        "phase": "delete",
+        "status": "passed",
+        "timeoutMs": 28000
+      },
+      "postLoss": "You're offline\n\nConnect to the internet, then try again to open this page.\n\nTry again",
+      "status": "passed"
+    }
+  ],
+  "safariCapability": "passed"
+}

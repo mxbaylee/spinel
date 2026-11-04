@@ -1,0 +1,18 @@
+{
+  "source": "c4e64fa110a57d70fb682649d7f4d45ca3d20951",
+  "base": "13b74ecea5f2552627ff638be9413ad4754ef581",
+  "tested": "4be35332dda5e805c7fd8c45d69099b535c3000f",
+  "tree": "fa97144469a2a600ff304d38c9747af724d71807",
+  "reviews": [
+    {"reviewer": "/root/spn120_review_a", "score": 98, "rubric": [35,25,18,10,10], "blockers": [], "prePush": true},
+    {"reviewer": "/root/spn120_review_b", "score": 98, "rubric": [35,25,18,10,10], "blockers": [], "prePush": true}
+  ],
+  "runs": {"ci": 41903959881, "native": 41903959769, "storybook": 41903959795},
+  "protocol": "One concrete repair synchronization/all three native owners. No unchanged scenario or provisioning retry. Prior passes are not reused.",
+  "previousSource": "388262cc619f6caa162bc71881f22a714d0ddf69",
+  "previousFailureArchive": "f8e24b41b73eb9d4414597aba2c3396a931a9408",
+  "oldMetadataRun": 41903949201,
+  "oldMetadataDisposition": "Verified completed/cancelled after normal cancellation and force-cancel of continuing always-jobs. No acceptance credit.",
+  "oldCodeRun": 41900102989,
+  "oldCodeDisposition": "Verified completed/cancelled after source supersession and force-cancel of continuing always-jobs. Unit aggregate126833489868 correctly failed closed on a cancelled selected partition; raw log and final run/job snapshots retained. No incomplete owner is credited."
+}

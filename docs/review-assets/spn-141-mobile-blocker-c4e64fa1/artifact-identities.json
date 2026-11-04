@@ -1,0 +1,27 @@
+[
+  {
+    "name": "chrome",
+    "artifact": 13360950271,
+    "sha256": "2f77f59dfbc661e8d57c64eca3edf6abb7896a48d022877e5842a7e132a6d5b6"
+  },
+  {
+    "name": "firefox",
+    "artifact": 13360235377,
+    "sha256": "eb3d483da1469782b7f238b3d29f507a7e6cbac040cf0a1a0b26177fdef2663b"
+  },
+  {
+    "name": "safari",
+    "artifact": 13359163780,
+    "sha256": "276e79e110ef98aff86da51fd265f4205dbea8c509b642214c64f612e9fdffe1"
+  },
+  {
+    "name": "plan",
+    "artifact": 13359158350,
+    "sha256": "6871c15f811bb2b3223dd150736b70b85d5fa95625bc23b8a60f872b72a0dfef"
+  },
+  {
+    "name": "mobile-failure",
+    "artifact": 13362532612,
+    "sha256": "db84971b17a44ccc39df48296f38cd53f9c66782155711c014fb8828f4a40e81"
+  }
+]
