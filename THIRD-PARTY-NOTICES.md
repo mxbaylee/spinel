@@ -4,11 +4,16 @@ Code copied or adapted from other projects, with its source, license and what
 changed. Dependencies installed from npm are not listed here; their licenses
 ship with them.
 
-`scripts/dependencies/patch-univer-docs.ts` and its `.test.ts` adapt the
+`scripts/dependencies/patch-univer-docs.ts`, its `.test.ts` and
+`scripts/dependencies/doc-flush-observation.ts` adapt the
 Apache-2.0 [Univer 1.1.0 native Doc state manager](https://github.com/dream-num/univer/blob/v1.1.0/packages/docs/src/services/doc-state-change-manager.service.ts).
 The version- and hash-checked ES/CJS patch balances qualifying single-character
-insert sequences within the existing history/collaboration composition folds;
-all other sequences retain the original reducer. It preserves native operation
+leading insert sequences within the existing history/collaboration composition
+folds; the first unsupported state and every following state retain the original
+sequential reducer (SPN-133). SPN-135 also aggregates fully qualified descending
+single-character deletes, retaining the lowest-offset native deleted body, and
+adds opt-in scalar flush observations covering native timer and public entry paths.
+It preserves native operation
 order, metadata, cache lifetimes and publication. Tests retain the verified
 original manager as a semantic and work-count control. SPN-132 admits the exact
 native paragraph-preservation marker on otherwise qualifying inserts, preserving

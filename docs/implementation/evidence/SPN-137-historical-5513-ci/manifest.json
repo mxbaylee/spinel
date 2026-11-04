@@ -1,0 +1,744 @@
+{
+  "schema": "spinel-historical-ci-preservation-manifest-v1",
+  "scope": "Historical ordinary CI for source 5513ccb only; no SPN-139 or combined-source acceptance credit. Separate native workflow 41813499184 failed.",
+  "sourceSha": "5513ccb247401006982f628d0bac827691d51533",
+  "baseSha": "5062129284ef7c60c1bc292edba130bab278c8ba",
+  "testedSha": "0cb4e715881a5f4948c25584e7d9d5336f984984",
+  "treeSha": "7b2388cb962187e487360e3b7c941796685efd3d",
+  "testedParents": [
+    "5062129284ef7c60c1bc292edba130bab278c8ba",
+    "5513ccb247401006982f628d0bac827691d51533"
+  ],
+  "workflow": {
+    "id": 41813499295,
+    "attempt": 1,
+    "status": "completed",
+    "conclusion": "success",
+    "event": "pull_request",
+    "createdAt": "2026-11-04T10:20:20Z",
+    "createdAtScope": "original-workflow-creation",
+    "metadataEndpoint": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/41813499295",
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/41813499295",
+    "lastJobCompletedAt": "2026-11-04T10:45:53Z"
+  },
+  "files": {
+    "records": {
+      "path": "records.json.gz",
+      "bytes": 442314,
+      "sha256": "b4285a5b57b77ba8283c300d7b944c1929307ea5bcf401ae6fe9fb95f9b6981b",
+      "encoding": "gzip",
+      "decodedBytes": 2580036,
+      "decodedSha256": "d2c6ee2910110ec1c18f3f58f710cbaa664e111ae6a5108b616ba2676891dfeb",
+      "sourceFileCount": 57
+    },
+    "readme": {
+      "path": "README.md",
+      "bytes": 7999,
+      "sha256": "7c6371c6a50078cf62aaaf5b96a224ed8dce0b2371941bf970cfaea9b9e153aa"
+    }
+  },
+  "contentCounts": {
+    "derived-collection-record": 8,
+    "original-artifact-member": 4,
+    "complete-provider-job-log": 33,
+    "provider-response-text": 7,
+    "immutable-source-snapshot": 5
+  },
+  "sourceFiles": [
+    {
+      "path": "README.md",
+      "bytes": 6275,
+      "sha256": "e60326521162169f0eedeec4657ad04a019781c9f9d0ec71d9895d9a6c9e17c7",
+      "encoding": "utf8",
+      "provenanceClass": "derived-collection-record"
+    },
+    {
+      "path": "ci-plan-verification.json",
+      "bytes": 584,
+      "sha256": "752efe02c94614abd580c8d1f70205e0699f212eb87b0714f8c873511c499814",
+      "encoding": "utf8",
+      "provenanceClass": "derived-collection-record"
+    },
+    {
+      "path": "ci-plan/ci-plan.json",
+      "bytes": 14756,
+      "sha256": "a05ceecce5287da77f7488dfdf8723e90806f688951f487e191b573cca6b0ad5",
+      "encoding": "utf8",
+      "provenanceClass": "original-artifact-member"
+    },
+    {
+      "path": "ci-results-browser-verification.json",
+      "bytes": 617,
+      "sha256": "f0f1239aa6cf1b3cbfe945414a52b8efd1a5fe72edb96430c44743999333c83f",
+      "encoding": "utf8",
+      "provenanceClass": "derived-collection-record"
+    },
+    {
+      "path": "ci-results-browser/ci-results-browser.json",
+      "bytes": 34578,
+      "sha256": "b41d101cd499e6e93a9f6b1194be7cd2ca496d247f52710254d701a59fc307e6",
+      "encoding": "utf8",
+      "provenanceClass": "original-artifact-member"
+    },
+    {
+      "path": "ci-results-lib-verification.json",
+      "bytes": 605,
+      "sha256": "c006246383ab81cfc32d3ffe02db5f176ed054440c56828cf810c39a5ff4b919",
+      "encoding": "utf8",
+      "provenanceClass": "derived-collection-record"
+    },
+    {
+      "path": "ci-results-lib/ci-results-lib.json",
+      "bytes": 21257,
+      "sha256": "05e3bfb2d5e06a12e041d62dc884b2f01661969aebfdc2142a0b032da8ebaa7b",
+      "encoding": "utf8",
+      "provenanceClass": "original-artifact-member"
+    },
+    {
+      "path": "ci-results-unit-verification.json",
+      "bytes": 608,
+      "sha256": "c58af687123e5dd0d971ea8fd57f2bf897c495e358d14a90f900dfd027c69353",
+      "encoding": "utf8",
+      "provenanceClass": "derived-collection-record"
+    },
+    {
+      "path": "ci-results-unit/ci-results-unit.json",
+      "bytes": 21150,
+      "sha256": "f67fefe4384eeec247440b710207fe9ff130b3e1dc793ee5fe1c34ed80dcca39",
+      "encoding": "utf8",
+      "provenanceClass": "original-artifact-member"
+    },
+    {
+      "path": "logs/126518672413.log",
+      "bytes": 63091,
+      "sha256": "ba084a6cb3d59d722b070e8857ac5d4de78fa5912c01be853ac895ccce08f0b4",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126518672697.log",
+      "bytes": 30474,
+      "sha256": "6fa711a5f26f2c6ca3878601f53d42355079c25b4af3bd5bc912dcb1c9366200",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126518823379.log",
+      "bytes": 91659,
+      "sha256": "c856ddaf7313fe42697890116a9271e707bdab929fc29594c40d4fb26e73616a",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126518823436.log",
+      "bytes": 49586,
+      "sha256": "4cf7c51751f1860f337ed81e26f8b4cbbced425d5a5ae190b98c49a254f7de34",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126518823499.log",
+      "bytes": 25581,
+      "sha256": "ce17799ee164dc70c8e41885bd70a8994b7c4fb686ac37eba6ea52976248df3b",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126518823518.log",
+      "bytes": 54404,
+      "sha256": "dacb3149acbc7d1a75d63aca490de22962056f884e0dd29dbc8c62c85496fe8e",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126518823525.log",
+      "bytes": 56767,
+      "sha256": "b4c884a39f04f6eceb432499c5cff558667886ec9c94beb17770d1e07cb97d16",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126518823552.log",
+      "bytes": 72722,
+      "sha256": "fc7c9a2cdd0581589a823b1e93e62f71d4c8e303c39d7ab7864f31b47798fb22",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126518823554.log",
+      "bytes": 22151,
+      "sha256": "ef7f2c46437cfdf6083129e571619a1d8b17b8f257fcba17dc04f936f32f5d34",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126518823559.log",
+      "bytes": 20157,
+      "sha256": "f1dc2c9918c546c3cef58fc2c6f04bb57285e200567cff05b3cb547037fa2962",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126518823577.log",
+      "bytes": 36085,
+      "sha256": "cfeb0c9945de39f2eb5ba39f92b4053f29b974110a772d7e3abccc9e670c2231",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126518823593.log",
+      "bytes": 77033,
+      "sha256": "7972fbb2a06ea636753e8adecf870fc1d735f9faaaef4d909ce455567be942c7",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126518823625.log",
+      "bytes": 73635,
+      "sha256": "3477c8110404c1773b9dc8955d6e7cc26a3105b33d4333d5f841d697ddfceff8",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126518823730.log",
+      "bytes": 55895,
+      "sha256": "10e281eaf2742e5e0eef236b15763405e2991efec2f2cf34ee1f609f61d2a5d8",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126518823737.log",
+      "bytes": 37946,
+      "sha256": "6f1174713100483793a1b9803129f804f8b94a7bc76763ae9dfcea6a53a9950b",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126518823743.log",
+      "bytes": 63989,
+      "sha256": "0777beb5e68199967782ec35dd6ea9cdcbad828e037249634183a21ab7be79b6",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126518823778.log",
+      "bytes": 22455,
+      "sha256": "bf56da3aa2888d5f7c5f8773fe1b8aca3cab04fc4a204d72410a43bf1bf40c09",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126518823813.log",
+      "bytes": 92005,
+      "sha256": "4e3f7d804075294fbcc929daa76a9497d28d439581266f3739161b3ed3005c53",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126518823828.log",
+      "bytes": 54333,
+      "sha256": "092e53b3eef33f21498a895f65ee80338488111cad5c04c2c62cdef0559d8c04",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126518823867.log",
+      "bytes": 84216,
+      "sha256": "67f4df3ad9f0f869f8fffa02bc35812d661d1dcf1d756184d4b82567dec656b7",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126518823907.log",
+      "bytes": 19581,
+      "sha256": "68ca026fc86007d1ef2cd09059963317d41d075ac5ae2214d96adabb42f9aa45",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126518823916.log",
+      "bytes": 84541,
+      "sha256": "789a7cc2f7aefdb36cef73a2779a78dece7f33610dfefde5cb8c19405306f706",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126518823969.log",
+      "bytes": 71200,
+      "sha256": "0b62e78bbaee3928d1a58dd2beb572e0d5f67dac1b8f70be9114af617f3c819e",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126518824316.log",
+      "bytes": 53095,
+      "sha256": "3555d59c108c9381675626dc1c037b6b7aab2343a3713f21263ffa784059a99d",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126518824433.log",
+      "bytes": 53667,
+      "sha256": "816517dfe021049bbca65c8420a8d7d9f0828257b7d1a5a1883771b9cf71a66e",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126518824443.log",
+      "bytes": 56684,
+      "sha256": "b02186d6831ace9a992656ab9c35b3db3aab0dac799ad34fe737fe383b81b7af",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126518824822.log",
+      "bytes": 19833,
+      "sha256": "e8a5a1b2f9c3e2dbc415a43189fbd858eb9a8b9c5c289367d2ecefb029434557",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126518825101.log",
+      "bytes": 67130,
+      "sha256": "6c40aed4054261e0864bb7eab77839a5343a9157ece02259b1215b43e2c186a6",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126518830188.log",
+      "bytes": 307234,
+      "sha256": "4c0310afa30dd53519f74cd47dc4ffa31f68c718f42d3cbbd06cfcc2e7312734",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126518928926.log",
+      "bytes": 62848,
+      "sha256": "20bd40a81474b9e46a9f3ff3664b47235dbe6871857b316abd64bb9bc9bbf0bf",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126522904714.log",
+      "bytes": 68459,
+      "sha256": "2b2241da7d0838a8a1d4f19ae6b085d8cc7d7a80c544ea4e6d92319daf2b7f25",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126523173681.log",
+      "bytes": 68625,
+      "sha256": "7cbbfed6807c6be7f1eccf171dfa297486938d3061a818895fc2737ea0cbc0ce",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "logs/126527785330.log",
+      "bytes": 90945,
+      "sha256": "0e37ad92d658cdbfd683006279daeedfd972893bac76c5a72478ad24cf965381",
+      "encoding": "utf8",
+      "provenanceClass": "complete-provider-job-log"
+    },
+    {
+      "path": "manifest.json",
+      "bytes": 12374,
+      "sha256": "f12f3d97052fda2bd8323d5eb6a9a8d66bbe621cf2bedfbfc35f6e482e2494d0",
+      "encoding": "utf8",
+      "provenanceClass": "derived-collection-record"
+    },
+    {
+      "path": "provider/artifacts.json",
+      "bytes": 16350,
+      "sha256": "626e5bc4bc60ae6fe312e088929f4c95d8c698c74cfbac83bb3529267fa7f1e2",
+      "encoding": "utf8",
+      "provenanceClass": "provider-response-text"
+    },
+    {
+      "path": "provider/attempt.json",
+      "bytes": 12281,
+      "sha256": "117cf54938e9deab5da6a76d027804b9ebe512e8d445c07c0e24fdc1792047e6",
+      "encoding": "utf8",
+      "provenanceClass": "provider-response-text"
+    },
+    {
+      "path": "provider/base.json",
+      "bytes": 3745,
+      "sha256": "7131321686a8aec446c1e346d1d7060be7d6faa0b3b463d8fbdd57a2fa959e51",
+      "encoding": "utf8",
+      "provenanceClass": "provider-response-text"
+    },
+    {
+      "path": "provider/capture.json",
+      "bytes": 1528,
+      "sha256": "ec268d734ee08fc733bf3814c20795e9457305d7f1a6f4c825b9746fe820e83a",
+      "encoding": "utf8",
+      "provenanceClass": "derived-collection-record"
+    },
+    {
+      "path": "provider/jobs.json",
+      "bytes": 101208,
+      "sha256": "9b35368674d664a3f1683190cda194f8055716d6875ef58d5a77bc021d0db536",
+      "encoding": "utf8",
+      "provenanceClass": "provider-response-text"
+    },
+    {
+      "path": "provider/run.json",
+      "bytes": 12259,
+      "sha256": "756f62aec88e80a8f56ccf8a75e22a2ca290815bb0e0ce1235bf54c5cd68e9d0",
+      "encoding": "utf8",
+      "provenanceClass": "provider-response-text"
+    },
+    {
+      "path": "provider/source.json",
+      "bytes": 1200,
+      "sha256": "155cce850f4c07c2a5fb41ea8e5ef15a224d5b3308292cc06b3b30ff1f203c76",
+      "encoding": "utf8",
+      "provenanceClass": "provider-response-text"
+    },
+    {
+      "path": "provider/tested.json",
+      "bytes": 2649,
+      "sha256": "24b107dbe462e9d86e676e7b731a792e229f4dfe724e44a07332a1479ab132f1",
+      "encoding": "utf8",
+      "provenanceClass": "provider-response-text"
+    },
+    {
+      "path": "receipt.json",
+      "bytes": 25117,
+      "sha256": "4dabc4326a1c30c99f008aed74efdd55b4366bc8a7521d19891cb86ee29940c7",
+      "encoding": "utf8",
+      "provenanceClass": "derived-collection-record"
+    },
+    {
+      "path": "source/.github/workflows/ci.yml",
+      "bytes": 34633,
+      "sha256": "a2743be09e490e022cd2ec09f68991832bf2a4e9dda6faa18b8f7eaf23820d8a",
+      "encoding": "utf8",
+      "provenanceClass": "immutable-source-snapshot"
+    },
+    {
+      "path": "source/playwright.config.ts",
+      "bytes": 10662,
+      "sha256": "8e49913b74aad03e810d7c993715688800507fa0cd28452477797bf4d293ea84",
+      "encoding": "utf8",
+      "provenanceClass": "immutable-source-snapshot"
+    },
+    {
+      "path": "source/scripts/ci/changes.ts",
+      "bytes": 3031,
+      "sha256": "6600236c204398809a1e596f85a3a5f2f8b445a94b0d24ccc2b4cb9311b53797",
+      "encoding": "utf8",
+      "provenanceClass": "immutable-source-snapshot"
+    },
+    {
+      "path": "source/scripts/ci/coverage-result.ts",
+      "bytes": 2391,
+      "sha256": "d5ea7ae10040110e4caf98a4cf8cd05a47cf0dc4dcfb47a51ab345c9f40de701",
+      "encoding": "utf8",
+      "provenanceClass": "immutable-source-snapshot"
+    },
+    {
+      "path": "source/scripts/ci/plan.ts",
+      "bytes": 10898,
+      "sha256": "29b07e0e80d010b8d24bedff3061cd825aee32015270d894089a60c935d40316",
+      "encoding": "utf8",
+      "provenanceClass": "immutable-source-snapshot"
+    }
+  ],
+  "originalCollectionManifest": {
+    "path": "manifest.json",
+    "bytes": 12374,
+    "sha256": "f12f3d97052fda2bd8323d5eb6a9a8d66bbe621cf2bedfbfc35f6e482e2494d0",
+    "records": 60,
+    "allRecordBytesAndHashesReverified": true
+  },
+  "jobs": {
+    "count": 33,
+    "selectedWorkers": 25,
+    "classifier": 1,
+    "requiredGateCount": 7,
+    "allProviderConclusionsSuccess": true,
+    "allProviderWorkflowAttempts": 1,
+    "requiredGates": [
+      {
+        "name": "Backlog",
+        "jobId": 126518823907,
+        "conclusion": "success",
+        "completedAt": "2026-11-04T10:23:11Z",
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/41813499295/job/126518823907"
+      },
+      {
+        "name": "Pull request",
+        "jobId": 126518672697,
+        "conclusion": "success",
+        "completedAt": "2026-11-04T10:21:35Z",
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/41813499295/job/126518672697"
+      },
+      {
+        "name": "Lint",
+        "jobId": 126518823559,
+        "conclusion": "success",
+        "completedAt": "2026-11-04T10:22:31Z",
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/41813499295/job/126518823559"
+      },
+      {
+        "name": "Typecheck",
+        "jobId": 126518824822,
+        "conclusion": "success",
+        "completedAt": "2026-11-04T10:25:51Z",
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/41813499295/job/126518824822"
+      },
+      {
+        "name": "Unit tests",
+        "jobId": 126522904714,
+        "conclusion": "success",
+        "completedAt": "2026-11-04T10:32:43Z",
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/41813499295/job/126522904714"
+      },
+      {
+        "name": "Lib tests",
+        "jobId": 126523173681,
+        "conclusion": "success",
+        "completedAt": "2026-11-04T10:33:27Z",
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/41813499295/job/126523173681"
+      },
+      {
+        "name": "Playwright smoke",
+        "jobId": 126527785330,
+        "conclusion": "success",
+        "completedAt": "2026-11-04T10:45:53Z",
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/41813499295/job/126527785330"
+      }
+    ],
+    "everyCompleteJobLogRetained": true,
+    "noPerTestRetryZeroClaim": true
+  },
+  "plan": {
+    "path": "ci-plan/ci-plan.json",
+    "serializedSha256": "bfd363a9b562fb18f83ddc3b752f531721d2201075ac20652b3131c5575b0100",
+    "originalMemberSha256": "a05ceecce5287da77f7488dfdf8723e90806f688951f487e191b573cca6b0ad5",
+    "selectedSuites": [
+      "backlog",
+      "pull-request",
+      "lint",
+      "typecheck",
+      "unit-tests",
+      "lib-test-run",
+      "playwright-run",
+      "container-smoke",
+      "restore-timing",
+      "sync-transition",
+      "doc-responsiveness",
+      "doc-callback-lifetimes",
+      "responsiveness-baseline",
+      "callback-baseline",
+      "phone-compatibility"
+    ],
+    "mode": "full",
+    "event": "pull_request",
+    "action": "synchronize",
+    "paths": [
+      "docs/implementation/SPN-137.md",
+      "docs/implementation/evidence/SPN-137-cursor-validation.json",
+      "docs/implementation/evidence/SPN-137-external-safari-evidence.json",
+      "docs/implementation/evidence/SPN-137-local-validation.json",
+      "docs/implementation/evidence/SPN-137-move-observation/README.md",
+      "docs/implementation/evidence/SPN-137-move-observation/failure-screen.png",
+      "docs/implementation/evidence/SPN-137-move-observation/manifest.json",
+      "docs/implementation/evidence/SPN-137-move-observation/records.json.gz",
+      "docs/todo/SPN-106.md",
+      "docs/todo/SPN-137.md",
+      "docs/todo/backlog.json",
+      "docs/todo/readme.md",
+      "scripts/ci/desktop-browser.ts",
+      "scripts/ci/desktop-pointer.test.ts",
+      "scripts/ci/desktop-pointer.ts"
+    ],
+    "digestQualification": "Serialized plan excludes its original artifact file terminal newline."
+  },
+  "aggregateProof": [
+    {
+      "owner": "unit",
+      "path": "ci-results-unit/ci-results-unit.json",
+      "passed": true,
+      "planSha256": "bfd363a9b562fb18f83ddc3b752f531721d2201075ac20652b3131c5575b0100",
+      "selectedResults": 1
+    },
+    {
+      "owner": "lib",
+      "path": "ci-results-lib/ci-results-lib.json",
+      "passed": true,
+      "planSha256": "bfd363a9b562fb18f83ddc3b752f531721d2201075ac20652b3131c5575b0100",
+      "selectedResults": 1
+    },
+    {
+      "owner": "browser",
+      "path": "ci-results-browser/ci-results-browser.json",
+      "passed": true,
+      "planSha256": "bfd363a9b562fb18f83ddc3b752f531721d2201075ac20652b3131c5575b0100",
+      "selectedResults": 12
+    }
+  ],
+  "dispositions": {
+    "reportedBrowserPassed": 449,
+    "reportedBrowserSkipped": 10,
+    "reportedLibraryRemainingPassed": 953,
+    "reportedLibraryRemainingSkipped": 3,
+    "skippedCasesAndConditionalStepsAreNotPassed": true,
+    "originalDetailedDispositions": "receipt.json:executionDispositions (retained unchanged in envelope)",
+    "completeScenarioRetryCountsAudited": false,
+    "retryQualification": "No reported retry/failure/flaky markers were found in the complete collected logs; workflow attempt 1 is not a universal test retry-zero claim."
+  },
+  "archives": [
+    {
+      "name": "ci-plan",
+      "artifactId": 13313482379,
+      "providerBytes": 1181,
+      "sha256": "3f111c2eaeedae41697f0f76d671f9a46916b8cf8131049a44cbced214ab02a3",
+      "createdAt": "2026-11-04T10:21:35Z",
+      "expiresAt": "2026-12-04T10:21:34Z",
+      "expiredAtCollection": false,
+      "providerWorkflowRun": {
+        "id": 41813499295,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-137-safari-pointer",
+        "head_sha": "5513ccb247401006982f628d0bac827691d51533"
+      },
+      "crcPassed": true,
+      "safePaths": true,
+      "regularFilesOnly": true,
+      "originalArchivePath": "ci-plan.zip",
+      "originalVerificationPath": "ci-plan-verification.json",
+      "members": [
+        {
+          "path": "ci-plan.json",
+          "bytes": 14756,
+          "sha256": "a05ceecce5287da77f7488dfdf8723e90806f688951f487e191b573cca6b0ad5"
+        }
+      ],
+      "originalMemberBytesPreservedInEnvelope": true,
+      "zipBytesIncludedInEnvelope": false
+    },
+    {
+      "name": "ci-results-unit",
+      "artifactId": 13313717740,
+      "providerBytes": 1539,
+      "sha256": "a1fe3f681e35b54f1b1b0cce592bbba0f55a96e7979d13a4e68f8c80e9a2b8b7",
+      "createdAt": "2026-11-04T10:32:41Z",
+      "expiresAt": "2026-12-04T10:32:41Z",
+      "expiredAtCollection": false,
+      "providerWorkflowRun": {
+        "id": 41813499295,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-137-safari-pointer",
+        "head_sha": "5513ccb247401006982f628d0bac827691d51533"
+      },
+      "crcPassed": true,
+      "safePaths": true,
+      "regularFilesOnly": true,
+      "originalArchivePath": "ci-results-unit.zip",
+      "originalVerificationPath": "ci-results-unit-verification.json",
+      "members": [
+        {
+          "path": "ci-results-unit.json",
+          "bytes": 21150,
+          "sha256": "f67fefe4384eeec247440b710207fe9ff130b3e1dc793ee5fe1c34ed80dcca39"
+        }
+      ],
+      "originalMemberBytesPreservedInEnvelope": true,
+      "zipBytesIncludedInEnvelope": false
+    },
+    {
+      "name": "ci-results-lib",
+      "artifactId": 13314227143,
+      "providerBytes": 1557,
+      "sha256": "b05035ea877def59d16a8ebe111e2b4cbf8b490c21509a0cda3fa22981dcca02",
+      "createdAt": "2026-11-04T10:33:25Z",
+      "expiresAt": "2026-12-04T10:33:25Z",
+      "expiredAtCollection": false,
+      "providerWorkflowRun": {
+        "id": 41813499295,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-137-safari-pointer",
+        "head_sha": "5513ccb247401006982f628d0bac827691d51533"
+      },
+      "crcPassed": true,
+      "safePaths": true,
+      "regularFilesOnly": true,
+      "originalArchivePath": "ci-results-lib.zip",
+      "originalVerificationPath": "ci-results-lib-verification.json",
+      "members": [
+        {
+          "path": "ci-results-lib.json",
+          "bytes": 21257,
+          "sha256": "05e3bfb2d5e06a12e041d62dc884b2f01661969aebfdc2142a0b032da8ebaa7b"
+        }
+      ],
+      "originalMemberBytesPreservedInEnvelope": true,
+      "zipBytesIncludedInEnvelope": false
+    },
+    {
+      "name": "ci-results-browser",
+      "artifactId": 13313814503,
+      "providerBytes": 1764,
+      "sha256": "4f8746ce73d7eff766cfa12b4fe539a89b7335b12d91b4fb88008061505b5f69",
+      "createdAt": "2026-11-04T10:45:50Z",
+      "expiresAt": "2026-12-04T10:45:50Z",
+      "expiredAtCollection": false,
+      "providerWorkflowRun": {
+        "id": 41813499295,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-137-safari-pointer",
+        "head_sha": "5513ccb247401006982f628d0bac827691d51533"
+      },
+      "crcPassed": true,
+      "safePaths": true,
+      "regularFilesOnly": true,
+      "originalArchivePath": "ci-results-browser.zip",
+      "originalVerificationPath": "ci-results-browser-verification.json",
+      "members": [
+        {
+          "path": "ci-results-browser.json",
+          "bytes": 34578,
+          "sha256": "b41d101cd499e6e93a9f6b1194be7cd2ca496d247f52710254d701a59fc307e6"
+        }
+      ],
+      "originalMemberBytesPreservedInEnvelope": true,
+      "zipBytesIncludedInEnvelope": false
+    }
+  ],
+  "supplementaryArtifactMetadata": {
+    "path": "provider/artifacts.json",
+    "count": 23,
+    "allOriginalMetadataRetained": true,
+    "downloadedSmallArchives": 4,
+    "largeScenarioTraceImagePerformanceArchivesDownloaded": false
+  },
+  "privacyReview": {
+    "source": "All original plaintext reviewed before encoding; no truncation or redaction.",
+    "patternsChecked": [
+      "privateKey",
+      "githubToken",
+      "apiSecret",
+      "jwt",
+      "signedUrl"
+    ],
+    "sensitivePatternMatches": 0,
+    "maskedCredentialLabels": 111,
+    "qualification": "Credential-value matches retain provider masking. Original source snapshots, synthetic fixture test names, runner paths and provider/Git metadata are preserved."
+  },
+  "limitations": [
+    "All 57 collected UTF-8 files are preserved byte-for-byte, including every one of the 33 complete logs; the four small ZIP container byte streams are not embedded, but their complete members and verification metadata are.",
+    "Provider responses are connector-returned JSON/log text with terminal newline; they are not original HTTP response bytes.",
+    "The original README, receipt, manifest, capture metadata and ZIP verification records are derived collection records and are classified separately from original provider/artifact content.",
+    "No later PR base or current merge ref is substituted for the original source/base/tested Git objects.",
+    "All 10 browser and 3 library skipped cases remain skipped; no universal per-test retry-zero claim is made.",
+    "Large scenario and performance artifacts were not downloaded or regraded; all original artifact metadata remains retained.",
+    "The separate native run 41813499184 failed at Safari initial identity. This ordinary-CI result neither replaces it nor establishes acceptance for SPN-139 or combined SPN-137.",
+    "Collection transport exit statuses were not retained; the original collector initially mislabeled absent statuses, but complete archives matched all provider size/hash/CRC/member checks without repeated downloads."
+  ]
+}

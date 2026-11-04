@@ -148,8 +148,6 @@ export class DiagnosticsStore {
         CREATE INDEX IF NOT EXISTS events_name ON events(name, received_at);
         CREATE INDEX IF NOT EXISTS events_component ON events(component, received_at);
         CREATE INDEX IF NOT EXISTS events_run ON events(run_id, received_at);
-        CREATE INDEX IF NOT EXISTS events_actor ON events(actor_id, received_at);
-        CREATE INDEX IF NOT EXISTS events_feedback ON events(actor_id) WHERE name='feedback';
         PRAGMA user_version = 1;
       `);
       database

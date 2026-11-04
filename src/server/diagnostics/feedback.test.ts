@@ -129,6 +129,73 @@ test('feedback commits synchronously, preserves exact intentional text and retri
   }
 });
 
+test('a full existing store reopens without growth and retains paired export and clear recovery', async () => {
+  const f = fixture();
+  let reopened: DiagnosticsStore | undefined;
+  let exec: ReturnType<typeof vi.spyOn> | undefined;
+  try {
+    const original = f.feedback();
+    await f.store.close();
+    // Recreate the existing schema at its actual page ceiling. Startup must not
+    // grow diagnostics for optional indexes or remove the Operator's recovery.
+    f.db.exec(
+      'DROP INDEX IF EXISTS events_actor; DROP INDEX IF EXISTS events_feedback; VACUUM; PRAGMA wal_checkpoint(TRUNCATE);',
+    );
+    const pages = Number(f.db.prepare('PRAGMA page_count').get()!.page_count);
+    f.db.exec(`PRAGMA max_page_count=${pages}`);
+    expect(() => f.db.exec('CREATE INDEX upgrade_probe ON events(actor_id)')).toThrow(/full/i);
+    const execute = DatabaseSync.prototype.exec;
+    exec = vi.spyOn(DatabaseSync.prototype, 'exec').mockImplementation(function (
+      this: DatabaseSync,
+      sql: string,
+    ) {
+      // Substitute only the configured ceiling; SQLite allocations stay real.
+      return execute.call(
+        this,
+        /^PRAGMA max_page_count = \d+;$/.test(sql) ? `PRAGMA max_page_count=${pages}` : sql,
+      );
+    });
+    reopened = new DiagnosticsStore({ path: f.path, build: 'reopened-build' });
+    expect(reopened.status()).toMatchObject({
+      available: true,
+      generation: f.generation,
+      recordCount: 1,
+    });
+    expect(f.db.prepare('PRAGMA page_count').get()?.page_count).toBe(pages);
+    expect(reopened.feedbackFlags().actors).toEqual([f.actor]);
+    const pair = await reopened.prepareFeedback(f.actor, f.operator);
+    expect(pair.state).toBe('ready');
+    if (pair.state !== 'ready') throw new Error('Expected complete pair.');
+    for (const scope of ['user', 'system'] as const) {
+      const download = reopened.feedbackDownload(pair.id, f.operator, scope);
+      try {
+        const exported = f.read(download.path);
+        expect(exported.rows.map((row) => row.id)).toEqual([original.id]);
+        expect(exported.manifest.rowCount).toBe(1);
+        expect(exported.check).toBe('ok');
+      } finally {
+        await download.finish(false);
+      }
+    }
+    await reopened.cancelFeedback(pair.id, f.operator);
+    const generation = reopened.truncate().generation;
+    expect(generation).not.toBe(f.generation);
+    expect(reopened.feedbackFlags().actors).toEqual([]);
+    expect(
+      reopened.feedback(
+        { id: randomUUID(), message: 'Report after clear', context: { route: '/files' } },
+        f.actor,
+        generation,
+      ).generation,
+    ).toBe(generation);
+    expect(f.db.prepare('PRAGMA page_count').get()?.page_count).toBe(pages);
+  } finally {
+    exec?.mockRestore();
+    await reopened?.close();
+    await f.close();
+  }
+});
+
 test('feedback failures never acknowledge or increment best-effort loss counters, and a real transactional failure rolls back', async () => {
   const f = fixture();
   try {
@@ -301,9 +368,7 @@ test.each([undefined, 3])(
         expect(exported.rows.map((row) => row.id)).toEqual([report.id]);
         expect(exported.manifest.retention.observationAgeTargetDays).toBe(policy ?? null);
         expect(exported.manifest.retention.observations).toContain(
-          policy === undefined
-            ? 'no automatic expiry configured'
-            : 'server receipt age target',
+          policy === undefined ? 'no automatic expiry configured' : 'server receipt age target',
         );
         expect(exported.manifest.historicalCompleteness).toBe('unknown');
       }
